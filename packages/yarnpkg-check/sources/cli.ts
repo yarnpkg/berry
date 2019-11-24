@@ -108,7 +108,7 @@ function checkForNodeModuleStrings(stringishNode: ts.StringLiteral | ts.NoSubsti
   const match = /node_modules/g.test(stringishNode.getText());
   if (match) {
     const prettyLocation = ast.prettyNodeLocation(configuration, stringishNode);
-    report.reportWarning(MessageName.UNNAMED, `${prettyLocation}: Strings should avoid referencing the node_modules directory`);
+    report.reportWarning(MessageName.UNNAMED, `${prettyLocation}: Strings should avoid referencing the node_modules directory (prefer require.resolve)`);
   }
 }
 
