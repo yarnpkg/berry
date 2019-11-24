@@ -2,11 +2,12 @@
   "name": "@yarnpkg/gatsby",
   "private": true,
   "dependencies": {
+    "@babel/core": "^7.7.4",
     "@emotion/core": "^10.0.7",
     "@emotion/styled": "^10.0.17",
     "@emotion/styled-base": "^10.0.7",
     "@haroenv/react-sparklines": "^1.7.1",
-    "@reach/router": "npm:^1.1.1",
+    "@reach/router": "^1.1.1",
     "algoliasearch": "^3.32.1",
     "bytes": "^3.1.0",
     "date-fns": "^2.0.0-beta.2",
@@ -58,5 +59,8 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "devDependencies": {
+    "@types/babel__core": "7.1.3"
   }
 }

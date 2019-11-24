@@ -27,7 +27,7 @@ yarn plugin import @yarnpkg/plugin-exec
 **gen-pkg.js**
 
 ```js
-const {mkdirSync, writeFileSync} = require(`child_process`);
+const {mkdirSync, writeFileSync} = require(`fs`);
 const generatorPath = process.argv[2];
 
 mkdirSync(`${generatorPath}/build`);

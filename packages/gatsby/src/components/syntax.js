@@ -20,12 +20,6 @@ export const Container = styled.div`
   background: ${props => props.theme.colors.background};
   color: ${props => props.theme.colors.documentation};
 
-  a[href^="#"] {
-    margin-left: -15px;
-    padding: 15px;
-    text-decoration: none;
-  }
-
   code {
     font-family: "PT Mono";
 
@@ -102,6 +96,15 @@ const DescriptionContainer = styled.div`
   }
 `;
 
+const AnchorContainer = styled.a`
+  margin-left: -15px;
+
+  padding: 15px;
+
+  color: inherit;
+  text-decoration: none;
+`;
+
 const Description = styled.div`
   margin-bottom: 0.5em;
 
@@ -129,9 +132,9 @@ const Anchor = () => <>
 const Key = ({theme, name, anchorTarget}) => <>
   <span style={{color: theme.colors.key}}>
     {anchorTarget ? <>
-      <a style={{color: `inherit`}} href={`#${anchorTarget}`}>
+      <AnchorContainer href={`#${anchorTarget}`}>
         <Anchor/>
-      </a>{theme.formatKey(name)}
+      </AnchorContainer>{theme.formatKey(name)}
     </> : <>
       {theme.formatKey(name)}
     </>}
