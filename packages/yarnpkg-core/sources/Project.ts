@@ -395,7 +395,7 @@ export class Project {
 
     // Ensures that we notice it when dependencies are added / removed from all sources coming from the filesystem
     if (!opts.lockfileOnly)
-      await this.forgetTransientResolutions();
+      this.forgetTransientResolutions();
 
     // Note that the resolution process is "offline" until everything has been
     // successfully resolved; all the processing is expected to have zero side
@@ -1553,6 +1553,7 @@ function applyVirtualResolutionMutations({
 
   try {
     for (const workspace of project.workspaces) {
+      volatileDescriptors.delete(workspace.anchoredDescriptor.descriptorHash);
       resolvePeerDependencies(workspace.anchoredLocator, true, false);
     }
   } catch (error) {
