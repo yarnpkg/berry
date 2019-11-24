@@ -168,7 +168,7 @@ export class Project {
 
           if (lockfileVersion >= LOCKFILE_VERSION) {
             const pkg: Package = {...locator, version, languageName, linkType, dependencies, peerDependencies, dependenciesMeta, peerDependenciesMeta, bin};
-            this.storedPackages.set(pkg.locatorHash, pkg);
+            this.originalPackages.set(pkg.locatorHash, pkg);
           }
 
           for (const entry of key.split(MULTIPLE_KEYS_REGEXP)) {
