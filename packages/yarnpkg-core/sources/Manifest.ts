@@ -231,7 +231,7 @@ export class Manifest {
           range = `*`;
         }
 
-        const descriptor = structUtils.makeDescriptor(ident, range);
+        const descriptor = structUtils.makeDescriptor(ident, range as string);
         this.peerDependencies.set(descriptor.identHash, descriptor);
       }
     }
