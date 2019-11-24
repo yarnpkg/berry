@@ -1,7 +1,0 @@
-{
-    "name": "peer-deps-invalid",
-    "version": "1.0.0",
-    "peerDependencies": {
-        "no-deps": "invalid"
-    }
-}

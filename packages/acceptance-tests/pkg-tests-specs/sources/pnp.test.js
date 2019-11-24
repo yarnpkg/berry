@@ -332,21 +332,6 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
-    `it should warn when the peer dependency range is not valid`,
-    makeTemporaryEnv(
-      {
-        dependencies: {
-          [`peer-deps-invalid`]: `1.0.0`,
-          [`no-deps`]: `1.0.0`,
-        },
-      },
-      async ({path, run, source}) => {
-        const {stdout} = await run(`install`);
-        expect(stdout).toEqual(expect.stringContaining('YN0059'));
-      })
-  );
-
-  test(
     `it should not warn when the peer dependency resolution is compatible`,
     makeTemporaryEnv(
       {
@@ -358,7 +343,8 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         const {stdout} = await run(`install`);
         expect(stdout).not.toEqual(expect.stringContaining('YN0060'));
-      })
+      }
+    ),
   );
 
   test(
@@ -373,7 +359,8 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         const {stdout} = await run(`install`);
         expect(stdout).toEqual(expect.stringContaining('YN0060'));
-      })
+      },
+    ),
   );
 
   test(
