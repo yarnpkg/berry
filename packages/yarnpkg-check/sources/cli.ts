@@ -7,7 +7,6 @@ import {Cli, Command}                                                           
 import globby                                                                                                                                                                from 'globby';
 import micromatch                                                                                                                                                            from 'micromatch';
 import module                                                                                                                                                                from 'module';
-import pLimit                                                                                                                                                                from 'p-limit';
 import * as ts                                                                                                                                                               from 'typescript';
 
 import * as ast                                                                                                                                                              from './ast';
@@ -363,32 +362,35 @@ class EntryCommand extends Command {
 
       try {
         for (const manifestFolder of allManifestFolders) {
+          const manifestPath = ppath.join(manifestFolder, Manifest.fileName);
+
           report.reportSeparator();
 
-          const workspace = await findWorkspace(manifestFolder);
-          if (!workspace)
-            return;
+          try {
+            await report.startTimerPromise(manifestPath, async () => {
+              const workspace = await findWorkspace(manifestFolder);
+              if (!workspace)
+                return;
 
-          const manifestPath = ppath.join(workspace.cwd, Manifest.fileName);
-          await report.startTimerPromise(manifestPath, async () => {
-            const patterns = [`**/*`];
-            const ignore = [];
+              const patterns = [`**/*`];
+              const ignore = [];
 
-            for (const otherManifestFolder of allManifestFolders) {
-              const sub = ppath.contains(manifestFolder, otherManifestFolder);
-              if (sub !== `.`) {
-                ignore.push(`${otherManifestFolder}/**`);
+              for (const otherManifestFolder of allManifestFolders) {
+                const sub = ppath.contains(manifestFolder, otherManifestFolder);
+                if (sub !== `.`) {
+                  ignore.push(`${otherManifestFolder}/**`);
+                }
               }
-            }
 
-            const fileList = micromatch(allFiles, patterns, {ignore}) as Array<PortablePath>;
+              const fileList = micromatch(allFiles, patterns, {ignore}) as Array<PortablePath>;
 
-            await processWorkspace(workspace, {
-              configuration,
-              fileList,
-              report,
+              await processWorkspace(workspace, {
+                configuration,
+                fileList,
+                report,
+              });
             });
-          });
+          } catch {}
 
           progress.tick();
         }
