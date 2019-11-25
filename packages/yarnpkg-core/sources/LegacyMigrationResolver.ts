@@ -21,7 +21,7 @@ const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>
   [/^[^\/]+\.tgz#[0-9a-f]+$/, version => `npm:${version}`],
 ];
 
-export class YarnResolver implements Resolver {
+export class LegacyMigrationResolver implements Resolver {
   private resolutions: Map<DescriptorHash, Locator> | null = null;
 
   async setup(project: Project, {report}: {report: Report}) {

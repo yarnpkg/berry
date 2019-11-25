@@ -4,19 +4,27 @@ import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
 import {Descriptor, Locator}                             from './types';
 
-export class SemverResolver implements Resolver {
-  supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!semver.validRange(descriptor.range))
-      return false;
+export const TAG_REGEXP = /^[a-z]+$/;
 
-    return true;
+export class ProtocolResolver implements Resolver {
+  supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    if (semver.validRange(descriptor.range))
+      return true;
+
+    if (TAG_REGEXP.test(descriptor.range))
+      return true;
+
+    return false;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (!semver.valid(locator.reference))
-      return false;
+    if (semver.validRange(locator.reference))
+      return true;
 
-    return true;
+    if (TAG_REGEXP.test(locator.reference))
+      return true;
+
+    return false;
   }
 
   shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {

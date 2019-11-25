@@ -217,12 +217,7 @@ export class Manifest {
     }
 
     if (typeof data.peerDependencies === `object` && data.peerDependencies !== null) {
-      for (const [name, range] of Object.entries(data.peerDependencies)) {
-        if (typeof range !== 'string') {
-          errors.push(new Error(`Invalid dependency range for '${name}'`));
-          continue;
-        }
-
+      for (let [name, range] of Object.entries(data.peerDependencies)) {
         let ident;
         try {
           ident = structUtils.parseIdent(name);
@@ -231,7 +226,12 @@ export class Manifest {
           continue;
         }
 
-        const descriptor = structUtils.makeDescriptor(ident, range);
+        if (typeof range !== 'string' || !semver.validRange(range)) {
+          errors.push(new Error(`Invalid dependency range for '${name}'`));
+          range = `*`;
+        }
+
+        const descriptor = structUtils.makeDescriptor(ident, range as string);
         this.peerDependencies.set(descriptor.identHash, descriptor);
       }
     }

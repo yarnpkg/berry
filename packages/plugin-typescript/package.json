@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/plugin-typescript",
   "version": "2.0.0-rc.8",
+  "nextVersion": {
+    "nonce": "8180755490941555"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.10"

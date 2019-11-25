@@ -11,7 +11,7 @@ const getConfiguration = (p: PortablePath) => {
 };
 
 describe(`Project`, () => {
-  it(`should resolve the virtual links at instantiation`, async () => {
+  it(`should resolve virtual links during 'resolveEverything'`, async () => {
     await xfs.mktempPromise(async dir => {
       await xfs.mkdirpPromise(ppath.join(dir, `foo` as Filename));
       await xfs.writeFilePromise(ppath.join(dir, `foo` as Filename, `package.json` as Filename), JSON.stringify({
@@ -46,6 +46,11 @@ describe(`Project`, () => {
       {
         const configuration = await getConfiguration(dir);
         const {project} = await Project.find(configuration, dir);
+
+        await project.resolveEverything({
+          lockfileOnly: true,
+          report: new ThrowReport(),
+        });
 
         const topLevelPkg = project.storedPackages.get(project.topLevelWorkspace.anchoredLocator.locatorHash)!;
 
