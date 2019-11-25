@@ -3,12 +3,12 @@
   "version": "2.0.0-rc.12",
   "nextVersion": {
     "semver": "2.0.0-rc.13",
-    "nonce": "7412603642868411"
+    "nonce": "2380948915725565"
   },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
-    "clipanion": "^2.1.4",
+    "clipanion": "^2.1.5",
     "ink": "^2.3.0",
     "react": "^16.8.4",
     "semver": "^5.6.0",

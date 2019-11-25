@@ -2,12 +2,13 @@
   "name": "@yarnpkg/plugin-workspace-tools",
   "version": "2.0.0-rc.9",
   "nextVersion": {
-    "nonce": "6690372440243295"
+    "semver": "2.0.0-rc.10",
+    "nonce": "7301549269229877"
   },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
-    "clipanion": "^2.1.4",
+    "clipanion": "^2.1.5",
     "p-limit": "^2.2.0",
     "yup": "^0.27.0"
   },

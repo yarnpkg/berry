@@ -2,7 +2,8 @@
   "name": "@yarnpkg/builder",
   "version": "2.0.0-rc.12",
   "nextVersion": {
-    "nonce": "5176271151140161"
+    "semver": "2.0.0-rc.13",
+    "nonce": "8820164288706743"
   },
   "bin": "./sources/boot-dev.js",
   "dependencies": {
@@ -15,7 +16,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-lazy-import": "arcanis/babel-plugin-lazy-import",
     "chalk": "^2.4.1",
-    "clipanion": "^2.1.4",
+    "clipanion": "^2.1.5",
     "filesize": "^4.1.2",
     "pnp-webpack-plugin": "^1.4.3",
     "semver": "^5.6.0",

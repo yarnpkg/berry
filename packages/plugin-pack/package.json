@@ -3,13 +3,13 @@
   "version": "2.0.0-rc.10",
   "nextVersion": {
     "semver": "2.0.0-rc.11",
-    "nonce": "8517283940162395"
+    "nonce": "3221478822395571"
   },
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/tar-stream": "1.6.0",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
-    "clipanion": "^2.1.4",
+    "clipanion": "^2.1.5",
     "micromatch": "^4.0.2",
     "tar-stream": "^2.0.1"
   },
