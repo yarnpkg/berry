@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.6",
   "nextVersion": {
     "semver": "2.0.0-rc.7",
-    "nonce": "561354238030311"
+    "nonce": "552923249203647"
   },
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
