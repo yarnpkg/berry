@@ -123,6 +123,13 @@ const YarnrcDoc = () => <>
         </>}
       />
       <SymlScalarProperty
+        name={`enableTransparentWorkspaces`}
+        placeholder={false}
+        description={<>
+          If disabled, Yarn won't anymore link workspaces just because their versions happen to match a semver range. Using this setting will require that all workspace accesses are made through the <code>workspace:</code> protocol. This is usually only needed in some very specific circumstances.
+        </>}
+      />
+      <SymlScalarProperty
         name={`globalFolder`}
         placeholder={`./.yarn/global`}
         description={<>

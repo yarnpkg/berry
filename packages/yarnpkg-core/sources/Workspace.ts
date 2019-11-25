@@ -99,14 +99,14 @@ export class Workspace {
     if (protocol === WorkspaceResolver.protocol && pathname === `*`)
       return true;
 
-    if (!this.project.configuration.get<boolean>(`enableTransparentWorkspaces`))
-      return false;
-
     if (!semver.validRange(pathname))
       return false;
 
     if (protocol === WorkspaceResolver.protocol)
       return semver.satisfies(this.manifest.version !== null ? this.manifest.version : `0.0.0`, pathname);
+
+    if (!this.project.configuration.get<boolean>(`enableTransparentWorkspaces`))
+      return false;
 
     if (this.manifest.version !== null)
       return semver.satisfies(this.manifest.version, pathname);
