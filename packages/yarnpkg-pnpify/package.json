@@ -2,10 +2,12 @@
   "name": "@yarnpkg/pnpify",
   "version": "2.0.0-rc.11",
   "nextVersion": {
-    "nonce": "2354979574895407"
+    "semver": "2.0.0-rc.12",
+    "nonce": "4029368934277969"
   },
   "main": "./sources/boot-dev.js",
   "bin": "./sources/boot-cli-dev.js",
+  "types": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
