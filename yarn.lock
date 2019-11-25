@@ -5174,7 +5174,7 @@ __metadata:
     "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.10"
     "@yarnpkg/pnp": "workspace:2.0.0-rc.11"
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.11"
-    clipanion: ^2.1.3
+    clipanion: ^2.1.5
   languageName: unknown
   linkType: soft
 
@@ -8037,7 +8037,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"clipanion@npm:^2.1.3, clipanion@npm:^2.1.5":
+"clipanion@npm:^2.1.5":
   version: 2.1.5
   resolution: "clipanion@npm:2.1.5"
   dependencies:
