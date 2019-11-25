@@ -269,3 +269,11 @@ This error is triggered when passing options to a CLI command through its argume
 Starting from the v2, this isn't supported anymore. The reason for this is that we've consolidated all of our configuration inside a single store that can be defined from a yarnrc file. This guarantees that all your commands run inside the same environments (which previously wasn't the case depending on whether you were using `--cache-folder` on all your commands or just the install). CLI options will now only be used to control the *one-time-behaviors* of a particular command (like `--verbose`).
 
 **Special note for Netlify users:** Netlify currently [automatically passes](https://github.com/netlify/build-image/blob/f9c7f9a87c10314e4d65b121d45d68dc976817a2/run-build-functions.sh#L109) the `--cache-folder` option to Yarn, and you cannot disable it. For this reason we decided to make it a warning rather than an error when we detect that Yarn is running on Netlify (we still ignore the flag). We suggest upvoting [the relevant issue](https://github.com/netlify/build-image/issues/319) on their repository, as we're likely to remove this special case in a future major release.
+
+## YN0059 - `INVALID_RANGE_PEER_DEPENDENCY`
+
+A package requests a peer dependency, but the range provided is not a valid semver range. It is not possible to ensure the provided package meets the peer dependency request. The range must be fixed in order for the warning to go away. This will not prevent resolution, but may leave the system in an incorrect state.
+
+## YN0060 - `INCOMPATIBLE_PEER_DEPENDENCY`
+
+A package requests a peer dependency, but its parent in the dependency tree provides a version which does not satisfy the peer dependency's range. The parent should be altered to provide a valid version or the peer dependency range updated. This will not prevent resolution, but may leave the system in an incorrect state.
