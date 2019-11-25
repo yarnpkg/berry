@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.18",
   "nextVersion": {
     "semver": "2.0.0-rc.19",
-    "nonce": "8502540664297841"
+    "nonce": "5815290281592927"
   },
   "main": "./sources/index.ts",
   "dependencies": {
@@ -37,6 +37,7 @@
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.11",
+    "micromatch": "^4.0.2",
     "typescript": "next"
   },
   "peerDependencies": {

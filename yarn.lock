@@ -4701,7 +4701,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/check@workspace:packages/yarnpkg-check"
   dependencies:
-    "@types/micromatch": ^3.1.0
     "@yarnpkg/cli": "workspace:2.0.0-rc.18"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
@@ -4744,6 +4743,7 @@ __metadata:
     "@yarnpkg/shell": "workspace:2.0.0-rc.4"
     chalk: ^2.4.1
     clipanion: ^2.1.4
+    micromatch: ^4.0.2
     promise.prototype.finally: ^3.1.1
     semver: ^5.6.0
     tmp: ^0.1.0
@@ -4761,7 +4761,6 @@ __metadata:
     "@types/cross-spawn": 6.0.0
     "@types/got": ^8.3.4
     "@types/is-ci": ^2.0.0
-    "@types/micromatch": ^3.1.0
     "@types/semver": ^6.0.2
     "@types/supports-color": ^5.3.0
     "@types/tar": ^4.0.0
@@ -5205,7 +5204,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pack@workspace:packages/plugin-pack"
   dependencies:
-    "@types/micromatch": ^3.1.0
     "@types/tar-stream": 1.6.0
     "@yarnpkg/cli": "workspace:2.0.0-rc.18"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
@@ -5289,7 +5287,7 @@ __metadata:
     yup: ^0.27.0
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.14
-    "@yarnpkg/core": 62.0.0-rc.13
+    "@yarnpkg/core": ^2.0.0-rc.13
     "@yarnpkg/plugin-pack": ^2.0.0-rc.7
   languageName: unknown
   linkType: soft

@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.12",
   "nextVersion": {
     "semver": "2.0.0-rc.13",
-    "nonce": "6340019508274947"
+    "nonce": "7412603642868411"
   },
   "main": "./sources/index.ts",
   "dependencies": {
@@ -16,7 +16,7 @@
   },
   "peerDependencies": {
     "@yarnpkg/cli": "^2.0.0-rc.14",
-    "@yarnpkg/core": "62.0.0-rc.13",
+    "@yarnpkg/core": "^2.0.0-rc.13",
     "@yarnpkg/plugin-pack": "^2.0.0-rc.7"
   },
   "devDependencies": {
