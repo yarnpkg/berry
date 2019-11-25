@@ -10,6 +10,7 @@
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
   },
   "devDependencies": {
+    "@types/node": "^12.12.8",
     "@yarnpkg/builder": "workspace:2.0.0-rc.12",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.11",
     "typescript": "next",

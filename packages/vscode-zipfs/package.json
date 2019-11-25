@@ -66,6 +66,7 @@
     }
   },
   "devDependencies": {
+    "@types/node": "^12.12.8",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.11",
     "pnp-webpack-plugin": "^1.4.3",

@@ -17,6 +17,7 @@
     "typescript": "next"
   },
   "devDependencies": {
+    "@types/node": "^12.12.8",
     "@yarnpkg/monorepo": "workspace:0.0.0"
   },
   "scripts": {

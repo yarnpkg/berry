@@ -61,6 +61,7 @@
     "url": "ssh://git@github.com/yarnpkg/berry.git"
   },
   "devDependencies": {
-    "@types/babel__core": "7.1.3"
+    "@types/babel__core": "7.1.3",
+    "@types/node": "^12.12.8"
   }
 }

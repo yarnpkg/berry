@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@types/cross-spawn": "6.0.0",
+    "@types/node": "^12.12.8",
     "@types/tmp": "^0.0.33",
     "tmp": "^0.1.0"
   },
