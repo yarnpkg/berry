@@ -99,6 +99,9 @@ export class Workspace {
     if (protocol === WorkspaceResolver.protocol && pathname === `*`)
       return true;
 
+    if (!this.project.configuration.get<boolean>(`enableTransparentWorkspaces`))
+      return false;
+
     if (!semver.validRange(pathname))
       return false;
 
