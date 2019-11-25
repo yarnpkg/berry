@@ -9,13 +9,16 @@ Object {
 {\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"defaultSemverRangePrefix\\",\\"effective\\":\\"^\\",\\"description\\":\\"The default save prefix: '^', '~' or ''\\",\\"type\\":\\"STRING\\",\\"default\\":\\"^\\"}
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableMirror\\",\\"effective\\":true,\\"description\\":\\"If true, the downloaded packages will be retrieved and stored in both the local and global folders\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
@@ -36,6 +39,7 @@ Object {
 {\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmPublishRegistry\\":{\\"description\\":\\"Registry to push packages to\\",\\"type\\":\\"STRING\\",\\"default\\":null},\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}}}}
+{\\"key\\":\\"packageExtensions\\",\\"effective\\":{},\\"description\\":\\"Map of package corrections to apply on the dependency tree\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"ANY\\"}}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpFallbackMode\\",\\"effective\\":\\"none\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the generated PnP loader will follow the top-level fallback rule\\",\\"type\\":\\"STRING\\",\\"default\\":\\"dependencies-only\\"}
@@ -44,6 +48,7 @@ Object {
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -61,13 +66,16 @@ Object {
 ➤ YN0000: checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
 ➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
 ➤ YN0000: defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - The default save prefix: '^', '~' or '' - '^'
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
 ➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
+➤ YN0000: enableMirror - If true, the downloaded packages will be retrieved and stored in both the local and global folders - true
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
+➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
@@ -88,6 +96,7 @@ Object {
 ➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Settings per package scope - Map {}
+➤ YN0000: packageExtensions - Map of package corrections to apply on the dependency tree - Map {}
 ➤ YN0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpFallbackMode - If true, the generated PnP loader will follow the top-level fallback rule - 'none'
@@ -96,6 +105,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -114,13 +124,16 @@ Object {
 ➤ YN0000: checksumBehavior - <default> - 'throw'
 ➤ YN0000: defaultLanguageName - <default> - 'node'
 ➤ YN0000: defaultProtocol - <default> - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - <default> - '^'
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
-➤ YN0000: enableInlineBuilds - <default> - false
+➤ YN0000: enableInlineBuilds - <environment> - false
+➤ YN0000: enableMirror - <default> - true
 ➤ YN0000: enableNetwork - <default> - true
+➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
@@ -141,6 +154,7 @@ Object {
 ➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - <default> - Map {}
+➤ YN0000: packageExtensions - <default> - Map {}
 ➤ YN0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpFallbackMode - <environment> - 'none'
@@ -149,6 +163,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
+➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -167,13 +182,16 @@ Object {
 ➤ YN0000: checksumBehavior - 'throw'
 ➤ YN0000: defaultLanguageName - 'node'
 ➤ YN0000: defaultProtocol - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - '^'
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
 ➤ YN0000: enableImmutableCache - false
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
+➤ YN0000: enableMirror - true
 ➤ YN0000: enableNetwork - true
+➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
@@ -194,6 +212,7 @@ Object {
 ➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Map {}
+➤ YN0000: packageExtensions - Map {}
 ➤ YN0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpFallbackMode - 'none'
@@ -202,6 +221,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
+➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -220,13 +240,16 @@ Object {
 {\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"defaultSemverRangePrefix\\",\\"effective\\":\\"^\\",\\"description\\":\\"The default save prefix: '^', '~' or ''\\",\\"type\\":\\"STRING\\",\\"default\\":\\"^\\"}
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableMirror\\",\\"effective\\":true,\\"description\\":\\"If true, the downloaded packages will be retrieved and stored in both the local and global folders\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
@@ -247,6 +270,7 @@ Object {
 {\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmPublishRegistry\\":{\\"description\\":\\"Registry to push packages to\\",\\"type\\":\\"STRING\\",\\"default\\":null},\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}}}}
+{\\"key\\":\\"packageExtensions\\",\\"effective\\":{},\\"description\\":\\"Map of package corrections to apply on the dependency tree\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"ANY\\"}}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpFallbackMode\\",\\"effective\\":\\"none\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the generated PnP loader will follow the top-level fallback rule\\",\\"type\\":\\"STRING\\",\\"default\\":\\"dependencies-only\\"}
@@ -255,6 +279,7 @@ Object {
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -272,13 +297,16 @@ Object {
 ➤ YN0000: checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
 ➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
 ➤ YN0000: defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - The default save prefix: '^', '~' or '' - '^'
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
 ➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
+➤ YN0000: enableMirror - If true, the downloaded packages will be retrieved and stored in both the local and global folders - true
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
+➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
@@ -299,6 +327,7 @@ Object {
 ➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Settings per package scope - Map {}
+➤ YN0000: packageExtensions - Map of package corrections to apply on the dependency tree - Map {}
 ➤ YN0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpFallbackMode - If true, the generated PnP loader will follow the top-level fallback rule - 'none'
@@ -307,6 +336,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -325,13 +355,16 @@ Object {
 ➤ YN0000: checksumBehavior - <default> - 'throw'
 ➤ YN0000: defaultLanguageName - <default> - 'node'
 ➤ YN0000: defaultProtocol - <default> - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - <default> - '^'
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
-➤ YN0000: enableInlineBuilds - <default> - false
+➤ YN0000: enableInlineBuilds - <environment> - false
+➤ YN0000: enableMirror - <default> - true
 ➤ YN0000: enableNetwork - <default> - true
+➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
@@ -352,6 +385,7 @@ Object {
 ➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - <default> - Map {}
+➤ YN0000: packageExtensions - <default> - Map {}
 ➤ YN0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpFallbackMode - <environment> - 'none'
@@ -360,6 +394,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
+➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -378,13 +413,16 @@ Object {
 ➤ YN0000: checksumBehavior - 'throw'
 ➤ YN0000: defaultLanguageName - 'node'
 ➤ YN0000: defaultProtocol - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - '^'
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
 ➤ YN0000: enableImmutableCache - false
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
+➤ YN0000: enableMirror - true
 ➤ YN0000: enableNetwork - true
+➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
@@ -405,6 +443,7 @@ Object {
 ➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Map {}
+➤ YN0000: packageExtensions - Map {}
 ➤ YN0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpFallbackMode - 'none'
@@ -413,6 +452,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
+➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -431,13 +471,16 @@ Object {
 {\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"python\\",\\"source\\":\\"HOME/.spec-yarnrc\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"defaultSemverRangePrefix\\",\\"effective\\":\\"^\\",\\"description\\":\\"The default save prefix: '^', '~' or ''\\",\\"type\\":\\"STRING\\",\\"default\\":\\"^\\"}
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableMirror\\",\\"effective\\":true,\\"description\\":\\"If true, the downloaded packages will be retrieved and stored in both the local and global folders\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
@@ -458,6 +501,7 @@ Object {
 {\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmPublishRegistry\\":{\\"description\\":\\"Registry to push packages to\\",\\"type\\":\\"STRING\\",\\"default\\":null},\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}}}}
+{\\"key\\":\\"packageExtensions\\",\\"effective\\":{},\\"description\\":\\"Map of package corrections to apply on the dependency tree\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"ANY\\"}}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpFallbackMode\\",\\"effective\\":\\"none\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the generated PnP loader will follow the top-level fallback rule\\",\\"type\\":\\"STRING\\",\\"default\\":\\"dependencies-only\\"}
@@ -466,6 +510,7 @@ Object {
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -483,13 +528,16 @@ Object {
 ➤ YN0000: checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
 ➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'python'
 ➤ YN0000: defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - The default save prefix: '^', '~' or '' - '^'
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
 ➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
+➤ YN0000: enableMirror - If true, the downloaded packages will be retrieved and stored in both the local and global folders - true
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
+➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
@@ -510,6 +558,7 @@ Object {
 ➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Settings per package scope - Map {}
+➤ YN0000: packageExtensions - Map of package corrections to apply on the dependency tree - Map {}
 ➤ YN0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpFallbackMode - If true, the generated PnP loader will follow the top-level fallback rule - 'none'
@@ -518,6 +567,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -536,13 +586,16 @@ Object {
 ➤ YN0000: checksumBehavior - <default> - 'throw'
 ➤ YN0000: defaultLanguageName - HOME/.spec-yarnrc - 'python'
 ➤ YN0000: defaultProtocol - <default> - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - <default> - '^'
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
-➤ YN0000: enableInlineBuilds - <default> - false
+➤ YN0000: enableInlineBuilds - <environment> - false
+➤ YN0000: enableMirror - <default> - true
 ➤ YN0000: enableNetwork - <default> - true
+➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
@@ -563,6 +616,7 @@ Object {
 ➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - <default> - Map {}
+➤ YN0000: packageExtensions - <default> - Map {}
 ➤ YN0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpFallbackMode - <environment> - 'none'
@@ -571,6 +625,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
+➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -589,13 +644,16 @@ Object {
 ➤ YN0000: checksumBehavior - 'throw'
 ➤ YN0000: defaultLanguageName - 'python'
 ➤ YN0000: defaultProtocol - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - '^'
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
 ➤ YN0000: enableImmutableCache - false
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
+➤ YN0000: enableMirror - true
 ➤ YN0000: enableNetwork - true
+➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
@@ -616,6 +674,7 @@ Object {
 ➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Map {}
+➤ YN0000: packageExtensions - Map {}
 ➤ YN0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpFallbackMode - 'none'
@@ -624,6 +683,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
+➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -642,13 +702,16 @@ Object {
 {\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"defaultSemverRangePrefix\\",\\"effective\\":\\"^\\",\\"description\\":\\"The default save prefix: '^', '~' or ''\\",\\"type\\":\\"STRING\\",\\"default\\":\\"^\\"}
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableMirror\\",\\"effective\\":true,\\"description\\":\\"If true, the downloaded packages will be retrieved and stored in both the local and global folders\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
@@ -669,6 +732,7 @@ Object {
 {\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmPublishRegistry\\":{\\"description\\":\\"Registry to push packages to\\",\\"type\\":\\"STRING\\",\\"default\\":null},\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}}}}
+{\\"key\\":\\"packageExtensions\\",\\"effective\\":{},\\"description\\":\\"Map of package corrections to apply on the dependency tree\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"ANY\\"}}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpFallbackMode\\",\\"effective\\":\\"none\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the generated PnP loader will follow the top-level fallback rule\\",\\"type\\":\\"STRING\\",\\"default\\":\\"dependencies-only\\"}
@@ -677,6 +741,7 @@ Object {
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -694,13 +759,16 @@ Object {
 ➤ YN0000: checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
 ➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
 ➤ YN0000: defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - The default save prefix: '^', '~' or '' - '^'
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
 ➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
+➤ YN0000: enableMirror - If true, the downloaded packages will be retrieved and stored in both the local and global folders - true
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
+➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
@@ -721,6 +789,7 @@ Object {
 ➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Settings per package scope - Map {}
+➤ YN0000: packageExtensions - Map of package corrections to apply on the dependency tree - Map {}
 ➤ YN0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpFallbackMode - If true, the generated PnP loader will follow the top-level fallback rule - 'none'
@@ -729,6 +798,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -747,13 +817,16 @@ Object {
 ➤ YN0000: checksumBehavior - <default> - 'throw'
 ➤ YN0000: defaultLanguageName - <default> - 'node'
 ➤ YN0000: defaultProtocol - <default> - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - <default> - '^'
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
-➤ YN0000: enableInlineBuilds - <default> - false
+➤ YN0000: enableInlineBuilds - <environment> - false
+➤ YN0000: enableMirror - <default> - true
 ➤ YN0000: enableNetwork - <default> - true
+➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
@@ -774,6 +847,7 @@ Object {
 ➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - <default> - Map {}
+➤ YN0000: packageExtensions - <default> - Map {}
 ➤ YN0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpFallbackMode - <environment> - 'none'
@@ -782,6 +856,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
+➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -800,13 +875,16 @@ Object {
 ➤ YN0000: checksumBehavior - 'throw'
 ➤ YN0000: defaultLanguageName - 'node'
 ➤ YN0000: defaultProtocol - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - '^'
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
 ➤ YN0000: enableImmutableCache - false
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
+➤ YN0000: enableMirror - true
 ➤ YN0000: enableNetwork - true
+➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
@@ -827,6 +905,7 @@ Object {
 ➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Map {}
+➤ YN0000: packageExtensions - Map {}
 ➤ YN0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpFallbackMode - 'none'
@@ -835,6 +914,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
+➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -853,13 +933,16 @@ Object {
 {\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"defaultSemverRangePrefix\\",\\"effective\\":\\"^\\",\\"description\\":\\"The default save prefix: '^', '~' or ''\\",\\"type\\":\\"STRING\\",\\"default\\":\\"^\\"}
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableMirror\\",\\"effective\\":true,\\"description\\":\\"If true, the downloaded packages will be retrieved and stored in both the local and global folders\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
@@ -880,6 +963,7 @@ Object {
 {\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmPublishRegistry\\":{\\"description\\":\\"Registry to push packages to\\",\\"type\\":\\"STRING\\",\\"default\\":null},\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}}}}
+{\\"key\\":\\"packageExtensions\\",\\"effective\\":{},\\"description\\":\\"Map of package corrections to apply on the dependency tree\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"ANY\\"}}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpFallbackMode\\",\\"effective\\":\\"none\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the generated PnP loader will follow the top-level fallback rule\\",\\"type\\":\\"STRING\\",\\"default\\":\\"dependencies-only\\"}
@@ -888,6 +972,7 @@ Object {
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -905,13 +990,16 @@ Object {
 ➤ YN0000: checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
 ➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
 ➤ YN0000: defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - The default save prefix: '^', '~' or '' - '^'
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
 ➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
+➤ YN0000: enableMirror - If true, the downloaded packages will be retrieved and stored in both the local and global folders - true
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
+➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
@@ -932,6 +1020,7 @@ Object {
 ➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Settings per package scope - Map {}
+➤ YN0000: packageExtensions - Map of package corrections to apply on the dependency tree - Map {}
 ➤ YN0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpFallbackMode - If true, the generated PnP loader will follow the top-level fallback rule - 'none'
@@ -940,6 +1029,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -958,13 +1048,16 @@ Object {
 ➤ YN0000: checksumBehavior - <default> - 'throw'
 ➤ YN0000: defaultLanguageName - <default> - 'node'
 ➤ YN0000: defaultProtocol - <default> - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - <default> - '^'
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
-➤ YN0000: enableInlineBuilds - <default> - false
+➤ YN0000: enableInlineBuilds - <environment> - false
+➤ YN0000: enableMirror - <default> - true
 ➤ YN0000: enableNetwork - <default> - true
+➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
@@ -985,6 +1078,7 @@ Object {
 ➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - <default> - Map {}
+➤ YN0000: packageExtensions - <default> - Map {}
 ➤ YN0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpFallbackMode - <environment> - 'none'
@@ -993,6 +1087,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
+➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -1011,13 +1106,16 @@ Object {
 ➤ YN0000: checksumBehavior - 'throw'
 ➤ YN0000: defaultLanguageName - 'node'
 ➤ YN0000: defaultProtocol - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - '^'
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
 ➤ YN0000: enableImmutableCache - false
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
+➤ YN0000: enableMirror - true
 ➤ YN0000: enableNetwork - true
+➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
@@ -1038,6 +1136,7 @@ Object {
 ➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Map {}
+➤ YN0000: packageExtensions - Map {}
 ➤ YN0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpFallbackMode - 'none'
@@ -1046,6 +1145,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
+➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -1064,13 +1164,16 @@ Object {
 {\\"key\\":\\"checksumBehavior\\",\\"effective\\":\\"throw\\",\\"description\\":\\"Enumeration defining what to do when a checksum doesn't match expectations\\",\\"type\\":\\"STRING\\",\\"default\\":\\"throw\\"}
 {\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"defaultProtocol\\",\\"effective\\":\\"npm:\\",\\"description\\":\\"Default resolution protocol used when resolving pure semver and tag ranges\\",\\"type\\":\\"STRING\\",\\"default\\":\\"npm:\\"}
+{\\"key\\":\\"defaultSemverRangePrefix\\",\\"effective\\":\\"^\\",\\"description\\":\\"The default save prefix: '^', '~' or ''\\",\\"type\\":\\"STRING\\",\\"default\\":\\"^\\"}
 {\\"key\\":\\"enableAbsoluteVirtuals\\",\\"effective\\":true,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the virtual symlinks will use absolute paths if required [non portable!!]\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableColors\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI is allowed to use colors in its output\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableGlobalCache\\",\\"effective\\":false,\\"description\\":\\"If true, the system-wide cache folder will be used regardless of \`cache-folder\`\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableCache\\",\\"effective\\":false,\\"description\\":\\"If true, the cache is reputed immutable and actions that would modify it will throw\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"enableImmutableInstalls\\",\\"effective\\":false,\\"description\\":\\"If true, prevents the install command from modifying the lockfile\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
-{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"enableInlineBuilds\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI will print the build output on the command line\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false,\\"defaultText\\":\\"<dynamic>\\"}
+{\\"key\\":\\"enableMirror\\",\\"effective\\":true,\\"description\\":\\"If true, the downloaded packages will be retrieved and stored in both the local and global folders\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableNetwork\\",\\"effective\\":true,\\"description\\":\\"If false, the package manager will refuse to use the network if required to\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
@@ -1091,6 +1194,7 @@ Object {
 {\\"key\\":\\"npmRegistries\\",\\"effective\\":{},\\"description\\":\\"Settings per registry\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmAlwaysAuth\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false},\\"npmAuthIdent\\":{\\"description\\":\\"Authentication identity for the npm registry (_auth in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null},\\"npmAuthToken\\":{\\"description\\":\\"Authentication token for the npm registry (_authToken in npm and yarn v1)\\",\\"type\\":\\"SECRET\\",\\"default\\":null}}}}
 {\\"key\\":\\"npmRegistryServer\\",\\"effective\\":\\"http://yarn.test.registry\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}
 {\\"key\\":\\"npmScopes\\",\\"effective\\":{},\\"description\\":\\"Settings per package scope\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"SHAPE\\",\\"properties\\":{\\"npmPublishRegistry\\":{\\"description\\":\\"Registry to push packages to\\",\\"type\\":\\"STRING\\",\\"default\\":null},\\"npmRegistryServer\\":{\\"description\\":\\"URL of the selected npm registry (note: npm enterprise isn't supported)\\",\\"type\\":\\"STRING\\",\\"default\\":\\"https://registry.yarnpkg.com\\"}}}}
+{\\"key\\":\\"packageExtensions\\",\\"effective\\":{},\\"description\\":\\"Map of package corrections to apply on the dependency tree\\",\\"type\\":\\"MAP\\",\\"valueDefinition\\":{\\"description\\":\\"\\",\\"type\\":\\"ANY\\"}}
 {\\"key\\":\\"pnpDataPath\\",\\"effective\\":\\"WORKSPACE_ROOT/.pnp.data.json\\",\\"description\\":\\"Path of the file where the PnP data (used by the loader) must be written\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.pnp.data.json\\"}
 {\\"key\\":\\"pnpEnableInlining\\",\\"effective\\":true,\\"description\\":\\"If true, the PnP data will be inlined along with the generated loader\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"pnpFallbackMode\\",\\"effective\\":\\"none\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the generated PnP loader will follow the top-level fallback rule\\",\\"type\\":\\"STRING\\",\\"default\\":\\"dependencies-only\\"}
@@ -1099,6 +1203,7 @@ Object {
 {\\"key\\":\\"pnpUnpluggedFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/unplugged\\",\\"description\\":\\"Folder where the unplugged packages must be stored\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/unplugged\\"}
 {\\"key\\":\\"preferDeferredVersions\\",\\"effective\\":false,\\"description\\":\\"If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
 {\\"key\\":\\"preferInteractive\\",\\"effective\\":false,\\"description\\":\\"If true, the CLI will automatically use the interactive mode when called from a TTY\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":false}
+{\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
 {\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
@@ -1116,13 +1221,16 @@ Object {
 ➤ YN0000: checksumBehavior - Enumeration defining what to do when a checksum doesn't match expectations - 'throw'
 ➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
 ➤ YN0000: defaultProtocol - Default resolution protocol used when resolving pure semver and tag ranges - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - The default save prefix: '^', '~' or '' - '^'
 ➤ YN0000: enableAbsoluteVirtuals - If true, the virtual symlinks will use absolute paths if required [non portable!!] - true
 ➤ YN0000: enableColors - If true, the CLI is allowed to use colors in its output - false
 ➤ YN0000: enableGlobalCache - If true, the system-wide cache folder will be used regardless of \`cache-folder\` - false
 ➤ YN0000: enableImmutableCache - If true, the cache is reputed immutable and actions that would modify it will throw - false
 ➤ YN0000: enableImmutableInstalls - If true, prevents the install command from modifying the lockfile - false
 ➤ YN0000: enableInlineBuilds - If true, the CLI will print the build output on the command line - false
+➤ YN0000: enableMirror - If true, the downloaded packages will be retrieved and stored in both the local and global folders - true
 ➤ YN0000: enableNetwork - If false, the package manager will refuse to use the network if required to - true
+➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
@@ -1143,6 +1251,7 @@ Object {
 ➤ YN0000: npmRegistries - Settings per registry - Map {}
 ➤ YN0000: npmRegistryServer - URL of the selected npm registry (note: npm enterprise isn't supported) - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Settings per package scope - Map {}
+➤ YN0000: packageExtensions - Map of package corrections to apply on the dependency tree - Map {}
 ➤ YN0000: pnpDataPath - Path of the file where the PnP data (used by the loader) must be written - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - If true, the PnP data will be inlined along with the generated loader - true
 ➤ YN0000: pnpFallbackMode - If true, the generated PnP loader will follow the top-level fallback rule - 'none'
@@ -1151,6 +1260,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - Folder where the unplugged packages must be stored - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set - false
 ➤ YN0000: preferInteractive - If true, the CLI will automatically use the interactive mode when called from a TTY - false
+➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
 ➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -1169,13 +1279,16 @@ Object {
 ➤ YN0000: checksumBehavior - <default> - 'throw'
 ➤ YN0000: defaultLanguageName - <default> - 'node'
 ➤ YN0000: defaultProtocol - <default> - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - <default> - '^'
 ➤ YN0000: enableAbsoluteVirtuals - <environment> - true
 ➤ YN0000: enableColors - <default> - false
 ➤ YN0000: enableGlobalCache - <default> - false
 ➤ YN0000: enableImmutableCache - <default> - false
 ➤ YN0000: enableImmutableInstalls - <default> - false
-➤ YN0000: enableInlineBuilds - <default> - false
+➤ YN0000: enableInlineBuilds - <environment> - false
+➤ YN0000: enableMirror - <default> - true
 ➤ YN0000: enableNetwork - <default> - true
+➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
@@ -1196,6 +1309,7 @@ Object {
 ➤ YN0000: npmRegistries - <default> - Map {}
 ➤ YN0000: npmRegistryServer - <environment> - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - <default> - Map {}
+➤ YN0000: packageExtensions - <default> - Map {}
 ➤ YN0000: pnpDataPath - <default> - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - <default> - true
 ➤ YN0000: pnpFallbackMode - <environment> - 'none'
@@ -1204,6 +1318,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - <default> - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - <default> - false
 ➤ YN0000: preferInteractive - <default> - false
+➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
 ➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
@@ -1222,13 +1337,16 @@ Object {
 ➤ YN0000: checksumBehavior - 'throw'
 ➤ YN0000: defaultLanguageName - 'node'
 ➤ YN0000: defaultProtocol - 'npm:'
+➤ YN0000: defaultSemverRangePrefix - '^'
 ➤ YN0000: enableAbsoluteVirtuals - true
 ➤ YN0000: enableColors - false
 ➤ YN0000: enableGlobalCache - false
 ➤ YN0000: enableImmutableCache - false
 ➤ YN0000: enableImmutableInstalls - false
 ➤ YN0000: enableInlineBuilds - false
+➤ YN0000: enableMirror - true
 ➤ YN0000: enableNetwork - true
+➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
@@ -1249,6 +1367,7 @@ Object {
 ➤ YN0000: npmRegistries - Map {}
 ➤ YN0000: npmRegistryServer - 'http://yarn.test.registry'
 ➤ YN0000: npmScopes - Map {}
+➤ YN0000: packageExtensions - Map {}
 ➤ YN0000: pnpDataPath - 'WORKSPACE_ROOT/.pnp.data.json'
 ➤ YN0000: pnpEnableInlining - true
 ➤ YN0000: pnpFallbackMode - 'none'
@@ -1257,6 +1376,7 @@ Object {
 ➤ YN0000: pnpUnpluggedFolder - 'WORKSPACE_ROOT/.yarn/unplugged'
 ➤ YN0000: preferDeferredVersions - false
 ➤ YN0000: preferInteractive - false
+➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
 ➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'

@@ -2,7 +2,7 @@ import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
 import {Descriptor, Locator, Manifest, Package}          from '@yarnpkg/core';
 import {LinkType}                                        from '@yarnpkg/core';
 import {miscUtils, structUtils}                          from '@yarnpkg/core';
-import {NodeFS}                                          from '@yarnpkg/fslib';
+import {npath}                                           from '@yarnpkg/fslib';
 
 import {LINK_PROTOCOL}                                   from './constants';
 
@@ -34,11 +34,14 @@ export class LinkResolver implements Resolver {
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
     const path = descriptor.range.slice(LINK_PROTOCOL.length);
 
-    return [structUtils.makeLocator(descriptor, `${LINK_PROTOCOL}${NodeFS.toPortablePath(path)}`)];
+    return [structUtils.makeLocator(descriptor, `${LINK_PROTOCOL}${npath.toPortablePath(path)}`)];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
-    const packageFetch = await opts.fetcher.fetch(locator, opts);
+    if (!opts.fetchOptions)
+      throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
+
+    const packageFetch = await opts.fetchOptions.fetcher.fetch(locator, opts.fetchOptions);
 
     const manifest = await miscUtils.releaseAfterUseAsync(async () => {
       return await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});

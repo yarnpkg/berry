@@ -25,7 +25,7 @@ export default class SetResolutionCommand extends BaseCommand {
     `,
     examples: [[
       `Force all instances of lodash@^1.2.3 to resolve to 1.5.0`,
-      `yarn set resolution lodash@^1.2.3 1.5.0`,
+      `$0 set resolution lodash@^1.2.3 1.5.0`,
     ]],
   });
 

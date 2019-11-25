@@ -1,4 +1,32 @@
+import {PortablePath, npath} from '@yarnpkg/fslib';
 import {Readable, Transform} from 'stream';
+
+export function getArrayWithDefault<K, T>(map: Map<K, Array<T>>, key: K) {
+  let value = map.get(key);
+
+  if (typeof value === `undefined`)
+    map.set(key, value = []);
+
+  return value;
+}
+
+export function getSetWithDefault<K, T>(map: Map<K, Set<T>>, key: K) {
+  let value = map.get(key);
+
+  if (typeof value === `undefined`)
+    map.set(key, value = new Set<T>());
+
+  return value;
+}
+
+export function getMapWithDefault<K, MK, MV>(map: Map<K, Map<MK, MV>>, key: K) {
+  let value = map.get(key);
+
+  if (typeof value === `undefined`)
+    map.set(key, value = new Map<MK, MV>());
+
+  return value;
+}
 
 // Executes a chunk of code and calls a cleanup function once it returns (even
 // if it throws an exception)
@@ -116,6 +144,29 @@ export function dynamicRequire(path: string) {
   } else {
     return require(path);
   }
+}
+
+export function dynamicRequireNoCache(path: PortablePath) {
+  const physicalPath = npath.fromPortablePath(path);
+
+  const currentCacheEntry = require.cache[physicalPath];
+  delete require.cache[physicalPath];
+
+  let result;
+  try {
+    result = dynamicRequire(physicalPath);
+
+    const freshCacheEntry = require.cache[physicalPath];
+    const freshCacheIndex = module.children.indexOf(freshCacheEntry);
+
+    if (freshCacheIndex !== -1) {
+      module.children.splice(freshCacheIndex, 1);
+    }
+  } finally {
+    require.cache[physicalPath] = currentCacheEntry;
+  }
+
+  return result;
 }
 
 // This function transforms an iterable into an array and sorts it according to

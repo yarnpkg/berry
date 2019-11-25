@@ -1,11 +1,13 @@
 import {Configuration, CommandContext, PluginConfiguration} from '@yarnpkg/core';
-import {xfs, NodeFS, PortablePath}                          from '@yarnpkg/fslib';
+import {PortablePath, npath, xfs}                           from '@yarnpkg/fslib';
 import {execFileSync}                                       from 'child_process';
 import {Cli}                                                from 'clipanion';
 import {realpathSync}                                       from 'fs';
 
+import {WelcomeCommand}                                     from './tools/WelcomeCommand';
+
 function runBinary(path: PortablePath) {
-  const physicalPath = NodeFS.fromPortablePath(path);
+  const physicalPath = npath.fromPortablePath(path);
 
   if (physicalPath) {
     execFileSync(process.execPath, [physicalPath, ...process.argv.slice(2)], {
@@ -34,6 +36,8 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       binaryVersion,
     });
 
+    cli.register(WelcomeCommand);
+
     try {
       await exec(cli);
     } catch (error) {
@@ -45,7 +49,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
   async function exec(cli: Cli<CommandContext>): Promise<void> {
     // Since we only care about a few very specific settings (yarn-path and ignore-path) we tolerate extra configuration key.
     // If we didn't, we wouldn't even be able to run `yarn config` (which is recommended in the invalid config error message)
-    const configuration = await Configuration.find(NodeFS.toPortablePath(process.cwd()), pluginConfiguration, {
+    const configuration = await Configuration.find(npath.toPortablePath(process.cwd()), pluginConfiguration, {
       strict: false,
     });
 
@@ -87,12 +91,12 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       }
 
       cli.runExit(command, {
-        cwd: NodeFS.toPortablePath(process.cwd()),
+        cwd: npath.toPortablePath(process.cwd()),
         plugins: pluginConfiguration,
         quiet: false,
         stdin: process.stdin,
         stdout: process.stdout,
-        stderr: process.stdout,
+        stderr: process.stderr,
       });
     }
   }

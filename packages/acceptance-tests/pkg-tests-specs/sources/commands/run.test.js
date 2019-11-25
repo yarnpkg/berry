@@ -43,7 +43,6 @@ describe(`Commands`, () => {
         ),
       );
 
-
       test(
         `it should prefer scripts over binaries`,
         makeTemporaryEnv(
@@ -60,6 +59,27 @@ describe(`Commands`, () => {
 
             await expect(run(`run`, `has-bin-entries`)).resolves.toMatchObject({
               stdout: `hello world\n`,
+            });
+          },
+        ),
+      );
+
+      test(
+        `it should ignore scripts when --binaries-only is set`,
+        makeTemporaryEnv(
+          {
+            dependencies: {
+              [`has-bin-entries`]: `1.0.0`,
+            },
+            scripts: {
+              [`has-bin-entries`]: `echo hello world`,
+            },
+          },
+          async ({path, run, source}) => {
+            await run(`install`);
+
+            await expect(run(`run`, `--binaries-only`, `has-bin-entries`, `success`)).resolves.toMatchObject({
+              stdout: `success\n`,
             });
           },
         ),

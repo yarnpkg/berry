@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                                       from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, StreamReport, Workspace, structUtils} from '@yarnpkg/core';
-import {Filename, xfs, ppath, toPortablePath}                                      from '@yarnpkg/fslib';
-import {Command}                                                                   from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, StreamReport, Workspace, structUtils, ThrowReport} from '@yarnpkg/core';
+import {Filename, npath, ppath, xfs}                                                            from '@yarnpkg/fslib';
+import {Command}                                                                                from 'clipanion';
 
-import * as packUtils                                                              from '../packUtils';
+import * as packUtils                                                                           from '../packUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PackCommand extends BaseCommand {
@@ -13,6 +13,7 @@ export default class PackCommand extends BaseCommand {
   @Command.Boolean(`--json`)
   json: boolean = false;
 
+  @Command.String(`--filename`, {hidden: false})
   @Command.String(`-o,--out`)
   out?: string;
 
@@ -42,10 +43,15 @@ export default class PackCommand extends BaseCommand {
   @Command.Path(`pack`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {workspace} = await Project.find(configuration, this.context.cwd);
+    const {project, workspace} = await Project.find(configuration, this.context.cwd);
 
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
+
+    await project.resolveEverything({
+      lockfileOnly: true,
+      report: new ThrowReport(),
+    });
 
     const target = typeof this.out !== `undefined`
       ? ppath.resolve(this.context.cwd, interpolateOutputName(this.out, {workspace}))
@@ -93,7 +99,7 @@ function interpolateOutputName(name: string, {workspace}: {workspace: Workspace}
     .replace(`%s`, prettyWorkspaceIdent(workspace))
     .replace(`%v`, prettyWorkspaceVersion(workspace));
 
-  return toPortablePath(interpolated);
+  return npath.toPortablePath(interpolated);
 }
 
 function prettyWorkspaceIdent(workspace: Workspace) {

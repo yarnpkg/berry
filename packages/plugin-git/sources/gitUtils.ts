@@ -1,6 +1,6 @@
-import {execUtils, Configuration} from '@yarnpkg/core';
-import {fromPortablePath, xfs}    from '@yarnpkg/fslib';
-import semver                     from 'semver';
+import {Configuration, Locator, execUtils, structUtils} from '@yarnpkg/core';
+import {npath, xfs}                                     from '@yarnpkg/fslib';
+import semver                                           from 'semver';
 
 function makeGitEnvironment() {
   return {
@@ -8,6 +8,21 @@ function makeGitEnvironment() {
     // An option passed to SSH by Git to prevent SSH from asking for data (which would cause installs to hang when the SSH keys are missing)
     GIT_SSH_COMMAND: `ssh -o BatchMode=yes`,
   };
+}
+
+const gitPatterns = [
+  /^git:/,
+  /^git\+ssh:/,
+  /^(?:git\+)?https?:[^#]+\/[^#]+\.git(?:#.*)?$/,
+  /^git@[^#]+\/[^#]+\.git(?:#.*)?$/,
+  /^(?:github:|https:\/\/github\.com\/)?([a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d]))+)\/([a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d]))+)(?:#.*)?$/,
+];
+
+/**
+ * Determines whether a given url is a valid github git url via regex
+ */
+export function isGitUrl(url: string): boolean {
+  return url ? gitPatterns.some(pattern => !!url.match(pattern)) : false;
 }
 
 export function splitRepoUrl(url: string) {
@@ -18,7 +33,7 @@ export function splitRepoUrl(url: string) {
   const hashIndex = url.indexOf(`#`);
   if (hashIndex === -1) {
     repo = url;
-    protocol = `branch`;
+    protocol = `head`;
     request = `master`;
   } else {
     repo = url.slice(0, hashIndex);
@@ -34,9 +49,24 @@ export function splitRepoUrl(url: string) {
   }
 
   return {
-    repo: repo.replace(/^git\+https:/, `https:`),
+    repo,
     treeish: {protocol, request},
   };
+}
+
+export function normalizeRepoUrl(url: string) {
+  // "git+https://" isn't an actual Git protocol. It's just a way to
+  // disambiguate that this URL points to a Git repository.
+  url = url.replace(/^git\+https:/, `https:`);
+
+  // We support this as an alias to Github repositories
+  url = url.replace(/^(?:github:|https:\/\/github\.com\/)?([a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d]))+)\/([a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d]))+)(#.*)?$/, `https://github.com/$1/$2.git$3`);
+
+  return url;
+}
+
+export function normalizeLocator(locator: Locator) {
+  return structUtils.makeLocator(locator, normalizeRepoUrl(locator.reference));
 }
 
 export async function lsRemote(repo: string, configuration: Configuration) {
@@ -45,7 +75,7 @@ export async function lsRemote(repo: string, configuration: Configuration) {
 
   let res: {stdout: string};
   try {
-    res = await execUtils.execvp(`git`, [`ls-remote`, `--refs`, repo], {
+    res = await execUtils.execvp(`git`, [`ls-remote`, `--refs`, normalizeRepoUrl(repo)], {
       cwd: configuration.startingCwd,
       env: makeGitEnvironment(),
       strict: true,
@@ -152,7 +182,7 @@ export async function clone(url: string, configuration: Configuration) {
   if (!configuration.get(`enableNetwork`))
     throw new Error(`Network access has been disabled by configuration (${url})`);
 
-  const {repo, treeish:{protocol, request}} = splitRepoUrl(url);
+  const {repo, treeish: {protocol, request}} = splitRepoUrl(url);
   if (protocol !== `commit`)
     throw new Error(`Invalid treeish protocol when cloning`);
 
@@ -160,7 +190,7 @@ export async function clone(url: string, configuration: Configuration) {
   const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};
 
   try {
-    await execUtils.execvp(`git`, [`clone`, `${repo}`, fromPortablePath(directory)], execOpts);
+    await execUtils.execvp(`git`, [`clone`, `${normalizeRepoUrl(repo)}`, npath.fromPortablePath(directory)], execOpts);
     await execUtils.execvp(`git`, [`checkout`, `${request}`], execOpts);
   } catch (error) {
     error.message = `Repository clone failed`;

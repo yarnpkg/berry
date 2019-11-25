@@ -1,4 +1,4 @@
-const {NodeFS, xfs} = require(`@yarnpkg/fslib`);
+const {npath, ppath, xfs} = require(`@yarnpkg/fslib`);
 const cp = require(`child_process`);
 const {satisfies} = require(`semver`);
 
@@ -223,6 +223,52 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should throw different semantic errors based on whether the project or a sub-dependency requires something it doesn't own`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`various-requires`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        const rootMessage = await source(`{ try { require('no-deps') } catch (error) { return error.message } }`);
+        const dependencyMessage = await source(`{ try { require('various-requires/invalid-require') } catch (error) { return error.message } }`);
+
+        const filter = message => message.replace(/^(.*):.*/gm, `$1: Something`);
+
+        expect(filter(rootMessage)).not.toEqual(filter(dependencyMessage));
+      },
+    )
+  );
+
+  test(
+    `it should throw the same error than the root when a workspace requires something it doesn't own`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`packages/*`],
+      },
+      async ({path, run, source}) => {
+        const workspacePath = ppath.join(path, `packages/workspace-a`);
+
+        await xfs.mkdirpPromise(workspacePath);
+        await xfs.writeJsonPromise(ppath.join(workspacePath, `package.json`), {name: `workspace-a`});
+
+        await run(`install`);
+
+        const code = `{ try { require('no-deps') } catch (error) { return error.message } }`;
+
+        const rootMessage = await source(code);
+        const workspaceMessage = await source(code, {cwd: ppath.join(workspacePath)});
+
+        const filter = message => message.replace(/^(.*):.*/gm, `$1: Something`);
+
+        expect(filter(workspaceMessage)).toEqual(filter(rootMessage));
+      },
+    )
+  );
+
+  test(
     `it should throw an exception if a dependency tries to require a missing peer dependency`,
     makeTemporaryEnv(
       {dependencies: {[`peer-deps`]: `1.0.0`}},
@@ -286,17 +332,52 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should not warn when the peer dependency resolution is compatible`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`peer-deps-fixed`]: `1.0.0`,
+          [`no-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        const {stdout} = await run(`install`);
+        expect(stdout).not.toEqual(expect.stringContaining('YN0060'));
+      }
+    ),
+  );
+
+  test(
+    `it should warn when the peer dependency resolution is incompatible`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`peer-deps-fixed`]: `1.0.0`,
+          [`no-deps`]: `2.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        const {stdout} = await run(`install`);
+        expect(stdout).toEqual(expect.stringContaining('YN0060'));
+      },
+    ),
+  );
+
+  test(
     `it should install in such a way that two identical packages with different peer dependencies are different instances`,
     makeTemporaryEnv(
       {
-        dependencies: {[`provides-peer-deps-1-0-0`]: `1.0.0`, [`provides-peer-deps-2-0-0`]: `1.0.0`},
+        dependencies: {
+          [`provides-peer-deps-1-0-0`]: `1.0.0`,
+          [`provides-peer-deps-2-0-0`]: `1.0.0`,
+        },
       },
       async ({path, run, source}) => {
         await run(`install`);
 
         await expect(
-          source(`require('provides-peer-deps-1-0-0') !== require('provides-peer-deps-2-0-0')`),
-        ).resolves.toEqual(true);
+          source(`require('provides-peer-deps-1-0-0').dependencies['peer-deps'] === require('provides-peer-deps-2-0-0').dependencies['peer-deps']`),
+        ).resolves.toEqual(false);
 
         await expect(source(`require('provides-peer-deps-1-0-0')`)).resolves.toMatchObject({
           name: `provides-peer-deps-1-0-0`,
@@ -339,6 +420,65 @@ describe(`Plug'n'Play`, () => {
             },
           },
         });
+      },
+    ),
+  );
+
+  test(
+    `it should install in such a way that two identical packages with the same peer dependencies are the same instances (simple)`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`provides-peer-deps-1-0-0`]: `1.0.0`,
+          [`provides-peer-deps-1-0-0-too`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(
+          source(`require('provides-peer-deps-1-0-0').dependencies['peer-deps'] === require('provides-peer-deps-1-0-0-too').dependencies['peer-deps']`),
+        ).resolves.toEqual(true);
+      },
+    ),
+  );
+
+  test(
+    `it should install in such a way that two identical packages with the same peer dependencies are the same instances (complex)`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`forward-peer-deps`]: `1.0.0`,
+          [`forward-peer-deps-too`]: `1.0.0`,
+          [`no-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(
+          source(`require('forward-peer-deps').dependencies['peer-deps'] === require('forward-peer-deps-too').dependencies['peer-deps']`),
+        ).resolves.toEqual(true);
+      },
+    ),
+  );
+
+  test(
+    `it shouldn't deduplicate two packages with similar peer dependencies but different names`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`peer-deps`]: `1.0.0`,
+          [`peer-deps-too`]: `1.0.0`,
+          [`no-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(
+          source(`require('peer-deps') === require('peer-deps-too')`),
+        ).resolves.toEqual(false);
       },
     ),
   );
@@ -406,8 +546,8 @@ describe(`Plug'n'Play`, () => {
         await expect(
           source(
             `require(require.resolve('no-deps', {paths: ${JSON.stringify([
-              `${NodeFS.fromPortablePath(path)}/workspace-a`,
-              `${NodeFS.fromPortablePath(path)}/workspace-b`,
+              `${npath.fromPortablePath(path)}/workspace-a`,
+              `${npath.fromPortablePath(path)}/workspace-b`,
             ])}}))`,
           ),
         ).resolves.toMatchObject({
@@ -501,7 +641,7 @@ describe(`Plug'n'Play`, () => {
         await writeFile(`${tmp}/index.js`, `require(process.argv[2])`);
         await writeFile(`${path}/index.js`, `require('no-deps')`);
 
-        await run(`node`, `${NodeFS.fromPortablePath(tmp)}/index.js`, `${path}/index.js`);
+        await run(`node`, `${npath.fromPortablePath(tmp)}/index.js`, `${path}/index.js`);
       },
     ),
   );
@@ -514,6 +654,18 @@ describe(`Plug'n'Play`, () => {
         await run(`install`);
 
         await expect(source(`typeof require('pnpapi').VERSIONS.std`)).resolves.toEqual(`number`);
+      },
+    ),
+  );
+
+  test(
+    `it should return the path to the PnP file when calling require.resolve('pnpapi')`,
+    makeTemporaryEnv(
+      {},
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(xfs.existsSync(await source(`require.resolve('pnpapi')`))).toEqual(true);
       },
     ),
   );
@@ -1046,7 +1198,7 @@ describe(`Plug'n'Play`, () => {
         await expect(
           source(
             `JSON.parse(require('child_process').execFileSync(process.execPath, [${JSON.stringify(
-              `${NodeFS.fromPortablePath(path)}/script.js`,
+              `${npath.fromPortablePath(path)}/script.js`,
             )}]).toString())`,
           ),
         ).resolves.toMatchObject({
@@ -1071,7 +1223,7 @@ describe(`Plug'n'Play`, () => {
         await writeFile(
           `${path}/main.js`,
           `console.log(require('child_process').execFileSync(process.execPath, [${JSON.stringify(
-            `${NodeFS.fromPortablePath(path)}/sub.js`,
+            `${npath.fromPortablePath(path)}/sub.js`,
           )}]).toString())`,
         );
 
@@ -1091,7 +1243,7 @@ describe(`Plug'n'Play`, () => {
       await writeFile(`${path}/foo.js`, `console.log(42);`);
 
       await expect(
-        run(`node`, `-e`, `console.log(21);`, {env: {NODE_OPTIONS: `--require ${NodeFS.fromPortablePath(path)}/foo`}}),
+        run(`node`, `-e`, `console.log(21);`, {env: {NODE_OPTIONS: `--require ${npath.fromPortablePath(path)}/foo`}}),
       ).resolves.toMatchObject({
         // Note that '42' is present twice: the first one because Node executes Yarn, and the second one because Yarn spawns Node
         stdout: `42\n42\n21\n`,

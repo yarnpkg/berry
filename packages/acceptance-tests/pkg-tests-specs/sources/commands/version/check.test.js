@@ -1,5 +1,5 @@
 const {
-  fs: {writeJson},
+  fs: {writeFile, writeJson},
   exec: {execFile},
 } = require('pkg-tests-core');
 
@@ -121,6 +121,25 @@ describe(`Commands`, () => {
         await run(`packages/pkg-c`, `version`, `decline`, `--deferred`);
 
         await run(`version`, `check`);
+      }),
+    );
+
+    test(
+      `it shouldn't throw if changes were reverted`,
+      makeVersionCheckEnv(async ({path, run, source, git}) => {
+        await writeFile(`${path}/packages/pkg-a/state`, `Initial`);
+        await git(`add`, `.`);
+        await git(`commit`, `-m`, `Initial state`);
+
+        await git(`checkout`, `-b`, `feature-branch`);
+
+        await writeFile(`${path}/packages/pkg-a/state`, `Next`);
+        await git(`commit`, `-am`, `WIP`);
+
+        await writeFile(`${path}/packages/pkg-a/state`, `Initial`);
+        await git(`commit`, `-am`, `Revert WIP`);
+
+        await expect(run(`version`, `check`)).resolves.toBeTruthy();
       }),
     );
   });

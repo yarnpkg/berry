@@ -1,4 +1,4 @@
-import {NodeFS, xfs} from '@yarnpkg/fslib';
+import {npath, xfs}  from '@yarnpkg/fslib';
 import {execute}     from '@yarnpkg/shell';
 import {PassThrough} from 'stream';
 import {fileSync}    from 'tmp';
@@ -11,8 +11,8 @@ const bufferResult = async (command: string, args: Array<string> = [], options: 
   const stdout = new PassThrough();
   const stderr = new PassThrough();
 
-  const stdoutChunks = [];
-  const stderrChunks = [];
+  const stdoutChunks: Array<Buffer> = [];
+  const stderrChunks: Array<Buffer> = [];
 
   stdout.on(`data`, chunk => {
     stdoutChunks.push(chunk);
@@ -24,7 +24,7 @@ const bufferResult = async (command: string, args: Array<string> = [], options: 
 
   const exitCode = await execute(command, args, {...options, stdout, stderr, builtins: {
     [`test-builtin`]: async (args, opts, state) => {
-      const stdinChunks = [];
+      const stdinChunks: Array<Buffer> = [];
 
       state.stdin.on(`data`, chunk => {
         stdinChunks.push(chunk);
@@ -415,7 +415,7 @@ describe(`Simple shell features`, () => {
   });
 
   it(`should support input redirections (file)`, async () => {
-    const file = NodeFS.toPortablePath(fileSync({discardDescriptor: true}).name);
+    const file = npath.toPortablePath(fileSync({discardDescriptor: true}).name);
     await xfs.writeFilePromise(file, `hello world\n`);
 
     await expect(bufferResult(
@@ -434,7 +434,7 @@ describe(`Simple shell features`, () => {
   });
 
   it(`should support output redirections (overwrite)`, async () => {
-    const file = NodeFS.toPortablePath(fileSync({discardDescriptor: true}).name);
+    const file = npath.toPortablePath(fileSync({discardDescriptor: true}).name);
 
     await expect(bufferResult(
       `echo "hello world" > "${file}"`,
@@ -446,7 +446,7 @@ describe(`Simple shell features`, () => {
   });
 
   it(`should support output redirections (append)`, async () => {
-    const file = NodeFS.toPortablePath(fileSync({discardDescriptor: true}).name);
+    const file = npath.toPortablePath(fileSync({discardDescriptor: true}).name);
     await xfs.writeFilePromise(file, `foo bar baz\n`);
 
     await expect(bufferResult(
@@ -459,8 +459,8 @@ describe(`Simple shell features`, () => {
   });
 
   it(`should support multiple outputs`, async () => {
-    const file1 = NodeFS.toPortablePath(fileSync({discardDescriptor: true}).name);
-    const file2 = NodeFS.toPortablePath(fileSync({discardDescriptor: true}).name);
+    const file1 = npath.toPortablePath(fileSync({discardDescriptor: true}).name);
+    const file2 = npath.toPortablePath(fileSync({discardDescriptor: true}).name);
 
     await expect(bufferResult(
       `echo "hello world" > "${file1}" > "${file2}"`,
@@ -473,10 +473,10 @@ describe(`Simple shell features`, () => {
   });
 
   it(`should support multiple inputs`, async () => {
-    const file1 = NodeFS.toPortablePath(fileSync({discardDescriptor: true}).name);
+    const file1 = npath.toPortablePath(fileSync({discardDescriptor: true}).name);
     await xfs.writeFilePromise(file1, `foo bar baz\n`);
 
-    const file2 = NodeFS.toPortablePath(fileSync({discardDescriptor: true}).name);
+    const file2 = npath.toPortablePath(fileSync({discardDescriptor: true}).name);
     await xfs.writeFilePromise(file2, `hello world\n`);
 
     await expect(bufferResult(

@@ -1,3 +1,5 @@
+/// <reference path="./tauProlog.d.ts"/>
+
 import {Project}      from '@yarnpkg/core';
 import {PortablePath} from '@yarnpkg/fslib';
 import getPath        from 'lodash/get';

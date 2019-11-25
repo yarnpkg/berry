@@ -1,17 +1,14 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions}               from '@yarnpkg/core';
-import {Locator, MessageName}                                     from '@yarnpkg/core';
-import {execUtils, miscUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
-import {PortablePath, ppath, xfs}                                 from '@yarnpkg/fslib';
+import {Fetcher, FetchOptions, MinimalFetchOptions, FetchResult} from '@yarnpkg/core';
+import {Locator, MessageName}                                    from '@yarnpkg/core';
+import {miscUtils, scriptUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
+import {PortablePath, ppath, xfs}                                from '@yarnpkg/fslib';
 
-import {GIT_REGEXP}                                               from './constants';
-import * as gitUtils                                              from './gitUtils';
+import * as gitUtils                                             from './gitUtils';
+import {Hooks}                                                   from './index';
 
 export class GitFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
-    if (locator.reference.match(GIT_REGEXP))
-      return true;
-
-    return false;
+    return gitUtils.isGitUrl(locator.reference);
   }
 
   getLocalPath(locator: Locator, opts: FetchOptions) {
@@ -20,50 +17,50 @@ export class GitFetcher implements Fetcher {
 
   async fetch(locator: Locator, opts: FetchOptions) {
     const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
+    const normalizedLocator = gitUtils.normalizeLocator(locator);
+
+    const result = await this.downloadHosted(normalizedLocator, opts);
+    if (result !== null)
+      return result;
 
     const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(
       locator,
       expectedChecksum,
       async () => {
         opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote repository`);
-        return await this.cloneFromRemote(locator, opts);
+        return await this.cloneFromRemote(normalizedLocator, opts);
       },
     );
 
     return {
       packageFs,
       releaseFs,
-      prefixPath: `/sources` as PortablePath,
+      prefixPath: structUtils.getIdentVendorPath(locator),
       checksum,
     };
   }
 
+  async downloadHosted(locator: Locator, opts: FetchOptions) {
+    return opts.project.configuration.reduceHook((hooks: Hooks) => {
+      return hooks.fetchHostedRepository;
+    }, null as FetchResult | null, locator, opts);
+  }
+
   async cloneFromRemote(locator: Locator, opts: FetchOptions) {
-    const directory = await gitUtils.clone(locator.reference, opts.project.configuration);
+    const cloneTarget = await gitUtils.clone(locator.reference, opts.project.configuration);
 
-    const env = await scriptUtils.makeScriptEnv(opts.project);
-    try {
-      await execUtils.execvp(`yarn`, [`install`], {cwd: directory, env: env, strict: true});
-    } catch (error) {
-      error.message = `Installing the dependencies from the cloned repository failed (${directory})`;
-      throw error;
-    }
+    const packagePath = ppath.join(cloneTarget, `package.tgz` as PortablePath);
+    await scriptUtils.prepareExternalProject(cloneTarget, packagePath, {
+      configuration: opts.project.configuration,
+      report: opts.report,
+    });
 
-    try {
-      // Exclude `.git` and everything declared in `.npmignore` from the archive.
-      await execUtils.execvp(`yarn`, [`pack`], {cwd: directory, env: env, strict: true});
-    } catch (error) {
-      error.message = `Generating a tarball from the cloned repository failed (${directory})`;
-      throw error;
-    }
-
-    const packagePath = ppath.join(directory, `package.tgz` as PortablePath);
     const sourceBuffer = await xfs.readFilePromise(packagePath);
 
     return await miscUtils.releaseAfterUseAsync(async () => {
-      return await tgzUtils.makeArchive(sourceBuffer, {
+      return await tgzUtils.convertToZip(sourceBuffer, {
         stripComponents: 1,
-        prefixPath: `/sources` as PortablePath,
+        prefixPath: structUtils.getIdentVendorPath(locator),
       });
     });
   }

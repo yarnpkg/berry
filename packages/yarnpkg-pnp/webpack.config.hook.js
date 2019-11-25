@@ -16,6 +16,9 @@ module.exports = makeConfig({
   output: {
     filename: `[name].js`,
     path: `${__dirname}/lib`,
+    libraryExport: `default`,
+    libraryTarget: `umd`,
+    library: `pnpHook`,
   },
 
   plugins: [

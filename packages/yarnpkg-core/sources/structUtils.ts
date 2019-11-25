@@ -1,8 +1,8 @@
-import {toFilename}                             from '@yarnpkg/fslib';
+import {PortablePath, toFilename}               from '@yarnpkg/fslib';
 import querystring                              from 'querystring';
 import semver                                   from 'semver';
 
-import {Configuration}                          from './Configuration';
+import {Configuration, FormatType}              from './Configuration';
 import {Workspace}                              from './Workspace';
 import * as hashUtils                           from './hashUtils';
 import * as miscUtils                           from './miscUtils';
@@ -40,9 +40,14 @@ export function convertPackageToLocator(pkg: Package): Locator {
   return {identHash: pkg.identHash, scope: pkg.scope, name: pkg.name, locatorHash: pkg.locatorHash, reference: pkg.reference};
 }
 
-export function renamePackage(pkg: Package, locator: Locator) {
+export function renamePackage(pkg: Package, locator: Locator): Package {
   return {
-    ...locator,
+    identHash: locator.identHash,
+    scope: locator.scope,
+    name: locator.name,
+
+    locatorHash: locator.locatorHash,
+    reference: locator.reference,
 
     version: pkg.version,
 
@@ -57,6 +62,10 @@ export function renamePackage(pkg: Package, locator: Locator) {
 
     bin: new Map(pkg.bin),
   };
+}
+
+export function copyPackage(pkg: Package) {
+  return renamePackage(pkg, pkg);
 }
 
 export function virtualizeDescriptor(descriptor: Descriptor, entropy: string): Descriptor {
@@ -102,6 +111,13 @@ export function bindDescriptor(descriptor: Descriptor, params: {[key: string]: s
   return makeDescriptor(descriptor, `${descriptor.range}?${querystring.stringify(params)}`);
 }
 
+export function bindLocator(locator: Locator, params: {[key: string]: string}) {
+  if (locator.reference.includes(`?`))
+    return locator;
+
+  return makeLocator(locator, `${locator.reference}?${querystring.stringify(params)}`);
+}
+
 export function areIdentsEqual(a: Ident, b: Ident) {
   return a.identHash === b.identHash;
 }
@@ -112,6 +128,36 @@ export function areDescriptorsEqual(a: Descriptor, b: Descriptor) {
 
 export function areLocatorsEqual(a: Locator, b: Locator) {
   return a.locatorHash === b.locatorHash;
+}
+
+/**
+ * Virtual packages are considered equivalent when they belong to the same
+ * package identity and have the same dependencies. Note that equivalence
+ * is not the same as equality, as the references may be different.
+ */
+export function areVirtualPackagesEquivalent(a: Package, b: Package) {
+  if (!isVirtualLocator(a))
+    throw new Error(`Invalid package type`);
+  if (!isVirtualLocator(b))
+    throw new Error(`Invalid package type`);
+
+  if (!areIdentsEqual(a, b))
+    return false;
+
+  if (a.dependencies.size !== b.dependencies.size)
+    return false;
+
+  for (const dependencyDescriptorA of a.dependencies.values()) {
+    const dependencyDescriptorB = b.dependencies.get(dependencyDescriptorA.identHash);
+    if (!dependencyDescriptorB)
+      return false;
+
+    if (!areDescriptorsEqual(dependencyDescriptorA, dependencyDescriptorB)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 export function parseIdent(string: string): Ident {
@@ -204,13 +250,18 @@ export function parseRange(range: string) {
   const protocolRest = protocolIndex !== -1 ? range.slice(protocolIndex + 1) : range;
 
   const hashIndex = protocolRest.indexOf(`#`);
-  const source = hashIndex !== -1 ? protocolRest.slice(0, hashIndex) : null;
+  const sourceWithQs = hashIndex !== -1 ? protocolRest.slice(0, hashIndex) : null;
   const selector = hashIndex !== -1 ? protocolRest.slice(hashIndex + 1) : protocolRest;
 
-  return {protocol, source, selector};
+
+  const queryIndex = sourceWithQs !== null ? sourceWithQs.indexOf(`?`) : -1;
+  const source = queryIndex !== -1 ? sourceWithQs!.slice(0, queryIndex) : sourceWithQs;
+  const params = queryIndex !== -1 ? querystring.parse(sourceWithQs!.slice(queryIndex + 1)) : null;
+
+  return {protocol, source, params, selector};
 }
 
-export function makeRange({protocol, source, selector}: {protocol: string | null, source: string | null, selector: string}) {
+export function makeRange({protocol, source, selector, params}: {protocol: string | null, source: string | null, selector: string, params: querystring.ParsedUrlQuery | null}) {
   let range = ``;
 
   if (protocol !== null)
@@ -219,6 +270,30 @@ export function makeRange({protocol, source, selector}: {protocol: string | null
     range += `${source}#`;
 
   return range + selector;
+}
+
+/**
+ * The range used internally may differ from the range stored in the
+ * Manifest (package.json). This removes any params indicated for internal use.
+ * An internal param starts with "__".
+ * @param range range to convert
+ */
+export function convertToManifestRange(range: string) {
+  const {protocol, source, selector} = parseRange(range);
+  if (!source)
+    return range;
+
+  const queryIndex = source.indexOf(`?`);
+  if (queryIndex === -1)
+    return range;
+
+  const params = querystring.parse(source.slice(queryIndex + 1));
+
+  for (const name of Object.keys(params))
+    if (name.startsWith(`__`))
+      delete params[name];
+
+  return makeRange({protocol, source, params, selector});
 }
 
 export function requirableIdent(ident: Ident) {
@@ -295,9 +370,9 @@ export function slugifyLocator(locator: Locator) {
 
 export function prettyIdent(configuration: Configuration, ident: Ident) {
   if (ident.scope) {
-    return `${configuration.format(`@${ident.scope}/`, `#d75f00`)}${configuration.format(ident.name, `#d7875f`)}`;
+    return `${configuration.format(`@${ident.scope}/`, FormatType.SCOPE)}${configuration.format(ident.name, FormatType.NAME)}`;
   } else {
-    return `${configuration.format(ident.name, `#d7875f`)}`;
+    return `${configuration.format(ident.name, FormatType.NAME)}`;
   }
 }
 
@@ -314,19 +389,19 @@ function prettyRangeNoColors(range: string): string {
 }
 
 export function prettyRange(configuration: Configuration, range: string) {
-  return `${configuration.format(prettyRangeNoColors(range), `#00afaf`)}`;
+  return `${configuration.format(prettyRangeNoColors(range), FormatType.RANGE)}`;
 }
 
 export function prettyDescriptor(configuration: Configuration, descriptor: Descriptor) {
-  return `${prettyIdent(configuration, descriptor)}${configuration.format(`@`, `#00afaf`)}${prettyRange(configuration, descriptor.range)}`;
+  return `${prettyIdent(configuration, descriptor)}${configuration.format(`@`, FormatType.RANGE)}${prettyRange(configuration, descriptor.range)}`;
 }
 
 export function prettyReference(configuration: Configuration, reference: string) {
-  return `${configuration.format(prettyRangeNoColors(reference), `#87afff`)}`;
+  return `${configuration.format(prettyRangeNoColors(reference), FormatType.REFERENCE)}`;
 }
 
 export function prettyLocator(configuration: Configuration, locator: Locator) {
-  return `${prettyIdent(configuration, locator)}${configuration.format(`@`, `#87afff`)}${prettyReference(configuration, locator.reference)}`;
+  return `${prettyIdent(configuration, locator)}${configuration.format(`@`, FormatType.REFERENCE)}${prettyReference(configuration, locator.reference)}`;
 }
 
 export function prettyLocatorNoColors(locator: Locator) {
@@ -348,4 +423,19 @@ export function prettyWorkspace(configuration: Configuration, workspace: Workspa
   } else {
     return prettyLocator(configuration, workspace.anchoredLocator);
   }
+}
+
+/**
+ * The presence of a `node_modules` directory in the path is extremely common
+ * in the JavaScript ecosystem to denote whether a path belongs to a vendor
+ * or not. I considered using a more generic path for packages that aren't
+ * always JS-only (such as when using the Git fetcher), but that unfortunately
+ * caused various JS apps to start showing errors when working with git repos.
+ *
+ * As a result, all packages from all languages will follow this convention. At
+ * least it'll be consistent, and linkers will always have the ability to remap
+ * them to a different location if that's a critical requirement.
+ */
+export function getIdentVendorPath(ident: Ident) {
+  return `/node_modules/${requirableIdent(ident)}` as PortablePath;
 }

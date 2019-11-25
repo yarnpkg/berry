@@ -1,12 +1,12 @@
-/// <reference path="../../types/module/index.d.ts"/>
+/// <reference path="./module.d.ts"/>
 
-import {FakeFS, NodeFS, PortablePath, NativePath, Path}           from '@yarnpkg/fslib';
-import {ppath, toFilename}                                        from '@yarnpkg/fslib';
-import Module                                                     from 'module';
+import {FakeFS, NativePath, NoFS, Path, PortablePath, VirtualFS, npath} from '@yarnpkg/fslib';
+import {ppath, toFilename}                                              from '@yarnpkg/fslib';
+import Module                                                           from 'module';
 
-import {PackageInformation, PackageLocator, PnpApi, RuntimeState} from '../types';
+import {PackageInformation, PackageLocator, PnpApi, RuntimeState}       from '../types';
 
-import {ErrorCode, makeError}                                     from './internalTools';
+import {ErrorCode, makeError}                                           from './internalTools';
 
 export type MakeApiOptions = {
   allowDebug?: boolean,
@@ -50,7 +50,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   if (runtimeState.enableTopLevelFallback === true)
     fallbackLocators.push(topLevelLocator);
 
-  if (opts.compatibilityMode) {
+  if (opts.compatibilityMode !== false) {
     // ESLint currently doesn't have any portable way for shared configs to
     // specify their own plugins that should be used (cf issue #10125). This
     // will likely get fixed at some point but it'll take time, so in the
@@ -156,6 +156,20 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   }
 
   /**
+   * Returns whether the specified locator is a dependency tree root (in which case it's part of the project) or not
+   */
+  function isDependencyTreeRoot(packageLocator: PackageLocator) {
+    if (packageLocator.name === null)
+      return true;
+
+    for (const dependencyTreeRoot of runtimeState.dependencyTreeRoots)
+      if (dependencyTreeRoot.name === packageLocator.name && dependencyTreeRoot.reference === packageLocator.reference)
+        return true;
+
+    return false;
+  }
+
+  /**
    * Implements the node resolution for folder access and extension selection
    */
 
@@ -171,24 +185,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       // If the file exists and is a file, we can stop right there
 
-      if (stat && !stat.isDirectory()) {
-        // If the very last component of the resolved path is a symlink to a file, we then resolve it to a file. We only
-        // do this first the last component, and not the rest of the path! This allows us to support the case of bin
-        // symlinks, where a symlink in "/xyz/pkg-name/.bin/bin-name" will point somewhere else (like "/xyz/pkg-name/index.js").
-        // In such a case, we want relative requires to be resolved relative to "/xyz/pkg-name/" rather than "/xyz/pkg-name/.bin/".
-        //
-        // Also note that the reason we must use readlink on the last component (instead of realpath on the whole path)
-        // is that we must preserve the other symlinks, in particular those used by pnp to deambiguate packages using
-        // peer dependencies. For example, "/xyz/.pnp/local/pnp-01234569/.bin/bin-name" should see its relative requires
-        // be resolved relative to "/xyz/.pnp/local/pnp-0123456789/" rather than "/xyz/pkg-with-peers/", because otherwise
-        // we would lose the information that would tell us what are the dependencies of pkg-with-peers relative to its
-        // ancestors.
-
-        if (opts.fakeFs.lstatSync(unqualifiedPath).isSymbolicLink())
-          unqualifiedPath = ppath.normalize(ppath.resolve(ppath.dirname(unqualifiedPath), opts.fakeFs.readlinkSync(unqualifiedPath)));
-
-        return unqualifiedPath;
-      }
+      if (stat && !stat.isDirectory())
+        return opts.fakeFs.realpathSync(unqualifiedPath);
 
       // If the file is a directory, we must check if it contains a package.json with a "main" entry
 
@@ -274,7 +272,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function normalizePath(p: Path) {
-    return NodeFS.toPortablePath(p);
+    return npath.toPortablePath(p);
   }
 
   /**
@@ -289,7 +287,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     // would give us the paths to give to _resolveFilename), we can as well not use
     // the {paths} option at all, since it internally makes _resolveFilename create another
     // fake module anyway.
-    return Module._resolveFilename(request, makeFakeModule(NodeFS.fromPortablePath(issuer)), false, {plugnplay: false});
+    return Module._resolveFilename(request, makeFakeModule(npath.fromPortablePath(issuer)), false, {plugnplay: false});
   }
 
   /**
@@ -301,7 +299,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * functions, they'll just have to fix the conflicts and bump their own version number.
    */
 
-  const VERSIONS = {std: 2};
+  const VERSIONS = {std: 3, resolveVirtual: 1};
 
   /**
    * We export a special symbol for easy access to the top level locator.
@@ -397,7 +395,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
 
     if (request === `pnpapi`)
-      return NodeFS.toPortablePath(opts.pnpapiResolution);
+      return npath.toPortablePath(opts.pnpapiResolution);
 
     // Bailout if the request is a native module
 
@@ -419,7 +417,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         );
       }
 
-      return NodeFS.toPortablePath(result);
+      return npath.toPortablePath(result);
     }
 
     let unqualifiedPath: PortablePath;
@@ -481,7 +479,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           );
         }
 
-        return NodeFS.toPortablePath(result);
+        return npath.toPortablePath(result);
       }
 
       const issuerInformation = getPackageInformationSafe(issuerLocator);
@@ -515,7 +513,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       // If we can't find the path, and if the package making the request is the top-level, we can offer nicer error messages
 
       if (dependencyReference === null) {
-        if (issuerLocator.name === null) {
+        if (isDependencyTreeRoot(issuerLocator)) {
           throw makeError(
             ErrorCode.MISSING_PEER_DEPENDENCY,
             `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a peer dependency; this isn't allowed as the peer dependency cannot be provided by any parent package\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
@@ -529,7 +527,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           );
         }
       } else if (dependencyReference === undefined) {
-        if (issuerLocator.name === null) {
+        if (isDependencyTreeRoot(issuerLocator)) {
           throw makeError(
             ErrorCode.UNDECLARED_DEPENDENCY,
             `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a package that is not declared in your dependencies\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
@@ -619,10 +617,54 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     }
   };
 
+  /**
+   * Note: this function is an extension provided under the `resolveVirtual`
+   * version keyword. Not all PnP implementation will have it.
+   */
+
+  const virtualMappers = runtimeState.virtualRoots.map(root => {
+    return new VirtualFS(root, {baseFs: NoFS.instance});
+  });
+
+  function resolveVirtual(request: PortablePath) {
+    const initialRequest = ppath.normalize(request);
+
+    let currentRequest = request;
+    let nextRequest = request;
+
+    do {
+      currentRequest = nextRequest;
+
+      for (const mapper of virtualMappers) {
+        nextRequest = mapper.mapToBase(nextRequest);
+        if (nextRequest !== currentRequest) {
+          break;
+        }
+      }
+    } while (nextRequest !== currentRequest);
+
+    if (currentRequest !== initialRequest) {
+      return currentRequest;
+    } else {
+      return null;
+    }
+  }
+
   return {
     VERSIONS,
     topLevel,
 
+    getLocator: (name: string, referencish: [string, string] | string): PackageLocator => {
+      if (Array.isArray(referencish)) {
+        return {name: referencish[0], reference: referencish[1]};
+      } else {
+        return {name, reference: referencish};
+      }
+    },
+
+    getDependencyTreeRoots: () => {
+      return [...runtimeState.dependencyTreeRoots];
+    },
 
     getPackageInformation: (locator: PackageLocator) => {
       const info = getPackageInformation(locator);
@@ -630,38 +672,48 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       if (info === null)
         return null;
 
-      const packageLocation = NodeFS.fromPortablePath(info.packageLocation);
+      const packageLocation = npath.fromPortablePath(info.packageLocation);
       const nativeInfo = {...info, packageLocation};
 
       return nativeInfo;
     },
 
     findPackageLocator: (path: string) => {
-      return findPackageLocator(NodeFS.toPortablePath(path));
+      return findPackageLocator(npath.toPortablePath(path));
     },
 
     resolveToUnqualified: maybeLog(`resolveToUnqualified`, (request: NativePath, issuer: NativePath | null, opts?: ResolveToUnqualifiedOptions) => {
-      const portableIssuer = issuer !== null ?  NodeFS.toPortablePath(issuer) : null;
+      const portableIssuer = issuer !== null ?  npath.toPortablePath(issuer) : null;
 
-      const resolution = resolveToUnqualified(NodeFS.toPortablePath(request), portableIssuer, opts);
+      const resolution = resolveToUnqualified(npath.toPortablePath(request), portableIssuer, opts);
       if (resolution === null)
         return null;
 
-      return NodeFS.fromPortablePath(resolution);
+      return npath.fromPortablePath(resolution);
     }),
 
     resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath: NativePath, opts?: ResolveUnqualifiedOptions) => {
-      return NodeFS.fromPortablePath(resolveUnqualified(NodeFS.toPortablePath(unqualifiedPath), opts));
+      return npath.fromPortablePath(resolveUnqualified(npath.toPortablePath(unqualifiedPath), opts));
     }),
 
     resolveRequest: maybeLog(`resolveRequest`, (request: NativePath, issuer: NativePath | null, opts?: ResolveRequestOptions) => {
-      const portableIssuer = issuer !== null ? NodeFS.toPortablePath(issuer) : null;
+      const portableIssuer = issuer !== null ? npath.toPortablePath(issuer) : null;
 
-      const resolution = resolveRequest(NodeFS.toPortablePath(request), portableIssuer, opts);
+      const resolution = resolveRequest(npath.toPortablePath(request), portableIssuer, opts);
       if (resolution === null)
         return null;
 
-      return NodeFS.fromPortablePath(resolution);
+      return npath.fromPortablePath(resolution);
+    }),
+
+    resolveVirtual: maybeLog(`resolveVirtual`, (path: NativePath) => {
+      const result = resolveVirtual(npath.toPortablePath(path));
+
+      if (result !== null) {
+        return npath.fromPortablePath(result);
+      } else {
+        return null;
+      }
     }),
   };
 }

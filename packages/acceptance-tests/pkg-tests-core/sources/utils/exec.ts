@@ -1,8 +1,8 @@
-import {NodeFS} from '@yarnpkg/fslib';
-import cp       from 'child_process';
+import {PortablePath, npath} from '@yarnpkg/fslib';
+import cp                    from 'child_process';
 
 interface Options {
-  cwd: string;
+  cwd: PortablePath;
   env?: Record<string, string>;
 }
 
@@ -23,7 +23,7 @@ export const execFile = (
   return new Promise((resolve, reject) => {
     cp.execFile(path, args, {
       ...options,
-      cwd: options.cwd ? NodeFS.fromPortablePath(options.cwd) : undefined,
+      cwd: options.cwd ? npath.fromPortablePath(options.cwd) : undefined,
     }, (error, stdout, stderr) => {
       stdout = stdout.replace(/\r\n?/g, `\n`);
       stderr = stderr.replace(/\r\n?/g, `\n`);

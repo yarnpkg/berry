@@ -1,18 +1,14 @@
-import {xfs, NodeFS, PortablePath, ppath, toFilename} from '@yarnpkg/fslib';
-import {createHmac}                                   from 'crypto';
-import globby                                         from 'globby';
-import semver                                         from 'semver';
+import {PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
+import globby                                        from 'globby';
+import semver                                        from 'semver';
 
-import {Manifest}                                     from './Manifest';
-import {Project}                                      from './Project';
-import {WorkspaceResolver}                            from './WorkspaceResolver';
-import * as structUtils                               from './structUtils';
-import {IdentHash}                                    from './types';
-import {Descriptor, Locator}                          from './types';
-
-function hashWorkspaceCwd(cwd: string) {
-  return createHmac('sha256', 'berry').update(cwd).digest('hex').substr(0, 6);
-}
+import {Manifest}                                    from './Manifest';
+import {Project}                                     from './Project';
+import {WorkspaceResolver}                           from './WorkspaceResolver';
+import * as hashUtils                                from './hashUtils';
+import * as structUtils                              from './structUtils';
+import {IdentHash}                                   from './types';
+import {Descriptor, Locator}                         from './types';
 
 export class Workspace {
   public readonly project: Project;
@@ -52,7 +48,7 @@ export class Workspace {
     // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.relativeCwd = ppath.relative(this.project.cwd, this.cwd) || PortablePath.dot;
 
-    const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashWorkspaceCwd(this.relativeCwd)}`);
+    const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashUtils.makeHash<string>(this.relativeCwd).substr(0, 6)}`);
     const reference = this.manifest.version ? this.manifest.version : `0.0.0`;
 
     // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
@@ -67,7 +63,7 @@ export class Workspace {
     for (const definition of this.manifest.workspaceDefinitions) {
       const relativeCwds = await globby(definition.pattern, {
         absolute: true,
-        cwd: NodeFS.fromPortablePath(this.cwd),
+        cwd: npath.fromPortablePath(this.cwd),
         expandDirectories: false,
         onlyDirectories: true,
         onlyFiles: false,
@@ -77,7 +73,7 @@ export class Workspace {
       relativeCwds.sort();
 
       for (const relativeCwd of relativeCwds) {
-        const candidateCwd = ppath.resolve(this.cwd, NodeFS.toPortablePath(relativeCwd));
+        const candidateCwd = ppath.resolve(this.cwd, npath.toPortablePath(relativeCwd));
 
         if (xfs.existsSync(ppath.join(candidateCwd, toFilename(`package.json`)))) {
           this.workspacesCwds.add(candidateCwd);

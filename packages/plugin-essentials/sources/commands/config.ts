@@ -30,7 +30,7 @@ export default class ConfigCommand extends BaseCommand {
     `,
     examples: [[
       `Print the active configuration settings`,
-      `yarn config`,
+      `$0 config`,
     ]],
   });
 

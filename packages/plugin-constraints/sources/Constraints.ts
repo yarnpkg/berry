@@ -1,3 +1,5 @@
+/// <reference path="./tauProlog.d.ts"/>
+
 import {Ident, MessageName, Project, ReportError, Workspace} from '@yarnpkg/core';
 import {miscUtils, structUtils}                              from '@yarnpkg/core';
 import {xfs, ppath, PortablePath, toFilename}                from '@yarnpkg/fslib';

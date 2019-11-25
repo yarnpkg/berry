@@ -39,7 +39,10 @@ export class TarballHttpResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    const packageFetch = await opts.fetcher.fetch(locator, opts);
+    if (!opts.fetchOptions)
+      throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
+
+    const packageFetch = await opts.fetchOptions.fetcher.fetch(locator, opts.fetchOptions);
 
     const manifest = await miscUtils.releaseAfterUseAsync(async () => {
       return await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});

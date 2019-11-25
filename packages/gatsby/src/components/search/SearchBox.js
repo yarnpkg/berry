@@ -1,3 +1,4 @@
+import {navigate}                  from 'gatsby';
 import React, {useState}           from 'react';
 import {connectSearchBox}          from 'react-instantsearch-dom';
 import styled                      from '@emotion/styled';
@@ -80,8 +81,9 @@ const SearchBox = ({ currentRefinement, refine, autoFocus }) => {
   const onSubmit = e => {
     e.preventDefault();
     e.stopPropagation();
-    refine(currentRefinement);
-  }
+
+    navigate(`/package?${currentRefinement}`);
+  };
 
   return (
     <SearchForm noValidate action="" role="search" onSubmit={onSubmit}>

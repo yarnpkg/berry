@@ -58,6 +58,12 @@ const plugin: Plugin = {
       type: SettingsType.BOOLEAN,
       default: false,
     },
+
+    defaultSemverRangePrefix: {
+      description: `The default save prefix: '^', '~' or ''`,
+      type: SettingsType.STRING,
+      default: suggestUtils.Modifier.CARET,
+    },
   },
   commands: [
     cleanCache,

@@ -74,4 +74,4 @@ This feature allows you to not have to depend on something else than your local 
 
 ## Yarn Workspaces vs Lerna
 
-Despite the appearances, the Yarn workspaces and Lerna don't compete. In fact, Lerna will uses Yarn's workspaces if possible. In a sense, you can see Lerna as a high-level layer on top of the low-level Yarn implementation.
+Despite the appearances, the Yarn workspaces and Lerna don't compete. In fact, Lerna will use Yarn's workspaces if possible. In a sense, you can see Lerna as a high-level layer on top of the low-level Yarn implementation.

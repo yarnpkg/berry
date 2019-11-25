@@ -1,6 +1,6 @@
-import {NodeFS, PortablePath} from '@yarnpkg/fslib';
-import crossSpawn             from 'cross-spawn';
-import {Readable, Writable}   from 'stream';
+import {PortablePath, npath} from '@yarnpkg/fslib';
+import crossSpawn            from 'cross-spawn';
+import {Readable, Writable}  from 'stream';
 
 export type PipevpOptions = {
   cwd: PortablePath,
@@ -11,32 +11,37 @@ export type PipevpOptions = {
   stderr: Writable,
 };
 
+function hasFd(stream: null | Readable | Writable) {
+  // @ts-ignore: Not sure how to typecheck this field
+  return stream !== null && typeof stream.fd === `number`;
+}
+
 export async function pipevp(fileName: string, args: Array<string>, {cwd, env = process.env, strict = false, stdin = null, stdout, stderr}: PipevpOptions): Promise<{code: number}> {
   const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
 
   if (stdin === null)
     stdio[0] = `ignore`;
-  else if (stdin === process.stdin)
+  else if (hasFd(stdin))
     stdio[0] = stdin;
 
-  if (stdout === process.stdout)
+  if (hasFd(stdout))
     stdio[1] = stdout;
-  if (stderr === process.stderr)
+  if (hasFd(stderr))
     stdio[2] = stderr;
 
   const subprocess = crossSpawn(fileName, args, {
-    cwd: NodeFS.fromPortablePath(cwd),
+    cwd: npath.fromPortablePath(cwd),
     env,
     stdio,
   });
 
-  if (stdin !== process.stdin && stdin !== null)
-    stdin.pipe(subprocess.stdin);
+  if (!hasFd(stdin) && stdin !== null)
+    stdin.pipe(subprocess.stdin!);
 
-  if (stdout !== process.stdout)
-    subprocess.stdout.pipe(stdout);
-  if (stderr !== process.stderr)
-    subprocess.stderr.pipe(stderr);
+  if (!hasFd(stdout))
+    subprocess.stdout!.pipe(stdout);
+  if (!hasFd(stderr))
+    subprocess.stderr!.pipe(stderr);
 
   return new Promise((resolve, reject) => {
     subprocess.on(`close`, (code: number) => {
@@ -67,16 +72,16 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
   const stderrChunks: Array<Buffer> = [];
 
   const subprocess = crossSpawn(fileName, args, {
-    cwd: NodeFS.fromPortablePath(cwd),
+    cwd: npath.fromPortablePath(cwd),
     env,
     stdio,
   });
 
-  subprocess.stdout.on(`data`, (chunk: Buffer) => {
+  subprocess.stdout!.on(`data`, (chunk: Buffer) => {
     stdoutChunks.push(chunk);
   });
 
-  subprocess.stderr.on(`data`, (chunk: Buffer) => {
+  subprocess.stderr!.on(`data`, (chunk: Buffer) => {
     stderrChunks.push(chunk);
   });
 

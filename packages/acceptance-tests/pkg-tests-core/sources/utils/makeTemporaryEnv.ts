@@ -1,4 +1,4 @@
-import {NodeFS}    from '@yarnpkg/fslib';
+import {npath}     from '@yarnpkg/fslib';
 import {delimiter} from 'path';
 
 import {URL}       from 'url';
@@ -24,14 +24,15 @@ const mte = generatePkgDriver({
     for (const key of Object.keys(config))
       rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = config[key];
 
-    const nativePath = NodeFS.fromPortablePath(path);
-    const tempHomeFolder = NodeFS.fromPortablePath(await createTemporaryFolder());
+    const nativePath = npath.fromPortablePath(path);
+    const tempHomeFolder = npath.fromPortablePath(await createTemporaryFolder());
 
     const cwdArgs = typeof projectFolder !== `undefined`
       ? [projectFolder]
       : [];
 
-    const res = await execFile(process.execPath, [`${__dirname}/../../../../../scripts/run-yarn.js`, ...cwdArgs, command, ...args], {
+    const yarnBinary = require.resolve(`${__dirname}/../../../../yarnpkg-cli/bundles/yarn.js`);
+    const res = await execFile(process.execPath, [yarnBinary, ...cwdArgs, command, ...args], {
       cwd: cwd || path,
       env: {
         [`HOME`]: tempHomeFolder,
@@ -45,6 +46,9 @@ const mte = generatePkgDriver({
         [`YARN_ENABLE_ABSOLUTE_VIRTUALS`]: `true`,
         // Otherwise the output isn't stable between runs
         [`YARN_ENABLE_TIMERS`]: `false`,
+        [`YARN_ENABLE_PROGRESS_BARS`]: `false`,
+        // Otherwise the output wouldn't be the same on CI vs non-CI
+        [`YARN_ENABLE_INLINE_BUILDS`]: `false`,
         // Otherwise we would more often test the fallback rather than the real logic
         [`YARN_PNP_FALLBACK_MODE`]: `none`,
         ...rcEnv,

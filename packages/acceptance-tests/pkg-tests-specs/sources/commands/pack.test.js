@@ -77,6 +77,24 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should support excluding folders from the "files" field`,
+      makeTemporaryEnv({
+        files: [
+          `/lib`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/lib/a.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/lib/b.js`, `module.exports = 42;\n`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        await expect(stdout).toMatch(/lib\/a\.js/);
+        await expect(stdout).toMatch(/lib\/b\.js/);
+      }),
+    );
+
+    test(
       `it shouldn't add .gitignore files to the package files`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await fsUtils.writeFile(`${path}/.gitignore`, ``);
@@ -97,6 +115,24 @@ describe(`Commands`, () => {
 
         const {stdout} = await run(`pack`, `--dry-run`);
         await expect(stdout).not.toMatch(/\.npmignore/);
+      }),
+    );
+
+    test(
+      `it should ignore root .gitignore files when using the 'files' field`,
+      makeTemporaryEnv({
+        files: [
+          `lib`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/.gitignore`, `lib`);
+
+        await run(`install`);
+
+        await fsUtils.writeFile(`${path}/lib/foo.js`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        await expect(stdout).toMatch(/lib\/foo\.js/);
       }),
     );
 
@@ -225,9 +261,6 @@ describe(`Commands`, () => {
           devDependencies: {
             [dependency]: `workspace:^1.0.0`,
           },
-          peerDependencies: {
-            [dependency]: `workspace:dependency`,
-          },
         });
 
         await run(`install`);
@@ -241,13 +274,11 @@ describe(`Commands`, () => {
 
         expect(packedManifest.dependencies[dependency]).toBe(`1.0.0`);
         expect(packedManifest.devDependencies[dependency]).toBe(`^1.0.0`);
-        expect(packedManifest.peerDependencies[dependency]).toBe(`1.0.0`);
 
         const originalManifest = await fsUtils.readJson(`${path}/dependant/package.json`);
 
         expect(originalManifest.dependencies[dependency]).toBe(`workspace:*`);
         expect(originalManifest.devDependencies[dependency]).toBe(`workspace:^1.0.0`);
-        expect(originalManifest.peerDependencies[dependency]).toBe(`workspace:dependency`);
       }),
     );
 

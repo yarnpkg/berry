@@ -62,7 +62,7 @@ function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData
     const packageStoreData: PackageStoreData = [];
     packageRegistryData.push([packageName, packageStoreData]);
 
-    for (const [packageReference, {packageLocation, packageDependencies}] of sortMap(packageStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {
+    for (const [packageReference, {packageLocation, packageDependencies, packagePeers, linkType}] of sortMap(packageStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {
       const normalizedDependencies: Array<[string, string | [string, string] | null]> = [];
 
       if (packageName !== null && packageReference !== null && !packageDependencies.has(packageName))
@@ -71,9 +71,15 @@ function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData
       for (const [dependencyName, dependencyReference] of sortMap(packageDependencies.entries(), ([dependencyName]) => dependencyName))
         normalizedDependencies.push([dependencyName, dependencyReference]);
 
+      const normalizedPeers = packagePeers && packagePeers.size > 0
+        ? Array.from(packagePeers)
+        : undefined;
+
       packageStoreData.push([packageReference, {
         packageLocation,
         packageDependencies: normalizedDependencies,
+        packagePeers: normalizedPeers,
+        linkType,
       }]);
     }
   }
@@ -105,6 +111,7 @@ export function generateSerializedState(settings: PnpSettings): SerializedState 
       `is entirely unspecified and WILL change from a version to another.`,
     ],
 
+    dependencyTreeRoots: settings.dependencyTreeRoots,
     enableTopLevelFallback: settings.enableTopLevelFallback || false,
     ignorePatternData: settings.ignorePattern || null,
     virtualRoots: settings.virtualRoots || [],

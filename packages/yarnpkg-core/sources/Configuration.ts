@@ -1,82 +1,47 @@
-import {xfs, NodeFS, PortablePath, ppath, Filename, toFilename} from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                               from '@yarnpkg/parsers';
-import camelcase                                                from 'camelcase';
-import chalk                                                    from 'chalk';
-import {UsageError}                                             from 'clipanion';
-import supportsColor                                            from 'supports-color';
+import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                              from '@yarnpkg/parsers';
+import camelcase                                               from 'camelcase';
+import chalk                                                   from 'chalk';
+import {UsageError}                                            from 'clipanion';
+import isCI                                                    from 'is-ci';
+import semver                                                  from 'semver';
+import {PassThrough, Writable}                                 from 'stream';
+import supportsColor                                           from 'supports-color';
+import {tmpNameSync}                                           from 'tmp';
 
-import {MultiFetcher}                                           from './MultiFetcher';
-import {MultiResolver}                                          from './MultiResolver';
-import {Plugin, Hooks}                                          from './Plugin';
-import {SemverResolver}                                         from './SemverResolver';
-import {TagResolver}                                            from './TagResolver';
-import {VirtualFetcher}                                         from './VirtualFetcher';
-import {VirtualResolver}                                        from './VirtualResolver';
-import {WorkspaceFetcher}                                       from './WorkspaceFetcher';
-import {WorkspaceResolver}                                      from './WorkspaceResolver';
-import * as folderUtils                                         from './folderUtils';
-import * as miscUtils                                           from './miscUtils';
-import * as nodeUtils                                           from './nodeUtils';
-import * as structUtils                                         from './structUtils';
+import {Manifest}                                              from './Manifest';
+import {MultiFetcher}                                          from './MultiFetcher';
+import {MultiResolver}                                         from './MultiResolver';
+import {Plugin, Hooks}                                         from './Plugin';
+import {ProtocolResolver}                                      from './ProtocolResolver';
+import {Report}                                                from './Report';
+import {VirtualFetcher}                                        from './VirtualFetcher';
+import {VirtualResolver}                                       from './VirtualResolver';
+import {WorkspaceFetcher}                                      from './WorkspaceFetcher';
+import {WorkspaceResolver}                                     from './WorkspaceResolver';
+import * as folderUtils                                        from './folderUtils';
+import * as miscUtils                                          from './miscUtils';
+import * as nodeUtils                                          from './nodeUtils';
+import * as structUtils                                        from './structUtils';
+import {IdentHash, Package, Descriptor}                        from './types';
 
 // @ts-ignore
 const ctx: any = new chalk.constructor({enabled: true});
 
-const IGNORED_ENV_VARIABLES = new Set([
-  // "binFolder" is the magic location where the parent process stored the current binaries; not an actual configuration settings
-  `binFolder`,
-  // "version" is set by Docker: https://github.com/nodejs/docker-node/blob/5a6a5e91999358c5b04fddd6c22a9a4eb0bf3fbf/10/alpine/Dockerfile#L51
-  `version`,
-  // "flags" is set by Netlify; they use it to specify the flags to send to the CLI when running the automatic `yarn install`
-  `flags`,
-]);
+const TAG_REGEXP = /^[a-z]+$/;
 
-const LEGACY_NAMES = new Set([
-  `networkConcurrency`,
-  `childConcurrency`,
-  `networkTimeout`,
-  `proxy`,
-  `strictSsl`,
-  `ca`,
-  `cert`,
-  `key`,
-  `lastUpdateCheck`,
-  `plugnplayOverride`,
-  `plugnplayShebang`,
-  `plugnplayBlacklist`,
-  `workspacesExperimental`,
-  `workspacesNohoistExperimental`,
-  `offlineCacheFolder`,
-  `yarnOfflineMirrorPruning`,
-  `enableMetaFolder`,
-  `yarnEnableLockfileVersions`,
-  `yarnLinkFileDependencies`,
-  `experimentalPackScriptPackagesInMirror`,
-  `unsafeDisableIntegrityMigration`,
-  `production`,
-  `noProgress`,
-  `registry`,
-  `versionCommitHooks`,
-  `versionGitTag`,
-  `versionGitMessage`,
-  `versionSignGitTag`,
-  `versionTagPrefix`,
-  `savePrefix`,
-  `saveExact`,
-  `initAuthorName`,
-  `initAuthorEmail`,
-  `initAuthorUrl`,
-  `initVersion`,
-  `initLicense`,
-  `initPrivate`,
-  `ignoreScripts`,
-  `ignorePlatform`,
-  `ignoreEngines`,
-  `ignoreOptional`,
-  `force`,
-  `disableSelfUpdateCheck`,
-  `username`,
-  `email`,
+const IGNORED_ENV_VARIABLES = new Set([
+  // "binFolder" is the magic location where the parent process stored the
+  // current binaries; not an actual configuration settings
+  `binFolder`,
+
+  // "version" is set by Docker:
+  // https://github.com/nodejs/docker-node/blob/5a6a5e91999358c5b04fddd6c22a9a4eb0bf3fbf/10/alpine/Dockerfile#L51
+  `version`,
+
+  // "flags" is set by Netlify; they use it to specify the flags to send to the
+  // CLI when running the automatic `yarn install`
+  `flags`,
 ]);
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
@@ -84,6 +49,7 @@ export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc.yml`);
 export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
 
 export enum SettingsType {
+  ANY = 'ANY',
   BOOLEAN = 'BOOLEAN',
   ABSOLUTE_PATH = 'ABSOLUTE_PATH',
   LOCATOR = 'LOCATOR',
@@ -93,6 +59,24 @@ export enum SettingsType {
   SHAPE = 'SHAPE',
   MAP = 'MAP',
 };
+
+export enum FormatType {
+  NAME = 'NAME',
+  NUMBER = 'NUMBER',
+  PATH = 'PATH',
+  RANGE = 'RANGE',
+  REFERENCE = 'REFERENCE',
+  SCOPE = 'SCOPE',
+};
+
+export const formatColors = new Map([
+  [FormatType.NAME, `#d7875f`],
+  [FormatType.RANGE, `#00afaf`],
+  [FormatType.REFERENCE, `#87afff`],
+  [FormatType.NUMBER, `yellow`],
+  [FormatType.PATH, `cyan`],
+  [FormatType.SCOPE, `#d75f00`],
+]);
 
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
   description: string,
@@ -105,7 +89,7 @@ export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE>
 };
 
 export type MapSettingsDefinition = BaseSettingsDefinition<SettingsType.MAP> & {
-  valueDefinition: SettingsDefinition,
+  valueDefinition: SettingsDefinitionNoDefault,
 };
 
 export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.SHAPE | SettingsType.MAP>> & {
@@ -114,7 +98,15 @@ export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsTy
   isNullable?: boolean,
 };
 
-export type SettingsDefinition = MapSettingsDefinition|ShapeSettingsDefinition|SimpleSettingsDefinition;
+export type SettingsDefinitionNoDefault =
+  | MapSettingsDefinition
+  | ShapeSettingsDefinition
+  | Omit<SimpleSettingsDefinition, 'default'>;
+
+export type SettingsDefinition =
+  | MapSettingsDefinition
+  | ShapeSettingsDefinition
+  | SimpleSettingsDefinition;
 
 export type PluginConfiguration = {
   modules: Map<string, any>,
@@ -210,7 +202,14 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableInlineBuilds: {
     description: `If true, the CLI will print the build output on the command line`,
     type: SettingsType.BOOLEAN,
-    default: false,
+    default: isCI,
+    defaultText: `<dynamic>`,
+  },
+  enableProgressBars: {
+    description: `If true, the CLI is allowed to show a progress bar for long-running events`,
+    type: SettingsType.BOOLEAN,
+    default: !isCI && process.stdout.isTTY,
+    defaultText: `<dynamic>`,
   },
   enableTimers: {
     description: `If true, the CLI is allowed to print the time spent executing commands`,
@@ -221,6 +220,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `If true, the CLI will automatically use the interactive mode when called from a TTY`,
     type: SettingsType.BOOLEAN,
     default: false,
+  },
+  progressBarStyle: {
+    description: `Which style of progress bar should be used (only when progress bars are enabled)`,
+    type: SettingsType.STRING,
+    default: undefined,
+    defaultText: `<dynamic>`,
   },
 
   // Settings related to how packages are interpreted by default
@@ -236,6 +241,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
 
   // Settings related to network access
+  enableMirror: {
+    description: `If true, the downloaded packages will be retrieved and stored in both the local and global folders`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
   enableNetwork: {
     description: `If false, the package manager will refuse to use the network if required to`,
     type: SettingsType.BOOLEAN,
@@ -273,6 +283,16 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `Enumeration defining what to do when a checksum doesn't match expectations`,
     type: SettingsType.STRING,
     default: `throw`,
+  },
+
+  // Package patching - to fix incorrect definitions
+  packageExtensions: {
+    description: `Map of package corrections to apply on the dependency tree`,
+    type: SettingsType.MAP,
+    valueDefinition: {
+      description: ``,
+      type: SettingsType.ANY,
+    },
   },
 };
 
@@ -316,6 +336,8 @@ function parseValue(configuration: Configuration, path: string, value: unknown, 
 
 function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
   switch (definition.type) {
+    case SettingsType.ANY:
+      return value;
     case SettingsType.SHAPE:
       return parseShape(configuration, path, value, definition, folder);
     case SettingsType.MAP:
@@ -333,7 +355,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
 
   switch (definition.type) {
     case SettingsType.ABSOLUTE_PATH:
-      return ppath.resolve(folder, NodeFS.toPortablePath(value));
+      return ppath.resolve(folder, npath.toPortablePath(value));
     case SettingsType.LOCATOR_LOOSE:
       return structUtils.parseLocator(value, false);
     case SettingsType.LOCATOR:
@@ -377,7 +399,11 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
   for (const [propKey, propValue] of Object.entries(value)) {
     const subPath = `${path}['${propKey}']`;
 
-    result.set(propKey, parseValue(configuration, subPath, propValue, definition.valueDefinition, folder));
+    // @ts-ignore: SettingsDefinitionNoDefault has ... no default ... but
+    // that's fine because we're guaranteed it's not undefined.
+    const valueDefinition: SettingsDefinition = definition.valueDefinition;
+
+    result.set(propKey, parseValue(configuration, subPath, propValue, valueDefinition, folder));
   }
 
   return result;
@@ -392,9 +418,12 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
         result.set(propKey, getDefaultValue(configuration, propDefinition));
 
       return result;
-    }
-    case SettingsType.MAP:
+    } break;
+
+    case SettingsType.MAP: {
       return new Map<string, any>();
+    } break;
+
     case SettingsType.ABSOLUTE_PATH: {
       if (definition.default === null)
         return null;
@@ -412,9 +441,11 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
           return ppath.resolve(configuration.projectCwd, definition.default);
         }
       }
-    }
-    default:
+    } break;
+
+    default: {
       return definition.default;
+    } break;
   }
 }
 
@@ -445,6 +476,12 @@ function getRcFilename() {
   return DEFAULT_RC_FILENAME;
 }
 
+export enum ProjectLookup {
+  LOCKFILE,
+  MANIFEST,
+  NONE,
+};
+
 export class Configuration {
   public startingCwd: PortablePath;
   public projectCwd: PortablePath | null;
@@ -456,6 +493,11 @@ export class Configuration {
   public sources: Map<string, string> = new Map();
 
   public invalid: Map<string, string> = new Map();
+
+  private packageExtensions: Map<IdentHash, Array<{
+    range: string,
+    patch: (pkg: Package) => void,
+  }>> = new Map();
 
   /**
    * Instantiate a new configuration object exposing the configuration obtained
@@ -484,16 +526,18 @@ export class Configuration {
    * way around).
    */
 
-  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {strict = true, useRc = true}: {strict?: boolean, useRc?: boolean} = {}) {
+  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {lookup = ProjectLookup.LOCKFILE, strict = true, useRc = true}: {lookup?: ProjectLookup, strict?: boolean, useRc?: boolean} = {}) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
     const rcFiles = await Configuration.findRcFiles(startingCwd);
     const plugins = new Map();
 
+    const interop = (obj: any) => obj.__esModule ? obj.default : obj;
+
     if (pluginConfiguration !== null) {
       for (const request of pluginConfiguration.plugins.keys())
-        plugins.set(request, pluginConfiguration.modules.get(request).default);
+        plugins.set(request, interop(pluginConfiguration.modules.get(request)));
 
       const requireEntries = new Map();
       for (const request of nodeUtils.builtinModules())
@@ -510,8 +554,8 @@ export class Configuration {
           continue;
 
         for (const userProvidedPath of data.plugins) {
-          const pluginPath = ppath.resolve(cwd, NodeFS.toPortablePath(userProvidedPath));
-          const {factory, name} = nodeUtils.dynamicRequire(NodeFS.fromPortablePath(pluginPath));
+          const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
+          const {factory, name} = nodeUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
 
           // Prevent plugin redefinition so that the ones declared deeper in the
           // filesystem always have precedence over the ones below.
@@ -556,7 +600,24 @@ export class Configuration {
       }
     }
 
-    const projectCwd = await Configuration.findProjectCwd(startingCwd, lockfileFilename);
+    let projectCwd: PortablePath | null;
+    switch (lookup) {
+      case ProjectLookup.LOCKFILE: {
+        projectCwd = await Configuration.findProjectCwd(startingCwd, lockfileFilename);
+      } break;
+
+      case ProjectLookup.MANIFEST: {
+        projectCwd = await Configuration.findProjectCwd(startingCwd, null);
+      } break;
+
+      case ProjectLookup.NONE: {
+        if (xfs.existsSync(ppath.join(startingCwd, `package.json` as Filename))) {
+          projectCwd = ppath.resolve(startingCwd);
+        } else {
+          projectCwd = null;
+        }
+      } break;
+    }
 
     const configuration = new Configuration(startingCwd, projectCwd, plugins);
     configuration.useWithSource(`<environment>`, environmentSettings, startingCwd, {strict});
@@ -628,7 +689,7 @@ export class Configuration {
     return null;
   }
 
-  static async findProjectCwd(startingCwd: PortablePath, lockfileFilename: Filename) {
+  static async findProjectCwd(startingCwd: PortablePath, lockfileFilename: Filename | null) {
     let projectCwd = null;
 
     let nextCwd = startingCwd;
@@ -640,7 +701,11 @@ export class Configuration {
       if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`))))
         projectCwd = currentCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, lockfileFilename)))
+      const topLevelFound = lockfileFilename !== null
+        ? xfs.existsSync(ppath.join(currentCwd, lockfileFilename))
+        : projectCwd !== null;
+
+      if (topLevelFound)
         break;
 
       nextCwd = ppath.dirname(currentCwd);
@@ -698,8 +763,6 @@ export class Configuration {
       for (const [name, definition] of Object.entries(definitions)) {
         if (this.settings.has(name))
           throw new Error(`Cannot redefine settings "${name}"`);
-        else if (name in this)
-          throw new Error(`Settings named "${name}" conflicts with an actual property`);
 
         this.settings.set(name, definition);
         this.values.set(name, getDefaultValue(this, definition));
@@ -713,25 +776,6 @@ export class Configuration {
         importSettings(plugin.configuration);
       }
     }
-  }
-
-  extend(data: {[key: string]: unknown}) {
-    const newConfiguration = Object.create(Configuration.prototype);
-
-    newConfiguration.startingCwd = this.startingCwd;
-    newConfiguration.projectCwd = this.projectCwd;
-
-    newConfiguration.plugins = new Map(this.plugins);
-
-    newConfiguration.settings = new Map(this.settings);
-    newConfiguration.values = new Map(this.values);
-    newConfiguration.sources = new Map(this.sources);
-
-    newConfiguration.invalid = new Map(this.invalid);
-
-    newConfiguration.useWithSource(`<internal override>`, data, this.startingCwd, {override: true});
-
-    return newConfiguration;
   }
 
   useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
@@ -760,7 +804,7 @@ export class Configuration {
       const definition = this.settings.get(key);
       if (!definition) {
         if (strict) {
-          throw new UsageError(`${LEGACY_NAMES.has(key) ? `Legacy` : `Unrecognized`} configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
+          throw new UsageError(`Unrecognized or legacy configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
         } else {
           this.invalid.set(key, source);
           continue;
@@ -772,14 +816,48 @@ export class Configuration {
 
       this.values.set(key, parseValue(this, key, data[key], definition, folder));
       this.sources.set(key, source);
+
+      if (key === `packageExtensions`) {
+        this.refreshPackageExtensions();
+      }
     }
   }
 
-  get(key: string) {
+  get<T = any>(key: string) {
     if (!this.values.has(key))
       throw new Error(`Invalid configuration key "${key}"`);
 
-    return this.values.get(key);
+    return this.values.get(key) as T;
+  }
+
+  getSubprocessStreams(prefix: string, {header, report}: {header?: string, report: Report}) {
+    let stdout: Writable;
+    let stderr: Writable;
+
+    const logFile = npath.toPortablePath(tmpNameSync({prefix: `logfile-`, postfix: `.log`}));
+    const logStream = xfs.createWriteStream(logFile);
+
+    if (this.get(`enableInlineBuilds`)) {
+      const stdoutLineReporter = report.createStreamReporter(`${prefix} ${this.format(`STDOUT`, `green`)}`);
+      const stderrLineReporter = report.createStreamReporter(`${prefix} ${this.format(`STDERR`, `red`)}`);
+
+      stdout = new PassThrough();
+      stdout.pipe(stdoutLineReporter);
+      stdout.pipe(logStream);
+
+      stderr = new PassThrough();
+      stderr.pipe(stderrLineReporter);
+      stderr.pipe(logStream);
+    } else {
+      stdout = logStream;
+      stderr = logStream;
+
+      if (typeof header !== `undefined`) {
+        stdout.write(`${header}\n`);
+      }
+    }
+
+    return {logFile, stdout, stderr};
   }
 
   makeResolver() {
@@ -792,8 +870,7 @@ export class Configuration {
     return new MultiResolver([
       new VirtualResolver(),
       new WorkspaceResolver(),
-      new SemverResolver(),
-      new TagResolver(),
+      new ProtocolResolver(),
 
       ...pluginResolvers,
     ]);
@@ -822,6 +899,69 @@ export class Configuration {
         linkers.push(new linker());
 
     return linkers;
+  }
+
+  refreshPackageExtensions() {
+    this.packageExtensions = new Map();
+
+    for (const [descriptorString, extensionData] of this.get<Map<string, any>>(`packageExtensions`)) {
+      const descriptor = structUtils.parseDescriptor(descriptorString, true);
+      if (!semver.validRange(descriptor.range))
+        throw new Error(`Only semver ranges are allowed as keys for the lockfileExtensions setting`);
+
+      const extension = new Manifest();
+      extension.load(extensionData);
+
+      miscUtils.getArrayWithDefault(this.packageExtensions, descriptor.identHash).push({
+        range: descriptor.range,
+        patch: pkg => {
+          pkg.dependencies = new Map([...pkg.dependencies, ...extension.dependencies]);
+          pkg.peerDependencies = new Map([...pkg.peerDependencies, ...extension.peerDependencies]);
+          pkg.dependenciesMeta = new Map([...pkg.dependenciesMeta, ...extension.dependenciesMeta]);
+          pkg.peerDependenciesMeta = new Map([...pkg.peerDependenciesMeta, ...extension.peerDependenciesMeta]);
+        },
+      });
+    }
+  }
+
+  normalizeDescriptor(original: Descriptor) {
+    const defaultProtocol = this.get<string>(`defaultProtocol`);
+
+    if (semver.validRange(original.range) || TAG_REGEXP.test(original.range)) {
+      return structUtils.makeDescriptor(original, `${defaultProtocol}${original.range}`);
+    } else {
+      return original;
+    }
+  }
+
+  normalizePackage(original: Package) {
+    const pkg = structUtils.copyPackage(original);
+
+    // We use the extensions to define additional dependencies that weren't
+    // properly listed in the original package definition
+
+    const extensionList = this.packageExtensions.get(original.identHash);
+    if (typeof extensionList !== `undefined`) {
+      const version = original.version;
+
+      if (version !== null) {
+        const extensionEntry = extensionList.find(({range}) => {
+          return semver.satisfies(version, range);
+        });
+
+        if (typeof extensionEntry !== `undefined`) {
+          extensionEntry.patch(pkg);
+        }
+      }
+    }
+
+    // We sort the dependencies so that further iterations always occur in the
+    // same order, regardless how the various registries formatted their output
+
+    pkg.dependencies = new Map(miscUtils.sortMap(pkg.dependencies, ([, descriptor]) => descriptor.name));
+    pkg.peerDependencies = new Map(miscUtils.sortMap(pkg.peerDependencies, ([, descriptor]) => descriptor.name));
+
+    return pkg;
   }
 
   async triggerHook<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, ...args: U): Promise<void> {
@@ -862,15 +1002,18 @@ export class Configuration {
     return value;
   }
 
-  format(text: string, color: string) {
-    if (this.get(`enableColors`)) {
-      if (color.charAt(0) === `#`) {
-        return ctx.hex(color)(text);
-      } else {
-        return ctx[color](text);
-      }
-    } else {
+  format(text: string, colorRequest: FormatType | string) {
+    if (!this.get(`enableColors`))
       return text;
-    }
+
+    let color = formatColors.get(colorRequest as FormatType);
+    if (typeof color === `undefined`)
+      color = colorRequest;
+
+    const fn = color.startsWith(`#`)
+      ? ctx.hex(color)
+      : ctx[color];
+
+    return fn(text);
   }
 }

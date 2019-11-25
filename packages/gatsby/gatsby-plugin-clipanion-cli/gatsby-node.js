@@ -20,7 +20,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
 
     if (command.description) {
       sections.push([
-        `${command.description[0].toUpperCase()}${command.description.slice(1, -1)}.\n`
+        `${command.description[0].toUpperCase()}${command.description.slice(1, -1)}.\n`,
       ].join(``));
     }
 
@@ -44,7 +44,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       sections.push([
         `## Examples\n`,
         `\n`,
-        ... command.examples.map(([description, example]) => [
+        ...command.examples.map(([description, example]) => [
           `${description}:\n`,
           `\`\`\`\n`,
           `${example}\n`,
@@ -57,7 +57,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
     const contentDigest = createContentDigest(content);
 
     createNode({
-      ... commands[t],
+      ...commands[t],
       id: createNodeId(t),
       parent: null,
       children: [],

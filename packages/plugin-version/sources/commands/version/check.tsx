@@ -1,10 +1,10 @@
-import {WorkspaceRequiredError}                                                                                                      from '@yarnpkg/cli';
-import {CommandContext, Configuration, MessageName, Project, StreamReport, Workspace, execUtils, structUtils, Manifest, LocatorHash} from '@yarnpkg/core';
-import {Filename, PortablePath, fromPortablePath, ppath, toPortablePath, xfs}                                                        from '@yarnpkg/fslib';
-import {Command, UsageError}                                                                                                         from 'clipanion';
-import {AppContext, Box, Color, StdinContext, render}                                                                                from 'ink';
-import React, {useCallback, useContext, useEffect, useState}                                                                         from 'react';
-import semver                                                                                                                        from 'semver';
+import {WorkspaceRequiredError}                                                                                                                   from '@yarnpkg/cli';
+import {CommandContext, Configuration, MessageName, Project, StreamReport, Workspace, execUtils, structUtils, Manifest, LocatorHash, ThrowReport} from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, xfs}                                                                                                from '@yarnpkg/fslib';
+import {Command, UsageError}                                                                                                                      from 'clipanion';
+import {AppContext, Box, Color, StdinContext, render}                                                                                             from 'ink';
+import React, {useCallback, useContext, useEffect, useRef, useState}                                                                              from 'react';
+import semver                                                                                                                                     from 'semver';
 
 type Decision = 'undecided' | 'decline' | 'major' | 'minor' | 'patch' | 'prerelease';
 type Decisions = Map<Workspace, Decision>;
@@ -48,6 +48,11 @@ export default class VersionApplyCommand extends Command<CommandContext> {
 
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
+
+    await project.resolveEverything({
+      lockfileOnly: true,
+      report: new ThrowReport(),
+    });
 
     const root = await fetchRoot(this.context.cwd);
     const base = await fetchBase(root);
@@ -176,10 +181,14 @@ export default class VersionApplyCommand extends Command<CommandContext> {
       return {
         undecidedWorkspaces: status.undecided,
         undecidedDependents: undecidedDependentsNoDuplicates,
-        allUndecided: [
-          ...status.undecided,
-          ...undecidedDependentsNoDuplicates,
-        ],
+        fullListing: new Map([
+          ...status.undecided.map(workspace => {
+            return [`undecidedWorkspace:${workspace.anchoredLocator.locatorHash}`, workspace] as [string, Workspace];
+          }),
+          ...undecidedDependentsNoDuplicates.map(workspace => {
+            return [`undecidedDependent:${workspace.anchoredLocator.locatorHash}`, workspace] as [string, Workspace];
+          }),
+        ]),
       };
     };
 
@@ -194,14 +203,23 @@ export default class VersionApplyCommand extends Command<CommandContext> {
       const [decisions, setDecision] = useDecisions();
       useSubmit(decisions);
 
-      const {undecidedWorkspaces, undecidedDependents, allUndecided} = applyDecisions(status, decisions);
+      const {
+        undecidedWorkspaces,
+        undecidedDependents,
+        fullListing,
+      } = applyDecisions(status, decisions);
 
-      const [active, setActive] = useState<Workspace>(allUndecided[0]);
-      useListInput(active, allUndecided, {
+      const keys = [...fullListing.keys()];
+      const initialKey = keys[0];
+
+      const [activeKey, setActiveKey] = useState(initialKey);
+      const activeWorkspace = fullListing.get(activeKey);
+
+      useListInput(activeKey, keys, {
         active: true,
         minus: `up`,
         plus: `down`,
-        set: setActive,
+        set: setActiveKey,
       });
 
       return <Box width={80} flexDirection={`column`}>
@@ -219,7 +237,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
           </Box>
           <Box marginTop={1} flexDirection={`column`}>
             {undecidedWorkspaces.map(workspace => {
-              return <Undecided key={workspace.cwd} workspace={workspace} active={active === workspace} decision={decisions.get(workspace) || `undecided`} setDecision={decision => setDecision(workspace, decision)} />;
+              return <Undecided key={workspace.cwd} workspace={workspace} active={workspace === activeWorkspace} decision={decisions.get(workspace) || `undecided`} setDecision={decision => setDecision(workspace, decision)} />;
             })}
           </Box>
         </>}
@@ -229,7 +247,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
           </Box>
           <Box marginTop={1} flexDirection={`column`}>
             {undecidedDependents.map(workspace => {
-              return <Undecided key={workspace.cwd} workspace={workspace} active={active === workspace} decision={decisions.get(workspace) || `undecided`} setDecision={decision => setDecision(workspace, decision)} />;
+              return <Undecided key={workspace.cwd} workspace={workspace} active={workspace === activeWorkspace} decision={decisions.get(workspace) || `undecided`} setDecision={decision => setDecision(workspace, decision)} />;
             })}
           </Box>
         </>}
@@ -281,6 +299,11 @@ export default class VersionApplyCommand extends Command<CommandContext> {
 
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
+
+    await project.resolveEverything({
+      lockfileOnly: true,
+      report: new ThrowReport(),
+    });
 
     const report = await StreamReport.start({
       configuration,
@@ -472,20 +495,17 @@ async function fetchRoot(initialCwd: PortablePath) {
 }
 
 async function fetchChangedFiles(root: PortablePath, {base}: {base: string}) {
-  const {stdout: branchStdout} = await execUtils.execvp(`git`, [`log`, `--format=`, `--name-only`, `${base}..HEAD`], {cwd: root, strict: true});
-  const branchFiles = branchStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
-
-  const {stdout: localStdout} = await execUtils.execvp(`git`, [`diff`, `HEAD`, `--name-only`], {cwd: root, strict: true});
-  const localFiles = localStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
+  const {stdout: localStdout} = await execUtils.execvp(`git`, [`diff`, `--name-only`, `${base}`], {cwd: root, strict: true});
+  const trackedFiles = localStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
 
   const {stdout: untrackedStdout} = await execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {cwd: root, strict: true});
-  const untrackedFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, toPortablePath(file)));
+  const untrackedFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
 
-  return [...new Set([...branchFiles, ...localFiles, ...untrackedFiles].sort())];
+  return [...new Set([...trackedFiles, ...untrackedFiles].sort())];
 }
 
 async function fetchPreviousNonce(workspace: Workspace, {root, base}: {root: PortablePath, base: string}) {
-  const {code, stdout} = await execUtils.execvp(`git`, [`show`, `${base}:${fromPortablePath(ppath.relative(root, ppath.join(workspace.cwd, `package.json` as Filename)))}`], {cwd: workspace.cwd});
+  const {code, stdout} = await execUtils.execvp(`git`, [`show`, `${base}:${npath.fromPortablePath(ppath.relative(root, ppath.join(workspace.cwd, `package.json` as Filename)))}`], {cwd: workspace.cwd});
 
   if (code === 0) {
     return getNonce(Manifest.fromText(stdout));
