@@ -15,7 +15,7 @@ global.YARN_VERSION = require(`@yarnpkg/cli/package.json`).version;
 const PLUGIN_CONFIG_MODULE = `./tools/getPluginConfiguration.ts`;
 require.cache[require.resolve(PLUGIN_CONFIG_MODULE)] = {exports: {getPluginConfiguration}};
 
-const minimatch = require('minimatch');
+const micromatch = require('micromatch');
 
 module.exports = require(`./cli`);
 
@@ -25,7 +25,7 @@ function getPluginConfiguration() {
   const pluginFolders = folders.filter(folder => {
     if (!folder.startsWith('plugin-'))
       return false;
-    if (process.env.BLACKLIST && minimatch.match([folder, folder.replace('plugin-', '')], process.env.BLACKLIST).length > 0) {
+    if (process.env.BLACKLIST && micromatch.match([folder, folder.replace('plugin-', '')], process.env.BLACKLIST).length > 0) {
       console.warn(`Disabled blacklisted plugin ${folder}`);
       return false;
     }

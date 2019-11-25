@@ -3652,6 +3652,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/micromatch@npm:3.1.1":
+  version: 3.1.1
+  resolution: "@types/micromatch@npm:3.1.1"
+  dependencies:
+    "@types/braces": "npm:*"
+  checksum: f5c7ff4a940d2d2667983a5f4c8d0a87fce347b2438c5cb76ad7f83e8ccdd2612422b925bd68791f1d57ff1dcc6036baf6f91d29660f9dc3c568f2caf43b09ee
+  languageName: node
+  linkType: hard
+
 "@types/micromatch@npm:^3.1.0":
   version: 3.1.0
   resolution: "@types/micromatch@npm:3.1.0"
@@ -4666,6 +4675,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
+    "@types/micromatch": "npm:3.1.1"
     "@types/promise.prototype.finally": "npm:^2.0.3"
     "@yarnpkg/builder": "workspace:2.0.0-rc.12"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
@@ -4690,7 +4700,7 @@ __metadata:
     "@yarnpkg/shell": "workspace:2.0.0-rc.4"
     chalk: "npm:^2.4.1"
     clipanion: "npm:^2.1.4"
-    minimatch: "npm:^3.0.4"
+    micromatch: "npm:^4.0.2"
     promise.prototype.finally: "npm:^3.1.1"
     semver: "npm:^5.6.0"
     tmp: "npm:^0.1.0"
