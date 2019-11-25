@@ -26,6 +26,7 @@ import {Workspace}                                   from './Workspace';
 import {isFolderInside}                              from './folderUtils';
 import * as miscUtils                                from './miscUtils';
 import * as scriptUtils                              from './scriptUtils';
+import * as semverUtils                              from './semverUtils';
 import * as structUtils                              from './structUtils';
 import {IdentHash, DescriptorHash, LocatorHash}      from './types';
 import {Descriptor, Ident, Locator, Package}         from './types';
@@ -1372,6 +1373,18 @@ function applyVirtualResolutionMutations({
     throw new ReportError(MessageName.STACK_OVERFLOW_RESOLUTION, `Encountered a stack overflow when resolving peer dependencies; cf ${logFile}`);
   };
 
+  const getPackageFromDescriptor = (descriptor: Descriptor): Package => {
+    const resolution = allResolutions.get(descriptor.descriptorHash);
+    if (typeof resolution === `undefined`)
+      throw new Error(`Assertion failed: The resolution should have been registered`);
+
+    const pkg = allPackages.get(resolution);
+    if (!pkg)
+      throw new Error(`Assertion failed: The package could not be found`);
+
+    return pkg;
+  };
+
   const resolvePeerDependencies = (parentLocator: Locator, first: boolean, optional: boolean) => {
     resolutionStack.push(parentLocator);
     const result = resolvePeerDependenciesImpl(parentLocator, first, optional);
@@ -1519,6 +1532,13 @@ function applyVirtualResolutionMutations({
 
           if (peerDescriptor.range === `missing:`) {
             missingPeerDependencies.add(peerDescriptor.identHash);
+          } else if (report !== null) {
+            // When the parent provides the peer dependency request it must be checked to ensure
+            // it is a compatible version.
+            const peerPackage = getPackageFromDescriptor(peerDescriptor);
+            if (!semverUtils.satisfiesWithPrereleases(peerPackage.version, peerRequest.range)) {
+              report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} provides ${structUtils.prettyLocator(project.configuration, peerPackage)} with version ${peerPackage.version} which does not satisfy the range ${structUtils.prettyDescriptor(project.configuration, peerRequest)} requested by ${structUtils.prettyLocator(project.configuration, pkg)}`);
+            }
           }
         }
 
@@ -1563,18 +1583,6 @@ function applyVirtualResolutionMutations({
       throw error;
     }
   }
-
-  const getPackageFromDescriptor = (descriptor: Descriptor): Package => {
-    const resolution = allResolutions.get(descriptor.descriptorHash);
-    if (typeof resolution === `undefined`)
-      throw new Error(`Assertion failed: The resolution should have been registered`);
-
-    const pkg = allPackages.get(resolution);
-    if (!pkg)
-      throw new Error(`Assertion failed: The package could not be found`);
-
-    return pkg;
-  };
 
   // A package may have a peer dependency while being included as a standard dependency
   // in other packages. When this occurs, it leads to multiple virtual packages
