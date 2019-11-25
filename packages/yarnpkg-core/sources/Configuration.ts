@@ -4,16 +4,17 @@ import camelcase                                               from 'camelcase';
 import chalk                                                   from 'chalk';
 import {UsageError}                                            from 'clipanion';
 import isCI                                                    from 'is-ci';
+import semver                                                  from 'semver';
 import {PassThrough, Writable}                                 from 'stream';
 import supportsColor                                           from 'supports-color';
 import {tmpNameSync}                                           from 'tmp';
 
+import {Manifest}                                              from './Manifest';
 import {MultiFetcher}                                          from './MultiFetcher';
 import {MultiResolver}                                         from './MultiResolver';
 import {Plugin, Hooks}                                         from './Plugin';
+import {ProtocolResolver}                                      from './ProtocolResolver';
 import {Report}                                                from './Report';
-import {SemverResolver}                                        from './SemverResolver';
-import {TagResolver}                                           from './TagResolver';
 import {VirtualFetcher}                                        from './VirtualFetcher';
 import {VirtualResolver}                                       from './VirtualResolver';
 import {WorkspaceFetcher}                                      from './WorkspaceFetcher';
@@ -22,9 +23,12 @@ import * as folderUtils                                        from './folderUti
 import * as miscUtils                                          from './miscUtils';
 import * as nodeUtils                                          from './nodeUtils';
 import * as structUtils                                        from './structUtils';
+import {IdentHash, Package, Descriptor}                        from './types';
 
 // @ts-ignore
 const ctx: any = new chalk.constructor({enabled: true});
+
+const TAG_REGEXP = /^[a-z]+$/;
 
 const IGNORED_ENV_VARIABLES = new Set([
   // "binFolder" is the magic location where the parent process stored the
@@ -45,6 +49,7 @@ export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc.yml`);
 export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
 
 export enum SettingsType {
+  ANY = 'ANY',
   BOOLEAN = 'BOOLEAN',
   ABSOLUTE_PATH = 'ABSOLUTE_PATH',
   LOCATOR = 'LOCATOR',
@@ -84,7 +89,7 @@ export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE>
 };
 
 export type MapSettingsDefinition = BaseSettingsDefinition<SettingsType.MAP> & {
-  valueDefinition: SettingsDefinition,
+  valueDefinition: SettingsDefinitionNoDefault,
 };
 
 export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.SHAPE | SettingsType.MAP>> & {
@@ -93,7 +98,15 @@ export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsTy
   isNullable?: boolean,
 };
 
-export type SettingsDefinition = MapSettingsDefinition|ShapeSettingsDefinition|SimpleSettingsDefinition;
+export type SettingsDefinitionNoDefault =
+  | MapSettingsDefinition
+  | ShapeSettingsDefinition
+  | Omit<SimpleSettingsDefinition, 'default'>;
+
+export type SettingsDefinition =
+  | MapSettingsDefinition
+  | ShapeSettingsDefinition
+  | SimpleSettingsDefinition;
 
 export type PluginConfiguration = {
   modules: Map<string, any>,
@@ -271,6 +284,16 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.STRING,
     default: `throw`,
   },
+
+  // Package patching - to fix incorrect definitions
+  packageExtensions: {
+    description: `Map of package corrections to apply on the dependency tree`,
+    type: SettingsType.MAP,
+    valueDefinition: {
+      description: ``,
+      type: SettingsType.ANY,
+    },
+  },
 };
 
 function parseBoolean(value: unknown) {
@@ -313,6 +336,8 @@ function parseValue(configuration: Configuration, path: string, value: unknown, 
 
 function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
   switch (definition.type) {
+    case SettingsType.ANY:
+      return value;
     case SettingsType.SHAPE:
       return parseShape(configuration, path, value, definition, folder);
     case SettingsType.MAP:
@@ -374,7 +399,11 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
   for (const [propKey, propValue] of Object.entries(value)) {
     const subPath = `${path}['${propKey}']`;
 
-    result.set(propKey, parseValue(configuration, subPath, propValue, definition.valueDefinition, folder));
+    // @ts-ignore: SettingsDefinitionNoDefault has ... no default ... but
+    // that's fine because we're guaranteed it's not undefined.
+    const valueDefinition: SettingsDefinition = definition.valueDefinition;
+
+    result.set(propKey, parseValue(configuration, subPath, propValue, valueDefinition, folder));
   }
 
   return result;
@@ -464,6 +493,11 @@ export class Configuration {
   public sources: Map<string, string> = new Map();
 
   public invalid: Map<string, string> = new Map();
+
+  private packageExtensions: Map<IdentHash, Array<{
+    range: string,
+    patch: (pkg: Package) => void,
+  }>> = new Map();
 
   /**
    * Instantiate a new configuration object exposing the configuration obtained
@@ -729,8 +763,6 @@ export class Configuration {
       for (const [name, definition] of Object.entries(definitions)) {
         if (this.settings.has(name))
           throw new Error(`Cannot redefine settings "${name}"`);
-        else if (name in this)
-          throw new Error(`Settings named "${name}" conflicts with an actual property`);
 
         this.settings.set(name, definition);
         this.values.set(name, getDefaultValue(this, definition));
@@ -784,6 +816,10 @@ export class Configuration {
 
       this.values.set(key, parseValue(this, key, data[key], definition, folder));
       this.sources.set(key, source);
+
+      if (key === `packageExtensions`) {
+        this.refreshPackageExtensions();
+      }
     }
   }
 
@@ -834,8 +870,7 @@ export class Configuration {
     return new MultiResolver([
       new VirtualResolver(),
       new WorkspaceResolver(),
-      new SemverResolver(),
-      new TagResolver(),
+      new ProtocolResolver(),
 
       ...pluginResolvers,
     ]);
@@ -864,6 +899,69 @@ export class Configuration {
         linkers.push(new linker());
 
     return linkers;
+  }
+
+  refreshPackageExtensions() {
+    this.packageExtensions = new Map();
+
+    for (const [descriptorString, extensionData] of this.get<Map<string, any>>(`packageExtensions`)) {
+      const descriptor = structUtils.parseDescriptor(descriptorString, true);
+      if (!semver.validRange(descriptor.range))
+        throw new Error(`Only semver ranges are allowed as keys for the lockfileExtensions setting`);
+
+      const extension = new Manifest();
+      extension.load(extensionData);
+
+      miscUtils.getArrayWithDefault(this.packageExtensions, descriptor.identHash).push({
+        range: descriptor.range,
+        patch: pkg => {
+          pkg.dependencies = new Map([...pkg.dependencies, ...extension.dependencies]);
+          pkg.peerDependencies = new Map([...pkg.peerDependencies, ...extension.peerDependencies]);
+          pkg.dependenciesMeta = new Map([...pkg.dependenciesMeta, ...extension.dependenciesMeta]);
+          pkg.peerDependenciesMeta = new Map([...pkg.peerDependenciesMeta, ...extension.peerDependenciesMeta]);
+        },
+      });
+    }
+  }
+
+  normalizeDescriptor(original: Descriptor) {
+    const defaultProtocol = this.get<string>(`defaultProtocol`);
+
+    if (semver.validRange(original.range) || TAG_REGEXP.test(original.range)) {
+      return structUtils.makeDescriptor(original, `${defaultProtocol}${original.range}`);
+    } else {
+      return original;
+    }
+  }
+
+  normalizePackage(original: Package) {
+    const pkg = structUtils.copyPackage(original);
+
+    // We use the extensions to define additional dependencies that weren't
+    // properly listed in the original package definition
+
+    const extensionList = this.packageExtensions.get(original.identHash);
+    if (typeof extensionList !== `undefined`) {
+      const version = original.version;
+
+      if (version !== null) {
+        const extensionEntry = extensionList.find(({range}) => {
+          return semver.satisfies(version, range);
+        });
+
+        if (typeof extensionEntry !== `undefined`) {
+          extensionEntry.patch(pkg);
+        }
+      }
+    }
+
+    // We sort the dependencies so that further iterations always occur in the
+    // same order, regardless how the various registries formatted their output
+
+    pkg.dependencies = new Map(miscUtils.sortMap(pkg.dependencies, ([, descriptor]) => descriptor.name));
+    pkg.peerDependencies = new Map(miscUtils.sortMap(pkg.peerDependencies, ([, descriptor]) => descriptor.name));
+
+    return pkg;
   }
 
   async triggerHook<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, ...args: U): Promise<void> {

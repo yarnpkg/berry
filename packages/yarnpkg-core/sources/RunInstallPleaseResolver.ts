@@ -1,7 +1,6 @@
 import {MessageName}                                     from './MessageName';
 import {ReportError}                                     from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import * as structUtils                                  from './structUtils';
 import {Descriptor, Locator}                             from './types';
 
 export class RunInstallPleaseResolver implements Resolver {
@@ -19,12 +18,12 @@ export class RunInstallPleaseResolver implements Resolver {
     return this.resolver.supportsLocator(locator, opts);
   }
 
-  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions): never {
-    throw new Error(`Unreachable`);
+  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {
+    return this.resolver.shouldPersistResolution(locator, opts);
   }
 
-  bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions): never {
-    throw new ReportError(MessageName.MISSING_LOCKFILE_ENTRY, `A dependency (${structUtils.prettyDescriptor(opts.project.configuration, descriptor)}) cannot be retrieved from the lockfile; try to make an install to update your resolutions`);
+  bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
+    return this.resolver.bindDescriptor(descriptor, fromLocator, opts);
   }
 
   async getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<never> {
@@ -32,6 +31,6 @@ export class RunInstallPleaseResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<never> {
-    throw new Error(`Unreachable`);
+    throw new ReportError(MessageName.MISSING_LOCKFILE_ENTRY, `This package doesn't seem to be present in your lockfile; try to make an install to update your resolutions`);
   }
 }

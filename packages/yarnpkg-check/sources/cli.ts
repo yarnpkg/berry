@@ -7,7 +7,6 @@ import {Cli, Command}                                                           
 import globby                                                                                                                                                                from 'globby';
 import micromatch                                                                                                                                                            from 'micromatch';
 import module                                                                                                                                                                from 'module';
-import pLimit                                                                                                                                                                from 'p-limit';
 import * as ts                                                                                                                                                               from 'typescript';
 
 import * as ast                                                                                                                                                              from './ast';
@@ -104,6 +103,14 @@ function checkForUnsafeWebpackLoaderAccess(workspace: Workspace, initializerNode
   report.reportWarning(MessageName.UNNAMED, `${prettyLocation}: Webpack configs from non-private packages should avoid referencing loaders without require.resolve`);
 }
 
+function checkForNodeModuleStrings(stringishNode: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral | ts.TemplateExpression , {configuration, report}: {configuration: Configuration, report: Report}) {
+  const match = /node_modules/g.test(stringishNode.getText());
+  if (match) {
+    const prettyLocation = ast.prettyNodeLocation(configuration, stringishNode);
+    report.reportWarning(MessageName.UNNAMED, `${prettyLocation}: Strings should avoid referencing the node_modules directory (prefer require.resolve)`);
+  }
+}
+
 function processFile(workspace: Workspace, file: ts.SourceFile, {configuration, report}: {configuration: Configuration, report: Report}) {
   const importedModules = new Set<string>();
 
@@ -149,6 +156,23 @@ function processFile(workspace: Workspace, file: ts.SourceFile, {configuration, 
         if (name === `use` || name === `loader`) {
           checkForUnsafeWebpackLoaderAccess(workspace, property.initializer, {configuration, report});
         }
+      } break;
+
+      case ts.SyntaxKind.StringLiteral: {
+        const stringNode = node as ts.StringLiteral;
+        checkForNodeModuleStrings(stringNode, {configuration, report} );
+      } break;
+
+      case ts.SyntaxKind.NoSubstitutionTemplateLiteral: {
+        const stringNode = node as ts.NoSubstitutionTemplateLiteral;
+
+        checkForNodeModuleStrings(stringNode, {configuration, report} );
+      } break;
+
+      case ts.SyntaxKind.TemplateExpression: {
+        const stringNode = node as ts.TemplateExpression;
+
+        checkForNodeModuleStrings(stringNode, {configuration, report} );
       } break;
     }
 
@@ -338,32 +362,35 @@ class EntryCommand extends Command {
 
       try {
         for (const manifestFolder of allManifestFolders) {
+          const manifestPath = ppath.join(manifestFolder, Manifest.fileName);
+
           report.reportSeparator();
 
-          const workspace = await findWorkspace(manifestFolder);
-          if (!workspace)
-            return;
+          try {
+            await report.startTimerPromise(manifestPath, async () => {
+              const workspace = await findWorkspace(manifestFolder);
+              if (!workspace)
+                return;
 
-          const manifestPath = ppath.join(workspace.cwd, Manifest.fileName);
-          await report.startTimerPromise(manifestPath, async () => {
-            const patterns = [`**/*`];
-            const ignore = [];
+              const patterns = [`**/*`];
+              const ignore = [];
 
-            for (const otherManifestFolder of allManifestFolders) {
-              const sub = ppath.contains(manifestFolder, otherManifestFolder);
-              if (sub !== `.`) {
-                ignore.push(`${otherManifestFolder}/**`);
+              for (const otherManifestFolder of allManifestFolders) {
+                const sub = ppath.contains(manifestFolder, otherManifestFolder);
+                if (sub !== `.`) {
+                  ignore.push(`${otherManifestFolder}/**`);
+                }
               }
-            }
 
-            const fileList = micromatch(allFiles, patterns, {ignore}) as Array<PortablePath>;
+              const fileList = micromatch(allFiles, patterns, {ignore}) as Array<PortablePath>;
 
-            await processWorkspace(workspace, {
-              configuration,
-              fileList,
-              report,
+              await processWorkspace(workspace, {
+                configuration,
+                fileList,
+                report,
+              });
             });
-          });
+          } catch {}
 
           progress.tick();
         }

@@ -15,13 +15,30 @@ global.YARN_VERSION = require(`@yarnpkg/cli/package.json`).version;
 const PLUGIN_CONFIG_MODULE = `./tools/getPluginConfiguration.ts`;
 require.cache[require.resolve(PLUGIN_CONFIG_MODULE)] = {exports: {getPluginConfiguration}};
 
+const micromatch = require('micromatch');
+
 module.exports = require(`./cli`);
 
 function getPluginConfiguration() {
   const folders = fs.readdirSync(`${__dirname}/../../`);
 
   const pluginFolders = folders.filter(folder => {
-    return folder.startsWith(`plugin-`);
+    if (!folder.startsWith('plugin-'))
+      return false;
+    if (process.env.BLACKLIST && micromatch.match([folder, folder.replace('plugin-', '')], process.env.BLACKLIST).length > 0) {
+      console.warn(`Disabled blacklisted plugin ${folder}`);
+      return false;
+    }
+
+    let isRequirable;
+    try {
+      require(`${__dirname}/../../${folder}`);
+      isRequirable = true;
+    } catch (e) {
+      console.warn(`Disabled non-requirable plugin ${folder}`);
+      isRequirable = false;
+    }
+    return isRequirable;
   });
 
   // Note that we don't need to populate the `modules` field, because the
