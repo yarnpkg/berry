@@ -3,13 +3,20 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
+    "@yarnpkg/cli": "workspace:2.0.0-rc.18",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
-    "@yarnpkg/monorepo": "workspace:0.0.0"
+    "@yarnpkg/pnp": "workspace:2.0.0-rc.11",
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.11",
+    "clipanion": "^2.1.3"
+  },
+  "devDependencies": {
+    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.10"
   },
   "version": "2.0.0-rc.1",
   "nextVersion": {
-    "nonce": "3962840708862217"
+    "semver": "2.0.0-rc.5",
+    "nonce": "1989925236539513"
   },
   "repository": {
     "type": "git",
