@@ -3706,15 +3706,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/micromatch@npm:3.1.1":
-  version: 3.1.1
-  resolution: "@types/micromatch@npm:3.1.1"
-  dependencies:
-    "@types/braces": "npm:*"
-  checksum: f5c7ff4a940d2d2667983a5f4c8d0a87fce347b2438c5cb76ad7f83e8ccdd2612422b925bd68791f1d57ff1dcc6036baf6f91d29660f9dc3c568f2caf43b09ee
-  languageName: node
-  linkType: hard
-
 "@types/micromatch@npm:^3.1.0":
   version: 3.1.0
   resolution: "@types/micromatch@npm:3.1.0"
@@ -4710,7 +4701,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/check@workspace:packages/yarnpkg-check"
   dependencies:
-    "@types/micromatch": ^3.1.0
     "@yarnpkg/cli": "workspace:2.0.0-rc.18"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
@@ -4729,7 +4719,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
-    "@types/micromatch": 3.1.1
     "@types/promise.prototype.finally": ^2.0.3
     "@yarnpkg/builder": "workspace:2.0.0-rc.12"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
@@ -4772,7 +4761,6 @@ __metadata:
     "@types/cross-spawn": 6.0.0
     "@types/got": ^8.3.4
     "@types/is-ci": ^2.0.0
-    "@types/micromatch": ^3.1.0
     "@types/semver": ^6.0.2
     "@types/supports-color": ^5.3.0
     "@types/tar": ^4.0.0
@@ -5216,7 +5204,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pack@workspace:packages/plugin-pack"
   dependencies:
-    "@types/micromatch": ^3.1.0
     "@types/tar-stream": 1.6.0
     "@yarnpkg/cli": "workspace:2.0.0-rc.18"
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
