@@ -17,6 +17,7 @@
     "@yarnpkg/core": "^2.0.0-rc.13"
   },
   "devDependencies": {
+    "@types/node": "^12.12.8",
     "@types/yup": "0.26.12",
     "@yarnpkg/builder": "workspace:2.0.0-rc.12",
     "@yarnpkg/cli": "workspace:2.0.0-rc.18",

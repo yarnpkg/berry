@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@types/diff": "^4.0.2",
+    "@types/node": "^12.12.8",
     "@types/react": "^16.8.0",
     "@yarnpkg/builder": "workspace:2.0.0-rc.12",
     "@yarnpkg/cli": "workspace:2.0.0-rc.18",

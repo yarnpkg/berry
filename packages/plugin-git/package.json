@@ -17,6 +17,7 @@
     "@yarnpkg/core": "^2.0.0-rc.13"
   },
   "devDependencies": {
+    "@types/node": "^12.12.8",
     "@yarnpkg/core": "workspace:2.0.0-rc.14"
   },
   "repository": {

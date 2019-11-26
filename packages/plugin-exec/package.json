@@ -15,6 +15,7 @@
     "@yarnpkg/core": "^2.0.0-rc.13"
   },
   "devDependencies": {
+    "@types/node": "^12.12.8",
     "@types/tmp": "^0.0.33",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
     "typescript": "next"

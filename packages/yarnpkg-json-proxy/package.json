@@ -2,7 +2,7 @@
   "name": "@yarnpkg/json-proxy",
   "version": "2.0.0-rc.4",
   "nextVersion": {
-    "nonce": "4328590085497677"
+    "nonce": "3809192083668187"
   },
   "main": "./sources/index.ts",
   "dependencies": {
@@ -23,5 +23,8 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.8"
   }
 }

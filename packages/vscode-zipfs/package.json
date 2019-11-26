@@ -6,7 +6,7 @@
   "description": "Allows to easily inspect and modify files stored within zip archives.",
   "version": "0.1.1-1",
   "nextVersion": {
-    "nonce": "5353686916852975"
+    "nonce": "7345974210563369"
   },
   "engines": {
     "vscode": "^1.23.0"
@@ -66,6 +66,7 @@
     }
   },
   "devDependencies": {
+    "@types/node": "^12.12.8",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.11",
     "pnp-webpack-plugin": "^1.4.3",

@@ -2,13 +2,14 @@
   "name": "@yarnpkg/parsers",
   "version": "2.0.0-rc.6",
   "nextVersion": {
-    "nonce": "2098844667549255"
+    "nonce": "2898292918419691"
   },
   "main": "./sources/index.ts",
   "dependencies": {
     "js-yaml": "^3.10.0"
   },
   "devDependencies": {
+    "@types/node": "^12.12.8",
     "pegjs": "^0.10.0"
   },
   "scripts": {
