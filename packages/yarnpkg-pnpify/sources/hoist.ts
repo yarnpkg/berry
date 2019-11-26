@@ -28,8 +28,10 @@ export interface HoisterDependencies
 
 interface TrackedHoisterDependencies extends HoisterDependencies
 {
-  // The peer dependencies that have not been hoisted yet
-  nonHoistedPeerDeps: Set<HoisterPackageId>
+  // Original non-hoisted peer dependencies
+  origPeerDeps: Set<HoisterPackageId>
+  // Original non-hoisted dependencies
+  origDeps: Set<HoisterPackageId>
 }
 
 export interface ReadonlyHoisterDependencies
@@ -93,7 +95,7 @@ type AncestorMap = Array<Set<HoisterPackageId>>;
  */
 export const hoist = (tree: ReadonlyHoisterPackageTree, packageInfos: ReadonlyArray<HoisterPackageInfo>, nohoist: ReadonlySet<HoisterPackageId> = new Set()): HoistedTree => {
   // Make tree copy, which will be mutated by hoisting algorithm
-  const treeCopy: TrackedHoisterPackageTree = tree.map(({deps, peerDeps}) => ({deps: new Set(deps), peerDeps: new Set(peerDeps), nonHoistedPeerDeps: new Set(peerDeps)}));
+  const treeCopy: TrackedHoisterPackageTree = tree.map(({deps, peerDeps}) => ({deps: new Set(deps), peerDeps: new Set(peerDeps), origDeps: new Set(deps), origPeerDeps: new Set(peerDeps)}));
 
   const seenIds = new Set<HoisterPackageId>();
 
@@ -208,7 +210,7 @@ const hoistInplace = (tree: TrackedHoisterPackageTree, rootId: HoisterPackageId,
  *
  * @return map of package weights: package id -> total weight
  */
-const weighPackages = (weighCanidates: ReadonlySet<HoisterPackageId>, tree: ReadonlyHoisterPackageTree, packages: ReadonlyArray<HoisterPackageInfo>, ancestorMap: AncestorMap, nohoist: ReadonlySet<HoisterPackageId>): WeightMap => {
+const weighPackages = (weighCanidates: ReadonlySet<HoisterPackageId>, tree: TrackedHoisterPackageTree, packages: ReadonlyArray<HoisterPackageInfo>, ancestorMap: AncestorMap, nohoist: ReadonlySet<HoisterPackageId>): WeightMap => {
   const nodeWeights: WeightMap = new Map();
 
   const weighNode = (nodeId: HoisterPackageId): HoisterWeight => {
@@ -305,9 +307,9 @@ const computeHoistCandidates = (tree: TrackedHoisterPackageTree, rootId: Hoister
   const hoistCandidatesWithPeerDeps = new Set<HoisterPackageId>();
 
   const seenDepNames = new Map<HoisterPackageName, HoisterPackageId>();
-  for (const depId of tree[rootId].deps)
+  for (const depId of tree[rootId].origDeps)
     seenDepNames.set(packages[depId].name, depId);
-  for (const depId of tree[rootId].peerDeps)
+  for (const depId of tree[rootId].origPeerDeps)
     seenDepNames.set(packages[depId].name, depId);
 
   const seenIds = new Set<HoisterPackageId>();
@@ -321,8 +323,8 @@ const computeHoistCandidates = (tree: TrackedHoisterPackageTree, rootId: Hoister
     const pkg = tree[nodeId];
 
     // Check rule 1
-    if (!tree[rootId].peerDeps.has(nodeId) && (!seenPkgId || seenPkgId === nodeId)) {
-      if (pkg.nonHoistedPeerDeps.size > 0) {
+    if (!tree[rootId].origPeerDeps.has(nodeId) && (!seenPkgId || seenPkgId === nodeId)) {
+      if (pkg.peerDeps.size > 0) {
         hoistCandidatesWithPeerDeps.add(nodeId);
       } else {
         const pkgId = packagesToHoistNames.get(name);
@@ -367,7 +369,7 @@ const computeHoistCandidates = (tree: TrackedHoisterPackageTree, rootId: Hoister
 
     for (const peerDepCandId of hoistCandidatesWithPeerDeps) {
       // Peer dependencies that are going to be hoisted to the top, or were hoisted above the top
-      const nonHoistedPeerDeps = tree[peerDepCandId].nonHoistedPeerDeps;
+      const nonHoistedPeerDeps = tree[peerDepCandId].peerDeps;
 
       /* eslint-disable arca/curly */
       if (nonHoistedPeerDeps.size < newHoistCandidates.size) {
