@@ -1597,9 +1597,13 @@ function applyVirtualResolutionMutations({
   while (consolidatedVirtualPackages) {
     consolidatedVirtualPackages = false;
 
-    for (const virtualDescriptors of allVirtualizedDescriptorsByPhysicalLocator.values()) {
+    console.log(`# PASS`);
+
+    for (const [locatorHash, virtualDescriptors] of allVirtualizedDescriptorsByPhysicalLocator.entries()) {
       if (virtualDescriptors.size === 0)
         continue;
+
+      console.log(`## Processing ${locatorHash} / ${structUtils.stringifyIdent(getPackageFromDescriptor(Array.from(virtualDescriptors)[0]))} (${virtualDescriptors.size} virtual descriptors)`);
 
       // Group the descriptors based on whether they share the same dependencies.
       const descriptorGroups = [];
@@ -1615,7 +1619,7 @@ function applyVirtualResolutionMutations({
           return structUtils.areVirtualPackagesEquivalent(groupVirtualPackage, virtualPackage);
         });
 
-        if (matchedGroup)  {
+        if (matchedGroup) {
           consolidatedVirtualPackages = true;
           matchedGroup.push(virtualDescriptor);
         } else {
@@ -1624,19 +1628,26 @@ function applyVirtualResolutionMutations({
         }
       }
 
+      console.log(`Grouped into ${descriptorGroups.length} groups`);
+
       // If a group contains more than one descriptor then the first is considered
       // the primary and the others duplicates which will be replaced by the primary
       // and removed from the system.
       for (const descriptorGroup of descriptorGroups) {
         const [primaryDescriptor, ...duplicates] = descriptorGroup;
 
+        console.log(`Leader is ${primaryDescriptor.descriptorHash}`);
+
         for (const duplicateDescriptor of duplicates) {
+          console.log(`  Servant is ${duplicateDescriptor.descriptorHash}`);
+
           const dependents = allVirtualizedDescriptorsDependents.get(duplicateDescriptor.descriptorHash);
           if (!dependents)
             throw new Error(`Assertion failed: The virtual package should have a list of dependents`);
 
           for (const dependentLocatorHash of dependents) {
             const dependentPackage = allPackages.get(dependentLocatorHash);
+            console.log(`    Dependent is`, dependentPackage!.locatorHash);
             if (!dependentPackage)
               throw new Error(`Assertion failed: The dependent package could not be found`);
 
@@ -1644,6 +1655,7 @@ function applyVirtualResolutionMutations({
           }
 
           const duplicateVirtualPackage = getPackageFromDescriptor(duplicateDescriptor);
+          console.log(`  Removing (resolved to ${duplicateVirtualPackage.locatorHash} / ${structUtils.stringifyIdent(duplicateVirtualPackage)})`);
           allDescriptors.delete(duplicateDescriptor.descriptorHash);
           allPackages.delete(duplicateVirtualPackage.locatorHash);
           allResolutions.delete(duplicateDescriptor.descriptorHash);

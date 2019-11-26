@@ -263,4 +263,72 @@ describe(`Dragon tests`, () => {
       },
     ),
   );
+
+  test(
+    `it should pass the dragon test 6`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [
+          `packages/*`,
+        ],
+      },
+      async ({path, run, source}) => {
+        // Virtual packages are deduplicated, so that if multiple ones share
+        // the same set of dependencies they end up being unified into one.
+        // In order to do this, we track which package depends on which one
+        // so that we can properly update the dependents during unification.
+        //
+        // One problem that may arise is when a package with peer dependencies
+        // is used twice in the dependency tree, and itself depends on a
+        // package that lists peer dependencies. In this situation, the
+        // package may be removed from the dependency tree during unification,
+        // then its dependency gets unified too but the registered dependent
+        // doesn't exist anymore.
+
+        await xfs.mkdirpPromise(`${path}/packages/a`);
+        await xfs.writeJsonPromise(`${path}/packages/a/package.json`, {
+          name: `b`,
+          version: `1.0.0`,
+          dependencies: {
+            [`a`]: `1.0.0`,
+          },
+          peerDependencies: {
+            [`no-deps`]: `*`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/b`);
+        await xfs.writeJsonPromise(`${path}/packages/b/package.json`, {
+          name: `a`,
+          version: `1.0.0`,
+          peerDependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/c`);
+        await xfs.writeJsonPromise(`${path}/packages/c/package.json`, {
+          name: `c`,
+          version: `1.0.0`,
+          dependencies: {
+            [`b`]: `1.0.0`,
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/d`);
+        await xfs.writeJsonPromise(`${path}/packages/d/package.json`, {
+          name: `d`,
+          version: `1.0.0`,
+          dependencies: {
+            [`b`]: `1.0.0`,
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
+        console.log((await run(`install`)).stdout);
+      },
+    ),
+  );
 });

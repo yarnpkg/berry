@@ -1,0 +1,9 @@
+__nextVersions:
+  "@yarnpkg/core@1.2.3": [->, "1.2.3"]
+
+## In case of a merge conflict, always keep all your changes
+## and discard all changes from master. This usually means
+## that you should only keep the upper part of the conflict.
+__nonces:
+  - "@yarnpkg/core@workspace:1.2.3": "HASH C"
+  - "@yarnpkg/core@workspace:1.2.3": "HASH C"
