@@ -3,7 +3,7 @@ import {PnpApi}                               from '@yarnpkg/pnp';
 
 import fs                                     from 'fs';
 
-import {NodeModulesFS, PortableNodeModulesFs} from './NodeModulesFS';
+import {NodeModulesFS, PortableNodeModulesFS} from './NodeModulesFS';
 import {dynamicRequire}                       from './dynamicRequire';
 
 let fsPatched = false;
@@ -26,4 +26,4 @@ export const patchFs = () => {
 if (!process.mainModule)
   patchFs();
 
-export {NodeModulesFS, PortableNodeModulesFs};
+export {NodeModulesFS, PortableNodeModulesFS};

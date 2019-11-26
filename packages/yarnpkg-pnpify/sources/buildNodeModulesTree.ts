@@ -176,6 +176,11 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
   const makeLeafNode = (locator: PackageLocator): {target: PortablePath, linkType: LinkType} => {
     const info = pnp.getPackageInformation(locator)!;
     if (options.pnpifyFs) {
+      // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
+      // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
+      // To make this fs layout work with legacy tools we make
+      // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
+      // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
       return {target: npath.toPortablePath(info.packageLocation), linkType: LinkType.SOFT};
     } else {
       const truePath = pnp.resolveVirtual && locator.reference && locator.reference.startsWith('virtual:') ? pnp.resolveVirtual(info.packageLocation) : info.packageLocation;
@@ -228,12 +233,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
         segCount--;
       }
 
-      // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
-      // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
-      // To make this fs layout work with legacy tools we make
-      // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
-      // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
-      buildTree(depId, options.pnpifyFs ? leafNode.target: nodeModulesLocation);
+      buildTree(depId, leafNode.linkType === LinkType.SOFT ? leafNode.target: nodeModulesLocation);
     }
   };
 
