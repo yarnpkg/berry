@@ -125,9 +125,9 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     const peerDeps = new Set<HoisterPackageId>();
     packageTree[pkgId] = {deps, peerDeps};
 
-    for (const [name, reference] of pkg.packageDependencies) {
-      if (reference !== null) {
-        const locator = typeof reference === 'string' ? {name, reference} : {name: reference[0], reference: reference[1]};
+    for (const [name, referencish] of pkg.packageDependencies) {
+      if (referencish !== null) {
+        const locator = pnp.getLocator(name, referencish);
         const depPkg = pnp.getPackageInformation(locator)!;
         const depPkgId = assignPackageId(locator, depPkg);
         if (pkg.packagePeers.has(name)) {
@@ -141,9 +141,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     const allDepIds = new Set([...deps, ...peerDeps]);
     for (const depId of allDepIds) {
       const depPkg = packageInfos[depId];
-      if (depPkg) {
-        addPackageToTree(depPkg, depId, allDepIds);
-      }
+      addPackageToTree(depPkg, depId, allDepIds);
     }
   };
 
@@ -267,6 +265,29 @@ const benchmarkRawHoisting = (packageTree: ReadonlyHoisterPackageTree, packages:
 };
 
 /**
+ * Benchmarks node_modules tree building.
+ *
+ * The function is used for troubleshooting purposes only.
+ *
+ * @param packageTree package tree
+ * @param packages package info
+ *
+ * @returns average raw hoisting time
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const benchmarkBuildTree = (pnp: PnpApi, options: NodeModulesTreeOptions): number => {
+  const iterCount = 100;
+  const startTime = Date.now();
+  for (let iter = 0; iter < iterCount; iter++) {
+    const {packageTree, packages, locators} = buildPackageTree(pnp, options);
+    const hoistedTree = hoist(packageTree, packages);
+    populateNodeModulesTree(pnp, hoistedTree, locators, options);
+  }
+  const endTime = Date.now();
+  return (endTime - startTime) / iterCount;
+};
+
+/**
  * Pretty-prints node_modules tree.
  *
  * The function is used for troubleshooting purposes only.
@@ -347,12 +368,27 @@ const dumpDepTree = (tree: ReadonlyHoisterPackageTree | HoistedTree, locators: P
     }
   };
 
-  const deps: number[] = Array.from(((tree[nodeId] as ReadonlyHoisterDependencies).deps || tree[nodeId])).filter(depId => depId !== nodeId);
+  const deps: number[] = Array.from(((tree[nodeId] as ReadonlyHoisterDependencies).deps || tree[nodeId]));
+
+  const traverseIds = new Set();
+  for (const depId of deps) {
+    if (!seenIds.has(depId)) {
+      traverseIds.add(depId);
+      seenIds.add(depId);
+    }
+  }
+
   let str = '';
   for (let idx = 0; idx < deps.length; idx++) {
     const depId = deps[idx];
-    str += `${prefix}${idx < deps.length - 1 ? '├─' : '└─'}${dumpLocator(locators[depId])}\n`;
-    str += dumpDepTree(tree, locators, depId, `${prefix}${idx < deps.length - 1 ?'│ ' : '  '}`, seenIds);
+    str += `${prefix}${idx < deps.length - 1 ? '├─' : '└─'}${(traverseIds.has(depId) ? '>' : '') + dumpLocator(locators[depId])}\n`;
+    if (traverseIds.has(depId)) {
+      seenIds.delete(depId);
+      str += dumpDepTree(tree, locators, depId, `${prefix}${idx < deps.length - 1 ?'│ ' : '  '}`, seenIds);
+      seenIds.add(depId);
+    }
   }
+  for (const depId of traverseIds)
+    seenIds.delete(depId);
   return str;
 };

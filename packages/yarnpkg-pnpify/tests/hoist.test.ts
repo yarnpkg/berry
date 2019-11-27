@@ -78,6 +78,14 @@ describe('hoist', () => {
   });
 
   it('should perform deep hoisting', () => {
+    // . → A → B@1 → C@2
+    //       → C@1
+    //   → B@2
+    //   → C@1
+    // Should be hoisted to:
+    // . → A → B@1 → C@2
+    //   → B@2
+    //   → C@1
     const tree = [
       {deps: new Set([1, 3, 4]), peerDeps: new Set<number>()},
       {deps: new Set([2, 4]), peerDeps: new Set<number>()},
@@ -87,18 +95,18 @@ describe('hoist', () => {
       {deps: new Set<number>(), peerDeps: new Set<number>()},
     ];
     const packages = [
-      {name: 'app', weight: 1},
-      {name: 'webpack', weight: 1},
-      {name: 'watchpack', weight: 1},
-      {name: 'watchpack', weight: 1},
-      {name: 'lodash', weight: 1},
-      {name: 'lodash', weight: 1},
+      {name: '.', weight: 1},
+      {name: 'A', weight: 1},
+      {name: 'B', weight: 1},
+      {name: 'B', weight: 1},
+      {name: 'C', weight: 1},
+      {name: 'C', weight: 1},
     ];
     const result = hoist(tree, packages);
     expect(sortDeps(result)).toEqual([
       new Set([1, 3, 4]),
-      new Set([2, 5]),
-      new Set(),
+      new Set([2]),
+      new Set([5]),
       new Set(),
       new Set(),
       new Set(),
@@ -106,6 +114,14 @@ describe('hoist', () => {
   });
 
   it('should tolerate any cyclic dependencies', () => {
+    // . → . → A → A → B@1 → B@1 → C@2
+    //               → C@1
+    //   → B@2
+    //   → C@1
+    // Should be hoisted to:
+    // . → . → A   → B@1 → C@2
+    //   → B@2
+    //   → C@1
     const tree = [
       {deps: new Set([0, 1, 3, 4]), peerDeps: new Set<number>()},
       {deps: new Set([1, 2, 4]), peerDeps: new Set<number>()},
@@ -115,18 +131,18 @@ describe('hoist', () => {
       {deps: new Set<number>(), peerDeps: new Set<number>()},
     ];
     const packages = [
-      {name: 'app', weight: 1},
-      {name: 'webpack', weight: 1},
-      {name: 'watchpack', weight: 1},
-      {name: 'watchpack', weight: 1},
-      {name: 'lodash', weight: 1},
-      {name: 'lodash', weight: 1},
+      {name: '.', weight: 1},
+      {name: 'A', weight: 1},
+      {name: 'B', weight: 1},
+      {name: 'B', weight: 1},
+      {name: 'C', weight: 1},
+      {name: 'C', weight: 1},
     ];
     const result = hoist(tree, packages);
     expect(sortDeps(result)).toEqual([
       new Set([0, 1, 3, 4]),
-      new Set([2, 5]),
-      new Set(),
+      new Set([2]),
+      new Set([5]),
       new Set(),
       new Set(),
       new Set(),
