@@ -4,6 +4,7 @@ import {httpUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
 import semver                                       from 'semver';
 import {URL}                                        from 'url';
 
+import * as npmHttpUtils                            from './npmHttpUtils';
 import {PROTOCOL}                                   from './constants';
 
 export class NpmHttpFetcher implements Fetcher {
