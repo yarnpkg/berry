@@ -288,46 +288,65 @@ describe(`Dragon tests`, () => {
 
         await xfs.mkdirpPromise(`${path}/packages/a`);
         await xfs.writeJsonPromise(`${path}/packages/a/package.json`, {
-          name: `b`,
-          version: `1.0.0`,
+          name: `a`,
           dependencies: {
-            [`a`]: `1.0.0`,
-          },
-          peerDependencies: {
-            [`no-deps`]: `*`,
+            [`z`]: `workspace:*`,
           },
         });
 
         await xfs.mkdirpPromise(`${path}/packages/b`);
         await xfs.writeJsonPromise(`${path}/packages/b/package.json`, {
-          name: `a`,
-          version: `1.0.0`,
-          peerDependencies: {
-            [`no-deps`]: `1.0.0`,
+          name: `b`,
+          dependencies: {
+            [`u`]: `workspace:*`,
+            [`v`]: `workspace:*`,
           },
         });
 
         await xfs.mkdirpPromise(`${path}/packages/c`);
         await xfs.writeJsonPromise(`${path}/packages/c/package.json`, {
           name: `c`,
-          version: `1.0.0`,
           dependencies: {
-            [`b`]: `1.0.0`,
-            [`no-deps`]: `1.0.0`,
+            [`u`]: `workspace:*`,
+            [`v`]: `workspace:*`,
+            [`y`]: `workspace:*`,
+            [`z`]: `workspace:*`,
           },
         });
 
-        await xfs.mkdirpPromise(`${path}/packages/d`);
-        await xfs.writeJsonPromise(`${path}/packages/d/package.json`, {
-          name: `d`,
-          version: `1.0.0`,
-          dependencies: {
-            [`b`]: `1.0.0`,
-            [`no-deps`]: `1.0.0`,
+        await xfs.mkdirpPromise(`${path}/packages/u`);
+        await xfs.writeJsonPromise(`${path}/packages/u/package.json`, {
+          name: `u`,
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/v`);
+        await xfs.writeJsonPromise(`${path}/packages/v/package.json`, {
+          name: `v`,
+          peerDependencies: {
+            [`u`]: `*`,
           },
         });
 
-        console.log((await run(`install`)).stdout);
+        await xfs.mkdirpPromise(`${path}/packages/y`);
+        await xfs.writeJsonPromise(`${path}/packages/y/package.json`, {
+          name: `y`,
+          peerDependencies: {
+            [`v`]: `*`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/z`);
+        await xfs.writeJsonPromise(`${path}/packages/z/package.json`, {
+          name: `z`,
+          dependencies: {
+            [`y`]: `workspace:*`,
+          },
+          peerDependencies: {
+            [`v`]: `*`,
+          },
+        });
+
+        await run(`install`);
       },
     ),
   );
