@@ -45,6 +45,7 @@ export async function get(path: string, {configuration, headers, ident, authType
   } else {
     console.log("Not Absolute Path " + path);
   }
+
   if (ident && typeof registry === `undefined`)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
   if (ident && ident.scope && typeof authType === `undefined`)
@@ -54,8 +55,14 @@ export async function get(path: string, {configuration, headers, ident, authType
     throw new Error(`Assertion failed: The registry should be a string`);
 
   const auth = getAuthenticationHeader(registry, {authType, configuration});
-  if (auth)
+  if (auth) {
     headers = {...headers, authorization: auth};
+  }
+  
+  console.log("Registry " + registry);
+
+  console.log("Headers")
+  console.log(headers)
 
   return await httpUtils.get(registry + path, {configuration, headers, ...rest});
 }
