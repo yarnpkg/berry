@@ -50,8 +50,13 @@ export class NpmHttpFetcher implements Fetcher {
     if (archiveUrl === null)
       throw new Error(`Assertion failed: The archiveUrl querystring parameter should have been available`);
 
-    const sourceBuffer = await httpUtils.get(archiveUrl, {
+    //const sourceBuffer = await httpUtils.get(archiveUrl, {
+    //  configuration: opts.project.configuration,
+    //});
+    
+    const sourceBuffer = await npmHttpUtils.get(archiveUrl, {
       configuration: opts.project.configuration,
+      ident: locator,
     });
 
     return await tgzUtils.convertToZip(sourceBuffer, {
