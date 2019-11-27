@@ -42,6 +42,8 @@ export function isAbsoluteUrl(path: string) {
 export async function get(path: string, {configuration, headers, ident, authType, registry, ...rest}: Options) {
   if(isAbsoluteUrl(path)){
     console.log("Absolute Path " + path);
+  } else {
+    console.log("Not Absolute Path " + path);
   }
   if (ident && typeof registry === `undefined`)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
