@@ -34,7 +34,7 @@ export function getIdentUrl(ident: Ident) {
   }
 }
 
-export function isAbsoluteUrl(path) {
+export function isAbsoluteUrl(path: string) {
   const absoluteUrlRegex = new RegExp('^(?:[a-z]+:)?//', 'i');
   return absoluteUrlRegex.test(path);
 }
