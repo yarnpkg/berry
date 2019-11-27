@@ -34,7 +34,15 @@ export function getIdentUrl(ident: Ident) {
   }
 }
 
+export function isAbsoluteUrl(path) {
+  const absoluteUrlRegex = new RegExp('^(?:[a-z]+:)?//', 'i');
+  return absoluteUrlRegex.test(path);
+}
+
 export async function get(path: string, {configuration, headers, ident, authType, registry, ...rest}: Options) {
+  if(isAbsoluteUrl(path)){
+    console.log("Absolute Path " + path);
+  }
   if (ident && typeof registry === `undefined`)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
   if (ident && ident.scope && typeof authType === `undefined`)
