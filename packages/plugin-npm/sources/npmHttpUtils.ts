@@ -65,6 +65,8 @@ export async function get(path: string, {configuration, headers, ident, authType
   console.log("configuration")
   console.log(configuration)
   const auth = getAuthenticationHeader(registry, {authType, configuration});
+  console.log("auth")
+  console.log(auth)
   if (auth) {
     headers = {...headers, authorization: auth};
   }
