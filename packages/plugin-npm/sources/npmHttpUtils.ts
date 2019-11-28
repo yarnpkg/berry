@@ -58,6 +58,12 @@ export async function get(path: string, {configuration, headers, ident, authType
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
 
+  console.log("registry")
+  console.log(registry)
+  console.log("authType")
+  console.log(authType)
+  console.log("configuration")
+  console.log(configuration)
   const auth = getAuthenticationHeader(registry, {authType, configuration});
   if (auth) {
     headers = {...headers, authorization: auth};
