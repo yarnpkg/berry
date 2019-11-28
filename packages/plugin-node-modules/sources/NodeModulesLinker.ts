@@ -1,8 +1,10 @@
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName} from '@yarnpkg/core';
 import {FetchResult, Descriptor, Locator, Package, BuildDirective, BuildType}                from '@yarnpkg/core';
 import {miscUtils, structUtils}                                                              from '@yarnpkg/core';
-import {PortablePath, npath, ppath, toFilename, xfs}                                         from '@yarnpkg/fslib';
-import {PortableNodeModulesFs}                                                               from '@yarnpkg/pnpify';
+import {PortablePath, npath, ppath, toFilename, Filename, xfs}                               from '@yarnpkg/fslib';
+import {NodeModulesTimestampsTree}                                                           from '@yarnpkg/pnpify/sources/buildNodeModulesTree';
+import {PortableNodeModulesFS}                                                               from '@yarnpkg/pnpify';
+
 import {PackageRegistry, makeRuntimeApi}                                                     from '@yarnpkg/pnp';
 
 import {UsageError}                                                                          from 'clipanion';
@@ -178,9 +180,43 @@ class PnpInstaller implements Installer {
     };
 
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd);
-    const nodeModulesFS = new PortableNodeModulesFs(pnp, {pnpifyFs: false});
-    const persistDir = ppath.join(this.opts.project.cwd, toFilename('node_modules'));
-    xfs.copySync(persistDir, persistDir, {baseFs: nodeModulesFS, overwrite: true});
+    const nodeModulesFS = new PortableNodeModulesFS(pnp, {pnpifyFs: false});
+    this.persistNodeModules(nodeModulesFS);
+  }
+
+  private persistNodeModules(nodeModulesFS: PortableNodeModulesFS) {
+    const tsTree = nodeModulesFS.getNodeModulesDirTimestamps();
+
+    const persistDir = (parentPath: PortablePath, node: NodeModulesTimestampsTree, options: { updateTimestamps: boolean }) => {
+      for (const [entry, val] of node.entries()) {
+        const dirPath = ppath.join(parentPath, entry);
+        if (options.updateTimestamps) {
+          xfs.utimesSync(dirPath, val.mtime, val.mtime);
+          persistDir(dirPath, val.children, {updateTimestamps: true});
+        } else {
+          let stats;
+          try {
+            stats = xfs.lstatSync(dirPath);
+          } catch (e) {
+            if (e.code !== 'ENOENT') {
+              throw e;
+            }
+          }
+          if (!stats) {
+            xfs.copySync(dirPath, dirPath, {baseFs: nodeModulesFS, overwrite: true});
+            xfs.utimesSync(dirPath, val.mtime, val.mtime);
+            persistDir(dirPath, val.children, {updateTimestamps: true});
+          } else {
+            if (+stats.mtime !== +val.mtime)
+              this.opts.report.reportWarning(MessageName.DANGEROUS_NODE_MODULES, `dir ${dirPath} has changed ${stats.mtime} !== ${val.mtime}!`);
+
+            persistDir(dirPath, val.children, {updateTimestamps: false});
+          }
+        }
+      }
+    };
+
+    persistDir(this.opts.project.cwd, tsTree, {updateTimestamps: false});
   }
 
   private getPackageStore(key: string) {

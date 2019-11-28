@@ -1,16 +1,16 @@
-import {Filename, MkdirOptions}                            from '@yarnpkg/fslib';
-import {FSPath, NativePath, PortablePath, npath, ppath}    from '@yarnpkg/fslib';
-import {WatchOptions, WatchCallback, Watcher, toFilename}  from '@yarnpkg/fslib';
-import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}       from '@yarnpkg/fslib';
-import {CreateReadStreamOptions, CreateWriteStreamOptions} from '@yarnpkg/fslib';
+import {Filename, MkdirOptions}                                                                  from '@yarnpkg/fslib';
+import {FSPath, NativePath, PortablePath, npath, ppath}                                          from '@yarnpkg/fslib';
+import {WatchOptions, WatchCallback, Watcher, toFilename}                                        from '@yarnpkg/fslib';
+import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                                             from '@yarnpkg/fslib';
+import {CreateReadStreamOptions, CreateWriteStreamOptions}                                       from '@yarnpkg/fslib';
 
-import {PnpApi}                                            from '@yarnpkg/pnp';
-import fs, {Dirent}                                        from 'fs';
+import {PnpApi}                                                                                  from '@yarnpkg/pnp';
+import fs, {Dirent}                                                                              from 'fs';
 
-import {WatchManager}                                      from './WatchManager';
-import {NodeModulesTreeOptions, NodeModulesTree}           from './buildNodeModulesTree';
-import {buildNodeModulesTree}                              from './buildNodeModulesTree';
-import {resolveNodeModulesPath, ResolvedPath}              from './resolveNodeModulesPath';
+import {WatchManager}                                                                            from './WatchManager';
+import {NodeModulesTreeOptions, NodeModulesTree, NodeModulesTimestampsTree, buildTimestampsTree} from './buildNodeModulesTree';
+import {buildNodeModulesTree}                                                                    from './buildNodeModulesTree';
+import {resolveNodeModulesPath, ResolvedPath}                                                    from './resolveNodeModulesPath';
 
 export type NodeModulesFSOptions = {
   realFs?: typeof fs,
@@ -462,31 +462,8 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     }
   }
 
-  getNodeModulesDirTimestamps(): Map<PortablePath, Date> {
-    const dirList = new Map();
-    const pnpFileStats = this.statSync(this.pnpFilePath);
-
-    const addDir = async (dir: PortablePath) => {
-      const stats = this.lstatSync(dir);
-      dirList.set(dir, stats.mtime);
-      if (!stats.isSymbolicLink()) {
-        const entries = this.readdirSync(dir, {withFileTypes: true});
-        for (const entry of entries) {
-          if (entry.isDirectory()) {
-            addDir(ppath.join(dir, toFilename(entry.name)));
-          }
-        }
-      }
-    };
-
-    for (const [key, node] of this.nodeModulesTree.entries()) {
-      if (node.dirList) {
-        dirList.set(key, pnpFileStats.mtime);
-      } else {
-        addDir(key);
-      }
-    }
-
-    return dirList;
+  getNodeModulesDirTimestamps(): NodeModulesTimestampsTree {
+    const rootPath = ppath.dirname(this.pnpFilePath);
+    return buildTimestampsTree(this.nodeModulesTree, rootPath, this.statSync(ppath.join(rootPath, toFilename('yarn.lock'))).mtime);
   }
 }

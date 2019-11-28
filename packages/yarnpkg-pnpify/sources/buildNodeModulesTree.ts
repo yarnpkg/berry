@@ -21,6 +21,33 @@ export enum LinkType {HARD = 'HARD', SOFT = 'SOFT'};
  */
 export type NodeModulesTree = Map<PortablePath, {dirList: Set<Filename>} | {dirList?: undefined, target: PortablePath, linkType: LinkType}>;
 
+/**
+ * Node modules directory timestamps tree.
+ *
+ * Tree example:
+ * Map {
+ *   'node_modules' => {
+ *     mtime: 2019-11-26T18:19:29.663Z,
+ *     children: Map {
+ *       '@yarnpkg' => {
+ *         mtime: 2019-11-26T18:19:29.663Z,
+ *         children: Map {
+ *           'libui' => { mtime: 2019-11-26T12:38:53.007Z, children: Map {} },
+ *           'cli' => { mtime: 2019-11-26T12:38:53.075Z, children: Map {} },
+ *           'core' => { mtime: 2019-11-26T12:38:53.073Z, children: Map {} },
+ * ...
+ * }
+ *
+ * Each node is subdirectory inside node_modules directory tree with mtime timestamp.
+ * As mtime for the final modules we use mtime of an underlying archive. In case of all the
+ * other directories we use mtime of a yarn.lock file. On each new install that results in changes
+ * to pnp file we will need to recheck folder structure, but we will see which archives have
+ * not been changed, thanks to tracking archives mtimes. We will also be able to detect user
+ * changes by comparing mtimes of all the folders inside module with archive mtime. If any
+ * of the folders have different mtime than archive mtime, then user has changed the folder.
+ */
+export type NodeModulesTimestampsTree = Map<PortablePath, { mtime: Date, children: NodeModulesTimestampsTree }>;
+
 export interface NodeModulesTreeOptions {
   optimizeSizeOnDisk?: boolean;
   pnpifyFs?: boolean;
@@ -77,6 +104,41 @@ export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOption
   const hoistedTree = hoist(packageTree, packages);
 
   return populateNodeModulesTree(pnp, hoistedTree, locators, options);
+};
+
+/**
+ * Builds node_modules directories timestamps tree.
+ *
+ * @param tree node_modules tree
+ * @param rootPath root project directory (the one that contains .pnp.js)
+ * @param containerMtime mtime for container directories (node_modules and node_modules/@foo)
+ *
+ * @returns node_modules timestamps tree
+ */
+export const buildTimestampsTree = (tree: NodeModulesTree, rootPath: PortablePath, containerMtime: Date): NodeModulesTimestampsTree => {
+  const tsTree = new Map();
+
+  const addDir = (parentPath: PortablePath, dir: Filename, tsTreeNode: NodeModulesTimestampsTree) => {
+    const nodePath = ppath.join(parentPath, dir);
+    let node = tree.get(nodePath);
+    if (node) {
+      if (node.dirList) {
+        const newTsTreeNode = {mtime: containerMtime, children: new Map()};
+        tsTreeNode.set(dir, newTsTreeNode);
+        for (const entry of node.dirList) {
+          addDir(nodePath, entry, newTsTreeNode.children);
+        }
+      } else {
+        const newTsTreeNode = {mtime: xfs.statSync(getArchivePath(node.target) || node.target).mtime, children: new Map()};
+        tsTreeNode.set(dir, newTsTreeNode);
+        addDir(nodePath, NODE_MODULES, newTsTreeNode.children);
+      }
+    }
+  };
+
+  addDir(rootPath, NODE_MODULES, tsTree);
+
+  return tsTree;
 };
 
 /**
