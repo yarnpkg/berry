@@ -1,13 +1,13 @@
-import {Plugin, Project} from '@yarnpkg/core';
-import {Filename, ppath} from '@yarnpkg/fslib';
+import {Plugin, Project}   from '@yarnpkg/core';
+import {Filename, ppath}   from '@yarnpkg/fslib';
 
-import {PnpLinker}       from './NodeModulesLinker';
+import {NodeModulesLinker} from './NodeModulesLinker';
 
 export const getPnpPath = (project: Project) => ppath.join(project.cwd, `.pnp.js` as Filename);
 
 const plugin: Plugin = {
   linkers: [
-    PnpLinker,
+    NodeModulesLinker,
   ],
 };
 

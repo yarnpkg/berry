@@ -1,7 +1,7 @@
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName} from '@yarnpkg/core';
 import {FetchResult, Descriptor, Locator, Package, BuildDirective, BuildType}                from '@yarnpkg/core';
 import {miscUtils, structUtils}                                                              from '@yarnpkg/core';
-import {PortablePath, npath, ppath, toFilename, Filename, xfs}                               from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, toFilename, xfs}                                         from '@yarnpkg/fslib';
 import {NodeModulesTimestampsTree}                                                           from '@yarnpkg/pnpify/sources/buildNodeModulesTree';
 import {PortableNodeModulesFS}                                                               from '@yarnpkg/pnpify';
 
@@ -11,7 +11,7 @@ import {UsageError}                                                             
 
 import {getPnpPath}                                                                          from './index';
 
-export class PnpLinker implements Linker {
+export class NodeModulesLinker implements Linker {
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
     return opts.project.configuration.get('nodeLinker') === 'node-modules';
   }
@@ -51,11 +51,11 @@ export class PnpLinker implements Linker {
   }
 
   makeInstaller(opts: LinkOptions) {
-    return new PnpInstaller(opts);
+    return new NodeModulesInstaller(opts);
   }
 }
 
-class PnpInstaller implements Installer {
+class NodeModulesInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
 
   private readonly blacklistedPaths: Set<string> = new Set();
