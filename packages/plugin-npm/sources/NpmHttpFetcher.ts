@@ -70,7 +70,6 @@ export class NpmHttpFetcher implements Fetcher {
       });
     }
     
-    const 
     return await tgzUtils.convertToZip(sourceBuffer, {
       stripComponents: 1,
       prefixPath: structUtils.getIdentVendorPath(locator),
