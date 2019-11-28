@@ -47,6 +47,8 @@ export async function get(path: string, {configuration, headers, ident, authType
   }
   
   console.log("registry " + registry);
+  console.log("ident");
+  console.log(ident);
 
   if (ident && typeof registry === `undefined`)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
@@ -62,7 +64,6 @@ export async function get(path: string, {configuration, headers, ident, authType
   }
   
   console.log("Registry " + registry);
-
   console.log("Headers")
   console.log(headers)
 
