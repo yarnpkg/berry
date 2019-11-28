@@ -45,6 +45,8 @@ export async function get(path: string, {configuration, headers, ident, authType
   } else {
     console.log("Not Absolute Path " + path);
   }
+  
+  console.log("registry " + registry);
 
   if (ident && typeof registry === `undefined`)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
