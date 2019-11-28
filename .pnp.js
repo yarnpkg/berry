@@ -41410,11 +41410,20 @@ function applyPatch(pnpapi, opts) {
 
   let enableNativeHooks = true; // @ts-ignore
 
-  process.versions.pnp = String(pnpapi.VERSIONS.std); // A small note: we don't replace the cache here (and instead use the native one). This is an effort to not
+  process.versions.pnp = String(pnpapi.VERSIONS.std);
+
+  function getRequireStack(parent) {
+    const requireStack = [];
+
+    for (let cursor = parent; cursor; cursor = cursor.parent) requireStack.push(cursor.filename || cursor.id);
+
+    return requireStack;
+  } // A small note: we don't replace the cache here (and instead use the native one). This is an effort to not
   // break code similar to "delete require.cache[require.resolve(FOO)]", where FOO is a package located outside
   // of the Yarn dependency tree. In this case, we defer the load to the native loader. If we were to replace the
   // cache by our own, the native loader would populate its own cache, which wouldn't be exposed anymore, so the
   // delete call would be broken.
+
 
   const originalModuleLoad = external_module_default.a._load;
 
@@ -41540,6 +41549,9 @@ function applyPatch(pnpapi, opts) {
       return resolution !== null ? resolution : request;
     }
 
+    const requireStack = getRequireStack(parent);
+    firstError.requireStack = requireStack;
+    if (requireStack.length > 0) firstError.message += `\nRequire stack:\n- ${requireStack.join(`\n- `)}`;
     throw firstError;
   };
 

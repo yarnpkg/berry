@@ -33,15 +33,15 @@ See also: [Peer Dependency](#peerdependency)
 Fetchers are the components tasked from extracting the full package data from a <abbr>reference</abbr>. For example, the npm fetcher would download the package tarballs from the npm registry.
 
 See also: [Architecture](/advanced/architecture)
-See also: the [`Fetcher` interface](https://github.com/yarnpkg/berry/blob/master/packages/berry-core/sources/Fetcher.ts#L34)
+See also: the [`Fetcher` interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Fetcher.ts#L34)
 
 ### Linker
 
 Linkers are the components that consume both a dependency tree and a store of package data, and generate in return disk artifacts specific to the environment they target. For example, the <abbr>Plug'n'Play</abbr> linker generates a single `.pnp.js` file.
 
 See also: [Architecture](/advanced/architecture)
-See also: the [`Linker` interface](https://github.com/yarnpkg/berry/blob/master/packages/berry-core/sources/Linker.ts#L28)
-See also: the [`Installer` interface](https://github.com/yarnpkg/berry/blob/master/packages/berry-core/sources/Installer.ts#L18)
+See also: the [`Linker` interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Linker.ts#L28)
+See also: the [`Installer` interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Installer.ts#L18)
 
 ### Locator
 
@@ -78,7 +78,7 @@ See also: [Virtual Packages](#virtualpackages)
 Plugins are a new concept introduced in Yarn 2+. Through the use of plugins Yarn can be extended and made even more powerful - whether it's through the addition of new <abbr>resolvers</abbr>, <abbr>fetchers</abbr>, or <abbr>linkers</abbr>.
 
 See also: [Plugins](/features/plugins)
-See also: the [`Plugin` interface](https://github.com/yarnpkg/berry/blob/master/packages/berry-core/sources/Plugin.ts#L67)
+See also: the [`Plugin` interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Plugin.ts#L67)
 
 ### Plug'n'Play
 
@@ -119,7 +119,7 @@ See also: [Protocols](/features/protocols)
 Resolvers are the components tasked from converting <abbr>descriptors</abbr> into <abbr>locators</abbr>, and extracting the package <abbr>manifests</abbr> from the package <abbr>locators</abbr>. For example, the npm resolver would check what versions are available on the npm registry and return all the candidates that satisfy the <abbr>semver</abbr> requirements, then would query the npm registry to fetch the full metadata associated to the selected resolution.
 
 See also: [Architecture](/advanced/architecture)
-See also: the [`Resolver` interface](https://github.com/yarnpkg/berry/blob/master/packages/berry-core/sources/Resolver.ts#L43)
+See also: the [`Resolver` interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Resolver.ts#L45)
 
 ### Scope
 
