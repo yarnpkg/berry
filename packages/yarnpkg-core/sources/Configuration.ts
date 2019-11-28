@@ -239,6 +239,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.STRING,
     default: `npm:`,
   },
+  enableTransparentWorkspaces: {
+    description: `If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
 
   // Settings related to network access
   enableMirror: {
