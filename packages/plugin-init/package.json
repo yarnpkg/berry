@@ -10,6 +10,10 @@
     "clipanion": "^2.1.4"
   },
   "version": "2.0.0-rc.3",
+  "nextVersion": {
+    "semver": "2.0.0-rc.4",
+    "nonce": "4149448387893945"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
