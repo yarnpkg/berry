@@ -1,10 +1,10 @@
-import {BaseCommand}             from '@yarnpkg/cli';
-import {Configuration, Manifest} from '@yarnpkg/core';
-import {execUtils, structUtils}  from '@yarnpkg/core';
-import {xfs, ppath, toFilename}  from '@yarnpkg/fslib';
-import {updateAndSave}           from '@yarnpkg/json-proxy';
-import {Command, UsageError}     from 'clipanion';
-import {inspect}                 from 'util';
+import {BaseCommand}                         from '@yarnpkg/cli';
+import {Configuration, Manifest}             from '@yarnpkg/core';
+import {execUtils, scriptUtils, structUtils} from '@yarnpkg/core';
+import {xfs, ppath, toFilename, Filename}              from '@yarnpkg/fslib';
+import {updateAndSave}                       from '@yarnpkg/json-proxy';
+import {Command, UsageError}                 from 'clipanion';
+import {inspect}                             from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class InitCommand extends BaseCommand {
@@ -46,7 +46,7 @@ export default class InitCommand extends BaseCommand {
 
   @Command.Path(`init`)
   async execute() {
-    if (xfs.existsSync(ppath.join(this.context.cwd, toFilename(`package.json`))))
+    if (xfs.existsSync(ppath.join(this.context.cwd, Manifest.fileName)))
       throw new UsageError(`A package.json already exists in the specified directory`);
 
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
@@ -60,7 +60,7 @@ export default class InitCommand extends BaseCommand {
 
   async executeProxy(configuration: Configuration) {
     if (configuration.get(`yarnPath`) !== null)
-      throw new UsageError(`Cannot use the --install flag when the current directory already uses yarnPath`);
+      throw new UsageError(`Cannot use the --install flag when the current directory already uses yarnPath (from ${configuration.sources.get(`yarnPath`)})`);
 
     if (configuration.projectCwd !== null)
       throw new UsageError(`Cannot use the --install flag when the current directory is already part of a project`);
@@ -68,9 +68,15 @@ export default class InitCommand extends BaseCommand {
     if (!xfs.existsSync(this.context.cwd))
       await xfs.mkdirpPromise(this.context.cwd);
 
+    const lockfilePath = ppath.join(this.context.cwd, configuration.get<Filename>(`lockfileFilename`));
+    if (!xfs.existsSync(lockfilePath))
+      await xfs.writeFilePromise(lockfilePath, ``);
+
     const versionExitCode = await this.cli.run([`set`, `version`, this.install!]);
     if (versionExitCode !== 0)
       return versionExitCode;
+
+    this.context.stdout.write(`\n`);
 
     const args: Array<string> = [];
     if (this.private)
@@ -83,7 +89,7 @@ export default class InitCommand extends BaseCommand {
       stdin: this.context.stdin,
       stdout: this.context.stdout,
       stderr: this.context.stderr,
-      env: await scriptUtils.makeScriptEnv({project}),
+      env: await scriptUtils.makeScriptEnv(),
     });
 
     return code;
@@ -99,14 +105,14 @@ export default class InitCommand extends BaseCommand {
     manifest.private = this.private;
     manifest.license = configuration.get(`initLicense`);
 
-    await updateAndSave(ppath.join(this.context.cwd, toFilename(`package.json`)), (tracker: Object) => {
+    await updateAndSave(ppath.join(this.context.cwd, Manifest.fileName), (tracker: Object) => {
       manifest.exportTo(tracker);
     });
 
     const inspectable: any = {};
     manifest.exportTo(inspectable);
 
-    this.stdout.write(`${inspect(inspectable, {
+    this.context.stdout.write(`${inspect(inspectable, {
       depth: Infinity,
     })}\n`);
   }

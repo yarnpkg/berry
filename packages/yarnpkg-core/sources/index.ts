@@ -8,6 +8,7 @@ import * as structUtils from './structUtils';
 import * as tgzUtils    from './tgzUtils';
 
 export {Cache}                                                                                           from './Cache';
+export {DEFAULT_RC_FILENAME, DEFAULT_LOCK_FILENAME}                                                      from './Configuration';
 export {Configuration, FormatType, PluginConfiguration, ProjectLookup, SettingsDefinition, SettingsType} from './Configuration';
 export {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions}                                         from './Fetcher';
 export {Installer, BuildDirective, BuildType}                                                            from './Installer';
@@ -28,7 +29,6 @@ export {YarnVersion}                                                            
 export {IdentHash, DescriptorHash, LocatorHash}                                                          from './types';
 export {Ident, Descriptor, Locator, Package}                                                             from './types';
 export {LinkType}                                                                                        from './types';
-
 export {hashUtils};
 export {httpUtils};
 export {execUtils};
