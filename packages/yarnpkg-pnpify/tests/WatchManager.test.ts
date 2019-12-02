@@ -14,12 +14,11 @@ describe('WatchManager', () => {
     const watcher = manager.registerWatcher(dirPath, dirList, callback);
     watcher.on('rename', watcherCallback);
 
-    manager.notifyWatchers({
-      resolvePath: () => ({
-        dirList: new Set(['file1.ts', 'file5.ts', 'file2.ts', 'file3.ts'].map(x => toFilename(x))),
-        resolvedPath: dirPath,
-      }),
-    });
+    manager.notifyWatchers(() => ({
+      dirList: new Set(['file1.ts', 'file5.ts', 'file2.ts', 'file3.ts'].map(x => toFilename(x))),
+      realPath: dirPath,
+      resolvedPath: dirPath,
+    }));
 
     expect(callback).toBeCalledTimes(2);
     expect(callback).toBeCalledWith('rename', 'file3.ts');
@@ -40,12 +39,11 @@ describe('WatchManager', () => {
     const watcher = manager.registerWatcher(dirPath, dirList, callback);
     watcher.on('rename', watcherCallback);
 
-    manager.notifyWatchers({
-      resolvePath: () => ({
-        dirList: new Set(['file1.ts', 'file4.ts'].map(x => toFilename(x))),
-        resolvedPath: dirPath,
-      }),
-    });
+    manager.notifyWatchers(() => ({
+      dirList: new Set(['file1.ts', 'file4.ts'].map(x => toFilename(x))),
+      resolvedPath: dirPath,
+      realPath: dirPath,
+    }));
     expect(callback).toBeCalledTimes(2);
     expect(callback).toBeCalledWith('rename', 'file2.ts');
     expect(callback).toBeCalledWith('rename', 'file3.ts');
@@ -65,12 +63,11 @@ describe('WatchManager', () => {
     watcher.on('rename', watcherCallback);
     watcher.close();
 
-    manager.notifyWatchers({
-      resolvePath: () => ({
-        dirList: new Set(['file1.ts', 'file2.ts'].map(x => toFilename(x))),
-        resolvedPath: dirPath,
-      }),
-    });
+    manager.notifyWatchers(() => ({
+      dirList: new Set(['file1.ts', 'file2.ts'].map(x => toFilename(x))),
+      resolvedPath: dirPath,
+      realPath: dirPath,
+    }));
 
     expect(callback).toBeCalledTimes(0);
     expect(watcherCallback).toBeCalledTimes(0);

@@ -4,6 +4,8 @@ import {execFileSync}                                       from 'child_process'
 import {Cli}                                                from 'clipanion';
 import {realpathSync}                                       from 'fs';
 
+import {WelcomeCommand}                                     from './tools/WelcomeCommand';
+
 function runBinary(path: PortablePath) {
   const physicalPath = npath.fromPortablePath(path);
 
@@ -33,6 +35,8 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       binaryName: `yarn`,
       binaryVersion,
     });
+
+    cli.register(WelcomeCommand);
 
     try {
       await exec(cli);

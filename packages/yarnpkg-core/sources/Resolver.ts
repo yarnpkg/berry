@@ -1,5 +1,6 @@
 import {FetchOptions}                 from './Fetcher';
 import {Project}                      from './Project';
+import {Report}                       from './Report';
 import {Descriptor, Locator, Package} from './types';
 
 export type MinimalResolveOptions = {
@@ -7,9 +8,10 @@ export type MinimalResolveOptions = {
   resolver: Resolver,
 };
 
-export type ResolveOptions =
-  MinimalResolveOptions &
-  FetchOptions;
+export type ResolveOptions = MinimalResolveOptions & {
+  fetchOptions?: FetchOptions | null,
+  report: Report,
+};
 
 /**
  * Resolvers are the components that do all the lifting needed in order to

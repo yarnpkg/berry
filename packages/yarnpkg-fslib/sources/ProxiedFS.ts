@@ -1,6 +1,8 @@
+import {Dirent}                                                               from 'fs';
+
 import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS}            from './FakeFS';
 import {MkdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher} from './FakeFS';
-import {FSPath, Path}                                                         from './path';
+import {FSPath, Filename, Path}                                               from './path';
 
 export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<P> {
   protected abstract readonly baseFs: FakeFS<IP>;
@@ -217,12 +219,20 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     }
   }
 
-  readdirPromise(p: P) {
-    return this.baseFs.readdirPromise(this.mapToBase(p));
+  async readdirPromise(p: P): Promise<Array<Filename>>;
+  async readdirPromise(p: P, opts: {withFileTypes: false}): Promise<Array<Filename>>;
+  async readdirPromise(p: P, opts: {withFileTypes: true}): Promise<Array<Dirent>>;
+  async readdirPromise(p: P, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
+  async readdirPromise(p: P, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<Dirent>> {
+    return this.baseFs.readdirPromise(this.mapToBase(p), {withFileTypes: withFileTypes as any});
   }
 
-  readdirSync(p: P) {
-    return this.baseFs.readdirSync(this.mapToBase(p));
+  readdirSync(p: P): Array<Filename>;
+  readdirSync(p: P, opts: {withFileTypes: false}): Array<Filename>;
+  readdirSync(p: P, opts: {withFileTypes: true}): Array<Dirent>;
+  readdirSync(p: P, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
+  readdirSync(p: P, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<Dirent> {
+    return this.baseFs.readdirSync(this.mapToBase(p), {withFileTypes: withFileTypes as any});
   }
 
   async readlinkPromise(p: P) {

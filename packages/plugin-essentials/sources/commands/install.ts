@@ -27,6 +27,9 @@ export default class YarnCommand extends BaseCommand {
   @Command.Boolean(`--ignore-engines`, {hidden: true})
   ignoreEngines?: boolean;
 
+  @Command.String(`--registry`, {hidden: true})
+  registry?: string;
+
   @Command.Boolean(`--inline-builds`)
   inlineBuilds?: boolean;
 
@@ -115,7 +118,22 @@ export default class YarnCommand extends BaseCommand {
       }
     }
 
-    // Thie preferOffline flag doesn't make much sense with our architecture.
+    // The registry flag isn't supported anymore because it makes little sense
+    // to use a registry for a single install. You instead want to configure it
+    // for all installs inside a project, so through the .yarnrc.yml file. Note
+    // that if absolutely necessary, the old behavior can be emulated by adding
+    // the YARN_NPM_REGISTRY_SERVER variable to the environment.
+    if (typeof this.registry !== `undefined`) {
+      const exitCode = await reportDeprecation(`The --registry option is deprecated; prefer setting npmRegistryServer in your .yarnrc.yml file`, {
+        error: false,
+      });
+
+      if (typeof exitCode !== `undefined`) {
+        return exitCode;
+      }
+    }
+
+    // The preferOffline flag doesn't make much sense with our architecture.
     // It would require the fetchers to also act as resolvers, which is
     // doable but quirky. Since a similar behavior is available via the
     // --cached flag in yarn add, I prefer to move it outside of the core and

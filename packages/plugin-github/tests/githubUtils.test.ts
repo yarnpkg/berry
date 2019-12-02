@@ -35,10 +35,6 @@ const invalidScenarios = [{
 
 describe(`githubUtils`, () => {
   describe('isGithubUrl', () => {
-    it('should handle undefined', () => {
-      expect(isGithubUrl(undefined)).not.toBeTruthy();
-    });
-
     for (const scenario of validScenarios) {
       it(`should properly detect GitHub urls (${scenario.url})`, () => {
         expect(isGithubUrl(scenario.url)).toBeTruthy();

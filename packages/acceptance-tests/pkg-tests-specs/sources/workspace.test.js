@@ -127,6 +127,49 @@ describe(`Workspaces tests`, () => {
   );
 
   test(
+    `it should resolve workspaces as regular packages if enableTransparentWorkspaces is disabled`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`packages/*`],
+        dependencies: {
+          [`workspace`]: `workspace:1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc.yml`, `enableTransparentWorkspaces: false\n`);
+
+        await writeJson(`${path}/packages/workspace/package.json`, {
+          name: `workspace`,
+          version: `1.0.0`,
+          dependencies: {
+            [`no-deps`]: `*`,
+          },
+        });
+
+        await writeFile(
+          `${path}/packages/workspace/index.js`,
+          `
+            module.exports = require('no-deps/package.json');
+          `,
+        );
+
+        await writeJson(`${path}/packages/no-deps/package.json`, {
+          name: `no-deps`,
+          version: `1.0.0-local`,
+        });
+
+        await run(`install`);
+
+        await expect(source(`require('workspace')`)).resolves.toMatchObject({
+          name: `no-deps`,
+          version: `2.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
     `it should allow scripts defined in workspaces to run successfully`,
     makeTemporaryEnv(
       {

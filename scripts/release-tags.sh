@@ -45,8 +45,10 @@ while read line; do
   )
 done <<< "$RELEASE_DETAILS"
 
+echo
+
 # Regenerate the local versions for the elements that get released
-YARN_NPM_PUBLISH_REGISTRY=https://npm.pkg.github.com yarn workspaces foreach \
+yarn workspaces foreach \
   --verbose --topological --no-private "${UPDATE_ARGUMENTS[@]}" \
   run update-local
 

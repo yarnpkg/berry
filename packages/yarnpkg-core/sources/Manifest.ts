@@ -1,11 +1,11 @@
-import {FakeFS, NodeFS, PortablePath, ppath, toFilename}  from '@yarnpkg/fslib';
-import {Resolution, parseResolution, stringifyResolution} from '@yarnpkg/parsers';
-import semver                                             from 'semver';
+import {FakeFS, Filename, NodeFS, PortablePath, ppath, toFilename} from '@yarnpkg/fslib';
+import {Resolution, parseResolution, stringifyResolution}          from '@yarnpkg/parsers';
+import semver                                                      from 'semver';
 
-import * as miscUtils                                     from './miscUtils';
-import * as structUtils                                   from './structUtils';
-import {IdentHash}                                        from './types';
-import {Ident, Descriptor}                                from './types';
+import * as miscUtils                                              from './miscUtils';
+import * as structUtils                                            from './structUtils';
+import {IdentHash}                                                 from './types';
+import {Ident, Descriptor}                                         from './types';
 
 export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
 export type HardDependencies = 'dependencies' | 'devDependencies';
@@ -69,6 +69,8 @@ export class Manifest {
    * errors found in the raw manifest while loading
    */
   public errors: ReadonlyArray<Error> = [];
+
+  static readonly fileName = `package.json` as Filename;
 
   static readonly allDependencies: Array<AllDependencies> = [`dependencies`, `devDependencies`, `peerDependencies`];
   static readonly hardDependencies: Array<HardDependencies> = [`dependencies`, `devDependencies`];
@@ -215,12 +217,7 @@ export class Manifest {
     }
 
     if (typeof data.peerDependencies === `object` && data.peerDependencies !== null) {
-      for (const [name, range] of Object.entries(data.peerDependencies)) {
-        if (typeof range !== 'string') {
-          errors.push(new Error(`Invalid dependency range for '${name}'`));
-          continue;
-        }
-
+      for (let [name, range] of Object.entries(data.peerDependencies)) {
         let ident;
         try {
           ident = structUtils.parseIdent(name);
@@ -229,7 +226,12 @@ export class Manifest {
           continue;
         }
 
-        const descriptor = structUtils.makeDescriptor(ident, range);
+        if (typeof range !== 'string' || !semver.validRange(range)) {
+          errors.push(new Error(`Invalid dependency range for '${name}'`));
+          range = `*`;
+        }
+
+        const descriptor = structUtils.makeDescriptor(ident, range as string);
         this.peerDependencies.set(descriptor.identHash, descriptor);
       }
     }
@@ -396,11 +398,38 @@ export class Manifest {
     }
   }
 
+  hasConsumerDependency(ident: Ident) {
+    if (this.dependencies.has(ident.identHash))
+      return true;
+
+    if (this.peerDependencies.has(ident.identHash))
+      return true;
+
+    return false;
+  }
+
   hasHardDependency(ident: Ident) {
     if (this.dependencies.has(ident.identHash))
       return true;
 
     if (this.devDependencies.has(ident.identHash))
+      return true;
+
+    return false;
+  }
+
+  hasSoftDependency(ident: Ident) {
+    if (this.peerDependencies.has(ident.identHash))
+      return true;
+
+    return false;
+  }
+
+  hasDependency(ident: Ident) {
+    if (this.hasHardDependency(ident))
+      return true;
+
+    if (this.hasSoftDependency(ident))
       return true;
 
     return false;

@@ -263,4 +263,91 @@ describe(`Dragon tests`, () => {
       },
     ),
   );
+
+  test(
+    `it should pass the dragon test 6`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [
+          `packages/*`,
+        ],
+      },
+      async ({path, run, source}) => {
+        // Virtual packages are deduplicated, so that if multiple ones share
+        // the same set of dependencies they end up being unified into one.
+        // In order to do this, we track which package depends on which one
+        // so that we can properly update the dependents during unification.
+        //
+        // One problem that may arise is when a package with peer dependencies
+        // is used twice in the dependency tree, and itself depends on a
+        // package that lists peer dependencies. In this situation, the
+        // package may be removed from the dependency tree during unification,
+        // then its dependency gets unified too but the registered dependent
+        // doesn't exist anymore.
+
+        await xfs.mkdirpPromise(`${path}/packages/a`);
+        await xfs.writeJsonPromise(`${path}/packages/a/package.json`, {
+          name: `a`,
+          dependencies: {
+            [`z`]: `workspace:*`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/b`);
+        await xfs.writeJsonPromise(`${path}/packages/b/package.json`, {
+          name: `b`,
+          dependencies: {
+            [`u`]: `workspace:*`,
+            [`v`]: `workspace:*`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/c`);
+        await xfs.writeJsonPromise(`${path}/packages/c/package.json`, {
+          name: `c`,
+          dependencies: {
+            [`u`]: `workspace:*`,
+            [`v`]: `workspace:*`,
+            [`y`]: `workspace:*`,
+            [`z`]: `workspace:*`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/u`);
+        await xfs.writeJsonPromise(`${path}/packages/u/package.json`, {
+          name: `u`,
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/v`);
+        await xfs.writeJsonPromise(`${path}/packages/v/package.json`, {
+          name: `v`,
+          peerDependencies: {
+            [`u`]: `*`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/y`);
+        await xfs.writeJsonPromise(`${path}/packages/y/package.json`, {
+          name: `y`,
+          peerDependencies: {
+            [`v`]: `*`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/z`);
+        await xfs.writeJsonPromise(`${path}/packages/z/package.json`, {
+          name: `z`,
+          dependencies: {
+            [`y`]: `workspace:*`,
+          },
+          peerDependencies: {
+            [`v`]: `*`,
+          },
+        });
+
+        await run(`install`);
+      },
+    ),
+  );
 });

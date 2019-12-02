@@ -90,6 +90,16 @@ The `topLevel` object is a simple package locator pointing to the top-level pack
 
 This object is provided for convenience and doesn't necessarily needs to be used; you may create your own top-level locator by using your own locator literal with both fields set to `null`.
 
+### `getLocator(...)`
+
+```ts
+export function getLocator(name: string, referencish: string | [string, string]): PackageLocator;
+```
+
+This function is a small helper that makes it easier to work with "referencish" ranges. As you may have seen in the `PackageInformation` interface, the `packageDependencies` map values may be either a string or a tuple - and the way to compute the resolved locator changes depending on that. To avoid having to manually make a `Array.isArray` check, we provide the `getLocator` function that does it for you.
+
+Just like for `topLevel`, you're under no obligation to actually use it - you're free to roll your own version if for some reason our implementation wasn't what you're looking for.
+
 ### `getDependencyTreeRoots(...)`
 
 ```ts
@@ -251,30 +261,16 @@ const traverseDependencyTree = (locator, parentPkg = null) => {
 
   seen.add(key);
 
-  for (const [name, reference] of pkg.packageDependencies) {
+  for (const [name, referencish] of pkg.packageDependencies) {
     // Unmet peer dependencies
-    if (reference === null)
+    if (referencish === null)
       continue;
 
     // Avoid iterating on peer dependencies - very expensive
     if (parentPkg !== null && isPeerDependency(pkg, parentPkg, name))
       continue;
 
-    let childLocator;
-
-    // Dependency aliases ("underscore": "lodash@1.0.0")
-    if (Array.isArray(reference)) {
-      childLocator = {
-        name: reference[0],
-        reference: reference[1],
-      };
-    } else {
-      childLocator = {
-        name,
-        reference,
-      };
-    }
-
+    const childLocator = pnp.getLocator(name, referencish);
     traverseDependencyTree(childLocator, pkg);
   }
 

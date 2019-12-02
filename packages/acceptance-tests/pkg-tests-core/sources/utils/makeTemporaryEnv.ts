@@ -31,7 +31,8 @@ const mte = generatePkgDriver({
       ? [projectFolder]
       : [];
 
-    const res = await execFile(process.execPath, [`${__dirname}/../../../../../scripts/run-yarn.js`, ...cwdArgs, command, ...args], {
+    const yarnBinary = require.resolve(`${__dirname}/../../../../yarnpkg-cli/bundles/yarn.js`);
+    const res = await execFile(process.execPath, [yarnBinary, ...cwdArgs, command, ...args], {
       cwd: cwd || path,
       env: {
         [`HOME`]: tempHomeFolder,

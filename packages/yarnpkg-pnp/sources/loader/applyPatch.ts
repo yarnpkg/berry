@@ -83,6 +83,15 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   // @ts-ignore
   process.versions.pnp = String(pnpapi.VERSIONS.std);
 
+  function getRequireStack(parent: Module | null) {
+    const requireStack = [];
+
+    for (let cursor = parent; cursor; cursor = cursor.parent)
+      requireStack.push(cursor.filename || cursor.id);
+
+    return requireStack;
+  }
+
   // A small note: we don't replace the cache here (and instead use the native one). This is an effort to not
   // break code similar to "delete require.cache[require.resolve(FOO)]", where FOO is a package located outside
   // of the Yarn dependency tree. In this case, we defer the load to the native loader. If we were to replace the
@@ -236,6 +245,12 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
       return resolution !== null ? resolution : request;
     }
+
+    const requireStack = getRequireStack(parent);
+    firstError.requireStack = requireStack;
+
+    if (requireStack.length > 0)
+      firstError.message += `\nRequire stack:\n- ${requireStack.join(`\n- `)}`;
 
     throw firstError;
   };

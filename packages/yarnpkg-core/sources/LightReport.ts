@@ -1,8 +1,9 @@
-import {Writable}            from 'stream';
+import {Writable}      from 'stream';
 
-import {Configuration}       from './Configuration';
-import {Report, MessageName} from './Report';
-import {Locator}             from './types';
+import {Configuration} from './Configuration';
+import {MessageName}   from './MessageName';
+import {Report}        from './Report';
+import {Locator}       from './types';
 
 export type LightReportOptions = {
   configuration: Configuration,
@@ -75,10 +76,18 @@ export class LightReport extends Report {
     this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${text}\n`);
   }
 
-  async reportProgress(progress: AsyncIterable<{progress: number, title?: string}>) {
-    for await (const {} of progress) {
-      // No need to do anything; we just want to consume the progress events
-    }
+  reportProgress(progress: AsyncIterable<{progress: number, title?: string}>) {
+    const promise = Promise.resolve().then(async () => {
+      for await (const {} of progress) {
+        // No need to do anything; we just want to consume the progress events
+      }
+    });
+
+    const stop = () => {
+      // Nothing to stop
+    };
+
+    return {...promise, stop};
   }
 
   reportJson(data: any) {

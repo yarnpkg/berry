@@ -234,7 +234,7 @@ describe(`Plug'n'Play`, () => {
         const rootMessage = await source(`{ try { require('no-deps') } catch (error) { return error.message } }`);
         const dependencyMessage = await source(`{ try { require('various-requires/invalid-require') } catch (error) { return error.message } }`);
 
-        const filter = message => message.replace(/^(.*):.*/gm, `$1: Something`);
+        const filter = message => message.replace(/^(-|[^:]*:) .*/gm, `$1 Something`);
 
         expect(filter(rootMessage)).not.toEqual(filter(dependencyMessage));
       },
@@ -261,7 +261,7 @@ describe(`Plug'n'Play`, () => {
         const rootMessage = await source(code);
         const workspaceMessage = await source(code, {cwd: ppath.join(workspacePath)});
 
-        const filter = message => message.replace(/^(.*):.*/gm, `$1: Something`);
+        const filter = message => message.replace(/^(-|[^:]*:) .*/gm, `$1 Something`);
 
         expect(filter(workspaceMessage)).toEqual(filter(rootMessage));
       },
@@ -327,6 +327,38 @@ describe(`Plug'n'Play`, () => {
         await expect(run(`myScript`)).resolves.toMatchObject({
           stdout: `1.0.0\n`,
         });
+      },
+    ),
+  );
+
+  test(
+    `it should not warn when the peer dependency resolution is compatible`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`peer-deps-fixed`]: `1.0.0`,
+          [`no-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        const {stdout} = await run(`install`);
+        expect(stdout).not.toEqual(expect.stringContaining('YN0060'));
+      }
+    ),
+  );
+
+  test(
+    `it should warn when the peer dependency resolution is incompatible`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`peer-deps-fixed`]: `1.0.0`,
+          [`no-deps`]: `2.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        const {stdout} = await run(`install`);
+        expect(stdout).toEqual(expect.stringContaining('YN0060'));
       },
     ),
   );

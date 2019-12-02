@@ -1,4 +1,4 @@
-import {ReadStream, Stats, WriteStream}                  from 'fs';
+import {Dirent, ReadStream, Stats, WriteStream}          from 'fs';
 
 import {FSPath, Path, PortablePath, PathUtils, Filename} from './path';
 import {convertPath, ppath}                              from './path';
@@ -73,7 +73,14 @@ export abstract class FakeFS<P extends Path> {
   abstract realpathSync(p: P): P;
 
   abstract readdirPromise(p: P): Promise<Array<Filename>>;
+  abstract readdirPromise(p: P, opts: {withFileTypes: false}): Promise<Array<Filename>>;
+  abstract readdirPromise(p: P, opts: {withFileTypes: true}): Promise<Array<Dirent>>;
+  abstract readdirPromise(p: P, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
+
   abstract readdirSync(p: P): Array<Filename>;
+  abstract readdirSync(p: P, opts: {withFileTypes: false}): Array<Filename>;
+  abstract readdirSync(p: P, opts: {withFileTypes: true}): Array<Dirent>;
+  abstract readdirSync(p: P, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
 
   abstract existsPromise(p: P): Promise<boolean>;
   abstract existsSync(p: P): boolean;
