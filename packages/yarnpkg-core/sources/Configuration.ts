@@ -706,12 +706,16 @@ export class Configuration {
       if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`))))
         projectCwd = currentCwd;
 
-      const topLevelFound = lockfileFilename !== null
-        ? xfs.existsSync(ppath.join(currentCwd, lockfileFilename))
-        : projectCwd !== null;
-
-      if (topLevelFound)
-        break;
+      if (lockfileFilename !== null) {
+        if (xfs.existsSync(ppath.join(currentCwd, lockfileFilename))) {
+          projectCwd = currentCwd;
+          break;
+        }
+      } else {
+        if (projectCwd !== null) {
+          break;
+        }
+      }
 
       nextCwd = ppath.dirname(currentCwd);
     }

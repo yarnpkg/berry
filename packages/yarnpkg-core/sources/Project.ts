@@ -82,7 +82,7 @@ export class Project {
     if (!configuration.projectCwd)
       throw new Error(`No project found in the initial directory`);
 
-    let packageCwd = null;
+    let packageCwd = configuration.projectCwd;
 
     let nextCwd = startingCwd;
     let currentCwd = null;
@@ -90,15 +90,13 @@ export class Project {
     while (currentCwd !== configuration.projectCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`))))
-        if (!packageCwd)
-          packageCwd = currentCwd;
+      if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`)))) {
+        packageCwd = currentCwd;
+        break;
+      }
 
       nextCwd = ppath.dirname(currentCwd);
     }
-
-    if (!packageCwd)
-      throw new Error(`Assertion failed: No manifest found in the project`);
 
     const project = new Project(configuration.projectCwd, {configuration});
 
@@ -200,7 +198,7 @@ export class Project {
     }
   }
 
-  private async setupWorkspaces({force = false}: {force?: boolean} = {}) {
+  private async setupWorkspaces() {
     this.workspaces = [];
 
     this.workspacesByCwd = new Map();
