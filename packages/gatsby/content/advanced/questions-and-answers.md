@@ -34,7 +34,7 @@ Speed is relative and a temporary state. Processes, roadmaps and core values are
 
 ## Should lockfiles be committed to the repository?
 
-**Yes**
+**Yes.**
 
 Lockfiles are meant to always be stored along with your project sources - and this regardless of whether you're writing a standalone application or a distributed library.
 
@@ -43,3 +43,34 @@ One persisting argument against checking-in the lockfile in the repository is ab
 Although tempting, this reasoning has a fatal flaw: removing the lockfile from the repository doesn't prevent this problem from happening. Contributors won't test against new versions unless they run an install, so older projects may never even notice such incompatibilities. Then, years later, users that want to work on an old project won't even be able to install it because it's latest known good state didn't get checked-in. Even without going all the way to "years later", new contributors will always have to ponder whether things broke because of their changes or because of an incompatible dependency - decreasing the amount of contributions you'll receive.
 
 Lockfiles should **always** be kept within the repository. Continuous integration testing is a good idea, but should be left to continuous integration systems. For example, Yarn itself runs [daily tests](https://github.com/yarnpkg/berry#current-status) against the latest versions of major open-source frameworks and tools. [Dependabot](https://dependabot.com/#how-it-works) is also a good tool that allows you to track your dependencies updates in a more integrated way.
+
+## Which files should be gitignored?
+
+- `.yarn/plugins` and `.yarn/releases` contain the Yarn releases used in the current repository (as defined by [`yarn set version`](/cli/set/version)). You will want to keep them versioned (this prevents potential issues if, say, two engineers use different Yarn versions with different features).
+
+- `.yarn/unplugged` and `.yarn/build-state.yml` should likely always be ignored since they typically hold machine-specific build artifacts. Ignoring them might however prevent [Zero-Installs](https://next.yarnpkg.com/features/zero-installs) from working (to prevent this, set [`enableScripts`](/configuration/yarnrc#enableScripts) to `false`).
+
+- `.yarn/cache` and `.pnp.*` may be safely ignored, but you'll need to run `yarn install` to regenerate them between each branch switch - which would be optional otherwise, cf [Zero-Installs](/features/zero-installs).
+
+- `yarn.lock` should always be stored within your repository ([even if you develop a library](#should-lockfiles-be-committed-to-the-repository)).
+
+- `.yarnrc.yml` (and its older counterpart, `.yarnrc`) are configuration files. They should always be stored in your project.
+
+So to summarize:
+
+**If you're using Zero-Installs:**
+
+```gitignore
+.yarn/unplugged
+.yarn/build-state.yml
+```
+
+**If you're not using Zero-Installs:**
+
+```gitignore
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
+```
+

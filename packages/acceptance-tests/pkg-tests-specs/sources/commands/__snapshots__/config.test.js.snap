@@ -21,6 +21,7 @@ Object {
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableTransparentWorkspaces\\",\\"effective\\":true,\\"description\\":\\"If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -78,6 +79,7 @@ Object {
 ➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
+➤ YN0000: enableTransparentWorkspaces - If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol - true
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
@@ -136,6 +138,7 @@ Object {
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
+➤ YN0000: enableTransparentWorkspaces - <default> - true
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
@@ -194,6 +197,7 @@ Object {
 ➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
+➤ YN0000: enableTransparentWorkspaces - true
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
@@ -252,6 +256,7 @@ Object {
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableTransparentWorkspaces\\",\\"effective\\":true,\\"description\\":\\"If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -309,6 +314,7 @@ Object {
 ➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
+➤ YN0000: enableTransparentWorkspaces - If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol - true
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
@@ -367,6 +373,7 @@ Object {
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
+➤ YN0000: enableTransparentWorkspaces - <default> - true
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
@@ -425,6 +432,7 @@ Object {
 ➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
+➤ YN0000: enableTransparentWorkspaces - true
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
@@ -483,6 +491,7 @@ Object {
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableTransparentWorkspaces\\",\\"effective\\":true,\\"description\\":\\"If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -540,6 +549,7 @@ Object {
 ➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
+➤ YN0000: enableTransparentWorkspaces - If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol - true
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
@@ -598,6 +608,7 @@ Object {
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
+➤ YN0000: enableTransparentWorkspaces - <default> - true
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
@@ -656,6 +667,7 @@ Object {
 ➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
+➤ YN0000: enableTransparentWorkspaces - true
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
@@ -714,6 +726,7 @@ Object {
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableTransparentWorkspaces\\",\\"effective\\":true,\\"description\\":\\"If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -771,6 +784,7 @@ Object {
 ➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
+➤ YN0000: enableTransparentWorkspaces - If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol - true
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
@@ -829,6 +843,7 @@ Object {
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
+➤ YN0000: enableTransparentWorkspaces - <default> - true
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
@@ -887,6 +902,7 @@ Object {
 ➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
+➤ YN0000: enableTransparentWorkspaces - true
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
@@ -945,6 +961,7 @@ Object {
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableTransparentWorkspaces\\",\\"effective\\":true,\\"description\\":\\"If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -1002,6 +1019,7 @@ Object {
 ➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
+➤ YN0000: enableTransparentWorkspaces - If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol - true
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
@@ -1060,6 +1078,7 @@ Object {
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
+➤ YN0000: enableTransparentWorkspaces - <default> - true
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
@@ -1118,6 +1137,7 @@ Object {
 ➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
+➤ YN0000: enableTransparentWorkspaces - true
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null
@@ -1176,6 +1196,7 @@ Object {
 {\\"key\\":\\"enableProgressBars\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to show a progress bar for long-running events\\",\\"type\\":\\"BOOLEAN\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"enableScripts\\",\\"effective\\":true,\\"description\\":\\"If true, packages are allowed to have install scripts by default\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"enableTimers\\",\\"effective\\":false,\\"source\\":\\"<environment>\\",\\"description\\":\\"If true, the CLI is allowed to print the time spent executing commands\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
+{\\"key\\":\\"enableTransparentWorkspaces\\",\\"effective\\":true,\\"description\\":\\"If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol\\",\\"type\\":\\"BOOLEAN\\",\\"default\\":true}
 {\\"key\\":\\"globalFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/global\\",\\"source\\":\\"<environment>\\",\\"description\\":\\"Folder where are stored the system-wide settings\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"LOCAL_APP_DATA\\"}
 {\\"key\\":\\"httpProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing http requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"httpsProxy\\",\\"effective\\":null,\\"description\\":\\"URL of the http proxy that must be used for outgoing https requests\\",\\"type\\":\\"STRING\\",\\"default\\":null}
@@ -1233,6 +1254,7 @@ Object {
 ➤ YN0000: enableProgressBars - If true, the CLI is allowed to show a progress bar for long-running events - false
 ➤ YN0000: enableScripts - If true, packages are allowed to have install scripts by default - true
 ➤ YN0000: enableTimers - If true, the CLI is allowed to print the time spent executing commands - false
+➤ YN0000: enableTransparentWorkspaces - If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol - true
 ➤ YN0000: globalFolder - Folder where are stored the system-wide settings - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - URL of the http proxy that must be used for outgoing http requests - null
 ➤ YN0000: httpsProxy - URL of the http proxy that must be used for outgoing https requests - null
@@ -1291,6 +1313,7 @@ Object {
 ➤ YN0000: enableProgressBars - <environment> - false
 ➤ YN0000: enableScripts - <default> - true
 ➤ YN0000: enableTimers - <environment> - false
+➤ YN0000: enableTransparentWorkspaces - <default> - true
 ➤ YN0000: globalFolder - <environment> - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - <default> - null
 ➤ YN0000: httpsProxy - <default> - null
@@ -1349,6 +1372,7 @@ Object {
 ➤ YN0000: enableProgressBars - false
 ➤ YN0000: enableScripts - true
 ➤ YN0000: enableTimers - false
+➤ YN0000: enableTransparentWorkspaces - true
 ➤ YN0000: globalFolder - 'WORKSPACE_ROOT/.yarn/global'
 ➤ YN0000: httpProxy - null
 ➤ YN0000: httpsProxy - null

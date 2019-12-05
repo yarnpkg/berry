@@ -234,7 +234,7 @@ describe(`Plug'n'Play`, () => {
         const rootMessage = await source(`{ try { require('no-deps') } catch (error) { return error.message } }`);
         const dependencyMessage = await source(`{ try { require('various-requires/invalid-require') } catch (error) { return error.message } }`);
 
-        const filter = message => message.replace(/^(.*):.*/gm, `$1: Something`);
+        const filter = message => message.replace(/^(-|[^:]*:) .*/gm, `$1 Something`);
 
         expect(filter(rootMessage)).not.toEqual(filter(dependencyMessage));
       },
@@ -261,7 +261,7 @@ describe(`Plug'n'Play`, () => {
         const rootMessage = await source(code);
         const workspaceMessage = await source(code, {cwd: ppath.join(workspacePath)});
 
-        const filter = message => message.replace(/^(.*):.*/gm, `$1: Something`);
+        const filter = message => message.replace(/^(-|[^:]*:) .*/gm, `$1 Something`);
 
         expect(filter(workspaceMessage)).toEqual(filter(rootMessage));
       },

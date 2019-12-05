@@ -82,7 +82,7 @@ export class Project {
     if (!configuration.projectCwd)
       throw new Error(`No project found in the initial directory`);
 
-    let packageCwd = null;
+    let packageCwd = configuration.projectCwd;
 
     let nextCwd = startingCwd;
     let currentCwd = null;
@@ -90,15 +90,13 @@ export class Project {
     while (currentCwd !== configuration.projectCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`))))
-        if (!packageCwd)
-          packageCwd = currentCwd;
+      if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`)))) {
+        packageCwd = currentCwd;
+        break;
+      }
 
       nextCwd = ppath.dirname(currentCwd);
     }
-
-    if (!packageCwd)
-      throw new Error(`Assertion failed: No manifest found in the project`);
 
     const project = new Project(configuration.projectCwd, {configuration});
 
@@ -200,7 +198,7 @@ export class Project {
     }
   }
 
-  private async setupWorkspaces({force = false}: {force?: boolean} = {}) {
+  private async setupWorkspaces() {
     this.workspaces = [];
 
     this.workspacesByCwd = new Map();
@@ -1615,7 +1613,7 @@ function applyVirtualResolutionMutations({
           return structUtils.areVirtualPackagesEquivalent(groupVirtualPackage, virtualPackage);
         });
 
-        if (matchedGroup)  {
+        if (matchedGroup) {
           consolidatedVirtualPackages = true;
           matchedGroup.push(virtualDescriptor);
         } else {
@@ -1630,23 +1628,34 @@ function applyVirtualResolutionMutations({
       for (const descriptorGroup of descriptorGroups) {
         const [primaryDescriptor, ...duplicates] = descriptorGroup;
 
+        const primaryDependents = allVirtualizedDescriptorsDependents.get(primaryDescriptor.descriptorHash);
+        if (!primaryDependents)
+          throw new Error(`Assertion failed: The virtual package should have a list of dependents`);
+
         for (const duplicateDescriptor of duplicates) {
-          const dependents = allVirtualizedDescriptorsDependents.get(duplicateDescriptor.descriptorHash);
-          if (!dependents)
+          const duplicateDependents = allVirtualizedDescriptorsDependents.get(duplicateDescriptor.descriptorHash);
+          if (!duplicateDependents)
             throw new Error(`Assertion failed: The virtual package should have a list of dependents`);
 
-          for (const dependentLocatorHash of dependents) {
+          for (const dependentLocatorHash of duplicateDependents) {
             const dependentPackage = allPackages.get(dependentLocatorHash);
+
+            // The dependent may be missing if it has been removed in a prior
+            // unification iteration
             if (!dependentPackage)
-              throw new Error(`Assertion failed: The dependent package could not be found`);
+              continue;
 
             dependentPackage.dependencies.set(primaryDescriptor.identHash, primaryDescriptor);
+            primaryDependents.add(dependentLocatorHash);
           }
 
           const duplicateVirtualPackage = getPackageFromDescriptor(duplicateDescriptor);
+
           allDescriptors.delete(duplicateDescriptor.descriptorHash);
           allPackages.delete(duplicateVirtualPackage.locatorHash);
           allResolutions.delete(duplicateDescriptor.descriptorHash);
+
+          allVirtualizedDescriptorsDependents.delete(duplicateDescriptor.descriptorHash);
           virtualDescriptors.delete(duplicateDescriptor);
         }
       }

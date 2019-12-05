@@ -1,6 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError}                   from '@yarnpkg/cli';
 import {Configuration, Project, ThrowReport}                   from '@yarnpkg/core';
 import {scriptUtils, structUtils}                              from '@yarnpkg/core';
+import {DEFAULT_LOCK_FILENAME, DEFAULT_RC_FILENAME}            from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
 import {Command}                                               from 'clipanion';
 import tmp                                                     from 'tmp';

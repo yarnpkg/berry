@@ -239,6 +239,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.STRING,
     default: `npm:`,
   },
+  enableTransparentWorkspaces: {
+    description: `If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
 
   // Settings related to network access
   enableMirror: {
@@ -701,12 +706,16 @@ export class Configuration {
       if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`))))
         projectCwd = currentCwd;
 
-      const topLevelFound = lockfileFilename !== null
-        ? xfs.existsSync(ppath.join(currentCwd, lockfileFilename))
-        : projectCwd !== null;
-
-      if (topLevelFound)
-        break;
+      if (lockfileFilename !== null) {
+        if (xfs.existsSync(ppath.join(currentCwd, lockfileFilename))) {
+          projectCwd = currentCwd;
+          break;
+        }
+      } else {
+        if (projectCwd !== null) {
+          break;
+        }
+      }
 
       nextCwd = ppath.dirname(currentCwd);
     }
