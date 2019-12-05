@@ -374,7 +374,6 @@ const persistNodeModules = (rootPath: PortablePath, nodeModulesFS: PortableNodeM
     }
     // Non existing directory
     if (!stats) {
-      console.log('Persisting non-existing dir:', nodePath);
       persistDirEntry(parentPath, dir, nodeModulesFS, mtime, children);
       // Existing directory
     } else {
@@ -382,13 +381,11 @@ const persistNodeModules = (rootPath: PortablePath, nodeModulesFS: PortableNodeM
       // Changed module directory
       if ((children.size === 0 || hasInnerNodeModules) && wasModuleDirChanged(nodePath, stats, mtime, DEL_BLACKLIST, hasInnerNodeModules)) {
         if (!hasInnerNodeModules) {
-          console.log('Recreating pure module dir:', nodePath);
           // Module has no inner node_modules, remove module dir
           xfs.removeSync(nodePath);
           // Persist module dir
           persistDirEntry(parentPath, dir, nodeModulesFS, mtime, children);
         } else {
-          console.log('Rewriting non-pure module dir:', nodePath);
           // Module has inner node_modules, remove everything except inner node_modules
           const dstEntryNames = xfs.readdirSync(nodePath);
           for (const entry of dstEntryNames) {
@@ -410,14 +407,12 @@ const persistNodeModules = (rootPath: PortablePath, nodeModulesFS: PortableNodeM
         }
         // Changed container directory
       } else if (+stats.mtime !== +mtime) {
-        console.log('Detected changed container dir', nodePath);
         const srcEntryNames = new Set(children.keys());
         const dstEntryNames = new Set(stats ? xfs.readdirSync(nodePath) : []);
 
         for (const [entry, node] of children.entries()) {
           if (!dstEntryNames.has(entry)) {
             // Add new directories
-            console.log('Adding new dir:', ppath.join(nodePath, entry));
             persistDirEntry(nodePath, entry, nodeModulesFS, node.mtime, node.children);
           } else {
             // Check directories with the same name for changes
@@ -429,7 +424,6 @@ const persistNodeModules = (rootPath: PortablePath, nodeModulesFS: PortableNodeM
           const entryDir = ppath.join(nodePath, entry);
           if (!srcEntryNames.has(entry)) {
             // Remove old directories
-            console.log('Removing old dir:', entryDir);
             xfs.removeSync(entryDir);
           }
         }
