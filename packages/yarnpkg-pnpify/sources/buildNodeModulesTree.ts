@@ -46,7 +46,7 @@ export type NodeModulesTree = Map<PortablePath, {dirList: Set<Filename>} | {dirL
  * changes by comparing mtimes of all the folders inside module with archive mtime. If any
  * of the folders have different mtime than archive mtime, then user has changed the folder.
  */
-export type NodeModulesTimestampsTree = Map<PortablePath, { mtime: Date, children: NodeModulesTimestampsTree }>;
+export type NodeModulesTimestampsTree = Map<Filename, { mtime: Date, children: NodeModulesTimestampsTree }>;
 
 export interface NodeModulesTreeOptions {
   optimizeSizeOnDisk?: boolean;

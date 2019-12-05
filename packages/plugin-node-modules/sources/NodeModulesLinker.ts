@@ -1,15 +1,25 @@
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName} from '@yarnpkg/core';
 import {FetchResult, Descriptor, Locator, Package, BuildDirective, BuildType}                from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                              from '@yarnpkg/core';
-import {PortablePath, npath, ppath, toFilename, xfs}                                         from '@yarnpkg/fslib';
+import {miscUtils, structUtils, Ident, DependencyMeta}                                       from '@yarnpkg/core';
+import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS, CwdFS}                from '@yarnpkg/fslib';
 import {NodeModulesTimestampsTree}                                                           from '@yarnpkg/pnpify/sources/buildNodeModulesTree';
 import {PortableNodeModulesFS}                                                               from '@yarnpkg/pnpify';
-
 import {PackageRegistry, makeRuntimeApi}                                                     from '@yarnpkg/pnp';
-
 import {UsageError}                                                                          from 'clipanion';
 
+import {Dirent, Stats}                                                                       from 'fs';
+
 import {getPnpPath}                                                                          from './index';
+
+const FORCED_UNPLUG_PACKAGES = new Set([
+  // Some packages do weird stuff and MUST be unplugged. I don't like them.
+  structUtils.makeIdent(null, `nan`).identHash,
+  structUtils.makeIdent(null, `node-gyp`).identHash,
+  structUtils.makeIdent(null, `node-pre-gyp`).identHash,
+  structUtils.makeIdent(null, `node-addon-api`).identHash,
+  // Those ones contain native builds (*.node), and Node loads them through dlopen
+  structUtils.makeIdent(null, `fsevents`).identHash,
+]);
 
 export class NodeModulesLinker implements Linker {
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
@@ -58,6 +68,7 @@ export class NodeModulesLinker implements Linker {
 class NodeModulesInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
 
+  private readonly unpluggedPaths: Set<string> = new Set();
   private readonly blacklistedPaths: Set<string> = new Set();
 
   private readonly opts: LinkOptions;
@@ -94,7 +105,9 @@ class NodeModulesInstaller implements Installer {
       !structUtils.isVirtualLocator(pkg) &&
       !this.opts.project.tryWorkspaceByLocator(pkg);
 
-    const packageFs = fetchResult.packageFs;
+    const packageFs = !hasVirtualInstances && pkg.linkType !== LinkType.SOFT && (buildScripts.length > 0 || this.isUnplugged(pkg, dependencyMeta))
+      ? await this.unplugPackage(pkg, fetchResult.packageFs)
+      : fetchResult.packageFs;
 
     const packageRawLocation = ppath.resolve(packageFs.getRealPath(), ppath.relative(PortablePath.root, fetchResult.prefixPath));
 
@@ -143,9 +156,6 @@ class NodeModulesInstaller implements Installer {
     if (this.opts.project.configuration.get('nodeLinker') !== 'node-modules')
       return;
 
-    if (await this.shouldWarnNodeModules())
-      this.opts.report.reportWarning(MessageName.DANGEROUS_NODE_MODULES, `One or more node_modules have been detected; they risk hiding legitimate problems until your application reaches production.`);
-
     this.trimBlacklistedPackages();
 
     this.packageRegistry.set(null, new Map([
@@ -179,44 +189,21 @@ class NodeModulesInstaller implements Installer {
       virtualRoots,
     };
 
-    const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd);
-    const nodeModulesFS = new PortableNodeModulesFS(pnp, {pnpifyFs: false});
-    this.persistNodeModules(nodeModulesFS);
-  }
-
-  private persistNodeModules(nodeModulesFS: PortableNodeModulesFS) {
-    const tsTree = nodeModulesFS.getNodeModulesDirTimestamps();
-
-    const persistDir = (parentPath: PortablePath, node: NodeModulesTimestampsTree, options: { updateTimestamps: boolean }) => {
-      for (const [entry, val] of node.entries()) {
-        const dirPath = ppath.join(parentPath, entry);
-        if (options.updateTimestamps) {
-          xfs.utimesSync(dirPath, val.mtime, val.mtime);
-          persistDir(dirPath, val.children, {updateTimestamps: true});
-        } else {
-          let stats;
-          try {
-            stats = xfs.lstatSync(dirPath);
-          } catch (e) {
-            if (e.code !== 'ENOENT') {
-              throw e;
-            }
-          }
-          if (!stats) {
-            xfs.copySync(dirPath, dirPath, {baseFs: nodeModulesFS, overwrite: true});
-            xfs.utimesSync(dirPath, val.mtime, val.mtime);
-            persistDir(dirPath, val.children, {updateTimestamps: true});
-          } else {
-            if (+stats.mtime !== +val.mtime)
-              this.opts.report.reportWarning(MessageName.DANGEROUS_NODE_MODULES, `dir ${dirPath} has changed ${stats.mtime} !== ${val.mtime}!`);
-
-            persistDir(dirPath, val.children, {updateTimestamps: false});
-          }
+    const pnpUnpluggedFolder = this.opts.project.configuration.get(`pnpUnpluggedFolder`);
+    if (this.unpluggedPaths.size === 0) {
+      await xfs.removePromise(pnpUnpluggedFolder);
+    } else {
+      for (const entry of await xfs.readdirPromise(pnpUnpluggedFolder)) {
+        const unpluggedPath = ppath.resolve(pnpUnpluggedFolder, entry);
+        if (!this.unpluggedPaths.has(unpluggedPath)) {
+          await xfs.removePromise(unpluggedPath);
         }
       }
-    };
+    }
 
-    persistDir(this.opts.project.cwd, tsTree, {updateTimestamps: false});
+    const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd);
+    const nodeModulesFS = new PortableNodeModulesFS(pnp, {pnpifyFs: false});
+    persistNodeModules(this.opts.project.cwd, nodeModulesFS);
   }
 
   private getPackageStore(key: string) {
@@ -271,22 +258,6 @@ class NodeModulesInstaller implements Installer {
     }
   }
 
-  private async shouldWarnNodeModules() {
-    for (const workspace of this.opts.project.workspaces) {
-      const nodeModulesPath = ppath.join(workspace.cwd, toFilename(`node_modules`));
-      if (!xfs.existsSync(nodeModulesPath))
-        continue;
-
-      const directoryListing = await xfs.readdirPromise(nodeModulesPath);
-      if (directoryListing.every(entry => entry.startsWith(`.`)))
-        continue;
-
-      return true;
-    }
-
-    return false;
-  }
-
   private normalizeDirectoryPath(folder: PortablePath) {
     let relativeFolder = ppath.relative(this.opts.project.cwd, folder);
 
@@ -315,4 +286,181 @@ class NodeModulesInstaller implements Installer {
 
     return buildScripts;
   }
+
+  private getUnpluggedPath(locator: Locator) {
+    return ppath.resolve(this.opts.project.configuration.get(`pnpUnpluggedFolder`), structUtils.slugifyLocator(locator));
+  }
+
+  private async unplugPackage(locator: Locator, packageFs: FakeFS<PortablePath>) {
+    const unplugPath = this.getUnpluggedPath(locator);
+    this.unpluggedPaths.add(unplugPath);
+
+    await xfs.mkdirpPromise(unplugPath);
+    await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: packageFs, overwrite: false});
+
+    return new CwdFS(unplugPath);
+  }
+
+  private isUnplugged(ident: Ident, dependencyMeta: DependencyMeta) {
+    if (dependencyMeta.unplugged)
+      return true;
+
+    if (FORCED_UNPLUG_PACKAGES.has(ident.identHash))
+      return true;
+
+    return false;
+  }
 }
+
+const persistDirEntry = (parentPath: PortablePath, entryName: string, baseFs: PortableNodeModulesFS, mtime: Date, children: NodeModulesTimestampsTree, dirent?: Dirent) => {
+  const fullPath = ppath.join(parentPath, toFilename(entryName));
+  if (!dirent || dirent.isDirectory()) {
+    xfs.mkdirSync(fullPath);
+
+    const entries = baseFs.readdirSync(fullPath, {withFileTypes: true});
+    for (const entry of entries) {
+      const node = children.get(toFilename(entry.name));
+      const entryMtime = node ? node.mtime : mtime;
+      const entryChildren = node ? node.children : children;
+      persistDirEntry(fullPath, entry.name, baseFs, entryMtime, entryChildren, entry);
+    }
+
+    xfs.utimesSync(fullPath, mtime, mtime);
+    xfs.chmodSync(fullPath, 0o777);
+  } else if (dirent) {
+    if (dirent.isFile()) {
+      const content = baseFs.readFileSync(fullPath);
+      xfs.writeFileSync(fullPath, content);
+    } else if (dirent.isSymbolicLink()) {
+      const target = baseFs.readlinkSync(fullPath);
+      xfs.symlinkSync(target, fullPath);
+    } else {
+      throw new Error(`Unsupported file type (file: ${fullPath})`);
+    }
+  }
+};
+
+const wasModuleDirChanged = (dir: PortablePath, stats: Stats, mtime: Date, ignoreRegexp: RegExp, excludeNodeModules: boolean): boolean => {
+  if (+stats.mtime !== +mtime) {
+    return true;
+  } else {
+    const entries = xfs.readdirSync(dir);
+    for (const entry of entries) {
+      const entryPath = ppath.join(dir, entry);
+      const stats = xfs.lstatSync(entryPath);
+      if (stats.isDirectory() && !ignoreRegexp.test(entryPath) && (!excludeNodeModules || entry !== 'node_modules') && wasModuleDirChanged(entryPath, stats, mtime, ignoreRegexp, false)) {
+        return true;
+      }
+    }
+    return false;
+  }
+};
+
+const persistNodeModules = (rootPath: PortablePath, nodeModulesFS: PortableNodeModulesFS): NodeModulesTimestampsTree => {
+  const newTsTree = new Map();
+  const tsTree = nodeModulesFS.getNodeModulesDirTimestamps();
+  const NODE_MODULES = toFilename('node_modules');
+  const DEL_BLACKLIST = /\/(node_modules\/\.|__ivy_ngcc__(\/|$))/;
+
+  const persistNode = (parentPath: PortablePath, dir: Filename, mtime: Date, children: NodeModulesTimestampsTree) => {
+    const nodePath = ppath.join(parentPath, dir);
+    let stats;
+    try {
+      stats = xfs.lstatSync(nodePath);
+    } catch (e) {
+      if (e.code !== 'ENOENT') {
+        throw e;
+      }
+    }
+    // Non existing directory
+    if (!stats) {
+      console.log('Persisting non-existing dir:', nodePath);
+      persistDirEntry(parentPath, dir, nodeModulesFS, mtime, children);
+      // Existing directory
+    } else {
+      const hasInnerNodeModules = (children.size === 1 && children.has(NODE_MODULES));
+      // Changed module directory
+      if ((children.size === 0 || hasInnerNodeModules) && wasModuleDirChanged(nodePath, stats, mtime, DEL_BLACKLIST, hasInnerNodeModules)) {
+        if (!hasInnerNodeModules) {
+          console.log('Recreating pure module dir:', nodePath);
+          // Module has no inner node_modules, remove module dir
+          xfs.removeSync(nodePath);
+          // Persist module dir
+          persistDirEntry(parentPath, dir, nodeModulesFS, mtime, children);
+        } else {
+          console.log('Rewriting non-pure module dir:', nodePath);
+          // Module has inner node_modules, remove everything except inner node_modules
+          const dstEntryNames = xfs.readdirSync(nodePath);
+          for (const entry of dstEntryNames) {
+            const entryPath = ppath.join(nodePath, entry);
+            if (entry !== NODE_MODULES && !DEL_BLACKLIST.test(entryPath)) {
+              xfs.removeSync(entryPath);
+            }
+          }
+          // Persist everything, except inner node_modules
+          const srcEntries = nodeModulesFS.readdirSync(nodePath, {withFileTypes: true});
+          for (const entry of srcEntries) {
+            if (entry.name !== NODE_MODULES) {
+              persistDirEntry(nodePath, entry.name, nodeModulesFS, mtime, children, entry);
+            }
+          }
+          // Persist inner node_modules
+          const node = children.get(NODE_MODULES)!;
+          persistNode(nodePath, NODE_MODULES, node.mtime, node.children);
+        }
+        // Changed container directory
+      } else if (+stats.mtime !== +mtime) {
+        console.log('Detected changed container dir', nodePath);
+        const srcEntryNames = new Set(children.keys());
+        const dstEntryNames = new Set(stats ? xfs.readdirSync(nodePath) : []);
+
+        for (const [entry, node] of children.entries()) {
+          if (!dstEntryNames.has(entry)) {
+            // Add new directories
+            console.log('Adding new dir:', ppath.join(nodePath, entry));
+            persistDirEntry(nodePath, entry, nodeModulesFS, node.mtime, node.children);
+          } else {
+            // Check directories with the same name for changes
+            persistNode(nodePath, entry, node.mtime, node.children);
+          }
+        }
+
+        for (const entry of dstEntryNames) {
+          const entryDir = ppath.join(nodePath, entry);
+          if (!srcEntryNames.has(entry)) {
+            // Remove old directories
+            console.log('Removing old dir:', entryDir);
+            xfs.removeSync(entryDir);
+          }
+        }
+        xfs.utimesSync(nodePath, mtime, mtime);
+      } else {
+        // Unchanged container dir
+        for (const [entry, node] of children.entries()) {
+          persistNode(nodePath, entry, node.mtime, node.children);
+        }
+      }
+    }
+  };
+
+  let nmStats;
+
+  const rootNmDirPath = ppath.join(rootPath, NODE_MODULES);
+  try {
+    nmStats = nodeModulesFS.lstatSync(rootNmDirPath);
+  } catch (e) {
+    if (e.code !== 'ENOENT') {
+      throw e;
+    }
+  }
+
+  if (!nmStats) {
+    xfs.removeSync(rootNmDirPath);
+  } else {
+    const node = tsTree.get(NODE_MODULES)!;
+    persistNode(rootPath, NODE_MODULES, node.mtime, node.children);
+  }
+
+  return newTsTree;
+};
+
