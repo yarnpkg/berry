@@ -1,8 +1,7 @@
-// @ts-ignore
-import template                  from '@yarnpkg/pnp/lib/hook';
-
 import {generatePrettyJson}      from './generatePrettyJson';
 import {generateSerializedState} from './generateSerializedState';
+// @ts-ignore
+import template                  from './hook';
 import {SerializedState}         from './types';
 import {PnpSettings}             from './types';
 
