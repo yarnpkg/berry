@@ -635,6 +635,7 @@ function getIndent(content: string) {
 function stripBOM(content: string) {
   if (content.charCodeAt(0) === 0xFEFF) {
 		return content.slice(1);
-	}
-	return content;
+	} else {
+  	return content;
+  }
 }
