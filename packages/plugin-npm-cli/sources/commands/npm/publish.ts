@@ -1,5 +1,5 @@
 import {BaseCommand, WorkspaceRequiredError}                                       from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, Workspace} from '@yarnpkg/core';
+import {Configuration, MessageName, Project, ReportError, StreamReport, Workspace, ThrowReport} from '@yarnpkg/core';
 import {miscUtils, structUtils}                                                    from '@yarnpkg/core';
 import {npmConfigUtils, npmHttpUtils}                                              from '@yarnpkg/plugin-npm';
 import {packUtils}                                                                 from '@yarnpkg/plugin-pack';
@@ -37,7 +37,7 @@ export default class NpmPublishCommand extends BaseCommand {
   @Command.Path(`npm`, `publish`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {workspace} = await Project.find(configuration, this.context.cwd);
+    const {project, workspace} = await Project.find(configuration, this.context.cwd);
 
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
@@ -46,6 +46,11 @@ export default class NpmPublishCommand extends BaseCommand {
       throw new UsageError(`Private workspaces cannot be published`);
     if (workspace.manifest.name === null || workspace.manifest.version === null)
       throw new UsageError(`Workspaces must have valid names and versions to be published on an external registry`);
+
+    await project.resolveEverything({
+      lockfileOnly: true,
+      report: new ThrowReport(),
+    });
 
     // We store it so that TS knows that it's non-null
     const ident = workspace.manifest.name;
