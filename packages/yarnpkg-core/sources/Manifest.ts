@@ -96,7 +96,7 @@ export class Manifest {
   loadFromText(text: string) {
     let data;
     try {
-      data = JSON.parse(text || `{}`);
+      data = JSON.parse(stripBOM(text) || `{}`);
     } catch (error) {
       error.message += ` (when parsing ${text})`;
       throw error;
@@ -111,7 +111,7 @@ export class Manifest {
 
     let data;
     try {
-      data = JSON.parse(content || `{}`);
+      data = JSON.parse(stripBOM(content) || `{}`);
     } catch (error) {
       error.message += ` (when parsing ${path})`;
       throw error;
@@ -629,5 +629,13 @@ function getIndent(content: string) {
     return indentMatch[0];
   } else {
     return `  `;
+  }
+}
+
+function stripBOM(content: string) {
+  if (content.charCodeAt(0) === 0xFEFF) {
+		return content.slice(1);
+	} else {
+  	return content;
   }
 }
