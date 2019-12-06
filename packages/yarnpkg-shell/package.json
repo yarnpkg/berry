@@ -6,7 +6,7 @@
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12",
     "@yarnpkg/parsers": "workspace:2.0.0-rc.6",
     "cross-spawn": "^6.0.5",
     "stream-buffers": "^3.0.2"

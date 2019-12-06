@@ -1,13 +1,9 @@
 {
   "name": "@yarnpkg/plugin-npm",
-  "version": "2.0.0-rc.9",
-  "nextVersion": {
-    "semver": "2.0.0-rc.10",
-    "nonce": "8874636215394719"
-  },
+  "version": "2.0.0-rc.10",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12",
     "inquirer": "^6.2.0",
     "semver": "^5.6.0"
   },
@@ -18,7 +14,7 @@
     "@types/inquirer": "^0.0.43",
     "@types/node": "^12.12.8",
     "@types/semver": "^6.0.2",
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
   },
   "repository": {
     "type": "git",
