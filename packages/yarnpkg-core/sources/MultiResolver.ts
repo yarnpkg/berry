@@ -1,5 +1,3 @@
-import {MessageName}                                     from './MessageName';
-import {ReportError}                                     from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
 import {Descriptor, Locator}                             from './types';

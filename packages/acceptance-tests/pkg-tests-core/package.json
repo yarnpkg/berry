@@ -11,11 +11,13 @@
     "@yarnpkg/cli": "workspace:2.0.0-rc.18",
     "@yarnpkg/core": "workspace:2.0.0-rc.14",
     "@yarnpkg/fslib": "workspace:2.0.0-rc.11",
+    "finalhandler": "^1.1.2",
     "invariant": "^2.2.4",
     "klaw": "^2.1.1",
     "minimatch": "^3.0.4",
     "pkg-tests-fixtures": "workspace:0.0.0",
     "semver": "^5.6.0",
+    "serve-static": "^1.14.1",
     "super-resolve": "^1.0.0",
     "tar-fs": "^1.16.0",
     "tmp": "^0.1.0"
@@ -23,5 +25,9 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "devDependencies": {
+    "@types/finalhandler": "1.1.0",
+    "@types/serve-static": "1.13.3"
   }
 }

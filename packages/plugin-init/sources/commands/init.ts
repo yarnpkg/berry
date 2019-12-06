@@ -1,7 +1,7 @@
 import {BaseCommand}                         from '@yarnpkg/cli';
 import {Configuration, Manifest}             from '@yarnpkg/core';
 import {execUtils, scriptUtils, structUtils} from '@yarnpkg/core';
-import {xfs, ppath, toFilename, Filename}              from '@yarnpkg/fslib';
+import {xfs, ppath, Filename}                from '@yarnpkg/fslib';
 import {updateAndSave}                       from '@yarnpkg/json-proxy';
 import {Command, UsageError}                 from 'clipanion';
 import {inspect}                             from 'util';

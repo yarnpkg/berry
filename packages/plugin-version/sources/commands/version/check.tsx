@@ -3,7 +3,7 @@ import {CommandContext, Configuration, MessageName, Project, StreamReport, Works
 import {Filename, PortablePath, npath, ppath, xfs}                                                                                                from '@yarnpkg/fslib';
 import {Command, UsageError}                                                                                                                      from 'clipanion';
 import {AppContext, Box, Color, StdinContext, render}                                                                                             from 'ink';
-import React, {useCallback, useContext, useEffect, useRef, useState}                                                                              from 'react';
+import React, {useCallback, useContext, useEffect, useState}                                                                                      from 'react';
 import semver                                                                                                                                     from 'semver';
 
 type Decision = 'undecided' | 'decline' | 'major' | 'minor' | 'patch' | 'prerelease';
