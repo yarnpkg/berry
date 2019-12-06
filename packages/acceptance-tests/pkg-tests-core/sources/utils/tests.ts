@@ -11,7 +11,7 @@ import {Gzip}                            from 'zlib';
 
 const deepResolve = require('super-resolve');
 
-const staticServer = serveStatic(require(`pkg-tests-fixtures`));
+const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
 
 import {ExecResult} from './exec';
 import * as fsUtils from './fs';
