@@ -1,12 +1,15 @@
-import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, StreamReport, Workspace, structUtils, ThrowReport} from '@yarnpkg/core';
-import {Filename, npath, ppath, xfs}                                                            from '@yarnpkg/fslib';
-import {Command}                                                                                from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                           from '@yarnpkg/cli';
+import {Cache, Configuration, MessageName, Project, StreamReport, Workspace, structUtils, ThrowReport} from '@yarnpkg/core';
+import {Filename, npath, ppath, xfs}                                                                   from '@yarnpkg/fslib';
+import {Command}                                                                                       from 'clipanion';
 
-import * as packUtils                                                                           from '../packUtils';
+import * as packUtils                                                                                  from '../packUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PackCommand extends BaseCommand {
+  @Command.Boolean(`--install-if-needed`)
+  installIfNeeded: boolean = false;
+
   @Command.Boolean(`-n,--dry-run`)
   dryRun: boolean = false;
 
@@ -22,6 +25,8 @@ export default class PackCommand extends BaseCommand {
     details: `
       This command will turn the active workspace into a compressed archive suitable for publishing. The archive will by default be stored at the root of the workspace (\`package.tgz\`).
 
+      If the \`--install-if-needed\` flag is set Yarn will run a preliminary \`yarn install\` if the package contains build scripts.
+
       If the \`-n,--dry-run\` flag is set the command will just print the file paths without actually generating the package archive.
 
       If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
@@ -36,7 +41,7 @@ export default class PackCommand extends BaseCommand {
       `yarn pack --dry-run`,
     ], [
       `Name and output the archive in a dedicated folder`,
-      `yarn pack /artifacts/%s-%v.tgz`,
+      `yarn pack --out /artifacts/%s-%v.tgz`,
     ]],
   });
 
@@ -48,10 +53,19 @@ export default class PackCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
 
-    await project.resolveEverything({
-      lockfileOnly: true,
-      report: new ThrowReport(),
-    });
+    if (await packUtils.hasPackScripts(workspace)) {
+      if (this.installIfNeeded) {
+        await project.install({
+          cache: await Cache.find(configuration),
+          report: new ThrowReport(),
+        });
+      } else {
+        await project.resolveEverything({
+          lockfileOnly: true,
+          report: new ThrowReport(),
+        });
+      }
+    }
 
     const target = typeof this.out !== `undefined`
       ? ppath.resolve(this.context.cwd, interpolateOutputName(this.out, {workspace}))

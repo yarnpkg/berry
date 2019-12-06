@@ -164,13 +164,12 @@ const BUILTINS = new Map<string, ShellBuiltin>([
 
     // Close all the outputs (since the shell never closes the output stream)
     await Promise.all(outputs.map(output => {
-      output.end();
-
       // Wait until the output got flushed to the disk
       return new Promise(resolve => {
         output.on(`close`, () => {
           resolve();
         });
+        output.end();
       });
     }));
 

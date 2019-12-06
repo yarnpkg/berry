@@ -74,9 +74,11 @@
     "eslint-plugin-arca": "^0.9.0",
     "eslint-plugin-react": "^7.14.3",
     "github-api": "^3.2.2",
+    "hard-source-webpack-plugin": "mzgoddard/hard-source-webpack-plugin",
     "jest": "^24.9.0",
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
+    "left-pad": "left-pad/left-pad",
     "micromatch": "^4.0.2",
     "typescript": "next"
   },
@@ -112,6 +114,8 @@
     "url": "ssh://git@github.com/yarnpkg/berry.git"
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.0.0"
+    "@babel/preset-react": "^7.0.0",
+    "@types/hard-source-webpack-plugin": "1.0.1",
+    "@types/left-pad": "1.2.0"
   }
 }

@@ -1,13 +1,17 @@
 import {PortablePath, npath, toFilename} from '@yarnpkg/fslib';
 import crypto                            from 'crypto';
-import {IncomingMessage, ServerResponse} from 'http';
+import finalhandler                      from 'finalhandler';
 import http                              from 'http';
+import {IncomingMessage, ServerResponse} from 'http';
 import invariant                         from 'invariant';
 import {AddressInfo}                     from 'net';
 import semver                            from 'semver';
+import serveStatic                       from 'serve-static';
 import {Gzip}                            from 'zlib';
 
 const deepResolve = require('super-resolve');
+
+const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
 
 import {ExecResult} from './exec';
 import * as fsUtils from './fs';
@@ -178,6 +182,7 @@ export const startPackageServer = (): Promise<string> => {
     PackageInfo = 'packageInfo',
     PackageTarball = 'packageTarball',
     Whoami = 'whoami',
+    Repository = 'repository',
   }
 
   type Request = {
@@ -194,7 +199,9 @@ export const startPackageServer = (): Promise<string> => {
     version?: string;
   } | {
     type: RequestType.Whoami;
-  }
+  } | {
+    type: RequestType.Repository;
+  };
 
   const processors: {[requestType in RequestType]:(parsedRequest: Request, request: IncomingMessage, response: ServerResponse) => Promise<void>} = {
     async [RequestType.PackageInfo](parsedRequest, _, response) {
@@ -322,6 +329,9 @@ export const startPackageServer = (): Promise<string> => {
         return response.end(data);
       });
     },
+    async [RequestType.Repository](parsedRequest, request, response) {
+      staticServer(request, response, finalhandler(request, response));
+    },
   };
 
   const sendError = (res: ServerResponse, statusCode: number, errorMessage: string): void => {
@@ -341,7 +351,11 @@ export const startPackageServer = (): Promise<string> => {
 
     url = url.replace(/%2f/g, '/');
 
-    if (match = url.match(/^\/-\/user\/org\.couchdb\.user:(.+)/)) {
+    if (match = url.match(/^\/repositories\//)) {
+      return {
+        type: RequestType.Repository,
+      };
+    } else if (match = url.match(/^\/-\/user\/org\.couchdb\.user:(.+)/)) {
       const [, username] = match;
 
       return {
