@@ -156,6 +156,25 @@ describe(`Auth tests`, () => {
   );
 
   test(
+    `it should install unconventional scoped packages which require authentication if npmAlwaysAuth is set to true and an authentication ident is present`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@private/unconventional-tarball`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc.yml`, `npmAuthIdent: "${AUTH_IDENT}"\nnpmAlwaysAuth: true\n`);
+
+        await run(`install`);
+
+        await expect(source(`require('@private/unconventional-tarball')`)).resolves.toMatchObject({
+          name: `@private/unconventional-tarball`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
     `it should install unconventional unscoped packages which require authentication if npmAlwaysAuth is set to true and an authentication ident is present`,
     makeTemporaryEnv(
       {
