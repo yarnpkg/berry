@@ -1,8 +1,58 @@
-import {VirtualFS}              from '../sources/VirtualFS';
-import {Filename, npath, ppath} from '../sources/path';
-import {xfs}                    from '../sources';
+import {VirtualFS}                            from '../sources/VirtualFS';
+import {Filename, npath, ppath, PortablePath} from '../sources/path';
+import {xfs}                                  from '../sources';
 
 describe(`VirtualFS`, () => {
+  it(`shouldn't map non-number virtual components`, () => {
+    const virtualPath = ppath.join(npath.toPortablePath(__dirname), `virtual` as Filename);
+    const virtualEntry = ppath.join(virtualPath, `12345/invalid` as PortablePath);
+
+    const expected = virtualEntry;
+
+    const virtualFs = new VirtualFS(virtualPath);
+    expect(virtualFs.mapToBase(virtualEntry)).toEqual(expected);
+  });
+
+  it(`should map numbered virtual components (0, no file)`, () => {
+    const virtualPath = ppath.join(npath.toPortablePath(__dirname), `virtual` as Filename);
+    const virtualEntry = ppath.join(virtualPath, `12345/0` as PortablePath);
+
+    const expected = ppath.join(virtualPath, `..` as PortablePath);
+
+    const virtualFs = new VirtualFS(virtualPath);
+    expect(virtualFs.mapToBase(virtualEntry)).toEqual(expected);
+  });
+
+  it(`should map numbered virtual components (0, w/ file)`, () => {
+    const virtualPath = ppath.join(npath.toPortablePath(__dirname), `virtual` as Filename);
+    const virtualEntry = ppath.join(virtualPath, `12345/0/foobar` as PortablePath);
+
+    const expected = ppath.join(virtualPath, `../foobar` as PortablePath);
+
+    const virtualFs = new VirtualFS(virtualPath);
+    expect(virtualFs.mapToBase(virtualEntry)).toEqual(expected);
+  });
+
+  it(`should map numbered virtual components (1, no file)`, () => {
+    const virtualPath = ppath.join(npath.toPortablePath(__dirname), `virtual` as Filename);
+    const virtualEntry = ppath.join(virtualPath, `12345/1` as PortablePath);
+
+    const expected = ppath.join(virtualPath, `../..` as PortablePath);
+
+    const virtualFs = new VirtualFS(virtualPath);
+    expect(virtualFs.mapToBase(virtualEntry)).toEqual(expected);
+  });
+
+  it(`should map numbered virtual components (1, w/ file)`, () => {
+    const virtualPath = ppath.join(npath.toPortablePath(__dirname), `virtual` as Filename);
+    const virtualEntry = ppath.join(virtualPath, `12345/1/foobar` as PortablePath);
+
+    const expected = ppath.join(virtualPath, `../../foobar` as PortablePath);
+
+    const virtualFs = new VirtualFS(virtualPath);
+    expect(virtualFs.mapToBase(virtualEntry)).toEqual(expected);
+  });
+
   it(`should allow access to a directory through its virtual subfolder`, () => {
     const virtualPath = ppath.join(npath.toPortablePath(__dirname), `virtual` as Filename);
 

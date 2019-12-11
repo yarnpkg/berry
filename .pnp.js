@@ -359,6 +359,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       23,
       22,
       18,
+      17,
       2
     ],
     "packageRegistryData": [
@@ -437,6 +438,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint", "npm:5.16.0"],
             ["eslint-plugin-arca", "npm:0.9.0"],
             ["eslint-plugin-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.14.3"],
+            ["foo", "link:/tmp/foo?locator=%40yarnpkg%2Fmonorepo%40workspace%3A."],
             ["github-api", "npm:3.2.2"],
             ["hard-source-webpack-plugin", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#mzgoddard/hard-source-webpack-plugin#commit:aa0383bb7012a642fa7b519f317c235c12275632"],
             ["jest", "npm:24.9.0"],
@@ -6781,6 +6783,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint", "npm:5.16.0"],
             ["eslint-plugin-arca", "npm:0.9.0"],
             ["eslint-plugin-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.14.3"],
+            ["foo", "link:/tmp/foo?locator=%40yarnpkg%2Fmonorepo%40workspace%3A."],
             ["github-api", "npm:3.2.2"],
             ["hard-source-webpack-plugin", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#mzgoddard/hard-source-webpack-plugin#commit:aa0383bb7012a642fa7b519f317c235c12275632"],
             ["jest", "npm:24.9.0"],
@@ -17925,6 +17928,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["debug", "npm:3.2.6"]
           ],
           "linkType": "HARD"
+        }]
+      ]],
+      ["foo", [
+        ["link:/tmp/foo?locator=%40yarnpkg%2Fmonorepo%40workspace%3A.", {
+          "packageLocation": "../../../tmp/foo/",
+          "packageDependencies": [
+            ["foo", "link:/tmp/foo?locator=%40yarnpkg%2Fmonorepo%40workspace%3A."]
+          ],
+          "linkType": "SOFT"
         }]
       ]],
       ["for-each", [
@@ -41202,7 +41214,8 @@ class ProxiedFS_ProxiedFS extends FakeFS_FakeFS {
 // CONCATENATED MODULE: ../yarnpkg-fslib/sources/VirtualFS.ts
 
 
- // https://github.com/benjamingr/RegExp.escape/blob/master/polyfill.js
+
+const NUMBER_REGEXP = /^[0-9]+$/; // https://github.com/benjamingr/RegExp.escape/blob/master/polyfill.js
 
 const escapeRegexp = s => s.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&');
 
@@ -41213,7 +41226,13 @@ class VirtualFS_VirtualFS extends ProxiedFS_ProxiedFS {
     super(ppath);
     this.baseFs = baseFs;
     this.target = ppath.dirname(virtual);
-    this.virtual = virtual;
+    this.virtual = virtual; // $0: full path
+    // $1: virtual folder
+    // $2: virtual segment
+    // $3: hash
+    // $4: depth
+    // $5: subpath
+
     this.mapToBaseRegExp = new RegExp(`^(${escapeRegexp(this.virtual)})((?:/([^\/]+)(?:/([^/]+))?)?((?:/.*)?))$`);
   }
 
@@ -41254,8 +41273,13 @@ class VirtualFS_VirtualFS extends ProxiedFS_ProxiedFS {
   mapToBase(p) {
     const match = p.match(this.mapToBaseRegExp);
     if (!match) return p;
-    if (match[3]) return this.mapToBase(ppath.join(this.target, `../`.repeat(Number(match[4])), match[5]));
-    return this.target;
+    if (!match[3] || !match[4]) return this.target;
+    const isnum = NUMBER_REGEXP.test(match[4]);
+    if (!isnum) return p;
+    const depth = Number(match[4]);
+    const backstep = `../`.repeat(depth);
+    const subpath = match[5] || `.`;
+    return this.mapToBase(ppath.join(this.target, backstep, subpath));
   }
 
   mapFromBase(p) {
@@ -41508,6 +41532,14 @@ function applyPatch(pnpapi, opts) {
   const builtinModules = new Set(external_module_default.a.builtinModules || Object.keys(process.binding('natives'))); // The callback function gets called to wrap the return value of the module names matching the regexp
 
   const patchedModules = [];
+  const initialApiPath = npath.toPortablePath(pnpapi.resolveToUnqualified(`pnpapi`, null));
+  const initialApiStats = opts.fakeFs.statSync(npath.toPortablePath(initialApiPath));
+  const defaultCache = {};
+  const apiMetadata = new Map([[initialApiPath, {
+    cache: external_module_default.a._cache,
+    instance: pnpapi,
+    stats: initialApiStats
+  }]]);
 
   if (opts.compatibilityMode !== false) {
     // Modern versions of `resolve` support a specific entry point that custom resolvers can use
@@ -41519,17 +41551,20 @@ function applyPatch(pnpapi, opts) {
       return (request, opts) => {
         opts = opts || {};
         if (opts.forceNodeResolution) return opts;
-        opts.preserveSymlinks = true;
 
         opts.paths = function (request, basedir, getNodeModulesDir, opts) {
           // Extract the name of the package being requested (1=full name, 2=scope name, 3=local name)
           const parts = request.match(/^((?:(@[^\/]+)\/)?([^\/]+))/);
           if (!parts) throw new Error(`Assertion failed: Expected the "resolve" package to call the "paths" callback with package names only (got "${request}")`); // make sure that basedir ends with a slash
 
-          if (basedir.charAt(basedir.length - 1) !== '/') basedir = external_path_default.a.join(basedir, '/'); // TODO Handle portable paths
+          if (basedir.charAt(basedir.length - 1) !== '/') basedir = external_path_default.a.join(basedir, '/');
+          const apiPath = findApiPathFor(basedir);
+          if (apiPath === null) return getNodeModulesDir();
+          const apiEntry = getApiEntry(apiPath, true);
+          const api = apiEntry.instance; // TODO Handle portable paths
           // This is guaranteed to return the path to the "package.json" file from the given package
 
-          const manifestPath = pnpapi.resolveToUnqualified(`${parts[1]}/package.json`, basedir, {
+          const manifestPath = api.resolveToUnqualified(`${parts[1]}/package.json`, basedir, {
             considerBuiltins: false
           });
           if (manifestPath === null) throw new Error(`Assertion failed: The resolution thinks that "${parts[1]}" is a Node builtin`); // The first dirname strips the package.json, the second strips the local named folder
@@ -41560,6 +41595,69 @@ function applyPatch(pnpapi, opts) {
     for (let cursor = parent; cursor; cursor = cursor.parent) requireStack.push(cursor.filename || cursor.id);
 
     return requireStack;
+  }
+
+  function loadApiInstance(pnpApiPath) {
+    // @ts-ignore
+    const module = new external_module_default.a(npath.fromPortablePath(pnpApiPath), null);
+    module.load(pnpApiPath);
+    return module.exports;
+  }
+
+  function refreshApiEntry(pnpApiPath, apiEntry) {
+    const stats = opts.fakeFs.statSync(pnpApiPath);
+
+    if (stats.mtime > apiEntry.stats.mtime) {
+      console.warn(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance (${pnpApiPath})`);
+      apiEntry.instance = loadApiInstance(pnpApiPath);
+      apiEntry.stats = stats;
+    }
+  }
+
+  function getApiEntry(pnpApiPath, refresh = false) {
+    let apiEntry = apiMetadata.get(pnpApiPath);
+
+    if (typeof apiEntry !== `undefined`) {
+      if (refresh) {
+        refreshApiEntry(pnpApiPath, apiEntry);
+      }
+    } else {
+      apiMetadata.set(pnpApiPath, apiEntry = {
+        cache: {},
+        instance: loadApiInstance(pnpApiPath),
+        stats: opts.fakeFs.statSync(pnpApiPath)
+      });
+    }
+
+    return apiEntry;
+  }
+
+  function getApiCache(pnpApiPath) {
+    if (pnpApiPath === null) {
+      return defaultCache;
+    } else {
+      return getApiEntry(pnpApiPath).cache;
+    }
+  }
+
+  function findApiPathFor(modulePath) {
+    let curr;
+    let next = npath.toPortablePath(modulePath);
+
+    do {
+      curr = next;
+      const candidate = ppath.join(curr, `.pnp.js`);
+      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile()) return candidate;
+      next = ppath.dirname(curr);
+    } while (curr !== PortablePath.root);
+
+    return null;
+  }
+
+  function getApiPathFromParent(parent) {
+    if (parent === null || typeof parent.pnpApiPath === `undefined`) return initialApiPath;
+    if (parent.pnpApiPath !== null) return parent.pnpApiPath;
+    return null;
   } // A small note: we don't replace the cache here (and instead use the native one). This is an effort to not
   // break code similar to "delete require.cache[require.resolve(FOO)]", where FOO is a package located outside
   // of the Yarn dependency tree. In this case, we defer the load to the native loader. If we were to replace the
@@ -41579,20 +41677,31 @@ function applyPatch(pnpapi, opts) {
       } finally {
         enableNativeHooks = true;
       }
-    } // The 'pnpapi' name is reserved to return the PnP api currently in use by the program
+    }
+
+    const parentApiPath = getApiPathFromParent(parent);
+    const parentApi = parentApiPath !== null ? getApiEntry(parentApiPath, true).instance : null; // The 'pnpapi' name is reserved to return the PnP api currently in use
+    // by the program
+
+    if (parentApi !== null && request === `pnpapi`) return parentApi; // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us
+    // which file we should load
+
+    const modulePath = external_module_default.a._resolveFilename(request, parent, isMain); // We check whether the module is owned by the dependency tree of the
+    // module that required it. If it isn't, then we need to create a new
+    // store and possibly load its sandboxed PnP runtime.
 
 
-    if (request === `pnpapi`) return pnpapi; // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us which file we should load
+    const isOwnedByRuntime = parentApi !== null ? parentApi.findPackageLocator(modulePath) !== null : false;
+    const moduleApiPath = isOwnedByRuntime ? parentApiPath : findApiPathFor(npath.dirname(modulePath));
+    const cache = getApiCache(moduleApiPath); // Check if the module has already been created for the given file
 
-    const modulePath = external_module_default.a._resolveFilename(request, parent, isMain); // Check if the module has already been created for the given file
-
-
-    const cacheEntry = external_module_default.a._cache[modulePath];
+    const cacheEntry = cache[modulePath];
     if (cacheEntry) return cacheEntry.exports; // Create a new module and store it into the cache
     // @ts-ignore
 
     const module = new external_module_default.a(modulePath, parent);
-    external_module_default.a._cache[modulePath] = module; // The main module is exposed as global variable
+    module.pnpApiPath = moduleApiPath;
+    cache[modulePath] = module; // The main module is exposed as global variable
 
     if (isMain) {
       // @ts-ignore
@@ -41626,8 +41735,11 @@ function applyPatch(pnpapi, opts) {
   const originalModuleResolveFilename = external_module_default.a._resolveFilename;
 
   external_module_default.a._resolveFilename = function (request, parent, isMain, options) {
-    if (request === `pnpapi`) return pnpapi.resolveToUnqualified(`pnpapi`, null);
-    if (!enableNativeHooks) return originalModuleResolveFilename.call(external_module_default.a, request, parent, isMain, options);
+    if (builtinModules.has(request)) return request;
+    const parentApiPath = getApiPathFromParent(parent);
+    const parentApi = parentApiPath !== null ? getApiEntry(parentApiPath, true).instance : null;
+    if (parentApi !== null && request === `pnpapi`) return parentApi.resolveToUnqualified(`pnpapi`, null);
+    if (!enableNativeHooks || parentApi === null) return originalModuleResolveFilename.call(external_module_default.a, request, parent, isMain, options);
 
     if (options && options.plugnplay === false) {
       const {
@@ -41682,7 +41794,7 @@ function applyPatch(pnpapi, opts) {
       let resolution;
 
       try {
-        resolution = pnpapi.resolveRequest(request, issuer);
+        resolution = parentApi.resolveRequest(request, issuer);
       } catch (error) {
         firstError = firstError || error;
         continue;

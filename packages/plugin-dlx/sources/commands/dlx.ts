@@ -76,17 +76,18 @@ export default class DlxCommand extends BaseCommand {
         stderr: this.context.stderr,
       });
     } finally {
-      await xfs.removePromise(tmpDir);
+      //await xfs.removePromise(tmpDir);
     }
   }
 }
 
 function createTemporaryDirectory(name?: Filename) {
   return new Promise<PortablePath>((resolve, reject) => {
-    tmp.dir({unsafeCleanup: true}, (error, dirPath) => {
+    tmp.dir({unsafeCleanup: false}, (error, dirPath) => {
       if (error) {
         reject(error);
       } else {
+        console.log(dirPath);
         resolve(npath.toPortablePath(dirPath));
       }
     });

@@ -8,4 +8,8 @@ declare namespace NodeJS {
     function _resolveFilename(request: string, parent: NodeModule | null, isMain: boolean, options?: {[key: string]: any}): string;
     function _load(request: string, parent: NodeModule | null, isMain: boolean): any;
   }
+
+  interface Module {
+    pnpApiPath?: import('@yarnpkg/fslib').PortablePath;
+  }
 }
