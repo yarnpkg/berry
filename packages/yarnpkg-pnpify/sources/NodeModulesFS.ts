@@ -18,12 +18,13 @@ export type NodeModulesFSOptions = {
 };
 
 export class NodeModulesFS extends ProxiedFS<NativePath, PortablePath> {
-  protected readonly baseFs: FakeFS<PortablePath>;
+  protected readonly baseFs: PortableNodeModulesFs;
 
   constructor(pnp: PnpApi, {realFs = fs, pnpifyFs = true}: NodeModulesFSOptions = {}) {
     super(npath);
 
-    this.baseFs = new PortableNodeModulesFs(pnp, realFs, this, {pnpifyFs});
+    this.baseFs = new PortableNodeModulesFs(pnp, realFs, {pnpifyFs});
+    this.baseFs.setNodeModulesFs(this);
   }
 
   protected mapFromBase(path: PortablePath) {
@@ -42,22 +43,18 @@ interface PortableNodeModulesFSOptions extends NodeModulesTreeOptions {
 export class PortableNodeModulesFs extends FakeFS<PortablePath> {
   private readonly baseFs: FakeFS<PortablePath>;
   private readonly realFs: typeof fs;
-  private readonly nodeModulesFs?: NodeModulesFS;
+  private nodeModulesFs?: NodeModulesFS;
   private readonly options: PortableNodeModulesFSOptions;
   private readonly watchManager: WatchManager;
   private nodeModulesTree: NodeModulesTree;
 
-  constructor(pnp: PnpApi, realFs: typeof fs, nodeModulesFs?: NodeModulesFS, {pnpifyFs = true, optimizeSizeOnDisk = false}: PortableNodeModulesFSOptions = {}) {
+  constructor(pnp: PnpApi, realFs: typeof fs, {pnpifyFs = true, optimizeSizeOnDisk = false}: PortableNodeModulesFSOptions = {}) {
     super(ppath);
-
-    if (pnpifyFs && !this.nodeModulesFs)
-      throw new Error('NodeModulesFs instance must be provided in case of pnpify fs to pickup pnp file changes');
 
     if (!pnp.getDependencyTreeRoots)
       throw new Error('NodeModulesFS supports PnP API versions 3+, please upgrade your PnP API provider');
 
     this.realFs = realFs;
-    this.nodeModulesFs = nodeModulesFs;
     this.baseFs = new NodeFS(realFs);
     this.options = {pnpifyFs, optimizeSizeOnDisk};
     this.nodeModulesTree = buildNodeModulesTree(pnp, this.options);
@@ -65,6 +62,10 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
     const pnpRootPath = npath.toPortablePath(pnp.getPackageInformation(pnp.topLevel)!.packageLocation);
     this.watchPnpFile(pnpRootPath);
+  }
+
+  public setNodeModulesFs(nodeModulesFs: NodeModulesFS) {
+    this.nodeModulesFs = nodeModulesFs;
   }
 
   private watchPnpFile(pnpRootPath: PortablePath) {
