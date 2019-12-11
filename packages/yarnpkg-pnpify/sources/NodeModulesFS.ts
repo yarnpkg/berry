@@ -1,4 +1,4 @@
-import {Filename, MkdirOptions}                            from '@yarnpkg/fslib';
+import {Filename, MkdirOptions, patchFs}                   from '@yarnpkg/fslib';
 import {FSPath, NativePath, PortablePath, npath, ppath}    from '@yarnpkg/fslib';
 import {WatchOptions, WatchCallback, Watcher, toFilename}  from '@yarnpkg/fslib';
 import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}       from '@yarnpkg/fslib';
@@ -23,7 +23,7 @@ export class NodeModulesFS extends ProxiedFS<NativePath, PortablePath> {
   constructor(pnp: PnpApi, {realFs = fs, pnpifyFs = true}: NodeModulesFSOptions = {}) {
     super(npath);
 
-    this.baseFs = new PortableNodeModulesFs(pnp, {baseFs: new NodeFS(realFs), pnpifyFs});
+    this.baseFs = new PortableNodeModulesFs(pnp, realFs, this, {pnpifyFs});
   }
 
   protected mapFromBase(path: PortablePath) {
@@ -36,24 +36,30 @@ export class NodeModulesFS extends ProxiedFS<NativePath, PortablePath> {
 }
 
 interface PortableNodeModulesFSOptions extends NodeModulesTreeOptions {
-  baseFs?: FakeFS<PortablePath>
   pnpifyFs?: boolean;
 };
 
 export class PortableNodeModulesFs extends FakeFS<PortablePath> {
   private readonly baseFs: FakeFS<PortablePath>;
+  private readonly realFs: typeof fs;
+  private readonly nodeModulesFs?: NodeModulesFS;
   private readonly options: PortableNodeModulesFSOptions;
   private readonly watchManager: WatchManager;
   private nodeModulesTree: NodeModulesTree;
 
-  constructor(pnp: PnpApi, {baseFs = new NodeFS(), pnpifyFs = true, optimizeSizeOnDisk = false}: PortableNodeModulesFSOptions = {}) {
+  constructor(pnp: PnpApi, realFs: typeof fs, nodeModulesFs?: NodeModulesFS, {pnpifyFs = true, optimizeSizeOnDisk = false}: PortableNodeModulesFSOptions = {}) {
     super(ppath);
+
+    if (pnpifyFs && !this.nodeModulesFs)
+      throw new Error('NodeModulesFs instance must be provided in case of pnpify fs to pickup pnp file changes');
 
     if (!pnp.getDependencyTreeRoots)
       throw new Error('NodeModulesFS supports PnP API versions 3+, please upgrade your PnP API provider');
 
-    this.options = {baseFs, pnpifyFs, optimizeSizeOnDisk};
-    this.baseFs = baseFs;
+    this.realFs = realFs;
+    this.nodeModulesFs = nodeModulesFs;
+    this.baseFs = new NodeFS(realFs);
+    this.options = {pnpifyFs, optimizeSizeOnDisk};
     this.nodeModulesTree = buildNodeModulesTree(pnp, this.options);
     this.watchManager = new WatchManager();
 
@@ -66,7 +72,23 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
     this.baseFs.watch(pnpRootPath, {persistent: false},  (_, filename) => {
       if (filename === '.pnp.js') {
         delete require.cache[pnpFilePath];
+
+        // If nodeModulesFs instance was provided the underlying fs was patched, unpatch it, before reloading pnp
+        if (this.nodeModulesFs) {
+          // Restore original fs object
+          const fsMethods = Object.keys(this.realFs).filter(key => key[0] === key[0].toLowerCase() && typeof (this.realFs as any)[key] === 'function');
+          fsMethods.forEach(method => {
+            (fs as any)[method] = (this.realFs as any)[method];
+          });
+        }
+
         const pnp = require(pnpFilePath);
+        pnp.setup();
+
+        if (this.nodeModulesFs)
+          // Patch fs back with nodeModulesFS instance
+          patchFs(fs, this.nodeModulesFs);
+
         this.nodeModulesTree = buildNodeModulesTree(pnp, this.options);
         this.watchManager.notifyWatchers((nodePath: PortablePath) => resolveNodeModulesPath(nodePath, this.nodeModulesTree));
       }
