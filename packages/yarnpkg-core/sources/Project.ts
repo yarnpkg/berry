@@ -1504,6 +1504,11 @@ function applyVirtualResolutionMutations({
             volatileDescriptors.delete(peerDescriptor.descriptorHash);
           }
 
+          if (!peerDescriptor && virtualizedPackage.dependencies.has(peerRequest.identHash)) {
+            virtualizedPackage.peerDependencies.delete(peerRequest.identHash);
+            continue;
+          }
+
           if (!peerDescriptor) {
             if (!parentPackage.peerDependencies.has(peerRequest.identHash)) {
               const peerDependencyMeta = virtualizedPackage.peerDependenciesMeta.get(structUtils.stringifyIdent(peerRequest));
@@ -1654,6 +1659,8 @@ function applyVirtualResolutionMutations({
 
           allVirtualizedDescriptorsDependents.delete(duplicateDescriptor.descriptorHash);
           virtualDescriptors.delete(duplicateDescriptor);
+
+          accessibleLocators.delete(duplicateVirtualPackage.locatorHash);
         }
       }
     }
