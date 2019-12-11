@@ -233,7 +233,7 @@ export const startPackageServer = (): Promise<string> => {
                 [version as string]: Object.assign({}, packageVersionEntry!.packageJson, {
                   dist: {
                     shasum: await getPackageArchiveHash(name, version),
-                    tarball: localName === `unconventional-tarball`
+                    tarball: (localName === `unconventional-tarball` || localName === `private-unconventional-tarball`)
                       ? (await getPackageHttpArchivePath(name, version)).replace(`/-/`, `/tralala/`)
                       : await getPackageHttpArchivePath(name, version),
                   },
@@ -377,7 +377,7 @@ export const startPackageServer = (): Promise<string> => {
     } else if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)\/(-|tralala)\/\2-(.*)\.tgz$/)) {
       const [, scope, localName, split, version] = match;
 
-      if (localName === `unconventional-tarball` && split === `-`)
+      if ((localName === `unconventional-tarball` || localName === `private-unconventional-tarball`) && split === `-`)
         return null;
 
       return {

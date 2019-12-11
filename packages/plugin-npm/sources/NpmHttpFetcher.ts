@@ -1,10 +1,11 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator, MessageName}                       from '@yarnpkg/core';
-import {httpUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
+import {structUtils, tgzUtils}                      from '@yarnpkg/core';
 import semver                                       from 'semver';
 import {URL}                                        from 'url';
 
 import {PROTOCOL}                                   from './constants';
+import * as npmHttpUtils                            from './npmHttpUtils';
 
 export class NpmHttpFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -50,8 +51,9 @@ export class NpmHttpFetcher implements Fetcher {
     if (archiveUrl === null)
       throw new Error(`Assertion failed: The archiveUrl querystring parameter should have been available`);
 
-    const sourceBuffer = await httpUtils.get(archiveUrl, {
+    const sourceBuffer = await npmHttpUtils.get(archiveUrl, {
       configuration: opts.project.configuration,
+      ident: locator,
     });
 
     return await tgzUtils.convertToZip(sourceBuffer, {
