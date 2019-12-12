@@ -41514,7 +41514,7 @@ function getIssuerModule(parent) {
 
   while (issuer && (issuer.id === '[eval]' || issuer.id === '<repl>' || !issuer.filename)) issuer = issuer.parent;
 
-  return issuer;
+  return issuer || null;
 }
 // CONCATENATED MODULE: ./sources/loader/applyPatch.ts
 var __rest = undefined && undefined.__rest || function (s, e) {
@@ -41661,7 +41661,7 @@ function applyPatch(pnpapi, opts) {
   }
 
   function getApiPathFromParent(parent) {
-    if (parent === null) return initialApiPath;
+    if (parent == null) return initialApiPath;
 
     if (typeof parent.pnpApiPath === `undefined`) {
       if (parent.filename !== null) {
@@ -41791,17 +41791,26 @@ function applyPatch(pnpapi, opts) {
     const getIssuerSpecsFromPaths = paths => {
       return paths.map(path => ({
         apiPath: findApiPathFor(path),
-        path: npath.toPortablePath(path)
+        path: npath.toPortablePath(path),
+        module: null
       }));
     };
 
     const getIssuerSpecsFromModule = module => {
       const issuer = getIssuerModule(module);
-      const issuerPath = issuer ? issuer.filename : process.cwd();
+      const issuerPath = issuer !== null ? npath.dirname(issuer.filename) : process.cwd();
       return [{
         apiPath: getApiPathFromParent(issuer),
-        path: npath.toPortablePath(issuerPath)
+        path: npath.toPortablePath(issuerPath),
+        module
       }];
+    };
+
+    const makeFakeParent = path => {
+      const fakeParent = new external_module_default.a(``);
+      const fakeFilePath = ppath.join(path, `[file]`);
+      fakeParent.paths = external_module_default.a._nodeModulePaths(npath.fromPortablePath(fakeFilePath));
+      return fakeParent;
     };
 
     const issuerSpecs = options && options.paths ? getIssuerSpecsFromPaths(options.paths) : getIssuerSpecsFromModule(parent);
@@ -41809,23 +41818,26 @@ function applyPatch(pnpapi, opts) {
 
     for (const {
       apiPath,
-      path
+      path,
+      module
     } of issuerSpecs) {
       let resolution;
       const issuerApi = apiPath !== null ? getApiEntry(apiPath, true).instance : null;
 
       try {
         if (issuerApi !== null) {
-          resolution = issuerApi.resolveRequest(request, path);
+          resolution = issuerApi.resolveRequest(request, `${path}/`);
         } else {
-          resolution = originalModuleResolveFilename.call(external_module_default.a, request, new external_module_default.a(npath.fromPortablePath(path)), isMain);
+          resolution = originalModuleResolveFilename.call(external_module_default.a, request, module || makeFakeParent(path), isMain);
         }
       } catch (error) {
         firstError = firstError || error;
         continue;
       }
 
-      return resolution !== null ? resolution : request;
+      if (resolution !== null) {
+        return resolution;
+      }
     }
 
     const requireStack = getRequireStack(parent);
@@ -42474,7 +42486,9 @@ function makeApi(runtimeState, opts) {
   ;
 
   function resolveVirtual(request) {
-    return VirtualFS_VirtualFS.resolveVirtual(request);
+    const normalized = ppath.normalize(request);
+    const resolved = VirtualFS_VirtualFS.resolveVirtual(normalized);
+    return resolved !== normalized ? resolved : null;
   }
 
   return {

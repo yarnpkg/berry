@@ -618,7 +618,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   };
 
   function resolveVirtual(request: PortablePath) {
-    return VirtualFS.resolveVirtual(request);
+    const normalized = ppath.normalize(request);
+    const resolved = VirtualFS.resolveVirtual(normalized);
+
+    return resolved !== normalized ? resolved : null;
   }
 
   return {

@@ -108,7 +108,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   // @ts-ignore
   process.versions.pnp = String(pnpapi.VERSIONS.std);
 
-  function getRequireStack(parent: Module | null) {
+  function getRequireStack(parent: Module | null | undefined) {
     const requireStack = [];
 
     for (let cursor = parent; cursor; cursor = cursor.parent)
@@ -178,8 +178,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     return null;
   }
 
-  function getApiPathFromParent(parent: Module | null): PortablePath | null {
-    if (parent === null)
+  function getApiPathFromParent(parent: Module | null | undefined): PortablePath | null {
+    if (parent == null)
       return initialApiPath;
 
     if (typeof parent.pnpApiPath === `undefined`) {
@@ -204,7 +204,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
   const originalModuleLoad = Module._load;
 
-  Module._load = function(request: string, parent: NodeModule | null, isMain: boolean) {
+  Module._load = function(request: string, parent: NodeModule | null | undefined, isMain: boolean) {
     if (!enableNativeHooks)
       return originalModuleLoad.call(Module, request, parent, isMain);
 
@@ -306,7 +306,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
   const originalModuleResolveFilename = Module._resolveFilename;
 
-  Module._resolveFilename = function(request: string, parent: NodeModule | null, isMain: boolean, options?: {[key: string]: any}) {
+  Module._resolveFilename = function(request: string, parent: NodeModule | null | undefined, isMain: boolean, options?: {[key: string]: any}) {
     if (builtinModules.has(request))
       return request;
 
@@ -350,20 +350,31 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       return paths.map(path => ({
         apiPath: findApiPathFor(path),
         path: npath.toPortablePath(path),
+        module: null,
       }));
     };
 
-    const getIssuerSpecsFromModule = (module: NodeModule | null) => {
+    const getIssuerSpecsFromModule = (module: NodeModule | null | undefined) => {
       const issuer = getIssuerModule(module);
 
-      const issuerPath = issuer
-        ? issuer.filename
+      const issuerPath = issuer !== null
+        ? npath.dirname(issuer.filename)
         : process.cwd();
 
       return [{
         apiPath: getApiPathFromParent(issuer),
         path: npath.toPortablePath(issuerPath),
+        module,
       }];
+    };
+
+    const makeFakeParent = (path: PortablePath) => {
+      const fakeParent = new Module(``);
+
+      const fakeFilePath = ppath.join(path, `[file]` as Filename);
+      fakeParent.paths = Module._nodeModulePaths(npath.fromPortablePath(fakeFilePath));
+
+      return fakeParent;
     };
 
     const issuerSpecs = options && options.paths
@@ -372,7 +383,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     let firstError;
 
-    for (const {apiPath, path} of issuerSpecs) {
+    for (const {apiPath, path, module} of issuerSpecs) {
       let resolution;
 
       const issuerApi = apiPath !== null
@@ -381,16 +392,18 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
       try {
         if (issuerApi !== null) {
-          resolution = issuerApi.resolveRequest(request, path);
+          resolution = issuerApi.resolveRequest(request, `${path}/`);
         } else {
-          resolution = originalModuleResolveFilename.call(Module, request, new Module(npath.fromPortablePath(path)), isMain);
+          resolution = originalModuleResolveFilename.call(Module, request, module || makeFakeParent(path), isMain);
         }
       } catch (error) {
         firstError = firstError || error;
         continue;
       }
 
-      return resolution !== null ? resolution : request;
+      if (resolution !== null) {
+        return resolution;
+      }
     }
 
     const requireStack = getRequireStack(parent);
@@ -404,7 +417,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
   const originalFindPath = Module._findPath;
 
-  Module._findPath = function(request: string, paths: Array<string> | null, isMain: boolean) {
+  Module._findPath = function(request: string, paths: Array<string> | null | undefined, isMain: boolean) {
     if (request === `pnpapi`)
       return false;
 
