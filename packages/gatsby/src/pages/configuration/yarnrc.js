@@ -382,9 +382,9 @@ const YarnrcDoc = () => <>
       </SymlArrayProperty>
       <SymlScalarProperty
         name={`virtualFolder`}
-        placeholder={`./.yarn/virtual`}
+        placeholder={`./.yarn/$$virtual`}
         description={<>
-          Due to a particularity in how Yarn installs packages which list peer dependencies, some packages will be mapped to multiple virtual directories that don't actually exist on the filesystem. This settings tells Yarn where to put them.
+          Due to a particularity in how Yarn installs packages which list peer dependencies, some packages will be mapped to multiple virtual directories that don't actually exist on the filesystem. This settings tells Yarn where to put them. Note that the folder name *must* be <code>$$virtual</code>.
         </>}
       />
       <SymlScalarProperty
