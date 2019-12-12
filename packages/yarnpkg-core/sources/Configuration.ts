@@ -160,9 +160,9 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: `./.yarn/cache`,
   },
   virtualFolder: {
-    description: `Folder where the virtual packages (cf doc) will be mapped on the disk`,
+    description: `Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual)`,
     type: SettingsType.ABSOLUTE_PATH,
-    default: `./.yarn/virtual`,
+    default: `./.yarn/$$virtual`,
   },
   bstatePath: {
     description: `Path of the file where the current state of the built packages must be stored`,

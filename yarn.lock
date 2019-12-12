@@ -5036,7 +5036,6 @@ __metadata:
     eslint: ^5.16.0
     eslint-plugin-arca: ^0.9.0
     eslint-plugin-react: ^7.14.3
-    foo: "link:/tmp/foo"
     github-api: ^3.2.2
     hard-source-webpack-plugin: mzgoddard/hard-source-webpack-plugin
     jest: ^24.9.0
@@ -11671,12 +11670,6 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   checksum: 5c4ff195f644040234b6337a100966081d54e8b9609dc15e6ccbc71758193a8df06f707db8b40fe95e3f95fa409ac3b02cd8e1fcc426c93a965a56c185c9d51e
   languageName: node
   linkType: hard
-
-"foo@link:/tmp/foo?locator=%40yarnpkg%2Fmonorepo%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "foo@link:/tmp/foo?locator=%40yarnpkg%2Fmonorepo%40workspace%3A."
-  languageName: node
-  linkType: soft
 
 "for-each@npm:^0.3.3":
   version: 0.3.3

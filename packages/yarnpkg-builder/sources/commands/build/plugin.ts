@@ -65,14 +65,14 @@ export default class BuildPluginCommand extends Command {
               for (const chunk of chunks) {
                 for (const file of chunk.files) {
                   compilation.assets[file] = new RawSource(reindent(`
-                    module.exports = {};
-
-                    module.exports.factory = function (require) {
-${reindent(compilation.assets[file].source().replace(/^ +/, ``), 11)}
-                      return plugin;
+                    /* eslint-disable*/
+                    module.exports = {
+                      name: ${JSON.stringify(name)},
+                      factory: function (require) {
+                        ${reindent(compilation.assets[file].source().replace(/^ +/, ``), 11)}
+                        return plugin;
+                      },
                     };
-
-                    module.exports.name = ${JSON.stringify(name)};
                   `));
                 }
               }

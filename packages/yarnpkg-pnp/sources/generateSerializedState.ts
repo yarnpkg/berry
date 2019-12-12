@@ -114,7 +114,6 @@ export function generateSerializedState(settings: PnpSettings): SerializedState 
     dependencyTreeRoots: settings.dependencyTreeRoots,
     enableTopLevelFallback: settings.enableTopLevelFallback || false,
     ignorePatternData: settings.ignorePattern || null,
-    virtualRoots: settings.virtualRoots || [],
 
     fallbackExclusionList: generateFallbackExclusionList(settings),
     locationBlacklistData: generateLocationBlacklistData(settings),

@@ -76,7 +76,7 @@ export default class DlxCommand extends BaseCommand {
         stderr: this.context.stderr,
       });
     } finally {
-      //await xfs.removePromise(tmpDir);
+      await xfs.removePromise(tmpDir);
     }
   }
 }
@@ -87,7 +87,6 @@ function createTemporaryDirectory(name?: Filename) {
       if (error) {
         reject(error);
       } else {
-        console.log(dirPath);
         resolve(npath.toPortablePath(dirPath));
       }
     });

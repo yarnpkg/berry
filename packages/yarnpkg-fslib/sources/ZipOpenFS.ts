@@ -12,6 +12,7 @@ const ZIP_FD = 0x80000000;
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS<PortablePath>,
   filter?: RegExp | null,
+  maxOpenFiles?: number,
   readOnlyArchives?: boolean,
   useCache?: boolean,
 };
@@ -42,13 +43,14 @@ export class ZipOpenFS extends BasePortableFakeFS {
   private readonly fdMap: Map<number, [ZipFS, number]> = new Map();
   private nextFd = 3;
 
-  private readonly filter?: RegExp | null;
-  private readonly readOnlyArchives?: boolean;
+  private readonly filter: RegExp | null;
+  private readonly maxOpenFiles: number;
+  private readonly readOnlyArchives: boolean;
 
   private isZip: Set<string> = new Set();
   private notZip: Set<string> = new Set();
 
-  constructor({baseFs = new NodeFS(), filter = null, readOnlyArchives = false, useCache = true}: ZipOpenFSOptions = {}) {
+  constructor({baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true}: ZipOpenFSOptions = {}) {
     super();
 
     this.baseFs = baseFs;
@@ -56,6 +58,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     this.zipInstances = useCache ? new Map() : null;
 
     this.filter = filter;
+    this.maxOpenFiles = maxOpenFiles;
     this.readOnlyArchives = readOnlyArchives;
 
     this.isZip = new Set();
@@ -724,6 +727,23 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return null;
   }
 
+  private limitOpenFiles(max: number) {
+    if (this.zipInstances === null)
+      return;
+
+    let closeCount = this.zipInstances.size - max;
+
+    for (const [path, zipFs] of this.zipInstances.entries()) {
+      if (closeCount <= 0)
+        break;
+
+      zipFs.saveAndClose();
+      this.zipInstances.delete(path);
+
+      closeCount -= 1;
+    }
+  }
+
   private async getZipPromise<T>(p: PortablePath, accept: (zipFs: ZipFS) => Promise<T>) {
     const getZipOptions = async () => ({
       baseFs: this.baseFs,
@@ -735,7 +755,14 @@ export class ZipOpenFS extends BasePortableFakeFS {
       let zipFs = this.zipInstances.get(p);
 
       if (!zipFs)
-        this.zipInstances.set(p, zipFs = new ZipFS(p, await getZipOptions()));
+        zipFs = new ZipFS(p, await getZipOptions());
+
+      // Removing then re-adding the field allows us to easily implement
+      // a basic LRU garbage collection strategy
+      this.zipInstances.delete(p);
+      this.zipInstances.set(p, zipFs);
+
+      this.limitOpenFiles(this.maxOpenFiles);
 
       return await accept(zipFs);
     } else {
