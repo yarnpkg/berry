@@ -83,7 +83,7 @@ export default class DlxCommand extends BaseCommand {
 
 function createTemporaryDirectory(name?: Filename) {
   return new Promise<PortablePath>((resolve, reject) => {
-    tmp.dir({unsafeCleanup: true}, (error, dirPath) => {
+    tmp.dir({unsafeCleanup: false}, (error, dirPath) => {
       if (error) {
         reject(error);
       } else {

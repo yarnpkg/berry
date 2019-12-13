@@ -41,11 +41,11 @@ export function makeError(pnpCode: ErrorCode, message: string, data: Object = {}
  * inside an eval expression.
  */
 
-export function getIssuerModule(parent: NodeModule | null): NodeModule | null {
+export function getIssuerModule(parent: NodeModule | null | undefined): NodeModule | null {
   let issuer = parent;
 
   while (issuer && (issuer.id === '[eval]' || issuer.id === '<repl>' || !issuer.filename))
     issuer = issuer.parent;
 
-  return issuer;
+  return issuer || null;
 }

@@ -2,7 +2,7 @@ import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, 
 import {FetchResult, Descriptor, Ident, Locator, Package, BuildDirective, BuildType}                         from '@yarnpkg/core';
 import {miscUtils, structUtils}                                                                              from '@yarnpkg/core';
 import {CwdFS, FakeFS, PortablePath, npath, ppath, toFilename, xfs}                                          from '@yarnpkg/fslib';
-import {PackageRegistry, generateInlinedScript, generateSplitScript}                                         from '@yarnpkg/pnp';
+import {PackageRegistry, generateInlinedScript, generateSplitScript, PnpSettings}                            from '@yarnpkg/pnp';
 import {UsageError}                                                                                          from 'clipanion';
 
 import {getPnpPath}                                                                                          from './index';
@@ -165,7 +165,6 @@ class PnpInstaller implements Installer {
     const ignorePattern = this.opts.project.configuration.get(`pnpIgnorePattern`);
     const packageRegistry = this.packageRegistry;
     const shebang = this.opts.project.configuration.get(`pnpShebang`);
-    const virtualRoots = [this.normalizeDirectoryPath(this.opts.project.configuration.get(`virtualFolder`))];
 
     if (pnpFallbackMode === `dependencies-only`)
       for (const pkg of this.opts.project.storedPackages.values())
@@ -175,7 +174,7 @@ class PnpInstaller implements Installer {
     const pnpPath = getPnpPath(this.opts.project);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
 
-    const pnpSettings = {
+    const pnpSettings: PnpSettings = {
       blacklistedLocations,
       dependencyTreeRoots,
       enableTopLevelFallback,
@@ -183,7 +182,6 @@ class PnpInstaller implements Installer {
       ignorePattern,
       packageRegistry,
       shebang,
-      virtualRoots,
     };
 
     if (this.opts.project.configuration.get(`pnpEnableInlining`)) {

@@ -35,7 +35,6 @@ export type SerializedState = {
   locationLengthData: LocationLengthData,
   packageRegistryData: PackageRegistryData,
   dependencyTreeRoots: Array<PackageLocator>,
-  virtualRoots: Array<PortablePath>,
 };
 
 // This is what `makeApi` actually consumes
@@ -48,7 +47,6 @@ export type RuntimeState = {
   packageLocatorsByLocations: Map<PortablePath, PackageLocator | null>;
   packageRegistry: PackageRegistry,
   dependencyTreeRoots: Array<PackageLocator>,
-  virtualRoots: Array<PortablePath>,
 };
 
 // This is what the generation functions take as parameter
@@ -75,10 +73,6 @@ export type PnpSettings = {
   // The shebang to add at the top of the file, can be any string you want (the
   // default value should be enough most of the time)
   shebang?: string | null,
-
-  // Some paths where the hook will map virtual indirection (we use that to
-  // generate unique paths for each package that lists peer dependencies)
-  virtualRoots?: Array<PortablePath>,
 
   // The following locators will be made available in the API through the
   // getDependencyTreeRoots function. They are typically the workspace

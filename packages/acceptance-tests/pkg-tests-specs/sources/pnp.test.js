@@ -600,6 +600,41 @@ describe(`Plug'n'Play`, () => {
     ),
   );
 
+  test(
+    `it should be able to require files from a different dependency tree`,
+    makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      const tmp = await createTemporaryFolder();
+
+      await xfs.writeJsonPromise(ppath.join(tmp, `package.json`), {
+        dependencies: {
+          [`no-deps`]: `2.0.0`,
+        },
+      });
+
+      await xfs.writeFilePromise(ppath.join(tmp, `index.js`), `
+        module.exports = require('no-deps');
+      `);
+
+      await run(`install`, {cwd: tmp});
+
+      await expect(source(`require('no-deps')`)).resolves.toEqual({
+        name: `no-deps`,
+        version: `1.0.0`,
+      });
+
+      await expect(source(`require(${JSON.stringify(tmp)})`)).resolves.toEqual({
+        name: `no-deps`,
+        version: `2.0.0`,
+      });
+    }),
+  );
+
   testIf(
     () => satisfies(process.versions.node, `>=8.9.0`),
     `it should throw when using require.resolve with unsupported options`,
@@ -641,7 +676,7 @@ describe(`Plug'n'Play`, () => {
         await writeFile(`${tmp}/index.js`, `require(process.argv[2])`);
         await writeFile(`${path}/index.js`, `require('no-deps')`);
 
-        await run(`node`, `${npath.fromPortablePath(tmp)}/index.js`, `${path}/index.js`);
+        await run(`node`, `${npath.fromPortablePath(tmp)}/index.js`, `${npath.fromPortablePath(path)}/index.js`);
       },
     ),
   );
