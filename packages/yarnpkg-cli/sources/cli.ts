@@ -1,7 +1,11 @@
-import {main}                from './main';
-import {pluginConfiguration} from './pluginConfiguration';
+import './polyfills';
+
+import {YarnVersion}            from '@yarnpkg/core';
+
+import {main}                   from './main';
+import {getPluginConfiguration} from './tools/getPluginConfiguration';
 
 main({
-  binaryVersion: YARN_VERSION,
-  pluginConfiguration,
+  binaryVersion: YarnVersion || `<unknown>`,
+  pluginConfiguration: getPluginConfiguration(),
 });

@@ -1,16 +1,34 @@
 {
   "name": "@yarnpkg/plugin-npm",
-  "private": true,
+  "version": "2.0.0-rc.10",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/core": "workspace:2.0.0-rc.6",
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12",
     "inquirer": "^6.2.0",
     "semver": "^5.6.0"
   },
-  "version": "2.0.0-rc.3",
+  "peerDependencies": {
+    "@yarnpkg/core": "^2.0.0-rc.13"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^0.0.43",
+    "@types/node": "^12.12.8",
+    "@types/semver": "^6.0.2",
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
-  }
+  },
+  "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\""
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ]
 }

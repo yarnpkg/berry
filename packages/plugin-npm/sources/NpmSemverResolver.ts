@@ -2,7 +2,6 @@ import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOption
 import {Descriptor, Locator}                                                                 from '@yarnpkg/core';
 import {LinkType}                                                                            from '@yarnpkg/core';
 import {structUtils}                                                                         from '@yarnpkg/core';
-import querystring                                                                           from 'querystring';
 import semver                                                                                from 'semver';
 import {URL}                                                                                 from 'url';
 
@@ -67,7 +66,7 @@ export class NpmSemverResolver implements Resolver {
       if (NpmSemverFetcher.isConventionalTarballUrl(versionLocator, archiveUrl, {configuration: opts.project.configuration})) {
         return versionLocator;
       } else {
-        return structUtils.makeLocator(versionLocator, `${versionLocator.reference}?${querystring.stringify({archiveUrl})}`);
+        return structUtils.bindLocator(versionLocator, {__archiveUrl: archiveUrl});
       }
     });
   }
@@ -99,7 +98,7 @@ export class NpmSemverResolver implements Resolver {
     if (!manifest.dependencies.has(NODE_GYP_IDENT.identHash) && !manifest.peerDependencies.has(NODE_GYP_IDENT.identHash)) {
       for (const value of manifest.scripts.values()) {
         if (value.match(NODE_GYP_MATCH)) {
-          manifest.dependencies.set(NODE_GYP_IDENT.identHash,  structUtils.makeDescriptor(NODE_GYP_IDENT, `*`));
+          manifest.dependencies.set(NODE_GYP_IDENT.identHash, structUtils.makeDescriptor(NODE_GYP_IDENT, `latest`));
           opts.report.reportWarning(MessageName.NODE_GYP_INJECTED, `${structUtils.prettyLocator(opts.project.configuration, locator)}: Implicit dependencies on node-gyp are discouraged`);
           break;
         }

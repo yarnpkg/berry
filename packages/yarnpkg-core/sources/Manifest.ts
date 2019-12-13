@@ -1,11 +1,11 @@
-import {FakeFS, NodeFS, PortablePath, ppath, toFilename}  from '@yarnpkg/fslib';
-import {Resolution, parseResolution, stringifyResolution} from '@yarnpkg/parsers';
-import semver                                             from 'semver';
+import {FakeFS, Filename, NodeFS, PortablePath, ppath, toFilename} from '@yarnpkg/fslib';
+import {Resolution, parseResolution, stringifyResolution}          from '@yarnpkg/parsers';
+import semver                                                      from 'semver';
 
-import * as miscUtils                                     from './miscUtils';
-import * as structUtils                                   from './structUtils';
-import {IdentHash}                                        from './types';
-import {Ident, Descriptor}                                from './types';
+import * as miscUtils                                              from './miscUtils';
+import * as structUtils                                            from './structUtils';
+import {IdentHash}                                                 from './types';
+import {Ident, Descriptor}                                         from './types';
 
 export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
 export type HardDependencies = 'dependencies' | 'devDependencies';
@@ -70,6 +70,8 @@ export class Manifest {
    */
   public errors: ReadonlyArray<Error> = [];
 
+  static readonly fileName = `package.json` as Filename;
+
   static readonly allDependencies: Array<AllDependencies> = [`dependencies`, `devDependencies`, `peerDependencies`];
   static readonly hardDependencies: Array<HardDependencies> = [`dependencies`, `devDependencies`];
 
@@ -94,7 +96,7 @@ export class Manifest {
   loadFromText(text: string) {
     let data;
     try {
-      data = JSON.parse(text || `{}`);
+      data = JSON.parse(stripBOM(text) || `{}`);
     } catch (error) {
       error.message += ` (when parsing ${text})`;
       throw error;
@@ -109,7 +111,7 @@ export class Manifest {
 
     let data;
     try {
-      data = JSON.parse(content || `{}`);
+      data = JSON.parse(stripBOM(content) || `{}`);
     } catch (error) {
       error.message += ` (when parsing ${path})`;
       throw error;
@@ -215,12 +217,7 @@ export class Manifest {
     }
 
     if (typeof data.peerDependencies === `object` && data.peerDependencies !== null) {
-      for (const [name, range] of Object.entries(data.peerDependencies)) {
-        if (typeof range !== 'string') {
-          errors.push(new Error(`Invalid dependency range for '${name}'`));
-          continue;
-        }
-
+      for (let [name, range] of Object.entries(data.peerDependencies)) {
         let ident;
         try {
           ident = structUtils.parseIdent(name);
@@ -229,7 +226,12 @@ export class Manifest {
           continue;
         }
 
-        const descriptor = structUtils.makeDescriptor(ident, range);
+        if (typeof range !== 'string' || !semver.validRange(range)) {
+          errors.push(new Error(`Invalid dependency range for '${name}'`));
+          range = `*`;
+        }
+
+        const descriptor = structUtils.makeDescriptor(ident, range as string);
         this.peerDependencies.set(descriptor.identHash, descriptor);
       }
     }
@@ -396,11 +398,38 @@ export class Manifest {
     }
   }
 
+  hasConsumerDependency(ident: Ident) {
+    if (this.dependencies.has(ident.identHash))
+      return true;
+
+    if (this.peerDependencies.has(ident.identHash))
+      return true;
+
+    return false;
+  }
+
   hasHardDependency(ident: Ident) {
     if (this.dependencies.has(ident.identHash))
       return true;
 
     if (this.devDependencies.has(ident.identHash))
+      return true;
+
+    return false;
+  }
+
+  hasSoftDependency(ident: Ident) {
+    if (this.peerDependencies.has(ident.identHash))
+      return true;
+
+    return false;
+  }
+
+  hasDependency(ident: Ident) {
+    if (this.hasHardDependency(ident))
+      return true;
+
+    if (this.hasSoftDependency(ident))
       return true;
 
     return false;
@@ -433,6 +462,15 @@ export class Manifest {
     let peerDependencyMeta = this.peerDependenciesMeta.get(identString);
     if (!peerDependencyMeta)
       this.peerDependenciesMeta.set(identString, peerDependencyMeta = {});
+
+    // I don't like implicit dependencies, but package authors are reluctant to
+    // use optional peer dependencies because they would print warnings in npm
+    // due to a bug in their server implementation. We've been waiting for them
+    // to fix it, but it's been a while now with no idea how close they are. So
+    // in the meantime the "peerDependenciesMeta" field will imply a generic
+    // peer dependency. Ref: https://github.com/npm/cli/pull/224
+    if (!this.peerDependencies.has(descriptor.identHash))
+      this.peerDependencies.set(descriptor.identHash, structUtils.makeDescriptor(descriptor, `*`));
 
     return peerDependencyMeta;
   }
@@ -591,5 +629,13 @@ function getIndent(content: string) {
     return indentMatch[0];
   } else {
     return `  `;
+  }
+}
+
+function stripBOM(content: string) {
+  if (content.charCodeAt(0) === 0xFEFF) {
+    return content.slice(1);
+  } else {
+    return content;
   }
 }

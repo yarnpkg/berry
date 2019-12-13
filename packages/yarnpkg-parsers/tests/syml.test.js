@@ -10,12 +10,12 @@ describe(`Syml parser`, () => {
   it(`should parse new-style objects`, () => {
     expect(parseSyml(`foo:\n  bar: true\n  baz: "quux"\n`)).toEqual({
       foo: {bar: `true`, baz: `quux`},
-    })
+    });
   });
 
   it(`should parse old-style objects`, () => {
     expect(parseSyml(`# yarn lockfile v1\nfoo:\n  bar true\n  baz "quux"\n`)).toEqual({
       foo: {bar: `true`, baz: `quux`},
-    })
+    });
   });
 });

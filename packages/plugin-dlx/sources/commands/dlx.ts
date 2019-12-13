@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                    from '@yarnpkg/cli';
-import {Configuration, Project}                                 from '@yarnpkg/core';
-import {scriptUtils, structUtils}                               from '@yarnpkg/core';
-import {NodeFS, xfs, PortablePath, ppath, Filename, toFilename} from '@yarnpkg/fslib';
-import {Command}                                                from 'clipanion';
-import tmp                                                      from 'tmp';
+import {BaseCommand, WorkspaceRequiredError}                   from '@yarnpkg/cli';
+import {Configuration, Project, ThrowReport}                   from '@yarnpkg/core';
+import {scriptUtils, structUtils}                              from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
+import {Command}                                               from 'clipanion';
+import tmp                                                     from 'tmp';
 
 // eslint-disable-next-line arca/no-default-export
 export default class DlxCommand extends BaseCommand {
@@ -59,10 +59,15 @@ export default class DlxCommand extends BaseCommand {
         this.context.stdout.write(`\n`);
 
       const configuration = await Configuration.find(tmpDir, this.context.plugins);
-      const {workspace} = await Project.find(configuration, tmpDir);
+      const {project, workspace} = await Project.find(configuration, tmpDir);
 
       if (workspace === null)
         throw new WorkspaceRequiredError(tmpDir);
+
+      await project.resolveEverything({
+        lockfileOnly: true,
+        report: new ThrowReport(),
+      });
 
       return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, this.args, {
         cwd: this.context.cwd,
@@ -78,11 +83,11 @@ export default class DlxCommand extends BaseCommand {
 
 function createTemporaryDirectory(name?: Filename) {
   return new Promise<PortablePath>((resolve, reject) => {
-    tmp.dir({unsafeCleanup: true}, (error, dirPath) => {
+    tmp.dir({unsafeCleanup: false}, (error, dirPath) => {
       if (error) {
         reject(error);
       } else {
-        resolve(NodeFS.toPortablePath(dirPath));
+        resolve(npath.toPortablePath(dirPath));
       }
     });
   }).then(async dirPath => {

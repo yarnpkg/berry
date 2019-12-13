@@ -9,7 +9,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({
         dependencies: {
           [`no-deps`]: `1.0.0`,
-          [`one-fixed-dep`]: `1.0.0`
+          [`one-fixed-dep`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
         await run(`remove`, `no-deps`);
@@ -23,7 +23,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({
         devDependencies: {
           [`no-deps`]: `1.0.0`,
-          [`one-fixed-dep`]: `1.0.0`
+          [`one-fixed-dep`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
         await run(`remove`, `no-deps`);
@@ -37,7 +37,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({
         dependencies: {
           [`no-deps`]: `1.0.0`,
-          [`one-fixed-dep`]: `1.0.0`
+          [`one-fixed-dep`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
         await run(`remove`, `no-deps`);
@@ -51,7 +51,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({
         devDependencies: {
           [`no-deps`]: `1.0.0`,
-          [`one-fixed-dep`]: `1.0.0`
+          [`one-fixed-dep`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
         await run(`remove`, `no-deps`);

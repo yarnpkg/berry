@@ -1,11 +1,6 @@
 import {xfs}           from '@yarnpkg/fslib';
 import {stringifySyml} from '@yarnpkg/parsers';
 
-const {
-  fs: {readJson, writeJson},
-  tests: {getPackageDirectoryPath},
-} = require('pkg-tests-core');
-
 describe(`Protocols`, () => {
   describe(`exec:`, () => {
     test(
@@ -18,7 +13,7 @@ describe(`Protocols`, () => {
         await xfs.writeFilePromise(`${path}/.yarnrc.yml`, stringifySyml({
           plugins: [require.resolve(`@yarnpkg/monorepo/scripts/plugin-exec.js`)],
         }));
-  
+
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
           const fs = require('fs');
           fs.mkdirSync('build');

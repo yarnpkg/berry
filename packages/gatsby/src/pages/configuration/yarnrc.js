@@ -46,6 +46,13 @@ const YarnrcDoc = () => <>
         </>}
       />
       <SymlScalarProperty
+        name={`defaultSemverRangePrefix`}
+        placeholder={`^`}
+        description={<>
+          The default prefix for semantic version dependency ranges, which is used for new dependencies that are installed to a manifest. Possible values are <code>"^"</code> (the default), <code>"~"</code> or <code>""</code>.
+        </>}
+      />
+      <SymlScalarProperty
         name={`enableColors`}
         placeholder={true}
         description={<>
@@ -81,6 +88,13 @@ const YarnrcDoc = () => <>
         </>}
       />
       <SymlScalarProperty
+        name={`enableMirror`}
+        placeholder={true}
+        description={<>
+          If enabled (which is the default), Yarn will use the global folder as indirection between the network and the actual cache. This makes installs much faster for projects that don't already benefit from Zero-Installs.
+        </>}
+      />
+      <SymlScalarProperty
         name={`enableNetwork`}
         placeholder={true}
         description={<>
@@ -88,10 +102,31 @@ const YarnrcDoc = () => <>
         </>}
       />
       <SymlScalarProperty
+        name={`enableProgressBars`}
+        placeholder={true}
+        description={<>
+          If true, Yarn will show progress bars for long-running events. It's disabled by default for CI environments.
+        </>}
+      />
+      <SymlScalarProperty
+        name={`enableScripts`}
+        placeholder={false}
+        description={<>
+          If disabled, Yarn will not execute the <code>postInstall</code> scripts when installing the project. Note that you can now also disable scripts on a per-package basis thanks to <code>dependenciesMeta</code>.
+        </>}
+      />
+      <SymlScalarProperty
         name={`enableTimers`}
         placeholder={true}
         description={<>
-          If true, Yarn will print the time spent running each substep when running various commands. Disabling this feature is typically needed for testing purposes, when you want each execution to have exactly the same output as the previous ones.
+          If true, Yarn will print the time spent running each sub-step when running various commands. Disabling this feature is typically needed for testing purposes, when you want each execution to have exactly the same output as the previous ones.
+        </>}
+      />
+      <SymlScalarProperty
+        name={`enableTransparentWorkspaces`}
+        placeholder={false}
+        description={<>
+          If disabled, Yarn won't anymore link workspaces just because their versions happen to match a semver range. Using this setting will require that all workspace accesses are made through the <code>workspace:</code> protocol. This is usually only needed in some very specific circumstances.
         </>}
       />
       <SymlScalarProperty
@@ -154,7 +189,7 @@ const YarnrcDoc = () => <>
         name={`npmPublishRegistry`}
         placeholder={`https://npm.pkg.github.com`}
         description={<>
-          Defines the registry that must be used when pushing packages. Doesn't need to be defined, in which case the value of <code>npmRegistryServer</code> will be used. Overriden by <code>publishConfig.registry</code>.
+          Defines the registry that must be used when pushing packages. Doesn't need to be defined, in which case the value of <code>npmRegistryServer</code> will be used. Overridden by <code>publishConfig.registry</code>.
         </>}
       />
       <SymlObjectProperty
@@ -221,7 +256,7 @@ const YarnrcDoc = () => <>
           <SymlScalarProperty
             name={`npmPublishRegistry`}
             anchor={`npmScopes.npmPublishRegistry`}
-            placeholder={true}
+            placeholder={`https://registry.yarnpkg.com`}
             description={<>
               See <a href={`#npmPublishRegistry`}><code>npmPublishRegistry</code></a>.
             </>}
@@ -229,11 +264,44 @@ const YarnrcDoc = () => <>
           <SymlScalarProperty
             name={`npmRegistryServer`}
             anchor={`npmScopes.npmRegistryServer`}
-            placeholder={true}
+            placeholder={`https://registry.yarnpkg.com`}
             description={<>
               See <a href={`#npmRegistryServer`}><code>npmRegistryServer</code></a>.
             </>}
           />
+        </SymlObjectProperty>
+      </SymlObjectProperty>
+      <SymlObjectProperty
+        name={`packageExtensions`}
+        margin={true}
+        description={<>
+          Some packages may have been specified incorrectly with regard to their dependencies - for example with one dependency being missing, causing Yarn to refuse it the access. The <code>packageExtensions</code> fields offer a way to extend the existing package definitions with additional information.
+        </>}
+      >
+        <SymlObjectProperty
+          name={`webpack@*`}
+          description={<>
+            Each key is a descriptor covering a semver range. The extensions will be applied to any package whose version matches the specified range. This is true regardless of where the package comes from, so no distinction on whether they come from git or a registry, for example. Only the version matters.
+          </>}
+        >
+          <SymlObjectProperty
+            name={`dependencies`}
+            anchor={`packageExtensions.dependencies`}
+          >
+            <SymlScalarProperty
+              name={`lodash`}
+              placeholder={`^4.15.0`}
+            />
+          </SymlObjectProperty>
+          <SymlObjectProperty
+            name={`peerDependencies`}
+            anchor={`packageExtensions.peerDependencies`}
+          >
+            <SymlScalarProperty
+              name={`webpack-cli`}
+              placeholder={`*`}
+            />
+          </SymlObjectProperty>
         </SymlObjectProperty>
       </SymlObjectProperty>
       <SymlScalarProperty
@@ -314,9 +382,9 @@ const YarnrcDoc = () => <>
       </SymlArrayProperty>
       <SymlScalarProperty
         name={`virtualFolder`}
-        placeholder={`./.yarn/virtual`}
+        placeholder={`./.yarn/$$virtual`}
         description={<>
-          Due to a particularity in how Yarn install packages, some symlinks have to be created when working with packages containing peer dependencies (check this article to learn more about the subject). This setting defines where should those symlinks go. It is perfectly safe to share it between multiple projects.
+          Due to a particularity in how Yarn installs packages which list peer dependencies, some packages will be mapped to multiple virtual directories that don't actually exist on the filesystem. This settings tells Yarn where to put them. Note that the folder name *must* be <code>$$virtual</code>.
         </>}
       />
       <SymlScalarProperty
@@ -324,6 +392,13 @@ const YarnrcDoc = () => <>
         placeholder={`./scripts/yarn-2.0.0-rc001.js`}
         description={<>
           The path of a Yarn binary, which will be executed instead of any other (including the global one) for any command run within the directory covered by the rc file. If the file extension ends with <code>.js</code> it will be required, and will be spawned in any other case.
+        </>}
+      />
+      <SymlScalarProperty
+        name={`yarnUpgradePath`}
+        placeholder={`./scripts/yarn-2.0.0-rc001.js`}
+        description={<>
+          If set, the <code>yarn set version</code> command will store the downloaded file at this location instead of the one referenced by <code>yarnPath</code>. This settings is useful if you want the file referenced in <code>yarnPath</code> to be a wrapper, and the real Yarn binary to be stored elsewhere.
         </>}
       />
     </SymlContainer>

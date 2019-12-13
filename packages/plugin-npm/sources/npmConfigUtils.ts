@@ -1,5 +1,4 @@
-import {Configuration, Ident, Manifest, structUtils} from '@yarnpkg/core';
-import {PortablePath}                                from '@yarnpkg/fslib';
+import {Configuration, Manifest} from '@yarnpkg/core';
 
 export enum RegistryType {
   FETCH_REGISTRY = 'npmRegistryServer',
@@ -71,6 +70,3 @@ export function getScopeConfiguration(scope: string | null, {configuration}: {co
   return scopeConfiguration;
 }
 
-export function getVendorPath(ident: Ident) {
-  return `/node_modules/${structUtils.requirableIdent(ident)}` as PortablePath;
-}

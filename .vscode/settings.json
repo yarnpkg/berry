@@ -3,7 +3,7 @@
   "files.eol": "\n",
   "typescript.tsdk": ".vscode/pnpify/typescript/lib",
   "eslint.validate": [
-    "javascript",
+    "javascript", // js comment
     {
       "language": "typescript",
       "autoFix": true
@@ -14,5 +14,6 @@
     }
   ],
   "eslint.autoFixOnSave": true,
+  "eslint.enable": true,
   "eslint.nodePath": ".vscode/pnpify"
 }

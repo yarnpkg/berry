@@ -31,6 +31,8 @@ COMMIT_MESSAGE="$COMMIT_MESSAGE| --- | --- |$NL"
 UPDATE_ARGUMENTS=()
 
 while read line; do
+  echo $line
+
   IDENT=$(jq -r .ident <<< "$line")
   VERSION=$(jq -r .newVersion <<< "$line")
 
@@ -43,8 +45,10 @@ while read line; do
   )
 done <<< "$RELEASE_DETAILS"
 
+echo
+
 # Regenerate the local versions for the elements that get released
-YARN_NPM_PUBLISH_REGISTRY=https://npm.pkg.github.com yarn workspaces foreach \
+yarn workspaces foreach \
   --verbose --topological --no-private "${UPDATE_ARGUMENTS[@]}" \
   run update-local
 
@@ -75,7 +79,8 @@ for TAG_SUFFIX in '' {a..z}; do
         fi
     fi
 
-    git tag -a "$TAG" "$TAG"
+    git tag -a "$TAG" -m "$TAG"
+    break
 done
 
 printf "%s" "$COMMIT_MESSAGE"

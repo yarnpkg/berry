@@ -17,7 +17,7 @@ export class NpmSemverFetcher implements Fetcher {
 
     if (!semver.valid(url.pathname))
       return false;
-    if (url.searchParams.has(`archiveUrl`))
+    if (url.searchParams.has(`__archiveUrl`))
       return false;
 
     return true;
@@ -42,7 +42,7 @@ export class NpmSemverFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs,
-      prefixPath: npmConfigUtils.getVendorPath(locator),
+      prefixPath: structUtils.getIdentVendorPath(locator),
       checksum,
     };
   }
@@ -64,9 +64,9 @@ export class NpmSemverFetcher implements Fetcher {
       });
     }
 
-    return await tgzUtils.makeArchive(sourceBuffer, {
+    return await tgzUtils.convertToZip(sourceBuffer, {
       stripComponents: 1,
-      prefixPath: npmConfigUtils.getVendorPath(locator),
+      prefixPath: structUtils.getIdentVendorPath(locator),
     });
   }
 

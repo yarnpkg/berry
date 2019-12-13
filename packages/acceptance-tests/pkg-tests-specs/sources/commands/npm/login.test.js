@@ -110,7 +110,7 @@ describe(`Commands`, () => {
     test(
       `it should login a user with no OTP setup to a specific scope`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        const url = startPackageServer();
+        const url = await startPackageServer();
         const homePath = await createTemporaryFolder();
 
         await writeFile(`${homePath}/${SPEC_RC_FILENAME}`, [
@@ -148,7 +148,7 @@ describe(`Commands`, () => {
     test(
       `it should login a user with OTP to a specific scope`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        const url = startPackageServer();
+        const url = await startPackageServer();
         const homePath = await createTemporaryFolder();
 
         const initialRcFileContent = [

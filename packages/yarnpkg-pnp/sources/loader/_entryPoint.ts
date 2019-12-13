@@ -1,17 +1,17 @@
-import {FakeFS, NodeFS, PortablePath, VirtualFS, ZipOpenFS} from '@yarnpkg/fslib';
-import fs                                                   from 'fs';
-import Module                                               from 'module';
-import path                                                 from 'path';
-import StringDecoder                                        from 'string_decoder';
+import {FakeFS, NodeFS, NativePath, PortablePath, VirtualFS, ZipOpenFS} from '@yarnpkg/fslib';
+import fs                                                               from 'fs';
+import Module                                                           from 'module';
+import path                                                             from 'path';
+import StringDecoder                                                    from 'string_decoder';
 
-import {RuntimeState}                                       from '../types';
+import {RuntimeState, PnpApi}                                           from '../types';
 
-import {applyPatch}                                         from './applyPatch';
-import {hydrateRuntimeState}                                from './hydrateRuntimeState';
-import {makeApi}                                            from './makeApi';
+import {applyPatch}                                                     from './applyPatch';
+import {hydrateRuntimeState}                                            from './hydrateRuntimeState';
+import {MakeApiOptions, makeApi}                                        from './makeApi';
 
 declare var __non_webpack_module__: NodeModule;
-declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState) => RuntimeState;
+declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState, basePath?: NativePath) => RuntimeState;
 
 // We must copy the fs into a local, because otherwise
 // 1. we would make the NodeFS instance use the function that we patched (infinite loop)
@@ -19,27 +19,62 @@ declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState) => RuntimeState;
 const localFs: typeof fs = {...fs};
 const nodeFs = new NodeFS(localFs);
 
-const runtimeState = $$SETUP_STATE(hydrateRuntimeState);
+const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
+const defaultPnpapiResolution = path.resolve(__dirname, __filename);
 
-let underlyingFs: FakeFS<PortablePath> = new ZipOpenFS({baseFs: nodeFs});
-for (const virtualRoot of runtimeState.virtualRoots)
-  underlyingFs = new VirtualFS(virtualRoot, {baseFs: underlyingFs});
-
-module.exports = makeApi(runtimeState, {
-  compatibilityMode: true,
-  fakeFs: underlyingFs,
-  pnpapiResolution: path.resolve(__dirname, __filename),
+// We create a virtual filesystem that will do three things:
+// 1. all requests inside a folder named "$$virtual" will be remapped according the virtual folder rules
+// 2. all requests going inside a Zip archive will be handled by the Zip fs implementation
+// 3. any remaining request will be forwarded to Node as-is
+const defaultFsLayer: FakeFS<PortablePath> = new VirtualFS({
+  baseFs: new ZipOpenFS({
+    baseFs: nodeFs,
+    maxOpenFiles: 80,
+    readOnlyArchives: true,
+  }),
 });
 
-module.exports.setup = () => {
-  applyPatch(module.exports, {
-    compatibilityMode: true,
-    fakeFs: underlyingFs,
-  });
-};
+const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
+  fakeFs: defaultFsLayer,
+  pnpapiResolution: defaultPnpapiResolution,
+}), {
+  /**
+   * Can be used to generate a different API than the default one (for example
+   * to map it on `/` rather than the local directory path, or to use a
+   * different FS layer than the default one).
+   */
+  makeApi: ({
+    basePath = undefined,
+    fakeFs = defaultFsLayer,
+    pnpapiResolution = defaultPnpapiResolution,
+    ...rest
+  }: Partial<MakeApiOptions> & {basePath?: NativePath}) => {
+    const apiRuntimeState = typeof basePath !== `undefined`
+      ? $$SETUP_STATE(hydrateRuntimeState, basePath)
+      : defaultRuntimeState;
+
+    return makeApi(apiRuntimeState, {
+      fakeFs,
+      pnpapiResolution,
+      ...rest,
+    });
+  },
+  /**
+   * Will inject the specified API into the environment, monkey-patching FS. Is
+   * automatically called when the hook is loaded through `--require`.
+   */
+  setup: (api?: PnpApi) => {
+    applyPatch(api || defaultApi, {
+      fakeFs: defaultFsLayer,
+    });
+  },
+});
+
+// eslint-disable-next-line arca/no-default-export
+export default defaultApi;
 
 if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {
-  module.exports.setup();
+  defaultApi.setup();
 
   if (__non_webpack_module__.filename) {
     // We delete it from the cache in order to support the case where the CLI resolver is invoked from "yarn run"
@@ -62,7 +97,7 @@ if (process.mainModule === __non_webpack_module__) {
 
   const processResolution = (request: string, issuer: string) => {
     try {
-      reportSuccess(module.exports.resolveRequest(request, issuer));
+      reportSuccess(defaultApi.resolveRequest(request, issuer));
     } catch (error) {
       reportError(error.code, error.message, error.data);
     }

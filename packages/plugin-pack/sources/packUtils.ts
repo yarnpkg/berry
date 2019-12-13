@@ -1,5 +1,6 @@
 import {MessageName, ReportError, Report, Workspace, scriptUtils} from '@yarnpkg/core';
 import {FakeFS, JailFS, xfs, PortablePath, ppath, toFilename}     from '@yarnpkg/fslib';
+import {Hooks as StageHooks}                                      from '@yarnpkg/plugin-stage';
 import mm                                                         from 'micromatch';
 import {PassThrough}                                              from 'stream';
 import tar                                                        from 'tar-stream';
@@ -42,6 +43,16 @@ type IgnoreList = {
   accept: Array<string>;
   reject: Array<string>;
 };
+
+export async function hasPackScripts(workspace: Workspace) {
+  if (await scriptUtils.hasWorkspaceScript(workspace, `prepack`))
+    return true;
+
+  if (await scriptUtils.hasWorkspaceScript(workspace, `postpack`))
+    return true;
+
+  return false;
+}
 
 export async function prepareForPack(workspace: Workspace, {report}: {report: Report}, cb: () => Promise<void>) {
   const stdin = null;
@@ -110,7 +121,6 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
         else
           content = await xfs.readFilePromise(source);
 
-
         pack.entry({...opts, type: `file`}, content, cb);
       } else if (stat.isSymbolicLink()) {
         pack.entry({...opts, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
@@ -175,7 +185,7 @@ export async function genPackList(workspace: Workspace) {
   maybeRejectPath(configuration.get(`virtualFolder`));
   maybeRejectPath(configuration.get(`yarnPath`));
 
-  await configuration.triggerHook((hooks: Hooks) => {
+  await configuration.triggerHook((hooks: StageHooks) => {
     return hooks.populateYarnPaths;
   }, project, (path: PortablePath | null) => {
     maybeRejectPath(path);
@@ -204,21 +214,23 @@ export async function genPackList(workspace: Workspace) {
   else if (workspace.manifest.module)
     ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.module));
 
-  if (workspace.manifest.files !== null) {
-    ignoreList.reject.push(`*`);
+  const hasExplicitFileList = workspace.manifest.files !== null;
+  if (hasExplicitFileList) {
+    ignoreList.reject.push(`/*`);
 
-    for (const pattern of workspace.manifest.files) {
+    for (const pattern of workspace.manifest.files!) {
       addIgnorePattern(ignoreList.accept, pattern, {cwd: PortablePath.root});
     }
   }
 
   return await walk(workspace.cwd, {
+    hasExplicitFileList,
     globalList,
     ignoreList,
   });
 }
 
-async function walk(initialCwd: PortablePath, {globalList, ignoreList}: {globalList: IgnoreList, ignoreList: IgnoreList}) {
+async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, ignoreList}: {hasExplicitFileList: boolean, globalList: IgnoreList, ignoreList: IgnoreList}) {
   const list: PortablePath[] = [];
 
   const cwdFs = new JailFS(initialCwd);
@@ -237,9 +249,11 @@ async function walk(initialCwd: PortablePath, {globalList, ignoreList}: {globalL
       let hasGitIgnore = false;
       let hasNpmIgnore = false;
 
-      for (const entry of entries) {
-        hasGitIgnore = hasGitIgnore || entry === `.gitignore`;
-        hasNpmIgnore = hasNpmIgnore || entry === `.npmignore`;
+      if (!hasExplicitFileList || cwd !== PortablePath.root) {
+        for (const entry of entries) {
+          hasGitIgnore = hasGitIgnore || entry === `.gitignore`;
+          hasNpmIgnore = hasNpmIgnore || entry === `.npmignore`;
+        }
       }
 
       const localIgnoreList = hasNpmIgnore

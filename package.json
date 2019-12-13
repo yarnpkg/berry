@@ -7,7 +7,8 @@
   "dependencies": {
     "@arcanis/sherlock": "^1.0.19",
     "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.5.5",
+    "@babel/core": "^7.7.4",
+    "@babel/plugin-proposal-async-generator-functions": "^7.2.0",
     "@babel/plugin-proposal-class-properties": "^7.3.3",
     "@babel/plugin-proposal-decorators": "^7.4.4",
     "@babel/plugin-transform-modules-commonjs": "^7.2.0",
@@ -16,8 +17,10 @@
     "@babel/register": "^7.5.5",
     "@types/camelcase": "5.2.0",
     "@types/chalk": "2.2.0",
+    "@types/comment-json": "^1.1.1",
     "@types/cross-spawn": "6.0.0",
     "@types/dateformat": "^1.0.1",
+    "@types/diff": "^4.0.2",
     "@types/emscripten": "^1.38.0",
     "@types/eslint": "4.16.6",
     "@types/eventemitter3": "^2.0.2",
@@ -26,17 +29,22 @@
     "@types/filesize": "4.1.0",
     "@types/fs-extra": "^5.0.4",
     "@types/git-url-parse": "9.0.0",
-    "@types/globby": "^8.0.0",
     "@types/got": "^8.3.4",
     "@types/inquirer": "^0.0.43",
+    "@types/invariant": "^2.2.30",
+    "@types/is-ci": "^2.0.0",
+    "@types/jest": "^24.0.18",
     "@types/joi": "^13.6.0",
+    "@types/klaw": "^3.0.0",
     "@types/lockfile": "^1.0.0",
     "@types/lodash": "^4.14.136",
     "@types/micromatch": "^3.1.0",
+    "@types/minimatch": "^3.0.3",
     "@types/mkdirp": "^0.5.2",
-    "@types/node": "^10.12.0",
+    "@types/node": "^12.12.8",
     "@types/node-emoji": "^1.8.0",
     "@types/node-fetch": "^2.1.2",
+    "@types/promise.prototype.finally": "^2.0.3",
     "@types/react": "^16.8.0",
     "@types/react-redux": "^7.1.2",
     "@types/redux-saga": "^0.10.5",
@@ -46,7 +54,9 @@
     "@types/stream-to-promise": "^2.2.0",
     "@types/supports-color": "^5.3.0",
     "@types/tar": "^4.0.0",
+    "@types/tar-fs": "^1.16.1",
     "@types/tar-stream": "1.6.0",
+    "@types/terser-webpack-plugin": "^1.2.1",
     "@types/tmp": "^0.0.33",
     "@types/treeify": "^1.0.0",
     "@types/tunnel": "^0.0.0",
@@ -56,16 +66,21 @@
     "@types/yup": "0.26.12",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^1.6.0",
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.4",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19",
+    "@yarnpkg/core": "workspace:2.0.0-rc.15",
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.12",
     "babel-jest": "^24.5.0",
     "eslint": "^5.16.0",
     "eslint-plugin-arca": "^0.9.0",
     "eslint-plugin-react": "^7.14.3",
     "github-api": "^3.2.2",
+    "hard-source-webpack-plugin": "mzgoddard/hard-source-webpack-plugin",
     "jest": "^24.9.0",
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
-    "typescript": "^3.5.3"
+    "left-pad": "left-pad/left-pad",
+    "micromatch": "^4.0.2",
+    "typescript": "next"
   },
   "dependenciesMeta": {
     "fsevents": {
@@ -79,11 +94,12 @@
     }
   },
   "scripts": {
-    "build:compile": "pnpify tsc -p",
+    "build:compile": "rm -rf \"$0\"/lib && mkdir -p \"$0\"/lib && rsync -a --include '*.d.ts' --exclude '*.ts' \"$0\"/sources/ \"$0\"/lib/ && pnpify tsc -p \"$0\"",
     "gen-tssdk": "pnpify --sdk scripts",
     "release:all": "./scripts/release.sh",
-    "test:lint": "eslint packages/*/sources/**/*.ts",
-    "test:unit": "jest"
+    "test:lint": "eslint \"packages/**/@(sources|tests)/**/!(libzip).@(tsx|ts|js)\"",
+    "test:unit": "jest",
+    "typecheck:all": "pnpify tsc --noEmit"
   },
   "sherlock": {
     "requireList": [
@@ -96,5 +112,10 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.0.0",
+    "@types/hard-source-webpack-plugin": "1.0.1",
+    "@types/left-pad": "1.2.0"
   }
 }

@@ -1,25 +1,23 @@
 {
   "name": "@yarnpkg/pnp",
-  "version": "2.0.0-rc.3",
-  "nextVersion": {
-    "nonce": "460148469419547"
-  },
+  "version": "2.0.0-rc.12",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.3"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
   },
   "devDependencies": {
-    "@yarnpkg/builder": "workspace:2.0.0-rc.6",
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.4",
-    "typescript": "^3.5.3",
-    "webpack": "^4.39.3",
+    "@types/node": "^12.12.8",
+    "@yarnpkg/builder": "workspace:2.0.0-rc.13",
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.12",
+    "typescript": "next",
+    "webpack": "^4.41.2",
     "webpack-cli": "^3.2.1",
     "webpack-sources": "^1.3.0"
   },
   "scripts": {
     "build:pnp:hook": "run pnpify webpack-cli --config webpack.config.hook.js",
     "build:pnp": "run pnpify webpack-cli --config webpack.config.pkg.js",
-    "postpack": "find lib -mindepth 1 ! -path 'lib/hook.js' -exec rm -rf '{}' +",
+    "postpack": "rm -rf lib",
     "prepack": "run build:pnp && run build:compile packages/yarnpkg-pnp --emitDeclarationOnly --declaration",
     "release": "yarn npm publish",
     "update-local": "run build:pnp:hook"

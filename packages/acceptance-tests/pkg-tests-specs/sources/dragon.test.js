@@ -156,13 +156,13 @@ describe(`Dragon tests`, () => {
         // peer dependencies and its dev dependencies, and that it itself has a peer
         // depencency. In those circumstances, we've had issues where the peer dependency
         // wasn't being properly resolved.
-        
+
         await xfs.mkdirpPromise(`${path}/my-workspace`);
         await xfs.writeJsonPromise(`${path}/my-workspace/package.json`, {
           name: `my-workspace`,
           peerDependencies: {
             [`no-deps`]: `*`,
-            [`peer-deps`]: `*`, 
+            [`peer-deps`]: `*`,
           },
           devDependencies: {
             [`no-deps`]: `1.0.0`,
@@ -173,7 +173,7 @@ describe(`Dragon tests`, () => {
         await run(`install`);
 
         await expect(source(`require('peer-deps')`, {
-          cwd: `${path}/my-workspace`
+          cwd: `${path}/my-workspace`,
         })).resolves.toMatchObject({
           name: `peer-deps`,
           version: `1.0.0`,
@@ -184,6 +184,169 @@ describe(`Dragon tests`, () => {
             },
           },
         });
+      },
+    ),
+  );
+
+  test(
+    `it should pass the dragon test 5`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [
+          `packages/*`,
+        ],
+      },
+      async ({path, run, source}) => {
+        // This test is related to the way Yarn is resolving peer dependencies
+        // into virtual packages (check our documentation for more details). In
+        // short, we create copies of packages when they have peer dependencies,
+        // and update their immediate parents to instead reference the copy.
+        //
+        // Since parents have been copied themselves if there's a possibility
+        // they would resolve to different versions (because it only happens
+        // when they have peer dependencies themselves) the patch operation is
+        // safe. There's one catch though: workspaces aren't traversed this way
+        // in our implementation, so they aren't copied, and the dependency
+        // replacements may end up being mirrored in the other unrelated
+        // instances of the same package.
+        //
+        // To reproduce this situation, we have:
+        //
+        // . -> A -> X -> Y (peer deps)
+        //        -> Y
+        //        -> Z (peer deps)
+        //
+        //   -> B -> A
+        //        -> Z
+        //
+        // This setup has the following characteristics:
+        //
+        //   - A and B are both workspaces, and X,Y,Z are packages we don't
+        //     care about too much (except that X has a peer dep on Y).
+        //
+        //   - Since A has a peer dependency, two different instances of it
+        //     exist: one as an independant workspace, and another as a
+        //     dependency of B. This is critical because otherwise Yarn will
+        //     just skip the second traversal of A (since we know its
+        //     dependencies have already been virtualized).
+        //
+        // This causes the bug to appear: A gets traversed, we see that it
+        // depends on X which has a peer dependency, so we virtualize X and
+        // modify A to point to this new package instead of the original X.
+        // Then once we traverse B we check the dependencies of A, but by
+        // this time they have already been modified, leading to a boggus
+        // install.
+
+        await xfs.mkdirpPromise(`${path}/packages/a`);
+        await xfs.writeJsonPromise(`${path}/packages/a/package.json`, {
+          name: `a`,
+          peerDependencies: {
+            [`various-requires`]: `*`,
+          },
+          devDependencies: {
+            [`no-deps`]: `1.0.0`,
+            [`peer-deps`]: `1.0.0`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/b`);
+        await xfs.writeJsonPromise(`${path}/packages/b/package.json`, {
+          name: `b`,
+          devDependencies: {
+            [`a`]: `workspace:*`,
+            [`various-requires`]: `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+      },
+    ),
+  );
+
+  test(
+    `it should pass the dragon test 6`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [
+          `packages/*`,
+        ],
+      },
+      async ({path, run, source}) => {
+        // Virtual packages are deduplicated, so that if multiple ones share
+        // the same set of dependencies they end up being unified into one.
+        // In order to do this, we track which package depends on which one
+        // so that we can properly update the dependents during unification.
+        //
+        // One problem that may arise is when a package with peer dependencies
+        // is used twice in the dependency tree, and itself depends on a
+        // package that lists peer dependencies. In this situation, the
+        // package may be removed from the dependency tree during unification,
+        // then its dependency gets unified too but the registered dependent
+        // doesn't exist anymore.
+
+        await xfs.mkdirpPromise(`${path}/packages/a`);
+        await xfs.writeJsonPromise(`${path}/packages/a/package.json`, {
+          name: `a`,
+          dependencies: {
+            [`z`]: `workspace:*`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/b`);
+        await xfs.writeJsonPromise(`${path}/packages/b/package.json`, {
+          name: `b`,
+          dependencies: {
+            [`u`]: `workspace:*`,
+            [`v`]: `workspace:*`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/c`);
+        await xfs.writeJsonPromise(`${path}/packages/c/package.json`, {
+          name: `c`,
+          dependencies: {
+            [`u`]: `workspace:*`,
+            [`v`]: `workspace:*`,
+            [`y`]: `workspace:*`,
+            [`z`]: `workspace:*`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/u`);
+        await xfs.writeJsonPromise(`${path}/packages/u/package.json`, {
+          name: `u`,
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/v`);
+        await xfs.writeJsonPromise(`${path}/packages/v/package.json`, {
+          name: `v`,
+          peerDependencies: {
+            [`u`]: `*`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/y`);
+        await xfs.writeJsonPromise(`${path}/packages/y/package.json`, {
+          name: `y`,
+          peerDependencies: {
+            [`v`]: `*`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/z`);
+        await xfs.writeJsonPromise(`${path}/packages/z/package.json`, {
+          name: `z`,
+          dependencies: {
+            [`y`]: `workspace:*`,
+          },
+          peerDependencies: {
+            [`v`]: `*`,
+          },
+        });
+
+        await run(`install`);
       },
     ),
   );

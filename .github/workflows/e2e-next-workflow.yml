@@ -21,7 +21,7 @@ jobs:
     - name: 'Use Node.js 10.x'
       uses: actions/setup-node@master
       with:
-        version: 10.x
+        node-version: 10.x
 
     - name: 'Build the standard bundle'
       run: |
@@ -33,8 +33,7 @@ jobs:
         yarn init
 
         # Required
-        yarn add next@^9.0.6-canary.1 react react-dom pnp-webpack-plugin
-        echo 'module.exports = {webpack: config => { config.resolve.plugins = [require("pnp-webpack-plugin")]; config.resolveLoader.plugins = [require("pnp-webpack-plugin")]; return config; }};' | tee next.config.js
+        yarn add next@^9.1.5-canary.0 react react-dom
 
         # Test itself
         yarn add raw-loader

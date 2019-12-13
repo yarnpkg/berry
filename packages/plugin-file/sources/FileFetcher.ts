@@ -44,7 +44,7 @@ export class FileFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs,
-      prefixPath: `/sources` as PortablePath,
+      prefixPath: structUtils.getIdentVendorPath(locator),
       localPath: this.getLocalPath(locator, opts),
       checksum,
     };
@@ -75,7 +75,7 @@ export class FileFetcher implements Fetcher {
     return await miscUtils.releaseAfterUseAsync(async () => {
       return await tgzUtils.makeArchiveFromDirectory(sourcePath, {
         baseFs: sourceFs,
-        prefixPath: `/sources` as PortablePath,
+        prefixPath: structUtils.getIdentVendorPath(locator),
       });
     }, effectiveParentFetch.releaseFs);
   }

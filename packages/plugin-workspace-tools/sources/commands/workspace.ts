@@ -18,6 +18,8 @@ export default class WorkspaceCommand extends Command<CommandContext> {
     category: `Workspace-related commands`,
     description: `run a command within the specified workspace`,
     details: `
+      > In order to use this command you need to add \`@yarnpkg/plugin-workspace-tools\` to your plugins.
+
       This command will run a given sub-command on a single workspace.
     `,
     examples: [[

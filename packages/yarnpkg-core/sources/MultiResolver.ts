@@ -1,4 +1,3 @@
-import {MessageName, ReportError}                        from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
 import {Descriptor, Locator}                             from './types';
@@ -59,7 +58,7 @@ export class MultiResolver implements Resolver {
     const resolver = this.resolvers.find(resolver => resolver.supportsDescriptor(descriptor, opts));
 
     if (!resolver)
-      throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `${structUtils.prettyDescriptor(opts.project.configuration, descriptor)} isn't supported by any available resolver`);
+      throw new Error(`${structUtils.prettyDescriptor(opts.project.configuration, descriptor)} isn't supported by any available resolver`);
 
     return resolver;
   }
@@ -77,7 +76,7 @@ export class MultiResolver implements Resolver {
     const resolver = this.resolvers.find(resolver => resolver.supportsLocator(locator, opts));
 
     if (!resolver)
-      throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `${structUtils.prettyLocator(opts.project.configuration, locator)} isn't supported by any available resolver`);
+      throw new Error(`${structUtils.prettyLocator(opts.project.configuration, locator)} isn't supported by any available resolver`);
 
     return resolver;
   }

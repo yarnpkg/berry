@@ -1,8 +1,9 @@
-import {Writable}            from 'stream';
+import {Writable}                   from 'stream';
 
-import {Configuration}       from './Configuration';
-import {Report, MessageName} from './Report';
-import {Locator}             from './types';
+import {Configuration}              from './Configuration';
+import {MessageName}                from './MessageName';
+import {ProgressDefinition, Report} from './Report';
+import {Locator}                    from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration,
@@ -13,6 +14,53 @@ export type StreamReportOptions = {
   json?: boolean,
   stdout: Writable,
 };
+
+const PROGRESS_FRAMES = [`⠋`, `⠙`, `⠹`, `⠸`, `⠼`, `⠴`, `⠦`, `⠧`, `⠇`, `⠏`];
+const PROGRESS_INTERVAL = 80;
+
+const now = new Date();
+
+// We only want to support environments that will out-of-the-box accept the
+// characters we want to use. Others can enforce the style from the project
+// configuration.
+const supportsEmojis = [`iTerm.app`, `Apple_Terminal`].includes(process.env.TERM_PROGRAM!);
+
+const makeRecord = <T>(obj: {[key: string]: T}) => obj;
+const PROGRESS_STYLES = makeRecord({
+  patrick: {
+    date: [17, 3],
+    chars: [`🍀`, `🌱`],
+    size: 40,
+  },
+  simba: {
+    date: [19, 7],
+    chars: [`🌟`, `✨`],
+    size: 40,
+  },
+  jack: {
+    date: [31, 10],
+    chars: [`🎃`, `🦇`],
+    size: 40,
+  },
+  yearly: {
+    date: [31, 12],
+    chars: [`🎉`, `🕛`],
+    size: 40,
+  },
+  default: {
+    chars: [`=`, `-`],
+    size: 80,
+  },
+});
+
+const defaultStyle = (supportsEmojis && Object.keys(PROGRESS_STYLES).find(name => {
+  const style = PROGRESS_STYLES[name];
+
+  if (style.date && (style.date[0] !== now.getDate() || style.date[1] !== now.getMonth() + 1))
+    return false;
+
+  return true;
+})) || `default`;
 
 export class StreamReport extends Report {
   static async start(opts: StreamReportOptions, cb: (report: StreamReport) => Promise<void>) {
@@ -45,6 +93,11 @@ export class StreamReport extends Report {
   private startTime: number = Date.now();
 
   private indent: number = 0;
+
+  private progress: Map<AsyncIterable<ProgressDefinition>, ProgressDefinition> = new Map();
+  private progressTime: number = 0;
+  private progressFrame: number = 0;
+  private progressTimeout: ReturnType<typeof setTimeout> | null = null;
 
   constructor({configuration, stdout, json = false, includeFooter = true, includeLogs = !json, includeInfos = includeLogs, includeWarnings = includeLogs}: StreamReportOptions) {
     super();
@@ -121,7 +174,7 @@ export class StreamReport extends Report {
 
   reportSeparator() {
     if (this.indent === 0) {
-      this.stdout.write(`\n`);
+      this.writeLine(``);
     } else {
       this.reportInfo(null, ``);
     }
@@ -132,7 +185,7 @@ export class StreamReport extends Report {
       return;
 
     if (!this.json) {
-      this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+      this.writeLine(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `info`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -145,7 +198,7 @@ export class StreamReport extends Report {
       return;
 
     if (!this.json) {
-      this.stdout.write(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+      this.writeLine(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `warning`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -155,15 +208,54 @@ export class StreamReport extends Report {
     this.errorCount += 1;
 
     if (!this.json) {
-      this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+      this.writeLine(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
   }
 
+  reportProgress(progressIt: AsyncIterable<{progress: number, title?: string}>) {
+    let stopped = false;
+
+    const promise = Promise.resolve().then(async () => {
+      const progressDefinition: ProgressDefinition = {
+        progress: 0,
+        title: undefined,
+      };
+
+      this.progress.set(progressIt, progressDefinition);
+      this.refreshProgress(-1);
+
+      for await (const {progress, title} of progressIt) {
+        if (stopped)
+          continue;
+        if (progressDefinition.progress === progress && progressDefinition.title === title)
+          continue;
+
+        progressDefinition.progress = progress;
+        progressDefinition.title = title;
+        this.refreshProgress();
+      }
+
+      stop();
+    });
+
+    const stop = () => {
+      if (stopped)
+        return;
+
+      stopped = true;
+
+      this.progress.delete(progressIt);
+      this.refreshProgress(+1);
+    };
+
+    return {...promise, stop};
+  }
+
   reportJson(data: any) {
     if (this.json) {
-      this.stdout.write(`${JSON.stringify(data)}\n`);
+      this.writeLine(`${JSON.stringify(data)}`);
     }
   }
 
@@ -213,6 +305,71 @@ export class StreamReport extends Report {
     } else {
       this.reportInfo(MessageName.UNNAMED, message);
     }
+  }
+
+  private writeLine(str: string) {
+    this.clearProgress({clear: true});
+    this.stdout.write(`${str}\n`);
+    this.writeProgress();
+  }
+
+  private clearProgress({delta = 0, clear = false}: {delta?: number, clear?: boolean}) {
+    if (!this.configuration.get(`enableProgressBars`) || this.json)
+      return;
+
+    if (this.progress.size + delta > 0) {
+      this.stdout.write(`\x1b[${this.progress.size + delta}A`);
+      if (delta > 0 || clear) {
+        this.stdout.write(`\x1b[0J`);
+      }
+    }
+  }
+
+  private writeProgress() {
+    if (!this.configuration.get(`enableProgressBars`) || this.json)
+      return;
+
+    if (this.progressTimeout !== null)
+      clearTimeout(this.progressTimeout);
+
+    this.progressTimeout = null;
+
+    if (this.progress.size === 0)
+      return;
+
+    const now = Date.now();
+
+    if (now - this.progressTime > PROGRESS_INTERVAL) {
+      this.progressFrame = (this.progressFrame + 1) % PROGRESS_FRAMES.length;
+      this.progressTime = now;
+    }
+
+    const spinner = PROGRESS_FRAMES[this.progressFrame];
+
+    let styleName = this.configuration.get(`progressBarStyle`) || defaultStyle;
+    if (!Object.prototype.hasOwnProperty.call(PROGRESS_STYLES, styleName))
+      throw new Error(`Assertion failed: Invalid progress bar style`);
+
+    // @ts-ignore
+    const style = PROGRESS_STYLES[styleName];
+
+    for (const {progress} of this.progress.values()) {
+      const okSize = Math.floor(style.size * progress);
+
+      const ok = style.chars[0].repeat(okSize);
+      const ko = style.chars[1].repeat(style.size - okSize);
+
+      this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(null)}: ${spinner} ${ok}${ko}\n`);
+    }
+
+    this.progressTimeout = setTimeout(() => {
+      this.refreshProgress();
+    }, 1000 / 60);
+  }
+
+  private refreshProgress(delta: number = 0) {
+    this.clearProgress({delta});
+    this.writeProgress();
   }
 
   private formatTiming(timing: number) {

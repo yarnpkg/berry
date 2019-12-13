@@ -1,15 +1,29 @@
-const {NodeFS} = require(`@yarnpkg/fslib`);
-const cp = require('child_process');
+import {PortablePath, npath} from '@yarnpkg/fslib';
+import cp                    from 'child_process';
 
-exports.execFile = function(
+interface Options {
+  cwd: PortablePath;
+  env?: Record<string, string>;
+}
+
+export type ExecResult = {
+  stdout: string;
+  stderr: string;
+  code: number;
+} | Error & {
+  stdout: string;
+  stderr: string;
+};
+
+export const execFile = (
   path: string,
   args: Array<string>,
-  options: Object,
-): Promise<{stdout: Buffer, stderr: Buffer}> {
+  options: Options,
+): Promise<ExecResult> => {
   return new Promise((resolve, reject) => {
     cp.execFile(path, args, {
-      ... options,
-      cwd: options.cwd ? NodeFS.fromPortablePath(options.cwd) : undefined,
+      ...options,
+      cwd: options.cwd ? npath.fromPortablePath(options.cwd) : undefined,
     }, (error, stdout, stderr) => {
       stdout = stdout.replace(/\r\n?/g, `\n`);
       stderr = stderr.replace(/\r\n?/g, `\n`);
@@ -22,13 +36,14 @@ exports.execFile = function(
       if (error)
         error.message += `\n\n===== stdout:\n\n\`\`\`\n${stdout}\`\`\`\n\n===== stderr:\n\n\`\`\`\n${stderr}\`\`\`\n\n`;
 
-      const result = error ? error : {code: 0};
-      Object.assign(result, {stdout, stderr});
-
       if (error) {
-        reject(result);
+        reject(Object.assign(error, {stdout, stderr}));
       } else {
-        resolve(result);
+        resolve({
+          code: 0,
+          stdout,
+          stderr,
+        });
       }
     });
   });

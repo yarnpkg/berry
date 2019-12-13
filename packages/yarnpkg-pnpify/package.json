@@ -1,22 +1,23 @@
 {
   "name": "@yarnpkg/pnpify",
-  "version": "2.0.0-rc.4",
-  "nextVersion": {
-    "semver": "2.0.0-rc.5",
-    "nonce": "6963302120315489"
-  },
+  "version": "2.0.0-rc.12",
   "main": "./sources/boot-dev.js",
   "bin": "./sources/boot-cli-dev.js",
+  "types": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.3",
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12",
+    "comment-json": "^2.2.0",
     "cross-spawn": "^6.0.5"
   },
   "devDependencies": {
+    "@types/comment-json": "^1.1.1",
+    "@types/cross-spawn": "6.0.0",
+    "@types/node": "^12.12.8",
     "@yarnpkg/monorepo": "workspace:0.0.0",
-    "@yarnpkg/pnp": "workspace:2.0.0-rc.3",
+    "@yarnpkg/pnp": "workspace:2.0.0-rc.12",
     "eslint": "^5.16.0",
-    "typescript": "^3.5.3"
+    "typescript": "next"
   },
   "peerDependencies": {
     "eslint": "*",
@@ -32,8 +33,9 @@
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "run build:compile packages/yarnpkg-pnpify",
-    "release": "yarn npm publish"
+    "prepack": "run build:compile \"$(pwd)\"",
+    "release": "yarn npm publish",
+    "test": "run test:unit packages/yarnpkg-pnpify"
   },
   "publishConfig": {
     "main": "./lib/index.js",

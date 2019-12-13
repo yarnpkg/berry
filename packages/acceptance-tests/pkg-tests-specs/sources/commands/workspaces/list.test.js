@@ -10,17 +10,17 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [`packages/*`]
+          workspaces: [`packages/*`],
         },
         async ({path, run}) => {
           await writeJson(`${path}/packages/workspace-a/package.json`, {
             name: `workspace-a`,
-            version: `1.0.0`
+            version: `1.0.0`,
           });
-  
+
           await writeJson(`${path}/packages/workspace-b/package.json`, {
             name: `workspace-b`,
-            version: `1.0.0`
+            version: `1.0.0`,
           });
 
           await expect(parseJsonStream(
@@ -31,7 +31,7 @@ describe(`Commands`, () => {
               location: `.`,
               name: null,
               workspaceDependencies: [],
-              mismatchedWorkspaceDependencies:[]
+              mismatchedWorkspaceDependencies:[],
             },
             [`packages/workspace-a`]: {
               location: `packages/workspace-a`,
@@ -55,7 +55,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [`packages/*`]
+          workspaces: [`packages/*`],
         },
         async ({path, run}) => {
           await writeJson(`${path}/packages/workspace-a/package.json`, {
@@ -65,7 +65,7 @@ describe(`Commands`, () => {
               [`workspace-b`]: `1.0.0`,
             },
           });
-  
+
           await writeJson(`${path}/packages/workspace-b/package.json`, {
             name: `workspace-b`,
             version: `1.0.0`,
@@ -73,7 +73,7 @@ describe(`Commands`, () => {
               [`workspace-a`]: `1.0.0`,
             },
           });
-  
+
           await expect(parseJsonStream(
             (await run(`workspaces`, `list`, `-v`, `--json`)).stdout,
             `location`,
@@ -82,7 +82,7 @@ describe(`Commands`, () => {
               location: `.`,
               name: null,
               workspaceDependencies: [],
-              mismatchedWorkspaceDependencies:[]
+              mismatchedWorkspaceDependencies:[],
             },
             [`packages/workspace-a`]: {
               location: `packages/workspace-a`,
@@ -106,7 +106,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [`packages/*`]
+          workspaces: [`packages/*`],
         },
         async ({path, run}) => {
           await writeJson(`${path}/packages/workspace-a/package.json`, {
@@ -116,10 +116,10 @@ describe(`Commands`, () => {
               [`workspace-b`]: `2.0.0`,
             },
           });
-  
+
           await writeJson(`${path}/packages/workspace-b/package.json`, {
             name: `workspace-b`,
-            version: `1.0.0`
+            version: `1.0.0`,
           });
 
           await expect(parseJsonStream(
@@ -130,7 +130,7 @@ describe(`Commands`, () => {
               location: `.`,
               name: null,
               workspaceDependencies: [],
-              mismatchedWorkspaceDependencies:[]
+              mismatchedWorkspaceDependencies:[],
             },
             [`packages/workspace-a`]: {
               location: `packages/workspace-a`,

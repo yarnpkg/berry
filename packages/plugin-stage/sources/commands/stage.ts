@@ -1,11 +1,11 @@
-import {BaseCommand}                      from '@yarnpkg/cli';
-import {Configuration, Project}           from '@yarnpkg/core';
-import {NodeFS, xfs, PortablePath, ppath} from '@yarnpkg/fslib';
-import {Command, UsageError}              from 'clipanion';
+import {BaseCommand}                     from '@yarnpkg/cli';
+import {Configuration, Project}          from '@yarnpkg/core';
+import {PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import {Command, UsageError}             from 'clipanion';
 
-import {Driver as GitDriver}              from '../drivers/GitDriver';
-import {Driver as MercurialDriver}        from '../drivers/MercurialDriver';
-import {Hooks}                            from '..';
+import {Driver as GitDriver}             from '../drivers/GitDriver';
+import {Driver as MercurialDriver}       from '../drivers/MercurialDriver';
+import {Hooks}                           from '..';
 
 const ALL_DRIVERS = [
   GitDriver,
@@ -87,7 +87,7 @@ export default class StageCommand extends BaseCommand {
         this.context.stdout.write(`${commitMessage}\n`);
       } else {
         for (const file of changeList) {
-          this.context.stdout.write(`${NodeFS.fromPortablePath(file.path)}\n`);
+          this.context.stdout.write(`${npath.fromPortablePath(file.path)}\n`);
         }
       }
     } else {

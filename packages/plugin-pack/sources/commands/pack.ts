@@ -1,18 +1,22 @@
-import {BaseCommand, WorkspaceRequiredError}                                       from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, StreamReport, Workspace, structUtils} from '@yarnpkg/core';
-import {Filename, xfs, ppath, toPortablePath}                                      from '@yarnpkg/fslib';
-import {Command}                                                                   from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                           from '@yarnpkg/cli';
+import {Cache, Configuration, MessageName, Project, StreamReport, Workspace, structUtils, ThrowReport} from '@yarnpkg/core';
+import {Filename, npath, ppath, xfs}                                                                   from '@yarnpkg/fslib';
+import {Command}                                                                                       from 'clipanion';
 
-import * as packUtils                                                              from '../packUtils';
+import * as packUtils                                                                                  from '../packUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PackCommand extends BaseCommand {
+  @Command.Boolean(`--install-if-needed`)
+  installIfNeeded: boolean = false;
+
   @Command.Boolean(`-n,--dry-run`)
   dryRun: boolean = false;
 
   @Command.Boolean(`--json`)
   json: boolean = false;
 
+  @Command.String(`--filename`, {hidden: false})
   @Command.String(`-o,--out`)
   out?: string;
 
@@ -20,6 +24,8 @@ export default class PackCommand extends BaseCommand {
     description: `generate a tarball from the active workspace`,
     details: `
       This command will turn the active workspace into a compressed archive suitable for publishing. The archive will by default be stored at the root of the workspace (\`package.tgz\`).
+
+      If the \`--install-if-needed\` flag is set Yarn will run a preliminary \`yarn install\` if the package contains build scripts.
 
       If the \`-n,--dry-run\` flag is set the command will just print the file paths without actually generating the package archive.
 
@@ -35,17 +41,31 @@ export default class PackCommand extends BaseCommand {
       `yarn pack --dry-run`,
     ], [
       `Name and output the archive in a dedicated folder`,
-      `yarn pack /artifacts/%s-%v.tgz`,
+      `yarn pack --out /artifacts/%s-%v.tgz`,
     ]],
   });
 
   @Command.Path(`pack`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {workspace} = await Project.find(configuration, this.context.cwd);
+    const {project, workspace} = await Project.find(configuration, this.context.cwd);
 
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
+
+    if (await packUtils.hasPackScripts(workspace)) {
+      if (this.installIfNeeded) {
+        await project.install({
+          cache: await Cache.find(configuration),
+          report: new ThrowReport(),
+        });
+      } else {
+        await project.resolveEverything({
+          lockfileOnly: true,
+          report: new ThrowReport(),
+        });
+      }
+    }
 
     const target = typeof this.out !== `undefined`
       ? ppath.resolve(this.context.cwd, interpolateOutputName(this.out, {workspace}))
@@ -93,7 +113,7 @@ function interpolateOutputName(name: string, {workspace}: {workspace: Workspace}
     .replace(`%s`, prettyWorkspaceIdent(workspace))
     .replace(`%v`, prettyWorkspaceVersion(workspace));
 
-  return toPortablePath(interpolated);
+  return npath.toPortablePath(interpolated);
 }
 
 function prettyWorkspaceIdent(workspace: Workspace) {

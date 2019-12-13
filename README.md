@@ -70,7 +70,7 @@ Note that no other command is needed! Given that our dependencies are checked-in
 
 Those plugins typically come bundled with Yarn. You don't need to do anything special to use them.
 
-- [★ plugin-constraints](packages/plugin-constraints) adds support for `yarn constraints check` and `yarn constraints fix`.
+- [★ plugin-constraints](packages/plugin-constraints) adds support for `yarn constraints [--fix]`.
 - [★ plugin-dlx](packages/plugin-dlx) adds support for the [`yarn dlx`](https://next.yarnpkg.com/cli/dlx) command.
 - [★ plugin-essentials](packages/plugin-essentials) adds various commands deemed necessary for a package manager (add, remove, ...).
 - [★ plugin-file](packages/plugin-file) adds support for using the `file:` protocol within your dependencies.
@@ -85,7 +85,7 @@ Those plugins typically come bundled with Yarn. You don't need to do anything sp
 
 ### Contrib plugins
 
-Although developed on the same repository as Yarn itself, those plugins are optionals and need to be explicitly installed through `yarn plugin import @yarnpkg/<plugin-name>`.
+Although developed on the same repository as Yarn itself, those plugins are optional and need to be explicitly installed through `yarn plugin import @yarnpkg/<plugin-name>`.
 
 - [☆ plugin-exec](packages/plugin-exec) adds support for using the `exec:` protocol within your dependencies.
 - [☆ plugin-stage](packages/plugin-pack) adds support for the [`yarn stage`](https://next.yarnpkg.com/cli/stage) command.

@@ -1,9 +1,10 @@
-import {Filename, NodeFS, PortablePath, xfs, ppath} from '@yarnpkg/fslib';
+import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import CJSON                                       from 'comment-json';
 
-import {dynamicRequire}                             from './dynamicRequire';
+import {dynamicRequire}                            from './dynamicRequire';
 
 const TEMPLATE = (relPnpApiPath: string, module: string, {usePnpify}: {usePnpify: boolean}) => [
-  `const relPnpApiPath = ${JSON.stringify(NodeFS.toPortablePath(relPnpApiPath))};\n`,
+  `const relPnpApiPath = ${JSON.stringify(npath.toPortablePath(relPnpApiPath))};\n`,
   `const absPnpApiPath = require(\`path\`).resolve(__dirname, relPnpApiPath);\n`,
   `\n`,
   `// Setup the environment to be able to require ${module}\n`,
@@ -27,8 +28,8 @@ const addVSCodeWorkspaceSettings = async (projectRoot: PortablePath, settings: a
   const settingsPath = ppath.join(projectRoot, `.vscode/settings.json` as PortablePath);
   const content = await xfs.existsPromise(settingsPath) ? await xfs.readFilePromise(settingsPath, `utf8`) : `{}`;
 
-  const data = JSON.parse(content);
-  const patched = `${JSON.stringify({...data, ...settings}, null, 2)}\n`;
+  const data = CJSON.parse(content);
+  const patched = `${CJSON.stringify({...data, ...settings}, null, 2)}\n`;
 
   await xfs.mkdirpPromise(ppath.dirname(settingsPath));
   await xfs.changeFilePromise(settingsPath, patched);
@@ -45,7 +46,7 @@ const generateTypescriptWrapper = async (projectRoot: PortablePath, target: Port
   await xfs.writeFilePromise(manifest, JSON.stringify({name: 'typescript', version: `${dynamicRequire('typescript/package.json').version}-pnpify`}, null, 2));
   await xfs.writeFilePromise(tsserver, TEMPLATE(relPnpApiPath, "typescript/lib/tsserver", {usePnpify: true}));
 
-  await addVSCodeWorkspaceSettings(projectRoot, {'typescript.tsdk': NodeFS.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(tsserver)))});
+  await addVSCodeWorkspaceSettings(projectRoot, {'typescript.tsdk': npath.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(tsserver)))});
 };
 
 export const generateEslintWrapper = async (projectRoot: PortablePath, target: PortablePath) => {
@@ -59,7 +60,7 @@ export const generateEslintWrapper = async (projectRoot: PortablePath, target: P
   await xfs.writeFilePromise(manifest, JSON.stringify({name: 'eslint', version: `${dynamicRequire('eslint/package.json').version}-pnpify`, main: 'lib/api.js'}, null, 2));
   await xfs.writeFilePromise(api, TEMPLATE(relPnpApiPath, "eslint", {usePnpify: false}));
 
-  await addVSCodeWorkspaceSettings(projectRoot, {'eslint.nodePath': NodeFS.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(eslint)))});
+  await addVSCodeWorkspaceSettings(projectRoot, {'eslint.nodePath': npath.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(eslint)))});
 };
 
 const isPackageInstalled = (name: string): boolean => {

@@ -1,4 +1,4 @@
-const {NodeFS, xfs} = require(`@yarnpkg/fslib`);
+const {npath, xfs} = require(`@yarnpkg/fslib`);
 const {
   exec: {execFile},
   fs: {writeFile, writeJson, mkdirp},
@@ -14,8 +14,8 @@ describe(`Commands`, () => {
 
         await expect(run(`stage`, `-n`, {cwd: path})).resolves.toMatchObject({
           stdout: [
-            `${NodeFS.fromPortablePath(`${path}/.yarnrc.yml`)}\n`,
-            `${NodeFS.fromPortablePath(`${path}/package.json`)}\n`,
+            `${npath.fromPortablePath(`${path}/.yarnrc.yml`)}\n`,
+            `${npath.fromPortablePath(`${path}/package.json`)}\n`,
           ].join(``),
         });
       }),
@@ -31,8 +31,8 @@ describe(`Commands`, () => {
 
         await expect(run(`stage`, `-n`, {cwd: path})).resolves.toMatchObject({
           stdout: [
-            `${NodeFS.fromPortablePath(`${path}/.yarnrc.yml`)}\n`,
-            `${NodeFS.fromPortablePath(`${path}/package.json`)}\n`,
+            `${npath.fromPortablePath(`${path}/.yarnrc.yml`)}\n`,
+            `${npath.fromPortablePath(`${path}/package.json`)}\n`,
           ].join(``),
         });
       }),
@@ -52,12 +52,13 @@ describe(`Commands`, () => {
 
         await expect(run(`stage`, `-n`, {cwd: path})).resolves.toMatchObject({
           stdout: [
-            `${NodeFS.fromPortablePath(`${path}/.pnp.js`)}\n`,
-            `${NodeFS.fromPortablePath(`${path}/.yarn/cache/.gitignore`)}\n`,
-            `${NodeFS.fromPortablePath(`${path}/.yarn/cache/no-deps-npm-1.0.0-7b98016e47.zip`)}\n`,
-            `${NodeFS.fromPortablePath(`${path}/.yarnrc.yml`)}\n`,
-            `${NodeFS.fromPortablePath(`${path}/package.json`)}\n`,
-            `${NodeFS.fromPortablePath(`${path}/yarn.lock`)}\n`,
+            `${npath.fromPortablePath(`${path}/.pnp.js`)}\n`,
+            `${npath.fromPortablePath(`${path}/.yarn/global/cache/no-deps-npm-1.0.0-cf533b267a-1.zip`)}\n`,
+            `${npath.fromPortablePath(`${path}/.yarn/cache/.gitignore`)}\n`,
+            `${npath.fromPortablePath(`${path}/.yarn/cache/no-deps-npm-1.0.0-cf533b267a-1.zip`)}\n`,
+            `${npath.fromPortablePath(`${path}/.yarnrc.yml`)}\n`,
+            `${npath.fromPortablePath(`${path}/package.json`)}\n`,
+            `${npath.fromPortablePath(`${path}/yarn.lock`)}\n`,
           ].join(``),
         });
       }),
@@ -69,7 +70,7 @@ describe(`Commands`, () => {
         name: `my-commit-package`,
         dependencies: {
           [`deps1`]: `1.0.0`,
-          [`deps2`]: `2.0.0`
+          [`deps2`]: `2.0.0`,
         },
       }, async ({path, run, source}) => {
         await execFile(`git`, [`init`], {cwd: path});
@@ -83,7 +84,7 @@ describe(`Commands`, () => {
         await run(`${path}/new-package`, `init`);
 
         await expect(run(`stage`, `-c`, `-n`, {cwd: path})).resolves.toMatchObject({
-          stdout: `chore(yarn): Creates my-commit-package (and one other)\n`
+          stdout: `chore(yarn): Creates my-commit-package (and one other)\n`,
         });
 
         await execFile(`git`, [`add`, `.`], {cwd: path});
@@ -94,12 +95,12 @@ describe(`Commands`, () => {
           name: `my-commit-package`,
           dependencies: {
             [`deps1`]: `2.0.0`,
-            [`deps3`]: `2.0.0`
+            [`deps3`]: `2.0.0`,
           },
         });
 
         await expect(run(`stage`, `-c`, `-n`, {cwd: path})).resolves.toMatchObject({
-          stdout: `chore(yarn): Deletes new-package, adds deps3, removes deps2, updates deps1 to 2.0.0\n`
+          stdout: `chore(yarn): Deletes new-package, adds deps3, removes deps2, updates deps1 to 2.0.0\n`,
         });
       }),
     );

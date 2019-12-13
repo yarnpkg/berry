@@ -1,3 +1,5 @@
+/// <reference path="./tauProlog.d.ts"/>
+
 import {Ident, MessageName, Project, ReportError, Workspace} from '@yarnpkg/core';
 import {miscUtils, structUtils}                              from '@yarnpkg/core';
 import {xfs, ppath, PortablePath, toFilename}                from '@yarnpkg/fslib';
@@ -18,7 +20,7 @@ export type EnforcedField = {
   fieldValue: string | null,
 };
 
-export const enum DependencyType {
+export enum DependencyType {
   Dependencies = 'dependencies',
   DevDependencies = 'devDependencies',
   PeerDependencies = 'peerDependencies',

@@ -3,6 +3,7 @@ import {Command}     from 'clipanion';
 import filesize      from 'filesize';
 import fs            from 'fs';
 import path          from 'path';
+import TerserPlugin  from 'terser-webpack-plugin';
 import webpack       from 'webpack';
 
 import {dynamicLibs} from '../../data/dynamicLibs';
@@ -22,6 +23,9 @@ export default class BuildBundleCommand extends Command {
   @Command.Array(`--plugin`)
   plugins: Array<string> = [];
 
+  @Command.Boolean(`--no-minify`)
+  noMinify: boolean = false;
+
   static usage = Command.Usage({
     description: `build the local bundle`,
   });
@@ -39,16 +43,37 @@ export default class BuildBundleCommand extends Command {
 
       bail: true,
 
+      ...!this.noMinify && {
+        mode: `production`,
+      },
+
+      ...!this.noMinify && {
+        optimization: {
+          minimizer: [
+            new TerserPlugin({
+              cache: false,
+              extractComments: false,
+            }),
+          ],
+        },
+      },
+
       output: {
         filename: path.basename(output),
         path: path.dirname(output),
+      },
+
+      resolve: {
+        alias: {
+          [path.resolve(basedir, `./sources/tools/getPluginConfiguration.ts`)]: path.resolve(basedir, `./sources/tools/getPluginConfiguration.val.js`),
+        },
       },
 
       module: {
         rules: [{
           // This file is particular in that it exposes the bundle
           // configuration to the bundle itself (primitive introspection).
-          test: path.resolve(basedir, `sources/pluginConfiguration.raw.js`),
+          test: /[\\\/]getPluginConfiguration\.val\.js$/,
           use: {
             loader: require.resolve(`val-loader`),
             options: {modules, plugins},
@@ -59,7 +84,7 @@ export default class BuildBundleCommand extends Command {
       plugins: [
         new webpack.BannerPlugin({
           entryOnly: true,
-          banner: `#!/usr/bin/env node`,
+          banner: `#!/usr/bin/env node\n/* eslint-disable */`,
           raw: true,
         }),
         new webpack.DefinePlugin({

@@ -1,5 +1,4 @@
 import {FakeFS}                          from './FakeFS';
-import {NodeFS}                          from './NodeFS';
 import {ProxiedFS}                       from './ProxiedFS';
 import {npath, NativePath, PortablePath} from './path';
 
@@ -13,10 +12,10 @@ export class PosixFS extends ProxiedFS<NativePath, PortablePath> {
   }
 
   protected mapFromBase(path: PortablePath) {
-    return NodeFS.fromPortablePath(path);
+    return npath.fromPortablePath(path);
   }
 
   protected mapToBase(path: NativePath) {
-    return NodeFS.toPortablePath(path);
+    return npath.toPortablePath(path);
   }
 }

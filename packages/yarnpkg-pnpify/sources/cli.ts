@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import {NodeFS}         from '@yarnpkg/fslib';
+import {npath}          from '@yarnpkg/fslib';
 import crossSpawn       from 'cross-spawn';
 
 import {dynamicRequire} from './dynamicRequire';
@@ -33,7 +33,7 @@ function sdk() {
   const {getPackageInformation, topLevel} = dynamicRequire(`pnpapi`);
   const {packageLocation} = getPackageInformation(topLevel);
 
-  const projectRoot = NodeFS.toPortablePath(packageLocation);
+  const projectRoot = npath.toPortablePath(packageLocation);
 
   generateSdk(projectRoot).catch(error => {
     console.error(error.stack);

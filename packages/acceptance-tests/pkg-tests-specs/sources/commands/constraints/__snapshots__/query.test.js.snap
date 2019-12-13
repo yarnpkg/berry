@@ -42,7 +42,7 @@ exports[`Commands constraints query test (empty project / single predicate with 
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
+  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-0b6124'
 ➤ YN0000: Done
 ",
 }
@@ -128,7 +128,7 @@ exports[`Commands constraints query test (multiple workspaces / single predicate
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
+  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-0b6124'
 ➤ YN0000: WorkspaceName = 'workspace-a'
 ➤ YN0000: WorkspaceName = 'workspace-b'
 ➤ YN0000: Done
@@ -193,7 +193,7 @@ exports[`Commands constraints query test (one regular dependency / single predic
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
+  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-0b6124'
 ➤ YN0000: Done
 ",
 }
@@ -259,7 +259,7 @@ exports[`Commands constraints query test (two development dependencies / single 
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
+  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-0b6124'
 ➤ YN0000: Done
 ",
 }
@@ -325,7 +325,7 @@ exports[`Commands constraints query test (two regular dependencies / single pred
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
+  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-0b6124'
 ➤ YN0000: Done
 ",
 }
@@ -397,7 +397,7 @@ exports[`Commands constraints query test (two regular dependencies, two developm
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
+  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-0b6124'
 ➤ YN0000: Done
 ",
 }
@@ -449,7 +449,7 @@ exports[`Commands constraints query test without trailing . 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-988eec'
+  "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-0b6124'
 ➤ YN0000: Done
 ",
 }

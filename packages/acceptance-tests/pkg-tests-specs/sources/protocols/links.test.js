@@ -1,6 +1,5 @@
-const {xfs} = require(`@yarnpkg/fslib`);
 const {
-  fs: {createTemporaryFolder, readJson, writeJson},
+  fs: {createTemporaryFolder, writeJson},
   tests: {getPackageDirectoryPath},
 } = require('pkg-tests-core');
 

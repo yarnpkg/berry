@@ -12,7 +12,7 @@ export default class PluginListCommand extends BaseCommand {
     `,
     examples: [[
       `List the currently active plugins`,
-      `yarn plugin runtime`,
+      `$0 plugin runtime`,
     ]],
   });
 

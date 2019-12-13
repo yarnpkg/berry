@@ -1,11 +1,11 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator, MessageName}                       from '@yarnpkg/core';
-import {httpUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
+import {structUtils, tgzUtils}                      from '@yarnpkg/core';
 import semver                                       from 'semver';
 import {URL}                                        from 'url';
 
 import {PROTOCOL}                                   from './constants';
-import * as npmConfigUtils                          from './npmConfigUtils';
+import * as npmHttpUtils                            from './npmHttpUtils';
 
 export class NpmHttpFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -16,7 +16,7 @@ export class NpmHttpFetcher implements Fetcher {
 
     if (!semver.valid(url.pathname))
       return false;
-    if (!url.searchParams.has(`archiveUrl`))
+    if (!url.searchParams.has(`__archiveUrl`))
       return false;
 
     return true;
@@ -41,23 +41,24 @@ export class NpmHttpFetcher implements Fetcher {
     return {
       packageFs,
       releaseFs,
-      prefixPath: npmConfigUtils.getVendorPath(locator),
+      prefixPath: structUtils.getIdentVendorPath(locator),
       checksum,
     };
   }
 
   async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
-    const archiveUrl = new URL(locator.reference).searchParams.get(`archiveUrl`);
+    const archiveUrl = new URL(locator.reference).searchParams.get(`__archiveUrl`);
     if (archiveUrl === null)
       throw new Error(`Assertion failed: The archiveUrl querystring parameter should have been available`);
 
-    const sourceBuffer = await httpUtils.get(archiveUrl, {
+    const sourceBuffer = await npmHttpUtils.get(archiveUrl, {
       configuration: opts.project.configuration,
+      ident: locator,
     });
 
-    return await tgzUtils.makeArchive(sourceBuffer, {
+    return await tgzUtils.convertToZip(sourceBuffer, {
       stripComponents: 1,
-      prefixPath: npmConfigUtils.getVendorPath(locator),
+      prefixPath: structUtils.getIdentVendorPath(locator),
     });
   }
 }

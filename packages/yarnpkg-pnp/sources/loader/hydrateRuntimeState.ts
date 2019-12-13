@@ -1,4 +1,4 @@
-import {NodeFS, ppath, PortablePath}                                                     from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath}                                                      from '@yarnpkg/fslib';
 
 import {PackageInformation, PackageLocator, PackageStore, RuntimeState, SerializedState} from '../types';
 
@@ -7,7 +7,7 @@ export type HydrateRuntimeStateOptions = {
 };
 
 export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRuntimeStateOptions): RuntimeState {
-  const portablePath = NodeFS.toPortablePath(basePath);
+  const portablePath = npath.toPortablePath(basePath);
 
   const ignorePattern = data.ignorePatternData !== null
     ? new RegExp(data.ignorePatternData)
@@ -18,6 +18,8 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
       return [packageReference, {
         packageLocation: ppath.resolve(portablePath, packageInformationData.packageLocation),
         packageDependencies: new Map(packageInformationData.packageDependencies),
+        packagePeers: new Set(packageInformationData.packagePeers),
+        linkType: packageInformationData.linkType,
       }] as [string | null, PackageInformation<PortablePath>];
     }))] as [string | null, PackageStore];
   }));
@@ -43,21 +45,18 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     return [packageName, new Set(packageReferences)] as [string, Set<string>];
   }));
 
-  const virtualRoots = data.virtualRoots.map(virtualRoot => {
-    return ppath.resolve(portablePath, virtualRoot);
-  });
-
+  const dependencyTreeRoots = data.dependencyTreeRoots;
   const enableTopLevelFallback = data.enableTopLevelFallback;
   const packageLocationLengths = data.locationLengthData;
 
   return {
     basePath: portablePath,
+    dependencyTreeRoots,
     enableTopLevelFallback,
     fallbackExclusionList,
     ignorePattern,
     packageLocationLengths,
     packageLocatorsByLocations,
     packageRegistry,
-    virtualRoots,
   };
 }

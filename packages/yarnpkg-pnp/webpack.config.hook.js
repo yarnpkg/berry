@@ -6,7 +6,7 @@ module.exports = makeConfig({
 
   mode: 'production',
   optimization: {
-    minimize: false
+    minimize: false,
   },
 
   entry: {
@@ -15,11 +15,14 @@ module.exports = makeConfig({
 
   output: {
     filename: `[name].js`,
-    path: `${__dirname}/lib`,
+    path: `${__dirname}/sources`,
+    libraryExport: `default`,
+    libraryTarget: `umd`,
+    library: `pnpHook`,
   },
 
   plugins: [
-    { apply: compiler => {
+    {apply: compiler => {
       compiler.hooks.compilation.tap(`MyPlugin`, compilation => {
         compilation.hooks.optimizeChunkAssets.tap(`MyPlugin`, chunks => {
           for (const chunk of chunks) {
@@ -31,6 +34,6 @@ module.exports = makeConfig({
           }
         });
       });
-    } },
+    }},
   ],
 });

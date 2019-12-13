@@ -168,7 +168,7 @@ module.exports.factory = function (require) {
       return {
         packageFs,
         releaseFs,
-        prefixPath: `/sources`,
+        prefixPath: _yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__["structUtils"].getIdentVendorPath(locator),
         localPath: this.getLocalPath(locator, opts),
         checksum
       };
@@ -201,16 +201,18 @@ module.exports.factory = function (require) {
 
       if (!_yarnpkg_fslib__WEBPACK_IMPORTED_MODULE_1__["xfs"].existsSync(_yarnpkg_fslib__WEBPACK_IMPORTED_MODULE_1__["ppath"].join(cwd, Object(_yarnpkg_fslib__WEBPACK_IMPORTED_MODULE_1__["toFilename"])(`build`)))) throw new Error(`The script should have generated a build directory`);
       return await _yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__["tgzUtils"].makeArchiveFromDirectory(_yarnpkg_fslib__WEBPACK_IMPORTED_MODULE_1__["ppath"].join(cwd, Object(_yarnpkg_fslib__WEBPACK_IMPORTED_MODULE_1__["toFilename"])(`build`)), {
-        prefixPath: `/sources`
+        prefixPath: _yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__["structUtils"].getIdentVendorPath(locator)
       });
     }
 
     async generatePackage(locator, generatorPath, opts) {
       const _ref2 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 7, 7));
 
-      const cwd = _yarnpkg_fslib__WEBPACK_IMPORTED_MODULE_1__["NodeFS"].toPortablePath(_ref2.dirSync().name);
-      const env = await _yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__["scriptUtils"].makeScriptEnv(opts.project);
-      const logFile = _yarnpkg_fslib__WEBPACK_IMPORTED_MODULE_1__["NodeFS"].toPortablePath(_ref2.tmpNameSync({
+      const cwd = _yarnpkg_fslib__WEBPACK_IMPORTED_MODULE_1__["npath"].toPortablePath(_ref2.dirSync().name);
+      const env = await _yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__["scriptUtils"].makeScriptEnv({
+        project: opts.project
+      });
+      const logFile = _yarnpkg_fslib__WEBPACK_IMPORTED_MODULE_1__["npath"].toPortablePath(_ref2.tmpNameSync({
         prefix: `buildfile-`,
         postfix: `.log`
       }));
@@ -221,7 +223,7 @@ module.exports.factory = function (require) {
       stdout.write(`\n`);
       const {
         code
-      } = await _yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__["execUtils"].pipevp(process.execPath, [_yarnpkg_fslib__WEBPACK_IMPORTED_MODULE_1__["NodeFS"].fromPortablePath(generatorPath), _yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__["structUtils"].stringifyIdent(locator)], {
+      } = await _yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__["execUtils"].pipevp(process.execPath, [_yarnpkg_fslib__WEBPACK_IMPORTED_MODULE_1__["npath"].fromPortablePath(generatorPath), _yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__["structUtils"].stringifyIdent(locator)], {
         cwd,
         env,
         stdin,
@@ -316,7 +318,7 @@ module.exports.factory = function (require) {
 
       let path = descriptor.range;
       if (path.startsWith(_constants__WEBPACK_IMPORTED_MODULE_2__["PROTOCOL"])) path = path.slice(_constants__WEBPACK_IMPORTED_MODULE_2__["PROTOCOL"].length);
-      return [_yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__["structUtils"].makeLocator(descriptor, `${_constants__WEBPACK_IMPORTED_MODULE_2__["PROTOCOL"]}${_ref3.NodeFS.toPortablePath(path)}`)];
+      return [_yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__["structUtils"].makeLocator(descriptor, `${_constants__WEBPACK_IMPORTED_MODULE_2__["PROTOCOL"]}${_ref3.npath.toPortablePath(path)}`)];
     }
 
     async resolve(locator, opts) {
@@ -324,13 +326,14 @@ module.exports.factory = function (require) {
 
       const _ref = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 2, 7));
 
-      const packageFetch = await opts.fetcher.fetch(locator, opts);
+      if (!opts.fetchOptions) throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
+      const packageFetch = await opts.fetchOptions.fetcher.fetch(locator, opts.fetchOptions);
       const manifest = await _yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__["miscUtils"].releaseAfterUseAsync(async () => {
         return await _ref.Manifest.find(packageFetch.prefixPath, {
           baseFs: packageFetch.packageFs
         });
       }, packageFetch.releaseFs);
-      return Object.assign({}, locator, {
+      return Object.assign(Object.assign({}, locator), {
         version: manifest.version || `0.0.0`,
         languageName: opts.project.configuration.get(`defaultLanguageName`),
         linkType: _ref2.LinkType.HARD,

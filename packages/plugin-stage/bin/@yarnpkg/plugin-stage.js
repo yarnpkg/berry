@@ -191,7 +191,7 @@ module.exports.factory = function (require) {
           this.context.stdout.write(`${commitMessage}\n`);
         } else {
           for (const file of changeList) {
-            this.context.stdout.write(`${_yarnpkg_fslib__WEBPACK_IMPORTED_MODULE_1__["NodeFS"].fromPortablePath(file.path)}\n`);
+            this.context.stdout.write(`${_yarnpkg_fslib__WEBPACK_IMPORTED_MODULE_1__["npath"].fromPortablePath(file.path)}\n`);
           }
         }
       } else {
@@ -309,7 +309,9 @@ module.exports.factory = function (require) {
   "use strict";
   __webpack_require__.r(__webpack_exports__);
   /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Driver", function() { return Driver; });
-  function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+  function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+  function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
   const MESSAGE_MARKER = `Commit generated via \`yarn stage\``;
   const COMMIT_DEPTH = 11;
@@ -497,7 +499,7 @@ module.exports.factory = function (require) {
 
       const _ref4 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 7, 7));
 
-      const localPaths = changeList.map(file => _ref6.NodeFS.fromPortablePath(file.path));
+      const localPaths = changeList.map(file => _ref6.npath.fromPortablePath(file.path));
       await _ref4.execUtils.execvp(`git`, [`add`, `-N`, `--`, ...localPaths], {
         cwd,
         strict: true
@@ -513,7 +515,7 @@ module.exports.factory = function (require) {
 
       const _ref5 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 7, 7));
 
-      const localPaths = changeList.map(path => _ref7.NodeFS.fromPortablePath(path.path));
+      const localPaths = changeList.map(path => _ref7.npath.fromPortablePath(path.path));
       await _ref5.execUtils.execvp(`git`, [`reset`, `HEAD`, `--`, ...localPaths], {
         cwd,
         strict: true
@@ -529,7 +531,9 @@ module.exports.factory = function (require) {
   "use strict";
   __webpack_require__.r(__webpack_exports__);
   /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Driver", function() { return Driver; });
-  function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+  function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+  function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
   const Driver = {
     async findRoot(cwd) {
