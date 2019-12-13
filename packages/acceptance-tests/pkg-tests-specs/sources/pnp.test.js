@@ -676,7 +676,7 @@ describe(`Plug'n'Play`, () => {
         await writeFile(`${tmp}/index.js`, `require(process.argv[2])`);
         await writeFile(`${path}/index.js`, `require('no-deps')`);
 
-        await run(`node`, `${npath.fromPortablePath(tmp)}/index.js`, `${path}/index.js`);
+        await run(`node`, `${npath.fromPortablePath(tmp)}/index.js`, `${npath.fromPortablePath(path)}/index.js`);
       },
     ),
   );
