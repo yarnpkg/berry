@@ -36,5 +36,5 @@ jobs:
     - name: 'Running the TypeScript integration test'
       run: |
         source scripts/e2e-setup-ci.sh
-        yarn dlx create-react-app my-cra-ts --typescript && cd my-cra-ts
+        yarn dlx create-react-app my-cra-ts --template typescript && cd my-cra-ts
         yarn build
