@@ -4,7 +4,6 @@ import {PnpApi, PackageLocator, PackageInformation}                             
 import {hoist, ReadonlyHoisterPackageTree, HoisterPackageId, HoisterPackageInfo, ReadonlyHoisterDependencies} from './hoist';
 import {HoistedTree, HoisterPackageTree}                                                                      from './hoist';
 
-
 // Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
 // But because of this TypeScript requires @yarnpkg/pnp during runtime
 // To prevent this we redeclare LinkType enum here, to not depend on @yarnpkg/pnp during runtime
@@ -19,34 +18,7 @@ export enum LinkType {HARD = 'HARD', SOFT = 'SOFT'};
  * /home/user/project/node_modules/foo -> {target: '/home/user/project/.yarn/.cache/foo.zip/node_modules/foo', linkType: 'HARD'}
  * /home/user/project/node_modules/bar -> {target: '/home/user/project/packages/bar', linkType: 'SOFT'}
  */
-export type NodeModulesTree = Map<PortablePath, {dirList: Set<Filename>} | {dirList?: undefined, target: PortablePath, linkType: LinkType}>;
-
-/**
- * Node modules directory timestamps tree.
- *
- * Tree example:
- * Map {
- *   'node_modules' => {
- *     mtime: 2019-11-26T18:19:29.663Z,
- *     children: Map {
- *       '@yarnpkg' => {
- *         mtime: 2019-11-26T18:19:29.663Z,
- *         children: Map {
- *           'libui' => { mtime: 2019-11-26T12:38:53.007Z, children: Map {} },
- *           'cli' => { mtime: 2019-11-26T12:38:53.075Z, children: Map {} },
- *           'core' => { mtime: 2019-11-26T12:38:53.073Z, children: Map {} },
- * ...
- * }
- *
- * Each node is subdirectory inside node_modules directory tree with mtime timestamp.
- * As mtime for the final modules we use mtime of an underlying archive. In case of all the
- * other directories we use mtime of a yarn.lock file. On each new install that results in changes
- * to pnp file we will need to recheck folder structure, but we will see which archives have
- * not been changed, thanks to tracking archives mtimes. We will also be able to detect user
- * changes by comparing mtimes of all the folders inside module with archive mtime. If any
- * of the folders have different mtime than archive mtime, then user has changed the folder.
- */
-export type NodeModulesTimestampsTree = Map<Filename, { mtime: Date, children: NodeModulesTimestampsTree }>;
+export type NodeModulesTree = Map<PortablePath, {dirList: Set<Filename>} | {dirList?: undefined, locator: LocatorKey, size: number, target: PortablePath, linkType: LinkType}>;
 
 export interface NodeModulesTreeOptions {
   optimizeSizeOnDisk?: boolean;
@@ -103,42 +75,34 @@ export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOption
 
   const hoistedTree = hoist(packageTree, packages);
 
-  return populateNodeModulesTree(pnp, hoistedTree, locators, options);
+  return populateNodeModulesTree(pnp, hoistedTree, locators, packages, options);
 };
 
-/**
- * Builds node_modules directories timestamps tree.
- *
- * @param tree node_modules tree
- * @param rootPath root project directory (the one that contains .pnp.js)
- * @param containerMtime mtime for container directories (node_modules and node_modules/@foo)
- *
- * @returns node_modules timestamps tree
- */
-export const buildTimestampsTree = (tree: NodeModulesTree, rootPath: PortablePath, containerMtime: Date): NodeModulesTimestampsTree => {
-  const tsTree = new Map();
+const serializeLocator = (locator: PackageLocator): LocatorKey => `${locator.name}:${locator.reference}`;
 
-  const addDir = (parentPath: PortablePath, dir: Filename, tsTreeNode: NodeModulesTimestampsTree) => {
-    const nodePath = ppath.join(parentPath, dir);
-    let node = tree.get(nodePath);
-    if (node) {
-      if (node.dirList) {
-        const newTsTreeNode = {mtime: containerMtime, children: new Map()};
-        tsTreeNode.set(dir, newTsTreeNode);
-        for (const entry of node.dirList) {
-          addDir(nodePath, entry, newTsTreeNode.children);
-        }
-      } else {
-        const newTsTreeNode = {mtime: xfs.statSync(getArchivePath(node.target) || node.target).mtime, children: new Map()};
-        tsTreeNode.set(dir, newTsTreeNode);
-        addDir(nodePath, NODE_MODULES, newTsTreeNode.children);
+export type NodeModulesLocatorMap = Map<LocatorKey, {
+  size: number;
+  target: PortablePath;
+  linkType: LinkType;
+  locations: Set<PortablePath>;
+}>
+
+export const buildLocatorMap = (rootPath: PortablePath, nodeModulesTree: NodeModulesTree): NodeModulesLocatorMap => {
+  const map = new Map();
+
+  for (const [location, val] of nodeModulesTree.entries()) {
+    if (!val.dirList) {
+      let entry = map.get(val.locator);
+      if (!entry) {
+        entry = {size: val.size, target: val.target, linkType: val.linkType, locations: new Set()};
+        map.set(val.locator, entry);
       }
+
+      entry.locations.add(ppath.relative(rootPath, location));
     }
-  };
+  }
 
-  addDir(rootPath, NODE_MODULES, tsTree);
-
-  return tsTree;
+  return map;
 };
 
 /**
@@ -159,10 +123,8 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   let lastPkgId = 0;
 
-  const getLocatorKey = (locator: PackageLocator): LocatorKey => `${locator.name}:${locator.reference}`;
-
   const assignPackageId = (locator: PackageLocator, pkg: PackageInformation<NativePath>) => {
-    const locatorKey = getLocatorKey(locator);
+    const locatorKey = serializeLocator(locator);
     const pkgId = locatorToPackageMap.get(locatorKey);
     if (typeof pkgId !== 'undefined')
       return pkgId;
@@ -209,9 +171,9 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   const pkg = pnp.getPackageInformation(pnp.topLevel)!;
   const topLocator = pnp.findPackageLocator(pkg.packageLocation)!;
-  const topLocatorKey = getLocatorKey(topLocator);
+  const topLocatorKey = serializeLocator(topLocator);
   for (const locator of pnpRoots) {
-    if (getLocatorKey(locator) !== topLocatorKey) {
+    if (serializeLocator(locator) !== topLocatorKey) {
       pkg.packageDependencies.set(locator.name!, locator.reference);
     }
   }
@@ -229,25 +191,39 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
  * @param pnp PnP API
  * @param hoistedTree hoisted package tree from `RawHoister`
  * @param locators locators
+ * @param packages package weights
  *
  * @returns node modules map
  */
-const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators: PackageLocator[], options: NodeModulesTreeOptions): NodeModulesTree => {
+const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators: PackageLocator[], packages: HoisterPackageInfo[], options: NodeModulesTreeOptions): NodeModulesTree => {
   const tree: NodeModulesTree = new Map();
 
-  const makeLeafNode = (locator: PackageLocator): {target: PortablePath, linkType: LinkType} => {
+  const makeLeafNode = (packageId: HoisterPackageId): {locator: LocatorKey, size: number, target: PortablePath, linkType: LinkType} => {
+    const locator = locators[packageId];
     const info = pnp.getPackageInformation(locator)!;
+
+    let linkType;
+    let target;
     if (options.pnpifyFs) {
       // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
       // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
       // To make this fs layout work with legacy tools we make
       // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
       // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
-      return {target: npath.toPortablePath(info.packageLocation), linkType: LinkType.SOFT};
+      target = npath.toPortablePath(info.packageLocation);
+      linkType = LinkType.SOFT;
     } else {
       const truePath = pnp.resolveVirtual && locator.reference && locator.reference.startsWith('virtual:') ? pnp.resolveVirtual(info.packageLocation) : info.packageLocation;
-      return {target: npath.toPortablePath(truePath || info.packageLocation), linkType: info.linkType};
+      target = npath.toPortablePath(truePath || info.packageLocation);
+      linkType = info.linkType;
     }
+
+    return {
+      locator: serializeLocator(locator),
+      size: packages[packageId].weight,
+      target,
+      linkType,
+    };
   };
 
   const getPackageName = (locator: PackageLocator): { name: Filename, scope: Filename | null } => {
@@ -270,7 +246,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
       const nodeModulesDirPath = ppath.join(locationPrefix, NODE_MODULES);
       const nodeModulesLocation = ppath.join(nodeModulesDirPath, ...packageNameParts);
 
-      const leafNode = makeLeafNode(locator);
+      const leafNode = makeLeafNode(depId);
       tree.set(nodeModulesLocation, leafNode);
 
       const segments = nodeModulesLocation.split('/');
@@ -299,7 +275,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
     }
   };
 
-  const rootNode = makeLeafNode(locators[0]);
+  const rootNode = makeLeafNode(0);
   const rootPath = rootNode.target && rootNode.target;
   buildTree(0, rootPath);
 
@@ -343,7 +319,7 @@ const benchmarkBuildTree = (pnp: PnpApi, options: NodeModulesTreeOptions): numbe
   for (let iter = 0; iter < iterCount; iter++) {
     const {packageTree, packages, locators} = buildPackageTree(pnp, options);
     const hoistedTree = hoist(packageTree, packages);
-    populateNodeModulesTree(pnp, hoistedTree, locators, options);
+    populateNodeModulesTree(pnp, hoistedTree, locators, packages, options);
   }
   const endTime = Date.now();
   return (endTime - startTime) / iterCount;

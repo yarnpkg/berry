@@ -8806,6 +8806,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:e23b02a23dd21a1183b7bea287ba41db2b362005cc3f364e1677565eaf97ca1611b7ccd4cdf6ef547bbb3251afacdc4a1a999c3156da491b521e7c36b6663da9#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
+            ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-stage", "virtual:e23b02a23dd21a1183b7bea287ba41db2b362005cc3f364e1677565eaf97ca1611b7ccd4cdf6ef547bbb3251afacdc4a1a999c3156da491b521e7c36b6663da9#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["@yarnpkg/pnpify", "virtual:e23b02a23dd21a1183b7bea287ba41db2b362005cc3f364e1677565eaf97ca1611b7ccd4cdf6ef547bbb3251afacdc4a1a999c3156da491b521e7c36b6663da9#workspace:packages/yarnpkg-pnpify"],
