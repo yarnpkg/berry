@@ -1,14 +1,16 @@
-import {miscUtils, structUtils, Ident, DependencyMeta}                                       from '@yarnpkg/core';
-import {FetchResult, Descriptor, Locator, Package, BuildDirective, BuildType}                from '@yarnpkg/core';
-import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType, MessageName} from '@yarnpkg/core';
-import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS, CwdFS}                from '@yarnpkg/fslib';
-import {parseSyml}                                                                           from '@yarnpkg/parsers';
-import {NodeModulesLocatorMap, buildLocatorMap, buildNodeModulesTree}                        from '@yarnpkg/pnpify';
-import {PackageRegistry, makeRuntimeApi}                                                     from '@yarnpkg/pnp';
+import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType} from '@yarnpkg/core';
+import {FetchResult, Descriptor, Locator, Package, BuildDirective, BuildType}   from '@yarnpkg/core';
+import {miscUtils, structUtils, Ident, DependencyMeta, MessageName}             from '@yarnpkg/core';
+import {NodeFS, VirtualFS, ZipOpenFS}                                           from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS, CwdFS}   from '@yarnpkg/fslib';
+import {parseSyml}                                                              from '@yarnpkg/parsers';
+import {NodeModulesLocatorMap, buildLocatorMap, buildNodeModulesTree}           from '@yarnpkg/pnpify';
+import {PackageRegistry, makeRuntimeApi}                                        from '@yarnpkg/pnp';
 
-import {UsageError}                                                                          from 'clipanion';
+import {UsageError}                                                             from 'clipanion';
+import fs                                                                       from 'fs';
 
-import {getPnpPath}                                                                          from './index';
+import {getPnpPath}                                                             from './index';
 
 const FORCED_UNPLUG_PACKAGES = new Set([
   // Some packages do weird stuff and MUST be unplugged. I don't like them.
@@ -200,8 +202,16 @@ class NodeModulesInstaller implements Installer {
       }
     }
 
+    const nodeFs = new NodeFS(fs);
+    const baseFs = new ZipOpenFS({
+      baseFs: nodeFs,
+      maxOpenFiles: 80,
+      readOnlyArchives: true,
+    });
+    const defaultFsLayer: FakeFS<PortablePath> = new VirtualFS({baseFs});
+
     const rootPath = this.opts.project.cwd;
-    const pnp = makeRuntimeApi(pnpSettings, rootPath);
+    const pnp = makeRuntimeApi(pnpSettings, rootPath, defaultFsLayer);
     const locatorMap = buildLocatorMap(rootPath, buildNodeModulesTree(pnp, {optimizeSizeOnDisk: true, pnpifyFs: false}));
     await persistNodeModules(rootPath, locatorMap);
   }
