@@ -15,5 +15,8 @@
   ],
   "eslint.autoFixOnSave": true,
   "eslint.enable": true,
-  "eslint.nodePath": ".vscode/pnpify"
+  "eslint.nodePath": ".vscode/pnpify",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }
