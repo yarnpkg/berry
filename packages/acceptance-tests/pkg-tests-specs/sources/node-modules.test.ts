@@ -1,5 +1,5 @@
-import {NodeFS} from '@yarnpkg/fslib';
-import {fs}     from 'pkg-tests-core';
+import {npath} from '@yarnpkg/fslib';
+import {fs}    from 'pkg-tests-core';
 
 const {writeFile} = fs;
 
@@ -10,7 +10,7 @@ describe('Node_Modules', () => {
         dependencies: {[`repeat-string`]: `1.6.1`},
       },
       async ({path, run, source}) => {
-        await writeFile(NodeFS.toPortablePath(`${path}/.yarnrc.yml`), `nodeLinker: "node-modules"\n`);
+        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `nodeLinker: "node-modules"\n`);
 
         // await expect(run(`install`)).resolves.toBe('abc');
       },
