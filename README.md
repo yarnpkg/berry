@@ -38,15 +38,27 @@ The documentation is being reworked to contain an updated content and a refreshe
 
 On top of our classic integration tests, we also run Yarn every day against the latest versions of the toolchains used by our community - just in case, really. Everything should be green!
 
-| Toolchain | E2E Tests | Tooling | E2E Tests |
-| --- | --- | --- | --- |
-| [Create-React-App](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-cra-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20CRA/badge.svg)]() | [ESLint](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-eslint-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20ESLint/badge.svg)]() |
-| [Gatsby](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-gatsby-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg)]() | [Husky](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-husky-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Husky/badge.svg)]() |
-| [Next.js](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-next-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Next/badge.svg)]() | [Prettier](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-prettier-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Prettier/badge.svg)]() |
-| [Angular](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-angular-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Angular/badge.svg)]() | [Jest](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-jest-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Jest/badge.svg)]() |
-| | | [Mocha](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-mocha-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Mocha/badge.svg)]() |
-| | | [TypeScript](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-typescript-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20TypeScript/badge.svg)]() |
-| | | [Webpack](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-webpack-workflow.yml) | [![](https://github.com/yarnpkg/berry/workflows/E2E%20Webpack/badge.svg)]() |
+<table>
+<tr><th>Toolchains</th><th>Tooling</th></tr>
+<tr><td valign="top">
+
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Angular/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-angular-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20CRA/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-cra-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-gatsby-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Next/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-next-workflow.yml)<br/>
+</td><td valign="top">
+
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20ESLint/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-eslint-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Husky/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-husky-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Jest/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-jest-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Mocha/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-mocha-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20NYC/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-nyc-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Prettier/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-prettier-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20TypeScript/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-typescript-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Webpack/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-webpack-workflow.yml)<br/>
+</td></tr>
+
+</table>
 
 ## Build your own bundle
 
