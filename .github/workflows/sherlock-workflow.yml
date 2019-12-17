@@ -14,17 +14,6 @@ jobs:
       with:
         node-version: 10.x
 
-    - name: 'Build the standard bundle & plugins'
-      run: |
-        set -e
-        node --version
-        node ./scripts/run-yarn.js build:cli
-        node ./scripts/run-yarn.js build:plugin-exec
-        node ./scripts/run-yarn.js build:plugin-stage
-        node ./scripts/run-yarn.js build:plugin-typescript
-        node ./scripts/run-yarn.js build:plugin-version
-        node ./scripts/run-yarn.js build:plugin-workspace-tools
-
     - name: 'Sherlock Payload'
       uses: ./scripts/actions/local-yarn-command
       with:
@@ -41,7 +30,7 @@ jobs:
         args: 'sherlock report'
       env:
         GITHUB_TOKEN: ${{secrets.YARNBOT_TOKEN}}
-    
+
     - name: 'Swallowing Errors'
       if: always()
       run: 'true'

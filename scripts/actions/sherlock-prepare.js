@@ -1,5 +1,5 @@
 const {execFile} = require(`child_process`);
-const {existsSync, promises: {mkdir, writeFile}} = require(`fs`);
+const {promises: {mkdir, writeFile}} = require(`fs`);
 const {resolve} = require(`path`);
 const {promisify} = require(`util`);
 
@@ -48,20 +48,16 @@ global.yarn = async (...args) => {
   if (typeof args[args.length - 1] === `object`)
     opts = args.pop();
 
-  const bundlePath = `${__dirname}/../../packages/yarnpkg-cli/bundles/yarn.js`;
-  if (!existsSync(bundlePath))
-    throw new Error(`The local CLI bundle must have been generated before calling this command`);
-
-    let stdout;
-    try {
-        ({stdout} = await execFileP(process.execPath, [bundlePath, ...args], {
-            env: {...process.env, YARN_IGNORE_PATH: 1, YARN_ENABLE_INLINE_BUILDS: 1},
-            ...opts,
-        }));
-    } catch (error) {
-        error.message += `\n${error.stdout}`;
-        throw error;
-    }
+  let stdout;
+  try {
+    ({stdout} = await execFileP(process.execPath, [`${__dirname}/../run-yarn.js`, ...args], {
+        env: {...process.env, YARN_IGNORE_PATH: 1, YARN_ENABLE_INLINE_BUILDS: 1},
+        ...opts,
+    }));
+  } catch (error) {
+    error.message += `\n${error.stdout}`;
+    throw error;
+  }
 
   return stdout;
 };
