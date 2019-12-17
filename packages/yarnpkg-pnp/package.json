@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/pnp",
   "version": "2.0.0-rc.12",
+  "nextVersion": {
+    "semver": "2.0.0-rc.13",
+    "nonce": "3449939332652435"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
