@@ -1,14 +1,14 @@
-// @ts-ignore
-import template                  from '@yarnpkg/pnp/lib/hook';
-
 import {generatePrettyJson}      from './generatePrettyJson';
 import {generateSerializedState} from './generateSerializedState';
+// @ts-ignore
+import template                  from './hook';
 import {SerializedState}         from './types';
 import {PnpSettings}             from './types';
 
 function generateLoader(shebang: string | null | undefined, loader: string) {
   return [
-    shebang ? `${shebang}\n\n` : ``,
+    shebang ? `${shebang}\n` : ``,
+    `/* eslint-disable */\n\n`,
     `try {\n`,
     `  Object.freeze({}).detectStrictMode = true;\n`,
     `} catch (error) {\n`,

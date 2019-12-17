@@ -52,7 +52,7 @@ Object {
 {\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
-{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
+{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/$$virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual)\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/$$virtual\\"}
 {\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
 }
@@ -110,7 +110,7 @@ Object {
 ➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
-➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual) - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - Path to the local executable that must be used over the global one - null
 ➤ YN0000: Done
 ",
@@ -169,7 +169,7 @@ Object {
 ➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
-➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - <default> - null
 ➤ YN0000: Done
 ",
@@ -228,7 +228,7 @@ Object {
 ➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
-➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - null
 ➤ YN0000: Done
 ",
@@ -287,7 +287,7 @@ Object {
 {\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
-{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
+{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/$$virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual)\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/$$virtual\\"}
 {\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
 }
@@ -345,7 +345,7 @@ Object {
 ➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
-➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual) - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - Path to the local executable that must be used over the global one - null
 ➤ YN0000: Done
 ",
@@ -404,7 +404,7 @@ Object {
 ➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
-➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - <default> - null
 ➤ YN0000: Done
 ",
@@ -463,7 +463,7 @@ Object {
 ➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
-➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - null
 ➤ YN0000: Done
 ",
@@ -522,7 +522,7 @@ Object {
 {\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
-{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
+{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/$$virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual)\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/$$virtual\\"}
 {\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
 }
@@ -580,7 +580,7 @@ Object {
 ➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
-➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual) - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - Path to the local executable that must be used over the global one - null
 ➤ YN0000: Done
 ",
@@ -639,7 +639,7 @@ Object {
 ➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
-➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - <default> - null
 ➤ YN0000: Done
 ",
@@ -698,7 +698,7 @@ Object {
 ➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
-➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - null
 ➤ YN0000: Done
 ",
@@ -757,7 +757,7 @@ Object {
 {\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
-{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
+{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/$$virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual)\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/$$virtual\\"}
 {\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
 }
@@ -815,7 +815,7 @@ Object {
 ➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
-➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual) - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - Path to the local executable that must be used over the global one - null
 ➤ YN0000: Done
 ",
@@ -874,7 +874,7 @@ Object {
 ➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
-➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - <default> - null
 ➤ YN0000: Done
 ",
@@ -933,7 +933,7 @@ Object {
 ➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
-➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - null
 ➤ YN0000: Done
 ",
@@ -992,7 +992,7 @@ Object {
 {\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
-{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
+{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/$$virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual)\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/$$virtual\\"}
 {\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
 }
@@ -1050,7 +1050,7 @@ Object {
 ➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
-➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual) - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - Path to the local executable that must be used over the global one - null
 ➤ YN0000: Done
 ",
@@ -1109,7 +1109,7 @@ Object {
 ➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
-➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - <default> - null
 ➤ YN0000: Done
 ",
@@ -1168,7 +1168,7 @@ Object {
 ➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
-➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - null
 ➤ YN0000: Done
 ",
@@ -1227,7 +1227,7 @@ Object {
 {\\"key\\":\\"progressBarStyle\\",\\"description\\":\\"Which style of progress bar should be used (only when progress bars are enabled)\\",\\"type\\":\\"STRING\\",\\"defaultText\\":\\"<dynamic>\\"}
 {\\"key\\":\\"rcFilename\\",\\"effective\\":\\".spec-yarnrc\\",\\"description\\":\\"Name of the files where the configuration can be found\\",\\"type\\":\\"STRING\\",\\"default\\":\\".spec-yarnrc\\"}
 {\\"key\\":\\"unsafeHttpWhitelist\\",\\"effective\\":[\\"localhost\\"],\\"source\\":\\"<environment>\\",\\"description\\":\\"List of the hostnames for which http queries are allowed (glob patterns are supported)\\",\\"type\\":\\"STRING\\",\\"default\\":[],\\"isArray\\":true}
-{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/virtual\\"}
+{\\"key\\":\\"virtualFolder\\",\\"effective\\":\\"WORKSPACE_ROOT/.yarn/$$virtual\\",\\"description\\":\\"Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual)\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":\\"./.yarn/$$virtual\\"}
 {\\"key\\":\\"yarnPath\\",\\"effective\\":null,\\"description\\":\\"Path to the local executable that must be used over the global one\\",\\"type\\":\\"ABSOLUTE_PATH\\",\\"default\\":null}
 ",
 }
@@ -1285,7 +1285,7 @@ Object {
 ➤ YN0000: progressBarStyle - Which style of progress bar should be used (only when progress bars are enabled) - undefined
 ➤ YN0000: rcFilename - Name of the files where the configuration can be found - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - List of the hostnames for which http queries are allowed (glob patterns are supported) - [ 'localhost' ]
-➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual) - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - Path to the local executable that must be used over the global one - null
 ➤ YN0000: Done
 ",
@@ -1344,7 +1344,7 @@ Object {
 ➤ YN0000: progressBarStyle - <default> - undefined
 ➤ YN0000: rcFilename - <default> - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - <environment> - [ 'localhost' ]
-➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - <default> - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - <default> - null
 ➤ YN0000: Done
 ",
@@ -1403,7 +1403,7 @@ Object {
 ➤ YN0000: progressBarStyle - undefined
 ➤ YN0000: rcFilename - '.spec-yarnrc'
 ➤ YN0000: unsafeHttpWhitelist - [ 'localhost' ]
-➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/virtual'
+➤ YN0000: virtualFolder - 'WORKSPACE_ROOT/.yarn/$$virtual'
 ➤ YN0000: yarnPath - null
 ➤ YN0000: Done
 ",

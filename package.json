@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "dependencies": {
-    "@arcanis/sherlock": "^1.0.19",
+    "@arcanis/sherlock": "^1.0.25",
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.7.4",
     "@babel/plugin-proposal-async-generator-functions": "^7.2.0",
@@ -66,17 +66,19 @@
     "@types/yup": "0.26.12",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^1.6.0",
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18",
-    "@yarnpkg/core": "workspace:2.0.0-rc.14",
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.11",
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19",
+    "@yarnpkg/core": "workspace:2.0.0-rc.15",
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.12",
     "babel-jest": "^24.5.0",
     "eslint": "^5.16.0",
     "eslint-plugin-arca": "^0.9.0",
     "eslint-plugin-react": "^7.14.3",
     "github-api": "^3.2.2",
+    "hard-source-webpack-plugin": "mzgoddard/hard-source-webpack-plugin",
     "jest": "^24.9.0",
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
+    "left-pad": "left-pad/left-pad",
     "micromatch": "^4.0.2",
     "typescript": "next"
   },
@@ -112,6 +114,8 @@
     "url": "ssh://git@github.com/yarnpkg/berry.git"
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.0.0"
+    "@babel/preset-react": "^7.0.0",
+    "@types/hard-source-webpack-plugin": "1.0.1",
+    "@types/left-pad": "1.2.0"
   }
 }

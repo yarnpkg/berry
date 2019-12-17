@@ -51,9 +51,9 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
     if (stdio[0] instanceof Transform)
       stdio[0].pipe(child.stdin!);
     if (stdio[1] instanceof Transform)
-      child.stdout!.pipe(stdio[1], {end: stdio[1] !== opts.initialStdout});
+      child.stdout!.pipe(stdio[1], {end: false});
     if (stdio[2] instanceof Transform)
-      child.stderr!.pipe(stdio[2], {end: stdio[2] !== opts.initialStderr});
+      child.stderr!.pipe(stdio[2], {end: false});
 
     return {
       stdin: child.stdin!,

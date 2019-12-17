@@ -84,7 +84,7 @@ export default class BuildBundleCommand extends Command {
       plugins: [
         new webpack.BannerPlugin({
           entryOnly: true,
-          banner: `#!/usr/bin/env node`,
+          banner: `#!/usr/bin/env node\n/* eslint-disable */`,
           raw: true,
         }),
         new webpack.DefinePlugin({

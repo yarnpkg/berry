@@ -326,7 +326,8 @@ module.exports.factory = function (require) {
 
       const _ref = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 2, 7));
 
-      const packageFetch = await opts.fetcher.fetch(locator, opts);
+      if (!opts.fetchOptions) throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
+      const packageFetch = await opts.fetchOptions.fetcher.fetch(locator, opts.fetchOptions);
       const manifest = await _yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__["miscUtils"].releaseAfterUseAsync(async () => {
         return await _ref.Manifest.find(packageFetch.prefixPath, {
           baseFs: packageFetch.packageFs

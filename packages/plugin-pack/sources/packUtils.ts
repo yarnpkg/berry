@@ -44,6 +44,16 @@ type IgnoreList = {
   reject: Array<string>;
 };
 
+export async function hasPackScripts(workspace: Workspace) {
+  if (await scriptUtils.hasWorkspaceScript(workspace, `prepack`))
+    return true;
+
+  if (await scriptUtils.hasWorkspaceScript(workspace, `postpack`))
+    return true;
+
+  return false;
+}
+
 export async function prepareForPack(workspace: Workspace, {report}: {report: Report}, cb: () => Promise<void>) {
   const stdin = null;
   const stdout = new PassThrough();
@@ -110,7 +120,6 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
           content = Buffer.from(JSON.stringify(await genPackageManifest(workspace), null, 2));
         else
           content = await xfs.readFilePromise(source);
-
 
         pack.entry({...opts, type: `file`}, content, cb);
       } else if (stat.isSymbolicLink()) {

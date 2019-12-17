@@ -5,7 +5,7 @@ module.exports = makeConfig({
 
   mode: `production`,
   optimization: {
-    minimize: false
+    minimize: false,
   },
 
   entry: {

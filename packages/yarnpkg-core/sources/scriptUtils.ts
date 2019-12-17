@@ -95,17 +95,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
     const stdin = null;
     const {logFile, stdout, stderr} = configuration.getSubprocessStreams(cwd, {report});
 
-    const {code} = await execUtils.pipevp(`yarn`, [`install`], {cwd, env, stdin, stdout, stderr});
-    if (code !== 0) {
-      throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Installing the package dependencies failed (exit code ${code}, logs can be found here: ${logFile})`);
-    }
-  }
-
-  {
-    const stdin = null;
-    const {logFile, stdout, stderr} = configuration.getSubprocessStreams(cwd, {report});
-
-    const {code} = await execUtils.pipevp(`yarn`, [`pack`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
+    const {code} = await execUtils.pipevp(`yarn`, [`pack`, `--install-if-needed`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
     if (code !== 0) {
       throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Packing the package failed (exit code ${code}, logs can be found here: ${logFile})`);
     }
@@ -225,7 +215,7 @@ export async function executeWorkspaceScript(workspace: Workspace, scriptName: s
 }
 
 export async function hasWorkspaceScript(workspace: Workspace, scriptName: string) {
-  return await hasPackageScript(workspace.anchoredLocator, scriptName, {project: workspace.project});
+  return workspace.manifest.scripts.has(scriptName);
 }
 
 type GetPackageAccessibleBinariesOptions = {

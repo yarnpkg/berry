@@ -322,4 +322,55 @@ describe(`Basic tests`, () => {
       },
     ),
   );
+
+  test(
+    `it should prefer peer dependencies when a package also has the same regular dependency`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`fallback-peer-deps`]: `1.0.0`,
+          [`no-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(source(`require('fallback-peer-deps')`)).resolves.toMatchObject({
+          name: `fallback-peer-deps`,
+          version: `1.0.0`,
+          dependencies: {
+            [`no-deps`]: {
+              name: `no-deps`,
+              version: `1.0.0`,
+            },
+          },
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should fallback to the regular dependency if the peer dependency isn't met`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`fallback-peer-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(source(`require('fallback-peer-deps')`)).resolves.toMatchObject({
+          name: `fallback-peer-deps`,
+          version: `1.0.0`,
+          dependencies: {
+            [`no-deps`]: {
+              name: `no-deps`,
+              version: `2.0.0`,
+            },
+          },
+        });
+      },
+    ),
+  );
 });

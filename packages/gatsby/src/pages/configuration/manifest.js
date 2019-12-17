@@ -133,7 +133,7 @@ const PackageJsonDoc = () => <>
       <JsonObjectProperty
         name={`peerDependencies`}
         description={<>
-          Peer dependencies are inherited dependencies - the consumer of your package will be tasked to provide them. This is typically what you want when writing plugins, for example. Be careful: listing peer dependencies will have side effects on the way your package will be executed by your consumers. Check the documentation for more information.
+          Peer dependencies are inherited dependencies - the consumer of your package will be tasked to provide them. This is typically what you want when writing plugins, for example. Note that peer dependencies can also be listed as regular dependencies; in this case, Yarn will use the package provided by the ancestors if possible, but will fallback to the regular dependencies otherwise.
         </>}
       >
         <JsonScalarProperty

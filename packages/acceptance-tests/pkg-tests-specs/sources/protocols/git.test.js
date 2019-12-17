@@ -1,12 +1,19 @@
 const {
   fs: {readFile},
+  tests: {startPackageServer},
 } = require('pkg-tests-core');
 const {parseSyml} = require('@yarnpkg/parsers');
 
 const TESTED_URLS = {
-  // We've picked util-deprecate because it doesn't have any dependency, and thus
-  // doesn't crash when installing through our mock registry. We also could have
-  // made our own repository (and maybe we will), but it was simpler this way.
+  // We've picked util-deprecate because it doesn't have any dependency, and
+  // thus doesn't crash when installing through our mock registry. We also
+  // could have made our own repository (and maybe we will), but it was simpler
+  // this way.
+  //
+  // Edit 2019 Dec 6 - we now have the ability to serve local repositories
+  // through our test server (cf following tests); still, these tests are
+  // useful since they test various different protocols such as ssh.
+
   [`git://github.com/TooTallNate/util-deprecate.git#v1.0.1`]: {version: `1.0.1`, ci: false},
   [`git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1`]: {version: `1.0.1`, ci: false},
   [`https://github.com/TooTallNate/util-deprecate.git#semver:^1.0.0`]: {version: `1.0.2`, ci: false},
@@ -48,5 +55,37 @@ describe(`Protocols`, () => {
         ),
       );
     }
+
+    test(
+      `it should install dependencies and run prepack if needed`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`has-prepack`]: startPackageServer().then(url => `${url}/repositories/has-prepack.git`),
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('has-prepack')`)).resolves.toEqual(42);
+        },
+      )
+    );
+
+    test(
+      `it shouldn't install dependencies for packages without prepack`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`no-prepack`]: startPackageServer().then(url => `${url}/repositories/no-prepack.git`),
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('no-prepack')`)).resolves.toEqual(42);
+        },
+      )
+    );
   });
 });

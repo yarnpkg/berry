@@ -4,9 +4,9 @@
 __metadata:
   version: 4
 
-"@arcanis/sherlock@npm:^1.0.19":
-  version: 1.0.20
-  resolution: "@arcanis/sherlock@npm:1.0.20"
+"@arcanis/sherlock@npm:^1.0.25":
+  version: 1.0.25
+  resolution: "@arcanis/sherlock@npm:1.0.25"
   dependencies:
     "@octokit/rest": ^16.28.7
     clipanion: 2.0.0-rc.16
@@ -23,7 +23,7 @@ __metadata:
       built: false
   bin:
     sherlock: lib/boot.js
-  checksum: b1b22476670335ace9ba04f310a3ac2abc53aab44caa93013e6553603b25ee2f6c5cff455a83c0d6d041e23372dd9f26d8f29b2e06f7f59dbc11c90ba622fab7
+  checksum: 86e900bcd5819100266e40197af508d9afd512c7d05f0ac5294df87439df5a66ffa9d9035dff99c4d17cf26184556b31b0f83aedc3322fc15720d9afeef77a41
   languageName: node
   linkType: hard
 
@@ -3500,6 +3500,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/express-serve-static-core@npm:*":
+  version: 4.17.0
+  resolution: "@types/express-serve-static-core@npm:4.17.0"
+  dependencies:
+    "@types/node": "*"
+    "@types/range-parser": "*"
+  checksum: c197c3e181f0f2d5a8e28867a9ccf8cfc47db3e27c7b6470d3b260c92267b67caa5b82d09b9bed61d27bc79144b51428c1d52dde440fca75632aab799c5358f9
+  languageName: node
+  linkType: hard
+
 "@types/faker@npm:^4.1.4":
   version: 4.1.4
   resolution: "@types/faker@npm:4.1.4"
@@ -3511,6 +3521,15 @@ __metadata:
   version: 4.1.0
   resolution: "@types/filesize@npm:4.1.0"
   checksum: d35de9cf2dfe81b484997d69c110d403b0b7afb7b4af9192de4f8751e0e8900a78ed8e89e9b3f1343dfa70a460c0718b4a726e5a84a649b174776cd9dde51ba3
+  languageName: node
+  linkType: hard
+
+"@types/finalhandler@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@types/finalhandler@npm:1.1.0"
+  dependencies:
+    "@types/node": "*"
+  checksum: 919c55df977dcda03d041a6cc730a98b52fd2191ba9192d0829f742d9b42e9abd633e124229b2c8b4d3a4351cc925705a63f11268fbea34e6eb5cb9a246a7684
   languageName: node
   linkType: hard
 
@@ -3574,6 +3593,15 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 4b370d899ec72cedd8f6546d6c56829015561aaec9e095cce4f436c2c5f20ac92f404683ab9554a27c12bbbb78d177b231ed4962f53a9b9a1ad994e09a1af9a6
+  languageName: node
+  linkType: hard
+
+"@types/hard-source-webpack-plugin@npm:1.0.1":
+  version: 1.0.1
+  resolution: "@types/hard-source-webpack-plugin@npm:1.0.1"
+  dependencies:
+    "@types/webpack": "*"
+  checksum: 5c36b2ac5172b69db07783a95733d4560e8182c590b302200d095e43b78b149263d630a63e5f0650b5aff71de11e8aa05eb15432e4bb6f88d0c4c36975df4f7e
   languageName: node
   linkType: hard
 
@@ -3692,6 +3720,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/left-pad@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@types/left-pad@npm:1.2.0"
+  dependencies:
+    left-pad: "*"
+  checksum: b8adb3d80c5cef440addbf0c9f15e21e010e9a02bb182456bdb90caeb138d80d939b6de5a992e23946f0c4ef2c1f1c76620ed814b6a87494b47dd969c70da854
+  languageName: node
+  linkType: hard
+
 "@types/lockfile@npm:^1.0.0":
   version: 1.0.0
   resolution: "@types/lockfile@npm:1.0.0"
@@ -3712,6 +3749,13 @@ __metadata:
   dependencies:
     "@types/braces": "*"
   checksum: 06c5207614ae0367008007de26d5c2d3e1f73b92394fe4e5e1139b3c0a36d578f55b640a6997b42aacf1584841b6d3f56f9c6ecf61e4d90c75c713a95cf8f47b
+  languageName: node
+  linkType: hard
+
+"@types/mime@npm:*":
+  version: 2.0.1
+  resolution: "@types/mime@npm:2.0.1"
+  checksum: 4228ec6658d775ea3606b6d82fc48e6080e8e6b1c6c43cc5328a4d012f931721e7c30d2d031f28a026c1213d395afce47ae4d1bc29cf50edfb429140fb6705ab
   languageName: node
   linkType: hard
 
@@ -3793,6 +3837,13 @@ __metadata:
   version: 1.5.1
   resolution: "@types/q@npm:1.5.1"
   checksum: 8f04d8739c7b8f049f440bc3497e16f63533fcc672723f322a68903b41def5b9ef294042a2b83f9bcbc7fc675418fe5184ddab2828f06ffe28b3a1af71fa925b
+  languageName: node
+  linkType: hard
+
+"@types/range-parser@npm:*":
+  version: 1.2.3
+  resolution: "@types/range-parser@npm:1.2.3"
+  checksum: 60dfb067416b050bd65eb894ced9f1598d61f0bdfb367bdc7776a5aad35f8059aad68014e89e14625794d34cd40e2bfa449e23c1b2accb0ce93966fbf06c7576
   languageName: node
   linkType: hard
 
@@ -3980,6 +4031,16 @@ __metadata:
   version: 6.0.2
   resolution: "@types/semver@npm:6.0.2"
   checksum: 4d5e0b54aeb51124f1ef509aab515731dacfa6ee9f0287a7fd9b1c38ded628491e26ab699c8dc768f5c11c7c77fa0a8c3f6bf9d51fe73c559bf8ff309629be39
+  languageName: node
+  linkType: hard
+
+"@types/serve-static@npm:1.13.3":
+  version: 1.13.3
+  resolution: "@types/serve-static@npm:1.13.3"
+  dependencies:
+    "@types/express-serve-static-core": "*"
+    "@types/mime": "*"
+  checksum: feee5f0a18d2921b45f2f67d76977eda9b7325528a2a90fd56dbe03f7a87e6c20dc4bc530e199045d0e2a79c83c46e82849007ba6b8a6210c043967f1368e83c
   languageName: node
   linkType: hard
 
@@ -4661,7 +4722,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/builder@workspace:2.0.0-rc.12, @yarnpkg/builder@workspace:packages/yarnpkg-builder":
+"@yarnpkg/builder@workspace:2.0.0-rc.13, @yarnpkg/builder@workspace:packages/yarnpkg-builder":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/builder@workspace:packages/yarnpkg-builder"
   dependencies:
@@ -4674,10 +4735,10 @@ __metadata:
     "@types/webpack": ^4.32.1
     "@types/webpack-merge": ^4.1.5
     "@types/webpack-sources": ^0.1.5
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     "@yarnpkg/monorepo": "workspace:0.0.0"
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.11"
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.12"
     babel-loader: ^8.0.6
     babel-plugin-lazy-import: arcanis/babel-plugin-lazy-import
     chalk: ^2.4.1
@@ -4703,9 +4764,9 @@ __metadata:
   resolution: "@yarnpkg/check@workspace:packages/yarnpkg-check"
   dependencies:
     "@types/node": ^12.12.8
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     clipanion: ^2.1.5
     globby: ^10.0.1
@@ -4717,33 +4778,33 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/cli@workspace:2.0.0-rc.18, @yarnpkg/cli@workspace:packages/yarnpkg-cli":
+"@yarnpkg/cli@workspace:2.0.0-rc.19, @yarnpkg/cli@workspace:packages/yarnpkg-cli":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
     "@types/node": ^12.12.8
     "@types/promise.prototype.finally": ^2.0.3
-    "@yarnpkg/builder": "workspace:2.0.0-rc.12"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/builder": "workspace:2.0.0-rc.13"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/parsers": "workspace:2.0.0-rc.6"
     "@yarnpkg/plugin-constraints": "workspace:2.0.0-rc.7"
-    "@yarnpkg/plugin-dlx": "workspace:2.0.0-rc.7"
-    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.14"
-    "@yarnpkg/plugin-file": "workspace:2.0.0-rc.7"
-    "@yarnpkg/plugin-git": "workspace:2.0.0-rc.10"
-    "@yarnpkg/plugin-github": "workspace:2.0.0-rc.7"
-    "@yarnpkg/plugin-http": "workspace:2.0.0-rc.6"
-    "@yarnpkg/plugin-init": "workspace:2.0.0-rc.7"
-    "@yarnpkg/plugin-link": "workspace:2.0.0-rc.6"
+    "@yarnpkg/plugin-dlx": "workspace:2.0.0-rc.8"
+    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.15"
+    "@yarnpkg/plugin-file": "workspace:2.0.0-rc.8"
+    "@yarnpkg/plugin-git": "workspace:2.0.0-rc.11"
+    "@yarnpkg/plugin-github": "workspace:2.0.0-rc.8"
+    "@yarnpkg/plugin-http": "workspace:2.0.0-rc.7"
+    "@yarnpkg/plugin-init": "workspace:2.0.0-rc.8"
+    "@yarnpkg/plugin-link": "workspace:2.0.0-rc.7"
     "@yarnpkg/plugin-node-modules": "workspace:2.0.0-rc.1"
-    "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.9"
-    "@yarnpkg/plugin-npm-cli": "workspace:2.0.0-rc.7"
-    "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.10"
-    "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.10"
-    "@yarnpkg/plugin-version": "workspace:2.0.0-rc.12"
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.11"
+    "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.10"
+    "@yarnpkg/plugin-npm-cli": "workspace:2.0.0-rc.8"
+    "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.11"
+    "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.11"
+    "@yarnpkg/plugin-version": "workspace:2.0.0-rc.13"
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.12"
     "@yarnpkg/shell": "workspace:2.0.0-rc.4"
     chalk: ^2.4.1
     clipanion: ^2.1.5
@@ -4758,7 +4819,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/core@workspace:2.0.0-rc.14, @yarnpkg/core@workspace:packages/yarnpkg-core":
+"@yarnpkg/core@workspace:2.0.0-rc.15, @yarnpkg/core@workspace:packages/yarnpkg-core":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
@@ -4771,13 +4832,13 @@ __metadata:
     "@types/tar": ^4.0.0
     "@types/tmp": ^0.0.33
     "@types/tunnel": ^0.0.0
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.4"
     "@yarnpkg/parsers": "workspace:2.0.0-rc.6"
-    "@yarnpkg/plugin-link": "workspace:2.0.0-rc.6"
-    "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.10"
-    "@yarnpkg/pnp": "workspace:2.0.0-rc.11"
+    "@yarnpkg/plugin-link": "workspace:2.0.0-rc.7"
+    "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.11"
+    "@yarnpkg/pnp": "workspace:2.0.0-rc.12"
     "@yarnpkg/shell": "workspace:2.0.0-rc.4"
     agentkeepalive: ^4.0.2
     camelcase: ^5.3.1
@@ -4803,7 +4864,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/fslib@workspace:2.0.0-rc.11, @yarnpkg/fslib@workspace:packages/yarnpkg-fslib":
+"@yarnpkg/fslib@workspace:2.0.0-rc.12, @yarnpkg/fslib@workspace:packages/yarnpkg-fslib":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/fslib@workspace:packages/yarnpkg-fslib"
   dependencies:
@@ -4874,7 +4935,7 @@ __metadata:
   resolution: "@yarnpkg/json-proxy@workspace:packages/yarnpkg-json-proxy"
   dependencies:
     "@types/node": ^12.12.8
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
   languageName: unknown
   linkType: soft
 
@@ -4905,7 +4966,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/monorepo@workspace:."
   dependencies:
-    "@arcanis/sherlock": ^1.0.19
+    "@arcanis/sherlock": ^1.0.25
     "@babel/cli": ^7.2.3
     "@babel/core": ^7.7.4
     "@babel/plugin-proposal-async-generator-functions": ^7.2.0
@@ -4931,12 +4992,14 @@ __metadata:
     "@types/fs-extra": ^5.0.4
     "@types/git-url-parse": 9.0.0
     "@types/got": ^8.3.4
+    "@types/hard-source-webpack-plugin": 1.0.1
     "@types/inquirer": ^0.0.43
     "@types/invariant": ^2.2.30
     "@types/is-ci": ^2.0.0
     "@types/jest": ^24.0.18
     "@types/joi": ^13.6.0
     "@types/klaw": ^3.0.0
+    "@types/left-pad": 1.2.0
     "@types/lockfile": ^1.0.0
     "@types/lodash": ^4.14.136
     "@types/micromatch": ^3.1.0
@@ -4967,17 +5030,19 @@ __metadata:
     "@types/yup": 0.26.12
     "@typescript-eslint/eslint-plugin": ^1.7.0
     "@typescript-eslint/parser": ^1.6.0
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.11"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.12"
     babel-jest: ^24.5.0
     eslint: ^5.16.0
     eslint-plugin-arca: ^0.9.0
     eslint-plugin-react: ^7.14.3
     github-api: ^3.2.2
+    hard-source-webpack-plugin: mzgoddard/hard-source-webpack-plugin
     jest: ^24.9.0
     jest-environment-node: ^24.5.0
     jest-junit: ^5.2.0
+    left-pad: left-pad/left-pad
     micromatch: ^4.0.2
     typescript: next
   dependenciesMeta:
@@ -5006,9 +5071,9 @@ __metadata:
   dependencies:
     "@types/lodash": ^4.14.136
     "@types/node": ^12.12.8
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     clipanion: ^2.1.5
     inquirer: ^6.2.0
     lodash: ^4.17.15
@@ -5020,15 +5085,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-dlx@workspace:2.0.0-rc.7, @yarnpkg/plugin-dlx@workspace:packages/plugin-dlx":
+"@yarnpkg/plugin-dlx@workspace:2.0.0-rc.8, @yarnpkg/plugin-dlx@workspace:packages/plugin-dlx":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-dlx@workspace:packages/plugin-dlx"
   dependencies:
     "@types/node": ^12.12.8
     "@types/tmp": ^0.0.33
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.4"
     clipanion: ^2.1.5
     tmp: ^0.1.0
@@ -5038,7 +5103,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-essentials@workspace:2.0.0-rc.14, @yarnpkg/plugin-essentials@workspace:packages/plugin-essentials":
+"@yarnpkg/plugin-essentials@workspace:2.0.0-rc.15, @yarnpkg/plugin-essentials@workspace:packages/plugin-essentials":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
@@ -5046,9 +5111,9 @@ __metadata:
     "@types/node": ^12.12.8
     "@types/semver": ^6.0.2
     "@types/treeify": ^1.0.0
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.4"
     "@yarnpkg/parsers": "workspace:2.0.0-rc.6"
     clipanion: ^2.1.5
@@ -5068,9 +5133,9 @@ __metadata:
   dependencies:
     "@types/node": ^12.12.8
     "@types/tmp": ^0.0.33
-    "@yarnpkg/builder": "workspace:2.0.0-rc.12"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/builder": "workspace:2.0.0-rc.13"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     tmp: ^0.1.0
     typescript: next
   peerDependencies:
@@ -5078,26 +5143,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-file@workspace:2.0.0-rc.7, @yarnpkg/plugin-file@workspace:packages/plugin-file":
+"@yarnpkg/plugin-file@workspace:2.0.0-rc.8, @yarnpkg/plugin-file@workspace:packages/plugin-file":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-file@workspace:packages/plugin-file"
   dependencies:
     "@types/node": ^12.12.8
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
   peerDependencies:
     "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-git@workspace:2.0.0-rc.10, @yarnpkg/plugin-git@workspace:packages/plugin-git":
+"@yarnpkg/plugin-git@workspace:2.0.0-rc.11, @yarnpkg/plugin-git@workspace:packages/plugin-git":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-git@workspace:packages/plugin-git"
   dependencies:
     "@types/node": ^12.12.8
     "@types/semver": ^6.0.2
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     git-url-parse: 11.1.2
     semver: ^5.6.0
     tmp: ^0.1.0
@@ -5106,15 +5171,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-github@workspace:2.0.0-rc.7, @yarnpkg/plugin-github@workspace:packages/plugin-github":
+"@yarnpkg/plugin-github@workspace:2.0.0-rc.8, @yarnpkg/plugin-github@workspace:packages/plugin-github":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-github@workspace:packages/plugin-github"
   dependencies:
     "@types/node": ^12.12.8
     "@types/tmp": ^0.0.33
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
-    "@yarnpkg/plugin-git": "workspace:2.0.0-rc.10"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
+    "@yarnpkg/plugin-git": "workspace:2.0.0-rc.11"
     tmp: ^0.1.0
   peerDependencies:
     "@yarnpkg/core": ^2.0.0-rc.13
@@ -5122,26 +5187,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-http@workspace:2.0.0-rc.6, @yarnpkg/plugin-http@workspace:packages/plugin-http":
+"@yarnpkg/plugin-http@workspace:2.0.0-rc.7, @yarnpkg/plugin-http@workspace:packages/plugin-http":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-http@workspace:packages/plugin-http"
   dependencies:
     "@types/node": ^12.12.8
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
   peerDependencies:
     "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-init@workspace:2.0.0-rc.7, @yarnpkg/plugin-init@workspace:packages/plugin-init":
+"@yarnpkg/plugin-init@workspace:2.0.0-rc.8, @yarnpkg/plugin-init@workspace:packages/plugin-init":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-init@workspace:packages/plugin-init"
   dependencies:
     "@types/node": ^12.12.8
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     "@yarnpkg/json-proxy": "workspace:2.0.0-rc.4"
     clipanion: ^2.1.5
   peerDependencies:
@@ -5157,11 +5222,11 @@ __metadata:
     "@types/diff": ^4.0.2
     "@types/node": ^12.12.8
     "@types/react": ^16.8.0
-    "@yarnpkg/builder": "workspace:2.0.0-rc.12"
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
+    "@yarnpkg/builder": "workspace:2.0.0-rc.13"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
     "@yarnpkg/libui": "workspace:2.0.0-rc.1"
-    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.14"
+    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.15"
     clipanion: ^2.1.5
     diff: ^4.0.1
     ink: ^2.3.0
@@ -5174,13 +5239,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-link@workspace:2.0.0-rc.6, @yarnpkg/plugin-link@workspace:packages/plugin-link":
+"@yarnpkg/plugin-link@workspace:2.0.0-rc.7, @yarnpkg/plugin-link@workspace:packages/plugin-link":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-link@workspace:packages/plugin-link"
   dependencies:
     "@types/node": ^12.12.8
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
   peerDependencies:
     "@yarnpkg/core": ^2.0.0-rc.13
   languageName: unknown
@@ -5190,29 +5255,29 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-node-modules@workspace:packages/plugin-node-modules"
   dependencies:
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     "@yarnpkg/parsers": "workspace:2.0.0-rc.6"
-    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.10"
-    "@yarnpkg/pnp": "workspace:2.0.0-rc.11"
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.11"
+    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.11"
+    "@yarnpkg/pnp": "workspace:2.0.0-rc.12"
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.12"
     clipanion: ^2.1.5
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-npm-cli@workspace:2.0.0-rc.7, @yarnpkg/plugin-npm-cli@workspace:packages/plugin-npm-cli":
+"@yarnpkg/plugin-npm-cli@workspace:2.0.0-rc.8, @yarnpkg/plugin-npm-cli@workspace:packages/plugin-npm-cli":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-npm-cli@workspace:packages/plugin-npm-cli"
   dependencies:
     "@types/inquirer": ^0.0.43
     "@types/node": ^12.12.8
     "@types/ssri": ^6.0.1
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
-    "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.9"
-    "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.10"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
+    "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.10"
+    "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.11"
     clipanion: ^2.1.5
     inquirer: ^6.2.0
     ssri: ^6.0.1
@@ -5225,15 +5290,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-npm@workspace:2.0.0-rc.9, @yarnpkg/plugin-npm@workspace:packages/plugin-npm":
+"@yarnpkg/plugin-npm@workspace:2.0.0-rc.10, @yarnpkg/plugin-npm@workspace:packages/plugin-npm":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
     "@types/inquirer": ^0.0.43
     "@types/node": ^12.12.8
     "@types/semver": ^6.0.2
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     inquirer: ^6.2.0
     semver: ^5.6.0
   peerDependencies:
@@ -5241,16 +5306,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-pack@workspace:2.0.0-rc.10, @yarnpkg/plugin-pack@workspace:packages/plugin-pack":
+"@yarnpkg/plugin-pack@workspace:2.0.0-rc.11, @yarnpkg/plugin-pack@workspace:packages/plugin-pack":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pack@workspace:packages/plugin-pack"
   dependencies:
     "@types/node": ^12.12.8
     "@types/tar-stream": 1.6.0
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
-    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.10"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
+    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.11"
     clipanion: ^2.1.5
     micromatch: ^4.0.2
     tar-stream: ^2.0.1
@@ -5260,16 +5325,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-pnp@workspace:2.0.0-rc.10, @yarnpkg/plugin-pnp@workspace:packages/plugin-pnp":
+"@yarnpkg/plugin-pnp@workspace:2.0.0-rc.11, @yarnpkg/plugin-pnp@workspace:packages/plugin-pnp":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pnp@workspace:packages/plugin-pnp"
   dependencies:
     "@types/node": ^12.12.8
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
-    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.10"
-    "@yarnpkg/pnp": "workspace:2.0.0-rc.11"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
+    "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.11"
+    "@yarnpkg/pnp": "workspace:2.0.0-rc.12"
     clipanion: ^2.1.5
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.14
@@ -5277,15 +5342,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-stage@workspace:2.0.0-rc.10, @yarnpkg/plugin-stage@workspace:packages/plugin-stage":
+"@yarnpkg/plugin-stage@workspace:2.0.0-rc.11, @yarnpkg/plugin-stage@workspace:packages/plugin-stage":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-stage@workspace:packages/plugin-stage"
   dependencies:
     "@types/node": ^12.12.8
-    "@yarnpkg/builder": "workspace:2.0.0-rc.12"
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/builder": "workspace:2.0.0-rc.13"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     clipanion: ^2.1.5
     typescript: next
   peerDependencies:
@@ -5299,11 +5364,11 @@ __metadata:
   resolution: "@yarnpkg/plugin-typescript@workspace:packages/plugin-typescript"
   dependencies:
     "@types/node": ^12.12.8
-    "@yarnpkg/builder": "workspace:2.0.0-rc.12"
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.14"
-    "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.10"
+    "@yarnpkg/builder": "workspace:2.0.0-rc.13"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.15"
+    "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.11"
     typescript: next
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.14
@@ -5312,7 +5377,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-version@workspace:2.0.0-rc.12, @yarnpkg/plugin-version@workspace:packages/plugin-version":
+"@yarnpkg/plugin-version@workspace:2.0.0-rc.13, @yarnpkg/plugin-version@workspace:packages/plugin-version":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-version@workspace:packages/plugin-version"
   dependencies:
@@ -5320,11 +5385,11 @@ __metadata:
     "@types/react": ^16.8.0
     "@types/semver": ^6.0.2
     "@types/yup": 0.26.12
-    "@yarnpkg/builder": "workspace:2.0.0-rc.12"
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
-    "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.10"
+    "@yarnpkg/builder": "workspace:2.0.0-rc.13"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
+    "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.11"
     clipanion: ^2.1.5
     ink: ^2.3.0
     react: ^16.8.4
@@ -5344,10 +5409,10 @@ __metadata:
   dependencies:
     "@types/node": ^12.12.8
     "@types/yup": 0.26.12
-    "@yarnpkg/builder": "workspace:2.0.0-rc.12"
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/builder": "workspace:2.0.0-rc.13"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     clipanion: ^2.1.5
     p-limit: ^2.2.0
     typescript: next
@@ -5358,14 +5423,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/pnp@workspace:2.0.0-rc.11, @yarnpkg/pnp@workspace:packages/yarnpkg-pnp":
+"@yarnpkg/pnp@workspace:2.0.0-rc.12, @yarnpkg/pnp@workspace:packages/yarnpkg-pnp":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnp@workspace:packages/yarnpkg-pnp"
   dependencies:
     "@types/node": ^12.12.8
-    "@yarnpkg/builder": "workspace:2.0.0-rc.12"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.11"
+    "@yarnpkg/builder": "workspace:2.0.0-rc.13"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.12"
     typescript: next
     webpack: ^4.41.2
     webpack-cli: ^3.2.1
@@ -5373,16 +5438,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/pnpify@workspace:2.0.0-rc.11, @yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify":
+"@yarnpkg/pnpify@workspace:2.0.0-rc.12, @yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify"
   dependencies:
     "@types/comment-json": ^1.1.1
     "@types/cross-spawn": 6.0.0
     "@types/node": ^12.12.8
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     "@yarnpkg/monorepo": "workspace:0.0.0"
-    "@yarnpkg/pnp": "workspace:2.0.0-rc.11"
+    "@yarnpkg/pnp": "workspace:2.0.0-rc.12"
     comment-json: ^2.2.0
     cross-spawn: ^6.0.5
     eslint: ^5.16.0
@@ -5407,7 +5472,7 @@ __metadata:
     "@types/cross-spawn": 6.0.0
     "@types/node": ^12.12.8
     "@types/tmp": ^0.0.33
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     "@yarnpkg/parsers": "workspace:2.0.0-rc.6"
     cross-spawn: ^6.0.5
     stream-buffers: ^3.0.2
@@ -5434,9 +5499,9 @@ __metadata:
   resolution: "acceptance-tests-229a13@workspace:packages/acceptance-tests"
   dependencies:
     "@types/node": ^12.12.8
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     is-wsl: ^2.1.1
     pkg-tests-core: "workspace:0.0.0"
@@ -11425,6 +11490,21 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"finalhandler@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "finalhandler@npm:1.1.2"
+  dependencies:
+    debug: 2.6.9
+    encodeurl: ~1.0.2
+    escape-html: ~1.0.3
+    on-finished: ~2.3.0
+    parseurl: ~1.3.3
+    statuses: ~1.5.0
+    unpipe: ~1.0.0
+  checksum: 621e50ccbe8a9f4762ced7658ccf4c669c9b807478e63ade09f962c3ce20617f3775821a3a5db7765e1f5fc16f2265b4a61509adc06193583734f570cb6a5c97
+  languageName: node
+  linkType: hard
+
 "find-cache-dir@npm:^0.1.1":
   version: 0.1.1
   resolution: "find-cache-dir@npm:0.1.1"
@@ -13063,6 +13143,29 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+hard-source-webpack-plugin@mzgoddard/hard-source-webpack-plugin:
+  version: 0.13.1
+  resolution: "hard-source-webpack-plugin@mzgoddard/hard-source-webpack-plugin#commit:aa0383bb7012a642fa7b519f317c235c12275632"
+  dependencies:
+    chalk: ^2.4.1
+    find-cache-dir: ^2.0.0
+    graceful-fs: ^4.1.11
+    lodash: ^4.15.0
+    mkdirp: ^0.5.1
+    node-object-hash: ^1.2.0
+    parse-json: ^4.0.0
+    pkg-dir: ^3.0.0
+    rimraf: ^2.6.2
+    semver: ^5.6.0
+    tapable: ^1.0.0-beta.5
+    webpack-sources: ^1.0.1
+    write-json-file: ^2.3.0
+  peerDependencies:
+    webpack: "*"
+  checksum: bb8b880bb7323bdc0926d39723fee74c48625e8f9c42fdf62f5463eab3079a741108b066346ae3099bb431e6bafe4249174dce6c29bcf13b3a8da6a0d919eb24
+  languageName: node
+  linkType: hard
+
 "has-ansi@npm:^2.0.0":
   version: 2.0.0
   resolution: "has-ansi@npm:2.0.0"
@@ -13585,6 +13688,19 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"http-errors@npm:~1.7.2":
+  version: 1.7.3
+  resolution: "http-errors@npm:1.7.3"
+  dependencies:
+    depd: ~1.1.2
+    inherits: 2.0.4
+    setprototypeof: 1.1.1
+    statuses: ">= 1.5.0 < 2"
+    toidentifier: 1.0.0
+  checksum: b5a969ae98de61bf5a5a51574390b6f1d8d623dbcb2bfc0ec5adb585a1babd134e9e3752aff235153e1efe972162b0dc2846533c68a62ced91c6d6c9b69f2db4
+  languageName: node
+  linkType: hard
+
 "http-parser-js@npm:>=0.4.0":
   version: 0.5.0
   resolution: "http-parser-js@npm:0.5.0"
@@ -13929,6 +14045,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 2.0.1
   resolution: "inherits@npm:2.0.1"
   checksum: fa738e30f8ad65959715d5ba699b78fed43c6d36bd972d6b8dabac43c45f3157aa0dde6bc4b2898c274e825868e13fb64084518b44ea632d9ca20e5eadfbc87e
+  languageName: node
+  linkType: hard
+
+"inherits@npm:2.0.4":
+  version: 2.0.4
+  resolution: "inherits@npm:2.0.4"
+  checksum: d11734fde3095ce63e83a4be33779c8597b0c95edec3efcadf9a78a9312a520028e25acb2d126656005791550f9f2e17de3ea6abeb026fa24627401e5e174d6c
   languageName: node
   linkType: hard
 
@@ -16355,7 +16478,14 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"left-pad@npm:^1.3.0":
+left-pad@left-pad/left-pad:
+  version: 1.3.0
+  resolution: "left-pad@left-pad/left-pad#commit:2fca6157fcca165438e0f9495cf0e5a4e6f71349"
+  checksum: 3e66343260586a3def0d1aa1f5b2c7ad74bb25231835e92d654f84289f7ae3f21dc1a0c1d78f7e8858772d190b66dbad19ed7bdc701dfa44439bbeefad0964e4
+  languageName: node
+  linkType: hard
+
+"left-pad@npm:*, left-pad@npm:^1.3.0":
   version: 1.3.0
   resolution: "left-pad@npm:1.3.0"
   checksum: eab17d2302911f0b9f3f90416386a9919f658f1cd50e5224f0e8af61ad98fc854cb444ec5d22128c6f4393c5174804f027fabac178e018f127200850d6b37f1c
@@ -17323,7 +17453,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"mime@npm:^1.3.4":
+"mime@npm:1.6.0, mime@npm:^1.3.4":
   version: 1.6.0
   resolution: "mime@npm:1.6.0"
   bin:
@@ -17584,7 +17714,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"ms@npm:^2.0.0, ms@npm:^2.1.1":
+"ms@npm:2.1.1, ms@npm:^2.0.0, ms@npm:^2.1.1":
   version: 2.1.1
   resolution: "ms@npm:2.1.1"
   checksum: f6a582361bde460587db401d7c9ede3bfe00a2fbf3f02b4e230343ef7385263280eb4b6c86e28dc2a17d321225fceb606591b84b20b770e4e7e03d6f1d27eaab
@@ -17914,6 +18044,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     shellwords: ^0.1.1
     which: ^1.3.0
   checksum: 8182f9e865c018f5dd40f2a07ba1e4fe18a841db6f0ae4137a3a36a60ef3b7aff0ff495c0e5e43b4230f8829a9e62c656265289c497e03a02dffc25020712a89
+  languageName: node
+  linkType: hard
+
+"node-object-hash@npm:^1.2.0":
+  version: 1.4.2
+  resolution: "node-object-hash@npm:1.4.2"
+  checksum: e6019aed9c9945b2459aa294fc0840705e880fef37ad73629f706329b672b974317381d92116762831119d47bc069c0a74151e22161b5d40d1bbc9e18be63eab
   languageName: node
   linkType: hard
 
@@ -19028,6 +19165,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"parseurl@npm:~1.3.3":
+  version: 1.3.3
+  resolution: "parseurl@npm:1.3.3"
+  checksum: dce90b0503088ff4c51a9011955720d568359103e0e3775e1bf5d1c4f8d4c6b92a53810a60f15198337c1f4efec22ca68123c00591423b5d41263b5b2759186d
+  languageName: node
+  linkType: hard
+
 "pascalcase@npm:^0.1.1":
   version: 0.1.1
   resolution: "pascalcase@npm:0.1.1"
@@ -19333,19 +19477,23 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 0.0.0-use.local
   resolution: "pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core"
   dependencies:
+    "@types/finalhandler": 1.1.0
     "@types/invariant": ^2.2.30
     "@types/minimatch": ^3.0.3
     "@types/semver": ^6.0.2
+    "@types/serve-static": 1.13.3
     "@types/tar-fs": ^1.16.1
     "@types/tmp": ^0.0.33
-    "@yarnpkg/cli": "workspace:2.0.0-rc.18"
-    "@yarnpkg/core": "workspace:2.0.0-rc.14"
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/cli": "workspace:2.0.0-rc.19"
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
+    finalhandler: ^1.1.2
     invariant: ^2.2.4
     klaw: ^2.1.1
     minimatch: ^3.0.4
     pkg-tests-fixtures: "workspace:0.0.0"
     semver: ^5.6.0
+    serve-static: ^1.14.1
     super-resolve: ^1.0.0
     tar-fs: ^1.16.0
     tmp: ^0.1.0
@@ -19356,7 +19504,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 0.0.0-use.local
   resolution: "pkg-tests-fixtures@workspace:packages/acceptance-tests/pkg-tests-fixtures"
   dependencies:
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
   languageName: unknown
   linkType: soft
 
@@ -19364,7 +19512,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 0.0.0-use.local
   resolution: "pkg-tests-specs@workspace:packages/acceptance-tests/pkg-tests-specs"
   dependencies:
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/parsers": "workspace:2.0.0-rc.6"
     fs-extra: ^7.0.1
@@ -20427,6 +20575,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 1.2.0
   resolution: "range-parser@npm:1.2.0"
   checksum: c406f9f8e7637ea201839ceeda061e96373860245d9d7194e82c576bc111524831b7e31ef9b3a666797b1a6b413cd48ec2307a0af0bd060a2caa14bf2a34fcd4
+  languageName: node
+  linkType: hard
+
+"range-parser@npm:~1.2.1":
+  version: 1.2.1
+  resolution: "range-parser@npm:1.2.1"
+  checksum: bb275debfeeecf3a3da38167e24356eb8c365914d2b3b76074d270553184c05b3fb85c27a6936c3abd57b2f6b5c0a57848e33227f32dd5295d2e18c4f79346b0
   languageName: node
   linkType: hard
 
@@ -21992,6 +22147,27 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"send@npm:0.17.1":
+  version: 0.17.1
+  resolution: "send@npm:0.17.1"
+  dependencies:
+    debug: 2.6.9
+    depd: ~1.1.2
+    destroy: ~1.0.4
+    encodeurl: ~1.0.2
+    escape-html: ~1.0.3
+    etag: ~1.8.1
+    fresh: 0.5.2
+    http-errors: ~1.7.2
+    mime: 1.6.0
+    ms: 2.1.1
+    on-finished: ~2.3.0
+    range-parser: ~1.2.1
+    statuses: ~1.5.0
+  checksum: ae895afa58b4daf914bd992126308a51e960449090c8518ab394c62f84d30b57daa80f19a6060c06868a3982562732aa125d79b25c993878b9ae3219f3e868fb
+  languageName: node
+  linkType: hard
+
 "serialize-javascript@npm:^1.7.0":
   version: 1.7.0
   resolution: "serialize-javascript@npm:1.7.0"
@@ -22030,6 +22206,18 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     parseurl: ~1.3.2
     send: 0.16.2
   checksum: c9c066e1aa92571e3d81999ad0d264aa00d6c34a3ef4a279b7c1a0324ba7785f9ae3a38ad8a6d31139c96a5404a01e0654b96e406c538b52002039d84c557ba1
+  languageName: node
+  linkType: hard
+
+"serve-static@npm:^1.14.1":
+  version: 1.14.1
+  resolution: "serve-static@npm:1.14.1"
+  dependencies:
+    encodeurl: ~1.0.2
+    escape-html: ~1.0.3
+    parseurl: ~1.3.3
+    send: 0.17.1
+  checksum: 4ea8c736546304788be47aa4cca032af76d8f877cdbcb2b934be517a99fb0ae5b22398a8a2a81382c1bf9edd5b764d0e035b92ca0b0c6464d0d8185ca0dc1ad9
   languageName: node
   linkType: hard
 
@@ -22702,7 +22890,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"statuses@npm:>= 1.4.0 < 2, statuses@npm:>= 1.5.0 < 2":
+"statuses@npm:>= 1.4.0 < 2, statuses@npm:>= 1.5.0 < 2, statuses@npm:~1.5.0":
   version: 1.5.0
   resolution: "statuses@npm:1.5.0"
   checksum: f9d54c70e9abf0ea577d03e93c4dc13dd6d458740fd913ea6c53378f82638d518a69dee44d480606d4e443faacc19aac628ffabf066f6c88107eaa8b55e3854d
@@ -23278,7 +23466,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"tapable@npm:^1.1.3":
+"tapable@npm:^1.0.0-beta.5, tapable@npm:^1.1.3":
   version: 1.1.3
   resolution: "tapable@npm:1.1.3"
   checksum: a2b041750f06874a9d83940869ba95e1390997910272769f605f56d549065549c5684cbadd533bc6e7461f3116661264afbcf8f54b946bb464d84308ea510fed
@@ -24868,8 +25056,8 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
     "@types/node": ^12.12.8
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.11"
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.11"
+    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
+    "@yarnpkg/pnpify": "workspace:2.0.0-rc.12"
     pnp-webpack-plugin: ^1.4.3
     ts-loader: ^5.3.3
     typescript: next
@@ -25050,7 +25238,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"webpack-sources@npm:^1.1.0, webpack-sources@npm:^1.3.0":
+"webpack-sources@npm:^1.0.1, webpack-sources@npm:^1.1.0, webpack-sources@npm:^1.3.0":
   version: 1.3.0
   resolution: "webpack-sources@npm:1.3.0"
   dependencies:
@@ -25499,6 +25687,20 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     imurmurhash: ^0.1.4
     signal-exit: ^3.0.2
   checksum: c5363263afb4097e1f95a2c6473981fcbb6471d92950fd258dfca66ae54c59b9be5fe897851363fb66ff085b06775d392865c8691668137d904ddd3194ad76e1
+  languageName: node
+  linkType: hard
+
+"write-json-file@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "write-json-file@npm:2.3.0"
+  dependencies:
+    detect-indent: ^5.0.0
+    graceful-fs: ^4.1.2
+    make-dir: ^1.0.0
+    pify: ^3.0.0
+    sort-keys: ^2.0.0
+    write-file-atomic: ^2.0.0
+  checksum: c167065e414118c7b0618493a823669ffdaa84ca71c579fa1d2b149495151ac0762ea79de9cb9d5f30552c7589fb807ebbc59fb7d9d4fa6d015cf20bea91337b
   languageName: node
   linkType: hard
 

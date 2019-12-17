@@ -118,7 +118,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           } catch (error) {
             throw logEntry.error = error;
           } finally {
-            console.error(logEntry);
+            console.trace(logEntry);
           }
         };
       } else if (level >= 1) {
@@ -128,7 +128,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           } catch (error) {
             const logEntry = makeLogEntry(name, args);
             logEntry.error = error;
-            console.error(logEntry);
+            console.trace(logEntry);
             throw error;
           }
         };
@@ -617,37 +617,11 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     }
   };
 
-  /**
-   * Note: this function is an extension provided under the `resolveVirtual`
-   * version keyword. Not all PnP implementation will have it.
-   */
-
-  const virtualMappers = runtimeState.virtualRoots.map(root => {
-    return new VirtualFS(root, {baseFs: NoFS.instance});
-  });
-
   function resolveVirtual(request: PortablePath) {
-    const initialRequest = ppath.normalize(request);
+    const normalized = ppath.normalize(request);
+    const resolved = VirtualFS.resolveVirtual(normalized);
 
-    let currentRequest = request;
-    let nextRequest = request;
-
-    do {
-      currentRequest = nextRequest;
-
-      for (const mapper of virtualMappers) {
-        nextRequest = mapper.mapToBase(nextRequest);
-        if (nextRequest !== currentRequest) {
-          break;
-        }
-      }
-    } while (nextRequest !== currentRequest);
-
-    if (currentRequest !== initialRequest) {
-      return currentRequest;
-    } else {
-      return null;
-    }
+    return resolved !== normalized ? resolved : null;
   }
 
   return {

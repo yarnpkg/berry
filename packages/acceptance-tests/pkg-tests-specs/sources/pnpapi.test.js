@@ -285,11 +285,12 @@ describe(`Plug'n'Play API`, () => {
           const virtualPath = await source(`require.resolve('peer-deps')`);
 
           // Sanity check: to ensure that the test actually tests something :)
-          expect(xfs.existsSync(virtualPath)).toEqual(false);
+          expect(virtualPath).toMatch(`${npath.sep}$$virtual${npath.sep}`);
 
           const physicalPath = await source(`require('pnpapi').resolveVirtual(require.resolve('peer-deps'))`);
 
           expect(typeof physicalPath).toEqual(`string`);
+          expect(physicalPath).not.toEqual(virtualPath);
           expect(xfs.existsSync(physicalPath)).toEqual(true);
         }),
       );

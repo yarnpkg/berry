@@ -47,7 +47,14 @@ export async function get(path: string, {configuration, headers, ident, authType
   if (auth)
     headers = {...headers, authorization: auth};
 
-  return await httpUtils.get(registry + path, {configuration, headers, ...rest});
+  let url;
+  try {
+    url = new URL(path);
+  } catch (e) {
+    url = new URL(registry + path);
+  }
+
+  return await httpUtils.get(url.href, {configuration, headers, ...rest});
 }
 
 export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options) {

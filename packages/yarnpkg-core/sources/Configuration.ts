@@ -23,12 +23,10 @@ import * as folderUtils                                        from './folderUti
 import * as miscUtils                                          from './miscUtils';
 import * as nodeUtils                                          from './nodeUtils';
 import * as structUtils                                        from './structUtils';
-import {IdentHash, Package, Descriptor}                        from './types';
+import {IdentHash, Package}                                    from './types';
 
 // @ts-ignore
 const ctx: any = new chalk.constructor({enabled: true});
-
-const TAG_REGEXP = /^[a-z]+$/;
 
 const IGNORED_ENV_VARIABLES = new Set([
   // "binFolder" is the magic location where the parent process stored the
@@ -162,9 +160,9 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: `./.yarn/cache`,
   },
   virtualFolder: {
-    description: `Folder where the virtual packages (cf doc) will be mapped on the disk`,
+    description: `Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual)`,
     type: SettingsType.ABSOLUTE_PATH,
-    default: `./.yarn/virtual`,
+    default: `./.yarn/$$virtual`,
   },
   bstatePath: {
     description: `Path of the file where the current state of the built packages must be stored`,
@@ -930,16 +928,6 @@ export class Configuration {
           pkg.peerDependenciesMeta = new Map([...pkg.peerDependenciesMeta, ...extension.peerDependenciesMeta]);
         },
       });
-    }
-  }
-
-  normalizeDescriptor(original: Descriptor) {
-    const defaultProtocol = this.get<string>(`defaultProtocol`);
-
-    if (semver.validRange(original.range) || TAG_REGEXP.test(original.range)) {
-      return structUtils.makeDescriptor(original, `${defaultProtocol}${original.range}`);
-    } else {
-      return original;
     }
   }
 

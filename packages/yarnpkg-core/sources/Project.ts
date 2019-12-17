@@ -74,8 +74,8 @@ export class Project {
   public storedPackages: Map<LocatorHash, Package> = new Map();
   public storedChecksums: Map<LocatorHash, string> = new Map();
 
+  public accessibleLocators: Set<LocatorHash> = new Set();
   public originalPackages: Map<LocatorHash, Package> = new Map();
-
   public optionalBuilds: Set<LocatorHash> = new Set();
 
   static async find(configuration: Configuration, startingCwd: PortablePath): Promise<{project: Project, workspace: Workspace | null, locator: Locator}> {
@@ -698,11 +698,13 @@ export class Project {
 
     const volatileDescriptors = new Set(this.resolutionAliases.values());
     const optionalBuilds = new Set(allPackages.keys());
+    const accessibleLocators = new Set<LocatorHash>();
 
     applyVirtualResolutionMutations({
       project: this,
       report: opts.report,
 
+      accessibleLocators,
       volatileDescriptors,
       optionalBuilds,
 
@@ -737,8 +739,8 @@ export class Project {
     this.storedDescriptors = allDescriptors;
     this.storedPackages = allPackages;
 
+    this.accessibleLocators = accessibleLocators;
     this.originalPackages = originalPackages;
-
     this.optionalBuilds = optionalBuilds;
   }
 
@@ -810,19 +812,12 @@ export class Project {
     const packageLocations: Map<LocatorHash, PortablePath> = new Map();
     const packageBuildDirectives: Map<LocatorHash, BuildDirective[]> = new Map();
 
-    // We can skip installing packages that have been split into virtual
-    // packages, except for our workspaces (because they also exist by
-    // themselves, outside of the typical dependency considerations)
-    const skipPackageLink = (pkg: Package) =>
-      pkg.peerDependencies.size > 0 &&
-      !structUtils.isVirtualLocator(pkg) &&
-      !this.tryWorkspaceByLocator(pkg);
-
     // Step 1: Installing the packages on the disk
 
-    for (const pkg of this.storedPackages.values()) {
-      if (skipPackageLink(pkg))
-        continue;
+    for (const locatorHash of this.accessibleLocators) {
+      const pkg = this.storedPackages.get(locatorHash);
+      if (!pkg)
+        throw new Error(`Assertion failed: The locator should have been registered`);
 
       const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
       if (!linker)
@@ -855,9 +850,10 @@ export class Project {
 
     const externalDependents: Map<LocatorHash, Array<PortablePath>> = new Map();
 
-    for (const pkg of this.storedPackages.values()) {
-      if (skipPackageLink(pkg))
-        continue;
+    for (const locatorHash of this.accessibleLocators) {
+      const pkg = this.storedPackages.get(locatorHash);
+      if (!pkg)
+        throw new Error(`Assertion failed: The locator should have been registered`);
 
       const packageLinker = packageLinkers.get(pkg.locatorHash);
       if (!packageLinker)
@@ -1307,6 +1303,7 @@ function applyVirtualResolutionMutations({
   allResolutions,
   allPackages,
 
+  accessibleLocators = new Set(),
   optionalBuilds = new Set(),
   volatileDescriptors = new Set(),
 
@@ -1320,6 +1317,7 @@ function applyVirtualResolutionMutations({
   allResolutions: Map<DescriptorHash, LocatorHash>,
   allPackages: Map<LocatorHash, Package>,
 
+  accessibleLocators?: Set<LocatorHash>,
   optionalBuilds?: Set<LocatorHash>,
   volatileDescriptors?: Set<DescriptorHash>,
 
@@ -1327,7 +1325,6 @@ function applyVirtualResolutionMutations({
 
   tolerateMissingPackages?: boolean,
 }) {
-  const hasBeenTraversed = new Set();
   const resolutionStack: Array<Locator> = [];
 
   // We'll be keeping track of all virtual descriptors; once they have all
@@ -1392,10 +1389,10 @@ function applyVirtualResolutionMutations({
   };
 
   const resolvePeerDependenciesImpl = (parentLocator: Locator, first: boolean, optional: boolean) => {
-    if (hasBeenTraversed.has(parentLocator.locatorHash))
+    if (accessibleLocators.has(parentLocator.locatorHash))
       return;
 
-    hasBeenTraversed.add(parentLocator.locatorHash);
+    accessibleLocators.add(parentLocator.locatorHash);
 
     if (!optional)
       optionalBuilds.delete(parentLocator.locatorHash);
@@ -1505,6 +1502,11 @@ function applyVirtualResolutionMutations({
             allResolutions.set(peerDescriptor.descriptorHash, parentLocator.locatorHash);
 
             volatileDescriptors.delete(peerDescriptor.descriptorHash);
+          }
+
+          if (!peerDescriptor && virtualizedPackage.dependencies.has(peerRequest.identHash)) {
+            virtualizedPackage.peerDependencies.delete(peerRequest.identHash);
+            continue;
           }
 
           if (!peerDescriptor) {
@@ -1657,6 +1659,8 @@ function applyVirtualResolutionMutations({
 
           allVirtualizedDescriptorsDependents.delete(duplicateDescriptor.descriptorHash);
           virtualDescriptors.delete(duplicateDescriptor);
+
+          accessibleLocators.delete(duplicateVirtualPackage.locatorHash);
         }
       }
     }
