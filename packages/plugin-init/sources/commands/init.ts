@@ -112,8 +112,12 @@ export default class InitCommand extends BaseCommand {
     const inspectable: any = {};
     manifest.exportTo(inspectable);
 
+    inspect.styles.name = `cyan`;
+
     this.context.stdout.write(`${inspect(inspectable, {
       depth: Infinity,
+      colors: true,
+      compact: false,
     })}\n`);
   }
 }
