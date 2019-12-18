@@ -1,4 +1,4 @@
-import {miscUtils, structUtils, Ident, DependencyMeta}                          from '@yarnpkg/core';
+import {miscUtils, structUtils, Ident, DependencyMeta, Report}                  from '@yarnpkg/core';
 import {FetchResult, Descriptor, Locator, Package, BuildType}                   from '@yarnpkg/core';
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType} from '@yarnpkg/core';
 import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS, CwdFS}   from '@yarnpkg/fslib';
@@ -233,7 +233,7 @@ class NodeModulesInstaller implements Installer {
       pnpifyFs: false,
     });
     const locatorMap = buildLocatorMap(rootPath, nmTree);
-    await persistNodeModules(rootPath, prevLocatorMap, locatorMap, baseFs);
+    await persistNodeModules(rootPath, prevLocatorMap, locatorMap, baseFs, this.opts.report);
     const endTime = Date.now();
     console.log(`Persist time: ${endTime - startTime}ms`);
   }
@@ -373,9 +373,9 @@ const readLocatorState = async (locatorStatePath: PortablePath): Promise<NodeMod
   return locatorMap;
 };
 
-const fastRemove = async (dir: PortablePath, innerLoop?: boolean): Promise<any> => {
+const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean, excludeNodeModules?: boolean}): Promise<any> => {
   try {
-    if (!innerLoop) {
+    if (options && !options.innerLoop) {
       const stats = xfs.lstatSync(dir);
       if (!stats.isDirectory()) {
         xfs.unlinkSync(dir);
@@ -387,7 +387,9 @@ const fastRemove = async (dir: PortablePath, innerLoop?: boolean): Promise<any> 
     for (const entry of entries) {
       const targetPath = ppath.join(dir, toFilename(entry.name));
       if (entry.isDirectory()) {
-        queue.push(fastRemove(targetPath, true));
+        if (entry.name !== NODE_MODULES || !options || !options.excludeNodeModules) {
+          queue.push(removeDir(targetPath, {innerLoop: true}));
+        }
       } else {
         queue.push(xfs.unlinkPromise(targetPath));
       }
@@ -402,10 +404,10 @@ const fastRemove = async (dir: PortablePath, innerLoop?: boolean): Promise<any> 
   }
 };
 
-const ADD_CONCURRENT_LIMIT = 8;
+const ADD_CONCURRENT_LIMIT = 2;
 
 type LocatorKey = string;
-type LocationNode = Map<Filename, LocationNode> | LocatorKey;
+type LocationNode = { children: Map<Filename, LocationNode>, locator?: LocatorKey };
 type LocationRoot = PortablePath;
 
 /**
@@ -414,16 +416,26 @@ type LocationRoot = PortablePath;
  *
  * Example:
  *  Map {
- *   '' => Map {
- *     'react-hooks' => Map {
- *       'node_modules' => Map {
- *         '@apollo' => Map {
- *           'react-common' => '@apollo/react-common:virtual:177a6d6446ef9024f7f485d3d4ffe8dd220638941c4a952fb7a8ee9f20257f948e4c490221dab4eec623c9ec44e6337d4dbff8e330d459b4b5324002e8f08504#npm:3.1.3'
+ *   '' => children: Map {
+ *     'react-apollo' => {
+ *       children: Map {
+ *         'node_modules' => {
+ *           children: Map {
+ *             '@apollo' => {
+ *               children: Map {
+ *                 'react-hooks' => {
+ *                   children: Map {},
+ *                   locator: '@apollo/react-hooks:virtual:cf51d203f9119859b7628364a64433e4a73a44a577d2ffd0dfd5dd737a980bc6cddc70ed15c1faf959fc2ad6a8e103ce52fe188f2b175b5f4371d4381544d74e#npm:3.1.3'
+ *                 }
+ *               }
+ *             }
+ *           }
  *         }
- *       }
- *     }
+ *       },
+ *       locator: 'react-apollo:virtual:2499dbb93d824027565d71b0716c4fb8b548ad61955d0a0286bfb3c5b4058e227894b6691d96808c00f576db14870018375210362c26ee321ea99fd6ed041c74#npm:3.1.3'
+ *     },
  *   },
- *   'packages/client' => Map {
+ *   'packages/client' => children: Map {
  *     'node_modules' => Map {
  *       ...
  *     }
@@ -449,16 +461,21 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap): LocationTree => {
       const {locationRoot, segments} = parseLocation(location);
       let node = locationTree.get(locationRoot);
       if (!node) {
-        node = new Map();
+        node = { children: new Map() };
         locationTree.set(locationRoot, node);
       }
       for (let idx = 0; idx < segments.length; idx++) {
         const segment = segments[idx];
-        const nextNode = node.get(segment);
+        const nextNode = node.children.get(segment);
         if (!nextNode) {
-          const newNode = idx < segments.length - 1 ? new Map() : locator;
-          node.set(segment, newNode);
+          const newNode: LocationNode = { children: new Map() };
+          node.children.set(segment, newNode);
           node = newNode;
+        } else {
+          node = nextNode;
+        }
+        if (idx === segments.length - 1) {
+          node.locator = locator;
         }
       }
     }
@@ -467,7 +484,7 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap): LocationTree => {
   return locationTree;
 }
 
-const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeModulesLocatorMap, locatorMap: NodeModulesLocatorMap, baseFs: FakeFS<PortablePath>) => {
+const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeModulesLocatorMap, locatorMap: NodeModulesLocatorMap, baseFs: FakeFS<PortablePath>, report: Report) => {
   const rootNmDirPath = ppath.join(rootPath, NODE_MODULES);
   const locatorStatePath = ppath.join(rootNmDirPath, LOCATOR_STATE_FILE);
 
@@ -475,10 +492,10 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
   const locationTree = buildLocationTree(locatorMap);
 
   const addQueue: Promise<any>[] = [];
-  const addModule = async (srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType) => {
+  const addModule = async ({srcDir, dstDir, linkType, keepNodeModules}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, keepNodeModules: boolean}) => {
     const promise: Promise<any> = (async () => {
       try {
-        await fastRemove(dstDir);
+        await removeDir(dstDir, {excludeNodeModules: keepNodeModules});
         if (linkType === LinkType.SOFT) {
           xfs.mkdirpSync(ppath.dirname(dstDir));
           xfs.symlinkSync(srcDir, dstDir);
@@ -488,6 +505,8 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
       } catch (e) {
         e.message = `While persisting ${srcDir} -> ${dstDir} ` + e.message;
         throw e;
+      } finally {
+        progress.tick();
       }
     })().then(() => addQueue.splice(addQueue.indexOf(promise), 1));
     addQueue.push(promise);
@@ -500,7 +519,7 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
   const deleteModule = (dstDir: PortablePath) => {
     const promise = (async () => {
       try {
-        await fastRemove(dstDir);
+        await removeDir(dstDir);
       } catch (e) {
         e.message = `While persisting ${dstDir} ` + e.message;
         throw e;
@@ -509,28 +528,33 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
     deleteQueue.push(promise);
   };
 
+
   // Delete locations that no longer exist
+  const deleteList: PortablePath[] = [];
   for (const {locations} of prevLocatorMap.values()) {
     for (const location of locations) {
       const {locationRoot, segments} = parseLocation(location);
       let node = locationTree.get(locationRoot);
       let curLocation = locationRoot;
       if (!node) {
-        deleteModule(ppath.join(rootPath, curLocation));
+        deleteList.push(ppath.join(rootPath, curLocation));
       } else {
         for (const segment of segments) {
           curLocation = ppath.join(curLocation, segment);
-          node = (node as Map<Filename, LocationNode>).get(segment);
+          node = node.children.get(segment);
           if (!node) {
-            deleteModule(ppath.join(rootPath, curLocation));
+            deleteList.push(ppath.join(rootPath, curLocation));
             break;
           }
         }
       }
     }
   }
+  for (const dstDir of deleteList)
+    deleteModule(dstDir);
 
   // Update changed locations
+  const addList: Array<{srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, keepNodeModules: boolean}> = [];
   for (const [prevLocator, {locations}] of prevLocatorMap.entries()) {
     for (const location of locations) {
       const {locationRoot, segments} = parseLocation(location);
@@ -539,16 +563,18 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
       if (node) {
         for (const segment of segments) {
           curLocation = ppath.join(curLocation, segment);
-          node = (node as Map<Filename, LocationNode>).get(segment);
+          node = node.children.get(segment);
           if (!node) {
             break;
           }
         }
-        if (node && node !== prevLocator) {
-          const info = locatorMap.get(node as string)!;
+        if (node && node.locator !== prevLocator) {
+          const info = locatorMap.get(node.locator!)!;
           const srcDir = info.target;
           const dstDir = ppath.join(rootPath, curLocation);
-          await addModule(srcDir, dstDir, info.linkType);
+          const linkType = info.linkType;
+          const keepNodeModules = node.children.size > 0;
+          addList.push({srcDir, dstDir, linkType, keepNodeModules});
         }
       }
     }
@@ -558,26 +584,36 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
   for (const [locator, {locations}] of locatorMap.entries()) {
     for (const location of locations) {
       const {locationRoot, segments} = parseLocation(location);
-      let node = prevLocationTree.get(locationRoot);
+      let prevTreeNode = prevLocationTree.get(locationRoot);
+      let node = locationTree.get(locationRoot);
       let curLocation = locationRoot;
 
       const info = locatorMap.get(locator)!;
       const srcDir = info.target;
       const dstDir = ppath.join(rootPath, location);
+      const linkType = info.linkType;
 
-      if (!node) {
-        await addModule(srcDir, dstDir, info.linkType);
+      if (!prevTreeNode) {
+        addList.push({srcDir, dstDir, linkType, keepNodeModules: false});
       } else {
         for (const segment of segments) {
           curLocation = ppath.join(curLocation, segment);
-          node = (node as Map<Filename, LocationNode>).get(segment);
-          if (!node) {
-            await addModule(srcDir, dstDir, info.linkType);
+          prevTreeNode = prevTreeNode.children.get(segment);
+          node = node!.children.get(segment);
+          if (!prevTreeNode) {
+            addList.push({srcDir, dstDir, linkType, keepNodeModules: node!.children.size > 0});
             break;
           }
         }
       }
     }
+  }
+
+  const progress = Report.progressViaCounter(addList.length);
+  report.reportProgress(progress);
+
+  for (const entry of addList) {
+    await addModule({...entry});
   }
 
   await Promise.all([addQueue, deleteQueue].map(queue => Promise.all(queue)));
