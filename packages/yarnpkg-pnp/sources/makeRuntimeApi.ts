@@ -1,5 +1,5 @@
 import {npath, PortablePath}     from '@yarnpkg/fslib';
-import {FakeFS, NodeFS}          from '@yarnpkg/fslib';
+import {FakeFS}                  from '@yarnpkg/fslib';
 
 import {generateSerializedState} from './generateSerializedState';
 import {hydrateRuntimeState}     from './loader/hydrateRuntimeState';

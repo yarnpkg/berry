@@ -1,8 +1,8 @@
+import {miscUtils, structUtils, Ident, DependencyMeta}                          from '@yarnpkg/core';
+import {FetchResult, Descriptor, Locator, Package, BuildType}                   from '@yarnpkg/core';
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType} from '@yarnpkg/core';
-import {FetchResult, Descriptor, Locator, Package, BuildDirective, BuildType}   from '@yarnpkg/core';
-import {miscUtils, structUtils, Ident, DependencyMeta, MessageName}             from '@yarnpkg/core';
-import {NodeFS, VirtualFS, ZipOpenFS}                                           from '@yarnpkg/fslib';
 import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS, CwdFS}   from '@yarnpkg/fslib';
+import {NodeFS, VirtualFS, ZipOpenFS}                                           from '@yarnpkg/fslib';
 import {parseSyml}                                                              from '@yarnpkg/parsers';
 import {NodeModulesLocatorMap, buildLocatorMap, buildNodeModulesTree}           from '@yarnpkg/pnpify';
 import {PackageRegistry, makeRuntimeApi}                                        from '@yarnpkg/pnp';
@@ -21,6 +21,9 @@ const FORCED_UNPLUG_PACKAGES = new Set([
   // Those ones contain native builds (*.node), and Node loads them through dlopen
   structUtils.makeIdent(null, `fsevents`).identHash,
 ]);
+
+const NODE_MODULES = toFilename('node_modules');
+const LOCATOR_STATE_FILE = toFilename('.yarn-state.yml');
 
 export class NodeModulesLinker implements Linker {
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
@@ -82,33 +85,34 @@ class NodeModulesInstaller implements Installer {
     const key1 = structUtils.requirableIdent(pkg);
     const key2 = pkg.reference;
 
-    const buildScripts = await this.getBuildScripts(fetchResult);
+    // const buildScripts = await this.getBuildScripts(fetchResult);
 
-    if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`)) {
-      this.opts.report.reportWarningOnce(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but all build scripts have been disabled.`);
-      buildScripts.length = 0;
-    }
+    // if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`)) {
+    //   this.opts.report.reportWarningOnce(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but all build scripts have been disabled.`);
+    //   buildScripts.length = 0;
+    // }
 
-    if (buildScripts.length > 0 && pkg.linkType !== LinkType.HARD && !this.opts.project.tryWorkspaceByLocator(pkg)) {
-      this.opts.report.reportWarningOnce(MessageName.SOFT_LINK_BUILD, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but is referenced through a soft link. Soft links don't support build scripts, so they'll be ignored.`);
-      buildScripts.length = 0;
-    }
+    // if (buildScripts.length > 0 && pkg.linkType !== LinkType.HARD && !this.opts.project.tryWorkspaceByLocator(pkg)) {
+    //   this.opts.report.reportWarningOnce(MessageName.SOFT_LINK_BUILD, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but is referenced through a soft link. Soft links don't support build scripts, so they'll be ignored.`);
+    //   buildScripts.length = 0;
+    // }
 
-    const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
+    // const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
 
-    if (buildScripts.length > 0 && dependencyMeta && dependencyMeta.built === false) {
-      this.opts.report.reportInfoOnce(MessageName.BUILD_DISABLED, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but its build has been explicitly disabled through configuration.`);
-      buildScripts.length = 0;
-    }
+    // if (buildScripts.length > 0 && dependencyMeta && dependencyMeta.built === false) {
+    //   this.opts.report.reportInfoOnce(MessageName.BUILD_DISABLED, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but its build has been explicitly disabled through configuration.`);
+    //   buildScripts.length = 0;
+    // }
 
-    const hasVirtualInstances =
-      pkg.peerDependencies.size > 0 &&
-      !structUtils.isVirtualLocator(pkg) &&
-      !this.opts.project.tryWorkspaceByLocator(pkg);
+    // const hasVirtualInstances =
+    //   pkg.peerDependencies.size > 0 &&
+    //   !structUtils.isVirtualLocator(pkg) &&
+    //   !this.opts.project.tryWorkspaceByLocator(pkg);
 
-    const packageFs = !hasVirtualInstances && pkg.linkType !== LinkType.SOFT && (buildScripts.length > 0 || this.isUnplugged(pkg, dependencyMeta))
-      ? await this.unplugPackage(pkg, fetchResult.packageFs)
-      : fetchResult.packageFs;
+    // const packageFs = !hasVirtualInstances && pkg.linkType !== LinkType.SOFT && (buildScripts.length > 0 || this.isUnplugged(pkg, dependencyMeta))
+    //   ? await this.unplugPackage(pkg, fetchResult.packageFs)
+    //   : fetchResult.packageFs;
+    const packageFs = fetchResult.packageFs;
 
     const packageRawLocation = ppath.resolve(packageFs.getRealPath(), ppath.relative(PortablePath.root, fetchResult.prefixPath));
 
@@ -124,12 +128,15 @@ class NodeModulesInstaller implements Installer {
     const packageStore = this.getPackageStore(key1);
     packageStore.set(key2, {packageLocation, packageDependencies, packagePeers, linkType: pkg.linkType});
 
-    if (hasVirtualInstances)
-      this.blacklistedPaths.add(packageLocation);
+    // if (hasVirtualInstances)
+    //   this.blacklistedPaths.add(packageLocation);
 
+    // return {
+    //   packageLocation,
+    //   buildDirective: buildScripts.length > 0 ? buildScripts as BuildDirective[] : null,
+    // };
     return {
       packageLocation,
-      buildDirective: buildScripts.length > 0 ? buildScripts as BuildDirective[] : null,
     };
   }
 
@@ -154,6 +161,7 @@ class NodeModulesInstaller implements Installer {
   }
 
   async finalizeInstall() {
+    const startTime = Date.now();
     if (this.opts.project.configuration.get('nodeLinker') !== 'node-modules')
       return;
 
@@ -211,9 +219,23 @@ class NodeModulesInstaller implements Installer {
     const defaultFsLayer: FakeFS<PortablePath> = new VirtualFS({baseFs});
 
     const rootPath = this.opts.project.cwd;
+    let prevLocatorMap: NodeModulesLocatorMap;
+    try {
+      prevLocatorMap = await readLocatorState(ppath.join(rootPath, NODE_MODULES, LOCATOR_STATE_FILE));
+    } catch (e) {
+      prevLocatorMap = new Map();
+    }
+
     const pnp = makeRuntimeApi(pnpSettings, rootPath, defaultFsLayer);
-    const locatorMap = buildLocatorMap(rootPath, buildNodeModulesTree(pnp, {optimizeSizeOnDisk: true, pnpifyFs: false}));
-    await persistNodeModules(rootPath, locatorMap);
+    const nmTree = buildNodeModulesTree(pnp, {
+      optimizeSizeOnDisk: true,
+      knownLocatorWeights: new Map(Array.from(prevLocatorMap).map(([key, val]) => [key, val.size])),
+      pnpifyFs: false,
+    });
+    const locatorMap = buildLocatorMap(rootPath, nmTree);
+    await persistNodeModules(rootPath, prevLocatorMap, locatorMap, baseFs);
+    const endTime = Date.now();
+    console.log(`Persist time: ${endTime - startTime}ms`);
   }
 
   private getPackageStore(key: string) {
@@ -341,7 +363,7 @@ const readLocatorState = async (locatorStatePath: PortablePath): Promise<NodeMod
   delete locatorState.__metadata;
   for (const [key, val] of Object.entries(locatorState)) {
     locatorMap.set(key, {
-      size: val.size,
+      size: +val.size,
       target: PortablePath.dot,
       linkType: LinkType.HARD,
       locations: new Set(val.locations),
@@ -351,79 +373,214 @@ const readLocatorState = async (locatorStatePath: PortablePath): Promise<NodeMod
   return locatorMap;
 };
 
-interface LocationNode
-{
-  parentNode: LocationNode | null;
-  entries: Map<Filename, LocationNode>;
+const fastRemove = async (dir: PortablePath, innerLoop?: boolean): Promise<any> => {
+  try {
+    if (!innerLoop) {
+      const stats = xfs.lstatSync(dir);
+      if (!stats.isDirectory()) {
+        xfs.unlinkSync(dir);
+        return;
+      }
+    }
+    const queue: Array<Promise<any>> = [];
+    const entries = xfs.readdirSync(dir, {withFileTypes: true});
+    for (const entry of entries) {
+      const targetPath = ppath.join(dir, toFilename(entry.name));
+      if (entry.isDirectory()) {
+        queue.push(fastRemove(targetPath, true));
+      } else {
+        queue.push(xfs.unlinkPromise(targetPath));
+      }
+    }
+    return Promise.all(queue).then(() => {
+      xfs.removeSync(dir);
+    });
+  } catch (e) {
+    if (e.code !== 'ENOENT') {
+      throw e;
+    }
+  }
+};
+
+const ADD_CONCURRENT_LIMIT = 1;
+
+type LocatorKey = string;
+type LocationNode = Map<Filename, LocationNode> | LocatorKey;
+type LocationRoot = PortablePath;
+
+/**
+ * Locations tree. It starts with the map of location roots and continues as maps
+ * of nested directory entries.
+ *
+ * Example:
+ *  Map {
+ *   '' => Map {
+ *     'react-hooks' => Map {
+ *       'node_modules' => Map {
+ *         '@apollo' => Map {
+ *           'react-common' => '@apollo/react-common:virtual:177a6d6446ef9024f7f485d3d4ffe8dd220638941c4a952fb7a8ee9f20257f948e4c490221dab4eec623c9ec44e6337d4dbff8e330d459b4b5324002e8f08504#npm:3.1.3'
+ *         }
+ *       }
+ *     }
+ *   },
+ *   'packages/client' => Map {
+ *     'node_modules' => Map {
+ *       ...
+ *     }
+ *   }
+ *   ...
+ * }
+ */
+type LocationTree = Map<LocationRoot, LocationNode>
+
+const parseLocation = (location: PortablePath): {locationRoot: PortablePath, segments: Filename[]} => {
+  const allSegments = location.split(ppath.sep);
+  const nmIndex = allSegments.indexOf(NODE_MODULES);
+  const locationRoot: LocationRoot = npath.toPortablePath(allSegments.slice(0, nmIndex + 1).join(ppath.sep));
+  const segments = allSegments.slice(nmIndex + 1).map(x => toFilename(x));
+  return {locationRoot, segments};
 }
 
-const persistNodeModules = async (rootPath: PortablePath, locatorMap: NodeModulesLocatorMap) => {
-  const NODE_MODULES = toFilename('node_modules');
-  const LOCATOR_STATE_FILE = toFilename('.yarn-state.yml');
+const buildLocationTree = (locatorMap: NodeModulesLocatorMap): LocationTree => {
+  const locationTree = new Map();
 
-  const rootNmDirPath = ppath.join(rootPath, NODE_MODULES);
-  const locatorStatePath = ppath.join(rootNmDirPath, LOCATOR_STATE_FILE);
-
-  let prevLocatorMap: NodeModulesLocatorMap;
-  try {
-    prevLocatorMap = await readLocatorState(locatorStatePath);
-  } catch (e) {
-    prevLocatorMap = new Map();
-  }
-
-  const locationTree: LocationNode = {parentNode: null, entries: new Map()};
-  for (const val of prevLocatorMap.values()) {
-    for (const location of val.locations) {
-      const segments = location.split(ppath.sep).map(x => toFilename(x));
-      let node = locationTree;
-      for (const segment of segments) {
-        let childNode = node.entries.get(segment);
-        if (!childNode) {
-          childNode = {parentNode: node, entries: new Map()};
-          node.entries.set(segment, childNode);
+  for (const [locator, info] of locatorMap.entries()) {
+    for (const location of info.locations) {
+      const {locationRoot, segments} = parseLocation(location);
+      let node = locationTree.get(locationRoot);
+      if (!node) {
+        node = new Map();
+        locationTree.set(locationRoot, node);
+      }
+      for (let idx = 0; idx < segments.length; idx++) {
+        const segment = segments[idx];
+        const nextNode = node.get(segment);
+        if (!nextNode) {
+          const newNode = idx < segments.length - 1 ? new Map() : locator;
+          node.set(segment, newNode);
+          node = newNode;
         }
-        node = childNode;
       }
     }
   }
 
-  // Delete old locations
-  for (const [key, val] of prevLocatorMap.entries()) {
-    const newVal = locatorMap.get(key);
-    const locations = newVal ? newVal.locations : new Set();
-    for (const location of val.locations) {
-      if (!locations.has(location)) {
-        const segments = location.split(ppath.sep).map(x => toFilename(x));
-        let node = locationTree;
-        for (const segment of segments.slice(0, -1))
-          node = node.entries.get(segment)!;
+  return locationTree;
+}
 
-        let segCount = segments.length;
-        while (node.parentNode !== null && node.entries.size === 1) {
-          node = node.parentNode;
-          segCount--;
+const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeModulesLocatorMap, locatorMap: NodeModulesLocatorMap, baseFs: FakeFS<PortablePath>) => {
+  const rootNmDirPath = ppath.join(rootPath, NODE_MODULES);
+  const locatorStatePath = ppath.join(rootNmDirPath, LOCATOR_STATE_FILE);
+
+  const prevLocationTree = buildLocationTree(prevLocatorMap);
+  const locationTree = buildLocationTree(locatorMap);
+
+  const addQueue: Promise<any>[] = [];
+  const addModule = async (srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType) => {
+    const promise: Promise<any> = (async () => {
+      try {
+        await fastRemove(dstDir);
+        if (linkType === LinkType.SOFT) {
+          xfs.mkdirpSync(ppath.dirname(dstDir));
+          xfs.symlinkSync(srcDir, dstDir);
+        } else {
+          xfs.copySync(dstDir, srcDir, {baseFs});
         }
-        node.entries.delete(segments[segCount - 1]);
-        xfs.removeSync(ppath.join(rootPath, ...segments.slice(0, segCount)));
+      } catch (e) {
+        e.message = `While persisting ${srcDir} -> ${dstDir} ` + e.message;
+        throw e;
+      }
+    })().then(() => addQueue.splice(addQueue.indexOf(promise), 1));
+    addQueue.push(promise);
+    if (addQueue.length > ADD_CONCURRENT_LIMIT) {
+      await Promise.race(addQueue);
+    }
+  };
+
+  const deleteQueue: Promise<any>[] = [];
+  const deleteModule = (dstDir: PortablePath) => {
+    const promise = (async () => {
+      try {
+        await fastRemove(dstDir);
+      } catch (e) {
+        e.message = `While persisting ${dstDir} ` + e.message;
+        throw e;
+      }
+    })();
+    deleteQueue.push(promise);
+  };
+
+  // Delete locations that no longer exist
+  for (const {locations} of prevLocatorMap.values()) {
+    for (const location of locations) {
+      const {locationRoot, segments} = parseLocation(location);
+      let node = locationTree.get(locationRoot);
+      let curLocation = locationRoot;
+      if (!node) {
+        deleteModule(ppath.join(rootPath, curLocation));
+      } else {
+        for (const segment of segments) {
+          curLocation = ppath.join(curLocation, segment);
+          node = (node as Map<Filename, LocationNode>).get(segment);
+          if (!node) {
+            deleteModule(ppath.join(rootPath, curLocation));
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  // Update changed locations
+  for (const [prevLocator, {locations}] of prevLocatorMap.entries()) {
+    for (const location of locations) {
+      const {locationRoot, segments} = parseLocation(location);
+      let node = locationTree.get(locationRoot);
+      let curLocation = locationRoot;
+      if (node) {
+        for (const segment of segments) {
+          curLocation = ppath.join(curLocation, segment);
+          node = (node as Map<Filename, LocationNode>).get(segment);
+          if (!node) {
+            break;
+          }
+        }
+        if (node && node !== prevLocator) {
+          const info = locatorMap.get(node as string)!;
+          const srcDir = info.target;
+          const dstDir = ppath.join(rootPath, curLocation);
+          await addModule(srcDir, dstDir, info.linkType);
+        }
       }
     }
   }
 
   // Add new locations
-  for (const [key, val] of locatorMap.entries()) {
-    const prevVal = prevLocatorMap.get(key);
-    const prevLocations = prevVal ? prevVal.locations : new Set();
+  for (const [locator, {locations}] of locatorMap.entries()) {
+    for (const location of locations) {
+      const {locationRoot, segments} = parseLocation(location);
+      let node = prevLocationTree.get(locationRoot);
+      let curLocation = locationRoot;
 
-    for (const location of val.locations) {
-      if (!prevLocations.has(location)) {
-        const srcDir = val.target;
-        const dstDir = ppath.join(rootPath, location);
+      const info = locatorMap.get(locator)!;
+      const srcDir = info.target;
+      const dstDir = ppath.join(rootPath, location);
 
-        xfs.removeSync(dstDir);
-        xfs.copySync(dstDir, srcDir);
+      if (!node) {
+        await addModule(srcDir, dstDir, info.linkType);
+      } else {
+        for (const segment of segments) {
+          curLocation = ppath.join(curLocation, segment);
+          node = (node as Map<Filename, LocationNode>).get(segment);
+          if (!node) {
+            await addModule(srcDir, dstDir, info.linkType);
+            break;
+          }
+        }
       }
     }
   }
+
+  await Promise.all([addQueue, deleteQueue].map(queue => Promise.all(queue)));
 
   xfs.mkdirpSync(rootNmDirPath);
   await writeLocatorState(locatorStatePath, locatorMap);

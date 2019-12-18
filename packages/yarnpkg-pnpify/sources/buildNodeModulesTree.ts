@@ -23,6 +23,7 @@ export type NodeModulesTree = Map<PortablePath, {dirList: Set<Filename>} | {dirL
 export interface NodeModulesTreeOptions {
   optimizeSizeOnDisk?: boolean;
   pnpifyFs?: boolean;
+  knownLocatorWeights?: Map<LocatorKey, number>;
 }
 
 /** node_modules path segment */
@@ -131,7 +132,8 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
     const newPkgId = lastPkgId++;
     const packagePath = npath.toPortablePath(pkg.packageLocation);
-    const weight = getPackageWeight(packagePath, options);
+    const knownWeight = options.knownLocatorWeights ? options.knownLocatorWeights.get(locatorKey) : null;
+    const weight = knownWeight || getPackageWeight(packagePath, options);
 
     locatorToPackageMap.set(locatorKey, newPkgId);
     locators.push(locator);
