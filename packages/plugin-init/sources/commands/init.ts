@@ -114,6 +114,7 @@ export default class InitCommand extends BaseCommand {
 
     this.context.stdout.write(`${inspect(inspectable, {
       depth: Infinity,
+      compact: false,
     })}\n`);
   }
 }
