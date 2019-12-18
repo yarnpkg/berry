@@ -402,7 +402,7 @@ const fastRemove = async (dir: PortablePath, innerLoop?: boolean): Promise<any> 
   }
 };
 
-const ADD_CONCURRENT_LIMIT = 1;
+const ADD_CONCURRENT_LIMIT = 8;
 
 type LocatorKey = string;
 type LocationNode = Map<Filename, LocationNode> | LocatorKey;
