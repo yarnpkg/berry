@@ -1,0 +1,40 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-nyc-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E NYC'
+jobs:
+  chore:
+    name: 'Validating NYC'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+        yarn init
+
+        yarn add nyc@^15.0.0-beta.1 object-assign@4.1.1
+
+        printf '"use strict";\nmodule.exports = require("object-assign");\n' > index.js
+        printf 'const objectAssign = require("./index.js");\nconsole.log(typeof objectAssign);\n' > test.js
+
+        yarn nyc node test.js

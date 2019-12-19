@@ -533,14 +533,14 @@ export class Manifest {
     else
       delete data.languageName;
 
-    if (this.bin.size === 0) {
-      data.bin = undefined;
-    } else if (this.bin.size === 1 && this.name !== null && this.bin.has(this.name.name)) {
+    if (this.bin.size === 1 && this.name !== null && this.bin.has(this.name.name)) {
       data.bin = this.bin.get(this.name.name)!;
-    } else {
+    } else if (this.bin.size > 0) {
       data.bin = Object.assign({}, ...Array.from(this.bin.keys()).sort().map(name => {
         return {[name]: this.bin.get(name)};
       }));
+    } else {
+      delete data.bin;
     }
 
     const regularDependencies = [];
@@ -566,21 +566,37 @@ export class Manifest {
       }
     }
 
-    data.dependencies = regularDependencies.length === 0 ? undefined : Object.assign({}, ...structUtils.sortDescriptors(regularDependencies).map(dependency => {
-      return {[structUtils.stringifyIdent(dependency)]: dependency.range};
-    }));
+    if (regularDependencies.length > 0) {
+      data.dependencies = Object.assign({}, ...structUtils.sortDescriptors(regularDependencies).map(dependency => {
+        return {[structUtils.stringifyIdent(dependency)]: dependency.range};
+      }));
+    } else {
+      delete data.dependencies;
+    }
 
-    data.optionalDependencies = optionalDependencies.length === 0 ? undefined : Object.assign({}, ...structUtils.sortDescriptors(optionalDependencies).map(dependency => {
-      return {[structUtils.stringifyIdent(dependency)]: dependency.range};
-    }));
+    if (optionalDependencies.length > 0) {
+      data.optionalDependencies = Object.assign({}, ...structUtils.sortDescriptors(optionalDependencies).map(dependency => {
+        return {[structUtils.stringifyIdent(dependency)]: dependency.range};
+      }));
+    } else {
+      delete data.optionalDependencies;
+    }
 
-    data.devDependencies = this.devDependencies.size === 0 ? undefined : Object.assign({}, ...structUtils.sortDescriptors(this.devDependencies.values()).map(dependency => {
-      return {[structUtils.stringifyIdent(dependency)]: dependency.range};
-    }));
+    if (this.devDependencies.size > 0) {
+      data.devDependencies = Object.assign({}, ...structUtils.sortDescriptors(this.devDependencies.values()).map(dependency => {
+        return {[structUtils.stringifyIdent(dependency)]: dependency.range};
+      }));
+    } else {
+      delete data.devDependencies;
+    }
 
-    data.peerDependencies = this.peerDependencies.size === 0 ? undefined : Object.assign({}, ...structUtils.sortDescriptors(this.peerDependencies.values()).map(dependency => {
-      return {[structUtils.stringifyIdent(dependency)]: dependency.range};
-    }));
+    if (this.peerDependencies.size > 0) {
+      data.peerDependencies = Object.assign({}, ...structUtils.sortDescriptors(this.peerDependencies.values()).map(dependency => {
+        return {[structUtils.stringifyIdent(dependency)]: dependency.range};
+      }));
+    } else {
+      delete data.peerDependencies;
+    }
 
     data.dependenciesMeta = {};
 
@@ -603,20 +619,28 @@ export class Manifest {
     }
 
     if (Object.keys(data.dependenciesMeta).length === 0)
-      data.dependenciesMeta = undefined;
+      delete data.dependenciesMeta;
 
-    data.peerDependenciesMeta = this.peerDependenciesMeta.size === 0 ? undefined : Object.assign({}, ...miscUtils.sortMap(this.peerDependenciesMeta.entries(), ([identString, meta]) => identString).map(([identString, meta]) => {
-      return {[identString]: meta};
-    }));
+    if (this.peerDependenciesMeta.size > 0) {
+      data.peerDependenciesMeta = Object.assign({}, ...miscUtils.sortMap(this.peerDependenciesMeta.entries(), ([identString, meta]) => identString).map(([identString, meta]) => {
+        return {[identString]: meta};
+      }));
+    } else {
+      delete data.peerDependenciesMeta;
+    }
 
-    data.resolutions = this.resolutions.length === 0 ? undefined : Object.assign({}, ...this.resolutions.map(({pattern, reference}) => {
-      return {[stringifyResolution(pattern)]: reference};
-    }));
+    if (this.resolutions.length > 0) {
+      data.resolutions = Object.assign({}, ...this.resolutions.map(({pattern, reference}) => {
+        return {[stringifyResolution(pattern)]: reference};
+      }));
+    } else {
+      delete data.resolutions;
+    }
 
-    if (this.files === null)
-      data.files = undefined;
-    else
+    if (this.files !== null)
       data.files = Array.from(this.files);
+    else
+      delete data.files;
 
     return data;
   }
