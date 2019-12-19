@@ -85,7 +85,7 @@ export type NodeModulesLocatorMap = Map<LocatorKey, {
   size: number;
   target: PortablePath;
   linkType: LinkType;
-  locations: Set<PortablePath>;
+  locations: PortablePath[];
 }>
 
 export const buildLocatorMap = (rootPath: PortablePath, nodeModulesTree: NodeModulesTree): NodeModulesLocatorMap => {
@@ -95,11 +95,11 @@ export const buildLocatorMap = (rootPath: PortablePath, nodeModulesTree: NodeMod
     if (!val.dirList) {
       let entry = map.get(val.locator);
       if (!entry) {
-        entry = {size: val.size, target: val.target, linkType: val.linkType, locations: new Set()};
+        entry = {size: val.size, target: val.target, linkType: val.linkType, locations: []};
         map.set(val.locator, entry);
       }
 
-      entry.locations.add(ppath.relative(rootPath, location));
+      entry.locations.push(ppath.relative(rootPath, location));
     }
   }
 
@@ -240,6 +240,10 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
     seenPkgIds.add(nodeId);
 
     for (const depId of hoistedTree[nodeId]) {
+      if (!options.pnpifyFs && depId === nodeId)
+        // Skip self-references
+        continue;
+
       const locator = locators[depId];
       const {name, scope} = getPackageName(locator);
 

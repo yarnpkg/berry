@@ -1,7 +1,7 @@
-import {miscUtils, structUtils, Ident, DependencyMeta, Report}                  from '@yarnpkg/core';
-import {FetchResult, Descriptor, Locator, Package, BuildType}                   from '@yarnpkg/core';
-import {Installer, Linker, LinkOptions, MinimalLinkOptions, Manifest, LinkType} from '@yarnpkg/core';
-import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS, CwdFS}   from '@yarnpkg/fslib';
+import {miscUtils, structUtils, Report}                                         from '@yarnpkg/core';
+import {FetchResult, Descriptor, Locator, Package}                              from '@yarnpkg/core';
+import {Installer, Linker, LinkOptions, MinimalLinkOptions, LinkType}           from '@yarnpkg/core';
+import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS}          from '@yarnpkg/fslib';
 import {NodeFS, VirtualFS, ZipOpenFS}                                           from '@yarnpkg/fslib';
 import {parseSyml}                                                              from '@yarnpkg/parsers';
 import {NodeModulesLocatorMap, buildLocatorMap, buildNodeModulesTree}           from '@yarnpkg/pnpify';
@@ -278,7 +278,7 @@ const readLocatorState = async (locatorStatePath: PortablePath): Promise<NodeMod
       size: +val.size,
       target: PortablePath.dot,
       linkType: LinkType.HARD,
-      locations: new Set(val.locations),
+      locations: val.locations,
     });
   }
 
@@ -305,11 +305,10 @@ const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean, excl
         await xfs.unlinkPromise(targetPath);
       }
     }
-    await xfs.removePromise(dir);
+    await xfs.rmdirPromise(dir);
   } catch (e) {
-    if (e.code !== 'ENOENT') {
+    if (e.code !== 'ENOENT' && e.code !== 'ENOTEMPTY')
       throw e;
-    }
   }
 };
 
@@ -411,19 +410,24 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
         } else {
           const archivePath = getArchivePath(srcDir);
           if (archivePath) {
-            const PARENT = toFilename('..');
-            const parentDir = ppath.join(dstDir, PARENT, PARENT, PARENT);
+            const prefixInsideArchive = srcDir.substring(archivePath.length);
             await xfs.createReadStream(archivePath)
-            .pipe(unzipper.Parse({concurrency: 8}))
-            .on('entry', async (entry) => {
-              const fullPath = ppath.join(parentDir, entry.path);
-              if (entry.type === 'Directory') {
-                await xfs.mkdirpPromise(fullPath, {chmod: 0o777});
-              } else {
-                await xfs.mkdirpPromise(ppath.dirname(fullPath), {chmod: 0o777});
-                entry.pipe(fs.createWriteStream(fullPath));
-              }
-            }).promise();
+              .pipe(unzipper.Parse({concurrency: 8}))
+              .on('entry', (entry) => {
+                if (entry.path.length <= prefixInsideArchive.length) {
+                  entry.autodrain();
+                } else {
+                  const entryName = entry.path.substring(prefixInsideArchive.length);
+                  const fullPath = ppath.join(dstDir, entryName);
+                  if (entry.type === 'Directory') {
+                    xfs.mkdirpSync(fullPath, {chmod: 0o777});
+                    entry.autodrain();
+                  } else {
+                    xfs.mkdirpSync(ppath.dirname(fullPath), {chmod: 0o777});
+                    entry.pipe(fs.createWriteStream(fullPath));
+                  }
+                }
+              }).promise();
           } else {
             await xfs.copyPromise(dstDir, srcDir, {baseFs});
           }
@@ -441,13 +445,47 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
     }
   };
 
+  const cloneModule = async (srcDir: PortablePath, dstDir: PortablePath, options?: { keepNodeModules?: boolean, innerLoop?: boolean }) => {
+    try {
+      if (!options || !options.innerLoop) {
+        await removeDir(dstDir, {excludeNodeModules: options && options.keepNodeModules});
+        await xfs.mkdirpPromise(dstDir, { chmod: 0o777 });
+      }
+
+      const entries = await xfs.readdirPromise(srcDir, {withFileTypes: true});
+      for (const entry of entries) {
+        const entryName = toFilename(entry.name);
+        const src = ppath.join(srcDir, entryName);
+        const dst = ppath.join(dstDir, entryName);
+        if (entryName !== NODE_MODULES || !options || !options.keepNodeModules) {
+          if (entry.isDirectory()) {
+            await xfs.mkdirPromise(dst);
+            await xfs.chmodPromise(dst, 0o777);
+            await cloneModule(src, dst, { keepNodeModules: false, innerLoop: true });
+          } else {
+            await xfs.copyFilePromise(src, dst, fs.constants.COPYFILE_FICLONE);
+          }
+        }
+      }
+    } catch (e) {
+      if (!options || !options.innerLoop) {
+        e.message = `While cloning ${srcDir} -> ${dstDir} ` + e.message;
+      }
+      throw e;
+    } finally {
+      if (!options || !options.innerLoop) {
+        progress.tick();
+      }
+    }
+  };
+
   const deleteQueue: Promise<any>[] = [];
   const deleteModule = (dstDir: PortablePath) => {
     const promise = (async () => {
       try {
         await removeDir(dstDir);
       } catch (e) {
-        e.message = `While persisting ${dstDir} ` + e.message;
+        e.message = `While removing ${dstDir} ` + e.message;
         throw e;
       }
     })();
@@ -540,11 +578,28 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
   const progress = Report.progressViaCounter(addList.length);
   report.reportProgress(progress);
 
+  // First pass: persist all the modules only once in node_modules tree
+  const persistedLocations = new Map();
   for (const entry of addList) {
-    await addModule({...entry});
+    if (entry.linkType === LinkType.SOFT || !persistedLocations.has(entry.srcDir)) {
+      persistedLocations.set(entry.srcDir, entry.dstDir);
+      await addModule({...entry});
+    }
   }
 
-  await Promise.all([addQueue, deleteQueue].map(queue => Promise.all(queue)));
+  await Promise.all(deleteQueue);
+  await Promise.all(addQueue);
+  addQueue.length = 0;
+
+  // Second pass: clone module duplicates
+  for (const entry of addList) {
+    const copiedDstDir = persistedLocations.get(entry.srcDir);
+    if (entry.linkType !== LinkType.SOFT && entry.dstDir !== copiedDstDir) {
+      addQueue.push(cloneModule(copiedDstDir, entry.dstDir, { keepNodeModules: entry.keepNodeModules }));
+    }
+  }
+
+  await Promise.all(addQueue);
 
   await xfs.mkdirpPromise(rootNmDirPath);
   await writeLocatorState(locatorStatePath, locatorMap);

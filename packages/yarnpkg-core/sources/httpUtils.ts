@@ -44,6 +44,10 @@ async function request(target: string, body: Body, {configuration, headers, json
   if (!configuration.get(`enableNetwork`))
     throw new Error(`Network access have been disabled by configuration (${method} ${target})`);
 
+  if (target.startsWith('http:')) {
+    console.trace();
+    target = target.replace('http:', 'https:');
+  }
   const url = new URL(target);
   if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
     throw new Error(`Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
