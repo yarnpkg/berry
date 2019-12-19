@@ -3,9 +3,9 @@ import {PnpApi}                                from '@yarnpkg/pnp';
 
 import fs                                      from 'fs';
 
-import {NodeModulesFS, PortableNodeModulesFS}  from './NodeModulesFS';
+import {NodeModulesFS}                         from './NodeModulesFS';
 import {buildNodeModulesTree, buildLocatorMap} from './buildNodeModulesTree';
-import {NodeModulesLocatorMap}                 from './buildNodeModulesTree';
+import {NodeModulesLocatorMap, getArchivePath} from './buildNodeModulesTree';
 import {dynamicRequire}                        from './dynamicRequire';
 
 let fsPatched = false;
@@ -30,8 +30,8 @@ if (!process.mainModule)
 
 export {
   NodeModulesFS,
-  PortableNodeModulesFS,
   buildNodeModulesTree,
   buildLocatorMap,
   NodeModulesLocatorMap,
+  getArchivePath
 };

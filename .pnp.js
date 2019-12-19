@@ -5125,6 +5125,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"
         }]
       ]],
+      ["@types/unzipper", [
+        ["npm:0.10.1", {
+          "packageLocation": "./.yarn/cache/@types-unzipper-npm-0.10.1-a859ae4b90-1.zip/node_modules/@types/unzipper/",
+          "packageDependencies": [
+            ["@types/unzipper", "npm:0.10.1"],
+            ["@types/node", "npm:10.12.18"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
       ["@types/vfile", [
         ["npm:3.0.2", {
           "packageLocation": "./.yarn/cache/@types-vfile-npm-3.0.2-5a6f4624c4-1.zip/node_modules/@types/vfile/",
@@ -8846,6 +8856,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/plugin-node-modules/",
           "packageDependencies": [
             ["@yarnpkg/plugin-node-modules", "workspace:packages/plugin-node-modules"],
+            ["@types/unzipper", "npm:0.10.1"],
             ["@yarnpkg/cli", "virtual:e23b02a23dd21a1183b7bea287ba41db2b362005cc3f364e1677565eaf97ca1611b7ccd4cdf6ef547bbb3251afacdc4a1a999c3156da491b521e7c36b6663da9#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -8853,7 +8864,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:e23b02a23dd21a1183b7bea287ba41db2b362005cc3f364e1677565eaf97ca1611b7ccd4cdf6ef547bbb3251afacdc4a1a999c3156da491b521e7c36b6663da9#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["unzipper", "npm:0.10.5"]
           ],
           "linkType": "SOFT"
         }]
@@ -13040,6 +13052,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"
         }]
       ]],
+      ["big-integer", [
+        ["npm:1.6.48", {
+          "packageLocation": "./.yarn/cache/big-integer-npm-1.6.48-b1b63dbdbd-1.zip/node_modules/big-integer/",
+          "packageDependencies": [
+            ["big-integer", "npm:1.6.48"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
       ["big.js", [
         ["npm:5.2.2", {
           "packageLocation": "./.yarn/cache/big.js-npm-5.2.2-e147c30820-1.zip/node_modules/big.js/",
@@ -13121,6 +13142,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"
         }]
       ]],
+      ["binary", [
+        ["npm:0.3.0", {
+          "packageLocation": "./.yarn/cache/binary-npm-0.3.0-56515cf10f-1.zip/node_modules/binary/",
+          "packageDependencies": [
+            ["binary", "npm:0.3.0"],
+            ["buffers", "npm:0.1.1"],
+            ["chainsaw", "npm:0.1.0"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
       ["binary-extensions", [
         ["npm:1.12.0", {
           "packageLocation": "./.yarn/cache/binary-extensions-npm-1.12.0-5e3e1208ac-1.zip/node_modules/binary-extensions/",
@@ -13159,6 +13191,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["bluebird", [
+        ["npm:3.4.7", {
+          "packageLocation": "./.yarn/cache/bluebird-npm-3.4.7-5dff099581-1.zip/node_modules/bluebird/",
+          "packageDependencies": [
+            ["bluebird", "npm:3.4.7"]
+          ],
+          "linkType": "HARD"
+        }],
         ["npm:3.5.3", {
           "packageLocation": "./.yarn/cache/bluebird-npm-3.5.3-f4239277cf-1.zip/node_modules/bluebird/",
           "packageDependencies": [
@@ -13589,11 +13628,29 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"
         }]
       ]],
+      ["buffer-indexof-polyfill", [
+        ["npm:1.0.1", {
+          "packageLocation": "./.yarn/cache/buffer-indexof-polyfill-npm-1.0.1-6beafb7d74-1.zip/node_modules/buffer-indexof-polyfill/",
+          "packageDependencies": [
+            ["buffer-indexof-polyfill", "npm:1.0.1"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
       ["buffer-xor", [
         ["npm:1.0.3", {
           "packageLocation": "./.yarn/cache/buffer-xor-npm-1.0.3-56bb81b0dd-1.zip/node_modules/buffer-xor/",
           "packageDependencies": [
             ["buffer-xor", "npm:1.0.3"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
+      ["buffers", [
+        ["npm:0.1.1", {
+          "packageLocation": "./.yarn/cache/buffers-npm-0.1.1-59dbe6d7fb-1.zip/node_modules/buffers/",
+          "packageDependencies": [
+            ["buffers", "npm:0.1.1"]
           ],
           "linkType": "HARD"
         }]
@@ -13979,6 +14036,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/chain-function-npm-1.0.1-17b783e2fe-1.zip/node_modules/chain-function/",
           "packageDependencies": [
             ["chain-function", "npm:1.0.1"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
+      ["chainsaw", [
+        ["npm:0.1.0", {
+          "packageLocation": "./.yarn/cache/chainsaw-npm-0.1.0-0d34a3db01-1.zip/node_modules/chainsaw/",
+          "packageDependencies": [
+            ["chainsaw", "npm:0.1.0"],
+            ["traverse", "npm:0.3.9"]
           ],
           "linkType": "HARD"
         }]
@@ -16356,6 +16423,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"
         }]
       ]],
+      ["duplexer2", [
+        ["npm:0.1.4", {
+          "packageLocation": "./.yarn/cache/duplexer2-npm-0.1.4-6bca6bef12-1.zip/node_modules/duplexer2/",
+          "packageDependencies": [
+            ["duplexer2", "npm:0.1.4"],
+            ["readable-stream", "npm:2.3.6"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
       ["duplexer3", [
         ["npm:0.1.4", {
           "packageLocation": "./.yarn/cache/duplexer3-npm-0.1.4-361a33d994-1.zip/node_modules/duplexer3/",
@@ -18457,6 +18534,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["fsevents", "npm:1.2.7"],
             ["nan", "npm:2.12.1"],
             ["node-pre-gyp", "npm:0.10.3"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
+      ["fstream", [
+        ["npm:1.0.12", {
+          "packageLocation": "./.yarn/cache/fstream-npm-1.0.12-db27e8a713-1.zip/node_modules/fstream/",
+          "packageDependencies": [
+            ["fstream", "npm:1.0.12"],
+            ["graceful-fs", "npm:4.1.15"],
+            ["inherits", "npm:2.0.3"],
+            ["mkdirp", "npm:0.5.1"],
+            ["rimraf", "npm:2.6.3"]
           ],
           "linkType": "HARD"
         }]
@@ -23468,6 +23558,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["linkify-it", "npm:2.1.0"],
             ["uc.micro", "npm:1.0.5"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
+      ["listenercount", [
+        ["npm:1.0.1", {
+          "packageLocation": "./.yarn/cache/listenercount-npm-1.0.1-01172e4210-1.zip/node_modules/listenercount/",
+          "packageDependencies": [
+            ["listenercount", "npm:1.0.1"]
           ],
           "linkType": "HARD"
         }]
@@ -31641,6 +31740,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"
         }]
       ]],
+      ["traverse", [
+        ["npm:0.3.9", {
+          "packageLocation": "./.yarn/cache/traverse-npm-0.3.9-913743c694-1.zip/node_modules/traverse/",
+          "packageDependencies": [
+            ["traverse", "npm:0.3.9"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
       ["treeify", [
         ["npm:1.1.0", {
           "packageLocation": "./.yarn/cache/treeify-npm-1.1.0-abf9292333-1.zip/node_modules/treeify/",
@@ -32364,6 +32472,25 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/unzip-response-npm-2.0.1-d139c365e6-1.zip/node_modules/unzip-response/",
           "packageDependencies": [
             ["unzip-response", "npm:2.0.1"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
+      ["unzipper", [
+        ["npm:0.10.5", {
+          "packageLocation": "./.yarn/cache/unzipper-npm-0.10.5-5fa7330d40-1.zip/node_modules/unzipper/",
+          "packageDependencies": [
+            ["unzipper", "npm:0.10.5"],
+            ["big-integer", "npm:1.6.48"],
+            ["binary", "npm:0.3.0"],
+            ["bluebird", "npm:3.4.7"],
+            ["buffer-indexof-polyfill", "npm:1.0.1"],
+            ["duplexer2", "npm:0.1.4"],
+            ["fstream", "npm:1.0.12"],
+            ["graceful-fs", "npm:4.2.2"],
+            ["listenercount", "npm:1.0.1"],
+            ["readable-stream", "npm:2.3.6"],
+            ["setimmediate", "npm:1.0.5"]
           ],
           "linkType": "HARD"
         }]

@@ -4187,6 +4187,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/unzipper@npm:^0.10.1":
+  version: 0.10.1
+  resolution: "@types/unzipper@npm:0.10.1"
+  dependencies:
+    "@types/node": "*"
+  checksum: 76c4025a47205c23afaaec3fbb4d30770c75c1dca7517b4d69bec7999b347f51fead785fd98614b6399f9cf5134e3ecf119929beab0f4fe62d283fc790eaef8f
+  languageName: node
+  linkType: hard
+
 "@types/vfile-message@npm:*":
   version: 1.0.1
   resolution: "@types/vfile-message@npm:1.0.1"
@@ -5255,6 +5264,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-node-modules@workspace:packages/plugin-node-modules"
   dependencies:
+    "@types/unzipper": ^0.10.1
     "@yarnpkg/cli": "workspace:2.0.0-rc.19"
     "@yarnpkg/core": "workspace:2.0.0-rc.15"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
@@ -5263,6 +5273,7 @@ __metadata:
     "@yarnpkg/pnp": "workspace:2.0.0-rc.12"
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.12"
     clipanion: ^2.1.5
+    unzipper: ^0.10.5
   languageName: unknown
   linkType: soft
 
@@ -6927,6 +6938,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"big-integer@npm:^1.6.17":
+  version: 1.6.48
+  resolution: "big-integer@npm:1.6.48"
+  checksum: d0e79f79e91f5104b682403674397e2d825d73a66873819b9c11b46fdaeef9f3d9295cbf627b4b42e986b0edfede61c77f686615f9599bf9fc00787365b22e3a
+  languageName: node
+  linkType: hard
+
 "big.js@npm:^5.2.2":
   version: 5.2.2
   resolution: "big.js@npm:5.2.2"
@@ -7006,6 +7024,16 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"binary@npm:~0.3.0":
+  version: 0.3.0
+  resolution: "binary@npm:0.3.0"
+  dependencies:
+    buffers: ~0.1.1
+    chainsaw: ~0.1.0
+  checksum: 81b273958f0c59a8da57c896ca72db2524bb9de66b63605863e4fbbc323c2bd3c037a30334f0bf3acc69fa5f2463da93db22c24206c19606ed42c77496892ae7
+  languageName: node
+  linkType: hard
+
 "bl@npm:^1.0.0":
   version: 1.2.2
   resolution: "bl@npm:1.2.2"
@@ -7043,6 +7071,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 3.5.5
   resolution: "bluebird@npm:3.5.5"
   checksum: 03e1cdb2e7324991ac5ae7258cfcf091fbbca92596bf105066fcf9bc7e32376201023975443b5e32b179c97db6af172a23df1ad63c0c6c7c8bb1048e783a7e58
+  languageName: node
+  linkType: hard
+
+"bluebird@npm:~3.4.1":
+  version: 3.4.7
+  resolution: "bluebird@npm:3.4.7"
+  checksum: e4dd48b55ffbb862f663cc4c46b6a48d8635c99e34fa9e9768971bf4aa874359c566fab3b9e0204505bd5427ea04394b3b1e031ca2e0282df5ef5f44ea9f10c4
   languageName: node
   linkType: hard
 
@@ -7411,6 +7446,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"buffer-indexof-polyfill@npm:~1.0.0":
+  version: 1.0.1
+  resolution: "buffer-indexof-polyfill@npm:1.0.1"
+  checksum: 7832f8f5527ab572a490f44552f725dd119f9d54d315c7edb9fc4ec70cd83aed6198eab475edecbf944b51f84390da085116e21e347542a26dd8e6cd295e8ac4
+  languageName: node
+  linkType: hard
+
 "buffer-indexof@npm:^1.0.0":
   version: 1.1.1
   resolution: "buffer-indexof@npm:1.1.1"
@@ -7443,6 +7485,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     base64-js: ^1.0.2
     ieee754: ^1.1.4
   checksum: b683c834de35022275710772e55826121f04039d6f71f88b6d42af1fbc8d51663b4b369f11e5cd7add2b631a21a54ba69918761b0be0004bb3c2fccf301635bb
+  languageName: node
+  linkType: hard
+
+"buffers@npm:~0.1.1":
+  version: 0.1.1
+  resolution: "buffers@npm:0.1.1"
+  checksum: 99ce7682dd22e601e994860b75ad202a06df1e9f9e62b4b9a5605a7559dc40d6ad21accfda80f99626282efaf3c1571fd18970c5944e44031f83b1b22d8ac6ed
   languageName: node
   linkType: hard
 
@@ -7796,6 +7845,15 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 1.0.1
   resolution: "chain-function@npm:1.0.1"
   checksum: eadf75cbede26e0440619fb3d508cd642ed828633f2df7c0cd7cbf622006f1b449db0f5ee6c08fb299e9d6ff6fdb0c4700d31da6903f3686f071ef04b617df9d
+  languageName: node
+  linkType: hard
+
+"chainsaw@npm:~0.1.0":
+  version: 0.1.0
+  resolution: "chainsaw@npm:0.1.0"
+  dependencies:
+    traverse: ">=0.3.0 <0.4"
+  checksum: b541a710988b148180885d39ec5a2ebb1c81a24ec9f9f023e21198d192fdf8d4ea95255ec62d9d65f064107345dbab789c866f24ba02f126e9e12cffb927f0a8
   languageName: node
   linkType: hard
 
@@ -9951,6 +10009,15 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"duplexer2@npm:~0.1.4":
+  version: 0.1.4
+  resolution: "duplexer2@npm:0.1.4"
+  dependencies:
+    readable-stream: ^2.0.2
+  checksum: 3e8b49bf3368b02bd3e90337f065caeb81635d1af1709f1b09282c02c9c98d9dbcd932466679f076895ff4b72b852a1bc7a2a8947bc262686c166410bfac5ff0
+  languageName: node
+  linkType: hard
+
 "duplexer3@npm:^0.1.4":
   version: 0.1.4
   resolution: "duplexer3@npm:0.1.4"
@@ -11907,6 +11974,18 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     nan: ^2.9.2
     node-pre-gyp: ^0.10.0
   checksum: 3540b943825c040761165835c91112e89579ea221842f568aa29ab0ddf9d18250bbdc5beb0d4086ffd39b81f4feaad36b70723fbc3ae754951774b479aad04a2
+  languageName: node
+  linkType: hard
+
+"fstream@npm:^1.0.12":
+  version: 1.0.12
+  resolution: "fstream@npm:1.0.12"
+  dependencies:
+    graceful-fs: ^4.1.2
+    inherits: ~2.0.0
+    mkdirp: ">=0.5 0"
+    rimraf: 2
+  checksum: 576135bae9f2ffcf3b6e4f9bd91978ee52cff60b5b641e9532cc63b9e49df2c6c47b7b7e5b3987eac3f85737f129c5be6e20f44b8dcf9a3b41cf1a5d9220fb16
   languageName: node
   linkType: hard
 
@@ -14034,7 +14113,7 @@ hard-source-webpack-plugin@mzgoddard/hard-source-webpack-plugin:
   languageName: node
   linkType: hard
 
-"inherits@npm:2, inherits@npm:2.0.3, inherits@npm:^2.0.1, inherits@npm:^2.0.3, inherits@npm:~2.0.1, inherits@npm:~2.0.3":
+"inherits@npm:2, inherits@npm:2.0.3, inherits@npm:^2.0.1, inherits@npm:^2.0.3, inherits@npm:~2.0.0, inherits@npm:~2.0.1, inherits@npm:~2.0.3":
   version: 2.0.3
   resolution: "inherits@npm:2.0.3"
   checksum: 7e20ced2334a7f9ea37288769037a186377028a52827ef7fd9d6aeed1ee7466357428cd1cba376c517735ad93d15c295e406b3e29ee10729ab04955f45ec489b
@@ -16525,6 +16604,13 @@ left-pad@left-pad/left-pad:
   languageName: node
   linkType: hard
 
+"listenercount@npm:~1.0.1":
+  version: 1.0.1
+  resolution: "listenercount@npm:1.0.1"
+  checksum: 0183f3131fcd45fb71b40a21380e9e15db3932a4e9438df3d119699d7672deabc0b49fb524646ecdc68fc7a3cda11b78a7b1e1cf617251b9c43167e16baaeed0
+  languageName: node
+  linkType: hard
+
 "load-bmfont@npm:^1.2.3, load-bmfont@npm:^1.3.1, load-bmfont@npm:^1.4.0":
   version: 1.4.0
   resolution: "load-bmfont@npm:1.4.0"
@@ -17662,7 +17748,7 @@ left-pad@left-pad/left-pad:
   languageName: node
   linkType: hard
 
-"mkdirp@npm:0.5.1, mkdirp@npm:0.5.x, mkdirp@npm:^0.5.0, mkdirp@npm:^0.5.1, mkdirp@npm:~0.5.0, mkdirp@npm:~0.5.1":
+"mkdirp@npm:0.5.1, mkdirp@npm:0.5.x, mkdirp@npm:>=0.5 0, mkdirp@npm:^0.5.0, mkdirp@npm:^0.5.1, mkdirp@npm:~0.5.0, mkdirp@npm:~0.5.1":
   version: 0.5.1
   resolution: "mkdirp@npm:0.5.1"
   dependencies:
@@ -21785,7 +21871,7 @@ left-pad@left-pad/left-pad:
   languageName: node
   linkType: hard
 
-"rimraf@npm:2.6.3, rimraf@npm:^2.2.8, rimraf@npm:^2.5.0, rimraf@npm:^2.5.4, rimraf@npm:^2.6.1, rimraf@npm:^2.6.2, rimraf@npm:^2.6.3":
+"rimraf@npm:2, rimraf@npm:2.6.3, rimraf@npm:^2.2.8, rimraf@npm:^2.5.0, rimraf@npm:^2.5.4, rimraf@npm:^2.6.1, rimraf@npm:^2.6.2, rimraf@npm:^2.6.3":
   version: 2.6.3
   resolution: "rimraf@npm:2.6.3"
   dependencies:
@@ -22252,7 +22338,7 @@ left-pad@left-pad/left-pad:
   languageName: node
   linkType: hard
 
-"setimmediate@npm:^1.0.4, setimmediate@npm:^1.0.5":
+"setimmediate@npm:^1.0.4, setimmediate@npm:^1.0.5, setimmediate@npm:~1.0.4":
   version: 1.0.5
   resolution: "setimmediate@npm:1.0.5"
   checksum: 41fe93be936a4d6d2393b08652e5a235b1d50a3d542e561ec3b14c2b75f543762e52d9c4f77097d70e5630e0f84469d27b3b5e4237ea0de17abcd55c776319ec
@@ -23999,6 +24085,13 @@ left-pad@left-pad/left-pad:
   languageName: node
   linkType: hard
 
+"traverse@npm:>=0.3.0 <0.4":
+  version: 0.3.9
+  resolution: "traverse@npm:0.3.9"
+  checksum: 5d391b3f18af2e7e09fc063dc5b9bf4fd1c7264455bcc34aef93179e74c3482f6c6defefdf4b254dc9703fdc9830722db5cf4f47af1c49c3df024832989fac7f
+  languageName: node
+  linkType: hard
+
 "treeify@npm:^1.1.0":
   version: 1.1.0
   resolution: "treeify@npm:1.1.0"
@@ -24617,6 +24710,24 @@ left-pad@left-pad/left-pad:
   version: 2.0.1
   resolution: "unzip-response@npm:2.0.1"
   checksum: f4eb467b6b0203abffc7d53ed1e7979452045b9112b484ecb907a2822fc0b4f223828270443cdc43d10baefd55f45025dc163eee49fff2c2bae2586088e43d65
+  languageName: node
+  linkType: hard
+
+"unzipper@npm:^0.10.5":
+  version: 0.10.5
+  resolution: "unzipper@npm:0.10.5"
+  dependencies:
+    big-integer: ^1.6.17
+    binary: ~0.3.0
+    bluebird: ~3.4.1
+    buffer-indexof-polyfill: ~1.0.0
+    duplexer2: ~0.1.4
+    fstream: ^1.0.12
+    graceful-fs: ^4.2.2
+    listenercount: ~1.0.1
+    readable-stream: ~2.3.6
+    setimmediate: ~1.0.4
+  checksum: 564c57259b6bb87bc6d3c17d75b01b0c386890221e783416b4fc087c3420c859464d1dbe714234a7920ce12b76a4e017f4ef98e2612866283cef9820217d4246
   languageName: node
   linkType: hard
 

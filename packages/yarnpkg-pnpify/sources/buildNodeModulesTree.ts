@@ -39,7 +39,7 @@ type LocatorKey = string;
  *
  * @returns path to archive is location is insde the archive or null otherwise
  */
-const getArchivePath = (packagePath: PortablePath): PortablePath | null =>
+export const getArchivePath = (packagePath: PortablePath): PortablePath | null =>
   packagePath.indexOf(`.zip/${NODE_MODULES}/`) >= 0 ?
     npath.toPortablePath(packagePath.split(`/${NODE_MODULES}/`)[0]) :
     null;

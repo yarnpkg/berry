@@ -9,9 +9,11 @@
     "@yarnpkg/parsers": "workspace:2.0.0-rc.6",
     "@yarnpkg/pnp": "workspace:2.0.0-rc.12",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.12",
-    "clipanion": "^2.1.5"
+    "clipanion": "^2.1.5",
+    "unzipper": "^0.10.5"
   },
   "devDependencies": {
+    "@types/unzipper": "^0.10.1",
     "@yarnpkg/plugin-stage": "workspace:2.0.0-rc.11"
   },
   "version": "2.0.0-rc.1",

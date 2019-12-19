@@ -5,22 +5,14 @@ import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS, CwdFS}   
 import {NodeFS, VirtualFS, ZipOpenFS}                                           from '@yarnpkg/fslib';
 import {parseSyml}                                                              from '@yarnpkg/parsers';
 import {NodeModulesLocatorMap, buildLocatorMap, buildNodeModulesTree}           from '@yarnpkg/pnpify';
+import {getArchivePath}                                                         from '@yarnpkg/pnpify';
 import {PackageRegistry, makeRuntimeApi}                                        from '@yarnpkg/pnp';
 
 import {UsageError}                                                             from 'clipanion';
 import fs                                                                       from 'fs';
+import unzipper                                                                 from 'unzipper';
 
 import {getPnpPath}                                                             from './index';
-
-const FORCED_UNPLUG_PACKAGES = new Set([
-  // Some packages do weird stuff and MUST be unplugged. I don't like them.
-  structUtils.makeIdent(null, `nan`).identHash,
-  structUtils.makeIdent(null, `node-gyp`).identHash,
-  structUtils.makeIdent(null, `node-pre-gyp`).identHash,
-  structUtils.makeIdent(null, `node-addon-api`).identHash,
-  // Those ones contain native builds (*.node), and Node loads them through dlopen
-  structUtils.makeIdent(null, `fsevents`).identHash,
-]);
 
 const NODE_MODULES = toFilename('node_modules');
 const LOCATOR_STATE_FILE = toFilename('.yarn-state.yml');
@@ -85,33 +77,6 @@ class NodeModulesInstaller implements Installer {
     const key1 = structUtils.requirableIdent(pkg);
     const key2 = pkg.reference;
 
-    // const buildScripts = await this.getBuildScripts(fetchResult);
-
-    // if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`)) {
-    //   this.opts.report.reportWarningOnce(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but all build scripts have been disabled.`);
-    //   buildScripts.length = 0;
-    // }
-
-    // if (buildScripts.length > 0 && pkg.linkType !== LinkType.HARD && !this.opts.project.tryWorkspaceByLocator(pkg)) {
-    //   this.opts.report.reportWarningOnce(MessageName.SOFT_LINK_BUILD, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but is referenced through a soft link. Soft links don't support build scripts, so they'll be ignored.`);
-    //   buildScripts.length = 0;
-    // }
-
-    // const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
-
-    // if (buildScripts.length > 0 && dependencyMeta && dependencyMeta.built === false) {
-    //   this.opts.report.reportInfoOnce(MessageName.BUILD_DISABLED, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but its build has been explicitly disabled through configuration.`);
-    //   buildScripts.length = 0;
-    // }
-
-    // const hasVirtualInstances =
-    //   pkg.peerDependencies.size > 0 &&
-    //   !structUtils.isVirtualLocator(pkg) &&
-    //   !this.opts.project.tryWorkspaceByLocator(pkg);
-
-    // const packageFs = !hasVirtualInstances && pkg.linkType !== LinkType.SOFT && (buildScripts.length > 0 || this.isUnplugged(pkg, dependencyMeta))
-    //   ? await this.unplugPackage(pkg, fetchResult.packageFs)
-    //   : fetchResult.packageFs;
     const packageFs = fetchResult.packageFs;
 
     const packageRawLocation = ppath.resolve(packageFs.getRealPath(), ppath.relative(PortablePath.root, fetchResult.prefixPath));
@@ -128,13 +93,6 @@ class NodeModulesInstaller implements Installer {
     const packageStore = this.getPackageStore(key1);
     packageStore.set(key2, {packageLocation, packageDependencies, packagePeers, linkType: pkg.linkType});
 
-    // if (hasVirtualInstances)
-    //   this.blacklistedPaths.add(packageLocation);
-
-    // return {
-    //   packageLocation,
-    //   buildDirective: buildScripts.length > 0 ? buildScripts as BuildDirective[] : null,
-    // };
     return {
       packageLocation,
     };
@@ -161,7 +119,6 @@ class NodeModulesInstaller implements Installer {
   }
 
   async finalizeInstall() {
-    const startTime = Date.now();
     if (this.opts.project.configuration.get('nodeLinker') !== 'node-modules')
       return;
 
@@ -234,8 +191,6 @@ class NodeModulesInstaller implements Installer {
     });
     const locatorMap = buildLocatorMap(rootPath, nmTree);
     await persistNodeModules(rootPath, prevLocatorMap, locatorMap, baseFs, this.opts.report);
-    const endTime = Date.now();
-    console.log(`Persist time: ${endTime - startTime}ms`);
   }
 
   private getPackageStore(key: string) {
@@ -299,49 +254,6 @@ class NodeModulesInstaller implements Installer {
 
     return relativeFolder.replace(/\/?$/, '/')  as PortablePath;
   }
-
-  private async getBuildScripts(fetchResult: FetchResult) {
-    if (!await fetchResult.packageFs.existsPromise(ppath.resolve(fetchResult.prefixPath, toFilename(`package.json`))))
-      return [];
-
-    const buildScripts = [];
-    const {scripts} = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
-
-    for (const scriptName of [`preinstall`, `install`, `postinstall`])
-      if (scripts.has(scriptName))
-        buildScripts.push([BuildType.SCRIPT, scriptName]);
-
-    // Detect cases where a package has a binding.gyp but no install script
-    const bindingFilePath = ppath.resolve(fetchResult.prefixPath, toFilename(`binding.gyp`));
-    if (!scripts.has(`install`) && fetchResult.packageFs.existsSync(bindingFilePath))
-      buildScripts.push([BuildType.SHELLCODE, `node-gyp rebuild`]);
-
-    return buildScripts;
-  }
-
-  private getUnpluggedPath(locator: Locator) {
-    return ppath.resolve(this.opts.project.configuration.get(`pnpUnpluggedFolder`), structUtils.slugifyLocator(locator));
-  }
-
-  private async unplugPackage(locator: Locator, packageFs: FakeFS<PortablePath>) {
-    const unplugPath = this.getUnpluggedPath(locator);
-    this.unpluggedPaths.add(unplugPath);
-
-    await xfs.mkdirpPromise(unplugPath);
-    await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: packageFs, overwrite: false});
-
-    return new CwdFS(unplugPath);
-  }
-
-  private isUnplugged(ident: Ident, dependencyMeta: DependencyMeta) {
-    if (dependencyMeta.unplugged)
-      return true;
-
-    if (FORCED_UNPLUG_PACKAGES.has(ident.identHash))
-      return true;
-
-    return false;
-  }
 }
 
 const writeLocatorState = async (locatorStatePath: PortablePath, locatorMap: NodeModulesLocatorMap): Promise<void> => {
@@ -376,27 +288,24 @@ const readLocatorState = async (locatorStatePath: PortablePath): Promise<NodeMod
 const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean, excludeNodeModules?: boolean}): Promise<any> => {
   try {
     if (options && !options.innerLoop) {
-      const stats = xfs.lstatSync(dir);
+      const stats = await xfs.lstatPromise(dir);
       if (!stats.isDirectory()) {
-        xfs.unlinkSync(dir);
+        await xfs.unlinkPromise(dir);
         return;
       }
     }
-    const queue: Array<Promise<any>> = [];
-    const entries = xfs.readdirSync(dir, {withFileTypes: true});
+    const entries = await xfs.readdirPromise(dir, {withFileTypes: true});
     for (const entry of entries) {
       const targetPath = ppath.join(dir, toFilename(entry.name));
       if (entry.isDirectory()) {
         if (entry.name !== NODE_MODULES || !options || !options.excludeNodeModules) {
-          queue.push(removeDir(targetPath, {innerLoop: true}));
+          await removeDir(targetPath, {innerLoop: true});
         }
       } else {
-        queue.push(xfs.unlinkPromise(targetPath));
+        await xfs.unlinkPromise(targetPath);
       }
     }
-    return Promise.all(queue).then(() => {
-      xfs.removeSync(dir);
-    });
+    await xfs.removePromise(dir);
   } catch (e) {
     if (e.code !== 'ENOENT') {
       throw e;
@@ -404,7 +313,7 @@ const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean, excl
   }
 };
 
-const ADD_CONCURRENT_LIMIT = 2;
+const ADD_CONCURRENT_LIMIT = 4;
 
 type LocatorKey = string;
 type LocationNode = { children: Map<Filename, LocationNode>, locator?: LocatorKey };
@@ -497,10 +406,27 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
       try {
         await removeDir(dstDir, {excludeNodeModules: keepNodeModules});
         if (linkType === LinkType.SOFT) {
-          xfs.mkdirpSync(ppath.dirname(dstDir));
-          xfs.symlinkSync(srcDir, dstDir);
+          await xfs.mkdirpPromise(ppath.dirname(dstDir));
+          await xfs.symlinkPromise(srcDir, dstDir);
         } else {
-          xfs.copySync(dstDir, srcDir, {baseFs});
+          const archivePath = getArchivePath(srcDir);
+          if (archivePath) {
+            const PARENT = toFilename('..');
+            const parentDir = ppath.join(dstDir, PARENT, PARENT, PARENT);
+            await xfs.createReadStream(archivePath)
+            .pipe(unzipper.Parse({concurrency: 8}))
+            .on('entry', async (entry) => {
+              const fullPath = ppath.join(parentDir, entry.path);
+              if (entry.type === 'Directory') {
+                await xfs.mkdirpPromise(fullPath, {chmod: 0o777});
+              } else {
+                await xfs.mkdirpPromise(ppath.dirname(fullPath), {chmod: 0o777});
+                entry.pipe(fs.createWriteStream(fullPath));
+              }
+            }).promise();
+          } else {
+            await xfs.copyPromise(dstDir, srcDir, {baseFs});
+          }
         }
       } catch (e) {
         e.message = `While persisting ${srcDir} -> ${dstDir} ` + e.message;
@@ -593,13 +519,15 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
       const dstDir = ppath.join(rootPath, location);
       const linkType = info.linkType;
 
+      for (const segment of segments) {
+        node = node!.children.get(segment);
+      }
       if (!prevTreeNode) {
-        addList.push({srcDir, dstDir, linkType, keepNodeModules: false});
+        addList.push({srcDir, dstDir, linkType, keepNodeModules: node!.children.size > 0});
       } else {
         for (const segment of segments) {
           curLocation = ppath.join(curLocation, segment);
           prevTreeNode = prevTreeNode.children.get(segment);
-          node = node!.children.get(segment);
           if (!prevTreeNode) {
             addList.push({srcDir, dstDir, linkType, keepNodeModules: node!.children.size > 0});
             break;
@@ -618,7 +546,7 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
 
   await Promise.all([addQueue, deleteQueue].map(queue => Promise.all(queue)));
 
-  xfs.mkdirpSync(rootNmDirPath);
+  await xfs.mkdirpPromise(rootNmDirPath);
   await writeLocatorState(locatorStatePath, locatorMap);
 };
 
