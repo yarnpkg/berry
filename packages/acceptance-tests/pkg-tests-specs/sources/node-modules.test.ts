@@ -7,13 +7,19 @@ describe('Node_Modules', () => {
   it('should install one dependency',
     makeTemporaryEnv(
       {
-        dependencies: {[`repeat-string`]: `1.6.1`},
+        dependencies: {
+          [`resolve`]: `1.9.0`,
+        },
       },
       async ({path, run, source}) => {
         await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `nodeLinker: "node-modules"\n`);
 
-        // await expect(run(`install`)).resolves.toBe('abc');
+        await run(`install`);
+
+        await expect(source(`require('resolve').sync('resolve')`)).resolves.toEqual(
+          await source(`require.resolve('resolve')`),
+        );
       },
-    ),
+    )
   );
 });

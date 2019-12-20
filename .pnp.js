@@ -427,6 +427,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/tmp", "npm:0.0.33"],
             ["@types/treeify", "npm:1.0.0"],
             ["@types/tunnel", "npm:0.0.0"],
+            ["@types/unzipper", "npm:0.10.1"],
             ["@types/webpack", "npm:4.32.1"],
             ["@types/webpack-merge", "npm:4.1.5"],
             ["@types/webpack-sources", "npm:0.1.5"],
@@ -6841,6 +6842,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/tmp", "npm:0.0.33"],
             ["@types/treeify", "npm:1.0.0"],
             ["@types/tunnel", "npm:0.0.0"],
+            ["@types/unzipper", "npm:0.10.1"],
             ["@types/webpack", "npm:4.32.1"],
             ["@types/webpack-merge", "npm:4.1.5"],
             ["@types/webpack-sources", "npm:0.1.5"],
@@ -8856,7 +8858,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/plugin-node-modules/",
           "packageDependencies": [
             ["@yarnpkg/plugin-node-modules", "workspace:packages/plugin-node-modules"],
-            ["@types/unzipper", "npm:0.10.1"],
             ["@yarnpkg/cli", "virtual:e23b02a23dd21a1183b7bea287ba41db2b362005cc3f364e1677565eaf97ca1611b7ccd4cdf6ef547bbb3251afacdc4a1a999c3156da491b521e7c36b6663da9#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -8865,6 +8866,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"],
             ["unzipper", "npm:0.10.5"]
           ],
           "linkType": "SOFT"

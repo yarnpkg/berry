@@ -5033,6 +5033,7 @@ __metadata:
     "@types/tmp": ^0.0.33
     "@types/treeify": ^1.0.0
     "@types/tunnel": ^0.0.0
+    "@types/unzipper": ^0.10.1
     "@types/webpack": ^4.32.1
     "@types/webpack-merge": ^4.1.5
     "@types/webpack-sources": ^0.1.5
@@ -5264,7 +5265,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-node-modules@workspace:packages/plugin-node-modules"
   dependencies:
-    "@types/unzipper": ^0.10.1
     "@yarnpkg/cli": "workspace:2.0.0-rc.19"
     "@yarnpkg/core": "workspace:2.0.0-rc.15"
     "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
@@ -5273,6 +5273,7 @@ __metadata:
     "@yarnpkg/pnp": "workspace:2.0.0-rc.12"
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.12"
     clipanion: ^2.1.5
+    micromatch: ^4.0.2
     unzipper: ^0.10.5
   languageName: unknown
   linkType: soft
