@@ -832,7 +832,7 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv(
       {},
       {
-        pnpIgnorePattern: `/foo/`,
+        pnpIgnorePatterns: `foo/**`,
       },
       async ({path, run, source}) => {
         await writeFile(`${path}/foo/shouldwork.js`, `module.exports = require('bad-dep');\n`);
@@ -854,7 +854,7 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv(
       {},
       {
-        pnpIgnorePattern: `/foo/`,
+        pnpIgnorePatterns: `foo/**`,
       },
       async ({path, run, source}) => {
         await writeFile(`${path}/foo/filea.js`, `module.exports = require('./fileb');\n`);
