@@ -1,18 +1,18 @@
-import {miscUtils, structUtils, Report}                                         from '@yarnpkg/core';
-import {FetchResult, Descriptor, Locator, Package}                              from '@yarnpkg/core';
-import {Installer, Linker, LinkOptions, MinimalLinkOptions, LinkType}           from '@yarnpkg/core';
-import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS}          from '@yarnpkg/fslib';
-import {NodeFS, VirtualFS, ZipOpenFS}                                           from '@yarnpkg/fslib';
-import {parseSyml}                                                              from '@yarnpkg/parsers';
-import {NodeModulesLocatorMap, buildLocatorMap, buildNodeModulesTree}           from '@yarnpkg/pnpify';
-import {getArchivePath}                                                         from '@yarnpkg/pnpify';
-import {PackageRegistry, makeRuntimeApi}                                        from '@yarnpkg/pnp';
+import {miscUtils, structUtils, Report}                                from '@yarnpkg/core';
+import {FetchResult, Descriptor, Locator, Package}                     from '@yarnpkg/core';
+import {Installer, Linker, LinkOptions, MinimalLinkOptions, LinkType}  from '@yarnpkg/core';
+import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS} from '@yarnpkg/fslib';
+import {NodeFS, VirtualFS, ZipOpenFS}                                  from '@yarnpkg/fslib';
+import {parseSyml}                                                     from '@yarnpkg/parsers';
+import {NodeModulesLocatorMap, buildLocatorMap, buildNodeModulesTree}  from '@yarnpkg/pnpify';
+import {getArchivePath}                                                from '@yarnpkg/pnpify';
+import {PackageRegistry, makeRuntimeApi}                               from '@yarnpkg/pnp';
 
-import {UsageError}                                                             from 'clipanion';
-import fs                                                                       from 'fs';
-import unzipper                                                                 from 'unzipper';
+import {UsageError}                                                    from 'clipanion';
+import fs                                                              from 'fs';
+import unzipper                                                        from 'unzipper';
 
-import {getPnpPath}                                                             from './index';
+import {getPnpPath}                                                    from './index';
 
 const NODE_MODULES = toFilename('node_modules');
 const LOCATOR_STATE_FILE = toFilename('.yarn-state.yml');
@@ -307,8 +307,9 @@ const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean, excl
     }
     await xfs.rmdirPromise(dir);
   } catch (e) {
-    if (e.code !== 'ENOENT' && e.code !== 'ENOTEMPTY')
+    if (e.code !== 'ENOENT' && e.code !== 'ENOTEMPTY') {
       throw e;
+    }
   }
 };
 
@@ -359,7 +360,7 @@ const parseLocation = (location: PortablePath): {locationRoot: PortablePath, seg
   const locationRoot: LocationRoot = npath.toPortablePath(allSegments.slice(0, nmIndex + 1).join(ppath.sep));
   const segments = allSegments.slice(nmIndex + 1).map(x => toFilename(x));
   return {locationRoot, segments};
-}
+};
 
 const buildLocationTree = (locatorMap: NodeModulesLocatorMap): LocationTree => {
   const locationTree = new Map();
@@ -369,14 +370,14 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap): LocationTree => {
       const {locationRoot, segments} = parseLocation(location);
       let node = locationTree.get(locationRoot);
       if (!node) {
-        node = { children: new Map() };
+        node = {children: new Map()};
         locationTree.set(locationRoot, node);
       }
       for (let idx = 0; idx < segments.length; idx++) {
         const segment = segments[idx];
         const nextNode = node.children.get(segment);
         if (!nextNode) {
-          const newNode: LocationNode = { children: new Map() };
+          const newNode: LocationNode = {children: new Map()};
           node.children.set(segment, newNode);
           node = newNode;
         } else {
@@ -390,7 +391,7 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap): LocationTree => {
   }
 
   return locationTree;
-}
+};
 
 const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeModulesLocatorMap, locatorMap: NodeModulesLocatorMap, baseFs: FakeFS<PortablePath>, report: Report) => {
   const rootNmDirPath = ppath.join(rootPath, NODE_MODULES);
@@ -433,7 +434,7 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
           }
         }
       } catch (e) {
-        e.message = `While persisting ${srcDir} -> ${dstDir} ` + e.message;
+        e.message = `While persisting ${srcDir} -> ${dstDir} ${e.message}`;
         throw e;
       } finally {
         progress.tick();
@@ -449,7 +450,7 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
     try {
       if (!options || !options.innerLoop) {
         await removeDir(dstDir, {excludeNodeModules: options && options.keepNodeModules});
-        await xfs.mkdirpPromise(dstDir, { chmod: 0o777 });
+        await xfs.mkdirpPromise(dstDir, {chmod: 0o777});
       }
 
       const entries = await xfs.readdirPromise(srcDir, {withFileTypes: true});
@@ -461,16 +462,16 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
           if (entry.isDirectory()) {
             await xfs.mkdirPromise(dst);
             await xfs.chmodPromise(dst, 0o777);
-            await cloneModule(src, dst, { keepNodeModules: false, innerLoop: true });
+            await cloneModule(src, dst, {keepNodeModules: false, innerLoop: true});
           } else {
             await xfs.copyFilePromise(src, dst, fs.constants.COPYFILE_FICLONE);
           }
         }
       }
     } catch (e) {
-      if (!options || !options.innerLoop) {
-        e.message = `While cloning ${srcDir} -> ${dstDir} ` + e.message;
-      }
+      if (!options || !options.innerLoop)
+        e.message = `While cloning ${srcDir} -> ${dstDir} ${e.message}`;
+
       throw e;
     } finally {
       if (!options || !options.innerLoop) {
@@ -485,7 +486,7 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
       try {
         await removeDir(dstDir);
       } catch (e) {
-        e.message = `While removing ${dstDir} ` + e.message;
+        e.message = `While removing ${dstDir} ${e.message}`;
         throw e;
       }
     })();
@@ -557,9 +558,9 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
       const dstDir = ppath.join(rootPath, location);
       const linkType = info.linkType;
 
-      for (const segment of segments) {
+      for (const segment of segments)
         node = node!.children.get(segment);
-      }
+
       if (!prevTreeNode) {
         addList.push({srcDir, dstDir, linkType, keepNodeModules: node!.children.size > 0});
       } else {
@@ -595,7 +596,7 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
   for (const entry of addList) {
     const copiedDstDir = persistedLocations.get(entry.srcDir);
     if (entry.linkType !== LinkType.SOFT && entry.dstDir !== copiedDstDir) {
-      addQueue.push(cloneModule(copiedDstDir, entry.dstDir, { keepNodeModules: entry.keepNodeModules }));
+      addQueue.push(cloneModule(copiedDstDir, entry.dstDir, {keepNodeModules: entry.keepNodeModules}));
     }
   }
 

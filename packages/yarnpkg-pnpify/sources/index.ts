@@ -33,5 +33,5 @@ export {
   buildNodeModulesTree,
   buildLocatorMap,
   NodeModulesLocatorMap,
-  getArchivePath
+  getArchivePath,
 };
