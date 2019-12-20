@@ -172,7 +172,7 @@ class PnpInstaller implements Installer {
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
-    const ignorePattern = buildIgnorePattern([`.vscode/pnpify/**`, this.opts.project.configuration.get(`pnpIgnorePatterns`)]);
+    const ignorePattern = buildIgnorePattern([`.vscode/pnpify/**`, ...this.opts.project.configuration.get(`pnpIgnorePatterns`)]);
     const packageRegistry = this.packageRegistry;
     const shebang = this.opts.project.configuration.get(`pnpShebang`);
 
