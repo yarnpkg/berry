@@ -4,6 +4,7 @@ import {miscUtils, structUtils}                                                 
 import {CwdFS, FakeFS, PortablePath, npath, ppath, toFilename, xfs}                                          from '@yarnpkg/fslib';
 import {PackageRegistry, generateInlinedScript, generateSplitScript, PnpSettings}                            from '@yarnpkg/pnp';
 import {UsageError}                                                                                          from 'clipanion';
+import mm                                                                                                    from 'micromatch';
 
 import {getPnpPath}                                                                                          from './index';
 
@@ -156,13 +157,22 @@ class PnpInstaller implements Installer {
       [null, this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator)],
     ]));
 
+    const buildIgnorePattern = (ignorePatterns: Array<string>) => {
+      if (ignorePatterns.length === 0)
+        return null;
+
+      return ignorePatterns.map(pattern => {
+        return `(${mm.makeRe(pattern).source})`;
+      }).join(`|`);
+    };
+
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
     const blacklistedLocations = this.blacklistedPaths;
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
-    const ignorePattern = this.opts.project.configuration.get(`pnpIgnorePattern`);
+    const ignorePattern = buildIgnorePattern([`.vscode/pnpify/**`, ...this.opts.project.configuration.get(`pnpIgnorePatterns`)]);
     const packageRegistry = this.packageRegistry;
     const shebang = this.opts.project.configuration.get(`pnpShebang`);
 

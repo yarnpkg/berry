@@ -4,24 +4,33 @@ import CJSON                                       from 'comment-json';
 import {dynamicRequire}                            from './dynamicRequire';
 
 const TEMPLATE = (relPnpApiPath: string, module: string, {usePnpify}: {usePnpify: boolean}) => [
+  `const {dirname, resolve} = require(\`path\`);\n`,
+  `\n`,
   `const relPnpApiPath = ${JSON.stringify(npath.toPortablePath(relPnpApiPath))};\n`,
-  `const absPnpApiPath = require(\`path\`).resolve(__dirname, relPnpApiPath);\n`,
+  `\n`,
+  `const absPnpApiPath = resolve(__dirname, relPnpApiPath);\n`,
+  `const absRootPath = dirname(absPnpApiPath);\n`,
   `\n`,
   `// Setup the environment to be able to require ${module}\n`,
   `require(absPnpApiPath).setup();\n`,
+  `\n`,
+  ...(usePnpify ? [
+    `const pnpifyResolution = require.resolve(\`@yarnpkg/pnpify\`, {paths: [absRootPath]});\n`,
+  ] : []),
+  `const moduleResolution = require.resolve(\`${module}\`, {paths: [absRootPath]});\n`,
   `\n`,
   `// Prepare the environment (to be ready in case of child_process.spawn etc)\n`,
   `process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || \`\`;\n`,
   `process.env.NODE_OPTIONS += \` -r \${absPnpApiPath}\`;\n`,
   ...(usePnpify ? [
-    `process.env.NODE_OPTIONS += \` -r \${require.resolve(\`@yarnpkg/pnpify\`)}\`;\n`,
+    `process.env.NODE_OPTIONS += \` -r \${pnpifyResolution}\`;\n`,
     `\n`,
     `// Apply PnPify to the current process\n`,
-    `require(\`@yarnpkg/pnpify\`).patchFs();\n`,
+    `require(pnpifyResolution).patchFs();\n`,
   ] : []),
   `\n`,
   `// Defer to the real ${module} your application uses\n`,
-  `module.exports = require(\`${module}\`);\n`,
+  `module.exports = require(moduleResolution);\n`,
 ].join(``);
 
 const addVSCodeWorkspaceSettings = async (projectRoot: PortablePath, settings: any) => {
