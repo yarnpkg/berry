@@ -289,6 +289,25 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     // fake module anyway.
     return Module._resolveFilename(request, makeFakeModule(npath.fromPortablePath(issuer)), false, {plugnplay: false});
   }
+  const x: number = 4;
+  /**
+   *
+   */
+
+  function isPathIgnored(path: PortablePath) {
+    if (ignorePattern === null)
+      return false;
+
+    const subPath = ppath.contains(runtimeState.basePath, path);
+    if (subPath === null)
+      return false;
+
+    if (ignorePattern.test(subPath.replace(/\/$/, ``))) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   /**
    * This key indicates which version of the standard is implemented by this resolver. The `std` key is the
@@ -313,12 +332,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   function getPackageInformation({name, reference}: PackageLocator): PackageInformation<PortablePath> | null {
     const packageInformationStore = packageRegistry.get(name);
-
     if (!packageInformationStore)
       return null;
 
     const packageInformation = packageInformationStore.get(reference);
-
     if (!packageInformation)
       return null;
 
@@ -402,22 +419,32 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     if (considerBuiltins && builtinModules.has(request))
       return null;
 
-    // We allow disabling the pnp resolution for some subpaths. This is because some projects, often legacy,
-    // contain multiple levels of dependencies (ie. a yarn.lock inside a subfolder of a yarn.lock). This is
-    // typically solved using workspaces, but not all of them have been converted already.
+    // We allow disabling the pnp resolution for some subpaths.
+    // This is because some projects, often legacy, contain multiple
+    // levels of dependencies (ie. a yarn.lock inside a subfolder of
+    // a yarn.lock). This is typically solved using workspaces, but
+    // not all of them have been converted already.
 
-    if (ignorePattern && issuer && ignorePattern.test(normalizePath(issuer))) {
-      const result = callNativeResolution(request, issuer);
+    if (issuer && isPathIgnored(issuer)) {
+      // Absolute paths that seem to belong to a PnP tree are still
+      // handled by our runtime even if the issuer isn't. This is
+      // because the native Node resolution uses a special version
+      // of the `stat` syscall which would otherwise bypass the
+      // filesystem layer we require to access the files.
 
-      if (result === false) {
-        throw makeError(
-          ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED,
-          `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp)\n\nRequire request: "${request}"\nRequired by: ${issuer}\n`,
-          {request, issuer},
-        );
+      if (!ppath.isAbsolute(request) || findPackageLocator(request) === null) {
+        const result = callNativeResolution(request, issuer);
+
+        if (result === false) {
+          throw makeError(
+            ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED,
+            `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp)\n\nRequire request: "${request}"\nRequired by: ${issuer}\n`,
+            {request, issuer},
+          );
+        }
+
+        return npath.toPortablePath(result);
       }
-
-      return npath.toPortablePath(result);
     }
 
     let unqualifiedPath: PortablePath;

@@ -172,7 +172,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       }
     ],
     "enableTopLevelFallback": true,
-    "ignorePatternData": null,
+    "ignorePatternData": "(^(?:\\.vscode\\/pnpify(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)|$))$)",
     "fallbackExclusionList": [
       ["@yarnpkg/builder", ["virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder", "workspace:packages/yarnpkg-builder"]],
       ["@yarnpkg/check", ["workspace:packages/yarnpkg-check"]],
@@ -9676,7 +9676,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:76774085d0b766c296cabbb346c418bb95686cbd6926b4156770624f66da564ebe96a3c76b13c8fb8a0f99627e36ba9c03b44c22afcd6c455521ba0079ed2d11#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9694,7 +9695,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:1fc8c38f0d90ffeaf1fb2d09edba974c2cee73dd82a13c8b1eec144bb973f0bccd4301b1e2c558948606e194558c5ffc8338fb03ff28cb3573e57e4c39b54aa6#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9712,7 +9714,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:0d27f767dd513a4d7cb95e5b40f157428e111f9b54ba3a1ee5b557a9ea084b142b9ce9f75f8598af222206a9704fa19c7dff92efbe7f62512b37ee6c432170a9#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9730,7 +9733,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:710c124f252fea91d1ae93fd423dcee60745326534d20f538c5de1a52e99382311185229afbf32f0b8fe54a751534fd6d248cf7c21b2cdfa7648efea6ee277c0#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9748,7 +9752,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:f1723d6d2ea99b43cb50ae64c417b52c49a2c22b69368722853282b88468c708e4993dd63aeac85516644b149582cfd6eeb198e39dae7d28ffba2db31859ef26#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9766,7 +9771,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:1c63a696a4031b4fe50d0d3d8eb156d158236bd8f256962582186eddbcc54ca632ae3f06136884adc9c143428b6572af21304b9da969522d465fc505c9ba28b0#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9784,7 +9790,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:4f32fc3cb183a052bc8fe3c8f8e313e9051a18d2b71f7c9b4e257dc264cc21bd45bdbf17f21b36fdeabe4a7115c8b501505a63a733a0714824fc48c6d251a913#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9802,7 +9809,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:210384ac81e0e57e383211c49fa8e4493b3dd84507b3443af2f8d092fc022e5059209ad6104223c2b805e196d2277202480d42b482b4397adfa03ed4fcc015d6#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9820,7 +9828,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:1a62304f6d8dc7f55f32389812572c13268ae5be55a6436af504b8f2ee6e1268d38dbafba5e9f58ed99219862b1773104f1b31aea9b004979fd1be16c13d2a40#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9838,7 +9847,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:b9731b7d0a9f72cae95021d903b386b6df297cf776f03dcd57e6383935623fb60009eebb02775550f6d16e9a0afd692937bbf1972c2c7540553ab1c831ed7694#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9856,7 +9866,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:d14908fb916cf87b6a14cdb7d84eaaea33366ecafb5353a181bcdd848a2f12081d1f493de8fd389bbdb9a07664a4c4e0b7b37d252ed3ff15d014f448f1f4b7c2#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9874,7 +9885,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:0e968562338bd8d02836ac2558770295d5163d8a2f3675772392d54058910e33e6c7e3a6dd5e2268fca661e39e0cfda5255692b1beb5a01c5eca283ac9f6b9a0#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9892,7 +9904,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:503e7a08f8324fae84a4e066ba7c705261e9b00a48016f6534a47bf7ec84d12fa5c11e6838007ddc1fc67d3b442473dd38dcba0156fbfb4fa2abe1c7a2466d0a#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9910,7 +9923,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:4e57d0fc7214a90484e280ecd3a8155ee51f5b18147a075df333268a11f408223acedd5bcd37b1eed0c14387b73bf3d01d41ff169df1da90e2da0ba3100975d4#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9928,7 +9942,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:b4db0ba657f58d4960f1baadef426333fb84ed0a56d81fc9d239dec3833008751eb6f77ab5e4a8b2e31a90c5552512a6a8c928f4593964ac8e728347c720a5ac#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9946,7 +9961,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:e1907ad60a39abeecb766d010959b7b14614a5a064ca356dc52a7ae8903bbdde94e8570c968efbd9bc659a419ae30d8c8d1bffaf905201cdc5340289bd549fd9#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9964,7 +9980,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:d27d363545ddfc95b2b89d19262cf67c5cd8bd3704fa2836444d52a906ac508194e701f1cc7bd45ca85f7f788a64c0342fb0351679dfc71b45ae86cc4e1c3015#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -9982,7 +9999,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:0c0e3b7ccdb78e31e6a732eb2cf089bf478de29f916c4394eaf9a92280e46a04a30313b851de6610990948c53e549b7d4b15a8d424b753e0542dbc3e63994c1a#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -10000,7 +10018,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:19e94abfc304afc59bcf8561b0158ac06cb1d9469e72c5007ba6f9b8b461a4fa324cf256551c721eb1daf00ab4077326d40a81d755b428fd9db2e94b7ffdb9be#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -10018,7 +10037,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:616a2ba0d005227805d037f4c8ec29f1dd09fdb3e3f49f7b5c4a07a62139a147d373d38bc5ebcb31bddab3956c3fc25d54edf8722741d9ebdbe9d36d21968f91#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.1.5"],
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "cli",
@@ -42177,6 +42197,23 @@ function makeApi(runtimeState, opts) {
       plugnplay: false
     });
   }
+
+  const x = 4;
+  /**
+   *
+   */
+
+  function isPathIgnored(path) {
+    if (ignorePattern === null) return false;
+    const subPath = ppath.contains(runtimeState.basePath, path);
+    if (subPath === null) return false;
+
+    if (ignorePattern.test(subPath.replace(/\/$/, ``))) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   /**
    * This key indicates which version of the standard is implemented by this resolver. The `std` key is the
    * Plug'n'Play standard, and any other key are third-party extensions. Third-party extensions are not allowed
@@ -42271,21 +42308,30 @@ function makeApi(runtimeState, opts) {
     // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
     if (request === `pnpapi`) return npath.toPortablePath(opts.pnpapiResolution); // Bailout if the request is a native module
 
-    if (considerBuiltins && builtinModules.has(request)) return null; // We allow disabling the pnp resolution for some subpaths. This is because some projects, often legacy,
-    // contain multiple levels of dependencies (ie. a yarn.lock inside a subfolder of a yarn.lock). This is
-    // typically solved using workspaces, but not all of them have been converted already.
+    if (considerBuiltins && builtinModules.has(request)) return null; // We allow disabling the pnp resolution for some subpaths.
+    // This is because some projects, often legacy, contain multiple
+    // levels of dependencies (ie. a yarn.lock inside a subfolder of
+    // a yarn.lock). This is typically solved using workspaces, but
+    // not all of them have been converted already.
 
-    if (ignorePattern && issuer && ignorePattern.test(normalizePath(issuer))) {
-      const result = callNativeResolution(request, issuer);
+    if (issuer && isPathIgnored(issuer)) {
+      // Absolute paths that seem to belong to a PnP tree are still
+      // handled by our runtime even if the issuer isn't. This is
+      // because the native Node resolution uses a special version
+      // of the `stat` syscall which would otherwise bypass the
+      // filesystem layer we require to access the files.
+      if (!ppath.isAbsolute(request) || findPackageLocator(request) === null) {
+        const result = callNativeResolution(request, issuer);
 
-      if (result === false) {
-        throw internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp)\n\nRequire request: "${request}"\nRequired by: ${issuer}\n`, {
-          request,
-          issuer
-        });
+        if (result === false) {
+          throw internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp)\n\nRequire request: "${request}"\nRequired by: ${issuer}\n`, {
+            request,
+            issuer
+          });
+        }
+
+        return npath.toPortablePath(result);
       }
-
-      return npath.toPortablePath(result);
     }
 
     let unqualifiedPath; // If the request is a relative or absolute path, we just return it normalized

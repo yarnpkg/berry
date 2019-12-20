@@ -682,6 +682,23 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should allow ignored paths to require files within the dependency tree`,
+    makeTemporaryEnv(
+      {dependencies: {[`no-deps`]: `1.0.0`}},
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        const tmp = await createTemporaryFolder();
+
+        await writeFile(`${tmp}/index.js`, `require(process.argv[2])`);
+        await writeFile(`${path}/index.js`, `require('no-deps')`);
+
+        await run(`node`, `${npath.fromPortablePath(tmp)}/index.js`, `${npath.fromPortablePath(path)}/index.js`);
+      },
+    ),
+  );
+
+  test(
     `it should export the PnP API through the 'pnpapi' name`,
     makeTemporaryEnv(
       {},

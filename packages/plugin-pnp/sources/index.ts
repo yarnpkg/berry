@@ -39,10 +39,11 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
       type: SettingsType.STRING,
       default: `#!/usr/bin/env node`,
     },
-    pnpIgnorePattern: {
-      description: `Regex defining a pattern of files that should use the classic resolution`,
+    pnpIgnorePatterns: {
+      description: `Array of glob patterns; files matching them will use the classic resolution`,
       type: SettingsType.STRING,
-      default: null,
+      default: [],
+      isArray: true,
     },
     pnpEnableInlining: {
       description: `If true, the PnP data will be inlined along with the generated loader`,
