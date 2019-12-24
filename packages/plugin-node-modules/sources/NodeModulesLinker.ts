@@ -1,16 +1,18 @@
-import {miscUtils, structUtils, Report}                                from '@yarnpkg/core';
-import {FetchResult, Descriptor, Locator, Package}                     from '@yarnpkg/core';
+import {InstallStatus, BuildDirective}                                 from '@yarnpkg/core/sources/Installer';
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, LinkType}  from '@yarnpkg/core';
-import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS} from '@yarnpkg/fslib';
+import {FetchResult, Descriptor, Locator, Package, BuildType}          from '@yarnpkg/core';
+import {structUtils, Report, LocatorHash, Manifest}                    from '@yarnpkg/core';
 import {NodeFS, VirtualFS, ZipOpenFS}                                  from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS} from '@yarnpkg/fslib';
 import {parseSyml}                                                     from '@yarnpkg/parsers';
+import {getArchivePath, serializeLocator}                              from '@yarnpkg/pnpify';
 import {NodeModulesLocatorMap, buildLocatorMap, buildNodeModulesTree}  from '@yarnpkg/pnpify';
-import {getArchivePath}                                                from '@yarnpkg/pnpify';
-import {PackageRegistry, makeRuntimeApi}                               from '@yarnpkg/pnp';
 
+import {PackageRegistry, makeRuntimeApi}                               from '@yarnpkg/pnp';
 import {UsageError}                                                    from 'clipanion';
 import fs                                                              from 'fs';
 import mm                                                              from 'micromatch';
+
 import unzipper                                                        from 'unzipper';
 
 import {getPnpPath}                                                    from './index';
@@ -19,46 +21,50 @@ const NODE_MODULES = toFilename('node_modules');
 const LOCATOR_STATE_FILE = toFilename('.yarn-state.yml');
 
 export class NodeModulesLinker implements Linker {
+  private cachedLocatorMap: NodeModulesLocatorMap | null = null;
+
+  private async getLocatorMap(rootPath: PortablePath, options?: {reread: boolean}): Promise<NodeModulesLocatorMap> {
+    if (!this.cachedLocatorMap || (options && options.reread))
+      this.cachedLocatorMap = await readLocatorState(ppath.join(rootPath, NODE_MODULES, LOCATOR_STATE_FILE));
+
+    return this.cachedLocatorMap;
+  }
+
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
     return opts.project.configuration.get('nodeLinker') === 'node-modules';
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
-    const pnpPath = getPnpPath(opts.project);
-    if (!xfs.existsSync(pnpPath))
-      throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
+    const rootPath = opts.project.cwd;
+    const locatorMap = await this.getLocatorMap(rootPath);
+    const locatorInfo = locatorMap.get(serializeLocator({name: structUtils.requirableIdent(locator), reference: locator.reference}));
 
-    const physicalPath = npath.fromPortablePath(pnpPath);
-    const pnpFile = miscUtils.dynamicRequire(physicalPath);
-    delete require.cache[physicalPath];
+    if (!locatorInfo)
+      throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed node_modules map - running an install might help`);
 
-    const packageLocator = {name: structUtils.requirableIdent(locator), reference: locator.reference};
-    const packageInformation = pnpFile.getPackageInformation(packageLocator);
-
-    if (!packageInformation)
-      throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed PnP map - running an install might help`);
-
-    return npath.toPortablePath(packageInformation.packageLocation);
+    return ppath.join(rootPath, locatorInfo.locations[0]);
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
-    const pnpPath = getPnpPath(opts.project);
-    if (!xfs.existsSync(pnpPath))
-      throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
+    throw new Error(`Not implemented, location: ${location}`);
+    // const pnpPath = getPnpPath(opts.project);
+    // if (!xfs.existsSync(pnpPath))
+    //   throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
 
-    const physicalPath = npath.fromPortablePath(pnpPath);
-    const pnpFile = miscUtils.dynamicRequire(physicalPath);
-    delete require.cache[physicalPath];
+    // const physicalPath = npath.fromPortablePath(pnpPath);
+    // const pnpFile = miscUtils.dynamicRequire(physicalPath);
+    // delete require.cache[physicalPath];
 
-    const locator = pnpFile.findPackageLocator(npath.fromPortablePath(location));
-    if (!locator)
-      return null;
+    // const locator = pnpFile.findPackageLocator(npath.fromPortablePath(location));
+    // if (!locator)
+    //   return null;
 
-    return structUtils.makeLocator(structUtils.parseIdent(locator.name), locator.reference);
+    // return structUtils.makeLocator(structUtils.parseIdent(locator.name), locator.reference);
+    return structUtils.makeLocator(structUtils.parseIdent('aaa'), 'bb');
   }
 
   makeInstaller(opts: LinkOptions) {
-    return new NodeModulesInstaller(opts);
+    return new NodeModulesInstaller(opts, () => this.getLocatorMap(opts.project.cwd, {reread: true}));
   }
 }
 
@@ -67,11 +73,14 @@ class NodeModulesInstaller implements Installer {
 
   private readonly unpluggedPaths: Set<string> = new Set();
   private readonly blacklistedPaths: Set<string> = new Set();
+  private readonly installedPackages: Map<LocatorKey, { locatorHash: LocatorHash, packageLocation: PortablePath }> = new Map();
+  private readonly onFinalizeInstall: () => Promise<any>;
 
   private readonly opts: LinkOptions;
 
-  constructor(opts: LinkOptions) {
+  constructor(opts: LinkOptions, onFinalizeInstall: () => Promise<any>) {
     this.opts = opts;
+    this.onFinalizeInstall = onFinalizeInstall;
   }
 
   async installPackage(pkg: Package, fetchResult: FetchResult) {
@@ -93,6 +102,8 @@ class NodeModulesInstaller implements Installer {
 
     const packageStore = this.getPackageStore(key1);
     packageStore.set(key2, {packageLocation, packageDependencies, packagePeers, linkType: pkg.linkType});
+
+    this.installedPackages.set(serializeLocator({name: key1, reference: key2}), {locatorHash: pkg.locatorHash, packageLocation});
 
     return {
       packageLocation,
@@ -201,6 +212,35 @@ class NodeModulesInstaller implements Installer {
     });
     const locatorMap = buildLocatorMap(rootPath, nmTree);
     await persistNodeModules(rootPath, prevLocatorMap, locatorMap, baseFs, this.opts.report);
+    await this.onFinalizeInstall();
+
+    const installStatuses: InstallStatus[] = [];
+    for (const [key, val] of locatorMap.entries()) {
+      const pkg = this.installedPackages.get(key)!;
+      installStatuses.push({
+        buildLocations: val.locations.map(loc => ppath.join(rootPath, loc)),
+        locatorHash: pkg.locatorHash,
+        packageLocation: pkg.packageLocation,
+        buildDirective: await this.getBuildScripts(val.locations[0]),
+      });
+    }
+    return installStatuses;
+  }
+
+  private async getBuildScripts(packageLocation: PortablePath): Promise<BuildDirective[] | null> {
+    const buildScripts: BuildDirective[] = [];
+    const {scripts} = await Manifest.find(packageLocation);
+
+    for (const scriptName of [`preinstall`, `install`, `postinstall`])
+      if (scripts.has(scriptName))
+        buildScripts.push([BuildType.SCRIPT, scriptName]);
+
+    // Detect cases where a package has a binding.gyp but no install script
+    const bindingFilePath = ppath.resolve(packageLocation, toFilename(`binding.gyp`));
+    if (!scripts.has(`install`) && xfs.existsSync(bindingFilePath))
+      buildScripts.push([BuildType.SHELLCODE, `node-gyp rebuild`]);
+
+    return buildScripts.length > 0 ? buildScripts : null;
   }
 
   private getPackageStore(key: string) {

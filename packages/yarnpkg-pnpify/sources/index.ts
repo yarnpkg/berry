@@ -6,6 +6,7 @@ import fs                                      from 'fs';
 import {NodeModulesFS}                         from './NodeModulesFS';
 import {buildNodeModulesTree, buildLocatorMap} from './buildNodeModulesTree';
 import {NodeModulesLocatorMap, getArchivePath} from './buildNodeModulesTree';
+import {serializeLocator}                      from './buildNodeModulesTree';
 import {dynamicRequire}                        from './dynamicRequire';
 
 let fsPatched = false;
@@ -34,4 +35,5 @@ export {
   buildLocatorMap,
   NodeModulesLocatorMap,
   getArchivePath,
+  serializeLocator,
 };

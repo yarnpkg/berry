@@ -810,7 +810,7 @@ export class Project {
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
     const packageLocations: Map<LocatorHash, PortablePath> = new Map();
-    const packageBuildDirectives: Map<LocatorHash, BuildDirective[]> = new Map();
+    const packageBuildDirectives: Map<LocatorHash, { directives: BuildDirective[], buildLocations: PortablePath[] }> = new Map();
 
     // Step 1: Installing the packages on the disk
 
@@ -842,7 +842,7 @@ export class Project {
       packageLocations.set(pkg.locatorHash, installStatus.packageLocation);
 
       if (installStatus.buildDirective) {
-        packageBuildDirectives.set(pkg.locatorHash, installStatus.buildDirective);
+        packageBuildDirectives.set(pkg.locatorHash, {directives: installStatus.buildDirective, buildLocations: [installStatus.packageLocation]});
       }
     }
 
@@ -914,8 +914,16 @@ export class Project {
 
     // Step 3: Inform our linkers that they should have all the info needed
 
-    for (const installer of installers.values())
-      await installer.finalizeInstall();
+    for (const installer of installers.values()) {
+      const installStatuses = await installer.finalizeInstall();
+      if (installStatuses) {
+        for (const installStatus of installStatuses) {
+          if (installStatus.buildDirective) {
+            packageBuildDirectives.set(installStatus.locatorHash!, {directives: installStatus.buildDirective || undefined, buildLocations: installStatus.buildLocations || [installStatus.packageLocation]});
+          }
+        }
+      }
+    }
 
     // Step 4: Build the packages in multiple steps
 
@@ -931,7 +939,7 @@ export class Project {
     // the rebuilds much more predictable than before, and to give us the tools
     // later to improve this further by explaining *why* a rebuild happened.
 
-    const getBuildHash = (locator: Locator) => {
+    const getBuildHash = (locator: Locator, buildLocations: PortablePath[]) => {
       const hash = createHash(`sha512`);
 
       const traverse = (locatorHash: LocatorHash, seenPackages: Set<string> = new Set()) => {
@@ -956,6 +964,8 @@ export class Project {
       };
 
       traverse(locator.locatorHash);
+
+      buildLocations.forEach(location => hash.update(location));
 
       return hash.digest(`hex`);
     };
@@ -997,7 +1007,11 @@ export class Project {
 
         buildablePackages.delete(locatorHash);
 
-        const buildHash = getBuildHash(pkg);
+        const buildInfo = packageBuildDirectives.get(pkg.locatorHash);
+        if (!buildInfo)
+          throw new Error(`Assertion failed: The build directive should have been registered`);
+
+        const buildHash = getBuildHash(pkg, buildInfo.buildLocations);
 
         // No need to rebuild the package if its hash didn't change
         if (Object.prototype.hasOwnProperty.call(bstate, pkg.locatorHash) && bstate[pkg.locatorHash] === buildHash) {
@@ -1010,59 +1024,57 @@ export class Project {
         else
           report.reportInfo(MessageName.MUST_BUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be built because it never did before or the last one failed`);
 
-        const buildDirective = packageBuildDirectives.get(pkg.locatorHash);
-        if (!buildDirective)
-          throw new Error(`Assertion failed: The build directive should have been registered`);
-
-        buildPromises.push((async () => {
-          for (const [buildType, scriptName] of buildDirective) {
-            let header = `# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`;
-            switch (buildType) {
-              case BuildType.SCRIPT: {
-                header += `# Script name: ${scriptName}\n`;
-              } break;
-              case BuildType.SHELLCODE: {
-                header += `# Script code: ${scriptName}\n`;
-              } break;
-            }
-
-            const stdin = null;
-            const {logFile, stdout, stderr} = this.configuration.getSubprocessStreams(structUtils.prettyLocator(this.configuration, pkg), {
-              header,
-              report,
-            });
-
-            let exitCode;
-            try {
+        for (const location of buildInfo.buildLocations) {
+          buildPromises.push((async () => {
+            for (const [buildType, scriptName] of buildInfo.directives) {
+              let header = `# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`;
               switch (buildType) {
                 case BuildType.SCRIPT: {
-                  exitCode = await scriptUtils.executePackageScript(pkg, scriptName, [], {project: this, stdin, stdout, stderr});
+                  header += `# Script name: ${scriptName}\n`;
                 } break;
                 case BuildType.SHELLCODE: {
-                  exitCode = await scriptUtils.executePackageShellcode(pkg, scriptName, [], {project: this, stdin, stdout, stderr});
+                  header += `# Script code: ${scriptName}\n`;
                 } break;
               }
-            } catch (error) {
-              stderr.write(error.stack);
-              exitCode = 1;
-            }
 
-            if (exitCode === 0) {
+              const stdin = null;
+              const {logFile, stdout, stderr} = this.configuration.getSubprocessStreams(structUtils.prettyLocator(this.configuration, pkg), {
+                header,
+                report,
+              });
+
+              let exitCode;
+              try {
+                switch (buildType) {
+                  case BuildType.SCRIPT: {
+                    exitCode = await scriptUtils.executePackageScript(pkg, scriptName, [], {cwd: location, project: this, stdin, stdout, stderr});
+                  } break;
+                  case BuildType.SHELLCODE: {
+                    exitCode = await scriptUtils.executePackageShellcode(pkg, scriptName, [], {cwd: location, project: this, stdin, stdout, stderr});
+                  } break;
+                }
+              } catch (error) {
+                stderr.write(error.stack);
+                exitCode = 1;
+              }
+
+              if (exitCode === 0) {
+                nextBState[pkg.locatorHash] = buildHash;
+                continue;
+              }
+
+              const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${exitCode}, logs can be found here: ${logFile})`;
+
+              if (!this.optionalBuilds.has(pkg.locatorHash)) {
+                report.reportError(MessageName.BUILD_FAILED, buildMessage);
+                break;
+              }
+
               nextBState[pkg.locatorHash] = buildHash;
-              continue;
+              report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
             }
-
-            const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${exitCode}, logs can be found here: ${logFile})`;
-
-            if (!this.optionalBuilds.has(pkg.locatorHash)) {
-              report.reportError(MessageName.BUILD_FAILED, buildMessage);
-              break;
-            }
-
-            nextBState[pkg.locatorHash] = buildHash;
-            report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
-          }
-        })());
+          })());
+        }
       }
 
       await Promise.all(buildPromises);

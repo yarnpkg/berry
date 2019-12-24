@@ -79,7 +79,7 @@ export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOption
   return populateNodeModulesTree(pnp, hoistedTree, locators, packages, options);
 };
 
-const serializeLocator = (locator: PackageLocator): LocatorKey => `${locator.name}:${locator.reference}`;
+export const serializeLocator = (locator: PackageLocator): LocatorKey => `${locator.name}:${locator.reference}`;
 
 export type NodeModulesLocatorMap = Map<LocatorKey, {
   size: number;
