@@ -15,8 +15,6 @@ import mm                                                              from 'mic
 
 import unzipper                                                        from 'unzipper';
 
-import {getPnpPath}                                                    from './index';
-
 const NODE_MODULES = toFilename('node_modules');
 const LOCATOR_STATE_FILE = toFilename('.yarn-state.yml');
 
@@ -454,6 +452,9 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
   const addModule = async ({srcDir, dstDir, linkType, keepNodeModules}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, keepNodeModules: boolean}) => {
     const promise: Promise<any> = (async () => {
       try {
+        if (linkType === LinkType.SOFT && srcDir === dstDir)
+          // Soft links to themselves are used to denote workspace packages, just ignore them
+          return;
         await removeDir(dstDir, {excludeNodeModules: keepNodeModules});
         if (linkType === LinkType.SOFT) {
           await xfs.mkdirpPromise(ppath.dirname(dstDir));

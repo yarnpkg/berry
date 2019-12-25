@@ -283,6 +283,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
 
   const rootNode = makeLeafNode(0);
   const rootPath = rootNode.target && rootNode.target;
+  tree.set(rootPath, rootNode);
   buildTree(0, rootPath);
 
   return tree;
