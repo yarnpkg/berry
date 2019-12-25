@@ -137,7 +137,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
     locatorToPackageMap.set(locatorKey, newPkgId);
     locators.push(locator);
-    packages.push({name: locator.name!, weight});
+    packages.push({name: locator.name!, weight, locatorKey});
     packageInfos.push(pkg);
     return newPkgId;
   };

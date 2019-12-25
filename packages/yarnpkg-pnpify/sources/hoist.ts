@@ -61,6 +61,8 @@ export interface HoisterPackageInfo {
   name: HoisterPackageName;
   /** The own weight of the package, without its transitive dependencies */
   weight: HoisterWeight;
+  /** Full package locator, for troubleshooting purposes */
+  locatorKey: string;
 }
 
 /**
