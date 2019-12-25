@@ -133,23 +133,24 @@ const buildAncestorMap = (tree: ReadonlyHoisterPackageTree): AncestorMap => {
 
   const seenIds = new Set<HoisterPackageId>();
 
-  const addAncestor = (nodeId: HoisterPackageId) => {
-    if (seenIds.has(nodeId))
+  const addAncestor = (parentNodeIds: HoisterPackageId[]) => {
+    const lastNodeId = parentNodeIds[parentNodeIds.length - 1];
+    if (seenIds.has(lastNodeId))
       return;
-    seenIds.add(nodeId);
+    seenIds.add(lastNodeId);
 
-    for (const depId of tree[nodeId].deps) {
+    for (const depId of tree[lastNodeId].deps) {
       const ancestors = ancestorMap[depId];
       if (!ancestors)
-        ancestorMap[depId] = new Set([nodeId]);
+        ancestorMap[depId] = new Set(parentNodeIds);
       else
-        ancestors.add(nodeId);
+        ancestors.add(lastNodeId);
 
-      addAncestor(depId);
+      addAncestor([...parentNodeIds, depId]);
     }
   };
 
-  addAncestor(0);
+  addAncestor([0]);
 
   return ancestorMap;
 };
