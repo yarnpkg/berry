@@ -258,7 +258,7 @@ type ParseRangeReturnType<Opts extends ParseRangeOptions> =
   & ({selector: Opts extends {parseSelector: true} ? querystring.ParsedUrlQuery : string});
 
 export function parseRange<Opts extends ParseRangeOptions>(range: string, opts?: Opts): ParseRangeReturnType<Opts> {
-  const match = range.match(/^([^#:]*:)?([^#:]*)(?:#((?:(?!::).)*))?(?:::(.*))?$/);
+  const match = range.match(/^([^#:]*:)?((?:(?!::)[^#])*)(?:#((?:(?!::).)*))?(?:::(.*))?$/);
   if (match === null)
     throw new Error(`Invalid range (${range})`);
 
