@@ -1,5 +1,5 @@
-import {miscUtils} from '@yarnpkg/core';
-import { PortablePath, npath } from '@yarnpkg/fslib';
+import {miscUtils}           from '@yarnpkg/core';
+import {PortablePath, npath} from '@yarnpkg/fslib';
 
 const HEADER_REGEXP = /^@@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? @@.*/;
 
@@ -31,8 +31,8 @@ export function parseHunkHeaderLine(headerLine: string): HunkHeader {
   };
 }
 
-export const NON_EXECUTABLE_FILE_MODE = 0o644
-export const EXECUTABLE_FILE_MODE = 0o755
+export const NON_EXECUTABLE_FILE_MODE = 0o644;
+export const EXECUTABLE_FILE_MODE = 0o755;
 
 type FileMode =
   | typeof NON_EXECUTABLE_FILE_MODE
@@ -145,7 +145,7 @@ const hunkLinetypes: {[k: string]: PatchMutationPart['type'] | `pragma` | `heade
   [`\\`]: `pragma`,
   // Treat blank lines as context
   undefined: `context`,
-}
+};
 
 function parsePatchLines(lines: Array<string>, {supportLegacyDiffs}: {supportLegacyDiffs: boolean}) {
   const result: Array<FileDeets> = [];
@@ -205,16 +205,16 @@ function parsePatchLines(lines: Array<string>, {supportLegacyDiffs}: {supportLeg
       } else if (line.startsWith(`rename to `)) {
         currentFilePatch.renameTo = line.slice(`rename to `.length).trim();
       } else if (line.startsWith(`index `)) {
-        const match = line.match(/(\w+)\.\.(\w+)/)
+        const match = line.match(/(\w+)\.\.(\w+)/);
         if (!match)
           continue;
 
         currentFilePatch.beforeHash = match[1];
         currentFilePatch.afterHash = match[2];
       } else if (line.startsWith(`--- `)) {
-        currentFilePatch.fromPath = line.slice(`--- a/`.length).trim()
+        currentFilePatch.fromPath = line.slice(`--- a/`.length).trim();
       } else if (line.startsWith(`+++ `)) {
-        currentFilePatch.toPath = line.slice(`+++ b/`.length).trim()
+        currentFilePatch.toPath = line.slice(`+++ b/`.length).trim();
       }
     } else {
       if (supportLegacyDiffs && line.startsWith(`--- a/`)) {
@@ -336,7 +336,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
       case `file deletion`: {
         const path = diffLineFromPath || fromPath;
         if (!path)
-          throw new Error("Bad parse state: no path given for file deletion")
+          throw new Error("Bad parse state: no path given for file deletion");
 
         result.push({
           type: `file deletion`,
@@ -363,11 +363,11 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
 
       case `patch`:
       case `mode change`: {
-        destinationFilePath = toPath || diffLineToPath
+        destinationFilePath = toPath || diffLineToPath;
       } break;
 
       default: {
-        miscUtils.assertNever(type)
+        miscUtils.assertNever(type);
       } break;
     }
 
@@ -412,7 +412,7 @@ export function parsePatchFile(file: string): ParsedPatchFile {
     return interpretParsedPatchFile(parsePatchLines(lines, {supportLegacyDiffs: false}));
   } catch (e) {
     if (e instanceof Error && e.message === `hunk header integrity check failed`) {
-      return interpretParsedPatchFile(parsePatchLines(lines, { supportLegacyDiffs: true }));
+      return interpretParsedPatchFile(parsePatchLines(lines, {supportLegacyDiffs: true}));
     } else {
       throw e;
     }

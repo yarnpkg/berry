@@ -2,7 +2,7 @@ import semver                                            from 'semver';
 
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
-import {Descriptor, Locator, DescriptorHash}                             from './types';
+import {Descriptor, Locator, DescriptorHash}             from './types';
 
 export const TAG_REGEXP = /^[a-z]+$/;
 

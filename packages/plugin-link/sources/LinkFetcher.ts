@@ -2,7 +2,6 @@ import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator}                                    from '@yarnpkg/core';
 import {structUtils}                                from '@yarnpkg/core';
 import {JailFS, NodeFS, ppath, PortablePath}        from '@yarnpkg/fslib';
-import querystring                                  from 'querystring';
 
 import {LINK_PROTOCOL}                              from './constants';
 

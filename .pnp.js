@@ -40614,8 +40614,8 @@ class ZipFS_ZipFS extends FakeFS_BasePortableFakeFS {
       const ctime = new Date(ctimeMs);
       const mtime = new Date(mtimeMs);
       const type = this.listings.has(p) ? S_IFDIR : S_IFREG;
-      const baseMode = type === S_IFDIR ? 0o755 : 0o644;
-      const mode = this.getUnixMode(entry, type | baseMode);
+      const defaultMode = type === S_IFDIR ? 0o755 : 0o644;
+      const mode = type | this.getUnixMode(entry, defaultMode) & 0o777;
       return Object.assign(new StatEntry(), {
         uid,
         gid,
@@ -42297,14 +42297,6 @@ function applyPatch(pnpapi, opts) {
     return apiEntry;
   }
 
-  function getApiCache(pnpApiPath) {
-    if (pnpApiPath === null) {
-      return defaultCache;
-    } else {
-      return getApiEntry(pnpApiPath).cache;
-    }
-  }
-
   function findApiPathFor(modulePath) {
     let curr;
     let next = sources_path["npath"].toPortablePath(modulePath);
@@ -42836,11 +42828,10 @@ function makeApi(runtimeState, opts) {
       plugnplay: false
     });
   }
-
-  const x = 4;
   /**
    *
    */
+
 
   function isPathIgnored(path) {
     if (ignorePattern === null) return false;

@@ -1,9 +1,9 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator, MessageName}                       from '@yarnpkg/core';
 import {miscUtils, structUtils}                     from '@yarnpkg/core';
-import {NodeFS, ppath, xfs, ZipFS, Filename, CwdFS} from '@yarnpkg/fslib';
+import {ppath, xfs, ZipFS, Filename, CwdFS}         from '@yarnpkg/fslib';
 
-import * as patchUtils from './patchUtils';
+import * as patchUtils                              from './patchUtils';
 
 export class PatchFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {

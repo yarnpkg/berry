@@ -1,9 +1,9 @@
 import {Plugin}        from '@yarnpkg/core';
 
-import PatchCommit     from './commands/patchCommit';
-import Patch           from './commands/patch';
 import {PatchFetcher}  from './PatchFetcher';
 import {PatchResolver} from './PatchResolver';
+import PatchCommit     from './commands/patchCommit';
+import Patch           from './commands/patch';
 
 const plugin: Plugin = {
   commands: [

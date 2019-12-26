@@ -1,8 +1,8 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions, DescriptorHash, hashUtils} from '@yarnpkg/core';
-import {Descriptor, Locator, Package}                    from '@yarnpkg/core';
-import {structUtils}                                     from '@yarnpkg/core';
+import {Descriptor, Locator, Package}                                               from '@yarnpkg/core';
+import {structUtils}                                                                from '@yarnpkg/core';
 
-import * as patchUtils                      from './patchUtils';
+import * as patchUtils                                                              from './patchUtils';
 
 export class PatchResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {

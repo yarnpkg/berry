@@ -2,7 +2,6 @@ import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator, MessageName}                       from '@yarnpkg/core';
 import {miscUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
 import {NodeFS, PortablePath, ppath}                from '@yarnpkg/fslib';
-import querystring                                  from 'querystring';
 
 import {PROTOCOL}                                   from './constants';
 

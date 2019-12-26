@@ -1,5 +1,5 @@
 import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions} from '@yarnpkg/core';
-import {npath, PortablePath, xfs, ppath, Filename, NodeFS}                            from '@yarnpkg/fslib';
+import {npath, PortablePath, xfs, ppath, Filename, NodeFS}                                             from '@yarnpkg/fslib';
 
 export {applyPatchFile}                          from './tools/apply';
 export {parsePatchFile}                          from './tools/parse';

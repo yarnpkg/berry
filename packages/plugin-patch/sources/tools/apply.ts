@@ -97,7 +97,7 @@ export async function applyPatchFile(effects: ParsedPatchFile, {baseFs = new Nod
 }
 
 function isExecutable(fileMode: number) {
-  return (fileMode & 0o100) > 0
+  return (fileMode & 0o100) > 0;
 }
 
 function trimRight(s: string) {
@@ -105,7 +105,7 @@ function trimRight(s: string) {
 }
 
 function linesAreEqual(a: string, b: string) {
-  return trimRight(a) === trimRight(b)
+  return trimRight(a) === trimRight(b);
 }
 
 /**
@@ -136,7 +136,7 @@ export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = fal
   const fileContents = await baseFs.readFileSync(path, `utf8`);
   const fileLines = fileContents.split(/\n/);
 
-  const result: Array<Array<Modification>> = []
+  const result: Array<Array<Modification>> = [];
 
   for (const hunk of hunks) {
     let fuzzingOffset = 0;
@@ -161,7 +161,7 @@ export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = fal
   if (dryRun)
     return;
 
-  let diffOffset = 0
+  let diffOffset = 0;
 
   for (const modifications of result) {
     for (const modification of modifications) {
@@ -259,7 +259,7 @@ function evaluateHunk(hunk: Hunk, fileLines: Array<string>, fuzzingOffset: numbe
         });
 
         if (part.noNewlineAtEndOfFile) {
-          result.push({ type: "pop" });
+          result.push({type: "pop"});
         }
       } break;
 
@@ -269,5 +269,5 @@ function evaluateHunk(hunk: Hunk, fileLines: Array<string>, fuzzingOffset: numbe
     }
   }
 
-  return result
+  return result;
 }

@@ -3,7 +3,6 @@ import {Descriptor, Locator}                                                    
 import {LinkType}                                                                                            from '@yarnpkg/core';
 import {structUtils}                                                                                         from '@yarnpkg/core';
 import semver                                                                                                from 'semver';
-import {URL}                                                                                                 from 'url';
 
 import {NpmSemverFetcher}                                                                                    from './NpmSemverFetcher';
 import {PROTOCOL}                                                                                            from './constants';

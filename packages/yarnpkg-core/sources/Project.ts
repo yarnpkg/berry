@@ -324,7 +324,7 @@ export class Project {
     for (const pkg of this.originalPackages.values()) {
       let shouldPersistResolution: boolean;
       try {
-        shouldPersistResolution = resolver.shouldPersistResolution(pkg, {project: this, resolver})
+        shouldPersistResolution = resolver.shouldPersistResolution(pkg, {project: this, resolver});
       } catch {
         shouldPersistResolution = false;
       }

@@ -1,4 +1,4 @@
-import { xfs, ppath } from '@yarnpkg/fslib';
+import {xfs, ppath} from '@yarnpkg/fslib';
 
 const NO_DEPS_PATCH = `diff --git a/index.js b/index.js
 index a6bf8f58..629b6aa8 100644
@@ -79,7 +79,7 @@ describe(`Protocols`, () => {
           // At least three seconds because Zip archives are precise to two
           // seconds, not one. One extra second will ensure that the file
           // timestamps will always have a chance to tick.
-          await new Promise(resolve => setTimeout(resolve, 3000))
+          await new Promise(resolve => setTimeout(resolve, 3000));
 
           await run(`install`);
 

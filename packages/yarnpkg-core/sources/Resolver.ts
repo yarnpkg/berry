@@ -1,6 +1,6 @@
-import {FetchOptions}                 from './Fetcher';
-import {Project}                      from './Project';
-import {Report}                       from './Report';
+import {FetchOptions}                                 from './Fetcher';
+import {Project}                                      from './Project';
+import {Report}                                       from './Report';
 import {Descriptor, Locator, Package, DescriptorHash} from './types';
 
 export type MinimalResolveOptions = {

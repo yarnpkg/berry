@@ -153,14 +153,6 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     return apiEntry;
   }
 
-  function getApiCache(pnpApiPath: PortablePath | null) {
-    if (pnpApiPath === null) {
-      return defaultCache;
-    } else {
-      return getApiEntry(pnpApiPath).cache;
-    }
-  }
-
   function findApiPathFor(modulePath: NativePath) {
     let curr: PortablePath;
     let next = npath.toPortablePath(modulePath);
