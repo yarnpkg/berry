@@ -43536,9 +43536,13 @@ async function maybeLStat(baseFs, p) {
 }
 
 async function copyFolder(operations, utimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
-  if (opts.overwrite && destinationStat !== null && !destinationStat.isDirectory()) {
-    operations.push(async () => destinationFs.removePromise(destination));
-    destinationStat = null;
+  if (destinationStat !== null && !destinationStat.isDirectory()) {
+    if (opts.overwrite) {
+      operations.push(async () => destinationFs.removePromise(destination));
+      destinationStat = null;
+    } else {
+      return;
+    }
   }
 
   if (destinationStat === null) operations.push(async () => destinationFs.mkdirPromise(destination, {
@@ -43553,9 +43557,13 @@ async function copyFolder(operations, utimes, destinationFs, destination, destin
 async function copyFile(operations, utimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
   const _ref = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 3, 7));
 
-  if (opts.overwrite && destinationStat !== null && !destinationStat.isFile()) {
-    operations.push(async () => destinationFs.removePromise(destination));
-    destinationStat = null;
+  if (destinationStat !== null) {
+    if (opts.overwrite) {
+      operations.push(async () => destinationFs.removePromise(destination));
+      destinationStat = null;
+    } else {
+      return;
+    }
   }
 
   if (destinationFs === sourceFs) {
@@ -43568,9 +43576,13 @@ async function copyFile(operations, utimes, destinationFs, destination, destinat
 async function copySymlink(operations, utimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
   const _ref2 = await Promise.resolve(/* import() */).then(__webpack_require__.bind(null, 0));
 
-  if (opts.overwrite && destinationStat !== null) {
-    operations.push(async () => destinationFs.removePromise(destination));
-    destinationStat = null;
+  if (destinationStat !== null) {
+    if (opts.overwrite) {
+      operations.push(async () => destinationFs.removePromise(destination));
+      destinationStat = null;
+    } else {
+      return;
+    }
   }
 
   const target = await sourceFs.readlinkPromise(source);
