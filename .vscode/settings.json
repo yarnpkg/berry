@@ -6,7 +6,7 @@
   "eslint.validate": [
     "javascript",
     "typescript",
-    "typescriptreact",
+    "typescriptreact"
   ],
   "eslint.enable": true,
   "eslint.nodePath": ".vscode/pnpify",
