@@ -71,7 +71,7 @@
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.12",
     "pnp-webpack-plugin": "^1.4.3",
     "ts-loader": "^5.3.3",
-    "typescript": "next",
+    "typescript": "^3.7.4",
     "vsce": "^1.54.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.2.1"

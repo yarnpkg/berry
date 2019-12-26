@@ -1,12 +1,12 @@
 /// <reference path="./module.d.ts"/>
 
-import {FakeFS, NativePath, NoFS, Path, PortablePath, VirtualFS, npath} from '@yarnpkg/fslib';
-import {ppath, toFilename}                                              from '@yarnpkg/fslib';
-import Module                                                           from 'module';
+import {FakeFS, NativePath, Path, PortablePath, VirtualFS, npath} from '@yarnpkg/fslib';
+import {ppath, toFilename}                                        from '@yarnpkg/fslib';
+import Module                                                     from 'module';
 
-import {PackageInformation, PackageLocator, PnpApi, RuntimeState}       from '../types';
+import {PackageInformation, PackageLocator, PnpApi, RuntimeState} from '../types';
 
-import {ErrorCode, makeError}                                           from './internalTools';
+import {ErrorCode, makeError}                                     from './internalTools';
 
 export type MakeApiOptions = {
   allowDebug?: boolean,
@@ -289,7 +289,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     // fake module anyway.
     return Module._resolveFilename(request, makeFakeModule(npath.fromPortablePath(issuer)), false, {plugnplay: false});
   }
-  const x: number = 4;
+
   /**
    *
    */

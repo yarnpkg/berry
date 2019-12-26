@@ -15,6 +15,7 @@ The following protocols can be used by any dependency entry listed in the `depen
 | Github | `github:foo/bar` | Downloads a **public** package from Github |
 | File | `file:./my-package` | Copies the target location into the cache |
 | Link | `link:./my-folder` | Creates a link to the `./my-folder` folder (ignore dependencies) |
+| Patch | `patch:left-pad@1.0.0#./my-patch.patch` | Creates a patched copy of the original package |
 | Portal | `portal:./my-folder` | Creates a link to the `./my-folder` folder (follow dependencies) |
 
 ## What's the difference between `link:` and `portal:`?

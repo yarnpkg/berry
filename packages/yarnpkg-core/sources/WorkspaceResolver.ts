@@ -35,7 +35,11 @@ export class WorkspaceResolver implements Resolver {
     return descriptor;
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    return [];
+  }
+
+  async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
     const candidateWorkspaces = opts.project.findWorkspacesByDescriptor(descriptor);
 
     if (candidateWorkspaces.length < 1) {

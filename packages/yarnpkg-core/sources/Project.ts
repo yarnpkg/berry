@@ -7,7 +7,6 @@ import pLimit                                        from 'p-limit';
 import semver                                        from 'semver';
 import {tmpNameSync}                                 from 'tmp';
 
-import {AliasResolver}                               from './AliasResolver';
 import {Cache}                                       from './Cache';
 import {Configuration}                               from './Configuration';
 import {Fetcher}                                     from './Fetcher';
@@ -18,8 +17,9 @@ import {LockfileResolver}                            from './LockfileResolver';
 import {DependencyMeta, Manifest}                    from './Manifest';
 import {MessageName}                                 from './MessageName';
 import {MultiResolver}                               from './MultiResolver';
+import {OverrideResolver}                            from './OverrideResolver';
 import {Report, ReportError}                         from './Report';
-import {ResolveOptions}                              from './Resolver';
+import {ResolveOptions, Resolver}                    from './Resolver';
 import {RunInstallPleaseResolver}                    from './RunInstallPleaseResolver';
 import {ThrowReport}                                 from './ThrowReport';
 import {Workspace}                                   from './Workspace';
@@ -322,7 +322,14 @@ export class Project {
     const forgottenPackages = new Set();
 
     for (const pkg of this.originalPackages.values()) {
-      if (!resolver.shouldPersistResolution(pkg, {project: this, resolver})) {
+      let shouldPersistResolution: boolean;
+      try {
+        shouldPersistResolution = resolver.shouldPersistResolution(pkg, {project: this, resolver});
+      } catch {
+        shouldPersistResolution = false;
+      }
+
+      if (!shouldPersistResolution) {
         this.originalPackages.delete(pkg.locatorHash);
         forgottenPackages.add(pkg.locatorHash);
       }
@@ -413,9 +420,9 @@ export class Project {
     const legacyMigrationResolver = new LegacyMigrationResolver();
     await legacyMigrationResolver.setup(this, {report: opts.report});
 
-    const resolver = opts.lockfileOnly
+    const resolver: Resolver = opts.lockfileOnly
       ? new MultiResolver([new LockfileResolver(), new RunInstallPleaseResolver(realResolver)])
-      : new AliasResolver(new MultiResolver([new LockfileResolver(), legacyMigrationResolver, realResolver]));
+      : new OverrideResolver(new MultiResolver([new LockfileResolver(), legacyMigrationResolver, realResolver]));
 
     const fetcher = this.configuration.makeFetcher();
 
@@ -429,40 +436,109 @@ export class Project {
 
     const originalPackages = new Map<LocatorHash, Package>();
 
+    const resolutionDependencies = new Map<DescriptorHash, Set<DescriptorHash>>();
     const haveBeenAliased = new Set<DescriptorHash>();
 
-    let mustBeResolved = new Set<DescriptorHash>();
+    let nextResolutionPass = new Set<DescriptorHash>();
 
     for (const workspace of this.workspaces) {
       const workspaceDescriptor = workspace.anchoredDescriptor;
 
       allDescriptors.set(workspaceDescriptor.descriptorHash, workspaceDescriptor);
-      mustBeResolved.add(workspaceDescriptor.descriptorHash);
+      nextResolutionPass.add(workspaceDescriptor.descriptorHash);
     }
 
     const limit = pLimit(10);
 
-    while (mustBeResolved.size !== 0) {
+    while (nextResolutionPass.size !== 0) {
+      const currentResolutionPass = nextResolutionPass;
+      nextResolutionPass = new Set();
+
       // We remove from the "mustBeResolved" list all packages that have
       // already been resolved previously.
 
-      for (const descriptorHash of mustBeResolved)
+      for (const descriptorHash of currentResolutionPass)
         if (allResolutions.has(descriptorHash))
-          mustBeResolved.delete(descriptorHash);
+          currentResolutionPass.delete(descriptorHash);
+
+      if (currentResolutionPass.size === 0)
+        break;
+
+      // We check that the resolution dependencies have been resolved for all
+      // descriptors that we're about to resolve. Buffalo buffalo buffalo
+      // buffalo.
+
+      const deferredResolutions = new Set<DescriptorHash>();
+      const resolvedDependencies = new Map<DescriptorHash, Map<DescriptorHash, Locator>>();
+
+      for (const descriptorHash of currentResolutionPass) {
+        const descriptor = allDescriptors.get(descriptorHash);
+        if (!descriptor)
+          throw new Error(`Assertion failed: The descriptor should have been registered`);
+
+        let dependencies = resolutionDependencies.get(descriptorHash);
+        if (typeof dependencies === `undefined`) {
+          resolutionDependencies.set(descriptorHash, dependencies = new Set());
+
+          for (const dependency of resolver.getResolutionDependencies(descriptor, resolveOptions)) {
+            allDescriptors.set(dependency.descriptorHash, dependency);
+            dependencies.add(dependency.descriptorHash);
+          }
+        }
+
+        const resolved = miscUtils.getMapWithDefault(resolvedDependencies, descriptorHash);
+
+        for (const dependencyHash of dependencies) {
+          const resolution = allResolutions.get(dependencyHash);
+
+          if (typeof resolution !== `undefined`) {
+            const dependencyPkg = allPackages.get(resolution);
+            if (typeof dependencyPkg === `undefined`)
+              throw new Error(`Assertion failed: The package should have been registered`);
+
+            // The dependency is ready. We register it into the map so
+            // that we can pass that to getCandidates right after.
+            resolved.set(dependencyHash, dependencyPkg);
+          } else {
+            // One of the resolution dependencies of this descriptor is
+            // missing; we need to postpone its resolution for now.
+            deferredResolutions.add(descriptorHash);
+
+            // For this pass however we'll want to schedule the resolution
+            // of the dependency (so that it's probably ready next pass).
+            currentResolutionPass.add(dependencyHash);
+          }
+        }
+      }
+
+      // Note: we're postponing the resolution only once we already know all
+      // those that are going to be postponed. This way we can detect
+      // potential cyclic dependencies.
+
+      for (const descriptorHash of deferredResolutions) {
+        currentResolutionPass.delete(descriptorHash);
+        nextResolutionPass.add(descriptorHash);
+      }
+
+      if (currentResolutionPass.size === 0)
+        throw new Error(`Assertion failed: Descriptors should not have cyclic dependencies`);
 
       // Then we request the resolvers for the list of possible references that
       // match the given ranges. That will give us a set of candidate references
       // for each descriptor.
 
-      const passCandidates = new Map(await Promise.all(Array.from(mustBeResolved).map(descriptorHash => limit(async () => {
+      const passCandidates = new Map(await Promise.all(Array.from(currentResolutionPass).map(descriptorHash => limit(async () => {
         const descriptor = allDescriptors.get(descriptorHash);
-        if (!descriptor)
+        if (typeof descriptor === `undefined`)
           throw new Error(`Assertion failed: The descriptor should have been registered`);
 
-        let candidateLocators;
+        const descriptorDependencies = resolvedDependencies.get(descriptor.descriptorHash);
+        if (typeof descriptorDependencies === `undefined`)
+          throw new Error(`Assertion failed: The descriptor dependencies should have been registered`);
 
+        let candidateLocators;
         try {
-          candidateLocators = await resolver.getCandidates(descriptor, resolveOptions);
+          candidateLocators = await resolver.getCandidates(descriptor, descriptorDependencies, resolveOptions);
         } catch (error) {
           error.message = `${structUtils.prettyDescriptor(this.configuration, descriptor)}: ${error.message}`;
           throw error;
@@ -591,10 +667,7 @@ export class Project {
       // since mustBeResolved is stable regardless of the order in which the
       // resolvers return)
 
-      const haveBeenResolved = mustBeResolved;
-      mustBeResolved = new Set();
-
-      for (const descriptorHash of haveBeenResolved) {
+      for (const descriptorHash of currentResolutionPass) {
         const locator = passResolutions.get(descriptorHash);
         if (!locator)
           throw new Error(`Assertion failed: The locator should have been registered`);
@@ -614,7 +687,7 @@ export class Project {
 
         for (const descriptor of pkg.dependencies.values()) {
           allDescriptors.set(descriptor.descriptorHash, descriptor);
-          mustBeResolved.add(descriptor.descriptorHash);
+          nextResolutionPass.add(descriptor.descriptorHash);
 
           // We must check and make sure that the descriptor didn't get aliased
           // to something else
@@ -644,8 +717,8 @@ export class Project {
 
           // We can now replace the descriptor by its alias in the list of
           // descriptors that must be resolved
-          mustBeResolved.delete(descriptor.descriptorHash);
-          mustBeResolved.add(aliasHash);
+          nextResolutionPass.delete(descriptor.descriptorHash);
+          nextResolutionPass.add(aliasHash);
 
           allDescriptors.set(aliasHash, alias);
 

@@ -1,7 +1,7 @@
-import {FetchOptions}                 from './Fetcher';
-import {Project}                      from './Project';
-import {Report}                       from './Report';
-import {Descriptor, Locator, Package} from './types';
+import {FetchOptions}                                 from './Fetcher';
+import {Project}                                      from './Project';
+import {Report}                                       from './Report';
+import {Descriptor, Locator, Package, DescriptorHash} from './types';
 
 export type MinimalResolveOptions = {
   project: Project,
@@ -101,6 +101,14 @@ export interface Resolver {
   bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions): Descriptor;
 
   /**
+   * This function must return a set of other descriptors that must be
+   * transformed into locators before the subject descriptor can be transformed
+   * into a locator. This is typically only needed for transform packages, as
+   * you need to know the original resolution in order to copy it.
+   */
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions): Array<Descriptor>;
+
+  /**
    * This function will, given a descriptor, return the list of locators that
    * potentially satisfy it.
    *
@@ -109,9 +117,10 @@ export interface Resolver {
    * them if possible (it doesn't guarantee that they'll end up being used).
    *
    * @param descriptor The source descriptor.
+   * @param dependencies The resolution dependencies and their resolutions.
    * @param opts The resolution options.
    */
-  getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<Array<Locator>>;
+  getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Locator>, opts: ResolveOptions): Promise<Array<Locator>>;
 
   /**
    * This function will, given a locator, return the full package definition

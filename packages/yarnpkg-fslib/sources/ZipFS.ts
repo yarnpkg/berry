@@ -280,7 +280,9 @@ export class ZipFS extends BasePortableFakeFS {
     // weird cases - maybe related to emscripten?)
     //
     // See also https://github.com/nih-at/libzip/issues/77
-    if (previousMod !== null && previousMod !== (this.baseFs.statSync(this.path).mode & 0o777))
+    if (previousMod === null)
+      this.baseFs.chmodSync(this.path, this.stats.mode);
+    else if (previousMod !== (this.baseFs.statSync(this.path).mode & 0o777))
       this.baseFs.chmodSync(this.path, previousMod);
 
     this.ready = false;
@@ -497,32 +499,10 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   private statImpl(reason: string, p: PortablePath): Stats {
-    if (this.listings.has(p)) {
-      const uid = this.stats.uid;
-      const gid = this.stats.gid;
-
-      const size = 0;
-      const blksize = 512;
-      const blocks = 0;
-
-      const atimeMs = this.stats.mtimeMs;
-      const birthtimeMs = this.stats.mtimeMs;
-      const ctimeMs = this.stats.mtimeMs;
-      const mtimeMs = this.stats.mtimeMs;
-
-      const atime = new Date(atimeMs);
-      const birthtime = new Date(birthtimeMs);
-      const ctime = new Date(ctimeMs);
-      const mtime = new Date(mtimeMs);
-
-      const mode = S_IFDIR | 0o755;
-
-      return Object.assign(new StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
-    }
-
     const entry = this.entries.get(p);
 
-    if (entry !== undefined) {
+    // File, or explicit directory
+    if (typeof entry !== `undefined`) {
       const stat = libzip.struct.statS();
 
       const rc = libzip.statIndex(this.zip, entry, 0, 0, stat);
@@ -546,7 +526,39 @@ export class ZipFS extends BasePortableFakeFS {
       const ctime = new Date(ctimeMs);
       const mtime = new Date(mtimeMs);
 
-      const mode = this.getUnixMode(entry, S_IFREG | 0o644);
+      const type = this.listings.has(p)
+        ? S_IFDIR
+        : S_IFREG;
+
+      const defaultMode = type === S_IFDIR
+        ? 0o755
+        : 0o644;
+
+      const mode = type | (this.getUnixMode(entry, defaultMode) & 0o777);
+
+      return Object.assign(new StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
+    }
+
+    // Implicit directory
+    if (this.listings.has(p)) {
+      const uid = this.stats.uid;
+      const gid = this.stats.gid;
+
+      const size = 0;
+      const blksize = 512;
+      const blocks = 0;
+
+      const atimeMs = this.stats.mtimeMs;
+      const birthtimeMs = this.stats.mtimeMs;
+      const ctimeMs = this.stats.mtimeMs;
+      const mtimeMs = this.stats.mtimeMs;
+
+      const atime = new Date(atimeMs);
+      const birthtime = new Date(birthtimeMs);
+      const ctime = new Date(ctimeMs);
+      const mtime = new Date(mtimeMs);
+
+      const mode = S_IFDIR | 0o755;
 
       return Object.assign(new StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
     }
@@ -743,8 +755,8 @@ export class ZipFS extends BasePortableFakeFS {
       return;
 
     const entry = this.entries.get(resolvedP);
-    if (entry === undefined)
-      throw new Error(`Unreachable`);
+    if (typeof entry === `undefined`)
+      throw new Error(`Assertion failed: The entry should have been registered (${resolvedP})`);
 
     const oldMod = this.getUnixMode(entry, S_IFREG | 0o000);
     const newMod = oldMod & (~0o777) | mask;
@@ -863,9 +875,9 @@ export class ZipFS extends BasePortableFakeFS {
     if (this.readOnly)
       throw errors.EROFS(`utimes '${p}'`);
 
-    const resolvedP = this.resolveFilename(`chmod '${p}'`, p);
+    const resolvedP = this.resolveFilename(`utimes '${p}'`, p);
 
-    return this.utimesImpl(resolvedP, mtime);
+    this.utimesImpl(resolvedP, mtime);
   }
 
   async lutimesPromise(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
@@ -876,9 +888,9 @@ export class ZipFS extends BasePortableFakeFS {
     if (this.readOnly)
       throw errors.EROFS(`lutimes '${p}'`);
 
-    const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
+    const resolvedP = this.resolveFilename(`utimes '${p}'`, p, false);
 
-    return this.utimesImpl(resolvedP, mtime);
+    this.utimesImpl(resolvedP, mtime);
   }
 
   private utimesImpl(resolvedP: PortablePath, mtime: Date | string | number) {

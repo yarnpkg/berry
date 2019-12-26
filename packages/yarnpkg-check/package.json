@@ -10,7 +10,7 @@
     "globby": "^10.0.1",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
-    "typescript": "next"
+    "typescript": "^3.7.4"
   },
   "devDependencies": {
     "@types/node": "^12.12.8",

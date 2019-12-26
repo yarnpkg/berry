@@ -105,17 +105,17 @@ export function devirtualizeLocator(locator: Locator): Locator {
 }
 
 export function bindDescriptor(descriptor: Descriptor, params: {[key: string]: string}) {
-  if (descriptor.range.includes(`?`))
+  if (descriptor.range.includes(`::`))
     return descriptor;
 
-  return makeDescriptor(descriptor, `${descriptor.range}?${querystring.stringify(params)}`);
+  return makeDescriptor(descriptor, `${descriptor.range}::${querystring.stringify(params)}`);
 }
 
 export function bindLocator(locator: Locator, params: {[key: string]: string}) {
-  if (locator.reference.includes(`?`))
+  if (locator.reference.includes(`::`))
     return locator;
 
-  return makeLocator(locator, `${locator.reference}?${querystring.stringify(params)}`);
+  return makeLocator(locator, `${locator.reference}::${querystring.stringify(params)}`);
 }
 
 export function areIdentsEqual(a: Ident, b: Ident) {
@@ -244,21 +244,84 @@ export function tryParseLocator(string: string, strict: boolean = false): Locato
   return makeLocator(makeIdent(realScope, name), realReference);
 }
 
-export function parseRange(range: string) {
-  const protocolIndex = range.indexOf(`:`);
-  const protocol = protocolIndex !== -1 ? range.slice(0, protocolIndex + 1) : null;
-  const protocolRest = protocolIndex !== -1 ? range.slice(protocolIndex + 1) : range;
+type ParseRangeOptions = {
+  requireBindings?: boolean,
+  requireProtocol?: boolean | string,
+  requireSource?: boolean,
+  parseSelector?: boolean,
+};
 
-  const hashIndex = protocolRest.indexOf(`#`);
-  const sourceWithQs = hashIndex !== -1 ? protocolRest.slice(0, hashIndex) : null;
-  const selector = hashIndex !== -1 ? protocolRest.slice(hashIndex + 1) : protocolRest;
+type ParseRangeReturnType<Opts extends ParseRangeOptions> =
+  & ({params: Opts extends {requireBindings: true} ? querystring.ParsedUrlQuery : querystring.ParsedUrlQuery | null})
+  & ({protocol: Opts extends {requireProtocol: true | string} ? string : string | null})
+  & ({source: Opts extends {requireSource: true} ? string : string | null})
+  & ({selector: Opts extends {parseSelector: true} ? querystring.ParsedUrlQuery : string});
 
+export function parseRange<Opts extends ParseRangeOptions>(range: string, opts?: Opts): ParseRangeReturnType<Opts> {
+  const match = range.match(/^([^#:]*:)?((?:(?!::)[^#])*)(?:#((?:(?!::).)*))?(?:::(.*))?$/);
+  if (match === null)
+    throw new Error(`Invalid range (${range})`);
 
-  const queryIndex = sourceWithQs !== null ? sourceWithQs.indexOf(`?`) : -1;
-  const source = queryIndex !== -1 ? sourceWithQs!.slice(0, queryIndex) : sourceWithQs;
-  const params = queryIndex !== -1 ? querystring.parse(sourceWithQs!.slice(queryIndex + 1)) : null;
+  const protocol = typeof match[1] !== `undefined`
+    ? match[1]
+    : null;
 
-  return {protocol, source, params, selector};
+  if (typeof opts?.requireProtocol === `string` && protocol !== opts!.requireProtocol)
+    throw new Error(`Invalid protocol (${protocol})`);
+  else if (opts?.requireProtocol && protocol === null)
+    throw new Error(`Missing protocol (${protocol})`);
+
+  const source = typeof match[3] !== `undefined`
+    ? decodeURIComponent(match[2])
+    : null;
+
+  if (opts?.requireSource && source === null)
+    throw new Error(`Missing source (${range})`);
+
+  const rawSelector = typeof match[3] !== `undefined`
+    ? decodeURIComponent(match[3])
+    : decodeURIComponent(match[2]);
+
+  const selector = (opts?.parseSelector)
+    ? querystring.parse(rawSelector)
+    : rawSelector;
+
+  const params = typeof match[4] !== `undefined`
+    ? querystring.parse(match[4])
+    : null;
+
+  return {
+    // @ts-ignore
+    protocol,
+    // @ts-ignore
+    source,
+    // @ts-ignore
+    selector,
+    // @ts-ignore
+    params,
+  };
+}
+
+export function parseFileStyleRange(range: string, {protocol}: {protocol: string}) {
+  const {selector, params} = parseRange(range, {
+    requireProtocol: protocol,
+    requireBindings: true,
+  });
+
+  if (typeof params.locator !== `string`)
+    throw new Error(`Assertion failed: Invalid bindings for ${range}`);
+
+  const parentLocator = parseLocator(params.locator, true);
+  const path = selector as PortablePath;
+
+  return {parentLocator, path};
+}
+
+function encodeUnsafeCharacters(str: string) {
+  str = str.replace(/%/g, `%25`);
+  str = str.replace(/:/g, `%3A`);
+  str = str.replace(/#/g, `%23`);
+  return str;
 }
 
 export function makeRange({protocol, source, selector, params}: {protocol: string | null, source: string | null, selector: string, params: querystring.ParsedUrlQuery | null}) {
@@ -267,9 +330,14 @@ export function makeRange({protocol, source, selector, params}: {protocol: strin
   if (protocol !== null)
     range += `${protocol}`;
   if (source !== null)
-    range += `${source}#`;
+    range += `${encodeUnsafeCharacters(source)}#`;
 
-  return range + selector;
+  range += encodeUnsafeCharacters(selector);
+
+  if (params !== null)
+    range += `::${querystring.stringify(params)}`;
+
+  return range;
 }
 
 /**

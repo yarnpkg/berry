@@ -1,13 +1,12 @@
-import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest} from '@yarnpkg/core';
-import {Descriptor, Locator}                                                                 from '@yarnpkg/core';
-import {LinkType}                                                                            from '@yarnpkg/core';
-import {structUtils}                                                                         from '@yarnpkg/core';
-import semver                                                                                from 'semver';
-import {URL}                                                                                 from 'url';
+import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest, DescriptorHash} from '@yarnpkg/core';
+import {Descriptor, Locator}                                                                                 from '@yarnpkg/core';
+import {LinkType}                                                                                            from '@yarnpkg/core';
+import {structUtils}                                                                                         from '@yarnpkg/core';
+import semver                                                                                                from 'semver';
 
-import {NpmSemverFetcher}                                                                    from './NpmSemverFetcher';
-import {PROTOCOL}                                                                            from './constants';
-import * as npmHttpUtils                                                                     from './npmHttpUtils';
+import {NpmSemverFetcher}                                                                                    from './NpmSemverFetcher';
+import {PROTOCOL}                                                                                            from './constants';
+import * as npmHttpUtils                                                                                     from './npmHttpUtils';
 
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
 const NODE_GYP_MATCH = /\b(node-gyp|prebuild-install)\b/;
@@ -27,9 +26,8 @@ export class NpmSemverResolver implements Resolver {
     if (!locator.reference.startsWith(PROTOCOL))
       return false;
 
-    const url = new URL(locator.reference);
-
-    if (!semver.valid(url.pathname))
+    const {selector} = structUtils.parseRange(locator.reference);
+    if (!semver.valid(selector))
       return false;
 
     return true;
@@ -43,7 +41,11 @@ export class NpmSemverResolver implements Resolver {
     return descriptor;
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    return [];
+  }
+
+  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Locator>, opts: ResolveOptions) {
     const range = descriptor.range.slice(PROTOCOL.length);
 
     const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(descriptor), {
@@ -72,7 +74,9 @@ export class NpmSemverResolver implements Resolver {
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    const version = semver.clean(new URL(locator.reference).pathname);
+    const {selector} = structUtils.parseRange(locator.reference);
+
+    const version = semver.clean(selector);
     if (version === null)
       throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `The npm semver resolver got selected, but the version isn't semver`);
 

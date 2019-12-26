@@ -1,6 +1,6 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
-import {Descriptor, Locator}                             from './types';
+import {Descriptor, Locator, DescriptorHash}             from './types';
 
 export class MultiResolver implements Resolver {
   private readonly resolvers: Array<Resolver>;
@@ -33,10 +33,16 @@ export class MultiResolver implements Resolver {
     return resolver.bindDescriptor(descriptor, fromLocator, opts);
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
     const resolver = this.getResolverByDescriptor(descriptor, opts);
 
-    return await resolver.getCandidates(descriptor, opts);
+    return resolver.getResolutionDependencies(descriptor, opts);
+  }
+
+  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Locator>, opts: ResolveOptions) {
+    const resolver = this.getResolverByDescriptor(descriptor, opts);
+
+    return await resolver.getCandidates(descriptor, dependencies, opts);
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

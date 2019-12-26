@@ -17,6 +17,7 @@
     "@yarnpkg/plugin-npm": "workspace:2.0.0-rc.10",
     "@yarnpkg/plugin-npm-cli": "workspace:2.0.0-rc.8",
     "@yarnpkg/plugin-pack": "workspace:2.0.0-rc.11",
+    "@yarnpkg/plugin-patch": "workspace:2.0.0-rc.0",
     "@yarnpkg/plugin-pnp": "workspace:2.0.0-rc.11",
     "@yarnpkg/plugin-version": "workspace:2.0.0-rc.13",
     "@yarnpkg/shell": "workspace:2.0.0-rc.4",
@@ -35,7 +36,7 @@
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.12",
     "micromatch": "^4.0.2",
-    "typescript": "next"
+    "typescript": "^3.7.4"
   },
   "peerDependencies": {
     "@yarnpkg/core": "*"
@@ -73,6 +74,7 @@
         "@yarnpkg/plugin-npm",
         "@yarnpkg/plugin-npm-cli",
         "@yarnpkg/plugin-pack",
+        "@yarnpkg/plugin-patch",
         "@yarnpkg/plugin-pnp",
         "@yarnpkg/plugin-version"
       ]
