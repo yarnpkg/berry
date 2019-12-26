@@ -3,7 +3,6 @@ import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
 import {LinkType}                                        from '@yarnpkg/core';
 import {miscUtils, structUtils}                          from '@yarnpkg/core';
 import {npath}                                           from '@yarnpkg/fslib';
-import querystring                                       from 'querystring';
 
 import {FILE_REGEXP, TARBALL_REGEXP, PROTOCOL}           from './constants';
 

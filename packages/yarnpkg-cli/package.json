@@ -36,7 +36,7 @@
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.12",
     "micromatch": "^4.0.2",
-    "typescript": "next"
+    "typescript": "^3.7.4"
   },
   "peerDependencies": {
     "@yarnpkg/core": "*"

@@ -17,7 +17,7 @@
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/pnp": "workspace:2.0.0-rc.12",
     "eslint": "^5.16.0",
-    "typescript": "next"
+    "typescript": "^3.7.4"
   },
   "peerDependencies": {
     "eslint": "*",

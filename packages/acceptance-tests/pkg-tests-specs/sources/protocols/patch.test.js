@@ -90,6 +90,7 @@ describe(`Protocols`, () => {
           });
         },
       ),
+      10000,
     );
 
     test(

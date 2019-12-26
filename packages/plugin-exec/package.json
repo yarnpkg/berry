@@ -14,7 +14,7 @@
     "@types/node": "^12.12.8",
     "@types/tmp": "^0.0.33",
     "@yarnpkg/core": "workspace:2.0.0-rc.15",
-    "typescript": "next"
+    "typescript": "^3.7.4"
   },
   "scripts": {
     "build:plugin-exec": "builder build plugin",

@@ -66,7 +66,7 @@
     "@types/webpack-sources": "^0.1.5",
     "@types/yup": "0.26.12",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
-    "@typescript-eslint/parser": "^1.6.0",
+    "@typescript-eslint/parser": "^2.13.0",
     "@yarnpkg/cli": "workspace:2.0.0-rc.19",
     "@yarnpkg/core": "workspace:2.0.0-rc.15",
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.12",
@@ -80,7 +80,7 @@
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
     "micromatch": "^4.0.2",
-    "typescript": "next"
+    "typescript": "^3.7.4"
   },
   "dependenciesMeta": {
     "fsevents": {
