@@ -1,7 +1,7 @@
-import fs, {Stats} from 'fs';
+import fs, {Stats}         from 'fs';
 
-import {FakeFS}    from '../FakeFS';
-import {Path, convertPath}      from '../path';
+import {FakeFS}            from '../FakeFS';
+import {Path, convertPath} from '../path';
 
 export type CopyOptions = {
   overwrite: boolean,

@@ -530,11 +530,11 @@ export class ZipFS extends BasePortableFakeFS {
         ? S_IFDIR
         : S_IFREG;
 
-      const baseMode = type === S_IFDIR
+      const defaultMode = type === S_IFDIR
         ? 0o755
         : 0o644;
 
-      const mode = this.getUnixMode(entry, type | baseMode);
+      const mode = type | (this.getUnixMode(entry, defaultMode) & 0o777);
 
       return Object.assign(new StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
     }
