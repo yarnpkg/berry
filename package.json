@@ -11,6 +11,7 @@
     "@babel/plugin-proposal-async-generator-functions": "^7.2.0",
     "@babel/plugin-proposal-class-properties": "^7.3.3",
     "@babel/plugin-proposal-decorators": "^7.4.4",
+    "@babel/plugin-proposal-optional-chaining": "^7.7.5",
     "@babel/plugin-transform-modules-commonjs": "^7.2.0",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.3.3",
@@ -78,7 +79,6 @@
     "jest": "^24.9.0",
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
-    "left-pad": "left-pad/left-pad",
     "micromatch": "^4.0.2",
     "typescript": "next"
   },

@@ -1,8 +1,8 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
-import {Descriptor, Locator}                             from './types';
+import {Descriptor, Locator, DescriptorHash}             from './types';
 
-export class AliasResolver implements Resolver {
+export class OverrideResolver implements Resolver {
   private next: Resolver;
 
   constructor(next: Resolver) {
@@ -25,8 +25,12 @@ export class AliasResolver implements Resolver {
     return this.next.bindDescriptor(descriptor, fromLocator, opts);
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
-    return await this.next.getCandidates(descriptor, opts);
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    return this.next.getResolutionDependencies(descriptor, opts);
+  }
+
+  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Locator>, opts: ResolveOptions) {
+    return await this.next.getCandidates(descriptor, dependencies, opts);
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

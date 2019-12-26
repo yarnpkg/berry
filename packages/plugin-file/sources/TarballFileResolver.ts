@@ -37,17 +37,18 @@ export class TarballFileResolver implements Resolver {
 
   bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     if (FILE_REGEXP.test(descriptor.range))
-      descriptor = structUtils.makeDescriptor(descriptor, `file:${descriptor.range}`);
+      descriptor = structUtils.makeDescriptor(descriptor, `${PROTOCOL}${descriptor.range}`);
 
-    if (descriptor.range.includes(`?`))
-      return descriptor;
-
-    return structUtils.makeDescriptor(descriptor, `${descriptor.range}?${querystring.stringify({
+    return structUtils.bindDescriptor(descriptor, {
       locator: structUtils.stringifyLocator(fromLocator),
-    })}`);
+    });
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    return [];
+  }
+
+  async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
     let path = descriptor.range;
 
     if (path.startsWith(PROTOCOL))

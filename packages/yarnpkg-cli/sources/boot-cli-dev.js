@@ -25,6 +25,7 @@ function getPluginConfiguration() {
   const pluginFolders = folders.filter(folder => {
     if (!folder.startsWith('plugin-'))
       return false;
+
     if (process.env.BLACKLIST && micromatch.match([folder, folder.replace('plugin-', '')], process.env.BLACKLIST).length > 0) {
       console.warn(`Disabled blacklisted plugin ${folder}`);
       return false;
@@ -35,7 +36,7 @@ function getPluginConfiguration() {
       require(`${__dirname}/../../${folder}`);
       isRequirable = true;
     } catch (e) {
-      console.warn(`Disabled non-requirable plugin ${folder}`);
+      console.warn(`Disabled non-requirable plugin ${folder}: ${e.message}`);
       isRequirable = false;
     }
     return isRequirable;

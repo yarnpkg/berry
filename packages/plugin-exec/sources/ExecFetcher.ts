@@ -2,7 +2,6 @@ import {Fetcher, FetchOptions, MinimalFetchOptions}          from '@yarnpkg/core
 import {Locator, MessageName}                                from '@yarnpkg/core';
 import {execUtils, scriptUtils, structUtils, tgzUtils}       from '@yarnpkg/core';
 import {NodeFS, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
-import querystring                                           from 'querystring';
 import {dirSync, tmpNameSync}                                from 'tmp';
 
 import {PROTOCOL}                                            from './constants';
@@ -16,18 +15,15 @@ export class ExecFetcher implements Fetcher {
   }
 
   getLocalPath(locator: Locator, opts: FetchOptions) {
-    const {parentLocator, execPath} = this.parseLocator(locator);
-
-    if (ppath.isAbsolute(execPath))
-      return execPath;
+    const {parentLocator, path} = structUtils.parseFileStyleRange(locator.reference, {protocol: PROTOCOL});
+    if (ppath.isAbsolute(path))
+      return path;
 
     const parentLocalPath = opts.fetcher.getLocalPath(parentLocator, opts);
-
-    if (parentLocalPath !== null) {
-      return ppath.resolve(parentLocalPath, execPath);
-    } else {
+    if (parentLocalPath === null)
       return null;
-    }
+
+    return ppath.resolve(parentLocalPath, path);
   }
 
   async fetch(locator: Locator, opts: FetchOptions) {
@@ -52,11 +48,11 @@ export class ExecFetcher implements Fetcher {
   }
 
   private async fetchFromDisk(locator: Locator, opts: FetchOptions) {
-    const {parentLocator, execPath} = this.parseLocator(locator);
+    const {parentLocator, path} = structUtils.parseFileStyleRange(locator.reference, {protocol: PROTOCOL});
 
     // If the file target is an absolute path we can directly access it via its
     // location on the disk. Otherwise we must go through the package fs.
-    const parentFetch = ppath.isAbsolute(execPath)
+    const parentFetch = ppath.isAbsolute(path)
       ? {packageFs: new NodeFS(), prefixPath: PortablePath.root, localPath: PortablePath.root}
       : await opts.fetcher.fetch(parentLocator, opts);
 
@@ -71,7 +67,7 @@ export class ExecFetcher implements Fetcher {
       parentFetch.releaseFs();
 
     const generatorFs = effectiveParentFetch.packageFs;
-    const generatorPath = ppath.resolve(ppath.resolve(generatorFs.getRealPath(), effectiveParentFetch.prefixPath), execPath);
+    const generatorPath = ppath.resolve(ppath.resolve(generatorFs.getRealPath(), effectiveParentFetch.prefixPath), path);
 
     // Execute the specified script in the temporary directory
     const cwd = await this.generatePackage(locator, generatorPath, opts);
@@ -106,22 +102,5 @@ export class ExecFetcher implements Fetcher {
       throw new Error(`Package generation failed (exit code ${code}, logs can be found here: ${logFile})`);
 
     return cwd;
-  }
-
-  private parseLocator(locator: Locator) {
-    const qsIndex = locator.reference.indexOf(`?`);
-
-    if (qsIndex === -1)
-      throw new Error(`Invalid file-type locator`);
-
-    const execPath = ppath.normalize(locator.reference.slice(PROTOCOL.length, qsIndex) as PortablePath);
-    const queryString = querystring.parse(locator.reference.slice(qsIndex + 1));
-
-    if (typeof queryString.locator !== `string`)
-      throw new Error(`Invalid file-type locator`);
-
-    const parentLocator = structUtils.parseLocator(queryString.locator, true);
-
-    return {parentLocator, execPath};
   }
 }

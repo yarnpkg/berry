@@ -31,7 +31,11 @@ export class LockfileResolver implements Resolver {
     return descriptor;
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    return [];
+  }
+
+  async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
     let pkg = opts.project.originalPackages.get(structUtils.convertDescriptorToLocator(descriptor).locatorHash);
     if (pkg)
       return [pkg];

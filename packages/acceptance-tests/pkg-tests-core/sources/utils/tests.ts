@@ -330,7 +330,7 @@ export const startPackageServer = (): Promise<string> => {
       });
     },
     async [RequestType.Repository](parsedRequest, request, response) {
-      staticServer(request, response, finalhandler(request, response));
+      staticServer(request as any, response as any, finalhandler(request, response));
     },
   };
 

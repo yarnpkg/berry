@@ -1,4 +1,4 @@
-import {Descriptor, Locator, MinimalResolveOptions, ResolveOptions, Resolver} from '@yarnpkg/core';
+import {Descriptor, Locator, MinimalResolveOptions, ResolveOptions, Resolver, DescriptorHash} from '@yarnpkg/core';
 import {structUtils}                                                          from '@yarnpkg/core';
 
 import {PROTOCOL}                                                             from './constants';
@@ -28,10 +28,16 @@ export class NpmRemapResolver implements Resolver {
     return descriptor;
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
     const nextDescriptor = structUtils.parseDescriptor(descriptor.range.slice(PROTOCOL.length), true);
 
-    return await opts.resolver.getCandidates(nextDescriptor, opts);
+    return opts.resolver.getResolutionDependencies(nextDescriptor, opts);
+  }
+
+  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Locator>, opts: ResolveOptions) {
+    const nextDescriptor = structUtils.parseDescriptor(descriptor.range.slice(PROTOCOL.length), true);
+
+    return await opts.resolver.getCandidates(nextDescriptor, dependencies, opts);
   }
 
   resolve(locator: Locator, opts: ResolveOptions): never {

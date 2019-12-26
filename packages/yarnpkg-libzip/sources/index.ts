@@ -93,6 +93,7 @@ export default {
     fromUnattachedBuffer: libzip.cwrap(`zip_source_buffer_create`, `number`, [`number`, `number`, `number`, `number`]),
     fromBuffer: libzip.cwrap(`zip_source_buffer`, `number`, [`number`, `number`, ...number64, `number`]),
     free: libzip.cwrap(`zip_source_free`, null, [`number`]),
+    setMtime: libzip.cwrap(`zip_source_set_mtime`, `number`, [`number`, `number`]),
   },
 
   struct: {

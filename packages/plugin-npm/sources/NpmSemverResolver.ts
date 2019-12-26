@@ -1,4 +1,4 @@
-import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest} from '@yarnpkg/core';
+import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest, DescriptorHash} from '@yarnpkg/core';
 import {Descriptor, Locator}                                                                 from '@yarnpkg/core';
 import {LinkType}                                                                            from '@yarnpkg/core';
 import {structUtils}                                                                         from '@yarnpkg/core';
@@ -43,7 +43,11 @@ export class NpmSemverResolver implements Resolver {
     return descriptor;
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    return [];
+  }
+
+  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Locator>, opts: ResolveOptions) {
     const range = descriptor.range.slice(PROTOCOL.length);
 
     const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(descriptor), {

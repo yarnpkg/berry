@@ -30,17 +30,18 @@ export class FileResolver implements Resolver {
 
   bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     if (FILE_REGEXP.test(descriptor.range))
-      descriptor = structUtils.makeDescriptor(descriptor, `file:${descriptor.range}`);
-
-    if (descriptor.range.includes(`?`))
-      return descriptor;
+      descriptor = structUtils.makeDescriptor(descriptor, `${PROTOCOL}${descriptor.range}`);
 
     return structUtils.bindDescriptor(descriptor, {
       locator: structUtils.stringifyLocator(fromLocator),
     });
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    return [];
+  }
+
+  async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
     let path = descriptor.range;
 
     if (path.startsWith(PROTOCOL))
