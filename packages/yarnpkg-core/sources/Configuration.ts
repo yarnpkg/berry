@@ -999,6 +999,26 @@ export class Configuration {
     return value;
   }
 
+  async firstHook<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => Promise<V>) | undefined, ...args: U): Promise<Exclude<V, void> | null> {
+    for (const plugin of this.plugins.values()) {
+      const hooks = plugin.hooks as HooksDefinition;
+      if (!hooks)
+        continue;
+
+      const hook = get(hooks);
+      if (!hook)
+        continue;
+
+      const ret = await hook(...args);
+      if (typeof ret !== `undefined`) {
+        // @ts-ignore
+        return ret;
+      }
+    }
+
+    return null;
+  }
+
   format(text: string, colorRequest: FormatType | string) {
     if (!this.get(`enableColors`))
       return text;

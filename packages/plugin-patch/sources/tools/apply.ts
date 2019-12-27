@@ -152,8 +152,8 @@ export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = fal
       else
         fuzzingOffset = fuzzingOffset * -1 - 1;
 
-      if (Math.abs(fuzzingOffset) > 20) {
-        throw new Error(`Cant apply hunk ${hunks.indexOf(hunk)} for file ${path}`);
+      if (Math.abs(fuzzingOffset) > 60) {
+        throw new Error(`Can't apply hunk ${hunks.indexOf(hunk)} for file ${path}`);
       }
     }
   }

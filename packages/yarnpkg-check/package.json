@@ -13,6 +13,7 @@
     "typescript": "^3.7.4"
   },
   "devDependencies": {
+    "@types/micromatch": "^3.1.0",
     "@types/node": "^12.12.8",
     "@yarnpkg/monorepo": "workspace:0.0.0"
   },
