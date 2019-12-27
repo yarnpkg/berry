@@ -20,15 +20,15 @@ const plugin: Plugin<CoreHooks & PatchHooks> = {
       return typeof patch !== `undefined` ? patch : null;
     },
 
-    reduceDescriptorAlias: async (alias, project, descriptor) => {
-      const patch = PATCHES.get(alias.identHash);
+    reduceDependency: async (dependency, project, locator, initialDescriptor) => {
+      const patch = PATCHES.get(dependency.identHash);
       if (typeof patch === `undefined`)
-        return alias;
+        return dependency;
 
-      return structUtils.makeDescriptor(descriptor, structUtils.makeRange({
+      return structUtils.makeDescriptor(dependency, structUtils.makeRange({
         protocol: `patch:`,
-        source: structUtils.stringifyDescriptor(descriptor),
-        selector: `builtin<compat/${structUtils.stringifyIdent(descriptor)}>`,
+        source: structUtils.stringifyDescriptor(dependency),
+        selector: `builtin<compat/${structUtils.stringifyIdent(dependency)}>`,
         params: null,
       }));
     },

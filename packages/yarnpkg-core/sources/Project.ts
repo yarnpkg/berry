@@ -437,6 +437,7 @@ export class Project {
     const originalPackages = new Map<LocatorHash, Package>();
 
     const resolutionDependencies = new Map<DescriptorHash, Set<DescriptorHash>>();
+    const haveBeenAliased = new Set<DescriptorHash>();
 
     let nextResolutionPass = new Set<DescriptorHash>();
 
@@ -446,31 +447,6 @@ export class Project {
       allDescriptors.set(workspaceDescriptor.descriptorHash, workspaceDescriptor);
       nextResolutionPass.add(workspaceDescriptor.descriptorHash);
     }
-
-    const cachedAliases = new Map<DescriptorHash, Descriptor>();
-
-    const getResolutionAlias = async (descriptor: Descriptor) => {
-      const cache = cachedAliases.get(descriptor.descriptorHash);
-      if (typeof cache !== `undefined`)
-        return cache;
-
-      const predef = this.resolutionAliases.get(descriptor.descriptorHash);
-
-      const initial = typeof predef !== `undefined`
-        ? this.storedDescriptors.get(predef)
-        : descriptor;
-
-      if (typeof initial === `undefined`)
-        throw new Error(`Assertion failed: The descriptor should have been registered`);
-
-      const alias = await this.configuration.reduceHook(hooks => {
-        return hooks.reduceDescriptorAlias;
-      }, initial, this, descriptor);
-
-      cachedAliases.set(descriptor.descriptorHash, alias);
-
-      return alias;
-    };
 
     const limit = pLimit(10);
 
@@ -680,11 +656,14 @@ export class Project {
         const pkg = this.configuration.normalizePackage(original);
 
         for (const [identHash, descriptor] of pkg.dependencies) {
-          const alias = await getResolutionAlias(descriptor);
-          if (!structUtils.areIdentsEqual(descriptor, alias))
+          const dependency = await this.configuration.reduceHook(hooks => {
+            return hooks.reduceDependency;
+          }, descriptor, this, pkg, descriptor);
+
+          if (!structUtils.areIdentsEqual(descriptor, dependency))
             throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
 
-          const bound = resolver.bindDescriptor(alias, locator, resolveOptions);
+          const bound = resolver.bindDescriptor(dependency, locator, resolveOptions);
           pkg.dependencies.set(identHash, bound);
         }
 
@@ -718,7 +697,79 @@ export class Project {
         for (const descriptor of pkg.dependencies.values()) {
           allDescriptors.set(descriptor.descriptorHash, descriptor);
           nextResolutionPass.add(descriptor.descriptorHash);
+
+          // We must check and make sure that the descriptor didn't get aliased
+          // to something else
+          const aliasHash = this.resolutionAliases.get(descriptor.descriptorHash);
+          if (aliasHash === undefined)
+            continue;
+
+          // It doesn't cost us much to support the case where a descriptor is
+          // equal to its own alias (which should mean "no alias")
+          if (descriptor.descriptorHash === aliasHash)
+            continue;
+
+          const alias = this.storedDescriptors.get(aliasHash);
+          if (!alias)
+            throw new Error(`Assertion failed: The alias should have been registered`);
+
+          // If it's already been "resolved" (in reality it will be the temporary
+          // resolution we've set in the next few lines) we simply must skip it
+          if (allResolutions.has(descriptor.descriptorHash))
+            continue;
+
+          // Temporarily set an invalid resolution so that it won't be resolved
+          // multiple times if it is found multiple times in the dependency
+          // tree (this is only temporary, we will replace it by the actual
+          // resolution after we've finished resolving everything)
+          allResolutions.set(descriptor.descriptorHash, `temporary` as LocatorHash);
+
+          // We can now replace the descriptor by its alias in the list of
+          // descriptors that must be resolved
+          nextResolutionPass.delete(descriptor.descriptorHash);
+          nextResolutionPass.add(aliasHash);
+
+          allDescriptors.set(aliasHash, alias);
+
+          haveBeenAliased.add(descriptor.descriptorHash);
         }
+      }
+    }
+
+    // Each package that should have been resolved but was skipped because it
+    // was aliased will now see the resolution for its alias propagated to it
+
+    while (haveBeenAliased.size > 0) {
+      let hasChanged = false;
+
+      for (const descriptorHash of haveBeenAliased) {
+        const descriptor = allDescriptors.get(descriptorHash);
+        if (!descriptor)
+          throw new Error(`Assertion failed: The descriptor should have been registered`);
+
+        const aliasHash = this.resolutionAliases.get(descriptorHash);
+        if (aliasHash === undefined)
+          throw new Error(`Assertion failed: The descriptor should have an alias`);
+
+        const resolution = allResolutions.get(aliasHash);
+        if (resolution === undefined)
+          throw new Error(`Assertion failed: The resolution should have been registered`);
+
+        // The following can happen if a package gets aliased to another package
+        // that's itself aliased - in this case we just process all those we can
+        // do, then make new passes until everything is resolved
+        if (resolution === `temporary`)
+          continue;
+
+        haveBeenAliased.delete(descriptorHash);
+
+        allResolutions.set(descriptorHash, resolution);
+
+        hasChanged = true;
+      }
+
+      if (!hasChanged) {
+        throw new Error(`Alias loop detected`);
       }
     }
 

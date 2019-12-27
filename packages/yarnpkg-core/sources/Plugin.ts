@@ -59,10 +59,11 @@ export type Hooks = {
 
   // Before the resolution runs; should be use to setup new aliases that won't
   // persist on the project instance itself.
-  reduceDescriptorAlias?: (
-    alias: Descriptor,
+  reduceDependency?: (
+    dependency: Descriptor,
     project: Project,
-    descriptor: Descriptor,
+    locator: Locator,
+    initialDependency: Descriptor,
   ) => Promise<Descriptor>,
 
   // Called after the `install` method from the `Project` class successfully

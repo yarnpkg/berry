@@ -98,7 +98,7 @@ describe(`Protocols`, () => {
       makeTemporaryEnv(
         {
           dependencies: {
-            [`no-deps`]: `^2.0.0`,
+            [`no-deps`]: `1.0.0`,
           },
         },
         async ({path, run, source}) => {
@@ -106,9 +106,7 @@ describe(`Protocols`, () => {
 
           await run(`install`);
 
-          const lockfilePath = ppath.join(path, `yarn.lock`);
-          const lockfile = await xfs.readFilePromise(lockfilePath, `utf8`);
-          await xfs.writeFilePromise(lockfilePath, lockfile.replace(/\^2\.0\.0/, `1.0.0`));
+          await run(`set`, `resolution`, `no-deps@npm:1.0.0`, `npm:2.0.0`);
 
           await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
             dependencies: {
