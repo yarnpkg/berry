@@ -6,7 +6,7 @@
   "types": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.12",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.12",
     "comment-json": "^2.2.0",
     "cross-spawn": "^6.0.5"
   },
@@ -15,7 +15,7 @@
     "@types/cross-spawn": "6.0.0",
     "@types/node": "^12.12.8",
     "@yarnpkg/monorepo": "workspace:0.0.0",
-    "@yarnpkg/pnp": "workspace:2.0.0-rc.12",
+    "@yarnpkg/pnp": "workspace:^2.0.0-rc.12",
     "eslint": "^5.16.0",
     "typescript": "^3.7.4"
   },

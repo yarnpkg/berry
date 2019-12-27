@@ -7,9 +7,9 @@
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.12",
-    "@yarnpkg/json-proxy": "workspace:2.0.0-rc.4",
-    "@yarnpkg/parsers": "workspace:2.0.0-rc.6",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.12",
+    "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.4",
+    "@yarnpkg/parsers": "workspace:^2.0.0-rc.6",
     "clipanion": "^2.1.5",
     "inquirer": "^6.2.0",
     "semver": "^5.6.0",
@@ -17,16 +17,16 @@
     "yup": "^0.27.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.14",
-    "@yarnpkg/core": "^2.0.0-rc.13"
+    "@yarnpkg/cli": "^2.0.0-rc.19",
+    "@yarnpkg/core": "^2.0.0-rc.15"
   },
   "devDependencies": {
     "@types/inquirer": "^0.0.43",
     "@types/node": "^12.12.8",
     "@types/semver": "^6.0.2",
     "@types/treeify": "^1.0.0",
-    "@yarnpkg/cli": "workspace:2.0.0-rc.19",
-    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.19",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.15"
   },
   "repository": {
     "type": "git",

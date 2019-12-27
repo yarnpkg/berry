@@ -14,6 +14,7 @@
     "@babel/plugin-proposal-optional-chaining": "^7.7.5",
     "@babel/plugin-transform-modules-commonjs": "^7.2.0",
     "@babel/preset-env": "^7.3.1",
+    "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.3.3",
     "@babel/register": "^7.5.5",
     "@types/camelcase": "5.2.0",
@@ -31,12 +32,14 @@
     "@types/fs-extra": "^5.0.4",
     "@types/git-url-parse": "9.0.0",
     "@types/got": "^8.3.4",
+    "@types/hard-source-webpack-plugin": "1.0.1",
     "@types/inquirer": "^0.0.43",
     "@types/invariant": "^2.2.30",
     "@types/is-ci": "^2.0.0",
     "@types/jest": "^24.0.18",
     "@types/joi": "^13.6.0",
     "@types/klaw": "^3.0.0",
+    "@types/left-pad": "1.2.0",
     "@types/lockfile": "^1.0.0",
     "@types/lodash": "^4.14.136",
     "@types/micromatch": "^3.1.0",
@@ -67,9 +70,9 @@
     "@types/yup": "0.26.12",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^2.13.0",
-    "@yarnpkg/cli": "workspace:2.0.0-rc.19",
-    "@yarnpkg/core": "workspace:2.0.0-rc.15",
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.12",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.19",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.15",
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.12",
     "babel-jest": "^24.5.0",
     "eslint": "^5.16.0",
     "eslint-plugin-arca": "^0.9.0",
@@ -83,7 +86,16 @@
     "typescript": "^3.7.4"
   },
   "dependenciesMeta": {
+    "core-js": {
+      "built": false
+    },
+    "date-fns": {
+      "built": false
+    },
     "fsevents": {
+      "built": false
+    },
+    "gatsby-telemetry": {
       "built": false
     },
     "svg2png": {
@@ -112,10 +124,5 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
-  },
-  "devDependencies": {
-    "@babel/preset-react": "^7.0.0",
-    "@types/hard-source-webpack-plugin": "1.0.1",
-    "@types/left-pad": "1.2.0"
   }
 }

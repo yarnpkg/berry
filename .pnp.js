@@ -1032,7 +1032,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         ["npm:7.7.4", {
           "packageLocation": "./.yarn/cache/@babel-parser-npm-7.7.4-b01a453c28-1.zip/node_modules/@babel/parser/",
           "packageDependencies": [
-            ["@babel/parser", "npm:7.7.4"]
+            ["@babel/parser", "npm:7.7.4"],
+            ["@babel/types", "npm:7.7.4"]
           ],
           "linkType": "HARD"
         }]
@@ -15979,7 +15980,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"
         }],
         ["npm:3.1.4", {
-          "packageLocation": "./.yarn/unplugged/core-js-npm-3.1.4-ec86906935/node_modules/core-js/",
+          "packageLocation": "./.yarn/cache/core-js-npm-3.1.4-ec86906935-1.zip/node_modules/core-js/",
           "packageDependencies": [
             ["core-js", "npm:3.1.4"]
           ],
@@ -16609,7 +16610,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["date-fns", [
         ["npm:2.0.0-beta.2", {
-          "packageLocation": "./.yarn/unplugged/date-fns-npm-2.0.0-beta.2-4d5428140c/node_modules/date-fns/",
+          "packageLocation": "./.yarn/cache/date-fns-npm-2.0.0-beta.2-4d5428140c-1.zip/node_modules/date-fns/",
           "packageDependencies": [
             ["date-fns", "npm:2.0.0-beta.2"]
           ],
@@ -20064,7 +20065,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["gatsby-telemetry", [
         ["npm:1.1.3", {
-          "packageLocation": "./.yarn/unplugged/gatsby-telemetry-npm-1.1.3-3ef8657161/node_modules/gatsby-telemetry/",
+          "packageLocation": "./.yarn/cache/gatsby-telemetry-npm-1.1.3-3ef8657161-1.zip/node_modules/gatsby-telemetry/",
           "packageDependencies": [
             ["gatsby-telemetry", "npm:1.1.3"],
             ["@babel/code-frame", "npm:7.0.0"],

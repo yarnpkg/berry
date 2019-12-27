@@ -3,12 +3,12 @@
   "version": "2.0.0-rc.12",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
   },
   "devDependencies": {
     "@types/node": "^12.12.8",
-    "@yarnpkg/builder": "workspace:2.0.0-rc.13",
-    "@yarnpkg/pnpify": "workspace:2.0.0-rc.12",
+    "@yarnpkg/builder": "workspace:^2.0.0-rc.13",
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.12",
     "typescript": "^3.7.4",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.2.1",
