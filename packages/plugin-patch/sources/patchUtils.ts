@@ -38,7 +38,7 @@ export function parseLocator(locator: Locator) {
 
 function makeSpec<T>({parentLocator, sourceItem, patchPaths, patchHash}: {parentLocator: Locator | null, sourceItem: T, patchPaths: Array<PortablePath>, patchHash?: string}, sourceStringifier: (source: T) => string) {
   const parentLocatorSpread = parentLocator !== null
-    ? {parentLocator: structUtils.stringifyLocator(parentLocator)}
+    ? {locator: structUtils.stringifyLocator(parentLocator)}
     : {} as {};
 
   const patchHashSpread = typeof patchHash !== `undefined`

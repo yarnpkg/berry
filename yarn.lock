@@ -24329,9 +24329,9 @@ typescript@^3.7.4:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^3.7.4#builtin<compat/9ca470fa61f45e067b8912c4342a3400ef0a72ba40cc23c2c0b328fe2213be1f145c35685252f614b708022def6c86380b66b07686cf36dd332caae8d849136f>":
+"typescript@patch:typescript@^3.7.4#builtin<compat/typescript>":
   version: 3.7.4
-  resolution: "typescript@patch:typescript@npm%3A3.7.4#builtin<compat/9ca470fa61f45e067b8912c4342a3400ef0a72ba40cc23c2c0b328fe2213be1f145c35685252f614b708022def6c86380b66b07686cf36dd332caae8d849136f>::hash=9aabd0"
+  resolution: "typescript@patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::hash=9aabd0"
   bin:
     tsc: ./bin/tsc
     tsserver: ./bin/tsserver

@@ -1,7 +1,7 @@
-import {Hooks as CoreHooks, Plugin, structUtils, IdentHash} from '@yarnpkg/core';
-import {Hooks as PatchHooks}                                from '@yarnpkg/plugin-patch';
+import {Hooks as CoreHooks, Plugin, structUtils} from '@yarnpkg/core';
+import {Hooks as PatchHooks}                     from '@yarnpkg/plugin-patch';
 
-import {patch as typescriptPatch}                           from './patches/typescript-1';
+import {patch as typescriptPatch}                from './patches/typescript-1';
 
 const PATCHES = new Map([
   [structUtils.makeIdent(null, `typescript`).identHash, typescriptPatch],
@@ -14,7 +14,9 @@ const plugin: Plugin<CoreHooks & PatchHooks> = {
       if (!name.startsWith(TAG))
         return;
 
-      const patch = PATCHES.get(name.slice(TAG.length) as IdentHash);
+      const ident = structUtils.parseIdent(name.slice(TAG.length));
+      const patch = PATCHES.get(ident.identHash);
+
       return typeof patch !== `undefined` ? patch : null;
     },
 
@@ -26,7 +28,7 @@ const plugin: Plugin<CoreHooks & PatchHooks> = {
       return structUtils.makeDescriptor(descriptor, structUtils.makeRange({
         protocol: `patch:`,
         source: structUtils.stringifyDescriptor(descriptor),
-        selector: `builtin<compat/${descriptor.identHash}>`,
+        selector: `builtin<compat/${structUtils.stringifyIdent(descriptor)}>`,
         params: null,
       }));
     },
