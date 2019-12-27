@@ -437,7 +437,6 @@ export class Project {
     const originalPackages = new Map<LocatorHash, Package>();
 
     const resolutionDependencies = new Map<DescriptorHash, Set<DescriptorHash>>();
-    const haveBeenAliased = new Set<DescriptorHash>();
 
     let nextResolutionPass = new Set<DescriptorHash>();
 
@@ -680,8 +679,14 @@ export class Project {
 
         const pkg = this.configuration.normalizePackage(original);
 
-        for (const [identHash, descriptor] of pkg.dependencies)
-          pkg.dependencies.set(identHash, resolver.bindDescriptor(descriptor, locator, resolveOptions));
+        for (const [identHash, descriptor] of pkg.dependencies) {
+          const alias = await getResolutionAlias(descriptor);
+          if (!structUtils.areIdentsEqual(descriptor, alias))
+            throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
+
+          const bound = resolver.bindDescriptor(alias, locator, resolveOptions);
+          pkg.dependencies.set(identHash, bound);
+        }
 
         return [pkg.locatorHash, {original, pkg}] as const;
       })));
@@ -713,70 +718,7 @@ export class Project {
         for (const descriptor of pkg.dependencies.values()) {
           allDescriptors.set(descriptor.descriptorHash, descriptor);
           nextResolutionPass.add(descriptor.descriptorHash);
-
-          // We must check and make sure that the descriptor didn't get aliased
-          // to something else
-          const alias = await getResolutionAlias(descriptor);
-          if (alias === null || alias.descriptorHash === descriptor.descriptorHash)
-            continue;
-
-          // If it's already been "resolved" (in reality it will be the temporary
-          // resolution we've set in the next few lines) we simply must skip it
-          if (allResolutions.has(descriptor.descriptorHash))
-            continue;
-
-          // Temporarily set an invalid resolution so that it won't be resolved
-          // multiple times if it is found multiple times in the dependency
-          // tree (this is only temporary, we will replace it by the actual
-          // resolution after we've finished resolving everything)
-          allResolutions.set(descriptor.descriptorHash, `temporary` as LocatorHash);
-
-          // We can now replace the descriptor by its alias in the list of
-          // descriptors that must be resolved
-          nextResolutionPass.delete(descriptor.descriptorHash);
-          nextResolutionPass.add(alias.descriptorHash);
-
-          allDescriptors.set(alias.descriptorHash, alias);
-
-          haveBeenAliased.add(descriptor.descriptorHash);
         }
-      }
-    }
-
-    // Each package that should have been resolved but was skipped because it
-    // was aliased will now see the resolution for its alias propagated to it
-
-    while (haveBeenAliased.size > 0) {
-      let hasChanged = false;
-
-      for (const descriptorHash of haveBeenAliased) {
-        const descriptor = allDescriptors.get(descriptorHash);
-        if (!descriptor)
-          throw new Error(`Assertion failed: The descriptor should have been registered`);
-
-        const alias = cachedAliases.get(descriptorHash);
-        if (typeof alias === `undefined` || alias === null)
-          throw new Error(`Assertion failed: The descriptor should have an alias`);
-
-        const resolution = allResolutions.get(alias.descriptorHash);
-        if (resolution === undefined)
-          throw new Error(`Assertion failed: The resolution should have been registered`);
-
-        // The following can happen if a package gets aliased to another package
-        // that's itself aliased - in this case we just process all those we can
-        // do, then make new passes until everything is resolved
-        if (resolution === `temporary`)
-          continue;
-
-        haveBeenAliased.delete(descriptorHash);
-
-        allResolutions.set(descriptorHash, resolution);
-
-        hasChanged = true;
-      }
-
-      if (!hasChanged) {
-        throw new Error(`Alias loop detected`);
       }
     }
 
