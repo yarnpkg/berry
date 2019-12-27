@@ -5,6 +5,7 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:2.0.0-rc.12",
     "@yarnpkg/parsers": "workspace:2.0.0-rc.6",
+    "@yarnpkg/plugin-compat": "workspace:2.0.0-rc.0",
     "@yarnpkg/plugin-constraints": "workspace:2.0.0-rc.7",
     "@yarnpkg/plugin-dlx": "workspace:2.0.0-rc.8",
     "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.15",

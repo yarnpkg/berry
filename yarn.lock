@@ -4802,7 +4802,7 @@ __metadata:
     pnp-webpack-plugin: ^1.4.3
     semver: ^5.6.0
     terser-webpack-plugin: ^2.1.3
-    ts-loader: ^5.3.3
+    ts-loader: ^6.2.1
     val-loader: ^1.1.1
     webpack: ^4.41.2
     webpack-merge: ^4.2.1
@@ -4818,6 +4818,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/check@workspace:packages/yarnpkg-check"
   dependencies:
+    "@types/micromatch": ^3.1.0
     "@types/node": ^12.12.8
     "@yarnpkg/cli": "workspace:2.0.0-rc.19"
     "@yarnpkg/core": "workspace:2.0.0-rc.15"
@@ -4844,6 +4845,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/parsers": "workspace:2.0.0-rc.6"
+    "@yarnpkg/plugin-compat": "workspace:2.0.0-rc.0"
     "@yarnpkg/plugin-constraints": "workspace:2.0.0-rc.7"
     "@yarnpkg/plugin-dlx": "workspace:2.0.0-rc.8"
     "@yarnpkg/plugin-essentials": "workspace:2.0.0-rc.15"
@@ -4881,6 +4883,7 @@ __metadata:
     "@types/cross-spawn": 6.0.0
     "@types/got": ^8.3.4
     "@types/is-ci": ^2.0.0
+    "@types/micromatch": ^3.1.0
     "@types/node": ^12.12.8
     "@types/semver": ^6.0.2
     "@types/supports-color": ^5.3.0
@@ -5120,6 +5123,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@yarnpkg/plugin-compat@workspace:2.0.0-rc.0, @yarnpkg/plugin-compat@workspace:packages/plugin-compat":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/plugin-compat@workspace:packages/plugin-compat"
+  dependencies:
+    "@types/node": ^12.12.8
+    "@yarnpkg/core": "workspace:2.0.0-rc.15"
+    "@yarnpkg/plugin-patch": "workspace:2.0.0-rc.0"
+  peerDependencies:
+    "@yarnpkg/core": ^2.0.0-rc.13
+    "@yarnpkg/plugin-patch": ^2.0.0-rc.0
+  languageName: unknown
+  linkType: soft
+
 "@yarnpkg/plugin-constraints@workspace:2.0.0-rc.7, @yarnpkg/plugin-constraints@workspace:packages/plugin-constraints":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-constraints@workspace:packages/plugin-constraints"
@@ -5350,6 +5366,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pack@workspace:packages/plugin-pack"
   dependencies:
+    "@types/micromatch": ^3.1.0
     "@types/node": ^12.12.8
     "@types/tar-stream": 1.6.0
     "@yarnpkg/cli": "workspace:2.0.0-rc.19"
@@ -5384,6 +5401,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pnp@workspace:packages/plugin-pnp"
   dependencies:
+    "@types/micromatch": ^3.1.0
     "@types/node": ^12.12.8
     "@yarnpkg/cli": "workspace:2.0.0-rc.19"
     "@yarnpkg/core": "workspace:2.0.0-rc.15"
@@ -17463,7 +17481,7 @@ hard-source-webpack-plugin@mzgoddard/hard-source-webpack-plugin:
   languageName: node
   linkType: hard
 
-"micromatch@npm:^4.0.2":
+"micromatch@npm:^4.0.0, micromatch@npm:^4.0.2":
   version: 4.0.2
   resolution: "micromatch@npm:4.0.2"
   dependencies:
@@ -22161,7 +22179,7 @@ hard-source-webpack-plugin@mzgoddard/hard-source-webpack-plugin:
   languageName: node
   linkType: hard
 
-"semver@npm:2 || 3 || 4 || 5, semver@npm:^5.0.1, semver@npm:^5.0.3, semver@npm:^5.1.0, semver@npm:^5.3.0, semver@npm:^5.4.1, semver@npm:^5.5.0, semver@npm:^5.5.1, semver@npm:^5.6.0":
+"semver@npm:2 || 3 || 4 || 5, semver@npm:^5.0.3, semver@npm:^5.1.0, semver@npm:^5.3.0, semver@npm:^5.4.1, semver@npm:^5.5.0, semver@npm:^5.5.1, semver@npm:^5.6.0":
   version: 5.6.0
   resolution: "semver@npm:5.6.0"
   bin:
@@ -24146,18 +24164,18 @@ hard-source-webpack-plugin@mzgoddard/hard-source-webpack-plugin:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:^5.3.3":
-  version: 5.3.3
-  resolution: "ts-loader@npm:5.3.3"
+"ts-loader@npm:^6.2.1":
+  version: 6.2.1
+  resolution: "ts-loader@npm:6.2.1"
   dependencies:
     chalk: ^2.3.0
     enhanced-resolve: ^4.0.0
     loader-utils: ^1.0.2
-    micromatch: ^3.1.4
-    semver: ^5.0.1
+    micromatch: ^4.0.0
+    semver: ^6.0.0
   peerDependencies:
     typescript: "*"
-  checksum: 54a1f0f3598c2e5adee4b7b2daf4ca7c2655194da9aafc3640f91dc5245d862b7b52fe9276523b83ce29febd2ef15bb2aaaf260c818dc4cb5d727473026dd0b2
+  checksum: 64adeb3a79525c0b714b83492d24123835f784e072282a999370c93a23545c0b2d6063a939e0bd70ae1c095366e7a13949313127b2c9b96aefb13043b1bf0f07
   languageName: node
   linkType: hard
 
@@ -24301,13 +24319,23 @@ hard-source-webpack-plugin@mzgoddard/hard-source-webpack-plugin:
   languageName: node
   linkType: hard
 
-"typescript@npm:^3.7.4":
+typescript@^3.7.4:
   version: 3.7.4
   resolution: "typescript@npm:3.7.4"
   bin:
     tsc: ./bin/tsc
     tsserver: ./bin/tsserver
   checksum: b8f67d9158af24c6cae17f2ec6fddc15b45bd681a3eed1517b1b9b74f0565a4a2b12902a676e127c798081af41285db6c970ac3a2018e6c9e5e841efd7a68236
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^3.7.4#builtin<compat/typescript>":
+  version: 3.7.4
+  resolution: "typescript@patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::hash=9aabd0"
+  bin:
+    tsc: ./bin/tsc
+    tsserver: ./bin/tsserver
+  checksum: bf2e32168279d11ec3b4d1af5aa6da632d05640142496aacf55f121d3c9f612ade060de99525dc493bd87b4920aa34c8953aa346c08e57e996fbc13f66b212ae
   languageName: node
   linkType: hard
 
@@ -25150,7 +25178,7 @@ hard-source-webpack-plugin@mzgoddard/hard-source-webpack-plugin:
     "@yarnpkg/fslib": "workspace:2.0.0-rc.12"
     "@yarnpkg/pnpify": "workspace:2.0.0-rc.12"
     pnp-webpack-plugin: ^1.4.3
-    ts-loader: ^5.3.3
+    ts-loader: ^6.2.1
     typescript: ^3.7.4
     vsce: ^1.54.0
     webpack: ^4.41.2

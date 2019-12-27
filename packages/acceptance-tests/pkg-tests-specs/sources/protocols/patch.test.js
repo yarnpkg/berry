@@ -94,7 +94,7 @@ describe(`Protocols`, () => {
     );
 
     test(
-      `it should reuse the original resolution when switching to a patch`,
+      `it should preserve the resolution when switching in and out of a patch`,
       makeTemporaryEnv(
         {
           dependencies: {
@@ -106,14 +106,7 @@ describe(`Protocols`, () => {
 
           await run(`install`);
 
-          // Enforces an invalid resolution; if it's preserved we're sure that it works
           await run(`set`, `resolution`, `no-deps@npm:1.0.0`, `npm:2.0.0`);
-
-          // If this test fails, resolutions are broken, not patching
-          await expect(source(`require('no-deps')`)).resolves.toMatchObject({
-            name: `no-deps`,
-            version: `2.0.0`,
-          });
 
           await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
             dependencies: {
@@ -128,8 +121,26 @@ describe(`Protocols`, () => {
             version: `2.0.0`,
             hello: `world`,
           });
+
+          await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
+            dependencies: {
+              [`no-deps`]: `1.0.0`,
+            },
+          });
+
+          await run(`install`);
+
+          await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+            name: `no-deps`,
+            version: `2.0.0`,
+          });
+
+          await expect(source(`require('no-deps')`)).resolves.not.toMatchObject({
+            hello: `world`,
+          });
         },
       ),
+      10000,
     );
   });
 });

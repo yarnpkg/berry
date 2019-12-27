@@ -1,9 +1,19 @@
-import {Plugin}        from '@yarnpkg/core';
+import {Plugin, Project} from '@yarnpkg/core';
 
-import {PatchFetcher}  from './PatchFetcher';
-import {PatchResolver} from './PatchResolver';
-import PatchCommit     from './commands/patchCommit';
-import Patch           from './commands/patch';
+import {PatchFetcher}    from './PatchFetcher';
+import {PatchResolver}   from './PatchResolver';
+import PatchCommit       from './commands/patchCommit';
+import Patch             from './commands/patch';
+import * as patchUtils   from './patchUtils';
+
+export {patchUtils};
+
+export interface Hooks {
+  getBuiltinPatch?: (
+    project: Project,
+    name: string,
+  ) => Promise<string | null | void>,
+};
 
 const plugin: Plugin = {
   commands: [

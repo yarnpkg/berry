@@ -7,7 +7,7 @@ import {Fetcher}                                 from './Fetcher';
 import {Linker}                                  from './Linker';
 import {Project}                                 from './Project';
 import {Resolver}                                from './Resolver';
-import {Locator}                                 from './types';
+import {Locator, Descriptor, DescriptorHash}     from './types';
 
 type ProcessEnvironment = {[key: string]: string};
 
@@ -56,6 +56,15 @@ export type Hooks = {
     scriptName: string,
     extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable},
   ) => Promise<() => Promise<number>>,
+
+  // Before the resolution runs; should be use to setup new aliases that won't
+  // persist on the project instance itself.
+  reduceDependency?: (
+    dependency: Descriptor,
+    project: Project,
+    locator: Locator,
+    initialDependency: Descriptor,
+  ) => Promise<Descriptor>,
 
   // Called after the `install` method from the `Project` class successfully
   // completed.

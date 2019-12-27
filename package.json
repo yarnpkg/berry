@@ -99,7 +99,7 @@
     "release:all": "./scripts/release.sh",
     "test:lint": "eslint \"packages/**/@(sources|tests)/**/!(libzip).@(tsx|ts|js)\"",
     "test:unit": "jest",
-    "typecheck:all": "pnpify tsc --noEmit"
+    "typecheck:all": "tsc --noEmit"
   },
   "sherlock": {
     "requireList": [

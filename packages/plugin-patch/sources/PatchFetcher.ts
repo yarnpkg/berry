@@ -61,9 +61,11 @@ export class PatchFetcher implements Fetcher {
     const patchFs = new CwdFS(prefixPath, {baseFs: patchedPackage});
 
     for (const patchFile of patchFiles) {
-      await patchUtils.applyPatchFile(patchUtils.parsePatchFile(patchFile), {
-        baseFs: patchFs,
-      });
+      if (patchFile !== null) {
+        await patchUtils.applyPatchFile(patchUtils.parsePatchFile(patchFile), {
+          baseFs: patchFs,
+        });
+      }
     }
 
     return patchedPackage;

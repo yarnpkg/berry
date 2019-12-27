@@ -1,23 +1,27 @@
 import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions} from '@yarnpkg/core';
 import {npath, PortablePath, xfs, ppath, Filename, NodeFS}                                             from '@yarnpkg/fslib';
 
-export {applyPatchFile}                          from './tools/apply';
-export {parsePatchFile}                          from './tools/parse';
+import {Hooks as PatchHooks}                                                                           from './index';
+
+export {applyPatchFile} from './tools/apply';
+export {parsePatchFile} from './tools/parse';
+
+const BUILTIN_REGEXP = /^builtin<([^>]+)>$/;
 
 function parseSpec<T>(spec: string, sourceParser: (source: string) => T) {
   const {source, selector, params} = structUtils.parseRange(spec);
   if (source === null)
     throw new Error(`Patch locators must explicitly define their source`);
 
-  if (!params || typeof params.locator !== `string`)
-    throw new Error(`Patch locators must be bound to a source package`);
-
-  const parentLocator = structUtils.parseLocator(params.locator);
-  const sourceItem = sourceParser(source);
-
   const patchPaths = selector
     ? selector.split(/&/).map(path => npath.toPortablePath(path))
     : [];
+
+  const parentLocator = params && typeof params.locator === `string`
+    ? structUtils.parseLocator(params.locator)
+    : null;
+
+  const sourceItem = sourceParser(source);
 
   return {parentLocator, sourceItem, patchPaths};
 }
@@ -32,14 +36,22 @@ export function parseLocator(locator: Locator) {
   return {...rest, sourceLocator: sourceItem};
 }
 
-function makeSpec<T>({parentLocator, sourceItem, patchPaths, patchHash}: {parentLocator: Locator, sourceItem: T, patchPaths: Array<PortablePath>, patchHash?: string}, sourceStringifier: (source: T) => string) {
+function makeSpec<T>({parentLocator, sourceItem, patchPaths, patchHash}: {parentLocator: Locator | null, sourceItem: T, patchPaths: Array<PortablePath>, patchHash?: string}, sourceStringifier: (source: T) => string) {
+  const parentLocatorSpread = parentLocator !== null
+    ? {locator: structUtils.stringifyLocator(parentLocator)}
+    : {} as {};
+
+  const patchHashSpread = typeof patchHash !== `undefined`
+    ? {hash: patchHash}
+    : {} as {};
+
   return structUtils.makeRange({
     protocol: `patch:`,
     source: sourceStringifier(sourceItem),
     selector: patchPaths.join(`&`),
     params: {
-      locator: structUtils.stringifyLocator(parentLocator),
-      ...typeof patchHash !== `undefined` ? {hash: patchHash} : {},
+      ...parentLocatorSpread,
+      ...patchHashSpread,
     },
   });
 }
@@ -52,10 +64,36 @@ export function makeLocator(ident: Ident, {parentLocator, sourceLocator, patchPa
   return structUtils.makeLocator(ident, makeSpec({parentLocator, sourceItem: sourceLocator, patchPaths, patchHash}, structUtils.stringifyLocator));
 }
 
-export async function loadPatchFiles(parentLocator: Locator, patchPaths: Array<PortablePath>, opts: FetchOptions) {
+type VisitPatchPathOptions<T> = {
+  onAbsolute: (p: PortablePath) => T,
+  onRelative: (p: PortablePath) => T,
+  onBuiltin: (name: string) => T,
+};
+
+function visitPatchPath<T>({onAbsolute, onRelative, onBuiltin}: VisitPatchPathOptions<T>, patchPath: PortablePath) {
+  const builtinMatch = patchPath.match(BUILTIN_REGEXP);
+  if (builtinMatch !== null)
+    return onBuiltin(builtinMatch[1]);
+
+  if (ppath.isAbsolute(patchPath)) {
+    return onAbsolute(patchPath);
+  } else {
+    return onRelative(patchPath);
+  }
+}
+
+export function isParentRequired(patchPath: PortablePath) {
+  return visitPatchPath({
+    onAbsolute: () => false,
+    onRelative: () => true,
+    onBuiltin: () => false,
+  }, patchPath);
+}
+
+export async function loadPatchFiles(parentLocator: Locator | null, patchPaths: Array<PortablePath>, opts: FetchOptions) {
   // When the patch files use absolute paths we can directly access them via
   // their location on the disk. Otherwise we must go through the package fs.
-  const parentFetch = patchPaths.some(filePath => !ppath.isAbsolute(filePath))
+  const parentFetch = parentLocator !== null
     ? await opts.fetcher.fetch(parentLocator, opts)
     : null;
 
@@ -72,13 +110,24 @@ export async function loadPatchFiles(parentLocator: Locator, patchPaths: Array<P
   // First we obtain the specification for all the patches that we'll have to
   // apply to the original package.
   return await miscUtils.releaseAfterUseAsync(async () => {
-    return await Promise.all(patchPaths.map(async filePath => {
-      if (ppath.isAbsolute(filePath)) {
-        return xfs.readFilePromise(filePath, `utf8`);
-      } else {
-        return parentFetch!.packageFs.readFilePromise(filePath, `utf8`);
-      }
-    }));
+    return await Promise.all(patchPaths.map(async patchPath => visitPatchPath({
+      onAbsolute: async () => {
+        return await xfs.readFilePromise(patchPath, `utf8`);
+      },
+
+      onRelative: async () => {
+        if (parentFetch === null)
+          throw new Error(`Assertion failed: The parent locator should have been fetched`);
+
+        return await parentFetch.packageFs.readFilePromise(patchPath, `utf8`);
+      },
+
+      onBuiltin: async name => {
+        return await opts.project.configuration.firstHook((hooks: PatchHooks) => {
+          return hooks.getBuiltinPatch;
+        }, opts.project, name);
+      },
+    }, patchPath)));
   });
 }
 

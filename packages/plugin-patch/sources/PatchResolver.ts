@@ -24,6 +24,12 @@ export class PatchResolver implements Resolver {
   }
 
   bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
+    // If the patch is statically defined (ie absolute or a builtin), then we
+    // don't need to bind the descriptor to its parent
+    const {patchPaths} = patchUtils.parseDescriptor(descriptor);
+    if (patchPaths.every(patchPath => !patchUtils.isParentRequired(patchPath)))
+      return descriptor;
+
     return structUtils.bindDescriptor(descriptor, {
       locator: structUtils.stringifyLocator(fromLocator),
     });

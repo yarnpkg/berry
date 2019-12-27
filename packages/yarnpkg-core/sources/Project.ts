@@ -655,8 +655,17 @@ export class Project {
 
         const pkg = this.configuration.normalizePackage(original);
 
-        for (const [identHash, descriptor] of pkg.dependencies)
-          pkg.dependencies.set(identHash, resolver.bindDescriptor(descriptor, locator, resolveOptions));
+        for (const [identHash, descriptor] of pkg.dependencies) {
+          const dependency = await this.configuration.reduceHook(hooks => {
+            return hooks.reduceDependency;
+          }, descriptor, this, pkg, descriptor);
+
+          if (!structUtils.areIdentsEqual(descriptor, dependency))
+            throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
+
+          const bound = resolver.bindDescriptor(dependency, locator, resolveOptions);
+          pkg.dependencies.set(identHash, bound);
+        }
 
         return [pkg.locatorHash, {original, pkg}] as const;
       })));
