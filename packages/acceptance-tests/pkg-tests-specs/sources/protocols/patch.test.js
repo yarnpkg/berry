@@ -106,7 +106,7 @@ describe(`Protocols`, () => {
 
           await run(`install`);
 
-          await run(`set`, `resolution`, `no-deps@npm:1.0.0`, `npm:2.0.0`);
+          await run(`set`, `resolution`, `no-deps@  npm:1.0.0`, `npm:2.0.0`);
 
           await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
             dependencies: {
@@ -140,6 +140,7 @@ describe(`Protocols`, () => {
           });
         },
       ),
+      10000,
     );
   });
 });
