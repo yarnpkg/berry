@@ -34,7 +34,11 @@ export class TarballHttpResolver implements Resolver {
     return descriptor;
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    return [];
+  }
+
+  async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
     return [structUtils.convertDescriptorToLocator(descriptor)];
   }
 

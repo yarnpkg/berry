@@ -23,9 +23,14 @@ gen_enforced_dependency(WorkspaceCwd, DependencyIdent, WorkspaceRange, Dependenc
   % Obtain the version from the dependency
     workspace_field(DependencyCwd, 'version', DependencyVersion),
   % Quirk: we must discard the workspaces that don't declare a version
-    var(DependencyVersion),
+    atom(DependencyVersion),
   % Derive the expected range from the version
-    atom_concat('workspace:', WorkspaceVersion, WorkspaceRange).
+    (
+      DependencyType \= 'peerDependencies' ->
+        atom_concat('workspace:^', DependencyVersion, WorkspaceRange)
+      ;
+        atom_concat('^', DependencyVersion, WorkspaceRange)
+    ).
 
 % This rule will prevent all workspaces from depending on tslib
 gen_enforced_dependency(WorkspaceCwd, 'tslib', null, DependencyType) :-

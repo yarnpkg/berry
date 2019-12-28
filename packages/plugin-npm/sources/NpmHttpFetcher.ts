@@ -2,7 +2,6 @@ import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator, MessageName}                       from '@yarnpkg/core';
 import {structUtils, tgzUtils}                      from '@yarnpkg/core';
 import semver                                       from 'semver';
-import {URL}                                        from 'url';
 
 import {PROTOCOL}                                   from './constants';
 import * as npmHttpUtils                            from './npmHttpUtils';
@@ -12,11 +11,11 @@ export class NpmHttpFetcher implements Fetcher {
     if (!locator.reference.startsWith(PROTOCOL))
       return false;
 
-    const url = new URL(locator.reference);
-
-    if (!semver.valid(url.pathname))
+    const {selector, params} = structUtils.parseRange(locator.reference);
+    if (!semver.valid(selector))
       return false;
-    if (!url.searchParams.has(`__archiveUrl`))
+
+    if (params === null || typeof params.__archiveUrl !== `string`)
       return false;
 
     return true;
@@ -47,11 +46,11 @@ export class NpmHttpFetcher implements Fetcher {
   }
 
   async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
-    const archiveUrl = new URL(locator.reference).searchParams.get(`__archiveUrl`);
-    if (archiveUrl === null)
+    const {params} = structUtils.parseRange(locator.reference);
+    if (params === null || typeof params.__archiveUrl !== `string`)
       throw new Error(`Assertion failed: The archiveUrl querystring parameter should have been available`);
 
-    const sourceBuffer = await npmHttpUtils.get(archiveUrl, {
+    const sourceBuffer = await npmHttpUtils.get(params.__archiveUrl, {
       configuration: opts.project.configuration,
       ident: locator,
     });

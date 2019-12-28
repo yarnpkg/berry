@@ -1,13 +1,13 @@
 import {NodeFS, PortablePath} from '@yarnpkg/fslib';
 import {createHash}           from 'crypto';
 
-export function makeHash<T>(...args: Array<string | null>): T {
+export function makeHash<T extends string = string>(...args: Array<string | null>): T {
   const hash = createHash(`sha512`);
 
   for (const arg of args)
     hash.update(arg ? arg : ``);
 
-  return hash.digest(`hex`) as unknown as T;
+  return hash.digest(`hex`) as T;
 }
 
 export function checksumFile(path: PortablePath) {

@@ -1,0 +1,405 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`parsepatchFile can handle files with CRLF line breaks 1`] = `
+Array [
+  Object {
+    "hash": "3e1267f",
+    "hunk": Object {
+      "header": Object {
+        "original": Object {
+          "length": 0,
+          "start": 1,
+        },
+        "patched": Object {
+          "length": 1,
+          "start": 1,
+        },
+      },
+      "parts": Array [
+        Object {
+          "lines": Array [
+            "this is a new file
+",
+          ],
+          "noNewlineAtEndOfFile": false,
+          "type": "insertion",
+        },
+      ],
+    },
+    "mode": 420,
+    "path": "banana.ts",
+    "type": "file creation",
+  },
+]
+`;
+
+exports[`parsepatchFile parses old-style patches 1`] = `
+Array [
+  Object {
+    "afterHash": null,
+    "beforeHash": null,
+    "hunks": Array [
+      Object {
+        "header": Object {
+          "original": Object {
+            "length": 10,
+            "start": 41,
+          },
+          "patched": Object {
+            "length": 11,
+            "start": 41,
+          },
+        },
+        "parts": Array [
+          Object {
+            "lines": Array [
+              " */",
+              "function isValidNameError(name, node) {",
+              "  !(typeof name === 'string') ? (0, _invariant2.default)(0, 'Expected string') : void 0;",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "context",
+          },
+          Object {
+            "lines": Array [
+              "  if (name.length > 1 && name[0] === '_' && name[1] === '_') {",
+              "    return new _GraphQLError.GraphQLError('Name \\"' + name + '\\" must not begin with \\"__\\", which is reserved by ' + 'GraphQL introspection.', node);",
+              "  }",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "deletion",
+          },
+          Object {
+            "lines": Array [
+              "  // if (name.length > 1 && name[0] === '_' && name[1] === '_') {",
+              "  //   return new _GraphQLError.GraphQLError('Name \\"' + name + '\\" must not begin with \\"__\\", which is reserved by ' + 'GraphQL introspection.', node);",
+              "  // }",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "insertion",
+          },
+          Object {
+            "lines": Array [
+              "  if (!NAME_RX.test(name)) {",
+              "    return new _GraphQLError.GraphQLError('Names must match /^[_a-zA-Z][_a-zA-Z0-9]*$/ but \\"' + name + '\\" does not.', node);",
+              "  }",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "context",
+          },
+          Object {
+            "lines": Array [
+              "",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "insertion",
+          },
+          Object {
+            "lines": Array [
+              "}",
+            ],
+            "noNewlineAtEndOfFile": true,
+            "type": "context",
+          },
+        ],
+      },
+    ],
+    "path": "node_modules/graphql/utilities/assertValidName.js",
+    "type": "patch",
+  },
+  Object {
+    "afterHash": null,
+    "beforeHash": null,
+    "hunks": Array [
+      Object {
+        "header": Object {
+          "original": Object {
+            "length": 9,
+            "start": 29,
+          },
+          "patched": Object {
+            "length": 9,
+            "start": 29,
+          },
+        },
+        "parts": Array [
+          Object {
+            "lines": Array [
+              " */",
+              "export function isValidNameError(name, node) {",
+              "  !(typeof name === 'string') ? invariant(0, 'Expected string') : void 0;",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "context",
+          },
+          Object {
+            "lines": Array [
+              "  if (name.length > 1 && name[0] === '_' && name[1] === '_') {",
+              "    return new GraphQLError('Name \\"' + name + '\\" must not begin with \\"__\\", which is reserved by ' + 'GraphQL introspection.', node);",
+              "  }",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "deletion",
+          },
+          Object {
+            "lines": Array [
+              "  // if (name.length > 1 && name[0] === '_' && name[1] === '_') {",
+              "  //   return new GraphQLError('Name \\"' + name + '\\" must not begin with \\"__\\", which is reserved by ' + 'GraphQL introspection.', node);",
+              "  // }",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "insertion",
+          },
+          Object {
+            "lines": Array [
+              "  if (!NAME_RX.test(name)) {",
+              "    return new GraphQLError('Names must match /^[_a-zA-Z][_a-zA-Z0-9]*$/ but \\"' + name + '\\" does not.', node);",
+              "  }",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "context",
+          },
+        ],
+      },
+    ],
+    "path": "node_modules/graphql/utilities/assertValidName.mjs",
+    "type": "patch",
+  },
+]
+`;
+
+exports[`parsepatchFile works 1`] = `
+Array [
+  Object {
+    "fromPath": "numbers.txt",
+    "toPath": "banana.txt",
+    "type": "rename",
+  },
+  Object {
+    "newMode": 493,
+    "oldMode": 420,
+    "path": "banana.txt",
+    "type": "mode change",
+  },
+  Object {
+    "afterHash": "92d2c5f",
+    "beforeHash": "fbf1785",
+    "hunks": Array [
+      Object {
+        "header": Object {
+          "original": Object {
+            "length": 4,
+            "start": 1,
+          },
+          "patched": Object {
+            "length": 4,
+            "start": 1,
+          },
+        },
+        "parts": Array [
+          Object {
+            "lines": Array [
+              "one",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "deletion",
+          },
+          Object {
+            "lines": Array [
+              "ne",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "insertion",
+          },
+          Object {
+            "lines": Array [
+              "",
+              "two",
+              "",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "context",
+          },
+        ],
+      },
+    ],
+    "path": "banana.txt",
+    "type": "patch",
+  },
+]
+`;
+
+exports[`parsepatchFile works 2`] = `
+Array [
+  Object {
+    "afterHash": "842652c",
+    "beforeHash": "2de83dd",
+    "hunks": Array [
+      Object {
+        "header": Object {
+          "original": Object {
+            "length": 5,
+            "start": 1,
+          },
+          "patched": Object {
+            "length": 5,
+            "start": 1,
+          },
+        },
+        "parts": Array [
+          Object {
+            "lines": Array [
+              "this",
+              "is",
+              "",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "context",
+          },
+          Object {
+            "lines": Array [
+              "a",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "deletion",
+          },
+          Object {
+            "lines": Array [
+              "",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "insertion",
+          },
+          Object {
+            "lines": Array [
+              "file",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "context",
+          },
+        ],
+      },
+    ],
+    "path": "banana.ts",
+    "type": "patch",
+  },
+]
+`;
+
+exports[`parsepatchFile works 3`] = `
+Array [
+  Object {
+    "fromPath": "numbers.txt",
+    "toPath": "banana.txt",
+    "type": "rename",
+  },
+  Object {
+    "newMode": 493,
+    "oldMode": 420,
+    "path": "banana.txt",
+    "type": "mode change",
+  },
+  Object {
+    "afterHash": "92d2c5f",
+    "beforeHash": "fbf1785",
+    "hunks": Array [
+      Object {
+        "header": Object {
+          "original": Object {
+            "length": 4,
+            "start": 1,
+          },
+          "patched": Object {
+            "length": 4,
+            "start": 1,
+          },
+        },
+        "parts": Array [
+          Object {
+            "lines": Array [
+              "one",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "deletion",
+          },
+          Object {
+            "lines": Array [
+              "ne",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "insertion",
+          },
+          Object {
+            "lines": Array [
+              "",
+              "two",
+              "",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "context",
+          },
+        ],
+      },
+    ],
+    "path": "banana.txt",
+    "type": "patch",
+  },
+]
+`;
+
+exports[`parsepatchFile works for a simple case 1`] = `
+Array [
+  Object {
+    "afterHash": "842652c",
+    "beforeHash": "2de83dd",
+    "hunks": Array [
+      Object {
+        "header": Object {
+          "original": Object {
+            "length": 5,
+            "start": 1,
+          },
+          "patched": Object {
+            "length": 5,
+            "start": 1,
+          },
+        },
+        "parts": Array [
+          Object {
+            "lines": Array [
+              "this",
+              "is",
+              "",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "context",
+          },
+          Object {
+            "lines": Array [
+              "a",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "deletion",
+          },
+          Object {
+            "lines": Array [
+              "",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "insertion",
+          },
+          Object {
+            "lines": Array [
+              "file",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "context",
+          },
+        ],
+      },
+    ],
+    "path": "banana.ts",
+    "type": "patch",
+  },
+]
+`;

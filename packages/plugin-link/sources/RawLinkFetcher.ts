@@ -2,7 +2,6 @@ import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator}                                    from '@yarnpkg/core';
 import {structUtils}                                from '@yarnpkg/core';
 import {JailFS, NodeFS, ppath, PortablePath}        from '@yarnpkg/fslib';
-import querystring                                  from 'querystring';
 
 import {RAW_LINK_PROTOCOL}                          from './constants';
 
@@ -15,26 +14,23 @@ export class RawLinkFetcher implements Fetcher {
   }
 
   getLocalPath(locator: Locator, opts: FetchOptions) {
-    const {parentLocator, linkPath} = this.parseLocator(locator);
-
-    if (ppath.isAbsolute(linkPath))
-      return linkPath;
+    const {parentLocator, path} = structUtils.parseFileStyleRange(locator.reference, {protocol: RAW_LINK_PROTOCOL});
+    if (ppath.isAbsolute(path))
+      return path;
 
     const parentLocalPath = opts.fetcher.getLocalPath(parentLocator, opts);
-
-    if (parentLocalPath !== null) {
-      return ppath.resolve(parentLocalPath, linkPath);
-    } else {
+    if (parentLocalPath === null)
       return null;
-    }
+
+    return ppath.resolve(parentLocalPath, path);
   }
 
   async fetch(locator: Locator, opts: FetchOptions) {
-    const {parentLocator, linkPath} = this.parseLocator(locator);
+    const {parentLocator, path} = structUtils.parseFileStyleRange(locator.reference, {protocol: RAW_LINK_PROTOCOL});
 
     // If the link target is an absolute path we can directly access it via its
     // location on the disk. Otherwise we must go through the package fs.
-    const parentFetch = ppath.isAbsolute(linkPath)
+    const parentFetch = ppath.isAbsolute(path)
       ? {packageFs: new NodeFS(), prefixPath: PortablePath.root, localPath: PortablePath.root}
       : await opts.fetcher.fetch(parentLocator, opts);
 
@@ -49,29 +45,12 @@ export class RawLinkFetcher implements Fetcher {
       parentFetch.releaseFs();
 
     const sourceFs = effectiveParentFetch.packageFs;
-    const sourcePath = ppath.resolve(effectiveParentFetch.prefixPath, linkPath);
+    const sourcePath = ppath.resolve(effectiveParentFetch.prefixPath, path);
 
     if (parentFetch.localPath) {
       return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.root, localPath: sourcePath};
     } else {
       return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.root};
     }
-  }
-
-  private parseLocator(locator: Locator) {
-    const qsIndex = locator.reference.indexOf(`?`);
-
-    if (qsIndex === -1)
-      throw new Error(`Invalid link-type locator`);
-
-    const linkPath = locator.reference.slice(RAW_LINK_PROTOCOL.length, qsIndex) as PortablePath;
-    const queryString = querystring.parse(locator.reference.slice(qsIndex + 1));
-
-    if (typeof queryString.locator !== `string`)
-      throw new Error(`Invalid link-type locator`);
-
-    const parentLocator = structUtils.parseLocator(queryString.locator, true);
-
-    return {parentLocator, linkPath};
   }
 }

@@ -2,11 +2,15 @@
 
 set -e
 
+EMSDK=~/emsdk/emsdk_env.sh
+
 THIS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$THIS_DIR"
 
 ZLIB_VERSION=1.2.11
-LIBZIP_VERSION=1.5.1
+LIBZIP_VERSION=1.5.2
+
+LIBZIP_REPO=arcanis/libzip
 
 [[ -f ./zlib-"$ZLIB_VERSION"/libz.a ]] || (
     if ! [[ -e zlib-"$ZLIB_VERSION".tar.gz ]]; then
@@ -19,41 +23,71 @@ LIBZIP_VERSION=1.5.1
 
     cd "$THIS_DIR"/zlib-"$ZLIB_VERSION"
 
-    source ~/emsdk-portable/emsdk_env.sh
+    source "$EMSDK"
 
-    emcmake cmake -Wno-dev .
+    mkdir -p build
+    cd build
+
+    emcmake cmake -Wno-dev \
+      ..
+
     emmake make zlibstatic
+
+    mkdir -p local/lib local/include
+    cp libz.a local/lib/
+    cp zconf.h ../zlib.h local/include/
+
+    echo Built zlib
 )
 
-(
-    if ! [[ -e libzip-"$LIBZIP_VERSION".tar.gz ]]; then
-        wget -O ./libzip-"$LIBZIP_VERSION".tar.gz "https://libzip.org/download/libzip-$LIBZIP_VERSION.tar.gz"
-    fi
+[[ -f ./libzip-"$LIBZIP_VERSION"/build/lib/libzip.a ]] || (
+    if [[ -v LIBZIP_REPO ]]; then
+        if ! [[ -e libzip-"$LIBZIP_VERSION" ]]; then
+            git clone git@github.com:"$LIBZIP_REPO" libzip-"$LIBZIP_VERSION"
+        fi
+    else
+        if ! [[ -e libzip-"$LIBZIP_VERSION".tar.gz ]]; then
+            wget -O ./libzip-"$LIBZIP_VERSION".tar.gz "https://libzip.org/download/libzip-$LIBZIP_VERSION.tar.gz"
+        fi
 
-    if ! [[ -e libzip-"$LIBZIP_VERSION" ]]; then
-        tar xvf ./libzip-"$LIBZIP_VERSION".tar.gz
-        # https://github.com/nih-at/libzip/issues/89
-        sed s/localtime/gmtime/g \
-            <<< "$(cat ./libzip-"$LIBZIP_VERSION"/lib/zip_dirent.c)" \
-            > ./libzip-"$LIBZIP_VERSION"/lib/zip_dirent.c
+        if ! [[ -e libzip-"$LIBZIP_VERSION" ]]; then
+            tar xvf ./libzip-"$LIBZIP_VERSION".tar.gz
+        fi
     fi
 
     cd "$THIS_DIR"/libzip-"$LIBZIP_VERSION"
 
-    source ~/emsdk-portable/emsdk_env.sh
+    source "$EMSDK"
 
-    emcmake cmake -Wno-dev -DBUILD_SHARED_LIBS=OFF -DENABLE_GNUTLS=OFF -DENABLE_OPENSSL=OFF -DENABLE_COMMONCRYPTO=OFF -DZLIB_LIBRARY="$THIS_DIR"/zlib-"$ZLIB_VERSION"/libz.a -DZLIB_INCLUDE_DIR="$THIS_DIR"/zlib-"$ZLIB_VERSION" .
+    mkdir -p build
+    cd build
+
+    emcmake cmake -Wno-dev \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DENABLE_LOCALTIME=OFF \
+      -DENABLE_COMMONCRYPTO=OFF \
+      -DENABLE_GNUTLS=OFF \
+      -DENABLE_MBEDTLS=OFF \
+      -DENABLE_OPENSSL=OFF \
+      -DENABLE_WINDOWS_CRYPTO=OFF \
+      -DZLIB_LIBRARY="$THIS_DIR"/zlib-"$ZLIB_VERSION"/build/local/lib/libz.a \
+      -DZLIB_INCLUDE_DIR="$THIS_DIR"/zlib-"$ZLIB_VERSION"/build/local/include \
+      ..
+
     emmake make zip
 
-    echo Built zip
+    mkdir -p local/lib local/include
+    cp lib/libzip.a local/lib/
+    cp zipconf.h ../lib/zip.h local/include/
+
+    echo Built libzip
 )
 
 (
-    source ~/emsdk-portable/emsdk_env.sh
+    source "$EMSDK"
 
     emcc \
         -o ./build.js \
-        -s WASM=1 \
         -s EXPORTED_FUNCTIONS="$(cat ./exported.json)" \
         -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "getValue"]' \
         -s ALLOW_MEMORY_GROWTH=1 \
@@ -62,18 +96,16 @@ LIBZIP_VERSION=1.5.1
         -s NODERAWFS=1 \
         -s SINGLE_FILE=1 \
         -s ASSERTIONS=1 -s SAFE_HEAP=1 \
-        -I./libzip-"$LIBZIP_VERSION"/lib \
-        -I./libzip-"$LIBZIP_VERSION" \
+        -I./libzip-"$LIBZIP_VERSION"/build/local/include \
         -O3 \
         --llvm-lto 1 \
         ./zipstruct.c \
-        ./libzip-"$LIBZIP_VERSION"/lib/libzip.a \
-        ./zlib-"$ZLIB_VERSION"/libz.a
+        ./libzip-"$LIBZIP_VERSION"/build/local/lib/libzip.a \
+        ./zlib-"$ZLIB_VERSION"/build/local/lib/libz.a
 
     cat > ../sources/libzip.js \
-        "./shell.pre.js" \
+        <(echo "var frozenFs = Object.assign({}, require('fs'));") \
         <(sed 's/require("fs")/frozenFs/g' ./build.js | sed 's/process\["on"\]/(function(){})/g') \
-        "./shell.post.js"
 
     echo Built wasm
 )

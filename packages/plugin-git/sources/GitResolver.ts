@@ -22,7 +22,11 @@ export class GitResolver implements Resolver {
     return descriptor;
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    return [];
+  }
+
+  async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
     const reference = await gitUtils.resolveUrl(descriptor.range, opts.project.configuration);
     const locator = structUtils.makeLocator(descriptor, reference);
 
