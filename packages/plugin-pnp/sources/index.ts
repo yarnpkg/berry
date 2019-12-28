@@ -6,10 +6,11 @@ import {PnpLinker}                                         from './PnpLinker';
 import unplug                                              from './commands/unplug';
 
 export const getPnpPath = (project: Project) => ppath.join(project.cwd, `.pnp.js` as Filename);
+export const quotePathIfNeeded = (path: string) => /\s/.test(path) ? JSON.stringify(path) : path;
 
 async function setupScriptEnvironment(project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
   const pnpPath: PortablePath = getPnpPath(project);
-  const pnpRequire = `--require ${npath.fromPortablePath(pnpPath)}`;
+  const pnpRequire = `--require ${quotePathIfNeeded(npath.fromPortablePath(pnpPath))}`;
 
   if (xfs.existsSync(pnpPath)) {
     let nodeOptions = env.NODE_OPTIONS || ``;
