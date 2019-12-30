@@ -1,15 +1,16 @@
-import HttpAgent, {HttpsAgent} from 'agentkeepalive';
-import got, {GotOptions}       from 'got';
-import micromatch              from 'micromatch';
-import tunnel, {ProxyOptions}  from 'tunnel';
-import {URL}                   from 'url';
+import got, {GotOptions, NormalizedOptions, Response} from 'got';
+import {Agent as HttpsAgent}                          from 'https';
+import {Agent as HttpAgent}                           from 'http';
+import micromatch                                     from 'micromatch';
+import tunnel, {ProxyOptions}                         from 'tunnel';
+import {URL}                                          from 'url';
 
-import {Configuration}         from './Configuration';
+import {Configuration}                                from './Configuration';
 
 const cache = new Map<string, Promise<Buffer>>();
 
-const globalHttpAgent = new HttpAgent();
-const globalHttpsAgent = new HttpsAgent();
+const globalHttpAgent = new HttpAgent({keepAlive: true});
+const globalHttpsAgent = new HttpsAgent({keepAlive: true});
 
 function parseProxy(specifier: string) {
   const url = new URL(specifier);
@@ -63,17 +64,29 @@ async function request(target: string, body: Body, {configuration, headers, json
       ? tunnel.httpsOverHttp(parseProxy(httpsProxy))
       : globalHttpsAgent;
 
-  const gotOptions = {agent, body, headers, json, method, encoding: null};
+  const gotOptions: GotOptions = {agent, headers, method};
   let hostname: string | undefined;
 
-  const makeHooks = <T extends string | null>() => ({
+  gotOptions.responseType = json
+    ? `json`
+    : `buffer`;
+
+  if (body !== null) {
+    if (typeof body === `string` || Buffer.isBuffer(body)) {
+      gotOptions.body = body;
+    } else {
+      gotOptions.json = body;
+    }
+  }
+
+  const makeHooks = () => ({
     beforeRequest: [
-      (options: GotOptions<T>) => {
+      (options: NormalizedOptions) => {
         hostname = options.hostname;
       },
     ],
     beforeRedirect: [
-      (options: GotOptions<T>) => {
+      (options: NormalizedOptions) => {
         if (options.headers && options.headers.authorization && options.hostname !== hostname) {
           delete options.headers.authorization;
         }
@@ -83,11 +96,12 @@ async function request(target: string, body: Body, {configuration, headers, json
 
   //@ts-ignore
   const gotClient = got.extend({
+    retry: 10,
     ...gotOptions,
     hooks: makeHooks(),
   });
 
-  const res = await gotClient(target);
+  const res = await gotClient(target) as Response<any>;
   return await res.body;
 }
 

@@ -8,16 +8,11 @@ const absRootPath = dirname(absPnpApiPath);
 // Setup the environment to be able to require typescript/lib/tsserver
 require(absPnpApiPath).setup();
 
-const pnpifyResolution = require.resolve(`@yarnpkg/pnpify`, {paths: [absRootPath]});
 const moduleResolution = require.resolve(`typescript/lib/tsserver`, {paths: [absRootPath]});
 
 // Prepare the environment (to be ready in case of child_process.spawn etc)
 process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || ``;
 process.env.NODE_OPTIONS += ` -r ${absPnpApiPath}`;
-process.env.NODE_OPTIONS += ` -r ${pnpifyResolution}`;
-
-// Apply PnPify to the current process
-require(pnpifyResolution).patchFs();
 
 // Defer to the real typescript/lib/tsserver your application uses
 module.exports = require(moduleResolution);

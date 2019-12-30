@@ -4,6 +4,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/invariant": "^2.2.30",
+    "@types/klaw": "^2.0.0",
     "@types/minimatch": "^3.0.3",
     "@types/semver": "^6.0.2",
     "@types/tar-fs": "^1.16.1",

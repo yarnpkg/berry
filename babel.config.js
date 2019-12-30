@@ -11,6 +11,7 @@ module.exports = {
     `@babel/preset-react`,
   ],
   ignore: [
+    `**/*.d.ts`,
     `packages/yarnpkg-libzip/sources/libzip.js`,
   ],
 };

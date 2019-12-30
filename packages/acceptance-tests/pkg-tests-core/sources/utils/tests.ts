@@ -292,8 +292,8 @@ export const startPackageServer = (): Promise<string> => {
 
       const {username} = parsedRequest;
       const otp = request.headers['npm-otp'];
-      const user = validLogins[username];
 
+      const user = validLogins[username];
       if (!user)
         return processError(response, 401, `Unauthorized`);
 
@@ -452,7 +452,7 @@ export const startPackageServer = (): Promise<string> => {
             const {authorization} = req.headers;
             if (authorization != null) {
               if (!validAuthorizations.includes(authorization)) {
-                sendError(res, 403, `Forbidden`);
+                sendError(res, 401, `Invalid token`);
                 return;
               }
             } else if (needsAuth(parsedRequest)) {

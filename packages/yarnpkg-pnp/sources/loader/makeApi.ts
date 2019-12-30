@@ -1,8 +1,6 @@
-/// <reference path="./module.d.ts"/>
-
 import {FakeFS, NativePath, Path, PortablePath, VirtualFS, npath} from '@yarnpkg/fslib';
 import {ppath, toFilename}                                        from '@yarnpkg/fslib';
-import Module                                                     from 'module';
+import {Module}                                                   from 'module';
 
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState} from '../types';
 

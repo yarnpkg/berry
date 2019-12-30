@@ -11,7 +11,6 @@
     "@yarnpkg/plugin-git": "^2.0.0-rc.11"
   },
   "devDependencies": {
-    "@types/node": "^12.12.8",
     "@types/tmp": "^0.0.33",
     "@yarnpkg/core": "workspace:^2.0.0-rc.15",
     "@yarnpkg/plugin-git": "workspace:^2.0.0-rc.11"

@@ -13,7 +13,6 @@
   "devDependencies": {
     "@types/comment-json": "^1.1.1",
     "@types/cross-spawn": "6.0.0",
-    "@types/node": "^12.12.8",
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.12",
     "eslint": "^5.16.0",

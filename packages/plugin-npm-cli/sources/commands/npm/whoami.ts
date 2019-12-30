@@ -59,7 +59,9 @@ export default class NpmWhoamiCommand extends BaseCommand {
 
         report.reportInfo(MessageName.UNNAMED, response.username);
       } catch (err) {
-        if (err.statusCode === 401 || err.statusCode === 403) {
+        if (err.name !== `HTTPError`) {
+          throw err;
+        } else if (err.response.statusCode === 401 || err.response.statusCode === 403) {
           report.reportError(MessageName.AUTHENTICATION_INVALID, `Authentication failed - your credentials may have expired`);
         } else {
           report.reportError(MessageName.AUTHENTICATION_INVALID, err.toString());

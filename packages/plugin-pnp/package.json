@@ -19,7 +19,6 @@
   },
   "devDependencies": {
     "@types/micromatch": "^3.1.0",
-    "@types/node": "^12.12.8",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.19",
     "@yarnpkg/core": "workspace:^2.0.0-rc.15"
   },

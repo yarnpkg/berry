@@ -16,7 +16,6 @@
     "@yarnpkg/plugin-pack": "^2.0.0-rc.11"
   },
   "devDependencies": {
-    "@types/node": "^12.12.8",
     "@types/react": "^16.8.0",
     "@types/semver": "^6.0.2",
     "@types/yup": "0.26.12",

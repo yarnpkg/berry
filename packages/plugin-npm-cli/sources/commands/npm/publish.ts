@@ -82,8 +82,8 @@ export default class NpmPublishCommand extends BaseCommand {
         } catch (error) {
           if (error.name !== `HTTPError`) {
             throw error;
-          } else if (error.statusCode !== 404) {
-            throw new ReportError(MessageName.NETWORK_ERROR, `The remote server answered with HTTP ${error.statusCode} ${error.statusMessage}`);
+          } else if (error.response.statusCode !== 404) {
+            throw new ReportError(MessageName.NETWORK_ERROR, `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`);
           }
         }
       }
@@ -109,14 +109,14 @@ export default class NpmPublishCommand extends BaseCommand {
             json: true,
           });
         } catch (error) {
-          if (error.name === `HTTPError`) {
-            const message = error.body && error.body.error
-              ? error.body.error
-              : `The remote server answered with HTTP ${error.statusCode} ${error.statusMessage}`;
+          if (error.name !== `HTTPError`) {
+            throw error;
+          } else {
+            const message = error.response.body && error.body.response.error
+              ? error.response.body.error
+              : `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`;
 
             report.reportError(MessageName.NETWORK_ERROR, message);
-          } else {
-            throw error;
           }
         }
       });

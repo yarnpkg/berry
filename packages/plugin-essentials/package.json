@@ -22,7 +22,6 @@
   },
   "devDependencies": {
     "@types/inquirer": "^0.0.43",
-    "@types/node": "^12.12.8",
     "@types/semver": "^6.0.2",
     "@types/treeify": "^1.0.0",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.19",

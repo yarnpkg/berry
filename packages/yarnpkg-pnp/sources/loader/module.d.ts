@@ -1,4 +1,4 @@
-declare namespace NodeJS {
+declare module "module" {
   namespace Module {
     const _cache: {[p: string]: NodeModule};
     const _extensions: {[ext: string]: any};

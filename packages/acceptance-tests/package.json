@@ -20,8 +20,5 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
-  },
-  "devDependencies": {
-    "@types/node": "^12.12.8"
   }
 }

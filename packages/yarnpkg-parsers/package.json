@@ -9,7 +9,6 @@
     "js-yaml": "^3.10.0"
   },
   "devDependencies": {
-    "@types/node": "^12.12.8",
     "pegjs": "^0.10.0"
   },
   "scripts": {
