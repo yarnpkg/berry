@@ -138,24 +138,49 @@ export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = fal
 
   const result: Array<Array<Modification>> = [];
 
+  let fixupOffset = 0;
+  let maxFrozenLine = 0;
+
   for (const hunk of hunks) {
-    let fuzzingOffset = 0;
-    while (true) {
-      const modifications = evaluateHunk(hunk, fileLines, fuzzingOffset);
-      if (modifications) {
-        result.push(modifications);
-        break;
+    const firstGuess = Math.max(maxFrozenLine, hunk.header.patched.start + fixupOffset);
+
+    const maxPrefixFuzz = Math.max(0, firstGuess - maxFrozenLine);
+    const maxSuffixFuzz = Math.max(0, fileLines.length - firstGuess - hunk.header.original.length);
+
+    const maxFuzz = Math.max(maxPrefixFuzz, maxSuffixFuzz);
+
+    let offset = 0;
+    let location = 0;
+
+    let modifications: ReturnType<typeof evaluateHunk> = null;
+
+    while (offset <= maxFuzz) {
+      if (offset <= maxPrefixFuzz) {
+        location = firstGuess - offset;
+        modifications = evaluateHunk(hunk, fileLines, location);
+        if (modifications !== null) {
+          break;
+        }
       }
 
-      if (fuzzingOffset < 0)
-        fuzzingOffset = fuzzingOffset * -1;
-      else
-        fuzzingOffset = fuzzingOffset * -1 - 1;
-
-      if (Math.abs(fuzzingOffset) > 60) {
-        throw new Error(`Can't apply hunk ${hunks.indexOf(hunk)} for file ${path}`);
+      if (offset <= maxSuffixFuzz) {
+        location = firstGuess + offset;
+        modifications = evaluateHunk(hunk, fileLines, location);
+        if (modifications !== null) {
+          break;
+        }
       }
+
+      offset += 1;
     }
+
+    if (modifications === null)
+      throw new Error(`Cannot apply hunk #${hunks.indexOf(hunk) + 1}`);
+
+    result.push(modifications);
+
+    fixupOffset += offset;
+    maxFrozenLine = location + hunk.header.original.length;
   }
 
   if (dryRun)
@@ -211,32 +236,26 @@ type Modification =
   | Pop
   | Splice;
 
-function evaluateHunk(hunk: Hunk, fileLines: Array<string>, fuzzingOffset: number): Modification[] | null {
+function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number): Modification[] | null {
   const result: Array<Modification> = [];
-
-  let contextIndex = hunk.header.original.start - 1 + fuzzingOffset;
-  if (contextIndex < 0)
-    return null;
-  if (fileLines.length - contextIndex < hunk.header.original.length)
-    return null;
 
   for (const part of hunk.parts) {
     switch (part.type) {
       case `deletion`:
       case `context`: {
         for (const line of part.lines) {
-          const originalLine = fileLines[contextIndex];
+          const originalLine = fileLines[offset];
 
           if (!linesAreEqual(originalLine, line))
             return null;
 
-          contextIndex += 1;
+          offset += 1;
         }
 
         if (part.type === `deletion`) {
           result.push({
             type: `splice`,
-            index: contextIndex - part.lines.length,
+            index: offset - part.lines.length,
             numToDelete: part.lines.length,
             linesToInsert: [],
           });
@@ -253,7 +272,7 @@ function evaluateHunk(hunk: Hunk, fileLines: Array<string>, fuzzingOffset: numbe
       case `insertion`: {
         result.push({
           type: `splice`,
-          index: contextIndex,
+          index: offset,
           numToDelete: 0,
           linesToInsert: part.lines,
         });
