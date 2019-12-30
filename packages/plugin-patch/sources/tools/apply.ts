@@ -177,6 +177,8 @@ export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = fal
     if (modifications === null)
       throw new Error(`Cannot apply hunk #${hunks.indexOf(hunk) + 1}`);
 
+    result.push(modifications);
+
     fixupOffset += offset;
     maxFrozenLine = location + hunk.header.original.length;
   }
