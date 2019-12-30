@@ -422,27 +422,24 @@ function fetchUndecidedDependentWorkspaces({decided, declined}: {decided: Array<
     if (workspace.manifest.version === null)
       continue;
 
-    for (const descriptor of workspace.dependencies.values()) {
-      const resolution = project.storedResolutions.get(descriptor.descriptorHash);
-      if (typeof resolution === `undefined`)
-        throw new Error(`Assertion failed: The resolution should have been registered`);
+    for (const dependencyType of Manifest.hardDependencies) {
+      for (const descriptor  of workspace.manifest.getForScope(dependencyType).values()) {
+        const matchingWorkspaces = project.findWorkspacesByDescriptor(descriptor);
 
-      const pkg = project.storedPackages.get(resolution);
-      if (typeof pkg === `undefined`)
-        throw new Error(`Assertion failed: The package should have been registered`);
+        for (const workspaceDependency of matchingWorkspaces) {
+          // We only care about workspaces, and we only care about workspaces that will be bumped
+          if (bumpedWorkspaces.has(workspaceDependency.anchoredLocator.locatorHash)) {
+            // Quick note: we don't want to check whether the workspace pointer
+            // by `resolution` is private, because while it doesn't makes sense
+            // to bump a private package because its dependencies changed, the
+            // opposite isn't true: a (public) package might need to be bumped
+            // because one of its dev dependencies is a (private) package whose
+            // behavior sensibly changed.
 
-      // We only care about workspaces, and we only care about workspaces that will be bumped
-      if (!bumpedWorkspaces.has(resolution))
-        continue;
-
-      // Quick note: we don't want to check whether the workspace pointer
-      // by `resolution` is private, because while it doesn't makes sense
-      // to bump a private package because its dependencies changed, the
-      // opposite isn't true: a (public) package might need to be bumped
-      // because one of its dev dependencies is a (private) package whose
-      // behavior sensibly changed.
-
-      undecided.push([workspace, bumpedWorkspaces.get(resolution)!]);
+            undecided.push([workspace, workspaceDependency]);
+          }
+        }
+      }
     }
   }
 

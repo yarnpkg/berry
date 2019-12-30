@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/plugin-pack",
   "version": "2.0.0-rc.12",
+  "nextVersion": {
+    "nonce": "1837285398600697"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12",

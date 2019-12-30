@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/core",
   "version": "2.0.0-rc.16",
+  "nextVersion": {
+    "nonce": "1036848147942221"
+  },
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
