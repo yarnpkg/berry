@@ -1,10 +1,6 @@
 {
   "name": "@yarnpkg/plugin-typescript",
-  "version": "2.0.0-rc.9",
-  "nextVersion": {
-    "semver": "2.0.0-rc.10",
-    "nonce": "6170923747242287"
-  },
+  "version": "2.0.0-rc.10",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.11"

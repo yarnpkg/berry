@@ -4,11 +4,7 @@
   "publisher": "arcanis",
   "displayName": "ZipFS - a zip file system",
   "description": "Allows to easily inspect and modify files stored within zip archives.",
-  "version": "0.1.1-1",
-  "nextVersion": {
-    "semver": "0.1.1-2",
-    "nonce": "5250758730376923"
-  },
+  "version": "0.1.1-2",
   "engines": {
     "vscode": "^1.23.0"
   },
