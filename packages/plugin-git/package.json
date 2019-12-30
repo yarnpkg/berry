@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/plugin-git",
   "version": "2.0.0-rc.11",
+  "nextVersion": {
+    "semver": "2.0.0-rc.12",
+    "nonce": "5594912856976339"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/semver": "^6.0.2",

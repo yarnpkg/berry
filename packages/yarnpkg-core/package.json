@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/core",
   "version": "2.0.0-rc.15",
+  "nextVersion": {
+    "semver": "2.0.0-rc.16",
+    "nonce": "6147294836706051"
+  },
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {

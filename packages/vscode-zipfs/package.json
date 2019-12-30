@@ -6,7 +6,8 @@
   "description": "Allows to easily inspect and modify files stored within zip archives.",
   "version": "0.1.1-1",
   "nextVersion": {
-    "nonce": "5353686916852975"
+    "semver": "0.1.1-2",
+    "nonce": "5250758730376923"
   },
   "engines": {
     "vscode": "^1.23.0"
