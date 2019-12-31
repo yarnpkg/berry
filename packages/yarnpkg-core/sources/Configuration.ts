@@ -25,9 +25,9 @@ import * as structUtils                                        from './structUti
 import {IdentHash, Package}                                    from './types';
 
 const chalkOptions = process.env.GITHUB_ACTIONS
-  ? {level: 3}
+  ? {level: 2}
   : chalk.supportsColor
-    ? {}
+    ? {level: chalk.supportsColor.level}
     : {level: 0};
 
 const supportsColor = chalkOptions.level !== 0;
@@ -72,13 +72,20 @@ export enum FormatType {
   SCOPE = 'SCOPE',
 };
 
-export const formatColors = new Map([
+export const formatColors = chalkOptions.level >= 3 ? new Map([
   [FormatType.NAME, `#d7875f`],
   [FormatType.RANGE, `#00afaf`],
   [FormatType.REFERENCE, `#87afff`],
-  [FormatType.NUMBER, `yellow`],
-  [FormatType.PATH, `cyan`],
+  [FormatType.NUMBER, `#ffd700`],
+  [FormatType.PATH, `#d75fd7`],
   [FormatType.SCOPE, `#d75f00`],
+]) : new Map([
+  [FormatType.NAME, 173],
+  [FormatType.RANGE, 37],
+  [FormatType.REFERENCE, 111],
+  [FormatType.NUMBER, 220],
+  [FormatType.PATH, 170],
+  [FormatType.SCOPE, 166],
 ]);
 
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
@@ -1032,9 +1039,11 @@ export class Configuration {
     if (typeof color === `undefined`)
       color = colorRequest;
 
-    const fn = color.startsWith(`#`)
-      ? chalkInstance.hex(color)
-      : (chalkInstance as any)[color];
+    const fn = typeof color === `number`
+      ? chalkInstance.ansi256(color)
+      : color.startsWith(`#`)
+        ? chalkInstance.hex(color)
+        : (chalkInstance as any)[color];
 
     return fn(text);
   }
