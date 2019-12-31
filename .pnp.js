@@ -257,7 +257,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       166,
       164,
       163,
-      162,
       161,
       160,
       157,
@@ -399,7 +398,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-arca", "npm:0.9.0"],
             ["eslint-plugin-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.14.3"],
             ["github-api", "npm:3.2.2"],
-            ["hard-source-webpack-plugin", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#mzgoddard/hard-source-webpack-plugin#commit:aa0383bb7012a642fa7b519f317c235c12275632"],
             ["jest", "npm:24.9.0"],
             ["jest-environment-node", "npm:24.5.0"],
             ["jest-junit", "npm:5.2.0"],
@@ -6474,6 +6472,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@types/cross-spawn", "npm:6.0.0"],
+            ["@types/diff", "npm:4.0.2"],
             ["@types/got", "npm:8.3.5"],
             ["@types/is-ci", "npm:2.0.0"],
             ["@types/micromatch", "npm:3.1.0"],
@@ -6493,6 +6492,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["chalk", "npm:3.0.0"],
             ["clipanion", "npm:2.1.5"],
             ["cross-spawn", "npm:6.0.5"],
+            ["diff", "npm:4.0.1"],
             ["globby", "npm:10.0.1"],
             ["got", "npm:10.2.0"],
             ["is-ci", "npm:2.0.0"],
@@ -6661,7 +6661,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-arca", "npm:0.9.0"],
             ["eslint-plugin-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.14.3"],
             ["github-api", "npm:3.2.2"],
-            ["hard-source-webpack-plugin", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#mzgoddard/hard-source-webpack-plugin#commit:aa0383bb7012a642fa7b519f317c235c12275632"],
             ["jest", "npm:24.9.0"],
             ["jest-environment-node", "npm:24.5.0"],
             ["jest-junit", "npm:5.2.0"],
@@ -20359,32 +20358,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"
         }]
       ]],
-      ["hard-source-webpack-plugin", [
-        ["virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#mzgoddard/hard-source-webpack-plugin#commit:aa0383bb7012a642fa7b519f317c235c12275632", {
-          "packageLocation": "./.yarn/$$virtual/hard-source-webpack-plugin-virtual-b295a383f8/0/cache/hard-source-webpack-plugin-https-e175aca6b6-1.zip/node_modules/hard-source-webpack-plugin/",
-          "packageDependencies": [
-            ["hard-source-webpack-plugin", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#mzgoddard/hard-source-webpack-plugin#commit:aa0383bb7012a642fa7b519f317c235c12275632"],
-            ["chalk", "npm:2.4.2"],
-            ["find-cache-dir", "npm:2.0.0"],
-            ["graceful-fs", "npm:4.1.15"],
-            ["lodash", "npm:4.17.11"],
-            ["mkdirp", "npm:0.5.1"],
-            ["node-object-hash", "npm:1.4.2"],
-            ["parse-json", "npm:4.0.0"],
-            ["pkg-dir", "npm:3.0.0"],
-            ["rimraf", "npm:2.6.3"],
-            ["semver", "npm:5.6.0"],
-            ["tapable", "npm:1.1.3"],
-            ["webpack", null],
-            ["webpack-sources", "npm:1.3.0"],
-            ["write-json-file", "npm:2.3.0"]
-          ],
-          "packagePeers": [
-            "webpack"
-          ],
-          "linkType": "HARD"
-        }]
-      ]],
       ["has", [
         ["npm:1.0.3", {
           "packageLocation": "./.yarn/cache/has-npm-1.0.3-b7f00631c1-1.zip/node_modules/has/",
@@ -25671,15 +25644,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:5.6.0"],
             ["shellwords", "npm:0.1.1"],
             ["which", "npm:1.3.1"]
-          ],
-          "linkType": "HARD"
-        }]
-      ]],
-      ["node-object-hash", [
-        ["npm:1.4.2", {
-          "packageLocation": "./.yarn/cache/node-object-hash-npm-1.4.2-f0c56edff5-1.zip/node_modules/node-object-hash/",
-          "packageDependencies": [
-            ["node-object-hash", "npm:1.4.2"]
           ],
           "linkType": "HARD"
         }]
@@ -34103,21 +34067,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["graceful-fs", "npm:4.1.15"],
             ["imurmurhash", "npm:0.1.4"],
             ["signal-exit", "npm:3.0.2"]
-          ],
-          "linkType": "HARD"
-        }]
-      ]],
-      ["write-json-file", [
-        ["npm:2.3.0", {
-          "packageLocation": "./.yarn/cache/write-json-file-npm-2.3.0-c197cc680a-1.zip/node_modules/write-json-file/",
-          "packageDependencies": [
-            ["write-json-file", "npm:2.3.0"],
-            ["detect-indent", "npm:5.0.0"],
-            ["graceful-fs", "npm:4.1.15"],
-            ["make-dir", "npm:1.3.0"],
-            ["pify", "npm:3.0.0"],
-            ["sort-keys", "npm:2.0.0"],
-            ["write-file-atomic", "npm:2.4.2"]
           ],
           "linkType": "HARD"
         }]
