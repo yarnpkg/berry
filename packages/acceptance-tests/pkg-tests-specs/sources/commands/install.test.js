@@ -1,4 +1,4 @@
-import {xfs} from '@yarnpkg/fslib';
+import {xfs, ppath} from '@yarnpkg/fslib';
 
 const {
   fs: {writeJson},
@@ -20,12 +20,27 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should refuse to change the lockfile when using --immutable`,
+      `it should refuse to create a lockfile when using --immutable`,
       makeTemporaryEnv({
         dependencies: {
           [`no-deps`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
+        await expect(run(`install`, `--immutable`)).rejects.toThrow(/YN0028/);
+      }),
+    );
+
+    test(
+      `it should refuse to change the lockfile when using --immutable`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`install`);
+
+        await xfs.writeJsonPromise(ppath.join(path, `yarn.lock`), {
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },  
+        });
+
         await expect(run(`install`, `--immutable`)).rejects.toThrow(/YN0028/);
       }),
     );

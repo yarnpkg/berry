@@ -1220,9 +1220,18 @@ export class Project {
       const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
 
       // If we operate with a frozen lockfile, we take a snapshot of it to later make sure it didn't change
-      const initialLockfile = opts.immutable
-        ? await xfs.readFilePromise(lockfilePath, `utf8`)
-        : null;
+      let initialLockfile: string | null = null;
+      if (opts.immutable) {
+        try {
+          initialLockfile = await xfs.readFilePromise(lockfilePath, `utf8`);
+        } catch (error) {
+          if (error.code === `ENOENT`) {
+            throw new ReportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, `The lockfile would have been created by this install, which is explicitly forbidden.`);
+          } else {
+            throw error;
+          }
+        }
+      }
 
       await this.resolveEverything(opts);
 
@@ -1231,12 +1240,6 @@ export class Project {
 
         if (newLockfile !== initialLockfile) {
           const diff = structuredPatch(lockfilePath, lockfilePath, initialLockfile, newLockfile);
-
-          const styles = new Map([
-            [`+`, FormatType.ADDED],
-            [`-`, FormatType.REMOVED],
-            [` `, `grey`],
-          ]);
 
           opts.report.reportSeparator();
 
