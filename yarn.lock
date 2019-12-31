@@ -24119,11 +24119,11 @@ typescript@^3.7.4:
 
 "typescript@patch:typescript@^3.7.4#builtin<compat/typescript>":
   version: 3.7.4
-  resolution: "typescript@patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::hash=9aabd0"
+  resolution: "typescript@patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::hash=bafb4c"
   bin:
     tsc: ./bin/tsc
     tsserver: ./bin/tsserver
-  checksum: bf2e32168279d11ec3b4d1af5aa6da632d05640142496aacf55f121d3c9f612ade060de99525dc493bd87b4920aa34c8953aa346c08e57e996fbc13f66b212ae
+  checksum: 76801a625f79ee313070bf80459d54457c3f8eefeb78fa1d7d5f394f8092279faf6a637fdb15f691b42e93a7920aff52161b9dd771035fcca6251237bb390e70
   languageName: node
   linkType: hard
 
