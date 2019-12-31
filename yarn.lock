@@ -3454,7 +3454,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/diff@npm:4.0.2, @types/diff@npm:^4.0.2":
+"@types/diff@npm:^4.0.2":
   version: 4.0.2
   resolution: "@types/diff@npm:4.0.2"
   checksum: 78828313b42c06c6b87170b553cebc206850eb9c73c225bb8b655563823351a5ee702a2eb9c5645f616c83570fe4b6d5425f7925b61eac0cb0e70da64ca9d546
@@ -4702,7 +4702,7 @@ __metadata:
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
     "@types/cross-spawn": 6.0.0
-    "@types/diff": 4.0.2
+    "@types/diff": ^4.0.2
     "@types/got": ^8.3.4
     "@types/is-ci": ^2.0.0
     "@types/micromatch": ^3.1.0
