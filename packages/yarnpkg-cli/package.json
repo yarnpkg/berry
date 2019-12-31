@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.20",
   "nextVersion": {
     "semver": "2.0.0-rc.21",
-    "nonce": "1744453385370855"
+    "nonce": "7754415512164123"
   },
   "main": "./sources/index.ts",
   "dependencies": {
@@ -26,7 +26,7 @@
     "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.11",
     "@yarnpkg/plugin-version": "workspace:^2.0.0-rc.13",
     "@yarnpkg/shell": "workspace:^2.0.0-rc.4",
-    "chalk": "^2.4.1",
+    "chalk": "^3.0.0",
     "clipanion": "^2.1.5",
     "promise.prototype.finally": "^3.1.1",
     "semver": "^5.6.0",

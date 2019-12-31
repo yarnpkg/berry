@@ -6,7 +6,6 @@ import {UsageError}                                            from 'clipanion';
 import isCI                                                    from 'is-ci';
 import semver                                                  from 'semver';
 import {PassThrough, Writable}                                 from 'stream';
-import supportsColor                                           from 'supports-color';
 import {tmpNameSync}                                           from 'tmp';
 
 import {Manifest}                                              from './Manifest';
@@ -25,8 +24,14 @@ import * as nodeUtils                                          from './nodeUtils
 import * as structUtils                                        from './structUtils';
 import {IdentHash, Package}                                    from './types';
 
-// @ts-ignore
-const ctx: any = new chalk.constructor({enabled: true});
+const chalkOptions = process.env.GITHUB_ACTIONS
+  ? {level: 3}
+  : chalk.supportsColor
+    ? {}
+    : {level: 0};
+
+const supportsColor = chalkOptions.level !== 0;
+const chalkInstance = new chalk.Instance(chalkOptions);
 
 const IGNORED_ENV_VARIABLES = new Set([
   // "binFolder" is the magic location where the parent process stored the
@@ -194,7 +199,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableColors: {
     description: `If true, the CLI is allowed to use colors in its output`,
     type: SettingsType.BOOLEAN,
-    default: !!supportsColor.stdout,
+    default: supportsColor,
     defaultText: `<dynamic>`,
   },
   enableInlineBuilds: {
@@ -1028,8 +1033,8 @@ export class Configuration {
       color = colorRequest;
 
     const fn = color.startsWith(`#`)
-      ? ctx.hex(color)
-      : ctx[color];
+      ? chalkInstance.hex(color)
+      : (chalkInstance as any)[color];
 
     return fn(text);
   }
