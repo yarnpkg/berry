@@ -52,6 +52,10 @@ yarn workspaces foreach \
   --verbose --topological --no-private "${UPDATE_ARGUMENTS[@]}" \
   run update-local
 
+# The v1 still uses the "berry.js" file path when using "policies set-version"
+cp "$REPO_DIR"/packages/yarnpkg-cli/bin/yarn.js \
+   "$REPO_DIR"/packages/berry-cli/bin/berry.js
+
 git add "$REPO_DIR"
 git commit -m "$COMMIT_MESSAGE"
 
