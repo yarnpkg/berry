@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/pnp",
   "version": "2.0.0-rc.13",
+  "nextVersion": {
+    "nonce": "1334567419921365"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/node": "^13.1.1",

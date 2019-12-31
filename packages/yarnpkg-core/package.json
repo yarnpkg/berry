@@ -2,7 +2,7 @@
   "name": "@yarnpkg/core",
   "version": "2.0.0-rc.16",
   "nextVersion": {
-    "nonce": "1036848147942221"
+    "nonce": "3582703902113017"
   },
   "main": "./sources/index.ts",
   "sideEffects": false,
@@ -13,7 +13,7 @@
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.12",
     "@yarnpkg/shell": "workspace:^2.0.0-rc.4",
     "camelcase": "^5.3.1",
-    "chalk": "^2.4.1",
+    "chalk": "^3.0.0",
     "clipanion": "^2.1.5",
     "cross-spawn": "^6.0.5",
     "globby": "^10.0.1",
@@ -28,7 +28,6 @@
     "pretty-bytes": "^5.1.0",
     "semver": "^5.6.0",
     "stream-to-promise": "^2.2.0",
-    "supports-color": "^7.1.0",
     "tar": "^4.4.6",
     "tmp": "^0.1.0",
     "tunnel": "^0.0.6"
@@ -39,7 +38,6 @@
     "@types/is-ci": "^2.0.0",
     "@types/micromatch": "^3.1.0",
     "@types/semver": "^6.0.2",
-    "@types/supports-color": "^5.3.0",
     "@types/tar": "^4.0.0",
     "@types/tmp": "^0.0.33",
     "@types/tunnel": "^0.0.0",

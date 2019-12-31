@@ -2,7 +2,7 @@
   "name": "@yarnpkg/plugin-typescript",
   "version": "2.0.0-rc.10",
   "nextVersion": {
-    "nonce": "938098439424615"
+    "nonce": "6234909799596577"
   },
   "main": "./sources/index.ts",
   "dependencies": {
