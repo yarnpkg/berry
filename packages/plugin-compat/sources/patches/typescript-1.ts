@@ -48,7 +48,7 @@ index d7f749f..3b98f16 100644
 +        var nmTypes = getNodeModulesTypeRoots(currentDirectory, host);
 +        var pnpTypes = getPnpTypeRoots(currentDirectory);
 +        if (nmTypes.length > 0 || pnpTypes.length > 0) {
-+            return __spreadArrays(nmTypes, pnpTypes);
++            return [].concat(nmTypes, pnpTypes);
 +        }
 +    }
      function resolveTypeReferenceDirective(typeReferenceDirectiveName, containingFile, options, host, redirectedReference) {
@@ -179,7 +179,7 @@ index 4ea67ec..41c335a 100644
 +        var nmTypes = getNodeModulesTypeRoots(currentDirectory, host);
 +        var pnpTypes = getPnpTypeRoots(currentDirectory);
 +        if (nmTypes.length > 0 || pnpTypes.length > 0) {
-+            return __spreadArrays(nmTypes, pnpTypes);
++            return [].concat(nmTypes, pnpTypes);
 +        }
 +    }
      /**
@@ -322,7 +322,7 @@ index 2897a22..da04c70 100644
 +        var nmTypes = getNodeModulesTypeRoots(currentDirectory, host);
 +        var pnpTypes = getPnpTypeRoots(currentDirectory);
 +        if (nmTypes.length > 0 || pnpTypes.length > 0) {
-+            return __spreadArrays(nmTypes, pnpTypes);
++            return [].concat(nmTypes, pnpTypes);
 +        }
 +    }
      /**
@@ -465,7 +465,7 @@ index 548ceea..5e0e897 100644
 +        var nmTypes = getNodeModulesTypeRoots(currentDirectory, host);
 +        var pnpTypes = getPnpTypeRoots(currentDirectory);
 +        if (nmTypes.length > 0 || pnpTypes.length > 0) {
-+            return __spreadArrays(nmTypes, pnpTypes);
++            return [].concat(nmTypes, pnpTypes);
 +        }
 +    }
      /**
@@ -608,7 +608,7 @@ index 9046c6f..7d0d7a9 100644
 +        var nmTypes = getNodeModulesTypeRoots(currentDirectory, host);
 +        var pnpTypes = getPnpTypeRoots(currentDirectory);
 +        if (nmTypes.length > 0 || pnpTypes.length > 0) {
-+            return __spreadArrays(nmTypes, pnpTypes);
++            return [].concat(nmTypes, pnpTypes);
 +        }
 +    }
      /**
@@ -751,7 +751,7 @@ index 776a2e0..26e5510 100644
 +        var nmTypes = getNodeModulesTypeRoots(currentDirectory, host);
 +        var pnpTypes = getPnpTypeRoots(currentDirectory);
 +        if (nmTypes.length > 0 || pnpTypes.length > 0) {
-+            return __spreadArrays(nmTypes, pnpTypes);
++            return [].concat(nmTypes, pnpTypes);
 +        }
 +    }
      /**

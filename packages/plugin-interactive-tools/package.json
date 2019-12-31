@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/plugin-interactive-tools",
   "version": "2.0.0-rc.10",
+  "nextVersion": {
+    "nonce": "7452966136840619"
+  },
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/libui": "workspace:^2.0.0-rc.1",

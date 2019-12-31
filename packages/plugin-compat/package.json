@@ -1,6 +1,10 @@
 {
   "name": "@yarnpkg/plugin-compat",
   "version": "2.0.0-rc.1",
+  "nextVersion": {
+    "semver": "2.0.0-rc.2",
+    "nonce": "2540932548576125"
+  },
   "main": "./sources/index.ts",
   "peerDependencies": {
     "@yarnpkg/core": "^2.0.0-rc.15",

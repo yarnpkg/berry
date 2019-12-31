@@ -30,4 +30,5 @@ reset-git() {
 git diff --no-index "$TMPDIR"/orig "$TMPDIR"/patched \
     | perl -p -e"s#$TMPDIR/orig##" \
     | perl -p -e"s#$TMPDIR/patched##" \
+    | perl -p -e"s#__spreadArrays#[].concat#" \
     > typescript.patch
