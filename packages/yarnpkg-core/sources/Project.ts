@@ -9,7 +9,7 @@ import semver                                        from 'semver';
 import {tmpNameSync}                                 from 'tmp';
 
 import {Cache}                                       from './Cache';
-import {Configuration, FormatType}                               from './Configuration';
+import {Configuration, FormatType}                   from './Configuration';
 import {Fetcher}                                     from './Fetcher';
 import {Installer, BuildDirective, BuildType}        from './Installer';
 import {LegacyMigrationResolver}                     from './LegacyMigrationResolver';
