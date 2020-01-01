@@ -2,7 +2,8 @@
   "name": "@yarnpkg/core",
   "version": "2.0.0-rc.16",
   "nextVersion": {
-    "nonce": "3582703902113017"
+    "semver": "2.0.0-rc.17",
+    "nonce": "6625846091998069"
   },
   "main": "./sources/index.ts",
   "sideEffects": false,
@@ -16,6 +17,7 @@
     "chalk": "^3.0.0",
     "clipanion": "^2.1.5",
     "cross-spawn": "^6.0.5",
+    "diff": "^4.0.1",
     "globby": "^10.0.1",
     "got": "^10.2.0",
     "is-ci": "^2.0.0",
@@ -34,6 +36,7 @@
   },
   "devDependencies": {
     "@types/cross-spawn": "6.0.0",
+    "@types/diff": "^4.0.2",
     "@types/got": "^8.3.4",
     "@types/is-ci": "^2.0.0",
     "@types/micromatch": "^3.1.0",

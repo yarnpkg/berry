@@ -1,6 +1,7 @@
 import {PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                    from '@yarnpkg/parsers';
 import {createHash}                                  from 'crypto';
+import {structuredPatch}                             from 'diff';
 // @ts-ignore
 import Logic                                         from 'logic-solver';
 import pLimit                                        from 'p-limit';
@@ -8,7 +9,7 @@ import semver                                        from 'semver';
 import {tmpNameSync}                                 from 'tmp';
 
 import {Cache}                                       from './Cache';
-import {Configuration}                               from './Configuration';
+import {Configuration, FormatType}                   from './Configuration';
 import {Fetcher}                                     from './Fetcher';
 import {Installer, BuildDirective, BuildType}        from './Installer';
 import {LegacyMigrationResolver}                     from './LegacyMigrationResolver';
@@ -1216,13 +1217,49 @@ export class Project {
     }
 
     await opts.report.startTimerPromise(`Resolution step`, async () => {
+      const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
+
       // If we operate with a frozen lockfile, we take a snapshot of it to later make sure it didn't change
-      const initialLockfile = opts.immutable ? this.generateLockfile() : null;
+      let initialLockfile: string | null = null;
+      if (opts.immutable) {
+        try {
+          initialLockfile = await xfs.readFilePromise(lockfilePath, `utf8`);
+        } catch (error) {
+          if (error.code === `ENOENT`) {
+            throw new ReportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, `The lockfile would have been created by this install, which is explicitly forbidden.`);
+          } else {
+            throw error;
+          }
+        }
+      }
 
       await this.resolveEverything(opts);
 
-      if (opts.immutable && this.generateLockfile() !== initialLockfile) {
-        throw new ReportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, `The lockfile would have been modified by this install, which is explicitly forbidden`);
+      if (initialLockfile !== null) {
+        const newLockfile = this.generateLockfile();
+
+        if (newLockfile !== initialLockfile) {
+          const diff = structuredPatch(lockfilePath, lockfilePath, initialLockfile, newLockfile);
+
+          opts.report.reportSeparator();
+
+          for (const hunk of diff.hunks) {
+            opts.report.reportInfo(null, `@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`);
+            for (const line of hunk.lines) {
+              if (line.startsWith(`+`)) {
+                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, this.configuration.format(line, FormatType.ADDED));
+              } else if (line.startsWith(`-`)) {
+                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, this.configuration.format(line, FormatType.REMOVED));
+              } else {
+                opts.report.reportInfo(null, this.configuration.format(line, `grey`));
+              }
+            }
+          }
+
+          opts.report.reportSeparator();
+
+          throw new ReportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, `The lockfile would have been modified by this install, which is explicitly forbidden.`);
+        }
       }
     });
 
@@ -1619,7 +1656,7 @@ function applyVirtualResolutionMutations({
             // it is a compatible version.
             const peerPackage = getPackageFromDescriptor(peerDescriptor);
             if (!semverUtils.satisfiesWithPrereleases(peerPackage.version, peerRequest.range)) {
-              report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} provides ${structUtils.prettyLocator(project.configuration, peerPackage)} with version ${peerPackage.version} which does not satisfy the range ${structUtils.prettyDescriptor(project.configuration, peerRequest)} requested by ${structUtils.prettyLocator(project.configuration, pkg)}`);
+              report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} provides ${structUtils.prettyLocator(project.configuration, peerPackage)} with version ${peerPackage.version} which doesn't satisfy ${structUtils.prettyRange(project.configuration, peerRequest.range)} requested by ${structUtils.prettyLocator(project.configuration, pkg)}`);
             }
           }
         }

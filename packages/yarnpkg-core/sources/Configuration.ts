@@ -70,6 +70,8 @@ export enum FormatType {
   RANGE = 'RANGE',
   REFERENCE = 'REFERENCE',
   SCOPE = 'SCOPE',
+  ADDED = 'ADDED',
+  REMOVED = 'REMOVED',
 };
 
 export const formatColors = chalkOptions.level >= 3 ? new Map([
@@ -79,6 +81,8 @@ export const formatColors = chalkOptions.level >= 3 ? new Map([
   [FormatType.NUMBER, `#ffd700`],
   [FormatType.PATH, `#d75fd7`],
   [FormatType.SCOPE, `#d75f00`],
+  [FormatType.ADDED, `#5faf00`],
+  [FormatType.REMOVED, `#d70000`],
 ]) : new Map([
   [FormatType.NAME, 173],
   [FormatType.RANGE, 37],
@@ -86,6 +90,8 @@ export const formatColors = chalkOptions.level >= 3 ? new Map([
   [FormatType.NUMBER, 220],
   [FormatType.PATH, 170],
   [FormatType.SCOPE, 166],
+  [FormatType.ADDED, 70],
+  [FormatType.REMOVED, 160],
 ]);
 
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {

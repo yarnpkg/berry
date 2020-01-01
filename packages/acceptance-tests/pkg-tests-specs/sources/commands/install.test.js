@@ -1,4 +1,4 @@
-import {xfs} from '@yarnpkg/fslib';
+import {xfs, ppath} from '@yarnpkg/fslib';
 
 const {
   fs: {writeJson},
@@ -20,12 +20,27 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should refuse to change the lockfile when using --immutable`,
+      `it should refuse to create a lockfile when using --immutable`,
       makeTemporaryEnv({
         dependencies: {
           [`no-deps`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
+        await expect(run(`install`, `--immutable`)).rejects.toThrow(/YN0028/);
+      }),
+    );
+
+    test(
+      `it should refuse to change the lockfile when using --immutable`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`install`);
+
+        await xfs.writeJsonPromise(ppath.join(path, `yarn.lock`), {
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
         await expect(run(`install`, `--immutable`)).rejects.toThrow(/YN0028/);
       }),
     );
@@ -93,29 +108,57 @@ describe(`Commands`, () => {
       makeTemporaryEnv({
         dependencies: {
           [`no-deps`]: `1.0.0`,
-          [`no-deps-bins`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
-        await run(`install`);
+        let archiveName1;
+        let archiveName2;
 
-        let lockfile = await xfs.readFilePromise(`${path}/yarn.lock`, `utf8`);
+        // First we need to detect the name that the true cache archive would have
+        {
+          await run(`install`);
 
-        // Switch "no-deps" and "no-deps-bins"
-        lockfile = lockfile.replace(/no-deps-bins/g, `NO_DEPS_BINS`);
-        lockfile = lockfile.replace(/no-deps/g, `no-deps-bins`);
-        lockfile = lockfile.replace(/NO_DEPS_BINS/g, `no-deps`);
+          const allFiles1 = await xfs.readdirPromise(ppath.join(path, `.yarn/cache`));
+          const zipFiles1 = allFiles1.filter(file => file.endsWith(`.zip`));
 
-        await xfs.writeFilePromise(`${path}/yarn.lock`, lockfile);
+          // Just a sanity check, since this test is quite complex
+          expect(zipFiles1).toHaveLength(1);
+          archiveName1 = zipFiles1[0];
+        }
 
-        const allFiles = await xfs.readdirPromise(`${path}/.yarn/cache`);
-        const zipFiles = allFiles.filter(file => file.endsWith(`.zip`));
+        await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
 
-        // Just a sanity check, since this test is quite complex
-        expect(zipFiles).toHaveLength(2);
+        // Then we install the project with 2.0.0
+        {
+          await run(`install`);
 
-        await xfs.movePromise(`${path}/.yarn/cache/${zipFiles[0]}`, `${path}/.yarn/cache/${zipFiles[0]}-tmp`);
-        await xfs.movePromise(`${path}/.yarn/cache/${zipFiles[1]}`, `${path}/.yarn/cache/${zipFiles[0]}`);
-        await xfs.movePromise(`${path}/.yarn/cache/${zipFiles[0]}-tmp`, `${path}/.yarn/cache/${zipFiles[1]}`);
+          const allFiles2 = await xfs.readdirPromise(`${path}/.yarn/cache`);
+          const zipFiles2 = allFiles2.filter(file => file.endsWith(`.zip`));
+
+          // Just a sanity check, since this test is quite complex
+          expect(zipFiles2).toHaveLength(1);
+          archiveName2 = zipFiles2[0];
+        }
+
+        await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
+        // Then we disguise 2.0.0 as 1.0.0. The stored checksum will stay the same.
+        {
+          const lockfile = await xfs.readFilePromise(`${path}/yarn.lock`, `utf8`);
+
+          // Moves from "2.0.0" to "1.0.0"
+          await xfs.writeFilePromise(`${path}/yarn.lock`, lockfile.replace(/2\.0\.0/g, `1.0.0`));
+
+          // Don't forget to rename the archive to match the name the real 1.0.0 would have
+          await xfs.movePromise(`${path}/.yarn/cache/${archiveName2}`, `${path}/.yarn/cache/${archiveName1}`);
+        }
 
         // Just checking that the test is properly written: it should pass, because the lockfile checksum will match the tarballs
         await run(`install`, `--immutable`, `--immutable-cache`);

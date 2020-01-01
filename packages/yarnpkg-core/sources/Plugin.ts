@@ -7,7 +7,7 @@ import {Fetcher}                                 from './Fetcher';
 import {Linker}                                  from './Linker';
 import {Project}                                 from './Project';
 import {Resolver}                                from './Resolver';
-import {Locator, Descriptor, DescriptorHash}     from './types';
+import {Locator, Descriptor}                     from './types';
 
 type ProcessEnvironment = {[key: string]: string};
 

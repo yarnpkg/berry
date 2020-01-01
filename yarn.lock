@@ -4702,6 +4702,7 @@ __metadata:
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
     "@types/cross-spawn": 6.0.0
+    "@types/diff": ^4.0.2
     "@types/got": ^8.3.4
     "@types/is-ci": ^2.0.0
     "@types/micromatch": ^3.1.0
@@ -4721,6 +4722,7 @@ __metadata:
     chalk: ^3.0.0
     clipanion: ^2.1.5
     cross-spawn: ^6.0.5
+    diff: ^4.0.1
     globby: ^10.0.1
     got: ^10.2.0
     is-ci: ^2.0.0
@@ -4860,7 +4862,6 @@ __metadata:
     eslint-plugin-arca: ^0.9.0
     eslint-plugin-react: ^7.14.3
     github-api: ^3.2.2
-    hard-source-webpack-plugin: mzgoddard/hard-source-webpack-plugin
     jest: ^24.9.0
     jest-environment-node: ^24.5.0
     jest-junit: ^5.2.0
@@ -13048,29 +13049,6 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-hard-source-webpack-plugin@mzgoddard/hard-source-webpack-plugin:
-  version: 0.13.1
-  resolution: "hard-source-webpack-plugin@mzgoddard/hard-source-webpack-plugin#commit:aa0383bb7012a642fa7b519f317c235c12275632"
-  dependencies:
-    chalk: ^2.4.1
-    find-cache-dir: ^2.0.0
-    graceful-fs: ^4.1.11
-    lodash: ^4.15.0
-    mkdirp: ^0.5.1
-    node-object-hash: ^1.2.0
-    parse-json: ^4.0.0
-    pkg-dir: ^3.0.0
-    rimraf: ^2.6.2
-    semver: ^5.6.0
-    tapable: ^1.0.0-beta.5
-    webpack-sources: ^1.0.1
-    write-json-file: ^2.3.0
-  peerDependencies:
-    webpack: "*"
-  checksum: bb8b880bb7323bdc0926d39723fee74c48625e8f9c42fdf62f5463eab3079a741108b066346ae3099bb431e6bafe4249174dce6c29bcf13b3a8da6a0d919eb24
-  languageName: node
-  linkType: hard
-
 "has-ansi@npm:^2.0.0":
   version: 2.0.0
   resolution: "has-ansi@npm:2.0.0"
@@ -17947,13 +17925,6 @@ hard-source-webpack-plugin@mzgoddard/hard-source-webpack-plugin:
     shellwords: ^0.1.1
     which: ^1.3.0
   checksum: 8182f9e865c018f5dd40f2a07ba1e4fe18a841db6f0ae4137a3a36a60ef3b7aff0ff495c0e5e43b4230f8829a9e62c656265289c497e03a02dffc25020712a89
-  languageName: node
-  linkType: hard
-
-"node-object-hash@npm:^1.2.0":
-  version: 1.4.2
-  resolution: "node-object-hash@npm:1.4.2"
-  checksum: e6019aed9c9945b2459aa294fc0840705e880fef37ad73629f706329b672b974317381d92116762831119d47bc069c0a74151e22161b5d40d1bbc9e18be63eab
   languageName: node
   linkType: hard
 
@@ -23379,7 +23350,7 @@ hard-source-webpack-plugin@mzgoddard/hard-source-webpack-plugin:
   languageName: node
   linkType: hard
 
-"tapable@npm:^1.0.0-beta.5, tapable@npm:^1.1.3":
+"tapable@npm:^1.1.3":
   version: 1.1.3
   resolution: "tapable@npm:1.1.3"
   checksum: a2b041750f06874a9d83940869ba95e1390997910272769f605f56d549065549c5684cbadd533bc6e7461f3116661264afbcf8f54b946bb464d84308ea510fed
@@ -25178,7 +25149,7 @@ typescript@^3.7.4:
   languageName: node
   linkType: hard
 
-"webpack-sources@npm:^1.0.1, webpack-sources@npm:^1.1.0, webpack-sources@npm:^1.3.0":
+"webpack-sources@npm:^1.1.0, webpack-sources@npm:^1.3.0":
   version: 1.3.0
   resolution: "webpack-sources@npm:1.3.0"
   dependencies:
@@ -25627,20 +25598,6 @@ typescript@^3.7.4:
     imurmurhash: ^0.1.4
     signal-exit: ^3.0.2
   checksum: c5363263afb4097e1f95a2c6473981fcbb6471d92950fd258dfca66ae54c59b9be5fe897851363fb66ff085b06775d392865c8691668137d904ddd3194ad76e1
-  languageName: node
-  linkType: hard
-
-"write-json-file@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "write-json-file@npm:2.3.0"
-  dependencies:
-    detect-indent: ^5.0.0
-    graceful-fs: ^4.1.2
-    make-dir: ^1.0.0
-    pify: ^3.0.0
-    sort-keys: ^2.0.0
-    write-file-atomic: ^2.0.0
-  checksum: c167065e414118c7b0618493a823669ffdaa84ca71c579fa1d2b149495151ac0762ea79de9cb9d5f30552c7589fb807ebbc59fb7d9d4fa6d015cf20bea91337b
   languageName: node
   linkType: hard
 

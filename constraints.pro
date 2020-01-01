@@ -24,6 +24,8 @@ gen_enforced_dependency(WorkspaceCwd, DependencyIdent, WorkspaceRange, Dependenc
     workspace_field(DependencyCwd, 'version', DependencyVersion),
   % Quirk: we must discard the workspaces that don't declare a version
     atom(DependencyVersion),
+  % Only proceed if the dependency isn't satisfied by a workspace
+    \+ project_workspaces_by_descriptor(DependencyIdent, DependencyRange, DependencyCwd),
   % Derive the expected range from the version
     (
       DependencyType \= 'peerDependencies' ->
