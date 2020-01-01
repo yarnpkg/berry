@@ -2,7 +2,7 @@
   "name": "@yarnpkg/plugin-npm-cli",
   "version": "2.0.0-rc.9",
   "nextVersion": {
-    "nonce": "5765971909527943"
+    "nonce": "352305881470523"
   },
   "main": "./sources/index.ts",
   "dependencies": {
