@@ -10,15 +10,15 @@ title: "2 - Installation"
 
 2. Install Yarn:
 
-   ```
-   npm install -g yarn
-   ```
+```
+npm install -g yarn
+```
 
 3. Test that Yarn 2 has been properly installed by running the following, which should yield "v2.0.0" or similar:
 
-   ```bash
-   yarn --version
-   ```
+```bash
+yarn --version
+```
 
 ## Per-project install
 
@@ -26,14 +26,14 @@ title: "2 - Installation"
 
 2. Move into your project folder:
 
-  ```bash
-  cd ~/path/to/project
-  ```
+```bash
+cd ~/path/to/project
+```
 
 3. Run the following command:
 
-  ```bash
-  yarn policies set-version berry
-  ```
+```bash
+yarn policies set-version berry
+```
 
 4. Commit the `.yarn` and `.yarnrc.yml` changes

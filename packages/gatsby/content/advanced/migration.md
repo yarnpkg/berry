@@ -12,7 +12,7 @@ Yarn v2 is a very different software from the v1. While one of our aim is to mak
 
 Older releases don't support Plug'n'Play at all. Since the `resolve` package is used by pretty much everything nowadays, making sure that you use a modern release can go a long way to solve the most obnoxious bugs you may have.
 
-**How to do?** Open your lockfile, look for all the `resolve` entries that could match 1.9+ (for example `^1.0.0`), and remove them. Then run `yarn install` again. If you run `yarn why resolve`, you'll also get a good idea of which package is depending on outdated version of `resolve` - maybe you can upgrade them too?
+**Fix:** Open your lockfile, look for all the `resolve` entries that could match 1.9+ (for example `^1.0.0`), and remove them. Then run `yarn install` again. If you run `yarn why resolve`, you'll also get a good idea of which package is depending on outdated version of `resolve` - maybe you can upgrade them too?
 
 ### Call your scripts through `yarn node` rather than `node`
 
@@ -24,17 +24,17 @@ We now need to inject some variables into the environment for Node to be able to
 
 Yarn 2 uses a different style of configuration files than Yarn 1. While mostly invisible for the lockfile (because we import them on the fly), it might cause some issues for your rc files.
 
-- The main change is the name of the file. Yarn 1 used `.yarnrc`, but Yarn 2 is moving to a different name: `.yarnrc.yml`.
+- The main change is the name of the file. Yarn 1 used `.yarnrc`, but Yarn 2 is moving to a different name: `.yarnrc.yml`. This should make it easier for third-party tools to detect whether a project uses Yarn 1 or Yarn 2, and will allow you to easily set different settings in your home folders when working with a mix of Yarn 1 and Yarn 2 projects.
 
 - As evidenced by the new file extension, the Yarnrc files are now to be written in [YAML](https://en.wikipedia.org/wiki/YAML). This has been requested for a long time, and we hope it'll allow easier integrations for the various third-party tools that need to interact with the Yarnrc files (think Dependabot, etc).
 
-- The configuration keys themselves have changed. You can find the comprehensive list of the supported configuration settings on the [dedicated documentation page](/configuration/yarnrc), but some particular changes you might be interested in:
+- The configuration keys have changed. The comprehensive settings list is available in our [documentation](/configuration/yarnrc), but here are some particular changes you need to be aware of:
 
   - Custom registries are now configured via [`npmRegistryServer`](/configuration/yarnrc#npmRegistryServer).
 
   - Registry authentication tokens are now configuration via [`npmAuthToken`](/configuration/yarnrc#npmAuthToken).
 
-  - The `yarn-offline-mirror` has been removed, since the offline mirror has been merged with the cache as part of the [Zero-Install effort](/features/zero-installs).
+  - The `yarn-offline-mirror` has been removed, since the offline mirror has been merged with the cache as part of the [Zero-Install effort](/features/zero-installs). Just commit the Yarn cache and you're ready to go.
 
 ### Don't use the `.npmrc` files
 
@@ -46,11 +46,26 @@ On top of their naming, the way we load the Yarnrc files has also been changed a
 
 - All environment variables prefixed with `YARN_` are automatically used to override the matching configuration settings. So for example, adding `YARN_NPM_REGISTRY_SERVER` into your environment will change the value of [`npmRegistryServer`](/configuration/yarnrc#npmRegistryServer).
 
-### Take a look to the [integration tests](https://github.com/yarnpkg/berry#current-status)
+### Take a look to the integration tests
 
-We now run daily end-to-end tests against various popular JavaScript tools in order to make sure that we never regress - or to be notified when those tools do.
+We now run daily [end-to-end tests](https://github.com/yarnpkg/berry#current-status) against various popular JavaScript tools in order to make sure that we never regress - or to be notified when those tools do.
 
 Consulting the sources for those tests is a great way to check whether some special configuration values have to be set when using a particular toolchain.
+
+### Don't use `bundleDependencies`
+
+The `bundleDependencies` (or `bundledDependencies`) is an artifact of the past that used to let you define a set of packages that would be stored as-is within the package archive, `node_modules` and all. This feature has many problems:
+
+- It uses `node_modules`, which doesn't easily allow different install strategies such as Plug'n'Play.
+- It encodes the hoisting inside the package, which is the exact opposite of what we aim for
+- It messes with the hoisting of other packages
+- Etc, etc, etc
+
+So how to replace them? There are different ways:
+
+- If you need to patch a package, just fork it or reference it through `file:` or `portal:` (it's perfectly fine even for transitive dependencies to use those protocols).
+
+- If you need to ship a package to your customers as a standalone package, bundle it yourself using Webpack, Rollup, or similar tools.
 
 ### If required: install the `node-modules` plugin
 
@@ -66,13 +81,13 @@ This will cause Yarn to install the project just like Yarn 1 used to, by copying
 
 ## Troubleshooting
 
-## `Cannot find module [...]`
+### `Cannot find module [...]`
 
 Interestingly, this error **doesn't** come from Yarn. In fact, seeing this message shouldn't be possible when working with Yarn 2 projects and typically highlights that something is wrong in your setup.
 
 This error appears when Node is executed without the proper environment variables. In such a case, the underlying application won't be able to access the dependencies and Node will throw this message. To fix that, make sure that the script is called through `yarn node [...]` (instead of `node [...]`) if you run it from the command line.
 
-## `A package is trying to access another package [...]`
+### `A package is trying to access another package [...]`
 
 > **Full message:** A package is trying to access another package without the second one being listed as a dependency of the first one.
 
