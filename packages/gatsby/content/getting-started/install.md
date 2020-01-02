@@ -4,24 +4,36 @@ path: /getting-started/install
 title: "2 - Installation"
 ---
 
-The version of Yarn this website is about is the v2 - being slightly experimental, its install process is different from our regular builds. In order to install it:
+## Global Install
 
-1. First install the regular Yarn by following [the instructions from the v1 website](https://yarnpkg.com/en/docs/install). Make sure that your global Yarn is 1.17.1 or higher (install from the rc channel if you need to):
+1. Install [Node.js](https://nodejs.org/en/download/)
 
-   ```
-   $> YARN_IGNORE_PATH=1 yarn --version
-   1.17.1
-   ```
-
-2. Go into your project (that you created either manually or via `yarn init`) and run the following:
+2. Install Yarn:
 
    ```
-   $> yarn policies set-version v2
+   npm install -g yarn
    ```
 
-3. Test that the v2 has been properly selected by running:
+3. Test that Yarn 2 has been properly installed by running the following, which should yield "v2.0.0" or similar:
 
+   ```bash
+   yarn --version
    ```
-   $> yarn --version
-   v2.0.0
-   ```
+
+## Per-project install
+
+1. Follow the global install instructions
+
+2. Move into your project folder:
+
+  ```bash
+  cd ~/path/to/project
+  ```
+
+3. Run the following command:
+
+  ```bash
+  yarn policies set-version berry
+  ```
+
+4. Commit the `.yarn` and `.yarnrc.yml` changes
