@@ -2,7 +2,7 @@
   "name": "@yarnpkg/plugin-pnp",
   "version": "2.0.0-rc.12",
   "nextVersion": {
-    "nonce": "2339506237348861"
+    "nonce": "4717007463001471"
   },
   "main": "./sources/index.ts",
   "dependencies": {
