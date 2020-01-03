@@ -46,12 +46,14 @@ type PatchMutationPart = {
 
 type FileRename = {
   type: `rename`,
+  semverExclusivity: string | null,
   fromPath: PortablePath,
   toPath: PortablePath,
 };
 
 type FileModeChange = {
   type: `mode change`,
+  semverExclusivity: string | null,
   path: PortablePath,
   oldMode: FileMode,
   newMode: FileMode,
@@ -59,6 +61,7 @@ type FileModeChange = {
 
 export type FilePatch = {
   type: `patch`,
+  semverExclusivity: string | null,
   path: PortablePath,
   hunks: Array<Hunk>,
   beforeHash: string | null,
@@ -67,6 +70,7 @@ export type FilePatch = {
 
 type FileDeletion = {
   type: `file deletion`
+  semverExclusivity: string | null,
   path: PortablePath,
   mode: FileMode,
   hunk: Hunk | null,
@@ -75,6 +79,7 @@ type FileDeletion = {
 
 type FileCreation = {
   type: `file creation`,
+  semverExclusivity: string | null,
   mode: FileMode,
   path: PortablePath,
   hunk: Hunk | null,
@@ -96,6 +101,7 @@ type State =
   | `parsing hunks`;
 
 type FileDeets = {
+  semverExclusivity: string | null,
   diffLineFromPath: string | null,
   diffLineToPath: string | null,
   oldMode: string | null,
@@ -117,6 +123,7 @@ export type Hunk = {
 };
 
 const emptyFilePatch = (): FileDeets => ({
+  semverExclusivity: null,
   diffLineFromPath: null,
   diffLineToPath: null,
   oldMode: null,
@@ -211,6 +218,8 @@ function parsePatchLines(lines: Array<string>, {supportLegacyDiffs}: {supportLeg
 
         currentFilePatch.beforeHash = match[1];
         currentFilePatch.afterHash = match[2];
+      } else if (line.startsWith(`semver exclusivity `)) {
+        currentFilePatch.semverExclusivity = line.slice(`semver exclusivity `.length).trim();
       } else if (line.startsWith(`--- `)) {
         currentFilePatch.fromPath = line.slice(`--- a/`.length).trim();
       } else if (line.startsWith(`+++ `)) {
@@ -293,6 +302,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
 
   for (const file of files) {
     const {
+      semverExclusivity,
       diffLineFromPath,
       diffLineToPath,
       oldMode,
@@ -326,6 +336,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
 
         result.push({
           type: `rename`,
+          semverExclusivity,
           fromPath: npath.toPortablePath(renameFrom),
           toPath: npath.toPortablePath(renameTo),
         });
@@ -340,6 +351,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
 
         result.push({
           type: `file deletion`,
+          semverExclusivity,
           hunk: (hunks && hunks[0]) || null,
           path: npath.toPortablePath(path),
           mode: parseFileMode(deletedFileMode!),
@@ -354,6 +366,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
 
         result.push({
           type: `file creation`,
+          semverExclusivity,
           hunk: (hunks && hunks[0]) || null,
           path: npath.toPortablePath(path),
           mode: parseFileMode(newFileMode!),
@@ -374,6 +387,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
     if (destinationFilePath && oldMode && newMode && oldMode !== newMode) {
       result.push({
         type: `mode change`,
+        semverExclusivity,
         path: npath.toPortablePath(destinationFilePath),
         oldMode: parseFileMode(oldMode),
         newMode: parseFileMode(newMode),
@@ -383,6 +397,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
     if (destinationFilePath && hunks && hunks.length) {
       result.push({
         type: `patch`,
+        semverExclusivity,
         path: npath.toPortablePath(destinationFilePath),
         hunks,
         beforeHash,

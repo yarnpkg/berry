@@ -1,0 +1,61 @@
+module.exports = function (_, opts) {
+  opts = opts || {};
+
+  if (opts.forceNodeResolution || !process.versions.pnp)
+    return opts;
+
+  if (opts.packageIterator || opts.paths)
+    throw new Error(`The 'packageIterator' and 'paths' options cannot be used in PnP environments. Set 'forceNodeResolution: true' if absolutely needed, or branch on process.versions.pnp otherwise.`);
+
+  const pnp = require(`pnpapi`);
+
+  /**
+   * @param request {string}
+   * @param basedir {string}
+   * @param getCandidates {() => Array<string>}
+   * @param opts {any}
+   */
+  opts.packageIterator = function (request, basedir, getCandidates, opts) {
+    // Extract the name of the package being requested (1=full name, 2=scope name, 3=local name)
+    const parts = request.match(/^((?:(@[^\/]+)\/)?([^\/]+))/);
+    if (!parts)
+      throw new Error(`Assertion failed: Expected the "resolve" package to call the "paths" callback with package names only (got "${request}")`);
+
+    // Make sure that basedir ends with a slash
+    if (basedir.charAt(basedir.length - 1) !== `/`)
+      basedir = path.join(basedir, `/`);
+
+    const api = pnp.findApiFromPath(basedir);
+    if (api === null)
+      return getCandidates();
+
+    // This is guaranteed to return the path to the "package.json" file from the given package
+    const manifestPath = api.resolveToUnqualified(`${parts[1]}/package.json`, basedir, {
+      considerBuiltins: false,
+    });
+
+    if (manifestPath === null)
+      throw new Error(`Assertion failed: The resolution thinks that "${parts[1]}" is a Node builtin`);
+
+    // Strip the package.json to get the package folder
+    return [path.dirname(manifestPath)];
+  };
+
+  opts.paths = function (request, basedir, getNodeModulePaths, opts) {
+    if (opts.packageIterator)
+      return getNodeModulePaths();
+
+    return opts.packageIterator(request, basedir, () => [], opts).map(path => {
+      // Stip the local named folder
+      let nodeModules = path.dirname(manifestPath);
+
+      // Strip the scope named folder if needed
+      if (request.match(/^@[^\/]+)\//))
+        nodeModules = path.dirname(nodeModules);
+
+      return [nodeModules];
+    });
+  };
+
+  return opts;
+};

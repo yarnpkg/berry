@@ -39,7 +39,7 @@ export class PatchFetcher implements Fetcher {
   }
 
   private async patchPackage(locator: Locator, opts: FetchOptions) {
-    const {parentLocator, sourceLocator, patchPaths} = patchUtils.parseLocator(locator);
+    const {parentLocator, sourceLocator, sourceVersion, patchPaths} = patchUtils.parseLocator(locator);
     const patchFiles = await patchUtils.loadPatchFiles(parentLocator, patchPaths, opts);
 
     const tmpDir = await xfs.mktempPromise();
@@ -64,6 +64,7 @@ export class PatchFetcher implements Fetcher {
       if (patchFile !== null) {
         await patchUtils.applyPatchFile(patchUtils.parsePatchFile(patchFile), {
           baseFs: patchFs,
+          version: sourceVersion,
         });
       }
     }

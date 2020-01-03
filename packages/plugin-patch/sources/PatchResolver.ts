@@ -41,20 +41,20 @@ export class PatchResolver implements Resolver {
     return [sourceDescriptor];
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Locator>, opts: ResolveOptions) {
+  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
     if (!opts.fetchOptions)
       throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
 
     const {parentLocator, sourceDescriptor, patchPaths} = patchUtils.parseDescriptor(descriptor);
     const patchFiles = await patchUtils.loadPatchFiles(parentLocator, patchPaths, opts.fetchOptions);
 
-    const sourceLocator = dependencies.get(sourceDescriptor.descriptorHash);
-    if (typeof sourceLocator === `undefined`)
+    const sourcePackage = dependencies.get(sourceDescriptor.descriptorHash);
+    if (typeof sourcePackage === `undefined`)
       throw new Error(`Assertion failed: The dependency should have been resolved`);
 
     const patchHash = hashUtils.makeHash(...patchFiles).slice(0, 6);
 
-    return [patchUtils.makeLocator(descriptor, {parentLocator, sourceLocator, patchPaths, patchHash})];
+    return [patchUtils.makeLocator(descriptor, {parentLocator, sourcePackage, patchPaths, patchHash})];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {

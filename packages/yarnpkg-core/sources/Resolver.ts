@@ -120,7 +120,7 @@ export interface Resolver {
    * @param dependencies The resolution dependencies and their resolutions.
    * @param opts The resolution options.
    */
-  getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Locator>, opts: ResolveOptions): Promise<Array<Locator>>;
+  getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions): Promise<Array<Locator>>;
 
   /**
    * This function will, given a locator, return the full package definition

@@ -1,4 +1,4 @@
-import {miscUtils}                           from '@yarnpkg/core';
+import {miscUtils, semverUtils}              from '@yarnpkg/core';
 import {FakeFS, ppath, NodeFS, PortablePath} from '@yarnpkg/fslib';
 
 import {ParsedPatchFile, FilePatch, Hunk}    from './parse';
@@ -21,8 +21,12 @@ async function preserveTime(baseFs: FakeFS<PortablePath>, p: PortablePath, cb: (
   }
 }
 
-export async function applyPatchFile(effects: ParsedPatchFile, {baseFs = new NodeFS(), dryRun = false}: {baseFs?: FakeFS<PortablePath>, dryRun?: boolean} = {}) {
+export async function applyPatchFile(effects: ParsedPatchFile, {baseFs = new NodeFS(), dryRun = false, version = null}: {baseFs?: FakeFS<PortablePath>, dryRun?: boolean, version?: string | null} = {}) {
   for (const eff of effects) {
+    if (eff.semverExclusivity !== null && version !== null)
+      if (!semverUtils.satisfiesWithPrereleases(version, eff.semverExclusivity))
+        continue;
+
     switch (eff.type) {
       case `file deletion`: {
         if (dryRun) {
