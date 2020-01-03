@@ -2,7 +2,7 @@ import semver                                            from 'semver';
 
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
-import {Descriptor, Locator, DescriptorHash}             from './types';
+import {Descriptor, Locator, DescriptorHash, Package}    from './types';
 
 export const TAG_REGEXP = /^[a-z]+$/;
 
@@ -39,7 +39,7 @@ export class ProtocolResolver implements Resolver {
     return opts.resolver.getResolutionDependencies(this.forwardDescriptor(descriptor, opts), opts);
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Locator>, opts: ResolveOptions) {
+  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
     return await opts.resolver.getCandidates(this.forwardDescriptor(descriptor, opts), dependencies, opts);
   }
 

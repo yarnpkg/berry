@@ -483,7 +483,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["debug", "npm:4.1.1"],
             ["json5", "npm:2.1.0"],
             ["lodash", "npm:4.17.11"],
-            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=f615c8"],
+            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=2dd91e"],
             ["semver", "npm:5.6.0"],
             ["source-map", "npm:0.5.7"]
           ],
@@ -504,7 +504,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["debug", "npm:4.1.1"],
             ["json5", "npm:2.1.0"],
             ["lodash", "npm:4.17.15"],
-            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=f615c8"],
+            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=2dd91e"],
             ["semver", "npm:5.6.0"],
             ["source-map", "npm:0.5.7"]
           ],
@@ -1906,7 +1906,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/core", "npm:7.7.4"],
             ["@babel/helper-module-imports", "npm:7.0.0"],
             ["@babel/helper-plugin-utils", "npm:7.0.0"],
-            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=f615c8"],
+            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=2dd91e"],
             ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
@@ -13088,7 +13088,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["babel-plugin-macros", "npm:2.5.0"],
             ["cosmiconfig", "npm:5.1.0"],
-            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=f615c8"]
+            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=2dd91e"]
           ],
           "linkType": "HARD"
         }]
@@ -13787,7 +13787,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/browser-resolve-npm-1.11.3-c550b74990-1.zip/node_modules/browser-resolve/",
           "packageDependencies": [
             ["browser-resolve", "npm:1.11.3"],
-            ["resolve", "patch:resolve@npm%3A1.1.7#builtin<compat/resolve>::version=1.1.7&hash=f615c8"]
+            ["resolve", "patch:resolve@npm%3A1.1.7#builtin<compat/resolve>::version=1.1.7&hash=2dd91e"]
           ],
           "linkType": "HARD"
         }]
@@ -15517,7 +15517,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["glob2base", "npm:0.0.12"],
             ["minimatch", "npm:3.0.4"],
             ["mkdirp", "npm:0.5.1"],
-            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=f615c8"],
+            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=2dd91e"],
             ["safe-buffer", "npm:5.1.2"],
             ["shell-quote", "npm:1.6.1"],
             ["subarg", "npm:1.0.0"]
@@ -17342,7 +17342,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["eslint-import-resolver-node", "npm:0.3.2"],
             ["debug", "npm:2.6.9"],
-            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=f615c8"]
+            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=2dd91e"]
           ],
           "linkType": "HARD"
         }]
@@ -17432,7 +17432,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.11"],
             ["minimatch", "npm:3.0.4"],
             ["read-pkg-up", "npm:2.0.0"],
-            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=f615c8"]
+            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=2dd91e"]
           ],
           "packagePeers": [
             "eslint"
@@ -17473,7 +17473,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jsx-ast-utils", "npm:2.0.1"],
             ["object.fromentries", "npm:2.0.0"],
             ["prop-types", "npm:15.6.2"],
-            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=f615c8"]
+            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=2dd91e"]
           ],
           "packagePeers": [
             "eslint"
@@ -17493,7 +17493,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["object.fromentries", "npm:2.0.0"],
             ["object.values", "npm:1.1.0"],
             ["prop-types", "npm:15.7.2"],
-            ["resolve", "patch:resolve@npm%3A1.12.0#builtin<compat/resolve>::version=1.12.0&hash=f615c8"]
+            ["resolve", "patch:resolve@npm%3A1.12.0#builtin<compat/resolve>::version=1.12.0&hash=2dd91e"]
           ],
           "packagePeers": [
             "eslint"
@@ -25769,7 +25769,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["normalize-package-data", "npm:2.5.0"],
             ["hosted-git-info", "npm:2.7.1"],
-            ["resolve", "patch:resolve@npm%3A1.11.1#builtin<compat/resolve>::version=1.11.1&hash=f615c8"],
+            ["resolve", "patch:resolve@npm%3A1.11.1#builtin<compat/resolve>::version=1.11.1&hash=2dd91e"],
             ["semver", "npm:5.6.0"],
             ["validate-npm-package-license", "npm:3.0.4"]
           ],
@@ -28383,7 +28383,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["js-reporters", "npm:1.2.1"],
             ["minimatch", "npm:3.0.4"],
             ["node-watch", "npm:0.6.0"],
-            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=f615c8"]
+            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=2dd91e"]
           ],
           "linkType": "HARD"
         }]
@@ -29584,33 +29584,33 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["resolve", [
-        ["patch:resolve@npm%3A1.1.7#builtin<compat/resolve>::version=1.1.7&hash=f615c8", {
-          "packageLocation": "./.yarn/cache/resolve-patch-57df3db16d-1.zip/node_modules/resolve/",
+        ["patch:resolve@npm%3A1.1.7#builtin<compat/resolve>::version=1.1.7&hash=2dd91e", {
+          "packageLocation": "./.yarn/cache/resolve-patch-32873ea4b6-1.zip/node_modules/resolve/",
           "packageDependencies": [
-            ["resolve", "patch:resolve@npm%3A1.1.7#builtin<compat/resolve>::version=1.1.7&hash=f615c8"]
+            ["resolve", "patch:resolve@npm%3A1.1.7#builtin<compat/resolve>::version=1.1.7&hash=2dd91e"]
           ],
           "linkType": "HARD"
         }],
-        ["patch:resolve@npm%3A1.11.1#builtin<compat/resolve>::version=1.11.1&hash=f615c8", {
-          "packageLocation": "./.yarn/cache/resolve-patch-12f318723a-1.zip/node_modules/resolve/",
+        ["patch:resolve@npm%3A1.11.1#builtin<compat/resolve>::version=1.11.1&hash=2dd91e", {
+          "packageLocation": "./.yarn/cache/resolve-patch-4d4a8192ba-1.zip/node_modules/resolve/",
           "packageDependencies": [
-            ["resolve", "patch:resolve@npm%3A1.11.1#builtin<compat/resolve>::version=1.11.1&hash=f615c8"],
+            ["resolve", "patch:resolve@npm%3A1.11.1#builtin<compat/resolve>::version=1.11.1&hash=2dd91e"],
             ["path-parse", "npm:1.0.6"]
           ],
           "linkType": "HARD"
         }],
-        ["patch:resolve@npm%3A1.12.0#builtin<compat/resolve>::version=1.12.0&hash=f615c8", {
-          "packageLocation": "./.yarn/cache/resolve-patch-2c7ece965c-1.zip/node_modules/resolve/",
+        ["patch:resolve@npm%3A1.12.0#builtin<compat/resolve>::version=1.12.0&hash=2dd91e", {
+          "packageLocation": "./.yarn/cache/resolve-patch-a83641c74d-1.zip/node_modules/resolve/",
           "packageDependencies": [
-            ["resolve", "patch:resolve@npm%3A1.12.0#builtin<compat/resolve>::version=1.12.0&hash=f615c8"],
+            ["resolve", "patch:resolve@npm%3A1.12.0#builtin<compat/resolve>::version=1.12.0&hash=2dd91e"],
             ["path-parse", "npm:1.0.6"]
           ],
           "linkType": "HARD"
         }],
-        ["patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=f615c8", {
-          "packageLocation": "./.yarn/cache/resolve-patch-787d6f74d1-1.zip/node_modules/resolve/",
+        ["patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=2dd91e", {
+          "packageLocation": "./.yarn/cache/resolve-patch-585ee5c4c7-1.zip/node_modules/resolve/",
           "packageDependencies": [
-            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=f615c8"],
+            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=2dd91e"],
             ["path-parse", "npm:1.0.6"]
           ],
           "linkType": "HARD"
@@ -34716,7 +34716,7 @@ Object.defineProperty(exports, "__esModule", {
 
 const fs_1 = __importDefault(__webpack_require__(1));
 
-const FakeFS_1 = __webpack_require__(5);
+const FakeFS_1 = __webpack_require__(6);
 
 const path_1 = __webpack_require__(0);
 
@@ -35052,7 +35052,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-const FakeFS_1 = __webpack_require__(5);
+const FakeFS_1 = __webpack_require__(6);
 
 class ProxiedFS extends FakeFS_1.FakeFS {
   resolve(path) {
@@ -35292,6 +35292,221 @@ exports.ProxiedFS = ProxiedFS;
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const NodeFS_1 = __webpack_require__(3);
+
+const path_1 = __webpack_require__(0);
+
+var path_2 = __webpack_require__(0);
+
+exports.PortablePath = path_2.PortablePath;
+
+var path_3 = __webpack_require__(0);
+
+exports.npath = path_3.npath;
+exports.ppath = path_3.ppath;
+exports.toFilename = path_3.toFilename;
+
+var AliasFS_1 = __webpack_require__(23);
+
+exports.AliasFS = AliasFS_1.AliasFS;
+
+var FakeFS_1 = __webpack_require__(6);
+
+exports.FakeFS = FakeFS_1.FakeFS;
+
+var CwdFS_1 = __webpack_require__(24);
+
+exports.CwdFS = CwdFS_1.CwdFS;
+
+var JailFS_1 = __webpack_require__(25);
+
+exports.JailFS = JailFS_1.JailFS;
+
+var LazyFS_1 = __webpack_require__(26);
+
+exports.LazyFS = LazyFS_1.LazyFS;
+
+var NoFS_1 = __webpack_require__(27);
+
+exports.NoFS = NoFS_1.NoFS;
+
+var NodeFS_2 = __webpack_require__(3);
+
+exports.NodeFS = NodeFS_2.NodeFS;
+
+var PosixFS_1 = __webpack_require__(28);
+
+exports.PosixFS = PosixFS_1.PosixFS;
+
+var ProxiedFS_1 = __webpack_require__(4);
+
+exports.ProxiedFS = ProxiedFS_1.ProxiedFS;
+
+var VirtualFS_1 = __webpack_require__(29);
+
+exports.VirtualFS = VirtualFS_1.VirtualFS;
+
+var ZipFS_1 = __webpack_require__(12);
+
+exports.ZipFS = ZipFS_1.ZipFS;
+
+var ZipOpenFS_1 = __webpack_require__(34);
+
+exports.ZipOpenFS = ZipOpenFS_1.ZipOpenFS;
+
+function patchFs(patchedFs, fakeFs) {
+  const SYNC_IMPLEMENTATIONS = new Set([`accessSync`, `appendFileSync`, `createReadStream`, `chmodSync`, `closeSync`, `copyFileSync`, `lstatSync`, `mkdirSync`, `openSync`, `readSync`, `readlinkSync`, `readFileSync`, `readdirSync`, `readlinkSync`, `realpathSync`, `renameSync`, `rmdirSync`, `statSync`, `symlinkSync`, `unlinkSync`, `utimesSync`, `watch`, `writeFileSync`, `writeSync`]);
+  const ASYNC_IMPLEMENTATIONS = new Set([`accessPromise`, `appendFilePromise`, `chmodPromise`, `closePromise`, `copyFilePromise`, `lstatPromise`, `mkdirPromise`, `openPromise`, `readdirPromise`, `realpathPromise`, `readFilePromise`, `readdirPromise`, `readlinkPromise`, `renamePromise`, `rmdirPromise`, `statPromise`, `symlinkPromise`, `unlinkPromise`, `utimesPromise`, `writeFilePromise`, `writeSync`]);
+
+  patchedFs.existsSync = p => {
+    try {
+      return fakeFs.existsSync(p);
+    } catch (error) {
+      return false;
+    }
+  };
+
+  patchedFs.exists = (p, ...args) => {
+    const hasCallback = typeof args[args.length - 1] === `function`;
+    const callback = hasCallback ? args.pop() : () => {};
+    process.nextTick(() => {
+      fakeFs.existsPromise(p).then(exists => {
+        callback(exists);
+      }, () => {
+        callback(false);
+      });
+    });
+  };
+
+  patchedFs.read = (p, buffer, ...args) => {
+    const hasCallback = typeof args[args.length - 1] === `function`;
+    const callback = hasCallback ? args.pop() : () => {};
+    process.nextTick(() => {
+      fakeFs.readPromise(p, buffer, ...args).then(bytesRead => {
+        callback(null, bytesRead, buffer);
+      }, error => {
+        callback(error);
+      });
+    });
+  };
+
+  for (const fnName of ASYNC_IMPLEMENTATIONS) {
+    const fakeImpl = fakeFs[fnName].bind(fakeFs);
+    const origName = fnName.replace(/Promise$/, ``);
+
+    patchedFs[origName] = (...args) => {
+      const hasCallback = typeof args[args.length - 1] === `function`;
+      const callback = hasCallback ? args.pop() : () => {};
+      process.nextTick(() => {
+        fakeImpl(...args).then(result => {
+          callback(null, result);
+        }, error => {
+          callback(error);
+        });
+      });
+    };
+  }
+
+  for (const fnName of SYNC_IMPLEMENTATIONS) {
+    const fakeImpl = fakeFs[fnName].bind(fakeFs);
+    const origName = fnName;
+    patchedFs[origName] = fakeImpl;
+  }
+
+  patchedFs.realpathSync.native = patchedFs.realpathSync;
+  patchedFs.realpath.native = patchedFs.realpath;
+}
+
+exports.patchFs = patchFs;
+
+function extendFs(realFs, fakeFs) {
+  const patchedFs = Object.create(realFs);
+  patchFs(patchedFs, fakeFs);
+  return patchedFs;
+}
+
+exports.extendFs = extendFs;
+exports.xfs = Object.assign(new NodeFS_1.NodeFS(), {
+  mktempSync(cb) {
+    // We lazily load `tmp` because it injects itself into the `process`
+    // events (to clean the folders at exit time), and it may lead to
+    // large memory leaks. Better avoid loading it until we can't do
+    // otherwise (ideally the fix would be for `tmp` itself to only
+    // attach cleaners after the first call).
+    const tmp = __webpack_require__(14);
+
+    const {
+      name,
+      removeCallback
+    } = tmp.dirSync({
+      unsafeCleanup: true
+    });
+
+    if (typeof cb === `undefined`) {
+      return path_1.npath.toPortablePath(name);
+    } else {
+      try {
+        return cb(path_1.npath.toPortablePath(name));
+      } finally {
+        removeCallback();
+      }
+    }
+  },
+
+  mktempPromise(cb) {
+    // We lazily load `tmp` because it injects itself into the `process`
+    // events (to clean the folders at exit time), and it may lead to
+    // large memory leaks. Better avoid loading it until we can't do
+    // otherwise (ideally the fix would be for `tmp` itself to only
+    // attach cleaners after the first call).
+    const tmp = __webpack_require__(14);
+
+    if (typeof cb === `undefined`) {
+      return new Promise((resolve, reject) => {
+        tmp.dir({
+          unsafeCleanup: true
+        }, (err, path) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(path_1.npath.toPortablePath(path));
+          }
+        });
+      });
+    } else {
+      return new Promise((resolve, reject) => {
+        tmp.dir({
+          unsafeCleanup: true
+        }, (err, path, cleanup) => {
+          if (err) {
+            reject(err);
+          } else {
+            Promise.resolve(path_1.npath.toPortablePath(path)).then(cb).then(result => {
+              cleanup();
+              resolve(result);
+            }, error => {
+              cleanup();
+              reject(error);
+            });
+          }
+        });
+      });
+    }
+  }
+
+});
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35674,234 +35889,25 @@ class BasePortableFakeFS extends FakeFS {
 exports.BasePortableFakeFS = BasePortableFakeFS;
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-const NodeFS_1 = __webpack_require__(3);
-
-const path_1 = __webpack_require__(0);
-
-var path_2 = __webpack_require__(0);
-
-exports.PortablePath = path_2.PortablePath;
-
-var path_3 = __webpack_require__(0);
-
-exports.npath = path_3.npath;
-exports.ppath = path_3.ppath;
-exports.toFilename = path_3.toFilename;
-
-var AliasFS_1 = __webpack_require__(23);
-
-exports.AliasFS = AliasFS_1.AliasFS;
-
-var FakeFS_1 = __webpack_require__(5);
-
-exports.FakeFS = FakeFS_1.FakeFS;
-
-var CwdFS_1 = __webpack_require__(24);
-
-exports.CwdFS = CwdFS_1.CwdFS;
-
-var JailFS_1 = __webpack_require__(25);
-
-exports.JailFS = JailFS_1.JailFS;
-
-var LazyFS_1 = __webpack_require__(26);
-
-exports.LazyFS = LazyFS_1.LazyFS;
-
-var NoFS_1 = __webpack_require__(27);
-
-exports.NoFS = NoFS_1.NoFS;
-
-var NodeFS_2 = __webpack_require__(3);
-
-exports.NodeFS = NodeFS_2.NodeFS;
-
-var PosixFS_1 = __webpack_require__(28);
-
-exports.PosixFS = PosixFS_1.PosixFS;
-
-var ProxiedFS_1 = __webpack_require__(4);
-
-exports.ProxiedFS = ProxiedFS_1.ProxiedFS;
-
-var VirtualFS_1 = __webpack_require__(29);
-
-exports.VirtualFS = VirtualFS_1.VirtualFS;
-
-var ZipFS_1 = __webpack_require__(12);
-
-exports.ZipFS = ZipFS_1.ZipFS;
-
-var ZipOpenFS_1 = __webpack_require__(34);
-
-exports.ZipOpenFS = ZipOpenFS_1.ZipOpenFS;
-
-function patchFs(patchedFs, fakeFs) {
-  const SYNC_IMPLEMENTATIONS = new Set([`accessSync`, `appendFileSync`, `createReadStream`, `chmodSync`, `closeSync`, `copyFileSync`, `lstatSync`, `mkdirSync`, `openSync`, `readSync`, `readlinkSync`, `readFileSync`, `readdirSync`, `readlinkSync`, `realpathSync`, `renameSync`, `rmdirSync`, `statSync`, `symlinkSync`, `unlinkSync`, `utimesSync`, `watch`, `writeFileSync`, `writeSync`]);
-  const ASYNC_IMPLEMENTATIONS = new Set([`accessPromise`, `appendFilePromise`, `chmodPromise`, `closePromise`, `copyFilePromise`, `lstatPromise`, `mkdirPromise`, `openPromise`, `readdirPromise`, `realpathPromise`, `readFilePromise`, `readdirPromise`, `readlinkPromise`, `renamePromise`, `rmdirPromise`, `statPromise`, `symlinkPromise`, `unlinkPromise`, `utimesPromise`, `writeFilePromise`, `writeSync`]);
-
-  patchedFs.existsSync = p => {
-    try {
-      return fakeFs.existsSync(p);
-    } catch (error) {
-      return false;
-    }
-  };
-
-  patchedFs.exists = (p, ...args) => {
-    const hasCallback = typeof args[args.length - 1] === `function`;
-    const callback = hasCallback ? args.pop() : () => {};
-    process.nextTick(() => {
-      fakeFs.existsPromise(p).then(exists => {
-        callback(exists);
-      }, () => {
-        callback(false);
-      });
-    });
-  };
-
-  patchedFs.read = (p, buffer, ...args) => {
-    const hasCallback = typeof args[args.length - 1] === `function`;
-    const callback = hasCallback ? args.pop() : () => {};
-    process.nextTick(() => {
-      fakeFs.readPromise(p, buffer, ...args).then(bytesRead => {
-        callback(null, bytesRead, buffer);
-      }, error => {
-        callback(error);
-      });
-    });
-  };
-
-  for (const fnName of ASYNC_IMPLEMENTATIONS) {
-    const fakeImpl = fakeFs[fnName].bind(fakeFs);
-    const origName = fnName.replace(/Promise$/, ``);
-
-    patchedFs[origName] = (...args) => {
-      const hasCallback = typeof args[args.length - 1] === `function`;
-      const callback = hasCallback ? args.pop() : () => {};
-      process.nextTick(() => {
-        fakeImpl(...args).then(result => {
-          callback(null, result);
-        }, error => {
-          callback(error);
-        });
-      });
-    };
-  }
-
-  for (const fnName of SYNC_IMPLEMENTATIONS) {
-    const fakeImpl = fakeFs[fnName].bind(fakeFs);
-    const origName = fnName;
-    patchedFs[origName] = fakeImpl;
-  }
-
-  patchedFs.realpathSync.native = patchedFs.realpathSync;
-  patchedFs.realpath.native = patchedFs.realpath;
-}
-
-exports.patchFs = patchFs;
-
-function extendFs(realFs, fakeFs) {
-  const patchedFs = Object.create(realFs);
-  patchFs(patchedFs, fakeFs);
-  return patchedFs;
-}
-
-exports.extendFs = extendFs;
-exports.xfs = Object.assign(new NodeFS_1.NodeFS(), {
-  mktempSync(cb) {
-    // We lazily load `tmp` because it injects itself into the `process`
-    // events (to clean the folders at exit time), and it may lead to
-    // large memory leaks. Better avoid loading it until we can't do
-    // otherwise (ideally the fix would be for `tmp` itself to only
-    // attach cleaners after the first call).
-    const tmp = __webpack_require__(14);
-
-    const {
-      name,
-      removeCallback
-    } = tmp.dirSync({
-      unsafeCleanup: true
-    });
-
-    if (typeof cb === `undefined`) {
-      return path_1.npath.toPortablePath(name);
-    } else {
-      try {
-        return cb(path_1.npath.toPortablePath(name));
-      } finally {
-        removeCallback();
-      }
-    }
-  },
-
-  mktempPromise(cb) {
-    // We lazily load `tmp` because it injects itself into the `process`
-    // events (to clean the folders at exit time), and it may lead to
-    // large memory leaks. Better avoid loading it until we can't do
-    // otherwise (ideally the fix would be for `tmp` itself to only
-    // attach cleaners after the first call).
-    const tmp = __webpack_require__(14);
-
-    if (typeof cb === `undefined`) {
-      return new Promise((resolve, reject) => {
-        tmp.dir({
-          unsafeCleanup: true
-        }, (err, path) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(path_1.npath.toPortablePath(path));
-          }
-        });
-      });
-    } else {
-      return new Promise((resolve, reject) => {
-        tmp.dir({
-          unsafeCleanup: true
-        }, (err, path, cleanup) => {
-          if (err) {
-            reject(err);
-          } else {
-            Promise.resolve(path_1.npath.toPortablePath(path)).then(cb).then(result => {
-              cleanup();
-              resolve(result);
-            }, error => {
-              cleanup();
-              reject(error);
-            });
-          }
-        });
-      });
-    }
-  }
-
-});
-
-/***/ }),
 /* 7 */
 /***/ (function(module, exports) {
 
-module.exports = require("util");
+module.exports = require("module");
 
 /***/ }),
 /* 8 */
 /***/ (function(module, exports) {
 
-module.exports = require("assert");
+module.exports = require("util");
 
 /***/ }),
 /* 9 */
+/***/ (function(module, exports) {
+
+module.exports = require("assert");
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = minimatch
@@ -36830,7 +36836,7 @@ function regExpEscape (s) {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36855,12 +36861,6 @@ module.exports = process.platform === 'win32' ? win32 : posix;
 module.exports.posix = posix;
 module.exports.win32 = win32;
 
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-module.exports = require("module");
 
 /***/ }),
 /* 12 */
@@ -36893,9 +36893,9 @@ const fs_1 = __webpack_require__(1);
 
 const stream_1 = __webpack_require__(32);
 
-const util_1 = __webpack_require__(7);
+const util_1 = __webpack_require__(8);
 
-const FakeFS_1 = __webpack_require__(5);
+const FakeFS_1 = __webpack_require__(6);
 
 const NodeFS_1 = __webpack_require__(3);
 
@@ -38630,13 +38630,13 @@ module.exports = glob
 
 var fs = __webpack_require__(1)
 var rp = __webpack_require__(16)
-var minimatch = __webpack_require__(9)
+var minimatch = __webpack_require__(10)
 var Minimatch = minimatch.Minimatch
 var inherits = __webpack_require__(41)
 var EE = __webpack_require__(42).EventEmitter
 var path = __webpack_require__(2)
-var assert = __webpack_require__(8)
-var isAbsolute = __webpack_require__(10)
+var assert = __webpack_require__(9)
+var isAbsolute = __webpack_require__(11)
 var globSync = __webpack_require__(43)
 var common = __webpack_require__(17)
 var alphasort = common.alphasort
@@ -38644,7 +38644,7 @@ var alphasorti = common.alphasorti
 var setopts = common.setopts
 var ownProp = common.ownProp
 var inflight = __webpack_require__(44)
-var util = __webpack_require__(7)
+var util = __webpack_require__(8)
 var childrenIgnored = common.childrenIgnored
 var isIgnored = common.isIgnored
 
@@ -39469,8 +39469,8 @@ function ownProp (obj, field) {
 }
 
 var path = __webpack_require__(2)
-var minimatch = __webpack_require__(9)
-var isAbsolute = __webpack_require__(10)
+var minimatch = __webpack_require__(10)
+var isAbsolute = __webpack_require__(11)
 var Minimatch = minimatch.Minimatch
 
 function alphasorti (a, b) {
@@ -39848,11 +39848,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-const fslib_1 = __webpack_require__(6);
+const fslib_1 = __webpack_require__(5);
 
 const fs_1 = __importDefault(__webpack_require__(1));
 
-const module_1 = __importDefault(__webpack_require__(11));
+const module_1 = __importDefault(__webpack_require__(7));
 
 const path_1 = __importDefault(__webpack_require__(2));
 
@@ -39862,7 +39862,9 @@ const applyPatch_1 = __webpack_require__(46);
 
 const hydrateRuntimeState_1 = __webpack_require__(47);
 
-const makeApi_1 = __webpack_require__(48); // We must copy the fs into a local, because otherwise
+const makeApi_1 = __webpack_require__(48);
+
+const makeManager_1 = __webpack_require__(49); // We must copy the fs into a local, because otherwise
 // 1. we would make the NodeFS instance use the function that we patched (infinite loop)
 // 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
 
@@ -39882,6 +39884,7 @@ const defaultFsLayer = new fslib_1.VirtualFS({
     readOnlyArchives: true
   })
 });
+let manager;
 const defaultApi = Object.assign(makeApi_1.makeApi(defaultRuntimeState, {
   fakeFs: defaultFsLayer,
   pnpapiResolution: defaultPnpapiResolution
@@ -39907,14 +39910,31 @@ const defaultApi = Object.assign(makeApi_1.makeApi(defaultRuntimeState, {
   },
 
   /**
+   * Can be used to retrieve the API for a particular file, or `null` if the
+   * specified location doesn't seem to be part of a PnP runtime. Note that
+   * this function return value may change when the underlying PnP hook gets
+   * overriden (Yarn automatically reloads them when this happen).
+   */
+  findApiFromPath: modulePath => {
+    const apiPath = manager.findApiPathFor(modulePath);
+    if (apiPath === null) return null;
+    const apiEntry = manager.getApiEntry(apiPath, true);
+    return apiEntry.instance;
+  },
+
+  /**
    * Will inject the specified API into the environment, monkey-patching FS. Is
    * automatically called when the hook is loaded through `--require`.
    */
   setup: api => {
     applyPatch_1.applyPatch(api || defaultApi, {
-      fakeFs: defaultFsLayer
+      fakeFs: defaultFsLayer,
+      manager
     });
   }
+});
+manager = makeManager_1.makeManager(defaultApi, {
+  fakeFs: defaultFsLayer
 }); // eslint-disable-next-line arca/no-default-export
 
 exports.default = defaultApi;
@@ -40308,7 +40328,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-const FakeFS_1 = __webpack_require__(5);
+const FakeFS_1 = __webpack_require__(6);
 
 const path_1 = __webpack_require__(0);
 
@@ -40859,7 +40879,7 @@ Object.defineProperty(exports, "__esModule", {
 
 const fs_1 = __webpack_require__(1);
 
-const FakeFS_1 = __webpack_require__(5);
+const FakeFS_1 = __webpack_require__(6);
 
 const NodeFS_1 = __webpack_require__(3);
 
@@ -41731,7 +41751,7 @@ module.exports = require("os");
 module.exports = rimraf
 rimraf.sync = rimrafSync
 
-var assert = __webpack_require__(8)
+var assert = __webpack_require__(9)
 var path = __webpack_require__(2)
 var fs = __webpack_require__(1)
 var glob = __webpack_require__(15)
@@ -42739,13 +42759,13 @@ globSync.GlobSync = GlobSync
 
 var fs = __webpack_require__(1)
 var rp = __webpack_require__(16)
-var minimatch = __webpack_require__(9)
+var minimatch = __webpack_require__(10)
 var Minimatch = minimatch.Minimatch
 var Glob = __webpack_require__(15).Glob
-var util = __webpack_require__(7)
+var util = __webpack_require__(8)
 var path = __webpack_require__(2)
-var assert = __webpack_require__(8)
-var isAbsolute = __webpack_require__(10)
+var assert = __webpack_require__(9)
+var isAbsolute = __webpack_require__(11)
 var common = __webpack_require__(17)
 var alphasort = common.alphasort
 var alphasorti = common.alphasorti
@@ -43316,73 +43336,26 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-const fslib_1 = __webpack_require__(6);
+const fslib_1 = __webpack_require__(5);
 
 const fs_1 = __importDefault(__webpack_require__(1));
 
-const module_1 = __webpack_require__(11);
-
-const path_1 = __importDefault(__webpack_require__(2));
+const module_1 = __webpack_require__(7);
 
 const internalTools_1 = __webpack_require__(20);
 
 function applyPatch(pnpapi, opts) {
   // @ts-ignore
-  const builtinModules = new Set(module_1.Module.builtinModules || Object.keys(process.binding('natives'))); // The callback function gets called to wrap the return value of the module names matching the regexp
+  const builtinModules = new Set(module_1.Module.builtinModules || Object.keys(process.binding('natives')));
+  /**
+   * The cache that will be used for all accesses occuring outside of a PnP context.
+   */
 
-  const patchedModules = [];
-  const initialApiPath = fslib_1.npath.toPortablePath(pnpapi.resolveToUnqualified(`pnpapi`, null));
-  const initialApiStats = opts.fakeFs.statSync(fslib_1.npath.toPortablePath(initialApiPath));
   const defaultCache = {};
-  const apiMetadata = new Map([[initialApiPath, {
-    cache: module_1.Module._cache,
-    instance: pnpapi,
-    stats: initialApiStats
-  }]]);
-
-  if (opts.compatibilityMode !== false) {
-    // Modern versions of `resolve` support a specific entry point that custom resolvers can use
-    // to inject a specific resolution logic without having to patch the whole package.
-    //
-    // Cf: https://github.com/browserify/resolve/pull/174
-    patchedModules.push([/^\.\/normalize-options\.js$/, (issuer, normalizeOptions) => {
-      if (!issuer || issuer.name !== 'resolve') return normalizeOptions;
-      return (request, opts) => {
-        opts = opts || {};
-        if (opts.forceNodeResolution) return opts;
-
-        opts.paths = function (request, basedir, getNodeModulesDir, opts) {
-          // Extract the name of the package being requested (1=full name, 2=scope name, 3=local name)
-          const parts = request.match(/^((?:(@[^\/]+)\/)?([^\/]+))/);
-          if (!parts) throw new Error(`Assertion failed: Expected the "resolve" package to call the "paths" callback with package names only (got "${request}")`); // make sure that basedir ends with a slash
-
-          if (basedir.charAt(basedir.length - 1) !== '/') basedir = path_1.default.join(basedir, '/');
-          const apiPath = findApiPathFor(basedir);
-          if (apiPath === null) return getNodeModulesDir();
-          const apiEntry = getApiEntry(apiPath, true);
-          const api = apiEntry.instance; // TODO Handle portable paths
-          // This is guaranteed to return the path to the "package.json" file from the given package
-
-          const manifestPath = api.resolveToUnqualified(`${parts[1]}/package.json`, basedir, {
-            considerBuiltins: false
-          });
-          if (manifestPath === null) throw new Error(`Assertion failed: The resolution thinks that "${parts[1]}" is a Node builtin`); // The first dirname strips the package.json, the second strips the local named folder
-
-          let nodeModules = path_1.default.dirname(path_1.default.dirname(manifestPath)); // Strips the scope named folder if needed
-
-          if (parts[2]) nodeModules = path_1.default.dirname(nodeModules);
-          return [nodeModules];
-        };
-
-        return opts;
-      };
-    }]);
-  }
   /**
    * Used to disable the resolution hooks (for when we want to fallback to the previous resolution - we then need
    * a way to "reset" the environment temporarily)
    */
-
 
   let enableNativeHooks = true; // @ts-ignore
 
@@ -43394,70 +43367,6 @@ function applyPatch(pnpapi, opts) {
     for (let cursor = parent; cursor; cursor = cursor.parent) requireStack.push(cursor.filename || cursor.id);
 
     return requireStack;
-  }
-
-  function loadApiInstance(pnpApiPath) {
-    // @ts-ignore
-    const module = new module_1.Module(fslib_1.npath.fromPortablePath(pnpApiPath), null);
-    module.load(pnpApiPath);
-    return module.exports;
-  }
-
-  function refreshApiEntry(pnpApiPath, apiEntry) {
-    const stats = opts.fakeFs.statSync(pnpApiPath);
-
-    if (stats.mtime > apiEntry.stats.mtime) {
-      console.warn(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance (${pnpApiPath})`);
-      apiEntry.instance = loadApiInstance(pnpApiPath);
-      apiEntry.stats = stats;
-    }
-  }
-
-  function getApiEntry(pnpApiPath, refresh = false) {
-    let apiEntry = apiMetadata.get(pnpApiPath);
-
-    if (typeof apiEntry !== `undefined`) {
-      if (refresh) {
-        refreshApiEntry(pnpApiPath, apiEntry);
-      }
-    } else {
-      apiMetadata.set(pnpApiPath, apiEntry = {
-        cache: {},
-        instance: loadApiInstance(pnpApiPath),
-        stats: opts.fakeFs.statSync(pnpApiPath)
-      });
-    }
-
-    return apiEntry;
-  }
-
-  function findApiPathFor(modulePath) {
-    let curr;
-    let next = fslib_1.npath.toPortablePath(modulePath);
-
-    do {
-      curr = next;
-      const candidate = fslib_1.ppath.join(curr, `.pnp.js`);
-      if (fslib_1.xfs.existsSync(candidate) && fslib_1.xfs.statSync(candidate).isFile()) return candidate;
-      next = fslib_1.ppath.dirname(curr);
-    } while (curr !== fslib_1.PortablePath.root);
-
-    return null;
-  }
-
-  function getApiPathFromParent(parent) {
-    if (parent == null) return initialApiPath;
-
-    if (typeof parent.pnpApiPath === `undefined`) {
-      if (parent.filename !== null) {
-        return findApiPathFor(parent.filename);
-      } else {
-        return initialApiPath;
-      }
-    }
-
-    if (parent.pnpApiPath !== null) return parent.pnpApiPath;
-    return null;
   } // A small note: we don't replace the cache here (and instead use the native one). This is an effort to not
   // break code similar to "delete require.cache[require.resolve(FOO)]", where FOO is a package located outside
   // of the Yarn dependency tree. In this case, we defer the load to the native loader. If we were to replace the
@@ -43479,8 +43388,8 @@ function applyPatch(pnpapi, opts) {
       }
     }
 
-    const parentApiPath = getApiPathFromParent(parent);
-    const parentApi = parentApiPath !== null ? getApiEntry(parentApiPath, true).instance : null; // The 'pnpapi' name is reserved to return the PnP api currently in use
+    const parentApiPath = opts.manager.getApiPathFromParent(parent);
+    const parentApi = parentApiPath !== null ? opts.manager.getApiEntry(parentApiPath, true).instance : null; // The 'pnpapi' name is reserved to return the PnP api currently in use
     // by the program
 
     if (parentApi !== null && request === `pnpapi`) return parentApi; // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us
@@ -43492,8 +43401,8 @@ function applyPatch(pnpapi, opts) {
 
 
     const isOwnedByRuntime = parentApi !== null ? parentApi.findPackageLocator(modulePath) !== null : false;
-    const moduleApiPath = isOwnedByRuntime ? parentApiPath : findApiPathFor(fslib_1.npath.dirname(modulePath));
-    const entry = moduleApiPath !== null ? getApiEntry(moduleApiPath) : {
+    const moduleApiPath = isOwnedByRuntime ? parentApiPath : opts.manager.findApiPathFor(fslib_1.npath.dirname(modulePath));
+    const entry = moduleApiPath !== null ? opts.manager.getApiEntry(moduleApiPath) : {
       instance: null,
       cache: defaultCache
     }; // Check if the module has already been created for the given file
@@ -43521,16 +43430,6 @@ function applyPatch(pnpapi, opts) {
     } finally {
       if (hasThrown) {
         delete module_1.Module._cache[modulePath];
-      }
-    } // Some modules might have to be patched for compatibility purposes
-
-
-    if (entry.instance !== null) {
-      for (const [filter, patchFn] of patchedModules) {
-        if (filter.test(request)) {
-          const issuer = parent && parent.filename ? entry.instance.findPackageLocator(parent.filename) : null;
-          module.exports = patchFn(issuer, module.exports);
-        }
       }
     }
 
@@ -43575,7 +43474,7 @@ function applyPatch(pnpapi, opts) {
 
     const getIssuerSpecsFromPaths = paths => {
       return paths.map(path => ({
-        apiPath: findApiPathFor(path),
+        apiPath: opts.manager.findApiPathFor(path),
         path: fslib_1.npath.toPortablePath(path),
         module: null
       }));
@@ -43585,7 +43484,7 @@ function applyPatch(pnpapi, opts) {
       const issuer = internalTools_1.getIssuerModule(module);
       const issuerPath = issuer !== null ? fslib_1.npath.dirname(issuer.filename) : process.cwd();
       return [{
-        apiPath: getApiPathFromParent(issuer),
+        apiPath: opts.manager.getApiPathFromParent(issuer),
         path: fslib_1.npath.toPortablePath(issuerPath),
         module
       }];
@@ -43607,7 +43506,7 @@ function applyPatch(pnpapi, opts) {
       module
     } of issuerSpecs) {
       let resolution;
-      const issuerApi = apiPath !== null ? getApiEntry(apiPath, true).instance : null;
+      const issuerApi = apiPath !== null ? opts.manager.getApiEntry(apiPath, true).instance : null;
 
       try {
         if (issuerApi !== null) {
@@ -43641,10 +43540,10 @@ function applyPatch(pnpapi, opts) {
       let resolution;
 
       try {
-        const pnpApiPath = findApiPathFor(path);
+        const pnpApiPath = opts.manager.findApiPathFor(path);
 
         if (pnpApiPath !== null) {
-          const api = getApiEntry(pnpApiPath, true).instance;
+          const api = opts.manager.getApiEntry(pnpApiPath, true).instance;
           resolution = api.resolveRequest(request, path) || false;
         } else {
           resolution = originalFindPath.call(module_1.Module, request, [path], isMain);
@@ -43678,7 +43577,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-const fslib_1 = __webpack_require__(6);
+const fslib_1 = __webpack_require__(5);
 
 function hydrateRuntimeState(data, {
   basePath
@@ -43742,11 +43641,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-const fslib_1 = __webpack_require__(6);
+const fslib_1 = __webpack_require__(5);
 
-const fslib_2 = __webpack_require__(6);
+const fslib_2 = __webpack_require__(5);
 
-const module_1 = __webpack_require__(11);
+const module_1 = __webpack_require__(7);
 
 const internalTools_1 = __webpack_require__(20);
 
@@ -44390,6 +44289,103 @@ function makeApi(runtimeState, opts) {
 }
 
 exports.makeApi = makeApi;
+
+/***/ }),
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const fslib_1 = __webpack_require__(5);
+
+const module_1 = __webpack_require__(7);
+
+function makeManager(pnpapi, opts) {
+  const initialApiPath = fslib_1.npath.toPortablePath(pnpapi.resolveToUnqualified(`pnpapi`, null));
+  const initialApiStats = opts.fakeFs.statSync(fslib_1.npath.toPortablePath(initialApiPath));
+  const apiMetadata = new Map([[initialApiPath, {
+    cache: module_1.Module._cache,
+    instance: pnpapi,
+    stats: initialApiStats
+  }]]);
+
+  function loadApiInstance(pnpApiPath) {
+    // @ts-ignore
+    const module = new module_1.Module(fslib_1.npath.fromPortablePath(pnpApiPath), null);
+    module.load(pnpApiPath);
+    return module.exports;
+  }
+
+  function refreshApiEntry(pnpApiPath, apiEntry) {
+    const stats = opts.fakeFs.statSync(pnpApiPath);
+
+    if (stats.mtime > apiEntry.stats.mtime) {
+      console.warn(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance (${pnpApiPath})`);
+      apiEntry.instance = loadApiInstance(pnpApiPath);
+      apiEntry.stats = stats;
+    }
+  }
+
+  function getApiEntry(pnpApiPath, refresh = false) {
+    let apiEntry = apiMetadata.get(pnpApiPath);
+
+    if (typeof apiEntry !== `undefined`) {
+      if (refresh) {
+        refreshApiEntry(pnpApiPath, apiEntry);
+      }
+    } else {
+      apiMetadata.set(pnpApiPath, apiEntry = {
+        cache: {},
+        instance: loadApiInstance(pnpApiPath),
+        stats: opts.fakeFs.statSync(pnpApiPath)
+      });
+    }
+
+    return apiEntry;
+  }
+
+  function findApiPathFor(modulePath) {
+    let curr;
+    let next = fslib_1.npath.toPortablePath(modulePath);
+
+    do {
+      curr = next;
+      const candidate = fslib_1.ppath.join(curr, `.pnp.js`);
+      if (fslib_1.xfs.existsSync(candidate) && fslib_1.xfs.statSync(candidate).isFile()) return candidate;
+      next = fslib_1.ppath.dirname(curr);
+    } while (curr !== fslib_1.PortablePath.root);
+
+    return null;
+  }
+
+  function getApiPathFromParent(parent) {
+    if (parent == null) return initialApiPath;
+
+    if (typeof parent.pnpApiPath === `undefined`) {
+      if (parent.filename !== null) {
+        return findApiPathFor(parent.filename);
+      } else {
+        return initialApiPath;
+      }
+    }
+
+    if (parent.pnpApiPath !== null) return parent.pnpApiPath;
+    return null;
+  }
+
+  return {
+    getApiPathFromParent,
+    findApiPathFor,
+    getApiEntry
+  };
+}
+
+exports.makeManager = makeManager;
 
 /***/ })
 /******/ ])["default"];

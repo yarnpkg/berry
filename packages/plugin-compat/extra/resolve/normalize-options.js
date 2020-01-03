@@ -1,3 +1,5 @@
+const path = require(`path`);
+
 module.exports = function (_, opts) {
   opts = opts || {};
 
@@ -5,17 +7,11 @@ module.exports = function (_, opts) {
     return opts;
 
   if (opts.packageIterator || opts.paths)
-    throw new Error(`The 'packageIterator' and 'paths' options cannot be used in PnP environments. Set 'forceNodeResolution: true' if absolutely needed, or branch on process.versions.pnp otherwise.`);
+    throw new Error(`The "packageIterator" and "paths" options cannot be used in PnP environments. Set "forceNodeResolution: true" if absolutely needed, or branch on process.versions.pnp otherwise.`);
 
   const pnp = require(`pnpapi`);
 
-  /**
-   * @param request {string}
-   * @param basedir {string}
-   * @param getCandidates {() => Array<string>}
-   * @param opts {any}
-   */
-  opts.packageIterator = function (request, basedir, getCandidates, opts) {
+  const packageIterator = function (request, basedir, getCandidates, opts) {
     // Extract the name of the package being requested (1=full name, 2=scope name, 3=local name)
     const parts = request.match(/^((?:(@[^\/]+)\/)?([^\/]+))/);
     if (!parts)
@@ -41,20 +37,37 @@ module.exports = function (_, opts) {
     return [path.dirname(manifestPath)];
   };
 
-  opts.paths = function (request, basedir, getNodeModulePaths, opts) {
-    if (opts.packageIterator)
-      return getNodeModulePaths();
-
-    return opts.packageIterator(request, basedir, () => [], opts).map(path => {
+  const paths = function (request, basedir, opts) {
+    return opts.packageIterator(request, basedir, () => [], opts).map(manifestPath => {
       // Stip the local named folder
       let nodeModules = path.dirname(manifestPath);
 
       // Strip the scope named folder if needed
-      if (request.match(/^@[^\/]+)\//))
+      if (request.match(/^@[^\/]+\//))
         nodeModules = path.dirname(nodeModules);
 
-      return [nodeModules];
+      return nodeModules;
     });
+  };
+
+  // We need to keep track whether we're in `packageIterator` or not so that
+  // the code is compatible with both `resolve` 1.9+ and `resolve` 1.15+
+  let isInsideIterator = false;
+
+  opts.packageIterator = function (request, basedir, getCandidates, opts) {
+    isInsideIterator = true;
+    try {
+      return packageIterator(request, basedir, getCandidates, opts);
+    } finally {
+      isInsideIterator = false;
+    }
+  };
+
+  opts.paths = function (request, basedir, getNodeModulePaths, opts) {
+    if (isInsideIterator)
+      return getNodeModulePaths();
+
+    return paths(request, basedir, opts);
   };
 
   return opts;
