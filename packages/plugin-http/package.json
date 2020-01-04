@@ -2,7 +2,7 @@
   "name": "@yarnpkg/plugin-http",
   "version": "2.0.0-rc.8",
   "nextVersion": {
-    "nonce": "5059619631016675"
+    "nonce": "7561198339636525"
   },
   "main": "./sources/index.ts",
   "dependencies": {

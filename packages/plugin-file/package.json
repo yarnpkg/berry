@@ -2,7 +2,7 @@
   "name": "@yarnpkg/plugin-file",
   "version": "2.0.0-rc.9",
   "nextVersion": {
-    "nonce": "763615526236347"
+    "nonce": "7338051564847907"
   },
   "main": "./sources/index.ts",
   "dependencies": {

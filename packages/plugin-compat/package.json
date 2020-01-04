@@ -2,7 +2,8 @@
   "name": "@yarnpkg/plugin-compat",
   "version": "2.0.0-rc.2",
   "nextVersion": {
-    "nonce": "700545012977963"
+    "semver": "2.0.0-rc.3",
+    "nonce": "3835955033853351"
   },
   "main": "./sources/index.ts",
   "peerDependencies": {

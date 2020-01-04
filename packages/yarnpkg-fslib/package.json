@@ -1,6 +1,9 @@
 {
   "name": "@yarnpkg/fslib",
   "version": "2.0.0-rc.13",
+  "nextVersion": {
+    "nonce": "8891659325007283"
+  },
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
