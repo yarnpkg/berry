@@ -29,9 +29,11 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
   ]);
 
   function loadApiInstance(pnpApiPath: PortablePath): PnpApi {
+    const nativePath = npath.fromPortablePath(pnpApiPath);
+
     // @ts-ignore
-    const module = new Module(npath.fromPortablePath(pnpApiPath), null);
-    module.load(pnpApiPath);
+    const module = new Module(nativePath, null);
+    module.load(nativePath);
     return module.exports;
   }
 

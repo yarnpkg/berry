@@ -21,7 +21,7 @@ const localFs: typeof fs = {...fs};
 const nodeFs = new NodeFS(localFs);
 
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
-const defaultPnpapiResolution = path.resolve(__dirname, __filename);
+const defaultPnpapiResolution = __filename;
 
 // We create a virtual filesystem that will do three things:
 // 1. all requests inside a folder named "$$virtual" will be remapped according the virtual folder rules
