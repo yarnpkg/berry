@@ -470,7 +470,7 @@ export class Project {
       // buffalo.
 
       const deferredResolutions = new Set<DescriptorHash>();
-      const resolvedDependencies = new Map<DescriptorHash, Map<DescriptorHash, Locator>>();
+      const resolvedDependencies = new Map<DescriptorHash, Map<DescriptorHash, Package>>();
 
       for (const descriptorHash of currentResolutionPass) {
         const descriptor = allDescriptors.get(descriptorHash);

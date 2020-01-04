@@ -9,6 +9,7 @@ import {RuntimeState, PnpApi}                                           from '..
 import {applyPatch}                                                     from './applyPatch';
 import {hydrateRuntimeState}                                            from './hydrateRuntimeState';
 import {MakeApiOptions, makeApi}                                        from './makeApi';
+import {Manager, makeManager}                                           from './makeManager';
 
 declare var __non_webpack_module__: NodeModule;
 declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState, basePath?: NativePath) => RuntimeState;
@@ -20,7 +21,7 @@ const localFs: typeof fs = {...fs};
 const nodeFs = new NodeFS(localFs);
 
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
-const defaultPnpapiResolution = path.resolve(__dirname, __filename);
+const defaultPnpapiResolution = __filename;
 
 // We create a virtual filesystem that will do three things:
 // 1. all requests inside a folder named "$$virtual" will be remapped according the virtual folder rules
@@ -33,6 +34,8 @@ const defaultFsLayer: FakeFS<PortablePath> = new VirtualFS({
     readOnlyArchives: true,
   }),
 });
+
+let manager: Manager;
 
 const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
   fakeFs: defaultFsLayer,
@@ -59,6 +62,22 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
       ...rest,
     });
   },
+
+  /**
+   * Can be used to retrieve the API for a particular file, or `null` if the
+   * specified location doesn't seem to be part of a PnP runtime. Note that
+   * this function return value may change when the underlying PnP hook gets
+   * overriden (Yarn automatically reloads them when this happen).
+   */
+  findApiFromPath: (modulePath: NativePath) => {
+    const apiPath = manager.findApiPathFor(modulePath);
+    if (apiPath === null)
+      return null;
+
+    const apiEntry = manager.getApiEntry(apiPath, true);
+    return apiEntry.instance;
+  },
+
   /**
    * Will inject the specified API into the environment, monkey-patching FS. Is
    * automatically called when the hook is loaded through `--require`.
@@ -66,8 +85,13 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
   setup: (api?: PnpApi) => {
     applyPatch(api || defaultApi, {
       fakeFs: defaultFsLayer,
+      manager,
     });
   },
+});
+
+manager = makeManager(defaultApi, {
+  fakeFs: defaultFsLayer,
 });
 
 // eslint-disable-next-line arca/no-default-export

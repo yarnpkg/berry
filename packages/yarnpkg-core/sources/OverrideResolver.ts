@@ -1,6 +1,6 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
-import {Descriptor, Locator, DescriptorHash}             from './types';
+import {Descriptor, Locator, DescriptorHash, Package}    from './types';
 
 export class OverrideResolver implements Resolver {
   private next: Resolver;
@@ -29,7 +29,7 @@ export class OverrideResolver implements Resolver {
     return this.next.getResolutionDependencies(descriptor, opts);
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Locator>, opts: ResolveOptions) {
+  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
     return await this.next.getCandidates(descriptor, dependencies, opts);
   }
 

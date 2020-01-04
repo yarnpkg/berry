@@ -88,6 +88,7 @@ LIBZIP_REPO=arcanis/libzip
 
     emcc \
         -o ./build.js \
+        -s WASM=1 \
         -s EXPORTED_FUNCTIONS="$(cat ./exported.json)" \
         -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "getValue"]' \
         -s ALLOW_MEMORY_GROWTH=1 \
@@ -95,7 +96,6 @@ LIBZIP_REPO=arcanis/libzip
         -s ENVIRONMENT=node \
         -s NODERAWFS=1 \
         -s SINGLE_FILE=1 \
-        -s ASSERTIONS=1 -s SAFE_HEAP=1 \
         -I./libzip-"$LIBZIP_VERSION"/build/local/include \
         -O3 \
         --llvm-lto 1 \

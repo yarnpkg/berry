@@ -1,7 +1,7 @@
-import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions} from '@yarnpkg/core';
-import {npath, PortablePath, xfs, ppath, Filename, NodeFS}                                             from '@yarnpkg/fslib';
+import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions, Package} from '@yarnpkg/core';
+import {npath, PortablePath, xfs, ppath, Filename, NodeFS}                                                      from '@yarnpkg/fslib';
 
-import {Hooks as PatchHooks}                                                                           from './index';
+import {Hooks as PatchHooks}                                                                                    from './index';
 
 export {applyPatchFile} from './tools/apply';
 export {parsePatchFile} from './tools/parse';
@@ -21,9 +21,13 @@ function parseSpec<T>(spec: string, sourceParser: (source: string) => T) {
     ? structUtils.parseLocator(params.locator)
     : null;
 
+  const sourceVersion = params && typeof params.version === `string`
+    ? params.version
+    : null;
+
   const sourceItem = sourceParser(source);
 
-  return {parentLocator, sourceItem, patchPaths};
+  return {parentLocator, sourceItem, patchPaths, sourceVersion};
 }
 
 export function parseDescriptor(descriptor: Descriptor) {
@@ -36,9 +40,13 @@ export function parseLocator(locator: Locator) {
   return {...rest, sourceLocator: sourceItem};
 }
 
-function makeSpec<T>({parentLocator, sourceItem, patchPaths, patchHash}: {parentLocator: Locator | null, sourceItem: T, patchPaths: Array<PortablePath>, patchHash?: string}, sourceStringifier: (source: T) => string) {
+function makeSpec<T>({parentLocator, sourceItem, patchPaths, sourceVersion, patchHash}: {parentLocator: Locator | null, sourceItem: T, patchPaths: Array<PortablePath>, sourceVersion?: string | null, patchHash?: string}, sourceStringifier: (source: T) => string) {
   const parentLocatorSpread = parentLocator !== null
     ? {locator: structUtils.stringifyLocator(parentLocator)}
+    : {} as {};
+
+  const sourceVersionSpread = typeof sourceVersion !== `undefined`
+    ? {version: sourceVersion}
     : {} as {};
 
   const patchHashSpread = typeof patchHash !== `undefined`
@@ -50,8 +58,9 @@ function makeSpec<T>({parentLocator, sourceItem, patchPaths, patchHash}: {parent
     source: sourceStringifier(sourceItem),
     selector: patchPaths.join(`&`),
     params: {
-      ...parentLocatorSpread,
+      ...sourceVersionSpread,
       ...patchHashSpread,
+      ...parentLocatorSpread,
     },
   });
 }
@@ -60,8 +69,8 @@ export function makeDescriptor(ident: Ident, {parentLocator, sourceDescriptor, p
   return structUtils.makeLocator(ident, makeSpec({parentLocator, sourceItem: sourceDescriptor, patchPaths}, structUtils.stringifyDescriptor));
 }
 
-export function makeLocator(ident: Ident, {parentLocator, sourceLocator, patchPaths, patchHash}: ReturnType<typeof parseLocator> & {patchHash: string}) {
-  return structUtils.makeLocator(ident, makeSpec({parentLocator, sourceItem: sourceLocator, patchPaths, patchHash}, structUtils.stringifyLocator));
+export function makeLocator(ident: Ident, {parentLocator, sourcePackage, patchPaths, patchHash}: Omit<ReturnType<typeof parseLocator>, 'sourceLocator' | 'sourceVersion'> & {sourcePackage: Package, patchHash: string}) {
+  return structUtils.makeLocator(ident, makeSpec({parentLocator, sourceItem: sourcePackage, sourceVersion: sourcePackage.version, patchPaths, patchHash}, structUtils.stringifyLocator));
 }
 
 type VisitPatchPathOptions<T> = {

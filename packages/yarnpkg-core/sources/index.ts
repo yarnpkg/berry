@@ -4,6 +4,7 @@ import * as hashUtils   from './hashUtils';
 import * as httpUtils   from './httpUtils';
 import * as miscUtils   from './miscUtils';
 import * as scriptUtils from './scriptUtils';
+import * as semverUtils from './semverUtils';
 import * as structUtils from './structUtils';
 import * as tgzUtils    from './tgzUtils';
 
@@ -35,5 +36,6 @@ export {execUtils};
 export {folderUtils};
 export {miscUtils};
 export {scriptUtils};
+export {semverUtils};
 export {structUtils};
 export {tgzUtils};
