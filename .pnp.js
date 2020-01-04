@@ -180,7 +180,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       }
     ],
     "enableTopLevelFallback": true,
-    "ignorePatternData": "(^(?:\\.vscode\\/pnpify(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)|$))$)",
+    "ignorePatternData": "(^(?:\\.vscode[\\\\\\/]pnpify(?:[\\\\\\/](?!\\.)(?:(?:(?!(?:^|[\\\\\\/])\\.).)*?)|$))$)",
     "fallbackExclusionList": [
       ["@yarnpkg/builder", ["virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder", "workspace:packages/yarnpkg-builder"]],
       ["@yarnpkg/check", ["workspace:packages/yarnpkg-check"]],
@@ -39854,8 +39854,6 @@ const fs_1 = __importDefault(__webpack_require__(1));
 
 const module_1 = __importDefault(__webpack_require__(7));
 
-const path_1 = __importDefault(__webpack_require__(2));
-
 const string_decoder_1 = __importDefault(__webpack_require__(45));
 
 const applyPatch_1 = __webpack_require__(46);
@@ -39872,7 +39870,7 @@ const makeManager_1 = __webpack_require__(49); // We must copy the fs into a loc
 const localFs = Object.assign({}, fs_1.default);
 const nodeFs = new fslib_1.NodeFS(localFs);
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState_1.hydrateRuntimeState);
-const defaultPnpapiResolution = path_1.default.resolve(__dirname, __filename); // We create a virtual filesystem that will do three things:
+const defaultPnpapiResolution = __filename; // We create a virtual filesystem that will do three things:
 // 1. all requests inside a folder named "$$virtual" will be remapped according the virtual folder rules
 // 2. all requests going inside a Zip archive will be handled by the Zip fs implementation
 // 3. any remaining request will be forwarded to Node as-is
@@ -44315,9 +44313,10 @@ function makeManager(pnpapi, opts) {
   }]]);
 
   function loadApiInstance(pnpApiPath) {
-    // @ts-ignore
-    const module = new module_1.Module(fslib_1.npath.fromPortablePath(pnpApiPath), null);
-    module.load(pnpApiPath);
+    const nativePath = fslib_1.npath.fromPortablePath(pnpApiPath); // @ts-ignore
+
+    const module = new module_1.Module(nativePath, null);
+    module.load(nativePath);
     return module.exports;
   }
 
