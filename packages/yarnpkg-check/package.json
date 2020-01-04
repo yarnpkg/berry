@@ -2,7 +2,8 @@
   "name": "@yarnpkg/check",
   "version": "2.0.0-rc.8",
   "nextVersion": {
-    "nonce": "8994600960034007"
+    "semver": "2.0.0-rc.9",
+    "nonce": "5133219199959275"
   },
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {

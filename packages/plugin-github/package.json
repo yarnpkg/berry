@@ -2,7 +2,8 @@
   "name": "@yarnpkg/plugin-github",
   "version": "2.0.0-rc.9",
   "nextVersion": {
-    "nonce": "5701631085515075"
+    "semver": "2.0.0-rc.10",
+    "nonce": "3847775796677047"
   },
   "main": "./sources/index.ts",
   "dependencies": {
