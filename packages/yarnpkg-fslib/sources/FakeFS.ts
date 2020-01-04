@@ -1,4 +1,5 @@
 import {Dirent, ReadStream, Stats, WriteStream}          from 'fs';
+import {EOL}                                             from 'os';
 
 import {copyPromise}                                     from './algorithms/copyPromise';
 import {FSPath, Path, PortablePath, PathUtils, Filename} from './path';
@@ -310,29 +311,35 @@ export abstract class FakeFS<P extends Path> {
   }
 
   async changeFilePromise(p: P, content: string) {
+    let current = '';
+
     try {
-      const current = await this.readFilePromise(p, `utf8`);
-      if (current === content) {
-        return;
-      }
+      current = await this.readFilePromise(p, `utf8`);
     } catch (error) {
       // ignore errors, no big deal
     }
 
-    await this.writeFilePromise(p, content);
+    const normalizedContent = normalizeLineEndings(current, content);
+    if (current === normalizedContent)
+      return;
+
+    await this.writeFilePromise(p, normalizedContent);
   }
 
   changeFileSync(p: P, content: string) {
+    let current = '';
+
     try {
-      const current = this.readFileSync(p, `utf8`);
-      if (current === content) {
-        return;
-      }
+      current = this.readFileSync(p, `utf8`);
     } catch (error) {
       // ignore errors, no big deal
     }
 
-    this.writeFileSync(p, content);
+    const normalizedContent = normalizeLineEndings(current, content);
+    if (current === normalizedContent)
+      return;
+
+    this.writeFileSync(p, normalizedContent);
   }
 
   async movePromise(fromP: P, toP: P) {
@@ -496,4 +503,14 @@ export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
   resolve(p: PortablePath) {
     return this.pathUtils.resolve(PortablePath.root, p);
   }
+}
+
+function getEndOfLine(content: string) {
+  const match = content.match(/\r?\n/);
+
+  return match === null ? EOL : match[0];
+}
+
+function normalizeLineEndings(originalContent: string, newContent: string){
+  return newContent.replace(/\r?\n/g, getEndOfLine(originalContent));
 }
