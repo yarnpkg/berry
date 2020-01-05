@@ -1,7 +1,7 @@
-import {PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                    from '@yarnpkg/parsers';
 import {createHash}                                  from 'crypto';
 import {structuredPatch}                             from 'diff';
+import {PortablePath, npath, ppath, toFilename, xfs, normalizeLineEndings} from '@yarnpkg/fslib';
 // @ts-ignore
 import Logic                                         from 'logic-solver';
 import pLimit                                        from 'p-limit';
@@ -1238,7 +1238,7 @@ export class Project {
       await this.resolveEverything(opts);
 
       if (initialLockfile !== null) {
-        const newLockfile = this.generateLockfile();
+        const newLockfile = normalizeLineEndings(initialLockfile, this.generateLockfile());
 
         if (newLockfile !== initialLockfile) {
           const diff = structuredPatch(lockfilePath, lockfilePath, initialLockfile, newLockfile);
