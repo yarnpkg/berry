@@ -116,6 +116,9 @@ const cloneTree = (tree: HoisterPackageTree): TrackedHoisterPackageTree => {
     seenNodes.add(srcNode);
 
     for (const depNode of srcNode.deps) {
+      if (depNode.pkgId === srcNode.pkgId && (depNode.deps.size > 0 || depNode.peerDepIds.size > 0))
+        throw new Error(`Assert: package ${depNode.pkgId} self-reference must have empty deps and peerDeps`);
+
       const newNode: TrackedHoisterPackageTree = {pkgId: depNode.pkgId, deps: new Set(), origDepIds: new Set(), peerDepIds: new Set(depNode.peerDepIds), origPeerDepIds: new Set(depNode.peerDepIds)};
       dstNode.deps.add(newNode);
       dstNode.origDepIds.add(depNode.pkgId);
@@ -235,7 +238,9 @@ const hoistInplace = (rootPkg: TrackedHoisterPackageTree, packages: ReadonlyArra
 
   for (const dep of hoistedDeps) {
     // Add hoisted packages to the root package, omit self-reference
-    if (dep.pkgId !== rootPkg.pkgId) {
+    // Top-level self-reference should not be omitted, since for the top level to require
+    // itself the symlink should be created self/node_modules/self -> ../..
+    if (dep.pkgId === 0 || dep.pkgId !== rootPkg.pkgId) {
       rootPkg.deps.add(dep);
     }
   }

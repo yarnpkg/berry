@@ -209,7 +209,7 @@ describe('hoist', () => {
     //   → B@Y
     //   → C@X
     // should be hoisted to:
-    // . → A → B@X → C@Y
+    // . → . → A → B@X → C@Y
     //   → B@Y
     //   → C@X
     const tree = {
@@ -265,6 +265,10 @@ describe('hoist', () => {
     expect(result).toEqual({
       pkgId: 0, // .
       deps: new Set([{
+        pkgId: 0, // .
+        deps: new Set(),
+        peerDepIds: new Set(),
+      }, {
         pkgId: 1, // A
         deps: new Set([{
           pkgId: 2, // B@X
@@ -421,42 +425,111 @@ describe('hoist', () => {
   //   ]);
   // });
 
-  // it('should hoist different copies of a package independently', () => {
-  //   // . → A@X
-  //   //   → B → A@Y → D@X
-  //   //     → D@Y
-  //   //   → C → A@Y → D@X
-  //   // Should be hoisted to (top D@X instance must not be hoisted):
-  //   // . → A@X
-  //   //   → B → A@Y → D@X
-  //   //     → D@Y
-  //   //   → C
-  //   //     → A@Y
-  //   //     → D@X
-  //   const packages = [
-  //     {name: '.', weight: 1},
-  //     {name: 'A', weight: 1},
-  //     {name: 'A', weight: 1},
-  //     {name: 'B', weight: 1},
-  //     {name: 'C', weight: 1},
-  //     {name: 'D', weight: 1},
-  //     {name: 'D', weight: 1},
-  //   ];
-  //   const tree = [
-  //     {deps: new Set([1, 3, 4]), peerDeps: new Set<number>([2])},
-  //     {deps: new Set<number>(), peerDeps: new Set<number>()},
-  //     {deps: new Set([5]), peerDeps: new Set<number>()},
-  //     {deps: new Set([2, 6]), peerDeps: new Set<number>()},
-  //     {deps: new Set([2]), peerDeps: new Set<number>()},
-  //     {deps: new Set<number>(), peerDeps: new Set<number>()},
-  //     {deps: new Set<number>(), peerDeps: new Set<number>()},
-  //   ];
-  //   const result = hoist(tree, packages);
-  //   expect(sortDeps(result)).toEqual([
-  //     new Set([1, 3, 4]),
-  //     new Set(),
-  //     new Set([5]),
-  //     new Set(),
-  //   ]);
-  // });
+  it('should hoist different copies of a package independently', () => {
+    // . → A → B@X → C@X
+    //     → C@Y
+    //   → D → B@X → C@X
+    //   → B@Y
+    //   → C@Z
+    // Should be hoisted to (top C@X instance must not be hoisted):
+    // . → A → B@X → C@X
+    //     → C@Y
+    //   → D → B@X
+    //     → C@X
+    //   → B@Y
+    //   → C@Z
+    const packages = [
+      {name: '.'}, // .   - 0
+      {name: 'A'}, // A   - 1
+      {name: 'B'}, // B@X - 2
+      {name: 'B'}, // B@Y - 3
+      {name: 'C'}, // C@X - 4
+      {name: 'C'}, // C@Y - 5
+      {name: 'C'}, // C@Z - 6
+      {name: 'D'}, // D   - 7
+    ];
+    const tree = {
+      pkgId: 0, // .
+      deps: new Set([{
+        pkgId: 1, // A
+        deps: new Set([{
+          pkgId: 2, // B@X
+          deps: new Set([{
+            pkgId: 4, // C@X
+            deps: new Set<HoisterPackageTree>(),
+            peerDepIds: new Set<number>(),
+          }]),
+          peerDepIds: new Set<number>(),
+        }, {
+          pkgId: 5, // C@Y
+          deps: new Set<HoisterPackageTree>(),
+          peerDepIds: new Set<number>(),
+        }]),
+        peerDepIds: new Set<number>(),
+      }, {
+        pkgId: 7, // D
+        deps: new Set([{
+          pkgId: 2, // B@X
+          deps: new Set([{
+            pkgId: 4, // C@X
+            deps: new Set<HoisterPackageTree>(),
+            peerDepIds: new Set<number>(),
+          }]),
+          peerDepIds: new Set<number>(),
+        }]),
+        peerDepIds: new Set<number>(),
+      }, {
+        pkgId: 3, // B@Y
+        deps: new Set<HoisterPackageTree>(),
+        peerDepIds: new Set<number>(),
+      }, {
+        pkgId: 6, // C@Z
+        deps: new Set<HoisterPackageTree>(),
+        peerDepIds: new Set<number>(),
+      }]),
+      peerDepIds: new Set<number>(),
+    };
+    const result = hoist(tree, packages);
+    expect(result).toEqual({
+      pkgId: 0, // .
+      deps: new Set([{
+        pkgId: 1, // A
+        deps: new Set([{
+          pkgId: 2, // B@X
+          deps: new Set([{
+            pkgId: 4, // C@X
+            deps: new Set(),
+            peerDepIds: new Set(),
+          }]),
+          peerDepIds: new Set(),
+        }, {
+          pkgId: 5, // C@Y
+          deps: new Set(),
+          peerDepIds: new Set(),
+        }]),
+        peerDepIds: new Set(),
+      }, {
+        pkgId: 7, // D
+        deps: new Set([{
+          pkgId: 2, // B@X
+          deps: new Set(),
+          peerDepIds: new Set(),
+        }, {
+          pkgId: 4, // C@X
+          deps: new Set(),
+          peerDepIds: new Set(),
+        }]),
+        peerDepIds: new Set(),
+      }, {
+        pkgId: 3, // B@Y
+        deps: new Set(),
+        peerDepIds: new Set(),
+      }, {
+        pkgId: 6, // C@Z
+        deps: new Set(),
+        peerDepIds: new Set(),
+      }]),
+      peerDepIds: new Set<number>(),
+    });
+  });
 });
