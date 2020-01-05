@@ -1,37 +1,37 @@
-import {parseSyml, stringifySyml}                    from '@yarnpkg/parsers';
-import {createHash}                                  from 'crypto';
-import {structuredPatch}                             from 'diff';
 import {PortablePath, npath, ppath, toFilename, xfs, normalizeLineEndings} from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                          from '@yarnpkg/parsers';
+import {createHash}                                                        from 'crypto';
+import {structuredPatch}                                                   from 'diff';
 // @ts-ignore
-import Logic                                         from 'logic-solver';
-import pLimit                                        from 'p-limit';
-import semver                                        from 'semver';
-import {tmpNameSync}                                 from 'tmp';
+import Logic                                                               from 'logic-solver';
+import pLimit                                                              from 'p-limit';
+import semver                                                              from 'semver';
+import {tmpNameSync}                                                       from 'tmp';
 
-import {Cache}                                       from './Cache';
-import {Configuration, FormatType}                   from './Configuration';
-import {Fetcher}                                     from './Fetcher';
-import {Installer, BuildDirective, BuildType}        from './Installer';
-import {LegacyMigrationResolver}                     from './LegacyMigrationResolver';
-import {Linker}                                      from './Linker';
-import {LockfileResolver}                            from './LockfileResolver';
-import {DependencyMeta, Manifest}                    from './Manifest';
-import {MessageName}                                 from './MessageName';
-import {MultiResolver}                               from './MultiResolver';
-import {OverrideResolver}                            from './OverrideResolver';
-import {Report, ReportError}                         from './Report';
-import {ResolveOptions, Resolver}                    from './Resolver';
-import {RunInstallPleaseResolver}                    from './RunInstallPleaseResolver';
-import {ThrowReport}                                 from './ThrowReport';
-import {Workspace}                                   from './Workspace';
-import {isFolderInside}                              from './folderUtils';
-import * as miscUtils                                from './miscUtils';
-import * as scriptUtils                              from './scriptUtils';
-import * as semverUtils                              from './semverUtils';
-import * as structUtils                              from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash}      from './types';
-import {Descriptor, Ident, Locator, Package}         from './types';
-import {LinkType}                                    from './types';
+import {Cache}                                                             from './Cache';
+import {Configuration, FormatType}                                         from './Configuration';
+import {Fetcher}                                                           from './Fetcher';
+import {Installer, BuildDirective, BuildType}                              from './Installer';
+import {LegacyMigrationResolver}                                           from './LegacyMigrationResolver';
+import {Linker}                                                            from './Linker';
+import {LockfileResolver}                                                  from './LockfileResolver';
+import {DependencyMeta, Manifest}                                          from './Manifest';
+import {MessageName}                                                       from './MessageName';
+import {MultiResolver}                                                     from './MultiResolver';
+import {OverrideResolver}                                                  from './OverrideResolver';
+import {Report, ReportError}                                               from './Report';
+import {ResolveOptions, Resolver}                                          from './Resolver';
+import {RunInstallPleaseResolver}                                          from './RunInstallPleaseResolver';
+import {ThrowReport}                                                       from './ThrowReport';
+import {Workspace}                                                         from './Workspace';
+import {isFolderInside}                                                    from './folderUtils';
+import * as miscUtils                                                      from './miscUtils';
+import * as scriptUtils                                                    from './scriptUtils';
+import * as semverUtils                                                    from './semverUtils';
+import * as structUtils                                                    from './structUtils';
+import {IdentHash, DescriptorHash, LocatorHash}                            from './types';
+import {Descriptor, Ident, Locator, Package}                               from './types';
+import {LinkType}                                                          from './types';
 
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
