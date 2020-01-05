@@ -20,8 +20,8 @@ module.exports = function (_, opts) {
   const pnp = require(`pnpapi`);
 
   const packageIterator = function (request, basedir, getCandidates, opts) {
-    // Extract the name of the package being requested (1=full name, 2=scope name, 3=local name)
-    const parts = request.match(/^((?:(@[^\/]+)\/)?([^\/]+))/);
+    // Extract the name of the package being requested (1=package name, 2=internal path)
+    const parts = request.match(/^((?:@[^\/]+\/)?[^\/]+)(\/.*)?/);
     if (!parts)
       throw new Error(`Assertion failed: Expected the "resolve" package to call the "paths" callback with package names only (got "${request}")`);
 
@@ -42,7 +42,13 @@ module.exports = function (_, opts) {
       throw new Error(`Assertion failed: The resolution thinks that "${parts[1]}" is a Node builtin`);
 
     // Strip the package.json to get the package folder
-    return [path.dirname(manifestPath)];
+    let packagePath = path.dirname(manifestPath);
+
+    // Attach the internal path to the resolved package directory
+    if (typeof parts[2] !== `undefined`)
+      packagePath = path.join(packagePath, parts[2]);
+
+    return [packagePath];
   };
 
   const paths = function (request, basedir, opts) {
