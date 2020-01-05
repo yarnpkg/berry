@@ -769,7 +769,9 @@ export class Configuration {
     if (!patched)
       return;
 
-    await xfs.changeFilePromise(configurationPath, stringifySyml(current));
+    await xfs.changeFilePromise(configurationPath, stringifySyml(current), {
+      automaticNewlines: true,
+    });
   }
 
   static async updateHomeConfiguration(patch: any) {

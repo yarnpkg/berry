@@ -1193,7 +1193,9 @@ export class Project {
       }
 
       await xfs.mkdirpPromise(ppath.dirname(bstatePath));
-      await xfs.changeFilePromise(bstatePath, bstateFile);
+      await xfs.changeFilePromise(bstatePath, bstateFile, {
+        automaticNewlines: true,
+      });
     } else {
       await xfs.removePromise(bstatePath);
     }
@@ -1363,7 +1365,9 @@ export class Project {
     const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
     const lockfileContent = this.generateLockfile();
 
-    await xfs.changeFilePromise(lockfilePath, lockfileContent);
+    await xfs.changeFilePromise(lockfilePath, lockfileContent, {
+      automaticNewlines: true,
+    });
   }
 
   async persist() {

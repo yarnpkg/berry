@@ -33,6 +33,10 @@ export type WatchOptions = Partial<{
   encoding: string,
 }> | string;
 
+export type ChangeFileOptions = Partial<{
+  automaticNewlines: boolean,
+}>;
+
 export type WatchCallback = (
   eventType: string,
   filename: string,
@@ -310,32 +314,36 @@ export abstract class FakeFS<P extends Path> {
     this.chmodSync(destination, mode);
   }
 
-  async changeFilePromise(p: P, content: string) {
+  async changeFilePromise(p: P, content: string, {automaticNewlines}: ChangeFileOptions = {}) {
     let current = '';
-
     try {
       current = await this.readFilePromise(p, `utf8`);
     } catch (error) {
       // ignore errors, no big deal
     }
 
-    const normalizedContent = normalizeLineEndings(current, content);
+    const normalizedContent = automaticNewlines
+      ? normalizeLineEndings(current, content)
+      : content;
+
     if (current === normalizedContent)
       return;
 
     await this.writeFilePromise(p, normalizedContent);
   }
 
-  changeFileSync(p: P, content: string) {
+  changeFileSync(p: P, content: string, {automaticNewlines = false}: ChangeFileOptions = {}) {
     let current = '';
-
     try {
       current = this.readFileSync(p, `utf8`);
     } catch (error) {
       // ignore errors, no big deal
     }
 
-    const normalizedContent = normalizeLineEndings(current, content);
+    const normalizedContent = automaticNewlines
+      ? normalizeLineEndings(current, content)
+      : content;
+
     if (current === normalizedContent)
       return;
 
@@ -506,9 +514,14 @@ export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
 }
 
 function getEndOfLine(content: string) {
-  const match = content.match(/\r?\n/);
+  const matches = content.match(/\r?\n/g);
+  if (matches === null)
+    return EOL;
 
-  return match === null ? EOL : match[0];
+  const crlf = matches.filter(nl => nl === `\r\n`).length;
+  const lf = matches.length - crlf;
+
+  return crlf > lf ? `\r\n` : `\n`;
 }
 
 function normalizeLineEndings(originalContent: string, newContent: string){
