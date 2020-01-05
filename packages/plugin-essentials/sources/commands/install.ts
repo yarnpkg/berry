@@ -261,7 +261,9 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
   const merged = Object.assign({}, parsedLeft, parsedRight);
   const serialized = stringifySyml(merged);
 
-  await xfs.changeFilePromise(lockfilePath, serialized);
+  await xfs.changeFilePromise(lockfilePath, serialized, {
+    automaticNewlines: true,
+  });
 
   return true;
 }

@@ -2,7 +2,8 @@
   "name": "@yarnpkg/plugin-init",
   "version": "2.0.0-rc.9",
   "nextVersion": {
-    "nonce": "7074591094005049"
+    "semver": "2.0.0-rc.10",
+    "nonce": "8157100585986273"
   },
   "main": "./sources/index.ts",
   "dependencies": {

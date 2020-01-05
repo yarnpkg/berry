@@ -822,7 +822,7 @@ describe(`Plug'n'Play`, () => {
 
         const pnpJs = await readFile(`${path}/.pnp.js`, `utf8`);
 
-        expect(pnpJs.replace(/\n.*/s, ``)).toMatch(/^#!foo$/);
+        expect(pnpJs.replace(/(\r\n|\r|\n).*/s, ``)).toMatch(/^#!foo$/);
       },
     ),
   );

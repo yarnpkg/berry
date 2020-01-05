@@ -1,7 +1,6 @@
 import {FakeFS, NodeFS, NativePath, PortablePath, VirtualFS, ZipOpenFS} from '@yarnpkg/fslib';
 import fs                                                               from 'fs';
 import Module                                                           from 'module';
-import path                                                             from 'path';
 import StringDecoder                                                    from 'string_decoder';
 
 import {RuntimeState, PnpApi}                                           from '../types';

@@ -197,7 +197,7 @@ class PnpInstaller implements Installer {
     if (this.opts.project.configuration.get(`pnpEnableInlining`)) {
       const loaderFile = generateInlinedScript(pnpSettings);
 
-      await xfs.changeFilePromise(pnpPath, loaderFile);
+      await xfs.changeFilePromise(pnpPath, loaderFile, {automaticNewlines: true});
       await xfs.chmodPromise(pnpPath, 0o755);
 
       await xfs.removePromise(pnpDataPath);
@@ -205,10 +205,10 @@ class PnpInstaller implements Installer {
       const dataLocation = ppath.relative(ppath.dirname(pnpPath), pnpDataPath);
       const {dataFile, loaderFile} = generateSplitScript({...pnpSettings, dataLocation});
 
-      await xfs.changeFilePromise(pnpPath, loaderFile);
+      await xfs.changeFilePromise(pnpPath, loaderFile, {automaticNewlines: true});
       await xfs.chmodPromise(pnpPath, 0o755);
 
-      await xfs.changeFilePromise(pnpDataPath, dataFile);
+      await xfs.changeFilePromise(pnpDataPath, dataFile, {automaticNewlines: true});
       await xfs.chmodPromise(pnpDataPath, 0o644);
     }
 
