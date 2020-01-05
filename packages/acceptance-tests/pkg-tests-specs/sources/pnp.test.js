@@ -1317,6 +1317,10 @@ describe(`Plug'n'Play`, () => {
         await expect(source(`require('resolve').sync('resolve')`)).resolves.toEqual(
           await source(`require.resolve('resolve')`),
         );
+
+        await expect(source(`require('resolve').sync('resolve/package.json')`)).resolves.toEqual(
+          await source(`require.resolve('resolve/package.json')`),
+        );
       },
     ),
     15000,
