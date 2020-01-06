@@ -47,13 +47,13 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   private readonly pnpFilePath: PortablePath;
   private nodeModulesTree: NodeModulesTree;
 
-  constructor(pnp: PnpApi, {baseFs = new NodeFS(), pnpifyFs = true, optimizeSizeOnDisk = false}: PortableNodeModulesFSOptions = {}) {
+  constructor(pnp: PnpApi, {baseFs = new NodeFS(), pnpifyFs = true}: PortableNodeModulesFSOptions = {}) {
     super(ppath);
 
     if (!pnp.getDependencyTreeRoots)
       throw new Error('NodeModulesFS supports PnP API versions 3+, please upgrade your PnP API provider');
 
-    this.options = {baseFs, pnpifyFs, optimizeSizeOnDisk};
+    this.options = {baseFs, pnpifyFs};
     this.baseFs = baseFs;
     this.nodeModulesTree = buildNodeModulesTree(pnp, this.options);
     this.watchManager = new WatchManager();

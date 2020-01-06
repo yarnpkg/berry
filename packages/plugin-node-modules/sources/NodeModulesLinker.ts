@@ -199,15 +199,15 @@ class NodeModulesInstaller implements Installer {
     try {
       prevLocatorMap = await readLocatorState(ppath.join(rootPath, NODE_MODULES, LOCATOR_STATE_FILE));
     } catch (e) {
+      // Remove build state as well, to force rebuild of all the packages
+      const bstatePath = this.opts.project.configuration.get(`bstatePath`);
+      if (await xfs.existsPromise(bstatePath))
+        await xfs.unlinkPromise(bstatePath);
       prevLocatorMap = new Map();
     }
 
     const pnp = makeRuntimeApi(pnpSettings, rootPath, defaultFsLayer);
-    const nmTree = buildNodeModulesTree(pnp, {
-      optimizeSizeOnDisk: true,
-      knownLocatorWeights: new Map(Array.from(prevLocatorMap).map(([key, val]) => [key, val.size])),
-      pnpifyFs: false,
-    });
+    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false});
     const locatorMap = buildLocatorMap(rootPath, nmTree);
     await persistNodeModules(rootPath, prevLocatorMap, locatorMap, baseFs, this.opts.report);
     await this.onFinalizeInstall();
@@ -497,10 +497,10 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
     }
   };
 
-  const cloneModule = async (srcDir: PortablePath, dstDir: PortablePath, options?: { keepNodeModules?: boolean, innerLoop?: boolean }) => {
+  const cloneModule = async (srcDir: PortablePath, dstDir: PortablePath, options?: { keepSrcNodeModules?: boolean, keepDstNodeModules?: boolean, innerLoop?: boolean }) => {
     try {
       if (!options || !options.innerLoop) {
-        await removeDir(dstDir, {excludeNodeModules: options && options.keepNodeModules});
+        await removeDir(dstDir, {excludeNodeModules: options && options.keepDstNodeModules});
         await xfs.mkdirpPromise(dstDir, {chmod: 0o777});
       }
 
@@ -509,11 +509,11 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
         const entryName = toFilename(entry.name);
         const src = ppath.join(srcDir, entryName);
         const dst = ppath.join(dstDir, entryName);
-        if (entryName !== NODE_MODULES || !options || !options.keepNodeModules) {
+        if (entryName !== NODE_MODULES || !options || !options.keepSrcNodeModules) {
           if (entry.isDirectory()) {
             await xfs.mkdirPromise(dst);
             await xfs.chmodPromise(dst, 0o777);
-            await cloneModule(src, dst, {keepNodeModules: false, innerLoop: true});
+            await cloneModule(src, dst, {keepSrcNodeModules: false, keepDstNodeModules: false, innerLoop: true});
           } else {
             await xfs.copyFilePromise(src, dst, fs.constants.COPYFILE_FICLONE);
           }
@@ -631,10 +631,10 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
   report.reportProgress(progress);
 
   // First pass: persist all the modules only once in node_modules tree
-  const persistedLocations = new Map();
+  const persistedLocations = new Map<PortablePath, {dstDir: PortablePath, keepNodeModules: boolean}>();
   for (const entry of addList) {
     if (entry.linkType === LinkType.SOFT || !persistedLocations.has(entry.srcDir)) {
-      persistedLocations.set(entry.srcDir, entry.dstDir);
+      persistedLocations.set(entry.srcDir, {dstDir: entry.dstDir, keepNodeModules: entry.keepNodeModules});
       await addModule({...entry});
     }
   }
@@ -645,9 +645,9 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
 
   // Second pass: clone module duplicates
   for (const entry of addList) {
-    const copiedDstDir = persistedLocations.get(entry.srcDir);
-    if (entry.linkType !== LinkType.SOFT && entry.dstDir !== copiedDstDir) {
-      addQueue.push(cloneModule(copiedDstDir, entry.dstDir, {keepNodeModules: entry.keepNodeModules}));
+    const locationInfo = persistedLocations.get(entry.srcDir)!;
+    if (entry.linkType !== LinkType.SOFT && entry.dstDir !== locationInfo.dstDir) {
+      addQueue.push(cloneModule(locationInfo.dstDir, entry.dstDir, {keepSrcNodeModules: locationInfo.keepNodeModules, keepDstNodeModules: entry.keepNodeModules}));
     }
   }
 
