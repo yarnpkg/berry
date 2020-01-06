@@ -31,12 +31,15 @@ module.exports = function (_, opts) {
 
     const api = pnp.findApiFromPath(basedir);
     if (api === null)
-      return null;
+      return undefined;
 
     // This is guaranteed to return the path to the "package.json" file from the given package
-    const manifestPath = api.resolveToUnqualified(`${parts[1]}/package.json`, basedir, {
-      considerBuiltins: false,
-    });
+    let manifestPath;
+    try {
+      manifestPath = api.resolveToUnqualified(`${parts[1]}/package.json`, basedir, {considerBuiltins: false});
+    } catch (err) {
+      return null;
+    }
 
     if (manifestPath === null)
       throw new Error(`Assertion failed: The resolution thinks that "${parts[1]}" is a Node builtin`);
@@ -54,16 +57,22 @@ module.exports = function (_, opts) {
 
   const packageIterator = (request, basedir, getCandidates, opts) => {
     const resolution = runPnpResolution(request, basedir);
-    if (resolution === null)
+    if (typeof resolution === `undefined`)
       return getCandidates();
 
-    return resolution.unqualifiedPath;
+    if (resolution === null)
+      return [];
+
+    return [resolution.unqualifiedPath];
   };
 
   const paths = (request, basedir, getNodeModulePaths, opts) => {
     const resolution = runPnpResolution(request, basedir);
-    if (resolution === null)
+    if (typeof resolution === `undefined`)
       return getNodeModulePaths();
+
+    if (resolution === null)
+      return [];
 
     // Stip the local named folder
     let nodeModules = path.dirname(resolution.packagePath);
