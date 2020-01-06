@@ -34,6 +34,7 @@ export interface HoisterDependencies
  * dependencies, but rather hoisted packages.
  */
 export type HoisterPackageTree = {pkgId: HoisterPackageId, deps: Set<HoisterPackageTree>, peerDepIds: Set<HoisterPackageId>};
+export type HoisterResultTree = {pkgId: HoisterPackageId, deps: Set<HoisterResultTree>};
 type TrackedHoisterPackageTree = {pkgId: HoisterPackageId, deps: Set<TrackedHoisterPackageTree>, origDepIds: Set<HoisterPackageId>, peerDepIds: Set<HoisterPackageId>, origPeerDepIds: Set<HoisterPackageId>};
 
 /**
@@ -76,7 +77,7 @@ type AncestorMap = Array<Set<HoisterPackageId>>;
  *
  * @returns hoisted tree copy
  */
-export const hoist = (tree: HoisterPackageTree, packageInfos: ReadonlyArray<HoisterPackageInfo>, nohoist: ReadonlySet<HoisterPackageId> = new Set()): HoisterPackageTree => {
+export const hoist = (tree: HoisterPackageTree, packageInfos: ReadonlyArray<HoisterPackageInfo>, nohoist: ReadonlySet<HoisterPackageId> = new Set()): HoisterResultTree => {
   // Make tree copy, which will be mutated by hoisting algorithm
   const treeCopy = cloneTree(tree);
 
@@ -136,18 +137,18 @@ const cloneTree = (tree: HoisterPackageTree): TrackedHoisterPackageTree => {
  *
  * @param tree package tree clone
  */
-const shrinkTree = (tree: TrackedHoisterPackageTree): HoisterPackageTree => {
-  const treeCopy: HoisterPackageTree = {pkgId: tree.pkgId, deps: new Set(), peerDepIds: new Set(tree.origPeerDepIds)};
+const shrinkTree = (tree: TrackedHoisterPackageTree): HoisterResultTree => {
+  const treeCopy: HoisterResultTree = {pkgId: tree.pkgId, deps: new Set()};
 
   const seenNodes = new Set<TrackedHoisterPackageTree>();
 
-  const copySubTree = (srcNode: TrackedHoisterPackageTree, dstNode: HoisterPackageTree) => {
+  const copySubTree = (srcNode: TrackedHoisterPackageTree, dstNode: HoisterResultTree) => {
     if (seenNodes.has(srcNode))
       return;
     seenNodes.add(srcNode);
 
     for (const depNode of srcNode.deps) {
-      const newNode: HoisterPackageTree = {pkgId: depNode.pkgId, deps: new Set(), peerDepIds: new Set(depNode.origPeerDepIds)};
+      const newNode: HoisterResultTree = {pkgId: depNode.pkgId, deps: new Set()};
       dstNode.deps.add(newNode);
       copySubTree(depNode, newNode);
     }
