@@ -133,6 +133,12 @@ While singleton packages aren't a first-class citizen, they can be easily create
 
 See also: [Peer Dependency](#peerdependency)
 
+### Transitive Dependency
+
+A transitive dependency is a dependency of a package you depend on.
+
+Imagine the case of `react`. Your application depends on it (you listed it yourself in your manifest), so it's a direct dependency. But `react` also depends on `prop-types`! That makes `prop-types` a transitive dependency, in that you don't directly declare it.
+
 ### Unplugged Package
 
 In Yarn 2, most packages are kept within their zip archives rather than being unpacked on the disk. The archives are then mounted on the filesystem at runtime, and transparently accessed. The mounts are read-only so that the archives don't get corrupted if something tries to write into them.
