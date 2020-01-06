@@ -304,9 +304,11 @@ const computeHoistCandidates = (rootPkg: TrackedHoisterPackageTree, packages: Re
   // Packages that should be hoisted for sure (they have only 1 version)
   const packagesToHoist = new Set<TrackedHoisterPackageTree>();
   // Names of the packages of hoist candidates
-  const packagesToHoistNames: Map<HoisterPackageName, HoisterPackageId> = new Map();
+  const packagesToHoistNames: Map<HoisterPackageName, TrackedHoisterPackageTree> = new Map();
   // Hoist candidates that has no peer deps or that has all peer deps already hoisted
   const pureHoistCandidates = new Set<TrackedHoisterPackageTree>();
+  // Hoist candidate ids must be unique (it does not matter which one of the package copies we hoist)
+  const hoistCandidateIds = new Set<HoisterPackageId>();
   // Hoist candidates with peer deps
   const hoistCandidatesWithPeerDeps = new Set<TrackedHoisterPackageTree>();
 
@@ -326,20 +328,21 @@ const computeHoistCandidates = (rootPkg: TrackedHoisterPackageTree, packages: Re
     const seenPkgId = seenDepNames.get(name);
 
     // Check rule 1
-    if (!rootPkg.origPeerDepIds.has(pkg.pkgId) && (!seenPkgId || seenPkgId === pkg.pkgId)) {
+    if (!hoistCandidateIds.has(pkg.pkgId) && !rootPkg.origPeerDepIds.has(pkg.pkgId) && (!seenPkgId || seenPkgId === pkg.pkgId)) {
       if (pkg.peerDepIds.size > 0) {
         hoistCandidatesWithPeerDeps.add(pkg);
       } else {
-        const pkgId = packagesToHoistNames.get(name);
-        if (pkgId) {
-          packagesToHoist.delete(pkg);
-          pureHoistCandidates.add(pkg);
+        const hoistCandidate = packagesToHoistNames.get(name);
+        if (hoistCandidate && hoistCandidate.pkgId !== pkg.pkgId) {
+          packagesToHoist.delete(hoistCandidate);
+          pureHoistCandidates.add(hoistCandidate);
           pureHoistCandidates.add(pkg);
         } else {
           packagesToHoist.add(pkg);
-          packagesToHoistNames.set(name, pkg.pkgId);
+          packagesToHoistNames.set(name, pkg);
         }
       }
+      hoistCandidateIds.add(pkg.pkgId);
     }
 
     if (!seenPkgId)
@@ -358,12 +361,12 @@ const computeHoistCandidates = (rootPkg: TrackedHoisterPackageTree, packages: Re
     findHoistCandidates(depNode);
 
   const pureHoistCandidatesWeights: WeightMap = new Map();
-  for (const pkg of packagesToHoist)
+  for (const pkg of pureHoistCandidates)
     pureHoistCandidatesWeights.set(pkg, ancestorMap[pkg.pkgId].size);
 
   // Among all pure hoist candidates choose the heaviest and add them to packages to hoist list
   getHeaviestPackages(pureHoistCandidatesWeights, packages).forEach(pkg => {
-    packagesToHoistNames.set(packages[pkg.pkgId].name, pkg.pkgId);
+    packagesToHoistNames.set(packages[pkg.pkgId].name, pkg);
     packagesToHoist.add(pkg);
   });
 
@@ -398,14 +401,14 @@ const computeHoistCandidates = (rootPkg: TrackedHoisterPackageTree, packages: Re
         // Check that we don't already have the package with the same name but different version
         // among hoist candidates
         const name = packages[peerDepCand.pkgId].name;
-        const hoistedPkgId = packagesToHoistNames.get(name);
+        const hoistedPkg = packagesToHoistNames.get(name);
 
         // Recheck rule 1 for the peer dependent package that is going to be hoisted
-        if (!hoistedPkgId || hoistedPkgId === peerDepCand.pkgId) {
+        if (!hoistedPkg || hoistedPkg.pkgId === peerDepCand.pkgId) {
           // Peer dependent package can be hoisted if all of its peer deps are going to be hoisted
           nextHoistCandidates.add(peerDepCand);
           packagesToHoist.add(peerDepCand);
-          packagesToHoistNames.set(name, peerDepCand.pkgId);
+          packagesToHoistNames.set(name, peerDepCand);
           hoistCandidatesWithPeerDeps.delete(peerDepCand);
         } else {
           // We cannot hoist this package without breaking rule 1, stop trying
