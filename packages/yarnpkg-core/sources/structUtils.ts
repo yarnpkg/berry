@@ -405,19 +405,17 @@ export function slugifyIdent(ident: Ident) {
 }
 
 export function slugifyLocator(locator: Locator) {
-  const protocolIndex = locator.reference.indexOf(`:`);
+  const {protocol, selector} = parseRange(locator.reference);
 
-  const protocol = protocolIndex !== -1
-    ? locator.reference.slice(0, protocolIndex)
+  const humanProtocol = protocol !== null
+    ? protocol.replace(/:$/, ``)
     : `exotic`;
 
-  const version = protocolIndex !== -1
-    ? semver.valid(locator.reference.slice(protocolIndex + 1))
-    : null;
+  const humanVersion = semver.valid(selector);
 
-  const humanReference = version !== null
-    ? `${protocol}-${version}`
-    : protocol;
+  const humanReference = humanVersion !== null
+    ? `${humanProtocol}-${humanVersion}`
+    : `${humanProtocol}`;
 
   // 10 hex characters means that 47 different entries have 10^-9 chances of
   // causing a hash collision. Since this hash is joined with the package name

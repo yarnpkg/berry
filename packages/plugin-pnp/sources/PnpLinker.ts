@@ -161,8 +161,12 @@ class PnpInstaller implements Installer {
       if (ignorePatterns.length === 0)
         return null;
 
+
       return ignorePatterns.map(pattern => {
-        return `(${mm.makeRe(pattern).source})`;
+        return `(${mm.makeRe(pattern, {
+          // @ts-ignore
+          windows: false,
+        }).source})`;
       }).join(`|`);
     };
 

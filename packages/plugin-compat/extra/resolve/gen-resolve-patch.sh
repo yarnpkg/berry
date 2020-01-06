@@ -22,7 +22,7 @@ rm -f "$PATCHFILE" && touch "$PATCHFILE"
 echo 'export const patch =' \
   >> "$PATCHFILE"
 (git diff --no-index "$TEMP_DIR"/orig/package "$TEMP_DIR"/patched/package) \
-  | perl -p -e"s#^--- #semver exclusivity ^1.9\n--- #" \
+  | perl -p -e"s#^--- #semver exclusivity >=1.9\n--- #" \
   | perl -p -e"s#$TEMP_DIR/orig/package##" \
   | perl -p -e"s#$TEMP_DIR/patched/package##" \
   > "$TEMP_DIR"/patch.tmp || true
