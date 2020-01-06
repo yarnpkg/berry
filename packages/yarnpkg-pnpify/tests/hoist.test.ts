@@ -6,6 +6,11 @@ describe('hoist', () => {
     // should be hoisted to:
     // . → A
     //   → B
+    const packages = [
+      {name: '.'},
+      {name: 'A'},
+      {name: 'B'},
+    ];
     const tree = {
       pkgId: 0, // .
       deps: new Set([{
@@ -19,11 +24,6 @@ describe('hoist', () => {
       }]),
       peerDepIds: new Set<number>(),
     };
-    const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-    ];
     const result = hoist(tree, packages);
     expect(result).toEqual({
       pkgId: 0, // .
@@ -41,6 +41,12 @@ describe('hoist', () => {
     // . → A → B@X
     //   → B@Y
     // should not be changed
+    const packages = [
+      {name: '.'},
+      {name: 'A'},
+      {name: 'B'},
+      {name: 'B'},
+    ];
     const tree = {
       pkgId: 0, // .
       deps: new Set([{
@@ -58,12 +64,6 @@ describe('hoist', () => {
       }]),
       peerDepIds: new Set<number>(),
     };
-    const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-      {name: 'B'},
-    ];
     const result = hoist(tree, packages);
     expect(result).toEqual({
       pkgId: 0, // .
@@ -86,6 +86,13 @@ describe('hoist', () => {
     // . → A
     //   → B@X
     //   → C → B@Y
+    const packages = [
+      {name: '.'},
+      {name: 'A'},
+      {name: 'B'},
+      {name: 'C'},
+      {name: 'B'},
+    ];
     const tree = {
       pkgId: 0, // .
       deps: new Set([{
@@ -107,13 +114,6 @@ describe('hoist', () => {
       }]),
       peerDepIds: new Set<number>(),
     };
-    const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-      {name: 'C'},
-      {name: 'B'},
-    ];
     const result = hoist(tree, packages);
     expect(result).toEqual({
       pkgId: 0, // .
@@ -142,6 +142,14 @@ describe('hoist', () => {
     // . → A → B@X → C@Y
     //   → B@Y
     //   → C@X
+    const packages = [
+      {name: '.'},
+      {name: 'A'},
+      {name: 'B'},
+      {name: 'B'},
+      {name: 'C'},
+      {name: 'C'},
+    ];
     const tree = {
       pkgId: 0, // .
       deps: new Set([{
@@ -171,14 +179,6 @@ describe('hoist', () => {
       }]),
       peerDepIds: new Set<number>(),
     };
-    const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-      {name: 'B'},
-      {name: 'C'},
-      {name: 'C'},
-    ];
     const result = hoist(tree, packages);
     expect(result).toEqual({
       pkgId: 0, // .
@@ -210,6 +210,14 @@ describe('hoist', () => {
     // . → . → A → B@X → C@Y
     //   → B@Y
     //   → C@X
+    const packages = [
+      {name: '.'},
+      {name: 'A'},
+      {name: 'B'},
+      {name: 'B'},
+      {name: 'C'},
+      {name: 'C'},
+    ];
     const tree = {
       pkgId: 0, // .
       deps: new Set([{
@@ -251,14 +259,6 @@ describe('hoist', () => {
       }]),
       peerDepIds: new Set<number>(),
     };
-    const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-      {name: 'B'},
-      {name: 'C'},
-      {name: 'C'},
-    ];
     const result = hoist(tree, packages);
     expect(result).toEqual({
       pkgId: 0, // .
@@ -295,6 +295,17 @@ describe('hoist', () => {
     //   → F
     //   → G
     //   → B@Y
+    const packages = [
+      {name: '.'},
+      {name: 'A'},
+      {name: 'B'},
+      {name: 'B'},
+      {name: 'C'},
+      {name: 'D'},
+      {name: 'E'},
+      {name: 'F'},
+      {name: 'G'},
+    ];
     const tree = {
       pkgId: 0, // .
       deps: new Set([{
@@ -344,17 +355,6 @@ describe('hoist', () => {
       }]),
       peerDepIds: new Set<number>(),
     };
-    const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-      {name: 'B'},
-      {name: 'C'},
-      {name: 'D'},
-      {name: 'E'},
-      {name: 'F'},
-      {name: 'G'},
-    ];
     const result = hoist(tree, packages);
     expect(result).toEqual({
       pkgId: 0, // .
@@ -398,6 +398,14 @@ describe('hoist', () => {
     //     → D@X
     //   → C
     //   → D@Y
+    const packages = [
+      {name: '.'},
+      {name: 'A'},
+      {name: 'B'},
+      {name: 'C'},
+      {name: 'D'},
+      {name: 'D'},
+    ];
     const tree = {
       pkgId: 0, // .
       deps: new Set([{
@@ -425,15 +433,6 @@ describe('hoist', () => {
       }]),
       peerDepIds: new Set<number>(),
     };
-
-    const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-      {name: 'C'},
-      {name: 'D'},
-      {name: 'D'},
-    ];
     const result = hoist(tree, packages);
     expect(result).toEqual({
       pkgId: 0, // .
@@ -456,69 +455,119 @@ describe('hoist', () => {
     });
   });
 
-  // it('should honor unhoisted peer dependencies', () => {
-  //   // . → A ⟶ B@X
-  //   //       → C@X → B@Y
-  //   //   → B@X
-  //   //   → C@Y
-  //   // Should be hoisted to:
-  //   // . → A
-  //   //     → C@X → B@Y
-  //   //   → B@X
-  //   //   → C@Y
-  //   const packages = [
-  //     {name: '.', weight: 1},
-  //     {name: 'A', weight: 1},
-  //     {name: 'B', weight: 1},
-  //     {name: 'B', weight: 1},
-  //     {name: 'C', weight: 1},
-  //     {name: 'C', weight: 1},
-  //   ];
-  //   const tree = [
-  //     {deps: new Set([1, 2, 5]), peerDeps: new Set<number>()},
-  //     {deps: new Set([4]), peerDeps: new Set<number>([2])},
-  //     {deps: new Set<number>(), peerDeps: new Set<number>()},
-  //     {deps: new Set<number>(), peerDeps: new Set<number>()},
-  //     {deps: new Set<number>([3]), peerDeps: new Set<number>()},
-  //     {deps: new Set<number>(), peerDeps: new Set<number>()},
-  //   ];
-  //   const result = hoist(tree, packages);
-  //   expect(sortDeps(result)).toEqual([
-  //     new Set([1, 2, 5]),
-  //     new Set([4]),
-  //     new Set(),
-  //     new Set(),
-  //     new Set([3]),
-  //     new Set(),
-  //   ]);
-  // });
+  it('should honor unhoisted peer dependencies', () => {
+    // . → A ⟶ B@X
+    //     → C@X → B@Y
+    //   → B@X
+    //   → C@Y
+    // should be hoisted to:
+    // . → A
+    //     → C@X → B@Y
+    //   → B@X
+    //   → C@Y
+    const packages = [
+      {name: '.'},
+      {name: 'A'},
+      {name: 'B'},
+      {name: 'B'},
+      {name: 'C'},
+      {name: 'C'},
+    ];
+    const tree = {
+      pkgId: 0, // .
+      deps: new Set([{
+        pkgId: 1, // A
+        deps: new Set([{
+          pkgId: 4, // C@X
+          deps: new Set([{
+            pkgId: 3, // B@Y
+            deps: new Set<HoisterPackageTree>(),
+            peerDepIds: new Set<number>(),
+          }]),
+          peerDepIds: new Set<number>(),
+        }]),
+        peerDepIds: new Set([
+          2, // B@X
+        ]),
+      }, {
+        pkgId: 2, // B@X
+        deps: new Set<HoisterPackageTree>(),
+        peerDepIds: new Set<number>(),
+      }, {
+        pkgId: 5, // C@Y
+        deps: new Set<HoisterPackageTree>(),
+        peerDepIds: new Set<number>(),
+      }]),
+      peerDepIds: new Set<number>(),
+    };
+    const result = hoist(tree, packages);
+    expect(result).toEqual({
+      pkgId: 0,
+      deps: new Set([{
+        pkgId: 1, // A
+        deps: new Set([{
+          pkgId: 4,
+          deps: new Set([{
+            pkgId: 3,
+            deps: new Set(),
+          }]),
+        }]),
+      }, {
+        pkgId: 2, // B@X
+        deps: new Set(),
+      }, {
+        pkgId: 5, // C@Y
+        deps: new Set(),
+      }]),
+    });
+  });
 
-  // it('should honor peer dependency promise for the same version of dependency', () => {
-  //   // . → A → B → C
-  //   //   ⟶ B
-  //   // Should be hoisted to (B@X must not be hoisted to the top):
-  //   // . → A → B
-  //   //   → C
-  //   const packages = [
-  //     {name: '.', weight: 1},
-  //     {name: 'A', weight: 1},
-  //     {name: 'B', weight: 1},
-  //     {name: 'C', weight: 1},
-  //   ];
-  //   const tree = [
-  //     {deps: new Set([1]), peerDeps: new Set<number>([2])},
-  //     {deps: new Set([2]), peerDeps: new Set<number>()},
-  //     {deps: new Set([3]), peerDeps: new Set<number>()},
-  //     {deps: new Set<number>(), peerDeps: new Set<number>()},
-  //   ];
-  //   const result = hoist(tree, packages);
-  //   expect(sortDeps(result)).toEqual([
-  //     new Set([1, 3]),
-  //     new Set([2]),
-  //     new Set(),
-  //     new Set(),
-  //   ]);
-  // });
+  it('should honor peer dependency promise for the same version of dependency', () => {
+    // . → A → B → C
+    //   ⟶ B
+    // Should be hoisted to (B@X must not be hoisted to the top):
+    // . → A → B
+    //   → C
+    const packages = [
+      {name: '.'},
+      {name: 'A'},
+      {name: 'B'},
+      {name: 'C'},
+    ];
+    const tree = {
+      pkgId: 0, // .
+      deps: new Set([{
+        pkgId: 1, // A
+        deps: new Set([{
+          pkgId: 2, // B
+          deps: new Set([{
+            pkgId: 3, // C
+            deps: new Set<HoisterPackageTree>(),
+            peerDepIds: new Set<number>(),
+          }]),
+          peerDepIds: new Set<number>(),
+        }]),
+        peerDepIds: new Set<number>(),
+      }]),
+      peerDepIds: new Set([
+        2, // B
+      ]),
+    };
+    const result = hoist(tree, packages);
+    expect(result).toEqual({
+      pkgId: 0, // .
+      deps: new Set([{
+        pkgId: 1, // A
+        deps: new Set([{
+          pkgId: 2, // B
+          deps: new Set(),
+        }]),
+      }, {
+        pkgId: 3, // C
+        deps: new Set(),
+      }]),
+    });
+  });
 
   it('should hoist different copies of a package independently', () => {
     // . → A → B@X → C@X
