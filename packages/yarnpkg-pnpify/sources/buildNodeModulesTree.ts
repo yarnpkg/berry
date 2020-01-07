@@ -62,7 +62,6 @@ export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOption
 export const serializeLocator = (locator: PackageLocator): LocatorKey => `${locator.name}:${locator.reference}`;
 
 export type NodeModulesLocatorMap = Map<LocatorKey, {
-  size: number;
   target: PortablePath;
   linkType: LinkType;
   locations: PortablePath[];

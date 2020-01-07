@@ -311,7 +311,6 @@ const writeLocatorState = async (locatorStatePath: PortablePath, locatorMap: Nod
   locatorState += '  version: 1\n';
   for (const [locator, value] of locatorMap.entries()) {
     locatorState += `\n"${locator}":\n`;
-    locatorState += `  size: ${value.size}\n`;
     locatorState += `  locations:\n${Array.from(value.locations).map(loc => `    - "${loc}"\n`).join('')}`;
   }
   await xfs.writeFilePromise(locatorStatePath, locatorState);
@@ -323,7 +322,6 @@ const readLocatorState = async (locatorStatePath: PortablePath): Promise<NodeMod
   delete locatorState.__metadata;
   for (const [key, val] of Object.entries(locatorState)) {
     locatorMap.set(key, {
-      size: +val.size,
       target: PortablePath.dot,
       linkType: LinkType.HARD,
       locations: val.locations,
@@ -335,7 +333,7 @@ const readLocatorState = async (locatorStatePath: PortablePath): Promise<NodeMod
 
 const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean, excludeNodeModules?: boolean}): Promise<any> => {
   try {
-    if (options && !options.innerLoop) {
+    if (!options || !options.innerLoop) {
       const stats = await xfs.lstatPromise(dir);
       if (!stats.isDirectory()) {
         await xfs.unlinkPromise(dir);
