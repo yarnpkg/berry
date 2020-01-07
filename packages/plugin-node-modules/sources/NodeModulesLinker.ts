@@ -456,7 +456,7 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
         await removeDir(dstDir, {excludeNodeModules: keepNodeModules});
         if (linkType === LinkType.SOFT) {
           await xfs.mkdirpPromise(ppath.dirname(dstDir));
-          await xfs.symlinkPromise(srcDir, dstDir);
+          await xfs.symlinkPromise(ppath.relative(ppath.dirname(dstDir), srcDir), dstDir);
         } else {
           const archivePath = getArchivePath(srcDir);
           if (archivePath) {
