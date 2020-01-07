@@ -372,31 +372,27 @@ const computeHoistCandidates = (rootPkg: TrackedHoisterPackageTree, packages: Re
   let newHoistCandidates = packagesToHoist;
   // Loop until new hoist candidates appear
   while (newHoistCandidates.size > 0) {
-    const newHoistCandidateIds = new Set<HoisterPackageId>();
-    for (const cand of newHoistCandidates)
-      newHoistCandidateIds.add(cand.pkgId);
-
     let nextHoistCandidates = new Set<TrackedHoisterPackageTree>();
 
     for (const peerDepCand of hoistCandidatesWithPeerDeps) {
       // Peer dependencies that are going to be hoisted to the top, or were hoisted above the top
-      const nonHoistedPeerDeps = peerDepCand.peerDepIds;
+      const nonHoistedPeerDepIds = peerDepCand.peerDepIds;
 
       /* eslint-disable arca/curly */
-      if (nonHoistedPeerDeps.size < newHoistCandidates.size) {
-        for (const peerDepId of nonHoistedPeerDeps)
-          if (newHoistCandidateIds.has(peerDepId))
+      if (nonHoistedPeerDepIds.size < newHoistCandidates.size) {
+        for (const peerDepId of nonHoistedPeerDepIds)
+          if (hoistCandidateIds.has(peerDepId))
             // Remove all the packages that are going to be hoisted from current peer deps
-            nonHoistedPeerDeps.delete(peerDepId);
+            nonHoistedPeerDepIds.delete(peerDepId);
       } else {
-        for (const candidateId of newHoistCandidateIds)
-          if (nonHoistedPeerDeps.has(candidateId))
+        for (const candidateId of hoistCandidateIds)
+          if (nonHoistedPeerDepIds.has(candidateId))
             // Remove all the packages that are going to be hoisted from current peer deps
-            nonHoistedPeerDeps.delete(candidateId);
+            nonHoistedPeerDepIds.delete(candidateId);
       }
       /* eslint-enable arca/curly */
 
-      if (nonHoistedPeerDeps.size === 0) {
+      if (nonHoistedPeerDepIds.size === 0) {
         // Check that we don't already have the package with the same name but different version
         // among hoist candidates
         const name = packages[peerDepCand.pkgId].name;
@@ -406,6 +402,7 @@ const computeHoistCandidates = (rootPkg: TrackedHoisterPackageTree, packages: Re
         if (!hoistedPkg || hoistedPkg.pkgId === peerDepCand.pkgId) {
           // Peer dependent package can be hoisted if all of its peer deps are going to be hoisted
           nextHoistCandidates.add(peerDepCand);
+          hoistCandidateIds.add(peerDepCand.pkgId);
           packagesToHoist.add(peerDepCand);
           packagesToHoistNames.set(name, peerDepCand);
           hoistCandidatesWithPeerDeps.delete(peerDepCand);
