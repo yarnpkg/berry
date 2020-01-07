@@ -5,15 +5,13 @@ import {structUtils, Report, LocatorHash, Manifest}                    from '@ya
 import {NodeFS, VirtualFS, ZipOpenFS}                                  from '@yarnpkg/fslib';
 import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS} from '@yarnpkg/fslib';
 import {parseSyml}                                                     from '@yarnpkg/parsers';
-import {getArchivePath, serializeLocator}                              from '@yarnpkg/pnpify';
+import {serializeLocator}                                              from '@yarnpkg/pnpify';
 import {NodeModulesLocatorMap, buildLocatorMap, buildNodeModulesTree}  from '@yarnpkg/pnpify';
 
 import {PackageRegistry, makeRuntimeApi}                               from '@yarnpkg/pnp';
 import {UsageError}                                                    from 'clipanion';
 import fs                                                              from 'fs';
 import mm                                                              from 'micromatch';
-
-import unzipper                                                        from 'unzipper';
 
 const NODE_MODULES = toFilename('node_modules');
 const LOCATOR_STATE_FILE = toFilename('.yarn-state.yml');
@@ -458,29 +456,7 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
           await xfs.mkdirpPromise(ppath.dirname(dstDir));
           await xfs.symlinkPromise(ppath.relative(ppath.dirname(dstDir), srcDir), dstDir);
         } else {
-          const archivePath = getArchivePath(srcDir);
-          if (archivePath) {
-            const prefixInsideArchive = srcDir.substring(archivePath.length);
-            await xfs.createReadStream(archivePath)
-              .pipe(unzipper.Parse({concurrency: 8}))
-              .on('entry', (entry: any) => {
-                if (entry.path.length <= prefixInsideArchive.length) {
-                  entry.autodrain();
-                } else {
-                  const entryName = entry.path.substring(prefixInsideArchive.length);
-                  const fullPath = ppath.join(dstDir, entryName);
-                  if (entry.type === 'Directory') {
-                    xfs.mkdirpSync(fullPath, {chmod: 0o777});
-                    entry.autodrain();
-                  } else {
-                    xfs.mkdirpSync(ppath.dirname(fullPath), {chmod: 0o777});
-                    entry.pipe(fs.createWriteStream(fullPath));
-                  }
-                }
-              }).promise();
-          } else {
-            await xfs.copyPromise(dstDir, srcDir, {baseFs});
-          }
+          await xfs.copyPromise(dstDir, srcDir, {baseFs});
         }
       } catch (e) {
         e.message = `While persisting ${srcDir} -> ${dstDir} ${e.message}`;
