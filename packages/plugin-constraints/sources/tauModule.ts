@@ -1,13 +1,13 @@
 /// <reference path="./tauProlog.d.ts"/>
 
-import {Project}      from '@yarnpkg/core';
-import {PortablePath} from '@yarnpkg/fslib';
-import getPath        from 'lodash/get';
-import pl             from 'tau-prolog';
-import vm             from 'vm';
+import {Project, structUtils} from '@yarnpkg/core';
+import {PortablePath}         from '@yarnpkg/fslib';
+import getPath                from 'lodash/get';
+import pl                     from 'tau-prolog';
+import vm                     from 'vm';
 
 // eslint-disable-next-line @typescript-eslint/camelcase
-const {is_atom: isAtom, is_instantiated_list: isInstantiatedList} = pl.type;
+const {is_atom: isAtom, is_variable: isVariable, is_instantiated_list: isInstantiatedList} = pl.type;
 
 function prependGoals(thread: pl.type.Thread, point: pl.type.State, goals: pl.type.Term<number, string>[]): void {
   thread.prepend(goals.map(
@@ -31,6 +31,36 @@ function getProject(thread: pl.type.Thread): Project {
 }
 
 const tauModule = new pl.type.Module(`constraints`, {
+  [`project_workspaces_by_descriptor/3`]: (thread, point, atom) => {
+    const [descriptorIdent, descriptorRange, workspaceCwd] = atom.args;
+
+    if (!isAtom(descriptorIdent) || !isAtom(descriptorRange)) {
+      thread.throwError(pl.error.instantiation(atom.indicator));
+      return;
+    }
+
+    const ident = structUtils.parseIdent(descriptorIdent.id);
+    const descriptor = structUtils.makeDescriptor(ident, descriptorRange.id);
+
+    const project = getProject(thread);
+    const workspaces = project.findWorkspacesByDescriptor(descriptor);
+
+    if (isVariable(workspaceCwd)) {
+      for (const workspace of workspaces) {
+        prependGoals(thread, point, [new pl.type.Term(`=`, [
+          workspaceCwd,
+          new pl.type.Term(String(workspace.relativeCwd)),
+        ])]);
+      }
+    }
+
+    if (isAtom(workspaceCwd)) {
+      if (workspaces.find(workspace => workspace.relativeCwd === workspaceCwd.id)) {
+        thread.success(point);
+      }
+    }
+  },
+
   [`workspace_field/3`]: (thread, point, atom) => {
     const [workspaceCwd, fieldName, fieldValue] = atom.args;
 
@@ -110,6 +140,7 @@ const tauModule = new pl.type.Module(`constraints`, {
     }
   },
 }, [
+  `project_workspaces_by_descriptor/3`,
   `workspace_field/3`,
   `workspace_field_test/3`,
   `workspace_field_test/4`,

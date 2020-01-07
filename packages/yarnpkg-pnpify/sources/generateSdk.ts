@@ -41,7 +41,9 @@ const addVSCodeWorkspaceSettings = async (projectRoot: PortablePath, settings: a
   const patched = `${CJSON.stringify({...data, ...settings}, null, 2)}\n`;
 
   await xfs.mkdirpPromise(ppath.dirname(settingsPath));
-  await xfs.changeFilePromise(settingsPath, patched);
+  await xfs.changeFilePromise(settingsPath, patched, {
+    automaticNewlines: true,
+  });
 };
 
 const generateTypescriptWrapper = async (projectRoot: PortablePath, target: PortablePath) => {

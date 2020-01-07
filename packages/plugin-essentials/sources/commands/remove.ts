@@ -87,10 +87,16 @@ export default class RemoveCommand extends BaseCommand {
       }
     }
 
-    if (unreferencedPackages.length > 1)
-      throw new UsageError(`Packages ${unreferencedPackages.join(`, `)} aren't referenced by any workspace`);
+    const arent = unreferencedPackages.length > 1
+      ? `aren't`
+      : `isn't`;
+
+    const which = this.all
+      ? `any`
+      : `this`;
+
     if (unreferencedPackages.length > 0)
-      throw new UsageError(`Package ${unreferencedPackages[0]} isn't referenced by any workspace`);
+      throw new UsageError(`Package ${unreferencedPackages.join(`, `)} ${arent} referenced by ${which} workspace`);
 
     if (hasChanged) {
       await configuration.triggerMultipleHooks(

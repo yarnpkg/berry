@@ -822,7 +822,7 @@ describe(`Plug'n'Play`, () => {
 
         const pnpJs = await readFile(`${path}/.pnp.js`, `utf8`);
 
-        expect(pnpJs.replace(/\n.*/s, ``)).toMatch(/^#!foo$/);
+        expect(pnpJs.replace(/(\r\n|\r|\n).*/s, ``)).toMatch(/^#!foo$/);
       },
     ),
   );
@@ -1316,6 +1316,10 @@ describe(`Plug'n'Play`, () => {
 
         await expect(source(`require('resolve').sync('resolve')`)).resolves.toEqual(
           await source(`require.resolve('resolve')`),
+        );
+
+        await expect(source(`require('resolve').sync('resolve/package.json')`)).resolves.toEqual(
+          await source(`require.resolve('resolve/package.json')`),
         );
       },
     ),

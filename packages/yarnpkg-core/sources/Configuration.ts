@@ -6,7 +6,6 @@ import {UsageError}                                            from 'clipanion';
 import isCI                                                    from 'is-ci';
 import semver                                                  from 'semver';
 import {PassThrough, Writable}                                 from 'stream';
-import supportsColor                                           from 'supports-color';
 import {tmpNameSync}                                           from 'tmp';
 
 import {Manifest}                                              from './Manifest';
@@ -25,8 +24,14 @@ import * as nodeUtils                                          from './nodeUtils
 import * as structUtils                                        from './structUtils';
 import {IdentHash, Package}                                    from './types';
 
-// @ts-ignore
-const ctx: any = new chalk.constructor({enabled: true});
+const chalkOptions = process.env.GITHUB_ACTIONS
+  ? {level: 2}
+  : chalk.supportsColor
+    ? {level: chalk.supportsColor.level}
+    : {level: 0};
+
+const supportsColor = chalkOptions.level !== 0;
+const chalkInstance = new chalk.Instance(chalkOptions);
 
 const IGNORED_ENV_VARIABLES = new Set([
   // "binFolder" is the magic location where the parent process stored the
@@ -65,15 +70,28 @@ export enum FormatType {
   RANGE = 'RANGE',
   REFERENCE = 'REFERENCE',
   SCOPE = 'SCOPE',
+  ADDED = 'ADDED',
+  REMOVED = 'REMOVED',
 };
 
-export const formatColors = new Map([
+export const formatColors = chalkOptions.level >= 3 ? new Map([
   [FormatType.NAME, `#d7875f`],
   [FormatType.RANGE, `#00afaf`],
   [FormatType.REFERENCE, `#87afff`],
-  [FormatType.NUMBER, `yellow`],
-  [FormatType.PATH, `cyan`],
+  [FormatType.NUMBER, `#ffd700`],
+  [FormatType.PATH, `#d75fd7`],
   [FormatType.SCOPE, `#d75f00`],
+  [FormatType.ADDED, `#5faf00`],
+  [FormatType.REMOVED, `#d70000`],
+]) : new Map([
+  [FormatType.NAME, 173],
+  [FormatType.RANGE, 37],
+  [FormatType.REFERENCE, 111],
+  [FormatType.NUMBER, 220],
+  [FormatType.PATH, 170],
+  [FormatType.SCOPE, 166],
+  [FormatType.ADDED, 70],
+  [FormatType.REMOVED, 160],
 ]);
 
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
@@ -194,7 +212,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableColors: {
     description: `If true, the CLI is allowed to use colors in its output`,
     type: SettingsType.BOOLEAN,
-    default: !!supportsColor.stdout,
+    default: supportsColor,
     defaultText: `<dynamic>`,
   },
   enableInlineBuilds: {
@@ -751,7 +769,9 @@ export class Configuration {
     if (!patched)
       return;
 
-    await xfs.changeFilePromise(configurationPath, stringifySyml(current));
+    await xfs.changeFilePromise(configurationPath, stringifySyml(current), {
+      automaticNewlines: true,
+    });
   }
 
   static async updateHomeConfiguration(patch: any) {
@@ -999,6 +1019,26 @@ export class Configuration {
     return value;
   }
 
+  async firstHook<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => Promise<V>) | undefined, ...args: U): Promise<Exclude<V, void> | null> {
+    for (const plugin of this.plugins.values()) {
+      const hooks = plugin.hooks as HooksDefinition;
+      if (!hooks)
+        continue;
+
+      const hook = get(hooks);
+      if (!hook)
+        continue;
+
+      const ret = await hook(...args);
+      if (typeof ret !== `undefined`) {
+        // @ts-ignore
+        return ret;
+      }
+    }
+
+    return null;
+  }
+
   format(text: string, colorRequest: FormatType | string) {
     if (!this.get(`enableColors`))
       return text;
@@ -1007,9 +1047,11 @@ export class Configuration {
     if (typeof color === `undefined`)
       color = colorRequest;
 
-    const fn = color.startsWith(`#`)
-      ? ctx.hex(color)
-      : ctx[color];
+    const fn = typeof color === `number`
+      ? chalkInstance.ansi256(color)
+      : color.startsWith(`#`)
+        ? chalkInstance.hex(color)
+        : (chalkInstance as any)[color];
 
     return fn(text);
   }

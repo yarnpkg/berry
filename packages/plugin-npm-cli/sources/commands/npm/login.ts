@@ -103,20 +103,17 @@ async function getCredentials(prompt: any) {
     };
   }
 
-  const {username, password} = await prompt([
-    {
-      type: `input`,
-      name: `username`,
-      message: `Username:`,
-      validate: (input: string) => validateRequiredInput(input, `Username`),
-    },
-    {
-      type: `password`,
-      name: `password`,
-      message: `Password:`,
-      validate: (input: string) => validateRequiredInput(input, `Password`),
-    },
-  ]);
+  const {username, password} = await prompt([{
+    type: `input`,
+    name: `username`,
+    message: `Username:`,
+    validate: (input: string) => validateRequiredInput(input, `Username`),
+  }, {
+    type: `password`,
+    name: `password`,
+    message: `Password:`,
+    validate: (input: string) => validateRequiredInput(input, `Password`),
+  }]);
 
   return {
     name: username,

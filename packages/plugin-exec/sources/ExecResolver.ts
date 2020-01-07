@@ -3,7 +3,6 @@ import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
 import {LinkType}                                        from '@yarnpkg/core';
 import {miscUtils, structUtils}                          from '@yarnpkg/core';
 import {npath}                                           from '@yarnpkg/fslib';
-import querystring                                       from 'querystring';
 
 import {PROTOCOL}                                        from './constants';
 
@@ -27,15 +26,16 @@ export class ExecResolver implements Resolver {
   }
 
   bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
-    if (descriptor.range.includes(`?`))
-      return descriptor;
-
-    return structUtils.makeDescriptor(descriptor, `${descriptor.range}?${querystring.stringify({
+    return structUtils.bindDescriptor(descriptor, {
       locator: structUtils.stringifyLocator(fromLocator),
-    })}`);
+    });
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    return [];
+  }
+
+  async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
     let path = descriptor.range;
 
     if (path.startsWith(PROTOCOL))

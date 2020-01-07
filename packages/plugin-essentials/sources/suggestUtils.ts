@@ -263,7 +263,7 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
 
   let candidateLocators;
   try {
-    candidateLocators = await resolver.getCandidates(latestDescriptor, resolverOptions);
+    candidateLocators = await resolver.getCandidates(latestDescriptor, new Map(), resolverOptions);
   } catch {
     return null;
   }

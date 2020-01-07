@@ -1,6 +1,14 @@
 import {PortablePath, npath} from '@yarnpkg/fslib';
 import {Readable, Transform} from 'stream';
 
+export function escapeRegExp(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+export function assertNever(arg: never): never {
+  throw new Error(`Assertion failed: Unexpected object '${arg}'`);
+}
+
 export function getArrayWithDefault<K, T>(map: Map<K, Array<T>>, key: K) {
   let value = map.get(key);
 
@@ -31,8 +39,8 @@ export function getMapWithDefault<K, MK, MV>(map: Map<K, Map<MK, MV>>, key: K) {
 // Executes a chunk of code and calls a cleanup function once it returns (even
 // if it throws an exception)
 
-export async function releaseAfterUseAsync<T>(fn: () => Promise<T>, cleanup?: () => any) {
-  if (!cleanup)
+export async function releaseAfterUseAsync<T>(fn: () => Promise<T>, cleanup?: (() => any) | null) {
+  if (cleanup == null)
     return await fn();
 
   try {

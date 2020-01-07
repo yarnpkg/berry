@@ -1,13 +1,13 @@
-import {BaseCommand}                                         from '@yarnpkg/cli';
-import {Configuration, IdentHash, Ident, Project, Workspace} from '@yarnpkg/core';
-import {MessageName, StreamReport, AllDependencies, Report}  from '@yarnpkg/core';
-import {structUtils}                                         from '@yarnpkg/core';
-import {Command}                                             from 'clipanion';
-import getPath                                               from 'lodash/get';
-import setPath                                               from 'lodash/set';
-import unsetPath                                             from 'lodash/unset';
+import {BaseCommand}                                                    from '@yarnpkg/cli';
+import {Configuration, IdentHash, Ident, Project, Workspace, miscUtils} from '@yarnpkg/core';
+import {MessageName, StreamReport, AllDependencies, Report}             from '@yarnpkg/core';
+import {structUtils}                                                    from '@yarnpkg/core';
+import {Command}                                                        from 'clipanion';
+import getPath                                                          from 'lodash/get';
+import setPath                                                          from 'lodash/set';
+import unsetPath                                                        from 'lodash/unset';
 
-import {Constraints, EnforcedDependency, EnforcedField}      from '../Constraints';
+import {Constraints, EnforcedDependency, EnforcedField}                 from '../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsCheckCommand extends BaseCommand {
@@ -35,43 +35,49 @@ export default class ConstraintsCheckCommand extends BaseCommand {
 
   @Command.Path(`constraints`)
   async execute() {
-    let report: StreamReport;
-
-    let fixPass = 0;
-    let hasFixes = false;
-
-    do {
-      hasFixes = false;
-
+    for (let t = 0; t < 10; ++t) {
       const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
       const {project} = await Project.find(configuration, this.context.cwd);
       const constraints = await Constraints.find(project);
 
-      report = await StreamReport.start({
+      const toSave = new Set<Workspace>();
+
+      const report = await StreamReport.start({
         configuration,
         stdout: this.context.stdout,
       }, async report => {
         const result = await constraints.process();
 
-        hasFixes = await processDependencyConstraints(result.enforcedDependencies, {
+        await processDependencyConstraints(toSave, result.enforcedDependencies, {
           fix: this.fix,
           configuration,
           report,
-        }) || hasFixes;
+        });
 
-        hasFixes = await processFieldConstraints(result.enforcedFields, {
+        await processFieldConstraints(toSave, result.enforcedFields, {
           fix: this.fix,
           configuration,
           report,
-        }) || hasFixes;
+        });
+
+        for (const workspace of toSave) {
+          workspace.persistManifest();
+        }
       });
-    } while (this.fix && fixPass < 10 && hasFixes && !report.hasErrors());
 
-    return report.exitCode();
+      if (report.hasErrors())
+        return report.exitCode();
+
+      if (!this.fix || toSave.size > 0) {
+        return 0;
+      }
+    }
+
+    return 1;
   }
 }
 
-async function processDependencyConstraints(enforcedDependencies: Array<EnforcedDependency>, {configuration, fix, report}: {configuration: Configuration, fix: boolean, report: Report}) {
+async function processDependencyConstraints(toSave: Set<Workspace>, enforcedDependencies: Array<EnforcedDependency>, {configuration, fix, report}: {configuration: Configuration, fix: boolean, report: Report}) {
   let hasFixes = false;
 
   const allIdents: Map<IdentHash, Ident> = new Map();
@@ -114,6 +120,7 @@ async function processDependencyConstraints(enforcedDependencies: Array<Enforced
             if (!dependencyDescriptor) {
               if (fix) {
                 workspace.manifest[dependencyType].set(dependencyIdent.identHash, structUtils.makeDescriptor(dependencyIdent, expectedRange));
+                toSave.add(workspace);
                 hasFixes = true;
               } else {
                 report.reportError(MessageName.CONSTRAINTS_MISSING_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} (via ${structUtils.prettyRange(configuration, expectedRange)}), but doesn't (in ${dependencyType})`);
@@ -121,6 +128,7 @@ async function processDependencyConstraints(enforcedDependencies: Array<Enforced
             } else if (dependencyDescriptor.range !== expectedRange) {
               if (fix) {
                 workspace.manifest[dependencyType].set(dependencyIdent.identHash, structUtils.makeDescriptor(dependencyIdent, expectedRange));
+                toSave.add(workspace);
                 hasFixes = true;
               } else {
                 report.reportError(MessageName.CONSTRAINTS_INCOMPATIBLE_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} via ${structUtils.prettyRange(configuration, expectedRange)}, but uses ${structUtils.prettyRange(configuration, dependencyDescriptor.range)} instead (in ${dependencyType})`);
@@ -130,6 +138,7 @@ async function processDependencyConstraints(enforcedDependencies: Array<Enforced
             if (dependencyDescriptor) {
               if (fix) {
                 workspace.manifest[dependencyType].delete(dependencyIdent.identHash);
+                toSave.add(workspace);
                 hasFixes = true;
               } else {
                 report.reportError(MessageName.CONSTRAINTS_EXTRANEOUS_DEPENDENCY, `${structUtils.prettyWorkspace(configuration, workspace)} has an extraneous dependency on ${structUtils.prettyIdent(configuration, dependencyIdent)} (in ${dependencyType})`);
@@ -144,19 +153,14 @@ async function processDependencyConstraints(enforcedDependencies: Array<Enforced
   return hasFixes;
 }
 
-async function processFieldConstraints(enforcedFields: Array<EnforcedField>, {configuration, fix, report}: {configuration: Configuration, fix: boolean, report: Report}) {
+async function processFieldConstraints(toSave: Set<Workspace>, enforcedFields: Array<EnforcedField>, {configuration, fix, report}: {configuration: Configuration, fix: boolean, report: Report}) {
   let hasFixes = false;
 
   const byWorkspaces: Map<Workspace, Map<string, Set<string | null>>> = new Map();
 
   for (const {workspace, fieldPath, fieldValue} of enforcedFields) {
-    let byWorkspacesStore = byWorkspaces.get(workspace);
-    if (typeof byWorkspacesStore === `undefined`)
-      byWorkspaces.set(workspace, byWorkspacesStore = new Map());
-
-    let byPathStore = byWorkspacesStore.get(fieldPath);
-    if (typeof byPathStore === `undefined`)
-      byWorkspacesStore.set(fieldPath, byPathStore = new Set());
+    const byWorkspacesStore = miscUtils.getMapWithDefault(byWorkspaces, workspace);
+    const byPathStore = miscUtils.getSetWithDefault(byWorkspacesStore, fieldPath);
 
     byPathStore.add(fieldValue);
   }
@@ -176,6 +180,7 @@ async function processFieldConstraints(enforcedFields: Array<EnforcedField>, {co
           if (actualValue === undefined) {
             if (fix) {
               await setWorkspaceField(workspace, fieldPath, expectedValue);
+              toSave.add(workspace);
               hasFixes = true;
             } else {
               report.reportError(MessageName.CONSTRAINTS_MISSING_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} must have a field ${configuration.format(fieldPath, `cyan`)} set to ${configuration.format(String(expectedValue), `magenta`)}, but doesn't`);
@@ -183,6 +188,7 @@ async function processFieldConstraints(enforcedFields: Array<EnforcedField>, {co
           } else if (JSON.stringify(actualValue) !== expectedValue) {
             if (fix) {
               await setWorkspaceField(workspace, fieldPath, expectedValue);
+              toSave.add(workspace);
               hasFixes = true;
             } else {
               report.reportError(MessageName.CONSTRAINTS_INCOMPATIBLE_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} must have a field ${configuration.format(fieldPath, `cyan`)} set to ${configuration.format(String(expectedValue), `magenta`)}, but is set to ${configuration.format(JSON.stringify(actualValue), `magenta`)} instead`);
@@ -192,6 +198,7 @@ async function processFieldConstraints(enforcedFields: Array<EnforcedField>, {co
           if (actualValue !== undefined && actualValue !== null) {
             if (fix) {
               await setWorkspaceField(workspace, fieldPath, null);
+              toSave.add(workspace);
               hasFixes = true;
             } else {
               report.reportError(MessageName.CONSTRAINTS_EXTRANEOUS_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} has an extraneous field ${configuration.format(fieldPath, `cyan`)} set to ${configuration.format(String(expectedValue), `magenta`)}`);
@@ -206,10 +213,9 @@ async function processFieldConstraints(enforcedFields: Array<EnforcedField>, {co
 }
 
 async function setWorkspaceField(workspace: Workspace, fieldPath: string, value: string | null) {
-  if (value === null)
+  if (value === null) {
     unsetPath(workspace.manifest.raw, fieldPath);
-  else
+  } else {
     setPath(workspace.manifest.raw, fieldPath, JSON.parse(value));
-
-  await workspace.persistRawManifest();
+  }
 }

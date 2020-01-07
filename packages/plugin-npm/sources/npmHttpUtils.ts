@@ -133,9 +133,11 @@ async function askForOtp() {
 }
 
 function isOtpError(error: any) {
-  try {
-    const authMethods = error.headers['www-authenticate'].split(/,\s*/).map((s: string) => s.toLowerCase());
+  if (error.name !== `HTTPError`)
+    return false;
 
+  try {
+    const authMethods = error.response.headers['www-authenticate'].split(/,\s*/).map((s: string) => s.toLowerCase());
     return authMethods.includes('otp');
   } catch (e) {
     return false;

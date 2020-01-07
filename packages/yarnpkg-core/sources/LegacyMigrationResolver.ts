@@ -11,7 +11,7 @@ import {DescriptorHash, Descriptor, Locator}             from './types';
 
 const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>) => string]> = [
   // These ones come from Git urls
-  [/^git\+(?:https|ssh):\/\/.*\.git#.*$/, (version, $0) => $0],
+  [/^(git(?:\+(?:https|ssh))?:\/\/.*\.git)#(.*)$/, (version, $0, $1, $2) => `${$1}#commit:${$2}`],
   // These ones come from the GitHub HTTP endpoints
   [/^https:\/\/((?:[^/]+?)@)?codeload\.github\.com\/([^\/]+\/[^\/]+)\/tar\.gz\/([0-9a-f]+)$/, (version, $0, $1 = ``, $2, $3) => `https://${$1}github.com/${$2}.git#commit:${$3}`],
   [/^https:\/\/((?:[^/]+?)@)?github\.com\/([^\/]+\/[^\/]+?)(?:\.git)?#([0-9a-f]+)$/, (version, $0, $1 = ``, $2, $3) => `https://${$1}github.com/${$2}.git#commit:${$3}`],
@@ -100,7 +100,11 @@ export class LegacyMigrationResolver implements Resolver {
     return descriptor;
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    return [];
+  }
+
+  async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
     if (!this.resolutions)
       throw new Error(`Assertion failed: The resolution store should have been setup`);
 

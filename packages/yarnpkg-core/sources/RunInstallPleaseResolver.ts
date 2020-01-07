@@ -26,7 +26,11 @@ export class RunInstallPleaseResolver implements Resolver {
     return this.resolver.bindDescriptor(descriptor, fromLocator, opts);
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions): Promise<never> {
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    return this.resolver.getResolutionDependencies(descriptor, opts);
+  }
+
+  async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions): Promise<never> {
     throw new ReportError(MessageName.MISSING_LOCKFILE_ENTRY, `This package doesn't seem to be present in your lockfile; try to make an install to update your resolutions`);
   }
 

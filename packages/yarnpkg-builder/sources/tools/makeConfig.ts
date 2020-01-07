@@ -43,13 +43,6 @@ export const makeConfig = (config: webpack.Configuration) => merge({
         },
       }, {
         loader: require.resolve(`ts-loader`),
-        options: PnpWebpackPlugin.tsLoaderOptions({
-          compilerOptions: {
-            declaration: false,
-            module: `ES6`,
-            moduleResolution: `Node`,
-          },
-        }),
       }],
     }],
   },

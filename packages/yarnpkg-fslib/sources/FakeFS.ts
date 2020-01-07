@@ -1,5 +1,7 @@
 import {Dirent, ReadStream, Stats, WriteStream}          from 'fs';
+import {EOL}                                             from 'os';
 
+import {copyPromise}                                     from './algorithms/copyPromise';
 import {FSPath, Path, PortablePath, PathUtils, Filename} from './path';
 import {convertPath, ppath}                              from './path';
 
@@ -31,6 +33,10 @@ export type WatchOptions = Partial<{
   encoding: string,
 }> | string;
 
+export type ChangeFileOptions = Partial<{
+  automaticNewlines: boolean,
+}>;
+
 export type WatchCallback = (
   eventType: string,
   filename: string,
@@ -42,6 +48,8 @@ export type Watcher = {
 };
 
 export abstract class FakeFS<P extends Path> {
+  static DEFAULT_TIME = 315532800;
+
   public readonly pathUtils: PathUtils<P>;
 
   protected constructor(pathUtils: PathUtils<P>) {
@@ -222,6 +230,9 @@ export abstract class FakeFS<P extends Path> {
 
         if (utimes != null) {
           await this.utimesPromise(subPath, utimes[0], utimes[1]);
+        } else {
+          const parentStat = await this.statPromise(this.pathUtils.dirname(subPath));
+          await this.utimesPromise(subPath, parentStat.atime, parentStat.mtime);
         }
       }
     }
@@ -253,6 +264,9 @@ export abstract class FakeFS<P extends Path> {
 
         if (utimes != null) {
           this.utimesSync(subPath, utimes[0], utimes[1]);
+        } else {
+          const parentStat = this.statSync(this.pathUtils.dirname(subPath));
+          this.utimesSync(subPath, parentStat.atime, parentStat.mtime);
         }
       }
     }
@@ -261,37 +275,7 @@ export abstract class FakeFS<P extends Path> {
   copyPromise(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean}): Promise<void>;
   copyPromise<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean}): Promise<void>;
   async copyPromise<P2 extends Path>(destination: P, source: P2, {baseFs = this as any, overwrite = true}: {baseFs?: FakeFS<P2>, overwrite?: boolean} = {}) {
-    const stat = await baseFs.lstatPromise(source);
-    const exists = await this.existsSync(destination);
-
-    if (stat.isDirectory()) {
-      await this.mkdirpPromise(destination);
-      const directoryListing = await baseFs.readdirPromise(source);
-      await Promise.all(directoryListing.map(entry => {
-        return this.copyPromise(this.pathUtils.join(destination, entry), baseFs.pathUtils.join(source, entry), {baseFs, overwrite});
-      }));
-    } else if (stat.isFile()) {
-      if (!exists || overwrite) {
-        if (exists)
-          await this.removePromise(destination);
-
-        const content = await baseFs.readFilePromise(source);
-        await this.writeFilePromise(destination, content);
-      }
-    } else if (stat.isSymbolicLink()) {
-      if (!exists || overwrite) {
-        if (exists)
-          await this.removePromise(destination);
-
-        const target = await baseFs.readlinkPromise(source);
-        await this.symlinkPromise(convertPath(this.pathUtils, target), destination);
-      }
-    } else {
-      throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
-    }
-
-    const mode = stat.mode & 0o777;
-    await this.chmodPromise(destination, mode);
+    return await copyPromise(this, destination, baseFs, source, {overwrite});
   }
 
   copySync(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean}): void;
@@ -330,30 +314,40 @@ export abstract class FakeFS<P extends Path> {
     this.chmodSync(destination, mode);
   }
 
-  async changeFilePromise(p: P, content: string) {
+  async changeFilePromise(p: P, content: string, {automaticNewlines}: ChangeFileOptions = {}) {
+    let current = '';
     try {
-      const current = await this.readFilePromise(p, `utf8`);
-      if (current === content) {
-        return;
-      }
+      current = await this.readFilePromise(p, `utf8`);
     } catch (error) {
       // ignore errors, no big deal
     }
 
-    await this.writeFilePromise(p, content);
+    const normalizedContent = automaticNewlines
+      ? normalizeLineEndings(current, content)
+      : content;
+
+    if (current === normalizedContent)
+      return;
+
+    await this.writeFilePromise(p, normalizedContent);
   }
 
-  changeFileSync(p: P, content: string) {
+  changeFileSync(p: P, content: string, {automaticNewlines = false}: ChangeFileOptions = {}) {
+    let current = '';
     try {
-      const current = this.readFileSync(p, `utf8`);
-      if (current === content) {
-        return;
-      }
+      current = this.readFileSync(p, `utf8`);
     } catch (error) {
       // ignore errors, no big deal
     }
 
-    this.writeFileSync(p, content);
+    const normalizedContent = automaticNewlines
+      ? normalizeLineEndings(current, content)
+      : content;
+
+    if (current === normalizedContent)
+      return;
+
+    this.writeFileSync(p, normalizedContent);
   }
 
   async movePromise(fromP: P, toP: P) {
@@ -479,6 +473,34 @@ export abstract class FakeFS<P extends Path> {
   writeJsonSync(p: P, data: any) {
     return this.writeFileSync(p, `${JSON.stringify(data, null, 2)}\n`);
   }
+
+  async preserveTimePromise(p: P, cb: () => Promise<P | void>) {
+    const stat = await this.lstatPromise(p);
+
+    const result = await cb();
+    if (typeof result !== `undefined`)
+      p = result;
+
+    if (this.lutimesPromise) {
+      await this.lutimesPromise(p, stat.atime, stat.mtime);
+    } else if (!stat.isSymbolicLink()) {
+      await this.utimesPromise(p, stat.atime, stat.mtime);
+    }
+  }
+
+  async preserveTimeSync(p: P, cb: () => P | void) {
+    const stat = this.lstatSync(p);
+
+    const result = cb();
+    if (typeof result !== `undefined`)
+      p = result;
+
+    if (this.lutimesSync) {
+      this.lutimesSync(p, stat.atime, stat.mtime);
+    } else if (!stat.isSymbolicLink()) {
+      this.utimesSync(p, stat.atime, stat.mtime);
+    }
+  }
 };
 
 export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
@@ -489,4 +511,19 @@ export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
   resolve(p: PortablePath) {
     return this.pathUtils.resolve(PortablePath.root, p);
   }
+}
+
+function getEndOfLine(content: string) {
+  const matches = content.match(/\r?\n/g);
+  if (matches === null)
+    return EOL;
+
+  const crlf = matches.filter(nl => nl === `\r\n`).length;
+  const lf = matches.length - crlf;
+
+  return crlf > lf ? `\r\n` : `\n`;
+}
+
+export function normalizeLineEndings(originalContent: string, newContent: string){
+  return newContent.replace(/\r?\n/g, getEndOfLine(originalContent));
 }

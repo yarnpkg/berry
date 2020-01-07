@@ -1,16 +1,11 @@
-module.exports = {};
-
-module.exports.factory = function (require) {
-  var plugin =
+/* eslint-disable*/
+module.exports = {
+  name: "@yarnpkg/plugin-workspace-tools",
+  factory: function (require) {
+                          var plugin =
   /******/ (function(modules) { // webpackBootstrap
   /******/ 	// The module cache
   /******/ 	var installedModules = {};
-  /******/
-  /******/ 	// object to store loaded chunks
-  /******/ 	// "0" means "already loaded"
-  /******/ 	var installedChunks = {
-  /******/ 		0: 0
-  /******/ 	};
   /******/
   /******/ 	// The require function
   /******/ 	function __webpack_require__(moduleId) {
@@ -36,12 +31,6 @@ module.exports.factory = function (require) {
   /******/ 		return module.exports;
   /******/ 	}
   /******/
-  /******/ 	// The chunk loading function for additional chunks
-  /******/ 	// Since all referenced chunks are already included
-  /******/ 	// in this file, this function is empty here.
-  /******/ 	__webpack_require__.e = function requireEnsure() {
-  /******/ 		return Promise.resolve();
-  /******/ 	};
   /******/
   /******/ 	// expose the modules object (__webpack_modules__)
   /******/ 	__webpack_require__.m = modules;
@@ -95,13 +84,6 @@ module.exports.factory = function (require) {
   /******/ 	// __webpack_public_path__
   /******/ 	__webpack_require__.p = "";
   /******/
-  /******/ 	// uncaught error handler for webpack runtime
-  /******/ 	__webpack_require__.oe = function(err) {
-  /******/ 		process.nextTick(function() {
-  /******/ 			throw err; // catch this error by using import().catch()
-  /******/ 		});
-  /******/ 	};
-  /******/
   /******/
   /******/ 	// Load entry module and return exports
   /******/ 	return __webpack_require__(__webpack_require__.s = 0);
@@ -109,38 +91,39 @@ module.exports.factory = function (require) {
   /************************************************************************/
   /******/ ([
   /* 0 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony import */ var _commands_foreach__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-  /* harmony import */ var _commands_workspace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
 
+
+  var __importDefault = this && this.__importDefault || function (mod) {
+    return mod && mod.__esModule ? mod : {
+      "default": mod
+    };
+  };
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  const foreach_1 = __importDefault(__webpack_require__(1));
+
+  const workspace_1 = __importDefault(__webpack_require__(9));
 
   const plugin = {
-    commands: [_commands_foreach__WEBPACK_IMPORTED_MODULE_0__["default"], _commands_workspace__WEBPACK_IMPORTED_MODULE_1__["default"]]
+    commands: [foreach_1.default, workspace_1.default]
   }; // eslint-disable-next-line arca/no-default-export
 
-  /* harmony default export */ __webpack_exports__["default"] = (plugin);
+  exports.default = plugin;
 
   /***/ }),
   /* 1 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return WorkspacesForeachCommand; });
-  /* harmony import */ var _yarnpkg_cli__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-  /* harmony import */ var _yarnpkg_cli__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_yarnpkg_cli__WEBPACK_IMPORTED_MODULE_0__);
-  /* harmony import */ var _yarnpkg_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
-  /* harmony import */ var _yarnpkg_core__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_yarnpkg_core__WEBPACK_IMPORTED_MODULE_1__);
-  /* harmony import */ var clipanion__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4);
-  /* harmony import */ var clipanion__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(clipanion__WEBPACK_IMPORTED_MODULE_2__);
-  /* harmony import */ var yup__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5);
-  /* harmony import */ var yup__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(yup__WEBPACK_IMPORTED_MODULE_3__);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-  var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
+
+  var __decorate = this && this.__decorate || function (decorators, target, key, desc) {
     var c = arguments.length,
         r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
         d;
@@ -148,10 +131,39 @@ module.exports.factory = function (require) {
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
 
+  var __importDefault = this && this.__importDefault || function (mod) {
+    return mod && mod.__esModule ? mod : {
+      "default": mod
+    };
+  };
 
+  var __importStar = this && this.__importStar || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+  };
 
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 
+  const cli_1 = __webpack_require__(2);
 
+  const core_1 = __webpack_require__(3);
+
+  const core_2 = __webpack_require__(3);
+
+  const core_3 = __webpack_require__(3);
+
+  const clipanion_1 = __webpack_require__(4);
+
+  const os_1 = __webpack_require__(5);
+
+  const p_limit_1 = __importDefault(__webpack_require__(6));
+
+  const yup = __importStar(__webpack_require__(8));
   /**
    * Retrieves all the child workspaces of a given root workspace recursively
    *
@@ -160,6 +172,7 @@ module.exports.factory = function (require) {
    *
    * @returns all the child workspaces
    */
+
 
   const getWorkspaceChildrenRecursive = (rootWorkspace, project) => {
     const workspaceList = [];
@@ -176,7 +189,7 @@ module.exports.factory = function (require) {
   }; // eslint-disable-next-line arca/no-default-export
 
 
-  class WorkspacesForeachCommand extends _yarnpkg_cli__WEBPACK_IMPORTED_MODULE_0__["BaseCommand"] {
+  class WorkspacesForeachCommand extends cli_1.BaseCommand {
     constructor() {
       super(...arguments);
       this.args = [];
@@ -192,23 +205,15 @@ module.exports.factory = function (require) {
     }
 
     async execute() {
-      const _ref4 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 7, 7));
-
-      const _ref3 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 9, 7));
-
-      const _ref2 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 3, 7));
-
-      const _ref = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 3, 7));
-
-      const configuration = await _ref.Configuration.find(this.context.cwd, this.context.plugins);
+      const configuration = await core_1.Configuration.find(this.context.cwd, this.context.plugins);
       const {
         project,
         workspace: cwdWorkspace
-      } = await _ref.Project.find(configuration, this.context.cwd);
-      if (!this.all && !cwdWorkspace) throw new _yarnpkg_cli__WEBPACK_IMPORTED_MODULE_0__["WorkspaceRequiredError"](this.context.cwd);
+      } = await core_1.Project.find(configuration, this.context.cwd);
+      if (!this.all && !cwdWorkspace) throw new cli_1.WorkspaceRequiredError(this.context.cwd);
       const command = this.cli.process([this.commandName, ...this.args]);
       const scriptName = command.path.length === 1 && command.path[0] === `run` && typeof command.scriptName !== `undefined` ? command.scriptName : null;
-      if (command.path.length === 0) throw new clipanion__WEBPACK_IMPORTED_MODULE_2__["UsageError"](`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
+      if (command.path.length === 0) throw new clipanion_1.UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
       const rootWorkspace = this.all ? project.topLevelWorkspace : cwdWorkspace;
       const candidates = [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
       const workspaces = [];
@@ -218,8 +223,8 @@ module.exports.factory = function (require) {
         // "lint": "yarn workspaces foreach --all lint"
 
         if (scriptName === process.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace.cwd) continue;
-        if (this.include.length > 0 && !this.include.includes(_yarnpkg_core__WEBPACK_IMPORTED_MODULE_1__["structUtils"].stringifyIdent(workspace.locator))) continue;
-        if (this.exclude.length > 0 && this.exclude.includes(_yarnpkg_core__WEBPACK_IMPORTED_MODULE_1__["structUtils"].stringifyIdent(workspace.locator))) continue;
+        if (this.include.length > 0 && !this.include.includes(core_3.structUtils.stringifyIdent(workspace.locator))) continue;
+        if (this.exclude.length > 0 && this.exclude.includes(core_3.structUtils.stringifyIdent(workspace.locator))) continue;
         if (this.private === false && workspace.manifest.private === true) continue;
         workspaces.push(workspace);
       }
@@ -229,12 +234,10 @@ module.exports.factory = function (require) {
       if (!this.parallel) interlaced = true;
       const needsProcessing = new Map();
       const processing = new Set();
-      const concurrency = this.parallel ? Math.max(1, _ref3.cpus().length / 2) : 1;
-
-      const limit = _interopRequireDefault(_ref4).default(this.jobs || concurrency);
-
+      const concurrency = this.parallel ? Math.max(1, os_1.cpus().length / 2) : 1;
+      const limit = p_limit_1.default(this.jobs || concurrency);
       let commandCount = 0;
-      const report = await _ref2.StreamReport.start({
+      const report = await core_2.StreamReport.start({
         configuration,
         stdout: this.context.stdout
       }, async report => {
@@ -324,15 +327,15 @@ module.exports.factory = function (require) {
 
           if (commandPromises.length === 0) {
             const cycle = Array.from(needsProcessing.values()).map(workspace => {
-              return _yarnpkg_core__WEBPACK_IMPORTED_MODULE_1__["structUtils"].prettyLocator(configuration, workspace.anchoredLocator);
+              return core_3.structUtils.prettyLocator(configuration, workspace.anchoredLocator);
             }).join(`, `);
-            return report.reportError(_ref2.MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected (${cycle})`);
+            return report.reportError(core_2.MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected (${cycle})`);
           }
 
           const exitCodes = await Promise.all(commandPromises);
 
           if ((this.topological || this.topologicalDev) && exitCodes.some(exitCode => exitCode !== 0)) {
-            report.reportError(_ref2.MessageName.UNNAMED, `The command failed for workspaces that are depended upon by other workspaces; can't satisfy the dependency graph`);
+            report.reportError(core_2.MessageName.UNNAMED, `The command failed for workspaces that are depended upon by other workspaces; can't satisfy the dependency graph`);
           }
         }
       });
@@ -340,15 +343,16 @@ module.exports.factory = function (require) {
     }
 
   }
-  WorkspacesForeachCommand.schema = yup__WEBPACK_IMPORTED_MODULE_3__["object"]().shape({
-    jobs: yup__WEBPACK_IMPORTED_MODULE_3__["number"]().min(2),
-    parallel: yup__WEBPACK_IMPORTED_MODULE_3__["boolean"]().when(`jobs`, {
+
+  WorkspacesForeachCommand.schema = yup.object().shape({
+    jobs: yup.number().min(2),
+    parallel: yup.boolean().when(`jobs`, {
       is: val => val > 1,
-      then: yup__WEBPACK_IMPORTED_MODULE_3__["boolean"]().oneOf([true], `--parallel must be set when using --jobs`),
-      otherwise: yup__WEBPACK_IMPORTED_MODULE_3__["boolean"]()
+      then: yup.boolean().oneOf([true], `--parallel must be set when using --jobs`),
+      otherwise: yup.boolean()
     })
   });
-  WorkspacesForeachCommand.usage = clipanion__WEBPACK_IMPORTED_MODULE_2__["Command"].Usage({
+  WorkspacesForeachCommand.usage = clipanion_1.Command.Usage({
     category: `Workspace-related commands`,
     description: `run a command on all workspaces`,
     details: `
@@ -373,38 +377,40 @@ module.exports.factory = function (require) {
     examples: [[`Publish all the packages in a workspace`, `yarn workspaces foreach npm publish --tolerate-republish`], [`Run build script on all the packages in a workspace`, `yarn workspaces foreach run build`], [`Run build script on all the packages in a workspace in parallel, building dependent packages first`, `yarn workspaces foreach -pt run build`]]
   });
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_2__["Command"].String()], WorkspacesForeachCommand.prototype, "commandName", void 0);
+  __decorate([clipanion_1.Command.String()], WorkspacesForeachCommand.prototype, "commandName", void 0);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_2__["Command"].Proxy()], WorkspacesForeachCommand.prototype, "args", void 0);
+  __decorate([clipanion_1.Command.Proxy()], WorkspacesForeachCommand.prototype, "args", void 0);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_2__["Command"].Boolean(`-a,--all`)], WorkspacesForeachCommand.prototype, "all", void 0);
+  __decorate([clipanion_1.Command.Boolean(`-a,--all`)], WorkspacesForeachCommand.prototype, "all", void 0);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_2__["Command"].Boolean(`-v,--verbose`)], WorkspacesForeachCommand.prototype, "verbose", void 0);
+  __decorate([clipanion_1.Command.Boolean(`-v,--verbose`)], WorkspacesForeachCommand.prototype, "verbose", void 0);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_2__["Command"].Boolean(`-p,--parallel`)], WorkspacesForeachCommand.prototype, "parallel", void 0);
+  __decorate([clipanion_1.Command.Boolean(`-p,--parallel`)], WorkspacesForeachCommand.prototype, "parallel", void 0);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_2__["Command"].Boolean(`-i,--interlaced`)], WorkspacesForeachCommand.prototype, "interlaced", void 0);
+  __decorate([clipanion_1.Command.Boolean(`-i,--interlaced`)], WorkspacesForeachCommand.prototype, "interlaced", void 0);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_2__["Command"].String(`-j,--jobs`)], WorkspacesForeachCommand.prototype, "jobs", void 0);
+  __decorate([clipanion_1.Command.String(`-j,--jobs`)], WorkspacesForeachCommand.prototype, "jobs", void 0);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_2__["Command"].Boolean(`-t,--topological`)], WorkspacesForeachCommand.prototype, "topological", void 0);
+  __decorate([clipanion_1.Command.Boolean(`-t,--topological`)], WorkspacesForeachCommand.prototype, "topological", void 0);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_2__["Command"].Boolean(`--topological-dev`)], WorkspacesForeachCommand.prototype, "topologicalDev", void 0);
+  __decorate([clipanion_1.Command.Boolean(`--topological-dev`)], WorkspacesForeachCommand.prototype, "topologicalDev", void 0);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_2__["Command"].Array(`--include`)], WorkspacesForeachCommand.prototype, "include", void 0);
+  __decorate([clipanion_1.Command.Array(`--include`)], WorkspacesForeachCommand.prototype, "include", void 0);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_2__["Command"].Array(`--exclude`)], WorkspacesForeachCommand.prototype, "exclude", void 0);
+  __decorate([clipanion_1.Command.Array(`--exclude`)], WorkspacesForeachCommand.prototype, "exclude", void 0);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_2__["Command"].Boolean(`--private`)], WorkspacesForeachCommand.prototype, "private", void 0);
+  __decorate([clipanion_1.Command.Boolean(`--private`)], WorkspacesForeachCommand.prototype, "private", void 0);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_2__["Command"].Path(`workspaces`, `foreach`)], WorkspacesForeachCommand.prototype, "execute", null);
+  __decorate([clipanion_1.Command.Path(`workspaces`, `foreach`)], WorkspacesForeachCommand.prototype, "execute", null);
+
+  exports.default = WorkspacesForeachCommand;
 
   function createStream(report, {
     prefix,
     interlaced
   }) {
     const streamReporter = report.createStreamReporter(prefix);
-    const defaultStream = new _yarnpkg_core__WEBPACK_IMPORTED_MODULE_1__["miscUtils"].DefaultStream();
+    const defaultStream = new core_3.miscUtils.DefaultStream();
     defaultStream.pipe(streamReporter, {
       end: false
     });
@@ -417,7 +423,7 @@ module.exports.factory = function (require) {
       });
     });
     if (interlaced) return [defaultStream, promise];
-    const streamBuffer = new _yarnpkg_core__WEBPACK_IMPORTED_MODULE_1__["miscUtils"].BufferStream();
+    const streamBuffer = new core_3.miscUtils.BufferStream();
     streamBuffer.pipe(defaultStream, {
       end: false
     });
@@ -433,8 +439,8 @@ module.exports.factory = function (require) {
     verbose
   }) {
     if (!verbose) return null;
-    const ident = _yarnpkg_core__WEBPACK_IMPORTED_MODULE_1__["structUtils"].convertToIdent(workspace.locator);
-    const name = _yarnpkg_core__WEBPACK_IMPORTED_MODULE_1__["structUtils"].stringifyIdent(ident);
+    const ident = core_3.structUtils.convertToIdent(workspace.locator);
+    const name = core_3.structUtils.stringifyIdent(ident);
     let prefix = `[${name}]:`;
     const colors = [`#2E86AB`, `#A23B72`, `#F18F01`, `#C73E1D`, `#CCE2A3`];
     const colorName = colors[commandIndex % colors.length];
@@ -463,91 +469,15 @@ module.exports.factory = function (require) {
   /* 5 */
   /***/ (function(module, exports) {
 
-  module.exports = require("yup");
+  module.exports = require("os");
 
   /***/ }),
   /* 6 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-  "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return WorkspaceCommand; });
-  /* harmony import */ var clipanion__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
-  /* harmony import */ var clipanion__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(clipanion__WEBPACK_IMPORTED_MODULE_0__);
-  var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
-    var c = arguments.length,
-        r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
-        d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-  };
-
-   // eslint-disable-next-line arca/no-default-export
-
-  class WorkspaceCommand extends clipanion__WEBPACK_IMPORTED_MODULE_0__["Command"] {
-    constructor() {
-      super(...arguments);
-      this.args = [];
-    }
-
-    async execute() {
-      const _ref3 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 3, 7));
-
-      const _ref2 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 3, 7));
-
-      const _ref = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 2, 7));
-
-      const configuration = await _ref2.Configuration.find(this.context.cwd, this.context.plugins);
-      const {
-        project,
-        workspace: cwdWorkspace
-      } = await _ref2.Project.find(configuration, this.context.cwd);
-      if (!cwdWorkspace) throw new _ref.WorkspaceRequiredError(this.context.cwd);
-      const candidates = project.workspaces;
-      const candidatesByName = new Map(candidates.map(workspace => {
-        const ident = _ref3.structUtils.convertToIdent(workspace.locator);
-
-        return [_ref3.structUtils.stringifyIdent(ident), workspace];
-      }));
-      const workspace = candidatesByName.get(this.workspaceName);
-
-      if (workspace === undefined) {
-        const otherNames = Array.from(candidatesByName.keys()).sort();
-        throw new clipanion__WEBPACK_IMPORTED_MODULE_0__["UsageError"](`Workspace '${this.workspaceName}' not found. Did you mean any of the following:\n  - ${otherNames.join("\n  - ")}?`);
-      }
-
-      return this.cli.run([this.commandName, ...this.args], {
-        cwd: workspace.cwd
-      });
-    }
-
-  }
-  WorkspaceCommand.usage = clipanion__WEBPACK_IMPORTED_MODULE_0__["Command"].Usage({
-    category: `Workspace-related commands`,
-    description: `run a command within the specified workspace`,
-    details: `
-        > In order to use this command you need to add \`@yarnpkg/plugin-workspace-tools\` to your plugins.
-
-        This command will run a given sub-command on a single workspace.
-      `,
-    examples: [[`Add a package to a single workspace`, `yarn workspace components add -D react`], [`Run build script on a single workspace`, `yarn workspace components run build`]]
-  });
-
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_0__["Command"].String()], WorkspaceCommand.prototype, "workspaceName", void 0);
-
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_0__["Command"].String()], WorkspaceCommand.prototype, "commandName", void 0);
-
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_0__["Command"].Proxy()], WorkspaceCommand.prototype, "args", void 0);
-
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_0__["Command"].Path(`workspace`)], WorkspaceCommand.prototype, "execute", null);
-
-  /***/ }),
-  /* 7 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const pTry = __webpack_require__(8);
+  const pTry = __webpack_require__(7);
 
   const pLimit = concurrency => {
   	if (concurrency < 1) {
@@ -601,7 +531,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 8 */
+  /* 7 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -613,14 +543,94 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 9 */
+  /* 8 */
   /***/ (function(module, exports) {
 
-  module.exports = require("os");
+  module.exports = require("yup");
+
+  /***/ }),
+  /* 9 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+
+
+  var __decorate = this && this.__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+        r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+        d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+  };
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  const cli_1 = __webpack_require__(2);
+
+  const core_1 = __webpack_require__(3);
+
+  const core_2 = __webpack_require__(3);
+
+  const clipanion_1 = __webpack_require__(4); // eslint-disable-next-line arca/no-default-export
+
+
+  class WorkspaceCommand extends clipanion_1.Command {
+    constructor() {
+      super(...arguments);
+      this.args = [];
+    }
+
+    async execute() {
+      const configuration = await core_1.Configuration.find(this.context.cwd, this.context.plugins);
+      const {
+        project,
+        workspace: cwdWorkspace
+      } = await core_1.Project.find(configuration, this.context.cwd);
+      if (!cwdWorkspace) throw new cli_1.WorkspaceRequiredError(this.context.cwd);
+      const candidates = project.workspaces;
+      const candidatesByName = new Map(candidates.map(workspace => {
+        const ident = core_2.structUtils.convertToIdent(workspace.locator);
+        return [core_2.structUtils.stringifyIdent(ident), workspace];
+      }));
+      const workspace = candidatesByName.get(this.workspaceName);
+
+      if (workspace === undefined) {
+        const otherNames = Array.from(candidatesByName.keys()).sort();
+        throw new clipanion_1.UsageError(`Workspace '${this.workspaceName}' not found. Did you mean any of the following:\n  - ${otherNames.join("\n  - ")}?`);
+      }
+
+      return this.cli.run([this.commandName, ...this.args], {
+        cwd: workspace.cwd
+      });
+    }
+
+  }
+
+  WorkspaceCommand.usage = clipanion_1.Command.Usage({
+    category: `Workspace-related commands`,
+    description: `run a command within the specified workspace`,
+    details: `
+        > In order to use this command you need to add \`@yarnpkg/plugin-workspace-tools\` to your plugins.
+
+        This command will run a given sub-command on a single workspace.
+      `,
+    examples: [[`Add a package to a single workspace`, `yarn workspace components add -D react`], [`Run build script on a single workspace`, `yarn workspace components run build`]]
+  });
+
+  __decorate([clipanion_1.Command.String()], WorkspaceCommand.prototype, "workspaceName", void 0);
+
+  __decorate([clipanion_1.Command.String()], WorkspaceCommand.prototype, "commandName", void 0);
+
+  __decorate([clipanion_1.Command.Proxy()], WorkspaceCommand.prototype, "args", void 0);
+
+  __decorate([clipanion_1.Command.Path(`workspace`)], WorkspaceCommand.prototype, "execute", null);
+
+  exports.default = WorkspaceCommand;
 
   /***/ })
   /******/ ]);
-  return plugin;
+    return plugin;
+  },
 };
-
-module.exports.name = "@yarnpkg/plugin-workspace-tools";

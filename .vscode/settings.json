@@ -2,6 +2,7 @@
   "editor.tabSize": 2,
   "files.eol": "\n",
   "typescript.tsdk": ".vscode/pnpify/typescript/lib",
+  "npm.packageManager": "yarn",
   "eslint.validate": [
     "javascript",
     "typescript",

@@ -6,12 +6,12 @@ import {PortablePath, npath, ppath, xfs}                                        
 import {Cli, Command}                                                                                                                                                        from 'clipanion';
 import globby                                                                                                                                                                from 'globby';
 import micromatch                                                                                                                                                            from 'micromatch';
-import module                                                                                                                                                                from 'module';
+import {Module}                                                                                                                                                              from 'module';
 import * as ts                                                                                                                                                               from 'typescript';
 
 import * as ast                                                                                                                                                              from './ast';
 
-const BUILTINS = new Set([...module.builtinModules || [], `pnpapi`]);
+const BUILTINS = new Set([...Module.builtinModules || [], `pnpapi`]);
 
 function probablyMinified(content: string) {
   if (content.length > 1024 * 1024)
@@ -246,7 +246,7 @@ async function makeResolveFn(project: Project) {
   const resolveOptions = {...fetchOptions, resolver};
 
   return async (descriptor: Descriptor) => {
-    const candidates = await resolver.getCandidates(descriptor, resolveOptions);
+    const candidates = await resolver.getCandidates(descriptor, new Map(), resolveOptions);
     if (candidates.length === 0)
       return null;
 

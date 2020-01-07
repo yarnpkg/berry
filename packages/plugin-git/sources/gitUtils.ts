@@ -11,8 +11,7 @@ function makeGitEnvironment() {
 }
 
 const gitPatterns = [
-  /^git:/,
-  /^git\+ssh:/,
+  /^git(?:\+ssh)?:/,
   /^(?:git\+)?https?:[^#]+\/[^#]+\.git(?:#.*)?$/,
   /^git@[^#]+\/[^#]+\.git(?:#.*)?$/,
   /^(?:github:|https:\/\/github\.com\/)?([a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d]))+)\/([a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d]))+)(?:#.*)?$/,

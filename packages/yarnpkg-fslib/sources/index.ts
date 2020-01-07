@@ -11,6 +11,7 @@ export {WatchOptions}             from './FakeFS';
 export {WatchCallback}            from './FakeFS';
 export {Watcher}                  from './FakeFS';
 export {WriteFileOptions}         from './FakeFS';
+export {normalizeLineEndings}     from './FakeFS';
 
 export {FSPath, Path, PortablePath, NativePath, Filename} from './path';
 export {ParsedPath, PathUtils, FormatInputPathObject} from './path';

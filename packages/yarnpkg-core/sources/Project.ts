@@ -1,36 +1,37 @@
-import {PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                    from '@yarnpkg/parsers';
-import {createHash}                                  from 'crypto';
+import {PortablePath, npath, ppath, toFilename, xfs, normalizeLineEndings} from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                          from '@yarnpkg/parsers';
+import {createHash}                                                        from 'crypto';
+import {structuredPatch}                                                   from 'diff';
 // @ts-ignore
-import Logic                                         from 'logic-solver';
-import pLimit                                        from 'p-limit';
-import semver                                        from 'semver';
-import {tmpNameSync}                                 from 'tmp';
+import Logic                                                               from 'logic-solver';
+import pLimit                                                              from 'p-limit';
+import semver                                                              from 'semver';
+import {tmpNameSync}                                                       from 'tmp';
 
-import {AliasResolver}                               from './AliasResolver';
-import {Cache}                                       from './Cache';
-import {Configuration}                               from './Configuration';
-import {Fetcher}                                     from './Fetcher';
-import {Installer, BuildDirective, BuildType}        from './Installer';
-import {LegacyMigrationResolver}                     from './LegacyMigrationResolver';
-import {Linker}                                      from './Linker';
-import {LockfileResolver}                            from './LockfileResolver';
-import {DependencyMeta, Manifest}                    from './Manifest';
-import {MessageName}                                 from './MessageName';
-import {MultiResolver}                               from './MultiResolver';
-import {Report, ReportError}                         from './Report';
-import {ResolveOptions}                              from './Resolver';
-import {RunInstallPleaseResolver}                    from './RunInstallPleaseResolver';
-import {ThrowReport}                                 from './ThrowReport';
-import {Workspace}                                   from './Workspace';
-import {isFolderInside}                              from './folderUtils';
-import * as miscUtils                                from './miscUtils';
-import * as scriptUtils                              from './scriptUtils';
-import * as semverUtils                              from './semverUtils';
-import * as structUtils                              from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash}      from './types';
-import {Descriptor, Ident, Locator, Package}         from './types';
-import {LinkType}                                    from './types';
+import {Cache}                                                             from './Cache';
+import {Configuration, FormatType}                                         from './Configuration';
+import {Fetcher}                                                           from './Fetcher';
+import {Installer, BuildDirective, BuildType}                              from './Installer';
+import {LegacyMigrationResolver}                                           from './LegacyMigrationResolver';
+import {Linker}                                                            from './Linker';
+import {LockfileResolver}                                                  from './LockfileResolver';
+import {DependencyMeta, Manifest}                                          from './Manifest';
+import {MessageName}                                                       from './MessageName';
+import {MultiResolver}                                                     from './MultiResolver';
+import {OverrideResolver}                                                  from './OverrideResolver';
+import {Report, ReportError}                                               from './Report';
+import {ResolveOptions, Resolver}                                          from './Resolver';
+import {RunInstallPleaseResolver}                                          from './RunInstallPleaseResolver';
+import {ThrowReport}                                                       from './ThrowReport';
+import {Workspace}                                                         from './Workspace';
+import {isFolderInside}                                                    from './folderUtils';
+import * as miscUtils                                                      from './miscUtils';
+import * as scriptUtils                                                    from './scriptUtils';
+import * as semverUtils                                                    from './semverUtils';
+import * as structUtils                                                    from './structUtils';
+import {IdentHash, DescriptorHash, LocatorHash}                            from './types';
+import {Descriptor, Ident, Locator, Package}                               from './types';
+import {LinkType}                                                          from './types';
 
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
@@ -322,7 +323,14 @@ export class Project {
     const forgottenPackages = new Set();
 
     for (const pkg of this.originalPackages.values()) {
-      if (!resolver.shouldPersistResolution(pkg, {project: this, resolver})) {
+      let shouldPersistResolution: boolean;
+      try {
+        shouldPersistResolution = resolver.shouldPersistResolution(pkg, {project: this, resolver});
+      } catch {
+        shouldPersistResolution = false;
+      }
+
+      if (!shouldPersistResolution) {
         this.originalPackages.delete(pkg.locatorHash);
         forgottenPackages.add(pkg.locatorHash);
       }
@@ -413,9 +421,9 @@ export class Project {
     const legacyMigrationResolver = new LegacyMigrationResolver();
     await legacyMigrationResolver.setup(this, {report: opts.report});
 
-    const resolver = opts.lockfileOnly
+    const resolver: Resolver = opts.lockfileOnly
       ? new MultiResolver([new LockfileResolver(), new RunInstallPleaseResolver(realResolver)])
-      : new AliasResolver(new MultiResolver([new LockfileResolver(), legacyMigrationResolver, realResolver]));
+      : new OverrideResolver(new MultiResolver([new LockfileResolver(), legacyMigrationResolver, realResolver]));
 
     const fetcher = this.configuration.makeFetcher();
 
@@ -429,40 +437,109 @@ export class Project {
 
     const originalPackages = new Map<LocatorHash, Package>();
 
+    const resolutionDependencies = new Map<DescriptorHash, Set<DescriptorHash>>();
     const haveBeenAliased = new Set<DescriptorHash>();
 
-    let mustBeResolved = new Set<DescriptorHash>();
+    let nextResolutionPass = new Set<DescriptorHash>();
 
     for (const workspace of this.workspaces) {
       const workspaceDescriptor = workspace.anchoredDescriptor;
 
       allDescriptors.set(workspaceDescriptor.descriptorHash, workspaceDescriptor);
-      mustBeResolved.add(workspaceDescriptor.descriptorHash);
+      nextResolutionPass.add(workspaceDescriptor.descriptorHash);
     }
 
     const limit = pLimit(10);
 
-    while (mustBeResolved.size !== 0) {
+    while (nextResolutionPass.size !== 0) {
+      const currentResolutionPass = nextResolutionPass;
+      nextResolutionPass = new Set();
+
       // We remove from the "mustBeResolved" list all packages that have
       // already been resolved previously.
 
-      for (const descriptorHash of mustBeResolved)
+      for (const descriptorHash of currentResolutionPass)
         if (allResolutions.has(descriptorHash))
-          mustBeResolved.delete(descriptorHash);
+          currentResolutionPass.delete(descriptorHash);
+
+      if (currentResolutionPass.size === 0)
+        break;
+
+      // We check that the resolution dependencies have been resolved for all
+      // descriptors that we're about to resolve. Buffalo buffalo buffalo
+      // buffalo.
+
+      const deferredResolutions = new Set<DescriptorHash>();
+      const resolvedDependencies = new Map<DescriptorHash, Map<DescriptorHash, Package>>();
+
+      for (const descriptorHash of currentResolutionPass) {
+        const descriptor = allDescriptors.get(descriptorHash);
+        if (!descriptor)
+          throw new Error(`Assertion failed: The descriptor should have been registered`);
+
+        let dependencies = resolutionDependencies.get(descriptorHash);
+        if (typeof dependencies === `undefined`) {
+          resolutionDependencies.set(descriptorHash, dependencies = new Set());
+
+          for (const dependency of resolver.getResolutionDependencies(descriptor, resolveOptions)) {
+            allDescriptors.set(dependency.descriptorHash, dependency);
+            dependencies.add(dependency.descriptorHash);
+          }
+        }
+
+        const resolved = miscUtils.getMapWithDefault(resolvedDependencies, descriptorHash);
+
+        for (const dependencyHash of dependencies) {
+          const resolution = allResolutions.get(dependencyHash);
+
+          if (typeof resolution !== `undefined`) {
+            const dependencyPkg = allPackages.get(resolution);
+            if (typeof dependencyPkg === `undefined`)
+              throw new Error(`Assertion failed: The package should have been registered`);
+
+            // The dependency is ready. We register it into the map so
+            // that we can pass that to getCandidates right after.
+            resolved.set(dependencyHash, dependencyPkg);
+          } else {
+            // One of the resolution dependencies of this descriptor is
+            // missing; we need to postpone its resolution for now.
+            deferredResolutions.add(descriptorHash);
+
+            // For this pass however we'll want to schedule the resolution
+            // of the dependency (so that it's probably ready next pass).
+            currentResolutionPass.add(dependencyHash);
+          }
+        }
+      }
+
+      // Note: we're postponing the resolution only once we already know all
+      // those that are going to be postponed. This way we can detect
+      // potential cyclic dependencies.
+
+      for (const descriptorHash of deferredResolutions) {
+        currentResolutionPass.delete(descriptorHash);
+        nextResolutionPass.add(descriptorHash);
+      }
+
+      if (currentResolutionPass.size === 0)
+        throw new Error(`Assertion failed: Descriptors should not have cyclic dependencies`);
 
       // Then we request the resolvers for the list of possible references that
       // match the given ranges. That will give us a set of candidate references
       // for each descriptor.
 
-      const passCandidates = new Map(await Promise.all(Array.from(mustBeResolved).map(descriptorHash => limit(async () => {
+      const passCandidates = new Map(await Promise.all(Array.from(currentResolutionPass).map(descriptorHash => limit(async () => {
         const descriptor = allDescriptors.get(descriptorHash);
-        if (!descriptor)
+        if (typeof descriptor === `undefined`)
           throw new Error(`Assertion failed: The descriptor should have been registered`);
 
-        let candidateLocators;
+        const descriptorDependencies = resolvedDependencies.get(descriptor.descriptorHash);
+        if (typeof descriptorDependencies === `undefined`)
+          throw new Error(`Assertion failed: The descriptor dependencies should have been registered`);
 
+        let candidateLocators;
         try {
-          candidateLocators = await resolver.getCandidates(descriptor, resolveOptions);
+          candidateLocators = await resolver.getCandidates(descriptor, descriptorDependencies, resolveOptions);
         } catch (error) {
           error.message = `${structUtils.prettyDescriptor(this.configuration, descriptor)}: ${error.message}`;
           throw error;
@@ -579,8 +656,17 @@ export class Project {
 
         const pkg = this.configuration.normalizePackage(original);
 
-        for (const [identHash, descriptor] of pkg.dependencies)
-          pkg.dependencies.set(identHash, resolver.bindDescriptor(descriptor, locator, resolveOptions));
+        for (const [identHash, descriptor] of pkg.dependencies) {
+          const dependency = await this.configuration.reduceHook(hooks => {
+            return hooks.reduceDependency;
+          }, descriptor, this, pkg, descriptor);
+
+          if (!structUtils.areIdentsEqual(descriptor, dependency))
+            throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
+
+          const bound = resolver.bindDescriptor(dependency, locator, resolveOptions);
+          pkg.dependencies.set(identHash, bound);
+        }
 
         return [pkg.locatorHash, {original, pkg}] as const;
       })));
@@ -591,10 +677,7 @@ export class Project {
       // since mustBeResolved is stable regardless of the order in which the
       // resolvers return)
 
-      const haveBeenResolved = mustBeResolved;
-      mustBeResolved = new Set();
-
-      for (const descriptorHash of haveBeenResolved) {
+      for (const descriptorHash of currentResolutionPass) {
         const locator = passResolutions.get(descriptorHash);
         if (!locator)
           throw new Error(`Assertion failed: The locator should have been registered`);
@@ -614,7 +697,7 @@ export class Project {
 
         for (const descriptor of pkg.dependencies.values()) {
           allDescriptors.set(descriptor.descriptorHash, descriptor);
-          mustBeResolved.add(descriptor.descriptorHash);
+          nextResolutionPass.add(descriptor.descriptorHash);
 
           // We must check and make sure that the descriptor didn't get aliased
           // to something else
@@ -644,8 +727,8 @@ export class Project {
 
           // We can now replace the descriptor by its alias in the list of
           // descriptors that must be resolved
-          mustBeResolved.delete(descriptor.descriptorHash);
-          mustBeResolved.add(aliasHash);
+          nextResolutionPass.delete(descriptor.descriptorHash);
+          nextResolutionPass.add(aliasHash);
 
           allDescriptors.set(aliasHash, alias);
 
@@ -1122,7 +1205,9 @@ export class Project {
       }
 
       await xfs.mkdirpPromise(ppath.dirname(bstatePath));
-      await xfs.changeFilePromise(bstatePath, bstateFile);
+      await xfs.changeFilePromise(bstatePath, bstateFile, {
+        automaticNewlines: true,
+      });
     } else {
       await xfs.removePromise(bstatePath);
     }
@@ -1146,13 +1231,49 @@ export class Project {
     }
 
     await opts.report.startTimerPromise(`Resolution step`, async () => {
+      const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
+
       // If we operate with a frozen lockfile, we take a snapshot of it to later make sure it didn't change
-      const initialLockfile = opts.immutable ? this.generateLockfile() : null;
+      let initialLockfile: string | null = null;
+      if (opts.immutable) {
+        try {
+          initialLockfile = await xfs.readFilePromise(lockfilePath, `utf8`);
+        } catch (error) {
+          if (error.code === `ENOENT`) {
+            throw new ReportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, `The lockfile would have been created by this install, which is explicitly forbidden.`);
+          } else {
+            throw error;
+          }
+        }
+      }
 
       await this.resolveEverything(opts);
 
-      if (opts.immutable && this.generateLockfile() !== initialLockfile) {
-        throw new ReportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, `The lockfile would have been modified by this install, which is explicitly forbidden`);
+      if (initialLockfile !== null) {
+        const newLockfile = normalizeLineEndings(initialLockfile, this.generateLockfile());
+
+        if (newLockfile !== initialLockfile) {
+          const diff = structuredPatch(lockfilePath, lockfilePath, initialLockfile, newLockfile);
+
+          opts.report.reportSeparator();
+
+          for (const hunk of diff.hunks) {
+            opts.report.reportInfo(null, `@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`);
+            for (const line of hunk.lines) {
+              if (line.startsWith(`+`)) {
+                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, this.configuration.format(line, FormatType.ADDED));
+              } else if (line.startsWith(`-`)) {
+                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, this.configuration.format(line, FormatType.REMOVED));
+              } else {
+                opts.report.reportInfo(null, this.configuration.format(line, `grey`));
+              }
+            }
+          }
+
+          opts.report.reportSeparator();
+
+          throw new ReportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, `The lockfile would have been modified by this install, which is explicitly forbidden.`);
+        }
       }
     });
 
@@ -1256,7 +1377,9 @@ export class Project {
     const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
     const lockfileContent = this.generateLockfile();
 
-    await xfs.changeFilePromise(lockfilePath, lockfileContent);
+    await xfs.changeFilePromise(lockfilePath, lockfileContent, {
+      automaticNewlines: true,
+    });
   }
 
   async persist() {
@@ -1549,7 +1672,7 @@ function applyVirtualResolutionMutations({
             // it is a compatible version.
             const peerPackage = getPackageFromDescriptor(peerDescriptor);
             if (!semverUtils.satisfiesWithPrereleases(peerPackage.version, peerRequest.range)) {
-              report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} provides ${structUtils.prettyLocator(project.configuration, peerPackage)} with version ${peerPackage.version} which does not satisfy the range ${structUtils.prettyDescriptor(project.configuration, peerRequest)} requested by ${structUtils.prettyLocator(project.configuration, pkg)}`);
+              report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} provides ${structUtils.prettyLocator(project.configuration, peerPackage)} with version ${peerPackage.version} which doesn't satisfy ${structUtils.prettyRange(project.configuration, peerRequest.range)} requested by ${structUtils.prettyLocator(project.configuration, pkg)}`);
             }
           }
         }

@@ -1,8 +1,9 @@
 {
   "name": "@yarnpkg/libzip",
-  "version": "2.0.0-rc.5",
+  "version": "2.0.0-rc.6",
   "nextVersion": {
-    "nonce": "7604916690414653"
+    "semver": "2.0.0-rc.7",
+    "nonce": "5722240915800843"
   },
   "main": "./sources/index.ts",
   "scripts": {
@@ -21,8 +22,5 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
-  },
-  "devDependencies": {
-    "@types/node": "^12.12.8"
   }
 }

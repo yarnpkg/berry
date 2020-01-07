@@ -12,6 +12,7 @@
     "target": "es2017"
   },
   "exclude": [
+    "packages/*/lib",
     "packages/yarnpkg-check/fixtures"
   ]
 }

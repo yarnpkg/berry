@@ -128,12 +128,11 @@ export class Workspace {
     const data = {};
     this.manifest.exportTo(data);
 
+    const path = ppath.join(this.cwd, Manifest.fileName);
     const content = `${JSON.stringify(data, null, this.manifest.indent)}\n`;
-    await xfs.changeFilePromise(ppath.join(this.cwd, toFilename(`package.json`)), content);
-  }
 
-  async persistRawManifest() {
-    const content = `${JSON.stringify(this.manifest.raw, null, this.manifest.indent)}\n`;
-    await xfs.changeFilePromise(ppath.join(this.cwd, toFilename(`package.json`)), content);
+    await xfs.changeFilePromise(path, content, {
+      automaticNewlines: true,
+    });
   }
 }

@@ -31,7 +31,11 @@ export class RawLinkResolver implements Resolver {
     });
   }
 
-  async getCandidates(descriptor: Descriptor, opts: ResolveOptions) {
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    return [];
+  }
+
+  async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
     const path = descriptor.range.slice(RAW_LINK_PROTOCOL.length);
 
     return [structUtils.makeLocator(descriptor, `${RAW_LINK_PROTOCOL}${npath.toPortablePath(path)}`)];
