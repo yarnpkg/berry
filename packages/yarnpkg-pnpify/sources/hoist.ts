@@ -314,8 +314,7 @@ const computeHoistCandidates = (rootPkg: TrackedHoisterPackageTree, packages: Re
   for (const depId of rootPkg.origDepIds)
     seenDepNames.set(packages[depId].name, depId);
   for (const depId of rootPkg.origPeerDepIds)
-    if (depId !== -1) // If not unsatisfied peer dep
-      seenDepNames.set(packages[depId].name, depId);
+    seenDepNames.set(packages[depId].name, depId);
 
   const seenPkgs = new Set<TrackedHoisterPackageTree>();
   const findHoistCandidates = (pkg: TrackedHoisterPackageTree) => {
@@ -327,7 +326,7 @@ const computeHoistCandidates = (rootPkg: TrackedHoisterPackageTree, packages: Re
     const seenPkgId = seenDepNames.get(name);
 
     // Check rule 1
-    if (!hoistCandidateIds.has(pkg.pkgId) && !pkg.origPeerDepIds.has(-1) && !rootPkg.origPeerDepIds.has(pkg.pkgId) && (!seenPkgId || seenPkgId === pkg.pkgId)) {
+    if (!hoistCandidateIds.has(pkg.pkgId) && !rootPkg.origPeerDepIds.has(pkg.pkgId) && (!seenPkgId || seenPkgId === pkg.pkgId)) {
       if (pkg.peerDepIds.size > 0) {
         hoistCandidatesWithPeerDeps.add(pkg);
       } else {
