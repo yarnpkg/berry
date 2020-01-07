@@ -125,8 +125,12 @@ const buildPackageTree = (pnp: PnpApi): { packageTree: HoisterPackageTree, packa
       return;
     addedIds.add(pkgId);
 
+    let hasUnsatisfiedPeerDeps = false;
     for (const [name, referencish] of pkg.packageDependencies) {
-      if (referencish !== null) {
+      if (referencish === null && !hasUnsatisfiedPeerDeps) {
+        treePkg.peerDepIds.add(-1);
+        hasUnsatisfiedPeerDeps = true;
+      } else if (referencish) {
         const locator = pnp.getLocator(name, referencish);
         const depPkg = pnp.getPackageInformation(locator)!;
         const depPkgId = assignPackageId(locator, depPkg);

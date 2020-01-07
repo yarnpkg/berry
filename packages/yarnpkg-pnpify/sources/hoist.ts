@@ -109,21 +109,22 @@ export const hoist = (tree: HoisterPackageTree, packageInfos: ReadonlyArray<Hois
 const cloneTree = (tree: HoisterPackageTree): TrackedHoisterPackageTree => {
   const treeCopy: TrackedHoisterPackageTree = {pkgId: tree.pkgId, deps: new Set(), origDepIds: new Set(), peerDepIds: new Set(tree.peerDepIds), origPeerDepIds: new Set(tree.peerDepIds)};
 
-  const seenNodes = new Set<HoisterPackageTree>();
+  const seenPkgs = new Set<HoisterPackageTree>();
 
-  const copySubTree = (srcNode: HoisterPackageTree, dstNode: TrackedHoisterPackageTree) => {
-    if (seenNodes.has(srcNode))
+  const copySubTree = (srcPkg: HoisterPackageTree, dstPkg: TrackedHoisterPackageTree) => {
+    if (seenPkgs.has(srcPkg))
       return;
-    seenNodes.add(srcNode);
+    seenPkgs.add(srcPkg);
 
-    for (const depNode of srcNode.deps) {
-      if (depNode.pkgId === srcNode.pkgId && (depNode.deps.size > 0 || depNode.peerDepIds.size > 0))
-        throw new Error(`Assert: package ${depNode.pkgId} self-reference must have empty deps and peerDeps`);
+    for (const depPkg of srcPkg.deps) {
+      // Strip all self-references except top level
+      if (depPkg.pkgId === srcPkg.pkgId && depPkg.pkgId !== 0)
+        continue;
 
-      const newNode: TrackedHoisterPackageTree = {pkgId: depNode.pkgId, deps: new Set(), origDepIds: new Set(), peerDepIds: new Set(depNode.peerDepIds), origPeerDepIds: new Set(depNode.peerDepIds)};
-      dstNode.deps.add(newNode);
-      dstNode.origDepIds.add(depNode.pkgId);
-      copySubTree(depNode, newNode);
+      const pkg: TrackedHoisterPackageTree = {pkgId: depPkg.pkgId, deps: new Set(), origDepIds: new Set(), peerDepIds: new Set(depPkg.peerDepIds), origPeerDepIds: new Set(depPkg.peerDepIds)};
+      dstPkg.deps.add(pkg);
+      dstPkg.origDepIds.add(depPkg.pkgId);
+      copySubTree(depPkg, pkg);
     }
   };
 
@@ -238,12 +239,8 @@ const hoistInplace = (rootPkg: TrackedHoisterPackageTree, packages: ReadonlyArra
   removeHoistedDeps(rootPkg);
 
   for (const dep of hoistedDeps) {
-    // Add hoisted packages to the root package, omit self-reference
-    // Top-level self-reference should not be omitted, since for the top level to require
-    // itself the symlink should be created self/node_modules/self -> ../..
-    if (dep.pkgId === 0 || dep.pkgId !== rootPkg.pkgId) {
-      rootPkg.deps.add(dep);
-    }
+    // Add hoisted packages to the root package
+    rootPkg.deps.add(dep);
   }
 };
 
@@ -317,7 +314,8 @@ const computeHoistCandidates = (rootPkg: TrackedHoisterPackageTree, packages: Re
   for (const depId of rootPkg.origDepIds)
     seenDepNames.set(packages[depId].name, depId);
   for (const depId of rootPkg.origPeerDepIds)
-    seenDepNames.set(packages[depId].name, depId);
+    if (depId !== -1) // If not unsatisfied peer dep
+      seenDepNames.set(packages[depId].name, depId);
 
   const seenPkgs = new Set<TrackedHoisterPackageTree>();
   const findHoistCandidates = (pkg: TrackedHoisterPackageTree) => {
@@ -329,7 +327,7 @@ const computeHoistCandidates = (rootPkg: TrackedHoisterPackageTree, packages: Re
     const seenPkgId = seenDepNames.get(name);
 
     // Check rule 1
-    if (!hoistCandidateIds.has(pkg.pkgId) && !rootPkg.origPeerDepIds.has(pkg.pkgId) && (!seenPkgId || seenPkgId === pkg.pkgId)) {
+    if (!hoistCandidateIds.has(pkg.pkgId) && !pkg.origPeerDepIds.has(-1) && !rootPkg.origPeerDepIds.has(pkg.pkgId) && (!seenPkgId || seenPkgId === pkg.pkgId)) {
       if (pkg.peerDepIds.size > 0) {
         hoistCandidatesWithPeerDeps.add(pkg);
       } else {
