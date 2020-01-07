@@ -4041,6 +4041,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/unzipper@npm:^0.10.1":
+  version: 0.10.1
+  resolution: "@types/unzipper@npm:0.10.1"
+  dependencies:
+    "@types/node": "*"
+  checksum: 76c4025a47205c23afaaec3fbb4d30770c75c1dca7517b4d69bec7999b347f51fead785fd98614b6399f9cf5134e3ecf119929beab0f4fe62d283fc790eaef8f
+  languageName: node
+  linkType: hard
+
 "@types/vfile-message@npm:*":
   version: 1.0.1
   resolution: "@types/vfile-message@npm:1.0.1"
@@ -4852,6 +4861,7 @@ __metadata:
     "@types/emscripten": ^1.38.0
     "@types/jest": ^24.0.25
     "@types/node": ^13.1.1
+    "@types/unzipper": ^0.10.1
     "@typescript-eslint/eslint-plugin": ^1.7.0
     "@typescript-eslint/parser": ^2.13.0
     "@yarnpkg/cli": "workspace:^2.0.0-rc.19"

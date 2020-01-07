@@ -394,6 +394,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/emscripten", "npm:1.38.0"],
             ["@types/jest", "npm:24.0.25"],
             ["@types/node", "npm:13.1.1"],
+            ["@types/unzipper", "npm:0.10.1"],
             ["@typescript-eslint/eslint-plugin", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:1.7.0"],
             ["@typescript-eslint/parser", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:2.13.0"],
             ["@yarnpkg/cli", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/yarnpkg-cli"],
@@ -4921,6 +4922,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"
         }]
       ]],
+      ["@types/unzipper", [
+        ["npm:0.10.1", {
+          "packageLocation": "./.yarn/cache/@types-unzipper-npm-0.10.1-a859ae4b90-1.zip/node_modules/@types/unzipper/",
+          "packageDependencies": [
+            ["@types/unzipper", "npm:0.10.1"],
+            ["@types/node", "npm:10.12.18"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
       ["@types/vfile", [
         ["npm:3.0.2", {
           "packageLocation": "./.yarn/cache/@types-vfile-npm-3.0.2-5a6f4624c4-1.zip/node_modules/@types/vfile/",
@@ -6699,6 +6710,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/emscripten", "npm:1.38.0"],
             ["@types/jest", "npm:24.0.25"],
             ["@types/node", "npm:13.1.1"],
+            ["@types/unzipper", "npm:0.10.1"],
             ["@typescript-eslint/eslint-plugin", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:1.7.0"],
             ["@typescript-eslint/parser", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:2.13.0"],
             ["@yarnpkg/cli", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/yarnpkg-cli"],

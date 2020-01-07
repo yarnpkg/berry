@@ -463,7 +463,7 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
             const prefixInsideArchive = srcDir.substring(archivePath.length);
             await xfs.createReadStream(archivePath)
               .pipe(unzipper.Parse({concurrency: 8}))
-              .on('entry', (entry) => {
+              .on('entry', (entry: any) => {
                 if (entry.path.length <= prefixInsideArchive.length) {
                   entry.autodrain();
                 } else {
