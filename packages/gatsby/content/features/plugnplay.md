@@ -26,7 +26,7 @@ When you think about it, Yarn already knows everything about your dependency tre
 
 In this install mode (now the default starting from Yarn v2), Yarn generates a single `.pnp.js` file instead of the usual `node_modules`. Instead of containing the source code of the installed packages, the `.pnp.js` file contains a map linking a package name and version to a location on the disk, and another map linking a package name and version to its set of dependencies. Thanks to this efficient system, Node can directly know where to look for files being required - regardless of who asks for them!
 
-This approach as various benefits:
+This approach has various benefits:
 
 - Since we only need to generate a single text file instead of tens of thousands, installs are now pretty much instantaneous - the main bottleneck becomes the number of dependencies in your project rather than your disk performances.
 
