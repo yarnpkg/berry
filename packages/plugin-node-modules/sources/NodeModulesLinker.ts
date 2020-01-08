@@ -1,11 +1,10 @@
 import {InstallStatus, BuildDirective}                                 from '@yarnpkg/core/sources/Installer';
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, LinkType}  from '@yarnpkg/core';
 import {FetchResult, Descriptor, Locator, Package, BuildType}          from '@yarnpkg/core';
-import {structUtils, Report, LocatorHash, Manifest}                    from '@yarnpkg/core';
+import {structUtils, Report, Manifest}                                 from '@yarnpkg/core';
 import {NodeFS, VirtualFS, ZipOpenFS}                                  from '@yarnpkg/fslib';
 import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS} from '@yarnpkg/fslib';
 import {parseSyml}                                                     from '@yarnpkg/parsers';
-import {serializeLocator}                                              from '@yarnpkg/pnpify';
 import {NodeModulesLocatorMap, buildLocatorMap, buildNodeModulesTree}  from '@yarnpkg/pnpify';
 
 import {PackageRegistry, makeRuntimeApi}                               from '@yarnpkg/pnp';
@@ -16,14 +15,34 @@ import mm                                                              from 'mic
 const NODE_MODULES = toFilename('node_modules');
 const LOCATOR_STATE_FILE = toFilename('.yarn-state.yml');
 
+type LocationMap = Map<PortablePath, Locator>;
+
 export class NodeModulesLinker implements Linker {
   private cachedLocatorMap: NodeModulesLocatorMap | null = null;
+  private cachedLocationMap: LocationMap | null = null;
 
-  private async getLocatorMap(rootPath: PortablePath, options?: {reread: boolean}): Promise<NodeModulesLocatorMap> {
-    if (!this.cachedLocatorMap || (options && options.reread))
-      this.cachedLocatorMap = await readLocatorState(ppath.join(rootPath, NODE_MODULES, LOCATOR_STATE_FILE));
+  private async getLocatorMap(rootPath: PortablePath, options?: {reread?: boolean, ignoreStateFileReadErrors?: boolean}): Promise<{locatorMap: NodeModulesLocatorMap, locationMap: LocationMap}> {
+    if (!this.cachedLocatorMap || (options && options.reread)) {
+      try {
+        this.cachedLocatorMap = await readLocatorState(ppath.join(rootPath, NODE_MODULES, LOCATOR_STATE_FILE));
+      } catch (e) {
+        if (options && options.ignoreStateFileReadErrors) {
+          // Ignore errors if state file is absent
+          this.cachedLocatorMap = new Map();
+        } else {
+          throw e;
+        }
+      }
+      this.cachedLocationMap = new Map();
+      for (const [locatorKey, val] of this.cachedLocatorMap) {
+        const locator = structUtils.tryParseLocator(locatorKey)!;
+        for (const location of val.locations) {
+          this.cachedLocationMap.set(ppath.join(rootPath, location), locator);
+        }
+      }
+    }
 
-    return this.cachedLocatorMap;
+    return {locatorMap: this.cachedLocatorMap, locationMap: this.cachedLocationMap!};
   }
 
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
@@ -32,8 +51,8 @@ export class NodeModulesLinker implements Linker {
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
     const rootPath = opts.project.cwd;
-    const locatorMap = await this.getLocatorMap(rootPath);
-    const locatorInfo = locatorMap.get(serializeLocator({name: structUtils.requirableIdent(locator), reference: locator.reference}));
+    const {locatorMap} = await this.getLocatorMap(rootPath);
+    const locatorInfo = locatorMap.get(structUtils.stringifyLocator(locator));
 
     if (!locatorInfo)
       throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed node_modules map - running an install might help`);
@@ -42,21 +61,9 @@ export class NodeModulesLinker implements Linker {
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
-    throw new Error(`Not implemented, location: ${location}`);
-    // const pnpPath = getPnpPath(opts.project);
-    // if (!xfs.existsSync(pnpPath))
-    //   throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
-
-    // const physicalPath = npath.fromPortablePath(pnpPath);
-    // const pnpFile = miscUtils.dynamicRequire(physicalPath);
-    // delete require.cache[physicalPath];
-
-    // const locator = pnpFile.findPackageLocator(npath.fromPortablePath(location));
-    // if (!locator)
-    //   return null;
-
-    // return structUtils.makeLocator(structUtils.parseIdent(locator.name), locator.reference);
-    return structUtils.makeLocator(structUtils.parseIdent('aaa'), 'bb');
+    const rootPath = opts.project.cwd;
+    const {locationMap} = await this.getLocatorMap(rootPath, {ignoreStateFileReadErrors: true});
+    return locationMap.get(location) || null;
   }
 
   makeInstaller(opts: LinkOptions) {
@@ -69,7 +76,7 @@ class NodeModulesInstaller implements Installer {
 
   private readonly unpluggedPaths: Set<string> = new Set();
   private readonly blacklistedPaths: Set<string> = new Set();
-  private readonly installedPackages: Map<LocatorKey, { locatorHash: LocatorHash, packageLocation: PortablePath }> = new Map();
+  private readonly installedPackages: Map<LocatorKey, PortablePath> = new Map();
   private readonly onFinalizeInstall: () => Promise<any>;
 
   private readonly opts: LinkOptions;
@@ -80,8 +87,8 @@ class NodeModulesInstaller implements Installer {
   }
 
   async installPackage(pkg: Package, fetchResult: FetchResult) {
-    const key1 = structUtils.requirableIdent(pkg);
-    const key2 = pkg.reference;
+    const requirableIdent = structUtils.requirableIdent(pkg);
+    const reference = pkg.reference;
 
     const packageFs = fetchResult.packageFs;
 
@@ -96,10 +103,10 @@ class NodeModulesInstaller implements Installer {
       packagePeers.add(descriptor.name);
     }
 
-    const packageStore = this.getPackageStore(key1);
-    packageStore.set(key2, {packageLocation, packageDependencies, packagePeers, linkType: pkg.linkType});
+    const packageStore = this.getPackageStore(requirableIdent);
+    packageStore.set(reference, {packageLocation, packageDependencies, packagePeers, linkType: pkg.linkType});
 
-    this.installedPackages.set(serializeLocator({name: key1, reference: key2}), {locatorHash: pkg.locatorHash, packageLocation});
+    this.installedPackages.set(structUtils.stringifyLocator(pkg), packageLocation);
 
     return {
       packageLocation,
@@ -211,12 +218,13 @@ class NodeModulesInstaller implements Installer {
     await this.onFinalizeInstall();
 
     const installStatuses: InstallStatus[] = [];
-    for (const [key, val] of locatorMap.entries()) {
-      const pkg = this.installedPackages.get(key)!;
+    for (const [locatorKey, val] of locatorMap.entries()) {
+      const locator = structUtils.parseLocator(locatorKey);
+      const packageLocation = this.installedPackages.get(locatorKey)!;
       installStatuses.push({
         buildLocations: val.locations.map(loc => ppath.join(rootPath, loc)),
-        locatorHash: pkg.locatorHash,
-        packageLocation: pkg.packageLocation,
+        locatorHash: locator.locatorHash,
+        packageLocation: packageLocation,
         buildDirective: await this.getBuildScripts(val.locations[0]),
       });
     }

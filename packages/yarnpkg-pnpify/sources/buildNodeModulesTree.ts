@@ -59,7 +59,7 @@ export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOption
   return populateNodeModulesTree(pnp, hoistedTree, locators, packages, options);
 };
 
-export const serializeLocator = (locator: PackageLocator): LocatorKey => `${locator.name}:${locator.reference}`;
+const stringifyLocator = (locator: PackageLocator): LocatorKey => `${locator.name}@${locator.reference}`;
 
 export type NodeModulesLocatorMap = Map<LocatorKey, {
   target: PortablePath;
@@ -104,7 +104,7 @@ const buildPackageTree = (pnp: PnpApi): { packageTree: HoisterPackageTree, packa
   let lastPkgId = 0;
 
   const assignPackageId = (locator: PackageLocator, pkg: PackageInformation<NativePath>) => {
-    const locatorKey = serializeLocator(locator);
+    const locatorKey = stringifyLocator(locator);
     const pkgId = locatorToPackageMap.get(locatorKey);
     if (typeof pkgId !== 'undefined')
       return pkgId;
@@ -143,9 +143,9 @@ const buildPackageTree = (pnp: PnpApi): { packageTree: HoisterPackageTree, packa
   const topPkg = pnp.getPackageInformation(pnp.topLevel)!;
   const topLocator = pnp.findPackageLocator(topPkg.packageLocation)!;
   assignPackageId(topLocator, topPkg); // Assign id:0 to top package
-  const topLocatorKey = serializeLocator(topLocator);
+  const topLocatorKey = stringifyLocator(topLocator);
   for (const locator of pnpRoots) {
-    if (serializeLocator(locator) !== topLocatorKey) {
+    if (stringifyLocator(locator) !== topLocatorKey) {
       topPkg.packageDependencies.set(locator.name!, locator.reference);
     }
   }
@@ -190,7 +190,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResultTree, lo
     }
 
     return {
-      locator: serializeLocator(locator),
+      locator: stringifyLocator(locator),
       target,
       linkType,
     };
