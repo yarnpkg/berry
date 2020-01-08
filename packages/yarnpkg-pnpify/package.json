@@ -10,7 +10,7 @@
   "types": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.13",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.12",
     "comment-json": "^2.2.0",
     "cross-spawn": "^6.0.5"
   },
