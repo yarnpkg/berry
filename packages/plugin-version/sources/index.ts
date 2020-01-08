@@ -6,6 +6,11 @@ import version                from './commands/version';
 
 const plugin: Plugin = {
   configuration: {
+    deferredVersionFolder: {
+      description: `Folder where are stored the versioning files`,
+      type: SettingsType.ABSOLUTE_PATH,
+      default: `./.yarn/versions`,
+    },
     preferDeferredVersions: {
       description: `If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set`,
       type: SettingsType.BOOLEAN,

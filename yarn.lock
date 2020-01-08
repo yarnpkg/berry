@@ -5213,6 +5213,8 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.0.0-rc.19"
     "@yarnpkg/core": "workspace:^2.0.0-rc.15"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
+    "@yarnpkg/libui": "workspace:^2.0.0-rc.1"
+    "@yarnpkg/parsers": "workspace:^2.0.0-rc.6"
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.11"
     clipanion: ^2.1.5
     ink: ^2.3.0
