@@ -399,12 +399,12 @@ describe('hoist', () => {
     //   → C
     //   → D@Y
     const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-      {name: 'C'},
-      {name: 'D'},
-      {name: 'D'},
+      {name: '.'}, // 0 - .
+      {name: 'A'}, // 1 - A
+      {name: 'B'}, // 2 - B
+      {name: 'C'}, // 3 - C
+      {name: 'D'}, // 4 - D@X
+      {name: 'D'}, // 5 - D@Y
     ];
     const tree = {
       pkgId: 0, // .

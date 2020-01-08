@@ -362,11 +362,18 @@ const computeHoistCandidates = (rootPkg: TrackedHoisterPackageTree, packages: Re
   for (const pkg of pureHoistCandidates)
     pureHoistCandidatesWeights.set(pkg, ancestorMap[pkg.pkgId].size);
 
+  // Since we are going to reduce hoist candidate list, we should also rebuild hoist candidate ids list
+  hoistCandidateIds.clear();
+
   // Among all pure hoist candidates choose the heaviest and add them to packages to hoist list
   getHeaviestPackages(pureHoistCandidatesWeights, packages).forEach(pkg => {
     packagesToHoistNames.set(packages[pkg.pkgId].name, pkg);
     packagesToHoist.add(pkg);
   });
+
+  // Rebuild hoist candidate ids
+  packagesToHoist.forEach(pkg => hoistCandidateIds.add(pkg.pkgId));
+  hoistCandidatesWithPeerDeps.forEach(pkg => hoistCandidateIds.add(pkg.pkgId));
 
   let newHoistCandidates = packagesToHoist;
   // Loop until new hoist candidates appear
