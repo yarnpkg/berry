@@ -5,7 +5,7 @@
     "semver": "2.0.0-rc.14",
     "nonce": "8631777927998841"
   },
-  "main": "./sources/boot-dev.js",
+  "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
   "types": "./sources/index.ts",
   "sideEffects": false,
