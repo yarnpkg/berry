@@ -1,8 +1,8 @@
-import {navigate}                  from 'gatsby';
-import React, {useState}           from 'react';
-import {connectSearchBox}          from 'react-instantsearch-dom';
-import styled                      from '@emotion/styled';
-import { IoIosSearch, IoIosClose } from "react-icons/io";
+import styled                    from '@emotion/styled';
+import {navigate}                from 'gatsby';
+import {IoIosSearch, IoIosClose} from "react-icons/io";
+import {connectSearchBox}        from 'react-instantsearch-dom';
+import React, {useState}         from 'react';
 
 const SearchForm = styled.form`
   display: flex;
@@ -28,7 +28,6 @@ const SearchInput = styled.input`
     color: #46a7d4;
     font-family: inherit;
     font-style: italic;
-    font-weight: 100;
   }
   -webkit-appearance: none;
   order: 2;
@@ -75,7 +74,7 @@ const ResetButton = styled(IconButton)`
   order: 2;
 `;
 
-const SearchBox = ({ currentRefinement, refine, autoFocus }) => {
+const SearchBox = ({currentRefinement, refine, autoFocus}) => {
   const [active, setActive] = useState(false);
 
   const onSubmit = e => {
