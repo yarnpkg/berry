@@ -41,9 +41,6 @@ module.exports = {
           family: `Open Sans`,
           variants: [`300`, `400`, `700`],
         }, {
-          family: `Abel`,
-          variants: [`300`, `400`],
-        }, {
           family: `PT Mono`,
         }],
       },

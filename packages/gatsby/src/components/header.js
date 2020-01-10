@@ -106,13 +106,13 @@ const MenuEntry = styled.div`
     display: flex;
     align-items: center;
 
-    height: 4em;
+    height: 4rem;
 
     border: 3px solid transparent;
 
     padding: 0 1em;
 
-    font-family: Abel;
+    font-size: 0.9em;
     text-decoration: none;
     text-transform: uppercase;
 
