@@ -113,8 +113,6 @@ const MenuEntry = styled.div`
 
     padding: 0 1em;
 
-    font-family: Abel;
-    font-weight: light;
     text-decoration: none;
     text-transform: uppercase;
 
