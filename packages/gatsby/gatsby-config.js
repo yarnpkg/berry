@@ -44,9 +44,6 @@ module.exports = {
           family: `Abel`,
           variants: [`300`, `400`],
         }, {
-          family: `Baumans`,
-          variants: [`400`],
-        }, {
           family: `PT Mono`,
         }],
       },
