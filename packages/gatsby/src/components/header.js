@@ -21,7 +21,6 @@ const NewsContainer = styled.a`
 
   padding: 0 1em;
 
-  font-weight: light;
   text-decoration: none;
   line-height: 2.5em;
 
@@ -114,7 +113,6 @@ const MenuEntry = styled.div`
     padding: 0 1em;
 
     font-family: Abel;
-    font-weight: light;
     text-decoration: none;
     text-transform: uppercase;
 
@@ -132,7 +130,7 @@ const MenuEntry = styled.div`
   }
 `;
 
-const isActive = ({ href, location }) => {
+const isActive = ({href, location}) => {
   const homeUrl = withPrefix('/');
   const packageInfoUrl = withPrefix('/package/');
 
@@ -141,12 +139,12 @@ const isActive = ({ href, location }) => {
 
   // Make home menu active when home or package info routes are current
   const isHomeMenuLinkActive = href === homeUrl
-      && [homeUrl, packageInfoUrl].includes(location.pathname)
+      && [homeUrl, packageInfoUrl].includes(location.pathname);
 
-  return isMenuLinkActive || isHomeMenuLinkActive ? { className: 'active' } : null;
+  return isMenuLinkActive || isHomeMenuLinkActive ? {className: 'active'} : null;
 };
 
-const Header = ({ children }) => {
+const Header = ({children}) => {
   const data = useStaticQuery(graphql`
     query SiteQuery {
       site {
@@ -193,7 +191,7 @@ const Header = ({ children }) => {
       </MenuContainer>
       {children}
     </HeaderContainer>
-  </>
+  </>;
 };
 
 Header.propTypes = {
