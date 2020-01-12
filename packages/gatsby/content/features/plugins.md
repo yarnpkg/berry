@@ -22,17 +22,17 @@ As you can guess, this philosophy (coupled with the high number of external cont
 
 ## How to use plugins?
 
-Plugins are single-file JS scripts built via the `@yarnpkg/builder` tools. They are easy to use:
+The Yarn plugins are single-file JS scripts. They are easy to use:
 
 ### Automatic setup
 
 The official plugins (the ones whose development happen on the Yarn repository) can be installed using the following commands:
 
-  - `yarn plugin list` will print the name of the available official plugins. Some of them might be marked experimental, in which case they might be subject to breaking changes between releases (they should be mostly stable in general, though).
+  - `yarn plugin list` will print the name of all available [official plugins](https://github.com/yarnpkg/berry/tree/plugins.yml).
 
   - `yarn plugin import <plugin-name>` will download one of the plugins from the list, store it within the `.yarn/plugins` directory, and modify your local `.yarnrc.yml` file to reference it.
 
-  - `yarn plugin import <url>` will do the same thing, but because it uses a URL it will work with any plugin regardless of where the plugin is actually hosted.
+  - `yarn plugin import <url>` will do the same thing, but because it uses an URL it will also work with any plugin regardless of where the plugin is actually hosted.
 
 ### Manual setup
 

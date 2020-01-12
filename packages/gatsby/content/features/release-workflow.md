@@ -4,6 +4,14 @@ path: /features/release-workflow
 title: "Release Workflow"
 ---
 
+> **Experimental**
+>
+> This feature is still incubating, and we'll likely be improving it based on your feedback.
+
+> **Plugin**
+>
+> To access this feature, first install the `version` plugin: `yarn plugin import version`
+
 When working with monorepos, a hard task often is to figure out which packages should receive a new version when starting a new release. Yarn offers a few tools that aim to make this workflow easier without need for third-party tools (althought it's possible you may prefer the workflow offered by different implementations, of course!).
 
 ## Auto-updated dependencies
