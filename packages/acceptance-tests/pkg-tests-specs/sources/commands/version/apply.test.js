@@ -160,7 +160,7 @@ describe(`Commands`, () => {
             await expect(xfs.readJsonPromise(ppath.join(pkgA, `package.json`))).resolves.toMatchObject({
               version: `1.0.0`,
               dependencies: {
-                [`pkg-b`]: `1.0.1`,
+                [`pkg-b`]: dependency.replace(/1\.0\.0/, `1.0.1`),
               },
             });
 
