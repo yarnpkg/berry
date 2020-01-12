@@ -9,6 +9,11 @@ const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{
 // specified order. It's not fair but life isn't fair either.
 const specialObjectKeys = [`__metadata`, `version`, `resolution`, `dependencies`, `peerDependencies`, `dependenciesMeta`, `peerDependenciesMeta`, `binaries`];
 
+class PreserveOrdering {
+  constructor(public readonly data: any) {
+  }
+};
+
 function stringifyString(value: string): string {
   if (value.match(simpleStringPattern)) {
     return value;
@@ -51,26 +56,41 @@ function stringifyValue(value: any, indentLevel: number): string {
   }
 
   if (typeof value === `object` && value) {
+    let data: any;
+    let sort: boolean;
+
+    if (value instanceof PreserveOrdering) {
+      data = value.data;
+      sort = false;
+    } else {
+      data = value;
+      sort = true;
+    }
+
     const indent = `  `.repeat(indentLevel);
 
-    const keys = Object.keys(value).sort((a, b) => {
-      const aIndex = specialObjectKeys.indexOf(a);
-      const bIndex = specialObjectKeys.indexOf(b);
+    const keys = Object.keys(data);
 
-      if (aIndex === -1 && bIndex === -1)
-        return a < b ? -1 : a > b ? +1 : 0;
-      if (aIndex !== -1 && bIndex === -1)
-        return -1;
-      if (aIndex === -1 && bIndex !== -1)
-        return +1;
+    if (sort) {
+      keys.sort((a, b) => {
+        const aIndex = specialObjectKeys.indexOf(a);
+        const bIndex = specialObjectKeys.indexOf(b);
 
-      return aIndex - bIndex;
-    });
+        if (aIndex === -1 && bIndex === -1)
+          return a < b ? -1 : a > b ? +1 : 0;
+        if (aIndex !== -1 && bIndex === -1)
+          return -1;
+        if (aIndex === -1 && bIndex !== -1)
+          return +1;
+
+        return aIndex - bIndex;
+      });
+    }
 
     const fields = keys.filter(key => {
-      return value[key] !== undefined;
+      return data[key] !== undefined;
     }).map(key => {
-      return `${indent}${stringifyString(key)}:${stringifyValue(value[key], indentLevel + 1)}`;
+      return `${indent}${stringifyString(key)}:${stringifyValue(data[key], indentLevel + 1)}`;
     }).join(indentLevel === 0 ? `\n\n` : `\n`);
 
     if (indentLevel === 0) {
@@ -92,6 +112,8 @@ export function stringifySyml(value: any) {
     throw error;
   }
 }
+
+stringifySyml.PreserveOrdering = PreserveOrdering;
 
 function parseViaPeg(source: string) {
   if (!source.endsWith(`\n`))

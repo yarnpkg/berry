@@ -235,7 +235,9 @@ export class Project {
     this.workspaces.push(workspace);
 
     this.workspacesByCwd.set(workspaceCwd, workspace);
+
     this.workspacesByLocator.set(workspace.anchoredLocator.locatorHash, workspace);
+    this.workspacesByLocator.set(workspace.locator.locatorHash, workspace);
 
     let byIdent = this.workspacesByIdent.get(workspace.locator.identHash);
     if (!byIdent)
@@ -293,7 +295,7 @@ export class Project {
       locator = structUtils.devirtualizeLocator(locator);
 
     const workspace = this.workspacesByLocator.get(locator.locatorHash);
-    if (!workspace)
+    if (typeof workspace === `undefined`)
       return null;
 
     return workspace;
@@ -309,8 +311,7 @@ export class Project {
 
   findWorkspacesByDescriptor(descriptor: Descriptor) {
     const candidateWorkspaces = this.workspacesByIdent.get(descriptor.identHash);
-
-    if (!candidateWorkspaces)
+    if (typeof candidateWorkspaces === `undefined`)
       return [];
 
     return candidateWorkspaces.filter(workspace => {

@@ -4,21 +4,11 @@ import {Command, UsageError}                 from 'clipanion';
 import semver                                from 'semver';
 import * as yup                              from 'yup';
 
-// This is a special strategy; Yarn won't change the semver version,
-// but will change the nonce. This will cause `yarn version check` to
-// stop reporting the package as having no explicit bump strategy.
-const DECLINE = `decline`;
+import * as versionUtils                     from '../versionUtils';
 
-const STRATEGIES = new Set([
-  `major`,
-  `minor`,
-  `patch`,
-  `premajor`,
-  `preminor`,
-  `prepatch`,
-  `prerelease`,
-  DECLINE,
-]);
+const acceptedStrategies = new Set(Object.values(versionUtils.Decision).filter(decision => {
+  return decision !== versionUtils.Decision.UNDECIDED;
+}));
 
 // eslint-disable-next-line arca/no-default-export
 export default class VersionCommand extends BaseCommand {
@@ -38,9 +28,9 @@ export default class VersionCommand extends BaseCommand {
     strategy: yup.string().test({
       name: `strategy`,
       message: '${path} must be a semver range or one of ${strategies}',
-      params: {strategies: Array.from(STRATEGIES).join(`, `)},
+      params: {strategies: [...acceptedStrategies].join(`, `)},
       test: (range: string) => {
-        return semver.valid(range) !== null || STRATEGIES.has(range);
+        return semver.valid(range) !== null || acceptedStrategies.has(range as any);
       },
     }),
   });
@@ -74,7 +64,7 @@ export default class VersionCommand extends BaseCommand {
   @Command.Path(`version`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {workspace} = await Project.find(configuration, this.context.cwd);
+    const {project, workspace} = await Project.find(configuration, this.context.cwd);
 
     if (!workspace)
       throw new WorkspaceRequiredError(this.context.cwd);
@@ -86,11 +76,21 @@ export default class VersionCommand extends BaseCommand {
       deferred = false;
 
     const isSemver = semver.valid(this.strategy);
-    const isDeclined = this.strategy === DECLINE;
+    const isDeclined = this.strategy === versionUtils.Decision.DECLINE;
 
-    let nextVersion: string | null;
+    let releaseStrategy: string | null;
     if (isSemver) {
-      nextVersion = this.strategy;
+      if (workspace.manifest.version !== null) {
+        const suggestedStrategy = versionUtils.suggestStrategy(workspace.manifest.version, this.strategy);
+
+        if (suggestedStrategy !== null) {
+          releaseStrategy = suggestedStrategy;
+        } else {
+          releaseStrategy = this.strategy;
+        }
+      } else {
+        releaseStrategy = this.strategy;
+      }
     } else {
       let currentVersion = workspace.manifest.version;
 
@@ -103,35 +103,24 @@ export default class VersionCommand extends BaseCommand {
         }
       }
 
-      const bumpedVersion = !isDeclined
-        ? semver.inc(currentVersion!, this.strategy as any)
-        : currentVersion;
-
-      if (!isDeclined && bumpedVersion === null)
-        throw new Error(`Assertion failed: Failed to increment the version number (${currentVersion})`);
-
-      nextVersion = bumpedVersion;
+      releaseStrategy = this.strategy;
     }
 
-    if (workspace.manifest.raw.nextVersion) {
-      const deferredVersion = workspace.manifest.raw.nextVersion.semver as string | undefined;
-      if (typeof deferredVersion !== `undefined`) {
-        if (!isDeclined) {
-          if (semver.gt(deferredVersion, nextVersion!) && !this.force) {
-            throw new UsageError(`The target version (${nextVersion}) is smaller than the one currently registered (${deferredVersion}); use -f,--force to overwrite.`);
-          }
-        } else {
-          nextVersion = deferredVersion;
+    if (!deferred) {
+      const releases = await versionUtils.resolveVersionFiles(project);
+      const storedVersion = releases.get(workspace);
+
+      if (typeof storedVersion !== `undefined`) {
+        const thisVersion = versionUtils.applyStrategy(workspace.manifest.version, releaseStrategy);
+        if (semver.lt(thisVersion, storedVersion)) {
+          throw new UsageError(`Can't bump the version to one that would be lower than the current deferred one (${storedVersion})`);
         }
       }
     }
 
-    workspace.manifest.setRawField(`nextVersion`, {
-      semver: nextVersion !== workspace.manifest.version ? nextVersion : undefined,
-      nonce: String(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)),
-    }, {after: [`version`]});
-
-    await workspace.persistManifest();
+    const versionFile = await versionUtils.openVersionFile(project, {allowEmpty: true});
+    await versionFile.releases.set(workspace, releaseStrategy as any);
+    await versionFile.saveAll();
 
     if (!deferred) {
       await this.cli.run([`version`, `apply`]);
