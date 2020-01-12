@@ -1,10 +1,6 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "2.0.0-rc.21",
-  "nextVersion": {
-    "semver": "2.0.0-rc.22",
-    "nonce": "6247871399560805"
-  },
+  "version": "2.0.0-rc.22",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12",
