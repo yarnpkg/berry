@@ -21,88 +21,123 @@ custom_predicate(DependencyType):-
 
 describe(`Commands`, () => {
   describe(`constraints query`, () => {
-    test(`test without trailing .`, makeTemporaryEnv({}, async({path, run, source}) => {
-      await environments[`one regular dependency`](path);
+    test(
+      `test without trailing .`,
+      makeTemporaryEnv({}, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-constraints.js`),
+        ],
+      }, async({path, run, source}) => {
+        await environments[`one regular dependency`](path);
 
-      let code;
-      let stdout;
-      let stderr;
+        let code;
+        let stdout;
+        let stderr;
 
-      try {
-        ({code, stdout, stderr} = await run(`constraints`, `query`, `workspace_ident(_, WorkspaceName)`));
-      } catch (error) {
-        ({code, stdout, stderr} = error);
-      }
+        try {
+          ({code, stdout, stderr} = await run(`constraints`, `query`, `workspace_ident(_, WorkspaceName)`));
+        } catch (error) {
+          ({code, stdout, stderr} = error);
+        }
 
-      expect({code, stdout, stderr}).toMatchSnapshot();
-    }));
+        expect({code, stdout, stderr}).toMatchSnapshot();
+      }),
+    );
 
-    test(`test with a syntax error`, makeTemporaryEnv({}, async({path, run, source}) => {
-      await environments[`one regular dependency`](path);
+    test(
+      `test with a syntax error`,
+      makeTemporaryEnv({}, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-constraints.js`),
+        ],
+      }, async({path, run, source}) => {
+        await environments[`one regular dependency`](path);
 
-      let code;
-      let stdout;
-      let stderr;
+        let code;
+        let stdout;
+        let stderr;
 
-      try {
-        ({code, stdout, stderr} = await run(`constraints`, `query`, `*&%@$#$#!$@)`));
-      } catch (error) {
-        ({code, stdout, stderr} = error);
-      }
+        try {
+          ({code, stdout, stderr} = await run(`constraints`, `query`, `*&%@$#$#!$@)`));
+        } catch (error) {
+          ({code, stdout, stderr} = error);
+        }
 
-      expect({code, stdout, stderr}).toMatchSnapshot();
-    }));
+        expect({code, stdout, stderr}).toMatchSnapshot();
+      }),
+    );
 
-    test(`test with an unknown predicate`, makeTemporaryEnv({}, async({path, run, source}) => {
-      await environments[`one regular dependency`](path);
+    test(
+      `test with an unknown predicate`,
+      makeTemporaryEnv({}, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-constraints.js`),
+        ],
+      }, async({path, run, source}) => {
+        await environments[`one regular dependency`](path);
 
-      let code;
-      let stdout;
-      let stderr;
+        let code;
+        let stdout;
+        let stderr;
 
-      try {
-        ({code, stdout, stderr} = await run(`constraints`, `query`, `hello_word(X)`));
-      } catch (error) {
-        ({code, stdout, stderr} = error);
-      }
+        try {
+          ({code, stdout, stderr} = await run(`constraints`, `query`, `hello_word(X)`));
+        } catch (error) {
+          ({code, stdout, stderr} = error);
+        }
 
-      expect({code, stdout, stderr}).toMatchSnapshot();
-    }));
+        expect({code, stdout, stderr}).toMatchSnapshot();
+      }),
+    );
 
-    test(`test with an empty predicate`, makeTemporaryEnv({}, async({path, run, source}) => {
-      await environments[`one regular dependency`](path);
+    test(
+      `test with an empty predicate`,
+      makeTemporaryEnv({}, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-constraints.js`),
+        ],
+      }, async({path, run, source}) => {
+        await environments[`one regular dependency`](path);
 
-      let code;
-      let stdout;
-      let stderr;
+        let code;
+        let stdout;
+        let stderr;
 
-      try {
-        ({code, stdout, stderr} = await run(`constraints`, `query`, `workspace()`));
-      } catch (error) {
-        ({code, stdout, stderr} = error);
-      }
+        try {
+          ({code, stdout, stderr} = await run(`constraints`, `query`, `workspace()`));
+        } catch (error) {
+          ({code, stdout, stderr} = error);
+        }
 
-      expect({code, stdout, stderr}).toMatchSnapshot();
-    }));
+        expect({code, stdout, stderr}).toMatchSnapshot();
+      }),
+    );
 
     for (const [environmentDescription, environment] of Object.entries(environments)) {
       for (const [queryDescription, query] of Object.entries(queries)) {
-        test(`test (${environmentDescription} / ${queryDescription})`, makeTemporaryEnv({}, async ({path, run, source}) => {
-          await environment(path);
-          await writeFile(`${path}/constraints.pro`, constraintsFile);
+        test(
+          `test (${environmentDescription} / ${queryDescription})`,
+          makeTemporaryEnv({}, {
+            plugins: [
+              require.resolve(`@yarnpkg/monorepo/scripts/plugin-constraints.js`),
+            ],
+          }, async ({path, run, source}) => {
+            await environment(path);
+            await writeFile(`${path}/constraints.pro`, constraintsFile);
 
-          let code;
-          let stdout;
-          let stderr;
+            let code;
+            let stdout;
+            let stderr;
 
-          try {
-            ({code, stdout, stderr} = await run(`constraints`, `query`, query));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
+            try {
+              ({code, stdout, stderr} = await run(`constraints`, `query`, query));
+            } catch (error) {
+              ({code, stdout, stderr} = error);
+            }
 
-          expect({code, stdout, stderr}).toMatchSnapshot();
-        }));
+            expect({code, stdout, stderr}).toMatchSnapshot();
+          }),
+        );
       }
     }
   });
