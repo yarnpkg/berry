@@ -67,7 +67,7 @@ export default class VersionCommand extends BaseCommand {
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(this.context.cwd);
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     let deferred = configuration.get(`preferDeferredVersions`);
     if (this.deferred)

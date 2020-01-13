@@ -42,7 +42,7 @@ export default class LinkCommand extends BaseCommand {
     const cache = await Cache.find(configuration);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(this.context.cwd);
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(this.destination));
 
@@ -50,7 +50,7 @@ export default class LinkCommand extends BaseCommand {
     const {project: project2, workspace: workspace2} = await Project.find(configuration2, absoluteDestination);
 
     if (!workspace2)
-      throw new WorkspaceRequiredError(absoluteDestination);
+      throw new WorkspaceRequiredError(project2.cwd, absoluteDestination);
 
     const topLevelWorkspace = project.topLevelWorkspace;
     const linkedWorkspaces = [];

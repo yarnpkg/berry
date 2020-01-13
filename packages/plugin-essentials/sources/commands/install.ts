@@ -203,7 +203,7 @@ export default class YarnCommand extends BaseCommand {
     const cache = await Cache.find(configuration, {immutable: this.immutableCache, check: this.checkCache});
 
     if (!workspace)
-      throw new WorkspaceRequiredError(this.context.cwd);
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     // Important: Because other commands also need to run installs, if you
     // get in a situation where you need to change this file in order to

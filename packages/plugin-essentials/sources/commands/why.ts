@@ -40,7 +40,7 @@ export default class WhyCommand extends BaseCommand {
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(this.context.cwd);
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     await project.resolveEverything({
       lockfileOnly: true,
