@@ -574,9 +574,13 @@ export class Configuration {
         if (!Array.isArray(data.plugins))
           continue;
 
-        for (const userProvidedPath of data.plugins) {
+        for (const userPluginEntry of data.plugins) {
+          const userProvidedPath = typeof userPluginEntry !== `string`
+            ? userPluginEntry.path
+            : userPluginEntry;
+
           const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
-          const {factory, name} = nodeUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
+          const {factory, name} = miscUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
 
           // Prevent plugin redefinition so that the ones declared deeper in the
           // filesystem always have precedence over the ones below.
@@ -592,8 +596,12 @@ export class Configuration {
             }
           };
 
+          const getDefault = (object: any) => {
+            return object.default || object;
+          };
+
           const plugin = miscUtils.prettifySyncErrors(() => {
-            return factory(pluginRequire).default;
+            return getDefault(factory(pluginRequire));
           }, message => {
             return `${message} (when initializing ${name}, defined in ${path})`;
           });
