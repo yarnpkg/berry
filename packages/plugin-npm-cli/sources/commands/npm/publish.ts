@@ -40,7 +40,7 @@ export default class NpmPublishCommand extends BaseCommand {
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(this.context.cwd);
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     if (workspace.manifest.private)
       throw new UsageError(`Private workspaces cannot be published`);

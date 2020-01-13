@@ -56,7 +56,7 @@ export default class UpCommand extends BaseCommand {
     const cache = await Cache.find(configuration);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(this.context.cwd);
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     // @ts-ignore
     const prompt = inquirer.createPromptModule({
