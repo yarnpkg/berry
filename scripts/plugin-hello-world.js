@@ -1,5 +1,5 @@
 module.exports = {
-  name: `plugin-hello-world`,
+  name: `@yarnpkg/plugin-hello-world`,
   factory: require => {
     const {Command} = require(`clipanion`);
     const yup = require(`yup`);
