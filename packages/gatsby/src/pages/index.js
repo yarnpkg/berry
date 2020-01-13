@@ -1,12 +1,12 @@
-import {css}             from '@emotion/core';
-import styled            from '@emotion/styled';
-import React, {useState} from 'react';
+import {css}                                   from '@emotion/core';
+import styled                                  from '@emotion/styled';
+import React, {useState}                       from 'react';
 
 import Header                                  from '../components/header';
-import {SearchBar, SearchResults, withUrlSync} from '../components/search';
-import {SearchProvider}                        from '../components/search';
 import Layout                                  from '../components/layout';
 import {ifDesktop, ifMobile}                   from '../components/responsive';
+import {SearchProvider}                        from '../components/search';
+import {SearchBar, SearchResults, withUrlSync} from '../components/search';
 import SEO                                     from '../components/seo';
 import agendaIcon                              from '../images/homeicons/agenda.svg';
 import laptopIcon                              from '../images/homeicons/laptop.svg';
@@ -62,7 +62,6 @@ const HeroSubtitle = styled.div`
   margin-top: 40px;
 
   font-size: 1.5em;
-  font-weight: light;
 
   color: #ffffff;
 `;
@@ -119,7 +118,7 @@ const Copy = styled.div`
   }
 `;
 
-const SellingPoint = ({ imgUrl, children }) => <>
+const SellingPoint = ({imgUrl, children}) => <>
   <SellingPointContainer>
     <SellingPointIcon src={imgUrl}/>
     <SellingPointContent>
@@ -128,7 +127,7 @@ const SellingPoint = ({ imgUrl, children }) => <>
   </SellingPointContainer>
 </>;
 
-const IndexPage = ({ data, searchState, onSearchStateChange }) => {
+const IndexPage = ({data, searchState, onSearchStateChange}) => {
   const [tags, setTags] = useState([]);
   const [owners, setOwners] = useState([]);
 

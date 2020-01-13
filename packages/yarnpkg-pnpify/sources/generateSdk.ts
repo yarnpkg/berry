@@ -54,10 +54,12 @@ const generateTypescriptWrapper = async (projectRoot: PortablePath, target: Port
   const relPnpApiPath = ppath.relative(ppath.dirname(tsserver), ppath.join(projectRoot, `.pnp.js` as Filename));
 
   await xfs.mkdirpPromise(ppath.dirname(tsserver));
-  await xfs.writeFilePromise(manifest, JSON.stringify({name: 'typescript', version: `${dynamicRequire('typescript/package.json').version}-pnpify`}, null, 2));
-  await xfs.writeFilePromise(tsserver, TEMPLATE(relPnpApiPath, "typescript/lib/tsserver", {usePnpify: true}));
+  await xfs.writeFilePromise(manifest, JSON.stringify({name: `typescript`, version: `${dynamicRequire(`typescript/package.json`).version}-pnpify`}, null, 2));
+  await xfs.writeFilePromise(tsserver, TEMPLATE(relPnpApiPath, `typescript/lib/tsserver`, {usePnpify: false}));
 
-  await addVSCodeWorkspaceSettings(projectRoot, {'typescript.tsdk': npath.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(tsserver)))});
+  await addVSCodeWorkspaceSettings(projectRoot, {
+    [`typescript.tsdk`]: npath.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(tsserver))),
+  });
 };
 
 export const generateEslintWrapper = async (projectRoot: PortablePath, target: PortablePath) => {
@@ -68,10 +70,12 @@ export const generateEslintWrapper = async (projectRoot: PortablePath, target: P
   const relPnpApiPath = ppath.relative(ppath.dirname(api), ppath.join(projectRoot, `.pnp.js` as Filename));
 
   await xfs.mkdirpPromise(ppath.dirname(api));
-  await xfs.writeFilePromise(manifest, JSON.stringify({name: 'eslint', version: `${dynamicRequire('eslint/package.json').version}-pnpify`, main: 'lib/api.js'}, null, 2));
-  await xfs.writeFilePromise(api, TEMPLATE(relPnpApiPath, "eslint", {usePnpify: false}));
+  await xfs.writeFilePromise(manifest, JSON.stringify({name: `eslint`, version: `${dynamicRequire(`eslint/package.json`).version}-pnpify`, main: `lib/api.js`}, null, 2));
+  await xfs.writeFilePromise(api, TEMPLATE(relPnpApiPath, `eslint`, {usePnpify: false}));
 
-  await addVSCodeWorkspaceSettings(projectRoot, {'eslint.nodePath': npath.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(eslint)))});
+  await addVSCodeWorkspaceSettings(projectRoot, {
+    [`eslint.nodePath`]: npath.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(eslint))),
+  });
 };
 
 const isPackageInstalled = (name: string): boolean => {
@@ -79,7 +83,7 @@ const isPackageInstalled = (name: string): boolean => {
     dynamicRequire.resolve(name);
     return true;
   } catch (e) {
-    if (e.code && e.code === 'MODULE_NOT_FOUND') {
+    if (e.code && e.code === `MODULE_NOT_FOUND`) {
       return false;
     } else  {
       throw e;
@@ -88,8 +92,8 @@ const isPackageInstalled = (name: string): boolean => {
 };
 
 export const generateSdk = async (projectRoot: PortablePath): Promise<any> => {
-  const hasTypescript = isPackageInstalled('typescript');
-  const hasEslint = isPackageInstalled('eslint');
+  const hasTypescript = isPackageInstalled(`typescript`);
+  const hasEslint = isPackageInstalled(`eslint`);
 
   const targetFolder = ppath.join(projectRoot, `.vscode/pnpify` as PortablePath);
 

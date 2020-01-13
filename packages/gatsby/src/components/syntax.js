@@ -14,14 +14,14 @@ const getColorForScalar = (theme, scalar) => {
 export const Container = styled.div`
   padding: 1.5em;
 
-  font-family: "PT Mono";
+  font-family: "PT Mono", monospace;
   line-height: 1.6em;
 
   background: ${props => props.theme.colors.background};
   color: ${props => props.theme.colors.documentation};
 
   code {
-    font-family: "PT Mono";
+    font-family: "PT Mono", monospace;
 
     color: ${props => props.theme.colors.code};
   }
@@ -36,7 +36,7 @@ export const Main = styled.div`
 
   padding: 1em;
 
-  font-family: "Open Sans";
+  font-family: "Open Sans", sans-serif;
   white-space: normal;
 
   & + * {
@@ -108,7 +108,7 @@ const AnchorContainer = styled.a`
 const Description = styled.div`
   margin-bottom: 0.5em;
 
-  font-family: "Open Sans";
+  font-family: "Open Sans", sans-serif;
   white-space: normal;
 `;
 

@@ -9,6 +9,22 @@ export function assertNever(arg: never): never {
   throw new Error(`Assertion failed: Unexpected object '${arg}'`);
 }
 
+export function mapAndFilter<In, Out>(array: Array<In>, cb: (value: In) => Out | typeof mapAndFilterSkip): Array<Out> {
+  const output: Array<Out> = [];
+
+  for (const value of array) {
+    const out = cb(value);
+    if (out !== mapAndFilterSkip) {
+      output.push(out);
+    }
+  }
+
+  return output;
+}
+
+const mapAndFilterSkip = Symbol();
+mapAndFilter.skip = mapAndFilterSkip;
+
 export function getArrayWithDefault<K, T>(map: Map<K, Array<T>>, key: K) {
   let value = map.get(key);
 

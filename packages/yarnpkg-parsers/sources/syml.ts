@@ -9,6 +9,11 @@ const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{
 // specified order. It's not fair but life isn't fair either.
 const specialObjectKeys = [`__metadata`, `version`, `resolution`, `dependencies`, `peerDependencies`, `dependenciesMeta`, `peerDependenciesMeta`, `binaries`];
 
+class PreserveOrdering {
+  constructor(public readonly data: any) {
+  }
+};
+
 function stringifyString(value: string): string {
   if (value.match(simpleStringPattern)) {
     return value;
@@ -17,64 +22,79 @@ function stringifyString(value: string): string {
   }
 }
 
-function stringifyValue(value: any, indentLevel: number): string {
-  if (value === null) {
-    if (indentLevel === 0) {
-      throw new Error(`Null is not a valid top-level value`);
-    } else {
-      return ` null`;
-    }
-  }
+function stringifyValue(value: any, indentLevel: number, newLineIfObject: boolean): string {
+  if (value === null)
+    return `null\n`;
 
-  if (typeof value === `number` || typeof value === `boolean`) {
-    if (indentLevel === 0) {
-      return `${value.toString()}\n`;
-    } else {
-      return ` ${value.toString()}`;
-    }
-  }
+  if (typeof value === `number` || typeof value === `boolean`)
+    return `${value.toString()}\n`;
 
-  if (typeof value === `string`) {
-    if (indentLevel === 0) {
-      return `${stringifyString(value)}\n`;
-    } else {
-      return ` ${stringifyString(value)}`;
-    }
-  }
+  if (typeof value === `string`)
+    return `${stringifyString(value)}\n`;
 
   if (Array.isArray(value)) {
     const indent = `  `.repeat(indentLevel);
 
-    return value.map(sub => {
-      return `\n${indent}-${stringifyValue(sub, indentLevel + 1)}`;
+    const serialized = value.map(sub => {
+      return `${indent}- ${stringifyValue(sub, indentLevel + 1, false)}`;
     }).join(``);
+
+    return `\n${serialized}`;
   }
 
   if (typeof value === `object` && value) {
+    let data: any;
+    let sort: boolean;
+
+    if (value instanceof PreserveOrdering) {
+      data = value.data;
+      sort = false;
+    } else {
+      data = value;
+      sort = true;
+    }
+
     const indent = `  `.repeat(indentLevel);
 
-    const keys = Object.keys(value).sort((a, b) => {
-      const aIndex = specialObjectKeys.indexOf(a);
-      const bIndex = specialObjectKeys.indexOf(b);
+    const keys = Object.keys(data);
 
-      if (aIndex === -1 && bIndex === -1)
-        return a < b ? -1 : a > b ? +1 : 0;
-      if (aIndex !== -1 && bIndex === -1)
-        return -1;
-      if (aIndex === -1 && bIndex !== -1)
-        return +1;
+    if (sort) {
+      keys.sort((a, b) => {
+        const aIndex = specialObjectKeys.indexOf(a);
+        const bIndex = specialObjectKeys.indexOf(b);
 
-      return aIndex - bIndex;
-    });
+        if (aIndex === -1 && bIndex === -1)
+          return a < b ? -1 : a > b ? +1 : 0;
+        if (aIndex !== -1 && bIndex === -1)
+          return -1;
+        if (aIndex === -1 && bIndex !== -1)
+          return +1;
+
+        return aIndex - bIndex;
+      });
+    }
 
     const fields = keys.filter(key => {
-      return value[key] !== undefined;
-    }).map(key => {
-      return `${indent}${stringifyString(key)}:${stringifyValue(value[key], indentLevel + 1)}`;
-    }).join(indentLevel === 0 ? `\n\n` : `\n`);
+      return data[key] !== undefined;
+    }).map((key, index) => {
+      const value = data[key];
 
-    if (indentLevel === 0) {
-      return fields ? `${fields}\n` : ``;
+      const stringifiedKey = stringifyString(key);
+      const stringifiedValue = stringifyValue(value, indentLevel + 1, true);
+
+      const recordIndentation = index > 0 || newLineIfObject
+        ? indent
+        : ``;
+
+      if (stringifiedValue.startsWith(`\n`)) {
+        return `${recordIndentation}${stringifiedKey}:${stringifiedValue}`;
+      } else {
+        return `${recordIndentation}${stringifiedKey}: ${stringifiedValue}`;
+      }
+    }).join(indentLevel === 0 ? `\n` : ``) || `\n`;
+
+    if (!newLineIfObject) {
+      return `${fields}`;
     } else {
       return `\n${fields}`;
     }
@@ -85,13 +105,15 @@ function stringifyValue(value: any, indentLevel: number): string {
 
 export function stringifySyml(value: any) {
   try {
-    return stringifyValue(value, 0);
+    return stringifyValue(value, 0, false);
   } catch (error) {
     if (error.location)
       error.message = error.message.replace(/(\.)?$/, ` (line ${error.location.start.line}, column ${error.location.start.column})$1`);
     throw error;
   }
 }
+
+stringifySyml.PreserveOrdering = PreserveOrdering;
 
 function parseViaPeg(source: string) {
   if (!source.endsWith(`\n`))

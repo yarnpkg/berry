@@ -83,6 +83,7 @@ jobs:
       run: |
         node --version
         node ./scripts/run-yarn.js build:cli --no-minify
+        node ./scripts/run-yarn.js build:plugin-constraints
         node ./scripts/run-yarn.js build:plugin-exec
         node ./scripts/run-yarn.js build:plugin-interactive-tools
         node ./scripts/run-yarn.js build:plugin-stage

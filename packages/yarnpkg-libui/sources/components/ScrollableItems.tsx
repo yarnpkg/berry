@@ -1,9 +1,10 @@
-import {Box, Color}      from 'ink';
-import React, {useState} from 'react';
+import {Box, Color}                           from 'ink';
+import React, {useState}                      from 'react';
 
-import {useListInput}    from '../hooks/useListInput';
+import {FocusRequestHandler, useFocusRequest} from '../hooks/useFocusRequest';
+import {useListInput}                         from '../hooks/useListInput';
 
-export const ScrollableItems = ({children = [], size = 10}: {children: Array<React.ReactElement>, size?: number}) => {
+export const ScrollableItems = ({active = true, children = [], radius = 10, size = 1, onFocusRequest}: {active?: boolean, children: Array<React.ReactElement>, radius?: number, size?: number, onFocusRequest?: FocusRequestHandler}) => {
   const getKey = (child: React.ReactElement) => {
     if (child.key === null) {
       throw new Error(`Expected all children to have a key`);
@@ -18,15 +19,20 @@ export const ScrollableItems = ({children = [], size = 10}: {children: Array<Rea
   const [activeKey, setActiveKey] = useState(initialKey);
   const activeIndex = keys.indexOf(activeKey);
 
+  useFocusRequest({
+    active,
+    handler: onFocusRequest,
+  });
+
   useListInput(activeKey, keys, {
-    active: true,
+    active,
     minus: `up`,
     plus: `down`,
     set: setActiveKey,
   });
 
-  let min = activeIndex - size;
-  let max = activeIndex + size;
+  let min = activeIndex - radius;
+  let max = activeIndex + radius;
 
   if (max > keys.length) {
     min -= max - keys.length;
@@ -38,26 +44,26 @@ export const ScrollableItems = ({children = [], size = 10}: {children: Array<Rea
     min = 0;
   }
 
-  if (max > keys.length)
-    max = keys.length;
+  if (max >= keys.length)
+    max = keys.length - 1;
 
   const rendered = [];
 
-  for (let t = min; t < max; ++t) {
+  for (let t = min; t <= max; ++t) {
     const key = keys[t];
-    const active = key === activeKey;
+    const activeItem = active && key === activeKey;
 
-    rendered.push(<Box key={key!} height={1}>
+    rendered.push(<Box key={key!} height={size}>
       <Box marginLeft={2} marginRight={2}>
-        {active ? <Color cyan>▶</Color> : ` `}
+        {activeItem ? <Color cyan>▶</Color> : ` `}
       </Box>
       <Box>
-        {React.cloneElement(children[t], {active})}
+        {React.cloneElement(children[t], {active: activeItem})}
       </Box>
     </Box>);
   }
 
-  return <Box flexDirection={`column`} width={`100%`} height={size * 2 + 1}>
+  return <Box flexDirection={`column`} width={`100%`} height={radius * size * 2 + size}>
     {rendered}
   </Box>;
 };

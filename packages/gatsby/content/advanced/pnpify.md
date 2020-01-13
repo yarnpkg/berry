@@ -6,60 +6,30 @@ title: "PnPify"
 
 ## Motivation
 
-Plug'n'Play is, by design, compatible with all projects that only make use of the `require` API - whether it's `require`, `require.resolve`, or `createRequireFromPath`. However, some projects like to reimplement the resolution themselves and aren't compatible by default with our environment (unless they add some specific lines into their resolution logic). One such project is for example TypeScript, which doesn't natively supports Plug'n'Play in its `tsc` binary at the time of this writing ([#28289](https://github.com/Microsoft/TypeScript/issues/28289)).
+Plug'n'Play is, by design, compatible with all projects that only make use of the `require` API - whether it's `require`, `require.resolve`, or `createRequireFromPath`. However, some rare projects prefer to reimplement the Node resolution themselves and as such aren't compatible by default with our environment (unless they integrate their resolvers with the [PnP API](/advanced/pnpapi)).
 
 ## PnPify
 
-PnPify is a tool designed to workaround these compatibility issues. It's not perfect in that it brings its own set of caveats and doesn't allow you to leverage all the features that PnP has to offer, but it's often good enough to unblock you until better solutions are implemented.
+PnPify is a tool designed to workaround these compatibility issues. It's not perfect - it brings its own set of caveats and doesn't allow you to leverage all the features that PnP has to offer - but it's often good enough to unblock you until better solutions are implemented.
 
-How it works is simple: when a non-PnP-compliant project tries to access the `node_modules` directories (for example through `readdir` or `readFile`), PnPify intercepts those calls and converts them into calls to the PnP API. Then, based on the result, it simulates an actual filesystem for the underlying tool to use.
+How it works is simple: when a non-PnP-compliant project tries to access the `node_modules` directories (for example through `readdir` or `readFile`), PnPify intercepts those calls and converts them into calls to the PnP API. Then, based on the result, it simulates the existence of a virtual `node_modules` folder that the underlying tool will then consume - still unaware that the files are extracted from a virtual filesystem.
 
 ## Usage
 
 1. Add PnPify to your dependencies:
 
-   ```bash
-   yarn add @yarnpkg/pnpify
-   ```
+```bash
+yarn add @yarnpkg/pnpify
+```
 
 2. Use pnpify to run the incompatible tool:
 
-   ```bash
-   yarn pnpify tsc
-   ```
-
-## VSCode Support
-
-PnPify also is compatible with VSCode! Follow those steps to enable it:
-
-1. Add PnPify to your dependencies:
-
-   ```bash
-   yarn add @yarnpkg/pnpify
-   ```
-
-2. Run the following command, which will generate a new directory called `.vscode/pnpify`:
-
-   ```bash
-   yarn pnpify --sdk
-   ```
-
-3. For safety reason VSCode requires you to explicitly activate the custom TS settings:
-
-    1. Press <kbd>ctrl+shift+p</kbd> in a TypeScript file
-    2. Choose "Select TypeScript Version"
-    3. Pick "Use Workspace Version"
-
-Your VSCode project is now configured to use the exact same version of TypeScript as the one you usually use, except that it will now be able to properly resolve the type definitions!
-
-Note that VSCode might ask you to do Step 4 again from time to time, but apart from that your experience should be the same as usual. Happy development!
+```bash
+yarn pnpify tsc
+```
 
 ## Caveat
 
 - Due to how PnPify emulates the `node_modules` directory, some problems are to be expected, especially with tools that watch directories inside `node_modules`.
 
 - PnPify isn't designed to be a long-term solution; its purpose is purely to help projects during their transition to the stricter Plug'n'Play module resolution scheme. Relying on PnPify doesn't allow you to take full advantage of everything Plug'n'Play has to offer, in particular perfect flattening and boundary checks.
-
-## Alternatives
-
-- A non-official VSCode extension called [`TypeScript Plug'n'Play`](https://marketplace.visualstudio.com/items?itemName=ark120202.vscode-typescript-pnp-plugin) is maintained by [@ark120202](https://github.com/ark120202/vscode-typescript-pnp-plugin) and add PnP support to VSCode in a more integrated way.

@@ -62,7 +62,7 @@ export default class DlxCommand extends BaseCommand {
       const {project, workspace} = await Project.find(configuration, tmpDir);
 
       if (workspace === null)
-        throw new WorkspaceRequiredError(tmpDir);
+        throw new WorkspaceRequiredError(project.cwd, tmpDir);
 
       await project.resolveEverything({
         lockfileOnly: true,

@@ -1,20 +1,14 @@
 # `@yarnpkg/plugin-typescript`
 
-This plugin automatically adds `@types/` packages into your dependencies when you add a package that's covered by one.
+This plugin automatically adds `@types/` packages into your dependencies when you add a package that doesn't include its own types.
 
-Note that for performance reasons the plugin doesn't try to check whether the added package contains its own types - so you might end up with extraneous type packages in some cases.
+> **Known problem:** The current implementation always adds `@types` packages if they exist.
 
-## Usage
+## Install
 
-**Note:** This plugin (as all other Yarn plugins) is only compatible with Yarn 2. Yarn 2 is still in a "developer preview" state, meaning that you're welcome to use it and give us your feedback but you might have to get your hands a little dirty to dive into the mechanic.
-
-1. [Install Yarn](https://github.com/yarnpkg/berry#install)
-
-2. Install the `@yarnpkg/plugin-typescript` plugin:
-
-   ```
-   $ yarn plugin import @yarnpkg/plugin-typescript
-   ```
+```
+yarn plugin import typescript
+```
 
 ## Example
 
@@ -36,4 +30,4 @@ Note that for performance reasons the plugin doesn't try to check whether the ad
 ➤ BR0000: Done with warnings in 6.81s
 ```
 
-As you can see in the fetch step, even though we only added `lodash` into our dependencies, Yarn automatically figured out that we would need `@types/lodash` and added it.
+As you can see in the fetch step, even though we only added `lodash` into our dependencies, Yarn automatically figured out that we would need `@types/lodash`, and added it before we ask it to.

@@ -23,7 +23,7 @@ export default class PatchCommand extends BaseCommand {
     const cache = await Cache.find(configuration);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(this.context.cwd);
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     await project.resolveEverything({
       lockfileOnly: true,

@@ -9,10 +9,10 @@ export default class RunCommand extends BaseCommand {
   @Command.Path(`run`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {workspace} = await Project.find(configuration, this.context.cwd);
+    const {project, workspace} = await Project.find(configuration, this.context.cwd);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(this.context.cwd);
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const report = await StreamReport.start({
       configuration,
