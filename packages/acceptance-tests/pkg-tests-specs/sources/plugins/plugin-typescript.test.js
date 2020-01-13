@@ -5,23 +5,38 @@ const {
 describe(`Plugins`, () => {
   describe(`typescript`, () => {
     test(
-      `it should automatically add @types to development`,
+      `it should automatically add @types to devDependencies when package doesn't provide types`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-typescript.js`))}\n`);
-        await run(`add`, `no-deps`);
+        await run(`add`, `is-number`);
 
         await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
           dependencies: {
-            [`no-deps`]: `^2.0.0`,
+            [`is-number`]: `^1.0.0`,
           },
           devDependencies: {
-            [`@types/no-deps`]: `1.0.0`,
+            [`@types/is-number`]: `1.0.0`,
           },
         });
       })
     );
 
     test(
+      `it should not add @types when package provides its own types`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-typescript.js`))}\n`);
+        await run(`add`, `left-pad`);
+
+        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+          dependencies: {
+            [`left-pad`]: `^1.0.0`,
+          },
+        });
+      })
+    );
+
+    // TODO: Find a scoped package we can use
+    test.skip(
       `it should automatically add @types for scoped packages`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-typescript.js`))}\n`);
@@ -56,30 +71,30 @@ describe(`Plugins`, () => {
       `it should not add @types for transient dependencies`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-typescript.js`))}\n`);
-        await run(`add`, `one-fixed-dep`);
+        await run(`add`, `one-fixed-dep-with-types`);
 
         await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
           dependencies: {
-            [`one-fixed-dep`]: `^1.0.0`,
+            [`one-fixed-dep-with-types`]: `^1.0.0`,
           },
         });
       })
     );
 
     test(
-      `it should automatically remove @types from development`,
+      `it should automatically remove @types from devDependencies`,
       makeTemporaryEnv({
         dependencies: {
-          [`no-deps`]: `^2.0.0`,
+          [`is-number`]: `^1.0.0`,
         },
         devDependencies: {
-          [`@types/no-deps`]: `2.0.0`,
+          [`@types/is-number`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
         await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-typescript.js`))}\n`);
-        await run(`remove`, `no-deps`);
+        await run(`remove`, `is-number`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.not.toHaveProperty(`devDependencies.@types/no-deps`);
+        await expect(readJson(`${path}/package.json`)).resolves.not.toHaveProperty(`devDependencies.@types/is-number`);
       })
     );
 

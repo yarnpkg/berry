@@ -4,6 +4,8 @@ import {Hooks as EssentialsHooks}             from '@yarnpkg/plugin-essentials';
 import {suggestUtils}                         from '@yarnpkg/plugin-essentials';
 import {Hooks as PackHooks}                   from '@yarnpkg/plugin-pack';
 
+import {hasDefinitelyTyped}                   from './typescriptUtils';
+
 const getTypesName = (descriptor: Descriptor) => {
   return descriptor.scope
     ? `${descriptor.scope}__${descriptor.name}`
@@ -20,6 +22,11 @@ const afterWorkspaceDependencyAddition = async (
 
   const project = workspace.project;
   const configuration = project.configuration;
+  const requiresInstallTypes = await hasDefinitelyTyped(descriptor, configuration);
+
+  if (!requiresInstallTypes)
+    return;
+
   const cache = await Cache.find(configuration);
   const typesName = getTypesName(descriptor);
 
