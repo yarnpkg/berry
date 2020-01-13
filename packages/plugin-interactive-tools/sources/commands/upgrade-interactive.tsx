@@ -16,7 +16,7 @@ const SIMPLE_SEMVER = /^([\^~]?)([0-9+])(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
 export default class UpgradeInteractiveCommand extends BaseCommand {
   static usage = Command.Usage({
     category: `Interactive commands`,
-    description: `open the upgrade interace`,
+    description: `open the upgrade interface`,
     details: `
       > In order to use this command you will need to add \`@yarnpkg/plugin-interactive-tools\` to your plugins. Check the documentation for \`yarn plugin import\` for more details.
 
