@@ -1,5 +1,10 @@
 # This file contains the list of officially endorsed plugins.
 
+"@yarnpkg/plugin-hello-world":
+  url: "https://github.com/yarnpkg/berry/raw/master/scripts/plugin-hello-world.js"
+  experimental: true
+  description: "Adds a `yarn hello` command that says 'hello'."
+
 "@yarnpkg/plugin-exec":
   url: "https://github.com/yarnpkg/berry/raw/master/packages/plugin-exec/bin/%40yarnpkg/plugin-exec.js"
   experimental: true

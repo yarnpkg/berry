@@ -22,37 +22,24 @@ function stringifyString(value: string): string {
   }
 }
 
-function stringifyValue(value: any, indentLevel: number): string {
-  if (value === null) {
-    if (indentLevel === 0) {
-      throw new Error(`Null is not a valid top-level value`);
-    } else {
-      return ` null`;
-    }
-  }
+function stringifyValue(value: any, indentLevel: number, newLineIfObject: boolean): string {
+  if (value === null)
+    return `null\n`;
 
-  if (typeof value === `number` || typeof value === `boolean`) {
-    if (indentLevel === 0) {
-      return `${value.toString()}\n`;
-    } else {
-      return ` ${value.toString()}`;
-    }
-  }
+  if (typeof value === `number` || typeof value === `boolean`)
+    return `${value.toString()}\n`;
 
-  if (typeof value === `string`) {
-    if (indentLevel === 0) {
-      return `${stringifyString(value)}\n`;
-    } else {
-      return ` ${stringifyString(value)}`;
-    }
-  }
+  if (typeof value === `string`)
+    return `${stringifyString(value)}\n`;
 
   if (Array.isArray(value)) {
     const indent = `  `.repeat(indentLevel);
 
-    return value.map(sub => {
-      return `\n${indent}-${stringifyValue(sub, indentLevel + 1)}`;
+    const serialized = value.map(sub => {
+      return `${indent}- ${stringifyValue(sub, indentLevel + 1, false)}`;
     }).join(``);
+
+    return `\n${serialized}`;
   }
 
   if (typeof value === `object` && value) {
@@ -89,12 +76,25 @@ function stringifyValue(value: any, indentLevel: number): string {
 
     const fields = keys.filter(key => {
       return data[key] !== undefined;
-    }).map(key => {
-      return `${indent}${stringifyString(key)}:${stringifyValue(data[key], indentLevel + 1)}`;
-    }).join(indentLevel === 0 ? `\n\n` : `\n`);
+    }).map((key, index) => {
+      const value = data[key];
 
-    if (indentLevel === 0) {
-      return fields ? `${fields}\n` : ``;
+      const stringifiedKey = stringifyString(key);
+      const stringifiedValue = stringifyValue(value, indentLevel + 1, true);
+
+      const recordIndentation = index > 0 || newLineIfObject
+        ? indent
+        : ``;
+
+      if (stringifiedValue.startsWith(`\n`)) {
+        return `${recordIndentation}${stringifiedKey}:${stringifiedValue}`;
+      } else {
+        return `${recordIndentation}${stringifiedKey}: ${stringifiedValue}`;
+      }
+    }).join(indentLevel === 0 ? `\n` : ``) || `\n`;
+
+    if (!newLineIfObject) {
+      return `${fields}`;
     } else {
       return `\n${fields}`;
     }
@@ -105,7 +105,7 @@ function stringifyValue(value: any, indentLevel: number): string {
 
 export function stringifySyml(value: any) {
   try {
-    return stringifyValue(value, 0);
+    return stringifyValue(value, 0, false);
   } catch (error) {
     if (error.location)
       error.message = error.message.replace(/(\.)?$/, ` (line ${error.location.start.line}, column ${error.location.start.column})$1`);

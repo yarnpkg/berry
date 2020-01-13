@@ -37,7 +37,7 @@ export default class WorkspaceCommand extends Command<CommandContext> {
     const {project, workspace: cwdWorkspace} = await Project.find(configuration, this.context.cwd);
 
     if (!cwdWorkspace)
-      throw new WorkspaceRequiredError(this.context.cwd);
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const candidates = project.workspaces;
     const candidatesByName = new Map(

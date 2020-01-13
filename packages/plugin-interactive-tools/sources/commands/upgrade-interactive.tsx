@@ -35,7 +35,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     const cache = await Cache.find(configuration);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(this.context.cwd);
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const colorizeRawDiff = (from: string, to: string) => {
       const diff = diffWords(from, to);

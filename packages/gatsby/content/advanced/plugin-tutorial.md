@@ -4,7 +4,7 @@ path: /advanced/plugin-tutorial
 title: "Plugin Tutorial"
 ---
 
-Starting from the v2, Yarn now supports plugins. For more information about what they are and in which case you'd want to use them, consult the [dedicated page](/features/plugins). We'll talk here about the exact steps needed to write one. It's quite simple, really!
+Starting from the Yarn 2, Yarn now supports plugins. For more information about what they are and in which case you'd want to use them, consult the [dedicated page](/features/plugins). We'll talk here about the exact steps needed to write one. It's quite simple, really!
 
 ## What does a plugin look like?
 
@@ -20,6 +20,17 @@ Open in a text editor a new file called `plugin-hello-world.js`, and type the fo
 module.exports = {
   name: `plugin-hello-world`,
   factory: require => ({
+    // What is this `require` function, you ask? It's a `require`
+    // implementation provided by Yarn core that allows you to
+    // access various packages (such as @yarnpkg/core) without
+    // having to list them in your own dependencies - hence
+    // lowering your plugin bundle size, and making sure that
+    // you'll use the exact same core modules as the rest of the
+    // application.
+    //
+    // Of course, the regular `require` implementation remains
+    // available, so feel free to use the `require` you need for
+    // your use case!
   })
 };
 ```
@@ -70,7 +81,7 @@ module.exports = {
       }
     }
     
-    Command.Path(`hello`)(HelloWorldCommand.prototype);
+    HelloWorldCommand.addPath(`hello`);
 
     return {
       commands: [
@@ -99,7 +110,11 @@ module.exports = {
     // Note: This curious syntax is because @Command.String is actually
     // a decorator! But since they aren't supported in native JS at the
     // moment, we need to call them manually.
-    Command.String(`--email`)(HelloWorldCommand.prototype, `email`);
+    HelloWorldCommand.addOption(`email`, Command.String(`--email`));
+
+    // Similarly we would be able to use a decorator here too, but since
+    // we're writing our code in JS-only we need to go through "addPath".
+    HelloWorldCommand.addPath(`hello`);
 
     // Similarly, native JS doesn't support member variable as of today,
     // hence the awkward writing.
@@ -124,6 +139,6 @@ module.exports = {
         HelloWorldCommand,
       ],
     };
-  }
+  },
 };
 ```

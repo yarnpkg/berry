@@ -570,6 +570,10 @@ export class Configuration {
 
       const dynamicPlugins = new Set();
 
+      const getDefault = (object: any) => {
+        return object.default || object;
+      };
+
       const importPlugin = (pluginPath: PortablePath, source: string) => {
         const {factory, name} = nodeUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
 
@@ -588,7 +592,7 @@ export class Configuration {
         };
 
         const plugin = miscUtils.prettifySyncErrors(() => {
-          return factory(pluginRequire).default;
+          return getDefault(factory(pluginRequire));
         }, message => {
           return `${message} (when initializing ${name}, defined in ${source})`;
         });
@@ -612,7 +616,11 @@ export class Configuration {
         if (!Array.isArray(data.plugins))
           continue;
 
-        for (const userProvidedPath of data.plugins) {
+        for (const userPluginEntry of data.plugins) {
+          const userProvidedPath = typeof userPluginEntry !== `string`
+            ? userPluginEntry.path
+            : userPluginEntry;
+
           const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
           importPlugin(pluginPath, path);
         }
