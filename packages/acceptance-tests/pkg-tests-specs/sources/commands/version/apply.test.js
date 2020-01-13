@@ -8,6 +8,11 @@ describe(`Commands`, () => {
         {
           version: `0.0.0`,
         },
+        {
+          plugins: [
+            require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+          ],
+        },
         async ({path, run}) => {
           await run(`version`, `patch`, `--deferred`);
 
@@ -31,6 +36,11 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [
             `packages/*`,
+          ],
+        },
+        {
+          plugins: [
+            require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
           ],
         },
         async ({path, run}) => {
@@ -74,6 +84,11 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [
             `packages/*`,
+          ],
+        },
+        {
+          plugins: [
+            require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
           ],
         },
         async ({path, run}) => {
@@ -129,6 +144,11 @@ describe(`Commands`, () => {
             private: true,
             workspaces: [
               `packages/*`,
+            ],
+          },
+          {
+            plugins: [
+              require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
             ],
           },
           async ({path, run}) => {
