@@ -55,7 +55,7 @@ const generateTypescriptWrapper = async (projectRoot: PortablePath, target: Port
 
   await xfs.mkdirpPromise(ppath.dirname(tsserver));
   await xfs.writeFilePromise(manifest, JSON.stringify({name: 'typescript', version: `${dynamicRequire('typescript/package.json').version}-pnpify`}, null, 2));
-  await xfs.writeFilePromise(tsserver, TEMPLATE(relPnpApiPath, "typescript/lib/tsserver", {usePnpify: true}));
+  await xfs.writeFilePromise(tsserver, TEMPLATE(relPnpApiPath, "typescript/lib/tsserver", {usePnpify: false}));
 
   await addVSCodeWorkspaceSettings(projectRoot, {'typescript.tsdk': npath.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(tsserver)))});
 };
