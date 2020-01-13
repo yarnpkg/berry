@@ -46,7 +46,7 @@ jobs:
       run: |
         yarn add eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin
 
-        echo '{"rules": {"@typescript-eslint/explicit-function-return-type": "error"}, "extends": ["plugin:@typescript-eslint/recommended"]}' > .eslintrc
+        echo '{"parser": "@typescript-eslint/parser", "plugins": ["@typescript-eslint"], "rules": {"@typescript-eslint/explicit-function-return-type": "error"}}' > .eslintrc
 
         echo 'const f = (): number => 42;' | tee ok.ts
         yarn eslint ok.ts

@@ -32,7 +32,7 @@ jobs:
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add typescript @yarnpkg/pnpify@*
+        yarn add typescript
 
         yarn add ts-pnp left-pad @types/left-pad
 
