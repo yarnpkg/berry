@@ -1,4 +1,4 @@
-# `@yarnpkg/plugin-pack`
+# `@yarnpkg/plugin-patch`
 
 This plugin adds support for the `patch:` protocol.
 
