@@ -2,6 +2,8 @@
 
 This plugin automatically adds `@types/` packages into your dependencies when you add a package that doesn't include its own types.
 
+> **Known problem:** The current implementation always adds `@types` packages if they exist.
+
 ## Install
 
 ```
