@@ -342,7 +342,9 @@ function parseBoolean(value: unknown) {
 function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
   if (definition.isArray) {
     if (!Array.isArray(value)) {
-      return [parseSingleValue(configuration, path, value, definition, folder)];
+      return String(value).split(/,/).map(segment => {
+        return parseSingleValue(configuration, path, segment, definition, folder);
+      });
     } else {
       return value.map((sub, i) => parseSingleValue(configuration, `${path}[${i}]`, sub, definition, folder));
     }
@@ -568,6 +570,46 @@ export class Configuration {
 
       const dynamicPlugins = new Set();
 
+      const getDefault = (object: any) => {
+        return object.default || object;
+      };
+
+      const importPlugin = (pluginPath: PortablePath, source: string) => {
+        const {factory, name} = nodeUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
+
+        // Prevent plugin redefinition so that the ones declared deeper in the
+        // filesystem always have precedence over the ones below.
+        if (dynamicPlugins.has(name))
+          return;
+
+        const pluginRequireEntries = new Map(requireEntries);
+        const pluginRequire = (request: string) => {
+          if (pluginRequireEntries.has(request)) {
+            return pluginRequireEntries.get(request)();
+          } else {
+            throw new UsageError(`This plugin cannot access the package referenced via ${request} which is neither a builtin, nor an exposed entry`);
+          }
+        };
+
+        const plugin = miscUtils.prettifySyncErrors(() => {
+          return getDefault(factory(pluginRequire));
+        }, message => {
+          return `${message} (when initializing ${name}, defined in ${source})`;
+        });
+
+        requireEntries.set(name, () => plugin);
+
+        dynamicPlugins.add(name);
+        plugins.set(name, plugin);
+      };
+
+      if (environmentSettings.plugins) {
+        for (const userProvidedPath of environmentSettings.plugins.split(`;`)) {
+          const pluginPath = ppath.resolve(startingCwd, npath.toPortablePath(userProvidedPath));
+          importPlugin(pluginPath, `<environment>`);
+        }
+      }
+
       for (const {path, cwd, data} of rcFiles) {
         if (!useRc)
           continue;
@@ -580,36 +622,7 @@ export class Configuration {
             : userPluginEntry;
 
           const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
-          const {factory, name} = miscUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
-
-          // Prevent plugin redefinition so that the ones declared deeper in the
-          // filesystem always have precedence over the ones below.
-          if (dynamicPlugins.has(name))
-            continue;
-
-          const pluginRequireEntries = new Map(requireEntries);
-          const pluginRequire = (request: string) => {
-            if (pluginRequireEntries.has(request)) {
-              return pluginRequireEntries.get(request)();
-            } else {
-              throw new UsageError(`This plugin cannot access the package referenced via ${request} which is neither a builtin, nor an exposed entry`);
-            }
-          };
-
-          const getDefault = (object: any) => {
-            return object.default || object;
-          };
-
-          const plugin = miscUtils.prettifySyncErrors(() => {
-            return getDefault(factory(pluginRequire));
-          }, message => {
-            return `${message} (when initializing ${name}, defined in ${path})`;
-          });
-
-          requireEntries.set(name, () => plugin);
-
-          dynamicPlugins.add(name);
-          plugins.set(name, plugin);
+          importPlugin(pluginPath, path);
         }
       }
     }

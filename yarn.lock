@@ -4025,6 +4025,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/typescript@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@types/typescript@npm:2.0.0"
+  dependencies:
+    typescript: "*"
+  checksum: f70f7b4b2415d9a0089719fb34d5c65fdf7c65d4f8c334e2761d3cf0d7ac76b2f3e12197fa649c1bf3f29484ab03cff2872a0b8f21915d82029733bfab66eaf1
+  languageName: node
+  linkType: hard
+
 "@types/uglify-js@npm:*":
   version: 3.0.4
   resolution: "@types/uglify-js@npm:3.0.4"
@@ -4909,6 +4918,8 @@ __metadata:
   resolution: "@yarnpkg/plugin-constraints@workspace:packages/plugin-constraints"
   dependencies:
     "@types/lodash": ^4.14.136
+    "@types/typescript": 2.0.0
+    "@yarnpkg/builder": "workspace:^2.0.0-rc.13"
     "@yarnpkg/cli": "workspace:^2.0.0-rc.19"
     "@yarnpkg/core": "workspace:^2.0.0-rc.15"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
@@ -4917,6 +4928,7 @@ __metadata:
     lodash: ^4.17.15
     node-emoji: ^1.8.1
     tau-prolog: ^0.2.66
+    typescript: ^3.7.4
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.19
     "@yarnpkg/core": ^2.0.0-rc.15
@@ -24148,7 +24160,7 @@ resolve@^1.10.1:
   languageName: node
   linkType: hard
 
-typescript@^3.7.4:
+"typescript@*, typescript@^3.7.4":
   version: 3.7.4
   resolution: "typescript@npm:3.7.4"
   bin:
@@ -24158,7 +24170,7 @@ typescript@^3.7.4:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^3.7.4#builtin<compat/typescript>":
+"typescript@patch:typescript@*#builtin<compat/typescript>, typescript@patch:typescript@^3.7.4#builtin<compat/typescript>":
   version: 3.7.4
   resolution: "typescript@patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=226bd1"
   bin:

@@ -6,7 +6,11 @@ describe(`Commands`, () => {
   describe(`version check`, () => {
     test(
       `it shouldn't work if the strategy isn't semver and there is no prior version`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
+      makeTemporaryEnv({}, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
+      }, async ({path, run, source}) => {
         await expect(run(`version`, `patch`)).rejects.toThrow();
       }),
     );
@@ -15,6 +19,10 @@ describe(`Commands`, () => {
       `it shouldn't work if the immediate bump would be lower than the planned version (semver strategy)`,
       makeTemporaryEnv({
         version: `1.0.0`,
+      }, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
         await expect(run(`version`, `1.0.1`)).rejects.toThrow();
@@ -25,6 +33,10 @@ describe(`Commands`, () => {
       `it shouldn't work if the immediate bump would be lower than the planned version (incremental strategy)`,
       makeTemporaryEnv({
         version: `1.0.0`,
+      }, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
         await expect(run(`version`, `patch`)).rejects.toThrow();
@@ -35,6 +47,10 @@ describe(`Commands`, () => {
       `it should work if the immediate bump is greater than the planned version (semver strategy)`,
       makeTemporaryEnv({
         version: `1.0.0`,
+      }, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
         await run(`version`, `2.0.0`);
@@ -49,6 +65,10 @@ describe(`Commands`, () => {
       `it should work if the immediate bump is greater than the planned version (incremental strategy)`,
       makeTemporaryEnv({
         version: `1.0.0`,
+      }, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
         await run(`version`, `major`);
@@ -63,6 +83,10 @@ describe(`Commands`, () => {
       `it should work if the immediate bump is equal to the planned version (semver strategy)`,
       makeTemporaryEnv({
         version: `1.0.0`,
+      }, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
         await run(`version`, `1.1.0`);
@@ -77,6 +101,10 @@ describe(`Commands`, () => {
       `it should work if the immediate bump is equal to the planned version (incremental strategy)`,
       makeTemporaryEnv({
         version: `1.0.0`,
+      }, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
         await run(`version`, `minor`);
@@ -91,6 +119,10 @@ describe(`Commands`, () => {
       `it should increase the version number for a workspace`,
       makeTemporaryEnv({
         version: `0.0.0`,
+      }, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
       }, async ({path, run, source}) => {
         await run(`version`, `patch`);
 
@@ -104,6 +136,10 @@ describe(`Commands`, () => {
       `it shouldn't immediatly increase the version number for a workspace when using --deferred`,
       makeTemporaryEnv({
         version: `0.0.0`,
+      }, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
       }, async ({path, run, source}) => {
         await run(`version`, `patch`, `--deferred`);
 
@@ -125,6 +161,9 @@ describe(`Commands`, () => {
         version: `0.0.0`,
       }, {
         preferDeferredVersions: true,
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
       }, async ({path, run, source}) => {
         await run(`version`, `patch`);
 
@@ -146,6 +185,9 @@ describe(`Commands`, () => {
         version: `0.0.0`,
       }, {
         preferDeferredVersions: true,
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
       }, async ({path, run, source}) => {
         await run(`version`, `patch`, `--immediate`);
 

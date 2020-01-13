@@ -20,10 +20,15 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",
+    "@types/typescript": "2.0.0",
+    "@yarnpkg/builder": "workspace:^2.0.0-rc.13",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.19",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.15"
+    "@yarnpkg/core": "workspace:^2.0.0-rc.15",
+    "typescript": "^3.7.4"
   },
   "scripts": {
+    "build:plugin-constraints": "builder build plugin",
+    "update-local": "yarn build:plugin-constraints && rsync -a --delete bundles/ bin/",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
   },
