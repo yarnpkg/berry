@@ -115,42 +115,6 @@ index fbf1785..92d2c5f
 
 `;
 
-const oldStylePatch = `patch-package
---- a/node_modules/graphql/utilities/assertValidName.js
-+++ b/node_modules/graphql/utilities/assertValidName.js
-@@ -41,10 +41,11 @@ function assertValidName(name) {
-  */
- function isValidNameError(name, node) {
-   !(typeof name === 'string') ? (0, _invariant2.default)(0, 'Expected string') : void 0;
--  if (name.length > 1 && name[0] === '_' && name[1] === '_') {
--    return new _GraphQLError.GraphQLError('Name "' + name + '" must not begin with "__", which is reserved by ' + 'GraphQL introspection.', node);
--  }
-+  // if (name.length > 1 && name[0] === '_' && name[1] === '_') {
-+  //   return new _GraphQLError.GraphQLError('Name "' + name + '" must not begin with "__", which is reserved by ' + 'GraphQL introspection.', node);
-+  // }
-   if (!NAME_RX.test(name)) {
-     return new _GraphQLError.GraphQLError('Names must match /^[_a-zA-Z][_a-zA-Z0-9]*$/ but "' + name + '" does not.', node);
-   }
-+
- }
-\\ No newline at end of file
---- a/node_modules/graphql/utilities/assertValidName.mjs
-+++ b/node_modules/graphql/utilities/assertValidName.mjs
-@@ -29,9 +29,9 @@ export function assertValidName(name) {
-  */
- export function isValidNameError(name, node) {
-   !(typeof name === 'string') ? invariant(0, 'Expected string') : void 0;
--  if (name.length > 1 && name[0] === '_' && name[1] === '_') {
--    return new GraphQLError('Name "' + name + '" must not begin with "__", which is reserved by ' + 'GraphQL introspection.', node);
--  }
-+  // if (name.length > 1 && name[0] === '_' && name[1] === '_') {
-+  //   return new GraphQLError('Name "' + name + '" must not begin with "__", which is reserved by ' + 'GraphQL introspection.', node);
-+  // }
-   if (!NAME_RX.test(name)) {
-     return new GraphQLError('Names must match /^[_a-zA-Z][_a-zA-Z0-9]*$/ but "' + name + '" does not.', node);
-   }
-`;
-
 describe(`parsepatchFile`, () => {
   it(`works for a simple case`, () => {
     expect(parsePatchFile(patch)).toMatchSnapshot();
@@ -177,9 +141,5 @@ describe(`parsepatchFile`, () => {
 
     expect(parsePatchFile(accidentalBlankLine)).toMatchSnapshot();
     expect(parsePatchFile(modeChangeAndModifyAndRename)).toMatchSnapshot();
-  });
-
-  it(`parses old-style patches`, () => {
-    expect(parsePatchFile(oldStylePatch)).toMatchSnapshot();
   });
 });
