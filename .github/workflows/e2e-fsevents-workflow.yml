@@ -55,11 +55,11 @@ jobs:
           setTimeout(() => {
             console.log('Timeout');
             resolve(1);
-          }, 5000);
+          }, 20000);
 
           setTimeout(() => {
             fs.writeFileSync('./helloworld', 'some new text');
-          }, 2000);
+          }, 10000);
 
           deferred.then(exitCode => {
             process.exit(exitCode);
