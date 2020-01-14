@@ -44,21 +44,28 @@ jobs:
           watcher.start();
 
           let resolve, deferred = new Promise(resolveDeferred => {
-              resolve = resolveDeferred;
+            resolve = resolveDeferred;
           });
 
           watcher.on('change', (p, info) => {
-              resolve(p === virtualP && info.path === virtualP ? 0 : 1);
+            console.log('Received a change event', p, info.path, virtualP);
+            resolve(p === virtualP && info.path === virtualP ? 0 : 1);
           });
 
           setTimeout(() => {
-              resolve(1);
+            console.log('Timeout');
+            resolve(1);
           }, 5000);
 
-          fs.writeFileSync('./helloworld', 'some new text');
+          setTimeout(() => {
+            fs.writeFileSync('./helloworld', 'some new text');
+          }, 2000);
 
           deferred.then(exitCode => {
-              process.exit(exitCode);
+            process.exit(exitCode);
+          }, error => {
+            console.log(error.stack);
+            process.exit(1);
           });
         EOT
 
@@ -82,17 +89,22 @@ jobs:
           });
 
           fsevents(virtualP, p => {
-              resolve(p === virtualP ? 0 : 1);
+            console.log('Received a change event', p, virtualP);
+            resolve(p === virtualP ? 0 : 1);
           });
 
           setTimeout(() => {
-              resolve(1);
+            console.log('Timeout');
+            resolve(1);
           }, 5000);
 
           fs.writeFileSync('./helloworld', 'some new text');
 
           deferred.then(exitCode => {
-              process.exit(exitCode);
+            process.exit(exitCode);
+          }, error => {
+            console.log(error.stack);
+            process.exit(1);
           });
         EOT
 
