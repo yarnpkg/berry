@@ -461,6 +461,7 @@ export function verifyHunkIntegrity(hunk: Hunk) {
   }
 
   if (originalLength !== hunk.header.original.length || patchedLength !== hunk.header.patched.length) {
-    throw new Error(`hunk header integrity check failed`);
+    const format = (n: number) => n < 0 ? n : `+${n}`;
+    throw new Error(`hunk header integrity check failed (expected @@ ${format(hunk.header.original.length)} ${format(hunk.header.patched.length)} @@, got @@ ${format(originalLength)} ${format(patchedLength)} @@)`);
   }
 }
