@@ -145,6 +145,9 @@ export class Project {
             continue;
 
           const data = parsed[key];
+          if (typeof data.resolution === `undefined`)
+            throw new Error(`Assertion failed: Expected the lockfile entry to have a resolution field (${key})`);
+
           const locator = structUtils.parseLocator(data.resolution, true);
 
           const manifest = new Manifest();

@@ -250,7 +250,6 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
 
   let parsedLeft;
   let parsedRight;
-
   try {
     parsedLeft = parseSyml(left);
     parsedRight = parseSyml(right);
@@ -258,10 +257,20 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
     throw new ReportError(MessageName.AUTOMERGE_FAILED_TO_PARSE, `The individual variants of the lockfile failed to parse`);
   }
 
-  const merged = Object.assign({}, parsedLeft, parsedRight);
-  const serialized = stringifySyml(merged);
+  const merged = {
+    ...parsedLeft,
+    ...parsedRight,
+  };
 
-  await xfs.changeFilePromise(lockfilePath, serialized, {
+  // Old-style lockfiles should be filtered out (for example when switching
+  // from a Yarn 2 branch to a Yarn 1 branch). Fortunately (?), they actually
+  // parse as valid YAML except that the objects become strings. We can use
+  // that to detect them. Damn, it's really ugly though.
+  for (const [key, value] of Object.entries(merged))
+    if (typeof value === `string`)
+      delete merged[key];
+
+  await xfs.changeFilePromise(lockfilePath, stringifySyml(merged), {
     automaticNewlines: true,
   });
 
