@@ -14661,7 +14661,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["chokidar", "npm:1.7.0"],
             ["anymatch", "npm:1.3.2"],
             ["async-each", "npm:1.0.1"],
-            ["fsevents", "npm:1.2.7"],
+            ["fsevents", "patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=e8cd9e"],
             ["glob-parent", "npm:2.0.0"],
             ["inherits", "npm:2.0.3"],
             ["is-binary-path", "npm:1.0.1"],
@@ -14678,7 +14678,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["anymatch", "npm:2.0.0"],
             ["async-each", "npm:1.0.1"],
             ["braces", "npm:2.3.2"],
-            ["fsevents", "npm:1.2.6"],
+            ["fsevents", "patch:fsevents@npm%3A1.2.6#builtin<compat/fsevents>::version=1.2.6&hash=e8cd9e"],
             ["glob-parent", "npm:3.1.0"],
             ["inherits", "npm:2.0.3"],
             ["is-binary-path", "npm:1.0.1"],
@@ -14698,7 +14698,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["anymatch", "npm:2.0.0"],
             ["async-each", "npm:1.0.1"],
             ["braces", "npm:2.3.2"],
-            ["fsevents", "npm:1.2.7"],
+            ["fsevents", "patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=e8cd9e"],
             ["glob-parent", "npm:3.1.0"],
             ["inherits", "npm:2.0.3"],
             ["is-binary-path", "npm:1.0.1"],
@@ -14717,7 +14717,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["anymatch", "npm:2.0.0"],
             ["async-each", "npm:1.0.1"],
             ["braces", "npm:2.3.2"],
-            ["fsevents", "npm:1.2.7"],
+            ["fsevents", "patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=e8cd9e"],
             ["glob-parent", "npm:3.1.0"],
             ["inherits", "npm:2.0.3"],
             ["is-binary-path", "npm:1.0.1"],
@@ -19052,19 +19052,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["fsevents", [
-        ["npm:1.2.6", {
-          "packageLocation": "./.yarn/unplugged/fsevents-npm-1.2.6-0bf004c284/node_modules/fsevents/",
+        ["patch:fsevents@npm%3A1.2.6#builtin<compat/fsevents>::version=1.2.6&hash=e8cd9e", {
+          "packageLocation": "./.yarn/unplugged/fsevents-patch-0e5d215591/node_modules/fsevents/",
           "packageDependencies": [
-            ["fsevents", "npm:1.2.6"],
+            ["fsevents", "patch:fsevents@npm%3A1.2.6#builtin<compat/fsevents>::version=1.2.6&hash=e8cd9e"],
             ["nan", "npm:2.12.1"],
             ["node-pre-gyp", "npm:0.10.3"]
           ],
           "linkType": "HARD"
         }],
-        ["npm:1.2.7", {
-          "packageLocation": "./.yarn/unplugged/fsevents-npm-1.2.7-fae282aebc/node_modules/fsevents/",
+        ["patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=e8cd9e", {
+          "packageLocation": "./.yarn/unplugged/fsevents-patch-5e63278d20/node_modules/fsevents/",
           "packageDependencies": [
-            ["fsevents", "npm:1.2.7"],
+            ["fsevents", "patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=e8cd9e"],
             ["nan", "npm:2.12.1"],
             ["node-pre-gyp", "npm:0.10.3"]
           ],
@@ -22970,7 +22970,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@jest/types", "npm:24.9.0"],
             ["anymatch", "npm:2.0.0"],
             ["fb-watchman", "npm:2.0.0"],
-            ["fsevents", "npm:1.2.7"],
+            ["fsevents", "patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=e8cd9e"],
             ["graceful-fs", "npm:4.1.15"],
             ["invariant", "npm:2.2.4"],
             ["jest-serializer", "npm:24.9.0"],

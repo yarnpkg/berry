@@ -11784,7 +11784,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"fsevents@npm:^1.0.0, fsevents@npm:^1.2.7":
+"fsevents@^1.0.0, fsevents@^1.2.7":
   version: 1.2.7
   resolution: "fsevents@npm:1.2.7"
   dependencies:
@@ -11794,13 +11794,33 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"fsevents@npm:^1.2.2":
+fsevents@^1.2.2:
   version: 1.2.6
   resolution: "fsevents@npm:1.2.6"
   dependencies:
     nan: ^2.9.2
     node-pre-gyp: ^0.10.0
   checksum: 3540b943825c040761165835c91112e89579ea221842f568aa29ab0ddf9d18250bbdc5beb0d4086ffd39b81f4feaad36b70723fbc3ae754951774b479aad04a2
+  languageName: node
+  linkType: hard
+
+"fsevents@patch:fsevents@^1.0.0#builtin<compat/fsevents>, fsevents@patch:fsevents@^1.2.7#builtin<compat/fsevents>":
+  version: 1.2.7
+  resolution: "fsevents@patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=e8cd9e"
+  dependencies:
+    nan: ^2.9.2
+    node-pre-gyp: ^0.10.0
+  checksum: 19bc5a4d6c0e31d73fc8eb9ba8d65b1ba88d5ebdb43ff0258ae6dd0d5040d0d89cda2bd95fd01f470bce11cb20a911dad641e5cd05f1ef9e9d4ec2cc9953e2b8
+  languageName: node
+  linkType: hard
+
+"fsevents@patch:fsevents@^1.2.2#builtin<compat/fsevents>":
+  version: 1.2.6
+  resolution: "fsevents@patch:fsevents@npm%3A1.2.6#builtin<compat/fsevents>::version=1.2.6&hash=e8cd9e"
+  dependencies:
+    nan: ^2.9.2
+    node-pre-gyp: ^0.10.0
+  checksum: e96572ee161869d7c851e2ebc5029700dff3f6710cd7e0309ce685baa06b6994cb060d9112aa21b6d7d555ff18ba4f1c91310bcb1cc6b01bde515022a13f4080
   languageName: node
   linkType: hard
 

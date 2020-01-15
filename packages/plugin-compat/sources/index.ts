@@ -1,10 +1,12 @@
 import {Hooks as CoreHooks, Plugin, structUtils} from '@yarnpkg/core';
 import {Hooks as PatchHooks}                     from '@yarnpkg/plugin-patch';
 
+import {patch as fseventsPatch}                  from './patches/fsevents.patch';
 import {patch as resolvePatch}                   from './patches/resolve.patch';
 import {patch as typescriptPatch}                from './patches/typescript.patch';
 
 const PATCHES = new Map([
+  [structUtils.makeIdent(null, `fsevents`).identHash, fseventsPatch],
   [structUtils.makeIdent(null, `resolve`).identHash, resolvePatch],
   [structUtils.makeIdent(null, `typescript`).identHash, typescriptPatch],
 ]);
