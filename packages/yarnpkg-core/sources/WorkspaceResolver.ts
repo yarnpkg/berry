@@ -13,8 +13,8 @@ export class WorkspaceResolver implements Resolver {
     if (descriptor.range.startsWith(WorkspaceResolver.protocol))
       return true;
 
-    const matchingWorkspaces = opts.project.findWorkspacesByDescriptor(descriptor);
-    if (matchingWorkspaces.length > 0)
+    const workspace = opts.project.tryWorkspaceByDescriptor(descriptor);
+    if (workspace !== null)
       return true;
 
     return false;
@@ -40,20 +40,9 @@ export class WorkspaceResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
-    const candidateWorkspaces = opts.project.findWorkspacesByDescriptor(descriptor);
+    const workspace = opts.project.getWorkspaceByDescriptor(descriptor);
 
-    if (candidateWorkspaces.length < 1) {
-      if (!opts.project.workspacesByIdent.has(descriptor.identHash)) {
-        throw new ReportError(MessageName.WORKSPACE_NOT_FOUND, `No local workspace found for this name`);
-      } else {
-        throw new ReportError(MessageName.WORKSPACE_NOT_FOUND, `No local workspace found for this range`);
-      }
-    }
-
-    if (candidateWorkspaces.length > 1)
-      throw new ReportError(MessageName.TOO_MANY_MATCHING_WORKSPACES, `Too many workspaces match this range, please disambiguate`);
-
-    return [candidateWorkspaces[0].anchoredLocator];
+    return [workspace.anchoredLocator];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

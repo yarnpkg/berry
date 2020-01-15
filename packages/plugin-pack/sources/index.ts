@@ -32,21 +32,18 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
   const project = workspace.project;
 
   for (const dependencyType of DEPENDENCY_TYPES) {
-    for (const [identHash, descriptor] of workspace.manifest.getForScope(dependencyType)) {
-      const matchingWorkspaces = project.findWorkspacesByDescriptor(descriptor);
+    for (const descriptor of workspace.manifest.getForScope(dependencyType).values()) {
+      const matchingWorkspace = project.tryWorkspaceByDescriptor(descriptor);
       const range = structUtils.parseRange(descriptor.range);
 
       if (range.protocol !== WORKSPACE_PROTOCOL)
         continue;
 
-      if (matchingWorkspaces.length === 0) {
-        if (project.workspacesByIdent.has(identHash)) {
+      if (matchingWorkspace === null) {
+        if (project.tryWorkspaceByIdent(descriptor) === null) {
           throw new ReportError(MessageName.WORKSPACE_NOT_FOUND, `${structUtils.prettyDescriptor(project.configuration, descriptor)}: No local workspace found for this range`);
         }
-      } else if (matchingWorkspaces.length > 1) {
-        throw new ReportError(MessageName.TOO_MANY_MATCHING_WORKSPACES, `${structUtils.prettyDescriptor(project.configuration, descriptor)}: Too many workspaces match this range, please disambiguate`);
       } else {
-        const [matchingWorkspace] = matchingWorkspaces;
         let versionToWrite: string;
 
         // For workspace:path/to/workspace and workspace:* we look up the workspace version

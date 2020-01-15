@@ -482,13 +482,7 @@ export function sortDescriptors(descriptors: Iterable<Descriptor>) {
 }
 
 export function prettyWorkspace(configuration: Configuration, workspace: Workspace) {
-  const byIdent = workspace.project.workspacesByIdent.get(workspace.locator.identHash);
-
-  if (!byIdent || byIdent.length <= 1) {
-    return prettyIdent(configuration, workspace.locator);
-  } else {
-    return prettyLocator(configuration, workspace.anchoredLocator);
-  }
+  return prettyIdent(configuration, workspace.locator);
 }
 
 /**
