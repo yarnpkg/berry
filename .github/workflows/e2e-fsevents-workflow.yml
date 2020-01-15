@@ -59,7 +59,7 @@ jobs:
             await sleep(1000);
 
             if (events.length === 0)
-              throw new Error(`No events recorded`);
+              throw new Error('No events recorded');
 
             for (const [p] of events) {
               if (!p.startsWith(virtualP)) {
