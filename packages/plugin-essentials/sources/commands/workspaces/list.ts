@@ -40,16 +40,14 @@ export default class WorkspacesListCommand extends BaseCommand {
 
           for (const dependencyType of DEPENDENCY_TYPES) {
             for (const [identHash, descriptor]  of manifest.getForScope(dependencyType)) {
-              const matchingWorkspaces = project.findWorkspacesByDescriptor(descriptor);
+              const matchingWorkspace = project.tryWorkspaceByDescriptor(descriptor);
 
-              if (matchingWorkspaces.length === 0) {
+              if (matchingWorkspace === null) {
                 if (project.workspacesByIdent.has(identHash)) {
                   mismatchedWorkspaceDependencies.add(descriptor);
                 }
               } else {
-                for (const workspaceDependency of matchingWorkspaces) {
-                  workspaceDependencies.add(workspaceDependency);
-                }
+                workspaceDependencies.add(matchingWorkspace);
               }
             }
           }

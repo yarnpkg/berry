@@ -159,7 +159,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       for (const workspace of project.workspaces)
         for (const dependencyType of [`dependencies`, `devDependencies`] as Array<HardDependencies>)
           for (const descriptor of workspace.manifest[dependencyType].values())
-            if (project.findWorkspacesByDescriptor(descriptor).length === 0)
+            if (project.tryWorkspaceByDescriptor(descriptor) === null)
               allDependencies.set(descriptor.descriptorHash, descriptor);
 
       const sortedDependencies = miscUtils.sortMap(allDependencies.values(), descriptor => {

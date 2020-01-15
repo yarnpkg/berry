@@ -43,10 +43,10 @@ const tauModule = new pl.type.Module(`constraints`, {
     const descriptor = structUtils.makeDescriptor(ident, descriptorRange.id);
 
     const project = getProject(thread);
-    const workspaces = project.findWorkspacesByDescriptor(descriptor);
+    const workspace = project.tryWorkspaceByDescriptor(descriptor);
 
     if (isVariable(workspaceCwd)) {
-      for (const workspace of workspaces) {
+      if (workspace !== null) {
         prependGoals(thread, point, [new pl.type.Term(`=`, [
           workspaceCwd,
           new pl.type.Term(String(workspace.relativeCwd)),
@@ -55,7 +55,7 @@ const tauModule = new pl.type.Module(`constraints`, {
     }
 
     if (isAtom(workspaceCwd)) {
-      if (workspaces.find(workspace => workspace.relativeCwd === workspaceCwd.id)) {
+      if (workspace !== null && workspace.relativeCwd === workspaceCwd.id) {
         thread.success(point);
       }
     }
