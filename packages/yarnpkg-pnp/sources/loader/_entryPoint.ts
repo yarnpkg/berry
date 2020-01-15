@@ -63,21 +63,6 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
   },
 
   /**
-   * Can be used to retrieve the API for a particular file, or `null` if the
-   * specified location doesn't seem to be part of a PnP runtime. Note that
-   * this function return value may change when the underlying PnP hook gets
-   * overriden (Yarn automatically reloads them when this happen).
-   */
-  findApiFromPath: (modulePath: NativePath) => {
-    const apiPath = manager.findApiPathFor(modulePath);
-    if (apiPath === null)
-      return null;
-
-    const apiEntry = manager.getApiEntry(apiPath, true);
-    return apiEntry.instance;
-  },
-
-  /**
    * Will inject the specified API into the environment, monkey-patching FS. Is
    * automatically called when the hook is loaded through `--require`.
    */

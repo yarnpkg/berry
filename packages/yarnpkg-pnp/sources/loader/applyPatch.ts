@@ -1,6 +1,7 @@
 import {FakeFS, PosixFS, npath, ppath, patchFs, PortablePath, Filename, NativePath} from '@yarnpkg/fslib';
 import fs                                                                           from 'fs';
 import {Module}                                                                     from 'module';
+import {URL, fileURLToPath}                                                         from 'url';
 
 import {PnpApi}                                                                     from '../types';
 
@@ -31,6 +32,23 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
   // @ts-ignore
   process.versions.pnp = String(pnpapi.VERSIONS.std);
+
+  // @ts-ignore
+  const moduleExports = require(`module`);
+
+  // @ts-ignore
+  moduleExports.findPnpApi = (lookupSource: URL | NativePath) => {
+    const lookupPath = lookupSource instanceof URL
+      ? fileURLToPath(lookupSource)
+      : lookupSource;
+
+    const apiPath = opts.manager.findApiPathFor(lookupPath);
+    if (apiPath === null)
+      return null;
+
+    const apiEntry = opts.manager.getApiEntry(apiPath, true);
+    return apiEntry.instance;
+  };
 
   function getRequireStack(parent: Module | null | undefined) {
     const requireStack = [];

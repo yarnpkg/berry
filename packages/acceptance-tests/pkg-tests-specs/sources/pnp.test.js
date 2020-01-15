@@ -735,6 +735,15 @@ describe(`Plug'n'Play`, () => {
     }),
   );
 
+  test(
+    `it should expose 'findPnpApi' in the 'module' builtin`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await run(`install`);
+
+      await expect(source(`require('module').findPnpApi(process.cwd()) === require('pnpapi')`)).resolves.toEqual(true);
+    }),
+  );
+
   testIf(
     () => process.platform !== 'win32',
     `it should generate a file that can be used as an executable to resolve a request (valid request)`,

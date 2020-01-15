@@ -483,7 +483,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["debug", "npm:4.1.1"],
             ["json5", "npm:2.1.0"],
             ["lodash", "npm:4.17.11"],
-            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=88bf65"],
+            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=8fccd0"],
             ["semver", "npm:5.6.0"],
             ["source-map", "npm:0.5.7"]
           ],
@@ -504,7 +504,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["debug", "npm:4.1.1"],
             ["json5", "npm:2.1.0"],
             ["lodash", "npm:4.17.15"],
-            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=88bf65"],
+            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=8fccd0"],
             ["semver", "npm:5.6.0"],
             ["source-map", "npm:0.5.7"]
           ],
@@ -1906,7 +1906,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/core", "npm:7.7.4"],
             ["@babel/helper-module-imports", "npm:7.0.0"],
             ["@babel/helper-plugin-utils", "npm:7.0.0"],
-            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=88bf65"],
+            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=8fccd0"],
             ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
@@ -13203,7 +13203,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["babel-plugin-macros", "npm:2.5.0"],
             ["cosmiconfig", "npm:5.1.0"],
-            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=88bf65"]
+            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=8fccd0"]
           ],
           "linkType": "HARD"
         }]
@@ -13902,7 +13902,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/browser-resolve-npm-1.11.3-c550b74990-1.zip/node_modules/browser-resolve/",
           "packageDependencies": [
             ["browser-resolve", "npm:1.11.3"],
-            ["resolve", "patch:resolve@npm%3A1.1.7#builtin<compat/resolve>::version=1.1.7&hash=88bf65"]
+            ["resolve", "patch:resolve@npm%3A1.1.7#builtin<compat/resolve>::version=1.1.7&hash=8fccd0"]
           ],
           "linkType": "HARD"
         }]
@@ -15632,7 +15632,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["glob2base", "npm:0.0.12"],
             ["minimatch", "npm:3.0.4"],
             ["mkdirp", "npm:0.5.1"],
-            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=88bf65"],
+            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=8fccd0"],
             ["safe-buffer", "npm:5.1.2"],
             ["shell-quote", "npm:1.6.1"],
             ["subarg", "npm:1.0.0"]
@@ -17457,7 +17457,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["eslint-import-resolver-node", "npm:0.3.2"],
             ["debug", "npm:2.6.9"],
-            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=88bf65"]
+            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=8fccd0"]
           ],
           "linkType": "HARD"
         }]
@@ -17547,7 +17547,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.11"],
             ["minimatch", "npm:3.0.4"],
             ["read-pkg-up", "npm:2.0.0"],
-            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=88bf65"]
+            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=8fccd0"]
           ],
           "packagePeers": [
             "eslint"
@@ -17588,7 +17588,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jsx-ast-utils", "npm:2.0.1"],
             ["object.fromentries", "npm:2.0.0"],
             ["prop-types", "npm:15.6.2"],
-            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=88bf65"]
+            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=8fccd0"]
           ],
           "packagePeers": [
             "eslint"
@@ -17608,7 +17608,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["object.fromentries", "npm:2.0.0"],
             ["object.values", "npm:1.1.0"],
             ["prop-types", "npm:15.7.2"],
-            ["resolve", "patch:resolve@npm%3A1.12.0#builtin<compat/resolve>::version=1.12.0&hash=88bf65"]
+            ["resolve", "patch:resolve@npm%3A1.12.0#builtin<compat/resolve>::version=1.12.0&hash=8fccd0"]
           ],
           "packagePeers": [
             "eslint"
@@ -25884,7 +25884,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["normalize-package-data", "npm:2.5.0"],
             ["hosted-git-info", "npm:2.7.1"],
-            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=88bf65"],
+            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=8fccd0"],
             ["semver", "npm:5.6.0"],
             ["validate-npm-package-license", "npm:3.0.4"]
           ],
@@ -28498,7 +28498,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["js-reporters", "npm:1.2.1"],
             ["minimatch", "npm:3.0.4"],
             ["node-watch", "npm:0.6.0"],
-            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=88bf65"]
+            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=8fccd0"]
           ],
           "linkType": "HARD"
         }]
@@ -29699,33 +29699,33 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["resolve", [
-        ["patch:resolve@npm%3A1.1.7#builtin<compat/resolve>::version=1.1.7&hash=88bf65", {
-          "packageLocation": "./.yarn/cache/resolve-patch-08c59d6ec7-1.zip/node_modules/resolve/",
+        ["patch:resolve@npm%3A1.1.7#builtin<compat/resolve>::version=1.1.7&hash=8fccd0", {
+          "packageLocation": "./.yarn/cache/resolve-patch-08cf240cc5-1.zip/node_modules/resolve/",
           "packageDependencies": [
-            ["resolve", "patch:resolve@npm%3A1.1.7#builtin<compat/resolve>::version=1.1.7&hash=88bf65"]
+            ["resolve", "patch:resolve@npm%3A1.1.7#builtin<compat/resolve>::version=1.1.7&hash=8fccd0"]
           ],
           "linkType": "HARD"
         }],
-        ["patch:resolve@npm%3A1.12.0#builtin<compat/resolve>::version=1.12.0&hash=88bf65", {
-          "packageLocation": "./.yarn/cache/resolve-patch-1cd7b75bc4-1.zip/node_modules/resolve/",
+        ["patch:resolve@npm%3A1.12.0#builtin<compat/resolve>::version=1.12.0&hash=8fccd0", {
+          "packageLocation": "./.yarn/cache/resolve-patch-87eb8a5217-1.zip/node_modules/resolve/",
           "packageDependencies": [
-            ["resolve", "patch:resolve@npm%3A1.12.0#builtin<compat/resolve>::version=1.12.0&hash=88bf65"],
+            ["resolve", "patch:resolve@npm%3A1.12.0#builtin<compat/resolve>::version=1.12.0&hash=8fccd0"],
             ["path-parse", "npm:1.0.6"]
           ],
           "linkType": "HARD"
         }],
-        ["patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=88bf65", {
-          "packageLocation": "./.yarn/cache/resolve-patch-95c2af9405-1.zip/node_modules/resolve/",
+        ["patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=8fccd0", {
+          "packageLocation": "./.yarn/cache/resolve-patch-d25d0f7d7d-1.zip/node_modules/resolve/",
           "packageDependencies": [
-            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=88bf65"],
+            ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=8fccd0"],
             ["path-parse", "npm:1.0.6"]
           ],
           "linkType": "HARD"
         }],
-        ["patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=88bf65", {
-          "packageLocation": "./.yarn/cache/resolve-patch-17595d6a3b-1.zip/node_modules/resolve/",
+        ["patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=8fccd0", {
+          "packageLocation": "./.yarn/cache/resolve-patch-6b8fce4b26-1.zip/node_modules/resolve/",
           "packageDependencies": [
-            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=88bf65"],
+            ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=8fccd0"],
             ["path-parse", "npm:1.0.6"]
           ],
           "linkType": "HARD"
@@ -40003,11 +40003,11 @@ const string_decoder_1 = __importDefault(__webpack_require__(45));
 
 const applyPatch_1 = __webpack_require__(46);
 
-const hydrateRuntimeState_1 = __webpack_require__(47);
+const hydrateRuntimeState_1 = __webpack_require__(48);
 
-const makeApi_1 = __webpack_require__(48);
+const makeApi_1 = __webpack_require__(49);
 
-const makeManager_1 = __webpack_require__(49); // We must copy the fs into a local, because otherwise
+const makeManager_1 = __webpack_require__(50); // We must copy the fs into a local, because otherwise
 // 1. we would make the NodeFS instance use the function that we patched (infinite loop)
 // 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
 
@@ -40050,19 +40050,6 @@ const defaultApi = Object.assign(makeApi_1.makeApi(defaultRuntimeState, {
       fakeFs,
       pnpapiResolution
     }, rest));
-  },
-
-  /**
-   * Can be used to retrieve the API for a particular file, or `null` if the
-   * specified location doesn't seem to be part of a PnP runtime. Note that
-   * this function return value may change when the underlying PnP hook gets
-   * overriden (Yarn automatically reloads them when this happen).
-   */
-  findApiFromPath: modulePath => {
-    const apiPath = manager.findApiPathFor(modulePath);
-    if (apiPath === null) return null;
-    const apiEntry = manager.getApiEntry(apiPath, true);
-    return apiEntry.instance;
   },
 
   /**
@@ -43479,6 +43466,8 @@ const fs_1 = __importDefault(__webpack_require__(1));
 
 const module_1 = __webpack_require__(7);
 
+const url_1 = __webpack_require__(47);
+
 const internalTools_1 = __webpack_require__(21);
 
 function applyPatch(pnpapi, opts) {
@@ -43496,7 +43485,18 @@ function applyPatch(pnpapi, opts) {
 
   let enableNativeHooks = true; // @ts-ignore
 
-  process.versions.pnp = String(pnpapi.VERSIONS.std);
+  process.versions.pnp = String(pnpapi.VERSIONS.std); // @ts-ignore
+
+  const moduleExports = __webpack_require__(7); // @ts-ignore
+
+
+  moduleExports.findPnpApi = lookupSource => {
+    const lookupPath = lookupSource instanceof url_1.URL ? url_1.fileURLToPath(lookupSource) : lookupSource;
+    const apiPath = opts.manager.findApiPathFor(lookupPath);
+    if (apiPath === null) return null;
+    const apiEntry = opts.manager.getApiEntry(apiPath, true);
+    return apiEntry.instance;
+  };
 
   function getRequireStack(parent) {
     const requireStack = [];
@@ -43705,6 +43705,12 @@ exports.applyPatch = applyPatch;
 
 /***/ }),
 /* 47 */
+/***/ (function(module, exports) {
+
+module.exports = require("url");
+
+/***/ }),
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43768,7 +43774,7 @@ function hydrateRuntimeState(data, {
 exports.hydrateRuntimeState = hydrateRuntimeState;
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44428,7 +44434,7 @@ function makeApi(runtimeState, opts) {
 exports.makeApi = makeApi;
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
