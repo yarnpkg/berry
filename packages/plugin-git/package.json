@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-git",
-  "version": "2.0.0-rc.13",
+  "version": "2.0.0-rc.14",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/semver": "^6.0.2",
@@ -10,10 +10,10 @@
     "tmp": "^0.1.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.15"
+    "@yarnpkg/core": "^2.0.0-rc.18"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^2.0.0-rc.15"
+    "@yarnpkg/core": "workspace:^2.0.0-rc.18"
   },
   "repository": {
     "type": "git",

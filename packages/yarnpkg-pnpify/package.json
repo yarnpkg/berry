@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/pnpify",
-  "version": "2.0.0-rc.14",
+  "version": "2.0.0-rc.15",
   "main": "./sources/boot-dev.js",
   "bin": "./sources/boot-cli-dev.js",
   "types": "./sources/index.ts",
@@ -14,7 +14,7 @@
     "@types/comment-json": "^1.1.1",
     "@types/cross-spawn": "6.0.0",
     "@yarnpkg/monorepo": "workspace:0.0.0",
-    "@yarnpkg/pnp": "workspace:^2.0.0-rc.12",
+    "@yarnpkg/pnp": "workspace:^2.0.0-rc.15",
     "eslint": "^5.16.0",
     "typescript": "^3.7.4"
   },

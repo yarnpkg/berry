@@ -1,26 +1,26 @@
 {
   "name": "@yarnpkg/plugin-interactive-tools",
-  "version": "2.0.0-rc.11",
+  "version": "2.0.0-rc.12",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/libui": "workspace:^2.0.0-rc.1",
+    "@yarnpkg/libui": "workspace:^2.0.0-rc.4",
     "clipanion": "^2.1.5",
     "diff": "^4.0.1",
     "ink": "^2.3.0",
     "react": "^16.8.4"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.19",
-    "@yarnpkg/core": "^2.0.0-rc.15",
-    "@yarnpkg/plugin-essentials": "^2.0.0-rc.15"
+    "@yarnpkg/cli": "^2.0.0-rc.23",
+    "@yarnpkg/core": "^2.0.0-rc.18",
+    "@yarnpkg/plugin-essentials": "^2.0.0-rc.19"
   },
   "devDependencies": {
     "@types/diff": "^4.0.2",
     "@types/react": "^16.8.0",
     "@yarnpkg/builder": "workspace:^2.0.0-rc.13",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.19",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.15",
-    "@yarnpkg/plugin-essentials": "workspace:^2.0.0-rc.15",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.23",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.18",
+    "@yarnpkg/plugin-essentials": "workspace:^2.0.0-rc.19",
     "typescript": "^3.7.4"
   },
   "repository": {

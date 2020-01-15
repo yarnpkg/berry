@@ -149,15 +149,15 @@ module.exports = {
 
   const ScrollableItems_1 = __webpack_require__(90);
 
-  const useMinistore_1 = __webpack_require__(91);
+  const useMinistore_1 = __webpack_require__(92);
 
-  const renderForm_1 = __webpack_require__(93);
+  const renderForm_1 = __webpack_require__(94);
 
-  const plugin_essentials_1 = __webpack_require__(94);
+  const plugin_essentials_1 = __webpack_require__(95);
 
-  const clipanion_1 = __webpack_require__(95);
+  const clipanion_1 = __webpack_require__(96);
 
-  const diff_1 = __webpack_require__(96);
+  const diff_1 = __webpack_require__(97);
 
   const ink_1 = __webpack_require__(5);
 
@@ -173,7 +173,7 @@ module.exports = {
         workspace
       } = await core_1.Project.find(configuration, this.context.cwd);
       const cache = await core_1.Cache.find(configuration);
-      if (!workspace) throw new cli_1.WorkspaceRequiredError(this.context.cwd);
+      if (!workspace) throw new cli_1.WorkspaceRequiredError(project.cwd, this.context.cwd);
 
       const colorizeRawDiff = (from, to) => {
         const diff = diff_1.diffWords(from, to);
@@ -339,7 +339,7 @@ module.exports = {
 
   UpgradeInteractiveCommand.usage = clipanion_1.Command.Usage({
     category: `Interactive commands`,
-    description: `open the upgrade interace`,
+    description: `open the upgrade interface`,
     details: `
         > In order to use this command you will need to add \`@yarnpkg/plugin-interactive-tools\` to your plugins. Check the documentation for \`yarn plugin import\` for more details.
 
@@ -33736,11 +33736,16 @@ module.exports = {
 
   const react_1 = __importStar(__webpack_require__(8));
 
+  const useFocusRequest_1 = __webpack_require__(91);
+
   const useListInput_1 = __webpack_require__(89);
 
   exports.ScrollableItems = ({
+    active = true,
     children = [],
-    size = 10
+    radius = 10,
+    size = 1,
+    onFocusRequest
   }) => {
     const getKey = child => {
       if (child.key === null) {
@@ -33754,14 +33759,18 @@ module.exports = {
     const initialKey = keys[0];
     const [activeKey, setActiveKey] = react_1.useState(initialKey);
     const activeIndex = keys.indexOf(activeKey);
+    useFocusRequest_1.useFocusRequest({
+      active,
+      handler: onFocusRequest
+    });
     useListInput_1.useListInput(activeKey, keys, {
-      active: true,
+      active,
       minus: `up`,
       plus: `down`,
       set: setActiveKey
     });
-    let min = activeIndex - size;
-    let max = activeIndex + size;
+    let min = activeIndex - radius;
+    let max = activeIndex + radius;
 
     if (max > keys.length) {
       min -= max - keys.length;
@@ -33773,29 +33782,29 @@ module.exports = {
       min = 0;
     }
 
-    if (max > keys.length) max = keys.length;
+    if (max >= keys.length) max = keys.length - 1;
     const rendered = [];
 
-    for (let t = min; t < max; ++t) {
+    for (let t = min; t <= max; ++t) {
       const key = keys[t];
-      const active = key === activeKey;
+      const activeItem = active && key === activeKey;
       rendered.push(react_1.default.createElement(ink_1.Box, {
         key: key,
-        height: 1
+        height: size
       }, react_1.default.createElement(ink_1.Box, {
         marginLeft: 2,
         marginRight: 2
-      }, active ? react_1.default.createElement(ink_1.Color, {
+      }, activeItem ? react_1.default.createElement(ink_1.Color, {
         cyan: true
       }, "\u25B6") : ` `), react_1.default.createElement(ink_1.Box, null, react_1.default.cloneElement(children[t], {
-        active
+        active: activeItem
       }))));
     }
 
     return react_1.default.createElement(ink_1.Box, {
       flexDirection: `column`,
       width: `100%`,
-      height: size * 2 + 1
+      height: radius * size * 2 + size
     }, rendered);
   };
 
@@ -33810,9 +33819,60 @@ module.exports = {
     value: true
   });
 
+  const ink_1 = __webpack_require__(5);
+
   const react_1 = __webpack_require__(8);
 
-  const Application_1 = __webpack_require__(92);
+  var FocusRequest;
+
+  (function (FocusRequest) {
+    FocusRequest["BEFORE"] = "before";
+    FocusRequest["AFTER"] = "after";
+  })(FocusRequest = exports.FocusRequest || (exports.FocusRequest = {}));
+
+  ;
+
+  exports.useFocusRequest = function ({
+    active,
+    handler
+  }) {
+    const {
+      stdin
+    } = react_1.useContext(ink_1.StdinContext);
+    react_1.useEffect(() => {
+      if (!active || typeof handler === `undefined`) return;
+
+      const cb = (ch, key) => {
+        if (key.name === `tab`) {
+          if (key.shift) {
+            handler(FocusRequest.BEFORE);
+          } else {
+            handler(FocusRequest.AFTER);
+          }
+        }
+      };
+
+      stdin.on(`keypress`, cb);
+      return () => {
+        stdin.off(`keypress`, cb);
+      };
+    }, [active, handler]);
+  };
+
+  /***/ }),
+  /* 92 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  const react_1 = __webpack_require__(8);
+
+  const Application_1 = __webpack_require__(93);
 
   function useMinistore(key, initialValue) {
     const ministore = react_1.useContext(Application_1.MinistoreContext);
@@ -33830,7 +33890,7 @@ module.exports = {
   ;
 
   /***/ }),
-  /* 92 */
+  /* 93 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -33876,7 +33936,7 @@ module.exports = {
   };
 
   /***/ }),
-  /* 93 */
+  /* 94 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -33898,7 +33958,7 @@ module.exports = {
 
   const react_1 = __importStar(__webpack_require__(8));
 
-  const Application_1 = __webpack_require__(92);
+  const Application_1 = __webpack_require__(93);
 
   exports.renderForm = async function (UserComponent, props) {
     let returnedValue;
@@ -33935,19 +33995,19 @@ module.exports = {
   };
 
   /***/ }),
-  /* 94 */
+  /* 95 */
   /***/ (function(module, exports) {
 
   module.exports = require("@yarnpkg/plugin-essentials");
 
   /***/ }),
-  /* 95 */
+  /* 96 */
   /***/ (function(module, exports) {
 
   module.exports = require("clipanion");
 
   /***/ }),
-  /* 96 */
+  /* 97 */
   /***/ (function(module, exports, __webpack_require__) {
 
   /*!

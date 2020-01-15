@@ -1,16 +1,11 @@
-module.exports = {};
-
-module.exports.factory = function (require) {
-  var plugin =
+/* eslint-disable*/
+module.exports = {
+  name: "@yarnpkg/plugin-version",
+  factory: function (require) {
+                          var plugin =
   /******/ (function(modules) { // webpackBootstrap
   /******/ 	// The module cache
   /******/ 	var installedModules = {};
-  /******/
-  /******/ 	// object to store loaded chunks
-  /******/ 	// "0" means "already loaded"
-  /******/ 	var installedChunks = {
-  /******/ 		0: 0
-  /******/ 	};
   /******/
   /******/ 	// The require function
   /******/ 	function __webpack_require__(moduleId) {
@@ -36,12 +31,6 @@ module.exports.factory = function (require) {
   /******/ 		return module.exports;
   /******/ 	}
   /******/
-  /******/ 	// The chunk loading function for additional chunks
-  /******/ 	// Since all referenced chunks are already included
-  /******/ 	// in this file, this function is empty here.
-  /******/ 	__webpack_require__.e = function requireEnsure() {
-  /******/ 		return Promise.resolve();
-  /******/ 	};
   /******/
   /******/ 	// expose the modules object (__webpack_modules__)
   /******/ 	__webpack_require__.m = modules;
@@ -95,13 +84,6 @@ module.exports.factory = function (require) {
   /******/ 	// __webpack_public_path__
   /******/ 	__webpack_require__.p = "";
   /******/
-  /******/ 	// uncaught error handler for webpack runtime
-  /******/ 	__webpack_require__.oe = function(err) {
-  /******/ 		process.nextTick(function() {
-  /******/ 			throw err; // catch this error by using import().catch()
-  /******/ 		});
-  /******/ 	};
-  /******/
   /******/
   /******/ 	// Load entry module and return exports
   /******/ 	return __webpack_require__(__webpack_require__.s = 0);
@@ -109,31 +91,46 @@ module.exports.factory = function (require) {
   /************************************************************************/
   /******/ ([
   /* 0 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony import */ var _yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-  /* harmony import */ var _yarnpkg_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__);
-  /* harmony import */ var _commands_version_apply__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
-  /* harmony import */ var _commands_version_check__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
-  /* harmony import */ var _commands_version__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6);
 
 
+  var __importDefault = this && this.__importDefault || function (mod) {
+    return mod && mod.__esModule ? mod : {
+      "default": mod
+    };
+  };
 
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  const core_1 = __webpack_require__(1);
+
+  const apply_1 = __importDefault(__webpack_require__(2));
+
+  const check_1 = __importDefault(__webpack_require__(9));
+
+  const version_1 = __importDefault(__webpack_require__(99));
 
   const plugin = {
     configuration: {
+      deferredVersionFolder: {
+        description: `Folder where are stored the versioning files`,
+        type: core_1.SettingsType.ABSOLUTE_PATH,
+        default: `./.yarn/versions`
+      },
       preferDeferredVersions: {
         description: `If true, running \`yarn version\` will assume the \`--deferred\` flag unless \`--immediate\` is set`,
-        type: _yarnpkg_core__WEBPACK_IMPORTED_MODULE_0__["SettingsType"].BOOLEAN,
+        type: core_1.SettingsType.BOOLEAN,
         default: false
       }
     },
-    commands: [_commands_version_apply__WEBPACK_IMPORTED_MODULE_1__["default"], _commands_version_check__WEBPACK_IMPORTED_MODULE_2__["default"], _commands_version__WEBPACK_IMPORTED_MODULE_3__["default"]]
+    commands: [apply_1.default, check_1.default, version_1.default]
   }; // eslint-disable-next-line arca/no-default-export
 
-  /* harmony default export */ __webpack_exports__["default"] = (plugin);
+  exports.default = plugin;
 
   /***/ }),
   /* 1 */
@@ -143,18 +140,12 @@ module.exports.factory = function (require) {
 
   /***/ }),
   /* 2 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return VersionApplyCommand; });
-  /* harmony import */ var _yarnpkg_cli__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-  /* harmony import */ var _yarnpkg_cli__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_yarnpkg_cli__WEBPACK_IMPORTED_MODULE_0__);
-  /* harmony import */ var clipanion__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
-  /* harmony import */ var clipanion__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(clipanion__WEBPACK_IMPORTED_MODULE_1__);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-  var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
+
+  var __decorate = this && this.__decorate || function (decorators, target, key, desc) {
     var c = arguments.length,
         r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
         d;
@@ -162,155 +153,72 @@ module.exports.factory = function (require) {
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
 
+  var __importStar = this && this.__importStar || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+  };
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  const cli_1 = __webpack_require__(3);
+
+  const core_1 = __webpack_require__(1);
+
+  const core_2 = __webpack_require__(1);
+
+  const clipanion_1 = __webpack_require__(4);
+
+  const versionUtils = __importStar(__webpack_require__(5)); // eslint-disable-next-line arca/no-default-export
 
 
-  // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
-  const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/; // eslint-disable-next-line arca/no-default-export
-
-  class VersionApplyCommand extends _yarnpkg_cli__WEBPACK_IMPORTED_MODULE_0__["BaseCommand"] {
+  class VersionApplyCommand extends cli_1.BaseCommand {
     constructor() {
       super(...arguments);
       this.all = false;
       this.json = false;
-      this.dependents = false;
     }
 
     async execute() {
-      const _ref4 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 7, 7));
-
-      const _ref3 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 1, 7));
-
-      const _ref2 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 1, 7));
-
-      const _ref = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 1, 7));
-
-      const configuration = await _ref.Configuration.find(this.context.cwd, this.context.plugins);
+      const configuration = await core_1.Configuration.find(this.context.cwd, this.context.plugins);
       const {
         project,
         workspace
-      } = await _ref2.Project.find(configuration, this.context.cwd);
-      if (!workspace) throw new _yarnpkg_cli__WEBPACK_IMPORTED_MODULE_0__["WorkspaceRequiredError"](this.context.cwd);
-      const applyReport = await _ref2.StreamReport.start({
+      } = await core_2.Project.find(configuration, this.context.cwd);
+      const cache = await core_1.Cache.find(configuration);
+      if (!workspace) throw new cli_1.WorkspaceRequiredError(project.cwd, this.context.cwd);
+      const applyReport = await core_2.StreamReport.start({
         configuration,
         json: this.json,
         stdout: this.context.stdout
       }, async report => {
-        const allDependents = new Map(); // First we compute the reverse map to figure out which workspace is
-        // depended upon by which other.
-        //
-        // Note that we need to do this before applying the new versions,
-        // otherwise the `findWorkspacesByDescriptor` calls won't be able to
-        // resolve the workspaces anymore (because the workspace versions will
-        // have changed and won't match the outdated dependencies).
-
-        for (const dependent of project.workspaces) {
-          for (const set of _ref.Manifest.allDependencies) {
-            for (const descriptor of dependent.manifest[set].values()) {
-              const workspaces = project.findWorkspacesByDescriptor(descriptor);
-              if (workspaces.length !== 1) continue; // When operating on a single workspace, we don't have to compute
-              // the dependencies for the other ones
-
-              const dependency = workspaces[0];
-              if (!this.all && dependency !== workspace) continue;
-              let dependents = allDependents.get(dependency);
-              if (typeof dependents === `undefined`) allDependents.set(dependency, dependents = []);
-              dependents.push([dependent, set, descriptor.identHash]);
-            }
-          }
-        } // First a quick sanity check before we start modifying stuff
-
-
-        const validateWorkspace = workspace => {
-          const nextVersion = workspace.manifest.raw.nextVersion;
-          if (typeof nextVersion === `undefined`) return;
-          if (typeof nextVersion !== `object` || nextVersion === null) throw new Error(`Assertion failed: The nextVersion field should have been an object`);
-          const newVersion = workspace.manifest.raw.nextVersion.semver;
-          if (typeof newVersion === `undefined`) return;
-          if (typeof newVersion !== `string`) throw new Error(`Assertion failed: The nextVersion.semver should have been a string`);
-
-          if (!_interopRequireDefault(_ref4).default.valid(newVersion)) {
-            throw new clipanion__WEBPACK_IMPORTED_MODULE_1__["UsageError"](`Can't apply the version bump if the resulting version (${newVersion}) isn't valid semver (in ${_ref3.structUtils.prettyLocator(configuration, workspace.anchoredLocator)})`);
-          }
-        };
+        let releases = await versionUtils.resolveVersionFiles(project);
 
         if (!this.all) {
-          validateWorkspace(workspace);
-        } else {
-          for (const workspace of project.workspaces) {
-            validateWorkspace(workspace);
-          }
-        } // Now that we know which workspaces depend on which others, we can
-        // proceed to update everything at once using our accumulated knowledge.
-
-
-        const processWorkspace = workspace => {
-          const nextVersion = workspace.manifest.raw.nextVersion;
-          if (typeof nextVersion === `undefined`) return;
-          if (typeof nextVersion !== `object` || nextVersion === null) throw new Error(`Assertion failed: The nextVersion field should have been an object`);
-          const newVersion = workspace.manifest.raw.nextVersion.semver;
-          if (typeof newVersion === `undefined`) return;
-          if (typeof newVersion !== `string`) throw new Error(`Assertion failed: The nextVersion.semver should have been a string`);
-          const oldVersion = workspace.manifest.version;
-          workspace.manifest.version = newVersion;
-          workspace.manifest.raw.nextVersion = undefined;
-          const identString = workspace.manifest.name !== null ? _ref3.structUtils.stringifyIdent(workspace.manifest.name) : null;
-          report.reportInfo(_ref2.MessageName.UNNAMED, `${_ref3.structUtils.prettyLocator(configuration, workspace.anchoredLocator)}: Bumped to ${newVersion}`);
-          report.reportJson({
-            cwd: workspace.cwd,
-            ident: identString,
-            oldVersion,
-            newVersion
-          });
-          const dependents = allDependents.get(workspace);
-          if (typeof dependents === `undefined`) return;
-
-          for (const [dependent, set, identHash] of dependents) {
-            const descriptor = dependent.manifest[set].get(identHash);
-            if (typeof descriptor === `undefined`) throw new Error(`Assertion failed: The dependency should have existed`);
-            let range = descriptor.range;
-            let useWorkspaceProtocol = false;
-
-            if (range.startsWith(_ref2.WorkspaceResolver.protocol)) {
-              range = range.slice(_ref2.WorkspaceResolver.protocol.length);
-              useWorkspaceProtocol = true; // Workspaces referenced through their path never get upgraded ("workspace:packages/yarnpkg-core")
-
-              if (range === workspace.relativeCwd) {
-                continue;
-              }
-            } // We can only auto-upgrade the basic semver ranges (we can't auto-upgrade ">=1.0.0 <2.0.0", for example)
-
-
-            const parsed = range.match(SUPPORTED_UPGRADE_REGEXP);
-
-            if (!parsed) {
-              report.reportWarning(_ref2.MessageName.UNNAMED, `Couldn't auto-upgrade range ${range} (in ${_ref3.structUtils.prettyLocator(configuration, workspace.anchoredLocator)})`);
-              continue;
-            }
-
-            let newRange = `${parsed[1]}${newVersion}`;
-            if (useWorkspaceProtocol) newRange = `${_ref2.WorkspaceResolver.protocol}${newRange}`;
-
-            const newDescriptor = _ref3.structUtils.makeDescriptor(descriptor, newRange);
-
-            dependent.manifest[set].set(identHash, newDescriptor);
-          }
-        };
-
-        if (!this.all) {
-          processWorkspace(workspace);
-        } else {
-          for (const workspace of project.workspaces) {
-            processWorkspace(workspace);
-          }
+          const release = releases.get(workspace);
+          if (typeof release === `undefined`) return;
+          releases = new Map([[workspace, release]]);
         }
 
-        await project.persist();
+        await versionUtils.applyReleases(project, releases, {
+          report
+        });
+        if (this.all) await versionUtils.clearVersionFiles(project);else await versionUtils.updateVersionFiles(project);
+        await project.install({
+          cache,
+          report
+        });
       });
       return applyReport.exitCode();
     }
 
   }
-  VersionApplyCommand.usage = clipanion__WEBPACK_IMPORTED_MODULE_1__["Command"].Usage({
+
+  VersionApplyCommand.usage = clipanion_1.Command.Usage({
     category: `Release-related commands`,
     description: `apply all the deferred version bumps at once`,
     details: `
@@ -323,13 +231,13 @@ module.exports.factory = function (require) {
     examples: [[`Apply the version change to the local workspace`, `yarn version apply`], [`Apply the version change to all the workspaces in the local workspace`, `yarn version apply --all`]]
   });
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_1__["Command"].Boolean(`--all`)], VersionApplyCommand.prototype, "all", void 0);
+  __decorate([clipanion_1.Command.Boolean(`--all`)], VersionApplyCommand.prototype, "all", void 0);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_1__["Command"].Boolean(`--json`)], VersionApplyCommand.prototype, "json", void 0);
+  __decorate([clipanion_1.Command.Boolean(`--json`)], VersionApplyCommand.prototype, "json", void 0);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_1__["Command"].Boolean(`--dependents`)], VersionApplyCommand.prototype, "dependents", void 0);
+  __decorate([clipanion_1.Command.Path(`version`, `apply`)], VersionApplyCommand.prototype, "execute", null);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_1__["Command"].Path(`version`, `apply`)], VersionApplyCommand.prototype, "execute", null);
+  exports.default = VersionApplyCommand;
 
   /***/ }),
   /* 3 */
@@ -345,16 +253,463 @@ module.exports.factory = function (require) {
 
   /***/ }),
   /* 5 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return VersionApplyCommand; });
-  /* harmony import */ var clipanion__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
-  /* harmony import */ var clipanion__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(clipanion__WEBPACK_IMPORTED_MODULE_0__);
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-  var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
+
+  var __importDefault = this && this.__importDefault || function (mod) {
+    return mod && mod.__esModule ? mod : {
+      "default": mod
+    };
+  };
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  const core_1 = __webpack_require__(1);
+
+  const fslib_1 = __webpack_require__(6);
+
+  const parsers_1 = __webpack_require__(7);
+
+  const clipanion_1 = __webpack_require__(4);
+
+  const semver_1 = __importDefault(__webpack_require__(8)); // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
+
+
+  const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
+  var Decision;
+
+  (function (Decision) {
+    Decision["UNDECIDED"] = "undecided";
+    Decision["DECLINE"] = "decline";
+    Decision["MAJOR"] = "major";
+    Decision["MINOR"] = "minor";
+    Decision["PATCH"] = "patch";
+    Decision["PRERELEASE"] = "prerelease";
+  })(Decision = exports.Decision || (exports.Decision = {}));
+
+  ;
+
+  async function fetchBase(root) {
+    const candidateBases = [`master`, `origin/master`, `upstream/master`];
+    const ancestorBases = [];
+
+    for (const candidate of candidateBases) {
+      const {
+        code
+      } = await core_1.execUtils.execvp(`git`, [`merge-base`, candidate, `HEAD`], {
+        cwd: root
+      });
+
+      if (code === 0) {
+        ancestorBases.push(candidate);
+      }
+    }
+
+    if (ancestorBases.length === 0) throw new clipanion_1.UsageError(`No ancestor could be found between any of HEAD and ${candidateBases.join(`, `)}`);
+    const {
+      stdout: mergeBaseStdout
+    } = await core_1.execUtils.execvp(`git`, [`merge-base`, `HEAD`, ...ancestorBases], {
+      cwd: root,
+      strict: true
+    });
+    const hash = mergeBaseStdout.trim();
+    const {
+      stdout: showStdout
+    } = await core_1.execUtils.execvp(`git`, [`show`, `--quiet`, `--pretty=format:%s`, hash], {
+      cwd: root,
+      strict: true
+    });
+    const title = showStdout.trim();
+    return {
+      hash,
+      title
+    };
+  }
+
+  exports.fetchBase = fetchBase;
+
+  async function fetchRoot(initialCwd) {
+    // Note: We can't just use `git rev-parse --show-toplevel`, because on Windows
+    // it may return long paths even when the cwd uses short paths, and we have no
+    // way to detect it from Node (not even realpath).
+    let match = null;
+    let cwd;
+    let nextCwd = initialCwd;
+
+    do {
+      cwd = nextCwd;
+      if (await fslib_1.xfs.existsPromise(fslib_1.ppath.join(cwd, `.git`))) match = cwd;
+      nextCwd = fslib_1.ppath.dirname(cwd);
+    } while (match === null && nextCwd !== cwd);
+
+    return match;
+  }
+
+  exports.fetchRoot = fetchRoot;
+
+  async function fetchChangedFiles(root, {
+    base
+  }) {
+    const {
+      stdout: localStdout
+    } = await core_1.execUtils.execvp(`git`, [`diff`, `--name-only`, `${base}`], {
+      cwd: root,
+      strict: true
+    });
+    const trackedFiles = localStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => fslib_1.ppath.resolve(root, fslib_1.npath.toPortablePath(file)));
+    const {
+      stdout: untrackedStdout
+    } = await core_1.execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {
+      cwd: root,
+      strict: true
+    });
+    const untrackedFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => fslib_1.ppath.resolve(root, fslib_1.npath.toPortablePath(file)));
+    return [...new Set([...trackedFiles, ...untrackedFiles].sort())];
+  }
+
+  exports.fetchChangedFiles = fetchChangedFiles;
+
+  async function resolveVersionFiles(project) {
+    const candidateReleases = new Map();
+    const deferredVersionFolder = project.configuration.get(`deferredVersionFolder`);
+    if (!fslib_1.xfs.existsSync(deferredVersionFolder)) return new Map();
+    const deferredVersionFiles = await fslib_1.xfs.readdirPromise(deferredVersionFolder);
+
+    for (const entry of deferredVersionFiles) {
+      if (!entry.endsWith(`.yml`)) continue;
+      const versionPath = fslib_1.ppath.join(deferredVersionFolder, entry);
+      const versionContent = await fslib_1.xfs.readFilePromise(versionPath, `utf8`);
+      const versionData = parsers_1.parseSyml(versionContent);
+
+      for (const [locatorStr, decision] of Object.entries(versionData.releases || {})) {
+        const locator = core_1.structUtils.parseLocator(locatorStr);
+        const workspace = project.tryWorkspaceByLocator(locator);
+        if (workspace === null) throw new Error(`Assertion failed: Expected a release definition file to only reference existing workspaces (${fslib_1.ppath.basename(versionPath)} references ${locatorStr})`);
+        if (workspace.manifest.version === null) throw new Error(`Assertion failed: Expected the workspace to have a version (${core_1.structUtils.prettyLocator(project.configuration, workspace.anchoredLocator)})`);
+        const candidateRelease = candidateReleases.get(workspace);
+        const suggestedRelease = applyStrategy(workspace.manifest.version, decision);
+        if (suggestedRelease === null) throw new Error(`Assertion failed: Expected ${workspace.manifest.version} to support being bumped via strategy ${decision}`);
+        const bestRelease = typeof candidateRelease !== `undefined` ? semver_1.default.gt(suggestedRelease, candidateRelease) ? suggestedRelease : candidateRelease : suggestedRelease;
+        candidateReleases.set(workspace, bestRelease);
+      }
+    }
+
+    return candidateReleases;
+  }
+
+  exports.resolveVersionFiles = resolveVersionFiles;
+
+  async function clearVersionFiles(project) {
+    const deferredVersionFolder = project.configuration.get(`deferredVersionFolder`);
+    if (!fslib_1.xfs.existsSync(deferredVersionFolder)) return;
+    await fslib_1.xfs.removePromise(deferredVersionFolder);
+  }
+
+  exports.clearVersionFiles = clearVersionFiles;
+
+  async function updateVersionFiles(project) {
+    const deferredVersionFolder = project.configuration.get(`deferredVersionFolder`);
+    if (!fslib_1.xfs.existsSync(deferredVersionFolder)) return;
+    const deferredVersionFiles = await fslib_1.xfs.readdirPromise(deferredVersionFolder);
+
+    for (const entry of deferredVersionFiles) {
+      if (!entry.endsWith(`.yml`)) continue;
+      const versionPath = fslib_1.ppath.join(deferredVersionFolder, entry);
+      const versionContent = await fslib_1.xfs.readFilePromise(versionPath, `utf8`);
+      const versionData = parsers_1.parseSyml(versionContent);
+      if (typeof versionData.releases === `undefined`) continue;
+
+      for (const locatorStr of Object.keys(versionData.releases || {})) {
+        const locator = core_1.structUtils.parseLocator(locatorStr);
+        const workspace = project.tryWorkspaceByLocator(locator);
+
+        if (workspace === null) {
+          delete versionData.releases[locatorStr];
+        }
+      }
+
+      await fslib_1.xfs.changeFilePromise(versionPath, parsers_1.stringifySyml(new parsers_1.stringifySyml.PreserveOrdering(versionData)));
+    }
+  }
+
+  exports.updateVersionFiles = updateVersionFiles;
+
+  async function openVersionFile(project, {
+    allowEmpty = false
+  } = {}) {
+    const configuration = project.configuration;
+    if (configuration.projectCwd === null) throw new clipanion_1.UsageError(`This command can only be run from within a Yarn project`);
+    const root = await fetchRoot(configuration.projectCwd);
+    const base = root !== null ? await fetchBase(root) : null;
+    const changedFiles = root !== null ? await fetchChangedFiles(root, {
+      base: base.hash
+    }) : [];
+    const deferredVersionFolder = configuration.get(`deferredVersionFolder`);
+    const versionFiles = changedFiles.filter(p => fslib_1.ppath.contains(deferredVersionFolder, p) !== null);
+    if (versionFiles.length > 1) throw new clipanion_1.UsageError(`Your current branch contains multiple versioning files; this isn't supported:\n- ${versionFiles.join(`\n- `)}`);
+    const changedWorkspaces = new Set(changedFiles.map(file => project.getWorkspaceByFilePath(file)));
+    if (versionFiles.length === 0 && changedWorkspaces.size === 0 && !allowEmpty) return null;
+    const versionPath = versionFiles.length === 1 ? versionFiles[0] : fslib_1.ppath.join(deferredVersionFolder, `${core_1.hashUtils.makeHash(Math.random().toString()).slice(0, 8)}.yml`);
+    const versionContent = fslib_1.xfs.existsSync(versionPath) ? await fslib_1.xfs.readFilePromise(versionPath, `utf8`) : `{}`;
+    const versionData = parsers_1.parseSyml(versionContent);
+    const releaseStore = new Map();
+
+    for (const locatorStr of versionData.declined || []) {
+      const locator = core_1.structUtils.parseLocator(locatorStr);
+      const workspace = project.getWorkspaceByLocator(locator);
+      releaseStore.set(workspace, Decision.DECLINE);
+    }
+
+    for (const [locatorStr, decision] of Object.entries(versionData.releases || {})) {
+      const locator = core_1.structUtils.parseLocator(locatorStr);
+      const workspace = project.getWorkspaceByLocator(locator);
+      releaseStore.set(workspace, decision);
+    }
+
+    return {
+      project,
+      root,
+      baseHash: base !== null ? base.hash : null,
+      baseTitle: base !== null ? base.title : null,
+      changedFiles: new Set(changedFiles),
+      changedWorkspaces,
+      releaseRoots: new Set([...changedWorkspaces].filter(workspace => workspace.manifest.version !== null)),
+      releases: releaseStore,
+
+      async saveAll() {
+        const releases = {};
+        const declined = [];
+        const undecided = [];
+
+        for (const workspace of project.workspaces) {
+          // Let's assume that packages without versions don't need to see their version increased
+          if (workspace.manifest.version === null) continue;
+          const locatorStr = core_1.structUtils.stringifyLocator(workspace.locator);
+          const decision = releaseStore.get(workspace);
+
+          if (decision === Decision.DECLINE) {
+            declined.push(locatorStr);
+          } else if (typeof decision !== `undefined`) {
+            releases[locatorStr] = decision;
+          } else if (changedWorkspaces.has(workspace)) {
+            undecided.push(locatorStr);
+          }
+        }
+
+        await fslib_1.xfs.mkdirpPromise(fslib_1.ppath.dirname(versionPath));
+        await fslib_1.xfs.changeFilePromise(versionPath, parsers_1.stringifySyml(new parsers_1.stringifySyml.PreserveOrdering({
+          releases: Object.keys(releases).length > 0 ? releases : undefined,
+          declined: declined.length > 0 ? declined : undefined,
+          undecided: undecided.length > 0 ? undecided : undefined
+        })));
+      }
+
+    };
+  }
+
+  exports.openVersionFile = openVersionFile;
+
+  function requireMoreDecisions(versionFile) {
+    if (getUndecidedWorkspaces(versionFile).size > 0) return true;
+    if (getUndecidedDependentWorkspaces(versionFile).length > 0) return true;
+    return false;
+  }
+
+  exports.requireMoreDecisions = requireMoreDecisions;
+
+  function getUndecidedWorkspaces(versionFile) {
+    const undecided = new Set();
+
+    for (const workspace of versionFile.changedWorkspaces) {
+      // Let's assume that packages without versions don't need to see their version increased
+      if (workspace.manifest.version === null) continue;
+      if (versionFile.releases.has(workspace)) continue;
+      undecided.add(workspace);
+    }
+
+    return undecided;
+  }
+
+  exports.getUndecidedWorkspaces = getUndecidedWorkspaces;
+
+  function getUndecidedDependentWorkspaces(versionFile, {
+    include = new Set()
+  } = {}) {
+    const undecided = [];
+    const bumpedWorkspaces = new Map(core_1.miscUtils.mapAndFilter([...versionFile.releases], ([workspace, decision]) => {
+      if (decision === Decision.DECLINE) return core_1.miscUtils.mapAndFilter.skip;
+      return [workspace.anchoredLocator.locatorHash, workspace];
+    }));
+    const declinedWorkspaces = new Map(core_1.miscUtils.mapAndFilter([...versionFile.releases], ([workspace, decision]) => {
+      if (decision !== Decision.DECLINE) return core_1.miscUtils.mapAndFilter.skip;
+      return [workspace.anchoredLocator.locatorHash, workspace];
+    })); // Then we check which workspaces depend on packages that will be released again but have no release strategies themselves
+
+    for (const workspace of versionFile.project.workspaces) {
+      // We allow to overrule the following check because the interactive mode wants to keep displaying the previously-undecided packages even after they have been decided
+      if (!include.has(workspace)) {
+        // We don't need to run the check for packages that have already been decided
+        if (declinedWorkspaces.has(workspace.anchoredLocator.locatorHash)) continue;
+
+        if (bumpedWorkspaces.has(workspace.anchoredLocator.locatorHash)) {
+          continue;
+        }
+      } // Let's assume that packages without versions don't need to see their version increased
+
+
+      if (workspace.manifest.version === null) continue;
+
+      for (const dependencyType of core_1.Manifest.hardDependencies) {
+        for (const descriptor of workspace.manifest.getForScope(dependencyType).values()) {
+          const matchingWorkspaces = versionFile.project.findWorkspacesByDescriptor(descriptor);
+
+          for (const workspaceDependency of matchingWorkspaces) {
+            // We only care about workspaces, and we only care about workspaces that will be bumped
+            if (bumpedWorkspaces.has(workspaceDependency.anchoredLocator.locatorHash)) {
+              // Quick note: we don't want to check whether the workspace pointer
+              // by `resolution` is private, because while it doesn't makes sense
+              // to bump a private package because its dependencies changed, the
+              // opposite isn't true: a (public) package might need to be bumped
+              // because one of its dev dependencies is a (private) package whose
+              // behavior sensibly changed.
+              undecided.push([workspace, workspaceDependency]);
+            }
+          }
+        }
+      }
+    }
+
+    return undecided;
+  }
+
+  exports.getUndecidedDependentWorkspaces = getUndecidedDependentWorkspaces;
+
+  function suggestStrategy(from, to) {
+    const cleaned = semver_1.default.clean(to);
+
+    for (const strategy of Object.values(Decision)) if (strategy !== Decision.UNDECIDED && strategy !== Decision.DECLINE) if (semver_1.default.inc(from, strategy) === cleaned) return strategy;
+
+    return null;
+  }
+
+  exports.suggestStrategy = suggestStrategy;
+
+  function applyStrategy(version, strategy) {
+    if (semver_1.default.valid(strategy)) return strategy;
+    if (version === null) throw new clipanion_1.UsageError(`Cannot apply the release strategy "${strategy}" unless the workspace already has a valid version`);
+    if (!semver_1.default.valid(version)) throw new clipanion_1.UsageError(`Cannot apply the release strategy "${strategy}" on a non-semver version (${version})`);
+    const nextVersion = semver_1.default.inc(version, strategy);
+    if (nextVersion === null) throw new clipanion_1.UsageError(`Cannot apply the release strategy "${strategy}" on the specified version (${version})`);
+    return nextVersion;
+  }
+
+  exports.applyStrategy = applyStrategy;
+
+  function applyReleases(project, newVersions, {
+    report
+  }) {
+    const allDependents = new Map(); // First we compute the reverse map to figure out which workspace is
+    // depended upon by which other.
+    //
+    // Note that we need to do this before applying the new versions,
+    // otherwise the `findWorkspacesByDescriptor` calls won't be able to
+    // resolve the workspaces anymore (because the workspace versions will
+    // have changed and won't match the outdated dependencies).
+
+    for (const dependent of project.workspaces) {
+      for (const set of core_1.Manifest.allDependencies) {
+        for (const descriptor of dependent.manifest[set].values()) {
+          const workspaces = project.findWorkspacesByDescriptor(descriptor);
+          if (workspaces.length !== 1) continue; // We only care about workspaces that depend on a workspace that will
+          // receive a fresh update
+
+          const dependency = workspaces[0];
+          if (!newVersions.has(dependency)) continue;
+          const dependents = core_1.miscUtils.getArrayWithDefault(allDependents, dependency);
+          dependents.push([dependent, set, descriptor.identHash]);
+        }
+      }
+    } // Now that we know which workspaces depend on which others, we can
+    // proceed to update everything at once using our accumulated knowledge.
+
+
+    for (const [workspace, newVersion] of newVersions) {
+      const oldVersion = workspace.manifest.version;
+      workspace.manifest.version = newVersion;
+      const identString = workspace.manifest.name !== null ? core_1.structUtils.stringifyIdent(workspace.manifest.name) : null;
+      report.reportInfo(core_1.MessageName.UNNAMED, `${core_1.structUtils.prettyLocator(project.configuration, workspace.anchoredLocator)}: Bumped to ${newVersion}`);
+      report.reportJson({
+        cwd: workspace.cwd,
+        ident: identString,
+        oldVersion,
+        newVersion
+      });
+      const dependents = allDependents.get(workspace);
+      if (typeof dependents === `undefined`) continue;
+
+      for (const [dependent, set, identHash] of dependents) {
+        const descriptor = dependent.manifest[set].get(identHash);
+        if (typeof descriptor === `undefined`) throw new Error(`Assertion failed: The dependency should have existed`);
+        let range = descriptor.range;
+        let useWorkspaceProtocol = false;
+
+        if (range.startsWith(core_1.WorkspaceResolver.protocol)) {
+          range = range.slice(core_1.WorkspaceResolver.protocol.length);
+          useWorkspaceProtocol = true; // Workspaces referenced through their path never get upgraded ("workspace:packages/yarnpkg-core")
+
+          if (range === workspace.relativeCwd) {
+            continue;
+          }
+        } // We can only auto-upgrade the basic semver ranges (we can't auto-upgrade ">=1.0.0 <2.0.0", for example)
+
+
+        const parsed = range.match(SUPPORTED_UPGRADE_REGEXP);
+
+        if (!parsed) {
+          report.reportWarning(core_1.MessageName.UNNAMED, `Couldn't auto-upgrade range ${range} (in ${core_1.structUtils.prettyLocator(project.configuration, workspace.anchoredLocator)})`);
+          continue;
+        }
+
+        let newRange = `${parsed[1]}${newVersion}`;
+        if (useWorkspaceProtocol) newRange = `${core_1.WorkspaceResolver.protocol}${newRange}`;
+        const newDescriptor = core_1.structUtils.makeDescriptor(descriptor, newRange);
+        dependent.manifest[set].set(identHash, newDescriptor);
+      }
+    }
+  }
+
+  exports.applyReleases = applyReleases;
+
+  /***/ }),
+  /* 6 */
+  /***/ (function(module, exports) {
+
+  module.exports = require("@yarnpkg/fslib");
+
+  /***/ }),
+  /* 7 */
+  /***/ (function(module, exports) {
+
+  module.exports = require("@yarnpkg/parsers");
+
+  /***/ }),
+  /* 8 */
+  /***/ (function(module, exports) {
+
+  module.exports = require("semver");
+
+  /***/ }),
+  /* 9 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+
+
+  var __decorate = this && this.__decorate || function (decorators, target, key, desc) {
     var c = arguments.length,
         r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
         d;
@@ -362,9 +717,50 @@ module.exports.factory = function (require) {
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
 
+  var __importStar = this && this.__importStar || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+  };
 
-  // eslint-disable-next-line arca/no-default-export
-  class VersionApplyCommand extends clipanion__WEBPACK_IMPORTED_MODULE_0__["Command"] {
+  var __importDefault = this && this.__importDefault || function (mod) {
+    return mod && mod.__esModule ? mod : {
+      "default": mod
+    };
+  };
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  const cli_1 = __webpack_require__(3);
+
+  const core_1 = __webpack_require__(1);
+
+  const fslib_1 = __webpack_require__(6);
+
+  const ScrollableItems_1 = __webpack_require__(10);
+
+  const useFocusRequest_1 = __webpack_require__(95);
+
+  const useListInput_1 = __webpack_require__(96);
+
+  const renderForm_1 = __webpack_require__(97);
+
+  const clipanion_1 = __webpack_require__(4);
+
+  const ink_1 = __webpack_require__(11);
+
+  const react_1 = __importStar(__webpack_require__(14));
+
+  const semver_1 = __importDefault(__webpack_require__(8));
+
+  const versionUtils = __importStar(__webpack_require__(5)); // eslint-disable-next-line arca/no-default-export
+
+
+  class VersionApplyCommand extends clipanion_1.Command {
     async execute() {
       if (this.interactive) {
         return await this.executeInteractive();
@@ -374,76 +770,19 @@ module.exports.factory = function (require) {
     }
 
     async executeInteractive() {
-      const _ref14 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 7, 7));
-
-      const _ref13 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 9, 7));
-
-      const _ref12 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 14, 7));
-
-      const _ref9 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 93, 7));
-
-      const _ref3 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 1, 7));
-
-      const _ref = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 3, 7));
-
-      const configuration = await _ref3.Configuration.find(this.context.cwd, this.context.plugins);
+      const configuration = await core_1.Configuration.find(this.context.cwd, this.context.plugins);
       const {
         project,
         workspace
-      } = await _ref3.Project.find(configuration, this.context.cwd);
-      if (!workspace) throw new _ref.WorkspaceRequiredError(this.context.cwd);
-      const root = await fetchRoot(this.context.cwd);
-      const base = await fetchBase(root);
-      const files = await fetchChangedFiles(root, {
-        base: base.hash
+      } = await core_1.Project.find(configuration, this.context.cwd);
+      if (!workspace) throw new cli_1.WorkspaceRequiredError(project.cwd, this.context.cwd);
+      await project.resolveEverything({
+        lockfileOnly: true,
+        report: new core_1.ThrowReport()
       });
-      const workspaces = [...new Set(files.map(file => project.getWorkspaceByFilePath(file)))];
-      if (workspaces.length === 0) return;
-      const status = await fetchWorkspacesStatus(workspaces, {
-        root,
-        base: base.hash
-      });
-      if (status.undecided.length === 0) if (fetchUndecidedDependentWorkspaces(status, {
-        project
-      }).length === 0) return;
-
-      const useListInput = function (value, values, {
-        active,
-        minus,
-        plus,
-        set
-      }) {
-        const {
-          stdin
-        } = _ref13.useContext(_ref12.StdinContext);
-
-        _ref13.useEffect(() => {
-          if (!active) return;
-
-          const cb = (ch, key) => {
-            const index = values.indexOf(value);
-
-            switch (key.name) {
-              case minus:
-                {
-                  set(values[(values.length + index - 1) % values.length]);
-                }
-                break;
-
-              case plus:
-                {
-                  set(values[(index + 1) % values.length]);
-                }
-                break;
-            }
-          };
-
-          stdin.on(`keypress`, cb);
-          return () => {
-            stdin.off(`keypress`, cb);
-          };
-        }, [values, value, active]);
-      };
+      const versionFile = await versionUtils.openVersionFile(project);
+      if (versionFile === null || versionFile.releaseRoots.size === 0) return;
+      if (versionFile.root === null) throw new clipanion_1.UsageError(`This command can only be run on Git repositories`);
 
       const Undecided = ({
         workspace,
@@ -452,283 +791,289 @@ module.exports.factory = function (require) {
         setDecision
       }) => {
         const currentVersion = workspace.manifest.version;
-        if (currentVersion === null) throw new Error(`Assertion failed: The version should have been set`);
-        const strategies = _interopRequireDefault(_ref14).default.prerelease(currentVersion) === null ? [`undecided`, `decline`, `patch`, `minor`, `major`, `prerelease`] : [`undecided`, `decline`, `prerelease`, `major`];
-        useListInput(decision, strategies, {
-          active,
+        if (currentVersion === null) throw new Error(`Assertion failed: The version should have been set (${core_1.structUtils.prettyLocator(configuration, workspace.anchoredLocator)})`);
+        const strategies = semver_1.default.prerelease(currentVersion) === null ? [versionUtils.Decision.UNDECIDED, versionUtils.Decision.DECLINE, versionUtils.Decision.PATCH, versionUtils.Decision.MINOR, versionUtils.Decision.MAJOR, versionUtils.Decision.PRERELEASE] : [versionUtils.Decision.UNDECIDED, versionUtils.Decision.DECLINE, versionUtils.Decision.PRERELEASE, versionUtils.Decision.MAJOR];
+        useListInput_1.useListInput(decision, strategies, {
+          active: active,
           minus: `left`,
           plus: `right`,
           set: setDecision
         });
-        const nextVersion = decision === `undecided` ? _interopRequireDefault(_ref13).default.createElement(_ref12.Color, {
+        const nextVersion = decision === versionUtils.Decision.UNDECIDED ? react_1.default.createElement(ink_1.Color, {
           yellow: true
-        }, currentVersion) : decision === `decline` ? _interopRequireDefault(_ref13).default.createElement(_ref12.Color, {
+        }, currentVersion) : decision === versionUtils.Decision.DECLINE ? react_1.default.createElement(ink_1.Color, {
           green: true
-        }, currentVersion) : _interopRequireDefault(_ref13).default.createElement(_interopRequireDefault(_ref13).default.Fragment, null, _interopRequireDefault(_ref13).default.createElement(_ref12.Color, {
+        }, currentVersion) : react_1.default.createElement(react_1.default.Fragment, null, react_1.default.createElement(ink_1.Color, {
           magenta: true
-        }, currentVersion), " \u2192 ", _interopRequireDefault(_ref13).default.createElement(_ref12.Color, {
+        }, currentVersion), " \u2192 ", react_1.default.createElement(ink_1.Color, {
           green: true
-        }, _interopRequireDefault(_ref14).default.inc(currentVersion, decision)));
-        return _interopRequireDefault(_ref13).default.createElement(_ref12.Box, {
-          marginBottom: 1
-        }, _interopRequireDefault(_ref13).default.createElement(_ref12.Box, {
-          marginLeft: 2,
-          marginRight: 2
-        }, active ? _interopRequireDefault(_ref13).default.createElement(_ref12.Color, {
-          cyan: true
-        }, "\u25B6") : ` `), _interopRequireDefault(_ref13).default.createElement(_ref12.Box, {
+        }, semver_1.default.inc(currentVersion, decision)));
+        return react_1.default.createElement(ink_1.Box, {
           flexDirection: `column`
-        }, _interopRequireDefault(_ref13).default.createElement(_ref12.Box, null, _ref3.structUtils.prettyLocator(configuration, workspace.anchoredLocator), " - ", nextVersion), _interopRequireDefault(_ref13).default.createElement(_ref12.Box, null, strategies.map(strategy => {
+        }, react_1.default.createElement(ink_1.Box, null, core_1.structUtils.prettyLocator(configuration, workspace.anchoredLocator), " - ", nextVersion), react_1.default.createElement(ink_1.Box, null, strategies.map(strategy => {
           if (strategy === decision) {
-            return _interopRequireDefault(_ref13).default.createElement(_ref12.Box, {
+            return react_1.default.createElement(ink_1.Box, {
               key: strategy,
               paddingLeft: 2
-            }, _interopRequireDefault(_ref13).default.createElement(_ref12.Color, {
+            }, react_1.default.createElement(ink_1.Color, {
               green: true
             }, "\u25FC"), " ", strategy);
           } else {
-            return _interopRequireDefault(_ref13).default.createElement(_ref12.Box, {
+            return react_1.default.createElement(ink_1.Box, {
               key: strategy,
               paddingLeft: 2
-            }, _interopRequireDefault(_ref13).default.createElement(_ref12.Color, {
+            }, react_1.default.createElement(ink_1.Color, {
               yellow: true
             }, "\u25FB"), " ", strategy);
           }
-        }))));
+        })));
       };
 
-      const useDecisions = () => {
-        const [decisions, setDecisions] = _ref13.useState(new Map());
+      const getRelevancy = releases => {
+        // Now, starting from all the workspaces that changed, we'll detect
+        // which ones are affected by the choices that the user picked. By
+        // doing this we'll "forget" all choices that aren't relevant any
+        // longer (for example, imagine that the user decided to re-release
+        // something, then its dependents, but then decided to not release
+        // the original package anymore; then the dependents don't need to
+        // released anymore)
+        const relevantWorkspaces = new Set(versionFile.releaseRoots);
+        const relevantReleases = new Map([...releases].filter(([workspace]) => {
+          return relevantWorkspaces.has(workspace);
+        }));
 
-        const setDecision = _ref13.useCallback((workspace, decision) => {
-          const copy = new Map(decisions);
-          if (decision !== `undecided`) copy.set(workspace, decision);else copy.delete(workspace);
-          setDecisions(copy);
-        }, [decisions, setDecisions]);
+        while (true) {
+          const undecidedDependentWorkspaces = versionUtils.getUndecidedDependentWorkspaces({
+            project: versionFile.project,
+            releases: relevantReleases
+          });
+          let hasNewDependents = false;
 
-        return [decisions, setDecision];
-      };
+          if (undecidedDependentWorkspaces.length > 0) {
+            for (const [workspace] of undecidedDependentWorkspaces) {
+              if (!relevantWorkspaces.has(workspace)) {
+                relevantWorkspaces.add(workspace);
+                hasNewDependents = true;
+                const release = releases.get(workspace);
 
-      const applyDecisions = (status, decisions) => {
-        const decidedWithDecisions = [...status.decided];
-        const declinedWithDecisions = [...status.declined];
+                if (typeof release !== `undefined`) {
+                  relevantReleases.set(workspace, release);
+                }
+              }
+            }
+          }
 
-        for (const [workspace, decision] of decisions) {
-          if (decision === `undecided`) continue;
-
-          if (decision !== `decline`) {
-            decidedWithDecisions.push(workspace);
-          } else {
-            declinedWithDecisions.push(workspace);
+          if (!hasNewDependents) {
+            break;
           }
         }
 
-        const undecidedDependents = fetchUndecidedDependentWorkspaces({
-          decided: decidedWithDecisions,
-          declined: declinedWithDecisions
-        }, {
-          project,
-          include: new Set(decisions.keys())
-        });
-        const undecidedDependentsNoDuplicates = [];
-
-        for (const [workspace] of undecidedDependents) if (!undecidedDependentsNoDuplicates.includes(workspace)) undecidedDependentsNoDuplicates.push(workspace);
-
         return {
-          undecidedWorkspaces: status.undecided,
-          undecidedDependents: undecidedDependentsNoDuplicates,
-          allUndecided: [...status.undecided, ...undecidedDependentsNoDuplicates]
+          relevantWorkspaces,
+          relevantReleases
         };
       };
 
+      const useReleases = () => {
+        const [releases, setReleases] = react_1.useState(versionFile.releases);
+        const setWorkspaceRelease = react_1.useCallback((workspace, decision) => {
+          const copy = new Map(releases);
+          if (decision !== versionUtils.Decision.UNDECIDED) copy.set(workspace, decision);else copy.delete(workspace);
+          const {
+            relevantReleases
+          } = getRelevancy(copy);
+          setReleases(relevantReleases);
+        }, [releases, setReleases]);
+        return [releases, setWorkspaceRelease];
+      };
+
+      const Stats = ({
+        workspaces,
+        releases
+      }) => {
+        const parts = [];
+        parts.push(`${workspaces.size} total`);
+        let releaseCount = 0;
+        let remainingCount = 0;
+
+        for (const workspace of workspaces) {
+          const release = releases.get(workspace);
+
+          if (typeof release === `undefined`) {
+            remainingCount += 1;
+          } else if (release !== versionUtils.Decision.DECLINE) {
+            releaseCount += 1;
+          }
+        }
+
+        parts.push(`${releaseCount} release${releaseCount === 1 ? `` : `s`}`);
+        parts.push(`${remainingCount} remaining`);
+        return react_1.default.createElement(ink_1.Color, {
+          yellow: true
+        }, parts.join(`, `));
+      };
+
       const App = ({
-        status,
         useSubmit
       }) => {
+        const [releases, setWorkspaceRelease] = useReleases();
+        useSubmit(releases);
         const {
-          setRawMode
-        } = _ref13.useContext(_ref12.StdinContext);
+          relevantWorkspaces
+        } = getRelevancy(releases);
+        const dependentWorkspaces = new Set([...relevantWorkspaces].filter(workspace => {
+          return !versionFile.releaseRoots.has(workspace);
+        }));
+        const [focus, setFocus] = react_1.useState(0);
+        const handleFocusRequest = react_1.useCallback(request => {
+          switch (request) {
+            case useFocusRequest_1.FocusRequest.BEFORE:
+              {
+                setFocus(focus - 1);
+              }
+              break;
 
-        _ref13.useEffect(() => {
-          if (setRawMode) {
-            setRawMode(true);
+            case useFocusRequest_1.FocusRequest.AFTER:
+              {
+                setFocus(focus + 1);
+              }
+              break;
           }
-        }, []);
-
-        const [decisions, setDecision] = useDecisions();
-        useSubmit(decisions);
-        const {
-          undecidedWorkspaces,
-          undecidedDependents,
-          allUndecided
-        } = applyDecisions(status, decisions);
-
-        const [active, setActive] = _ref13.useState(allUndecided[0]);
-
-        useListInput(active, allUndecided, {
-          active: true,
-          minus: `up`,
-          plus: `down`,
-          set: setActive
-        });
-        return _interopRequireDefault(_ref13).default.createElement(_ref12.Box, {
+        }, [focus, setFocus]);
+        return react_1.default.createElement(ink_1.Box, {
           width: 80,
           flexDirection: `column`
-        }, _interopRequireDefault(_ref13).default.createElement(_ref12.Box, {
+        }, react_1.default.createElement(ink_1.Box, {
           textWrap: `wrap`
-        }, "The following files have been modified in your local checkout."), _interopRequireDefault(_ref13).default.createElement(_ref12.Box, {
+        }, "The following files have been modified in your local checkout."), react_1.default.createElement(ink_1.Box, {
           flexDirection: `column`,
           marginTop: 1,
-          marginBottom: 1,
           paddingLeft: 2
-        }, files.map(file => _interopRequireDefault(_ref13).default.createElement(_ref12.Box, {
+        }, [...versionFile.changedFiles].map(file => react_1.default.createElement(ink_1.Box, {
           key: file
-        }, _interopRequireDefault(_ref13).default.createElement(_ref12.Color, {
+        }, react_1.default.createElement(ink_1.Color, {
           grey: true
-        }, root), "/", _ref9.ppath.relative(root, file)))), undecidedWorkspaces.length > 0 && _interopRequireDefault(_ref13).default.createElement(_interopRequireDefault(_ref13).default.Fragment, null, _interopRequireDefault(_ref13).default.createElement(_ref12.Box, {
+        }, versionFile.root), "/", fslib_1.ppath.relative(versionFile.root, file)))), versionFile.releaseRoots.size > 0 && react_1.default.createElement(react_1.default.Fragment, null, react_1.default.createElement(ink_1.Box, {
+          marginTop: 1,
           textWrap: `wrap`
-        }, "Because of those files having been modified, the following workspaces may need to be released again (note that private workspaces are also shown here, because even though they won't be published, bumping them will allow us to flag their dependents for potential re-release):"), _interopRequireDefault(_ref13).default.createElement(_ref12.Box, {
+        }, "Because of those files having been modified, the following workspaces may need to be released again (note that private workspaces are also shown here, because even though they won't be published, releasing them will allow us to flag their dependents for potential re-release):"), dependentWorkspaces.size > 3 ? react_1.default.createElement(ink_1.Box, {
+          marginTop: 1
+        }, react_1.default.createElement(Stats, {
+          workspaces: versionFile.releaseRoots,
+          releases: releases
+        })) : null, react_1.default.createElement(ink_1.Box, {
           marginTop: 1,
           flexDirection: `column`
-        }, undecidedWorkspaces.map(workspace => {
-          return _interopRequireDefault(_ref13).default.createElement(Undecided, {
+        }, react_1.default.createElement(ScrollableItems_1.ScrollableItems, {
+          active: focus % 2 === 0,
+          radius: 1,
+          size: 2,
+          onFocusRequest: handleFocusRequest
+        }, [...versionFile.releaseRoots].map(workspace => {
+          return react_1.default.createElement(Undecided, {
             key: workspace.cwd,
             workspace: workspace,
-            active: active === workspace,
-            decision: decisions.get(workspace) || `undecided`,
-            setDecision: decision => setDecision(workspace, decision)
+            decision: releases.get(workspace) || versionUtils.Decision.UNDECIDED,
+            setDecision: decision => setWorkspaceRelease(workspace, decision)
           });
-        }))), undecidedDependents.length > 0 && _interopRequireDefault(_ref13).default.createElement(_interopRequireDefault(_ref13).default.Fragment, null, _interopRequireDefault(_ref13).default.createElement(_ref12.Box, {
+        })))), dependentWorkspaces.size > 0 && react_1.default.createElement(react_1.default.Fragment, null, react_1.default.createElement(ink_1.Box, {
+          marginTop: 1,
           textWrap: `wrap`
-        }, "The following workspaces depend on other workspaces that have been bumped, and thus may need to receive a bump of their own:"), _interopRequireDefault(_ref13).default.createElement(_ref12.Box, {
+        }, "The following workspaces depend on other workspaces that have been marked for release, and thus may need to be released as well:"), dependentWorkspaces.size > 5 ? react_1.default.createElement(ink_1.Box, {
+          marginTop: 1
+        }, react_1.default.createElement(Stats, {
+          workspaces: dependentWorkspaces,
+          releases: releases
+        })) : null, react_1.default.createElement(ink_1.Box, {
           marginTop: 1,
           flexDirection: `column`
-        }, undecidedDependents.map(workspace => {
-          return _interopRequireDefault(_ref13).default.createElement(Undecided, {
+        }, react_1.default.createElement(ScrollableItems_1.ScrollableItems, {
+          active: focus % 2 === 1,
+          radius: 2,
+          size: 2,
+          onFocusRequest: handleFocusRequest
+        }, [...dependentWorkspaces].map(workspace => {
+          return react_1.default.createElement(Undecided, {
             key: workspace.cwd,
             workspace: workspace,
-            active: active === workspace,
-            decision: decisions.get(workspace) || `undecided`,
-            setDecision: decision => setDecision(workspace, decision)
+            decision: releases.get(workspace) || versionUtils.Decision.UNDECIDED,
+            setDecision: decision => setWorkspaceRelease(workspace, decision)
           });
-        }))));
+        })))));
       };
 
-      const renderForm = async function (UserComponent, props) {
-        let returnedValue;
-
-        const {
-          waitUntilExit
-        } = _ref12.render(_interopRequireDefault(_ref13).default.cloneElement(_interopRequireDefault(_ref13).default.createElement(UserComponent, Object.assign({}, props)), {
-          useSubmit(value) {
-            const {
-              exit
-            } = _ref13.useContext(_ref12.AppContext);
-
-            const {
-              stdin
-            } = _ref13.useContext(_ref12.StdinContext);
-
-            _ref13.useEffect(() => {
-              const cb = (ch, key) => {
-                if (key.name === `return`) {
-                  returnedValue = value;
-                  exit();
-                }
-              };
-
-              stdin.on(`keypress`, cb);
-              return () => {
-                stdin.off(`keypress`, cb);
-              };
-            }, [stdin, exit, value]);
-          }
-
-        }));
-
-        await waitUntilExit();
-        return returnedValue;
-      };
-
-      const decisions = await renderForm(App, {
-        status
+      const decisions = await renderForm_1.renderForm(App, {
+        versionFile
       });
       if (typeof decisions === `undefined`) return 1;
+      versionFile.releases.clear();
 
-      for (const [workspace, decision] of decisions.entries()) {
-        if (decision !== `undecided`) {
-          await this.cli.run([workspace.cwd, `version`, decision, `--deferred`]);
-        }
-      }
+      for (const [workspace, decision] of decisions) versionFile.releases.set(workspace, decision);
+
+      await versionFile.saveAll();
     }
 
     async executeStandard() {
-      const _ref4 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 1, 7));
-
-      const _ref2 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 3, 7));
-
-      const configuration = await _ref4.Configuration.find(this.context.cwd, this.context.plugins);
+      const configuration = await core_1.Configuration.find(this.context.cwd, this.context.plugins);
       const {
         project,
         workspace
-      } = await _ref4.Project.find(configuration, this.context.cwd);
-      if (!workspace) throw new _ref2.WorkspaceRequiredError(this.context.cwd);
-      const report = await _ref4.StreamReport.start({
+      } = await core_1.Project.find(configuration, this.context.cwd);
+      if (!workspace) throw new cli_1.WorkspaceRequiredError(project.cwd, this.context.cwd);
+      await project.resolveEverything({
+        lockfileOnly: true,
+        report: new core_1.ThrowReport()
+      });
+      const report = await core_1.StreamReport.start({
         configuration,
         stdout: this.context.stdout
       }, async report => {
-        const root = await fetchRoot(this.context.cwd);
-        const base = await fetchBase(root);
-        const files = await fetchChangedFiles(root, {
-          base: base.hash
-        });
-        const workspaces = [...new Set(files.map(file => project.getWorkspaceByFilePath(file)))];
-        let hasDiffErrors = false;
-        let hasDepsErrors = false;
-        report.reportInfo(_ref4.MessageName.UNNAMED, `Your PR was started right after ${configuration.format(base.hash.slice(0, 7), `yellow`)} ${configuration.format(base.message, `magenta`)}`);
+        const versionFile = await versionUtils.openVersionFile(project);
+        if (versionFile === null || versionFile.releaseRoots.size === 0) return;
+        if (versionFile.root === null) throw new clipanion_1.UsageError(`This command can only be run on Git repositories`);
+        report.reportInfo(core_1.MessageName.UNNAMED, `Your PR was started right after ${configuration.format(versionFile.baseHash.slice(0, 7), `yellow`)} ${configuration.format(versionFile.baseTitle, `magenta`)}`);
 
-        if (files.length > 0) {
-          report.reportInfo(_ref4.MessageName.UNNAMED, `you have changed the following files since then:`);
+        if (versionFile.changedFiles.size > 0) {
+          report.reportInfo(core_1.MessageName.UNNAMED, `You have changed the following files since then:`);
+          report.reportSeparator();
 
-          for (const file of files) {
-            report.reportInfo(null, file);
+          for (const file of versionFile.changedFiles) {
+            report.reportInfo(null, `${configuration.format(versionFile.root, `gray`)}/${fslib_1.ppath.relative(versionFile.root, file)}`);
           }
         }
 
-        const status = await fetchWorkspacesStatus(workspaces, {
-          root,
-          base: base.hash
-        });
+        let hasDiffErrors = false;
+        let hasDepsErrors = false;
+        const undecided = versionUtils.getUndecidedWorkspaces(versionFile);
 
-        if (status.undecided.length > 0) {
-          if (!hasDiffErrors && files.length > 0) report.reportSeparator();
+        if (undecided.size > 0) {
+          if (!hasDiffErrors) report.reportSeparator();
 
-          for (const workspace of status.undecided) report.reportError(_ref4.MessageName.UNNAMED, `${_ref4.structUtils.prettyLocator(configuration, workspace.anchoredLocator)} has been modified but doesn't have a bump strategy attached`);
+          for (const workspace of undecided) report.reportError(core_1.MessageName.UNNAMED, `${core_1.structUtils.prettyLocator(configuration, workspace.anchoredLocator)} has been modified but doesn't have a release strategy attached`);
 
           hasDiffErrors = true;
         }
 
-        const undecidedDependents = await fetchUndecidedDependentWorkspaces(status, {
-          project
-        }); // Then we check which workspaces depend on packages that will be released again but have no release strategies themselves
+        const undecidedDependents = versionUtils.getUndecidedDependentWorkspaces(versionFile); // Then we check which workspaces depend on packages that will be released again but have no release strategies themselves
 
         for (const [workspace, dependency] of undecidedDependents) {
-          if (!hasDepsErrors && (files.length > 0 || hasDiffErrors)) report.reportSeparator();
-          report.reportError(_ref4.MessageName.UNNAMED, `${_ref4.structUtils.prettyLocator(configuration, workspace.anchoredLocator)} doesn't have a bump strategy attached, but depends on ${_ref4.structUtils.prettyWorkspace(configuration, dependency)} which will be re-released.`);
+          if (!hasDepsErrors) report.reportSeparator();
+          report.reportError(core_1.MessageName.UNNAMED, `${core_1.structUtils.prettyLocator(configuration, workspace.anchoredLocator)} doesn't have a release strategy attached, but depends on ${core_1.structUtils.prettyWorkspace(configuration, dependency)} which is planned for release.`);
           hasDepsErrors = true;
         }
 
         if (hasDiffErrors || hasDepsErrors) {
           report.reportSeparator();
-          report.reportInfo(_ref4.MessageName.UNNAMED, `This command detected that at least some workspaces have received modifications but no explicit instructions as to how they had to be released (if needed).`);
-          report.reportInfo(_ref4.MessageName.UNNAMED, `To correct these errors, run \`yarn version ... --deferred\` in each of them with the adequate bump strategies, then run \`yarn version check\` again.`);
+          report.reportInfo(core_1.MessageName.UNNAMED, `This command detected that at least some workspaces have received modifications without explicit instructions as to how they had to be released (if needed).`);
+          report.reportInfo(core_1.MessageName.UNNAMED, `To correct these errors, run \`yarn version check --interactive\` then follow the instructions.`);
         }
       });
       return report.exitCode();
     }
 
   }
-  VersionApplyCommand.usage = clipanion__WEBPACK_IMPORTED_MODULE_0__["Command"].Usage({
+
+  VersionApplyCommand.usage = clipanion_1.Command.Usage({
     category: `Release-related commands`,
     description: `check that all the relevant packages have been bumped`,
     details: `
@@ -743,392 +1088,414 @@ module.exports.factory = function (require) {
     examples: [[`Check whether the modified packages need a bump`, `yarn version check`]]
   });
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_0__["Command"].Boolean(`-i,--interactive`)], VersionApplyCommand.prototype, "interactive", void 0);
+  __decorate([clipanion_1.Command.Boolean(`-i,--interactive`)], VersionApplyCommand.prototype, "interactive", void 0);
 
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_0__["Command"].Path(`version`, `check`)], VersionApplyCommand.prototype, "execute", null);
+  __decorate([clipanion_1.Command.Path(`version`, `check`)], VersionApplyCommand.prototype, "execute", null);
 
-  async function fetchWorkspacesStatus(workspaces, {
-    root,
-    base
-  }) {
-    const decided = [];
-    const undecided = [];
-    const declined = []; // First we check which workspaces have received modifications but no release strategies
-
-    for (const workspace of workspaces) {
-      // Let's assume that packages without versions don't need to see their version increased
-      if (workspace.manifest.version === null) continue;
-      const currentNonce = getNonce(workspace.manifest);
-      const previousNonce = await fetchPreviousNonce(workspace, {
-        root,
-        base
-      }); // If the nonce is the same, it means that the user didn't run one of the `yarn version <>` variants since they started working on this diff
-
-      if (currentNonce === previousNonce) {
-        undecided.push(workspace);
-      } else {
-        if (willBeReleased(workspace.manifest)) {
-          decided.push(workspace);
-        } else {
-          declined.push(workspace);
-        }
-      }
-    }
-
-    return {
-      decided,
-      undecided,
-      declined
-    };
-  }
-
-  function fetchUndecidedDependentWorkspaces({
-    decided,
-    declined
-  }, {
-    project,
-    include = new Set()
-  }) {
-    const undecided = [];
-    const bumpedWorkspaces = new Map(decided.map(workspace => {
-      return [workspace.anchoredLocator.locatorHash, workspace];
-    }));
-    const declinedWorkspaces = new Map(declined.map(workspace => {
-      return [workspace.anchoredLocator.locatorHash, workspace];
-    })); // Then we check which workspaces depend on packages that will be released again but have no release strategies themselves
-
-    for (const workspace of project.workspaces) {
-      // We allow to overrule the following check because the interactive mode wants to keep displaying the previously-undecided packages even after they have been decided
-      if (!include.has(workspace)) {
-        // We don't need to run the check for packages that have already been decided
-        if (declinedWorkspaces.has(workspace.anchoredLocator.locatorHash)) continue;
-
-        if (bumpedWorkspaces.has(workspace.anchoredLocator.locatorHash)) {
-          continue;
-        }
-      } // We also don't need to run the check for private packages (is that true? I'm not really sure)
-
-
-      if (workspace.manifest.private) continue; // Let's assume that packages without versions don't need to see their version increased
-
-      if (workspace.manifest.version === null) continue;
-
-      for (const descriptor of workspace.dependencies.values()) {
-        const resolution = project.storedResolutions.get(descriptor.descriptorHash);
-        if (typeof resolution === `undefined`) throw new Error(`Assertion failed: The resolution should have been registered`);
-        const pkg = project.storedPackages.get(resolution);
-        if (typeof pkg === `undefined`) throw new Error(`Assertion failed: The package should have been registered`); // We only care about workspaces, and we only care about workspaces that will be bumped
-
-        if (!bumpedWorkspaces.has(resolution)) continue; // Quick note: we don't want to check whether the workspace pointer
-        // by `resolution` is private, because while it doesn't makes sense
-        // to bump a private package because its dependencies changed, the
-        // opposite isn't true: a (public) package might need to be bumped
-        // because one of its dev dependencies is a (private) package whose
-        // behavior sensibly changed.
-
-        undecided.push([workspace, bumpedWorkspaces.get(resolution)]);
-      }
-    }
-
-    return undecided;
-  }
-
-  async function fetchBase(root) {
-    const _ref5 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 1, 7));
-
-    const candidateBases = [`master`, `origin/master`, `upstream/master`];
-    const ancestorBases = [];
-
-    for (const candidate of candidateBases) {
-      const {
-        code
-      } = await _ref5.execUtils.execvp(`git`, [`merge-base`, candidate, `HEAD`], {
-        cwd: root
-      });
-
-      if (code === 0) {
-        ancestorBases.push(candidate);
-      }
-    }
-
-    if (ancestorBases.length === 0) throw new clipanion__WEBPACK_IMPORTED_MODULE_0__["UsageError"](`No ancestor could be found between any of HEAD and ${candidateBases.join(`, `)}`);
-    const {
-      stdout: mergeBaseStdout
-    } = await _ref5.execUtils.execvp(`git`, [`merge-base`, `HEAD`, ...ancestorBases], {
-      cwd: root,
-      strict: true
-    });
-    const hash = mergeBaseStdout.trim();
-    const {
-      stdout: showStdout
-    } = await _ref5.execUtils.execvp(`git`, [`show`, `--quiet`, `--pretty=format:%s`, hash], {
-      cwd: root,
-      strict: true
-    });
-    const message = showStdout.trim();
-    return {
-      hash,
-      message
-    };
-  }
-
-  async function fetchRoot(initialCwd) {
-    const _ref10 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 93, 7));
-
-    // Note: We can't just use `git rev-parse --show-toplevel`, because on Windows
-    // it may return long paths even when the cwd uses short paths, and we have no
-    // way to detect it from Node (not even realpath).
-    let match = null;
-    let cwd;
-    let nextCwd = initialCwd;
-
-    do {
-      cwd = nextCwd;
-      if (await _ref10.xfs.existsPromise(_ref10.ppath.join(cwd, `.git`))) match = cwd;
-      nextCwd = _ref10.ppath.dirname(cwd);
-    } while (match === null && nextCwd !== cwd);
-
-    if (match === null) throw new clipanion__WEBPACK_IMPORTED_MODULE_0__["UsageError"](`This command can only be run from within a Git repository`);
-    return match;
-  }
-
-  async function fetchChangedFiles(root, {
-    base
-  }) {
-    const _ref11 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 93, 7));
-
-    const _ref6 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 1, 7));
-
-    const {
-      stdout: branchStdout
-    } = await _ref6.execUtils.execvp(`git`, [`log`, `--format=`, `--name-only`, `${base}..HEAD`], {
-      cwd: root,
-      strict: true
-    });
-    const branchFiles = branchStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => _ref11.ppath.resolve(root, _ref11.toPortablePath(file)));
-    const {
-      stdout: localStdout
-    } = await _ref6.execUtils.execvp(`git`, [`diff`, `HEAD`, `--name-only`], {
-      cwd: root,
-      strict: true
-    });
-    const localFiles = localStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => _ref11.ppath.resolve(root, _ref11.toPortablePath(file)));
-    const {
-      stdout: untrackedStdout
-    } = await _ref6.execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {
-      cwd: root,
-      strict: true
-    });
-    const untrackedFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => _ref11.ppath.resolve(root, _ref11.toPortablePath(file)));
-    return [...new Set([...branchFiles, ...localFiles, ...untrackedFiles].sort())];
-  }
-
-  async function fetchPreviousNonce(workspace, {
-    root,
-    base
-  }) {
-    const _ref8 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 93, 7));
-
-    const _ref7 = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 1, 7));
-
-    const {
-      code,
-      stdout
-    } = await _ref7.execUtils.execvp(`git`, [`show`, `${base}:${_ref8.fromPortablePath(_ref8.ppath.relative(root, _ref8.ppath.join(workspace.cwd, `package.json`)))}`], {
-      cwd: workspace.cwd
-    });
-
-    if (code === 0) {
-      return getNonce(_ref7.Manifest.fromText(stdout));
-    } else {
-      return null;
-    }
-  }
-
-  function getNonce(manifest) {
-    if (manifest.raw.nextVersion && (typeof manifest.raw.nextVersion.nonce === `string` || typeof manifest.raw.nextVersion.nonce === `number`)) {
-      return String(manifest.raw.nextVersion.nonce);
-    } else {
-      return null;
-    }
-  }
-
-  function willBeReleased(manifest) {
-    if (manifest.raw.nextVersion && typeof manifest.raw.nextVersion.semver === `string` && manifest.raw.nextVersion !== manifest.raw.version) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  exports.default = VersionApplyCommand;
 
   /***/ }),
-  /* 6 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /* 10 */
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return VersionCommand; });
-  /* harmony import */ var _yarnpkg_cli__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-  /* harmony import */ var _yarnpkg_cli__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_yarnpkg_cli__WEBPACK_IMPORTED_MODULE_0__);
-  /* harmony import */ var clipanion__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
-  /* harmony import */ var clipanion__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(clipanion__WEBPACK_IMPORTED_MODULE_1__);
-  /* harmony import */ var semver__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
-  /* harmony import */ var semver__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(semver__WEBPACK_IMPORTED_MODULE_2__);
-  /* harmony import */ var yup__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-  /* harmony import */ var yup__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(yup__WEBPACK_IMPORTED_MODULE_3__);
-  var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
-    var c = arguments.length,
-        r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
-        d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
+
+
+  var __importStar = this && this.__importStar || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
   };
 
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 
+  const ink_1 = __webpack_require__(11);
 
+  const react_1 = __importStar(__webpack_require__(14));
 
-   // This is a special strategy; Yarn won't change the semver version,
-  // but will change the nonce. This will cause `yarn version check` to
-  // stop reporting the package as having no explicit bump strategy.
+  const useFocusRequest_1 = __webpack_require__(95);
 
-  const DECLINE = `decline`;
-  const STRATEGIES = new Set([`major`, `minor`, `patch`, `premajor`, `preminor`, `prepatch`, `prerelease`, DECLINE]); // eslint-disable-next-line arca/no-default-export
+  const useListInput_1 = __webpack_require__(96);
 
-  class VersionCommand extends _yarnpkg_cli__WEBPACK_IMPORTED_MODULE_0__["BaseCommand"] {
-    constructor() {
-      super(...arguments);
-      this.force = false;
+  exports.ScrollableItems = ({
+    active = true,
+    children = [],
+    radius = 10,
+    size = 1,
+    onFocusRequest
+  }) => {
+    const getKey = child => {
+      if (child.key === null) {
+        throw new Error(`Expected all children to have a key`);
+      } else {
+        return child.key;
+      }
+    };
+
+    const keys = react_1.default.Children.map(children, child => getKey(child));
+    const initialKey = keys[0];
+    const [activeKey, setActiveKey] = react_1.useState(initialKey);
+    const activeIndex = keys.indexOf(activeKey);
+    useFocusRequest_1.useFocusRequest({
+      active,
+      handler: onFocusRequest
+    });
+    useListInput_1.useListInput(activeKey, keys, {
+      active,
+      minus: `up`,
+      plus: `down`,
+      set: setActiveKey
+    });
+    let min = activeIndex - radius;
+    let max = activeIndex + radius;
+
+    if (max > keys.length) {
+      min -= max - keys.length;
+      max = keys.length;
     }
 
-    async execute() {
-      const _ref = await Promise.resolve(/* import() */).then(__webpack_require__.t.bind(null, 1, 7));
+    if (min < 0) {
+      max += -min;
+      min = 0;
+    }
 
-      const configuration = await _ref.Configuration.find(this.context.cwd, this.context.plugins);
-      const {
-        workspace
-      } = await _ref.Project.find(configuration, this.context.cwd);
-      if (!workspace) throw new _yarnpkg_cli__WEBPACK_IMPORTED_MODULE_0__["WorkspaceRequiredError"](this.context.cwd);
-      let deferred = configuration.get(`preferDeferredVersions`);
-      if (this.deferred) deferred = true;
-      if (this.immediate) deferred = false;
-      const isSemver = semver__WEBPACK_IMPORTED_MODULE_2___default.a.valid(this.strategy);
-      const isDeclined = this.strategy === DECLINE;
-      let nextVersion;
+    if (max >= keys.length) max = keys.length - 1;
+    const rendered = [];
 
-      if (isSemver) {
-        nextVersion = this.strategy;
-      } else {
-        let currentVersion = workspace.manifest.version;
+    for (let t = min; t <= max; ++t) {
+      const key = keys[t];
+      const activeItem = active && key === activeKey;
+      rendered.push(react_1.default.createElement(ink_1.Box, {
+        key: key,
+        height: size
+      }, react_1.default.createElement(ink_1.Box, {
+        marginLeft: 2,
+        marginRight: 2
+      }, activeItem ? react_1.default.createElement(ink_1.Color, {
+        cyan: true
+      }, "\u25B6") : ` `), react_1.default.createElement(ink_1.Box, null, react_1.default.cloneElement(children[t], {
+        active: activeItem
+      }))));
+    }
 
-        if (!isDeclined) {
-          if (currentVersion === null) throw new clipanion__WEBPACK_IMPORTED_MODULE_1__["UsageError"](`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
+    return react_1.default.createElement(ink_1.Box, {
+      flexDirection: `column`,
+      width: `100%`,
+      height: radius * size * 2 + size
+    }, rendered);
+  };
 
-          if (typeof currentVersion !== `string` || !semver__WEBPACK_IMPORTED_MODULE_2___default.a.valid(currentVersion)) {
-            throw new clipanion__WEBPACK_IMPORTED_MODULE_1__["UsageError"](`Can't bump the version (${currentVersion}) if it's not valid semver`);
-          }
-        }
+  /***/ }),
+  /* 11 */
+  /***/ (function(module, exports, __webpack_require__) {
 
-        const bumpedVersion = !isDeclined ? semver__WEBPACK_IMPORTED_MODULE_2___default.a.inc(currentVersion, this.strategy) : currentVersion;
-        if (!isDeclined && bumpedVersion === null) throw new Error(`Assertion failed: Failed to increment the version number (${currentVersion})`);
-        nextVersion = bumpedVersion;
-      }
+  "use strict";
 
-      if (workspace.manifest.raw.nextVersion) {
-        const deferredVersion = workspace.manifest.raw.nextVersion.semver;
 
-        if (typeof deferredVersion !== `undefined`) {
-          if (!isDeclined) {
-            if (semver__WEBPACK_IMPORTED_MODULE_2___default.a.gt(deferredVersion, nextVersion) && !this.force) {
-              throw new clipanion__WEBPACK_IMPORTED_MODULE_1__["UsageError"](`The target version (${nextVersion}) is smaller than the one currently registered (${deferredVersion}); use -f,--force to overwrite.`);
-            }
-          } else {
-            nextVersion = deferredVersion;
-          }
-        }
-      }
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, "render", {
+    enumerable: true,
+    get: function () {
+      return _render.default;
+    }
+  });
+  Object.defineProperty(exports, "Box", {
+    enumerable: true,
+    get: function () {
+      return _Box.default;
+    }
+  });
+  Object.defineProperty(exports, "Text", {
+    enumerable: true,
+    get: function () {
+      return _Text.default;
+    }
+  });
+  Object.defineProperty(exports, "Color", {
+    enumerable: true,
+    get: function () {
+      return _Color.default;
+    }
+  });
+  Object.defineProperty(exports, "AppContext", {
+    enumerable: true,
+    get: function () {
+      return _AppContext.default;
+    }
+  });
+  Object.defineProperty(exports, "StdinContext", {
+    enumerable: true,
+    get: function () {
+      return _StdinContext.default;
+    }
+  });
+  Object.defineProperty(exports, "StdoutContext", {
+    enumerable: true,
+    get: function () {
+      return _StdoutContext.default;
+    }
+  });
+  Object.defineProperty(exports, "Static", {
+    enumerable: true,
+    get: function () {
+      return _Static.default;
+    }
+  });
 
-      workspace.manifest.setRawField(`nextVersion`, {
-        semver: nextVersion !== workspace.manifest.version ? nextVersion : undefined,
-        nonce: String(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER))
-      }, {
-        after: [`version`]
+  var _render = _interopRequireDefault(__webpack_require__(12));
+
+  var _Box = _interopRequireDefault(__webpack_require__(84));
+
+  var _Text = _interopRequireDefault(__webpack_require__(85));
+
+  var _Color = _interopRequireDefault(__webpack_require__(92));
+
+  var _AppContext = _interopRequireDefault(__webpack_require__(81));
+
+  var _StdinContext = _interopRequireDefault(__webpack_require__(82));
+
+  var _StdoutContext = _interopRequireDefault(__webpack_require__(83));
+
+  var _Static = _interopRequireDefault(__webpack_require__(94));
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+  /***/ }),
+  /* 12 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+
+  var _instance = _interopRequireDefault(__webpack_require__(13));
+
+  var _instances = _interopRequireDefault(__webpack_require__(76));
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+  function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+  var _default = (node, options = {}) => {
+    // Stream was passed instead of `options` object
+    if (typeof options.write === 'function') {
+      options = {
+        stdout: options,
+        stdin: process.stdin
+      };
+    }
+
+    options = _objectSpread({
+      stdout: process.stdout,
+      stdin: process.stdin,
+      debug: false,
+      exitOnCtrlC: true
+    }, options);
+    let instance;
+
+    if (_instances.default.has(options.stdout)) {
+      instance = _instances.default.get(options.stdout);
+    } else {
+      instance = new _instance.default(options);
+
+      _instances.default.set(options.stdout, instance);
+    }
+
+    instance.render(node);
+    return {
+      rerender: instance.render,
+      unmount: () => instance.unmount(),
+      waitUntilExit: instance.waitUntilExit,
+      cleanup: () => _instances.default.delete(options.stdout)
+    };
+  };
+
+  exports.default = _default;
+
+  /***/ }),
+  /* 13 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+
+  var _react = _interopRequireDefault(__webpack_require__(14));
+
+  var _lodash = _interopRequireDefault(__webpack_require__(19));
+
+  var _autoBind = _interopRequireDefault(__webpack_require__(20));
+
+  var _logUpdate = _interopRequireDefault(__webpack_require__(21));
+
+  var _isCi = _interopRequireDefault(__webpack_require__(43));
+
+  var _signalExit = _interopRequireDefault(__webpack_require__(27));
+
+  var _reconciler = _interopRequireDefault(__webpack_require__(46));
+
+  var _renderer = _interopRequireDefault(__webpack_require__(56));
+
+  var _dom = __webpack_require__(55);
+
+  var _instances = _interopRequireDefault(__webpack_require__(76));
+
+  var _App = _interopRequireDefault(__webpack_require__(77));
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+  class Instance {
+    constructor(options) {
+      (0, _autoBind.default)(this);
+      this.options = options;
+      this.rootNode = (0, _dom.createNode)('root');
+      this.rootNode.onRender = this.onRender;
+      this.renderer = (0, _renderer.default)({
+        terminalWidth: options.stdout.columns
       });
-      await workspace.persistManifest();
+      this.log = _logUpdate.default.create(options.stdout);
+      this.throttledLog = options.debug ? this.log : (0, _lodash.default)(this.log, {
+        leading: true,
+        trailing: true
+      }); // Ignore last render after unmounting a tree to prevent empty output before exit
 
-      if (!deferred) {
-        await this.cli.run([`version`, `apply`]);
+      this.isUnmounted = false; // Store last output to only rerender when needed
+
+      this.lastOutput = ''; // This variable is used only in debug mode to store full static output
+      // so that it's rerendered every time, not just new static parts, like in non-debug mode
+
+      this.fullStaticOutput = '';
+      this.container = _reconciler.default.createContainer(this.rootNode, false, false);
+      this.exitPromise = new Promise((resolve, reject) => {
+        this.resolveExitPromise = resolve;
+        this.rejectExitPromise = reject;
+      }); // Unmount when process exits
+
+      this.unsubscribeExit = (0, _signalExit.default)(this.unmount, {
+        alwaysLast: false
+      });
+    }
+
+    onRender() {
+      if (this.isUnmounted) {
+        return;
       }
+
+      const {
+        output,
+        staticOutput
+      } = this.renderer(this.rootNode); // If <Static> output isn't empty, it means new children have been added to it
+
+      const hasStaticOutput = staticOutput && staticOutput !== '\n';
+
+      if (this.options.debug) {
+        if (hasStaticOutput) {
+          this.fullStaticOutput += staticOutput;
+        }
+
+        this.options.stdout.write(this.fullStaticOutput + output);
+        return;
+      } // To ensure static output is cleanly rendered before main output, clear main output first
+
+
+      if (hasStaticOutput) {
+        if (!_isCi.default) {
+          this.log.clear();
+        }
+
+        this.options.stdout.write(staticOutput);
+
+        if (!_isCi.default) {
+          this.log(output);
+        }
+      }
+
+      if (output !== this.lastOutput) {
+        if (!_isCi.default) {
+          this.throttledLog(output);
+        }
+
+        this.lastOutput = output;
+      }
+    }
+
+    render(node) {
+      const tree = _react.default.createElement(_App.default, {
+        stdin: this.options.stdin,
+        stdout: this.options.stdout,
+        exitOnCtrlC: this.options.exitOnCtrlC,
+        onExit: this.unmount
+      }, node);
+
+      _reconciler.default.updateContainer(tree, this.container);
+    }
+
+    unmount(error) {
+      if (this.isUnmounted) {
+        return;
+      }
+
+      this.onRender();
+      this.unsubscribeExit(); // CIs don't handle erasing ansi escapes well, so it's better to
+      // only render last frame of non-static output
+
+      if (_isCi.default) {
+        this.options.stdout.write(this.lastOutput + '\n');
+      } else if (!this.options.debug) {
+        this.log.done();
+      }
+
+      this.isUnmounted = true;
+
+      _reconciler.default.updateContainer(null, this.container);
+
+      _instances.default.delete(this.options.stdout);
+
+      if (error instanceof Error) {
+        this.rejectExitPromise(error);
+      } else {
+        this.resolveExitPromise();
+      }
+    }
+
+    waitUntilExit() {
+      return this.exitPromise;
     }
 
   }
-  VersionCommand.schema = yup__WEBPACK_IMPORTED_MODULE_3__["object"]().shape({
-    strategy: yup__WEBPACK_IMPORTED_MODULE_3__["string"]().test({
-      name: `strategy`,
-      message: '${path} must be a semver range or one of ${strategies}',
-      params: {
-        strategies: Array.from(STRATEGIES).join(`, `)
-      },
-      test: range => {
-        return semver__WEBPACK_IMPORTED_MODULE_2___default.a.valid(range) !== null || STRATEGIES.has(range);
-      }
-    })
-  });
-  VersionCommand.usage = clipanion__WEBPACK_IMPORTED_MODULE_1__["Command"].Usage({
-    category: `Release-related commands`,
-    description: `apply a new version to the current package`,
-    details: `
-        This command will bump the version number for the given package, following the specified strategy:
 
-        - If \`major\`, the first number from the semver range will be increased (\`X.0.0\`).
-        - If \`minor\`, the second number from the semver range will be increased (\`0.X.0\`).
-        - If \`patch\`, the third number from the semver range will be increased (\`0.0.X\`).
-        - If prefixed by \`pre\` (\`premajor\`, ...), a \`-0\` suffix will be set (\`0.0.0-0\`).
-        - If \`prerelease\`, the suffix will be increased (\`0.0.0-X\`); the third number from the semver range will also be increased if there was no suffix in the previous version.
-        - If \`decline\`, the nonce will be increased for \`yarn version check\` to pass without version bump.
-        - If a valid semver range, it will be used as new version.
-        - If unspecified, Yarn will ask you for guidance.
-
-        For more information about the \`--deferred\` flag, consult our documentation ("Managing Releases").
-      `,
-    examples: [[`Immediatly bump the version to the next major`, `yarn version major`], [`Prepare the version to be bumped to the next major`, `yarn version major --deferred`]]
-  });
-
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_1__["Command"].String()], VersionCommand.prototype, "strategy", void 0);
-
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_1__["Command"].Boolean(`-d,--deferred`)], VersionCommand.prototype, "deferred", void 0);
-
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_1__["Command"].Boolean(`-i,--immediate`)], VersionCommand.prototype, "immediate", void 0);
-
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_1__["Command"].Boolean(`-f,--force`)], VersionCommand.prototype, "force", void 0);
-
-  __decorate([clipanion__WEBPACK_IMPORTED_MODULE_1__["Command"].Path(`version`)], VersionCommand.prototype, "execute", null);
+  exports.default = Instance;
 
   /***/ }),
-  /* 7 */
-  /***/ (function(module, exports) {
-
-  module.exports = require("semver");
-
-  /***/ }),
-  /* 8 */
-  /***/ (function(module, exports) {
-
-  module.exports = require("yup");
-
-  /***/ }),
-  /* 9 */
+  /* 14 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
 
   if (false) {} else {
-    module.exports = __webpack_require__(10);
+    module.exports = __webpack_require__(15);
   }
 
 
   /***/ }),
-  /* 10 */
+  /* 15 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -1149,8 +1516,8 @@ module.exports.factory = function (require) {
     (function() {
   'use strict';
 
-  var _assign = __webpack_require__(11);
-  var checkPropTypes = __webpack_require__(12);
+  var _assign = __webpack_require__(16);
+  var checkPropTypes = __webpack_require__(17);
 
   // TODO: this is special because it gets imported during build.
 
@@ -3036,7 +3403,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 11 */
+  /* 16 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -3133,7 +3500,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 12 */
+  /* 17 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -3149,7 +3516,7 @@ module.exports.factory = function (require) {
   var printWarning = function() {};
 
   if (true) {
-    var ReactPropTypesSecret = __webpack_require__(13);
+    var ReactPropTypesSecret = __webpack_require__(18);
     var loggedTypeFailures = {};
 
     printWarning = function(text) {
@@ -3231,7 +3598,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 13 */
+  /* 18 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -3250,300 +3617,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 14 */
-  /***/ (function(module, exports, __webpack_require__) {
-
-  "use strict";
-
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  Object.defineProperty(exports, "render", {
-    enumerable: true,
-    get: function () {
-      return _render.default;
-    }
-  });
-  Object.defineProperty(exports, "Box", {
-    enumerable: true,
-    get: function () {
-      return _Box.default;
-    }
-  });
-  Object.defineProperty(exports, "Text", {
-    enumerable: true,
-    get: function () {
-      return _Text.default;
-    }
-  });
-  Object.defineProperty(exports, "Color", {
-    enumerable: true,
-    get: function () {
-      return _Color.default;
-    }
-  });
-  Object.defineProperty(exports, "AppContext", {
-    enumerable: true,
-    get: function () {
-      return _AppContext.default;
-    }
-  });
-  Object.defineProperty(exports, "StdinContext", {
-    enumerable: true,
-    get: function () {
-      return _StdinContext.default;
-    }
-  });
-  Object.defineProperty(exports, "StdoutContext", {
-    enumerable: true,
-    get: function () {
-      return _StdoutContext.default;
-    }
-  });
-  Object.defineProperty(exports, "Static", {
-    enumerable: true,
-    get: function () {
-      return _Static.default;
-    }
-  });
-
-  var _render = _interopRequireDefault(__webpack_require__(15));
-
-  var _Box = _interopRequireDefault(__webpack_require__(82));
-
-  var _Text = _interopRequireDefault(__webpack_require__(83));
-
-  var _Color = _interopRequireDefault(__webpack_require__(90));
-
-  var _AppContext = _interopRequireDefault(__webpack_require__(79));
-
-  var _StdinContext = _interopRequireDefault(__webpack_require__(80));
-
-  var _StdoutContext = _interopRequireDefault(__webpack_require__(81));
-
-  var _Static = _interopRequireDefault(__webpack_require__(92));
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-  /***/ }),
-  /* 15 */
-  /***/ (function(module, exports, __webpack_require__) {
-
-  "use strict";
-
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.default = void 0;
-
-  var _instance = _interopRequireDefault(__webpack_require__(16));
-
-  var _instances = _interopRequireDefault(__webpack_require__(74));
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-  function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-  var _default = (node, options = {}) => {
-    // Stream was passed instead of `options` object
-    if (typeof options.write === 'function') {
-      options = {
-        stdout: options,
-        stdin: process.stdin
-      };
-    }
-
-    options = _objectSpread({
-      stdout: process.stdout,
-      stdin: process.stdin,
-      debug: false,
-      exitOnCtrlC: true
-    }, options);
-    let instance;
-
-    if (_instances.default.has(options.stdout)) {
-      instance = _instances.default.get(options.stdout);
-    } else {
-      instance = new _instance.default(options);
-
-      _instances.default.set(options.stdout, instance);
-    }
-
-    instance.render(node);
-    return {
-      rerender: instance.render,
-      unmount: () => instance.unmount(),
-      waitUntilExit: instance.waitUntilExit,
-      cleanup: () => _instances.default.delete(options.stdout)
-    };
-  };
-
-  exports.default = _default;
-
-  /***/ }),
-  /* 16 */
-  /***/ (function(module, exports, __webpack_require__) {
-
-  "use strict";
-
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.default = void 0;
-
-  var _react = _interopRequireDefault(__webpack_require__(9));
-
-  var _lodash = _interopRequireDefault(__webpack_require__(17));
-
-  var _autoBind = _interopRequireDefault(__webpack_require__(18));
-
-  var _logUpdate = _interopRequireDefault(__webpack_require__(19));
-
-  var _isCi = _interopRequireDefault(__webpack_require__(41));
-
-  var _signalExit = _interopRequireDefault(__webpack_require__(25));
-
-  var _reconciler = _interopRequireDefault(__webpack_require__(44));
-
-  var _renderer = _interopRequireDefault(__webpack_require__(54));
-
-  var _dom = __webpack_require__(53);
-
-  var _instances = _interopRequireDefault(__webpack_require__(74));
-
-  var _App = _interopRequireDefault(__webpack_require__(75));
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-  class Instance {
-    constructor(options) {
-      (0, _autoBind.default)(this);
-      this.options = options;
-      this.rootNode = (0, _dom.createNode)('root');
-      this.rootNode.onRender = this.onRender;
-      this.renderer = (0, _renderer.default)({
-        terminalWidth: options.stdout.columns
-      });
-      this.log = _logUpdate.default.create(options.stdout);
-      this.throttledLog = options.debug ? this.log : (0, _lodash.default)(this.log, {
-        leading: true,
-        trailing: true
-      }); // Ignore last render after unmounting a tree to prevent empty output before exit
-
-      this.isUnmounted = false; // Store last output to only rerender when needed
-
-      this.lastOutput = ''; // This variable is used only in debug mode to store full static output
-      // so that it's rerendered every time, not just new static parts, like in non-debug mode
-
-      this.fullStaticOutput = '';
-      this.container = _reconciler.default.createContainer(this.rootNode, false, false);
-      this.exitPromise = new Promise((resolve, reject) => {
-        this.resolveExitPromise = resolve;
-        this.rejectExitPromise = reject;
-      }); // Unmount when process exits
-
-      this.unsubscribeExit = (0, _signalExit.default)(this.unmount, {
-        alwaysLast: false
-      });
-    }
-
-    onRender() {
-      if (this.isUnmounted) {
-        return;
-      }
-
-      const {
-        output,
-        staticOutput
-      } = this.renderer(this.rootNode); // If <Static> output isn't empty, it means new children have been added to it
-
-      const hasStaticOutput = staticOutput && staticOutput !== '\n';
-
-      if (this.options.debug) {
-        if (hasStaticOutput) {
-          this.fullStaticOutput += staticOutput;
-        }
-
-        this.options.stdout.write(this.fullStaticOutput + output);
-        return;
-      } // To ensure static output is cleanly rendered before main output, clear main output first
-
-
-      if (hasStaticOutput) {
-        if (!_isCi.default) {
-          this.log.clear();
-        }
-
-        this.options.stdout.write(staticOutput);
-
-        if (!_isCi.default) {
-          this.log(output);
-        }
-      }
-
-      if (output !== this.lastOutput) {
-        if (!_isCi.default) {
-          this.throttledLog(output);
-        }
-
-        this.lastOutput = output;
-      }
-    }
-
-    render(node) {
-      const tree = _react.default.createElement(_App.default, {
-        stdin: this.options.stdin,
-        stdout: this.options.stdout,
-        exitOnCtrlC: this.options.exitOnCtrlC,
-        onExit: this.unmount
-      }, node);
-
-      _reconciler.default.updateContainer(tree, this.container);
-    }
-
-    unmount(error) {
-      if (this.isUnmounted) {
-        return;
-      }
-
-      this.onRender();
-      this.unsubscribeExit(); // CIs don't handle erasing ansi escapes well, so it's better to
-      // only render last frame of non-static output
-
-      if (_isCi.default) {
-        this.options.stdout.write(this.lastOutput + '\n');
-      } else if (!this.options.debug) {
-        this.log.done();
-      }
-
-      this.isUnmounted = true;
-
-      _reconciler.default.updateContainer(null, this.container);
-
-      _instances.default.delete(this.options.stdout);
-
-      if (error instanceof Error) {
-        this.rejectExitPromise(error);
-      } else {
-        this.resolveExitPromise();
-      }
-    }
-
-    waitUntilExit() {
-      return this.exitPromise;
-    }
-
-  }
-
-  exports.default = Instance;
-
-  /***/ }),
-  /* 17 */
+  /* 19 */
   /***/ (function(module, exports) {
 
   /**
@@ -3988,7 +4062,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 18 */
+  /* 20 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -4064,14 +4138,14 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 19 */
+  /* 21 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const ansiEscapes = __webpack_require__(20);
-  const cliCursor = __webpack_require__(21);
-  const wrapAnsi = __webpack_require__(29);
+  const ansiEscapes = __webpack_require__(22);
+  const cliCursor = __webpack_require__(23);
+  const wrapAnsi = __webpack_require__(31);
 
   const getWidth = stream => {
   	const {columns} = stream;
@@ -4135,7 +4209,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 20 */
+  /* 22 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -4273,12 +4347,12 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 21 */
+  /* 23 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const restoreCursor = __webpack_require__(22);
+  const restoreCursor = __webpack_require__(24);
 
   let hidden = false;
 
@@ -4319,13 +4393,13 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 22 */
+  /* 24 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const onetime = __webpack_require__(23);
-  const signalExit = __webpack_require__(25);
+  const onetime = __webpack_require__(25);
+  const signalExit = __webpack_require__(27);
 
   module.exports = onetime(() => {
   	signalExit(() => {
@@ -4335,12 +4409,12 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 23 */
+  /* 25 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const mimicFn = __webpack_require__(24);
+  const mimicFn = __webpack_require__(26);
 
   module.exports = (fn, opts) => {
   	// TODO: Remove this in v3
@@ -4381,7 +4455,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 24 */
+  /* 26 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -4397,16 +4471,16 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 25 */
+  /* 27 */
   /***/ (function(module, exports, __webpack_require__) {
 
   // Note: since nyc uses this module to output coverage, any lines
   // that are in the direct sync flow of nyc's outputCoverage are
   // ignored, since we can never get coverage for them.
-  var assert = __webpack_require__(26)
-  var signals = __webpack_require__(27)
+  var assert = __webpack_require__(28)
+  var signals = __webpack_require__(29)
 
-  var EE = __webpack_require__(28)
+  var EE = __webpack_require__(30)
   /* istanbul ignore if */
   if (typeof EE !== 'function') {
     EE = EE.EventEmitter
@@ -4560,13 +4634,13 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 26 */
+  /* 28 */
   /***/ (function(module, exports) {
 
   module.exports = require("assert");
 
   /***/ }),
-  /* 27 */
+  /* 29 */
   /***/ (function(module, exports) {
 
   // This is not the set of all possible signals.
@@ -4625,20 +4699,20 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 28 */
+  /* 30 */
   /***/ (function(module, exports) {
 
   module.exports = require("events");
 
   /***/ }),
-  /* 29 */
+  /* 31 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const stringWidth = __webpack_require__(30);
-  const stripAnsi = __webpack_require__(31);
-  const ansiStyles = __webpack_require__(35);
+  const stringWidth = __webpack_require__(32);
+  const stripAnsi = __webpack_require__(33);
+  const ansiStyles = __webpack_require__(37);
 
   const ESCAPES = new Set([
   	'\u001B',
@@ -4826,14 +4900,14 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 30 */
+  /* 32 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const stripAnsi = __webpack_require__(31);
-  const isFullwidthCodePoint = __webpack_require__(33);
-  const emojiRegex = __webpack_require__(34)();
+  const stripAnsi = __webpack_require__(33);
+  const isFullwidthCodePoint = __webpack_require__(35);
+  const emojiRegex = __webpack_require__(36)();
 
   module.exports = input => {
   	input = input.replace(emojiRegex, '  ');
@@ -4872,18 +4946,18 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 31 */
+  /* 33 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const ansiRegex = __webpack_require__(32);
+  const ansiRegex = __webpack_require__(34);
 
   module.exports = input => typeof input === 'string' ? input.replace(ansiRegex(), '') : input;
 
 
   /***/ }),
-  /* 32 */
+  /* 34 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -4904,7 +4978,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 33 */
+  /* 35 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -4957,7 +5031,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 34 */
+  /* 36 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -4970,12 +5044,12 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 35 */
+  /* 37 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
   /* WEBPACK VAR INJECTION */(function(module) {
-  const colorConvert = __webpack_require__(37);
+  const colorConvert = __webpack_require__(39);
 
   const wrapAnsi16 = (fn, offset) => function () {
   	const code = fn.apply(colorConvert, arguments);
@@ -5140,10 +5214,10 @@ module.exports.factory = function (require) {
   	get: assembleStyles
   });
 
-  /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(36)(module)))
+  /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(38)(module)))
 
   /***/ }),
-  /* 36 */
+  /* 38 */
   /***/ (function(module, exports) {
 
   module.exports = function(module) {
@@ -5171,11 +5245,11 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 37 */
+  /* 39 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var conversions = __webpack_require__(38);
-  var route = __webpack_require__(40);
+  var conversions = __webpack_require__(40);
+  var route = __webpack_require__(42);
 
   var convert = {};
 
@@ -5255,11 +5329,11 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 38 */
+  /* 40 */
   /***/ (function(module, exports, __webpack_require__) {
 
   /* MIT license */
-  var cssKeywords = __webpack_require__(39);
+  var cssKeywords = __webpack_require__(41);
 
   // NOTE: conversions should only return primitive values (i.e. arrays, or
   //       values that give correct `typeof` results).
@@ -6129,7 +6203,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 39 */
+  /* 41 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -6288,10 +6362,10 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 40 */
+  /* 42 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var conversions = __webpack_require__(38);
+  var conversions = __webpack_require__(40);
 
   /*
   	this function routes a model to all other models.
@@ -6391,23 +6465,23 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 41 */
+  /* 43 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
 
-  module.exports = __webpack_require__(42).isCI
+  module.exports = __webpack_require__(44).isCI
 
 
   /***/ }),
-  /* 42 */
+  /* 44 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
 
-  var vendors = __webpack_require__(43)
+  var vendors = __webpack_require__(45)
 
   var env = process.env
 
@@ -6474,13 +6548,13 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 43 */
+  /* 45 */
   /***/ (function(module) {
 
   module.exports = JSON.parse("[{\"name\":\"AppVeyor\",\"constant\":\"APPVEYOR\",\"env\":\"APPVEYOR\",\"pr\":\"APPVEYOR_PULL_REQUEST_NUMBER\"},{\"name\":\"Azure Pipelines\",\"constant\":\"AZURE_PIPELINES\",\"env\":\"SYSTEM_TEAMFOUNDATIONCOLLECTIONURI\",\"pr\":\"SYSTEM_PULLREQUEST_PULLREQUESTID\"},{\"name\":\"Bamboo\",\"constant\":\"BAMBOO\",\"env\":\"bamboo_planKey\"},{\"name\":\"Bitbucket Pipelines\",\"constant\":\"BITBUCKET\",\"env\":\"BITBUCKET_COMMIT\",\"pr\":\"BITBUCKET_PR_ID\"},{\"name\":\"Bitrise\",\"constant\":\"BITRISE\",\"env\":\"BITRISE_IO\",\"pr\":\"BITRISE_PULL_REQUEST\"},{\"name\":\"Buddy\",\"constant\":\"BUDDY\",\"env\":\"BUDDY_WORKSPACE_ID\",\"pr\":\"BUDDY_EXECUTION_PULL_REQUEST_ID\"},{\"name\":\"Buildkite\",\"constant\":\"BUILDKITE\",\"env\":\"BUILDKITE\",\"pr\":{\"env\":\"BUILDKITE_PULL_REQUEST\",\"ne\":\"false\"}},{\"name\":\"CircleCI\",\"constant\":\"CIRCLE\",\"env\":\"CIRCLECI\",\"pr\":\"CIRCLE_PULL_REQUEST\"},{\"name\":\"Cirrus CI\",\"constant\":\"CIRRUS\",\"env\":\"CIRRUS_CI\",\"pr\":\"CIRRUS_PR\"},{\"name\":\"AWS CodeBuild\",\"constant\":\"CODEBUILD\",\"env\":\"CODEBUILD_BUILD_ARN\"},{\"name\":\"Codeship\",\"constant\":\"CODESHIP\",\"env\":{\"CI_NAME\":\"codeship\"}},{\"name\":\"Drone\",\"constant\":\"DRONE\",\"env\":\"DRONE\",\"pr\":{\"DRONE_BUILD_EVENT\":\"pull_request\"}},{\"name\":\"dsari\",\"constant\":\"DSARI\",\"env\":\"DSARI\"},{\"name\":\"GitLab CI\",\"constant\":\"GITLAB\",\"env\":\"GITLAB_CI\"},{\"name\":\"GoCD\",\"constant\":\"GOCD\",\"env\":\"GO_PIPELINE_LABEL\"},{\"name\":\"Hudson\",\"constant\":\"HUDSON\",\"env\":\"HUDSON_URL\"},{\"name\":\"Jenkins\",\"constant\":\"JENKINS\",\"env\":[\"JENKINS_URL\",\"BUILD_ID\"],\"pr\":{\"any\":[\"ghprbPullId\",\"CHANGE_ID\"]}},{\"name\":\"Magnum CI\",\"constant\":\"MAGNUM\",\"env\":\"MAGNUM\"},{\"name\":\"Netlify CI\",\"constant\":\"NETLIFY\",\"env\":\"NETLIFY_BUILD_BASE\",\"pr\":{\"env\":\"PULL_REQUEST\",\"ne\":\"false\"}},{\"name\":\"Sail CI\",\"constant\":\"SAIL\",\"env\":\"SAILCI\",\"pr\":\"SAIL_PULL_REQUEST_NUMBER\"},{\"name\":\"Semaphore\",\"constant\":\"SEMAPHORE\",\"env\":\"SEMAPHORE\",\"pr\":\"PULL_REQUEST_NUMBER\"},{\"name\":\"Shippable\",\"constant\":\"SHIPPABLE\",\"env\":\"SHIPPABLE\",\"pr\":{\"IS_PULL_REQUEST\":\"true\"}},{\"name\":\"Solano CI\",\"constant\":\"SOLANO\",\"env\":\"TDDIUM\",\"pr\":\"TDDIUM_PR_ID\"},{\"name\":\"Strider CD\",\"constant\":\"STRIDER\",\"env\":\"STRIDER\"},{\"name\":\"TaskCluster\",\"constant\":\"TASKCLUSTER\",\"env\":[\"TASK_ID\",\"RUN_ID\"]},{\"name\":\"TeamCity\",\"constant\":\"TEAMCITY\",\"env\":\"TEAMCITY_VERSION\"},{\"name\":\"Travis CI\",\"constant\":\"TRAVIS\",\"env\":\"TRAVIS\",\"pr\":{\"env\":\"TRAVIS_PULL_REQUEST\",\"ne\":\"false\"}}]");
 
   /***/ }),
-  /* 44 */
+  /* 46 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -6491,11 +6565,11 @@ module.exports.factory = function (require) {
   });
   exports.default = void 0;
 
-  var _scheduler = __webpack_require__(45);
+  var _scheduler = __webpack_require__(47);
 
-  var _reactReconciler = _interopRequireDefault(__webpack_require__(47));
+  var _reactReconciler = _interopRequireDefault(__webpack_require__(49));
 
-  var _dom = __webpack_require__(53);
+  var _dom = __webpack_require__(55);
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6613,19 +6687,19 @@ module.exports.factory = function (require) {
   exports.default = _default;
 
   /***/ }),
-  /* 45 */
+  /* 47 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
 
   if (false) {} else {
-    module.exports = __webpack_require__(46);
+    module.exports = __webpack_require__(48);
   }
 
 
   /***/ }),
-  /* 46 */
+  /* 48 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -7331,19 +7405,19 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 47 */
+  /* 49 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
 
   if (false) {} else {
-    module.exports = __webpack_require__(48);
+    module.exports = __webpack_require__(50);
   }
 
 
   /***/ }),
-  /* 48 */
+  /* 50 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -7362,11 +7436,11 @@ module.exports.factory = function (require) {
     module.exports = function $$$reconciler($$$hostConfig) {
   'use strict';
 
-  var _assign = __webpack_require__(11);
-  var React = __webpack_require__(9);
-  var checkPropTypes = __webpack_require__(12);
-  var tracing = __webpack_require__(49);
-  var scheduler = __webpack_require__(51);
+  var _assign = __webpack_require__(16);
+  var React = __webpack_require__(14);
+  var checkPropTypes = __webpack_require__(17);
+  var tracing = __webpack_require__(51);
+  var scheduler = __webpack_require__(53);
 
   /**
    * Use invariant() to assert state which your program assumes to be true.
@@ -20115,19 +20189,19 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 49 */
+  /* 51 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
 
   if (false) {} else {
-    module.exports = __webpack_require__(50);
+    module.exports = __webpack_require__(52);
   }
 
 
   /***/ }),
-  /* 50 */
+  /* 52 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -20557,19 +20631,19 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 51 */
+  /* 53 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
 
   if (false) {} else {
-    module.exports = __webpack_require__(52);
+    module.exports = __webpack_require__(54);
   }
 
 
   /***/ }),
-  /* 52 */
+  /* 54 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -21275,7 +21349,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 53 */
+  /* 55 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -21358,7 +21432,7 @@ module.exports.factory = function (require) {
   exports.createTextNode = createTextNode;
 
   /***/ }),
-  /* 54 */
+  /* 56 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -21369,21 +21443,21 @@ module.exports.factory = function (require) {
   });
   exports.default = void 0;
 
-  var _yogaLayoutPrebuilt = _interopRequireDefault(__webpack_require__(55));
+  var _yogaLayoutPrebuilt = _interopRequireDefault(__webpack_require__(57));
 
-  var _output = _interopRequireDefault(__webpack_require__(59));
+  var _output = _interopRequireDefault(__webpack_require__(61));
 
-  var _dom = __webpack_require__(53);
+  var _dom = __webpack_require__(55);
 
-  var _buildLayout = _interopRequireDefault(__webpack_require__(65));
+  var _buildLayout = _interopRequireDefault(__webpack_require__(67));
 
-  var _renderNodeToOutput = _interopRequireDefault(__webpack_require__(70));
+  var _renderNodeToOutput = _interopRequireDefault(__webpack_require__(72));
 
-  var _measureText = _interopRequireDefault(__webpack_require__(67));
+  var _measureText = _interopRequireDefault(__webpack_require__(69));
 
-  var _wrapText = _interopRequireDefault(__webpack_require__(71));
+  var _wrapText = _interopRequireDefault(__webpack_require__(73));
 
-  var _getMaxWidth = _interopRequireDefault(__webpack_require__(73));
+  var _getMaxWidth = _interopRequireDefault(__webpack_require__(75));
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21522,7 +21596,7 @@ module.exports.factory = function (require) {
   exports.default = _default;
 
   /***/ }),
-  /* 55 */
+  /* 57 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -21540,8 +21614,8 @@ module.exports.factory = function (require) {
    * @format
    */
 
-  var Yoga = __webpack_require__(56);
-  var nbind = __webpack_require__(58);
+  var Yoga = __webpack_require__(58);
+  var nbind = __webpack_require__(60);
 
   var ran = false;
   var ret = null;
@@ -21568,7 +21642,7 @@ module.exports.factory = function (require) {
   module.exports = Yoga(ret.bind, ret.lib);
 
   /***/ }),
-  /* 56 */
+  /* 58 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -21594,7 +21668,7 @@ module.exports.factory = function (require) {
    * @format
    */
 
-  var CONSTANTS = __webpack_require__(57);
+  var CONSTANTS = __webpack_require__(59);
 
   var Layout = function () {
     function Layout(left, right, top, bottom, width, height) {
@@ -21821,7 +21895,7 @@ module.exports.factory = function (require) {
   };
 
   /***/ }),
-  /* 57 */
+  /* 59 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -21937,7 +22011,7 @@ module.exports.factory = function (require) {
   module.exports = CONSTANTS;
 
   /***/ }),
-  /* 58 */
+  /* 60 */
   /***/ (function(module, exports, __webpack_require__) {
 
   var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, wrapper) {
@@ -31764,7 +31838,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 59 */
+  /* 61 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -31775,9 +31849,9 @@ module.exports.factory = function (require) {
   });
   exports.default = void 0;
 
-  var _stringLength = _interopRequireDefault(__webpack_require__(60));
+  var _stringLength = _interopRequireDefault(__webpack_require__(62));
 
-  var _sliceAnsi = _interopRequireDefault(__webpack_require__(64));
+  var _sliceAnsi = _interopRequireDefault(__webpack_require__(66));
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31840,30 +31914,30 @@ module.exports.factory = function (require) {
   exports.default = Output;
 
   /***/ }),
-  /* 60 */
+  /* 62 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const stripAnsi = __webpack_require__(61);
-  const astralRegex = __webpack_require__(63);
+  const stripAnsi = __webpack_require__(63);
+  const astralRegex = __webpack_require__(65);
 
   module.exports = input => stripAnsi(input).replace(astralRegex(), ' ').length;
 
 
   /***/ }),
-  /* 61 */
+  /* 63 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const ansiRegex = __webpack_require__(62);
+  const ansiRegex = __webpack_require__(64);
 
   module.exports = input => typeof input === 'string' ? input.replace(ansiRegex(), '') : input;
 
 
   /***/ }),
-  /* 62 */
+  /* 64 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -31880,7 +31954,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 63 */
+  /* 65 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -31891,12 +31965,12 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 64 */
+  /* 66 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const isFullwidthCodePoint = __webpack_require__(33);
+  const isFullwidthCodePoint = __webpack_require__(35);
 
   const ESCAPES = [
   	'\u001B',
@@ -31986,7 +32060,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 65 */
+  /* 67 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -31997,11 +32071,11 @@ module.exports.factory = function (require) {
   });
   exports.default = void 0;
 
-  var _yogaLayoutPrebuilt = _interopRequireDefault(__webpack_require__(55));
+  var _yogaLayoutPrebuilt = _interopRequireDefault(__webpack_require__(57));
 
-  var _applyStyles = _interopRequireDefault(__webpack_require__(66));
+  var _applyStyles = _interopRequireDefault(__webpack_require__(68));
 
-  var _measureText = _interopRequireDefault(__webpack_require__(67));
+  var _measureText = _interopRequireDefault(__webpack_require__(69));
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32069,7 +32143,7 @@ module.exports.factory = function (require) {
   exports.default = _default;
 
   /***/ }),
-  /* 66 */
+  /* 68 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -32080,7 +32154,7 @@ module.exports.factory = function (require) {
   });
   exports.default = void 0;
 
-  var _yogaLayoutPrebuilt = _interopRequireDefault(__webpack_require__(55));
+  var _yogaLayoutPrebuilt = _interopRequireDefault(__webpack_require__(57));
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32254,7 +32328,7 @@ module.exports.factory = function (require) {
   exports.default = _default;
 
   /***/ }),
-  /* 67 */
+  /* 69 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -32265,7 +32339,7 @@ module.exports.factory = function (require) {
   });
   exports.default = void 0;
 
-  var _widestLine = _interopRequireDefault(__webpack_require__(68));
+  var _widestLine = _interopRequireDefault(__webpack_require__(70));
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32281,12 +32355,12 @@ module.exports.factory = function (require) {
   exports.default = _default;
 
   /***/ }),
-  /* 68 */
+  /* 70 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const stringWidth = __webpack_require__(69);
+  const stringWidth = __webpack_require__(71);
 
   module.exports = input => {
   	let max = 0;
@@ -32296,13 +32370,13 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 69 */
+  /* 71 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const stripAnsi = __webpack_require__(61);
-  const isFullwidthCodePoint = __webpack_require__(33);
+  const stripAnsi = __webpack_require__(63);
+  const isFullwidthCodePoint = __webpack_require__(35);
 
   module.exports = str => {
   	if (typeof str !== 'string' || str.length === 0) {
@@ -32339,7 +32413,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 70 */
+  /* 72 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -32350,11 +32424,11 @@ module.exports.factory = function (require) {
   });
   exports.default = void 0;
 
-  var _widestLine = _interopRequireDefault(__webpack_require__(68));
+  var _widestLine = _interopRequireDefault(__webpack_require__(70));
 
-  var _wrapText = _interopRequireDefault(__webpack_require__(71));
+  var _wrapText = _interopRequireDefault(__webpack_require__(73));
 
-  var _getMaxWidth = _interopRequireDefault(__webpack_require__(73));
+  var _getMaxWidth = _interopRequireDefault(__webpack_require__(75));
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32502,7 +32576,7 @@ module.exports.factory = function (require) {
   exports.default = _default;
 
   /***/ }),
-  /* 71 */
+  /* 73 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -32513,9 +32587,9 @@ module.exports.factory = function (require) {
   });
   exports.default = void 0;
 
-  var _wrapAnsi = _interopRequireDefault(__webpack_require__(29));
+  var _wrapAnsi = _interopRequireDefault(__webpack_require__(31));
 
-  var _cliTruncate = _interopRequireDefault(__webpack_require__(72));
+  var _cliTruncate = _interopRequireDefault(__webpack_require__(74));
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32555,13 +32629,13 @@ module.exports.factory = function (require) {
   exports.default = _default;
 
   /***/ }),
-  /* 72 */
+  /* 74 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const sliceAnsi = __webpack_require__(64);
-  const stringWidth = __webpack_require__(69);
+  const sliceAnsi = __webpack_require__(66);
+  const stringWidth = __webpack_require__(71);
 
   module.exports = (input, columns, opts) => {
   	opts = Object.assign({
@@ -32607,7 +32681,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 73 */
+  /* 75 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -32625,7 +32699,7 @@ module.exports.factory = function (require) {
   exports.default = _default;
 
   /***/ }),
-  /* 74 */
+  /* 76 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -32646,7 +32720,7 @@ module.exports.factory = function (require) {
   exports.default = _default;
 
   /***/ }),
-  /* 75 */
+  /* 77 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -32657,19 +32731,19 @@ module.exports.factory = function (require) {
   });
   exports.default = void 0;
 
-  var _readline = _interopRequireDefault(__webpack_require__(76));
+  var _readline = _interopRequireDefault(__webpack_require__(78));
 
-  var _react = _interopRequireWildcard(__webpack_require__(9));
+  var _react = _interopRequireWildcard(__webpack_require__(14));
 
-  var _propTypes = _interopRequireDefault(__webpack_require__(77));
+  var _propTypes = _interopRequireDefault(__webpack_require__(79));
 
-  var _cliCursor = _interopRequireDefault(__webpack_require__(21));
+  var _cliCursor = _interopRequireDefault(__webpack_require__(23));
 
-  var _AppContext = _interopRequireDefault(__webpack_require__(79));
+  var _AppContext = _interopRequireDefault(__webpack_require__(81));
 
-  var _StdinContext = _interopRequireDefault(__webpack_require__(80));
+  var _StdinContext = _interopRequireDefault(__webpack_require__(82));
 
-  var _StdoutContext = _interopRequireDefault(__webpack_require__(81));
+  var _StdoutContext = _interopRequireDefault(__webpack_require__(83));
 
   function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
@@ -32794,13 +32868,13 @@ module.exports.factory = function (require) {
   });
 
   /***/ }),
-  /* 76 */
+  /* 78 */
   /***/ (function(module, exports) {
 
   module.exports = require("readline");
 
   /***/ }),
-  /* 77 */
+  /* 79 */
   /***/ (function(module, exports, __webpack_require__) {
 
   /**
@@ -32825,12 +32899,12 @@ module.exports.factory = function (require) {
     // By explicitly using `prop-types` you are opting into new development behavior.
     // http://fb.me/prop-types-in-prod
     var throwOnDirectAccess = true;
-    module.exports = __webpack_require__(78)(isValidElement, throwOnDirectAccess);
+    module.exports = __webpack_require__(80)(isValidElement, throwOnDirectAccess);
   } else {}
 
 
   /***/ }),
-  /* 78 */
+  /* 80 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -32843,10 +32917,10 @@ module.exports.factory = function (require) {
 
 
 
-  var assign = __webpack_require__(11);
+  var assign = __webpack_require__(16);
 
-  var ReactPropTypesSecret = __webpack_require__(13);
-  var checkPropTypes = __webpack_require__(12);
+  var ReactPropTypesSecret = __webpack_require__(18);
+  var checkPropTypes = __webpack_require__(17);
 
   var printWarning = function() {};
 
@@ -33392,52 +33466,6 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 79 */
-  /***/ (function(module, exports, __webpack_require__) {
-
-  "use strict";
-
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.default = void 0;
-
-  var _react = _interopRequireDefault(__webpack_require__(9));
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-  var _default = _react.default.createContext({
-    exit() {}
-
-  });
-
-  exports.default = _default;
-
-  /***/ }),
-  /* 80 */
-  /***/ (function(module, exports, __webpack_require__) {
-
-  "use strict";
-
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.default = void 0;
-
-  var _react = _interopRequireDefault(__webpack_require__(9));
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-  var _default = _react.default.createContext({
-    stdin: undefined,
-    setRawMode: undefined
-  });
-
-  exports.default = _default;
-
-  /***/ }),
   /* 81 */
   /***/ (function(module, exports, __webpack_require__) {
 
@@ -33449,12 +33477,13 @@ module.exports.factory = function (require) {
   });
   exports.default = void 0;
 
-  var _react = _interopRequireDefault(__webpack_require__(9));
+  var _react = _interopRequireDefault(__webpack_require__(14));
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
   var _default = _react.default.createContext({
-    stdout: undefined
+    exit() {}
+
   });
 
   exports.default = _default;
@@ -33471,9 +33500,54 @@ module.exports.factory = function (require) {
   });
   exports.default = void 0;
 
-  var _react = _interopRequireWildcard(__webpack_require__(9));
+  var _react = _interopRequireDefault(__webpack_require__(14));
 
-  var _propTypes = _interopRequireDefault(__webpack_require__(77));
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+  var _default = _react.default.createContext({
+    stdin: undefined,
+    setRawMode: undefined
+  });
+
+  exports.default = _default;
+
+  /***/ }),
+  /* 83 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+
+  var _react = _interopRequireDefault(__webpack_require__(14));
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+  var _default = _react.default.createContext({
+    stdout: undefined
+  });
+
+  exports.default = _default;
+
+  /***/ }),
+  /* 84 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = void 0;
+
+  var _react = _interopRequireWildcard(__webpack_require__(14));
+
+  var _propTypes = _interopRequireDefault(__webpack_require__(79));
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33551,7 +33625,7 @@ module.exports.factory = function (require) {
   });
 
   /***/ }),
-  /* 83 */
+  /* 85 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -33562,11 +33636,11 @@ module.exports.factory = function (require) {
   });
   exports.default = void 0;
 
-  var _react = _interopRequireDefault(__webpack_require__(9));
+  var _react = _interopRequireDefault(__webpack_require__(14));
 
-  var _propTypes = _interopRequireDefault(__webpack_require__(77));
+  var _propTypes = _interopRequireDefault(__webpack_require__(79));
 
-  var _chalk = _interopRequireDefault(__webpack_require__(84));
+  var _chalk = _interopRequireDefault(__webpack_require__(86));
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33630,16 +33704,16 @@ module.exports.factory = function (require) {
   exports.default = _default;
 
   /***/ }),
-  /* 84 */
+  /* 86 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const escapeStringRegexp = __webpack_require__(85);
-  const ansiStyles = __webpack_require__(35);
-  const stdoutColor = __webpack_require__(86).stdout;
+  const escapeStringRegexp = __webpack_require__(87);
+  const ansiStyles = __webpack_require__(37);
+  const stdoutColor = __webpack_require__(88).stdout;
 
-  const template = __webpack_require__(89);
+  const template = __webpack_require__(91);
 
   const isSimpleWindowsTerm = process.platform === 'win32' && !(process.env.TERM || '').toLowerCase().startsWith('xterm');
 
@@ -33865,7 +33939,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 85 */
+  /* 87 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -33883,13 +33957,13 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 86 */
+  /* 88 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const os = __webpack_require__(87);
-  const hasFlag = __webpack_require__(88);
+  const os = __webpack_require__(89);
+  const hasFlag = __webpack_require__(90);
 
   const env = process.env;
 
@@ -34021,13 +34095,13 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 87 */
+  /* 89 */
   /***/ (function(module, exports) {
 
   module.exports = require("os");
 
   /***/ }),
-  /* 88 */
+  /* 90 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -34042,7 +34116,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 89 */
+  /* 91 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -34177,7 +34251,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 90 */
+  /* 92 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -34188,13 +34262,13 @@ module.exports.factory = function (require) {
   });
   exports.default = void 0;
 
-  var _react = _interopRequireDefault(__webpack_require__(9));
+  var _react = _interopRequireDefault(__webpack_require__(14));
 
-  var _propTypes = _interopRequireDefault(__webpack_require__(77));
+  var _propTypes = _interopRequireDefault(__webpack_require__(79));
 
-  var _arrify = _interopRequireDefault(__webpack_require__(91));
+  var _arrify = _interopRequireDefault(__webpack_require__(93));
 
-  var _chalk = _interopRequireDefault(__webpack_require__(84));
+  var _chalk = _interopRequireDefault(__webpack_require__(86));
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34238,7 +34312,7 @@ module.exports.factory = function (require) {
   exports.default = _default;
 
   /***/ }),
-  /* 91 */
+  /* 93 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -34253,7 +34327,7 @@ module.exports.factory = function (require) {
 
 
   /***/ }),
-  /* 92 */
+  /* 94 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -34264,9 +34338,9 @@ module.exports.factory = function (require) {
   });
   exports.default = void 0;
 
-  var _react = _interopRequireWildcard(__webpack_require__(9));
+  var _react = _interopRequireWildcard(__webpack_require__(14));
 
-  var _propTypes = _interopRequireDefault(__webpack_require__(77));
+  var _propTypes = _interopRequireDefault(__webpack_require__(79));
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34350,14 +34424,386 @@ module.exports.factory = function (require) {
   });
 
   /***/ }),
-  /* 93 */
+  /* 95 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  const ink_1 = __webpack_require__(11);
+
+  const react_1 = __webpack_require__(14);
+
+  var FocusRequest;
+
+  (function (FocusRequest) {
+    FocusRequest["BEFORE"] = "before";
+    FocusRequest["AFTER"] = "after";
+  })(FocusRequest = exports.FocusRequest || (exports.FocusRequest = {}));
+
+  ;
+
+  exports.useFocusRequest = function ({
+    active,
+    handler
+  }) {
+    const {
+      stdin
+    } = react_1.useContext(ink_1.StdinContext);
+    react_1.useEffect(() => {
+      if (!active || typeof handler === `undefined`) return;
+
+      const cb = (ch, key) => {
+        if (key.name === `tab`) {
+          if (key.shift) {
+            handler(FocusRequest.BEFORE);
+          } else {
+            handler(FocusRequest.AFTER);
+          }
+        }
+      };
+
+      stdin.on(`keypress`, cb);
+      return () => {
+        stdin.off(`keypress`, cb);
+      };
+    }, [active, handler]);
+  };
+
+  /***/ }),
+  /* 96 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  const ink_1 = __webpack_require__(11);
+
+  const react_1 = __webpack_require__(14);
+
+  exports.useListInput = function (value, values, {
+    active,
+    minus,
+    plus,
+    set
+  }) {
+    const {
+      stdin
+    } = react_1.useContext(ink_1.StdinContext);
+    react_1.useEffect(() => {
+      if (!active) return;
+
+      const cb = (ch, key) => {
+        const index = values.indexOf(value);
+
+        switch (key.name) {
+          case minus:
+            {
+              set(values[(values.length + index - 1) % values.length]);
+            }
+            break;
+
+          case plus:
+            {
+              set(values[(index + 1) % values.length]);
+            }
+            break;
+        }
+      };
+
+      stdin.on(`keypress`, cb);
+      return () => {
+        stdin.off(`keypress`, cb);
+      };
+    }, [values, value, active]);
+  };
+
+  /***/ }),
+  /* 97 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+
+
+  var __importStar = this && this.__importStar || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+  };
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  const ink_1 = __webpack_require__(11);
+
+  const react_1 = __importStar(__webpack_require__(14));
+
+  const Application_1 = __webpack_require__(98);
+
+  exports.renderForm = async function (UserComponent, props) {
+    let returnedValue;
+
+    const useSubmit = value => {
+      const {
+        exit
+      } = react_1.useContext(ink_1.AppContext);
+      const {
+        stdin
+      } = react_1.useContext(ink_1.StdinContext);
+      react_1.useEffect(() => {
+        const cb = (ch, key) => {
+          if (key.name === `return`) {
+            returnedValue = value;
+            exit();
+          }
+        };
+
+        stdin.on(`keypress`, cb);
+        return () => {
+          stdin.off(`keypress`, cb);
+        };
+      }, [stdin, exit, value]);
+    };
+
+    const {
+      waitUntilExit
+    } = ink_1.render(react_1.default.createElement(Application_1.Application, null, react_1.default.createElement(UserComponent, Object.assign({}, props, {
+      useSubmit: useSubmit
+    }))));
+    await waitUntilExit();
+    return returnedValue;
+  };
+
+  /***/ }),
+  /* 98 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+
+
+  var __importStar = this && this.__importStar || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+  };
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  const ink_1 = __webpack_require__(11);
+
+  const react_1 = __importStar(__webpack_require__(14));
+
+  exports.MinistoreContext = react_1.default.createContext(null);
+
+  exports.Application = function ({
+    children
+  }) {
+    const {
+      setRawMode
+    } = react_1.useContext(ink_1.StdinContext);
+    react_1.useEffect(() => {
+      setRawMode && setRawMode(true);
+    }, []);
+    const [data, setData] = react_1.useState(new Map());
+    const ministore = react_1.useMemo(() => ({
+      getAll: () => data,
+      get: key => data.get(key),
+      set: (key, value) => setData(new Map([...data, [key, value]]))
+    }), [data, setData]);
+    return react_1.default.createElement(exports.MinistoreContext.Provider, {
+      value: ministore,
+      children: children
+    });
+  };
+
+  /***/ }),
+  /* 99 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+
+
+  var __decorate = this && this.__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+        r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+        d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+  };
+
+  var __importDefault = this && this.__importDefault || function (mod) {
+    return mod && mod.__esModule ? mod : {
+      "default": mod
+    };
+  };
+
+  var __importStar = this && this.__importStar || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+  };
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  const cli_1 = __webpack_require__(3);
+
+  const core_1 = __webpack_require__(1);
+
+  const clipanion_1 = __webpack_require__(4);
+
+  const semver_1 = __importDefault(__webpack_require__(8));
+
+  const yup = __importStar(__webpack_require__(100));
+
+  const versionUtils = __importStar(__webpack_require__(5));
+
+  const acceptedStrategies = new Set(Object.values(versionUtils.Decision).filter(decision => {
+    return decision !== versionUtils.Decision.UNDECIDED;
+  })); // eslint-disable-next-line arca/no-default-export
+
+  class VersionCommand extends cli_1.BaseCommand {
+    constructor() {
+      super(...arguments);
+      this.force = false;
+    }
+
+    async execute() {
+      const configuration = await core_1.Configuration.find(this.context.cwd, this.context.plugins);
+      const {
+        project,
+        workspace
+      } = await core_1.Project.find(configuration, this.context.cwd);
+      if (!workspace) throw new cli_1.WorkspaceRequiredError(project.cwd, this.context.cwd);
+      let deferred = configuration.get(`preferDeferredVersions`);
+      if (this.deferred) deferred = true;
+      if (this.immediate) deferred = false;
+      const isSemver = semver_1.default.valid(this.strategy);
+      const isDeclined = this.strategy === versionUtils.Decision.DECLINE;
+      let releaseStrategy;
+
+      if (isSemver) {
+        if (workspace.manifest.version !== null) {
+          const suggestedStrategy = versionUtils.suggestStrategy(workspace.manifest.version, this.strategy);
+
+          if (suggestedStrategy !== null) {
+            releaseStrategy = suggestedStrategy;
+          } else {
+            releaseStrategy = this.strategy;
+          }
+        } else {
+          releaseStrategy = this.strategy;
+        }
+      } else {
+        let currentVersion = workspace.manifest.version;
+
+        if (!isDeclined) {
+          if (currentVersion === null) throw new clipanion_1.UsageError(`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
+
+          if (typeof currentVersion !== `string` || !semver_1.default.valid(currentVersion)) {
+            throw new clipanion_1.UsageError(`Can't bump the version (${currentVersion}) if it's not valid semver`);
+          }
+        }
+
+        releaseStrategy = this.strategy;
+      }
+
+      if (!deferred) {
+        const releases = await versionUtils.resolveVersionFiles(project);
+        const storedVersion = releases.get(workspace);
+
+        if (typeof storedVersion !== `undefined`) {
+          const thisVersion = versionUtils.applyStrategy(workspace.manifest.version, releaseStrategy);
+
+          if (semver_1.default.lt(thisVersion, storedVersion)) {
+            throw new clipanion_1.UsageError(`Can't bump the version to one that would be lower than the current deferred one (${storedVersion})`);
+          }
+        }
+      }
+
+      const versionFile = await versionUtils.openVersionFile(project, {
+        allowEmpty: true
+      });
+      await versionFile.releases.set(workspace, releaseStrategy);
+      await versionFile.saveAll();
+
+      if (!deferred) {
+        await this.cli.run([`version`, `apply`]);
+      }
+    }
+
+  }
+
+  VersionCommand.schema = yup.object().shape({
+    strategy: yup.string().test({
+      name: `strategy`,
+      message: '${path} must be a semver range or one of ${strategies}',
+      params: {
+        strategies: [...acceptedStrategies].join(`, `)
+      },
+      test: range => {
+        return semver_1.default.valid(range) !== null || acceptedStrategies.has(range);
+      }
+    })
+  });
+  VersionCommand.usage = clipanion_1.Command.Usage({
+    category: `Release-related commands`,
+    description: `apply a new version to the current package`,
+    details: `
+        This command will bump the version number for the given package, following the specified strategy:
+
+        - If \`major\`, the first number from the semver range will be increased (\`X.0.0\`).
+        - If \`minor\`, the second number from the semver range will be increased (\`0.X.0\`).
+        - If \`patch\`, the third number from the semver range will be increased (\`0.0.X\`).
+        - If prefixed by \`pre\` (\`premajor\`, ...), a \`-0\` suffix will be set (\`0.0.0-0\`).
+        - If \`prerelease\`, the suffix will be increased (\`0.0.0-X\`); the third number from the semver range will also be increased if there was no suffix in the previous version.
+        - If \`decline\`, the nonce will be increased for \`yarn version check\` to pass without version bump.
+        - If a valid semver range, it will be used as new version.
+        - If unspecified, Yarn will ask you for guidance.
+
+        For more information about the \`--deferred\` flag, consult our documentation ("Managing Releases").
+      `,
+    examples: [[`Immediatly bump the version to the next major`, `yarn version major`], [`Prepare the version to be bumped to the next major`, `yarn version major --deferred`]]
+  });
+
+  __decorate([clipanion_1.Command.String()], VersionCommand.prototype, "strategy", void 0);
+
+  __decorate([clipanion_1.Command.Boolean(`-d,--deferred`)], VersionCommand.prototype, "deferred", void 0);
+
+  __decorate([clipanion_1.Command.Boolean(`-i,--immediate`)], VersionCommand.prototype, "immediate", void 0);
+
+  __decorate([clipanion_1.Command.Boolean(`-f,--force`)], VersionCommand.prototype, "force", void 0);
+
+  __decorate([clipanion_1.Command.Path(`version`)], VersionCommand.prototype, "execute", null);
+
+  exports.default = VersionCommand;
+
+  /***/ }),
+  /* 100 */
   /***/ (function(module, exports) {
 
-  module.exports = require("@yarnpkg/fslib");
+  module.exports = require("yup");
 
   /***/ })
   /******/ ]);
-  return plugin;
+    return plugin;
+  },
 };
-
-module.exports.name = "@yarnpkg/plugin-version";

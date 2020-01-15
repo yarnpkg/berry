@@ -1,15 +1,15 @@
 {
   "name": "@yarnpkg/plugin-http",
-  "version": "2.0.0-rc.9",
+  "version": "2.0.0-rc.10",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.15"
+    "@yarnpkg/core": "^2.0.0-rc.18"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^2.0.0-rc.15"
+    "@yarnpkg/core": "workspace:^2.0.0-rc.18"
   },
   "repository": {
     "type": "git",
