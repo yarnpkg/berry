@@ -57,10 +57,14 @@ gen_enforced_field(WorkspaceCwd, 'scripts.update-local', '<any value>') :-
   % Only if they don't have a script set
     \+ workspace_field(WorkspaceCwd, 'scripts.update-local', _).
 
+inline_compile('@yarnpkg/libui').
+
 gen_enforced_field(WorkspaceCwd, 'scripts.prepack', 'run build:compile "$(pwd)"') :-
   workspace(WorkspaceCwd),
   % This package is built using Webpack, so we allow it to configure its build scripts itself
     \+ workspace_ident(WorkspaceCwd, '@yarnpkg/pnp'),
+  % Those packages use a different build
+    \+ (workspace_ident(WorkspaceCwd, WorkspaceIdent), inline_compile(WorkspaceIdent)),
   % Private packages aren't covered
     \+ workspace_field_test(WorkspaceCwd, 'private', 'true').
 
@@ -68,5 +72,7 @@ gen_enforced_field(WorkspaceCwd, 'scripts.postpack', 'rm -rf lib') :-
   workspace(WorkspaceCwd),
   % This package is built using Webpack, so we allow it to configure its build scripts itself
     \+ workspace_ident(WorkspaceCwd, '@yarnpkg/pnp'),
+  % Those packages use a different build
+    \+ (workspace_ident(WorkspaceCwd, WorkspaceIdent), inline_compile(WorkspaceIdent)),
   % Private packages aren't covered
     \+ workspace_field_test(WorkspaceCwd, 'private', 'true').

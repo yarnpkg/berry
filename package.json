@@ -58,6 +58,7 @@
   },
   "scripts": {
     "build:compile": "rm -rf \"$0\"/lib && mkdir -p \"$0\"/lib && babel \"$0\"/sources --out-dir \"$0\"/lib --copy-files --extensions .js,.ts,.tsx",
+    "build:compile-inline": "find \"$0\"/sources -name '*.js' && babel \"$0\"/sources --out-dir \"$0\"/sources --extensions .ts,.tsx",
     "gen-tssdk": "pnpify --sdk scripts",
     "release:all": "./scripts/release.sh",
     "test:lint": "eslint \"packages/**/@(sources|tests)/**/!(libzip).@(tsx|ts|js)\"",
