@@ -5049,7 +5049,6 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.0.0-rc.19"
     "@yarnpkg/core": "workspace:^2.0.0-rc.15"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
-    "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.4"
     clipanion: ^2.1.5
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.19
