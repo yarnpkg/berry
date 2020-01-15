@@ -117,7 +117,7 @@ jobs:
             const file = path.join(dir, fileName);
 
             const events = [];
-            const stop = fsevents(dir, (...args) => events.push(args));
+            const stop = fsevents.watch(dir, (...args) => events.push(args));
 
             async function main() {
               await sleep(1000);
