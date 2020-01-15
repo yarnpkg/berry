@@ -3,6 +3,7 @@ import {Filename, PortablePath, npath, ppath, xfs}                              
 import {parseSyml, stringifySyml}                                                                                                                       from '@yarnpkg/parsers';
 import {UsageError}                                                                                                                                     from 'clipanion';
 import semver                                                                                                                                           from 'semver';
+import {version}                                                                                                                                        from 'punycode';
 
 // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
 const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
@@ -116,7 +117,10 @@ export async function resolveVersionFiles(project: Project) {
 
     for (const [locatorStr, decision] of Object.entries(versionData.releases || {})) {
       const locator = structUtils.parseLocator(locatorStr);
-      const workspace = project.getWorkspaceByLocator(locator);
+
+      const workspace = project.tryWorkspaceByLocator(locator);
+      if (workspace === null)
+        throw new Error(`Assertion failed: Expected a release definition file to only reference existing workspaces (${ppath.basename(versionPath)} references ${locatorStr})`);
 
       if (workspace.manifest.version === null)
         throw new Error(`Assertion failed: Expected the workspace to have a version (${structUtils.prettyLocator(project.configuration, workspace.anchoredLocator)})`);
