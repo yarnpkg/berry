@@ -15,7 +15,7 @@ module.exports = {
     });
   },
 
-  createPages: async ({actions: {createPage, createRedirect}, graphql}) => {
+  createPages: async ({page, actions: {createPage, createRedirect}, graphql}) => {
     const everything = await graphql(`{
       allMarkdownRemark {
         edges {
@@ -35,6 +35,14 @@ module.exports = {
         component: `${__dirname}/src/templates/article.js`,
         context: {category: node.frontmatter.category},
       });
+    }
+
+    if (page.path.match(/^\/package/)) {
+      // page.matchPath is a special key that's used for matching pages
+      // with corresponding routes only on the client.
+      page.matchPath = `/package/*`;
+      // Update the page.
+      createPage(page);
     }
 
     createRedirect({
