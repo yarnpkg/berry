@@ -1012,6 +1012,18 @@ export class Project {
     for (const locatorHash of buildablePackages)
       readyPackages.delete(locatorHash);
 
+    const globalHashGenerator = createHash(`sha512`);
+    globalHashGenerator.update(process.versions.node);
+
+    this.configuration.triggerHook(hooks => {
+      return hooks.globalHashGeneration;
+    }, this, (data: Buffer | string) => {
+      globalHashGenerator.update(`\0`);
+      globalHashGenerator.update(data);
+    });
+
+    const globalHash = globalHashGenerator.digest(`hex`);
+
     // We'll use this function is order to compute a hash for each package
     // that exposes a build directive. If the hash changes compared to the
     // previous run, the package is rebuilt. This has the advantage of making
@@ -1020,6 +1032,7 @@ export class Project {
 
     const getBuildHash = (locator: Locator) => {
       const hash = createHash(`sha512`);
+      hash.update(globalHash);
 
       const traverse = (locatorHash: LocatorHash, seenPackages: Set<string> = new Set()) => {
         hash.update(locatorHash);
