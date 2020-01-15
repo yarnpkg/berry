@@ -1139,7 +1139,7 @@ export class Project {
               continue;
             }
 
-            const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${exitCode}, logs can be found here: ${logFile})`;
+            const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${this.configuration.format(String(exitCode), FormatType.NUMBER)}, logs can be found here: ${this.configuration.format(logFile, FormatType.PATH)})`;
 
             if (!this.optionalBuilds.has(pkg.locatorHash)) {
               report.reportError(MessageName.BUILD_FAILED, buildMessage);
