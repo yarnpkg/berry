@@ -39,42 +39,56 @@ jobs:
           const fs = require('fs');
           const path = require('path');
 
-          const virtualP = path.resolve('./\$\$virtual/foo/0');
-          const fileP = path.join(virtualP, 'helloworld');
-
-          const events = [];
-          const watcher = fsevents(virtualP);
-          watcher.on('change', (...args) => events.push(args));
-          watcher.start();
-
           async function sleep(n) {
             return new Promise(resolve => {
               setTimeout(resolve, n);
             });
           }
 
-          async function main() {
-            await sleep(1000);
-            fs.writeFileSync(fileP, '');
-            await sleep(1000);
+          async function runTestOn(dir, fileName) {
+            const file = path.join(dir, fileName);
 
-            if (events.length === 0)
-              throw new Error('No events recorded');
+            const events = [];
+            const watcher = fsevents(dir);
+            watcher.on('change', (...args) => events.push(args));
+            watcher.start();
 
-            for (const [p] of events) {
-              if (!p.startsWith(virtualP)) {
-                throw new Error(p);
+            async function main() {
+              await sleep(1000);
+              fs.writeFileSync(file, '');
+              await sleep(1000);
+
+              if (events.length === 0)
+                throw new Error('No events recorded');
+
+              for (const [p] of events) {
+                if (!p.startsWith(dir)) {
+                  throw new Error(p);
+                }
               }
+            }
+
+            try {
+              return await main();
+            } finally {
+              watcher.stop();
             }
           }
 
-          main().then(() => {
-            watcher.stop();
-          }, error => {
-            watcher.stop();
+          async function registerTest(dir, fileName) {
+            try {
+              await runTestOn(dir, fileName);
+              console.log('Succeeded test for ' + dir);
+            } catch (error) {
+              console.log('Failed test for ' + dir + ': ' + error.message);
+              process.exitCode = 1;
+            }
+          }
 
-            console.log(error.stack);
-            process.exitCode = 1;
+          Promise.resolve().then(() => {
+            return registerTest(process.cwd(), 'hello');
+          }).then(() => {
+            return registerTest(process.cwd() + '/\$\$virtual/foo/0', 'world');
           });
         EOT
 
