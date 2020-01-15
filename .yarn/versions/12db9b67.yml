@@ -17,6 +17,7 @@ declined:
   - "@yarnpkg/plugin-link@2.0.0-rc.9"
   - "@yarnpkg/plugin-npm@2.0.0-rc.12"
   - "@yarnpkg/plugin-npm-cli@2.0.0-rc.10"
+  - "@yarnpkg/plugin-pack@2.0.0-rc.13"
   - "@yarnpkg/plugin-patch@2.0.0-rc.2"
   - "@yarnpkg/plugin-pnp@2.0.0-rc.13"
   - "@yarnpkg/plugin-stage@2.0.0-rc.13"
