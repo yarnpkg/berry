@@ -30,7 +30,7 @@ new file mode 100644
 +
 +module.exports = class FsePnp {
 +  constructor(p) {
-+    this.normalizedP = path.normalize(p);
++    this.normalizedP = path.resolve(p);
 +    this.resolvedP = resolveVirtual(this.normalizedP);
 +  }
 +
