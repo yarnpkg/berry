@@ -229,9 +229,9 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
     releaseStore.set(workspace, Decision.DECLINE);
   }
 
-  for (const [locatorStr, decision] of Object.entries(versionData.releases || {})) {
-    const locator = structUtils.parseLocator(locatorStr);
-    const workspace = project.getWorkspaceByLocator(locator);
+  for (const [identStr, decision] of Object.entries(versionData.releases || {})) {
+    const ident = structUtils.parseIdent(identStr);
+    const workspace = project.getWorkspaceByIdent(ident);
 
     releaseStore.set(workspace, decision as any);
   }
