@@ -39,7 +39,7 @@ jobs:
           const fs = require('fs');
           const path = require('path');
 
-          const virtualP = path.resolve('./$$virtual/foo/0');
+          const virtualP = path.resolve('./\$\$virtual/foo/0');
           const fileP = path.join(virtualP, 'helloworld');
 
           const events = [];
