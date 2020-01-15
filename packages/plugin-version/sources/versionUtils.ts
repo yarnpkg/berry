@@ -222,9 +222,9 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
   const versionData = parseSyml(versionContent);
   const releaseStore: Releases = new Map();
 
-  for (const locatorStr of versionData.declined || []) {
-    const locator = structUtils.parseLocator(locatorStr);
-    const workspace = project.getWorkspaceByLocator(locator);
+  for (const identStr of versionData.declined || []) {
+    const ident = structUtils.parseIdent(identStr);
+    const workspace = project.getWorkspaceByIdent(ident);
 
     releaseStore.set(workspace, Decision.DECLINE);
   }

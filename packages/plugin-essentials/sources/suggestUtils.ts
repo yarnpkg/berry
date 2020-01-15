@@ -209,18 +209,16 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
       } break;
 
       case Strategy.PROJECT: {
-        const workspace = project.tryWorkspaceByIdent(request);
-        if (workspace === null)
-          continue;
-
         // Don't suggest a workspace to depend on itself
         if (workspace.manifest.name !== null && request.identHash === workspace.manifest.name.identHash)
           continue;
 
-        if (workspace !== null) {
-          const reason = `Attach ${structUtils.prettyWorkspace(project.configuration, workspace)} (local workspace at ${workspace.cwd})`;
-          suggested.push({descriptor: workspace.anchoredDescriptor, reason});
-        }
+        const candidateWorkspace = project.tryWorkspaceByIdent(request);
+        if (candidateWorkspace === null)
+          continue;
+
+        const reason = `Attach ${structUtils.prettyWorkspace(project.configuration, candidateWorkspace)} (local workspace at ${candidateWorkspace.cwd})`;
+        suggested.push({descriptor: candidateWorkspace.anchoredDescriptor, reason});
       } break;
 
       case Strategy.LATEST: {
