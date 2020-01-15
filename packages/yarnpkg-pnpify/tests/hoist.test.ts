@@ -1,4 +1,60 @@
-import {hoist, HoisterPackageTree} from '../sources/hoist';
+import {hoist, HoisterTree, HoisterResult} from '../sources/hoist';
+
+const toTree = (obj: any): HoisterTree => {
+  const tree = new Map(
+    Object.entries(obj).map(([key, val]: [string, any]) => {
+      const {deps, peerNames, ...meta} = val;
+      return [key, {
+        name: key.match(/@?[^@]+/)![0],
+        reference: key.match(/@?[^@]+@?(.+)?/)![1] || '',
+        deps: new Set(deps || []),
+        peerNames: new Set(peerNames || []),
+        ...meta,
+      }];
+    })
+  );
+  // Create empty nodes
+  for (const node of tree.values()) {
+    for (const dep of node.deps) {
+      if (!tree.has(dep)) {
+        tree.set(dep, {
+          name: dep.match(/@?[^@]+/)![0],
+          reference: dep.match(/@?[^@]+@?(.+)?/)![1] || '',
+          deps: new Set(),
+          peerNames: new Set(),
+        });
+      }
+    }
+  }
+  return tree;
+};
+
+const toResult = (obj: any): HoisterResult => {
+  const tree = new Map(
+    Object.entries(obj).map(([key, val]: [string, any]) => {
+      const {deps, peerNames, ...meta} = val;
+      return [key, {
+        name: key.match(/@?[^@]+/)![0],
+        reference: key.match(/@?[^@]+@?([^$]+)?/)![1] || '',
+        deps: new Set(deps || []),
+        ...meta,
+      }];
+    })
+  );
+  // Create empty nodes
+  for (const node of tree.values()) {
+    for (const dep of node.deps) {
+      if (!tree.has(dep)) {
+        tree.set(dep, {
+          name: dep.match(/@?[^@]+/)![0],
+          reference: dep.match(/@?[^@]+@?([^$]+)?/)![1] || '',
+          deps: new Set(),
+        });
+      }
+    }
+  }
+  return tree;
+};
 
 describe('hoist', () => {
   it('should do very basic hoisting', () => {
@@ -6,78 +62,41 @@ describe('hoist', () => {
     // should be hoisted to:
     // . → A
     //   → B
-    const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-    ];
     const tree = {
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 2, // B
-          deps: new Set<HoisterPackageTree>(),
-          peerDepIds: new Set<number>(),
-        }]),
-        peerDepIds: new Set<number>(),
-      }]),
-      peerDepIds: new Set<number>(),
+      '.': {deps: ['A']},
+      'A': {deps: ['B']},
     };
-    const result = hoist(tree, packages);
-    expect(result).toEqual({
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set(),
-      }, {
-        pkgId: 2, // B
-        deps: new Set(),
-      }]),
-    });
+    expect(hoist(toTree(tree))).toEqual(toResult({
+      '.': {deps: ['A', 'B']},
+    }));
+  });
+
+  it('should preserve original metadata during hoisting', () => {
+    // . → A → B
+    // should be hoisted to:
+    // . → A
+    //   → B
+    const tree = {
+      '.': {deps: ['A'], meta1: 'dot'},
+      'A': {deps: ['B'], meta2: 'abc'},
+      'B': {meta3: 'def'},
+    };
+    expect(hoist(toTree(tree))).toEqual(toResult({
+      '.': {deps: ['A', 'B'], meta1: 'dot'},
+      'A': {meta2: 'abc'},
+      'B': {meta3: 'def'},
+    }));
   });
 
   it('should not hoist different package with the same name', () => {
     // . → A → B@X
     //   → B@Y
     // should not be changed
-    const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-      {name: 'B'},
-    ];
     const tree = {
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 2, // B@X
-          deps: new Set<HoisterPackageTree>(),
-          peerDepIds: new Set<number>(),
-        }]),
-        peerDepIds: new Set<number>(),
-      }, {
-        pkgId: 3, // B@Y
-        deps: new Set<HoisterPackageTree>(),
-        peerDepIds: new Set<number>(),
-      }]),
-      peerDepIds: new Set<number>(),
+      '.': {deps: ['A', 'B@Y']},
+      'A': {deps: ['B@X']},
     };
-    const result = hoist(tree, packages);
-    expect(result).toEqual({
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 2, // B@X
-          deps: new Set(),
-        }]),
-      }, {
-        pkgId: 3, // B@Y
-        deps: new Set(),
-      }]),
-    });
+    expect(hoist(toTree(tree))).toEqual(toResult(tree));
   });
 
   it('should not hoist package that has several versions on the same tree path', () => {
@@ -86,51 +105,16 @@ describe('hoist', () => {
     // . → A
     //   → B@X
     //   → C → B@Y
-    const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-      {name: 'C'},
-      {name: 'B'},
-    ];
     const tree = {
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 2, // B@X
-          deps: new Set([{
-            pkgId: 3, // C
-            deps: new Set([{
-              pkgId: 4, // B@Y
-              deps: new Set<HoisterPackageTree>(),
-              peerDepIds: new Set<number>(),
-            }]),
-            peerDepIds: new Set<number>(),
-          }]),
-          peerDepIds: new Set<number>(),
-        }]),
-        peerDepIds: new Set<number>(),
-      }]),
-      peerDepIds: new Set<number>(),
+      '.':   {deps: ['A']},
+      'A':   {deps: ['B@X']},
+      'B@X': {deps: ['C']},
+      'C':   {deps: ['B@Y']},
     };
-    const result = hoist(tree, packages);
-    expect(result).toEqual({
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set(),
-      }, {
-        pkgId: 2, // B@X
-        deps: new Set(),
-      }, {
-        pkgId: 3, // C
-        deps: new Set([{
-          pkgId: 4, // B@Y
-          deps: new Set<HoisterPackageTree>(),
-        }]),
-      }]),
-    });
+    expect(hoist(toTree(tree))).toEqual(toResult({
+      '.': {deps: ['A', 'B@X', 'C']},
+      'C': {deps: ['B@Y']},
+    }));
   });
 
   it('should perform deep hoisting', () => {
@@ -142,143 +126,39 @@ describe('hoist', () => {
     // . → A → B@X → C@Y
     //   → B@Y
     //   → C@X
-    const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-      {name: 'B'},
-      {name: 'C'},
-      {name: 'C'},
-    ];
     const tree = {
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 2, // B@X
-          deps: new Set([{
-            pkgId: 5, // C@Y
-            deps: new Set<HoisterPackageTree>(),
-            peerDepIds: new Set<number>(),
-          }]),
-          peerDepIds: new Set<number>(),
-        }, {
-          pkgId: 4, // C@X
-          deps: new Set<HoisterPackageTree>(),
-          peerDepIds: new Set<number>(),
-        }]),
-        peerDepIds: new Set<number>(),
-      }, {
-        pkgId: 3, // B@Y
-        deps: new Set<HoisterPackageTree>(),
-        peerDepIds: new Set<number>(),
-      }, {
-        pkgId: 4, // C@X
-        deps: new Set<HoisterPackageTree>(),
-        peerDepIds: new Set<number>(),
-      }]),
-      peerDepIds: new Set<number>(),
+      '.':   {deps: ['A', 'B@Y', 'C@X']},
+      'A':   {deps: ['B@X', 'C@X']},
+      'B@X': {deps: ['C@Y']},
+      'C':   {deps: ['B@Y']},
     };
-    const result = hoist(tree, packages);
-    expect(result).toEqual({
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 2, // B@X
-          deps: new Set([{
-            pkgId: 5, // C@Y
-            deps: new Set(),
-          }]),
-        }]),
-      }, {
-        pkgId: 3, // B@Y
-        deps: new Set(),
-      }, {
-        pkgId: 4, // C@X
-        deps: new Set(),
-      }]),
-    });
+    expect(hoist(toTree(tree))).toEqual(toResult({
+      '.':   {deps: ['A', 'B@Y', 'C@X']},
+      'A':   {deps: ['B@X']},
+      'B@X': {deps: ['C@Y']},
+    }));
   });
 
-  it('should tolerate any cyclic dependencies', () => {
+  it('should tolerate self-dependencies', () => {
     // . → . → A → A → B@X → B@X → C@Y
     //               → C@X
     //   → B@Y
     //   → C@X
     // should be hoisted to:
-    // . → . → A → B@X → C@Y
+    // . → A → B@X → C@Y
     //   → B@Y
     //   → C@X
-    const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-      {name: 'B'},
-      {name: 'C'},
-      {name: 'C'},
-    ];
     const tree = {
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 0, // . self-ref
-        deps: new Set<HoisterPackageTree>(),
-        peerDepIds: new Set<number>(),
-      }, {
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 1, // A self-ref
-          deps: new Set<HoisterPackageTree>(),
-          peerDepIds: new Set<number>(),
-        }, {
-          pkgId: 2, // B@X
-          deps: new Set([{
-            pkgId: 2, // B@X self-ref
-            deps: new Set<HoisterPackageTree>(),
-            peerDepIds: new Set<number>(),
-          }, {
-            pkgId: 4, // C@Y
-            deps: new Set<HoisterPackageTree>(),
-            peerDepIds: new Set<number>(),
-          }]),
-          peerDepIds: new Set<number>(),
-        }, {
-          pkgId: 3, // C@X
-          deps: new Set<HoisterPackageTree>(),
-          peerDepIds: new Set<number>(),
-        }]),
-        peerDepIds: new Set<number>(),
-      }, {
-        pkgId: 3, // B@Y
-        deps: new Set<HoisterPackageTree>(),
-        peerDepIds: new Set<number>(),
-      }, {
-        pkgId: 4, // C@X
-        deps: new Set<HoisterPackageTree>(),
-        peerDepIds: new Set<number>(),
-      }]),
-      peerDepIds: new Set<number>(),
+      '.':   {deps: ['.', 'A', 'B@Y', 'C@X']},
+      'A':   {deps: ['A', 'B@X', 'C@X']},
+      'B@X': {deps: ['B@X', 'C@Y']},
+      'C':   {deps: ['B@Y']},
     };
-    const result = hoist(tree, packages);
-    expect(result).toEqual({
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 0, // .
-        deps: new Set(),
-      }, {
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 2, // B@X
-          deps: new Set(),
-        }]),
-      }, {
-        pkgId: 4, // C@Y
-        deps: new Set(),
-      }, {
-        pkgId: 3, // C@X
-        deps: new Set(),
-      }]),
-    });
+    expect(hoist(toTree(tree))).toEqual(toResult({
+      '.':   {deps: ['A', 'B@Y', 'C@X']},
+      'A':   {deps: ['B@X']},
+      'B@X': {deps: ['C@Y']},
+    }));
   });
 
   it('should honor package popularity when hoisting', () => {
@@ -295,164 +175,56 @@ describe('hoist', () => {
     //   → F
     //   → G
     //   → B@Y
-    const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-      {name: 'B'},
-      {name: 'C'},
-      {name: 'D'},
-      {name: 'E'},
-      {name: 'F'},
-      {name: 'G'},
-    ];
     const tree = {
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 2, // B@X
-          deps: new Set<HoisterPackageTree>(),
-          peerDepIds: new Set<number>(),
-        }]),
-        peerDepIds: new Set<number>(),
-      }, {
-        pkgId: 4, // C
-        deps: new Set([{
-          pkgId: 2, // B@X
-          deps: new Set<HoisterPackageTree>(),
-          peerDepIds: new Set<number>(),
-        }]),
-        peerDepIds: new Set<number>(),
-      }, {
-        pkgId: 5, // D
-        deps: new Set([{
-          pkgId: 3, // B@Y
-          deps: new Set<HoisterPackageTree>(),
-          peerDepIds: new Set<number>(),
-        }]),
-        peerDepIds: new Set<number>(),
-      }, {
-        pkgId: 6, // E
-        deps: new Set([{
-          pkgId: 3, // B@Y
-          deps: new Set<HoisterPackageTree>(),
-          peerDepIds: new Set<number>(),
-        }]),
-        peerDepIds: new Set<number>(),
-      }, {
-        pkgId: 7, // F
-        deps: new Set([{
-          pkgId: 8, // G
-          deps: new Set([{
-            pkgId: 3, // B@Y
-            deps: new Set<HoisterPackageTree>(),
-            peerDepIds: new Set<number>(),
-          }]),
-          peerDepIds: new Set<number>(),
-        }]),
-        peerDepIds: new Set<number>(),
-      }]),
-      peerDepIds: new Set<number>(),
+      '.': {deps: ['A', 'C', 'D', 'E', 'F']},
+      'A': {deps: ['B@X']},
+      'C': {deps: ['B@X']},
+      'D': {deps: ['B@Y']},
+      'E': {deps: ['B@Y']},
+      'F': {deps: ['G']},
+      'G': {deps: ['B@Y']},
     };
-    const result = hoist(tree, packages);
-    expect(result).toEqual({
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 2, // B@X
-          deps: new Set(),
-        }]),
-      }, {
-        pkgId: 4, // C
-        deps: new Set([{
-          pkgId: 2, // B@X
-          deps: new Set(),
-        }]),
-      }, {
-        pkgId: 5, // D
-        deps: new Set(),
-      }, {
-        pkgId: 6, // E
-        deps: new Set(),
-      }, {
-        pkgId: 7, // F
-        deps: new Set(),
-      }, {
-        pkgId: 8, // G
-        deps: new Set(),
-      }, {
-        pkgId: 3, // B@Y
-        deps: new Set(),
-      }]),
-    });
+    expect(hoist(toTree(tree))).toEqual(toResult({
+      '.': {deps: ['A', 'C', 'D', 'E', 'F', 'G', 'B@Y']},
+      'A': {deps: ['B@X']},
+      'C': {deps: ['B@X']},
+    }));
   });
 
   it('should honor peer dependencies', () => {
     // . → A → B ⟶ D@X
-    //     → C → D@Y
-    //     → D@X
+    //       → D@X
+    //   → D@Y
     // should be hoisted to (A and B should share single D@X dependency):
     // . → A → B
     //     → D@X
-    //   → C
     //   → D@Y
-    const packages = [
-      {name: '.'}, // 0 - .
-      {name: 'A'}, // 1 - A
-      {name: 'B'}, // 2 - B
-      {name: 'C'}, // 3 - C
-      {name: 'D'}, // 4 - D@X
-      {name: 'D'}, // 5 - D@Y
-    ];
     const tree = {
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 2, // B
-          deps: new Set<HoisterPackageTree>(),
-          peerDepIds: new Set([
-            4, // D@X
-          ]),
-        }, {
-          pkgId: 3, // C
-          deps: new Set([{
-            pkgId: 5, // D@Y
-            deps: new Set<HoisterPackageTree>(),
-            peerDepIds: new Set<number>(),
-          }]),
-          peerDepIds: new Set<number>(),
-        }, {
-          pkgId: 4, // D@X
-          deps: new Set<HoisterPackageTree>(),
-          peerDepIds: new Set<number>(),
-        }]),
-        peerDepIds: new Set<number>(),
-      }]),
-      peerDepIds: new Set<number>(),
+      '.': {deps: ['A', 'D@Y']},
+      'A': {deps: ['B', 'D@X']},
+      'B': {deps: ['D@X'], peerNames: ['D']},
     };
-    const result = hoist(tree, packages);
-    expect(result).toEqual({
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 2, // B
-          deps: new Set(),
-        }, {
-          pkgId: 4, // D@X
-          deps: new Set(),
-        }]),
-      }, {
-        pkgId: 3, // C
-        deps: new Set(),
-      }, {
-        pkgId: 5, // D@Y
-        deps: new Set(),
-      }]),
-    });
+    expect(hoist(toTree(tree))).toEqual(toResult({
+      '.': {deps: ['A', 'D@Y']},
+      'A': {deps: ['B', 'D@X']},
+    }));
+  });
+
+  it('should hoist deps after hoisting peer dep', () => {
+    // . → A → B ⟶ D@X
+    //     → D@X
+    // should be hoisted to (B should be hoisted because its inherited dep D@X was hoisted):
+    // . → A
+    //   → B
+    //   → D@X
+    const tree = {
+      '.': {deps: ['A']},
+      'A': {deps: ['B', 'D@X']},
+      'B': {deps: ['D@X'], peerNames: ['D']},
+    };
+    expect(hoist(toTree(tree))).toEqual(toResult({
+      '.': {deps: ['A', 'B', 'D@X']},
+    }));
   });
 
   it('should honor unhoisted peer dependencies', () => {
@@ -465,108 +237,33 @@ describe('hoist', () => {
     //     → C@X → B@Y
     //   → B@X
     //   → C@Y
-    const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-      {name: 'B'},
-      {name: 'C'},
-      {name: 'C'},
-    ];
     const tree = {
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 4, // C@X
-          deps: new Set([{
-            pkgId: 3, // B@Y
-            deps: new Set<HoisterPackageTree>(),
-            peerDepIds: new Set<number>(),
-          }]),
-          peerDepIds: new Set<number>(),
-        }]),
-        peerDepIds: new Set([
-          2, // B@X
-        ]),
-      }, {
-        pkgId: 2, // B@X
-        deps: new Set<HoisterPackageTree>(),
-        peerDepIds: new Set<number>(),
-      }, {
-        pkgId: 5, // C@Y
-        deps: new Set<HoisterPackageTree>(),
-        peerDepIds: new Set<number>(),
-      }]),
-      peerDepIds: new Set<number>(),
+      '.': {deps: ['A', 'B@X', 'C@Y']},
+      'A': {deps: ['B@X', 'C@X'], peerNames: ['B']},
+      'C@X': {deps: ['B@Y']},
     };
-    const result = hoist(tree, packages);
-    expect(result).toEqual({
-      pkgId: 0,
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 4,
-          deps: new Set([{
-            pkgId: 3,
-            deps: new Set(),
-          }]),
-        }]),
-      }, {
-        pkgId: 2, // B@X
-        deps: new Set(),
-      }, {
-        pkgId: 5, // C@Y
-        deps: new Set(),
-      }]),
-    });
+    expect(hoist(toTree(tree))).toEqual(toResult({
+      '.': {deps: ['A', 'B@X', 'C@Y']},
+      'A': {deps: ['C@X']},
+      'C@X': {deps: ['B@Y']},
+    }));
   });
 
   it('should honor peer dependency promise for the same version of dependency', () => {
     // . → A → B → C
     //   ⟶ B
-    // Should be hoisted to (B@X must not be hoisted to the top):
+    // should be hoisted to (B must not be hoisted to the top):
     // . → A → B
     //   → C
-    const packages = [
-      {name: '.'},
-      {name: 'A'},
-      {name: 'B'},
-      {name: 'C'},
-    ];
     const tree = {
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 2, // B
-          deps: new Set([{
-            pkgId: 3, // C
-            deps: new Set<HoisterPackageTree>(),
-            peerDepIds: new Set<number>(),
-          }]),
-          peerDepIds: new Set<number>(),
-        }]),
-        peerDepIds: new Set<number>(),
-      }]),
-      peerDepIds: new Set([
-        2, // B
-      ]),
+      '.': {deps: ['A'], peerNames: ['B']},
+      'A': {deps: ['B']},
+      'B': {deps: ['C']},
     };
-    const result = hoist(tree, packages);
-    expect(result).toEqual({
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 2, // B
-          deps: new Set(),
-        }]),
-      }, {
-        pkgId: 3, // C
-        deps: new Set(),
-      }]),
-    });
+    expect(hoist(toTree(tree))).toEqual(toResult({
+      '.': {deps: ['A', 'C']},
+      'A': {deps: ['B']},
+    }));
   });
 
   it('should hoist different copies of a package independently', () => {
@@ -575,95 +272,24 @@ describe('hoist', () => {
     //   → D → B@X → C@X
     //   → B@Y
     //   → C@Z
-    // Should be hoisted to (top C@X instance must not be hoisted):
+    // should be hoisted to (top C@X instance must not be hoisted):
     // . → A → B@X → C@X
     //     → C@Y
     //   → D → B@X
     //     → C@X
     //   → B@Y
     //   → C@Z
-    const packages = [
-      {name: '.'}, // .   - 0
-      {name: 'A'}, // A   - 1
-      {name: 'B'}, // B@X - 2
-      {name: 'B'}, // B@Y - 3
-      {name: 'C'}, // C@X - 4
-      {name: 'C'}, // C@Y - 5
-      {name: 'C'}, // C@Z - 6
-      {name: 'D'}, // D   - 7
-    ];
     const tree = {
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 2, // B@X
-          deps: new Set([{
-            pkgId: 4, // C@X
-            deps: new Set<HoisterPackageTree>(),
-            peerDepIds: new Set<number>(),
-          }]),
-          peerDepIds: new Set<number>(),
-        }, {
-          pkgId: 5, // C@Y
-          deps: new Set<HoisterPackageTree>(),
-          peerDepIds: new Set<number>(),
-        }]),
-        peerDepIds: new Set<number>(),
-      }, {
-        pkgId: 7, // D
-        deps: new Set([{
-          pkgId: 2, // B@X
-          deps: new Set([{
-            pkgId: 4, // C@X
-            deps: new Set<HoisterPackageTree>(),
-            peerDepIds: new Set<number>(),
-          }]),
-          peerDepIds: new Set<number>(),
-        }]),
-        peerDepIds: new Set<number>(),
-      }, {
-        pkgId: 3, // B@Y
-        deps: new Set<HoisterPackageTree>(),
-        peerDepIds: new Set<number>(),
-      }, {
-        pkgId: 6, // C@Z
-        deps: new Set<HoisterPackageTree>(),
-        peerDepIds: new Set<number>(),
-      }]),
-      peerDepIds: new Set<number>(),
+      '.': {deps: ['A', 'D', 'B@Y', 'C@Z']},
+      'A': {deps: ['B@X', 'C@Y']},
+      'B@X': {deps: ['C@X']},
+      'D': {deps: ['B@X']},
     };
-    const result = hoist(tree, packages);
-    expect(result).toEqual({
-      pkgId: 0, // .
-      deps: new Set([{
-        pkgId: 1, // A
-        deps: new Set([{
-          pkgId: 2, // B@X
-          deps: new Set([{
-            pkgId: 4, // C@X
-            deps: new Set(),
-          }]),
-        }, {
-          pkgId: 5, // C@Y
-          deps: new Set(),
-        }]),
-      }, {
-        pkgId: 7, // D
-        deps: new Set([{
-          pkgId: 2, // B@X
-          deps: new Set(),
-        }, {
-          pkgId: 4, // C@X
-          deps: new Set(),
-        }]),
-      }, {
-        pkgId: 3, // B@Y
-        deps: new Set(),
-      }, {
-        pkgId: 6, // C@Z
-        deps: new Set(),
-      }]),
-    });
+    expect(hoist(toTree(tree))).toEqual(toResult({
+      '.': {deps: ['A', 'D', 'B@Y', 'C@Z']},
+      'A': {deps: ['B@X', 'C@Y']},
+      'B@X': {deps: ['C@X']},
+      'D': {deps: ['B@X$1', 'C@X']},
+    }));
   });
 });

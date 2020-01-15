@@ -2,7 +2,7 @@ import {NativePath, PortablePath, Filename}         from '@yarnpkg/fslib';
 import {toFilename, npath, ppath}                   from '@yarnpkg/fslib';
 import {PnpApi, PackageLocator, PackageInformation} from '@yarnpkg/pnp';
 
-import {hoist, HoisterTree, HoisterResult}          from './hoist';
+import {hoist, HoisterTree, HoisterResult}          from './hoist2';
 
 // Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
 // But because of this TypeScript requires @yarnpkg/pnp during runtime
