@@ -28,7 +28,6 @@ jobs:
         node ./scripts/run-yarn.js build:cli
 
     - name: 'Running the integration test (FSEvents ^1)'
-      if: false # Doesn't work on GitHub Actions
       run: |
         source scripts/e2e-setup-ci.sh
         yarn init

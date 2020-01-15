@@ -30,12 +30,12 @@ new file mode 100644
 +
 +module.exports = class FsePnp {
 +  constructor(p) {
-+    this.normalizedP = path.resolve(p);
-+    this.resolvedP = resolveVirtual(this.normalizedP);
++    this.normalizedPath = path.resolve(p);
++    this.resolvedPath = resolveVirtual(this.normalizedPath);
 +  }
 +
 +  transpose(p) {
-+    return this.normalizedP + p.substr(this.resolvedP.length);
++    return this.normalizedPath + p.substr(this.resolvedPath.length);
 +  }
 +
 +  wrap(fn) {
