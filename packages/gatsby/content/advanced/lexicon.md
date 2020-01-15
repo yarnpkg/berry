@@ -12,8 +12,9 @@ A dependency (listed in the [`dependencies` field](/configuration/manifest#depen
 
 When a package A has a dependency B, Yarn guarantees that A will be able to access B if the install is successful. Note that this is the only promise we make regarding regular dependencies: in particular, there is no guarantee that the package B will be the same version than the one used in other parts of the application.
 
-See also: [Development Dependencies](#developmentdependencies)
-See also: [Peer Dependency](#peerdependency)
+See also: [Development Dependency](#development-dependency)
+
+See also: [Peer Dependency](#peer-dependency)
 
 ### Descriptor
 
@@ -26,13 +27,15 @@ A dependency (listed in the [`devDependencies` field](/configuration/manifest#de
 Development dependencies are very much like regular dependencies except that they only matter for local packages. Packages fetched from remote registries such as npm will not be able to access their development dependencies, but packages installed from local sources (such as [workspaces](#workspaces) or the [`portal:` protocol](#portals)) will.
 
 See also: [Dependency](#dependency)
-See also: [Peer Dependency](#peerdependency)
+
+See also: [Peer Dependency](#peer-dependency)
 
 ### Fetcher
 
 Fetchers are the components tasked from extracting the full package data from a <abbr>reference</abbr>. For example, the npm fetcher would download the package tarballs from the npm registry.
 
 See also: [Architecture](/advanced/architecture)
+
 See also: the [`Fetcher` interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Fetcher.ts#L34)
 
 ### Linker
@@ -40,7 +43,9 @@ See also: the [`Fetcher` interface](https://github.com/yarnpkg/berry/blob/master
 Linkers are the components that consume both a dependency tree and a store of package data, and generate in return disk artifacts specific to the environment they target. For example, the <abbr>Plug'n'Play</abbr> linker generates a single `.pnp.js` file.
 
 See also: [Architecture](/advanced/architecture)
+
 See also: the [`Linker` interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Linker.ts#L28)
+
 See also: the [`Installer` interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Installer.ts#L18)
 
 ### Locator
@@ -63,15 +68,15 @@ A dependency (listed in the [`peerDependencies` field](/configuration/manifest#p
 
 Contrary to regular dependencies, a package A with a peer dependency on B doesn't guarantee that A will be able to access B - it's up to the package that depends on A to manually provide a version of B compatible with with request from A. This drawback has a good side too: the package instance of B that A will access is guaranteed to be the exact same one as the one used by the ancestor of A. This matters a lot when B uses `instanceof` checks or singletons.
 
-See also: [Development Dependencies](#developmentdependencies)
-See also: [Peer Dependency](#peerdependency)
-See also: [Singleton Package](#singletonpackage)
+See also: [Development Dependencies](#development-dependencies)
+See also: [Peer Dependency](#peer-dependency)
+See also: [Singleton Package](#singleton-package)
 
 ### Peer-dependent Package
 
 A peer-dependent package is a package that lists peer dependencies.
 
-See also: [Virtual Packages](#virtualpackages)
+See also: [Virtual Packages](#virtual-packages)
 
 ### Plugin
 
@@ -129,9 +134,9 @@ Scopes are a term linked inherited from the npm registry; they are used to descr
 
 A singleton package is a package which is instantiated a single time across the dependency tree.
 
-While singleton packages aren't a first-class citizen, they can be easily created using [peer dependencies](#peerdependency) by using one of their properties: since packages depended upon by peer dependencies are guaranteed to be the exact same instance as the one used by their direct ancestor, using peer dependencies across the entire dependency branch all the way up to the nearest workspace will ensure that a single instance of the package is ever created - making it a de-facto singleton package.
+While singleton packages aren't a first-class citizen, they can be easily created using [peer dependencies](#peer-dependency) by using one of their properties: since packages depended upon by peer dependencies are guaranteed to be the exact same instance as the one used by their direct ancestor, using peer dependencies across the entire dependency branch all the way up to the nearest workspace will ensure that a single instance of the package is ever created - making it a de-facto singleton package.
 
-See also: [Peer Dependency](#peerdependency)
+See also: [Peer Dependency](#peer-dependency)
 
 ### Transitive Dependency
 
@@ -149,7 +154,7 @@ Packages are unplugged in two cases: either explicitly when the [`unplugged` fie
 
 ### Virtual Package
 
-Because [peer-dependent packages](#peerdependentpackage) effectively define an *horizon* of possible dependency sets rather than an single static set of dependencies, a peer-dependent package may have multiple dependency sets. When this happens, the package will need to be instantiated at least once for each such set.
+Because [peer-dependent packages](#peer-dependent-package) effectively define an *horizon* of possible dependency sets rather than an single static set of dependencies, a peer-dependent package may have multiple dependency sets. When this happens, the package will need to be instantiated at least once for each such set.
 
 Since in Node-land the JS modules are instantiated based on their path (a file is never instantiated twice for any given path), and since PnP makes it so that packages are installed only once in any given project, the only way to instantiate those packages multiple times is to give them multiple paths while still referencing to the same on-disk location. That's where virtual packages come handy.
 

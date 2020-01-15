@@ -17,7 +17,7 @@ module.exports = function (_, opts) {
   // if (opts.packageIterator || opts.paths)
   //   throw new Error(`The "packageIterator" and "paths" options cannot be used in PnP environments. Set "forceNodeResolution: true" if absolutely needed, or branch on process.versions.pnp otherwise.`);
 
-  const pnp = require(`pnpapi`);
+  const {findPnpApi} = require(`module`);
 
   const runPnpResolution = (request, basedir) => {
     // Extract the name of the package being requested (1=package name, 2=internal path)
@@ -29,7 +29,7 @@ module.exports = function (_, opts) {
     if (basedir.charAt(basedir.length - 1) !== `/`)
       basedir = path.join(basedir, `/`);
 
-    const api = pnp.findApiFromPath(basedir);
+    const api = findPnpApi(basedir);
     if (api === null)
       return undefined;
 

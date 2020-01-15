@@ -62,11 +62,52 @@ if (process.versions.pnp) {
 }
 ```
 
+### `require('module')`
+
+The `module` builtin module is extended when operating within the PnP API with one extra function:
+
+```ts
+export function findPnpApi(lookupSource: URL | string): PnpApi | null;
+```
+
+When called, this function will traverse the filesystem hierarchy starting from the given `lookupSource` in order to locate the closest `.pnp.js` file. It'll then load this file, register it inside the PnP loader internal store, and return the resulting API to you.
+
+Note that while you'll be able to resolve the dependencies by using the API returned to you, you'll need to make sure they are properly *loaded* on behalf of the project too, by using `createRequire`:
+
+```ts
+const {createRequire, findPnpApi} = require(`module`);
+
+// We'll be able to inspect the dependencies of the module passed as first argument
+const targetModule = process.argv[2];
+
+const targetPnp = findPnpApi(targetModule);
+const targetRequire = createRequire(targetModule);
+
+const resolved = targetPnp.resolveRequest(`eslint`, targetModule);
+const instance = targetRequire(resolved); // <-- important! don't use `require`!
+```
+
+Finally, it can be noted that `findPnpApi` isn't actually needed in most cases and we can do the same with just `createRequire` thanks to its `resolve` function:
+
+```ts
+const {createRequire} = require(`module`);
+
+// We'll be able to inspect the dependencies of the module passed as first argument
+const targetModule = process.argv[2];
+
+const targetRequire = createRequire(targetModule);
+
+const resolved = targetRequire.resolve(`eslint`);
+const instance = targetRequire(resolved); // <-- still important
+```
+
 ### `require('pnpapi')`
 
 When operating under a Plug'n'Play environment, a new builtin module will appear in your tree and will be made available to all your packages (regardless of whether they define it in their dependencies or not): `pnpapi`. It exposes the constants a function described in the rest of this document.
 
 Note that we've reserved the `pnpapi` package name on the npm registry, so there's no risk that anyone will be able to snatch the name for nefarious purposes. We might use it later to provide a polyfill for non-PnP environments (so that you'd be able to use the PnP API regardless of whether the project got installed via PnP or not), but as of now it's still an empty package.
+
+Note that the `pnpapi` builtin is *contextual*: while two packages from the same dependency tree are guaranteed to read the same one, two packages from different dependency trees will get different instances - each reflecting the dependency tree they belong to. This distinction doesn't often matter except sometimes for project generator (which typically run within their own dependency tree while also manipulating the project they're generating).
 
 ## API Interface
 
