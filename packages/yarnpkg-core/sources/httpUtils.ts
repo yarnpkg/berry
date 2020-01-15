@@ -7,7 +7,7 @@ import {URL}                                          from 'url';
 
 import {Configuration}                                from './Configuration';
 
-const cache = new Map<string, Promise<Buffer>>();
+const cache = new Map<string, Promise<Response<Buffer>>>();
 
 const globalHttpAgent = new HttpAgent({keepAlive: true});
 const globalHttpsAgent = new HttpsAgent({keepAlive: true});
@@ -41,7 +41,7 @@ export type Options = {
   method?: Method,
 };
 
-async function request(target: string, body: Body, {configuration, headers, json, method = Method.GET}: Options) {
+export async function request(target: string, body: Body, {configuration, headers, json, method = Method.GET}: Options) {
   if (!configuration.get(`enableNetwork`))
     throw new Error(`Network access have been disabled by configuration (${method} ${target})`);
 
@@ -101,8 +101,7 @@ async function request(target: string, body: Body, {configuration, headers, json
     hooks: makeHooks(),
   });
 
-  const res = await gotClient(target) as Response<any>;
-  return await res.body;
+  return gotClient(target) as unknown as Response<any>;
 }
 
 export async function get(target: string, {configuration, json, ...rest}: Options) {
@@ -113,13 +112,17 @@ export async function get(target: string, {configuration, json, ...rest}: Option
     cache.set(target, entry);
   }
 
+  const response = await entry;
+
   if (json) {
-    return await entry.then(buffer => JSON.parse(buffer.toString()));
+    return JSON.parse(response.body.toString());
   } else {
-    return await entry;
+    return response.body;
   }
 }
 
 export async function put(target: string, body: Body, options: Options): Promise<Buffer> {
-  return await request(target, body, {...options, method: Method.PUT});
+  const response = await request(target, body, {...options, method: Method.PUT});
+
+  return response.body;
 }

@@ -35,19 +35,18 @@ describe(`Plugins`, () => {
       })
     );
 
-    // TODO: Find a scoped package we can use
-    test.skip(
+    test(
       `it should automatically add @types for scoped packages`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-typescript.js`))}\n`);
-        await run(`add`, `@scoped/package`);
+        await run(`add`, `@iarna/toml`);
 
         await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
           dependencies: {
-            [`@scoped/package`]: `^1.0.0`,
+            [`@iarna/toml`]: `^1.0.0`,
           },
           devDependencies: {
-            [`@types/scoped__package`]: `1.0.0`,
+            [`@types/iarna__toml`]: `1.0.0`,
           },
         });
       })
@@ -102,16 +101,16 @@ describe(`Plugins`, () => {
       `it should automatically remove @types for scoped packages`,
       makeTemporaryEnv({
         dependencies: {
-          [`@scoped/package`]: `^1.0.0`,
+          [`@iarna/toml`]: `^1.0.0`,
         },
         devDependencies: {
-          [`@types/scoped__package`]: `1.0.0`,
+          [`@types/iarna__toml`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
         await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-typescript.js`))}\n`);
-        await run(`remove`, `@scoped/package`);
+        await run(`remove`, `@iarna/toml`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.not.toHaveProperty(`devDependencies.@types/scoped__package`);
+        await expect(readJson(`${path}/package.json`)).resolves.not.toHaveProperty(`devDependencies.@types/iarna__toml`);
       })
     );
 
