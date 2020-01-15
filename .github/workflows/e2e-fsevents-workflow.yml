@@ -34,38 +34,47 @@ jobs:
         yarn add fsevents@^1
 
         cat > test.js <<EOT
+          const assert = require('assert');
           const fsevents = require('fsevents');
           const fs = require('fs');
           const path = require('path');
 
           const virtualP = path.resolve('./$$virtual/foo/0');
+          const fileP = path.join(virtualP, 'helloworld');
 
+          const events = [];
           const watcher = fsevents(virtualP);
+          watcher.on('change', (...args) => events.push(args));
           watcher.start();
 
-          let resolve, deferred = new Promise(resolveDeferred => {
-            resolve = resolveDeferred;
-          });
+          async function sleep(n) {
+            return new Promise(resolve => {
+              setTimeout(resolve, n);
+            });
+          }
 
-          watcher.on('change', (p, info) => {
-            console.log('Received a change event', p, info.path, virtualP);
-            resolve(p === virtualP && info.path === virtualP ? 0 : 1);
-          });
+          async function main() {
+            await sleep(1000);
+            fs.writeFileSync(fileP, '');
+            await sleep(1000);
 
-          setTimeout(() => {
-            console.log('Timeout');
-            resolve(1);
-          }, 20000);
+            if (events.length === 0)
+              throw new Error(`No events recorded`);
 
-          setTimeout(() => {
-            fs.writeFileSync('./helloworld', 'some new text');
-          }, 10000);
+            for (const [p] of events) {
+              if (!p.startsWith(virtualP)) {
+                throw new Error(p);
+              }
+            }
+          }
 
-          deferred.then(exitCode => {
-            process.exit(exitCode);
+          main().then(() => {
+            watcher.stop();
           }, error => {
+            watcher.stop();
+
             console.log(error.stack);
-            process.exit(1);
+            process.exitCode = 1;
           });
         EOT
 
