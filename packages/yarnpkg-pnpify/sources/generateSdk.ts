@@ -3,21 +3,17 @@ import CJSON                                       from 'comment-json';
 
 import {dynamicRequire}                            from './dynamicRequire';
 
-const TEMPLATE = (relPnpApiPath: string, module: string, {usePnpify}: {usePnpify: boolean}) => [
+const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {usePnpify}: {usePnpify: boolean}) => [
+  `const {createRequire, createRequireFromPath} = require(\`module\`);\n`,
   `const {dirname, resolve} = require(\`path\`);\n`,
   `\n`,
-  `const relPnpApiPath = ${JSON.stringify(npath.toPortablePath(relPnpApiPath))};\n`,
+  `const relPnpApiPath = ${JSON.stringify(npath.fromPortablePath(relPnpApiPath))};\n`,
   `\n`,
   `const absPnpApiPath = resolve(__dirname, relPnpApiPath);\n`,
-  `const absRootPath = dirname(absPnpApiPath);\n`,
+  `const absRequire = (createRequire || createRequireFromPath)(absPnpApiPath);\n`,
   `\n`,
   `// Setup the environment to be able to require ${module}\n`,
   `require(absPnpApiPath).setup();\n`,
-  `\n`,
-  ...(usePnpify ? [
-    `const pnpifyResolution = require.resolve(\`@yarnpkg/pnpify\`, {paths: [absRootPath]});\n`,
-  ] : []),
-  `const moduleResolution = require.resolve(\`${module}\`, {paths: [absRootPath]});\n`,
   `\n`,
   `// Prepare the environment (to be ready in case of child_process.spawn etc)\n`,
   `process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || \`\`;\n`,
@@ -26,11 +22,11 @@ const TEMPLATE = (relPnpApiPath: string, module: string, {usePnpify}: {usePnpify
     `process.env.NODE_OPTIONS += \` -r \${pnpifyResolution}\`;\n`,
     `\n`,
     `// Apply PnPify to the current process\n`,
-    `require(pnpifyResolution).patchFs();\n`,
+    `absRequire(\`@yarnpkg/pnpify\`).patchFs();\n`,
   ] : []),
   `\n`,
   `// Defer to the real ${module} your application uses\n`,
-  `module.exports = require(moduleResolution);\n`,
+  `module.exports = absRequire(\`${module}\`);\n`,
 ].join(``);
 
 const addVSCodeWorkspaceSettings = async (projectRoot: PortablePath, settings: any) => {
@@ -78,6 +74,22 @@ export const generateEslintWrapper = async (projectRoot: PortablePath, target: P
   });
 };
 
+export const generatePrettierWrapper = async (projectRoot: PortablePath, target: PortablePath) => {
+  const prettier = ppath.join(target, `prettier` as PortablePath);
+  const manifest = ppath.join(prettier, `package.json` as PortablePath);
+  const api = ppath.join(prettier, `index.js` as PortablePath);
+
+  const relPnpApiPath = ppath.relative(ppath.dirname(api), ppath.join(projectRoot, `.pnp.js` as Filename));
+
+  await xfs.mkdirpPromise(ppath.dirname(api));
+  await xfs.writeFilePromise(manifest, JSON.stringify({name: `prettier`, version: `${dynamicRequire(`prettier/package.json`).version}-pnpify`, main: `index.js`}, null, 2));
+  await xfs.writeFilePromise(api, TEMPLATE(relPnpApiPath, `prettier`, {usePnpify: false}));
+
+  await addVSCodeWorkspaceSettings(projectRoot, {
+    [`prettier.prettierPath`]: npath.fromPortablePath(ppath.relative(projectRoot, prettier)),
+  });
+};
+
 const isPackageInstalled = (name: string): boolean => {
   try {
     dynamicRequire.resolve(name);
@@ -91,21 +103,35 @@ const isPackageInstalled = (name: string): boolean => {
   }
 };
 
-export const generateSdk = async (projectRoot: PortablePath): Promise<any> => {
-  const hasTypescript = isPackageInstalled(`typescript`);
-  const hasEslint = isPackageInstalled(`eslint`);
+const SDKS: Array<[string, (projectRoot: PortablePath, target: PortablePath) => Promise<void>]> = [
+  [`typescript`, generateTypescriptWrapper],
+  [`eslint`, generateEslintWrapper],
+  [`prettier`, generatePrettierWrapper],
+];
 
+export const generateSdk = async (projectRoot: PortablePath): Promise<any> => {
   const targetFolder = ppath.join(projectRoot, `.vscode/pnpify` as PortablePath);
 
-  if (!hasTypescript && !hasEslint)
-    console.warn(`Neither 'typescript' nor 'eslint' are installed. Nothing to do.`);
-  else
+  let generatedSomething = false;
+
+  if (xfs.existsSync(targetFolder)) {
+    console.log(`Cleaning the existing SDKs...`);
     await xfs.removePromise(targetFolder);
 
-  if (hasTypescript)
-    await generateTypescriptWrapper(projectRoot, targetFolder);
+    generatedSomething = true;
+  }
 
-  if (hasEslint) {
-    await generateEslintWrapper(projectRoot, targetFolder);
+  for (const [pkgName, generateWrapper] of SDKS) {
+    if (!isPackageInstalled(pkgName))
+      continue;
+
+    console.log(`Installing the SDK for ${pkgName}...`);
+    await generateWrapper(projectRoot, targetFolder);
+
+    generatedSomething = true;
+  }
+
+  if (!generatedSomething) {
+    console.log(`Nothing to do.`);
   }
 };
