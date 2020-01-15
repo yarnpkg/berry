@@ -26,23 +26,14 @@ jobs:
     - name: 'Build the standard bundle'
       run: |
         node ./scripts/run-yarn.js build:cli
-        node ./scripts/run-yarn workspace @yarnpkg/fslib pack
-        node ./scripts/run-yarn workspace @yarnpkg/libzip pack
-        node ./scripts/run-yarn workspace @yarnpkg/pnpify pack
 
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
+        yarn add typescript
 
-        jq '.resolutions["@yarnpkg/fslib"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-fslib/package.tgz"' <<< "$(cat package.json)" > package.json
-        jq '.resolutions["@yarnpkg/libzip"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-libzip/package.tgz"' <<< "$(cat package.json)" > package.json
-        jq '.resolutions["@yarnpkg/pnpify"] = "file:'"$GITHUB_WORKSPACE"'/packages/yarnpkg-pnpify/package.tgz"' <<< "$(cat package.json)" > package.json
-
-        jq '.scripts.tsc = "pnpify tsc"' <<< "$(cat package.json)" > package.json
-
-        yarn add typescript @yarnpkg/pnpify@*
         yarn add ts-pnp left-pad @types/left-pad
 
         echo '{"compilerOptions": {"baseUrl": ".", "strict": true, "esModuleInterop": true}}' > tsconfig.json

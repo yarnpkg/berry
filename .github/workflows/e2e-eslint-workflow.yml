@@ -41,3 +41,18 @@ jobs:
 
         echo '42' | tee ko.js
         ! yarn eslint ko.js
+
+    - name: 'Running the TypeScript integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn init -p
+        yarn add eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin
+
+        echo '{"parser": "@typescript-eslint/parser", "plugins": ["@typescript-eslint"], "rules": {"@typescript-eslint/explicit-function-return-type": "error"}}' > .eslintrc
+
+        echo 'const f = (): number => 42;' | tee ok.ts
+        yarn eslint ok.ts
+
+        echo 'const f = () => 42;' | tee ko.ts
+        ! yarn eslint ko.ts
