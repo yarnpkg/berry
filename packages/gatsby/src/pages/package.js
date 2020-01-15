@@ -41,7 +41,12 @@ const PackagePage = ({ searchState, onSearchStateChange }) => {
   const [tags, setTags] = useState([]);
   const [owners, setOwners] = useState([]);
 
-  const packageName = typeof window !== 'undefined' && window.location.search.slice(1);
+  const [
+    /* leading slash */,
+    /* package/ */,
+    ...parts
+  ] = typeof window !== 'undefined' && window.location.pathname.split('/');
+  const packageName = parts.join('/');
 
   return (<>
     <SearchProvider searchState={searchState} onSearchStateChange={onSearchStateChange}>
