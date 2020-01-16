@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 
 THIS_DIR=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-REPO_DIR="$THIS_DIR/.."
+REPO_DIR="$THIS_DIR/../.."
 
 if ! [[ -z $(git status --porcelain) ]]; then
   echo 'This command must be executed on a clean repository'
