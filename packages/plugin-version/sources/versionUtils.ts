@@ -3,7 +3,6 @@ import {Filename, PortablePath, npath, ppath, xfs}                              
 import {parseSyml, stringifySyml}                                                                                                                       from '@yarnpkg/parsers';
 import {UsageError}                                                                                                                                     from 'clipanion';
 import semver                                                                                                                                           from 'semver';
-import {version}                                                                                                                                        from 'punycode';
 
 // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
 const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
@@ -115,12 +114,12 @@ export async function resolveVersionFiles(project: Project) {
     const versionContent = await xfs.readFilePromise(versionPath, `utf8`);
     const versionData = parseSyml(versionContent);
 
-    for (const [locatorStr, decision] of Object.entries(versionData.releases || {})) {
-      const locator = structUtils.parseLocator(locatorStr);
+    for (const [identStr, decision] of Object.entries(versionData.releases || {})) {
+      const ident = structUtils.parseIdent(identStr);
 
-      const workspace = project.tryWorkspaceByLocator(locator);
+      const workspace = project.tryWorkspaceByIdent(ident);
       if (workspace === null)
-        throw new Error(`Assertion failed: Expected a release definition file to only reference existing workspaces (${ppath.basename(versionPath)} references ${locatorStr})`);
+        throw new Error(`Assertion failed: Expected a release definition file to only reference existing workspaces (${ppath.basename(versionPath)} references ${identStr})`);
 
       if (workspace.manifest.version === null)
         throw new Error(`Assertion failed: Expected the workspace to have a version (${structUtils.prettyLocator(project.configuration, workspace.anchoredLocator)})`);
@@ -223,16 +222,16 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
   const versionData = parseSyml(versionContent);
   const releaseStore: Releases = new Map();
 
-  for (const locatorStr of versionData.declined || []) {
-    const locator = structUtils.parseLocator(locatorStr);
-    const workspace = project.getWorkspaceByLocator(locator);
+  for (const identStr of versionData.declined || []) {
+    const ident = structUtils.parseIdent(identStr);
+    const workspace = project.getWorkspaceByIdent(ident);
 
     releaseStore.set(workspace, Decision.DECLINE);
   }
 
-  for (const [locatorStr, decision] of Object.entries(versionData.releases || {})) {
-    const locator = structUtils.parseLocator(locatorStr);
-    const workspace = project.getWorkspaceByLocator(locator);
+  for (const [identStr, decision] of Object.entries(versionData.releases || {})) {
+    const ident = structUtils.parseIdent(identStr);
+    const workspace = project.getWorkspaceByIdent(ident);
 
     releaseStore.set(workspace, decision as any);
   }
@@ -266,15 +265,15 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
         if (workspace.manifest.version === null)
           continue;
 
-        const locatorStr = structUtils.stringifyLocator(workspace.locator);
+        const identStr = structUtils.stringifyIdent(workspace.locator);
 
         const decision = releaseStore.get(workspace);
         if (decision === Decision.DECLINE) {
-          declined.push(locatorStr);
+          declined.push(identStr);
         } else if (typeof decision !== `undefined`) {
-          releases[locatorStr] = decision;
+          releases[identStr] = decision;
         } else if (changedWorkspaces.has(workspace)) {
-          undecided.push(locatorStr);
+          undecided.push(identStr);
         }
       }
 
@@ -353,20 +352,20 @@ export function getUndecidedDependentWorkspaces(versionFile: Pick<VersionFile, '
 
     for (const dependencyType of Manifest.hardDependencies) {
       for (const descriptor  of workspace.manifest.getForScope(dependencyType).values()) {
-        const matchingWorkspaces = versionFile.project.findWorkspacesByDescriptor(descriptor);
+        const matchingWorkspace = versionFile.project.tryWorkspaceByDescriptor(descriptor);
+        if (matchingWorkspace === null)
+          continue;
 
-        for (const workspaceDependency of matchingWorkspaces) {
-          // We only care about workspaces, and we only care about workspaces that will be bumped
-          if (bumpedWorkspaces.has(workspaceDependency.anchoredLocator.locatorHash)) {
-            // Quick note: we don't want to check whether the workspace pointer
-            // by `resolution` is private, because while it doesn't makes sense
-            // to bump a private package because its dependencies changed, the
-            // opposite isn't true: a (public) package might need to be bumped
-            // because one of its dev dependencies is a (private) package whose
-            // behavior sensibly changed.
+        // We only care about workspaces, and we only care about workspaces that will be bumped
+        if (bumpedWorkspaces.has(matchingWorkspace.anchoredLocator.locatorHash)) {
+          // Quick note: we don't want to check whether the workspace pointer
+          // by `resolution` is private, because while it doesn't makes sense
+          // to bump a private package because its dependencies changed, the
+          // opposite isn't true: a (public) package might need to be bumped
+          // because one of its dev dependencies is a (private) package whose
+          // behavior sensibly changed.
 
-            undecided.push([workspace, workspaceDependency]);
-          }
+          undecided.push([workspace, matchingWorkspace]);
         }
       }
     }
@@ -420,17 +419,16 @@ export function applyReleases(project: Project, newVersions: Map<Workspace, stri
   for (const dependent of project.workspaces) {
     for (const set of Manifest.allDependencies) {
       for (const descriptor of dependent.manifest[set].values()) {
-        const workspaces = project.findWorkspacesByDescriptor(descriptor);
-        if (workspaces.length !== 1)
+        const workspace = project.tryWorkspaceByDescriptor(descriptor);
+        if (workspace === null)
           continue;
 
         // We only care about workspaces that depend on a workspace that will
         // receive a fresh update
-        const dependency = workspaces[0];
-        if (!newVersions.has(dependency))
+        if (!newVersions.has(workspace))
           continue;
 
-        const dependents = miscUtils.getArrayWithDefault(allDependents, dependency);
+        const dependents = miscUtils.getArrayWithDefault(allDependents, workspace);
         dependents.push([dependent, set, descriptor.identHash]);
       }
     }

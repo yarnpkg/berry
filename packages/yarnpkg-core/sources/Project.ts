@@ -67,8 +67,7 @@ export class Project {
   public workspaces: Array<Workspace> = [];
 
   public workspacesByCwd: Map<PortablePath, Workspace> = new Map();
-  public workspacesByLocator: Map<LocatorHash, Workspace> = new Map();
-  public workspacesByIdent: Map<IdentHash, Array<Workspace>> = new Map();
+  public workspacesByIdent: Map<IdentHash, Workspace> = new Map();
 
   public storedResolutions: Map<DescriptorHash, LocatorHash> = new Map();
   public storedDescriptors: Map<DescriptorHash, Descriptor> = new Map();
@@ -206,7 +205,6 @@ export class Project {
     this.workspaces = [];
 
     this.workspacesByCwd = new Map();
-    this.workspacesByLocator = new Map();
     this.workspacesByIdent = new Map();
 
     let workspaceCwds = [this.cwd];
@@ -235,17 +233,13 @@ export class Project {
     const workspace = new Workspace(workspaceCwd, {project: this});
     await workspace.setup();
 
+    if (this.workspacesByIdent.has(workspace.locator.identHash))
+      throw new Error(`Duplicate workspace name ${structUtils.prettyIdent(this.configuration, workspace.locator)}`);
+
     this.workspaces.push(workspace);
 
     this.workspacesByCwd.set(workspaceCwd, workspace);
-
-    this.workspacesByLocator.set(workspace.anchoredLocator.locatorHash, workspace);
-    this.workspacesByLocator.set(workspace.locator.locatorHash, workspace);
-
-    let byIdent = this.workspacesByIdent.get(workspace.locator.identHash);
-    if (!byIdent)
-      this.workspacesByIdent.set(workspace.locator.identHash, byIdent = []);
-    byIdent.push(workspace);
+    this.workspacesByIdent.set(workspace.locator.identHash, workspace);
 
     return workspace;
   }
@@ -293,12 +287,48 @@ export class Project {
     return bestWorkspace;
   }
 
+  tryWorkspaceByIdent(ident: Ident) {
+    const workspace = this.workspacesByIdent.get(ident.identHash);
+
+    if (typeof workspace === `undefined`)
+      return null;
+
+    return workspace;
+  }
+
+  getWorkspaceByIdent(ident: Ident) {
+    const workspace = this.tryWorkspaceByIdent(ident);
+
+    if (!workspace)
+      throw new Error(`Workspace not found (${structUtils.prettyIdent(this.configuration, ident)})`);
+
+    return workspace;
+  }
+
+  tryWorkspaceByDescriptor(descriptor: Descriptor) {
+    const workspace = this.tryWorkspaceByIdent(descriptor);
+
+    if (workspace === null || !workspace.accepts(descriptor.range))
+      return null;
+
+    return workspace;
+  }
+
+  getWorkspaceByDescriptor(descriptor: Descriptor) {
+    const workspace = this.tryWorkspaceByDescriptor(descriptor);
+
+    if (workspace === null)
+      throw new Error(`Workspace not found (${structUtils.prettyDescriptor(this.configuration, descriptor)})`);
+
+    return workspace;
+  }
+
   tryWorkspaceByLocator(locator: Locator) {
     if (structUtils.isVirtualLocator(locator))
       locator = structUtils.devirtualizeLocator(locator);
 
-    const workspace = this.workspacesByLocator.get(locator.locatorHash);
-    if (typeof workspace === `undefined`)
+    const workspace = this.tryWorkspaceByIdent(locator);
+    if (workspace === null || (workspace.locator.locatorHash !== locator.locatorHash && workspace.anchoredLocator.locatorHash !== locator.locatorHash))
       return null;
 
     return workspace;
@@ -306,20 +336,11 @@ export class Project {
 
   getWorkspaceByLocator(locator: Locator) {
     const workspace = this.tryWorkspaceByLocator(locator);
+
     if (!workspace)
       throw new Error(`Workspace not found (${structUtils.prettyLocator(this.configuration, locator)})`);
 
     return workspace;
-  }
-
-  findWorkspacesByDescriptor(descriptor: Descriptor) {
-    const candidateWorkspaces = this.workspacesByIdent.get(descriptor.identHash);
-    if (typeof candidateWorkspaces === `undefined`)
-      return [];
-
-    return candidateWorkspaces.filter(workspace => {
-      return workspace.accepts(descriptor.range);
-    });
   }
 
   forgetTransientResolutions() {
