@@ -112,7 +112,7 @@ export default class NpmPublishCommand extends BaseCommand {
           if (error.name !== `HTTPError`) {
             throw error;
           } else {
-            const message = error.response.body && error.body.response.error
+            const message = error.response.body && error.response.body.error
               ? error.response.body.error
               : `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`;
 
