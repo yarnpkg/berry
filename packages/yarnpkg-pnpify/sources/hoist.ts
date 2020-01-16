@@ -9,7 +9,7 @@ type HoisterWorkTree = Map<NodeId, HoisterWorkNode>;
 
 type Locator = string;
 
-type HoistCandidate = {locator: Locator, paths: Set<NodeId[]>};
+type HoistCandidateSet = {treePath: NodeId[], candidates: Map<Locator, NodeId>};
 
 /**
  * Mapping which packages depend on a given package. It is used to determine hoisting weight,
@@ -19,6 +19,8 @@ type HoistCandidate = {locator: Locator, paths: Set<NodeId[]>};
 type AncestorMap = Map<Locator, { direct: Set<Locator>, indirect: Set<Locator>}>;
 
 const makeLocator = (name: string, reference: string) => `${name}@${reference}`;
+
+let lastNodeId: number;
 
 /**
  * Hoists package tree.
@@ -34,6 +36,7 @@ export const hoist = (tree: HoisterTree): HoisterResult => {
   const treeCopy = cloneTree(tree);
   const ancestorMap = buildAncestorMap(treeCopy);
 
+  lastNodeId = 0;
   hoistTo(treeCopy, '.', ancestorMap);
 
   return shrinkTree(treeCopy);
@@ -50,88 +53,115 @@ export const hoist = (tree: HoisterTree): HoisterResult => {
  */
 const hoistTo = (tree: HoisterWorkTree, rootId: NodeId, ancestorMap: AncestorMap) => {
   let packagesToHoist;
-  let lastNodeId = 0;
 
   const rootNode = tree.get(rootId)!;
+  const hoistedPackages = new Map<Locator, Map<string, NodeId[]>>();
 
-  let MAX_ITER = 10;
-  let iter = 0;
   do {
     const remapedMap = new Map<NodeId, NodeId>();
-    const getNodeId = (id: NodeId) => remapedMap.get(id) || id;
+    const findNodeId = (origId: NodeId, deps: Set<NodeId>): NodeId | undefined => {
+      let candId: NodeId | undefined = origId;
+      do {
+        if (deps.has(candId))
+          return candId;
+        candId = remapedMap.get(candId);
+      } while (candId);
+      return candId;
+    };
 
     packagesToHoist = getHoistablePackages(tree, rootId, ancestorMap);
-    for (const {paths} of packagesToHoist) {
-      for (const nodePath of paths) {
-        for (let idx = 0; idx < nodePath.length - 2; idx++) {
-          const parentNodeId = getNodeId(nodePath[idx]);
-          const parentNode = tree.get(parentNodeId)!;
-          const origNodeId = nodePath[idx + 1];
-          const nodeId = getNodeId(origNodeId);
-          let node = tree.get(nodeId)!;
-          if (nodeId === origNodeId && parentNode.deps.has(nodeId)) {
-            const {name, reference, locator, deps, depNames, hoistedDepNames, peerNames, ...meta} = node;
-            const depCopy = new Set(deps);
-            const depNamesCopy = new Map(depNames);
-            const hoistedDepNamesCopy = new Map(hoistedDepNames);
+    for (const {treePath, candidates} of packagesToHoist) {
+      let locatorPath = '';
+      let idx;
+      let prevNode: HoisterWorkNode;
+      for (idx = 0; idx < treePath.length - 1; idx++) {
+        const parentNodeId = idx === 0 ? treePath[idx] : findNodeId(treePath[idx], prevNode!.deps);
+        if (!parentNodeId)
+          break;
+        const parentNode = tree.get(parentNodeId)!;
+        prevNode = parentNode;
+        locatorPath += (idx === 0 ? '' : '>') + parentNode.locator;
+        const origNodeId = treePath[idx + 1];
+        const nodeId = findNodeId(origNodeId, parentNode.deps);
+        if (!nodeId)
+          break;
 
-            const nodeCopy: HoisterWorkNode = {
-              name,
-              reference,
-              locator,
-              deps: depCopy,
-              depNames: depNamesCopy,
-              hoistedDepNames: hoistedDepNamesCopy,
-              peerNames: new Set(peerNames),
-              ...meta,
-            };
-            const newNodeId = `${lastNodeId++}`;
-            parentNode.deps.delete(nodeId);
-            parentNode.deps.add(newNodeId);
-            tree.set(newNodeId, nodeCopy);
-            remapedMap.set(nodeId, newNodeId);
-            node = nodeCopy;
-          }
+        let node = tree.get(nodeId)!;
+        const {name, reference, locator, deps, depNames, hoistedDepNames, peerNames, ...meta} = node;
+        const depCopy = new Set(deps);
+        const depNamesCopy = new Map(depNames);
+        const hoistedDepNamesCopy = new Map(hoistedDepNames);
 
-          if (idx === nodePath.length - 3) {
-            const hoistedNodeId = getNodeId(nodePath[nodePath.length - 1]);
+        const nodeCopy: HoisterWorkNode = {
+          name,
+          reference,
+          locator,
+          deps: depCopy,
+          depNames: depNamesCopy,
+          hoistedDepNames: hoistedDepNamesCopy,
+          peerNames: new Set(peerNames),
+          ...meta,
+        };
+        const newNodeId = `${lastNodeId++}`;
+        parentNode.deps.delete(nodeId);
+        parentNode.deps.add(newNodeId);
+        tree.set(newNodeId, nodeCopy);
+        remapedMap.set(nodeId, newNodeId);
+        node = nodeCopy;
+
+        if (idx === treePath.length - 2) {
+          for (const [hoistedLocator, origHoistedNodeId] of candidates.entries()) {
+            const hoistedNodeId = findNodeId(origHoistedNodeId, node.deps);
+            if (!hoistedNodeId)
+              break;
             const hoistedNode = tree.get(hoistedNodeId)!;
+            locatorPath += `>${node.locator}`;
 
             // Delete hoisted node from parent node
             node.deps.delete(hoistedNodeId);
             node.depNames.delete(hoistedNode.name);
             node.hoistedDepNames.set(hoistedNode.name, hoistedNode.locator);
 
-            // Add hoisted node to root node
-            rootNode.deps.add(hoistedNodeId);
-            rootNode.depNames.set(hoistedNode.name, hoistedNode.locator);
+            // Add hoisted node to root node, in case it is not already there
+            if (!rootNode.depNames.has(hoistedNode.name)) {
+              rootNode.deps.add(hoistedNodeId);
+              rootNode.depNames.set(hoistedNode.name, hoistedNode.locator);
+            }
+
+            let hoistedPackagesNode = hoistedPackages.get(hoistedLocator)!;
+            if (!hoistedPackages.get(hoistedLocator)) {
+              hoistedPackagesNode = new Map();
+              hoistedPackages.set(hoistedLocator, hoistedPackagesNode);
+            }
+            if (hoistedPackagesNode.has(locatorPath))
+              throw new Error(`Assertion failed. Package ${hoistedLocator} has already been hoisted from ${locatorPath} previously`);
+
+            hoistedPackagesNode.set(locatorPath, treePath);
           }
         }
       }
     }
-  } while (packagesToHoist.size > 0 && iter++ < MAX_ITER);
-  if (iter >= MAX_ITER)
-    throw new Error('Assertion failed. Too many hoising iterations reached!');
+  } while (packagesToHoist.length > 0);
   for (const depId of rootNode.deps) {
     hoistTo(tree, depId, ancestorMap);
   }
 };
 
-const getHoistablePackages = (tree: HoisterWorkTree, rootId: NodeId, ancestorMap: AncestorMap): Set<HoistCandidate> => {
-  const packagesToHoist = new Map<PackageName, { locator: Locator, weight: number, paths: Set<NodeId[]> }>();
+const getHoistablePackages = (tree: HoisterWorkTree, rootId: NodeId, ancestorMap: AncestorMap): HoistCandidateSet[] => {
+  const hoistCandidatePaths = new Map<NodeId[], Map<Locator, NodeId>>();
+  const hoistedPackageNames = new Map<PackageName, { locator: Locator, weight: number, hoistPaths: Set<NodeId[]> }>();
 
   const seenIds = new Set<NodeId>([rootId]);
   const rootNode = tree.get(rootId)!;
 
-  const computeHoistCandidates = (nodePath: NodeId[], parentNodeNames: Map<string, Locator>) => {
-    const nodeId = nodePath[nodePath.length - 1];
+  const computeHoistCandidates = (nodePath: NodeId[], nodeId: NodeId, parentNodeNames: Map<string, Locator>) => {
     if (seenIds.has(nodeId))
       return;
     seenIds.add(nodeId);
 
     const node = tree.get(nodeId)!;
     const sameParentNodeNameLocator = parentNodeNames.get(node.name);
-    const parentNodeId = nodePath[nodePath.length - 2];
+    const parentNodeId = nodePath[nodePath.length - 1];
     const parentNode = tree.get(parentNodeId)!;
 
     let arePeerDepsSatisfied = true;
@@ -145,7 +175,7 @@ const getHoistablePackages = (tree: HoisterWorkTree, rootId: NodeId, ancestorMap
     const isNameAvailable = arePeerDepsSatisfied && (!sameParentNodeNameLocator || sameParentNodeNameLocator === node.locator);
     const isRegularDep = isNameAvailable && !rootNode.peerNames.has(node.name);
     let isHoistable = isRegularDep;
-    const competitorInfo = packagesToHoist.get(node.name);
+    const competitorInfo = hoistedPackageNames.get(node.name);
     const ancestorNode = ancestorMap.get(node.locator)!;
     const weight = ancestorNode.direct.size + ancestorNode.indirect.size;
     if (isHoistable)
@@ -154,13 +184,29 @@ const getHoistablePackages = (tree: HoisterWorkTree, rootId: NodeId, ancestorMap
 
     if (isHoistable) {
       if (!competitorInfo || competitorInfo.locator !== node.locator) {
-        packagesToHoist.set(node.name, {locator: node.locator, weight, paths: new Set([nodePath])});
-      } else {
-        packagesToHoist.get(node.name)!.paths.add(nodePath);
+        if (competitorInfo) {
+          for (const hoistPath of competitorInfo.hoistPaths) {
+            const locatorMap = hoistCandidatePaths.get(hoistPath)!;
+            if (locatorMap.size === 1) {
+              hoistCandidatePaths.delete(hoistPath);
+            } else {
+              locatorMap.delete(competitorInfo.locator);
+            }
+          }
+        }
+        hoistedPackageNames.set(node.name, {locator: node.locator, weight, hoistPaths: new Set()});
       }
-    }
-    for (const depId of node.deps) {
-      computeHoistCandidates([...nodePath, depId], new Map([...parentNodeNames.entries(), [node.name, node.locator]]));
+      let locatorMap = hoistCandidatePaths.get(nodePath);
+      if (!locatorMap) {
+        locatorMap = new Map();
+        hoistCandidatePaths.set(nodePath, locatorMap);
+      }
+      locatorMap.set(node.locator, nodeId);
+      hoistedPackageNames.get(node.name)!.hoistPaths.add(nodePath);
+    } else {
+      for (const depId of node.deps) {
+        computeHoistCandidates([...nodePath, nodeId], depId, new Map([...parentNodeNames.entries(), [node.name, node.locator]]));
+      }
     }
   };
 
@@ -168,11 +214,14 @@ const getHoistablePackages = (tree: HoisterWorkTree, rootId: NodeId, ancestorMap
   for (const depId of rootNode.deps) {
     const dep = tree.get(depId)!;
     for (const subDepId of dep.deps) {
-      computeHoistCandidates([rootId, depId, subDepId], parentNodeNames);
+      computeHoistCandidates([rootId, depId], subDepId, parentNodeNames);
     }
   }
 
-  return new Set(packagesToHoist.values());
+  return Array.from(hoistCandidatePaths.entries())
+    .map(
+      ([treePath, candidates]) => ({treePath, candidates})
+    );
 };
 
 /**
