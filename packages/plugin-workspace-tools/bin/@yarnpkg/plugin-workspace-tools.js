@@ -292,15 +292,11 @@ module.exports = {
             let isRunnable = true;
 
             if (this.topological || this.topologicalDev) {
-              const resolvedSet = this.topologicalDev ? [...workspace.manifest.dependencies, ...workspace.manifest.devDependencies] : workspace.manifest.dependencies;
+              const resolvedSet = this.topologicalDev ? new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]) : workspace.manifest.dependencies;
 
-              for (const [,
-              /*identHash*/
-              descriptor] of resolvedSet) {
-                const workspaces = project.findWorkspacesByDescriptor(descriptor);
-                isRunnable = !workspaces.some(workspace => {
-                  return needsProcessing.has(workspace.anchoredLocator.locatorHash);
-                });
+              for (const descriptor of resolvedSet.values()) {
+                const workspace = project.tryWorkspaceByDescriptor(descriptor);
+                isRunnable = workspace === null || !needsProcessing.has(workspace.anchoredLocator.locatorHash);
 
                 if (!isRunnable) {
                   break;

@@ -8,12 +8,12 @@
     "semver": "^5.6.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.18"
+    "@yarnpkg/core": "^2.0.0-rc.19"
   },
   "devDependencies": {
     "@types/inquirer": "^0.0.43",
     "@types/semver": "^6.0.2",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.18"
+    "@yarnpkg/core": "workspace:^2.0.0-rc.19"
   },
   "repository": {
     "type": "git",

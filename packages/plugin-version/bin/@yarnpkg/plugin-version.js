@@ -385,10 +385,10 @@ module.exports = {
       const versionContent = await fslib_1.xfs.readFilePromise(versionPath, `utf8`);
       const versionData = parsers_1.parseSyml(versionContent);
 
-      for (const [locatorStr, decision] of Object.entries(versionData.releases || {})) {
-        const locator = core_1.structUtils.parseLocator(locatorStr);
-        const workspace = project.tryWorkspaceByLocator(locator);
-        if (workspace === null) throw new Error(`Assertion failed: Expected a release definition file to only reference existing workspaces (${fslib_1.ppath.basename(versionPath)} references ${locatorStr})`);
+      for (const [identStr, decision] of Object.entries(versionData.releases || {})) {
+        const ident = core_1.structUtils.parseIdent(identStr);
+        const workspace = project.tryWorkspaceByIdent(ident);
+        if (workspace === null) throw new Error(`Assertion failed: Expected a release definition file to only reference existing workspaces (${fslib_1.ppath.basename(versionPath)} references ${identStr})`);
         if (workspace.manifest.version === null) throw new Error(`Assertion failed: Expected the workspace to have a version (${core_1.structUtils.prettyLocator(project.configuration, workspace.anchoredLocator)})`);
         const candidateRelease = candidateReleases.get(workspace);
         const suggestedRelease = applyStrategy(workspace.manifest.version, decision);
@@ -458,15 +458,15 @@ module.exports = {
     const versionData = parsers_1.parseSyml(versionContent);
     const releaseStore = new Map();
 
-    for (const locatorStr of versionData.declined || []) {
-      const locator = core_1.structUtils.parseLocator(locatorStr);
-      const workspace = project.getWorkspaceByLocator(locator);
+    for (const identStr of versionData.declined || []) {
+      const ident = core_1.structUtils.parseIdent(identStr);
+      const workspace = project.getWorkspaceByIdent(ident);
       releaseStore.set(workspace, Decision.DECLINE);
     }
 
-    for (const [locatorStr, decision] of Object.entries(versionData.releases || {})) {
-      const locator = core_1.structUtils.parseLocator(locatorStr);
-      const workspace = project.getWorkspaceByLocator(locator);
+    for (const [identStr, decision] of Object.entries(versionData.releases || {})) {
+      const ident = core_1.structUtils.parseIdent(identStr);
+      const workspace = project.getWorkspaceByIdent(ident);
       releaseStore.set(workspace, decision);
     }
 
@@ -488,15 +488,15 @@ module.exports = {
         for (const workspace of project.workspaces) {
           // Let's assume that packages without versions don't need to see their version increased
           if (workspace.manifest.version === null) continue;
-          const locatorStr = core_1.structUtils.stringifyLocator(workspace.locator);
+          const identStr = core_1.structUtils.stringifyIdent(workspace.locator);
           const decision = releaseStore.get(workspace);
 
           if (decision === Decision.DECLINE) {
-            declined.push(locatorStr);
+            declined.push(identStr);
           } else if (typeof decision !== `undefined`) {
-            releases[locatorStr] = decision;
+            releases[identStr] = decision;
           } else if (changedWorkspaces.has(workspace)) {
-            undecided.push(locatorStr);
+            undecided.push(identStr);
           }
         }
 
@@ -565,19 +565,17 @@ module.exports = {
 
       for (const dependencyType of core_1.Manifest.hardDependencies) {
         for (const descriptor of workspace.manifest.getForScope(dependencyType).values()) {
-          const matchingWorkspaces = versionFile.project.findWorkspacesByDescriptor(descriptor);
+          const matchingWorkspace = versionFile.project.tryWorkspaceByDescriptor(descriptor);
+          if (matchingWorkspace === null) continue; // We only care about workspaces, and we only care about workspaces that will be bumped
 
-          for (const workspaceDependency of matchingWorkspaces) {
-            // We only care about workspaces, and we only care about workspaces that will be bumped
-            if (bumpedWorkspaces.has(workspaceDependency.anchoredLocator.locatorHash)) {
-              // Quick note: we don't want to check whether the workspace pointer
-              // by `resolution` is private, because while it doesn't makes sense
-              // to bump a private package because its dependencies changed, the
-              // opposite isn't true: a (public) package might need to be bumped
-              // because one of its dev dependencies is a (private) package whose
-              // behavior sensibly changed.
-              undecided.push([workspace, workspaceDependency]);
-            }
+          if (bumpedWorkspaces.has(matchingWorkspace.anchoredLocator.locatorHash)) {
+            // Quick note: we don't want to check whether the workspace pointer
+            // by `resolution` is private, because while it doesn't makes sense
+            // to bump a private package because its dependencies changed, the
+            // opposite isn't true: a (public) package might need to be bumped
+            // because one of its dev dependencies is a (private) package whose
+            // behavior sensibly changed.
+            undecided.push([workspace, matchingWorkspace]);
           }
         }
       }
@@ -623,13 +621,12 @@ module.exports = {
     for (const dependent of project.workspaces) {
       for (const set of core_1.Manifest.allDependencies) {
         for (const descriptor of dependent.manifest[set].values()) {
-          const workspaces = project.findWorkspacesByDescriptor(descriptor);
-          if (workspaces.length !== 1) continue; // We only care about workspaces that depend on a workspace that will
+          const workspace = project.tryWorkspaceByDescriptor(descriptor);
+          if (workspace === null) continue; // We only care about workspaces that depend on a workspace that will
           // receive a fresh update
 
-          const dependency = workspaces[0];
-          if (!newVersions.has(dependency)) continue;
-          const dependents = core_1.miscUtils.getArrayWithDefault(allDependents, dependency);
+          if (!newVersions.has(workspace)) continue;
+          const dependents = core_1.miscUtils.getArrayWithDefault(allDependents, workspace);
           dependents.push([dependent, set, descriptor.identHash]);
         }
       }

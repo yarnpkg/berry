@@ -1,14 +1,14 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "2.0.0-rc.23",
+  "version": "2.0.0-rc.24",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.8",
     "@yarnpkg/plugin-compat": "workspace:^2.0.0-rc.4",
-    "@yarnpkg/plugin-constraints": "workspace:^2.0.0-rc.10",
+    "@yarnpkg/plugin-constraints": "workspace:^2.0.0-rc.11",
     "@yarnpkg/plugin-dlx": "workspace:^2.0.0-rc.11",
-    "@yarnpkg/plugin-essentials": "workspace:^2.0.0-rc.19",
+    "@yarnpkg/plugin-essentials": "workspace:^2.0.0-rc.20",
     "@yarnpkg/plugin-file": "workspace:^2.0.0-rc.11",
     "@yarnpkg/plugin-git": "workspace:^2.0.0-rc.14",
     "@yarnpkg/plugin-github": "workspace:^2.0.0-rc.11",
@@ -16,11 +16,11 @@
     "@yarnpkg/plugin-init": "workspace:^2.0.0-rc.11",
     "@yarnpkg/plugin-link": "workspace:^2.0.0-rc.10",
     "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.13",
-    "@yarnpkg/plugin-npm-cli": "workspace:^2.0.0-rc.11",
-    "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.14",
+    "@yarnpkg/plugin-npm-cli": "workspace:^2.0.0-rc.12",
+    "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.15",
     "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.3",
     "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.14",
-    "@yarnpkg/plugin-version": "workspace:^2.0.0-rc.18",
+    "@yarnpkg/plugin-version": "workspace:^2.0.0-rc.19",
     "@yarnpkg/shell": "workspace:^2.0.0-rc.4",
     "chalk": "^3.0.0",
     "clipanion": "^2.1.5",
@@ -32,14 +32,14 @@
   "devDependencies": {
     "@types/promise.prototype.finally": "^2.0.3",
     "@yarnpkg/builder": "workspace:^2.0.0-rc.13",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.18",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.19",
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.15",
     "micromatch": "^4.0.2",
     "typescript": "^3.7.4"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.18"
+    "@yarnpkg/core": "^2.0.0-rc.19"
   },
   "scripts": {
     "postpack": "rm -rf lib",

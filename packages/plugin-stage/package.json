@@ -7,13 +7,13 @@
     "clipanion": "^2.1.5"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.23",
-    "@yarnpkg/core": "^2.0.0-rc.18"
+    "@yarnpkg/cli": "^2.0.0-rc.24",
+    "@yarnpkg/core": "^2.0.0-rc.19"
   },
   "devDependencies": {
     "@yarnpkg/builder": "workspace:^2.0.0-rc.13",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.23",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.18",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.24",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.19",
     "typescript": "^3.7.4"
   },
   "scripts": {

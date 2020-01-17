@@ -8413,16 +8413,16 @@ module.exports = {
       const ident = core_1.structUtils.parseIdent(descriptorIdent.id);
       const descriptor = core_1.structUtils.makeDescriptor(ident, descriptorRange.id);
       const project = getProject(thread);
-      const workspaces = project.findWorkspacesByDescriptor(descriptor);
+      const workspace = project.tryWorkspaceByDescriptor(descriptor);
 
       if (isVariable(workspaceCwd)) {
-        for (const workspace of workspaces) {
+        if (workspace !== null) {
           prependGoals(thread, point, [new tau_prolog_1.default.type.Term(`=`, [workspaceCwd, new tau_prolog_1.default.type.Term(String(workspace.relativeCwd))])]);
         }
       }
 
       if (isAtom(workspaceCwd)) {
-        if (workspaces.find(workspace => workspace.relativeCwd === workspaceCwd.id)) {
+        if (workspace !== null && workspace.relativeCwd === workspaceCwd.id) {
           thread.success(point);
         }
       }

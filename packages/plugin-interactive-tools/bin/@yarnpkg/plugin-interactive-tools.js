@@ -280,7 +280,7 @@ module.exports = {
         useSubmit(useMinistore_1.useMinistore());
         const allDependencies = new Map();
 
-        for (const workspace of project.workspaces) for (const dependencyType of [`dependencies`, `devDependencies`]) for (const descriptor of workspace.manifest[dependencyType].values()) if (project.findWorkspacesByDescriptor(descriptor).length === 0) allDependencies.set(descriptor.descriptorHash, descriptor);
+        for (const workspace of project.workspaces) for (const dependencyType of [`dependencies`, `devDependencies`]) for (const descriptor of workspace.manifest[dependencyType].values()) if (project.tryWorkspaceByDescriptor(descriptor) === null) allDependencies.set(descriptor.descriptorHash, descriptor);
 
         const sortedDependencies = core_1.miscUtils.sortMap(allDependencies.values(), descriptor => {
           return core_1.structUtils.stringifyDescriptor(descriptor);
