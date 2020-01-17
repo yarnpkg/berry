@@ -1,6 +1,6 @@
 import React, { Component }            from 'react';
 import bytes                           from 'bytes';
-import algoliasearch                   from 'algoliasearch/lite';
+import algoliasearch                   from 'algoliasearch';
 import qs                              from 'qs';
 import formatDistance                  from 'date-fns/formatDistance';
 import styled                          from '@emotion/styled';
