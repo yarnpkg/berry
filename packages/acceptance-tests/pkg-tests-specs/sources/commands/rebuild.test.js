@@ -1,5 +1,3 @@
-import {xfs, ppath} from '@yarnpkg/fslib';
-
 describe(`Commands`, () => {
   describe(`rebuild`, () => {
     test(
@@ -12,7 +10,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(source(`require('no-deps-scripted/logs')`)).resolves.toEqual([
+        await expect(source(`require('no-deps-scripted/log')`)).resolves.toEqual([
           `preinstall`,
           `install`,
           `postinstall`,
@@ -20,7 +18,7 @@ describe(`Commands`, () => {
 
         await run(`rebuild`);
 
-        await expect(source(`require('no-deps-scripted/logs')`)).resolves.toEqual([
+        await expect(source(`require('no-deps-scripted/log')`)).resolves.toEqual([
           `preinstall`,
           `install`,
           `postinstall`,
@@ -29,7 +27,7 @@ describe(`Commands`, () => {
           `postinstall`,
         ]);
 
-        await expect(source(`require('no-deps-scripted-bis/logs')`)).resolves.toEqual([
+        await expect(source(`require('no-deps-scripted-bis/log')`)).resolves.toEqual([
           `preinstall`,
           `install`,
           `postinstall`,
@@ -50,7 +48,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(source(`require('no-deps-scripted/logs')`)).resolves.toEqual([
+        await expect(source(`require('no-deps-scripted/log')`)).resolves.toEqual([
           `preinstall`,
           `install`,
           `postinstall`,
@@ -58,7 +56,7 @@ describe(`Commands`, () => {
 
         await run(`rebuild`, `no-deps-scripted`);
 
-        await expect(source(`require('no-deps-scripted/logs')`)).resolves.toEqual([
+        await expect(source(`require('no-deps-scripted/log')`)).resolves.toEqual([
           `preinstall`,
           `install`,
           `postinstall`,
@@ -67,7 +65,7 @@ describe(`Commands`, () => {
           `postinstall`,
         ]);
 
-        await expect(source(`require('no-deps-scripted-bis/logs')`)).resolves.toEqual([
+        await expect(source(`require('no-deps-scripted-bis/log')`)).resolves.toEqual([
           `preinstall`,
           `install`,
           `postinstall`,

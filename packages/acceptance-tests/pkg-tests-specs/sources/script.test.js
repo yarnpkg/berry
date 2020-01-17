@@ -266,7 +266,7 @@ describe(`Scripts tests`, () => {
     }, async ({path, run, source}) => {
       await run(`install`);
 
-      await expect(source(`require('no-deps-scripted/logs')`)).resolves.toEqual([
+      await expect(source(`require('no-deps-scripted/log')`)).resolves.toEqual([
         `preinstall`,
         `install`,
         `postinstall`,
@@ -274,7 +274,7 @@ describe(`Scripts tests`, () => {
 
       await run(`install`);
 
-      await expect(source(`require('no-deps-scripted/logs')`)).resolves.toEqual([
+      await expect(source(`require('no-deps-scripted/log')`)).resolves.toEqual([
         `preinstall`,
         `install`,
         `postinstall`,
