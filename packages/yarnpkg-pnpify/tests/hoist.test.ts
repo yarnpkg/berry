@@ -292,4 +292,46 @@ describe('hoist', () => {
       'D': {deps: ['B@X$1', 'C@X']},
     }));
   });
+
+  it('should hoist different copies of a package independently (complicated case)', () => {
+    // . → A → B@X → C@X → D@X
+    //     → C@Y
+    //   → E → B@X → C@X → D@X
+    //   → F → G → B@X → C@X → D@X
+    //         → D@Z
+    //   → B@Y
+    //   → D@Y
+    //   → C@Z
+    // should be hoisted to (top C@X instance must not be hoisted):
+    // . → A → B@X → C@X
+    //     → C@Y
+    //     → D@X
+    //   → E → B@X
+    //     → C@X
+    //     → D@X
+    //   → F
+    //   → G → B@X
+    //     → C@X → D@X
+    //     → D@Z
+    //   → B@Y
+    //   → D@Y
+    //   → C@Z
+    const tree = {
+      '.': {deps: ['A', 'E', 'F', 'B@Y', 'C@Z', 'D@Y']},
+      'A': {deps: ['B@X', 'C@Y']},
+      'B@X': {deps: ['C@X']},
+      'C@X': {deps: ['D@X']},
+      'E': {deps: ['B@X']},
+      'F': {deps: ['G']},
+      'G': {deps: ['B@X', 'D@Z']},
+    };
+    expect(hoist(toTree(tree))).toEqual(toResult({
+      '.': {deps: ['A', 'E', 'F', 'G', 'B@Y', 'D@Y', 'C@Z']},
+      'A': {deps: ['B@X', 'C@Y', 'D@X']},
+      'B@X': {deps: ['C@X']},
+      'E': {deps: ['B@X$1', 'C@X$1', 'D@X']},
+      'G': {deps: ['B@X$2', 'C@X$2', 'D@Z']},
+      'C@X$2': {deps: ['D@X']},
+    }));
+  });
 });
