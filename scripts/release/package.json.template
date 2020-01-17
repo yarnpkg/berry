@@ -1,0 +1,29 @@
+{
+  "name": "yarn",
+  "description": "📦🐈 Safe, stable, reproducible projects",
+
+  "version": "{{version}}",
+  "license": "BSD-2-Clause",
+
+  "bin": {
+    "yarn": "./bin/yarn.js",
+    "yarnpkg": "./bin/yarn.js"
+  },
+
+  "preferGlobal": true,
+
+  "engines": {
+    "node": "^10"
+  },
+
+  "author": {
+    "name": "Maël Nison",
+    "email": "nison.mael@gmail.com",
+    "url": "https://twitter.com/arcanis"
+  },
+
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yarnpkg/berry.git"
+  }
+}

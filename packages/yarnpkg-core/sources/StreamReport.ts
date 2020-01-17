@@ -42,9 +42,9 @@ const PROGRESS_STYLES = makeRecord({
     chars: [`🎃`, `🦇`],
     size: 40,
   },
-  yearly: {
+  hogsfather: {
     date: [31, 12],
-    chars: [`🎉`, `🕛`],
+    chars: [`🎉`, `🎄`],
     size: 40,
   },
   default: {
@@ -353,11 +353,16 @@ export class StreamReport extends Report {
     // @ts-ignore
     const style = PROGRESS_STYLES[styleName];
 
+    const PAD_LEFT = `➤ YN0000: ┌ `.length;
+
+    const maxWidth = Math.min(process.stdout.columns - PAD_LEFT, 80);
+    const scaledSize = Math.floor(style.size * maxWidth / 80);
+
     for (const {progress} of this.progress.values()) {
-      const okSize = Math.floor(style.size * progress);
+      const okSize = scaledSize * progress;
 
       const ok = style.chars[0].repeat(okSize);
-      const ko = style.chars[1].repeat(style.size - okSize);
+      const ko = style.chars[1].repeat(scaledSize - okSize);
 
       this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(null)}: ${spinner} ${ok}${ko}\n`);
     }

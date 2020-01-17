@@ -71,7 +71,7 @@ export default class SetVersionCommand extends BaseCommand {
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(this.context.cwd);
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const target = typeof this.installPath !== `undefined`
       ? ppath.resolve(this.context.cwd, npath.toPortablePath(this.installPath))

@@ -154,7 +154,7 @@ const hunkLinetypes: {[k: string]: PatchMutationPart['type'] | `pragma` | `heade
   undefined: `context`,
 };
 
-function parsePatchLines(lines: Array<string>, {supportLegacyDiffs}: {supportLegacyDiffs: boolean}) {
+function parsePatchLines(lines: Array<string>) {
   const result: Array<FileDeets> = [];
 
   let currentFilePatch: FileDeets = emptyFilePatch();
@@ -226,13 +226,6 @@ function parsePatchLines(lines: Array<string>, {supportLegacyDiffs}: {supportLeg
         currentFilePatch.toPath = line.slice(`+++ b/`.length).trim();
       }
     } else {
-      if (supportLegacyDiffs && line.startsWith(`--- a/`)) {
-        state = `parsing header`;
-        commitFilePatch();
-        i -= 1;
-        continue;
-      }
-
       // parsing hunks
       const lineType = hunkLinetypes[line[0]] || null;
       switch (lineType) {
@@ -420,18 +413,11 @@ function parseFileMode(mode: string): FileMode {
 
 export function parsePatchFile(file: string): ParsedPatchFile {
   const lines = file.split(/\n/g);
+
   if (lines[lines.length - 1] === ``)
     lines.pop();
 
-  try {
-    return interpretParsedPatchFile(parsePatchLines(lines, {supportLegacyDiffs: false}));
-  } catch (e) {
-    if (e instanceof Error && e.message === `hunk header integrity check failed`) {
-      return interpretParsedPatchFile(parsePatchLines(lines, {supportLegacyDiffs: true}));
-    } else {
-      throw e;
-    }
-  }
+  return interpretParsedPatchFile(parsePatchLines(lines));
 }
 
 export function verifyHunkIntegrity(hunk: Hunk) {
@@ -461,6 +447,7 @@ export function verifyHunkIntegrity(hunk: Hunk) {
   }
 
   if (originalLength !== hunk.header.original.length || patchedLength !== hunk.header.patched.length) {
-    throw new Error(`hunk header integrity check failed`);
+    const format = (n: number) => n < 0 ? n : `+${n}`;
+    throw new Error(`hunk header integrity check failed (expected @@ ${format(hunk.header.original.length)} ${format(hunk.header.patched.length)} @@, got @@ ${format(originalLength)} ${format(patchedLength)} @@)`);
   }
 }

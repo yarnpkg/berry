@@ -213,10 +213,12 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
         if (workspace.manifest.name !== null && request.identHash === workspace.manifest.name.identHash)
           continue;
 
-        for (const workspace of project.workspacesByIdent.get(request.identHash) || []) {
-          const reason = `Attach ${structUtils.prettyWorkspace(project.configuration, workspace)} (local workspace at ${workspace.cwd})`;
-          suggested.push({descriptor: workspace.anchoredDescriptor, reason});
-        }
+        const candidateWorkspace = project.tryWorkspaceByIdent(request);
+        if (candidateWorkspace === null)
+          continue;
+
+        const reason = `Attach ${structUtils.prettyWorkspace(project.configuration, candidateWorkspace)} (local workspace at ${candidateWorkspace.cwd})`;
+        suggested.push({descriptor: candidateWorkspace.anchoredDescriptor, reason});
       } break;
 
       case Strategy.LATEST: {

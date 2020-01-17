@@ -1,11 +1,11 @@
-import {BaseCommand}                                                    from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport} from '@yarnpkg/core';
-import {httpUtils, structUtils}                                         from '@yarnpkg/core';
-import {PortablePath, npath, ppath, xfs}                                from '@yarnpkg/fslib';
-import {Command}                                                        from 'clipanion';
-import {runInNewContext}                                                from 'vm';
+import {BaseCommand}                                                               from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport, miscUtils} from '@yarnpkg/core';
+import {httpUtils, structUtils}                                                    from '@yarnpkg/core';
+import {PortablePath, npath, ppath, xfs}                                           from '@yarnpkg/fslib';
+import {Command}                                                                   from 'clipanion';
+import {runInNewContext}                                                           from 'vm';
 
-import {getAvailablePlugins}                                            from './list';
+import {getAvailablePlugins}                                                       from './list';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginDlCommand extends BaseCommand {
@@ -30,8 +30,14 @@ export default class PluginDlCommand extends BaseCommand {
       `Download and activate the "@yarnpkg/plugin-exec" plugin`,
       `$0 plugin import @yarnpkg/plugin-exec`,
     ], [
+      `Download and activate the "@yarnpkg/plugin-exec" plugin (shorthand)`,
+      `$0 plugin import exec`,
+    ], [
       `Download and activate a community plugin`,
       `$0 plugin import https://example.org/path/to/plugin.js`,
+    ], [
+      `Activate a local plugin`,
+      `$0 plugin import ./path/to/plugin.js`,
     ]],
   });
 
@@ -45,35 +51,37 @@ export default class PluginDlCommand extends BaseCommand {
     }, async report => {
       const {project} = await Project.find(configuration, this.context.cwd);
 
-      const name = this.name!;
-      const candidatePath = ppath.resolve(this.context.cwd, npath.toPortablePath(name));
+      let pluginSpec: string;
+      let pluginBuffer: Buffer;
+      if (this.name.match(/^\.{0,2}[\\\/]/) || npath.isAbsolute(this.name)) {
+        const candidatePath = ppath.resolve(this.context.cwd, npath.toPortablePath(this.name));
 
-      let pluginBuffer;
-
-      if (await xfs.existsPromise(candidatePath)) {
         report.reportInfo(MessageName.UNNAMED, `Reading ${configuration.format(candidatePath, `green`)}`);
+
+        pluginSpec = ppath.relative(project.cwd, candidatePath);
         pluginBuffer = await xfs.readFilePromise(candidatePath);
       } else {
-        const ident = structUtils.tryParseIdent(name);
-
         let pluginUrl;
-        if (ident) {
-          const key = structUtils.stringifyIdent(ident);
-          const data = await getAvailablePlugins(configuration);
-
-          if (!Object.prototype.hasOwnProperty.call(data, key))
-            throw new ReportError(MessageName.PLUGIN_NAME_NOT_FOUND, `Couldn't find a plugin named "${key}" on the remote registry. Note that only the plugins referenced on our website (https://github.com/yarnpkg/berry/blob/master/plugins.yml) can be referenced by their name; any other plugin will have to be referenced through its public url (for example https://github.com/yarnpkg/berry/raw/master/packages/plugin-typescript/bin/%40yarnpkg/plugin-typescript.js).`);
-
-          pluginUrl = data[key].url;
-        } else {
+        if (this.name.match(/^https?:/)) {
           try {
             // @ts-ignore We don't want to add the dom to the TS env just for this line
-            new URL(name);
+            new URL(this.name);
           } catch {
-            throw new ReportError(MessageName.INVALID_PLUGIN_REFERENCE, `Plugin specifier "${name}" is neither a plugin name nor a valid url`);
+            throw new ReportError(MessageName.INVALID_PLUGIN_REFERENCE, `Plugin specifier "${this.name}" is neither a plugin name nor a valid url`);
           }
 
+          pluginSpec = this.name;
           pluginUrl = name;
+        } else {
+          const ident = structUtils.parseIdent(this.name.replace(/^((@yarnpkg\/)?|(plugin-)?)/, `@yarnpkg/plugin-`));
+          const identStr = structUtils.stringifyIdent(ident);
+          const data = await getAvailablePlugins(configuration);
+
+          if (!Object.prototype.hasOwnProperty.call(data, identStr))
+            throw new ReportError(MessageName.PLUGIN_NAME_NOT_FOUND, `Couldn't find a plugin named "${identStr}" on the remote registry. Note that only the plugins referenced on our website (https://github.com/yarnpkg/berry/blob/master/plugins.yml) can be referenced by their name; any other plugin will have to be referenced through its public url (for example https://github.com/yarnpkg/berry/raw/master/packages/plugin-typescript/bin/%40yarnpkg/plugin-typescript.js).`);
+
+          pluginSpec = identStr;
+          pluginUrl = data[identStr].url;
         }
 
         report.reportInfo(MessageName.UNNAMED, `Downloading ${configuration.format(pluginUrl, `green`)}`);
@@ -88,18 +96,45 @@ export default class PluginDlCommand extends BaseCommand {
         exports: vmExports,
       });
 
-      const relativePath = `.yarn/plugins/${vmModule.exports.name}.js` as PortablePath;
+      const pluginName = vmModule.exports.name;
+
+      const relativePath = `.yarn/plugins/${pluginName}.js` as PortablePath;
       const absolutePath = ppath.resolve(project.cwd, relativePath);
 
       report.reportInfo(MessageName.UNNAMED, `Saving the new plugin in ${configuration.format(relativePath, `magenta`)}`);
       await xfs.mkdirpPromise(ppath.dirname(absolutePath));
       await xfs.writeFilePromise(absolutePath, pluginBuffer);
 
-      await Configuration.updateConfiguration(project.cwd, (current: any) => ({
-        plugins: (current.plugins || []).concat([
-          relativePath,
-        ]),
-      }));
+      const pluginMeta = {
+        path: relativePath,
+        spec: pluginSpec,
+      };
+
+      await Configuration.updateConfiguration(project.cwd, (current: any) => {
+        const plugins = [];
+        let hasBeenReplaced = false;
+
+        for (const entry of current.plugins || []) {
+          const userProvidedPath = typeof entry !== `string`
+            ? entry.path
+            : entry;
+
+          const pluginPath = ppath.resolve(project.cwd, npath.toPortablePath(userProvidedPath));
+          const {name} = miscUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
+
+          if (name !== pluginName) {
+            plugins.push(entry);
+          } else {
+            plugins.push(pluginMeta);
+            hasBeenReplaced = true;
+          }
+        }
+
+        if (!hasBeenReplaced)
+          plugins.push(pluginMeta);
+
+        return {plugins};
+      });
     });
 
     return report.exitCode();

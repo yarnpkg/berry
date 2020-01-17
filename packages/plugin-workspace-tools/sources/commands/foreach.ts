@@ -114,7 +114,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     const {project, workspace: cwdWorkspace} = await Project.find(configuration, this.context.cwd);
 
     if (!this.all && !cwdWorkspace)
-      throw new WorkspaceRequiredError(this.context.cwd);
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const command = this.cli.process([this.commandName, ...this.args]) as {path: string[], scriptName?: string};
     const scriptName = command.path.length === 1 && command.path[0] === `run` && typeof command.scriptName !== `undefined`
@@ -225,15 +225,12 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
           if (this.topological || this.topologicalDev) {
             const resolvedSet = this.topologicalDev
-              ? [...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]
+              ? new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies])
               : workspace.manifest.dependencies;
 
-            for (const [/*identHash*/, descriptor] of resolvedSet) {
-              const workspaces = project.findWorkspacesByDescriptor(descriptor);
-
-              isRunnable = !workspaces.some(workspace => {
-                return needsProcessing.has(workspace.anchoredLocator.locatorHash);
-              });
+            for (const descriptor of resolvedSet.values()) {
+              const workspace = project.tryWorkspaceByDescriptor(descriptor);
+              isRunnable = workspace === null || !needsProcessing.has(workspace.anchoredLocator.locatorHash);
 
               if (!isRunnable) {
                 break;

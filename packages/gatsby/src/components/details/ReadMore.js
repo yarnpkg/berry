@@ -94,6 +94,10 @@ const ReadMoreContainer = styled.div`
     font-size: 1.25rem;
     border-left: .25rem solid #eceeef;
   }
+
+  img {
+    max-width: 100%;
+  }
 `;
 
 const ReadMore = ({text, height, children}) => {

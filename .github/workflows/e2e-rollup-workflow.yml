@@ -1,0 +1,124 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-rollup-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E rollup.js'
+jobs:
+  chore:
+    name: 'Validating rollup.js'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn init -p
+        yarn add -D rollup@^1.29.0
+
+        # Tree-shaking
+        echo "export default { input: 'src/main.js', output: { file: 'dist/bundle.js', format: 'cjs' } };" | tee rollup.config.js
+
+        mkdir src
+        echo "export function square(x) { return x * x } export function cube(x) { return x * x * x }" | tee src/maths.js
+        echo "import { cube } from './maths.js'; console.log(cube(5));" | tee src/main.js
+
+        yarn rollup -c
+        [[ "$(node dist/bundle.js)" = "125" ]]
+        cat dist/bundle.js | grep -v "square"
+
+        rm -rf dist src
+
+        # Multiple entry modules
+        echo "export default { input: ['src/main.js', 'src/otherEntry.js'], output: { dir: 'dist', format: 'cjs' } };" | tee rollup.config.js
+
+        mkdir src
+        echo "import hyperCube from './hyperCube.js'; console.log(hyperCube(5));" | tee src/main.js
+        echo "import cube from './cube.js'; console.log(cube(5));" | tee src/otherEntry.js
+        echo "import square from './square.js'; export default function cube(x) { return square(x) * x; }" | tee src/cube.js
+        echo "import cube from './cube.js'; export default function hyperCube(x) { return cube(x) * x; }" | tee src/hyperCube.js
+        echo "export default function square(x) { return x * x; }" | tee src/square.js
+
+        yarn rollup -c
+        [[ "$(node dist/main.js)" = "625" ]]
+        [[ "$(node dist/otherEntry.js)" = "125" ]]
+        ls dist | grep "cube"
+
+        rm -rf dist src
+
+        # With NPM packages
+        yarn add the-answer@^1.0.0
+        yarn add -D @rollup/plugin-node-resolve@^7.0.0
+
+        echo "import resolve from '@rollup/plugin-node-resolve'; export default { input: 'src/main.js', output: { file: 'dist/bundle.js', format: 'cjs' }, plugins: [resolve()]};" | tee rollup.config.js
+
+        mkdir src
+        echo "import answer from 'the-answer'; console.log('the answer is ' + answer);" | tee src/main.js
+
+        yarn rollup -c
+        [[ "$(node dist/bundle.js)" = "the answer is 42" ]]
+
+        rm -rf dist src
+
+        # Peer dependencies
+        yarn add -P lodash
+
+        echo "import resolve from '@rollup/plugin-node-resolve'; export default { input: 'src/main.js', output: { file: 'dist/bundle.js', format: 'cjs' }, plugins: [resolve()], external: ['lodash']};" | tee rollup.config.js
+
+        mkdir src
+        echo "import answer from 'the-answer'; import _ from 'lodash';" | tee src/main.js
+
+        yarn rollup -c
+        cat dist/bundle.js | grep -v "lodash"
+
+        rm -rf src dist
+
+        # Babel
+        yarn add -D rollup-plugin-babel@^4.3.3 @babel/core@^7.7.7 @babel/preset-env@^7.7.7
+
+        echo "import resolve from '@rollup/plugin-node-resolve'; import babel from 'rollup-plugin-babel'; export default { input: 'src/main.js', output: { file: 'dist/bundle.js', format: 'cjs' }, plugins: [resolve(), babel({ exclude: 'node_modules/**' })]};" | tee rollup.config.js
+
+        mkdir src
+        echo '{ "presets": [["@babel/preset-env", { "modules": false }]] }' | tee src/.babelrc
+        echo "import answer from 'the-answer'; console.log(\`the answer is \${answer}\`);" | tee src/main.js
+
+        yarn rollup -c
+        [[ "$(node dist/bundle.js)" = "the answer is 42" ]]
+        cat dist/bundle.js | grep -v "console.log(\`"
+
+        rm -rf src dist
+
+        # rollup-plugin-postcss
+        yarn add -D rollup-plugin-postcss@^2.0.3
+
+        echo "import postcss from 'rollup-plugin-postcss'; export default { input: 'src/main.js', output: { file: 'dist/bundle.js', format: 'cjs' }, plugins: [postcss({ extract: true, modules: true })] }" | tee rollup.config.js
+
+        mkdir src
+        echo "import style from './style.css'; console.log(style);" | tee src/main.js
+        echo ".app { color: red; }" | tee src/style.css
+
+        yarn rollup -c
+        [[ "$(cat dist/bundle.css)" = ".style_app__3FC6W { color: red; }" ]]
+        [[ "$(node dist/bundle.js)" = "{ app: 'style_app__3FC6W' }" ]]
+
+        rm -rf src dist
+
+

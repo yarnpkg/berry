@@ -9,12 +9,12 @@ body {
   margin: 0;
   padding: 0;
 
-  font-family: "Open Sans";
+  font-family: "Open Sans", sans-serif;
   line-height: 1.5;
 }
 
 code {
-  font-family: "PT Mono";
+  font-family: "PT Mono", monospace;
 }
 
 /* unset styling from primsjs theme (set in gatsby-browser.js) */

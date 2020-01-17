@@ -203,7 +203,7 @@ export default class YarnCommand extends BaseCommand {
     const cache = await Cache.find(configuration, {immutable: this.immutableCache, check: this.checkCache});
 
     if (!workspace)
-      throw new WorkspaceRequiredError(this.context.cwd);
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     // Important: Because other commands also need to run installs, if you
     // get in a situation where you need to change this file in order to
@@ -250,7 +250,6 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
 
   let parsedLeft;
   let parsedRight;
-
   try {
     parsedLeft = parseSyml(left);
     parsedRight = parseSyml(right);
@@ -258,10 +257,20 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
     throw new ReportError(MessageName.AUTOMERGE_FAILED_TO_PARSE, `The individual variants of the lockfile failed to parse`);
   }
 
-  const merged = Object.assign({}, parsedLeft, parsedRight);
-  const serialized = stringifySyml(merged);
+  const merged = {
+    ...parsedLeft,
+    ...parsedRight,
+  };
 
-  await xfs.changeFilePromise(lockfilePath, serialized, {
+  // Old-style lockfiles should be filtered out (for example when switching
+  // from a Yarn 2 branch to a Yarn 1 branch). Fortunately (?), they actually
+  // parse as valid YAML except that the objects become strings. We can use
+  // that to detect them. Damn, it's really ugly though.
+  for (const [key, value] of Object.entries(merged))
+    if (typeof value === `string`)
+      delete merged[key];
+
+  await xfs.changeFilePromise(lockfilePath, stringifySyml(merged), {
     automaticNewlines: true,
   });
 

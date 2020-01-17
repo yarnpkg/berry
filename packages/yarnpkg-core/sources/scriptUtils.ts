@@ -51,7 +51,7 @@ export async function makeScriptEnv({project, lifecycleScript}: {project?: Proje
   }
 
   if (project)
-    scriptEnv.INIT_CWD = project.configuration.startingCwd;
+    scriptEnv.INIT_CWD = npath.fromPortablePath(project.configuration.startingCwd);
 
   scriptEnv.PATH = scriptEnv.PATH
     ? `${nativeBinFolder}${npath.delimiter}${scriptEnv.PATH}`

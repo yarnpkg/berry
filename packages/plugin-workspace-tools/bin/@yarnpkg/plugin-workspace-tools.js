@@ -210,7 +210,7 @@ module.exports = {
         project,
         workspace: cwdWorkspace
       } = await core_1.Project.find(configuration, this.context.cwd);
-      if (!this.all && !cwdWorkspace) throw new cli_1.WorkspaceRequiredError(this.context.cwd);
+      if (!this.all && !cwdWorkspace) throw new cli_1.WorkspaceRequiredError(project.cwd, this.context.cwd);
       const command = this.cli.process([this.commandName, ...this.args]);
       const scriptName = command.path.length === 1 && command.path[0] === `run` && typeof command.scriptName !== `undefined` ? command.scriptName : null;
       if (command.path.length === 0) throw new clipanion_1.UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
@@ -588,7 +588,7 @@ module.exports = {
         project,
         workspace: cwdWorkspace
       } = await core_1.Project.find(configuration, this.context.cwd);
-      if (!cwdWorkspace) throw new cli_1.WorkspaceRequiredError(this.context.cwd);
+      if (!cwdWorkspace) throw new cli_1.WorkspaceRequiredError(project.cwd, this.context.cwd);
       const candidates = project.workspaces;
       const candidatesByName = new Map(candidates.map(workspace => {
         const ident = core_2.structUtils.convertToIdent(workspace.locator);

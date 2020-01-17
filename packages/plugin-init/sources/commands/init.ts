@@ -2,7 +2,6 @@ import {BaseCommand}                         from '@yarnpkg/cli';
 import {Configuration, Manifest}             from '@yarnpkg/core';
 import {execUtils, scriptUtils, structUtils} from '@yarnpkg/core';
 import {xfs, ppath, Filename}                from '@yarnpkg/fslib';
-import {updateAndSave}                       from '@yarnpkg/json-proxy';
 import {Command, UsageError}                 from 'clipanion';
 import {inspect}                             from 'util';
 
@@ -105,19 +104,18 @@ export default class InitCommand extends BaseCommand {
     manifest.private = this.private;
     manifest.license = configuration.get(`initLicense`);
 
-    await updateAndSave(ppath.join(this.context.cwd, Manifest.fileName), (tracker: Object) => {
-      manifest.exportTo(tracker);
-    });
-
-    const inspectable: any = {};
-    manifest.exportTo(inspectable);
+    const serialized: any = {};
+    manifest.exportTo(serialized);
 
     inspect.styles.name = `cyan`;
 
-    this.context.stdout.write(`${inspect(inspectable, {
+    this.context.stdout.write(`${inspect(serialized, {
       depth: Infinity,
       colors: true,
       compact: false,
     })}\n`);
+
+    const manifestPath = ppath.join(this.context.cwd, Manifest.fileName);
+    await xfs.changeFilePromise(manifestPath, `${JSON.stringify(serialized, null, 2)}\n`);
   }
 }

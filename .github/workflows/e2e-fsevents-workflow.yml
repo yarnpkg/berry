@@ -1,0 +1,160 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-fsevents-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E FSEvents'
+jobs:
+  chore:
+    name: 'Validating FSEvents'
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Running the integration test (FSEvents ^1)'
+      run: |
+        source scripts/e2e-setup-ci.sh
+        yarn init
+        yarn add fsevents@^1
+
+        cat > test.js <<EOT
+          const assert = require('assert');
+          const fsevents = require('fsevents');
+          const fs = require('fs');
+          const path = require('path');
+
+          async function sleep(n) {
+            return new Promise(resolve => {
+              setTimeout(resolve, n);
+            });
+          }
+
+          async function runTestOn(dir, fileName) {
+            const file = path.join(dir, fileName);
+
+            const events = [];
+            const watcher = fsevents(dir);
+            watcher.on('change', (...args) => events.push(args));
+            watcher.start();
+
+            async function main() {
+              await sleep(1000);
+              fs.writeFileSync(file, '');
+              await sleep(1000);
+
+              if (events.length === 0)
+                throw new Error('No events recorded');
+
+              for (const [p] of events) {
+                if (!p.startsWith(dir)) {
+                  throw new Error(p);
+                }
+              }
+            }
+
+            try {
+              return await main();
+            } finally {
+              watcher.stop();
+            }
+          }
+
+          async function registerTest(dir, fileName) {
+            try {
+              await runTestOn(dir, fileName);
+              console.log('Succeeded test for ' + dir);
+            } catch (error) {
+              console.log('Failed test for ' + dir + ': ' + error.message);
+              process.exitCode = 1;
+            }
+          }
+
+          Promise.resolve().then(() => {
+            return registerTest(process.cwd(), 'hello');
+          }).then(() => {
+            return registerTest(process.cwd() + '/\$\$virtual/foo/0', 'world');
+          });
+        EOT
+
+        yarn node ./test.js
+
+    - name: 'Running the integration test (FSEvents latest)'
+      run: |
+        source scripts/e2e-setup-ci.sh
+        yarn init
+        yarn add fsevents@latest
+
+        cat > test.js <<EOT
+          const assert = require('assert');
+          const fsevents = require('fsevents');
+          const fs = require('fs');
+          const path = require('path');
+
+          async function sleep(n) {
+            return new Promise(resolve => {
+              setTimeout(resolve, n);
+            });
+          }
+
+          async function runTestOn(dir, fileName) {
+            const file = path.join(dir, fileName);
+
+            const events = [];
+            const stop = fsevents.watch(dir, (...args) => events.push(args));
+
+            async function main() {
+              await sleep(1000);
+              fs.writeFileSync(file, '');
+              await sleep(1000);
+
+              if (events.length === 0)
+                throw new Error('No events recorded');
+
+              for (const [p] of events) {
+                if (!p.startsWith(dir)) {
+                  throw new Error(p);
+                }
+              }
+            }
+
+            try {
+              return await main();
+            } finally {
+              await stop();
+            }
+          }
+
+          async function registerTest(dir, fileName) {
+            try {
+              await runTestOn(dir, fileName);
+              console.log('Succeeded test for ' + dir);
+            } catch (error) {
+              console.log('Failed test for ' + dir + ': ' + error.message);
+              process.exitCode = 1;
+            }
+          }
+
+          Promise.resolve().then(() => {
+            return registerTest(process.cwd(), 'hello');
+          }).then(() => {
+            return registerTest(process.cwd() + '/\$\$virtual/foo/0', 'world');
+          });
+        EOT
+
+        yarn node ./test.js

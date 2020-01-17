@@ -148,11 +148,16 @@ class PnpInstaller implements Installer {
   }
 
   async finalizeInstall() {
-    if (this.opts.project.configuration.get('nodeLinker') !== 'pnp')
+    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`)
       return;
 
-    if (await this.shouldWarnNodeModules())
-      this.opts.report.reportWarning(MessageName.DANGEROUS_NODE_MODULES, `One or more node_modules have been detected; they risk hiding legitimate problems until your application reaches production.`);
+    const nodeModules = await this.locateNodeModules();
+    if (nodeModules.length > 0) {
+      this.opts.report.reportWarning(MessageName.DANGEROUS_NODE_MODULES, `One or more node_modules have been detected and will be removed. This operation may take some time.`);
+      for (const nodeModulesPath of nodeModules) {
+        await xfs.removePromise(nodeModulesPath);
+      }
+    }
 
     this.trimBlacklistedPackages();
 
@@ -284,7 +289,9 @@ class PnpInstaller implements Installer {
     }
   }
 
-  private async shouldWarnNodeModules() {
+  private async locateNodeModules() {
+    const nodeModules: Array<PortablePath> = [];
+
     for (const workspace of this.opts.project.workspaces) {
       const nodeModulesPath = ppath.join(workspace.cwd, toFilename(`node_modules`));
       if (!xfs.existsSync(nodeModulesPath))
@@ -294,10 +301,10 @@ class PnpInstaller implements Installer {
       if (directoryListing.every(entry => entry.startsWith(`.`)))
         continue;
 
-      return true;
+      nodeModules.push(nodeModulesPath);
     }
 
-    return false;
+    return nodeModules;
   }
 
   private normalizeDirectoryPath(folder: PortablePath) {

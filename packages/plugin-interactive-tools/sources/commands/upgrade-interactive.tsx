@@ -16,9 +16,9 @@ const SIMPLE_SEMVER = /^([\^~]?)([0-9+])(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
 export default class UpgradeInteractiveCommand extends BaseCommand {
   static usage = Command.Usage({
     category: `Interactive commands`,
-    description: `open the upgrade interace`,
+    description: `open the upgrade interface`,
     details: `
-      > In order to use this command you will need to add \`@yarnpkg/plugin-interactive\` to your plugins. Check the documentation for \`yarn plugin import\` for more details.
+      > In order to use this command you will need to add \`@yarnpkg/plugin-interactive-tools\` to your plugins. Check the documentation for \`yarn plugin import\` for more details.
 
       This command opens a fullscreen terminal interace where you can see the packages used by your application, their status compared to the latest versions available on the remote registry, and let you upgrade.
     `,
@@ -35,7 +35,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     const cache = await Cache.find(configuration);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(this.context.cwd);
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const colorizeRawDiff = (from: string, to: string) => {
       const diff = diffWords(from, to);
@@ -159,7 +159,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       for (const workspace of project.workspaces)
         for (const dependencyType of [`dependencies`, `devDependencies`] as Array<HardDependencies>)
           for (const descriptor of workspace.manifest[dependencyType].values())
-            if (project.findWorkspacesByDescriptor(descriptor).length === 0)
+            if (project.tryWorkspaceByDescriptor(descriptor) === null)
               allDependencies.set(descriptor.descriptorHash, descriptor);
 
       const sortedDependencies = miscUtils.sortMap(allDependencies.values(), descriptor => {

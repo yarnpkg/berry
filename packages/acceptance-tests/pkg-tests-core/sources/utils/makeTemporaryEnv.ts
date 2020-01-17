@@ -21,8 +21,8 @@ const mte = generatePkgDriver({
     {cwd, projectFolder, registryUrl, env, ...config},
   ) {
     const rcEnv: Record<string, any> = {};
-    for (const key of Object.keys(config))
-      rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = config[key];
+    for (const [key, value] of Object.entries(config))
+      rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = Array.isArray(value) ? value.join(`;`) : value;
 
     const nativePath = npath.fromPortablePath(path);
     const tempHomeFolder = npath.fromPortablePath(await createTemporaryFolder());

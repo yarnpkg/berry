@@ -4,7 +4,15 @@ path: /features/release-workflow
 title: "Release Workflow"
 ---
 
-A hard task when working in a monorepo, and in particular when managing multiple packages, is to figure out which packages should be bumped when doing a new release. Yarn offers a few tools that aim to make this workflow easier without need for third-party software, althought it's possible to leverage those tools and build more integrated workflows.
+> **Experimental**
+>
+> This feature is still incubating, and we'll likely be improving it based on your feedback.
+
+> **Plugin**
+>
+> To access this feature, first install the `version` plugin: `yarn plugin import version`
+
+When working with monorepos, a hard task often is to figure out which packages should receive a new version when starting a new release. Yarn offers a few tools that aim to make this workflow easier without need for third-party tools (althought it's possible you may prefer the workflow offered by different implementations, of course!).
 
 ## Auto-updated dependencies
 
@@ -24,45 +32,45 @@ In pre-2.0, upgrading `common` would have required you to run the command there,
 /packages/client (depends on common@^1.1.1)
 ```
 
-Of course it's not that important when the packages from the monorepo are always meant to be used as part of the monorepo, but it becomes much more interesting when you work with multiple packages meant to be published. Had you forgotten to bump the referenced range of either of your dependent packages, your users would have potentially downloaded an old version of `common` which wouldn't have been compatible with the newer one.
+Of course it's not that important when the packages from the monorepo are always meant to be used as part of the monorepo, but it becomes much more interesting when you work with multiple packages meant to be published. Have you forgotten to update the range of either of your dependent packages, your users would have potentially downloaded an old version of `common` which wouldn't have been compatible with the newer one.
 
 ## Deferred versioning
 
-Starting from the 2.0, the `yarn version` command now accepts a new flag: `--deferred`. When set, this flag will cause the command to not directly change the `version` field of the local manifest, but instead create a new field called `nextVersion`. For example, the following:
+Starting from the 2.0, the `yarn version` command now accepts a new flag: `--deferred`. When set, this flag will cause the command to not immediatly change the `version` field of the local manifest, but to instead internally record an entry stating that the current package will need to receive an upgrade during the next release cycle. For example, the following:
 
 ```bash
-yarn version 1.0.0
 yarn version minor --deferred
 ```
 
-Would generate the following field:
+Will not cause the `package.json` file to change! Instead, Yarn will create (or reuse, if you're inside a branch) a file within the `.yarn/releases` directory. This file will record the requested upgrade:
 
-```json
-{
-  "version": "1.0.0",
-  "nextVersion": {
-    "semver": "1.1.0",
-    "nonce": "102039092"
-  }
-}
+```yaml
+releases:
+  my-package@1.0.0: minor
 ```
 
-One question you might have is: why? Why does it matter? To answer it, let's take the case of a successful open-source project which receives many contributions. Users work on various features, which you merge, and every once in a while you make a release for everything that got modified.
+Then later on, once you're ready, just run `yarn version apply`. Yarn will then locate all the upgrade records it previously saved, and apply them all at once (including by taking care of upgrading inter-dependencies as we saw).
 
-But now the problem is: how do you choose which packages to bump? Some tools offer to detect it based on the commit messages, but that implies that a specific style of commit message must be followed - and it causes ambiguities when multiple packages are modified in a single commit with various degrees of severity.
+## Checked-in deferred records
 
-What `--deferred` offers, instead, is to let your users (and reviewers) decide when should a package be bumped. By using this flag, they're essentially telling Yarn: "at some point, I'll need to bump this package by at least a minor". Then once all the changes have been made, once all the pull requests have been merged, all that remains is to run `yarn version apply` to simultaneously update the version numbers of all the packages that were scheduled for a bump.
+We've seen in the previous section that `yarn version patch` could store the future versions in an internal folder, `.yarn/releases`. But why is that? What good is it? To answer this question, consider a popular open-source project developed through a monorepo. This project receives many external pull requests, but they aren't released right away - they're often released as part of a batch. Every once in a while, the lead maintainer will take all the changes, convert them into new versions, and start the deployment.
+
+Let's focus on the part where changes have to be converted into versions. How does that work? This isn't easy. Taking Lerna, for example (the most popular version management tool for monorepos), you have two solutions:
+
+- With the fixed mode, all your packages have a single version. As such, they get upgraded all at once.
+
+- With the independent mode, you get to chose a version for each package whose sources changed.
+
+One critical problem remains, though: even if you use the independent mode, how will you know which packages are meant to be upgraded? And, just as critical, should they be patch releases? Minor releases? Hard to know - large projects can receive dozens of PRs a week, and keeping track of which units need to be released and to which version is a pretty difficult task.
+
+With Yarn's workflow, however, this all becomes very easy! Since the upgrades are kept in a file, and since this file is magically bound to a Git branch, it simply becomes a matter of committing the release folder - all expected releases will then become part of the project history until comes the time of `yarn version apply` - then Yarn will consume all the individual records, merge then (so that a PR requiring a minor will have higher precedence than the PR requiring a patch), and apply them simultaneously.
+
+As an added bonus, you'll even be able to review the package upgrades as part of the typical PR review! This will have the effect of delegating more power to your community while being able to ensure that everyone follow rules.
 
 ## Ensuring that versions are bumped (CI)
 
-One problem with the `--deferred` flag, however, is that it becomes impossible to distinguish whether a PR bumped a package via a redundant strategy (for example when merging two minor features for the same release), or whether the PR author simply forgot to run the command on the affected package.
+One problem with committing the deferred releases, however, is that it becomes important to make sure that the PRs you receive include the correct package release definitions. For example, you should be able to trust that the definition contains release strategies (patch, minor, major, ...) for each modified workspace.
 
-To solve this problem in an automated way, the `yarn version check` command appeared. When run, this command will figure out which packages changed and whether they received a version bump. If they didn't, an error will be thrown and assuming to integrate this into a CI system the PR author will be asked to be explicit about whether their changes should cause any package to be bumped.
+To solve this problem in an automated way, the `yarn version check` command appeared. When run, this command will figure out which packages changed and whether they are listed in the release definition file. If they aren't, an error will be thrown and - assuming you integrate this into a CI system such as the GitHub Actions - the PR author will be asked to fill out the release definition file.
 
-Even better, `yarn version check` also works through transitive dependencies. So going back on our past example, should you modify your `common` package, running `yarn version check` will ask you to explicitly bump any non-private package that would happen to depend on it. Private packages get a pass because they're assumed to only work within the context of your repository, and thus don't need to have their version bumped.
-
-Some changes don't require any version bump, of course! For those, just run `yarn version decline --deferred` and Yarn will take care of the rest.
-
-> **How does it work?**
->
-> You might have seen in the previous section this interesting `nonce` field. The nonce is used to mark whether a package received an explicit version bump or not. When running `yarn version check`, Yarn checks whether each workspace that got modified lists a new nonce compared to master. If they don't, it will recommand you to run `yarn version ... --deferred`, which will generate a new nonce regardless of whether a version bump would be redundant or not.
+Writing this file can be tedius; fortunately `yarn version check` implements a very handy flag named `--interactive`. When set (`yarn version check --interactive`), Yarn will print a terminal interface that will summarize all the changed files, all the changed workspaces, all relevant dependent workspaces, and checkboxes for wach entry allowing you to pick the release strategies you want to set for each workspace.

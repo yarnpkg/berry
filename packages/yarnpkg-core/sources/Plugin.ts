@@ -57,6 +57,14 @@ export type Hooks = {
     extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable},
   ) => Promise<() => Promise<number>>,
 
+  // Called before the build, to compute a global hash key that we will use
+  // to detect whether packages must be rebuilt (typically when the Node
+  // version changes)
+  globalHashGeneration?: (
+    project: Project,
+    contributeHash: (data: string | Buffer) => void,
+  ) => Promise<void>,
+
   // Before the resolution runs; should be use to setup new aliases that won't
   // persist on the project instance itself.
   reduceDependency?: (

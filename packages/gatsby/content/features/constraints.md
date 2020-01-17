@@ -8,6 +8,10 @@ title: "Constraints"
 >
 > This feature is still incubating, and its exact API might change from a release to the next. It means it's the perfect time for you to get involved and let us hear your feedback!
 
+> **Plugin**
+>
+> To access this feature, first install the `constraints` plugin: `yarn plugin import constraints`
+
 Constraints are a solution to a very basic need: I have a lot of [workspaces](/features/workspaces), and I need to make sure they use the same version of their dependencies. Or that they don't depend on a specific package. Or that they use a specific type of dependency. Anyway, you see the point: whatever is the exact logic, my goal is the same; I want to automatically enforce some kind of rule across all my workspaces. That's exactly what constraints allow you to do.
 
 ## Creating a constraint

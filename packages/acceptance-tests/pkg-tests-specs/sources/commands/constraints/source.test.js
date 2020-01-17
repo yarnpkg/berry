@@ -15,32 +15,39 @@ describe(`Commands`, () => {
   describe(`constraints source`, () => {
     for (const [environmentDescription, environment] of Object.entries(environments)) {
       for (const [scriptDescription, script] of Object.entries(constraints)) {
-        test(`test (${environmentDescription} / ${scriptDescription})`, makeTemporaryEnv({}, async ({path, run, source}) => {
-          await environment(path);
-          await writeFile(`${path}/constraints.pro`, script);
+        test(
+          `test (${environmentDescription} / ${scriptDescription})`,
+          makeTemporaryEnv({}, {
+            plugins: [
+              require.resolve(`@yarnpkg/monorepo/scripts/plugin-constraints.js`),
+            ],
+          }, async ({path, run, source}) => {
+            await environment(path);
+            await writeFile(`${path}/constraints.pro`, script);
 
-          let code;
-          let stdout;
-          let stderr;
+            let code;
+            let stdout;
+            let stderr;
 
-          try {
-            ({code, stdout, stderr} = await run(`constraints`, `source`));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
+            try {
+              ({code, stdout, stderr} = await run(`constraints`, `source`));
+            } catch (error) {
+              ({code, stdout, stderr} = error);
+            }
 
-          expect({code, stdout, stderr}).toMatchSnapshot();
+            expect({code, stdout, stderr}).toMatchSnapshot();
 
-          try {
-            ({code, stdout, stderr} = await run(`constraints`, `source`, `--verbose`));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
+            try {
+              ({code, stdout, stderr} = await run(`constraints`, `source`, `--verbose`));
+            } catch (error) {
+              ({code, stdout, stderr} = error);
+            }
 
-          stdout = stdout.replace(new RegExp(path, 'g'), 'WORKSPACE_ROOT');
+            stdout = stdout.replace(new RegExp(path, 'g'), 'WORKSPACE_ROOT');
 
-          expect({code, stdout, stderr}).toMatchSnapshot();
-        }));
+            expect({code, stdout, stderr}).toMatchSnapshot();
+          }),
+        );
       }
     }
   });
