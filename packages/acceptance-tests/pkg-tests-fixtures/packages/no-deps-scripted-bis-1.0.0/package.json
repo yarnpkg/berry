@@ -1,5 +1,5 @@
 {
-    "name": "no-deps-scripted",
+    "name": "no-deps-scripted-bis",
     "version": "1.0.0",
     "scripts": {
         "preinstall": "node scripts/preinstall",
