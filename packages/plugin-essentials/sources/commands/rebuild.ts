@@ -41,7 +41,7 @@ export default class RunCommand extends BaseCommand {
       filteredIdents.add(structUtils.parseIdent(identStr).identHash);
 
     await project.resolveEverything({
-      lockfileOnly: true,
+      cache,
       report: new ThrowReport(),
     });
 
@@ -50,7 +50,7 @@ export default class RunCommand extends BaseCommand {
       ? parseSyml(await xfs.readFilePromise(bstatePath, `utf8`)) as {[key: string]: string}
       : {};
 
-    const nextBState = new Map<Locator, string>();
+    const nextBState = new Map<LocatorHash, string>();
 
     for (const pkg of project.storedPackages.values()) {
       if (!Object.prototype.hasOwnProperty.call(bstate, pkg.locatorHash))
@@ -60,12 +60,12 @@ export default class RunCommand extends BaseCommand {
         continue;
 
       const buildHash = bstate[pkg.locatorHash];
-      nextBState.set(pkg, buildHash);
+      nextBState.set(pkg.locatorHash, buildHash);
     }
 
     if (nextBState.size > 0) {
       const bstatePath = configuration.get<PortablePath>(`bstatePath`);
-      const bstateFile = Project.generateBuildStateFile(nextBState);
+      const bstateFile = Project.generateBuildStateFile(nextBState, project.storedPackages);
 
       await xfs.mkdirpPromise(ppath.dirname(bstatePath));
       await xfs.changeFilePromise(bstatePath, bstateFile, {
