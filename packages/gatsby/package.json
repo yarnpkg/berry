@@ -8,7 +8,7 @@
     "@emotion/styled-base": "^10.0.7",
     "@haroenv/react-sparklines": "^1.7.1",
     "@reach/router": "^1.1.1",
-    "algoliasearch": "^3.32.1",
+    "algoliasearch": "4.0.0-beta.14",
     "bytes": "^3.1.0",
     "date-fns": "^2.0.0-beta.2",
     "es6-promise": "^4.2.6",
