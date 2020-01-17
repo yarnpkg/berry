@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                                                       from '@yarnpkg/cli';
-import {Cache, Configuration, Project, StreamReport, ThrowReport, structUtils, Locator, IdentHash} from '@yarnpkg/core';
-import {PortablePath, xfs, ppath}                                                                  from '@yarnpkg/fslib';
-import {parseSyml}                                                                                 from '@yarnpkg/parsers';
-import {Command}                                                                                   from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                           from '@yarnpkg/cli';
+import {Cache, Configuration, Project, StreamReport, ThrowReport, structUtils, IdentHash, LocatorHash} from '@yarnpkg/core';
+import {PortablePath, xfs, ppath}                                                                      from '@yarnpkg/fslib';
+import {parseSyml}                                                                                     from '@yarnpkg/parsers';
+import {Command}                                                                                       from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends BaseCommand {
