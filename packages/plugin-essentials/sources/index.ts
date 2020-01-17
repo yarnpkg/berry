@@ -17,6 +17,7 @@ import node                               from './commands/node';
 import pluginImport                       from './commands/plugin/import';
 import pluginList                         from './commands/plugin/list';
 import pluginRuntime                      from './commands/plugin/runtime';
+import rebuild                            from './commands/rebuild';
 import remove                             from './commands/remove';
 import runIndex                           from './commands/runIndex';
 import run                                from './commands/run';
@@ -86,6 +87,7 @@ const plugin: Plugin = {
     pluginImport,
     pluginList,
     pluginRuntime,
+    rebuild,
     remove,
     runIndex,
     run,

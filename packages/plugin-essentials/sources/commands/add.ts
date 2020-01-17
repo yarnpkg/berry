@@ -223,7 +223,7 @@ export default class AddCommand extends BaseCommand {
     if (askedQuestions)
       this.context.stdout.write(`\n`);
 
-    let installReport = await StreamReport.start({
+    const installReport = await StreamReport.start({
       configuration,
       json: this.json,
       stdout: this.context.stdout,

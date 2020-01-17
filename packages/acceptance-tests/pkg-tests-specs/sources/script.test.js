@@ -256,4 +256,29 @@ describe(`Scripts tests`, () => {
       },
     ),
   );
+
+  test(
+    `it shouldn't call the postinstall on every install`,
+    makeTemporaryEnv({
+      dependencies: {
+        [`no-deps-scripted`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await expect(source(`require('no-deps-scripted/log')`)).resolves.toEqual([
+        `preinstall`,
+        `install`,
+        `postinstall`,
+      ]);
+
+      await run(`install`);
+
+      await expect(source(`require('no-deps-scripted/log')`)).resolves.toEqual([
+        `preinstall`,
+        `install`,
+        `postinstall`,
+      ]);
+    }),
+  );
 });
