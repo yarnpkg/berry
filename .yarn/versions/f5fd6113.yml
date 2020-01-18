@@ -1,0 +1,7 @@
+undecided:
+  - "@yarnpkg/plugin-node-modules"
+  - "@yarnpkg/plugin-pnp"
+  - "@yarnpkg/cli"
+  - "@yarnpkg/core"
+  - "@yarnpkg/pnp"
+  - "@yarnpkg/pnpify"
