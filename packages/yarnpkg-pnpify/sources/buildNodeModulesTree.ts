@@ -19,7 +19,7 @@ export enum LinkType {HARD = 'HARD', SOFT = 'SOFT'};
  * /home/user/project/node_modules/foo -> {target: '/home/user/project/.yarn/.cache/foo.zip/node_modules/foo', linkType: 'HARD'}
  * /home/user/project/node_modules/bar -> {target: '/home/user/project/packages/bar', linkType: 'SOFT'}
  */
-export type NodeModulesTree = Map<PortablePath, {dirList: Set<Filename>} | {dirList?: undefined, locator: LocatorKey, target: PortablePath, linkType: LinkType}>;
+export type NodeModulesTree = Map<PortablePath, {dirList: Set<Filename>} | {dirList?: undefined, locator: LocatorKey, target: PortablePath, linkType: LinkType, aliases: string[]}>;
 
 export interface NodeModulesTreeOptions {
   pnpifyFs?: boolean;
@@ -67,6 +67,7 @@ export type NodeModulesLocatorMap = Map<LocatorKey, {
   target: PortablePath;
   linkType: LinkType;
   locations: PortablePath[];
+  aliases: string[];
 }>
 
 export const buildLocatorMap = (rootPath: PortablePath, nodeModulesTree: NodeModulesTree): NodeModulesLocatorMap => {
@@ -76,7 +77,7 @@ export const buildLocatorMap = (rootPath: PortablePath, nodeModulesTree: NodeMod
     if (!val.dirList) {
       let entry = map.get(val.locator);
       if (!entry) {
-        entry = {target: val.target, linkType: val.linkType, locations: []};
+        entry = {target: val.target, linkType: val.linkType, locations: [], aliases: val.aliases};
         map.set(val.locator, entry);
       }
 
@@ -106,11 +107,6 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
     return {name: locator.name!, reference};
   };
 
-  const getNodeId = (locator: PackageLocator): PackageId => {
-    const {name, reference} = parseLocator(locator);
-    return reference === 'workspace:.' ? '.' : `${name}@${reference}`;
-  };
-
   const addPackageToTree = (pkg: PackageInformation<NativePath>, locator: PackageLocator, pkgId: PackageId) => {
     if (packageTree.has(pkgId))
       return;
@@ -130,7 +126,7 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
       if (referencish !== null) {
         const depLocator = pnp.getLocator(name, referencish);
         const depPkg = pnp.getPackageInformation(depLocator)!;
-        const depNodeId = getNodeId(depLocator);
+        const depNodeId = stringifyLocator(depLocator);
         node.deps.add(depNodeId);
         addPackageToTree(depPkg, depLocator, depNodeId);
       }
@@ -165,7 +161,7 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
 const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, options: NodeModulesTreeOptions): NodeModulesTree => {
   const tree: NodeModulesTree = new Map();
 
-  const makeLeafNode = (locator: PackageLocator): {locator: LocatorKey, target: PortablePath, linkType: LinkType} => {
+  const makeLeafNode = (locator: PackageLocator, aliases: string[]): {locator: LocatorKey, target: PortablePath, linkType: LinkType, aliases: string[]} => {
     const info = pnp.getPackageInformation(locator)!;
 
     let linkType;
@@ -188,6 +184,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
       locator: stringifyLocator(locator),
       target,
       linkType,
+      aliases,
     };
   };
 
@@ -204,7 +201,8 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
 
     for (const depId of pkg.deps) {
       const dep = hoistedTree.get(depId)!;
-      const locator = {name: dep.name, reference: dep.originalReference};
+      const references: string[] = Array.from(dep.originalReference);
+      const locator = {name: dep.name, reference: references[0]};
       const {name, scope} = getPackageName(locator);
 
       const packageNameParts = scope ? [scope, name] : [name];
@@ -212,7 +210,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
       const nodeModulesDirPath = ppath.join(locationPrefix, NODE_MODULES);
       const nodeModulesLocation = ppath.join(nodeModulesDirPath, ...packageNameParts);
 
-      const leafNode = makeLeafNode(locator);
+      const leafNode = makeLeafNode(locator, references.slice(1));
       tree.set(nodeModulesLocation, leafNode);
 
       const segments = nodeModulesLocation.split('/');
@@ -242,7 +240,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
   };
 
   const hoistedRoot = hoistedTree.get('.')!;
-  const rootNode = makeLeafNode({name: hoistedRoot.name, reference: hoistedRoot.originalReference});
+  const rootNode = makeLeafNode({name: hoistedRoot.name, reference: Array.from(hoistedRoot.originalReference)[0] as string}, []);
   const rootPath = rootNode.target;
   tree.set(rootPath, rootNode);
   buildTree(hoistedRoot, '.', rootPath);

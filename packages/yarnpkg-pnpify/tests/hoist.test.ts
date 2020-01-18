@@ -73,18 +73,20 @@ describe('hoist', () => {
 
   it('should preserve original metadata during hoisting', () => {
     // . → A → B
+    //   → C → B
     // should be hoisted to:
     // . → A
     //   → B
+    //   → C
     const tree = {
       '.': {deps: ['A'], meta1: 'dot'},
       'A': {deps: ['B'], meta2: 'abc'},
       'B': {meta3: 'def'},
     };
     expect(hoist(toTree(tree))).toEqual(toResult({
-      '.': {deps: ['A', 'B'], meta1: 'dot'},
-      'A': {meta2: 'abc'},
-      'B': {meta3: 'def'},
+      '.': {deps: ['A', 'B'], meta1: new Set(['dot'])},
+      'A': {meta2: new Set(['abc'])},
+      'B': {meta3: new Set(['def'])},
     }));
   });
 

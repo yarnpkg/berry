@@ -24,7 +24,7 @@ export class NodeModulesLinker implements Linker {
   private async getLocatorMap(rootPath: PortablePath, options?: {reread?: boolean, ignoreStateFileReadErrors?: boolean}): Promise<{locatorMap: NodeModulesLocatorMap, locationMap: LocationMap}> {
     if (!this.cachedLocatorMap || (options && options.reread)) {
       try {
-        this.cachedLocatorMap = await readLocatorState(ppath.join(rootPath, NODE_MODULES, LOCATOR_STATE_FILE));
+        this.cachedLocatorMap = await readLocatorState(ppath.join(rootPath, NODE_MODULES, LOCATOR_STATE_FILE), {unrollAliases: true});
       } catch (e) {
         if (options && options.ignoreStateFileReadErrors) {
           // Ignore errors if state file is absent
@@ -318,11 +318,14 @@ const writeLocatorState = async (locatorStatePath: PortablePath, locatorMap: Nod
   for (const [locator, value] of locatorMap.entries()) {
     locatorState += `\n"${locator}":\n`;
     locatorState += `  locations:\n${Array.from(value.locations).map(loc => `    - "${loc}"\n`).join('')}`;
+    if (value.aliases.length > 0) {
+      locatorState += `  aliases:\n${Array.from(value.aliases).map(alias => `    - "${alias}"\n`).join('')}`;
+    }
   }
   await xfs.writeFilePromise(locatorStatePath, locatorState);
 };
 
-const readLocatorState = async (locatorStatePath: PortablePath): Promise<NodeModulesLocatorMap> => {
+const readLocatorState = async (locatorStatePath: PortablePath, options?: {unrollAliases: boolean}): Promise<NodeModulesLocatorMap> => {
   const locatorMap: NodeModulesLocatorMap = new Map();
   const locatorState = parseSyml(await xfs.readFilePromise(locatorStatePath, `utf8`));
   delete locatorState.__metadata;
@@ -331,7 +334,20 @@ const readLocatorState = async (locatorStatePath: PortablePath): Promise<NodeMod
       target: PortablePath.dot,
       linkType: LinkType.HARD,
       locations: val.locations,
+      aliases: val.aliases || [],
     });
+    if (options && options.unrollAliases && val.aliases) {
+      for (const alias of val.aliases) {
+        const {scope, name} = structUtils.parseLocator(key);
+        const aliasKey = structUtils.stringifyLocator(structUtils.makeLocator(structUtils.makeIdent(scope, name), alias));
+        locatorMap.set(aliasKey, {
+          target: PortablePath.dot,
+          linkType: LinkType.HARD,
+          locations: val.locations,
+          aliases: [],
+        });
+      }
+    }
   }
 
   return locatorMap;
