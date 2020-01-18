@@ -1,4 +1,4 @@
-import {InstallStatus, BuildDirective}                                 from '@yarnpkg/core/sources/Installer';
+import {InstallStatus, BuildDirective, MessageName}                    from '@yarnpkg/core';
 import {Installer, Linker, LinkOptions, MinimalLinkOptions, LinkType}  from '@yarnpkg/core';
 import {FetchResult, Descriptor, Locator, Package, BuildType}          from '@yarnpkg/core';
 import {structUtils, Report, Manifest}                                 from '@yarnpkg/core';
@@ -218,22 +218,45 @@ class NodeModulesInstaller implements Installer {
     await this.onFinalizeInstall();
 
     const installStatuses: InstallStatus[] = [];
+
     for (const [locatorKey, val] of locatorMap.entries()) {
+      const pkgLocation = val.locations[0];
+      const manifest = await Manifest.find(pkgLocation);
+      const buildScripts = await this.getBuildScripts(pkgLocation, manifest);
+      const pkg = structUtils.parseLocator(locatorKey);
+
+      if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`)) {
+        this.opts.report.reportWarningOnce(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but all build scripts have been disabled.`);
+        buildScripts.length = 0;
+      }
+
+      if (buildScripts.length > 0 && val.linkType !== LinkType.HARD && !this.opts.project.tryWorkspaceByLocator(pkg)) {
+        this.opts.report.reportWarningOnce(MessageName.SOFT_LINK_BUILD, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but is referenced through a soft link. Soft links don't support build scripts, so they'll be ignored.`);
+        buildScripts.length = 0;
+      }
+
+      const dependencyMeta = this.opts.project.getDependencyMeta(pkg, manifest.version);
+
+      if (buildScripts.length > 0 && dependencyMeta && dependencyMeta.built === false) {
+        this.opts.report.reportInfoOnce(MessageName.BUILD_DISABLED, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but its build has been explicitly disabled through configuration.`);
+        buildScripts.length = 0;
+      }
+
       const locator = structUtils.parseLocator(locatorKey);
       const packageLocation = this.installedPackages.get(locatorKey)!;
       installStatuses.push({
         buildLocations: val.locations.map(loc => ppath.join(rootPath, loc)),
         locatorHash: locator.locatorHash,
         packageLocation: packageLocation,
-        buildDirective: await this.getBuildScripts(val.locations[0]),
+        buildDirective: buildScripts.length > 0 ? buildScripts : null,
       });
     }
     return installStatuses;
   }
 
-  private async getBuildScripts(packageLocation: PortablePath): Promise<BuildDirective[] | null> {
+  private async getBuildScripts(packageLocation: PortablePath, manifest: Manifest): Promise<BuildDirective[]> {
     const buildScripts: BuildDirective[] = [];
-    const {scripts} = await Manifest.find(packageLocation);
+    const {scripts} = manifest;
 
     for (const scriptName of [`preinstall`, `install`, `postinstall`])
       if (scripts.has(scriptName))
@@ -244,7 +267,7 @@ class NodeModulesInstaller implements Installer {
     if (!scripts.has(`install`) && xfs.existsSync(bindingFilePath))
       buildScripts.push([BuildType.SHELLCODE, `node-gyp rebuild`]);
 
-    return buildScripts.length > 0 ? buildScripts : null;
+    return buildScripts;
   }
 
   private getPackageStore(key: string) {
