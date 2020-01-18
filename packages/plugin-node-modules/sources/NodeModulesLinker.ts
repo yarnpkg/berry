@@ -461,6 +461,36 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap): LocationTree => {
   return locationTree;
 };
 
+const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs}: {baseFs: FakeFS<PortablePath>}) => {
+  await xfs.mkdirpPromise(dstDir);
+  const entries = await baseFs.readdirPromise(srcDir, {withFileTypes: true});
+
+  const copy = async (dstPath: PortablePath, srcPath: PortablePath, srcType: fs.Dirent) => {
+    if (srcType.isFile()) {
+      const stat = await baseFs.lstatPromise(srcPath);
+      const content = await baseFs.readFilePromise(srcPath);
+      await xfs.writeFilePromise(dstPath, content);
+      const mode = stat.mode & 0o777;
+      await xfs.chmodPromise(dstPath, mode);
+    } else if (srcType.isSymbolicLink()) {
+      const target = await baseFs.readlinkPromise(srcPath);
+      await xfs.symlinkPromise(target, dstPath);
+    } else {
+      throw new Error(`Unsupported file type (file: ${srcPath}, mode: 0o${await xfs.statSync(srcPath).mode.toString(8).padStart(6, `0`)})`);
+    }
+  };
+
+  for (const entry of entries) {
+    const srcPath = ppath.join(srcDir, toFilename(entry.name));
+    const dstPath = ppath.join(dstDir, toFilename(entry.name));
+    if (entry.isDirectory()) {
+      await copyPromise(dstPath, srcPath, {baseFs});
+    } else {
+      await copy(dstPath, srcPath, entry);
+    }
+  }
+};
+
 const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeModulesLocatorMap, locatorMap: NodeModulesLocatorMap, baseFs: FakeFS<PortablePath>, report: Report) => {
   const rootNmDirPath = ppath.join(rootPath, NODE_MODULES);
   const locatorStatePath = ppath.join(rootNmDirPath, LOCATOR_STATE_FILE);
@@ -480,7 +510,7 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
           await xfs.mkdirpPromise(ppath.dirname(dstDir));
           await xfs.symlinkPromise(ppath.relative(ppath.dirname(dstDir), srcDir), dstDir);
         } else {
-          await xfs.copyPromise(dstDir, srcDir, {baseFs});
+          await copyPromise(dstDir, srcDir, {baseFs});
         }
       } catch (e) {
         e.message = `While persisting ${srcDir} -> ${dstDir} ${e.message}`;
@@ -499,7 +529,7 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
     try {
       if (!options || !options.innerLoop) {
         await removeDir(dstDir, {excludeNodeModules: options && options.keepDstNodeModules});
-        await xfs.mkdirpPromise(dstDir, {chmod: 0o777});
+        await xfs.mkdirpPromise(dstDir);
       }
 
       const entries = await xfs.readdirPromise(srcDir, {withFileTypes: true});
@@ -510,7 +540,6 @@ const persistNodeModules = async (rootPath: PortablePath, prevLocatorMap: NodeMo
         if (entryName !== NODE_MODULES || !options || !options.keepSrcNodeModules) {
           if (entry.isDirectory()) {
             await xfs.mkdirPromise(dst);
-            await xfs.chmodPromise(dst, 0o777);
             await cloneModule(src, dst, {keepSrcNodeModules: false, keepDstNodeModules: false, innerLoop: true});
           } else {
             await xfs.copyFilePromise(src, dst, fs.constants.COPYFILE_FICLONE);
