@@ -3,18 +3,18 @@
   "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.19",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.15",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.23",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.18",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12",
-    "@yarnpkg/parsers": "workspace:^2.0.0-rc.6",
-    "@yarnpkg/pnp": "workspace:^2.0.0-rc.12",
-    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.12",
+    "@yarnpkg/parsers": "workspace:^2.0.0-rc.8",
+    "@yarnpkg/pnp": "workspace:^2.0.0-rc.15",
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.15",
     "clipanion": "^2.1.5",
     "micromatch": "^4.0.2"
   },
   "devDependencies": {
     "@types/micromatch": "^3.1.0",
-    "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.11"
+    "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.14"
   },
   "version": "2.0.0-rc.1",
   "nextVersion": {
