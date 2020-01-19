@@ -124,9 +124,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@arcanis/sherlock@npm:^1.0.25":
-  version: 1.0.25
-  resolution: "@arcanis/sherlock@npm:1.0.25"
+"@arcanis/sherlock@npm:^1.0.37":
+  version: 1.0.37
+  resolution: "@arcanis/sherlock@npm:1.0.37"
   dependencies:
     "@octokit/rest": ^16.28.7
     clipanion: 2.0.0-rc.16
@@ -143,7 +143,7 @@ __metadata:
       built: false
   bin:
     sherlock: lib/boot.js
-  checksum: 86e900bcd5819100266e40197af508d9afd512c7d05f0ac5294df87439df5a66ffa9d9035dff99c4d17cf26184556b31b0f83aedc3322fc15720d9afeef77a41
+  checksum: 3a067703bdd88bfd8a1904c83d84d05c01cac892d3d0205b482b06bdb0f2e1e01f92db9dc34cd25cf394924759d17f612fd70daa820c825bf7d6797021dcfb86
   languageName: node
   linkType: hard
 
@@ -4966,7 +4966,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/monorepo@workspace:."
   dependencies:
-    "@arcanis/sherlock": ^1.0.25
+    "@arcanis/sherlock": ^1.0.37
     "@babel/cli": ^7.2.3
     "@babel/core": ^7.7.4
     "@babel/plugin-proposal-async-generator-functions": ^7.2.0
