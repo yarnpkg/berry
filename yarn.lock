@@ -4987,6 +4987,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.0.0-rc.19"
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.15"
     babel-jest: ^24.5.0
+    clipanion: ^2.1.5
     eslint: ^5.16.0
     eslint-plugin-arca: ^0.9.0
     eslint-plugin-react: ^7.14.3
