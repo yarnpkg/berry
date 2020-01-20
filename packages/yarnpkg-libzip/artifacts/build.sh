@@ -103,9 +103,35 @@ LIBZIP_REPO=arcanis/libzip
         ./libzip-"$LIBZIP_VERSION"/build/local/lib/libzip.a \
         ./zlib-"$ZLIB_VERSION"/build/local/lib/libz.a
 
+    cat > ../sources/libzip.node.js \
+        <(echo "var frozenFs = Object.assign({}, require('fs'));") \
+        <(sed 's/require("fs")/frozenFs/g' ./build.js | sed 's/process\["on"\]/(function(){})/g') \
+
+    echo Built wasm node sync version
+)
+
+(
+    source "$EMSDK"
+
+    emcc \
+        -o ./build.js \
+        -s WASM=1 \
+        -s EXPORTED_FUNCTIONS="$(cat ./exported.json)" \
+        -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "getValue"]' \
+        -s ALLOW_MEMORY_GROWTH=1 \
+        -s BINARYEN_ASYNC_COMPILATION=0 \
+        -s NODERAWFS=1 \
+        -s SINGLE_FILE=1 \
+        -I./libzip-"$LIBZIP_VERSION"/build/local/include \
+        -O3 \
+        --llvm-lto 1 \
+        ./zipstruct.c \
+        ./libzip-"$LIBZIP_VERSION"/build/local/lib/libzip.a \
+        ./zlib-"$ZLIB_VERSION"/build/local/lib/libz.a
+
     cat > ../sources/libzip.js \
         <(echo "var frozenFs = Object.assign({}, require('fs'));") \
         <(sed 's/require("fs")/frozenFs/g' ./build.js | sed 's/process\["on"\]/(function(){})/g') \
 
-    echo Built wasm
+    echo Built wasm async version
 )
