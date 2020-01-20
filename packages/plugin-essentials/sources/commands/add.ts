@@ -246,14 +246,14 @@ function suggestTarget(workspace: Workspace, ident: Ident, {dev, peer, preferDev
   if (!dev && !peer && hasPeer)
     throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a peer dependency - use either of -D or -P, or remove it from your peer dependencies first`);
 
-  if (hasRegular)
-    return suggestUtils.Target.REGULAR;
-  if (hasDev)
-    return suggestUtils.Target.DEVELOPMENT;
-
   if (peer)
     return suggestUtils.Target.PEER;
   if (dev || preferDev)
+    return suggestUtils.Target.DEVELOPMENT;
+
+  if (hasRegular)
+    return suggestUtils.Target.REGULAR;
+  if (hasDev)
     return suggestUtils.Target.DEVELOPMENT;
 
   return suggestUtils.Target.REGULAR;
