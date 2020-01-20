@@ -20,7 +20,7 @@ const FORCED_UNPLUG_PACKAGES = new Set([
 
 export class PnpLinker implements Linker {
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
-    return true;
+    return opts.project.configuration.get('nodeLinker') === 'pnp';
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
@@ -122,7 +122,7 @@ class PnpInstaller implements Installer {
       this.blacklistedPaths.add(packageLocation);
 
     return {
-      packageLocation,
+      packageLocation: packageRawLocation,
       buildDirective: buildScripts.length > 0 ? buildScripts as BuildDirective[] : null,
     };
   }
@@ -148,6 +148,9 @@ class PnpInstaller implements Installer {
   }
 
   async finalizeInstall() {
+    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`)
+      return;
+
     const nodeModules = await this.locateNodeModules();
     if (nodeModules.length > 0) {
       this.opts.report.reportWarning(MessageName.DANGEROUS_NODE_MODULES, `One or more node_modules have been detected and will be removed. This operation may take some time.`);

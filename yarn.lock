@@ -4805,6 +4805,7 @@ __metadata:
     "@yarnpkg/plugin-http": "workspace:^2.0.0-rc.10"
     "@yarnpkg/plugin-init": "workspace:^2.0.0-rc.11"
     "@yarnpkg/plugin-link": "workspace:^2.0.0-rc.10"
+    "@yarnpkg/plugin-node-modules": "workspace:^2.0.0-rc.1"
     "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.13"
     "@yarnpkg/plugin-npm-cli": "workspace:^2.0.0-rc.12"
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.15"
@@ -5208,6 +5209,23 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
   peerDependencies:
     "@yarnpkg/core": ^2.0.0-rc.19
+  languageName: unknown
+  linkType: soft
+
+"@yarnpkg/plugin-node-modules@workspace:^2.0.0-rc.1, @yarnpkg/plugin-node-modules@workspace:packages/plugin-node-modules":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/plugin-node-modules@workspace:packages/plugin-node-modules"
+  dependencies:
+    "@types/micromatch": ^3.1.0
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.24"
+    "@yarnpkg/core": "workspace:^2.0.0-rc.19"
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
+    "@yarnpkg/parsers": "workspace:^2.0.0-rc.8"
+    "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.14"
+    "@yarnpkg/pnp": "workspace:^2.0.0-rc.15"
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.15"
+    clipanion: ^2.1.5
+    micromatch: ^4.0.2
   languageName: unknown
   linkType: soft
 

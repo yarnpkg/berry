@@ -23,7 +23,7 @@ export class NodeModulesFS extends ProxiedFS<NativePath, PortablePath> {
   constructor(pnp: PnpApi, {realFs = fs, pnpifyFs = true}: NodeModulesFSOptions = {}) {
     super(npath);
 
-    this.baseFs = new PortableNodeModulesFs(pnp, {baseFs: new NodeFS(realFs), pnpifyFs});
+    this.baseFs = new PortableNodeModulesFS(pnp, {baseFs: new NodeFS(realFs), pnpifyFs});
   }
 
   protected mapFromBase(path: PortablePath) {
@@ -40,33 +40,35 @@ interface PortableNodeModulesFSOptions extends NodeModulesTreeOptions {
   pnpifyFs?: boolean;
 };
 
-export class PortableNodeModulesFs extends FakeFS<PortablePath> {
+export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   private readonly baseFs: FakeFS<PortablePath>;
   private readonly options: PortableNodeModulesFSOptions;
   private readonly watchManager: WatchManager;
+  private readonly pnpFilePath: PortablePath;
   private nodeModulesTree: NodeModulesTree;
 
-  constructor(pnp: PnpApi, {baseFs = new NodeFS(), pnpifyFs = true, optimizeSizeOnDisk = false}: PortableNodeModulesFSOptions = {}) {
+  constructor(pnp: PnpApi, {baseFs = new NodeFS(), pnpifyFs = true}: PortableNodeModulesFSOptions = {}) {
     super(ppath);
 
     if (!pnp.getDependencyTreeRoots)
       throw new Error('NodeModulesFS supports PnP API versions 3+, please upgrade your PnP API provider');
 
-    this.options = {baseFs, pnpifyFs, optimizeSizeOnDisk};
+    this.options = {baseFs, pnpifyFs};
     this.baseFs = baseFs;
     this.nodeModulesTree = buildNodeModulesTree(pnp, this.options);
     this.watchManager = new WatchManager();
 
     const pnpRootPath = npath.toPortablePath(pnp.getPackageInformation(pnp.topLevel)!.packageLocation);
+    this.pnpFilePath = ppath.join(pnpRootPath, toFilename('.pnp.js'));
+
     this.watchPnpFile(pnpRootPath);
   }
 
   private watchPnpFile(pnpRootPath: PortablePath) {
-    const pnpFilePath = ppath.join(pnpRootPath, toFilename('.pnp.js'));
     this.baseFs.watch(pnpRootPath, {persistent: false},  (_, filename) => {
       if (filename === '.pnp.js') {
-        delete require.cache[pnpFilePath];
-        const pnp = require(pnpFilePath);
+        delete require.cache[this.pnpFilePath];
+        const pnp = require(this.pnpFilePath);
         this.nodeModulesTree = buildNodeModulesTree(pnp, this.options);
         this.watchManager.notifyWatchers((nodePath: PortablePath) => resolveNodeModulesPath(nodePath, this.nodeModulesTree));
       }
@@ -145,10 +147,6 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
       isDirectory: () => false,
       isSymbolicLink: () => true,
     });
-  }
-
-  private static createFsError(code: string, message: string) {
-    return Object.assign(new Error(`${code}: ${message}`), {code});
   }
 
   getRealPath() {
@@ -253,14 +251,14 @@ export class PortableNodeModulesFs extends FakeFS<PortablePath> {
 
   async lstatPromise(p: PortablePath) {
     return this.resolveLink(p, 'lstat',
-      (stats) => PortableNodeModulesFs.makeSymlinkStats(stats),
+      (stats) => PortableNodeModulesFS.makeSymlinkStats(stats),
       async (resolvedPath) => await this.baseFs.lstatPromise(resolvedPath)
     );
   }
 
   lstatSync(p: PortablePath) {
     return this.resolveLink(p, 'lstat',
-      (stats) => PortableNodeModulesFs.makeSymlinkStats(stats),
+      (stats) => PortableNodeModulesFS.makeSymlinkStats(stats),
       (resolvedPath) => this.baseFs.lstatSync(this.resolveDirOrFilePath(resolvedPath))
     );
   }

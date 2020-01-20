@@ -1,0 +1,28 @@
+{
+  "name": "@yarnpkg/plugin-node-modules",
+  "private": true,
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.24",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.19",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.12",
+    "@yarnpkg/parsers": "workspace:^2.0.0-rc.8",
+    "@yarnpkg/pnp": "workspace:^2.0.0-rc.15",
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.15",
+    "clipanion": "^2.1.5",
+    "micromatch": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/micromatch": "^3.1.0",
+    "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.14"
+  },
+  "version": "2.0.0-rc.1",
+  "nextVersion": {
+    "semver": "2.0.0-rc.5",
+    "nonce": "1989925236539513"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
+  }
+}

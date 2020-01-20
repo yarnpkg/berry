@@ -1,9 +1,9 @@
-import {NativePath, PortablePath, Filename, toFilename, npath, ppath, xfs}                                    from '@yarnpkg/fslib';
-import {PnpApi, PackageLocator, PackageInformation}                                                           from '@yarnpkg/pnp';
+import {NativePath, PortablePath, Filename}         from '@yarnpkg/fslib';
+import {toFilename, npath, ppath}                   from '@yarnpkg/fslib';
+import {PnpApi, PackageLocator, PackageInformation} from '@yarnpkg/pnp';
 
-import {hoist, ReadonlyHoisterPackageTree, HoisterPackageId, HoisterPackageInfo, ReadonlyHoisterDependencies} from './hoist';
-import {HoistedTree, HoisterPackageTree}                                                                      from './hoist';
-
+import {hoist, HoisterTree, HoisterResult}          from './hoist';
+import {HoisterTreeNode, HoisterResultNode}         from './hoist';
 
 // Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
 // But because of this TypeScript requires @yarnpkg/pnp during runtime
@@ -19,10 +19,9 @@ export enum LinkType {HARD = 'HARD', SOFT = 'SOFT'};
  * /home/user/project/node_modules/foo -> {target: '/home/user/project/.yarn/.cache/foo.zip/node_modules/foo', linkType: 'HARD'}
  * /home/user/project/node_modules/bar -> {target: '/home/user/project/packages/bar', linkType: 'SOFT'}
  */
-export type NodeModulesTree = Map<PortablePath, {dirList: Set<Filename>} | {dirList?: undefined, target: PortablePath, linkType: LinkType}>;
+export type NodeModulesTree = Map<PortablePath, {dirList: Set<Filename>} | {dirList?: undefined, locator: LocatorKey, target: PortablePath, linkType: LinkType, aliases: string[]}>;
 
 export interface NodeModulesTreeOptions {
-  optimizeSizeOnDisk?: boolean;
   pnpifyFs?: boolean;
 }
 
@@ -32,6 +31,8 @@ const NODE_MODULES = toFilename(`node_modules`);
 /** Package locator key for usage inside maps */
 type LocatorKey = string;
 
+type PackageId = string;
+
 /**
  * Returns path to archive, if package location is inside the archive.
  *
@@ -39,29 +40,10 @@ type LocatorKey = string;
  *
  * @returns path to archive is location is insde the archive or null otherwise
  */
-const getArchivePath = (packagePath: PortablePath): PortablePath | null =>
+export const getArchivePath = (packagePath: PortablePath): PortablePath | null =>
   packagePath.indexOf(`.zip/${NODE_MODULES}/`) >= 0 ?
     npath.toPortablePath(packagePath.split(`/${NODE_MODULES}/`)[0]) :
     null;
-
-/**
- * Determines package's weight relative to other packages for hoisting purposes.
- * If optimizeSizeOnDisk is `true`, we use archive size in bytes as a weight,
- * otherwise weight 1 is assigned to each package.
- *
- * @param packagePath package path
- * @param optimizeSizeOnDisk whether size on disk should be optimized during hoisting
- */
-const getPackageWeight = (packagePath: PortablePath, {optimizeSizeOnDisk}: NodeModulesTreeOptions) => {
-  if (!optimizeSizeOnDisk)
-    return 1;
-
-  const archivePath = getArchivePath(packagePath);
-  if (archivePath === null)
-    return 1;
-
-  return xfs.statSync(archivePath).size;
-};
 
 /**
  * Retrieve full package list and build hoisted `node_modules` directories
@@ -72,11 +54,38 @@ const getPackageWeight = (packagePath: PortablePath, {optimizeSizeOnDisk}: NodeM
  * @returns hoisted `node_modules` directories representation in-memory
  */
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
-  const {packageTree, packages, locators} = buildPackageTree(pnp, options);
+  const packageTree = buildPackageTree(pnp);
 
-  const hoistedTree = hoist(packageTree, packages);
+  const hoistedTree = hoist(packageTree);
 
-  return populateNodeModulesTree(pnp, hoistedTree, locators, options);
+  return populateNodeModulesTree(pnp, hoistedTree, options);
+};
+
+const stringifyLocator = (locator: PackageLocator): LocatorKey => `${locator.name}@${locator.reference}`;
+
+export type NodeModulesLocatorMap = Map<LocatorKey, {
+  target: PortablePath;
+  linkType: LinkType;
+  locations: PortablePath[];
+  aliases: string[];
+}>
+
+export const buildLocatorMap = (rootPath: PortablePath, nodeModulesTree: NodeModulesTree): NodeModulesLocatorMap => {
+  const map = new Map();
+
+  for (const [location, val] of nodeModulesTree.entries()) {
+    if (!val.dirList) {
+      let entry = map.get(val.locator);
+      if (!entry) {
+        entry = {target: val.target, linkType: val.linkType, locations: [], aliases: val.aliases};
+        map.set(val.locator, entry);
+      }
+
+      entry.locations.push(ppath.relative(rootPath, location));
+    }
+  }
+
+  return map;
 };
 
 /**
@@ -86,78 +95,56 @@ export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOption
  *
  * @returns package tree, packages info and locators
  */
-const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: ReadonlyHoisterPackageTree, packages: HoisterPackageInfo[], locators: PackageLocator[] } => {
-  const packageTree: HoisterPackageTree = [];
-  const packages: HoisterPackageInfo[] = [];
-  const locators: PackageLocator[] = [];
-  const locatorToPackageMap = new Map<LocatorKey, HoisterPackageId>();
-  const packageInfos: PackageInformation<NativePath>[] = [];
+const buildPackageTree = (pnp: PnpApi): HoisterTree => {
+  const packageTree = new Map();
 
   const pnpRoots = pnp.getDependencyTreeRoots();
 
-  let lastPkgId = 0;
-
-  const getLocatorKey = (locator: PackageLocator): LocatorKey => `${locator.name}:${locator.reference}`;
-
-  const assignPackageId = (locator: PackageLocator, pkg: PackageInformation<NativePath>) => {
-    const locatorKey = getLocatorKey(locator);
-    const pkgId = locatorToPackageMap.get(locatorKey);
-    if (typeof pkgId !== 'undefined')
-      return pkgId;
-
-    const newPkgId = lastPkgId++;
-    const packagePath = npath.toPortablePath(pkg.packageLocation);
-    const weight = getPackageWeight(packagePath, options);
-
-    locatorToPackageMap.set(locatorKey, newPkgId);
-    locators.push(locator);
-    packages.push({name: locator.name!, weight});
-    packageInfos.push(pkg);
-    return newPkgId;
+  const parseLocator = (locator: PackageLocator): {name: string, reference: string} => {
+    const hashIdx = locator.reference!.indexOf('#');
+    // Strip virtual reference part, we don't need it for hoisting purposes
+    const reference = hashIdx >= 0 ? locator.reference!.substring(hashIdx + 1) : locator.reference!;
+    return {name: locator.name!, reference};
   };
 
-  const addedIds = new Set<HoisterPackageId>();
-  const addPackageToTree = (pkg: PackageInformation<NativePath>, pkgId: HoisterPackageId, parentDepIds: Set<HoisterPackageId>) => {
-    if (addedIds.has(pkgId))
+  const addPackageToTree = (pkg: PackageInformation<NativePath>, locator: PackageLocator, pkgId: PackageId) => {
+    if (packageTree.has(pkgId))
       return;
-    addedIds.add(pkgId);
-    const deps = new Set<HoisterPackageId>();
-    const peerDeps = new Set<HoisterPackageId>();
-    packageTree[pkgId] = {deps, peerDeps};
+    const {name, reference} = parseLocator(locator);
+
+    const node: HoisterTreeNode = {
+      name,
+      reference,
+      originalReference: locator.reference,
+      deps: new Set(),
+      peerNames: pkg.packagePeers,
+    };
+
+    packageTree.set(pkgId, node);
 
     for (const [name, referencish] of pkg.packageDependencies) {
       if (referencish !== null) {
-        const locator = pnp.getLocator(name, referencish);
-        const depPkg = pnp.getPackageInformation(locator)!;
-        const depPkgId = assignPackageId(locator, depPkg);
-        if (pkg.packagePeers.has(name)) {
-          peerDeps.add(depPkgId);
-        } else {
-          deps.add(depPkgId);
-        }
+        const depLocator = pnp.getLocator(name, referencish);
+        const depPkg = pnp.getPackageInformation(depLocator)!;
+        const depNodeId = stringifyLocator(depLocator);
+        node.deps.add(depNodeId);
+        addPackageToTree(depPkg, depLocator, depNodeId);
       }
-    }
-
-    const allDepIds = new Set([...deps, ...peerDeps]);
-    for (const depId of allDepIds) {
-      const depPkg = packageInfos[depId];
-      addPackageToTree(depPkg, depId, allDepIds);
     }
   };
 
-  const pkg = pnp.getPackageInformation(pnp.topLevel)!;
-  const topLocator = pnp.findPackageLocator(pkg.packageLocation)!;
-  const topLocatorKey = getLocatorKey(topLocator);
+  const topPkg = pnp.getPackageInformation(pnp.topLevel)!;
+  const topLocator = pnp.findPackageLocator(topPkg.packageLocation)!;
+  const topLocatorKey = stringifyLocator(topLocator);
   for (const locator of pnpRoots) {
-    if (getLocatorKey(locator) !== topLocatorKey) {
-      pkg.packageDependencies.set(locator.name!, locator.reference);
+    if (stringifyLocator(locator) !== topLocatorKey) {
+      topPkg.packageDependencies.set(locator.name!, locator.reference);
     }
   }
 
-  const pkgId = assignPackageId(topLocator, pkg);
-  addPackageToTree(pkg, pkgId, new Set<number>());
+  addPackageToTree(topPkg, topLocator, '.');
 
-  return {packageTree, packages, locators};
+  return packageTree;
 };
 
 
@@ -167,20 +154,38 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
  * @param pnp PnP API
  * @param hoistedTree hoisted package tree from `RawHoister`
  * @param locators locators
+ * @param packages package weights
  *
  * @returns node modules map
  */
-const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators: PackageLocator[], options: NodeModulesTreeOptions): NodeModulesTree => {
+const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, options: NodeModulesTreeOptions): NodeModulesTree => {
   const tree: NodeModulesTree = new Map();
 
-  const makeLeafNode = (locator: PackageLocator): {target: PortablePath, linkType: LinkType} => {
+  const makeLeafNode = (locator: PackageLocator, aliases: string[]): {locator: LocatorKey, target: PortablePath, linkType: LinkType, aliases: string[]} => {
     const info = pnp.getPackageInformation(locator)!;
+
+    let linkType;
+    let target;
     if (options.pnpifyFs) {
-      return {target: npath.toPortablePath(info.packageLocation), linkType: LinkType.SOFT};
+      // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
+      // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
+      // To make this fs layout work with legacy tools we make
+      // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
+      // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
+      target = npath.toPortablePath(info.packageLocation);
+      linkType = LinkType.SOFT;
     } else {
       const truePath = pnp.resolveVirtual && locator.reference && locator.reference.startsWith('virtual:') ? pnp.resolveVirtual(info.packageLocation) : info.packageLocation;
-      return {target: npath.toPortablePath(truePath || info.packageLocation), linkType: info.linkType};
+      target = npath.toPortablePath(truePath || info.packageLocation);
+      linkType = info.linkType;
     }
+
+    return {
+      locator: stringifyLocator(locator),
+      target,
+      linkType,
+      aliases,
+    };
   };
 
   const getPackageName = (locator: PackageLocator): { name: Filename, scope: Filename | null } => {
@@ -189,13 +194,15 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
   };
 
   const seenPkgIds = new Set();
-  const buildTree = (nodeId: HoisterPackageId, locationPrefix: PortablePath) => {
-    if (seenPkgIds.has(nodeId))
+  const buildTree = (pkg: HoisterResultNode, pkgId: PackageId, locationPrefix: PortablePath) => {
+    if (seenPkgIds.has(pkgId))
       return;
-    seenPkgIds.add(nodeId);
+    seenPkgIds.add(pkgId);
 
-    for (const depId of hoistedTree[nodeId]) {
-      const locator = locators[depId];
+    for (const depId of pkg.deps) {
+      const dep = hoistedTree.get(depId)!;
+      const references: string[] = Array.from(dep.originalReference);
+      const locator = {name: dep.name, reference: references[0]};
       const {name, scope} = getPackageName(locator);
 
       const packageNameParts = scope ? [scope, name] : [name];
@@ -203,7 +210,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
       const nodeModulesDirPath = ppath.join(locationPrefix, NODE_MODULES);
       const nodeModulesLocation = ppath.join(nodeModulesDirPath, ...packageNameParts);
 
-      const leafNode = makeLeafNode(locator);
+      const leafNode = makeLeafNode(locator, references.slice(1));
       tree.set(nodeModulesLocation, leafNode);
 
       const segments = nodeModulesLocation.split('/');
@@ -228,18 +235,15 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
         segCount--;
       }
 
-      // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
-      // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
-      // To make this fs layout work with legacy tools we make
-      // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
-      // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
-      buildTree(depId, options.pnpifyFs ? leafNode.target: nodeModulesLocation);
+      buildTree(dep, depId, leafNode.linkType === LinkType.SOFT ? leafNode.target: nodeModulesLocation);
     }
   };
 
-  const rootNode = makeLeafNode(locators[0]);
-  const rootPath = rootNode.target && rootNode.target;
-  buildTree(0, rootPath);
+  const hoistedRoot = hoistedTree.get('.')!;
+  const rootNode = makeLeafNode({name: hoistedRoot.name, reference: Array.from(hoistedRoot.originalReference)[0] as string}, []);
+  const rootPath = rootNode.target;
+  tree.set(rootPath, rootNode);
+  buildTree(hoistedRoot, '.', rootPath);
 
   return tree;
 };
@@ -255,11 +259,11 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoistedTree, locators
  * @returns average raw hoisting time
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const benchmarkRawHoisting = (packageTree: ReadonlyHoisterPackageTree, packages: HoisterPackageInfo[]) => {
+const benchmarkRawHoisting = (packageTree: HoisterTree) => {
   const iterCount = 100;
   const startTime = Date.now();
   for (let iter = 0; iter < iterCount; iter++)
-    hoist(packageTree, packages);
+    hoist(packageTree);
   const endTime = Date.now();
   return (endTime - startTime) / iterCount;
 };
@@ -279,9 +283,9 @@ const benchmarkBuildTree = (pnp: PnpApi, options: NodeModulesTreeOptions): numbe
   const iterCount = 100;
   const startTime = Date.now();
   for (let iter = 0; iter < iterCount; iter++) {
-    const {packageTree, packages, locators} = buildPackageTree(pnp, options);
-    const hoistedTree = hoist(packageTree, packages);
-    populateNodeModulesTree(pnp, hoistedTree, locators, options);
+    const packageTree = buildPackageTree(pnp);
+    const hoistedTree = hoist(packageTree);
+    populateNodeModulesTree(pnp, hoistedTree, options);
   }
   const endTime = Date.now();
   return (endTime - startTime) / iterCount;
@@ -343,16 +347,12 @@ const dumpNodeModulesTree = (tree: NodeModulesTree, rootPath: PortablePath): str
  *
  * The function is used for troubleshooting purposes only.
  *
- * @param tree node_modules tree
+ * @param pkg node_modules tree
  *
  * @returns sorted node_modules tree
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const dumpDepTree = (tree: ReadonlyHoisterPackageTree | HoistedTree, locators: PackageLocator[], nodeId: number = 0, prefix = '', seenIds = new Set()) => {
-  if (seenIds.has(nodeId))
-    return '';
-  seenIds.add(nodeId);
-
+const dumpDepTree = (tree: HoisterResult) => {
   const dumpLocator = (locator: PackageLocator): string => {
     if (locator.reference === 'workspace:.') {
       return '.';
@@ -368,27 +368,22 @@ const dumpDepTree = (tree: ReadonlyHoisterPackageTree | HoistedTree, locators: P
     }
   };
 
-  const deps: number[] = Array.from(((tree[nodeId] as ReadonlyHoisterDependencies).deps || tree[nodeId]));
+  const dumpPackage = (pkg: HoisterResultNode, pkgId: PackageId, parentIds: PackageId[], prefix = ''): string => {
+    if (parentIds.includes(pkgId))
+      return '';
 
-  const traverseIds = new Set();
-  for (const depId of deps) {
-    if (!seenIds.has(depId)) {
-      traverseIds.add(depId);
-      seenIds.add(depId);
-    }
-  }
+    const depIds = Array.from(pkg.deps);
 
-  let str = '';
-  for (let idx = 0; idx < deps.length; idx++) {
-    const depId = deps[idx];
-    str += `${prefix}${idx < deps.length - 1 ? '├─' : '└─'}${(traverseIds.has(depId) ? '>' : '') + dumpLocator(locators[depId])}\n`;
-    if (traverseIds.has(depId)) {
-      seenIds.delete(depId);
-      str += dumpDepTree(tree, locators, depId, `${prefix}${idx < deps.length - 1 ?'│ ' : '  '}`, seenIds);
-      seenIds.add(depId);
+    let str = '';
+    for (let idx = 0; idx < depIds.length; idx++) {
+      const depId = depIds[idx];
+      const dep = tree.get(depId)!;
+      str += `${prefix}${idx < depIds.length - 1 ? '├─' : '└─'}${(parentIds.includes(depId) ? '>' : '') + dumpLocator(dep.locator)}\n`;
+      str += dumpPackage(dep, depId, [...parentIds, depId], `${prefix}${idx < depIds.length - 1 ?'│ ' : '  '}`);
     }
-  }
-  for (const depId of traverseIds)
-    seenIds.delete(depId);
-  return str;
+    return str;
+  };
+
+  const rootPkg = tree.get('.')!;
+  return dumpPackage(rootPkg, '.', []);
 };

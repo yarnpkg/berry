@@ -12,7 +12,7 @@ export {Cache}                                                                  
 export {DEFAULT_RC_FILENAME, DEFAULT_LOCK_FILENAME}                                                      from './Configuration';
 export {Configuration, FormatType, PluginConfiguration, ProjectLookup, SettingsDefinition, SettingsType} from './Configuration';
 export {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions}                                         from './Fetcher';
-export {Installer, BuildDirective, BuildType}                                                            from './Installer';
+export {Installer, BuildDirective, BuildType, InstallStatus}                                             from './Installer';
 export {LightReport}                                                                                     from './LightReport';
 export {Linker, LinkOptions, MinimalLinkOptions}                                                         from './Linker';
 export {AllDependencies, HardDependencies, Manifest, DependencyMeta, PeerDependencyMeta}                 from './Manifest';

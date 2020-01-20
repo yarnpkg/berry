@@ -1,7 +1,7 @@
-import {PortablePath}                 from '@yarnpkg/fslib';
+import {PortablePath}                              from '@yarnpkg/fslib';
 
-import {FetchResult}                  from './Fetcher';
-import {Descriptor, Locator, Package} from './types';
+import {FetchResult}                               from './Fetcher';
+import {Descriptor, Locator, Package, LocatorHash} from './types';
 
 export enum BuildType {
   SCRIPT = 0,
@@ -12,6 +12,8 @@ export type BuildDirective = [BuildType, string];
 
 export type InstallStatus = {
   packageLocation: PortablePath,
+  locatorHash?: LocatorHash,
+  buildLocations?: PortablePath[],
   buildDirective?: Array<BuildDirective> | null,
 };
 
@@ -64,5 +66,5 @@ export interface Installer {
   /**
    * Finalize the install by writing miscellaneous files to the disk.
    */
-  finalizeInstall(): Promise<void>;
+  finalizeInstall(): Promise<InstallStatus[] | void>;
 };

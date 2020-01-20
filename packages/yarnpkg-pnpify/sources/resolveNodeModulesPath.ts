@@ -84,7 +84,7 @@ export const resolveNodeModulesPath = (inputPath: PortablePath, nodeModulesTree:
         locationCandidate = (node as any).target;
       lastNode = node;
       request = PortablePath.dot;
-      lastNodeLocation = locationCandidate;
+      lastNodeLocation = node.dirList ? locationCandidate : (node as any).target;
     } else {
       request = ppath.join(request, curSegment);
     }
