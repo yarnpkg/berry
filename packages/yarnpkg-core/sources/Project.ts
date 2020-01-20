@@ -1172,6 +1172,9 @@ export class Project {
           report.reportInfo(MessageName.MUST_BUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be built because it never did before or the last one failed`);
 
         for (const location of buildInfo.buildLocations) {
+          if (!ppath.isAbsolute(location))
+            throw new Error(`Assertion failed: Expected the build location to be absolute (not ${location})`);
+
           buildPromises.push((async () => {
             for (const [buildType, scriptName] of buildInfo.directives) {
               let header = `# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`;

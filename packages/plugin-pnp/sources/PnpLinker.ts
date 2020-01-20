@@ -122,7 +122,7 @@ class PnpInstaller implements Installer {
       this.blacklistedPaths.add(packageLocation);
 
     return {
-      packageLocation,
+      packageLocation: packageRawLocation,
       buildDirective: buildScripts.length > 0 ? buildScripts as BuildDirective[] : null,
     };
   }
