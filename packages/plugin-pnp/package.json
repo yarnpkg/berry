@@ -10,13 +10,13 @@
     "micromatch": "^4.0.2"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.23",
-    "@yarnpkg/core": "^2.0.0-rc.18"
+    "@yarnpkg/cli": "^2.0.0-rc.24",
+    "@yarnpkg/core": "^2.0.0-rc.19"
   },
   "devDependencies": {
     "@types/micromatch": "^3.1.0",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.23",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.18"
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.24",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.19"
   },
   "repository": {
     "type": "git",

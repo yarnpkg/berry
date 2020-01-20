@@ -6,10 +6,10 @@
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.18"
+    "@yarnpkg/core": "^2.0.0-rc.19"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^2.0.0-rc.18"
+    "@yarnpkg/core": "workspace:^2.0.0-rc.19"
   },
   "repository": {
     "type": "git",

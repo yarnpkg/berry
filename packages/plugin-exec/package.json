@@ -8,11 +8,11 @@
     "tmp": "^0.1.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.18"
+    "@yarnpkg/core": "^2.0.0-rc.19"
   },
   "devDependencies": {
     "@types/tmp": "^0.0.33",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.18",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.19",
     "typescript": "^3.7.4"
   },
   "scripts": {

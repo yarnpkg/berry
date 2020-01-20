@@ -3,6 +3,8 @@ import {Configuration, Project, Workspace, ThrowReport} from '@yarnpkg/core';
 import {scriptUtils, structUtils}                       from '@yarnpkg/core';
 import {Command, UsageError}                            from 'clipanion';
 
+import {pluginCommands}                                 from '../pluginCommands';
+
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends BaseCommand {
   // This flag is mostly used to give users a way to configure node-gyp. They
@@ -109,6 +111,13 @@ export default class RunCommand extends BaseCommand {
         throw new UsageError(`Couldn't find a script name "${this.scriptName}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)}).`);
       }
     } else {
+      const userCommand = [this.scriptName].concat(this.args);
+
+      for (const [pluginName, candidates] of pluginCommands)
+        for (const candidate of candidates)
+          if (userCommand.length >= candidate.length && JSON.stringify(userCommand.slice(0, candidate.length)) === JSON.stringify(candidate))
+            throw new UsageError(`Couldn't find a script named "${this.scriptName}", but a matching command can be found in the ${pluginName} plugin. You can install it with "yarn plugin import ${pluginName}".`);
+
       throw new UsageError(`Couldn't find a script named "${this.scriptName}".`);
     }
   }

@@ -16,6 +16,9 @@ mkdir "$TEMP_DIR"/bin
 cp "$THIS_DIR"/package.json.template "$TEMP_DIR"/package.json
 cp "$REPO_DIR"/packages/yarnpkg-cli/bin/yarn.js "$TEMP_DIR"/bin/yarn.js
 
+VERSION=$(YARN_IGNORE_PATH=1 node packages/yarnpkg-cli/bin/yarn.js --version)
+perl -pi -e "s#{{version}}#$VERSION#" "$TEMP_DIR"/package.json
+
 chmod +x "$TEMP_DIR"/bin/yarn.js
 
 cd "$TEMP_DIR"
