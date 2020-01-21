@@ -87,27 +87,15 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
       }
     }
 
-    console.time(`makeRuntimeApi`);
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
-    console.timeEnd(`makeRuntimeApi`);
-
-    console.time(`buildNodeModulesTree`);
     const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false});
-    console.timeEnd(`buildNodeModulesTree`);
-
-    console.time(`buildLocatorMap`);
     const installState = buildLocatorMap(nmTree);
-    console.timeEnd(`buildLocatorMap`);
 
-    xfs.writeFileSync(`/tmp/foolog` as any, require(`util`).inspect(installState, {depth: Infinity}));
-
-    console.time(`persistNodeModules`);
     await persistNodeModules(preinstallState, installState, {
       baseFs: defaultFsLayer,
       project: this.opts.project,
       report: this.opts.report,
     });
-    console.timeEnd(`persistNodeModules`);
 
     const installStatuses: Array<FinalizeInstallStatus> = [];
 
@@ -121,7 +109,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
 
       const sourceLocation = npath.toPortablePath(pnpEntry.packageLocation);
 
-      const manifest = await Manifest.find(sourceLocation);
+      const manifest = await Manifest.find(sourceLocation, {baseFs: defaultFsLayer});
       const buildScripts = await this.getSourceBuildScripts(sourceLocation, manifest);
 
       if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`)) {
