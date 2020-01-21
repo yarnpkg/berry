@@ -59,7 +59,7 @@
   },
   "scripts": {
     "build:plugin-commands": "node ./scripts/gen-plugin-commands.js > packages/plugin-essentials/sources/pluginCommands.ts",
-    "build:compile": "rm -rf \"$0\"/lib && mkdir -p \"$0\"/lib && babel \"$0\"/sources --out-dir \"$0\"/lib --copy-files --extensions .js,.ts,.tsx",
+    "build:compile": "rm -rf \"$0\"/lib && mkdir -p \"$0\"/lib && rsync -a --exclude '*.ts' --exclude '*.tsx' --include '*.d.ts' \"$0\"/sources/ \"$0\"/lib/ && node scripts/compile \"$0\"",
     "build:compile-inline": "find \"$0\"/sources -name '*.js' && babel \"$0\"/sources --out-dir \"$0\"/sources --extensions .ts,.tsx",
     "gen-tssdk": "pnpify --sdk scripts",
     "release:all": "./scripts/release.sh",
