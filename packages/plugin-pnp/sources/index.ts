@@ -80,5 +80,7 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
   ],
 };
 
+export {AbstractPnpInstaller} from './AbstractPnpInstaller';
+
 // eslint-disable-next-line arca/no-default-export
 export default plugin;
