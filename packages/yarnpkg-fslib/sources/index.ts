@@ -6,6 +6,7 @@ import {PortablePath, NativePath, npath} from './path';
 
 export {CreateReadStreamOptions}  from './FakeFS';
 export {CreateWriteStreamOptions} from './FakeFS';
+export {Dirent}                   from './FakeFS';
 export {MkdirOptions}             from './FakeFS';
 export {WatchOptions}             from './FakeFS';
 export {WatchCallback}            from './FakeFS';
