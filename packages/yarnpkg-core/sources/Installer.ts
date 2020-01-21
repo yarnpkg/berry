@@ -12,9 +12,13 @@ export type BuildDirective = [BuildType, string];
 
 export type InstallStatus = {
   packageLocation: PortablePath,
-  locatorHash?: LocatorHash,
-  buildLocations?: PortablePath[],
-  buildDirective?: Array<BuildDirective> | null,
+  buildDirective: Array<BuildDirective> | null,
+};
+
+export type FinalizeInstallStatus = {
+  locatorHash: LocatorHash,
+  buildLocations: Array<PortablePath>,
+  buildDirective: Array<BuildDirective>,
 };
 
 export interface Installer {
@@ -66,5 +70,5 @@ export interface Installer {
   /**
    * Finalize the install by writing miscellaneous files to the disk.
    */
-  finalizeInstall(): Promise<InstallStatus[] | void>;
+  finalizeInstall(): Promise<Array<FinalizeInstallStatus> | void>;
 };

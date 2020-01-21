@@ -7,10 +7,12 @@
     "@yarnpkg/core": "workspace:^2.0.0-rc.19",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.8",
+    "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.14",
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.15",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.15",
     "clipanion": "^2.1.5",
-    "micromatch": "^4.0.2"
+    "micromatch": "^4.0.2",
+    "p-limit": "^2.2.0"
   },
   "devDependencies": {
     "@types/micromatch": "^3.1.0",

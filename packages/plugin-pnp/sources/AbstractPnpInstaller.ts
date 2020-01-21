@@ -1,9 +1,9 @@
-import {InstallStatus, Installer, LinkOptions, LinkType, MessageName, DependencyMeta} from '@yarnpkg/core';
-import {FetchResult, Descriptor, Locator, Package, BuildDirective}                    from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                       from '@yarnpkg/core';
-import {FakeFS, PortablePath, ppath}                                                  from '@yarnpkg/fslib';
-import {PackageRegistry, PnpSettings}                                                 from '@yarnpkg/pnp';
-import mm                                                                             from 'micromatch';
+import {InstallStatus, Installer, LinkOptions, LinkType, MessageName, DependencyMeta, FinalizeInstallStatus} from '@yarnpkg/core';
+import {FetchResult, Descriptor, Locator, Package, BuildDirective}                                           from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                                              from '@yarnpkg/core';
+import {FakeFS, PortablePath, ppath}                                                                         from '@yarnpkg/fslib';
+import {PackageRegistry, PnpSettings}                                                                        from '@yarnpkg/pnp';
+import mm                                                                                                    from 'micromatch';
 
 export abstract class AbstractPnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
@@ -29,7 +29,7 @@ export abstract class AbstractPnpInstaller implements Installer {
    * Called with the full settings, ready to be used by the @yarnpkg/pnp
    * package.
    */
-  abstract finalizeInstallWithPnp(pnpSettings: PnpSettings): Promise<Array<InstallStatus> | void>;
+  abstract finalizeInstallWithPnp(pnpSettings: PnpSettings): Promise<Array<FinalizeInstallStatus> | void>;
 
   async installPackage(pkg: Package, fetchResult: FetchResult) {
     const key1 = structUtils.requirableIdent(pkg);

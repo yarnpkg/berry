@@ -949,30 +949,62 @@ export class Project {
       if (!pkg)
         throw new Error(`Assertion failed: The locator should have been registered`);
 
-      const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
-      if (!linker)
-        throw new ReportError(MessageName.LINKER_NOT_FOUND, `${structUtils.prettyLocator(this.configuration, pkg)} isn't supported by any available linker`);
-
-      const installer = installers.get(linker);
-      if (!installer)
-        throw new Error(`Assertion failed: The installer should have been registered`);
-
       const fetchResult = await fetcher.fetch(pkg, fetcherOptions);
 
-      let installStatus;
-      try {
-        installStatus = await installer.installPackage(pkg, fetchResult);
-      } finally {
-        if (fetchResult.releaseFs) {
-          fetchResult.releaseFs();
+      if (this.tryWorkspaceByLocator(pkg) !== null) {
+        const buildScripts: Array<BuildDirective> = [];
+        const {scripts} = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
+
+        for (const scriptName of [`preinstall`, `install`, `postinstall`])
+          if (scripts.has(scriptName))
+            buildScripts.push([BuildType.SCRIPT, scriptName]);
+
+        try {
+          for (const installer of installers.values()) {
+            await installer.installPackage(pkg, fetchResult);
+          }
+        } finally {
+          if (fetchResult.releaseFs) {
+            fetchResult.releaseFs();
+          }
         }
-      }
 
-      packageLinkers.set(pkg.locatorHash, linker);
-      packageLocations.set(pkg.locatorHash, installStatus.packageLocation);
+        const location = ppath.join(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
+        packageLocations.set(pkg.locatorHash, location);
 
-      if (installStatus.buildDirective) {
-        packageBuildDirectives.set(pkg.locatorHash, {directives: installStatus.buildDirective, buildLocations: [installStatus.packageLocation]});
+        if (buildScripts.length > 0) {
+          packageBuildDirectives.set(pkg.locatorHash, {
+            directives: buildScripts,
+            buildLocations: [location],
+          });
+        }
+      } else {
+        const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
+        if (!linker)
+          throw new ReportError(MessageName.LINKER_NOT_FOUND, `${structUtils.prettyLocator(this.configuration, pkg)} isn't supported by any available linker`);
+
+        const installer = installers.get(linker);
+        if (!installer)
+          throw new Error(`Assertion failed: The installer should have been registered`);
+
+        let installStatus;
+        try {
+          installStatus = await installer.installPackage(pkg, fetchResult);
+        } finally {
+          if (fetchResult.releaseFs) {
+            fetchResult.releaseFs();
+          }
+        }
+
+        packageLinkers.set(pkg.locatorHash, linker);
+        packageLocations.set(pkg.locatorHash, installStatus.packageLocation);
+
+        if (installStatus.buildDirective) {
+          packageBuildDirectives.set(pkg.locatorHash, {
+            directives: installStatus.buildDirective,
+            buildLocations: [installStatus.packageLocation],
+          });
+        }
       }
     }
 
@@ -985,45 +1017,59 @@ export class Project {
       if (!pkg)
         throw new Error(`Assertion failed: The locator should have been registered`);
 
-      const packageLinker = packageLinkers.get(pkg.locatorHash);
-      if (!packageLinker)
-        throw new Error(`Assertion failed: The linker should have been found`);
+      const isWorkspace = this.tryWorkspaceByLocator(pkg) !== null;
 
-      const installer = installers.get(packageLinker);
-      if (!installer)
-        throw new Error(`Assertion failed: The installer should have been registered`);
+      const linkPackage = async (packageLinker: Linker, installer: Installer) => {
+        const packageLocation = packageLocations.get(pkg.locatorHash);
+        if (!packageLocation)
+          throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, pkg)}) should have been registered`);
 
-      const packageLocation = packageLocations.get(pkg.locatorHash);
-      if (!packageLocation)
-        throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, pkg)}) should have been registered`);
+        const internalDependencies = [];
 
-      const internalDependencies = [];
+        for (const descriptor of pkg.dependencies.values()) {
+          const resolution = this.storedResolutions.get(descriptor.descriptorHash);
+          if (typeof resolution === `undefined`)
+            throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}, from ${structUtils.prettyLocator(this.configuration, pkg)})should have been registered`);
 
-      for (const descriptor of pkg.dependencies.values()) {
-        const resolution = this.storedResolutions.get(descriptor.descriptorHash);
-        if (!resolution)
-          throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}, from ${structUtils.prettyLocator(this.configuration, pkg)})should have been registered`);
+          const dependency = this.storedPackages.get(resolution);
+          if (typeof dependency === `undefined`)
+            throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
-        const dependency = this.storedPackages.get(resolution);
-        if (!dependency)
-          throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+          const dependencyLinker = this.tryWorkspaceByLocator(dependency) === null
+            ? packageLinkers.get(resolution)
+            : null;
 
-        const dependencyLinker = packageLinkers.get(resolution);
-        if (!dependencyLinker)
-          throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+          if (typeof dependencyLinker === `undefined`)
+            throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
 
-        if (dependencyLinker === packageLinker) {
-          internalDependencies.push([descriptor, dependency] as [Descriptor, Locator]);
-        } else {
-          let externalEntry = externalDependents.get(resolution);
-          if (!externalEntry)
-            externalDependents.set(resolution, externalEntry = []);
+          const isWorkspaceDependency = dependencyLinker === null;
 
-          externalEntry.push(packageLocation);
+          if (dependencyLinker === packageLinker || isWorkspace || isWorkspaceDependency) {
+            internalDependencies.push([descriptor, dependency] as [Descriptor, Locator]);
+          } else {
+            const externalEntry = miscUtils.getArrayWithDefault(externalDependents, resolution);
+            externalEntry.push(packageLocation);
+          }
         }
-      }
 
-      await installer.attachInternalDependencies(pkg, internalDependencies);
+        await installer.attachInternalDependencies(pkg, internalDependencies);
+      };
+
+      if (isWorkspace) {
+        for (const [packageLinker, installer] of installers) {
+          await linkPackage(packageLinker, installer);
+        }
+      } else {
+        const packageLinker = packageLinkers.get(pkg.locatorHash);
+        if (!packageLinker)
+          throw new Error(`Assertion failed: The linker should have been found`);
+
+        const installer = installers.get(packageLinker!);
+        if (!installer)
+          throw new Error(`Assertion failed: The installer should have been registered`);
+
+        await linkPackage(packageLinker, installer);
+      }
     }
 
     for (const [locatorHash, dependentPaths] of externalDependents) {
@@ -1049,7 +1095,10 @@ export class Project {
       if (installStatuses) {
         for (const installStatus of installStatuses) {
           if (installStatus.buildDirective) {
-            packageBuildDirectives.set(installStatus.locatorHash!, {directives: installStatus.buildDirective || undefined, buildLocations: installStatus.buildLocations || [installStatus.packageLocation]});
+            packageBuildDirectives.set(installStatus.locatorHash!, {
+              directives: installStatus.buildDirective,
+              buildLocations: installStatus.buildLocations,
+            });
           }
         }
       }
