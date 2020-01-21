@@ -1,4 +1,4 @@
-# `@yarnpkg/plugin-http`
+# `@yarnpkg/plugin-node-modules`
 
 This plugin adds support for installing packages through a `node_modules` folder.
 
@@ -24,10 +24,8 @@ To quote the repository [license](/LICENSE.md):
 
 > THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY [...] DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE
 
-With that in mind, good luck. Here be dragons.
+With that in mind, good luck. Here be dragons 🐉
 
 ## Known issues
 
-Keeping in mind the section above, here are some of the problems we're aware of but won't be fixed immediatly. For real, use the PnP linker.
-
-- A same package / reference combination present multiple times within the same `node_modules` dependency tree will have issues calling `yarn run` from within its postinstall scripts. This is because this plugin is able to extract the package locator from the current cwd, but since a single locator may be in multiple places it then loses this information.
+- A same package / reference combination present multiple times within the same `node_modules` dependency tree will have issues calling `yarn run` from within its postinstall scripts. This is because this plugin is able to extract the package locator from the current cwd, but since a same locator may be found in multiple places it's not possible to convert it back from the locator to its location on the disk.
