@@ -108,7 +108,11 @@ build() {
 
   cat > ../sources/"$name".js \
     <(echo "var frozenFs = Object.assign({}, require('fs'));") \
-    <(sed 's/require("fs")/frozenFs/g' ./build.js | sed 's/process\["on"\]/(function(){})/g') \
+    <(sed 's/require("fs")/frozenFs/g' ./build.js \
+    | sed 's/process\["on"\]/(function(){})/g' \
+    | sed 's/process\["binding"\]("constants")/({"fs":fs.constants})/g')
+
+  yarn prettier --write ../sources/"$name".js
 
   echo "Built wasm ($name)"
 }

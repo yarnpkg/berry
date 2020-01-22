@@ -3840,6 +3840,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/prettier@npm:1.19.0":
+  version: 1.19.0
+  resolution: "@types/prettier@npm:1.19.0"
+  checksum: 99ef50448801bb9bb5eee7760f84da2d9690007a3c272cc9fb80bcb9417c2b6253f6a89abe3d3468693b28b21a944d1b5c66f17628c8906ef6e28c40405643e0
+  languageName: node
+  linkType: hard
+
 "@types/promise.prototype.finally@npm:^2.0.3":
   version: 2.0.3
   resolution: "@types/promise.prototype.finally@npm:2.0.3"
@@ -4961,6 +4968,9 @@ __metadata:
 "@yarnpkg/libzip@workspace:^2.0.0-rc.5, @yarnpkg/libzip@workspace:packages/yarnpkg-libzip":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/libzip@workspace:packages/yarnpkg-libzip"
+  dependencies:
+    "@types/prettier": 1.19.0
+    prettier: ^1.19.1
   languageName: unknown
   linkType: soft
 
@@ -20185,6 +20195,15 @@ fsevents@^1.2.2:
   version: 0.2.0
   resolution: "preserve@npm:0.2.0"
   checksum: 048c6ba85c5da3e23bea5df49a89559bb2ddd92916273edf912e4f49c30278d738d334184d19f76fdefbb71c7085f5425af586d79e88f3538e347ab73178e578
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^1.19.1":
+  version: 1.19.1
+  resolution: "prettier@npm:1.19.1"
+  bin:
+    prettier: ./bin-prettier.js
+  checksum: 0b8665fa22259378feaf46a54a559a09bd2c367e6391015af5068e88c6fb8d96e20afc56a6a6b2bac2eb0ad1ad26302ea634377e6397eca09301f64b01f3021a
   languageName: node
   linkType: hard
 

@@ -18,5 +18,9 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "devDependencies": {
+    "@types/prettier": "1.19.0",
+    "prettier": "^1.19.1"
   }
 }
