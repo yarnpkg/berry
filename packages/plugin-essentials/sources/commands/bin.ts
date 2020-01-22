@@ -70,11 +70,11 @@ export default class BinCommand extends BaseCommand {
 
         if (this.verbose) {
           for (const [name, [pkg]] of binaries) {
-            report.reportInfo(null, `${name.padEnd(maxKeyLength, ` `)}   ${structUtils.prettyLocator(configuration, pkg)}\n`);
+            report.reportInfo(null, `${name.padEnd(maxKeyLength, ` `)}   ${structUtils.prettyLocator(configuration, pkg)}`);
           }
         } else {
           for (const name of binaries.keys()) {
-            report.reportInfo(null, `${name}\n`);
+            report.reportInfo(null, name);
           }
         }
       }
