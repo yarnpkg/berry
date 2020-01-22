@@ -42,6 +42,19 @@ export default class BinCommand extends BaseCommand {
       report: new ThrowReport(),
     });
 
+    if (this.name) {
+      const binaries = await scriptUtils.getPackageAccessibleBinaries(locator, {project});
+
+      const binary = binaries.get(this.name);
+      if (!binary)
+        throw new UsageError(`Couldn't find a binary named "${this.name}" for package "${structUtils.prettyLocator(configuration, locator)}"`);
+
+      const [/*pkg*/, binaryFile] = binary;
+      this.context.stdout.write(`${binaryFile}\n`);
+
+      return 0;
+    }
+
     const report = await StreamReport.start({
       configuration,
       json: this.json,
@@ -49,33 +62,24 @@ export default class BinCommand extends BaseCommand {
     }, async report => {
       const binaries = await scriptUtils.getPackageAccessibleBinaries(locator, {project});
 
-      if (this.name) {
-        const binary = binaries.get(this.name);
-        if (!binary)
-          throw new UsageError(`Couldn't find a binary named "${this.name}" for package "${structUtils.prettyLocator(configuration, locator)}"`);
+      const keys = Array.from(binaries.keys());
+      const maxKeyLength = keys.reduce((max, key) => Math.max(max, key.length), 0);
 
-        const [/*pkg*/, binaryFile] = binary;
-        this.context.stdout.write(`${binaryFile}\n`);
-      } else {
-        const keys = Array.from(binaries.keys());
-        const maxKeyLength = keys.reduce((max, key) => Math.max(max, key.length), 0);
+      for (const [name, [pkg, binaryFile]] of binaries) {
+        report.reportJson({
+          name,
+          source: structUtils.stringifyIdent(pkg),
+          path: binaryFile,
+        });
+      }
 
-        for (const [name, [pkg, binaryFile]] of binaries) {
-          report.reportJson({
-            name,
-            source: structUtils.stringifyIdent(pkg),
-            path: binaryFile,
-          });
+      if (this.verbose) {
+        for (const [name, [pkg]] of binaries) {
+          report.reportInfo(null, `${name.padEnd(maxKeyLength, ` `)}   ${structUtils.prettyLocator(configuration, pkg)}`);
         }
-
-        if (this.verbose) {
-          for (const [name, [pkg]] of binaries) {
-            report.reportInfo(null, `${name.padEnd(maxKeyLength, ` `)}   ${structUtils.prettyLocator(configuration, pkg)}`);
-          }
-        } else {
-          for (const name of binaries.keys()) {
-            report.reportInfo(null, name);
-          }
+      } else {
+        for (const name of binaries.keys()) {
+          report.reportInfo(null, name);
         }
       }
     });
