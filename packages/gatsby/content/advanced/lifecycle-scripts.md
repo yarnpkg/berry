@@ -26,6 +26,6 @@ Unfortunately postinstall scripts break this model because they signal Yarn that
 
 Depending on your use case, here's how you can avoid postinstall scripts:
 
- - Native packages can be built to [WebAssembly](https://webassembly.org), which is already supported in Node 12 and beyond. On top of being portable and fast, WebAssembly packages also have the benefit to make your libraries available not only to Node but also to your browser users. And since their compilation is made upfront, your users won't be impacted by slow compilation time problems.
+- Native packages can be built to [WebAssembly](https://webassembly.org), which is already supported in Node 12 and beyond. On top of being portable and fast, WebAssembly packages also have the benefit to make your libraries available not only to Node but also to your browser users. And since their compilation is made upfront, your users won't be impacted by slow compilation time problems.
 
 - Project sustainability is a big topic, but the gist is that we don't think postinstall scripts are a viable solution. We however are committed to provide a specific field in the package.json that would signal to the package managers that a project would like to communicate its existence with the user in an integrated and respectful way.

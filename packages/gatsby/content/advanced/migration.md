@@ -8,11 +8,19 @@ Yarn v2 is a very different software from the v1. While one of our aim is to mak
 
 ## General Advices
 
+### Upgrade to Node 10 or 12
+
+Yarn doesn't support Node 8 anymore, as it's reached its end of life in December and won't receive any further update.
+
 ### Make sure you use `resolve@1.9+`
 
 Older releases don't support Plug'n'Play at all. Since the `resolve` package is used by pretty much everything nowadays, making sure that you use a modern release can go a long way to solve the most obnoxious bugs you may have.
 
 **Fix:** Open your lockfile, look for all the `resolve` entries that could match 1.9+ (for example `^1.0.0`), and remove them. Then run `yarn install` again. If you run `yarn why resolve`, you'll also get a good idea of which package is depending on outdated version of `resolve` - maybe you can upgrade them too?
+
+### Enable the PnP plugin when using Webpack 4
+
+Webpack 5 will support PnP natively, but if you use Webpack 4 you'll need to add the [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) plugin yourself.
 
 ### Call your scripts through `yarn node` rather than `node`
 
@@ -20,7 +28,11 @@ We now need to inject some variables into the environment for Node to be able to
 
 **Note:** this section only applies to the _shell CLI_. The commands defined in your `scripts` are unaffected, as we make sure that `node` always points to the right location.
 
-### Updates your configuration to the new settings
+### Setup your IDE accordingly
+
+We've written a [guide](https://next.yarnpkg.com/advanced/editor-sdks) entirely designed to explain you how to use Yarn with your IDE. Make sure to take a look at it, and maybe contribute to it if some instructions are unclear or missing!
+
+### Update your configuration to the new settings
 
 Yarn 2 uses a different style of configuration files than Yarn 1. While mostly invisible for the lockfile (because we import them on the fly), it might cause some issues for your rc files.
 
@@ -36,7 +48,7 @@ Yarn 2 uses a different style of configuration files than Yarn 1. While mostly i
 
   - The `yarn-offline-mirror` has been removed, since the offline mirror has been merged with the cache as part of the [Zero-Install effort](/features/zero-installs). Just commit the Yarn cache and you're ready to go.
 
-### Don't use the `.npmrc` files
+### Don't use `.npmrc` files
 
 On top of their naming, the way we load the Yarnrc files has also been changed and simplified. In particular:
 
@@ -46,7 +58,7 @@ On top of their naming, the way we load the Yarnrc files has also been changed a
 
 - All environment variables prefixed with `YARN_` are automatically used to override the matching configuration settings. So for example, adding `YARN_NPM_REGISTRY_SERVER` into your environment will change the value of [`npmRegistryServer`](/configuration/yarnrc#npmRegistryServer).
 
-### Take a look to the integration tests
+### Take a look to our end-to-end tests
 
 We now run daily [end-to-end tests](https://github.com/yarnpkg/berry#current-status) against various popular JavaScript tools in order to make sure that we never regress - or to be notified when those tools do.
 
@@ -71,19 +83,19 @@ So how to replace them? There are different ways:
 
 Despite our best efforts some tools don't work at all under Plug'n'Play environments, and we don't have the resources to update them ourselves. There are only two notorious ones on our list: Flow, and React Native.
 
-In such a radical case, you can install the [`node-modules` plugin]() by running `yarn plugin import node-modules`. Once done, enable the linker in your local `.yarnrc.yml` file before running a fresh `yarn install`:
+In such a radical case, you can enable the [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules) by adding the following into your local `.yarnrc.yml` file before running a fresh `yarn install`:
 
 ```yaml
 nodeLinker: node-modules
 ```
 
-This will cause Yarn to install the project just like Yarn 1 used to, by copying the packages into various `node_modules` folders. This install strategy is typically quite a bit slower and less stable than the modern one (read [Plug'n'Play](/features/pnp) for more details), but at the very least this will allow you to upgrade to our new CLI until you're ready to drop the `node_modules` linker.
+This will cause Yarn to install the project just like Yarn 1 used to, by copying the packages into various `node_modules` folders. Remember that this plugin is currently very experimental and we expect it to improve over time.
 
 ## Troubleshooting
 
 ### `Cannot find module [...]`
 
-Interestingly, this error **doesn't** come from Yarn. In fact, seeing this message shouldn't be possible when working with Yarn 2 projects and typically highlights that something is wrong in your setup.
+Interestingly, this error **doesn't** come from Yarn. In fact, seeing this message should be extremely rare when working with Yarn 2 projects and typically highlights that something is wrong in your setup.
 
 This error appears when Node is executed without the proper environment variables. In such a case, the underlying application won't be able to access the dependencies and Node will throw this message. To fix that, make sure that the script is called through `yarn node [...]` (instead of `node [...]`) if you run it from the command line.
 

@@ -4,14 +4,18 @@ path: /getting-started/install
 title: "2 - Installation"
 ---
 
+> **Migrating from Yarn 1**
+>
+> We've been compiling helpful advices when porting over from Yarn 1 on the following [Migration Guide](/advanced/migration). Give it a look and contribute to it if you see things that aren't covered yet!
+
 ## Global Install
 
 1. Install [Node.js](https://nodejs.org/en/download/)
 
 2. Install Yarn:
 
-```
-npm install -g yarn
+```bash
+npm install -g yarn@berry
 ```
 
 3. Test that Yarn 2 has been properly installed by running the following, which should yield "v2.0.0" or similar:
