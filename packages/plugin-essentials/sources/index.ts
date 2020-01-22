@@ -1,5 +1,5 @@
-import {Descriptor, Plugin, SettingsType} from '@yarnpkg/core';
 import {Workspace}                        from '@yarnpkg/core';
+import {Descriptor, Plugin, SettingsType} from '@yarnpkg/core';
 
 import add                                from './commands/add';
 import bin                                from './commands/bin';
@@ -27,6 +27,7 @@ import setVersionPolicy                   from './commands/set/version';
 import up                                 from './commands/up';
 import why                                from './commands/why';
 import listWorkspaces                     from './commands/workspaces/list';
+import workspace                          from './commands/workspace';
 import * as suggestUtils                  from './suggestUtils';
 
 export {suggestUtils};
@@ -93,6 +94,7 @@ const plugin: Plugin = {
     run,
     up,
     why,
+    workspace,
   ],
 };
 
