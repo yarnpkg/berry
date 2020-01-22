@@ -49,7 +49,9 @@ export class PatchFetcher implements Fetcher {
     const sourceFetch = await opts.fetcher.fetch(sourceLocator, opts);
     const prefixPath = structUtils.getIdentVendorPath(locator);
 
-    const copiedPackage = new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise()});
+    const libzip = await getLibzipPromise();
+
+    const copiedPackage = new ZipFS(tmpFile, {libzip, create: true});
     await copiedPackage.mkdirpPromise(prefixPath);
 
     await miscUtils.releaseAfterUseAsync(async () => {
@@ -58,7 +60,7 @@ export class PatchFetcher implements Fetcher {
 
     copiedPackage.saveAndClose();
 
-    const patchedPackage = new ZipFS(tmpFile);
+    const patchedPackage = new ZipFS(tmpFile, {libzip});
     const patchFs = new CwdFS(prefixPath, {baseFs: patchedPackage});
 
     for (const patchFile of patchFiles) {
