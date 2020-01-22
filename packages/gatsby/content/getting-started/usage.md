@@ -12,26 +12,26 @@ Now that you have Yarn [installed](/getting-started/install), you can start usin
 
 ### Accessing the list of commands
 
-```
+```bash
 yarn help
 ```
 
 ### Starting a new project
 
-```
+```bash
 yarn init
 ```
 
 ### Installing all the dependencies
 
-```
+```bash
 yarn
 yarn install
 ```
 
 ### Adding a dependency
 
-```
+```bash
 yarn add [package]
 yarn add [package]@[version]
 yarn add [package]@[tag]
@@ -39,14 +39,14 @@ yarn add [package]@[tag]
 
 ### Adding a dependency to different categories of dependencies
 
-```
+```bash
 yarn add [package] --dev  # dev dependencies
 yarn add [package] --peer # peer dependencies
 ```
 
 ### Upgrading a dependency
 
-```
+```bash
 yarn up [package]
 yarn up [package]@[version]
 yarn up [package]@[tag]
@@ -54,12 +54,13 @@ yarn up [package]@[tag]
 
 ### Removing a dependency
 
-```
+```bash
 yarn remove [package]
 ```
 
 ### Upgrading Yarn itself
 
-```
+```bash
+yarn set version 2.0.0
 yarn set version from sources
 ```
