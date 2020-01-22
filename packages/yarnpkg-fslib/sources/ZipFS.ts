@@ -1,4 +1,4 @@
-import libzip                                                                  from '@yarnpkg/libzip';
+import {Libzip}                                                                from '@yarnpkg/libzip';
 import {ReadStream, Stats, WriteStream, constants}                             from 'fs';
 import {PassThrough}                                                           from 'stream';
 import {isDate}                                                                from 'util';
@@ -109,6 +109,7 @@ function makeDefaultStats() {
 }
 
 export type ZipBufferOptions = {
+  libzip: Libzip,
   readOnly?: boolean,
   stats?: Stats,
 };
@@ -139,6 +140,8 @@ function toUnixTimestamp(time: Date | string | number) {
 }
 
 export class ZipFS extends BasePortableFakeFS {
+  private readonly libzip: Libzip;
+
   private readonly baseFs: FakeFS<PortablePath> | null;
   private readonly path: PortablePath | null;
 
@@ -157,8 +160,10 @@ export class ZipFS extends BasePortableFakeFS {
   constructor(p: PortablePath, opts?: ZipPathOptions);
   constructor(data: Buffer, opts?: ZipBufferOptions);
 
-  constructor(source: PortablePath | Buffer, opts: ZipPathOptions | ZipBufferOptions = {}) {
+  constructor(source: PortablePath | Buffer, opts: ZipPathOptions | ZipBufferOptions) {
     super();
+
+    this.libzip = opts.libzip;
 
     const pathOptions = opts as ZipPathOptions;
 
@@ -189,47 +194,47 @@ export class ZipFS extends BasePortableFakeFS {
       }
     }
 
-    const errPtr = libzip.malloc(4);
+    const errPtr = this.libzip.malloc(4);
 
     try {
       let flags = 0;
 
       if (typeof source === `string` && pathOptions.create)
-        flags |= libzip.ZIP_CREATE | libzip.ZIP_TRUNCATE;
+        flags |= this.libzip.ZIP_CREATE | this.libzip.ZIP_TRUNCATE;
 
       if (opts.readOnly) {
-        flags |= libzip.ZIP_RDONLY;
+        flags |= this.libzip.ZIP_RDONLY;
         this.readOnly = true;
       }
 
       if (typeof source === `string`) {
-        this.zip = libzip.open(npath.fromPortablePath(source), flags, errPtr);
+        this.zip = this.libzip.open(npath.fromPortablePath(source), flags, errPtr);
       } else {
         const lzSource = this.allocateUnattachedSource(source);
 
         try {
-          this.zip = libzip.openFromSource(lzSource, flags, errPtr);
+          this.zip = this.libzip.openFromSource(lzSource, flags, errPtr);
         } catch (error) {
-          libzip.source.free(lzSource);
+          this.libzip.source.free(lzSource);
           throw error;
         }
       }
 
       if (this.zip === 0) {
-        const error = libzip.struct.errorS();
-        libzip.error.initWithCode(error, libzip.getValue(errPtr, `i32`));
+        const error = this.libzip.struct.errorS();
+        this.libzip.error.initWithCode(error, this.libzip.getValue(errPtr, `i32`));
 
-        throw new Error(libzip.error.strerror(error));
+        throw new Error(this.libzip.error.strerror(error));
       }
     } finally {
-      libzip.free(errPtr);
+      this.libzip.free(errPtr);
     }
 
     this.listings.set(PortablePath.root, new Set());
 
-    const entryCount = libzip.getNumEntries(this.zip, 0);
+    const entryCount = this.libzip.getNumEntries(this.zip, 0);
     for (let t = 0; t < entryCount; ++t) {
-      const raw = libzip.getName(this.zip, t, 0);
+      const raw = this.libzip.getName(this.zip, t, 0);
       if (ppath.isAbsolute(raw))
         continue;
 
@@ -271,11 +276,11 @@ export class ZipFS extends BasePortableFakeFS {
       ? this.baseFs.statSync(this.path).mode & 0o777
       : null;
 
-    const rc = libzip.close(this.zip);
+    const rc = this.libzip.close(this.zip);
     if (rc === -1)
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+      throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
 
-    // Libzip overrides the chmod when writing the archive, which is a weird
+    // this.libzip overrides the chmod when writing the archive, which is a weird
     // behavior I don't totally understand (plus the umask seems bogus in some
     // weird cases - maybe related to emscripten?)
     //
@@ -292,7 +297,7 @@ export class ZipFS extends BasePortableFakeFS {
     if (!this.ready)
       throw errors.EBUSY(`archive closed, close`);
 
-    libzip.discard(this.zip);
+    this.libzip.discard(this.zip);
 
     this.ready = false;
   }
@@ -503,20 +508,20 @@ export class ZipFS extends BasePortableFakeFS {
 
     // File, or explicit directory
     if (typeof entry !== `undefined`) {
-      const stat = libzip.struct.statS();
+      const stat = this.libzip.struct.statS();
 
-      const rc = libzip.statIndex(this.zip, entry, 0, 0, stat);
+      const rc = this.libzip.statIndex(this.zip, entry, 0, 0, stat);
       if (rc === -1)
-        throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+        throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
 
       const uid = this.stats.uid;
       const gid = this.stats.gid;
 
-      const size = (libzip.struct.statSize(stat) >>> 0);
+      const size = (this.libzip.struct.statSize(stat) >>> 0);
       const blksize = 512;
       const blocks = Math.ceil(size / blksize);
 
-      const mtimeMs = (libzip.struct.statMtime(stat) >>> 0) * 1000;
+      const mtimeMs = (this.libzip.struct.statMtime(stat) >>> 0) * 1000;
       const atimeMs = mtimeMs;
       const birthtimeMs = mtimeMs;
       const ctimeMs = mtimeMs;
@@ -567,15 +572,15 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   private getUnixMode(index: number, defaultMode: number) {
-    const rc = libzip.file.getExternalAttributes(this.zip, index, 0, 0, libzip.uint08S, libzip.uint32S);
+    const rc = this.libzip.file.getExternalAttributes(this.zip, index, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
     if (rc === -1)
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+      throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
 
-    const opsys = libzip.getValue(libzip.uint08S, `i8`) >>> 0;
-    if (opsys !== libzip.ZIP_OPSYS_UNIX)
+    const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
+    if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
       return defaultMode;
 
-    return libzip.getValue(libzip.uint32S, `i32`) >>> 16;
+    return this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
   }
 
   private registerListing(p: PortablePath) {
@@ -622,7 +627,7 @@ export class ZipFS extends BasePortableFakeFS {
       if (!resolveLastComponent)
         break;
 
-      const index = libzip.name.locate(this.zip, resolvedP);
+      const index = this.libzip.name.locate(this.zip, resolvedP);
       if (index === -1)
         break;
 
@@ -641,26 +646,26 @@ export class ZipFS extends BasePortableFakeFS {
     if (!Buffer.isBuffer(content))
       content = Buffer.from(content as any);
 
-    const buffer = libzip.malloc(content.byteLength);
+    const buffer = this.libzip.malloc(content.byteLength);
     if (!buffer)
       throw new Error(`Couldn't allocate enough memory`);
 
     // Copy the file into the Emscripten heap
-    const heap = new Uint8Array(libzip.HEAPU8.buffer, buffer, content.byteLength);
+    const heap = new Uint8Array(this.libzip.HEAPU8.buffer, buffer, content.byteLength);
     heap.set(content as any);
 
     return {buffer, byteLength: content.byteLength};
   }
 
   private allocateUnattachedSource(content: string | Buffer | ArrayBuffer | DataView) {
-    const error = libzip.struct.errorS();
+    const error = this.libzip.struct.errorS();
 
     const {buffer, byteLength} = this.allocateBuffer(content);
-    const source = libzip.source.fromUnattachedBuffer(buffer, byteLength, 0, true, error);
+    const source = this.libzip.source.fromUnattachedBuffer(buffer, byteLength, 0, true, error);
 
     if (source === 0) {
-      libzip.free(error);
-      throw new Error(libzip.error.strerror(error));
+      this.libzip.free(error);
+      throw new Error(this.libzip.error.strerror(error));
     }
 
     return source;
@@ -668,11 +673,11 @@ export class ZipFS extends BasePortableFakeFS {
 
   private allocateSource(content: string | Buffer | ArrayBuffer | DataView) {
     const {buffer, byteLength} = this.allocateBuffer(content);
-    const source = libzip.source.fromBuffer(this.zip, buffer, byteLength, 0, true);
+    const source = this.libzip.source.fromBuffer(this.zip, buffer, byteLength, 0, true);
 
     if (source === 0) {
-      libzip.free(buffer);
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+      this.libzip.free(buffer);
+      throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
     }
 
     return source;
@@ -683,60 +688,60 @@ export class ZipFS extends BasePortableFakeFS {
     const lzSource = this.allocateSource(content);
 
     try {
-      return libzip.file.add(this.zip, target, lzSource, libzip.ZIP_FL_OVERWRITE);
+      return this.libzip.file.add(this.zip, target, lzSource, this.libzip.ZIP_FL_OVERWRITE);
     } catch (error) {
-      libzip.source.free(lzSource);
+      this.libzip.source.free(lzSource);
       throw error;
     }
   }
 
   private isSymbolicLink(index: number) {
-    const attrs = libzip.file.getExternalAttributes(this.zip, index, 0, 0, libzip.uint08S, libzip.uint32S);
+    const attrs = this.libzip.file.getExternalAttributes(this.zip, index, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
     if (attrs === -1)
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+      throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
 
-    const opsys = libzip.getValue(libzip.uint08S, `i8`) >>> 0;
-    if (opsys !== libzip.ZIP_OPSYS_UNIX)
+    const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
+    if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
       return false;
 
-    const attributes = libzip.getValue(libzip.uint32S, `i32`) >>> 16;
+    const attributes = this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
     return (attributes & S_IFMT) === S_IFLNK;
   }
 
   private getFileSource(index: number) {
-    const stat = libzip.struct.statS();
+    const stat = this.libzip.struct.statS();
 
-    const rc = libzip.statIndex(this.zip, index, 0, 0, stat);
+    const rc = this.libzip.statIndex(this.zip, index, 0, 0, stat);
     if (rc === -1)
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+      throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
 
-    const size = libzip.struct.statSize(stat);
-    const buffer = libzip.malloc(size);
+    const size = this.libzip.struct.statSize(stat);
+    const buffer = this.libzip.malloc(size);
 
     try {
-      const file = libzip.fopenIndex(this.zip, index, 0, 0);
+      const file = this.libzip.fopenIndex(this.zip, index, 0, 0);
       if (file === 0)
-        throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+        throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
 
       try {
-        const rc = libzip.fread(file, buffer, size, 0);
+        const rc = this.libzip.fread(file, buffer, size, 0);
 
         if (rc === -1)
-          throw new Error(libzip.error.strerror(libzip.file.getError(file)));
+          throw new Error(this.libzip.error.strerror(this.libzip.file.getError(file)));
         else if (rc < size)
           throw new Error(`Incomplete read`);
         else if (rc > size)
           throw new Error(`Overread`);
 
-        const memory = libzip.HEAPU8.subarray(buffer, buffer + size);
+        const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
         const data = Buffer.from(memory);
 
         return data;
       } finally {
-        libzip.fclose(file);
+        this.libzip.fclose(file);
       }
     } finally {
-      libzip.free(buffer);
+      this.libzip.free(buffer);
     }
   }
 
@@ -761,9 +766,9 @@ export class ZipFS extends BasePortableFakeFS {
     const oldMod = this.getUnixMode(entry, S_IFREG | 0o000);
     const newMod = oldMod & (~0o777) | mask;
 
-    const rc = libzip.file.setExternalAttributes(this.zip, entry, 0, 0, libzip.ZIP_OPSYS_UNIX, newMod << 16);
+    const rc = this.libzip.file.setExternalAttributes(this.zip, entry, 0, 0, this.libzip.ZIP_OPSYS_UNIX, newMod << 16);
     if (rc === -1) {
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+      throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
     }
   }
 
@@ -902,9 +907,9 @@ export class ZipFS extends BasePortableFakeFS {
     if (entry === undefined)
       throw new Error(`Unreachable`);
 
-    const rc = libzip.file.setMtime(this.zip, entry, 0, toUnixTimestamp(mtime), 0);
+    const rc = this.libzip.file.setMtime(this.zip, entry, 0, toUnixTimestamp(mtime), 0);
     if (rc === -1) {
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+      throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
     }
   }
 
@@ -936,9 +941,9 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   private hydrateDirectory(resolvedP: PortablePath) {
-    const index = libzip.dir.add(this.zip, ppath.relative(PortablePath.root, resolvedP));
+    const index = this.libzip.dir.add(this.zip, ppath.relative(PortablePath.root, resolvedP));
     if (index === -1)
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+      throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
 
     this.registerListing(resolvedP);
     this.registerEntry(resolvedP, index);
@@ -964,9 +969,9 @@ export class ZipFS extends BasePortableFakeFS {
     const index = this.setFileSource(resolvedP, target);
     this.registerEntry(resolvedP, index);
 
-    const rc = libzip.file.setExternalAttributes(this.zip, index, 0, 0, libzip.ZIP_OPSYS_UNIX, (0o120000 | 0o777) << 16);
+    const rc = this.libzip.file.setExternalAttributes(this.zip, index, 0, 0, this.libzip.ZIP_OPSYS_UNIX, (0o120000 | 0o777) << 16);
     if (rc === -1) {
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+      throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
     }
   }
 
@@ -1065,15 +1070,15 @@ export class ZipFS extends BasePortableFakeFS {
     if (entry === undefined)
       throw new Error(`Unreachable`);
 
-    const rc = libzip.file.getExternalAttributes(this.zip, entry, 0, 0, libzip.uint08S, libzip.uint32S);
+    const rc = this.libzip.file.getExternalAttributes(this.zip, entry, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
     if (rc === -1)
-      throw new Error(libzip.error.strerror(libzip.getError(this.zip)));
+      throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
 
-    const opsys = libzip.getValue(libzip.uint08S, `i8`) >>> 0;
-    if (opsys !== libzip.ZIP_OPSYS_UNIX)
+    const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
+    if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
       throw errors.EINVAL(`readlink '${p}'`);
 
-    const attributes = libzip.getValue(libzip.uint32S, `i32`) >>> 16;
+    const attributes = this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
     if ((attributes & 0o170000) !== 0o120000)
       throw errors.EINVAL(`readlink '${p}'`);
 

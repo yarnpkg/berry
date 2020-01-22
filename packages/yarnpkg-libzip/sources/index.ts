@@ -6,7 +6,7 @@ const number64 = [
 ] as 'number'[];
 
 // eslint-disable-next-line arca/no-default-export
-export default {
+const jsApi = {
   // Those are getters because they can change after memory growth
   get HEAP8() { return libzip.HEAP8; },
   get HEAPU8() { return libzip.HEAPU8; },
@@ -108,3 +108,9 @@ export default {
     errorS: libzip.cwrap(`zipstruct_errorS`, `number`, []),
   },
 };
+
+type Libzip = typeof jsApi;
+export {Libzip};
+
+// eslint-disable-next-line arca/no-default-export
+export default jsApi;
