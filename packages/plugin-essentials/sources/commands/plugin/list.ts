@@ -14,6 +14,9 @@ export async function getAvailablePlugins(configuration: Configuration) {
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginDlCommand extends BaseCommand {
+  @Command.Boolean(`--json`)
+  json: boolean = false;
+
   static usage = Command.Usage({
     category: `Plugin-related commands`,
     description: `list the available official plugins`,
@@ -32,16 +35,18 @@ export default class PluginDlCommand extends BaseCommand {
 
     const report = await StreamReport.start({
       configuration,
+      json: this.json,
       stdout: this.context.stdout,
     }, async report => {
       const data = await getAvailablePlugins(configuration);
 
-      for (const [name, {experimental}] of Object.entries(data)) {
+      for (const [name, {experimental, ...rest}] of Object.entries(data)) {
         let label = name;
 
         if (experimental)
           label += ` [experimental]`;
 
+        report.reportJson({name, experimental, ...rest});
         report.reportInfo(null, label);
       }
     });
