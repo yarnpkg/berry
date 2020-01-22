@@ -12,6 +12,25 @@ Yarn v2 is a very different software from the v1. While one of our aim is to mak
 
 Yarn doesn't support Node 8 anymore, as it's reached its end of life in December and won't receive any further update.
 
+### Run the doctor
+
+Run `npx @yarnpkg/check .` (or `yarn dlx @yarnpkg/check .`) in your project to quickly get an overview of potential issues found in your codebase. For example here's what `webpack-dev-server` would reveal:
+
+```
+➤ YN0000: Found 1 package(s) to process
+➤ YN0000: For a grand total of 236 file(s) to validate
+
+➤ YN0000: ┌ /webpack-dev-server/package.json
+➤ YN0000: │ /webpack-dev-server/test/testSequencer.js:5:19: Undeclared dependency on @jest/test-sequencer
+➤ YN0000: │ /webpack-dev-server/client-src/default/webpack.config.js:12:14: Webpack configs from non-private packages should avoid referencing loaders without require.resolve
+➤ YN0000: │ /webpack-dev-server/test/server/contentBase-option.test.js:68:8: Strings should avoid referencing the node_modules directory (prefer require.resolve)
+➤ YN0000: └ Completed in 5.12s
+
+➤ YN0000: Failed with errors in 5.12s
+```
+
+Note that the doctor is intended to report any potential issue - it's then up to you to decide whether they are a false positive or not (for example it won't traverse Git repositories). For this reason we don't recommend using it as a CI tool.
+
 ### Make sure you use `resolve@1.9+`
 
 Older releases don't support Plug'n'Play at all. Since the `resolve` package is used by pretty much everything nowadays, making sure that you use a modern release can go a long way to solve the most obnoxious bugs you may have.
@@ -21,6 +40,34 @@ Older releases don't support Plug'n'Play at all. Since the `resolve` package is 
 ### Enable the PnP plugin when using Webpack 4
 
 Webpack 5 will support PnP natively, but if you use Webpack 4 you'll need to add the [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) plugin yourself.
+
+### Don't use `resolve.alias` (Webpack) or `moduleNameMapper` (Jest)
+
+Both of those settings try to override the regular resolution engine to provide custom resolution rules for one single tool, but since the Plug'n'Play resolver doesn't know about those special rules it'll think they are unlisted dependencies and refuse to let the resolution proceed.
+
+Fortunately the fix is very simple: just use the `link:` protocol to list the aliases in your manifest file, as if they were regular dependencies! By doing this, you're also able to define your aliases a single time while ensuring that they will be picked up by your whole toolchain: Webpack, Jest, TypeScript, ...
+
+So instead of:
+
+```ts
+module.exports = {
+  resolve: {
+    aliases: {
+      assets: `./static/assets`
+    },
+  },
+};
+```
+
+Prefer:
+
+```json
+{
+  "dependencies": {
+    "assets": "link:./static/assets"
+  }
+}
+```
 
 ### Call your scripts through `yarn node` rather than `node`
 
