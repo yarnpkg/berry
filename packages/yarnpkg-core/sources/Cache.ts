@@ -8,9 +8,9 @@ import {Configuration}                                         from './Configura
 import {MessageName}                                           from './MessageName';
 import {ReportError}                                           from './Report';
 import * as hashUtils                                          from './hashUtils';
+import * as miscUtils                                          from './miscUtils';
 import * as structUtils                                        from './structUtils';
 import {LocatorHash, Locator}                                  from './types';
-import {miscUtils}                                             from '.';
 
 // Each time we'll bump this number the cache hashes will change, which will
 // cause all files to be fetched again. Use with caution.
