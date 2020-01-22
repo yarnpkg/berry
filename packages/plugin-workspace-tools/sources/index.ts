@@ -1,12 +1,10 @@
-import {Plugin}  from '@yarnpkg/core';
+import {Plugin} from '@yarnpkg/core';
 
-import foreach   from './commands/foreach';
-import workspace from './commands/workspace';
+import foreach  from './commands/foreach';
 
 const plugin: Plugin = {
   commands: [
     foreach,
-    workspace,
   ],
 };
 
