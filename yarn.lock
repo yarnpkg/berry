@@ -4843,6 +4843,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.0.0-rc.24"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
     "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.4"
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.5"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.8"
     "@yarnpkg/plugin-link": "workspace:^2.0.0-rc.10"
     "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.14"
@@ -5220,6 +5221,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.0.0-rc.24"
     "@yarnpkg/core": "workspace:^2.0.0-rc.19"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.5"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.8"
     "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.14"
     "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.14"
@@ -5296,6 +5298,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.0.0-rc.24"
     "@yarnpkg/core": "workspace:^2.0.0-rc.19"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.5"
     clipanion: ^2.1.5
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.24
@@ -5409,6 +5412,7 @@ __metadata:
     "@types/node": ^13.1.1
     "@yarnpkg/builder": "workspace:^2.0.0-rc.13"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.5"
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.15"
     typescript: ^3.7.4
     webpack: ^4.41.2
@@ -25199,6 +25203,7 @@ resolve@^1.10.1:
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.5"
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.15"
     pnp-webpack-plugin: ^1.4.3
     ts-loader: ^6.2.1

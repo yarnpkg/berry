@@ -1,12 +1,11 @@
-import libzip from './libzip';
-
 const number64 = [
   `number`, // low
   `number`, // high
 ] as 'number'[];
 
-// eslint-disable-next-line arca/no-default-export
-const jsApi = {
+export type Libzip = ReturnType<typeof makeInterface>;
+
+export const makeInterface = (libzip: EmscriptenModule) => ({
   // Those are getters because they can change after memory growth
   get HEAP8() { return libzip.HEAP8; },
   get HEAPU8() { return libzip.HEAPU8; },
@@ -107,10 +106,4 @@ const jsApi = {
     error: libzip.cwrap(`zipstruct_error`, `number`, []),
     errorS: libzip.cwrap(`zipstruct_errorS`, `number`, []),
   },
-};
-
-type Libzip = typeof jsApi;
-export {Libzip};
-
-// eslint-disable-next-line arca/no-default-export
-export default jsApi;
+});

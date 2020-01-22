@@ -21,10 +21,8 @@ export type ZipOpenFSOptions = {
 };
 
 export class ZipOpenFS extends BasePortableFakeFS {
-  static async openPromise<T>(fn: (zipOpenFs: ZipOpenFS) => Promise<T>): Promise<T> {
-    const zipOpenFs = new ZipOpenFS({
-
-    });
+  static async openPromise<T>(fn: (zipOpenFs: ZipOpenFS) => Promise<T>, opts: ZipOpenFSOptions): Promise<T> {
+    const zipOpenFs = new ZipOpenFS(opts);
 
     try {
       return await fn(zipOpenFs);
@@ -781,6 +779,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   private getZipSync<T>(p: PortablePath, accept: (zipFs: ZipFS) => T) {
     const getZipOptions = () => ({
       baseFs: this.baseFs,
+      libzip: this.libzip,
       readOnly: this.readOnlyArchives,
       stats: this.baseFs.statSync(p),
     });

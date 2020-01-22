@@ -4,6 +4,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12",
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.5",
     "clipanion": "^2.1.5"
   },
   "peerDependencies": {

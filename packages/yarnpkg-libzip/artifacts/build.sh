@@ -2,7 +2,7 @@
 
 set -e
 
-EMSDK=~/emsdk/emsdk_env.sh
+EMSDK_ENV=~/emsdk/emsdk_env.sh
 
 THIS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$THIS_DIR"
@@ -23,7 +23,7 @@ LIBZIP_REPO=arcanis/libzip
 
   cd "$THIS_DIR"/zlib-"$ZLIB_VERSION"
 
-  source "$EMSDK"
+  source "$EMSDK_ENV"
 
   mkdir -p build
   cd build
@@ -57,7 +57,7 @@ LIBZIP_REPO=arcanis/libzip
 
   cd "$THIS_DIR"/libzip-"$LIBZIP_VERSION"
 
-  source "$EMSDK"
+  source "$EMSDK_ENV"
 
   mkdir -p build
   cd build
@@ -84,7 +84,10 @@ LIBZIP_REPO=arcanis/libzip
 )
 
 build() {
-  source "$EMSDK"
+  local name=$1
+  shift
+
+  source "$EMSDK_ENV"
 
   emcc \
     -o ./build.js \
@@ -92,10 +95,10 @@ build() {
     -s EXPORTED_FUNCTIONS="$(cat ./exported.json)" \
     -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "getValue"]' \
     -s ALLOW_MEMORY_GROWTH=1 \
-    -s BINARYEN_ASYNC_COMPILATION=0 \
     -s ENVIRONMENT=node \
     -s NODERAWFS=1 \
     -s SINGLE_FILE=1 \
+    "$@" \
     -I./libzip-"$LIBZIP_VERSION"/build/local/include \
     -O3 \
     --llvm-lto 1 \
@@ -103,9 +106,12 @@ build() {
     ./libzip-"$LIBZIP_VERSION"/build/local/lib/libzip.a \
     ./zlib-"$ZLIB_VERSION"/build/local/lib/libz.a
 
-  cat > ../sources/libzip.js \
+  cat > ../sources/"$name".js \
     <(echo "var frozenFs = Object.assign({}, require('fs'));") \
     <(sed 's/require("fs")/frozenFs/g' ./build.js | sed 's/process\["on"\]/(function(){})/g') \
 
-  echo Built wasm
+  echo "Built wasm ($name)"
 }
+
+build libzipSync -s BINARYEN_ASYNC_COMPILATION=0
+build libzipAsync -s BINARYEN_ASYNC_COMPILATION=1

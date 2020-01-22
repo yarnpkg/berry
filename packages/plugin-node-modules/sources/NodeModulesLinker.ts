@@ -1,9 +1,10 @@
-import {BuildDirective, MessageName, Project}                                                         from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                                            from '@yarnpkg/core';
-import {Locator, Package, BuildType}                                                                  from '@yarnpkg/core';
 import {structUtils, Report, Manifest, miscUtils, FinalizeInstallStatus, FetchResult, DependencyMeta} from '@yarnpkg/core';
-import {VirtualFS, ZipOpenFS}                                                                         from '@yarnpkg/fslib';
+import {Locator, Package, BuildType}                                                                  from '@yarnpkg/core';
+import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                                            from '@yarnpkg/core';
+import {BuildDirective, MessageName, Project}                                                         from '@yarnpkg/core';
 import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS}                                from '@yarnpkg/fslib';
+import {VirtualFS, ZipOpenFS}                                                                         from '@yarnpkg/fslib';
+import {getLibzipPromise}                                                                             from '@yarnpkg/libzip';
 import {parseSyml}                                                                                    from '@yarnpkg/parsers';
 import {AbstractPnpInstaller}                                                                         from '@yarnpkg/plugin-pnp';
 import {NodeModulesLocatorMap, buildLocatorMap, buildNodeModulesTree}                                 from '@yarnpkg/pnpify';
@@ -72,6 +73,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
 
     const defaultFsLayer = new VirtualFS({
       baseFs: new ZipOpenFS({
+        libzip: await getLibzipPromise(),
         maxOpenFiles: 80,
         readOnlyArchives: true,
       }),

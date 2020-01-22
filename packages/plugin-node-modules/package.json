@@ -6,6 +6,7 @@
     "@yarnpkg/cli": "workspace:^2.0.0-rc.24",
     "@yarnpkg/core": "workspace:^2.0.0-rc.19",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12",
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.5",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.8",
     "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.14",
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.15",
