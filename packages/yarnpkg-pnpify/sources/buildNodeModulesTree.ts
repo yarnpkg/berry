@@ -19,7 +19,15 @@ export enum LinkType {HARD = 'HARD', SOFT = 'SOFT'};
  * /home/user/project/node_modules/foo -> {target: '/home/user/project/.yarn/.cache/foo.zip/node_modules/foo', linkType: 'HARD'}
  * /home/user/project/node_modules/bar -> {target: '/home/user/project/packages/bar', linkType: 'SOFT'}
  */
-export type NodeModulesTree = Map<PortablePath, {dirList: Set<Filename>} | {dirList?: undefined, locator: LocatorKey, target: PortablePath, linkType: LinkType, aliases: string[]}>;
+export type NodeModulesTree = Map<PortablePath, {
+  dirList: Set<Filename>
+} | {
+  dirList?: undefined,
+  locator: LocatorKey,
+  target: PortablePath,
+  linkType: LinkType,
+  aliases: string[],
+}>;
 
 export interface NodeModulesTreeOptions {
   pnpifyFs?: boolean;
@@ -70,7 +78,7 @@ export type NodeModulesLocatorMap = Map<LocatorKey, {
   aliases: string[];
 }>
 
-export const buildLocatorMap = (rootPath: PortablePath, nodeModulesTree: NodeModulesTree): NodeModulesLocatorMap => {
+export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLocatorMap => {
   const map = new Map();
 
   for (const [location, val] of nodeModulesTree.entries()) {
@@ -81,7 +89,7 @@ export const buildLocatorMap = (rootPath: PortablePath, nodeModulesTree: NodeMod
         map.set(val.locator, entry);
       }
 
-      entry.locations.push(ppath.relative(rootPath, location));
+      entry.locations.push(location);
     }
   }
 

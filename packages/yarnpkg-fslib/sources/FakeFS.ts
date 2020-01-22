@@ -1,9 +1,13 @@
-import {Dirent, ReadStream, Stats, WriteStream}          from 'fs';
-import {EOL}                                             from 'os';
+import {Dirent as NodeDirent, ReadStream, Stats, WriteStream} from 'fs';
+import {EOL}                                                  from 'os';
 
-import {copyPromise}                                     from './algorithms/copyPromise';
-import {FSPath, Path, PortablePath, PathUtils, Filename} from './path';
-import {convertPath, ppath}                              from './path';
+import {copyPromise}                                          from './algorithms/copyPromise';
+import {FSPath, Path, PortablePath, PathUtils, Filename}      from './path';
+import {convertPath, ppath}                                   from './path';
+
+export type Dirent = Exclude<NodeDirent, 'name'> & {
+  name: Filename,
+};
 
 export type CreateReadStreamOptions = Partial<{
   encoding: string,

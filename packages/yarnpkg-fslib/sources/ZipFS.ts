@@ -17,7 +17,7 @@ const S_IFREG = 0o100000;
 const S_IFLNK = 0o120000;
 
 class DirEntry {
-  public name: string = ``;
+  public name: Filename = `` as Filename;
   public mode: number = 0;
 
   isBlockDevice() {

@@ -25,6 +25,15 @@ export function mapAndFilter<In, Out>(array: Array<In>, cb: (value: In) => Out |
 const mapAndFilterSkip = Symbol();
 mapAndFilter.skip = mapAndFilterSkip;
 
+export function getFactoryWithDefault<K, T>(map: Map<K, T>, key: K, factory: () => T) {
+  let value = map.get(key);
+
+  if (typeof value === `undefined`)
+    map.set(key, value = factory());
+
+  return value;
+}
+
 export function getArrayWithDefault<K, T>(map: Map<K, Array<T>>, key: K) {
   let value = map.get(key);
 

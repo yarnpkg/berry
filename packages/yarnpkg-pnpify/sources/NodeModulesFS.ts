@@ -1,11 +1,10 @@
-import {Filename, MkdirOptions}                            from '@yarnpkg/fslib';
+import {Dirent, Filename, MkdirOptions}                    from '@yarnpkg/fslib';
 import {FSPath, NativePath, PortablePath, npath, ppath}    from '@yarnpkg/fslib';
 import {WatchOptions, WatchCallback, Watcher, toFilename}  from '@yarnpkg/fslib';
 import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}       from '@yarnpkg/fslib';
 import {CreateReadStreamOptions, CreateWriteStreamOptions} from '@yarnpkg/fslib';
-
 import {PnpApi}                                            from '@yarnpkg/pnp';
-import fs, {Dirent}                                        from 'fs';
+import fs                                                  from 'fs';
 
 import {WatchManager}                                      from './WatchManager';
 import {NodeModulesTreeOptions, NodeModulesTree}           from './buildNodeModulesTree';

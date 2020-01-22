@@ -1,6 +1,5 @@
-import {Dirent}                                                               from 'fs';
-
 import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS}            from './FakeFS';
+import {Dirent}                                                               from './FakeFS';
 import {MkdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher} from './FakeFS';
 import {FSPath, Filename, Path}                                               from './path';
 

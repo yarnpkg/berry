@@ -1,6 +1,7 @@
-import {Dirent, constants}                                                     from 'fs';
+import {constants}                                                             from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
+import {Dirent}                                                                from './FakeFS';
 import {FakeFS, MkdirOptions, WriteFileOptions}                                from './FakeFS';
 import {WatchOptions, WatchCallback, Watcher}                                  from './FakeFS';
 import {NodeFS}                                                                from './NodeFS';
