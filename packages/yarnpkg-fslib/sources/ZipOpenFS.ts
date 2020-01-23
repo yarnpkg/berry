@@ -1,3 +1,4 @@
+import {Libzip}                                                                from '@yarnpkg/libzip';
 import {constants}                                                             from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
@@ -13,29 +14,24 @@ const ZIP_FD = 0x80000000;
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS<PortablePath>,
   filter?: RegExp | null,
+  libzip: Libzip,
   maxOpenFiles?: number,
   readOnlyArchives?: boolean,
   useCache?: boolean,
 };
 
 export class ZipOpenFS extends BasePortableFakeFS {
-  static open<T>(fn: (zipOpenFs: ZipOpenFS) => Promise<T>): Promise<T> {
-    const zipOpenFs = new ZipOpenFS();
-    try {
-      return fn(zipOpenFs);
-    } finally {
-      zipOpenFs.saveAndClose();
-    }
-  }
+  static async openPromise<T>(fn: (zipOpenFs: ZipOpenFS) => Promise<T>, opts: ZipOpenFSOptions): Promise<T> {
+    const zipOpenFs = new ZipOpenFS(opts);
 
-  static async openPromise<T>(fn: (zipOpenFs: ZipOpenFS) => Promise<T>): Promise<T> {
-    const zipOpenFs = new ZipOpenFS();
     try {
       return await fn(zipOpenFs);
     } finally {
       zipOpenFs.saveAndClose();
     }
   }
+
+  private readonly libzip: Libzip;
 
   private readonly baseFs: FakeFS<PortablePath>;
 
@@ -51,8 +47,10 @@ export class ZipOpenFS extends BasePortableFakeFS {
   private isZip: Set<string> = new Set();
   private notZip: Set<string> = new Set();
 
-  constructor({baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true}: ZipOpenFSOptions = {}) {
+  constructor({libzip, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true}: ZipOpenFSOptions) {
     super();
+
+    this.libzip = libzip;
 
     this.baseFs = baseFs;
 
@@ -748,6 +746,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   private async getZipPromise<T>(p: PortablePath, accept: (zipFs: ZipFS) => Promise<T>) {
     const getZipOptions = async () => ({
       baseFs: this.baseFs,
+      libzip: this.libzip,
       readOnly: this.readOnlyArchives,
       stats: await this.baseFs.statPromise(p),
     });
@@ -780,6 +779,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   private getZipSync<T>(p: PortablePath, accept: (zipFs: ZipFS) => T) {
     const getZipOptions = () => ({
       baseFs: this.baseFs,
+      libzip: this.libzip,
       readOnly: this.readOnlyArchives,
       stats: this.baseFs.statSync(p),
     });

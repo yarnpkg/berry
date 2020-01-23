@@ -1,5 +1,6 @@
 import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename} from '@yarnpkg/fslib';
 import {npath, ppath, toFilename, xfs}                         from '@yarnpkg/fslib';
+import {getLibzipPromise}                                      from '@yarnpkg/libzip';
 import fs                                                      from 'fs';
 import {tmpNameSync}                                           from 'tmp';
 
@@ -7,6 +8,7 @@ import {Configuration}                                         from './Configura
 import {MessageName}                                           from './MessageName';
 import {ReportError}                                           from './Report';
 import * as hashUtils                                          from './hashUtils';
+import * as miscUtils                                          from './miscUtils';
 import * as structUtils                                        from './structUtils';
 import {LocatorHash, Locator}                                  from './types';
 
@@ -149,7 +151,10 @@ export class Cache {
 
       const tempPath = npath.toPortablePath(tmpNameSync());
       await xfs.copyFilePromise(mirrorPath, tempPath, fs.constants.COPYFILE_FICLONE);
-      return new ZipFS(tempPath);
+
+      return new ZipFS(tempPath, {
+        libzip: await getLibzipPromise(),
+      });
     };
 
     const loadPackage = async () => {
@@ -203,14 +208,12 @@ export class Cache {
 
     let zipFs: ZipFS | null = null;
 
-    const lazyFs: LazyFS<PortablePath> = new LazyFS<PortablePath>(() => {
-      try {
-        return zipFs = new ZipFS(cachePath, {readOnly: true, baseFs});
-      } catch (error) {
-        error.message = `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${error.message}`;
-        throw error;
-      }
-    }, ppath);
+    const libzip = await getLibzipPromise();
+    const lazyFs: LazyFS<PortablePath> = new LazyFS<PortablePath>(() => miscUtils.prettifySyncErrors(() => {
+      return zipFs = new ZipFS(cachePath, {baseFs, libzip, readOnly: true});
+    }, message => {
+      return `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${message}`;
+    }), ppath);
 
     const releaseFs = () => {
       if (zipFs !== null) {

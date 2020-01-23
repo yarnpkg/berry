@@ -1,9 +1,13 @@
 import {ZipOpenFS, PortablePath} from '@yarnpkg/fslib';
+import {getLibzipSync}           from '@yarnpkg/libzip';
 import {posix}                   from 'path';
 import * as vscode               from 'vscode';
 
 export class ZipFSProvider implements vscode.FileSystemProvider {
-  private readonly zipFs = new ZipOpenFS({useCache: false});
+  private readonly zipFs = new ZipOpenFS({
+    libzip: getLibzipSync(),
+    useCache: false,
+  });
 
   stat(uri: vscode.Uri): vscode.FileStat {
     const stat: any = this.zipFs.statSync(uri.path as PortablePath);

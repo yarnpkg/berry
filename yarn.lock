@@ -3840,6 +3840,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/prettier@npm:1.19.0":
+  version: 1.19.0
+  resolution: "@types/prettier@npm:1.19.0"
+  checksum: 99ef50448801bb9bb5eee7760f84da2d9690007a3c272cc9fb80bcb9417c2b6253f6a89abe3d3468693b28b21a944d1b5c66f17628c8906ef6e28c40405643e0
+  languageName: node
+  linkType: hard
+
 "@types/promise.prototype.finally@npm:^2.0.3":
   version: 2.0.3
   resolution: "@types/promise.prototype.finally@npm:2.0.3"
@@ -4843,6 +4850,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.0.0-rc.24"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
     "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.4"
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.5"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.8"
     "@yarnpkg/plugin-link": "workspace:^2.0.0-rc.10"
     "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.14"
@@ -4960,6 +4968,9 @@ __metadata:
 "@yarnpkg/libzip@workspace:^2.0.0-rc.5, @yarnpkg/libzip@workspace:packages/yarnpkg-libzip":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/libzip@workspace:packages/yarnpkg-libzip"
+  dependencies:
+    "@types/prettier": 1.19.0
+    prettier: ^1.19.1
   languageName: unknown
   linkType: soft
 
@@ -5220,6 +5231,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.0.0-rc.24"
     "@yarnpkg/core": "workspace:^2.0.0-rc.19"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.5"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.8"
     "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.14"
     "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.14"
@@ -5296,6 +5308,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.0.0-rc.24"
     "@yarnpkg/core": "workspace:^2.0.0-rc.19"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.5"
     clipanion: ^2.1.5
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.24
@@ -5409,6 +5422,7 @@ __metadata:
     "@types/node": ^13.1.1
     "@yarnpkg/builder": "workspace:^2.0.0-rc.13"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.5"
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.15"
     typescript: ^3.7.4
     webpack: ^4.41.2
@@ -20184,6 +20198,15 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
+"prettier@npm:^1.19.1":
+  version: 1.19.1
+  resolution: "prettier@npm:1.19.1"
+  bin:
+    prettier: ./bin-prettier.js
+  checksum: 0b8665fa22259378feaf46a54a559a09bd2c367e6391015af5068e88c6fb8d96e20afc56a6a6b2bac2eb0ad1ad26302ea634377e6397eca09301f64b01f3021a
+  languageName: node
+  linkType: hard
+
 "pretty-bytes@npm:^4.0.2":
   version: 4.0.2
   resolution: "pretty-bytes@npm:4.0.2"
@@ -25199,6 +25222,7 @@ resolve@^1.10.1:
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12"
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.5"
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.15"
     pnp-webpack-plugin: ^1.4.3
     ts-loader: ^6.2.1

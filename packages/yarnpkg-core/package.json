@@ -6,6 +6,7 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.12",
     "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.4",
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.5",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.8",
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.15",
     "@yarnpkg/shell": "workspace:^2.0.0-rc.4",

@@ -2,6 +2,7 @@ import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator, MessageName}                       from '@yarnpkg/core';
 import {miscUtils, structUtils}                     from '@yarnpkg/core';
 import {ppath, xfs, ZipFS, Filename, CwdFS}         from '@yarnpkg/fslib';
+import {getLibzipPromise}                           from '@yarnpkg/libzip';
 
 import * as patchUtils                              from './patchUtils';
 
@@ -48,7 +49,9 @@ export class PatchFetcher implements Fetcher {
     const sourceFetch = await opts.fetcher.fetch(sourceLocator, opts);
     const prefixPath = structUtils.getIdentVendorPath(locator);
 
-    const copiedPackage = new ZipFS(tmpFile, {create: true});
+    const libzip = await getLibzipPromise();
+
+    const copiedPackage = new ZipFS(tmpFile, {libzip, create: true});
     await copiedPackage.mkdirpPromise(prefixPath);
 
     await miscUtils.releaseAfterUseAsync(async () => {
@@ -57,7 +60,7 @@ export class PatchFetcher implements Fetcher {
 
     copiedPackage.saveAndClose();
 
-    const patchedPackage = new ZipFS(tmpFile);
+    const patchedPackage = new ZipFS(tmpFile, {libzip});
     const patchFs = new CwdFS(prefixPath, {baseFs: patchedPackage});
 
     for (const patchFile of patchFiles) {

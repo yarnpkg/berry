@@ -1,5 +1,6 @@
 import {CwdFS, Filename, NativePath, PortablePath, ZipOpenFS} from '@yarnpkg/fslib';
 import {xfs, npath, ppath, toFilename}                        from '@yarnpkg/fslib';
+import {getLibzipPromise}                                     from '@yarnpkg/libzip';
 import {execute}                                              from '@yarnpkg/shell';
 import {PassThrough, Readable, Writable}                      from 'stream';
 import {dirSync}                                              from 'tmp';
@@ -126,6 +127,8 @@ export async function hasPackageScript(locator: Locator, scriptName: string, {pr
     const manifest = await Manifest.find(PortablePath.dot, {baseFs: packageFs});
 
     return manifest.scripts.has(scriptName);
+  }, {
+    libzip: await getLibzipPromise(),
   });
 }
 
@@ -200,6 +203,8 @@ async function initializePackageEnvironment(locator: Locator, {project, cwd, lif
       cwd = packageLocation;
 
     return {manifest, binFolder, env, cwd};
+  }, {
+    libzip: await getLibzipPromise(),
   });
 }
 
