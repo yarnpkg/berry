@@ -1,5 +1,5 @@
-import {LocationBlacklistData, LocationLengthData, PackageRegistryData} from './types';
-import {PackageStoreData, PnpSettings, SerializedState}                 from './types';
+import {LocationBlacklistData, LocationLengthData, PackageRegistryData, LocationDiscardData} from './types';
+import {PackageStoreData, PnpSettings, SerializedState}                                      from './types';
 
 // Keep this function is sync with its implementation in:
 // @yarnpkg/core/sources/miscUtils.ts
@@ -91,6 +91,10 @@ function generateLocationBlacklistData(settings: PnpSettings): LocationBlacklist
   return sortMap(settings.blacklistedLocations || [], location => location);
 }
 
+function generateLocationDiscardData(settings: PnpSettings): LocationDiscardData {
+  return sortMap(settings.discardedLocations || [], location => location);
+}
+
 function generateLocationLengthData(settings: PnpSettings): LocationLengthData {
   const lengths = new Set<number>();
 
@@ -117,6 +121,7 @@ export function generateSerializedState(settings: PnpSettings): SerializedState 
 
     fallbackExclusionList: generateFallbackExclusionList(settings),
     locationBlacklistData: generateLocationBlacklistData(settings),
+    locationDiscardData: generateLocationDiscardData(settings),
     locationLengthData: generateLocationLengthData(settings),
     packageRegistryData: generatePackageRegistryData(settings),
   };

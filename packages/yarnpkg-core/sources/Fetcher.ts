@@ -18,10 +18,37 @@ export type FetchOptions = MinimalFetchOptions & {
 
 export type FetchResult = {
   packageFs: FakeFS<PortablePath>,
+
+  /**
+   * If set, this function will be called once the fetch result isn't needed
+   * anymore. Typically used to release the ZipFS memory.
+   */
   releaseFs?: () => void,
+
+  /**
+   * The path where the package can be found within the `packageFs`. This is
+   * typically the "node_modules/<scope>/<name>` path.
+   */
   prefixPath: PortablePath,
-  localPath?: PortablePath | null
+
+  /**
+   * The "true" place where we can find the sources. We use that in order to
+   * compute the `file:` and `link:` relative paths.
+   */
+  localPath?: PortablePath | null,
+
+  /**
+   * The checksum for the fetch result.
+   */
   checksum?: string,
+
+  /**
+   * If true, the package location won't be considered for package lookups (so
+   * for example with can use this flag to indicate that the `link:` protocol
+   * should be resolvable, but should never be used to detect the package that
+   * owns a path).
+   */
+  discardFromLookup?: boolean,
 };
 
 /**
