@@ -43,6 +43,9 @@ export const makeConfig = (config: webpack.Configuration) => merge({
         },
       }, {
         loader: require.resolve(`ts-loader`),
+        options: {
+          compilerOptions: {declaration: false},
+        },
       }],
     }],
   },
