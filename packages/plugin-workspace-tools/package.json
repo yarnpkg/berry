@@ -1,22 +1,22 @@
 {
   "name": "@yarnpkg/plugin-workspace-tools",
-  "version": "2.0.0-rc.14",
+  "version": "2.0.0-rc.15",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.12",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
     "clipanion": "^2.1.5",
     "p-limit": "^2.2.0",
     "yup": "^0.27.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.24",
-    "@yarnpkg/core": "^2.0.0-rc.19"
+    "@yarnpkg/cli": "^2.0.0-rc.25",
+    "@yarnpkg/core": "^2.0.0-rc.20"
   },
   "devDependencies": {
     "@types/yup": "0.26.12",
-    "@yarnpkg/builder": "workspace:^2.0.0-rc.13",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.24",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.19",
+    "@yarnpkg/builder": "workspace:^2.0.0-rc.17",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.25",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.20",
     "typescript": "^3.7.4"
   },
   "scripts": {

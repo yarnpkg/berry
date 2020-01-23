@@ -1,13 +1,13 @@
 {
   "name": "@yarnpkg/plugin-constraints",
-  "version": "2.0.0-rc.11",
+  "version": "2.0.0-rc.12",
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.12",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
     "clipanion": "^2.1.5",
     "inquirer": "^6.2.0",
     "lodash": "^4.17.15",
@@ -15,15 +15,15 @@
     "tau-prolog": "^0.2.66"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.24",
-    "@yarnpkg/core": "^2.0.0-rc.19"
+    "@yarnpkg/cli": "^2.0.0-rc.25",
+    "@yarnpkg/core": "^2.0.0-rc.20"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",
     "@types/typescript": "2.0.0",
-    "@yarnpkg/builder": "workspace:^2.0.0-rc.13",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.24",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.19",
+    "@yarnpkg/builder": "workspace:^2.0.0-rc.17",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.25",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.20",
     "typescript": "^3.7.4"
   },
   "scripts": {

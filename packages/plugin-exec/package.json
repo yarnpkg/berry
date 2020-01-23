@@ -1,18 +1,18 @@
 {
   "name": "@yarnpkg/plugin-exec",
-  "version": "2.0.0-rc.14",
+  "version": "2.0.0-rc.15",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/builder": "workspace:^2.0.0-rc.13",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.12",
+    "@yarnpkg/builder": "workspace:^2.0.0-rc.17",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
     "tmp": "^0.1.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.19"
+    "@yarnpkg/core": "^2.0.0-rc.20"
   },
   "devDependencies": {
     "@types/tmp": "^0.0.33",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.19",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.20",
     "typescript": "^3.7.4"
   },
   "scripts": {
