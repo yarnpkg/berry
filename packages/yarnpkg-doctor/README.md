@@ -1,4 +1,4 @@
-# @yarnpkg/check
+# @yarnpkg/doctor
 
 A cli tool to help package maintainers support pnp.
 
@@ -6,7 +6,7 @@ A cli tool to help package maintainers support pnp.
 
 To check your package run:
 
-`yarn dlx @yarnpkg/check ./package-dir`
+`yarn dlx @yarnpkg/doctor ./package-dir`
 
 You'll get a pretty output with all the warnings.
 

@@ -405,7 +405,7 @@ class EntryCommand extends Command {
   }
 }
 
-const cli = new Cli({binaryName: `yarn dlx @yarnpkg/check`});
+const cli = new Cli({binaryName: `yarn dlx @yarnpkg/doctor`});
 cli.register(EntryCommand);
 cli.runExit(process.argv.slice(2), {
   stdin: process.stdin,

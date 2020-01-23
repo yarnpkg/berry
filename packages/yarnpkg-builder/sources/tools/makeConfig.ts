@@ -19,12 +19,8 @@ export const makeConfig = (config: webpack.Configuration) => merge({
   },
 
   resolve: {
-    alias: {
-      [`supports-color`]: `supports-color/index`,
-      [`agentkeepalive`]: `agentkeepalive/index`,
-    },
     extensions: [`.js`, `.ts`, `.tsx`, `.json`],
-    mainFields: [`browser`, `module`, `main`],
+    mainFields: [`main`],
     plugins: [PnpWebpackPlugin],
   },
 

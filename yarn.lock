@@ -4773,25 +4773,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/check@workspace:packages/yarnpkg-check":
-  version: 0.0.0-use.local
-  resolution: "@yarnpkg/check@workspace:packages/yarnpkg-check"
-  dependencies:
-    "@types/micromatch": ^3.1.0
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.25"
-    "@yarnpkg/core": "workspace:^2.0.0-rc.20"
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
-    "@yarnpkg/monorepo": "workspace:0.0.0"
-    clipanion: ^2.1.5
-    globby: ^10.0.1
-    micromatch: ^4.0.2
-    p-limit: ^2.2.0
-    typescript: ^3.7.4
-  bin:
-    check: ./sources/boot-cli-dev.js
-  languageName: unknown
-  linkType: soft
-
 "@yarnpkg/cli@workspace:^2.0.0-rc.25, @yarnpkg/cli@workspace:packages/yarnpkg-cli":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
@@ -4876,6 +4857,25 @@ __metadata:
     tar: ^4.4.6
     tmp: ^0.1.0
     tunnel: ^0.0.6
+  languageName: unknown
+  linkType: soft
+
+"@yarnpkg/doctor@workspace:packages/yarnpkg-doctor":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/doctor@workspace:packages/yarnpkg-doctor"
+  dependencies:
+    "@types/micromatch": ^3.1.0
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.25"
+    "@yarnpkg/core": "workspace:^2.0.0-rc.20"
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
+    "@yarnpkg/monorepo": "workspace:0.0.0"
+    clipanion: ^2.1.5
+    globby: ^10.0.1
+    micromatch: ^4.0.2
+    p-limit: ^2.2.0
+    typescript: ^3.7.4
+  bin:
+    doctor: ./sources/boot-cli-dev.js
   languageName: unknown
   linkType: soft
 

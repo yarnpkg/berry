@@ -2,6 +2,7 @@
   "name": "@yarnpkg/libzip",
   "version": "2.0.0-rc.8",
   "main": "./sources/sync.ts",
+  "browser": "./sources/async.ts",
   "scripts": {
     "build:libzip:wasm": "cd ./artifacts && ./build.sh",
     "postpack": "rm -rf lib",
@@ -9,8 +10,8 @@
     "release": "yarn npm publish"
   },
   "publishConfig": {
-    "main": "./lib/index.js",
-    "typings": "./lib/index.d.ts"
+    "main": "./lib/sync.js",
+    "browser": "./lib/async.js"
   },
   "files": [
     "/lib/**/*"
