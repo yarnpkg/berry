@@ -1,3 +1,6 @@
+/latest-version https://legacy.yarnpkg.com/latest-version 301
+/latest-rc-version https://legacy.yarnpkg.com/latest-rc-version 301
+
 /latest.tar.gz https://legacy.yarnpkg.com/latest.tar.gz 301
 /latest.tar.gz.asc https://legacy.yarnpkg.com/latest.tar.gz.asc 301
 /latest.msi https://legacy.yarnpkg.com/latest.msi 301
@@ -42,4 +45,3 @@
 
 /lang/zh-Hant/* https://legacy.yarnpkg.com/lang/zh-Hant/:splat 301
 /zh-Hant/* https://legacy.yarnpkg.com/lang/zh-Hant/:splat 301
-
