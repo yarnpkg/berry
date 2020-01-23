@@ -5,7 +5,7 @@ import {ScrollableItems}                                                        
 import {useMinistore}                                                                                                      from '@yarnpkg/libui/sources/hooks/useMinistore';
 import {renderForm}                                                                                                        from '@yarnpkg/libui/sources/misc/renderForm';
 import {suggestUtils}                                                                                                      from '@yarnpkg/plugin-essentials';
-import {Command}                                                                                                           from 'clipanion';
+import {Command, Usage}                                                                                                    from 'clipanion';
 import {diffWords}                                                                                                         from 'diff';
 import {Box, Color}                                                                                                        from 'ink';
 import React, {useEffect, useState}                                                                                        from 'react';
@@ -14,7 +14,7 @@ const SIMPLE_SEMVER = /^([\^~]?)([0-9+])(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpgradeInteractiveCommand extends BaseCommand {
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Interactive commands`,
     description: `open the upgrade interface`,
     details: `

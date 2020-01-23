@@ -2,7 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}                   from '@yarnpkg/cl
 import {Configuration, Project, ThrowReport}                   from '@yarnpkg/core';
 import {scriptUtils, structUtils}                              from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
-import {Command}                                               from 'clipanion';
+import {Command, Usage}                                        from 'clipanion';
 import tmp                                                     from 'tmp';
 
 // eslint-disable-next-line arca/no-default-export
@@ -19,7 +19,7 @@ export default class DlxCommand extends BaseCommand {
   @Command.Proxy()
   args: Array<string> = [];
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `run a package in a temporary environment`,
     details: `
       This command will install a package within a temporary environment, and run its binary script if it contains any. The binary will run within the current cwd.

@@ -2,7 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}                        from '@yarnp
 import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@yarnpkg/core';
 import {Project, StreamReport, Workspace}                           from '@yarnpkg/core';
 import {structUtils}                                                from '@yarnpkg/core';
-import {Command, UsageError}                                        from 'clipanion';
+import {Command, Usage, UsageError}                                 from 'clipanion';
 import inquirer                                                     from 'inquirer';
 
 import * as suggestUtils                                            from '../suggestUtils';
@@ -28,7 +28,7 @@ export default class UpCommand extends BaseCommand {
   @Command.Boolean(`-C,--caret`)
   caret: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `upgrade dependencies across the project`,
     details: `
       This command upgrades a list of packages to their latest available version across the whole project (regardless of whether they're part of \`dependencies\` or \`devDependencies\` - \`peerDependencies\` won't be affected). This is a project-wide command: all workspaces will be upgraded in the process.

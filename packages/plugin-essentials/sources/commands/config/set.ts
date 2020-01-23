@@ -1,6 +1,6 @@
-import {BaseCommand}         from '@yarnpkg/cli';
-import {Configuration}       from '@yarnpkg/core';
-import {Command, UsageError} from 'clipanion';
+import {BaseCommand}                from '@yarnpkg/cli';
+import {Configuration}              from '@yarnpkg/core';
+import {Command, Usage, UsageError} from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigSetCommand extends BaseCommand {
@@ -10,7 +10,7 @@ export default class ConfigSetCommand extends BaseCommand {
   @Command.String()
   value!: string;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `change a configuration settings`,
   });
 

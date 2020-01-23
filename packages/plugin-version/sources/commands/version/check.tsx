@@ -5,7 +5,7 @@ import {ScrollableItems}                                                        
 import {FocusRequest}                                                                                           from '@yarnpkg/libui/sources/hooks/useFocusRequest';
 import {useListInput}                                                                                           from '@yarnpkg/libui/sources/hooks/useListInput';
 import {renderForm}                                                                                             from '@yarnpkg/libui/sources/misc/renderForm';
-import {Command, UsageError}                                                                                    from 'clipanion';
+import {Command, Usage, UsageError}                                                                             from 'clipanion';
 import {Box, Color}                                                                                             from 'ink';
 import React, {useCallback, useState}                                                                           from 'react';
 import semver                                                                                                   from 'semver';
@@ -19,7 +19,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
   @Command.Boolean(`-i,--interactive`)
   interactive?: boolean;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Release-related commands`,
     description: `check that all the relevant packages have been bumped`,
     details: `

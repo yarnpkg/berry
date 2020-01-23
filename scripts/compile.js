@@ -8,14 +8,17 @@ const ts = require('typescript');
  * @param {string} tsConfigPath
  * @param {string} folder
  */
-function compile(tsConfigPath, folder) {
+function compile(tsConfigPath, folder, ...opts) {
+  const emitDeclarationOnly = opts.includes(`--emitDeclarationOnly`);
+
   const parsedConfig = ts.parseJsonConfigFileContent({
     extends: tsConfigPath,
     compilerOptions: {
-      rootDir: 'sources',
-      outDir: 'lib',
+      rootDir: `sources`,
+      outDir: `lib`,
+      emitDeclarationOnly,
     },
-    include: ['sources/**/*.ts', 'sources/**/*.tsx'],
+    include: [`sources/**/*.ts`, `sources/**/*.tsx`],
   }, ts.sys, folder);
 
   const program = ts.createProgram({
@@ -54,4 +57,4 @@ function reportErrors(allDiagnostics) {
 }
 
 if (process.mainModule === module)
-  process.exitCode = compile(path.resolve(__dirname, '../tsconfig.json'), process.argv[2]);
+  process.exitCode = compile(path.resolve(__dirname, `../tsconfig.json`), ...process.argv.slice(2));

@@ -1,7 +1,7 @@
 import {BaseCommand}                            from '@yarnpkg/cli';
 import {Configuration, StreamReport, httpUtils} from '@yarnpkg/core';
 import {parseSyml}                              from '@yarnpkg/parsers';
-import {Command}                                from 'clipanion';
+import {Command, Usage}                         from 'clipanion';
 
 const REMOTE_REGISTRY = `https://raw.githubusercontent.com/yarnpkg/berry/master/plugins.yml`;
 
@@ -17,7 +17,7 @@ export default class PluginDlCommand extends BaseCommand {
   @Command.Boolean(`--json`)
   json: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Plugin-related commands`,
     description: `list the available official plugins`,
     details: `

@@ -9,10 +9,10 @@ const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{
 // specified order. It's not fair but life isn't fair either.
 const specialObjectKeys = [`__metadata`, `version`, `resolution`, `dependencies`, `peerDependencies`, `dependenciesMeta`, `peerDependenciesMeta`, `binaries`];
 
-class PreserveOrdering {
+export class PreserveOrdering {
   constructor(public readonly data: any) {
   }
-};
+}
 
 function stringifyString(value: string): string {
   if (value.match(simpleStringPattern)) {

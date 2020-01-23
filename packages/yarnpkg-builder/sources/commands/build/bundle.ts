@@ -1,14 +1,14 @@
-import chalk         from 'chalk';
-import {Command}     from 'clipanion';
-import filesize      from 'filesize';
-import fs            from 'fs';
-import path          from 'path';
-import TerserPlugin  from 'terser-webpack-plugin';
-import webpack       from 'webpack';
+import chalk            from 'chalk';
+import {Command, Usage} from 'clipanion';
+import filesize         from 'filesize';
+import fs               from 'fs';
+import path             from 'path';
+import TerserPlugin     from 'terser-webpack-plugin';
+import webpack          from 'webpack';
 
-import {dynamicLibs} from '../../data/dynamicLibs';
-import {findPlugins} from '../../tools/findPlugins';
-import {makeConfig}  from '../../tools/makeConfig';
+import {dynamicLibs}    from '../../data/dynamicLibs';
+import {findPlugins}    from '../../tools/findPlugins';
+import {makeConfig}     from '../../tools/makeConfig';
 
 const pkgJsonVersion = (basedir: string) => {
   const pkgJson = require(`${basedir}/package.json`);
@@ -26,7 +26,7 @@ export default class BuildBundleCommand extends Command {
   @Command.Boolean(`--no-minify`)
   noMinify: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `build the local bundle`,
   });
 

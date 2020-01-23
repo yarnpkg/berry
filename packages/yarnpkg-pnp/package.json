@@ -19,7 +19,7 @@
     "build:pnp:hook": "run pnpify webpack-cli --config webpack.config.hook.js",
     "build:pnp": "run pnpify webpack-cli --config webpack.config.pkg.js",
     "postpack": "rm -rf lib",
-    "prepack": "run build:pnp && run build:compile packages/yarnpkg-pnp --emitDeclarationOnly --declaration",
+    "prepack": "run build:compile packages/yarnpkg-pnp --emitDeclarationOnly && run build:pnp",
     "release": "yarn npm publish",
     "update-local": "run build:pnp:hook"
   },

@@ -2,7 +2,7 @@ import {BaseCommand, openWorkspace}   from '@yarnpkg/cli';
 import {Configuration, MessageName}   from '@yarnpkg/core';
 import {StreamReport}                 from '@yarnpkg/core';
 import {npmConfigUtils, npmHttpUtils} from '@yarnpkg/plugin-npm';
-import {Command}                      from 'clipanion';
+import {Command, Usage}               from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmWhoamiCommand extends BaseCommand {
@@ -12,7 +12,7 @@ export default class NpmWhoamiCommand extends BaseCommand {
   @Command.Boolean(`--publish`)
   publish: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Npm-related commands`,
     description: `display the name of the authenticated user`,
     details: `

@@ -1,14 +1,14 @@
 import {BaseCommand, WorkspaceRequiredError}         from '@yarnpkg/cli';
 import {Cache, Configuration, Project, StreamReport} from '@yarnpkg/core';
 import {structUtils}                                 from '@yarnpkg/core';
-import {Command}                                     from 'clipanion';
+import {Command, Usage}                              from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UnplugCommand extends BaseCommand {
   @Command.Rest()
   patterns: Array<string> = [];
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `force the unpacking of a list of packages`,
     details: `
       This command will add the specified selectors to the list of packages that must be unplugged when installed.

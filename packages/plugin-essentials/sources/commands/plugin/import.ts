@@ -2,7 +2,7 @@ import {BaseCommand}                                                            
 import {Configuration, MessageName, Project, ReportError, StreamReport, miscUtils} from '@yarnpkg/core';
 import {httpUtils, structUtils}                                                    from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs}                                           from '@yarnpkg/fslib';
-import {Command}                                                                   from 'clipanion';
+import {Command, Usage}                                                            from 'clipanion';
 import {runInNewContext}                                                           from 'vm';
 
 import {getAvailablePlugins}                                                       from './list';
@@ -12,7 +12,7 @@ export default class PluginDlCommand extends BaseCommand {
   @Command.String()
   name!: string;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Plugin-related commands`,
     description: `download a plugin`,
     details: `

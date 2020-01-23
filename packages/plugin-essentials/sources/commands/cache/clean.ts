@@ -1,7 +1,7 @@
 import {BaseCommand}                        from '@yarnpkg/cli';
 import {Configuration, Cache, StreamReport} from '@yarnpkg/core';
 import {xfs}                                from '@yarnpkg/fslib';
-import {Command}                            from 'clipanion';
+import {Command, Usage}                     from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class CacheCleanCommand extends BaseCommand {
@@ -11,7 +11,7 @@ export default class CacheCleanCommand extends BaseCommand {
   @Command.Boolean(`--all`)
   all: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `remove the shared cache files`,
     details: `
       This command will remove all the files in the shared cache.

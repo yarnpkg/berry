@@ -1,14 +1,14 @@
 import {BaseCommand}            from '@yarnpkg/cli';
 import {Configuration, Project} from '@yarnpkg/core';
 import {execUtils, scriptUtils} from '@yarnpkg/core';
-import {Command}                from 'clipanion';
+import {Command, Usage}         from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NodeCommand extends BaseCommand {
   @Command.Proxy()
   args: Array<string> = [];
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `run node with the hook already setup`,
     details: `
       This command simply runs Node. It also makes sure to call it in a way that's compatible with the current project (for example, on PnP projects the environment will be setup in such a way that PnP will be correctly injected into the environment).

@@ -2,7 +2,7 @@ import {BaseCommand}                                                    from '@y
 import {Configuration, IdentHash, Ident, Project, Workspace, miscUtils} from '@yarnpkg/core';
 import {MessageName, StreamReport, AllDependencies, Report}             from '@yarnpkg/core';
 import {structUtils}                                                    from '@yarnpkg/core';
-import {Command}                                                        from 'clipanion';
+import {Command, Usage}                                                 from 'clipanion';
 import getPath                                                          from 'lodash/get';
 import setPath                                                          from 'lodash/set';
 import unsetPath                                                        from 'lodash/unset';
@@ -14,7 +14,7 @@ export default class ConstraintsCheckCommand extends BaseCommand {
   @Command.Boolean(`--fix`)
   fix: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Constraints-related commands`,
     description: `check that the project constraints are met`,
     details: `

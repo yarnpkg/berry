@@ -1,10 +1,10 @@
 import {BaseCommand}                 from '@yarnpkg/cli';
 import {Configuration, StreamReport} from '@yarnpkg/core';
-import {Command}                     from 'clipanion';
+import {Command, Usage}              from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginListCommand extends BaseCommand {
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Plugin-related commands`,
     description: `list the active plugins`,
     details: `

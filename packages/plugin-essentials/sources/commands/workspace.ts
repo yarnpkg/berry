@@ -1,7 +1,7 @@
 import {WorkspaceRequiredError}                            from "@yarnpkg/cli";
 import {CommandContext, Configuration, Project, Workspace} from "@yarnpkg/core";
 import {structUtils}                                       from "@yarnpkg/core";
-import {Command, UsageError}                               from "clipanion";
+import {Command, Usage, UsageError}                        from "clipanion";
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspaceCommand extends Command<CommandContext> {
@@ -14,7 +14,7 @@ export default class WorkspaceCommand extends Command<CommandContext> {
   @Command.Proxy()
   args: Array<string> = [];
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Workspace-related commands`,
     description: `run a command within the specified workspace`,
     details: `

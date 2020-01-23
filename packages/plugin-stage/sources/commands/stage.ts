@@ -1,7 +1,7 @@
 import {BaseCommand}                     from '@yarnpkg/cli';
 import {Configuration, Project}          from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
-import {Command, UsageError}             from 'clipanion';
+import {Command, Usage, UsageError}      from 'clipanion';
 
 import {Driver as GitDriver}             from '../drivers/GitDriver';
 import {Driver as MercurialDriver}       from '../drivers/MercurialDriver';
@@ -26,7 +26,7 @@ export default class StageCommand extends BaseCommand {
   @Command.Boolean(`-n,--dry-run`)
   dryRun: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `add all yarn files to your vcs`,
     details: `
       This command will add to your staging area the files belonging to Yarn (typically any modified \`package.json\` and \`.yarnrc.yml\` files, but also linker-generated files, cache data, etc). It will take your ignore list into account, so the cache files won't be added if the cache is ignored in a \`.gitignore\` file (assuming you use Git).

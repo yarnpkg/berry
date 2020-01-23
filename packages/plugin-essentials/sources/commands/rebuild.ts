@@ -2,14 +2,14 @@ import {BaseCommand, WorkspaceRequiredError}                                    
 import {Cache, Configuration, Project, StreamReport, ThrowReport, structUtils, IdentHash, LocatorHash} from '@yarnpkg/core';
 import {PortablePath, xfs, ppath}                                                                      from '@yarnpkg/fslib';
 import {parseSyml}                                                                                     from '@yarnpkg/parsers';
-import {Command}                                                                                       from 'clipanion';
+import {Command, Usage}                                                                                from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends BaseCommand {
   @Command.Rest()
   idents: Array<string> = [];
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `rebuild the project's native packages`,
     details: `
       This command will automatically cause Yarn to forget about previous compilations of the given packages and to run them again.
