@@ -8,10 +8,14 @@ releases:
 
 declined:
   - "@yarnpkg/plugin-constraints"
+  - "@yarnpkg/plugin-dlx"
+  - "@yarnpkg/plugin-essentials"
   - "@yarnpkg/plugin-exec"
+  - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-node-modules"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-patch"
+  - "@yarnpkg/plugin-pnp"
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-version"
