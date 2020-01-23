@@ -1,13 +1,13 @@
-import {PortablePath}                            from '@yarnpkg/fslib';
-import {CommandClass}                            from 'clipanion';
-import {Writable, Readable}                      from 'stream';
+import {PortablePath}                                           from '@yarnpkg/fslib';
+import {CommandClass}                                           from 'clipanion';
+import {Writable, Readable}                                     from 'stream';
 
-import {SettingsDefinition, PluginConfiguration} from './Configuration';
-import {Fetcher}                                 from './Fetcher';
-import {Linker}                                  from './Linker';
-import {Project}                                 from './Project';
-import {Resolver}                                from './Resolver';
-import {Locator, Descriptor}                     from './types';
+import {SettingsDefinition, PluginConfiguration, Configuration} from './Configuration';
+import {Fetcher}                                                from './Fetcher';
+import {Linker}                                                 from './Linker';
+import {Project}                                                from './Project';
+import {Resolver}                                               from './Resolver';
+import {Locator, Descriptor}                                    from './types';
 
 type ProcessEnvironment = {[key: string]: string};
 
@@ -33,6 +33,14 @@ export interface ResolverPlugin {
 };
 
 export type Hooks = {
+  // Called when the package extensions are setup. Can be used to inject new
+  // ones (for example, that's what the compat plugin uses to workaround
+  // metadata problems).
+  registerPackageExtensions?: (
+    configuration: Configuration,
+    registerPackageExtension: (descriptor: Descriptor, extensionData: any) => void,
+  ) => Promise<void>;
+
   // Called before a script is executed. The hooks are allowed to modify the
   // `env` object as they see fit, and any call to `makePathWrapper` will cause
   // a binary of the given name to be injected somewhere within the PATH (we
