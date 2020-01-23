@@ -23,7 +23,7 @@ import * as miscUtils                                          from './miscUtils
 import * as nodeUtils                                          from './nodeUtils';
 import * as semverUtils                                        from './semverUtils';
 import * as structUtils                                        from './structUtils';
-import {IdentHash, Package}                                    from './types';
+import {IdentHash, Package, Descriptor}                        from './types';
 
 const chalkOptions = process.env.GITHUB_ACTIONS
   ? {level: 2}
