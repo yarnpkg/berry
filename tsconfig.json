@@ -9,7 +9,8 @@
     "lib": ["dom", "es2017", "esnext.asynciterable"],
     "module": "commonjs",
     "strict": true,
-    "target": "es2017"
+    "target": "es2017",
+    "declaration": true
   },
   "exclude": [
     "packages/*/lib",
