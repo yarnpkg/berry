@@ -10,8 +10,8 @@
     "release": "yarn npm publish"
   },
   "publishConfig": {
-    "main": "./lib/index.js",
-    "typings": "./lib/index.d.ts"
+    "main": "./lib/sync.js",
+    "browser": "./lib/async.js"
   },
   "files": [
     "/lib/**/*"
