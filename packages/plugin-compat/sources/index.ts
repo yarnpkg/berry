@@ -1,6 +1,7 @@
 import {Hooks as CoreHooks, Plugin, structUtils} from '@yarnpkg/core';
 import {Hooks as PatchHooks}                     from '@yarnpkg/plugin-patch';
 
+import {packageExtensions}                       from './extensions';
 import {patch as fseventsPatch}                  from './patches/fsevents.patch';
 import {patch as resolvePatch}                   from './patches/resolve.patch';
 import {patch as typescriptPatch}                from './patches/typescript.patch';
@@ -13,6 +14,12 @@ const PATCHES = new Map([
 
 const plugin: Plugin<CoreHooks & PatchHooks> = {
   hooks: {
+    registerPackageExtensions: async (configuration, registerPackageExtension) => {
+      for (const [descriptorStr, extensionData] of packageExtensions) {
+        registerPackageExtension(structUtils.parseDescriptor(descriptorStr, true), extensionData);
+      }
+    },
+
     getBuiltinPatch: async (project, name) => {
       const TAG = `compat/`;
       if (!name.startsWith(TAG))

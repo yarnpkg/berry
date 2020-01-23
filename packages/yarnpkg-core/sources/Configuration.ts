@@ -21,8 +21,9 @@ import {WorkspaceResolver}                                     from './Workspace
 import * as folderUtils                                        from './folderUtils';
 import * as miscUtils                                          from './miscUtils';
 import * as nodeUtils                                          from './nodeUtils';
+import * as semverUtils                                        from './semverUtils';
 import * as structUtils                                        from './structUtils';
-import {IdentHash, Package}                                    from './types';
+import {IdentHash, Package, Descriptor}                        from './types';
 
 const chalkOptions = process.env.GITHUB_ACTIONS
   ? {level: 2}
@@ -952,8 +953,7 @@ export class Configuration {
   refreshPackageExtensions() {
     this.packageExtensions = new Map();
 
-    for (const [descriptorString, extensionData] of this.get<Map<string, any>>(`packageExtensions`)) {
-      const descriptor = structUtils.parseDescriptor(descriptorString, true);
+    const registerPackageExtension = (descriptor: Descriptor, extensionData: any) => {
       if (!semver.validRange(descriptor.range))
         throw new Error(`Only semver ranges are allowed as keys for the lockfileExtensions setting`);
 
@@ -969,7 +969,14 @@ export class Configuration {
           pkg.peerDependenciesMeta = new Map([...pkg.peerDependenciesMeta, ...extension.peerDependenciesMeta]);
         },
       });
-    }
+    };
+
+    for (const [descriptorString, extensionData] of this.get<Map<string, any>>(`packageExtensions`))
+      registerPackageExtension(structUtils.parseDescriptor(descriptorString, true), extensionData);
+
+    this.triggerHook(hooks => {
+      return hooks.registerPackageExtensions;
+    }, this, registerPackageExtension);
   }
 
   normalizePackage(original: Package) {
@@ -984,7 +991,7 @@ export class Configuration {
 
       if (version !== null) {
         const extensionEntry = extensionList.find(({range}) => {
-          return semver.satisfies(version, range);
+          return semverUtils.satisfiesWithPrereleases(version, range);
         });
 
         if (typeof extensionEntry !== `undefined`) {
