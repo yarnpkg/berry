@@ -171,7 +171,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           <Box textWrap={`wrap`} marginBottom={1}>
             The following packages are direct dependencies of your project. Select those you want to upgrade, then press enter. Press ctrl-C to abort at any time:
           </Box>
-          <ScrollableItems size={10} children={sortedDependencies.map(descriptor => {
+          <ScrollableItems radius={10} children={sortedDependencies.map(descriptor => {
             return <UpgradeEntry key={descriptor.descriptorHash} active={false} descriptor={descriptor} />;
           })} />
         </Box>

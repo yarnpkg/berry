@@ -14,7 +14,7 @@ Yarn doesn't support Node 8 anymore, as it's reached its end of life in December
 
 ### Run the doctor
 
-Run `npx @yarnpkg/check .` (or `yarn dlx @yarnpkg/check .`) in your project to quickly get an overview of potential issues found in your codebase. For example here's what `webpack-dev-server` would reveal:
+Run `npx @yarnpkg/doctor .` (or `yarn dlx @yarnpkg/doctor .`) in your project to quickly get an overview of potential issues found in your codebase. For example here's what `webpack-dev-server` would reveal:
 
 ```
 ➤ YN0000: Found 1 package(s) to process

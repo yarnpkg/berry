@@ -255,11 +255,27 @@ const PackageJsonDoc = () => <>
           </>}
         />
         <JsonScalarProperty
+          name={`bin`}
+          anchor={`publishConfig.bin`}
+          placeholder={`./build/bin.js`}
+          description={<>
+            If present, the top-level <code>bin</code> field from the manifest will be set to this new value before the package is packed to be shipped to remote registries. This won't modify the real manifest, just the one stored within the tarball.
+          </>}
+        />
+        <JsonScalarProperty
+          name={`browser`}
+          anchor={`publishConfig.browser`}
+          placeholder={`./build/browser.js`}
+          description={<>
+            Same principle as the <code>publishConfig.bin</code> property; this value will be used instead of the top-level <code>browser</code> field when generating the workspace tarball.
+          </>}
+        />
+        <JsonScalarProperty
           name={`main`}
           anchor={`publishConfig.main`}
           placeholder={`./build/index.js`}
           description={<>
-            If present, the top-level <code>main</code> field from the manifest will be set to this new value before the package is packed to be shipped to remote registries. This won't modified the actual file, just the one in the tarball.
+            Same principle as the <code>publishConfig.bin</code> property; this value will be used instead of the top-level <code>main</code> field when generating the workspace tarball.
           </>}
         />
         <JsonScalarProperty
@@ -267,7 +283,7 @@ const PackageJsonDoc = () => <>
           anchor={`publishConfig.module`}
           placeholder={`./build/index.mjs`}
           description={<>
-            Same principle as the <code>publishConfig.main</code> property; this value will be used instead of the top-level <code>module</code> field when generating the workspace tarball.
+            Same principle as the <code>publishConfig.bin</code> property; this value will be used instead of the top-level <code>module</code> field when generating the workspace tarball.
           </>}
         />
         <JsonScalarProperty
