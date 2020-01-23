@@ -24,7 +24,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     }))] as [string | null, PackageStore];
   }));
 
-  const packageLocatorsByLocations = new Map();
+  const packageLocatorsByLocations = new Map<PortablePath, PackageLocator | null>();
 
   for (const [packageName, storeData] of data.packageRegistryData) {
     for (const [packageReference, packageInformationData] of storeData) {
@@ -40,6 +40,9 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
 
   for (const location of data.locationBlacklistData)
     packageLocatorsByLocations.set(location, null);
+
+  for (const location of data.locationDiscardData)
+    packageLocatorsByLocations.delete(location);
 
   const fallbackExclusionList = new Map(data.fallbackExclusionList.map(([packageName, packageReferences]) => {
     return [packageName, new Set(packageReferences)] as [string, Set<string>];

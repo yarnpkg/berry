@@ -48,9 +48,9 @@ export class RawLinkFetcher implements Fetcher {
     const sourcePath = ppath.resolve(effectiveParentFetch.prefixPath, path);
 
     if (parentFetch.localPath) {
-      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.root, localPath: sourcePath};
+      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.root, discardFromLookup: true, localPath: sourcePath};
     } else {
-      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.root};
+      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.root, discardFromLookup: true};
     }
   }
 }

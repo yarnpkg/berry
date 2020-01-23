@@ -1,3 +1,5 @@
+import {xfs, ppath} from '@yarnpkg/fslib';
+
 const {
   fs: {createTemporaryFolder, writeJson},
   tests: {getPackageDirectoryPath},
@@ -61,6 +63,28 @@ describe(`Protocols`, () => {
           });
         },
       ),
+    );
+
+    test(
+      `it should allow link to access their containers' dependencies`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+          [`foo`]: `link:./my-dir`,
+        },
+      }, {
+        pnpFallbackMode: `none`,
+      }, async ({path, run, source}) => {
+        await xfs.mkdirPromise(`${path}/my-dir`);
+        await xfs.writeFilePromise(`${path}/my-dir/index.js`, `module.exports = require('no-deps');\n`);
+
+        await run(`install`);
+
+        await expect(source(`require('foo')`)).resolves.toMatchObject({
+          name: `no-deps`,
+          version: `1.0.0`,
+        });
+      }),
     );
   });
 });

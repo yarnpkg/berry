@@ -230,6 +230,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
     ],
     "locationBlacklistData": [
     ],
+    "locationDiscardData": [
+    ],
     "locationLengthData": [
       244,
       238,
@@ -48808,6 +48810,8 @@ function hydrateRuntimeState(data, {
   }
 
   for (const location of data.locationBlacklistData) packageLocatorsByLocations.set(location, null);
+
+  for (const location of data.locationDiscardData) packageLocatorsByLocations.delete(location);
 
   const fallbackExclusionList = new Map(data.fallbackExclusionList.map(([packageName, packageReferences]) => {
     return [packageName, new Set(packageReferences)];

@@ -7,7 +7,9 @@ import mm                                                                       
 
 export abstract class AbstractPnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
-  private readonly blacklistedPaths: Set<string> = new Set();
+
+  private readonly blacklistedPaths: Set<PortablePath> = new Set();
+  private readonly discardedPaths: Set<PortablePath> = new  Set();
 
   constructor(protected opts: LinkOptions) {
     this.opts = opts;
@@ -82,6 +84,9 @@ export abstract class AbstractPnpInstaller implements Installer {
     if (hasVirtualInstances)
       this.blacklistedPaths.add(packageLocation);
 
+    if (fetchResult.discardFromLookup)
+      this.discardedPaths.add(packageLocation);
+
     return {
       packageLocation: packageRawLocation,
       buildDirective: buildScripts.length > 0 ? buildScripts as BuildDirective[] : null,
@@ -119,7 +124,6 @@ export abstract class AbstractPnpInstaller implements Installer {
       if (ignorePatterns.length === 0)
         return null;
 
-
       return ignorePatterns.map(pattern => {
         return `(${mm.makeRe(pattern, {
           // @ts-ignore
@@ -131,6 +135,7 @@ export abstract class AbstractPnpInstaller implements Installer {
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
     const blacklistedLocations = this.blacklistedPaths;
+    const discardedLocations = this.discardedPaths;
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
@@ -145,6 +150,7 @@ export abstract class AbstractPnpInstaller implements Installer {
 
     return await this.finalizeInstallWithPnp({
       blacklistedLocations,
+      discardedLocations,
       dependencyTreeRoots,
       enableTopLevelFallback,
       fallbackExclusionList,

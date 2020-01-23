@@ -22,7 +22,8 @@ export type PackageStoreData = Array<[string | null, PackageInformationData<Port
 export type PackageRegistry = Map<string | null, PackageStore>;
 export type PackageRegistryData = Array<[string | null, PackageStoreData]>;
 
-export type LocationBlacklistData = Array<string>;
+export type LocationBlacklistData = Array<PortablePath>;
+export type LocationDiscardData = Array<PortablePath>;
 export type LocationLengthData = Array<number>;
 
 // This is what is stored within the .pnp.meta.json file
@@ -32,6 +33,7 @@ export type SerializedState = {
   fallbackExclusionList: Array<[string, Array<string>]>,
   ignorePatternData: string | null,
   locationBlacklistData: LocationBlacklistData,
+  locationDiscardData: LocationDiscardData,
   locationLengthData: LocationLengthData,
   packageRegistryData: PackageRegistryData,
   dependencyTreeRoots: Array<PackageLocator>,
@@ -53,7 +55,12 @@ export type RuntimeState = {
 export type PnpSettings = {
   // Some locations that are not allowed to make a require call, period
   // (usually the realpath of virtual packages)
-  blacklistedLocations?: Iterable<string>,
+  blacklistedLocations?: Iterable<PortablePath>,
+
+  // Some locations should just be ignored for the purpose of the locator
+  // lookup (for example the `link:` protocol should be seen as a "true"
+  // symlink, not an empty package).
+  discardedLocations?: Iterable<PortablePath>,
 
   // Whether the top-level dependencies should be made available to all the
   // dependency tree as a fallback (default is true)
