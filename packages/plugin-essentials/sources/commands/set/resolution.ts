@@ -1,7 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError}         from '@yarnpkg/cli';
 import {Configuration, Cache, Project, StreamReport} from '@yarnpkg/core';
 import {structUtils}                                 from '@yarnpkg/core';
-import {Command}                                     from 'clipanion';
+import {Command, Usage}                              from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SetResolutionCommand extends BaseCommand {
@@ -14,7 +14,7 @@ export default class SetResolutionCommand extends BaseCommand {
   @Command.Boolean(`-s,--save`)
   save: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `enforce a package resolution`,
     details: `
       This command updates the resolution table so that \`descriptor\` is resolved by \`resolution\`.

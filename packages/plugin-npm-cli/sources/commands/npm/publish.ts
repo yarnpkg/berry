@@ -3,7 +3,7 @@ import {Configuration, MessageName, Project, ReportError, StreamReport, Workspac
 import {miscUtils, structUtils}                                                                 from '@yarnpkg/core';
 import {npmConfigUtils, npmHttpUtils}                                                           from '@yarnpkg/plugin-npm';
 import {packUtils}                                                                              from '@yarnpkg/plugin-pack';
-import {Command, UsageError}                                                                    from 'clipanion';
+import {Command, Usage, UsageError}                                                             from 'clipanion';
 import {createHash}                                                                             from 'crypto';
 import ssri                                                                                     from 'ssri';
 
@@ -18,7 +18,7 @@ export default class NpmPublishCommand extends BaseCommand {
   @Command.Boolean(`--tolerate-republish`)
   tolerateRepublish: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Npm-related commands`,
     description: `publish the active workspace to the npm registry`,
     details: `

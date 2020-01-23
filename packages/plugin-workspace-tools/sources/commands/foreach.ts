@@ -2,7 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}               from '@yarnpkg/cli';
 import {Configuration, LocatorHash, Project, Workspace}    from '@yarnpkg/core';
 import {DescriptorHash, MessageName, Report, StreamReport} from '@yarnpkg/core';
 import {miscUtils, structUtils}                            from '@yarnpkg/core';
-import {Command, UsageError}                               from 'clipanion';
+import {Command, Usage, UsageError}                        from 'clipanion';
 import {cpus}                                              from 'os';
 import pLimit                                              from 'p-limit';
 import {Writable}                                          from 'stream';
@@ -74,7 +74,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     }),
   });
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Workspace-related commands`,
     description: `run a command on all workspaces`,
     details: `

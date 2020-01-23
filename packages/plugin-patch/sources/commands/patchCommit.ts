@@ -1,7 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError}                                           from '@yarnpkg/cli';
 import {Cache, Configuration, Project, ThrowReport, structUtils, execUtils, miscUtils} from '@yarnpkg/core';
 import {npath, xfs, Filename, ppath}                                                   from '@yarnpkg/fslib';
-import {Command, UsageError}                                                           from 'clipanion';
+import {Command, Usage, UsageError}                                                    from 'clipanion';
 
 import * as patchUtils                                                                 from '../patchUtils';
 
@@ -10,7 +10,7 @@ export default class PatchCommitCommand extends BaseCommand {
   @Command.String()
   patchFolder!: string;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `
       This will turn the folder passed in parameter into a patchfile suitable for consumption with the \`patch:\` protocol.
 

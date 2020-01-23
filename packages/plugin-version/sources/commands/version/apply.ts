@@ -1,7 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
 import {Cache, Configuration}                from '@yarnpkg/core';
 import {Project, StreamReport}               from '@yarnpkg/core';
-import {Command}                             from 'clipanion';
+import {Command, Usage}                      from 'clipanion';
 
 import * as versionUtils                     from '../../versionUtils';
 
@@ -13,7 +13,7 @@ export default class VersionApplyCommand extends BaseCommand {
   @Command.Boolean(`--json`)
   json: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Release-related commands`,
     description: `apply all the deferred version bumps at once`,
     details: `

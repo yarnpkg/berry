@@ -1,7 +1,7 @@
 import {BaseCommand}            from '@yarnpkg/cli';
 import {Configuration, Project} from '@yarnpkg/core';
 import {StreamReport}           from '@yarnpkg/core';
-import {Command}                from 'clipanion';
+import {Command, Usage}         from 'clipanion';
 
 import {Constraints}            from '../../Constraints';
 
@@ -13,7 +13,7 @@ export default class ConstraintsQueryCommand extends BaseCommand {
   @Command.String()
   query!: string;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Constraints-related commands`,
     description: `query the constraints fact database`,
     details: `

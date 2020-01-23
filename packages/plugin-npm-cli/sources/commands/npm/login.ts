@@ -2,7 +2,7 @@ import {BaseCommand, openWorkspace}   from '@yarnpkg/cli';
 import {Configuration, MessageName}   from '@yarnpkg/core';
 import {StreamReport}                 from '@yarnpkg/core';
 import {npmConfigUtils, npmHttpUtils} from '@yarnpkg/plugin-npm';
-import {Command}                      from 'clipanion';
+import {Command, Usage}               from 'clipanion';
 import inquirer                       from 'inquirer';
 
 // eslint-disable-next-line arca/no-default-export
@@ -13,7 +13,7 @@ export default class NpmLoginCommand extends BaseCommand {
   @Command.Boolean(`--publish`)
   publish: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Npm-related commands`,
     description: `store new login info to access the npm registry`,
     details: `

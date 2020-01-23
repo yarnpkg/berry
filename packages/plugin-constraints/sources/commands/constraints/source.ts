@@ -1,6 +1,6 @@
 import {BaseCommand}            from '@yarnpkg/cli';
 import {Configuration, Project} from '@yarnpkg/core';
-import {Command}                from 'clipanion';
+import {Command, Usage}         from 'clipanion';
 
 import {Constraints}            from '../../Constraints';
 
@@ -9,7 +9,7 @@ export default class ConstraintsSourceCommand extends BaseCommand {
   @Command.Boolean(`-v,--verbose`)
   verbose: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Constraints-related commands`,
     description: `print the source code for the constraints`,
     details: `

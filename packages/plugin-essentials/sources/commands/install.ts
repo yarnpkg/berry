@@ -2,7 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}                                   f
 import {Configuration, Cache, MessageName, Project, ReportError, StreamReport} from '@yarnpkg/core';
 import {xfs, ppath}                                                            from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                              from '@yarnpkg/parsers';
-import {Command}                                                               from 'clipanion';
+import {Command, Usage}                                                        from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
@@ -39,7 +39,7 @@ export default class YarnCommand extends BaseCommand {
   @Command.Boolean(`--silent`, {hidden: true})
   silent?: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `install the project dependencies`,
     details: `
       This command setup your project if needed. The installation is splitted in four different steps that each have their own characteristics:

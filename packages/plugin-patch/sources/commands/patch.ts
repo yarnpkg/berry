@@ -1,7 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError}                                                from '@yarnpkg/cli';
 import {Cache, Configuration, Project, ThrowReport, structUtils, StreamReport, MessageName} from '@yarnpkg/core';
 import {npath}                                                                              from '@yarnpkg/fslib';
-import {Command, UsageError}                                                                from 'clipanion';
+import {Command, Usage, UsageError}                                                         from 'clipanion';
 
 import * as patchUtils                                                                      from '../patchUtils';
 
@@ -10,7 +10,7 @@ export default class PatchCommand extends BaseCommand {
   @Command.String()
   package!: string;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `
       This command will cause a package to be extracted in a temporary directory (under a folder named "patch-workdir"). This folder will be editable at will; running \`yarn patch\` inside it will then cause Yarn to generate a patchfile and register it into your top-level manifest (cf the \`patch:\` protocol).
     `,

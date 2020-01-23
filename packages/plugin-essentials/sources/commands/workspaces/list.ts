@@ -1,6 +1,6 @@
 import {BaseCommand}                                                              from '@yarnpkg/cli';
 import {Configuration, Project, StreamReport, structUtils, Descriptor, Workspace} from '@yarnpkg/core';
-import {Command}                                                                  from 'clipanion';
+import {Command, Usage}                                                           from 'clipanion';
 
 const DEPENDENCY_TYPES = ['devDependencies', 'dependencies'];
 
@@ -12,7 +12,7 @@ export default class WorkspacesListCommand extends BaseCommand {
   @Command.Boolean(`--json`)
   json: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Workspace-related commands`,
     description: `list all available workspaces`,
     details: `

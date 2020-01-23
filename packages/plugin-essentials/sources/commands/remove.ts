@@ -2,7 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}       from '@yarnpkg/cli';
 import {Configuration, Cache, Descriptor, Project} from '@yarnpkg/core';
 import {StreamReport, Workspace}                   from '@yarnpkg/core';
 import {structUtils}                               from '@yarnpkg/core';
-import {Command, UsageError}                       from 'clipanion';
+import {Command, Usage, UsageError}                from 'clipanion';
 
 import * as suggestUtils                           from '../suggestUtils';
 import {Hooks}                                     from '..';
@@ -15,7 +15,7 @@ export default class RemoveCommand extends BaseCommand {
   @Command.Rest()
   names: Array<string> = [];
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `remove dependencies from the project`,
     details: `
       This command will remove the specified packages from the current workspace.

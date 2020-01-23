@@ -1,14 +1,14 @@
-import chalk                 from 'chalk';
-import {Command, UsageError} from 'clipanion';
-import filesize              from 'filesize';
-import fs                    from 'fs';
-import path                  from 'path';
-import {RawSource}           from 'webpack-sources';
-import webpack               from 'webpack';
+import chalk                        from 'chalk';
+import {Command, Usage, UsageError} from 'clipanion';
+import filesize                     from 'filesize';
+import fs                           from 'fs';
+import path                         from 'path';
+import {RawSource}                  from 'webpack-sources';
+import webpack                      from 'webpack';
 
-import {isDynamicLib}        from '../../data/dynamicLibs';
-import {makeConfig}          from '../../tools/makeConfig';
-import {reindent}            from '../../tools/reindent';
+import {isDynamicLib}               from '../../data/dynamicLibs';
+import {makeConfig}                 from '../../tools/makeConfig';
+import {reindent}                   from '../../tools/reindent';
 
 // The name gets normalized so that everyone can override some plugins by
 // their own (@arcanis/yarn-plugin-foo would override @yarnpkg/plugin-foo
@@ -23,7 +23,7 @@ const getNormalizedName = (name: string) => {
 
 // eslint-disable-next-line arca/no-default-export
 export default class BuildPluginCommand extends Command {
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `build the local plugin`,
   });
 

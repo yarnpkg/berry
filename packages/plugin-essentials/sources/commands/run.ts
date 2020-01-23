@@ -1,7 +1,7 @@
 import {BaseCommand}                                    from '@yarnpkg/cli';
 import {Configuration, Project, Workspace, ThrowReport} from '@yarnpkg/core';
 import {scriptUtils, structUtils}                       from '@yarnpkg/core';
-import {Command, UsageError}                            from 'clipanion';
+import {Command, Usage, UsageError}                     from 'clipanion';
 
 import {pluginCommands}                                 from '../pluginCommands';
 
@@ -31,7 +31,7 @@ export default class RunCommand extends BaseCommand {
   @Command.Proxy()
   args: Array<string> = [];
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `run a script defined in the package.json`,
     details: `
       This command will run a tool. The exact tool that will be executed will depend on the current state of your workspace:

@@ -2,7 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}              from '@yarnpkg/cli';
 import {Configuration, LocatorHash, Package, ThrowReport} from '@yarnpkg/core';
 import {IdentHash, Project}                               from '@yarnpkg/core';
 import {miscUtils, structUtils}                           from '@yarnpkg/core';
-import {Command}                                          from 'clipanion';
+import {Command, Usage}                                   from 'clipanion';
 import {Writable}                                         from 'stream';
 import {asTree}                                           from 'treeify';
 
@@ -19,7 +19,7 @@ export default class WhyCommand extends BaseCommand {
   @Command.Boolean(`--peers`)
   peers: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `display the reason why a package is needed`,
     details: `
       This command prints the exact reasons why a package appears in the dependency tree.

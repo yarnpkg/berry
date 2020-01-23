@@ -1,7 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError}                      from '@yarnpkg/cli';
 import {Cache, Configuration, Project, StreamReport, structUtils} from '@yarnpkg/core';
 import {npath, ppath}                                             from '@yarnpkg/fslib';
-import {Command, UsageError}                                      from 'clipanion';
+import {Command, Usage, UsageError}                               from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class LinkCommand extends BaseCommand {
@@ -17,7 +17,7 @@ export default class LinkCommand extends BaseCommand {
   @Command.Boolean(`-r,--relative`)
   relative: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `connect the local project to another one`,
     details: `
       This command will set a new \`resolutions\` field in the project-level manifest and point it to the workspace at the specified location (even if part of another project).

@@ -1,7 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError}                                                           from '@yarnpkg/cli';
 import {Cache, Configuration, MessageName, Project, StreamReport, Workspace, structUtils, ThrowReport} from '@yarnpkg/core';
 import {Filename, npath, ppath, xfs}                                                                   from '@yarnpkg/fslib';
-import {Command}                                                                                       from 'clipanion';
+import {Command, Usage}                                                                                from 'clipanion';
 
 import * as packUtils                                                                                  from '../packUtils';
 
@@ -20,7 +20,7 @@ export default class PackCommand extends BaseCommand {
   @Command.String(`-o,--out`)
   out?: string;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `generate a tarball from the active workspace`,
     details: `
       This command will turn the active workspace into a compressed archive suitable for publishing. The archive will by default be stored at the root of the workspace (\`package.tgz\`).

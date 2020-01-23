@@ -1,6 +1,6 @@
 import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
 import chalk                         from 'chalk';
-import {Command, UsageError}         from 'clipanion';
+import {Command, Usage, UsageError}  from 'clipanion';
 import path                          from 'path';
 
 // eslint-disable-next-line arca/no-default-export
@@ -8,7 +8,7 @@ export default class NewPluginCommand extends Command {
   @Command.String()
   target!: string;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `generate the template for a new plugin`,
   });
 

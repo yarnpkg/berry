@@ -2,7 +2,7 @@ import {BaseCommand}                                                  from '@yar
 import {WorkspaceRequiredError}                                       from '@yarnpkg/cli';
 import {Configuration, MessageName, Project, StreamReport, execUtils} from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, xfs}                    from '@yarnpkg/fslib';
-import {Command}                                                      from 'clipanion';
+import {Command, Usage}                                               from 'clipanion';
 import {tmpdir}                                                       from 'os';
 
 import {setVersion}                                                   from '../version';
@@ -54,7 +54,7 @@ export default class SetVersionCommand extends BaseCommand {
   @Command.Boolean(`-f,--force`)
   force: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `build Yarn from master`,
     details: `
       This command will clone the Yarn repository into a temporary folder, then build it. The resulting bundle will then be copied into the local project.

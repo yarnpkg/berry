@@ -3,7 +3,7 @@ import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@yarnp
 import {Project, StreamReport, Workspace, Ident}                    from '@yarnpkg/core';
 import {structUtils}                                                from '@yarnpkg/core';
 import {PortablePath}                                               from '@yarnpkg/fslib';
-import {Command, UsageError}                                        from 'clipanion';
+import {Command, Usage, UsageError}                                 from 'clipanion';
 import inquirer                                                     from 'inquirer';
 
 import * as suggestUtils                                            from '../suggestUtils';
@@ -41,7 +41,7 @@ export default class AddCommand extends BaseCommand {
   @Command.Boolean(`--cached`)
   cached: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `add dependencies to the project`,
     details: `
       This command adds a package to the package.json for the nearest workspace.

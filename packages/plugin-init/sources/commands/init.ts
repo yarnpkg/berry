@@ -2,7 +2,7 @@ import {BaseCommand}                         from '@yarnpkg/cli';
 import {Configuration, Manifest}             from '@yarnpkg/core';
 import {execUtils, scriptUtils, structUtils} from '@yarnpkg/core';
 import {xfs, ppath, Filename}                from '@yarnpkg/fslib';
-import {Command, UsageError}                 from 'clipanion';
+import {Command, Usage, UsageError}          from 'clipanion';
 import {inspect}                             from 'util';
 
 // eslint-disable-next-line arca/no-default-export
@@ -16,7 +16,7 @@ export default class InitCommand extends BaseCommand {
   @Command.String(`-i,--install`)
   install?: string;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `create a new package`,
     details: `
       This command will setup a new package in your local directory.

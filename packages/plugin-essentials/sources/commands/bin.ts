@@ -1,7 +1,7 @@
 import {BaseCommand}                                       from '@yarnpkg/cli';
 import {Configuration, Project, ThrowReport, StreamReport} from '@yarnpkg/core';
 import {scriptUtils, structUtils}                          from '@yarnpkg/core';
-import {Command, UsageError}                               from 'clipanion';
+import {Command, Usage, UsageError}                        from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class BinCommand extends BaseCommand {
@@ -14,7 +14,7 @@ export default class BinCommand extends BaseCommand {
   @Command.Boolean(`--json`)
   json: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `get the path to a binary script`,
     details: `
       When used without arguments, this command will print the list of all the binaries available in the current workspace. Adding the \`-v,--verbose\` flag will cause the output to contain both the binary name and the locator of the package that provides the binary.

@@ -2,7 +2,7 @@ import {BaseCommand}                                               from '@yarnpk
 import {Configuration, Project, StreamReport, MessageName, Report} from '@yarnpkg/core';
 import {httpUtils}                                                 from '@yarnpkg/core';
 import {Filename, PortablePath, ppath, xfs}                        from '@yarnpkg/fslib';
-import {Command, UsageError}                                       from 'clipanion';
+import {Command, Usage, UsageError}                                from 'clipanion';
 import semver, {SemVer}                                            from 'semver';
 
 const BUNDLE_REGEXP = /^yarn-[0-9]+\.[0-9]+\.[0-9]+\.js$/;
@@ -19,7 +19,7 @@ export default class SetVersionCommand extends BaseCommand {
   @Command.Boolean(`--dry-run`)
   dryRun: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `lock the Yarn version used by the project`,
     details: `
       This command will download a specific release of Yarn directly from the Yarn Github repository, will store it inside your project, and will change the \`yarnPath\` settings from your project \`.yarnrc.yml\` file to point to the new file.

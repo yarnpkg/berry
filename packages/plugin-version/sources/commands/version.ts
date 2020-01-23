@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
 import {Configuration, Project}              from '@yarnpkg/core';
-import {Command, UsageError}                 from 'clipanion';
+import {Command, Usage, UsageError}          from 'clipanion';
 import semver                                from 'semver';
 import * as yup                              from 'yup';
 
@@ -35,7 +35,7 @@ export default class VersionCommand extends BaseCommand {
     }),
   });
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     category: `Release-related commands`,
     description: `apply a new version to the current package`,
     details: `

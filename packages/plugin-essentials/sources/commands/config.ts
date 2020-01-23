@@ -1,7 +1,7 @@
 import {BaseCommand}                                            from '@yarnpkg/cli';
 import {Configuration, MessageName, SettingsType, StreamReport} from '@yarnpkg/core';
 import {miscUtils}                                              from '@yarnpkg/core';
-import {Command}                                                from 'clipanion';
+import {Command, Usage}                                         from 'clipanion';
 import {inspect}                                                from 'util';
 
 // eslint-disable-next-line arca/no-default-export
@@ -15,7 +15,7 @@ export default class ConfigCommand extends BaseCommand {
   @Command.Boolean(`--json`)
   json: boolean = false;
 
-  static usage = Command.Usage({
+  static usage: Usage = Command.Usage({
     description: `display the current configuration`,
     details: `
       This command prints the current active configuration settings.
