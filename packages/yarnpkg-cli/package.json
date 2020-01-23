@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "2.0.0-rc.25",
+  "version": "2.0.0-rc.26",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
@@ -18,7 +18,7 @@
     "@yarnpkg/plugin-node-modules": "workspace:^2.0.0-rc.2",
     "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.14",
     "@yarnpkg/plugin-npm-cli": "workspace:^2.0.0-rc.13",
-    "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.16",
+    "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.17",
     "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.4",
     "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.15",
     "@yarnpkg/plugin-version": "workspace:^2.0.0-rc.20",
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@types/promise.prototype.finally": "^2.0.3",
-    "@yarnpkg/builder": "workspace:^2.0.0-rc.17",
+    "@yarnpkg/builder": "workspace:^2.0.0-rc.18",
     "@yarnpkg/core": "workspace:^2.0.0-rc.20",
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.16",

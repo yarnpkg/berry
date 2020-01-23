@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/libzip",
-  "version": "2.0.0-rc.8",
+  "version": "2.0.0-rc.9",
   "main": "./sources/sync.ts",
   "browser": "./sources/async.ts",
   "scripts": {

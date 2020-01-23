@@ -10,12 +10,12 @@
     "micromatch": "^4.0.2"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.25",
+    "@yarnpkg/cli": "^2.0.0-rc.26",
     "@yarnpkg/core": "^2.0.0-rc.20"
   },
   "devDependencies": {
     "@types/micromatch": "^3.1.0",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.25",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.26",
     "@yarnpkg/core": "workspace:^2.0.0-rc.20"
   },
   "repository": {

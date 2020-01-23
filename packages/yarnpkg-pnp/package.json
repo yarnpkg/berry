@@ -7,8 +7,8 @@
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
   },
   "devDependencies": {
-    "@yarnpkg/builder": "workspace:^2.0.0-rc.17",
-    "@yarnpkg/libzip": "workspace:^2.0.0-rc.8",
+    "@yarnpkg/builder": "workspace:^2.0.0-rc.18",
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.9",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.16",
     "typescript": "^3.7.4",
     "webpack": "^4.41.2",
