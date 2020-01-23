@@ -41,9 +41,9 @@ Older releases don't support Plug'n'Play at all. Since the `resolve` package is 
 
 Webpack 5 will support PnP natively, but if you use Webpack 4 you'll need to add the [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) plugin yourself.
 
-### Don't use `resolve.alias` (Webpack) or `moduleNameMapper` (Jest)
+### Don't use `resolve.alias|modules` (Webpack) or `moduleNameMapper` (Jest)
 
-Both of those settings try to override the regular resolution engine to provide custom resolution rules for one single tool, but since the Plug'n'Play resolver doesn't know about those special rules it'll think they are unlisted dependencies and refuse to let the resolution proceed.
+Those settings all try to override the regular resolution engine to provide custom rules. The downside is that they only apply to a single tool (so the configuration must be repeated again and again), and since the central Plug'n'Play resolver doesn't know about those aliases it'll think they are unlisted dependencies and refuse to let the resolution proceed.
 
 Fortunately the fix is very simple: just use the `link:` protocol to list the aliases in your manifest file, as if they were regular dependencies! By doing this, you're also able to define your aliases a single time while ensuring that they will be picked up by your whole toolchain: Webpack, Jest, TypeScript, ...
 
