@@ -1,7 +1,7 @@
 import React                                     from 'react';
 import styled                                    from '@emotion/styled';
 
-import { License, Deprecated, Owner, Downloads } from '../hit';
+import { License, Deprecated, Owner, Downloads, TypeScript } from '../hit';
 import { Keywords, safeMarkdown }                from '../util';
 
 const DescriptionText = styled.p`
