@@ -40,7 +40,7 @@ export const SearchProvider = ({searchState, onSearchStateChange, children}) => 
             'name',
             'owner',
             'repository',
-            'typescript',
+            'types',
             'version',
           ]}
           attributesToHighlight={['name', 'description', 'keywords']}
