@@ -3,11 +3,11 @@
   "version": "2.0.0-rc.5",
   "main": "./sources/index.ts",
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.20",
+    "@yarnpkg/core": "^2.0.0-rc.21",
     "@yarnpkg/plugin-patch": "^2.0.0-rc.4"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^2.0.0-rc.20",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.21",
     "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.4"
   },
   "repository": {

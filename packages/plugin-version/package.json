@@ -13,8 +13,8 @@
     "yup": "^0.27.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.26",
-    "@yarnpkg/core": "^2.0.0-rc.20",
+    "@yarnpkg/cli": "^2.0.0-rc.27",
+    "@yarnpkg/core": "^2.0.0-rc.21",
     "@yarnpkg/plugin-pack": "^2.0.0-rc.17"
   },
   "devDependencies": {
@@ -22,8 +22,8 @@
     "@types/semver": "^6.0.2",
     "@types/yup": "0.26.12",
     "@yarnpkg/builder": "workspace:^2.0.0-rc.18",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.26",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.20",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.27",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.21",
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.17",
     "typescript": "^3.7.4"
   },

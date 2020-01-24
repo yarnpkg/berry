@@ -9,13 +9,13 @@
     "tmp": "^0.1.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.26",
-    "@yarnpkg/core": "^2.0.0-rc.20"
+    "@yarnpkg/cli": "^2.0.0-rc.27",
+    "@yarnpkg/core": "^2.0.0-rc.21"
   },
   "devDependencies": {
     "@types/tmp": "^0.0.33",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.26",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.20"
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.27",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.21"
   },
   "repository": {
     "type": "git",

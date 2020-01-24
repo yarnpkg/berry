@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/core",
-  "version": "2.0.0-rc.20",
+  "version": "2.0.0-rc.21",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
@@ -41,7 +41,7 @@
     "@types/tar": "^4.0.0",
     "@types/tmp": "^0.0.33",
     "@types/tunnel": "^0.0.0",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.26",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.27",
     "@yarnpkg/plugin-link": "workspace:^2.0.0-rc.11",
     "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.15"
   },

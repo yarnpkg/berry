@@ -7,12 +7,12 @@
     "tmp": "^0.1.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.20",
+    "@yarnpkg/core": "^2.0.0-rc.21",
     "@yarnpkg/plugin-git": "^2.0.0-rc.15"
   },
   "devDependencies": {
     "@types/tmp": "^0.0.33",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.20",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.21",
     "@yarnpkg/plugin-git": "workspace:^2.0.0-rc.15"
   },
   "scripts": {

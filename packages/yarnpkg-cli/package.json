@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "2.0.0-rc.26",
+  "version": "2.0.0-rc.27",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
@@ -33,14 +33,14 @@
   "devDependencies": {
     "@types/promise.prototype.finally": "^2.0.3",
     "@yarnpkg/builder": "workspace:^2.0.0-rc.18",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.20",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.21",
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.16",
     "micromatch": "^4.0.2",
     "typescript": "^3.7.4"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.20"
+    "@yarnpkg/core": "^2.0.0-rc.21"
   },
   "scripts": {
     "postpack": "rm -rf lib",
