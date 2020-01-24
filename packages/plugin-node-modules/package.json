@@ -1,6 +1,5 @@
 {
   "name": "@yarnpkg/plugin-node-modules",
-  "private": true,
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/cli": "workspace:^2.0.0-rc.27",
