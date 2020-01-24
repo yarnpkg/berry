@@ -166,7 +166,7 @@ const Header = ({children}) => {
   return <>
     <HeaderContainer>
       <NewsContainer href={`https://github.com/yarnpkg/berry`}>
-        <Highlight>Important:</Highlight> This documentation covers the v2 onwards and is actively being worked on. Come help us! For the 1.x doc, check legacy.yarnnpkg.com.
+        <Highlight>Important:</Highlight> This documentation covers the v2 onwards and is actively being worked on. Come help us! For the 1.x doc, check legacy.yarnpkg.com.
       </NewsContainer>
 
       <MenuContainer>
