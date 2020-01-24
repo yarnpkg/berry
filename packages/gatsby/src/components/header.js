@@ -44,7 +44,17 @@ const NewsInner = styled.div`
   pointer-events: none;
 
   a {
+    display: inline-block;
+
+    line-height: 2.5em;
+
     pointer-events: all;
+
+    color: inherit;
+
+    &:hover {
+      color: #ffffff;
+    }
   }
 `;
 
