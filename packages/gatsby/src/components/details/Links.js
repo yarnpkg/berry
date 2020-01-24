@@ -11,7 +11,7 @@ import IcoNpm                          from '../../images/search/ico-npm.svg';
 import IcoYarn                         from '../../images/search/ico-yarn.svg';
 import {encode, isKnownRepositoryHost} from '../util';
 
-import Copyable                        from './Copyable';
+import {Copyable}                      from './Copyable';
 
 const images = {
   homepage: IcoHome,
