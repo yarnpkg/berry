@@ -1,9 +1,9 @@
-import {InstallStatus, Installer, LinkOptions, LinkType, MessageName, DependencyMeta, FinalizeInstallStatus} from '@yarnpkg/core';
-import {FetchResult, Descriptor, Locator, Package, BuildDirective}                                           from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                                              from '@yarnpkg/core';
-import {FakeFS, PortablePath, ppath}                                                                         from '@yarnpkg/fslib';
-import {PackageRegistry, PnpSettings}                                                                        from '@yarnpkg/pnp';
-import mm                                                                                                    from 'micromatch';
+import {Installer, LinkOptions, LinkType, MessageName, DependencyMeta, FinalizeInstallStatus} from '@yarnpkg/core';
+import {FetchResult, Descriptor, Locator, Package, BuildDirective}                            from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                               from '@yarnpkg/core';
+import {FakeFS, PortablePath, ppath}                                                          from '@yarnpkg/fslib';
+import {PackageRegistry, PnpSettings}                                                         from '@yarnpkg/pnp';
+import mm                                                                                     from 'micromatch';
 
 export abstract class AbstractPnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
