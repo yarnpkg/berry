@@ -1,3 +1,5 @@
+/downloads/* https://legacy.yarnpkg.com/downloads:splat 301
+
 /latest-version https://legacy.yarnpkg.com/latest-version 301
 /latest-rc-version https://legacy.yarnpkg.com/latest-rc-version 301
 
