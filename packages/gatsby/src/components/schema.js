@@ -51,5 +51,6 @@ export default {
   version: '',
   versions: {},
   tags: {},
+  types: {},
   loaded: false,
 };

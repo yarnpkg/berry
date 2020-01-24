@@ -14,6 +14,7 @@ import IcoHome         from '../../images/search/ico-home.svg';
 import IcoBitBucket    from '../../images/search/ico-bitbucket.svg';
 import IcoGitHub       from '../../images/search/ico-github.svg';
 import IcoGitLab       from '../../images/search/ico-gitlab.svg';
+import IcoTypeScript  from '../../images/search/ico-typescript.svg';
 
 import {
   getDownloadBucket,
@@ -246,6 +247,22 @@ const HitVersion = styled.span`
   vertical-align: middle;
 `;
 
+const IconTypeScript = styled.img`
+  margin-left: 0.2em;
+  width: 0.8em;
+  height: 0.8em;
+  vertical-align: baseline;
+`;
+
+export const TypeScript = ({ts}) =>
+  ts !== false ? (
+    <IconTypeScript
+      src={IcoTypeScript}
+      alt={`TypeScript support: ${ts}`}
+      title={`TypeScript support: ${ts}`}
+    />
+  ) : null;
+
 const HitDescription = styled.p`
   font-size: 0.875rem;
   color: rgba(0,0,0,0.5);
@@ -279,6 +296,7 @@ const Hit = ({ hit, onTagClick, onOwnerClick, searchState }) => (
     <License type={hit.license} />
     <Deprecated deprecated={hit.deprecated} />
     <HitVersion>{hit.version}</HitVersion>
+    <TypeScript ts={hit.types.ts} />
     <HitDescription>
       {hit.deprecated ? (
         hit.deprecated

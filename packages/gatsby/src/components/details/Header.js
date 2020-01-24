@@ -49,6 +49,7 @@ const Header = ({
   deprecated,
   keywords,
   version,
+  types,
 }) => (
   <header>
     <PackageTitle>{name}</PackageTitle>
@@ -61,6 +62,7 @@ const Header = ({
       <License type={license} />
       <Deprecated deprecated={deprecated} />
       <span>{version}</span>
+      <TypeScript ts={types.ts} />
     </PackageInfo>
     <Description description={description} deprecated={deprecated} />
     <Keywords keywords={keywords} />
