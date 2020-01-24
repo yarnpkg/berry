@@ -17,6 +17,8 @@
 /latest-rc.deb https://legacy.yarnpkg.com/latest-rc.deb 301
 /latest-rc.rpm https://legacy.yarnpkg.com/latest-rc.rpm 301
 
+/blog/* https://legacy.yarnpkg.com/blog/:splat 301
+
 /lang/en/* https://legacy.yarnpkg.com/lang/en/:splat 301
 /en/* https://legacy.yarnpkg.com/lang/en/:splat 301
 
