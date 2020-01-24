@@ -511,6 +511,7 @@ export class Details extends Component {
             deprecated={this.state.deprecated}
             keywords={this.state.keywords}
             version={this.state.version}
+            types={this.state.types}
           />
           <Section id="readme">
             <SectionTitle icon={IcoReadme}>

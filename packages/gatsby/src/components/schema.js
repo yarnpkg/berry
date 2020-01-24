@@ -52,5 +52,6 @@ export const schema = {
   version: '',
   versions: {},
   tags: {},
+  types: {},
   loaded: false,
 };

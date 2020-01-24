@@ -1,7 +1,7 @@
 import styled                                  from '@emotion/styled';
 import React                                   from 'react';
 
-import {License, Deprecated, Owner, Downloads} from '../hit';
+import {License, Deprecated, Owner, Downloads, TypeScript} from '../hit';
 import {Keywords, safeMarkdown}                from '../util';
 
 const DescriptionText = styled.p`
@@ -49,6 +49,7 @@ export const Header = ({
   deprecated,
   keywords,
   version,
+  types,
 }) => (
   <header>
     <PackageTitle>{name}</PackageTitle>
@@ -61,6 +62,7 @@ export const Header = ({
       <License type={license} />
       <Deprecated deprecated={deprecated} />
       <span>{version}</span>
+      <TypeScript ts={types.ts} />
     </PackageInfo>
     <Description description={description} deprecated={deprecated} />
     <Keywords keywords={keywords} />

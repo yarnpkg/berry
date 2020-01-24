@@ -32,7 +32,6 @@ export const SearchProvider = ({searchState, onSearchStateChange, children}) => 
             'deprecated',
             'description',
             'downloadsLast30Days',
-            'repository',
             'homepage',
             'humanDownloadsLast30Days',
             'keywords',
@@ -40,6 +39,8 @@ export const SearchProvider = ({searchState, onSearchStateChange, children}) => 
             'modified',
             'name',
             'owner',
+            'repository',
+            'types',
             'version',
           ]}
           attributesToHighlight={['name', 'description', 'keywords']}
