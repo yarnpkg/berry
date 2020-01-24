@@ -136,7 +136,7 @@ export const Downloads = ({ downloads = 0, humanDownloads }) => (
 );
 
 const HitLinkList = styled.div`
-  position: inherit;
+  position: absolute;
   top: calc(50% - 12px);
   right: 1rem;
 `;
