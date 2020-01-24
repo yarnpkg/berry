@@ -10,6 +10,8 @@ title: "2 - Installation"
 
 ## Global Install
 
+NOTE: Currently, Yarn 2 is only available to install via npm. The installation methods previously available with Yarn 1 (Windows installer, Chocolatey, Debian/Ubuntu package, Homebrew, and RPM package) will be available again soon.
+
 1. Install [Node.js](https://nodejs.org/en/download/)
 
 2. Install Yarn:
