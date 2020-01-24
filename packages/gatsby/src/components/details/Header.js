@@ -39,7 +39,7 @@ const PackageInfo = styled.div`
   position: relative;
 `;
 
-const Header = ({
+export const Header = ({
   name,
   owner,
   downloadsLast30Days,
@@ -66,5 +66,3 @@ const Header = ({
     <Keywords keywords={keywords} />
   </header>
 );
-
-export default Header;
