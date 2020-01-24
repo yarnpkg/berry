@@ -3,7 +3,7 @@ import {Link, graphql, useStaticQuery, withPrefix} from 'gatsby';
 import PropTypes                                   from 'prop-types';
 import React, {useState}                           from 'react';
 
-import Logo                                        from './logo';
+import {Logo}                                      from './logo';
 import {ifDesktop, ifMobile}                       from './responsive';
 
 const HeaderContainer = styled.div`
@@ -174,7 +174,7 @@ const isActive = ({href, location}) => {
   return isMenuLinkActive || isHomeMenuLinkActive ? {className: 'active'} : null;
 };
 
-const Header = ({children}) => {
+export const Header = ({children}) => {
   const data = useStaticQuery(graphql`
     query SiteQuery {
       site {
@@ -234,5 +234,3 @@ Header.propTypes = {
 Header.defaultProps = {
   siteTitle: ``,
 };
-
-export default Header;

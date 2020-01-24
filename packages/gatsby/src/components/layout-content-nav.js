@@ -1,9 +1,9 @@
-import styled      from '@emotion/styled';
-import React       from 'react';
+import styled       from '@emotion/styled';
+import React        from 'react';
 
-import Layout      from './layout';
-import Navigation  from './navigation';
-import {ifDesktop} from './responsive';
+import {Layout}     from './layout';
+import {Navigation} from './navigation';
+import {ifDesktop}  from './responsive';
 
 const Container = styled.div`
   padding: 2em;
@@ -27,4 +27,4 @@ export const LayoutContentNav = ({items, children}) => {
       </Navigation>
     </Layout>
   </>;
-}
+};

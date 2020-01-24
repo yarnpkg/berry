@@ -1,17 +1,18 @@
-import React                                      from 'react';
-import styled                                     from '@emotion/styled';
+import styled                                   from '@emotion/styled';
+import React                                    from 'react';
 
-import Install                                    from './Install';
-import Cdn                                        from './Cdn';
-import Links                                      from './Links';
-import Activity                                   from './Activity';
-import Popularity                                 from './Popularity';
-import Usage                                      from './Usage';
-import Versions                                   from './Versions';
-import Contributors                               from './Contributors';
-import Tags                                       from './Tags';
-import { packageJSONLink, isKnownRepositoryHost } from '../util';
-import GithubActivity                             from './GithubActivity';
+import {packageJSONLink, isKnownRepositoryHost} from '../util';
+
+import {Activity}                               from './Activity';
+import {Cdn}                                    from './Cdn';
+import {Contributors}                           from './Contributors';
+import {GithubActivity}                         from './GithubActivity';
+import {Install}                                from './Install';
+import {Links}                                  from './Links';
+import {Popularity}                             from './Popularity';
+import {Tags}                                   from './Tags';
+import {Usage}                                  from './Usage';
+import {Versions}                               from './Versions';
 
 const AsideContainer = styled.aside`
   border-left: 1px solid #cbcbcb;
@@ -24,7 +25,7 @@ const DetailsLinks = styled.article`
   margin-bottom: 2em;
 `;
 
-const Aside = ({
+export const Aside = ({
   name,
   homepage,
   repository,
@@ -78,5 +79,3 @@ const Aside = ({
     <Contributors contributors={contributors} />
   </AsideContainer>
 );
-
-export default Aside;

@@ -11,9 +11,9 @@ import PropTypes from 'prop-types';
 import {Helmet}  from 'react-helmet';
 import React     from 'react';
 
-import Header    from './header';
+import {Header}  from './header';
 
-const Layout = ({ header, children }) => <>
+export const Layout = ({header, children}) => <>
   <Helmet>
     <meta name={`viewport`} content={`width=device-width, initial-scale=1`} />
   </Helmet>
@@ -26,5 +26,3 @@ const Layout = ({ header, children }) => <>
 Layout.propTypes = {
   children: PropTypes.node.isRequired,
 };
-
-export default Layout;

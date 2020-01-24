@@ -1,8 +1,8 @@
-import React                                     from 'react';
-import styled                                    from '@emotion/styled';
+import styled                                  from '@emotion/styled';
+import React                                   from 'react';
 
-import { License, Deprecated, Owner, Downloads } from '../hit';
-import { Keywords, safeMarkdown }                from '../util';
+import {License, Deprecated, Owner, Downloads} from '../hit';
+import {Keywords, safeMarkdown}                from '../util';
 
 const DescriptionText = styled.p`
   font-size: 1.25rem;
@@ -11,7 +11,7 @@ const DescriptionText = styled.p`
 
 const DeprecatedText = styled.p``;
 
-const Description = ({ description, deprecated }) => (
+const Description = ({description, deprecated}) => (
   <div>
     {deprecated ? (
       <DeprecatedText>
@@ -39,7 +39,7 @@ const PackageInfo = styled.div`
   position: relative;
 `;
 
-const Header = ({
+export const Header = ({
   name,
   owner,
   downloadsLast30Days,
@@ -66,5 +66,3 @@ const Header = ({
     <Keywords keywords={keywords} />
   </header>
 );
-
-export default Header;

@@ -1,6 +1,6 @@
-import React, {Component}     from 'react';
-import qs                     from 'qs';
-import {withPrefix}           from 'gatsby';
+import {withPrefix}       from 'gatsby';
+import qs                 from 'qs';
+import React, {Component} from 'react';
 
 const updateAfter = 700;
 const searchStateToQueryString = searchState => ({
@@ -19,43 +19,43 @@ const searchStateToQueryString = searchState => ({
 const searchStateToUrl = searchState =>
   searchState
     ? `${withPrefix('/')}?${qs.stringify(
-        searchStateToQueryString(searchState)
-      )}`
+      searchStateToQueryString(searchState)
+    )}`
     : '';
 
 const queryStringToSearchState = queryString => {
-  const { p, q, owner, keywords } = qs.parse(queryString);
+  const {p, q, owner, keywords} = qs.parse(queryString);
   return {
     query: q,
     page: p || 1,
     refinementList: {
-      ...(keywords && { keywords }),
-      ...(owner && { 'owner.name': owner }),
+      ...(keywords && {keywords}),
+      ...(owner && {'owner.name': owner}),
     },
   };
 };
 
-export default App =>
+export const withUrlSync = App =>
   class extends Component {
     constructor() {
       super();
-      this.state = { searchState: { query: '', page: 1 } };
+      this.state = {searchState: {query: '', page: 1}};
     }
 
     componentDidMount() {
       this.originalPathName = window.location.pathname;
       this.originalHref = window.location.href;
 
-      this.setState({ searchState: queryStringToSearchState(window.location.search.slice(1)) });
+      this.setState({searchState: queryStringToSearchState(window.location.search.slice(1))});
 
-      window.addEventListener('popstate', ({ state: searchState }) => {
+      window.addEventListener('popstate', ({state: searchState}) => {
         // check we are on a search result
         if (searchState !== null) {
-          this.setState({ searchState });
+          this.setState({searchState});
           return;
         }
 
-        this.setState({ searchState: { query: '', page: 1 } });
+        this.setState({searchState: {query: '', page: 1}});
       });
     }
 
@@ -63,7 +63,7 @@ export default App =>
       if (nextProps.location.key !== this.props.location.key) {
         this.originalPathName = window.location.pathname;
         this.originalHref = window.location.href;
-        this.setState({ searchState: { query: '', page: 1 } });
+        this.setState({searchState: {query: '', page: 1}});
       }
     }
 
@@ -86,7 +86,7 @@ export default App =>
         }, updateAfter);
       }
 
-      this.setState({ searchState });
+      this.setState({searchState});
     };
 
     render() {

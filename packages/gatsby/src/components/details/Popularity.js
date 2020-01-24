@@ -1,16 +1,17 @@
 import React                   from 'react';
 
-import {Di}                    from './';
 import {isKnownRepositoryHost} from '../util';
 
-const Stargazers = ({ stargazers, repository }) => {
+import {Di}                    from './';
+
+const Stargazers = ({stargazers, repository}) => {
   if (
     stargazers < 0 ||
     !repository ||
     !isKnownRepositoryHost(repository.host)
-  ) {
+  )
     return null;
-  }
+
   const [provider] = repository.host.split('.');
   const providerName = {github: 'GitHub', gitlab: 'GitLab'}[provider];
   return (
@@ -22,7 +23,7 @@ const Stargazers = ({ stargazers, repository }) => {
   );
 };
 
-const Downloads = ({ downloads, humanDownloads }) =>
+const Downloads = ({downloads, humanDownloads}) =>
   downloads >= 0 &&
   humanDownloads && (
     <Di
@@ -36,7 +37,7 @@ const Downloads = ({ downloads, humanDownloads }) =>
     />
   );
 
-const Dependents = ({ dependents, humanDependents, name }) =>
+const Dependents = ({dependents, humanDependents, name}) =>
   dependents >= 0 && (
     <Di
       icon="dependents"
@@ -55,18 +56,18 @@ const Dependents = ({ dependents, humanDependents, name }) =>
   );
 
 const formatHits = (hits) => {
-  if (hits >= 1e9) {
-    return (Math.round(hits / 1e7) / 100) + "b";
-  } else if (hits >= 1e6) {
-    return (Math.round(hits / 1e4) / 100) + "m";
-  } else if (hits >= 1000) {
-    return (Math.round(hits / 10) / 100) + "k";
-  }
+  if (hits >= 1e9)
+    return `${Math.round(hits / 1e7) / 100}b`;
+  else if (hits >= 1e6)
+    return `${Math.round(hits / 1e4) / 100}m`;
+  else if (hits >= 1000)
+    return `${Math.round(hits / 10) / 100}k`;
+
 
   return hits;
 };
 
-const JsDelivrHits = ({ jsDelivrHits }) => (<Di
+const JsDelivrHits = ({jsDelivrHits}) => (<Di
   icon="downloads"
   title="jsDelivr last 30 days"
   description={
@@ -76,8 +77,8 @@ const JsDelivrHits = ({ jsDelivrHits }) => (<Di
   }
 />);
 
-const Popularity = ({ name, stargazers, repository,
-  downloads, humanDownloads, dependents, humanDependents, jsDelivrHits }) => {
+export const Popularity = ({name, stargazers, repository,
+  downloads, humanDownloads, dependents, humanDependents, jsDelivrHits}) => {
   if (downloads >= 0 || dependents >= 0 || stargazers >= 0 || jsDelivrHits >= 0) {
     return (
       <article>
@@ -98,5 +99,3 @@ const Popularity = ({ name, stargazers, repository,
     return null;
   }
 };
-
-export default Popularity;

@@ -70,7 +70,7 @@ const Content = styled.div`
   }
 `;
 
-const Navigation = ({items, children}) => {
+export const Navigation = ({items, children}) => {
   const scrollRef = useScroll();
 
   return <>
@@ -86,7 +86,5 @@ const Navigation = ({items, children}) => {
         {children}
       </Content>
     </Container>
-  </>
+  </>;
 };
-
-export default Navigation;

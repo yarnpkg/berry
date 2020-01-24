@@ -1,7 +1,7 @@
 import styled   from '@emotion/styled';
 import React    from 'react';
-import markdown from 'remark-parse';
 import html     from 'remark-html';
+import markdown from 'remark-parse';
 import unified  from 'unified';
 
 import useCache from '../utils/useCache';
@@ -132,4 +132,4 @@ export const Markdown = ({title, children}) => {
       {String(document)}
     </PrerenderedMarkdown>
   </> : null;
-}
+};

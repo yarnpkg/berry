@@ -1,8 +1,8 @@
-import React, {Component}      from 'react';
-import {connectRefinementList} from 'react-instantsearch-dom';
 import styled                  from '@emotion/styled';
+import {connectRefinementList} from 'react-instantsearch-dom';
+import React, {Component}      from 'react';
 
-import SearchBox       from './SearchBox';
+import {SearchBox}             from './SearchBox';
 
 const equals = (arr1, arr2) =>
   arr1.length === arr2.length && arr1.reduce((a, b, i) => a && arr2[i], true);
@@ -22,7 +22,7 @@ const shouldFocus = path =>
 
 class RefinementList extends Component {
   componentWillReceiveProps(newProps) {
-    const { currentRefinement, defaultRefinement, onRefine, refine } = newProps;
+    const {currentRefinement, defaultRefinement, onRefine, refine} = newProps;
     const {
       currentRefinement: oldCurrentRefinement,
       defaultRefinement: oldDefaultRefinement,
@@ -46,7 +46,7 @@ class RefinementList extends Component {
 
 const VirtualRefinementList = connectRefinementList(RefinementList);
 
-const SearchBar = ({ searchState, onSearchStateChange, tags, setTags, owners, setOwners }) => (
+export const SearchBar = ({searchState, onSearchStateChange, tags, setTags, owners, setOwners}) => (
   <SearchContainer className={searchState.query ? 'searching' : ''}>
     <SearchBox
       autoFocus={shouldFocus(typeof window !== 'undefined' ? window.location.pathname : '')}
@@ -66,5 +66,3 @@ const SearchBar = ({ searchState, onSearchStateChange, tags, setTags, owners, se
     />
   </SearchContainer>
 );
-
-export default SearchBar;

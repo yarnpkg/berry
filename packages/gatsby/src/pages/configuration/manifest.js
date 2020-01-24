@@ -3,11 +3,11 @@ import React                                   from 'react';
 import {JsonContainer, JsonMain, JsonScalar}   from '../../components/json';
 import {JsonArrayProperty, JsonObjectProperty} from '../../components/json';
 import {JsonScalarProperty}                    from '../../components/json';
-import Layout                                  from '../../components/layout-configuration';
-import SEO                                     from '../../components/seo';
+import {ConfigurationLayout}                   from '../../components/layout-configuration';
+import {SEO}                                   from '../../components/seo';
 
 const PackageJsonDoc = () => <>
-  <Layout>
+  <ConfigurationLayout>
     <SEO
       title={`Manifest fields`}
       description={`List of all the supported fields for a Yarn project manifest (package.json files)`}
@@ -296,7 +296,8 @@ const PackageJsonDoc = () => <>
         />
       </JsonObjectProperty>
     </JsonContainer>
-  </Layout>
+  </ConfigurationLayout>
 </>;
 
+// eslint-disable-next-line arca/no-default-export
 export default PackageJsonDoc;

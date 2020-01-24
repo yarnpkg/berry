@@ -1,32 +1,32 @@
-import React, { Component }            from 'react';
-import bytes                           from 'bytes';
-import algoliasearch                   from 'algoliasearch';
-import qs                              from 'qs';
-import formatDistance                  from 'date-fns/formatDistance';
-import styled                          from '@emotion/styled';
+import styled             from '@emotion/styled';
+import algoliasearch      from 'algoliasearch';
+import bytes              from 'bytes';
+import formatDistance     from 'date-fns/formatDistance';
+import qs                 from 'qs';
+import React, {Component} from 'react';
 
-import Aside                           from './Aside';
-import FileBrowser                     from './FileBrowser';
-import Copyable                        from './Copyable';
-import Header                          from './Header';
-import JSONLDItem                      from './JSONLDItem';
-import ReadMore                        from './ReadMore';
-import Markdown                        from './Markdown';
-import schema                          from '../schema';
-import { prefixURL, get }              from '../util';
-import { algolia }                     from '../config';
+import IcoChangelog       from '../../images/detail/ico-changelog.svg';
+import IcoCommitsLast     from '../../images/detail/ico-commits-last.svg';
+import IcoCommits         from '../../images/detail/ico-commits.svg';
+import IcoDependencies    from '../../images/detail/ico-dependencies.svg';
+import IcoDependents      from '../../images/detail/ico-dependents.svg';
+import IcoDevDependencies from '../../images/detail/ico-devdependencies.svg';
+import IcoDownloadSize    from '../../images/detail/ico-download-size.svg';
+import IcoDownloads       from '../../images/detail/ico-downloads.svg';
+import IcoPackageJson     from '../../images/detail/ico-package-json.svg';
+import IcoReadme          from '../../images/detail/ico-readme.svg';
+import IcoStargazers      from '../../images/detail/ico-stargazers.svg';
+import {algolia}          from '../config';
+import {schema}           from '../schema';
+import {prefixURL, get}   from '../util';
 
-import IcoReadme                       from '../../images/detail/ico-readme.svg';
-import IcoChangelog                    from '../../images/detail/ico-changelog.svg';
-import IcoCommits                      from '../../images/detail/ico-commits.svg';
-import IcoCommitsLast                  from '../../images/detail/ico-commits-last.svg';
-import IcoDependencies                 from '../../images/detail/ico-dependencies.svg';
-import IcoDependents                   from '../../images/detail/ico-dependents.svg';
-import IcoDevDependencies              from '../../images/detail/ico-devdependencies.svg';
-import IcoDownloadSize                 from '../../images/detail/ico-download-size.svg';
-import IcoDownloads                    from '../../images/detail/ico-downloads.svg';
-import IcoPackageJson                  from '../../images/detail/ico-package-json.svg';
-import IcoStargazers                   from '../../images/detail/ico-stargazers.svg';
+import {Aside}            from './Aside';
+import {Copyable}         from './Copyable';
+import {FileBrowser}      from './FileBrowser';
+import {Header}           from './Header';
+import {JSONLDItem}       from './JSONLDItem';
+import {Markdown}         from './Markdown';
+import {ReadMore}         from './ReadMore';
 
 const client = algoliasearch(algolia.appId, algolia.apiKey);
 const index = client.initIndex(algolia.indexName);
@@ -125,10 +125,10 @@ const icons = {
   'download-size': IcoDownloadSize,
   downloads: IcoDownloads,
   'package-json': IcoPackageJson,
-  stargazers: IcoStargazers
+  stargazers: IcoStargazers,
 };
 
-export const Di = ({ icon, title, description }) => (
+export const Di = ({icon, title, description}) => (
   <DiBox>
     {icon && <img src={icons[icon]} alt="" />}
     <dt>{title}</dt>
@@ -228,7 +228,7 @@ const SectionTitle = styled.h3`
   }
 `;
 
-class Details extends Component {
+export class Details extends Component {
   constructor(props) {
     super(props);
     this.getGithub = this.getGithub.bind(this);
@@ -243,17 +243,17 @@ class Details extends Component {
       .getObject(this.props.objectID)
       .then(content => {
         try {
-          this.setState(prevState => ({ ...content, loaded: true }));
+          this.setState(prevState => ({...content, loaded: true}));
           // setHead(content);
           this.getDocuments();
 
           // Opens the file browser if the search has a 'files' param.
-          const { files } = qs.parse(window.location.search, {
+          const {files} = qs.parse(window.location.search, {
             ignoreQueryPrefix: true,
           });
 
           if (files !== undefined) {
-            this.setState({ isBrowsingFiles: true });
+            this.setState({isBrowsingFiles: true});
           }
         } catch (e) {
           console.error(e.stack);
@@ -274,22 +274,22 @@ class Details extends Component {
     window.removeEventListener('popstate', this._onPopState);
   }
 
-  getGithub({ url, state }) {
+  getGithub({url, state}) {
     return get({
       url: `https://api.github.com/${url}`,
       type: 'json',
     })
-      .then(res => this.setState({ [state]: res }))
+      .then(res => this.setState({[state]: res}))
       .catch(err => {
         if (err === 'retry') {
-          setTimeout(this.getGithub({ url, state }), 200);
+          setTimeout(this.getGithub({url, state}), 200);
         }
       });
   }
 
   // Get repository details, like stars, changelog, commit activity and so on
-  getRepositoryDetails({ user, project, host, branch, path }) {
-    const { readme, changelogFilename } = this.state;
+  getRepositoryDetails({user, project, host, branch, path}) {
+    const {readme, changelogFilename} = this.state;
     const hasReadme =
       readme && readme.length > 0 && readme !== readmeErrorMessage;
 
@@ -299,12 +299,12 @@ class Details extends Component {
           url: changelogFilename,
           type: 'text',
         }).then(res => {
-          this.setState({ changelog: res })
+          this.setState({changelog: res});
         });
       }
 
       if (!hasReadme) {
-        this.setState({ readmeLoading: true });
+        this.setState({readmeLoading: true});
         get({
           url: prefixURL('README.md', {
             base: 'https://raw.githubusercontent.com',
@@ -315,8 +315,8 @@ class Details extends Component {
           }),
           type: 'text',
         })
-          .then(res => this.setState({ readme: res }))
-          .catch(() => this.setState({ readmeLoading: false }));
+          .then(res => this.setState({readme: res}))
+          .catch(() => this.setState({readmeLoading: false}));
       }
 
       this.getGithub({
@@ -329,7 +329,7 @@ class Details extends Component {
         state: 'github',
       });
     } else if (host === 'gitlab.com') {
-      const getGitlabFile = ({ user, project, branch, filePath }) => {
+      const getGitlabFile = ({user, project, branch, filePath}) => {
         // We need to use the Gitlab API because the raw url does not support cors
         // https://gitlab.com/gitlab-org/gitlab-ce/issues/25736
         // So we need to 'translate' raw urls to api urls.
@@ -347,23 +347,24 @@ class Details extends Component {
       get({
         url: `https://gitlab.com/api/v4/projects/${user}%2F${project}`,
         type: 'json',
-      }).then(res => this.setState({ gitlab: res }));
+      }).then(res => this.setState({gitlab: res}));
 
       // Fetch last commit
       get({
         url: `https://gitlab.com/api/v4/projects/${user}%2F${project}/repository/commits?per_page=1`,
         type: 'json',
-      }).then(([{ committed_date }]) => {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      }).then(([{committed_date}]) => {
         const timeDistance = formatDistance(new Date(committed_date), new Date());
         this.setState({
           activity: {
-            lastCommit: `${timeDistance} ago`
-          }
+            lastCommit: `${timeDistance} ago`,
+          },
         });
       });
 
       if (!hasReadme) {
-        this.setState({ readmeLoading: true });
+        this.setState({readmeLoading: true});
 
         getGitlabFile({
           user,
@@ -371,8 +372,8 @@ class Details extends Component {
           branch,
           filePath: `${path}/README.md`,
         })
-          .then(res => this.setState({ readme: res }))
-          .catch(() => this.setState({ readmeLoading: false }));
+          .then(res => this.setState({readme: res}))
+          .catch(() => this.setState({readmeLoading: false}));
       }
 
       if (changelogFilename) {
@@ -382,13 +383,13 @@ class Details extends Component {
           /^https?:\/\/gitlab.com\/([^/]+)\/([^/]+)\/raw\/([^/]+)\/(.*)$/i
         );
 
-        getGitlabFile({ user, project, branch, filePath }).then(res =>
-          this.setState({ changelog: res })
+        getGitlabFile({user, project, branch, filePath}).then(res =>
+          this.setState({changelog: res})
         );
       }
     } else if (host === 'bitbucket.org') {
       if (!hasReadme) {
-        this.setState({ readmeLoading: true });
+        this.setState({readmeLoading: true});
 
         get({
           url: `https://bitbucket.org/${user}/${project}${
@@ -397,20 +398,20 @@ class Details extends Component {
           type: 'text',
           redirect: 'error', // Prevent being redirected to login page
         })
-          .then(res => this.setState({ changelog: res }))
-          .catch(() => this.setState({ readmeLoading: false }));
+          .then(res => this.setState({changelog: res}))
+          .catch(() => this.setState({readmeLoading: false}));
       }
 
       // Fetch last commit
       get({
         url: `https://api.bitbucket.org/2.0/repositories/${user}/${project}/commits?pagelen=1`,
         type: 'json',
-      }).then(({ values: [{ date }] }) => {
+      }).then(({values: [{date}]}) => {
         const timeDistance = formatDistance(new Date(date), new Date());
         this.setState({
           activity: {
-            lastCommit: `${timeDistance} ago`
-          }
+            lastCommit: `${timeDistance} ago`,
+          },
         });
       });
 
@@ -419,17 +420,17 @@ class Details extends Component {
           url: changelogFilename,
           type: 'text',
           redirect: 'error', // Prevent being redirected to login page
-        }).then(res => this.setState({ changelog: res }));
+        }).then(res => this.setState({changelog: res}));
       }
     }
   }
 
   getDocuments() {
-    const { repository, name, version } = this.state;
+    const {repository, name, version} = this.state;
 
-    if (repository && repository.host) {
+    if (repository && repository.host)
       this.getRepositoryDetails(repository);
-    }
+
 
     get({
       url: `https://bundlephobia.com/api/size?package=${name}@${version}`,
@@ -447,12 +448,12 @@ class Details extends Component {
 
   maybeRenderReadme() {
     if (this.state.loaded) {
-      const { readmeLoading, readme = '' } = this.state;
+      const {readmeLoading, readme = ''} = this.state;
       if (readme.length === 0 || readme === readmeErrorMessage) {
         // Still loading
-        if (readmeLoading) {
+        if (readmeLoading)
           return null;
-        }
+
         return <div>no readme found <span role="img" aria-label="sad emotion">😢</span></div>;
       }
       return (
@@ -469,12 +470,12 @@ class Details extends Component {
   }
 
   render() {
-    if (this.state.isBrowsingFiles) {
+    if (this.state.isBrowsingFiles)
       return this._renderFileBrowser();
-    }
-    if (this.state.objectDoesntExist) {
+
+    if (this.state.objectDoesntExist)
       return this._renderInvalidPackage();
-    }
+
     return this._renderDetails();
   }
 
@@ -584,22 +585,22 @@ class Details extends Component {
   }
 
   _getRepositoryStarCount = () => {
-    const { github, gitlab, repository } = this.state;
+    const {github, gitlab, repository} = this.state;
 
     if (
       !repository ||
       !repository.host ||
       repository.host === 'bitbucket.org'
-    ) {
+    )
       return -1;
-    }
 
-    if (repository.host === 'github.com' && github) {
+
+    if (repository.host === 'github.com' && github)
       return this.state.github.stargazers_count;
-    }
-    if (repository.host === 'gitlab.com' && gitlab) {
+
+    if (repository.host === 'gitlab.com' && gitlab)
       return this.state.gitlab.star_count;
-    }
+
     return 0;
   };
 
@@ -608,7 +609,7 @@ class Details extends Component {
     if (!this.state.isBrowsingFiles) {
       this._setFilesSearchParam(true);
 
-      this.setState({ isBrowsingFiles: true });
+      this.setState({isBrowsingFiles: true});
     }
     evt.preventDefault();
   };
@@ -616,7 +617,7 @@ class Details extends Component {
   _closeFileBrowser = evt => {
     this._setFilesSearchParam(false);
 
-    this.setState({ isBrowsingFiles: false });
+    this.setState({isBrowsingFiles: false});
     evt.preventDefault();
   };
 
@@ -628,30 +629,28 @@ class Details extends Component {
       strictNullHandling: true,
     });
 
-    if (active) {
+    if (active)
       search.files = null;
-    } else {
+    else
       delete search.files;
-    }
+
 
     window.history.pushState(
       null,
       null,
       window.location.pathname +
-        qs.stringify(search, { addQueryPrefix: true, strictNullHandling: true })
+        qs.stringify(search, {addQueryPrefix: true, strictNullHandling: true})
     );
   };
 
-  _onPopState = ({ state }) => {
+  _onPopState = ({state}) => {
     // Open or close the file browser based on the current search
-    const { files } = qs.parse(window.location.search, { ignoreQueryPrefix: true });
+    const {files} = qs.parse(window.location.search, {ignoreQueryPrefix: true});
 
     if (files !== undefined) {
-      this.setState({ isBrowsingFiles: true });
+      this.setState({isBrowsingFiles: true});
     } else if (this.state.isBrowsingFiles) {
-      this.setState({ isBrowsingFiles: false });
+      this.setState({isBrowsingFiles: false});
     }
   };
 }
-
-export default Details;
