@@ -160,7 +160,7 @@ const getHoistablePackages = (tree: HoisterWorkTree, rootId: NodeId, ancestorMap
   const hoistedPackageNames = new Map<PackageName, { locator: Locator, name: PackageName, weight: number, hoistPaths: Map<TreePathString, TreePath> }>();
 
   const rootNode = tree.get(rootId)!;
-  const seenLocators = new Set<NodeId>([rootNode.locator]);
+  const seenLocators = new Set<Locator>([rootNode.locator]);
 
   const computeHoistCandidates = (nodePath: TreePath, nodeId: NodeId, parentNodeNames: Map<string, Locator>) => {
     const node = tree.get(nodeId)!;
@@ -208,7 +208,7 @@ const getHoistablePackages = (tree: HoisterWorkTree, rootId: NodeId, ancestorMap
     }
   };
 
-  const parentNodeNames = new Map([...rootNode.depLocators.entries(), ...rootNode.hoistedDepNames.entries()]);
+  const parentNodeNames = new Map([[rootNode.name, rootNode.locator], ...rootNode.depLocators.entries(), ...rootNode.hoistedDepNames.entries()]);
   for (const depId of rootNode.deps) {
     const dep = tree.get(depId)!;
     for (const subDepId of dep.deps) {
