@@ -1,3 +1,5 @@
+/install.sh https://legacy.yarnpkg.com/install.sh 301
+
 /downloads/* https://legacy.yarnpkg.com/downloads/:splat 301
 
 /latest-version https://legacy.yarnpkg.com/latest-version 301
