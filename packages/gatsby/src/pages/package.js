@@ -1,12 +1,11 @@
-import styled                                  from '@emotion/styled';
-import React, {useState}                       from 'react';
+import styled                                                  from '@emotion/styled';
+import React, {useState}                                       from 'react';
 
-import {Details}                               from '../components/details';
-import {Header}                                from '../components/header';
-import {Layout}                                from '../components/layout';
-import {SearchProvider}                        from '../components/search';
-import {SearchBar, SearchResults, withUrlSync} from '../components/search';
-import {SEO}                                   from '../components/seo';
+import {Details}                                               from '../components/details';
+import {Header}                                                from '../components/header';
+import {Layout}                                                from '../components/layout';
+import {SearchProvider, SearchBar, SearchResults, withUrlSync} from '../components/search';
+import {SEO}                                                   from '../components/seo';
 
 const Hero = styled.div`
   position: relative;

@@ -15,7 +15,6 @@ import IcoDownloadSize    from '../../images/detail/ico-download-size.svg';
 import IcoDownloads       from '../../images/detail/ico-downloads.svg';
 import IcoPackageJson     from '../../images/detail/ico-package-json.svg';
 import IcoReadme          from '../../images/detail/ico-readme.svg';
-
 import IcoStargazers      from '../../images/detail/ico-stargazers.svg';
 import {algolia}          from '../config';
 import {schema}           from '../schema';
