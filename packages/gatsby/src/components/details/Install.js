@@ -1,7 +1,7 @@
-import React    from 'react';
-import styled   from '@emotion/styled';
+import styled     from '@emotion/styled';
+import React      from 'react';
 
-import Copyable from './Copyable';
+import {Copyable} from './Copyable';
 
 const InstallBox = styled.article`
   color: #117cad;
@@ -57,7 +57,7 @@ const BrowseFiles = styled.button`
   }
 `;
 
-const Install = ({ name, onOpenFileBrowser }) => (
+export const Install = ({name, onOpenFileBrowser}) => (
   <InstallBox>
     <h1>Use it</h1>
     <InstallCommand>
@@ -80,5 +80,3 @@ const Install = ({ name, onOpenFileBrowser }) => (
     </div>
   </InstallBox>
 );
-
-export default Install;

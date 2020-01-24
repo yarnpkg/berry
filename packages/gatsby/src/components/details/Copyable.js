@@ -1,13 +1,13 @@
-import React, {useState, useRef} from 'react';
 import styled                    from '@emotion/styled';
+import React, {useState, useRef} from 'react';
 
 import IcoCopyDefault            from '../../images/detail/ico-copy-default.svg';
 import IcoCopySuccess            from '../../images/detail/ico-copy-success.svg';
 
 const images = {
   default: IcoCopyDefault,
-  success: IcoCopySuccess
-}
+  success: IcoCopySuccess,
+};
 
 const Button = styled.button`
   -webkit-user-select: none;
@@ -77,11 +77,11 @@ const CopyableContent = styled.section`
   }
 `;
 
-const Copyable = ({ tag = 'div', pre, children }) => {
+export const Copyable = ({tag = 'div', pre, children}) => {
   const [statusImage, setImage] = useState(images.default);
 
   const copy = (toCopy, timeout = 2000) => {
-    const setAndUnset = ({ image, timeout }) => {
+    const setAndUnset = ({image, timeout}) => {
       setImage(image);
       setTimeout(() => {
         setImage(images.default);
@@ -97,12 +97,12 @@ const Copyable = ({ tag = 'div', pre, children }) => {
       const copy = document.execCommand('copy');
       window.getSelection().removeAllRanges();
       if (copy === true) {
-        setAndUnset({ image: images.success, timeout });
+        setAndUnset({image: images.success, timeout});
       }
     } catch (err) {
       setImage(images.default);
     }
-  }
+  };
 
   const copyTextRef = useRef();
 
@@ -127,5 +127,3 @@ const Copyable = ({ tag = 'div', pre, children }) => {
     </CopyableContent>
   );
 };
-
-export default Copyable;

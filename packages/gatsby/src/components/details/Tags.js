@@ -1,11 +1,12 @@
 import React from 'react';
+
 import {Di}  from './';
 
-const Tags = ({ tags }) => {
+export const Tags = ({tags}) => {
   const tagNames = Object.keys(tags);
-  if (tagNames.length === 0) {
+  if (tagNames.length === 0)
     return null;
-  }
+
 
   return (
     <article>
@@ -18,5 +19,3 @@ const Tags = ({ tags }) => {
     </article>
   );
 };
-
-export default Tags;

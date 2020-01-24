@@ -1,6 +1,6 @@
-import React        from 'react';
-import {Pagination} from 'react-instantsearch-dom';
-import styled       from '@emotion/styled';
+import styled                        from '@emotion/styled';
+import {Pagination as AisPagination} from 'react-instantsearch-dom';
+import React                         from 'react';
 
 const PaginationContainer = styled.div`
   height: 3rem;
@@ -63,14 +63,14 @@ const PaginationContainer = styled.div`
   }
 `;
 
-const PaginationComponent = ({ pagination }) => (
+export const Pagination = ({pagination}) => (
   <PaginationContainer>
     {pagination ? (
-      <Pagination showFirst={false} showLast={false} scrollTo={true} />
+      <AisPagination showFirst={false} showLast={false} scrollTo={true} />
     ) : (
-      <div style={{ height: '3rem' }} />
+      <div style={{height: '3rem'}} />
     )}
   </PaginationContainer>
 );
 
-export default PaginationComponent;
+

@@ -1,13 +1,14 @@
-import React                                   from 'react';
-import {CurrentRefinements, Stats}             from 'react-instantsearch-dom';
-import {connectHits, connectStateResults}      from 'react-instantsearch-dom';
-import styled                                  from '@emotion/styled';
+import styled                             from '@emotion/styled';
+import {connectHits, connectStateResults} from 'react-instantsearch-dom';
+import {CurrentRefinements, Stats}        from 'react-instantsearch-dom';
+import React                              from 'react';
 
-import Pagination from './Pagination';
-import Hit        from '../hit';
-import {isEmpty}  from '../util';
+import {Hit}                              from '../hit';
+import {isEmpty}                          from '../util';
 
-const Hits = connectHits(({ hits, onTagClick, onOwnerClick, searchState }) =>
+import {Pagination}                       from './Pagination';
+
+const Hits = connectHits(({hits, onTagClick, onOwnerClick, searchState}) =>
   hits.map(hit => (
     <Hit
       onTagClick={onTagClick}
@@ -57,7 +58,7 @@ const RefinementContainer = styled.div`
   }
 `;
 
-const ResultsFound = ({ pagination, onTagClick, onOwnerClick, searchState }) => (
+const ResultsFound = ({pagination, onTagClick, onOwnerClick, searchState}) => (
   <ResultsContainer>
     <StatsText>
       <RefinementContainer>
@@ -66,7 +67,7 @@ const ResultsFound = ({ pagination, onTagClick, onOwnerClick, searchState }) => 
       <Stats
         translations={{
           stats: (num, time) =>
-            `found ${num.toLocaleString('en')} packages in ${time}ms`
+            `found ${num.toLocaleString('en')} packages in ${time}ms`,
         }}
       />
     </StatsText>
@@ -89,7 +90,7 @@ const NoPackagesFound = styled.div`
   text-align: center;
 `;
 
-const SearchResults = ({ searchState, searchResults, onTagClick, onOwnerClick }) => {
+const RawSearchResults = ({searchState, searchResults, onTagClick, onOwnerClick}) => {
   if (isEmpty(searchState.query)) {
     return null;
   } else if (searchResults && searchResults.nbHits === 0) {
@@ -119,4 +120,4 @@ const SearchResults = ({ searchState, searchResults, onTagClick, onOwnerClick })
   }
 };
 
-export default connectStateResults(SearchResults);
+export const SearchResults = connectStateResults(RawSearchResults);

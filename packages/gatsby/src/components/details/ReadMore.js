@@ -1,5 +1,5 @@
-import React, {useState, useRef, useEffect} from 'react';
 import styled                               from '@emotion/styled';
+import React, {useState, useRef, useEffect} from 'react';
 
 import IcoReadMore                          from '../../images/detail/ico-readmore.svg';
 
@@ -100,19 +100,19 @@ const ReadMoreContainer = styled.div`
   }
 `;
 
-const ReadMore = ({text, height, children}) => {
+export const ReadMore = ({text, height, children}) => {
   const [state, setState] = useState({
     collapsed: true,
     collapsible: true,
   });
 
-  const { collapsed, collapsible } = state;
+  const {collapsed, collapsible} = state;
 
   const contentRef = useRef();
 
   const toggleCollapse = () => setState({
     collapsed: !collapsed,
-    collapsible
+    collapsible,
   });
 
   useEffect(() => {
@@ -123,7 +123,7 @@ const ReadMore = ({text, height, children}) => {
         collapsed: false,
       });
     }
-  }, [height, collapsible])
+  }, [height, collapsible]);
 
   return (
     <ReadMoreContainer className={collapsed ? 'collapsed' : ''}>
@@ -153,5 +153,3 @@ ReadMore.defaultProps = {
   height: 250,
   className: '',
 };
-
-export default ReadMore;

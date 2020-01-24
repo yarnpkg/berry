@@ -1,5 +1,6 @@
-export default {
-  activity: Array.from({ length: 12 }, () => ({ total: 0 })),
+/* eslint-disable @typescript-eslint/camelcase */
+export const schema = {
+  activity: Array.from({length: 12}, () => ({total: 0})),
   changelogFilename: '',
   created: 1489597229367,
   dependencies: {},

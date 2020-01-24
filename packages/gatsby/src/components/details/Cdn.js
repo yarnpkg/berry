@@ -1,7 +1,7 @@
-import React  from 'react';
 import styled from '@emotion/styled';
+import React  from 'react';
 
-import { Di } from './';
+import {Di}   from './';
 
 const CdnBox = styled.article`
   h1 {
@@ -14,7 +14,7 @@ const CdnBox = styled.article`
   }
 `;
 
-const JsDelivr = ({ name, version }) => (
+const JsDelivr = ({name, version}) => (
   <Di
     title="jsDelivr"
     description={
@@ -29,7 +29,7 @@ const JsDelivr = ({ name, version }) => (
   />
 );
 
-const Unpkg = ({ name, version }) => (
+const Unpkg = ({name, version}) => (
   <Di
     title="unpkg"
     description={
@@ -44,7 +44,7 @@ const Unpkg = ({ name, version }) => (
   />
 );
 
-const BundleRun = ({ name, version }) => (
+const BundleRun = ({name, version}) => (
   <Di
     title="bundle.run"
     description={
@@ -59,11 +59,11 @@ const BundleRun = ({ name, version }) => (
   />
 );
 
-const Cdn = ({ name, version }) => {
+export const Cdn = ({name, version}) => {
   const cdns = {
     jsdelivr: JsDelivr,
     unpkg: Unpkg,
-    bundlerun: BundleRun
+    bundlerun: BundleRun,
   };
 
   const order = Object.keys(cdns).sort(() => Math.random() - 0.5);
@@ -86,5 +86,3 @@ const Cdn = ({ name, version }) => {
     </CdnBox>
   );
 };
-
-export default Cdn;

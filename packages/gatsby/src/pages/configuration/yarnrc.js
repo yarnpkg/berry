@@ -1,12 +1,12 @@
-import React                                    from 'react';
+import React                                                    from 'react';
 
-import Layout                                   from '../../components/layout-configuration';
-import {SymlContainer, SymlMain, SymlArrayProperty, SymlScalar}                from '../../components/syml';
-import {SymlObjectProperty, SymlScalarProperty} from '../../components/syml';
-import SEO                                      from '../../components/seo';
+import {ConfigurationLayout}                                    from '../../components/layout-configuration';
+import {SEO}                                                    from '../../components/seo';
+import {SymlObjectProperty, SymlScalarProperty}                 from '../../components/syml';
+import {SymlContainer, SymlMain, SymlArrayProperty, SymlScalar} from '../../components/syml';
 
 const YarnrcDoc = () => <>
-  <Layout>
+  <ConfigurationLayout>
     <SEO
       title={`Configuration options`}
       description={`List of all the configuration option for Yarn (yarnrc files)`}
@@ -402,7 +402,8 @@ const YarnrcDoc = () => <>
         </>}
       />
     </SymlContainer>
-  </Layout>
+  </ConfigurationLayout>
 </>;
 
+// eslint-disable-next-line arca/no-default-export
 export default YarnrcDoc;

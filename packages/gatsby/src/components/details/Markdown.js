@@ -1,62 +1,62 @@
-import React from 'react';
-import marked from 'marked';
-import xss from 'xss';
-import hljs from 'highlight.js';
 import 'highlight.js/styles/monokai.css';
+import hljs                               from 'highlight.js';
+import marked                             from 'marked';
+import React                              from 'react';
+import xss                                from 'xss';
 
-import { prefixURL, isKnownRepositoryHost } from '../util';
+import {prefixURL, isKnownRepositoryHost} from '../util';
 
 marked.Lexer.rules.gfm.heading = marked.Lexer.rules.normal.heading;
 marked.Lexer.rules.tables.heading = marked.Lexer.rules.normal.heading;
 
-const renderAndEscapeMarkdown = ({ source, repository }) => {
+const renderAndEscapeMarkdown = ({source, repository}) => {
   const renderer = new marked.Renderer();
 
   if (repository && isKnownRepositoryHost(repository.host)) {
-    const { user, project, path, head, host } = repository;
+    const {user, project, path, head, host} = repository;
 
     const prefixImage = href =>
       host === 'github.com'
         ? prefixURL(href, {
-            base: 'https://raw.githubusercontent.com',
-            user,
-            project,
-            head: head || 'master',
-            path,
-          })
+          base: 'https://raw.githubusercontent.com',
+          user,
+          project,
+          head: head || 'master',
+          path,
+        })
         : host === 'gitlab.com'
           ? prefixURL(href, {
-              base: 'https://gitlab.com',
-              user,
-              project,
-              head: `raw/${head || 'master'}`,
-              path: path ? path.replace('tree', 'raw') : '',
-            })
+            base: 'https://gitlab.com',
+            user,
+            project,
+            head: `raw/${head || 'master'}`,
+            path: path ? path.replace('tree', 'raw') : '',
+          })
           : prefixURL(href, {
-              base: 'https://bitbucket.org',
-              user,
-              project,
-              head: `raw/${head || 'master'}`,
-              path: path ? path.replace('src', 'raw') : '',
-            });
+            base: 'https://bitbucket.org',
+            user,
+            project,
+            head: `raw/${head || 'master'}`,
+            path: path ? path.replace('src', 'raw') : '',
+          });
 
     const prefixLink = href =>
       host === 'bitbucket.org'
         ? prefixURL(href, {
-            base: 'https://bitbucket.org',
-            user,
-            project,
-            head: `src/${head || 'master'}`,
-            path,
-          })
+          base: 'https://bitbucket.org',
+          user,
+          project,
+          head: `src/${head || 'master'}`,
+          path,
+        })
         : prefixURL(href, {
-            // Github and Gitlab are the same
-            base: `https://${host}`,
-            user,
-            project,
-            head: `blob/${head || 'master'}`,
-            path,
-          });
+          // Github and Gitlab are the same
+          base: `https://${host}`,
+          user,
+          project,
+          head: `blob/${head || 'master'}`,
+          path,
+        });
 
     // manually ask for sanitation of svgs, otherwise it will have wrong content-type
     function sanitizeSvg(href) {
@@ -64,9 +64,9 @@ const renderAndEscapeMarkdown = ({ source, repository }) => {
         href.indexOf('//') === -1 &&
         String.prototype.endsWith &&
         href.endsWith('.svg')
-      ) {
+      )
         return `${href}?sanitize=true`;
-      }
+
       return href;
     }
 
@@ -77,14 +77,14 @@ const renderAndEscapeMarkdown = ({ source, repository }) => {
 
     renderer.link = (href, title, text) => {
       // No need to prefix hashes
-      if (href.startsWith('#')) {
+      if (href.startsWith('#'))
         return `<a href="${href}" title="${title}">${text}</a>`;
-      }
+
       // wrongly linked comments
       // see https://github.com/yarnpkg/website/issues/685
-      if (text.startsWith('!--')) {
+      if (text.startsWith('!--'))
         return '';
-      }
+
       return `<a href="${prefixLink(href)}" title="${title}">${text}</a>`;
     };
 
@@ -119,7 +119,7 @@ const renderAndEscapeMarkdown = ({ source, repository }) => {
     return `<pre><code>${code}</code></pre>`;
   };
 
-  return xss(marked(source, { renderer, mangle: false }), {
+  return xss(marked(source, {renderer, mangle: false}), {
     whiteList: {
       ...xss.getDefaultWhiteList(),
       code: ['class'],
@@ -134,7 +134,7 @@ const renderAndEscapeMarkdown = ({ source, repository }) => {
   });
 };
 
-const Markdown = ({ source, repository }) => (
+export const Markdown = ({source, repository}) => (
   <article
     dangerouslySetInnerHTML={{
       __html: renderAndEscapeMarkdown({
@@ -144,5 +144,3 @@ const Markdown = ({ source, repository }) => (
     }}
   />
 );
-
-export default Markdown;

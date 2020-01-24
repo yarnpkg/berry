@@ -1,14 +1,14 @@
-import React                                          from 'react';
-import {useState, useEffect, useLayoutEffect, useRef} from 'react'
-import CSSTransitionGroup                             from 'react-transition-group/CSSTransitionGroup';
-import fetch                                          from 'unfetch';
-import bytes                                          from 'bytes';
 import styled                                         from '@emotion/styled';
+import bytes                                          from 'bytes';
+import CSSTransitionGroup                             from 'react-transition-group/CSSTransitionGroup';
+import {useState, useEffect, useLayoutEffect, useRef} from 'react';
+import React                                          from 'react';
+import fetch                                          from 'unfetch';
 
-import IcoFolder                                      from '../../images/detail/ico-folder.svg';
 import IcoFile                                        from '../../images/detail/ico-file.svg';
+import IcoFolder                                      from '../../images/detail/ico-folder.svg';
 
-const SORT_ORDER = { directory: 1, file: 2 };
+const SORT_ORDER = {directory: 1, file: 2};
 
 const ListItem = styled.li`
   list-style-type: none;
@@ -100,20 +100,20 @@ const Alert = styled.div`
   margin-top: -1.5rem;
 `;
 
-const FileBrowser = ({ objectID, version, onBackToDetails }) => {
-  const [state, setState] = useState({ error: null, files: null, expandedDirs: { '/': true } });
+export const FileBrowser = ({objectID, version, onBackToDetails}) => {
+  const [state, setState] = useState({error: null, files: null, expandedDirs: {'/': true}});
   const backRef = useRef();
 
   const fetchFiles = () => {
     (async () => {
       const url = `https://data.jsdelivr.com/v1/package/npm/${objectID}@${version}`;
       const response = await fetch(url);
-      const { error, files } = await response.json();
+      const {error, files} = await response.json();
 
       if (!response.ok) {
-        setState({ ...state, error });
+        setState({...state, error});
       } else {
-        setState({ ...state, files });
+        setState({...state, files});
       }
     })();
   };
@@ -130,7 +130,7 @@ const FileBrowser = ({ objectID, version, onBackToDetails }) => {
       expandedDirs: {
         ...state.expandedDirs,
         [path]: !state.expandedDirs[path],
-      }
+      },
     });
   };
 
@@ -157,7 +157,7 @@ const FileBrowser = ({ objectID, version, onBackToDetails }) => {
     } else {
       return <div>Loading...</div>;
     }
-  }
+  };
 
   return (
     <FilesHeader>
@@ -172,7 +172,7 @@ const FileBrowser = ({ objectID, version, onBackToDetails }) => {
   );
 };
 
-const Directory = ({ name, path, baseURL, expandedDirs, files, onToggleDir }) => {
+const Directory = ({name, path, baseURL, expandedDirs, files, onToggleDir}) => {
   const url = baseURL + path;
 
   const toggleDir = evt => {
@@ -181,17 +181,17 @@ const Directory = ({ name, path, baseURL, expandedDirs, files, onToggleDir }) =>
   };
 
   const renderDirContents = () => {
-    if (!expandedDirs[path]) {
+    if (!expandedDirs[path])
       return null;
-    }
+
 
     files.sort((a, b) => {
       // Sort by type (directories to the top)
-      if (a.type !== b.type) {
+      if (a.type !== b.type)
         return SORT_ORDER[a.type] - SORT_ORDER[b.type];
-      }
+
       // Then sort by filename, case insensitive
-      return a.name.localeCompare(b.name, 'en', { sensitivity: 'base' });
+      return a.name.localeCompare(b.name, 'en', {sensitivity: 'base'});
     });
 
     return (
@@ -203,7 +203,7 @@ const Directory = ({ name, path, baseURL, expandedDirs, files, onToggleDir }) =>
                 baseURL={baseURL}
                 files={file.files}
                 name={file.name}
-                path={path + file.name + '/'}
+                path={`${path + file.name}/`}
                 expandedDirs={expandedDirs}
                 key={path + file.name}
                 onToggleDir={onToggleDir}
@@ -253,7 +253,7 @@ const Directory = ({ name, path, baseURL, expandedDirs, files, onToggleDir }) =>
   }
 };
 
-const File = ({ file, url, key, size }) => (
+const File = ({file, url, key, size}) => (
   <FileItem key={key}>
     <a href={url} target="_blank" rel="noopener noreferrer">
       {file.name}
@@ -261,5 +261,3 @@ const File = ({ file, url, key, size }) => (
     <small>{bytes(size)}</small>
   </FileItem>
 );
-
-export default FileBrowser;
