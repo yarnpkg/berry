@@ -35,7 +35,7 @@ const queryStringToSearchState = queryString => {
   };
 };
 
-export const withURLSync = App =>
+export const withUrlSync = App =>
   class extends Component {
     constructor() {
       super();
