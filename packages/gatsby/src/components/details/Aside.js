@@ -3,16 +3,16 @@ import React                                    from 'react';
 
 import {packageJSONLink, isKnownRepositoryHost} from '../util';
 
-import Activity                                 from './Activity';
-import Cdn                                      from './Cdn';
-import Contributors                             from './Contributors';
-import GithubActivity                           from './GithubActivity';
-import Install                                  from './Install';
-import Links                                    from './Links';
-import Popularity                               from './Popularity';
-import Tags                                     from './Tags';
-import Usage                                    from './Usage';
-import Versions                                 from './Versions';
+import {Activity}                               from './Activity';
+import {Cdn}                                    from './Cdn';
+import {Contributors}                           from './Contributors';
+import {GithubActivity}                         from './GithubActivity';
+import {Install}                                from './Install';
+import {Links}                                  from './Links';
+import {Popularity}                             from './Popularity';
+import {Tags}                                   from './Tags';
+import {Usage}                                  from './Usage';
+import {Versions}                               from './Versions';
 
 const AsideContainer = styled.aside`
   border-left: 1px solid #cbcbcb;
