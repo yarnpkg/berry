@@ -1,4 +1,4 @@
-export { default as SearchBar } from './SearchBar';
-export { default as SearchResults } from './SearchResults';
-export { default as SearchProvider } from './SearchProvider';
-export { default as withUrlSync } from './withUrlSync';
+export {SearchBar} from './SearchBar';
+export {SearchResults} from './SearchResults';
+export {SearchProvider} from './SearchProvider';
+export {withUrlSync} from './withUrlSync';

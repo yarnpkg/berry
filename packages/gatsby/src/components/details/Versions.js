@@ -1,8 +1,9 @@
-import React, {useState}    from 'react';
-import {Di}                 from './';
+import React, {useState}              from 'react';
+
+import IcoReadMore                    from '../../images/detail/ico-readmore.svg';
 
 import {ReadMoreButton, ReadMoreIcon} from './ReadMore';
-import IcoReadMore                    from '../../images/detail/ico-readmore.svg';
+import {Di}                           from './';
 
 const _localeVersion = pubDate =>
   new Date(pubDate).toLocaleDateString('en', {
@@ -11,7 +12,7 @@ const _localeVersion = pubDate =>
     day: 'numeric',
   });
 
-const Versions = ({ versions }) => {
+export const Versions = ({versions}) => {
   const [showMore, setShowMore] = useState(false);
   const toggleShowMore = () => setShowMore(!showMore);
 
@@ -41,12 +42,10 @@ const Versions = ({ versions }) => {
           <ReadMoreIcon
             src={IcoReadMore}
             alt=""
-            style={{ transform: showMore ? 'rotate(180deg)' : '' }}
+            style={{transform: showMore ? 'rotate(180deg)' : ''}}
           />
         </ReadMoreButton>
       )}
     </article>
   );
 };
-
-export default Versions;

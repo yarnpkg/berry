@@ -1,17 +1,17 @@
-import React                          from 'react';
-import { Sparklines, SparklinesLine } from '@haroenv/react-sparklines';
+import {Sparklines, SparklinesLine} from '@haroenv/react-sparklines';
+import React                        from 'react';
 
-import { Di }                         from './';
+import {Di}                         from './';
 
-const Activity = ({
+export const Activity = ({
   graphData,
   graphLink,
   lastCommit,
   commitsLastThreeMonths,
 }) => {
-  if (!graphData && !graphLink && !lastCommit && !commitsLastThreeMonths) {
+  if (!graphData && !graphLink && !lastCommit && !commitsLastThreeMonths)
     return null;
-  }
+
 
   return (
     <article>
@@ -43,5 +43,3 @@ const Activity = ({
     </article>
   );
 };
-
-export default Activity;

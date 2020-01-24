@@ -1,8 +1,10 @@
-import React from 'react';
-import { packageLink } from '../util';
-import { Di } from './';
+import React         from 'react';
 
-const deps = ({ dependencies, title }) => {
+import {packageLink} from '../util';
+
+import {Di}          from './';
+
+const deps = ({dependencies, title}) => {
   if (dependencies) {
     const dependencyNames = Object.keys(dependencies);
 
@@ -32,7 +34,7 @@ const deps = ({ dependencies, title }) => {
   return {};
 };
 
-const Usage = ({
+export const Usage = ({
   dependencies,
   devDependencies,
   versions,
@@ -86,5 +88,3 @@ const Usage = ({
     </dl>
   </article>
 );
-
-export default Usage;

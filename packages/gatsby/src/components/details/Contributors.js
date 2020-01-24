@@ -2,7 +2,7 @@ import React   from 'react';
 
 import {Owner} from '../hit';
 
-const Contributors = ({ contributors }) => (
+export const Contributors = ({contributors}) => (
   <article>
     <h1>Contributors</h1>
     <ul>
@@ -14,5 +14,3 @@ const Contributors = ({ contributors }) => (
     </ul>
   </article>
 );
-
-export default Contributors;

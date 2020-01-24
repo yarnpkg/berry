@@ -1,5 +1,6 @@
-import React from 'react';
-import { packageLink } from '../util';
+import React         from 'react';
+
+import {packageLink} from '../util';
 
 /**
  * JSON-ld is a technology that allows crawlers to get info about
@@ -19,7 +20,7 @@ import { packageLink } from '../util';
  * read more about it on: http://json-ld.org
  */
 
-const JSONLDItem = ({ name, description, keywords }) => (
+export const JSONLDItem = ({name, description, keywords}) => (
   <script type="application/ld+json">
     {JSON.stringify({
       '@context': 'http://schema.org',
@@ -36,5 +37,3 @@ const JSONLDItem = ({ name, description, keywords }) => (
     })}
   </script>
 );
-
-export default JSONLDItem;

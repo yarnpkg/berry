@@ -1,13 +1,13 @@
-import React                                from 'react';
-import fetch                                from 'unfetch';
-import marked                               from 'marked';
-import xss                                  from 'xss';
-import unescape                             from 'unescape-html';
-import { HIGHLIGHT_TAGS, connectHighlight } from 'react-instantsearch-dom';
-import styled                               from '@emotion/styled';
-import {withPrefix}                         from 'gatsby'
+import styled                             from '@emotion/styled';
+import {withPrefix}                       from 'gatsby';
+import marked                             from 'marked';
+import {HIGHLIGHT_TAGS, connectHighlight} from 'react-instantsearch-dom';
+import React                              from 'react';
+import unescape                           from 'unescape-html';
+import fetch                              from 'unfetch';
+import xss                                from 'xss';
 
-import IcoTag                               from '../images/search/ico-tag.svg'
+import IcoTag                             from '../images/search/ico-tag.svg';
 
 export const isEmpty = item => typeof item === 'undefined' || item.length < 1;
 
@@ -42,7 +42,7 @@ const HitKeywords = styled.span`
   }
 `;
 
-export const Keywords = ({ name, keywords = [], maxKeywords = 4 }) => {
+export const Keywords = ({name, keywords = [], maxKeywords = 4}) => {
   return isEmpty(keywords) ? null : (
     <HitKeywords>
       {keywords
@@ -78,9 +78,9 @@ export function formatKeywords(
         if (k2.matchLevel === 'full') return 1;
         return k1.matchLevel === 'partial' ? -1 : 1;
       }
-      if (k1.matchedWords.length !== k2.matchedWords.length) {
+      if (k1.matchedWords.length !== k2.matchedWords.length)
         return k2.matchedWords.length - k1.matchedWords.length;
-      }
+
       if (k1.matchedWords.join('').length !== k2.matchedWords.join('').length) {
         return (
           k2.matchedWords.join('').length - k1.matchedWords.join('').length
@@ -90,7 +90,7 @@ export function formatKeywords(
     })
     .slice(0, maxKeywords)
     .map(
-      ({ value: highlightedKeyword, originalValue: keyword }, keywordIndex) => {
+      ({value: highlightedKeyword, originalValue: keyword}, keywordIndex) => {
         const highlighted = parseHighlightedAttribute({
           highlightedValue: highlightedKeyword,
         });
@@ -130,12 +130,12 @@ function parseHighlightedAttribute({
   const splitByPreTag = highlightedValue.split(preTag);
   const firstValue = splitByPreTag.shift();
   const elements =
-    firstValue === '' ? [] : [{ value: firstValue, isHighlighted: false }];
+    firstValue === '' ? [] : [{value: firstValue, isHighlighted: false}];
 
   if (postTag === preTag) {
     let isHighlighted = true;
     splitByPreTag.forEach(split => {
-      elements.push({ value: split, isHighlighted });
+      elements.push({value: split, isHighlighted});
       isHighlighted = !isHighlighted;
     });
   } else {
@@ -165,12 +165,12 @@ export const packageJSONLink = packageName => ({
 export const packageLink = (name, prefix = true) =>
   `${prefix ? withPrefix('/package/') : '/package/'}${name}`;
 
-export const prefixURL = (url, { base, user, project, head, path }) => {
+export const prefixURL = (url, {base, user, project, head, path}) => {
   if (url.indexOf('//') > 0) {
     return url;
   } else {
     return new URL(
-      (path ? path.replace(/^\//, '') + '/' : '') +
+      (path ? `${path.replace(/^\//, '')}/` : '') +
         url.replace(/^(\.?\/?)/, ''),
       `${base}/${user}/${project}/${path ? '' : `${head}/`}`
     );
@@ -182,17 +182,17 @@ const status = res =>
     if (res.status >= 200 && res.status < 300) {
       // GitHub will return status 202 or 204 if things like contributor activity are
       // valid, but not yet computed, and will return an empty response
-      if (res.status === 202 || res.status === 204) {
+      if (res.status === 202 || res.status === 204)
         reject(res);
-      }
+
       resolve(res);
     } else {
       reject(res);
     }
   });
 
-export const get = ({ url, type, headers, ...rest }) =>
-  fetch(url, { headers, ...rest })
+export const get = ({url, type, headers, ...rest}) =>
+  fetch(url, {headers, ...rest})
     .then(status)
     .then(res => res[type]())
     .catch(err => {
@@ -205,7 +205,7 @@ export const get = ({ url, type, headers, ...rest }) =>
     });
 
 export const HighlightedMarkdown = connectHighlight(
-  ({ highlight, attribute, hit }) => (
+  ({highlight, attribute, hit}) => (
     <span>
       {highlight({
         attribute,
@@ -235,7 +235,7 @@ inlineRenderer.paragraph = function(text) {
 };
 
 export const safeMarkdown = input => ({
-  __html: xss(marked(unescape(input), { renderer: inlineRenderer })) || ' ',
+  __html: xss(marked(unescape(input), {renderer: inlineRenderer})) || ' ',
 });
 
 // Contains the repositories that we know how to handle

@@ -3,7 +3,7 @@ import React          from 'react';
 
 import yarnKittenFull from '../images/yarn-kitten-full.svg';
 
-const Logo = ({align, height}) => (
+export const Logo = ({align, height}) => (
   <img alt={`Yarn`} src={yarnKittenFull} style={{height, verticalAlign: align}} />
 );
 
@@ -18,5 +18,3 @@ Logo.propTypes = {
 Logo.defaultProps = {
   height: 100,
 };
-
-export default Logo;

@@ -74,7 +74,7 @@ const ResetButton = styled(IconButton)`
   order: 2;
 `;
 
-const SearchBox = ({currentRefinement, refine, autoFocus}) => {
+const RawSearchBox = ({currentRefinement, refine, autoFocus}) => {
   const [active, setActive] = useState(false);
 
   const onSubmit = e => {
@@ -103,4 +103,4 @@ const SearchBox = ({currentRefinement, refine, autoFocus}) => {
   );
 };
 
-export default connectSearchBox(SearchBox);
+export const SearchBox = connectSearchBox(RawSearchBox);

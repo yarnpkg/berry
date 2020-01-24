@@ -1,16 +1,17 @@
-import React                             from 'react';
-import styled                            from '@emotion/styled';
+import styled                          from '@emotion/styled';
+import React                           from 'react';
 
-import { encode, isKnownRepositoryHost } from '../util';
-import Copyable                          from './Copyable';
+import IcoBitbucket                    from '../../images/search/ico-bitbucket.svg';
+import IcoGit                          from '../../images/search/ico-git.svg';
 
-import IcoHome                           from '../../images/search/ico-home.svg';
-import IcoNpm                            from '../../images/search/ico-npm.svg';
-import IcoGithub                         from '../../images/search/ico-github.svg';
-import IcoYarn                           from '../../images/search/ico-yarn.svg';
-import IcoGitlab                         from '../../images/search/ico-gitlab.svg';
-import IcoBitbucket                      from '../../images/search/ico-bitbucket.svg';
-import IcoGit                            from '../../images/search/ico-git.svg';
+import IcoGithub                       from '../../images/search/ico-github.svg';
+import IcoGitlab                       from '../../images/search/ico-gitlab.svg';
+import IcoHome                         from '../../images/search/ico-home.svg';
+import IcoNpm                          from '../../images/search/ico-npm.svg';
+import IcoYarn                         from '../../images/search/ico-yarn.svg';
+import {encode, isKnownRepositoryHost} from '../util';
+
+import {Copyable}                      from './Copyable';
 
 const images = {
   homepage: IcoHome,
@@ -19,7 +20,8 @@ const images = {
   yarn: IcoYarn,
   gitlab: IcoGitlab,
   bitbucket: IcoBitbucket,
-  generic_repo: IcoGit
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  generic_repo: IcoGit,
 };
 
 const LinkIcon = styled.img`
@@ -38,8 +40,7 @@ const LinkBox = styled.span`
   }
 `;
 
-export const Link = ({ site, url, display, tag = 'a' }) => {
-
+export const Link = ({site, url, display, tag = 'a'}) => {
   const LinkElement = styled(tag)`
     display: block;
     overflow: hidden;
@@ -66,10 +67,10 @@ export const Link = ({ site, url, display, tag = 'a' }) => {
       </LinkElement>
     </LinkBox>
   );
-}
+};
 
-const RepositoryLink = ({ repository }) => {
-  const { host, user, path, project } = repository;
+const RepositoryLink = ({repository}) => {
+  const {host, user, path, project} = repository;
 
   if (!isKnownRepositoryHost(repository.host)) {
     return repository.url ? (
@@ -88,7 +89,7 @@ const RepositoryLink = ({ repository }) => {
   );
 };
 
-const Links = ({ name, homepage, repository }) => (
+export const Links = ({name, homepage, repository}) => (
   <div>
     <Link
       display={
@@ -117,5 +118,3 @@ const Links = ({ name, homepage, repository }) => (
     />
   </div>
 );
-
-export default Links;

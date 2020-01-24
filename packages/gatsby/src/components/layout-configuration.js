@@ -1,10 +1,10 @@
-import PropTypes  from 'prop-types';
-import React      from 'react';
+import PropTypes    from 'prop-types';
+import React        from 'react';
 
-import Layout     from './layout';
-import Navigation from './navigation';
+import {Layout}     from './layout';
+import {Navigation} from './navigation';
 
-const ConfigurationLayout = ({children}) => <>
+export const ConfigurationLayout = ({children}) => <>
   <Layout>
     <Navigation
       items={[
@@ -20,5 +20,3 @@ const ConfigurationLayout = ({children}) => <>
 ConfigurationLayout.propTypes = {
   children: PropTypes.node.isRequired,
 };
-
-export default ConfigurationLayout;

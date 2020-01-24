@@ -1,12 +1,11 @@
-import React, {useState}                       from 'react';
-import styled                                  from '@emotion/styled';
+import styled                                                  from '@emotion/styled';
+import React, {useState}                                       from 'react';
 
-import Header                                  from '../components/header';
-import {SearchBar, SearchResults, withUrlSync} from '../components/search';
-import {SearchProvider}                        from '../components/search';
-import Layout                                  from '../components/layout';
-import SEO                                     from '../components/seo';
-import Details                                 from '../components/details';
+import {Details}                                               from '../components/details';
+import {Header}                                                from '../components/header';
+import {Layout}                                                from '../components/layout';
+import {SearchProvider, SearchBar, SearchResults, withUrlSync} from '../components/search';
+import {SEO}                                                   from '../components/seo';
 
 const Hero = styled.div`
   position: relative;
@@ -37,7 +36,7 @@ const HeroTitle = styled.div`
   text-shadow: 5px 5px #1476a2
 `;
 
-const PackagePage = ({ searchState, onSearchStateChange }) => {
+const PackagePage = ({searchState, onSearchStateChange}) => {
   const [tags, setTags] = useState([]);
   const [owners, setOwners] = useState([]);
 
@@ -90,4 +89,5 @@ const PackagePage = ({ searchState, onSearchStateChange }) => {
   </>);
 };
 
+// eslint-disable-next-line arca/no-default-export
 export default withUrlSync(PackagePage);

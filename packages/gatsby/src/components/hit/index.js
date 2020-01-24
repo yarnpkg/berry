@@ -1,19 +1,19 @@
-import React           from 'react';
-import formatDistance  from 'date-fns/formatDistance';
-import { Link }        from 'gatsby';
-import { Highlight }   from 'react-instantsearch-dom';
-import styled          from '@emotion/styled';
+import styled         from '@emotion/styled';
+import formatDistance from 'date-fns/formatDistance';
+import {Link}         from 'gatsby';
+import {Highlight}    from 'react-instantsearch-dom';
+import React          from 'react';
 
-import IcoDownload     from '../../images/search/ico-download.svg';
-import IcoHotT1        from '../../images/search/ico-hot-t1.svg';
-import IcoHotT2        from '../../images/search/ico-hot-t2.svg';
-import IcoHotT3        from '../../images/search/ico-hot-t3.svg';
-import IcoHotT4        from '../../images/search/ico-hot-t4.svg';
-import IcoNpm          from '../../images/search/ico-npm.svg';
-import IcoHome         from '../../images/search/ico-home.svg';
-import IcoBitBucket    from '../../images/search/ico-bitbucket.svg';
-import IcoGitHub       from '../../images/search/ico-github.svg';
-import IcoGitLab       from '../../images/search/ico-gitlab.svg';
+import IcoBitBucket   from '../../images/search/ico-bitbucket.svg';
+import IcoDownload    from '../../images/search/ico-download.svg';
+import IcoGitHub      from '../../images/search/ico-github.svg';
+import IcoGitLab      from '../../images/search/ico-gitlab.svg';
+import IcoHome        from '../../images/search/ico-home.svg';
+import IcoHotT1       from '../../images/search/ico-hot-t1.svg';
+import IcoHotT2       from '../../images/search/ico-hot-t2.svg';
+import IcoHotT3       from '../../images/search/ico-hot-t3.svg';
+import IcoHotT4       from '../../images/search/ico-hot-t4.svg';
+import IcoNpm         from '../../images/search/ico-npm.svg';
 import IcoTypeScript  from '../../images/search/ico-typescript.svg';
 
 import {
@@ -36,7 +36,7 @@ const HitLicense = styled.span`
   letter-spacing: 0.2px;
 `;
 
-export const License = ({ type }) =>
+export const License = ({type}) =>
   type ? <HitLicense>{type}</HitLicense> : null;
 
 const HitDeprecated = styled.span`
@@ -51,7 +51,7 @@ const HitDeprecated = styled.span`
   letter-spacing: 0.2px;
 `;
 
-export const Deprecated = ({ deprecated }) =>
+export const Deprecated = ({deprecated}) =>
   deprecated ? (
     <HitDeprecated title={deprecated}>
       deprecated
@@ -76,7 +76,7 @@ const HitOwnerAvatar = styled.img`
   border-style: none;
 `;
 
-export const Owner = ({ link, avatar, name, onClick }) => (
+export const Owner = ({link, avatar, name, onClick}) => (
   <HitOwnerLink
     href={link}
     onClick={e => {
@@ -127,7 +127,7 @@ const HitPopular = styled.span`
   }
 `;
 
-export const Downloads = ({ downloads = 0, humanDownloads }) => (
+export const Downloads = ({downloads = 0, humanDownloads}) => (
   <HitPopular
     className={`${getDownloadBucket(downloads)}`}
     title={`${downloads.toLocaleString('en')} downloads in the last 30 days`}
@@ -137,7 +137,7 @@ export const Downloads = ({ downloads = 0, humanDownloads }) => (
 );
 
 const HitLinkList = styled.div`
-  position: inherit;
+  position: absolute;
   top: calc(50% - 12px);
   right: 1rem;
 `;
@@ -168,8 +168,8 @@ const HitLinkHomepage = styled(HitLink)`
 const RepoIcons = {
   github: IcoGitHub,
   gitlab: IcoGitLab,
-  bitbucket: IcoBitBucket
-}
+  bitbucket: IcoBitBucket,
+};
 
 const HitRepoLink = styled(HitLink)`
   background-image: url(${props => RepoIcons[props.provider]});
@@ -177,7 +177,7 @@ const HitRepoLink = styled(HitLink)`
   height: 26px;
 `;
 
-const Repository = ({ repository, name }) => {
+const Repository = ({repository, name}) => {
   const [provider] = repository.host.split('.');
 
   return (
@@ -193,7 +193,7 @@ const Repository = ({ repository, name }) => {
   );
 };
 
-export const Links = ({ name, homepage, repository }) => (
+export const Links = ({name, homepage, repository}) => (
   <HitLinkList>
     <HitLinkNpm
       href={`https://www.npmjs.com/package/${name}`}
@@ -284,7 +284,7 @@ const HitHiddenKeywords = styled.span`
   display: none !important;
 `;
 
-const Hit = ({ hit, onTagClick, onOwnerClick, searchState }) => (
+export const Hit = ({hit, onTagClick, onOwnerClick, searchState}) => (
   <HitItem>
     <HitNameLink to={packageLink(hit.name, false)}>
       <Highlight attribute="name" hit={hit} />
@@ -330,5 +330,3 @@ const Hit = ({ hit, onTagClick, onOwnerClick, searchState }) => (
     />
   </HitItem>
 );
-
-export default Hit;
