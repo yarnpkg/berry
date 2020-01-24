@@ -381,7 +381,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {
           "packageLocation": "./",
           "packageDependencies": [
-            ["@arcanis/sherlock", "npm:1.0.37"],
+            ["@arcanis/sherlock", "npm:1.0.38"],
             ["@babel/cli", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.2.3"],
             ["@babel/core", "npm:7.7.4"],
             ["@babel/plugin-proposal-async-generator-functions", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.2.0"],
@@ -554,10 +554,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@arcanis/sherlock", [
-        ["npm:1.0.37", {
-          "packageLocation": "./.yarn/cache/@arcanis-sherlock-npm-1.0.37-bb4398f5f1-1.zip/node_modules/@arcanis/sherlock/",
+        ["npm:1.0.38", {
+          "packageLocation": "./.yarn/cache/@arcanis-sherlock-npm-1.0.38-d4f5e2dbf3-1.zip/node_modules/@arcanis/sherlock/",
           "packageDependencies": [
-            ["@arcanis/sherlock", "npm:1.0.37"],
+            ["@arcanis/sherlock", "npm:1.0.38"],
             ["@octokit/rest", "npm:16.28.7"],
             ["clipanion", "npm:2.0.0-rc.16"],
             ["expect", "npm:24.8.0"],
@@ -6867,7 +6867,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",
           "packageDependencies": [
             ["@yarnpkg/monorepo", "workspace:."],
-            ["@arcanis/sherlock", "npm:1.0.37"],
+            ["@arcanis/sherlock", "npm:1.0.38"],
             ["@babel/cli", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.2.3"],
             ["@babel/core", "npm:7.7.4"],
             ["@babel/plugin-proposal-async-generator-functions", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.2.0"],

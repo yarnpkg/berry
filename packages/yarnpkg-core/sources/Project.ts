@@ -1,5 +1,6 @@
 import {PortablePath, npath, ppath, toFilename, xfs, normalizeLineEndings} from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                          from '@yarnpkg/parsers';
+import {UsageError}                                                        from 'clipanion';
 import {createHash}                                                        from 'crypto';
 import {structuredPatch}                                                   from 'diff';
 // @ts-ignore
@@ -80,7 +81,7 @@ export class Project {
 
   static async find(configuration: Configuration, startingCwd: PortablePath): Promise<{project: Project, workspace: Workspace | null, locator: Locator}> {
     if (!configuration.projectCwd)
-      throw new Error(`No project found in the initial directory`);
+      throw new UsageError(`No project found in ${startingCwd}`);
 
     let packageCwd = configuration.projectCwd;
 

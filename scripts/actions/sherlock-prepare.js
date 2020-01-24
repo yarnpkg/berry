@@ -35,7 +35,7 @@ global.packageJson = async (data, {cwd = `.`} = {}) => {
  */
 global.packageJsonAndInstall = async (data, {cwd = `.`} = {}) => {
   await global.packageJson(data, {cwd});
-  await global.yarn(`install`);
+  return await global.yarn(`install`);
 };
 
 /**
@@ -51,8 +51,8 @@ global.yarn = async (...args) => {
   let stdout;
   try {
     ({stdout} = await execFileP(process.execPath, [`${__dirname}/../run-yarn.js`, ...args], {
-        env: {...process.env, YARN_IGNORE_PATH: 1, YARN_ENABLE_INLINE_BUILDS: 1},
-        ...opts,
+      env: {...process.env, YARN_IGNORE_PATH: 1, YARN_ENABLE_INLINE_BUILDS: 1},
+      ...opts,
     }));
   } catch (error) {
     error.message += `\n${error.stdout}`;

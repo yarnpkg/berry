@@ -1,5 +1,7 @@
 ## Master
 
+Remember that a [migration guide](https://yarnpkg.com/advanced/migration) is available to help you port your applications to Yarn 2.
+
 ### Notable fixes
 
   - Using `yarn link` will now properly resolve peer dependencies based on the package that requires the linked package rather than the dependencies installed in the linked project folder.
@@ -12,9 +14,13 @@
 
 ### Notable changes
 
+  - We dropped support for Node 8, which has reached its end of life in December.
+
+  - Accessing registries through http is now forbidden by default (Yarn will throw an exception and require to use https instead). This can be overruled on a per-hostname basis by using [`unsafeHttpWhitelist`](https://yarnpkg.com/configuration/yarnrc#unsafeHttpWhitelist).
+
   - The meaning of `devDependencies` is slightly altered. Until then dev dependencies were described as "dependencies we only use in development". Given that we now advocate for all your packages to be stored within the repository (in order to guarantee reproducible builds), this doesn't really make sense anymore. As a result, our description of dev dependencies is now "dependencies that aren't installed by the package consumers". It doesn't really change anything else than the name, but the more you know.
 
-      - One particular note is that you cannot install production dependencies only at the moment. We plan to add back this feature at a later time, but given that Zero-Installs means that your repository contains all your packages (prod & dev), the priority isn't as high as it used to be.
+      - One particular note is that you cannot install production dependencies only at the moment. We plan to add back this feature at a later time, but given that enabling [Zero-Installs](https://yarnpkg.com/features/zero-installs) would cause your repository to contain all your packages anyway (prod & dev), this feature isn't deemed as important as it used to be.
 
   - Running `yarn link <package>` now has a semi-permanent effect in that `<package>` will be added as a dependency of your active workspace (using the new `portal:` protocol). Apart from that the workflow stays the same, meaning that running `yarn link` somewhere will add the local path to the local registry, and `yarn link <package>` will add a dependency to the previously linked package.
 
@@ -89,7 +95,7 @@ To see a comprehensive documentation about each possible field, please check our
 
   - Running `yarn remove -A <package>` will remove `<package>` from all the dependency sets from all your workspaces, regardless of what your cwd is.
 
-  - Running `yarn policies set-resolution <package> <resolution>` will force the resolver to use a specific resolution for the given package descriptor. Note that the descriptor passed as parameter must be exactly the same as the one you want to override. This command is a handy tool to manually optimize some ranges that could benefit from overlapping.
+  - Running `yarn set resolution <package> <resolution>` will force the resolver to use a specific resolution for the given package descriptor. Note that the descriptor passed as parameter must be exactly the same as the one you want to override. This command is a handy tool to manually optimize some ranges that could benefit from overlapping.
 
   - Running `yarn up <package>` will upgrade `<package>` in all of your workspaces at once (only if they already use the specified package - those that don't won't see it being added). Adding the `-i` flag will also cause Yarn to ask you to confirm for each workspace.
 
@@ -97,6 +103,10 @@ To see a comprehensive documentation about each possible field, please check our
 
   - Running `yarn pack` will no longer always include *nested* README, CHANGELOG, LICENSE or LICENCE files (note that those files will still be included if found at the root of the workspace being packed, as is usually the case). If you rely on this ([somewhat unintended](https://github.com/npm/npm-packlist/blob/270f534bc70dfb1d316682226332fd05e75e1b14/index.js#L162-L168)) behavior you can add those files manually to the `files` field of your `package.json`.
 
+  - The `yarn upgrade-interactive` command has been moved into a plugin that needs to be installed through `yarn plugin import interactive-tools`. It's also been rewritten, and we'll keep improving over time.
+
 ### Miscellaneous
 
   - A new protocol is now supported, `portal:`. Portals are very much like `link:` in that they directly point to a location on the disk, but unlike links they also take into account the dependencies of the target location (whereas links don't care about these). To give you a better idea, portals are what you use when you want to target a *package*, whereas links are what you use when you want to target a non-package folder (for example your `src` directory, or similar).
+
+  - A new protocol is now supported, `patch:`. The patch protocol can be used to automatically apply changes to the sources of a package. It's very similar to [`patch-package`](https://github.com/ds300/patch-package), but is directly integrated within Yarn (including its cache and checksum systems).

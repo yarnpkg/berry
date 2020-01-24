@@ -14,8 +14,8 @@ const HeaderContainer = styled.div`
   }
 `;
 
-const NewsContainer = styled.a`
-  display: block;
+const NewsContainer = styled.div`
+  position: relative;
 
   height: 2.5em;
 
@@ -26,6 +26,36 @@ const NewsContainer = styled.a`
 
   background: #2188b6;
   color: rgba(255, 255, 255, 0.8);
+`;
+
+const NewsOverlay = styled.a`
+  position:absolute;
+
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+`;
+
+const NewsInner = styled.div`
+  position:relative;
+  z-index: 1;
+
+  pointer-events: none;
+
+  a {
+    display: inline-block;
+
+    line-height: 2.5em;
+
+    pointer-events: all;
+
+    color: inherit;
+
+    &:hover {
+      color: #ffffff;
+    }
+  }
 `;
 
 const Highlight = styled.span`
@@ -165,8 +195,11 @@ const Header = ({children}) => {
 
   return <>
     <HeaderContainer>
-      <NewsContainer href={`https://github.com/yarnpkg/berry`}>
-        <Highlight>Important:</Highlight> This documentation covers the v2 onwards and is actively being worked on. Come help us! For the 1.x doc, check legacy.yarnpkg.com.
+      <NewsContainer>
+        <NewsOverlay href={`https://github.com/yarnpkg/berry`} />
+        <NewsInner>
+          <Highlight>Important:</Highlight> This documentation covers Yarn 2. For the 1.x doc, check <a href={`https://legacy.yarnpkg.com`}>legacy.yarnpkg.com</a>.
+        </NewsInner>
       </NewsContainer>
 
       <MenuContainer>
