@@ -91,6 +91,12 @@ const RawSearchBox = ({currentRefinement, refine, autoFocus}) => {
         autoFocus={autoFocus}
         active={active}
         type="search"
+        autoComplete="off"
+        autoCorrect="off"
+        autoCapitalize="off"
+        spellCheck="false"
+        required="required"
+        maxLength="512"
         onFocus={() => setActive(true)}
         onBlur={() => setActive(false)}
         value={currentRefinement}
