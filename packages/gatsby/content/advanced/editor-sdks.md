@@ -12,7 +12,7 @@ Smart IDEs (such as VSCode or IntelliJ) require special configuration for TypeSc
 
 | Extension | Required package.json dependency |
 |---|---|
-| VSCode Typescript Server | [typescript](https://yarnpkg.com/package/typescript) |
+| VS Code TypeScript Server | [typescript](https://yarnpkg.com/package/typescript) |
 | [vscode-eslint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) | [eslint](https://yarnpkg.com/package/eslint) |
 | [prettier-vscode extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) | [prettier](https://yarnpkg.com/package/prettier) |
 
