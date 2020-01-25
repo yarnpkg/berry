@@ -56,7 +56,7 @@ The following compatibility table gives you an idea of the integration status wi
 | Jest              | Native     | Starting from 24.1+ |
 | Prettier          | Native     | Starting from 1.17+ |
 | Rollup            | Plugin     | Via [`rollup-plugin-pnp-resolve`](https://github.com/arcanis/rollup-plugin-pnp-resolve) |
-| TypeScript        | Plugin     | Via [PnPify](/advanced/pnpify), or Webpack and [`ts-loader`](https://github.com/arcanis/pnp-webpack-plugin#ts-loader-integration) |
+| TypeScript        | Workaround | Patched with [`plugin-compat`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-compat) (native with Webpack's [`ts-loader`](https://github.com/arcanis/pnp-webpack-plugin#ts-loader-integration)) |
 | TypeScript-ESLint | Native     | Starting from 2.12+ |
 | VSCode-ESLint     | Plugin     | Via [PnPify](/advanced/pnpify#vscode-support) |
 | VSCode            | Plugin     | Via [PnPify](/advanced/pnpify#vscode-support) |
