@@ -1,5 +1,5 @@
-import {Workspace}                        from '@yarnpkg/core';
 import {Descriptor, Plugin, SettingsType} from '@yarnpkg/core';
+import {Workspace}                        from '@yarnpkg/core';
 
 import add                                from './commands/add';
 import bin                                from './commands/bin';
@@ -16,6 +16,7 @@ import link                               from './commands/link';
 import node                               from './commands/node';
 import pluginImport                       from './commands/plugin/import';
 import pluginList                         from './commands/plugin/list';
+import pluginRemove                       from './commands/plugin/remove';
 import pluginRuntime                      from './commands/plugin/runtime';
 import rebuild                            from './commands/rebuild';
 import remove                             from './commands/remove';
@@ -86,6 +87,7 @@ const plugin: Plugin = {
     link,
     node,
     pluginImport,
+    pluginRemove,
     pluginList,
     pluginRuntime,
     rebuild,
