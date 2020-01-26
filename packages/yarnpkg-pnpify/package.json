@@ -8,7 +8,7 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
     "comment-json": "^2.2.0",
-    "cross-spawn": "^6.0.5"
+    "cross-spawn": "6.0.5"
   },
   "devDependencies": {
     "@types/comment-json": "^1.1.1",

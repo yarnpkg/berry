@@ -14,7 +14,7 @@ const gitPatterns = [
   /^git(?:\+ssh)?:/,
   /^(?:git\+)?https?:[^#]+\/[^#]+\.git(?:#.*)?$/,
   /^git@[^#]+\/[^#]+\.git(?:#.*)?$/,
-  /^(?:github:|https:\/\/github\.com\/)?([a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d]))+)\/([a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d]))+)(?:#.*)?$/,
+  /^(?:github:|https:\/\/github\.com\/)?(?!\.{1,2}\/)([a-zA-Z._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z._-]+?)(?:\.git)?(?:#.*)?$/,
 ];
 
 /**
@@ -59,7 +59,7 @@ export function normalizeRepoUrl(url: string) {
   url = url.replace(/^git\+https:/, `https:`);
 
   // We support this as an alias to Github repositories
-  url = url.replace(/^(?:github:|https:\/\/github\.com\/)?([a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d]))+)\/([a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d]))+)(#.*)?$/, `https://github.com/$1/$2.git$3`);
+  url = url.replace(/^(?:github:|https:\/\/github\.com\/)?(?!\.{1,2}\/)([a-zA-Z._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z._-]+?)(?:\.git)?(#.*)?$/, `https://github.com/$1/$2.git$3`);
 
   return url;
 }

@@ -5,7 +5,7 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.9",
-    "cross-spawn": "^6.0.5",
+    "cross-spawn": "6.0.5",
     "stream-buffers": "^3.0.2"
   },
   "devDependencies": {

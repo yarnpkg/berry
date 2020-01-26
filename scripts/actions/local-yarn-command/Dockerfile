@@ -5,7 +5,7 @@ LABEL "com.github.actions.description"="Run a Yarn command using the checked-in 
 LABEL "com.github.actions.icon"="package"
 LABEL "com.github.actions.color"="blue"
 
-RUN apk add --no-cache bash nodejs rsync
+RUN apk add --no-cache bash nodejs rsync git
 
 # For building Sharp
 RUN apk add fftw-dev build-base autoconf python2 imagemagick --update-cache \

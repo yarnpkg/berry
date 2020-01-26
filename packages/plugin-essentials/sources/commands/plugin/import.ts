@@ -61,7 +61,7 @@ export default class PluginDlCommand extends BaseCommand {
         pluginSpec = ppath.relative(project.cwd, candidatePath);
         pluginBuffer = await xfs.readFilePromise(candidatePath);
       } else {
-        let pluginUrl;
+        let pluginUrl: string;
         if (this.name.match(/^https?:/)) {
           try {
             // @ts-ignore We don't want to add the dom to the TS env just for this line

@@ -38,6 +38,8 @@ export class Manifest {
   public name: Ident | null = null;
   public version: string | null = null;
 
+  public type: string | null = null;
+
   public ["private"]: boolean = false;
   public license: string | null = null;
 
@@ -138,6 +140,9 @@ export class Manifest {
 
     if (typeof data.version === `string`)
       this.version = data.version;
+
+    if (typeof data.type === `string`)
+      this.type = data.type;
 
     if (typeof data.private === `boolean`)
       this.private = data.private;
@@ -513,10 +518,15 @@ export class Manifest {
     else
       delete data.name;
 
-    if (this.version !== null)
+      if (this.version !== null)
       data.version = this.version;
     else
       delete data.version;
+
+    if (this.type !== null)
+      data.type = this.type;
+    else
+      delete data.type;
 
     if (this.private)
       data.private = true;

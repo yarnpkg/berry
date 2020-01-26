@@ -54,7 +54,15 @@ export async function get(path: string, {configuration, headers, ident, authType
     url = new URL(registry + path);
   }
 
-  return await httpUtils.get(url.href, {configuration, headers, ...rest});
+  try {
+    return await httpUtils.get(url.href, {configuration, headers, ...rest});
+  } catch (error) {
+    if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
+      throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Authorization failed when accessing the resource as ${whoami(registry, headers, {configuration})}`);
+    } else {
+      throw error;
+    }
+  }
 }
 
 export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options) {
@@ -78,7 +86,15 @@ export async function put(path: string, body: httpUtils.Body, {configuration, he
     const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
 
     // Retrying request with OTP
-    return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
+    try {
+      return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
+    } catch (error) {
+      if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
+        throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Authorization failed when accessing the resource as ${whoami(registry, headers, {configuration})}`);
+      } else {
+        throw error;
+      }
+    }
   }
 }
 
@@ -113,6 +129,22 @@ function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
 
     case AuthType.NO_AUTH:
       return false;
+  }
+}
+
+async function whoami(registry: string, headers: {[key: string]: string} | undefined, {configuration}: {configuration: Configuration}) {
+  if (typeof headers === `undefined` || typeof headers.authorization === `undefined`)
+    return `an anonymous user`;
+
+  try {
+    const response = await httpUtils.get(new URL(`${registry}/-/whoami`).href, {
+      configuration,
+      headers,
+    });
+
+    return response.username;
+  } catch {
+    return `an unknown user`;
   }
 }
 

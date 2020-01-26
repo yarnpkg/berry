@@ -5,11 +5,30 @@ import {Hooks as StageHooks}                               from '@yarnpkg/plugin
 import {PnpLinker}                                         from './PnpLinker';
 import unplug                                              from './commands/unplug';
 
-export const getPnpPath = (project: Project) => ppath.join(project.cwd, `.pnp.js` as Filename);
-export const quotePathIfNeeded = (path: string) => /\s/.test(path) ? JSON.stringify(path) : path;
+export const getPnpPath = (project: Project) => {
+  let mainFilename;
+  let otherFilename;
+
+  if (project.topLevelWorkspace.manifest.type === `module`) {
+    mainFilename = `.pnp.cjs`;
+    otherFilename = `.pnp.js`;
+  } else {
+    mainFilename = `.pnp.js`;
+    otherFilename = `.pnp.cjs`;
+  }
+
+  return {
+    main: ppath.join(project.cwd, mainFilename as Filename),
+    other: ppath.join(project.cwd, otherFilename as Filename),
+  };
+};
+
+export const quotePathIfNeeded = (path: string) => {
+  return /\s/.test(path) ? JSON.stringify(path) : path;
+};
 
 async function setupScriptEnvironment(project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
-  const pnpPath: PortablePath = getPnpPath(project);
+  const pnpPath: PortablePath = getPnpPath(project).main;
   const pnpRequire = `--require ${quotePathIfNeeded(npath.fromPortablePath(pnpPath))}`;
 
   if (xfs.existsSync(pnpPath)) {
@@ -23,7 +42,8 @@ async function setupScriptEnvironment(project: Project, env: {[key: string]: str
 }
 
 async function populateYarnPaths(project: Project, definePath: (path: PortablePath | null) => void) {
-  definePath(getPnpPath(project));
+  definePath(getPnpPath(project).main);
+  definePath(getPnpPath(project).other);
 
   definePath(project.configuration.get(`pnpDataPath`));
   definePath(project.configuration.get(`pnpUnpluggedFolder`));
