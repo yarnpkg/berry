@@ -518,7 +518,7 @@ export class Manifest {
     else
       delete data.name;
 
-      if (this.version !== null)
+    if (this.version !== null)
       data.version = this.version;
     else
       delete data.version;

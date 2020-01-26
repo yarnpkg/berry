@@ -7,7 +7,7 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {usePnpify}: {use
   `#!/usr/bin/env node\n`,
   `\n`,
   `const {createRequire, createRequireFromPath} = require(\`module\`);\n`,
-  `const {dirname, resolve} = require(\`path\`);\n`,
+  `const {resolve} = require(\`path\`);\n`,
   `\n`,
   `const relPnpApiPath = ${JSON.stringify(npath.fromPortablePath(relPnpApiPath))};\n`,
   `\n`,
