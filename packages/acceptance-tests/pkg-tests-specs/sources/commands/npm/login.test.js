@@ -88,7 +88,7 @@ describe(`Commands`, () => {
               TEST_NPM_PASSWORD: `incorrect password`,
             },
           })
-        ).rejects.toThrowError(/Invalid Authentication/);
+        ).rejects.toThrowError(/Invalid authentication \(attempted as anotherTestUser\)/);
       })
     );
 
@@ -103,7 +103,7 @@ describe(`Commands`, () => {
               TEST_NPM_2FA_TOKEN: `incorrect OTP`,
             },
           })
-        ).rejects.toThrowError(/Invalid Authentication/);
+        ).rejects.toThrowError(/Invalid authentication \(attempted as testUser\)/);
       })
     );
 

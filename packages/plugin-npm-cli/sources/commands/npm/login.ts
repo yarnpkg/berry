@@ -62,21 +62,13 @@ export default class NpmLoginCommand extends BaseCommand {
       const credentials = await getCredentials(prompt, {registry, report});
       const url = `/-/user/org.couchdb.user:${encodeURIComponent(credentials.name)}`;
 
-      let response;
-      try {
-        response = await npmHttpUtils.put(url, credentials, {
-          configuration,
-          registry,
-          json: true,
-          authType: npmHttpUtils.AuthType.NO_AUTH,
-        }) as any;
-      } catch (error) {
-        if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
-          return report.reportError(MessageName.AUTHENTICATION_INVALID, `Invalid Authentication`);
-        } else {
-          throw error;
-        }
-      }
+      const response = await npmHttpUtils.put(url, credentials, {
+        attemptedAs: credentials.name,
+        configuration,
+        registry,
+        json: true,
+        authType: npmHttpUtils.AuthType.NO_AUTH,
+      }) as any;
 
       await setAuthToken(registry, response.token, {configuration});
       return report.reportInfo(MessageName.UNNAMED, `Successfully logged in`);

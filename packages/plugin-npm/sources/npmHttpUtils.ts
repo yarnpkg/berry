@@ -58,14 +58,14 @@ export async function get(path: string, {configuration, headers, ident, authType
     return await httpUtils.get(url.href, {configuration, headers, ...rest});
   } catch (error) {
     if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
-      throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Authorization failed when accessing the resource as ${whoami(registry, headers, {configuration})}`);
+      throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (as ${await whoami(registry, headers, {configuration})})`);
     } else {
       throw error;
     }
   }
 }
 
-export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options) {
+export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options & {attemptedAs?: string}) {
   if (ident && typeof registry === `undefined`)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
 
@@ -79,8 +79,13 @@ export async function put(path: string, body: httpUtils.Body, {configuration, he
   try {
     return await httpUtils.put(registry + path, body, {configuration, headers, ...rest});
   } catch (error) {
-    if (!isOtpError(error))
-      throw error;
+    if (!isOtpError(error)) {
+      if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
+        throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headers, {configuration})}` : `attempted as ${attemptedAs}`})`);
+      } else {
+        throw error;
+      }
+    }
 
     const otp = await askForOtp();
     const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
@@ -90,7 +95,7 @@ export async function put(path: string, body: httpUtils.Body, {configuration, he
       return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
     } catch (error) {
       if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
-        throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Authorization failed when accessing the resource as ${whoami(registry, headers, {configuration})}`);
+        throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headersWithOtp, {configuration})}` : `attempted as ${attemptedAs}`})`);
       } else {
         throw error;
       }
@@ -133,7 +138,7 @@ function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
 }
 
 async function whoami(registry: string, headers: {[key: string]: string} | undefined, {configuration}: {configuration: Configuration}) {
-  if (typeof headers === `undefined` || typeof headers.authorization === `undefined`)
+  if (typeof headers === `undefined` || typeof headers.authorization === `undefined` )
     return `an anonymous user`;
 
   try {
