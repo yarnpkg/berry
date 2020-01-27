@@ -150,11 +150,21 @@ class PnpInstaller extends AbstractPnpInstaller {
       if (!xfs.existsSync(nodeModulesPath))
         continue;
 
-      const directoryListing = await xfs.readdirPromise(nodeModulesPath);
-      if (directoryListing.every(entry => entry.startsWith(`.`)))
-        continue;
+      const directoryListing = await xfs.readdirPromise(nodeModulesPath, {
+        withFileTypes: true,
+      });
 
-      nodeModules.push(nodeModulesPath);
+      const nonCacheEntries = directoryListing.filter(entry => {
+        return !entry.isDirectory() || !entry.name.startsWith(`.`);
+      });
+
+      if (nonCacheEntries.length === directoryListing.length) {
+        nodeModules.push(nodeModulesPath);
+      } else {
+        for (const entry of nonCacheEntries) {
+          nodeModules.push(ppath.join(nodeModulesPath, entry.name));
+        }
+      }
     }
 
     return nodeModules;

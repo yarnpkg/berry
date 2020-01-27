@@ -1313,6 +1313,46 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should remove the lingering node_modules folders`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/node_modules/foo`);
+
+      await run(`install`);
+
+      await expect(xfs.readdirPromise(path)).resolves.not.toContain(`node_modules`);
+    }),
+  );
+
+  test(
+    `it shouldn't remove the lingering node_modules folders when they contain dot-folders`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/node_modules/.cache`);
+
+      await run(`install`);
+
+      await expect(xfs.readdirPromise(path)).resolves.toContain(`node_modules`);
+      await expect(xfs.readdirPromise(ppath.join(path, `node_modules`))).resolves.toEqual([
+        `.cache`,
+      ]);
+    }),
+  );
+
+  test(
+    `it should remove lingering folders from the node_modules even when they contain dot-folders`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/node_modules/.cache`);
+      await xfs.mkdirpPromise(`${path}/node_modules/foo`);
+
+      await run(`install`);
+
+      await expect(xfs.readdirPromise(path)).resolves.toContain(`node_modules`);
+      await expect(xfs.readdirPromise(ppath.join(path, `node_modules`))).resolves.toEqual([
+        `.cache`,
+      ]);
+    }),
+  );
+
+  test(
     `it should transparently support the "resolve" package`,
     makeTemporaryEnv(
       {
