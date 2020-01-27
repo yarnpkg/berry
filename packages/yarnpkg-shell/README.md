@@ -1,6 +1,6 @@
 # `@yarnpkg/shell`
 
-A Javascript implementation of a bash-like shell (we use it in Yarn 2 to provide cross-platform scripting). This package exposes an API that abstracts both the parser and the interpreter; should you only need the parser you can check out `@yarnpkg/parsers`, but you probably won't need it.
+A JavaScript implementation of a bash-like shell (we use it in Yarn 2 to provide cross-platform scripting). This package exposes an API that abstracts both the parser and the interpreter; should you only need the parser you can check out `@yarnpkg/parsers`, but you probably won't need it.
 
 ## Usage
 
