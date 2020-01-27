@@ -4,14 +4,14 @@ import {JsonContainer, JsonMain, JsonScalar}   from '../../components/json';
 import {JsonArrayProperty, JsonObjectProperty} from '../../components/json';
 import {JsonScalarProperty}                    from '../../components/json';
 import {ConfigurationLayout}                   from '../../components/layout-configuration';
-import {SEO}                                   from '../../components/seo';
+import {SEO, defaultKeywords}                  from '../../components/seo';
 
 const PackageJsonDoc = () => <>
   <ConfigurationLayout>
     <SEO
       title={`Manifest fields`}
       description={`List of all the supported fields for a Yarn project manifest (package.json files)`}
-      keywords={[`package manager`, `yarn`, `yarnpkg`, `configuration`, `package.json`]}
+      keywords={defaultKeywords}
     />
     <JsonContainer>
       <JsonMain>

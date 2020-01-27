@@ -1,7 +1,7 @@
 import React                                                    from 'react';
 
 import {ConfigurationLayout}                                    from '../../components/layout-configuration';
-import {SEO}                                                    from '../../components/seo';
+import {SEO, defaultKeywords}                                   from '../../components/seo';
 import {SymlObjectProperty, SymlScalarProperty}                 from '../../components/syml';
 import {SymlContainer, SymlMain, SymlArrayProperty, SymlScalar} from '../../components/syml';
 
@@ -10,7 +10,7 @@ const YarnrcDoc = () => <>
     <SEO
       title={`Configuration options`}
       description={`List of all the configuration option for Yarn (yarnrc files)`}
-      keywords={[`package manager`, `yarn`, `yarnpkg`, `configuration`, `yarnrc`]}
+      keywords={defaultKeywords}
     />
     <SymlContainer>
       <SymlMain>

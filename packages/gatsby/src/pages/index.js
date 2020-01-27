@@ -7,7 +7,7 @@ import {Layout}                                from '../components/layout';
 import {ifDesktop, ifMobile}                   from '../components/responsive';
 import {SearchProvider}                        from '../components/search';
 import {SearchBar, SearchResults, withUrlSync} from '../components/search';
-import {SEO}                                   from '../components/seo';
+import {SEO, defaultKeywords}                  from '../components/seo';
 import agendaIcon                              from '../images/homeicons/agenda.svg';
 import laptopIcon                              from '../images/homeicons/laptop.svg';
 import noteIcon                                from '../images/homeicons/note.svg';
@@ -146,7 +146,7 @@ const IndexPage = ({data, searchState, onSearchStateChange}) => {
           </Header>
         }
       >
-        <SEO title="Home" keywords={[`gatsby`, `application`, `react`]} />
+        <SEO title="Home" keywords={defaultKeywords} />
 
         <SearchResults
           onTagClick={tag => setTags([...tags, tag])}
