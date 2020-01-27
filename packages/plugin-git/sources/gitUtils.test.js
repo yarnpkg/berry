@@ -30,7 +30,7 @@ describe(`gitUtils`, () => {
     });
   }
 
-  for (const pattern of VALID_PATTERN) {
+  for (const pattern of VALID_PATTERNS) {
     it(`should properly normalize ${pattern}`, () => {
       expect(gitUtils.normalizeRepoUrl(pattern)).toMatchSnapshot();
     });
