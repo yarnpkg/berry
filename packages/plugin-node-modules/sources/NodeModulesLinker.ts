@@ -416,12 +416,12 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
   const addQueue: Promise<void>[] = [];
   const addModule = async ({srcDir, dstDir, linkType, keepNodeModules}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, keepNodeModules: boolean}) => {
     addQueue.push(limit(async () => {
-      // Soft links to themselves are used to denote workspace packages, we
-      // should just ignore them
-      if (linkType === LinkType.SOFT && srcDir === dstDir)
-        return;
-
       try {
+        // Soft links to themselves are used to denote workspace packages, we
+        // should just ignore them
+        if (linkType === LinkType.SOFT && srcDir === dstDir)
+          return;
+
         await removeDir(dstDir, {excludeNodeModules: keepNodeModules});
         if (linkType === LinkType.SOFT) {
           await xfs.mkdirpPromise(ppath.dirname(dstDir));
