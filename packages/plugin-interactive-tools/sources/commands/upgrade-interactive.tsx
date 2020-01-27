@@ -77,7 +77,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       let res = ``;
 
       for (let t = 1; t < SEMVER_COLORS.length; ++t) {
-        if (matchedFrom[t] !== matchedTo[t]) {
+        if (color !== null || matchedFrom[t] !== matchedTo[t]) {
           if (color === null)
             color = SEMVER_COLORS[t - 1];
 
@@ -91,7 +91,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     };
 
     const fetchUpdatedDescriptor = async (descriptor: Descriptor, copyStyle: string, range: string) => {
-      const candidate = await suggestUtils.fetchDescriptorFrom(descriptor, descriptor.range, {project, cache});
+      const candidate = await suggestUtils.fetchDescriptorFrom(descriptor, range, {project, cache, preserveModifier: copyStyle});
 
       if (candidate !== null) {
         return candidate.range;
