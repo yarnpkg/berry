@@ -107,6 +107,7 @@ export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE>
 
 export type MapSettingsDefinition = BaseSettingsDefinition<SettingsType.MAP> & {
   valueDefinition: SettingsDefinitionNoDefault,
+  normalizeKeys?: (key: string) => string,
 };
 
 export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.SHAPE | SettingsType.MAP>> & {
@@ -421,13 +422,14 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
     return result;
 
   for (const [propKey, propValue] of Object.entries(value)) {
-    const subPath = `${path}['${propKey}']`;
+    const normalizedKey = definition.normalizeKeys? definition.normalizeKeys(propKey) : propKey;
+    const subPath = `${path}['${normalizedKey}']`;
 
     // @ts-ignore: SettingsDefinitionNoDefault has ... no default ... but
     // that's fine because we're guaranteed it's not undefined.
     const valueDefinition: SettingsDefinition = definition.valueDefinition;
 
-    result.set(propKey, parseValue(configuration, subPath, propValue, valueDefinition, folder));
+    result.set(normalizedKey, parseValue(configuration, subPath, propValue, valueDefinition, folder));
   }
 
   return result;

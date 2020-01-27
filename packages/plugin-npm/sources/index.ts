@@ -63,6 +63,7 @@ const plugin: Plugin = {
     npmRegistries: {
       description: `Settings per registry`,
       type: SettingsType.MAP,
+      normalizeKeys: key => key.replace(/\/$/, ``),
       valueDefinition: {
         description: ``,
         type: SettingsType.SHAPE,
