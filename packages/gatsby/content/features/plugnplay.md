@@ -28,7 +28,7 @@ In this install mode (now the default starting from Yarn v2), Yarn generates a s
 
 This approach has various benefits:
 
-- Since we only need to generate a single text file instead of tens of thousands, installs are now pretty much instantaneous - the main bottleneck becomes the number of dependencies in your project rather than your disk performances.
+- Since we only need to generate a single text file instead of tens of thousands, installs are now pretty much instantaneous - the main bottleneck becomes the number of dependencies in your project rather than your disk performance.
 
 - Installs are more stable and reliable due to reduced I/O operations, which are prone to fail (especially on Windows, where writing and removing files in batch may trigger various unintended interactions with Windows Defender and similar tools).
 
@@ -40,7 +40,7 @@ This approach has various benefits:
 
 ## Caveats and work-in-progress
 
-During the years that led to Plug'n'Play being designed and adopted as main install strategy, various projects came up with their own implementation of the Node Resolution Algorithm - usually to circumvent shortcomings of the `require.resolve` API. Such projects can be Webpack (`enhanced-resolve`), Babel (`resolve`), Jest (`jest-resolve`), Metro (`metro-resolver`), ...
+During the years that led to Plug'n'Play being designed and adopted as the main install strategy, various projects came up with their own implementation of the Node Resolution Algorithm - usually to circumvent shortcomings of the `require.resolve` API. Such projects can be Webpack (`enhanced-resolve`), Babel (`resolve`), Jest (`jest-resolve`), Metro (`metro-resolver`), ...
 
 The following compatibility table gives you an idea of the integration status with various tools from the community. Note that only CLI tools are listed there, as frontend libraries (such as `react`, `vue`, `lodash`, ...) don't reimplement the Node resolution and as such don't need any special logic to take advantage of Plug'n'Play:
 
