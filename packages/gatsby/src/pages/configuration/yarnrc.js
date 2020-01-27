@@ -10,7 +10,7 @@ const YarnrcDoc = () => <>
     <SEO
       title={`Configuration options`}
       description={`List of all the configuration option for Yarn (yarnrc files)`}
-      keywords={[defaultKeywords]}
+      keywords={defaultKeywords}
     />
     <SymlContainer>
       <SymlMain>
