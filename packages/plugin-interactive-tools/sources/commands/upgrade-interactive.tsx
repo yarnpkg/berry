@@ -10,7 +10,7 @@ import {diffWords}                                                              
 import {Box, Color}                                                                                                        from 'ink';
 import React, {useEffect, useState}                                                                                        from 'react';
 
-const SIMPLE_SEMVER = /^([\^~]?)([0-9+])(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
+const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9+])(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpgradeInteractiveCommand extends BaseCommand {
@@ -178,7 +178,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       </>;
     };
 
-    const updateRequests = await renderForm<Map<DescriptorHash, string>>(GlobalListApp, {});
+    const updateRequests = await renderForm<Map<DescriptorHash, string | null>>(GlobalListApp, {});
     if (typeof updateRequests === `undefined`)
       return 1;
 
@@ -191,7 +191,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         for (const descriptor of dependencies.values()) {
           const newRange = updateRequests.get(descriptor.descriptorHash);
 
-          if (typeof newRange !== `undefined`) {
+          if (typeof newRange !== `undefined` && newRange !== null) {
             dependencies.set(descriptor.identHash, structUtils.makeDescriptor(descriptor, newRange));
             hasChanged = true;
           }
