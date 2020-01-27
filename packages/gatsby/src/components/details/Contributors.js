@@ -3,7 +3,7 @@ import React   from 'react';
 
 import {Owner} from '../hit';
 
-const List = styled`
+const List = styled.ul`
   list-style-type: none;
   padding-inline-start: 0;
   padding-left: 0;
