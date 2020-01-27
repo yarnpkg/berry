@@ -17,4 +17,10 @@ export const packageExtensions: Array<[string, any]> = [
       [`zenObservable`]: `*`,
     },
   }],
+  // https://github.com/keymetrics/pm2-io-agent/pull/125
+  [`@pm2/agent@*`, {
+    dependencies: {
+      [`debug`]: `*`,
+    },
+  }],
 ];
