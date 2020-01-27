@@ -149,9 +149,9 @@ describe(`Auth tests`, () => {
         await writeFile(`${path}/.yarnrc.yml`, [
           `npmScopes:`,
           `  private:`,
-          `    npmRegistryServer: "${url}/"`, // Testing the trailing `/`
+          `    npmRegistryServer: "${url}"`,
           `npmRegistries:`,
-          `  "${url}":`,
+          `  "${url}/":`,  // Testing the trailing `/`
           `    npmAuthToken: ${AUTH_TOKEN}`,
         ].join(`\n`));
 
