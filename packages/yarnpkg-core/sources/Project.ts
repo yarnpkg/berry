@@ -115,7 +115,7 @@ export class Project {
     if (locator)
       return {project, locator, workspace: null};
 
-    throw new Error(`Assertion failed: The package should have been detected as part of the project`);
+    throw new UsageError(`The nearest package directory (${packageCwd}) doesn't seem to be part of the project declared at ${project.cwd}. If the project directory is right, it might be that you forgot to list a workspace. If it isn't, it's likely because you have a yarn.lock file at the detected location, confusing the project detection.`);
   }
 
   static generateBuildStateFile(buildState: Map<LocatorHash, string>, locatorStore: Map<LocatorHash, Locator>) {
@@ -1561,6 +1561,7 @@ function applyVirtualResolutionMutations({
 
   tolerateMissingPackages?: boolean,
 }) {
+  const virtualStack = new Map<LocatorHash, number>();
   const resolutionStack: Array<Locator> = [];
 
   // We'll be keeping track of all virtual descriptors; once they have all
@@ -1617,6 +1618,9 @@ function applyVirtualResolutionMutations({
   };
 
   const resolvePeerDependencies = (parentLocator: Locator, first: boolean, optional: boolean) => {
+    if (resolutionStack.length > 1000)
+      reportStackOverflow();
+
     resolutionStack.push(parentLocator);
     const result = resolvePeerDependenciesImpl(parentLocator, first, optional);
     resolutionStack.pop();
@@ -1702,6 +1706,14 @@ function applyVirtualResolutionMutations({
         continue;
       }
 
+      // The stack overflow is checked against two level because a workspace
+      // may have a dev dependency on another workspace that lists the first
+      // one as a regular dependency. In this case the loop will break so we
+      // don't need to throw an exception.
+      const stackDepth = virtualStack.get(pkg.locatorHash);
+      if (typeof stackDepth === `number` && stackDepth >= 2)
+        reportStackOverflow();
+
       let virtualizedDescriptor: Descriptor;
       let virtualizedPackage: Package;
 
@@ -1785,7 +1797,12 @@ function applyVirtualResolutionMutations({
       });
 
       thirdPass.push(() => {
+        const current = virtualStack.get(pkg.locatorHash);
+        const next = typeof current !== `undefined` ? current + 1 : 1;
+
+        virtualStack.set(pkg.locatorHash, next);
         resolvePeerDependencies(virtualizedPackage, false, isOptional);
+        virtualStack.set(pkg.locatorHash, next - 1);
       });
 
       fourthPass.push(() => {
@@ -1807,17 +1824,9 @@ function applyVirtualResolutionMutations({
     }
   };
 
-  try {
-    for (const workspace of project.workspaces) {
-      volatileDescriptors.delete(workspace.anchoredDescriptor.descriptorHash);
-      resolvePeerDependencies(workspace.anchoredLocator, true, false);
-    }
-  } catch (error) {
-    if (error.name === `RangeError` && error.message === `Maximum call stack size exceeded`) {
-      reportStackOverflow();
-    } else {
-      throw error;
-    }
+  for (const workspace of project.workspaces) {
+    volatileDescriptors.delete(workspace.anchoredDescriptor.descriptorHash);
+    resolvePeerDependencies(workspace.anchoredLocator, true, false);
   }
 
   // A package may have a peer dependency while being included as a standard dependency

@@ -88,7 +88,7 @@ describe(`Commands`, () => {
       `it should throw an error when config has an invalid npmAuthToken`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await writeFile(`${path}/.yarnrc.yml`, `npmAuthToken: "${INVALID_AUTH_TOKEN}"\n`);
-        await expect(run(`npm`, `whoami`)).rejects.toThrowError(/Authentication failed/);
+        await expect(run(`npm`, `whoami`)).rejects.toThrowError(/Invalid authentication \(as an unknown user\)/);
       })
     );
 
@@ -96,7 +96,7 @@ describe(`Commands`, () => {
       `it should throw an error when config has an invalid npmAuthIdent`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await writeFile(`${path}/.yarnrc.yml`, `npmAuthIdent: "${INVALID_AUTH_IDENT}"\n`);
-        await expect(run(`npm`, `whoami`)).rejects.toThrowError(/Authentication failed/);
+        await expect(run(`npm`, `whoami`)).rejects.toThrowError(/Invalid authentication \(as an unknown user\)/);
       })
     );
 
@@ -114,8 +114,8 @@ describe(`Commands`, () => {
           `    npmAuthToken: ${INVALID_AUTH_TOKEN}`,
         ].join(``));
 
-        await expect(run(`npm`, `whoami`, `--scope`, `testScope`)).rejects.toThrowError(/Authentication failed/);
-        await expect(run(`npm`, `whoami`)).rejects.toThrowError(/Authentication failed/);
+        await expect(run(`npm`, `whoami`, `--scope`, `testScope`)).rejects.toThrowError(/Invalid authentication \(as an unknown user\)/);
+        await expect(run(`npm`, `whoami`)).rejects.toThrowError(/Invalid authentication \(as an unknown user\)/);
       })
     );
   });

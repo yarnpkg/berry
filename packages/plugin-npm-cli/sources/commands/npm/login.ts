@@ -1,9 +1,9 @@
-import {BaseCommand, openWorkspace}   from '@yarnpkg/cli';
-import {Configuration, MessageName}   from '@yarnpkg/core';
-import {StreamReport}                 from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils} from '@yarnpkg/plugin-npm';
-import {Command, Usage}               from 'clipanion';
-import inquirer                       from 'inquirer';
+import {BaseCommand, openWorkspace}         from '@yarnpkg/cli';
+import {Configuration, MessageName, Report} from '@yarnpkg/core';
+import {StreamReport}                       from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils}       from '@yarnpkg/plugin-npm';
+import {Command, Usage}                     from 'clipanion';
+import inquirer                             from 'inquirer';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmLoginCommand extends BaseCommand {
@@ -59,24 +59,19 @@ export default class NpmLoginCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async report => {
-      const credentials = await getCredentials(prompt);
+      const credentials = await getCredentials(prompt, {registry, report});
       const url = `/-/user/org.couchdb.user:${encodeURIComponent(credentials.name)}`;
 
-      try {
-        const response = await npmHttpUtils.put(url, credentials, {
-          configuration,
-          registry,
-          json: true,
-          authType: npmHttpUtils.AuthType.NO_AUTH,
-        });
+      const response = await npmHttpUtils.put(url, credentials, {
+        attemptedAs: credentials.name,
+        configuration,
+        registry,
+        json: true,
+        authType: npmHttpUtils.AuthType.NO_AUTH,
+      }) as any;
 
-        // @ts-ignore
-        await setAuthToken(registry, response.token, {configuration});
-
-        return report.reportInfo(MessageName.UNNAMED, `Successfully logged in`);
-      } catch (error) {
-        return report.reportError(MessageName.AUTHENTICATION_INVALID, `Invalid Authentication`);
-      }
+      await setAuthToken(registry, response.token, {configuration});
+      return report.reportInfo(MessageName.UNNAMED, `Successfully logged in`);
     });
 
     return report.exitCode();
@@ -95,13 +90,24 @@ async function setAuthToken(registry: string, npmAuthToken: string, {configurati
   });
 }
 
-async function getCredentials(prompt: any) {
+async function getCredentials(prompt: any, {registry, report}: {registry: string, report: Report}) {
   if (process.env.TEST_ENV) {
     return {
       name: process.env.TEST_NPM_USER || '',
       password: process.env.TEST_NPM_PASSWORD || '',
     };
   }
+
+  report.reportInfo(MessageName.UNNAMED, `Logging in to ${registry}`);
+
+  let isToken = false;
+
+  if (registry.match(/^https:\/\/npm\.pkg\.github\.com(\/|$)/)) {
+    report.reportInfo(MessageName.UNNAMED, `You seem to be using the GitHub Package Registry. Tokens must be generated with the 'repo', 'write:packages', and 'read:packages' permissions.`);
+    isToken = true;
+  }
+
+  report.reportSeparator();
 
   const {username, password} = await prompt([{
     type: `input`,
@@ -111,9 +117,11 @@ async function getCredentials(prompt: any) {
   }, {
     type: `password`,
     name: `password`,
-    message: `Password:`,
+    message: isToken ? `Token:` : `Password:`,
     validate: (input: string) => validateRequiredInput(input, `Password`),
   }]);
+
+  report.reportSeparator();
 
   return {
     name: username,

@@ -4840,7 +4840,7 @@ __metadata:
     camelcase: ^5.3.1
     chalk: ^3.0.0
     clipanion: ^2.1.5
-    cross-spawn: ^6.0.5
+    cross-spawn: 6.0.5
     diff: ^4.0.1
     globby: ^10.0.1
     got: ^10.2.0
@@ -5441,7 +5441,7 @@ __metadata:
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.16"
     comment-json: ^2.2.0
-    cross-spawn: ^6.0.5
+    cross-spawn: 6.0.5
     eslint: ^5.16.0
     typescript: ^3.7.4
   peerDependencies:
@@ -5465,7 +5465,7 @@ __metadata:
     "@types/tmp": ^0.0.33
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.9"
-    cross-spawn: ^6.0.5
+    cross-spawn: 6.0.5
     stream-buffers: ^3.0.2
     tmp: ^0.1.0
   languageName: unknown
@@ -8914,7 +8914,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:^6.0.0, cross-spawn@npm:^6.0.5":
+"cross-spawn@npm:6.0.5, cross-spawn@npm:^6.0.0, cross-spawn@npm:^6.0.5":
   version: 6.0.5
   resolution: "cross-spawn@npm:6.0.5"
   dependencies:

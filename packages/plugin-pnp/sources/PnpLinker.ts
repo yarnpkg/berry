@@ -24,7 +24,7 @@ export class PnpLinker implements Linker {
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
-    const pnpPath = getPnpPath(opts.project);
+    const pnpPath = getPnpPath(opts.project).main;
     if (!xfs.existsSync(pnpPath))
       throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
 
@@ -40,7 +40,7 @@ export class PnpLinker implements Linker {
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
-    const pnpPath = getPnpPath(opts.project);
+    const pnpPath = getPnpPath(opts.project).main;
     if (!xfs.existsSync(pnpPath))
       return null;
 
@@ -91,8 +91,17 @@ class PnpInstaller extends AbstractPnpInstaller {
   }
 
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
-    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`)
+    const pnpPath = getPnpPath(this.opts.project);
+    const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
+
+    await xfs.removePromise(pnpPath.other);
+
+    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
+      await xfs.removePromise(pnpPath.main);
+      await xfs.removePromise(pnpDataPath);
+
       return;
+    }
 
     const nodeModules = await this.locateNodeModules();
     if (nodeModules.length > 0) {
@@ -102,22 +111,19 @@ class PnpInstaller extends AbstractPnpInstaller {
       }
     }
 
-    const pnpPath = getPnpPath(this.opts.project);
-    const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
-
     if (this.opts.project.configuration.get(`pnpEnableInlining`)) {
       const loaderFile = generateInlinedScript(pnpSettings);
 
-      await xfs.changeFilePromise(pnpPath, loaderFile, {automaticNewlines: true});
-      await xfs.chmodPromise(pnpPath, 0o755);
+      await xfs.changeFilePromise(pnpPath.main, loaderFile, {automaticNewlines: true});
+      await xfs.chmodPromise(pnpPath.main, 0o755);
 
       await xfs.removePromise(pnpDataPath);
     } else {
-      const dataLocation = ppath.relative(ppath.dirname(pnpPath), pnpDataPath);
+      const dataLocation = ppath.relative(ppath.dirname(pnpPath.main), pnpDataPath);
       const {dataFile, loaderFile} = generateSplitScript({...pnpSettings, dataLocation});
 
-      await xfs.changeFilePromise(pnpPath, loaderFile, {automaticNewlines: true});
-      await xfs.chmodPromise(pnpPath, 0o755);
+      await xfs.changeFilePromise(pnpPath.main, loaderFile, {automaticNewlines: true});
+      await xfs.chmodPromise(pnpPath.main, 0o755);
 
       await xfs.changeFilePromise(pnpDataPath, dataFile, {automaticNewlines: true});
       await xfs.chmodPromise(pnpDataPath, 0o644);

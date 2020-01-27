@@ -1,4 +1,4 @@
-import {xfs, ppath} from '@yarnpkg/fslib';
+import {xfs} from '@yarnpkg/fslib';
 
 const {
   fs: {createTemporaryFolder, writeJson},

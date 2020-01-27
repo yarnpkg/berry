@@ -17,7 +17,6 @@ else if (typeof name !== `undefined` && name[0] !== `-`)
 else
   help(true);
 
-
 function help(error: boolean) {
   const logFn = error ? console.error : console.log;
   process.exitCode = error ? 1 : 0;

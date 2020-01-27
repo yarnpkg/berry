@@ -4,8 +4,10 @@ import CJSON                                       from 'comment-json';
 import {dynamicRequire}                            from './dynamicRequire';
 
 const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {usePnpify}: {usePnpify: boolean}) => [
+  `#!/usr/bin/env node\n`,
+  `\n`,
   `const {createRequire, createRequireFromPath} = require(\`module\`);\n`,
-  `const {dirname, resolve} = require(\`path\`);\n`,
+  `const {resolve} = require(\`path\`);\n`,
   `\n`,
   `const relPnpApiPath = ${JSON.stringify(npath.fromPortablePath(relPnpApiPath))};\n`,
   `\n`,
@@ -42,51 +44,116 @@ const addVSCodeWorkspaceSettings = async (projectRoot: PortablePath, settings: a
   });
 };
 
+class Wrapper {
+  private name: PortablePath;
+
+  private projectRoot: PortablePath;
+  private target: PortablePath;
+
+  private paths: Map<PortablePath, PortablePath> = new Map();
+
+  constructor(name: PortablePath, {projectRoot, target}: {projectRoot: PortablePath, target: PortablePath}) {
+    this.name = name;
+
+    this.projectRoot = projectRoot;
+    this.target = target;
+  }
+
+  async writeManifest() {
+    const absWrapperPath = ppath.join(this.target, this.name, `package.json` as Filename);
+    const manifest = dynamicRequire(`${this.name}/package.json`);
+
+    await xfs.mkdirpPromise(ppath.dirname(absWrapperPath));
+    await xfs.writeFilePromise(absWrapperPath, JSON.stringify({
+      name: this.name,
+      version: `${manifest.version}-pnpify`,
+      main: manifest.main,
+    }, null, 2));
+  }
+
+  async writeBinary(relPackagePath: PortablePath) {
+    const absPackagePath = await this.writeFile(relPackagePath);
+
+    await xfs.chmodPromise(absPackagePath, 0o755);
+  }
+
+  async writeFile(relPackagePath: PortablePath) {
+    const absWrapperPath = ppath.join(this.target, this.name, relPackagePath);
+    const relPnpApiPath = ppath.relative(ppath.dirname(absWrapperPath), ppath.join(this.projectRoot, `.pnp.js` as Filename));
+    const relProjectPath = ppath.relative(this.projectRoot, absWrapperPath);
+
+    await xfs.mkdirpPromise(ppath.dirname(absWrapperPath));
+    await xfs.writeFilePromise(absWrapperPath, TEMPLATE(relPnpApiPath, ppath.join(this.name, relPackagePath), {usePnpify: false}));
+
+    this.paths.set(relPackagePath, relProjectPath);
+
+    return absWrapperPath;
+  }
+
+  getProjectPathTo(relPackagePath: PortablePath) {
+    const relProjectPath = this.paths.get(relPackagePath);
+
+    if (typeof relProjectPath === `undefined`)
+      throw new Error(`Assertion failed: Expected path to have been registered`);
+
+    return relProjectPath;
+  }
+}
+
 const generateTypescriptWrapper = async (projectRoot: PortablePath, target: PortablePath) => {
-  const typescript = ppath.join(target, `typescript` as PortablePath);
-  const manifest = ppath.join(typescript, `package.json` as PortablePath);
-  const tsserver = ppath.join(typescript, `lib/tsserver.js` as PortablePath);
+  const wrapper = new Wrapper(`typescript` as PortablePath, {projectRoot, target});
 
-  const relPnpApiPath = ppath.relative(ppath.dirname(tsserver), ppath.join(projectRoot, `.pnp.js` as Filename));
+  await wrapper.writeManifest();
 
-  await xfs.mkdirpPromise(ppath.dirname(tsserver));
-  await xfs.writeFilePromise(manifest, JSON.stringify({name: `typescript`, version: `${dynamicRequire(`typescript/package.json`).version}-pnpify`}, null, 2));
-  await xfs.writeFilePromise(tsserver, TEMPLATE(relPnpApiPath, `typescript/lib/tsserver`, {usePnpify: false}));
+  await wrapper.writeBinary(`bin/tsc` as PortablePath);
+  await wrapper.writeBinary(`bin/tsserver` as PortablePath);
+
+  await wrapper.writeFile(`lib/tsc.js` as PortablePath);
+  await wrapper.writeFile(`lib/tsserver.js` as PortablePath);
 
   await addVSCodeWorkspaceSettings(projectRoot, {
-    [`typescript.tsdk`]: npath.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(tsserver))),
+    [`typescript.tsdk`]: npath.fromPortablePath(
+      ppath.dirname(
+        wrapper.getProjectPathTo(
+          `lib/tsserver.js` as PortablePath,
+        ),
+      ),
+    ),
   });
 };
 
 export const generateEslintWrapper = async (projectRoot: PortablePath, target: PortablePath) => {
-  const eslint = ppath.join(target, `eslint` as PortablePath);
-  const manifest = ppath.join(eslint, `package.json` as PortablePath);
-  const api = ppath.join(eslint, `lib/api.js` as PortablePath);
+  const wrapper = new Wrapper(`eslint` as PortablePath, {projectRoot, target});
 
-  const relPnpApiPath = ppath.relative(ppath.dirname(api), ppath.join(projectRoot, `.pnp.js` as Filename));
+  await wrapper.writeManifest();
 
-  await xfs.mkdirpPromise(ppath.dirname(api));
-  await xfs.writeFilePromise(manifest, JSON.stringify({name: `eslint`, version: `${dynamicRequire(`eslint/package.json`).version}-pnpify`, main: `lib/api.js`}, null, 2));
-  await xfs.writeFilePromise(api, TEMPLATE(relPnpApiPath, `eslint`, {usePnpify: false}));
+  await wrapper.writeBinary(`bin/eslint.js` as PortablePath);
+  await wrapper.writeFile(`lib/api.js` as PortablePath);
 
   await addVSCodeWorkspaceSettings(projectRoot, {
-    [`eslint.nodePath`]: npath.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(eslint))),
+    [`eslint.nodePath`]: npath.fromPortablePath(
+      ppath.dirname(ppath.dirname(ppath.dirname(
+        wrapper.getProjectPathTo(
+          `lib/api.js` as PortablePath,
+        ),
+      ))),
+    ),
   });
 };
 
 export const generatePrettierWrapper = async (projectRoot: PortablePath, target: PortablePath) => {
-  const prettier = ppath.join(target, `prettier` as PortablePath);
-  const manifest = ppath.join(prettier, `package.json` as PortablePath);
-  const api = ppath.join(prettier, `index.js` as PortablePath);
+  const wrapper = new Wrapper(`prettier` as PortablePath, {projectRoot, target});
 
-  const relPnpApiPath = ppath.relative(ppath.dirname(api), ppath.join(projectRoot, `.pnp.js` as Filename));
+  await wrapper.writeManifest();
 
-  await xfs.mkdirpPromise(ppath.dirname(api));
-  await xfs.writeFilePromise(manifest, JSON.stringify({name: `prettier`, version: `${dynamicRequire(`prettier/package.json`).version}-pnpify`, main: `index.js`}, null, 2));
-  await xfs.writeFilePromise(api, TEMPLATE(relPnpApiPath, `prettier`, {usePnpify: false}));
+  await wrapper.writeBinary(`index.js` as PortablePath);
 
   await addVSCodeWorkspaceSettings(projectRoot, {
-    [`prettier.prettierPath`]: npath.fromPortablePath(ppath.relative(projectRoot, prettier)),
+    [`prettier.prettierPath`]: npath.fromPortablePath(
+      wrapper.getProjectPathTo(
+        `index.js` as PortablePath,
+      ),
+    ),
   });
 };
 

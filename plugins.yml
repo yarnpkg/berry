@@ -1,5 +1,10 @@
 # This file contains the list of officially endorsed plugins.
 
+"@yarnpkg/plugin-constraints":
+  url: "https://github.com/yarnpkg/berry/raw/master/packages/plugin-constraints/bin/%40yarnpkg/plugin-constraints.js"
+  experimental: true
+  description: "Adds a new command to Yarn (`yarn constraints`) to enforce lint rules across workspaces."
+
 "@yarnpkg/plugin-hello-world":
   url: "https://github.com/yarnpkg/berry/raw/master/scripts/plugin-hello-world.js"
   experimental: true
@@ -25,7 +30,12 @@
   experimental: true
   description: "Adds various utilities for a seamless TypeScript experience. Consult the plugin page for more details."
 
+"@yarnpkg/plugin-version":
+  url: "https://github.com/yarnpkg/berry/raw/master/packages/plugin-version/bin/%40yarnpkg/plugin-version.js"
+  experimental: true
+  description: "Adds a new workflow to Yarn (`yarn version`) to efficiently manage releases in a monorepository."
+
 "@yarnpkg/plugin-workspace-tools":
   url: "https://github.com/yarnpkg/berry/raw/master/packages/plugin-workspace-tools/bin/%40yarnpkg/plugin-workspace-tools.js"
   experimental: true
-  description: "Adds various commands that make working with workspaces a more pleasing experience. Consult the plugin page for more details."
+  description: "Adds various commands that make working with workspaces a more pleasing experience."
