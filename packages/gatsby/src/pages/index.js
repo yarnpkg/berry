@@ -146,7 +146,7 @@ const IndexPage = ({data, searchState, onSearchStateChange}) => {
           </Header>
         }
       >
-        <SEO title="Home" keywords={[defaultKeywords]} />
+        <SEO title="Home" keywords={defaultKeywords} />
 
         <SearchResults
           onTagClick={tag => setTags([...tags, tag])}
