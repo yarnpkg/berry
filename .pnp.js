@@ -10792,7 +10792,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:76774085d0b766c296cabbb346c418bb95686cbd6926b4156770624f66da564ebe96a3c76b13c8fb8a0f99627e36ba9c03b44c22afcd6c455521ba0079ed2d11#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -10811,7 +10812,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:1fc8c38f0d90ffeaf1fb2d09edba974c2cee73dd82a13c8b1eec144bb973f0bccd4301b1e2c558948606e194558c5ffc8338fb03ff28cb3573e57e4c39b54aa6#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -10830,7 +10832,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:0d27f767dd513a4d7cb95e5b40f157428e111f9b54ba3a1ee5b557a9ea084b142b9ce9f75f8598af222206a9704fa19c7dff92efbe7f62512b37ee6c432170a9#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -10849,7 +10852,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:710c124f252fea91d1ae93fd423dcee60745326534d20f538c5de1a52e99382311185229afbf32f0b8fe54a751534fd6d248cf7c21b2cdfa7648efea6ee277c0#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -10868,7 +10872,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:1c63a696a4031b4fe50d0d3d8eb156d158236bd8f256962582186eddbcc54ca632ae3f06136884adc9c143428b6572af21304b9da969522d465fc505c9ba28b0#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -10887,7 +10892,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:345fd0a2c473faefcdff4a393623dea0cb6a7f90cadf0b23cfb344768b764191ba69abab656c31d90e99f901344e99ea666e08fbd936a49d1ad2b345f77c6603#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -10906,7 +10912,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:4f32fc3cb183a052bc8fe3c8f8e313e9051a18d2b71f7c9b4e257dc264cc21bd45bdbf17f21b36fdeabe4a7115c8b501505a63a733a0714824fc48c6d251a913#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -10925,7 +10932,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:210384ac81e0e57e383211c49fa8e4493b3dd84507b3443af2f8d092fc022e5059209ad6104223c2b805e196d2277202480d42b482b4397adfa03ed4fcc015d6#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -10944,7 +10952,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:1a62304f6d8dc7f55f32389812572c13268ae5be55a6436af504b8f2ee6e1268d38dbafba5e9f58ed99219862b1773104f1b31aea9b004979fd1be16c13d2a40#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -10963,7 +10972,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:b9731b7d0a9f72cae95021d903b386b6df297cf776f03dcd57e6383935623fb60009eebb02775550f6d16e9a0afd692937bbf1972c2c7540553ab1c831ed7694#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -10982,7 +10992,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:d14908fb916cf87b6a14cdb7d84eaaea33366ecafb5353a181bcdd848a2f12081d1f493de8fd389bbdb9a07664a4c4e0b7b37d252ed3ff15d014f448f1f4b7c2#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -11001,7 +11012,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:0e968562338bd8d02836ac2558770295d5163d8a2f3675772392d54058910e33e6c7e3a6dd5e2268fca661e39e0cfda5255692b1beb5a01c5eca283ac9f6b9a0#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -11020,7 +11032,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:cb0c79ff506ad1a7f80225d62faa62a8af5bbdb1271bff2b68f32b826cf68c19f3fc74f313ce822be07b14e4503d29e16892a928a07abe43cce50af6eeb8a4f1#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -11039,7 +11052,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:503e7a08f8324fae84a4e066ba7c705261e9b00a48016f6534a47bf7ec84d12fa5c11e6838007ddc1fc67d3b442473dd38dcba0156fbfb4fa2abe1c7a2466d0a#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -11058,7 +11072,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:0b3c15b045e8ef946e6e261633ec71f3bcc7bec76c55710439fa02fbcc7f146245868f2c54fd6b6870cbae912129642cad14867416ff09d8abbcd30b2ce7db3f#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -11077,7 +11092,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:4e57d0fc7214a90484e280ecd3a8155ee51f5b18147a075df333268a11f408223acedd5bcd37b1eed0c14387b73bf3d01d41ff169df1da90e2da0ba3100975d4#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -11096,7 +11112,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:b4db0ba657f58d4960f1baadef426333fb84ed0a56d81fc9d239dec3833008751eb6f77ab5e4a8b2e31a90c5552512a6a8c928f4593964ac8e728347c720a5ac#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -11115,7 +11132,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:e1907ad60a39abeecb766d010959b7b14614a5a064ca356dc52a7ae8903bbdde94e8570c968efbd9bc659a419ae30d8c8d1bffaf905201cdc5340289bd549fd9#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -11134,7 +11152,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:d27d363545ddfc95b2b89d19262cf67c5cd8bd3704fa2836444d52a906ac508194e701f1cc7bd45ca85f7f788a64c0342fb0351679dfc71b45ae86cc4e1c3015#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -11153,7 +11172,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:0c0e3b7ccdb78e31e6a732eb2cf089bf478de29f916c4394eaf9a92280e46a04a30313b851de6610990948c53e549b7d4b15a8d424b753e0542dbc3e63994c1a#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -11172,7 +11192,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:e23b02a23dd21a1183b7bea287ba41db2b362005cc3f364e1677565eaf97ca1611b7ccd4cdf6ef547bbb3251afacdc4a1a999c3156da491b521e7c36b6663da9#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -11191,7 +11212,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:19e94abfc304afc59bcf8561b0158ac06cb1d9469e72c5007ba6f9b8b461a4fa324cf256551c721eb1daf00ab4077326d40a81d755b428fd9db2e94b7ffdb9be#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -11210,7 +11232,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:d91173e005a8099167bd612e4aa970136c65940d0b56d363a86d926d39fdfcb7df6f7a0e532dec89bde38897942b79c6c9763eabc737ef3669cf827a693d60d9#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
@@ -11229,7 +11252,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:616a2ba0d005227805d037f4c8ec29f1dd09fdb3e3f49f7b5c4a07a62139a147d373d38bc5ebcb31bddab3956c3fc25d54edf8722741d9ebdbe9d36d21968f91#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"]
+            ["micromatch", "npm:4.0.2"],
+            ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
             "cli",
