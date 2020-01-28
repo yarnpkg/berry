@@ -24,7 +24,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
 - Yarn supports [workspaces](https://next.yarnpkg.com/features/workspaces) natively, and its CLI takes advantage of that
 - Yarn uses a portable shell to execute package scripts, guaranteeing they work the same way on Windows and Linux
 - Yarn is first and foremost a Node API that can be used programmatically (via [@yarnpkg/core](packages/yarnpkg-core))
-- Yarn is written in TypeScript, and fully typechecked
+- Yarn is written in TypeScript, and is fully type checked
 
 ## Install
 
