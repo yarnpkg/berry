@@ -23,4 +23,16 @@ export const packageExtensions: Array<[string, any]> = [
       [`debug`]: `*`,
     },
   }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/155
+  [`vue-cli-plugin-vuetify@*`, {
+    dependencies: {
+      [`semver`]: `*`,
+    },
+  }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/155
+  [`@vuetify/cli-plugin-utils@*`, {
+    dependencies: {
+      [`semver`]: `*`,
+    },
+  }],
 ];
