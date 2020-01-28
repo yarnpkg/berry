@@ -5,6 +5,7 @@ import {Descriptor, Locator}                             from './types';
 import {LinkType}                                        from './types';
 
 export class WorkspaceResolver implements Resolver {
+  type = 'protocol';
   static protocol = `workspace:`;
 
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {

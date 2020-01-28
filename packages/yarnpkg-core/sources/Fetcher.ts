@@ -59,6 +59,7 @@ export type FetchResult = {
  */
 
 export interface Fetcher {
+  type: string | null;
   /**
    * This function must return true if the specified locator is understood by
    * this resolver (only its syntax is checked, it doesn't have to be valid
@@ -67,7 +68,7 @@ export interface Fetcher {
    * @param locator The locator that needs to be validated.
    * @param opts The fetch options.
    */
-  supports(locator: Locator, opts: MinimalFetchOptions): boolean;
+  supports(locator: Locator, opts: MinimalFetchOptions): Promise<boolean>;
 
   /**
    * This function must return the local path for the given package. The local
@@ -77,7 +78,7 @@ export interface Fetcher {
    * @param locator The source locator.
    * @param opts The fetch options.
    */
-  getLocalPath(locator: Locator, opts: FetchOptions): PortablePath | null;
+  getLocalPath(locator: Locator, opts: FetchOptions): Promise<PortablePath | null>;
 
   /**
    * This function must return a object describing where the package manager

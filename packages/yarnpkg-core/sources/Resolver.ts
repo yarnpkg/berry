@@ -43,6 +43,7 @@ export type ResolveOptions = MinimalResolveOptions & {
  */
 
 export interface Resolver {
+  type: string | null;
   /**
    * This function must return true if the specified descriptor is meant to be
    * turned into a locator by this resolver. The other functions (except its
@@ -51,7 +52,7 @@ export interface Resolver {
    * @param descriptor The descriptor that needs to be validated.
    * @param opts The resolution options.
    */
-  supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions): boolean;
+  supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions): Promise<boolean>;
 
   /**
    * This function must return true if the specified locator is meant to be
@@ -61,7 +62,7 @@ export interface Resolver {
    * @param locator The locator that needs to be validated.
    * @param opts The resolution options.
    */
-  supportsLocator(locator: Locator, opts: MinimalResolveOptions): boolean;
+  supportsLocator(locator: Locator, opts: MinimalResolveOptions): Promise<boolean>;
 
   /**
    * This function indicates whether the package definition for the specified
@@ -77,7 +78,7 @@ export interface Resolver {
    * @param locator The queried package.
    * @param opts The resolution options.
    */
-  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions): boolean;
+  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions): Promise<boolean>;
 
   /**
    * This function is called for each dependency present in the dependency list
@@ -98,7 +99,7 @@ export interface Resolver {
    * @param fromLocator The dependent locator.
    * @param opts The resolution options.
    */
-  bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions): Descriptor;
+  bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions): Promise<Descriptor>;
 
   /**
    * This function must return a set of other descriptors that must be
@@ -106,7 +107,7 @@ export interface Resolver {
    * into a locator. This is typically only needed for transform packages, as
    * you need to know the original resolution in order to copy it.
    */
-  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions): Array<Descriptor>;
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions): Promise<Array<Descriptor>>;
 
   /**
    * This function will, given a descriptor, return the list of locators that

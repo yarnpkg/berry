@@ -366,14 +366,14 @@ export class Project {
     return workspace;
   }
 
-  forgetTransientResolutions() {
+  async forgetTransientResolutions() {
     const resolver = this.configuration.makeResolver();
     const forgottenPackages = new Set();
 
     for (const pkg of this.originalPackages.values()) {
       let shouldPersistResolution: boolean;
       try {
-        shouldPersistResolution = resolver.shouldPersistResolution(pkg, {project: this, resolver});
+        shouldPersistResolution = await resolver.shouldPersistResolution(pkg, {project: this, resolver});
       } catch {
         shouldPersistResolution = false;
       }
@@ -392,7 +392,7 @@ export class Project {
     }
   }
 
-  forgetVirtualResolutions() {
+  async forgetVirtualResolutions() {
     for (const pkg of this.storedPackages.values()) {
       for (const [dependencyHash, dependency] of pkg.dependencies) {
         if (structUtils.isVirtualDescriptor(dependency)) {
@@ -450,7 +450,7 @@ export class Project {
 
     // Ensures that we notice it when dependencies are added / removed from all sources coming from the filesystem
     if (!opts.lockfileOnly)
-      this.forgetTransientResolutions();
+      await this.forgetTransientResolutions();
 
     // Note that the resolution process is "offline" until everything has been
     // successfully resolved; all the processing is expected to have zero side
@@ -529,7 +529,7 @@ export class Project {
         if (typeof dependencies === `undefined`) {
           resolutionDependencies.set(descriptorHash, dependencies = new Set());
 
-          for (const dependency of resolver.getResolutionDependencies(descriptor, resolveOptions)) {
+          for (const dependency of await resolver.getResolutionDependencies(descriptor, resolveOptions)) {
             allDescriptors.set(dependency.descriptorHash, dependency);
             dependencies.add(dependency.descriptorHash);
           }
@@ -712,7 +712,7 @@ export class Project {
           if (!structUtils.areIdentsEqual(descriptor, dependency))
             throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
 
-          const bound = resolver.bindDescriptor(dependency, locator, resolveOptions);
+          const bound = await resolver.bindDescriptor(dependency, locator, resolveOptions);
           pkg.dependencies.set(identHash, bound);
         }
 

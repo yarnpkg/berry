@@ -4,6 +4,7 @@ import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import {Descriptor, Locator}                             from './types';
 
 export class RunInstallPleaseResolver implements Resolver {
+  type = 'protocol';
   private readonly resolver: Resolver;
 
   constructor(resolver: Resolver) {

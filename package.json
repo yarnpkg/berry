@@ -35,6 +35,7 @@
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
     "micromatch": "^4.0.2",
+    "tar": "^6.0.1",
     "typescript": "^3.7.4"
   },
   "dependenciesMeta": {
@@ -74,5 +75,8 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "devDependencies": {
+    "@types/tar": "4.0.3"
   }
 }

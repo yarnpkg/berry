@@ -3,14 +3,15 @@ import * as structUtils                                  from './structUtils';
 import {Descriptor, Locator, DescriptorHash, Package}    from './types';
 
 export class OverrideResolver implements Resolver {
+  type = 'protocol';
   private next: Resolver;
 
   constructor(next: Resolver) {
     this.next = next;
   }
 
-  supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return this.next.supportsDescriptor(descriptor, opts);
+  async supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    return await this.next.supportsDescriptor(descriptor, opts);
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
@@ -49,7 +50,7 @@ export class OverrideResolver implements Resolver {
         if (pattern.descriptor.description && pattern.descriptor.description !== descriptor.range)
           continue;
 
-        const alias = opts.resolver.bindDescriptor(
+        const alias = await opts.resolver.bindDescriptor(
           structUtils.makeDescriptor(descriptor, reference),
           topLevelWorkspace.anchoredLocator,
           opts,

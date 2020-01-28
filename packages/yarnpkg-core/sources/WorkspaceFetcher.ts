@@ -5,6 +5,7 @@ import {WorkspaceResolver}     from './WorkspaceResolver';
 import {Locator}               from './types';
 
 export class WorkspaceFetcher implements Fetcher {
+  type = 'protocol';
   supports(locator: Locator) {
     if (!locator.reference.startsWith(WorkspaceResolver.protocol))
       return false;

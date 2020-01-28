@@ -8,9 +8,8 @@ import semver                                                  from 'semver';
 import {PassThrough, Writable}                                 from 'stream';
 import {tmpNameSync}                                           from 'tmp';
 
+import {ResolverController, CoreFetcher}                       from './Controllers';
 import {Manifest}                                              from './Manifest';
-import {MultiFetcher}                                          from './MultiFetcher';
-import {MultiResolver}                                         from './MultiResolver';
 import {Plugin, Hooks}                                         from './Plugin';
 import {ProtocolResolver}                                      from './ProtocolResolver';
 import {Report}                                                from './Report';
@@ -916,7 +915,7 @@ export class Configuration {
       for (const resolver of plugin.resolvers || [])
         pluginResolvers.push(new resolver());
 
-    return new MultiResolver([
+    return new ResolverController([
       new VirtualResolver(),
       new WorkspaceResolver(),
       new ProtocolResolver(),
@@ -932,7 +931,7 @@ export class Configuration {
       for (const fetcher of plugin.fetchers || [])
         pluginFetchers.push(new fetcher());
 
-    return new MultiFetcher([
+    return new CoreFetcher([
       new VirtualFetcher(),
       new WorkspaceFetcher(),
 

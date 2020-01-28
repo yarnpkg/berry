@@ -5,6 +5,7 @@ import * as structUtils                     from './structUtils';
 import {Locator}                            from './types';
 
 export class VirtualFetcher implements Fetcher {
+  type = 'protocol';
   supports(locator: Locator) {
     if (!locator.reference.startsWith(`virtual:`))
       return false;

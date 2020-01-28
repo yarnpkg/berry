@@ -2,6 +2,7 @@ import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import {Descriptor, Locator}                             from './types';
 
 export class VirtualResolver implements Resolver {
+  type = 'protocol';
   static protocol = `virtual:`;
 
   static isVirtualDescriptor(descriptor: Descriptor) {
@@ -18,19 +19,19 @@ export class VirtualResolver implements Resolver {
     return true;
   }
 
-  supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
+  async supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     return VirtualResolver.isVirtualDescriptor(descriptor);
   }
 
-  supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
+  async supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
     return VirtualResolver.isVirtualLocator(locator);
   }
 
-  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {
+  async shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {
     return false;
   }
 
-  bindDescriptor(descriptor: Descriptor, locator: Locator, opts: MinimalResolveOptions): never {
+  async bindDescriptor(descriptor: Descriptor, locator: Locator, opts: MinimalResolveOptions): never {
     // It's unsupported because packages inside the dependency tree should
     // only become virtual AFTER they have all been resolved, by which point
     // you shouldn't need to call `bindDescriptor` anymore.
@@ -38,7 +39,7 @@ export class VirtualResolver implements Resolver {
     throw new Error(`Assertion failed: calling "bindDescriptor" on a virtual descriptor is unsupported`);
   }
 
-  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions): never {
+  async getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions): never {
     // It's unsupported because packages inside the dependency tree should
     // only become virtual AFTER they have all been resolved, by which point
     // you shouldn't need to call `bindDescriptor` anymore.

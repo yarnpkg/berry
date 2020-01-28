@@ -7,7 +7,8 @@ import {Descriptor, Locator, DescriptorHash, Package}    from './types';
 export const TAG_REGEXP = /^[a-z]+$/;
 
 export class ProtocolResolver implements Resolver {
-  supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
+  type = 'protocol';
+  async supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     if (semver.validRange(descriptor.range))
       return true;
 
@@ -17,7 +18,7 @@ export class ProtocolResolver implements Resolver {
     return false;
   }
 
-  supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
+  async supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
     if (semver.validRange(locator.reference))
       return true;
 
@@ -27,15 +28,15 @@ export class ProtocolResolver implements Resolver {
     return false;
   }
 
-  shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {
+  async shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {
     return opts.resolver.shouldPersistResolution(this.forwardLocator(locator, opts), opts);
   }
 
-  bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
+  async bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
     return opts.resolver.bindDescriptor(this.forwardDescriptor(descriptor, opts), fromLocator, opts);
   }
 
-  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
+  async getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
     return opts.resolver.getResolutionDependencies(this.forwardDescriptor(descriptor, opts), opts);
   }
 
