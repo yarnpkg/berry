@@ -4238,6 +4238,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"
         }]
       ]],
+      ["@types/algoliasearch", [
+        ["npm:3.34.10", {
+          "packageLocation": "./.yarn/cache/@types-algoliasearch-npm-3.34.10-994371d25f-1.zip/node_modules/@types/algoliasearch/",
+          "packageDependencies": [
+            ["@types/algoliasearch", "npm:3.34.10"]
+          ],
+          "linkType": "HARD"
+        }]
+      ]],
       ["@types/anymatch", [
         ["npm:1.3.1", {
           "packageLocation": "./.yarn/cache/@types-anymatch-npm-1.3.1-b86e9de5d9-1.zip/node_modules/@types/anymatch/",
@@ -6796,7 +6805,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:16.8.4"],
             ["react-helmet", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.2.0"],
             ["react-icons", "npm:3.7.0"],
-            ["react-instantsearch-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.7.0"],
+            ["react-instantsearch-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:6.2.0"],
             ["react-transition-group", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.2.1"],
             ["regenerator-runtime", "npm:0.13.3"],
             ["remark-html", "npm:9.0.0"],
@@ -12605,15 +12614,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"
         }]
       ]],
-      ["agentkeepalive", [
-        ["npm:2.2.0", {
-          "packageLocation": "./.yarn/cache/agentkeepalive-npm-2.2.0-5f0351daab-1.zip/node_modules/agentkeepalive/",
-          "packageDependencies": [
-            ["agentkeepalive", "npm:2.2.0"]
-          ],
-          "linkType": "HARD"
-        }]
-      ]],
       ["aggregate-error", [
         ["npm:3.0.1", {
           "packageLocation": "./.yarn/cache/aggregate-error-npm-3.0.1-46f220b212-1.zip/node_modules/aggregate-error/",
@@ -12698,28 +12698,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["algoliasearch", [
-        ["npm:3.32.1", {
-          "packageLocation": "./.yarn/cache/algoliasearch-npm-3.32.1-f65d604b45-1.zip/node_modules/algoliasearch/",
-          "packageDependencies": [
-            ["algoliasearch", "npm:3.32.1"],
-            ["agentkeepalive", "npm:2.2.0"],
-            ["debug", "npm:2.6.9"],
-            ["envify", "npm:4.1.0"],
-            ["es6-promise", "npm:4.2.6"],
-            ["events", "npm:1.1.1"],
-            ["foreach", "npm:2.0.5"],
-            ["global", "npm:4.3.2"],
-            ["inherits", "npm:2.0.3"],
-            ["isarray", "npm:2.0.4"],
-            ["load-script", "npm:1.0.0"],
-            ["object-keys", "npm:1.0.12"],
-            ["querystring-es3", "npm:0.2.1"],
-            ["reduce", "npm:1.0.2"],
-            ["semver", "npm:5.6.0"],
-            ["tunnel-agent", "npm:0.6.0"]
-          ],
-          "linkType": "HARD"
-        }],
         ["npm:4.0.0-beta.14", {
           "packageLocation": "./.yarn/cache/algoliasearch-npm-4.0.0-beta.14-2decfaf265-1.zip/node_modules/algoliasearch/",
           "packageDependencies": [
@@ -12742,14 +12720,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["algoliasearch-helper", [
-        ["virtual:e481ccfc093d622f9e9750ed24d32c0c1d60d6979003f371ad59fd6cf01a161ce788f96c3ac737f687273543cd0fa8e155ec71f817d88249cc1a2f853c7c7c09#npm:2.28.0", {
-          "packageLocation": "./.yarn/$$virtual/algoliasearch-helper-virtual-5212bbef0d/0/cache/algoliasearch-helper-npm-2.28.0-a526fd8f69-1.zip/node_modules/algoliasearch-helper/",
+        ["virtual:4d75cd6004c60692205b37395ccf5d8b39c77fc65afc17335f6fd5e6b6c88b478f1ad71224bf2b6fd1da86f269d637bab1507722ec3ca4fb1c11fcd49814c48b#npm:3.1.0", {
+          "packageLocation": "./.yarn/$$virtual/algoliasearch-helper-virtual-c8ed4c238a/0/cache/algoliasearch-helper-npm-3.1.0-8f49d2edce-1.zip/node_modules/algoliasearch-helper/",
           "packageDependencies": [
-            ["algoliasearch-helper", "virtual:e481ccfc093d622f9e9750ed24d32c0c1d60d6979003f371ad59fd6cf01a161ce788f96c3ac737f687273543cd0fa8e155ec71f817d88249cc1a2f853c7c7c09#npm:2.28.0"],
-            ["algoliasearch", "npm:3.32.1"],
-            ["events", "npm:1.1.1"],
-            ["lodash", "npm:4.17.11"],
-            ["qs", "npm:6.7.0"]
+            ["algoliasearch-helper", "virtual:4d75cd6004c60692205b37395ccf5d8b39c77fc65afc17335f6fd5e6b6c88b478f1ad71224bf2b6fd1da86f269d637bab1507722ec3ca4fb1c11fcd49814c48b#npm:3.1.0"],
+            ["algoliasearch", null],
+            ["events", "npm:1.1.1"]
           ],
           "packagePeers": [
             "algoliasearch"
@@ -17701,17 +17677,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"
         }]
       ]],
-      ["envify", [
-        ["npm:4.1.0", {
-          "packageLocation": "./.yarn/cache/envify-npm-4.1.0-6fd4a01c66-1.zip/node_modules/envify/",
-          "packageDependencies": [
-            ["envify", "npm:4.1.0"],
-            ["esprima", "npm:4.0.1"],
-            ["through", "npm:2.3.8"]
-          ],
-          "linkType": "HARD"
-        }]
-      ]],
       ["envinfo", [
         ["npm:5.12.1", {
           "packageLocation": "./.yarn/cache/envinfo-npm-5.12.1-5525230e4e-1.zip/node_modules/envinfo/",
@@ -19372,15 +19337,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["for-own", "npm:0.1.5"],
             ["for-in", "npm:1.0.2"]
-          ],
-          "linkType": "HARD"
-        }]
-      ]],
-      ["foreach", [
-        ["npm:2.0.5", {
-          "packageLocation": "./.yarn/cache/foreach-npm-2.0.5-9fbfc73114-1.zip/node_modules/foreach/",
-          "packageDependencies": [
-            ["foreach", "npm:2.0.5"]
           ],
           "linkType": "HARD"
         }]
@@ -23044,13 +23000,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["isarray", "npm:2.0.1"]
           ],
           "linkType": "HARD"
-        }],
-        ["npm:2.0.4", {
-          "packageLocation": "./.yarn/cache/isarray-npm-2.0.4-9c8786c060-1.zip/node_modules/isarray/",
-          "packageDependencies": [
-            ["isarray", "npm:2.0.4"]
-          ],
-          "linkType": "HARD"
         }]
       ]],
       ["isemail", [
@@ -24644,15 +24593,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["parse-json", "npm:4.0.0"],
             ["pify", "npm:3.0.0"],
             ["strip-bom", "npm:3.0.0"]
-          ],
-          "linkType": "HARD"
-        }]
-      ]],
-      ["load-script", [
-        ["npm:1.0.0", {
-          "packageLocation": "./.yarn/cache/load-script-npm-1.0.0-32a3163a57-1.zip/node_modules/load-script/",
-          "packageDependencies": [
-            ["load-script", "npm:1.0.0"]
           ],
           "linkType": "HARD"
         }]
@@ -26636,13 +26576,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/object-keys-npm-1.0.12-9e93882d4d-1.zip/node_modules/object-keys/",
           "packageDependencies": [
             ["object-keys", "npm:1.0.12"]
-          ],
-          "linkType": "HARD"
-        }],
-        ["npm:1.1.0", {
-          "packageLocation": "./.yarn/cache/object-keys-npm-1.1.0-2c8014f1c5-1.zip/node_modules/object-keys/",
-          "packageDependencies": [
-            ["object-keys", "npm:1.1.0"]
           ],
           "linkType": "HARD"
         }],
@@ -29269,14 +29202,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["react-instantsearch-core", [
-        ["virtual:e481ccfc093d622f9e9750ed24d32c0c1d60d6979003f371ad59fd6cf01a161ce788f96c3ac737f687273543cd0fa8e155ec71f817d88249cc1a2f853c7c7c09#npm:5.7.0", {
-          "packageLocation": "./.yarn/$$virtual/react-instantsearch-core-virtual-7aa67afbcd/0/cache/react-instantsearch-core-npm-5.7.0-fb509fcae6-1.zip/node_modules/react-instantsearch-core/",
+        ["virtual:4d75cd6004c60692205b37395ccf5d8b39c77fc65afc17335f6fd5e6b6c88b478f1ad71224bf2b6fd1da86f269d637bab1507722ec3ca4fb1c11fcd49814c48b#npm:6.2.0", {
+          "packageLocation": "./.yarn/$$virtual/react-instantsearch-core-virtual-3bb9e14280/0/cache/react-instantsearch-core-npm-6.2.0-b72b746ee1-1.zip/node_modules/react-instantsearch-core/",
           "packageDependencies": [
-            ["react-instantsearch-core", "virtual:e481ccfc093d622f9e9750ed24d32c0c1d60d6979003f371ad59fd6cf01a161ce788f96c3ac737f687273543cd0fa8e155ec71f817d88249cc1a2f853c7c7c09#npm:5.7.0"],
+            ["react-instantsearch-core", "virtual:4d75cd6004c60692205b37395ccf5d8b39c77fc65afc17335f6fd5e6b6c88b478f1ad71224bf2b6fd1da86f269d637bab1507722ec3ca4fb1c11fcd49814c48b#npm:6.2.0"],
             ["@babel/runtime", "npm:7.2.0"],
-            ["algoliasearch", "npm:3.32.1"],
-            ["algoliasearch-helper", "virtual:e481ccfc093d622f9e9750ed24d32c0c1d60d6979003f371ad59fd6cf01a161ce788f96c3ac737f687273543cd0fa8e155ec71f817d88249cc1a2f853c7c7c09#npm:2.28.0"],
-            ["lodash", "npm:4.17.11"],
+            ["@types/algoliasearch", "npm:3.34.10"],
+            ["algoliasearch", null],
+            ["algoliasearch-helper", "virtual:4d75cd6004c60692205b37395ccf5d8b39c77fc65afc17335f6fd5e6b6c88b478f1ad71224bf2b6fd1da86f269d637bab1507722ec3ca4fb1c11fcd49814c48b#npm:3.1.0"],
+            ["fast-deep-equal", "npm:2.0.1"],
             ["prop-types", "npm:15.7.2"],
             ["react", "npm:16.8.4"]
           ],
@@ -29288,19 +29222,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["react-instantsearch-dom", [
-        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.7.0", {
-          "packageLocation": "./.yarn/$$virtual/react-instantsearch-dom-virtual-e481ccfc09/0/cache/react-instantsearch-dom-npm-5.7.0-dc84f075f8-1.zip/node_modules/react-instantsearch-dom/",
+        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:6.2.0", {
+          "packageLocation": "./.yarn/$$virtual/react-instantsearch-dom-virtual-4d75cd6004/0/cache/react-instantsearch-dom-npm-6.2.0-0ac627c568-1.zip/node_modules/react-instantsearch-dom/",
           "packageDependencies": [
-            ["react-instantsearch-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.7.0"],
+            ["react-instantsearch-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:6.2.0"],
             ["@babel/runtime", "npm:7.2.0"],
-            ["algoliasearch", "npm:3.32.1"],
-            ["algoliasearch-helper", "virtual:e481ccfc093d622f9e9750ed24d32c0c1d60d6979003f371ad59fd6cf01a161ce788f96c3ac737f687273543cd0fa8e155ec71f817d88249cc1a2f853c7c7c09#npm:2.28.0"],
+            ["algoliasearch-helper", "virtual:4d75cd6004c60692205b37395ccf5d8b39c77fc65afc17335f6fd5e6b6c88b478f1ad71224bf2b6fd1da86f269d637bab1507722ec3ca4fb1c11fcd49814c48b#npm:3.1.0"],
             ["classnames", "npm:2.2.6"],
-            ["lodash", "npm:4.17.11"],
             ["prop-types", "npm:15.7.2"],
             ["react", "npm:16.8.4"],
             ["react-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:16.8.4"],
-            ["react-instantsearch-core", "virtual:e481ccfc093d622f9e9750ed24d32c0c1d60d6979003f371ad59fd6cf01a161ce788f96c3ac737f687273543cd0fa8e155ec71f817d88249cc1a2f853c7c7c09#npm:5.7.0"]
+            ["react-instantsearch-core", "virtual:4d75cd6004c60692205b37395ccf5d8b39c77fc65afc17335f6fd5e6b6c88b478f1ad71224bf2b6fd1da86f269d637bab1507722ec3ca4fb1c11fcd49814c48b#npm:6.2.0"]
           ],
           "packagePeers": [
             "react",
@@ -29617,16 +29549,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["redent", "npm:1.0.0"],
             ["indent-string", "npm:2.1.0"],
             ["strip-indent", "npm:1.0.1"]
-          ],
-          "linkType": "HARD"
-        }]
-      ]],
-      ["reduce", [
-        ["npm:1.0.2", {
-          "packageLocation": "./.yarn/cache/reduce-npm-1.0.2-577cd4d4f6-1.zip/node_modules/reduce/",
-          "packageDependencies": [
-            ["reduce", "npm:1.0.2"],
-            ["object-keys", "npm:1.1.0"]
           ],
           "linkType": "HARD"
         }]
