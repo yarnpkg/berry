@@ -434,9 +434,9 @@ export class Details extends Component {
 
     get({
       url: `https://bundlephobia.com/api/size?package=${name}@${version}`,
-      type: "json",
+      type: 'json',
     }).then(res => {
-      if (typeof res === "object") {
+      if (typeof res === 'object') {
         this.setState({
           bundlesize: {
             href: `https://bundlephobia.com/result?p=${name}@${version}`,
