@@ -102,7 +102,7 @@ Those plugins typically come bundled with Yarn. You don't need to do anything sp
 Although developed on the same repository as Yarn itself, those plugins are optional and need to be explicitly installed through `yarn plugin import @yarnpkg/<plugin-name>`.
 
 - [☆ plugin-exec](packages/plugin-exec) adds support for using the `exec:` protocol within your dependencies.
-- [☆ plugin-stage](packages/plugin-pack) adds support for the [`yarn stage`](https://next.yarnpkg.com/cli/stage) command.
+- [☆ plugin-stage](packages/plugin-stage) adds support for the [`yarn stage`](https://next.yarnpkg.com/cli/stage) command.
 - [☆ plugin-typescript](packages/plugin-typescript) improves the user experience when working with TypeScript.
 - [☆ plugin-workspace-tools](packages/plugin-workspace-tools) adds support for the [`yarn workspaces foreach`](https://next.yarnpkg.com/cli/workspaces/foreach) command.
 
