@@ -159,7 +159,7 @@ const YarnrcDoc = () => <>
       />
       <SymlScalarProperty
         name={`npmAlwaysAuth`}
-        placeholder={`true`}
+        placeholder={true}
         description={<>
           If true, Yarn will always send the authentication credentials when making a request to the registries. This typically shouldn't be needed.
         </>}
