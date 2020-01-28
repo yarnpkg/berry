@@ -31,6 +31,8 @@ export const SearchProvider = ({searchState, onSearchStateChange, children}) => 
     >
       <Configure
         hitsPerPage={5}
+        // set page parameter by default, since we don't always show pagination
+        page={0}
         facets={['keywords']}
         analyticsTags={['yarnpkg.com']}
         attributesToRetrieve={[
