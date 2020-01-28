@@ -1,3 +1,4 @@
+import algoliasearch              from 'algoliasearch/lite';
 import {StaticQuery, graphql}     from 'gatsby';
 import {Configure, InstantSearch} from 'react-instantsearch-dom';
 import React                      from 'react';
@@ -18,8 +19,7 @@ export const SearchProvider = ({searchState, onSearchStateChange, children}) => 
       }`}
     render={({site: {siteMetadata: {algolia}}}) => (
       <InstantSearch
-        appId={algolia.appId}
-        apiKey={algolia.apiKey}
+        searchClient={algoliasearch(algolia.appId, algolia.apiKey)}
         indexName={algolia.indexName}
         searchState={searchState}
         onSearchStateChange={onSearchStateChange}

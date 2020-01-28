@@ -3450,6 +3450,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/algoliasearch@npm:^3.30.16":
+  version: 3.34.10
+  resolution: "@types/algoliasearch@npm:3.34.10"
+  checksum: d4df4d6eb17888e04364b94f68760093feb172b6cf13f8571b9f763778a8b7e99ce743b4378062a65bf581d851f840f89459c6de9c9f377276368f56b8d9a4d9
+  languageName: node
+  linkType: hard
+
 "@types/anymatch@npm:*":
   version: 1.3.1
   resolution: "@types/anymatch@npm:1.3.1"
@@ -4931,7 +4938,7 @@ __metadata:
     react-dom: ^16.8.4
     react-helmet: ^5.2.0
     react-icons: ^3.7.0
-    react-instantsearch-dom: ^5.7.0
+    react-instantsearch-dom: ^6.2.0
     react-transition-group: ^1.2.1
     regenerator-runtime: ^0.13.3
     remark-html: ^9.0.0
@@ -5603,13 +5610,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"agentkeepalive@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "agentkeepalive@npm:2.2.0"
-  checksum: 82fdeee3f1de45233555d7301c84395fb7a5a500e79790da103f2d86841ce87eecd4dcc5d70042c28d625fe8d89051a7c159e1d2d9bcda58f7c1d1818cfc4699
-  languageName: node
-  linkType: hard
-
 "aggregate-error@npm:^3.0.0":
   version: 3.0.1
   resolution: "aggregate-error@npm:3.0.1"
@@ -5683,16 +5683,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"algoliasearch-helper@npm:^2.26.0":
-  version: 2.28.0
-  resolution: "algoliasearch-helper@npm:2.28.0"
+"algoliasearch-helper@npm:^3.0.0":
+  version: 3.1.0
+  resolution: "algoliasearch-helper@npm:3.1.0"
   dependencies:
     events: ^1.1.1
-    lodash: ^4.17.5
-    qs: ^6.5.1
   peerDependencies:
-    algoliasearch: ">= 3.1 < 4"
-  checksum: cc17e55a8c33b7df218f2f3d9c99bf1b5330da475e57d7ea2ede207a64cf38ac6d8123dad53fda3d9e994b67c26813416a1b3a94918878a72d0a924434eb4656
+    algoliasearch: ">= 3.1 < 5"
+  checksum: d17087cd6a15f47c815dfc8539c6df6f56c40d16462d017f3fa4602ac83868cc136a40ca4ad08e8cc72d14c9c3269da51235d08802fa214e6caf719066984353
   languageName: node
   linkType: hard
 
@@ -5714,29 +5712,6 @@ __metadata:
     "@algolia/requester-node-http": 4.0.0-beta.14
     "@algolia/transporter": 4.0.0-beta.14
   checksum: 56667a9db06829e1c5ea5e2381ddbcf0e17faf470f0356d7f2c2f4d82cb3c96559b4cc4bcbf64747d133547a11d438ecc8c4cfcf16ee02fe07bd84928f5a4244
-  languageName: node
-  linkType: hard
-
-"algoliasearch@npm:^3.27.1":
-  version: 3.32.1
-  resolution: "algoliasearch@npm:3.32.1"
-  dependencies:
-    agentkeepalive: ^2.2.0
-    debug: ^2.6.9
-    envify: ^4.0.0
-    es6-promise: ^4.1.0
-    events: ^1.1.0
-    foreach: ^2.0.5
-    global: ^4.3.2
-    inherits: ^2.0.1
-    isarray: ^2.0.1
-    load-script: ^1.0.0
-    object-keys: ^1.0.11
-    querystring-es3: ^0.2.1
-    reduce: ^1.0.1
-    semver: ^5.1.0
-    tunnel-agent: ^0.6.0
-  checksum: 40ce754558bf5d6809c7d7019291d18c08cc1b36d0642a96443859c7edcc27a299ed57564487e8b95d4402430376d2c5c94f2c7833a37bcf3e1407b4338ac022
   languageName: node
   linkType: hard
 
@@ -10217,18 +10192,6 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"envify@npm:^4.0.0":
-  version: 4.1.0
-  resolution: "envify@npm:4.1.0"
-  dependencies:
-    esprima: ^4.0.0
-    through: ~2.3.4
-  bin:
-    envify: bin/envify
-  checksum: dcda2caf998acede1eb2d0b52ae3a765c589fc1524de73bccde660d0bb4b325d9b519bceb4027b7699332e693975be79fcfaee234e01a90e03a6a3aaee403019
-  languageName: node
-  linkType: hard
-
 "envinfo@npm:^5.8.1":
   version: 5.12.1
   resolution: "envinfo@npm:5.12.1"
@@ -10324,7 +10287,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"es6-promise@npm:^4.0.3, es6-promise@npm:^4.1.0, es6-promise@npm:^4.2.6":
+"es6-promise@npm:^4.0.3, es6-promise@npm:^4.2.6":
   version: 4.2.6
   resolution: "es6-promise@npm:4.2.6"
   checksum: 4f878cebd25764beb029d414d8d2318df7ae98e4c7dd3cd02efb4cf2383b65355318b4aaf2e7808801c3f6b8e7b2817bddf500849886dea5f17252ed8b14733e
@@ -10776,7 +10739,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"events@npm:^1.1.0, events@npm:^1.1.1":
+"events@npm:^1.1.1":
   version: 1.1.1
   resolution: "events@npm:1.1.1"
   checksum: 10a2de029e1043f1b0ca912bc3d496b48b326bfbe8f1170f5219633cf48e5afb4c3520944d6386ea087863d158a0542ac24c79893647fcaf87adeedf0b798923
@@ -11780,13 +11743,6 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   dependencies:
     for-in: ^1.0.1
   checksum: 7007a98e06c79b433735baf10047e774b8522e7a1b9375c7a31e3f07d40d7a084e98d92fcdf8d0cc2cd7668a2afb4b2d8c8950527e07b394adf61015ca98dcdf
-  languageName: node
-  linkType: hard
-
-"foreach@npm:^2.0.5":
-  version: 2.0.5
-  resolution: "foreach@npm:2.0.5"
-  checksum: 2628d36c6009868029821e61694d1fa458583c20742e0b13c4da6c79a5521405e1b5765e9d176d84c390b6a58700011032ac20ee2f5f2fe1d6b9aa9fe120ab57
   languageName: node
   linkType: hard
 
@@ -12868,7 +12824,7 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"global@npm:^4.3.0, global@npm:^4.3.2, global@npm:~4.3.0":
+"global@npm:^4.3.0, global@npm:~4.3.0":
   version: 4.3.2
   resolution: "global@npm:4.3.2"
   dependencies:
@@ -15093,13 +15049,6 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"isarray@npm:^2.0.1":
-  version: 2.0.4
-  resolution: "isarray@npm:2.0.4"
-  checksum: 1f9e3ce6798ff19bff7f8ace24a2a2984f9565f0883adce7df414df657820f5fec03758ff84ab1a9629d9a74231064d64e3b4cdc138abb1b5facde3790733120
-  languageName: node
-  linkType: hard
-
 "isemail@npm:3.x.x":
   version: 3.2.0
   resolution: "isemail@npm:3.2.0"
@@ -16653,13 +16602,6 @@ fsevents@^1.2.2:
     pify: ^3.0.0
     strip-bom: ^3.0.0
   checksum: 8bd8362913ca53284a050d7a015f4e294eba8e979a693b9709ef63b1baa69b8bce1453c0eeef05bf44ae3eed165dc6311852a168e5032a9d0ca71bec611847cf
-  languageName: node
-  linkType: hard
-
-"load-script@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "load-script@npm:1.0.0"
-  checksum: 865978da14001d6adcac5971e347aaeabe24065149320a81c44697adde5762737e3f1400d360c8833668ae532af48d738a0b557907b8735ea38adf5ff0c93809
   languageName: node
   linkType: hard
 
@@ -18455,13 +18397,6 @@ fsevents@^1.2.2:
   version: 1.0.12
   resolution: "object-keys@npm:1.0.12"
   checksum: acd19a607be4a6026e2ba23c7ec66069aee8a5d08fadf17aa1a1f59de535dc4469a9c963c9d8c092c13753102e178a37394724b457b9b31b8475ba27aae7525a
-  languageName: node
-  linkType: hard
-
-"object-keys@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "object-keys@npm:1.1.0"
-  checksum: 54a49d07b4cd8a713cfa970b39f4ddb6469f06be987515c480703fdd27e27cf6961cf954b8ec37384ae4cebdafb806837ab618341b58f57aea9b1dcbd191e9c2
   languageName: node
   linkType: hard
 
@@ -20589,7 +20524,7 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.5.1, qs@npm:^6.7.0":
+"qs@npm:^6.7.0":
   version: 6.7.0
   resolution: "qs@npm:6.7.0"
   checksum: 00917393bac59cda442020ca17fe8df9c176ca12c915b8475ab181c0d81e8cefc66d559af9287f47380d37a5188f95f8489300ff059514449982f3deed1fc52a
@@ -20607,7 +20542,7 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"querystring-es3@npm:^0.2.0, querystring-es3@npm:^0.2.1":
+"querystring-es3@npm:^0.2.0":
   version: 0.2.1
   resolution: "querystring-es3@npm:0.2.1"
   checksum: 622791c35950405e7ced57df018e949ed2e2f4a44f9089177416c93e46df06b38f7ff68054991f60270c51bb01f85da87f15a11d2f5da4973334d58702493846
@@ -20831,35 +20766,34 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"react-instantsearch-core@npm:^5.7.0":
-  version: 5.7.0
-  resolution: "react-instantsearch-core@npm:5.7.0"
+"react-instantsearch-core@npm:^6.2.0":
+  version: 6.2.0
+  resolution: "react-instantsearch-core@npm:6.2.0"
   dependencies:
     "@babel/runtime": ^7.1.2
-    algoliasearch-helper: ^2.26.0
-    lodash: ^4.17.4
+    "@types/algoliasearch": ^3.30.16
+    algoliasearch-helper: ^3.0.0
+    fast-deep-equal: ^2.0.1
     prop-types: ^15.5.10
   peerDependencies:
-    react: ">= 15.3.0 < 17"
-  checksum: beaa5a326005b24d7acaaba8fa22224a491dd409ca63886a0d0520f4a342b2bb3823532bf2d3808ae31da0dc66fe12b4e8c7669bf92697a009c4a63b572f8141
+    react: ">= 16.3.0 < 17"
+  checksum: 0d55eebcef531c0f7f0a1bbe131ca5a408378c0ef94436547ad8543c85294fe168b04cdaa53e0963edef09b97677c8a1e404392dcee450296d860495e59dabe4
   languageName: node
   linkType: hard
 
-"react-instantsearch-dom@npm:^5.7.0":
-  version: 5.7.0
-  resolution: "react-instantsearch-dom@npm:5.7.0"
+"react-instantsearch-dom@npm:^6.2.0":
+  version: 6.2.0
+  resolution: "react-instantsearch-dom@npm:6.2.0"
   dependencies:
     "@babel/runtime": ^7.1.2
-    algoliasearch: ^3.27.1
-    algoliasearch-helper: ^2.26.0
+    algoliasearch-helper: ^3.0.0
     classnames: ^2.2.5
-    lodash: ^4.17.4
     prop-types: ^15.5.10
-    react-instantsearch-core: ^5.7.0
+    react-instantsearch-core: ^6.2.0
   peerDependencies:
-    react: ">= 15.3.0 < 17"
-    react-dom: ">= 15.3.0 < 17"
-  checksum: 320db66c02e6bbc00249010a1b1a2c2de253e5b531b1550f172bd3c4c80e55268abc676b7c79dce61db27b4b7c2fbcb9ebb11e199fe8b2af2451245485b6ff71
+    react: ">= 16.3.0 < 17"
+    react-dom: ">= 16.3.0 < 17"
+  checksum: 4cdb266f02abc70af8dea2c7a847e544907ad2259b728fb04053061d98efdfa529b543e282aa0b5f2b610aadbde958ba864b44569bb59a89044ddf4dee0e544c
   languageName: node
   linkType: hard
 
@@ -21180,15 +21114,6 @@ fsevents@^1.2.2:
     indent-string: ^2.1.0
     strip-indent: ^1.0.1
   checksum: fc8bc5ff5cd60545ed91bf368cd21d0497212fbe02a0d8ac7cf0ab8bb51df8b08eccc79b07ee960d325f38de3d9fae2c48fba213848cf224e87ea501ba6f49d0
-  languageName: node
-  linkType: hard
-
-"reduce@npm:^1.0.1":
-  version: 1.0.2
-  resolution: "reduce@npm:1.0.2"
-  dependencies:
-    object-keys: ^1.1.0
-  checksum: ff180955cb272c5015f515b6829b105cf3e41c72826993ee794ff45323289b64e561a6735a3cc517961695aac84192d142affe600bf57c53a30e4f62c9cc4bc4
   languageName: node
   linkType: hard
 
@@ -23880,7 +23805,7 @@ resolve@^1.10.1:
   languageName: node
   linkType: hard
 
-"through@npm:^2.3.6, through@npm:^2.3.8, through@npm:~2.3.4":
+"through@npm:^2.3.6, through@npm:^2.3.8":
   version: 2.3.8
   resolution: "through@npm:2.3.8"
   checksum: ab0e84b0ad6587f12411f1d205728beb362f5586f20b3f6208ea3b076f942f78777ec01b92a6ea2cfa743f997c791d2991400c237f516d35967cf19926e241cb
