@@ -275,7 +275,7 @@ const YarnrcDoc = () => <>
         name={`packageExtensions`}
         margin={true}
         description={<>
-          Some packages may have been specified incorrectly with regard to their dependencies - for example with one dependency being missing, causing Yarn to refuse it the access. The <code>packageExtensions</code> fields offer a way to extend the existing package definitions with additional information.
+          Some packages may have been specified incorrectly with regard to their dependencies - for example with one dependency being missing, causing Yarn to refuse it the access. The <code>packageExtensions</code> fields offer a way to extend the existing package definitions with additional information. If you use it, consider sending a PR upstream and contributing your extension to the <a href={`https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts`}><code>plugin-compat</code> database</a>.
         </>}
       >
         <SymlObjectProperty
