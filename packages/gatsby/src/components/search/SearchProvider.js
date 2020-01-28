@@ -3,24 +3,34 @@ import {useStaticQuery, graphql}  from 'gatsby';
 import {Configure, InstantSearch} from 'react-instantsearch-dom';
 import React, {useMemo}           from 'react';
 
-export const SearchProvider = ({searchState, onSearchStateChange, children}) => {
-  const {site: {siteMetadata: {algolia: {appId, apiKey, indexName}}}} = useStaticQuery(graphql`query AlgoliaConfigQuery {
-    site {
-      siteMetadata {
-        algolia {
-          appId
-          apiKey
-          indexName
+export const SearchProvider = ({
+  searchState,
+  onSearchStateChange,
+  children,
+}) => {
+  const {
+    site: {
+      siteMetadata: {
+        algolia: {appId, apiKey, indexName},
+      },
+    },
+  } = useStaticQuery(graphql`
+    query AlgoliaConfigQuery {
+      site {
+        siteMetadata {
+          algolia {
+            appId
+            apiKey
+            indexName
+          }
         }
       }
     }
-  }`);
-
+  `);
 
   const searchClient = useMemo(() => {
-    console.log('memo');
     return algoliasearch(appId, apiKey);
-  }, [appId,apiKey]);
+  }, [appId, apiKey]);
 
   return (
     <InstantSearch
