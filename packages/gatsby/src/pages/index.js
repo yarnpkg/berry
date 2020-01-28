@@ -190,7 +190,7 @@ const IndexPage = ({data, searchState, onSearchStateChange}) => {
                 </SellingPoint>
                 <SellingPoint imgUrl={worldwideIcon}>
                   <h3>Openness</h3>
-                  Yarn is an independent open-source project tied to no company. Your support make us thrive.
+                  Yarn is an independent open-source project tied to no company. Your support makes us thrive.
                 </SellingPoint>
               </SellingPoints>
             </SectionContent>
