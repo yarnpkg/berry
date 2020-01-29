@@ -31,10 +31,12 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
 
-        yarn dlx gatsby new my-gatsby && cd my-gatsby
+        yarn dlx gatsby new my-gatsby
+        cd my-gatsby
 
         # Test production build
         yarn build
 
         # Test development server (which includes development only loaders like eslint-loader)
-        yarn dlx start-server-and-test "yarn start" :8000 "curl -s localhost:8000 | grep \"<h1>Hi people</h1>\""
+        # Redirect the output to log.txt and check if it contains "ERROR #"
+        yarn dlx start-server-and-test "yarn start > log.txt 2>&1" :8000 "! cat log.txt | grep \"ERROR #\""
