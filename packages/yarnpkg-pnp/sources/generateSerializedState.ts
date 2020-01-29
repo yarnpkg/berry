@@ -75,7 +75,7 @@ function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData
         ? Array.from(packagePeers)
         : undefined;
 
-      const normalizedDiscardFromLookup = typeof discardFromLookup !== `undefined`
+      const normalizedDiscardFromLookup = discardFromLookup
         ? discardFromLookup
         : undefined;
 
