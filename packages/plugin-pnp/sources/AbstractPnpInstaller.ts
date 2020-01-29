@@ -9,7 +9,6 @@ export abstract class AbstractPnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
 
   private readonly blacklistedPaths: Set<PortablePath> = new Set();
-  private readonly discardedPaths: Map<PortablePath, boolean> = new Map();
 
   constructor(protected opts: LinkOptions) {
     this.opts = opts;
@@ -78,21 +77,16 @@ export abstract class AbstractPnpInstaller implements Installer {
       packagePeers.add(descriptor.name);
     }
 
-    const packageStore = miscUtils.getMapWithDefault(this.packageRegistry, key1);
-    packageStore.set(key2, {packageLocation, packageDependencies, packagePeers, linkType: pkg.linkType});
+    miscUtils.getMapWithDefault(this.packageRegistry, key1).set(key2, {
+      packageLocation,
+      packageDependencies,
+      packagePeers,
+      linkType: pkg.linkType,
+      discardFromLookup: fetchResult.discardFromLookup || false,
+    });
 
     if (hasVirtualInstances)
       this.blacklistedPaths.add(packageLocation);
-
-    if (fetchResult.discardFromLookup) {
-      const discardEntry = this.discardedPaths.get(packageLocation);
-
-      if (typeof discardEntry === `undefined`) {
-        this.discardedPaths.set(packageLocation, true);
-      }
-    } else {
-      this.discardedPaths.set(packageLocation, false);
-    }
 
     return {
       packageLocation: packageRawLocation,
@@ -142,7 +136,6 @@ export abstract class AbstractPnpInstaller implements Installer {
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
     const blacklistedLocations = this.blacklistedPaths;
-    const discardedLocations = [];
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
@@ -155,13 +148,8 @@ export abstract class AbstractPnpInstaller implements Installer {
         if (this.opts.project.tryWorkspaceByLocator(pkg))
           fallbackExclusionList.push({name: structUtils.requirableIdent(pkg), reference: pkg.reference});
 
-    for (const [location, isDiscarded] of this.discardedPaths)
-      if (isDiscarded)
-        discardedLocations.push(location);
-
     return await this.finalizeInstallWithPnp({
       blacklistedLocations,
-      discardedLocations,
       dependencyTreeRoots,
       enableTopLevelFallback,
       fallbackExclusionList,
@@ -190,18 +178,13 @@ export abstract class AbstractPnpInstaller implements Installer {
     const packageStore = miscUtils.getMapWithDefault(this.packageRegistry, `@@disk`);
     const normalizedPath = this.normalizeDirectoryPath(path);
 
-    let diskInformation = packageStore.get(normalizedPath);
-
-    if (!diskInformation) {
-      packageStore.set(normalizedPath, diskInformation = {
-        packageLocation: normalizedPath,
-        packageDependencies: new Map(),
-        packagePeers: new Set(),
-        linkType: LinkType.SOFT,
-      });
-    }
-
-    return diskInformation;
+    return miscUtils.getFactoryWithDefault(packageStore, normalizedPath, () => ({
+      packageLocation: normalizedPath,
+      packageDependencies: new Map(),
+      packagePeers: new Set(),
+      linkType: LinkType.SOFT,
+      discardFromLookup: false,
+    }));
   }
 
   private trimBlacklistedPackages() {
