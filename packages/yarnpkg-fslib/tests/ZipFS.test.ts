@@ -37,7 +37,6 @@ describe(`ZipFS`, () => {
       expectSameStats(zipFs.statSync("/linkToFileB" as PortablePath), file);
       expectSameStats(zipFs.statSync("/linkToDirA/file" as PortablePath), file);
       expectSameStats(zipFs.statSync("/linkToDirB/file" as PortablePath), file);
-
       expectSameStats(zipFs.statSync("/linkToCwd/linkToCwd/linkToCwd/linkToCwd/dir/file" as PortablePath), file);
 
       expectSameStats(zipFs.statSync("/linkToDirA" as PortablePath), dir);
@@ -57,6 +56,27 @@ describe(`ZipFS`, () => {
       expect(linkToDirB.isFile()).toBeFalsy();
       expect(linkToDirB.isDirectory()).toBeFalsy();
       expect(linkToDirB.isSymbolicLink()).toBeTruthy();
+
+      for (const path of [
+        "/linkToFileA",
+        "/linkToFileB",
+        "/linkToDirA/file",
+        "/linkToDirB/file",
+        "/dir/file",
+        "/linkToCwd/linkToCwd/linkToCwd/linkToCwd/dir/file",
+      ])
+        expect(zipFs.readFileSync(path as PortablePath, "utf8")).toEqual("file content");
+
+
+      for (const path of [
+        "/linkToDirA",
+        "/linkToDirB",
+        "/linkToCwd/linkToCwd/linkToCwd/linkToCwd/dir",
+        "/linkToCwd/linkToCwd/linkToCwd/linkToCwd/linkToDirA",
+        "/linkToCwd/linkToCwd/linkToCwd/linkToCwd/linkToDirB",
+      ]) {
+        expect(zipFs.readdirSync(path as PortablePath)).toContain("file");
+      }
     };
 
     const libzip = getLibzipSync();
