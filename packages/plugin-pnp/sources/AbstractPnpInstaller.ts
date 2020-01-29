@@ -9,7 +9,7 @@ export abstract class AbstractPnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
 
   private readonly blacklistedPaths: Set<PortablePath> = new Set();
-  private readonly discardedPaths: Set<PortablePath> = new  Set();
+  private readonly discardedPaths: Map<PortablePath, boolean> = new Map();
 
   constructor(protected opts: LinkOptions) {
     this.opts = opts;
@@ -84,8 +84,15 @@ export abstract class AbstractPnpInstaller implements Installer {
     if (hasVirtualInstances)
       this.blacklistedPaths.add(packageLocation);
 
-    if (fetchResult.discardFromLookup)
-      this.discardedPaths.add(packageLocation);
+    if (fetchResult.discardFromLookup) {
+      const discardEntry = this.discardedPaths.get(packageLocation);
+
+      if (typeof discardEntry === `undefined`) {
+        this.discardedPaths.set(packageLocation, true);
+      }
+    } else {
+      this.discardedPaths.set(packageLocation, false);
+    }
 
     return {
       packageLocation: packageRawLocation,
@@ -135,7 +142,7 @@ export abstract class AbstractPnpInstaller implements Installer {
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
     const blacklistedLocations = this.blacklistedPaths;
-    const discardedLocations = this.discardedPaths;
+    const discardedLocations = [];
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
@@ -147,6 +154,10 @@ export abstract class AbstractPnpInstaller implements Installer {
       for (const pkg of this.opts.project.storedPackages.values())
         if (this.opts.project.tryWorkspaceByLocator(pkg))
           fallbackExclusionList.push({name: structUtils.requirableIdent(pkg), reference: pkg.reference});
+
+    for (const [location, isDiscarded] of this.discardedPaths)
+      if (isDiscarded)
+        discardedLocations.push(location);
 
     return await this.finalizeInstallWithPnp({
       blacklistedLocations,
