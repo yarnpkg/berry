@@ -19,7 +19,6 @@ import {LockfileResolver}                                                  from 
 import {DependencyMeta, Manifest}                                          from './Manifest';
 import {MessageName}                                                       from './MessageName';
 import {MultiResolver}                                                     from './MultiResolver';
-import {OverrideResolver}                                                  from './OverrideResolver';
 import {Report, ReportError}                                               from './Report';
 import {ResolveOptions, Resolver}                                          from './Resolver';
 import {RunInstallPleaseResolver}                                          from './RunInstallPleaseResolver';
@@ -471,7 +470,7 @@ export class Project {
 
     const resolver: Resolver = opts.lockfileOnly
       ? new MultiResolver([new LockfileResolver(), new RunInstallPleaseResolver(realResolver)])
-      : new OverrideResolver(new MultiResolver([new LockfileResolver(), legacyMigrationResolver, realResolver]));
+      : new MultiResolver([new LockfileResolver(), legacyMigrationResolver, realResolver]);
 
     const fetcher = this.configuration.makeFetcher();
 
@@ -707,7 +706,10 @@ export class Project {
         for (const [identHash, descriptor] of pkg.dependencies) {
           const dependency = await this.configuration.reduceHook(hooks => {
             return hooks.reduceDependency;
-          }, descriptor, this, pkg, descriptor);
+          }, descriptor, this, pkg, descriptor, {
+            resolver,
+            resolveOptions,
+          });
 
           if (!structUtils.areIdentsEqual(descriptor, dependency))
             throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);

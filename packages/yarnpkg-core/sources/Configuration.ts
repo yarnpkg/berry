@@ -8,6 +8,7 @@ import semver                                                  from 'semver';
 import {PassThrough, Writable}                                 from 'stream';
 import {tmpNameSync}                                           from 'tmp';
 
+import {CorePlugin}                                            from './CorePlugin';
 import {Manifest}                                              from './Manifest';
 import {MultiFetcher}                                          from './MultiFetcher';
 import {MultiResolver}                                         from './MultiResolver';
@@ -557,7 +558,9 @@ export class Configuration {
     delete environmentSettings.rcFilename;
 
     const rcFiles = await Configuration.findRcFiles(startingCwd);
-    const plugins = new Map();
+    const plugins = new Map<string, Plugin>([
+      [`@@core`, CorePlugin],
+    ]);
 
     const interop = (obj: any) => obj.__esModule ? obj.default : obj;
 
