@@ -5328,6 +5328,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-pnp@workspace:packages/plugin-pnp"
   dependencies:
     "@types/micromatch": ^3.1.0
+    "@types/semver": ^6.0.2
     "@yarnpkg/cli": "workspace:^2.0.0-rc.27"
     "@yarnpkg/core": "workspace:^2.0.0-rc.21"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
@@ -5335,6 +5336,7 @@ __metadata:
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.16"
     clipanion: ^2.1.5
     micromatch: ^4.0.2
+    semver: ^5.6.0
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.27
     "@yarnpkg/core": ^2.0.0-rc.21

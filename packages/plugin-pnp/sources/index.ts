@@ -2,6 +2,8 @@ import {Hooks as CoreHooks, Plugin, Project, SettingsType} from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, xfs}         from '@yarnpkg/fslib';
 import {Hooks as StageHooks}                               from '@yarnpkg/plugin-stage';
 
+import semver                                              from 'semver';
+
 import {PnpLinker}                                         from './PnpLinker';
 import unplug                                              from './commands/unplug';
 
@@ -30,6 +32,9 @@ export const quotePathIfNeeded = (path: string) => {
 async function setupScriptEnvironment(project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
   const pnpPath: PortablePath = getPnpPath(project).main;
   const pnpRequire = `--require ${quotePathIfNeeded(npath.fromPortablePath(pnpPath))}`;
+
+  if (pnpPath.includes(' ') && semver.lt(process.versions.node, '12.0.0'))
+    throw new Error(`Expected the build location to not include spaces when using Node < 12.0.0 (${process.versions.node})`);
 
   if (xfs.existsSync(pnpPath)) {
     let nodeOptions = env.NODE_OPTIONS || ``;
