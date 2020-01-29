@@ -5247,6 +5247,9 @@ __metadata:
     clipanion: ^2.1.5
     micromatch: ^4.0.2
     p-limit: ^2.2.0
+  peerDependencies:
+    "@yarnpkg/cli": ^2.0.0-rc.28
+    "@yarnpkg/core": ^2.0.0-rc.22
   languageName: unknown
   linkType: soft
 

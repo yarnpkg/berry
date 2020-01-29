@@ -2,8 +2,6 @@
   "name": "@yarnpkg/plugin-node-modules",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.28",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.22",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
     "@yarnpkg/libzip": "workspace:^2.0.0-rc.9",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.9",
@@ -14,8 +12,14 @@
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0"
   },
+  "peerDependencies": {
+    "@yarnpkg/cli": "^2.0.0-rc.28",
+    "@yarnpkg/core": "^2.0.0-rc.22"
+  },
   "devDependencies": {
     "@types/micromatch": "^3.1.0",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.28",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.22",
     "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.15"
   },
   "version": "2.0.0-rc.4",
