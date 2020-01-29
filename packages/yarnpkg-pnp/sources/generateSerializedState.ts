@@ -1,5 +1,5 @@
-import {LocationBlacklistData, LocationLengthData, PackageRegistryData, LocationDiscardData} from './types';
-import {PackageStoreData, PnpSettings, SerializedState}                                      from './types';
+import {LocationBlacklistData, LocationLengthData, PackageRegistryData} from './types';
+import {PackageStoreData, PnpSettings, SerializedState}                 from './types';
 
 // Keep this function is sync with its implementation in:
 // @yarnpkg/core/sources/miscUtils.ts
@@ -62,7 +62,7 @@ function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData
     const packageStoreData: PackageStoreData = [];
     packageRegistryData.push([packageName, packageStoreData]);
 
-    for (const [packageReference, {packageLocation, packageDependencies, packagePeers, linkType}] of sortMap(packageStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {
+    for (const [packageReference, {packageLocation, packageDependencies, packagePeers, linkType, discardFromLookup}] of sortMap(packageStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {
       const normalizedDependencies: Array<[string, string | [string, string] | null]> = [];
 
       if (packageName !== null && packageReference !== null && !packageDependencies.has(packageName))
@@ -75,11 +75,16 @@ function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData
         ? Array.from(packagePeers)
         : undefined;
 
+      const normalizedDiscardFromLookup = typeof discardFromLookup !== `undefined`
+        ? discardFromLookup
+        : undefined;
+
       packageStoreData.push([packageReference, {
         packageLocation,
         packageDependencies: normalizedDependencies,
         packagePeers: normalizedPeers,
         linkType,
+        discardFromLookup: normalizedDiscardFromLookup,
       }]);
     }
   }
@@ -89,21 +94,6 @@ function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData
 
 function generateLocationBlacklistData(settings: PnpSettings): LocationBlacklistData {
   return sortMap(settings.blacklistedLocations || [], location => location);
-}
-
-function generateLocationDiscardData(settings: PnpSettings): LocationDiscardData {
-  return sortMap(settings.discardedLocations || [], location => location);
-}
-
-function generateLocationLengthData(settings: PnpSettings): LocationLengthData {
-  const lengths = new Set<number>();
-
-  for (const packageInformationStore of settings.packageRegistry.values())
-    for (const {packageLocation} of packageInformationStore.values())
-      if (packageLocation !== null)
-        lengths.add(packageLocation.length);
-
-  return Array.from(lengths).sort((a, b) => b - a);
 }
 
 export function generateSerializedState(settings: PnpSettings): SerializedState {
@@ -121,8 +111,6 @@ export function generateSerializedState(settings: PnpSettings): SerializedState 
 
     fallbackExclusionList: generateFallbackExclusionList(settings),
     locationBlacklistData: generateLocationBlacklistData(settings),
-    locationDiscardData: generateLocationDiscardData(settings),
-    locationLengthData: generateLocationLengthData(settings),
     packageRegistryData: generatePackageRegistryData(settings),
   };
 }
