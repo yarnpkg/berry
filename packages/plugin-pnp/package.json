@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-pnp",
-  "version": "2.0.0-rc.15",
+  "version": "2.0.0-rc.16",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/semver": "^6.0.2",
@@ -12,13 +12,13 @@
     "semver": "^5.6.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.27",
-    "@yarnpkg/core": "^2.0.0-rc.21"
+    "@yarnpkg/cli": "^2.0.0-rc.28",
+    "@yarnpkg/core": "^2.0.0-rc.22"
   },
   "devDependencies": {
     "@types/micromatch": "^3.1.0",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.27",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.21"
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.28",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.22"
   },
   "repository": {
     "type": "git",

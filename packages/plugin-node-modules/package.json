@@ -2,14 +2,14 @@
   "name": "@yarnpkg/plugin-node-modules",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.27",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.21",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.28",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.22",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
     "@yarnpkg/libzip": "workspace:^2.0.0-rc.9",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.9",
-    "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.15",
+    "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.16",
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.16",
-    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.16",
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.17",
     "clipanion": "^2.1.5",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0"
@@ -18,7 +18,7 @@
     "@types/micromatch": "^3.1.0",
     "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.15"
   },
-  "version": "2.0.0-rc.3",
+  "version": "2.0.0-rc.4",
   "nextVersion": {
     "semver": "2.0.0-rc.5",
     "nonce": "1989925236539513"

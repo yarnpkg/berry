@@ -9,14 +9,14 @@
     "yup": "^0.27.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.27",
-    "@yarnpkg/core": "^2.0.0-rc.21"
+    "@yarnpkg/cli": "^2.0.0-rc.28",
+    "@yarnpkg/core": "^2.0.0-rc.22"
   },
   "devDependencies": {
     "@types/yup": "0.26.12",
     "@yarnpkg/builder": "workspace:^2.0.0-rc.18",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.27",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.21",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.28",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.22",
     "typescript": "^3.7.4"
   },
   "scripts": {
