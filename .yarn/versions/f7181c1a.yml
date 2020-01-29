@@ -1,6 +1,7 @@
 releases:
   "@yarnpkg/cli": prerelease
   "@yarnpkg/plugin-pnp": prerelease
+  "@yarnpkg/pnp": prerelease
 
 declined:
   - "@yarnpkg/plugin-constraints"
@@ -18,3 +19,4 @@ declined:
   - "@yarnpkg/plugin-workspace-tools"
   - "@yarnpkg/core"
   - "@yarnpkg/doctor"
+  - "@yarnpkg/pnpify"
