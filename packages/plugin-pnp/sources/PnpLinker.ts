@@ -18,6 +18,17 @@ const FORCED_UNPLUG_PACKAGES = new Set([
   structUtils.makeIdent(null, `fsevents`).identHash,
 ]);
 
+const FORCED_UNPLUG_FILETYPES = new Set([
+  // Windows can't execute exe files inside zip archives
+  '.exe',
+  // The c/c++ compiler can't read files from zip archives
+  '.h', '.hh', '.hpp', '.c', '.cc', '.cpp',
+  // The java runtime can't read files from zip archives
+  '.java',
+  // Node opens these through dlopen
+  '.node',
+]);
+
 export class PnpLinker implements Linker {
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
     return opts.project.configuration.get('nodeLinker') === 'pnp';
@@ -83,7 +94,7 @@ class PnpInstaller extends AbstractPnpInstaller {
   }
 
   async transformPackage(locator: Locator, dependencyMeta: DependencyMeta, packageFs: FakeFS<PortablePath>, {hasBuildScripts}: {hasBuildScripts: boolean}) {
-    if (hasBuildScripts || this.isUnplugged(locator, dependencyMeta)) {
+    if (hasBuildScripts || this.isUnplugged(locator, dependencyMeta, packageFs)) {
       return this.unplugPackage(locator, packageFs);
     } else {
       return packageFs;
@@ -184,11 +195,14 @@ class PnpInstaller extends AbstractPnpInstaller {
     return new CwdFS(unplugPath);
   }
 
-  private isUnplugged(ident: Ident, dependencyMeta: DependencyMeta) {
+  private isUnplugged(ident: Ident, dependencyMeta: DependencyMeta, packageFs: FakeFS<PortablePath>) {
     if (dependencyMeta.unplugged)
       return true;
 
     if (FORCED_UNPLUG_PACKAGES.has(ident.identHash))
+      return true;
+
+    if (packageFs.getExtractHint({relevantExtensions:FORCED_UNPLUG_FILETYPES}))
       return true;
 
     return false;
