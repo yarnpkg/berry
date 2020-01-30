@@ -23,7 +23,7 @@ const Menu = styled.div`
     height: calc(100vh - 6.5em);
     overflow-y: auto;
 
-    padding-right: 3px;
+    padding-right: 4px;
     background: #d1dee8;
   }
   ${ifMobile} {
