@@ -1404,7 +1404,10 @@ describe(`Plug'n'Play`, () => {
         }
       `);
 
-      cp.execFileSync(`node`, [`${tmp}/index.js`, `${path}/.pnp.js`], {encoding: `utf-8`});
-    })
+      cp.execFileSync(`node`, [
+        npath.fromPortablePath(`${tmp}/index.js`),
+        npath.fromPortablePath(`${path}/.pnp.js`),
+      ], {encoding: `utf-8`});
+    }),
   );
 });
