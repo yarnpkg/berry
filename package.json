@@ -35,7 +35,6 @@
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
     "micromatch": "^4.0.2",
-    "tar": "^6.0.1",
     "typescript": "^3.7.4"
   },
   "dependenciesMeta": {

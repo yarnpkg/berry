@@ -1,9 +1,7 @@
-const tar = require('tar'); // note that tar had to be added to yarn top level workspace to get it requirable here
-// it threw an error when trying to require it from within the factory method below
-
 module.exports = {
   name: `plugin-local-cache`,
-  factory: (yarnRequire) => {
+  factory: (require) => {
+    
     const cachePath = '.yarn/packages'; // TODO update to get this from config instead of hard coded
     let index = undefined;
 
@@ -30,8 +28,14 @@ module.exports = {
                 manifest = JSON.parse(await fs.promises.readFile(path.join(location, 'package.json'), 'utf8'));
                 manifest.url = `portal:${location}`;
               } else if (dirent.isFile() && dirent.name.endsWith('.tgz')) {
-                manifest = JSON.parse(await extractTarFile(location, 'package/package.json'));
-                manifest.url = `file:${location}`;
+                manifest = {
+                  name: 'scratch',
+                  version: '0.0.0',
+                };
+                console.warn('skipped extracting .tgz file since "tar" is not currently requirable in plugins');
+                // TODO delete the above and uncomment the following
+                // manifest = JSON.parse(await extractTarFile(location, 'package/package.json'));
+                // manifest.url = `file:${location}`;
               }
               if (!manifest || !manifest.name || !manifest.version) throw new Error(`error: invalid manifest for ${location}`);
               if (!index[manifest.name]) index[manifest.name] = {};
@@ -51,6 +55,7 @@ module.exports = {
       } );
 
       function extractTarFile(source, filename) {
+        const tar = require('tar');
         return new Promise( (resolve, reject) => {
           try {
             fs.createReadStream(source).pipe(new tar.Parse({

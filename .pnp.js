@@ -266,7 +266,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-environment-node", "npm:24.5.0"],
             ["jest-junit", "npm:5.2.0"],
             ["micromatch", "npm:4.0.2"],
-            ["tar", "npm:6.0.1"],
             ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=226bd1"]
           ],
           "linkType": "SOFT",
@@ -6782,7 +6781,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-environment-node", "npm:24.5.0"],
             ["jest-junit", "npm:5.2.0"],
             ["micromatch", "npm:4.0.2"],
-            ["tar", "npm:6.0.1"],
             ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=226bd1"]
           ],
           "linkType": "SOFT",
@@ -26197,15 +26195,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["minipass", "npm:2.3.5"]
           ],
           "linkType": "HARD",
-        }],
-        ["npm:2.1.0", {
-          "packageLocation": "./.yarn/cache/minizlib-npm-2.1.0-9531be52b3-1.zip/node_modules/minizlib/",
-          "packageDependencies": [
-            ["minizlib", "npm:2.1.0"],
-            ["minipass", "npm:3.0.1"],
-            ["yallist", "npm:4.0.0"]
-          ],
-          "linkType": "HARD",
         }]
       ]],
       ["mississippi", [
@@ -26253,13 +26242,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["mkdirp", "npm:0.5.1"],
             ["minimist", "npm:0.0.8"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:1.0.3", {
-          "packageLocation": "./.yarn/cache/mkdirp-npm-1.0.3-02fc91ac70-1.zip/node_modules/mkdirp/",
-          "packageDependencies": [
-            ["mkdirp", "npm:1.0.3"]
           ],
           "linkType": "HARD",
         }]
@@ -32604,19 +32586,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["mkdirp", "npm:0.5.1"],
             ["safe-buffer", "npm:5.1.2"],
             ["yallist", "npm:3.0.3"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:6.0.1", {
-          "packageLocation": "./.yarn/cache/tar-npm-6.0.1-aedef672fb-1.zip/node_modules/tar/",
-          "packageDependencies": [
-            ["tar", "npm:6.0.1"],
-            ["chownr", "npm:1.1.3"],
-            ["fs-minipass", "npm:2.0.0"],
-            ["minipass", "npm:3.0.1"],
-            ["minizlib", "npm:2.1.0"],
-            ["mkdirp", "npm:1.0.3"],
-            ["yallist", "npm:4.0.0"]
           ],
           "linkType": "HARD",
         }]

@@ -5035,7 +5035,6 @@ __metadata:
     jest-environment-node: ^24.5.0
     jest-junit: ^5.2.0
     micromatch: ^4.0.2
-    tar: ^6.0.1
     typescript: ^3.7.4
   dependenciesMeta:
     core-js:
@@ -8013,7 +8012,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"chownr@npm:^1.1.2, chownr@npm:^1.1.3":
+"chownr@npm:^1.1.2":
   version: 1.1.3
   resolution: "chownr@npm:1.1.3"
   checksum: 384cf62ef219f12f1af1159777163154f68c455405217d94b8e2e107164242884521b5e92d4d8f510fd17f66f5aafaa83f2ed7b0d59be19f3d448d8d05301947
@@ -17687,16 +17686,6 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"minizlib@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "minizlib@npm:2.1.0"
-  dependencies:
-    minipass: ^3.0.0
-    yallist: ^4.0.0
-  checksum: 00574fea94ddb9ce0df9fa198daf421439107ae68448db445255c3bcdaaa0acd6c765fb8ccde63f39f85b8db780a10c79d2a4773ec3043a22b7bfbd0b6b541c1
-  languageName: node
-  linkType: hard
-
 "mississippi@npm:^3.0.0":
   version: 3.0.0
   resolution: "mississippi@npm:3.0.0"
@@ -17740,15 +17729,6 @@ fsevents@^1.2.2:
   bin:
     mkdirp: bin/cmd.js
   checksum: ab0413777774b9c8255bce8e43b4e355bf329f7da0e3db007d6d370567cd82a858bd2aff028b7c5d39ff19bfd26b3c29d8e7ae706bd768a114ae95fbc9311b51
-  languageName: node
-  linkType: hard
-
-"mkdirp@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "mkdirp@npm:1.0.3"
-  bin:
-    mkdirp: bin/cmd.js
-  checksum: 8c3f00e9bba32181159cbe3be25afe25f51e106d13327d8d20b5e43e7414eb8e98c1bfb3b2a2a60417dc16e4cf40cf683e7b481167ee107026cfe93be165a34b
   languageName: node
   linkType: hard
 
@@ -23663,20 +23643,6 @@ resolve@^1.10.1:
     safe-buffer: ^5.1.2
     yallist: ^3.0.3
   checksum: a21f56df0aecd47fc2c847199e99eb96b959bc02fe64e0816bb1746ed83263e7f8c60477b104b0a86058c2852172d0ca85215c10ba80025a477a5052791d3d03
-  languageName: node
-  linkType: hard
-
-"tar@npm:^6.0.1":
-  version: 6.0.1
-  resolution: "tar@npm:6.0.1"
-  dependencies:
-    chownr: ^1.1.3
-    fs-minipass: ^2.0.0
-    minipass: ^3.0.0
-    minizlib: ^2.1.0
-    mkdirp: ^1.0.3
-    yallist: ^4.0.0
-  checksum: 1e47688641d13a7386b228aeb32fbb39ba2345fa1f836a8f2b2b38257d6f463dd5d3eea2cdc8a1d95e81f9cd4585871c8f748fe88a5430601c308555486be899
   languageName: node
   linkType: hard
 
