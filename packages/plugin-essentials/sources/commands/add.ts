@@ -278,11 +278,12 @@ function suggestTarget(workspace: Workspace, ident: Ident, {dev, peer, preferDev
   if (optional && hasDev)
     throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a dev dependency - remove the -O flag or remove it from your dev dependencies first`);
 
-  if (optional && hasPeer)
-    throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a peer dependency - remove the -O flag or remove it from your peer dependencies first`);
+  if (optional && !peer && hasPeer)
+    throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a peer dependency - remove the -O flag or add the -P flag or remove it from your peer dependencies first`);
 
   if ((dev || preferDev) && optional)
     throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" cannot simultaneously be a dev dependency and an optional dependency`);
+
 
   if (peer)
     return suggestUtils.Target.PEER;
