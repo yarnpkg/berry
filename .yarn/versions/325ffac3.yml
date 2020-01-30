@@ -1,6 +1,7 @@
 releases:
   "@yarnpkg/fslib": prerelease
   "@yarnpkg/plugin-pnp": prerelease
+  "@yarnpkg/pnpify": prerelease
 
 declined:
   - "@yarnpkg/plugin-constraints"
@@ -28,5 +29,4 @@ declined:
   - "@yarnpkg/doctor"
   - "@yarnpkg/json-proxy"
   - "@yarnpkg/pnp"
-  - "@yarnpkg/pnpify"
   - "@yarnpkg/shell"
