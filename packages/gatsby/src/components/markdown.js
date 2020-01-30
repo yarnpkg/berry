@@ -14,8 +14,6 @@ const Title = styled.h1`
 
   margin: 0;
 
-  height: 4rem;
-
   border-bottom: 1px solid;
 
   font-weight: 300;
