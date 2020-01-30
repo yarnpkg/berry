@@ -8,7 +8,7 @@ import semver                                                  from 'semver';
 import {PassThrough, Writable}                                 from 'stream';
 import {tmpNameSync}                                           from 'tmp';
 
-import {ResolverController, CoreFetcher}                       from './Controllers';
+import {ResolverController, FetcherController}                 from './Controllers';
 import {Manifest}                                              from './Manifest';
 import {Plugin, Hooks}                                         from './Plugin';
 import {ProtocolResolver}                                      from './ProtocolResolver';
@@ -931,7 +931,7 @@ export class Configuration {
       for (const fetcher of plugin.fetchers || [])
         pluginFetchers.push(new fetcher());
 
-    return new CoreFetcher([
+    return new FetcherController([
       new VirtualFetcher(),
       new WorkspaceFetcher(),
 

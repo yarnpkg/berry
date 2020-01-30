@@ -1,9 +1,3 @@
-
-import * as fs                                           from 'fs';
-import * as path                                         from 'path';
-
-import * as tar                                          from 'tar';
-
 import {Fetcher}                                         from './Fetcher';
 import {MultiFetcher}                                    from './MultiFetcher';
 import {MultiResolver}                                   from './MultiResolver';
@@ -71,7 +65,7 @@ export class ResolverController implements Resolver {
   }
 }
 
-export class CoreFetcher implements Fetcher {
+export class FetcherController implements Fetcher {
   public readonly type = 'module';
   private readonly index = new Map<Fetcher, Fetcher | undefined>();
   private readonly protocols = new MultiFetcher([]);
