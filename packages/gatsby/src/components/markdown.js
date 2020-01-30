@@ -53,7 +53,7 @@ const Content = styled.div`
   }
 
   p, table {
-    margin-bottom: 1em;
+    margin-bottom: 1.2em;
   }
 
   table {
