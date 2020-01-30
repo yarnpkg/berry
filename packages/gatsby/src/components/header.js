@@ -85,6 +85,12 @@ const MenuLogo = styled(Link)`
 
   padding: 0 1em;
 
+  ${ifDesktop} {
+    &:hover {
+      background: hsl(204, 33%, 96%);
+    }
+  }
+
   ${ifMobile} {
     margin-right: auto;
 
@@ -135,6 +141,11 @@ const MenuNavigation = styled.div`
 `;
 
 const MenuEntry = styled.div`
+  ${ifDesktop} {
+    &:hover {
+      background: hsl(204, 33%, 96%);
+    }
+  }
   a {
     display: flex;
     align-items: center;

@@ -42,8 +42,13 @@ const MenuEntry = styled(Link)`
 
   text-decoration: none;
 
-  background: #ffffff;
   color: #333333;
+  background: #ffffff;
+  ${ifDesktop} {
+    &:hover {
+      background: hsl(204, 33%, 96%);
+    }
+  }
 
   &::before {
     content: "";
