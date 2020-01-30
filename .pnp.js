@@ -48929,10 +48929,14 @@ function applyPatch(pnpapi, opts) {
     }
 
     const parentApiPath = opts.manager.getApiPathFromParent(parent);
-    const parentApi = parentApiPath !== null ? opts.manager.getApiEntry(parentApiPath, true).instance : null; // The 'pnpapi' name is reserved to return the PnP api currently in use
+    const parentApi = parentApiPath !== null ? opts.manager.getApiEntry(parentApiPath, true).instance : null; // Requests that aren't covered by the PnP runtime goes through the
+    // parent `_load` implementation. This is required for VSCode, for example,
+    // which override `_load` to provide additional builtins to its extensions.
+
+    if (parentApi === null) return originalModuleLoad(request, parent, isMain); // The 'pnpapi' name is reserved to return the PnP api currently in use
     // by the program
 
-    if (parentApi !== null && request === `pnpapi`) return parentApi; // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us
+    if (request === `pnpapi`) return parentApi; // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us
     // which file we should load
 
     const modulePath = module_1.Module._resolveFilename(request, parent, isMain); // We check whether the module is owned by the dependency tree of the
