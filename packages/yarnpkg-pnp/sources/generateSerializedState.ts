@@ -1,5 +1,5 @@
-import {LocationBlacklistData, LocationLengthData, PackageRegistryData} from './types';
-import {PackageStoreData, PnpSettings, SerializedState}                 from './types';
+import {LocationBlacklistData, PackageRegistryData}     from './types';
+import {PackageStoreData, PnpSettings, SerializedState} from './types';
 
 // Keep this function is sync with its implementation in:
 // @yarnpkg/core/sources/miscUtils.ts

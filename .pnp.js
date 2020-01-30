@@ -15839,7 +15839,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["clipboardy", [
         ["npm:1.2.3", {
-          "packageLocation": "./.yarn/cache/clipboardy-npm-1.2.3-d3a44efb48-1.zip/node_modules/clipboardy/",
+          "packageLocation": "./.yarn/unplugged/clipboardy-npm-1.2.3-d3a44efb48/node_modules/clipboardy/",
           "packageDependencies": [
             ["clipboardy", "npm:1.2.3"],
             ["arch", "npm:2.1.1"],
@@ -26623,7 +26623,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["node-notifier", [
         ["npm:5.4.3", {
-          "packageLocation": "./.yarn/cache/node-notifier-npm-5.4.3-068ef79075-1.zip/node_modules/node-notifier/",
+          "packageLocation": "./.yarn/unplugged/node-notifier-npm-5.4.3-068ef79075/node_modules/node-notifier/",
           "packageDependencies": [
             ["node-notifier", "npm:5.4.3"],
             ["growly", "npm:1.3.0"],
@@ -32644,7 +32644,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["term-size", [
         ["npm:1.2.0", {
-          "packageLocation": "./.yarn/cache/term-size-npm-1.2.0-7629e52ca8-1.zip/node_modules/term-size/",
+          "packageLocation": "./.yarn/unplugged/term-size-npm-1.2.0-7629e52ca8/node_modules/term-size/",
           "packageDependencies": [
             ["term-size", "npm:1.2.0"],
             ["execa", "npm:0.7.0"]

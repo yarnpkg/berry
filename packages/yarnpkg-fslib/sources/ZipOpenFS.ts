@@ -1,13 +1,13 @@
-import {Libzip}                                                                from '@yarnpkg/libzip';
-import {constants}                                                             from 'fs';
+import {Libzip}                                                                                    from '@yarnpkg/libzip';
+import {constants}                                                                                 from 'fs';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
-import {Dirent}                                                                from './FakeFS';
-import {FakeFS, MkdirOptions, WriteFileOptions}                                from './FakeFS';
-import {WatchOptions, WatchCallback, Watcher}                                  from './FakeFS';
-import {NodeFS}                                                                from './NodeFS';
-import {ZipFS}                                                                 from './ZipFS';
-import {Filename, FSPath, PortablePath}                                        from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions} from './FakeFS';
+import {Dirent}                                                                                    from './FakeFS';
+import {FakeFS, MkdirOptions, WriteFileOptions}                                                    from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher}                                                      from './FakeFS';
+import {NodeFS}                                                                                    from './NodeFS';
+import {ZipFS}                                                                                     from './ZipFS';
+import {Filename, FSPath, PortablePath}                                                            from './path';
 
 const ZIP_FD = 0x80000000;
 
@@ -62,6 +62,10 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
     this.isZip = new Set();
     this.notZip = new Set();
+  }
+
+  getExtractHint(hints: ExtractHintOptions) {
+    return this.baseFs.getExtractHint(hints);
   }
 
   getRealPath() {
