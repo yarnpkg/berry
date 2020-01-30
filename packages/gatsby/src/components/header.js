@@ -100,9 +100,14 @@ const MenuLogo = styled(Link)`
 `;
 
 const MenuToggle = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   margin: 1em;
   margin-left: 0;
 
+  color: grey;
   border: 1px solid lightgrey;
   border-radius: 10px;
 
@@ -137,6 +142,7 @@ const MenuNavigation = styled.div`
 
     &.expanded {
       transform: scaleY(1);
+      box-shadow: 0px 6px 6px 0px rgba(0, 0, 0, 0.1);
     }
   }
 `;
@@ -223,7 +229,7 @@ export const Header = ({children}) => {
             <Logo height={`3em`} align={`middle`} />
           </MenuLogo>
           <MenuToggle onClick={() => setExpanded(!expanded)}>
-            {`≡`}
+            {expanded ? `×` : `≡`}
           </MenuToggle>
         </MenuTools>
 
