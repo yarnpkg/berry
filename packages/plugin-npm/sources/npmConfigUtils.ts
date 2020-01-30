@@ -9,7 +9,7 @@ export interface MapLike {
   get(key: string): any;
 }
 
-function normalizeRegistry(registry: string) {
+export function normalizeRegistry(registry: string) {
   return registry.replace(/\/$/, ``);
 }
 

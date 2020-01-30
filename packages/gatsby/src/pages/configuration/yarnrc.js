@@ -1,7 +1,7 @@
 import React                                                    from 'react';
 
 import {ConfigurationLayout}                                    from '../../components/layout-configuration';
-import {SEO}                                                    from '../../components/seo';
+import {SEO, defaultKeywords}                                   from '../../components/seo';
 import {SymlObjectProperty, SymlScalarProperty}                 from '../../components/syml';
 import {SymlContainer, SymlMain, SymlArrayProperty, SymlScalar} from '../../components/syml';
 
@@ -10,7 +10,7 @@ const YarnrcDoc = () => <>
     <SEO
       title={`Configuration options`}
       description={`List of all the configuration option for Yarn (yarnrc files)`}
-      keywords={[`package manager`, `yarn`, `yarnpkg`, `configuration`, `yarnrc`]}
+      keywords={defaultKeywords}
     />
     <SymlContainer>
       <SymlMain>
@@ -159,7 +159,7 @@ const YarnrcDoc = () => <>
       />
       <SymlScalarProperty
         name={`npmAlwaysAuth`}
-        placeholder={`true`}
+        placeholder={true}
         description={<>
           If true, Yarn will always send the authentication credentials when making a request to the registries. This typically shouldn't be needed.
         </>}
@@ -275,7 +275,7 @@ const YarnrcDoc = () => <>
         name={`packageExtensions`}
         margin={true}
         description={<>
-          Some packages may have been specified incorrectly with regard to their dependencies - for example with one dependency being missing, causing Yarn to refuse it the access. The <code>packageExtensions</code> fields offer a way to extend the existing package definitions with additional information.
+          Some packages may have been specified incorrectly with regard to their dependencies - for example with one dependency being missing, causing Yarn to refuse it the access. The <code>packageExtensions</code> fields offer a way to extend the existing package definitions with additional information. If you use it, consider sending a PR upstream and contributing your extension to the <a href={`https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts`}><code>plugin-compat</code> database</a>.
         </>}
       >
         <SymlObjectProperty

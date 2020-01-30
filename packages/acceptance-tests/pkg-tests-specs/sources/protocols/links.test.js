@@ -66,6 +66,46 @@ describe(`Protocols`, () => {
     );
 
     test(
+      `it shouldn't cause the paths to be discarded when covered by other fetchers (alphabetical before)`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`a-my-app`]: `link:.`,
+            [`no-deps`]: `1.0.0`,
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+            name: `no-deps`,
+            version: `1.0.0`,
+          });
+        },
+      ),
+    );
+
+    test(
+      `it shouldn't cause the paths to be discarded when covered by other fetchers (alphabetical after)`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+            [`z-my-app`]: `link:.`,
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+            name: `no-deps`,
+            version: `1.0.0`,
+          });
+        },
+      ),
+    );
+
+    test(
       `it should allow link to access their containers' dependencies`,
       makeTemporaryEnv({
         dependencies: {

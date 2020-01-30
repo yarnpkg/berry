@@ -533,7 +533,9 @@ export class ZipFS extends BasePortableFakeFS {
 
       const type = this.listings.has(p)
         ? S_IFDIR
-        : S_IFREG;
+        : this.isSymbolicLink(entry)
+          ? S_IFLNK
+          : S_IFREG;
 
       const defaultMode = type === S_IFDIR
         ? 0o755
@@ -627,7 +629,7 @@ export class ZipFS extends BasePortableFakeFS {
       if (!resolveLastComponent)
         break;
 
-      const index = this.libzip.name.locate(this.zip, resolvedP);
+      const index = this.libzip.name.locate(this.zip, resolvedP.slice(1));
       if (index === -1)
         break;
 

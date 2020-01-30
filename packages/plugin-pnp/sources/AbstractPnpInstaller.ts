@@ -9,7 +9,6 @@ export abstract class AbstractPnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
 
   private readonly blacklistedPaths: Set<PortablePath> = new Set();
-  private readonly discardedPaths: Set<PortablePath> = new  Set();
 
   constructor(protected opts: LinkOptions) {
     this.opts = opts;
@@ -78,14 +77,16 @@ export abstract class AbstractPnpInstaller implements Installer {
       packagePeers.add(descriptor.name);
     }
 
-    const packageStore = miscUtils.getMapWithDefault(this.packageRegistry, key1);
-    packageStore.set(key2, {packageLocation, packageDependencies, packagePeers, linkType: pkg.linkType});
+    miscUtils.getMapWithDefault(this.packageRegistry, key1).set(key2, {
+      packageLocation,
+      packageDependencies,
+      packagePeers,
+      linkType: pkg.linkType,
+      discardFromLookup: fetchResult.discardFromLookup || false,
+    });
 
     if (hasVirtualInstances)
       this.blacklistedPaths.add(packageLocation);
-
-    if (fetchResult.discardFromLookup)
-      this.discardedPaths.add(packageLocation);
 
     return {
       packageLocation: packageRawLocation,
@@ -135,7 +136,6 @@ export abstract class AbstractPnpInstaller implements Installer {
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
     const blacklistedLocations = this.blacklistedPaths;
-    const discardedLocations = this.discardedPaths;
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
@@ -150,7 +150,6 @@ export abstract class AbstractPnpInstaller implements Installer {
 
     return await this.finalizeInstallWithPnp({
       blacklistedLocations,
-      discardedLocations,
       dependencyTreeRoots,
       enableTopLevelFallback,
       fallbackExclusionList,
@@ -179,18 +178,13 @@ export abstract class AbstractPnpInstaller implements Installer {
     const packageStore = miscUtils.getMapWithDefault(this.packageRegistry, `@@disk`);
     const normalizedPath = this.normalizeDirectoryPath(path);
 
-    let diskInformation = packageStore.get(normalizedPath);
-
-    if (!diskInformation) {
-      packageStore.set(normalizedPath, diskInformation = {
-        packageLocation: normalizedPath,
-        packageDependencies: new Map(),
-        packagePeers: new Set(),
-        linkType: LinkType.SOFT,
-      });
-    }
-
-    return diskInformation;
+    return miscUtils.getFactoryWithDefault(packageStore, normalizedPath, () => ({
+      packageLocation: normalizedPath,
+      packageDependencies: new Map(),
+      packagePeers: new Set(),
+      linkType: LinkType.SOFT,
+      discardFromLookup: false,
+    }));
   }
 
   private trimBlacklistedPackages() {

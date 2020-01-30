@@ -19,35 +19,35 @@
 
 /blog/* https://legacy.yarnpkg.com/blog/:splat 301
 
-/lang/en/* https://legacy.yarnpkg.com/lang/en/:splat 301
-/en/* https://legacy.yarnpkg.com/lang/en/:splat 301
+/lang/en/* https://legacy.yarnpkg.com/en/:splat 301
+/en/* https://legacy.yarnpkg.com/en/:splat 301
 
-/lang/es-ES/* https://legacy.yarnpkg.com/lang/es-ES/:splat 301
-/es-ES/* https://legacy.yarnpkg.com/lang/es-ES/:splat 301
+/lang/es-ES/* https://legacy.yarnpkg.com/es-ES/:splat 301
+/es-ES/* https://legacy.yarnpkg.com/es-ES/:splat 301
 
-/lang/fr/* https://legacy.yarnpkg.com/lang/fr/:splat 301
-/fr/* https://legacy.yarnpkg.com/lang/fr/:splat 301
+/lang/fr/* https://legacy.yarnpkg.com/fr/:splat 301
+/fr/* https://legacy.yarnpkg.com/fr/:splat 301
 
-/lang/id-ID/* https://legacy.yarnpkg.com/lang/id-ID/:splat 301
-/id-ID/* https://legacy.yarnpkg.com/lang/id-ID/:splat 301
+/lang/id-ID/* https://legacy.yarnpkg.com/id-ID/:splat 301
+/id-ID/* https://legacy.yarnpkg.com/id-ID/:splat 301
 
-/lang/ja/* https://legacy.yarnpkg.com/lang/ja/:splat 301
-/ja/* https://legacy.yarnpkg.com/lang/ja/:splat 301
+/lang/ja/* https://legacy.yarnpkg.com/ja/:splat 301
+/ja/* https://legacy.yarnpkg.com/ja/:splat 301
 
-/lang/pt-BR/* https://legacy.yarnpkg.com/lang/pt-BR/:splat 301
-/pt-BR/* https://legacy.yarnpkg.com/lang/pt-BR/:splat 301
+/lang/pt-BR/* https://legacy.yarnpkg.com/pt-BR/:splat 301
+/pt-BR/* https://legacy.yarnpkg.com/pt-BR/:splat 301
 
-/lang/ru/* https://legacy.yarnpkg.com/lang/ru/:splat 301
-/ru/* https://legacy.yarnpkg.com/lang/ru/:splat 301
+/lang/ru/* https://legacy.yarnpkg.com/ru/:splat 301
+/ru/* https://legacy.yarnpkg.com/ru/:splat 301
 
-/lang/tr/* https://legacy.yarnpkg.com/lang/tr/:splat 301
-/tr/* https://legacy.yarnpkg.com/lang/tr/:splat 301
+/lang/tr/* https://legacy.yarnpkg.com/tr/:splat 301
+/tr/* https://legacy.yarnpkg.com/tr/:splat 301
 
-/lang/uk/* https://legacy.yarnpkg.com/lang/uk/:splat 301
-/uk/* https://legacy.yarnpkg.com/lang/uk/:splat 301
+/lang/uk/* https://legacy.yarnpkg.com/uk/:splat 301
+/uk/* https://legacy.yarnpkg.com/uk/:splat 301
 
-/lang/zh-Hans/* https://legacy.yarnpkg.com/lang/zh-Hans/:splat 301
-/zh-Hans/* https://legacy.yarnpkg.com/lang/zh-Hans/:splat 301
+/lang/zh-Hans/* https://legacy.yarnpkg.com/zh-Hans/:splat 301
+/zh-Hans/* https://legacy.yarnpkg.com/zh-Hans/:splat 301
 
-/lang/zh-Hant/* https://legacy.yarnpkg.com/lang/zh-Hant/:splat 301
-/zh-Hant/* https://legacy.yarnpkg.com/lang/zh-Hant/:splat 301
+/lang/zh-Hant/* https://legacy.yarnpkg.com/zh-Hant/:splat 301
+/zh-Hant/* https://legacy.yarnpkg.com/zh-Hant/:splat 301

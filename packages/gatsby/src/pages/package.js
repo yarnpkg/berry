@@ -5,7 +5,7 @@ import {Details}                                               from '../componen
 import {Header}                                                from '../components/header';
 import {Layout}                                                from '../components/layout';
 import {SearchProvider, SearchBar, SearchResults, withUrlSync} from '../components/search';
-import {SEO}                                                   from '../components/seo';
+import {SEO, defaultKeywords}                                  from '../components/seo';
 
 const Hero = styled.div`
   position: relative;
@@ -66,7 +66,7 @@ const PackagePage = ({searchState, onSearchStateChange}) => {
           </Header>
         }
       >
-        <SEO title="Home" keywords={[`gatsby`, `application`, `react`]} />
+        <SEO title="Home" keywords={defaultKeywords} />
 
         <SearchResults
           onTagClick={tag => setTags([...tags, tag])}

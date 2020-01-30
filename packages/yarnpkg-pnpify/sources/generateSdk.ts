@@ -3,7 +3,12 @@ import CJSON                                       from 'comment-json';
 
 import {dynamicRequire}                            from './dynamicRequire';
 
-const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {usePnpify}: {usePnpify: boolean}) => [
+type TemplateOptions = {
+  setupEnv?: boolean,
+  usePnpify?: boolean,
+};
+
+const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false, usePnpify = false}: TemplateOptions) => [
   `#!/usr/bin/env node\n`,
   `\n`,
   `const {createRequire, createRequireFromPath} = require(\`module\`);\n`,
@@ -16,10 +21,14 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {usePnpify}: {use
   `\n`,
   `// Setup the environment to be able to require ${module}\n`,
   `require(absPnpApiPath).setup();\n`,
-  `\n`,
-  `// Prepare the environment (to be ready in case of child_process.spawn etc)\n`,
-  `process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || \`\`;\n`,
-  `process.env.NODE_OPTIONS += \` -r \${absPnpApiPath}\`;\n`,
+  ...(setupEnv || usePnpify ? [
+    `\n`,
+    `// Prepare the environment (to be ready in case of child_process.spawn etc)\n`,
+  ] : []),
+  ...(setupEnv ? [
+    `process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || \`\`;\n`,
+    `process.env.NODE_OPTIONS += \` -r \${absPnpApiPath}\`;\n`,
+  ] : []),
   ...(usePnpify ? [
     `process.env.NODE_OPTIONS += \` -r \${pnpifyResolution}\`;\n`,
     `\n`,
@@ -71,19 +80,19 @@ class Wrapper {
     }, null, 2));
   }
 
-  async writeBinary(relPackagePath: PortablePath) {
-    const absPackagePath = await this.writeFile(relPackagePath);
+  async writeBinary(relPackagePath: PortablePath, options: TemplateOptions = {}) {
+    const absPackagePath = await this.writeFile(relPackagePath, options);
 
     await xfs.chmodPromise(absPackagePath, 0o755);
   }
 
-  async writeFile(relPackagePath: PortablePath) {
+  async writeFile(relPackagePath: PortablePath, options: TemplateOptions = {}) {
     const absWrapperPath = ppath.join(this.target, this.name, relPackagePath);
     const relPnpApiPath = ppath.relative(ppath.dirname(absWrapperPath), ppath.join(this.projectRoot, `.pnp.js` as Filename));
     const relProjectPath = ppath.relative(this.projectRoot, absWrapperPath);
 
     await xfs.mkdirpPromise(ppath.dirname(absWrapperPath));
-    await xfs.writeFilePromise(absWrapperPath, TEMPLATE(relPnpApiPath, ppath.join(this.name, relPackagePath), {usePnpify: false}));
+    await xfs.writeFilePromise(absWrapperPath, TEMPLATE(relPnpApiPath, ppath.join(this.name, relPackagePath), options));
 
     this.paths.set(relPackagePath, relProjectPath);
 

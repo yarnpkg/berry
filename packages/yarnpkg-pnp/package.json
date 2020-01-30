@@ -9,7 +9,7 @@
   "devDependencies": {
     "@yarnpkg/builder": "workspace:^2.0.0-rc.18",
     "@yarnpkg/libzip": "workspace:^2.0.0-rc.9",
-    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.16",
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.17",
     "typescript": "^3.7.4",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.2.1",
