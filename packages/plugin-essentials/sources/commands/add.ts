@@ -55,15 +55,14 @@ export default class AddCommand extends BaseCommand {
 
       - If set, the \`--prefer-dev\` flag will operate as a more flexible \`-D,--dev\` in that it will add the package to your \`devDependencies\` if it isn't already listed in either \`dependencies\` or \`devDependencies\`, but it will also happily upgrade your \`dependencies\` if that's what you already use (whereas \`-D,--dev\` would throw an exception).
 
-      - If set, the \`-O,--optional\` flag will add the package to the \`optionalDependencies\` field and, in combination with the \`-P,--peer\ flag, it will add the package as an optional peer dependency (
-        \`\`\`json
-        "peerDependenciesMeta": {
-          "<package>": {
-            "optional": true
-          }
+      - If set, the \`-O,--optional\` flag will add the package to the \`optionalDependencies\` field and, in combination with the \`-P,--peer\` flag, it will add the package as an optional peer dependency. If the package was already listed in your \`dependencies\`, it will be upgraded to \`optionalDependencies\`. If the package was already listed in your \`peerDependencies\`, in combination with the \`-P,--peer\` flag, it will be upgraded to an optional peer dependency:
+      \`\`\`json
+      "peerDependenciesMeta": {
+        "<package>": {
+          "optional": true
         }
-        \`\`\`. If the package was already listed in your dependencies, it will be upgraded to \`optionalDependencies\`.
-      )
+      }
+      \`\`\`
 
       - If the added package doesn't specify a range at all its \`latest\` tag will be resolved and the returned version will be used to generate a new semver range (using the \`^\` modifier by default unless otherwise configured via the \`savePrefix\` configuration, or the \`~\` modifier if \`-T,--tilde\` is specified, or no modifier at all if \`-E,--exact\` is specified). Two exceptions to this rule: the first one is that if the package is a workspace then its local version will be used, and the second one is that if you use \`-P,--peer\` the default range will be \`*\` and won't be resolved at all.
 
