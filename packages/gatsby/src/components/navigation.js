@@ -19,7 +19,7 @@ const Menu = styled.div`
     position: fixed;
     left: 0;
 
-    width: 300px;
+    width: 260px;
     height: calc(100vh - 6.5em);
     overflow-y: auto;
 
@@ -32,13 +32,8 @@ const MenuEntry = styled(Link)`
   position: relative;
   align-items: center;
 
-  border-bottom: 1px solid #cfdee9;
 
-  &:first-of-type {
-    border-top: 1px solid #cfdee9;
-  }
-
-  padding: 1.5em;
+  padding: 1em;
 
   text-decoration: none;
 
