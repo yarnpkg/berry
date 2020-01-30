@@ -255,7 +255,6 @@ export class ZipFS extends BasePortableFakeFS {
     for (const fileName of this.entries.keys()) {
       const ext = this.pathUtils.extname(fileName);
       if (hints.relevantExtensions.has(ext)){
-        console.log('Unplugging', fileName);
         return true;
       }
     }
