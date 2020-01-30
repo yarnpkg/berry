@@ -77,8 +77,6 @@ const Content = styled.div`
   }
 
   h2, h3, h4 {
-    border-bottom: 1px solid #d1dee8;
-
     padding-bottom: 0.2em;
 
     font-weight: 300;
