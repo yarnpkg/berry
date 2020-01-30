@@ -72,7 +72,6 @@ const MenuContainer = styled.header`
 
   ${ifDesktop} {
     display: flex;
-    border-bottom: 2px solid #d1dee8;
   }
 `;
 

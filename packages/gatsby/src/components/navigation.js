@@ -10,7 +10,7 @@ const Container = styled.div`
   position: relative;
 
   ${ifDesktop} {
-    padding-left: 300px;
+    padding-left: 260px;
   }
 `;
 
@@ -45,23 +45,39 @@ const MenuEntry = styled(Link)`
 
   ${ifDesktop} {
     padding: 1em;
+    position: relative;
+
+    &:first-of-type {
+      border-top: 1px solid #cfdee9;
+    }
     &:hover {
       background: hsl(204, 33%, 96%);
     }
-  }
 
+    &::before {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      bottom: 0;
+      left: 100%;
+      width: 4px;
+      background: transparent;
+    }
+    &:first-of-type::before {
+      top: -1px;
+    }
+    &.active::before {
+      background: #2188b6;
+    }
+  }
   ${ifMobile} {
     padding: .5em;
     white-space: pre;
-  }
-
-  border: 4px solid transparent;
-  &.active {
-    ${ifDesktop} {
-      border-right-color #2188b6;
-    }
-    ${ifMobile} {
-      border-bottom-color #2188b6;
+    border-bottom: 4px solid transparent;
+    &.active {
+        border-bottom-color #2188b6;
+      }
     }
   }
 `;
