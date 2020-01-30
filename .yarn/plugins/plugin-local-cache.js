@@ -1,4 +1,4 @@
-//const tar = require('tar'); // note that tar had to be added to yarn top level workspace to get it requirable here
+const tar = require('tar'); // note that tar had to be added to yarn top level workspace to get it requirable here
 // it threw an error when trying to require it from within the factory method below
 
 module.exports = {
@@ -6,11 +6,9 @@ module.exports = {
   factory: (yarnRequire) => {
     const cachePath = '.yarn/packages'; // TODO update to get this from config instead of hard coded
     let index = undefined;
-    //const tar = yarnRequire('tar');
 
     let scanPromise = undefined;
     async function initializePackageCache() {
-      return;
       if (!scanPromise) scanPromise = scanPackageCache(cachePath);
       const result = await scanPromise;
       if (!index) index = result;
