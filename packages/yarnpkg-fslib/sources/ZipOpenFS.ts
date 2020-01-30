@@ -64,7 +64,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     this.notZip = new Set();
   }
 
-  getExtractHint(hints: ExtractHintOptions){
+  getExtractHint(hints: ExtractHintOptions) {
     return this.baseFs.getExtractHint(hints);
   }
 

@@ -534,6 +534,6 @@ function getEndOfLine(content: string) {
   return crlf > lf ? `\r\n` : `\n`;
 }
 
-export function normalizeLineEndings(originalContent: string, newContent: string){
+export function normalizeLineEndings(originalContent: string, newContent: string) {
   return newContent.replace(/\r?\n/g, getEndOfLine(originalContent));
 }

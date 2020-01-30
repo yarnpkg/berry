@@ -86,7 +86,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     }
   }
 
-  getExtractHint(hints: ExtractHintOptions){
+  getExtractHint(hints: ExtractHintOptions) {
     return this.baseFs.getExtractHint(hints);
   }
 

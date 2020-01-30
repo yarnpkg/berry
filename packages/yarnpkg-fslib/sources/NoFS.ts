@@ -10,7 +10,7 @@ export class NoFS extends FakeFS<PortablePath> {
     super(ppath);
   }
 
-  getExtractHint(): never{
+  getExtractHint(): never {
     throw makeError();
   }
 

@@ -16,7 +16,7 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
    */
   protected abstract mapFromBase(path: IP): P;
 
-  getExtractHint(hints: ExtractHintOptions){
+  getExtractHint(hints: ExtractHintOptions) {
     return this.baseFs.getExtractHint(hints);
   }
 
