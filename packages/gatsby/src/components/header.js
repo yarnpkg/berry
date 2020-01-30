@@ -72,7 +72,7 @@ const MenuContainer = styled.header`
 
   ${ifDesktop} {
     display: flex;
-    border-bottom: 4px solid #d1dee8;
+    border-bottom: 2px solid #d1dee8;
   }
 `;
 
@@ -127,7 +127,7 @@ const MenuNavigation = styled.div`
 
   ${ifMobile} {
     position: absolute;
-    z-index: 1;
+    z-index: 2;
 
     width: 100%;
 
@@ -153,7 +153,7 @@ const MenuEntry = styled.div`
 
     height: 4rem;
 
-    border: 3px solid transparent;
+    border: 4px solid transparent;
 
     padding: 0 1em;
 
