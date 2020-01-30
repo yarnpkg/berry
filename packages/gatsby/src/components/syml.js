@@ -13,7 +13,7 @@ import {
 
 const theme = {
   colors: {
-    background: `#242424`,
+    background: `#3f3f3f`,
     documentation: `#ddddcc`,
     highlight: `#716f6f`,
     code: `#639db1`,
