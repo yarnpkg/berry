@@ -3,9 +3,13 @@ import React        from 'react';
 
 import {Layout}     from './layout';
 import {Navigation} from './navigation';
+import {ifMobile}   from './responsive';
 
 const Container = styled.div`
   padding: 2em;
+  ${ifMobile} {
+    padding: 1em;
+  }
 `;
 
 export const LayoutContentNav = ({items, children}) => {
