@@ -14,8 +14,6 @@ const Title = styled.h1`
 
   margin: 0;
 
-  height: 4rem;
-
   border-bottom: 1px solid;
 
   font-weight: 300;
@@ -53,7 +51,7 @@ const Content = styled.div`
   }
 
   p, table {
-    margin-bottom: 1em;
+    margin-bottom: 1.2em;
   }
 
   table {
@@ -77,8 +75,6 @@ const Content = styled.div`
   }
 
   h2, h3, h4 {
-    border-bottom: 1px solid #d1dee8;
-
     padding-bottom: 0.2em;
 
     font-weight: 300;
