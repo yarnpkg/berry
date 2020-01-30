@@ -1,5 +1,6 @@
 const {
   fs: {writeFile},
+  tests: {startPackageServer},
 } = require('pkg-tests-core');
 
 const AUTH_TOKEN = `686159dc-64b3-413e-a244-2de2b8d1c36f`;
@@ -125,6 +126,34 @@ describe(`Auth tests`, () => {
       },
       async ({path, run, source}) => {
         await writeFile(`${path}/.yarnrc.yml`, `npmAuthIdent: "${AUTH_IDENT}"\n`);
+
+        await run(`install`);
+
+        await expect(source(`require('@private/package')`)).resolves.toMatchObject({
+          name: `@private/package`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should normalize registries url keys`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@private/package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `npmScopes:`,
+          `  private:`,
+          `    npmRegistryServer: "${url}"`,
+          `npmRegistries:`,
+          `  "${url}/":`,  // Testing the trailing `/`
+          `    npmAuthToken: ${AUTH_TOKEN}`,
+        ].join(`\n`));
 
         await run(`install`);
 

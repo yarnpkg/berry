@@ -163,7 +163,7 @@ module.exports = {
 
   const react_1 = __importStar(__webpack_require__(8));
 
-  const SIMPLE_SEMVER = /^([\^~]?)([0-9+])(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/; // eslint-disable-next-line arca/no-default-export
+  const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9+])(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/; // eslint-disable-next-line arca/no-default-export
 
   class UpgradeInteractiveCommand extends cli_1.BaseCommand {
     async execute() {
@@ -202,7 +202,7 @@ module.exports = {
         let res = ``;
 
         for (let t = 1; t < SEMVER_COLORS.length; ++t) {
-          if (matchedFrom[t] !== matchedTo[t]) {
+          if (color !== null || matchedFrom[t] !== matchedTo[t]) {
             if (color === null) color = SEMVER_COLORS[t - 1];
             res += configuration.format(matchedTo[t], color);
           } else {
@@ -214,9 +214,10 @@ module.exports = {
       };
 
       const fetchUpdatedDescriptor = async (descriptor, copyStyle, range) => {
-        const candidate = await plugin_essentials_1.suggestUtils.fetchDescriptorFrom(descriptor, descriptor.range, {
+        const candidate = await plugin_essentials_1.suggestUtils.fetchDescriptorFrom(descriptor, range, {
           project,
-          cache
+          cache,
+          preserveModifier: copyStyle
         });
 
         if (candidate !== null) {
@@ -313,7 +314,7 @@ module.exports = {
           for (const descriptor of dependencies.values()) {
             const newRange = updateRequests.get(descriptor.descriptorHash);
 
-            if (typeof newRange !== `undefined`) {
+            if (typeof newRange !== `undefined` && newRange !== null) {
               dependencies.set(descriptor.identHash, core_1.structUtils.makeDescriptor(descriptor, newRange));
               hasChanged = true;
             }

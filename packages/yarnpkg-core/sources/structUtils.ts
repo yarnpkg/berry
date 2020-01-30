@@ -324,6 +324,13 @@ function encodeUnsafeCharacters(str: string) {
   return str;
 }
 
+function hasParams(params: querystring.ParsedUrlQuery | null): params is querystring.ParsedUrlQuery {
+  if (params === null)
+    return false;
+
+  return Object.entries(params).length > 0;
+}
+
 export function makeRange({protocol, source, selector, params}: {protocol: string | null, source: string | null, selector: string, params: querystring.ParsedUrlQuery | null}) {
   let range = ``;
 
@@ -334,7 +341,7 @@ export function makeRange({protocol, source, selector, params}: {protocol: strin
 
   range += encodeUnsafeCharacters(selector);
 
-  if (params !== null)
+  if (hasParams(params))
     range += `::${querystring.stringify(params)}`;
 
   return range;
@@ -347,17 +354,9 @@ export function makeRange({protocol, source, selector, params}: {protocol: strin
  * @param range range to convert
  */
 export function convertToManifestRange(range: string) {
-  const {protocol, source, selector} = parseRange(range);
-  if (!source)
-    return range;
+  const {params, protocol, source, selector} = parseRange(range);
 
-  const queryIndex = source.indexOf(`?`);
-  if (queryIndex === -1)
-    return range;
-
-  const params = querystring.parse(source.slice(queryIndex + 1));
-
-  for (const name of Object.keys(params))
+  for (const name in params)
     if (name.startsWith(`__`))
       delete params[name];
 

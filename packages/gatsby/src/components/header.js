@@ -17,12 +17,15 @@ const HeaderContainer = styled.div`
 const NewsContainer = styled.div`
   position: relative;
 
-  height: 2.5em;
-
   padding: 0 1em;
 
   text-decoration: none;
   line-height: 2.5em;
+
+  ${ifMobile} {
+    white-space: pre-wrap;
+    line-height: 1.5em;
+  }
 
   background: #2188b6;
   color: rgba(255, 255, 255, 0.8);

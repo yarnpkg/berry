@@ -24,7 +24,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
 - Yarn supports [workspaces](https://next.yarnpkg.com/features/workspaces) natively, and its CLI takes advantage of that
 - Yarn uses a portable shell to execute package scripts, guaranteeing they work the same way on Windows and Linux
 - Yarn is first and foremost a Node API that can be used programmatically (via [@yarnpkg/core](packages/yarnpkg-core))
-- Yarn is written in TypeScript, and fully typechecked
+- Yarn is written in TypeScript, and is fully type checked
 
 ## Install
 
@@ -102,7 +102,7 @@ Those plugins typically come bundled with Yarn. You don't need to do anything sp
 Although developed on the same repository as Yarn itself, those plugins are optional and need to be explicitly installed through `yarn plugin import @yarnpkg/<plugin-name>`.
 
 - [☆ plugin-exec](packages/plugin-exec) adds support for using the `exec:` protocol within your dependencies.
-- [☆ plugin-stage](packages/plugin-pack) adds support for the [`yarn stage`](https://next.yarnpkg.com/cli/stage) command.
+- [☆ plugin-stage](packages/plugin-stage) adds support for the [`yarn stage`](https://next.yarnpkg.com/cli/stage) command.
 - [☆ plugin-typescript](packages/plugin-typescript) improves the user experience when working with TypeScript.
 - [☆ plugin-workspace-tools](packages/plugin-workspace-tools) adds support for the [`yarn workspaces foreach`](https://next.yarnpkg.com/cli/workspaces/foreach) command.
 

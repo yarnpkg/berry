@@ -43,7 +43,7 @@ jobs:
 
         yarn rollup -c
         [[ "$(node dist/bundle.js)" = "125" ]]
-        cat dist/bundle.js | grep -v "square"
+        ! cat dist/bundle.js | grep "square"
 
         rm -rf dist src
 
@@ -87,7 +87,7 @@ jobs:
         echo "import answer from 'the-answer'; import _ from 'lodash';" | tee src/main.js
 
         yarn rollup -c
-        cat dist/bundle.js | grep -v "lodash"
+        ! cat dist/bundle.js | grep "lodash"
 
         rm -rf src dist
 
@@ -102,7 +102,7 @@ jobs:
 
         yarn rollup -c
         [[ "$(node dist/bundle.js)" = "the answer is 42" ]]
-        cat dist/bundle.js | grep -v "console.log(\`"
+        ! cat dist/bundle.js | grep "console.log(\`"
 
         rm -rf src dist
 
