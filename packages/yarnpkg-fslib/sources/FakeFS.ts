@@ -51,6 +51,10 @@ export type Watcher = {
   close: () => void;
 };
 
+export type ExtractHintOptions = {
+  relevantExtensions: Set<string>;
+}
+
 export abstract class FakeFS<P extends Path> {
   static DEFAULT_TIME = 315532800;
 
@@ -59,6 +63,8 @@ export abstract class FakeFS<P extends Path> {
   protected constructor(pathUtils: PathUtils<P>) {
     this.pathUtils =  pathUtils;
   }
+
+  abstract getExtractHint(hints: ExtractHintOptions): boolean;
 
   abstract getRealPath(): P;
 
@@ -528,6 +534,6 @@ function getEndOfLine(content: string) {
   return crlf > lf ? `\r\n` : `\n`;
 }
 
-export function normalizeLineEndings(originalContent: string, newContent: string){
+export function normalizeLineEndings(originalContent: string, newContent: string) {
   return newContent.replace(/\r?\n/g, getEndOfLine(originalContent));
 }

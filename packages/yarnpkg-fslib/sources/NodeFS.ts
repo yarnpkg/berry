@@ -15,6 +15,10 @@ export class NodeFS extends BasePortableFakeFS {
     this.realFs = realFs;
   }
 
+  getExtractHint() {
+    return false;
+  }
+
   getRealPath() {
     return PortablePath.root;
   }

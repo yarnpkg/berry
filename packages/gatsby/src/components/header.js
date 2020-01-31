@@ -85,6 +85,12 @@ const MenuLogo = styled(Link)`
 
   padding: 0 1em;
 
+  ${ifDesktop} {
+    &:hover {
+      background: hsl(204, 33%, 96%);
+    }
+  }
+
   ${ifMobile} {
     margin-right: auto;
 
@@ -93,9 +99,14 @@ const MenuLogo = styled(Link)`
 `;
 
 const MenuToggle = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   margin: 1em;
   margin-left: 0;
 
+  color: grey;
   border: 1px solid lightgrey;
   border-radius: 10px;
 
@@ -120,7 +131,7 @@ const MenuNavigation = styled.div`
 
   ${ifMobile} {
     position: absolute;
-    z-index: 1;
+    z-index: 2;
 
     width: 100%;
 
@@ -130,18 +141,24 @@ const MenuNavigation = styled.div`
 
     &.expanded {
       transform: scaleY(1);
+      box-shadow: 0px 6px 6px 0px rgba(0, 0, 0, 0.1);
     }
   }
 `;
 
 const MenuEntry = styled.div`
+  ${ifDesktop} {
+    &:hover {
+      background: hsl(204, 33%, 96%);
+    }
+  }
   a {
     display: flex;
     align-items: center;
 
     height: 4rem;
 
-    border: 3px solid transparent;
+    border: 4px solid transparent;
 
     padding: 0 1em;
 
@@ -211,7 +228,7 @@ export const Header = ({children}) => {
             <Logo height={`3em`} align={`middle`} />
           </MenuLogo>
           <MenuToggle onClick={() => setExpanded(!expanded)}>
-            {`≡`}
+            {expanded ? `×` : `≡`}
           </MenuToggle>
         </MenuTools>
 

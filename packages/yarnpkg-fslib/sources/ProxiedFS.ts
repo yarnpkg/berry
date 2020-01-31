@@ -1,7 +1,7 @@
-import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS}            from './FakeFS';
-import {Dirent}                                                               from './FakeFS';
-import {MkdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher} from './FakeFS';
-import {FSPath, Filename, Path}                                               from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions} from './FakeFS';
+import {Dirent}                                                                        from './FakeFS';
+import {MkdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}          from './FakeFS';
+import {FSPath, Filename, Path}                                                        from './path';
 
 export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<P> {
   protected abstract readonly baseFs: FakeFS<IP>;
@@ -15,6 +15,10 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
    * Convert a path from the format supported by the base FS into the user one.
    */
   protected abstract mapFromBase(path: IP): P;
+
+  getExtractHint(hints: ExtractHintOptions) {
+    return this.baseFs.getExtractHint(hints);
+  }
 
   resolve(path: P)  {
     return this.mapFromBase(this.baseFs.resolve(this.mapToBase(path)));

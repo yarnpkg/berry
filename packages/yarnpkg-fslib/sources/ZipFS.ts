@@ -1,14 +1,14 @@
-import {Libzip}                                                                from '@yarnpkg/libzip';
-import {ReadStream, Stats, WriteStream, constants}                             from 'fs';
-import {PassThrough}                                                           from 'stream';
-import {isDate}                                                                from 'util';
+import {Libzip}                                                                                    from '@yarnpkg/libzip';
+import {ReadStream, Stats, WriteStream, constants}                                                 from 'fs';
+import {PassThrough}                                                                               from 'stream';
+import {isDate}                                                                                    from 'util';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
-import {FakeFS, MkdirOptions, WriteFileOptions}                                from './FakeFS';
-import {WatchOptions, WatchCallback, Watcher}                                  from './FakeFS';
-import {NodeFS}                                                                from './NodeFS';
-import * as errors                                                             from './errors';
-import {FSPath, PortablePath, npath, ppath, Filename}                          from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions} from './FakeFS';
+import {FakeFS, MkdirOptions, WriteFileOptions}                                                    from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher}                                                      from './FakeFS';
+import {NodeFS}                                                                                    from './NodeFS';
+import * as errors                                                                                 from './errors';
+import {FSPath, PortablePath, npath, ppath, Filename}                                              from './path';
 
 const S_IFMT = 0o170000;
 
@@ -249,6 +249,17 @@ export class ZipFS extends BasePortableFakeFS {
     }
 
     this.ready = true;
+  }
+
+  getExtractHint(hints: ExtractHintOptions) {
+    for (const fileName of this.entries.keys()) {
+      const ext = this.pathUtils.extname(fileName);
+      if (hints.relevantExtensions.has(ext)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   getAllFiles() {
