@@ -1,7 +1,15 @@
+
+    
+function trace(msg, obj) {
+  console.info(`${msg}`);
+  console.log(obj);
+}
+
+
 module.exports = {
   name: `plugin-local-cache`,
   factory: (require) => {
-    
+
     const cachePath = '.yarn/packages'; // TODO update to get this from config instead of hard coded
     let index = undefined;
 
@@ -32,7 +40,7 @@ module.exports = {
                   name: 'scratch',
                   version: '0.0.0',
                 };
-                console.warn('skipped extracting .tgz file since "tar" is not currently requirable in plugins');
+                console.warn('skipped extracting .tgz file and used a fake manifest since "tar" is not currently requirable in plugins');
                 // TODO delete the above and uncomment the following
                 // manifest = JSON.parse(await extractTarFile(location, 'package/package.json'));
                 // manifest.url = `file:${location}`;
@@ -68,45 +76,52 @@ module.exports = {
         } );
       }
     }
-    
+
     class CachingResolver {
       constructor() {
         this.type = 'module';
       }
       async supportsDescriptor(descriptor, opts, next, protocols) {
-        // console.log('called supportsDescription');
+        //trace('called supportsDescriptor', {descriptor, opts});
         await initializePackageCache();
-        return await next();
+        const result = await next();
+        return result;
       }
       async supportsLocator(locator, opts, next, protocols) {
-        // console.log('called supportsLocator');
+        //trace('called supportsLocator, {locator, opts});
         await initializePackageCache();
-        return await next();
+        const result = await next();
+        return result;
       }
       async shouldPersistResolution(locator, opts, next, protocols) {
-        // console.log('called shouldPersistResolution');
+        trace('called shouldPersistResolution', {locator, opts});
         await initializePackageCache();
-        return await next();
+        const result = await next();
+        return result;
       }
       async bindDescriptor(descriptor, fromLocator, opts, next, protocols) {
-        // console.log('called bindDescriptor');
+        trace('called bindDescriptor', {descriptor, fromLocator, opts});
         await initializePackageCache();
-        return await next();
+        const result = await next();
+        return result;
       }
       async getResolutionDependencies(descriptor, opts, next, protocols) {
-        // console.log('called getResolutionDependencies');
+        trace('called getResolutionDependencies', {descriptor, opts});
         await initializePackageCache();
-        return await next();
+        const result = await next();
+        return result;
       }
       async getCandidates(descriptor, dependencies, opts, next, protocols) {
-        // console.log('called getCandidates');
+        trace('called getCandidates', {descriptor, dependencies, opts});
         await initializePackageCache();
-        return await next();
+        const result = await next();
+        return result;
       }
       async resolve(locator, opts, next, protocols) {
-        // console.log('called resolve');
+        trace('called resolve', {locator, opts});
         await initializePackageCache();
-        return await next();
+        const result = await next();
+        return result;
       }
     }
 
@@ -115,24 +130,36 @@ module.exports = {
         this.type = 'module';
       }
       async supports(locator, opts, next, protocols) {
-        // console.log('called supports');
+        trace('called supports', {locator, opts});
         await initializePackageCache();
         return await next();
       }
       async getLocalPath(locator, opts, next, protocols) {
-        // console.log('called getLocalPath');
+        trace('called getLocalPath', {locator, opts});
         await initializePackageCache();
         return await next();
       }
       async fetch(locator, opts, next, protocols) {
-        // console.log('called fetch');
+        trace('called fetch', {locator, opts});
         await initializePackageCache();
         return await next();
       }
     }
+
+    // const {Command} = require(`clipanion`);
+
+    // class HelloWorldCommand extends Command {
+    //   async execute() {
+    //     this.context.stdout.write(`This is my very own plugin 😎\n`);
+    //   }
+    // }
+    
+    // HelloWorldCommand.addPath(`hello`);
+
     return {
       resolvers: [CachingResolver],
       fetchers: [CachingFetcher],
+      // commands: [HelloWorldCommand],
     };
   },
 };

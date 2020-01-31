@@ -33,6 +33,28 @@
         "<node_internals>/**"
       ],
       "outputCapture": "std"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Single Package Install",
+      "runtimeExecutable": "node",
+      "cwd": "${workspaceFolder}/../tossme",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "${workspaceFolder}/scripts/run-yarn.js"
+      ],
+      "args": [
+        "install"
+      ],
+      "env": {
+        "YARN_IGNORE_PATH": "1"
+      },
+      "port": 9229,
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "outputCapture": "std"
     }
   ]
 }
