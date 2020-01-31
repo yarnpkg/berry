@@ -15860,7 +15860,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["clipboardy", [
         ["npm:1.2.3", {
-          "packageLocation": "./.yarn/cache/clipboardy-npm-1.2.3-d3a44efb48-1.zip/node_modules/clipboardy/",
+          "packageLocation": "./.yarn/unplugged/clipboardy-npm-1.2.3-d3a44efb48/node_modules/clipboardy/",
           "packageDependencies": [
             ["clipboardy", "npm:1.2.3"],
             ["arch", "npm:2.1.1"],
@@ -26644,7 +26644,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["node-notifier", [
         ["npm:5.4.3", {
-          "packageLocation": "./.yarn/cache/node-notifier-npm-5.4.3-068ef79075-1.zip/node_modules/node-notifier/",
+          "packageLocation": "./.yarn/unplugged/node-notifier-npm-5.4.3-068ef79075/node_modules/node-notifier/",
           "packageDependencies": [
             ["node-notifier", "npm:5.4.3"],
             ["growly", "npm:1.3.0"],
@@ -32665,7 +32665,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["term-size", [
         ["npm:1.2.0", {
-          "packageLocation": "./.yarn/cache/term-size-npm-1.2.0-7629e52ca8-1.zip/node_modules/term-size/",
+          "packageLocation": "./.yarn/unplugged/term-size-npm-1.2.0-7629e52ca8/node_modules/term-size/",
           "packageDependencies": [
             ["term-size", "npm:1.2.0"],
             ["execa", "npm:0.7.0"]
@@ -48950,10 +48950,14 @@ function applyPatch(pnpapi, opts) {
     }
 
     const parentApiPath = opts.manager.getApiPathFromParent(parent);
-    const parentApi = parentApiPath !== null ? opts.manager.getApiEntry(parentApiPath, true).instance : null; // The 'pnpapi' name is reserved to return the PnP api currently in use
+    const parentApi = parentApiPath !== null ? opts.manager.getApiEntry(parentApiPath, true).instance : null; // Requests that aren't covered by the PnP runtime goes through the
+    // parent `_load` implementation. This is required for VSCode, for example,
+    // which override `_load` to provide additional builtins to its extensions.
+
+    if (parentApi === null) return originalModuleLoad(request, parent, isMain); // The 'pnpapi' name is reserved to return the PnP api currently in use
     // by the program
 
-    if (parentApi !== null && request === `pnpapi`) return parentApi; // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us
+    if (request === `pnpapi`) return parentApi; // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us
     // which file we should load
 
     const modulePath = module_1.Module._resolveFilename(request, parent, isMain); // We check whether the module is owned by the dependency tree of the

@@ -27,6 +27,7 @@
     "comma-dangle": ["error", "always-multiline"],
     "computed-property-spacing": 2,
     "generator-star-spacing": ["error", {"before": true, "after": true}],
+    "space-before-blocks": 2,
     "keyword-spacing": 2,
     "no-multiple-empty-lines": 2,
     "no-tabs": 2,

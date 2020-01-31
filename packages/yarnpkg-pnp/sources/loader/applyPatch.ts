@@ -88,10 +88,17 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       ? opts.manager.getApiEntry(parentApiPath, true).instance
       : null;
 
+    // Requests that aren't covered by the PnP runtime goes through the
+    // parent `_load` implementation. This is required for VSCode, for example,
+    // which override `_load` to provide additional builtins to its extensions.
+
+    if (parentApi === null)
+      return originalModuleLoad(request, parent, isMain);
+
     // The 'pnpapi' name is reserved to return the PnP api currently in use
     // by the program
 
-    if (parentApi !== null && request === `pnpapi`)
+    if (request === `pnpapi`)
       return parentApi;
 
     // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us

@@ -1,4 +1,4 @@
-import {FakeFS}                        from './FakeFS';
+import {FakeFS, ExtractHintOptions}    from './FakeFS';
 import {NodeFS}                        from './NodeFS';
 import {ProxiedFS}                     from './ProxiedFS';
 import {Filename, PortablePath, ppath} from './path';
@@ -64,6 +64,10 @@ export class VirtualFS extends ProxiedFS<PortablePath, PortablePath> {
     super(ppath);
 
     this.baseFs = baseFs;
+  }
+
+  getExtractHint(hints: ExtractHintOptions) {
+    return this.baseFs.getExtractHint(hints);
   }
 
   getRealPath() {

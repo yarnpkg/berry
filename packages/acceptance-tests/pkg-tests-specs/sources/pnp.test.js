@@ -1374,4 +1374,40 @@ describe(`Plug'n'Play`, () => {
     ),
     15000,
   );
+
+  test(
+    `it shouldn't break the vscode builtin resolution`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      // VSCode has its own layer on top of `require` to provide extra builtins
+      // to the plugins. We don't want to accidentally break this:
+      //
+      // https://github.com/microsoft/vscode/blob/dcecb9eea6158f561ee703cbcace49b84048e6e3/src/vs/workbench/api/node/extHostExtensionService.ts#L23
+
+      await run(`install`);
+
+      const tmp = await xfs.mktempPromise();
+      await xfs.writeFilePromise(ppath.join(tmp, `index.js`), `
+        const realLoad = module.constructor._load;
+
+        module.constructor._load = function (name, ...args) {
+          if (name === 'foo') {
+            return 'this works';
+          } else {
+            return realLoad.call(this, name, ...args);
+          }
+        };
+
+        require(process.argv[2]).setup();
+
+        if (require('foo') !== 'this works') {
+          throw new Error('Assertion failed');
+        }
+      `);
+
+      cp.execFileSync(`node`, [
+        npath.fromPortablePath(`${tmp}/index.js`),
+        npath.fromPortablePath(`${path}/.pnp.js`),
+      ], {encoding: `utf-8`});
+    }),
+  );
 });
