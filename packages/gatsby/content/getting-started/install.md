@@ -39,7 +39,7 @@ cd ~/path/to/project
 3. Run the following command:
 
 ```bash
-yarn policies set-version berry
+yarn set version berry
 ```
 
 4. Commit the `.yarn` and `.yarnrc.yml` changes
