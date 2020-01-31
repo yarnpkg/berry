@@ -205,8 +205,7 @@ export default class AddCommand extends BaseCommand {
               ...selected,
               range: `unknown`,
             }).optional = true;
-          }
-          else if (target === `peerDependencies`) {
+          } else if (target === `peerDependencies`) {
             workspace.manifest.ensurePeerDependencyMeta({
               ...selected,
               range: `unknown`,
