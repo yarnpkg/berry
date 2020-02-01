@@ -169,9 +169,12 @@ async function writeInstallState(project: Project, locatorMap: NodeModulesLocato
   locatorState += `__metadata:\n`;
   locatorState += `  version: 1\n`;
 
-  for (const [locatorStr, installRecord] of locatorMap.entries()) {
+  const locators = Array.from(locatorMap.keys()).sort();
+
+  for (const locator of locators) {
+    const installRecord = locatorMap.get(locator)!;
     locatorState += `\n`;
-    locatorState += `${JSON.stringify(locatorStr)}:\n`;
+    locatorState += `${JSON.stringify(locator)}:\n`;
     locatorState += `  locations:\n`;
 
     for (const location of installRecord.locations) {
@@ -416,12 +419,12 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
   const addQueue: Promise<void>[] = [];
   const addModule = async ({srcDir, dstDir, linkType, keepNodeModules}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, keepNodeModules: boolean}) => {
     addQueue.push(limit(async () => {
+      try {
       // Soft links to themselves are used to denote workspace packages, we
       // should just ignore them
-      if (linkType === LinkType.SOFT && srcDir === dstDir)
-        return;
+        if (linkType === LinkType.SOFT && srcDir === dstDir)
+          return;
 
-      try {
         await removeDir(dstDir, {excludeNodeModules: keepNodeModules});
         if (linkType === LinkType.SOFT) {
           await xfs.mkdirpPromise(ppath.dirname(dstDir));
