@@ -46,28 +46,14 @@ Lockfiles should **always** be kept within the repository. Continuous integratio
 
 ## Which files should be gitignored?
 
-- `.yarn/plugins` and `.yarn/releases` contain the Yarn releases used in the current repository (as defined by [`yarn set version`](/cli/set/version)). You will want to keep them versioned (this prevents potential issues if, say, two engineers use different Yarn versions with different features).
-
-- `.yarn/unplugged` and `.yarn/build-state.yml` should likely always be ignored since they typically hold machine-specific build artifacts. Ignoring them might however prevent [Zero-Installs](https://next.yarnpkg.com/features/zero-installs) from working (to prevent this, set [`enableScripts`](/configuration/yarnrc#enableScripts) to `false`).
-
-- `.yarn/versions` is used by the [version plugin](/features/release-workflow) to store the package release definitions. You will want to keep it within your repository.
-
-- `.yarn/cache` and `.pnp.*` may be safely ignored, but you'll need to run `yarn install` to regenerate them between each branch switch - which would be optional otherwise, cf [Zero-Installs](/features/zero-installs).
-
-- `yarn.lock` should always be stored within your repository ([even if you develop a library](#should-lockfiles-be-committed-to-the-repository)).
-
-- `.yarnrc.yml` (and its older counterpart, `.yarnrc`) are configuration files. They should always be stored in your project.
-
-So to summarize:
-
-**If you're using Zero-Installs:**
+If you're using Zero-Installs:
 
 ```gitignore
 .yarn/unplugged
 .yarn/build-state.yml
 ```
 
-**If you're not using Zero-Installs:**
+If you're not using Zero-Installs:
 
 ```gitignore
 .yarn/cache
@@ -76,3 +62,16 @@ So to summarize:
 .pnp.*
 ```
 
+### Details
+
+- `.yarn/unplugged` and `.yarn/build-state.yml` should likely always be ignored since they typically hold machine-specific build artifacts. Ignoring them might however prevent [Zero-Installs](https://next.yarnpkg.com/features/zero-installs) from working (to prevent this, set [`enableScripts`](/configuration/yarnrc#enableScripts) to `false`).
+
+- `.yarn/cache` and `.pnp.*` may be safely ignored, but you'll need to run `yarn install` to regenerate them between each branch switch - which would be optional otherwise, cf [Zero-Installs](/features/zero-installs).
+
+- `.yarn/plugins` and `.yarn/releases` contain the Yarn releases used in the current repository (as defined by [`yarn set version`](/cli/set/version)). You will want to keep them versioned (this prevents potential issues if, say, two engineers use different Yarn versions with different features).
+
+- `.yarn/versions` is used by the [version plugin](/features/release-workflow) to store the package release definitions. You will want to keep it within your repository.
+
+- `yarn.lock` should always be stored within your repository ([even if you develop a library](#should-lockfiles-be-committed-to-the-repository)).
+
+- `.yarnrc.yml` (and its older counterpart, `.yarnrc`) are configuration files. They should always be stored in your project.

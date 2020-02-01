@@ -32,14 +32,6 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       `\`\`\`\n`,
     ].join(``));
 
-    if (command.details) {
-      sections.push([
-        `## Details\n`,
-        `\n`,
-        `${command.details}\n`,
-      ].join(``));
-    }
-
     if (command.examples && command.examples.length > 0) {
       sections.push([
         `## Examples\n`,
@@ -52,6 +44,15 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
         ].join(``)),
       ].join(``));
     }
+
+    if (command.details) {
+      sections.push([
+        `## Details\n`,
+        `\n`,
+        `${command.details}\n`,
+      ].join(``));
+    }
+
 
     const content = sections.join(`\n`);
     const contentDigest = createContentDigest(content);
