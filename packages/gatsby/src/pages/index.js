@@ -23,6 +23,10 @@ const sectionStyle = css`
 
 const Section = styled.div`
   ${sectionStyle}
+
+  ${ifMobile} {
+    padding: 0 1em;
+  }
 `;
 
 const sectionContentStyle = css`
@@ -89,6 +93,9 @@ const SellingPointContainer = styled.div`
   ${ifDesktop} {
     width: calc(50% - 20px);
   }
+  ${ifMobile} {
+    align-items: center;
+  }
 
   margin-top: 40px;
 
@@ -100,6 +107,10 @@ const SellingPointContainer = styled.div`
 const SellingPointIcon = styled.img`
   width: 100px;
   height: 100px;
+  ${ifMobile} {
+    width: 75px;
+    height: 75px;
+  }
 `;
 
 const SellingPointContent = styled.div`
@@ -107,6 +118,9 @@ const SellingPointContent = styled.div`
 
   h3 {
     margin-top: 0;
+    ${ifMobile} {
+      margin-bottom: .5em;
+    }
   }
 `;
 
