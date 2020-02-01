@@ -50,6 +50,11 @@ const Hero = styled.div`
 
 const HeroTitle = styled.div`
   font-size: 4em;
+  ${ifMobile} {
+    font-size: 2.2em;
+    text-align: center;
+  }
+
   font-weight: bold;
 
   color: #ffffff;
@@ -58,12 +63,16 @@ const HeroTitle = styled.div`
 
 const HeroSubtitle = styled.div`
   max-width: 800px;
-
+  color: #ffffff;
   margin-top: 40px;
-
   font-size: 1.5em;
 
-  color: #ffffff;
+  ${ifMobile} {
+    margin-top: 20px;
+    font-size: 1.2em;
+    text-align: center;
+    margin-bottom: 10px;
+  }
 `;
 
 const SellingPoints = styled.div`
