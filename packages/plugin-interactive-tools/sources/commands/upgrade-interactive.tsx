@@ -9,8 +9,9 @@ import {Command, Usage}                                                         
 import {diffWords}                                                                                                         from 'diff';
 import {Box, Color}                                                                                                        from 'ink';
 import React, {useEffect, useState}                                                                                        from 'react';
+import semver                                                                                                              from 'semver';
 
-const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9+])(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
+const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpgradeInteractiveCommand extends BaseCommand {
@@ -101,8 +102,12 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     };
 
     const fetchSuggestions = async (descriptor: Descriptor) => {
+      const referenceRange = semver.valid(descriptor.range)
+        ? `^${descriptor.range}`
+        : descriptor.range;
+
       const [resolution, dependency] = await Promise.all([
-        fetchUpdatedDescriptor(descriptor, descriptor.range, descriptor.range),
+        fetchUpdatedDescriptor(descriptor, descriptor.range, referenceRange),
         fetchUpdatedDescriptor(descriptor, descriptor.range, `latest`),
       ]);
 
@@ -118,7 +123,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         });
       }
 
-      if (dependency !== resolution) {
+      if (dependency !== resolution && dependency !== descriptor.range) {
         suggestions.push({
           value: dependency,
           label: colorizeVersionDiff(descriptor.range, dependency),
