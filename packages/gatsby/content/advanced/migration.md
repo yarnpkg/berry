@@ -91,7 +91,7 @@ Yarn 2 uses a different style of configuration files than Yarn 1. While mostly i
 
   - Custom registries are now configured via [`npmRegistryServer`](/configuration/yarnrc#npmRegistryServer).
 
-  - Registry authentication tokens are now configuration via [`npmAuthToken`](/configuration/yarnrc#npmAuthToken).
+  - Registry authentication tokens are now configured via [`npmAuthToken`](/configuration/yarnrc#npmAuthToken).
 
   - The `yarn-offline-mirror` has been removed, since the offline mirror has been merged with the cache as part of the [Zero-Install effort](/features/zero-installs). Just commit the Yarn cache and you're ready to go.
 

@@ -4,7 +4,7 @@ This plugin adds support for installing packages through a `node_modules` folder
 
 ## Install
 
-This plugin is included by default in Yarn 2, but is still considered experimental. For this reason, you must enable it manually by adding the following to your `.yarnrc` file:
+This plugin is included by default in Yarn 2, but is still considered experimental. For this reason, you must enable it manually by adding the following to your `.yarnrc.yml` file:
 
 ```yml
 nodeLinker: node-modules
