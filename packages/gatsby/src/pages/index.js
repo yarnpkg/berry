@@ -23,6 +23,10 @@ const sectionStyle = css`
 
 const Section = styled.div`
   ${sectionStyle}
+
+  ${ifMobile} {
+    padding: 0 1em;
+  }
 `;
 
 const sectionContentStyle = css`
@@ -50,6 +54,11 @@ const Hero = styled.div`
 
 const HeroTitle = styled.div`
   font-size: 4em;
+  ${ifMobile} {
+    font-size: 2.2em;
+    text-align: center;
+  }
+
   font-weight: bold;
 
   color: #ffffff;
@@ -58,12 +67,16 @@ const HeroTitle = styled.div`
 
 const HeroSubtitle = styled.div`
   max-width: 800px;
-
+  color: #ffffff;
   margin-top: 40px;
-
   font-size: 1.5em;
 
-  color: #ffffff;
+  ${ifMobile} {
+    margin-top: 20px;
+    font-size: 1.2em;
+    text-align: center;
+    margin-bottom: 10px;
+  }
 `;
 
 const SellingPoints = styled.div`
@@ -80,6 +93,9 @@ const SellingPointContainer = styled.div`
   ${ifDesktop} {
     width: calc(50% - 20px);
   }
+  ${ifMobile} {
+    align-items: center;
+  }
 
   margin-top: 40px;
 
@@ -91,6 +107,10 @@ const SellingPointContainer = styled.div`
 const SellingPointIcon = styled.img`
   width: 100px;
   height: 100px;
+  ${ifMobile} {
+    width: 75px;
+    height: 75px;
+  }
 `;
 
 const SellingPointContent = styled.div`
@@ -98,6 +118,9 @@ const SellingPointContent = styled.div`
 
   h3 {
     margin-top: 0;
+    ${ifMobile} {
+      margin-bottom: .5em;
+    }
   }
 `;
 
