@@ -35,6 +35,7 @@ rm -f "$PATCHFILE" && touch "$PATCHFILE"
 echo 'export const patch =' \
   >> "$PATCHFILE"
 git diff --no-index "$TEMP_DIR"/orig "$TEMP_DIR"/patched \
+  | perl -p -e"s#^--- #semver exclusivity >=3\n--- #" \
   | perl -p -e"s#$TEMP_DIR/orig##" \
   | perl -p -e"s#$TEMP_DIR/patched##" \
   | perl -p -e"s#__spreadArrays#[].concat#" \
