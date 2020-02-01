@@ -4038,15 +4038,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/semver@npm:7.1.0":
-  version: 7.1.0
-  resolution: "@types/semver@npm:7.1.0"
-  dependencies:
-    "@types/node": "*"
-  checksum: e3098a0bc7dc665f062bde191a073b571e9c1567f0b5dfa472e221b75615bed69dbe38f58c2a30ec185a2aab1c4615b5db8c72e8f06f4db588c7f47415617199
-  languageName: node
-  linkType: hard
-
 "@types/semver@npm:^6.0.2":
   version: 6.0.2
   resolution: "@types/semver@npm:6.0.2"
@@ -5211,7 +5202,7 @@ __metadata:
   dependencies:
     "@types/diff": ^4.0.2
     "@types/react": ^16.8.0
-    "@types/semver": 7.1.0
+    "@types/semver": ^6.0.2
     "@yarnpkg/builder": "workspace:^2.0.0-rc.18"
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28"
     "@yarnpkg/core": "workspace:^2.0.0-rc.22"

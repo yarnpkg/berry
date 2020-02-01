@@ -4779,14 +4779,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/semver", "npm:6.0.2"]
           ],
           "linkType": "HARD",
-        }],
-        ["npm:7.1.0", {
-          "packageLocation": "./.yarn/cache/@types-semver-npm-7.1.0-ce58bbc3b4-1.zip/node_modules/@types/semver/",
-          "packageDependencies": [
-            ["@types/semver", "npm:7.1.0"],
-            ["@types/node", "npm:10.12.18"]
-          ],
-          "linkType": "HARD",
         }]
       ]],
       ["@types/serve-static", [
@@ -9089,7 +9081,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-interactive-tools", "workspace:packages/plugin-interactive-tools"],
             ["@types/diff", "npm:4.0.2"],
             ["@types/react", "npm:16.9.2"],
-            ["@types/semver", "npm:7.1.0"],
+            ["@types/semver", "npm:6.0.2"],
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@yarnpkg/cli", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
