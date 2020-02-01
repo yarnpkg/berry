@@ -25,6 +25,8 @@ const NewsContainer = styled.div`
   ${ifMobile} {
     white-space: pre-wrap;
     line-height: 1.5em;
+    text-align: center;
+    padding-top: 5px;
   }
 
   background: #2188b6;
