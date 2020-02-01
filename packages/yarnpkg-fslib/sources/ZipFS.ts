@@ -766,11 +766,10 @@ export class ZipFS extends BasePortableFakeFS {
     if (this.readOnly)
       throw errors.EROFS(`chmod '${p}'`);
 
-    const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
+    // We don't allow to make the extracted entries group-writable
+    mask &= 0o755;
 
-    // We silently ignore chmod requests for directories
-    if (this.listings.has(resolvedP))
-      return;
+    const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
 
     const entry = this.entries.get(resolvedP);
     if (typeof entry === `undefined`)
@@ -930,9 +929,9 @@ export class ZipFS extends BasePortableFakeFS {
     return this.mkdirSync(p, opts);
   }
 
-  mkdirSync(p: PortablePath, opts?: MkdirOptions) {
-    if (opts && opts.recursive)
-      return this.mkdirpSync(p, {chmod: opts.mode});
+  mkdirSync(p: PortablePath, {mode = 0o755, recursive = false}: MkdirOptions = {}) {
+    if (recursive)
+      return this.mkdirpSync(p, {chmod: mode});
 
     if (this.readOnly)
       throw errors.EROFS(`mkdir '${p}'`);
@@ -943,6 +942,7 @@ export class ZipFS extends BasePortableFakeFS {
       throw errors.EEXIST(`mkdir '${p}'`);
 
     this.hydrateDirectory(resolvedP);
+    this.chmodSync(resolvedP, mode);
   }
 
   async rmdirPromise(p: PortablePath) {

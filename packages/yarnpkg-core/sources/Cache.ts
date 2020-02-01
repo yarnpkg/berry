@@ -14,7 +14,7 @@ import {LocatorHash, Locator}                                  from './types';
 
 // Each time we'll bump this number the cache hashes will change, which will
 // cause all files to be fetched again. Use with caution.
-const CACHE_VERSION = 1;
+const CACHE_VERSION = 2;
 
 export type FetchFromCacheOptions = {
   checksums: Map<LocatorHash, Locator>,
@@ -99,10 +99,10 @@ export class Cache {
     this.markedFiles.add(cachePath);
 
     const validateFile = async (path: PortablePath, refetchPath: PortablePath | null = null) => {
-      const actualChecksum = await hashUtils.checksumFile(path);
+      const actualChecksum = `${CACHE_VERSION}/${await hashUtils.checksumFile(path)}`;
 
       if (refetchPath !== null) {
-        const previousChecksum = await hashUtils.checksumFile(refetchPath);
+        const previousChecksum = `${CACHE_VERSION}/${await hashUtils.checksumFile(refetchPath)}`;
         if (actualChecksum !== previousChecksum) {
           throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `The remote archive doesn't match the local checksum - has the local cache been corrupted?`);
         }
@@ -111,7 +111,9 @@ export class Cache {
       if (expectedChecksum !== null && actualChecksum !== expectedChecksum) {
         // Using --check-cache overrides any preconfigured checksum behavior
         const checksumBehavior = !this.check
-          ? this.configuration.get(`checksumBehavior`)
+          ? expectedChecksum.match(/^[0-9]+\//) === null
+            ? `update`
+            : this.configuration.get(`checksumBehavior`)
           : `throw`;
 
         switch (checksumBehavior) {
