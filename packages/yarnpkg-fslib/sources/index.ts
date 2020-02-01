@@ -1,4 +1,5 @@
 import fs                                from 'fs';
+import {promisify}                       from 'util';
 
 import {FakeFS}                          from './FakeFS';
 import {NodeFS}                          from './NodeFS';
@@ -84,15 +85,26 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `writeSync`,
   ]);
 
-  (patchedFs as any).existsSync = (p: string) => {
+  const setupFn = (target: any, name: string, replacement: any) => {
+    const orig = target[name];
+    if (typeof orig === `undefined`)
+      return;
+
+    target[name] = replacement;
+    if (typeof orig[promisify.custom] !== `undefined`) {
+      replacement[promisify.custom] = orig[promisify.custom];
+    }
+  };
+
+  setupFn(patchedFs, `existsSync`, (p: string) => {
     try {
       return fakeFs.existsSync(p);
     } catch (error) {
       return false;
     }
-  };
+  });
 
-  (patchedFs as any).exists = (p: string, ...args: any[]) => {
+  setupFn(patchedFs, `exists`, (p: string, ...args: any[]) => {
     const hasCallback = typeof args[args.length - 1] === `function`;
     const callback = hasCallback ? args.pop() : () => {};
 
@@ -103,9 +115,9 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         callback(false);
       });
     });
-  };
+  });
 
-  (patchedFs as any).read = (p: number, buffer: Buffer, ...args: any[]) => {
+  setupFn(patchedFs, `read`, (p: number, buffer: Buffer, ...args: any[]) => {
     const hasCallback = typeof args[args.length - 1] === `function`;
     const callback = hasCallback ? args.pop() : () => {};
 
@@ -116,13 +128,13 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         callback(error);
       });
     });
-  };
+  });
 
   for (const fnName of ASYNC_IMPLEMENTATIONS) {
     const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);
     const origName = fnName.replace(/Promise$/, ``);
 
-    (patchedFs as any)[origName] = (...args: Array<any>) => {
+    setupFn(patchedFs, origName, (...args: Array<any>) => {
       const hasCallback = typeof args[args.length - 1] === `function`;
       const callback = hasCallback ? args.pop() : () => {};
 
@@ -133,14 +145,14 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
           callback(error);
         });
       });
-    };
+    });
   }
 
   for (const fnName of SYNC_IMPLEMENTATIONS) {
     const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);
     const origName = fnName;
 
-    (patchedFs as any)[origName] = fakeImpl;
+    setupFn(patchedFs, origName, fakeImpl);
   }
 
   patchedFs.realpathSync.native = patchedFs.realpathSync;

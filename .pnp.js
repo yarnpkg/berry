@@ -35707,6 +35707,10 @@ class NodeFS extends FakeFS_1.BasePortableFakeFS {
     this.realFs = realFs;
   }
 
+  getExtractHint() {
+    return false;
+  }
+
   getRealPath() {
     return path_1.PortablePath.root;
   }
@@ -36439,6 +36443,10 @@ Object.defineProperty(exports, "__esModule", {
 const FakeFS_1 = __webpack_require__(4);
 
 class ProxiedFS extends FakeFS_1.FakeFS {
+  getExtractHint(hints) {
+    return this.baseFs.getExtractHint(hints);
+  }
+
   resolve(path) {
     return this.mapFromBase(this.baseFs.resolve(this.mapToBase(path)));
   }
@@ -36685,6 +36693,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+const util_1 = __webpack_require__(7);
+
 const NodeFS_1 = __webpack_require__(3);
 
 const path_1 = __webpack_require__(0);
@@ -36755,15 +36765,24 @@ function patchFs(patchedFs, fakeFs) {
   const SYNC_IMPLEMENTATIONS = new Set([`accessSync`, `appendFileSync`, `createReadStream`, `chmodSync`, `closeSync`, `copyFileSync`, `lstatSync`, `mkdirSync`, `openSync`, `readSync`, `readlinkSync`, `readFileSync`, `readdirSync`, `readlinkSync`, `realpathSync`, `renameSync`, `rmdirSync`, `statSync`, `symlinkSync`, `unlinkSync`, `utimesSync`, `watch`, `writeFileSync`, `writeSync`]);
   const ASYNC_IMPLEMENTATIONS = new Set([`accessPromise`, `appendFilePromise`, `chmodPromise`, `closePromise`, `copyFilePromise`, `lstatPromise`, `mkdirPromise`, `openPromise`, `readdirPromise`, `realpathPromise`, `readFilePromise`, `readdirPromise`, `readlinkPromise`, `renamePromise`, `rmdirPromise`, `statPromise`, `symlinkPromise`, `unlinkPromise`, `utimesPromise`, `writeFilePromise`, `writeSync`]);
 
-  patchedFs.existsSync = p => {
+  const setupFn = (target, name, replacement) => {
+    const orig = target[name];
+    if (typeof orig === `undefined`) return;
+    target[name] = replacement;
+
+    if (typeof orig[util_1.promisify.custom] !== `undefined`) {
+      replacement[util_1.promisify.custom] = orig[util_1.promisify.custom];
+    }
+  };
+
+  setupFn(patchedFs, `existsSync`, p => {
     try {
       return fakeFs.existsSync(p);
     } catch (error) {
       return false;
     }
-  };
-
-  patchedFs.exists = (p, ...args) => {
+  });
+  setupFn(patchedFs, `exists`, (p, ...args) => {
     const hasCallback = typeof args[args.length - 1] === `function`;
     const callback = hasCallback ? args.pop() : () => {};
     process.nextTick(() => {
@@ -36773,9 +36792,8 @@ function patchFs(patchedFs, fakeFs) {
         callback(false);
       });
     });
-  };
-
-  patchedFs.read = (p, buffer, ...args) => {
+  });
+  setupFn(patchedFs, `read`, (p, buffer, ...args) => {
     const hasCallback = typeof args[args.length - 1] === `function`;
     const callback = hasCallback ? args.pop() : () => {};
     process.nextTick(() => {
@@ -36785,13 +36803,12 @@ function patchFs(patchedFs, fakeFs) {
         callback(error);
       });
     });
-  };
+  });
 
   for (const fnName of ASYNC_IMPLEMENTATIONS) {
     const fakeImpl = fakeFs[fnName].bind(fakeFs);
     const origName = fnName.replace(/Promise$/, ``);
-
-    patchedFs[origName] = (...args) => {
+    setupFn(patchedFs, origName, (...args) => {
       const hasCallback = typeof args[args.length - 1] === `function`;
       const callback = hasCallback ? args.pop() : () => {};
       process.nextTick(() => {
@@ -36801,13 +36818,13 @@ function patchFs(patchedFs, fakeFs) {
           callback(error);
         });
       });
-    };
+    });
   }
 
   for (const fnName of SYNC_IMPLEMENTATIONS) {
     const fakeImpl = fakeFs[fnName].bind(fakeFs);
     const origName = fnName;
-    patchedFs[origName] = fakeImpl;
+    setupFn(patchedFs, origName, fakeImpl);
   }
 
   patchedFs.realpathSync.native = patchedFs.realpathSync;
@@ -36897,13 +36914,13 @@ exports.xfs = Object.assign(new NodeFS_1.NodeFS(), {
 /* 7 */
 /***/ (function(module, exports) {
 
-module.exports = require("module");
+module.exports = require("util");
 
 /***/ }),
 /* 8 */
 /***/ (function(module, exports) {
 
-module.exports = require("util");
+module.exports = require("module");
 
 /***/ }),
 /* 9 */
@@ -37896,7 +37913,7 @@ const fs_1 = __webpack_require__(1);
 
 const stream_1 = __webpack_require__(31);
 
-const util_1 = __webpack_require__(8);
+const util_1 = __webpack_require__(7);
 
 const FakeFS_1 = __webpack_require__(4);
 
@@ -38111,6 +38128,18 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
     }
 
     this.ready = true;
+  }
+
+  getExtractHint(hints) {
+    for (const fileName of this.entries.keys()) {
+      const ext = this.pathUtils.extname(fileName);
+
+      if (hints.relevantExtensions.has(ext)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   getAllFiles() {
@@ -38531,10 +38560,10 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
   }
 
   chmodSync(p, mask) {
-    if (this.readOnly) throw errors.EROFS(`chmod '${p}'`);
-    const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false); // We silently ignore chmod requests for directories
+    if (this.readOnly) throw errors.EROFS(`chmod '${p}'`); // We don't allow to make the extracted entries group-writable
 
-    if (this.listings.has(resolvedP)) return;
+    mask &= 0o755;
+    const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
     const entry = this.entries.get(resolvedP);
     if (typeof entry === `undefined`) throw new Error(`Assertion failed: The entry should have been registered (${resolvedP})`);
     const oldMod = this.getUnixMode(entry, S_IFREG | 0o000);
@@ -38656,14 +38685,18 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
     return this.mkdirSync(p, opts);
   }
 
-  mkdirSync(p, opts) {
-    if (opts && opts.recursive) return this.mkdirpSync(p, {
-      chmod: opts.mode
+  mkdirSync(p, {
+    mode = 0o755,
+    recursive = false
+  } = {}) {
+    if (recursive) return this.mkdirpSync(p, {
+      chmod: mode
     });
     if (this.readOnly) throw errors.EROFS(`mkdir '${p}'`);
     const resolvedP = this.resolveFilename(`mkdir '${p}'`, p);
     if (this.entries.has(resolvedP) || this.listings.has(resolvedP)) throw errors.EEXIST(`mkdir '${p}'`);
     this.hydrateDirectory(resolvedP);
+    this.chmodSync(resolvedP, mode);
   }
 
   async rmdirPromise(p) {
@@ -39648,7 +39681,7 @@ var alphasorti = common.alphasorti
 var setopts = common.setopts
 var ownProp = common.ownProp
 var inflight = __webpack_require__(43)
-var util = __webpack_require__(8)
+var util = __webpack_require__(7)
 var childrenIgnored = common.childrenIgnored
 var isIgnored = common.isIgnored
 
@@ -40858,7 +40891,7 @@ const libzip_1 = __webpack_require__(44);
 
 const fs_1 = __importDefault(__webpack_require__(1));
 
-const module_1 = __importDefault(__webpack_require__(7));
+const module_1 = __importDefault(__webpack_require__(8));
 
 const string_decoder_1 = __importDefault(__webpack_require__(47));
 
@@ -41333,6 +41366,10 @@ class NoFS extends FakeFS_1.FakeFS {
     super(path_1.ppath);
   }
 
+  getExtractHint() {
+    throw makeError();
+  }
+
   getRealPath() {
     throw makeError();
   }
@@ -41629,6 +41666,10 @@ class VirtualFS extends ProxiedFS_1.ProxiedFS {
     return VirtualFS.resolveVirtual(path_1.ppath.join(target, backstep, subpath));
   }
 
+  getExtractHint(hints) {
+    return this.baseFs.getExtractHint(hints);
+  }
+
   getRealPath() {
     return this.baseFs.getRealPath();
   }
@@ -41793,6 +41834,10 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     } finally {
       zipOpenFs.saveAndClose();
     }
+  }
+
+  getExtractHint(hints) {
+    return this.baseFs.getExtractHint(hints);
   }
 
   getRealPath() {
@@ -43580,7 +43625,7 @@ function range(a, b, str) {
 /***/ (function(module, exports, __webpack_require__) {
 
 try {
-  var util = __webpack_require__(8);
+  var util = __webpack_require__(7);
   if (typeof util.inherits !== 'function') throw '';
   module.exports = util.inherits;
 } catch (e) {
@@ -43635,7 +43680,7 @@ var rp = __webpack_require__(17)
 var minimatch = __webpack_require__(10)
 var Minimatch = minimatch.Minimatch
 var Glob = __webpack_require__(16).Glob
-var util = __webpack_require__(8)
+var util = __webpack_require__(7)
 var path = __webpack_require__(2)
 var assert = __webpack_require__(9)
 var isAbsolute = __webpack_require__(11)
@@ -48869,7 +48914,7 @@ const fslib_1 = __webpack_require__(6);
 
 const fs_1 = __importDefault(__webpack_require__(1));
 
-const module_1 = __webpack_require__(7);
+const module_1 = __webpack_require__(8);
 
 const url_1 = __webpack_require__(49);
 
@@ -48892,7 +48937,7 @@ function applyPatch(pnpapi, opts) {
 
   process.versions.pnp = String(pnpapi.VERSIONS.std); // @ts-ignore
 
-  const moduleExports = __webpack_require__(7); // @ts-ignore
+  const moduleExports = __webpack_require__(8); // @ts-ignore
 
 
   moduleExports.findPnpApi = lookupSource => {
@@ -49200,7 +49245,7 @@ const fslib_1 = __webpack_require__(6);
 
 const fslib_2 = __webpack_require__(6);
 
-const module_1 = __webpack_require__(7);
+const module_1 = __webpack_require__(8);
 
 const internalTools_1 = __webpack_require__(21);
 
@@ -49858,7 +49903,7 @@ Object.defineProperty(exports, "__esModule", {
 
 const fslib_1 = __webpack_require__(6);
 
-const module_1 = __webpack_require__(7);
+const module_1 = __webpack_require__(8);
 
 function makeManager(pnpapi, opts) {
   const initialApiPath = fslib_1.npath.toPortablePath(pnpapi.resolveToUnqualified(`pnpapi`, null));
