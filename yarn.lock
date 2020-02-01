@@ -11944,7 +11944,7 @@ fsevents@^1.2.2:
 
 "fsevents@patch:fsevents@^1.0.0#builtin<compat/fsevents>, fsevents@patch:fsevents@^1.2.7#builtin<compat/fsevents>":
   version: 1.2.7
-  resolution: "fsevents@patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=e8cd9e"
+  resolution: "fsevents@patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=77dfe6"
   dependencies:
     nan: ^2.9.2
     node-pre-gyp: ^0.10.0
@@ -11954,7 +11954,7 @@ fsevents@^1.2.2:
 
 "fsevents@patch:fsevents@^1.2.2#builtin<compat/fsevents>":
   version: 1.2.6
-  resolution: "fsevents@patch:fsevents@npm%3A1.2.6#builtin<compat/fsevents>::version=1.2.6&hash=e8cd9e"
+  resolution: "fsevents@patch:fsevents@npm%3A1.2.6#builtin<compat/fsevents>::version=1.2.6&hash=77dfe6"
   dependencies:
     nan: ^2.9.2
     node-pre-gyp: ^0.10.0
@@ -24308,11 +24308,11 @@ resolve@^1.10.1:
 
 "typescript@patch:typescript@*#builtin<compat/typescript>, typescript@patch:typescript@^3.7.4#builtin<compat/typescript>":
   version: 3.7.4
-  resolution: "typescript@patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=226bd1"
+  resolution: "typescript@patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"
   bin:
     tsc: ./bin/tsc
     tsserver: ./bin/tsserver
-  checksum: 2/f39de68fea020f03929159a25aefcb7194eb4a5ee85ade1b76733f99f009e3e3d46790778d6b700cd8ad30b0baade750a2f5fafbc71f75c1286b0e637e305aed
+  checksum: 2/783bad1234fd466f8b481e9d1d6fd2286af993731eb59c23e48a091805b8687cf0d68f992061da0f721b6f09b63e8da7e4f5d9f724c25c91cecbb8f53a643e47
   languageName: node
   linkType: hard
 
