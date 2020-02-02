@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@types/inquirer": "^0.0.43",
-    "@types/semver": "^6.0.2",
+    "@types/semver": "^7.1.0",
     "@yarnpkg/core": "workspace:^2.0.0-rc.22"
   },
   "repository": {

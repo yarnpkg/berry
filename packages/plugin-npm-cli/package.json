@@ -21,7 +21,7 @@
     "@npm/types": "^1.0.1",
     "@types/inquirer": "^0.0.43",
     "@types/json5": "0.0.30",
-    "@types/semver": "7.1.0",
+    "@types/semver": "^7.1.0",
     "@types/ssri": "^6.0.1",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28",
     "@yarnpkg/core": "workspace:^2.0.0-rc.22",
