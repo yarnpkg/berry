@@ -25,7 +25,7 @@
     "p-limit": "^2.2.0",
     "pluralize": "^7.0.0",
     "pretty-bytes": "^5.1.0",
-    "semver": "^5.6.0",
+    "semver": "^7.1.2",
     "stream-to-promise": "^2.2.0",
     "tar": "^4.4.6",
     "tmp": "^0.1.0",

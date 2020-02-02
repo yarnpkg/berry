@@ -9,7 +9,7 @@
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.16",
     "clipanion": "^2.1.5",
     "micromatch": "^4.0.2",
-    "semver": "^5.6.0"
+    "semver": "^7.1.2"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "^2.0.0-rc.28",

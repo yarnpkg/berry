@@ -8,7 +8,7 @@
     "diff": "^4.0.1",
     "ink": "^2.3.0",
     "react": "^16.8.4",
-    "semver": "^5.6.0"
+    "semver": "^7.1.2"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "^2.0.0-rc.28",

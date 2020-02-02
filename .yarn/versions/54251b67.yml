@@ -1,15 +1,17 @@
 releases:
   "@yarnpkg/cli": prerelease
+  "@yarnpkg/plugin-npm-cli": prerelease
 
 declined:
+  - "@yarnpkg/builder"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
   - "@yarnpkg/plugin-essentials"
-  - "@yarnpkg/plugin-info"
+  - "@yarnpkg/plugin-git"
   - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-node-modules"
-  - "@yarnpkg/plugin-npm-cli"
+  - "@yarnpkg/plugin-npm"
   - "@yarnpkg/plugin-pack"
   - "@yarnpkg/plugin-patch"
   - "@yarnpkg/plugin-pnp"

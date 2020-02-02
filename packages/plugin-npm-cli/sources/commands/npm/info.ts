@@ -43,33 +43,33 @@ export default class InfoCommand extends BaseCommand {
 
       If the optional field argument is provided, then only that part of the tree is returned.
 
-      By default, \`yarn info\` will not return the \`dist\`, \`readme\`, and \`users\` fields, since they are often very long. To explicitly request those fields, use the \`-v,--verbose\` flag or the second argument: \`yarn info react readme\`
+      By default, \`yarn npm info\` will not return the \`dist\`, \`readme\`, and \`users\` fields, since they are often very long. To explicitly request those fields, use the \`-v,--verbose\` flag or the second argument: \`yarn npm info react readme\`
     `,
     examples: [[
       `Show all available information about react (except the \`dist\`, \`readme\`, and \`users\` fields)`,
-      `yarn info react`,
+      `yarn npm info react`,
     ],[
       `Show all available information about react, including the \`dist\`, \`readme\`, and \`users\` fields`,
-      `yarn info react --verbose`,
+      `yarn npm info react --verbose`,
     ],[
       `Show all available information about react as valid JSON`,
-      `yarn info react --json`,
+      `yarn npm info react --json`,
     ],[
       `Show all available information about react 16.12.0`,
-      `yarn info react@16.12.0`,
+      `yarn npm info react@16.12.0`,
     ],[
       `Show the description of react`,
-      `yarn info react description`,
+      `yarn npm info react description`,
     ],[
       `Show all available versions of react`,
-      `yarn info react versions`,
+      `yarn npm info react versions`,
     ],[
       `Show the readme of react`,
-      `yarn info react readme`,
+      `yarn npm info react readme`,
     ]],
   });
 
-  @Command.Path(`info`)
+  @Command.Path(`npm`, `info`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
