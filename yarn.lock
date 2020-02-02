@@ -4052,7 +4052,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/semver@npm:7.1.0":
+"@types/semver@npm:^7.1.0":
   version: 7.1.0
   resolution: "@types/semver@npm:7.1.0"
   dependencies:
@@ -4847,7 +4847,7 @@ __metadata:
     "@types/got": ^8.3.4
     "@types/is-ci": ^2.0.0
     "@types/micromatch": ^3.1.0
-    "@types/semver": 7.1.0
+    "@types/semver": ^7.1.0
     "@types/tar": ^4.0.0
     "@types/tmp": ^0.0.33
     "@types/tunnel": ^0.0.0
@@ -5113,7 +5113,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
     "@types/inquirer": ^0.0.43
-    "@types/semver": 7.1.0
+    "@types/semver": ^7.1.0
     "@types/treeify": ^1.0.0
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28"
     "@yarnpkg/core": "workspace:^2.0.0-rc.22"
@@ -5161,7 +5161,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-git@workspace:packages/plugin-git"
   dependencies:
-    "@types/semver": 7.1.0
+    "@types/semver": ^7.1.0
     "@yarnpkg/core": "workspace:^2.0.0-rc.22"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
     git-url-parse: 11.1.2
@@ -5218,7 +5218,7 @@ __metadata:
   dependencies:
     "@types/diff": ^4.0.2
     "@types/react": ^16.8.0
-    "@types/semver": 7.1.0
+    "@types/semver": ^7.1.0
     "@yarnpkg/builder": "workspace:^2.0.0-rc.18"
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28"
     "@yarnpkg/core": "workspace:^2.0.0-rc.22"
@@ -5278,7 +5278,7 @@ __metadata:
     "@npm/types": ^1.0.1
     "@types/inquirer": ^0.0.43
     "@types/json5": 0.0.30
-    "@types/semver": 7.1.0
+    "@types/semver": ^7.1.0
     "@types/ssri": ^6.0.1
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28"
     "@yarnpkg/core": "workspace:^2.0.0-rc.22"
@@ -5304,7 +5304,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
     "@types/inquirer": ^0.0.43
-    "@types/semver": 7.1.0
+    "@types/semver": ^7.1.0
     "@yarnpkg/core": "workspace:^2.0.0-rc.22"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
     inquirer: ^6.2.0
@@ -5354,7 +5354,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-pnp@workspace:packages/plugin-pnp"
   dependencies:
     "@types/micromatch": ^3.1.0
-    "@types/semver": 7.1.0
+    "@types/semver": ^7.1.0
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28"
     "@yarnpkg/core": "workspace:^2.0.0-rc.22"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
@@ -5409,7 +5409,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-version@workspace:packages/plugin-version"
   dependencies:
     "@types/react": ^16.8.0
-    "@types/semver": 7.1.0
+    "@types/semver": ^7.1.0
     "@types/yup": 0.26.12
     "@yarnpkg/builder": "workspace:^2.0.0-rc.18"
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28"
@@ -19547,7 +19547,7 @@ fsevents@^1.2.2:
     "@types/invariant": ^2.2.30
     "@types/klaw": ^2.0.0
     "@types/minimatch": ^3.0.3
-    "@types/semver": 7.1.0
+    "@types/semver": ^7.1.0
     "@types/serve-static": 1.13.3
     "@types/tar-fs": ^1.16.1
     "@types/tmp": ^0.0.33
