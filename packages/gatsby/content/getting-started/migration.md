@@ -1,7 +1,7 @@
 ---
 category: getting-started
-path: /getting-started/migration
-title: "Migration from v1"
+path: /getting-started/migration-from-classic
+title: "Migration from 1.x (Classic)"
 ---
 
 Yarn v2 is a very different software from the v1. While one of our aim is to make the transition as easy as possible, some behaviors needed to be tweaked. To make things easier we've documented the most common problems that may arise when porting from one project to the other, along with suggestions to keep moving forward.

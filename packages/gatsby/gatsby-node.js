@@ -52,6 +52,19 @@ module.exports = {
     });
 
     createRedirect({
+      fromPath: `/advanced/migration`,
+      toPath: `/getting-started/migration-from-classic`,
+      redirectInBrowser: true,
+      isPermanent: false,
+    });
+    createRedirect({
+      fromPath: `/getting-started/migration`,
+      toPath: `/getting-started/migration-from-classic`,
+      redirectInBrowser: true,
+      isPermanent: false,
+    });
+
+    createRedirect({
       fromPath: `/cli`,
       toPath: `/cli/install`,
       redirectInBrowser: true,

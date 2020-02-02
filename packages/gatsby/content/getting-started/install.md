@@ -6,7 +6,7 @@ title: "2 - Installation"
 
 > **Migrating from Yarn 1**
 >
-> We've been compiling helpful advices when porting over from Yarn 1 on the following [Migration Guide](/getting-started/migration). Give it a look and contribute to it if you see things that aren't covered yet!
+> We've been compiling helpful advices when porting over from Yarn 1 on the following [Migration Guide](/getting-started/migration-from-classic). Give it a look and contribute to it if you see things that aren't covered yet!
 
 ## Global Install
 
