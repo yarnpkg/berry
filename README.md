@@ -21,18 +21,18 @@ Yarn is a modern package manager split into various packages. Its novel architec
 
 - Yarn supports plugins; adding a plugin is as simple as adding it into your repository
 - Yarn supports Node by default but isn't limited to it - plugins can add support for other languages
-- Yarn supports [workspaces](https://next.yarnpkg.com/features/workspaces) natively, and its CLI takes advantage of that
+- Yarn supports [workspaces](https://yarnpkg.com/features/workspaces) natively, and its CLI takes advantage of that
 - Yarn uses a portable shell to execute package scripts, guaranteeing they work the same way on Windows and Linux
 - Yarn is first and foremost a Node API that can be used programmatically (via [@yarnpkg/core](packages/yarnpkg-core))
 - Yarn is written in TypeScript, and is fully type checked
 
 ## Install
 
-Consult the [dedicated page](https://next.yarnpkg.com/getting-started/install) for more details.
+Consult the [dedicated page](https://yarnpkg.com/getting-started/install) for more details.
 
 ## Documentation
 
-The documentation is being reworked to contain an updated content and a refreshed design, and the most up-to-date version can be found on the repository GitHub pages: [next.yarnpkg.com](https://next.yarnpkg.com/)
+The documentation is being reworked to contain an updated content and a refreshed design, and the most up-to-date version can be found on the repository GitHub pages: [yarnpkg.com](https://yarnpkg.com/)
 
 ## Current status
 
@@ -85,34 +85,34 @@ Note that no other command is needed! Given that our dependencies are checked-in
 Those plugins typically come bundled with Yarn. You don't need to do anything special to use them.
 
 - [★ plugin-constraints](packages/plugin-constraints) adds support for `yarn constraints [--fix]`.
-- [★ plugin-dlx](packages/plugin-dlx) adds support for the [`yarn dlx`](https://next.yarnpkg.com/cli/dlx) command.
+- [★ plugin-dlx](packages/plugin-dlx) adds support for the [`yarn dlx`](https://yarnpkg.com/cli/dlx) command.
 - [★ plugin-essentials](packages/plugin-essentials) adds various commands deemed necessary for a package manager (add, remove, ...).
 - [★ plugin-file](packages/plugin-file) adds support for using the `file:` protocol within your dependencies.
 - [★ plugin-github](packages/plugin-github) adds support for using Github references as dependencies. [This plugin doesn't use git.](https://stackoverflow.com/a/13636954/880703)
 - [★ plugin-http](packages/plugin-http) adds support for using straight URL references as dependencies (tgz archives only).
-- [★ plugin-init](packages/plugin-init) adds support for the [`yarn init`](https://next.yarnpkg.com/cli/init) command.
+- [★ plugin-init](packages/plugin-init) adds support for the [`yarn init`](https://yarnpkg.com/cli/init) command.
 - [★ plugin-link](packages/plugin-link) adds support for using `link:` and `portal:` references as dependencies.
 - [★ plugin-npm](packages/plugin-npm) adds support for using [semver ranges](https://semver.org) as dependencies, resolving them to an NPM-like registry.
-- [★ plugin-npm-cli](packages/plugin-npm-cli) adds support for the NPM-specific commands ([`yarn npm login`](https://next.yarnpkg.com/cli/npm/login), [`yarn npm publish`](https://next.yarnpkg.com/cli/npm/publish), ...).
-- [★ plugin-pack](packages/plugin-pack) adds support for the [`yarn pack`](https://next.yarnpkg.com/cli/pack) command.
-- [★ plugin-pnp](packages/plugin-pnp) adds support for installing Javascript dependencies through the [Plug'n'Play](https://next.yarnpkg.com/features/pnp) specification.
+- [★ plugin-npm-cli](packages/plugin-npm-cli) adds support for the NPM-specific commands ([`yarn npm login`](https://yarnpkg.com/cli/npm/login), [`yarn npm publish`](https://yarnpkg.com/cli/npm/publish), ...).
+- [★ plugin-pack](packages/plugin-pack) adds support for the [`yarn pack`](https://yarnpkg.com/cli/pack) command.
+- [★ plugin-pnp](packages/plugin-pnp) adds support for installing Javascript dependencies through the [Plug'n'Play](https://yarnpkg.com/features/pnp) specification.
 
 ### Contrib plugins
 
 Although developed on the same repository as Yarn itself, those plugins are optional and need to be explicitly installed through `yarn plugin import @yarnpkg/<plugin-name>`.
 
 - [☆ plugin-exec](packages/plugin-exec) adds support for using the `exec:` protocol within your dependencies.
-- [☆ plugin-stage](packages/plugin-stage) adds support for the [`yarn stage`](https://next.yarnpkg.com/cli/stage) command.
+- [☆ plugin-stage](packages/plugin-stage) adds support for the [`yarn stage`](https://yarnpkg.com/cli/stage) command.
 - [☆ plugin-typescript](packages/plugin-typescript) improves the user experience when working with TypeScript.
-- [☆ plugin-workspace-tools](packages/plugin-workspace-tools) adds support for the [`yarn workspaces foreach`](https://next.yarnpkg.com/cli/workspaces/foreach) command.
+- [☆ plugin-workspace-tools](packages/plugin-workspace-tools) adds support for the [`yarn workspaces foreach`](https://yarnpkg.com/cli/workspaces/foreach) command.
 
 ### Third-party plugins
 
-Plugins can be developed by third-party entities. To use them within your applications, just specify the full plugin URL when calling [`yarn plugin import`](https://next.yarnpkg.com/cli/plugin/import). Note that plugins aren't fetched from the npm registry at this time - they must be distributed as a single JavaScript file.
+Plugins can be developed by third-party entities. To use them within your applications, just specify the full plugin URL when calling [`yarn plugin import`](https://yarnpkg.com/cli/plugin/import). Note that plugins aren't fetched from the npm registry at this time - they must be distributed as a single JavaScript file.
 
 ### Creating a new plugin
 
-To create your own plugin, please refer to the [documentation](https://next.yarnpkg.com/features/plugins).
+To create your own plugin, please refer to the [documentation](https://yarnpkg.com/features/plugins).
 
 ## Generic packages
 
@@ -123,7 +123,7 @@ The following packages are generic and can be used in a variety of purposes (inc
 - [@yarnpkg/json-proxy](packages/yarnpkg-json-proxy) allows to temporarily convert any POD object to an immutable object.
 - [@yarnpkg/libzip](packages/yarnpkg-libzip) contains zlib+libzip bindings compiled to WebAssembly.
 - [@yarnpkg/parsers](packages/yarnpkg-parsers) can be used to parse the language used by [@yarnpkg/shell](packages/yarnpkg-shell).
-- [@yarnpkg/pnp](packages/yarnpkg-pnp) can be used to generate [Plug'n'Play](https://next.yarnpkg.com/features/pnp)-compatible hooks.
+- [@yarnpkg/pnp](packages/yarnpkg-pnp) can be used to generate [Plug'n'Play](https://yarnpkg.com/features/pnp)-compatible hooks.
 - [@yarnpkg/pnpify](packages/yarnpkg-pnpify) is a CLI tool to transparently add PnP support to various tools.
 - [@yarnpkg/shell](packages/yarnpkg-shell) is a portable bash-like shell interpreter.
 

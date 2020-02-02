@@ -12,7 +12,7 @@ nodeLinker: node-modules
 
 ## Word of caution
 
-While they are supported by virtually every tool, installs using the `node_modules` strategy have various fundamental issues that the default Plug'n'Play installations don't suffer from (for more details, check out our [documentation](https://next.yarnpkg.com/features/pnp)). Carefully consider the pros and cons before enabling this plugin.
+While they are supported by virtually every tool, installs using the `node_modules` strategy have various fundamental issues that the default Plug'n'Play installations don't suffer from (for more details, check out our [documentation](https://yarnpkg.com/features/pnp)). Carefully consider the pros and cons before enabling this plugin.
 
 ## Known issues
 

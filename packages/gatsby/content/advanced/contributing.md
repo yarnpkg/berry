@@ -87,7 +87,7 @@ yarn test:lint --fix
 
 ## Preparing your PR to be released
 
-In order to track which packages need to be released we use the workflow described in the [following document](https://next.yarnpkg.com/advanced/managing-releases). To summarize, you must run `yarn version check --interactive` on each PR you make, and select which packages should be released again for your changes to be effective (and to which version), if any.
+In order to track which packages need to be released we use the workflow described in the [following document](https://yarnpkg.com/advanced/managing-releases). To summarize, you must run `yarn version check --interactive` on each PR you make, and select which packages should be released again for your changes to be effective (and to which version), if any.
 
 If you expect a package to have to be released again but Yarn doesn't offer you this choice, first check whether the name of your local branch is `master`. If that's the case, Yarn might not be able to detect your changes (since it will do it against `master`, which is yourself). Run the following commands:
 
