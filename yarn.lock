@@ -3332,6 +3332,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@npm/types@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@npm/types@npm:1.0.1"
+  checksum: 2/ca8f116961e4befdbfbfd0a320326462dd08be0c037cdfa52e2afb5c7c2012f768faf4d78910840357e1872626e186d1e23302ae67f8a26eb29a25d4fcf6fedf
+  languageName: node
+  linkType: hard
+
 "@octokit/endpoint@npm:^5.1.0":
   version: 5.3.2
   resolution: "@octokit/endpoint@npm:5.3.2"
@@ -3762,6 +3769,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/json5@npm:0.0.30":
+  version: 0.0.30
+  resolution: "@types/json5@npm:0.0.30"
+  checksum: 2/af9d434f14dc6337e16454944bca5eadbdf5d0e85a0ef59fe5e011eadabfe126f42f3913bf7fee478747cf34efd88061ac0e15ede07b83986ae31aa2ddda6232
+  languageName: node
+  linkType: hard
+
 "@types/keyv@npm:*":
   version: 3.1.1
   resolution: "@types/keyv@npm:3.1.1"
@@ -4035,6 +4049,15 @@ __metadata:
     "@types/rx-lite-time": "*"
     "@types/rx-lite-virtualtime": "*"
   checksum: 2/77fc69dbbc89cc3c615cbc1e07e0068279af35ff6e7dbc85f5db5ef1f45c789c2f77fd1a78388a63090450d919194b545f4d5da8e189fa3156f7f3802ebe6166
+  languageName: node
+  linkType: hard
+
+"@types/semver@npm:7.1.0":
+  version: 7.1.0
+  resolution: "@types/semver@npm:7.1.0"
+  dependencies:
+    "@types/node": "*"
+  checksum: 2/d4450e985101a5241a879c919a6f462e4d1ed82c7720d1b732a01bc5692356c5fd817e7ef985efd7b2175f47513d56c3d308ea79dd1f9faf18153a2c673df8fe
   languageName: node
   linkType: hard
 
@@ -4798,6 +4821,7 @@ __metadata:
     "@yarnpkg/plugin-git": "workspace:^2.0.0-rc.16"
     "@yarnpkg/plugin-github": "workspace:^2.0.0-rc.13"
     "@yarnpkg/plugin-http": "workspace:^2.0.0-rc.11"
+    "@yarnpkg/plugin-info": "workspace:packages/plugin-info"
     "@yarnpkg/plugin-init": "workspace:^2.0.0-rc.12"
     "@yarnpkg/plugin-link": "workspace:^2.0.0-rc.11"
     "@yarnpkg/plugin-node-modules": "workspace:^2.0.0-rc.5"
@@ -5179,6 +5203,26 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
   peerDependencies:
     "@yarnpkg/core": ^2.0.0-rc.22
+  languageName: unknown
+  linkType: soft
+
+"@yarnpkg/plugin-info@workspace:packages/plugin-info":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/plugin-info@workspace:packages/plugin-info"
+  dependencies:
+    "@npm/types": ^1.0.1
+    "@types/json5": 0.0.30
+    "@types/semver": 7.1.0
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.28"
+    "@yarnpkg/core": "workspace:^2.0.0-rc.22"
+    "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.15"
+    clipanion: ^2.1.5
+    json5: ^2.1.1
+    semver: ^7.1.2
+  peerDependencies:
+    "@yarnpkg/cli": ^2.0.0-rc.28
+    "@yarnpkg/core": ^2.0.0-rc.22
+    "@yarnpkg/plugin-npm": ^2.0.0-rc.15
   languageName: unknown
   linkType: soft
 
@@ -16314,6 +16358,17 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
+"json5@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "json5@npm:2.1.1"
+  dependencies:
+    minimist: ^1.2.0
+  bin:
+    json5: lib/cli.js
+  checksum: 2/fd755a9551d59acaa08c61ff9f1227a946d55af52d94b08fa5b4180471125f363f924606b56fa46ce94b171045d4e17502e6ccdc443e9a0bb1a2cef7b4875928
+  languageName: node
+  linkType: hard
+
 "jsonfile@npm:^2.1.0":
   version: 2.4.0
   resolution: "jsonfile@npm:2.4.0"
@@ -22193,6 +22248,15 @@ resolve@^1.10.1:
   bin:
     semver: ./bin/semver.js
   checksum: 2/968df974cece4e1ce51a0243c32f1b7d796f5aa24f1494c1b3acabcf51d1c964d6ac7e527cbbf3a69787db48462c9ccfd8768fae064e8a8e7237c7759e514ee5
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.1.2":
+  version: 7.1.2
+  resolution: "semver@npm:7.1.2"
+  bin:
+    semver: bin/semver.js
+  checksum: 2/16ab13f3e12cad85a2c0afa5456cf54a38abd337a8cc986d1eaa1a267386598855ecaf688225070b21b1887771a51664fd2576821d93b4addc340e314f0e5afe
   languageName: node
   linkType: hard
 
