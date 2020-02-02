@@ -40,7 +40,6 @@ const Button = styled.button`
 
 const CopyableContent = styled.section`
   display: flex;
-  position: relative;
   width: 100%;
   margin: 8px 0;
   font-size: 1em;
