@@ -8,6 +8,6 @@ This plugin is included by default in Yarn.
 
 ## Commands
 
-- [`yarn npm login`](https://next.yarnpkg.com/cli/npm/login)
-- [`yarn npm publish`](https://next.yarnpkg.com/cli/npm/publish)
-- [`yarn npm whoami`](https://next.yarnpkg.com/cli/npm/whoami)
+- [`yarn npm login`](https://yarnpkg.com/cli/npm/login)
+- [`yarn npm publish`](https://yarnpkg.com/cli/npm/publish)
+- [`yarn npm whoami`](https://yarnpkg.com/cli/npm/whoami)

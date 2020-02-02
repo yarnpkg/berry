@@ -77,7 +77,7 @@ We now need to inject some variables into the environment for Node to be able to
 
 ### Setup your IDE accordingly
 
-We've written a [guide](https://next.yarnpkg.com/advanced/editor-sdks) entirely designed to explain you how to use Yarn with your IDE. Make sure to take a look at it, and maybe contribute to it if some instructions are unclear or missing!
+We've written a [guide](https://yarnpkg.com/advanced/editor-sdks) entirely designed to explain you how to use Yarn with your IDE. Make sure to take a look at it, and maybe contribute to it if some instructions are unclear or missing!
 
 ### Update your configuration to the new settings
 

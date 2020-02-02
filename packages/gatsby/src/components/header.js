@@ -220,7 +220,7 @@ export const Header = ({children}) => {
       <NewsContainer>
         <NewsOverlay href={`https://github.com/yarnpkg/berry`} />
         <NewsInner>
-          <Highlight>Important:</Highlight> This documentation covers Yarn 2. For the 1.x doc, check <a href={`https://legacy.yarnpkg.com`}>legacy.yarnpkg.com</a>.
+          <Highlight>Important:</Highlight> This documentation covers Yarn 2. For the 1.x doc, check <a href={`https://classic.yarnpkg.com`}>classic.yarnpkg.com</a>.
         </NewsInner>
       </NewsContainer>
 

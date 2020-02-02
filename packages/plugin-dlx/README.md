@@ -1,6 +1,6 @@
 # `@yarnpkg/plugin-dlx`
 
-This plugin adds support for [yarn dlx](https://next.yarnpkg.com/cli/dlx) to Yarn.
+This plugin adds support for [yarn dlx](https://yarnpkg.com/cli/dlx) to Yarn.
 
 ## Install
 
