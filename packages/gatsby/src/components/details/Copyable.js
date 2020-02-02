@@ -40,12 +40,14 @@ const Button = styled.button`
 
 const CopyableContent = styled.section`
   display: flex;
+  position: relative;
   width: 100%;
   margin: 8px 0;
   font-size: 1em;
   color: #666666;
   whitespace: no-wrap;
   line-height: 1.5;
+  overflow: hidden;
 
   code {
     padding: 0.2rem 0.4rem;
@@ -57,6 +59,11 @@ const CopyableContent = styled.section`
       color: #0a4a67;
       text-decoration: underline;
     }
+  }
+
+  object {
+    display: flex;
+    align-items: center;
   }
 
   button {
@@ -120,10 +127,15 @@ export const Copyable = ({tag = 'div', pre, children}) => {
         {pre}
         <span ref={copyTextRef}>{children}</span>
       </Content>
-      <Button onClick={() => copy(copyTextRef.current)}>
-        <img src={statusImage} alt=""/>
+      <object type="stop/styling">
+        <Button onClick={(event) => {
+          event.preventDefault();
+          copy(copyTextRef.current);
+        }}>
+          <img src={statusImage} alt=""/>
         copy
-      </Button>
+        </Button>
+      </object>
     </CopyableContent>
   );
 };
