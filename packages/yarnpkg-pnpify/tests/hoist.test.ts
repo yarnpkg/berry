@@ -1,59 +1,32 @@
 import {hoist, HoisterTree, HoisterResult} from '../sources/hoist';
 
-const toTree = (obj: any): HoisterTree => {
-  const tree = new Map(
-    Object.entries(obj).map(([key, val]: [string, any]) => {
-      const {deps, peerNames, ...meta} = val;
-      return [key, {
-        name: key.match(/@?[^@]+/)![0],
-        reference: key.match(/@?[^@]+@?(.+)?/)![1] || '',
-        deps: new Set(deps || []),
-        peerNames: new Set(peerNames || []),
-        ...meta,
-      }];
-    })
-  );
-  // Create empty nodes
-  for (const node of tree.values()) {
-    for (const dep of node.deps) {
-      if (!tree.has(dep)) {
-        tree.set(dep, {
-          name: dep.match(/@?[^@]+/)![0],
-          reference: dep.match(/@?[^@]+@?(.+)?/)![1] || '',
-          deps: new Set(),
-          peerNames: new Set(),
-        });
-      }
+const toTree = (obj: any, key: string = '.', nodes = new Map()): HoisterTree => {
+  let node = nodes.get(key);
+  if (!node) {
+    node = {
+      name: key.match(/@?[^@]+/)![0],
+      reference: key.match(/@?[^@]+@?(.+)?/)![1] || '',
+      deps: new Set<HoisterTree>(),
+      peerNames: new Set<string>((obj[key] || {}).peerNames || []),
+    };
+    nodes.set(key, node);
+
+    for (const dep of ((obj[key] || {}).deps || [])) {
+      node.deps.add(toTree(obj, dep, nodes));
     }
   }
-  return tree;
+  return node;
 };
 
-const toResult = (obj: any): HoisterResult => {
-  const tree = new Map(
-    Object.entries(obj).map(([key, val]: [string, any]) => {
-      const {deps, peerNames, log, ...meta} = val;
-      return [key, {
-        name: key.match(/@?[^@]+/)![0],
-        reference: key.match(/@?[^@]+@?([^$]+)?/)![1] || '',
-        deps: new Set(deps || []),
-        ...meta,
-      }];
-    })
-  );
-  // Create empty nodes
-  for (const node of tree.values()) {
-    for (const dep of node.deps) {
-      if (!tree.has(dep)) {
-        tree.set(dep, {
-          name: dep.match(/@?[^@]+/)![0],
-          reference: dep.match(/@?[^@]+@?([^$]+)?/)![1] || '',
-          deps: new Set(),
-        });
-      }
-    }
-  }
-  return tree;
+const toResult = (obj: any, key: string = '.'): HoisterResult => {
+  const node = {
+    name: key.match(/@?[^@]+/)![0],
+    references: new Set([key.match(/@?[^@]+@?([^$]+)?/)![1] || '']),
+    deps: new Set<HoisterResult>(),
+  };
+  for (const dep of ((obj[key] || {}).deps || []))
+    node.deps.add(dep === key ? {name: node.name, references: new Set(node.references), deps: new Set(node.deps)} : toResult(obj, dep));
+  return node;
 };
 
 describe('hoist', () => {
@@ -88,6 +61,7 @@ describe('hoist', () => {
 
   it('should not forget hoisted dependencies', () => {
     // . → A → B → C@X
+    //           → A
     //   → C@Y
     // should be hoisted to (B cannot be hoisted to the top, otherwise it will require C@Y instead of C@X)
     // . → A → B
@@ -96,32 +70,11 @@ describe('hoist', () => {
     const tree = {
       '.': {deps: ['A', 'C@Y']},
       'A': {deps: ['B']},
-      'B': {deps: ['A']},
-      'C@X': {},
-    };
-    console.log(require('util').inspect(hoist(toTree(tree))));
-    // expect(hoist(toTree(tree))).toEqual(toResult({
-    //   '.': {deps: ['A', 'C@Y']},
-    //   'A': {deps: ['B', 'C@X']},
-    // }));
-  });
-
-  it('should preserve original metadata during hoisting', () => {
-    // . → A → B
-    //   → C → B
-    // should be hoisted to:
-    // . → A
-    //   → B
-    //   → C
-    const tree = {
-      '.': {deps: ['A'], meta1: 'dot'},
-      'A': {deps: ['B'], meta2: 'abc'},
-      'B': {meta3: 'def'},
+      'B': {deps: ['A', 'C@X']},
     };
     expect(hoist(toTree(tree))).toEqual(toResult({
-      '.': {deps: ['A', 'B'], meta1: new Set(['dot'])},
-      'A': {meta2: new Set(['abc'])},
-      'B': {meta3: new Set(['def'])},
+      '.': {deps: ['A', 'C@Y']},
+      'A': {deps: ['B', 'C@X']},
     }));
   });
 
@@ -139,8 +92,6 @@ describe('hoist', () => {
   it('should not hoist package that has several versions on the same tree path', () => {
     // . → A → B@X → C → B@Y
     // should be hoisted to:
-    // . → A → B@X
-    //       → C → B@Y
     // . → A
     //   → B@X
     //   → C → B@Y
@@ -194,7 +145,7 @@ describe('hoist', () => {
       'C':   {deps: ['B@Y']},
     };
     expect(hoist(toTree(tree))).toEqual(toResult({
-      '.':   {deps: ['A', 'B@Y', 'C@X']},
+      '.':   {deps: ['.', 'A', 'B@Y', 'C@X']},
       'A':   {deps: ['B@X']},
       'B@X': {deps: ['C@Y']},
     }));
