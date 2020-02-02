@@ -5,7 +5,7 @@
   "dependencies": {
     "clipanion": "^2.1.5",
     "json5": "^2.1.1",
-    "semver": "^7.1.2"
+    "semver": "^5.6.0"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "^2.0.0-rc.28",
@@ -15,7 +15,7 @@
   "devDependencies": {
     "@npm/types": "^1.0.1",
     "@types/json5": "0.0.30",
-    "@types/semver": "7.1.0",
+    "@types/semver": "^6.0.2",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28",
     "@yarnpkg/core": "workspace:^2.0.0-rc.22",
     "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.15"

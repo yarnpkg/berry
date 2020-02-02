@@ -4052,15 +4052,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/semver@npm:7.1.0":
-  version: 7.1.0
-  resolution: "@types/semver@npm:7.1.0"
-  dependencies:
-    "@types/node": "*"
-  checksum: 2/d4450e985101a5241a879c919a6f462e4d1ed82c7720d1b732a01bc5692356c5fd817e7ef985efd7b2175f47513d56c3d308ea79dd1f9faf18153a2c673df8fe
-  languageName: node
-  linkType: hard
-
 "@types/semver@npm:^6.0.2":
   version: 6.0.2
   resolution: "@types/semver@npm:6.0.2"
@@ -5212,13 +5203,13 @@ __metadata:
   dependencies:
     "@npm/types": ^1.0.1
     "@types/json5": 0.0.30
-    "@types/semver": 7.1.0
+    "@types/semver": ^6.0.2
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28"
     "@yarnpkg/core": "workspace:^2.0.0-rc.22"
     "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.15"
     clipanion: ^2.1.5
     json5: ^2.1.1
-    semver: ^7.1.2
+    semver: ^5.6.0
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.28
     "@yarnpkg/core": ^2.0.0-rc.22
@@ -22248,15 +22239,6 @@ resolve@^1.10.1:
   bin:
     semver: ./bin/semver.js
   checksum: 2/968df974cece4e1ce51a0243c32f1b7d796f5aa24f1494c1b3acabcf51d1c964d6ac7e527cbbf3a69787db48462c9ccfd8768fae064e8a8e7237c7759e514ee5
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.1.2":
-  version: 7.1.2
-  resolution: "semver@npm:7.1.2"
-  bin:
-    semver: bin/semver.js
-  checksum: 2/16ab13f3e12cad85a2c0afa5456cf54a38abd337a8cc986d1eaa1a267386598855ecaf688225070b21b1887771a51664fd2576821d93b4addc340e314f0e5afe
   languageName: node
   linkType: hard
 
