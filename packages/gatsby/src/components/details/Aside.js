@@ -1,6 +1,8 @@
 import styled                                   from '@emotion/styled';
 import React                                    from 'react';
 
+import {ifDesktop}                              from '../responsive';
+
 import {packageJSONLink, isKnownRepositoryHost} from '../util';
 
 import {Activity}                               from './Activity';
@@ -15,10 +17,11 @@ import {Usage}                                  from './Usage';
 import {Versions}                               from './Versions';
 
 const AsideContainer = styled.aside`
-  border-left: 1px solid #cbcbcb;
-  float: left;
-  width: 33.3333333333%;
-  padding: 0 15px;
+  ${ifDesktop} {
+    border-left: 1px solid #cbcbcb;
+    width: calc(100% / 3);
+    padding: 0 15px;
+  }
 `;
 
 const DetailsLinks = styled.article`

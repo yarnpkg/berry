@@ -4,19 +4,24 @@ import React, {useState}                                       from 'react';
 import {Details}                                               from '../components/details';
 import {Header}                                                from '../components/header';
 import {Layout}                                                from '../components/layout';
+import {ifMobile}                                              from '../components/responsive';
 import {SearchProvider, SearchBar, SearchResults, withUrlSync} from '../components/search';
 import {SEO, defaultKeywords}                                  from '../components/seo';
 
 const Hero = styled.div`
   position: relative;
-  margin: 0;
-  padding: 2rem 0;
   color: white;
   background-color: #2188b6;
   background-size: 25px auto;
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
-  margin: 0 0 3rem 0;
+
+  margin-bottom: 3rem;
+  padding: 2rem 0;
+  ${ifMobile} {
+    margin-bottom: 1rem;
+    padding: 1rem 0;
+  }
 `;
 
 const HeroFrame = styled.div`
@@ -27,8 +32,11 @@ const HeroFrame = styled.div`
 `;
 
 const HeroTitle = styled.div`
-  font-size: 3rem;
   font-weight: 400;
+  font-size: 3rem;
+  ${ifMobile} {
+    font-size: 2rem;
+  }
 
   padding: 0 15px;
 
