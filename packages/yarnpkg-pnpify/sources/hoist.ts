@@ -11,8 +11,7 @@ type HoistCandidate = {
 };
 
 const DEBUG = false;
-const TRACE: string[] = [];
-//'sort-keys', 'normalize-url', 'mimic-response', 'cacheable-request', 'clone-response'];
+const TRACE: string[] = ['sort-keys', 'normalize-url', 'mimic-response', 'cacheable-request', 'clone-response'];
 
 /**
  * Mapping which packages depend on a given package. It is used to determine hoisting weight,
@@ -43,7 +42,13 @@ export const hoist = (tree: HoisterTree): HoisterResult => {
   const treeCopy = cloneTree(tree);
   const ancestorMap = buildAncestorMap(treeCopy);
 
-  hoistTo(treeCopy, ancestorMap);
+  // let iter = 0;
+  let totalHoisted = 0;
+  do {
+    totalHoisted = hoistTo(treeCopy, ancestorMap);
+    // console.log(`${iter}, total hoisted: ${totalHoisted}`);
+    // iter++;
+  } while (totalHoisted > 0);
 
   return shrinkTree(treeCopy);
 };
@@ -56,21 +61,24 @@ export const hoist = (tree: HoisterTree): HoisterResult => {
  * @param rootNode root node to hoist to
  * @param ancestorMap ancestor map
  */
-const hoistTo = (rootNode: HoisterWorkTree, ancestorMap: AncestorMap, seenNodes: Set<HoisterWorkTree> = new Set()) => {
+const hoistTo = (rootNode: HoisterWorkTree, ancestorMap: AncestorMap, seenNodes: Set<HoisterWorkTree> = new Set()): number => {
   if (seenNodes.has(rootNode))
-    return;
+    return 0;
   seenNodes.add(rootNode);
+
+  let totalHoisted = 0;
 
   for (const dep of rootNode.deps.values()) {
     for (const subDep of dep.deps.values()) {
       if (subDep.deps.size > 0) {
-        hoistTo(dep, ancestorMap, seenNodes);
+        totalHoisted += hoistTo(dep, ancestorMap, seenNodes);
         break;
       }
     }
   }
 
-  hoistPass(rootNode, ancestorMap);
+  totalHoisted += hoistPass(rootNode, ancestorMap);
+  return totalHoisted;
 };
 
 const hoistPass = (rootNode: HoisterWorkTree, ancestorMap: AncestorMap): number => {
@@ -104,7 +112,7 @@ const hoistPass = (rootNode: HoisterWorkTree, ancestorMap: AncestorMap): number 
       parentNode.deps.delete(node.name);
       parentNode.hoistedDeps.set(node.name, node);
 
-      const hoistedNode = rootNode.deps.get(node.name) || rootNode.hoistedDeps.get(node.name);
+      const hoistedNode = rootNode.deps.get(node.name);
       // Add hoisted node to root node, in case it is not already there
       if (!hoistedNode) {
         // Avoid adding node to itself
@@ -152,11 +160,12 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, ancestorMap: AncestorMa
     }
 
     if (isHoistable) {
-      const isNameAvailable = (!rootDep || rootDep.physicalLocator === node.physicalLocator);
+      const origRootDep = rootNode.origDeps.get(node.name);
+      const isNameAvailable = (!rootDep || rootDep.physicalLocator === node.physicalLocator) && (!origRootDep || origRootDep.physicalLocator === node.physicalLocator);
       if (DEBUG && !isNameAvailable)
-        node.log.push(`${logPrefix} name taken by ${rootNode.locator}#${rootDep!.physicalLocator}`);
+        node.log.push(`${logPrefix} name taken by ${rootNode.locator}#${(rootDep || origRootDep)!.physicalLocator}`);
       if (TRACE.indexOf(node.name) >= 0 && !isNameAvailable)
-        console.log(`${logPrefix} name taken by ${rootNode.locator}#${rootDep!.physicalLocator}`);
+        console.log(`${logPrefix} name taken by ${rootNode.locator}#${(rootDep || origRootDep)!.physicalLocator}`);
       isHoistable = isNameAvailable;
     }
 
