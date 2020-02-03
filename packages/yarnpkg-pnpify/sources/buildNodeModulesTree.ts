@@ -271,7 +271,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const benchmarkRawHoisting = (packageTree: HoisterTree) => {
-  const iterCount = 100;
+  const iterCount = 10;
   const startTime = Date.now();
   for (let iter = 0; iter < iterCount; iter++)
     hoist(packageTree);

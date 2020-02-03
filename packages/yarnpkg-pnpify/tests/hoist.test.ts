@@ -145,7 +145,7 @@ describe('hoist', () => {
       'C':   {deps: ['B@Y']},
     };
     expect(hoist(toTree(tree))).toEqual(toResult({
-      '.':   {deps: ['.', 'A', 'B@Y', 'C@X']},
+      '.':   {deps: ['A', 'B@Y', 'C@X']},
       'A':   {deps: ['B@X']},
       'B@X': {deps: ['C@Y']},
     }));
