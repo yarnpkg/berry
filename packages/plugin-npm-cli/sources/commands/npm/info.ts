@@ -138,6 +138,9 @@ export default class InfoCommand extends BaseCommand {
         // Check if the package range from the command arguments is a valid version
         const isRangeValid = descriptor.range !== `unknown` && semver.valid(descriptor.range);
 
+        if (!isRangeValid)
+          report.reportWarning(MessageName.EXCEPTION, `${structUtils.prettyRange(configuration, descriptor.range)} isn't a valid version. Falling back to the latest version`);
+
         // The `descriptor.range` if it is a valid version, else the latest dist-tag or the most recent version
         const version = isRangeValid
           ? descriptor.range
@@ -150,7 +153,7 @@ export default class InfoCommand extends BaseCommand {
          * The merging of
          * @see `result` - The information from `registry.npmjs.org/<package>`
          * @see `release` - The release corresponding to `version`
-         * @see `version` - `descriptor.range` if it is a valid version, else the latest dist-tag or the greatest version
+         * @see `version` - `descriptor.range` if it is a valid version, else the latest dist-tag or the latest version
          * @see `versions` - All version tags of a package, sorted in ascending order
          */
         const packageInformation: PackageInformation = {
