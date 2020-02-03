@@ -84,12 +84,12 @@ export default class InfoCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
 
-    const fields = typeof this.fields !== `undefined`
+    let fields = typeof this.fields !== `undefined`
       ? new Set(this.fields.split(/\s*,\s*/))
       : null;
 
     if (fields !== null)
-      fields.add(`name`);
+      fields = new Set([`name`, ...fields]);
 
     const infos: Array<PackageInformation> = [];
     let leadWithSeparator = false;
