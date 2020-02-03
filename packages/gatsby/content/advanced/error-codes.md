@@ -122,7 +122,7 @@ When a package is downloaded from whatever its remote location is, Yarn stores i
 
 A lockfile couldn't be properly imported from a v1 lockfile.
 
-The v2 release contains major changes in the way Yarn is design, and the lockfile format is one of them. In some rare cases, the data contained in the v1 lockfile aren't compatible with the ones we stored within the v2 files. When it happens, Yarn will emit this warning and resolve the package descriptor again. Only this package will be affected; all others will continue to be imported as expected.
+The v2 release contains major changes in the way Yarn is designed, and the lockfile format is one of them. In some rare cases, the data contained in the v1 lockfile aren't compatible with the ones we stored within the v2 files. When it happens, Yarn will emit this warning and resolve the package descriptor again. Only this package will be affected; all others will continue to be imported as expected.
 
 ## YN0015 - `REMOTE_INVALID`
 
