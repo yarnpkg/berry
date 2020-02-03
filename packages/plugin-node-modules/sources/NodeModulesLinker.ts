@@ -455,7 +455,7 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
 
         if (entry.name !== NODE_MODULES || !options || !options.keepSrcNodeModules) {
           if (entry.isDirectory()) {
-            await xfs.mkdirPromise(dst);
+            await xfs.mkdirpPromise(dst);
             await cloneModule(src, dst, {keepSrcNodeModules: false, keepDstNodeModules: false, innerLoop: true});
           } else {
             await xfs.copyFilePromise(src, dst, fs.constants.COPYFILE_FICLONE);
