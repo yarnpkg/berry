@@ -47,7 +47,7 @@ export default class InfoCommand extends BaseCommand {
 
       The package does not have to be installed locally, but needs to have been published (in particular, local changes will be ignored even for workspaces).
 
-      Append \`@<version>\` to the package argument to provide information specific to that version. If the version is invalid, the command will print a warning and fall back to latest.
+      Append \`@<range>\` to the package argument to provide information specific to the latest version that satisfies the range. If the range is invalid or if there is no version satisfying the range, the command will print a warning and fall back to the latest version.
 
       If the \`-f,--fields\` option is set, it's a comma-separated list of fields which will be used to only display part of the package informations.
 
@@ -136,15 +136,25 @@ export default class InfoCommand extends BaseCommand {
         const versions = Object.keys(result.versions).sort(semver.compareLoose);
 
         // Check if the package range from the command arguments is a valid version
-        const isRangeValid = descriptor.range !== `unknown` && semver.valid(descriptor.range);
+        const isRangeValid = semver.validRange(descriptor.range);
 
-        if (!isRangeValid)
-          report.reportWarning(MessageName.EXCEPTION, `${structUtils.prettyRange(configuration, descriptor.range)} isn't a valid version. Falling back to the latest version`);
+        // The latest dist-tag or the most recent version
+        const fallbackVersion = result[`dist-tags`].latest || versions[versions.length - 1];
 
-        // The `descriptor.range` if it is a valid version, else the latest dist-tag or the most recent version
-        const version = isRangeValid
-          ? descriptor.range
-          : (result[`dist-tags`].latest || versions[versions.length - 1]);
+        // The latest version that satisfies `descriptor.range` (if it is a valid range), else `fallbackVersion`
+        let version: string = fallbackVersion;
+
+        if (isRangeValid) {
+          const maxSatisfyingVersion = semver.maxSatisfying(versions, descriptor.range);
+
+          if (maxSatisfyingVersion) {
+            version = maxSatisfyingVersion;
+          } else {
+            report.reportWarning(MessageName.EXCEPTION, `No version satisfies range ${structUtils.prettyRange(configuration, descriptor.range)}. Falling back to the latest version`);
+          }
+        } else if (descriptor.range !== `unknown`) {
+          report.reportWarning(MessageName.EXCEPTION, `${structUtils.prettyRange(configuration, descriptor.range)} isn't a valid range. Falling back to the latest version`);
+        }
 
         // The release corresponding to `version`
         const release = result.versions[version];
@@ -153,7 +163,7 @@ export default class InfoCommand extends BaseCommand {
          * The merging of
          * @see `result` - The information from `registry.npmjs.org/<package>`
          * @see `release` - The release corresponding to `version`
-         * @see `version` - `descriptor.range` if it is a valid version, else the latest dist-tag or the latest version
+         * @see `version` - The latest version that satisfies `descriptor.range` (if it is a valid range), else `fallbackVersion`
          * @see `versions` - All version tags of a package, sorted in ascending order
          */
         const packageInformation: PackageInformation = {
