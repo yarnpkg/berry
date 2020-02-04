@@ -21,6 +21,7 @@ const AsideContainer = styled.aside`
     border-left: 1px solid #cbcbcb;
     width: calc(100% / 3);
     padding: 0 15px;
+    float: right;
   }
 `;
 
