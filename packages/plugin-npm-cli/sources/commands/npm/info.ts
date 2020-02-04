@@ -84,12 +84,9 @@ export default class InfoCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
 
-    let fields = typeof this.fields !== `undefined`
-      ? new Set(this.fields.split(/\s*,\s*/))
+    const fields = typeof this.fields !== `undefined`
+      ? new Set([`name`, ...this.fields.split(/\s*,\s*/)])
       : null;
-
-    if (fields !== null)
-      fields = new Set([`name`, ...fields]);
 
     const infos: Array<PackageInformation> = [];
     let leadWithSeparator = false;
@@ -132,31 +129,25 @@ export default class InfoCommand extends BaseCommand {
           }
         }
 
-        // All version tags of a package, sorted in ascending order
         const versions = Object.keys(result.versions).sort(semver.compareLoose);
-
-        // Check if the package range from the command arguments is a valid version
-        const isRangeValid = semver.validRange(descriptor.range);
-
-        // The latest dist-tag or the most recent version
         const fallbackVersion = result[`dist-tags`].latest || versions[versions.length - 1];
 
         // The latest version that satisfies `descriptor.range` (if it is a valid range), else `fallbackVersion`
         let version: string = fallbackVersion;
-
-        if (isRangeValid) {
+        if (semver.validRange(descriptor.range)) {
           const maxSatisfyingVersion = semver.maxSatisfying(versions, descriptor.range);
 
-          if (maxSatisfyingVersion) {
+          if (maxSatisfyingVersion !== null) {
             version = maxSatisfyingVersion;
           } else {
-            report.reportWarning(MessageName.EXCEPTION, `No version satisfies range ${structUtils.prettyRange(configuration, descriptor.range)}. Falling back to the latest version`);
+            report.reportWarning(MessageName.UNNAMED, `Unmet range ${structUtils.prettyRange(configuration, descriptor.range)}; falling back to the latest version`);
+            leadWithSeparator = true;
           }
         } else if (descriptor.range !== `unknown`) {
-          report.reportWarning(MessageName.EXCEPTION, `${structUtils.prettyRange(configuration, descriptor.range)} isn't a valid range. Falling back to the latest version`);
+          report.reportWarning(MessageName.UNNAMED, `Invalid range ${structUtils.prettyRange(configuration, descriptor.range)}; falling back to the latest version`);
+          leadWithSeparator = true;
         }
 
-        // The release corresponding to `version`
         const release = result.versions[version];
 
         /**
