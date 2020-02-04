@@ -182,6 +182,7 @@ const DetailsContainer = styled.div`
 `;
 
 const DetailsMain = styled.section`
+  width: 100%;
   ${ifDesktop} {
     width: calc(100% * 2 / 3);
     padding: 0 15px;
