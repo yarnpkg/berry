@@ -9,7 +9,7 @@
     "clipanion": "^2.1.5",
     "ink": "^2.3.0",
     "react": "^16.8.4",
-    "semver": "^5.6.0",
+    "semver": "^7.1.2",
     "yup": "^0.27.0"
   },
   "peerDependencies": {
@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/react": "^16.8.0",
-    "@types/semver": "^6.0.2",
+    "@types/semver": "^7.1.0",
     "@types/yup": "0.26.12",
     "@yarnpkg/builder": "workspace:^2.0.0-rc.18",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28",

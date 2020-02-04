@@ -3332,6 +3332,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@npm/types@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@npm/types@npm:1.0.1"
+  checksum: 2/ca8f116961e4befdbfbfd0a320326462dd08be0c037cdfa52e2afb5c7c2012f768faf4d78910840357e1872626e186d1e23302ae67f8a26eb29a25d4fcf6fedf
+  languageName: node
+  linkType: hard
+
 "@octokit/endpoint@npm:^5.1.0":
   version: 5.3.2
   resolution: "@octokit/endpoint@npm:5.3.2"
@@ -3762,6 +3769,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/json5@npm:0.0.30":
+  version: 0.0.30
+  resolution: "@types/json5@npm:0.0.30"
+  checksum: 2/af9d434f14dc6337e16454944bca5eadbdf5d0e85a0ef59fe5e011eadabfe126f42f3913bf7fee478747cf34efd88061ac0e15ede07b83986ae31aa2ddda6232
+  languageName: node
+  linkType: hard
+
 "@types/keyv@npm:*":
   version: 3.1.1
   resolution: "@types/keyv@npm:3.1.1"
@@ -4038,10 +4052,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/semver@npm:^6.0.2":
-  version: 6.0.2
-  resolution: "@types/semver@npm:6.0.2"
-  checksum: 2/a3711b463a287492e583a23ed69a47ddb56bbeceb33ba4ecf323283d7c418cd778baf66c9baac54e963afd87ae273233e870eb1cfd2bc056ed4b846c677de41d
+"@types/semver@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "@types/semver@npm:7.1.0"
+  dependencies:
+    "@types/node": "*"
+  checksum: 2/d4450e985101a5241a879c919a6f462e4d1ed82c7720d1b732a01bc5692356c5fd817e7ef985efd7b2175f47513d56c3d308ea79dd1f9faf18153a2c673df8fe
   languageName: node
   linkType: hard
 
@@ -4766,7 +4782,7 @@ __metadata:
     clipanion: ^2.1.5
     filesize: ^4.1.2
     pnp-webpack-plugin: ^1.4.3
-    semver: ^5.6.0
+    semver: ^7.1.2
     terser-webpack-plugin: ^2.1.3
     ts-loader: ^6.2.1
     val-loader: ^1.1.1
@@ -4813,7 +4829,7 @@ __metadata:
     clipanion: ^2.1.5
     micromatch: ^4.0.2
     promise.prototype.finally: ^3.1.1
-    semver: ^5.6.0
+    semver: ^7.1.2
     tmp: ^0.1.0
     typescript: ^3.7.4
     yup: ^0.27.0
@@ -4831,7 +4847,7 @@ __metadata:
     "@types/got": ^8.3.4
     "@types/is-ci": ^2.0.0
     "@types/micromatch": ^3.1.0
-    "@types/semver": ^6.0.2
+    "@types/semver": ^7.1.0
     "@types/tar": ^4.0.0
     "@types/tmp": ^0.0.33
     "@types/tunnel": ^0.0.0
@@ -4859,7 +4875,7 @@ __metadata:
     p-limit: ^2.2.0
     pluralize: ^7.0.0
     pretty-bytes: ^5.1.0
-    semver: ^5.6.0
+    semver: ^7.1.2
     stream-to-promise: ^2.2.0
     tar: ^4.4.6
     tmp: ^0.1.0
@@ -5097,7 +5113,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
     "@types/inquirer": ^0.0.43
-    "@types/semver": ^6.0.2
+    "@types/semver": ^7.1.0
     "@types/treeify": ^1.0.0
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28"
     "@yarnpkg/core": "workspace:^2.0.0-rc.22"
@@ -5106,7 +5122,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.9"
     clipanion: ^2.1.5
     inquirer: ^6.2.0
-    semver: ^5.6.0
+    semver: ^7.1.2
     treeify: ^1.1.0
     yup: ^0.27.0
   peerDependencies:
@@ -5145,11 +5161,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-git@workspace:packages/plugin-git"
   dependencies:
-    "@types/semver": ^6.0.2
+    "@types/semver": ^7.1.0
     "@yarnpkg/core": "workspace:^2.0.0-rc.22"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
     git-url-parse: 11.1.2
-    semver: ^5.6.0
+    semver: ^7.1.2
     tmp: ^0.1.0
   peerDependencies:
     "@yarnpkg/core": ^2.0.0-rc.22
@@ -5202,7 +5218,7 @@ __metadata:
   dependencies:
     "@types/diff": ^4.0.2
     "@types/react": ^16.8.0
-    "@types/semver": ^6.0.2
+    "@types/semver": ^7.1.0
     "@yarnpkg/builder": "workspace:^2.0.0-rc.18"
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28"
     "@yarnpkg/core": "workspace:^2.0.0-rc.22"
@@ -5212,7 +5228,7 @@ __metadata:
     diff: ^4.0.1
     ink: ^2.3.0
     react: ^16.8.4
-    semver: ^5.6.0
+    semver: ^7.1.2
     typescript: ^3.7.4
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.28
@@ -5259,7 +5275,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-npm-cli@workspace:packages/plugin-npm-cli"
   dependencies:
+    "@npm/types": ^1.0.1
     "@types/inquirer": ^0.0.43
+    "@types/json5": 0.0.30
+    "@types/semver": ^7.1.0
     "@types/ssri": ^6.0.1
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28"
     "@yarnpkg/core": "workspace:^2.0.0-rc.22"
@@ -5268,6 +5287,8 @@ __metadata:
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.17"
     clipanion: ^2.1.5
     inquirer: ^6.2.0
+    json5: ^2.1.1
+    semver: ^7.1.2
     ssri: ^6.0.1
     yup: ^0.27.0
   peerDependencies:
@@ -5283,11 +5304,11 @@ __metadata:
   resolution: "@yarnpkg/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
     "@types/inquirer": ^0.0.43
-    "@types/semver": ^6.0.2
+    "@types/semver": ^7.1.0
     "@yarnpkg/core": "workspace:^2.0.0-rc.22"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
     inquirer: ^6.2.0
-    semver: ^5.6.0
+    semver: ^7.1.2
   peerDependencies:
     "@yarnpkg/core": ^2.0.0-rc.22
   languageName: unknown
@@ -5333,7 +5354,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-pnp@workspace:packages/plugin-pnp"
   dependencies:
     "@types/micromatch": ^3.1.0
-    "@types/semver": ^6.0.2
+    "@types/semver": ^7.1.0
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28"
     "@yarnpkg/core": "workspace:^2.0.0-rc.22"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
@@ -5341,7 +5362,7 @@ __metadata:
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.16"
     clipanion: ^2.1.5
     micromatch: ^4.0.2
-    semver: ^5.6.0
+    semver: ^7.1.2
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.28
     "@yarnpkg/core": ^2.0.0-rc.22
@@ -5388,7 +5409,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-version@workspace:packages/plugin-version"
   dependencies:
     "@types/react": ^16.8.0
-    "@types/semver": ^6.0.2
+    "@types/semver": ^7.1.0
     "@types/yup": 0.26.12
     "@yarnpkg/builder": "workspace:^2.0.0-rc.18"
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28"
@@ -5400,7 +5421,7 @@ __metadata:
     clipanion: ^2.1.5
     ink: ^2.3.0
     react: ^16.8.4
-    semver: ^5.6.0
+    semver: ^7.1.2
     typescript: ^3.7.4
     yup: ^0.27.0
   peerDependencies:
@@ -16314,6 +16335,17 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
+"json5@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "json5@npm:2.1.1"
+  dependencies:
+    minimist: ^1.2.0
+  bin:
+    json5: lib/cli.js
+  checksum: 2/fd755a9551d59acaa08c61ff9f1227a946d55af52d94b08fa5b4180471125f363f924606b56fa46ce94b171045d4e17502e6ccdc443e9a0bb1a2cef7b4875928
+  languageName: node
+  linkType: hard
+
 "jsonfile@npm:^2.1.0":
   version: 2.4.0
   resolution: "jsonfile@npm:2.4.0"
@@ -19515,7 +19547,7 @@ fsevents@^1.2.2:
     "@types/invariant": ^2.2.30
     "@types/klaw": ^2.0.0
     "@types/minimatch": ^3.0.3
-    "@types/semver": ^6.0.2
+    "@types/semver": ^7.1.0
     "@types/serve-static": 1.13.3
     "@types/tar-fs": ^1.16.1
     "@types/tmp": ^0.0.33
@@ -19527,7 +19559,7 @@ fsevents@^1.2.2:
     klaw: ^2.1.1
     minimatch: ^3.0.4
     pkg-tests-fixtures: "workspace:0.0.0"
-    semver: ^5.6.0
+    semver: ^7.1.2
     serve-static: ^1.14.1
     super-resolve: ^1.0.0
     tar-fs: ^1.16.0
@@ -19552,7 +19584,7 @@ fsevents@^1.2.2:
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.9"
     fs-extra: ^7.0.1
     pkg-tests-core: "workspace:0.0.0"
-    semver: ^5.6.0
+    semver: ^7.1.2
   languageName: unknown
   linkType: soft
 
@@ -22193,6 +22225,15 @@ resolve@^1.10.1:
   bin:
     semver: ./bin/semver.js
   checksum: 2/968df974cece4e1ce51a0243c32f1b7d796f5aa24f1494c1b3acabcf51d1c964d6ac7e527cbbf3a69787db48462c9ccfd8768fae064e8a8e7237c7759e514ee5
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.1.2":
+  version: 7.1.2
+  resolution: "semver@npm:7.1.2"
+  bin:
+    semver: bin/semver.js
+  checksum: 2/16ab13f3e12cad85a2c0afa5456cf54a38abd337a8cc986d1eaa1a267386598855ecaf688225070b21b1887771a51664fd2576821d93b4addc340e314f0e5afe
   languageName: node
   linkType: hard
 

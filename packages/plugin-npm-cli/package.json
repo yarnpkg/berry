@@ -6,6 +6,8 @@
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
     "clipanion": "^2.1.5",
     "inquirer": "^6.2.0",
+    "json5": "^2.1.1",
+    "semver": "^7.1.2",
     "ssri": "^6.0.1",
     "yup": "^0.27.0"
   },
@@ -16,7 +18,10 @@
     "@yarnpkg/plugin-pack": "^2.0.0-rc.17"
   },
   "devDependencies": {
+    "@npm/types": "^1.0.1",
     "@types/inquirer": "^0.0.43",
+    "@types/json5": "0.0.30",
+    "@types/semver": "^7.1.0",
     "@types/ssri": "^6.0.1",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28",
     "@yarnpkg/core": "workspace:^2.0.0-rc.22",
