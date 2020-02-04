@@ -65,9 +65,11 @@ const Instructions = styled.div`
 `;
 
 const FileBrowserColumn = styled.section`
-  float: left;
-  padding: 0 15px;
-  width: 66.6666666667%;
+  width: 100%;
+  ${ifDesktop} {
+    width: calc(100% * 2 / 3);
+    padding: 0 15px;
+  }
 `;
 
 const DiBox = styled.div`
