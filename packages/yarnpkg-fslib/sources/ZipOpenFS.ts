@@ -792,7 +792,14 @@ export class ZipOpenFS extends BasePortableFakeFS {
       let zipFs = this.zipInstances.get(p);
 
       if (!zipFs)
-        this.zipInstances.set(p, zipFs = new ZipFS(p, getZipOptions()));
+        zipFs = new ZipFS(p, getZipOptions());
+
+      // Removing then re-adding the field allows us to easily implement
+      // a basic LRU garbage collection strategy
+      this.zipInstances.delete(p);
+      this.zipInstances.set(p, zipFs);
+
+      this.limitOpenFiles(this.maxOpenFiles);
 
       return accept(zipFs);
     } else {
