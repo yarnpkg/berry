@@ -1,2 +1,5 @@
 /packages/yarnpkg-libzip/sources/libzipAsync.js
 /packages/yarnpkg-libzip/sources/libzipSync.js
+
+# The parsers are auto-generated
+/packages/yarnpkg-parsers/sources/grammars/*.js
