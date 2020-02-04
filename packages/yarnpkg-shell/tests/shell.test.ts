@@ -331,6 +331,22 @@ describe(`Simple shell features`, () => {
     });
   });
 
+  it(`should interpolate subshells with the proper split`, async () => {
+    await expect(bufferResult(
+      `echo $(echo foo)bar`,
+    )).resolves.toMatchObject({
+      stdout: `foobar\n`,
+    });
+  });
+
+  it(`should interpolate subshells with the proper split`, async () => {
+    await expect(bufferResult(
+      `echo $(echo 'foo      bar')bar`,
+    )).resolves.toMatchObject({
+      stdout: `foo barbar\n`,
+    });
+  });
+
   it(`should support setting env variable without command`, async () => {
     await expect(bufferResult([
       `FOO=1`,
@@ -484,5 +500,17 @@ describe(`Simple shell features`, () => {
     )).resolves.toMatchObject({
       stdout: `foo bar baz\nhello world\n`,
     });
+  });
+
+  it(`should support redirections on subshells`, async () => {
+    const file = npath.toPortablePath(fileSync({discardDescriptor: true}).name);
+
+    await expect(bufferResult(
+      `(echo "hello world") > "${file}"`,
+    )).resolves.toMatchObject({
+      stdout: ``,
+    });
+
+    await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
   });
 });
