@@ -160,6 +160,9 @@ const OBJECT_DOESNT_EXIST = 'ObjectID does not exist';
 
 const DetailsContainer = styled.div`
   display: flex;
+  ${ifMobile} {		
+     flex-direction: column;		
+  }
 
   width: 1140px;
   max-width: 100%;
