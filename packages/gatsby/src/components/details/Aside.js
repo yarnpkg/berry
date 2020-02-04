@@ -17,11 +17,11 @@ import {Usage}                                  from './Usage';
 import {Versions}                               from './Versions';
 
 const AsideContainer = styled.aside`
+  width: 100%;
   ${ifDesktop} {
     border-left: 1px solid #cbcbcb;
     width: calc(100% / 3);
     padding: 0 15px;
-    float: right;
   }
 `;
 
