@@ -22,6 +22,8 @@ const Button = styled.button`
   white-space: nowrap;
   cursor: pointer;
   font-size: 0.9em;
+  padding: 0;
+  margin: 0;
 
   &:focus {
     outline: none;
@@ -41,7 +43,7 @@ const Button = styled.button`
 const CopyableContent = styled.section`
   display: flex;
   width: 100%;
-  margin: 8px 0;
+  margin: 0;
   font-size: 1em;
   color: #666666;
   whitespace: no-wrap;
