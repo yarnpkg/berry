@@ -15,7 +15,7 @@ export type Stdio = [
   any
 ];
 
-type ProcessImplementation = (
+export type ProcessImplementation = (
   stdio: Stdio,
 ) => {
   stdin: Writable,

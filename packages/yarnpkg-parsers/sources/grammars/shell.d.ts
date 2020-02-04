@@ -12,11 +12,14 @@ export type ArgumentSegment =
   | {type: `variable`, name: string, defaultValue?: Array<ValueArgument>, quoted: boolean};
 
 export type Argument =
-  | {type: `redirection`, subtype: `>` | `<` | `>>` | `<<<`, args: Array<ValueArgument>}
+  | RedirectArgument
   | ValueArgument;
 
+export type RedirectArgument =
+  | {type: `redirection`, subtype: `>` | `<` | `>>` | `<<<`, args: Array<ValueArgument>};
+
 export type ValueArgument =
-| {type: `argument`, segments: Array<ArgumentSegment>};
+  | {type: `argument`, segments: Array<ArgumentSegment>};
 
 export type EnvSegment = {
   name: string,
@@ -30,6 +33,7 @@ export type Command = {
 } | {
   type: `subshell`,
   subshell: ShellLine,
+  args: Array<RedirectArgument>,
 } | {
   type: `envs`,
   envs: Array<EnvSegment>
