@@ -30,14 +30,12 @@ It might be difficult to know where to start on a fresh codebase. To help a bit 
 
 Finally, feel free to pop on our [Discord channel](https://discordapp.com/invite/yarnpkg) to ask for help and guidance. We're always happy to see new blood, and will help you our best to make your first open-source contribution a success!
 
-## Working on plugins
+## Writing your feature
 
-The standard bundle uses a predefined set of plugins defined in [`packages/yarnpkg-cli/package.json`](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-cli/package.json#L64). If your PR aims to add a new plugin to the standard build you'll need to add it there (note that this decision should be left to the core maintainers - please don't modify this setting yourself).
-
-For development purposes, you can build your plugin as part of your own local bundle by using the `--plugin` option in the command line:
+Our repository is setup in such a way that calling `yarn` inside it will always use the TypeScript sources themselves - you don't have to rebuild anything for your changes to be applied there (we use `@babel/register` to automatically transpile the files as we require them). The downside is that it's slower than the regular Yarn, but the improved developer experience is well worth it.
 
 ```bash
-yarn build:cli --plugin @yarnpkg/plugin-typescript
+yarn install # Will automatically pick up any changes you made to sources
 ```
 
 ## Testing your code
