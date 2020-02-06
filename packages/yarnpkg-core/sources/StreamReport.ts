@@ -197,7 +197,7 @@ export class StreamReport extends Report {
 
           this.writeLines(name, this.forgettableLines);
         } else {
-          this.writeLine(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+          this.writeLine(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
         }
       } else {
         this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
