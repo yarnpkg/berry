@@ -6738,6 +6738,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/yarnpkg-libzip/",
           "packageDependencies": [
             ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
+            ["@types/emscripten", "npm:1.38.0"],
             ["@types/prettier", "npm:1.19.0"],
             ["prettier", "npm:1.19.1"]
           ],
