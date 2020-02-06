@@ -99,6 +99,9 @@ export class StreamReport extends Report {
   private progressFrame: number = 0;
   private progressTimeout: ReturnType<typeof setTimeout> | null = null;
 
+  private forgettableLines: Array<string> = [];
+  private visibleForgettableLineCount: number = 5;
+
   constructor({configuration, stdout, json = false, includeFooter = true, includeLogs = !json, includeInfos = includeLogs, includeWarnings = includeLogs}: StreamReportOptions) {
     super();
 
@@ -174,7 +177,7 @@ export class StreamReport extends Report {
 
   reportSeparator() {
     if (this.indent === 0) {
-      this.writeLine(``);
+      this.writeLineWithForgettableReset(``);
     } else {
       this.reportInfo(null, ``);
     }
@@ -185,7 +188,20 @@ export class StreamReport extends Report {
       return;
 
     if (!this.json) {
-      this.writeLine(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
+      const num = name === null ? 0 : name;
+      if (num === 13) {
+        this.forgettableLines.push(text);
+        if (this.forgettableLines.length > this.visibleForgettableLineCount) {
+          while (this.forgettableLines.length > this.visibleForgettableLineCount) {
+            this.forgettableLines.shift();
+          }
+          this.writeLines(name, this.forgettableLines);
+        } else {
+          this.writeLine(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
+        }
+      } else {
+        this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
+      }
     } else {
       this.reportJson({type: `info`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -198,7 +214,7 @@ export class StreamReport extends Report {
       return;
 
     if (!this.json) {
-      this.writeLine(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
+      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `warning`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -208,7 +224,7 @@ export class StreamReport extends Report {
     this.errorCount += 1;
 
     if (!this.json) {
-      this.writeLine(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
+      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -255,7 +271,7 @@ export class StreamReport extends Report {
 
   reportJson(data: any) {
     if (this.json) {
-      this.writeLine(`${JSON.stringify(data)}`);
+      this.writeLineWithForgettableReset(`${JSON.stringify(data)}`);
     }
   }
 
@@ -310,6 +326,19 @@ export class StreamReport extends Report {
   private writeLine(str: string) {
     this.clearProgress({clear: true});
     this.stdout.write(`${str}\n`);
+    this.writeProgress();
+  }
+
+  private writeLineWithForgettableReset(str: string) {
+    this.forgettableLines = [];
+    this.writeLine(str);
+  }
+
+  private writeLines(name: MessageName | null, lines: string[]) {
+    this.clearProgress({ delta: lines.length });
+    lines.forEach(line => {
+      this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${line}\n`);
+    });
     this.writeProgress();
   }
 
