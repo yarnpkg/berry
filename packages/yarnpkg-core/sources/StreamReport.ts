@@ -192,9 +192,9 @@ export class StreamReport extends Report {
       if (num === 13) {
         this.forgettableLines.push(text);
         if (this.forgettableLines.length > this.visibleForgettableLineCount) {
-          while (this.forgettableLines.length > this.visibleForgettableLineCount) {
+          while (this.forgettableLines.length > this.visibleForgettableLineCount)
             this.forgettableLines.shift();
-          }
+
           this.writeLines(name, this.forgettableLines);
         } else {
           this.writeLine(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}\n`);
@@ -335,7 +335,7 @@ export class StreamReport extends Report {
   }
 
   private writeLines(name: MessageName | null, lines: string[]) {
-    this.clearProgress({ delta: lines.length });
+    this.clearProgress({delta: lines.length});
     lines.forEach(line => {
       this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${line}\n`);
     });
