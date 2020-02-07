@@ -24,7 +24,7 @@ const FORCED_UNPLUG_FILETYPES = new Set([
   // The c/c++ compiler can't read files from zip archives
   '.h', '.hh', '.hpp', '.c', '.cc', '.cpp',
   // The java runtime can't read files from zip archives
-  '.java',
+  '.java', '.jar',
   // Node opens these through dlopen
   '.node',
 ]);
