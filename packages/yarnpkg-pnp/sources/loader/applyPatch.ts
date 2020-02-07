@@ -21,7 +21,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
    * The cache that will be used for all accesses occuring outside of a PnP context.
    */
 
-  const defaultCache: typeof Module._cache = {};
+  const defaultCache: NodeJS.NodeRequireCache = {};
 
   /**
    * Used to disable the resolution hooks (for when we want to fallback to the previous resolution - we then need

@@ -7,16 +7,18 @@
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
+    "chalk": "^3.0.0",
     "comment-json": "^2.2.0",
     "cross-spawn": "6.0.5"
   },
   "devDependencies": {
+    "@types/chalk": "2.2.0",
     "@types/comment-json": "^1.1.1",
     "@types/cross-spawn": "6.0.0",
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.16",
     "eslint": "^5.16.0",
-    "typescript": "^3.7.4"
+    "typescript": "^3.7.5"
   },
   "peerDependencies": {
     "eslint": "*",

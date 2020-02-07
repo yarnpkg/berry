@@ -199,6 +199,7 @@ export default class InfoCommand extends BaseCommand {
       }
     });
 
+    // @ts-ignore: The Node typings forgot one field
     inspect.styles.name = `cyan`;
 
     for (const serialized of infos) {

@@ -19,7 +19,7 @@
     "@babel/register": "^7.5.5",
     "@types/emscripten": "^1.38.0",
     "@types/jest": "^24.0.25",
-    "@types/node": "^13.1.1",
+    "@types/node": "^13.7.0",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^2.13.0",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28",
@@ -35,7 +35,7 @@
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
     "micromatch": "^4.0.2",
-    "typescript": "^3.7.4"
+    "typescript": "^3.7.5"
   },
   "dependenciesMeta": {
     "core-js": {

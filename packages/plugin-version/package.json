@@ -25,7 +25,7 @@
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28",
     "@yarnpkg/core": "workspace:^2.0.0-rc.22",
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.17",
-    "typescript": "^3.7.4"
+    "typescript": "^3.7.5"
   },
   "scripts": {
     "build:plugin-version": "builder build plugin",

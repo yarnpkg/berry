@@ -3,14 +3,14 @@
   "version": "2.0.0-rc.16",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@types/node": "^13.1.1",
+    "@types/node": "^13.7.0",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
   },
   "devDependencies": {
     "@yarnpkg/builder": "workspace:^2.0.0-rc.18",
     "@yarnpkg/libzip": "workspace:^2.0.0-rc.9",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.17",
-    "typescript": "^3.7.4",
+    "typescript": "^3.7.5",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.2.1",
     "webpack-sources": "^1.3.0"
