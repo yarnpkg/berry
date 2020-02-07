@@ -4992,6 +4992,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/libzip@workspace:packages/yarnpkg-libzip"
   dependencies:
+    "@types/emscripten": ^1.38.0
     "@types/prettier": 1.19.0
     prettier: ^1.19.1
   languageName: unknown

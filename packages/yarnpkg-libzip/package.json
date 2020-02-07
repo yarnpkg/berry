@@ -23,5 +23,8 @@
   "devDependencies": {
     "@types/prettier": "1.19.0",
     "prettier": "^1.19.1"
+  },
+  "dependencies": {
+    "@types/emscripten": "^1.38.0"
   }
 }

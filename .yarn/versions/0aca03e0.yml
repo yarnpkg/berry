@@ -1,0 +1,10 @@
+releases:
+  "@yarnpkg/libzip": prerelease
+
+declined:
+  - "@yarnpkg/plugin-node-modules"
+  - "@yarnpkg/plugin-patch"
+  - vscode-zipfs
+  - "@yarnpkg/core"
+  - "@yarnpkg/fslib"
+  - "@yarnpkg/pnp"
