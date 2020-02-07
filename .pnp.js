@@ -265,113 +265,125 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-environment-node", "npm:24.5.0"],
             ["jest-junit", "npm:5.2.0"],
             ["micromatch", "npm:4.0.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "linkType": "SOFT",
         }]
       ]],
       ["@algolia/cache-browser-local-storage", [
-        ["npm:4.0.0-beta.14", {
-          "packageLocation": "./.yarn/cache/@algolia-cache-browser-local-storage-npm-4.0.0-beta.14-d9c48e7145-2.zip/node_modules/@algolia/cache-browser-local-storage/",
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/@algolia-cache-browser-local-storage-npm-4.0.1-1d672991f0-2.zip/node_modules/@algolia/cache-browser-local-storage/",
           "packageDependencies": [
-            ["@algolia/cache-browser-local-storage", "npm:4.0.0-beta.14"],
-            ["@algolia/cache-common", "npm:4.0.0-beta.14"]
+            ["@algolia/cache-browser-local-storage", "npm:4.0.1"],
+            ["@algolia/cache-common", "npm:4.0.1"]
           ],
           "linkType": "HARD",
         }]
       ]],
       ["@algolia/cache-common", [
-        ["npm:4.0.0-beta.14", {
-          "packageLocation": "./.yarn/cache/@algolia-cache-common-npm-4.0.0-beta.14-15b1374323-2.zip/node_modules/@algolia/cache-common/",
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/@algolia-cache-common-npm-4.0.1-792a0c93e5-2.zip/node_modules/@algolia/cache-common/",
           "packageDependencies": [
-            ["@algolia/cache-common", "npm:4.0.0-beta.14"]
+            ["@algolia/cache-common", "npm:4.0.1"]
           ],
           "linkType": "HARD",
         }]
       ]],
       ["@algolia/cache-in-memory", [
-        ["npm:4.0.0-beta.14", {
-          "packageLocation": "./.yarn/cache/@algolia-cache-in-memory-npm-4.0.0-beta.14-1584b2f0b0-2.zip/node_modules/@algolia/cache-in-memory/",
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/@algolia-cache-in-memory-npm-4.0.1-bf957db37a-2.zip/node_modules/@algolia/cache-in-memory/",
           "packageDependencies": [
-            ["@algolia/cache-in-memory", "npm:4.0.0-beta.14"],
-            ["@algolia/cache-common", "npm:4.0.0-beta.14"]
+            ["@algolia/cache-in-memory", "npm:4.0.1"],
+            ["@algolia/cache-common", "npm:4.0.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@algolia/client-account", [
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/@algolia-client-account-npm-4.0.1-c5c8c9c526-2.zip/node_modules/@algolia/client-account/",
+          "packageDependencies": [
+            ["@algolia/client-account", "npm:4.0.1"],
+            ["@algolia/client-common", "npm:4.0.1"],
+            ["@algolia/client-search", "npm:4.0.1"],
+            ["@algolia/transporter", "npm:4.0.1"]
           ],
           "linkType": "HARD",
         }]
       ]],
       ["@algolia/client-analytics", [
-        ["npm:4.0.0-beta.14", {
-          "packageLocation": "./.yarn/cache/@algolia-client-analytics-npm-4.0.0-beta.14-673c8771ce-2.zip/node_modules/@algolia/client-analytics/",
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/@algolia-client-analytics-npm-4.0.1-874efaf8c6-2.zip/node_modules/@algolia/client-analytics/",
           "packageDependencies": [
-            ["@algolia/client-analytics", "npm:4.0.0-beta.14"],
-            ["@algolia/cache-common", "npm:4.0.0-beta.14"],
-            ["@algolia/client-common", "npm:4.0.0-beta.14"],
-            ["@algolia/requester-common", "npm:4.0.0-beta.14"],
-            ["@algolia/transporter", "npm:4.0.0-beta.14"]
+            ["@algolia/client-analytics", "npm:4.0.1"],
+            ["@algolia/client-common", "npm:4.0.1"],
+            ["@algolia/client-search", "npm:4.0.1"],
+            ["@algolia/requester-common", "npm:4.0.1"],
+            ["@algolia/transporter", "npm:4.0.1"]
           ],
           "linkType": "HARD",
         }]
       ]],
       ["@algolia/client-common", [
-        ["npm:4.0.0-beta.14", {
-          "packageLocation": "./.yarn/cache/@algolia-client-common-npm-4.0.0-beta.14-cc4fb0d283-2.zip/node_modules/@algolia/client-common/",
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/@algolia-client-common-npm-4.0.1-ed5066b21f-2.zip/node_modules/@algolia/client-common/",
           "packageDependencies": [
-            ["@algolia/client-common", "npm:4.0.0-beta.14"]
+            ["@algolia/client-common", "npm:4.0.1"],
+            ["@algolia/requester-common", "npm:4.0.1"],
+            ["@algolia/transporter", "npm:4.0.1"]
           ],
           "linkType": "HARD",
         }]
       ]],
       ["@algolia/client-recommendation", [
-        ["npm:4.0.0-beta.14", {
-          "packageLocation": "./.yarn/cache/@algolia-client-recommendation-npm-4.0.0-beta.14-96b7683c61-2.zip/node_modules/@algolia/client-recommendation/",
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/@algolia-client-recommendation-npm-4.0.1-13aa4e0786-2.zip/node_modules/@algolia/client-recommendation/",
           "packageDependencies": [
-            ["@algolia/client-recommendation", "npm:4.0.0-beta.14"],
-            ["@algolia/cache-common", "npm:4.0.0-beta.14"],
-            ["@algolia/client-common", "npm:4.0.0-beta.14"],
-            ["@algolia/requester-common", "npm:4.0.0-beta.14"],
-            ["@algolia/transporter", "npm:4.0.0-beta.14"]
+            ["@algolia/client-recommendation", "npm:4.0.1"],
+            ["@algolia/client-common", "npm:4.0.1"],
+            ["@algolia/requester-common", "npm:4.0.1"],
+            ["@algolia/transporter", "npm:4.0.1"]
           ],
           "linkType": "HARD",
         }]
       ]],
       ["@algolia/client-search", [
-        ["npm:4.0.0-beta.14", {
-          "packageLocation": "./.yarn/cache/@algolia-client-search-npm-4.0.0-beta.14-9f63ed0081-2.zip/node_modules/@algolia/client-search/",
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/@algolia-client-search-npm-4.0.1-08e5d73cd3-2.zip/node_modules/@algolia/client-search/",
           "packageDependencies": [
-            ["@algolia/client-search", "npm:4.0.0-beta.14"],
-            ["@algolia/client-common", "npm:4.0.0-beta.14"],
-            ["@algolia/logger-common", "npm:4.0.0-beta.14"],
-            ["@algolia/requester-common", "npm:4.0.0-beta.14"],
-            ["@algolia/transporter", "npm:4.0.0-beta.14"]
+            ["@algolia/client-search", "npm:4.0.1"],
+            ["@algolia/client-common", "npm:4.0.1"],
+            ["@algolia/requester-common", "npm:4.0.1"],
+            ["@algolia/transporter", "npm:4.0.1"]
           ],
           "linkType": "HARD",
         }]
       ]],
       ["@algolia/logger-common", [
-        ["npm:4.0.0-beta.14", {
-          "packageLocation": "./.yarn/cache/@algolia-logger-common-npm-4.0.0-beta.14-b3abc99c94-2.zip/node_modules/@algolia/logger-common/",
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/@algolia-logger-common-npm-4.0.1-e53eea1598-2.zip/node_modules/@algolia/logger-common/",
           "packageDependencies": [
-            ["@algolia/logger-common", "npm:4.0.0-beta.14"]
+            ["@algolia/logger-common", "npm:4.0.1"]
           ],
           "linkType": "HARD",
         }]
       ]],
       ["@algolia/logger-console", [
-        ["npm:4.0.0-beta.14", {
-          "packageLocation": "./.yarn/cache/@algolia-logger-console-npm-4.0.0-beta.14-2e29222f1a-2.zip/node_modules/@algolia/logger-console/",
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/@algolia-logger-console-npm-4.0.1-66efecc53b-2.zip/node_modules/@algolia/logger-console/",
           "packageDependencies": [
-            ["@algolia/logger-console", "npm:4.0.0-beta.14"],
-            ["@algolia/logger-common", "npm:4.0.0-beta.14"]
+            ["@algolia/logger-console", "npm:4.0.1"],
+            ["@algolia/logger-common", "npm:4.0.1"]
           ],
           "linkType": "HARD",
         }]
       ]],
       ["@algolia/requester-browser-xhr", [
-        ["npm:4.0.0-beta.14", {
-          "packageLocation": "./.yarn/cache/@algolia-requester-browser-xhr-npm-4.0.0-beta.14-1e8499b733-2.zip/node_modules/@algolia/requester-browser-xhr/",
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/@algolia-requester-browser-xhr-npm-4.0.1-8ba1b65182-2.zip/node_modules/@algolia/requester-browser-xhr/",
           "packageDependencies": [
-            ["@algolia/requester-browser-xhr", "npm:4.0.0-beta.14"],
-            ["@algolia/requester-common", "npm:4.0.0-beta.14"]
+            ["@algolia/requester-browser-xhr", "npm:4.0.1"],
+            ["@algolia/requester-common", "npm:4.0.1"]
           ],
           "linkType": "HARD",
         }]
@@ -383,26 +395,33 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@algolia/requester-common", "npm:4.0.0-beta.14"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/@algolia-requester-common-npm-4.0.1-18858ae598-2.zip/node_modules/@algolia/requester-common/",
+          "packageDependencies": [
+            ["@algolia/requester-common", "npm:4.0.1"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@algolia/requester-node-http", [
-        ["npm:4.0.0-beta.14", {
-          "packageLocation": "./.yarn/cache/@algolia-requester-node-http-npm-4.0.0-beta.14-ea2029f906-2.zip/node_modules/@algolia/requester-node-http/",
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/@algolia-requester-node-http-npm-4.0.1-af812cd0bd-2.zip/node_modules/@algolia/requester-node-http/",
           "packageDependencies": [
-            ["@algolia/requester-node-http", "npm:4.0.0-beta.14"],
-            ["@algolia/requester-common", "npm:4.0.0-beta.14"]
+            ["@algolia/requester-node-http", "npm:4.0.1"],
+            ["@algolia/requester-common", "npm:4.0.1"]
           ],
           "linkType": "HARD",
         }]
       ]],
       ["@algolia/transporter", [
-        ["npm:4.0.0-beta.14", {
-          "packageLocation": "./.yarn/cache/@algolia-transporter-npm-4.0.0-beta.14-e84d302ddb-2.zip/node_modules/@algolia/transporter/",
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/@algolia-transporter-npm-4.0.1-8ce4629454-2.zip/node_modules/@algolia/transporter/",
           "packageDependencies": [
-            ["@algolia/transporter", "npm:4.0.0-beta.14"],
-            ["@algolia/cache-common", "npm:4.0.0-beta.14"],
-            ["@algolia/logger-common", "npm:4.0.0-beta.14"],
-            ["@algolia/requester-common", "npm:4.0.0-beta.14"]
+            ["@algolia/transporter", "npm:4.0.1"],
+            ["@algolia/cache-common", "npm:4.0.1"],
+            ["@algolia/logger-common", "npm:4.0.1"],
+            ["@algolia/requester-common", "npm:4.0.1"]
           ],
           "linkType": "HARD",
         }]
@@ -5078,7 +5097,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["regexpp", "npm:2.0.1"],
             ["requireindex", "npm:1.2.0"],
             ["tsutils", "virtual:45cefb3a778deece82fc842b2b72f0afc757b6c0484407b9caa29c093b750350155ac2abd0f56e4ac93885a167aa5c99574da658766a7bf001a0aae00168eb82#npm:3.10.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "eslint",
@@ -5112,7 +5131,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint", "npm:5.16.0"],
             ["eslint-scope", "npm:4.0.0"],
             ["eslint-visitor-keys", "npm:1.0.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "eslint",
@@ -5129,7 +5148,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/typescript-estree", "virtual:be22e969588e5b9bb01154245a30a1bfa2fad15f08a9f0d7874afa09a4651ae4fe9cd0600afa10932b5dfe007f9b520145319057e59f92e2d7a8fb54b87c1da9#npm:2.13.0"],
             ["eslint", "npm:5.16.0"],
             ["eslint-visitor-keys", "npm:1.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "eslint",
@@ -5145,7 +5164,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/typescript-estree", "virtual:45cefb3a778deece82fc842b2b72f0afc757b6c0484407b9caa29c093b750350155ac2abd0f56e4ac93885a167aa5c99574da658766a7bf001a0aae00168eb82#npm:1.7.0"],
             ["lodash.unescape", "npm:4.0.1"],
             ["semver", "npm:5.5.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "typescript"
@@ -5181,7 +5200,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash.unescape", "npm:4.0.1"],
             ["semver", "npm:6.3.0"],
             ["tsutils", "virtual:faf413bcdf63d4ba216a03af4562f5428e636501de9fdbe6a8290b289fd010181647b2e3f557d4967e3d32c0e2e93d138ad4315d4b6048c665fd19f5d4a4f89d#npm:3.17.1"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "typescript"
@@ -5614,7 +5633,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"],
             ["terser-webpack-plugin", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:2.1.3"],
             ["ts-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:6.2.1"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["val-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:1.1.1"],
             ["webpack", "npm:4.41.2"],
             ["webpack-merge", "npm:4.2.1"],
@@ -5698,7 +5717,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -5741,7 +5760,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -5784,7 +5803,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -5827,7 +5846,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -5870,7 +5889,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -5913,7 +5932,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -5956,7 +5975,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -5999,7 +6018,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -6042,7 +6061,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -6085,7 +6104,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -6128,7 +6147,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -6171,7 +6190,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -6214,7 +6233,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -6257,7 +6276,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -6300,7 +6319,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -6343,7 +6362,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -6386,7 +6405,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -6429,7 +6448,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -6472,7 +6491,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -6515,7 +6534,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -6558,7 +6577,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -6628,7 +6647,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["globby", "npm:10.0.1"],
             ["micromatch", "npm:4.0.2"],
             ["p-limit", "npm:2.2.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "linkType": "SOFT",
         }]
@@ -6656,7 +6675,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@haroenv/react-sparklines", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.7.1"],
             ["@reach/router", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.2.1"],
             ["@types/babel__core", "npm:7.1.3"],
-            ["algoliasearch", "npm:4.0.0-beta.14"],
+            ["algoliasearch", "npm:4.0.1"],
             ["bytes", "npm:3.1.0"],
             ["date-fns", "npm:2.0.0-beta.2"],
             ["es6-promise", "npm:4.2.6"],
@@ -6789,7 +6808,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-environment-node", "npm:24.5.0"],
             ["jest-junit", "npm:5.2.0"],
             ["micromatch", "npm:4.0.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "linkType": "SOFT",
         }]
@@ -7109,7 +7128,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7132,7 +7151,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7155,7 +7174,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7178,7 +7197,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7201,7 +7220,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7224,7 +7243,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7247,7 +7266,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7270,7 +7289,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7293,7 +7312,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7316,7 +7335,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7339,7 +7358,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7362,7 +7381,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7385,7 +7404,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7408,7 +7427,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7431,7 +7450,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7454,7 +7473,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7477,7 +7496,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7500,7 +7519,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7523,7 +7542,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7546,7 +7565,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7569,7 +7588,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -7592,7 +7611,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -8587,7 +8606,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["tmp", "npm:0.1.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "core"
@@ -9121,7 +9140,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -11799,7 +11818,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -11816,7 +11835,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -11833,7 +11852,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -11850,7 +11869,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -11867,7 +11886,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -11884,7 +11903,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -11901,7 +11920,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -11918,7 +11937,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -11935,7 +11954,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -11952,7 +11971,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -11969,7 +11988,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -11986,7 +12005,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12003,7 +12022,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12020,7 +12039,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12037,7 +12056,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12054,7 +12073,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12071,7 +12090,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12088,7 +12107,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12105,7 +12124,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12122,7 +12141,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12139,7 +12158,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12156,7 +12175,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12173,7 +12192,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12190,7 +12209,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12207,7 +12226,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12224,7 +12243,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12241,7 +12260,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12258,7 +12277,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12275,7 +12294,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12295,8 +12314,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/plugin-essentials", "virtual:27ebb8cf1fa70157f710b4926b6d25c44192e74dbac3a766c8dc6505a59ebc433221bfb4b5aabc8cca814bbe95fcb6e1ecffcf94ba96ee6112a57c89364571ac#workspace:packages/plugin-essentials"],
             ["@yarnpkg/plugin-pack", "virtual:27ebb8cf1fa70157f710b4926b6d25c44192e74dbac3a766c8dc6505a59ebc433221bfb4b5aabc8cca814bbe95fcb6e1ecffcf94ba96ee6112a57c89364571ac#workspace:packages/plugin-pack"],
-            ["algoliasearch", "npm:4.0.0-beta.14"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["algoliasearch", "npm:4.0.1"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "cli",
@@ -12325,7 +12344,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12353,7 +12372,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12381,7 +12400,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12409,7 +12428,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12437,7 +12456,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12465,7 +12484,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12493,7 +12512,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12521,7 +12540,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12549,7 +12568,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12577,7 +12596,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12605,7 +12624,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12633,7 +12652,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12661,7 +12680,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12689,7 +12708,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12717,7 +12736,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12745,7 +12764,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12773,7 +12792,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12801,7 +12820,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12829,7 +12848,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12857,7 +12876,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12885,7 +12904,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12913,7 +12932,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink", "virtual:58c6a160e6d00ccf90867e4b527877bcde337a320c79277ab938543a3cd2ca12d5ecbaf449b71356276a2c24db742e5ae759512bae3689b4ef8ec896c616a6e2#npm:2.3.0"],
             ["react", "npm:16.8.4"],
             ["semver", "npm:7.1.2"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12936,7 +12955,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"],
             ["p-limit", "npm:2.2.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
@@ -12956,7 +12975,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["webpack", "npm:4.41.2"],
             ["webpack-cli", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:3.3.2"],
             ["webpack-sources", "npm:1.3.0"]
@@ -12979,7 +12998,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", "npm:5.16.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "typescript"
@@ -13000,7 +13019,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", "npm:5.16.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "eslint",
@@ -13253,23 +13272,24 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["algoliasearch", [
-        ["npm:4.0.0-beta.14", {
-          "packageLocation": "./.yarn/cache/algoliasearch-npm-4.0.0-beta.14-2decfaf265-2.zip/node_modules/algoliasearch/",
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/algoliasearch-npm-4.0.1-8f3ccc42fc-2.zip/node_modules/algoliasearch/",
           "packageDependencies": [
-            ["algoliasearch", "npm:4.0.0-beta.14"],
-            ["@algolia/cache-browser-local-storage", "npm:4.0.0-beta.14"],
-            ["@algolia/cache-common", "npm:4.0.0-beta.14"],
-            ["@algolia/cache-in-memory", "npm:4.0.0-beta.14"],
-            ["@algolia/client-analytics", "npm:4.0.0-beta.14"],
-            ["@algolia/client-common", "npm:4.0.0-beta.14"],
-            ["@algolia/client-recommendation", "npm:4.0.0-beta.14"],
-            ["@algolia/client-search", "npm:4.0.0-beta.14"],
-            ["@algolia/logger-common", "npm:4.0.0-beta.14"],
-            ["@algolia/logger-console", "npm:4.0.0-beta.14"],
-            ["@algolia/requester-browser-xhr", "npm:4.0.0-beta.14"],
-            ["@algolia/requester-common", "npm:4.0.0-beta.14"],
-            ["@algolia/requester-node-http", "npm:4.0.0-beta.14"],
-            ["@algolia/transporter", "npm:4.0.0-beta.14"]
+            ["algoliasearch", "npm:4.0.1"],
+            ["@algolia/cache-browser-local-storage", "npm:4.0.1"],
+            ["@algolia/cache-common", "npm:4.0.1"],
+            ["@algolia/cache-in-memory", "npm:4.0.1"],
+            ["@algolia/client-account", "npm:4.0.1"],
+            ["@algolia/client-analytics", "npm:4.0.1"],
+            ["@algolia/client-common", "npm:4.0.1"],
+            ["@algolia/client-recommendation", "npm:4.0.1"],
+            ["@algolia/client-search", "npm:4.0.1"],
+            ["@algolia/logger-common", "npm:4.0.1"],
+            ["@algolia/logger-console", "npm:4.0.1"],
+            ["@algolia/requester-browser-xhr", "npm:4.0.1"],
+            ["@algolia/requester-common", "npm:4.0.1"],
+            ["@algolia/requester-node-http", "npm:4.0.1"],
+            ["@algolia/transporter", "npm:4.0.1"]
           ],
           "linkType": "HARD",
         }]
@@ -33414,7 +33434,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["loader-utils", "npm:1.2.3"],
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:6.3.0"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "typescript"
@@ -33461,7 +33481,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["tsutils", "virtual:45cefb3a778deece82fc842b2b72f0afc757b6c0484407b9caa29c093b750350155ac2abd0f56e4ac93885a167aa5c99574da658766a7bf001a0aae00168eb82#npm:3.10.0"],
             ["tslib", "npm:1.9.3"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "typescript"
@@ -33485,7 +33505,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["tsutils", "virtual:faf413bcdf63d4ba216a03af4562f5428e636501de9fdbe6a8290b289fd010181647b2e3f557d4967e3d32c0e2e93d138ad4315d4b6048c665fd19f5d4a4f89d#npm:3.17.1"],
             ["tslib", "npm:1.9.3"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "typescript"
@@ -33608,6 +33628,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/typescript-patch-87b00092d4-2.zip/node_modules/typescript/",
           "packageDependencies": [
             ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569", {
+          "packageLocation": "./.yarn/cache/typescript-patch-7f9fbec647-2.zip/node_modules/typescript/",
+          "packageDependencies": [
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "linkType": "HARD",
         }]
@@ -34546,7 +34573,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["ts-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:6.2.1"],
-            ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=273569"],
+            ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["vsce", "npm:1.61.0"],
             ["webpack", "npm:4.41.2"],
             ["webpack-cli", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:3.3.2"]

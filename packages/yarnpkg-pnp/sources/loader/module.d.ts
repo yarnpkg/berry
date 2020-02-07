@@ -1,3 +1,5 @@
+import 'module';
+
 declare module "module" {
   const _cache: {[p: string]: NodeModule};
   const _extensions: {[ext: string]: any};

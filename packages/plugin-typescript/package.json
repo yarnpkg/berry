@@ -4,7 +4,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.17",
-    "algoliasearch": "4.0.0-beta.14"
+    "algoliasearch": "^4.0.1"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "^2.0.0-rc.28",
@@ -17,7 +17,7 @@
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28",
     "@yarnpkg/core": "workspace:^2.0.0-rc.22",
     "@yarnpkg/plugin-essentials": "workspace:^2.0.0-rc.22",
-    "typescript": "^3.7.4"
+    "typescript": "^3.7.5"
   },
   "scripts": {
     "build:plugin-typescript": "builder build plugin",
