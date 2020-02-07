@@ -10,21 +10,9 @@ title: "2 - Installation"
 
 ## Global Install
 
-NOTE: Currently, Yarn 2 is only available to install via npm. The installation methods previously available with Yarn 1 (Windows installer, Chocolatey, Debian/Ubuntu package, Homebrew, and RPM package) will be available again soon.
+Installing Yarn 2.x globally is discouraged as we're moving to a per-project install strategy. We advise you to keep Yarn 1.x (Classic) as your global binary by installing it via the instructions you can find [here](https://classic.yarnpkg.com/en/docs/install).
 
-1. Install [Node.js](https://nodejs.org/en/download/)
-
-2. Install Yarn:
-
-```bash
-npm install -g yarn@berry
-```
-
-3. Test that Yarn 2 has been properly installed by running the following, which should yield "v2.0.0" or similar:
-
-```bash
-yarn --version
-```
+Once you've followed the instructions (running `yarn --version` from your home directory should yield something like `1.22.0`), go to the next section to see how to enable Yarn 2 on your project.
 
 ## Per-project install
 
@@ -43,3 +31,13 @@ yarn set version berry
 ```
 
 4. Commit the `.yarn` and `.yarnrc.yml` changes
+
+## Installing the latest build fresh from master
+
+1. Follow the per-project install instructions
+
+2. Run the following comand (add `--no-minify` if you want an unminified build):
+
+```bash
+yarn set version from sources
+```
