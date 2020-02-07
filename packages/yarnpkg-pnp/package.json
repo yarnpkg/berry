@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.16",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@types/node": "^13.1.1",
+    "@types/node": "^13.7.0",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
   },
   "devDependencies": {

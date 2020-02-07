@@ -1,17 +1,19 @@
 #!/usr/bin/env node
 
-import {npath}          from '@yarnpkg/fslib';
-import crossSpawn       from 'cross-spawn';
+import {npath, NativePath, ppath, xfs, Filename} from '@yarnpkg/fslib';
+import crossSpawn                                from 'cross-spawn';
 
-import {dynamicRequire} from './dynamicRequire';
-import {generateSdk}    from './generateSdk';
+import {dynamicRequire}                          from './dynamicRequire';
+import {generateSdk}                             from './generateSdk';
 
 const [,, name, ...rest] = process.argv;
 
 if (name === `--help` || name === `-h`)
   help(false);
 else if (name === `--sdk` && rest.length === 0)
-  sdk();
+  sdk(process.cwd());
+else if (name === `--sdk` && rest.length === 1)
+  sdk(rest[0]);
 else if (typeof name !== `undefined` && name[0] !== `-`)
   run(name, rest);
 else
@@ -21,20 +23,33 @@ function help(error: boolean) {
   const logFn = error ? console.error : console.log;
   process.exitCode = error ? 1 : 0;
 
-  logFn(`Usage: yarn pnpify --sdk`);
+  logFn(`Usage: yarn pnpify --sdk [path?]`);
   logFn(`Usage: yarn pnpify <program> [...argv]`);
   logFn();
   logFn(`Setups a TypeScript sdk for use within your VSCode editor instance`);
   logFn(`More info at https://yarnpkg.com/advanced/pnpify`);
 }
 
-function sdk() {
-  const {getPackageInformation, topLevel} = dynamicRequire(`pnpapi`);
-  const {packageLocation} = getPackageInformation(topLevel);
+function sdk(cwd: NativePath) {
+  let nextProjectRoot = npath.toPortablePath(cwd);
+  let currProjectRoot = null;
 
-  const projectRoot = npath.toPortablePath(packageLocation);
+  while (nextProjectRoot !== currProjectRoot) {
+    currProjectRoot = nextProjectRoot;
+    nextProjectRoot = ppath.dirname(currProjectRoot);
 
-  generateSdk(projectRoot).catch(error => {
+    if (xfs.existsSync(ppath.join(currProjectRoot, `.pnp.js` as Filename))) {
+      break;
+    }
+  }
+
+  if (nextProjectRoot === currProjectRoot)
+    throw new Error(`This tool can only be used with projects using Yarn Plug'n'Play`);
+
+  const pnpPath = ppath.join(currProjectRoot, `.pnp.js` as Filename);
+  const pnpApi = dynamicRequire(pnpPath);
+
+  generateSdk(pnpApi).catch(error => {
     console.error(error.stack);
     process.exitCode = 1;
   });

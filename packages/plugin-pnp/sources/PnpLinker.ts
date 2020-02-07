@@ -2,7 +2,7 @@ import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, Dependen
 import {FetchResult, Ident, Locator, Package, BuildDirective, BuildType}                from '@yarnpkg/core';
 import {miscUtils, structUtils}                                                         from '@yarnpkg/core';
 import {CwdFS, FakeFS, PortablePath, npath, ppath, toFilename, xfs}                     from '@yarnpkg/fslib';
-import {generateInlinedScript, generateSplitScript, PnpSettings}                        from '@yarnpkg/pnp';
+import {generateInlinedScript, generateSplitScript, PnpSettings, PackageLocator}        from '@yarnpkg/pnp';
 import {UsageError}                                                                     from 'clipanion';
 
 import {AbstractPnpInstaller}                                                           from './AbstractPnpInstaller';
@@ -102,6 +102,8 @@ class PnpInstaller extends AbstractPnpInstaller {
   }
 
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
+    this.encodeHoisting(pnpSettings);
+
     const pnpPath = getPnpPath(this.opts.project);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
 
@@ -179,6 +181,19 @@ class PnpInstaller extends AbstractPnpInstaller {
     }
 
     return nodeModules;
+  }
+
+  private encodeHoisting(settings: PnpSettings) {
+    const state = new Map<string, Array<string>>();
+
+    const runStupidHoisting = (locator: PackageLocator) => {
+      const references = miscUtils.getArrayWithDefault(state, locator.name);
+      references.push(locator.reference);
+    };
+
+    for (const root of settings.dependencyTreeRoots) {
+      runStupidHoisting(root);
+    }
   }
 
   private getUnpluggedPath(locator: Locator) {

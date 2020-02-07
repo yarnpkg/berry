@@ -3544,6 +3544,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/chalk@npm:2.2.0":
+  version: 2.2.0
+  resolution: "@types/chalk@npm:2.2.0"
+  dependencies:
+    chalk: "*"
+  checksum: 2/9cded9031f180268be59010fc1e13c7b4384e51f0ca8b75bc7a40bdd46f5f3c4859953525fb53663287e5bb25ca5df59396c276ce5c09e1a83aa7a2aec6a9f59
+  languageName: node
+  linkType: hard
+
 "@types/ci-info@npm:*":
   version: 2.0.0
   resolution: "@types/ci-info@npm:2.0.0"
@@ -3847,10 +3856,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^13.1.1":
-  version: 13.1.1
-  resolution: "@types/node@npm:13.1.1"
-  checksum: 2/36071e0945d50b407080d9b026a8986a5f27ad21b7b8a09cef9551705c6dc24795ef04197066660fcea84cbd3139cf8637adb7f02ca6f3a638f8bedc013359dd
+"@types/node@npm:^13.7.0":
+  version: 13.7.0
+  resolution: "@types/node@npm:13.7.0"
+  checksum: 2/cfdb8577f650e20f850d706854a6ff5a43cf222ab8a760d102d909820645cb7da74da67283155c4f5278ca9a3ab2f2d3a4fde6af50bcf3d8280264a9b7998be8
   languageName: node
   linkType: hard
 
@@ -5015,7 +5024,7 @@ __metadata:
     "@babel/register": ^7.5.5
     "@types/emscripten": ^1.38.0
     "@types/jest": ^24.0.25
-    "@types/node": ^13.1.1
+    "@types/node": ^13.7.0
     "@typescript-eslint/eslint-plugin": ^1.7.0
     "@typescript-eslint/parser": ^2.13.0
     "@yarnpkg/cli": "workspace:^2.0.0-rc.28"
@@ -5454,7 +5463,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnp@workspace:packages/yarnpkg-pnp"
   dependencies:
-    "@types/node": ^13.1.1
+    "@types/node": ^13.7.0
     "@yarnpkg/builder": "workspace:^2.0.0-rc.18"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
     "@yarnpkg/libzip": "workspace:^2.0.0-rc.9"
@@ -5470,11 +5479,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify"
   dependencies:
+    "@types/chalk": 2.2.0
     "@types/comment-json": ^1.1.1
     "@types/cross-spawn": 6.0.0
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.15"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.16"
+    chalk: ^3.0.0
     comment-json: ^2.2.0
     cross-spawn: 6.0.5
     eslint: ^5.16.0
@@ -7821,6 +7832,16 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"chalk@npm:*, chalk@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "chalk@npm:3.0.0"
+  dependencies:
+    ansi-styles: ^4.1.0
+    supports-color: ^7.1.0
+  checksum: 2/4018b0c812880da595d0d7b8159939527b72f58d3370e2fdc1a24d9abd460bab851695d7eca014082f110d5702d1221b05493fec430ccce375de907d50cc48c1
+  languageName: node
+  linkType: hard
+
 "chalk@npm:1.1.3, chalk@npm:^1.0.0, chalk@npm:^1.1.3":
   version: 1.1.3
   resolution: "chalk@npm:1.1.3"
@@ -7842,16 +7863,6 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     escape-string-regexp: ^1.0.5
     supports-color: ^5.3.0
   checksum: 2/22c7b7b5bc761c882bb6516454a1a671923f1c53ff972860065aa0b28a195f230163c1d46ee88bcc7a03e5539177d896457d8bc727de7f244c6e87032743038e
-  languageName: node
-  linkType: hard
-
-"chalk@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "chalk@npm:3.0.0"
-  dependencies:
-    ansi-styles: ^4.1.0
-    supports-color: ^7.1.0
-  checksum: 2/4018b0c812880da595d0d7b8159939527b72f58d3370e2fdc1a24d9abd460bab851695d7eca014082f110d5702d1221b05493fec430ccce375de907d50cc48c1
   languageName: node
   linkType: hard
 
