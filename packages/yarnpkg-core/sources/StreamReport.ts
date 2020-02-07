@@ -18,6 +18,9 @@ export type StreamReportOptions = {
 const PROGRESS_FRAMES = [`⠋`, `⠙`, `⠹`, `⠸`, `⠼`, `⠴`, `⠦`, `⠧`, `⠇`, `⠏`];
 const PROGRESS_INTERVAL = 80;
 
+const FORGETTABLE_NAMES = new Set<MessageName | null>([MessageName.FETCH_NOT_CACHED]);
+const FORGETTABLE_BUFFER_SIZE = 5;
+
 const now = new Date();
 
 // We only want to support environments that will out-of-the-box accept the
@@ -100,7 +103,6 @@ export class StreamReport extends Report {
   private progressTimeout: ReturnType<typeof setTimeout> | null = null;
 
   private forgettableLines: Array<string> = [];
-  private visibleForgettableLineCount: number = 5;
 
   constructor({configuration, stdout, json = false, includeFooter = true, includeLogs = !json, includeInfos = includeLogs, includeWarnings = includeLogs}: StreamReportOptions) {
     super();
@@ -188,11 +190,10 @@ export class StreamReport extends Report {
       return;
 
     if (!this.json) {
-      const num = name === null ? 0 : name;
-      if (num === 13) {
+      if (FORGETTABLE_NAMES.has(name)) {
         this.forgettableLines.push(text);
-        if (this.forgettableLines.length > this.visibleForgettableLineCount) {
-          while (this.forgettableLines.length > this.visibleForgettableLineCount)
+        if (this.forgettableLines.length > FORGETTABLE_BUFFER_SIZE) {
+          while (this.forgettableLines.length > FORGETTABLE_BUFFER_SIZE)
             this.forgettableLines.shift();
 
           this.writeLines(name, this.forgettableLines);
@@ -336,9 +337,10 @@ export class StreamReport extends Report {
 
   private writeLines(name: MessageName | null, lines: string[]) {
     this.clearProgress({delta: lines.length});
-    lines.forEach(line => {
+
+    for (const line of lines)
       this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${line}\n`);
-    });
+
     this.writeProgress();
   }
 
