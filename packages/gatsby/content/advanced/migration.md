@@ -31,6 +31,10 @@ Run `npx @yarnpkg/doctor .` (or `yarn dlx @yarnpkg/doctor .`) in your project to
 
 Note that the doctor is intended to report any potential issue - it's then up to you to decide whether they are a false positive or not (for example it won't traverse Git repositories). For this reason we don't recommend using it as a CI tool.
 
+### Use `yarn dlx` instead of `yarn global`
+
+`yarn dlx` is designed to execute one off scripts that may have been installed as global packages with `yarn 1.x`. Managing system-wide packages is outside of the scope of `yarn`. To reflect this, `yarn global` has been removed. [Read more on GitHub](https://github.com/yarnpkg/berry/issues/821).
+
 ### Make sure you use `resolve@1.9+`
 
 Older releases don't support Plug'n'Play at all. Since the `resolve` package is used by pretty much everything nowadays, making sure that you use a modern release can go a long way to solve the most obnoxious bugs you may have.
