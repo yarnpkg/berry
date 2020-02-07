@@ -521,7 +521,7 @@ export class Configuration {
 
   public invalid: Map<string, string> = new Map();
 
-  private packageExtensions: Map<IdentHash, Array<{
+  private packageExtensions?: Map<IdentHash, Array<{
     range: string,
     patch: (pkg: Package) => void,
   }>> = new Map();
@@ -683,6 +683,8 @@ export class Configuration {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
       configuration.sources.set(`cacheFolder`, `<internal>`);
     }
+
+    await configuration.refreshPackageExtensions();
 
     return configuration;
   }
@@ -870,10 +872,6 @@ export class Configuration {
 
       this.values.set(key, parseValue(this, key, data[key], definition, folder));
       this.sources.set(key, source);
-
-      if (key === `packageExtensions`) {
-        this.refreshPackageExtensions();
-      }
     }
   }
 
@@ -955,8 +953,9 @@ export class Configuration {
     return linkers;
   }
 
-  refreshPackageExtensions() {
+  async refreshPackageExtensions() {
     this.packageExtensions = new Map();
+    const packageExtensions = this.packageExtensions;
 
     const registerPackageExtension = (descriptor: Descriptor, extensionData: any) => {
       if (!semver.validRange(descriptor.range))
@@ -965,7 +964,7 @@ export class Configuration {
       const extension = new Manifest();
       extension.load(extensionData);
 
-      miscUtils.getArrayWithDefault(this.packageExtensions, descriptor.identHash).push({
+      miscUtils.getArrayWithDefault(packageExtensions, descriptor.identHash).push({
         range: descriptor.range,
         patch: pkg => {
           pkg.dependencies = new Map([...pkg.dependencies, ...extension.dependencies]);
@@ -979,7 +978,7 @@ export class Configuration {
     for (const [descriptorString, extensionData] of this.get<Map<string, any>>(`packageExtensions`))
       registerPackageExtension(structUtils.parseDescriptor(descriptorString, true), extensionData);
 
-    this.triggerHook(hooks => {
+    await this.triggerHook(hooks => {
       return hooks.registerPackageExtensions;
     }, this, registerPackageExtension);
   }
@@ -989,6 +988,9 @@ export class Configuration {
 
     // We use the extensions to define additional dependencies that weren't
     // properly listed in the original package definition
+
+    if (this.packageExtensions == null)
+      throw new Error(`refreshPackageExtensions has to be called before normalizing packages`);
 
     const extensionList = this.packageExtensions.get(original.identHash);
     if (typeof extensionList !== `undefined`) {
