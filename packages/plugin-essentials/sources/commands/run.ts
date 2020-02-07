@@ -111,6 +111,9 @@ export default class RunCommand extends BaseCommand {
         throw new UsageError(`Couldn't find a script name "${this.scriptName}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)}).`);
       }
     } else {
+      if (this.scriptName === `global`)
+        throw new UsageError(`The 'yarn global' commands have been removed in 2.x - consider using 'yarn dlx' or a third-party plugin instead`);
+
       const userCommand = [this.scriptName].concat(this.args);
 
       for (const [pluginName, candidates] of pluginCommands)
