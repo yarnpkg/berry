@@ -1,34 +1,34 @@
-import styled                from '@emotion/styled';
-import algoliasearch         from 'algoliasearch';
-import bytes                 from 'bytes';
-import formatDistance        from 'date-fns/formatDistance';
-import qs                    from 'qs';
-import React, {Component}    from 'react';
+import styled             from '@emotion/styled';
+import algoliasearch      from 'algoliasearch';
+import bytes              from 'bytes';
+import formatDistance     from 'date-fns/formatDistance';
+import qs                 from 'qs';
+import React, {Component} from 'react';
 
-import IcoChangelog          from '../../images/detail/ico-changelog.svg';
-import IcoCommitsLast        from '../../images/detail/ico-commits-last.svg';
-import IcoCommits            from '../../images/detail/ico-commits.svg';
-import IcoDependencies       from '../../images/detail/ico-dependencies.svg';
-import IcoDependents         from '../../images/detail/ico-dependents.svg';
-import IcoDevDependencies    from '../../images/detail/ico-devdependencies.svg';
-import IcoDownloadSize       from '../../images/detail/ico-download-size.svg';
-import IcoDownloads          from '../../images/detail/ico-downloads.svg';
-import IcoPackageJson        from '../../images/detail/ico-package-json.svg';
-import IcoReadme             from '../../images/detail/ico-readme.svg';
-import IcoStargazers         from '../../images/detail/ico-stargazers.svg';
-import {algolia}             from '../config';
-import {ifMobile, ifDesktop} from '../responsive';
-import {schema}              from '../schema';
+import IcoChangelog       from '../../images/detail/ico-changelog.svg';
+import IcoCommitsLast     from '../../images/detail/ico-commits-last.svg';
+import IcoCommits         from '../../images/detail/ico-commits.svg';
+import IcoDependencies    from '../../images/detail/ico-dependencies.svg';
+import IcoDependents      from '../../images/detail/ico-dependents.svg';
+import IcoDevDependencies from '../../images/detail/ico-devdependencies.svg';
+import IcoDownloadSize    from '../../images/detail/ico-download-size.svg';
+import IcoDownloads       from '../../images/detail/ico-downloads.svg';
+import IcoPackageJson     from '../../images/detail/ico-package-json.svg';
+import IcoReadme          from '../../images/detail/ico-readme.svg';
+import IcoStargazers      from '../../images/detail/ico-stargazers.svg';
+import {algolia}          from '../config';
+import {ifDesktop}        from '../responsive';
+import {schema}           from '../schema';
 
-import {prefixURL, get}      from '../util';
+import {prefixURL, get}   from '../util';
 
-import {Aside}               from './Aside';
-import {Copyable}            from './Copyable';
-import {FileBrowser}         from './FileBrowser';
-import {Header}              from './Header';
-import {JSONLDItem}          from './JSONLDItem';
-import {Markdown}            from './Markdown';
-import {ReadMore}            from './ReadMore';
+import {Aside}            from './Aside';
+import {Copyable}         from './Copyable';
+import {FileBrowser}      from './FileBrowser';
+import {Header}           from './Header';
+import {JSONLDItem}       from './JSONLDItem';
+import {Markdown}         from './Markdown';
+import {ReadMore}         from './ReadMore';
 
 const client = algoliasearch(algolia.appId, algolia.apiKey);
 const index = client.initIndex(algolia.indexName);
@@ -40,10 +40,11 @@ const Container = styled.div`
   padding: 0 15px;
   width: 1140px;
   max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
 `;
 
 const InvalidPackage = styled(Container)`
-  display: flex;
   flex-direction: column;
   text-align: center;
   color: #5a5a5a;
@@ -65,9 +66,11 @@ const Instructions = styled.div`
 `;
 
 const FileBrowserColumn = styled.section`
-  float: left;
-  padding: 0 15px;
-  width: 66.6666666667%;
+  width: 100%;
+  ${ifDesktop} {
+    width: calc(100% * 2 / 3);
+    padding: 0 15px;
+  }
 `;
 
 const DiBox = styled.div`
@@ -158,18 +161,7 @@ export const Di = ({icon, title, description}) => (
 
 const OBJECT_DOESNT_EXIST = 'ObjectID does not exist';
 
-const DetailsContainer = styled.div`
-  display: flex;
-  ${ifMobile} {
-    flex-direction: column-reverse;
-  }
-
-  width: 1140px;
-  max-width: 100%;
-  margin: 0 auto 0 auto;
-
-  padding: 0 15px 0 15px;
-
+const DetailsContainer = styled(Container)`
   color: #5a5a5a;
 
   &:after {
@@ -184,6 +176,7 @@ const DetailsContainer = styled.div`
 `;
 
 const DetailsMain = styled.section`
+  width: 100%;
   ${ifDesktop} {
     width: calc(100% * 2 / 3);
     padding: 0 15px;
