@@ -62,10 +62,10 @@ export function getModifier(flags: {exact: boolean; caret: boolean; tilde: boole
   return project.configuration.get<Modifier>(`defaultSemverRangePrefix`);
 }
 
-const SIMPLE_SEMVER = /^([\^~]?)[0-9+](?:\.[0-9]+){0,2}(?:-\S+)?$/;
+const SIMPLE_SEMVER = /^([\^~]?)[0-9]+(?:\.[0-9]+){0,2}(?:-\S+)?$/;
 
-export function extractModifier(descriptor: Descriptor, {project}: {project: Project}) {
-  const match = descriptor.range.match(SIMPLE_SEMVER);
+export function extractRangeModifier(range: string, {project}: {project: Project}) {
+  const match = range.match(SIMPLE_SEMVER);
 
   return match ? match[1] : project.configuration.get<Modifier>(`defaultSemverRangePrefix`);
 }
@@ -253,7 +253,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
   return suggested.slice(0, maxResults);
 }
 
-export async function fetchDescriptorFrom(ident: Ident, range: string, {project, cache, preserveModifier = true}: {project: Project, cache: Cache, preserveModifier?: boolean}) {
+export async function fetchDescriptorFrom(ident: Ident, range: string, {project, cache, preserveModifier = true}: {project: Project, cache: Cache, preserveModifier?: boolean | string}) {
   const latestDescriptor = structUtils.makeDescriptor(ident, range);
 
   const report = new ThrowReport();
@@ -280,8 +280,12 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   if (protocol === project.configuration.get(`defaultProtocol`))
     protocol = null;
 
-  if (semver.valid(selector) && preserveModifier) {
-    const modifier = extractModifier(latestDescriptor, {project});
+  if (semver.valid(selector) && preserveModifier !== false) {
+    const referenceRange = typeof preserveModifier === `string`
+      ? preserveModifier
+      : latestDescriptor.range;
+
+    const modifier = extractRangeModifier(referenceRange, {project});
     selector = modifier + selector;
   }
 

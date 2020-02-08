@@ -1313,6 +1313,46 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should remove the lingering node_modules folders`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/node_modules/foo`);
+
+      await run(`install`);
+
+      await expect(xfs.readdirPromise(path)).resolves.not.toContain(`node_modules`);
+    }),
+  );
+
+  test(
+    `it shouldn't remove the lingering node_modules folders when they contain dot-folders`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/node_modules/.cache`);
+
+      await run(`install`);
+
+      await expect(xfs.readdirPromise(path)).resolves.toContain(`node_modules`);
+      await expect(xfs.readdirPromise(ppath.join(path, `node_modules`))).resolves.toEqual([
+        `.cache`,
+      ]);
+    }),
+  );
+
+  test(
+    `it should remove lingering folders from the node_modules even when they contain dot-folders`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/node_modules/.cache`);
+      await xfs.mkdirpPromise(`${path}/node_modules/foo`);
+
+      await run(`install`);
+
+      await expect(xfs.readdirPromise(path)).resolves.toContain(`node_modules`);
+      await expect(xfs.readdirPromise(ppath.join(path, `node_modules`))).resolves.toEqual([
+        `.cache`,
+      ]);
+    }),
+  );
+
+  test(
     `it should transparently support the "resolve" package`,
     makeTemporaryEnv(
       {
@@ -1333,5 +1373,41 @@ describe(`Plug'n'Play`, () => {
       },
     ),
     15000,
+  );
+
+  test(
+    `it shouldn't break the vscode builtin resolution`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      // VSCode has its own layer on top of `require` to provide extra builtins
+      // to the plugins. We don't want to accidentally break this:
+      //
+      // https://github.com/microsoft/vscode/blob/dcecb9eea6158f561ee703cbcace49b84048e6e3/src/vs/workbench/api/node/extHostExtensionService.ts#L23
+
+      await run(`install`);
+
+      const tmp = await xfs.mktempPromise();
+      await xfs.writeFilePromise(ppath.join(tmp, `index.js`), `
+        const realLoad = module.constructor._load;
+
+        module.constructor._load = function (name, ...args) {
+          if (name === 'foo') {
+            return 'this works';
+          } else {
+            return realLoad.call(this, name, ...args);
+          }
+        };
+
+        require(process.argv[2]).setup();
+
+        if (require('foo') !== 'this works') {
+          throw new Error('Assertion failed');
+        }
+      `);
+
+      cp.execFileSync(`node`, [
+        npath.fromPortablePath(`${tmp}/index.js`),
+        npath.fromPortablePath(`${path}/.pnp.js`),
+      ], {encoding: `utf-8`});
+    }),
   );
 });

@@ -7,7 +7,7 @@ import {Layout}                                from '../components/layout';
 import {ifDesktop, ifMobile}                   from '../components/responsive';
 import {SearchProvider}                        from '../components/search';
 import {SearchBar, SearchResults, withUrlSync} from '../components/search';
-import {SEO}                                   from '../components/seo';
+import {SEO, defaultKeywords}                  from '../components/seo';
 import agendaIcon                              from '../images/homeicons/agenda.svg';
 import laptopIcon                              from '../images/homeicons/laptop.svg';
 import noteIcon                                from '../images/homeicons/note.svg';
@@ -23,6 +23,10 @@ const sectionStyle = css`
 
 const Section = styled.div`
   ${sectionStyle}
+
+  ${ifMobile} {
+    padding: 0 1em;
+  }
 `;
 
 const sectionContentStyle = css`
@@ -50,6 +54,11 @@ const Hero = styled.div`
 
 const HeroTitle = styled.div`
   font-size: 4em;
+  ${ifMobile} {
+    font-size: 2.2em;
+    text-align: center;
+  }
+
   font-weight: bold;
 
   color: #ffffff;
@@ -58,12 +67,16 @@ const HeroTitle = styled.div`
 
 const HeroSubtitle = styled.div`
   max-width: 800px;
-
+  color: #ffffff;
   margin-top: 40px;
-
   font-size: 1.5em;
 
-  color: #ffffff;
+  ${ifMobile} {
+    margin-top: 20px;
+    font-size: 1.2em;
+    text-align: center;
+    margin-bottom: 10px;
+  }
 `;
 
 const SellingPoints = styled.div`
@@ -80,6 +93,9 @@ const SellingPointContainer = styled.div`
   ${ifDesktop} {
     width: calc(50% - 20px);
   }
+  ${ifMobile} {
+    align-items: center;
+  }
 
   margin-top: 40px;
 
@@ -91,6 +107,10 @@ const SellingPointContainer = styled.div`
 const SellingPointIcon = styled.img`
   width: 100px;
   height: 100px;
+  ${ifMobile} {
+    width: 75px;
+    height: 75px;
+  }
 `;
 
 const SellingPointContent = styled.div`
@@ -98,6 +118,9 @@ const SellingPointContent = styled.div`
 
   h3 {
     margin-top: 0;
+    ${ifMobile} {
+      margin-bottom: .5em;
+    }
   }
 `;
 
@@ -146,7 +169,7 @@ const IndexPage = ({data, searchState, onSearchStateChange}) => {
           </Header>
         }
       >
-        <SEO title="Home" keywords={[`gatsby`, `application`, `react`]} />
+        <SEO title="Home" keywords={defaultKeywords} />
 
         <SearchResults
           onTagClick={tag => setTags([...tags, tag])}
@@ -190,7 +213,7 @@ const IndexPage = ({data, searchState, onSearchStateChange}) => {
                 </SellingPoint>
                 <SellingPoint imgUrl={worldwideIcon}>
                   <h3>Openness</h3>
-                  Yarn is an independent open-source project tied to no company. Your support make us thrive.
+                  Yarn is an independent open-source project tied to no company. Your support makes us thrive.
                 </SellingPoint>
               </SellingPoints>
             </SectionContent>

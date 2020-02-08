@@ -9,8 +9,9 @@ import {Command, Usage}                                                         
 import {diffWords}                                                                                                         from 'diff';
 import {Box, Color}                                                                                                        from 'ink';
 import React, {useEffect, useState}                                                                                        from 'react';
+import semver                                                                                                              from 'semver';
 
-const SIMPLE_SEMVER = /^([\^~]?)([0-9+])(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
+const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpgradeInteractiveCommand extends BaseCommand {
@@ -77,7 +78,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       let res = ``;
 
       for (let t = 1; t < SEMVER_COLORS.length; ++t) {
-        if (matchedFrom[t] !== matchedTo[t]) {
+        if (color !== null || matchedFrom[t] !== matchedTo[t]) {
           if (color === null)
             color = SEMVER_COLORS[t - 1];
 
@@ -91,7 +92,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     };
 
     const fetchUpdatedDescriptor = async (descriptor: Descriptor, copyStyle: string, range: string) => {
-      const candidate = await suggestUtils.fetchDescriptorFrom(descriptor, descriptor.range, {project, cache});
+      const candidate = await suggestUtils.fetchDescriptorFrom(descriptor, range, {project, cache, preserveModifier: copyStyle});
 
       if (candidate !== null) {
         return candidate.range;
@@ -101,8 +102,12 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     };
 
     const fetchSuggestions = async (descriptor: Descriptor) => {
+      const referenceRange = semver.valid(descriptor.range)
+        ? `^${descriptor.range}`
+        : descriptor.range;
+
       const [resolution, dependency] = await Promise.all([
-        fetchUpdatedDescriptor(descriptor, descriptor.range, descriptor.range),
+        fetchUpdatedDescriptor(descriptor, descriptor.range, referenceRange),
         fetchUpdatedDescriptor(descriptor, descriptor.range, `latest`),
       ]);
 
@@ -118,7 +123,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         });
       }
 
-      if (dependency !== resolution) {
+      if (dependency !== resolution && dependency !== descriptor.range) {
         suggestions.push({
           value: dependency,
           label: colorizeVersionDiff(descriptor.range, dependency),
@@ -178,7 +183,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       </>;
     };
 
-    const updateRequests = await renderForm<Map<DescriptorHash, string>>(GlobalListApp, {});
+    const updateRequests = await renderForm<Map<DescriptorHash, string | null>>(GlobalListApp, {});
     if (typeof updateRequests === `undefined`)
       return 1;
 
@@ -191,7 +196,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         for (const descriptor of dependencies.values()) {
           const newRange = updateRequests.get(descriptor.descriptorHash);
 
-          if (typeof newRange !== `undefined`) {
+          if (typeof newRange !== `undefined` && newRange !== null) {
             dependencies.set(descriptor.identHash, structUtils.makeDescriptor(descriptor, newRange));
             hasChanged = true;
           }

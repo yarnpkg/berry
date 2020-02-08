@@ -32,7 +32,7 @@ VariableAssignment
   / name:EnvVariable '=' S* { return { name, args: [] } }
 
 Command
-  = S* "(" S* subshell:ShellLine S* ")" S* { return { type: `subshell`, subshell } }
+  = S* "(" S* subshell:ShellLine S* ")" S* args:RedirectArgument* S* { return { type: `subshell`, subshell, args } }
   / S* envs:VariableAssignment* S* args:Argument+ S* { return { type: `command`, args, envs } }
   / S* envs:VariableAssignment+ S* { return { type: `envs`, envs } }
 
@@ -40,8 +40,11 @@ CommandString
   = S* args:ValueArgument+ S* { return args }
 
 Argument
-  = S* redirect:(">>" / ">" / "<<<" / "<") arg:ValueArgument { return { type: `redirection`, subtype: redirect, args: [arg] } }
+  = S* arg:RedirectArgument { return arg }
   / S* arg:ValueArgument { return arg }
+
+RedirectArgument
+  = S* redirect:(">>" / ">" / "<<<" / "<") arg:ValueArgument { return { type: `redirection`, subtype: redirect, args: [arg] } }
 
 ValueArgument
   = S* arg:StrictValueArgument { return arg }
@@ -74,7 +77,7 @@ PlainStringSegment
   / text:PlainStringText { return { type: `text`, text } }
 
 SglQuoteStringText
-  = chars:('\\' c:. { return c } / [^'])+ { return chars.join(``) }
+  = chars:('\\' c:. { return c } / [^'])* { return chars.join(``) }
 
 DblQuoteStringText
   = chars:('\\' c:. { return c } / [^$"])+ { return chars.join(``) }

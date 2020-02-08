@@ -22,27 +22,27 @@ The way installs used to work was simple: when running `yarn install` Yarn would
 
 ## Fixing node_modules
 
-When you think about it, Yarn already knows everything about your dependency tree - after all it even installs it on the disk for you. So the question becomes: why do we leave it to Node to locate the packages? Why don't we simply tell Node where to find them, and inform it that any require call to X by Y was meant to access the files from a specific set of dependencies? It's from this postulate that Plug'n'Play was created.
+When you think about it, Yarn already knows everything there is to know about your dependency tree - it even installs it on the disk for you. So the question becomes: why do we leave it to Node to locate the packages? Why don't we simply tell Node where to find them, and inform it that any require call to X by Y was meant to access the files from a specific set of dependencies? It's from this postulate that Plug'n'Play was created.
 
-In this install mode (now the default starting from Yarn v2), Yarn generates a single `.pnp.js` file instead of the usual `node_modules`. Instead of containing the source code of the installed packages, the `.pnp.js` file contains a map linking a package name and version to a location on the disk, and another map linking a package name and version to its set of dependencies. Thanks to this efficient system, Node can directly know where to look for files being required - regardless of who asks for them!
+In this install mode (now the default starting from Yarn v2), Yarn generates a single `.pnp.js` file instead of the usual `node_modules`. Instead of containing the source code of the installed packages, the `.pnp.js` file contains a map linking a package name and version to a location on the disk, and another map linking a package name and version to its set of dependencies. Thanks to this efficient system, Yarn can tell Node exactly where to look for files being required - regardless of who asks for them!
 
 This approach has various benefits:
 
-- Since we only need to generate a single text file instead of tens of thousands, installs are now pretty much instantaneous - the main bottleneck becomes the number of dependencies in your project rather than your disk performances.
+- Since we only need to generate a single text file instead of tens of thousands, installs are now pretty much instantaneous - the main bottleneck becomes the number of dependencies in your project rather than your disk performance.
 
-- Our installs are made stabler, as I/O operations are prone to fail (like on Windows, where writing and removing files in batch may trigger various unintended interactions with Windows Defender and similar tools).
+- Installs are more stable and reliable due to reduced I/O operations, which are prone to fail (especially on Windows, where writing and removing files in batch may trigger various unintended interactions with Windows Defender and similar tools).
 
-- Since we aren't supported by a filesystem hierarchy anymore we can guarantee not only a perfect optimization of the dependency tree (aka perfect hoisting), but also predictable package instantiations.
+- Perfect optimization of the dependency tree (aka perfect hoisting) and predictable package instantiations.
 
-- The generated file can be checked within your repository as part of the [Zero-Installs](/features/zero-installs) effort, removing the need to run `yarn install` in the first place.
+- The generated .pnp.js file can be committed to your repository as part of the [Zero-Installs](/features/zero-installs) effort, removing the need to run `yarn install` in the first place.
 
-- Your applications start faster, because the Node resolution doesn't have to iterate over the filesystem hierarchy nearly as much as before (and soon won't have to do it at all!).
+- Faster application startup, because the Node resolution doesn't have to iterate over the filesystem hierarchy nearly as much as before (and soon won't have to do it at all!).
 
 ## Caveats and work-in-progress
 
-During the years that led to Plug'n'Play being designed and adopted as main install strategy, various projects came up with their own implementation of the Node Resolution Algorithm - usually to circumvent shortcomings of the `require.resolve` API. Such projects can be Webpack (`enhanced-resolve`), Babel (`resolve`), Jest (`jest-resolve`), Metro (`metro-resolver`), ...
+Over the years that led to Plug'n'Play being designed and adopted as the main install strategy, various projects came up with their own implementation of the Node Resolution Algorithm - usually to circumvent shortcomings of the `require.resolve` API. Such projects can be Webpack (`enhanced-resolve`), Babel (`resolve`), Jest (`jest-resolve`), Metro (`metro-resolver`), ...
 
-The following compatibility table gives you an idea of the integration status with various tools from the community. Note that only CLI tools are listed there, as frontend libraries (such as `react`, `vue`, `lodash`, ...) don't reimplement the Node resolution and as such don't need any special logic to take advantage from Plug'n'Play:
+The following compatibility table gives you an idea of the integration status with various tools from the community. Note that only CLI tools are listed there, as frontend libraries (such as `react`, `vue`, `lodash`, ...) don't reimplement the Node resolution and as such don't need any special logic to take advantage of Plug'n'Play:
 
 **[Suggest an addition to this table](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugnplay.md)**
 
@@ -55,12 +55,12 @@ The following compatibility table gives you an idea of the integration status wi
 | Husky             | Native     | Starting from 4.0.0-1+ |
 | Jest              | Native     | Starting from 24.1+ |
 | Prettier          | Native     | Starting from 1.17+ |
-| Rollup            | Plugin     | Via [`rollup-plugin-pnp-resolve`](https://github.com/arcanis/rollup-plugin-pnp-resolve) |
-| TypeScript        | Plugin     | Via [PnPify](/advanced/pnpify), or Webpack and [`ts-loader`](https://github.com/arcanis/pnp-webpack-plugin#ts-loader-integration) |
-| VSCode-ESLint     | Plugin     | Via [PnPify](/advanced/pnpify#vscode-support) |
-| VSCode            | Plugin     | Via [PnPify](/advanced/pnpify#vscode-support) |
+| Rollup            | Native     | Starting from `resolve` 1.9+ |
+| TypeScript-ESLint | Native     | Starting from 2.12+ |
+| WebStorm          | Native     | Starting from 2019.3+; See [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks) |
+| TypeScript        | Transparent | Via [`plugin-compat`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-compat) (enabled by default) |
+| VSCode-ESLint     | Plugin     | Follow [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks) |
+| VSCode            | Plugin     | Follow [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks) |
 | Webpack           | Plugin     | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin), will be native starting from 5+ |
-| WebStorm          | Native     | Starting from 2019.3+; limited TypeScript support (see [issue](https://youtrack.jetbrains.com/issue/WEB-42637)) |
-| Typescript-Eslint | Workaround | Update the lockfile to add `typescript: "*"` into its `peerDependencies`. [`Relevant Issue`](https://github.com/typescript-eslint/typescript-eslint/issues/770) |
 
-This list is kept up-to-date based on the latest release we've published starting from the v2. In case you notice something off in your own project please try to upgrade Yarn and the problematic package first, then feel free to an issue. And maybe a PR? 😊
+This list is kept up-to-date based on the latest release we've published starting from the v2. In case you notice something off in your own project please try to upgrade Yarn and the problematic package first, then feel free to file an issue. And maybe a PR? 😊

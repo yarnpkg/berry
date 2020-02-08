@@ -82,12 +82,12 @@ export async function request(target: string, body: Body, {configuration, header
   const makeHooks = () => ({
     beforeRequest: [
       (options: NormalizedOptions) => {
-        hostname = options.hostname;
+        hostname = options.url.hostname;
       },
     ],
     beforeRedirect: [
       (options: NormalizedOptions) => {
-        if (options.headers && options.headers.authorization && options.hostname !== hostname) {
+        if (options.headers && options.headers.authorization && options.url.hostname !== hostname) {
           delete options.headers.authorization;
         }
       },

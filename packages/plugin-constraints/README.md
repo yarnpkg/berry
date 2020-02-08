@@ -1,6 +1,6 @@
 # `@yarnpkg/plugin-constraints`
 
-This plugin adds support for [constraints](https://next.yarnpkg.com/features/constraints) to Yarn.
+This plugin adds support for [constraints](https://yarnpkg.com/features/constraints) to Yarn.
 
 ## Install
 

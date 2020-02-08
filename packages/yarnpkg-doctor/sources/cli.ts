@@ -104,7 +104,7 @@ function checkForUnsafeWebpackLoaderAccess(workspace: Workspace, initializerNode
 }
 
 function checkForNodeModuleStrings(stringishNode: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral | ts.TemplateExpression , {configuration, report}: {configuration: Configuration, report: Report}) {
-  const match = /node_modules/g.test(stringishNode.getText());
+  const match = /node_modules(?!(\\{2}|\/)\.cache)/g.test(stringishNode.getText());
   if (match) {
     const prettyLocation = ast.prettyNodeLocation(configuration, stringishNode);
     report.reportWarning(MessageName.UNNAMED, `${prettyLocation}: Strings should avoid referencing the node_modules directory (prefer require.resolve)`);

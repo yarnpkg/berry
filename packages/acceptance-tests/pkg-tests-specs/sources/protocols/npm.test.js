@@ -75,5 +75,17 @@ describe(`Protocols`, () => {
         },
       ),
     );
+
+    test(
+      `it should allow fetching packages that have an unconventional url without specifying version`,
+      makeTemporaryEnv({}, async ({run, source}) => {
+        await run(`add`, `unconventional-tarball`);
+
+        await expect(source(`require('unconventional-tarball')`)).resolves.toMatchObject({
+          name: `unconventional-tarball`,
+          version: `1.0.0`,
+        });
+      }),
+    );
   });
 });

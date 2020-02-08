@@ -17,12 +17,17 @@ const HeaderContainer = styled.div`
 const NewsContainer = styled.div`
   position: relative;
 
-  height: 2.5em;
-
   padding: 0 1em;
 
   text-decoration: none;
   line-height: 2.5em;
+
+  ${ifMobile} {
+    white-space: pre-wrap;
+    line-height: 1.5em;
+    text-align: center;
+    padding-top: 5px;
+  }
 
   background: #2188b6;
   color: rgba(255, 255, 255, 0.8);
@@ -82,6 +87,12 @@ const MenuLogo = styled(Link)`
 
   padding: 0 1em;
 
+  ${ifDesktop} {
+    &:hover {
+      background: hsl(204, 33%, 96%);
+    }
+  }
+
   ${ifMobile} {
     margin-right: auto;
 
@@ -90,9 +101,14 @@ const MenuLogo = styled(Link)`
 `;
 
 const MenuToggle = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   margin: 1em;
   margin-left: 0;
 
+  color: grey;
   border: 1px solid lightgrey;
   border-radius: 10px;
 
@@ -117,7 +133,7 @@ const MenuNavigation = styled.div`
 
   ${ifMobile} {
     position: absolute;
-    z-index: 1;
+    z-index: 2;
 
     width: 100%;
 
@@ -127,18 +143,24 @@ const MenuNavigation = styled.div`
 
     &.expanded {
       transform: scaleY(1);
+      box-shadow: 0px 6px 6px 0px rgba(0, 0, 0, 0.1);
     }
   }
 `;
 
 const MenuEntry = styled.div`
+  ${ifDesktop} {
+    &:hover {
+      background: hsl(204, 33%, 96%);
+    }
+  }
   a {
     display: flex;
     align-items: center;
 
     height: 4rem;
 
-    border: 3px solid transparent;
+    border: 4px solid transparent;
 
     padding: 0 1em;
 
@@ -198,7 +220,7 @@ export const Header = ({children}) => {
       <NewsContainer>
         <NewsOverlay href={`https://github.com/yarnpkg/berry`} />
         <NewsInner>
-          <Highlight>Important:</Highlight> This documentation covers Yarn 2. For the 1.x doc, check <a href={`https://legacy.yarnpkg.com`}>legacy.yarnpkg.com</a>.
+          <Highlight>Important:</Highlight> This documentation covers Yarn 2. For the 1.x doc, check <a href={`https://classic.yarnpkg.com`}>classic.yarnpkg.com</a>.
         </NewsInner>
       </NewsContainer>
 
@@ -208,7 +230,7 @@ export const Header = ({children}) => {
             <Logo height={`3em`} align={`middle`} />
           </MenuLogo>
           <MenuToggle onClick={() => setExpanded(!expanded)}>
-            {`≡`}
+            {expanded ? `×` : `≡`}
           </MenuToggle>
         </MenuTools>
 

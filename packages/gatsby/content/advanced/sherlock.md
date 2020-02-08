@@ -105,7 +105,7 @@ This means that your code is throwing an exception on our systems which doesn't 
 If you wish to test that something is failing (for example to test that `yarn install --immutable` doesn't work when the lockfile isn't up-to-date, or something like this) you can use the following pattern:
 
 ```js
-expect(async () => {
+await expect(async () => {
   // ...
 }()).rejects.toThrow();
 ```

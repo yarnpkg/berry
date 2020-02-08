@@ -2,6 +2,7 @@ import {FetchOptions, FetchResult, Locator, Plugin} from '@yarnpkg/core';
 
 import {GitFetcher}                                 from './GitFetcher';
 import {GitResolver}                                from './GitResolver';
+import * as gitUtils                                from './gitUtils';
 
 export interface Hooks {
   fetchHostedRepository?: (
@@ -19,6 +20,8 @@ const plugin: Plugin = {
     GitResolver,
   ],
 };
+
+export {gitUtils};
 
 // eslint-disable-next-line arca/no-default-export
 export default plugin;

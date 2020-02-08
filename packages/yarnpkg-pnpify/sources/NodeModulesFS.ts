@@ -1,4 +1,4 @@
-import {Dirent, Filename, MkdirOptions}                    from '@yarnpkg/fslib';
+import {Dirent, Filename, MkdirOptions,ExtractHintOptions} from '@yarnpkg/fslib';
 import {FSPath, NativePath, PortablePath, npath, ppath}    from '@yarnpkg/fslib';
 import {WatchOptions, WatchCallback, Watcher, toFilename}  from '@yarnpkg/fslib';
 import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}       from '@yarnpkg/fslib';
@@ -84,6 +84,10 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     for (const fullPath of pathStack.reverse()) {
       this.baseFs.mkdirSync(fullPath);
     }
+  }
+
+  getExtractHint(hints: ExtractHintOptions) {
+    return this.baseFs.getExtractHint(hints);
   }
 
   resolve(path: PortablePath) {

@@ -19,12 +19,12 @@
     "@babel/register": "^7.5.5",
     "@types/emscripten": "^1.38.0",
     "@types/jest": "^24.0.25",
-    "@types/node": "^13.1.1",
+    "@types/node": "^13.7.0",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^2.13.0",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.26",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.20",
-    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.16",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.28",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.22",
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.17",
     "babel-jest": "^24.5.0",
     "clipanion": "^2.1.5",
     "eslint": "^5.16.0",
@@ -35,7 +35,7 @@
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
     "micromatch": "^4.0.2",
-    "typescript": "^3.7.4"
+    "typescript": "^3.7.5"
   },
   "dependenciesMeta": {
     "core-js": {
@@ -61,19 +61,15 @@
     "build:plugin-commands": "node ./scripts/gen-plugin-commands.js > packages/plugin-essentials/sources/pluginCommands.ts",
     "build:compile": "rm -rf \"$0\"/lib && mkdir -p \"$0\"/lib && rsync -a --exclude '*.ts' --exclude '*.tsx' --include '*.d.ts' \"$0\"/sources/ \"$0\"/lib/ && node scripts/compile \"$@\"",
     "build:compile-inline": "find \"$0\"/sources -name '*.js' && babel \"$0\"/sources --out-dir \"$0\"/sources --extensions .ts,.tsx",
-    "gen-tssdk": "pnpify --sdk scripts",
-    "release:all": "./scripts/release.sh",
     "test:lint": "eslint \"packages/**/@(sources|tests)/**/!(libzip).@(tsx|ts|js)\"",
     "test:unit": "jest",
+    "sleep": "sleep 10",
     "typecheck:all": "tsc --noEmit"
   },
   "sherlock": {
     "requireList": [
       "scripts/actions/sherlock-prepare.js"
     ]
-  },
-  "nextVersion": {
-    "nonce": "6668117343518271"
   },
   "repository": {
     "type": "git",

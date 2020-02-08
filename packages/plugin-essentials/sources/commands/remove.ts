@@ -64,6 +64,13 @@ export default class RemoveCommand extends BaseCommand {
       let isReferenced = false;
 
       for (const workspace of affectedWorkspaces) {
+        if (workspace.manifest.peerDependenciesMeta.has(ident.name)) {
+          workspace.manifest.peerDependenciesMeta.delete(ident.name);
+
+          hasChanged = true;
+          isReferenced = true;
+        }
+
         for (const target of targets) {
           const current = workspace.manifest[target].get(ident.identHash);
 

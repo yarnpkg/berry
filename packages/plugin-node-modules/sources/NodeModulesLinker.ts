@@ -420,8 +420,8 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
   const addModule = async ({srcDir, dstDir, linkType, keepNodeModules}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, keepNodeModules: boolean}) => {
     addQueue.push(limit(async () => {
       try {
-      // Soft links to themselves are used to denote workspace packages, we
-      // should just ignore them
+        // Soft links to themselves are used to denote workspace packages, we
+        // should just ignore them
         if (linkType === LinkType.SOFT && srcDir === dstDir)
           return;
 

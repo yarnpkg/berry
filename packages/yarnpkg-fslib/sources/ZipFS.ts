@@ -1,14 +1,14 @@
-import {Libzip}                                                                from '@yarnpkg/libzip';
-import {ReadStream, Stats, WriteStream, constants}                             from 'fs';
-import {PassThrough}                                                           from 'stream';
-import {isDate}                                                                from 'util';
+import {Libzip}                                                                                    from '@yarnpkg/libzip';
+import {ReadStream, Stats, WriteStream, constants}                                                 from 'fs';
+import {PassThrough}                                                                               from 'stream';
+import {isDate}                                                                                    from 'util';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
-import {FakeFS, MkdirOptions, WriteFileOptions}                                from './FakeFS';
-import {WatchOptions, WatchCallback, Watcher}                                  from './FakeFS';
-import {NodeFS}                                                                from './NodeFS';
-import * as errors                                                             from './errors';
-import {FSPath, PortablePath, npath, ppath, Filename}                          from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions} from './FakeFS';
+import {FakeFS, MkdirOptions, WriteFileOptions}                                                    from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher}                                                      from './FakeFS';
+import {NodeFS}                                                                                    from './NodeFS';
+import * as errors                                                                                 from './errors';
+import {FSPath, PortablePath, npath, ppath, Filename}                                              from './path';
 
 const S_IFMT = 0o170000;
 
@@ -157,8 +157,8 @@ export class ZipFS extends BasePortableFakeFS {
   private ready = false;
   private readOnly = false;
 
-  constructor(p: PortablePath, opts?: ZipPathOptions);
-  constructor(data: Buffer, opts?: ZipBufferOptions);
+  constructor(p: PortablePath, opts: ZipPathOptions);
+  constructor(data: Buffer, opts: ZipBufferOptions);
 
   constructor(source: PortablePath | Buffer, opts: ZipPathOptions | ZipBufferOptions) {
     super();
@@ -249,6 +249,17 @@ export class ZipFS extends BasePortableFakeFS {
     }
 
     this.ready = true;
+  }
+
+  getExtractHint(hints: ExtractHintOptions) {
+    for (const fileName of this.entries.keys()) {
+      const ext = this.pathUtils.extname(fileName);
+      if (hints.relevantExtensions.has(ext)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   getAllFiles() {
@@ -533,7 +544,9 @@ export class ZipFS extends BasePortableFakeFS {
 
       const type = this.listings.has(p)
         ? S_IFDIR
-        : S_IFREG;
+        : this.isSymbolicLink(entry)
+          ? S_IFLNK
+          : S_IFREG;
 
       const defaultMode = type === S_IFDIR
         ? 0o755
@@ -627,7 +640,7 @@ export class ZipFS extends BasePortableFakeFS {
       if (!resolveLastComponent)
         break;
 
-      const index = this.libzip.name.locate(this.zip, resolvedP);
+      const index = this.libzip.name.locate(this.zip, resolvedP.slice(1));
       if (index === -1)
         break;
 
@@ -753,11 +766,10 @@ export class ZipFS extends BasePortableFakeFS {
     if (this.readOnly)
       throw errors.EROFS(`chmod '${p}'`);
 
-    const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
+    // We don't allow to make the extracted entries group-writable
+    mask &= 0o755;
 
-    // We silently ignore chmod requests for directories
-    if (this.listings.has(resolvedP))
-      return;
+    const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
 
     const entry = this.entries.get(resolvedP);
     if (typeof entry === `undefined`)
@@ -917,9 +929,9 @@ export class ZipFS extends BasePortableFakeFS {
     return this.mkdirSync(p, opts);
   }
 
-  mkdirSync(p: PortablePath, opts?: MkdirOptions) {
-    if (opts && opts.recursive)
-      return this.mkdirpSync(p, {chmod: opts.mode});
+  mkdirSync(p: PortablePath, {mode = 0o755, recursive = false}: MkdirOptions = {}) {
+    if (recursive)
+      return this.mkdirpSync(p, {chmod: mode});
 
     if (this.readOnly)
       throw errors.EROFS(`mkdir '${p}'`);
@@ -930,6 +942,7 @@ export class ZipFS extends BasePortableFakeFS {
       throw errors.EEXIST(`mkdir '${p}'`);
 
     this.hydrateDirectory(resolvedP);
+    this.chmodSync(resolvedP, mode);
   }
 
   async rmdirPromise(p: PortablePath) {

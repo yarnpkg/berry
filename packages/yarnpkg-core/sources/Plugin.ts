@@ -6,7 +6,7 @@ import {SettingsDefinition, PluginConfiguration, Configuration} from './Configur
 import {Fetcher}                                                from './Fetcher';
 import {Linker}                                                 from './Linker';
 import {Project}                                                from './Project';
-import {Resolver}                                               from './Resolver';
+import {Resolver, ResolveOptions}                               from './Resolver';
 import {Locator, Descriptor}                                    from './types';
 
 type ProcessEnvironment = {[key: string]: string};
@@ -80,6 +80,7 @@ export type Hooks = {
     project: Project,
     locator: Locator,
     initialDependency: Descriptor,
+    extra: {resolver: Resolver, resolveOptions: ResolveOptions},
   ) => Promise<Descriptor>,
 
   // Called after the `install` method from the `Project` class successfully

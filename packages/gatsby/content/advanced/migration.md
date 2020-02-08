@@ -31,6 +31,10 @@ Run `npx @yarnpkg/doctor .` (or `yarn dlx @yarnpkg/doctor .`) in your project to
 
 Note that the doctor is intended to report any potential issue - it's then up to you to decide whether they are a false positive or not (for example it won't traverse Git repositories). For this reason we don't recommend using it as a CI tool.
 
+### Use `yarn dlx` instead of `yarn global`
+
+`yarn dlx` is designed to execute one off scripts that may have been installed as global packages with `yarn 1.x`. Managing system-wide packages is outside of the scope of `yarn`. To reflect this, `yarn global` has been removed. [Read more on GitHub](https://github.com/yarnpkg/berry/issues/821).
+
 ### Make sure you use `resolve@1.9+`
 
 Older releases don't support Plug'n'Play at all. Since the `resolve` package is used by pretty much everything nowadays, making sure that you use a modern release can go a long way to solve the most obnoxious bugs you may have.
@@ -77,7 +81,7 @@ We now need to inject some variables into the environment for Node to be able to
 
 ### Setup your IDE accordingly
 
-We've written a [guide](https://next.yarnpkg.com/advanced/editor-sdks) entirely designed to explain you how to use Yarn with your IDE. Make sure to take a look at it, and maybe contribute to it if some instructions are unclear or missing!
+We've written a [guide](https://yarnpkg.com/advanced/editor-sdks) entirely designed to explain you how to use Yarn with your IDE. Make sure to take a look at it, and maybe contribute to it if some instructions are unclear or missing!
 
 ### Update your configuration to the new settings
 
@@ -91,7 +95,7 @@ Yarn 2 uses a different style of configuration files than Yarn 1. While mostly i
 
   - Custom registries are now configured via [`npmRegistryServer`](/configuration/yarnrc#npmRegistryServer).
 
-  - Registry authentication tokens are now configuration via [`npmAuthToken`](/configuration/yarnrc#npmAuthToken).
+  - Registry authentication tokens are now configured via [`npmAuthToken`](/configuration/yarnrc#npmAuthToken).
 
   - The `yarn-offline-mirror` has been removed, since the offline mirror has been merged with the cache as part of the [Zero-Install effort](/features/zero-installs). Just commit the Yarn cache and you're ready to go.
 
@@ -152,7 +156,7 @@ This error appears when Node is executed without the proper environment variable
 
 Some packages don't properly list their actual dependencies for a reason or another. Now that we've fully switched to Plug'n'Play and enforce boundaries between the various branches of the dependency tree, this kind of issue will start to become more apparent than it previously was.
 
-The long term fix is to submit a pull request upstream to add the missing dependency to the package listing. Given that it sometimes might take sometime before they get merged, we also have a more short-term fix available: create `.yarnrc.yml` in your project, then use the [`packageExtensions` setting]() to add the missing dependency to the relevant packages. Once you're done, run `yarn install` to apply your changes and voilà!
+The long term fix is to submit a pull request upstream to add the missing dependency to the package listing. Given that it sometimes might take sometime before they get merged, we also have a more short-term fix available: create `.yarnrc.yml` in your project, then use the [`packageExtensions` setting](/configuration/yarnrc#packageExtensions) to add the missing dependency to the relevant packages. Once you're done, run `yarn install` to apply your changes and voilà!
 
 ```yaml
 packageExtensions:
@@ -161,3 +165,5 @@ packageExtensions:
       "supports-color":
         optional: true
 ```
+
+If you also open a PR on the upstream repository you will also be able to contribute your package extension to our [compat plugin](https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts), helping the whole ecosystem move forward.

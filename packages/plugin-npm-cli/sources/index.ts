@@ -1,5 +1,6 @@
 import {Plugin, SettingsType} from '@yarnpkg/core';
 
+import info                   from './commands/npm/info';
 import login                  from './commands/npm/login';
 import npmPublish             from './commands/npm/publish';
 import whoami                 from './commands/npm/whoami';
@@ -13,6 +14,7 @@ const plugin: Plugin = {
     },
   },
   commands: [
+    info,
     login,
     npmPublish,
     whoami,

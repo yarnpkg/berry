@@ -3,7 +3,7 @@ import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseSh
 import {EnvSegment}                                                                  from '@yarnpkg/parsers';
 import {PassThrough, Readable, Writable}                                             from 'stream';
 
-import {Handle, ProtectedStream, Stdio, start}                                       from './pipe';
+import {Handle, ProcessImplementation, ProtectedStream, Stdio, start}                from './pipe';
 import {makeBuiltin, makeProcess}                                                    from './pipe';
 
 export type UserOptions = {
@@ -34,6 +34,7 @@ export type ShellState = {
   cwd: PortablePath,
   environment: {[key: string]: string},
   exitCode: number | null,
+  procedures: {[key: string]: ProcessImplementation},
   stdin: Readable,
   stdout: Writable,
   stderr: Writable,
@@ -85,7 +86,19 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     return 0;
   }],
 
-  [`setredirects`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
+  [`__ysh_run_procedure`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
+    const procedure = state.procedures[args[0]];
+
+    const exitCode = await start(procedure, {
+      stdin: new ProtectedStream<Readable>(state.stdin),
+      stdout: new ProtectedStream<Writable>(state.stdout),
+      stderr: new ProtectedStream<Writable>(state.stderr),
+    }).run();
+
+    return exitCode;
+  }],
+
+  [`__ysh_set_redirects`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
     let stdin = state.stdin;
     let stdout = state.stdout;
     let stderr = state.stderr;
@@ -260,9 +273,12 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
               if (segment.quoted) {
                 push(raw);
               } else {
-                for (const part of split(raw)) {
-                  pushAndClose(part);
-                }
+                const parts = split(raw);
+
+                for (let t = 0; t < parts.length - 1; ++t)
+                  pushAndClose(parts[t]);
+
+                push(parts[parts.length - 1]);
               }
             } break;
 
@@ -279,9 +295,12 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
                     }
                   } else {
                     for (const raw of opts.args) {
-                      for (const part of split(raw)) {
-                        pushAndClose(part);
-                      }
+                      const parts = split(raw);
+
+                      for (let t = 0; t < parts.length - 1; ++t)
+                        pushAndClose(parts[t]);
+
+                      push(parts[parts.length - 1]);
                     }
                   }
                 } break;
@@ -334,7 +353,7 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
     for (const [subtype, targets] of redirections.entries())
       redirectionArgs.splice(redirectionArgs.length, 0, subtype, String(targets.length), ...targets);
 
-    interpolated.splice(0, 0, `setredirects`, ...redirectionArgs, `--`);
+    interpolated.splice(0, 0, `__ysh_set_redirects`, ...redirectionArgs, `--`);
   }
 
   return interpolated;
@@ -406,9 +425,25 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
       } break;
 
       case `subshell`: {
-      // We don't interpolate the subshell because it will be recursively
-      // interpolated within its own context
-        action = makeSubshellAction(current.subshell, opts, activeState);
+        const args = await interpolateArguments(current.args, opts, state);
+
+        // We don't interpolate the subshell because it will be recursively
+        // interpolated within its own context
+        const procedure = makeSubshellAction(current.subshell, opts, activeState);
+
+        if (args.length === 0) {
+          action = procedure;
+        } else {
+          let key;
+          do {
+            key = String(Math.random());
+          } while (Object.prototype.hasOwnProperty.call(activeState.procedures, key));
+
+          activeState.procedures = {...activeState.procedures};
+          activeState.procedures[key] = procedure;
+
+          action = makeCommandAction([...args, `__ysh_run_procedure`, key], opts, activeState);
+        }
       } break;
 
       case `envs`: {
@@ -648,6 +683,7 @@ export async function execute(command: string, args: Array<string> = [], {
     cwd,
     environment: normalizedEnv,
     exitCode: null,
+    procedures: {},
     stdin,
     stdout,
     stderr,

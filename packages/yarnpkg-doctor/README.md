@@ -94,5 +94,5 @@ This rule is a temporary measure to address this [issue](https://github.com/webp
 
 ## Further reading
 
-* [Yarn 2 docs](https://next.yarnpkg.com)
-* [Introduction to `plug-n-play`](https://next.yarnpkg.com/features/pnp)
+* [Yarn 2 docs](https://yarnpkg.com)
+* [Introduction to `plug-n-play`](https://yarnpkg.com/features/pnp)

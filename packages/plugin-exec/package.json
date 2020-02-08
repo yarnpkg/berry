@@ -8,12 +8,12 @@
     "tmp": "^0.1.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.20"
+    "@yarnpkg/core": "^2.0.0-rc.22"
   },
   "devDependencies": {
     "@types/tmp": "^0.0.33",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.20",
-    "typescript": "^3.7.4"
+    "@yarnpkg/core": "workspace:^2.0.0-rc.22",
+    "typescript": "^3.7.5"
   },
   "scripts": {
     "build:plugin-exec": "builder build plugin",

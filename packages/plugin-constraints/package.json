@@ -15,16 +15,16 @@
     "tau-prolog": "^0.2.66"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.26",
-    "@yarnpkg/core": "^2.0.0-rc.20"
+    "@yarnpkg/cli": "^2.0.0-rc.28",
+    "@yarnpkg/core": "^2.0.0-rc.22"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",
     "@types/typescript": "2.0.0",
     "@yarnpkg/builder": "workspace:^2.0.0-rc.18",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.26",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.20",
-    "typescript": "^3.7.4"
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.28",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.22",
+    "typescript": "^3.7.5"
   },
   "scripts": {
     "build:plugin-constraints": "builder build plugin",

@@ -10,4 +10,4 @@ yarn plugin import interactive-tools
 
 ## Commands
 
-- [`yarn upgrade-interactive`](https://next.yarnpkg.com/cli/upgrade-interactive)
+- [`yarn upgrade-interactive`](https://yarnpkg.com/cli/upgrade-interactive)

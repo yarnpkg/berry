@@ -30,6 +30,5 @@ jobs:
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
-        yarn dlx -p @vue/cli@^4.1.0-beta.0 vue create -d my-vue && cd my-vue
-        yarn add vue-cli-plugin-pnp -D
+        yarn dlx -p @vue/cli vue create -d my-vue && cd my-vue
         yarn build

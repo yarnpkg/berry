@@ -21,7 +21,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
    * The cache that will be used for all accesses occuring outside of a PnP context.
    */
 
-  const defaultCache: typeof Module._cache = {};
+  const defaultCache: NodeJS.NodeRequireCache = {};
 
   /**
    * Used to disable the resolution hooks (for when we want to fallback to the previous resolution - we then need
@@ -88,10 +88,17 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       ? opts.manager.getApiEntry(parentApiPath, true).instance
       : null;
 
+    // Requests that aren't covered by the PnP runtime goes through the
+    // parent `_load` implementation. This is required for VSCode, for example,
+    // which override `_load` to provide additional builtins to its extensions.
+
+    if (parentApi === null)
+      return originalModuleLoad(request, parent, isMain);
+
     // The 'pnpapi' name is reserved to return the PnP api currently in use
     // by the program
 
-    if (parentApi !== null && request === `pnpapi`)
+    if (request === `pnpapi`)
       return parentApi;
 
     // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us

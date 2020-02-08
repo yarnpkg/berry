@@ -1,11 +1,20 @@
 import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import {PnpApi}                                    from '@yarnpkg/pnp';
+import chalk                                       from 'chalk';
 import CJSON                                       from 'comment-json';
 
 import {dynamicRequire}                            from './dynamicRequire';
 
-const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {usePnpify}: {usePnpify: boolean}) => [
+type TemplateOptions = {
+  setupEnv?: boolean,
+  usePnpify?: boolean,
+};
+
+const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false, usePnpify = false}: TemplateOptions) => [
+  `#!/usr/bin/env node\n`,
+  `\n`,
   `const {createRequire, createRequireFromPath} = require(\`module\`);\n`,
-  `const {dirname, resolve} = require(\`path\`);\n`,
+  `const {resolve} = require(\`path\`);\n`,
   `\n`,
   `const relPnpApiPath = ${JSON.stringify(npath.fromPortablePath(relPnpApiPath))};\n`,
   `\n`,
@@ -14,10 +23,14 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {usePnpify}: {use
   `\n`,
   `// Setup the environment to be able to require ${module}\n`,
   `require(absPnpApiPath).setup();\n`,
-  `\n`,
-  `// Prepare the environment (to be ready in case of child_process.spawn etc)\n`,
-  `process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || \`\`;\n`,
-  `process.env.NODE_OPTIONS += \` -r \${absPnpApiPath}\`;\n`,
+  ...(setupEnv || usePnpify ? [
+    `\n`,
+    `// Prepare the environment (to be ready in case of child_process.spawn etc)\n`,
+  ] : []),
+  ...(setupEnv ? [
+    `process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || \`\`;\n`,
+    `process.env.NODE_OPTIONS += \` -r \${absPnpApiPath}\`;\n`,
+  ] : []),
   ...(usePnpify ? [
     `process.env.NODE_OPTIONS += \` -r \${pnpifyResolution}\`;\n`,
     `\n`,
@@ -29,9 +42,15 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {usePnpify}: {use
   `module.exports = absRequire(\`${module}\`);\n`,
 ].join(``);
 
-const addVSCodeWorkspaceSettings = async (projectRoot: PortablePath, settings: any) => {
+const addVSCodeWorkspaceSettings = async (pnpApi: PnpApi, settings: any) => {
+  const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
+  const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
+
   const settingsPath = ppath.join(projectRoot, `.vscode/settings.json` as PortablePath);
-  const content = await xfs.existsPromise(settingsPath) ? await xfs.readFilePromise(settingsPath, `utf8`) : `{}`;
+
+  const content = await xfs.existsPromise(settingsPath)
+    ? await xfs.readFilePromise(settingsPath, `utf8`)
+    : `{}`;
 
   const data = CJSON.parse(content);
   const patched = `${CJSON.stringify({...data, ...settings}, null, 2)}\n`;
@@ -42,96 +61,169 @@ const addVSCodeWorkspaceSettings = async (projectRoot: PortablePath, settings: a
   });
 };
 
-const generateTypescriptWrapper = async (projectRoot: PortablePath, target: PortablePath) => {
-  const typescript = ppath.join(target, `typescript` as PortablePath);
-  const manifest = ppath.join(typescript, `package.json` as PortablePath);
-  const tsserver = ppath.join(typescript, `lib/tsserver.js` as PortablePath);
+class Wrapper {
+  private name: PortablePath;
 
-  const relPnpApiPath = ppath.relative(ppath.dirname(tsserver), ppath.join(projectRoot, `.pnp.js` as Filename));
+  private pnpApi: PnpApi;
+  private target: PortablePath;
 
-  await xfs.mkdirpPromise(ppath.dirname(tsserver));
-  await xfs.writeFilePromise(manifest, JSON.stringify({name: `typescript`, version: `${dynamicRequire(`typescript/package.json`).version}-pnpify`}, null, 2));
-  await xfs.writeFilePromise(tsserver, TEMPLATE(relPnpApiPath, `typescript/lib/tsserver`, {usePnpify: false}));
+  private paths: Map<PortablePath, PortablePath> = new Map();
 
-  await addVSCodeWorkspaceSettings(projectRoot, {
-    [`typescript.tsdk`]: npath.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(tsserver))),
-  });
-};
+  constructor(name: PortablePath, {pnpApi, target}: {pnpApi: PnpApi, target: PortablePath}) {
+    this.name = name;
 
-export const generateEslintWrapper = async (projectRoot: PortablePath, target: PortablePath) => {
-  const eslint = ppath.join(target, `eslint` as PortablePath);
-  const manifest = ppath.join(eslint, `package.json` as PortablePath);
-  const api = ppath.join(eslint, `lib/api.js` as PortablePath);
-
-  const relPnpApiPath = ppath.relative(ppath.dirname(api), ppath.join(projectRoot, `.pnp.js` as Filename));
-
-  await xfs.mkdirpPromise(ppath.dirname(api));
-  await xfs.writeFilePromise(manifest, JSON.stringify({name: `eslint`, version: `${dynamicRequire(`eslint/package.json`).version}-pnpify`, main: `lib/api.js`}, null, 2));
-  await xfs.writeFilePromise(api, TEMPLATE(relPnpApiPath, `eslint`, {usePnpify: false}));
-
-  await addVSCodeWorkspaceSettings(projectRoot, {
-    [`eslint.nodePath`]: npath.fromPortablePath(ppath.relative(projectRoot, ppath.dirname(eslint))),
-  });
-};
-
-export const generatePrettierWrapper = async (projectRoot: PortablePath, target: PortablePath) => {
-  const prettier = ppath.join(target, `prettier` as PortablePath);
-  const manifest = ppath.join(prettier, `package.json` as PortablePath);
-  const api = ppath.join(prettier, `index.js` as PortablePath);
-
-  const relPnpApiPath = ppath.relative(ppath.dirname(api), ppath.join(projectRoot, `.pnp.js` as Filename));
-
-  await xfs.mkdirpPromise(ppath.dirname(api));
-  await xfs.writeFilePromise(manifest, JSON.stringify({name: `prettier`, version: `${dynamicRequire(`prettier/package.json`).version}-pnpify`, main: `index.js`}, null, 2));
-  await xfs.writeFilePromise(api, TEMPLATE(relPnpApiPath, `prettier`, {usePnpify: false}));
-
-  await addVSCodeWorkspaceSettings(projectRoot, {
-    [`prettier.prettierPath`]: npath.fromPortablePath(ppath.relative(projectRoot, prettier)),
-  });
-};
-
-const isPackageInstalled = (name: string): boolean => {
-  try {
-    dynamicRequire.resolve(name);
-    return true;
-  } catch (e) {
-    if (e.code && e.code === `MODULE_NOT_FOUND`) {
-      return false;
-    } else  {
-      throw e;
-    }
+    this.pnpApi = pnpApi;
+    this.target = target;
   }
+
+  async writeManifest() {
+    const absWrapperPath = ppath.join(this.target, this.name, `package.json` as Filename);
+
+    const topLevelInformation = this.pnpApi.getPackageInformation(this.pnpApi.topLevel)!;
+    const dependencyReference = topLevelInformation.packageDependencies.get(this.name)!;
+
+    const pkgInformation = this.pnpApi.getPackageInformation(this.pnpApi.getLocator(this.name, dependencyReference));
+    if (pkgInformation === null)
+      throw new Error(`Assertion failed: Package ${this.name} isn't a dependency of the top-level`);
+
+    const manifest = dynamicRequire(`${this.name}/package.json`);
+
+    await xfs.mkdirpPromise(ppath.dirname(absWrapperPath));
+    await xfs.writeFilePromise(absWrapperPath, JSON.stringify({
+      name: this.name,
+      version: `${manifest.version}-pnpify`,
+      main: manifest.main,
+    }, null, 2));
+  }
+
+  async writeBinary(relPackagePath: PortablePath, options: TemplateOptions = {}) {
+    const absPackagePath = await this.writeFile(relPackagePath, options);
+
+    await xfs.chmodPromise(absPackagePath, 0o755);
+  }
+
+  async writeFile(relPackagePath: PortablePath, options: TemplateOptions = {}) {
+    const topLevelInformation = this.pnpApi.getPackageInformation(this.pnpApi.topLevel)!;
+    const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
+
+    const absWrapperPath = ppath.join(this.target, this.name, relPackagePath);
+    const relProjectPath = ppath.relative(projectRoot, absWrapperPath);
+
+    const absPnpApiPath = npath.toPortablePath(this.pnpApi.resolveRequest(`pnpapi`, null)!);
+    const relPnpApiPath = ppath.relative(ppath.dirname(absWrapperPath), absPnpApiPath);
+
+    await xfs.mkdirpPromise(ppath.dirname(absWrapperPath));
+    await xfs.writeFilePromise(absWrapperPath, TEMPLATE(relPnpApiPath, ppath.join(this.name, relPackagePath), options));
+
+    this.paths.set(relPackagePath, relProjectPath);
+
+    return absWrapperPath;
+  }
+
+  getProjectPathTo(relPackagePath: PortablePath) {
+    const relProjectPath = this.paths.get(relPackagePath);
+
+    if (typeof relProjectPath === `undefined`)
+      throw new Error(`Assertion failed: Expected path to have been registered`);
+
+    return relProjectPath;
+  }
+}
+
+const generateTypescriptWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`typescript` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeManifest();
+
+  await wrapper.writeBinary(`bin/tsc` as PortablePath);
+  await wrapper.writeBinary(`bin/tsserver` as PortablePath);
+
+  await wrapper.writeFile(`lib/tsc.js` as PortablePath);
+  await wrapper.writeFile(`lib/tsserver.js` as PortablePath);
+
+  await addVSCodeWorkspaceSettings(pnpApi, {
+    [`typescript.tsdk`]: npath.fromPortablePath(
+      ppath.dirname(
+        wrapper.getProjectPathTo(
+          `lib/tsserver.js` as PortablePath,
+        ),
+      ),
+    ),
+  });
 };
 
-const SDKS: Array<[string, (projectRoot: PortablePath, target: PortablePath) => Promise<void>]> = [
-  [`typescript`, generateTypescriptWrapper],
+export const generateEslintWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`eslint` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeManifest();
+
+  await wrapper.writeBinary(`bin/eslint.js` as PortablePath);
+  await wrapper.writeFile(`lib/api.js` as PortablePath);
+
+  await addVSCodeWorkspaceSettings(pnpApi, {
+    [`eslint.nodePath`]: npath.fromPortablePath(
+      ppath.dirname(ppath.dirname(ppath.dirname(
+        wrapper.getProjectPathTo(
+          `lib/api.js` as PortablePath,
+        ),
+      ))),
+    ),
+  });
+};
+
+export const generatePrettierWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`prettier` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeManifest();
+
+  await wrapper.writeBinary(`index.js` as PortablePath);
+
+  await addVSCodeWorkspaceSettings(pnpApi, {
+    [`prettier.prettierPath`]: npath.fromPortablePath(
+      wrapper.getProjectPathTo(
+        `index.js` as PortablePath,
+      ),
+    ),
+  });
+};
+
+const SDKS: Array<[string, (pnpApi: PnpApi, target: PortablePath) => Promise<void>]> = [
   [`eslint`, generateEslintWrapper],
   [`prettier`, generatePrettierWrapper],
+  [`typescript`, generateTypescriptWrapper],
 ];
 
-export const generateSdk = async (projectRoot: PortablePath): Promise<any> => {
+export const generateSdk = async (pnpApi: PnpApi): Promise<any> => {
+  const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
+  const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
+
   const targetFolder = ppath.join(projectRoot, `.vscode/pnpify` as PortablePath);
 
-  let generatedSomething = false;
-
   if (xfs.existsSync(targetFolder)) {
-    console.log(`Cleaning the existing SDKs...`);
+    console.log(`Cleaning up the existing SDK files...`);
     await xfs.removePromise(targetFolder);
-
-    generatedSomething = true;
   }
+
+  console.log(`Installing fresh SDKs for ${chalk.magenta(projectRoot)}:`);
+  console.log(``);
+
+  let skippedSome = false;
 
   for (const [pkgName, generateWrapper] of SDKS) {
-    if (!isPackageInstalled(pkgName))
-      continue;
+    const displayName = pkgName.replace(/^[a-z]/g, $0 => $0.toUpperCase());
 
-    console.log(`Installing the SDK for ${pkgName}...`);
-    await generateWrapper(projectRoot, targetFolder);
-
-    generatedSomething = true;
+    if (topLevelInformation.packageDependencies.has(pkgName)) {
+      console.log(`  ${chalk.green(`✓`)} ${displayName}`);
+      await generateWrapper(pnpApi, targetFolder);
+    } else {
+      console.log(`  ${chalk.yellow(`•`)} ${displayName} (dependency not found; skipped)`);
+      skippedSome = true;
+    }
   }
 
-  if (!generatedSomething) {
-    console.log(`Nothing to do.`);
+  if (skippedSome) {
+    console.log(``);
+    console.log(`Note that in order to be detected those packages have to be listed as top-level`);
+    console.log(`dependencies (listing them into each individual workspace won't be enough).`);
   }
 };
