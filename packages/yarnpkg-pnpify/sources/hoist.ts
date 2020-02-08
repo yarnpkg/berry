@@ -106,16 +106,17 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, ancestorMap: 
     return 0;
   seenNodes.add(rootNode);
 
-  let totalHoisted = 0;
+  let totalHoisted = hoistPass(tree, rootNode, ancestorMap, options);
 
-  totalHoisted += hoistPass(tree, rootNode, ancestorMap, options);
-
+  let childrenHoisted = 0;
   for (const dep of rootNode.deps.values())
-    totalHoisted += hoistTo(tree, dep, ancestorMap, options, seenNodes);
+    childrenHoisted += hoistTo(tree, dep, ancestorMap, options, seenNodes);
 
-  totalHoisted += hoistPass(tree, rootNode, ancestorMap, options);
+  if (childrenHoisted > 0)
+    // We need second hoisting pass, because some of the children were hoisted
+    hoistPass(tree, rootNode, ancestorMap, options);
 
-  return totalHoisted;
+  return totalHoisted + childrenHoisted;
 };
 
 const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, ancestorMap: AncestorMap, options: HoistOptions): number => {
@@ -193,13 +194,9 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, ancestorMap: AncestorMa
       const rootDep = rootNode.deps.get(node.name);
       const origRootDep = rootNode.origDeps.get(node.name);
       const hoistedRootDep = rootNode.hoistedDeps.get(node.name);
-      let isNameAvailable;
-      if (!rootDep && hoistedRootDep && hoistedRootDep.physicalLocator !== node.physicalLocator)
-        isNameAvailable = false;
-      else
-        isNameAvailable = (!rootDep || rootDep.physicalLocator === node.physicalLocator)
+      const isNameAvailable = (!hoistedRootDep || hoistedRootDep.physicalLocator === node.physicalLocator)
+          && (!rootDep || rootDep.physicalLocator === node.physicalLocator)
           && (!origRootDep || origRootDep.physicalLocator === node.physicalLocator);
-
 
       isHoistable = isNameAvailable;
     }
