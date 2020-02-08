@@ -38,8 +38,6 @@ const NODE_MODULES = toFilename(`node_modules`);
 /** Package locator key for usage inside maps */
 type LocatorKey = string;
 
-type PackageId = string;
-
 /**
  * Returns path to archive, if package location is inside the archive.
  *
@@ -63,7 +61,7 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
   const packageTree = buildPackageTree(pnp);
 
-  const hoistedTree = hoist(packageTree);
+  const hoistedTree = hoist(packageTree, {check: true});
 
   return populateNodeModulesTree(pnp, hoistedTree, options);
 };
