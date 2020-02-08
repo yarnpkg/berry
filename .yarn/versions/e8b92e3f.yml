@@ -1,5 +1,6 @@
 releases:
   "@yarnpkg/cli": prerelease
+  "@yarnpkg/plugin-compat": prerelease
   "@yarnpkg/plugin-node-modules": prerelease
   "@yarnpkg/plugin-pnp": prerelease
   "@yarnpkg/pnp": prerelease
