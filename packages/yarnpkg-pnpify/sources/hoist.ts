@@ -3,7 +3,7 @@ export type HoisterTree = {name: PackageName, reference: string, deps: Set<Hoist
 export type HoisterResult = {name: PackageName, references: Set<string>, deps: Set<HoisterResult>};
 type Locator = string;
 type PhysicalLocator = string;
-type HoisterWorkTree = {name: PackageName, references: Set<string>, log: string[], physicalLocator: PhysicalLocator, locator: Locator, deps: Map<PackageName, HoisterWorkTree>, origDeps: Map<PackageName, HoisterWorkTree>, hoistedDeps: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, singleton: boolean};
+type HoisterWorkTree = {name: PackageName, references: Set<string>, log: string[], physicalLocator: PhysicalLocator, locator: Locator, deps: Map<PackageName, HoisterWorkTree>, origDeps: Map<PackageName, HoisterWorkTree>, hoistedDeps: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>};
 
 type HoistCandidate = {
   node: HoisterWorkTree,
@@ -127,7 +127,7 @@ const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, ancestorMap
     packagesToHoist = getHoistablePackages(rootNode, ancestorMap);
     totalHoisted += packagesToHoist.size;
     for (const {parent, node} of packagesToHoist) {
-      let parentNode = parent.singleton ? parent : clonedParents.get(parent);
+      let parentNode = clonedParents.get(parent);
       if (!parentNode) {
         const {name, references, physicalLocator, locator, log, deps, origDeps, hoistedDeps, peerNames} = parent!;
         parentNode = {
@@ -140,7 +140,6 @@ const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, ancestorMap
           origDeps: new Map(origDeps),
           hoistedDeps: new Map(hoistedDeps),
           peerNames: new Set(peerNames),
-          singleton: false,
         };
         clonedParents.set(parent, parentNode);
         rootNode.deps.set(parentNode.name, parentNode);
@@ -297,7 +296,6 @@ const cloneTree = (tree: HoisterTree): HoisterWorkTree => {
     hoistedDeps: new Map(),
     peerNames: new Set(peerNames),
     log: [],
-    singleton: false,
   };
 
   const seenNodes = new Map<HoisterTree, HoisterWorkTree>([[tree, treeCopy]]);
@@ -320,7 +318,6 @@ const cloneTree = (tree: HoisterTree): HoisterWorkTree => {
         hoistedDeps: new Map(),
         peerNames: new Set(peerNames),
         log: [],
-        singleton: false,
       };
       seenNodes.set(node, workNode);
     }
