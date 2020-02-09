@@ -1,8 +1,9 @@
-import {NativePath, PortablePath, Filename}         from '@yarnpkg/fslib';
-import {toFilename, npath, ppath}                   from '@yarnpkg/fslib';
-import {PnpApi, PackageLocator, PackageInformation} from '@yarnpkg/pnp';
+import {NativePath, PortablePath, Filename}             from '@yarnpkg/fslib';
+import {toFilename, npath, ppath}                       from '@yarnpkg/fslib';
+import {PnpApi, PackageLocator, PackageInformation}     from '@yarnpkg/pnp';
+import {PhysicalPackageLocator, TopLevelPackageLocator} from '@yarnpkg/pnp';
 
-import {hoist, HoisterTree, HoisterResult}          from './hoist';
+import {hoist, HoisterTree, HoisterResult}              from './hoist';
 
 // Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
 // But because of this TypeScript requires @yarnpkg/pnp during runtime
@@ -59,11 +60,18 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
  * @returns hoisted `node_modules` directories representation in-memory
  */
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
-  const packageTree = buildPackageTree(pnp);
+  const pnpRoots = pnp.getDependencyTreeRoots();
+  let nodeModulesMap = new Map();
+  for (const locator of pnpRoots) {
+    const packageTree = buildPackageTree(pnp, locator);
 
-  const hoistedTree = hoist(packageTree, {check: false});
+    const hoistedTree = hoist(packageTree, {check: false});
 
-  return populateNodeModulesTree(pnp, hoistedTree, options);
+    const nmMap = populateNodeModulesTree(pnp, hoistedTree, options);
+    nodeModulesMap = new Map([...nodeModulesMap, ...nmMap]);
+  }
+
+  return nodeModulesMap;
 };
 
 const stringifyLocator = (locator: PackageLocator): LocatorKey => `${locator.name}@${locator.reference}`;
@@ -100,17 +108,22 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
  *
  * @returns package tree, packages info and locators
  */
-const buildPackageTree = (pnp: PnpApi): HoisterTree => {
-  const pnpRoots = pnp.getDependencyTreeRoots();
+const buildPackageTree = (pnp: PnpApi, topLocator: PhysicalPackageLocator | TopLevelPackageLocator): HoisterTree => {
+  const topPkg = pnp.getPackageInformation(topLocator)!;
+  // const topLocatorKey = stringifyLocator(topLocator);
+  // const pnpRoots = pnp.getDependencyTreeRoots();
 
-  const topPkg = pnp.getPackageInformation(pnp.topLevel)!;
-  const topLocator = pnp.findPackageLocator(topPkg.packageLocation)!;
-  const topLocatorKey = stringifyLocator(topLocator);
-  for (const locator of pnpRoots) {
-    if (stringifyLocator(locator) !== topLocatorKey) {
-      topPkg.packageDependencies.set(locator.name!, locator.reference);
-    }
-  }
+  // console.log(require('util').inspect(pnpRoots, {depth: null}));
+
+  // const topPkg = pnp.getPackageInformation(pnp.topLevel)!;
+  // const topLocator = pnp.findPackageLocator(topPkg.packageLocation)!;
+  // const topLocatorKey = stringifyLocator(topLocator);
+  // for (const locator of pnpRoots) {
+  //   // console.log(require('util').inspect(pnp.getPackageInformation(locator), {depth: null}));
+  //   if (stringifyLocator(locator) !== topLocatorKey) {
+  //     topPkg.packageDependencies.set(locator.name!, locator.reference);
+  //   }
+  // }
 
   const packageTree: HoisterTree = {
     name: topLocator.name!,
@@ -153,6 +166,8 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
   };
 
   addPackageToTree(topPkg, topLocator, packageTree);
+
+  console.log(require('util').inspect(packageTree, {depth: null}));
 
   return packageTree;
 };
@@ -292,7 +307,7 @@ const benchmarkBuildTree = (pnp: PnpApi, options: NodeModulesTreeOptions): numbe
   const iterCount = 100;
   const startTime = Date.now();
   for (let iter = 0; iter < iterCount; iter++) {
-    const packageTree = buildPackageTree(pnp);
+    const packageTree = buildPackageTree(pnp, pnp.topLevel);
     const hoistedTree = hoist(packageTree);
     populateNodeModulesTree(pnp, hoistedTree, options);
   }
