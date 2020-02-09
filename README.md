@@ -88,7 +88,7 @@ Those plugins typically come bundled with Yarn. You don't need to do anything sp
 - [★ plugin-dlx](packages/plugin-dlx) adds support for the [`yarn dlx`](https://yarnpkg.com/cli/dlx) command.
 - [★ plugin-essentials](packages/plugin-essentials) adds various commands deemed necessary for a package manager (add, remove, ...).
 - [★ plugin-file](packages/plugin-file) adds support for using the `file:` protocol within your dependencies.
-- [★ plugin-github](packages/plugin-github) adds support for using Github references as dependencies. [This plugin doesn't use git.](https://stackoverflow.com/a/13636954/880703)
+- [★ plugin-github](packages/plugin-github) adds support for using GitHub references as dependencies. [This plugin doesn't use git.](https://stackoverflow.com/a/13636954/880703)
 - [★ plugin-http](packages/plugin-http) adds support for using straight URL references as dependencies (tgz archives only).
 - [★ plugin-init](packages/plugin-init) adds support for the [`yarn init`](https://yarnpkg.com/cli/init) command.
 - [★ plugin-link](packages/plugin-link) adds support for using `link:` and `portal:` references as dependencies.

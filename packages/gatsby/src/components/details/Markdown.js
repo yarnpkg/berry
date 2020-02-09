@@ -50,7 +50,7 @@ const renderAndEscapeMarkdown = ({source, repository}) => {
           path,
         })
         : prefixURL(href, {
-          // Github and Gitlab are the same
+          // GitHub and GitLab are the same
           base: `https://${host}`,
           user,
           project,
