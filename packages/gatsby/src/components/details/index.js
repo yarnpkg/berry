@@ -334,7 +334,7 @@ export class Details extends Component {
       });
     } else if (host === 'gitlab.com') {
       const getGitlabFile = ({user, project, branch, filePath}) => {
-        // We need to use the Gitlab API because the raw url does not support cors
+        // We need to use the GitLab API because the raw url does not support cors
         // https://gitlab.com/gitlab-org/gitlab-ce/issues/25736
         // So we need to 'translate' raw urls to api urls.
         // E.g (https://gitlab.com/janslow/gitlab-fetch/raw/master/CHANGELOG.md) -> (https://gitlab.com/api/v4/projects/janslow%2Fgitlab-fetch/repository/files/CHANGELOG.md?ref=master)

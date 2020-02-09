@@ -11,8 +11,8 @@ The following protocols can be used by any dependency entry listed in the `depen
 | Semver | `^1.2.3` | Resolves from the default registry |
 | Tag | `latest` | Resolves from the default registry |
 | Npm alias | `npm:name@...` | Resolves from the npm registry |
-| Github | `foo/bar` | Alias for the `github:` protocol |
-| Github | `github:foo/bar` | Downloads a **public** package from Github |
+| GitHub | `foo/bar` | Alias for the `github:` protocol |
+| GitHub | `github:foo/bar` | Downloads a **public** package from GitHub |
 | File | `file:./my-package` | Copies the target location into the cache |
 | Link | `link:./my-folder` | Creates a link to the `./my-folder` folder (ignore dependencies) |
 | Patch | `patch:left-pad@1.0.0#./my-patch.patch` | Creates a patched copy of the original package |

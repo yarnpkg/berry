@@ -6204,8 +6204,8 @@ module.exports = {
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  
-  
+
+
   module.exports = {
   	"aliceblue": [240, 248, 255],
   	"antiquewhite": [250, 235, 215],
@@ -6528,7 +6528,7 @@ module.exports = {
   })
 
   exports.isCI = !!(
-    env.CI || // Travis CI, CircleCI, Cirrus CI, Gitlab CI, Appveyor, CodeShip, dsari
+    env.CI || // Travis CI, CircleCI, Cirrus CI, GitLab CI, Appveyor, CodeShip, dsari
     env.CONTINUOUS_INTEGRATION || // Travis CI, Cirrus CI
     env.BUILD_NUMBER || // Jenkins, TeamCity
     env.RUN_ID || // TaskCluster, dsari
