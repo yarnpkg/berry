@@ -213,8 +213,6 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
       seenNodes.add(pkg);
       for (const dep of pkg.deps) {
         const references: string[] = Array.from(dep.references).sort();
-        if (dep.name.indexOf('$wsroot$') === 0)
-          continue;
         const locator = {name: dep.name, reference: references[0]};
         const {name, scope} = getPackageName(locator);
 
@@ -224,28 +222,30 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
         const nodeModulesLocation = ppath.join(nodeModulesDirPath, ...packageNameParts);
 
         const leafNode = makeLeafNode(locator, references.slice(1));
-        tree.set(nodeModulesLocation, leafNode);
+        if (dep.name.indexOf('$wsroot$') < 0) {
+          tree.set(nodeModulesLocation, leafNode);
 
-        const segments = nodeModulesLocation.split('/');
-        const nodeModulesIdx = segments.indexOf(NODE_MODULES);
+          const segments = nodeModulesLocation.split('/');
+          const nodeModulesIdx = segments.indexOf(NODE_MODULES);
 
-        let segCount = segments.length - 1;
-        while (nodeModulesIdx >= 0 && segCount > nodeModulesIdx) {
-          const dirPath = npath.toPortablePath(segments.slice(0, segCount).join(ppath.sep));
-          const targetDir = toFilename(segments[segCount]);
+          let segCount = segments.length - 1;
+          while (nodeModulesIdx >= 0 && segCount > nodeModulesIdx) {
+            const dirPath = npath.toPortablePath(segments.slice(0, segCount).join(ppath.sep));
+            const targetDir = toFilename(segments[segCount]);
 
-          const subdirs = tree.get(dirPath);
-          if (!subdirs) {
-            tree.set(dirPath, {dirList: new Set([targetDir])});
-          } else if (subdirs.dirList) {
-            if (subdirs.dirList.has(targetDir)) {
-              break;
-            } else {
-              subdirs.dirList.add(targetDir);
+            const subdirs = tree.get(dirPath);
+            if (!subdirs) {
+              tree.set(dirPath, {dirList: new Set([targetDir])});
+            } else if (subdirs.dirList) {
+              if (subdirs.dirList.has(targetDir)) {
+                break;
+              } else {
+                subdirs.dirList.add(targetDir);
+              }
             }
-          }
 
-          segCount--;
+            segCount--;
+          }
         }
 
         buildTree(dep, leafNode.linkType === LinkType.SOFT ? leafNode.target: nodeModulesLocation);
