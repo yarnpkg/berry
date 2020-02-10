@@ -290,7 +290,7 @@ async function processWorkspace(workspace: Workspace, {configuration, fileList, 
   const reportedProgress = report.reportProgress(progress);
 
   for (const scriptName of workspace.manifest.scripts.keys())
-    if (scriptName.match(/^(pre|post)/))
+    if (scriptName.match(/^(pre|post)(?!install$)/))
       report.reportWarning(MessageName.UNNAMED, `Scripts prefixed with "pre" or "post" (like "${scriptName}") will not be called automatically anymore; prefer calling prologues and epilogues explicitly in your scripts`);
 
   for (const p of fileList) {
