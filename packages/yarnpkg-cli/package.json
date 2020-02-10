@@ -48,7 +48,7 @@
     "build:cli+hook": "run build:pnp:hook && builder build bundle",
     "build:cli": "builder build bundle",
     "run:cli": "builder run",
-    "update-local": "run build:cli && rsync -a --delete bundles/ bin/"
+    "update-local": "run build:cli --no-git-hash && rsync -a --delete bundles/ bin/"
   },
   "publishConfig": {
     "main": "./lib/index.js",

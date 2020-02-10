@@ -1,18 +1,30 @@
 import chalk            from 'chalk';
+import cp               from 'child_process';
 import {Command, Usage} from 'clipanion';
 import filesize         from 'filesize';
 import fs               from 'fs';
 import path             from 'path';
 import TerserPlugin     from 'terser-webpack-plugin';
+import {promisify}      from 'util';
 import webpack          from 'webpack';
 
 import {dynamicLibs}    from '../../data/dynamicLibs';
 import {findPlugins}    from '../../tools/findPlugins';
 import {makeConfig}     from '../../tools/makeConfig';
 
+const execFile = promisify(cp.execFile);
+
 const pkgJsonVersion = (basedir: string) => {
-  const pkgJson = require(`${basedir}/package.json`);
-  return JSON.stringify(pkgJson["version"]);
+  return require(`${basedir}/package.json`).version;
+};
+
+const suggestHash = async (basedir: string) => {
+  try {
+    const unique = await execFile(`git`, [`show`, `-s`, `--pretty=format:%ad.%t`, `--date=short`], {cwd: basedir});
+    return `.git.${unique.stdout.trim().replace(/-/g, ``)}`;
+  } catch {
+    return null;
+  }
 };
 
 // eslint-disable-next-line arca/no-default-export
@@ -22,6 +34,9 @@ export default class BuildBundleCommand extends Command {
 
   @Command.Array(`--plugin`)
   plugins: Array<string> = [];
+
+  @Command.String(`--no-git-hash`)
+  noGitHash: boolean = false;
 
   @Command.Boolean(`--no-minify`)
   noMinify: boolean = false;
@@ -36,6 +51,15 @@ export default class BuildBundleCommand extends Command {
     const plugins = findPlugins({basedir, profile: this.profile, plugins: this.plugins});
     const modules = Array.from(dynamicLibs).concat(plugins);
     const output = `${basedir}/bundles/yarn.js`;
+
+    let version = pkgJsonVersion(basedir);
+
+    const hash = !this.noGitHash
+      ? await suggestHash(basedir)
+      : null;
+
+    if (hash !== null)
+      version = version.replace(/-(.*)?$/, `-$1${hash}`);
 
     const compiler = webpack(makeConfig({
       context: basedir,
@@ -88,7 +112,7 @@ export default class BuildBundleCommand extends Command {
           raw: true,
         }),
         new webpack.DefinePlugin({
-          [`YARN_VERSION`]: pkgJsonVersion(basedir),
+          [`YARN_VERSION`]: JSON.stringify(version),
         }),
       ],
     }));
