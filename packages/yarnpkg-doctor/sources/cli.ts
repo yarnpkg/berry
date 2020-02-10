@@ -274,6 +274,11 @@ async function processManifest(workspace: Workspace, {configuration, report}: {c
       }
 
       for (const peerDescriptor of pkg.peerDependencies.values()) {
+        // No need to check optional peer dependencies at all
+        const peerDependencyMeta = pkg.peerDependenciesMeta.get(structUtils.stringifyIdent(peerDescriptor));
+        if (typeof peerDependencyMeta !== `undefined` && peerDependencyMeta.optional)
+          continue;
+
         await checkForUnmetPeerDependency(workspace, dependencyType, viaDescriptor, peerDescriptor, {configuration, report});
       }
     }
@@ -283,6 +288,10 @@ async function processManifest(workspace: Workspace, {configuration, report}: {c
 async function processWorkspace(workspace: Workspace, {configuration, fileList, report}: {configuration: Configuration, fileList: Array<PortablePath>, report: Report}) {
   const progress = StreamReport.progressViaCounter(fileList.length + 1);
   const reportedProgress = report.reportProgress(progress);
+
+  for (const scriptName of workspace.manifest.scripts.keys())
+    if (scriptName.match(/^(pre|post)(?!(install|pack)$)/))
+      report.reportWarning(MessageName.UNNAMED, `User scripts prefixed with "pre" or "post" (like "${scriptName}") will not be called in sequence anymore; prefer calling prologues and epilogues explicitly`);
 
   for (const p of fileList) {
     const parsed = await parseFile(p);
