@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "serve": "foo",
+    "preserve": "bar"
+  }
+}
