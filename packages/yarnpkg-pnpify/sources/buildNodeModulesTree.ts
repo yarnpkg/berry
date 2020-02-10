@@ -125,6 +125,8 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
     const locatorKey = stringifyLocator(locator);
     let node = nodes.get(locatorKey);
     const isSeen = !!node;
+    if (locator === topLocator)
+      node = packageTree;
     if (!node) {
       const {name, reference} = locator;
 
