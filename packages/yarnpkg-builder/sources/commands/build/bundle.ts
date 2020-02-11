@@ -35,7 +35,7 @@ export default class BuildBundleCommand extends Command {
   @Command.Array(`--plugin`)
   plugins: Array<string> = [];
 
-  @Command.String(`--no-git-hash`)
+  @Command.Boolean(`--no-git-hash`)
   noGitHash: boolean = false;
 
   @Command.Boolean(`--no-minify`)
