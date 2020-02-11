@@ -463,7 +463,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["source-map", "npm:0.5.7"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -657,7 +657,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-split-export-declaration", "npm:7.4.4"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1018,7 +1018,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-syntax-async-generators", "virtual:6bc187e1bfff8202f9a8ba4755f5cca0ec86b6bd753bc9f7117d9c494bd77b5e74da1ab8626479e3358f208b0f18165977ff2848d376729b25474a564caa2991#npm:7.2.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1033,7 +1033,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1049,7 +1049,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-syntax-decorators", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:7.2.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1064,7 +1064,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-syntax-json-strings", "virtual:765d85ff5c391528fae4c2ed2f1a944efc6f3bc99e33122544c740912c324811d4c7752bdfcb9850aedbf2917a4f4363b5f1ded25d77b3a7b44e004ee6f74d08#npm:7.2.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1079,7 +1079,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-syntax-object-rest-spread", "virtual:7fa15a54995aa35aaca7e6db26f9cafe58dfe17e87eb53096b115a3c117984e442501ba2f9a03ba458083e17f039368eae1074fa5915ec8eeeef82fa36dca33b#npm:7.2.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -1092,7 +1092,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-syntax-object-rest-spread", "virtual:7fa15a54995aa35aaca7e6db26f9cafe58dfe17e87eb53096b115a3c117984e442501ba2f9a03ba458083e17f039368eae1074fa5915ec8eeeef82fa36dca33b#npm:7.2.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1107,7 +1107,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-syntax-optional-catch-binding", "virtual:765d85ff5c391528fae4c2ed2f1a944efc6f3bc99e33122544c740912c324811d4c7752bdfcb9850aedbf2917a4f4363b5f1ded25d77b3a7b44e004ee6f74d08#npm:7.2.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1122,7 +1122,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-syntax-optional-chaining", "virtual:f994a5d1655b38d239cf59651b30b06bf98c0d91607530bd502aae0f2c23bf8758ddcf9688d7e2ac816700c8afdea39c6a9313972d0e2821bdc2ff00bb808d80#npm:7.7.4"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1138,7 +1138,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["regexpu-core", "npm:4.4.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -1152,7 +1152,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["regexpu-core", "npm:4.5.4"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1166,7 +1166,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1180,7 +1180,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1194,7 +1194,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1208,7 +1208,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1222,7 +1222,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1236,7 +1236,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1250,7 +1250,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1264,7 +1264,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -1276,7 +1276,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1290,7 +1290,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1304,7 +1304,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1318,7 +1318,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1332,7 +1332,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1348,7 +1348,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-remap-async-to-generator", "npm:7.1.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -1362,7 +1362,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-remap-async-to-generator", "npm:7.1.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1376,7 +1376,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1391,7 +1391,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.11"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -1404,7 +1404,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.11"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1425,7 +1425,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["globals", "npm:11.10.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -1444,7 +1444,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["globals", "npm:11.10.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1458,7 +1458,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1472,7 +1472,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -1484,7 +1484,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1500,7 +1500,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["regexpu-core", "npm:4.4.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1514,7 +1514,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1529,7 +1529,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1544,7 +1544,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-syntax-flow", "virtual:1bc182a7702ea3d6a536c631d382333cf661bf0da83db6c860ace2e0ba7d6e47b0de02c59fd1449e0ae031007321130949c87c39923ae892ba329df635f87e11#npm:7.2.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1558,7 +1558,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -1570,7 +1570,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1585,7 +1585,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1599,7 +1599,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1613,7 +1613,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1628,7 +1628,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1644,7 +1644,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-simple-access", "npm:7.1.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -1658,7 +1658,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-simple-access", "npm:7.1.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1673,7 +1673,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -1686,7 +1686,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1701,7 +1701,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1715,7 +1715,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["regexp-tree", "npm:0.1.5"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -1727,7 +1727,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["regexp-tree", "npm:0.1.5"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1741,7 +1741,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -1753,7 +1753,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1768,7 +1768,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-replace-supers", "npm:7.2.3"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1784,7 +1784,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -1798,7 +1798,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -1812,7 +1812,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1826,7 +1826,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1840,7 +1840,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1856,7 +1856,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-syntax-jsx", "virtual:9eda81eca8c70067f7f83bef1cbaae7baf798c1f4b90b04bb084e0826fddc55d06a3b6ab6182f6aae9ffd0a47a55b6c49cdb7080486fb8692192a7d82179632a#npm:7.2.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1871,7 +1871,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-syntax-jsx", "virtual:9eda81eca8c70067f7f83bef1cbaae7baf798c1f4b90b04bb084e0826fddc55d06a3b6ab6182f6aae9ffd0a47a55b6c49cdb7080486fb8692192a7d82179632a#npm:7.2.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1886,7 +1886,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-syntax-jsx", "virtual:9eda81eca8c70067f7f83bef1cbaae7baf798c1f4b90b04bb084e0826fddc55d06a3b6ab6182f6aae9ffd0a47a55b6c49cdb7080486fb8692192a7d82179632a#npm:7.2.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1900,7 +1900,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["regenerator-transform", "npm:0.13.3"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -1912,7 +1912,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["regenerator-transform", "npm:0.13.4"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1929,7 +1929,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1943,7 +1943,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1957,7 +1957,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1972,7 +1972,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-regex", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -1987,7 +1987,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -2001,7 +2001,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -2017,7 +2017,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-syntax-typescript", "virtual:2a812102453a9ffe85baf3b9a488613bbebb0a7bd4f07891beea74e416be1bfb8a5c0a66734c79860540af19991a430956652a30c58c0db1ba973eb49549e26c#npm:7.2.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -2033,7 +2033,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["regexpu-core", "npm:4.4.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -2102,7 +2102,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -2156,7 +2156,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:5.6.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -2174,7 +2174,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-transform-react-jsx-source", "virtual:397dabb014bd8a43caddf0e60d6a0f1e15124aa6021a39c75417965ac4f4fdcfd8d7d088810035296b1b2b2943157341a358dd232f5856b33e31030ecebe5e8a#npm:7.2.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -2189,7 +2189,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-transform-typescript", "virtual:798dbadc470a561ff41b6a01e6ae6223aa72d8e49895ba7eb8f16dcab1ea7d9298c4299cac068c3bcf3737fb8c9775bc618734e790abb009312f4fd144d36624#npm:7.5.5"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -2208,7 +2208,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["source-map-support", "npm:0.5.13"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -2417,7 +2417,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-syntax-jsx", "virtual:9eda81eca8c70067f7f83bef1cbaae7baf798c1f4b90b04bb084e0826fddc55d06a3b6ab6182f6aae9ffd0a47a55b6c49cdb7080486fb8692192a7d82179632a#npm:7.2.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -2434,7 +2434,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-plugin-emotion", "npm:10.0.17"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -2578,7 +2578,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:16.8.4"]
           ],
           "packagePeers": [
-            "core",
+            "@emotion/core",
             "react"
           ],
           "linkType": "HARD",
@@ -2597,7 +2597,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:16.8.4"]
           ],
           "packagePeers": [
-            "core",
+            "@emotion/core",
             "react"
           ],
           "linkType": "HARD",
@@ -2614,7 +2614,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:16.8.4"]
           ],
           "packagePeers": [
-            "core",
+            "@emotion/core",
             "react"
           ],
           "linkType": "HARD",
@@ -2695,7 +2695,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yargs", "npm:9.0.1"]
           ],
           "packagePeers": [
-            "core",
+            "@babel/core",
             "graphql"
           ],
           "linkType": "HARD",
@@ -3078,7 +3078,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3092,7 +3092,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3166,7 +3166,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["omggif", "npm:1.0.9"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3180,7 +3180,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["omggif", "npm:1.0.9"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3196,7 +3196,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jpeg-js", "npm:0.3.4"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3210,7 +3210,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jpeg-js", "npm:0.3.4"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3225,7 +3225,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3238,7 +3238,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3253,7 +3253,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3266,7 +3266,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3282,7 +3282,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tinycolor2", "npm:1.4.1"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3296,7 +3296,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tinycolor2", "npm:1.4.1"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3314,10 +3314,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom",
-            "plugin-blit",
-            "plugin-resize",
-            "plugin-scale"
+            "@jimp/custom",
+            "@jimp/plugin-blit",
+            "@jimp/plugin-resize",
+            "@jimp/plugin-scale"
           ],
           "linkType": "HARD",
         }],
@@ -3333,10 +3333,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom",
-            "plugin-blit",
-            "plugin-resize",
-            "plugin-scale"
+            "@jimp/custom",
+            "@jimp/plugin-blit",
+            "@jimp/plugin-resize",
+            "@jimp/plugin-scale"
           ],
           "linkType": "HARD",
         }]
@@ -3354,10 +3354,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom",
-            "plugin-crop",
-            "plugin-resize",
-            "plugin-scale"
+            "@jimp/custom",
+            "@jimp/plugin-crop",
+            "@jimp/plugin-resize",
+            "@jimp/plugin-scale"
           ],
           "linkType": "HARD",
         }],
@@ -3373,10 +3373,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom",
-            "plugin-crop",
-            "plugin-resize",
-            "plugin-scale"
+            "@jimp/custom",
+            "@jimp/plugin-crop",
+            "@jimp/plugin-resize",
+            "@jimp/plugin-scale"
           ],
           "linkType": "HARD",
         }]
@@ -3391,7 +3391,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3404,7 +3404,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3419,7 +3419,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3432,7 +3432,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3447,7 +3447,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3460,7 +3460,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3476,8 +3476,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom",
-            "plugin-rotate"
+            "@jimp/custom",
+            "@jimp/plugin-rotate"
           ],
           "linkType": "HARD",
         }],
@@ -3491,8 +3491,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom",
-            "plugin-rotate"
+            "@jimp/custom",
+            "@jimp/plugin-rotate"
           ],
           "linkType": "HARD",
         }]
@@ -3507,7 +3507,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3520,7 +3520,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3535,7 +3535,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3548,7 +3548,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3563,7 +3563,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3576,7 +3576,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3591,7 +3591,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3604,7 +3604,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3621,8 +3621,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["load-bmfont", "npm:1.4.0"]
           ],
           "packagePeers": [
-            "custom",
-            "plugin-blit"
+            "@jimp/custom",
+            "@jimp/plugin-blit"
           ],
           "linkType": "HARD",
         }],
@@ -3637,8 +3637,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["load-bmfont", "npm:1.4.0"]
           ],
           "packagePeers": [
-            "custom",
-            "plugin-blit"
+            "@jimp/custom",
+            "@jimp/plugin-blit"
           ],
           "linkType": "HARD",
         }]
@@ -3653,7 +3653,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3666,7 +3666,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3684,10 +3684,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom",
-            "plugin-blit",
-            "plugin-crop",
-            "plugin-resize"
+            "@jimp/custom",
+            "@jimp/plugin-blit",
+            "@jimp/plugin-crop",
+            "@jimp/plugin-resize"
           ],
           "linkType": "HARD",
         }],
@@ -3703,10 +3703,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom",
-            "plugin-blit",
-            "plugin-crop",
-            "plugin-resize"
+            "@jimp/custom",
+            "@jimp/plugin-blit",
+            "@jimp/plugin-crop",
+            "@jimp/plugin-resize"
           ],
           "linkType": "HARD",
         }]
@@ -3722,8 +3722,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom",
-            "plugin-resize"
+            "@jimp/custom",
+            "@jimp/plugin-resize"
           ],
           "linkType": "HARD",
         }],
@@ -3737,8 +3737,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-js", "npm:2.6.2"]
           ],
           "packagePeers": [
-            "custom",
-            "plugin-resize"
+            "@jimp/custom",
+            "@jimp/plugin-resize"
           ],
           "linkType": "HARD",
         }]
@@ -3770,7 +3770,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["timm", "npm:1.6.1"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3800,7 +3800,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["timm", "npm:1.6.1"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3816,7 +3816,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pngjs", "npm:3.3.3"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3830,7 +3830,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pngjs", "npm:3.3.3"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3845,7 +3845,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["utif", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3858,7 +3858,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["utif", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -3878,7 +3878,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["timm", "npm:1.6.1"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }],
@@ -3896,7 +3896,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["timm", "npm:1.6.1"]
           ],
           "packagePeers": [
-            "custom"
+            "@jimp/custom"
           ],
           "linkType": "HARD",
         }]
@@ -5721,7 +5721,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -5764,7 +5764,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -5807,7 +5807,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -5850,7 +5850,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -5893,7 +5893,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -5936,7 +5936,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -5979,7 +5979,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -6022,7 +6022,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -6065,7 +6065,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -6108,7 +6108,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -6151,7 +6151,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -6194,7 +6194,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -6237,7 +6237,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -6280,7 +6280,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -6323,7 +6323,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -6366,7 +6366,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -6409,7 +6409,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -6452,7 +6452,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -6495,7 +6495,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -6538,7 +6538,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -6581,7 +6581,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -6834,8 +6834,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:10635d85d43c1773f587c2d6565f7a30c3bff1c16e39550dcdd44b3745dd69317ced5e20de16484758df2d6dc9314da646bf356d1ef8485a0dcd939b71a3327c#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -6847,8 +6847,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:1c3d72c6b31a8950672985f8306a860ecc80c9a006aac95cf4a7ba13a6e7cc4e095e37186a53c9909e9efe97bc0f7f570a74b3879778e2a2356cdcf407120006#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -6860,8 +6860,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:2351fd5ac4f83ad35b714d8af9fdeea561ada341d529d0dba50742dd5735dc3750df6c56bd680e14833d5b987026a1eab6618211ea0ef1b34b727372b3c77bc9#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -6873,8 +6873,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:381a246dcb7de41565b7f807dad363d33e7845cbeaab8718b2310c7db922bb0991e2c4951bf72a53b696dc68432c0d43145b1b29571d06347e4c3c45a9b02a68#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -6886,8 +6886,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -6899,8 +6899,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:4a29f807996f33373b7909f7697d5552557b79876b38e12fe66420e3f55966553aeb91d59e46557b52c54398e721a822e73c7c1e4a7b731dfa9a51d31204328c#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -6912,8 +6912,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:4ff153bc11101851444cc464184bde5e42ffd55b3939421c30a4c2b69483c3267c1680de4a4c00a49c98cbbe35e70111bb3c26f5ce8836b703c15cd5b753451a#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -6925,8 +6925,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -6938,8 +6938,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:6fc63e4d1a1b8c6564cfaaeabf378b05cdf49336a90189d76df005175060690d597b069801c0c39b9c60573a6fba29e7646274224b3007bd7f72c95871114cf2#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -6951,8 +6951,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:a4e201fc3c2d8b3ec5632082d407d554bbf8ea8b84182577dde1ce419148ae0981b382a0805280637d50e1132628fef8f78ee6a015164963130b1310a4cca910#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -6964,8 +6964,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:a7c38e9a420fd3b408ea245831c2c9f0e880eac64b268fab3219f5f0b1d6015f44b1f92d23aabfc6e980bbbbda00a23e9faa983fb98544fab94119ccd31f2440#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -6977,8 +6977,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:a8631e9eb012bd7005ebfca8331470c837503bbf4c0b4f7db03f49a3739aaf3b5a6c1735ae2d8d68fae3256359660d204da9a63f932c56f4c6819943f2715c9d#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -6990,8 +6990,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:adaf1cec8728346f1bf6a263f1954625a52d60518b8d2084da8a926203282105d2b95fb9da84922062af8d4fc84b8a1c39f220238424024e56f55577bdbc7208#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -7003,8 +7003,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:b4c0e602e8ac4e01a7b08db41bb5808da767dd1f6802758faa5125fb2423614bb0a8806ee1b30c3a0769f86da15ad37377f5118d93cd93fa48df0008a448fb35#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -7016,8 +7016,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:c44c4b6360dc34d25da6d32e39622e7e40f36f37b99dc66b6ebbd615fdd49465f496bf10f81b6fa5f71b95443fda61174ad51d2799fc7ca433af9a9666cd0f37#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -7029,8 +7029,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:c4bd2716e35986fb2e70f5fba6e9570c69eceabc69282df5bcff5d22c6b7d0e696d0cfb4bcbd9a20675fe3e2eb6192b59d41b97baa8b27e1d474b94eeda3f778#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -7042,8 +7042,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:ce4dc3135569e847b88addae1199f9468fb0b37867e1a86ba6725f71b9df587a8ae43356ae86c3bfe3b0cbbf07dcf8c1a4a95199810d9f20df387eec0a1e1965#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -7055,8 +7055,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:d1d72d9e3903ca8b8d9c23a360395cc764db2689e5992ef9af91c79f03a839db10ec675af9e4c1c8f4842aff1a614eb5b115fcc0afe8256630151ef1252de94b#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -7068,8 +7068,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:e23070551897c977d5b8085c4d1e9a894a68fa8203db624358fb50a574c8e05714fb57031cb1acbef3b066e56b561ac5b876c49fef2e6b9466f45869bf78103f#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -7081,8 +7081,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:f8376ca2bc11738adced76b97627e7eff07ec08f93f5b76caf8d6bd4f78f5ae9c1911cb9d1a0bd256ef3e0601dedeba933acf0d2381588b6513ee81e25626459#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -7094,8 +7094,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:fbdc5d510ba8a17c8a6f41fa886aad6afdb5bb69a6c572f07631b9053e2f6fffb88c3c0ed12ce824d16679e6179817298d840c6f53555825740d9f6b3a6aa0cd#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }],
@@ -7107,8 +7107,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-patch", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-patch"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-patch"
           ],
           "linkType": "SOFT",
         }]
@@ -7132,8 +7132,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7155,8 +7155,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7178,8 +7178,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7201,8 +7201,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7224,8 +7224,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7247,8 +7247,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7270,8 +7270,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7293,8 +7293,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7316,8 +7316,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7339,8 +7339,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7362,8 +7362,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7385,8 +7385,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7408,8 +7408,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7431,8 +7431,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7454,8 +7454,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7477,8 +7477,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7500,8 +7500,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7523,8 +7523,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7546,8 +7546,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7569,8 +7569,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7592,8 +7592,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7615,8 +7615,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -7635,8 +7635,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7653,8 +7653,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7671,8 +7671,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7689,8 +7689,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7707,8 +7707,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7725,8 +7725,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7743,8 +7743,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7761,8 +7761,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7779,8 +7779,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7797,8 +7797,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7815,8 +7815,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7833,8 +7833,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7851,8 +7851,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7869,8 +7869,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7887,8 +7887,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7905,8 +7905,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7923,8 +7923,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7941,8 +7941,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7959,8 +7959,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7977,8 +7977,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -7995,8 +7995,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8013,8 +8013,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -8039,8 +8039,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8063,8 +8063,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8087,8 +8087,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8111,8 +8111,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8135,8 +8135,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8159,8 +8159,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8183,8 +8183,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8207,8 +8207,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8231,8 +8231,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8255,8 +8255,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8279,8 +8279,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8303,8 +8303,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8327,8 +8327,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8351,8 +8351,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8375,8 +8375,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8399,8 +8399,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8423,8 +8423,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8447,8 +8447,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8471,8 +8471,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8495,8 +8495,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8519,8 +8519,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8543,8 +8543,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8567,8 +8567,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8591,8 +8591,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -8610,7 +8610,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -8624,7 +8624,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8636,7 +8636,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8648,7 +8648,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -8666,7 +8666,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8682,7 +8682,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8698,7 +8698,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -8715,8 +8715,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-git"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-git"
           ],
           "linkType": "SOFT",
         }],
@@ -8731,8 +8731,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-git"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-git"
           ],
           "linkType": "SOFT",
         }],
@@ -8747,8 +8747,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.1.0"]
           ],
           "packagePeers": [
-            "core",
-            "plugin-git"
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-git"
           ],
           "linkType": "SOFT",
         }]
@@ -8762,7 +8762,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8774,7 +8774,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8786,7 +8786,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -8802,8 +8802,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8817,8 +8817,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8832,8 +8832,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8847,8 +8847,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8862,8 +8862,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8877,8 +8877,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8892,8 +8892,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8907,8 +8907,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8922,8 +8922,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8937,8 +8937,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8952,8 +8952,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8967,8 +8967,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8982,8 +8982,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -8997,8 +8997,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9012,8 +9012,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9027,8 +9027,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9042,8 +9042,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9057,8 +9057,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9072,8 +9072,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9087,8 +9087,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9102,8 +9102,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9117,8 +9117,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -9144,9 +9144,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-essentials"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-essentials"
           ],
           "linkType": "SOFT",
         }]
@@ -9160,7 +9160,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9172,7 +9172,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9184,7 +9184,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -9209,8 +9209,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9233,8 +9233,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9257,8 +9257,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9281,8 +9281,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9305,8 +9305,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9329,8 +9329,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9353,8 +9353,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9377,8 +9377,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9401,8 +9401,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9425,8 +9425,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9449,8 +9449,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9473,8 +9473,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9497,8 +9497,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9521,8 +9521,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9545,8 +9545,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9569,8 +9569,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9593,8 +9593,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9617,8 +9617,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9641,8 +9641,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9665,8 +9665,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9689,8 +9689,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9713,8 +9713,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -9732,7 +9732,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9748,7 +9748,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -9764,7 +9764,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -9792,10 +9792,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -9821,10 +9821,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -9850,10 +9850,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -9879,10 +9879,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -9908,10 +9908,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -9937,10 +9937,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -9966,10 +9966,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -9995,10 +9995,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -10024,10 +10024,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -10053,10 +10053,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -10082,10 +10082,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -10111,10 +10111,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -10140,10 +10140,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -10169,10 +10169,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -10198,10 +10198,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -10227,10 +10227,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -10256,10 +10256,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -10285,10 +10285,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -10314,10 +10314,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -10343,10 +10343,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -10372,10 +10372,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -10401,10 +10401,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-npm",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-npm",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }]
@@ -10425,8 +10425,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10445,8 +10445,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10465,8 +10465,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10485,8 +10485,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10505,8 +10505,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10525,8 +10525,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10545,8 +10545,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10565,8 +10565,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10585,8 +10585,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10605,8 +10605,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10625,8 +10625,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10645,8 +10645,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10665,8 +10665,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10685,8 +10685,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10705,8 +10705,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10725,8 +10725,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10745,8 +10745,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10765,8 +10765,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10785,8 +10785,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10805,8 +10805,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10825,8 +10825,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10845,8 +10845,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10865,8 +10865,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10885,8 +10885,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10905,8 +10905,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tar-stream", "npm:2.0.1"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -10924,8 +10924,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10941,8 +10941,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10958,8 +10958,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10975,8 +10975,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -10992,8 +10992,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11009,8 +11009,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11026,8 +11026,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11043,8 +11043,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11060,8 +11060,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11077,8 +11077,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11094,8 +11094,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11111,8 +11111,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11128,8 +11128,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11145,8 +11145,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11162,8 +11162,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11179,8 +11179,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11196,8 +11196,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11213,8 +11213,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11230,8 +11230,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11247,7 +11247,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "core"
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11263,8 +11263,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11280,8 +11280,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11297,8 +11297,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -11320,8 +11320,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11341,8 +11341,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11362,8 +11362,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11383,8 +11383,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11404,8 +11404,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11425,8 +11425,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11446,8 +11446,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11467,8 +11467,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11488,8 +11488,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11509,8 +11509,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11530,8 +11530,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11551,8 +11551,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11572,8 +11572,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11593,8 +11593,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11614,8 +11614,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11635,8 +11635,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11656,8 +11656,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11677,8 +11677,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11698,8 +11698,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11719,8 +11719,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11740,8 +11740,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11761,8 +11761,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11782,8 +11782,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11803,8 +11803,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -11822,8 +11822,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11839,8 +11839,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11856,8 +11856,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11873,8 +11873,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11890,8 +11890,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11907,8 +11907,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11924,8 +11924,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11941,8 +11941,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11958,8 +11958,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11975,8 +11975,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -11992,8 +11992,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12009,8 +12009,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12026,8 +12026,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12043,8 +12043,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12060,8 +12060,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12077,8 +12077,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12094,8 +12094,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12111,8 +12111,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12128,8 +12128,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12145,8 +12145,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12162,8 +12162,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12179,8 +12179,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12196,8 +12196,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12213,8 +12213,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12230,8 +12230,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12247,8 +12247,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12264,8 +12264,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12281,8 +12281,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }],
@@ -12298,8 +12298,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -12319,9 +12319,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-essentials"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-essentials"
           ],
           "linkType": "SOFT",
         }]
@@ -12349,9 +12349,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12377,9 +12377,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12405,9 +12405,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12433,9 +12433,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12461,9 +12461,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12489,9 +12489,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12517,9 +12517,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12545,9 +12545,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12573,9 +12573,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12601,9 +12601,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12629,9 +12629,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12657,9 +12657,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12685,9 +12685,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12713,9 +12713,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12741,9 +12741,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12769,9 +12769,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12797,9 +12797,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12825,9 +12825,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12853,9 +12853,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12881,9 +12881,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12909,9 +12909,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }],
@@ -12937,9 +12937,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core",
-            "plugin-pack"
+            "@yarnpkg/cli",
+            "@yarnpkg/core",
+            "@yarnpkg/plugin-pack"
           ],
           "linkType": "SOFT",
         }]
@@ -12960,8 +12960,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yup", "npm:0.27.0"]
           ],
           "packagePeers": [
-            "cli",
-            "core"
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -13995,7 +13995,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/core", "npm:7.7.4"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -14068,7 +14068,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["slash", "npm:2.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -14099,7 +14099,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["slash", "npm:2.0.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -14117,7 +14117,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["webpack", "npm:4.28.4"]
           ],
           "packagePeers": [
-            "core",
+            "@babel/core",
             "webpack"
           ],
           "linkType": "HARD",
@@ -14134,7 +14134,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["webpack", "npm:4.41.2"]
           ],
           "packagePeers": [
-            "core",
+            "@babel/core",
             "webpack"
           ],
           "linkType": "HARD",
@@ -14266,7 +14266,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/template", "npm:7.4.4"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -14379,7 +14379,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-plugin-syntax-trailing-function-commas", "npm:7.0.0-beta.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -14399,7 +14399,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-plugin-macros", "npm:2.5.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -14423,7 +14423,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-plugin-jest-hoist", "npm:24.3.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }],
@@ -14436,7 +14436,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-plugin-jest-hoist", "npm:24.9.0"]
           ],
           "packagePeers": [
-            "core"
+            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -20306,7 +20306,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yaml-loader", "npm:0.5.0"]
           ],
           "packagePeers": [
-            "core",
+            "@babel/core",
             "react",
             "react-dom"
           ],
@@ -20408,7 +20408,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "gatsby",
             "react",
             "react-dom",
-            "router"
+            "@reach/router"
           ],
           "linkType": "HARD",
         }]
@@ -20474,7 +20474,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.13.6"]
           ],
           "packagePeers": [
-            "core",
+            "@emotion/core",
+            "@babel/core",
             "gatsby"
           ],
           "linkType": "HARD",
@@ -20650,7 +20651,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "gatsby",
             "react",
             "react-dom",
-            "router"
+            "@reach/router"
           ],
           "linkType": "HARD",
         }]

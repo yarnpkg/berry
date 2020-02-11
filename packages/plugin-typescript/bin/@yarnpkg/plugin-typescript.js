@@ -266,14 +266,14 @@ module.exports = {
 
 
   var cacheCommon = __webpack_require__(6);
-  var cacheInMemory = __webpack_require__(7);
-  var clientAnalytics = __webpack_require__(8);
-  var clientCommon = __webpack_require__(9);
-  var clientRecommendation = __webpack_require__(12);
-  var clientSearch = __webpack_require__(13);
-  var loggerCommon = __webpack_require__(15);
-  var requesterNodeHttp = __webpack_require__(16);
-  var transporter = __webpack_require__(10);
+  var cacheInMemory = __webpack_require__(8);
+  var clientAnalytics = __webpack_require__(10);
+  var clientCommon = __webpack_require__(12);
+  var clientRecommendation = __webpack_require__(18);
+  var clientSearch = __webpack_require__(20);
+  var loggerCommon = __webpack_require__(23);
+  var requesterNodeHttp = __webpack_require__(25);
+  var transporter = __webpack_require__(14);
 
   function algoliasearch(appId, apiKey, options) {
       const commonOptions = {
@@ -398,18 +398,29 @@ module.exports = {
           },
       });
   }
+  // eslint-disable-next-line functional/immutable-data
+  algoliasearch.version = clientCommon.version;
 
   module.exports = algoliasearch;
 
 
   /***/ }),
   /* 6 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /***/ (function(module, exports, __webpack_require__) {
+
+  // eslint-disable-next-line functional/immutable-data, import/no-commonjs
+  module.exports = __webpack_require__(7);
+
+
+  /***/ }),
+  /* 7 */
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createFallbackableCache", function() { return createFallbackableCache; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createNullCache", function() { return createNullCache; });
+
+
+  Object.defineProperty(exports, '__esModule', { value: true });
+
   // @todo Add logger on options to debug when caches go wrong.
   function createFallbackableCache(options) {
       const caches = [...options.caches];
@@ -465,16 +476,27 @@ module.exports = {
       };
   }
 
-
+  exports.createFallbackableCache = createFallbackableCache;
+  exports.createNullCache = createNullCache;
 
 
   /***/ }),
-  /* 7 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /* 8 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  // eslint-disable-next-line functional/immutable-data, import/no-commonjs
+  module.exports = __webpack_require__(9);
+
+
+  /***/ }),
+  /* 9 */
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createInMemoryCache", function() { return createInMemoryCache; });
+
+
+  Object.defineProperty(exports, '__esModule', { value: true });
+
   function createInMemoryCache(options = { serializable: true }) {
       // eslint-disable-next-line functional/no-let
       let cache = {};
@@ -507,33 +529,35 @@ module.exports = {
       };
   }
 
-
+  exports.createInMemoryCache = createInMemoryCache;
 
 
   /***/ }),
-  /* 8 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /* 10 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  // eslint-disable-next-line functional/immutable-data, import/no-commonjs
+  module.exports = __webpack_require__(11);
+
+
+  /***/ }),
+  /* 11 */
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addABTest", function() { return addABTest; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createAnalyticsClient", function() { return createAnalyticsClient; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteABTest", function() { return deleteABTest; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getABTest", function() { return getABTest; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getABTests", function() { return getABTests; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "stopABTest", function() { return stopABTest; });
-  /* harmony import */ var _algolia_client_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9);
-  /* harmony import */ var _algolia_transporter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10);
-  /* harmony import */ var _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(11);
 
 
+  Object.defineProperty(exports, '__esModule', { value: true });
 
+  var clientCommon = __webpack_require__(12);
+  var transporter = __webpack_require__(14);
+  var requesterCommon = __webpack_require__(16);
 
   const createAnalyticsClient = options => {
       const region = options.region || 'us';
-      const auth = Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createAuth"])(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["AuthMode"].WithinHeaders, options.appId, options.apiKey);
-      const transporter = Object(_algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["createTransporter"])({
-          hosts: [{ url: `analytics.${region}.algolia.com`, accept: _algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["CallEnum"].Any }],
+      const auth = clientCommon.createAuth(clientCommon.AuthMode.WithinHeaders, options.appId, options.apiKey);
+      const transporter$1 = transporter.createTransporter({
+          hosts: [{ url: `analytics.${region}.algolia.com` }],
           ...options,
           headers: {
               ...auth.headers(),
@@ -546,13 +570,13 @@ module.exports = {
           },
       });
       const appId = options.appId;
-      return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["addMethods"])({ appId, transporter }, options.methods);
+      return clientCommon.addMethods({ appId, transporter: transporter$1 }, options.methods);
   };
 
   const addABTest = (base) => {
       return (abTest, requestOptions) => {
           return base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
+              method: requesterCommon.MethodEnum.Post,
               path: '2/abtests',
               data: abTest,
           }, requestOptions);
@@ -562,8 +586,8 @@ module.exports = {
   const deleteABTest = (base) => {
       return (abTestID, requestOptions) => {
           return base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Delete,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('2/abtests/%s', abTestID),
+              method: requesterCommon.MethodEnum.Delete,
+              path: clientCommon.encode('2/abtests/%s', abTestID),
           }, requestOptions);
       };
   };
@@ -571,8 +595,8 @@ module.exports = {
   const getABTest = (base) => {
       return (abTestID, requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('2/abtests/%s', abTestID),
+              method: requesterCommon.MethodEnum.Get,
+              path: clientCommon.encode('2/abtests/%s', abTestID),
           }, requestOptions);
       };
   };
@@ -580,7 +604,7 @@ module.exports = {
   const getABTests = (base) => {
       return (requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
+              method: requesterCommon.MethodEnum.Get,
               path: '2/abtests',
           }, requestOptions);
       };
@@ -589,30 +613,37 @@ module.exports = {
   const stopABTest = (base) => {
       return (abTestID, requestOptions) => {
           return base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('2/abtests/%s/stop', abTestID),
+              method: requesterCommon.MethodEnum.Post,
+              path: clientCommon.encode('2/abtests/%s/stop', abTestID),
           }, requestOptions);
       };
   };
 
-
+  exports.addABTest = addABTest;
+  exports.createAnalyticsClient = createAnalyticsClient;
+  exports.deleteABTest = deleteABTest;
+  exports.getABTest = getABTest;
+  exports.getABTests = getABTests;
+  exports.stopABTest = stopABTest;
 
 
   /***/ }),
-  /* 9 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /* 12 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  // eslint-disable-next-line functional/immutable-data, import/no-commonjs
+  module.exports = __webpack_require__(13);
+
+
+  /***/ }),
+  /* 13 */
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AuthMode", function() { return AuthMode; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addMethods", function() { return addMethods; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createAuth", function() { return createAuth; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createRetryablePromise", function() { return createRetryablePromise; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createWaitablePromise", function() { return createWaitablePromise; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "destroy", function() { return destroy; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "encode", function() { return encode; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "shuffle", function() { return shuffle; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "version", function() { return version; });
+
+
+  Object.defineProperty(exports, '__esModule', { value: true });
+
   function createAuth(authMode, appId, apiKey) {
       const credentials = {
           'x-algolia-api-key': apiKey,
@@ -681,7 +712,7 @@ module.exports = {
       return format.replace(/%s/g, () => encodeURIComponent(args[i++]));
   }
 
-  const version = '4.0.0-beta.14';
+  const version = '4.0.1';
 
   const destroy = (base) => {
       return () => {
@@ -700,35 +731,35 @@ module.exports = {
       WithinHeaders: 1,
   };
 
-
+  exports.AuthMode = AuthMode;
+  exports.addMethods = addMethods;
+  exports.createAuth = createAuth;
+  exports.createRetryablePromise = createRetryablePromise;
+  exports.createWaitablePromise = createWaitablePromise;
+  exports.destroy = destroy;
+  exports.encode = encode;
+  exports.shuffle = shuffle;
+  exports.version = version;
 
 
   /***/ }),
-  /* 10 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /* 14 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  // eslint-disable-next-line functional/immutable-data, import/no-commonjs
+  module.exports = __webpack_require__(15);
+
+
+  /***/ }),
+  /* 15 */
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CallEnum", function() { return CallEnum; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostStatusEnum", function() { return HostStatusEnum; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createApiError", function() { return createApiError; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createDeserializationError", function() { return createDeserializationError; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createMappedRequestOptions", function() { return createMappedRequestOptions; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createRetryError", function() { return createRetryError; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createStatefulHost", function() { return createStatefulHost; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createStatelessHost", function() { return createStatelessHost; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createTransporter", function() { return createTransporter; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createUserAgent", function() { return createUserAgent; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deserializeFailure", function() { return deserializeFailure; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deserializeSuccess", function() { return deserializeSuccess; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isStatefulHostTimeouted", function() { return isStatefulHostTimeouted; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isStatefulHostUp", function() { return isStatefulHostUp; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "serializeData", function() { return serializeData; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "serializeHeaders", function() { return serializeHeaders; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "serializeQueryParameters", function() { return serializeQueryParameters; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "serializeUrl", function() { return serializeUrl; });
-  /* harmony import */ var _algolia_requester_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
 
+
+  Object.defineProperty(exports, '__esModule', { value: true });
+
+  var requesterCommon = __webpack_require__(16);
 
   function createMappedRequestOptions(requestOptions, timeout) {
       const options = requestOptions || {};
@@ -789,7 +820,7 @@ module.exports = {
       return {
           protocol: options.protocol || 'https',
           url: options.url,
-          accept: options.accept,
+          accept: options.accept || CallEnum.Any,
       };
   }
 
@@ -861,7 +892,7 @@ module.exports = {
       const headers = serializeHeaders(transporter, requestOptions);
       const method = request.method;
       // On `GET`, the data is proxied to query parameters.
-      const dataQueryParameters = request.method !== _algolia_requester_common__WEBPACK_IMPORTED_MODULE_0__["MethodEnum"].Get
+      const dataQueryParameters = request.method !== requesterCommon.MethodEnum.Get
           ? {}
           : {
               ...request.data,
@@ -881,7 +912,7 @@ module.exports = {
            */
           const host = hosts.pop(); // eslint-disable-line functional/immutable-data
           if (host === undefined) {
-              throw createRetryError(stackTrace);
+              throw createRetryError(stackTraceWithoutCredentials(stackTrace));
           }
           const payload = {
               data,
@@ -891,21 +922,26 @@ module.exports = {
               connectTimeout: getTimeout(timeoutsCount, transporter.timeouts.connect),
               responseTimeout: getTimeout(timeoutsCount, requestOptions.timeout),
           };
+          /**
+           * The stackFrame is pushed to the stackTrace so we
+           * can have information about onRetry and onFailure
+           * decisions.
+           */
+          const pushToStackTrace = (response) => {
+              const stackFrame = {
+                  request: payload,
+                  response,
+                  host,
+                  triesLeft: hosts.length,
+              };
+              // eslint-disable-next-line functional/immutable-data
+              stackTrace.push(stackFrame);
+              return stackFrame;
+          };
           const decisions = {
               onSucess: response => deserializeSuccess(response),
               onRetry(response) {
-                  const stackFrame = {
-                      request: payload,
-                      response,
-                      host,
-                      triesLeft: hosts.length,
-                  };
-                  /**
-                   * The stackFrace is pushed to the stackTrace so we
-                   * can have information about the failures once a
-                   * retry error is thrown.
-                   */
-                  stackTrace.push(stackFrame); // eslint-disable-line functional/immutable-data
+                  const stackFrame = pushToStackTrace(response);
                   /**
                    * If response is a timeout, we increaset the number of
                    * timeouts so we can increase the timeout later.
@@ -919,7 +955,7 @@ module.exports = {
                        * the end user to debug / store stack frames even
                        * when a retry error does not happen.
                        */
-                      transporter.logger.debug('Retryable failure', stackFrame),
+                      transporter.logger.info('Retryable failure', stackFrameWithoutCredentials(stackFrame)),
                       /**
                        * We also store the state of the host in failure cases. If the host, is
                        * down it will remain down for the next 2 minutes. In a timeout situation,
@@ -929,7 +965,8 @@ module.exports = {
                   ]).then(() => retry(hosts, getTimeout));
               },
               onFail(response) {
-                  throw deserializeFailure(response);
+                  pushToStackTrace(response);
+                  throw deserializeFailure(response, stackTraceWithoutCredentials(stackTrace));
               },
           };
           return transporter.requester.send(payload).then(response => {
@@ -1060,14 +1097,6 @@ module.exports = {
       return userAgent;
   }
 
-  function createDeserializationError(message, response) {
-      return {
-          name: 'DeserializationError',
-          message,
-          response,
-      };
-  }
-
   function deserializeSuccess(response) {
       // eslint-disable-next-line functional/no-try-statement
       try {
@@ -1077,7 +1106,7 @@ module.exports = {
           throw createDeserializationError(e.message, response);
       }
   }
-  function deserializeFailure({ content, status }) {
+  function deserializeFailure({ content, status }, stackFrame) {
       // eslint-disable-next-line functional/no-let
       let message = content;
       // eslint-disable-next-line functional/no-try-statement
@@ -1087,7 +1116,7 @@ module.exports = {
       catch (e) {
           // ..
       }
-      return createApiError(message, status);
+      return createApiError(message, status, stackFrame);
   }
 
   // eslint-disable-next-line functional/prefer-readonly-type
@@ -1114,7 +1143,7 @@ module.exports = {
           .join('&');
   }
   function serializeData(request, requestOptions) {
-      if (request.method === _algolia_requester_common__WEBPACK_IMPORTED_MODULE_0__["MethodEnum"].Get ||
+      if (request.method === requesterCommon.MethodEnum.Get ||
           (request.data === undefined && requestOptions.data === undefined)) {
           return undefined;
       }
@@ -1138,32 +1167,89 @@ module.exports = {
       return serializedHeaders;
   }
 
-  function createApiError(message, status) {
+  function stackTraceWithoutCredentials(stackTrace) {
+      return stackTrace.map(stackFrame => stackFrameWithoutCredentials(stackFrame));
+  }
+  function stackFrameWithoutCredentials(stackFrame) {
+      const modifiedHeaders = stackFrame.request.headers['x-algolia-api-key']
+          ? { 'x-algolia-api-key': '*****' }
+          : {};
+      return {
+          ...stackFrame,
+          request: {
+              ...stackFrame.request,
+              headers: {
+                  ...stackFrame.request.headers,
+                  ...modifiedHeaders,
+              },
+          },
+      };
+  }
+
+  function createApiError(message, status, transporterStackTrace) {
       return {
           name: 'ApiError',
           message,
           status,
+          transporterStackTrace,
       };
   }
 
-  function createRetryError(stackTrace) {
+  function createDeserializationError(message, response) {
+      return {
+          name: 'DeserializationError',
+          message,
+          response,
+      };
+  }
+
+  function createRetryError(transporterStackTrace) {
       return {
           name: 'RetryError',
           message: 'Unreachable hosts - your application id may be incorrect. If the error persists, contact support@algolia.com.',
-          stackTrace,
+          transporterStackTrace,
       };
   }
 
-
+  exports.CallEnum = CallEnum;
+  exports.HostStatusEnum = HostStatusEnum;
+  exports.createApiError = createApiError;
+  exports.createDeserializationError = createDeserializationError;
+  exports.createMappedRequestOptions = createMappedRequestOptions;
+  exports.createRetryError = createRetryError;
+  exports.createStatefulHost = createStatefulHost;
+  exports.createStatelessHost = createStatelessHost;
+  exports.createTransporter = createTransporter;
+  exports.createUserAgent = createUserAgent;
+  exports.deserializeFailure = deserializeFailure;
+  exports.deserializeSuccess = deserializeSuccess;
+  exports.isStatefulHostTimeouted = isStatefulHostTimeouted;
+  exports.isStatefulHostUp = isStatefulHostUp;
+  exports.serializeData = serializeData;
+  exports.serializeHeaders = serializeHeaders;
+  exports.serializeQueryParameters = serializeQueryParameters;
+  exports.serializeUrl = serializeUrl;
+  exports.stackFrameWithoutCredentials = stackFrameWithoutCredentials;
+  exports.stackTraceWithoutCredentials = stackTraceWithoutCredentials;
 
 
   /***/ }),
-  /* 11 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /* 16 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  // eslint-disable-next-line functional/immutable-data, import/no-commonjs
+  module.exports = __webpack_require__(17);
+
+
+  /***/ }),
+  /* 17 */
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MethodEnum", function() { return MethodEnum; });
+
+
+  Object.defineProperty(exports, '__esModule', { value: true });
+
   const MethodEnum = {
       Delete: 'DELETE',
       Get: 'GET',
@@ -1171,30 +1257,35 @@ module.exports = {
       Put: 'PUT',
   };
 
-
+  exports.MethodEnum = MethodEnum;
 
 
   /***/ }),
-  /* 12 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /* 18 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  // eslint-disable-next-line functional/immutable-data, import/no-commonjs
+  module.exports = __webpack_require__(19);
+
+
+  /***/ }),
+  /* 19 */
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createRecommendationClient", function() { return createRecommendationClient; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPersonalizationStrategy", function() { return getPersonalizationStrategy; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setPersonalizationStrategy", function() { return setPersonalizationStrategy; });
-  /* harmony import */ var _algolia_client_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9);
-  /* harmony import */ var _algolia_transporter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10);
-  /* harmony import */ var _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(11);
 
 
+  Object.defineProperty(exports, '__esModule', { value: true });
 
+  var clientCommon = __webpack_require__(12);
+  var transporter = __webpack_require__(14);
+  var requesterCommon = __webpack_require__(16);
 
   const createRecommendationClient = options => {
       const region = options.region || 'us';
-      const auth = Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createAuth"])(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["AuthMode"].WithinHeaders, options.appId, options.apiKey);
-      const transporter = Object(_algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["createTransporter"])({
-          hosts: [{ url: `recommendation.${region}.algolia.com`, accept: _algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["CallEnum"].Any }],
+      const auth = clientCommon.createAuth(clientCommon.AuthMode.WithinHeaders, options.appId, options.apiKey);
+      const transporter$1 = transporter.createTransporter({
+          hosts: [{ url: `recommendation.${region}.algolia.com` }],
           ...options,
           headers: {
               ...auth.headers(),
@@ -1206,13 +1297,13 @@ module.exports = {
               ...options.queryParameters,
           },
       });
-      return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["addMethods"])({ appId: options.appId, transporter }, options.methods);
+      return clientCommon.addMethods({ appId: options.appId, transporter: transporter$1 }, options.methods);
   };
 
   const getPersonalizationStrategy = (base) => {
       return (requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
+              method: requesterCommon.MethodEnum.Get,
               path: '1/strategies/personalization',
           }, requestOptions);
       };
@@ -1221,108 +1312,39 @@ module.exports = {
   const setPersonalizationStrategy = (base) => {
       return (personalizationStrategy, requestOptions) => {
           return base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
+              method: requesterCommon.MethodEnum.Post,
               path: '1/strategies/personalization',
               data: personalizationStrategy,
           }, requestOptions);
       };
   };
 
-
+  exports.createRecommendationClient = createRecommendationClient;
+  exports.getPersonalizationStrategy = getPersonalizationStrategy;
+  exports.setPersonalizationStrategy = setPersonalizationStrategy;
 
 
   /***/ }),
-  /* 13 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /* 20 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  // eslint-disable-next-line functional/immutable-data, import/no-commonjs
+  module.exports = __webpack_require__(21);
+
+
+  /***/ }),
+  /* 21 */
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BatchActionEnum", function() { return BatchActionEnum; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ScopeEnum", function() { return ScopeEnum; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StrategyEnum", function() { return StrategyEnum; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SynonymEnum", function() { return SynonymEnum; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addApiKey", function() { return addApiKey; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "assignUserID", function() { return assignUserID; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "assignUserIDs", function() { return assignUserIDs; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "batch", function() { return batch; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "browseObjects", function() { return browseObjects; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "browseRules", function() { return browseRules; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "browseSynonyms", function() { return browseSynonyms; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "chunkedBatch", function() { return chunkedBatch; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearObjects", function() { return clearObjects; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearRules", function() { return clearRules; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearSynonyms", function() { return clearSynonyms; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "copyIndex", function() { return copyIndex; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "copyRules", function() { return copyRules; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "copySettings", function() { return copySettings; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "copySynonyms", function() { return copySynonyms; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createBrowsablePromise", function() { return createBrowsablePromise; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createMissingObjectIDError", function() { return createMissingObjectIDError; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createObjectNotFoundError", function() { return createObjectNotFoundError; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createSearchClient", function() { return createSearchClient; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createValidUntilNotFoundError", function() { return createValidUntilNotFoundError; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteApiKey", function() { return deleteApiKey; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteBy", function() { return deleteBy; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteIndex", function() { return deleteIndex; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteObject", function() { return deleteObject; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteObjects", function() { return deleteObjects; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteRule", function() { return deleteRule; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteSynonym", function() { return deleteSynonym; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "exists", function() { return exists; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findObject", function() { return findObject; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "generateSecuredApiKey", function() { return generateSecuredApiKey; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getApiKey", function() { return getApiKey; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getLogs", function() { return getLogs; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getObject", function() { return getObject; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getObjectPosition", function() { return getObjectPosition; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getObjects", function() { return getObjects; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRule", function() { return getRule; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSecuredApiKeyRemainingValidity", function() { return getSecuredApiKeyRemainingValidity; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSettings", function() { return getSettings; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSynonym", function() { return getSynonym; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTask", function() { return getTask; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTopUserIDs", function() { return getTopUserIDs; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getUserID", function() { return getUserID; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "initIndex", function() { return initIndex; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "listApiKeys", function() { return listApiKeys; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "listClusters", function() { return listClusters; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "listIndices", function() { return listIndices; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "listUserIDs", function() { return listUserIDs; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "moveIndex", function() { return moveIndex; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "multipleBatch", function() { return multipleBatch; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "multipleGetObjects", function() { return multipleGetObjects; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "multipleQueries", function() { return multipleQueries; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "multipleSearchForFacetValues", function() { return multipleSearchForFacetValues; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "partialUpdateObject", function() { return partialUpdateObject; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "partialUpdateObjects", function() { return partialUpdateObjects; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeUserID", function() { return removeUserID; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "replaceAllObjects", function() { return replaceAllObjects; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "replaceAllRules", function() { return replaceAllRules; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "replaceAllSynonyms", function() { return replaceAllSynonyms; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "restoreApiKey", function() { return restoreApiKey; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "saveObject", function() { return saveObject; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "saveObjects", function() { return saveObjects; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "saveRule", function() { return saveRule; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "saveRules", function() { return saveRules; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "saveSynonym", function() { return saveSynonym; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "saveSynonyms", function() { return saveSynonyms; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "search", function() { return search; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "searchForFacetValues", function() { return searchForFacetValues; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "searchRules", function() { return searchRules; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "searchSynonyms", function() { return searchSynonyms; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "searchUserIDs", function() { return searchUserIDs; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setSettings", function() { return setSettings; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateApiKey", function() { return updateApiKey; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "waitTask", function() { return waitTask; });
-  /* harmony import */ var _algolia_client_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9);
-  /* harmony import */ var _algolia_transporter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10);
-  /* harmony import */ var _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(11);
-  /* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(14);
-  /* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(crypto__WEBPACK_IMPORTED_MODULE_3__);
 
 
+  Object.defineProperty(exports, '__esModule', { value: true });
 
-
+  var clientCommon = __webpack_require__(12);
+  var transporter = __webpack_require__(14);
+  var requesterCommon = __webpack_require__(16);
+  var crypto = __webpack_require__(22);
 
   function createBrowsablePromise(options) {
       return new Promise(resolve => {
@@ -1346,15 +1368,15 @@ module.exports = {
 
   const createSearchClient = options => {
       const appId = options.appId;
-      const auth = Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createAuth"])(options.authMode !== undefined ? options.authMode : _algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["AuthMode"].WithinHeaders, appId, options.apiKey);
-      const transporter = Object(_algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["createTransporter"])({
+      const auth = clientCommon.createAuth(options.authMode !== undefined ? options.authMode : clientCommon.AuthMode.WithinHeaders, appId, options.apiKey);
+      const transporter$1 = transporter.createTransporter({
           hosts: [
-              { url: `${appId}-dsn.algolia.net`, accept: _algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["CallEnum"].Read },
-              { url: `${appId}.algolia.net`, accept: _algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["CallEnum"].Write },
-          ].concat(Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["shuffle"])([
-              { url: `${appId}-1.algolianet.com`, accept: _algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["CallEnum"].Any },
-              { url: `${appId}-2.algolianet.com`, accept: _algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["CallEnum"].Any },
-              { url: `${appId}-3.algolianet.com`, accept: _algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["CallEnum"].Any },
+              { url: `${appId}-dsn.algolia.net`, accept: transporter.CallEnum.Read },
+              { url: `${appId}.algolia.net`, accept: transporter.CallEnum.Write },
+          ].concat(clientCommon.shuffle([
+              { url: `${appId}-1.algolianet.com` },
+              { url: `${appId}-2.algolianet.com` },
+              { url: `${appId}-3.algolianet.com` },
           ])),
           ...options,
           headers: {
@@ -1368,19 +1390,19 @@ module.exports = {
           },
       });
       const base = {
-          transporter,
+          transporter: transporter$1,
           appId,
           addAlgoliaAgent(segment, version) {
-              transporter.userAgent.add({ segment, version });
+              transporter$1.userAgent.add({ segment, version });
           },
           clearCache() {
               return Promise.all([
-                  transporter.requestsCache.clear(),
-                  transporter.responsesCache.clear(),
+                  transporter$1.requestsCache.clear(),
+                  transporter$1.responsesCache.clear(),
               ]).then(() => undefined);
           },
       };
-      return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["addMethods"])(base, options.methods);
+      return clientCommon.addMethods(base, options.methods);
   };
 
   function createMissingObjectIDError() {
@@ -1416,7 +1438,7 @@ module.exports = {
               ...(queryParameters !== undefined ? { queryParameters } : {}),
           };
           const wait = (response, waitRequestOptions) => {
-              return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createRetryablePromise"])(retry => {
+              return clientCommon.createRetryablePromise(retry => {
                   return getApiKey(base)(response.key, waitRequestOptions).catch((apiError) => {
                       if (apiError.status !== 404) {
                           throw apiError;
@@ -1425,8 +1447,8 @@ module.exports = {
                   });
               });
           };
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Post,
               path: '1/keys',
               data,
           }, options), wait);
@@ -1435,11 +1457,11 @@ module.exports = {
 
   const assignUserID = (base) => {
       return (userID, clusterName, requestOptions) => {
-          const mappedRequestOptions = Object(_algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["createMappedRequestOptions"])(requestOptions);
+          const mappedRequestOptions = transporter.createMappedRequestOptions(requestOptions);
           // eslint-disable-next-line functional/immutable-data
           mappedRequestOptions.headers['X-Algolia-User-ID'] = userID;
           return base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
+              method: requesterCommon.MethodEnum.Post,
               path: '1/clusters/mapping',
               data: {
                   cluster: clusterName,
@@ -1451,7 +1473,7 @@ module.exports = {
   const assignUserIDs = (base) => {
       return (userIDs, clusterName, requestOptions) => {
           return base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
+              method: requesterCommon.MethodEnum.Post,
               path: '1/clusters/mapping/batch',
               data: {
                   users: userIDs,
@@ -1468,9 +1490,9 @@ module.exports = {
                   methods: { waitTask },
               }).waitTask(response.taskID, waitRequestOptions);
           };
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/operation', from),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Post,
+              path: clientCommon.encode('1/indexes/%s/operation', from),
               data: {
                   operation: 'copy',
                   destination: to,
@@ -1509,7 +1531,7 @@ module.exports = {
   const deleteApiKey = (base) => {
       return (apiKey, requestOptions) => {
           const wait = (_, waitRequestOptions) => {
-              return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createRetryablePromise"])(retry => {
+              return clientCommon.createRetryablePromise(retry => {
                   return getApiKey(base)(apiKey, waitRequestOptions)
                       .then(retry)
                       .catch((apiError) => {
@@ -1519,17 +1541,17 @@ module.exports = {
                   });
               });
           };
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Delete,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/keys/%s', apiKey),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Delete,
+              path: clientCommon.encode('1/keys/%s', apiKey),
           }, requestOptions), wait);
       };
   };
 
   const generateSecuredApiKey = () => {
       return (parentApiKey, restrictions) => {
-          const queryParameters = Object(_algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["serializeQueryParameters"])(restrictions);
-          const securedKey = Object(crypto__WEBPACK_IMPORTED_MODULE_3__["createHmac"])('sha256', parentApiKey)
+          const queryParameters = transporter.serializeQueryParameters(restrictions);
+          const securedKey = crypto.createHmac('sha256', parentApiKey)
               .update(queryParameters)
               .digest('hex');
           return Buffer.from(securedKey + queryParameters).toString('base64');
@@ -1539,8 +1561,8 @@ module.exports = {
   const getApiKey = (base) => {
       return (apiKey, requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/keys/%s', apiKey),
+              method: requesterCommon.MethodEnum.Get,
+              path: clientCommon.encode('1/keys/%s', apiKey),
           }, requestOptions);
       };
   };
@@ -1548,7 +1570,7 @@ module.exports = {
   const getLogs = (base) => {
       return (requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
+              method: requesterCommon.MethodEnum.Get,
               path: '1/logs',
           }, requestOptions);
       };
@@ -1569,7 +1591,7 @@ module.exports = {
   const getTopUserIDs = (base) => {
       return (requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
+              method: requesterCommon.MethodEnum.Get,
               path: '1/clusters/mapping/top',
           }, requestOptions);
       };
@@ -1578,8 +1600,8 @@ module.exports = {
   const getUserID = (base) => {
       return (userID, requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/clusters/mapping/%s', userID),
+              method: requesterCommon.MethodEnum.Get,
+              path: clientCommon.encode('1/clusters/mapping/%s', userID),
           }, requestOptions);
       };
   };
@@ -1591,14 +1613,14 @@ module.exports = {
               appId: base.appId,
               indexName,
           };
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["addMethods"])(searchIndex, options.methods);
+          return clientCommon.addMethods(searchIndex, options.methods);
       };
   };
 
   const listApiKeys = (base) => {
       return (requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
+              method: requesterCommon.MethodEnum.Get,
               path: '1/keys',
           }, requestOptions);
       };
@@ -1607,7 +1629,7 @@ module.exports = {
   const listClusters = (base) => {
       return (requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
+              method: requesterCommon.MethodEnum.Get,
               path: '1/clusters',
           }, requestOptions);
       };
@@ -1616,7 +1638,7 @@ module.exports = {
   const listIndices = (base) => {
       return (requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
+              method: requesterCommon.MethodEnum.Get,
               path: '1/indexes',
           }, requestOptions);
       };
@@ -1625,7 +1647,7 @@ module.exports = {
   const listUserIDs = (base) => {
       return (requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
+              method: requesterCommon.MethodEnum.Get,
               path: '1/clusters/mapping',
           }, requestOptions);
       };
@@ -1638,9 +1660,9 @@ module.exports = {
                   methods: { waitTask },
               }).waitTask(response.taskID, waitRequestOptions);
           };
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/operation', from),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Post,
+              path: clientCommon.encode('1/indexes/%s/operation', from),
               data: {
                   operation: 'move',
                   destination: to,
@@ -1658,8 +1680,8 @@ module.exports = {
                   }).waitTask(response.taskID[indexName], waitRequestOptions);
               }));
           };
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Post,
               path: '1/indexes/*/batch',
               data: {
                   requests,
@@ -1671,7 +1693,7 @@ module.exports = {
   const multipleGetObjects = (base) => {
       return (requests, requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
+              method: requesterCommon.MethodEnum.Post,
               path: '1/indexes/*/objects',
               data: {
                   requests,
@@ -1685,11 +1707,11 @@ module.exports = {
           const requests = queries.map(query => {
               return {
                   ...query,
-                  params: Object(_algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["serializeQueryParameters"])(query.params || {}),
+                  params: transporter.serializeQueryParameters(query.params || {}),
               };
           });
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
+              method: requesterCommon.MethodEnum.Post,
               path: '1/indexes/*/queries',
               data: {
                   requests,
@@ -1715,11 +1737,11 @@ module.exports = {
 
   const removeUserID = (base) => {
       return (userID, requestOptions) => {
-          const mappedRequestOptions = Object(_algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["createMappedRequestOptions"])(requestOptions);
+          const mappedRequestOptions = transporter.createMappedRequestOptions(requestOptions);
           // eslint-disable-next-line functional/immutable-data
           mappedRequestOptions.headers['X-Algolia-User-ID'] = userID;
           return base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Delete,
+              method: requesterCommon.MethodEnum.Delete,
               path: '1/clusters/mapping',
           }, mappedRequestOptions);
       };
@@ -1728,7 +1750,7 @@ module.exports = {
   const restoreApiKey = (base) => {
       return (apiKey, requestOptions) => {
           const wait = (_, waitRequestOptions) => {
-              return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createRetryablePromise"])(retry => {
+              return clientCommon.createRetryablePromise(retry => {
                   return getApiKey(base)(apiKey, waitRequestOptions).catch((apiError) => {
                       if (apiError.status !== 404) {
                           throw apiError;
@@ -1737,9 +1759,9 @@ module.exports = {
                   });
               });
           };
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/keys/%s/restore', apiKey),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Post,
+              path: clientCommon.encode('1/keys/%s/restore', apiKey),
           }, requestOptions), wait);
       };
   };
@@ -1747,7 +1769,7 @@ module.exports = {
   const searchUserIDs = (base) => {
       return (query, requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
+              method: requesterCommon.MethodEnum.Post,
               path: '1/clusters/mapping/search',
               data: {
                   query,
@@ -1780,14 +1802,14 @@ module.exports = {
                   getApiKeyResponse[updatedField] === updatedFields[updatedField]);
               });
           };
-          const wait = (_, waitRequestOptions) => Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createRetryablePromise"])(retry => {
+          const wait = (_, waitRequestOptions) => clientCommon.createRetryablePromise(retry => {
               return getApiKey(base)(apiKey, waitRequestOptions).then(getApiKeyResponse => {
                   return hasChanged(getApiKeyResponse) ? Promise.resolve() : retry();
               });
           });
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Put,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/keys/%s', apiKey),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Put,
+              path: clientCommon.encode('1/keys/%s', apiKey),
               data,
           }, options), wait);
       };
@@ -1798,9 +1820,9 @@ module.exports = {
           const wait = (response, waitRequestOptions) => {
               return waitTask(base)(response.taskID, waitRequestOptions);
           };
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/batch', base.indexName),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Post,
+              path: clientCommon.encode('1/indexes/%s/batch', base.indexName),
               data: {
                   requests,
               },
@@ -1814,8 +1836,8 @@ module.exports = {
               ...requestOptions,
               shouldStop: response => response.cursor === undefined,
               request: (data) => base.transporter.read({
-                  method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-                  path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/browse', base.indexName),
+                  method: requesterCommon.MethodEnum.Post,
+                  path: clientCommon.encode('1/indexes/%s/browse', base.indexName),
                   data,
               }, requestOptions),
           });
@@ -1909,7 +1931,7 @@ module.exports = {
                   return forEachBatch(index);
               });
           };
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(forEachBatch(), (chunkedBatchResponse, waitRequestOptions) => {
+          return clientCommon.createWaitablePromise(forEachBatch(), (chunkedBatchResponse, waitRequestOptions) => {
               return Promise.all(chunkedBatchResponse.taskIDs.map(taskID => {
                   return waitTask(base)(taskID, waitRequestOptions);
               }));
@@ -1919,9 +1941,9 @@ module.exports = {
 
   const clearObjects = (base) => {
       return (requestOptions) => {
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/clear', base.indexName),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Post,
+              path: clientCommon.encode('1/indexes/%s/clear', base.indexName),
           }, requestOptions), (response, waitRequestOptions) => waitTask(base)(response.taskID, waitRequestOptions));
       };
   };
@@ -1929,13 +1951,13 @@ module.exports = {
   const clearRules = (base) => {
       return (requestOptions) => {
           const { forwardToReplicas, ...options } = requestOptions || {};
-          const mappedRequestOptions = Object(_algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["createMappedRequestOptions"])(options);
+          const mappedRequestOptions = transporter.createMappedRequestOptions(options);
           if (forwardToReplicas) {
               mappedRequestOptions.queryParameters.forwardToReplicas = 1; // eslint-disable-line functional/immutable-data
           }
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/rules/clear', base.indexName),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Post,
+              path: clientCommon.encode('1/indexes/%s/rules/clear', base.indexName),
           }, mappedRequestOptions), (response, waitRequestOptions) => waitTask(base)(response.taskID, waitRequestOptions));
       };
   };
@@ -1943,22 +1965,22 @@ module.exports = {
   const clearSynonyms = (base) => {
       return (requestOptions) => {
           const { forwardToReplicas, ...options } = requestOptions || {};
-          const mappedRequestOptions = Object(_algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["createMappedRequestOptions"])(options);
+          const mappedRequestOptions = transporter.createMappedRequestOptions(options);
           if (forwardToReplicas) {
               mappedRequestOptions.queryParameters.forwardToReplicas = 1; // eslint-disable-line functional/immutable-data
           }
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/synonyms/clear', base.indexName),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Post,
+              path: clientCommon.encode('1/indexes/%s/synonyms/clear', base.indexName),
           }, mappedRequestOptions), (response, waitRequestOptions) => waitTask(base)(response.taskID, waitRequestOptions));
       };
   };
 
   const deleteBy = (base) => {
       return (filters, requestOptions) => {
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/deleteByQuery', base.indexName),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Post,
+              path: clientCommon.encode('1/indexes/%s/deleteByQuery', base.indexName),
               data: filters,
           }, requestOptions), (response, waitRequestOptions) => waitTask(base)(response.taskID, waitRequestOptions));
       };
@@ -1966,16 +1988,16 @@ module.exports = {
 
   const deleteIndex = (base) => {
       return (requestOptions) => {
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Delete,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s', base.indexName),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Delete,
+              path: clientCommon.encode('1/indexes/%s', base.indexName),
           }, requestOptions), (response, waitRequestOptions) => waitTask(base)(response.taskID, waitRequestOptions));
       };
   };
 
   const deleteObject = (base) => {
       return (objectID, requestOptions) => {
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(deleteObjects(base)([objectID], requestOptions).then(response => {
+          return clientCommon.createWaitablePromise(deleteObjects(base)([objectID], requestOptions).then(response => {
               return { taskID: response.taskIDs[0] };
           }), (response, waitRequestOptions) => waitTask(base)(response.taskID, waitRequestOptions));
       };
@@ -1993,13 +2015,13 @@ module.exports = {
   const deleteRule = (base) => {
       return (objectID, requestOptions) => {
           const { forwardToReplicas, ...options } = requestOptions || {};
-          const mappedRequestOptions = Object(_algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["createMappedRequestOptions"])(options);
+          const mappedRequestOptions = transporter.createMappedRequestOptions(options);
           if (forwardToReplicas) {
               mappedRequestOptions.queryParameters.forwardToReplicas = 1; // eslint-disable-line functional/immutable-data
           }
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Delete,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/rules/%s', base.indexName, objectID),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Delete,
+              path: clientCommon.encode('1/indexes/%s/rules/%s', base.indexName, objectID),
           }, mappedRequestOptions), (response, waitRequestOptions) => waitTask(base)(response.taskID, waitRequestOptions));
       };
   };
@@ -2007,13 +2029,13 @@ module.exports = {
   const deleteSynonym = (base) => {
       return (objectID, requestOptions) => {
           const { forwardToReplicas, ...options } = requestOptions || {};
-          const mappedRequestOptions = Object(_algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["createMappedRequestOptions"])(options);
+          const mappedRequestOptions = transporter.createMappedRequestOptions(options);
           if (forwardToReplicas) {
               mappedRequestOptions.queryParameters.forwardToReplicas = 1; // eslint-disable-line functional/immutable-data
           }
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Delete,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/synonyms/%s', base.indexName, objectID),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Delete,
+              path: clientCommon.encode('1/indexes/%s/synonyms/%s', base.indexName, objectID),
           }, mappedRequestOptions), (response, waitRequestOptions) => waitTask(base)(response.taskID, waitRequestOptions));
       };
   };
@@ -2064,8 +2086,8 @@ module.exports = {
   const getObject = (base) => {
       return (objectID, requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/%s', base.indexName, objectID),
+              method: requesterCommon.MethodEnum.Get,
+              path: clientCommon.encode('1/indexes/%s/%s', base.indexName, objectID),
           }, requestOptions);
       };
   };
@@ -2093,7 +2115,7 @@ module.exports = {
               };
           });
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
+              method: requesterCommon.MethodEnum.Post,
               path: '1/indexes/*/objects',
               data: {
                   requests,
@@ -2105,8 +2127,8 @@ module.exports = {
   const getRule = (base) => {
       return (objectID, requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/rules/%s', base.indexName, objectID),
+              method: requesterCommon.MethodEnum.Get,
+              path: clientCommon.encode('1/indexes/%s/rules/%s', base.indexName, objectID),
           }, requestOptions);
       };
   };
@@ -2114,8 +2136,8 @@ module.exports = {
   const getSettings = (base) => {
       return (requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/settings', base.indexName),
+              method: requesterCommon.MethodEnum.Get,
+              path: clientCommon.encode('1/indexes/%s/settings', base.indexName),
               data: {
                   getVersion: 2,
               },
@@ -2126,8 +2148,8 @@ module.exports = {
   const getSynonym = (base) => {
       return (objectID, requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])(`1/indexes/%s/synonyms/%s`, base.indexName, objectID),
+              method: requesterCommon.MethodEnum.Get,
+              path: clientCommon.encode(`1/indexes/%s/synonyms/%s`, base.indexName, objectID),
           }, requestOptions);
       };
   };
@@ -2135,15 +2157,15 @@ module.exports = {
   const getTask = (base) => {
       return (taskID, requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Get,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/task/%s', base.indexName, taskID.toString()),
+              method: requesterCommon.MethodEnum.Get,
+              path: clientCommon.encode('1/indexes/%s/task/%s', base.indexName, taskID.toString()),
           }, requestOptions);
       };
   };
 
   const partialUpdateObject = (base) => {
       return (object, requestOptions) => {
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(partialUpdateObjects(base)([object], requestOptions).then(response => {
+          return clientCommon.createWaitablePromise(partialUpdateObjects(base)([object], requestOptions).then(response => {
               return {
                   objectID: response.objectIDs[0],
                   taskID: response.taskIDs[0],
@@ -2166,9 +2188,9 @@ module.exports = {
       return (objects, requestOptions) => {
           const { safe, autoGenerateObjectIDIfNotExist, batchSize, ...options } = requestOptions || {};
           const operation = (from, to, type, operationRequestOptions) => {
-              return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-                  method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-                  path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/operation', from),
+              return clientCommon.createWaitablePromise(base.transporter.write({
+                  method: requesterCommon.MethodEnum.Post,
+                  path: clientCommon.encode('1/indexes/%s/operation', from),
                   data: {
                       operation: type,
                       destination: to,
@@ -2219,7 +2241,7 @@ module.exports = {
                   taskIDs: [copyResponse.taskID, ...saveObjectsResponse.taskIDs, moveResponse.taskID],
               };
           });
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(result, (_, waitRequestOptions) => {
+          return clientCommon.createWaitablePromise(result, (_, waitRequestOptions) => {
               return Promise.all(responses.map(response => response.wait(waitRequestOptions)));
           });
       };
@@ -2245,7 +2267,7 @@ module.exports = {
 
   const saveObject = (base) => {
       return (object, requestOptions) => {
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(saveObjects(base)([object], requestOptions).then(response => {
+          return clientCommon.createWaitablePromise(saveObjects(base)([object], requestOptions).then(response => {
               return {
                   objectID: response.objectIDs[0],
                   taskID: response.taskIDs[0],
@@ -2264,7 +2286,7 @@ module.exports = {
               // eslint-disable-next-line functional/no-loop-statement
               for (const object of objects) {
                   if (object.objectID === undefined) {
-                      return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(Promise.reject(createMissingObjectIDError()));
+                      return clientCommon.createWaitablePromise(Promise.reject(createMissingObjectIDError()));
                   }
               }
           }
@@ -2281,16 +2303,16 @@ module.exports = {
   const saveRules = (base) => {
       return (rules, requestOptions) => {
           const { forwardToReplicas, clearExistingRules, ...options } = requestOptions || {};
-          const mappedRequestOptions = Object(_algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["createMappedRequestOptions"])(options);
+          const mappedRequestOptions = transporter.createMappedRequestOptions(options);
           if (forwardToReplicas) {
               mappedRequestOptions.queryParameters.forwardToReplicas = 1; // eslint-disable-line functional/immutable-data
           }
           if (clearExistingRules) {
               mappedRequestOptions.queryParameters.clearExistingRules = 1; // eslint-disable-line functional/immutable-data
           }
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/rules/batch', base.indexName),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Post,
+              path: clientCommon.encode('1/indexes/%s/rules/batch', base.indexName),
               data: rules,
           }, mappedRequestOptions), (response, waitRequestOptions) => waitTask(base)(response.taskID, waitRequestOptions));
       };
@@ -2305,16 +2327,16 @@ module.exports = {
   const saveSynonyms = (base) => {
       return (synonyms, requestOptions) => {
           const { forwardToReplicas, replaceExistingSynonyms, ...options } = requestOptions || {};
-          const mappedRequestOptions = Object(_algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["createMappedRequestOptions"])(options);
+          const mappedRequestOptions = transporter.createMappedRequestOptions(options);
           if (forwardToReplicas) {
               mappedRequestOptions.queryParameters.forwardToReplicas = 1; // eslint-disable-line functional/immutable-data
           }
           if (replaceExistingSynonyms) {
               mappedRequestOptions.queryParameters.replaceExistingSynonyms = 1; // eslint-disable-line functional/immutable-data
           }
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/synonyms/batch', base.indexName),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Post,
+              path: clientCommon.encode('1/indexes/%s/synonyms/batch', base.indexName),
               data: synonyms,
           }, mappedRequestOptions), (response, waitRequestOptions) => waitTask(base)(response.taskID, waitRequestOptions));
       };
@@ -2323,8 +2345,8 @@ module.exports = {
   const search = (base) => {
       return (query, requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/query', base.indexName),
+              method: requesterCommon.MethodEnum.Post,
+              path: clientCommon.encode('1/indexes/%s/query', base.indexName),
               data: {
                   query,
               },
@@ -2336,8 +2358,8 @@ module.exports = {
   const searchForFacetValues = (base) => {
       return (facetName, facetQuery, requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/facets/%s/query', base.indexName, facetName),
+              method: requesterCommon.MethodEnum.Post,
+              path: clientCommon.encode('1/indexes/%s/facets/%s/query', base.indexName, facetName),
               data: {
                   facetQuery,
               },
@@ -2349,8 +2371,8 @@ module.exports = {
   const searchRules = (base) => {
       return (query, requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/rules/search', base.indexName),
+              method: requesterCommon.MethodEnum.Post,
+              path: clientCommon.encode('1/indexes/%s/rules/search', base.indexName),
               data: {
                   query,
               },
@@ -2361,8 +2383,8 @@ module.exports = {
   const searchSynonyms = (base) => {
       return (query, requestOptions) => {
           return base.transporter.read({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Post,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/synonyms/search', base.indexName),
+              method: requesterCommon.MethodEnum.Post,
+              path: clientCommon.encode('1/indexes/%s/synonyms/search', base.indexName),
               data: {
                   query,
               },
@@ -2373,13 +2395,13 @@ module.exports = {
   const setSettings = (base) => {
       return (settings, requestOptions) => {
           const { forwardToReplicas, ...options } = requestOptions || {};
-          const mappedRequestOptions = Object(_algolia_transporter__WEBPACK_IMPORTED_MODULE_1__["createMappedRequestOptions"])(options);
+          const mappedRequestOptions = transporter.createMappedRequestOptions(options);
           if (forwardToReplicas) {
               mappedRequestOptions.queryParameters.forwardToReplicas = 1; // eslint-disable-line functional/immutable-data
           }
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createWaitablePromise"])(base.transporter.write({
-              method: _algolia_requester_common__WEBPACK_IMPORTED_MODULE_2__["MethodEnum"].Put,
-              path: Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["encode"])('1/indexes/%s/settings', base.indexName),
+          return clientCommon.createWaitablePromise(base.transporter.write({
+              method: requesterCommon.MethodEnum.Put,
+              path: clientCommon.encode('1/indexes/%s/settings', base.indexName),
               data: settings,
           }, mappedRequestOptions), (response, waitRequestOptions) => waitTask(base)(response.taskID, waitRequestOptions));
       };
@@ -2387,7 +2409,7 @@ module.exports = {
 
   const waitTask = (base) => {
       return (taskID, requestOptions) => {
-          return Object(_algolia_client_common__WEBPACK_IMPORTED_MODULE_0__["createRetryablePromise"])(retry => {
+          return clientCommon.createRetryablePromise(retry => {
               return getTask(base)(taskID, requestOptions).then(response => {
                   return response.status !== 'published' ? retry() : undefined;
               });
@@ -2422,23 +2444,108 @@ module.exports = {
       Placeholder: 'placeholder',
   };
 
-
+  exports.BatchActionEnum = BatchActionEnum;
+  exports.ScopeEnum = ScopeEnum;
+  exports.StrategyEnum = StrategyEnum;
+  exports.SynonymEnum = SynonymEnum;
+  exports.addApiKey = addApiKey;
+  exports.assignUserID = assignUserID;
+  exports.assignUserIDs = assignUserIDs;
+  exports.batch = batch;
+  exports.browseObjects = browseObjects;
+  exports.browseRules = browseRules;
+  exports.browseSynonyms = browseSynonyms;
+  exports.chunkedBatch = chunkedBatch;
+  exports.clearObjects = clearObjects;
+  exports.clearRules = clearRules;
+  exports.clearSynonyms = clearSynonyms;
+  exports.copyIndex = copyIndex;
+  exports.copyRules = copyRules;
+  exports.copySettings = copySettings;
+  exports.copySynonyms = copySynonyms;
+  exports.createBrowsablePromise = createBrowsablePromise;
+  exports.createMissingObjectIDError = createMissingObjectIDError;
+  exports.createObjectNotFoundError = createObjectNotFoundError;
+  exports.createSearchClient = createSearchClient;
+  exports.createValidUntilNotFoundError = createValidUntilNotFoundError;
+  exports.deleteApiKey = deleteApiKey;
+  exports.deleteBy = deleteBy;
+  exports.deleteIndex = deleteIndex;
+  exports.deleteObject = deleteObject;
+  exports.deleteObjects = deleteObjects;
+  exports.deleteRule = deleteRule;
+  exports.deleteSynonym = deleteSynonym;
+  exports.exists = exists;
+  exports.findObject = findObject;
+  exports.generateSecuredApiKey = generateSecuredApiKey;
+  exports.getApiKey = getApiKey;
+  exports.getLogs = getLogs;
+  exports.getObject = getObject;
+  exports.getObjectPosition = getObjectPosition;
+  exports.getObjects = getObjects;
+  exports.getRule = getRule;
+  exports.getSecuredApiKeyRemainingValidity = getSecuredApiKeyRemainingValidity;
+  exports.getSettings = getSettings;
+  exports.getSynonym = getSynonym;
+  exports.getTask = getTask;
+  exports.getTopUserIDs = getTopUserIDs;
+  exports.getUserID = getUserID;
+  exports.initIndex = initIndex;
+  exports.listApiKeys = listApiKeys;
+  exports.listClusters = listClusters;
+  exports.listIndices = listIndices;
+  exports.listUserIDs = listUserIDs;
+  exports.moveIndex = moveIndex;
+  exports.multipleBatch = multipleBatch;
+  exports.multipleGetObjects = multipleGetObjects;
+  exports.multipleQueries = multipleQueries;
+  exports.multipleSearchForFacetValues = multipleSearchForFacetValues;
+  exports.partialUpdateObject = partialUpdateObject;
+  exports.partialUpdateObjects = partialUpdateObjects;
+  exports.removeUserID = removeUserID;
+  exports.replaceAllObjects = replaceAllObjects;
+  exports.replaceAllRules = replaceAllRules;
+  exports.replaceAllSynonyms = replaceAllSynonyms;
+  exports.restoreApiKey = restoreApiKey;
+  exports.saveObject = saveObject;
+  exports.saveObjects = saveObjects;
+  exports.saveRule = saveRule;
+  exports.saveRules = saveRules;
+  exports.saveSynonym = saveSynonym;
+  exports.saveSynonyms = saveSynonyms;
+  exports.search = search;
+  exports.searchForFacetValues = searchForFacetValues;
+  exports.searchRules = searchRules;
+  exports.searchSynonyms = searchSynonyms;
+  exports.searchUserIDs = searchUserIDs;
+  exports.setSettings = setSettings;
+  exports.updateApiKey = updateApiKey;
+  exports.waitTask = waitTask;
 
 
   /***/ }),
-  /* 14 */
+  /* 22 */
   /***/ (function(module, exports) {
 
   module.exports = require("crypto");
 
   /***/ }),
-  /* 15 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /* 23 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  // eslint-disable-next-line functional/immutable-data, import/no-commonjs
+  module.exports = __webpack_require__(24);
+
+
+  /***/ }),
+  /* 24 */
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LogLevelEnum", function() { return LogLevelEnum; });
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createNullLogger", function() { return createNullLogger; });
+
+
+  Object.defineProperty(exports, '__esModule', { value: true });
+
   function createNullLogger() {
       return {
           debug(_message, _args) {
@@ -2459,37 +2566,40 @@ module.exports = {
       Error: 3,
   };
 
-
+  exports.LogLevelEnum = LogLevelEnum;
+  exports.createNullLogger = createNullLogger;
 
 
   /***/ }),
-  /* 16 */
-  /***/ (function(module, __webpack_exports__, __webpack_require__) {
+  /* 25 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  // eslint-disable-next-line functional/immutable-data, import/no-commonjs
+  module.exports = __webpack_require__(26);
+
+
+  /***/ }),
+  /* 26 */
+  /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-  __webpack_require__.r(__webpack_exports__);
-  /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createNodeHttpRequester", function() { return createNodeHttpRequester; });
-  /* harmony import */ var http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(17);
-  /* harmony import */ var http__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(http__WEBPACK_IMPORTED_MODULE_0__);
-  /* harmony import */ var https__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(18);
-  /* harmony import */ var https__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(https__WEBPACK_IMPORTED_MODULE_1__);
-  /* harmony import */ var url__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(19);
-  /* harmony import */ var url__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(url__WEBPACK_IMPORTED_MODULE_2__);
 
 
+  Object.defineProperty(exports, '__esModule', { value: true });
 
-
-
+  var http = __webpack_require__(27);
+  var https = __webpack_require__(28);
+  var URL = __webpack_require__(29);
 
   /* eslint sonarjs/cognitive-complexity: 0 */ // -->
   function createNodeHttpRequester() {
       const agentOptions = { keepAlive: true };
-      const httpAgent = new http__WEBPACK_IMPORTED_MODULE_0__["Agent"](agentOptions);
-      const httpsAgent = new https__WEBPACK_IMPORTED_MODULE_1__["Agent"](agentOptions);
+      const httpAgent = new http.Agent(agentOptions);
+      const httpsAgent = new https.Agent(agentOptions);
       return {
           send(request) {
               return new Promise(resolve => {
-                  const url = Object(url__WEBPACK_IMPORTED_MODULE_2__["parse"])(request.url);
+                  const url = URL.parse(request.url);
                   const path = url.query === null ? url.pathname : `${url.pathname}?${url.query}`;
                   const options = {
                       agent: url.protocol === 'https:' ? httpsAgent : httpAgent,
@@ -2499,7 +2609,7 @@ module.exports = {
                       headers: request.headers,
                       ...(url.port !== undefined ? { port: url.port || '' } : {}),
                   };
-                  const req = (url.protocol === 'https:' ? https__WEBPACK_IMPORTED_MODULE_1__ : http__WEBPACK_IMPORTED_MODULE_0__).request(options, response => {
+                  const req = (url.protocol === 'https:' ? https : http).request(options, response => {
                       // eslint-disable-next-line functional/no-let
                       let content = '';
                       response.on('data', chunk => (content += chunk));
@@ -2551,23 +2661,23 @@ module.exports = {
       };
   }
 
-
+  exports.createNodeHttpRequester = createNodeHttpRequester;
 
 
   /***/ }),
-  /* 17 */
+  /* 27 */
   /***/ (function(module, exports) {
 
   module.exports = require("http");
 
   /***/ }),
-  /* 18 */
+  /* 28 */
   /***/ (function(module, exports) {
 
   module.exports = require("https");
 
   /***/ }),
-  /* 19 */
+  /* 29 */
   /***/ (function(module, exports) {
 
   module.exports = require("url");

@@ -1,24 +1,24 @@
 {
   "name": "@yarnpkg/plugin-pnp",
-  "version": "2.0.0-rc.16",
+  "version": "2.0.0-rc.17",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/semver": "^7.1.0",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.16",
     "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.15",
-    "@yarnpkg/pnp": "workspace:^2.0.0-rc.16",
+    "@yarnpkg/pnp": "workspace:^2.0.0-rc.17",
     "clipanion": "^2.1.5",
     "micromatch": "^4.0.2",
     "semver": "^7.1.2"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.28",
-    "@yarnpkg/core": "^2.0.0-rc.22"
+    "@yarnpkg/cli": "^2.0.0-rc.29",
+    "@yarnpkg/core": "^2.0.0-rc.23"
   },
   "devDependencies": {
     "@types/micromatch": "^3.1.0",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.28",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.22"
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.29",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.23"
   },
   "repository": {
     "type": "git",

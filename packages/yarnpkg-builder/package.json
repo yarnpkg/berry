@@ -1,14 +1,14 @@
 {
   "name": "@yarnpkg/builder",
-  "version": "2.0.0-rc.18",
+  "version": "2.0.0-rc.19",
   "bin": "./sources/boot-dev.js",
   "dependencies": {
     "@babel/core": "^7.7.4",
     "@babel/plugin-syntax-class-properties": "^7.2.0",
     "@babel/plugin-syntax-decorators": "^7.2.0",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.22",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
-    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.17",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.23",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.16",
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.18",
     "babel-loader": "^8.0.6",
     "babel-plugin-lazy-import": "arcanis/babel-plugin-lazy-import",
     "chalk": "^3.0.0",

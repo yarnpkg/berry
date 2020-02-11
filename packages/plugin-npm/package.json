@@ -3,17 +3,17 @@
   "version": "2.0.0-rc.15",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.16",
     "inquirer": "^6.2.0",
     "semver": "^7.1.2"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.22"
+    "@yarnpkg/core": "^2.0.0-rc.23"
   },
   "devDependencies": {
     "@types/inquirer": "^0.0.43",
     "@types/semver": "^7.1.0",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.22"
+    "@yarnpkg/core": "workspace:^2.0.0-rc.23"
   },
   "repository": {
     "type": "git",

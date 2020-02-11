@@ -1,10 +1,10 @@
 {
   "name": "@yarnpkg/shell",
-  "version": "2.0.0-rc.8",
+  "version": "2.0.0-rc.9",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
-    "@yarnpkg/parsers": "workspace:^2.0.0-rc.9",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.16",
+    "@yarnpkg/parsers": "workspace:^2.0.0-rc.10",
     "cross-spawn": "6.0.5",
     "stream-buffers": "^3.0.2"
   },

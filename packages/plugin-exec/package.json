@@ -3,16 +3,16 @@
   "version": "2.0.0-rc.15",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/builder": "workspace:^2.0.0-rc.18",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
+    "@yarnpkg/builder": "workspace:^2.0.0-rc.19",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.16",
     "tmp": "^0.1.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.22"
+    "@yarnpkg/core": "^2.0.0-rc.23"
   },
   "devDependencies": {
     "@types/tmp": "^0.0.33",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.22",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.23",
     "typescript": "^3.7.5"
   },
   "scripts": {

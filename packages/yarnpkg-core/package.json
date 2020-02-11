@@ -1,15 +1,15 @@
 {
   "name": "@yarnpkg/core",
-  "version": "2.0.0-rc.22",
+  "version": "2.0.0-rc.23",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.16",
     "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.7",
-    "@yarnpkg/libzip": "workspace:^2.0.0-rc.9",
-    "@yarnpkg/parsers": "workspace:^2.0.0-rc.9",
-    "@yarnpkg/pnp": "workspace:^2.0.0-rc.16",
-    "@yarnpkg/shell": "workspace:^2.0.0-rc.8",
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.10",
+    "@yarnpkg/parsers": "workspace:^2.0.0-rc.10",
+    "@yarnpkg/pnp": "workspace:^2.0.0-rc.17",
+    "@yarnpkg/shell": "workspace:^2.0.0-rc.9",
     "camelcase": "^5.3.1",
     "chalk": "^3.0.0",
     "clipanion": "^2.1.5",
@@ -41,9 +41,9 @@
     "@types/tar": "^4.0.0",
     "@types/tmp": "^0.0.33",
     "@types/tunnel": "^0.0.0",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.28",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.29",
     "@yarnpkg/plugin-link": "workspace:^2.0.0-rc.11",
-    "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.16"
+    "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.17"
   },
   "scripts": {
     "postpack": "rm -rf lib",
