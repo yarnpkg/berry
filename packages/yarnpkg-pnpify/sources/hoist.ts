@@ -50,8 +50,11 @@ export const hoist = (tree: HoisterTree, options: HoistOptions = {check: false})
 
 const selfCheck = (tree: HoisterWorkTree): string => {
   let log: string[] = [];
+
   const seenNodes = new Set();
-  const checkNode = (node: HoisterWorkTree, parentDeps: Map<PackageName, HoisterWorkTree>, parents: Set<HoisterWorkTree>) => {
+  const parents = new Set<HoisterWorkTree>();
+
+  const checkNode = (node: HoisterWorkTree, parentDeps: Map<PackageName, HoisterWorkTree>) => {
     if (seenNodes.has(node))
       return;
     seenNodes.add(node);
@@ -80,15 +83,16 @@ const selfCheck = (tree: HoisterWorkTree): string => {
       }
     }
 
-    const nextParents = new Set(parents).add(node);
+    parents.add(node);
     for (const dep of node.dependencies.values()) {
       if (!node.peerNames.has(dep.name)) {
-        checkNode(dep, dependencies, nextParents);
+        checkNode(dep, dependencies);
       }
     }
+    parents.delete(node);
   };
 
-  checkNode(tree, tree.dependencies, new Set<HoisterWorkTree>());
+  checkNode(tree, tree.dependencies);
 
   return log.join('\n');
 };
@@ -125,35 +129,44 @@ const selfCheck = (tree: HoisterWorkTree): string => {
  *
  * This function mutates the tree.
  *
+ * @param tree dependency tree
  * @param rootNode root node to hoist to
  * @param ancestorMap ancestor map
+ * @param options hoisting options
+ * @param hoistBlacklistMap root node -> blacklisted nodes from hoisting list
  */
-const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, ancestorMap: AncestorMap, options: HoistOptions, seenNodes: Set<HoisterWorkTree> = new Set()): number => {
+const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, ancestorMap: AncestorMap, options: HoistOptions, seenNodes: Set<HoisterWorkTree> = new Set(), hoistBlacklistMap = new Map()): number => {
   if (seenNodes.has(rootNode))
     return 0;
   seenNodes.add(rootNode);
 
+  let hoistBlacklist = hoistBlacklistMap.get(rootNode);
+  if (!hoistBlacklist) {
+    hoistBlacklist = new Set<HoisterWorkTree>();
+    hoistBlacklistMap.set(rootNode, hoistBlacklist);
+  }
+
   // Perform shallow-first hoisting by hoisting to the root node first
-  let totalHoisted = hoistPass(tree, rootNode, ancestorMap, options);
+  let totalHoisted = hoistPass(tree, rootNode, ancestorMap, options, hoistBlacklist);
 
   let childrenHoisted = 0;
   // Now perform children hoisting
   for (const dep of rootNode.dependencies.values())
-    childrenHoisted += hoistTo(tree, dep, ancestorMap, options, seenNodes);
+    childrenHoisted += hoistTo(tree, dep, ancestorMap, options, seenNodes, hoistBlacklistMap);
 
   if (childrenHoisted > 0)
     // Perfrom 2nd pass of hoisting to the root node, because some of the children were hoisted
-    hoistPass(tree, rootNode, ancestorMap, options);
+    hoistPass(tree, rootNode, ancestorMap, options, hoistBlacklist);
 
   return totalHoisted + childrenHoisted;
 };
 
-const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, ancestorMap: AncestorMap, options: HoistOptions): number => {
+const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, ancestorMap: AncestorMap, options: HoistOptions, hoistBlacklist: Set<HoisterWorkTree>): number => {
   let totalHoisted = 0;
   let packagesToHoist: Set<HoistCandidate>;
   const clonedParents = new Map<HoisterWorkTree, HoisterWorkTree>();
   do {
-    packagesToHoist = getHoistablePackages(rootNode, ancestorMap);
+    packagesToHoist = getHoistablePackages(rootNode, ancestorMap, hoistBlacklist);
     totalHoisted += packagesToHoist.size;
     for (const {parent, node} of packagesToHoist) {
       let parentNode = clonedParents.get(parent);
@@ -212,10 +225,12 @@ type HoistCandidateMap = Map<PackageName, {physicalLocator: PhysicalLocator, tup
  * @param rootNode root package node
  * @param ancestorMap ancestor map to determine `dependency` version popularity
  */
-const getHoistablePackages = (rootNode: HoisterWorkTree, ancestorMap: AncestorMap): Set<HoistCandidate> => {
+const getHoistablePackages = (rootNode: HoisterWorkTree, ancestorMap: AncestorMap, hoistBlacklist: Set<HoisterWorkTree>): Set<HoistCandidate> => {
   const hoistCandidates: HoistCandidateMap = new Map();
 
   const computeHoistCandidates = (parentNode: HoisterWorkTree, node: HoisterWorkTree) => {
+    if (hoistBlacklist.has(node))
+      return;
     let isHoistable: boolean = true;
     let competitorInfo = hoistCandidates.get(node.name);
 
@@ -248,6 +263,8 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, ancestorMap: AncestorMa
       // If there is a competitor package to be hoisted, we should prefer the package with more usage
       isPreferred = !competitorInfo || competitorInfo.weight < weight;
       isHoistable = isPreferred;
+    } else {
+      hoistBlacklist.add(node);
     }
 
     if (isHoistable) {
@@ -256,6 +273,8 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, ancestorMap: AncestorMa
         if (node.originalDependencies.has(dep.name)) {
           const rootDepNode = rootNode.dependencies.get(dep.name) || rootNode.hoistedDependencies.get(dep.name);
           if (!rootDepNode || rootDepNode.physicalLocator !== dep.physicalLocator) {
+            if (rootDepNode)
+              hoistBlacklist.add(node);
             isHoistable = false;
           }
         }
@@ -263,24 +282,26 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, ancestorMap: AncestorMa
           break;
         }
       }
+    }
 
-      // Check that hoisted dependencies of unhoisted children are still satisifed
-      if (isHoistable) {
-        const checkChildren = (node: HoisterWorkTree): boolean => {
-          for (const dep of node.dependencies.values()) {
-            if (node.originalDependencies.has(dep.name) && !node.peerNames.has(dep.name)) {
-              for (const subDep of dep.hoistedDependencies.values()) {
-                const rootDepNode = rootNode.dependencies.get(subDep.name) || rootNode.hoistedDependencies.get(subDep.name);
-                if (!rootDepNode || rootDepNode.physicalLocator !== subDep.physicalLocator || !checkChildren(dep)) {
-                  return false;
-                }
+    // Check that hoisted dependencies of unhoisted children are still satisifed
+    if (isHoistable) {
+      const checkChildren = (node: HoisterWorkTree): boolean => {
+        for (const dep of node.dependencies.values()) {
+          if (node.originalDependencies.has(dep.name) && !node.peerNames.has(dep.name)) {
+            for (const subDep of dep.hoistedDependencies.values()) {
+              const rootDepNode = rootNode.dependencies.get(subDep.name) || rootNode.hoistedDependencies.get(subDep.name);
+              if (!rootDepNode || rootDepNode.physicalLocator !== subDep.physicalLocator || !checkChildren(dep)) {
+                if (rootDepNode)
+                  hoistBlacklist.add(node);
+                return false;
               }
             }
           }
-          return true;
-        };
-        isHoistable = checkChildren(node);
-      }
+        }
+        return true;
+      };
+      isHoistable = checkChildren(node);
     }
 
     if (isHoistable) {
@@ -428,8 +449,9 @@ const buildAncestorMap = (tree: HoisterWorkTree): AncestorMap => {
   const ancestorMap: AncestorMap = new Map();
 
   const seenNodes = new Set<HoisterWorkTree>();
+  const parentNodes = new Set<HoisterWorkTree>([tree]);
 
-  const addParent = (parentNodes: Set<HoisterWorkTree>, node: HoisterWorkTree) => {
+  const addParent = (node: HoisterWorkTree) => {
     const isSeen = seenNodes.has(node);
     seenNodes.add(node);
 
@@ -442,14 +464,16 @@ const buildAncestorMap = (tree: HoisterWorkTree): AncestorMap => {
       parents.add(parent.physicalLocator);
 
     if (!isSeen) {
-      for (const dep of node.dependencies.values()) {
-        addParent(new Set(parentNodes).add(node), dep);
-      }
+      parentNodes.add(node);
+      for (const dep of node.dependencies.values())
+        addParent(dep);
+
+      parentNodes.delete(node);
     }
   };
 
   for (const dep of tree.dependencies.values())
-    addParent(new Set([tree]), dep);
+    addParent(dep);
 
   return ancestorMap;
 };
