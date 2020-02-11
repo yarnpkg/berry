@@ -116,7 +116,7 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
     name: topLocator.name!,
     reference: topLocator.reference!,
     peerNames: topPkg.packagePeers,
-    deps: new Set<HoisterTree>(),
+    dependencies: new Set<HoisterTree>(),
   };
 
   const nodes = new Map<LocatorKey, HoisterTree>();
@@ -133,12 +133,12 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
       node = {
         name: name!,
         reference: reference!,
-        deps: new Set(),
+        dependencies: new Set(),
         peerNames: pkg.packagePeers,
       };
       nodes.set(locatorKey, node);
     }
-    parent.deps.add(node);
+    parent.dependencies.add(node);
 
     if (!isSeen) {
       for (const [name, referencish] of pkg.packageDependencies) {
@@ -212,7 +212,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
     if (seenNodes.has(pkg))
       return;
     seenNodes.add(pkg);
-    for (const dep of pkg.deps) {
+    for (const dep of pkg.dependencies) {
       const references: string[] = Array.from(dep.references).sort();
       const locator = {name: dep.name, reference: references[0]};
       const {name, scope} = getPackageName(locator);
@@ -385,13 +385,13 @@ const dumpDepTree = (tree: HoisterResult) => {
     if (parents.includes(pkg))
       return '';
 
-    const deps = Array.from(pkg.deps);
+    const dependencies = Array.from(pkg.dependencies);
 
     let str = '';
-    for (let idx = 0; idx < deps.length; idx++) {
-      const dep = deps[idx];
-      str += `${prefix}${idx < deps.length - 1 ? '├─' : '└─'}${(parents.includes(dep) ? '>' : '') + dumpLocator({name: dep.name, reference: Array.from(dep.references)[0]})}\n`;
-      str += dumpPackage(dep, [...parents, dep], `${prefix}${idx < deps.length - 1 ?'│ ' : '  '}`);
+    for (let idx = 0; idx < dependencies.length; idx++) {
+      const dep = dependencies[idx];
+      str += `${prefix}${idx < dependencies.length - 1 ? '├─' : '└─'}${(parents.includes(dep) ? '>' : '') + dumpLocator({name: dep.name, reference: Array.from(dep.references)[0]})}\n`;
+      str += dumpPackage(dep, [...parents, dep], `${prefix}${idx < dependencies.length - 1 ?'│ ' : '  '}`);
     }
     return str;
   };
