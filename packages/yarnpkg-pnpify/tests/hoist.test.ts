@@ -6,13 +6,13 @@ const toTree = (obj: any, key: string = '.', nodes = new Map()): HoisterTree => 
     node = {
       name: key.match(/@?[^@]+/)![0],
       reference: key.match(/@?[^@]+@?(.+)?/)![1] || '',
-      deps: new Set<HoisterTree>(),
+      dependencies: new Set<HoisterTree>(),
       peerNames: new Set<string>((obj[key] || {}).peerNames || []),
     };
     nodes.set(key, node);
 
-    for (const dep of ((obj[key] || {}).deps || [])) {
-      node.deps.add(toTree(obj, dep, nodes));
+    for (const dep of ((obj[key] || {}).dependencies || [])) {
+      node.dependencies.add(toTree(obj, dep, nodes));
     }
   }
   return node;
@@ -25,8 +25,8 @@ describe('hoist', () => {
     // . -> A
     //   -> B
     const tree = {
-      '.': {deps: ['A']},
-      'A': {deps: ['B']},
+      '.': {dependencies: ['A']},
+      'A': {dependencies: ['B']},
     };
     hoist(toTree(tree), {check: true});
   });
@@ -37,9 +37,9 @@ describe('hoist', () => {
     // . -> A
     //   -> B
     const tree = {
-      '.': {deps: ['A']},
-      'A': {deps: ['B']},
-      'B': {deps: ['A']},
+      '.': {dependencies: ['A']},
+      'A': {dependencies: ['B']},
+      'B': {dependencies: ['A']},
     };
     hoist(toTree(tree), {check: true});
   });
@@ -61,11 +61,11 @@ describe('hoist', () => {
     //   -> F@Z
     //   -> G@X
     const tree = {
-      '.': {deps: ['A', 'C@Y', 'D@Y']},
-      'A': {deps: ['B', 'C@Z', 'F@Z']},
-      'B': {deps: ['C@X', 'F@X']},
-      'F@X': {deps: ['G@X']},
-      'C@X': {deps: ['D@X']},
+      '.': {dependencies: ['A', 'C@Y', 'D@Y']},
+      'A': {dependencies: ['B', 'C@Z', 'F@Z']},
+      'B': {dependencies: ['C@X', 'F@X']},
+      'F@X': {dependencies: ['G@X']},
+      'C@X': {dependencies: ['D@X']},
     };
     hoist(toTree(tree), {check: true});
   });
@@ -79,9 +79,9 @@ describe('hoist', () => {
     //        -> C@X
     //   -> C@Y
     const tree = {
-      '.': {deps: ['A', 'C@Y']},
-      'A': {deps: ['B']},
-      'B': {deps: ['A', 'C@X']},
+      '.': {dependencies: ['A', 'C@Y']},
+      'A': {dependencies: ['B']},
+      'B': {dependencies: ['A', 'C@X']},
     };
     hoist(toTree(tree), {check: true});
   });
@@ -91,8 +91,8 @@ describe('hoist', () => {
     //   -> B@Y
     // should not be changed
     const tree = {
-      '.': {deps: ['A', 'B@Y']},
-      'A': {deps: ['B@X']},
+      '.': {dependencies: ['A', 'B@Y']},
+      'A': {dependencies: ['B@X']},
     };
     hoist(toTree(tree), {check: true});
   });
@@ -104,10 +104,10 @@ describe('hoist', () => {
     //   -> B@X
     //   -> C -> B@Y
     const tree = {
-      '.':   {deps: ['A']},
-      'A':   {deps: ['B@X']},
-      'B@X': {deps: ['C']},
-      'C':   {deps: ['B@Y']},
+      '.':   {dependencies: ['A']},
+      'A':   {dependencies: ['B@X']},
+      'B@X': {dependencies: ['C']},
+      'C':   {dependencies: ['B@Y']},
     };
     hoist(toTree(tree), {check: true});
   });
@@ -122,10 +122,10 @@ describe('hoist', () => {
     //   -> B@Y
     //   -> C@X
     const tree = {
-      '.':   {deps: ['A', 'B@Y', 'C@X']},
-      'A':   {deps: ['B@X', 'C@X']},
-      'B@X': {deps: ['C@Y']},
-      'C':   {deps: ['B@Y']},
+      '.':   {dependencies: ['A', 'B@Y', 'C@X']},
+      'A':   {dependencies: ['B@X', 'C@X']},
+      'B@X': {dependencies: ['C@Y']},
+      'C':   {dependencies: ['B@Y']},
     };
     hoist(toTree(tree), {check: true});
   });
@@ -140,10 +140,10 @@ describe('hoist', () => {
     //   -> B@Y
     //   -> C@X
     const tree = {
-      '.':   {deps: ['.', 'A', 'B@Y', 'C@X']},
-      'A':   {deps: ['A', 'B@X', 'C@X']},
-      'B@X': {deps: ['B@X', 'C@Y']},
-      'C':   {deps: ['B@Y']},
+      '.':   {dependencies: ['.', 'A', 'B@Y', 'C@X']},
+      'A':   {dependencies: ['A', 'B@X', 'C@X']},
+      'B@X': {dependencies: ['B@X', 'C@Y']},
+      'C':   {dependencies: ['B@Y']},
     };
     hoist(toTree(tree), {check: true});
   });
@@ -163,13 +163,13 @@ describe('hoist', () => {
     //   -> G
     //   -> B@Y
     const tree = {
-      '.': {deps: ['A', 'C', 'D', 'E', 'F']},
-      'A': {deps: ['B@X']},
-      'C': {deps: ['B@X']},
-      'D': {deps: ['B@Y']},
-      'E': {deps: ['B@Y']},
-      'F': {deps: ['G']},
-      'G': {deps: ['B@Y']},
+      '.': {dependencies: ['A', 'C', 'D', 'E', 'F']},
+      'A': {dependencies: ['B@X']},
+      'C': {dependencies: ['B@X']},
+      'D': {dependencies: ['B@Y']},
+      'E': {dependencies: ['B@Y']},
+      'F': {dependencies: ['G']},
+      'G': {dependencies: ['B@Y']},
     };
     hoist(toTree(tree), {check: true});
   });
@@ -183,14 +183,14 @@ describe('hoist', () => {
     //        -> D@X
     //   -> D@Y
     const tree = {
-      '.': {deps: ['A', 'D@Y']},
-      'A': {deps: ['B', 'D@X']},
-      'B': {deps: ['D@X'], peerNames: ['D']},
+      '.': {dependencies: ['A', 'D@Y']},
+      'A': {dependencies: ['B', 'D@X']},
+      'B': {dependencies: ['D@X'], peerNames: ['D']},
     };
     hoist(toTree(tree), {check: true});
   });
 
-  it('should hoist deps after hoisting peer dep', () => {
+  it('should hoist dependencies after hoisting peer dep', () => {
     // . -> A -> B --> D@X
     //      -> D@X
     // should be hoisted to (B should be hoisted because its inherited dep D@X was hoisted):
@@ -198,9 +198,9 @@ describe('hoist', () => {
     //   -> B
     //   -> D@X
     const tree = {
-      '.': {deps: ['A']},
-      'A': {deps: ['B', 'D@X']},
-      'B': {deps: ['D@X'], peerNames: ['D']},
+      '.': {dependencies: ['A']},
+      'A': {dependencies: ['B', 'D@X']},
+      'B': {dependencies: ['D@X'], peerNames: ['D']},
     };
     hoist(toTree(tree), {check: true});
   });
@@ -215,9 +215,9 @@ describe('hoist', () => {
     //   -> B@X
     //   -> C@Y
     const tree = {
-      '.': {deps: ['A', 'B@X', 'C@Y']},
-      'A': {deps: ['B@X', 'C@X'], peerNames: ['B']},
-      'C@X': {deps: ['B@Y']},
+      '.': {dependencies: ['A', 'B@X', 'C@Y']},
+      'A': {dependencies: ['B@X', 'C@X'], peerNames: ['B']},
+      'C@X': {dependencies: ['B@Y']},
     };
     hoist(toTree(tree), {check: true});
   });
@@ -229,9 +229,9 @@ describe('hoist', () => {
     // . -> A -> B
     //   -> C
     const tree = {
-      '.': {deps: ['A'], peerNames: ['B']},
-      'A': {deps: ['B']},
-      'B': {deps: ['C']},
+      '.': {dependencies: ['A'], peerNames: ['B']},
+      'A': {dependencies: ['B']},
+      'B': {dependencies: ['C']},
     };
     hoist(toTree(tree), {check: true});
   });
@@ -250,10 +250,10 @@ describe('hoist', () => {
     //   -> B@Y
     //   -> C@Z
     const tree = {
-      '.': {deps: ['A', 'D', 'B@Y', 'C@Z']},
-      'A': {deps: ['B@X', 'C@Y']},
-      'B@X': {deps: ['C@X']},
-      'D': {deps: ['B@X']},
+      '.': {dependencies: ['A', 'D', 'B@Y', 'C@Z']},
+      'A': {dependencies: ['B@X', 'C@Y']},
+      'B@X': {dependencies: ['C@X']},
+      'D': {dependencies: ['B@X']},
     };
     hoist(toTree(tree), {check: true});
   });
@@ -281,13 +281,13 @@ describe('hoist', () => {
     //   -> D@Y
     //   -> C@Z
     const tree = {
-      '.': {deps: ['A', 'E', 'F', 'B@Y', 'C@Z', 'D@Y']},
-      'A': {deps: ['B@X', 'C@Y']},
-      'B@X': {deps: ['C@X']},
-      'C@X': {deps: ['D@X']},
-      'E': {deps: ['B@X']},
-      'F': {deps: ['G']},
-      'G': {deps: ['B@X', 'D@Z']},
+      '.': {dependencies: ['A', 'E', 'F', 'B@Y', 'C@Z', 'D@Y']},
+      'A': {dependencies: ['B@X', 'C@Y']},
+      'B@X': {dependencies: ['C@X']},
+      'C@X': {dependencies: ['D@X']},
+      'E': {dependencies: ['B@X']},
+      'F': {dependencies: ['G']},
+      'G': {dependencies: ['B@X', 'D@Z']},
     };
     hoist(toTree(tree), {check: true});
   });
