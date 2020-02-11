@@ -74,7 +74,7 @@ export abstract class AbstractPnpInstaller implements Installer {
 
     for (const descriptor of pkg.peerDependencies.values()) {
       packageDependencies.set(structUtils.requirableIdent(descriptor), null);
-      packagePeers.add(descriptor.name);
+      packagePeers.add(structUtils.stringifyIdent(descriptor));
     }
 
     miscUtils.getMapWithDefault(this.packageRegistry, key1).set(key2, {

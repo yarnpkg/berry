@@ -169,9 +169,12 @@ async function writeInstallState(project: Project, locatorMap: NodeModulesLocato
   locatorState += `__metadata:\n`;
   locatorState += `  version: 1\n`;
 
-  for (const [locatorStr, installRecord] of locatorMap.entries()) {
+  const locators = Array.from(locatorMap.keys()).sort();
+
+  for (const locator of locators) {
+    const installRecord = locatorMap.get(locator)!;
     locatorState += `\n`;
-    locatorState += `${JSON.stringify(locatorStr)}:\n`;
+    locatorState += `${JSON.stringify(locator)}:\n`;
     locatorState += `  locations:\n`;
 
     for (const location of installRecord.locations) {
@@ -452,7 +455,7 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
 
         if (entry.name !== NODE_MODULES || !options || !options.keepSrcNodeModules) {
           if (entry.isDirectory()) {
-            await xfs.mkdirPromise(dst);
+            await xfs.mkdirpPromise(dst);
             await cloneModule(src, dst, {keepSrcNodeModules: false, keepDstNodeModules: false, innerLoop: true});
           } else {
             await xfs.copyFilePromise(src, dst, fs.constants.COPYFILE_FICLONE);
