@@ -96,7 +96,34 @@ const selfCheck = (tree: HoisterWorkTree): string => {
 /**
  * Performs hoisting all the dependencies down the tree to the root node.
  *
- * This method mutates the tree.
+ * The algorithm used here reduces dependency graph by deduplicating
+ * instances of the packages while keeping:
+ * 1. Regular dependency promise: the package should require the exact version of the dependency
+ * that was declared in its `package.json`
+ * 2. Peer dependency promise: the package and its direct parent package
+ * must use the same instance of the peer dependency
+ *
+ * The regular and peer dependency promises are kept while performing transform
+ * on triples of packages at a time:
+ * `root package` -> `parent package` -> `dependency`
+ * We check wether we can hoist `dependency` to `root package`, this boils down basically
+ * to checking:
+ * 1. Wether `root package` does not depend on other version of `dependency`
+ * 2. Wether all the peer dependencies of a `dependency` had already been hoisted from `parent package`
+ *
+ * If many versions of the `dependency` can be hoisted to the `root package` we choose the most used
+ * `dependency` version in the project among them.
+ *
+ * This algorithm is shallow first, e.g. it transforms the tree:
+ * . -> A -> B -> C
+ * in this order:
+ * 1) . -> A
+ *      -> B -> C
+ * 2) . -> A
+ *      -> B
+ *      -> C
+ *
+ * This function mutates the tree.
  *
  * @param rootNode root node to hoist to
  * @param ancestorMap ancestor map
@@ -106,14 +133,16 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, ancestorMap: 
     return 0;
   seenNodes.add(rootNode);
 
+  // Perform shallow-first hoisting by hoisting to the root node first
   let totalHoisted = hoistPass(tree, rootNode, ancestorMap, options);
 
   let childrenHoisted = 0;
+  // Now perform children hoisting
   for (const dep of rootNode.dependencies.values())
     childrenHoisted += hoistTo(tree, dep, ancestorMap, options, seenNodes);
 
   if (childrenHoisted > 0)
-    // We need second hoisting pass, because some of the children were hoisted
+    // Perfrom 2nd pass of hoisting to the root node, because some of the children were hoisted
     hoistPass(tree, rootNode, ancestorMap, options);
 
   return totalHoisted + childrenHoisted;
@@ -130,6 +159,9 @@ const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, ancestorMap
       let parentNode = clonedParents.get(parent);
       if (!parentNode) {
         const {name, references, physicalLocator, locator, dependencies, originalDependencies, hoistedDependencies, peerNames} = parent!;
+        // To perform node hoisting from parent node we must clone parent node first,
+        // because some other package in the tree might depend on the parent package where hoisting
+        // cannot be performed
         parentNode = {
           name,
           references: new Set(references),
@@ -173,6 +205,13 @@ const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, ancestorMap
 
 type HoistCandidateMap = Map<PackageName, {physicalLocator: PhysicalLocator, tuples: Set<{parent: HoisterWorkTree, node: HoisterWorkTree}>, weight: number}>;
 
+/**
+ * Finds all the packages that can be hoisted to the root package node from the set of:
+ * `root node` -> `dependency` -> `subdependency`
+ *
+ * @param rootNode root package node
+ * @param ancestorMap ancestor map to determine `dependency` version popularity
+ */
 const getHoistablePackages = (rootNode: HoisterWorkTree, ancestorMap: AncestorMap): Set<HoistCandidate> => {
   const hoistCandidates: HoistCandidateMap = new Map();
 
