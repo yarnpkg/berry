@@ -175,7 +175,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
   const tree: NodeModulesTree = new Map();
 
   const makeLeafNode = (locator: PackageLocator, aliases: string[]): {locator: LocatorKey, target: PortablePath, linkType: LinkType, aliases: string[]} => {
-    const pkgLocator = pnp.getLocator(locator.name!.replace('$wsroot$', ''), locator.reference!);
+    const pkgLocator = pnp.getLocator(locator.name!.replace(/^\$wsroot\$/, ''), locator.reference!);
     const info = pnp.getPackageInformation(pkgLocator)!;
 
     let linkType;
