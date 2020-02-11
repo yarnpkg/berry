@@ -347,26 +347,32 @@ const shrinkTree = (tree: HoisterWorkTree): HoisterResult => {
     dependencies: new Set(),
   };
 
-  const addNode = (node: HoisterWorkTree, parentNode: HoisterResult, parents: Set<HoisterWorkTree>) => {
-    if (parents.has(node))
-      return;
+  const nodes = new Map<HoisterWorkTree, HoisterResult>([[tree, treeCopy]]);
 
-    const {name, references} = node;
-    const resultNode = {
-      name, references, dependencies: new Set<HoisterResult>(),
-    };
+  const addNode = (node: HoisterWorkTree, parentNode: HoisterResult) => {
+    let resultNode = nodes.get(node);
+    const isSeen = !!resultNode;
+
+    if (!resultNode) {
+      const {name, references} = node;
+      resultNode = {
+        name, references, dependencies: new Set<HoisterResult>(),
+      };
+    }
 
     parentNode.dependencies.add(resultNode);
 
-    for (const dep of node.dependencies.values()) {
-      if (!node.peerNames.has(dep.name)) {
-        addNode(dep, resultNode, new Set(parents).add(node));
+    if (!isSeen) {
+      for (const dep of node.dependencies.values()) {
+        if (!node.peerNames.has(dep.name)) {
+          addNode(dep, resultNode);
+        }
       }
     }
   };
 
   for (const dep of tree.dependencies.values())
-    addNode(dep, treeCopy, new Set([tree]));
+    addNode(dep, treeCopy);
 
   return treeCopy;
 };
