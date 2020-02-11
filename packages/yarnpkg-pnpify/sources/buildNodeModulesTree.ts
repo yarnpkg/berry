@@ -209,49 +209,47 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
 
   const seenNodes = new Set<HoisterResult>();
   const buildTree = (pkg: HoisterResult, locationPrefix: PortablePath) => {
-    const isSeen = seenNodes.has(pkg);
+    if (seenNodes.has(pkg))
+      return;
+    seenNodes.add(pkg);
+    for (const dep of pkg.deps) {
+      const references: string[] = Array.from(dep.references).sort();
+      const locator = {name: dep.name, reference: references[0]};
+      const {name, scope} = getPackageName(locator);
 
-    if (!isSeen) {
-      seenNodes.add(pkg);
-      for (const dep of pkg.deps) {
-        const references: string[] = Array.from(dep.references).sort();
-        const locator = {name: dep.name, reference: references[0]};
-        const {name, scope} = getPackageName(locator);
+      const packageNameParts = scope ? [scope, name] : [name];
 
-        const packageNameParts = scope ? [scope, name] : [name];
+      const nodeModulesDirPath = ppath.join(locationPrefix, NODE_MODULES);
+      const nodeModulesLocation = ppath.join(nodeModulesDirPath, ...packageNameParts);
 
-        const nodeModulesDirPath = ppath.join(locationPrefix, NODE_MODULES);
-        const nodeModulesLocation = ppath.join(nodeModulesDirPath, ...packageNameParts);
+      const leafNode = makeLeafNode(locator, references.slice(1));
+      if (!dep.name.startsWith('$wsroot$')) {
+        tree.set(nodeModulesLocation, leafNode);
 
-        const leafNode = makeLeafNode(locator, references.slice(1));
-        if (!dep.name.startsWith('$wsroot$')) {
-          tree.set(nodeModulesLocation, leafNode);
+        const segments = nodeModulesLocation.split('/');
+        const nodeModulesIdx = segments.indexOf(NODE_MODULES);
 
-          const segments = nodeModulesLocation.split('/');
-          const nodeModulesIdx = segments.indexOf(NODE_MODULES);
+        let segCount = segments.length - 1;
+        while (nodeModulesIdx >= 0 && segCount > nodeModulesIdx) {
+          const dirPath = npath.toPortablePath(segments.slice(0, segCount).join(ppath.sep));
+          const targetDir = toFilename(segments[segCount]);
 
-          let segCount = segments.length - 1;
-          while (nodeModulesIdx >= 0 && segCount > nodeModulesIdx) {
-            const dirPath = npath.toPortablePath(segments.slice(0, segCount).join(ppath.sep));
-            const targetDir = toFilename(segments[segCount]);
-
-            const subdirs = tree.get(dirPath);
-            if (!subdirs) {
-              tree.set(dirPath, {dirList: new Set([targetDir])});
-            } else if (subdirs.dirList) {
-              if (subdirs.dirList.has(targetDir)) {
-                break;
-              } else {
-                subdirs.dirList.add(targetDir);
-              }
+          const subdirs = tree.get(dirPath);
+          if (!subdirs) {
+            tree.set(dirPath, {dirList: new Set([targetDir])});
+          } else if (subdirs.dirList) {
+            if (subdirs.dirList.has(targetDir)) {
+              break;
+            } else {
+              subdirs.dirList.add(targetDir);
             }
-
-            segCount--;
           }
-        }
 
-        buildTree(dep, leafNode.linkType === LinkType.SOFT ? leafNode.target: nodeModulesLocation);
+          segCount--;
+        }
       }
+
+      buildTree(dep, leafNode.linkType === LinkType.SOFT ? leafNode.target: nodeModulesLocation);
     }
   };
 
