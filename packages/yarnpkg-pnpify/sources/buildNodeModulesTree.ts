@@ -224,7 +224,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
         const nodeModulesLocation = ppath.join(nodeModulesDirPath, ...packageNameParts);
 
         const leafNode = makeLeafNode(locator, references.slice(1));
-        if (dep.name.indexOf('$wsroot$') < 0) {
+        if (!dep.name.startsWith('$wsroot$')) {
           tree.set(nodeModulesLocation, leafNode);
 
           const segments = nodeModulesLocation.split('/');
