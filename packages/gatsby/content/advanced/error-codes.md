@@ -32,7 +32,7 @@ Note that Yarn enforces peer dependencies at every level of the dependency tree 
 
 Two packages with build scripts have cyclic dependencies.
 
-Cyclic dependencies are a can of worm. They happen when a package `A` depends on a package `B` and vice-versa Sometime can arise through a chain of multiple packages - for example when `A` depends on `B`, which depends on `C`, which depends on `A`.
+Cyclic dependencies are a can of worms. They happen when a package `A` depends on a package `B` and vice-versa Sometime can arise through a chain of multiple packages - for example when `A` depends on `B`, which depends on `C`, which depends on `A`.
 
 While cyclic dependencies may work fine in the general Javascript case (and in fact Yarn won't warn you about it in most cases), they can cause issues as soon as build scripts are involved. Indeed, in order to build a package, we first must make sure that its own dependencies have been properly built. How can we do that when two packages reference each other? Since the first one to build cannot be deduced, such patterns will cause the build scripts of every affected packages to simply be ignored (and a warning emitted).
 
