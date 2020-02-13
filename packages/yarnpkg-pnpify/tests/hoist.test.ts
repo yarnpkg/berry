@@ -1,4 +1,4 @@
-import {hoist, HoisterTree} from '../sources/hoist';
+import {hoist, HoisterTree, HoisterResult} from '../sources/hoist';
 
 const toTree = (obj: any, key: string = '.', nodes = new Map()): HoisterTree => {
   let node = nodes.get(key);
@@ -18,6 +18,28 @@ const toTree = (obj: any, key: string = '.', nodes = new Map()): HoisterTree => 
   return node;
 };
 
+const getTreeHeight = (tree: HoisterResult): number => {
+  let height = 0;
+  let maxHeight = 0;
+  const seen = new Set<HoisterResult>();
+
+  const visitNode = (node: HoisterResult) => {
+    if (seen.has(node))
+      return;
+    seen.add(node);
+
+    height += 1;
+    maxHeight = Math.max(height, maxHeight);
+    for (const dep of node.dependencies)
+      visitNode(dep);
+    height -= 1;
+  };
+
+  visitNode(tree);
+
+  return maxHeight;
+};
+
 describe('hoist', () => {
   it('should do very basic hoisting', () => {
     // . -> A -> B
@@ -28,7 +50,7 @@ describe('hoist', () => {
       '.': {dependencies: ['A']},
       'A': {dependencies: ['B']},
     };
-    hoist(toTree(tree), {check: true});
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
 
   it('should support basic cyclic dependencies', () => {
@@ -41,7 +63,7 @@ describe('hoist', () => {
       'A': {dependencies: ['B']},
       'B': {dependencies: ['A']},
     };
-    hoist(toTree(tree), {check: true});
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
 
   it('should keep require promise', () => {
@@ -51,11 +73,12 @@ describe('hoist', () => {
     //        -> F@Z
     //   -> C@Y
     //   -> D@Y
-    // should be hoisted to (B cannot be hoisted to the top, othewise C@X will access D@Y instead of D@X):
-    // . -> A -> B -> C@X
-    //             -> F@X
+    // should be hoisted to:
+    // . -> A
     //        -> C@Z
     //        -> D@X
+    //   -> B -> C@X
+    //        -> F@X
     //   -> C@Y
     //   -> D@Y
     //   -> F@Z
@@ -67,7 +90,7 @@ describe('hoist', () => {
       'F@X': {dependencies: ['G@X']},
       'C@X': {dependencies: ['D@X']},
     };
-    hoist(toTree(tree), {check: true});
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
   it('should not forget hoisted dependencies', () => {
@@ -83,7 +106,7 @@ describe('hoist', () => {
       'A': {dependencies: ['B']},
       'B': {dependencies: ['A', 'C@X']},
     };
-    hoist(toTree(tree), {check: true});
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
   it('should not hoist different package with the same name', () => {
@@ -94,7 +117,7 @@ describe('hoist', () => {
       '.': {dependencies: ['A', 'B@Y']},
       'A': {dependencies: ['B@X']},
     };
-    hoist(toTree(tree), {check: true});
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
   it('should not hoist package that has several versions on the same tree path', () => {
@@ -109,7 +132,7 @@ describe('hoist', () => {
       'B@X': {dependencies: ['C']},
       'C':   {dependencies: ['B@Y']},
     };
-    hoist(toTree(tree), {check: true});
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
   it('should perform deep hoisting', () => {
@@ -127,7 +150,7 @@ describe('hoist', () => {
       'B@X': {dependencies: ['C@Y']},
       'C':   {dependencies: ['B@Y']},
     };
-    hoist(toTree(tree), {check: true});
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
 
   it('should tolerate self-dependencies', () => {
@@ -145,7 +168,7 @@ describe('hoist', () => {
       'B@X': {dependencies: ['B@X', 'C@Y']},
       'C':   {dependencies: ['B@Y']},
     };
-    hoist(toTree(tree), {check: true});
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
 
   it('should honor package popularity when hoisting', () => {
@@ -171,7 +194,7 @@ describe('hoist', () => {
       'F': {dependencies: ['G']},
       'G': {dependencies: ['B@Y']},
     };
-    hoist(toTree(tree), {check: true});
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
   it('should honor peer dependencies', () => {
@@ -187,7 +210,7 @@ describe('hoist', () => {
       'A': {dependencies: ['B', 'D@X']},
       'B': {dependencies: ['D@X'], peerNames: ['D']},
     };
-    hoist(toTree(tree), {check: true});
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
   it('should hoist dependencies after hoisting peer dep', () => {
@@ -202,7 +225,7 @@ describe('hoist', () => {
       'A': {dependencies: ['B', 'D@X']},
       'B': {dependencies: ['D@X'], peerNames: ['D']},
     };
-    hoist(toTree(tree), {check: true});
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
 
   it('should honor unhoisted peer dependencies', () => {
@@ -219,7 +242,7 @@ describe('hoist', () => {
       'A': {dependencies: ['B@X', 'C@X'], peerNames: ['B']},
       'C@X': {dependencies: ['B@Y']},
     };
-    hoist(toTree(tree), {check: true});
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
 
   it('should honor peer dependency promise for the same version of dependency', () => {
@@ -233,7 +256,7 @@ describe('hoist', () => {
       'A': {dependencies: ['B']},
       'B': {dependencies: ['C']},
     };
-    hoist(toTree(tree), {check: true});
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
   it('should hoist different copies of a package independently', () => {
@@ -255,7 +278,7 @@ describe('hoist', () => {
       'B@X': {dependencies: ['C@X']},
       'D': {dependencies: ['B@X']},
     };
-    hoist(toTree(tree), {check: true});
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
 
   it('should hoist different copies of a package independently (complicated case)', () => {
@@ -289,6 +312,6 @@ describe('hoist', () => {
       'F': {dependencies: ['G']},
       'G': {dependencies: ['B@X', 'D@Z']},
     };
-    hoist(toTree(tree), {check: true});
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
 });
