@@ -2,6 +2,7 @@ import * as gitUtils from './gitUtils';
 
 const VALID_PATTERNS = [
   `GitHubOrg/foo-bar.js`,
+  `GitHubOrg/foo2bar.js`,
   `GitHubOrg/foo-bar.js#hash`,
   `github:GitHubOrg/foo-bar.js`,
   `github:GitHubOrg/foo-bar.js#hash`,
