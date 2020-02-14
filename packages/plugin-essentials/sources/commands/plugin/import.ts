@@ -71,7 +71,7 @@ export default class PluginDlCommand extends BaseCommand {
           }
 
           pluginSpec = this.name;
-          pluginUrl = name;
+          pluginUrl = this.name;
         } else {
           const ident = structUtils.parseIdent(this.name.replace(/^((@yarnpkg\/)?plugin-)?/, `@yarnpkg/plugin-`));
           const identStr = structUtils.stringifyIdent(ident);
