@@ -43,6 +43,7 @@ const MULTIPLE_KEYS_REGEXP = / *, */g;
 export type InstallOptions = {
   cache: Cache,
   fetcher?: Fetcher,
+  resolver?: Resolver
   report: Report,
   immutable?: boolean,
   lockfileOnly?: boolean,
@@ -440,7 +441,7 @@ export class Project {
     return null;
   }
 
-  async resolveEverything(opts: {report: Report, lockfileOnly: true} | {report: Report, lockfileOnly?: boolean, cache: Cache}) {
+  async resolveEverything(opts: {report: Report, lockfileOnly: true, resolver?: Resolver} | {report: Report, lockfileOnly?: boolean, cache: Cache, resolver?: Resolver}) {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
 
@@ -463,7 +464,7 @@ export class Project {
     // were to mutate the project then it would end up in a partial state that
     // could lead to hard-to-debug issues).
 
-    const realResolver = this.configuration.makeResolver();
+    const realResolver = opts.resolver || this.configuration.makeResolver();
 
     const legacyMigrationResolver = new LegacyMigrationResolver();
     await legacyMigrationResolver.setup(this, {report: opts.report});
@@ -930,8 +931,8 @@ export class Project {
     }
   }
 
-  async linkEverything({cache, report}: InstallOptions) {
-    const fetcher = this.configuration.makeFetcher();
+  async linkEverything({cache, report, fetcher: optFetcher}: InstallOptions) {
+    const fetcher = optFetcher || this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
 
     const linkers = this.configuration.getLinkers();
