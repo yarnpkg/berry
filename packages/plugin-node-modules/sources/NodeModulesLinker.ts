@@ -111,7 +111,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
 
       const sourceLocation = npath.toPortablePath(installRecord.locations[0]);
 
-      const manifest = await Manifest.find(sourceLocation, {baseFs: xfs});
+      const manifest = await Manifest.find(sourceLocation);
       const buildScripts = await this.getSourceBuildScripts(sourceLocation, manifest);
 
       if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`)) {
