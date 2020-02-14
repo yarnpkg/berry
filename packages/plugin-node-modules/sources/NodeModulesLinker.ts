@@ -109,9 +109,9 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
       if (pnpEntry === null)
         throw new Error(`Assertion failed: Expected the package to be registered (${structUtils.prettyLocator(this.opts.project.configuration, locator)})`);
 
-      const sourceLocation = npath.toPortablePath(pnpEntry.packageLocation);
+      const sourceLocation = npath.toPortablePath(installRecord.locations[0]);
 
-      const manifest = await Manifest.find(sourceLocation, {baseFs: defaultFsLayer});
+      const manifest = await Manifest.find(sourceLocation);
       const buildScripts = await this.getSourceBuildScripts(sourceLocation, manifest);
 
       if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`)) {
