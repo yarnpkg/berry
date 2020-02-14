@@ -381,12 +381,12 @@ class EntryCommand extends Command {
               if (!workspace)
                 return;
 
-              const patterns = [`**/*`];
+              const patterns = [`${manifestFolder}/**`];
               const ignore = [];
 
               for (const otherManifestFolder of allManifestFolders) {
                 const sub = ppath.contains(manifestFolder, otherManifestFolder);
-                if (sub !== `.`) {
+                if (sub !== null && sub !== `.`) {
                   ignore.push(`${otherManifestFolder}/**`);
                 }
               }
