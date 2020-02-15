@@ -44,7 +44,7 @@ export const hoist = (tree: HoisterTree, options: HoistOptions = {}): HoisterRes
   const treeCopy = cloneTree(tree);
   const ancestorMap = buildAncestorMap(treeCopy);
 
-  hoistTo(treeCopy, treeCopy, new Map(), ancestorMap, options);
+  while (hoistTo(treeCopy, treeCopy, new Map(), ancestorMap, options) > 0);
 
   if (options.finalCheck)
     selfCheck(treeCopy);
@@ -135,20 +135,15 @@ const selfCheck = (tree: HoisterWorkTree): string => {
  *
  * @param tree dependency tree
  * @param rootNode root node to hoist to
- * @param ancestorDeps commulative dependencies of all root node ancestors
+ * @param parentAncestorDependencies commulative dependencies of all root node ancestors, excluding root node dependenciew
  * @param ancestorMap ancestor map
  * @param options hoisting options
  * @param hoistBlacklistMap root node -> blacklisted nodes from hoisting list
  */
-const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, ancestorDeps: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, options: HoistOptions, seenNodes: Set<HoisterWorkTree> = new Set(), hoistBlacklistMap = new Map()): number => {
+const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, parentAncestorDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, options: HoistOptions, seenNodes: Set<HoisterWorkTree> = new Set(), hoistBlacklistMap = new Map()): number => {
   if (seenNodes.has(rootNode))
     return 0;
   seenNodes.add(rootNode);
-
-  const dependencies = new Map(ancestorDeps);
-  for (const dep of rootNode.dependencies.values())
-    if (!rootNode.peerNames.has(dep.name))
-      dependencies.set(dep.name, dep);
 
   let hoistBlacklist = hoistBlacklistMap.get(rootNode);
   if (!hoistBlacklist) {
@@ -157,32 +152,37 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, ancestorDeps:
   }
 
   // Perform shallow-first hoisting by hoisting to the root node first
-  let totalHoisted = hoistPass(tree, rootNode, ancestorDeps, ancestorMap, options, hoistBlacklist);
+  let totalHoisted = hoistPass(tree, rootNode, parentAncestorDependencies, ancestorMap, options, hoistBlacklist);
+
+  const ancestorDependencies = new Map(parentAncestorDependencies);
+  for (const dep of rootNode.dependencies.values())
+    if (!rootNode.peerNames.has(dep.name))
+      ancestorDependencies.set(dep.name, dep);
 
   let childrenHoisted = 0;
   // Now perform children hoisting
   for (const dep of rootNode.dependencies.values())
-    childrenHoisted += hoistTo(tree, dep, dependencies, ancestorMap, options, seenNodes, hoistBlacklistMap);
+    childrenHoisted += hoistTo(tree, dep, ancestorDependencies, ancestorMap, options, seenNodes, hoistBlacklistMap);
 
   if (childrenHoisted > 0)
     // Perfrom 2nd pass of hoisting to the root node, because some of the children were hoisted
-    hoistPass(tree, rootNode, ancestorDeps, ancestorMap, options, hoistBlacklist);
+    hoistPass(tree, rootNode, parentAncestorDependencies, ancestorMap, options, hoistBlacklist);
 
   return totalHoisted + childrenHoisted;
 };
 
-const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, ancestorDeps: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, options: HoistOptions, hoistBlacklist: Set<HoisterWorkTree>): number => {
+const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, parentAncestorDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, options: HoistOptions, hoistBlacklist: Set<HoisterWorkTree>): number => {
   let totalHoisted = 0;
   let packagesToHoist: Set<HoistCandidate>;
   const clonedParents = new Map<HoisterWorkTree, HoisterWorkTree>();
 
-  const dependencies = new Map(ancestorDeps);
+  const ancestorDependencies = new Map(parentAncestorDependencies);
   for (const dep of rootNode.dependencies.values())
     if (!rootNode.peerNames.has(dep.name))
-      dependencies.set(dep.name, dep);
+      ancestorDependencies.set(dep.name, dep);
 
   do {
-    packagesToHoist = getHoistablePackages(rootNode, dependencies, ancestorMap, hoistBlacklist);
+    packagesToHoist = getHoistablePackages(rootNode, ancestorDependencies, ancestorMap, hoistBlacklist);
     totalHoisted += packagesToHoist.size;
     for (const {parent, node} of packagesToHoist) {
       let parentNode = clonedParents.get(parent);
@@ -214,7 +214,7 @@ const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, ancestorDep
         // Avoid adding node to itself
         if (node.physicalLocator !== rootNode.physicalLocator) {
           rootNode.dependencies.set(node.name, node);
-          dependencies.set(node.name, node);
+          ancestorDependencies.set(node.name, node);
         }
       } else {
         for (const reference of node.references) {
@@ -240,14 +240,15 @@ type HoistCandidateMap = Map<PackageName, {physicalLocator: PhysicalLocator, tup
  * `root node` -> `dependency` -> `subdependency`
  *
  * @param rootNode root package node
+ * @param ancestorDependencies commulative dependencies of all root node ancestors, including root node dependencies
  * @param ancestorMap ancestor map to determine `dependency` version popularity
  */
-const getHoistablePackages = (rootNode: HoisterWorkTree, dependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, hoistBlacklist: Set<HoisterWorkTree>): Set<HoistCandidate> => {
+const getHoistablePackages = (rootNode: HoisterWorkTree, ancestorDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, hoistBlacklist: Set<HoisterWorkTree>): Set<HoistCandidate> => {
   const hoistCandidates: HoistCandidateMap = new Map();
 
   const computeHoistCandidates = (parentNode: HoisterWorkTree, node: HoisterWorkTree) => {
-    if (hoistBlacklist.has(node))
-      return;
+    // if (hoistBlacklist.has(node))
+    //   return;
     let isHoistable: boolean = true;
     let competitorInfo = hoistCandidates.get(node.name);
 
@@ -286,7 +287,7 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, dependencies: Map<Packa
       // Check that hoisted dependencies of current node are satisifed
       for (const dep of node.hoistedDependencies.values()) {
         if (node.originalDependencies.has(dep.name)) {
-          const depNode = dependencies.get(dep.name);
+          const depNode = ancestorDependencies.get(dep.name);
           if (!depNode) {
             isHoistable = false;
           } else if (depNode.physicalLocator !== dep.physicalLocator) {
