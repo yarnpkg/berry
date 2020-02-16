@@ -9,11 +9,13 @@
     "@types/semver": "^7.1.0",
     "@types/tar-fs": "^1.16.1",
     "@types/tmp": "^0.0.33",
+    "@verdaccio/commons-api": "^9.0.0",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.29",
     "@yarnpkg/core": "workspace:^2.0.0-rc.23",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.16",
     "finalhandler": "^1.1.2",
     "invariant": "^2.2.4",
+    "js-yaml": "^3.13.1",
     "klaw": "^2.1.1",
     "minimatch": "^3.0.4",
     "pkg-tests-fixtures": "workspace:0.0.0",
@@ -21,7 +23,9 @@
     "serve-static": "^1.14.1",
     "super-resolve": "^1.0.0",
     "tar-fs": "^1.16.0",
-    "tmp": "^0.1.0"
+    "tmp": "^0.1.0",
+    "verdaccio": "4.4.2",
+    "verdaccio-auth-memory": "^9.3.0"
   },
   "repository": {
     "type": "git",
@@ -29,6 +33,7 @@
   },
   "devDependencies": {
     "@types/finalhandler": "1.1.0",
-    "@types/serve-static": "1.13.3"
+    "@types/serve-static": "1.13.3",
+    "@verdaccio/types": "^9.3.0"
   }
 }

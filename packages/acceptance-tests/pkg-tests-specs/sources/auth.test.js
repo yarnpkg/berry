@@ -10,7 +10,7 @@ const INVALID_AUTH_TOKEN = `a24cb960-e6a5-45fc-b9ab-0f9fe0aaae57`;
 const INVALID_AUTH_IDENT = `dXNlcm5hbWU6bm90IHRoZSByaWdodCBwYXNzd29yZA==`; // username:not the right password
 
 describe(`Auth tests`, () => {
-  test(
+  test.only(
     `it should fail to install unscoped packages which require authentication if no authentication is configured`,
     makeTemporaryEnv(
       {

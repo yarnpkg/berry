@@ -8,6 +8,7 @@ import {AddressInfo}                     from 'net';
 import semver                            from 'semver';
 import serveStatic                       from 'serve-static';
 import {Gzip}                            from 'zlib';
+import startServer from 'verdaccio';
 
 const deepResolve = require('super-resolve');
 
@@ -174,6 +175,7 @@ export const getPackageDirectoryPath = async (
 let packageServerUrl: string | null = null;
 
 export const startPackageServer = (): Promise<string> => {
+  console.log("--verdaccio-->", startServer);
   if (packageServerUrl !== null)
     return Promise.resolve(packageServerUrl);
 
@@ -205,6 +207,8 @@ export const startPackageServer = (): Promise<string> => {
 
   const processors: {[requestType in RequestType]:(parsedRequest: Request, request: IncomingMessage, response: ServerResponse) => Promise<void>} = {
     async [RequestType.PackageInfo](parsedRequest, _, response) {
+      console.log('-parsedRequest-->', parsedRequest);
+      console.log('-response-->', parsedRequest);
       if (parsedRequest.type !== RequestType.PackageInfo)
         throw new Error(`Assertion failed: Invalid request type`);
       const {scope, localName} = parsedRequest;
@@ -347,6 +351,7 @@ export const startPackageServer = (): Promise<string> => {
   };
 
   const parseRequest = (url: string): Request | null => {
+    console.log("-->", parseRequest);
     let match: RegExpMatchArray|null;
 
     url = url.replace(/%2f/g, '/');
@@ -438,41 +443,70 @@ export const startPackageServer = (): Promise<string> => {
   ];
 
   return new Promise((resolve, reject) => {
-    const server = http.createServer(
-      (req, res) =>
-        void (async () => {
-          try {
-            const parsedRequest = parseRequest(req.url!);
+    // const server = http.createServer(
+    //   (req, res) =>
+    //     void (async () => {
+    //       try {
+    //         const parsedRequest = parseRequest(req.url!);
+    //
+    //         if (parsedRequest == null) {
+    //           processError(res, 404, `Invalid route: ${req.url}`);
+    //           return;
+    //         }
+    //
+    //         const {authorization} = req.headers;
+    //         if (authorization != null) {
+    //           if (!validAuthorizations.includes(authorization)) {
+    //             sendError(res, 401, `Invalid token`);
+    //             return;
+    //           }
+    //         } else if (needsAuth(parsedRequest)) {
+    //           sendError(res, 401, `Authentication required`);
+    //           return;
+    //         }
+    //
+    //         await processors[parsedRequest.type](parsedRequest, req, res);
+    //       } catch (error) {
+    //         processError(res, 500, error.stack);
+    //       }
+    //     })(),
+    // );
+    //
+    // // We don't want the server to prevent the process from exiting
+    // server.unref();
+    // server.listen(() => {
+    //   const {port} = server.address() as AddressInfo;
+    //   resolve((packageServerUrl = `http://localhost:${port}`));
+    // });
 
-            if (parsedRequest == null) {
-              processError(res, 404, `Invalid route: ${req.url}`);
-              return;
-            }
+    const fs = require('fs');
+    const path = require('path');
+    const verdaccio = require('verdaccio').default;
+    const YAML = require('js-yaml');
 
-            const {authorization} = req.headers;
-            if (authorization != null) {
-              if (!validAuthorizations.includes(authorization)) {
-                sendError(res, 401, `Invalid token`);
-                return;
-              }
-            } else if (needsAuth(parsedRequest)) {
-              sendError(res, 401, `Authentication required`);
-              return;
-            }
+    const getConfig = () => {
+      return YAML.safeLoad(fs.readFileSync(path.join(__dirname, 'config.yaml'), 'utf8'));
+    }
 
-            await processors[parsedRequest.type](parsedRequest, req, res);
-          } catch (error) {
-            processError(res, 500, error.stack);
-          }
-        })(),
-    );
-
-    // We don't want the server to prevent the process from exiting
-    server.unref();
-    server.listen(() => {
-      const {port} = server.address() as AddressInfo;
-      resolve((packageServerUrl = `http://localhost:${port}`));
+    const cache = path.join(__dirname, 'cache');
+    const config = Object.assign({}, getConfig(), {
+      self_path: cache,
+      plugins: path.join(__dirname, '../', 'server_plugins')
     });
+
+    verdaccio(config, 6000, cache, '1.0.0', 'verdaccio', (webServer, addrs, pkgName, pkgVersion) => {
+      try {
+        webServer.unref();
+        webServer.listen(addrs.port || addrs.path, addrs.host, () => {
+          console.log('verdaccio running');
+          resolve((packageServerUrl = `http://localhost:${6000}`));
+        });
+      } catch (error) {
+        console.error(error);
+        reject(error);
+      }
+    });
+
   });
 };
 

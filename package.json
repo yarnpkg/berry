@@ -38,6 +38,12 @@
     "typescript": "^3.7.5"
   },
   "dependenciesMeta": {
+    "@verdaccio/commons-api": {
+      "unplugged": true
+    },
+    "@verdaccio/types": {
+      "unplugged": true
+    },
     "core-js": {
       "built": false
     },
@@ -51,6 +57,12 @@
       "built": false
     },
     "svg2png": {
+      "unplugged": true
+    },
+    "verdaccio": {
+      "unplugged": true
+    },
+    "verdaccio-auth-memory": {
       "unplugged": true
     },
     "webpack-cli": {

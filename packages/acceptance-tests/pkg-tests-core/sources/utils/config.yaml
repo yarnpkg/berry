@@ -1,0 +1,37 @@
+storage: /Users/jpicado/.local/share/verdaccio/storage_yarn
+plugins: ./plugins
+
+web:
+  title: Verdaccio
+
+auth:
+  yarn-test-auth:
+    allowed: username
+
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+
+packages:
+  '@private/*':
+    access: nobody
+  '@*/*':
+    access: $all
+    publish: $authenticated
+    unpublish: $authenticated
+    proxy: npmjs
+  'private-*':
+    access: nobody
+  '**':
+    access: $all
+    publish: $authenticated
+    proxy: npmjs cachednpm
+
+server:
+  keepAliveTimeout: 60
+
+middlewares:
+  audit:
+    enabled: true
+logs:
+  - { type: stdout, format: pretty, level: trace }
