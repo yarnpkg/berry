@@ -1,14 +1,15 @@
 import {PortablePath, npath, toFilename} from '@yarnpkg/fslib';
 import crypto                            from 'crypto';
 import finalhandler                      from 'finalhandler';
-import http                              from 'http';
+import fs                                from 'fs';
 import {IncomingMessage, ServerResponse} from 'http';
 import invariant                         from 'invariant';
-import {AddressInfo}                     from 'net';
+import yaml                              from 'js-yaml';
+import path                              from 'path';
 import semver                            from 'semver';
 import serveStatic                       from 'serve-static';
+import verdaccio                         from 'verdaccio';
 import {Gzip}                            from 'zlib';
-import startServer from 'verdaccio';
 
 const deepResolve = require('super-resolve');
 
@@ -175,7 +176,6 @@ export const getPackageDirectoryPath = async (
 let packageServerUrl: string | null = null;
 
 export const startPackageServer = (): Promise<string> => {
-  console.log("--verdaccio-->", startServer);
   if (packageServerUrl !== null)
     return Promise.resolve(packageServerUrl);
 
@@ -479,19 +479,15 @@ export const startPackageServer = (): Promise<string> => {
     //   resolve((packageServerUrl = `http://localhost:${port}`));
     // });
 
-    const fs = require('fs');
-    const path = require('path');
-    const verdaccio = require('verdaccio').default;
-    const YAML = require('js-yaml');
-
     const getConfig = () => {
-      return YAML.safeLoad(fs.readFileSync(path.join(__dirname, 'config.yaml'), 'utf8'));
-    }
+      return yaml.safeLoad(fs.readFileSync(path.join(__dirname, 'config.yaml'), 'utf8'));
+    };
 
     const cache = path.join(__dirname, 'cache');
     const config = Object.assign({}, getConfig(), {
+      // eslint-disable-next-line
       self_path: cache,
-      plugins: path.join(__dirname, '../', 'server_plugins')
+      plugins: path.join(__dirname, '../', 'server_plugins'),
     });
 
     verdaccio(config, 6000, cache, '1.0.0', 'verdaccio', (webServer, addrs, pkgName, pkgVersion) => {
@@ -506,7 +502,6 @@ export const startPackageServer = (): Promise<string> => {
         reject(error);
       }
     });
-
   });
 };
 

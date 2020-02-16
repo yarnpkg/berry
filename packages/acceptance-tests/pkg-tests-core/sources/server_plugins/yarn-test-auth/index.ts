@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable arca/no-default-export */
+
 import {getForbidden, getUnauthorized, getInternalError}                         from '@verdaccio/commons-api';
 import {PluginOptions, Callback, PackageAccess, IPluginAuth, RemoteUser, Logger} from '@verdaccio/types';
 
@@ -52,6 +55,7 @@ export default class Memory implements IPluginAuth<YarnAuthMemoryConfig> {
     return cb(err);
   }
 
+  /** eslint-disable @typescript-eslint/camelcase **/
   public allow_publish(user: RemoteUser, pkg: PackageAccess, cb: Callback): void {
     if ((this._allowed.includes(user.name))) {
       this._logger.debug({user: user.name}, '[YarnAuthMemory] user: @{user} has been granted to publish');
