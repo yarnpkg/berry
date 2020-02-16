@@ -29339,7 +29339,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["finalhandler", "npm:1.1.2"],
             ["invariant", "npm:2.2.4"],
-            ["js-yaml", "npm:3.13.1"],
+            ["js-yaml", "npm:3.12.2"],
             ["klaw", "npm:2.1.1"],
             ["minimatch", "npm:3.0.4"],
             ["pkg-tests-fixtures", "workspace:packages/acceptance-tests/pkg-tests-fixtures"],

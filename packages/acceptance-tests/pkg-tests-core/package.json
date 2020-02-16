@@ -15,7 +15,7 @@
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.16",
     "finalhandler": "^1.1.2",
     "invariant": "^2.2.4",
-    "js-yaml": "^3.13.1",
+    "js-yaml": "^3.10.0",
     "klaw": "^2.1.1",
     "minimatch": "^3.0.4",
     "pkg-tests-fixtures": "workspace:0.0.0",
