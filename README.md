@@ -36,7 +36,7 @@ Consult the [Migration Guide](https://yarnpkg.com/advanced/migration).
 
 ## Documentation
 
-The documentation is being reworked to contain updated content and a refreshed design, and the most up-to-date version can be found on the repository GitHub pages: [yarnpkg.com](https://yarnpkg.com/)
+The documentation can be found at [yarnpkg.com](https://yarnpkg.com/)
 
 ## Current status
 
@@ -142,4 +142,3 @@ The following packages are meant to be used by Yarn itself, and probably won't b
 
 - [@yarnpkg/builder](packages/yarnpkg-builder) contains a CLI tool to package berry and its plugins.
 - [@yarnpkg/cli](packages/yarnpkg-cli) is a CLI entry point built on top of [@yarnpkg/core](packages/yarnpkg-core).
-
