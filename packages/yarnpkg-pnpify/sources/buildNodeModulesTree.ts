@@ -61,7 +61,7 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
   const packageTree = buildPackageTree(pnp);
 
-  const hoistedTree = hoist(packageTree, {finalCheck: false});
+  const hoistedTree = hoist(packageTree, {finalCheck: true});
 
   return populateNodeModulesTree(pnp, hoistedTree, options);
 };
