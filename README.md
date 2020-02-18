@@ -19,24 +19,28 @@
 
 Yarn is a modern package manager split into various packages. Its novel architecture allows to do things currently impossible with existing solutions:
 
-- Yarn supports plugins; adding a plugin is as simple as adding it into your repository
+- Yarn supports [plugins](https://yarnpkg.com/features/plugins); adding a plugin is as simple as adding it into your repository
 - Yarn supports Node by default but isn't limited to it - plugins can add support for other languages
 - Yarn supports [workspaces](https://yarnpkg.com/features/workspaces) natively, and its CLI takes advantage of that
-- Yarn uses a portable shell to execute package scripts, guaranteeing they work the same way on Windows and Linux
+- Yarn uses a [portable shell](https://github.com/yarnpkg/berry/tree/master/packages/yarnpkg-shell#yarnpkgshell) to execute package scripts, guaranteeing they work the same way on Windows and Linux
 - Yarn is first and foremost a Node API that can be used programmatically (via [@yarnpkg/core](packages/yarnpkg-core))
-- Yarn is written in TypeScript, and is fully type checked
+- Yarn is written in [TypeScript](https://www.typescriptlang.org/) and is fully type-checked
 
-## Install
+## Installation
 
-Consult the [dedicated page](https://yarnpkg.com/getting-started/install) for more details.
+Consult the [Installation Guide](https://yarnpkg.com/getting-started/install).
+
+## Migration
+
+Consult the [Migration Guide](https://yarnpkg.com/advanced/migration).
 
 ## Documentation
 
-The documentation is being reworked to contain an updated content and a refreshed design, and the most up-to-date version can be found on the repository GitHub pages: [yarnpkg.com](https://yarnpkg.com/)
+The documentation can be found at [yarnpkg.com](https://yarnpkg.com/)
 
 ## Current status
 
-On top of our classic integration tests, we also run Yarn every day against the latest versions of the toolchains used by our community - just in case, really. Everything should be green!
+On top of our classic integration tests, we also run Yarn every day against the latest versions of the toolchains used by our community - just in case. Everything should be green!
 
 <table>
 <tr><th>Toolchains</th><th>Tooling</th></tr>
@@ -62,7 +66,11 @@ On top of our classic integration tests, we also run Yarn every day against the 
 
 </table>
 
-## Build your own bundle
+## Contributing
+
+Consult the [Contributing Guide](https://yarnpkg.com/advanced/contributing).
+
+### Building your own bundle
 
 Clone this repository, then run the following commands:
 
@@ -72,11 +80,11 @@ yarn build:cli
 
 **How it works**
 
-After building the CLI your global `yarn` will immediately start to reflect your local changes. This is because Yarn will pick up the `yarnPath` settings in this repository's `.yarnrc.yml`, which is configured to use the newly built CLI if available.
+After building the CLI your global `yarn` will immediately start to reflect your local changes. This is because Yarn will pick up the [`yarnPath`](https://yarnpkg.com/configuration/yarnrc#yarnPath) settings in this repository's [`.yarnrc.yml`](https://yarnpkg.com/configuration/yarnrc), which is configured to use the newly built CLI if available.
 
 **Works out of the box!**
 
-Note that no other command is needed! Given that our dependencies are checked-in within the repository (within the [`.yarn/cache`](.yarn/cache) directory), you don't even need to run `yarn install`. Everything just works right after cloning the project, and is guaranteed to continue to work ten years from now 🙂
+Note that no other command is needed! Given that our dependencies are checked-in within the repository (within the [`.yarn/cache`](.yarn/cache) directory), you don't even need to run [`yarn install`](https://yarnpkg.com/cli/install). Everything just works right after cloning the project and is guaranteed to continue to work ten years from now 🙂
 
 ## Yarn plugins
 
@@ -84,26 +92,27 @@ Note that no other command is needed! Given that our dependencies are checked-in
 
 Those plugins typically come bundled with Yarn. You don't need to do anything special to use them.
 
-- [★ plugin-constraints](packages/plugin-constraints) adds support for `yarn constraints [--fix]`.
 - [★ plugin-dlx](packages/plugin-dlx) adds support for the [`yarn dlx`](https://yarnpkg.com/cli/dlx) command.
 - [★ plugin-essentials](packages/plugin-essentials) adds various commands deemed necessary for a package manager (add, remove, ...).
 - [★ plugin-file](packages/plugin-file) adds support for using the `file:` protocol within your dependencies.
 - [★ plugin-github](packages/plugin-github) adds support for using GitHub references as dependencies. [This plugin doesn't use git.](https://stackoverflow.com/a/13636954/880703)
 - [★ plugin-http](packages/plugin-http) adds support for using straight URL references as dependencies (tgz archives only).
 - [★ plugin-init](packages/plugin-init) adds support for the [`yarn init`](https://yarnpkg.com/cli/init) command.
-- [★ plugin-link](packages/plugin-link) adds support for using `link:` and `portal:` references as dependencies.
+- [★ plugin-link](packages/plugin-link) adds support for using [`link:` and `portal:`](https://yarnpkg.com/features/protocols#whats-the-difference-between-link-and-portal) references as dependencies.
 - [★ plugin-npm](packages/plugin-npm) adds support for using [semver ranges](https://semver.org) as dependencies, resolving them to an NPM-like registry.
 - [★ plugin-npm-cli](packages/plugin-npm-cli) adds support for the NPM-specific commands ([`yarn npm info`](https://yarnpkg.com/cli/npm/info), [`yarn npm login`](https://yarnpkg.com/cli/npm/login), [`yarn npm publish`](https://yarnpkg.com/cli/npm/publish), ...).
 - [★ plugin-pack](packages/plugin-pack) adds support for the [`yarn pack`](https://yarnpkg.com/cli/pack) command.
-- [★ plugin-pnp](packages/plugin-pnp) adds support for installing Javascript dependencies through the [Plug'n'Play](https://yarnpkg.com/features/pnp) specification.
+- [★ plugin-pnp](packages/plugin-pnp) adds support for installing JavaScript dependencies through the [Plug'n'Play](https://yarnpkg.com/features/pnp) specification.
 
 ### Contrib plugins
 
 Although developed on the same repository as Yarn itself, those plugins are optional and need to be explicitly installed through `yarn plugin import @yarnpkg/<plugin-name>`.
 
-- [☆ plugin-exec](packages/plugin-exec) adds support for using the `exec:` protocol within your dependencies.
+- [☆ plugin-constraints](packages/plugin-constraints) adds support for [constraints](https://yarnpkg.com/features/constraints) to Yarn.
+- [☆ plugin-exec](packages/plugin-exec) adds support for using the [`exec:`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-exec#documentation) protocol within your dependencies.
 - [☆ plugin-stage](packages/plugin-stage) adds support for the [`yarn stage`](https://yarnpkg.com/cli/stage) command.
 - [☆ plugin-typescript](packages/plugin-typescript) improves the user experience when working with TypeScript.
+- [☆ plugin-version](packages/plugin-version) adds support for the new [release workflow](https://yarnpkg.com/features/release-workflow).
 - [☆ plugin-workspace-tools](packages/plugin-workspace-tools) adds support for the [`yarn workspaces foreach`](https://yarnpkg.com/cli/workspaces/foreach) command.
 
 ### Third-party plugins
