@@ -5,10 +5,13 @@ type Locator = string;
 type PhysicalLocator = string;
 type HoisterWorkTree = {name: PackageName, references: Set<string>, physicalLocator: PhysicalLocator, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, reasons: Map<PackageName, string>};
 
-type HoistCandidate = {
+type HoistTuple = {
   node: HoisterWorkTree,
   parent: HoisterWorkTree,
-  hoist: boolean
+}
+
+type HoistCandidate = HoistTuple & {
+  drop: boolean
 };
 
 const DEBUG_LEVEL = Number(process.env.NM_DEBUG_LEVEL || -1);
@@ -105,16 +108,17 @@ const selfCheck = (tree: HoisterWorkTree): string => {
 
     for (const origDep of node.originalDependencies.values()) {
       const dep = dependencies.get(origDep.name);
+      const prettyPrintTreePath = () => `${Array.from(parents).concat([node]).map(x => prettyPrintLocator(x.locator)).join('→')}`;
       if (node.peerNames.has(origDep.name)) {
         const parentDep = parentDeps.get(origDep.name);
         if (parentDep !== dep) {
-          log.push(`${Array.from(parents).concat([node]).map(x => x.locator).join('#')} - broken peer promise: expected ${dep!.locator} but found ${parentDep ? parentDep.locator : parentDep}`);
+          log.push(`${prettyPrintTreePath()} - broken peer promise: expected ${dep!.locator} but found ${parentDep ? parentDep.locator : parentDep}`);
         }
       } else {
         if (!dep) {
-          log.push(`${Array.from(parents).concat([node]).map(x => x.locator).join('#')} - broken require promise: no required dependency ${origDep.locator} found`);
+          log.push(`${prettyPrintTreePath()} - broken require promise: no required dependency ${origDep.locator} found`);
         } else if (dep.physicalLocator !== origDep.physicalLocator) {
-          log.push(`${Array.from(parents).concat([node]).map(x => x.locator).join('#')} - broken require promise: expected ${origDep.physicalLocator}, but found: ${dep.physicalLocator}`);
+          log.push(`${prettyPrintTreePath()} - broken require promise: expected ${origDep.physicalLocator}, but found: ${dep.physicalLocator}`);
         }
       }
     }
@@ -208,7 +212,7 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, parents: Set<
 
 const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, parents: Set<HoisterWorkTree>, parentAncestorDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, options: HoistOptions, hoistBlacklist: Set<HoisterWorkTree>, whitelist?: Set<PhysicalLocator>): number => {
   let totalHoisted = 0;
-  let packagesToHoist: Set<HoistCandidate>;
+  let hoistablePackages: Set<HoistCandidate>;
   const clonedNodes = new Map<HoisterWorkTree, HoisterWorkTree>();
 
   const ancestorDependencies = new Map(parentAncestorDependencies);
@@ -217,9 +221,9 @@ const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, parents: Se
       ancestorDependencies.set(dep.name, dep);
 
   do {
-    packagesToHoist = getHoistablePackages(rootNode, parents, ancestorDependencies, ancestorMap, hoistBlacklist, whitelist);
-    totalHoisted += packagesToHoist.size;
-    for (let {parent, node, hoist} of packagesToHoist) {
+    hoistablePackages = getHoistablePackages(rootNode, parents, ancestorDependencies, ancestorMap, hoistBlacklist, whitelist);
+    totalHoisted += hoistablePackages.size;
+    for (let {parent, node, drop} of hoistablePackages) {
       let parentNode = clonedNodes.get(parent);
       if (!parentNode) {
         const {name, references, physicalLocator, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons} = parent!;
@@ -248,8 +252,7 @@ const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, parents: Se
       const hoistedNode = rootNode.dependencies.get(node.name);
       // Add hoisted node to root node, in case it is not already there
       if (!hoistedNode) {
-        // Avoid adding node to itself
-        if (node.physicalLocator !== rootNode.physicalLocator) {
+        if (!drop) {
           rootNode.dependencies.set(node.name, node);
           ancestorDependencies.set(node.name, node);
         }
@@ -261,16 +264,16 @@ const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, parents: Se
       if (options.check) {
         const checkLog = selfCheck(tree);
         if (checkLog) {
-          throw new Error(`After hoisting ${rootNode.locator}#${parent.physicalLocator}#${node.physicalLocator}:\n${require('util').inspect(node, {depth: null})}\n${checkLog}`);
+          throw new Error(`${checkLog}, after hoisting ${[rootNode, parent, node].map(x => prettyPrintLocator(x.locator)).join('→')}:\n${dumpDepTree(tree)}`);
         }
       }
     }
-  } while (packagesToHoist.size > 0);
+  } while (hoistablePackages.size > 0);
 
   return totalHoisted;
 };
 
-type HoistCandidateMap = Map<PackageName, {physicalLocator: PhysicalLocator, locator: Locator, tuples: Set<{parent: HoisterWorkTree, node: HoisterWorkTree, hoist: boolean}>, weight: number}>;
+type HoistCandidateMap = Map<PackageName, {physicalLocator: PhysicalLocator, locator: Locator, candidates: Set<HoistTuple>, weight: number}>;
 
 /**
  * Finds all the packages that can be hoisted to the root package node from the set of:
@@ -282,17 +285,17 @@ type HoistCandidateMap = Map<PackageName, {physicalLocator: PhysicalLocator, loc
  * @param whitelist if present specifies physical locators of the packages that should be hoisted
  */
 const getHoistablePackages = (rootNode: HoisterWorkTree, parents: Set<HoisterWorkTree>, ancestorDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, hoistBlacklist: Set<HoisterWorkTree>, whitelist?: Set<PhysicalLocator>): Set<HoistCandidate> => {
-  const hoistCandidates: HoistCandidateMap = new Map();
+  const hoistCandidateMap: HoistCandidateMap = new Map();
+  const dropCandidates = new Set<HoistTuple>();
 
   const computeHoistCandidates = (parentNode: HoisterWorkTree, node: HoisterWorkTree, treePath: Set<HoisterWorkTree>) => {
     if (whitelist && !whitelist.has(node.physicalLocator))
       return;
     let isHoistable: boolean = true;
-    let shouldDrop = false;
     let reasonRoot;
     let reason: string;
     if (DEBUG_LEVEL >= 1)
-      reasonRoot = `${Array.from(treePath).map(x => prettyPrintLocator(x.locator)).join('#')}`;
+      reasonRoot = `${Array.from(treePath).map(x => prettyPrintLocator(x.locator)).join('→')}`;
 
     let isRegularDepAtRoot = false;
     if (isHoistable) {
@@ -303,7 +306,7 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, parents: Set<HoisterWor
       isHoistable = isRegularDepAtRoot;
     }
 
-    let competitorInfo = hoistCandidates.get(node.name);
+    let competitorInfo = hoistCandidateMap.get(node.name);
 
     const ancestorNode = ancestorMap.get(node.physicalLocator)!;
     const weight = ancestorNode.size;
@@ -327,17 +330,6 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, parents: Set<HoisterWor
         reason = `- filled by: ${prettyPrintLocator(rootDep ? rootDep.locator : origRootDep!.locator)} at ${reasonRoot}`;
 
       isHoistable = isNameAvailable;
-    }
-
-    let isPreferred = false;
-    if (isHoistable) {
-      // If there is a competitor package to be hoisted, we should prefer the package with more usage
-      isPreferred = !competitorInfo || competitorInfo.weight <= weight;
-      if (DEBUG_LEVEL >= 1 && !isPreferred)
-        reason = `- preferred package ${competitorInfo!.locator} at ${reasonRoot}`;
-      isHoistable = isPreferred;
-    } else {
-      hoistBlacklist.add(node);
     }
 
     let areRegularDepsSatisfied = true;
@@ -379,12 +371,30 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, parents: Set<HoisterWor
     }
 
     if (isHoistable) {
-      let hoistCandidate = hoistCandidates.get(node.name);
-      if (!hoistCandidate || (competitorInfo && competitorInfo.physicalLocator !== node.physicalLocator)) {
-        hoistCandidate = {locator: node.locator, physicalLocator: node.physicalLocator, tuples: new Set(), weight};
-        hoistCandidates.set(node.name, hoistCandidate);
+      if ((rootDep && node.physicalLocator === rootDep.physicalLocator) || node.physicalLocator === rootNode.physicalLocator) {
+        dropCandidates.add({parent: parentNode, node});
+        isHoistable = false;
       }
-      hoistCandidate.tuples.add({parent: parentNode, node, hoist: !shouldDrop});
+    }
+
+    let isPreferred = false;
+    if (isHoistable) {
+      // If there is a competitor package to be hoisted, we should prefer the package with more usage
+      isPreferred = !competitorInfo || competitorInfo.weight <= weight;
+      if (DEBUG_LEVEL >= 1 && !isPreferred)
+        reason = `- preferred package ${competitorInfo!.locator} at ${reasonRoot}`;
+      isHoistable = isPreferred;
+    } else {
+      hoistBlacklist.add(node);
+    }
+
+    if (isHoistable) {
+      let hoistCandidate = hoistCandidateMap.get(node.name);
+      if (!hoistCandidate || (competitorInfo && competitorInfo.physicalLocator !== node.physicalLocator)) {
+        hoistCandidate = {locator: node.locator, physicalLocator: node.physicalLocator, candidates: new Set(), weight};
+        hoistCandidateMap.set(node.name, hoistCandidate);
+      }
+      hoistCandidate.candidates.add({parent: parentNode, node});
     } else if (DEBUG_LEVEL >= 1) {
       parentNode.reasons.set(node.name, reason!);
     }
@@ -398,12 +408,14 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, parents: Set<HoisterWor
   }
   parents.delete(rootNode);
 
-  const candidates = new Set<HoistCandidate>();
-  for (const {tuples} of hoistCandidates.values())
-    for (const tuple of tuples)
-      candidates.add(tuple);
+  const hoistCandidates = new Set<HoistCandidate>();
+  for (const {candidates} of hoistCandidateMap.values())
+    for (const candidate of candidates)
+      hoistCandidates.add({...candidate, drop: false});
+  for (const candidate of dropCandidates)
+    hoistCandidates.add({...candidate, drop: true});
 
-  return candidates;
+  return hoistCandidates;
 };
 
 /**
@@ -554,7 +566,7 @@ const prettyPrintLocator = (locator: Locator) => {
   if (reference === 'workspace:.') {
     return `.`;
   } else if (!reference) {
-    return `${name}@${reference}`;
+    return `${name}`;
   } else {
     const version = (reference.indexOf('#') > 0 ? reference.split('#')[1] : reference).replace('npm:', '');
     if (reference.startsWith('virtual')) {
