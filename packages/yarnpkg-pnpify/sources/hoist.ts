@@ -245,7 +245,7 @@ const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, parents: Se
       parentNode.reasons.delete(node.name);
       parentNode.hoistedDependencies.set(node.name, node);
 
-      const hoistedNode = ancestorDependencies.get(node.name);
+      const hoistedNode = rootNode.dependencies.get(node.name);
       // Add hoisted node to root node, in case it is not already there
       if (!hoistedNode) {
         // Avoid adding node to itself

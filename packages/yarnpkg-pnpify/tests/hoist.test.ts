@@ -90,7 +90,6 @@ describe('hoist', () => {
       'F@X': {dependencies: ['G@X']},
       'C@X': {dependencies: ['D@X']},
     };
-    console.log(require('util').inspect(hoist(toTree(tree), {check: true}), {depth: null}));
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
