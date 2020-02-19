@@ -192,13 +192,13 @@ We define a rule that says that for each dependency of each workspace in our pro
 ### Prevent two workspaces from depending on conflicting versions of a same dependency
 
 ```prolog
-gen_invalid_dependency(WorkspaceCwd, DependencyIdent, DependencyType, 'This dependency conflicts with another one from another workspace') :-
+gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyType, _) :-
   workspace_has_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType),
   workspace_has_dependency(_, DependencyIdent, DependencyRange2, _),
   DependencyRange \= DependencyRange2.
 ```
 
-We define a `gen_invalid_dependency` rule that is true for each dependency of each package (first `workspace_has_dependency`) if it also exists another dependency of another package (second `workspace_has_dependency`) that has the same name but a different range (`\=` operator).
+We define a `gen_enforced_dependency` rule that is true for each dependency of each package (first `workspace_has_dependency`) if it also exists another dependency of another package (second `workspace_has_dependency`) that has the same name but a different range (`\=` operator).
 
 ### Force all workspace dependencies to be made explicit
 
