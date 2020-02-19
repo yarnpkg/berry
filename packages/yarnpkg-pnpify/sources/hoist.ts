@@ -273,7 +273,7 @@ const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, parents: Se
   return totalHoisted;
 };
 
-type HoistCandidateMap = Map<PackageName, {physicalLocator: PhysicalLocator, locator: Locator, candidates: Set<HoistTuple>, weight: number}>;
+type HoistCandidateMap = Map<PackageName, {node: HoisterWorkTree, candidates: Set<HoistTuple>, weight: number}>;
 
 /**
  * Finds all the packages that can be hoisted to the root package node from the set of:
@@ -382,7 +382,7 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, parents: Set<HoisterWor
       // If there is a competitor package to be hoisted, we should prefer the package with more usage
       isPreferred = !competitorInfo || competitorInfo.weight <= weight;
       if (DEBUG_LEVEL >= 1 && !isPreferred)
-        reason = `- preferred package ${competitorInfo!.locator} at ${reasonRoot}`;
+        reason = `- preferred package ${competitorInfo!.node.locator} at ${reasonRoot}`;
       isHoistable = isPreferred;
     } else {
       hoistBlacklist.add(node);
@@ -390,8 +390,8 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, parents: Set<HoisterWor
 
     if (isHoistable) {
       let hoistCandidate = hoistCandidateMap.get(node.name);
-      if (!hoistCandidate || (competitorInfo && competitorInfo.physicalLocator !== node.physicalLocator)) {
-        hoistCandidate = {locator: node.locator, physicalLocator: node.physicalLocator, candidates: new Set(), weight};
+      if (!hoistCandidate || (competitorInfo && competitorInfo.node.physicalLocator !== node.physicalLocator)) {
+        hoistCandidate = {node, candidates: new Set(), weight};
         hoistCandidateMap.set(node.name, hoistCandidate);
       }
       hoistCandidate.candidates.add({parent: parentNode, node});
@@ -532,7 +532,7 @@ const buildAncestorMap = (tree: HoisterWorkTree): AncestorMap => {
 
   const parentNodes = new Set<HoisterWorkTree>([tree]);
 
-  const addParent = (node: HoisterWorkTree) => {
+  const addParent = (parentNode: HoisterWorkTree, node: HoisterWorkTree) => {
     if (parentNodes.has(node))
       return;
 
@@ -541,20 +541,19 @@ const buildAncestorMap = (tree: HoisterWorkTree): AncestorMap => {
       parents = new Set<PhysicalLocator>();
       ancestorMap.set(node.physicalLocator, parents);
     }
-    for (const parent of parentNodes)
-      parents.add(parent.physicalLocator);
+    parents.add(parentNode.physicalLocator);
 
     parentNodes.add(node);
     for (const dep of node.dependencies.values())
       if (!node.peerNames.has(dep.name))
-        addParent(dep);
+        addParent(node, dep);
 
     parentNodes.delete(node);
   };
 
   for (const dep of tree.dependencies.values())
     if (!tree.peerNames.has(dep.name))
-      addParent(dep);
+      addParent(tree, dep);
 
   return ancestorMap;
 };
