@@ -49,12 +49,12 @@ type HoistOptions = {
 export const hoist = (tree: HoisterTree, options: HoistOptions = {}): HoisterResult => {
   const treeCopy = cloneTree(tree);
   const ancestorMap = buildAncestorMap(treeCopy);
-  const heaviestPackages = getHeaviestPackages(ancestorMap);
+  const popularPackages = getPopularPackages(ancestorMap);
 
   let startTime: number;
   if (DEBUG_LEVEL >= 0)
     startTime = Date.now();
-  while (hoistTo(treeCopy, treeCopy, new Set(), new Map(), ancestorMap, options, heaviestPackages) > 0);
+  while (hoistTo(treeCopy, treeCopy, new Set(), new Map(), ancestorMap, options, popularPackages) > 0);
   while (hoistTo(treeCopy, treeCopy, new Set(), new Map(), ancestorMap, options) > 0);
 
   if (options.finalCheck)
@@ -68,7 +68,7 @@ export const hoist = (tree: HoisterTree, options: HoistOptions = {}): HoisterRes
   return shrinkTree(treeCopy);
 };
 
-const getHeaviestPackages = (ancestorMap: AncestorMap): Set<PhysicalLocator> => {
+const getPopularPackages = (ancestorMap: AncestorMap): Set<PhysicalLocator> => {
   const packageInfo = new Map<PackageName, {weight: number, locator: PhysicalLocator}>();
 
   for (const [locator, ancestors] of ancestorMap.entries()) {
@@ -344,7 +344,7 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, parents: Set<HoisterWor
             areRegularDepsSatisfied = false;
           } else if (depNode.physicalLocator !== dep.physicalLocator) {
             if (DEBUG_LEVEL >= 1)
-              reason = `- hoisted dependency ${prettyPrintLocator(dep.locator)} has conflict with ${prettyPrintLocator(depNode.locator)} at ${reasonRoot}`;
+              reason = `- hoisted dependency ${prettyPrintLocator(dep.locator)} has a clash with ${prettyPrintLocator(depNode.locator)} at ${reasonRoot}`;
             hoistBlacklist.add(node);
             areRegularDepsSatisfied = false;
           }
@@ -530,10 +530,10 @@ const shrinkTree = (tree: HoisterWorkTree): HoisterResult => {
 const buildAncestorMap = (tree: HoisterWorkTree): AncestorMap => {
   const ancestorMap: AncestorMap = new Map();
 
-  const parentNodes = new Set<HoisterWorkTree>([tree]);
+  const seenNodes = new Set<HoisterWorkTree>([tree]);
 
   const addParent = (parentNode: HoisterWorkTree, node: HoisterWorkTree) => {
-    if (parentNodes.has(node))
+    if (seenNodes.has(node))
       return;
 
     let parents = ancestorMap.get(node.physicalLocator);
@@ -543,12 +543,13 @@ const buildAncestorMap = (tree: HoisterWorkTree): AncestorMap => {
     }
     parents.add(parentNode.physicalLocator);
 
-    parentNodes.add(node);
-    for (const dep of node.dependencies.values())
-      if (!node.peerNames.has(dep.name))
+    seenNodes.add(node);
+    for (const dep of node.dependencies.values()) {
+      if (!node.peerNames.has(dep.name)) {
         addParent(node, dep);
-
-    parentNodes.delete(node);
+      }
+    }
+    seenNodes.delete(node);
   };
 
   for (const dep of tree.dependencies.values())
