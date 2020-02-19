@@ -314,4 +314,22 @@ describe('hoist', () => {
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
+
+  it ('should keep peer dependency promise for the case where the package with same ident is a dependency of parent node', () => {
+    // . -> A -> B@X --> C
+    //        -> C@Y
+    //   -> B@X --> C
+    //   -> C@X
+    // B@X cannot be hoisted to the top from A, because its peer dependency promise will be violated in this case
+    // `npm` and `yarn v1` will hoist B@X to the top, they have incorrect hoisting
+    const tree = {
+      '.': {dependencies: ['A', 'B@X#2', 'C@X']},
+      'A': {dependencies: ['B@X#1', 'C@Y']},
+      'B@X#1': {dependencies: ['C@Y'], peerNames: ['C']},
+      'B@X#2': {dependencies: ['C@X'], peerNames: ['C']},
+    };
+    const hoistedTree = hoist(toTree(tree), {check: true});
+    const [A] = Array.from(hoistedTree.dependencies).filter(x => x.name === 'A');
+    expect(Array.from(A.dependencies).filter(x => x.name === 'B')).toBeDefined();
+  });
 });
