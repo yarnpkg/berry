@@ -170,22 +170,15 @@ const selfCheck = (tree: HoisterWorkTree): string => {
  * @param parentAncestorDependencies commulative dependencies of all root node ancestors, excluding root node dependenciew
  * @param ancestorMap ancestor map
  * @param options hoisting options
- * @param hoistBlacklistMap root node -> blacklisted nodes from hoisting list
  * @param whitelist if present specifies physical locators of the packages that should be hoisted
  */
-const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, parents: Set<HoisterWorkTree>, parentAncestorDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, options: HoistOptions, whitelist?: Set<PhysicalLocator>, seenNodes: Set<HoisterWorkTree> = new Set(), hoistBlacklistMap = new Map()): number => {
+const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, parents: Set<HoisterWorkTree>, parentAncestorDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, options: HoistOptions, whitelist?: Set<PhysicalLocator>, seenNodes: Set<HoisterWorkTree> = new Set()): number => {
   if (seenNodes.has(rootNode))
     return 0;
   seenNodes.add(rootNode);
 
-  let hoistBlacklist = hoistBlacklistMap.get(rootNode);
-  if (!hoistBlacklist) {
-    hoistBlacklist = new Set<HoisterWorkTree>();
-    hoistBlacklistMap.set(rootNode, hoistBlacklist);
-  }
-
   // Perform shallow-first hoisting by hoisting to the root node first
-  let totalHoisted = hoistPass(tree, rootNode, parents, parentAncestorDependencies, ancestorMap, options, hoistBlacklist, whitelist);
+  let totalHoisted = hoistPass(tree, rootNode, parents, parentAncestorDependencies, ancestorMap, options, whitelist);
 
   const ancestorDependencies = new Map(parentAncestorDependencies);
   for (const dep of rootNode.dependencies.values())
@@ -196,17 +189,17 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, parents: Set<
   // Now perform children hoisting
   parents.add(rootNode);
   for (const dep of rootNode.dependencies.values())
-    childrenHoisted += hoistTo(tree, dep, parents, ancestorDependencies, ancestorMap, options, whitelist, seenNodes, hoistBlacklistMap);
+    childrenHoisted += hoistTo(tree, dep, parents, ancestorDependencies, ancestorMap, options, whitelist, seenNodes);
   parents.delete(rootNode);
 
   if (childrenHoisted > 0)
     // Perfrom 2nd pass of hoisting to the root node, because some of the children were hoisted
-    totalHoisted += childrenHoisted + hoistPass(tree, rootNode, parents, parentAncestorDependencies, ancestorMap, options, hoistBlacklist, whitelist);
+    totalHoisted += childrenHoisted + hoistPass(tree, rootNode, parents, parentAncestorDependencies, ancestorMap, options, whitelist);
 
   return totalHoisted;
 };
 
-const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, parents: Set<HoisterWorkTree>, parentAncestorDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, options: HoistOptions, hoistBlacklist: Set<HoisterWorkTree>, whitelist?: Set<PhysicalLocator>): number => {
+const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, parents: Set<HoisterWorkTree>, parentAncestorDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, options: HoistOptions, whitelist?: Set<PhysicalLocator>): number => {
   let totalHoisted = 0;
   let hoistablePackages: Set<HoistCandidate>;
   const clonedNodes = new Map<HoisterWorkTree, HoisterWorkTree>();
@@ -217,7 +210,7 @@ const hoistPass = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, parents: Se
       ancestorDependencies.set(dep.name, dep);
 
   do {
-    hoistablePackages = getHoistablePackages(rootNode, parents, ancestorDependencies, ancestorMap, hoistBlacklist, whitelist);
+    hoistablePackages = getHoistablePackages(rootNode, parents, ancestorDependencies, ancestorMap, whitelist);
     totalHoisted += hoistablePackages.size;
     for (let {parent, node} of hoistablePackages) {
       let parentNode = clonedNodes.get(parent);
@@ -281,11 +274,11 @@ type HoistCandidateMap = Map<PackageName, {node: HoisterWorkTree, candidates: Se
  * @param ancestorMap ancestor map to determine `dependency` version popularity
  * @param whitelist if present specifies physical locators of the packages that should be hoisted
  */
-const getHoistablePackages = (rootNode: HoisterWorkTree, parents: Set<HoisterWorkTree>, ancestorDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, hoistBlacklist: Set<HoisterWorkTree>, whitelist?: Set<PhysicalLocator>): Set<HoistCandidate> => {
+const getHoistablePackages = (rootNode: HoisterWorkTree, parents: Set<HoisterWorkTree>, ancestorDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, whitelist?: Set<PhysicalLocator>): Set<HoistCandidate> => {
   const hoistCandidateMap: HoistCandidateMap = new Map();
 
   const computeHoistCandidates = (parentNode: HoisterWorkTree, node: HoisterWorkTree, treePath: Set<HoisterWorkTree>) => {
-    if (whitelist && !whitelist.has(node.physicalLocator) || hoistBlacklist.has(node))
+    if (whitelist && !whitelist.has(node.physicalLocator))
       return;
     let isHoistable: boolean = true;
     let reasonRoot;
@@ -328,6 +321,15 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, parents: Set<HoisterWor
       isHoistable = isNameAvailable;
     }
 
+    let isPreferred = false;
+    if (isHoistable) {
+      // If there is a competitor package to be hoisted, we should prefer the package with more usage
+      isPreferred = !competitorInfo || competitorInfo.weight <= weight;
+      if (DEBUG_LEVEL >= 1 && !isPreferred)
+        reason = `- preferred package ${competitorInfo!.node.locator} at ${reasonRoot}`;
+      isHoistable = isPreferred;
+    }
+
     let areRegularDepsSatisfied = !!rootDep;
     if (isHoistable && !areRegularDepsSatisfied) {
       areRegularDepsSatisfied = true;
@@ -342,7 +344,6 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, parents: Set<HoisterWor
           } else if (depNode.physicalLocator !== dep.physicalLocator) {
             if (DEBUG_LEVEL >= 1)
               reason = `- hoisted dependency ${prettyPrintLocator(dep.locator)} has a clash with ${prettyPrintLocator(depNode.locator)} at ${reasonRoot}`;
-            // hoistBlacklist.add(node);
             areRegularDepsSatisfied = false;
           }
         }
@@ -365,17 +366,6 @@ const getHoistablePackages = (rootNode: HoisterWorkTree, parents: Set<HoisterWor
         }
       }
       isHoistable = arePeerDepsSatisfied;
-    }
-
-    let isPreferred = false;
-    if (isHoistable) {
-      // If there is a competitor package to be hoisted, we should prefer the package with more usage
-      isPreferred = !competitorInfo || competitorInfo.weight <= weight;
-      if (DEBUG_LEVEL >= 1 && !isPreferred)
-        reason = `- preferred package ${competitorInfo!.node.locator} at ${reasonRoot}`;
-      isHoistable = isPreferred;
-    } else {
-      // hoistBlacklist.add(node);
     }
 
     if (isHoistable) {
