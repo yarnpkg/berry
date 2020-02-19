@@ -511,8 +511,7 @@ const buildAncestorMap = (tree: HoisterWorkTree): AncestorMap => {
   const seenNodes = new Set<HoisterWorkTree>([tree]);
 
   const addParent = (parentNode: HoisterWorkTree, node: HoisterWorkTree) => {
-    if (seenNodes.has(node))
-      return;
+    const isSeen = !!seenNodes.has(node);
 
     let parents = ancestorMap.get(node.physicalLocator);
     if (!parents) {
@@ -521,13 +520,14 @@ const buildAncestorMap = (tree: HoisterWorkTree): AncestorMap => {
     }
     parents.add(parentNode.physicalLocator);
 
-    seenNodes.add(node);
-    for (const dep of node.dependencies.values()) {
-      if (!node.peerNames.has(dep.name)) {
-        addParent(node, dep);
+    if (!isSeen) {
+      seenNodes.add(node);
+      for (const dep of node.dependencies.values()) {
+        if (!node.peerNames.has(dep.name)) {
+          addParent(node, dep);
+        }
       }
     }
-    seenNodes.delete(node);
   };
 
   for (const dep of tree.dependencies.values())
