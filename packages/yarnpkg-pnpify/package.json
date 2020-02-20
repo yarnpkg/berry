@@ -22,10 +22,14 @@
   },
   "peerDependencies": {
     "eslint": "*",
+    "stylelint": "*",
     "typescript": "*"
   },
   "peerDependenciesMeta": {
     "eslint": {
+      "optional": true
+    },
+    "stylelint": {
       "optional": true
     },
     "typescript": {
