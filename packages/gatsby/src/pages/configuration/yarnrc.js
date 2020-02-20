@@ -313,7 +313,7 @@ const YarnrcDoc = () => <>
       />
       <SymlScalarProperty
         name={`pnpEnableInlining`}
-        placeholder={`true`}
+        placeholder={true}
         description={<>
           If true (the default), Yarn will generate a single <code>.pnp.js</code> file that contains all the required data for your project to work properly. If toggled off, Yarn will also generate a <code>.pnp.data.json</code> file meant to be consumed by the <code>@yarnpkg/pnp</code> package.
         </>}
@@ -341,7 +341,7 @@ const YarnrcDoc = () => <>
       />
       <SymlScalarProperty
         name={`pnpUnpluggedFolder`}
-        placeholder={`./yarn/unplugged`}
+        placeholder={`./.yarn/unplugged`}
         description={<>
           The path where unplugged packages will be stored on the disk.
         </>}
