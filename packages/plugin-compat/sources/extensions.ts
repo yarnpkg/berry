@@ -39,4 +39,13 @@ export const packageExtensions: Array<[string, any]> = [
       },
     },
   }],
+  // https://github.com/jacobwgillespie/styled-icons/pull/1156
+  ...['boxicons-logos', 'boxicons-regular', 'boxicons-solid', 'crypto', 'evil', 'fa-brands', 'fa-regular', 'fa-solid', 'feather', 'icomoon', 'material', 'octicons', 'remix-fill', 'remix-line', 'typicons'].map<[string, any]>(name => (
+    [`@styled-icons/${name}@*`, {
+      peerDependencies: {
+        [`react`]: `*`,
+        [`styled-components`]: `*`,
+      },
+    }]
+  )),
 ];
