@@ -291,6 +291,7 @@ export async function getWorkspaceAccessibleBinaries(workspace: Workspace) {
 
 type ExecutePackageAccessibleBinaryOptions = {
   cwd: PortablePath,
+  nodeArgs?: Array<string>,
   project: Project,
   stdin: Readable | null,
   stdout: Writable,
@@ -309,7 +310,7 @@ type ExecutePackageAccessibleBinaryOptions = {
  * @param args The arguments to pass to the file
  */
 
-export async function executePackageAccessibleBinary(locator: Locator, binaryName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageAccessibleBinaryOptions) {
+export async function executePackageAccessibleBinary(locator: Locator, binaryName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr, nodeArgs = []}: ExecutePackageAccessibleBinaryOptions) {
   const packageAccessibleBinaries = await getPackageAccessibleBinaries(locator, {project});
 
   const binary = packageAccessibleBinaries.get(binaryName);
@@ -324,7 +325,7 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
 
   let result;
   try {
-    result = await execUtils.pipevp(process.execPath, [binaryPath, ...args], {cwd, env, stdin, stdout, stderr});
+    result = await execUtils.pipevp(process.execPath, [...nodeArgs, binaryPath, ...args], {cwd, env, stdin, stdout, stderr});
   } finally {
     await xfs.removePromise(env.BERRY_BIN_FOLDER as PortablePath);
   }
