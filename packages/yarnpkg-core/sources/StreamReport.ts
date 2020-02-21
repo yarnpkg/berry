@@ -25,7 +25,9 @@ const GROUP = process.env.GITHUB_ACTIONS
   ? {start: (what: string) => `::group::${what}\n`, end: (what: string) => `::endgroup::\n`}
   : process.env.TRAVIS
     ? {start: (what: string) => `travis_fold:start:${what}\n`, end: (what: string) => `travis_fold:end:${what}\n`}
-    : null;
+    : process.env.GITLAB_CI
+      ? {start: (what: string) => `section_start:${Date.now() / 1000}:${what}\n`, end: (what: string) => `section_end:${Date.now() / 1000}:${what}\n`}
+      : null;
 
 const now = new Date();
 
