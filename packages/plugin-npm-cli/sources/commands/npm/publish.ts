@@ -100,6 +100,7 @@ export default class NpmPublishCommand extends BaseCommand {
         const body = await makePublishBody(workspace, buffer, {
           access: this.access,
           tag: this.tag,
+          registry,
         });
 
         try {
@@ -130,7 +131,7 @@ export default class NpmPublishCommand extends BaseCommand {
   }
 }
 
-async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag}: {access: string | undefined, tag: string}) {
+async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry}: {access: string | undefined, tag: string, registry: string}) {
   const configuration = workspace.project.configuration;
 
   const ident = workspace.manifest.name!;
@@ -155,10 +156,17 @@ async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, ta
 
   const raw = await packUtils.genPackageManifest(workspace);
 
+  // This matches Lerna's logic:
+  // https://github.com/evocateur/libnpmpublish/blob/latest/publish.js#L142
+  // While the npm registry ignores the provided tarball URL, it's used by
+  // other registries such as verdaccio.
+  const tarballName = `${name}-${version}.tgz`;
+  const tarballURL = new URL(`${name}/-/${tarballName}`, registry);
+
   return {
     _id: name,
     _attachments: {
-      [`${name}-${version}.tgz`]: {
+      [tarballName]: {
         [`content_type`]: `application/octet-stream`,
         data: buffer.toString(`base64`),
         length: buffer.length,
@@ -186,7 +194,7 @@ async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, ta
           integrity,
 
           // the npm registry requires a tarball path, but it seems useless 🤷
-          tarball: `https://example.org/yarn/was/here.tgz`,
+          tarball: tarballURL.toString(),
         },
       },
     },
