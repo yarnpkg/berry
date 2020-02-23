@@ -109,6 +109,7 @@ Although developed on the same repository as Yarn itself, those plugins are opti
 
 - [☆ plugin-constraints](packages/plugin-constraints) adds support for [constraints](https://yarnpkg.com/features/constraints) to Yarn.
 - [☆ plugin-exec](packages/plugin-exec) adds support for using the [`exec:`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-exec#documentation) protocol within your dependencies.
+- [☆ plugin-interactive-tools](packages/plugin-interactive-tools) adds support for various interactive commands ([`yarn upgrade-interactive`](https://yarnpkg.com/cli/upgrade-interactive)).
 - [☆ plugin-stage](packages/plugin-stage) adds support for the [`yarn stage`](https://yarnpkg.com/cli/stage) command.
 - [☆ plugin-typescript](packages/plugin-typescript) improves the user experience when working with TypeScript.
 - [☆ plugin-version](packages/plugin-version) adds support for the new [release workflow](https://yarnpkg.com/features/release-workflow).
