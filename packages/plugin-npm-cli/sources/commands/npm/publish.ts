@@ -162,7 +162,6 @@ async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, ta
   // other registries such as verdaccio.
   const tarballName = `${name}-${version}.tgz`;
   const tarballURL = new URL(`${name}/-/${tarballName}`, registry);
-  if (tarballURL.protocol === "https:") tarballURL.protocol = "http:";
 
   return {
     _id: name,
