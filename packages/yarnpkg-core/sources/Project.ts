@@ -1478,7 +1478,11 @@ export class Project {
   }
 
   generateVirtualState() {
-    return "toto";
+    // this.storedResolutions ;
+    // this.storedDescriptors;
+    // this.storedPackages;
+    return stringifySyml(this.storedResolutions );
+    // return "toto";
   }
 
   async persistLockfile() {
@@ -1494,6 +1498,16 @@ export class Project {
     await xfs.changeFilePromise(virtualStatePath, virtualStateContent, {
       automaticNewlines: true,
     });
+  }
+
+  async hydrateVirtualState() {
+    this.storedResolutions = new Map();
+
+    this.storedDescriptors = new Map();
+    this.storedPackages = new Map();
+
+
+    const virtualStatePath = ppath.join(this.cwd, this.configuration.get(`virtualStateFilename`));
   }
 
   async persist() {
