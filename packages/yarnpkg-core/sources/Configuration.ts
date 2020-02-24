@@ -52,7 +52,7 @@ const IGNORED_ENV_VARIABLES = new Set([
 export const ENVIRONMENT_PREFIX = `yarn_`;
 export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc.yml`);
 export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
-export const DEFAULT_VIRTUAL_STATE_FILENAME = toFilename(`.yarn/virtual-state.yml`);
+
 
 export enum SettingsType {
   ANY = 'ANY',
@@ -199,7 +199,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   virtualStateFilename: {
     description: `Name of the file where the Yarn virtual state is persisted `,
     type: SettingsType.STRING,
-    default: DEFAULT_VIRTUAL_STATE_FILENAME,
+    default: `./.yarn/virtual-state.yml`,
   },
   rcFilename: {
     description: `Name of the files where the configuration can be found`,
