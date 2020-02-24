@@ -101,8 +101,12 @@ export class Project {
 
     const project = new Project(configuration.projectCwd, {configuration});
 
+    console.time("setupResolutions");
     await project.setupResolutions();
+    console.timeEnd("setupResolutions");
+    console.time("setupWorkspaces");
     await project.setupWorkspaces();
+    console.timeEnd("setupWorkspaces");
 
     // If we're in a workspace, no need to go any further to find which package we're in
     const workspace = project.tryWorkspaceByCwd(packageCwd);
