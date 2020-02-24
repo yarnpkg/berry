@@ -1576,17 +1576,12 @@ export class Project {
         continue;
       const virtualLocator = structUtils.parseLocator(virtualEntryName);
       const virtualDescriptor = structUtils.convertLocatorToDescriptor(virtualLocator);
-      console.log("=====================");
-      console.log(virtualEntry.virtualOf);
+
       const originalLocator = structUtils.parseLocator(virtualEntry.virtualOf);
       const originalPackage = this.originalPackages.get(originalLocator.locatorHash);
-      console.log(originalLocator.locatorHash);
-      if (!originalPackage)
-        // throw new Error("Wowowowow could not find original package");
-        continue;
-      else
-        console.log("FOUNDD");
 
+      if (!originalPackage)
+        throw new Error("Wowowowow could not find original package");
 
       const virtualPackage = structUtils.renamePackage(originalPackage, virtualLocator);
       for (const [name, resolution] of Object.entries(virtualEntry.peerResolutions))

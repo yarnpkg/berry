@@ -67,9 +67,19 @@ export default class RunCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace, locator} = await Project.find(configuration, this.context.cwd);
 
+
     console.time("hydrateVirtualPackages");
     await project.hydrateVirtualPackages();
     console.timeEnd("hydrateVirtualPackages");
+    console.log(project.storedPackages.size);
+
+    console.time("resolveEverything");
+    await project.resolveEverything({
+      lockfileOnly: true,
+      report: new ThrowReport(),
+    });
+    console.timeEnd("resolveEverything");
+    console.log(project.storedPackages.size);
 
     const effectiveLocator = this.topLevel
       ? project.topLevelWorkspace.anchoredLocator
