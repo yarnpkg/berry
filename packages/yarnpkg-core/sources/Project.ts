@@ -1506,8 +1506,7 @@ export class Project {
       const pkg0 = this.originalPackages.get(locatorHash);
 
       // A resolution that isn't in `originalPackages` is a virtual packages.
-      // Since virtual packages can be derived from the information stored in
-      // the rest of the lockfile we don't want to bother storing them.
+      // Here we are only intrested in virtual packages
       if (!!pkg0)
         continue;
 
@@ -1518,11 +1517,11 @@ export class Project {
 
       const descriptors = [];
 
+
       for (const descriptorHash of descriptorHashes) {
         const descriptor = this.storedDescriptors.get(descriptorHash);
         if (!descriptor)
           throw new Error(`Assertion failed: The descriptor should have been registered`);
-
         descriptors.push(descriptor);
       }
 
@@ -1530,31 +1529,16 @@ export class Project {
         return structUtils.stringifyDescriptor(descriptor);
       }).sort().join(`, `);
 
-      const manifest = new Manifest();
+      const peerResolutions:{[key:string]:any}={};
 
-      manifest.version = pkg.linkType === LinkType.HARD
-        ? pkg.version
-        : `0.0.0-use.local`;
+      for (const descriptor of pkg.peerDependencies.values())
+        peerResolutions[structUtils.stringifyIdent(descriptor)]=descriptor.range;
 
-      manifest.languageName = pkg.languageName;
-
-      manifest.dependencies = new Map(pkg.dependencies);
-      manifest.peerDependencies = new Map(pkg.peerDependencies);
-
-      manifest.dependenciesMeta = new Map(pkg.dependenciesMeta);
-      manifest.peerDependenciesMeta = new Map(pkg.peerDependenciesMeta);
-
-      manifest.bin = new Map(pkg.bin);
 
       optimizedLockfile[key] = {
-        ...manifest.exportTo({}, {
-          compatibilityMode: false,
-        }),
+        virtualOf:structUtils.stringifyDescriptor(structUtils.devirtualizeDescriptor(descriptors[0])),
+        peerResolutions:peerResolutions,
 
-        linkType: pkg.linkType.toLowerCase(),
-
-        resolution: structUtils.stringifyLocator(pkg),
-        checksum: this.storedChecksums.get(pkg.locatorHash),
       };
     }
 
@@ -1581,14 +1565,32 @@ export class Project {
     });
   }
 
-  async hydrateVirtualState() {
-    this.storedResolutions = new Map();
+  async hydrateVirtualPackages() {
+    // this.storedResolutions = new Map();
 
-    this.storedDescriptors = new Map();
-    this.storedPackages = new Map();
+    // this.storedDescriptors = new Map();
+    // this.storedPackages = new Map();
 
 
-    const virtualStatePath = ppath.join(this.cwd, this.configuration.get(`virtualStateFilename`));
+    // const virtualStatePath = ppath.join(this.cwd, this.configuration.get(`virtualStateFilename`));
+
+
+    // for (const [virtualEntryName, virtualEntry] of Object.values(virtualStateFileData)) {
+    //   const virtualLocator = structUtils.parseLocator(virtualEntryName);
+    //   const virtualDescriptor = structUtils.convertLocatorToDescriptor(virtualLocator);
+
+    //   const originalLocator = structUtils.parseLocator(virtualEntry.virtualOf);
+    //   const originalPackage = this.originalPackages.get(originalLocator.locatorHash);
+
+    //   const virtualPackage = structUtils.renamePackage(originalPackage, virtualLocator);
+    //   for (const [name, resolution] of Object.entries(virtualEntry.peerResolutions))
+    //     virtualPackage.dependencies.set(name, structUtils.parseDescriptor(resolution).descriptorHash);
+
+    //   this.storedPackages.set(virtualPackage.locatorHash, virtualPackage);
+    //   this.storedDescriptors.set(virtualDescriptor.descriptorHash, descriptor);
+
+    //   this.storedResolutions.set(virtualDescriptor.descriptorHash, virtualPackage.locatorHash);
+    // }
   }
 
   async persist() {
