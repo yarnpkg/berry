@@ -1529,6 +1529,7 @@ export class Project {
         return structUtils.stringifyDescriptor(descriptor);
       }).sort().join(`, `);
 
+
       const peerResolutions:{[key:string]:any}={};
 
       for (const descriptor of pkg.peerDependencies.values())
@@ -1536,9 +1537,9 @@ export class Project {
 
 
       optimizedLockfile[key] = {
-        virtualOf:structUtils.stringifyDescriptor(structUtils.devirtualizeDescriptor(descriptors[0])),
         peerResolutions:peerResolutions,
-
+        virtualOf:structUtils.stringifyLocator(structUtils.devirtualizeLocator(pkg)),
+        // virtualOf:structUtils.stringifyDescriptor(structUtils.devirtualizeDescriptor(descriptors[0])), // BAD
       };
     }
 
@@ -1566,31 +1567,36 @@ export class Project {
   }
 
   async hydrateVirtualPackages() {
-    // this.storedResolutions = new Map();
+    const virtualStatePath = ppath.join(this.cwd, this.configuration.get(`virtualStateFilename`));
+    const content = await xfs.readFilePromise(virtualStatePath, `utf8`);
+    const virtualStateFileData: {[key:string]:{virtualOf:string,peerResolutions:{[key:string]:string}}} = parseSyml(content);
 
-    // this.storedDescriptors = new Map();
-    // this.storedPackages = new Map();
+    for (const [virtualEntryName, virtualEntry] of Object.entries(virtualStateFileData)) {
+      if (virtualEntryName === `__metadata`)
+        continue;
+      const virtualLocator = structUtils.parseLocator(virtualEntryName);
+      const virtualDescriptor = structUtils.convertLocatorToDescriptor(virtualLocator);
+      console.log("=====================");
+      console.log(virtualEntry.virtualOf);
+      const originalLocator = structUtils.parseLocator(virtualEntry.virtualOf);
+      const originalPackage = this.originalPackages.get(originalLocator.locatorHash);
+      console.log(originalLocator.locatorHash);
+      if (!originalPackage)
+        // throw new Error("Wowowowow could not find original package");
+        continue;
+      else
+        console.log("FOUNDD");
 
 
-    // const virtualStatePath = ppath.join(this.cwd, this.configuration.get(`virtualStateFilename`));
+      const virtualPackage = structUtils.renamePackage(originalPackage, virtualLocator);
+      for (const [name, resolution] of Object.entries(virtualEntry.peerResolutions))
+        virtualPackage.dependencies.set(name as IdentHash, structUtils.parseDescriptor(resolution));
 
+      this.storedPackages.set(virtualPackage.locatorHash, virtualPackage);
+      this.storedDescriptors.set(virtualDescriptor.descriptorHash, virtualDescriptor);
 
-    // for (const [virtualEntryName, virtualEntry] of Object.values(virtualStateFileData)) {
-    //   const virtualLocator = structUtils.parseLocator(virtualEntryName);
-    //   const virtualDescriptor = structUtils.convertLocatorToDescriptor(virtualLocator);
-
-    //   const originalLocator = structUtils.parseLocator(virtualEntry.virtualOf);
-    //   const originalPackage = this.originalPackages.get(originalLocator.locatorHash);
-
-    //   const virtualPackage = structUtils.renamePackage(originalPackage, virtualLocator);
-    //   for (const [name, resolution] of Object.entries(virtualEntry.peerResolutions))
-    //     virtualPackage.dependencies.set(name, structUtils.parseDescriptor(resolution).descriptorHash);
-
-    //   this.storedPackages.set(virtualPackage.locatorHash, virtualPackage);
-    //   this.storedDescriptors.set(virtualDescriptor.descriptorHash, descriptor);
-
-    //   this.storedResolutions.set(virtualDescriptor.descriptorHash, virtualPackage.locatorHash);
-    // }
+      this.storedResolutions.set(virtualDescriptor.descriptorHash, virtualPackage.locatorHash);
+    }
   }
 
   async persist() {
