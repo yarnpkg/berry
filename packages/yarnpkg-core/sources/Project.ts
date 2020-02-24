@@ -1477,11 +1477,21 @@ export class Project {
     return header + stringifySyml(optimizedLockfile);
   }
 
+  generateVirtualState() {
+    return "toto";
+  }
+
   async persistLockfile() {
     const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
     const lockfileContent = this.generateLockfile();
 
     await xfs.changeFilePromise(lockfilePath, lockfileContent, {
+      automaticNewlines: true,
+    });
+
+    const virtualStatePath = ppath.join(this.cwd, this.configuration.get(`virtualStateFilename`));
+    const virtualStateContent = this.generateVirtualState();
+    await xfs.changeFilePromise(virtualStatePath, virtualStateContent, {
       automaticNewlines: true,
     });
   }
