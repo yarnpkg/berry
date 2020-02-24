@@ -59,6 +59,7 @@ If you're not using Zero-Installs:
 .yarn/cache
 .yarn/unplugged
 .yarn/build-state.yml
+.yarn/virtual-state.yml
 .pnp.*
 ```
 
