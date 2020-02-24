@@ -67,7 +67,7 @@ export default class RunCommand extends BaseCommand {
     console.time("find");
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace, locator} = await Project.find(configuration, this.context.cwd);
-    console.time("find");
+    console.timeEnd("find");
     console.time("resolveEverything");
     await project.resolveEverything({
       lockfileOnly: true,
