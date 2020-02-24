@@ -1571,6 +1571,15 @@ export class Project {
     const content = await xfs.readFilePromise(virtualStatePath, `utf8`);
     const virtualStateFileData: {[key:string]:{virtualOf:string,peerResolutions:{[key:string]:string}}} = parseSyml(content);
 
+    for (const [EntryName, Entry] of this.originalPackages.entries()) {
+      this.storedPackages.set(EntryName,Entry);
+      this.storedPackages.set(virtualPackage.locatorHash, virtualPackage);
+      this.storedDescriptors.set(virtualDescriptor.descriptorHash, virtualDescriptor);
+
+      this.storedResolutions.set(virtualDescriptor.descriptorHash, virtualPackage.locatorHash);
+    }
+
+
     for (const [virtualEntryName, virtualEntry] of Object.entries(virtualStateFileData)) {
       if (virtualEntryName === `__metadata`)
         continue;

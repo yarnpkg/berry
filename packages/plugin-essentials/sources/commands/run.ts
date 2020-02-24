@@ -73,13 +73,13 @@ export default class RunCommand extends BaseCommand {
     console.timeEnd("hydrateVirtualPackages");
     console.log(project.storedPackages.size);
 
-    console.time("resolveEverything");
-    await project.resolveEverything({
-      lockfileOnly: true,
-      report: new ThrowReport(),
-    });
-    console.timeEnd("resolveEverything");
-    console.log(project.storedPackages.size);
+    // console.time("resolveEverything");
+    // await project.resolveEverything({
+    //   lockfileOnly: true,
+    //   report: new ThrowReport(),
+    // });
+    // console.timeEnd("resolveEverything");
+    // console.log(project.storedPackages.size);
 
     const effectiveLocator = this.topLevel
       ? project.topLevelWorkspace.anchoredLocator
