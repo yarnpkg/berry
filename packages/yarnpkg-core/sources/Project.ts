@@ -1478,6 +1478,14 @@ export class Project {
   }
 
   generateVirtualState() {
+    const convertMapsToObjects = (mapInstance) => {
+      const obj = {};
+      for (let prop of mapInstance)
+        obj[prop[0]] = prop[1];
+
+      return obj;
+    };
+
     // this.storedResolutions ;
     // this.storedDescriptors;
     // this.storedPackages;
@@ -1487,9 +1495,9 @@ export class Project {
     ].join(``)}\n`;
 
     return header + stringifySyml({
-      storedResolutions:this.storedResolutions ,
-      storedDescriptors:this.storedDescriptors,
-      storedPackages:this.storedPackages,
+      storedResolutions:convertMapsToObjects(this.storedResolutions ),
+      storedDescriptors:convertMapsToObjects(this.storedDescriptors),
+      storedPackages:convertMapsToObjects(this.storedPackages),
     } );
     // return ;
     // return "toto";
