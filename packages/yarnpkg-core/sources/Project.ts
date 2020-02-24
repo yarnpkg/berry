@@ -1478,10 +1478,10 @@ export class Project {
   }
 
   generateVirtualState() {
-    const convertMapsToObjects = (mapInstance) => {
-      const obj = {};
-      for (let prop of mapInstance)
-        obj[prop[0]] = prop[1];
+    const convertMapsToObjects = (mapInstance:Map) => {
+      const obj:{[key:string]:any} = {};
+      for (let [key,value] of mapInstance)
+        obj[(key as string)] = value;
 
       return obj;
     };
