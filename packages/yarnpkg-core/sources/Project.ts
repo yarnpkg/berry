@@ -1571,12 +1571,11 @@ export class Project {
     const content = await xfs.readFilePromise(virtualStatePath, `utf8`);
     const virtualStateFileData: {[key:string]:{virtualOf:string,peerResolutions:{[key:string]:string}}} = parseSyml(content);
 
-    for (const [EntryName, Entry] of this.originalPackages.entries()) {
-      this.storedPackages.set(EntryName,Entry);
-      this.storedPackages.set(virtualPackage.locatorHash, virtualPackage);
-      this.storedDescriptors.set(virtualDescriptor.descriptorHash, virtualDescriptor);
-
-      this.storedResolutions.set(virtualDescriptor.descriptorHash, virtualPackage.locatorHash);
+    for (const [locatorHash, pkg] of this.originalPackages.entries()) {
+      const desc = structUtils.convertLocatorToDescriptor(pkg);
+      this.storedPackages.set(pkg.locatorHash, pkg);
+      this.storedDescriptors.set(desc.descriptorHash, desc);
+      this.storedResolutions.set(desc.descriptorHash, pkg.locatorHash);
     }
 
 
