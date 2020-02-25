@@ -11,8 +11,7 @@
 <p align="center">
   <a href="https://github.com/yarnpkg/berry"><img alt="GitHub Actions status" src="https://github.com/yarnpkg/berry/workflows/Integration/badge.svg"></a>
   <a href="https://discord.gg/yarnpkg"><img alt="Discord Chat" src="https://img.shields.io/discord/226791405589233664.svg"></a>
-  <img alt="Stable Release" src="https://img.shields.io/github/release/yarnpkg/yarn.svg?style=flat">
-  <img alt="Prerelease" src="https://img.shields.io/github/release-pre/yarnpkg/yarn.svg?style=flat">
+  <a href="https://www.npmjs.com/package/yarn"><img alt="Latest Berry Release" src="https://img.shields.io/npm/v/yarn/berry"></a>
 </p>
 
 ---
@@ -110,6 +109,7 @@ Although developed on the same repository as Yarn itself, those plugins are opti
 
 - [☆ plugin-constraints](packages/plugin-constraints) adds support for [constraints](https://yarnpkg.com/features/constraints) to Yarn.
 - [☆ plugin-exec](packages/plugin-exec) adds support for using the [`exec:`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-exec#documentation) protocol within your dependencies.
+- [☆ plugin-interactive-tools](packages/plugin-interactive-tools) adds support for various interactive commands ([`yarn upgrade-interactive`](https://yarnpkg.com/cli/upgrade-interactive)).
 - [☆ plugin-stage](packages/plugin-stage) adds support for the [`yarn stage`](https://yarnpkg.com/cli/stage) command.
 - [☆ plugin-typescript](packages/plugin-typescript) improves the user experience when working with TypeScript.
 - [☆ plugin-version](packages/plugin-version) adds support for the new [release workflow](https://yarnpkg.com/features/release-workflow).
