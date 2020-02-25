@@ -409,7 +409,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs}:
 };
 
 /**
- * This function removes node_modules roots that do not exist on the filesystem.
+ * This function removes node_modules roots that do not exist on the filesystem from the location tree.
  *
  * This is needed to transparently support workflows on CI systems. When
  * user caches only top-level node_modules and forgets to cache node_modules
