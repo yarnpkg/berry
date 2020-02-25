@@ -21,6 +21,14 @@ const PROGRESS_INTERVAL = 80;
 const FORGETTABLE_NAMES = new Set<MessageName | null>([MessageName.FETCH_NOT_CACHED, MessageName.UNUSED_CACHE_ENTRY]);
 const FORGETTABLE_BUFFER_SIZE = 5;
 
+const GROUP = process.env.GITHUB_ACTIONS
+  ? {start: (what: string) => `::group::${what}\n`, end: (what: string) => `::endgroup::\n`}
+  : process.env.TRAVIS
+    ? {start: (what: string) => `travis_fold:start:${what}\n`, end: (what: string) => `travis_fold:end:${what}\n`}
+    : process.env.GITLAB_CI
+      ? {start: (what: string) => `section_start:${Date.now() / 1000}:${what}\n`, end: (what: string) => `section_end:${Date.now() / 1000}:${what}\n`}
+      : null;
+
 const now = new Date();
 
 // We only want to support environments that will out-of-the-box accept the
@@ -157,6 +165,9 @@ export class StreamReport extends Report {
   async startTimerPromise<T>(what: string, cb: () => Promise<T>) {
     this.reportInfo(null, `┌ ${what}`);
 
+    if (GROUP !== null)
+      this.stdout.write(GROUP.start(what));
+
     const before = Date.now();
     this.indent += 1;
 
@@ -168,6 +179,9 @@ export class StreamReport extends Report {
     } finally {
       const after = Date.now();
       this.indent -= 1;
+
+      if (GROUP !== null)
+        this.stdout.write(GROUP.end(what));
 
       if (this.configuration.get(`enableTimers`)) {
         this.reportInfo(null, `└ Completed in ${this.formatTiming(after - before)}`);
