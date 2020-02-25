@@ -424,19 +424,14 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs}:
  *
  * @returns location tree with non-existent node_modules roots stripped
  */
-async function refineLocationRoots(locationTree: LocationTree): Promise<LocationTree> {
+function refineNodeModulesRoots(locationTree: LocationTree): LocationTree {
   const refinedTree: LocationTree = new Map();
 
-  const promises = [];
   for (const [nodeModulesRoot, node] of locationTree.entries()) {
-    promises.push(async () => {
-      if (await xfs.existsPromise(nodeModulesRoot)) {
-        refinedTree.set(nodeModulesRoot, node);
-      }
-    });
+    if (xfs.existsSync(nodeModulesRoot)) {
+      refinedTree.set(nodeModulesRoot, node);
+    }
   }
-
-  await Promise.all(promises);
 
   return refinedTree;
 };
@@ -444,7 +439,7 @@ async function refineLocationRoots(locationTree: LocationTree): Promise<Location
 async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null, installState: NodeModulesLocatorMap, {baseFs, project, report}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report}) {
   const rootNmDirPath = ppath.join(project.cwd, NODE_MODULES);
 
-  const prevLocationTree = await refineLocationRoots(buildLocationTree(preinstallState, {skipPrefix: project.cwd}));
+  const prevLocationTree = refineNodeModulesRoots(buildLocationTree(preinstallState, {skipPrefix: project.cwd}));
   const locationTree = buildLocationTree(installState, {skipPrefix: project.cwd});
 
   const limit = pLimit(ADD_CONCURRENT_LIMIT);
