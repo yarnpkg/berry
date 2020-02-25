@@ -408,10 +408,38 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs}:
   }
 };
 
+/**
+ * This function removes node_modules roots that do not exist on the filesystem from the location tree.
+ *
+ * This is needed to transparently support workflows on CI systems. When
+ * user caches only top-level node_modules and forgets to cache node_modules
+ * from deeper workspaces. By removing non-existent node_modules roots
+ * we make our location tree to represent the real tree on the file system.
+ *
+ * Please note, that this function doesn't help with any other inconsistency
+ * on a deeper level inside node_modules tree, it helps only when some node_modules roots
+ * do not exist at all
+ *
+ * @param locationTree location tree
+ *
+ * @returns location tree with non-existent node_modules roots stripped
+ */
+function refineNodeModulesRoots(locationTree: LocationTree): LocationTree {
+  const refinedTree: LocationTree = new Map();
+
+  for (const [nodeModulesRoot, node] of locationTree.entries()) {
+    if (xfs.existsSync(nodeModulesRoot)) {
+      refinedTree.set(nodeModulesRoot, node);
+    }
+  }
+
+  return refinedTree;
+};
+
 async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null, installState: NodeModulesLocatorMap, {baseFs, project, report}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report}) {
   const rootNmDirPath = ppath.join(project.cwd, NODE_MODULES);
 
-  const prevLocationTree = buildLocationTree(preinstallState, {skipPrefix: project.cwd});
+  const prevLocationTree = refineNodeModulesRoots(buildLocationTree(preinstallState, {skipPrefix: project.cwd}));
   const locationTree = buildLocationTree(installState, {skipPrefix: project.cwd});
 
   const limit = pLimit(ADD_CONCURRENT_LIMIT);
