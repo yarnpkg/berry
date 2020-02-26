@@ -1503,12 +1503,13 @@ export class Project {
       if (!!res.dependencies && res.dependencies.size>0) {
         const oldMap = res.dependencies;
         const newDict:{[key:string]:any}={};
-        for (const [key, value] of oldMap.entries()) {
-          newDict[key]={
-            descriptorHash:value.descriptorHash,
-            range:value.range,
-          };
-        }
+        for (const [key, value] of oldMap.entries())
+          // newDict[key]={
+          //   descriptorHash:value.descriptorHash,
+          //   range:value.range,
+          // };
+          newDict[key]=value;
+
 
         res.dependencies=newDict;
       } else {
@@ -1518,12 +1519,13 @@ export class Project {
       if (!!res.peerDependencies&& res.peerDependencies.size>0) {
         const oldMap = res.peerDependencies;
         const newDict:{[key:string]:any}={};
-        for (const [key, value] of oldMap.entries()) {
-          newDict[key]={
-            descriptorHash:value.descriptorHash,
-            range:value.range,
-          };
-        }
+        for (const [key, value] of oldMap.entries())
+          // newDict[key]={
+          //   descriptorHash:value.descriptorHash,
+          //   range:value.range,
+          // };
+          newDict[key]=value;
+
 
         res.peerDependencies=newDict;
       } else {
@@ -1610,13 +1612,6 @@ export class Project {
 
   async restoreInstallState() {
     console.time("restoreInstallState");
-    // console.time("installStateResolveEverything");
-    // await this.resolveEverything({
-    //   lockfileOnly: true,
-    //   skipVirtualResolution: true,
-    //   report: new ThrowReport(),
-    // });
-    // console.timeEnd("installStateResolveEverything");
     console.time("readInstallState");
     const installStatePath = ppath.join(this.cwd, this.configuration.get(`installStateFilename`));
     const content = ((await xfs.readFilePromise(installStatePath, `utf8`)) );
@@ -1711,6 +1706,15 @@ export class Project {
     }
 
     console.timeEnd("computeInstallState");
+
+
+    // console.time("installStateResolveEverything");
+    // await this.resolveEverything({
+    //   lockfileOnly: true,
+    //   skipVirtualResolution: true,
+    //   report: new ThrowReport(),
+    // });
+    // console.timeEnd("installStateResolveEverything");
 
     console.timeEnd("restoreInstallState");
   }
