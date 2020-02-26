@@ -1692,8 +1692,8 @@ export class Project {
 
         if (bin!==null && bin!==undefined) {
           for (const [key2, value2] of Object.entries(bin)) {
-            const storedFields = res.bin.get(key2 as IdentHash) || {};
-            res.bin.set(key2 as IdentHash,{...storedFields,...value2});
+            const storedFields = value2 || res.bin.get(key2 as IdentHash);
+            res.bin.set(key2 as IdentHash,storedFields);
           }
         }
 
