@@ -53,6 +53,7 @@ export const ENVIRONMENT_PREFIX = `yarn_`;
 export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc.yml`);
 export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
 
+
 export enum SettingsType {
   ANY = 'ANY',
   BOOLEAN = 'BOOLEAN',
@@ -194,6 +195,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `Name of the files where the Yarn dependency tree entries must be stored`,
     type: SettingsType.STRING,
     default: DEFAULT_LOCK_FILENAME,
+  },
+  virtualStateFilename: {
+    description: `Name of the file where the Yarn virtual state is persisted `,
+    type: SettingsType.STRING,
+    default: `./.yarn/virtual-state.yml`,
   },
   rcFilename: {
     description: `Name of the files where the configuration can be found`,
