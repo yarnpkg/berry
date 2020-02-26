@@ -108,7 +108,7 @@ describe(`Project`, () => {
         const configuration = await getConfiguration(dir);
         const {project} = await Project.find(configuration, dir);
 
-        await project.hydrateVirtualPackages();
+        await project.restoreInstallState();
 
         project2 = project;
       }
