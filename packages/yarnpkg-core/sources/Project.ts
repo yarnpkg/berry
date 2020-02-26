@@ -1591,54 +1591,33 @@ export class Project {
   }
 
   async saveInstallStateFile() {
-    // console.time("saveInstallStateFileConfiguration");
-    // const configuration = await Configuration.find(this.cwd, this.plugins);
-    // console.timeEnd("saveInstallStateFileConfiguration");
-    // console.time("saveInstallStateFileProject");
-    // await Project.find(configuration, this.cwd);
-    // console.timeEnd("saveInstallStateFileProject");
-    console.time("saveInstallStateFile");
-    console.time("generateInstallState");
     const installStatePath = ppath.join(this.cwd, this.configuration.get(`installStateFilename`));
     const installStateContent = this.generateInstallState();
-    console.timeEnd("generateInstallState");
-    console.time("installStateContent");
+
     await xfs.changeFilePromise(installStatePath, installStateContent);
-    console.timeEnd("installStateContent");
-    console.timeEnd("saveInstallStateFile");
   }
 
   async restoreInstallState() {
-    console.time("restoreInstallState");
-    console.time("readInstallState");
     const installStatePath = ppath.join(this.cwd, this.configuration.get(`installStateFilename`));
     const content = ((await xfs.readFilePromise(installStatePath, `utf8`)) );
     const parsed= JSON.parse(content) as {accessibleLocators:LocatorHash[],optionalBuilds:LocatorHash[],storedDescriptors:{[key:string]:Descriptor},storedResolutions:{[key:string]:LocatorHash},storedPackages:{[key:string]:Package}} ;
-    console.timeEnd("readInstallState");
-
-    console.time("computeInstallState");
 
     if (parsed.accessibleLocators!==null && parsed.accessibleLocators!==undefined)
       this.accessibleLocators = new Set([...this.accessibleLocators,...parsed.accessibleLocators]);
-    else
-      console.log("EMPPPPPTYYY accessibleLocators");
 
     if (parsed.optionalBuilds!==null && parsed.optionalBuilds!==undefined)
       this.optionalBuilds = new Set([...this.optionalBuilds,...parsed.optionalBuilds]);
-    else
-      console.log("EMPPPPPTYYY optionalBuilds");
+
 
     if (parsed.storedDescriptors!==null && parsed.storedDescriptors!==undefined)
       for (const [key, value] of Object.entries(parsed.storedDescriptors))
         this.storedDescriptors.set(key as DescriptorHash,value);
-    else
-      console.log("EMPPPPPTYYY storedDescriptors");
+
 
     if (parsed.storedResolutions!==null && parsed.storedResolutions!==undefined)
       for (const [key, value] of Object.entries(parsed.storedResolutions))
         this.storedResolutions.set(key as DescriptorHash,value);
-    else
-      console.log("EMPPPPPTYYY storedResolutions");
+
 
     if (parsed.storedPackages!==null && parsed.storedPackages!==undefined) {
       for (const [key, value] of Object.entries(parsed.storedPackages))
@@ -1699,22 +1678,7 @@ export class Project {
 
         this.storedPackages.set(key as LocatorHash,res);
       }
-    } else {
-      console.log("EMPPPPPTYYY storedPackages");
     }
-
-    console.timeEnd("computeInstallState");
-
-
-    // console.time("installStateResolveEverything");
-    // await this.resolveEverything({
-    //   lockfileOnly: true,
-    //   skipVirtualResolution: true,
-    //   report: new ThrowReport(),
-    // });
-    // console.timeEnd("installStateResolveEverything");
-
-    console.timeEnd("restoreInstallState");
   }
 
   async persist() {
