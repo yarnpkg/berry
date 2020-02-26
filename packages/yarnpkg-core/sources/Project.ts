@@ -445,7 +445,7 @@ export class Project {
     return null;
   }
 
-  async resolveEverything(opts: {report: Report, lockfileOnly: true, resolver?: Resolver} | {report: Report, lockfileOnly?: boolean, cache: Cache, resolver?: Resolver}) {
+  async resolveEverything(opts: {report: Report, lockfileOnly: true, skipVirtualResolution?: boolean, resolver?: Resolver} | {report: Report, lockfileOnly?: boolean, skipVirtualResolution?: boolean, cache: Cache, resolver?: Resolver}) {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
 
@@ -849,6 +849,8 @@ export class Project {
       allDescriptors,
       allResolutions,
       allPackages,
+
+      skipVirtualResolution: opts.skipVirtualResolution,
     });
 
     // All descriptors still referenced within the volatileDescriptors set are
@@ -1482,18 +1484,27 @@ export class Project {
   }
 
   generateVirtualState() {
-    // We generate the data structure that will represent our lockfile. To do this, we create a
-    // reverse lookup table, where the key will be the resolved locator and the value will be a set
-    // of all the descriptors that resolved to it. Then we use it to construct an optimized version
-    // if the final object.
-    const reverseLookup = new Map<LocatorHash, Set<DescriptorHash>>();
+    // We generate the data structure that will represent our lockfile. To do
+    // this, we create a reverse lookup table, where the key will be the
+    // virtual locator and each value will be the set of all packages that
+    // depend on it in any way.
+    const reverseLookup = new Map<LocatorHash, Set<LocatorHash>>();
 
-    for (const [descriptorHash, locatorHash] of this.storedResolutions.entries()) {
-      let descriptorHashes = reverseLookup.get(locatorHash);
-      if (!descriptorHashes)
-        reverseLookup.set(locatorHash, descriptorHashes = new Set());
+    for (const pkg of this.storedPackages.values()) {
+      for (const dependency of pkg.dependencies.values()) {
+        const resolution = this.storedResolutions.get(dependency.descriptorHash);
+        if (typeof resolution === `undefined`)
+          throw new Error(`Assertion failed: The resolution should have been registered`);
 
-      descriptorHashes.add(descriptorHash);
+        // We only care about the virtual packages, and virtual packages are
+        // the only ones which don't come from the resolvers and thus don't
+        // have "original package" entries.
+        const originalDependency = this.originalPackages.get(resolution);
+        if (typeof originalDependency !== `undefined`)
+          continue;
+
+        miscUtils.getSetWithDefault(reverseLookup, resolution).add(pkg.locatorHash);
+      }
     }
 
     const optimizedLockfile: {[key: string]: any} = {};
@@ -1502,44 +1513,35 @@ export class Project {
       version: LOCKFILE_VERSION,
     };
 
-    for (const [locatorHash, descriptorHashes] of reverseLookup.entries()) {
-      const pkg0 = this.originalPackages.get(locatorHash);
-
-      // A resolution that isn't in `originalPackages` is a virtual packages.
-      // Here we are only intrested in virtual packages
-      if (!!pkg0)
-        continue;
-
+    for (const [locatorHash, dependentHashes] of reverseLookup.entries()) {
       const pkg = this.storedPackages.get(locatorHash);
-
       if (!pkg)
         continue;
 
-      const descriptors = [];
+      const key = structUtils.stringifyLocator(pkg);
 
+      const dependents: Array<string> = [];
+      for (const dependentHash of dependentHashes) {
+        const dependent = this.storedPackages.get(dependentHash);
+        if (typeof dependent === `undefined`)
+          throw new Error(`Assertion failed: The package should have been registered`);
 
-      for (const descriptorHash of descriptorHashes) {
-        const descriptor = this.storedDescriptors.get(descriptorHash);
-        if (!descriptor)
-          throw new Error(`Assertion failed: The descriptor should have been registered`);
-        descriptors.push(descriptor);
+        dependents.push(structUtils.stringifyLocator(dependent));
       }
 
-      const key = descriptors.map(descriptor => {
-        return structUtils.stringifyDescriptor(descriptor);
-      }).sort().join(`, `);
+      const peerResolutions: {[key: string]: any} = {};
+      for (const descriptor of pkg.peerDependencies.values()) {
+        const resolution = pkg.dependencies.get(descriptor.identHash);
+        if (typeof resolution === `undefined`)
+          continue;
 
-
-      const peerResolutions:{[key:string]:any}={};
-
-      for (const descriptor of pkg.peerDependencies.values())
-        peerResolutions[structUtils.stringifyIdent(descriptor)]=descriptor.range;
-
+        peerResolutions[structUtils.stringifyIdent(descriptor)] = resolution.range;
+      }
 
       optimizedLockfile[key] = {
-        peerResolutions:peerResolutions,
-        virtualOf:structUtils.stringifyLocator(structUtils.devirtualizeLocator(pkg)),
-        // virtualOf:structUtils.stringifyDescriptor(structUtils.devirtualizeDescriptor(descriptors[0])), // BAD
+        dependents,
+        peerResolutions: Object.keys(peerResolutions).length > 0 ? peerResolutions : undefined,
+        virtualOf: structUtils.stringifyLocator(structUtils.devirtualizeLocator(pkg)),
       };
     }
 
@@ -1567,38 +1569,64 @@ export class Project {
   }
 
   async hydrateVirtualPackages() {
+    await this.resolveEverything({
+      lockfileOnly: true,
+      skipVirtualResolution: true,
+      report: new ThrowReport(),
+    });
+
     const virtualStatePath = ppath.join(this.cwd, this.configuration.get(`virtualStateFilename`));
     const content = await xfs.readFilePromise(virtualStatePath, `utf8`);
-    const virtualStateFileData: {[key:string]:{virtualOf:string,peerResolutions:{[key:string]:string}}} = parseSyml(content);
 
-    for (const [locatorHash, pkg] of this.originalPackages.entries()) {
-      const desc = structUtils.convertLocatorToDescriptor(pkg);
-      this.storedPackages.set(pkg.locatorHash, pkg);
-      this.storedDescriptors.set(desc.descriptorHash, desc);
-      this.storedResolutions.set(desc.descriptorHash, pkg.locatorHash);
-    }
-
+    const virtualStateFileData: {
+      [key: string]: {
+        dependents: Array<string>,
+        virtualOf: string,
+        peerResolutions: {[key: string]: string},
+      },
+    } = parseSyml(content);
 
     for (const [virtualEntryName, virtualEntry] of Object.entries(virtualStateFileData)) {
       if (virtualEntryName === `__metadata`)
         continue;
+
       const virtualLocator = structUtils.parseLocator(virtualEntryName);
       const virtualDescriptor = structUtils.convertLocatorToDescriptor(virtualLocator);
 
-      const originalLocator = structUtils.parseLocator(virtualEntry.virtualOf);
-      const originalPackage = this.originalPackages.get(originalLocator.locatorHash);
+      const sourceLocator = structUtils.parseLocator(virtualEntry.virtualOf);
+      const sourcePackage = this.storedPackages.get(sourceLocator.locatorHash);
 
-      if (!originalPackage)
-        throw new Error("Wowowowow could not find original package");
+      if (typeof sourcePackage === `undefined`)
+        throw new Error(`Assertion failed: The package should have been registered`);
 
-      const virtualPackage = structUtils.renamePackage(originalPackage, virtualLocator);
-      for (const [name, resolution] of Object.entries(virtualEntry.peerResolutions))
-        virtualPackage.dependencies.set(name as IdentHash, structUtils.parseDescriptor(resolution));
+      const virtualPackage = structUtils.renamePackage(sourcePackage, virtualLocator);
+      for (const [identStr, resolution] of Object.entries(virtualEntry.peerResolutions || {})) {
+        const ident = structUtils.parseIdent(identStr);
+        virtualPackage.dependencies.set(ident.identHash, structUtils.makeDescriptor(ident, resolution));
+      }
 
       this.storedPackages.set(virtualPackage.locatorHash, virtualPackage);
       this.storedDescriptors.set(virtualDescriptor.descriptorHash, virtualDescriptor);
 
       this.storedResolutions.set(virtualDescriptor.descriptorHash, virtualPackage.locatorHash);
+    }
+
+    for (const [virtualEntryName, virtualEntry] of Object.entries(virtualStateFileData)) {
+      if (virtualEntryName === `__metadata`)
+        continue;
+
+      const virtualLocator = structUtils.parseLocator(virtualEntryName);
+      const virtualDescriptor = structUtils.convertLocatorToDescriptor(virtualLocator);
+
+      for (const dependentString of virtualEntry.dependents) {
+        const dependentLocator = structUtils.parseLocator(dependentString);
+        const dependentPackage = this.storedPackages.get(dependentLocator.locatorHash);
+
+        if (typeof dependentPackage === `undefined`)
+          throw new Error(`Assertion failed: The package should have been registered`);
+
+        dependentPackage.dependencies.set(virtualDescriptor.identHash, virtualDescriptor);
+      }
     }
   }
 
@@ -1664,6 +1692,7 @@ function applyVirtualResolutionMutations({
 
   report,
 
+  skipVirtualResolution = false,
   tolerateMissingPackages = false,
 }: {
   project: Project,
@@ -1678,6 +1707,7 @@ function applyVirtualResolutionMutations({
 
   report: Report | null,
 
+  skipVirtualResolution?: boolean,
   tolerateMissingPackages?: boolean,
 }) {
   const virtualStack = new Map<LocatorHash, number>();
@@ -1820,7 +1850,7 @@ function applyVirtualResolutionMutations({
       if (!pkg)
         throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
 
-      if (pkg.peerDependencies.size === 0) {
+      if (pkg.peerDependencies.size === 0 || skipVirtualResolution) {
         resolvePeerDependencies(pkg, false, isOptional);
         continue;
       }
