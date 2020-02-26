@@ -196,10 +196,10 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.STRING,
     default: DEFAULT_LOCK_FILENAME,
   },
-  virtualStateFilename: {
-    description: `Name of the file where the Yarn virtual state is persisted `,
+  installStateFilename: {
+    description: `Name of the file where the Yarn install state is persisted `,
     type: SettingsType.STRING,
-    default: `./.yarn/virtual-state.yml`,
+    default: `./.yarn/install-state.yml`,
   },
   rcFilename: {
     description: `Name of the files where the configuration can be found`,

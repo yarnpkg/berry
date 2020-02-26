@@ -1479,74 +1479,93 @@ export class Project {
     return header + stringifySyml(optimizedLockfile);
   }
 
-  generateVirtualState() {
-    // We generate the data structure that will represent our lockfile. To do
-    // this, we create a reverse lookup table, where the key will be the
-    // virtual locator and each value will be the set of all packages that
-    // depend on it in any way.
-    const reverseLookup = new Map<LocatorHash, Set<LocatorHash>>();
+  generateInstallState() {
+    const installStateFile : {[key:string]:any} = {};
 
-    for (const pkg of this.storedPackages.values()) {
-      for (const dependency of pkg.dependencies.values()) {
-        const resolution = this.storedResolutions.get(dependency.descriptorHash);
-        if (typeof resolution === `undefined`)
-          throw new Error(`Assertion failed: The resolution should have been registered`);
+    installStateFile.storedPackages={};
+    for (const [key, value] of this.storedPackages.entries())
+    {
+      const res:{[key:string]:any} = {...value};
 
-        // We only care about the virtual packages, and virtual packages are
-        // the only ones which don't come from the resolvers and thus don't
-        // have "original package" entries.
-        const originalDependency = this.originalPackages.get(resolution);
-        if (typeof originalDependency !== `undefined`)
-          continue;
+      if (!!res.dependencies && res.dependencies.size>0) {
+        const oldMap = res.dependencies;
+        const newDict:{[key:string]:any}={};
+        for (const [key, value] of oldMap.entries())
+          newDict[key]=value;
 
-        miscUtils.getSetWithDefault(reverseLookup, resolution).add(pkg.locatorHash);
+        res.dependencies=newDict;
+      } else {
+        delete res.dependencies;
       }
+
+      if (!!res.peerDependencies&& res.peerDependencies.size>0) {
+        const oldMap = res.peerDependencies;
+        const newDict:{[key:string]:any}={};
+        for (const [key, value] of oldMap.entries())
+          newDict[key]=value;
+
+        res.peerDependencies=newDict;
+      } else {
+        delete res.peerDependencies;
+      }
+
+      if (!!res.bin&& res.bin.size>0) {
+        const oldMap = res.bin;
+        const newDict:{[key:string]:any}={};
+        for (const [key, value] of oldMap.entries())
+          newDict[key]=value;
+
+        res.bin=newDict;
+      } else {
+        delete res.bin;
+      }
+
+      if (!!res.peerDependenciesMeta&& res.peerDependenciesMeta.size>0) {
+        const oldMap = res.peerDependenciesMeta;
+        const newDict:{[key:string]:any}={};
+        for (const [key, value] of oldMap.entries())
+          newDict[key]=value;
+
+        res.peerDependenciesMeta=newDict;
+      } else {
+        delete res.peerDependenciesMeta;
+      }
+
+      if (!!res.dependenciesMeta&& res.dependenciesMeta.size>0) {
+        const oldMap = res.dependenciesMeta;
+        const newDict:{[key:string]:any}={};
+        for (const [key, value] of oldMap.entries()) {
+          const oldMap2 = value;
+          const newDict2:{[key:string]:any}={};
+          for (const [key2, value2] of oldMap2.entries())
+            newDict2[key2]=value2;
+          newDict[key]=newDict2;
+        }
+        res.dependenciesMeta=newDict;
+      } else {
+        delete res.dependenciesMeta;
+      }
+
+      installStateFile.storedPackages[key]= res;
     }
 
-    const optimizedLockfile: {[key: string]: any} = {};
+    installStateFile.storedDescriptors={};
+    for (const [key, value] of this.storedDescriptors.entries())
+      installStateFile.storedDescriptors[key]= value;
 
-    optimizedLockfile[`__metadata`] = {
-      version: LOCKFILE_VERSION,
-    };
+    installStateFile.storedResolutions={};
+    for (const [key, value] of this.storedResolutions.entries())
+      installStateFile.storedResolutions[key]= value;
 
-    for (const [locatorHash, dependentHashes] of reverseLookup.entries()) {
-      const pkg = this.storedPackages.get(locatorHash);
-      if (!pkg)
-        continue;
-
-      const key = structUtils.stringifyLocator(pkg);
-
-      const dependents: Array<string> = [];
-      for (const dependentHash of dependentHashes) {
-        const dependent = this.storedPackages.get(dependentHash);
-        if (typeof dependent === `undefined`)
-          throw new Error(`Assertion failed: The package should have been registered`);
-
-        dependents.push(structUtils.stringifyLocator(dependent));
-      }
-
-      const peerResolutions: {[key: string]: any} = {};
-      for (const descriptor of pkg.peerDependencies.values()) {
-        const resolution = pkg.dependencies.get(descriptor.identHash);
-        if (typeof resolution === `undefined`)
-          continue;
-
-        peerResolutions[structUtils.stringifyIdent(descriptor)] = resolution.range;
-      }
-
-      optimizedLockfile[key] = {
-        dependents,
-        peerResolutions: Object.keys(peerResolutions).length > 0 ? peerResolutions : undefined,
-        virtualOf: structUtils.stringifyLocator(structUtils.devirtualizeLocator(pkg)),
-      };
-    }
+    installStateFile.accessibleLocators=Array.from(this.accessibleLocators);
+    installStateFile.optionalBuilds=Array.from(this.optionalBuilds);
 
     const header = `${[
       `# This file is generated by running "yarn install" inside your project.\n`,
       `# Manual changes might be lost - proceed with caution!\n`,
     ].join(``)}\n`;
 
-    return header + stringifySyml(optimizedLockfile);
+    return header + stringifySyml(installStateFile);
   }
 
   async persistLockfile() {
@@ -1556,79 +1575,23 @@ export class Project {
     await xfs.changeFilePromise(lockfilePath, lockfileContent, {
       automaticNewlines: true,
     });
+  }
 
-    const virtualStatePath = ppath.join(this.cwd, this.configuration.get(`virtualStateFilename`));
-    const virtualStateContent = this.generateVirtualState();
+  async saveInstallStateFile() {
+    const virtualStatePath = ppath.join(this.cwd, this.configuration.get(`installStateFilename`));
+    const virtualStateContent = this.generateInstallState();
     await xfs.changeFilePromise(virtualStatePath, virtualStateContent, {
       automaticNewlines: true,
     });
   }
 
-  async hydrateVirtualPackages() {
-    await this.resolveEverything({
-      lockfileOnly: true,
-      skipVirtualResolution: true,
-      report: new ThrowReport(),
-    });
+  async restoreInstallState() {
 
-    const virtualStatePath = ppath.join(this.cwd, this.configuration.get(`virtualStateFilename`));
-    const content = await xfs.readFilePromise(virtualStatePath, `utf8`);
-
-    const virtualStateFileData: {
-      [key: string]: {
-        dependents: Array<string>,
-        virtualOf: string,
-        peerResolutions: {[key: string]: string},
-      },
-    } = parseSyml(content);
-
-    for (const [virtualEntryName, virtualEntry] of Object.entries(virtualStateFileData)) {
-      if (virtualEntryName === `__metadata`)
-        continue;
-
-      const virtualLocator = structUtils.parseLocator(virtualEntryName);
-      const virtualDescriptor = structUtils.convertLocatorToDescriptor(virtualLocator);
-
-      const sourceLocator = structUtils.parseLocator(virtualEntry.virtualOf);
-      const sourcePackage = this.storedPackages.get(sourceLocator.locatorHash);
-
-      if (typeof sourcePackage === `undefined`)
-        throw new Error(`Assertion failed: The package should have been registered`);
-
-      const virtualPackage = structUtils.renamePackage(sourcePackage, virtualLocator);
-      for (const [identStr, resolution] of Object.entries(virtualEntry.peerResolutions || {})) {
-        const ident = structUtils.parseIdent(identStr);
-        virtualPackage.dependencies.set(ident.identHash, structUtils.makeDescriptor(ident, resolution));
-      }
-
-      this.storedPackages.set(virtualPackage.locatorHash, virtualPackage);
-      this.storedDescriptors.set(virtualDescriptor.descriptorHash, virtualDescriptor);
-
-      this.storedResolutions.set(virtualDescriptor.descriptorHash, virtualPackage.locatorHash);
-    }
-
-    for (const [virtualEntryName, virtualEntry] of Object.entries(virtualStateFileData)) {
-      if (virtualEntryName === `__metadata`)
-        continue;
-
-      const virtualLocator = structUtils.parseLocator(virtualEntryName);
-      const virtualDescriptor = structUtils.convertLocatorToDescriptor(virtualLocator);
-
-      for (const dependentString of virtualEntry.dependents) {
-        const dependentLocator = structUtils.parseLocator(dependentString);
-        const dependentPackage = this.storedPackages.get(dependentLocator.locatorHash);
-
-        if (typeof dependentPackage === `undefined`)
-          throw new Error(`Assertion failed: The package should have been registered`);
-
-        dependentPackage.dependencies.set(virtualDescriptor.identHash, virtualDescriptor);
-      }
-    }
   }
 
   async persist() {
     await this.persistLockfile();
-
+    await this.saveInstallStateFile();
     for (const workspace of this.workspacesByCwd.values()) {
       await workspace.persistManifest();
     }
