@@ -250,7 +250,7 @@ function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number): Mod
         for (const line of part.lines) {
           const originalLine = fileLines[offset];
 
-          if (!linesAreEqual(originalLine, line))
+          if (originalLine == null || !linesAreEqual(originalLine, line))
             return null;
 
           offset += 1;
