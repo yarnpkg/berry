@@ -25,6 +25,7 @@ import {RunInstallPleaseResolver}                                          from 
 import {ThrowReport}                                                       from './ThrowReport';
 import {Workspace}                                                         from './Workspace';
 import {isFolderInside}                                                    from './folderUtils';
+import * as hashUtils                                                      from './hashUtils';
 import * as miscUtils                                                      from './miscUtils';
 import * as scriptUtils                                                    from './scriptUtils';
 import * as semverUtils                                                    from './semverUtils';
@@ -32,7 +33,6 @@ import * as structUtils                                                    from 
 import {IdentHash, DescriptorHash, LocatorHash}                            from './types';
 import {Descriptor, Ident, Locator, Package}                               from './types';
 import {LinkType}                                                          from './types';
-import {hashUtils}                                                         from '.';
 
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
