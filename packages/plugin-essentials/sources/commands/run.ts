@@ -64,22 +64,17 @@ export default class RunCommand extends BaseCommand {
 
   @Command.Path(`run`)
   async execute() {
+    console.time("configuration");
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    console.timeEnd("configuration");
+
+    console.time("project");
     const {project, workspace, locator} = await Project.find(configuration, this.context.cwd);
+    console.timeEnd("project");
 
-
-    console.time("hydrateVirtualPackages");
+    console.time("Hydrate");
     await project.hydrateVirtualPackages();
-    console.timeEnd("hydrateVirtualPackages");
-    console.log(project.storedPackages.size);
-
-    // console.time("resolveEverything");
-    // await project.resolveEverything({
-    //   lockfileOnly: true,
-    //   report: new ThrowReport(),
-    // });
-    // console.timeEnd("resolveEverything");
-    // console.log(project.storedPackages.size);
+    console.timeEnd("Hydrate");
 
     const effectiveLocator = this.topLevel
       ? project.topLevelWorkspace.anchoredLocator
@@ -88,16 +83,20 @@ export default class RunCommand extends BaseCommand {
     // First we check to see whether a script exist inside the current package
     // for the given name
 
-    if (!this.binariesOnly && await scriptUtils.hasPackageScript(effectiveLocator, this.scriptName, {project}))
-      return await scriptUtils.executePackageScript(effectiveLocator, this.scriptName, this.args, {project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
-
+    if (!this.binariesOnly && await scriptUtils.hasPackageScript(effectiveLocator, this.scriptName, {project})) {
+      console.time("executePackageScript");
+      const res = await scriptUtils.executePackageScript(effectiveLocator, this.scriptName, this.args, {project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
+      console.timeEnd("executePackageScript");
+      return res;
+    }
     // If we can't find it, we then check whether one of the dependencies of the
     // current package exports a binary with the requested name
-
+    console.time("getPackageAccessibleBinaries");
     const binaries = await scriptUtils.getPackageAccessibleBinaries(effectiveLocator, {project});
     const binary = binaries.get(this.scriptName);
-
+    console.timeEnd("getPackageAccessibleBinaries");
     if (binary) {
+      console.time("executePackageAccessibleBinary");
       const nodeArgs = [];
 
       if (this.inspect)
@@ -105,7 +104,9 @@ export default class RunCommand extends BaseCommand {
       if (this.inspectBrk)
         nodeArgs.push(`--inspect-brk`);
 
-      return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, this.scriptName, this.args, {cwd: this.context.cwd, project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr, nodeArgs});
+      const res= await scriptUtils.executePackageAccessibleBinary(effectiveLocator, this.scriptName, this.args, {cwd: this.context.cwd, project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr, nodeArgs});
+      console.timeEnd("executePackageAccessibleBinary");
+      return res;
     }
 
     // When it fails, we try to check whether it's a global script (ie we look
@@ -117,6 +118,7 @@ export default class RunCommand extends BaseCommand {
     // not workspaces). No particular reason except maybe security concerns.
 
     if (!this.topLevel && !this.binariesOnly && workspace && this.scriptName.includes(`:`)) {
+      console.time("candidateWorkspaces");
       let candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {
         return workspace.manifest.scripts.has(this.scriptName) ? workspace : null;
       }));
@@ -125,8 +127,12 @@ export default class RunCommand extends BaseCommand {
         return workspace !== null;
       }) as Array<Workspace>;
 
+      console.timeEnd("candidateWorkspaces");
       if (filteredWorkspaces.length === 1) {
-        return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], this.scriptName, this.args, {stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
+        console.time("executeWorkspaceScript");
+        const res= await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], this.scriptName, this.args, {stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
+        console.timeEnd("executeWorkspaceScript");
+        return res;
       }
     }
 
