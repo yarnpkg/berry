@@ -73,7 +73,7 @@ export default class RunCommand extends BaseCommand {
     console.timeEnd("project");
 
     console.time("Hydrate");
-    await project.hydrateVirtualPackages();
+    await project.restoreInstallState();
     console.timeEnd("Hydrate");
 
     const effectiveLocator = this.topLevel
