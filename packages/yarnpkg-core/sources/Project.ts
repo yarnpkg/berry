@@ -1518,7 +1518,7 @@ export class Project {
 
       // Read the project state from the installStateFile
       const installStatePath = ppath.join(this.cwd, this.configuration.get(`installStateFilename`));
-      const installStateContent = ((await xfs.readFilePromise(installStatePath)) );
+      const installStateContent = await xfs.readFilePromise(installStatePath);
       const {accessibleLocators,optionalBuilds,storedDescriptors,storedResolutions,storedPackages,lockFileChecksum} = v8.deserialize((await (util.promisify(zlib.gunzip))(installStateContent)) as Buffer);
       this.accessibleLocators = accessibleLocators;
       this.optionalBuilds = optionalBuilds;
