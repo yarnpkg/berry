@@ -64,15 +64,10 @@ export default class RunCommand extends BaseCommand {
 
   @Command.Path(`run`)
   async execute() {
-    console.time("configuration");
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    console.timeEnd("configuration");
-    console.time("project");
     const {project, workspace, locator} = await Project.find(configuration, this.context.cwd);
-    console.timeEnd("project");
-    console.time("restoreInstallState");
+
     await project.restoreInstallState();
-    console.timeEnd("restoreInstallState");
 
     const effectiveLocator = this.topLevel
       ? project.topLevelWorkspace.anchoredLocator
@@ -83,7 +78,6 @@ export default class RunCommand extends BaseCommand {
 
     if (!this.binariesOnly && await scriptUtils.hasPackageScript(effectiveLocator, this.scriptName, {project}))
       return await scriptUtils.executePackageScript(effectiveLocator, this.scriptName, this.args, {project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
-
 
     // If we can't find it, we then check whether one of the dependencies of the
     // current package exports a binary with the requested name
