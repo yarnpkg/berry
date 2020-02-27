@@ -41,6 +41,7 @@ import {LinkType}                                                          from 
 // versions are still pinned, no worry). Bump it when you change the fields within
 // the Package type; no more no less.
 const LOCKFILE_VERSION = 4;
+const INSTALLSTATEFILE_VERSION = 1;
 
 const MULTIPLE_KEYS_REGEXP = / *, */g;
 
@@ -82,6 +83,8 @@ export class Project {
   public accessibleLocators: Set<LocatorHash> = new Set();
   public originalPackages: Map<LocatorHash, Package> = new Map();
   public optionalBuilds: Set<LocatorHash> = new Set();
+
+  public lockFileChecksum: string|null = null;
 
   static async find(configuration: Configuration, startingCwd: PortablePath): Promise<{project: Project, workspace: Workspace | null, locator: Locator}> {
     if (!configuration.projectCwd)
@@ -160,6 +163,10 @@ export class Project {
 
     if (xfs.existsSync(lockfilePath)) {
       const content = await xfs.readFilePromise(lockfilePath, `utf8`);
+
+      // For cache invalidation of the installStateFileStore, we store the checksum of the lockFile salted with INSTALLSTATEFILE_VERSION
+      this.lockFileChecksum = hashUtils.makeHash(`${INSTALLSTATEFILE_VERSION}`,content);
+
       const parsed: any = parseSyml(content);
 
       // Protects against v1 lockfiles
@@ -1491,31 +1498,49 @@ export class Project {
   }
 
   async persistInstallStateFile() {
+    // Read the the lockfile to compute its checksum (salted with the INSTALLSTATEFILE_VERSION) and store it in the project
+    const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
+    const lockfileContent = await xfs.readFilePromise(lockfilePath, `utf8`);
+    this.lockFileChecksum = hashUtils.makeHash(`${INSTALLSTATEFILE_VERSION}`,lockfileContent);
+
+    // Write the project state to the installStateFile
     const installStatePath = ppath.join(this.cwd, this.configuration.get(`installStateFilename`));
-    const {accessibleLocators,optionalBuilds,storedDescriptors,storedResolutions,storedPackages} = this;
-    const content = await (util.promisify(zlib.gzip))(v8.serialize({accessibleLocators,optionalBuilds,storedDescriptors,storedResolutions,storedPackages}));
+    const {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, lockFileChecksum} = this;
+    const content = await (util.promisify(zlib.gzip))(v8.serialize({accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, lockFileChecksum}));
     await xfs.writeFilePromise(installStatePath, content as Buffer);
   }
 
   async restoreInstallState() {
     try {
+      // Read the the actual lockfile to compute its checksum (salted with the INSTALLSTATEFILE_VERSION)
+      const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
+      const lockfileContent = await xfs.readFilePromise(lockfilePath, `utf8`);
+      const actualLockFileChecksum = hashUtils.makeHash(`${INSTALLSTATEFILE_VERSION}`,lockfileContent);
+
+      // Read the project state from the installStateFile
       const installStatePath = ppath.join(this.cwd, this.configuration.get(`installStateFilename`));
-      const content = ((await xfs.readFilePromise(installStatePath)) );
-      const {accessibleLocators,optionalBuilds,storedDescriptors,storedResolutions,storedPackages} = v8.deserialize((await (util.promisify(zlib.gunzip))(content)) as Buffer);
-      this.accessibleLocators=accessibleLocators;
-      this.optionalBuilds=optionalBuilds;
-      this.storedDescriptors=storedDescriptors;
-      this.storedResolutions=storedResolutions;
-      this.storedPackages=storedPackages;
-    } catch (e) {
-      console.log("Not up to date during restore");
-      console.log(e);
-      // Fallback to normal slow resolution
+      const installStateContent = ((await xfs.readFilePromise(installStatePath)) );
+      const {accessibleLocators,optionalBuilds,storedDescriptors,storedResolutions,storedPackages,lockFileChecksum} = v8.deserialize((await (util.promisify(zlib.gunzip))(installStateContent)) as Buffer);
+      this.accessibleLocators = accessibleLocators;
+      this.optionalBuilds = optionalBuilds;
+      this.storedDescriptors = storedDescriptors;
+      this.storedResolutions = storedResolutions;
+      this.storedPackages = storedPackages;
+      this.lockFileChecksum = lockFileChecksum;
+
+      // Check that the lockfile checksum of the restored project match the actual lockfile checksum
+      if (actualLockFileChecksum!==this.lockFileChecksum) {
+        throw `The checksum stored in the install-state file and the checksum of the lockfile do not match`;
+      }
+    } catch (error) {
+      console.log("Need to recompute the installstate file for the following reason:");
+      console.log(error.message || error);
+      // Fallback to normal uncached resolution
       await this.resolveEverything({
         lockfileOnly: true,
         report: new ThrowReport(),
       });
-      // Save the result asynchronously as a background task, no need to await it.
+      // Save the result asynchronously as a background task, no need to await the result at this point
       this.persistInstallStateFile();
     }
   }
