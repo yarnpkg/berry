@@ -33,7 +33,7 @@ jobs:
         yarn init
 
         # Required
-        yarn add next@^9.1.5-canary.0 react react-dom
+        yarn add next@canary react react-dom
 
         # Test itself
         yarn add raw-loader

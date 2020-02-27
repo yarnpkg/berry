@@ -32,9 +32,10 @@ jobs:
         source scripts/e2e-setup-ci.sh;
 
         yarn dlx -p @angular/cli@next ng new berry-angular --interactive=false
+
         cd berry-angular
+        echo 'nodeLinker: node-modules' >> .yarnrc.yml
 
-        yarn add @yarnpkg/pnpify @angular-devkit/core@next @babel/preset-env @babel/core -D
+        yarn add @angular-devkit/core@next @babel/preset-env @babel/core -D
 
-        yarn unplug @angular/platform-browser @angular/core @angular/common
-        yarn pnpify ng build --aot
+        yarn ng build --aot
