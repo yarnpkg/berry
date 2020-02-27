@@ -1,16 +1,16 @@
-import {WorkspaceRequiredError}                                                                                 from '@yarnpkg/cli';
-import {CommandContext, Configuration, MessageName, Project, StreamReport, Workspace, structUtils, ThrowReport} from '@yarnpkg/core';
-import {ppath}                                                                                                  from '@yarnpkg/fslib';
-import {ScrollableItems}                                                                                        from '@yarnpkg/libui/sources/components/ScrollableItems';
-import {FocusRequest}                                                                                           from '@yarnpkg/libui/sources/hooks/useFocusRequest';
-import {useListInput}                                                                                           from '@yarnpkg/libui/sources/hooks/useListInput';
-import {renderForm}                                                                                             from '@yarnpkg/libui/sources/misc/renderForm';
-import {Command, Usage, UsageError}                                                                             from 'clipanion';
-import {Box, Color}                                                                                             from 'ink';
-import React, {useCallback, useState}                                                                           from 'react';
-import semver                                                                                                   from 'semver';
+import {WorkspaceRequiredError}                                                                    from '@yarnpkg/cli';
+import {CommandContext, Configuration, MessageName, Project, StreamReport, Workspace, structUtils} from '@yarnpkg/core';
+import {ppath}                                                                                     from '@yarnpkg/fslib';
+import {ScrollableItems}                                                                           from '@yarnpkg/libui/sources/components/ScrollableItems';
+import {FocusRequest}                                                                              from '@yarnpkg/libui/sources/hooks/useFocusRequest';
+import {useListInput}                                                                              from '@yarnpkg/libui/sources/hooks/useListInput';
+import {renderForm}                                                                                from '@yarnpkg/libui/sources/misc/renderForm';
+import {Command, Usage, UsageError}                                                                from 'clipanion';
+import {Box, Color}                                                                                from 'ink';
+import React, {useCallback, useState}                                                              from 'react';
+import semver                                                                                      from 'semver';
 
-import * as versionUtils                                                                                        from '../../versionUtils';
+import * as versionUtils                                                                           from '../../versionUtils';
 
 type Releases = Map<Workspace, Exclude<versionUtils.Decision, versionUtils.Decision.UNDECIDED>>;
 

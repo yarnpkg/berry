@@ -1,5 +1,5 @@
 import {BaseCommand, WorkspaceRequiredError}                   from '@yarnpkg/cli';
-import {Configuration, Project, ThrowReport}                   from '@yarnpkg/core';
+import {Configuration, Project}                                from '@yarnpkg/core';
 import {scriptUtils, structUtils}                              from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
 import {Command, Usage}                                        from 'clipanion';

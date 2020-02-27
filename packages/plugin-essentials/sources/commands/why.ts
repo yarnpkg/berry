@@ -1,10 +1,10 @@
-import {BaseCommand, WorkspaceRequiredError}              from '@yarnpkg/cli';
-import {Configuration, LocatorHash, Package, ThrowReport} from '@yarnpkg/core';
-import {IdentHash, Project}                               from '@yarnpkg/core';
-import {miscUtils, structUtils}                           from '@yarnpkg/core';
-import {Command, Usage}                                   from 'clipanion';
-import {Writable}                                         from 'stream';
-import {asTree}                                           from 'treeify';
+import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
+import {Configuration, LocatorHash, Package} from '@yarnpkg/core';
+import {IdentHash, Project}                  from '@yarnpkg/core';
+import {miscUtils, structUtils}              from '@yarnpkg/core';
+import {Command, Usage}                      from 'clipanion';
+import {Writable}                            from 'stream';
+import {asTree}                              from 'treeify';
 
 type TreeNode = {[key: string]: TreeNode};
 

@@ -49,18 +49,18 @@ Lockfiles should **always** be kept within the repository. Continuous integratio
 If you're using Zero-Installs:
 
 ```gitignore
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
+.yarn/*
+!.yarn/cache
+!.yarn/releases
+!.yarn/plugins
 ```
 
 If you're not using Zero-Installs:
 
 ```gitignore
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
 .pnp.*
 ```
 

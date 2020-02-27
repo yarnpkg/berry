@@ -1,7 +1,7 @@
-import {BaseCommand}                                       from '@yarnpkg/cli';
-import {Configuration, Project, ThrowReport, StreamReport} from '@yarnpkg/core';
-import {scriptUtils, structUtils}                          from '@yarnpkg/core';
-import {Command, Usage, UsageError}                        from 'clipanion';
+import {BaseCommand}                          from '@yarnpkg/cli';
+import {Configuration, Project, StreamReport} from '@yarnpkg/core';
+import {scriptUtils, structUtils}             from '@yarnpkg/core';
+import {Command, Usage, UsageError}           from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class BinCommand extends BaseCommand {

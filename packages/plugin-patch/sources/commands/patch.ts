@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                                                from '@yarnpkg/cli';
-import {Cache, Configuration, Project, ThrowReport, structUtils, StreamReport, MessageName} from '@yarnpkg/core';
-import {npath}                                                                              from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                                                         from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                   from '@yarnpkg/cli';
+import {Cache, Configuration, Project, structUtils, StreamReport, MessageName} from '@yarnpkg/core';
+import {npath}                                                                 from '@yarnpkg/fslib';
+import {Command, Usage, UsageError}                                            from 'clipanion';
 
-import * as patchUtils                                                                      from '../patchUtils';
+import * as patchUtils                                                         from '../patchUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PatchCommand extends BaseCommand {
