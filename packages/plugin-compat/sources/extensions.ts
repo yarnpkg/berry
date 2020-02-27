@@ -39,4 +39,12 @@ export const packageExtensions: Array<[string, any]> = [
       },
     },
   }],
+  // https://github.com/ember-engines/ember-engines/pull/694
+  [`ember-engines@*`, {
+    peerDependenciesMeta: {
+      [`ember-cli`]: {
+        optional: true,
+      },
+    },
+  }],
 ];
