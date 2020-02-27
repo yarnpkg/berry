@@ -195,6 +195,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.STRING,
     default: DEFAULT_LOCK_FILENAME,
   },
+  installStatePath: {
+    description: `Path of the file where the install state will be persisted`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: `./.yarn/install-state.gz`,
+  },
   rcFilename: {
     description: `Name of the files where the configuration can be found`,
     type: SettingsType.STRING,

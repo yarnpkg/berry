@@ -1,9 +1,9 @@
-import {BaseCommand}                                    from '@yarnpkg/cli';
-import {Configuration, Project, Workspace, ThrowReport} from '@yarnpkg/core';
-import {scriptUtils, structUtils}                       from '@yarnpkg/core';
-import {Command, Usage, UsageError}                     from 'clipanion';
+import {BaseCommand}                       from '@yarnpkg/cli';
+import {Configuration, Project, Workspace} from '@yarnpkg/core';
+import {scriptUtils, structUtils}          from '@yarnpkg/core';
+import {Command, Usage, UsageError}        from 'clipanion';
 
-import {pluginCommands}                                 from '../pluginCommands';
+import {pluginCommands}                    from '../pluginCommands';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends BaseCommand {
@@ -67,10 +67,7 @@ export default class RunCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace, locator} = await Project.find(configuration, this.context.cwd);
 
-    await project.resolveEverything({
-      lockfileOnly: true,
-      report: new ThrowReport(),
-    });
+    await project.restoreInstallState();
 
     const effectiveLocator = this.topLevel
       ? project.topLevelWorkspace.anchoredLocator

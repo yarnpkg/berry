@@ -1,7 +1,7 @@
-import {BaseCommand}                                       from '@yarnpkg/cli';
-import {Configuration, Project, ThrowReport, StreamReport} from '@yarnpkg/core';
-import {scriptUtils, structUtils}                          from '@yarnpkg/core';
-import {Command, Usage, UsageError}                        from 'clipanion';
+import {BaseCommand}                          from '@yarnpkg/cli';
+import {Configuration, Project, StreamReport} from '@yarnpkg/core';
+import {scriptUtils, structUtils}             from '@yarnpkg/core';
+import {Command, Usage, UsageError}           from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class BinCommand extends BaseCommand {
@@ -37,10 +37,7 @@ export default class BinCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, locator} = await Project.find(configuration, this.context.cwd);
 
-    await project.resolveEverything({
-      lockfileOnly: true,
-      report: new ThrowReport(),
-    });
+    await project.restoreInstallState();
 
     if (this.name) {
       const binaries = await scriptUtils.getPackageAccessibleBinaries(locator, {project});

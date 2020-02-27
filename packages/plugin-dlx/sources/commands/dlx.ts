@@ -1,5 +1,5 @@
 import {BaseCommand, WorkspaceRequiredError}                   from '@yarnpkg/cli';
-import {Configuration, Project, ThrowReport}                   from '@yarnpkg/core';
+import {Configuration, Project}                                from '@yarnpkg/core';
 import {scriptUtils, structUtils}                              from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
 import {Command, Usage}                                        from 'clipanion';
@@ -64,10 +64,7 @@ export default class DlxCommand extends BaseCommand {
       if (workspace === null)
         throw new WorkspaceRequiredError(project.cwd, tmpDir);
 
-      await project.resolveEverything({
-        lockfileOnly: true,
-        report: new ThrowReport(),
-      });
+      await project.restoreInstallState();
 
       return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, this.args, {
         cwd: this.context.cwd,
