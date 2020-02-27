@@ -199,7 +199,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   installStateFilename: {
     description: `Name of the file where the Yarn install state is persisted `,
     type: SettingsType.STRING,
-    default: `./.yarn/install-state.yml`,
+    default: `./.yarn/install-state.gz`,
   },
   rcFilename: {
     description: `Name of the files where the configuration can be found`,

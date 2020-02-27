@@ -64,12 +64,15 @@ export default class RunCommand extends BaseCommand {
 
   @Command.Path(`run`)
   async execute() {
+    console.time("configuration");
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-
+    console.timeEnd("configuration");
+    console.time("project");
     const {project, workspace, locator} = await Project.find(configuration, this.context.cwd);
-
+    console.timeEnd("project");
+    console.time("restoreInstallState");
     await project.restoreInstallState();
-    ;
+    console.timeEnd("restoreInstallState");
 
     const effectiveLocator = this.topLevel
       ? project.topLevelWorkspace.anchoredLocator

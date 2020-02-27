@@ -8,6 +8,9 @@ import Logic                                                               from 
 import pLimit                                                              from 'p-limit';
 import semver                                                              from 'semver';
 import {tmpNameSync}                                                       from 'tmp';
+import v8                                                                  from 'v8';
+import zlib                                                                from 'zlib';
+import util                                                                from 'util';
 
 import {Cache}                                                             from './Cache';
 import {Configuration, FormatType}                                         from './Configuration';
@@ -1480,107 +1483,6 @@ export class Project {
     return header + stringifySyml(optimizedLockfile);
   }
 
-  generateInstallState() {
-    const installStateFile : {[key:string]:any} = {};
-
-    installStateFile.accessibleLocators=Array.from(this.accessibleLocators);
-    installStateFile.optionalBuilds=Array.from(this.optionalBuilds);
-
-
-    installStateFile.storedDescriptors={};
-    for (const [key, value] of this.storedDescriptors.entries())
-      installStateFile.storedDescriptors[key]= value;
-
-    installStateFile.storedResolutions={};
-    for (const [key, value] of this.storedResolutions.entries())
-      installStateFile.storedResolutions[key]= value;
-
-
-    installStateFile.storedPackages={};
-    for (const [key, value] of this.storedPackages.entries())
-    {
-      const res:{[key:string]:any} = {...value};
-
-      if (!!res.dependencies && res.dependencies.size>0) {
-        const oldMap = res.dependencies;
-        const newDict:{[key:string]:any}={};
-        for (const [key, value] of oldMap.entries())
-          // newDict[key]={
-          //   descriptorHash:value.descriptorHash,
-          //   range:value.range,
-          // };
-          newDict[key]=value;
-
-
-        res.dependencies=newDict;
-      } else {
-        delete res.dependencies;
-      }
-
-      if (!!res.peerDependencies&& res.peerDependencies.size>0) {
-        const oldMap = res.peerDependencies;
-        const newDict:{[key:string]:any}={};
-        for (const [key, value] of oldMap.entries())
-          // newDict[key]={
-          //   descriptorHash:value.descriptorHash,
-          //   range:value.range,
-          // };
-          newDict[key]=value;
-
-
-        res.peerDependencies=newDict;
-      } else {
-        delete res.peerDependencies;
-      }
-
-      if (!!res.bin&& res.bin.size>0) {
-        const oldMap = res.bin;
-        const newDict:{[key:string]:any}={};
-        for (const [key, value] of oldMap.entries())
-          newDict[key]=value;
-
-        res.bin=newDict;
-      } else {
-        delete res.bin;
-      }
-
-      if (!!res.peerDependenciesMeta&& res.peerDependenciesMeta.size>0) {
-        const oldMap = res.peerDependenciesMeta;
-        const newDict:{[key:string]:any}={};
-        for (const [key, value] of oldMap.entries())
-          newDict[key]=value;
-
-        res.peerDependenciesMeta=newDict;
-      } else {
-        delete res.peerDependenciesMeta;
-      }
-
-      if (!!res.dependenciesMeta&& res.dependenciesMeta.size>0) {
-        const oldMap = res.dependenciesMeta;
-        const newDict:{[key:string]:any}={};
-        for (const [key, value] of oldMap.entries()) {
-          if (value instanceof Map) {
-            const oldMap2 = value;
-            const newDict2:{[key:string]:any}={};
-            for (const [key2, value2] of oldMap2.entries())
-              newDict2[key2]=value2;
-            newDict[key]=newDict2;
-          } else {
-            newDict[key]=value;
-          }
-        }
-        res.dependenciesMeta=newDict;
-      } else {
-        delete res.dependenciesMeta;
-      }
-
-      installStateFile.storedPackages[key]= res;
-    }
-
-
-    return JSON.stringify(installStateFile,null,1);
-  }
-
   async persistLockfile() {
     const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
     const lockfileContent = this.generateLockfile();
@@ -1590,100 +1492,39 @@ export class Project {
     });
   }
 
-  async saveInstallStateFile() {
+  async persistInstallStateFile() {
     const installStatePath = ppath.join(this.cwd, this.configuration.get(`installStateFilename`));
-    const installStateContent = this.generateInstallState();
-
-    await xfs.changeFilePromise(installStatePath, installStateContent);
+    const {accessibleLocators,optionalBuilds,storedDescriptors,storedResolutions,storedPackages} = this;
+    const content = await (util.promisify(zlib.gzip))(v8.serialize({accessibleLocators,optionalBuilds,storedDescriptors,storedResolutions,storedPackages}));
+    await xfs.writeFilePromise(installStatePath, content as Buffer);
   }
 
   async restoreInstallState() {
-    const installStatePath = ppath.join(this.cwd, this.configuration.get(`installStateFilename`));
-    const content = ((await xfs.readFilePromise(installStatePath, `utf8`)) );
-    const parsed= JSON.parse(content) as {accessibleLocators:LocatorHash[],optionalBuilds:LocatorHash[],storedDescriptors:{[key:string]:Descriptor},storedResolutions:{[key:string]:LocatorHash},storedPackages:{[key:string]:Package}} ;
-
-    if (parsed.accessibleLocators!==null && parsed.accessibleLocators!==undefined)
-      this.accessibleLocators = new Set([...this.accessibleLocators,...parsed.accessibleLocators]);
-
-    if (parsed.optionalBuilds!==null && parsed.optionalBuilds!==undefined)
-      this.optionalBuilds = new Set([...this.optionalBuilds,...parsed.optionalBuilds]);
-
-
-    if (parsed.storedDescriptors!==null && parsed.storedDescriptors!==undefined)
-      for (const [key, value] of Object.entries(parsed.storedDescriptors))
-        this.storedDescriptors.set(key as DescriptorHash,value);
-
-
-    if (parsed.storedResolutions!==null && parsed.storedResolutions!==undefined)
-      for (const [key, value] of Object.entries(parsed.storedResolutions))
-        this.storedResolutions.set(key as DescriptorHash,value);
-
-
-    if (parsed.storedPackages!==null && parsed.storedPackages!==undefined) {
-      for (const [key, value] of Object.entries(parsed.storedPackages))
-      {
-        const {dependencies,peerDependencies,peerDependenciesMeta,dependenciesMeta,bin,...nonMapFields} = value;
-        const storedFields = this.storedPackages.get(key as LocatorHash) || {};
-        const res = {...storedFields,...nonMapFields} as Package;
-
-        if (!res.dependencies  || !(res.dependencies instanceof Map))
-          res.dependencies = new Map();
-
-        if (!res.peerDependencies  || !(res.peerDependencies instanceof Map) )
-          res.peerDependencies = new Map();
-
-        if (!res.peerDependenciesMeta  || !(res.peerDependenciesMeta instanceof Map) )
-          res.peerDependenciesMeta = new Map();
-
-        if (!res.dependenciesMeta  || !(res.dependenciesMeta instanceof Map) )
-          res.dependenciesMeta = new Map();
-
-        if (!res.bin  || !(res.bin instanceof Map) )
-          res.bin = new Map();
-
-        if (dependencies!==null && dependencies!==undefined) {
-          for (const [key2, value2] of Object.entries(dependencies)) {
-            const storedFields = res.dependencies.get(key2 as IdentHash) || {};
-            res.dependencies.set(key2 as IdentHash,{...storedFields,...value2});
-          }
-        }
-
-        if (peerDependencies!==null && peerDependencies!==undefined) {
-          for (const [key2, value2] of Object.entries(peerDependencies)) {
-            const storedFields = res.peerDependencies.get(key2 as IdentHash) || {};
-            res.peerDependencies.set(key2 as IdentHash,{...storedFields,...value2});
-          }
-        }
-
-        if (peerDependenciesMeta!==null && peerDependenciesMeta!==undefined) {
-          for (const [key2, value2] of Object.entries(peerDependenciesMeta)) {
-            const storedFields = res.peerDependenciesMeta.get(key2 as IdentHash) || {};
-            res.peerDependenciesMeta.set(key2 as IdentHash,{...storedFields,...value2});
-          }
-        }
-
-        if (dependenciesMeta!==null && dependenciesMeta!==undefined) {
-          for (const [key2, value2] of Object.entries(dependenciesMeta)) {
-            const storedFields = res.dependenciesMeta.get(key2 as IdentHash) || {};
-            res.dependenciesMeta.set(key2 as IdentHash,{...storedFields,...value2});
-          }
-        }
-
-        if (bin!==null && bin!==undefined) {
-          for (const [key2, value2] of Object.entries(bin)) {
-            const storedFields = value2 || res.bin.get(key2 as IdentHash);
-            res.bin.set(key2 as IdentHash,storedFields);
-          }
-        }
-
-        this.storedPackages.set(key as LocatorHash,res);
-      }
+    try {
+      const installStatePath = ppath.join(this.cwd, this.configuration.get(`installStateFilename`));
+      const content = ((await xfs.readFilePromise(installStatePath)) );
+      const {accessibleLocators,optionalBuilds,storedDescriptors,storedResolutions,storedPackages} = v8.deserialize((await (util.promisify(zlib.gunzip))(content)) as Buffer);
+      this.accessibleLocators=accessibleLocators;
+      this.optionalBuilds=optionalBuilds;
+      this.storedDescriptors=storedDescriptors;
+      this.storedResolutions=storedResolutions;
+      this.storedPackages=storedPackages;
+    } catch (e) {
+      console.log("Not up to date during restore");
+      console.log(e);
+      // Fallback to normal slow resolution
+      await this.resolveEverything({
+        lockfileOnly: true,
+        report: new ThrowReport(),
+      });
+      // Save the result asynchronously as a background task, no need to await it.
+      this.persistInstallStateFile();
     }
   }
 
   async persist() {
     await this.persistLockfile();
-    await this.saveInstallStateFile();
+    await this.persistInstallStateFile();
     for (const workspace of this.workspacesByCwd.values()) {
       await workspace.persistManifest();
     }

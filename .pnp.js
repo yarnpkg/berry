@@ -4593,6 +4593,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
+        ["npm:13.7.6", {
+          "packageLocation": "./.yarn/cache/@types-node-npm-13.7.6-3d3aec8abb-2.zip/node_modules/@types/node/",
+          "packageDependencies": [
+            ["@types/node", "npm:13.7.6"]
+          ],
+          "linkType": "HARD",
+        }],
         ["npm:7.10.5", {
           "packageLocation": "./.yarn/cache/@types-node-npm-7.10.5-ab79c19027-2.zip/node_modules/@types/node/",
           "packageDependencies": [
@@ -5822,6 +5829,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/got", "npm:8.3.5"],
             ["@types/is-ci", "npm:2.0.0"],
             ["@types/micromatch", "npm:3.1.0"],
+            ["@types/node", "npm:13.7.6"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/tar", "npm:4.0.0"],
             ["@types/tmp", "npm:0.0.33"],
