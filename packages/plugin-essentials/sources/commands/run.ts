@@ -113,7 +113,6 @@ export default class RunCommand extends BaseCommand {
         return workspace !== null;
       }) as Array<Workspace>;
 
-
       if (filteredWorkspaces.length === 1) {
         return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], this.scriptName, this.args, {stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
       }

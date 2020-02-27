@@ -53,7 +53,6 @@ export const ENVIRONMENT_PREFIX = `yarn_`;
 export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc.yml`);
 export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
 
-
 export enum SettingsType {
   ANY = 'ANY',
   BOOLEAN = 'BOOLEAN',
