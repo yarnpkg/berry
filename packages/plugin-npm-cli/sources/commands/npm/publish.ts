@@ -47,10 +47,7 @@ export default class NpmPublishCommand extends BaseCommand {
     if (workspace.manifest.name === null || workspace.manifest.version === null)
       throw new UsageError(`Workspaces must have valid names and versions to be published on an external registry`);
 
-    await project.resolveEverything({
-      lockfileOnly: true,
-      report: new ThrowReport(),
-    });
+    await project.restoreInstallState();
 
     // We store it so that TS knows that it's non-null
     const ident = workspace.manifest.name;

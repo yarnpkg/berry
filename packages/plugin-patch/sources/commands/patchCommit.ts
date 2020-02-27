@@ -27,10 +27,7 @@ export default class PatchCommitCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    await project.resolveEverything({
-      lockfileOnly: true,
-      report: new ThrowReport(),
-    });
+    await project.restoreInstallState();
 
     const folderPath = ppath.resolve(this.context.cwd, npath.toPortablePath(this.patchFolder));
     const metaPath = ppath.join(folderPath, `.yarn-patch.json` as Filename);

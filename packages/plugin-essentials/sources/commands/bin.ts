@@ -37,10 +37,7 @@ export default class BinCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, locator} = await Project.find(configuration, this.context.cwd);
 
-    await project.resolveEverything({
-      lockfileOnly: true,
-      report: new ThrowReport(),
-    });
+    await project.restoreInstallState();
 
     if (this.name) {
       const binaries = await scriptUtils.getPackageAccessibleBinaries(locator, {project});

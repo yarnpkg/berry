@@ -53,10 +53,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    await project.resolveEverything({
-      lockfileOnly: true,
-      report: new ThrowReport(),
-    });
+    await project.restoreInstallState();
 
     const versionFile = await versionUtils.openVersionFile(project);
     if (versionFile === null || versionFile.releaseRoots.size === 0)
@@ -273,10 +270,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    await project.resolveEverything({
-      lockfileOnly: true,
-      report: new ThrowReport(),
-    });
+    await project.restoreInstallState();
 
     const report = await StreamReport.start({
       configuration,

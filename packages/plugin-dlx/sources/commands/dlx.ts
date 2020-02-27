@@ -64,10 +64,7 @@ export default class DlxCommand extends BaseCommand {
       if (workspace === null)
         throw new WorkspaceRequiredError(project.cwd, tmpDir);
 
-      await project.resolveEverything({
-        lockfileOnly: true,
-        report: new ThrowReport(),
-      });
+      await project.restoreInstallState();
 
       return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, this.args, {
         cwd: this.context.cwd,
