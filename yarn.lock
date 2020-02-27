@@ -3882,13 +3882,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^13.7.6":
-  version: 13.7.6
-  resolution: "@types/node@npm:13.7.6"
-  checksum: 2/392fea5104aa326d4707d24061cb4b6c45d4f93a073affe7f5e2c5a1ea782c9bd499073a45ab87b0cce950c36891b84932a1cd7f0aa6c373f0efc6724a64e0ed
-  languageName: node
-  linkType: hard
-
 "@types/node@npm:^7.0.11":
   version: 7.10.5
   resolution: "@types/node@npm:7.10.5"
@@ -4882,7 +4875,7 @@ __metadata:
     "@types/got": ^8.3.4
     "@types/is-ci": ^2.0.0
     "@types/micromatch": ^3.1.0
-    "@types/node": ^13.7.6
+    "@types/node": ^13.7.0
     "@types/semver": ^7.1.0
     "@types/tar": ^4.0.0
     "@types/tmp": ^0.0.33
