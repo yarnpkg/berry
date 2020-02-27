@@ -61,7 +61,7 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
   const packageTree = buildPackageTree(pnp);
 
-  const hoistedTree = hoist(packageTree, {check: false});
+  const hoistedTree = hoist(packageTree, {finalCheck: false});
 
   return populateNodeModulesTree(pnp, hoistedTree, options);
 };
@@ -121,7 +121,7 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
 
   const nodes = new Map<LocatorKey, HoisterTree>();
 
-  const addPackageToTree = (pkg: PackageInformation<NativePath>, locator: PackageLocator, parent: HoisterTree) => {
+  const addPackageToTree = (pkg: PackageInformation<NativePath>, locator: PackageLocator, parent: HoisterTree, parentPkg: PackageInformation<NativePath>) => {
     const locatorKey = stringifyLocator(locator);
     let node = nodes.get(locatorKey);
     const isSeen = !!node;
@@ -130,11 +130,17 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
     if (!node) {
       const {name, reference} = locator;
 
+      // TODO: remove this code when `packagePeers` will not contain regular dependencies
+      const peerNames = new Set<string>();
+      for (const peerName of pkg.packagePeers)
+        if (pkg.packageDependencies.get(peerName) === parentPkg.packageDependencies.get(peerName))
+          peerNames.add(peerName);
+
       node = {
         name: name!,
         reference: reference!,
         dependencies: new Set(),
-        peerNames: pkg.packagePeers,
+        peerNames,
       };
       nodes.set(locatorKey, node);
     }
@@ -148,14 +154,14 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
           const depPkg = pnp.getPackageInformation(pkgLocator)!;
           // Skip package self-references
           if (stringifyLocator(depLocator) !== locatorKey) {
-            addPackageToTree(depPkg, depLocator, node);
+            addPackageToTree(depPkg, depLocator, node, pkg);
           }
         }
       }
     }
   };
 
-  addPackageToTree(topPkg, topLocator, packageTree);
+  addPackageToTree(topPkg, topLocator, packageTree, topPkg);
 
   return packageTree;
 };
