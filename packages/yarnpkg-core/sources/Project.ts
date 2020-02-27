@@ -8,6 +8,9 @@ import Logic                                                               from 
 import pLimit                                                              from 'p-limit';
 import semver                                                              from 'semver';
 import {tmpNameSync}                                                       from 'tmp';
+import {promisify}                                                         from 'util';
+import v8                                                                  from 'v8';
+import zlib                                                                from 'zlib';
 
 import {Cache}                                                             from './Cache';
 import {Configuration, FormatType}                                         from './Configuration';
@@ -39,7 +42,15 @@ import {LinkType}                                                          from 
 // the Package type; no more no less.
 const LOCKFILE_VERSION = 4;
 
+// Same thing but must be bumped when the members of the Project class changes (we
+// don't recommend our users to check-in this file, so it's fine to bump it even
+// between patch or minor releases).
+const INSTALL_STATE_VERSION = 1;
+
 const MULTIPLE_KEYS_REGEXP = / *, */g;
+
+const gzip = promisify(zlib.gzip);
+const gunzip = promisify(zlib.gunzip);
 
 export type InstallOptions = {
   cache: Cache,
@@ -79,6 +90,8 @@ export class Project {
   public accessibleLocators: Set<LocatorHash> = new Set();
   public originalPackages: Map<LocatorHash, Package> = new Map();
   public optionalBuilds: Set<LocatorHash> = new Set();
+
+  public lockFileChecksum: string | null = null;
 
   static async find(configuration: Configuration, startingCwd: PortablePath): Promise<{project: Project, workspace: Workspace | null, locator: Locator}> {
     if (!configuration.projectCwd)
@@ -152,11 +165,17 @@ export class Project {
     this.storedDescriptors = new Map();
     this.storedPackages = new Map();
 
+    this.lockFileChecksum = null;
+
     const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
     const defaultLanguageName = this.configuration.get(`defaultLanguageName`);
 
     if (xfs.existsSync(lockfilePath)) {
       const content = await xfs.readFilePromise(lockfilePath, `utf8`);
+
+      // We store the salted checksum of the lockfile in order to invalidate the install state when needed
+      this.lockFileChecksum = hashUtils.makeHash(`${INSTALL_STATE_VERSION}`, content);
+
       const parsed: any = parseSyml(content);
 
       // Protects against v1 lockfiles
@@ -1487,8 +1506,43 @@ export class Project {
     });
   }
 
+  async persistInstallStateFile() {
+    const {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, lockFileChecksum} = this;
+    const installState = {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, lockFileChecksum};
+    const serializedState = await gzip(v8.serialize(installState));
+
+    const installStatePath = this.configuration.get<PortablePath>(`installStatePath`);
+
+    await xfs.mkdirpPromise(ppath.dirname(installStatePath));
+    await xfs.writeFilePromise(installStatePath, serializedState as Buffer);
+  }
+
+  async restoreInstallState() {
+    const installStatePath = this.configuration.get<PortablePath>(`installStatePath`);
+    if (!xfs.existsSync(installStatePath))
+      return await this.applyLightResolution();
+
+    const serializedState = await xfs.readFilePromise(installStatePath);
+    const installState = v8.deserialize(await gunzip(serializedState) as Buffer);
+
+    if (installState.lockFileChecksum !== this.lockFileChecksum)
+      return await this.applyLightResolution();
+
+    Object.assign(this, installState);
+  }
+
+  async applyLightResolution() {
+    await this.resolveEverything({
+      lockfileOnly: true,
+      report: new ThrowReport(),
+    });
+
+    await this.persistInstallStateFile();
+  }
+
   async persist() {
     await this.persistLockfile();
+    await this.persistInstallStateFile();
 
     for (const workspace of this.workspacesByCwd.values()) {
       await workspace.persistManifest();
@@ -1632,13 +1686,9 @@ function applyVirtualResolutionMutations({
     return result;
   };
 
-  let iterationCount = 0;
-
   const resolvePeerDependenciesImpl = (parentLocator: Locator, first: boolean, optional: boolean) => {
     if (accessibleLocators.has(parentLocator.locatorHash))
       return;
-
-    iterationCount += 1;
 
     accessibleLocators.add(parentLocator.locatorHash);
 

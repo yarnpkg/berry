@@ -5822,6 +5822,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/got", "npm:8.3.5"],
             ["@types/is-ci", "npm:2.0.0"],
             ["@types/micromatch", "npm:3.1.0"],
+            ["@types/node", "npm:13.7.0"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/tar", "npm:4.0.0"],
             ["@types/tmp", "npm:0.0.33"],

@@ -1,11 +1,11 @@
-import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, Workspace, ThrowReport} from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                                 from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils}                                                           from '@yarnpkg/plugin-npm';
-import {packUtils}                                                                              from '@yarnpkg/plugin-pack';
-import {Command, Usage, UsageError}                                                             from 'clipanion';
-import {createHash}                                                                             from 'crypto';
-import ssri                                                                                     from 'ssri';
+import {BaseCommand, WorkspaceRequiredError}                                       from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport, Workspace} from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                    from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils}                                              from '@yarnpkg/plugin-npm';
+import {packUtils}                                                                 from '@yarnpkg/plugin-pack';
+import {Command, Usage, UsageError}                                                from 'clipanion';
+import {createHash}                                                                from 'crypto';
+import ssri                                                                        from 'ssri';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {
@@ -47,10 +47,7 @@ export default class NpmPublishCommand extends BaseCommand {
     if (workspace.manifest.name === null || workspace.manifest.version === null)
       throw new UsageError(`Workspaces must have valid names and versions to be published on an external registry`);
 
-    await project.resolveEverything({
-      lockfileOnly: true,
-      report: new ThrowReport(),
-    });
+    await project.restoreInstallState();
 
     // We store it so that TS knows that it's non-null
     const ident = workspace.manifest.name;
