@@ -1512,10 +1512,9 @@ export class Project {
 
   async restoreInstallState() {
     try {
-      // Read the the actual lockfile to compute its checksum (salted with the INSTALLSTATEFILE_VERSION)
+      // Start reading the the lockfile
       const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
-      const lockfileContent = await xfs.readFilePromise(lockfilePath, `utf8`);
-      const actualLockFileChecksum = hashUtils.makeHash(`${INSTALLSTATEFILE_VERSION}`,lockfileContent);
+      const lockfileContentPromise = xfs.readFilePromise(lockfilePath, `utf8`);
 
       // Read the project state from the installStateFile
       const installStatePath = ppath.join(this.cwd, this.configuration.get(`installStateFilename`));
@@ -1527,6 +1526,10 @@ export class Project {
       this.storedResolutions = storedResolutions;
       this.storedPackages = storedPackages;
       this.lockFileChecksum = lockFileChecksum;
+
+      // Finish reading the the lockfile and compute its checksum (salted with the INSTALLSTATEFILE_VERSION)
+      const lockfileContent = await lockfileContentPromise;
+      const actualLockFileChecksum = hashUtils.makeHash(`${INSTALLSTATEFILE_VERSION}`,lockfileContent);
 
       // Check that the lockfile checksum of the restored project match the actual lockfile checksum
       if (actualLockFileChecksum!==this.lockFileChecksum) {
