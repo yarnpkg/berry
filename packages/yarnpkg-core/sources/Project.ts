@@ -173,8 +173,8 @@ export class Project {
     if (xfs.existsSync(lockfilePath)) {
       const content = await xfs.readFilePromise(lockfilePath, `utf8`);
 
-      // For cache invalidation of the installStateFileStore, we store the checksum of the lockFile salted with INSTALLSTATEFILE_VERSION
-      this.lockFileChecksum = hashUtils.makeHash(`${INSTALL_STATE_VERSION}`,content);
+      // We store the salted checksum of the lockfile in order to invalidate the install state when needed
+      this.lockFileChecksum = hashUtils.makeHash(`${INSTALL_STATE_VERSION}`, content);
 
       const parsed: any = parseSyml(content);
 
@@ -1512,6 +1512,8 @@ export class Project {
     const serializedState = await gzip(v8.serialize(installState));
 
     const installStatePath = this.configuration.get<PortablePath>(`installStatePath`);
+
+    await xfs.mkdirpPromise(ppath.dirname(installStatePath));
     await xfs.writeFilePromise(installStatePath, serializedState as Buffer);
   }
 
