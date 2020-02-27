@@ -4,6 +4,9 @@ import {Command, Usage}              from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginListCommand extends BaseCommand {
+  @Command.Boolean(`--json`)
+  json: boolean = false;
+
   static usage: Usage = Command.Usage({
     category: `Plugin-related commands`,
     description: `list the active plugins`,
@@ -22,14 +25,18 @@ export default class PluginListCommand extends BaseCommand {
 
     const report = await StreamReport.start({
       configuration,
+      json: this.json,
       stdout: this.context.stdout,
     }, async report => {
       for (const name of configuration.plugins.keys()) {
-        if (this.context.plugins.plugins.has(name)) {
-          report.reportInfo(null, `${name} [builtin]`);
-        } else {
-          report.reportInfo(null, `${name}`);
-        }
+        const builtin  = this.context.plugins.plugins.has(name);
+        let label = name;
+
+        if (builtin)
+          label += ` [builtin]`;
+
+        report.reportJson({name, builtin});
+        report.reportInfo(null, `${label}`);
       }
     });
 

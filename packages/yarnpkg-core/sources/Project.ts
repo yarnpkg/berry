@@ -25,6 +25,7 @@ import {RunInstallPleaseResolver}                                          from 
 import {ThrowReport}                                                       from './ThrowReport';
 import {Workspace}                                                         from './Workspace';
 import {isFolderInside}                                                    from './folderUtils';
+import * as hashUtils                                                      from './hashUtils';
 import * as miscUtils                                                      from './miscUtils';
 import * as scriptUtils                                                    from './scriptUtils';
 import * as semverUtils                                                    from './semverUtils';
@@ -1569,8 +1570,8 @@ function applyVirtualResolutionMutations({
 
   // We'll be keeping track of all virtual descriptors; once they have all
   // been generated we'll check whether they can be consolidated into one.
-  const allVirtualizedDescriptorsByPhysicalLocator = new Map<LocatorHash, Set<Descriptor>>();
-  const allVirtualizedDescriptorsDependents = new Map<DescriptorHash, Set<LocatorHash>>();
+  const allVirtualInstances = new Map<LocatorHash, Map<string, Descriptor>>();
+  const allVirtualDependents = new Map<DescriptorHash, Set<LocatorHash>>();
 
   // We must keep a copy of the workspaces original dependencies, because they
   // may be overriden during the virtual package resolution - cf Dragon Test #5
@@ -1631,9 +1632,13 @@ function applyVirtualResolutionMutations({
     return result;
   };
 
+  let iterationCount = 0;
+
   const resolvePeerDependenciesImpl = (parentLocator: Locator, first: boolean, optional: boolean) => {
     if (accessibleLocators.has(parentLocator.locatorHash))
       return;
+
+    iterationCount += 1;
 
     accessibleLocators.add(parentLocator.locatorHash);
 
@@ -1648,6 +1653,8 @@ function applyVirtualResolutionMutations({
         throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(project.configuration, parentLocator)}) should have been registered`);
       }
     }
+
+    const newVirtualInstances: Array<[Locator, Descriptor, Package]> = [];
 
     const firstPass = [];
     const secondPass = [];
@@ -1734,12 +1741,8 @@ function applyVirtualResolutionMutations({
 
         allPackages.set(virtualizedPackage.locatorHash, virtualizedPackage);
 
-        const virtualizedDescriptors = miscUtils.getSetWithDefault(allVirtualizedDescriptorsByPhysicalLocator, pkg.locatorHash);
-        virtualizedDescriptors.add(virtualizedDescriptor);
-
-        allVirtualizedDescriptorsDependents.set(virtualizedDescriptor.descriptorHash, new Set([
-          parentPackage.locatorHash,
-        ]));
+        // Keep track of all new virtual packages since we'll want to dedupe them
+        newVirtualInstances.push([pkg, virtualizedDescriptor, virtualizedPackage]);
       });
 
       secondPass.push(() => {
@@ -1777,7 +1780,7 @@ function applyVirtualResolutionMutations({
           // Need to track when a virtual descriptor is set as a dependency in case
           // the descriptor will be consolidated.
           if (structUtils.isVirtualDescriptor(peerDescriptor)) {
-            const dependents = miscUtils.getSetWithDefault(allVirtualizedDescriptorsDependents, peerDescriptor.descriptorHash);
+            const dependents = miscUtils.getSetWithDefault(allVirtualDependents, peerDescriptor.descriptorHash);
             dependents.add(virtualizedPackage.locatorHash);
           }
 
@@ -1800,6 +1803,9 @@ function applyVirtualResolutionMutations({
       });
 
       thirdPass.push(() => {
+        if (!allPackages.has(virtualizedPackage.locatorHash))
+          return;
+
         const current = virtualStack.get(pkg.locatorHash);
         const next = typeof current !== `undefined` ? current + 1 : 1;
 
@@ -1809,20 +1815,53 @@ function applyVirtualResolutionMutations({
       });
 
       fourthPass.push(() => {
+        if (!allPackages.has(virtualizedPackage.locatorHash))
+          return;
+
         for (const missingPeerDependency of missingPeerDependencies) {
           virtualizedPackage.dependencies.delete(missingPeerDependency);
         }
       });
     }
 
-    const allPasses = [
-      ...firstPass,
-      ...secondPass,
-      ...thirdPass,
-      ...fourthPass,
-    ];
+    for (const fn of [...firstPass, ...secondPass])
+      fn();
 
-    for (const fn of allPasses) {
+    for (const [physicalLocator, virtualDescriptor, virtualPackage] of newVirtualInstances) {
+      const otherVirtualInstances = miscUtils.getMapWithDefault(allVirtualInstances, physicalLocator.locatorHash);
+
+      // We take all the dependencies from the new virtual instance and
+      // generate a hash from it. By checking if this hash is already
+      // registered, we know whether we can trim the new version.
+      const dependencyHash = hashUtils.makeHash(...[...virtualPackage.dependencies.values()].map(descriptor => {
+        return descriptor.descriptorHash;
+      }));
+
+      const masterDescriptor = otherVirtualInstances.get(dependencyHash);
+      if (typeof masterDescriptor === `undefined`) {
+        otherVirtualInstances.set(dependencyHash, virtualDescriptor);
+        continue;
+      }
+
+      allPackages.delete(virtualPackage.locatorHash);
+      allDescriptors.delete(virtualDescriptor.descriptorHash);
+      allResolutions.delete(virtualDescriptor.descriptorHash);
+
+      accessibleLocators.delete(virtualPackage.locatorHash);
+
+      const dependents = allVirtualDependents.get(virtualDescriptor.descriptorHash) || [];
+      const allDependents = [parentPackage.locatorHash, ...dependents];
+
+      for (const dependent of allDependents) {
+        const pkg = allPackages.get(dependent);
+        if (typeof pkg === `undefined`)
+          continue;
+
+        pkg.dependencies.set(virtualDescriptor.identHash, masterDescriptor);
+      }
+    }
+
+    for (const fn of [...thirdPass, ...fourthPass]) {
       fn();
     }
   };
@@ -1830,87 +1869,5 @@ function applyVirtualResolutionMutations({
   for (const workspace of project.workspaces) {
     volatileDescriptors.delete(workspace.anchoredDescriptor.descriptorHash);
     resolvePeerDependencies(workspace.anchoredLocator, true, false);
-  }
-
-  // A package may have a peer dependency while being included as a standard dependency
-  // in other packages. When this occurs, it leads to multiple virtual packages
-  // which could potentially resolve to a single virtual package (when all peer
-  // dependencies resolve to the same instance. The following is a safe consolidation
-  // of virtual packages if their dependencies are a direct match. Since consolidation
-  // could lead to more virtual packages sharing the same dependencies consolidation
-  // is run until a full pass yields no more consolidation.
-  //
-  let consolidatedVirtualPackages = true;
-
-  while (consolidatedVirtualPackages) {
-    consolidatedVirtualPackages = false;
-
-    for (const virtualDescriptors of allVirtualizedDescriptorsByPhysicalLocator.values()) {
-      if (virtualDescriptors.size === 0)
-        continue;
-
-      // Group the descriptors based on whether they share the same dependencies.
-      const descriptorGroups = [];
-      for (const virtualDescriptor of virtualDescriptors) {
-        if (!descriptorGroups.length) {
-          descriptorGroups.push([virtualDescriptor]);
-          continue;
-        }
-
-        const matchedGroup = descriptorGroups.find(([groupVirtualDescriptor]) => {
-          const groupVirtualPackage = getPackageFromDescriptor(groupVirtualDescriptor);
-          const virtualPackage = getPackageFromDescriptor(virtualDescriptor);
-          return structUtils.areVirtualPackagesEquivalent(groupVirtualPackage, virtualPackage);
-        });
-
-        if (matchedGroup) {
-          consolidatedVirtualPackages = true;
-          matchedGroup.push(virtualDescriptor);
-        } else {
-          // No match was made so create a new group
-          descriptorGroups.push([virtualDescriptor]);
-        }
-      }
-
-      // If a group contains more than one descriptor then the first is considered
-      // the primary and the others duplicates which will be replaced by the primary
-      // and removed from the system.
-      for (const descriptorGroup of descriptorGroups) {
-        const [primaryDescriptor, ...duplicates] = descriptorGroup;
-
-        const primaryDependents = allVirtualizedDescriptorsDependents.get(primaryDescriptor.descriptorHash);
-        if (!primaryDependents)
-          throw new Error(`Assertion failed: The virtual package should have a list of dependents`);
-
-        for (const duplicateDescriptor of duplicates) {
-          const duplicateDependents = allVirtualizedDescriptorsDependents.get(duplicateDescriptor.descriptorHash);
-          if (!duplicateDependents)
-            throw new Error(`Assertion failed: The virtual package should have a list of dependents`);
-
-          for (const dependentLocatorHash of duplicateDependents) {
-            const dependentPackage = allPackages.get(dependentLocatorHash);
-
-            // The dependent may be missing if it has been removed in a prior
-            // unification iteration
-            if (!dependentPackage)
-              continue;
-
-            dependentPackage.dependencies.set(primaryDescriptor.identHash, primaryDescriptor);
-            primaryDependents.add(dependentLocatorHash);
-          }
-
-          const duplicateVirtualPackage = getPackageFromDescriptor(duplicateDescriptor);
-
-          allDescriptors.delete(duplicateDescriptor.descriptorHash);
-          allPackages.delete(duplicateVirtualPackage.locatorHash);
-          allResolutions.delete(duplicateDescriptor.descriptorHash);
-
-          allVirtualizedDescriptorsDependents.delete(duplicateDescriptor.descriptorHash);
-          virtualDescriptors.delete(duplicateDescriptor);
-
-          accessibleLocators.delete(duplicateVirtualPackage.locatorHash);
-        }
-      }
-    }
   }
 }

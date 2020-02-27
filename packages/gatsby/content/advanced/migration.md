@@ -6,6 +6,8 @@ title: "Migration"
 
 Yarn v2 is a very different software from the v1. While one of our aim is to make the transition as easy as possible, some behaviors needed to be tweaked. To make things easier we've documented the most common problems that may arise when porting from one project to the other, along with suggestions to keep moving forward.
 
+**Important note:** This isn't a step-by-step guide. The best way to migrate is just to upgrade Yarn and see whether everything works. If it doesn't, go back to this guide and look for more context on the error you got. Most steps here aren't needed for most projects - we just tried to document all the tips that you could find handy if something breaks!
+
 ## General Advices
 
 ### Upgrade to Node 10 or 12
@@ -35,53 +37,45 @@ Note that the doctor is intended to report any potential issue - it's then up to
 
 `yarn dlx` is designed to execute one off scripts that may have been installed as global packages with `yarn 1.x`. Managing system-wide packages is outside of the scope of `yarn`. To reflect this, `yarn global` has been removed. [Read more on GitHub](https://github.com/yarnpkg/berry/issues/821).
 
-### Make sure you use `resolve@1.9+`
-
-Older releases don't support Plug'n'Play at all. Since the `resolve` package is used by pretty much everything nowadays, making sure that you use a modern release can go a long way to solve the most obnoxious bugs you may have.
-
-**Fix:** Open your lockfile, look for all the `resolve` entries that could match 1.9+ (for example `^1.0.0`), and remove them. Then run `yarn install` again. If you run `yarn why resolve`, you'll also get a good idea of which package is depending on outdated version of `resolve` - maybe you can upgrade them too?
-
 ### Enable the PnP plugin when using Webpack 4
 
 Webpack 5 will support PnP natively, but if you use Webpack 4 you'll need to add the [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) plugin yourself.
-
-### Don't use `resolve.alias|modules` (Webpack) or `moduleNameMapper` (Jest)
-
-Those settings all try to override the regular resolution engine to provide custom rules. The downside is that they only apply to a single tool (so the configuration must be repeated again and again), and since the central Plug'n'Play resolver doesn't know about those aliases it'll think they are unlisted dependencies and refuse to let the resolution proceed.
-
-Fortunately the fix is very simple: just use the `link:` protocol to list the aliases in your manifest file, as if they were regular dependencies! By doing this, you're also able to define your aliases a single time while ensuring that they will be picked up by your whole toolchain: Webpack, Jest, TypeScript, ...
-
-So instead of:
-
-```ts
-module.exports = {
-  resolve: {
-    aliases: {
-      assets: `./static/assets`
-    },
-  },
-};
-```
-
-Prefer:
-
-```json
-{
-  "dependencies": {
-    "assets": "link:./static/assets"
-  }
-}
-```
 
 ### Call your scripts through `yarn node` rather than `node`
 
 We now need to inject some variables into the environment for Node to be able to locate your dependencies. In order to make this possible, we ask you to use `yarn node` which transparently does the heavy lifting.
 
-**Note:** this section only applies to the _shell CLI_. The commands defined in your `scripts` are unaffected, as we make sure that `node` always points to the right location.
+**Note:** this section only applies to the _shell CLI_. The commands defined in your `scripts` are unaffected, as we make sure that `node` always points to the right location, with the right variables already set.
 
-### Setup your IDE accordingly
+### Explicitly call the `pre` and `post` scripts
 
-We've written a [guide](https://yarnpkg.com/advanced/editor-sdks) entirely designed to explain you how to use Yarn with your IDE. Make sure to take a look at it, and maybe contribute to it if some instructions are unclear or missing!
+Rewrite:
+
+```json
+{
+  "scripts": {
+    "prestart": "do-something",
+    "start": "http-server"
+  }
+}
+```
+
+Into:
+
+```json
+{
+  "scripts": {
+    "prestart": "do-something",
+    "start": "yarn prestart && http-server"
+  }
+}
+```
+
+**Note:** This only applies to user scripts, such as `start` & friends. It's still fine to use any of `preinstall`, `install`, and `postinstall`. Consult the [script documentation](/advanced/lifecycle-scripts) for more information.
+
+### Setup your IDE for PnP support
+
+We've written a [guide](/advanced/editor-sdks) entirely designed to explain you how to use Yarn with your IDE. Make sure to take a look at it, and maybe contribute to it if some instructions are unclear or missing!
 
 ### Update your configuration to the new settings
 
@@ -109,7 +103,7 @@ On top of their naming, the way we load the Yarnrc files has also been changed a
 
 - All environment variables prefixed with `YARN_` are automatically used to override the matching configuration settings. So for example, adding `YARN_NPM_REGISTRY_SERVER` into your environment will change the value of [`npmRegistryServer`](/configuration/yarnrc#npmRegistryServer).
 
-### Take a look to our end-to-end tests
+### Take a look at our end-to-end tests
 
 We now run daily [end-to-end tests](https://github.com/yarnpkg/berry#current-status) against various popular JavaScript tools in order to make sure that we never regress - or to be notified when those tools do.
 
@@ -146,9 +140,15 @@ This will cause Yarn to install the project just like Yarn 1 used to, by copying
 
 ### `Cannot find module [...]`
 
-Interestingly, this error **doesn't** come from Yarn. In fact, seeing this message should be extremely rare when working with Yarn 2 projects and typically highlights that something is wrong in your setup.
+Interestingly, this error often **doesn't** come from Yarn. In fact, seeing this message should be extremely rare when working with Yarn 2 projects and typically highlights that something is wrong in your setup.
 
 This error appears when Node is executed without the proper environment variables. In such a case, the underlying application won't be able to access the dependencies and Node will throw this message. To fix that, make sure that the script is called through `yarn node [...]` (instead of `node [...]`) if you run it from the command line.
+
+#### Make sure you use `resolve@1.9+`
+
+The `resolve` package is used by many tools in order to retrieve the dependencies for any given folder on the filesystem. It's compatible with Plug'n'Play, but only starting from 1.9+, so make sure you don't have an older release in your dependency tree (especially as transitive dependency).
+
+**Fix:** Open your lockfile, look for all the `resolve` entries that could match 1.9+ (for example `^1.0.0`), and remove them. Then run `yarn install` again. If you run `yarn why resolve`, you'll also get a good idea of which package is depending on outdated version of `resolve` - maybe you can upgrade them too?
 
 ### `A package is trying to access another package [...]`
 
