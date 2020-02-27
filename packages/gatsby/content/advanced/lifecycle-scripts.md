@@ -1,4 +1,4 @@
- ---
+---
 category: advanced
 path: /advanced/lifecycle-scripts
 title: "Lifecycle Scripts"
