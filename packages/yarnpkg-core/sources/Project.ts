@@ -445,7 +445,7 @@ export class Project {
     return null;
   }
 
-  async resolveEverything(opts: {report: Report, lockfileOnly: true, skipVirtualResolution?: boolean, resolver?: Resolver} | {report: Report, lockfileOnly?: boolean, skipVirtualResolution?: boolean, cache: Cache, resolver?: Resolver}) {
+  async resolveEverything(opts: {report: Report, lockfileOnly: true, resolver?: Resolver} | {report: Report, lockfileOnly?: boolean, cache: Cache, resolver?: Resolver}) {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
 
@@ -849,8 +849,6 @@ export class Project {
       allDescriptors,
       allResolutions,
       allPackages,
-
-      skipVirtualResolution: opts.skipVirtualResolution,
     });
 
     // All descriptors still referenced within the volatileDescriptors set are
@@ -1584,7 +1582,6 @@ function applyVirtualResolutionMutations({
 
   report,
 
-  skipVirtualResolution = false,
   tolerateMissingPackages = false,
 }: {
   project: Project,
@@ -1599,7 +1596,6 @@ function applyVirtualResolutionMutations({
 
   report: Report | null,
 
-  skipVirtualResolution?: boolean,
   tolerateMissingPackages?: boolean,
 }) {
   const virtualStack = new Map<LocatorHash, number>();
@@ -1748,7 +1744,7 @@ function applyVirtualResolutionMutations({
       if (!pkg)
         throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
 
-      if (pkg.peerDependencies.size === 0 || skipVirtualResolution) {
+      if (pkg.peerDependencies.size === 0) {
         resolvePeerDependencies(pkg, false, isOptional);
         continue;
       }
