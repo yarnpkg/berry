@@ -267,7 +267,7 @@ To access such files, you can use the `@yarnpkg/fslib` project which abstracts t
 
 ```ts
 const {PosixFS, ZipOpenFS} from '@yarnpkg/fslib';
-const libzip = require('@yarnpkg/libzip').getLibzipSync;
+const libzip = require('@yarnpkg/libzip').getLibzipSync();
 
 // This will transparently open zip archives
 const zipOpenFs = new ZipOpenFS({libzip});
