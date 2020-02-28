@@ -86,7 +86,7 @@ class Wrapper {
     if (pkgInformation === null)
       throw new Error(`Assertion failed: Package ${this.name} isn't a dependency of the top-level`);
 
-    const manifest = dynamicRequire(`${this.name}/package.json`);
+    const manifest = dynamicRequire(npath.join(pkgInformation.packageLocation, `package.json`));
 
     await xfs.mkdirpPromise(ppath.dirname(absWrapperPath));
     await xfs.writeFilePromise(absWrapperPath, JSON.stringify({
