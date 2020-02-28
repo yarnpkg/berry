@@ -4491,6 +4491,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/json-schema", "npm:7.0.3"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:7.0.4", {
+          "packageLocation": "./.yarn/cache/@types-json-schema-npm-7.0.4-e9c65098ca-2.zip/node_modules/@types/json-schema/",
+          "packageDependencies": [
+            ["@types/json-schema", "npm:7.0.4"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@types/json5", [
@@ -4537,6 +4544,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-lodash-npm-4.14.136-b396221d04-2.zip/node_modules/@types/lodash/",
           "packageDependencies": [
             ["@types/lodash", "npm:4.14.136"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:4.14.149", {
+          "packageLocation": "./.yarn/cache/@types-lodash-npm-4.14.149-d92d0adff6-2.zip/node_modules/@types/lodash/",
+          "packageDependencies": [
+            ["@types/lodash", "npm:4.14.149"]
           ],
           "linkType": "HARD",
         }]
@@ -5902,6 +5916,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@haroenv/react-sparklines", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.7.1"],
             ["@reach/router", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.2.1"],
             ["@types/babel__core", "npm:7.1.3"],
+            ["@types/json-schema", "npm:7.0.4"],
+            ["@types/lodash", "npm:4.14.149"],
             ["algoliasearch", "npm:4.0.1"],
             ["bytes", "npm:3.1.0"],
             ["date-fns", "npm:2.0.0-beta.2"],
@@ -5924,6 +5940,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["gatsby-transformer-remark", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.2"],
             ["gatsby-transformer-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.2.13"],
             ["highlight.js", "npm:9.15.8"],
+            ["interweave", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:12.2.1"],
+            ["json-ref-lite", "npm:1.1.0"],
+            ["lodash", "npm:4.17.15"],
             ["marked", "npm:0.6.3"],
             ["minimatch", "npm:3.0.4"],
             ["pify", "npm:4.0.1"],
@@ -17331,6 +17350,22 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["interweave", [
+        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:12.2.1", {
+          "packageLocation": "./.yarn/$$virtual/interweave-virtual-afd9bfb47c/0/cache/interweave-npm-12.2.1-c010111ed4-2.zip/node_modules/interweave/",
+          "packageDependencies": [
+            ["interweave", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:12.2.1"],
+            ["@types/react", "npm:16.9.2"],
+            ["escape-html", "npm:1.0.3"],
+            ["prop-types", "npm:15.7.2"],
+            ["react", "npm:16.8.4"]
+          ],
+          "packagePeers": [
+            "react"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["into-stream", [
         ["npm:3.1.0", {
           "packageLocation": "./.yarn/cache/into-stream-npm-3.1.0-56f8d76349-2.zip/node_modules/into-stream/",
@@ -19446,6 +19481,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/json-parse-better-errors-npm-1.0.2-7f37637d19-2.zip/node_modules/json-parse-better-errors/",
           "packageDependencies": [
             ["json-parse-better-errors", "npm:1.0.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["json-ref-lite", [
+        ["npm:1.1.0", {
+          "packageLocation": "./.yarn/cache/json-ref-lite-npm-1.1.0-8fcbe7edd2-2.zip/node_modules/json-ref-lite/",
+          "packageDependencies": [
+            ["json-ref-lite", "npm:1.1.0"],
+            ["property-expr", "npm:1.5.1"]
           ],
           "linkType": "HARD",
         }]

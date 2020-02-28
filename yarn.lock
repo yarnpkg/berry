@@ -3797,6 +3797,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/json-schema@npm:^7.0.4":
+  version: 7.0.4
+  resolution: "@types/json-schema@npm:7.0.4"
+  checksum: 2/5094037431e4b29d5cc9d6938ea596d1145cc46d305d8d302a477a54d0a7a83ba4629abbf52fcabc3ffdb31cf94647bc366a7bcc544770cbb80212d903018e2b
+  languageName: node
+  linkType: hard
+
 "@types/json5@npm:0.0.30":
   version: 0.0.30
   resolution: "@types/json5@npm:0.0.30"
@@ -3828,6 +3835,13 @@ __metadata:
   dependencies:
     left-pad: "*"
   checksum: 2/1af27f7aa7e7dba6186e3be0ce130adb766a2aa4899e345642b6c675c7fe5582dddbfd7ccaf7d0d3fae89ce47c478e94d364c5d81c8af911d39fcbd05bc58f26
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:4.14.149":
+  version: 4.14.149
+  resolution: "@types/lodash@npm:4.14.149"
+  checksum: 2/f5b8837c776d471755f8d48536933031e5753da4277d1e5a0ebd46caf392adc2a298eeb2812f2da8d1801fa1c666c9112207204e73e06c11bdcf1bf179f304fa
   languageName: node
   linkType: hard
 
@@ -4951,6 +4965,8 @@ __metadata:
     "@haroenv/react-sparklines": ^1.7.1
     "@reach/router": ^1.1.1
     "@types/babel__core": 7.1.3
+    "@types/json-schema": ^7.0.4
+    "@types/lodash": 4.14.149
     algoliasearch: ^4.0.1
     bytes: ^3.1.0
     date-fns: ^2.0.0-beta.2
@@ -4973,6 +4989,9 @@ __metadata:
     gatsby-transformer-remark: ^2.3.2
     gatsby-transformer-sharp: ^2.2.13
     highlight.js: ^9.15.8
+    interweave: ^12.2.1
+    json-ref-lite: ^1.1.0
+    lodash: ^4.17.15
     marked: ^0.6.3
     minimatch: ^3.0.4
     pify: ^4.0.1
@@ -10362,7 +10381,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"escape-html@npm:~1.0.3":
+"escape-html@npm:^1.0.3, escape-html@npm:~1.0.3":
   version: 1.0.3
   resolution: "escape-html@npm:1.0.3"
   checksum: 2/900a7f2b80b9f89c85b7a303d1b7a4d354b93e328871414f165f13c5c209a80eab787e3a63429e596877def69fe4dcb3d1b55af655207a901a9ec99f7f148743
@@ -14314,6 +14333,19 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
+"interweave@npm:^12.2.1":
+  version: 12.2.1
+  resolution: "interweave@npm:12.2.1"
+  dependencies:
+    "@types/react": "*"
+    escape-html: ^1.0.3
+    prop-types: ^15.7.2
+  peerDependencies:
+    react: ^16.8.0
+  checksum: 2/a2ebad12e9b62bf293e9b9533d6cea6a12fc69a14ae518f4c4e2302f8264d8529c1fce5bf9daddf52eedc385a6933ad76324f0e18fdbd127a209455bb37013d6
+  languageName: node
+  linkType: hard
+
 "into-stream@npm:^3.1.0":
   version: 3.1.0
   resolution: "into-stream@npm:3.1.0"
@@ -16299,6 +16331,15 @@ fsevents@^1.2.2:
   version: 1.0.2
   resolution: "json-parse-better-errors@npm:1.0.2"
   checksum: 2/b4c4f0e43b43892af887db742b26f9aa6302b09cd5f6e655ead49fca9f47f3cdd300dcf98cf5218778262be51d7b29859221206fc98b87a1a61c5af7618dae89
+  languageName: node
+  linkType: hard
+
+"json-ref-lite@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "json-ref-lite@npm:1.1.0"
+  dependencies:
+    property-expr: ^1.3.1
+  checksum: 2/d42e380a05499a88de1a5fff5fe4751244cf93fd415690fb22f08343909394bd4f57cbc399cc7c39746a85432a5bbd04a4e1f2d8293889556783fb635acf1b8e
   languageName: node
   linkType: hard
 
@@ -20436,7 +20477,7 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"property-expr@npm:^1.5.0":
+"property-expr@npm:^1.3.1, property-expr@npm:^1.5.0":
   version: 1.5.1
   resolution: "property-expr@npm:1.5.1"
   checksum: 2/957f1688252f6facc7e8ca2896b5966d5ac4b79a451008598ca3f3b062493711ac55ec9c20a3702844893cb0ea1fa314e263077b5647fef4235d94107ba17a90
