@@ -199,10 +199,10 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
 const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<HoisterWorkTree>, ancestorDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, options: InternalHoistOptions): Set<HoistCandidateSet> => {
   const hoistCandidates: HoistCandidates = new Map();
   const parents: Tuple[] = [];
-  const seenNodes = new Set<HoisterWorkTree>();
+  const seenLocators = new Set<Locator>();
 
   const computeHoistCandidates = (nodePath: HoisterWorkTree[], node: HoisterWorkTree) => {
-    const isSeen = seenNodes.has(node);
+    const isSeen = seenLocators.has(node.locator);
 
     let reasonRoot;
     let reason: string;
@@ -330,23 +330,23 @@ const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Hoister
     }
 
     if (!isSeen) {
-      seenNodes.add(node);
+      seenLocators.add(node.locator);
       const tuple = {parent, node};
       parents.push(tuple);
       for (const dep of node.dependencies.values())
-        if (!node.peerNames.has(dep.name))
+        if (!node.peerNames.has(dep.name) && nodePath.indexOf(dep) < 0)
           computeHoistCandidates([...nodePath, node], dep);
 
       parents.pop();
     }
   };
 
-  seenNodes.add(rootNode);
+  seenLocators.add(rootNode.locator);
   for (const dep of rootNode.dependencies.values()) {
     if (rootNode.peerNames.has(dep.name))
       continue;
 
-    seenNodes.add(dep);
+    seenLocators.add(dep.locator);
     const tuple = {parent: rootNode, node: dep};
     parents.push(tuple);
     for (const subDep of dep.dependencies.values())
@@ -431,10 +431,8 @@ const cloneTree = (tree: HoisterTree): HoisterWorkTree => {
 
   const seenNodes = new Map<HoisterTree, HoisterWorkTree>([[tree, treeCopy]]);
 
-  const addNode = (origParent: HoisterTree, node: HoisterTree, parentNode: HoisterWorkTree) => {
+  const addNode = (node: HoisterTree, parentNode: HoisterWorkTree) => {
     // Skip self-references
-    if (node === origParent)
-      return;
     let workNode = seenNodes.get(node);
     const isSeen = !!workNode;
     if (!workNode) {
@@ -459,13 +457,13 @@ const cloneTree = (tree: HoisterTree): HoisterWorkTree => {
 
     if (!isSeen) {
       for (const dep of node.dependencies) {
-        addNode(node, dep, workNode);
+        addNode(dep, workNode);
       }
     }
   };
 
   for (const dep of tree.dependencies)
-    addNode(tree, dep, treeCopy);
+    addNode(dep, treeCopy);
 
   return treeCopy;
 };
