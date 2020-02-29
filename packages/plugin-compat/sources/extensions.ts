@@ -65,4 +65,14 @@ export const packageExtensions: Array<[string, any]> = [
       [`vscode-languageserver-protocol`]: `^3.15.0`,
     },
   }],
+  // https://github.com/gucong3000/postcss-syntax/pull/46
+  [`postcss-syntax@*`, {
+    dependencies: {
+      [`postcss-html`]: `*`,
+      [`postcss-jsx`]: `*`,
+      [`postcss-less`]: `*`,
+      [`postcss-markdown`]: `*`,
+      [`postcss-scss`]: `*`,
+    },
+  }],
 ];
