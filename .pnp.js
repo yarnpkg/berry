@@ -12999,9 +12999,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", "npm:5.16.0"],
+            ["stylelint", null],
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
+            "stylelint",
             "typescript"
           ],
           "linkType": "SOFT",
@@ -13020,10 +13022,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["comment-json", "npm:2.2.0"],
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", "npm:5.16.0"],
+            ["stylelint", null],
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
             "eslint",
+            "stylelint",
             "typescript"
           ],
           "linkType": "SOFT",

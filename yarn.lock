@@ -5512,9 +5512,12 @@ __metadata:
     typescript: ^3.7.5
   peerDependencies:
     eslint: "*"
+    stylelint: "*"
     typescript: "*"
   peerDependenciesMeta:
     eslint:
+      optional: true
+    stylelint:
       optional: true
     typescript:
       optional: true
