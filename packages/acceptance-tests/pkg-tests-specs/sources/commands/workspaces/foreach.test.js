@@ -15,7 +15,7 @@ async function setupWorkspaces(path) {
     scripts: {
       print: `echo Test Workspace A`,
       start: `node server.js`,
-      test: "echo test | exit 0",
+      testExit: `exit 0`,
     },
   });
 
@@ -26,7 +26,7 @@ async function setupWorkspaces(path) {
     scripts: {
       print: `echo Test Workspace B`,
       start: `node client.js`,
-      test: "echo test | exit 1",
+      testExit: `exit 1`,
     },
     dependencies: {
       [`workspace-a`]: `workspace:*`,
@@ -400,13 +400,15 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
+
           let code;
           try {
             await run(`install`);
-            ({code} = await run(`workspaces`, `foreach`, `run`, `test`));
+            ({code} = await run(`workspaces`, `foreach`, `run`, `testExit`));
           } catch (error) {
             ({code} = error);
           }
+
           expect(code).toBe(1);
         }
       )

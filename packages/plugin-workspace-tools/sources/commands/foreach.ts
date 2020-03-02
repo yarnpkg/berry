@@ -165,7 +165,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     const limit = pLimit(this.jobs || concurrency);
 
     let commandCount = 0;
-    let finalExitCode = 0;
+    let finalExitCode: number | null = null;
 
     const report = await StreamReport.start({
       configuration,
@@ -271,14 +271,23 @@ export default class WorkspacesForeachCommand extends BaseCommand {
         }
 
         const exitCodes: Array<number> = await Promise.all(commandPromises);
-        finalExitCode = finalExitCode || exitCodes.find(code => code > 0) || 0;
-        if ((this.topological || this.topologicalDev) && exitCodes.some(code => code !== 0)) {
+        const errorCode = exitCodes.find(code => code !== 0);
+
+        // The order in which the exit codes will be processed is fairly
+        // opaque, so better just return a generic "1" for determinism.
+        finalExitCode = typeof errorCode !== `undefined` ? 1 : finalExitCode;
+
+        if ((this.topological || this.topologicalDev) && typeof errorCode !== `undefined`) {
           report.reportError(MessageName.UNNAMED, `The command failed for workspaces that are depended upon by other workspaces; can't satisfy the dependency graph`);
         }
       }
     });
 
-    return report.exitCode() || finalExitCode;
+    if (finalExitCode !== null) {
+      return finalExitCode;
+    } else {
+      return report.exitCode();
+    }
   }
 }
 
