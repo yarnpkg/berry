@@ -266,8 +266,8 @@ The paths returned in the `PackageInformation` structures are in the native form
 To access such files, you can use the `@yarnpkg/fslib` project which abstracts the filesystem under a multi-layer architecture. For example, the following code would make it possible to access any path, regardless of whether they're stored within a zip archive or not:
 
 ```ts
-const {PosixFS, ZipOpenFS} from '@yarnpkg/fslib';
-const libzip = require('@yarnpkg/libzip').getLibzipSync();
+const {PosixFS, ZipOpenFS} = require(`@yarnpkg/fslib`);
+const libzip = require(`@yarnpkg/libzip`).getLibzipSync();
 
 // This will transparently open zip archives
 const zipOpenFs = new ZipOpenFS({libzip});
