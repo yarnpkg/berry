@@ -1,7 +1,5 @@
 // @ts-check
 
-import {polyfillDOMImplementation}                                                                      from 'interweave-ssr';
-import {Markup}                                                                                         from 'interweave';
 import jref                                                                                             from 'json-ref-lite';
 import {cloneDeep, merge}                                                                               from 'lodash';
 import marked                                                                                           from 'marked';
@@ -9,9 +7,6 @@ import marked                                                                   
 import React                                                                                            from 'react';
 
 import {SymlContainer, SymlMain, SymlScalar, SymlScalarProperty, SymlObjectProperty, SymlArrayProperty} from '../components/syml';
-
-
-polyfillDOMImplementation();
 
 
 export const defaultCommentConfiguration = {
@@ -31,12 +26,7 @@ export const defaultCommentConfiguration = {
  */
 export const renderHtmlFromMarkdown = (markdown) => (
   markdown
-    ? (
-      <Markup
-        content={marked(markdown)}
-        tagName={`fragment`}
-      />
-    )
+    ? <div dangerouslySetInnerHTML={{__html: marked(markdown)}} />
     : undefined
 );
 

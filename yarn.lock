@@ -5014,8 +5014,6 @@ __metadata:
     gatsby-transformer-remark: ^2.3.2
     gatsby-transformer-sharp: ^2.2.13
     highlight.js: ^9.15.8
-    interweave: ^12.2.1
-    interweave-ssr: ^1.0.0
     json-ref-lite: ^1.1.0
     lodash: ^4.17.15
     marked: ^0.6.3
@@ -10407,7 +10405,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"escape-html@npm:^1.0.3, escape-html@npm:~1.0.3":
+"escape-html@npm:~1.0.3":
   version: 1.0.3
   resolution: "escape-html@npm:1.0.3"
   checksum: 2/900a7f2b80b9f89c85b7a303d1b7a4d354b93e328871414f165f13c5c209a80eab787e3a63429e596877def69fe4dcb3d1b55af655207a901a9ec99f7f148743
@@ -14388,29 +14386,6 @@ fsevents@^1.2.2:
   version: 1.2.0
   resolution: "interpret@npm:1.2.0"
   checksum: 2/06d0dd4af01f9d0a99af8fb20c888db99e7c1bd28835951646a7e426dd99ccfffb9d06ad2e8f7cb60dd2ecc3e5bc61fe83e04c2cc47d92c7b144ff935673463c
-  languageName: node
-  linkType: hard
-
-"interweave-ssr@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "interweave-ssr@npm:1.0.0"
-  dependencies:
-    parse5: ^5.1.1
-    style-parser: ^1.1.1
-  checksum: 2/fb91c0efa67e0c350aab66724c0188f9b1d6d4caa20444e833892364782df0f150e89c5da60a3237e523b8021c1a67c370dd56fb03565ea9199c2483d8ea0271
-  languageName: node
-  linkType: hard
-
-"interweave@npm:^12.2.1":
-  version: 12.2.1
-  resolution: "interweave@npm:12.2.1"
-  dependencies:
-    "@types/react": "*"
-    escape-html: ^1.0.3
-    prop-types: ^15.7.2
-  peerDependencies:
-    react: ^16.8.0
-  checksum: 2/a2ebad12e9b62bf293e9b9533d6cea6a12fc69a14ae518f4c4e2302f8264d8529c1fce5bf9daddf52eedc385a6933ad76324f0e18fdbd127a209455bb37013d6
   languageName: node
   linkType: hard
 
@@ -19355,13 +19330,6 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"parse5@npm:^5.1.1":
-  version: 5.1.1
-  resolution: "parse5@npm:5.1.1"
-  checksum: 2/fad72ff5010ee8a6f0a38b83fc886b71a54d746d5c4ff5aad74d6ba1fe87b9606585bf32aa200b015ce329e0906f50f2851f29876abeacd5c13567c7a0455362
-  languageName: node
-  linkType: hard
-
 "parseqs@npm:0.0.5":
   version: 0.0.5
   resolution: "parseqs@npm:0.0.5"
@@ -19391,13 +19359,6 @@ fsevents@^1.2.2:
   version: 1.3.3
   resolution: "parseurl@npm:1.3.3"
   checksum: 2/52c9e86cb58e38b28f1a50a6354d16648974ab7a2b91b209f97102840471de8adf524427774af6d5bc482fb7c0a6af6ba08ab37de9a1a7ae389ebe074015914b
-  languageName: node
-  linkType: hard
-
-"parsimmon@npm:^0.7.0":
-  version: 0.7.2
-  resolution: "parsimmon@npm:0.7.2"
-  checksum: 2/4e47e69b545fa7e99fc8d6e1b456de46fcfe98acb491b1bab435b6f5c63ba2fb3fdd87e864c36aec9ffeaa6fc4b01fb0daf60bd7d89b99360e4555c0e6adfe45
   languageName: node
   linkType: hard
 
@@ -23570,15 +23531,6 @@ resolve@^1.10.1:
     loader-utils: ^1.1.0
     schema-utils: ^0.4.5
   checksum: 2/a1164ffe359eb897c0e0aac921b65edb13c890089b2a26ebca34ef27e4e6624562e304b8f147cc3287c34c6026f8a7372f16129d22a16bf8ce5606d35c03376f
-  languageName: node
-  linkType: hard
-
-"style-parser@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "style-parser@npm:1.1.1"
-  dependencies:
-    parsimmon: ^0.7.0
-  checksum: 2/09271fa80815468e215fea3aeafa82782fe0cf2f46c2419b295a3872c2bfeacd37746038d6a742ec98a75b26722140e71d8478d226cee718f620cb2caac595ab
   languageName: node
   linkType: hard
 

@@ -30,8 +30,6 @@
     "gatsby-transformer-remark": "^2.3.2",
     "gatsby-transformer-sharp": "^2.2.13",
     "highlight.js": "^9.15.8",
-    "interweave": "^12.2.1",
-    "interweave-ssr": "^1.0.0",
     "json-ref-lite": "^1.1.0",
     "lodash": "^4.17.15",
     "marked": "^0.6.3",

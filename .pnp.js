@@ -5969,8 +5969,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["gatsby-transformer-remark", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.2"],
             ["gatsby-transformer-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.2.13"],
             ["highlight.js", "npm:9.15.8"],
-            ["interweave", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:12.2.1"],
-            ["interweave-ssr", "npm:1.0.0"],
             ["json-ref-lite", "npm:1.1.0"],
             ["lodash", "npm:4.17.15"],
             ["marked", "npm:0.6.3"],
@@ -17413,33 +17411,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["interweave", [
-        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:12.2.1", {
-          "packageLocation": "./.yarn/$$virtual/interweave-virtual-afd9bfb47c/0/cache/interweave-npm-12.2.1-c010111ed4-2.zip/node_modules/interweave/",
-          "packageDependencies": [
-            ["interweave", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:12.2.1"],
-            ["@types/react", "npm:16.9.2"],
-            ["escape-html", "npm:1.0.3"],
-            ["prop-types", "npm:15.7.2"],
-            ["react", "npm:16.8.4"]
-          ],
-          "packagePeers": [
-            "react"
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["interweave-ssr", [
-        ["npm:1.0.0", {
-          "packageLocation": "./.yarn/cache/interweave-ssr-npm-1.0.0-b4fe4b0d2f-2.zip/node_modules/interweave-ssr/",
-          "packageDependencies": [
-            ["interweave-ssr", "npm:1.0.0"],
-            ["parse5", "npm:5.1.1"],
-            ["style-parser", "npm:1.1.1"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["into-stream", [
         ["npm:3.1.0", {
           "packageLocation": "./.yarn/cache/into-stream-npm-3.1.0-56f8d76349-2.zip/node_modules/into-stream/",
@@ -22792,13 +22763,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["parse5", "npm:5.1.0"]
           ],
           "linkType": "HARD",
-        }],
-        ["npm:5.1.1", {
-          "packageLocation": "./.yarn/cache/parse5-npm-5.1.1-8e63d82cff-2.zip/node_modules/parse5/",
-          "packageDependencies": [
-            ["parse5", "npm:5.1.1"]
-          ],
-          "linkType": "HARD",
         }]
       ]],
       ["parseqs", [
@@ -22833,15 +22797,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/parseurl-npm-1.3.3-1542397e00-2.zip/node_modules/parseurl/",
           "packageDependencies": [
             ["parseurl", "npm:1.3.3"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["parsimmon", [
-        ["npm:0.7.2", {
-          "packageLocation": "./.yarn/cache/parsimmon-npm-0.7.2-0aac179459-2.zip/node_modules/parsimmon/",
-          "packageDependencies": [
-            ["parsimmon", "npm:0.7.2"]
           ],
           "linkType": "HARD",
         }]
@@ -27320,16 +27275,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["style-loader", "npm:0.21.0"],
             ["loader-utils", "npm:1.2.3"],
             ["schema-utils", "npm:0.4.7"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["style-parser", [
-        ["npm:1.1.1", {
-          "packageLocation": "./.yarn/cache/style-parser-npm-1.1.1-5c73563034-2.zip/node_modules/style-parser/",
-          "packageDependencies": [
-            ["style-parser", "npm:1.1.1"],
-            ["parsimmon", "npm:0.7.2"]
           ],
           "linkType": "HARD",
         }]
