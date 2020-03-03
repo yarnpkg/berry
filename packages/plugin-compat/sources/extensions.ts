@@ -42,7 +42,7 @@ export const packageExtensions: Array<[string, any]> = [
   // https://github.com/ember-engines/ember-engines/pull/694
   [`ember-engines@*`, {
     dependencies: {
-      [`ember-cli`]: "~3.13.1"
+      [`ember-cli`]: "~3.13.1",
     },
   }],
 ];
