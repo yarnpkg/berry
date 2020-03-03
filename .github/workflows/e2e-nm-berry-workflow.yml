@@ -40,6 +40,5 @@ jobs:
     - name: 'Running node_modules install with self-validation'
       run: |
         source scripts/e2e-setup-ci.sh
-        git clone https://github.com/yarnpkg/berry.git
-        cd berry
+        cd -
         NM_DEBUG_LEVEL=1 YARN_NODE_LINKER=node-modules yarn
