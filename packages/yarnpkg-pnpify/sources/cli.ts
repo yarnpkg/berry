@@ -34,11 +34,16 @@ function sdk(cwd: NativePath) {
   let nextProjectRoot = npath.toPortablePath(cwd);
   let currProjectRoot = null;
 
+  let isCJS = '';
   while (nextProjectRoot !== currProjectRoot) {
     currProjectRoot = nextProjectRoot;
     nextProjectRoot = ppath.dirname(currProjectRoot);
 
-    if (xfs.existsSync(ppath.join(currProjectRoot, `.pnp.js` as Filename))) {
+    if (xfs.existsSync(ppath.join(currProjectRoot, `.pnp.js` as Filename)))
+      break;
+
+    if (xfs.existsSync(ppath.join(currProjectRoot, `.pnp.cjs` as Filename))) {
+      isCJS = 'c';
       break;
     }
   }
@@ -46,7 +51,7 @@ function sdk(cwd: NativePath) {
   if (nextProjectRoot === currProjectRoot)
     throw new Error(`This tool can only be used with projects using Yarn Plug'n'Play`);
 
-  const pnpPath = ppath.join(currProjectRoot, `.pnp.js` as Filename);
+  const pnpPath = ppath.join(currProjectRoot, `.pnp.${isCJS}js` as Filename);
   const pnpApi = dynamicRequire(pnpPath);
 
   generateSdk(pnpApi).catch(error => {
