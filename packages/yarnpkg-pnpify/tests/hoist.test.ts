@@ -54,14 +54,19 @@ describe('hoist', () => {
   });
 
   it('should support basic cyclic dependencies', () => {
-    // . -> A -> B -> A
+    // . -> C -> A -> B -> A
+    //             -> D -> E
     // should be hoisted to:
     // . -> A
     //   -> B
+    //   -> C
+    //   -> D
+    //   -> E
     const tree = {
-      '.': {dependencies: ['A']},
-      'A': {dependencies: ['B']},
-      'B': {dependencies: ['A']},
+      '.': {dependencies: ['C']},
+      'C': {dependencies: ['A']},
+      'A': {dependencies: ['B', 'D']},
+      'B': {dependencies: ['A', 'E']},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });

@@ -134,8 +134,10 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
     const locatorKey = stringifyLocator(locator);
     let node = nodes.get(locatorKey);
     const isSeen = !!node;
-    if (locatorKey === topLocatorKey)
+    if (!isSeen && locatorKey === topLocatorKey) {
       node = packageTree;
+      nodes.set(locatorKey, packageTree);
+    }
     if (!node) {
       const {name, reference} = locator;
 
@@ -157,7 +159,7 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
 
     if (!isSeen) {
       for (const [name, referencish] of pkg.packageDependencies) {
-        if (referencish !== null) {
+        if (referencish !== null && !node.peerNames.has(name)) {
           const depLocator = pnp.getLocator(name, referencish);
           const pkgLocator = pnp.getLocator(name.replace('$wsroot$', ''), referencish);
           const depPkg = pnp.getPackageInformation(pkgLocator)!;
