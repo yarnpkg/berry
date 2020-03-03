@@ -39,9 +39,9 @@ function sdk(cwd: NativePath) {
     currProjectRoot = nextProjectRoot;
     nextProjectRoot = ppath.dirname(currProjectRoot);
 
-    if (xfs.existsSync(ppath.join(currProjectRoot, `.pnp.js` as Filename))) {
+    if (xfs.existsSync(ppath.join(currProjectRoot, `.pnp.js` as Filename)))
       break;
-    }
+
     if (xfs.existsSync(ppath.join(currProjectRoot, `.pnp.cjs` as Filename))) {
       isCJS = 'c';
       break;
