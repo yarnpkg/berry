@@ -30786,16 +30786,16 @@ class NodeFS extends FakeFS_1.BasePortableFakeFS {
     return this.realFs.rmdirSync(path_1.npath.fromPortablePath(p));
   }
 
-  async symlinkPromise(target, p) {
-    const type = target.endsWith(`/`) ? `dir` : `file`;
+  async symlinkPromise(target, p, type) {
+    const symlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
     return await new Promise((resolve, reject) => {
-      this.realFs.symlink(path_1.npath.fromPortablePath(target.replace(/\/+$/, ``)), path_1.npath.fromPortablePath(p), type, this.makeCallback(resolve, reject));
+      this.realFs.symlink(path_1.npath.fromPortablePath(target.replace(/\/+$/, ``)), path_1.npath.fromPortablePath(p), symlinkType, this.makeCallback(resolve, reject));
     });
   }
 
-  symlinkSync(target, p) {
-    const type = target.endsWith(`/`) ? `dir` : `file`;
-    return this.realFs.symlinkSync(path_1.npath.fromPortablePath(target.replace(/\/+$/, ``)), path_1.npath.fromPortablePath(p), type);
+  symlinkSync(target, p, type) {
+    const symlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
+    return this.realFs.symlinkSync(path_1.npath.fromPortablePath(target.replace(/\/+$/, ``)), path_1.npath.fromPortablePath(p), symlinkType);
   }
 
   async readFilePromise(p, encoding) {
@@ -31456,12 +31456,12 @@ class ProxiedFS extends FakeFS_1.FakeFS {
     return this.baseFs.rmdirSync(this.mapToBase(p));
   }
 
-  symlinkPromise(target, p) {
-    return this.baseFs.symlinkPromise(this.mapToBase(target), this.mapToBase(p));
+  symlinkPromise(target, p, type) {
+    return this.baseFs.symlinkPromise(this.mapToBase(target), this.mapToBase(p), type);
   }
 
-  symlinkSync(target, p) {
-    return this.baseFs.symlinkSync(this.mapToBase(target), this.mapToBase(p));
+  symlinkSync(target, p, type) {
+    return this.baseFs.symlinkSync(this.mapToBase(target), this.mapToBase(p), type);
   }
 
   readFilePromise(p, encoding) {
@@ -37231,9 +37231,9 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     });
   }
 
-  async symlinkPromise(target, p) {
+  async symlinkPromise(target, p, type) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.symlinkPromise(target, p);
+      return await this.baseFs.symlinkPromise(target, p, type);
     }, async (zipFs, {
       subPath
     }) => {
@@ -37241,9 +37241,9 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     });
   }
 
-  symlinkSync(target, p) {
+  symlinkSync(target, p, type) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.symlinkSync(target, p);
+      return this.baseFs.symlinkSync(target, p, type);
     }, (zipFs, {
       subPath
     }) => {
