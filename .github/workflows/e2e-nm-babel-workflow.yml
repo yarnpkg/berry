@@ -31,7 +31,7 @@ jobs:
     runs-on: ${{matrix.platform}}
 
     steps:
-    - name: Support longpaths
+    - name: Enable git longpaths
       run: git config --global core.longpaths true
 
     - uses: actions/checkout@master
