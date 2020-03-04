@@ -1,4 +1,3 @@
-#
 on:
   schedule:
   - cron: '0 */4 * * *'
@@ -22,8 +21,14 @@ on:
 name: 'E2E NM Berry Install'
 jobs:
   chore:
-    name: 'Validating berry install via node-modules linker'
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform:
+        - ubuntu-latest
+        - windows-latest
+
+    name: 'Validating berry install via node-modules linker on ${{matrix.platform}}'
+    runs-on: ${{matrix.platform}}
 
     steps:
     - uses: actions/checkout@master
@@ -36,9 +41,11 @@ jobs:
     - name: 'Build the standard bundle'
       run: |
         node ./scripts/run-yarn.js build:cli
+      shell: bash
 
     - name: 'Running node_modules install with self-validation'
       run: |
         source scripts/e2e-setup-ci.sh
         cd -
         NM_DEBUG_LEVEL=1 YARN_NODE_LINKER=node-modules yarn
+      shell: bash
