@@ -286,7 +286,7 @@ const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean, excl
   }
 };
 
-const ADD_CONCURRENT_LIMIT = 4;
+const CONCURRENT_OPERATION_LIMIT = 4;
 
 type LocatorKey = string;
 type LocationNode = { children: Map<Filename, LocationNode>, locator?: LocatorKey };
@@ -468,54 +468,68 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
       }
     })().then(() => addQueue.splice(addQueue.indexOf(promise), 1));
     addQueue.push(promise);
-    if (addQueue.length > ADD_CONCURRENT_LIMIT) {
+    if (addQueue.length > CONCURRENT_OPERATION_LIMIT) {
       await Promise.race(addQueue);
-    }  };
+    }
+  };
 
   const cloneModule = async (srcDir: PortablePath, dstDir: PortablePath, options?: { keepSrcNodeModules?: boolean, keepDstNodeModules?: boolean, innerLoop?: boolean }) => {
-    try {
-      if (!options || !options.innerLoop) {
-        await removeDir(dstDir, {excludeNodeModules: options && options.keepDstNodeModules});
-        await xfs.mkdirpPromise(dstDir);
-      }
+    const promise: Promise<any> = (async () => {
+      const cloneDir = async (srcDir: PortablePath, dstDir: PortablePath, options?: { keepSrcNodeModules?: boolean, keepDstNodeModules?: boolean, innerLoop?: boolean }) => {
+        try {
+          if (!options || !options.innerLoop) {
+            await removeDir(dstDir, {excludeNodeModules: options && options.keepDstNodeModules});
+            await xfs.mkdirpPromise(dstDir);
+          }
 
-      const entries = await xfs.readdirPromise(srcDir, {withFileTypes: true});
-      for (const entry of entries) {
-        const src = ppath.join(srcDir, entry.name);
-        const dst = ppath.join(dstDir, entry.name);
+          const entries = await xfs.readdirPromise(srcDir, {withFileTypes: true});
+          for (const entry of entries) {
+            const src = ppath.join(srcDir, entry.name);
+            const dst = ppath.join(dstDir, entry.name);
 
-        if (entry.name !== NODE_MODULES || !options || !options.keepSrcNodeModules) {
-          if (entry.isDirectory()) {
-            await xfs.mkdirpPromise(dst);
-            await cloneModule(src, dst, {keepSrcNodeModules: false, keepDstNodeModules: false, innerLoop: true});
-          } else {
-            await xfs.copyFilePromise(src, dst, fs.constants.COPYFILE_FICLONE);
+            if (entry.name !== NODE_MODULES || !options || !options.keepSrcNodeModules) {
+              if (entry.isDirectory()) {
+                await xfs.mkdirpPromise(dst);
+                await cloneDir(src, dst, {keepSrcNodeModules: false, keepDstNodeModules: false, innerLoop: true});
+              } else {
+                await xfs.copyFilePromise(src, dst, fs.constants.COPYFILE_FICLONE);
+              }
+            }
+          }
+        } catch (e) {
+          if (!options || !options.innerLoop)
+            e.message = `While cloning ${srcDir} -> ${dstDir} ${e.message}`;
+
+          throw e;
+        } finally {
+          if (!options || !options.innerLoop) {
+            progress.tick();
           }
         }
-      }
-    } catch (e) {
-      if (!options || !options.innerLoop)
-        e.message = `While cloning ${srcDir} -> ${dstDir} ${e.message}`;
+      };
 
-      throw e;
-    } finally {
-      if (!options || !options.innerLoop) {
-        progress.tick();
-      }
+      await cloneDir(srcDir, dstDir, options);
+    })().then(() => addQueue.splice(addQueue.indexOf(promise), 1));
+    addQueue.push(promise);
+    if (addQueue.length > CONCURRENT_OPERATION_LIMIT) {
+      await Promise.race(addQueue);
     }
   };
 
   const deleteQueue: Promise<any>[] = [];
-  const deleteModule = (dstDir: PortablePath) => {
-    const promise = (async () => {
+  const deleteModule = async (dstDir: PortablePath) => {
+    const promise: Promise<any> = (async () => {
       try {
         await removeDir(dstDir);
       } catch (e) {
         e.message = `While removing ${dstDir} ${e.message}`;
         throw e;
       }
-    })();
+    })().then(() => deleteQueue.splice(deleteQueue.indexOf(promise), 1));
     deleteQueue.push(promise);
+    if (deleteQueue.length > CONCURRENT_OPERATION_LIMIT) {
+      await Promise.race(deleteQueue);
+    }
   };
 
 
@@ -547,7 +561,7 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
   }
 
   for (const dstDir of deleteList)
-    deleteModule(dstDir);
+    await deleteModule(dstDir);
 
   // Update changed locations
   const addList: Array<{srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, keepNodeModules: boolean}> = [];
@@ -643,7 +657,7 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
     for (const entry of addList) {
       const locationInfo = persistedLocations.get(entry.srcDir)!;
       if (entry.linkType !== LinkType.SOFT && entry.dstDir !== locationInfo.dstDir) {
-        addQueue.push(cloneModule(locationInfo.dstDir, entry.dstDir, {keepSrcNodeModules: locationInfo.keepNodeModules, keepDstNodeModules: entry.keepNodeModules}));
+        await cloneModule(locationInfo.dstDir, entry.dstDir, {keepSrcNodeModules: locationInfo.keepNodeModules, keepDstNodeModules: entry.keepNodeModules});
       }
     }
 
