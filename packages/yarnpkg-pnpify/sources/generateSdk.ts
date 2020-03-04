@@ -140,6 +140,7 @@ const generateTypescriptWrapper = async (pnpApi: PnpApi, target: PortablePath) =
 
   await wrapper.writeFile(`lib/tsc.js` as PortablePath);
   await wrapper.writeFile(`lib/tsserver.js` as PortablePath);
+  await wrapper.writeFile(`lib/typescript.js` as PortablePath);
 
   await addVSCodeWorkspaceSettings(pnpApi, {
     [`typescript.tsdk`]: npath.fromPortablePath(
