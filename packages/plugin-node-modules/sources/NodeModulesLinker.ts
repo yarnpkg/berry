@@ -2,7 +2,7 @@ import {structUtils, Report, Manifest, miscUtils, FinalizeInstallStatus, FetchRe
 import {Locator, Package, BuildType}                                                                  from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                                            from '@yarnpkg/core';
 import {BuildDirective, MessageName, Project}                                                         from '@yarnpkg/core';
-import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS}                                from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS, NodeFS}                        from '@yarnpkg/fslib';
 import {VirtualFS, ZipOpenFS}                                                                         from '@yarnpkg/fslib';
 import {getLibzipPromise}                                                                             from '@yarnpkg/libzip';
 import {parseSyml}                                                                                    from '@yarnpkg/parsers';
@@ -379,7 +379,7 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
 };
 
 const symlinkPromise = async (srcDir: PortablePath, dstDir: PortablePath) =>
-  xfs.symlinkPromise(process.platform !== 'win32' ? ppath.relative(ppath.dirname(dstDir), srcDir) : srcDir, dstDir);
+  xfs.symlinkPromise(process.platform !== 'win32' ? ppath.relative(ppath.dirname(dstDir), srcDir) : npath.toPortablePath(`${srcDir}/`), dstDir);
 
 const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs}: {baseFs: FakeFS<PortablePath>}) => {
   await xfs.mkdirpPromise(dstDir);
