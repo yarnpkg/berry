@@ -11,7 +11,6 @@ import {NodeModulesLocatorMap, buildLocatorMap, buildNodeModulesTree}           
 import {PnpSettings, makeRuntimeApi}                                                                  from '@yarnpkg/pnp';
 import {UsageError}                                                                                   from 'clipanion';
 import fs                                                                                             from 'fs';
-import pLimit                                                                                         from 'p-limit';
 
 const NODE_MODULES = `node_modules` as Filename;
 const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
@@ -445,11 +444,9 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
   const prevLocationTree = refineNodeModulesRoots(buildLocationTree(preinstallState, {skipPrefix: project.cwd}));
   const locationTree = buildLocationTree(installState, {skipPrefix: project.cwd});
 
-  const limit = pLimit(ADD_CONCURRENT_LIMIT);
-
   const addQueue: Promise<void>[] = [];
   const addModule = async ({srcDir, dstDir, linkType, keepNodeModules}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, keepNodeModules: boolean}) => {
-    addQueue.push(limit(async () => {
+    const promise: Promise<any> = (async () => {
       try {
         // Soft links to themselves are used to denote workspace packages, we
         // should just ignore them
@@ -469,8 +466,11 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
       } finally {
         progress.tick();
       }
-    }));
-  };
+    })().then(() => addQueue.splice(addQueue.indexOf(promise), 1));
+    addQueue.push(promise);
+    if (addQueue.length > ADD_CONCURRENT_LIMIT) {
+      await Promise.race(addQueue);
+    }  };
 
   const cloneModule = async (srcDir: PortablePath, dstDir: PortablePath, options?: { keepSrcNodeModules?: boolean, keepDstNodeModules?: boolean, innerLoop?: boolean }) => {
     try {
@@ -616,39 +616,43 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
   }
 
   const progress = Report.progressViaCounter(addList.length);
-  report.reportProgress(progress);
+  const reportedProgress = report.reportProgress(progress);
 
-  const persistedLocations = new Map<PortablePath, {
-    dstDir: PortablePath,
-    keepNodeModules: boolean,
-  }>();
+  try {
+    const persistedLocations = new Map<PortablePath, {
+      dstDir: PortablePath,
+      keepNodeModules: boolean,
+    }>();
 
-  // For the first pass we'll only want to install a single copy for each
-  // source directory. We'll later use the resulting install directories for
-  // the other instances of the same package (this will avoid us having to
-  // crawl the zip archives for each package).
-  for (const entry of addList) {
-    if (entry.linkType === LinkType.SOFT || !persistedLocations.has(entry.srcDir)) {
-      persistedLocations.set(entry.srcDir, {dstDir: entry.dstDir, keepNodeModules: entry.keepNodeModules});
-      await addModule({...entry});
+    // For the first pass we'll only want to install a single copy for each
+    // source directory. We'll later use the resulting install directories for
+    // the other instances of the same package (this will avoid us having to
+    // crawl the zip archives for each package).
+    for (const entry of addList) {
+      if (entry.linkType === LinkType.SOFT || !persistedLocations.has(entry.srcDir)) {
+        persistedLocations.set(entry.srcDir, {dstDir: entry.dstDir, keepNodeModules: entry.keepNodeModules});
+        await addModule({...entry});
+      }
     }
-  }
 
-  await Promise.all(deleteQueue);
-  await Promise.all(addQueue);
-  addQueue.length = 0;
+    await Promise.all(deleteQueue);
+    await Promise.all(addQueue);
+    addQueue.length = 0;
 
-  // Second pass: clone module duplicates
-  for (const entry of addList) {
-    const locationInfo = persistedLocations.get(entry.srcDir)!;
-    if (entry.linkType !== LinkType.SOFT && entry.dstDir !== locationInfo.dstDir) {
-      addQueue.push(cloneModule(locationInfo.dstDir, entry.dstDir, {keepSrcNodeModules: locationInfo.keepNodeModules, keepDstNodeModules: entry.keepNodeModules}));
+    // Second pass: clone module duplicates
+    for (const entry of addList) {
+      const locationInfo = persistedLocations.get(entry.srcDir)!;
+      if (entry.linkType !== LinkType.SOFT && entry.dstDir !== locationInfo.dstDir) {
+        addQueue.push(cloneModule(locationInfo.dstDir, entry.dstDir, {keepSrcNodeModules: locationInfo.keepNodeModules, keepDstNodeModules: entry.keepNodeModules}));
+      }
     }
+
+    await Promise.all(addQueue);
+
+    await xfs.mkdirpPromise(rootNmDirPath);
+    await writeInstallState(project, installState);
+  } finally {
+    reportedProgress.stop();
   }
-
-  await Promise.all(addQueue);
-
-  await xfs.mkdirpPromise(rootNmDirPath);
-  await writeInstallState(project, installState);
 };
 
