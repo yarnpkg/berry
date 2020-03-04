@@ -93,6 +93,7 @@ class Wrapper {
       name: this.name,
       version: `${manifest.version}-pnpify`,
       main: manifest.main,
+      type: `commonjs`,
     }, null, 2));
   }
 
