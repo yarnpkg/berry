@@ -3593,6 +3593,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/concat-stream@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "@types/concat-stream@npm:1.6.0"
+  dependencies:
+    "@types/node": "*"
+  checksum: 2/135011e4e8e9a7a5c6e39fd5ce81ecdb18b6dcd9f4491093b0547c249a030383d552442f22b797a112d649fc514e832f3a2d884bfe6c91d913ec4650d5937550
+  languageName: node
+  linkType: hard
+
 "@types/configstore@npm:^2.1.1":
   version: 2.1.1
   resolution: "@types/configstore@npm:2.1.1"
@@ -3667,6 +3676,15 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 2/0731d261b2bbf95ade5a9929c4b3f523d4d02429767dd248505cf26ba3df5f1a5e8911cddedad831290853cb9faa6f3457be0acd5a731a920fa6d2c770b28677
+  languageName: node
+  linkType: hard
+
+"@types/form-data@npm:0.0.33":
+  version: 0.0.33
+  resolution: "@types/form-data@npm:0.0.33"
+  dependencies:
+    "@types/node": "*"
+  checksum: 2/5acc058ff10e410cf2a727888d011fe6fd5a19272e907aabdbf6873cd6810ad76ca969ab3e0be1fa067ca51a4465a5e49a748ab4a6c7f722175b3684a853335f
   languageName: node
   linkType: hard
 
@@ -3797,6 +3815,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/json-schema@npm:^7.0.4":
+  version: 7.0.4
+  resolution: "@types/json-schema@npm:7.0.4"
+  checksum: 2/5094037431e4b29d5cc9d6938ea596d1145cc46d305d8d302a477a54d0a7a83ba4629abbf52fcabc3ffdb31cf94647bc366a7bcc544770cbb80212d903018e2b
+  languageName: node
+  linkType: hard
+
 "@types/json5@npm:0.0.30":
   version: 0.0.30
   resolution: "@types/json5@npm:0.0.30"
@@ -3868,7 +3893,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
+"@types/node@npm:*, @types/node@npm:^10.0.3":
   version: 10.12.18
   resolution: "@types/node@npm:10.12.18"
   checksum: 2/64cc1c5105bcb7c27917c30c4de8d50931c9539bde52e0e8fae0c562a62ba38b9eab1bb1420eabf246f727845cac3109c83b4cba00abf93b6a73327bbdf141b5
@@ -3886,6 +3911,13 @@ __metadata:
   version: 7.10.5
   resolution: "@types/node@npm:7.10.5"
   checksum: 2/330a2a9d36b1404a9456c2fe770d6eb664d04adad853c699afb01869ab40c18bbb5a4ef85373c5a059c462ec64f58c1ec0cd3c8a0ae831db016f8d387baa70e4
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^8.0.0":
+  version: 8.10.59
+  resolution: "@types/node@npm:8.10.59"
+  checksum: 2/079fa24b52ce765094846ba868aea69788e5b0f629c372570cbc2576c502aebe3d9ff8f165c8e1ff87fdf1f83fb8c2632da7d3bf9786f1130669c5831b151eab
   languageName: node
   linkType: hard
 
@@ -3914,6 +3946,13 @@ __metadata:
   version: 1.5.1
   resolution: "@types/q@npm:1.5.1"
   checksum: 2/03f8952fc0449c970c1d5f6b2d969dff829a104f3f16009972623531958f8762c2792825299767fbd3e5bc1bd68cf3d05628ed34afb3a139e9e35be752a7a9c1
+  languageName: node
+  linkType: hard
+
+"@types/qs@npm:^6.2.31":
+  version: 6.9.1
+  resolution: "@types/qs@npm:6.9.1"
+  checksum: 2/22459dfb61f595b384561b22a233fe38c69e6e73a66b6e7bbdd9f95f9adc26d23bb4f4ecdc7f98fd59d56856308bf928a8792a0dd307d02afc870a6705b4f81e
   languageName: node
   linkType: hard
 
@@ -4951,6 +4990,8 @@ __metadata:
     "@haroenv/react-sparklines": ^1.7.1
     "@reach/router": ^1.1.1
     "@types/babel__core": 7.1.3
+    "@types/json-schema": ^7.0.4
+    "@types/lodash": ^4.14.136
     algoliasearch: ^4.0.1
     bytes: ^3.1.0
     date-fns: ^2.0.0-beta.2
@@ -4973,6 +5014,8 @@ __metadata:
     gatsby-transformer-remark: ^2.3.2
     gatsby-transformer-sharp: ^2.2.13
     highlight.js: ^9.15.8
+    json-ref-lite: ^1.1.0
+    lodash: ^4.17.15
     marked: ^0.6.3
     minimatch: ^3.0.4
     pify: ^4.0.1
@@ -6132,7 +6175,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"asap@npm:^2.0.0, asap@npm:~2.0.3":
+"asap@npm:^2.0.0, asap@npm:~2.0.3, asap@npm:~2.0.6":
   version: 2.0.6
   resolution: "asap@npm:2.0.6"
   checksum: 2/3d314f8c598b625a98347bacdba609d4c889c616ca5d8ea65acaae8050ab8b7aa6630df2cfe9856c20b260b432adf2ee7a65a1021f268ef70408c70f809e3a39
@@ -7821,7 +7864,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"caseless@npm:~0.12.0":
+"caseless@npm:^0.12.0, caseless@npm:~0.12.0":
   version: 0.12.0
   resolution: "caseless@npm:0.12.0"
   checksum: 2/147f48bff9bebf029d7050e2335da3f8d295f26d157edf08d8c3282c804dae04a462c4cd6efa8179755686aa3aeaca5c28f3e7f3559698bc0484c65e46c36c5b
@@ -8557,7 +8600,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"concat-stream@npm:1.6.2, concat-stream@npm:^1.5.0":
+"concat-stream@npm:1.6.2, concat-stream@npm:^1.5.0, concat-stream@npm:^1.6.0, concat-stream@npm:^1.6.2":
   version: 1.6.2
   resolution: "concat-stream@npm:1.6.2"
   dependencies:
@@ -11814,6 +11857,17 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"form-data@npm:^2.2.0":
+  version: 2.5.1
+  resolution: "form-data@npm:2.5.1"
+  dependencies:
+    asynckit: ^0.4.0
+    combined-stream: ^1.0.6
+    mime-types: ^2.1.12
+  checksum: 2/c46ee9a14a8678b6e0dfafabc96e25237d9f11ced9c51cd371a2b3448f6a3f2fa684b3bbbb35911bae8f5448b3f3c48c73f7f2be791a4ae5aee0eb0ab3cdfec2
+  languageName: node
+  linkType: hard
+
 "form-data@npm:~2.3.2":
   version: 2.3.3
   resolution: "form-data@npm:2.3.3"
@@ -12625,7 +12679,7 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"get-port@npm:^3.0.0":
+"get-port@npm:^3.0.0, get-port@npm:^3.1.0":
   version: 3.2.0
   resolution: "get-port@npm:3.2.0"
   checksum: 2/84ce817471a062262a44e8172b6e8799e7ef523240ad1c03ce1396fd63d87426d46ae9c072f9ce55c0190403bc78e72b3bb493cd5cb16b49f3be52ae0924cdc2
@@ -13753,6 +13807,18 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
+"http-basic@npm:^8.1.1":
+  version: 8.1.3
+  resolution: "http-basic@npm:8.1.3"
+  dependencies:
+    caseless: ^0.12.0
+    concat-stream: ^1.6.2
+    http-response-object: ^3.0.1
+    parse-cache-control: ^1.0.1
+  checksum: 2/12c6985ec447a2c24725b7ff0acbb07cdc390bcc2a3aff329802cf793435ef0263efb5389893281946a12fcb04a3b717864d3a7242fe38a20c2a2cc3bc6f1786
+  languageName: node
+  linkType: hard
+
 "http-cache-semantics@npm:3.8.1":
   version: 3.8.1
   resolution: "http-cache-semantics@npm:3.8.1"
@@ -13839,6 +13905,15 @@ fsevents@^1.2.2:
     follow-redirects: ^1.0.0
     requires-port: ^1.0.0
   checksum: 2/107bb95b4dc393dd665abc5500aab311cb8238447e04e25936218f38cbc9ecd382c99881e68f5dfb6675a61609d515e79581933ca4c78bf2076d7cbda46d603b
+  languageName: node
+  linkType: hard
+
+"http-response-object@npm:^3.0.1":
+  version: 3.0.2
+  resolution: "http-response-object@npm:3.0.2"
+  dependencies:
+    "@types/node": ^10.0.3
+  checksum: 2/07d149103fe8246106e83007551a024305f930e7004aa0e7e4e285370053c23e61a060ed57d5d9ed1e1bf0632b46a9a02aaa4da4061a7a28efa2ad5aa624a8bf
   languageName: node
   linkType: hard
 
@@ -16299,6 +16374,15 @@ fsevents@^1.2.2:
   version: 1.0.2
   resolution: "json-parse-better-errors@npm:1.0.2"
   checksum: 2/b4c4f0e43b43892af887db742b26f9aa6302b09cd5f6e655ead49fca9f47f3cdd300dcf98cf5218778262be51d7b29859221206fc98b87a1a61c5af7618dae89
+  languageName: node
+  linkType: hard
+
+"json-ref-lite@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "json-ref-lite@npm:1.1.0"
+  dependencies:
+    property-expr: ^1.3.1
+  checksum: 2/d42e380a05499a88de1a5fff5fe4751244cf93fd415690fb22f08343909394bd4f57cbc399cc7c39746a85432a5bbd04a4e1f2d8293889556783fb635acf1b8e
   languageName: node
   linkType: hard
 
@@ -19075,6 +19159,13 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
+"parse-cache-control@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "parse-cache-control@npm:1.0.1"
+  checksum: 2/2a3e5bc32adb707a1a1784b44e01d54d894bfad894aaede2e293f9c374fe735ef852164d94b615e513ceccf0638c4e175c774056a308d47e9e38221cd90523aa
+  languageName: node
+  linkType: hard
+
 "parse-english@npm:^4.0.0":
   version: 4.1.1
   resolution: "parse-english@npm:4.1.1"
@@ -20376,6 +20467,15 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
+"promise@npm:^8.0.0":
+  version: 8.0.3
+  resolution: "promise@npm:8.0.3"
+  dependencies:
+    asap: ~2.0.6
+  checksum: 2/3c7a70c95acbc9ecf7bb243c8a125fbaf620b6ac8840eb5c72e29f79f7c45095d43b822bd7b056185bc031fdadda20721bfd68d22fddcb4bdc47837fbf6ecec2
+  languageName: node
+  linkType: hard
+
 "promise@npm:~6.1.0":
   version: 6.1.0
   resolution: "promise@npm:6.1.0"
@@ -20436,7 +20536,7 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"property-expr@npm:^1.5.0":
+"property-expr@npm:^1.3.1, property-expr@npm:^1.5.0":
   version: 1.5.1
   resolution: "property-expr@npm:1.5.1"
   checksum: 2/957f1688252f6facc7e8ca2896b5966d5ac4b79a451008598ca3f3b062493711ac55ec9c20a3702844893cb0ea1fa314e263077b5647fef4235d94107ba17a90
@@ -20596,7 +20696,7 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.7.0":
+"qs@npm:^6.4.0, qs@npm:^6.7.0":
   version: 6.7.0
   resolution: "qs@npm:6.7.0"
   checksum: 2/8590470436ff0a75ae35e6b45fd7260e2beb537ff8ec1104f9703a349b09ce1aa27e8e1c06b9ad25ac62fc098e12cc65df93042a233128a0276ccd6de4c7819a
@@ -23584,6 +23684,26 @@ resolve@^1.10.1:
   languageName: node
   linkType: hard
 
+"sync-request@npm:*":
+  version: 6.1.0
+  resolution: "sync-request@npm:6.1.0"
+  dependencies:
+    http-response-object: ^3.0.1
+    sync-rpc: ^1.2.1
+    then-request: ^6.0.0
+  checksum: 2/904db919d10494babd2322e789508b326e1cfe60717de3895b9a350e1f52813cdefac6d8eedba7168a7bb1f136615d2b360687db18744ff32fa0ac79027c452b
+  languageName: node
+  linkType: hard
+
+"sync-rpc@npm:^1.2.1":
+  version: 1.3.6
+  resolution: "sync-rpc@npm:1.3.6"
+  dependencies:
+    get-port: ^3.1.0
+  checksum: 2/b1256fbbe371c60410f60ab26a96b2771fe117b076eb656cec7e1be9e2314d56fa9439a7847af149d25562e0e59d313dcebd434525d0ee4b7148d06e76a19767
+  languageName: node
+  linkType: hard
+
 "synchronous-promise@npm:^2.0.6":
   version: 2.0.6
   resolution: "synchronous-promise@npm:2.0.6"
@@ -23850,6 +23970,25 @@ resolve@^1.10.1:
   version: 0.2.0
   resolution: "text-table@npm:0.2.0"
   checksum: 2/373904ce70524ba11ec7e1905c44fb92671132d5e0b0aba2fb48057161f8bf9cbf7f6178f0adf31810150cf44fb52c7b912dc722bff3fddf9688378596dbeb56
+  languageName: node
+  linkType: hard
+
+"then-request@npm:^6.0.0":
+  version: 6.0.2
+  resolution: "then-request@npm:6.0.2"
+  dependencies:
+    "@types/concat-stream": ^1.6.0
+    "@types/form-data": 0.0.33
+    "@types/node": ^8.0.0
+    "@types/qs": ^6.2.31
+    caseless: ~0.12.0
+    concat-stream: ^1.6.0
+    form-data: ^2.2.0
+    http-basic: ^8.1.1
+    http-response-object: ^3.0.1
+    promise: ^8.0.0
+    qs: ^6.4.0
+  checksum: 2/12e4a81a9ea92f53601321760d90593a647d8084976f6134b548ff5690f4b44aabd1e04bf1d7f4d9069f2bca724f55581f2585f2d92c174343f8fc8b65db5a48
   languageName: node
   linkType: hard
 
