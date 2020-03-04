@@ -31,6 +31,9 @@ jobs:
     runs-on: ${{matrix.platform}}
 
     steps:
+    - name: Support longpaths
+      run: git config --system core.longpaths true
+
     - uses: actions/checkout@master
 
     - name: 'Use Node.js 10.x'
