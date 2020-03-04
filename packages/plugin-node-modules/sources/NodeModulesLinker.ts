@@ -378,6 +378,9 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
   return locationTree;
 };
 
+const symlinkPromise = async (srcDir: PortablePath, dstDir: PortablePath) =>
+  xfs.symlinkPromise(process.platform !== 'win32' ? ppath.relative(ppath.dirname(dstDir), srcDir) : srcDir, dstDir);
+
 const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs}: {baseFs: FakeFS<PortablePath>}) => {
   await xfs.mkdirpPromise(dstDir);
   const entries = await baseFs.readdirPromise(srcDir, {withFileTypes: true});
@@ -391,7 +394,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs}:
       await xfs.chmodPromise(dstPath, mode);
     } else if (srcType.isSymbolicLink()) {
       const target = await baseFs.readlinkPromise(srcPath);
-      await xfs.symlinkPromise(target, dstPath);
+      await symlinkPromise(ppath.resolve(srcPath, target), dstPath);
     } else {
       throw new Error(`Unsupported file type (file: ${srcPath}, mode: 0o${await xfs.statSync(srcPath).mode.toString(8).padStart(6, `0`)})`);
     }
@@ -456,7 +459,7 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
         await removeDir(dstDir, {excludeNodeModules: keepNodeModules});
         if (linkType === LinkType.SOFT) {
           await xfs.mkdirpPromise(ppath.dirname(dstDir));
-          await xfs.symlinkPromise(ppath.relative(ppath.dirname(dstDir), srcDir), dstDir);
+          await symlinkPromise(ppath.resolve(srcDir), dstDir);
         } else {
           await copyPromise(dstDir, srcDir, {baseFs});
         }
