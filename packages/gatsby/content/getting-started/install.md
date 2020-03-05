@@ -37,7 +37,7 @@ yarn set version berry          # on v1.22+
 
 1. Follow the per-project install instructions
 
-2. Run the following comand (add `--no-minify` if you want an unminified build):
+2. Run the following command (add `--no-minify` if you want an unminified build):
 
 ```bash
 yarn set version from sources

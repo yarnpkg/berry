@@ -30,6 +30,8 @@
     "gatsby-transformer-remark": "^2.3.2",
     "gatsby-transformer-sharp": "^2.2.13",
     "highlight.js": "^9.15.8",
+    "json-ref-lite": "^1.1.0",
+    "lodash": "^4.17.15",
     "marked": "^0.6.3",
     "minimatch": "^3.0.4",
     "pify": "^4.0.1",
@@ -61,6 +63,8 @@
     "url": "ssh://git@github.com/yarnpkg/berry.git"
   },
   "devDependencies": {
-    "@types/babel__core": "7.1.3"
+    "@types/babel__core": "7.1.3",
+    "@types/json-schema": "^7.0.4",
+    "@types/lodash": "^4.14.136"
   }
 }
