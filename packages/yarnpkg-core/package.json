@@ -28,7 +28,6 @@
     "semver": "^7.1.2",
     "stream-to-promise": "^2.2.0",
     "tar": "^4.4.6",
-    "tmp": "^0.1.0",
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
@@ -40,7 +39,6 @@
     "@types/node": "^13.7.0",
     "@types/semver": "^7.1.0",
     "@types/tar": "^4.0.0",
-    "@types/tmp": "^0.0.33",
     "@types/tunnel": "^0.0.0",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.29",
     "@yarnpkg/plugin-link": "workspace:^2.0.0-rc.11",

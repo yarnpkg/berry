@@ -4977,13 +4977,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/tmp", "npm:0.0.32"]
           ],
           "linkType": "HARD",
-        }],
-        ["npm:0.0.33", {
-          "packageLocation": "./.yarn/cache/@types-tmp-npm-0.0.33-070918943f-2.zip/node_modules/@types/tmp/",
-          "packageDependencies": [
-            ["@types/tmp", "npm:0.0.33"]
-          ],
-          "linkType": "HARD",
         }]
       ]],
       ["@types/treeify", [
@@ -5759,7 +5752,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["micromatch", "npm:4.0.2"],
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
-            ["tmp", "npm:0.1.0"],
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
@@ -5802,7 +5794,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["micromatch", "npm:4.0.2"],
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
-            ["tmp", "npm:0.1.0"],
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
@@ -5845,7 +5836,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["micromatch", "npm:4.0.2"],
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
-            ["tmp", "npm:0.1.0"],
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"],
             ["yup", "npm:0.27.0"]
           ],
@@ -5868,7 +5858,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/node", "npm:13.7.0"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/tar", "npm:4.0.0"],
-            ["@types/tmp", "npm:0.0.33"],
             ["@types/tunnel", "npm:0.0.0"],
             ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -5897,7 +5886,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"],
             ["stream-to-promise", "npm:2.2.0"],
             ["tar", "npm:4.4.8"],
-            ["tmp", "npm:0.1.0"],
             ["tunnel", "npm:0.0.6"]
           ],
           "linkType": "SOFT",
@@ -5927,8 +5915,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/yarnpkg-fslib/",
           "packageDependencies": [
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
-            ["tmp", "npm:0.1.0"]
+            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"]
           ],
           "linkType": "SOFT",
         }]
@@ -6282,13 +6269,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/$$virtual/@yarnpkg-plugin-dlx-virtual-0ee854167a/1/packages/plugin-dlx/",
           "packageDependencies": [
             ["@yarnpkg/plugin-dlx", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-dlx"],
-            ["@types/tmp", "npm:0.0.33"],
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
-            ["clipanion", "npm:2.1.5"],
-            ["tmp", "npm:0.1.0"]
+            ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
             "@yarnpkg/cli",
@@ -6300,13 +6285,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/$$virtual/@yarnpkg-plugin-dlx-virtual-7d2512c2b4/1/packages/plugin-dlx/",
           "packageDependencies": [
             ["@yarnpkg/plugin-dlx", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-dlx"],
-            ["@types/tmp", "npm:0.0.33"],
             ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
-            ["clipanion", "npm:2.1.5"],
-            ["tmp", "npm:0.1.0"]
+            ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
             "@yarnpkg/cli",
@@ -6318,13 +6301,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/$$virtual/@yarnpkg-plugin-dlx-virtual-4e5b7c75f5/1/packages/plugin-dlx/",
           "packageDependencies": [
             ["@yarnpkg/plugin-dlx", "virtual:e23070551897c977d5b8085c4d1e9a894a68fa8203db624358fb50a574c8e05714fb57031cb1acbef3b066e56b561ac5b876c49fef2e6b9466f45869bf78103f#workspace:packages/plugin-dlx"],
-            ["@types/tmp", "npm:0.0.33"],
             ["@yarnpkg/cli", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
-            ["clipanion", "npm:2.1.5"],
-            ["tmp", "npm:0.1.0"]
+            ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
             "@yarnpkg/cli",
@@ -6336,13 +6317,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/plugin-dlx/",
           "packageDependencies": [
             ["@yarnpkg/plugin-dlx", "workspace:packages/plugin-dlx"],
-            ["@types/tmp", "npm:0.0.33"],
             ["@yarnpkg/cli", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
-            ["clipanion", "npm:2.1.5"],
-            ["tmp", "npm:0.1.0"]
+            ["clipanion", "npm:2.1.5"]
           ],
           "packagePeers": [
             "@yarnpkg/cli",
@@ -6478,11 +6457,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/plugin-exec/",
           "packageDependencies": [
             ["@yarnpkg/plugin-exec", "workspace:packages/plugin-exec"],
-            ["@types/tmp", "npm:0.0.33"],
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["tmp", "npm:0.1.0"],
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=273569"]
           ],
           "packagePeers": [
@@ -6538,8 +6515,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["git-url-parse", "npm:11.1.2"],
-            ["semver", "npm:7.1.2"],
-            ["tmp", "npm:0.1.0"]
+            ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
             "@yarnpkg/core"
@@ -6554,8 +6530,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["git-url-parse", "npm:11.1.2"],
-            ["semver", "npm:7.1.2"],
-            ["tmp", "npm:0.1.0"]
+            ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
             "@yarnpkg/core"
@@ -6570,8 +6545,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["git-url-parse", "npm:11.1.2"],
-            ["semver", "npm:7.1.2"],
-            ["tmp", "npm:0.1.0"]
+            ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
             "@yarnpkg/core"
@@ -6584,11 +6558,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/$$virtual/@yarnpkg-plugin-github-virtual-f1a8e708ca/1/packages/plugin-github/",
           "packageDependencies": [
             ["@yarnpkg/plugin-github", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-github"],
-            ["@types/tmp", "npm:0.0.33"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],
-            ["tmp", "npm:0.1.0"]
+            ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"]
           ],
           "packagePeers": [
             "@yarnpkg/core",
@@ -6600,11 +6572,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/$$virtual/@yarnpkg-plugin-github-virtual-3f9246e99e/1/packages/plugin-github/",
           "packageDependencies": [
             ["@yarnpkg/plugin-github", "virtual:e23070551897c977d5b8085c4d1e9a894a68fa8203db624358fb50a574c8e05714fb57031cb1acbef3b066e56b561ac5b876c49fef2e6b9466f45869bf78103f#workspace:packages/plugin-github"],
-            ["@types/tmp", "npm:0.0.33"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/plugin-git", "virtual:e23070551897c977d5b8085c4d1e9a894a68fa8203db624358fb50a574c8e05714fb57031cb1acbef3b066e56b561ac5b876c49fef2e6b9466f45869bf78103f#workspace:packages/plugin-git"],
-            ["tmp", "npm:0.1.0"]
+            ["@yarnpkg/plugin-git", "virtual:e23070551897c977d5b8085c4d1e9a894a68fa8203db624358fb50a574c8e05714fb57031cb1acbef3b066e56b561ac5b876c49fef2e6b9466f45869bf78103f#workspace:packages/plugin-git"]
           ],
           "packagePeers": [
             "@yarnpkg/core",
@@ -6616,11 +6586,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/plugin-github/",
           "packageDependencies": [
             ["@yarnpkg/plugin-github", "workspace:packages/plugin-github"],
-            ["@types/tmp", "npm:0.0.33"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/plugin-git", "virtual:e23070551897c977d5b8085c4d1e9a894a68fa8203db624358fb50a574c8e05714fb57031cb1acbef3b066e56b561ac5b876c49fef2e6b9466f45869bf78103f#workspace:packages/plugin-git"],
-            ["tmp", "npm:0.1.0"]
+            ["@yarnpkg/plugin-git", "virtual:e23070551897c977d5b8085c4d1e9a894a68fa8203db624358fb50a574c8e05714fb57031cb1acbef3b066e56b561ac5b876c49fef2e6b9466f45869bf78103f#workspace:packages/plugin-git"]
           ],
           "packagePeers": [
             "@yarnpkg/core",
@@ -7708,12 +7676,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],
             ["@types/cross-spawn", "npm:6.0.0"],
-            ["@types/tmp", "npm:0.0.33"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["cross-spawn", "npm:6.0.5"],
-            ["stream-buffers", "npm:3.0.2"],
-            ["tmp", "npm:0.1.0"]
+            ["stream-buffers", "npm:3.0.2"]
           ],
           "linkType": "SOFT",
         }]
@@ -23144,7 +23110,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/semver", "npm:7.1.0"],
             ["@types/serve-static", "npm:1.13.3"],
             ["@types/tar-fs", "npm:1.16.1"],
-            ["@types/tmp", "npm:0.0.33"],
             ["@yarnpkg/cli", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -23156,8 +23121,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"],
             ["serve-static", "npm:1.14.1"],
             ["super-resolve", "npm:1.0.0"],
-            ["tar-fs", "npm:1.16.3"],
-            ["tmp", "npm:0.1.0"]
+            ["tar-fs", "npm:1.16.3"]
           ],
           "linkType": "SOFT",
         }]
