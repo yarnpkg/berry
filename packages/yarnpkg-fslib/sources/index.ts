@@ -36,7 +36,9 @@ export {ZipOpenFS}                from './ZipOpenFS';
 
 function getTempName(prefix: string) {
   const tmpdir = npath.toPortablePath(os.tmpdir());
-  return ppath.join(tmpdir, `${prefix}${Math.random()}` as Filename);
+  const hash = Math.ceil(Math.random() * 0x100000000).toString(16).padStart(8, `0`);
+
+  return ppath.join(tmpdir, `${prefix}${hash}` as Filename);
 }
 
 export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void {
@@ -186,17 +188,16 @@ export type XFS = NodeFS & {
 const tmpdirs = new Set<PortablePath>();
 
 const cleanExit = () => {
-  for (const p of tmpdirs) {
+  process.off(`exit`, cleanExit);
+
+for (const p of tmpdirs) {
+    tmpdirs.delete(p);
     try {
       xfs.removeSync(p);
     } catch {
       // Too bad if there's an error
     }
-
-    tmpdirs.delete(p);
   }
-
-  process.off(`exit`, cleanExit);
 };
 
 process.on(`exit`, cleanExit);
@@ -220,16 +221,22 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
         }
       }
 
+      tmpdirs.add(p);
+
       if (typeof cb !== `undefined`) {
         try {
           return cb(p);
         } finally {
           if (tmpdirs.has(p)) {
-            this.removeSync(p);
+            tmpdirs.delete(p);
+            try {
+              this.removeSync(p);
+            } catch {
+              // Too bad if there's an error
+            }
           }
         }
       } else {
-        tmpdirs.add(p);
         return p;
       }
     }
@@ -240,7 +247,7 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
       const p = getTempName(`xfs-`);
 
       try {
-        this.mkdirPromise(p);
+        await this.mkdirPromise(p);
       } catch (error) {
         if (error.code === `EEXIST`) {
           continue;
@@ -249,16 +256,22 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
         }
       }
 
+      tmpdirs.add(p);
+
       if (typeof cb !== `undefined`) {
         try {
           return await cb(p);
         } finally {
           if (tmpdirs.has(p)) {
-            this.removePromise(p);
+            tmpdirs.delete(p);
+            try {
+              await this.removePromise(p);
+            } catch {
+              // Too bad if there's an error
+            }
           }
         }
       } else {
-        tmpdirs.add(p);
         return p;
       }
     }
