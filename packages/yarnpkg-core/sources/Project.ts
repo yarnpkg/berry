@@ -1158,7 +1158,9 @@ export class Project {
       const hash = createHash(`sha512`);
       hash.update(globalHash);
 
-      const traverse = (locatorHash: LocatorHash, seenPackages: Set<string> = new Set()) => {
+      const seenPackages: Set<string> = new Set();
+
+      const traverse = (locatorHash: LocatorHash) => {
         hash.update(locatorHash);
 
         if (!seenPackages.has(locatorHash))
@@ -1179,7 +1181,7 @@ export class Project {
           if (typeof buildHash !== `undefined`)
             hash.update(buildHash);
 
-          traverse(resolution, new Set(seenPackages));
+          traverse(resolution);
         }
       };
 
