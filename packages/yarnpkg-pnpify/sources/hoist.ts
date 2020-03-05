@@ -53,14 +53,15 @@ type InternalHoistOptions = {
  * @returns hoisted tree copy
  */
 export const hoist = (tree: HoisterTree, opts: HoistOptions = {}): HoisterResult => {
-  const treeCopy = cloneTree(tree);
-  const ancestorMap = buildAncestorMap(treeCopy);
   const debugLevel = opts.debugLevel || Number(process.env.NM_DEBUG_LEVEL || -1);
   const check = opts.check || debugLevel >= 9;
   const options: InternalHoistOptions = {check, debugLevel};
 
   if (options.debugLevel >= 0)
     console.time('hoist');
+
+  const treeCopy = cloneTree(tree);
+  const ancestorMap = buildAncestorMap(treeCopy);
 
   hoistTo(treeCopy, treeCopy, new Set([treeCopy.locator]), new Map(), ancestorMap, options);
 
@@ -249,32 +250,27 @@ const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Locator
       reasonRoot = `${Array.from(rootNodePath).map(x => prettyPrintLocator(x)).join('→')}`;
 
     let isHoistable = true;
-
-    let isRegularDepAtRoot = false;
     if (isHoistable) {
-      isRegularDepAtRoot = !rootNode.peerNames.has(node.name);
+      const isRegularDepAtRoot = !rootNode.peerNames.has(node.name);
       if (options.debugLevel >= 2 && !isRegularDepAtRoot)
         reason = `- is a peer dependency at ${reasonRoot}`;
       isHoistable = isRegularDepAtRoot;
     }
 
-    let competitorInfo = hoistCandidates.get(node.name);
+    let competitorInfo;
+    let weight: number;
+    let rootDep;
 
-    const ancestorNode = ancestorMap.get(node.ident)!;
-    const weight = ancestorNode.size;
-
-    let isCompatibleIdent = false;
     if (isHoistable) {
-      isCompatibleIdent = (rootNode.name !== node.name || rootNode.ident === node.ident);
+      const isCompatibleIdent = (rootNode.name !== node.name || rootNode.ident === node.ident);
       if (options.debugLevel >= 2 && !isCompatibleIdent)
         reason = `- conflicts with ${reasonRoot}`;
 
       isHoistable = isCompatibleIdent;
     }
 
-    let isNameAvailable = false;
-    const rootDep = rootNode.dependencies.get(node.name);
     if (isHoistable) {
+      let isNameAvailable = false;
       const hoistedDep = hoistedDependencies.get(node.name);
       isNameAvailable = (!hoistedDep || hoistedDep.ident === node.ident);
       if (options.debugLevel >= 2 && !isNameAvailable)
@@ -294,18 +290,18 @@ const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Locator
       isHoistable = isNameAvailable;
     }
 
-    let isPreferred = false;
     if (isHoistable) {
+      competitorInfo = hoistCandidates.get(node.name);
+      weight = ancestorMap.get(node.ident)!.size;
       // If there is a competitor package to be hoisted, we should prefer the package with more usage
-      isPreferred = !competitorInfo || competitorInfo.weight <= weight;
+      const isPreferred = !competitorInfo || competitorInfo.weight <= weight;
       if (options.debugLevel >= 2 && !isPreferred)
         reason = `- preferred package ${competitorInfo!.node.locator} at ${reasonRoot}`;
       isHoistable = isPreferred;
     }
 
-    let areRegularDepsSatisfied = !!rootDep;
-    if (isHoistable && !areRegularDepsSatisfied) {
-      areRegularDepsSatisfied = true;
+    if (isHoistable && !rootDep) {
+      let areRegularDepsSatisfied = true;
       // Check that hoisted dependencies of current node are satisifed
       for (const dep of node.hoistedDependencies.values()) {
         if (node.originalDependencies.has(dep.name)) {
@@ -327,8 +323,8 @@ const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Locator
       isHoistable = areRegularDepsSatisfied;
     }
 
-    let arePeerDepsSatisfied = true;
     if (isHoistable) {
+      let arePeerDepsSatisfied = true;
       const checkList = new Set(node.peerNames);
       for (let idx = parents.length - 1; idx >= 0; idx--) {
         const parent = parents[idx].node;
@@ -352,15 +348,15 @@ const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Locator
       isHoistable = arePeerDepsSatisfied;
     }
 
-    const parent = parents[parents.length - 1].node;
     if (isHoistable) {
       let hoistCandidate = hoistCandidates.get(node.name);
       if (!hoistCandidate || (competitorInfo && competitorInfo.node.ident !== node.ident)) {
-        hoistCandidate = {node, candidates: new Set(), weight};
+        hoistCandidate = {node, candidates: new Set(), weight: weight!};
         hoistCandidates.set(node.name, hoistCandidate);
       }
       hoistCandidate.candidates.add({nodePath, node});
     } else if (options.debugLevel >= 2) {
+      const parent = parents[parents.length - 1].node;
       const prevReason = parent.reasons.get(node.name);
       if (!prevReason || prevReason.root === rootNode) {
         parent.reasons.set(node.name, {reason: reason!, root: rootNode});
@@ -369,6 +365,7 @@ const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Locator
 
     if (!isSeen && locatorPath.indexOf(node.locator) < 0) {
       seenNodes.add(node);
+      const parent = parents[parents.length - 1].node;
       const tuple = {parent, node};
       parents.push(tuple);
       for (const dep of node.dependencies.values())
