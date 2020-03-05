@@ -144,40 +144,36 @@ type ExecutePackageScriptOptions = {
 };
 
 export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
-  const {manifest, binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, cwd, lifecycleScript: scriptName});
+  return await xfs.mktempPromise(async binFolder => {
+    const {manifest, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, binFolder, cwd, lifecycleScript: scriptName});
 
-  const script = manifest.scripts.get(scriptName);
-  if (!script)
-    return;
+    const script = manifest.scripts.get(scriptName);
+    if (!script)
+      return;
 
-  const realExecutor = async () => {
-    return await execute(script, args, {cwd: realCwd, env, stdin, stdout, stderr});
-  };
+    const realExecutor = async () => {
+      return await execute(script, args, {cwd: realCwd, env, stdin, stdout, stderr});
+    };
 
-  const executor = await project.configuration.reduceHook(hooks => {
-    return hooks.wrapScriptExecution;
-  }, realExecutor, project, locator, scriptName, {
-    script, args, cwd: realCwd, env, stdin, stdout, stderr,
-  });
+    const executor = await project.configuration.reduceHook(hooks => {
+      return hooks.wrapScriptExecution;
+    }, realExecutor, project, locator, scriptName, {
+      script, args, cwd: realCwd, env, stdin, stdout, stderr,
+    });
 
-  try {
     return await executor();
-  } finally {
-    await xfs.removePromise(binFolder);
-  }
+  });
 }
 
 export async function executePackageShellcode(locator: Locator, command: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
-  const {binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, cwd});
+  return await xfs.mktempPromise(async binFolder => {
+    const {env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, binFolder, cwd});
 
-  try {
     return await execute(command, args, {cwd: realCwd, env, stdin, stdout, stderr});
-  } finally {
-    await xfs.removePromise(binFolder);
-  }
+  });
 }
 
-async function initializePackageEnvironment(locator: Locator, {project, cwd, lifecycleScript}: {project: Project, cwd?: PortablePath | undefined, lifecycleScript?: string}) {
+async function initializePackageEnvironment(locator: Locator, {project, binFolder, cwd, lifecycleScript}: {project: Project, binFolder: PortablePath, cwd?: PortablePath | undefined, lifecycleScript?: string}) {
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
     throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
@@ -192,21 +188,19 @@ async function initializePackageEnvironment(locator: Locator, {project, cwd, lif
     if (!linker)
       throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
 
-    return await xfs.mktempPromise(async binFolder => {
-      const env = await makeScriptEnv({project, binFolder, lifecycleScript});
+    const env = await makeScriptEnv({project, binFolder, lifecycleScript});
 
-      for (const [binaryName, [, binaryPath]] of await getPackageAccessibleBinaries(locator, {project}))
-        await makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath]);
+    for (const [binaryName, [, binaryPath]] of await getPackageAccessibleBinaries(locator, {project}))
+      await makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath]);
 
-      const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
-      const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
-      const manifest = await Manifest.find(PortablePath.dot, {baseFs: packageFs});
+    const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
+    const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
+    const manifest = await Manifest.find(PortablePath.dot, {baseFs: packageFs});
 
-      if (typeof cwd === `undefined`)
-        cwd = packageLocation;
+    if (typeof cwd === `undefined`)
+      cwd = packageLocation;
 
-      return {manifest, binFolder, env, cwd};
-    });
+    return {manifest, binFolder, env, cwd};
   }, {
     libzip: await getLibzipPromise(),
   });
