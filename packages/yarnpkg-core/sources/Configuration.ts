@@ -47,6 +47,11 @@ const IGNORED_ENV_VARIABLES = new Set([
   // "flags" is set by Netlify; they use it to specify the flags to send to the
   // CLI when running the automatic `yarn install`
   `flags`,
+
+  // "gpg" and "profile" are used by the install.sh script:
+  // https://classic.yarnpkg.com/install.sh
+  `profile`,
+  `gpg`,
 ]);
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
