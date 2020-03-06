@@ -1146,8 +1146,7 @@ export class Project {
     });
 
     const globalHash = globalHashGenerator.digest(`hex`);
-
-    const packageHashMap = new Map<LocatorHash, Buffer>();
+    const packageHashMap = new Map<LocatorHash, string>();
 
     // We'll use this function is order to compute a hash for each package
     // that exposes a build directive. If the hash changes compared to the
@@ -1155,52 +1154,49 @@ export class Project {
     // the rebuilds much more predictable than before, and to give us the tools
     // later to improve this further by explaining *why* a rebuild happened.
 
-    const getBuildHash = (locator: Locator, buildLocations: PortablePath[]) => {
-      const topHash = createHash(`sha512`);
-      topHash.update(globalHash);
+    const getBaseHash = (locator: Locator) => {
+      let hash = packageHashMap.get(locator.locatorHash);
+      if (typeof hash !== `undefined`)
+        return hash;
 
-      const traverse = (locatorHash: LocatorHash): Buffer => {
-        let packageHash = packageHashMap.get(locatorHash);
+      const pkg = this.storedPackages.get(locator.locatorHash);
+      if (typeof pkg === `undefined`)
+        throw new Error(`Assertion failed: The package should have been registered`);
 
-        if (typeof packageHash !== 'undefined')
-          return packageHash;
+      const builder = createHash(`sha512`);
+      builder.update(locator.locatorHash);
 
-        const pkg = this.storedPackages.get(locatorHash);
-        if (!pkg)
+      // To avoid the case where one dependency depends on itself somehow
+      packageHashMap.set(locator.locatorHash, `<recursive>`);
+
+      for (const descriptor of pkg.dependencies.values()) {
+        const resolution = this.storedResolutions.get(descriptor.descriptorHash);
+        if (typeof resolution === `undefined`)
+          throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, descriptor)}) should have been registered`);
+
+        const dependency = this.storedPackages.get(resolution);
+        if (typeof dependency === `undefined`)
           throw new Error(`Assertion failed: The package should have been registered`);
 
-        const hash = createHash(`sha512`);
-        hash.update(globalHash);
-        hash.update(locatorHash);
+        builder.update(getBaseHash(pkg));
+      }
 
-        for (const dependency of pkg.dependencies.values()) {
-          const resolution = this.storedResolutions.get(dependency.descriptorHash);
-          if (!resolution)
-            throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, dependency)}) should have been registered`);
+      hash = builder.digest(`hex`);
+      packageHashMap.set(locator.locatorHash, hash);
 
-          const buildHash = nextBState.get(resolution);
-          if (typeof buildHash !== `undefined`)
-            hash.update(buildHash);
+      return hash;
+    };
 
-          const dependencyHash = traverse(resolution);
-          // Prevent hang if dependencies form a lopp
-          if (dependencyHash) {
-            hash.update(dependencyHash);
-          }
-        }
+    const getBuildHash = (locator: Locator, buildLocations: PortablePath[]) => {
+      const builder = createHash(`sha512`);
 
-        packageHash = hash.digest();
+      builder.update(globalHash);
+      builder.update(getBaseHash(locator));
 
-        packageHashMap.set(locatorHash, packageHash);
+      for (const location of buildLocations)
+        builder.update(location);
 
-        return packageHash;
-      };
-
-      topHash.update(traverse(locator.locatorHash)!);
-
-      buildLocations.forEach(location => topHash.update(location));
-
-      return topHash.digest(`hex`);
+      return builder.digest(`hex`);
     };
 
     const bstatePath: PortablePath = this.configuration.get(`bstatePath`);

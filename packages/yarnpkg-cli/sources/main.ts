@@ -9,6 +9,11 @@ import {WelcomeCommand}                                     from './tools/Welcom
 function runBinary(path: PortablePath) {
   const physicalPath = npath.fromPortablePath(path);
 
+  process.on(`SIGINT`, () => {
+    // We don't want SIGINT to kill our process; we want it to kill the
+    // innermost process, whose end will cause our own to exit.
+  });
+
   if (physicalPath) {
     execFileSync(process.execPath, [physicalPath, ...process.argv.slice(2)], {
       stdio: `inherit`,
