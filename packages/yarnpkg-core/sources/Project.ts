@@ -1148,6 +1148,8 @@ export class Project {
 
     const globalHash = globalHashGenerator.digest(`hex`);
 
+    const packageHashMap = new Map<LocatorHash, Buffer | null>();
+
     // We'll use this function is order to compute a hash for each package
     // that exposes a build directive. If the hash changes compared to the
     // previous run, the package is rebuilt. This has the advantage of making
@@ -1155,22 +1157,25 @@ export class Project {
     // later to improve this further by explaining *why* a rebuild happened.
 
     const getBuildHash = (locator: Locator, buildLocations: PortablePath[]) => {
-      const hash = createHash(`sha512`);
-      hash.update(globalHash);
-
-      const seenPackages: Set<string> = new Set();
+      const topHash = createHash(`sha512`);
+      topHash.update(globalHash);
 
       const traverse = (locatorHash: LocatorHash) => {
-        hash.update(locatorHash);
+        const packageHash = packageHashMap.get(locatorHash);
 
-        if (!seenPackages.has(locatorHash))
-          seenPackages.add(locatorHash);
-        else
+        if (typeof packageHash !== 'undefined')
           return;
 
         const pkg = this.storedPackages.get(locatorHash);
         if (!pkg)
           throw new Error(`Assertion failed: The package should have been registered`);
+
+        // Mark entry in hash map as occupied to prevent endless traversal loops
+        packageHashMap.set(locator.locatorHash, null);
+
+        const hash = createHash(`sha512`);
+        hash.update(globalHash);
+        hash.update(locatorHash);
 
         for (const dependency of pkg.dependencies.values()) {
           const resolution = this.storedResolutions.get(dependency.descriptorHash);
@@ -1183,13 +1188,17 @@ export class Project {
 
           traverse(resolution);
         }
+
+        packageHashMap.set(locator.locatorHash, hash.digest());
       };
 
       traverse(locator.locatorHash);
 
-      buildLocations.forEach(location => hash.update(location));
+      topHash.update(packageHashMap.get(locator.locatorHash)!);
 
-      return hash.digest(`hex`);
+      buildLocations.forEach(location => topHash.update(location));
+
+      return topHash.digest(`hex`);
     };
 
     const bstatePath: PortablePath = this.configuration.get(`bstatePath`);
