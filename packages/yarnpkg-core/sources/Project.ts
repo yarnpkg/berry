@@ -1148,7 +1148,7 @@ export class Project {
 
     const globalHash = globalHashGenerator.digest(`hex`);
 
-    const packageHashMap = new Map<LocatorHash, Buffer | null>();
+    const packageHashMap = new Map<LocatorHash, Buffer>();
 
     // We'll use this function is order to compute a hash for each package
     // that exposes a build directive. If the hash changes compared to the
@@ -1160,18 +1160,15 @@ export class Project {
       const topHash = createHash(`sha512`);
       topHash.update(globalHash);
 
-      const traverse = (locatorHash: LocatorHash) => {
-        const packageHash = packageHashMap.get(locatorHash);
+      const traverse = (locatorHash: LocatorHash): Buffer => {
+        let packageHash = packageHashMap.get(locatorHash);
 
         if (typeof packageHash !== 'undefined')
-          return;
+          return packageHash;
 
         const pkg = this.storedPackages.get(locatorHash);
         if (!pkg)
           throw new Error(`Assertion failed: The package should have been registered`);
-
-        // Mark entry in hash map as occupied to prevent endless traversal loops
-        packageHashMap.set(locator.locatorHash, null);
 
         const hash = createHash(`sha512`);
         hash.update(globalHash);
@@ -1186,15 +1183,21 @@ export class Project {
           if (typeof buildHash !== `undefined`)
             hash.update(buildHash);
 
-          traverse(resolution);
+          const dependencyHash = traverse(resolution);
+          // Prevent hang if dependencies form a lopp
+          if (dependencyHash) {
+            hash.update(dependencyHash);
+          }
         }
 
-        packageHashMap.set(locator.locatorHash, hash.digest());
+        packageHash = hash.digest();
+
+        packageHashMap.set(locatorHash, packageHash);
+
+        return packageHash;
       };
 
-      traverse(locator.locatorHash);
-
-      topHash.update(packageHashMap.get(locator.locatorHash)!);
+      topHash.update(traverse(locator.locatorHash)!);
 
       buildLocations.forEach(location => topHash.update(location));
 
