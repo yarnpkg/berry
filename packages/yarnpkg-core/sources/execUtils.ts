@@ -29,26 +29,43 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
   if (hasFd(stderr))
     stdio[2] = stderr;
 
-  const subprocess = crossSpawn(fileName, args, {
+  const sigintHandler = () => {
+    // We don't want SIGINT to kill our process; we want it to kill the
+    // innermost process, whose end will cause our own to exit.
+  };
+
+  process.on(`SIGINT`, sigintHandler);
+
+  const child = crossSpawn(fileName, args, {
     cwd: npath.fromPortablePath(cwd),
     env,
     stdio,
   });
 
   if (!hasFd(stdin) && stdin !== null)
-    stdin.pipe(subprocess.stdin!);
+    stdin.pipe(child.stdin!);
 
   if (!hasFd(stdout))
-    subprocess.stdout!.pipe(stdout);
+    child.stdout!.pipe(stdout);
   if (!hasFd(stderr))
-    subprocess.stderr!.pipe(stderr);
+    child.stderr!.pipe(stderr);
 
   return new Promise((resolve, reject) => {
-    subprocess.on(`close`, (code: number) => {
+    child.on(`error`, error => {
+      process.off(`SIGINT`, sigintHandler);
+
+      reject(error);
+    });
+
+    child.on(`close`, (code: number, sig: string) => {
+      process.off(`SIGINT`, sigintHandler);
+
       if (code === 0 || !strict) {
         resolve({code});
-      } else {
+      } else if (code !== null) {
         reject(new Error(`Child "${fileName}" exited with exit code ${code}`));
+      } else {
+        reject(new Error(`Child "${fileName}" exited with signal ${sig}`));
       }
     });
   });
