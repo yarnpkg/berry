@@ -729,13 +729,11 @@ export class ZipFS extends BasePortableFakeFS {
     if (rc === -1)
       throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
 
-    // const size = this.libzip.struct.statSize(stat);
     const size = this.libzip.struct.statCompSize(stat);
     const compressionMethod = this.libzip.struct.statCompMethod(stat);
     const buffer = this.libzip.malloc(size);
 
     try {
-      // const file = this.libzip.fopenIndex(this.zip, index, 0, 0);
       const file = this.libzip.fopenIndex(this.zip, index, 0, this.libzip.ZIP_FL_COMPRESSED);
       if (file === 0)
         throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
@@ -754,7 +752,6 @@ export class ZipFS extends BasePortableFakeFS {
         const data = Buffer.from(memory);
 
         return new Promise((resolve, reject) => compressionMethod > 0 ? zlib.inflateRaw(data, (error, result) => error ? reject(error) : resolve(result)) : resolve(data));
-        // return data;
       } finally {
         this.libzip.fclose(file);
       }
@@ -770,13 +767,11 @@ export class ZipFS extends BasePortableFakeFS {
     if (rc === -1)
       throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
 
-    // const size = this.libzip.struct.statSize(stat);
     const size = this.libzip.struct.statCompSize(stat);
     const compressionMethod = this.libzip.struct.statCompMethod(stat);
     const buffer = this.libzip.malloc(size);
 
     try {
-      // const file = this.libzip.fopenIndex(this.zip, index, 0, 0);
       const file = this.libzip.fopenIndex(this.zip, index, 0, this.libzip.ZIP_FL_COMPRESSED);
       if (file === 0)
         throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
@@ -795,7 +790,6 @@ export class ZipFS extends BasePortableFakeFS {
         const data = Buffer.from(memory);
 
         return compressionMethod > 0 ? zlib.inflateRawSync(data) : data;
-        // return data;
       } finally {
         this.libzip.fclose(file);
       }
