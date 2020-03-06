@@ -33,6 +33,16 @@ unsigned int zipstruct_stat_size(struct zip_stat * st)
     return st->size;
 }
 
+unsigned int zipstruct_stat_comp_size(struct zip_stat * st)
+{
+    return st->comp_size;
+}
+
+unsigned int zipstruct_stat_comp_method(struct zip_stat * st)
+{
+    return st->comp_method;
+}
+
 unsigned int zipstruct_stat_mtime(struct zip_stat * st)
 {
     return st->mtime;
