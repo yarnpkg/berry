@@ -1,8 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@yarnpkg/core';
 import {Locator, MessageName}                          from '@yarnpkg/core';
 import {httpUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
-import {PortablePath, CwdFS, npath, ppath, xfs}        from '@yarnpkg/fslib';
-import {tmpNameSync}                                   from 'tmp';
+import {PortablePath, CwdFS, ppath, xfs}               from '@yarnpkg/fslib';
 
 import * as githubUtils                                from './githubUtils';
 
@@ -43,24 +42,25 @@ export class GithubFetcher implements Fetcher {
       configuration: opts.project.configuration,
     });
 
-    const extractPath = npath.toPortablePath(tmpNameSync());
-    const extractTarget = new CwdFS(extractPath);
+    return await xfs.mktempPromise(async extractPath => {
+      const extractTarget = new CwdFS(extractPath);
 
-    await tgzUtils.extractArchiveTo(sourceBuffer, extractTarget, {
-      stripComponents: 1,
-    });
+      await tgzUtils.extractArchiveTo(sourceBuffer, extractTarget, {
+        stripComponents: 1,
+      });
 
-    const packagePath = ppath.join(extractPath, `package.tgz` as PortablePath);
-    await scriptUtils.prepareExternalProject(extractPath, packagePath, {
-      configuration: opts.project.configuration,
-      report: opts.report,
-    });
+      const packagePath = ppath.join(extractPath, `package.tgz` as PortablePath);
+      await scriptUtils.prepareExternalProject(extractPath, packagePath, {
+        configuration: opts.project.configuration,
+        report: opts.report,
+      });
 
-    const packedBuffer = await xfs.readFilePromise(packagePath);
+      const packedBuffer = await xfs.readFilePromise(packagePath);
 
-    return await tgzUtils.convertToZip(packedBuffer, {
-      stripComponents: 1,
-      prefixPath: structUtils.getIdentVendorPath(locator),
+      return await tgzUtils.convertToZip(packedBuffer, {
+        stripComponents: 1,
+        prefixPath: structUtils.getIdentVendorPath(locator),
+      });
     });
   }
 

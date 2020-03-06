@@ -1,9 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                   from '@yarnpkg/cli';
-import {Configuration, Project}                                from '@yarnpkg/core';
-import {scriptUtils, structUtils}                              from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
-import {Command, Usage}                                        from 'clipanion';
-import tmp                                                     from 'tmp';
+import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
+import {Configuration, Project}              from '@yarnpkg/core';
+import {scriptUtils, structUtils}            from '@yarnpkg/core';
+import {Filename, ppath, toFilename, xfs}    from '@yarnpkg/fslib';
+import {Command, Usage}                      from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class DlxCommand extends BaseCommand {
@@ -38,9 +37,10 @@ export default class DlxCommand extends BaseCommand {
 
   @Command.Path(`dlx`)
   async execute() {
-    const tmpDir = await createTemporaryDirectory(toFilename(`dlx-${process.pid}`));
+    await xfs.mktempPromise(async baseDir => {
+      const tmpDir = ppath.join(baseDir, `dlx-${process.pid}` as Filename);
+      await xfs.mkdirPromise(tmpDir);
 
-    try {
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`package.json`)), `{}\n`);
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`yarn.lock`)), ``);
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`.yarnrc.yml`)), `enableGlobalCache: true\n`);
@@ -72,29 +72,6 @@ export default class DlxCommand extends BaseCommand {
         stdout: this.context.stdout,
         stderr: this.context.stderr,
       });
-    } finally {
-      await xfs.removePromise(tmpDir);
-    }
-  }
-}
-
-function createTemporaryDirectory(name?: Filename) {
-  return new Promise<PortablePath>((resolve, reject) => {
-    tmp.dir({unsafeCleanup: false}, (error, dirPath) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(npath.toPortablePath(dirPath));
-      }
     });
-  }).then(async dirPath => {
-    dirPath = await xfs.realpathPromise(dirPath);
-
-    if (name) {
-      dirPath = ppath.join(dirPath, name);
-      await xfs.mkdirpPromise(dirPath);
-    }
-
-    return dirPath;
-  });
+  }
 }

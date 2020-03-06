@@ -1,10 +1,9 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions}          from '@yarnpkg/core';
-import {Locator, MessageName}                                from '@yarnpkg/core';
-import {execUtils, scriptUtils, structUtils, tgzUtils}       from '@yarnpkg/core';
-import {NodeFS, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
-import {dirSync, tmpNameSync}                                from 'tmp';
+import {Fetcher, FetchOptions, MinimalFetchOptions}                    from '@yarnpkg/core';
+import {Locator, MessageName}                                          from '@yarnpkg/core';
+import {execUtils, scriptUtils, structUtils, tgzUtils}                 from '@yarnpkg/core';
+import {Filename, NodeFS, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
 
-import {PROTOCOL}                                            from './constants';
+import {PROTOCOL}                                                      from './constants';
 
 export class ExecFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -69,38 +68,40 @@ export class ExecFetcher implements Fetcher {
     const generatorFs = effectiveParentFetch.packageFs;
     const generatorPath = ppath.resolve(ppath.resolve(generatorFs.getRealPath(), effectiveParentFetch.prefixPath), path);
 
-    // Execute the specified script in the temporary directory
-    const cwd = await this.generatePackage(locator, generatorPath, opts);
+    return xfs.mktempPromise(async cwd => {
+      // Execute the specified script in the temporary directory
+      await this.generatePackage(cwd, locator, generatorPath, opts);
 
-    // Make sure the script generated the package
-    if (!xfs.existsSync(ppath.join(cwd, toFilename(`build`))))
-      throw new Error(`The script should have generated a build directory`);
+      // Make sure the script generated the package
+      if (!xfs.existsSync(ppath.join(cwd, toFilename(`build`))))
+        throw new Error(`The script should have generated a build directory`);
 
-    return await tgzUtils.makeArchiveFromDirectory(ppath.join(cwd, toFilename(`build`)), {
-      prefixPath: structUtils.getIdentVendorPath(locator),
+      return await tgzUtils.makeArchiveFromDirectory(ppath.join(cwd, toFilename(`build`)), {
+        prefixPath: structUtils.getIdentVendorPath(locator),
+      });
     });
   }
 
-  private async generatePackage(locator: Locator, generatorPath: PortablePath, opts: FetchOptions) {
-    const cwd = npath.toPortablePath(dirSync().name);
-    const env = await scriptUtils.makeScriptEnv({project: opts.project});
+  private async generatePackage(cwd: PortablePath, locator: Locator, generatorPath: PortablePath, opts: FetchOptions) {
+    return await xfs.mktempPromise(async binFolder => {
+      const env = await scriptUtils.makeScriptEnv({project: opts.project, binFolder});
 
-    const logFile = npath.toPortablePath(tmpNameSync({
-      prefix: `buildfile-`,
-      postfix: `.log`,
-    }));
+      return await xfs.mktempPromise(async logDir => {
+        const logFile = ppath.join(logDir, `buildfile.log` as Filename);
 
-    const stdin = null;
-    const stdout = xfs.createWriteStream(logFile);
-    const stderr = stdout;
+        const stdin = null;
+        const stdout = xfs.createWriteStream(logFile);
+        const stderr = stdout;
 
-    stdout.write(`# This file contains the result of Yarn generating a package (${structUtils.stringifyLocator(locator)})\n`);
-    stdout.write(`\n`);
+        stdout.write(`# This file contains the result of Yarn generating a package (${structUtils.stringifyLocator(locator)})\n`);
+        stdout.write(`\n`);
 
-    const {code} = await execUtils.pipevp(process.execPath, [npath.fromPortablePath(generatorPath), structUtils.stringifyIdent(locator)], {cwd, env, stdin, stdout, stderr});
-    if (code !== 0)
-      throw new Error(`Package generation failed (exit code ${code}, logs can be found here: ${logFile})`);
-
-    return cwd;
+        const {code} = await execUtils.pipevp(process.execPath, [npath.fromPortablePath(generatorPath), structUtils.stringifyIdent(locator)], {cwd, env, stdin, stdout, stderr});
+        if (code !== 0) {
+          xfs.detachTemp(logDir);
+          throw new Error(`Package generation failed (exit code ${code}, logs can be found here: ${logFile})`);
+        }
+      });
+    });
   }
 }

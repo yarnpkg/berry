@@ -1,8 +1,7 @@
 import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename} from '@yarnpkg/fslib';
-import {npath, ppath, toFilename, xfs}                         from '@yarnpkg/fslib';
+import {ppath, toFilename, xfs}                                from '@yarnpkg/fslib';
 import {getLibzipPromise}                                      from '@yarnpkg/libzip';
 import fs                                                      from 'fs';
-import {tmpNameSync}                                           from 'tmp';
 
 import {Configuration}                                         from './Configuration';
 import {MessageName}                                           from './MessageName';
@@ -151,7 +150,9 @@ export class Cache {
       if (mirrorPath === null || !xfs.existsSync(mirrorPath))
         return await loader!();
 
-      const tempPath = npath.toPortablePath(tmpNameSync());
+      const tempDir = await xfs.mktempPromise();
+      const tempPath = ppath.join(tempDir, this.getLocatorFilename(locator));
+
       await xfs.copyFilePromise(mirrorPath, tempPath, fs.constants.COPYFILE_FICLONE);
 
       return new ZipFS(tempPath, {

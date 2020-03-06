@@ -1,7 +1,6 @@
 import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
 import klaw                                        from 'klaw';
 import tarFs                                       from 'tar-fs';
-import tmp                                         from 'tmp';
 import zlib                                        from 'zlib';
 import {Gzip}                                      from 'zlib';
 
@@ -141,43 +140,23 @@ export const unpackToDirectory = (target: PortablePath, source: PortablePath): P
   });
 };
 
-export const createTemporaryFolder = (name?: Filename): Promise<PortablePath> => {
-  return new Promise<PortablePath>((resolve, reject) => {
-    tmp.dir({unsafeCleanup: true}, async (error: Error, dirPath: string) => {
-      if (error) {
-        reject(error);
-      } else {
-        let realPath = await xfs.realpathPromise(npath.toPortablePath(dirPath));
+export const createTemporaryFolder = async (name?: Filename): Promise<PortablePath> => {
+  let tmp = await xfs.mktempPromise();
 
-        if (name) {
-          realPath = ppath.join(realPath, name as PortablePath);
-          await exports.mkdirp(dirPath);
-        }
+  if (typeof name !== `undefined`) {
+    tmp = ppath.join(tmp, name);
+    await xfs.mkdirPromise(tmp);
+  }
 
-        resolve(realPath);
-      }
-    });
-  });
+  return tmp;
 };
 
-export const createTemporaryFile = async (filePath: PortablePath): Promise<PortablePath> => {
-  if (filePath) {
-    if (ppath.normalize(filePath).match(/^(\.\.)?\//))
-      throw new Error('A temporary file path must be a forward path');
+export const createTemporaryFile = async (filePath: PortablePath = `file` as PortablePath): Promise<PortablePath> => {
+  if (ppath.normalize(filePath).match(/^(\.\.)?\//))
+    throw new Error('A temporary file path must be a forward path');
 
-    const folderPath = await exports.createTemporaryFolder();
-    return ppath.resolve(folderPath, filePath as PortablePath);
-  } else {
-    return new Promise((resolve, reject) => {
-      tmp.file({discardDescriptor: true}, (error, filePath) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(npath.toPortablePath(filePath));
-        }
-      });
-    });
-  }
+  const folderPath = await exports.createTemporaryFolder();
+  return ppath.resolve(folderPath, filePath as PortablePath);
 };
 
 export const mkdirp = async (target: PortablePath): Promise<void> =>

@@ -83,15 +83,17 @@ export default class InitCommand extends BaseCommand {
     if (this.yes)
       args.push(`-y`);
 
-    const {code} = await execUtils.pipevp(`yarn`, [`init`, ...args], {
-      cwd: this.context.cwd,
-      stdin: this.context.stdin,
-      stdout: this.context.stdout,
-      stderr: this.context.stderr,
-      env: await scriptUtils.makeScriptEnv(),
-    });
+    return await xfs.mktempPromise(async binFolder => {
+      const {code} = await execUtils.pipevp(`yarn`, [`init`, ...args], {
+        cwd: this.context.cwd,
+        stdin: this.context.stdin,
+        stdout: this.context.stdout,
+        stderr: this.context.stderr,
+        env: await scriptUtils.makeScriptEnv({binFolder}),
+      });
 
-    return code;
+      return code;
+    });
   }
 
   async executeRegular(configuration: Configuration) {

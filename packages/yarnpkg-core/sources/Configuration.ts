@@ -6,7 +6,6 @@ import {UsageError}                                            from 'clipanion';
 import isCI                                                    from 'is-ci';
 import semver                                                  from 'semver';
 import {PassThrough, Writable}                                 from 'stream';
-import {tmpNameSync}                                           from 'tmp';
 
 import {CorePlugin}                                            from './CorePlugin';
 import {Manifest}                                              from './Manifest';
@@ -892,11 +891,10 @@ export class Configuration {
     return this.values.get(key) as T;
   }
 
-  getSubprocessStreams(prefix: string, {header, report}: {header?: string, report: Report}) {
+  getSubprocessStreams(logFile: PortablePath, {header, prefix, report}: {header?: string, prefix: string, report: Report}) {
     let stdout: Writable;
     let stderr: Writable;
 
-    const logFile = npath.toPortablePath(tmpNameSync({prefix: `logfile-`, postfix: `.log`}));
     const logStream = xfs.createWriteStream(logFile);
 
     if (this.get(`enableInlineBuilds`)) {
@@ -919,7 +917,7 @@ export class Configuration {
       }
     }
 
-    return {logFile, stdout, stderr};
+    return {stdout, stderr};
   }
 
   makeResolver() {

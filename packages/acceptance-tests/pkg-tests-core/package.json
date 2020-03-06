@@ -8,7 +8,6 @@
     "@types/minimatch": "^3.0.3",
     "@types/semver": "^7.1.0",
     "@types/tar-fs": "^1.16.1",
-    "@types/tmp": "^0.0.33",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.29",
     "@yarnpkg/core": "workspace:^2.0.0-rc.23",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.16",
@@ -20,8 +19,7 @@
     "semver": "^7.1.2",
     "serve-static": "^1.14.1",
     "super-resolve": "^1.0.0",
-    "tar-fs": "^1.16.0",
-    "tmp": "^0.1.0"
+    "tar-fs": "^1.16.0"
   },
   "repository": {
     "type": "git",

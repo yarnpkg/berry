@@ -9,9 +9,7 @@
     "stream-buffers": "^3.0.2"
   },
   "devDependencies": {
-    "@types/cross-spawn": "6.0.0",
-    "@types/tmp": "^0.0.33",
-    "tmp": "^0.1.0"
+    "@types/cross-spawn": "6.0.0"
   },
   "scripts": {
     "postpack": "rm -rf lib",

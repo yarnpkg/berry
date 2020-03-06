@@ -1,9 +1,10 @@
-import fs                                from 'fs';
-import {promisify}                       from 'util';
+import fs                                                 from 'fs';
+import os                                                 from 'os';
+import {promisify}                                        from 'util';
 
-import {FakeFS}                          from './FakeFS';
-import {NodeFS}                          from './NodeFS';
-import {PortablePath, NativePath, npath} from './path';
+import {FakeFS}                                           from './FakeFS';
+import {NodeFS}                                           from './NodeFS';
+import {Filename, PortablePath, NativePath, npath, ppath} from './path';
 
 export {CreateReadStreamOptions}  from './FakeFS';
 export {CreateWriteStreamOptions} from './FakeFS';
@@ -32,6 +33,13 @@ export {ProxiedFS}                from './ProxiedFS';
 export {VirtualFS}                from './VirtualFS';
 export {ZipFS}                    from './ZipFS';
 export {ZipOpenFS}                from './ZipOpenFS';
+
+function getTempName(prefix: string) {
+  const tmpdir = npath.toPortablePath(os.tmpdir());
+  const hash = Math.ceil(Math.random() * 0x100000000).toString(16).padStart(8, `0`);
+
+  return ppath.join(tmpdir, `${prefix}${hash}` as Filename);
+}
 
 export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void {
   const SYNC_IMPLEMENTATIONS = new Set([
@@ -168,6 +176,8 @@ export function extendFs(realFs: typeof fs, fakeFs: FakeFS<NativePath>): typeof 
 }
 
 export type XFS = NodeFS & {
+  detachTemp(p: PortablePath): void;
+
   mktempSync(): PortablePath;
   mktempSync<T>(cb: (p: PortablePath) => T): T;
 
@@ -175,61 +185,97 @@ export type XFS = NodeFS & {
   mktempPromise<T>(cb: (p: PortablePath) => Promise<T>): Promise<T>;
 };
 
-export const xfs: XFS = Object.assign(new NodeFS(), {
-  mktempSync<T>(cb?: (p: PortablePath) => T) {
-    // We lazily load `tmp` because it injects itself into the `process`
-    // events (to clean the folders at exit time), and it may lead to
-    // large memory leaks. Better avoid loading it until we can't do
-    // otherwise (ideally the fix would be for `tmp` itself to only
-    // attach cleaners after the first call).
-    const tmp = require(`tmp`);
+const tmpdirs = new Set<PortablePath>();
 
-    const {name, removeCallback} = tmp.dirSync({unsafeCleanup: true});
-    if (typeof cb === `undefined`) {
-      return npath.toPortablePath(name);
-    } else {
+const cleanExit = () => {
+  process.off(`exit`, cleanExit);
+
+  for (const p of tmpdirs) {
+    tmpdirs.delete(p);
+    try {
+      xfs.removeSync(p);
+    } catch {
+      // Too bad if there's an error
+    }
+  }
+};
+
+process.on(`exit`, cleanExit);
+
+export const xfs: XFS = Object.assign(new NodeFS(), {
+  detachTemp(p: PortablePath) {
+    tmpdirs.delete(p);
+  },
+
+  mktempSync<T>(this: XFS, cb?: (p: PortablePath) => T) {
+    while (true) {
+      const p = getTempName(`xfs-`);
+
       try {
-        return cb(npath.toPortablePath(name));
-      } finally {
-        removeCallback();
+        this.mkdirSync(p);
+      } catch (error) {
+        if (error.code === `EEXIST`) {
+          continue;
+        } else {
+          throw error;
+        }
+      }
+
+      const realP = this.realpathSync(p);
+      tmpdirs.add(realP);
+
+      if (typeof cb !== `undefined`) {
+        try {
+          return cb(realP);
+        } finally {
+          if (tmpdirs.has(realP)) {
+            tmpdirs.delete(realP);
+            try {
+              this.removeSync(realP);
+            } catch {
+              // Too bad if there's an error
+            }
+          }
+        }
+      } else {
+        return p;
       }
     }
   },
 
-  mktempPromise<T>(cb?: (p: PortablePath) => Promise<T>) {
-    // We lazily load `tmp` because it injects itself into the `process`
-    // events (to clean the folders at exit time), and it may lead to
-    // large memory leaks. Better avoid loading it until we can't do
-    // otherwise (ideally the fix would be for `tmp` itself to only
-    // attach cleaners after the first call).
-    const tmp = require(`tmp`);
+  async mktempPromise<T>(this: XFS, cb?: (p: PortablePath) => Promise<T>) {
+    while (true) {
+      const p = getTempName(`xfs-`);
 
-    if (typeof cb === `undefined`) {
-      return new Promise<PortablePath>((resolve, reject) => {
-        tmp.dir({unsafeCleanup: true}, (err: Error | null, path: NativePath) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(npath.toPortablePath(path));
+      try {
+        await this.mkdirPromise(p);
+      } catch (error) {
+        if (error.code === `EEXIST`) {
+          continue;
+        } else {
+          throw error;
+        }
+      }
+
+      const realP = await this.realpathPromise(p);
+      tmpdirs.add(realP);
+
+      if (typeof cb !== `undefined`) {
+        try {
+          return await cb(realP);
+        } finally {
+          if (tmpdirs.has(realP)) {
+            tmpdirs.delete(realP);
+            try {
+              await this.removePromise(realP);
+            } catch {
+              // Too bad if there's an error
+            }
           }
-        });
-      });
-    } else {
-      return new Promise<T>((resolve, reject) => {
-        tmp.dir({unsafeCleanup: true}, (err: Error | null, path: NativePath, cleanup: () => void) => {
-          if (err) {
-            reject(err);
-          } else {
-            Promise.resolve(npath.toPortablePath(path)).then(cb).then(result => {
-              cleanup();
-              resolve(result);
-            }, error => {
-              cleanup();
-              reject(error);
-            });
-          }
-        });
-      });
+        }
+      } else {
+        return realP;
+      }
     }
   },
 });

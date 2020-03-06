@@ -27,7 +27,6 @@
     "clipanion": "^2.1.5",
     "promise.prototype.finally": "^3.1.1",
     "semver": "^7.1.2",
-    "tmp": "^0.1.0",
     "yup": "^0.27.0"
   },
   "devDependencies": {

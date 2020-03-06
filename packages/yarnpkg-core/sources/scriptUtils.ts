@@ -3,7 +3,6 @@ import {xfs, npath, ppath, toFilename}                        from '@yarnpkg/fsl
 import {getLibzipPromise}                                     from '@yarnpkg/libzip';
 import {execute}                                              from '@yarnpkg/shell';
 import {PassThrough, Readable, Writable}                      from 'stream';
-import {dirSync}                                              from 'tmp';
 
 import {Configuration}                                        from './Configuration';
 import {Manifest}                                             from './Manifest';
@@ -27,18 +26,17 @@ async function makePathWrapper(location: PortablePath, name: Filename, argv0: Na
   }
 }
 
-export async function makeScriptEnv({project, lifecycleScript}: {project?: Project, lifecycleScript?: string} = {}) {
+export async function makeScriptEnv({project, binFolder, lifecycleScript}: {project?: Project, binFolder: PortablePath, lifecycleScript?: string}) {
   const scriptEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(process.env))
     if (typeof value !== `undefined`)
       scriptEnv[key.toLowerCase() !== `path` ? key : `PATH`] = value;
 
-  const nativeBinFolder = dirSync().name;
-  const binFolder = npath.toPortablePath(nativeBinFolder);
+  const nBinFolder = npath.fromPortablePath(binFolder);
 
   // We expose the base folder in the environment so that we can later add the
   // binaries for the dependencies of the active package
-  scriptEnv.BERRY_BIN_FOLDER = nativeBinFolder;
+  scriptEnv.BERRY_BIN_FOLDER = npath.fromPortablePath(nBinFolder);
 
   // Register some binaries that must be made available in all subprocesses
   // spawned by Yarn (we thus ensure that they always use the right version)
@@ -55,11 +53,11 @@ export async function makeScriptEnv({project, lifecycleScript}: {project?: Proje
     scriptEnv.INIT_CWD = npath.fromPortablePath(project.configuration.startingCwd);
 
   scriptEnv.PATH = scriptEnv.PATH
-    ? `${nativeBinFolder}${npath.delimiter}${scriptEnv.PATH}`
-    : `${nativeBinFolder}`;
+    ? `${nBinFolder}${npath.delimiter}${scriptEnv.PATH}`
+    : `${nBinFolder}`;
 
-  scriptEnv.npm_execpath = `${nativeBinFolder}${npath.sep}yarn`;
-  scriptEnv.npm_node_execpath = `${nativeBinFolder}${npath.sep}node`;
+  scriptEnv.npm_execpath = `${nBinFolder}${npath.sep}yarn`;
+  scriptEnv.npm_node_execpath = `${nBinFolder}${npath.sep}node`;
 
   const version = YarnVersion !== null
     ? `yarn/${YarnVersion}`
@@ -90,17 +88,22 @@ export async function makeScriptEnv({project, lifecycleScript}: {project?: Proje
  */
 
 export async function prepareExternalProject(cwd: PortablePath, outputPath: PortablePath, {configuration, report}: {configuration: Configuration, report: Report}) {
-  const env = await makeScriptEnv();
+  await xfs.mktempPromise(async binFolder => {
+    const env = await makeScriptEnv({binFolder});
 
-  {
-    const stdin = null;
-    const {logFile, stdout, stderr} = configuration.getSubprocessStreams(cwd, {report});
+    await xfs.mktempPromise(async logDir => {
+      const stdin = null;
 
-    const {code} = await execUtils.pipevp(`yarn`, [`pack`, `--install-if-needed`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
-    if (code !== 0) {
-      throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Packing the package failed (exit code ${code}, logs can be found here: ${logFile})`);
-    }
-  }
+      const logFile = ppath.join(logDir, `pack.log` as Filename);
+      const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: cwd, report});
+
+      const {code} = await execUtils.pipevp(`yarn`, [`pack`, `--install-if-needed`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
+      if (code !== 0) {
+        xfs.detachTemp(logDir);
+        throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Packing the package failed (exit code ${code}, logs can be found here: ${logFile})`);
+      }
+    });
+  });
 }
 
 type HasPackageScriptOption = {
@@ -141,40 +144,36 @@ type ExecutePackageScriptOptions = {
 };
 
 export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
-  const {manifest, binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, cwd, lifecycleScript: scriptName});
+  return await xfs.mktempPromise(async binFolder => {
+    const {manifest, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, binFolder, cwd, lifecycleScript: scriptName});
 
-  const script = manifest.scripts.get(scriptName);
-  if (!script)
-    return;
+    const script = manifest.scripts.get(scriptName);
+    if (!script)
+      return;
 
-  const realExecutor = async () => {
-    return await execute(script, args, {cwd: realCwd, env, stdin, stdout, stderr});
-  };
+    const realExecutor = async () => {
+      return await execute(script, args, {cwd: realCwd, env, stdin, stdout, stderr});
+    };
 
-  const executor = await project.configuration.reduceHook(hooks => {
-    return hooks.wrapScriptExecution;
-  }, realExecutor, project, locator, scriptName, {
-    script, args, cwd: realCwd, env, stdin, stdout, stderr,
-  });
+    const executor = await project.configuration.reduceHook(hooks => {
+      return hooks.wrapScriptExecution;
+    }, realExecutor, project, locator, scriptName, {
+      script, args, cwd: realCwd, env, stdin, stdout, stderr,
+    });
 
-  try {
     return await executor();
-  } finally {
-    await xfs.removePromise(binFolder);
-  }
+  });
 }
 
 export async function executePackageShellcode(locator: Locator, command: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
-  const {binFolder, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, cwd});
+  return await xfs.mktempPromise(async binFolder => {
+    const {env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, binFolder, cwd});
 
-  try {
     return await execute(command, args, {cwd: realCwd, env, stdin, stdout, stderr});
-  } finally {
-    await xfs.removePromise(binFolder);
-  }
+  });
 }
 
-async function initializePackageEnvironment(locator: Locator, {project, cwd, lifecycleScript}: {project: Project, cwd?: PortablePath | undefined, lifecycleScript?: string}) {
+async function initializePackageEnvironment(locator: Locator, {project, binFolder, cwd, lifecycleScript}: {project: Project, binFolder: PortablePath, cwd?: PortablePath | undefined, lifecycleScript?: string}) {
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
     throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
@@ -189,8 +188,7 @@ async function initializePackageEnvironment(locator: Locator, {project, cwd, lif
     if (!linker)
       throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
 
-    const env = await makeScriptEnv({project, lifecycleScript});
-    const binFolder = npath.toPortablePath(env.BERRY_BIN_FOLDER);
+    const env = await makeScriptEnv({project, binFolder, lifecycleScript});
 
     for (const [binaryName, [, binaryPath]] of await getPackageAccessibleBinaries(locator, {project}))
       await makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath]);
@@ -317,20 +315,22 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
   if (!binary)
     throw new Error(`Binary not found (${binaryName}) for ${structUtils.prettyLocator(project.configuration, locator)}`);
 
-  const [, binaryPath] = binary;
-  const env = await makeScriptEnv({project});
+  return await xfs.mktempPromise(async binFolder => {
+    const [, binaryPath] = binary;
+    const env = await makeScriptEnv({project, binFolder});
 
-  for (const [binaryName, [, binaryPath]] of packageAccessibleBinaries)
-    await makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [binaryPath]);
+    for (const [binaryName, [, binaryPath]] of packageAccessibleBinaries)
+      await makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [binaryPath]);
 
-  let result;
-  try {
-    result = await execUtils.pipevp(process.execPath, [...nodeArgs, binaryPath, ...args], {cwd, env, stdin, stdout, stderr});
-  } finally {
-    await xfs.removePromise(env.BERRY_BIN_FOLDER as PortablePath);
-  }
+    let result;
+    try {
+      result = await execUtils.pipevp(process.execPath, [...nodeArgs, binaryPath, ...args], {cwd, env, stdin, stdout, stderr});
+    } finally {
+      await xfs.removePromise(env.BERRY_BIN_FOLDER as PortablePath);
+    }
 
-  return result.code;
+    return result.code;
+  });
 }
 
 type ExecuteWorkspaceAccessibleBinaryOptions = {

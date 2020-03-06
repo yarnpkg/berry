@@ -4219,13 +4219,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/tmp@npm:^0.0.33":
-  version: 0.0.33
-  resolution: "@types/tmp@npm:0.0.33"
-  checksum: 2/93442cc384e3545e4ba625c74de37fa1011a82a440e6d762875db20977badaba5681ad20e88280727ca94777b37a030a421646ccd9187a39eae582d7012852d0
-  languageName: node
-  linkType: hard
-
 "@types/treeify@npm:^1.0.0":
   version: 1.0.0
   resolution: "@types/treeify@npm:1.0.0"
@@ -4897,7 +4890,6 @@ __metadata:
     micromatch: ^4.0.2
     promise.prototype.finally: ^3.1.1
     semver: ^7.1.2
-    tmp: ^0.1.0
     typescript: ^3.7.5
     yup: ^0.27.0
   peerDependencies:
@@ -4917,7 +4909,6 @@ __metadata:
     "@types/node": ^13.7.0
     "@types/semver": ^7.1.0
     "@types/tar": ^4.0.0
-    "@types/tmp": ^0.0.33
     "@types/tunnel": ^0.0.0
     "@yarnpkg/cli": "workspace:^2.0.0-rc.29"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.16"
@@ -4946,7 +4937,6 @@ __metadata:
     semver: ^7.1.2
     stream-to-promise: ^2.2.0
     tar: ^4.4.6
-    tmp: ^0.1.0
     tunnel: ^0.0.6
   languageName: unknown
   linkType: soft
@@ -4975,7 +4965,6 @@ __metadata:
   resolution: "@yarnpkg/fslib@workspace:packages/yarnpkg-fslib"
   dependencies:
     "@yarnpkg/libzip": "workspace:^2.0.0-rc.10"
-    tmp: ^0.1.0
   languageName: unknown
   linkType: soft
 
@@ -5168,13 +5157,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-dlx@workspace:packages/plugin-dlx"
   dependencies:
-    "@types/tmp": ^0.0.33
     "@yarnpkg/cli": "workspace:^2.0.0-rc.29"
     "@yarnpkg/core": "workspace:^2.0.0-rc.23"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.16"
     "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.7"
     clipanion: ^2.1.5
-    tmp: ^0.1.0
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.29
     "@yarnpkg/core": ^2.0.0-rc.23
@@ -5208,11 +5195,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-exec@workspace:packages/plugin-exec"
   dependencies:
-    "@types/tmp": ^0.0.33
     "@yarnpkg/builder": "workspace:^2.0.0-rc.19"
     "@yarnpkg/core": "workspace:^2.0.0-rc.23"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.16"
-    tmp: ^0.1.0
     typescript: ^3.7.5
   peerDependencies:
     "@yarnpkg/core": ^2.0.0-rc.23
@@ -5239,7 +5224,6 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.16"
     git-url-parse: 11.1.2
     semver: ^7.1.2
-    tmp: ^0.1.0
   peerDependencies:
     "@yarnpkg/core": ^2.0.0-rc.23
   languageName: unknown
@@ -5249,11 +5233,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-github@workspace:packages/plugin-github"
   dependencies:
-    "@types/tmp": ^0.0.33
     "@yarnpkg/core": "workspace:^2.0.0-rc.23"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.16"
     "@yarnpkg/plugin-git": "workspace:^2.0.0-rc.16"
-    tmp: ^0.1.0
   peerDependencies:
     "@yarnpkg/core": ^2.0.0-rc.23
     "@yarnpkg/plugin-git": ^2.0.0-rc.16
@@ -5571,12 +5553,10 @@ __metadata:
   resolution: "@yarnpkg/shell@workspace:packages/yarnpkg-shell"
   dependencies:
     "@types/cross-spawn": 6.0.0
-    "@types/tmp": ^0.0.33
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.16"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.10"
     cross-spawn: 6.0.5
     stream-buffers: ^3.0.2
-    tmp: ^0.1.0
   languageName: unknown
   linkType: soft
 
@@ -19673,7 +19653,6 @@ fsevents@^1.2.2:
     "@types/semver": ^7.1.0
     "@types/serve-static": 1.13.3
     "@types/tar-fs": ^1.16.1
-    "@types/tmp": ^0.0.33
     "@yarnpkg/cli": "workspace:^2.0.0-rc.29"
     "@yarnpkg/core": "workspace:^2.0.0-rc.23"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.16"
@@ -19686,7 +19665,6 @@ fsevents@^1.2.2:
     serve-static: ^1.14.1
     super-resolve: ^1.0.0
     tar-fs: ^1.16.0
-    tmp: ^0.1.0
   languageName: unknown
   linkType: soft
 

@@ -9,9 +9,6 @@ export const dynamicLibs = new Set([
   `clipanion`,
   `semver`,
   `yup`,
-
-  // This one register `exit` handlers; it would generate warnings on "foreach" if a plugin happened to use it
-  `tmp`,
 ]);
 
 export const isDynamicLib = (request: string) => {

@@ -5,15 +5,13 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.16",
     "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.7",
-    "clipanion": "^2.1.5",
-    "tmp": "^0.1.0"
+    "clipanion": "^2.1.5"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "^2.0.0-rc.29",
     "@yarnpkg/core": "^2.0.0-rc.23"
   },
   "devDependencies": {
-    "@types/tmp": "^0.0.33",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.29",
     "@yarnpkg/core": "workspace:^2.0.0-rc.23"
   },
