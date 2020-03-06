@@ -9,8 +9,7 @@
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.17",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.18",
     "clipanion": "^2.1.5",
-    "micromatch": "^4.0.2",
-    "p-limit": "^2.2.0"
+    "micromatch": "^4.0.2"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "^2.0.0-rc.29",

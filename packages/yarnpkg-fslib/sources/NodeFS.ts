@@ -1,7 +1,7 @@
 import fs, {Stats}                                          from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions}  from './FakeFS';
-import {Dirent}                                             from './FakeFS';
+import {Dirent, SymlinkType}                                from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}               from './FakeFS';
 import {MkdirOptions, WatchOptions, WatchCallback, Watcher} from './FakeFS';
 import {FSPath, PortablePath, Filename, npath}              from './path';
@@ -253,18 +253,18 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.rmdirSync(npath.fromPortablePath(p));
   }
 
-  async symlinkPromise(target: PortablePath, p: PortablePath) {
-    const type: 'dir' | 'file' = target.endsWith(`/`) ? `dir` : `file`;
+  async symlinkPromise(target: PortablePath, p: PortablePath, type?: SymlinkType) {
+    const symlinkType: SymlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
 
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.symlink(npath.fromPortablePath(target.replace(/\/+$/, ``) as PortablePath), npath.fromPortablePath(p), type, this.makeCallback(resolve, reject));
+      this.realFs.symlink(npath.fromPortablePath(target.replace(/\/+$/, ``) as PortablePath), npath.fromPortablePath(p), symlinkType, this.makeCallback(resolve, reject));
     });
   }
 
-  symlinkSync(target: PortablePath, p: PortablePath) {
-    const type: 'dir' | 'file' = target.endsWith(`/`) ? `dir` : `file`;
+  symlinkSync(target: PortablePath, p: PortablePath, type?: SymlinkType) {
+    const symlinkType: SymlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
 
-    return this.realFs.symlinkSync(npath.fromPortablePath(target.replace(/\/+$/, ``) as PortablePath), npath.fromPortablePath(p), type);
+    return this.realFs.symlinkSync(npath.fromPortablePath(target.replace(/\/+$/, ``) as PortablePath), npath.fromPortablePath(p), symlinkType);
   }
 
   readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;

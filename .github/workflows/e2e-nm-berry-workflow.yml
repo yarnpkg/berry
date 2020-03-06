@@ -1,0 +1,51 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+    paths:
+    - .github/workflows/e2e-nm-berry-workflow.yml
+    - scripts/e2e-setup-ci.sh
+    - packages/yarnpkg-pnpify/sources/hoist.ts
+    - packages/yarnpkg-pnpify/sources/buildNodeModulesTree.ts
+    - packages/plugin-node-modules/sources/NodeModulesLinker.ts
+  pull_request:
+    paths:
+    - .github/workflows/e2e-nm-berry-workflow.yml
+    - scripts/e2e-setup-ci.sh
+    - packages/yarnpkg-pnpify/sources/hoist.ts
+    - packages/yarnpkg-pnpify/sources/buildNodeModulesTree.ts
+    - packages/plugin-node-modules/sources/NodeModulesLinker.ts
+
+name: 'E2E NM Berry Install'
+jobs:
+  chore:
+    strategy:
+      matrix:
+        platform:
+        - ubuntu-latest
+        - windows-latest
+
+    name: 'Validating berry install via node-modules linker on ${{matrix.platform}}'
+    runs-on: ${{matrix.platform}}
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+      shell: bash
+
+    - name: 'Running node_modules install with self-validation'
+      run: |
+        source scripts/e2e-setup-ci.sh
+        cd -
+        NM_DEBUG_LEVEL=1 YARN_NODE_LINKER=node-modules yarn
+      shell: bash

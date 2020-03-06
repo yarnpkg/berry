@@ -11,7 +11,6 @@ import {NodeModulesLocatorMap, buildLocatorMap, buildNodeModulesTree}           
 import {PnpSettings, makeRuntimeApi}                                                                  from '@yarnpkg/pnp';
 import {UsageError}                                                                                   from 'clipanion';
 import fs                                                                                             from 'fs';
-import pLimit                                                                                         from 'p-limit';
 
 const NODE_MODULES = `node_modules` as Filename;
 const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
@@ -287,7 +286,7 @@ const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean, excl
   }
 };
 
-const ADD_CONCURRENT_LIMIT = 4;
+const CONCURRENT_OPERATION_LIMIT = 4;
 
 type LocatorKey = string;
 type LocationNode = { children: Map<Filename, LocationNode>, locator?: LocatorKey };
@@ -378,6 +377,9 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
   return locationTree;
 };
 
+const symlinkPromise = async (srcDir: PortablePath, dstDir: PortablePath) =>
+  xfs.symlinkPromise(process.platform !== 'win32' ? ppath.relative(ppath.dirname(dstDir), srcDir) : srcDir, dstDir, process.platform === 'win32' ? 'junction' : undefined);
+
 const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs}: {baseFs: FakeFS<PortablePath>}) => {
   await xfs.mkdirpPromise(dstDir);
   const entries = await baseFs.readdirPromise(srcDir, {withFileTypes: true});
@@ -391,7 +393,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs}:
       await xfs.chmodPromise(dstPath, mode);
     } else if (srcType.isSymbolicLink()) {
       const target = await baseFs.readlinkPromise(srcPath);
-      await xfs.symlinkPromise(target, dstPath);
+      await symlinkPromise(ppath.resolve(srcPath, target), dstPath);
     } else {
       throw new Error(`Unsupported file type (file: ${srcPath}, mode: 0o${await xfs.statSync(srcPath).mode.toString(8).padStart(6, `0`)})`);
     }
@@ -442,11 +444,9 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
   const prevLocationTree = refineNodeModulesRoots(buildLocationTree(preinstallState, {skipPrefix: project.cwd}));
   const locationTree = buildLocationTree(installState, {skipPrefix: project.cwd});
 
-  const limit = pLimit(ADD_CONCURRENT_LIMIT);
-
   const addQueue: Promise<void>[] = [];
   const addModule = async ({srcDir, dstDir, linkType, keepNodeModules}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, keepNodeModules: boolean}) => {
-    addQueue.push(limit(async () => {
+    const promise: Promise<any> = (async () => {
       try {
         // Soft links to themselves are used to denote workspace packages, we
         // should just ignore them
@@ -456,7 +456,7 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
         await removeDir(dstDir, {excludeNodeModules: keepNodeModules});
         if (linkType === LinkType.SOFT) {
           await xfs.mkdirpPromise(ppath.dirname(dstDir));
-          await xfs.symlinkPromise(ppath.relative(ppath.dirname(dstDir), srcDir), dstDir);
+          await symlinkPromise(ppath.resolve(srcDir), dstDir);
         } else {
           await copyPromise(dstDir, srcDir, {baseFs});
         }
@@ -466,53 +466,70 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
       } finally {
         progress.tick();
       }
-    }));
+    })().then(() => addQueue.splice(addQueue.indexOf(promise), 1));
+    addQueue.push(promise);
+    if (addQueue.length > CONCURRENT_OPERATION_LIMIT) {
+      await Promise.race(addQueue);
+    }
   };
 
   const cloneModule = async (srcDir: PortablePath, dstDir: PortablePath, options?: { keepSrcNodeModules?: boolean, keepDstNodeModules?: boolean, innerLoop?: boolean }) => {
-    try {
-      if (!options || !options.innerLoop) {
-        await removeDir(dstDir, {excludeNodeModules: options && options.keepDstNodeModules});
-        await xfs.mkdirpPromise(dstDir);
-      }
+    const promise: Promise<any> = (async () => {
+      const cloneDir = async (srcDir: PortablePath, dstDir: PortablePath, options?: { keepSrcNodeModules?: boolean, keepDstNodeModules?: boolean, innerLoop?: boolean }) => {
+        try {
+          if (!options || !options.innerLoop) {
+            await removeDir(dstDir, {excludeNodeModules: options && options.keepDstNodeModules});
+            await xfs.mkdirpPromise(dstDir);
+          }
 
-      const entries = await xfs.readdirPromise(srcDir, {withFileTypes: true});
-      for (const entry of entries) {
-        const src = ppath.join(srcDir, entry.name);
-        const dst = ppath.join(dstDir, entry.name);
+          const entries = await xfs.readdirPromise(srcDir, {withFileTypes: true});
+          for (const entry of entries) {
+            const src = ppath.join(srcDir, entry.name);
+            const dst = ppath.join(dstDir, entry.name);
 
-        if (entry.name !== NODE_MODULES || !options || !options.keepSrcNodeModules) {
-          if (entry.isDirectory()) {
-            await xfs.mkdirpPromise(dst);
-            await cloneModule(src, dst, {keepSrcNodeModules: false, keepDstNodeModules: false, innerLoop: true});
-          } else {
-            await xfs.copyFilePromise(src, dst, fs.constants.COPYFILE_FICLONE);
+            if (entry.name !== NODE_MODULES || !options || !options.keepSrcNodeModules) {
+              if (entry.isDirectory()) {
+                await xfs.mkdirpPromise(dst);
+                await cloneDir(src, dst, {keepSrcNodeModules: false, keepDstNodeModules: false, innerLoop: true});
+              } else {
+                await xfs.copyFilePromise(src, dst, fs.constants.COPYFILE_FICLONE);
+              }
+            }
+          }
+        } catch (e) {
+          if (!options || !options.innerLoop)
+            e.message = `While cloning ${srcDir} -> ${dstDir} ${e.message}`;
+
+          throw e;
+        } finally {
+          if (!options || !options.innerLoop) {
+            progress.tick();
           }
         }
-      }
-    } catch (e) {
-      if (!options || !options.innerLoop)
-        e.message = `While cloning ${srcDir} -> ${dstDir} ${e.message}`;
+      };
 
-      throw e;
-    } finally {
-      if (!options || !options.innerLoop) {
-        progress.tick();
-      }
+      await cloneDir(srcDir, dstDir, options);
+    })().then(() => addQueue.splice(addQueue.indexOf(promise), 1));
+    addQueue.push(promise);
+    if (addQueue.length > CONCURRENT_OPERATION_LIMIT) {
+      await Promise.race(addQueue);
     }
   };
 
   const deleteQueue: Promise<any>[] = [];
-  const deleteModule = (dstDir: PortablePath) => {
-    const promise = (async () => {
+  const deleteModule = async (dstDir: PortablePath) => {
+    const promise: Promise<any> = (async () => {
       try {
         await removeDir(dstDir);
       } catch (e) {
         e.message = `While removing ${dstDir} ${e.message}`;
         throw e;
       }
-    })();
+    })().then(() => deleteQueue.splice(deleteQueue.indexOf(promise), 1));
     deleteQueue.push(promise);
+    if (deleteQueue.length > CONCURRENT_OPERATION_LIMIT) {
+      await Promise.race(deleteQueue);
+    }
   };
 
 
@@ -544,7 +561,7 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
   }
 
   for (const dstDir of deleteList)
-    deleteModule(dstDir);
+    await deleteModule(dstDir);
 
   // Update changed locations
   const addList: Array<{srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, keepNodeModules: boolean}> = [];
@@ -613,39 +630,43 @@ async function persistNodeModules(preinstallState: NodeModulesLocatorMap | null,
   }
 
   const progress = Report.progressViaCounter(addList.length);
-  report.reportProgress(progress);
+  const reportedProgress = report.reportProgress(progress);
 
-  const persistedLocations = new Map<PortablePath, {
-    dstDir: PortablePath,
-    keepNodeModules: boolean,
-  }>();
+  try {
+    const persistedLocations = new Map<PortablePath, {
+      dstDir: PortablePath,
+      keepNodeModules: boolean,
+    }>();
 
-  // For the first pass we'll only want to install a single copy for each
-  // source directory. We'll later use the resulting install directories for
-  // the other instances of the same package (this will avoid us having to
-  // crawl the zip archives for each package).
-  for (const entry of addList) {
-    if (entry.linkType === LinkType.SOFT || !persistedLocations.has(entry.srcDir)) {
-      persistedLocations.set(entry.srcDir, {dstDir: entry.dstDir, keepNodeModules: entry.keepNodeModules});
-      await addModule({...entry});
+    // For the first pass we'll only want to install a single copy for each
+    // source directory. We'll later use the resulting install directories for
+    // the other instances of the same package (this will avoid us having to
+    // crawl the zip archives for each package).
+    for (const entry of addList) {
+      if (entry.linkType === LinkType.SOFT || !persistedLocations.has(entry.srcDir)) {
+        persistedLocations.set(entry.srcDir, {dstDir: entry.dstDir, keepNodeModules: entry.keepNodeModules});
+        await addModule({...entry});
+      }
     }
-  }
 
-  await Promise.all(deleteQueue);
-  await Promise.all(addQueue);
-  addQueue.length = 0;
+    await Promise.all(deleteQueue);
+    await Promise.all(addQueue);
+    addQueue.length = 0;
 
-  // Second pass: clone module duplicates
-  for (const entry of addList) {
-    const locationInfo = persistedLocations.get(entry.srcDir)!;
-    if (entry.linkType !== LinkType.SOFT && entry.dstDir !== locationInfo.dstDir) {
-      addQueue.push(cloneModule(locationInfo.dstDir, entry.dstDir, {keepSrcNodeModules: locationInfo.keepNodeModules, keepDstNodeModules: entry.keepNodeModules}));
+    // Second pass: clone module duplicates
+    for (const entry of addList) {
+      const locationInfo = persistedLocations.get(entry.srcDir)!;
+      if (entry.linkType !== LinkType.SOFT && entry.dstDir !== locationInfo.dstDir) {
+        await cloneModule(locationInfo.dstDir, entry.dstDir, {keepSrcNodeModules: locationInfo.keepNodeModules, keepDstNodeModules: entry.keepNodeModules});
+      }
     }
+
+    await Promise.all(addQueue);
+
+    await xfs.mkdirpPromise(rootNmDirPath);
+    await writeInstallState(project, installState);
+  } finally {
+    reportedProgress.stop();
   }
-
-  await Promise.all(addQueue);
-
-  await xfs.mkdirpPromise(rootNmDirPath);
-  await writeInstallState(project, installState);
 };
 
