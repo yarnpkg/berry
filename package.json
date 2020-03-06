@@ -63,7 +63,7 @@
     "build:compile-inline": "find \"$0\"/sources -name '*.js' && babel \"$0\"/sources --out-dir \"$0\"/sources --extensions .ts,.tsx",
     "test:lint": "eslint \"packages/**/@(sources|tests)/**/!(libzip).@(tsx|ts|js)\"",
     "test:unit": "jest",
-    "sleep": "sleep 10",
+    "sleep": "node ./x",
     "typecheck:all": "tsc --noEmit"
   },
   "sherlock": {

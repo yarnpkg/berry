@@ -187,20 +187,29 @@ export type XFS = NodeFS & {
 
 const tmpdirs = new Set<PortablePath>();
 
-const cleanExit = () => {
-  process.off(`exit`, cleanExit);
+let cleanExitRegistered = false;
 
-  for (const p of tmpdirs) {
-    tmpdirs.delete(p);
-    try {
-      xfs.removeSync(p);
-    } catch {
-      // Too bad if there's an error
+function registerCleanExit() {
+  if (!cleanExitRegistered)
+    cleanExitRegistered = true;
+  else
+    return;
+
+  const cleanExit = () => {
+    process.off(`exit`, cleanExit);
+
+    for (const p of tmpdirs) {
+      tmpdirs.delete(p);
+      try {
+        xfs.removeSync(p);
+      } catch {
+        // Too bad if there's an error
+      }
     }
-  }
-};
+  };
 
-process.on(`exit`, cleanExit);
+  process.on(`exit`, cleanExit);
+}
 
 export const xfs: XFS = Object.assign(new NodeFS(), {
   detachTemp(p: PortablePath) {
@@ -208,6 +217,8 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
   },
 
   mktempSync<T>(this: XFS, cb?: (p: PortablePath) => T) {
+    registerCleanExit();
+
     while (true) {
       const p = getTempName(`xfs-`);
 
@@ -244,6 +255,8 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
   },
 
   async mktempPromise<T>(this: XFS, cb?: (p: PortablePath) => Promise<T>) {
+    registerCleanExit();
+
     while (true) {
       const p = getTempName(`xfs-`);
 

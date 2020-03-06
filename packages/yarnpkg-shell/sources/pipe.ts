@@ -48,6 +48,13 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
       stderr,
     ]});
 
+    const sigintHandler = () => {
+      // We don't want SIGINT to kill our process; we want it to kill the
+      // innermost process, whose end will cause our own to exit.
+    };
+
+    process.on(`SIGINT`, sigintHandler);
+
     if (stdio[0] instanceof Transform)
       stdio[0].pipe(child.stdin!);
     if (stdio[1] instanceof Transform)
@@ -59,6 +66,8 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
       stdin: child.stdin!,
       promise: new Promise(resolve => {
         child.on(`error`, error => {
+          process.off(`SIGINT`, sigintHandler);
+
           // @ts-ignore
           switch (error.code) {
             case `ENOENT`: {
@@ -77,6 +86,8 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
         });
 
         child.on(`exit`, code => {
+          process.off(`SIGINT`, sigintHandler);
+
           if (code !== null) {
             resolve(code);
           } else {

@@ -31800,27 +31800,35 @@ function extendFs(realFs, fakeFs) {
 
 exports.extendFs = extendFs;
 const tmpdirs = new Set();
+let cleanExitRegistered = false;
 
-const cleanExit = () => {
-  process.off(`exit`, cleanExit);
+function registerCleanExit() {
+  if (!cleanExitRegistered) cleanExitRegistered = true;else return;
 
-  for (const p of tmpdirs) {
-    tmpdirs.delete(p);
+  const cleanExit = () => {
+    process.off(`exit`, cleanExit);
 
-    try {
-      exports.xfs.removeSync(p);
-    } catch (_a) {// Too bad if there's an error
+    for (const p of tmpdirs) {
+      tmpdirs.delete(p);
+
+      try {
+        exports.xfs.removeSync(p);
+      } catch (_a) {// Too bad if there's an error
+      }
     }
-  }
-};
+  };
 
-process.on(`exit`, cleanExit);
+  process.on(`exit`, cleanExit);
+}
+
 exports.xfs = Object.assign(new NodeFS_1.NodeFS(), {
   detachTemp(p) {
     tmpdirs.delete(p);
   },
 
   mktempSync(cb) {
+    registerCleanExit();
+
     while (true) {
       const p = getTempName(`xfs-`);
 
@@ -31857,6 +31865,8 @@ exports.xfs = Object.assign(new NodeFS_1.NodeFS(), {
   },
 
   async mktempPromise(cb) {
+    registerCleanExit();
+
     while (true) {
       const p = getTempName(`xfs-`);
 
