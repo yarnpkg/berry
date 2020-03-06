@@ -1,5 +1,5 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions} from './FakeFS';
-import {Dirent}                                                                        from './FakeFS';
+import {Dirent, SymlinkType}                                                           from './FakeFS';
 import {MkdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}          from './FakeFS';
 import {FSPath, Filename, Path}                                                        from './path';
 
@@ -192,12 +192,12 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.rmdirSync(this.mapToBase(p));
   }
 
-  symlinkPromise(target: P, p: P) {
-    return this.baseFs.symlinkPromise(this.mapToBase(target), this.mapToBase(p));
+  symlinkPromise(target: P, p: P, type?: SymlinkType) {
+    return this.baseFs.symlinkPromise(this.mapToBase(target), this.mapToBase(p), type);
   }
 
-  symlinkSync(target: P, p: P) {
-    return this.baseFs.symlinkSync(this.mapToBase(target), this.mapToBase(p));
+  symlinkSync(target: P, p: P, type?: SymlinkType) {
+    return this.baseFs.symlinkSync(this.mapToBase(target), this.mapToBase(p), type);
   }
 
   readFilePromise(p: FSPath<P>, encoding: 'utf8'): Promise<string>;

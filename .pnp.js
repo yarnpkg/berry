@@ -6811,8 +6811,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"],
-            ["p-limit", "npm:2.2.0"]
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "@yarnpkg/cli",
@@ -6835,8 +6834,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"],
-            ["p-limit", "npm:2.2.0"]
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "@yarnpkg/cli",
@@ -6859,8 +6857,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"],
-            ["p-limit", "npm:2.2.0"]
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "@yarnpkg/cli",
@@ -6883,8 +6880,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["clipanion", "npm:2.1.5"],
-            ["micromatch", "npm:4.0.2"],
-            ["p-limit", "npm:2.2.0"]
+            ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
             "@yarnpkg/cli",
@@ -30936,16 +30932,16 @@ class NodeFS extends FakeFS_1.BasePortableFakeFS {
     return this.realFs.rmdirSync(path_1.npath.fromPortablePath(p));
   }
 
-  async symlinkPromise(target, p) {
-    const type = target.endsWith(`/`) ? `dir` : `file`;
+  async symlinkPromise(target, p, type) {
+    const symlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
     return await new Promise((resolve, reject) => {
-      this.realFs.symlink(path_1.npath.fromPortablePath(target.replace(/\/+$/, ``)), path_1.npath.fromPortablePath(p), type, this.makeCallback(resolve, reject));
+      this.realFs.symlink(path_1.npath.fromPortablePath(target.replace(/\/+$/, ``)), path_1.npath.fromPortablePath(p), symlinkType, this.makeCallback(resolve, reject));
     });
   }
 
-  symlinkSync(target, p) {
-    const type = target.endsWith(`/`) ? `dir` : `file`;
-    return this.realFs.symlinkSync(path_1.npath.fromPortablePath(target.replace(/\/+$/, ``)), path_1.npath.fromPortablePath(p), type);
+  symlinkSync(target, p, type) {
+    const symlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
+    return this.realFs.symlinkSync(path_1.npath.fromPortablePath(target.replace(/\/+$/, ``)), path_1.npath.fromPortablePath(p), symlinkType);
   }
 
   async readFilePromise(p, encoding) {
@@ -31606,12 +31602,12 @@ class ProxiedFS extends FakeFS_1.FakeFS {
     return this.baseFs.rmdirSync(this.mapToBase(p));
   }
 
-  symlinkPromise(target, p) {
-    return this.baseFs.symlinkPromise(this.mapToBase(target), this.mapToBase(p));
+  symlinkPromise(target, p, type) {
+    return this.baseFs.symlinkPromise(this.mapToBase(target), this.mapToBase(p), type);
   }
 
-  symlinkSync(target, p) {
-    return this.baseFs.symlinkSync(this.mapToBase(target), this.mapToBase(p));
+  symlinkSync(target, p, type) {
+    return this.baseFs.symlinkSync(this.mapToBase(target), this.mapToBase(p), type);
   }
 
   readFilePromise(p, encoding) {
@@ -37381,9 +37377,9 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     });
   }
 
-  async symlinkPromise(target, p) {
+  async symlinkPromise(target, p, type) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.symlinkPromise(target, p);
+      return await this.baseFs.symlinkPromise(target, p, type);
     }, async (zipFs, {
       subPath
     }) => {
@@ -37391,9 +37387,9 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     });
   }
 
-  symlinkSync(target, p) {
+  symlinkSync(target, p, type) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.symlinkSync(target, p);
+      return this.baseFs.symlinkSync(target, p, type);
     }, (zipFs, {
       subPath
     }) => {

@@ -61,7 +61,7 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
   const packageTree = buildPackageTree(pnp);
 
-  const hoistedTree = hoist(packageTree, {finalCheck: false});
+  const hoistedTree = hoist(packageTree);
 
   return populateNodeModulesTree(pnp, hoistedTree, options);
 };
@@ -88,6 +88,15 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
 
       entry.locations.push(location);
     }
+  }
+
+  for (const val of map.values()) {
+    // Sort locations by depth first and then alphabetically for determinism
+    val.locations = val.locations.sort((loc1: PortablePath, loc2: PortablePath) => {
+      const len1 = loc1.split(ppath.delimiter).length;
+      const len2 = loc2.split(ppath.delimiter).length;
+      return len1 !== len2 ? len2 - len1: loc2.localeCompare(loc1);
+    });
   }
 
   return map;
@@ -125,8 +134,10 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
     const locatorKey = stringifyLocator(locator);
     let node = nodes.get(locatorKey);
     const isSeen = !!node;
-    if (locator === topLocator)
+    if (!isSeen && locatorKey === topLocatorKey) {
       node = packageTree;
+      nodes.set(locatorKey, packageTree);
+    }
     if (!node) {
       const {name, reference} = locator;
 
@@ -148,7 +159,7 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
 
     if (!isSeen) {
       for (const [name, referencish] of pkg.packageDependencies) {
-        if (referencish !== null) {
+        if (referencish !== null && !node.peerNames.has(name)) {
           const depLocator = pnp.getLocator(name, referencish);
           const pkgLocator = pnp.getLocator(name.replace('$wsroot$', ''), referencish);
           const depPkg = pnp.getPackageInformation(pkgLocator)!;

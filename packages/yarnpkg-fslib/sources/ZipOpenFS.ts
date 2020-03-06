@@ -2,7 +2,7 @@ import {Libzip}                                                                 
 import {constants}                                                                                 from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions} from './FakeFS';
-import {Dirent}                                                                                    from './FakeFS';
+import {Dirent, SymlinkType}                                                                       from './FakeFS';
 import {FakeFS, MkdirOptions, WriteFileOptions}                                                    from './FakeFS';
 import {WatchOptions, WatchCallback, Watcher}                                                      from './FakeFS';
 import {NodeFS}                                                                                    from './NodeFS';
@@ -538,17 +538,17 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async symlinkPromise(target: PortablePath, p: PortablePath) {
+  async symlinkPromise(target: PortablePath, p: PortablePath, type?: SymlinkType) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.symlinkPromise(target, p);
+      return await this.baseFs.symlinkPromise(target, p, type);
     }, async (zipFs, {subPath}) => {
       return await zipFs.symlinkPromise(target, subPath);
     });
   }
 
-  symlinkSync(target: PortablePath, p: PortablePath) {
+  symlinkSync(target: PortablePath, p: PortablePath, type?: SymlinkType) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.symlinkSync(target, p);
+      return this.baseFs.symlinkSync(target, p, type);
     }, (zipFs, {subPath}) => {
       return zipFs.symlinkSync(target, subPath);
     });

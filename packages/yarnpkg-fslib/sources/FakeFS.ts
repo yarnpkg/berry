@@ -55,6 +55,8 @@ export type ExtractHintOptions = {
   relevantExtensions: Set<string>;
 }
 
+export type SymlinkType = 'file' | 'dir' | 'junction';
+
 export abstract class FakeFS<P extends Path> {
   static DEFAULT_TIME = 315532800;
 
@@ -121,8 +123,8 @@ export abstract class FakeFS<P extends Path> {
   abstract rmdirPromise(p: P): Promise<void>;
   abstract rmdirSync(p: P): void;
 
-  abstract symlinkPromise(target: P, p: P): Promise<void>;
-  abstract symlinkSync(target: P, p: P): void;
+  abstract symlinkPromise(target: P, p: P, type?: SymlinkType): Promise<void>;
+  abstract symlinkSync(target: P, p: P, type?: SymlinkType): void;
 
   abstract renamePromise(oldP: P, newP: P): Promise<void>;
   abstract renameSync(oldP: P, newP: P): void;
