@@ -1,5 +1,5 @@
 import fs                                                 from 'fs';
-import os, {tmpdir}                                       from 'os';
+import os                                                 from 'os';
 import {promisify}                                        from 'util';
 
 import {FakeFS}                                           from './FakeFS';
@@ -190,7 +190,7 @@ const tmpdirs = new Set<PortablePath>();
 const cleanExit = () => {
   process.off(`exit`, cleanExit);
 
-for (const p of tmpdirs) {
+  for (const p of tmpdirs) {
     tmpdirs.delete(p);
     try {
       xfs.removeSync(p);
@@ -221,16 +221,17 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
         }
       }
 
-      tmpdirs.add(p);
+      const realP = this.realpathSync(p);
+      tmpdirs.add(realP);
 
       if (typeof cb !== `undefined`) {
         try {
-          return cb(p);
+          return cb(realP);
         } finally {
-          if (tmpdirs.has(p)) {
-            tmpdirs.delete(p);
+          if (tmpdirs.has(realP)) {
+            tmpdirs.delete(realP);
             try {
-              this.removeSync(p);
+              this.removeSync(realP);
             } catch {
               // Too bad if there's an error
             }
@@ -256,23 +257,24 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
         }
       }
 
-      tmpdirs.add(p);
+      const realP = await this.realpathPromise(p);
+      tmpdirs.add(realP);
 
       if (typeof cb !== `undefined`) {
         try {
-          return await cb(p);
+          return await cb(realP);
         } finally {
-          if (tmpdirs.has(p)) {
-            tmpdirs.delete(p);
+          if (tmpdirs.has(realP)) {
+            tmpdirs.delete(realP);
             try {
-              await this.removePromise(p);
+              await this.removePromise(realP);
             } catch {
               // Too bad if there's an error
             }
           }
         }
       } else {
-        return p;
+        return realP;
       }
     }
   },

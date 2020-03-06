@@ -41,41 +41,37 @@ export default class DlxCommand extends BaseCommand {
       const tmpDir = ppath.join(baseDir, `dlx-${process.pid}` as Filename);
       await xfs.mkdirPromise(tmpDir);
 
-      try {
-        await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`package.json`)), `{}\n`);
-        await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`yarn.lock`)), ``);
-        await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`.yarnrc.yml`)), `enableGlobalCache: true\n`);
+      await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`package.json`)), `{}\n`);
+      await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`yarn.lock`)), ``);
+      await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`.yarnrc.yml`)), `enableGlobalCache: true\n`);
 
-        const pkgs = typeof this.pkg !== `undefined`
-          ? [this.pkg]
-          : [this.command];
+      const pkgs = typeof this.pkg !== `undefined`
+        ? [this.pkg]
+        : [this.command];
 
-        const command = structUtils.parseDescriptor(this.command).name;
+      const command = structUtils.parseDescriptor(this.command).name;
 
-        const addExitCode = await this.cli.run([`add`, `--`, ...pkgs], {cwd: tmpDir, quiet: this.quiet});
-        if (addExitCode !== 0)
-          return addExitCode;
+      const addExitCode = await this.cli.run([`add`, `--`, ...pkgs], {cwd: tmpDir, quiet: this.quiet});
+      if (addExitCode !== 0)
+        return addExitCode;
 
-        if (!this.quiet)
-          this.context.stdout.write(`\n`);
+      if (!this.quiet)
+        this.context.stdout.write(`\n`);
 
-        const configuration = await Configuration.find(tmpDir, this.context.plugins);
-        const {project, workspace} = await Project.find(configuration, tmpDir);
+      const configuration = await Configuration.find(tmpDir, this.context.plugins);
+      const {project, workspace} = await Project.find(configuration, tmpDir);
 
-        if (workspace === null)
-          throw new WorkspaceRequiredError(project.cwd, tmpDir);
+      if (workspace === null)
+        throw new WorkspaceRequiredError(project.cwd, tmpDir);
 
-        await project.restoreInstallState();
+      await project.restoreInstallState();
 
-        return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, this.args, {
-          cwd: this.context.cwd,
-          stdin: this.context.stdin,
-          stdout: this.context.stdout,
-          stderr: this.context.stderr,
-        });
-      } finally {
-        await xfs.removePromise(tmpDir);
-      }
+      return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, this.args, {
+        cwd: this.context.cwd,
+        stdin: this.context.stdin,
+        stdout: this.context.stdout,
+        stderr: this.context.stderr,
+      });
     });
   }
 }
