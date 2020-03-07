@@ -8,7 +8,9 @@ export function getPluginConfiguration(): PluginConfiguration {
     if (dependencyName.startsWith(`@yarnpkg/plugin-`))
       plugins.add(dependencyName);
 
-  const modules = new Map<string, string>();
+  const modules = new Map<string, string>([
+    [`@yarnpkg/core`, require(`@yarnpkg/core`)],
+  ]);
   for (const plugin of plugins)
     modules.set(plugin, require(plugin).default);
 
