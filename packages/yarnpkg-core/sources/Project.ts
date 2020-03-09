@@ -1898,7 +1898,14 @@ function applyVirtualResolutionMutations({
       // generate a hash from it. By checking if this hash is already
       // registered, we know whether we can trim the new version.
       const dependencyHash = hashUtils.makeHash(...[...virtualPackage.dependencies.values()].map(descriptor => {
-        return descriptor.descriptorHash;
+        const resolution = descriptor.range !== `missing:`
+          ? allResolutions.get(descriptor.descriptorHash)
+          : `missing:`;
+
+        if (typeof resolution === `undefined`)
+          throw new Error(`Assertion failed: Expected the resolution to have been registered`);
+
+        return resolution;
       }));
 
       const masterDescriptor = otherVirtualInstances.get(dependencyHash);
