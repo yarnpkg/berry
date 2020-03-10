@@ -1,4 +1,5 @@
 import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions, Package} from '@yarnpkg/core';
+
 import {npath, PortablePath, xfs, ppath, Filename, NodeFS}                                                      from '@yarnpkg/fslib';
 
 import {Hooks as PatchHooks}                                                                                    from './index';
@@ -118,7 +119,7 @@ export async function loadPatchFiles(parentLocator: Locator | null, patchPaths: 
 
   // First we obtain the specification for all the patches that we'll have to
   // apply to the original package.
-  return await miscUtils.releaseAfterUseAsync(async () => {
+  let patchFiles = await miscUtils.releaseAfterUseAsync(async () => {
     return await Promise.all(patchPaths.map(async patchPath => visitPatchPath({
       onAbsolute: async () => {
         return await xfs.readFilePromise(patchPath, `utf8`);
@@ -137,6 +138,17 @@ export async function loadPatchFiles(parentLocator: Locator | null, patchPaths: 
         }, opts.project, name);
       },
     }, patchPath)));
+  });
+
+  // Normalizes the line endings to prevent mismatches when cloning a
+  // repository on Windows systems (the default settings for Git are to
+  // convert newlines back and forth, which would mess with the checksum)
+  return patchFiles.map(definition => {
+    if (typeof definition === `string`) {
+      return definition.replace(/\r\n?/g, `\n`);
+    } else {
+      return definition;
+    }
   });
 }
 
