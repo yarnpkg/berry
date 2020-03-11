@@ -7,6 +7,7 @@ on:
   pull_request:
     paths:
     - .github/workflows/e2e-typescript-workflow.yml
+    - packages/plugin-compat/sources/patches/typescript.patch.ts
     - scripts/e2e-setup-ci.sh
 
 name: 'E2E TypeScript'
@@ -26,6 +27,17 @@ jobs:
     - name: 'Build the standard bundle'
       run: |
         node ./scripts/run-yarn.js build:cli
+
+    - name: 'Installing all versions of TS'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn init -p
+        yarn add \
+          v35@npm:typescript@3.5 \
+          v36@npm:typescript@3.6 \
+          v37@npm:typescript@3.7 \
+          v38@npm:typescript@3.8
 
     - name: 'Running the integration test'
       run: |
