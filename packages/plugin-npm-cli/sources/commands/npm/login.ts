@@ -107,6 +107,11 @@ async function getCredentials(prompt: any, {registry, report}: {registry: string
     isToken = true;
   }
 
+  if (registry.match(/^https:\/\/pkgs\.dev\.azure\.com(\/|$)/)) {
+    report.reportInfo(MessageName.UNNAMED, `You seem to be using the Azure Artifacts Registry. Tokens must be generated with the narrow scope of 'Packaging (read & write)'.`);
+    isToken = true;
+  }
+
   report.reportSeparator();
 
   const {username, password} = await prompt([{
