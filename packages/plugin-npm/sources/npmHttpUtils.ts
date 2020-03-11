@@ -20,7 +20,7 @@ type RegistryOptions = {
   ident: Ident,
   registry?: string,
 } | {
-  ident?: void,
+  ident?: Ident,
   registry: string;
 };
 
@@ -43,7 +43,7 @@ export async function get(path: string, {configuration, headers, ident, authType
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
 
-  const auth = getAuthenticationHeader(registry, {authType, configuration});
+  const auth = getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
 
@@ -72,7 +72,7 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
 
-  const auth = getAuthenticationHeader(registry, {authType, configuration});
+  const auth = getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
 
@@ -103,11 +103,10 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
   }
 }
 
-function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration}: {authType?: AuthType, configuration: Configuration}) {
-  const registryConfiguration = npmConfigUtils.getRegistryConfiguration(registry, {configuration});
-  const effectiveConfiguration = registryConfiguration || configuration;
-
+function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration, ident}: {authType?: AuthType, configuration: Configuration, ident: RegistryOptions['ident']}) {
+  const effectiveConfiguration = npmConfigUtils.getAuthConfiguration(registry, {configuration, ident});
   const mustAuthenticate = shouldAuthenticate(effectiveConfiguration, authType);
+
   if (!mustAuthenticate)
     return null;
 

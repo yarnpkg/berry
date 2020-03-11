@@ -1,4 +1,4 @@
-import {Configuration, Manifest} from '@yarnpkg/core';
+import {Configuration, Manifest, Ident} from '@yarnpkg/core';
 
 export enum RegistryType {
   FETCH_REGISTRY = 'npmRegistryServer',
@@ -70,3 +70,13 @@ export function getScopeConfiguration(scope: string | null, {configuration}: {co
   return scopeConfiguration;
 }
 
+export function getAuthConfiguration(registry: string, {configuration, ident}: {configuration: Configuration, ident?: Ident}): MapLike {
+  const scopeConfiguration = ident && getScopeConfiguration(ident.scope, {configuration});
+
+  if (scopeConfiguration?.get('npmAuthIdent') || scopeConfiguration?.get('npmAuthToken'))
+    return scopeConfiguration;
+
+  const registryConfiguration = getRegistryConfiguration(registry, {configuration});
+
+  return registryConfiguration || configuration;
+}
