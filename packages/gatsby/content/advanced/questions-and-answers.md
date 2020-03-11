@@ -4,12 +4,12 @@ path: /advanced/qa
 title: "Questions & Answers"
 ---
 
-- [Which files should be gitignored?]()
-- [Should lockfiles be committed to the repository?]()
-- [How to share scripts between workspaces?]()
-- [Is Yarn operated by Facebook?]()
-- [Why `registry.yarnpkg.com`? Does Facebook track us?]()
-- [Is Yarn faster than other package managers?]()
+- [Which files should be gitignored?](#which-files-should-be-gitignored)
+- [Should lockfiles be committed to the repository?](#should-lockfiles-be-committed-to-the-repository)
+- [How to share scripts between workspaces?](#how-to-share-scripts-between-workspaces)
+- [Is Yarn operated by Facebook?](#is-yarn-operated-by-facebook)
+- [Why `registry.yarnpkg.com`? Does Facebook track us?](#why-registryyarnpkgcom-does-facebook-track-us)
+- [Is Yarn faster than other package managers?](#is-yarn-faster-than-other-package-managers)
 
 ---
 
