@@ -32709,10 +32709,21 @@ const MODULE_NOT_FOUND_ERRORS = new Set([ErrorCode.BLACKLISTED, ErrorCode.BUILTI
 
 function makeError(pnpCode, message, data = {}) {
   const code = MODULE_NOT_FOUND_ERRORS.has(pnpCode) ? `MODULE_NOT_FOUND` : pnpCode;
-  return Object.assign(new Error(message), {
-    code,
-    pnpCode,
-    data
+  const propertySpec = {
+    configurable: true,
+    writable: true,
+    enumerable: false
+  };
+  return Object.defineProperties(new Error(message), {
+    code: Object.assign(Object.assign({}, propertySpec), {
+      value: code
+    }),
+    pnpCode: Object.assign(Object.assign({}, propertySpec), {
+      value: pnpCode
+    }),
+    data: Object.assign(Object.assign({}, propertySpec), {
+      value: data
+    })
   });
 }
 
@@ -39431,7 +39442,12 @@ function applyPatch(pnpapi, opts) {
     }
 
     const requireStack = getRequireStack(parent);
-    firstError.requireStack = requireStack;
+    Object.defineProperty(firstError, `requireStack`, {
+      configurable: true,
+      writable: true,
+      enumerable: false,
+      value: requireStack
+    });
     if (requireStack.length > 0) firstError.message += `\nRequire stack:\n- ${requireStack.join(`\n- `)}`;
     throw firstError;
   };
@@ -39986,7 +40002,7 @@ function makeApi(runtimeState, opts) {
           const result = callNativeResolution(request, issuer);
 
           if (result === false) {
-            throw internalTools_1.makeError(internalTools_1.ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree)\n\nRequire path: "${request}"\nRequired by: ${issuer}\n`, {
+            throw internalTools_1.makeError(internalTools_1.ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree).\n\nRequire path: "${request}"\nRequired by: ${issuer}\n`, {
               request,
               issuer
             });
@@ -40002,14 +40018,14 @@ function makeApi(runtimeState, opts) {
         // It's a bit of a hack, but it improves compatibility with the existing Node ecosystem. Hopefully we should eventually be able
         // to kill this logic and become stricter once pnp gets enough traction and the affected packages fix themselves.
 
-        if (issuerLocator.name !== null) {
-          // To allow programs to become gradually stricter, starting from the v2 we enforce that workspaces cannot depend on fallbacks.
-          // This works by having a list containing all their locators, and checking when a fallback is required whether it's one of them.
-          const exclusionEntry = runtimeState.fallbackExclusionList.get(issuerLocator.name);
-          const canUseFallbacks = !exclusionEntry || !exclusionEntry.has(issuerLocator.reference);
+        if (typeof dependencyReference === `undefined`) {
+          if (issuerLocator.name !== null) {
+            // To allow programs to become gradually stricter, starting from the v2 we enforce that workspaces cannot depend on fallbacks.
+            // This works by having a list containing all their locators, and checking when a fallback is required whether it's one of them.
+            const exclusionEntry = runtimeState.fallbackExclusionList.get(issuerLocator.name);
+            const canUseFallbacks = !exclusionEntry || !exclusionEntry.has(issuerLocator.reference);
 
-          if (canUseFallbacks) {
-            if (dependencyReference === null) {
+            if (canUseFallbacks) {
               const reference = runtimeState.fallbackPool.get(dependencyName);
 
               if (reference != null) {
@@ -40024,13 +40040,13 @@ function makeApi(runtimeState, opts) {
 
         if (dependencyReference === null) {
           if (isDependencyTreeRoot(issuerLocator)) {
-            error = internalTools_1.makeError(internalTools_1.ErrorCode.MISSING_PEER_DEPENDENCY, `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a peer dependency; this isn't allowed as the peer dependency cannot be provided by any parent package\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, {
+            error = internalTools_1.makeError(internalTools_1.ErrorCode.MISSING_PEER_DEPENDENCY, `Your application tried to access ${dependencyName} (a peer dependency); this isn't allowed as there is no ancestor to satisfy the requirement. Use a devDependency if needed.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, {
               request,
               issuer,
               dependencyName
             });
           } else {
-            error = internalTools_1.makeError(internalTools_1.ErrorCode.MISSING_PEER_DEPENDENCY, `A package is trying to access a peer dependency that should be provided by its direct ancestor but isn't\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, {
+            error = internalTools_1.makeError(internalTools_1.ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, {
               request,
               issuer,
               issuerLocator: Object.assign({}, issuerLocator),
@@ -40039,13 +40055,13 @@ function makeApi(runtimeState, opts) {
           }
         } else if (dependencyReference === undefined) {
           if (isDependencyTreeRoot(issuerLocator)) {
-            error = internalTools_1.makeError(internalTools_1.ErrorCode.UNDECLARED_DEPENDENCY, `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a package that is not declared in your dependencies\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, {
+            error = internalTools_1.makeError(internalTools_1.ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, {
               request,
               issuer,
               dependencyName
             });
           } else {
-            error = internalTools_1.makeError(internalTools_1.ErrorCode.UNDECLARED_DEPENDENCY, `A package is trying to access a dependency without properly listing it; this makes the require call ambiguous and unsound\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, {
+            error = internalTools_1.makeError(internalTools_1.ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, {
               request,
               issuer,
               issuerLocator: Object.assign({}, issuerLocator),
@@ -40059,7 +40075,7 @@ function makeApi(runtimeState, opts) {
 
           if (typeof dependencyReference === `undefined` && fallbackReference !== null) {
             dependencyReference = fallbackReference;
-            console.log(error.stack);
+            process.emitWarning(error);
           } else {
             throw error;
           }
@@ -40113,7 +40129,7 @@ function makeApi(runtimeState, opts) {
     if (qualifiedPath) {
       return fslib_2.ppath.normalize(qualifiedPath);
     } else {
-      throw internalTools_1.makeError(internalTools_1.ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Couldn't find a suitable Node resolution for the specified unqualified path\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected resolution: ${candidate}\n`).join(``)}`, {
+      throw internalTools_1.makeError(internalTools_1.ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Qualified path resolution failed - none of the candidates can be found on the disk.\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected candidate: ${candidate}\n`).join(``)}`, {
         unqualifiedPath
       });
     }

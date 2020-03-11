@@ -499,7 +499,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         if (result === false) {
           throw makeError(
             ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED,
-            `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree)\n\nRequire path: "${request}"\nRequired by: ${issuer}\n`,
+            `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree).\n\nRequire path: "${request}"\nRequired by: ${issuer}\n`,
             {request, issuer},
           );
         }
@@ -518,14 +518,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       // It's a bit of a hack, but it improves compatibility with the existing Node ecosystem. Hopefully we should eventually be able
       // to kill this logic and become stricter once pnp gets enough traction and the affected packages fix themselves.
 
-      if (issuerLocator.name !== null) {
-        // To allow programs to become gradually stricter, starting from the v2 we enforce that workspaces cannot depend on fallbacks.
-        // This works by having a list containing all their locators, and checking when a fallback is required whether it's one of them.
-        const exclusionEntry = runtimeState.fallbackExclusionList.get(issuerLocator.name);
-        const canUseFallbacks = !exclusionEntry || !exclusionEntry.has(issuerLocator.reference);
+      if (typeof dependencyReference === `undefined`) {
+        if (issuerLocator.name !== null) {
+          // To allow programs to become gradually stricter, starting from the v2 we enforce that workspaces cannot depend on fallbacks.
+          // This works by having a list containing all their locators, and checking when a fallback is required whether it's one of them.
+          const exclusionEntry = runtimeState.fallbackExclusionList.get(issuerLocator.name);
+          const canUseFallbacks = !exclusionEntry || !exclusionEntry.has(issuerLocator.reference);
 
-        if (canUseFallbacks) {
-          if (dependencyReference === null) {
+          if (canUseFallbacks) {
             const reference = runtimeState.fallbackPool.get(dependencyName);
 
             if (reference != null) {
@@ -543,13 +543,13 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         if (isDependencyTreeRoot(issuerLocator)) {
           error = makeError(
             ErrorCode.MISSING_PEER_DEPENDENCY,
-            `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a peer dependency; this isn't allowed as the peer dependency cannot be provided by any parent package\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
+            `Your application tried to access ${dependencyName} (a peer dependency); this isn't allowed as there is no ancestor to satisfy the requirement. Use a devDependency if needed.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
             {request, issuer, dependencyName},
           );
         } else {
           error = makeError(
             ErrorCode.MISSING_PEER_DEPENDENCY,
-            `A package is trying to access a peer dependency that should be provided by its direct ancestor but isn't\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
+            `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
             {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName},
           );
         }
@@ -557,13 +557,13 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         if (isDependencyTreeRoot(issuerLocator)) {
           error = makeError(
             ErrorCode.UNDECLARED_DEPENDENCY,
-            `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a package that is not declared in your dependencies\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
+            `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
             {request, issuer, dependencyName},
           );
         } else {
           error = makeError(
             ErrorCode.UNDECLARED_DEPENDENCY,
-            `A package is trying to access a dependency without properly listing it; this makes the require call ambiguous and unsound\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
+            `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
             {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName},
           );
         }
@@ -575,7 +575,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
         if (typeof dependencyReference === `undefined` && fallbackReference !== null) {
           dependencyReference = fallbackReference;
-          console.log(error.stack);
+          process.emitWarning(error);
         } else {
           throw error;
         }
@@ -625,7 +625,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     } else {
       throw makeError(
         ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED,
-        `Couldn't find a suitable Node resolution for the specified unqualified path\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected resolution: ${candidate}\n`).join(``)}`,
+        `Qualified path resolution failed - none of the candidates can be found on the disk.\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected candidate: ${candidate}\n`).join(``)}`,
         {unqualifiedPath},
       );
     }

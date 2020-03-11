@@ -1,8 +1,8 @@
-import {LinkOptions, MinimalLinkOptions, Package}                                from '@yarnpkg/core';
-import {VirtualFS, ZipOpenFS, ppath, PortablePath, npath, Filename}              from '@yarnpkg/fslib';
-import {getLibzipPromise}                                                        from '@yarnpkg/libzip';
-import {PnpInstaller, PnpLinker}                                                 from '@yarnpkg/plugin-pnp';
-import {NodeModulesPackageNode, buildNodeModulesTree}                            from '@yarnpkg/pnpify';
+import {LinkOptions, MinimalLinkOptions, Package}                                                  from '@yarnpkg/core';
+import {VirtualFS, ZipOpenFS, ppath, PortablePath, npath, Filename}                                from '@yarnpkg/fslib';
+import {getLibzipPromise}                                                                          from '@yarnpkg/libzip';
+import {PnpInstaller, PnpLinker}                                                                   from '@yarnpkg/plugin-pnp';
+import {NodeModulesPackageNode, buildNodeModulesTree}                                              from '@yarnpkg/pnpify';
 import {PnpSettings, makeRuntimeApi, PackageInformation, PhysicalPackageLocator, DependencyTarget} from '@yarnpkg/pnp';
 
 export class PnpLooseLinker extends PnpLinker {
@@ -35,7 +35,7 @@ class PnpLooseInstaller extends PnpInstaller {
     pnpSettings.fallbackPool = fallbackPool;
 
     const registerFallback = (name: string, entry: NodeModulesPackageNode) => {
-      const locator = pnp.findPackageLocator(npath.fromPortablePath(entry.target));
+      const locator = pnp.findPackageLocator(`${npath.fromPortablePath(entry.target)}/`);
       if (locator === null)
         throw new Error(`Assertion failed: Expected the target to map to a locator`);
 
@@ -58,7 +58,7 @@ class PnpLooseInstaller extends PnpInstaller {
     for (const childName of entry.dirList) {
       const childP = ppath.join(root, childName);
 
-      const child = nmTree.get(childName);
+      const child = nmTree.get(childP);
       if (typeof child === `undefined`)
         throw new Error(`Assertion failed: Expected the child to have been registered`);
 

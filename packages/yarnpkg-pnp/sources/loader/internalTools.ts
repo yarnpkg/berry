@@ -31,8 +31,25 @@ export function makeError(pnpCode: ErrorCode, message: string, data: Object = {}
     ? `MODULE_NOT_FOUND`
     : pnpCode;
 
-  return Object.assign(new Error(message), {
-    code, pnpCode, data,
+  const propertySpec = {
+    configurable: true,
+    writable: true,
+    enumerable: false,
+  };
+
+  return Object.defineProperties(new Error(message), {
+    code: {
+      ...propertySpec,
+      value: code,
+    },
+    pnpCode: {
+      ...propertySpec,
+      value: pnpCode,
+    },
+    data: {
+      ...propertySpec,
+      value: data,
+    },
   });
 }
 
