@@ -29,6 +29,11 @@ if (!process.mainModule)
   patchFs();
 
 export {
+  NodeModulesBaseNode,
+  NodeModulesPackageNode,
+} from './buildNodeModulesTree';
+
+export {
   NodeModulesFS,
   buildNodeModulesTree,
   buildLocatorMap,

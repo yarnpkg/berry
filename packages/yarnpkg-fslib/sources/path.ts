@@ -11,6 +11,12 @@ export const PortablePath = {
 export type Filename = (PortablePath & NativePath) & { _filename: false };
 export type Path = PortablePath | NativePath;
 
+export const Filename = {
+  nodeModules: `node_modules` as Filename,
+  manifest: `package.json` as Filename,
+  lockfile: `yarn.lock` as Filename,
+};
+
 // Some of the FS functions support file descriptors
 export type FSPath<T extends Path> = T | number;
 

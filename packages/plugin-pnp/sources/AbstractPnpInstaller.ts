@@ -139,6 +139,7 @@ export abstract class AbstractPnpInstaller implements Installer {
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
+    const fallbackPool = this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator).packageDependencies;
     const ignorePattern = buildIgnorePattern([`.vscode/pnpify/**`, ...this.opts.project.configuration.get(`pnpIgnorePatterns`)]);
     const packageRegistry = this.packageRegistry;
     const shebang = this.opts.project.configuration.get(`pnpShebang`);
@@ -153,6 +154,7 @@ export abstract class AbstractPnpInstaller implements Installer {
       dependencyTreeRoots,
       enableTopLevelFallback,
       fallbackExclusionList,
+      fallbackPool,
       ignorePattern,
       packageRegistry,
       shebang,

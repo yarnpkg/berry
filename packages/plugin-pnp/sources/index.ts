@@ -65,6 +65,11 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
       type: SettingsType.STRING,
       default: `pnp`,
     },
+    pnpMode: {
+      description: `If 'strict', generates standard PnP maps. If 'loose', merges them with the n_m resolution.`,
+      type: SettingsType.STRING,
+      default: `strict`,
+    },
     pnpShebang: {
       description: `String to prepend to the generated PnP script`,
       type: SettingsType.STRING,
@@ -106,6 +111,7 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
 };
 
 export {AbstractPnpInstaller} from './AbstractPnpInstaller';
+export {PnpInstaller, PnpLinker} from './PnpLinker';
 
 // eslint-disable-next-line arca/no-default-export
 export default plugin;

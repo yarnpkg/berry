@@ -228,6 +228,132 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["pkg-tests-specs", ["workspace:packages/acceptance-tests/pkg-tests-specs"]],
       ["vscode-zipfs", ["workspace:packages/vscode-zipfs"]]
     ],
+    "fallbackPool": [
+      [
+        "@arcanis/sherlock",
+        "npm:1.0.38"
+      ],
+      [
+        "@babel/cli",
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.2.3"
+      ],
+      [
+        "@babel/core",
+        "npm:7.7.4"
+      ],
+      [
+        "@babel/plugin-proposal-async-generator-functions",
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.2.0"
+      ],
+      [
+        "@babel/plugin-proposal-class-properties",
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.3.3"
+      ],
+      [
+        "@babel/plugin-proposal-decorators",
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.4.4"
+      ],
+      [
+        "@babel/plugin-proposal-optional-chaining",
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.7.5"
+      ],
+      [
+        "@babel/plugin-transform-modules-commonjs",
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.2.0"
+      ],
+      [
+        "@babel/preset-env",
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.3.1"
+      ],
+      [
+        "@babel/preset-react",
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.0.0"
+      ],
+      [
+        "@babel/preset-typescript",
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.3.3"
+      ],
+      [
+        "@babel/register",
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.5.5"
+      ],
+      [
+        "@types/emscripten",
+        "npm:1.38.0"
+      ],
+      [
+        "@types/jest",
+        "npm:24.0.25"
+      ],
+      [
+        "@types/node",
+        "npm:13.7.0"
+      ],
+      [
+        "@typescript-eslint/eslint-plugin",
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:1.7.0"
+      ],
+      [
+        "@typescript-eslint/parser",
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:2.13.0"
+      ],
+      [
+        "@yarnpkg/cli",
+        "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"
+      ],
+      [
+        "@yarnpkg/core",
+        "workspace:packages/yarnpkg-core"
+      ],
+      [
+        "@yarnpkg/pnpify",
+        "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"
+      ],
+      [
+        "babel-jest",
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:24.5.0"
+      ],
+      [
+        "clipanion",
+        "npm:2.1.5"
+      ],
+      [
+        "eslint",
+        "npm:5.16.0"
+      ],
+      [
+        "eslint-plugin-arca",
+        "npm:0.9.0"
+      ],
+      [
+        "eslint-plugin-react",
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.14.3"
+      ],
+      [
+        "github-api",
+        "npm:3.2.2"
+      ],
+      [
+        "jest",
+        "npm:24.9.0"
+      ],
+      [
+        "jest-environment-node",
+        "npm:24.5.0"
+      ],
+      [
+        "jest-junit",
+        "npm:5.2.0"
+      ],
+      [
+        "micromatch",
+        "npm:4.0.2"
+      ],
+      [
+        "typescript",
+        "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=3ac2d9"
+      ]
+    ],
     "locationBlacklistData": [
     ],
     "packageRegistryData": [
@@ -30044,6 +30170,11 @@ exports.PortablePath = {
   root: `/`,
   dot: `.`
 };
+exports.Filename = {
+  nodeModules: `node_modules`,
+  manifest: `package.json`,
+  lockfile: `yarn.lock`
+};
 exports.npath = Object.create(path_1.default);
 exports.ppath = Object.create(path_1.default.posix);
 
@@ -31138,6 +31269,7 @@ exports.normalizeLineEndings = FakeFS_1.normalizeLineEndings;
 var path_2 = __webpack_require__(0);
 
 exports.PortablePath = path_2.PortablePath;
+exports.Filename = path_2.Filename;
 
 var path_3 = __webpack_require__(0);
 
@@ -39217,6 +39349,7 @@ function hydrateRuntimeState(data, {
   const fallbackExclusionList = new Map(data.fallbackExclusionList.map(([packageName, packageReferences]) => {
     return [packageName, new Set(packageReferences)];
   }));
+  const fallbackPool = new Map(data.fallbackPool);
   const dependencyTreeRoots = data.dependencyTreeRoots;
   const enableTopLevelFallback = data.enableTopLevelFallback;
   return {
@@ -39224,6 +39357,7 @@ function hydrateRuntimeState(data, {
     dependencyTreeRoots,
     enableTopLevelFallback,
     fallbackExclusionList,
+    fallbackPool,
     ignorePattern,
     packageLocationLengths: [...packageLocationLengths].sort((a, b) => b - a),
     packageLocatorsByLocations,
@@ -39683,7 +39817,8 @@ function makeApi(runtimeState, opts) {
 
         const issuerInformation = getPackageInformationSafe(issuerLocator); // We obtain the dependency reference in regard to the package that request it
 
-        let dependencyReference = issuerInformation.packageDependencies.get(dependencyName); // If we can't find it, we check if we can potentially load it from the packages that have been defined as potential fallbacks.
+        let dependencyReference = issuerInformation.packageDependencies.get(dependencyName);
+        let fallbackReference = null; // If we can't find it, we check if we can potentially load it from the packages that have been defined as potential fallbacks.
         // It's a bit of a hack, but it improves compatibility with the existing Node ecosystem. Hopefully we should eventually be able
         // to kill this logic and become stricter once pnp gets enough traction and the affected packages fix themselves.
 
@@ -39694,27 +39829,28 @@ function makeApi(runtimeState, opts) {
           const canUseFallbacks = !exclusionEntry || !exclusionEntry.has(issuerLocator.reference);
 
           if (canUseFallbacks) {
-            for (let t = 0, T = fallbackLocators.length; dependencyReference === undefined && t < T; ++t) {
-              const fallbackInformation = getPackageInformationSafe(fallbackLocators[t]);
-              const fallbackReference = fallbackInformation.packageDependencies.get(dependencyName);
+            if (dependencyReference === null) {
+              const reference = runtimeState.fallbackPool.get(dependencyName);
 
-              if (fallbackReference !== null) {
-                dependencyReference = fallbackReference;
+              if (reference != null) {
+                fallbackReference = reference;
               }
             }
           }
         } // If we can't find the path, and if the package making the request is the top-level, we can offer nicer error messages
 
 
+        let error = null;
+
         if (dependencyReference === null) {
           if (isDependencyTreeRoot(issuerLocator)) {
-            throw internalTools_1.makeError(internalTools_1.ErrorCode.MISSING_PEER_DEPENDENCY, `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a peer dependency; this isn't allowed as the peer dependency cannot be provided by any parent package\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, {
+            error = internalTools_1.makeError(internalTools_1.ErrorCode.MISSING_PEER_DEPENDENCY, `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a peer dependency; this isn't allowed as the peer dependency cannot be provided by any parent package\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, {
               request,
               issuer,
               dependencyName
             });
           } else {
-            throw internalTools_1.makeError(internalTools_1.ErrorCode.MISSING_PEER_DEPENDENCY, `A package is trying to access a peer dependency that should be provided by its direct ancestor but isn't\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, {
+            error = internalTools_1.makeError(internalTools_1.ErrorCode.MISSING_PEER_DEPENDENCY, `A package is trying to access a peer dependency that should be provided by its direct ancestor but isn't\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, {
               request,
               issuer,
               issuerLocator: Object.assign({}, issuerLocator),
@@ -39723,20 +39859,29 @@ function makeApi(runtimeState, opts) {
           }
         } else if (dependencyReference === undefined) {
           if (isDependencyTreeRoot(issuerLocator)) {
-            throw internalTools_1.makeError(internalTools_1.ErrorCode.UNDECLARED_DEPENDENCY, `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a package that is not declared in your dependencies\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, {
+            error = internalTools_1.makeError(internalTools_1.ErrorCode.UNDECLARED_DEPENDENCY, `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a package that is not declared in your dependencies\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, {
               request,
               issuer,
               dependencyName
             });
           } else {
-            const candidates = Array.from(issuerInformation.packageDependencies.keys());
-            throw internalTools_1.makeError(internalTools_1.ErrorCode.UNDECLARED_DEPENDENCY, `A package is trying to access another package without the second one being listed as a dependency of the first one\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, {
+            error = internalTools_1.makeError(internalTools_1.ErrorCode.UNDECLARED_DEPENDENCY, `A package is trying to access a dependency without properly listing it; this makes the require call ambiguous and unsound\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, {
               request,
               issuer,
               issuerLocator: Object.assign({}, issuerLocator),
-              dependencyName,
-              candidates
+              dependencyName
             });
+          }
+        }
+
+        if (dependencyReference == null) {
+          if (error === null) throw new Error(`Assertion failed: Expected an error to have been set`);
+
+          if (typeof dependencyReference === `undefined` && fallbackReference !== null) {
+            dependencyReference = fallbackReference;
+            console.log(error.stack);
+          } else {
+            throw error;
           }
         } // We need to check that the package exists on the filesystem, because it might not have been installed
 
