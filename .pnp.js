@@ -14926,6 +14926,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/runtime", "npm:7.5.5"],
             ["async", "npm:2.6.3"],
             ["bluebird", "npm:3.5.5"],
+            ["debug", "virtual:600237cf09a10d2aee41c3b67d3b1a1f8e4ee4d3398af108896e8123f43754f0ac9f704dcda78606de8699a7aca253e14c9d0933cdf05abe7bb399fdfb1d0dfa#npm:4.1.1"],
             ["fs-extra", "npm:8.1.0"],
             ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.13.6"],
             ["gatsby-core-utils", "npm:1.0.7"],
@@ -40075,6 +40076,7 @@ function makeApi(runtimeState, opts) {
 
           if (typeof dependencyReference === `undefined` && fallbackReference !== null) {
             dependencyReference = fallbackReference;
+            error.message = error.message.replace(/\n.*/g, ``);
             process.emitWarning(error);
           } else {
             throw error;

@@ -575,6 +575,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
         if (typeof dependencyReference === `undefined` && fallbackReference !== null) {
           dependencyReference = fallbackReference;
+          error.message = error.message.replace(/\n.*/g, ``);
           process.emitWarning(error);
         } else {
           throw error;

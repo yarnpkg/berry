@@ -551,7 +551,7 @@ export const generatePkgDriver = ({
             }).then(result => {
               console.log(JSON.stringify(result));
             })
-          `;
+          `.replace(/\n/g, ``);
 
           return JSON.parse((await run(`node`, `-e`, scriptWrapper, callDefinition)).stdout.toString());
         };
