@@ -235,7 +235,7 @@ module.exports = {
       const concurrency = this.parallel ? Math.max(1, os_1.cpus().length / 2) : 1;
       const limit = p_limit_1.default(this.jobs || concurrency);
       let commandCount = 0;
-      let finalExitCode = 0;
+      let finalExitCode = null;
       const report = await core_2.StreamReport.start({
         configuration,
         stdout: this.context.stdout
@@ -328,14 +328,22 @@ module.exports = {
           }
 
           const exitCodes = await Promise.all(commandPromises);
-          finalExitCode = finalExitCode || exitCodes.find(code => code > 0) || 0;
+          const errorCode = exitCodes.find(code => code !== 0); // The order in which the exit codes will be processed is fairly
+          // opaque, so better just return a generic "1" for determinism.
 
-          if ((this.topological || this.topologicalDev) && exitCodes.some(code => code !== 0)) {
+          finalExitCode = typeof errorCode !== `undefined` ? 1 : finalExitCode;
+
+          if ((this.topological || this.topologicalDev) && typeof errorCode !== `undefined`) {
             report.reportError(core_2.MessageName.UNNAMED, `The command failed for workspaces that are depended upon by other workspaces; can't satisfy the dependency graph`);
           }
         }
       });
-      return report.exitCode() || finalExitCode;
+
+      if (finalExitCode !== null) {
+        return finalExitCode;
+      } else {
+        return report.exitCode();
+      }
     }
 
   }

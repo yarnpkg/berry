@@ -7,9 +7,9 @@
     "pkg-tests-specs"
   ],
   "dependencies": {
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.29",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.23",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.16",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.30",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.24",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.17",
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "is-wsl": "^2.1.1",
     "pkg-tests-core": "workspace:0.0.0"

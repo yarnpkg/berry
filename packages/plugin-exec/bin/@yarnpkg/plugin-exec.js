@@ -102,7 +102,7 @@ module.exports = {
 
   const ExecFetcher_1 = __webpack_require__(1);
 
-  const ExecResolver_1 = __webpack_require__(6);
+  const ExecResolver_1 = __webpack_require__(5);
 
   const plugin = {
     fetchers: [ExecFetcher_1.ExecFetcher],
@@ -128,9 +128,7 @@ module.exports = {
 
   const fslib_1 = __webpack_require__(3);
 
-  const tmp_1 = __webpack_require__(4);
-
-  const constants_1 = __webpack_require__(5);
+  const constants_1 = __webpack_require__(4);
 
   class ExecFetcher {
     supports(locator, opts) {
@@ -189,41 +187,47 @@ module.exports = {
 
       if (parentFetch !== effectiveParentFetch && parentFetch.releaseFs) parentFetch.releaseFs();
       const generatorFs = effectiveParentFetch.packageFs;
-      const generatorPath = fslib_1.ppath.resolve(fslib_1.ppath.resolve(generatorFs.getRealPath(), effectiveParentFetch.prefixPath), path); // Execute the specified script in the temporary directory
+      const generatorPath = fslib_1.ppath.resolve(fslib_1.ppath.resolve(generatorFs.getRealPath(), effectiveParentFetch.prefixPath), path);
+      return fslib_1.xfs.mktempPromise(async cwd => {
+        // Execute the specified script in the temporary directory
+        await this.generatePackage(cwd, locator, generatorPath, opts); // Make sure the script generated the package
 
-      const cwd = await this.generatePackage(locator, generatorPath, opts); // Make sure the script generated the package
-
-      if (!fslib_1.xfs.existsSync(fslib_1.ppath.join(cwd, fslib_1.toFilename(`build`)))) throw new Error(`The script should have generated a build directory`);
-      return await core_2.tgzUtils.makeArchiveFromDirectory(fslib_1.ppath.join(cwd, fslib_1.toFilename(`build`)), {
-        prefixPath: core_2.structUtils.getIdentVendorPath(locator)
+        if (!fslib_1.xfs.existsSync(fslib_1.ppath.join(cwd, fslib_1.toFilename(`build`)))) throw new Error(`The script should have generated a build directory`);
+        return await core_2.tgzUtils.makeArchiveFromDirectory(fslib_1.ppath.join(cwd, fslib_1.toFilename(`build`)), {
+          prefixPath: core_2.structUtils.getIdentVendorPath(locator)
+        });
       });
     }
 
-    async generatePackage(locator, generatorPath, opts) {
-      const cwd = fslib_1.npath.toPortablePath(tmp_1.dirSync().name);
-      const env = await core_2.scriptUtils.makeScriptEnv({
-        project: opts.project
+    async generatePackage(cwd, locator, generatorPath, opts) {
+      return await fslib_1.xfs.mktempPromise(async binFolder => {
+        const env = await core_2.scriptUtils.makeScriptEnv({
+          project: opts.project,
+          binFolder
+        });
+        return await fslib_1.xfs.mktempPromise(async logDir => {
+          const logFile = fslib_1.ppath.join(logDir, `buildfile.log`);
+          const stdin = null;
+          const stdout = fslib_1.xfs.createWriteStream(logFile);
+          const stderr = stdout;
+          stdout.write(`# This file contains the result of Yarn generating a package (${core_2.structUtils.stringifyLocator(locator)})\n`);
+          stdout.write(`\n`);
+          const {
+            code
+          } = await core_2.execUtils.pipevp(process.execPath, [fslib_1.npath.fromPortablePath(generatorPath), core_2.structUtils.stringifyIdent(locator)], {
+            cwd,
+            env,
+            stdin,
+            stdout,
+            stderr
+          });
+
+          if (code !== 0) {
+            fslib_1.xfs.detachTemp(logDir);
+            throw new Error(`Package generation failed (exit code ${code}, logs can be found here: ${logFile})`);
+          }
+        });
       });
-      const logFile = fslib_1.npath.toPortablePath(tmp_1.tmpNameSync({
-        prefix: `buildfile-`,
-        postfix: `.log`
-      }));
-      const stdin = null;
-      const stdout = fslib_1.xfs.createWriteStream(logFile);
-      const stderr = stdout;
-      stdout.write(`# This file contains the result of Yarn generating a package (${core_2.structUtils.stringifyLocator(locator)})\n`);
-      stdout.write(`\n`);
-      const {
-        code
-      } = await core_2.execUtils.pipevp(process.execPath, [fslib_1.npath.fromPortablePath(generatorPath), core_2.structUtils.stringifyIdent(locator)], {
-        cwd,
-        env,
-        stdin,
-        stdout,
-        stderr
-      });
-      if (code !== 0) throw new Error(`Package generation failed (exit code ${code}, logs can be found here: ${logFile})`);
-      return cwd;
     }
 
   }
@@ -244,12 +248,6 @@ module.exports = {
 
   /***/ }),
   /* 4 */
-  /***/ (function(module, exports) {
-
-  module.exports = require("tmp");
-
-  /***/ }),
-  /* 5 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -261,7 +259,7 @@ module.exports = {
   exports.PROTOCOL = `exec:`;
 
   /***/ }),
-  /* 6 */
+  /* 5 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -279,7 +277,7 @@ module.exports = {
 
   const fslib_1 = __webpack_require__(3);
 
-  const constants_1 = __webpack_require__(5);
+  const constants_1 = __webpack_require__(4);
 
   class ExecResolver {
     supportsDescriptor(descriptor, opts) {

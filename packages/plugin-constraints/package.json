@@ -7,7 +7,7 @@
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.16",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.17",
     "clipanion": "^2.1.5",
     "inquirer": "^6.2.0",
     "lodash": "^4.17.15",
@@ -15,15 +15,15 @@
     "tau-prolog": "^0.2.66"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.29",
-    "@yarnpkg/core": "^2.0.0-rc.23"
+    "@yarnpkg/cli": "^2.0.0-rc.30",
+    "@yarnpkg/core": "^2.0.0-rc.24"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",
     "@types/typescript": "2.0.0",
     "@yarnpkg/builder": "workspace:^2.0.0-rc.19",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.29",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.23",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.30",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.24",
     "typescript": "^3.7.5"
   },
   "scripts": {

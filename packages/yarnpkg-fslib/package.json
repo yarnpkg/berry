@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/fslib",
-  "version": "2.0.0-rc.16",
+  "version": "2.0.0-rc.17",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {

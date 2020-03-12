@@ -773,10 +773,7 @@ module.exports = {
         workspace
       } = await core_1.Project.find(configuration, this.context.cwd);
       if (!workspace) throw new cli_1.WorkspaceRequiredError(project.cwd, this.context.cwd);
-      await project.resolveEverything({
-        lockfileOnly: true,
-        report: new core_1.ThrowReport()
-      });
+      await project.restoreInstallState();
       const versionFile = await versionUtils.openVersionFile(project);
       if (versionFile === null || versionFile.releaseRoots.size === 0) return;
       if (versionFile.root === null) throw new clipanion_1.UsageError(`This command can only be run on Git repositories`);
@@ -1017,10 +1014,7 @@ module.exports = {
         workspace
       } = await core_1.Project.find(configuration, this.context.cwd);
       if (!workspace) throw new cli_1.WorkspaceRequiredError(project.cwd, this.context.cwd);
-      await project.resolveEverything({
-        lockfileOnly: true,
-        report: new core_1.ThrowReport()
-      });
+      await project.restoreInstallState();
       const report = await core_1.StreamReport.start({
         configuration,
         stdout: this.context.stdout
@@ -6204,8 +6198,8 @@ module.exports = {
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-
-
+  
+  
   module.exports = {
   	"aliceblue": [240, 248, 255],
   	"antiquewhite": [250, 235, 215],
@@ -6528,7 +6522,7 @@ module.exports = {
   })
 
   exports.isCI = !!(
-    env.CI || // Travis CI, CircleCI, Cirrus CI, GitLab CI, Appveyor, CodeShip, dsari
+    env.CI || // Travis CI, CircleCI, Cirrus CI, Gitlab CI, Appveyor, CodeShip, dsari
     env.CONTINUOUS_INTEGRATION || // Travis CI, Cirrus CI
     env.BUILD_NUMBER || // Jenkins, TeamCity
     env.RUN_ID || // TaskCluster, dsari

@@ -1,11 +1,11 @@
 {
   "name": "@yarnpkg/doctor",
-  "version": "2.0.0-rc.15",
+  "version": "2.0.0-rc.16",
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.29",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.23",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.16",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.30",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.24",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.17",
     "clipanion": "^2.1.5",
     "globby": "^10.0.1",
     "micromatch": "^4.0.2",

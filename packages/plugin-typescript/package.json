@@ -3,20 +3,20 @@
   "version": "2.0.0-rc.15",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.17",
+    "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.18",
     "algoliasearch": "^4.0.1"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.29",
-    "@yarnpkg/core": "^2.0.0-rc.23",
-    "@yarnpkg/plugin-essentials": "^2.0.0-rc.23"
+    "@yarnpkg/cli": "^2.0.0-rc.30",
+    "@yarnpkg/core": "^2.0.0-rc.24",
+    "@yarnpkg/plugin-essentials": "^2.0.0-rc.24"
   },
   "devDependencies": {
     "@algolia/requester-common": "4.0.0-beta.14",
     "@yarnpkg/builder": "workspace:^2.0.0-rc.19",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.29",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.23",
-    "@yarnpkg/plugin-essentials": "workspace:^2.0.0-rc.23",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.30",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.24",
+    "@yarnpkg/plugin-essentials": "workspace:^2.0.0-rc.24",
     "typescript": "^3.7.5"
   },
   "scripts": {

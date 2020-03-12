@@ -1,9 +1,9 @@
 {
   "name": "@yarnpkg/plugin-version",
-  "version": "2.0.0-rc.20",
+  "version": "2.0.0-rc.21",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.16",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.17",
     "@yarnpkg/libui": "workspace:^2.0.0-rc.7",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.10",
     "clipanion": "^2.1.5",
@@ -13,18 +13,18 @@
     "yup": "^0.27.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.29",
-    "@yarnpkg/core": "^2.0.0-rc.23",
-    "@yarnpkg/plugin-pack": "^2.0.0-rc.17"
+    "@yarnpkg/cli": "^2.0.0-rc.30",
+    "@yarnpkg/core": "^2.0.0-rc.24",
+    "@yarnpkg/plugin-pack": "^2.0.0-rc.18"
   },
   "devDependencies": {
     "@types/react": "^16.8.0",
     "@types/semver": "^7.1.0",
     "@types/yup": "0.26.12",
     "@yarnpkg/builder": "workspace:^2.0.0-rc.19",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.29",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.23",
-    "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.17",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.30",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.24",
+    "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.18",
     "typescript": "^3.7.5"
   },
   "scripts": {
