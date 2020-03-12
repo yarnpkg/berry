@@ -5,6 +5,11 @@ import {npmConfigUtils, npmHttpUtils}       from '@yarnpkg/plugin-npm';
 import {Command, Usage}                     from 'clipanion';
 import inquirer                             from 'inquirer';
 
+type Credentials = {
+  name: string,
+  password: string,
+}
+
 // eslint-disable-next-line arca/no-default-export
 export default class NpmLoginCommand extends BaseCommand {
   @Command.String(`-s,--scope`)
@@ -90,7 +95,7 @@ async function setAuthToken(registry: string, npmAuthToken: string, {configurati
   });
 }
 
-async function getCredentials(prompt: any, {registry, report}: {registry: string, report: Report}) {
+async function getCredentials(prompt: any, {registry, report}: {registry: string, report: Report}): Promise<Credentials> {
   if (process.env.TEST_ENV) {
     return {
       name: process.env.TEST_NPM_USER || '',
