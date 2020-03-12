@@ -39590,7 +39590,9 @@ const module_1 = __webpack_require__(6);
 const internalTools_1 = __webpack_require__(11);
 
 function makeApi(runtimeState, opts) {
-  // @ts-ignore
+  const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
+  const debugLevel = Number(process.env.PNP_DEBUG_LEVEL); // @ts-ignore
+
   const builtinModules = new Set(module_1.Module.builtinModules || Object.keys(process.binding('natives'))); // Splits a require request into its components, or return null if the request is a file path
 
   const pathRegExp = /^(?![a-zA-Z]:[\\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^\/]+\/)?[^\/]+)\/?(.*|)$/; // Matches if the path starts with a valid path qualifier (./, ../, /)
@@ -39605,7 +39607,9 @@ function makeApi(runtimeState, opts) {
     reference: null
   }; // Used for compatibility purposes - cf setupCompatibilityLayer
 
-  const fallbackLocators = [];
+  const fallbackLocators = []; // To avoid emitting the same warning multiple times
+
+  const emittedWarnings = new Set();
   if (runtimeState.enableTopLevelFallback === true) fallbackLocators.push(topLevelLocator);
 
   if (opts.compatibilityMode !== false) {
@@ -39663,10 +39667,9 @@ function makeApi(runtimeState, opts) {
 
   function maybeLog(name, fn) {
     if (opts.allowDebug === false) return fn;
-    const level = Number(process.env.PNP_DEBUG_LEVEL);
 
-    if (Number.isFinite(level)) {
-      if (level >= 2) {
+    if (Number.isFinite(debugLevel)) {
+      if (debugLevel >= 2) {
         return (...args) => {
           const logEntry = makeLogEntry(name, args);
 
@@ -39678,7 +39681,7 @@ function makeApi(runtimeState, opts) {
             console.trace(logEntry);
           }
         };
-      } else if (level >= 1) {
+      } else if (debugLevel >= 1) {
         return (...args) => {
           try {
             return fn(...args);
@@ -40033,10 +40036,20 @@ function makeApi(runtimeState, opts) {
             const canUseFallbacks = !exclusionEntry || !exclusionEntry.has(issuerLocator.reference);
 
             if (canUseFallbacks) {
-              const reference = runtimeState.fallbackPool.get(dependencyName);
+              for (let t = 0, T = fallbackLocators.length; t < T; ++t) {
+                const fallbackInformation = getPackageInformationSafe(fallbackLocators[t]);
+                const reference = fallbackInformation.packageDependencies.get(dependencyName);
+                if (reference == null) continue;
+                if (alwaysWarnOnFallback) fallbackReference = reference;else dependencyReference = reference;
+                break;
+              }
 
-              if (reference != null) {
-                fallbackReference = reference;
+              if (typeof dependencyReference === `undefined` && fallbackReference === null) {
+                const reference = runtimeState.fallbackPool.get(dependencyName);
+
+                if (reference != null) {
+                  fallbackReference = reference;
+                }
               }
             }
           }
@@ -40077,15 +40090,17 @@ function makeApi(runtimeState, opts) {
           }
         }
 
-        if (dependencyReference == null) {
-          if (error === null) throw new Error(`Assertion failed: Expected an error to have been set`);
+        if (dependencyReference === null) throw error || new Error(`Assertion failed: Expected an error to have been set`);
 
-          if (typeof dependencyReference === `undefined` && fallbackReference !== null) {
-            dependencyReference = fallbackReference;
-            error.message = error.message.replace(/\n.*/g, ``);
+        if (typeof dependencyReference === `undefined`) {
+          if (fallbackReference === null || error === null) throw error || new Error(`Assertion failed: Expected an error to have been set`);
+          dependencyReference = fallbackReference;
+          const message = error.message.replace(/\n.*/g, ``);
+          error.message = message;
+
+          if (!emittedWarnings.has(message)) {
+            emittedWarnings.add(message);
             process.emitWarning(error);
-          } else {
-            throw error;
           }
         } // We need to check that the package exists on the filesystem, because it might not have been installed
 

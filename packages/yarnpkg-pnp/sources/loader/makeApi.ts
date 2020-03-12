@@ -26,6 +26,9 @@ export type ResolveRequestOptions =
   ResolveUnqualifiedOptions;
 
 export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpApi {
+  const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
+  const debugLevel = Number(process.env.PNP_DEBUG_LEVEL);
+
   // @ts-ignore
   const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding('natives')));
 
@@ -44,6 +47,9 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   // Used for compatibility purposes - cf setupCompatibilityLayer
   const fallbackLocators: Array<PackageLocator> = [];
+
+  // To avoid emitting the same warning multiple times
+  const emittedWarnings = new Set<string>();
 
   if (runtimeState.enableTopLevelFallback === true)
     fallbackLocators.push(topLevelLocator);
@@ -104,10 +110,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     if (opts.allowDebug === false)
       return fn;
 
-    const level = Number(process.env.PNP_DEBUG_LEVEL);
-
-    if (Number.isFinite(level)) {
-      if (level >= 2) {
+    if (Number.isFinite(debugLevel)) {
+      if (debugLevel >= 2) {
         return (...args: Array<any>) => {
           const logEntry = makeLogEntry(name, args);
 
@@ -119,7 +123,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
             console.trace(logEntry);
           }
         };
-      } else if (level >= 1) {
+      } else if (debugLevel >= 1) {
         return (...args: Array<any>) => {
           try {
             return fn(...args);
@@ -526,10 +530,26 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           const canUseFallbacks = !exclusionEntry || !exclusionEntry.has(issuerLocator.reference);
 
           if (canUseFallbacks) {
-            const reference = runtimeState.fallbackPool.get(dependencyName);
+            for (let t = 0, T = fallbackLocators.length; t < T; ++t) {
+              const fallbackInformation = getPackageInformationSafe(fallbackLocators[t]);
+              const reference = fallbackInformation.packageDependencies.get(dependencyName);
 
-            if (reference != null) {
-              fallbackReference = reference;
+              if (reference == null)
+                continue;
+
+              if (alwaysWarnOnFallback)
+                fallbackReference = reference;
+              else
+                dependencyReference = reference;
+
+              break;
+            }
+
+            if (typeof dependencyReference === `undefined` && fallbackReference === null) {
+              const reference = runtimeState.fallbackPool.get(dependencyName);
+              if (reference != null) {
+                fallbackReference = reference;
+              }
             }
           }
         }
@@ -569,16 +589,21 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         }
       }
 
-      if (dependencyReference == null) {
-        if (error === null)
-          throw new Error(`Assertion failed: Expected an error to have been set`);
+      if (dependencyReference === null)
+        throw error || new Error(`Assertion failed: Expected an error to have been set`);
 
-        if (typeof dependencyReference === `undefined` && fallbackReference !== null) {
-          dependencyReference = fallbackReference;
-          error.message = error.message.replace(/\n.*/g, ``);
+      if (typeof dependencyReference === `undefined`) {
+        if (fallbackReference === null || error === null)
+          throw error || new Error(`Assertion failed: Expected an error to have been set`);
+
+        dependencyReference = fallbackReference;
+
+        const message = error.message.replace(/\n.*/g, ``);
+        error.message = message;
+
+        if (!emittedWarnings.has(message)) {
+          emittedWarnings.add(message);
           process.emitWarning(error);
-        } else {
-          throw error;
         }
       }
 
