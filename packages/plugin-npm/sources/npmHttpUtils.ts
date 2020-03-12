@@ -34,7 +34,7 @@ export function getIdentUrl(ident: Ident) {
   }
 }
 
-export async function get(path: string, {configuration, headers, ident, authType, registry, ...rest}: Options) {
+export async function get(path: string, {attemptedAs, configuration, headers, ident, authType, registry, ...rest}: Options & {attemptedAs?: string}) {
   if (ident && typeof registry === `undefined`)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
   if (ident && ident.scope && typeof authType === `undefined`)
@@ -58,7 +58,7 @@ export async function get(path: string, {configuration, headers, ident, authType
     return await httpUtils.get(url.href, {configuration, headers, ...rest});
   } catch (error) {
     if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
-      throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (as ${await whoami(registry, headers, {configuration})})`);
+      throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headers, {configuration})}` : `attempted as ${attemptedAs}`})`);
     } else {
       throw error;
     }
