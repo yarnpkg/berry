@@ -81,6 +81,10 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
   } catch (error) {
     if (!isOtpError(error)) {
       if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
+        if (error.response.body?.reason?.indexOf('feed already contains the package') !== -1) {
+          error.response.body.error = error.response.body.reason;
+          throw error;
+        }
         throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headers, {configuration})}` : `attempted as ${attemptedAs}`})`);
       } else {
         throw error;
