@@ -1,10 +1,10 @@
-import {FakeFS, NativePath, Path, PortablePath, VirtualFS, npath} from '@yarnpkg/fslib';
-import {ppath, toFilename}                                        from '@yarnpkg/fslib';
-import {Module}                                                   from 'module';
+import {FakeFS, NativePath, Path, PortablePath, VirtualFS, npath}                                           from '@yarnpkg/fslib';
+import {ppath, toFilename}                                                                                  from '@yarnpkg/fslib';
+import {Module}                                                                                             from 'module';
 
-import {PackageInformation, PackageLocator, PnpApi, RuntimeState} from '../types';
+import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget} from '../types';
 
-import {ErrorCode, makeError}                                     from './internalTools';
+import {ErrorCode, makeError}                                                                               from './internalTools';
 
 export type MakeApiOptions = {
   allowDebug?: boolean,
@@ -344,7 +344,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * Finds the package locator that owns the specified path. If none is found, returns null instead.
    */
 
-  function findPackageLocator(location: PortablePath): PackageLocator | null {
+  function findPackageLocator(location: PortablePath): PhysicalPackageLocator | null {
     let relativeLocation = normalizePath(ppath.relative(runtimeState.basePath, location));
 
     if (!relativeLocation.match(isStrictRegExp))
@@ -499,7 +499,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         if (result === false) {
           throw makeError(
             ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED,
-            `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree)\n\nRequire path: "${request}"\nRequired by: ${issuer}\n`,
+            `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree).\n\nRequire path: "${request}"\nRequired by: ${issuer}\n`,
             {request, issuer},
           );
         }
@@ -512,24 +512,24 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       // We obtain the dependency reference in regard to the package that request it
 
       let dependencyReference = issuerInformation.packageDependencies.get(dependencyName);
+      let fallbackReference: DependencyTarget | null = null;
 
       // If we can't find it, we check if we can potentially load it from the packages that have been defined as potential fallbacks.
       // It's a bit of a hack, but it improves compatibility with the existing Node ecosystem. Hopefully we should eventually be able
       // to kill this logic and become stricter once pnp gets enough traction and the affected packages fix themselves.
 
-      if (issuerLocator.name !== null) {
-        // To allow programs to become gradually stricter, starting from the v2 we enforce that workspaces cannot depend on fallbacks.
-        // This works by having a list containing all their locators, and checking when a fallback is required whether it's one of them.
-        const exclusionEntry = runtimeState.fallbackExclusionList.get(issuerLocator.name);
-        const canUseFallbacks = !exclusionEntry || !exclusionEntry.has(issuerLocator.reference);
+      if (typeof dependencyReference === `undefined`) {
+        if (issuerLocator.name !== null) {
+          // To allow programs to become gradually stricter, starting from the v2 we enforce that workspaces cannot depend on fallbacks.
+          // This works by having a list containing all their locators, and checking when a fallback is required whether it's one of them.
+          const exclusionEntry = runtimeState.fallbackExclusionList.get(issuerLocator.name);
+          const canUseFallbacks = !exclusionEntry || !exclusionEntry.has(issuerLocator.reference);
 
-        if (canUseFallbacks) {
-          for (let t = 0, T = fallbackLocators.length; dependencyReference === undefined && t < T; ++t) {
-            const fallbackInformation = getPackageInformationSafe(fallbackLocators[t]);
-            const fallbackReference = fallbackInformation.packageDependencies.get(dependencyName);
+          if (canUseFallbacks) {
+            const reference = runtimeState.fallbackPool.get(dependencyName);
 
-            if (fallbackReference !== null) {
-              dependencyReference = fallbackReference;
+            if (reference != null) {
+              fallbackReference = reference;
             }
           }
         }
@@ -537,34 +537,48 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       // If we can't find the path, and if the package making the request is the top-level, we can offer nicer error messages
 
+      let error: Error | null = null;
+
       if (dependencyReference === null) {
         if (isDependencyTreeRoot(issuerLocator)) {
-          throw makeError(
+          error = makeError(
             ErrorCode.MISSING_PEER_DEPENDENCY,
-            `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a peer dependency; this isn't allowed as the peer dependency cannot be provided by any parent package\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
+            `Your application tried to access ${dependencyName} (a peer dependency); this isn't allowed as there is no ancestor to satisfy the requirement. Use a devDependency if needed.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
             {request, issuer, dependencyName},
           );
         } else {
-          throw makeError(
+          error = makeError(
             ErrorCode.MISSING_PEER_DEPENDENCY,
-            `A package is trying to access a peer dependency that should be provided by its direct ancestor but isn't\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
+            `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
             {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName},
           );
         }
       } else if (dependencyReference === undefined) {
         if (isDependencyTreeRoot(issuerLocator)) {
-          throw makeError(
+          error = makeError(
             ErrorCode.UNDECLARED_DEPENDENCY,
-            `Something that got detected as your top-level application (because it doesn't seem to belong to any package) tried to access a package that is not declared in your dependencies\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
+            `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`,
             {request, issuer, dependencyName},
           );
         } else {
-          const candidates = Array.from(issuerInformation.packageDependencies.keys());
-          throw makeError(
+          error = makeError(
             ErrorCode.UNDECLARED_DEPENDENCY,
-            `A package is trying to access another package without the second one being listed as a dependency of the first one\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
-            {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName, candidates},
+            `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
+            {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName},
           );
+        }
+      }
+
+      if (dependencyReference == null) {
+        if (error === null)
+          throw new Error(`Assertion failed: Expected an error to have been set`);
+
+        if (typeof dependencyReference === `undefined` && fallbackReference !== null) {
+          dependencyReference = fallbackReference;
+          error.message = error.message.replace(/\n.*/g, ``);
+          process.emitWarning(error);
+        } else {
+          throw error;
         }
       }
 
@@ -612,7 +626,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     } else {
       throw makeError(
         ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED,
-        `Couldn't find a suitable Node resolution for the specified unqualified path\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected resolution: ${candidate}\n`).join(``)}`,
+        `Qualified path resolution failed - none of the candidates can be found on the disk.\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected candidate: ${candidate}\n`).join(``)}`,
         {unqualifiedPath},
       );
     }
@@ -653,7 +667,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     VERSIONS,
     topLevel,
 
-    getLocator: (name: string, referencish: [string, string] | string): PackageLocator => {
+    getLocator: (name: string, referencish: [string, string] | string): PhysicalPackageLocator => {
       if (Array.isArray(referencish)) {
         return {name: referencish[0], reference: referencish[1]};
       } else {

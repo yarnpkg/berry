@@ -21,7 +21,7 @@ export type PackageLocator = {
 
 A package locator is an object describing one unique instance of a package in the dependency tree. The `name` field is guaranteed to be the name of the package itself, but the `reference` field should be considered an opaque string whose value may be whatever the PnP implementation decides to put there.
 
-Note that one package locator is different from the others: the top-level locator (available through `pnp.topLevel`, cf below) sets *both* `name` and `reference` to `null`. This special locator will always point to the project folder (which is generally the root of the repository, even when working with workspaces).
+Note that one package locator is different from the others: the top-level locator (available through `pnp.topLevel`, cf below) sets *both* `name` and `reference` to `null`. This special locator will always mirror the top-level package (which is generally the root of the repository, even when working with workspaces).
 
 ### `PackageInformation`
 
@@ -131,6 +131,8 @@ The `topLevel` object is a simple package locator pointing to the top-level pack
 
 This object is provided for convenience and doesn't necessarily needs to be used; you may create your own top-level locator by using your own locator literal with both fields set to `null`.
 
+**Note:** These special top-level locators are merely aliases to physical locators, which can be accessed by calling `findPackageLocator`.
+
 ### `getLocator(...)`
 
 ```ts
@@ -149,7 +151,7 @@ export function getDependencyTreeRoots(): PackageLocator[];
 
 The `getDependencyTreeRoots` function will return the set of locators that constitute the roots of individual dependency trees. In Yarn, there is exactly one such locator for each workspace in the project.
 
-**Note:** The top-level locator (referenced by the `topLevel` field above) isn't required to be stored in this array as long as it is replaced by another locator that points to the exact same information.
+**Note:** This function will always return the physical locators, so it'll never return the special top-level locator described in the `topLevel` section.
 
 ### `getPackageInformation(...)`
 
@@ -166,6 +168,13 @@ export function findPackageLocator(location: string): PackageLocator | null;
 ```
 
 Given a location on the disk, the `findPackageLocator` function will return the package locator for the package that "owns" the path. For example, running this function on something conceptually similar to `/path/to/node_modules/foo/index.js` would return a package locator pointing to the `foo` package (and its exact version).
+
+**Note:** This function will always return the physical locators, so it'll never return the special top-level locator described in the `topLevel` section. You can leverage this property to extract the physical locator for the top-level package:
+
+```ts
+const virtualLocator = pnpApi.topLevel;
+const physicalLocator = pnpApi.findPackageLocator(pnpApi.getPackageInformation(virtualLocator).packageLocation);
+```
 
 ### `resolveToUnqualified(...)`
 

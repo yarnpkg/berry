@@ -1,6 +1,6 @@
-import {PortablePath, npath, ppath}                                                      from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath}                                                              from '@yarnpkg/fslib';
 
-import {PackageInformation, PackageLocator, PackageStore, RuntimeState, SerializedState} from '../types';
+import {PackageInformation, PackageStore, RuntimeState, SerializedState, PhysicalPackageLocator} from '../types';
 
 export type HydrateRuntimeStateOptions = {
   basePath: string,
@@ -25,7 +25,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     }))] as [string | null, PackageStore];
   }));
 
-  const packageLocatorsByLocations = new Map<PortablePath, PackageLocator | null>();
+  const packageLocatorsByLocations = new Map<PortablePath, PhysicalPackageLocator | null>();
   const packageLocationLengths = new Set<number>();
 
   for (const [packageName, storeData] of data.packageRegistryData) {
@@ -37,7 +37,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
         continue;
 
       // @ts-ignore: TypeScript isn't smart enough to understand the type assertion
-      const packageLocator: PackageLocator = {name: packageName, reference: packageReference};
+      const packageLocator: PhysicalPackageLocator = {name: packageName, reference: packageReference};
       packageLocatorsByLocations.set(packageInformationData.packageLocation, packageLocator);
 
       packageLocationLengths.add(packageInformationData.packageLocation.length);
@@ -51,6 +51,8 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     return [packageName, new Set(packageReferences)] as [string, Set<string>];
   }));
 
+  const fallbackPool = new Map(data.fallbackPool);
+
   const dependencyTreeRoots = data.dependencyTreeRoots;
   const enableTopLevelFallback = data.enableTopLevelFallback;
 
@@ -59,6 +61,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     dependencyTreeRoots,
     enableTopLevelFallback,
     fallbackExclusionList,
+    fallbackPool,
     ignorePattern,
     packageLocationLengths: [...packageLocationLengths].sort((a, b) => b - a),
     packageLocatorsByLocations,

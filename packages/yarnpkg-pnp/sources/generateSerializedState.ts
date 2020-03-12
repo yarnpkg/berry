@@ -55,6 +55,10 @@ function generateFallbackExclusionList(settings: PnpSettings): Array<[string, Ar
   });
 }
 
+function generateFallbackPoolData(settings: PnpSettings): Array<[string, string | [string, string] | null]> {
+  return sortMap(settings.fallbackPool || [], ([name]) => name);
+}
+
 function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData {
   const packageRegistryData: PackageRegistryData = [];
 
@@ -110,6 +114,7 @@ export function generateSerializedState(settings: PnpSettings): SerializedState 
     ignorePatternData: settings.ignorePattern || null,
 
     fallbackExclusionList: generateFallbackExclusionList(settings),
+    fallbackPool: generateFallbackPoolData(settings),
     locationBlacklistData: generateLocationBlacklistData(settings),
     packageRegistryData: generatePackageRegistryData(settings),
   };

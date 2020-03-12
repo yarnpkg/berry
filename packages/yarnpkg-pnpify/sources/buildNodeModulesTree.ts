@@ -1,13 +1,29 @@
-import {NativePath, PortablePath, Filename}         from '@yarnpkg/fslib';
-import {toFilename, npath, ppath}                   from '@yarnpkg/fslib';
-import {PnpApi, PackageLocator, PackageInformation} from '@yarnpkg/pnp';
+import {NativePath, PortablePath, Filename}                 from '@yarnpkg/fslib';
+import {toFilename, npath, ppath}                           from '@yarnpkg/fslib';
+import {PnpApi, PhysicalPackageLocator, PackageInformation} from '@yarnpkg/pnp';
 
-import {hoist, HoisterTree, HoisterResult}          from './hoist';
+import {hoist, HoisterTree, HoisterResult}                  from './hoist';
 
 // Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
 // But because of this TypeScript requires @yarnpkg/pnp during runtime
 // To prevent this we redeclare LinkType enum here, to not depend on @yarnpkg/pnp during runtime
 export enum LinkType {HARD = 'HARD', SOFT = 'SOFT'};
+
+// The list of directories stored within a node_modules (or node_modules/@foo)
+export type NodeModulesBaseNode = {
+  dirList: Set<Filename>
+};
+
+// The entry for a package within a node_modules
+export type NodeModulesPackageNode = {
+  locator: LocatorKey,
+  target: PortablePath,
+  // Hard links are copies of the target; soft links are symlinks to it
+  linkType: LinkType,
+  // Contains ["node_modules"] if there's nested n_m entries
+  dirList?: undefined,
+  aliases: string[],
+};
 
 /**
  * Node modules tree - a map of every folder within the node_modules, along with their
@@ -18,15 +34,7 @@ export enum LinkType {HARD = 'HARD', SOFT = 'SOFT'};
  * /home/user/project/node_modules/foo -> {target: '/home/user/project/.yarn/.cache/foo.zip/node_modules/foo', linkType: 'HARD'}
  * /home/user/project/node_modules/bar -> {target: '/home/user/project/packages/bar', linkType: 'SOFT'}
  */
-export type NodeModulesTree = Map<PortablePath, {
-  dirList: Set<Filename>
-} | {
-  dirList?: undefined,
-  locator: LocatorKey,
-  target: PortablePath,
-  linkType: LinkType,
-  aliases: string[],
-}>;
+export type NodeModulesTree = Map<PortablePath, NodeModulesBaseNode | NodeModulesPackageNode>;
 
 export interface NodeModulesTreeOptions {
   pnpifyFs?: boolean;
@@ -60,13 +68,12 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
  */
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
   const packageTree = buildPackageTree(pnp);
-
   const hoistedTree = hoist(packageTree);
 
   return populateNodeModulesTree(pnp, hoistedTree, options);
 };
 
-const stringifyLocator = (locator: PackageLocator): LocatorKey => `${locator.name}@${locator.reference}`;
+const stringifyLocator = (locator: PhysicalPackageLocator): LocatorKey => `${locator.name}@${locator.reference}`;
 
 export type NodeModulesLocatorMap = Map<LocatorKey, {
   target: PortablePath;
@@ -112,25 +119,31 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
 const buildPackageTree = (pnp: PnpApi): HoisterTree => {
   const pnpRoots = pnp.getDependencyTreeRoots();
 
-  const topPkg = pnp.getPackageInformation(pnp.topLevel)!;
-  const topLocator = pnp.findPackageLocator(topPkg.packageLocation)!;
+  const topPkg = pnp.getPackageInformation(pnp.topLevel);
+  if (topPkg === null)
+    throw new Error(`Assertion failed: Expected the top-level package to have been registered`);
+
+  const topLocator = pnp.findPackageLocator(topPkg.packageLocation);
+  if (topLocator === null)
+    throw new Error(`Assertion failed: Expected the top-level package to have a physical locator`);
+
   const topLocatorKey = stringifyLocator(topLocator);
   for (const locator of pnpRoots) {
     if (stringifyLocator(locator) !== topLocatorKey) {
-      topPkg.packageDependencies.set(`$wsroot$${locator.name!}`, locator.reference);
+      topPkg.packageDependencies.set(`$wsroot$${locator.name}`, locator.reference);
     }
   }
 
   const packageTree: HoisterTree = {
-    name: topLocator.name!,
-    reference: topLocator.reference!,
+    name: topLocator.name,
+    reference: topLocator.reference,
     peerNames: topPkg.packagePeers,
     dependencies: new Set<HoisterTree>(),
   };
 
   const nodes = new Map<LocatorKey, HoisterTree>();
 
-  const addPackageToTree = (pkg: PackageInformation<NativePath>, locator: PackageLocator, parent: HoisterTree, parentPkg: PackageInformation<NativePath>) => {
+  const addPackageToTree = (pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentPkg: PackageInformation<NativePath>) => {
     const locatorKey = stringifyLocator(locator);
     let node = nodes.get(locatorKey);
     const isSeen = !!node;
@@ -148,8 +161,8 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
           peerNames.add(peerName);
 
       node = {
-        name: name!,
-        reference: reference!,
+        name,
+        reference,
         dependencies: new Set(),
         peerNames,
       };
@@ -162,11 +175,16 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
         if (referencish !== null && !node.peerNames.has(name)) {
           const depLocator = pnp.getLocator(name, referencish);
           const pkgLocator = pnp.getLocator(name.replace('$wsroot$', ''), referencish);
-          const depPkg = pnp.getPackageInformation(pkgLocator)!;
+
+          const depPkg = pnp.getPackageInformation(pkgLocator);
+          if (depPkg === null)
+            throw new Error(`Assertion failed: Expected the package to have been registered`);
+
           // Skip package self-references
-          if (stringifyLocator(depLocator) !== locatorKey) {
-            addPackageToTree(depPkg, depLocator, node, pkg);
-          }
+          if (stringifyLocator(depLocator) === locatorKey)
+            continue;
+
+          addPackageToTree(depPkg, depLocator, node, pkg);
         }
       }
     }
@@ -191,9 +209,12 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
 const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, options: NodeModulesTreeOptions): NodeModulesTree => {
   const tree: NodeModulesTree = new Map();
 
-  const makeLeafNode = (locator: PackageLocator, aliases: string[]): {locator: LocatorKey, target: PortablePath, linkType: LinkType, aliases: string[]} => {
-    const pkgLocator = pnp.getLocator(locator.name!.replace(/^\$wsroot\$/, ''), locator.reference!);
-    const info = pnp.getPackageInformation(pkgLocator)!;
+  const makeLeafNode = (locator: PhysicalPackageLocator, aliases: string[]): {locator: LocatorKey, target: PortablePath, linkType: LinkType, aliases: string[]} => {
+    const pkgLocator = pnp.getLocator(locator.name.replace(/^\$wsroot\$/, ''), locator.reference);
+
+    const info = pnp.getPackageInformation(pkgLocator);
+    if (info === null)
+      throw new Error(`Assertion failed: Expected the package to be registered`);
 
     let linkType;
     let target;
@@ -206,7 +227,10 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
       target = npath.toPortablePath(info.packageLocation);
       linkType = LinkType.SOFT;
     } else {
-      const truePath = pnp.resolveVirtual && locator.reference && locator.reference.startsWith('virtual:') ? pnp.resolveVirtual(info.packageLocation) : info.packageLocation;
+      const truePath = pnp.resolveVirtual && locator.reference && locator.reference.startsWith('virtual:')
+        ? pnp.resolveVirtual(info.packageLocation)
+        : info.packageLocation;
+
       target = npath.toPortablePath(truePath || info.packageLocation);
       linkType = info.linkType;
     }
@@ -219,22 +243,33 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
     };
   };
 
-  const getPackageName = (locator: PackageLocator): { name: Filename, scope: Filename | null } => {
-    const [nameOrScope, name] = locator.name!.split('/');
-    return name ? {scope: toFilename(nameOrScope), name: toFilename(name)} : {scope: null, name: toFilename(nameOrScope)};
+  const getPackageName = (locator: PhysicalPackageLocator): { name: Filename, scope: Filename | null } => {
+    const [nameOrScope, name] = locator.name.split('/');
+
+    return name ? {
+      scope: toFilename(nameOrScope),
+      name: toFilename(name),
+    } : {
+      scope: null,
+      name: toFilename(nameOrScope),
+    };
   };
 
   const seenNodes = new Set<HoisterResult>();
   const buildTree = (pkg: HoisterResult, locationPrefix: PortablePath) => {
     if (seenNodes.has(pkg))
       return;
+
     seenNodes.add(pkg);
+
     for (const dep of pkg.dependencies) {
-      const references: string[] = Array.from(dep.references).sort();
+      const references = Array.from(dep.references).sort();
       const locator = {name: dep.name, reference: references[0]};
       const {name, scope} = getPackageName(locator);
 
-      const packageNameParts = scope ? [scope, name] : [name];
+      const packageNameParts = scope
+        ? [scope, name]
+        : [name];
 
       const nodeModulesDirPath = ppath.join(locationPrefix, NODE_MODULES);
       const nodeModulesLocation = ppath.join(nodeModulesDirPath, ...packageNameParts);
@@ -266,7 +301,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
         }
       }
 
-      buildTree(dep, leafNode.linkType === LinkType.SOFT ? leafNode.target: nodeModulesLocation);
+      buildTree(dep, leafNode.linkType === LinkType.SOFT ? leafNode.target : nodeModulesLocation);
     }
   };
 
@@ -383,17 +418,17 @@ const dumpNodeModulesTree = (tree: NodeModulesTree, rootPath: PortablePath): str
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const dumpDepTree = (tree: HoisterResult) => {
-  const dumpLocator = (locator: PackageLocator): string => {
+  const dumpLocator = (locator: PhysicalPackageLocator): string => {
     if (locator.reference === 'workspace:.') {
       return '.';
     } else if (!locator.reference) {
-      return `${locator.name!}@${locator.reference}`;
+      return `${locator.name}@${locator.reference}`;
     } else {
       const version = (locator.reference.indexOf('#') > 0 ? locator.reference.split('#')[1] : locator.reference).replace('npm:', '');
       if (locator.reference.startsWith('virtual')) {
-        return `v:${locator.name!}@${version}`;
+        return `v:${locator.name}@${version}`;
       } else {
-        return `${locator.name!}@${version}`;
+        return `${locator.name}@${version}`;
       }
     }
   };

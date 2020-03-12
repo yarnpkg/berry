@@ -263,7 +263,13 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     }
 
     const requireStack = getRequireStack(parent);
-    firstError.requireStack = requireStack;
+
+    Object.defineProperty(firstError, `requireStack`, {
+      configurable: true,
+      writable: true,
+      enumerable: false,
+      value: requireStack,
+    });
 
     if (requireStack.length > 0)
       firstError.message += `\nRequire stack:\n- ${requireStack.join(`\n- `)}`;

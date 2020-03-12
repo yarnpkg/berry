@@ -18,6 +18,9 @@ package.tgz
 # This is the Yarn install state cache, it can be rebuilt anytime
 /.yarn/install-state.gz
 
+# Our documentation is now handled by Netlify
+/docs
+
 # Those files are meant to be local-only
 /packages/*/bundles
 

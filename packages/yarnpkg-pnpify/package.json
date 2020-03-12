@@ -17,7 +17,7 @@
     "@types/cross-spawn": "6.0.0",
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.17",
-    "eslint": "^5.16.0",
+    "eslint": "^6.8.0",
     "typescript": "^3.7.5"
   },
   "peerDependencies": {

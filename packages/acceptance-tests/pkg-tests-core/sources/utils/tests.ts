@@ -535,7 +535,25 @@ export const generatePkgDriver = ({
         };
 
         const source = async (script: string, callDefinition: Record<string, any> = {}): Promise<Record<string, any>> => {
-          return JSON.parse((await run('node', '-p', `JSON.stringify((() => ${script})())`, callDefinition)).stdout.toString());
+          const scriptWrapper = `
+            Promise.resolve().then(async () => ${script}).then(err => {
+              if (!(err instanceof Error))
+                return err;
+
+              const copy = JSON.parse(JSON.stringify(err));
+
+              if (err.code)
+                copy.code = err.code;
+              if (err.pnpCode)
+                copy.pnpCode = err.pnpCode;
+
+              return copy;
+            }).then(result => {
+              console.log(JSON.stringify(result));
+            })
+          `.replace(/\n/g, ``);
+
+          return JSON.parse((await run(`node`, `-e`, scriptWrapper, callDefinition)).stdout.toString());
         };
 
         try {

@@ -30,8 +30,16 @@ const FORCED_UNPLUG_FILETYPES = new Set([
 ]);
 
 export class PnpLinker implements Linker {
+  protected mode = `strict`;
+
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
-    return opts.project.configuration.get('nodeLinker') === 'pnp';
+    if (opts.project.configuration.get(`nodeLinker`) !== `pnp`)
+      return false;
+
+    if (opts.project.configuration.get(`pnpMode`) !== this.mode)
+      return false;
+
+    return true;
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
@@ -71,7 +79,9 @@ export class PnpLinker implements Linker {
   }
 }
 
-class PnpInstaller extends AbstractPnpInstaller {
+export class PnpInstaller extends AbstractPnpInstaller {
+  protected mode = `strict`;
+
   private readonly unpluggedPaths: Set<string> = new Set();
 
   async getBuildScripts(locator: Locator, fetchResult: FetchResult): Promise<Array<BuildDirective>> {
@@ -102,6 +112,9 @@ class PnpInstaller extends AbstractPnpInstaller {
   }
 
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
+    if (this.opts.project.configuration.get(`pnpMode`) !== this.mode)
+      return;
+
     const pnpPath = getPnpPath(this.opts.project);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
 
