@@ -67,9 +67,14 @@ export default class NpmLoginCommand extends BaseCommand {
     }, async report => {
       const credentials = await getCredentials(prompt, {registry, report});
 
-      const token = await getNpmAuthToken(credentials, configuration, registry);
+      if (credentials.azure) {
+        const ident = await getAzureAuthIdent(credentials, configuration, registry);
+        await setAuthIdent(registry, ident, {configuration});
+      } else {
+        const token = await getNpmAuthToken(credentials, configuration, registry);
+        await setAuthToken(registry, token, {configuration});
+      }
 
-      await setAuthToken(registry, token, {configuration});
       return report.reportInfo(MessageName.UNNAMED, `Successfully logged in`);
     });
 
@@ -89,6 +94,23 @@ async function getNpmAuthToken(credentials: Credentials, configuration: Configur
   return response.token;
 }
 
+async function getAzureAuthIdent(credentials: Credentials, configuration: Configuration, registry: string): Promise<string> {
+  const npmAuthIdent = `${Buffer.from(`${credentials.name}:${credentials.password}`).toString('base64')}`;
+  const headers = {
+    Authorization: `Basic ${npmAuthIdent}`,
+  };
+
+  await npmHttpUtils.get('', {
+    attemptedAs: credentials.name,
+    headers,
+    configuration,
+    registry,
+    authType: npmHttpUtils.AuthType.NO_AUTH,
+  });
+
+  return npmAuthIdent;
+}
+
 async function setAuthToken(registry: string, npmAuthToken: string, {configuration}: {configuration: Configuration}) {
   return await Configuration.updateHomeConfiguration({
     npmRegistries: (registries: {[key: string]: any} = {}) => ({
@@ -96,6 +118,18 @@ async function setAuthToken(registry: string, npmAuthToken: string, {configurati
       [registry]: {
         ...registries[registry],
         npmAuthToken,
+      },
+    }),
+  });
+}
+
+async function setAuthIdent(registry: string, npmAuthIdent: string, {configuration}: {configuration: Configuration}) {
+  return await Configuration.updateHomeConfiguration({
+    npmRegistries: (registries: {[key: string]: any} = {}) => ({
+      ...registries,
+      [registry]: {
+        ...registries[registry],
+        npmAuthIdent,
       },
     }),
   });
