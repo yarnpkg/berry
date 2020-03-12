@@ -190,11 +190,26 @@
             "npmRegistryServer": {
               "$ref": "#/properties/npmRegistryServer",
               "$comment": "{ \"anchor\": \"npmScopes.npmRegistryServer\" }"
+            },
+            "npmAlwaysAuth": {
+              "$ref": "#/properties/npmAlwaysAuth",
+              "$comment": "{ \"anchor\": \"npmRegistries.npmAlwaysAuth\" }"
+            },
+            "npmAuthIdent": {
+              "$ref": "#/properties/npmAuthIdent",
+              "$comment": "{ \"anchor\": \"npmRegistries.npmAuthIdent\" }"
+            },
+            "npmAuthToken": {
+              "$ref": "#/properties/npmAuthToken",
+              "$comment": "{ \"anchor\": \"npmRegistries.npmAuthToken\" }"
             }
           },
           "default": {
             "npmPublishRegistry": {},
-            "npmRegistryServer": {}
+            "npmRegistryServer": {},
+            "npmAlwaysAuth": {},
+            "npmAuthIdent": {},
+            "npmAuthToken": {}
           }
         }
       },

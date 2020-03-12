@@ -55,6 +55,7 @@ const plugin: Plugin = {
         description: ``,
         type: SettingsType.SHAPE,
         properties: {
+          ...authSettings,
           ...registrySettings,
         },
       },
