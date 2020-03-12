@@ -40033,10 +40033,21 @@ function makeApi(runtimeState, opts) {
             const canUseFallbacks = !exclusionEntry || !exclusionEntry.has(issuerLocator.reference);
 
             if (canUseFallbacks) {
-              const reference = runtimeState.fallbackPool.get(dependencyName);
+              for (let t = 0, T = fallbackLocators.length; dependencyReference === undefined && t < T; ++t) {
+                const fallbackInformation = getPackageInformationSafe(fallbackLocators[t]);
+                const fallbackReference = fallbackInformation.packageDependencies.get(dependencyName);
 
-              if (reference != null) {
-                fallbackReference = reference;
+                if (fallbackReference !== null) {
+                  dependencyReference = fallbackReference;
+                }
+              }
+
+              if (typeof dependencyReference === `undefined`) {
+                const reference = runtimeState.fallbackPool.get(dependencyName);
+
+                if (reference != null) {
+                  fallbackReference = reference;
+                }
               }
             }
           }
