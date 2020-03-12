@@ -66,22 +66,27 @@ export default class NpmLoginCommand extends BaseCommand {
       stdout: this.context.stdout,
     }, async report => {
       const credentials = await getCredentials(prompt, {registry, report});
-      const url = `/-/user/org.couchdb.user:${encodeURIComponent(credentials.name)}`;
 
-      const response = await npmHttpUtils.put(url, credentials, {
-        attemptedAs: credentials.name,
-        configuration,
-        registry,
-        json: true,
-        authType: npmHttpUtils.AuthType.NO_AUTH,
-      }) as any;
+      const token = await getNpmAuthToken(credentials, configuration, registry);
 
-      await setAuthToken(registry, response.token, {configuration});
+      await setAuthToken(registry, token, {configuration});
       return report.reportInfo(MessageName.UNNAMED, `Successfully logged in`);
     });
 
     return report.exitCode();
   }
+}
+
+async function getNpmAuthToken(credentials: Credentials, configuration: Configuration, registry: string): Promise<string> {
+  const url = `/-/user/org.couchdb.user:${encodeURIComponent(credentials.name)}`;
+  const response = await npmHttpUtils.put(url, credentials, {
+    attemptedAs: credentials.name,
+    configuration,
+    registry,
+    json: true,
+    authType: npmHttpUtils.AuthType.NO_AUTH,
+  }) as any;
+  return response.token;
 }
 
 async function setAuthToken(registry: string, npmAuthToken: string, {configuration}: {configuration: Configuration}) {
