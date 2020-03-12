@@ -12,7 +12,7 @@ title: "Release Workflow"
 >
 > To access this feature, first install the `version` plugin: `yarn plugin import version`
 
-When working with monorepos, a hard task often is to figure out which packages should receive a new version when starting a new release. Yarn offers a few tools that aim to make this workflow easier without need for third-party tools (althought it's possible you may prefer the workflow offered by different implementations, of course!).
+When working with monorepos, a hard task often is to figure out which packages should receive a new version when starting a new release. Yarn offers a few tools that aim to make this workflow easier without need for third-party tools (although it's possible you may prefer the workflow offered by different implementations, of course!).
 
 ## Auto-updated dependencies
 
@@ -36,7 +36,7 @@ Of course it's not that important when the packages from the monorepo are always
 
 ## Deferred versioning
 
-Starting from the 2.0, the `yarn version` command now accepts a new flag: `--deferred`. When set, this flag will cause the command to not immediatly change the `version` field of the local manifest, but to instead internally record an entry stating that the current package will need to receive an upgrade during the next release cycle. For example, the following:
+Starting from the 2.0, the `yarn version` command now accepts a new flag: `--deferred`. When set, this flag will cause the command to not immediately change the `version` field of the local manifest, but to instead internally record an entry stating that the current package will need to receive an upgrade during the next release cycle. For example, the following:
 
 ```bash
 yarn version minor --deferred
@@ -73,4 +73,4 @@ One problem with committing the deferred releases, however, is that it becomes i
 
 To solve this problem in an automated way, the `yarn version check` command appeared. When run, this command will figure out which packages changed and whether they are listed in the release definition file. If they aren't, an error will be thrown and - assuming you integrate this into a CI system such as the GitHub Actions - the PR author will be asked to fill out the release definition file.
 
-Writing this file can be tedius; fortunately `yarn version check` implements a very handy flag named `--interactive`. When set (`yarn version check --interactive`), Yarn will print a terminal interface that will summarize all the changed files, all the changed workspaces, all relevant dependent workspaces, and checkboxes for wach entry allowing you to pick the release strategies you want to set for each workspace.
+Writing this file can be tedious; fortunately `yarn version check` implements a very handy flag named `--interactive`. When set (`yarn version check --interactive`), Yarn will print a terminal interface that will summarize all the changed files, all the changed workspaces, all relevant dependent workspaces, and checkboxes for each entry allowing you to pick the release strategies you want to set for each workspace.
