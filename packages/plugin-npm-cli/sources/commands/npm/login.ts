@@ -8,6 +8,7 @@ import inquirer                             from 'inquirer';
 type Credentials = {
   name: string,
   password: string,
+  azure?: boolean,
 }
 
 // eslint-disable-next-line arca/no-default-export
@@ -106,6 +107,7 @@ async function getCredentials(prompt: any, {registry, report}: {registry: string
   report.reportInfo(MessageName.UNNAMED, `Logging in to ${registry}`);
 
   let isToken = false;
+  let azure = false;
 
   if (registry.match(/^https:\/\/npm\.pkg\.github\.com(\/|$)/)) {
     report.reportInfo(MessageName.UNNAMED, `You seem to be using the GitHub Package Registry. Tokens must be generated with the 'repo', 'write:packages', and 'read:packages' permissions.`);
@@ -115,6 +117,7 @@ async function getCredentials(prompt: any, {registry, report}: {registry: string
   if (registry.match(/^https:\/\/pkgs\.dev\.azure\.com(\/|$)/)) {
     report.reportInfo(MessageName.UNNAMED, `You seem to be using the Azure Artifacts Registry. Tokens must be generated with the narrow scope of 'Packaging (read & write)'.`);
     isToken = true;
+    azure = true;
   }
 
   report.reportSeparator();
@@ -136,6 +139,7 @@ async function getCredentials(prompt: any, {registry, report}: {registry: string
   return {
     name: username,
     password,
+    azure,
   };
 }
 
