@@ -73,19 +73,19 @@ const renderAndEscapeMarkdown = ({source, repository}) => {
     renderer.image = (href, title, text) =>
       `<img src="${prefixImage(
         sanitizeSvg(href)
-      )}" title="${title}" alt="${text}"/>`;
+      )}" title="${title || ''}" alt="${text}"/>`;
 
     renderer.link = (href, title, text) => {
       // No need to prefix hashes
       if (href.startsWith('#'))
-        return `<a href="${href}" title="${title}">${text}</a>`;
+        return `<a href="${href}" title="${title || ''}">${text}</a>`;
 
       // wrongly linked comments
       // see https://github.com/yarnpkg/website/issues/685
       if (text.startsWith('!--'))
         return '';
 
-      return `<a href="${prefixLink(href)}" title="${title}">${text}</a>`;
+      return `<a href="${prefixLink(href)}" title="${title || ''}">${text}</a>`;
     };
 
     renderer.html = function(html) {
