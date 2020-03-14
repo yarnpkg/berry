@@ -24,9 +24,30 @@ This error typically should never happen (it should instead point to a different
 
 A package requests a peer dependency, but its parent in the dependency tree doesn't provide it.
 
-This error occurs when a package peer dependencies cannot be satisfied. If the peer dependency is optional and shouldn't trigger such warnings, then mark it as such using the [optional peer dependencies]() feature.
+Yarn enforces peer dependencies at every level of the dependency tree. That is, if `─D>` is a dependency and `─P>` is a peer dependency,
 
-Note that Yarn enforces peer dependencies at every level of the dependency tree - meaning that if `A` depends on `B+X`, and `B` depends on `C`, and `C` has a peer dependency on `X`, then a warning will be emitted (because `B` doesn't fulfill the peer dependency request). The best way to solve this is to explicitly list the transitive peer dependency on `X` in `B` has well.
+```sh
+# bad
+project
+├─D> packageX
+└─D> packageA
+     └─D> packageB
+          └─P> packageX
+
+# good
+project
+├─D> packageX
+└─D> packageA
+     ├─P> packageX
+     └─D> packageB
+          └─P> packageX
+```
+
+* **The author of `packageA`** can fix this problem by adding a peer dependency on `packageX`.
+* **The author of `packageB`** can fix this problem by marking `packageX` as an [optional peer dependency](https://github.com/yarnpkg/rfcs/blob/master/accepted/0000-optional-peer-dependencies.md).
+* **The author of `project`** can fix this problem by manually overriding `packageA`'s dependencies via the [`packageExtensions` config option](/configuration/yarnrc#packageExtensions).
+
+[Learn more about this issue here](https://dev.to/arcanis/implicit-transitive-peer-dependencies-ed0).
 
 ## YN0003 - `CYCLIC_DEPENDENCIES`
 
