@@ -1,9 +1,9 @@
-import {LinkOptions, MinimalLinkOptions, Package}                                                  from '@yarnpkg/core';
-import {VirtualFS, ZipOpenFS, ppath, PortablePath, npath, Filename}                                from '@yarnpkg/fslib';
-import {getLibzipPromise}                                                                          from '@yarnpkg/libzip';
-import {PnpInstaller, PnpLinker}                                                                   from '@yarnpkg/plugin-pnp';
-import {NodeModulesPackageNode, buildNodeModulesTree}                                              from '@yarnpkg/pnpify';
-import {PnpSettings, makeRuntimeApi, PackageInformation, PhysicalPackageLocator, DependencyTarget} from '@yarnpkg/pnp';
+import {LinkOptions, structUtils}                      from '@yarnpkg/core';
+import {VirtualFS, ZipOpenFS, ppath, npath, Filename}  from '@yarnpkg/fslib';
+import {getLibzipPromise}                              from '@yarnpkg/libzip';
+import {PnpInstaller, PnpLinker}                       from '@yarnpkg/plugin-pnp';
+import {NodeModulesPackageNode, buildNodeModulesTree}  from '@yarnpkg/pnpify';
+import {PnpSettings, makeRuntimeApi, DependencyTarget} from '@yarnpkg/pnp';
 
 export class PnpLooseLinker extends PnpLinker {
   protected mode = `loose`;
@@ -35,14 +35,13 @@ class PnpLooseInstaller extends PnpInstaller {
     pnpSettings.fallbackPool = fallbackPool;
 
     const registerFallback = (name: string, entry: NodeModulesPackageNode) => {
-      const locator = pnp.findPackageLocator(`${npath.fromPortablePath(entry.target)}/`);
-      if (locator === null)
-        throw new Error(`Assertion failed: Expected the target to map to a locator`);
+      const locator = structUtils.parseLocator(entry.locator);
+      const identStr = structUtils.stringifyIdent(locator);
 
-      if (locator.name === name) {
+      if (identStr === name) {
         fallbackPool.set(name, locator.reference);
       } else {
-        fallbackPool.set(name, [locator.name, locator.reference]);
+        fallbackPool.set(name, [identStr, locator.reference]);
       }
     };
 

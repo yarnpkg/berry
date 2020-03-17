@@ -47,6 +47,29 @@ describe(`Features`, () => {
     );
 
     test(
+      `it should allow resolutions to top-level hoisting candidates (even if they have peer dependencies)`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+            [`forward-peer-deps`]: `1.0.0`,
+          },
+        },
+        {
+          pnpMode: `loose`,
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('peer-deps')`)).resolves.toMatchObject({
+            name: `peer-deps`,
+            version: `1.0.0`,
+          });
+        },
+      ),
+    );
+
+    test(
       `it should log an exception if a dependency tries to require something it doesn't own but that can be accessed through hoisting`,
       makeTemporaryEnv(
         {
