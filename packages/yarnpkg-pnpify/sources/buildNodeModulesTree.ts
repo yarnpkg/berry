@@ -17,6 +17,7 @@ export type NodeModulesBaseNode = {
 // The entry for a package within a node_modules
 export type NodeModulesPackageNode = {
   locator: LocatorKey,
+  // The source path. Note that the virtual paths have been resolved/lost!
   target: PortablePath,
   // Hard links are copies of the target; soft links are symlinks to it
   linkType: LinkType,
