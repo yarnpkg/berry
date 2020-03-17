@@ -3,7 +3,7 @@ import {Cache, Configuration, Project, HardDependencies, miscUtils, structUtils,
 import {ItemOptions}                                                                                                       from '@yarnpkg/libui/sources/components/ItemOptions';
 import {ScrollableItems}                                                                                                   from '@yarnpkg/libui/sources/components/ScrollableItems';
 import {useMinistore}                                                                                                      from '@yarnpkg/libui/sources/hooks/useMinistore';
-import {renderForm}                                                                                                        from '@yarnpkg/libui/sources/misc/renderForm';
+import {renderForm, SubmitInjectedComponent}                                                                               from '@yarnpkg/libui/sources/misc/renderForm';
 import {suggestUtils}                                                                                                      from '@yarnpkg/plugin-essentials';
 import {Command, Usage}                                                                                                    from 'clipanion';
 import {diffWords}                                                                                                         from 'diff';
@@ -156,7 +156,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       </Box>;
     };
 
-    const GlobalListApp = ({useSubmit}: any) => {
+    const GlobalListApp: SubmitInjectedComponent<Map<string, string | null>> = ({useSubmit}) => {
       useSubmit(useMinistore());
 
       const allDependencies = new Map<DescriptorHash, Descriptor>();
@@ -183,7 +183,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       </>;
     };
 
-    const updateRequests = await renderForm<Map<DescriptorHash, string | null>>(GlobalListApp, {});
+    const updateRequests = await renderForm(GlobalListApp, {});
     if (typeof updateRequests === `undefined`)
       return 1;
 

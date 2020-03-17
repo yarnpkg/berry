@@ -1,0 +1,3 @@
+declined:
+  - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/libui"
