@@ -1,7 +1,7 @@
 import {BaseCommand}            from '@yarnpkg/cli';
 import {Configuration, Project} from '@yarnpkg/core';
 import {execUtils, scriptUtils} from '@yarnpkg/core';
-import {xfs}                    from '@yarnpkg/fslib/sources';
+import {xfs}                    from '@yarnpkg/fslib';
 import {Command, Usage}         from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
