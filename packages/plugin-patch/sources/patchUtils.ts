@@ -160,6 +160,7 @@ export async function extractPackageToDisk(locator: Locator, {cache, project}: {
   const fetchResult = await fetcher.fetch(locator, {cache, project, fetcher, checksums, report});
 
   const temp = await xfs.mktempPromise();
+
   await xfs.copyPromise(temp, fetchResult.prefixPath, {
     baseFs: fetchResult.packageFs,
   });
@@ -168,5 +169,6 @@ export async function extractPackageToDisk(locator: Locator, {cache, project}: {
     locator: structUtils.stringifyLocator(locator),
   });
 
+  xfs.detachTemp(temp);
   return temp;
 }
