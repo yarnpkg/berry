@@ -14,6 +14,8 @@ Object {
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
 ➤ YN0000: Done with warnings
+➤ YN0000: Confused by error codes (YNxxxx)? See https://yarnpkg.com/advanced/error-codes
+➤ YN0000: To silence this message, run `yarn config set error-code-advisory false`
 ",
 }
 `;
@@ -51,6 +53,8 @@ Object {
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
 ➤ YN0000: Done with warnings
+➤ YN0000: Confused by error codes (YNxxxx)? See https://yarnpkg.com/advanced/error-codes
+➤ YN0000: To silence this message, run `yarn config set error-code-advisory false`
 ",
 }
 `;

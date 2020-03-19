@@ -421,6 +421,8 @@ Object {
   "stderr": "",
   "stdout": "➤ YN0043: Syntax error: . or operator expected at line 1, column 3
 ➤ YN0000: Failed with errors
+➤ YN0000: Confused by error codes (YNxxxx)? See https://yarnpkg.com/advanced/error-codes
+➤ YN0000: To silence this message, run `yarn config set error-code-advisory false`
 ",
 }
 `;
@@ -431,6 +433,8 @@ Object {
   "stderr": "",
   "stdout": "➤ YN0043: Syntax error: argument expected at line 1, column 11
 ➤ YN0000: Failed with errors
+➤ YN0000: Confused by error codes (YNxxxx)? See https://yarnpkg.com/advanced/error-codes
+➤ YN0000: To silence this message, run `yarn config set error-code-advisory false`
 ",
 }
 `;
@@ -441,6 +445,8 @@ Object {
   "stderr": "",
   "stdout": "➤ YN0044: Existence error: procedure hello_word/1 not found
 ➤ YN0000: Failed with errors
+➤ YN0000: Confused by error codes (YNxxxx)? See https://yarnpkg.com/advanced/error-codes
+➤ YN0000: To silence this message, run `yarn config set error-code-advisory false`
 ",
 }
 `;
