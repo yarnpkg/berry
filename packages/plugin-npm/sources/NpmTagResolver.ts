@@ -6,7 +6,7 @@ import {NpmSemverFetcher}                                                       
 import {PROTOCOL}                                                                  from './constants';
 import * as npmHttpUtils                                                           from './npmHttpUtils';
 
-export const TAG_REGEXP = /^[a-z]+$/;
+export const TAG_REGEXP = /^(?!v)[a-z0-9-]+$/i;
 
 export class NpmTagResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
