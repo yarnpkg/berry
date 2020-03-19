@@ -22,32 +22,36 @@ This error typically should never happen (it should instead point to a different
 
 ## YN0002 - `MISSING_PEER_DEPENDENCY`
 
-A package requests a peer dependency, but its parent in the dependency tree doesn't provide it.
+A package requests a peer dependency, but one or more of its parents in the dependency tree doesn't provide it.
 
-Yarn enforces peer dependencies at every level of the dependency tree. That is, if `─D>` is a dependency and `─P>` is a peer dependency,
+Note that Yarn enforces peer dependencies at every level of the dependency tree. That is, if `─D>` is a dependency and `─P>` is a peer dependency,
 
 ```sh
 # bad
 project
-├─D> packageX
+├─D> packagePeer
 └─D> packageA
-     └─D> packageB
-          └─P> packageX
+     └─P> packageB
+          └─P> packagePeer
 
 # good
 project
-├─D> packageX
+├─D> packagePeer
 └─D> packageA
-     ├─P> packageX
+     ├─P> packagePeer
      └─D> packageB
-          └─P> packageX
+          └─P> packagePeer
 ```
 
-* **The author of `packageA`** can fix this problem by adding a peer dependency on `packageX`.
-* **The author of `packageB`** can fix this problem by marking `packageX` as an [optional peer dependency](https://github.com/yarnpkg/rfcs/blob/master/accepted/0000-optional-peer-dependencies.md).
-* **The author of `project`** can fix this problem by manually overriding `packageA`'s dependencies via the [`packageExtensions` config option](/configuration/yarnrc#packageExtensions).
+Depending on your situation, multiple options are possible:
 
-[Learn more about this issue here](https://dev.to/arcanis/implicit-transitive-peer-dependencies-ed0).
+* The author of `packageA` can fix this problem by adding a peer dependency on `packagePeer`. If relevant, they can use [optional peer dependencies](https://yarnpkg.com/configuration/manifest#peerDependenciesMeta.optional) to this effect.
+
+* The author of `packageB` can fix this problem by marking the `packagePeer` peer dependency as optional - but only if the peer dependency is actually optional, of course!
+
+* The author of `project` can fix this problem by manually overriding the `packageA` and/or `packageB` definitions via the [`packageExtensions` config option](/configuration/yarnrc#packageExtensions).
+
+To understand more about this issue, check out [this blog post](https://dev.to/arcanis/implicit-transitive-peer-dependencies-ed0).
 
 ## YN0003 - `CYCLIC_DEPENDENCIES`
 
