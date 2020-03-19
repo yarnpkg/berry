@@ -60,6 +60,7 @@ export type InstallOptions = {
   report: Report,
   immutable?: boolean,
   lockfileOnly?: boolean,
+  persistProject?: boolean,
 };
 
 export class Project {
@@ -1458,10 +1459,14 @@ export class Project {
 
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);
-      await this.cacheCleanup(opts);
+
+      if (typeof opts.persistProject === `undefined` || opts.persistProject) {
+        await this.cacheCleanup(opts);
+      }
     });
 
-    await this.persist();
+    if (typeof opts.persistProject === `undefined` || opts.persistProject)
+      await this.persist();
 
     await opts.report.startTimerPromise(`Link step`, async () => {
       await this.linkEverything(opts);

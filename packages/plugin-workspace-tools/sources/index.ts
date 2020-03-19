@@ -1,9 +1,11 @@
 import {Plugin} from '@yarnpkg/core';
 
+import focus    from './commands/focus';
 import foreach  from './commands/foreach';
 
 const plugin: Plugin = {
   commands: [
+    focus,
     foreach,
   ],
 };
