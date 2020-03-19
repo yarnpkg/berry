@@ -331,8 +331,18 @@ export class StreamReport extends Report {
 
     if (this.errorCount > 0) {
       this.reportError(MessageName.UNNAMED, message);
+
+      if (this.configuration.get(`errorCodeAdvisory`)) {
+        this.reportError(MessageName.UNNAMED, `Confused by error codes (YNxxxx)? See https://yarnpkg.com/advanced/error-codes`);
+        this.reportError(MessageName.UNNAMED, `To silence this message, run \`yarn config set errorCodeAdvisory false\``);
+      }
     } else if (this.warningCount > 0) {
       this.reportWarning(MessageName.UNNAMED, message);
+
+      if (this.configuration.get(`errorCodeAdvisory`)) {
+        this.reportWarning(MessageName.UNNAMED, `Confused by error codes (YNxxxx)? See https://yarnpkg.com/advanced/error-codes`);
+        this.reportWarning(MessageName.UNNAMED, `To silence this message, run \`yarn config set error-code-advisory false\``);
+      }
     } else {
       this.reportInfo(MessageName.UNNAMED, message);
     }

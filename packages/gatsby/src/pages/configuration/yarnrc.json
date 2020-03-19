@@ -86,6 +86,11 @@
       "type": "boolean",
       "default": false
     },
+    "errorCodeAdvisory": {
+      "description": "If disabled, Yarn will silence a line of CLI output that points to online documentation for error codes.",
+      "type": "boolean",
+      "default": true
+    },
     "globalFolder": {
       "description": "The path where all system-global files (for example the list of all packages registered through `yarn link`) are stored.",
       "type": "string",

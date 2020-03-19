@@ -244,6 +244,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: true,
   },
+  errorCodeAdvisory: {
+    description: `If true, the CLI will print a URL to error code documentation when errors or warnings occur`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
   preferInteractive: {
     description: `If true, the CLI will automatically use the interactive mode when called from a TTY`,
     type: SettingsType.BOOLEAN,
