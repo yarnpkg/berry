@@ -22,11 +22,36 @@ This error typically should never happen (it should instead point to a different
 
 ## YN0002 - `MISSING_PEER_DEPENDENCY`
 
-A package requests a peer dependency, but its parent in the dependency tree doesn't provide it.
+A package requests a peer dependency, but one or more of its parents in the dependency tree doesn't provide it.
 
-This error occurs when a package peer dependencies cannot be satisfied. If the peer dependency is optional and shouldn't trigger such warnings, then mark it as such using the [optional peer dependencies]() feature.
+Note that Yarn enforces peer dependencies at every level of the dependency tree. That is, if `─D>` is a dependency and `─P>` is a peer dependency,
 
-Note that Yarn enforces peer dependencies at every level of the dependency tree - meaning that if `A` depends on `B+X`, and `B` depends on `C`, and `C` has a peer dependency on `X`, then a warning will be emitted (because `B` doesn't fulfill the peer dependency request). The best way to solve this is to explicitly list the transitive peer dependency on `X` in `B` has well.
+```sh
+# bad
+project
+├─D> packagePeer
+└─D> packageA
+     └─P> packageB
+          └─P> packagePeer
+
+# good
+project
+├─D> packagePeer
+└─D> packageA
+     ├─P> packagePeer
+     └─D> packageB
+          └─P> packagePeer
+```
+
+Depending on your situation, multiple options are possible:
+
+* The author of `packageA` can fix this problem by adding a peer dependency on `packagePeer`. If relevant, they can use [optional peer dependencies](https://yarnpkg.com/configuration/manifest#peerDependenciesMeta.optional) to this effect.
+
+* The author of `packageB` can fix this problem by marking the `packagePeer` peer dependency as optional - but only if the peer dependency is actually optional, of course!
+
+* The author of `project` can fix this problem by manually overriding the `packageA` and/or `packageB` definitions via the [`packageExtensions` config option](/configuration/yarnrc#packageExtensions).
+
+To understand more about this issue, check out [this blog post](https://dev.to/arcanis/implicit-transitive-peer-dependencies-ed0).
 
 ## YN0003 - `CYCLIC_DEPENDENCIES`
 
