@@ -46,4 +46,10 @@ export const packageExtensions: Array<[string, any]> = [
       [`@types/keyv`]: `^3.1.1`,
     },
   }],
+  // https://github.com/szmarczak/cacheable-lookup/pull/12
+  [`cacheable-lookup@*`, {
+    dependencies: {
+      [`@types/keyv`]: `^3.1.1`,
+    },
+  }],
 ];
