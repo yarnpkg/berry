@@ -39,4 +39,11 @@ export const packageExtensions: Array<[string, any]> = [
       },
     },
   }],
+  // https://github.com/sindresorhus/got/pull/1125
+  [`got@*`, {
+    dependencies: {
+      [`@types/responselike`]: `^1.0.0`,
+      [`@types/keyv`]: `^3.1.1`,
+    },
+  }],
 ];
