@@ -823,7 +823,7 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
         continue;
 
       if (process.platform === 'win32') {
-        await cmdShim(target, symlinkPath, {createPwshFile: false});
+        await cmdShim(npath.fromPortablePath(target), npath.fromPortablePath(symlinkPath), {createPwshFile: false});
       } else {
         await xfs.removeSync(symlinkPath);
         await symlinkPromise(target, symlinkPath);
