@@ -452,10 +452,11 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs}:
   const copy = async (dstPath: PortablePath, srcPath: PortablePath, srcType: fs.Dirent) => {
     if (srcType.isFile()) {
       const stat = await baseFs.lstatPromise(srcPath);
-      const content = await baseFs.readFilePromise(srcPath);
-      await xfs.writeFilePromise(dstPath, content);
+      await baseFs.copyFilePromise(srcPath, dstPath);
       const mode = stat.mode & 0o777;
-      await xfs.chmodPromise(dstPath, mode);
+      if (mode !== 0o644) {
+        await xfs.chmodPromise(dstPath, mode);
+      }
     } else if (srcType.isSymbolicLink()) {
       const target = await baseFs.readlinkPromise(srcPath);
       await symlinkPromise(ppath.resolve(srcPath, target), dstPath);
