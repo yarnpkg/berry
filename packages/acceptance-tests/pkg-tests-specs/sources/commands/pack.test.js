@@ -16,6 +16,18 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it shouldn't pack Yarn files by default`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/index.js`, `module.exports = 42;\n`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        await expect(stdout).not.toMatch(/\.yarn\//);
+      }),
+    );
+
+    test(
       `it should only keep the files covered by the "files" field`,
       makeTemporaryEnv({
         files: [

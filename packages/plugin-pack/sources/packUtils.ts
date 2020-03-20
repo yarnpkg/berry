@@ -30,7 +30,6 @@ const ALWAYS_IGNORE = [
   `.github`,
   `.git`,
   `.hg`,
-  `.yarn`,
   `node_modules`,
 
   `.npmignore`,
@@ -183,6 +182,7 @@ export async function genPackList(workspace: Workspace) {
   maybeRejectPath(configuration.get(`bstatePath`));
   maybeRejectPath(configuration.get(`cacheFolder`));
   maybeRejectPath(configuration.get(`globalFolder`));
+  maybeRejectPath(configuration.get(`installStatePath`));
   maybeRejectPath(configuration.get(`virtualFolder`));
   maybeRejectPath(configuration.get(`yarnPath`));
 
