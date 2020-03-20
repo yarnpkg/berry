@@ -1,14 +1,15 @@
-import {structUtils, Report, Manifest, miscUtils, FinalizeInstallStatus, FetchResult, DependencyMeta} from '@yarnpkg/core';
-import {Locator, Package, BuildType}                                                                  from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                                            from '@yarnpkg/core';
 import {BuildDirective, MessageName, Project}                                                         from '@yarnpkg/core';
-import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS}                                from '@yarnpkg/fslib';
+import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                                            from '@yarnpkg/core';
+import {Locator, Package, BuildType}                                                                  from '@yarnpkg/core';
+import {structUtils, Report, Manifest, miscUtils, FinalizeInstallStatus, FetchResult, DependencyMeta} from '@yarnpkg/core';
 import {VirtualFS, ZipOpenFS}                                                                         from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS}                                from '@yarnpkg/fslib';
 import {getLibzipPromise}                                                                             from '@yarnpkg/libzip';
 import {parseSyml}                                                                                    from '@yarnpkg/parsers';
 import {AbstractPnpInstaller}                                                                         from '@yarnpkg/plugin-pnp';
 import {NodeModulesLocatorMap, buildLocatorMap, buildNodeModulesTree}                                 from '@yarnpkg/pnpify';
 import {PnpSettings, makeRuntimeApi}                                                                  from '@yarnpkg/pnp';
+import cmdShim                                                                                        from '@zkochan/cmd-shim';
 import {UsageError}                                                                                   from 'clipanion';
 import fs                                                                                             from 'fs';
 
@@ -820,11 +821,13 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
       // Skip unchanged .bin symlinks
       if (prevTarget === target)
         continue;
-      else if (prevTarget)
-        // Remove changed .bin symlinks prior to recreating them
-        xfs.removeSync(symlinkPath);
 
-      await symlinkPromise(target, symlinkPath);
+      if (process.platform === 'win32') {
+        await cmdShim(target, symlinkPath, {createPwshFile: false});
+      } else {
+        await xfs.removeSync(symlinkPath);
+        await symlinkPromise(target, symlinkPath);
+      }
     }
   }
 }
