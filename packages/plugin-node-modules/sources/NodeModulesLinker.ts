@@ -816,6 +816,13 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
     const binDir = ppath.join(location, NODE_MODULES, DOT_BIN);
     const prevSymlinks = previousBinSymlinks.get(location) || new Map();
     xfs.mkdirpSync(binDir);
+    for (const name of prevSymlinks.keys()) {
+      if (!symlinks.has(name)) {
+        // Remove outdated symlinks
+        xfs.removeSync(ppath.join(binDir, name));
+      }
+    }
+
     for (const [name, target] of symlinks) {
       const prevTarget = prevSymlinks.get(name);
       const symlinkPath = ppath.join(binDir, name);
