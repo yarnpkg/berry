@@ -113,7 +113,7 @@
     "nodeLinker": {
       "description": "Defines what linker should be used (useful to enable the node-modules plugin)",
       "type": "string",
-      "default": "pnp-loose"
+      "default": "pnp"
     },
     "npmAlwaysAuth": {
       "description": "If true, Yarn will always send the authentication credentials when making a request to the registries. This typically shouldn't be needed.",
