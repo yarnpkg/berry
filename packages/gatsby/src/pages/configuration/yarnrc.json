@@ -113,6 +113,7 @@
     "nodeLinker": {
       "description": "Defines what linker should be used (useful to enable the node-modules plugin)",
       "type": "string",
+      "enum": ["pnp", "node-modules"],
       "default": "pnp"
     },
     "npmAlwaysAuth": {
@@ -332,6 +333,12 @@
       "type": "string",
       "format": "regex",
       "default": "^\\./subdir/.*"
+    },
+    "pnpMode": {
+      "description": "TODO",
+      "type": "string",
+      "enum": ["strict", "loose"],
+      "default": "strict"
     },
     "pnpShebang": {
       "description": "A header that will be prepended to the generated `.pnp.js` file. You're allowed to write multiple lines, but this is slightly frowned upon.",
