@@ -1,5 +1,6 @@
 {
   "name": "eslint",
-  "version": "5.16.0-pnpify",
-  "main": "./lib/api.js"
+  "version": "6.8.0-pnpify",
+  "main": "./lib/api.js",
+  "type": "commonjs"
 }

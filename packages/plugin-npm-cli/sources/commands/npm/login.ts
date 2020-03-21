@@ -41,8 +41,8 @@ export default class NpmLoginCommand extends BaseCommand {
 
     // @ts-ignore
     const prompt = inquirer.createPromptModule({
-      input: this.context.stdin,
-      output: this.context.stdout,
+      input: this.context.stdin as NodeJS.ReadStream,
+      output: this.context.stdout as NodeJS.WriteStream,
     });
 
     let registry: string;
