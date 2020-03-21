@@ -22,6 +22,9 @@ module.exports = {
     }, {
       name: `Advanced`,
       link: `/advanced`,
+    }, {
+      name: `API`,
+      link: `/api`,
     }],
     algolia: {
       // Note that the appId and appKey are specific to Yarn's website - please
@@ -99,4 +102,4 @@ module.exports = {
     // To learn more, visit: https://gatsby.dev/offline
     // 'gatsby-plugin-offline',
   ],
-}
+};

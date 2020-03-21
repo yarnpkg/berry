@@ -10,23 +10,23 @@
   "links": [
     {
       "label": "Home",
-      "url": "https://yarnpkg.com/"
+      "url": "/"
     },
     {
       "label": "Configuration",
-      "url": "https://yarnpkg.com/configuration"
+      "url": "/configuration"
     },
     {
       "label": "Features",
-      "url": "https://yarnpkg.com/features"
+      "url": "/features"
     },
     {
       "label": "CLI",
-      "url": "https://yarnpkg.com/cli"
+      "url": "/cli"
     },
     {
       "label": "Advanced",
-      "url": "https://yarnpkg.com/advanced"
+      "url": "/advanced"
     },
     {
       "label": "GitHub",
