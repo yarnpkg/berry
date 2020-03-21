@@ -270,8 +270,7 @@
                   "type": "string",
                   "pattern": "^(?:(.+))$",
                   "default": "*"
-                },
-                "additionalProperties": false
+                }
               },
               "additionalProperties": false,
               "default": {

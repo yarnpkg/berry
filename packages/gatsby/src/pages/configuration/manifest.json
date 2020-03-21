@@ -1,0 +1,312 @@
+{
+  "title": "JSON Schema for Yarn Manifest files",
+  "$schema": "https://json-schema.org/draft/2019-09/schema#",
+  "description": "Manifest files (also called `package.json` because of their name) contain everything needed to describe the settings unique to one particular package. Project will contain multiple such manifests if they use the workspace feature, as each workspace is described through its own manifest.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "description": "The name of the package. Used to identify it across the application, especially amongst multiple workspaces. The first part of the name (here `@scope/`) is optional and is used as a namespace).",
+      "type": "string",
+      "pattern": "^(?:@([^/]+?)/)?([^/]+?)$",
+      "default": "@scope/name"
+    },
+    "version": {
+      "description": "The version of the package. Usually doesn't have any impact on your project, except when it is a workspace - then its version must match the specified ranges for the workspace to be selected as resolution candidate.",
+      "type": "string",
+      "pattern": "^(?:(.+))$",
+      "default": "1.2.3"
+    },
+    "private": {
+      "description": "If true, the package is considered private and Yarn will refuse to publish it regardless of the circumstances. Setting this flag also unlocks some features that wouldn't make sense in published packages, such as workspaces.",
+      "type": "boolean",
+      "default": true
+    },
+    "license": {
+      "description": "An SPDX identifier that indicates under which license is your package distributed. Note that the default license can be set via the `initLicense` settings.",
+      "type": "string",
+      "default": "MIT"
+    },
+    "main": {
+      "description": "The path that will be used to resolve the qualified path to use when accessing the package by its name. This field can be modified at publish-time through the use of the `publishConfig.main` field.",
+      "type": "string",
+      "format": "uri-reference",
+      "default": "./sources/index.js"
+    },
+    "module": {
+      "description": "The path that will be used when an ES6-compatible environment will try to access the package by its name. Doesn't have any direct effect on Yarn itself.",
+      "type": "string",
+      "format": "uri-reference",
+      "default": "./sources/index.mjs"
+    },
+    "languageName": {
+      "description": "An enumeration used by the linker plugins to figure which linker should install a specific package. Only some values are allowed, consult the documentation to know more.",
+      "type": "string",
+      "default": "node"
+    },
+    "bin": {
+      "description": "A field used to expose some executable Javascript files to the parent package. Any entry listed here will be made available through the `$PATH`. Note that it is very advised to only expose Javascript files for portability reasons (shellscripts and non-js binaries require the user to have a specific shell, and are incompatible with zip access).",
+      "type": "object",
+      "patternProperties": {
+        "^(?:(.+))$": {
+          "type": "string",
+          "format": "uri-reference",
+          "default": "./dist/my-bin.js"
+        }
+      },
+      "additionalProperties": false,
+      "default": {
+        "my-bin": {}
+      },
+      "$comment": "{ \"margin\": false }"
+    },
+    "scripts": {
+      "description": "A field used to list small shell scripts that will be executed when running `yarn run`. Scripts are by default executed by a miniature shell, so some advanced features might not be available (if you have more complex needs, we recommend you to just execute a Javascript file). Note that scripts containing `:` (the colon character) are globals to your project and can be called regardless of your current workspace. Finally, be aware that scripts are always executed relative to the closest workspace (never the cwd).",
+      "type": "object",
+      "patternProperties": {
+        "^test$": {
+          "type": "string",
+          "default": "jest"
+        },
+        "^build$": {
+          "type": "string",
+          "default": "webpack-cli --config ./webpack.config.js"
+        },
+        "^count-words$": {
+          "type": "string",
+          "default": "echo \"$@\" | wc -w"
+        },
+        "^(?:(.+))$": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "default": {
+        "test": {},
+        "build": {},
+        "count-words": {}
+      }
+    },
+    "dependencies": {
+      "description": "The set of dependencies that must be made available to the current package in order for it to work properly. Consult the list of supported ranges for more information.",
+      "type": "object",
+      "patternProperties": {
+        "^(?:@([^/]+?)/)?([^/]+?)$": {
+          "type": "string",
+          "pattern": "^(?:(.+))$",
+          "default": "^5.0.0"
+        }
+      },
+      "additionalProperties": false,
+      "default": {
+        "webpack": {}
+      }
+    },
+    "optionalDependencies": {
+      "description": "Similar to the `dependencies` field, except that these entries will not be required to build properly should they have any build script. Note that such dependencies must still be resolvable and fetchable (otherwise we couldn't store it in the lockfile, which could lead to non-reproducible installs) - only the build step is optional.\n\n**This field is usually not what you're looking for**, unless you depend on the `fsevents` package. If you need a package to be required only when a specific feature is used then use an optional peer dependency. Your users will have to satisfy it should they use the feature, but it won't cause the build errors to be silently swallowed when the feature is needed.",
+      "type": "object",
+      "patternProperties": {
+        "^(?:@([^/]+?)/)?([^/]+?)$": {
+          "type": "string",
+          "pattern": "^(?:(.+))$",
+          "default": "^5.0.0"
+        }
+      },
+      "additionalProperties": false,
+      "default": {
+        "fsevents": {}
+      }
+    },
+    "devDependencies": {
+      "description": "Similar to the `dependencies` field, except that these dependencies are only installed on local installs and will never be installed by the consumers of your package. Note that because that would lead to different install trees depending on whether the install is made in \"production\" or \"development\" mode, Yarn doesn't offer a way to prevent the installation of dev dependencies at the moment.",
+      "type": "object",
+      "patternProperties": {
+        "^(?:@([^/]+?)/)?([^/]+?)$": {
+          "type": "string",
+          "pattern": "^(?:(.+))$",
+          "default": "^5.0.0"
+        }
+      },
+      "additionalProperties": false,
+      "default": {
+        "webpack": {}
+      }
+    },
+    "peerDependencies": {
+      "description": "Peer dependencies are inherited dependencies - the consumer of your package will be tasked to provide them. This is typically what you want when writing plugins, for example. Note that peer dependencies can also be listed as regular dependencies; in this case, Yarn will use the package provided by the ancestors if possible, but will fallback to the regular dependencies otherwise.",
+      "type": "object",
+      "patternProperties": {
+        "^(?:@([^/]+?)/)?([^/]+?)$": {
+          "type": "string",
+          "pattern": "^(?:(.+))$",
+          "default": "*"
+        }
+      },
+      "additionalProperties": false,
+      "default": {
+        "react": {},
+        "react-dom": {}
+      }
+    },
+    "workspaces": {
+      "description": "Workspaces are an optional feature used by monorepos to split a large project into semi-independent subprojects, each one listing their own set of dependencies. The `workspaces` field is a list of glob patterns that match all directories that should become workspaces of your application.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": ["packages/*"]
+    },
+    "dependenciesMeta": {
+      "description": "This field lists some extra information related to the dependencies listed in the `dependencies` and `devDependencies` fields. In the context of a workspaced project most of these settings will affect *all workspaces* and as such must be specified at the *root* of the project (except if noted otherwise, the `dependenciesMeta` field will be ignored if found within a workspace).",
+      "type": "object",
+      "patternProperties": {
+        "^(?:@([^/]+?)/)?([^/]+?)$": {
+          "type": "object",
+          "properties": {
+            "built": {
+              "description": "If false, the package will never be built. When the global settings `enableScripts` is toggled off, setting this additional flag will also downgrade the warning into a simple notice for this specific package.",
+              "type": "boolean",
+              "default": false,
+              "$comment": "{ \"anchor\": \"dependenciesMeta.built\" }"
+            },
+            "optional": {
+              "description": "If true, the build isn't required to succeed for the install to be considered a success. It's what the `optionalDependencies` field compiles down to.\n\n**This settings will be applied even when found within a nested manifest**, but the highest requirement in the dependency tree will prevale.",
+              "type": "boolean",
+              "default": false,
+              "$comment": "{ \"anchor\": \"dependenciesMeta.optional\" }"
+            },
+            "unplugged": {
+              "description": "If true, the specified package will be automatically unplugged at install time. This should only be needed for packages that contain scripts in other languages than Javascript (for example `nan` contains C++ headers).",
+              "type": "boolean",
+              "default": true,
+              "$comment": "{ \"anchor\": \"dependenciesMeta.unplugged\" }"
+            }
+          },
+          "default": {
+            "built": {},
+            "optional": {},
+            "unplugged": {}
+          },
+          "$comment": "{ \"margin\": true }"
+        }
+      },
+      "additionalProperties": false,
+      "default": {
+        "fsevents": {}
+      }
+    },
+    "peerDependenciesMeta": {
+      "description": "This field lists some extra information related to the dependencies listed in the `peerDependencies` field.",
+      "type": "object",
+      "patternProperties": {
+        "^(?:@([^/]+?)/)?([^/]+?)$": {
+          "type": "object",
+          "properties": {
+            "optional": {
+              "description": "If true, the selected peer dependency will be marked as optional by the package manager and the consumer omitting it won't be reported as an error.",
+              "type": "boolean",
+              "default": true,
+              "$comment": "{ \"anchor\": \"peerDependenciesMeta.optional\" }"
+            }
+          },
+          "default": {
+            "optional": {}
+          },
+          "$comment": "{ \"margin\": true }"
+        }
+      },
+      "additionalProperties": false,
+      "default": {
+        "react-dom": {}
+      }
+    },
+    "resolutions": {
+      "description": "This field allows you to instruct Yarn to use a specific resolution instead of anything the resolver would normally pick. This is useful to enforce all your packages to use a single version of a dependency, or backport a fix. The syntax for the resolution key accepts one level of specificity, so all the following examples are correct.",
+      "type": "object",
+      "patternProperties": {
+        "^relay-compiler$": {
+          "type": "string",
+          "default": "3.0.0"
+        },
+        "^webpack/memory-fs$": {
+          "type": "string",
+          "default": "0.4.1"
+        },
+        "^@babel/core/json5$": {
+          "type": "string",
+          "default": "2.1.0"
+        },
+        "^@babel/core/@babel/generator$": {
+          "type": "string",
+          "default": "7.3.4"
+        },
+        "^@babel/core@npm:7\\.0\\.0/@babel/generator$": {
+          "type": "string",
+          "default": "7.3.4"
+        },
+        "^(?:(?:@([^/]+?)/)?([^/]+?)/?)+$": {
+          "type": "string",
+          "pattern": "^(?:(.+))$"
+        }
+      },
+      "additionalProperties": false,
+      "default": {
+        "relay-compiler": {},
+        "webpack/memory-fs": {},
+        "@babel/core/json5": {},
+        "@babel/core/@babel/generator": {},
+        "@babel/core@npm:7.0.0/@babel/generator": {}
+      }
+    },
+    "publishConfig": {
+      "description": "This field contains various settings that are only taken into consideration when a package is generated from your local sources (either through `yarn pack` or one of the publish commands like `yarn npm publish`).",
+      "type": "object",
+      "properties": {
+        "access": {
+          "description": "Defines the package access level to use when publishing packages to the npm registry. Valid values are `public` and `restricted`, but `restricted` usually requires to register for a paid plan (this is up to the registry you use).",
+          "type": "string",
+          "enum": ["public", "restricted"],
+          "default": "public",
+          "$comment": "{ \"anchor\": \"publishConfig.access\" }"
+        },
+        "bin": {
+          "description": "If present, the top-level `bin` field from the manifest will be set to this new value before the package is packed to be shipped to remote registries. This won't modify the real manifest, just the one stored within the tarball.",
+          "type": "string",
+          "format": "uri-reference",
+          "default": "./build/bin.js",
+          "$comment": "{ \"anchor\": \"publishConfig.bin\" }"
+        },
+        "browser": {
+          "description": "Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `browser` field when generating the workspace tarball.",
+          "type": "string",
+          "format": "uri-reference",
+          "default": "./build/browser.js",
+          "$comment": "{ \"anchor\": \"publishConfig.browser\" }"
+        },
+        "main": {
+          "$ref": "#/properties/main",
+          "$comment": "{ \"anchor\": \"publishConfig.main\", \"overrides\": { \"description\": \"Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `main` field when generating the workspace tarball.\", \"default\": \"./build/index.js\" } }"
+        },
+        "module": {
+          "$ref": "#/properties/module",
+          "$comment": "{ \"anchor\": \"publishConfig.module\", \"overrides\": { \"description\": \"Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `module` field when generating the workspace tarball.\", \"default\": \"./build/index.mjs\" } }"
+        },
+        "registry": {
+          "description": "If present, will replace whatever registry is defined in the configuration when the package is about to be pushed to a remote location.",
+          "type": "string",
+          "format": "uri",
+          "default": "https://npm.pkg.github.com",
+          "$comment": "{ \"anchor\": \"publishConfig.registry\" }"
+        }
+      },
+      "default": {
+        "access": {},
+        "bin": {},
+        "browser": {},
+        "main": {},
+        "module": {},
+        "registry": {}
+      },
+      "$comment": "{ \"margin\": true }"
+    }
+  }
+}

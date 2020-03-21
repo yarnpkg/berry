@@ -15,7 +15,7 @@ const YarnrcDoc = () => <>
       description={`List of all the configuration option for Yarn (yarnrc files)`}
       keywords={defaultKeywords}
     />
-    {convertSchemaToConfiguration(yarnrcSchema)}
+    {convertSchemaToConfiguration(yarnrcSchema, `Syml`)}
   </ConfigurationLayout>
 </>;
 
