@@ -6,9 +6,9 @@ import constraints            from './commands/constraints';
 
 const plugin: Plugin = {
   configuration: {
-    constraintsFilename: {
-      description: `This setting defines the name of the files that Yarn looks for when resolving constraints.`,
-      type: SettingsType.STRING,
+    constraintsPath: {
+      description: `The path of the constraints file.`,
+      type: SettingsType.ABSOLUTE_PATH,
       default: `constraints.pro`,
     },
   },
