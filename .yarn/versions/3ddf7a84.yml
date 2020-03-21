@@ -1,7 +1,9 @@
 declined:
   - "@yarnpkg/plugin-constraints"
+  - "@yarnpkg/plugin-essentials"
   - "@yarnpkg/plugin-exec"
   - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-version"
