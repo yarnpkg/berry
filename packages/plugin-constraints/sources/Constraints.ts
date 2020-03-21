@@ -164,8 +164,10 @@ export class Constraints {
   constructor(project: Project) {
     this.project = project;
 
-    if (xfs.existsSync(ppath.join(project.cwd, toFilename(`constraints.pro`)))) {
-      this.source = xfs.readFileSync(ppath.join(project.cwd, toFilename(`constraints.pro`)), `utf8`);
+    const constraintsFilename = project.configuration.get(`constraintsFilename`);
+
+    if (xfs.existsSync(ppath.join(project.cwd, toFilename(constraintsFilename)))) {
+      this.source = xfs.readFileSync(ppath.join(project.cwd, toFilename(constraintsFilename)), `utf8`);
     }
   }
 
