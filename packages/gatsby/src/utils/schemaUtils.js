@@ -1,13 +1,38 @@
 // @ts-check
 
-import jref                                                                                             from 'json-ref-lite';
-import {cloneDeep, merge}                                                                               from 'lodash';
-import marked                                                                                           from 'marked';
+import jref               from 'json-ref-lite';
+import {cloneDeep, merge} from 'lodash';
+import marked             from 'marked';
 
-import React                                                                                            from 'react';
+import React              from 'react';
 
-import {SymlContainer, SymlMain, SymlScalar, SymlScalarProperty, SymlObjectProperty, SymlArrayProperty} from '../components/syml';
+import {
+  JsonContainer,
+  JsonMain,
+  JsonScalar,
+  JsonScalarProperty,
+  JsonObjectProperty,
+  JsonArrayProperty,
+} from '../components/json';
 
+import {
+  SymlContainer,
+  SymlMain,
+  SymlScalar,
+  SymlScalarProperty,
+  SymlObjectProperty,
+  SymlArrayProperty,
+} from '../components/syml';
+
+
+const dynamicComponents = {
+  containers: {JsonContainer, SymlContainer},
+  mains: {JsonMain, SymlMain},
+  scalars: {JsonScalar, SymlScalar},
+  scalarProperties: {JsonScalarProperty, SymlScalarProperty},
+  objectProperties: {JsonObjectProperty, SymlObjectProperty},
+  arrayProperties: {JsonArrayProperty, SymlArrayProperty},
+};
 
 export const defaultCommentConfiguration = {
   /** @type {boolean | undefined} */
@@ -17,6 +42,8 @@ export const defaultCommentConfiguration = {
   overrides: {
     /** @type {unknown} */
     default: undefined,
+    /** @type {string | undefined} */
+    description: ``,
   },
 };
 
@@ -70,26 +97,41 @@ export const getOverriddenProperty = (overrides, key) => (
 
 /**
  * @param {import('json-schema').JSONSchema7Type} placeholder
+ * @param {`Json` | `Syml`} mode
  * @returns {JSX.Element}
  */
-export const renderScalar = (placeholder) => (
-  <SymlScalar
-    placeholder={placeholder}
-  />
-);
+export const renderScalar = (placeholder, mode) => {
+  const Scalar = dynamicComponents.scalars[`${mode}Scalar`];
+
+  return (
+    <Scalar
+      placeholder={placeholder}
+    />
+  );
+};
 
 /**
  * @param {[string, import('json-schema').JSONSchema7]} entry
+ * @param {`Json` | `Syml`} mode
+ * @param {boolean} isNested
  * @returns {JSX.Element}
  */
-export const renderScalarProperty = (entry) => {
+export const renderScalarProperty = (entry, mode, isNested) => {
   const overrides = /** @type {defaultCommentConfiguration['overrides']} */ (getCommentConfigurationKey(entry[1].$comment, `overrides`));
   const overriddenDefault = getOverriddenProperty(overrides, `default`);
+  const overriddenDescription = getOverriddenProperty(overrides, `description`);
+
+  const description = entry[1].$ref
+    ? renderHtmlFromMarkdown(`See [\`${entry[0]}\`](#${entry[0]}).`)
+    : renderHtmlFromMarkdown(entry[1].description);
+
+  const ScalarProperty = dynamicComponents.scalarProperties[`${mode}ScalarProperty`];
+
   return (
-    <SymlScalarProperty
+    <ScalarProperty
       name={entry[0]}
       anchor={
-        entry[1].$ref
+        entry[1].$ref || isNested
           ? getCommentConfigurationKey(entry[1].$comment, `anchor`)
           : undefined
       }
@@ -99,9 +141,9 @@ export const renderScalarProperty = (entry) => {
           : entry[1].default
       }
       description={
-        entry[1].$ref
-          ? renderHtmlFromMarkdown(`See [\`${entry[0]}\`](#${entry[0]}).`)
-          : renderHtmlFromMarkdown(entry[1].description)
+        entry[1].$ref && overriddenDescription
+          ? renderHtmlFromMarkdown(/** @type {string}*/ (overriddenDescription))
+          : description
       }
     />
   );
@@ -109,93 +151,122 @@ export const renderScalarProperty = (entry) => {
 
 /**
  * @param {[string, import('json-schema').JSONSchema7]} entry
+ * @param {`Json` | `Syml`} mode
  * @returns {JSX.Element}
  */
-export const renderObjectProperty = (entry) => {
+export const renderObjectProperty = (entry, mode) => {
   /** @type {JSX.Element[]} */
   const objectProperties = [];
   if (typeof entry[1].default === `object`) {
     Object.keys(entry[1].default).map((propertyKey) => {
       if (entry[1].properties && Object.prototype.hasOwnProperty.call(entry[1].properties, propertyKey)) {
-        objectProperties.push(renderProperty([propertyKey, entry[1].properties[propertyKey]]));
+        objectProperties.push(renderProperty([propertyKey, entry[1].properties[propertyKey]], mode, true));
       } else if (entry[1].patternProperties) {
-        Object.keys(entry[1].patternProperties).forEach((patternPropertyKey) => {
+        for (const patternPropertyKey of Object.keys(entry[1].patternProperties)) {
           if (new RegExp(patternPropertyKey).test(propertyKey)) {
-            objectProperties.push(renderProperty([propertyKey, entry[1].patternProperties[patternPropertyKey]]));
+            objectProperties.push(renderProperty([propertyKey, entry[1].patternProperties[patternPropertyKey]], mode, true));
+            break;
           }
-        });
+        }
       }
     });
   }
+  const overrides = /** @type {defaultCommentConfiguration['overrides']} */ (getCommentConfigurationKey(entry[1].$comment, `overrides`));
+  const overriddenDescription = getOverriddenProperty(overrides, `description`);
+
+  const description = entry[1].$ref
+    ? renderHtmlFromMarkdown(`See [\`${entry[0]}\`](#${entry[0]}).`)
+    : renderHtmlFromMarkdown(entry[1].description);
+
   const margin = getCommentConfigurationKey(entry[1].$comment, `margin`);
+
+  const defaultMargin = (mode === `Syml`) ? !!entry[1].description : false;
+
+  const ObjectProperty = dynamicComponents.objectProperties[`${mode}ObjectProperty`];
+
   return (
-    <SymlObjectProperty
+    <ObjectProperty
       name={entry[0]}
       margin={
         typeof margin !== `undefined`
           ? margin
-          : !!entry[1].description
+          : defaultMargin
       }
       description={
-        entry[1].$ref
-          ? renderHtmlFromMarkdown(`See [\`${entry[0]}\`](#${entry[0]}).`)
-          : renderHtmlFromMarkdown(entry[1].description)
+        entry[1].$ref && overriddenDescription
+          ? renderHtmlFromMarkdown(/** @type {string}*/ (overriddenDescription))
+          : description
       }
     >
       {objectProperties}
-    </SymlObjectProperty>
+    </ObjectProperty>
   );
 };
 
 
 /**
  * @param {[string, import('json-schema').JSONSchema7]} entry
+ * @param {`Json` | `Syml`} mode
  * @returns {JSX.Element}
  */
-export const renderArrayProperty = (entry) => {
+export const renderArrayProperty = (entry, mode) => {
   /** @type {JSX.Element[]} */
   const arrayProperties = [];
   if (Array.isArray(entry[1].default)) {
     entry[1].default.forEach((arrayProperty) => {
-      arrayProperties.push(renderScalar(arrayProperty));
+      arrayProperties.push(renderScalar(arrayProperty, mode));
     });
   }
+
+  const overrides = /** @type {defaultCommentConfiguration['overrides']} */ (getCommentConfigurationKey(entry[1].$comment, `overrides`));
+  const overriddenDescription = getOverriddenProperty(overrides, `description`);
+
+  const description = entry[1].$ref
+    ? renderHtmlFromMarkdown(`See [\`${entry[0]}\`](#${entry[0]}).`)
+    : renderHtmlFromMarkdown(entry[1].description);
+
+
+  const ArrayProperty = dynamicComponents.arrayProperties[`${mode}ArrayProperty`];
+
   return (
-    <SymlArrayProperty
+    <ArrayProperty
       name={entry[0]}
       description={
-        entry[1].$ref
-          ? renderHtmlFromMarkdown(`See [\`${entry[0]}\`](#${entry[0]}).`)
-          : renderHtmlFromMarkdown(entry[1].description)
+        entry[1].$ref && overriddenDescription
+          ? renderHtmlFromMarkdown(/** @type {string}*/ (overriddenDescription))
+          : description
       }
     >
       {arrayProperties}
-    </SymlArrayProperty>
+    </ArrayProperty>
   );
 };
 
 /**
  * @param {[string, import('json-schema').JSONSchema7Definition]} entry
+ * @param {`Json` | `Syml`} mode
+ * @param {boolean} isNested
  * @returns {JSX.Element}
  */
-export const renderProperty = (entry) => {
+export const renderProperty = (entry, mode, isNested) => {
   if (typeof entry[1] === `boolean`)
     return;
 
   if (entry[1].type === `object`) {
-    return renderObjectProperty(/** @type {[string, import('json-schema').JSONSchema7]} */ (entry));
+    return renderObjectProperty(/** @type {[string, import('json-schema').JSONSchema7]} */ (entry), mode);
   } else if (entry[1].type === `array`) {
-    return renderArrayProperty(/** @type {[string, import('json-schema').JSONSchema7]} */ (entry));
+    return renderArrayProperty(/** @type {[string, import('json-schema').JSONSchema7]} */ (entry), mode);
   } else {
-    return renderScalarProperty(/** @type {[string, import('json-schema').JSONSchema7]} */ (entry));
+    return renderScalarProperty(/** @type {[string, import('json-schema').JSONSchema7]} */ (entry), mode, isNested);
   }
 };
 
 /**
  * @param {import('json-schema').JSONSchema7} schema
+ * @param {`Json` | `Syml`} mode
  * @returns {JSX.Element}
  */
-export const convertSchemaToConfiguration = (schema) => {
+export const convertSchemaToConfiguration = (schema, mode) => {
   /** @type {import('json-schema').JSONSchema7} */
   const dereferencedSchema = jref.resolve(
     // Required because json-ref-lite mutates its argument
@@ -203,12 +274,16 @@ export const convertSchemaToConfiguration = (schema) => {
   );
   // Recursive merge is needed
   const combinedSchema = merge(schema, dereferencedSchema);
+
+  const Container = dynamicComponents.containers[`${mode}Container`];
+  const Main = dynamicComponents.mains[`${mode}Main`];
+
   return (
-    <SymlContainer>
-      <SymlMain>
+    <Container>
+      <Main>
         {renderHtmlFromMarkdown(combinedSchema.description)}
-      </SymlMain>
-      {Object.entries(combinedSchema.properties).map((entry) => renderProperty(entry))}
-    </SymlContainer>
+      </Main>
+      {Object.entries(combinedSchema.properties).map((entry) => renderProperty(entry, mode, false))}
+    </Container>
   );
 };
