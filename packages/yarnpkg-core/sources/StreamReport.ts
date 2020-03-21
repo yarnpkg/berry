@@ -229,7 +229,7 @@ export class StreamReport extends Report {
       return;
 
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
+      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatNameWithTermLink(name)}: ${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `warning`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -239,7 +239,7 @@ export class StreamReport extends Report {
     this.errorCount += 1;
 
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
+      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `redBright`)} ${this.formatNameWithTermLink(name)}: ${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -437,6 +437,14 @@ export class StreamReport extends Report {
     } else {
       return label;
     }
+  }
+
+  private formatNameWithTermLink(name: MessageName | null) {
+    const code = this.formatName(name);
+    const desc = MessageName[name || 0];
+    const href = `https://yarnpkg.com/advanced/error-codes#${code}---${desc}`.toLowerCase();
+
+    return `\u001b]8;;${href}\u001b\\${code}\u001b]8;;\u001b\\`;
   }
 
   private formatIndent() {
