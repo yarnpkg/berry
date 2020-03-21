@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@yarnpkg/core": "workspace:^2.0.0-rc.24",
-    "typescript": "^3.7.5"
+    "typescript": "^3.8.3"
   },
   "scripts": {
     "build:plugin-exec": "builder build plugin",
