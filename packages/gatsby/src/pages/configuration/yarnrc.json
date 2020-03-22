@@ -21,6 +21,12 @@
       "enum": ["throw", "update", "ignore"],
       "default": "throw"
     },
+    "constraintsPath": {
+      "description": "The path of the constraints file.",
+      "type": "string",
+      "format": "uri-reference",
+      "default": "constraints.pro"
+    },
     "defaultProtocol": {
       "description": "Yarn is a modular package manager that can resolve packages from various sources. As such, semver ranges and tag names don't only work with the npm registry - just change the default protocol to something else and your semver ranges will be fetched from whatever source you select.",
       "type": "string",
