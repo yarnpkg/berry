@@ -65,6 +65,8 @@ export class Manifest {
   public files: Set<PortablePath> | null = null;
   public publishConfig: PublishConfig | null = null;
 
+  public preferUnplugged: boolean | null = null;
+
   public raw: {[key: string]: any} = {};
 
   /**
@@ -383,6 +385,9 @@ export class Manifest {
       }
     }
 
+    if (typeof data.preferUnplugged === `boolean`)
+      this.preferUnplugged = data.preferUnplugged;
+
     this.errors = errors;
   }
 
@@ -651,6 +656,11 @@ export class Manifest {
       data.files = Array.from(this.files);
     else
       delete data.files;
+
+    if (this.preferUnplugged !== null)
+      data.preferUnplugged = this.preferUnplugged;
+    else
+      delete data.preferUnplugged;
 
     return data;
   }
