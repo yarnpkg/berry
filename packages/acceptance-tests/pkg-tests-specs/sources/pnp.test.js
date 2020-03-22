@@ -1244,8 +1244,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
-        expect(listing).toHaveLength(0);
+        expect(xfs.existsSync(`${path}/.yarn/unplugged`)).toEqual(false);
       },
     ),
   );
