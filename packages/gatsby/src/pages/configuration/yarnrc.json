@@ -116,6 +116,12 @@
       "format": "uri-reference",
       "default": "yarn.lock"
     },
+    "nodeLinker": {
+      "description": "Defines what linker should be used (useful to enable the node-modules plugin)",
+      "type": "string",
+      "enum": ["pnp", "node-modules"],
+      "default": "pnp"
+    },
     "npmAlwaysAuth": {
       "description": "If true, Yarn will always send the authentication credentials when making a request to the registries. This typically shouldn't be needed.",
       "type": "boolean",
@@ -332,6 +338,12 @@
       "type": "string",
       "format": "regex",
       "default": "^\\./subdir/.*"
+    },
+    "pnpMode": {
+      "description": "If 'strict', Yarn won't allow modules to require packages they don't explicitly list in their own dependencies. If 'loose', Yarn will allow access to the packages that would have been hoisted to the top-level under 1.x installs. Note that, even in loose mode, such calls are unsafe (hoisting rules aren't predictable) and should be discouraged.",
+      "type": "string",
+      "enum": ["strict", "loose"],
+      "default": "strict"
     },
     "pnpShebang": {
       "description": "A header that will be prepended to the generated `.pnp.js` file. You're allowed to write multiple lines, but this is slightly frowned upon.",
