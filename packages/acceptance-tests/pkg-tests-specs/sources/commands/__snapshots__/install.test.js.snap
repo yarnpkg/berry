@@ -5,7 +5,7 @@ Object {
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: ┌ Validation step
-➤ ]8;;https://yarnpkg.com/advanced/error-codes#yn0057---invalid_manifest\\\\YN0057]8;;\\\\: │ package-a-ddd35d: String bin field, but no attached package name
+➤ YN0057: │ package-a-ddd35d: String bin field, but no attached package name
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
@@ -13,7 +13,7 @@ Object {
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
-➤ ]8;;https://yarnpkg.com/advanced/error-codes#yn0000---unnamed\\\\YN0000]8;;\\\\: Done with warnings
+➤ YN0000: Done with warnings
 ",
 }
 `;
@@ -42,7 +42,7 @@ Object {
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: ┌ Validation step
-➤ ]8;;https://yarnpkg.com/advanced/error-codes#yn0057---invalid_manifest\\\\YN0057]8;;\\\\: │ root-workspace-0b6124: String bin field, but no attached package name
+➤ YN0057: │ root-workspace-0b6124: String bin field, but no attached package name
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
@@ -50,7 +50,7 @@ Object {
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
-➤ ]8;;https://yarnpkg.com/advanced/error-codes#yn0000---unnamed\\\\YN0000]8;;\\\\: Done with warnings
+➤ YN0000: Done with warnings
 ",
 }
 `;
