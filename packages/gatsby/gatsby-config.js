@@ -25,6 +25,7 @@ module.exports = {
     }, {
       name: `API`,
       link: `/api`,
+      external: true,
     }],
     algolia: {
       // Note that the appId and appKey are specific to Yarn's website - please

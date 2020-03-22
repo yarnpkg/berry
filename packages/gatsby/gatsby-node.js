@@ -37,27 +37,25 @@ module.exports = {
       });
     }
 
+    // The following redirects are also mapped in the `_redirects` file
     createRedirect({
       fromPath: `/configuration`,
       toPath: `/configuration/manifest`,
       redirectInBrowser: true,
       isPermanent: true,
     });
-
     createRedirect({
       fromPath: `/features`,
       toPath: `/features/pnp`,
       redirectInBrowser: true,
       isPermanent: true,
     });
-
     createRedirect({
       fromPath: `/cli`,
       toPath: `/cli/install`,
       redirectInBrowser: true,
       isPermanent: true,
     });
-
     createRedirect({
       fromPath: `/advanced`,
       toPath: `/advanced/architecture`,
@@ -74,5 +72,5 @@ module.exports = {
       // Update the page.
       createPage(page);
     }
-  }
+  },
 };
