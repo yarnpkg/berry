@@ -9,7 +9,7 @@ const plugin: Plugin = {
     constraintsPath: {
       description: `The path of the constraints file.`,
       type: SettingsType.ABSOLUTE_PATH,
-      default: `constraints.pro`,
+      default: `./constraints.pro`,
     },
   },
   commands: [
