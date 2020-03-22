@@ -248,11 +248,13 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
     return null;
 
   const locatorState = parseSyml(await xfs.readFilePromise(installStatePath, `utf8`));
+
+  // If we have a higher serialized version than we can handle, ignore the state alltogether
+  if (locatorState.__metadata.version > STATE_FILE_VERSION)
+    return null;
+
   const locatorMap: NodeModulesLocatorMap = new Map();
   const binSymlinks: BinSymlinkMap = new Map();
-
-  if (locatorState.__metadata.version > STATE_FILE_VERSION)
-    return {locatorMap, binSymlinks};
 
   delete locatorState.__metadata;
 
@@ -454,6 +456,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs}:
       const stat = await baseFs.lstatPromise(srcPath);
       await baseFs.copyFilePromise(srcPath, dstPath);
       const mode = stat.mode & 0o777;
+      // An optimization - files will have rw-r-r permissions (0o644) by default, we can skip chmod for them
       if (mode !== 0o644) {
         await xfs.chmodPromise(dstPath, mode);
       }
@@ -808,18 +811,18 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
   for (const location of previousBinSymlinks.keys()) {
     if (!binSymlinks.has(location)) {
       const binDir = ppath.join(location, NODE_MODULES, DOT_BIN);
-      xfs.removeSync(binDir);
+      await xfs.removePromise(binDir);
     }
   }
 
   for (const [location, symlinks] of binSymlinks) {
     const binDir = ppath.join(location, NODE_MODULES, DOT_BIN);
     const prevSymlinks = previousBinSymlinks.get(location) || new Map();
-    xfs.mkdirpSync(binDir);
+    await xfs.mkdirpPromise(binDir);
     for (const name of prevSymlinks.keys()) {
       if (!symlinks.has(name)) {
         // Remove outdated symlinks
-        xfs.removeSync(ppath.join(binDir, name));
+        await xfs.removePromise(ppath.join(binDir, name));
       }
     }
 
@@ -833,7 +836,7 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
       if (process.platform === 'win32') {
         await cmdShim(npath.fromPortablePath(target), npath.fromPortablePath(symlinkPath), {createPwshFile: false});
       } else {
-        await xfs.removeSync(symlinkPath);
+        await xfs.removePromise(symlinkPath);
         await symlinkPromise(target, symlinkPath);
       }
     }
