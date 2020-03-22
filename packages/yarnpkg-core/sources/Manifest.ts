@@ -79,8 +79,22 @@ export class Manifest {
   static readonly allDependencies: Array<AllDependencies> = [`dependencies`, `devDependencies`, `peerDependencies`];
   static readonly hardDependencies: Array<HardDependencies> = [`dependencies`, `devDependencies`];
 
-  static async find(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
-    return await Manifest.fromFile(ppath.join(path, toFilename(`package.json`)), {baseFs});
+  static async tryFind(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
+    const manifestPath = ppath.join(path, toFilename(`package.json`));
+
+    if (!baseFs.existsPromise(manifestPath))
+      return null;
+
+    return await Manifest.fromFile(manifestPath, {baseFs});
+  }
+
+  static async find(path: PortablePath, {baseFs}: {baseFs?: FakeFS<PortablePath>} = {}) {
+    const manifest = await Manifest.tryFind(path, {baseFs});
+
+    if (manifest === null)
+      throw new Error(`Manifest not found`);
+
+    return manifest;
   }
 
   static async fromFile(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {

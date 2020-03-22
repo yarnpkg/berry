@@ -42,7 +42,7 @@ export abstract class AbstractPnpInstaller implements Installer {
       !this.opts.project.tryWorkspaceByLocator(pkg);
 
     const manifest = !hasVirtualInstances
-      ? await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs})
+      ? await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs})
       : null;
 
     const buildScripts = !hasVirtualInstances
