@@ -212,10 +212,10 @@ export class StreamReport extends Report {
 
           this.writeLines(name, this.forgettableLines);
         } else {
-          this.writeLine(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
+          this.writeLine(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
         }
       } else {
-        this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
+        this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
       }
     } else {
       this.reportJson({type: `info`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
@@ -229,7 +229,7 @@ export class StreamReport extends Report {
       return;
 
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatNameWithTermLink(name)}: ${this.formatIndent()}${text}`);
+      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `warning`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -239,7 +239,7 @@ export class StreamReport extends Report {
     this.errorCount += 1;
 
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `redBright`)} ${this.formatNameWithTermLink(name)}: ${this.formatIndent()}${text}`);
+      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -439,9 +439,18 @@ export class StreamReport extends Report {
     }
   }
 
-  private formatNameWithTermLink(name: MessageName | null) {
+  private formatNameWithHyperlink(name: MessageName | null) {
     const code = this.formatName(name);
-    const desc = MessageName[name || 0];
+
+    // Only print hyperlinks if allowed per configuration
+    if (!this.configuration.get(`enableHyperlinks`))
+      return code;
+
+    // Don't print hyperlinks for the generic messages
+    if (name === null || name === MessageName.UNNAMED)
+      return code;
+
+    const desc = MessageName[name];
     const href = `https://yarnpkg.com/advanced/error-codes#${code}---${desc}`.toLowerCase();
 
     return `\u001b]8;;${href}\u001b\\${code}\u001b]8;;\u001b\\`;

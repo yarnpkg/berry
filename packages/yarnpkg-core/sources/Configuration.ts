@@ -227,6 +227,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: supportsColor,
     defaultText: `<dynamic>`,
   },
+  enableHyperlinks: {
+    description: `If true, the CLI is allowed to use hyperlinks in its output`,
+    type: SettingsType.BOOLEAN,
+    default: supportsColor,
+    defaultText: `<dynamic>`,
+  },
   enableInlineBuilds: {
     description: `If true, the CLI will print the build output on the command line`,
     type: SettingsType.BOOLEAN,
