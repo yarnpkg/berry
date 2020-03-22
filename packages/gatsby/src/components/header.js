@@ -238,7 +238,7 @@ export const Header = ({children}) => {
         <MenuNavigation className={expanded ? `expanded` : ``}>
           {data.site.siteMetadata.menuLinks.map(({name, link, external}) => {
             const LinkComponent = external
-              ? (props => <a {...props}/>)
+              ? (({to}) => <a href={to}/>)
               : Link;
 
             return (
