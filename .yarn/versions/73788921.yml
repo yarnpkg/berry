@@ -1,6 +1,7 @@
 releases:
   "@yarnpkg/cli": prerelease
   "@yarnpkg/core": prerelease
+  "@yarnpkg/plugin-node-modules": prerelease
   "@yarnpkg/plugin-pnp": prerelease
 
 declined:
@@ -16,7 +17,6 @@ declined:
   - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-link"
-  - "@yarnpkg/plugin-node-modules"
   - "@yarnpkg/plugin-npm"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"

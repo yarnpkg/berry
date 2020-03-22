@@ -103,7 +103,7 @@ export class PnpInstaller extends AbstractPnpInstaller {
   }
 
   async transformPackage(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult, dependencyMeta: DependencyMeta, {hasBuildScripts}: {hasBuildScripts: boolean}) {
-    if (hasBuildScripts || this.isUnplugged(locator, manifest, dependencyMeta)) {
+    if (hasBuildScripts || this.isUnplugged(locator, manifest, fetchResult, dependencyMeta)) {
       return this.unplugPackage(locator, fetchResult.packageFs);
     } else {
       return fetchResult.packageFs;
@@ -207,7 +207,7 @@ export class PnpInstaller extends AbstractPnpInstaller {
     return new CwdFS(unplugPath);
   }
 
-  private isUnplugged(ident: Ident, manifest: Manifest | null, dependencyMeta: DependencyMeta, packageFs: FakeFS<PortablePath>) {
+  private isUnplugged(ident: Ident, manifest: Manifest | null, fetchResult: FetchResult, dependencyMeta: DependencyMeta) {
     if (typeof dependencyMeta.unplugged !== `undefined`)
       return dependencyMeta.unplugged;
 
@@ -217,7 +217,7 @@ export class PnpInstaller extends AbstractPnpInstaller {
     if (manifest !== null && manifest.preferUnplugged !== null)
       return manifest.preferUnplugged;
 
-    if (packageFs.getExtractHint({relevantExtensions:FORCED_UNPLUG_FILETYPES}))
+    if (fetchResult.packageFs.getExtractHint({relevantExtensions:FORCED_UNPLUG_FILETYPES}))
       return true;
 
     return false;

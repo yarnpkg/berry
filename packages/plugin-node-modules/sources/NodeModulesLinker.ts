@@ -58,12 +58,12 @@ export class NodeModulesLinker implements Linker {
 }
 
 class NodeModulesInstaller extends AbstractPnpInstaller {
-  async getBuildScripts(locator: Locator, fetchResult: FetchResult) {
+  async getBuildScripts(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult) {
     return [];
   }
 
-  async transformPackage(locator: Locator, dependencyMeta: DependencyMeta, packageFs: FakeFS<PortablePath>, flags: {hasBuildScripts: boolean}) {
-    return packageFs;
+  async transformPackage(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult, dependencyMeta: DependencyMeta, flags: {hasBuildScripts: boolean}) {
+    return fetchResult.packageFs;
   }
 
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
