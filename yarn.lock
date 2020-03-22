@@ -1791,6 +1791,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.8.7":
+  version: 7.9.2
+  resolution: "@babel/runtime@npm:7.9.2"
+  dependencies:
+    regenerator-runtime: ^0.13.4
+  checksum: 2/50c65b4972e62ca260ff6f3f99cf2395585d7f7bcd947ee87d082c2926cb4f0c93c815d5e9071162e689a4d2ba4143ffd5b005893be860088689c963f34e50c8
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.0.0, @babel/template@npm:^7.1.0, @babel/template@npm:^7.1.2, @babel/template@npm:^7.2.2":
   version: 7.2.2
   resolution: "@babel/template@npm:7.2.2"
@@ -4989,7 +4998,7 @@ __metadata:
     es6-promise: ^4.2.6
     gatsby: ^2.13.6
     gatsby-image: ^2.0.31
-    gatsby-plugin-catch-links: ^2.0.13
+    gatsby-plugin-catch-links: ^2.2.0
     gatsby-plugin-clipanion-cli: "portal:./gatsby-plugin-clipanion-cli"
     gatsby-plugin-emotion: ^4.1.4
     gatsby-plugin-favicon: ^3.1.6
@@ -12294,15 +12303,15 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"gatsby-plugin-catch-links@npm:^2.0.13":
-  version: 2.0.13
-  resolution: "gatsby-plugin-catch-links@npm:2.0.13"
+"gatsby-plugin-catch-links@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "gatsby-plugin-catch-links@npm:2.2.0"
   dependencies:
-    "@babel/runtime": ^7.0.0
+    "@babel/runtime": ^7.8.7
     escape-string-regexp: ^1.0.5
   peerDependencies:
     gatsby: ^2.0.0
-  checksum: 2/0595c05abf94bf3c919a9d5894127c8daf39593d404623cfe6c5337d3403adbbb6cd84c43eeee8066f0c109ac888fa39065d00dfca70964d2a4292db70aa51b5
+  checksum: 2/09da513c8f56fd38e160999af62eef3f1abd84e31d91e3464f617e18f1663b1466c4225e990ee742215ec8a182a5c7d0b1abf56d9648465bd2773aa42dbae958
   languageName: node
   linkType: hard
 
@@ -21571,6 +21580,13 @@ fsevents@^1.2.2:
   version: 0.13.3
   resolution: "regenerator-runtime@npm:0.13.3"
   checksum: 2/fc026f997801876927d8b11bd94b1d445c01fb1b112dcc35b1c4e83490b87954d26d8164c50098cdebaa8edc3cbfaa0e474758a57e28efc25930972148274b7a
+  languageName: node
+  linkType: hard
+
+"regenerator-runtime@npm:^0.13.4":
+  version: 0.13.5
+  resolution: "regenerator-runtime@npm:0.13.5"
+  checksum: 2/8d8ee0eca26e0491085033caf2b1b95379c4db21e38d79cde52bbd4014a3865eee26ec0f4f958682e8600f185f2f5dbcd8c6685b9b9261639767929c19b5bcd2
   languageName: node
   linkType: hard
 

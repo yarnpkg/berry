@@ -2371,6 +2371,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["regenerator-runtime", "npm:0.13.2"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:7.9.2", {
+          "packageLocation": "./.yarn/cache/@babel-runtime-npm-7.9.2-68b4224984-2.zip/node_modules/@babel/runtime/",
+          "packageDependencies": [
+            ["@babel/runtime", "npm:7.9.2"],
+            ["regenerator-runtime", "npm:0.13.5"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@babel/template", [
@@ -6012,7 +6020,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["es6-promise", "npm:4.2.6"],
             ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.13.6"],
             ["gatsby-image", "npm:2.0.31"],
-            ["gatsby-plugin-catch-links", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.0.13"],
+            ["gatsby-plugin-catch-links", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.2.0"],
             ["gatsby-plugin-clipanion-cli", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#portal:./gatsby-plugin-clipanion-cli::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],
             ["gatsby-plugin-emotion", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:4.1.4"],
             ["gatsby-plugin-favicon", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.1.6"],
@@ -14779,11 +14787,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["gatsby-plugin-catch-links", [
-        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.0.13", {
-          "packageLocation": "./.yarn/$$virtual/gatsby-plugin-catch-links-virtual-217c86ab48/0/cache/gatsby-plugin-catch-links-npm-2.0.13-53f91e7e2d-2.zip/node_modules/gatsby-plugin-catch-links/",
+        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.2.0", {
+          "packageLocation": "./.yarn/$$virtual/gatsby-plugin-catch-links-virtual-17a7b434aa/0/cache/gatsby-plugin-catch-links-npm-2.2.0-8ad2c362c4-2.zip/node_modules/gatsby-plugin-catch-links/",
           "packageDependencies": [
-            ["gatsby-plugin-catch-links", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.0.13"],
-            ["@babel/runtime", "npm:7.2.0"],
+            ["gatsby-plugin-catch-links", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.2.0"],
+            ["@babel/runtime", "npm:7.9.2"],
             ["escape-string-regexp", "npm:1.0.5"],
             ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.13.6"]
           ],
@@ -24753,6 +24761,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/regenerator-runtime-npm-0.13.3-bc3b9ae29d-2.zip/node_modules/regenerator-runtime/",
           "packageDependencies": [
             ["regenerator-runtime", "npm:0.13.3"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:0.13.5", {
+          "packageLocation": "./.yarn/cache/regenerator-runtime-npm-0.13.5-290ae86e15-2.zip/node_modules/regenerator-runtime/",
+          "packageDependencies": [
+            ["regenerator-runtime", "npm:0.13.5"]
           ],
           "linkType": "HARD",
         }]
