@@ -84,30 +84,29 @@ export class PnpInstaller extends AbstractPnpInstaller {
 
   private readonly unpluggedPaths: Set<string> = new Set();
 
-  async getBuildScripts(locator: Locator, fetchResult: FetchResult): Promise<Array<BuildDirective>> {
-    if (!await fetchResult.packageFs.existsPromise(ppath.resolve(fetchResult.prefixPath, toFilename(`package.json`))))
+  async getBuildScripts(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult): Promise<Array<BuildDirective>> {
+    if (manifest === null)
       return [];
 
     const buildScripts: Array<BuildDirective> = [];
-    const {scripts} = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
 
     for (const scriptName of [`preinstall`, `install`, `postinstall`])
-      if (scripts.has(scriptName))
+      if (manifest.scripts.has(scriptName))
         buildScripts.push([BuildType.SCRIPT, scriptName]);
 
     // Detect cases where a package has a binding.gyp but no install script
     const bindingFilePath = ppath.resolve(fetchResult.prefixPath, toFilename(`binding.gyp`));
-    if (!scripts.has(`install`) && fetchResult.packageFs.existsSync(bindingFilePath))
+    if (!manifest.scripts.has(`install`) && fetchResult.packageFs.existsSync(bindingFilePath))
       buildScripts.push([BuildType.SHELLCODE, `node-gyp rebuild`]);
 
     return buildScripts;
   }
 
-  async transformPackage(locator: Locator, dependencyMeta: DependencyMeta, packageFs: FakeFS<PortablePath>, {hasBuildScripts}: {hasBuildScripts: boolean}) {
-    if (hasBuildScripts || this.isUnplugged(locator, dependencyMeta, packageFs)) {
-      return this.unplugPackage(locator, packageFs);
+  async transformPackage(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult, dependencyMeta: DependencyMeta, {hasBuildScripts}: {hasBuildScripts: boolean}) {
+    if (this.isUnplugged(locator, manifest, fetchResult, dependencyMeta, {hasBuildScripts})) {
+      return this.unplugPackage(locator, fetchResult.packageFs);
     } else {
-      return packageFs;
+      return fetchResult.packageFs;
     }
   }
 
@@ -208,14 +207,17 @@ export class PnpInstaller extends AbstractPnpInstaller {
     return new CwdFS(unplugPath);
   }
 
-  private isUnplugged(ident: Ident, dependencyMeta: DependencyMeta, packageFs: FakeFS<PortablePath>) {
-    if (dependencyMeta.unplugged)
-      return true;
+  private isUnplugged(ident: Ident, manifest: Manifest | null, fetchResult: FetchResult, dependencyMeta: DependencyMeta, {hasBuildScripts}: {hasBuildScripts: boolean}) {
+    if (typeof dependencyMeta.unplugged !== `undefined`)
+      return dependencyMeta.unplugged;
 
     if (FORCED_UNPLUG_PACKAGES.has(ident.identHash))
       return true;
 
-    if (packageFs.getExtractHint({relevantExtensions:FORCED_UNPLUG_FILETYPES}))
+    if (manifest !== null && manifest.preferUnplugged !== null)
+      return manifest.preferUnplugged;
+
+    if (hasBuildScripts || fetchResult.packageFs.getExtractHint({relevantExtensions:FORCED_UNPLUG_FILETYPES}))
       return true;
 
     return false;

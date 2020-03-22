@@ -1221,6 +1221,35 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should allow packages to define whether they should be unplugged (true)`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`prefer-unplugged-true`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
+        expect(listing).toHaveLength(1);
+      },
+    ),
+  );
+
+  test(
+    `it should allow packages to define whether they should be unplugged (false)`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`prefer-unplugged-false`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        expect(xfs.existsSync(`${path}/.yarn/unplugged`)).toEqual(false);
+      },
+    ),
+  );
+
+  test(
     `it should not cache the postinstall artifacts`,
     makeTemporaryEnv(
       {

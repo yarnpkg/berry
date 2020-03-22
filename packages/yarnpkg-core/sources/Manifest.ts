@@ -65,6 +65,8 @@ export class Manifest {
   public files: Set<PortablePath> | null = null;
   public publishConfig: PublishConfig | null = null;
 
+  public preferUnplugged: boolean | null = null;
+
   public raw: {[key: string]: any} = {};
 
   /**
@@ -77,8 +79,22 @@ export class Manifest {
   static readonly allDependencies: Array<AllDependencies> = [`dependencies`, `devDependencies`, `peerDependencies`];
   static readonly hardDependencies: Array<HardDependencies> = [`dependencies`, `devDependencies`];
 
-  static async find(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
-    return await Manifest.fromFile(ppath.join(path, toFilename(`package.json`)), {baseFs});
+  static async tryFind(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
+    const manifestPath = ppath.join(path, toFilename(`package.json`));
+
+    if (!await baseFs.existsPromise(manifestPath))
+      return null;
+
+    return await Manifest.fromFile(manifestPath, {baseFs});
+  }
+
+  static async find(path: PortablePath, {baseFs}: {baseFs?: FakeFS<PortablePath>} = {}) {
+    const manifest = await Manifest.tryFind(path, {baseFs});
+
+    if (manifest === null)
+      throw new Error(`Manifest not found`);
+
+    return manifest;
   }
 
   static async fromFile(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
@@ -383,6 +399,9 @@ export class Manifest {
       }
     }
 
+    if (typeof data.preferUnplugged === `boolean`)
+      this.preferUnplugged = data.preferUnplugged;
+
     this.errors = errors;
   }
 
@@ -651,6 +670,11 @@ export class Manifest {
       data.files = Array.from(this.files);
     else
       delete data.files;
+
+    if (this.preferUnplugged !== null)
+      data.preferUnplugged = this.preferUnplugged;
+    else
+      delete data.preferUnplugged;
 
     return data;
   }

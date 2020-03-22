@@ -1,9 +1,9 @@
-import {Installer, LinkOptions, LinkType, MessageName, DependencyMeta, FinalizeInstallStatus} from '@yarnpkg/core';
-import {FetchResult, Descriptor, Locator, Package, BuildDirective}                            from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                               from '@yarnpkg/core';
-import {FakeFS, PortablePath, ppath}                                                          from '@yarnpkg/fslib';
-import {PackageRegistry, PnpSettings}                                                         from '@yarnpkg/pnp';
-import mm                                                                                     from 'micromatch';
+import {Installer, LinkOptions, LinkType, MessageName, DependencyMeta, FinalizeInstallStatus, Manifest} from '@yarnpkg/core';
+import {FetchResult, Descriptor, Locator, Package, BuildDirective}                                      from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                                         from '@yarnpkg/core';
+import {FakeFS, PortablePath, ppath}                                                                    from '@yarnpkg/fslib';
+import {PackageRegistry, PnpSettings}                                                                   from '@yarnpkg/pnp';
+import mm                                                                                               from 'micromatch';
 
 export abstract class AbstractPnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
@@ -17,14 +17,14 @@ export abstract class AbstractPnpInstaller implements Installer {
   /**
    * Called in order to know whether the specified package has build scripts.
    */
-  abstract getBuildScripts(locator: Locator, fetchResult: FetchResult): Promise<Array<BuildDirective>>;
+  abstract getBuildScripts(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult): Promise<Array<BuildDirective>>;
 
   /**
    * Called to transform the package before it's stored in the PnP map. For
    * example we use this in the PnP linker to materialize the packages within
    * their own directories when they have build scripts.
    */
-  abstract transformPackage(locator: Locator, dependencyMeta: DependencyMeta, packageFs: FakeFS<PortablePath>, flags: {hasBuildScripts: boolean}): Promise<FakeFS<PortablePath>>;
+  abstract transformPackage(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult, dependencyMeta: DependencyMeta, flags: {hasBuildScripts: boolean}): Promise<FakeFS<PortablePath>>;
 
   /**
    * Called with the full settings, ready to be used by the @yarnpkg/pnp
@@ -41,8 +41,12 @@ export abstract class AbstractPnpInstaller implements Installer {
       !structUtils.isVirtualLocator(pkg) &&
       !this.opts.project.tryWorkspaceByLocator(pkg);
 
+    const manifest = !hasVirtualInstances
+      ? await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs})
+      : null;
+
     const buildScripts = !hasVirtualInstances
-      ? await this.getBuildScripts(pkg, fetchResult)
+      ? await this.getBuildScripts(pkg, manifest, fetchResult)
       : [];
 
     if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`)) {
@@ -63,7 +67,7 @@ export abstract class AbstractPnpInstaller implements Installer {
     }
 
     const packageFs = !hasVirtualInstances && pkg.linkType !== LinkType.SOFT
-      ? await this.transformPackage(pkg, dependencyMeta, fetchResult.packageFs, {hasBuildScripts: buildScripts.length > 0})
+      ? await this.transformPackage(pkg, manifest, fetchResult, dependencyMeta, {hasBuildScripts: buildScripts.length > 0})
       : fetchResult.packageFs;
 
     const packageRawLocation = ppath.resolve(packageFs.getRealPath(), ppath.relative(PortablePath.root, fetchResult.prefixPath));
