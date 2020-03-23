@@ -38,6 +38,22 @@ This approach has various benefits:
 
 - Faster application startup, because the Node resolution doesn't have to iterate over the filesystem hierarchy nearly as much as before (and soon won't have to do it at all!).
 
+## PnP `loose` mode
+
+PnP `strict` mode breaks packages that rely on hoisting.
+
+The `loose` mode will cause Yarn to call the `node-modules` hoister to generate the list of packages that would have been hoisted to the top-level in a typical `node_modules` install. It follows the exact same implementation as the true hoister used by the [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules). This set of packages will be stored in a "fallback pool" that will be made available to the transitive dependencies, following the policy defined in [pnpFallbackMode](/configuration/yarnrc#pnpFallbackMode). Accessing the fallback pool will now generate a warning through [process.emitWarning](https://nodejs.org/api/process.html#process_process_emitwarning_warning_type_code_ctor).
+
+This mode is an in-between between the `strict` PnP linker and the `node_modules` linker. For now, the `strict` mode will remain the default, but once the `2.1` release will be tagged, the `loose` mode will be expected to become the new default.
+
+In order to enable `loose` mode, make sure that the [`nodeLinker`](/configuration/yarnrc#nodeLinker) option is set to `pnp` (the default) and add the following into your local [`.yarnrc.yml`](/configuration/yarnrc) file:
+
+```yaml
+pnpMode: loose
+```
+
+[More information about the `pnpMode` option.](/configuration/yarnrc#pnpMode)
+
 ## Caveats and work-in-progress
 
 Over the years that led to Plug'n'Play being designed and adopted as the main install strategy, various projects came up with their own implementation of the Node Resolution Algorithm - usually to circumvent shortcomings of the `require.resolve` API. Such projects can be Webpack (`enhanced-resolve`), Babel (`resolve`), Jest (`jest-resolve`), Metro (`metro-resolver`), ...
