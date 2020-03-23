@@ -61,6 +61,6 @@ yarn remove [package]
 ### Upgrading Yarn itself
 
 ```bash
-yarn set version 2.0.0
+yarn set version 2
 yarn set version from sources
 ```
