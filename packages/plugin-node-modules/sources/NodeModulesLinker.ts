@@ -318,6 +318,9 @@ function getLocationMap(installState: NodeModulesLocatorMap) {
 }
 
 const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean}): Promise<any> => {
+  if (dir.split(ppath.sep).indexOf(NODE_MODULES) < 0)
+    throw new Error(`Assertion failed: trying to remove dir that doesn't contain node_modules: ${dir}`);
+
   try {
     if (!options || !options.innerLoop) {
       const stats = await xfs.lstatPromise(dir);
