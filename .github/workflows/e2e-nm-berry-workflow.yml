@@ -47,5 +47,5 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
         cd -
-        NM_DEBUG_LEVEL=1 YARN_NODE_LINKER=node-modules yarn
+        NM_DEBUG_LEVEL=1 YARN_NODE_LINKER=node-modules yarn --inline-builds
       shell: bash
