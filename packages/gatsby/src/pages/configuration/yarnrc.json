@@ -231,7 +231,7 @@
       }
     },
     "npmRegistryServer": {
-      "description": "Defines the hostname of the remote server from where Yarn should fetch the metadata and archives when querying the npm registry. Should you want to define different registries for different scopes, see `npmScopes`. To define the authentication scheme for your servers, see `npmAuthToken`.",
+      "description": "Defines the hostname of the remote server from where Yarn should fetch the metadata and archives when querying the npm registry. Should you want to define different registries for different scopes, see `npmScopes`. To define the authentication scheme for your servers, see `npmAuthToken`. The Hostname must use the `HTTPS` protocol, but this can be changed by adding it to the [`unsafeHttpWhitelist`](#unsafeHttpWhitelist).",
       "type": "string",
       "format": "uri",
       "default": "https://registry.yarnpkg.com"
@@ -429,7 +429,7 @@
       "default": ".yarnrc.yml"
     },
     "unsafeHttpWhitelist": {
-      "description": "This setting lists the hostnames for which using the HTTP protocol is allowed. Any other hostname will be required to use HTTPS instead.",
+      "description": "This setting lists the hostnames for which using the HTTP protocol is allowed. Any other hostname will be required to use HTTPS instead. The reason behind this decision and more details can be found [here](https://github.com/yarnpkg/berry/pull/416).\n\nGlob patterns are supported.",
       "type": "array",
       "items": {
         "type": "string",
