@@ -6666,6 +6666,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:6c4ffdc97c0a8fe6a15cb1b353664a2d1556c0bef782dc06790db015a35ca3cd125eaf355368c58a3aaf6330c79507c16275fc3a3c13a847d89839cdae6b509e#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
+            ["@zkochan/cmd-shim", "npm:4.3.0"],
             ["clipanion", "npm:2.1.5"],
             ["micromatch", "npm:4.0.2"]
           ],
@@ -6689,6 +6690,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:fe83f9ef9c4464094226f14d0d9d2637b43378711c838ce6194b5c44cf0a77e24228b8c6fd658da19ee3a86978a710abe61d8247e86d97ed3d11085117b10fce#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
+            ["@zkochan/cmd-shim", "npm:4.3.0"],
             ["clipanion", "npm:2.1.5"],
             ["micromatch", "npm:4.0.2"]
           ],
@@ -6712,6 +6714,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-stage", "virtual:fe83f9ef9c4464094226f14d0d9d2637b43378711c838ce6194b5c44cf0a77e24228b8c6fd658da19ee3a86978a710abe61d8247e86d97ed3d11085117b10fce#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
+            ["@zkochan/cmd-shim", "npm:4.3.0"],
             ["clipanion", "npm:2.1.5"],
             ["micromatch", "npm:4.0.2"]
           ],
@@ -7282,6 +7285,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["stream-buffers", "npm:3.0.2"]
           ],
           "linkType": "SOFT",
+        }]
+      ]],
+      ["@zkochan/cmd-shim", [
+        ["npm:4.3.0", {
+          "packageLocation": "./.yarn/cache/@zkochan-cmd-shim-npm-4.3.0-00786a1c45-2.zip/node_modules/@zkochan/cmd-shim/",
+          "packageDependencies": [
+            ["@zkochan/cmd-shim", "npm:4.3.0"],
+            ["is-windows", "npm:1.0.2"],
+            ["make-dir", "npm:3.0.0"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["abab", [

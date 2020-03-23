@@ -8,6 +8,7 @@
     "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.18",
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.18",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.19",
+    "@zkochan/cmd-shim": "^4.3.0",
     "clipanion": "^2.1.5",
     "micromatch": "^4.0.2"
   },

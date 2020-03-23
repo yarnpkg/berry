@@ -5333,6 +5333,7 @@ __metadata:
     "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.15"
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.18"
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.19"
+    "@zkochan/cmd-shim": ^4.3.0
     clipanion: ^2.1.5
     micromatch: ^4.0.2
   peerDependencies:
@@ -5575,6 +5576,16 @@ __metadata:
     stream-buffers: ^3.0.2
   languageName: unknown
   linkType: soft
+
+"@zkochan/cmd-shim@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "@zkochan/cmd-shim@npm:4.3.0"
+  dependencies:
+    is-windows: ^1.0.2
+    make-dir: ^3.0.0
+  checksum: 2/63f13d275579980128220b39bbd635e9e365c83c59302c413a460cc5d9ba850c3ae87e08d02542d003fe480168fe897797edc202e19db7b643bf51ce3a96fa0e
+  languageName: node
+  linkType: hard
 
 "abab@npm:^2.0.0":
   version: 2.0.0
