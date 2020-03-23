@@ -53,6 +53,11 @@
       "type": "boolean",
       "default": false
     },
+    "enableHyperlinks": {
+      "description": "If true, the CLI is allowed to use hyperlinks in its output.",
+      "type": "boolean",
+      "default": true
+    },
     "enableImmutableCache": {
       "description": "If true, Yarn will refuse the change the cache in any way (whether it would add files or remove them) when running `yarn install`.",
       "type": "boolean",
