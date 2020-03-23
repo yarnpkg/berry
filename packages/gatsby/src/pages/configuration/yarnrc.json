@@ -182,7 +182,7 @@
       "default": "username:password"
     },
     "npmAuthToken": {
-      "description": "Defines the authentication credentials to use by default when accessing your registries (equivalent to `_authToken` in the v1). If you're using `npmScopes` to define multiple registries, the `npmServer` dictionary allows you to override these credentials on a per-registry basis.",
+      "description": "Defines the authentication credentials to use by default when accessing your registries (equivalent to `_authToken` in the v1). If you're using [`npmScopes`](#npmScopes) to define multiple registries, the [`npmRegistries`](#npmRegistries) dictionary allows you to override these credentials on a per-registry basis.",
       "type": "string",
       "default": "ffffffff-ffff-ffff-ffff-ffffffffffff"
     },
