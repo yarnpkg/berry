@@ -60,8 +60,8 @@ export default class UpCommand extends BaseCommand {
 
     // @ts-ignore
     const prompt = inquirer.createPromptModule({
-      input: this.context.stdin,
-      output: this.context.stdout,
+      input: this.context.stdin as NodeJS.ReadStream,
+      output: this.context.stdout as NodeJS.WriteStream,
     });
 
     const modifier = suggestUtils.getModifier(this, project);

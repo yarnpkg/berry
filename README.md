@@ -35,7 +35,11 @@ Consult the [Migration Guide](https://yarnpkg.com/advanced/migration).
 
 ## Documentation
 
-The documentation can be found at [yarnpkg.com](https://yarnpkg.com/)
+The documentation can be found at [yarnpkg.com](https://yarnpkg.com/).
+
+## API
+
+The API documentation can be found at [yarnpkg.com/api](https://yarnpkg.com/api).
 
 ## Current status
 

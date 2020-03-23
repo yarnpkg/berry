@@ -204,6 +204,7 @@ export const Header = ({children}) => {
           menuLinks {
             name
             link
+            external
           }
         }
       }
@@ -235,13 +236,21 @@ export const Header = ({children}) => {
         </MenuTools>
 
         <MenuNavigation className={expanded ? `expanded` : ``}>
-          {data.site.siteMetadata.menuLinks.map(({name, link}) => <React.Fragment key={name}>
-            <MenuEntry>
-              <Link to={link} activeClassName={`active`} getProps={isActive}>
-                {name}
-              </Link>
-            </MenuEntry>
-          </React.Fragment>)}
+          {data.site.siteMetadata.menuLinks.map(({name, link, external}) => {
+            const LinkComponent = external
+              ? (({children, to}) => <a href={to} children={children}/>)
+              : Link;
+
+            return (
+              <React.Fragment key={name}>
+                <MenuEntry>
+                  <LinkComponent to={link} activeClassName={`active`} getProps={isActive}>
+                    {name}
+                  </LinkComponent>
+                </MenuEntry>
+              </React.Fragment>
+            );
+          })}
         </MenuNavigation>
       </MenuContainer>
       {children}

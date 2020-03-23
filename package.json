@@ -35,7 +35,7 @@
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
     "micromatch": "^4.0.2",
-    "typescript": "^3.7.5"
+    "typescript": "^3.8.3"
   },
   "dependenciesMeta": {
     "core-js": {
@@ -51,6 +51,9 @@
       "built": false
     },
     "svg2png": {
+      "unplugged": true
+    },
+    "typedoc-neo-theme": {
       "unplugged": true
     },
     "webpack-cli": {

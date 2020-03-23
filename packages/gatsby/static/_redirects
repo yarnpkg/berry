@@ -1,3 +1,8 @@
+/configuration /configuration/manifest 301
+/features /features/pnp 301
+/cli /cli/install 301
+/advanced /advanced/architecture 301
+
 /install.sh https://classic.yarnpkg.com/install.sh 301
 
 /downloads/* https://classic.yarnpkg.com/downloads/:splat 301

@@ -36,34 +36,6 @@ module.exports = {
         context: {category: node.frontmatter.category},
       });
     }
-
-    createRedirect({
-      fromPath: `/configuration`,
-      toPath: `/configuration/manifest`,
-      redirectInBrowser: true,
-      isPermanent: true,
-    });
-
-    createRedirect({
-      fromPath: `/features`,
-      toPath: `/features/pnp`,
-      redirectInBrowser: true,
-      isPermanent: true,
-    });
-
-    createRedirect({
-      fromPath: `/cli`,
-      toPath: `/cli/install`,
-      redirectInBrowser: true,
-      isPermanent: true,
-    });
-
-    createRedirect({
-      fromPath: `/advanced`,
-      toPath: `/advanced/architecture`,
-      redirectInBrowser: true,
-      isPermanent: true,
-    });
   },
 
   onCreatePage: async ({page, actions: {createPage}}) => {
@@ -74,5 +46,5 @@ module.exports = {
       // Update the page.
       createPage(page);
     }
-  }
+  },
 };

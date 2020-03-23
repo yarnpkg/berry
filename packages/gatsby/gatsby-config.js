@@ -12,16 +12,20 @@ module.exports = {
       link: `/getting-started`,
     }, {
       name: `Configuration`,
-      link: `/configuration`,
+      link: `/configuration/manifest`,
     }, {
       name: `Features`,
-      link: `/features`,
+      link: `/features/pnp`,
     }, {
       name: `CLI`,
-      link: `/cli`,
+      link: `/cli/install`,
     }, {
       name: `Advanced`,
-      link: `/advanced`,
+      link: `/advanced/architecture`,
+    }, {
+      name: `API`,
+      link: `/api`,
+      external: true,
     }],
     algolia: {
       // Note that the appId and appKey are specific to Yarn's website - please
@@ -91,6 +95,9 @@ module.exports = {
     },
     {
       resolve: `gatsby-plugin-catch-links`,
+      options: {
+        excludePattern: /^\/api$/,
+      },
     },
     {
       resolve: `gatsby-plugin-remove-trailing-slashes`,
@@ -99,4 +106,4 @@ module.exports = {
     // To learn more, visit: https://gatsby.dev/offline
     // 'gatsby-plugin-offline',
   ],
-}
+};
