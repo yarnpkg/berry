@@ -257,6 +257,11 @@
         "@babel/core@npm:7.0.0/@babel/generator": {}
       }
     },
+    "preferUnplugged": {
+      "description": "This field instructs Yarn to either force-extract its content on the disk (useful when you need to ship executable binaries for a reason or another) or to force it to stay within its archive (useful when you want your package to contain *ALL* the sources, including shellscripts, but they aren't useful for runtime purposes).",
+      "type": "boolean",
+      "default": false
+    },
     "publishConfig": {
       "description": "This field contains various settings that are only taken into consideration when a package is generated from your local sources (either through `yarn pack` or one of the publish commands like `yarn npm publish`).",
       "type": "object",
