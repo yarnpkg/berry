@@ -42,25 +42,36 @@ This approach has various benefits:
 
 Over the years that led to Plug'n'Play being designed and adopted as the main install strategy, various projects came up with their own implementation of the Node Resolution Algorithm - usually to circumvent shortcomings of the `require.resolve` API. Such projects can be Webpack (`enhanced-resolve`), Babel (`resolve`), Jest (`jest-resolve`), Metro (`metro-resolver`), ...
 
+### Compatibility Table
+
 The following compatibility table gives you an idea of the integration status with various tools from the community. Note that only CLI tools are listed there, as frontend libraries (such as `react`, `vue`, `lodash`, ...) don't reimplement the Node resolution and as such don't need any special logic to take advantage of Plug'n'Play:
 
 **[Suggest an addition to this table](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugnplay.md)**
 
-| Project name | Status | Note |
-| ------------ | ------ | ---- |
-| Babel             | Native     | Starting from `resolve` 1.9+ |
-| Create-React-App  | Native     | Starting from 2.0+ |
-| ESLint            | Native     | Some compatibility issues w/ shared configs |
-| Gatsby            | Native     | No comment |
-| Husky             | Native     | Starting from 4.0.0-1+ |
-| Jest              | Native     | Starting from 24.1+ |
-| Prettier          | Native     | Starting from 1.17+ |
-| Rollup            | Native     | Starting from `resolve` 1.9+ |
-| TypeScript-ESLint | Native     | Starting from 2.12+ |
-| WebStorm          | Native     | Starting from 2019.3+; See [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks) |
-| TypeScript        | Transparent | Via [`plugin-compat`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-compat) (enabled by default) |
-| VSCode-ESLint     | Plugin     | Follow [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks) |
-| VSCode            | Plugin     | Follow [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks) |
-| Webpack           | Plugin     | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin), will be native starting from 5+ |
+| Project name                    | Status          | Note                                                                                                                                                                                                                                                                                                |
+| ------------------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Babel                           | Native          | Starting from `resolve` 1.9+                                                                                                                                                                                                                                                                        |
+| Create-React-App                | Native          | Starting from 2.0+                                                                                                                                                                                                                                                                                  |
+| ESLint                          | Native          | Some compatibility issues w/ shared configs                                                                                                                                                                                                                                                         |
+| Gatsby                          | Native          | No comment                                                                                                                                                                                                                                                                                          |
+| Husky                           | Native          | Starting from 4.0.0-1+                                                                                                                                                                                                                                                                              |
+| Jest                            | Native          | Starting from 24.1+                                                                                                                                                                                                                                                                                 |
+| Prettier                        | Native          | Starting from 1.17+                                                                                                                                                                                                                                                                                 |
+| Rollup                          | Native          | Starting from `resolve` 1.9+                                                                                                                                                                                                                                                                        |
+| TypeScript-ESLint               | Native          | Starting from 2.12+                                                                                                                                                                                                                                                                                 |
+| WebStorm                        | Native          | Starting from 2019.3+; See [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks)                                                                                                                                                                                                                  |
+| TypeScript                      | Transparent     | Via [`plugin-compat`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-compat) (enabled by default)                                                                                                                                                                                     |
+| VSCode-ESLint                   | Plugin          | Follow [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks)                                                                                                                                                                                                                                      |
+| VSCode                          | Plugin          | Follow [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks)                                                                                                                                                                                                                                      |
+| Webpack                         | Plugin / Native | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin), will be native starting from 5+                                                                                                                                                                                          |
+| Flow                            | Incompatible    | Follow [yarnpkg/berry#634](https://github.com/yarnpkg/berry/issues/634)                                                                                                                                                                                                                             |
+| React Native                    | Incompatible    | Follow [react-native-community/cli#27](https://github.com/react-native-community/cli/issues/27)                                                                                                                                                                                                     |
+| VSCode Extension Manager (vsce) | Incompatible    | Use the [vsce-yarn-patch](https://www.npmjs.com/package/vsce-yarn-patch) fork with the `node-modules` plugin enabled. The fork is required until [microsoft/vscode-vsce#379](https://github.com/microsoft/vscode-vsce/pull/379) is merged, as `vsce` currently uses the removed `yarn list` command |
 
 This list is kept up-to-date based on the latest release we've published starting from the v2. In case you notice something off in your own project please try to upgrade Yarn and the problematic package first, then feel free to file an issue. And maybe a PR? 😊
+
+---
+
+If a tool is incompatible with PnP, you can enable the [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules).
+
+[Instructions](/advanced/migration#if-required-enable-the-node-modules-plugin).

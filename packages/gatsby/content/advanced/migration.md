@@ -124,17 +124,21 @@ So how to replace them? There are different ways:
 
 - If you need to ship a package to your customers as a standalone package, bundle it yourself using Webpack, Rollup, or similar tools.
 
-### If required: install the `node-modules` plugin
+### If required: enable the `node-modules` plugin
+
+**[PnP Compatibility Table](/features/pnp#compatibility-table)**
 
 Despite our best efforts some tools don't work at all under Plug'n'Play environments, and we don't have the resources to update them ourselves. There are only two notorious ones on our list: Flow, and React Native.
 
-In such a radical case, you can enable the [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules) by adding the following into your local `.yarnrc.yml` file before running a fresh `yarn install`:
+In such a radical case, you can enable the built-in [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules) by adding the following into your local [`.yarnrc.yml`](/configuration/yarnrc) file before running a fresh `yarn install`:
 
 ```yaml
 nodeLinker: node-modules
 ```
 
 This will cause Yarn to install the project just like Yarn 1 used to, by copying the packages into various `node_modules` folders. Remember that this plugin is currently very experimental and we expect it to improve over time.
+
+[More information about the `nodeLinker` option.](/configuration/yarnrc#nodeLinker)
 
 ## Troubleshooting
 
