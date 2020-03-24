@@ -68,4 +68,30 @@ describe('Node_Modules', () => {
       },
     ),
   );
+
+  test(
+    `should support 'yarn run' from within build scripts`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          pkg: `file:./pkg`,
+        },
+      },
+      async ({path, run, source}) => {
+        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
+          nodeLinker: "node-modules"
+        `);
+
+        await writeJson(npath.toPortablePath(`${path}/pkg/package.json`), {
+          name: `pkg`,
+          scripts: {
+            postinstall: `yarn run foo`,
+            foo: `pwd`,
+          },
+        });
+
+        await expect(run(`install`)).resolves.toBeTruthy();
+      },
+    ),
+  );
 });
