@@ -156,7 +156,7 @@ In such a radical case, you can enable the built-in [`node-modules` plugin](http
 nodeLinker: node-modules
 ```
 
-This will cause Yarn to install the project just like Yarn 1 used to, by copying the packages into various `node_modules` folders. Remember that this plugin is currently very experimental and we expect it to improve over time.
+This will cause Yarn to install the project just like Yarn 1 used to, by copying the packages into various `node_modules` folders.
 
 [More information about the `nodeLinker` option.](/configuration/yarnrc#nodeLinker)
 
