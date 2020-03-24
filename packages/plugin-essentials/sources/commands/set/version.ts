@@ -10,21 +10,12 @@ export default class SetVersionCommand extends BaseCommand {
   @Command.String()
   version!: string;
 
-  @Command.Boolean(`--dry-run`)
-  dryRun: boolean = false;
-
   static usage: Usage = Command.Usage({
     description: `lock the Yarn version used by the project`,
     details: `
       This command will download a specific release of Yarn directly from the Yarn GitHub repository, will store it inside your project, and will change the \`yarnPath\` settings from your project \`.yarnrc.yml\` file to point to the new file.
 
       A very good use case for this command is to enforce the version of Yarn used by the any single member of your team inside a same project - by doing this you ensure that you have control on Yarn upgrades and downgrades (including on your deployment servers), and get rid of most of the headaches related to someone using a slightly different version and getting a different behavior than you.
-
-      The command will by default only consider stable releases as valid candidates, but releases candidates can be downloaded as well provided you add the \`--allow-rc\` flag or use an exact tag.
-
-      Note that because you're on the v2 alpha trunk, running the command without parameter will always download the latest build straight from the repository. This behavior will be tweaked near the release to only download stable releases once more.
-
-      Adding the \`--dry-run\` flag will cause Yarn not to persist the changes on the disk.
     `,
     examples: [[
       `Download the latest release from the Yarn repository`,
