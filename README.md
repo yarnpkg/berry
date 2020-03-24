@@ -108,7 +108,7 @@ Those plugins typically come bundled with Yarn. You don't need to do anything sp
 - [★ plugin-npm](packages/plugin-npm) adds support for using [semver ranges](https://semver.org) as dependencies, resolving them to an NPM-like registry.
 - [★ plugin-npm-cli](packages/plugin-npm-cli) adds support for the NPM-specific commands ([`yarn npm info`](https://yarnpkg.com/cli/npm/info), [`yarn npm login`](https://yarnpkg.com/cli/npm/login), [`yarn npm publish`](https://yarnpkg.com/cli/npm/publish), ...).
 - [★ plugin-pack](packages/plugin-pack) adds support for the [`yarn pack`](https://yarnpkg.com/cli/pack) command.
-- [★ plugin-patch](packages/plugin-patch) adds support for the patch: protocol.
+- [★ plugin-patch](packages/plugin-patch) adds support for the `patch:` protocol.
 - [★ plugin-pnp](packages/plugin-pnp) adds support for installing JavaScript dependencies through the [Plug'n'Play](https://yarnpkg.com/features/pnp) specification.
 
 ### Contrib plugins
