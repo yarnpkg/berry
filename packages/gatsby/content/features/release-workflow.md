@@ -42,7 +42,7 @@ Starting from the 2.0, the `yarn version` command now accepts a new flag: `--def
 yarn version minor --deferred
 ```
 
-Will not cause the `package.json` file to change! Instead, Yarn will create (or reuse, if you're inside a branch) a file within the `.yarn/releases` directory. This file will record the requested upgrade:
+Will not cause the `package.json` file to change! Instead, Yarn will create (or reuse, if you're inside a branch) a file within the `.yarn/versions` directory. This file will record the requested upgrade:
 
 ```yaml
 releases:
@@ -53,7 +53,7 @@ Then later on, once you're ready, just run `yarn version apply`. Yarn will then 
 
 ## Checked-in deferred records
 
-We've seen in the previous section that `yarn version patch` could store the future versions in an internal folder, `.yarn/releases`. But why is that? What good is it? To answer this question, consider a popular open-source project developed through a monorepo. This project receives many external pull requests, but they aren't released right away - they're often released as part of a batch. Every once in a while, the lead maintainer will take all the changes, convert them into new versions, and start the deployment.
+We've seen in the previous section that `yarn version patch` could store the future versions in an internal folder, `.yarn/versions`. But why is that? What good is it? To answer this question, consider a popular open-source project developed through a monorepo. This project receives many external pull requests, but they aren't released right away - they're often released as part of a batch. Every once in a while, the lead maintainer will take all the changes, convert them into new versions, and start the deployment.
 
 Let's focus on the part where changes have to be converted into versions. How does that work? This isn't easy. Taking Lerna, for example (the most popular version management tool for monorepos), you have two solutions:
 

@@ -8,7 +8,7 @@ Now that you have Yarn [installed](/getting-started/install), you can start usin
 
 > **Migrating from Yarn 1**
 >
-> We've been compiling helpful advices when porting over from Yarn 1 on the following [Migration Guide](/advanced/migration). Give it a look and contribute to it if you see things that aren't covered yet!
+> We've been compiling helpful advice when porting over from Yarn 1 on the following [Migration Guide](/advanced/migration). Give it a look and contribute to it if you see things that aren't covered yet! Make sure to consult the [PnP Compatibility Table](/features/pnp#compatibility-table) and [enable the node-modules plugin](/advanced/migration#if-required-enable-the-node-modules-plugin) if required!
 
 ### Accessing the list of commands
 
@@ -61,6 +61,6 @@ yarn remove [package]
 ### Upgrading Yarn itself
 
 ```bash
-yarn set version 2.0.0
+yarn set version 2
 yarn set version from sources
 ```

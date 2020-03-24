@@ -75,6 +75,18 @@ export default class AddCommand extends BaseCommand {
     ], [
       `Add a specific version for a package to the current workspace`,
       `$0 add lodash@1.2.3`,
+    ], [
+      `Add a package from a GitHub repository (the master branch) to the current workspace using a URL`,
+      `$0 add lodash@https://github.com/lodash/lodash`,
+    ], [
+      `Add a package from a GitHub repository (the master branch) to the current workspace using the GitHub protocol`,
+      `$0 add lodash@github:lodash/lodash`,
+    ], [
+      `Add a package from a GitHub repository (the master branch) to the current workspace using the GitHub protocol (shorthand)`,
+      `$0 add lodash@lodash/lodash`,
+    ], [
+      `Add a package from a specific branch of a GitHub repository to the current workspace using the GitHub protocol (shorthand)`,
+      `$0 add lodash-es@lodash/lodash#es`,
     ]],
   });
 

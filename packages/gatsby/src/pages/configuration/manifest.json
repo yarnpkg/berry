@@ -16,6 +16,12 @@
       "pattern": "^(?:(.+))$",
       "default": "1.2.3"
     },
+    "type": {
+      "description": "A Node.js v13.x [option](https://nodejs.org/api/esm.html#esm_package_json_type_field). Possible values are `commonjs`(the default) and `module`. If `module`, Yarn will generate a `.pnp.cjs` file when using PnP. If `commonjs`, Yarn will generate a `.pnp.js` file when using PnP.",
+      "type": "string",
+      "enum": ["commonjs", "module"],
+      "default": "commonjs"
+    },
     "private": {
       "description": "If true, the package is considered private and Yarn will refuse to publish it regardless of the circumstances. Setting this flag also unlocks some features that wouldn't make sense in published packages, such as workspaces.",
       "type": "boolean",
@@ -256,6 +262,20 @@
         "@babel/core/@babel/generator": {},
         "@babel/core@npm:7.0.0/@babel/generator": {}
       }
+    },
+    "preferUnplugged": {
+      "description": "This field instructs Yarn to either force-extract its content on the disk (useful when you need to ship executable binaries for a reason or another) or to force it to stay within its archive (useful when you want your package to contain *ALL* the sources, including shellscripts, but they aren't useful for runtime purposes).",
+      "type": "boolean",
+      "default": false
+    },
+    "files": {
+      "description": "The optional `files` field is an array of file patterns that describes the entries to be included when your package is installed as a dependency. File patterns follow a similar syntax to `.gitignore`, but reversed: including a file, directory, or glob pattern (`*`, `**/*`, and such) will make it so that file is included in the tarball when it’s packed. Omitting the field will make it default to `[\"*\"]`, which means it will include all files.\n\nSome special files and directories are also [included](https://github.com/yarnpkg/berry/blob/ab2e84588b1eacb2ec60a751f12b168415224a19/packages/plugin-pack/sources/packUtils.ts#L11) or [excluded](https://github.com/yarnpkg/berry/blob/ab2e84588b1eacb2ec60a751f12b168415224a19/packages/plugin-pack/sources/packUtils.ts#L27) regardless of whether they exist in the `files` array.\n\nYou can also provide a `.npmignore` file in the root of your package or in subdirectories, which will keep files from being included. The `.npmignore` file works just like a `.gitignore`. If there is a `.gitignore` file, and `.npmignore` is missing, `.gitignore`’s contents will be used instead. The `files` field overrides `.npmignore` and `.gitignore`.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri-reference"
+      },
+      "default": ["dist/**/*", "lib/**/*"]
     },
     "publishConfig": {
       "description": "This field contains various settings that are only taken into consideration when a package is generated from your local sources (either through `yarn pack` or one of the publish commands like `yarn npm publish`).",
