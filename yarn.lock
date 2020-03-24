@@ -5010,6 +5010,7 @@ __metadata:
     gatsby-plugin-sharp: ^2.2.19
     gatsby-remark-autolink-headers: ^2.0.16
     gatsby-remark-prismjs: ^3.2.9
+    gatsby-remark-table-of-contents: ^0.0.9
     gatsby-source-filesystem: ^2.0.23
     gatsby-transformer-remark: ^2.3.2
     gatsby-transformer-sharp: ^2.2.13
@@ -11275,7 +11276,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"extend@npm:^3.0.0, extend@npm:~3.0.2":
+"extend@npm:^3.0.0, extend@npm:^3.0.2, extend@npm:~3.0.2":
   version: 3.0.2
   resolution: "extend@npm:3.0.2"
   checksum: 2/1406da1f0c4b00b839497e4cdd0ec4303ce2ae349144b7c28064a5073c93ce8c08da4e8fb1bc5cb459ffcdff30a35fc0fe54344eb88320e70100c1baea6f195c
@@ -12519,6 +12520,16 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
+"gatsby-remark-table-of-contents@npm:^0.0.9":
+  version: 0.0.9
+  resolution: "gatsby-remark-table-of-contents@npm:0.0.9"
+  dependencies:
+    js-yaml: ^3.13.1
+    mdast-util-toc: ^4.2.0
+  checksum: 2/2dfd7edcf754e1cdaf253df6f46c4ff22e02553c2626ac0a7a62caf113d69ce3cc44b1b78853fbc5b2fe9ba4109e61d09fcc983320d03609de6f13db95b61a38
+  languageName: node
+  linkType: hard
+
 "gatsby-source-filesystem@npm:^2.0.23":
   version: 2.0.23
   resolution: "gatsby-source-filesystem@npm:2.0.23"
@@ -12915,7 +12926,7 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"github-slugger@npm:^1.1.1":
+"github-slugger@npm:^1.1.1, github-slugger@npm:^1.2.1":
   version: 1.2.1
   resolution: "github-slugger@npm:1.2.1"
   dependencies:
@@ -17585,6 +17596,19 @@ fsevents@^1.2.2:
     mdast-util-to-string: ^1.0.2
     unist-util-visit: ^1.1.0
   checksum: 2/74d503e2fcc1561e0c73c7e59410643f8423d284ee1466f9e8200d64c2c2082b32a050817c4538a40fe1d2db506471316767673e7d9f667bb9c4889fbbf8484f
+  languageName: node
+  linkType: hard
+
+"mdast-util-toc@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "mdast-util-toc@npm:4.2.0"
+  dependencies:
+    extend: ^3.0.2
+    github-slugger: ^1.2.1
+    mdast-util-to-string: ^1.0.5
+    unist-util-is: ^3.0.0
+    unist-util-visit: ^1.1.0
+  checksum: 2/949b6135a2f1c11d404ac9613868d1852eefa2e48000965ca7f5f591118372f3d6e0c0a7ea95aeb9710fa0a5e8e601d59a506e098cab9a171a8859122b884316
   languageName: node
   linkType: hard
 
@@ -25196,6 +25220,13 @@ typescript@^3.8.3:
   version: 2.1.2
   resolution: "unist-util-is@npm:2.1.2"
   checksum: 2/d4579b1f7e2758a030291e9265537abc51a6e5c082576465951aa0591dff0bf749170d60e5d4f7d21377e8fadd739667d6bf6d1539fc1e5bc9cc7399e96d2739
+  languageName: node
+  linkType: hard
+
+"unist-util-is@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "unist-util-is@npm:3.0.0"
+  checksum: 2/c001cb83663fe70af5ad595020a836d2efef40ce1ba1f03e574cbb9b0976ccd342a991f23417cb407a629ba882ca5e7e955e544dcee9c49b24177b869dd3fd6d
   languageName: node
   linkType: hard
 

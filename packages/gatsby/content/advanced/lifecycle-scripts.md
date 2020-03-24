@@ -20,6 +20,14 @@ Note that we don't support every single lifecycle script originally present in n
 
 > In particular, we intentionally don't support arbitrary `pre` and `post` hooks for user-defined scripts (such as `prestart`). This behavior, inherited from npm, caused scripts to be implicit rather than explicit, obfuscating the execution flow. It also led to surprising executions with `yarn serve` also running `yarn preserve`.
 
+---
+
+```toc
+# This code block gets replaced with the Table of Contents
+```
+
+---
+
 ## A note about `postinstall`
 
 Postinstall scripts have very real consequences for your users. In most cases Yarn will keep the installed packages in its cache under their archive form, and will instruct Node to load the files directly from there. This lead to much smaller installs, and eventually to [Zero-Installs](/features/zero-installs).
