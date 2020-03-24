@@ -27,7 +27,9 @@ export function satisfiesWithPrereleases(version: string | null, range: string, 
   let semverVersion: semver.SemVer;
   try {
     semverVersion = new semver.SemVer(version, semverRange.loose);
-    semverVersion.prerelease.length = 0;
+    if (semverVersion.prerelease) {
+      semverVersion.prerelease = [];
+    }
   } catch (err) {
     return false;
   }
@@ -37,7 +39,7 @@ export function satisfiesWithPrereleases(version: string | null, range: string, 
   return semverRange.set.some(comparatorSet => {
     for (const comparator of comparatorSet)
       if (comparator.semver.prerelease)
-        comparator.semver.prerelease.length = 0;
+        comparator.semver.prerelease = [];
 
     return comparatorSet.every(comparator => {
       return comparator.test(semverVersion);
