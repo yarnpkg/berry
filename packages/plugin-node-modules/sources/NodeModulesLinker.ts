@@ -19,7 +19,7 @@ const DOT_BIN = `.bin` as Filename;
 const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
 
 type LocationMap = Map<PortablePath, Locator>;
-type InstallState = {locatorMap: NodeModulesLocatorMap, binSymlinks: BinSymlinkMap};
+type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap};
 type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
 
 export class NodeModulesLinker implements Linker {
@@ -43,18 +43,21 @@ export class NodeModulesLinker implements Linker {
     const installState = await findInstallState(opts.project, {unrollAliases: true});
     if (installState === null)
       return null;
+    const {locationRoot, segments} = parseLocation(ppath.resolve(location), {skipPrefix: opts.project.cwd});
 
-    const locationMap = getLocationMap(installState.locatorMap);
-
-    // TODO: Doesn't support nested paths; we'd need to do something similar
-    // to the `findPackageLocator` in the PnP API.
-    //
-    // ex: /.../node_modules/foo/subdirectory/another/file.js
-    const locator = locationMap.get(location);
-    if (typeof locator === `undefined`)
+    let locationNode = installState.locationTree.get(locationRoot);
+    if (!locationNode)
       return null;
 
-    return locator;
+    let locator = locationNode.locator!;
+    for (const segment of segments) {
+      locationNode = locationNode.children.get(segment);
+      if (!locationNode)
+        break;
+      locator = locationNode.locator || locator;
+    }
+
+    return structUtils.parseLocator(locator);
   }
 
   makeInstaller(opts: LinkOptions) {
@@ -91,7 +94,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
       if (await xfs.existsPromise(bstatePath))
         await xfs.unlinkPromise(bstatePath);
 
-      preinstallState = {locatorMap: new Map(), binSymlinks: new Map()};
+      preinstallState = {locatorMap: new Map(), binSymlinks: new Map(), locationTree: new Map()};
     }
 
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
@@ -297,7 +300,7 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
     }
   }
 
-  return {locatorMap, binSymlinks};
+  return {locatorMap, binSymlinks, locationTree: buildLocationTree(locatorMap, {skipPrefix: project.cwd})};
 };
 
 function getLocationMap(installState: NodeModulesLocatorMap) {
@@ -317,7 +320,10 @@ function getLocationMap(installState: NodeModulesLocatorMap) {
   return locationMap;
 }
 
-const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean, excludeNodeModules?: boolean}): Promise<any> => {
+const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean}): Promise<any> => {
+  if (dir.split(ppath.sep).indexOf(NODE_MODULES) < 0)
+    throw new Error(`Assertion failed: trying to remove dir that doesn't contain node_modules: ${dir}`);
+
   try {
     if (!options || !options.innerLoop) {
       const stats = await xfs.lstatPromise(dir);
@@ -330,7 +336,7 @@ const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean, excl
     for (const entry of entries) {
       const targetPath = ppath.join(dir, toFilename(entry.name));
       if (entry.isDirectory()) {
-        if (entry.name !== NODE_MODULES || !options || !options.excludeNodeModules) {
+        if (entry.name !== NODE_MODULES || (options && options.innerLoop)) {
           await removeDir(targetPath, {innerLoop: true});
         }
       } else {
@@ -447,7 +453,7 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
 const symlinkPromise = async (srcDir: PortablePath, dstDir: PortablePath) =>
   xfs.symlinkPromise(process.platform !== 'win32' ? ppath.relative(ppath.dirname(dstDir), srcDir) : srcDir, dstDir, process.platform === 'win32' ? 'junction' : undefined);
 
-const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs}: {baseFs: FakeFS<PortablePath>}) => {
+const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, innerLoop}: {baseFs: FakeFS<PortablePath>, innerLoop?: boolean}) => {
   await xfs.mkdirpPromise(dstDir);
   const entries = await baseFs.readdirPromise(srcDir, {withFileTypes: true});
 
@@ -472,7 +478,9 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs}:
     const srcPath = ppath.join(srcDir, toFilename(entry.name));
     const dstPath = ppath.join(dstDir, toFilename(entry.name));
     if (entry.isDirectory()) {
-      await copyPromise(dstPath, srcPath, {baseFs});
+      if (entry.name !== NODE_MODULES || innerLoop) {
+        await copyPromise(dstPath, srcPath, {baseFs, innerLoop: true});
+      }
     } else {
       await copy(dstPath, srcPath, entry);
     }
@@ -570,14 +578,13 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
 async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
   const rootNmDirPath = ppath.join(project.cwd, NODE_MODULES);
 
-  const {locationTree: prevLocationTree, binSymlinks: prevBinSymlinks} = refineNodeModulesRoots(buildLocationTree(preinstallState.locatorMap, {skipPrefix: project.cwd}), preinstallState.binSymlinks);
+  const {locationTree: prevLocationTree, binSymlinks: prevBinSymlinks} = refineNodeModulesRoots(preinstallState.locationTree, preinstallState.binSymlinks);
   const locationTree = buildLocationTree(installState, {skipPrefix: project.cwd});
 
   const addQueue: Promise<void>[] = [];
-  const addModule = async ({srcDir, dstDir, linkType, keepNodeModules}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, keepNodeModules: boolean}) => {
+  const addModule = async ({srcDir, dstDir, linkType}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType}) => {
     const promise: Promise<any> = (async () => {
       try {
-        await removeDir(dstDir, {excludeNodeModules: keepNodeModules});
         if (linkType === LinkType.SOFT) {
           await xfs.mkdirpPromise(ppath.dirname(dstDir));
           await symlinkPromise(ppath.resolve(srcDir), dstDir);
@@ -597,14 +604,12 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     }
   };
 
-  const cloneModule = async (srcDir: PortablePath, dstDir: PortablePath, options?: { keepSrcNodeModules?: boolean, keepDstNodeModules?: boolean, innerLoop?: boolean }) => {
+  const cloneModule = async (srcDir: PortablePath, dstDir: PortablePath, options?: { innerLoop?: boolean }) => {
     const promise: Promise<any> = (async () => {
-      const cloneDir = async (srcDir: PortablePath, dstDir: PortablePath, options?: { keepSrcNodeModules?: boolean, keepDstNodeModules?: boolean, innerLoop?: boolean }) => {
+      const cloneDir = async (srcDir: PortablePath, dstDir: PortablePath, options?: { innerLoop?: boolean }) => {
         try {
-          if (!options || !options.innerLoop) {
-            await removeDir(dstDir, {excludeNodeModules: options && options.keepDstNodeModules});
+          if (!options || !options.innerLoop)
             await xfs.mkdirpPromise(dstDir);
-          }
 
           const entries = await xfs.readdirPromise(srcDir, {withFileTypes: true});
           for (const entry of entries) {
@@ -614,13 +619,13 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
             const src = ppath.join(srcDir, entry.name);
             const dst = ppath.join(dstDir, entry.name);
 
-            if (entry.name !== NODE_MODULES || !options || !options.keepSrcNodeModules) {
-              if (entry.isDirectory()) {
+            if (entry.isDirectory()) {
+              if (entry.name !== NODE_MODULES || (options && options.innerLoop)) {
                 await xfs.mkdirpPromise(dst);
-                await cloneDir(src, dst, {keepSrcNodeModules: false, keepDstNodeModules: false, innerLoop: true});
-              } else {
-                await xfs.copyFilePromise(src, dst, fs.constants.COPYFILE_FICLONE);
+                await cloneDir(src, dst, {innerLoop: true});
               }
+            } else {
+              await xfs.copyFilePromise(src, dst, fs.constants.COPYFILE_FICLONE);
             }
           }
         } catch (e) {
@@ -661,18 +666,19 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
 
   // Delete locations that no longer exist
-  const deleteList: PortablePath[] = [];
+  const deleteList = new Set<PortablePath>();
+  // Delete locations of inner node_modules
+  const innerDeleteList = new Set<PortablePath>();
   for (const {locations} of preinstallState.locatorMap.values()) {
     for (const location of locations) {
       const {locationRoot, segments} = parseLocation(location, {
         skipPrefix: project.cwd,
       });
 
+      let prevNode = prevLocationTree.get(locationRoot);
       let node = locationTree.get(locationRoot);
       let curLocation = locationRoot;
-      if (!node) {
-        deleteList.push(curLocation);
-      } else {
+      if (node) {
         for (const segment of segments) {
           // '.' segment exists only for top-level locator, skip it
           if (segment === '.')
@@ -680,8 +686,15 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
           curLocation = ppath.join(curLocation, segment);
           node = node.children.get(segment);
+          if (prevNode)
+            prevNode = prevNode.children.get(segment);
+
           if (!node) {
-            deleteList.push(curLocation);
+            deleteList.add(curLocation);
+            // If previous install had inner node_modules folder, we should explicitely list it for
+            // `removeDir` to delete it, but we need to delete it first, so we add it to inner delete list
+            if (prevNode && prevNode.children.has(NODE_MODULES))
+              innerDeleteList.add(ppath.join(curLocation, NODE_MODULES));
             break;
           }
         }
@@ -689,11 +702,17 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     }
   }
 
+  // Handle inner node_modules deletions first
+  for (const dstDir of innerDeleteList)
+    await deleteModule(dstDir);
+  await Promise.all(deleteQueue);
+  deleteQueue.length = 0;
+
   for (const dstDir of deleteList)
     await deleteModule(dstDir);
 
   // Update changed locations
-  const addList: Array<{srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, keepNodeModules: boolean}> = [];
+  const addList: Array<{srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType}> = [];
   for (const [prevLocator, {locations}] of preinstallState.locatorMap.entries()) {
     for (const location of locations) {
       const {locationRoot, segments} = parseLocation(location, {
@@ -715,9 +734,9 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
           const srcDir = info.target;
           const dstDir = curLocation;
           const linkType = info.linkType;
-          const keepNodeModules = node.children.size > 0;
           if (srcDir !== dstDir) {
-            addList.push({srcDir, dstDir, linkType, keepNodeModules});
+            deleteList.add(dstDir);
+            addList.push({srcDir, dstDir, linkType});
           }
         }
       }
@@ -747,13 +766,15 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
         node = node!.children.get(segment);
 
       if (!prevTreeNode) {
-        addList.push({srcDir, dstDir, linkType, keepNodeModules: node!.children.size > 0});
+        deleteList.add(dstDir);
+        addList.push({srcDir, dstDir, linkType});
       } else {
         for (const segment of segments) {
           curLocation = ppath.join(curLocation, segment);
           prevTreeNode = prevTreeNode.children.get(segment);
           if (!prevTreeNode) {
-            addList.push({srcDir, dstDir, linkType, keepNodeModules: node!.children.size > 0});
+            deleteList.add(dstDir);
+            addList.push({srcDir, dstDir, linkType});
             break;
           }
         }
@@ -765,10 +786,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   const reportedProgress = report.reportProgress(progress);
 
   try {
-    const persistedLocations = new Map<PortablePath, {
-      dstDir: PortablePath,
-      keepNodeModules: boolean,
-    }>();
+    const persistedLocations = new Map<PortablePath, PortablePath>();
 
     // For the first pass we'll only want to install a single copy for each
     // source directory. We'll later use the resulting install directories for
@@ -776,7 +794,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     // crawl the zip archives for each package).
     for (const entry of addList) {
       if (entry.linkType === LinkType.SOFT || !persistedLocations.has(entry.srcDir)) {
-        persistedLocations.set(entry.srcDir, {dstDir: entry.dstDir, keepNodeModules: entry.keepNodeModules});
+        persistedLocations.set(entry.srcDir, entry.dstDir);
         await addModule({...entry});
       }
     }
@@ -787,9 +805,9 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
     // Second pass: clone module duplicates
     for (const entry of addList) {
-      const locationInfo = persistedLocations.get(entry.srcDir)!;
-      if (entry.linkType !== LinkType.SOFT && entry.dstDir !== locationInfo.dstDir) {
-        await cloneModule(locationInfo.dstDir, entry.dstDir, {keepSrcNodeModules: locationInfo.keepNodeModules, keepDstNodeModules: entry.keepNodeModules});
+      const persistedDir = persistedLocations.get(entry.srcDir)!;
+      if (entry.linkType !== LinkType.SOFT && entry.dstDir !== persistedDir) {
+        await cloneModule(persistedDir, entry.dstDir);
       }
     }
 
