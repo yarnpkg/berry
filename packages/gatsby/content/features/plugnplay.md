@@ -94,6 +94,4 @@ This list is kept up-to-date based on the latest release we've published startin
 
 ---
 
-If a tool is incompatible with PnP, you can enable the [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules).
-
-[Instructions](/advanced/migration#if-required-enable-the-node-modules-plugin).
+**Important:** If a tool is incompatible with PnP, you can still enable the [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules). Just follow the [instructions](/advanced/migration#if-required-enable-the-node-modules-plugin) and you'll be ready to go in a minute 🙂
