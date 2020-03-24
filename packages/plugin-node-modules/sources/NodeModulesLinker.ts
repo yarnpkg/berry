@@ -19,7 +19,7 @@ const DOT_BIN = `.bin` as Filename;
 const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
 
 type LocationMap = Map<PortablePath, Locator>;
-type InstallState = {locatorMap: NodeModulesLocatorMap, binSymlinks: BinSymlinkMap};
+type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap};
 type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
 
 export class NodeModulesLinker implements Linker {
@@ -43,18 +43,21 @@ export class NodeModulesLinker implements Linker {
     const installState = await findInstallState(opts.project, {unrollAliases: true});
     if (installState === null)
       return null;
+    const {locationRoot, segments} = parseLocation(ppath.resolve(location), {skipPrefix: opts.project.cwd});
 
-    const locationMap = getLocationMap(installState.locatorMap);
-
-    // TODO: Doesn't support nested paths; we'd need to do something similar
-    // to the `findPackageLocator` in the PnP API.
-    //
-    // ex: /.../node_modules/foo/subdirectory/another/file.js
-    const locator = locationMap.get(location);
-    if (typeof locator === `undefined`)
+    let locationNode = installState.locationTree.get(locationRoot);
+    if (!locationNode)
       return null;
 
-    return locator;
+    let locator = locationNode.locator!;
+    for (const segment of segments) {
+      locationNode = locationNode.children.get(segment);
+      if (!locationNode)
+        break;
+      locator = locationNode.locator || locator;
+    }
+
+    return structUtils.parseLocator(locator);
   }
 
   makeInstaller(opts: LinkOptions) {
@@ -91,7 +94,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
       if (await xfs.existsPromise(bstatePath))
         await xfs.unlinkPromise(bstatePath);
 
-      preinstallState = {locatorMap: new Map(), binSymlinks: new Map()};
+      preinstallState = {locatorMap: new Map(), binSymlinks: new Map(), locationTree: new Map()};
     }
 
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
@@ -297,7 +300,7 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
     }
   }
 
-  return {locatorMap, binSymlinks};
+  return {locatorMap, binSymlinks, locationTree: buildLocationTree(locatorMap, {skipPrefix: project.cwd})};
 };
 
 function getLocationMap(installState: NodeModulesLocatorMap) {
@@ -575,7 +578,7 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
 async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
   const rootNmDirPath = ppath.join(project.cwd, NODE_MODULES);
 
-  const {locationTree: prevLocationTree, binSymlinks: prevBinSymlinks} = refineNodeModulesRoots(buildLocationTree(preinstallState.locatorMap, {skipPrefix: project.cwd}), preinstallState.binSymlinks);
+  const {locationTree: prevLocationTree, binSymlinks: prevBinSymlinks} = refineNodeModulesRoots(preinstallState.locationTree, preinstallState.binSymlinks);
   const locationTree = buildLocationTree(installState, {skipPrefix: project.cwd});
 
   const addQueue: Promise<void>[] = [];
