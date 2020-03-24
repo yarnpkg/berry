@@ -40,7 +40,7 @@ This approach has various benefits:
 
 ## PnP `loose` mode
 
-PnP `strict` mode breaks packages that rely on hoisting.
+Because the hoisting heuristics aren't standardized and predictable, PnP operating under strict mode will prevent packages to require dependencies that they don't explicitly list (even if one of their others dependencies happens to depend on it). This may cause issues with some packages.
 
 The `loose` mode will cause Yarn to call the `node-modules` hoister to generate the list of packages that would have been hoisted to the top-level in a typical `node_modules` install. It follows the exact same implementation as the true hoister used by the [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules). This set of packages will be stored in a "fallback pool" that will be made available to the transitive dependencies, following the policy defined in [pnpFallbackMode](/configuration/yarnrc#pnpFallbackMode). Accessing the fallback pool will now generate a warning through [process.emitWarning](https://nodejs.org/api/process.html#process_process_emitwarning_warning_type_code_ctor).
 
