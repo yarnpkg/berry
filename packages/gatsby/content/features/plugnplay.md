@@ -42,7 +42,13 @@ This approach has various benefits:
 
 Because the hoisting heuristics aren't standardized and predictable, PnP operating under strict mode will prevent packages to require dependencies that they don't explicitly list (even if one of their others dependencies happens to depend on it). This may cause issues with some packages.
 
-The `loose` mode will cause Yarn to call the `node-modules` hoister to generate the list of packages that would have been hoisted to the top-level in a typical `node_modules` install. It follows the exact same implementation as the true hoister used by the [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules). This set of packages will be stored in a "fallback pool" that will be made available to the transitive dependencies, following the policy defined in [pnpFallbackMode](/configuration/yarnrc#pnpFallbackMode). Accessing the fallback pool will now generate a warning through [process.emitWarning](https://nodejs.org/api/process.html#process_process_emitwarning_warning_type_code_ctor).
+To address this problem, Yarn ships with a "loose" mode which will cause the PnP linker to work in tandem with the `node-modules` hoister - we will first generate the list of packages that would have been hoisted to the top-level in a typical `node_modules` install, then remember this list as what we call the "fallback pool".
+
+> Note that because the loose mode directly calls the `node-modules` hoister, it follows the exact same implementation as the true algorithm used by the [`node-modules` linker](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules)!
+
+At runtime, packages that require unlisted dependencies will still be allowed to access them if any version of the dependency ended up in the fallback pool (which packages exactly are allowed to rely on the fallback pool can be tweaked with [pnpFallbackMode](/configuration/yarnrc#pnpFallbackMode)).
+
+Note that the content of the fallback pool is undetermined - should a dependency tree contains multiple versions of a same package, there's no telling which one will be hoisted to the top-level! For this reason, a package accessing the fallback pool will still generate a warning (via the [process.emitWarning](https://nodejs.org/api/process.html#process_process_emitwarning_warning_type_code_ctor) API).
 
 This mode is an in-between between the `strict` PnP linker and the `node_modules` linker. For now, the `strict` mode will remain the default, but once the `2.1` release will be tagged, the `loose` mode will be expected to become the new default.
 
