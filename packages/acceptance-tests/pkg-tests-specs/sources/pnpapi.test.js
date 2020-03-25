@@ -257,7 +257,9 @@ describe(`Plug'n'Play API`, () => {
         await run(`install`);
 
         await expect(source(`(() => require('pnpapi').resolveRequest('no-deps', ${JSON.stringify(`${path}/`)}))()`)).resolves.toMatchObject({
-          pnpCode: `UNDECLARED_DEPENDENCY`,
+          externalException: {
+            pnpCode: `UNDECLARED_DEPENDENCY`,
+          },
         });
       }),
     );
