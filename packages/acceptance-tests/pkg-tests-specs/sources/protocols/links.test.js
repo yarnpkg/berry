@@ -32,9 +32,11 @@ describe(`Protocols`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(source(`{ try { require('one-fixed-dep') } catch (error) { return error } }`)).resolves.toMatchObject({
-          code: `MODULE_NOT_FOUND`,
-          pnpCode: `UNDECLARED_DEPENDENCY`,
+        await expect(source(`require('one-fixed-dep')`)).rejects.toMatchObject({
+          externalException: {
+            code: `MODULE_NOT_FOUND`,
+            pnpCode: `UNDECLARED_DEPENDENCY`,
+          },
         });
       }),
     );

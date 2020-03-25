@@ -565,7 +565,7 @@ export const generatePkgDriver = ({
           }
 
           if (data.type === `failure`) {
-            throw data.result;
+            throw {externalException: data.result};
           } else {
             return data.result;
           }

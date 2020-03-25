@@ -256,7 +256,7 @@ describe(`Plug'n'Play API`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(source(`(() => require('pnpapi').resolveRequest('no-deps', ${JSON.stringify(`${path}/`)}))()`)).rejects.toMatchObject({
+        await expect(source(`(() => require('pnpapi').resolveRequest('no-deps', ${JSON.stringify(`${path}/`)}))()`)).resolves.toMatchObject({
           pnpCode: `UNDECLARED_DEPENDENCY`,
         });
       }),

@@ -14,10 +14,11 @@ describe(`Features`, () => {
         async ({path, run, source}) => {
           await run(`install`);
 
-          await expect(source(`require('various-requires/invalid-require')`)).rejects.toBeTruthy();
-          await expect(source(`{ try { require('various-requires/invalid-require') } catch (error) { return error } }`)).resolves.toMatchObject({
-            code: `MODULE_NOT_FOUND`,
-            pnpCode: `UNDECLARED_DEPENDENCY`,
+          await expect(source(`require('various-requires/invalid-require')`)).rejects.toMatchObject({
+            externalException: {
+              code: `MODULE_NOT_FOUND`,
+              pnpCode: `UNDECLARED_DEPENDENCY`,
+            },
           });
         },
       ),
