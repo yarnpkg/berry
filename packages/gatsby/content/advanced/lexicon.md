@@ -8,8 +8,6 @@ title: "Lexicon"
 # This code block gets replaced with the Table of Contents
 ```
 
----
-
 <!-- Note that all entries within this file must be alphabetically sorted -->
 
 ### Dependency

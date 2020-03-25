@@ -14,13 +14,9 @@ title: "Release Workflow"
 
 When working with monorepos, a hard task often is to figure out which packages should receive a new version when starting a new release. Yarn offers a few tools that aim to make this workflow easier without need for third-party tools (although it's possible you may prefer the workflow offered by different implementations, of course!).
 
----
-
 ```toc
 # This code block gets replaced with the Table of Contents
 ```
-
----
 
 ## Auto-updated dependencies
 

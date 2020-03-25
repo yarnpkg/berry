@@ -6,13 +6,9 @@ title: "Plug'n'Play"
 
 Unveiled in September 2018, Plug'n'Play is a new innovative installation strategy for Node. Based on prior works from other languages (for example [autoload](https://getcomposer.org/doc/04-schema.md#autoload) from PHP), it presents interesting characteristics that build upon the regular commonjs `require` workflow in an almost completely backward-compatible way.
 
----
-
 ```toc
 # This code block gets replaced with the Table of Contents
 ```
-
----
 
 ## The node_modules problem
 

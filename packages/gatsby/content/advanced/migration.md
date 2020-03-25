@@ -8,13 +8,9 @@ Yarn v2 is a very different software from the v1. While one of our aim is to mak
 
 **Important note:** This isn't a step-by-step guide. The best way to migrate is just to upgrade Yarn and see whether everything works. If it doesn't, go back to this guide and look for more context on the error you got. Most steps here aren't needed for most projects - we just tried to document all the tips that you could find handy if something breaks!
 
----
-
 ```toc
 # This code block gets replaced with the Table of Contents
 ```
-
----
 
 ## General Advice
 

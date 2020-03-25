@@ -8,13 +8,9 @@ While not a feature in itself, the term "Zero Install" encompasses a lot of Yarn
 
 > **Important:** Zero-install is an *optional* philosophy. It has some drawbacks, and while we believe this workflow to be a defining feature for professional-grade projects we don't have any plans to ignore or deprecate the typical `yarn install` workflow in any way, now or in the future.
 
----
-
 ```toc
 # This code block gets replaced with the Table of Contents
 ```
-
----
 
 ## How does Yarn impact a project's stability?
 

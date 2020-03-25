@@ -8,8 +8,6 @@ title: "Questions & Answers"
 # This code block gets replaced with the Table of Contents
 ```
 
----
-
 ## Which files should be gitignored?
 
 If you're using Zero-Installs:
