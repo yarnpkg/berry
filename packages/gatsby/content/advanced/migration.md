@@ -14,7 +14,7 @@ Yarn v2 is a very different software from the v1. While one of our aim is to mak
 
 Yarn doesn't support Node 8 anymore, as it's reached its end of life in December and won't receive any further update.
 
-**Note: Node 13.10.x is not LTS and has a critical bug that blocks `got` from doing http requests, so avoid it for now.**
+**Note: Node 13.10.x has a critical bug that blocks `got` from doing http requests, so avoid that version of node as well.**
 
 ### Run the doctor
 
