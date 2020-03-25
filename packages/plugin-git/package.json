@@ -9,10 +9,10 @@
     "semver": "^7.1.2"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.24"
+    "@yarnpkg/core": "^2.0.0-rc.25"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^2.0.0-rc.24"
+    "@yarnpkg/core": "workspace:^2.0.0-rc.25"
   },
   "repository": {
     "type": "git",

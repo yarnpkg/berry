@@ -5826,14 +5826,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"],
             ["terser-webpack-plugin", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:2.1.3"],
             ["ts-loader", "virtual:5d170a96e3bd35439131aba7820e7b850e9381656d638624d34e228d96fc2f134ebf73b7eb6235db8cb822a7bcd252e04750d4dfcaeb49408c4e561390950138#npm:6.2.1"],
-            ["typescript", null],
             ["val-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:1.1.1"],
             ["webpack", "npm:4.41.2"],
             ["webpack-merge", "npm:4.2.1"],
             ["webpack-sources", "npm:1.3.0"]
-          ],
-          "packagePeers": [
-            "typescript"
           ],
           "linkType": "SOFT",
         }]
@@ -5917,9 +5913,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=270b6c"],
             ["yup", "npm:0.27.0"]
-          ],
-          "packagePeers": [
-            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -6115,10 +6108,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:16.8.4"],
             ["redux", "npm:4.0.1"]
           ],
-          "packagePeers": [
-            "ink",
-            "react"
-          ],
           "linkType": "SOFT",
         }]
       ]],
@@ -6219,10 +6208,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/plugin-patch", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/plugin-patch"]
           ],
-          "packagePeers": [
-            "@yarnpkg/core",
-            "@yarnpkg/plugin-patch"
-          ],
           "linkType": "SOFT",
         }]
       ]],
@@ -6290,10 +6275,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tau-prolog", "npm:0.2.66"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=270b6c"]
           ],
-          "packagePeers": [
-            "@yarnpkg/cli",
-            "@yarnpkg/core"
-          ],
           "linkType": "SOFT",
         }]
       ]],
@@ -6339,10 +6320,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["clipanion", "npm:2.1.5"]
-          ],
-          "packagePeers": [
-            "@yarnpkg/cli",
-            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -6414,10 +6391,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["treeify", "npm:1.1.0"],
             ["yup", "npm:0.27.0"]
           ],
-          "packagePeers": [
-            "@yarnpkg/cli",
-            "@yarnpkg/core"
-          ],
           "linkType": "SOFT",
         }]
       ]],
@@ -6430,9 +6403,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=270b6c"]
-          ],
-          "packagePeers": [
-            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -6456,9 +6426,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-file", "workspace:packages/plugin-file"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"]
-          ],
-          "packagePeers": [
-            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -6489,9 +6456,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["git-url-parse", "npm:11.1.2"],
             ["semver", "npm:7.1.2"]
           ],
-          "packagePeers": [
-            "@yarnpkg/core"
-          ],
           "linkType": "SOFT",
         }]
       ]],
@@ -6518,10 +6482,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"]
           ],
-          "packagePeers": [
-            "@yarnpkg/core",
-            "@yarnpkg/plugin-git"
-          ],
           "linkType": "SOFT",
         }]
       ]],
@@ -6544,9 +6504,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-http", "workspace:packages/plugin-http"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"]
-          ],
-          "packagePeers": [
-            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -6591,10 +6548,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.1.5"]
           ],
-          "packagePeers": [
-            "@yarnpkg/cli",
-            "@yarnpkg/core"
-          ],
           "linkType": "SOFT",
         }]
       ]],
@@ -6618,11 +6571,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.1.2"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=270b6c"]
           ],
-          "packagePeers": [
-            "@yarnpkg/cli",
-            "@yarnpkg/core",
-            "@yarnpkg/plugin-essentials"
-          ],
           "linkType": "SOFT",
         }]
       ]],
@@ -6645,9 +6593,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-link", "workspace:packages/plugin-link"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"]
-          ],
-          "packagePeers": [
-            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -6719,10 +6664,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"],
             ["micromatch", "npm:4.0.2"]
           ],
-          "packagePeers": [
-            "@yarnpkg/cli",
-            "@yarnpkg/core"
-          ],
           "linkType": "SOFT",
         }]
       ]],
@@ -6753,9 +6694,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["inquirer", "npm:6.2.1"],
             ["semver", "npm:7.1.2"]
-          ],
-          "packagePeers": [
-            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -6840,12 +6778,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ssri", "npm:6.0.1"],
             ["yup", "npm:0.27.0"]
           ],
-          "packagePeers": [
-            "@yarnpkg/cli",
-            "@yarnpkg/core",
-            "@yarnpkg/plugin-npm",
-            "@yarnpkg/plugin-pack"
-          ],
           "linkType": "SOFT",
         }]
       ]],
@@ -6904,10 +6836,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["micromatch", "npm:4.0.2"],
             ["tar-stream", "npm:2.0.1"]
           ],
-          "packagePeers": [
-            "@yarnpkg/cli",
-            "@yarnpkg/core"
-          ],
           "linkType": "SOFT",
         }]
       ]],
@@ -6955,10 +6883,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "npm:2.1.5"]
-          ],
-          "packagePeers": [
-            "@yarnpkg/cli",
-            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -7021,10 +6945,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.1.2"]
           ],
-          "packagePeers": [
-            "@yarnpkg/cli",
-            "@yarnpkg/core"
-          ],
           "linkType": "SOFT",
         }]
       ]],
@@ -7074,10 +6994,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=270b6c"]
           ],
-          "packagePeers": [
-            "@yarnpkg/cli",
-            "@yarnpkg/core"
-          ],
           "linkType": "SOFT",
         }]
       ]],
@@ -7094,11 +7010,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-pack", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-pack"],
             ["algoliasearch", "npm:4.0.1"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=270b6c"]
-          ],
-          "packagePeers": [
-            "@yarnpkg/cli",
-            "@yarnpkg/core",
-            "@yarnpkg/plugin-essentials"
           ],
           "linkType": "SOFT",
         }]
@@ -7181,11 +7092,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=270b6c"],
             ["yup", "npm:0.27.0"]
           ],
-          "packagePeers": [
-            "@yarnpkg/cli",
-            "@yarnpkg/core",
-            "@yarnpkg/plugin-pack"
-          ],
           "linkType": "SOFT",
         }]
       ]],
@@ -7203,10 +7109,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-limit", "npm:2.2.0"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=270b6c"],
             ["yup", "npm:0.27.0"]
-          ],
-          "packagePeers": [
-            "@yarnpkg/cli",
-            "@yarnpkg/core"
           ],
           "linkType": "SOFT",
         }]
@@ -7266,10 +7168,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["cross-spawn", "npm:6.0.5"],
             ["eslint", "npm:6.8.0"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=270b6c"]
-          ],
-          "packagePeers": [
-            "eslint",
-            "typescript"
           ],
           "linkType": "SOFT",
         }]

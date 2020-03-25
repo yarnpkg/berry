@@ -65,7 +65,7 @@
   "devDependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.17",
     "@yarnpkg/libzip": "workspace:^2.0.0-rc.10",
-    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.19",
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.20",
     "pnp-webpack-plugin": "^1.4.3",
     "ts-loader": "^6.2.1",
     "typescript": "^3.8.3",

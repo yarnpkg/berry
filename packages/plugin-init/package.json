@@ -7,12 +7,12 @@
     "clipanion": "^2.1.5"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.30",
-    "@yarnpkg/core": "^2.0.0-rc.24"
+    "@yarnpkg/cli": "^2.0.0-rc.31",
+    "@yarnpkg/core": "^2.0.0-rc.25"
   },
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.30",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.24"
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.31",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.25"
   },
   "repository": {
     "type": "git",

@@ -106,13 +106,22 @@ module.exports = {
     value: true
   });
 
-  const query_1 = __importDefault(__webpack_require__(1));
+  const core_1 = __webpack_require__(1);
+
+  const query_1 = __importDefault(__webpack_require__(2));
 
   const source_1 = __importDefault(__webpack_require__(68));
 
   const constraints_1 = __importDefault(__webpack_require__(69));
 
   const plugin = {
+    configuration: {
+      constraintsPath: {
+        description: `The path of the constraints file.`,
+        type: core_1.SettingsType.ABSOLUTE_PATH,
+        default: `./constraints.pro`
+      }
+    },
     commands: [query_1.default, source_1.default, constraints_1.default]
   }; // eslint-disable-next-line arca/no-default-export
 
@@ -120,6 +129,12 @@ module.exports = {
 
   /***/ }),
   /* 1 */
+  /***/ (function(module, exports) {
+
+  module.exports = require("@yarnpkg/core");
+
+  /***/ }),
+  /* 2 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -163,11 +178,11 @@ module.exports = {
     value: true
   });
 
-  const cli_1 = __webpack_require__(2);
+  const cli_1 = __webpack_require__(3);
 
-  const core_1 = __webpack_require__(3);
+  const core_1 = __webpack_require__(1);
 
-  const core_2 = __webpack_require__(3);
+  const core_2 = __webpack_require__(1);
 
   const clipanion_1 = __webpack_require__(4);
 
@@ -261,16 +276,10 @@ module.exports = {
   }
 
   /***/ }),
-  /* 2 */
-  /***/ (function(module, exports) {
-
-  module.exports = require("@yarnpkg/cli");
-
-  /***/ }),
   /* 3 */
   /***/ (function(module, exports) {
 
-  module.exports = require("@yarnpkg/core");
+  module.exports = require("@yarnpkg/cli");
 
   /***/ }),
   /* 4 */
@@ -367,9 +376,9 @@ module.exports = {
     value: true
   });
 
-  const core_1 = __webpack_require__(3);
+  const core_1 = __webpack_require__(1);
 
-  const core_2 = __webpack_require__(3);
+  const core_2 = __webpack_require__(1);
 
   const fslib_1 = __webpack_require__(6);
 
@@ -514,9 +523,10 @@ module.exports = {
     constructor(project) {
       this.source = ``;
       this.project = project;
+      const constraintsPath = project.configuration.get(`constraintsPath`);
 
-      if (fslib_1.xfs.existsSync(fslib_1.ppath.join(project.cwd, fslib_1.toFilename(`constraints.pro`)))) {
-        this.source = fslib_1.xfs.readFileSync(fslib_1.ppath.join(project.cwd, fslib_1.toFilename(`constraints.pro`)), `utf8`);
+      if (fslib_1.xfs.existsSync(constraintsPath)) {
+        this.source = fslib_1.xfs.readFileSync(constraintsPath, `utf8`);
       }
     }
 
@@ -8374,7 +8384,7 @@ module.exports = {
     value: true
   });
 
-  const core_1 = __webpack_require__(3);
+  const core_1 = __webpack_require__(1);
 
   const get_1 = __importDefault(__webpack_require__(15));
 
@@ -10072,9 +10082,9 @@ module.exports = {
     value: true
   });
 
-  const cli_1 = __webpack_require__(2);
+  const cli_1 = __webpack_require__(3);
 
-  const core_1 = __webpack_require__(3);
+  const core_1 = __webpack_require__(1);
 
   const clipanion_1 = __webpack_require__(4);
 
@@ -10138,13 +10148,13 @@ module.exports = {
     value: true
   });
 
-  const cli_1 = __webpack_require__(2);
+  const cli_1 = __webpack_require__(3);
 
-  const core_1 = __webpack_require__(3);
+  const core_1 = __webpack_require__(1);
 
-  const core_2 = __webpack_require__(3);
+  const core_2 = __webpack_require__(1);
 
-  const core_3 = __webpack_require__(3);
+  const core_3 = __webpack_require__(1);
 
   const clipanion_1 = __webpack_require__(4);
 
