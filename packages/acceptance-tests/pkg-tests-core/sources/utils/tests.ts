@@ -536,32 +536,43 @@ export const generatePkgDriver = ({
 
         const source = async (script: string, callDefinition: Record<string, any> = {}): Promise<Record<string, any>> => {
           const scriptWrapper = `
-            Promise.resolve().then(async () => ${script}).then(err => {
+            Promise.resolve().then(async () => ${script}).then(result => {
+              return {type: 'success', result};
+            }, err => {
               if (!(err instanceof Error))
                 return err;
 
-              const copy = JSON.parse(JSON.stringify(err));
-
+              const copy = {message: err.message};
               if (err.code)
                 copy.code = err.code;
               if (err.pnpCode)
                 copy.pnpCode = err.pnpCode;
 
-              return copy;
-            }).then(result => {
-              console.log(JSON.stringify(result));
+              return {type: 'failure', result: copy};
+            }).then(payload => {
+              console.log(JSON.stringify(payload));
             })
           `.replace(/\n/g, ``);
 
-          return JSON.parse((await run(`node`, `-e`, scriptWrapper, callDefinition)).stdout.toString());
+          const result = await run(`node`, `-e`, scriptWrapper, callDefinition);
+          const content = result.stdout.toString();
+
+          let data;
+          try {
+            data = JSON.parse(content);
+          } catch {
+            throw new Error(`Error when parsing JSON payload (${content})`);
+          }
+
+          if (data.type === `failure`) {
+            throw {externalException: data.result};
+          } else {
+            return data.result;
+          }
         };
 
         try {
-          await fn!({
-            path,
-            run,
-            source,
-          });
+          await fn!({path, run, source});
         } catch (error) {
           error.message = `Temporary fixture folder: ${path}\n\n${error.message}`;
           throw error;

@@ -60,7 +60,12 @@ describe(`Features`, () => {
           await xfs.removePromise(`${path}/.yarnrc.yml`);
           await run(`install`);
 
-          await expect(source(`require('various-requires/invalid-require')`)).rejects.toThrow();
+          await expect(source(`require('various-requires/invalid-require')`)).rejects.toMatchObject({
+            externalException: {
+              code: `MODULE_NOT_FOUND`,
+              pnpCode: `UNDECLARED_DEPENDENCY`,
+            },
+          });
         },
       ),
     );

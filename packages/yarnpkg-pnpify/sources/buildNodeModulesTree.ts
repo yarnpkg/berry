@@ -147,28 +147,22 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
   const addPackageToTree = (pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentPkg: PackageInformation<NativePath>) => {
     const locatorKey = stringifyLocator(locator);
     let node = nodes.get(locatorKey);
+
     const isSeen = !!node;
     if (!isSeen && locatorKey === topLocatorKey) {
       node = packageTree;
       nodes.set(locatorKey, packageTree);
     }
+
     if (!node) {
-      const {name, reference} = locator;
-
-      // TODO: remove this code when `packagePeers` will not contain regular dependencies
-      const peerNames = new Set<string>();
-      for (const peerName of pkg.packagePeers)
-        if (pkg.packageDependencies.get(peerName) === parentPkg.packageDependencies.get(peerName))
-          peerNames.add(peerName);
-
-      node = {
-        name,
-        reference,
+      nodes.set(locatorKey, node = {
+        name: locator.name,
+        reference: locator.reference,
         dependencies: new Set(),
-        peerNames,
-      };
-      nodes.set(locatorKey, node);
+        peerNames: pkg.packagePeers,
+      });
     }
+
     parent.dependencies.add(node);
 
     if (!isSeen) {

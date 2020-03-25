@@ -213,10 +213,11 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(source(`require('various-requires/invalid-require')`)).rejects.toBeTruthy();
-        await expect(source(`{ try { require('various-requires/invalid-require') } catch (error) { return error } }`)).resolves.toMatchObject({
-          code: `MODULE_NOT_FOUND`,
-          pnpCode: `UNDECLARED_DEPENDENCY`,
+        await expect(source(`require('various-requires/invalid-require')`)).rejects.toMatchObject({
+          externalException: {
+            code: `MODULE_NOT_FOUND`,
+            pnpCode: `UNDECLARED_DEPENDENCY`,
+          },
         });
       },
     ),
@@ -275,10 +276,11 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(source(`require('peer-deps')`)).rejects.toBeTruthy();
-        await expect(source(`{ try { require('peer-deps') } catch (error) { return error } }`)).resolves.toMatchObject({
-          code: `MODULE_NOT_FOUND`,
-          pnpCode: `MISSING_PEER_DEPENDENCY`,
+        await expect(source(`require('peer-deps')`)).rejects.toMatchObject({
+          externalException: {
+            code: `MODULE_NOT_FOUND`,
+            pnpCode: `MISSING_PEER_DEPENDENCY`,
+          },
         });
       },
     ),

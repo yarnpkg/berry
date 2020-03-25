@@ -1,4 +1,5 @@
-const {npath, xfs} = require(`@yarnpkg/fslib`);
+import {ppath, npath, xfs} from '@yarnpkg/fslib';
+
 const {
   fs: {writeFile, writeJson},
 } = require('pkg-tests-core');
@@ -69,6 +70,109 @@ describe(`Plug'n'Play API`, () => {
           ).resolves.toEqual([
             [`no-deps`, `npm:1.0.0`],
           ]);
+        }),
+      );
+
+      test(
+        `it should return the packages peer dependencies`,
+        makeTemporaryEnv({
+          dependencies: {
+            [`peer-deps`]: `1.0.0`,
+            [`no-deps`]: `1.0.0`,
+          },
+        }, async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(
+            source(`{
+              const pnp = require('pnpapi');
+              const deps = pnp.getPackageInformation(pnp.topLevel).packageDependencies;
+              return [...pnp.getPackageInformation(pnp.getLocator('peer-deps', deps.get('peer-deps'))).packagePeers];
+            }`),
+          ).resolves.toEqual([
+            `no-deps`,
+          ]);
+        }),
+      );
+
+      test(
+        `it should return the workspaces peer dependencies when virtualized`,
+        makeTemporaryEnv({
+          private: true,
+          workspaces: [
+            `packages/*`,
+          ],
+        }, async ({path, run, source}) => {
+          await xfs.mkdirpPromise(ppath.join(path, `packages/foo`));
+          await xfs.writeJsonPromise(ppath.join(path, `packages/foo/package.json`), {
+            name: `foo`,
+            dependencies: {
+              [`bar`]: `workspace:*`,
+              [`no-deps`]: `1.0.0`,
+            },
+          });
+
+          await xfs.mkdirpPromise(ppath.join(path, `packages/bar`));
+          await xfs.writeJsonPromise(ppath.join(path, `packages/bar/package.json`), {
+            name: `bar`,
+            peerDependencies: {
+              [`no-deps`]: `1.0.0`,
+            },
+            devDependencies: {
+              [`no-deps`]: `1.0.0`,
+            },
+          });
+
+          await run(`install`);
+
+          await expect(
+            source(`{
+              const pnp = require('pnpapi');
+              const deps = pnp.getPackageInformation({name: 'foo', reference: 'workspace:packages/foo'}).packageDependencies;
+              return [...pnp.getPackageInformation(pnp.getLocator('bar', deps.get('bar'))).packagePeers];
+            }`),
+          ).resolves.toEqual([
+            `no-deps`,
+          ]);
+        }),
+      );
+
+      test(
+        `it shouldn't return the workspaces peer dependencies when accessed as roots`,
+        makeTemporaryEnv({
+          private: true,
+          workspaces: [
+            `packages/*`,
+          ],
+        }, async ({path, run, source}) => {
+          await xfs.mkdirpPromise(ppath.join(path, `packages/foo`));
+          await xfs.writeJsonPromise(ppath.join(path, `packages/foo/package.json`), {
+            name: `foo`,
+            dependencies: {
+              [`bar`]: `workspace:*`,
+              [`no-deps`]: `1.0.0`,
+            },
+          });
+
+          await xfs.mkdirpPromise(ppath.join(path, `packages/bar`));
+          await xfs.writeJsonPromise(ppath.join(path, `packages/bar/package.json`), {
+            name: `bar`,
+            peerDependencies: {
+              [`no-deps`]: `1.0.0`,
+            },
+            devDependencies: {
+              [`no-deps`]: `1.0.0`,
+            },
+          });
+
+          await run(`install`);
+
+          await expect(
+            source(`{
+              const pnp = require('pnpapi');
+              return [...pnp.getPackageInformation({name: 'bar', reference: 'workspace:packages/bar'}).packagePeers || []];
+            }`),
+          ).resolves.toEqual([]);
         }),
       );
     });
@@ -152,8 +256,10 @@ describe(`Plug'n'Play API`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(source(`(() => { try { require('pnpapi').resolveRequest('no-deps', ${JSON.stringify(`${path}/`)}) } catch (error) { return error } })()`)).resolves.toMatchObject({
-          pnpCode: `UNDECLARED_DEPENDENCY`,
+        await expect(source(`(() => require('pnpapi').resolveRequest('no-deps', ${JSON.stringify(`${path}/`)}))()`)).rejects.toMatchObject({
+          externalException: {
+            pnpCode: `UNDECLARED_DEPENDENCY`,
+          },
         });
       }),
     );
