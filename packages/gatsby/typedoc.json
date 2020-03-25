@@ -5,7 +5,7 @@
   "out": "./static/api",
   "theme": "../../.yarn/unplugged/typedoc-neo-theme-npm-1.0.7-d8a2223683/node_modules/typedoc-neo-theme/bin/default",
   "plugin": ["typedoc-neo-theme", "@strictsoftware/typedoc-plugin-monorepo"],
-  "external-modulemap": "^(?:(?!\\.yarn\\\/\\$\\$virtual\\\/).)*packages\\\/([^\\\/]+)\\\/.*$",
+  "external-modulemap": ".*packages\/([^\/]+)\/.*",
   "ignoreCompilerErrors": true,
   "links": [
     {
