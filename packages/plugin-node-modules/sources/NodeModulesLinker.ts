@@ -303,23 +303,6 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
   return {locatorMap, binSymlinks, locationTree: buildLocationTree(locatorMap, {skipPrefix: project.cwd})};
 };
 
-function getLocationMap(installState: NodeModulesLocatorMap) {
-  const locationMap: LocationMap = new Map();
-
-  for (const [locatorKey, val] of installState) {
-    const locator = structUtils.parseLocator(locatorKey);
-
-    if (val.linkType === LinkType.SOFT)
-      locationMap.set(val.target, locator);
-
-    for (const location of val.locations) {
-      locationMap.set(location, locator);
-    }
-  }
-
-  return locationMap;
-}
-
 const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean}): Promise<any> => {
   if (dir.split(ppath.sep).indexOf(NODE_MODULES) < 0)
     throw new Error(`Assertion failed: trying to remove dir that doesn't contain node_modules: ${dir}`);
