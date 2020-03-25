@@ -76,9 +76,15 @@ export abstract class AbstractPnpInstaller implements Installer {
     const packageDependencies = new Map<string, string | [string, string] | null>();
     const packagePeers = new Set<string>();
 
-    for (const descriptor of pkg.peerDependencies.values()) {
-      packageDependencies.set(structUtils.requirableIdent(descriptor), null);
-      packagePeers.add(structUtils.stringifyIdent(descriptor));
+    // Only virtual packages should have effective peer dependencies, but the
+    // workspaces are a special case because the original packages are kept in
+    // the dependency tree even after being virtualized; so in their case we
+    // just ignore their declared peer dependencies.
+    if (structUtils.isVirtualLocator(pkg)) {
+      for (const descriptor of pkg.peerDependencies.values()) {
+        packageDependencies.set(structUtils.requirableIdent(descriptor), null);
+        packagePeers.add(structUtils.stringifyIdent(descriptor));
+      }
     }
 
     miscUtils.getMapWithDefault(this.packageRegistry, key1).set(key2, {
