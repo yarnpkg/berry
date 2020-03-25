@@ -50,8 +50,12 @@ const Content = styled.div`
     }
   }
 
-  p, table {
-    margin-bottom: 1.2em;
+  .toc, p, ul, table {
+    margin: 1em 0;
+  }
+
+  .toc {
+    color: #007aa2;
   }
 
   table {

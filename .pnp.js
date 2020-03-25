@@ -6032,6 +6032,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["gatsby-plugin-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.2.19"],
             ["gatsby-remark-autolink-headers", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.0.16"],
             ["gatsby-remark-prismjs", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.2.9"],
+            ["gatsby-remark-table-of-contents", "npm:0.0.9"],
             ["gatsby-source-filesystem", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.0.23"],
             ["gatsby-transformer-remark", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.2"],
             ["gatsby-transformer-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.2.13"],
@@ -15061,6 +15062,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["gatsby-remark-table-of-contents", [
+        ["npm:0.0.9", {
+          "packageLocation": "./.yarn/cache/gatsby-remark-table-of-contents-npm-0.0.9-4458729b53-2.zip/node_modules/gatsby-remark-table-of-contents/",
+          "packageDependencies": [
+            ["gatsby-remark-table-of-contents", "npm:0.0.9"],
+            ["js-yaml", "npm:3.13.1"],
+            ["mdast-util-toc", "npm:4.2.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["gatsby-source-filesystem", [
         ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.0.23", {
           "packageLocation": "./.yarn/$$virtual/gatsby-source-filesystem-virtual-b1a77cbf7a/0/cache/gatsby-source-filesystem-npm-2.0.23-b179d7b355-2.zip/node_modules/gatsby-source-filesystem/",
@@ -20396,6 +20408,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["mdast-util-toc", "npm:2.1.0"],
             ["github-slugger", "npm:1.2.1"],
             ["mdast-util-to-string", "npm:1.0.5"],
+            ["unist-util-visit", "npm:1.4.0"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:4.2.0", {
+          "packageLocation": "./.yarn/cache/mdast-util-toc-npm-4.2.0-4d5eb4c9b1-2.zip/node_modules/mdast-util-toc/",
+          "packageDependencies": [
+            ["mdast-util-toc", "npm:4.2.0"],
+            ["extend", "npm:3.0.2"],
+            ["github-slugger", "npm:1.2.1"],
+            ["mdast-util-to-string", "npm:1.0.5"],
+            ["unist-util-is", "npm:3.0.0"],
             ["unist-util-visit", "npm:1.4.0"]
           ],
           "linkType": "HARD",
@@ -28652,6 +28676,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/unist-util-is-npm-2.1.2-5eaec96f28-2.zip/node_modules/unist-util-is/",
           "packageDependencies": [
             ["unist-util-is", "npm:2.1.2"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:3.0.0", {
+          "packageLocation": "./.yarn/cache/unist-util-is-npm-3.0.0-1816040586-2.zip/node_modules/unist-util-is/",
+          "packageDependencies": [
+            ["unist-util-is", "npm:3.0.0"]
           ],
           "linkType": "HARD",
         }],

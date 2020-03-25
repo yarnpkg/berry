@@ -8,6 +8,10 @@ title: "2 - Installation"
 >
 > We've been compiling helpful advice when porting over from Yarn 1 on the following [Migration Guide](/advanced/migration). Give it a look and contribute to it if you see things that aren't covered yet! Make sure to consult the [PnP Compatibility Table](/features/pnp#compatibility-table) and [enable the node-modules plugin](/advanced/migration#if-required-enable-the-node-modules-plugin) if required!
 
+```toc
+# This code block gets replaced with the Table of Contents
+```
+
 ## Global Install
 
 Installing Yarn 2.x globally is discouraged as we're moving to a per-project install strategy. We advise you to keep Yarn 1.x (Classic) as your global binary by installing it via the instructions you can find [here](https://classic.yarnpkg.com/en/docs/install).

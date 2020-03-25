@@ -10,6 +10,10 @@ title: "Error Codes"
 >
 > *Keeping this convention will help our users to figure out which error codes can be found on this documentation and which ones should instead be checked against the individual documentation of the plugins they use.*
 
+```toc
+# This code block gets replaced with the Table of Contents
+```
+
 ## YN0000 - `UNNAMED`
 
 This code is used to log regular messages, mostly to align all the lines in the Yarn output. No worry!

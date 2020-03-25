@@ -6,6 +6,10 @@ title: "Editor SDKs"
 
 Smart IDEs (such as VSCode or IntelliJ) require special configuration for TypeScript to work. This page intends to be a collection of settings for each editor we've worked with - please contribute to this list!
 
+```toc
+# This code block gets replaced with the Table of Contents
+```
+
 ## Tools currently supported
 
 > **Note:** When using the `--sdk` flag, be aware that only the SDKs for the tools present in your package.json will be installed. Don't forget to run the command again after installing new ones in your project.

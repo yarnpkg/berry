@@ -14,6 +14,10 @@ title: "Release Workflow"
 
 When working with monorepos, a hard task often is to figure out which packages should receive a new version when starting a new release. Yarn offers a few tools that aim to make this workflow easier without need for third-party tools (although it's possible you may prefer the workflow offered by different implementations, of course!).
 
+```toc
+# This code block gets replaced with the Table of Contents
+```
+
 ## Auto-updated dependencies
 
 When running the `yarn version` command to upgrade the version of a workspace, every other workspace that depend on the first one through a basic semver ranges (`^x.y.z`, `~x.y.z`, ...) will get auto-updated to reference the new version. For example, let's say we have the following workspaces:

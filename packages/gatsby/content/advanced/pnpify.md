@@ -4,6 +4,10 @@ path: /advanced/pnpify
 title: "PnPify"
 ---
 
+```toc
+# This code block gets replaced with the Table of Contents
+```
+
 ## Motivation
 
 Plug'n'Play is, by design, compatible with all projects that only make use of the `require` API - whether it's `require`, `require.resolve`, or `createRequireFromPath`. However, some rare projects prefer to reimplement the Node resolution themselves and as such aren't compatible by default with our environment (unless they integrate their resolvers with the [PnP API](/advanced/pnpapi)).

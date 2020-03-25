@@ -6,6 +6,10 @@ title: "Plugin Tutorial"
 
 Starting from the Yarn 2, Yarn now supports plugins. For more information about what they are and in which case you'd want to use them, consult the [dedicated page](/features/plugins). We'll talk here about the exact steps needed to write one. It's quite simple, really!
 
+```toc
+# This code block gets replaced with the Table of Contents
+```
+
 ## What does a plugin look like?
 
 Plugins are scripts that get loaded at runtime by Yarn, and that can inject new behaviors into it. They also can require some packages provided by Yarn itself, such as `@yarnpkg/core`. This allows you to use the exact same core API as the Yarn binary currently in use, kinda like if it was a peer dependency!
@@ -80,7 +84,7 @@ module.exports = {
         this.context.stdout.write(`This is my very own plugin 😎\n`);
       }
     }
-    
+
     HelloWorldCommand.addPath(`hello`);
 
     return {

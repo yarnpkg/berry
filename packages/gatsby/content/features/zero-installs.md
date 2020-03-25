@@ -8,6 +8,10 @@ While not a feature in itself, the term "Zero Install" encompasses a lot of Yarn
 
 > **Important:** Zero-install is an *optional* philosophy. It has some drawbacks, and while we believe this workflow to be a defining feature for professional-grade projects we don't have any plans to ignore or deprecate the typical `yarn install` workflow in any way, now or in the future.
 
+```toc
+# This code block gets replaced with the Table of Contents
+```
+
 ## How does Yarn impact a project's stability?
 
 Yarn does its best to guarantee that running `yarn install` twice will give you the same result in both cases. The main way it does this is through a lockfile, which contains all the information needed for a project to be installed in a reproducible way across systems. But is it good enough?

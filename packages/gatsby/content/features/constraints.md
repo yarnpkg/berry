@@ -14,6 +14,10 @@ title: "Constraints"
 
 Constraints are a solution to a very basic need: I have a lot of [workspaces](/features/workspaces), and I need to make sure they use the same version of their dependencies. Or that they don't depend on a specific package. Or that they use a specific type of dependency. Anyway, you see the point: whatever is the exact logic, my goal is the same; I want to automatically enforce some kind of rule across all my workspaces. That's exactly what constraints allow you to do.
 
+```toc
+# This code block gets replaced with the Table of Contents
+```
+
 ## Creating a constraint
 
 Constraints are created by adding a `constraints.pro` file at the root of your project (repository). The `.pro` extension might leave you perplex: this is because constraints aren't written in JavaScript (!) but rather in Prolog, a fact-based rule engine. The goal of this section isn't to teach you Prolog (good tutorials already exist, such as [Learn Prolog in Y Minutes](https://learnxinyminutes.com/docs/prolog/)),

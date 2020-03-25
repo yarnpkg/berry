@@ -4,6 +4,10 @@ path: /advanced/architecture
 title: "Architecture"
 ---
 
+```toc
+# This code block gets replaced with the Table of Contents
+```
+
 ## General architecture
 
 Yarn works through a core package (published as `@yarnpkg/core`) that exposes the various base components that make up a project. Some of components are classes that you might recognize from the API: `Configuration`, `Project`, `Workspace`, `Cache`, `Manifest`, and others. All those are provided by the core package.

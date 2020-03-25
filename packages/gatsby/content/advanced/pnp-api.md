@@ -4,6 +4,10 @@ path: /advanced/pnpapi
 title: "PnP API"
 ---
 
+```toc
+# This code block gets replaced with the Table of Contents
+```
+
 ## Overview
 
 On top of being a simple install strategy, Plug'n'Play also provides a API that allows you to introspect the dependency tree at runtime.

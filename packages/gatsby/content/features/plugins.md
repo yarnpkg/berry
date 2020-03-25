@@ -8,6 +8,10 @@ Ever since Yarn was created, our very essence has been about experimenting, evol
 
 As you can guess, this philosophy (coupled with the high number of external contribution we receive) requires us to iterate fast in order to accomodate with the various experiments that we brew. In a major step forward, Yarn got redesigned in the v2 in order to leverage a new modular API that can be extended through plugins. Nowadays, most of our features are implemented through those plugins - even `yarn add` and `yarn install` are preinstalled plugins!
 
+```toc
+# This code block gets replaced with the Table of Contents
+```
+
 ## Where to find plugins?
 
 Just type [`yarn plugin list`](/cli/plugin/list), or consult the repository: [plugins.yml](https://github.com/yarnpkg/berry/blob/master/plugins.yml).
