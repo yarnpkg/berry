@@ -7,6 +7,9 @@ import {inspect}                             from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class InitCommand extends BaseCommand {
+  @Command.Boolean(`-2`, {hidden: true})
+  usev2: boolean = false;
+
   @Command.Boolean(`-y,--yes`, {hidden: true})
   yes: boolean = false;
 
