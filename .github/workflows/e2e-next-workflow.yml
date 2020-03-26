@@ -56,7 +56,7 @@ jobs:
         yarn add raw-loader
 
         mkdir pages
-        echo 'import text from "raw-loader!./text.txt"; export default () => <div>{text}</div>;' | tee pages/home.tsx
+        echo 'const text = require("raw-loader!./text.txt"); export default () => <div>{text}</div>;' | tee pages/home.tsx
         echo 'hello world!' | tee pages/text.txt
 
         yarn next build
