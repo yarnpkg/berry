@@ -5,7 +5,10 @@ const {CommentPlugin} = require(`typedoc/dist/lib/converter/plugins/CommentPlugi
 const {ReflectionKind} = require(`typedoc/dist/lib/models/reflections/abstract`);
 
 exports.YarnPlugin = class YarnPlugin extends ConverterComponent {
-  name = 'yarn-plugin';
+  constructor() {
+    super();
+    this.name = `yarn-plugin`;
+  }
 
   initialize() {
     this.listenTo(this.owner, {
