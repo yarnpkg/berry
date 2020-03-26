@@ -50,7 +50,7 @@ jobs:
         yarn init
 
         # Required
-        yarn add typescript next@canary react react-dom @types/react @types/react-dom
+        yarn add typescript next@canary react react-dom @types/react @types/react-dom @types/node
 
         # Test itself
         yarn add raw-loader
