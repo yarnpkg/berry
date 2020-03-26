@@ -49,9 +49,14 @@ jobs:
         source scripts/e2e-setup-ci.sh
         yarn init
 
-        # Required, and not already imported in previous step
-        yarn add typescript @types/react @types/react-dom
+        # Required
+        yarn add typescript next@canary react react-dom @types/react @types/react-dom
 
+        # Test itself
+        yarn add raw-loader
+
+        mkdir pages
         echo 'import text from "raw-loader!./text.txt"; export default () => <div>{text}</div>;' | tee pages/home.tsx
+        echo 'hello world!' | tee pages/text.txt
 
         yarn next build
