@@ -1,0 +1,53 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-next-typescript-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E Next with TypeScript'
+jobs:
+  chore:
+    name: 'Validating Next.js'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Installing all versions of TS'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn init -p
+        yarn add \
+          v35@npm:typescript@3.5 \
+          v36@npm:typescript@3.6 \
+          v37@npm:typescript@3.7 \
+          v38@npm:typescript@3.8
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+        yarn init
+
+        # Required
+        yarn add next@canary react react-dom @types/react @types/react-dom typescript @types/node
+
+        # Test itself
+        mkdir pages
+        echo 'export default () => <div>hello world!</div>;' | tee pages/index.tsx
+
+        yarn next build
