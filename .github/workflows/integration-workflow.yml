@@ -62,7 +62,7 @@ jobs:
         node:
         - 10
         - 12
-        - 13.1 # https://github.com/nodejs/node/issues/30846 (libzip crashes on every platform on >13.1)
+        - 13
         platform:
         - ubuntu-latest
         - windows-latest
