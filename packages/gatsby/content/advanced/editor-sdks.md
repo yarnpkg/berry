@@ -102,12 +102,6 @@ yarn pnpify --sdk
                )))))
 ```
 
-4. You may have to install `vscode-jsonrpc` and `vscode-languageserver-protocol` manually if `typescript-language-server` fails to start (they are not listed in its dependencies as of this writing):
-
-```bash
-yarn add vscode-jsonrpc vscode-languageserver-protocol
-```
-
 ## Caveat
 
 - Since the Yarn packages are kept within their archives, editors need to understand how to work with such paths should you want to actually open the files (for example when command-clicking on an import path originating from an external package). This can only be implemented by those editors, and we can't do much more than opening issues to ask for this feature to be implemented (for example, here's the VSCode issue: [#75559](https://github.com/microsoft/vscode/issues/75559)).

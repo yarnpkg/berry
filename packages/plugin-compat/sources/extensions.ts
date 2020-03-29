@@ -52,4 +52,11 @@ export const packageExtensions: Array<[string, any]> = [
       [`@types/keyv`]: `^3.1.1`,
     },
   }],
+  // https://github.com/theia-ide/typescript-language-server/issues/144
+  [`typescript-language-server@*`, {
+    dependencies: {
+      [`vscode-jsonrpc`]: `^5.0.1`,
+      [`vscode-languageserver-protocol`]: `^3.15.0`,
+    },
+  }],
 ];

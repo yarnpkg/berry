@@ -1,4 +1,5 @@
 releases:
+  "@yarnpkg/plugin-compat": prerelease
   "@yarnpkg/pnpify": prerelease
 
 declined:
