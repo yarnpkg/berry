@@ -63,6 +63,7 @@ export enum SettingsType {
   ABSOLUTE_PATH = 'ABSOLUTE_PATH',
   LOCATOR = 'LOCATOR',
   LOCATOR_LOOSE = 'LOCATOR_LOOSE',
+  NUMBER = 'NUMBER',
   STRING = 'STRING',
   SECRET = 'SECRET',
   SHAPE = 'SHAPE',
@@ -183,6 +184,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `Folder where the cache files must be written`,
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.yarn/cache`,
+  },
+  compressionLevel: {
+    description: `Zip files compression level, default: -1, possible values: -1..9, -1 - default middle level compression, 0 - no compression, 9 - max compression`,
+    type: SettingsType.NUMBER,
+    default: -1,
   },
   virtualFolder: {
     description: `Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual)`,
@@ -399,6 +405,8 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
       return ppath.resolve(folder, npath.toPortablePath(value));
     case SettingsType.LOCATOR_LOOSE:
       return structUtils.parseLocator(value, false);
+    case SettingsType.NUMBER:
+      return parseInt(value);
     case SettingsType.LOCATOR:
       return structUtils.parseLocator(value);
     default:

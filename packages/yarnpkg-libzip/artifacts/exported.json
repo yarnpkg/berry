@@ -22,6 +22,7 @@
     "_zip_name_locate",
     "_zip_open_from_source",
     "_zip_open",
+    "_zip_set_file_compression",
     "_zip_source_buffer_create",
     "_zip_source_buffer",
     "_zip_source_free",

@@ -117,6 +117,7 @@ export type ZipBufferOptions = {
 export type ZipPathOptions = ZipBufferOptions & {
   baseFs?: FakeFS<PortablePath>,
   create?: boolean,
+  compressionLevel?: number
 };
 
 function toUnixTimestamp(time: Date | string | number) {
@@ -156,6 +157,7 @@ export class ZipFS extends BasePortableFakeFS {
 
   private ready = false;
   private readOnly = false;
+  private readonly compressionLevel: number;
 
   constructor(p: PortablePath, opts: ZipPathOptions);
   constructor(data: Buffer, opts: ZipBufferOptions);
@@ -166,6 +168,7 @@ export class ZipFS extends BasePortableFakeFS {
     this.libzip = opts.libzip;
 
     const pathOptions = opts as ZipPathOptions;
+    this.compressionLevel = typeof pathOptions.compressionLevel !== 'undefined' ? pathOptions.compressionLevel : -1;
 
     if (typeof source === `string`) {
       const {baseFs = new NodeFS()} = pathOptions;
@@ -701,7 +704,26 @@ export class ZipFS extends BasePortableFakeFS {
     const lzSource = this.allocateSource(content);
 
     try {
-      return this.libzip.file.add(this.zip, target, lzSource, this.libzip.ZIP_FL_OVERWRITE);
+      const newIndex = this.libzip.file.add(this.zip, target, lzSource, this.libzip.ZIP_FL_OVERWRITE);
+      if (this.compressionLevel >= 0) {
+        // Use default compression method for level -1, store for level 0, and deflate for 1..9
+        let method;
+        if (this.compressionLevel === -1)
+          method = this.libzip.ZIP_CM_DEFAULT;
+        else if (this.compressionLevel === 0)
+          method = this.libzip.ZIP_CM_STORE;
+        else
+          method = this.libzip.ZIP_CM_DEFLATE;
+        // For store method and default compression method with default level we pass 0, for deflate method we pass the actual level
+        const level = this.compressionLevel <= 0 ? 0 : this.compressionLevel;
+
+        const rc = this.libzip.file.setCompression(this.zip, newIndex, 0, method, level);
+        if (rc === -1) {
+          throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
+        }
+      }
+
+      return newIndex;
     } catch (error) {
       this.libzip.source.free(lzSource);
       throw error;

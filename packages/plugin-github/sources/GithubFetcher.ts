@@ -60,6 +60,8 @@ export class GithubFetcher implements Fetcher {
       return await tgzUtils.convertToZip(packedBuffer, {
         stripComponents: 1,
         prefixPath: structUtils.getIdentVendorPath(locator),
+      }, {
+        compressionLevel: opts.project.configuration.get('compressionLevel'),
       });
     });
   }

@@ -240,3 +240,7 @@ export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) 
     return asArray[index];
   });
 }
+
+export function getCompressionLevel(linker: string | null, compressionLevel: number): number {
+  return compressionLevel >= 0 ? compressionLevel : linker === 'node-modules' ? 0 : -1;
+}

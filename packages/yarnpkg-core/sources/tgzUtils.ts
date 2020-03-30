@@ -5,13 +5,14 @@ import {Parse}                                                     from 'tar';
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>,
   prefixPath?: PortablePath | null,
+  compressionLevel?: number
 };
 
-export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
+export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root, compressionLevel}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
   const tmpFolder = await xfs.mktempPromise();
   const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
 
-  const zipFs = new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise()});
+  const zipFs = new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise(), compressionLevel});
   const target = ppath.resolve(PortablePath.root, prefixPath!);
 
   await zipFs.copyPromise(target, source, {baseFs});
@@ -24,11 +25,11 @@ interface ExtractBufferOptions {
   stripComponents?: number,
 };
 
-export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
+export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions, {compressionLevel}: {compressionLevel?: number}) {
   const tmpFolder = await xfs.mktempPromise();
   const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
 
-  return await extractArchiveTo(tgz, new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise()}), opts);
+  return await extractArchiveTo(tgz, new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise(), compressionLevel}), opts);
 }
 
 export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buffer, targetFs: T, {stripComponents = 0, prefixPath = PortablePath.dot}: ExtractBufferOptions = {}): Promise<T> {
