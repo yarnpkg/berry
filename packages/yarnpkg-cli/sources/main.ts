@@ -90,6 +90,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
         const iShouldBeHere = realpathSync(cwd);
 
         if (iAmHere !== iShouldBeHere) {
+          process.argv.splice(process.argv.findIndex((arg) => arg === `--cwd`), 2);
           process.chdir(cwd);
           return await run();
         }
