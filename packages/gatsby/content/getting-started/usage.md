@@ -65,6 +65,6 @@ yarn remove [package]
 ### Upgrading Yarn itself
 
 ```bash
-yarn policies set-version berry
-yarn set version berry   
+yarn set version latest
+yarn set version from sources
 ```
