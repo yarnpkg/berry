@@ -8,6 +8,7 @@ releases:
   "@yarnpkg/plugin-git": prerelease
   "@yarnpkg/plugin-github": prerelease
   "@yarnpkg/plugin-http": prerelease
+  "@yarnpkg/plugin-npm": prerelease
   "@yarnpkg/plugin-patch": prerelease
 
 declined:
@@ -33,6 +34,3 @@ declined:
   - "@yarnpkg/pnp"
   - "@yarnpkg/pnpify"
   - "@yarnpkg/shell"
-
-undecided:
-  - "@yarnpkg/plugin-npm"
