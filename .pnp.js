@@ -6049,6 +6049,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["remark-parse", "npm:6.0.3"],
             ["typedoc", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:0.17.0-3"],
             ["typedoc-neo-theme", "npm:1.0.7"],
+            ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=270b6c"],
             ["unescape-html", "npm:1.1.0"],
             ["unfetch", "npm:4.1.0"],
@@ -28199,11 +28200,40 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["shelljs", "npm:0.8.3"],
             ["typedoc-default-themes", "npm:0.8.0-0"],
             ["typedoc-neo-theme", "npm:1.0.7"],
+            ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=270b6c"]
           ],
           "packagePeers": [
             "typedoc-neo-theme",
             "@strictsoftware/typedoc-plugin-monorepo",
+            "typedoc-plugin-yarn",
+            "typescript"
+          ],
+          "linkType": "HARD",
+        }],
+        ["virtual:258c95d7dd1da51c9c624f238593e0bc1c34b7bd8de0b85fefd9552f2220a4555cad458eb72d96f0c7b341784726b6a8e9c8b4e838a9d27aac3796b29de01981#npm:0.17.0-3", {
+          "packageLocation": "./.yarn/$$virtual/typedoc-virtual-0344ad4939/0/cache/typedoc-npm-0.17.0-3-0ce05847cf-2.zip/node_modules/typedoc/",
+          "packageDependencies": [
+            ["typedoc", "virtual:258c95d7dd1da51c9c624f238593e0bc1c34b7bd8de0b85fefd9552f2220a4555cad458eb72d96f0c7b341784726b6a8e9c8b4e838a9d27aac3796b29de01981#npm:0.17.0-3"],
+            ["@strictsoftware/typedoc-plugin-monorepo", null],
+            ["@types/minimatch", "npm:3.0.3"],
+            ["fs-extra", "npm:8.1.0"],
+            ["handlebars", "npm:4.7.3"],
+            ["highlight.js", "npm:9.18.1"],
+            ["lodash", "npm:4.17.15"],
+            ["marked", "npm:0.8.1"],
+            ["minimatch", "npm:3.0.4"],
+            ["progress", "npm:2.0.3"],
+            ["shelljs", "npm:0.8.3"],
+            ["typedoc-default-themes", "npm:0.8.0-0"],
+            ["typedoc-neo-theme", null],
+            ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],
+            ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=270b6c"]
+          ],
+          "packagePeers": [
+            "typedoc-neo-theme",
+            "@strictsoftware/typedoc-plugin-monorepo",
+            "typedoc-plugin-yarn",
             "typescript"
           ],
           "linkType": "HARD",
@@ -28224,11 +28254,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["shelljs", "npm:0.8.3"],
             ["typedoc-default-themes", "npm:0.7.2"],
             ["typedoc-neo-theme", "npm:1.0.7"],
+            ["typedoc-plugin-yarn", null],
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=270b6c"]
           ],
           "packagePeers": [
             "typedoc-neo-theme",
-            "@strictsoftware/typedoc-plugin-monorepo"
+            "@strictsoftware/typedoc-plugin-monorepo",
+            "typedoc-plugin-yarn"
           ],
           "linkType": "HARD",
         }]
@@ -28265,6 +28297,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typedoc", "virtual:d8a22236835ea6a343a6f368c384af7c307d527652163c1cfc56292a2b4e7d055c3e2d0ac6817157cd52f801ddf4aeddee76e681fa2e9a53e9fb60482401a352#npm:0.16.0"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["typedoc-plugin-yarn", [
+        ["portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby", {
+          "packageLocation": "./packages/gatsby/typedoc-plugin-yarn/",
+          "packageDependencies": [
+            ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],
+            ["typedoc", "virtual:258c95d7dd1da51c9c624f238593e0bc1c34b7bd8de0b85fefd9552f2220a4555cad458eb72d96f0c7b341784726b6a8e9c8b4e838a9d27aac3796b29de01981#npm:0.17.0-3"],
+            ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=270b6c"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["typescript", [

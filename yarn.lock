@@ -5034,6 +5034,7 @@ __metadata:
     remark-parse: ^6.0.3
     typedoc: next
     typedoc-neo-theme: ^1.0.7
+    typedoc-plugin-yarn: "portal:./typedoc-plugin-yarn"
     typescript: ^3.8.3
     unescape-html: ^1.1.0
     unfetch: ^4.1.0
@@ -24864,6 +24865,15 @@ resolve@^1.10.1:
   checksum: 2/c789b77158b76108ec1257e78760297f23495e258e1bc25896e87fd21feea45c83c63f5dc584c8ee75ec00ca395b1c4669737f179ee04f6303aa842b6e09d064
   languageName: node
   linkType: hard
+
+"typedoc-plugin-yarn@portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby":
+  version: 0.0.0-use.local
+  resolution: "typedoc-plugin-yarn@portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"
+  dependencies:
+    typedoc: next
+    typescript: ^3.8.3
+  languageName: node
+  linkType: soft
 
 "typedoc@npm:0.16.0":
   version: 0.16.0
