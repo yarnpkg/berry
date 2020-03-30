@@ -32,7 +32,7 @@ cd ~/path/to/project
 
 ```bash
 yarn policies set-version berry # below v1.22
-yarn set version berry          # on v1.22+
+yarn set version latest          # on v1.22+
 ```
 
 4. Commit the `.yarn` and `.yarnrc.yml` changes
