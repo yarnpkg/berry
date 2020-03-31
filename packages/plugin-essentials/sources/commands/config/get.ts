@@ -29,12 +29,12 @@ export default class ConfigSetCommand extends BaseCommand {
 /**
  * Converts `Maps` to `Objects` recursively.
  */
-function convertMapsToObjects(arg: unknown) {
+function convertMapsToObjects(arg: unknown): unknown {
   if (arg instanceof Map)
     arg = Object.fromEntries(arg);
   if (typeof arg === 'object' && arg !== null) {
     for (const key of Object.keys(arg)) {
-      let value = arg[key as keyof object] as unknown;
+      const value = arg[key as keyof object] as unknown;
       if (typeof value === 'object' && value !== null) {
         (arg[key as keyof object] as unknown) = convertMapsToObjects(value);
       }
