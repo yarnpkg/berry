@@ -87,6 +87,9 @@ describe(`Commands`, () => {
         {
           private: true,
           workspaces: [`packages/*`],
+          scripts: {
+            print: `echo Test workspace root`,
+          },
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
@@ -113,6 +116,9 @@ describe(`Commands`, () => {
         {
           private: true,
           workspaces: [`packages/*`],
+          scripts: {
+            print: `echo Test workspace root`,
+          },
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
@@ -124,6 +130,35 @@ describe(`Commands`, () => {
           try {
             await run(`install`);
             ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `print`, {cwd: path}));
+          } catch (error) {
+            ({code, stdout, stderr} = error);
+          }
+
+          await expect({code, stdout, stderr}).toMatchSnapshot();
+        }
+      )
+    );
+
+    test(
+      `should run on all workspaces with --all`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+          scripts: {
+            print: `echo Test workspace root`,
+          },
+        },
+        async ({path, run}) => {
+          await setupWorkspaces(path);
+
+          let code;
+          let stdout;
+          let stderr;
+
+          try {
+            await run(`install`);
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--all`, `run`, `print`, {cwd: path}));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
