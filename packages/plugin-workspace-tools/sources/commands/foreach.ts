@@ -124,11 +124,14 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (command.path.length === 0)
       throw new UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
 
-    const rootWorkspace = this.all
-      ? project.topLevelWorkspace
-      : cwdWorkspace!;
+    let candidates;
+    if (this.all)
+      candidates = [project.topLevelWorkspace, ...getWorkspaceChildrenRecursive(project.topLevelWorkspace, project)];
+    else if (cwdWorkspace! === project.topLevelWorkspace)
+      candidates = getWorkspaceChildrenRecursive(cwdWorkspace!, project);
+    else
+      candidates = [cwdWorkspace!, ...getWorkspaceChildrenRecursive(cwdWorkspace!, project)];
 
-    const candidates = [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
     const workspaces: Array<Workspace> = [];
 
     for (const workspace of candidates) {

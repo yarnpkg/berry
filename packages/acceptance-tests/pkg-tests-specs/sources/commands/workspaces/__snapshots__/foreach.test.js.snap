@@ -86,6 +86,21 @@ exports[`Commands workspace foreach should run on child workspaces by default 1`
 Object {
   "code": 0,
   "stderr": "",
+  "stdout": "➤ YN0000: Test Workspace A
+➤ YN0000: Test Workspace B
+➤ YN0000: Test Workspace C
+➤ YN0000: Test Workspace D
+➤ YN0000: Test Workspace E
+➤ YN0000: Test Workspace F
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands workspace foreach should run on child workspaces by default in nested workspaces 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
   "stdout": "➤ YN0000: Test Workspace C
 ➤ YN0000: Test Workspace D
 ➤ YN0000: Test Workspace E

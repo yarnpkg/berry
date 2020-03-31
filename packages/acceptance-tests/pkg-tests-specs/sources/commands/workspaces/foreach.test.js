@@ -82,7 +82,7 @@ async function setupWorkspaces(path) {
 describe(`Commands`, () => {
   describe(`workspace foreach`, () => {
     test(
-      `should run on child workspaces by default`,
+      `should run on child workspaces by default in nested workspaces`,
       makeTemporaryEnv(
         {
           private: true,
@@ -98,6 +98,32 @@ describe(`Commands`, () => {
           try {
             await run(`install`);
             ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `print`, {cwd: `${path}/packages/workspace-c`}));
+          } catch (error) {
+            ({code, stdout, stderr} = error);
+          }
+
+          await expect({code, stdout, stderr}).toMatchSnapshot();
+        }
+      )
+    );
+
+    test(
+      `should run on child workspaces by default`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await setupWorkspaces(path);
+
+          let code;
+          let stdout;
+          let stderr;
+
+          try {
+            await run(`install`);
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `print`, {cwd: path}));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
