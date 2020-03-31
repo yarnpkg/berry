@@ -21,7 +21,7 @@ export default class CreateCommand extends BaseCommand {
     if (this.pkg)
       flags.push(`--package`, this.pkg);
     if (this.quiet)
-      flags.push('--quiet');
+      flags.push(`--quiet`);
     this.cli.run([`dlx`, ...flags, `create-${this.command}`, ...this.args]);
   }
 }
