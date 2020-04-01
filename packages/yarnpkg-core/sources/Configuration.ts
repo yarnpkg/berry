@@ -1,4 +1,5 @@
 import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL}                             from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                              from '@yarnpkg/parsers';
 import camelcase                                               from 'camelcase';
 import chalk                                                   from 'chalk';
@@ -186,9 +187,9 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: `./.yarn/cache`,
   },
   compressionLevel: {
-    description: `Zip files compression level, default: -1, possible values: -1..9, -1 - default middle level compression, 0 - no compression, 9 - max compression`,
+    description: `Zip files compression level, default: ${DEFAULT_COMPRESSION_LEVEL}, possible values: 0..9, 0 - no compression, 9 - max compression`,
     type: SettingsType.NUMBER,
-    default: -1,
+    default: DEFAULT_COMPRESSION_LEVEL,
   },
   virtualFolder: {
     description: `Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual)`,

@@ -10,6 +10,8 @@ import {NodeFS}                                                                 
 import * as errors                                                                                 from './errors';
 import {FSPath, PortablePath, npath, ppath, Filename}                                              from './path';
 
+export const DEFAULT_COMPRESSION_LEVEL = 6;
+
 const S_IFMT = 0o170000;
 
 const S_IFDIR = 0o040000;
@@ -168,7 +170,7 @@ export class ZipFS extends BasePortableFakeFS {
     this.libzip = opts.libzip;
 
     const pathOptions = opts as ZipPathOptions;
-    this.compressionLevel = typeof pathOptions.compressionLevel !== 'undefined' ? pathOptions.compressionLevel : -1;
+    this.compressionLevel = typeof pathOptions.compressionLevel !== 'undefined' ? pathOptions.compressionLevel : 6;
 
     if (typeof source === `string`) {
       const {baseFs = new NodeFS()} = pathOptions;
@@ -705,19 +707,15 @@ export class ZipFS extends BasePortableFakeFS {
 
     try {
       const newIndex = this.libzip.file.add(this.zip, target, lzSource, this.libzip.ZIP_FL_OVERWRITE);
-      if (this.compressionLevel >= 0) {
-        // Use default compression method for level -1, store for level 0, and deflate for 1..9
+      if (this.compressionLevel !== DEFAULT_COMPRESSION_LEVEL) {
+        // Use default compression method for level 6, store for level 0, and deflate for 1..9
         let method;
-        if (this.compressionLevel === -1)
-          method = this.libzip.ZIP_CM_DEFAULT;
-        else if (this.compressionLevel === 0)
+        if (this.compressionLevel === 0)
           method = this.libzip.ZIP_CM_STORE;
         else
           method = this.libzip.ZIP_CM_DEFLATE;
-        // For store method and default compression method with default level we pass 0, for deflate method we pass the actual level
-        const level = this.compressionLevel <= 0 ? 0 : this.compressionLevel;
 
-        const rc = this.libzip.file.setCompression(this.zip, newIndex, 0, method, level);
+        const rc = this.libzip.file.setCompression(this.zip, newIndex, 0, method, this.compressionLevel);
         if (rc === -1) {
           throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
         }

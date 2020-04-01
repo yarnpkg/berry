@@ -1,5 +1,5 @@
 import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename} from '@yarnpkg/fslib';
-import {ppath, toFilename, xfs}                                from '@yarnpkg/fslib';
+import {ppath, toFilename, xfs, DEFAULT_COMPRESSION_LEVEL}     from '@yarnpkg/fslib';
 import {getLibzipPromise}                                      from '@yarnpkg/libzip';
 import fs                                                      from 'fs';
 
@@ -50,7 +50,7 @@ export class Cache {
 
   constructor(cacheCwd: PortablePath, {configuration, immutable = configuration.get<boolean>(`enableImmutableCache`), check = false}: {configuration: Configuration, immutable?: boolean, check?: boolean}) {
     const compressionLevel = configuration.get('compressionLevel');
-    this.compressionLevelSuffix = compressionLevel >= 0 ? `-c${compressionLevel}` : ``;
+    this.compressionLevelSuffix = compressionLevel === DEFAULT_COMPRESSION_LEVEL ? `` : `-c${compressionLevel}`;
 
     this.configuration = configuration;
     this.cwd = cacheCwd;
