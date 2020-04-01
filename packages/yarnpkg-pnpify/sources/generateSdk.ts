@@ -131,29 +131,6 @@ class Wrapper {
   }
 }
 
-const generateTypescriptWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`typescript` as PortablePath, {pnpApi, target});
-
-  await wrapper.writeManifest();
-
-  await wrapper.writeBinary(`bin/tsc` as PortablePath);
-  await wrapper.writeBinary(`bin/tsserver` as PortablePath);
-
-  await wrapper.writeFile(`lib/tsc.js` as PortablePath);
-  await wrapper.writeFile(`lib/tsserver.js` as PortablePath);
-  await wrapper.writeFile(`lib/typescript.js` as PortablePath);
-
-  await addVSCodeWorkspaceSettings(pnpApi, {
-    [`typescript.tsdk`]: npath.fromPortablePath(
-      ppath.dirname(
-        wrapper.getProjectPathTo(
-          `lib/tsserver.js` as PortablePath,
-        ),
-      ),
-    ),
-  });
-};
-
 export const generateEslintWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`eslint` as PortablePath, {pnpApi, target});
 
@@ -189,9 +166,41 @@ export const generatePrettierWrapper = async (pnpApi: PnpApi, target: PortablePa
   });
 };
 
+export const generateTypescriptLanguageServerWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`typescript-language-server` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeManifest();
+
+  await wrapper.writeBinary(`lib/cli.js` as PortablePath);
+};
+
+const generateTypescriptWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`typescript` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeManifest();
+
+  await wrapper.writeBinary(`bin/tsc` as PortablePath);
+  await wrapper.writeBinary(`bin/tsserver` as PortablePath);
+
+  await wrapper.writeFile(`lib/tsc.js` as PortablePath);
+  await wrapper.writeFile(`lib/tsserver.js` as PortablePath);
+  await wrapper.writeFile(`lib/typescript.js` as PortablePath);
+
+  await addVSCodeWorkspaceSettings(pnpApi, {
+    [`typescript.tsdk`]: npath.fromPortablePath(
+      ppath.dirname(
+        wrapper.getProjectPathTo(
+          `lib/tsserver.js` as PortablePath,
+        ),
+      ),
+    ),
+  });
+};
+
 const SDKS: Array<[string, (pnpApi: PnpApi, target: PortablePath) => Promise<void>]> = [
   [`eslint`, generateEslintWrapper],
   [`prettier`, generatePrettierWrapper],
+  [`typescript-language-server`, generateTypescriptLanguageServerWrapper],
   [`typescript`, generateTypescriptWrapper],
 ];
 

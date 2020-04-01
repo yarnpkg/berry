@@ -65,6 +65,43 @@ yarn pnpify --sdk
 
 3. Set [`tsserver.tsdk`](https://github.com/neoclide/coc-tsserver#configuration-options) to `.vscode/pnpify/typescript/lib`
 
+### Emacs
+
+The SDK comes with a typescript-language-server wrapper which enables you to use the ts-ls LSP client.
+
+1. Add PnPify to your dependencies:
+
+```bash
+yarn add @yarnpkg/pnpify
+```
+
+2. Run the following command, which will generate a new directory called `.vscode/pnpify`:
+
+```bash
+yarn pnpify --sdk
+```
+
+3. Create a `.dir-locals.el` with the following content to enable Flycheck and LSP support:
+
+```lisp
+((typescript-mode
+  . (
+     ;; Enable typescript-language-server and eslint LSP clients.
+     (lsp-enabled-clients . (ts-ls eslint))
+     (eval . (let ((project-directory (car (dir-locals-find-file "."))))
+               (set (make-local-variable 'flycheck-javascript-eslint-executable)
+                    (concat project-directory ".vscode/pnpify/eslint/bin/eslint.js"))
+
+               (lsp-dependency 'typescript-language-server
+                               `(:system ,(concat project-directory ".vscode/pnpify/typescript-language-server/lib/cli.js")))
+               (lsp-dependency 'typescript
+                               `(:system ,(concat project-directory ".vscode/pnpify/typescript/bin/tsserver")))
+
+               ;; Re-(start) LSP to pick up the dependency changes above.
+               (lsp)
+               )))))
+```
+
 ## Caveat
 
 - Since the Yarn packages are kept within their archives, editors need to understand how to work with such paths should you want to actually open the files (for example when command-clicking on an import path originating from an external package). This can only be implemented by those editors, and we can't do much more than opening issues to ask for this feature to be implemented (for example, here's the VSCode issue: [#75559](https://github.com/microsoft/vscode/issues/75559)).
