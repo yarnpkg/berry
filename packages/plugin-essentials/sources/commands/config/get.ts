@@ -1,12 +1,15 @@
-import {BaseCommand}                from '@yarnpkg/cli';
-import {Configuration}              from '@yarnpkg/core';
-import {stringifySyml}              from '@yarnpkg/parsers';
-import {Command, Usage, UsageError} from 'clipanion';
+import {BaseCommand}                 from '@yarnpkg/cli';
+import {Configuration, StreamReport} from '@yarnpkg/core';
+import {Command, Usage, UsageError}  from 'clipanion';
+import {inspect}                     from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigSetCommand extends BaseCommand {
   @Command.String()
   name!: string;
+
+  @Command.Boolean(`--json`)
+  json: boolean = false;
 
   static usage: Usage = Command.Usage({
     description: `read a configuration settings`,
@@ -20,9 +23,29 @@ export default class ConfigSetCommand extends BaseCommand {
     if (typeof setting === `undefined`)
       throw new UsageError(`Couldn't find a configuration settings named "${this.name}"`);
 
-    const value = convertMapsToObjects(configuration.get(this.name));
+    const value = configuration.get(this.name);
 
-    this.context.stdout.write(`${stringifySyml(value)}\n`);
+    const report = await StreamReport.start({
+      configuration,
+      includeFooter: false,
+      json: this.json,
+      stdout: this.context.stdout,
+    }, async report => {
+      report.reportJson(convertMapsToObjects(value));
+    });
+
+    if (!this.json) {
+      // @ts-ignore: The Node typings forgot one field
+      inspect.styles.name = `cyan`;
+
+      this.context.stdout.write(`${inspect(value, {
+        depth: Infinity,
+        colors: true,
+        compact: false,
+      })}\n`);
+    }
+
+    return report.exitCode();
   }
 }
 
