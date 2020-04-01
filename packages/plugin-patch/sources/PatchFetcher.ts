@@ -54,7 +54,7 @@ export class PatchFetcher implements Fetcher {
     const copiedPackage = new ZipFS(tmpFile, {
       libzip,
       create: true,
-      compressionLevel: opts.project.configuration.get('compressionLevel'),
+      level: opts.project.configuration.get('compressionLevel'),
     });
 
     await copiedPackage.mkdirpPromise(prefixPath);
@@ -67,7 +67,7 @@ export class PatchFetcher implements Fetcher {
 
     const patchedPackage = new ZipFS(tmpFile, {
       libzip,
-      compressionLevel: opts.project.configuration.get('compressionLevel'),
+      level: opts.project.configuration.get('compressionLevel'),
     });
     const patchFs = new CwdFS(prefixPath, {baseFs: patchedPackage});
 

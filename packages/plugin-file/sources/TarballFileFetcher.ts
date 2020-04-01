@@ -65,10 +65,9 @@ export class TarballFileFetcher implements Fetcher {
 
     return await miscUtils.releaseAfterUseAsync(async () => {
       return await tgzUtils.convertToZip(sourceBuffer, {
-        stripComponents: 1,
+        compressionLevel: opts.project.configuration.get(`compressionLevel`),
         prefixPath: structUtils.getIdentVendorPath(locator),
-      }, {
-        compressionLevel: opts.project.configuration.get('compressionLevel'),
+        stripComponents: 1,
       });
     }, effectiveParentFetch.releaseFs);
   }
