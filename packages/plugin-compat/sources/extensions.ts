@@ -58,4 +58,11 @@ export const packageExtensions: Array<[string, any]> = [
       [`graphql`]: `^0.13.1 || ^14.0.0`,
     },
   }],
+  // https://github.com/theia-ide/typescript-language-server/issues/144
+  [`typescript-language-server@*`, {
+    dependencies: {
+      [`vscode-jsonrpc`]: `^5.0.1`,
+      [`vscode-languageserver-protocol`]: `^3.15.0`,
+    },
+  }],
 ];

@@ -27,7 +27,7 @@ jobs:
       run: |
         node ./scripts/run-yarn.js build:cli
 
-    - name: 'Running the integration test'
+    - name: 'Running the integration test, without TypeScript'
       run: |
         source scripts/e2e-setup-ci.sh
         yarn init
@@ -40,6 +40,23 @@ jobs:
 
         mkdir pages
         echo 'import text from "raw-loader!./text.txt"; export default () => <div>{text}</div>;' | tee pages/index.js
+        echo 'hello world!' | tee pages/text.txt
+
+        yarn next build
+
+    - name: 'Running the integration test, with TypeScript'
+      run: |
+        source scripts/e2e-setup-ci.sh
+        yarn init
+
+        # Required
+        yarn add typescript next@canary react react-dom @types/react @types/react-dom @types/node
+
+        # Test itself
+        yarn add raw-loader
+
+        mkdir pages
+        echo 'const text = require("raw-loader!./text.txt").default; export default () => <div>{text}</div>;' | tee pages/home.tsx
         echo 'hello world!' | tee pages/text.txt
 
         yarn next build

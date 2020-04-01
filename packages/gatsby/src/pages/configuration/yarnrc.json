@@ -389,7 +389,7 @@
       "default": "^\\./subdir/.*"
     },
     "pnpMode": {
-      "description": "If `strict`, Yarn won't allow modules to require packages they don't explicitly list in their own dependencies. If `loose`, Yarn will allow access to the packages that would have been hoisted to the top-level under 1.x installs. Note that, even in loose mode, such calls are unsafe (hoisting rules aren't predictable) and should be discouraged.",
+      "description": "If `strict` (the default), Yarn won't allow modules to require packages they don't explicitly list in their own dependencies. If `loose`, Yarn will allow access to the packages that would have been hoisted to the top-level under 1.x installs. Note that, even in loose mode, such calls are unsafe (hoisting rules aren't predictable) and should be discouraged.",
       "type": "string",
       "enum": ["strict", "loose"],
       "default": "strict"
