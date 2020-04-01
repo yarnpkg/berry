@@ -52,6 +52,12 @@ export const packageExtensions: Array<[string, any]> = [
       [`@types/keyv`]: `^3.1.1`,
     },
   }],
+  // https://github.com/prisma-labs/http-link-dataloader/pull/22
+  [`http-link-dataloader@*`, {
+    peerDependencies: {
+      [`graphql`]: `^0.13.1 || ^14.0.0`,
+    },
+  }],
   // https://github.com/theia-ide/typescript-language-server/issues/144
   [`typescript-language-server@*`, {
     dependencies: {
