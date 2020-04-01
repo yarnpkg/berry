@@ -1,6 +1,6 @@
 import {BaseCommand} from '@yarnpkg/cli';
+import {structUtils} from '@yarnpkg/core';
 import {Command}     from 'clipanion';
-import {structUtils} from 'packages/yarnpkg-core/sources';
 
 // eslint-disable-next-line arca/no-default-export
 export default class CreateCommand extends BaseCommand {
