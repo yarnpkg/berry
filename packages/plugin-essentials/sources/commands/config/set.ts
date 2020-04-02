@@ -33,7 +33,7 @@ export default class ConfigSetCommand extends BaseCommand {
       includeFooter: false,
       stdout: this.context.stdout,
     }, async report => {
-      const value: unknown = this.json ? tryParseJson(this.name, this.value, report) : this.value;
+      const value: unknown = this.json ? JSON.parse((`{ "${this.name}": ${this.value} }`))[this.name] : this.value;
 
       await Configuration.updateConfiguration(configuration.projectCwd!, {
         [this.name]: value,
@@ -53,15 +53,3 @@ export default class ConfigSetCommand extends BaseCommand {
   }
 }
 
-function tryParseJson(name: string, value: string, report: StreamReport): unknown {
-  try {
-    return JSON.parse((`{ "${name}": ${value} }`))[name];
-  } catch (error) {
-    try {
-      report.reportWarning(MessageName.UNNAMED, `The entered value isn't a valid complex JSON value. It will be parsed as a string.`);
-      return JSON.parse((`{ "${name}": "${value}" }`))[name];
-    } catch {
-      throw new UsageError(error);
-    }
-  }
-};
