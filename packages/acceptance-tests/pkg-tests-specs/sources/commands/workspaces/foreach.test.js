@@ -84,7 +84,7 @@ async function setupWorkspaces(path) {
 describe(`Commands`, () => {
   describe(`workspace foreach`, () => {
     test(
-      `should run on child workspaces by default`,
+      `should run on current and descendant workspaces by default`,
       makeTemporaryEnv(
         {
           private: true,
