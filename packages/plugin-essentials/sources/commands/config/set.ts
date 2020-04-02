@@ -16,6 +16,26 @@ export default class ConfigSetCommand extends BaseCommand {
 
   static usage: Usage = Command.Usage({
     description: `change a configuration settings`,
+    details: `
+      This command will set a configuration setting.
+
+      When used without the \`--json\` flag, it can only set a simple configuration setting (a string, a number, or a boolean).
+
+      When used with the \`--json\` flag, it can set both simple and complex configuration settings, including Arrays and Objects.
+    `,
+    examples: [[
+      `Set a simple configuration setting (a string, a number, or a boolean)`,
+      `yarn config set initScope myScope`,
+    ], [
+      `Set a simple configuration setting (a string, a number, or a boolean) using the \`--json\` flag`,
+      `yarn config set initScope --json \\"myScope\\"`,
+    ], [
+      `Set a complex configuration setting (an Array) using the \`--json\` flag`,
+      `yarn config set unsafeHttpWhitelist --json '["*.example.com", "example.com"]'`,
+    ], [
+      `Set a complex configuration setting (an Object) using the \`--json\` flag`,
+      `yarn config set packageExtensions --json '{ "@babel/parser@*": { "dependencies": { "@babel/types": "*" } } }'`,
+    ]],
   });
 
   @Command.Path(`config`, `set`)
