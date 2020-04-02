@@ -1,7 +1,7 @@
-import {BaseCommand}                from '@yarnpkg/cli';
-import {Configuration}              from '@yarnpkg/core';
-import {parseSyml}                  from '@yarnpkg/parsers';
-import {Command, Usage, UsageError} from 'clipanion';
+import {BaseCommand}                              from '@yarnpkg/cli';
+import {Configuration, StreamReport, MessageName} from '@yarnpkg/core';
+import {Command, Usage, UsageError}               from 'clipanion';
+import {inspect}                                  from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigSetCommand extends BaseCommand {
@@ -10,6 +10,9 @@ export default class ConfigSetCommand extends BaseCommand {
 
   @Command.String()
   value!: string;
+
+  @Command.Boolean(`--json`)
+  json: boolean = false;
 
   static usage: Usage = Command.Usage({
     description: `change a configuration settings`,
@@ -25,18 +28,40 @@ export default class ConfigSetCommand extends BaseCommand {
     if (typeof setting === `undefined`)
       throw new UsageError(`Couldn't find a configuration settings named "${this.name}"`);
 
-    let parsedValue;
-    try {
-      parsedValue = parseSyml(`${this.name}: ${this.value}`)[this.name];
-    } catch {
-      // Use invalid YAML values as strings
-      // This allows the use of unquoted strings that would need quotes at the top-level
-      // For example: `yarn config set someOption @unquoted-value`
-      parsedValue = this.value;
-    }
+    const report = await StreamReport.start({
+      configuration,
+      includeFooter: false,
+      stdout: this.context.stdout,
+    }, async report => {
+      const value: unknown = this.json ? tryParseJson(this.name, this.value, report) : this.value;
 
-    await Configuration.updateConfiguration(configuration.projectCwd, {
-      [this.name]: parsedValue,
+      await Configuration.updateConfiguration(configuration.projectCwd!, {
+        [this.name]: value,
+      });
+
+      // @ts-ignore: The Node typings forgot one field
+      inspect.styles.name = `cyan`;
+
+      report.reportInfo(MessageName.UNNAMED, `Successfully set ${this.name} to:\n${inspect(value, {
+        depth: Infinity,
+        colors: true,
+        compact: false,
+      })}`);
     });
+
+    return report.exitCode();
   }
 }
+
+function tryParseJson(name: string, value: string, report: StreamReport): unknown {
+  try {
+    return JSON.parse((`{ "${name}": ${value} }`))[name];
+  } catch (error) {
+    try {
+      report.reportWarning(MessageName.UNNAMED, `The entered value isn't a valid complex JSON value. It will be parsed as a string.`);
+      return JSON.parse((`{ "${name}": "${value}" }`))[name];
+    } catch {
+      throw new UsageError(error);
+    }
+  }
+};
