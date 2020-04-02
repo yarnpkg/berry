@@ -18,6 +18,16 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       `---\n`,
     ].join(``));
 
+    if (!command.plugin.isDefault) {
+      const [, pluginName] = /^@yarnpkg\/plugin-(.+)$/.exec(command.plugin.name);
+
+      sections.push([
+        `> **Plugin**\n`,
+        `>\n`,
+        `> To use this command, first install the \`${pluginName}\` plugin: \`yarn plugin import ${pluginName}\`\n`,
+      ].join(``));
+    }
+
     if (command.description) {
       sections.push([
         `${command.description[0].toUpperCase()}${command.description.slice(1, -1)}.\n`,
