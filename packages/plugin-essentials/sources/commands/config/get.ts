@@ -13,6 +13,19 @@ export default class ConfigSetCommand extends BaseCommand {
 
   static usage: Usage = Command.Usage({
     description: `read a configuration settings`,
+    details: `
+      This command will print a configuration setting.
+    `,
+    examples: [[
+      `Print a simple configuration setting`,
+      `yarn config get yarnPath`,
+    ], [
+      `Print a complex configuration setting`,
+      `yarn config get packageExtensions`,
+    ], [
+      `Print a configuration setting as JSON`,
+      `yarn config get packageExtensions --json`,
+    ]],
   });
 
   @Command.Path(`config`, `get`)
