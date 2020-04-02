@@ -80,7 +80,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     details: `
       > In order to use this command you will need to add \`@yarnpkg/plugin-workspace-tools\` to your plugins. Check the documentation for \`yarn plugin import\` for more details.
 
-      This command will run a given sub-command on current and all its descendant workspaces. (any workspace that doesn't define the command will be skipped). Various flags can alter the exact behavior of the command:
+      This command will run a given sub-command on current and all its descendant workspaces. Various flags can alter the exact behavior of the command:
 
       - If \`-p,--parallel\` is set, the commands will be ran in parallel; they'll by default be limited to a number of parallel tasks roughly equal to half your core number, but that can be overridden via \`-j,--jobs\`.
 
