@@ -21,6 +21,11 @@
       "enum": ["throw", "update", "ignore"],
       "default": "throw"
     },
+    "compressionLevel": {
+      "description": "The compression level employed for zip archives, with 0 being 'no compression, faster' and 9 being 'heavy compression, slower'. The default is 'mixed', which is a variant of 6 where files may be stored uncompressed if the builtin zlib heuristic thinks it will lead to a more sensible result.",
+      "enum": ["mixed", 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      "default": "mixed"
+    },
     "constraintsPath": {
       "description": "The path of the constraints file.",
       "type": "string",

@@ -17,22 +17,25 @@ export {WriteFileOptions}         from './FakeFS';
 export {normalizeLineEndings}     from './FakeFS';
 export {ExtractHintOptions}       from './FakeFS';
 
+export {DEFAULT_COMPRESSION_LEVEL} from './ZipFS';
+export {ZipCompression}            from './ZipFS';
+
 export {FSPath, Path, PortablePath, NativePath, Filename} from './path';
 export {ParsedPath, PathUtils, FormatInputPathObject} from './path';
 export {npath, ppath, toFilename} from './path';
 
-export {AliasFS}                  from './AliasFS';
-export {FakeFS}                   from './FakeFS';
-export {CwdFS}                    from './CwdFS';
-export {JailFS}                   from './JailFS';
-export {LazyFS}                   from './LazyFS';
-export {NoFS}                     from './NoFS';
-export {NodeFS}                   from './NodeFS';
-export {PosixFS}                  from './PosixFS';
-export {ProxiedFS}                from './ProxiedFS';
-export {VirtualFS}                from './VirtualFS';
-export {ZipFS}                    from './ZipFS';
-export {ZipOpenFS}                from './ZipOpenFS';
+export {AliasFS}                   from './AliasFS';
+export {FakeFS}                    from './FakeFS';
+export {CwdFS}                     from './CwdFS';
+export {JailFS}                    from './JailFS';
+export {LazyFS}                    from './LazyFS';
+export {NoFS}                      from './NoFS';
+export {NodeFS}                    from './NodeFS';
+export {PosixFS}                   from './PosixFS';
+export {ProxiedFS}                 from './ProxiedFS';
+export {VirtualFS}                 from './VirtualFS';
+export {ZipFS}                     from './ZipFS';
+export {ZipOpenFS}                 from './ZipOpenFS';
 
 function getTempName(prefix: string) {
   const tmpdir = npath.toPortablePath(os.tmpdir());

@@ -10,6 +10,9 @@ import {NodeFS}                                                                 
 import * as errors                                                                                 from './errors';
 import {FSPath, PortablePath, npath, ppath, Filename}                                              from './path';
 
+export type ZipCompression = `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+export const DEFAULT_COMPRESSION_LEVEL: ZipCompression = `mixed`;
+
 const S_IFMT = 0o170000;
 
 const S_IFDIR = 0o040000;
@@ -117,6 +120,7 @@ export type ZipBufferOptions = {
 export type ZipPathOptions = ZipBufferOptions & {
   baseFs?: FakeFS<PortablePath>,
   create?: boolean,
+  level?: ZipCompression,
 };
 
 function toUnixTimestamp(time: Date | string | number) {
@@ -147,6 +151,7 @@ export class ZipFS extends BasePortableFakeFS {
 
   private readonly stats: Stats;
   private readonly zip: number;
+  private readonly level: ZipCompression;
 
   private readonly listings: Map<PortablePath, Set<Filename>> = new Map();
   private readonly entries: Map<PortablePath, number> = new Map();
@@ -166,6 +171,9 @@ export class ZipFS extends BasePortableFakeFS {
     this.libzip = opts.libzip;
 
     const pathOptions = opts as ZipPathOptions;
+    this.level = typeof pathOptions.level !== 'undefined'
+      ? pathOptions.level
+      : DEFAULT_COMPRESSION_LEVEL;
 
     if (typeof source === `string`) {
       const {baseFs = new NodeFS()} = pathOptions;
@@ -701,7 +709,22 @@ export class ZipFS extends BasePortableFakeFS {
     const lzSource = this.allocateSource(content);
 
     try {
-      return this.libzip.file.add(this.zip, target, lzSource, this.libzip.ZIP_FL_OVERWRITE);
+      const newIndex = this.libzip.file.add(this.zip, target, lzSource, this.libzip.ZIP_FL_OVERWRITE);
+      if (this.level !== `mixed`) {
+        // Use store for level 0, and deflate for 1..9
+        let method;
+        if (this.level === 0)
+          method = this.libzip.ZIP_CM_STORE;
+        else
+          method = this.libzip.ZIP_CM_DEFLATE;
+
+        const rc = this.libzip.file.setCompression(this.zip, newIndex, 0, method, this.level);
+        if (rc === -1) {
+          throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
+        }
+      }
+
+      return newIndex;
     } catch (error) {
       this.libzip.source.free(lzSource);
       throw error;

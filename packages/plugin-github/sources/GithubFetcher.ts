@@ -58,8 +58,9 @@ export class GithubFetcher implements Fetcher {
       const packedBuffer = await xfs.readFilePromise(packagePath);
 
       return await tgzUtils.convertToZip(packedBuffer, {
-        stripComponents: 1,
+        compressionLevel: opts.project.configuration.get(`compressionLevel`),
         prefixPath: structUtils.getIdentVendorPath(locator),
+        stripComponents: 1,
       });
     });
   }

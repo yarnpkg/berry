@@ -1,5 +1,5 @@
 import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename} from '@yarnpkg/fslib';
-import {ppath, toFilename, xfs}                                from '@yarnpkg/fslib';
+import {ppath, toFilename, xfs, DEFAULT_COMPRESSION_LEVEL}     from '@yarnpkg/fslib';
 import {getLibzipPromise}                                      from '@yarnpkg/libzip';
 import fs                                                      from 'fs';
 
@@ -37,6 +37,7 @@ export class Cache {
   // presently in the cache (unless the package isn't in the cache in the first
   // place).
   public readonly check: boolean;
+  public readonly compressionLevelSuffix: string;
 
   private mutexes: Map<LocatorHash, Promise<string>> = new Map();
 
@@ -48,6 +49,9 @@ export class Cache {
   }
 
   constructor(cacheCwd: PortablePath, {configuration, immutable = configuration.get<boolean>(`enableImmutableCache`), check = false}: {configuration: Configuration, immutable?: boolean, check?: boolean}) {
+    const compressionLevel = configuration.get('compressionLevel');
+    this.compressionLevelSuffix = compressionLevel === DEFAULT_COMPRESSION_LEVEL ? `` : `-c${compressionLevel}`;
+
     this.configuration = configuration;
     this.cwd = cacheCwd;
 
@@ -64,7 +68,7 @@ export class Cache {
   }
 
   getLocatorFilename(locator: Locator) {
-    return `${structUtils.slugifyLocator(locator)}-${CACHE_VERSION}.zip` as Filename;
+    return `${structUtils.slugifyLocator(locator)}${this.compressionLevelSuffix}-${CACHE_VERSION}.zip` as Filename;
   }
 
   getLocatorPath(locator: Locator) {

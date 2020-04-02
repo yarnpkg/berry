@@ -39,6 +39,10 @@ export const makeInterface = (libzip: EmscriptenModule) => ({
   ZIP_OPSYS_OS_400: 0x12,
   ZIP_OPSYS_OS_X: 0x13,
 
+  ZIP_CM_DEFAULT: -1,
+  ZIP_CM_STORE: 0,
+  ZIP_CM_DEFLATE: 8,
+
   uint08S: libzip._malloc(1),
   uint16S: libzip._malloc(2),
   uint32S: libzip._malloc(4),
@@ -77,6 +81,7 @@ export const makeInterface = (libzip: EmscriptenModule) => ({
     getExternalAttributes: libzip.cwrap(`zip_file_get_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
     setExternalAttributes: libzip.cwrap(`zip_file_set_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
     setMtime: libzip.cwrap(`zip_file_set_mtime`, `number`, [`number`, ...number64, `number`, `number`]),
+    setCompression: libzip.cwrap(`zip_set_file_compression`, `number`, [`number`, ...number64, `number`, `number`]),
   },
 
   error: {

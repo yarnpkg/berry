@@ -1,4 +1,5 @@
 import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL}                             from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                              from '@yarnpkg/parsers';
 import camelcase                                               from 'camelcase';
 import chalk                                                   from 'chalk';
@@ -63,6 +64,7 @@ export enum SettingsType {
   ABSOLUTE_PATH = 'ABSOLUTE_PATH',
   LOCATOR = 'LOCATOR',
   LOCATOR_LOOSE = 'LOCATOR_LOOSE',
+  NUMBER = 'NUMBER',
   STRING = 'STRING',
   SECRET = 'SECRET',
   SHAPE = 'SHAPE',
@@ -119,6 +121,7 @@ export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsTy
   default: any,
   defaultText?: any,
   isNullable?: boolean,
+  values?: any[],
 };
 
 export type SettingsDefinitionNoDefault =
@@ -183,6 +186,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `Folder where the cache files must be written`,
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.yarn/cache`,
+  },
+  compressionLevel: {
+    description: `Zip files compression level, from 0 to 9`,
+    type: SettingsType.NUMBER,
+    values: [`mixed`, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    default: DEFAULT_COMPRESSION_LEVEL,
   },
   virtualFolder: {
     description: `Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual)`,
@@ -388,22 +397,36 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
   if (value === null && !definition.isNullable && definition.default !== null)
     throw new Error(`Non-nullable configuration settings "${path}" cannot be set to null`);
 
-  if (definition.type === SettingsType.BOOLEAN)
-    return parseBoolean(value);
+  if (definition.values?.includes(value))
+    return value;
 
-  if (typeof value !== `string`)
-    throw new Error(`Expected value to be a string`);
+  const interpretValue = () => {
+    if (definition.type === SettingsType.BOOLEAN)
+      return parseBoolean(value);
 
-  switch (definition.type) {
-    case SettingsType.ABSOLUTE_PATH:
-      return ppath.resolve(folder, npath.toPortablePath(value));
-    case SettingsType.LOCATOR_LOOSE:
-      return structUtils.parseLocator(value, false);
-    case SettingsType.LOCATOR:
-      return structUtils.parseLocator(value);
-    default:
-      return value;
-  }
+    if (typeof value !== `string`)
+      throw new Error(`Expected value to be a string`);
+
+    switch (definition.type) {
+      case SettingsType.ABSOLUTE_PATH:
+        return ppath.resolve(folder, npath.toPortablePath(value));
+      case SettingsType.LOCATOR_LOOSE:
+        return structUtils.parseLocator(value, false);
+      case SettingsType.NUMBER:
+        return parseInt(value);
+      case SettingsType.LOCATOR:
+        return structUtils.parseLocator(value);
+      default:
+        return value;
+    }
+  };
+
+  const interpreted = interpretValue();
+
+  if (definition.values && !definition.values.includes(interpreted))
+    throw new Error(`Invalid value, expected one of ${definition.values.join(`, `)}`);
+
+  return interpreted;
 }
 
 function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: PortablePath) {

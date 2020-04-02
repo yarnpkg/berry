@@ -45,8 +45,9 @@ export class TarballHttpFetcher implements Fetcher {
     });
 
     return await tgzUtils.convertToZip(sourceBuffer, {
-      stripComponents: 1,
+      compressionLevel: opts.project.configuration.get(`compressionLevel`),
       prefixPath: structUtils.getIdentVendorPath(locator),
+      stripComponents: 1,
     });
   }
 }

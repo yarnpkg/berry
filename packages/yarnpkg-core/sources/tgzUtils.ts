@@ -1,17 +1,18 @@
-import {Filename, FakeFS, PortablePath, ZipFS, NodeFS, ppath, xfs} from '@yarnpkg/fslib';
-import {getLibzipPromise}                                          from '@yarnpkg/libzip';
-import {Parse}                                                     from 'tar';
+import {Filename, FakeFS, PortablePath, ZipCompression, ZipFS, NodeFS, ppath, xfs} from '@yarnpkg/fslib';
+import {getLibzipPromise}                                                          from '@yarnpkg/libzip';
+import {Parse}                                                                     from 'tar';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>,
   prefixPath?: PortablePath | null,
+  compressionLevel?: ZipCompression,
 };
 
-export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
+export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root, compressionLevel}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
   const tmpFolder = await xfs.mktempPromise();
   const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
 
-  const zipFs = new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise()});
+  const zipFs = new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise(), level: compressionLevel});
   const target = ppath.resolve(PortablePath.root, prefixPath!);
 
   await zipFs.copyPromise(target, source, {baseFs});
@@ -20,6 +21,7 @@ export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = n
 }
 
 interface ExtractBufferOptions {
+  compressionLevel?: ZipCompression,
   prefixPath?: PortablePath,
   stripComponents?: number,
 };
