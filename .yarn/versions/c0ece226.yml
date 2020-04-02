@@ -1,5 +1,6 @@
 releases:
   "@yarnpkg/cli": prerelease
+  "@yarnpkg/core": prerelease
 
 declined:
   - "@yarnpkg/plugin-constraints"
@@ -16,5 +17,4 @@ declined:
   - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
-  - "@yarnpkg/core"
   - "@yarnpkg/doctor"
