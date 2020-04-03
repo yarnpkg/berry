@@ -373,4 +373,21 @@ describe(`Basic tests`, () => {
       },
     ),
   );
+
+  test(
+    `it should allow accessing a package via too many slashes`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`various-requires`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(source(`require('various-requires//self')`)).resolves.toMatchObject({
+          name: `various-requires`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
 });
