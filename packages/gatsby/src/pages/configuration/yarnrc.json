@@ -136,6 +136,11 @@
       "format": "uri",
       "default": "http://proxy:4040"
     },
+    "ignoreCwd": {
+      "description": "If true, the `--cwd` flag will be ignored.",
+      "type": "boolean",
+      "default": false
+    },
     "ignorePath": {
       "description": "If true, the local executable will be ignored when using the global one.",
       "type": "boolean",

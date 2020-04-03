@@ -20,6 +20,7 @@ function runBinary(path: PortablePath) {
       env: {
         ...process.env,
         YARN_IGNORE_PATH: `1`,
+        YARN_IGNORE_CWD: `1`,
       },
     });
   } else {
@@ -28,6 +29,7 @@ function runBinary(path: PortablePath) {
       env: {
         ...process.env,
         YARN_IGNORE_PATH: `1`,
+        YARN_IGNORE_CWD: `1`,
       },
     });
   }
@@ -60,6 +62,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
 
     const yarnPath: PortablePath = configuration.get(`yarnPath`);
     const ignorePath = configuration.get(`ignorePath`);
+    const ignoreCwd = configuration.get(`ignoreCwd`);
 
     if (yarnPath !== null && !ignorePath) {
       if (!xfs.existsSync(yarnPath)) {
@@ -85,7 +88,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       // @ts-ignore: The cwd is a global option defined by BaseCommand
       const cwd: string | undefined = command.cwd;
 
-      if (typeof cwd !== `undefined`) {
+      if (typeof cwd !== `undefined` && !ignoreCwd) {
         const iAmHere = realpathSync(process.cwd());
         const iShouldBeHere = realpathSync(cwd);
 

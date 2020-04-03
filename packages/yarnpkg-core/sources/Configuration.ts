@@ -175,6 +175,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: false,
   },
+  ignoreCwd: {
+    description: `If true, the \`--cwd\` flag will be ignored`,
+    type: SettingsType.BOOLEAN,
+    default: false,
+  },
 
   // Settings related to the package manager internal names
   globalFolder: {
