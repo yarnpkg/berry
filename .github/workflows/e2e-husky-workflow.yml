@@ -39,7 +39,7 @@ jobs:
 
         echo 'module.exports = {extends: ["@commitlint/config-conventional"]};' > commitlint.config.js
 
-        echo '{"hooks": {"commit-msg": "commitlint -E HUSKY_GIT_PARAMS"}}' > .huskyrc
+        echo '{"skipCI": false, "hooks": {"commit-msg": "commitlint -E HUSKY_GIT_PARAMS"}}' > .huskyrc
 
         git add .
         ! git commit -m "Invalid commit message should fail pre-commit check"
