@@ -69,6 +69,7 @@ export class PatchFetcher implements Fetcher {
       libzip,
       level: opts.project.configuration.get('compressionLevel'),
     });
+
     const patchFs = new CwdFS(prefixPath, {baseFs: patchedPackage});
 
     for (const patchFile of patchFiles) {
