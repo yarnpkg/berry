@@ -1,17 +1,25 @@
 set -ex
 
 THIS_DIR=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-TEMP_DIR="$(mktemp -d)"
+TEMP_DIR="/tmp/ts-repo"
 
 HASHES=(
-  "426f5a7" ">=3 <3.6"
-  "bcb6dbf" ">3.6"
+  # Patch   # Base    # Ranges
+  "426f5a7" "e39bdc3" ">=3.0 <3.6"
+  "bcb6dbf" "e39bdc3" ">=3.6 <3.9"
+  "4be321a" "d68295e" ">=3.9"
 )
 
-git clone git@github.com:arcanis/typescript "$TEMP_DIR"/clone
+mkdir -p "$TEMP_DIR"
+if ! [[ -d "$TEMP_DIR"/clone ]]; then (
+  git clone git@github.com:arcanis/typescript "$TEMP_DIR"/clone
+  git remote add upstream git@github.com:microsoft/typescript
+); fi
 
-mkdir -p "$TEMP_DIR"/orig
-mkdir -p "$TEMP_DIR"/patched
+cd "$TEMP_DIR"/clone
+
+git fetch origin
+git fetch upstream
 
 reset-git() {
   git checkout .
@@ -22,16 +30,23 @@ reset-git() {
 
 cd "$TEMP_DIR"/clone
 
-reset-git
-git checkout master
-
-yarn gulp local LKG
-cp -r lib "$TEMP_DIR"/orig/
-
 while [[ ${#HASHES[@]} -gt 0 ]]; do
   HASH="${HASHES[0]}"
-  RANGE="${HASHES[1]}"
-  HASHES=("${HASHES[@]:2}")
+  BASE="${HASHES[1]}"
+  RANGE="${HASHES[2]}"
+  HASHES=("${HASHES[@]:3}")
+
+  rm -rf "$TEMP_DIR"/orig
+  rm -rf "$TEMP_DIR"/patched
+
+  mkdir -p "$TEMP_DIR"/orig
+  mkdir -p "$TEMP_DIR"/patched
+
+  reset-git
+  git checkout "$BASE"
+
+  yarn gulp local LKG
+  cp -r lib "$TEMP_DIR"/orig/
 
   reset-git
   git checkout "$HASH"
@@ -47,7 +62,10 @@ while [[ ${#HASHES[@]} -gt 0 ]]; do
     | perl -p -e"s#$TEMP_DIR/orig##" \
     | perl -p -e"s#$TEMP_DIR/patched##" \
     | perl -p -e"s#__spreadArrays#[].concat#" \
-    >> "$TEMP_DIR"/patch.tmp || true
+    > "$THIS_DIR"/patch."${HASH}".diff || true
+
+  cat "$THIS_DIR"/patch."${HASH}".diff
+    >> "$TEMP_DIR"/patch.tmp
 done
 
 echo 'export const patch =' \
