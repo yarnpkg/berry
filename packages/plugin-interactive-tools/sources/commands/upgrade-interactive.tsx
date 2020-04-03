@@ -19,9 +19,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     category: `Interactive commands`,
     description: `open the upgrade interface`,
     details: `
-      > In order to use this command you will need to add \`@yarnpkg/plugin-interactive-tools\` to your plugins. Check the documentation for \`yarn plugin import\` for more details.
-
-      This command opens a fullscreen terminal interace where you can see the packages used by your application, their status compared to the latest versions available on the remote registry, and let you upgrade.
+      This command opens a fullscreen terminal interface where you can see the packages used by your application, their status compared to the latest versions available on the remote registry, and let you upgrade.
     `,
     examples: [[
       `Open the upgrade window`,
