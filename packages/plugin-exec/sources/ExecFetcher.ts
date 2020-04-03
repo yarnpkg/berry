@@ -1,9 +1,10 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions}                    from '@yarnpkg/core';
-import {Locator, MessageName}                                          from '@yarnpkg/core';
-import {execUtils, scriptUtils, structUtils, tgzUtils}                 from '@yarnpkg/core';
-import {Filename, NodeFS, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
+import {execUtils, scriptUtils, structUtils, tgzUtils}         from '@yarnpkg/core';
+import {Locator, MessageName}                                  from '@yarnpkg/core';
+import {Fetcher, FetchOptions, MinimalFetchOptions}            from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
 
-import {PROTOCOL}                                                      from './constants';
+import {PROTOCOL}                                              from './constants';
+import {getGeneratorPath}                                      from './execUtils';
 
 export class ExecFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -47,26 +48,7 @@ export class ExecFetcher implements Fetcher {
   }
 
   private async fetchFromDisk(locator: Locator, opts: FetchOptions) {
-    const {parentLocator, path} = structUtils.parseFileStyleRange(locator.reference, {protocol: PROTOCOL});
-
-    // If the file target is an absolute path we can directly access it via its
-    // location on the disk. Otherwise we must go through the package fs.
-    const parentFetch = ppath.isAbsolute(path)
-      ? {packageFs: new NodeFS(), prefixPath: PortablePath.root, localPath: PortablePath.root}
-      : await opts.fetcher.fetch(parentLocator, opts);
-
-    // If the package fs publicized its "original location" (for example like
-    // in the case of "file:" packages), we use it to derive the real location.
-    const effectiveParentFetch = parentFetch.localPath
-      ? {packageFs: new NodeFS(), prefixPath: parentFetch.localPath}
-      : parentFetch;
-
-    // Discard the parent fs unless we really need it to access the files
-    if (parentFetch !== effectiveParentFetch && parentFetch.releaseFs)
-      parentFetch.releaseFs();
-
-    const generatorFs = effectiveParentFetch.packageFs;
-    const generatorPath = ppath.resolve(ppath.resolve(generatorFs.getRealPath(), effectiveParentFetch.prefixPath), path);
+    const generatorPath = await getGeneratorPath(locator.reference, PROTOCOL, opts);
 
     return xfs.mktempPromise(async cwd => {
       // Execute the specified script in the temporary directory
