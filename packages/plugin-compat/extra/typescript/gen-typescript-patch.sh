@@ -28,7 +28,11 @@ reset-git() {
   yarn
 }
 
-cd "$TEMP_DIR"/clone
+PATCHFILE="$TEMP_DIR"/patch.tmp
+rm -f "$PATCHFILE" && touch "$PATCHFILE"
+
+JSPATCH="$THIS_DIR"/../../sources/patches/typescript.patch.ts
+rm -f "$JSPATCH" && touch "$JSPATCH"
 
 while [[ ${#HASHES[@]} -gt 0 ]]; do
   HASH="${HASHES[0]}"
@@ -54,24 +58,23 @@ while [[ ${#HASHES[@]} -gt 0 ]]; do
   yarn gulp local LKG
   cp -r lib/ "$TEMP_DIR"/patched/
 
-  PATCHFILE="$THIS_DIR"/../../sources/patches/typescript.patch.ts
-  rm -f "$PATCHFILE" && touch "$PATCHFILE"
+  DIFF="$THIS_DIR"/patch."${HASH}".diff
 
   git diff --no-index "$TEMP_DIR"/orig "$TEMP_DIR"/patched \
     | perl -p -e"s#^--- #semver exclusivity $RANGE\n--- #" \
     | perl -p -e"s#$TEMP_DIR/orig##" \
     | perl -p -e"s#$TEMP_DIR/patched##" \
     | perl -p -e"s#__spreadArrays#[].concat#" \
-    > "$THIS_DIR"/patch."${HASH}".diff || true
+    > "$DIFF"
 
-  cat "$THIS_DIR"/patch."${HASH}".diff
-    >> "$TEMP_DIR"/patch.tmp
+  cat "$DIFF" \
+    >> "$PATCHFILE"
 done
 
 echo 'export const patch =' \
-  >> "$PATCHFILE"
-node "$THIS_DIR"/../jsonEscape.js < "$TEMP_DIR"/patch.tmp \
-  >> "$PATCHFILE"
+  >> "$JSPATCH"
+node "$THIS_DIR"/../jsonEscape.js < "$PATCHFILE" \
+  >> "$JSPATCH"
 echo ';' \
-  >> "$PATCHFILE"
+  >> "$JSPATCH"
 
