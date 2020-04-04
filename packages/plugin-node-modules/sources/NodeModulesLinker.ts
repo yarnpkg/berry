@@ -337,7 +337,7 @@ const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean}): Pr
 const CONCURRENT_OPERATION_LIMIT = 4;
 
 type LocatorKey = string;
-type LocationNode = { children: Map<Filename, LocationNode>, locator?: LocatorKey, isExternal?: boolean };
+type LocationNode = { children: Map<Filename, LocationNode>, locator?: LocatorKey, isSoftLinkTarget?: boolean };
 type LocationRoot = PortablePath;
 
 /**
@@ -406,7 +406,7 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
     if (info.linkType === LinkType.SOFT) {
       const node = miscUtils.getFactoryWithDefault(locationTree, info.target, makeNode);
       node.locator = locator;
-      node.isExternal = true;
+      node.isSoftLinkTarget = true;
     }
 
     for (const location of info.locations) {
@@ -528,7 +528,7 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
 
   const getBinSymlinks = (location: PortablePath, parentLocatorLocation: PortablePath, node: LocationNode): Map<Filename, PortablePath> => {
     const symlinks = new Map();
-    if (node.locator && !node.isExternal) {
+    if (node.locator && !node.isSoftLinkTarget) {
       const binScripts = locatorScriptMap.get(node.locator)!;
       for (const [filename, scriptPath] of binScripts) {
         const symlinkTarget = ppath.join(location, npath.toPortablePath(scriptPath));
@@ -680,7 +680,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
             deleteList.add(curLocation);
             // If previous install had inner node_modules folder, we should explicitely list it for
             // `removeDir` to delete it, but we need to delete it first, so we add it to inner delete list
-            if (!node && prevNode && prevNode.children.has(NODE_MODULES))
+            if ((!node || !node.children.has(NODE_MODULES)) && prevNode && prevNode.children.has(NODE_MODULES))
               innerDeleteList.add(ppath.join(curLocation, NODE_MODULES));
             break;
           }
