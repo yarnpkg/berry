@@ -337,7 +337,7 @@ const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean}): Pr
 const CONCURRENT_OPERATION_LIMIT = 4;
 
 type LocatorKey = string;
-type LocationNode = { children: Map<Filename, LocationNode>, locator?: LocatorKey };
+type LocationNode = { children: Map<Filename, LocationNode>, locator?: LocatorKey, isExternal?: boolean };
 type LocationRoot = PortablePath;
 
 /**
@@ -406,6 +406,7 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
     if (info.linkType === LinkType.SOFT) {
       const node = miscUtils.getFactoryWithDefault(locationTree, info.target, makeNode);
       node.locator = locator;
+      node.isExternal = true;
     }
 
     for (const location of info.locations) {
@@ -509,7 +510,7 @@ function refineNodeModulesRoots(locationTree: LocationTree, binSymlinks: BinSyml
 
 async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, {loadManifest}: {loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
   const locatorScriptMap = new Map<LocatorKey, Map<string, string>>();
-  for (const [locatorKey, {locations}] of installState) {
+  for (const [locatorKey, {locations, linkType}] of installState) {
     const manifest = await loadManifest(locations[0]);
 
     const bin = new Map();
@@ -527,7 +528,7 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
 
   const getBinSymlinks = (location: PortablePath, parentLocatorLocation: PortablePath, node: LocationNode): Map<Filename, PortablePath> => {
     const symlinks = new Map();
-    if (node.locator) {
+    if (node.locator && !node.isExternal) {
       const binScripts = locatorScriptMap.get(node.locator)!;
       for (const [filename, scriptPath] of binScripts) {
         const symlinkTarget = ppath.join(location, npath.toPortablePath(scriptPath));
