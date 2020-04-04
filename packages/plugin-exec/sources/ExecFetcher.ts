@@ -68,6 +68,7 @@ export class ExecFetcher implements Fetcher {
   private async generatePackage(cwd: PortablePath, locator: Locator, generatorPath: PortablePath, opts: FetchOptions) {
     return await xfs.mktempPromise(async binFolder => {
       const env = await scriptUtils.makeScriptEnv({project: opts.project, binFolder});
+      const envFile = ppath.join(binFolder, `environment.js` as Filename);
 
       return await xfs.mktempPromise(async logDir => {
         const logFile = ppath.join(logDir, `buildfile.log` as Filename);
@@ -75,6 +76,38 @@ export class ExecFetcher implements Fetcher {
         const stdin = null;
         const stdout = xfs.createWriteStream(logFile);
         const stderr = stdout;
+
+        /**
+         * Values exposed on the global `execEnv` variable.
+         *
+         * Must be stringifiable using `JSON.stringify`.
+         */
+        const execEnvValues = {
+          tempDir: npath.fromPortablePath(cwd),
+          locator,
+          generatorPath: npath.fromPortablePath(generatorPath),
+          logDir: npath.fromPortablePath(logDir),
+          logFile: npath.fromPortablePath(logFile),
+        };
+        /**
+         * Getters exposed on the global `execEnv` variable.
+         */
+        const execEnvGetters = [
+          `get logs() { return fs.readFileSync(this.logFile, 'utf8'); }`,
+        ];
+
+        await xfs.writeFilePromise(envFile, `
+          const fs = require('fs');
+
+          Object.defineProperty(global, 'execEnv', {
+            value: {
+              ...${JSON.stringify(execEnvValues)},
+              ${execEnvGetters.join()},
+            },
+            enumerable: true,
+          });
+        `);
+        env.NODE_OPTIONS += ` --require ${npath.fromPortablePath(envFile)}`;
 
         stdout.write(`# This file contains the result of Yarn generating a package (${structUtils.stringifyLocator(locator)})\n`);
         stdout.write(`\n`);
