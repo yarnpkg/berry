@@ -18,7 +18,6 @@ const NODE_MODULES = `node_modules` as Filename;
 const DOT_BIN = `.bin` as Filename;
 const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
 
-type LocationMap = Map<PortablePath, Locator>;
 type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap};
 type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
 
@@ -268,7 +267,8 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
 
     const recordSymlinks = installRecord.bin;
     if (recordSymlinks) {
-      for (const [location, locationSymlinks] of Object.entries(recordSymlinks)) {
+      for (const [relativeLocation, locationSymlinks] of Object.entries(recordSymlinks)) {
+        const location = ppath.join(rootPath, npath.toPortablePath(relativeLocation));
         const symlinks = miscUtils.getMapWithDefault(binSymlinks, location);
         for (const [name, target] of Object.entries(locationSymlinks as any)) {
           symlinks.set(toFilename(name), npath.toPortablePath([location, NODE_MODULES, target].join(ppath.delimiter)));
@@ -513,9 +513,12 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
     const manifest = await loadManifest(locations[0]);
 
     const bin = new Map();
-    for (const [name, value] of manifest.bin)
-      if (value !== '')
+    for (const [name, value] of manifest.bin) {
+      const target = ppath.join(locations[0], value);
+      if (value !== '' && xfs.existsSync(target)) {
         bin.set(name, value);
+      }
+    }
 
     locatorScriptMap.set(locatorKey, bin);
   }
@@ -534,7 +537,7 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
         const absChildLocation = ppath.join(location, childLocation);
         const childSymlinks = getBinSymlinks(absChildLocation, absChildLocation, childNode);
         if (childSymlinks.size > 0) {
-          binSymlinks.set(location, childSymlinks);
+          binSymlinks.set(location, new Map([...(binSymlinks.get(location) || new Map()), ...childSymlinks]));
         }
       }
     } else {
@@ -551,7 +554,7 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
   for (const [location, node] of locationTree) {
     const symlinks = getBinSymlinks(location, location, node);
     if (symlinks.size > 0) {
-      binSymlinks.set(location, symlinks);
+      binSymlinks.set(location, new Map([...(binSymlinks.get(location) || new Map()), ...symlinks]));
     }
   }
 

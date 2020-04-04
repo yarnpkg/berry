@@ -1,5 +1,5 @@
-import {npath} from '@yarnpkg/fslib';
-import {fs}    from 'pkg-tests-core';
+import {xfs, npath} from '@yarnpkg/fslib';
+import {fs}         from 'pkg-tests-core';
 
 const {writeFile, writeJson} = fs;
 
@@ -91,6 +91,28 @@ describe('Node_Modules', () => {
         });
 
         await expect(run(`install`)).resolves.toBeTruthy();
+      },
+    ),
+  );
+
+  test(`should not fail if target bin link does not exist`,
+    makeTemporaryEnv(
+      {
+        name: 'pkg',
+        bin: `dist/bin/index.js`,
+      },
+      async ({path, run, source}) => {
+        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
+          nodeLinker: "node-modules"
+        `);
+
+        await expect(run(`install`)).resolves.toBeTruthy();
+        await expect(xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/.bin/pkg`))).rejects.toThrow();
+
+        await writeFile(npath.toPortablePath(`${path}/dist/bin/index.js`), '');
+
+        await expect(run(`install`)).resolves.toBeTruthy();
+        await expect(xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/.bin/pkg`))).resolves.toBeDefined();
       },
     ),
   );
