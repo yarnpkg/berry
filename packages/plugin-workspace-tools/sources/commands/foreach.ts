@@ -173,6 +173,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
         if (!this.parallel && this.verbose && commandIndex > 1)
           report.reportSeparator();
 
+        report.reportInfo(MessageName.UNNAMED, `> ${workspace.computeCandidateName()}`);
         const prefix = getPrefix(workspace, {configuration, verbose: this.verbose, commandIndex});
 
         const [stdout, stdoutEnd] = createStream(report, {prefix, interlaced});
