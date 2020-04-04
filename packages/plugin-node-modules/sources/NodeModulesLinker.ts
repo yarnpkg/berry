@@ -510,7 +510,7 @@ function refineNodeModulesRoots(locationTree: LocationTree, binSymlinks: BinSyml
 
 async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, {loadManifest}: {loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
   const locatorScriptMap = new Map<LocatorKey, Map<string, string>>();
-  for (const [locatorKey, {locations, linkType}] of installState) {
+  for (const [locatorKey, {locations}] of installState) {
     const manifest = await loadManifest(locations[0]);
 
     const bin = new Map();
