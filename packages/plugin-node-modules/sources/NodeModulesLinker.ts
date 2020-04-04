@@ -310,7 +310,7 @@ const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean}): Pr
   try {
     if (!options || !options.innerLoop) {
       const stats = await xfs.lstatPromise(dir);
-      if (!stats.isDirectory()) {
+      if (stats.isSymbolicLink()) {
         await xfs.unlinkPromise(dir);
         return;
       }
@@ -675,11 +675,11 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
           if (prevNode)
             prevNode = prevNode.children.get(segment);
 
-          if (!node) {
+          if (!node || (prevNode && prevNode.locator !== node.locator)) {
             deleteList.add(curLocation);
             // If previous install had inner node_modules folder, we should explicitely list it for
             // `removeDir` to delete it, but we need to delete it first, so we add it to inner delete list
-            if (prevNode && prevNode.children.has(NODE_MODULES))
+            if (!node && prevNode && prevNode.children.has(NODE_MODULES))
               innerDeleteList.add(ppath.join(curLocation, NODE_MODULES));
             break;
           }
@@ -774,6 +774,8 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   try {
     const persistedLocations = new Map<PortablePath, PortablePath>();
 
+    await Promise.all(deleteQueue);
+
     // For the first pass we'll only want to install a single copy for each
     // source directory. We'll later use the resulting install directories for
     // the other instances of the same package (this will avoid us having to
@@ -785,7 +787,6 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       }
     }
 
-    await Promise.all(deleteQueue);
     await Promise.all(addQueue);
     addQueue.length = 0;
 
