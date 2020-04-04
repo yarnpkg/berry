@@ -337,7 +337,7 @@ const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean}): Pr
 const CONCURRENT_OPERATION_LIMIT = 4;
 
 type LocatorKey = string;
-type LocationNode = { children: Map<Filename, LocationNode>, locator?: LocatorKey, isSoftLinkTarget?: boolean };
+type LocationNode = { children: Map<Filename, LocationNode>, locator?: LocatorKey };
 type LocationRoot = PortablePath;
 
 /**
@@ -406,7 +406,6 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
     if (info.linkType === LinkType.SOFT) {
       const node = miscUtils.getFactoryWithDefault(locationTree, info.target, makeNode);
       node.locator = locator;
-      node.isSoftLinkTarget = true;
     }
 
     for (const location of info.locations) {
@@ -508,7 +507,7 @@ function refineNodeModulesRoots(locationTree: LocationTree, binSymlinks: BinSyml
   return {locationTree: refinedLocationTree, binSymlinks: refinedBinSymlinks};
 };
 
-async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, {loadManifest}: {loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
+async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, projectRoot: PortablePath, {loadManifest}: {loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
   const locatorScriptMap = new Map<LocatorKey, Map<string, string>>();
   for (const [locatorKey, {locations}] of installState) {
     const manifest = await loadManifest(locations[0]);
@@ -528,7 +527,8 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
 
   const getBinSymlinks = (location: PortablePath, parentLocatorLocation: PortablePath, node: LocationNode): Map<Filename, PortablePath> => {
     const symlinks = new Map();
-    if (node.locator && !node.isSoftLinkTarget) {
+    const internalPath = ppath.contains(projectRoot, location);
+    if (node.locator && internalPath !== null) {
       const binScripts = locatorScriptMap.get(node.locator)!;
       for (const [filename, scriptPath] of binScripts) {
         const symlinkTarget = ppath.join(location, npath.toPortablePath(scriptPath));
@@ -803,7 +803,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
     await xfs.mkdirpPromise(rootNmDirPath);
 
-    const binSymlinks = await createBinSymlinkMap(installState, locationTree, {loadManifest});
+    const binSymlinks = await createBinSymlinkMap(installState, locationTree, project.cwd, {loadManifest});
     await persistBinSymlinks(prevBinSymlinks, binSymlinks);
 
     await writeInstallState(project, installState, binSymlinks);
