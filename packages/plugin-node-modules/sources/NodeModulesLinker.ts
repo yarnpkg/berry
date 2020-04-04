@@ -828,7 +828,10 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
     for (const name of prevSymlinks.keys()) {
       if (!symlinks.has(name)) {
         // Remove outdated symlinks
-        await xfs.removePromise(ppath.join(binDir, name));
+        await xfs.unlinkPromise(ppath.join(binDir, name));
+        if (process.platform === 'win32') {
+          await xfs.unlinkPromise(ppath.join(binDir, toFilename(`${name}.cmd`)));
+        }
       }
     }
 
@@ -842,7 +845,7 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
       if (process.platform === 'win32') {
         await cmdShim(npath.fromPortablePath(target), npath.fromPortablePath(symlinkPath), {createPwshFile: false});
       } else {
-        await xfs.removePromise(symlinkPath);
+        await xfs.unlinkPromise(symlinkPath);
         await symlinkPromise(target, symlinkPath);
       }
     }
