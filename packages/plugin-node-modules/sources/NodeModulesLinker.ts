@@ -403,7 +403,8 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
   });
 
   for (const [locator, info] of locatorMap.entries()) {
-    if (info.linkType === LinkType.SOFT) {
+    const isPortal = locator.substring(locator.indexOf('@', 1) + 1).split('#').slice(-1)[0].startsWith('portal:');
+    if (info.linkType === LinkType.SOFT && !isPortal) {
       const node = miscUtils.getFactoryWithDefault(locationTree, info.target, makeNode);
       node.locator = locator;
     }
