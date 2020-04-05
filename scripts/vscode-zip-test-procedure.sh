@@ -1,3 +1,16 @@
+die() {
+  echo "${1}"
+  exit 1
+}
+
+if [ $# -lt 2 ]; then die "Path to VSCode and Yarn2 sources required"; fi
+
+echo "$#"
+
+CURRENTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+VSCODE_DIR=$(realpath "${1}")
+YARN2_DIR=$(realpath "${2}")
+
 STEP_ID=0
 step() {
   STEP_ID=$(($STEP_ID + 1))
@@ -5,19 +18,29 @@ step() {
   read
 }
 
+
 VSCODE_PID=
 open_vscode() {
+  set -x
   if [[ "$VSCODE_PID" != "" ]]; then
     kill -9 "$VSCODE_PID" >& /dev/null || true
     wait "$VSCODE_PID" >& /dev/null || true
   fi
-  step "VSCode will open when you press enter"
-  "$VSCODE_DIR"/scripts/code.sh "$1" >& /dev/null &
+  if [ $# -gt 1 ]; then
+    step "VSCode will open when you press enter (with zipfs extension)"
+    "$VSCODE_DIR"/scripts/code.sh "$1" --install-extension "${CURRENTDIR}/../packages/vscode-zipfs/vscode-zipfs-0.1.1-3.vsix" >& /dev/null &
+  else
+    step "VSCode will open when you press enter"
+    "$VSCODE_DIR"/scripts/code.sh "$1" >& /dev/null &
+  fi
   VSCODE_PID=$!
+  set +x
 }
 
 setup() {
+  set -x
   PM="$1"
+  if [ "${PM}" = "yarn" ]; then yarn set version berry; fi
   shift
 
   echo
@@ -40,6 +63,7 @@ EOF
 import slugify from "@sindresorhus/slugify";
 const x: number = slugify("foobar");
 EOF
+  set +x
 }
 
 echo "This script will execute everything automatically; just follow the step"
@@ -48,35 +72,44 @@ echo "just press ctrl-c in this terminal."
 
 ## Tests regarding the feature itself
 
-setup npm init -y
-open_vscode "$(pwd)"
+#setup npm init -y
+#echo "If this is first time, VSCode will take some time to build..."
+#open_vscode "$(pwd)"
+#
+#step "Open index.ts, check that 'x' has an error"
+#step "Remove the ': number', the error should disappear"
+#step "Command-click on '@sindresorhus/slugify' from 'import slugify', you should see a file open"
 
-step "Open index.ts, check that 'x' has an error"
-step "Remove the ': number', the error should disappear"
-step "Command-click on '@sindresorhus/slugify' from 'import slugify', you should see a file open"
+#setup npm init -y
+#npm install typescript@2.9 >& /dev/null
+#open_vscode "$(pwd)"
+#
+#step "Press Command+Shift+P, 'Select TypeScript version', 'Use workspace version'"
+#step "Check that 'Typescript 2.9' appears in the bottom-right of the window"
+#step "Check that 'x' has an error"
+#step "Remove the ': number', the error should disappear"
+#step "Command-click on '@sindresorhus/slugify', a tab should open on '.../slugify/index.d.ts'"
+#step "Going back to the previous file, command-click on 'slugify' from 'import slugify', you should see a bubble open"
+#step "Check that clicking on both 'namespace slugify {' and 'function slugify {' print more details in the bubble"
+#step "Check that double-clicking on both 'namespace slugify {' and 'function slugify {' leads you to the right symbols"
 
-setup npm init -y
-npm install typescript@2.9 >& /dev/null
-open_vscode "$(pwd)"
-
-step "Press Command+Shift+P, 'Select TypeScript version', 'Use workspace version'"
-step "Check that 'Typescript 2.9' appears in the bottom-right of the window"
-step "Check that 'x' has an error"
-step "Remove the ': number', the error should disappear"
-step "Command-click on '@sindresorhus/slugify', a tab should open on '.../slugify/index.d.ts'"
-step "Going back to the previous file, command-click on 'slugify' from 'import slugify', you should see a bubble open"
-step "Check that clicking on both 'namespace slugify {' and 'function slugify {' print more details in the bubble"
-step "Check that double-clicking on both 'namespace slugify {' and 'function slugify {' leads you to the right symbols"
-
-setup yarn init -2y
-open_vscode "$(pwd)"
-
-step "Open index.ts, check that '@sindresorhus/slugify' has an error (cannot find module)"
+#setup yarn init -2y
+#open_vscode "$(pwd)"
+#
+##step "Open index.ts, check that '@sindresorhus/slugify' has an error (cannot find module)"
+#step "Open index.ts, check that 'x' has an error"
+#step "Check that 'Typescript 3.8.3' (or some other recent version) appears in the bottom-right of the window"
+#step "Remove the ': number', the error should disappear"
+#step "Command-click on '@sindresorhus/slugify', a tab should open on '.../slugify/index.d.ts'"
+#step "Going back to the previous file, command-click on 'slugify' from 'import slugify', you should see a bubble open"
+#step "Check that clicking on both 'namespace slugify {' and 'function slugify {' print more details in the bubble"
+#step "Check that double-clicking on both 'namespace slugify {' and 'function slugify {' leads you to the right symbols"
 
 setup yarn init -2y
 yarn add typescript@3.8 >& /dev/null
-yarn dlx @yarnpkg/pnpify --sdk >& /dev/null
-open_vscode "$(pwd)"
+# yarn dlx @yarnpkg/pnpify --sdk >& /dev/null
+yarn node "${YARN2_DIR}/packages/yarnpkg-pnpify/sources/boot-cli-dev.js" --sdk
+open_vscode "$(pwd)" 1
 
 step "Open index.ts"
 step "Press Command+Shift+P, 'Select TypeScript version', 'Use workspace version'"

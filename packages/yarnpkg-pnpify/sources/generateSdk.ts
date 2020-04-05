@@ -8,9 +8,10 @@ import {dynamicRequire}                            from './dynamicRequire';
 type TemplateOptions = {
   setupEnv?: boolean,
   usePnpify?: boolean,
+  wrapModule?: string,
 };
 
-const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false, usePnpify = false}: TemplateOptions) => [
+const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false, usePnpify = false, wrapModule}: TemplateOptions) => [
   `#!/usr/bin/env node\n`,
   `\n`,
   `const {existsSync} = require(\`fs\`);\n`,
@@ -22,6 +23,10 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   `const absPnpApiPath = resolve(__dirname, relPnpApiPath);\n`,
   `const absRequire = (createRequire || createRequireFromPath)(absPnpApiPath);\n`,
   `\n`,
+  ...(wrapModule ? [
+    `const moduleWrapper = ${wrapModule}`,
+    `\n`,
+  ] : []),
   `if (existsSync(absPnpApiPath)) {\n`,
   `  // Setup the environment to be able to require ${module}\n`,
   `  require(absPnpApiPath).setup();\n`,
@@ -42,7 +47,7 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   `}\n`,
   `\n`,
   `// Defer to the real ${module} your application uses\n`,
-  `module.exports = absRequire(\`${module}\`);\n`,
+  wrapModule ? `module.exports = moduleWrapper(absRequire(\`${module}\`));\n` : `module.exports = absRequire(\`${module}\`);\n`,
 ].join(``);
 
 const addVSCodeWorkspaceSettings = async (pnpApi: PnpApi, settings: any) => {
@@ -178,6 +183,62 @@ export const generateTypescriptLanguageServerWrapper = async (pnpApi: PnpApi, ta
 };
 
 const generateTypescriptWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+
+  const tsServerMonkeyPatch = `function(tsserverOrLib) {
+    const Session = tsserverOrLib.server.Session;
+    const {onMessage: originalOnMessage, send: originalSend} = Session.prototype;
+    Object.assign(Session.prototype, {
+        onMessage(/** @type {string} */message) {
+            let processed = message;
+            try {
+                const parsed = JSON.parse(message);
+                // process the message
+                processed = JSON.stringify(parsed, (key, value) => {
+                    if(typeof value === 'string') {
+                        // strip the zip:// prefix from paths
+                        return removeZipPrefix(value);
+                    }
+                    return value;
+                });
+            } catch(e) {
+                // we failed to parse and process the message
+                // pass it verbatim
+                throw e;
+            }
+            return originalOnMessage.call(this, processed);
+            // return originalOnMessage.call(this, message);
+        },
+        /** msg is an object that will be formatted / stringified */
+        send(msg) {
+            let processed = msg;
+            try {
+                // transform it
+                processed = JSON.parse(JSON.stringify(msg, (key, value) => {
+                    if(typeof value === 'string') {
+                        return addZipPrefix(value);
+                    }
+                    return value;
+                }));
+            } catch(e) {
+                // we failed to process; pass it verbatim
+                throw e;
+            }
+            return originalSend.call(this, processed);
+            // return originalSend.call(this, msg);
+        }
+    });
+
+    function addZipPrefix(str) {
+        if(str.match(/\.zip\\//) && !str.match(/^zip:\\/\\//)) {
+            return \`zip://\${str}\`;
+        }
+        return str;
+    }
+    function removeZipPrefix(str) {
+        return str.replace(/^zip:\\/\\//, '');
+    }
+  }`
+
   const wrapper = new Wrapper(`typescript` as PortablePath, {pnpApi, target});
 
   await wrapper.writeManifest();
@@ -186,7 +247,7 @@ const generateTypescriptWrapper = async (pnpApi: PnpApi, target: PortablePath) =
   await wrapper.writeBinary(`bin/tsserver` as PortablePath);
 
   await wrapper.writeFile(`lib/tsc.js` as PortablePath);
-  await wrapper.writeFile(`lib/tsserver.js` as PortablePath);
+  await wrapper.writeFile(`lib/tsserver.js` as PortablePath, {wrapModule: tsServerMonkeyPatch});
   await wrapper.writeFile(`lib/typescript.js` as PortablePath);
 
   await addVSCodeWorkspaceSettings(pnpApi, {
