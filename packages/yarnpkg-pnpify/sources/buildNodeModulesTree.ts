@@ -165,7 +165,7 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
 
     parent.dependencies.add(node);
 
-    if (!isSeen) {
+    if (!isSeen && !locator.reference.startsWith('portal:')) {
       for (const [name, referencish] of pkg.packageDependencies) {
         if (referencish !== null && !node.peerNames.has(name)) {
           const depLocator = pnp.getLocator(name, referencish);
