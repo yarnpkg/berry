@@ -1,10 +1,40 @@
-import {execUtils, scriptUtils, structUtils, tgzUtils}         from '@yarnpkg/core';
-import {Locator, MessageName}                                  from '@yarnpkg/core';
-import {Fetcher, FetchOptions, MinimalFetchOptions}            from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
+import {execUtils, scriptUtils, structUtils, tgzUtils}                     from '@yarnpkg/core';
+import {Locator, MessageName}                                              from '@yarnpkg/core';
+import {Fetcher, FetchOptions, MinimalFetchOptions}                        from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, toFilename, xfs, NativePath} from '@yarnpkg/fslib';
 
-import {PROTOCOL}                                              from './constants';
-import {getGeneratorPath}                                      from './execUtils';
+import {PROTOCOL}                                                          from './constants';
+import {getGeneratorPath}                                                  from './execUtils';
+
+/**
+ * Contains various useful details about the execution context.
+ */
+export interface ExecEnv {
+  /**
+   * The absolute path of the temporary directory where the script runs. Equal to `process.cwd()`.
+   */
+  tempDir: NativePath;
+  /**
+   * The Locator identifying the generator package.
+   */
+  locator: Locator;
+  /**
+   * The absolute path of the generator file. Equal to `process.argv[1]`.
+   */
+  generatorPath: NativePath;
+  /**
+   * The absolute path of the build log directory.
+   */
+  logDir: NativePath;
+  /**
+   * The absolute path of the build log.
+   */
+  logFile: NativePath;
+  /**
+   * The content of the build log. It's a `getter`, so the value is dynamic.
+   */
+  logs: string;
+}
 
 export class ExecFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -82,7 +112,7 @@ export class ExecFetcher implements Fetcher {
          *
          * Must be stringifiable using `JSON.stringify`.
          */
-        const execEnvValues = {
+        const execEnvValues: Partial<ExecEnv> = {
           tempDir: npath.fromPortablePath(cwd),
           locator,
           generatorPath: npath.fromPortablePath(generatorPath),
@@ -107,7 +137,10 @@ export class ExecFetcher implements Fetcher {
             enumerable: true,
           });
         `);
-        env.NODE_OPTIONS += ` --require ${npath.fromPortablePath(envFile)}`;
+        const envRequire = `--require ${npath.fromPortablePath(envFile)}`;
+        let NODE_OPTIONS = env.NODE_OPTIONS || ``;
+        NODE_OPTIONS = NODE_OPTIONS ? `${NODE_OPTIONS} ${envRequire}` : envRequire;
+        env.NODE_OPTIONS = NODE_OPTIONS;
 
         stdout.write(`# This file contains the result of Yarn generating a package (${structUtils.stringifyLocator(locator)})\n`);
         stdout.write(`\n`);

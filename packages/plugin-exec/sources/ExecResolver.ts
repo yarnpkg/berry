@@ -2,7 +2,6 @@ import {Resolver, ResolveOptions, MinimalResolveOptions}        from '@yarnpkg/c
 import {Descriptor, Locator, Manifest, DescriptorHash, Package} from '@yarnpkg/core';
 import {LinkType}                                               from '@yarnpkg/core';
 import {miscUtils, structUtils, hashUtils}                      from '@yarnpkg/core';
-import {npath}                                                  from '@yarnpkg/fslib';
 
 import {PROTOCOL}                                               from './constants';
 import * as execUtils                                           from './execUtils';
