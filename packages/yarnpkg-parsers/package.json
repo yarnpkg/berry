@@ -3,11 +3,9 @@
   "version": "2.0.0-rc.10",
   "main": "./sources/index.ts",
   "dependencies": {
-    "glob": "^7.1.6",
     "js-yaml": "^3.10.0"
   },
   "devDependencies": {
-    "@types/glob": "7.1.1",
     "pegjs": "^0.10.0"
   },
   "scripts": {

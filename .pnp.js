@@ -6169,8 +6169,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/yarnpkg-parsers/",
           "packageDependencies": [
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
-            ["@types/glob", "npm:7.1.1"],
-            ["glob", "npm:7.1.6"],
             ["js-yaml", "npm:3.12.2"],
             ["pegjs", "npm:0.10.0"]
           ],
@@ -7184,6 +7182,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["cross-spawn", "npm:6.0.5"],
+            ["fast-glob", "npm:3.2.2"],
             ["stream-buffers", "npm:3.0.2"]
           ],
           "linkType": "SOFT",
@@ -13586,6 +13585,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["glob-parent", "npm:5.1.0"],
             ["merge2", "npm:1.3.0"],
             ["micromatch", "npm:4.0.2"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:3.2.2", {
+          "packageLocation": "./.yarn/cache/fast-glob-npm-3.2.2-5f42de738e-2.zip/node_modules/fast-glob/",
+          "packageDependencies": [
+            ["fast-glob", "npm:3.2.2"],
+            ["@nodelib/fs.stat", "npm:2.0.3"],
+            ["@nodelib/fs.walk", "npm:1.2.4"],
+            ["glob-parent", "npm:5.1.0"],
+            ["merge2", "npm:1.3.0"],
+            ["micromatch", "npm:4.0.2"],
+            ["picomatch", "npm:2.2.2"]
           ],
           "linkType": "HARD",
         }]
@@ -22747,6 +22759,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/picomatch-npm-2.0.5-1957a3e5a3-2.zip/node_modules/picomatch/",
           "packageDependencies": [
             ["picomatch", "npm:2.0.5"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:2.2.2", {
+          "packageLocation": "./.yarn/cache/picomatch-npm-2.2.2-1ce736a913-2.zip/node_modules/picomatch/",
+          "packageDependencies": [
+            ["picomatch", "npm:2.2.2"]
           ],
           "linkType": "HARD",
         }]

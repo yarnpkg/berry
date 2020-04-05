@@ -193,7 +193,7 @@ function peg$parse(input, options) {
       peg$c49 = function(text) { return { type: `text`, text } },
       peg$c50 = function(shell) { return { type: `shell`, shell, quoted: false } },
       peg$c51 = function(variable) { return { type: `variable`, ...variable, quoted: false } },
-      peg$c52 = function(glob) { return { type: `glob`, ...glob } },
+      peg$c52 = function(pattern) { return { type: `glob`, pattern } },
       peg$c53 = "\\",
       peg$c54 = peg$literalExpectation("\\", false),
       peg$c55 = peg$anyExpectation(),
@@ -219,8 +219,8 @@ function peg$parse(input, options) {
       peg$c75 = function(name) { return { name } },
       peg$c76 = "$",
       peg$c77 = peg$literalExpectation("$", false),
-      peg$c78 = function(pattern) { return globlib.hasMagic(pattern) },
-      peg$c79 = function(pattern) { return { pattern, matches: globlib.sync(pattern) } },
+      peg$c78 = function(pattern) { return options.isGlobPattern(pattern) },
+      peg$c79 = function(pattern) { return pattern },
       peg$c80 = /^[a-zA-Z0-9_]/,
       peg$c81 = peg$classExpectation([["a", "z"], ["A", "Z"], ["0", "9"], "_"], false, false),
       peg$c82 = function() { return text() },
@@ -2175,10 +2175,6 @@ function peg$parse(input, options) {
 
     return s0;
   }
-
-
-    const globlib = require(`glob`);
-
 
   peg$result = peg$startRuleFunction();
 
