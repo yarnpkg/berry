@@ -6169,6 +6169,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/yarnpkg-parsers/",
           "packageDependencies": [
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
+            ["@types/glob", "npm:7.1.1"],
+            ["glob", "npm:7.1.6"],
             ["js-yaml", "npm:3.12.2"],
             ["pegjs", "npm:0.10.0"]
           ],

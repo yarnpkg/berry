@@ -268,6 +268,15 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
               push(segment.text);
             } break;
 
+            case `glob`: {
+              if (!segment.matches.length)
+                throw new Error(`No file matches found: "${segment.pattern}". Note: Glob patterns currently only support files (Help Wanted)`);
+
+              for (const match of segment.matches) {
+                pushAndClose(match);
+              }
+            } break;
+
             case `shell`: {
               const raw = await executeBufferedSubshell(segment.shell, opts, state);
               if (segment.quoted) {

@@ -1,3 +1,7 @@
+{
+  const globlib = require(`glob`);
+}
+
 Start
   = line:ShellLine? { return line ? line : [] }
 
@@ -74,6 +78,7 @@ DblQuoteStringSegment
 PlainStringSegment
   = shell:Subshell { return { type: `shell`, shell, quoted: false } }
   / variable:Variable { return { type: `variable`, ...variable, quoted: false } }
+  / glob:Glob { return { type: `glob`, ...glob } }
   / text:PlainStringText { return { type: `text`, text } }
 
 SglQuoteStringText
@@ -94,6 +99,12 @@ Variable
   / '${' name:Identifier '}' { return { name } }
   / '$' name:Identifier { return { name } }
 
+Glob
+  = pattern:GlobText & { return globlib.hasMagic(pattern) } { return { pattern, matches: globlib.sync(pattern) } }
+
+GlobText
+  = chars:(!GlobSpecialShellChars c:. { return c })+ { return chars.join(``) }
+
 EnvVariable
   = [a-zA-Z0-9_]+ { return text() }
 
@@ -102,5 +113,8 @@ Identifier
 
 SpecialShellChars
   = [(){}<>$|&; \t"']
+
+GlobSpecialShellChars
+  = [<>&; \t"']
 
 S = [ \t]+
