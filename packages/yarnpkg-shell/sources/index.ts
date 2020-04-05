@@ -670,7 +670,7 @@ export async function execute(command: string, args: Array<string> = [], {
     (stdin as PassThrough).end();
   }
 
-  const ast = parseShell(command, {isGlobPattern: glob.isGlobPattern});
+  const ast = parseShell(command, glob);
 
   // If the shell line doesn't use the args, inject it at the end of the
   // right-most command
