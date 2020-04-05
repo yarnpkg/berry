@@ -16,6 +16,7 @@ process.exitCode = await execute(`ls "$1" | wc -l`, [process.cwd()]);
 - Portable across systems
 - Supports custom JS builtins
 - Supports pipes
+- Supports glob patterns (**only** for files: `ls *.txt`)
 - Supports logical operators
 - Supports subshells
 - Supports variables
@@ -26,7 +27,7 @@ process.exitCode = await execute(`ls "$1" | wc -l`, [process.cwd()]);
 
 ## Help Wanted
 
-- Glob support (`ls *.txt`)
+- Full glob support (`echo {foo,bar}`, `FOO=a,b echo {$FOO,x}`)
 - More string manipulators
 
 ## Non-Goals
