@@ -26,5 +26,42 @@ describe(`Protocols`, () => {
         await expect(source(`require('dynamic-pkg')`)).resolves.toEqual(42);
       }),
     );
+
+    test(
+      `it should correctly inject the \`execEnv\` global variable`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`dynamic-pkg`]: `exec:./genpkg.js`,
+        },
+      }, async ({path, run, source}) => {
+        await xfs.writeFilePromise(`${path}/.yarnrc.yml`, stringifySyml({
+          plugins: [require.resolve(`@yarnpkg/monorepo/scripts/plugin-exec.js`)],
+        }));
+
+        await xfs.writeFilePromise(`${path}/genpkg.js`, `
+          const fs = require('fs');
+          fs.mkdirSync('build');
+          fs.writeFileSync('build/index.js', \`module.exports = \${JSON.stringify(execEnv)};\`);
+          fs.writeFileSync('build/package.json', '{}');
+        `);
+
+        await run(`install`);
+
+        await expect(source(`require('dynamic-pkg')`)).resolves.toMatchObject({
+          tempDir: expect.any(String),
+          locator: expect.objectContaining({
+            identHash: expect.any(String),
+            locatorHash: expect.any(String),
+            name: expect.any(String),
+            reference: expect.any(String),
+            // `scope` can be `string` or `null`
+          }),
+          generatorPath: expect.any(String),
+          logDir: expect.any(String),
+          logFile: expect.any(String),
+          logs: expect.any(String),
+        });
+      }),
+    );
   });
 });
