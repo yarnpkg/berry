@@ -53,7 +53,7 @@ export default class ConfigSetCommand extends BaseCommand {
       includeFooter: false,
       stdout: this.context.stdout,
     }, async report => {
-      const value: unknown = this.json ? JSON.parse((`{ "${this.name}": ${this.value} }`))[this.name] : this.value;
+      const value: unknown = this.json ? JSON.parse(this.value) : this.value;
 
       await Configuration.updateConfiguration(configuration.projectCwd!, {
         [this.name]: value,
@@ -72,4 +72,3 @@ export default class ConfigSetCommand extends BaseCommand {
     return report.exitCode();
   }
 }
-
