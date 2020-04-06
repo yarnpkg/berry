@@ -48,6 +48,11 @@ export default class ConfigSetCommand extends BaseCommand {
     });
 
     if (!this.json) {
+      if (typeof value === `string`) {
+        this.context.stdout.write(value);
+        return report.exitCode();
+      }
+
       // @ts-ignore: The Node typings forgot one field
       inspect.styles.name = `cyan`;
 
@@ -64,7 +69,7 @@ export default class ConfigSetCommand extends BaseCommand {
 
 /**
  * Converts `Maps` to `Objects` recursively.
- * todo: Replace by `Object.fromEntries` once we drop support for 10.x (~April 2021) 
+ * todo: Replace by `Object.fromEntries` once we drop support for 10.x (~April 2021)
  */
 function convertMapsToObjects(arg: unknown): unknown {
   if (arg instanceof Map)
