@@ -15,9 +15,9 @@ export interface ExecEnv {
    */
   tempDir: NativePath;
   /**
-   * The Locator identifying the generator package.
+   * The stringified Locator identifying the generator package.
    */
-  locator: Locator;
+  locator: string;
   /**
    * The absolute path of the generator file. Equal to `process.argv[1]`.
    */
@@ -114,7 +114,7 @@ export class ExecFetcher implements Fetcher {
          */
         const execEnvValues: Partial<ExecEnv> = {
           tempDir: npath.fromPortablePath(cwd),
-          locator,
+          locator: structUtils.stringifyLocator(locator),
           generatorPath: npath.fromPortablePath(generatorPath),
           logDir: npath.fromPortablePath(logDir),
           logFile: npath.fromPortablePath(logFile),

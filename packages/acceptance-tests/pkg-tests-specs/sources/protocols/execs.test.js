@@ -49,13 +49,7 @@ describe(`Protocols`, () => {
 
         await expect(source(`require('dynamic-pkg')`)).resolves.toMatchObject({
           tempDir: expect.any(String),
-          locator: expect.objectContaining({
-            identHash: expect.any(String),
-            locatorHash: expect.any(String),
-            name: expect.any(String),
-            reference: expect.any(String),
-            // `scope` can be `string` or `null`
-          }),
+          locator: expect.any(String),
           generatorPath: expect.any(String),
           logDir: expect.any(String),
           logFile: expect.any(String),
