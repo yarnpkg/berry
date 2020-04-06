@@ -403,10 +403,12 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
   });
 
   for (const [locator, info] of locatorMap.entries()) {
-    const isPortal = locator.substring(locator.indexOf('@', 1) + 1).split('#').slice(-1)[0].startsWith('portal:');
-    if (info.linkType === LinkType.SOFT && !isPortal) {
-      const node = miscUtils.getFactoryWithDefault(locationTree, info.target, makeNode);
-      node.locator = locator;
+    if (info.linkType === LinkType.SOFT) {
+      const internalPath = ppath.contains(skipPrefix, info.target);
+      if (internalPath !== null) {
+        const node = miscUtils.getFactoryWithDefault(locationTree, info.target, makeNode);
+        node.locator = locator;
+      }
     }
 
     for (const location of info.locations) {
@@ -694,7 +696,6 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       // Location is changed and will be occupied by a different locator - clean it
       if (node.locator !== prevNode.locator)
         deleteList.add(location);
-
 
       for (const [segment, childNode] of node.children) {
         let prevChildNode = prevNode.children.get(segment);

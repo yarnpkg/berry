@@ -116,4 +116,42 @@ describe('Node_Modules', () => {
       },
     ),
   );
+
+  test(`should support replacement of regular dependency with portal: protocol dependency`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          [`one-fixed-dep`]: `*`,
+        },
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/../one-fixed-dep.local/package.json`), {
+          name: `one-fixed-dep`,
+          bin: 'abc.js',
+          dependencies: {
+            [`no-deps`]: `*`,
+          },
+        });
+        await writeFile(npath.toPortablePath(`${path}/../one-fixed-dep.local/abc.js`), '');
+
+        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
+          nodeLinker: "node-modules"
+        `);
+
+        await expect(run(`install`)).resolves.toBeTruthy();
+
+        await writeJson(npath.toPortablePath(`${path}/package.json`), {
+          private: true,
+          dependencies: {
+            [`one-fixed-dep`]: `portal:../one-fixed-dep.local`,
+          },
+        });
+
+        await expect(run(`install`)).resolves.toBeTruthy();
+        await expect(xfs.lstatPromise(npath.toPortablePath(`${path}/../one-fixed-dep.local/node_modules`))).rejects.toThrow();
+        await expect(xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/.bin/one-fixed-dep`))).resolves.toBeDefined();
+      },
+    ),
+  );
 });
