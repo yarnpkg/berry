@@ -1,17 +1,25 @@
 set -ex
 
 THIS_DIR=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-TEMP_DIR="$(mktemp -d)"
+TEMP_DIR="/tmp/ts-repo"
 
 HASHES=(
-  "426f5a7" ">=3 <3.6"
-  "bcb6dbf" ">3.6"
+  # Patch   # Base    # Ranges
+  "426f5a7" "e39bdc3" ">=3.0 <3.6"
+  "bcb6dbf" "e39bdc3" ">=3.6 <3.9"
+  "4be321a" "d68295e" ">=3.9"
 )
 
-git clone git@github.com:arcanis/typescript "$TEMP_DIR"/clone
+mkdir -p "$TEMP_DIR"
+if ! [[ -d "$TEMP_DIR"/clone ]]; then (
+  git clone git@github.com:arcanis/typescript "$TEMP_DIR"/clone
+  git remote add upstream git@github.com:microsoft/typescript
+); fi
 
-mkdir -p "$TEMP_DIR"/orig
-mkdir -p "$TEMP_DIR"/patched
+cd "$TEMP_DIR"/clone
+
+git fetch origin
+git fetch upstream
 
 reset-git() {
   git checkout .
@@ -20,18 +28,29 @@ reset-git() {
   yarn
 }
 
-cd "$TEMP_DIR"/clone
+PATCHFILE="$TEMP_DIR"/patch.tmp
+rm -f "$PATCHFILE" && touch "$PATCHFILE"
 
-reset-git
-git checkout master
-
-yarn gulp local LKG
-cp -r lib "$TEMP_DIR"/orig/
+JSPATCH="$THIS_DIR"/../../sources/patches/typescript.patch.ts
+rm -f "$JSPATCH" && touch "$JSPATCH"
 
 while [[ ${#HASHES[@]} -gt 0 ]]; do
   HASH="${HASHES[0]}"
-  RANGE="${HASHES[1]}"
-  HASHES=("${HASHES[@]:2}")
+  BASE="${HASHES[1]}"
+  RANGE="${HASHES[2]}"
+  HASHES=("${HASHES[@]:3}")
+
+  rm -rf "$TEMP_DIR"/orig
+  rm -rf "$TEMP_DIR"/patched
+
+  mkdir -p "$TEMP_DIR"/orig
+  mkdir -p "$TEMP_DIR"/patched
+
+  reset-git
+  git checkout "$BASE"
+
+  yarn gulp local LKG
+  cp -r lib "$TEMP_DIR"/orig/
 
   reset-git
   git checkout "$HASH"
@@ -39,21 +58,23 @@ while [[ ${#HASHES[@]} -gt 0 ]]; do
   yarn gulp local LKG
   cp -r lib/ "$TEMP_DIR"/patched/
 
-  PATCHFILE="$THIS_DIR"/../../sources/patches/typescript.patch.ts
-  rm -f "$PATCHFILE" && touch "$PATCHFILE"
+  DIFF="$THIS_DIR"/patch."${HASH}".diff
 
   git diff --no-index "$TEMP_DIR"/orig "$TEMP_DIR"/patched \
     | perl -p -e"s#^--- #semver exclusivity $RANGE\n--- #" \
     | perl -p -e"s#$TEMP_DIR/orig##" \
     | perl -p -e"s#$TEMP_DIR/patched##" \
     | perl -p -e"s#__spreadArrays#[].concat#" \
-    >> "$TEMP_DIR"/patch.tmp || true
+    > "$DIFF"
+
+  cat "$DIFF" \
+    >> "$PATCHFILE"
 done
 
 echo 'export const patch =' \
-  >> "$PATCHFILE"
-node "$THIS_DIR"/../jsonEscape.js < "$TEMP_DIR"/patch.tmp \
-  >> "$PATCHFILE"
+  >> "$JSPATCH"
+node "$THIS_DIR"/../jsonEscape.js < "$PATCHFILE" \
+  >> "$JSPATCH"
 echo ';' \
-  >> "$PATCHFILE"
+  >> "$JSPATCH"
 
