@@ -64,6 +64,7 @@ export default class ConfigSetCommand extends BaseCommand {
 
 /**
  * Converts `Maps` to `Objects` recursively.
+ * todo: Replace by `Object.fromEntries` once we drop support for 10.x (~April 2021) 
  */
 function convertMapsToObjects(arg: unknown): unknown {
   if (arg instanceof Map)
