@@ -38,6 +38,8 @@ If you're not using Zero-Installs:
 
 - `.yarn/versions` is used by the [version plugin](/features/release-workflow) to store the package release definitions. You will want to keep it within your repository.
 
+- `.yarn/install-state.tgz` is an optimization file that you shouldn't have to ever commit. It simply stores the exact state of your project so that the next commands can boot without having to resolve your workspaces again.
+
 - `yarn.lock` should always be stored within your repository ([even if you develop a library](#should-lockfiles-be-committed-to-the-repository)).
 
 - `.yarnrc.yml` (and its older counterpart, `.yarnrc`) are configuration files. They should always be stored in your project.
