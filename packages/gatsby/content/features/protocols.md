@@ -75,14 +75,14 @@ You're free to do whatever you want inside the temporary directory, but, at the 
 
 Yarn injects the `execEnv` global variable inside the script. It's an `object` that contains various useful details about the execution context. We also provide type definitions through the [`ExecEnv`](/api/interfaces/plugin_exec.execenv.html) interface from `@yarnpkg/plugin-exec`.
 
-| Property        | Type                                                       | Description                                                                                   |
-| --------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `tempDir`       | [`NativePath`](/api/modules/yarnpkg_fslib.html#nativepath) | The absolute path of the temporary directory where the script runs. Equal to `process.cwd()`. |
-| `locator`       | [`Locator`](/api/interfaces/yarnpkg_core.locator.html)     | The `Locator` identifying the generator package.                                              |
-| `generatorPath` | [`NativePath`](/api/modules/yarnpkg_fslib.html#nativepath) | The absolute path of the generator file. Equal to `process.argv[1]`.                          |
-| `logDir`        | [`NativePath`](/api/modules/yarnpkg_fslib.html#nativepath) | The absolute path of the build log directory.                                                 |
-| `logFile`       | [`NativePath`](/api/modules/yarnpkg_fslib.html#nativepath) | The absolute path of the build log.                                                           |
-| `logs`          | `string`                                                   | The content of the build log. It's a `getter`, so the value is dynamic.                       |
+| Property        | Type                                                   | Description                                                                                   |
+| --------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| `tempDir`       | `string`                                               | The absolute path of the temporary directory where the script runs. Equal to `process.cwd()`. |
+| `locator`       | [`Locator`](/api/interfaces/yarnpkg_core.locator.html) | The `Locator` identifying the generator package.                                              |
+| `generatorPath` | `string`                                               | The absolute path of the generator file. Equal to `process.argv[1]`.                          |
+| `logDir`        | `string`                                               | The absolute path of the build log directory.                                                 |
+| `logFile`       | `string`                                               | The absolute path of the build log.                                                           |
+| `logs`          | `string`                                               | The content of the build log. It's a `getter`, so the value is dynamic.                       |
 
 ## Questions & Answers
 
