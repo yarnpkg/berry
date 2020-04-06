@@ -68,7 +68,7 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
  * @returns hoisted `node_modules` directories representation in-memory
  */
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
-  const packageTree = buildPackageTree(pnp);
+  const packageTree = buildPackageTree(pnp, options);
   const hoistedTree = hoist(packageTree);
 
   return populateNodeModulesTree(pnp, hoistedTree, options);
@@ -117,12 +117,13 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
  *
  * @returns package tree, packages info and locators
  */
-const buildPackageTree = (pnp: PnpApi): HoisterTree => {
+const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): HoisterTree => {
   const pnpRoots = pnp.getDependencyTreeRoots();
 
   const topPkg = pnp.getPackageInformation(pnp.topLevel);
   if (topPkg === null)
     throw new Error(`Assertion failed: Expected the top-level package to have been registered`);
+  const projectRoot = npath.toPortablePath(topPkg.packageLocation);
 
   const topLocator = pnp.findPackageLocator(topPkg.packageLocation);
   if (topLocator === null)
@@ -165,7 +166,8 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
 
     parent.dependencies.add(node);
 
-    if (!isSeen) {
+    const internalPath = ppath.contains(projectRoot, getTargetLocatorPath(locator, pnp, options).target);
+    if (!isSeen && internalPath !== null) {
       for (const [name, referencish] of pkg.packageDependencies) {
         if (referencish !== null && !node.peerNames.has(name)) {
           const depLocator = pnp.getLocator(name, referencish);
@@ -190,6 +192,33 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
   return packageTree;
 };
 
+function getTargetLocatorPath(locator: PhysicalPackageLocator, pnp: PnpApi, options: NodeModulesTreeOptions): {linkType: LinkType, target: PortablePath} {
+  const pkgLocator = pnp.getLocator(locator.name.replace(/^\$wsroot\$/, ''), locator.reference);
+
+  const info = pnp.getPackageInformation(pkgLocator);
+  if (info === null)
+    throw new Error(`Assertion failed: Expected the package to be registered`);
+
+  let linkType;
+  let target;
+  if (options.pnpifyFs) {
+    // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
+    // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
+    // To make this fs layout work with legacy tools we make
+    // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
+    // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
+    target = npath.toPortablePath(info.packageLocation);
+    linkType = LinkType.SOFT;
+  } else {
+    const truePath = pnp.resolveVirtual && locator.reference && locator.reference.startsWith('virtual:')
+      ? pnp.resolveVirtual(info.packageLocation)
+      : info.packageLocation;
+
+    target = npath.toPortablePath(truePath || info.packageLocation);
+    linkType = info.linkType;
+  }
+  return {linkType, target};
+}
 
 /**
  * Converts hoisted tree to node modules map
@@ -205,30 +234,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
   const tree: NodeModulesTree = new Map();
 
   const makeLeafNode = (locator: PhysicalPackageLocator, aliases: string[]): {locator: LocatorKey, target: PortablePath, linkType: LinkType, aliases: string[]} => {
-    const pkgLocator = pnp.getLocator(locator.name.replace(/^\$wsroot\$/, ''), locator.reference);
-
-    const info = pnp.getPackageInformation(pkgLocator);
-    if (info === null)
-      throw new Error(`Assertion failed: Expected the package to be registered`);
-
-    let linkType;
-    let target;
-    if (options.pnpifyFs) {
-      // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
-      // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
-      // To make this fs layout work with legacy tools we make
-      // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
-      // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
-      target = npath.toPortablePath(info.packageLocation);
-      linkType = LinkType.SOFT;
-    } else {
-      const truePath = pnp.resolveVirtual && locator.reference && locator.reference.startsWith('virtual:')
-        ? pnp.resolveVirtual(info.packageLocation)
-        : info.packageLocation;
-
-      target = npath.toPortablePath(truePath || info.packageLocation);
-      linkType = info.linkType;
-    }
+    const {linkType, target} = getTargetLocatorPath(locator, pnp, options);
 
     return {
       locator: stringifyLocator(locator),
@@ -346,7 +352,7 @@ const benchmarkBuildTree = (pnp: PnpApi, options: NodeModulesTreeOptions): numbe
   const iterCount = 100;
   const startTime = Date.now();
   for (let iter = 0; iter < iterCount; iter++) {
-    const packageTree = buildPackageTree(pnp);
+    const packageTree = buildPackageTree(pnp, options);
     const hoistedTree = hoist(packageTree);
     populateNodeModulesTree(pnp, hoistedTree, options);
   }
