@@ -49,7 +49,7 @@ export default class ConfigSetCommand extends BaseCommand {
 
     if (!this.json) {
       if (typeof value === `string`) {
-        this.context.stdout.write(value);
+        this.context.stdout.write(`${value}\n`);
         return report.exitCode();
       }
 
