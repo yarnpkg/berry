@@ -6,6 +6,7 @@
   "types": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
+    "@yarnpkg/core": "workspace:^2.0.0-rc.25",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.17",
     "chalk": "^3.0.0",
     "comment-json": "^2.2.0",

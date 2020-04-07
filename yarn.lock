@@ -5546,6 +5546,7 @@ __metadata:
     "@types/chalk": 2.2.0
     "@types/comment-json": ^1.1.1
     "@types/cross-spawn": 6.0.0
+    "@yarnpkg/core": "workspace:^2.0.0-rc.25"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.17"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.18"

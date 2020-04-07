@@ -1,3 +1,4 @@
+import {structUtils}                                        from '@yarnpkg/core';
 import {NativePath, PortablePath, Filename}                 from '@yarnpkg/fslib';
 import {toFilename, npath, ppath}                           from '@yarnpkg/fslib';
 import {PnpApi, PhysicalPackageLocator, PackageInformation} from '@yarnpkg/pnp';
@@ -68,7 +69,7 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
  * @returns hoisted `node_modules` directories representation in-memory
  */
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
-  const packageTree = buildPackageTree(pnp, options);
+  const packageTree = buildPackageTree(pnp);
   const hoistedTree = hoist(packageTree);
 
   return populateNodeModulesTree(pnp, hoistedTree, options);
@@ -110,6 +111,14 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
   return map;
 };
 
+function isPortalLocator(locatorKey: LocatorKey): boolean {
+  let descriptor = structUtils.parseDescriptor(locatorKey);
+  if (structUtils.isVirtualDescriptor(descriptor))
+    descriptor = structUtils.devirtualizeDescriptor(descriptor);
+
+  return descriptor.range.startsWith('portal:');
+};
+
 /**
  * Traverses PnP tree and produces input for the `RawHoister`
  *
@@ -117,13 +126,12 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
  *
  * @returns package tree, packages info and locators
  */
-const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): HoisterTree => {
+const buildPackageTree = (pnp: PnpApi): HoisterTree => {
   const pnpRoots = pnp.getDependencyTreeRoots();
 
   const topPkg = pnp.getPackageInformation(pnp.topLevel);
   if (topPkg === null)
     throw new Error(`Assertion failed: Expected the top-level package to have been registered`);
-  const projectRoot = npath.toPortablePath(topPkg.packageLocation);
 
   const topLocator = pnp.findPackageLocator(topPkg.packageLocation);
   if (topLocator === null)
@@ -166,8 +174,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
 
     parent.dependencies.add(node);
 
-    const internalPath = ppath.contains(projectRoot, getTargetLocatorPath(locator, pnp, options).target);
-    if (!isSeen && internalPath !== null) {
+    if (!isSeen && !isPortalLocator(locatorKey)) {
       for (const [name, referencish] of pkg.packageDependencies) {
         if (referencish !== null && !node.peerNames.has(name)) {
           const depLocator = pnp.getLocator(name, referencish);
@@ -352,7 +359,7 @@ const benchmarkBuildTree = (pnp: PnpApi, options: NodeModulesTreeOptions): numbe
   const iterCount = 100;
   const startTime = Date.now();
   for (let iter = 0; iter < iterCount; iter++) {
-    const packageTree = buildPackageTree(pnp, options);
+    const packageTree = buildPackageTree(pnp);
     const hoistedTree = hoist(packageTree);
     populateNodeModulesTree(pnp, hoistedTree, options);
   }
