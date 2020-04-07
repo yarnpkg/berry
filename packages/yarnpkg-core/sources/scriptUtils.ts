@@ -200,6 +200,8 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
     if (typeof cwd === `undefined`)
       cwd = packageLocation;
 
+    cwd = await packageFs.realpathPromise(cwd);
+
     return {manifest, binFolder, env, cwd};
   }, {
     libzip: await getLibzipPromise(),
