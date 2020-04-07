@@ -38,7 +38,7 @@ export function makeLocator(ident: Ident, {parentLocator, path, generatorHash, p
   return structUtils.makeLocator(ident, makeSpec({parentLocator, path, generatorHash, protocol}));
 }
 
-export async function getGeneratorPath(range: string, protocol: string, opts: FetchOptions): Promise<PortablePath> {
+export async function loadGeneratorFile(range: string, protocol: string, opts: FetchOptions): Promise<string> {
   const {parentLocator, path} = structUtils.parseFileStyleRange(range, {protocol});
 
   // If the file target is an absolute path we can directly access it via its
@@ -58,8 +58,7 @@ export async function getGeneratorPath(range: string, protocol: string, opts: Fe
     parentFetch.releaseFs();
 
   const generatorFs = effectiveParentFetch.packageFs;
-  const generatorPath = ppath.resolve(ppath.resolve(generatorFs.getRealPath(), effectiveParentFetch.prefixPath), path);
 
-  return generatorPath;
+  return await generatorFs.readFilePromise(path, `utf8`);
 }
 

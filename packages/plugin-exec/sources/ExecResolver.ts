@@ -6,6 +6,9 @@ import {miscUtils, structUtils, hashUtils}                      from '@yarnpkg/c
 import {PROTOCOL}                                               from './constants';
 import * as execUtils                                           from './execUtils';
 
+// We use this for the generators to be regenerated without bumping the whole cache
+const CACHE_VERSION = 1;
+
 export class ExecResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     if (!descriptor.range.startsWith(PROTOCOL))
@@ -41,7 +44,7 @@ export class ExecResolver implements Resolver {
 
     const {path, parentLocator} = execUtils.parseSpec(descriptor.range);
 
-    const generatorPath = await execUtils.getGeneratorPath(structUtils.makeRange({
+    const generatorFile = await execUtils.loadGeneratorFile(structUtils.makeRange({
       protocol: PROTOCOL,
       source: path,
       selector: path,
@@ -50,7 +53,7 @@ export class ExecResolver implements Resolver {
         locator: structUtils.stringifyLocator(parentLocator!),
       },
     }), PROTOCOL, opts.fetchOptions);
-    const generatorHash = (await hashUtils.checksumFile(generatorPath)).slice(0, 6);
+    const generatorHash = hashUtils.makeHash(`${CACHE_VERSION}`, generatorFile).slice(0, 6);
 
     return [execUtils.makeLocator(descriptor, {parentLocator, path, generatorHash, protocol: PROTOCOL})];
   }
