@@ -27,7 +27,7 @@ export class NodeModulesLinker implements Linker {
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
-    const workspace = opts.project.getWorkspaceByLocator(locator);
+    const workspace = opts.project.tryWorkspaceByLocator(locator);
     if (workspace)
       return workspace.cwd;
 
