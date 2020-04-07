@@ -69,7 +69,7 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
  * @returns hoisted `node_modules` directories representation in-memory
  */
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
-  const packageTree = buildPackageTree(pnp);
+  const packageTree = buildPackageTree(pnp, options);
   const hoistedTree = hoist(packageTree);
 
   return populateNodeModulesTree(pnp, hoistedTree, options);
@@ -126,7 +126,7 @@ function isPortalLocator(locatorKey: LocatorKey): boolean {
  *
  * @returns package tree, packages info and locators
  */
-const buildPackageTree = (pnp: PnpApi): HoisterTree => {
+const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): HoisterTree => {
   const pnpRoots = pnp.getDependencyTreeRoots();
 
   const topPkg = pnp.getPackageInformation(pnp.topLevel);
@@ -174,7 +174,10 @@ const buildPackageTree = (pnp: PnpApi): HoisterTree => {
 
     parent.dependencies.add(node);
 
-    if (!isSeen && !isPortalLocator(locatorKey)) {
+    // If we link dependencies to file system we must not try to install children dependencies inside portal folders
+    const shouldAddChildrenDependencies = options.pnpifyFs || !isPortalLocator(locatorKey);
+
+    if (!isSeen && shouldAddChildrenDependencies) {
       for (const [name, referencish] of pkg.packageDependencies) {
         if (referencish !== null && !node.peerNames.has(name)) {
           const depLocator = pnp.getLocator(name, referencish);
@@ -359,7 +362,7 @@ const benchmarkBuildTree = (pnp: PnpApi, options: NodeModulesTreeOptions): numbe
   const iterCount = 100;
   const startTime = Date.now();
   for (let iter = 0; iter < iterCount; iter++) {
-    const packageTree = buildPackageTree(pnp);
+    const packageTree = buildPackageTree(pnp, options);
     const hoistedTree = hoist(packageTree);
     populateNodeModulesTree(pnp, hoistedTree, options);
   }
