@@ -54,6 +54,8 @@ jobs:
 
         cd berry-angular
         echo 'nodeLinker: node-modules' >> .yarnrc.yml
+        echo 'enableGlobalCache: true' >> .yarnrc.yml
+        echo 'compressionLevel: 0' >> .yarnrc.yml
 
         yarn add @angular-devkit/core@next @babel/preset-env @babel/core -D
 
