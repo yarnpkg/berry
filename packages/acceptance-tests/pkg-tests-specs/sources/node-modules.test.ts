@@ -117,6 +117,27 @@ describe('Node_Modules', () => {
     ),
   );
 
+  test(`should support dependency via link: protocol to a missing folder`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          abc: `link:../abc`,
+        },
+      },
+      async ({path, run, source}) => {
+        await writeFile(npath.toPortablePath(`${path}/../one-fixed-dep.local/abc.js`), '');
+
+        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
+        nodeLinker: "node-modules"
+      `);
+
+        await expect(run(`install`)).resolves.toBeTruthy();
+
+        await expect(xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/abc`))).resolves.toBeDefined();
+      },
+    ),
+  );
+
   test(`should support replacement of regular dependency with portal: protocol dependency`,
     makeTemporaryEnv(
       {
