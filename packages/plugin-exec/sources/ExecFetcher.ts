@@ -130,10 +130,22 @@ export class ExecFetcher implements Fetcher {
         const execEnvGetters = [
           `get logs() { return fs.readFileSync(this.logFile, 'utf8'); }`,
         ];
-
         await xfs.writeFilePromise(envFile, `
-          const fs = require('fs');
+          // Expose 'Module' as a global variable
+          Object.defineProperty(global, 'Module', {
+            get: () => require('module'),
+            enumerable: false,
+          });
 
+          // Expose non-hidden built-in modules as global variables
+          for (const name of Module.builtinModules.filter((name) => name !== 'module' && !name.startsWith('_'))) {
+            Object.defineProperty(global, name, {
+              get: () => require(name),
+              enumerable: false,
+            });
+          }
+
+          // Expose the 'execEnv' global variable
           Object.defineProperty(global, 'execEnv', {
             value: {
               ...${JSON.stringify(execEnvValues)},
