@@ -50,8 +50,9 @@ You're free to do whatever you want inside the temporary directory, but, at the 
 
 Yarn injects the `execEnv` global variable inside the script. It's an `object` that contains various useful details about the execution context. We also provide type definitions through the [`ExecEnv`](/api/interfaces/plugin_exec.execenv.html) interface from `@yarnpkg/plugin-exec`.
 
-| Property        | Type     | Description                                                                                   |
-| --------------- | -------- | --------------------------------------------------------------------------------------------- |
-| `tempDir`       | `string` | The absolute path of the temporary directory where the script runs. Equal to `process.cwd()`. |
-| `locator`       | `string` | The stringified `Locator` identifying the generator package.                                  |
+| Property   | Type     | Description                                                                                                   |
+| ---------- | -------- | ------------------------------------------------------------------------------------------------------------- |
+| `tempDir`  | `string` | The absolute path of the temporary directory.                                                                 |
+| `buildDir` | `string` | The absolute path of the build directory that will be compressed into an archive and stored within the cache. |
+| `locator`  | `string` | The stringified `Locator` identifying the generator package.                                                  |
 

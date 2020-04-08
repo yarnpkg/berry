@@ -47,6 +47,7 @@ describe(`Protocols`, () => {
 
         await expect(source(`require('dynamic-pkg')`)).resolves.toMatchObject({
           tempDir: expect.any(String),
+          buildDir: expect.any(String),
           locator: expect.any(String),
         });
       }),

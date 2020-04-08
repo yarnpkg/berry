@@ -11,9 +11,13 @@ import {loadGeneratorFile}                                                 from 
  */
 export interface ExecEnv {
   /**
-   * The absolute path of the temporary directory where the script runs. Equal to `process.cwd()`.
+   * The absolute path of the temporary directory.
    */
   tempDir: NativePath;
+  /**
+   * The absolute path of the build directory that will be compressed into an archive and stored within the cache.
+   */
+  buildDir: NativePath;
   /**
    * The stringified Locator identifying the generator package.
    */
@@ -101,8 +105,9 @@ export class ExecFetcher implements Fetcher {
          *
          * Must be stringifiable using `JSON.stringify`.
          */
-        const execEnvValues: Partial<ExecEnv> = {
-          tempDir: npath.fromPortablePath(cwd),
+        const execEnvValues: ExecEnv = {
+          tempDir: npath.fromPortablePath(ppath.join(cwd, `generator` as PortablePath)),
+          buildDir: npath.fromPortablePath(ppath.join(cwd, `build` as PortablePath)),
           locator: structUtils.stringifyLocator(locator),
         };
         await xfs.writeFilePromise(envFile, `
