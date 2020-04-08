@@ -9,6 +9,7 @@ import {Configuration}                                from './Configuration';
 
 const cache = new Map<string, Promise<Response<Buffer>>>();
 
+const dnsCache = new Map();
 const globalHttpAgent = new HttpAgent({keepAlive: true});
 const globalHttpsAgent = new HttpsAgent({keepAlive: true});
 
@@ -97,6 +98,7 @@ export async function request(target: string, body: Body, {configuration, header
   //@ts-ignore
   const gotClient = got.extend({
     retry: 10,
+    dnsCache,
     ...gotOptions,
     hooks: makeHooks(),
   });
