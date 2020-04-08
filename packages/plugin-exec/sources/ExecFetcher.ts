@@ -18,10 +18,6 @@ export interface ExecEnv {
    * The stringified Locator identifying the generator package.
    */
   locator: string;
-  /**
-   * The absolute path of the generator file. Equal to `process.argv[1]`.
-   */
-  generatorPath: NativePath;
 }
 
 export class ExecFetcher implements Fetcher {
@@ -108,7 +104,6 @@ export class ExecFetcher implements Fetcher {
         const execEnvValues: Partial<ExecEnv> = {
           tempDir: npath.fromPortablePath(cwd),
           locator: structUtils.stringifyLocator(locator),
-          generatorPath: npath.fromPortablePath(generatorPath),
         };
         await xfs.writeFilePromise(envFile, `
           // Expose 'Module' as a global variable

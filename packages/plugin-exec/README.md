@@ -54,5 +54,4 @@ Yarn injects the `execEnv` global variable inside the script. It's an `object` t
 | --------------- | -------- | --------------------------------------------------------------------------------------------- |
 | `tempDir`       | `string` | The absolute path of the temporary directory where the script runs. Equal to `process.cwd()`. |
 | `locator`       | `string` | The stringified `Locator` identifying the generator package.                                  |
-| `generatorPath` | `string` | The absolute path of the generator file. Equal to `process.argv[1]`.                          |
 
