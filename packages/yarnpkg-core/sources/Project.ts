@@ -909,7 +909,7 @@ export class Project {
       return structUtils.stringifyLocator(pkg);
     }]);
 
-    const limit = pLimit(5);
+    const limit = pLimit(8);
     let firstError = false;
 
     const progress = Report.progressViaCounter(locatorHashes.length);
