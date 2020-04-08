@@ -11,11 +11,11 @@ import {loadGeneratorFile}                                                 from 
  */
 export interface ExecEnv {
   /**
-   * The absolute path of the temporary directory.
+   * The absolute path of the empty temporary directory. It is created before the script is invoked.
    */
   tempDir: NativePath;
   /**
-   * The absolute path of the build directory that will be compressed into an archive and stored within the cache.
+   * The absolute path of the empty build directory that will be compressed into an archive and stored within the cache. It is created before the script is invoked.
    */
   buildDir: NativePath;
   /**
@@ -132,6 +132,9 @@ export class ExecFetcher implements Fetcher {
             },
             enumerable: true,
           });
+
+          fs.mkdirSync(execEnv.tempDir);
+          fs.mkdirSync(execEnv.buildDir);
         `);
         const envRequire = `--require ${npath.fromPortablePath(envFile)}`;
         let NODE_OPTIONS = env.NODE_OPTIONS || ``;

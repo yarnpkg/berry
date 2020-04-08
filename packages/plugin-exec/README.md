@@ -27,32 +27,29 @@ yarn plugin import exec
 `gen-pkg.js`
 
 ```js
-const {mkdirSync, writeFileSync} = require(`fs`);
-const {tempDir} = execEnv;
+const {buildDir} = execEnv;
 
-// Can also be written as `mkdirSync(`build`);`
-// since the script is executed in the temporary directory
-mkdirSync(`${tempDir}/build`);
-
-writeFileSync(`${tempDir}/build/package.json`, JSON.stringify({
+fs.writeFileSync(path.join(buildDir, `package.json`), JSON.stringify({
   name: `pkg`,
   version: `1.0.0`,
 }));
 
-writeFileSync(`${tempDir}/build/index.js`, `module.exports = ${Date.now()};\n`);
+fs.writeFileSync(path.join(buildDir, `index.js`), `module.exports = ${Date.now()};\n`);
 ```
 
 ## Documentation
 
-The script will be invoked inside a temporary directory (`execEnv.tempDir`) with two parameters: the generator path (`process.argv[1]`) and the stringified [`Ident`](/api/interfaces/yarnpkg_core.ident.html) identifying the generator package (`process.argv[2]`).
+The script will be invoked inside a temporary directory with two parameters: the generator path (`process.argv[1]`; Warning: it's not the `generatorPath` you expect, don't use it) and the stringified [`Ident`](/api/interfaces/yarnpkg_core.ident.html) identifying the generator package (`process.argv[2]`).
 
-You're free to do whatever you want inside the temporary directory, but, at the end of the execution, Yarn will expect a `build` directory to have been created inside it that will then be compressed into an archive and stored within the cache.
+The content of the generator file is written to a file inside a temporary directory. That file is then invoked, so `require` doesn't work as expected. That's why we expose all of the built-in modules as global variables (`'module'` is exposed as `Module`)). If you want to bundle your own dependencies, you have to use a module bundler like Webpack or Rollup.
 
 Yarn injects the `execEnv` global variable inside the script. It's an `object` that contains various useful details about the execution context. We also provide type definitions through the [`ExecEnv`](/api/interfaces/plugin_exec.execenv.html) interface from `@yarnpkg/plugin-exec`.
 
-| Property   | Type     | Description                                                                                                   |
-| ---------- | -------- | ------------------------------------------------------------------------------------------------------------- |
-| `tempDir`  | `string` | The absolute path of the temporary directory.                                                                 |
-| `buildDir` | `string` | The absolute path of the build directory that will be compressed into an archive and stored within the cache. |
-| `locator`  | `string` | The stringified `Locator` identifying the generator package.                                                  |
+You're free to do whatever you want inside `execEnv.tempDir`, but, at the end of the execution, Yarn will expect `execEnv.buildDir` to contain the files that will then be compressed into an archive and stored within the cache.
+
+| Property   | Type     | Description                                                                                                                                                     |
+| ---------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tempDir`  | `string` | The absolute path of the empty temporary directory. It is created before the script is invoked.                                                                 |
+| `buildDir` | `string` | The absolute path of the empty build directory that will be compressed into an archive and stored within the cache. It is created before the script is invoked. |
+| `locator`  | `string` | The stringified `Locator` identifying the generator package.                                                                                                    |
 
