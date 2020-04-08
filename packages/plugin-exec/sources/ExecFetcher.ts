@@ -22,18 +22,6 @@ export interface ExecEnv {
    * The absolute path of the generator file. Equal to `process.argv[1]`.
    */
   generatorPath: NativePath;
-  /**
-   * The absolute path of the build log directory.
-   */
-  logDir: NativePath;
-  /**
-   * The absolute path of the build log.
-   */
-  logFile: NativePath;
-  /**
-   * The content of the build log. It's a `getter`, so the value is dynamic.
-   */
-  logs: string;
 }
 
 export class ExecFetcher implements Fetcher {
@@ -121,15 +109,7 @@ export class ExecFetcher implements Fetcher {
           tempDir: npath.fromPortablePath(cwd),
           locator: structUtils.stringifyLocator(locator),
           generatorPath: npath.fromPortablePath(generatorPath),
-          logDir: npath.fromPortablePath(logDir),
-          logFile: npath.fromPortablePath(logFile),
         };
-        /**
-         * Getters exposed on the global `execEnv` variable.
-         */
-        const execEnvGetters = [
-          `get logs() { return fs.readFileSync(this.logFile, 'utf8'); }`,
-        ];
         await xfs.writeFilePromise(envFile, `
           // Expose 'Module' as a global variable
           Object.defineProperty(global, 'Module', {
@@ -149,7 +129,6 @@ export class ExecFetcher implements Fetcher {
           Object.defineProperty(global, 'execEnv', {
             value: {
               ...${JSON.stringify(execEnvValues)},
-              ${execEnvGetters.join()},
             },
             enumerable: true,
           });

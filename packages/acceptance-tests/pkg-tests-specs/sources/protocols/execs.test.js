@@ -15,7 +15,6 @@ describe(`Protocols`, () => {
         }));
 
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
-          const fs = require('fs');
           fs.mkdirSync('build');
           fs.writeFileSync('build/index.js', 'module.exports = 42;');
           fs.writeFileSync('build/package.json', '{}');
@@ -39,7 +38,6 @@ describe(`Protocols`, () => {
         }));
 
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
-          const fs = require('fs');
           fs.mkdirSync('build');
           fs.writeFileSync('build/index.js', \`module.exports = \${JSON.stringify(execEnv)};\`);
           fs.writeFileSync('build/package.json', '{}');
@@ -51,9 +49,6 @@ describe(`Protocols`, () => {
           tempDir: expect.any(String),
           locator: expect.any(String),
           generatorPath: expect.any(String),
-          logDir: expect.any(String),
-          logFile: expect.any(String),
-          logs: expect.any(String),
         });
       }),
     );
@@ -70,7 +65,6 @@ describe(`Protocols`, () => {
         }));
 
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
-          const fs = require('fs');
           fs.mkdirSync('build');
           fs.writeFileSync('build/index.js', 'module.exports = 42;');
           fs.writeFileSync('build/package.json', '{}');
@@ -79,7 +73,6 @@ describe(`Protocols`, () => {
         await run(`install`);
 
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
-          const fs = require('fs');
           fs.mkdirSync('build');
           fs.writeFileSync('build/index.js', 'module.exports = 100;');
           fs.writeFileSync('build/package.json', '{}');
