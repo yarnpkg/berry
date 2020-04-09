@@ -37,7 +37,7 @@ fs.writeFileSync(path.join(buildDir, `package.json`), JSON.stringify({
 fs.writeFileSync(path.join(buildDir, `index.js`), `module.exports = ${Date.now()};\n`);
 ```
 
-## Rational
+## Rationale
 
 Typical Yarn fetchers download packages from the internet - this works fine if the project you want to use got packaged beforehand, but fails short as soon as you need to bundle it yourself. Yarn's builtin mechanism allows you to run the `prepare` script on compatible git repositories and use the result as final package, but even that isn't always enough - you may need to clone a specific branch, go into a specific directory, run a specific build script ... all things that makes it hard for us to support every single use case.
 
@@ -62,6 +62,7 @@ In order to let the script knows about the various predefined folders involved i
 | `tempDir`  | `string` | The absolute path of the empty temporary directory. It is created before the script is invoked.                                                                 |
 | `buildDir` | `string` | The absolute path of the empty build directory that will be compressed into an archive and stored within the cache. It is created before the script is invoked. |
 | `locator`  | `string` | The stringified `Locator` identifying the generator package.                                                                                                    |
+
 You're free to do whatever you want inside `execEnv.tempDir` but, at the end of the execution, Yarn will expect `execEnv.buildDir` to contain the files that can be compressed into an archive and stored within the cache.
 
 ### Example
@@ -86,15 +87,15 @@ const pathToRepo = path.join(execEnv.tempDir, 'repo');
 const pathToArchive = path.join(execEnv.tempDir, 'archive.tgz');
 const pathToSubpackage = path.join(pathToRepo, 'packages/foobar');
 
-# Clone the repository
+// Clone the repository
 child_process.execFileSync(`git`, [`clone`, `git@github.com:foo/bar`, pathToRepo]);
 
-# Install the dependencies
+// Install the dependencies
 child_process.execFileSync(`yarn`, [`install`], {cwd: pathToRepo});
 
-# Pack a specific workspace
+// Pack a specific workspace
 child_process.execFileSync(`yarn`, [`pack`, `--out`, pathToArchive], {cwd: pathToSubpackage});
 
-# Send the package content into the build directory
+// Send the package content into the build directory
 child_process.execFileSync(`tar`, [`xfz`, `--strip-components=1`, pathToArchive, `-C`, execEnv.buildDir]);
 ```
