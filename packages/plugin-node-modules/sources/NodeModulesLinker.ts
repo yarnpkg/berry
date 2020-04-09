@@ -27,6 +27,10 @@ export class NodeModulesLinker implements Linker {
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
+    const workspace = opts.project.tryWorkspaceByLocator(locator);
+    if (workspace)
+      return workspace.cwd;
+
     const installState = await findInstallState(opts.project, {unrollAliases: true});
     if (installState === null)
       throw new UsageError(`Couldn't find the node_modules state file - running an install might help (findPackageLocation)`);

@@ -154,4 +154,30 @@ describe('Node_Modules', () => {
       },
     ),
   );
+
+  test(`should return real cwd for scripts inside workspaces`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`packages/*`],
+      },
+      async ({path, run, source}) => {
+        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
+          nodeLinker: "node-modules"
+        `);
+
+        await writeJson(npath.toPortablePath(`${path}/packages/workspace/package.json`), {
+          name: `workspace`,
+          version: `1.0.0`,
+          scripts: {
+            [`ws:cwd`]: `node -p 'process.cwd()'`,
+          },
+        });
+
+        await run(`install`);
+
+        expect((await run(`run`, `ws:cwd`)).stdout.trim()).toEqual(npath.fromPortablePath(`${path}/packages/workspace`));
+      },
+    ),
+  );
 });
