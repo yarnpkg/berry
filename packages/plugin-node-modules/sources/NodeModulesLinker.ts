@@ -1,17 +1,18 @@
-import {BuildDirective, MessageName, Project}                                                         from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                                            from '@yarnpkg/core';
-import {Locator, Package, BuildType}                                                                  from '@yarnpkg/core';
-import {structUtils, Report, Manifest, miscUtils, FinalizeInstallStatus, FetchResult, DependencyMeta} from '@yarnpkg/core';
-import {VirtualFS, ZipOpenFS}                                                                         from '@yarnpkg/fslib';
-import {PortablePath, npath, ppath, toFilename, Filename, xfs, FakeFS}                                from '@yarnpkg/fslib';
-import {getLibzipPromise}                                                                             from '@yarnpkg/libzip';
-import {parseSyml}                                                                                    from '@yarnpkg/parsers';
-import {AbstractPnpInstaller}                                                                         from '@yarnpkg/plugin-pnp';
-import {NodeModulesLocatorMap, buildLocatorMap, buildNodeModulesTree}                                 from '@yarnpkg/pnpify';
-import {PnpSettings, makeRuntimeApi}                                                                  from '@yarnpkg/pnp';
-import cmdShim                                                                                        from '@zkochan/cmd-shim';
-import {UsageError}                                                                                   from 'clipanion';
-import fs                                                                                             from 'fs';
+import {BuildDirective, MessageName, Project, FetchResult}        from '@yarnpkg/core';
+import {Linker, LinkOptions, MinimalLinkOptions, LinkType}        from '@yarnpkg/core';
+import {Locator, Package, BuildType, FinalizeInstallStatus}       from '@yarnpkg/core';
+import {structUtils, Report, Manifest, miscUtils, DependencyMeta} from '@yarnpkg/core';
+import {VirtualFS, ZipOpenFS, xfs, FakeFS}                        from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, toFilename, Filename}         from '@yarnpkg/fslib';
+import {getLibzipPromise}                                         from '@yarnpkg/libzip';
+import {parseSyml}                                                from '@yarnpkg/parsers';
+import {AbstractPnpInstaller}                                     from '@yarnpkg/plugin-pnp';
+import {NodeModulesLocatorMap, buildLocatorMap}                   from '@yarnpkg/pnpify';
+import {buildNodeModulesTree}                                     from '@yarnpkg/pnpify';
+import {PnpSettings, makeRuntimeApi}                              from '@yarnpkg/pnp';
+import cmdShim                                                    from '@zkochan/cmd-shim';
+import {UsageError}                                               from 'clipanion';
+import fs                                                         from 'fs';
 
 const STATE_FILE_VERSION = 1;
 const NODE_MODULES = `node_modules` as Filename;
@@ -113,8 +114,11 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
 
     const installStatuses: Array<FinalizeInstallStatus> = [];
 
-    for (const [locatorStr, installRecord] of locatorMap.entries()) {
-      const locator = structUtils.parseLocator(locatorStr);
+    for (const [locatorKey, installRecord] of locatorMap.entries()) {
+      if (isLinkLocator(locatorKey))
+        continue;
+
+      const locator = structUtils.parseLocator(locatorKey);
       const pnpLocator = {name: structUtils.stringifyIdent(locator), reference: locator.reference};
 
       const pnpEntry = pnp.getPackageInformation(pnpLocator);
@@ -514,16 +518,26 @@ function refineNodeModulesRoots(locationTree: LocationTree, binSymlinks: BinSyml
   return {locationTree: refinedLocationTree, binSymlinks: refinedBinSymlinks};
 };
 
+function isLinkLocator(locatorKey: LocatorKey): boolean {
+  let descriptor = structUtils.parseDescriptor(locatorKey);
+  if (structUtils.isVirtualDescriptor(descriptor))
+    descriptor = structUtils.devirtualizeDescriptor(descriptor);
+
+  return descriptor.range.startsWith('link:');
+};
+
 async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, projectRoot: PortablePath, {loadManifest}: {loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
   const locatorScriptMap = new Map<LocatorKey, Map<string, string>>();
   for (const [locatorKey, {locations}] of installState) {
-    const manifest = await loadManifest(locations[0]);
+    let manifest = isLinkLocator(locatorKey) ? null : await loadManifest(locations[0]);
 
     const bin = new Map();
-    for (const [name, value] of manifest.bin) {
-      const target = ppath.join(locations[0], value);
-      if (value !== '' && xfs.existsSync(target)) {
-        bin.set(name, value);
+    if (manifest) {
+      for (const [name, value] of manifest.bin) {
+        const target = ppath.join(locations[0], value);
+        if (value !== '' && xfs.existsSync(target)) {
+          bin.set(name, value);
+        }
       }
     }
 
