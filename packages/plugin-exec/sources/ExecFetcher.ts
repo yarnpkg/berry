@@ -100,14 +100,20 @@ export class ExecFetcher implements Fetcher {
         const stdout = xfs.createWriteStream(logFile);
         const stderr = stdout;
 
+        const tempDir = ppath.join(cwd, `generator` as PortablePath);
+        const buildDir = ppath.join(cwd, `build` as PortablePath);
+
+        await xfs.mkdirPromise(tempDir);
+        await xfs.mkdirPromise(buildDir);
+
         /**
          * Values exposed on the global `execEnv` variable.
          *
          * Must be stringifiable using `JSON.stringify`.
          */
         const execEnvValues: ExecEnv = {
-          tempDir: npath.fromPortablePath(ppath.join(cwd, `generator` as PortablePath)),
-          buildDir: npath.fromPortablePath(ppath.join(cwd, `build` as PortablePath)),
+          tempDir: npath.fromPortablePath(tempDir),
+          buildDir: npath.fromPortablePath(buildDir),
           locator: structUtils.stringifyLocator(locator),
         };
         await xfs.writeFilePromise(envFile, `
@@ -132,9 +138,6 @@ export class ExecFetcher implements Fetcher {
             },
             enumerable: true,
           });
-
-          fs.mkdirSync(execEnv.tempDir);
-          fs.mkdirSync(execEnv.buildDir);
         `);
         const envRequire = `--require ${npath.fromPortablePath(envFile)}`;
         let NODE_OPTIONS = env.NODE_OPTIONS || ``;
