@@ -14,7 +14,7 @@ yarn plugin import exec
 
 ## Usage
 
-`package.json`
+**package.json**
 
 ```json
 {
@@ -24,7 +24,7 @@ yarn plugin import exec
 }
 ```
 
-`gen-pkg.js`
+**gen-pkg.js**
 
 ```js
 const {buildDir} = execEnv;
@@ -37,19 +37,64 @@ fs.writeFileSync(path.join(buildDir, `package.json`), JSON.stringify({
 fs.writeFileSync(path.join(buildDir, `index.js`), `module.exports = ${Date.now()};\n`);
 ```
 
+## Rational
+
+Typical Yarn fetchers download packages from the internet - this works fine if the project you want to use got packaged beforehand, but fails short as soon as you need to bundle it yourself. Yarn's builtin mechanism allows you to run the `prepare` script on compatible git repositories and use the result as final package, but even that isn't always enough - you may need to clone a specific branch, go into a specific directory, run a specific build script ... all things that makes it hard for us to support every single use case.
+
+The `exec:` protocol represents a way to define yourself how the specified package should be fetched. In a sense, it can be seen as a more high-level version of the [Fetcher API](/advanced/lexicon#fetcher) that Yarn provides.
+
 ## Documentation
 
-The script will be invoked inside a temporary directory with two parameters: the generator path (`process.argv[1]`; Warning: it's not the `generatorPath` you expect, don't use it) and the stringified [`Ident`](/api/interfaces/yarnpkg_core.ident.html) identifying the generator package (`process.argv[2]`).
+The JavaScript file targeted by the `exec:` protocol will be invoked inside a temporary directory at fetch-time with a preconfigured runtime environment. The script is then expected to populate a special directory defined in the environment, and exit once the generation has finished.
 
-The content of the generator file is written to a file inside a temporary directory. That file is then invoked, so `require` doesn't work as expected. That's why we expose all of the built-in modules as global variables (`'module'` is exposed as `Module`)). If you want to bundle your own dependencies, you have to use a module bundler like Webpack or Rollup.
+### Generator scripts & `require`
 
-Yarn injects the `execEnv` global variable inside the script. It's an `object` that contains various useful details about the execution context. We also provide type definitions through the [`ExecEnv`](/api/interfaces/plugin_exec.execenv.html) interface from `@yarnpkg/plugin-exec`.
+Because the generator will be called in a very special context (before any package has been installed on the disk), it won't be able to call the `require` function (not even with relative paths). Should you need very complex generators, just bundle them up beforehand in a single script using tools such as Webpack or Rollup.
 
-You're free to do whatever you want inside `execEnv.tempDir`, but, at the end of the execution, Yarn will expect `execEnv.buildDir` to contain the files that will then be compressed into an archive and stored within the cache.
+Because of this restriction, and because generators will pretty much always need to use the Node builtin modules, those are made available in the global scope - in a very similar way to what the Node REPL already does. As a result, no need to manually require the `fs` module: it's available through the global `fs` variable!
+
+### Runtime environment
+
+In order to let the script knows about the various predefined folders involved in the generation process, Yarn will inject a special `execEnv` global variable available to the script. This object's [interface](/api/interfaces/plugin_exec.execenv.html) is defined as such:
 
 | Property   | Type     | Description                                                                                                                                                     |
 | ---------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `tempDir`  | `string` | The absolute path of the empty temporary directory. It is created before the script is invoked.                                                                 |
 | `buildDir` | `string` | The absolute path of the empty build directory that will be compressed into an archive and stored within the cache. It is created before the script is invoked. |
 | `locator`  | `string` | The stringified `Locator` identifying the generator package.                                                                                                    |
+You're free to do whatever you want inside `execEnv.tempDir` but, at the end of the execution, Yarn will expect `execEnv.buildDir` to contain the files that can be compressed into an archive and stored within the cache.
 
+### Example
+
+Generate an hello world package:
+
+```ts
+fs.writeFileSync(path.join(execEnv.buildDir, 'package.json'), JSON.stringify({
+  name: 'hello-world',
+  version: '1.0.0',
+}));
+
+fs.writeFileSync(path.join(execEnv.buildDir, 'index.js'), `
+  module.exports = 'hello world!';
+`);
+```
+
+Clone a monorepo and build a specific package:
+
+```ts
+const pathToRepo = path.join(execEnv.tempDir, 'repo');
+const pathToArchive = path.join(execEnv.tempDir, 'archive.tgz');
+const pathToSubpackage = path.join(pathToRepo, 'packages/foobar');
+
+# Clone the repository
+child_process.execFileSync(`git`, [`clone`, `git@github.com:foo/bar`, pathToRepo]);
+
+# Install the dependencies
+child_process.execFileSync(`yarn`, [`install`], {cwd: pathToRepo});
+
+# Pack a specific workspace
+child_process.execFileSync(`yarn`, [`pack`, `--out`, pathToArchive], {cwd: pathToSubpackage});
+
+# Send the package content into the build directory
+child_process.execFileSync(`tar`, [`xfz`, `--strip-components=1`, pathToArchive, `-C`, execEnv.buildDir]);
+```
