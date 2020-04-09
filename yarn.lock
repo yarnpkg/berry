@@ -5576,6 +5576,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.17"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.10"
     cross-spawn: 6.0.5
+    fast-glob: ^3.2.2
     stream-buffers: ^3.0.2
   languageName: unknown
   linkType: soft
@@ -11391,6 +11392,20 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     merge2: ^1.3.0
     micromatch: ^4.0.2
   checksum: 2/6736f9dcf1d777881ae4a20dd090ee6834f19dd35e5447d98b3e96d05f2d880a7b9cb048c4957f50da7d7d3e535829e2d47e7386485c3c5ac378993286bdef1a
+  languageName: node
+  linkType: hard
+
+"fast-glob@npm:^3.2.2":
+  version: 3.2.2
+  resolution: "fast-glob@npm:3.2.2"
+  dependencies:
+    "@nodelib/fs.stat": ^2.0.2
+    "@nodelib/fs.walk": ^1.2.3
+    glob-parent: ^5.1.0
+    merge2: ^1.3.0
+    micromatch: ^4.0.2
+    picomatch: ^2.2.1
+  checksum: 2/be3e4862756ca07414f45fc9c7c4e19657482793f98101a07b226a6b76f35dda8226f645a5cf0d6fa5a0b28b400b3776e94bdc1e36010bfe288200090053d1ec
   languageName: node
   linkType: hard
 
@@ -19821,6 +19836,13 @@ fsevents@^1.2.2:
   version: 2.0.5
   resolution: "picomatch@npm:2.0.5"
   checksum: 2/6bc5dcb63df322752671a5b44bfb0ba78e055e4ee3aaba8533937fcd649521936b95903981e7e1d8353e7024e1812f8c5b727f8758d1704ec660425107b51f37
+  languageName: node
+  linkType: hard
+
+"picomatch@npm:^2.2.1":
+  version: 2.2.2
+  resolution: "picomatch@npm:2.2.2"
+  checksum: 2/20fa75e0a58b39d83425b3db68744d5f6f361fd4fd66ec7745d884036d502abba0d553a637703af79939b844164b13e60eea339ccb043d7fbd74c3da2592b864
   languageName: node
   linkType: hard
 

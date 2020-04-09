@@ -1,10 +1,16 @@
-import {PortablePath, npath, ppath, xfs}                                             from '@yarnpkg/fslib';
-import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
+import {PortablePath, npath, ppath, xfs, FakeFS}                                     from '@yarnpkg/fslib';
 import {EnvSegment}                                                                  from '@yarnpkg/parsers';
+import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
+import fastGlob                                                                      from 'fast-glob';
 import {PassThrough, Readable, Writable}                                             from 'stream';
 
-import {Handle, ProcessImplementation, ProtectedStream, Stdio, start}                from './pipe';
 import {makeBuiltin, makeProcess}                                                    from './pipe';
+import {Handle, ProcessImplementation, ProtectedStream, Stdio, start}                from './pipe';
+
+export type Glob = {
+  isGlobPattern: (arg: string) => boolean,
+  match: (pattern: string, options: {cwd: PortablePath, fs?: FakeFS<PortablePath>}) => Promise<string[]>,
+};
 
 export type UserOptions = {
   builtins: {[key: string]: ShellBuiltin},
@@ -14,6 +20,7 @@ export type UserOptions = {
   stdout: Writable,
   stderr: Writable,
   variables: {[key: string]: string},
+  glob: Glob,
 };
 
 export type ShellBuiltin = (
@@ -28,6 +35,7 @@ export type ShellOptions = {
   initialStdin: Readable,
   initialStdout: Writable,
   initialStderr: Writable,
+  glob: Glob,
 };
 
 export type ShellState = {
@@ -266,6 +274,16 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
           switch (segment.type) {
             case `text`: {
               push(segment.text);
+            } break;
+
+            case `glob`: {
+              const matches = await opts.glob.match(segment.pattern, {cwd: state.cwd});
+              if (!matches.length)
+                throw new Error(`No file matches found: "${segment.pattern}". Note: Glob patterns currently only support files that exist on the filesystem (Help Wanted)`);
+
+              for (const match of matches) {
+                pushAndClose(match);
+              }
             } break;
 
             case `shell`: {
@@ -631,6 +649,11 @@ export async function execute(command: string, args: Array<string> = [], {
   stdout = process.stdout,
   stderr = process.stderr,
   variables = {},
+  glob = {
+    isGlobPattern: fastGlob.isDynamicPattern,
+    // @ts-ignore: `fs` is based on `PortablePath`
+    match: (pattern: string, {cwd, fs = xfs}) => fastGlob(pattern, {cwd, fs}),
+  },
 }: Partial<UserOptions> = {}) {
   const normalizedEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(env))
@@ -647,7 +670,7 @@ export async function execute(command: string, args: Array<string> = [], {
     (stdin as PassThrough).end();
   }
 
-  const ast = parseShell(command);
+  const ast = parseShell(command, glob);
 
   // If the shell line doesn't use the args, inject it at the end of the
   // right-most command
@@ -679,6 +702,7 @@ export async function execute(command: string, args: Array<string> = [], {
     initialStdin: stdin,
     initialStdout: stdout,
     initialStderr: stderr,
+    glob,
   }, {
     cwd,
     environment: normalizedEnv,
