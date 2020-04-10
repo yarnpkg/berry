@@ -909,13 +909,12 @@ export class Project {
       return structUtils.stringifyLocator(pkg);
     }]);
 
-    const limit = pLimit(5);
     let firstError = false;
 
     const progress = Report.progressViaCounter(locatorHashes.length);
     report.reportProgress(progress);
 
-    await Promise.all(locatorHashes.map(locatorHash => limit(async () => {
+    await Promise.all(locatorHashes.map(locatorHash => (async () => {
       const pkg = this.storedPackages.get(locatorHash);
       if (!pkg)
         throw new Error(`Assertion failed: The locator should have been registered`);
@@ -941,7 +940,7 @@ export class Project {
       if (fetchResult.releaseFs) {
         fetchResult.releaseFs();
       }
-    }).finally(() => {
+    })().finally(() => {
       progress.tick();
     })));
 
