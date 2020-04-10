@@ -5866,6 +5866,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],
             ["chalk", "npm:3.0.0"],
             ["clipanion", "npm:2.1.5"],
+            ["fromentries", "npm:1.2.0"],
             ["micromatch", "npm:4.0.2"],
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
@@ -5908,6 +5909,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],
             ["chalk", "npm:3.0.0"],
             ["clipanion", "npm:2.1.5"],
+            ["fromentries", "npm:1.2.0"],
             ["micromatch", "npm:4.0.2"],
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
@@ -14283,6 +14285,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["from2", "npm:2.3.0"],
             ["inherits", "npm:2.0.3"],
             ["readable-stream", "npm:2.3.6"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["fromentries", [
+        ["npm:1.2.0", {
+          "packageLocation": "./.yarn/cache/fromentries-npm-1.2.0-7bbcba0f9c-2.zip/node_modules/fromentries/",
+          "packageDependencies": [
+            ["fromentries", "npm:1.2.0"]
           ],
           "linkType": "HARD",
         }]

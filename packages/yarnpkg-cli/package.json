@@ -25,6 +25,7 @@
     "@yarnpkg/shell": "workspace:^2.0.0-rc.10",
     "chalk": "^3.0.0",
     "clipanion": "^2.1.5",
+    "fromentries": "^1.2.0",
     "promise.prototype.finally": "^3.1.1",
     "semver": "^7.1.2",
     "yup": "^0.27.0"

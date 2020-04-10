@@ -4897,6 +4897,7 @@ __metadata:
     "@yarnpkg/shell": "workspace:^2.0.0-rc.10"
     chalk: ^3.0.0
     clipanion: ^2.1.5
+    fromentries: ^1.2.0
     micromatch: ^4.0.2
     promise.prototype.finally: ^3.1.1
     semver: ^7.1.2
@@ -12041,6 +12042,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     inherits: ^2.0.1
     readable-stream: ^2.0.0
   checksum: 2/5f1a9bbff02d30cf5b4f12cfef20b47455876f8318b92d275ca39e3c5adf0636d3a0d8f4821a1c245339c47e79a551dce9ce5c7d9236c16347b934dc13d1d408
+  languageName: node
+  linkType: hard
+
+"fromentries@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "fromentries@npm:1.2.0"
+  checksum: 2/daae12847b36fb700691f26e91e575f3f33dd4e5a1e1e21eeca26574b38d00d2d2634cb8fbc25e2bfc3c092eab77b57caa06e0417cf41a6ea76165b6e867ba56
   languageName: node
   linkType: hard
 
