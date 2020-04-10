@@ -107,17 +107,6 @@ export async function request(target: string, body: Body, {configuration, header
   });
 
   return limit(() => gotClient(target) as unknown as Response<any>);
-
-  // const responsePromise = gotClient(target) as Promise<any>;
-  // if (requestPool.length >= NETWORK_CONCURRENCY) {
-  //   console.log('before race', requestPool.length);
-  //   await Promise.race(requestPool);
-  //   console.log('after race', requestPool.length);
-  // } else {
-  //   requestPool.push(responsePromise.finally(() => requestPool.splice(requestPool.indexOf(responsePromise), 1)));
-  // }
-
-  // return await responsePromise;
 }
 
 export async function get(target: string, {configuration, json, ...rest}: Options) {
