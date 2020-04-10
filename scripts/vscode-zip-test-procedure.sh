@@ -38,6 +38,7 @@ open_vscode() {
 checkout_vscode() {
   if ! [[ -d "${VSCODE_DIR}" ]]; then
     git clone --depth 1 git@github.com:elmpp/vscode.git -b elmpp/yarn2-vscode-36943 "${VSCODE_DIR}" >& /dev/null
+    (cd "${VSCODE_DIR}" && yarn set version (cd "$(realpath "$(mktemp -d)")" && yarn --version))
   fi
 }
 
@@ -76,12 +77,12 @@ echo "just press ctrl-c in this terminal."
 ## Tests regarding the feature itself
 
 setup npm init -y
-echo "If this is first time, VSCode will take some time to build..."
 open_vscode "$(pwd)"
 
 step "Open index.ts, check that 'x' has an error"
 step "Remove the ': number', the error should disappear"
 step "Command-click on '@sindresorhus/slugify' from 'import slugify', you should see a file open"
+
 
 setup npm init -y
 npm install typescript@2.9 >& /dev/null
@@ -96,31 +97,15 @@ step "Going back to the previous file, command-click on 'slugify' from 'import s
 step "Check that clicking on both 'namespace slugify {' and 'function slugify {' print more details in the bubble"
 step "Check that double-clicking on both 'namespace slugify {' and 'function slugify {' leads you to the right symbols"
 
+
 setup yarn init -2y
 open_vscode "$(pwd)"
 
-#step "Open index.ts, check that '@sindresorhus/slugify' has an error (cannot find module)"
+step "Open index.ts, check that '@sindresorhus/slugify' has an error (cannot find module)"
 step "Open index.ts, check that 'x' has an error"
 step "Check that 'Typescript 3.8.3' (or some other recent version) appears in the bottom-right of the window"
 step "Remove the ': number', the error should disappear"
 step "Command-click on '@sindresorhus/slugify', a tab should open on '.../slugify/index.d.ts'"
-step "Going back to the previous file, command-click on 'slugify' from 'import slugify', you should see a bubble open"
-step "Check that clicking on both 'namespace slugify {' and 'function slugify {' print more details in the bubble"
-step "Check that double-clicking on both 'namespace slugify {' and 'function slugify {' leads you to the right symbols"
-
-
-Contingent on application of changes mentioned in [36943](https://github.com/microsoft/TypeScript/issues/36943#issuecomment-597054870)
-setup yarn init -2y
-yarn add typescript@3.8 >& /dev/null
-yarn node "${YARN2_DIR}/packages/yarnpkg-pnpify/sources/boot-cli-dev.js" --sdk
-open_vscode "$(pwd)" 1
-
-step "Open index.ts"
-step "Press Command+Shift+P, 'Select TypeScript version', 'Use workspace version'"
-step "Check that 'Typescript 3.8-pnpify' appears in the bottom-right of the window"
-step "Check that 'x' has an error"
-step "Remove the ': number', the error should disappear"
-step "Command-click on '@sindresorhus/slugify', a tab should open on '.../slugify/index.d.ts' (you shouldn't see any error in the lower corner!)"
 step "Going back to the previous file, command-click on 'slugify' from 'import slugify', you should see a bubble open"
 step "Check that clicking on both 'namespace slugify {' and 'function slugify {' print more details in the bubble"
 step "Check that double-clicking on both 'namespace slugify {' and 'function slugify {' leads you to the right symbols"
