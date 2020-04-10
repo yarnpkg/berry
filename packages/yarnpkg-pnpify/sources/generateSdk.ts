@@ -230,7 +230,7 @@ const generateTypescriptWrapper = async (pnpApi: PnpApi, target: PortablePath) =
 
     function addZipPrefix(str) {
         if(str.match(/\.zip\\//) && !str.match(/^zip:\\/\\//)) {
-            return \`zip://\${str}\`;
+            return \`zip:\${str}\`;
         }
         return str;
     }
