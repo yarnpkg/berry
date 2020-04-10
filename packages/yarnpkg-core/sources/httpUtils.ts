@@ -2,10 +2,15 @@ import got, {GotOptions, NormalizedOptions, Response} from 'got';
 import {Agent as HttpsAgent}                          from 'https';
 import {Agent as HttpAgent}                           from 'http';
 import micromatch                                     from 'micromatch';
+import plimit                                         from 'p-limit';
 import tunnel, {ProxyOptions}                         from 'tunnel';
 import {URL}                                          from 'url';
 
 import {Configuration}                                from './Configuration';
+
+const NETWORK_CONCURRENCY = 8;
+
+const limit = plimit(NETWORK_CONCURRENCY);
 
 const cache = new Map<string, Promise<Response<Buffer>>>();
 
@@ -101,7 +106,7 @@ export async function request(target: string, body: Body, {configuration, header
     hooks: makeHooks(),
   });
 
-  return gotClient(target) as unknown as Response<any>;
+  return limit(() => gotClient(target) as unknown as Response<any>);
 }
 
 export async function get(target: string, {configuration, json, ...rest}: Options) {
