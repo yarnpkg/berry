@@ -4897,8 +4897,8 @@ __metadata:
     "@yarnpkg/shell": "workspace:^2.0.0-rc.10"
     chalk: ^3.0.0
     clipanion: ^2.1.5
+    fromentries: ^1.2.0
     micromatch: ^4.0.2
-    object.fromentries: ^2.0.2
     promise.prototype.finally: ^3.1.1
     semver: ^7.1.2
     typescript: ^3.8.3
@@ -10453,25 +10453,6 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"es-abstract@npm:^1.17.0-next.1, es-abstract@npm:^1.17.5":
-  version: 1.17.5
-  resolution: "es-abstract@npm:1.17.5"
-  dependencies:
-    es-to-primitive: ^1.2.1
-    function-bind: ^1.1.1
-    has: ^1.0.3
-    has-symbols: ^1.0.1
-    is-callable: ^1.1.5
-    is-regex: ^1.0.5
-    object-inspect: ^1.7.0
-    object-keys: ^1.1.1
-    object.assign: ^4.1.0
-    string.prototype.trimleft: ^2.1.1
-    string.prototype.trimright: ^2.1.1
-  checksum: 2/83b0ce528072f37174182548d73e18d1b02fa6bddf0d675e81de77b23f4c6f4908f4d1bd5835fcae9f5d91051533afafd841482dafa21b111eaf52160a08b837
-  languageName: node
-  linkType: hard
-
 "es-to-primitive@npm:^1.2.0":
   version: 1.2.0
   resolution: "es-to-primitive@npm:1.2.0"
@@ -10480,17 +10461,6 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     is-date-object: ^1.0.1
     is-symbol: ^1.0.2
   checksum: 2/9298f4a7c9b950f9a80cd0316d73ab433fe88a0f464b25a0b5ea96bc7c99cfee11c50d304105cd05a132af67a2f3b62e5d9d5f0d1471dbd32ff308f5b17de098
-  languageName: node
-  linkType: hard
-
-"es-to-primitive@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "es-to-primitive@npm:1.2.1"
-  dependencies:
-    is-callable: ^1.1.4
-    is-date-object: ^1.0.1
-    is-symbol: ^1.0.2
-  checksum: 2/d20b7be268b84662469972ec7265a57d4d6a65b9bf2b73f040d75e14f9f6dbe266a1a88579162e11349f9cb70eaa17640efb515c90dab19745a904b680b14be3
   languageName: node
   linkType: hard
 
@@ -12059,6 +12029,13 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
+"fromentries@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "fromentries@npm:1.2.0"
+  checksum: 2/daae12847b36fb700691f26e91e575f3f33dd4e5a1e1e21eeca26574b38d00d2d2634cb8fbc25e2bfc3c092eab77b57caa06e0417cf41a6ea76165b6e867ba56
+  languageName: node
+  linkType: hard
+
 "fs-constants@npm:^1.0.0":
   version: 1.0.0
   resolution: "fs-constants@npm:1.0.0"
@@ -13574,13 +13551,6 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"has-symbols@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "has-symbols@npm:1.0.1"
-  checksum: 2/84e2a03ada6f530f0c1ebea64df5932556ac20a4b78998f1f2b5dd0cf736843e8082c488b0ea7f08b9aec72fb6d8b736beed2fd62fac60dcaebfdc0b8d2aa7ac
-  languageName: node
-  linkType: hard
-
 "has-to-string-tag-x@npm:^1.2.0":
   version: 1.4.1
   resolution: "has-to-string-tag-x@npm:1.4.1"
@@ -14793,13 +14763,6 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"is-callable@npm:^1.1.5":
-  version: 1.1.5
-  resolution: "is-callable@npm:1.1.5"
-  checksum: 2/e77885498dc68297933cfcf2b93da039936216a6423698dfbad33fdabd4e79f3298f30d505424e5f52d8acebc1223a1a0a0ab98435b92dbd55d7713be012719e
-  languageName: node
-  linkType: hard
-
 "is-ci@npm:^1.0.10":
   version: 1.2.1
   resolution: "is-ci@npm:1.2.1"
@@ -15239,15 +15202,6 @@ fsevents@^1.2.2:
   dependencies:
     has: ^1.0.1
   checksum: 2/a38cc3d91b80a60fc8984d13972ce99487575febe28c67b8aa8c76d0d00717ff44d266d33153a6a6d33f0da17d8f0cb757c8bd0acc3354911be712849dfee13c
-  languageName: node
-  linkType: hard
-
-"is-regex@npm:^1.0.5":
-  version: 1.0.5
-  resolution: "is-regex@npm:1.0.5"
-  dependencies:
-    has: ^1.0.3
-  checksum: 2/2f3b1fdb16044c6d1cc8d3a617cf1ff8637fe6958991e2805ba8eb01bdc76be6032ccd7fde12e81c39c5e70b0d556cdc7ba2a3a92f096d4e788f764bded2eca0
   languageName: node
   linkType: hard
 
@@ -18833,13 +18787,6 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"object-inspect@npm:^1.7.0":
-  version: 1.7.0
-  resolution: "object-inspect@npm:1.7.0"
-  checksum: 2/9f479ca1002fedbf4e1c5dec908477d1a7a2dd4466af0b4cf5886d269db54d8310544dfb7670a17a4c5d6a7a3dd3c346be38ea6b3541330551900a3134dec662
-  languageName: node
-  linkType: hard
-
 "object-keys@npm:^1.0.11, object-keys@npm:^1.0.12":
   version: 1.0.12
   resolution: "object-keys@npm:1.0.12"
@@ -18903,18 +18850,6 @@ fsevents@^1.2.2:
     function-bind: ^1.1.1
     has: ^1.0.1
   checksum: 2/9718cecf8b7a621634ba29f389883218eff9fb3d679f7a122f814d83c95ae260b0f1f73d802b18cb6a1952fa976a070038e174031cd9dbeae42ec7eb4b227768
-  languageName: node
-  linkType: hard
-
-"object.fromentries@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "object.fromentries@npm:2.0.2"
-  dependencies:
-    define-properties: ^1.1.3
-    es-abstract: ^1.17.0-next.1
-    function-bind: ^1.1.1
-    has: ^1.0.3
-  checksum: 2/58fa9edab136a299e81828842e0c2dd12df1985025f13e451a2c5609d8b16e4c7ebd2c574691f3b6edffb44ada8d5d12aef3b060ce1a65660b65e3202a7897a1
   languageName: node
   linkType: hard
 
@@ -23714,16 +23649,6 @@ resolve@^1.10.1:
   languageName: node
   linkType: hard
 
-"string.prototype.trimend@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "string.prototype.trimend@npm:1.0.0"
-  dependencies:
-    define-properties: ^1.1.3
-    es-abstract: ^1.17.5
-  checksum: 2/e1bae7e46ef46c37765740f095ba286bcde74ac74d25ea2c8b88675f194d90e74d1568fa2ff242757e0d57992ae93cb734eacfe8bf8ef3b3e7cf77efdbd429fe
-  languageName: node
-  linkType: hard
-
 "string.prototype.trimleft@npm:^2.1.0":
   version: 2.1.0
   resolution: "string.prototype.trimleft@npm:2.1.0"
@@ -23734,17 +23659,6 @@ resolve@^1.10.1:
   languageName: node
   linkType: hard
 
-"string.prototype.trimleft@npm:^2.1.1":
-  version: 2.1.2
-  resolution: "string.prototype.trimleft@npm:2.1.2"
-  dependencies:
-    define-properties: ^1.1.3
-    es-abstract: ^1.17.5
-    string.prototype.trimstart: ^1.0.0
-  checksum: 2/c0b749c23b0f8621b1901e6aed83c1338af8fb5293a367e4b1065667e00ab07aa5248f19a6f5b9cb85f01c686987e0378153c066cd6901c3ea9a71d1133daaba
-  languageName: node
-  linkType: hard
-
 "string.prototype.trimright@npm:^2.1.0":
   version: 2.1.0
   resolution: "string.prototype.trimright@npm:2.1.0"
@@ -23752,27 +23666,6 @@ resolve@^1.10.1:
     define-properties: ^1.1.3
     function-bind: ^1.1.1
   checksum: 2/c79f1a54fcc4da511bb30f90b80b290ac3f258e18e09fb4dea71bb744101a05c73b724cf8f0ffe1af3d5511c2f091635ebb023d27d98bbfa732d563a6f2ae252
-  languageName: node
-  linkType: hard
-
-"string.prototype.trimright@npm:^2.1.1":
-  version: 2.1.2
-  resolution: "string.prototype.trimright@npm:2.1.2"
-  dependencies:
-    define-properties: ^1.1.3
-    es-abstract: ^1.17.5
-    string.prototype.trimend: ^1.0.0
-  checksum: 2/2c7b83c4cf487646d56ec7cd5d24dab112a0c34409b79d2fec4db111fb492ebeac507d993e228451eb56589e24b4c4cdfdcf335ff38bad85e0c34a94a74b7f6b
-  languageName: node
-  linkType: hard
-
-"string.prototype.trimstart@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "string.prototype.trimstart@npm:1.0.0"
-  dependencies:
-    define-properties: ^1.1.3
-    es-abstract: ^1.17.5
-  checksum: 2/f26c8ac21491b9ac1e067a5832f90d282a2bef347d212624d53f1850bacb4c49b7d68d1d3e9173544e2609ba618e96cc9cf4a9d1bc32d44eaf3bdaa6c2987e2a
   languageName: node
   linkType: hard
 

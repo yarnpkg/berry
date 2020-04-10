@@ -5866,8 +5866,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],
             ["chalk", "npm:3.0.0"],
             ["clipanion", "npm:2.1.5"],
+            ["fromentries", "npm:1.2.0"],
             ["micromatch", "npm:4.0.2"],
-            ["object.fromentries", "npm:2.0.2"],
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=270b6c"],
@@ -5909,8 +5909,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],
             ["chalk", "npm:3.0.0"],
             ["clipanion", "npm:2.1.5"],
+            ["fromentries", "npm:1.2.0"],
             ["micromatch", "npm:4.0.2"],
-            ["object.fromentries", "npm:2.0.2"],
             ["promise.prototype.finally", "npm:3.1.1"],
             ["semver", "npm:7.1.2"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=270b6c"],
@@ -12583,24 +12583,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["string.prototype.trimright", "npm:2.1.0"]
           ],
           "linkType": "HARD",
-        }],
-        ["npm:1.17.5", {
-          "packageLocation": "./.yarn/cache/es-abstract-npm-1.17.5-7b6ab50e26-2.zip/node_modules/es-abstract/",
-          "packageDependencies": [
-            ["es-abstract", "npm:1.17.5"],
-            ["es-to-primitive", "npm:1.2.1"],
-            ["function-bind", "npm:1.1.1"],
-            ["has", "npm:1.0.3"],
-            ["has-symbols", "npm:1.0.1"],
-            ["is-callable", "npm:1.1.5"],
-            ["is-regex", "npm:1.0.5"],
-            ["object-inspect", "npm:1.7.0"],
-            ["object-keys", "npm:1.1.1"],
-            ["object.assign", "npm:4.1.0"],
-            ["string.prototype.trimleft", "npm:2.1.2"],
-            ["string.prototype.trimright", "npm:2.1.2"]
-          ],
-          "linkType": "HARD",
         }]
       ]],
       ["es-to-primitive", [
@@ -12608,16 +12590,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/es-to-primitive-npm-1.2.0-e4c5d8a5a4-2.zip/node_modules/es-to-primitive/",
           "packageDependencies": [
             ["es-to-primitive", "npm:1.2.0"],
-            ["is-callable", "npm:1.1.4"],
-            ["is-date-object", "npm:1.0.1"],
-            ["is-symbol", "npm:1.0.2"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:1.2.1", {
-          "packageLocation": "./.yarn/cache/es-to-primitive-npm-1.2.1-b7a7eac6c5-2.zip/node_modules/es-to-primitive/",
-          "packageDependencies": [
-            ["es-to-primitive", "npm:1.2.1"],
             ["is-callable", "npm:1.1.4"],
             ["is-date-object", "npm:1.0.1"],
             ["is-symbol", "npm:1.0.2"]
@@ -14301,6 +14273,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["fromentries", [
+        ["npm:1.2.0", {
+          "packageLocation": "./.yarn/cache/fromentries-npm-1.2.0-7bbcba0f9c-2.zip/node_modules/fromentries/",
+          "packageDependencies": [
+            ["fromentries", "npm:1.2.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["fs", [
         ["npm:0.0.1-security", {
           "packageLocation": "./.yarn/cache/fs-npm-0.0.1-security-5060b47e87-2.zip/node_modules/fs/",
@@ -15965,13 +15946,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["has-symbols", "npm:1.0.0"]
           ],
           "linkType": "HARD",
-        }],
-        ["npm:1.0.1", {
-          "packageLocation": "./.yarn/cache/has-symbols-npm-1.0.1-b783bc25ec-2.zip/node_modules/has-symbols/",
-          "packageDependencies": [
-            ["has-symbols", "npm:1.0.1"]
-          ],
-          "linkType": "HARD",
         }]
       ]],
       ["has-to-string-tag-x", [
@@ -17310,13 +17284,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["is-callable", "npm:1.1.4"]
           ],
           "linkType": "HARD",
-        }],
-        ["npm:1.1.5", {
-          "packageLocation": "./.yarn/cache/is-callable-npm-1.1.5-ffa06e733e-2.zip/node_modules/is-callable/",
-          "packageDependencies": [
-            ["is-callable", "npm:1.1.5"]
-          ],
-          "linkType": "HARD",
         }]
       ]],
       ["is-ci", [
@@ -17803,14 +17770,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/is-regex-npm-1.0.4-c77d6d844a-2.zip/node_modules/is-regex/",
           "packageDependencies": [
             ["is-regex", "npm:1.0.4"],
-            ["has", "npm:1.0.3"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:1.0.5", {
-          "packageLocation": "./.yarn/cache/is-regex-npm-1.0.5-5bb6a707e2-2.zip/node_modules/is-regex/",
-          "packageDependencies": [
-            ["is-regex", "npm:1.0.5"],
             ["has", "npm:1.0.3"]
           ],
           "linkType": "HARD",
@@ -21643,13 +21602,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["object-inspect", "npm:1.6.0"]
           ],
           "linkType": "HARD",
-        }],
-        ["npm:1.7.0", {
-          "packageLocation": "./.yarn/cache/object-inspect-npm-1.7.0-52604d77d2-2.zip/node_modules/object-inspect/",
-          "packageDependencies": [
-            ["object-inspect", "npm:1.7.0"]
-          ],
-          "linkType": "HARD",
         }]
       ]],
       ["object-keys", [
@@ -21720,17 +21672,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["object.fromentries", "npm:2.0.0"],
             ["define-properties", "npm:1.1.3"],
             ["es-abstract", "npm:1.13.0"],
-            ["function-bind", "npm:1.1.1"],
-            ["has", "npm:1.0.3"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:2.0.2", {
-          "packageLocation": "./.yarn/cache/object.fromentries-npm-2.0.2-17b1a805ec-2.zip/node_modules/object.fromentries/",
-          "packageDependencies": [
-            ["object.fromentries", "npm:2.0.2"],
-            ["define-properties", "npm:1.1.3"],
-            ["es-abstract", "npm:1.17.5"],
             ["function-bind", "npm:1.1.1"],
             ["has", "npm:1.0.3"]
           ],
@@ -26907,17 +26848,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["string.prototype.trimend", [
-        ["npm:1.0.0", {
-          "packageLocation": "./.yarn/cache/string.prototype.trimend-npm-1.0.0-108b6ffa0d-2.zip/node_modules/string.prototype.trimend/",
-          "packageDependencies": [
-            ["string.prototype.trimend", "npm:1.0.0"],
-            ["define-properties", "npm:1.1.3"],
-            ["es-abstract", "npm:1.17.5"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["string.prototype.trimleft", [
         ["npm:2.1.0", {
           "packageLocation": "./.yarn/cache/string.prototype.trimleft-npm-2.1.0-7bb7868754-2.zip/node_modules/string.prototype.trimleft/",
@@ -26925,16 +26855,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["string.prototype.trimleft", "npm:2.1.0"],
             ["define-properties", "npm:1.1.3"],
             ["function-bind", "npm:1.1.1"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:2.1.2", {
-          "packageLocation": "./.yarn/cache/string.prototype.trimleft-npm-2.1.2-ae3615d81f-2.zip/node_modules/string.prototype.trimleft/",
-          "packageDependencies": [
-            ["string.prototype.trimleft", "npm:2.1.2"],
-            ["define-properties", "npm:1.1.3"],
-            ["es-abstract", "npm:1.17.5"],
-            ["string.prototype.trimstart", "npm:1.0.0"]
           ],
           "linkType": "HARD",
         }]
@@ -26946,27 +26866,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["string.prototype.trimright", "npm:2.1.0"],
             ["define-properties", "npm:1.1.3"],
             ["function-bind", "npm:1.1.1"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:2.1.2", {
-          "packageLocation": "./.yarn/cache/string.prototype.trimright-npm-2.1.2-634eb1e814-2.zip/node_modules/string.prototype.trimright/",
-          "packageDependencies": [
-            ["string.prototype.trimright", "npm:2.1.2"],
-            ["define-properties", "npm:1.1.3"],
-            ["es-abstract", "npm:1.17.5"],
-            ["string.prototype.trimend", "npm:1.0.0"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["string.prototype.trimstart", [
-        ["npm:1.0.0", {
-          "packageLocation": "./.yarn/cache/string.prototype.trimstart-npm-1.0.0-105508ab58-2.zip/node_modules/string.prototype.trimstart/",
-          "packageDependencies": [
-            ["string.prototype.trimstart", "npm:1.0.0"],
-            ["define-properties", "npm:1.1.3"],
-            ["es-abstract", "npm:1.17.5"]
           ],
           "linkType": "HARD",
         }]
