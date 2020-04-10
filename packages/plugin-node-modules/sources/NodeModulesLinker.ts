@@ -311,12 +311,12 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
   return {locatorMap, binSymlinks, locationTree: buildLocationTree(locatorMap, {skipPrefix: project.cwd})};
 };
 
-const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean}): Promise<any> => {
+const removeDir = async (dir: PortablePath, options: {contentsOnly: boolean, innerLoop?: boolean}): Promise<any> => {
   if (dir.split(ppath.sep).indexOf(NODE_MODULES) < 0)
     throw new Error(`Assertion failed: trying to remove dir that doesn't contain node_modules: ${dir}`);
 
   try {
-    if (!options || !options.innerLoop) {
+    if (!options.innerLoop) {
       const stats = await xfs.lstatPromise(dir);
       if (stats.isSymbolicLink()) {
         await xfs.unlinkPromise(dir);
@@ -328,13 +328,15 @@ const removeDir = async (dir: PortablePath, options?: {innerLoop?: boolean}): Pr
       const targetPath = ppath.join(dir, toFilename(entry.name));
       if (entry.isDirectory()) {
         if (entry.name !== NODE_MODULES || (options && options.innerLoop)) {
-          await removeDir(targetPath, {innerLoop: true});
+          await removeDir(targetPath, {innerLoop: true, contentsOnly: false});
         }
       } else {
         await xfs.unlinkPromise(targetPath);
       }
     }
-    await xfs.rmdirPromise(dir);
+    if (!options.contentsOnly) {
+      await xfs.rmdirPromise(dir);
+    }
   } catch (e) {
     if (e.code !== 'ENOENT' && e.code !== 'ENOTEMPTY') {
       throw e;
@@ -656,31 +658,14 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     }
   };
 
-  const deleteQueue: Promise<any>[] = [];
-  const deleteModule = async (dstDir: PortablePath) => {
-    const promise: Promise<any> = (async () => {
-      try {
-        await removeDir(dstDir);
-      } catch (e) {
-        e.message = `While removing ${dstDir} ${e.message}`;
-        throw e;
-      }
-    })().then(() => deleteQueue.splice(deleteQueue.indexOf(promise), 1));
-    deleteQueue.push(promise);
-    if (deleteQueue.length > CONCURRENT_OPERATION_LIMIT) {
-      await Promise.race(deleteQueue);
-    }
-  };
-
-
   // Delete locations that no longer exist
-  const deleteList = new Set<PortablePath>();
+  const deleteList = new Map<PortablePath, {contentsOnly: boolean}>();
   // Delete locations of inner node_modules
   const innerDeleteList = new Set<PortablePath>();
 
   const recordOutdatedDirsToRemove = (location: PortablePath, prevNode: LocationNode, node?: LocationNode) => {
     if (!node) {
-      deleteList.add(location);
+      deleteList.set(location, {contentsOnly: false});
       if (prevNode.children.has(NODE_MODULES)) {
         innerDeleteList.add(ppath.join(location, NODE_MODULES));
       }
@@ -704,20 +689,21 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     }
   }
 
-  const recordNewDirsToClean = (location: PortablePath, node: LocationNode, prevNode?: LocationNode, ) => {
+  const recordNewDirsToClean = (location: PortablePath, node: LocationNode, {topLevel}: {topLevel: boolean}, prevNode?: LocationNode) => {
     if (!prevNode) {
-      deleteList.add(location);
+      // We want to clean only contents of top-level node_modules dir, since we need these dirs to be present
+      deleteList.set(location, {contentsOnly: topLevel});
       if (node.children.has(NODE_MODULES)) {
         innerDeleteList.add(ppath.join(location, NODE_MODULES));
       }
     } else {
       // Location is changed and will be occupied by a different locator - clean it
       if (node.locator !== prevNode.locator)
-        deleteList.add(location);
+        deleteList.set(location, {contentsOnly: topLevel});
 
       for (const [segment, childNode] of node.children) {
         let prevChildNode = prevNode.children.get(segment);
-        recordNewDirsToClean(ppath.join(location, segment), childNode, prevChildNode);
+        recordNewDirsToClean(ppath.join(location, segment), childNode, {topLevel: false}, prevChildNode);
       }
     }
   };
@@ -730,18 +716,16 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       if (segment === '.')
         continue;
       let prevChildNode = prevNode ? prevNode.children.get(segment) : prevNode;
-      recordNewDirsToClean(ppath.join(location, segment), childNode, prevChildNode);
+      recordNewDirsToClean(ppath.join(location, segment), childNode, {topLevel: true}, prevChildNode);
     }
   }
 
   // Handle inner node_modules deletions first
   for (const dstDir of innerDeleteList)
-    await deleteModule(dstDir);
-  await Promise.all(deleteQueue);
-  deleteQueue.length = 0;
+    await removeDir(dstDir, {contentsOnly: false});
 
-  for (const dstDir of deleteList)
-    await deleteModule(dstDir);
+  for (const [dstDir, {contentsOnly}] of deleteList)
+    await removeDir(dstDir, {contentsOnly});
 
   // Update changed locations
   const addList: Array<{srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType}> = [];
@@ -816,8 +800,6 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
   try {
     const persistedLocations = new Map<PortablePath, PortablePath>();
-
-    await Promise.all(deleteQueue);
 
     // For the first pass we'll only want to install a single copy for each
     // source directory. We'll later use the resulting install directories for
