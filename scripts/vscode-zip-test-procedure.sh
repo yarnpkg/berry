@@ -38,7 +38,7 @@ open_vscode() {
 checkout_vscode() {
   if ! [[ -d "${VSCODE_DIR}" ]]; then
     git clone --depth 1 git@github.com:elmpp/vscode.git -b elmpp/yarn2-vscode-36943 "${VSCODE_DIR}" >& /dev/null
-    (cd "${VSCODE_DIR}" && yarn set version (cd "$(realpath "$(mktemp -d)")" && yarn --version))
+    (cd "${VSCODE_DIR}" && echo "yarnPath: $(which yarn)" > .yarnrc.yml)
   fi
 }
 
