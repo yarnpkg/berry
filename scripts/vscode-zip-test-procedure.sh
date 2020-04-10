@@ -3,7 +3,7 @@ die() {
   exit 1
 }
 
-if [ $# -lt 1 ]; then die "Path to VSCode working copy required (or desired location if first time)"; fi
+if [ $# -lt 1 ]; then echo "Path to VSCode working copy required (or desired location if first time)"; exit 1; fi
 
 set -e
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -112,8 +112,7 @@ step "Check that double-clicking on both 'namespace slugify {' and 'function slu
 Contingent on application of changes mentioned in [36943](https://github.com/microsoft/TypeScript/issues/36943#issuecomment-597054870)
 setup yarn init -2y
 yarn add typescript@3.8 >& /dev/null
-yarn dlx @yarnpkg/pnpify --sdk >& /dev/null
-# yarn node "${YARN2_DIR}/packages/yarnpkg-pnpify/sources/boot-cli-dev.js" --sdk # required to include typescript-language-server pnpify process
+yarn node "${YARN2_DIR}/packages/yarnpkg-pnpify/sources/boot-cli-dev.js" --sdk
 open_vscode "$(pwd)" 1
 
 step "Open index.ts"
@@ -130,8 +129,6 @@ step "Check that double-clicking on both 'namespace slugify {' and 'function slu
 setup yarn init -2y
 echo 'nodeLinker: node-modules' >> .yarnrc.yml
 yarn add typescript@2.7.1 >& /dev/null
-# yarn dlx @yarnpkg/pnpify --sdk >& /dev/null
-# yarn node "${YARN2_DIR}/packages/yarnpkg-pnpify/sources/boot-cli-dev.js" --sdk # required to include typescript-language-server pnpify process
 open_vscode "$(pwd)" 1
 
 step "Open index.ts"
@@ -148,8 +145,6 @@ step "Check that double-clicking on both 'namespace slugify {' and 'function slu
 setup yarn init -2y
 echo 'nodeLinker: node-modules' >> .yarnrc.yml
 yarn add typescript@3.5.1 >& /dev/null
-# yarn dlx @yarnpkg/pnpify --sdk >& /dev/null
-# yarn node "${YARN2_DIR}/packages/yarnpkg-pnpify/sources/boot-cli-dev.js" --sdk # required to include typescript-language-server pnpify process
 open_vscode "$(pwd)" 1
 
 step "Open index.ts"
@@ -165,7 +160,6 @@ step "Check that double-clicking on both 'namespace slugify {' and 'function slu
 
 setup yarn init -2y
 yarn add typescript@3.8 >& /dev/null
-# yarn dlx @yarnpkg/pnpify --sdk >& /dev/null
 yarn node "${YARN2_DIR}/packages/yarnpkg-pnpify/sources/boot-cli-dev.js" --sdk
 open_vscode "$(pwd)" 1
 
