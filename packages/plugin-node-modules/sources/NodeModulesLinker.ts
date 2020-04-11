@@ -666,7 +666,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       if (prevNode.children.has(NODE_MODULES))
         await removeDir(ppath.join(location, NODE_MODULES), {contentsOnly: false});
 
-      await removeDir(location, {contentsOnly: false});
+      await removeDir(location, {contentsOnly: location === rootNmDirPath});
     } else {
       for (const [segment, prevChildNode] of prevNode.children) {
         let childNode = node.children.get(segment);
