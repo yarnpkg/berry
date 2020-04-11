@@ -1,8 +1,3 @@
-die() {
-  echo "${1}"
-  exit 1
-}
-
 if [ $# -lt 1 ]; then echo "Path to VSCode working copy required (or desired location if first time)"; exit 1; fi
 
 set -e
