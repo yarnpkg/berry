@@ -9,6 +9,7 @@ set -e
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 VSCODE_DIR=$(realpath "${1}")
 YARN2_DIR=$(realpath "${CURRENT_DIR}/../")
+EXTENSION_ID="arcanis.vscode-zipfs"
 
 STEP_ID=0
 step() {
@@ -25,12 +26,14 @@ open_vscode() {
     kill -9 "$VSCODE_PID" >& /dev/null || true
     wait "$VSCODE_PID" >& /dev/null || true
   fi
+
+  local VSIX=$(realpath "$(ls -t "${YARN2_DIR}"/packages/vscode-zipfs/vscode-zipfs-0.* | head -1)")
   if [ $# -gt 1 ]; then
-    step "VSCode (with zipfs extension) will open when you press enter. Working dir: '${1}'"
-    "$VSCODE_DIR"/scripts/code.sh "$1" --install-extension "${VSCODE_DIR}/packages/vscode-zipfs/vscode-zipfs-0.1.1-3.vsix" >& /dev/null &
+    step "VSCode (with zipfs extension ${VSIX##*/}) will open when you press enter. (Working dir: '${1}')"
+    "$VSCODE_DIR"/scripts/code.sh "$1" --install-extension "${VSIX}" >& /dev/null &
   else
-    step "VSCode will open when you press enter. Working dir: '${1}'"
-    "$VSCODE_DIR"/scripts/code.sh "$1" >& /dev/null &
+    step "VSCode will open when you press enter. (Working dir: '${1}')"
+    "$VSCODE_DIR"/scripts/code.sh "$1" --disable-extension "arcanis.vscode-zipfs" >& /dev/null &
   fi
   VSCODE_PID=$!
 }
@@ -44,7 +47,7 @@ checkout_vscode() {
 
 setup() {
   PM="$1"
-  if [ "${PM}" = "yarn" ]; then yarn set version berry || true; fi
+  if [ "${PM}" = "yarn" ]; then yarn set version berry || true >& /dev/null; fi
   shift
 
   echo
@@ -117,6 +120,7 @@ yarn add typescript@2.7.1 >& /dev/null
 open_vscode "$(pwd)" 1
 
 step "Open index.ts"
+step "Ensure that ZipFS extension is installed and enabled"
 step "Press Command+Shift+P, 'Select TypeScript version', 'Use workspace version'"
 step "Check that 'Typescript 2.7.1' appears in the bottom-right of the window"
 step "Check that 'x' has an error"
@@ -133,6 +137,7 @@ yarn add typescript@3.5.1 >& /dev/null
 open_vscode "$(pwd)" 1
 
 step "Open index.ts"
+step "Ensure that ZipFS extension is installed and enabled"
 step "Press Command+Shift+P, 'Select TypeScript version', 'Use workspace version'"
 step "Check that 'Typescript 3.5.1' appears in the bottom-right of the window"
 step "Check that 'x' has an error"
@@ -149,6 +154,24 @@ yarn node "${YARN2_DIR}/packages/yarnpkg-pnpify/sources/boot-cli-dev.js" --sdk
 open_vscode "$(pwd)" 1
 
 step "Open index.ts"
+step "Ensure that ZipFS extension is installed and enabled"
+step "Press Command+Shift+P, 'Select TypeScript version', 'Use workspace version'"
+step "Check that 'Typescript 3.8-pnpify' appears in the bottom-right of the window"
+step "Check that 'x' has an error"
+step "Remove the ': number', the error should disappear"
+step "Command-click on '@sindresorhus/slugify', a tab should open on '.../slugify/index.d.ts' (you shouldn't see any error in the lower corner!)"
+step "Going back to the previous file, command-click on 'slugify' from 'import slugify', you should see a bubble open"
+step "Check that clicking on both 'namespace slugify {' and 'function slugify {' print more details in the bubble"
+step "Check that double-clicking on both 'namespace slugify {' and 'function slugify {' leads you to the right symbols. Note here intellisense is not apparent (https://github.com/microsoft/vscode/issues/59650)"
+
+
+setup yarn init -2y
+yarn add typescript@3.8 >& /dev/null
+yarn node "${YARN2_DIR}/packages/yarnpkg-pnpify/sources/boot-cli-dev.js" --sdk
+open_vscode "$(pwd)"
+
+step "Open index.ts"
+step "Ensure that all extensions are uninstalled/disabled"
 step "Press Command+Shift+P, 'Select TypeScript version', 'Use workspace version'"
 step "Check that 'Typescript 3.8-pnpify' appears in the bottom-right of the window"
 step "Check that 'x' has an error"
