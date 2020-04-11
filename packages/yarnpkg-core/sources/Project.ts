@@ -48,6 +48,8 @@ const INSTALL_STATE_VERSION = 1;
 
 const MULTIPLE_KEYS_REGEXP = / *, */g;
 
+const FETCHER_CONCURRENCY = 32;
+
 const gzip = promisify(zlib.gzip);
 const gunzip = promisify(zlib.gunzip);
 
@@ -914,7 +916,9 @@ export class Project {
     const progress = Report.progressViaCounter(locatorHashes.length);
     report.reportProgress(progress);
 
-    await Promise.all(locatorHashes.map(locatorHash => (async () => {
+    const limit = pLimit(FETCHER_CONCURRENCY);
+
+    await Promise.all(locatorHashes.map(locatorHash => limit(async () => {
       const pkg = this.storedPackages.get(locatorHash);
       if (!pkg)
         throw new Error(`Assertion failed: The locator should have been registered`);
@@ -940,7 +944,7 @@ export class Project {
       if (fetchResult.releaseFs) {
         fetchResult.releaseFs();
       }
-    })().finally(() => {
+    }).finally(() => {
       progress.tick();
     })));
 
