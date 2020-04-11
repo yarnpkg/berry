@@ -693,6 +693,11 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       if (node.children.has(NODE_MODULES))
         await removeDir(ppath.join(location, NODE_MODULES), {contentsOnly: true});
 
+      // 1. If old directory is a symlink removeDir will remove it, regardless contentsOnly value
+      // 2. If old and new directories are hardlinks - we pass contentsOnly: true
+      // so that removeDir cleared only contents
+      // 3. If new directory is a symlink - we pass contentsOnly: false
+      // so that removeDir removed the whole directory
       await removeDir(location, {contentsOnly: node.linkType === LinkType.HARD});
     } else {
       // Location is changed and will be occupied by a different locator - clean it
