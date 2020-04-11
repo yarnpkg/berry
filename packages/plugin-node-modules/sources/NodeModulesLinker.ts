@@ -347,7 +347,7 @@ const removeDir = async (dir: PortablePath, options: {contentsOnly: boolean, inn
 const CONCURRENT_OPERATION_LIMIT = 4;
 
 type LocatorKey = string;
-type LocationNode = { children: Map<Filename, LocationNode>, locator?: LocatorKey };
+type LocationNode = { children: Map<Filename, LocationNode>, locator?: LocatorKey, linkType: LinkType };
 type LocationRoot = PortablePath;
 
 /**
@@ -410,6 +410,7 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
 
   const makeNode: () => LocationNode = () => ({
     children: new Map(),
+    linkType: LinkType.HARD,
   });
 
   for (const [locator, info] of locatorMap.entries()) {
@@ -418,6 +419,7 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
       if (internalPath !== null) {
         const node = miscUtils.getFactoryWithDefault(locationTree, info.target, makeNode);
         node.locator = locator;
+        node.linkType = info.linkType;
       }
     }
 
@@ -438,6 +440,7 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
 
         if (idx === segments.length - 1) {
           node.locator = locator;
+          node.linkType = info.linkType;
         }
       }
     }
@@ -658,21 +661,16 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     }
   };
 
-  // Delete locations that no longer exist
-  const deleteList = new Map<PortablePath, {contentsOnly: boolean}>();
-  // Delete locations of inner node_modules
-  const innerDeleteList = new Set<PortablePath>();
-
-  const recordOutdatedDirsToRemove = (location: PortablePath, prevNode: LocationNode, node?: LocationNode) => {
+  const removeOutdatedDirs = async (location: PortablePath, prevNode: LocationNode, node?: LocationNode) => {
     if (!node) {
-      deleteList.set(location, {contentsOnly: false});
-      if (prevNode.children.has(NODE_MODULES)) {
-        innerDeleteList.add(ppath.join(location, NODE_MODULES));
-      }
+      if (prevNode.children.has(NODE_MODULES))
+        await removeDir(ppath.join(location, NODE_MODULES), {contentsOnly: false});
+
+      await removeDir(location, {contentsOnly: false});
     } else {
       for (const [segment, prevChildNode] of prevNode.children) {
         let childNode = node.children.get(segment);
-        recordOutdatedDirsToRemove(ppath.join(location, segment), prevChildNode, childNode);
+        await removeOutdatedDirs(ppath.join(location, segment), prevChildNode, childNode);
       }
     }
   };
@@ -685,25 +683,25 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       if (segment === '.')
         continue;
       let childNode = node ? node.children.get(segment) : node;
-      recordOutdatedDirsToRemove(ppath.join(location, segment), prevChildNode, childNode);
+      await removeOutdatedDirs(ppath.join(location, segment), prevChildNode, childNode);
     }
   }
 
-  const recordNewDirsToClean = (location: PortablePath, node: LocationNode, {topLevel}: {topLevel: boolean}, prevNode?: LocationNode) => {
+  const cleanNewDirs = async (location: PortablePath, node: LocationNode, prevNode?: LocationNode) => {
     if (!prevNode) {
       // We want to clean only contents of top-level node_modules dir, since we need these dirs to be present
-      deleteList.set(location, {contentsOnly: topLevel});
-      if (node.children.has(NODE_MODULES)) {
-        innerDeleteList.add(ppath.join(location, NODE_MODULES));
-      }
+      if (node.children.has(NODE_MODULES))
+        await removeDir(ppath.join(location, NODE_MODULES), {contentsOnly: true});
+
+      await removeDir(location, {contentsOnly: node.linkType === LinkType.HARD});
     } else {
       // Location is changed and will be occupied by a different locator - clean it
       if (node.locator !== prevNode.locator)
-        deleteList.set(location, {contentsOnly: topLevel});
+        await removeDir(location, {contentsOnly: node.linkType === LinkType.HARD});
 
       for (const [segment, childNode] of node.children) {
         let prevChildNode = prevNode.children.get(segment);
-        recordNewDirsToClean(ppath.join(location, segment), childNode, {topLevel: false}, prevChildNode);
+        await cleanNewDirs(ppath.join(location, segment), childNode, prevChildNode);
       }
     }
   };
@@ -716,16 +714,9 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       if (segment === '.')
         continue;
       let prevChildNode = prevNode ? prevNode.children.get(segment) : prevNode;
-      recordNewDirsToClean(ppath.join(location, segment), childNode, {topLevel: true}, prevChildNode);
+      await cleanNewDirs(ppath.join(location, segment), childNode, prevChildNode);
     }
   }
-
-  // Handle inner node_modules deletions first
-  for (const dstDir of innerDeleteList)
-    await removeDir(dstDir, {contentsOnly: false});
-
-  for (const [dstDir, {contentsOnly}] of deleteList)
-    await removeDir(dstDir, {contentsOnly});
 
   // Update changed locations
   const addList: Array<{srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType}> = [];
