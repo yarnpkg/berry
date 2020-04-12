@@ -3961,13 +3961,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/promise.prototype.finally@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "@types/promise.prototype.finally@npm:2.0.3"
-  checksum: 2/9275c55136ac728fcbcf89ca58d1265ad56a655b67d8abc3f3b750de660a05dfad5c7a3ef27e67dd5ad918bb929e85390f000dda129cfe843b7cf7e188724b75
-  languageName: node
-  linkType: hard
-
 "@types/prop-types@npm:*":
   version: 15.5.8
   resolution: "@types/prop-types@npm:15.5.8"
@@ -4870,7 +4863,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
-    "@types/promise.prototype.finally": ^2.0.3
     "@yarnpkg/builder": "workspace:^2.0.0-rc.19"
     "@yarnpkg/core": "workspace:^2.0.0-rc.25"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.17"
@@ -4899,7 +4891,6 @@ __metadata:
     clipanion: ^2.1.5
     fromentries: ^1.2.0
     micromatch: ^4.0.2
-    promise.prototype.finally: ^3.1.1
     semver: ^7.1.2
     typescript: ^3.8.3
     yup: ^0.27.0
@@ -10434,24 +10425,6 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     is-regex: ^1.0.4
     object-keys: ^1.0.12
   checksum: 2/dc7326b8051cee797666ee6818307cedcc7c553541fa5e72a3c2d7389f694e400d58d642ea8b9f2f38ac6e36598c5df64d1e3ab1bd8e0267565d33176996ab27
-  languageName: node
-  linkType: hard
-
-"es-abstract@npm:^1.13.0":
-  version: 1.15.0
-  resolution: "es-abstract@npm:1.15.0"
-  dependencies:
-    es-to-primitive: ^1.2.0
-    function-bind: ^1.1.1
-    has: ^1.0.3
-    has-symbols: ^1.0.0
-    is-callable: ^1.1.4
-    is-regex: ^1.0.4
-    object-inspect: ^1.6.0
-    object-keys: ^1.1.1
-    string.prototype.trimleft: ^2.1.0
-    string.prototype.trimright: ^2.1.0
-  checksum: 2/51a4891d6db76e7ff51860442f9a275a0330ea04a477ae061c589b341c868575779945c6cc6ba835a55bb3574ca0517bd7c42e61c0d22db8ca67d77156dd9fb0
   languageName: node
   linkType: hard
 
@@ -18796,24 +18769,10 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"object-inspect@npm:^1.6.0":
-  version: 1.6.0
-  resolution: "object-inspect@npm:1.6.0"
-  checksum: 2/f9d36f8955ee63bcda700cb46cbc4615192b1280cee56dbeea34bc7f90e94b0871578f4fac977e99a10f8d7ea29f37bb501c389af30ee5321c604d8bc1b31126
-  languageName: node
-  linkType: hard
-
 "object-keys@npm:^1.0.11, object-keys@npm:^1.0.12":
   version: 1.0.12
   resolution: "object-keys@npm:1.0.12"
   checksum: 2/bf68a065848f18b411099d86b6a97e4650b9c5516640e7a80715bec4f07b38447231f57f8a6e0d67478d3917c940721e1bbbca5bea30b2cb7bc4af051e0ec2e2
-  languageName: node
-  linkType: hard
-
-"object-keys@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "object-keys@npm:1.1.1"
-  checksum: 2/30d72d768b7f3f42144cee517b80e70c40cf39bb76f100557ffac42779613c591780135c54d8133894a78d2c0ae817e24a5891484722c6019a5cd5b58c745c66
   languageName: node
   linkType: hard
 
@@ -20726,17 +20685,6 @@ fsevents@^1.2.2:
   version: 1.0.1
   resolution: "promise-inflight@npm:1.0.1"
   checksum: 2/c06bce0fc60b1c7979f291e489b9017db9c15f872d5cef0dfbb2b56694e9db574bc5c28f332a7033cdbd3a1d6417c5a1ee03889743638f0241e82e5a6b9c277f
-  languageName: node
-  linkType: hard
-
-"promise.prototype.finally@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "promise.prototype.finally@npm:3.1.1"
-  dependencies:
-    define-properties: ^1.1.3
-    es-abstract: ^1.13.0
-    function-bind: ^1.1.1
-  checksum: 2/f467d0fcee18284fd3b431e0a59c8305d3ac96a7940ff6ead09aa5071c809333e79f6ab24da44f0f296c220d01beb0fbb0fcbf61057742d72352aec2cbde5fba
   languageName: node
   linkType: hard
 
@@ -23669,26 +23617,6 @@ resolve@^1.10.1:
     es-abstract: ^1.5.0
     function-bind: ^1.0.2
   checksum: 2/1b4e3295a8c2cfb80756bff15196f55b6bc621d3168047ec5b9859b7edd8f6d5f90b75302cf9298cbe197b8d03ac111bf4fe1587f7f12f688900712d771e4615
-  languageName: node
-  linkType: hard
-
-"string.prototype.trimleft@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "string.prototype.trimleft@npm:2.1.0"
-  dependencies:
-    define-properties: ^1.1.3
-    function-bind: ^1.1.1
-  checksum: 2/d99b87df9c6b1c945a0ee3aaf513f6bcb8eeab2bff838422ae39713f9ea2fc2e306fafc92c5befe0f01b080acb795ca3f522262572c3915a76094d8ef28a8680
-  languageName: node
-  linkType: hard
-
-"string.prototype.trimright@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "string.prototype.trimright@npm:2.1.0"
-  dependencies:
-    define-properties: ^1.1.3
-    function-bind: ^1.1.1
-  checksum: 2/c79f1a54fcc4da511bb30f90b80b290ac3f258e18e09fb4dea71bb744101a05c73b724cf8f0ffe1af3d5511c2f091635ebb023d27d98bbfa732d563a6f2ae252
   languageName: node
   linkType: hard
 

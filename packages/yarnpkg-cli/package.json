@@ -26,12 +26,10 @@
     "chalk": "^3.0.0",
     "clipanion": "^2.1.5",
     "fromentries": "^1.2.0",
-    "promise.prototype.finally": "^3.1.1",
     "semver": "^7.1.2",
     "yup": "^0.27.0"
   },
   "devDependencies": {
-    "@types/promise.prototype.finally": "^2.0.3",
     "@yarnpkg/builder": "workspace:^2.0.0-rc.19",
     "@yarnpkg/core": "workspace:^2.0.0-rc.25",
     "@yarnpkg/monorepo": "workspace:0.0.0",
