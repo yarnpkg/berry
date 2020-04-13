@@ -2,6 +2,7 @@ export const dynamicLibs = new Set([
   `@yarnpkg/cli`,
   `@yarnpkg/core`,
   `@yarnpkg/fslib`,
+  `@yarnpkg/libzip`,
   `@yarnpkg/parsers`,
   `@yarnpkg/shell`,
 
