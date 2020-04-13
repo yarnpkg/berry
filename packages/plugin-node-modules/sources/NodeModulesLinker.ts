@@ -166,7 +166,12 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
     if (manifest)
       return manifest;
 
-    manifest = await Manifest.find(sourceLocation);
+    try {
+      manifest = await Manifest.find(sourceLocation);
+    } catch (e) {
+      e.message = `While loading ${sourceLocation}: ${e.message}`;
+      throw e;
+    }
     this.manifestCache.set(sourceLocation, manifest);
 
     return manifest;
@@ -316,6 +321,7 @@ const removeDir = async (dir: PortablePath, options: {contentsOnly: boolean, inn
     throw new Error(`Assertion failed: trying to remove dir that doesn't contain node_modules: ${dir}`);
 
   try {
+    console.log('removeDir', dir, options);
     if (!options.innerLoop) {
       const stats = await xfs.lstatPromise(dir);
       if (stats.isSymbolicLink()) {
@@ -700,7 +706,6 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       // so that removeDir removed the whole directory
       await removeDir(location, {contentsOnly: node.linkType === LinkType.HARD});
     } else {
-      // Location is changed and will be occupied by a different locator - clean it
       if (node.locator !== prevNode.locator)
         await removeDir(location, {contentsOnly: node.linkType === LinkType.HARD});
 
