@@ -40,6 +40,7 @@
     "minimatch": "^3.0.4",
     "monaco-editor": "^0.20.0",
     "monaco-editor-webpack-plugin": "^1.9.0",
+    "null-loader": "^3.0.0",
     "pify": "^4.0.1",
     "prismjs": "^1.16.0",
     "prop-types": "^15.7.2",

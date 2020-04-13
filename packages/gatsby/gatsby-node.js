@@ -27,7 +27,7 @@ module.exports = {
           rules: [
             {
               test: /monaco-editor/,
-              use: [`null-loader`],
+              use: require.resolve(`null-loader`),
             },
           ],
         },

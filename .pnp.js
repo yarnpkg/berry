@@ -6203,6 +6203,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["minimatch", "npm:3.0.4"],
             ["monaco-editor", "npm:0.20.0"],
             ["monaco-editor-webpack-plugin", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.9.0"],
+            ["null-loader", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.0.0"],
             ["pify", "npm:4.0.1"],
             ["prismjs", "npm:1.16.0"],
             ["prop-types", "npm:15.7.2"],
@@ -21762,6 +21763,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/null-loader-npm-0.1.1-6bcbfa35a4-2.zip/node_modules/null-loader/",
           "packageDependencies": [
             ["null-loader", "npm:0.1.1"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.0.0", {
+          "packageLocation": "./.yarn/$$virtual/null-loader-virtual-80986b9078/0/cache/null-loader-npm-3.0.0-bf671c937b-2.zip/node_modules/null-loader/",
+          "packageDependencies": [
+            ["null-loader", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.0.0"],
+            ["loader-utils", "npm:1.2.3"],
+            ["schema-utils", "npm:1.0.0"],
+            ["webpack", "npm:4.41.2"]
+          ],
+          "packagePeers": [
+            "webpack"
           ],
           "linkType": "HARD",
         }]

@@ -5184,6 +5184,7 @@ __metadata:
     minimatch: ^3.0.4
     monaco-editor: ^0.20.0
     monaco-editor-webpack-plugin: ^1.9.0
+    null-loader: ^3.0.0
     pify: ^4.0.1
     prismjs: ^1.16.0
     prop-types: ^15.7.2
@@ -18954,6 +18955,18 @@ fsevents@^1.2.2:
   version: 0.1.1
   resolution: "null-loader@npm:0.1.1"
   checksum: 2/106c1c7c6d3e51fc8e28b67b96439be53f0a31664729da58eb773878a9bc8e4910d02ed3afd0869b06eff2d6e5ccccb0d48e267494b1900dfa366a5e895c1054
+  languageName: node
+  linkType: hard
+
+"null-loader@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "null-loader@npm:3.0.0"
+  dependencies:
+    loader-utils: ^1.2.3
+    schema-utils: ^1.0.0
+  peerDependencies:
+    webpack: ^4.3.0
+  checksum: 2/710c523c620ee9a4b17e7d966da5d4d753d55ba85b8321f1302e784939be18e554cb08d933132194c783d4f40e072ab3aa01059a3dcfc6b9877066d32c593640
   languageName: node
   linkType: hard
 
