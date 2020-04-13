@@ -1,7 +1,9 @@
 import 'xterm/css/xterm.css';
-import styled from '@emotion/styled';
-import XTerm  from 'react-xterm';
-import React  from 'react';
+import styled   from '@emotion/styled';
+import Loadable from "@loadable/component";
+import React    from 'react';
+
+const XTerm = Loadable(() => import(`react-xterm`));
 
 const OutputContainer = styled.div`
   grid-area: output;

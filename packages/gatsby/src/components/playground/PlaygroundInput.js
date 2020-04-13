@@ -1,6 +1,8 @@
-import styled       from '@emotion/styled';
-import MonacoEditor from 'react-monaco-editor';
-import React        from 'react';
+import styled   from '@emotion/styled';
+import Loadable from "@loadable/component";
+import React    from 'react';
+
+const MonacoEditor = Loadable(() => import(`react-monaco-editor`));
 
 const InputContainer = styled.div`
   grid-area: input;

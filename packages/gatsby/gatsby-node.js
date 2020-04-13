@@ -7,7 +7,7 @@
 const MonacoWebpackPlugin = require(`monaco-editor-webpack-plugin`);
 
 module.exports = {
-  onCreateWebpackConfig: ({actions, stage}) => {
+  onCreateWebpackConfig: ({actions}) => {
     actions.setWebpackConfig({
       resolve: {
         alias: {
@@ -20,19 +20,6 @@ module.exports = {
         }),
       ],
     });
-
-    if (stage === `build-html`) {
-      actions.setWebpackConfig({
-        module: {
-          rules: [
-            {
-              test: /monaco-editor/,
-              use: require.resolve(`null-loader`),
-            },
-          ],
-        },
-      });
-    }
   },
 
   createPages: async ({actions: {createPage, createRedirect}, graphql}) => {
