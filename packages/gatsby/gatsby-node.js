@@ -4,6 +4,8 @@
  * See: https://www.gatsbyjs.org/docs/node-apis/
  */
 
+const MonacoWebpackPlugin = require(`monaco-editor-webpack-plugin`);
+
 module.exports = {
   onCreateWebpackConfig: ({actions}) => {
     actions.setWebpackConfig({
@@ -12,6 +14,11 @@ module.exports = {
           [`@emotion/core`]: require.resolve(`@emotion/core`),
         },
       },
+      plugins: [
+        new MonacoWebpackPlugin({
+          languages: [`javascript`, `typescript`],
+        }),
+      ],
     });
   },
 
