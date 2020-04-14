@@ -1,4 +1,4 @@
-import ky       from 'ky';
+import fetch    from 'unfetch';
 
 import {STATUS} from '../../src/components/playground/constants';
 
@@ -10,9 +10,7 @@ export const PLAYGROUND_SANDBOX_URL = typeof window !== `undefined` && (
 
 export const checkRepo = async ({statusState: [, setStatus]}) => {
   setStatus(STATUS.CHECKING);
-  const checkRepoData = await ky.get(`${PLAYGROUND_SANDBOX_URL}api/check-repo`, {
-    timeout: false,
-  }).json();
+  const checkRepoData = await (await fetch(`${PLAYGROUND_SANDBOX_URL}api/check-repo`)).json();
 
   if (checkRepoData.status === `success`) {
     return checkRepoData.shouldClone;
@@ -24,9 +22,7 @@ export const checkRepo = async ({statusState: [, setStatus]}) => {
 
 export const cloneRepo = async ({statusState: [, setStatus]}) => {
   setStatus(STATUS.CLONING);
-  const cloneRepoData = await ky.get(`${PLAYGROUND_SANDBOX_URL}api/clone-repo`, {
-    timeout: false,
-  }).json();
+  const cloneRepoData = await (await fetch(`${PLAYGROUND_SANDBOX_URL}api/clone-repo`)).json();
 
   if (cloneRepoData.status === `error`) {
     setStatus(STATUS.ERROR);
@@ -38,12 +34,9 @@ export const runReproduction = async (
   {inputState: [input], statusState: [, setStatus]}
 ) => {
   setStatus(STATUS.RUNNING);
-  const sherlockData = await ky.get(`${PLAYGROUND_SANDBOX_URL}api/sherlock`, {
-    searchParams: {
-      code: input,
-    },
-    timeout: false,
-  }).json();
+  const sherlockData = await (await fetch(
+    `${PLAYGROUND_SANDBOX_URL}api/sherlock?code=${encodeURIComponent(input)}`)
+  ).json();
 
   if (sherlockData.status === `success`) {
     setStatus(STATUS.FINISHED);
