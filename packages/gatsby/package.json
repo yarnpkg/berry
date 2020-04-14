@@ -36,6 +36,7 @@
     "gatsby-transformer-sharp": "^2.2.13",
     "highlight.js": "^9.15.8",
     "json-ref-lite": "^1.1.0",
+    "ky": "^0.19.0",
     "lodash": "^4.17.15",
     "marked": "^0.6.3",
     "minimatch": "^3.0.4",

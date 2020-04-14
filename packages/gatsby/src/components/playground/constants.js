@@ -1,5 +1,9 @@
 import {mdiInformationOutline, mdiAlertCircleOutline} from '@mdi/js';
 
+export const PLAYGROUND_SANDBOX_URL = window.location !== window.parent.location
+  ? document.referrer
+  : document.location.href;
+
 export const SELECT_OPTIONS = [
   {
     value: `empty`,

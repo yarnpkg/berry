@@ -1,8 +1,7 @@
 import styled                           from '@emotion/styled';
 import React, {useState}                from 'react';
 
-// TODO: create `playgroundUtils.runInput` function
-// import * as playgroundUtils             from '../../utils/playgroundUtils';
+import * as playgroundUtils             from '../../utils/playgroundUtils';
 
 import PlaygroundInput                  from './PlaygroundInput';
 
@@ -54,9 +53,7 @@ const Playground = () => {
   const runInput = async () => {
     cleanup();
 
-    //const {assertion, error} = await playgroundUtils.runInput({inputState, statusState});
-    const assertion = undefined;
-    const error = 'Error';
+    const {assertion, error} = await playgroundUtils.runInput({inputState, statusState});
 
     if (assertion) {
       labelState[1](LABELS.REPRODUCIBLE);

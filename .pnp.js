@@ -6225,6 +6225,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["gatsby-transformer-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.2.13"],
             ["highlight.js", "npm:9.15.8"],
             ["json-ref-lite", "npm:1.1.0"],
+            ["ky", "npm:0.19.0"],
             ["lodash", "npm:4.17.15"],
             ["marked", "npm:0.6.3"],
             ["minimatch", "npm:3.0.4"],
@@ -19711,6 +19712,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/kleur-npm-3.0.3-f6f53649a4-2.zip/node_modules/kleur/",
           "packageDependencies": [
             ["kleur", "npm:3.0.3"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["ky", [
+        ["npm:0.19.0", {
+          "packageLocation": "./.yarn/cache/ky-npm-0.19.0-009d76b53e-2.zip/node_modules/ky/",
+          "packageDependencies": [
+            ["ky", "npm:0.19.0"]
           ],
           "linkType": "HARD",
         }]

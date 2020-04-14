@@ -5202,6 +5202,7 @@ __metadata:
     gatsby-transformer-sharp: ^2.2.13
     highlight.js: ^9.15.8
     json-ref-lite: ^1.1.0
+    ky: ^0.19.0
     lodash: ^4.17.15
     marked: ^0.6.3
     minimatch: ^3.0.4
@@ -17080,6 +17081,13 @@ fsevents@^1.2.2:
   version: 3.0.3
   resolution: "kleur@npm:3.0.3"
   checksum: 2/20ef0e37fb3f9aebbec8a75b61f547051aa61e3a6c51bd2678e77a11d69d73885a76966aea77f09c40677c7dfa274a5e16741ec89859213c9f798d4a96f77521
+  languageName: node
+  linkType: hard
+
+"ky@npm:^0.19.0":
+  version: 0.19.0
+  resolution: "ky@npm:0.19.0"
+  checksum: 2/0e6dd37a557dc2a9e971c9d5a376c7c6df5ffb416e612d6678d8b6fa9c665f754a3530bef5abdfb8ca2ab2db7fc284843f35fe7a161886ff53e7fe48397c4b78
   languageName: node
   linkType: hard
 
