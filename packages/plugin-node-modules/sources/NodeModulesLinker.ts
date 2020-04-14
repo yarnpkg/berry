@@ -321,7 +321,6 @@ const removeDir = async (dir: PortablePath, options: {contentsOnly: boolean, inn
     throw new Error(`Assertion failed: trying to remove dir that doesn't contain node_modules: ${dir}`);
 
   try {
-    console.log('removeDir', dir, options);
     if (!options.innerLoop) {
       const stats = await xfs.lstatPromise(dir);
       if (stats.isSymbolicLink()) {

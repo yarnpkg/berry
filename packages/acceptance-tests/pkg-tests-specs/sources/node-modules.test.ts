@@ -201,4 +201,37 @@ describe('Node_Modules', () => {
       },
     ),
   );
+
+  test(`should not recreated folders when package is updated`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run}) => {
+        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
+          nodeLinker: "node-modules"
+        `);
+
+        await expect(run(`install`)).resolves.toBeTruthy();
+
+        const nmFolderCtime = xfs.statSync(npath.toPortablePath(`${path}/node_modules`)).ctime;
+        const depFolderCtime = xfs.statSync(npath.toPortablePath(`${path}/node_modules/no-deps`)).ctime;
+
+        await writeJson(npath.toPortablePath(`${path}/package.json`), {
+          private: true,
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        await expect(run(`install`)).resolves.toBeTruthy();
+
+        expect(xfs.statSync(npath.toPortablePath(`${path}/node_modules`)).ctime).toEqual(nmFolderCtime);
+        expect(xfs.statSync(npath.toPortablePath(`${path}/node_modules/no-deps`)).ctime).toEqual(depFolderCtime);
+      },
+    ),
+  );
 });
