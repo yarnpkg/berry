@@ -12,7 +12,7 @@ const Home = () => (
     <main>
       <iframe
         title="playground"
-        src={`${WEBSITE_URL}/_playground`}
+        src={`${WEBSITE_URL}/playground/frame`}
         allow="fullscreen"
         width="100%"
         height="100%"
