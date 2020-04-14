@@ -217,8 +217,8 @@ describe('Node_Modules', () => {
 
         await expect(run(`install`)).resolves.toBeTruthy();
 
-        const nmFolderCtime = xfs.statSync(npath.toPortablePath(`${path}/node_modules`)).ctime;
-        const depFolderCtime = xfs.statSync(npath.toPortablePath(`${path}/node_modules/no-deps`)).ctime;
+        const nmFolderInode = xfs.statSync(npath.toPortablePath(`${path}/node_modules`)).ino;
+        const depFolderInode = xfs.statSync(npath.toPortablePath(`${path}/node_modules/no-deps`)).ino;
 
         await writeJson(npath.toPortablePath(`${path}/package.json`), {
           private: true,
@@ -229,8 +229,8 @@ describe('Node_Modules', () => {
 
         await expect(run(`install`)).resolves.toBeTruthy();
 
-        expect(xfs.statSync(npath.toPortablePath(`${path}/node_modules`)).ctime).toEqual(nmFolderCtime);
-        expect(xfs.statSync(npath.toPortablePath(`${path}/node_modules/no-deps`)).ctime).toEqual(depFolderCtime);
+        expect(xfs.statSync(npath.toPortablePath(`${path}/node_modules`)).ino).toEqual(nmFolderInode);
+        expect(xfs.statSync(npath.toPortablePath(`${path}/node_modules/no-deps`)).ino).toEqual(depFolderInode);
       },
     ),
   );
