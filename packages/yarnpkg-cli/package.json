@@ -4,6 +4,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.17",
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.10",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.10",
     "@yarnpkg/plugin-compat": "workspace:^2.0.0-rc.9",
     "@yarnpkg/plugin-constraints": "workspace:^2.0.0-rc.13",
