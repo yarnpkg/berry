@@ -2,15 +2,9 @@ import fetch    from 'unfetch';
 
 import {STATUS} from '../../src/components/playground/constants';
 
-export const PLAYGROUND_SANDBOX_URL = typeof window !== `undefined` && (
-  window.location !== window.parent.location
-    ? document.referrer
-    : document.location.href
-);
-
 export const checkRepo = async ({statusState: [, setStatus]}) => {
   setStatus(STATUS.CHECKING);
-  const checkRepoData = await (await fetch(`${PLAYGROUND_SANDBOX_URL}api/check-repo`)).json();
+  const checkRepoData = await (await fetch(`/playground/api/check-repo`)).json();
 
   if (checkRepoData.status === `success`) {
     return checkRepoData.shouldClone;
@@ -22,7 +16,7 @@ export const checkRepo = async ({statusState: [, setStatus]}) => {
 
 export const cloneRepo = async ({statusState: [, setStatus]}) => {
   setStatus(STATUS.CLONING);
-  const cloneRepoData = await (await fetch(`${PLAYGROUND_SANDBOX_URL}api/clone-repo`)).json();
+  const cloneRepoData = await (await fetch(`/playground/api/clone-repo`)).json();
 
   if (cloneRepoData.status === `error`) {
     setStatus(STATUS.ERROR);
@@ -35,7 +29,7 @@ export const runReproduction = async (
 ) => {
   setStatus(STATUS.RUNNING);
   const sherlockData = await (await fetch(
-    `${PLAYGROUND_SANDBOX_URL}api/sherlock?code=${encodeURIComponent(input)}`)
+    `/playground/api/sherlock?code=${encodeURIComponent(input)}`)
   ).json();
 
   if (sherlockData.status === `success`) {

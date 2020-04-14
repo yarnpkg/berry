@@ -1,7 +1,7 @@
 import Head from 'next/head';
 
-// TODO: replace with `https://yarnpkg.com/playground`
-const WEBSITE_URL = `https://deploy-preview-1193--yarn2.netlify.com/playground`;
+// TODO: replace with `https://yarnpkg.com`
+const WEBSITE_URL = `https://deploy-preview-1193--yarn2.netlify.com`;
 
 const Home = () => (
   <div className="container">
@@ -12,7 +12,7 @@ const Home = () => (
     <main>
       <iframe
         title="playground"
-        src={WEBSITE_URL}
+        src={`${WEBSITE_URL}/_playground`}
         allow="fullscreen"
         width="100%"
         height="100%"
