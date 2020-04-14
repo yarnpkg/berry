@@ -10,7 +10,7 @@ export const PLAYGROUND_SANDBOX_URL = typeof window !== `undefined` && (
 
 export const checkRepo = async ({statusState: [, setStatus]}) => {
   setStatus(STATUS.CHECKING);
-  const checkRepoData = await ky.get(`${PLAYGROUND_SANDBOX_URL}/api/check-repo`, {
+  const checkRepoData = await ky.get(`${PLAYGROUND_SANDBOX_URL}api/check-repo`, {
     timeout: false,
   }).json();
 
@@ -24,7 +24,7 @@ export const checkRepo = async ({statusState: [, setStatus]}) => {
 
 export const cloneRepo = async ({statusState: [, setStatus]}) => {
   setStatus(STATUS.CLONING);
-  const cloneRepoData = await ky.get(`${PLAYGROUND_SANDBOX_URL}/api/clone-repo`, {
+  const cloneRepoData = await ky.get(`${PLAYGROUND_SANDBOX_URL}api/clone-repo`, {
     timeout: false,
   }).json();
 
@@ -38,7 +38,7 @@ export const runReproduction = async (
   {inputState: [input], statusState: [, setStatus]}
 ) => {
   setStatus(STATUS.RUNNING);
-  const sherlockData = await ky.get(`${PLAYGROUND_SANDBOX_URL}/api/sherlock`, {
+  const sherlockData = await ky.get(`${PLAYGROUND_SANDBOX_URL}api/sherlock`, {
     searchParams: {
       code: input,
     },
