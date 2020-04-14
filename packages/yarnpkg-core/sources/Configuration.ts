@@ -197,7 +197,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: `./.yarn/cache`,
   },
   compressionLevel: {
-    description: `Zip files compression level, from 0 to 9`,
+    description: `Zip files compression level, from 0 to 9 or mixed (a variant of 9, which stores some files uncompressed, when compression doesn't yield good results)`,
     type: SettingsType.NUMBER,
     values: [`mixed`, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     default: DEFAULT_COMPRESSION_LEVEL,
