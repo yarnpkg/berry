@@ -311,7 +311,7 @@ export class Project {
     return workspace;
   }
 
-  getWorkspaceByFilePath(filePath: PortablePath) {
+  tryWorkspaceByFilePath(filePath: PortablePath) {
     let bestWorkspace = null;
 
     for (const workspace of this.workspaces) {
@@ -326,9 +326,17 @@ export class Project {
     }
 
     if (!bestWorkspace)
-      throw new Error(`Workspace not found (${filePath})`);
+      return null;
 
     return bestWorkspace;
+  }
+
+  getWorkspaceByFilePath(filePath: PortablePath) {
+    const workspace = this.tryWorkspaceByFilePath(filePath);
+    if (!workspace)
+      throw new Error(`Workspace not found (${filePath})`);
+
+    return workspace;
   }
 
   tryWorkspaceByIdent(ident: Ident) {
