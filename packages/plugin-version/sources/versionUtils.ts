@@ -19,8 +19,8 @@ export enum Decision {
 export type Releases =
   Map<Workspace, Exclude<Decision, Decision.UNDECIDED>>;
 
-export async function fetchBase(root: PortablePath) {
-  const candidateBases = [`master`, `origin/master`, `upstream/master`];
+export async function fetchBase(root: PortablePath, {baseRef}: {baseRef?: string | null}) {
+  const candidateBases = baseRef !== null ? [baseRef] : [`master`, `origin/master`, `upstream/master`];
   const ancestorBases = [];
 
   for (const candidate of candidateBases) {
@@ -194,7 +194,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
   const root = await fetchRoot(configuration.projectCwd);
 
   const base = root !== null
-    ? await fetchBase(root)
+    ? await fetchBase(root, {baseRef: configuration.get('changesetBaseRef')})
     : null;
 
   const changedFiles = root !== null
