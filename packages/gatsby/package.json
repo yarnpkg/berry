@@ -90,6 +90,6 @@
     "@types/lodash": "^4.14.136",
     "@types/react-select": "3.0.11",
     "@types/tinycolor2": "1.4.2",
-    "@types/webpack": "4.41.11"
+    "@types/webpack": "^4.32.1"
   }
 }

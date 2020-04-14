@@ -5385,19 +5385,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["source-map", "npm:0.6.1"]
           ],
           "linkType": "HARD",
-        }],
-        ["npm:4.41.11", {
-          "packageLocation": "./.yarn/cache/@types-webpack-npm-4.41.11-ee00bcd416-2.zip/node_modules/@types/webpack/",
-          "packageDependencies": [
-            ["@types/webpack", "npm:4.41.11"],
-            ["@types/anymatch", "npm:1.3.1"],
-            ["@types/node", "npm:10.12.18"],
-            ["@types/tapable", "npm:1.0.4"],
-            ["@types/uglify-js", "npm:3.0.4"],
-            ["@types/webpack-sources", "npm:0.1.5"],
-            ["source-map", "npm:0.6.1"]
-          ],
-          "linkType": "HARD",
         }]
       ]],
       ["@types/webpack-merge", [
@@ -6200,7 +6187,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/lodash", "npm:4.14.136"],
             ["@types/react-select", "npm:3.0.11"],
             ["@types/tinycolor2", "npm:1.4.2"],
-            ["@types/webpack", "npm:4.41.11"],
+            ["@types/webpack", "npm:4.32.1"],
             ["algoliasearch", "npm:4.0.1"],
             ["bytes", "npm:3.1.0"],
             ["date-fns", "npm:2.0.0-beta.2"],

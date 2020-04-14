@@ -4488,7 +4488,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/webpack-sources@npm:*, @types/webpack-sources@npm:^0.1.5":
+"@types/webpack-sources@npm:^0.1.5":
   version: 0.1.5
   resolution: "@types/webpack-sources@npm:0.1.5"
   dependencies:
@@ -4509,20 +4509,6 @@ __metadata:
     "@types/uglify-js": "*"
     source-map: ^0.6.0
   checksum: 2/3ed3671cb1894a22cf41e47c3d1104f7cce5a0a990d53a0660544df0294b6b7a6caf3b9a17c2096eed55b5f4449f124ac7c8a1dd63831a440a0dfde92fda408f
-  languageName: node
-  linkType: hard
-
-"@types/webpack@npm:4.41.11":
-  version: 4.41.11
-  resolution: "@types/webpack@npm:4.41.11"
-  dependencies:
-    "@types/anymatch": "*"
-    "@types/node": "*"
-    "@types/tapable": "*"
-    "@types/uglify-js": "*"
-    "@types/webpack-sources": "*"
-    source-map: ^0.6.0
-  checksum: 2/18213d661f88b38f5233c922a58439bd0c3547f8c91a9e5e2ec91d5592e1fd0e2f3cb460dddf9b4c6e3c410d8b39553683f7de07c824825dcbf5cb8f75ae07d9
   languageName: node
   linkType: hard
 
@@ -5177,7 +5163,7 @@ __metadata:
     "@types/lodash": ^4.14.136
     "@types/react-select": 3.0.11
     "@types/tinycolor2": 1.4.2
-    "@types/webpack": 4.41.11
+    "@types/webpack": ^4.32.1
     algoliasearch: ^4.0.1
     bytes: ^3.1.0
     date-fns: ^2.0.0-beta.2
