@@ -199,7 +199,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   compressionLevel: {
     description: `Zip files compression level, from 0 to 9`,
     type: SettingsType.NUMBER,
-    values: [`mixed`, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    values: [`max`, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     default: DEFAULT_COMPRESSION_LEVEL,
   },
   virtualFolder: {
