@@ -1,7 +1,12 @@
-import ky                               from 'ky';
+import ky       from 'ky';
 
-import {STATUS, PLAYGROUND_SANDBOX_URL} from '../../src/components/playground/constants';
+import {STATUS} from '../../src/components/playground/constants';
 
+export const PLAYGROUND_SANDBOX_URL = typeof window !== `undefined` && (
+  window.location !== window.parent.location
+    ? document.referrer
+    : document.location.href
+);
 
 export const checkRepo = async ({statusState: [, setStatus]}) => {
   setStatus(STATUS.CHECKING);
