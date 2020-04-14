@@ -10,8 +10,8 @@ import {NodeFS}                                                                 
 import * as errors                                                                                 from './errors';
 import {FSPath, PortablePath, npath, ppath, Filename}                                              from './path';
 
-export type ZipCompression = `max` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-export const DEFAULT_COMPRESSION_LEVEL: ZipCompression = `max`;
+export type ZipCompression = `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+export const DEFAULT_COMPRESSION_LEVEL: ZipCompression = `mixed`;
 
 const S_IFMT = 0o170000;
 
@@ -710,7 +710,7 @@ export class ZipFS extends BasePortableFakeFS {
 
     try {
       const newIndex = this.libzip.file.add(this.zip, target, lzSource, this.libzip.ZIP_FL_OVERWRITE);
-      if (this.level !== 'max') {
+      if (this.level !== `mixed`) {
         // Use store for level 0, and deflate for 1..9
         let method;
         if (this.level === 0)
