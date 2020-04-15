@@ -1,0 +1,63 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+    paths:
+    - .github/workflows/e2e-angular-workflow.yml
+    - scripts/e2e-setup-ci.sh
+    - packages/yarnpkg-pnpify/sources/hoist.ts
+    - packages/yarnpkg-pnpify/sources/buildNodeModulesTree.ts
+    - packages/plugin-node-modules/sources/NodeModulesLinker.ts
+  pull_request:
+    paths:
+    - .github/workflows/e2e-angular-workflow.yml
+    - scripts/e2e-setup-ci.sh
+    - packages/yarnpkg-pnpify/sources/hoist.ts
+    - packages/yarnpkg-pnpify/sources/buildNodeModulesTree.ts
+    - packages/plugin-node-modules/sources/NodeModulesLinker.ts
+
+name: 'E2E NM Angular'
+jobs:
+  chore:
+    strategy:
+      matrix:
+        platform:
+        - ubuntu-latest
+        - windows-latest
+
+    name: 'Validating Angular install via node-modules linker on ${{matrix.platform}}'
+    runs-on: ${{matrix.platform}}
+
+    steps:
+    - name: Enable git longpaths
+      run: git config --global core.longpaths true
+
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+      shell: bash
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh;
+
+        yarn dlx -p @angular/cli@next ng new berry-angular --interactive=false
+
+        cd berry-angular
+        echo 'nodeLinker: node-modules' >> .yarnrc.yml
+        echo 'enableGlobalCache: true' >> .yarnrc.yml
+        echo 'compressionLevel: 0' >> .yarnrc.yml
+
+        yarn add @angular-devkit/core@next @babel/preset-env @babel/core -D
+
+        yarn ng build --aot
+      shell: bash

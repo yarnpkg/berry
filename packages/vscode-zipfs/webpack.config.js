@@ -7,8 +7,8 @@ module.exports = {
 
   target: `node`,
 
-  context: `${__dirname}/sources`,
-  entry: `./index.ts`,
+  context: __dirname,
+  entry: `./sources/index.ts`,
 
   output: {
     filename: `index.js`,
@@ -19,8 +19,10 @@ module.exports = {
   module: {
     rules: [{
       test: /\.ts$/,
-      loader: 'ts-loader',
-      options: PnpWebpackPlugin.tsLoaderOptions(),
+      loader: `ts-loader`,
+      options: {
+        compilerOptions: {declaration: false},
+      },
     }],
   },
 

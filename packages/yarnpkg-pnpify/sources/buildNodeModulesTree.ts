@@ -1,3 +1,4 @@
+import {structUtils}                                        from '@yarnpkg/core';
 import {NativePath, PortablePath, Filename}                 from '@yarnpkg/fslib';
 import {toFilename, npath, ppath}                           from '@yarnpkg/fslib';
 import {PnpApi, PhysicalPackageLocator, PackageInformation} from '@yarnpkg/pnp';
@@ -110,6 +111,14 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
   return map;
 };
 
+function isPortalLocator(locatorKey: LocatorKey): boolean {
+  let descriptor = structUtils.parseDescriptor(locatorKey);
+  if (structUtils.isVirtualDescriptor(descriptor))
+    descriptor = structUtils.devirtualizeDescriptor(descriptor);
+
+  return descriptor.range.startsWith('portal:');
+};
+
 /**
  * Traverses PnP tree and produces input for the `RawHoister`
  *
@@ -123,7 +132,6 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
   const topPkg = pnp.getPackageInformation(pnp.topLevel);
   if (topPkg === null)
     throw new Error(`Assertion failed: Expected the top-level package to have been registered`);
-  const projectRoot = npath.toPortablePath(topPkg.packageLocation);
 
   const topLocator = pnp.findPackageLocator(topPkg.packageLocation);
   if (topLocator === null)
@@ -166,8 +174,10 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
 
     parent.dependencies.add(node);
 
-    const internalPath = ppath.contains(projectRoot, getTargetLocatorPath(locator, pnp, options).target);
-    if (!isSeen && internalPath !== null) {
+    // If we link dependencies to file system we must not try to install children dependencies inside portal folders
+    const shouldAddChildrenDependencies = options.pnpifyFs || !isPortalLocator(locatorKey);
+
+    if (!isSeen && shouldAddChildrenDependencies) {
       for (const [name, referencish] of pkg.packageDependencies) {
         if (referencish !== null && !node.peerNames.has(name)) {
           const depLocator = pnp.getLocator(name, referencish);

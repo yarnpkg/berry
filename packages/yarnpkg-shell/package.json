@@ -6,6 +6,7 @@
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.17",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.10",
     "cross-spawn": "6.0.5",
+    "fast-glob": "^3.2.2",
     "stream-buffers": "^3.0.2"
   },
   "devDependencies": {

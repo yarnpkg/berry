@@ -52,6 +52,10 @@ const IGNORED_ENV_VARIABLES = new Set([
   // https://classic.yarnpkg.com/install.sh
   `profile`,
   `gpg`,
+
+  // "wrapOutput" was a variable used to indicate nested "yarn run" processes
+  // back in Yarn 1.
+  `wrapOutput`,
 ]);
 
 export const ENVIRONMENT_PREFIX = `yarn_`;

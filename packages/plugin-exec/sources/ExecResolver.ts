@@ -1,10 +1,13 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {miscUtils, structUtils}                          from '@yarnpkg/core';
-import {npath}                                           from '@yarnpkg/fslib';
+import {Resolver, ResolveOptions, MinimalResolveOptions}        from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest, DescriptorHash, Package} from '@yarnpkg/core';
+import {LinkType}                                               from '@yarnpkg/core';
+import {miscUtils, structUtils, hashUtils}                      from '@yarnpkg/core';
 
-import {PROTOCOL}                                        from './constants';
+import {PROTOCOL}                                               from './constants';
+import * as execUtils                                           from './execUtils';
+
+// We use this for the generators to be regenerated without bumping the whole cache
+const CACHE_VERSION = 1;
 
 export class ExecResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -35,13 +38,24 @@ export class ExecResolver implements Resolver {
     return [];
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
-    let path = descriptor.range;
+  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+    if (!opts.fetchOptions)
+      throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
 
-    if (path.startsWith(PROTOCOL))
-      path = path.slice(PROTOCOL.length);
+    const {path, parentLocator} = execUtils.parseSpec(descriptor.range);
 
-    return [structUtils.makeLocator(descriptor, `${PROTOCOL}${npath.toPortablePath(path)}`)];
+    const generatorFile = await execUtils.loadGeneratorFile(structUtils.makeRange({
+      protocol: PROTOCOL,
+      source: path,
+      selector: path,
+      params: {
+        // The Descriptor should already be bound
+        locator: structUtils.stringifyLocator(parentLocator!),
+      },
+    }), PROTOCOL, opts.fetchOptions);
+    const generatorHash = hashUtils.makeHash(`${CACHE_VERSION}`, generatorFile).slice(0, 6);
+
+    return [execUtils.makeLocator(descriptor, {parentLocator, path, generatorHash, protocol: PROTOCOL})];
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

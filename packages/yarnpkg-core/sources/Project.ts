@@ -48,6 +48,8 @@ const INSTALL_STATE_VERSION = 1;
 
 const MULTIPLE_KEYS_REGEXP = / *, */g;
 
+const FETCHER_CONCURRENCY = 32;
+
 const gzip = promisify(zlib.gzip);
 const gunzip = promisify(zlib.gunzip);
 
@@ -909,11 +911,12 @@ export class Project {
       return structUtils.stringifyLocator(pkg);
     }]);
 
-    const limit = pLimit(5);
     let firstError = false;
 
     const progress = Report.progressViaCounter(locatorHashes.length);
     report.reportProgress(progress);
+
+    const limit = pLimit(FETCHER_CONCURRENCY);
 
     await Promise.all(locatorHashes.map(locatorHash => limit(async () => {
       const pkg = this.storedPackages.get(locatorHash);
