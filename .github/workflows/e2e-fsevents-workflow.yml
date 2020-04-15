@@ -88,7 +88,7 @@ jobs:
           Promise.resolve().then(() => {
             return registerTest(process.cwd(), 'hello');
           }).then(() => {
-            return registerTest(process.cwd() + '/\$\$virtual/foo/0', 'world');
+            return registerTest(process.cwd() + '/\$\$virtual/1234/0', 'world');
           });
         EOT
 
@@ -153,7 +153,7 @@ jobs:
           Promise.resolve().then(() => {
             return registerTest(process.cwd(), 'hello');
           }).then(() => {
-            return registerTest(process.cwd() + '/\$\$virtual/foo/0', 'world');
+            return registerTest(process.cwd() + '/\$\$virtual/1234/0', 'world');
           });
         EOT
 
