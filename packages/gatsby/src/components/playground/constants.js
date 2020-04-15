@@ -114,3 +114,9 @@ export const LABELS = {
     type: `error`,
   },
 };
+
+export const ENCODING = `base64`;
+
+export const REPO_URL = `https://github.com/yarnpkg/berry`;
+
+export const RAW_REPO_URL = `https://raw.githubusercontent.com/yarnpkg/berry`;

@@ -15,7 +15,7 @@ const Notice = styled.a`
 `;
 
 const PlaygroundNotice = () => (
-  <Notice href={`https://codesandbox.io`}>
+  <Notice href={`https://codesandbox.io`} target={`_blank`}>
     Powered by CodeSandbox
     <InlineIcon
       icon={codesandboxIcon}

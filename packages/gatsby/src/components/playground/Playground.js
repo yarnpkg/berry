@@ -5,6 +5,7 @@ import React, {useState}                        from 'react';
 import * as playgroundUtils                     from '../../utils/playgroundUtils';
 
 import PlaygroundButton                         from './PlaygroundButton';
+import PlaygroundExportButton                   from './PlaygroundExportButton';
 import PlaygroundInput                          from './PlaygroundInput';
 import PlaygroundNotice                         from './PlaygroundNotice';
 import PlaygroundOutput                         from './PlaygroundOutput';
@@ -87,7 +88,7 @@ const Playground = () => {
       <Toolbar>
         <PlaygroundSelect select={select} options={SELECT_OPTIONS} onSelectChanged={onSelectChanged} />
         <PlaygroundButton onClick={runInput} children={`Run`} />
-        <PlaygroundButton onClick={runInput} children={`GitHub`} />
+        <PlaygroundExportButton input={input} />
         <PlaygroundStatus label={label} />
         <PlaygroundNotice />
       </Toolbar>

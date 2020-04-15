@@ -1,24 +1,30 @@
-import fetch    from 'unfetch';
+import {Buffer}                         from 'buffer';
+import copy                             from 'copy-to-clipboard';
+import dedent                           from 'dedent';
+import indentString                     from 'indent-string';
+import fetch                            from 'unfetch';
 
-import {LABELS} from '../../src/components/playground/constants';
+import {LABELS, ENCODING, RAW_REPO_URL} from '../../src/components/playground/constants';
 
 const TARGET = `https://viko0.sse.codesandbox.io`;
 
-const fetchJson = async url => {
-  const req = await fetch(TARGET + url);
+const fetchJson = async (url, options) => {
+  const req = await fetch(url, options);
   const text = await req.text();
 
   try {
     return JSON.parse(text);
   } catch (error) {
-    console.log(TARGET + url, text);
+    console.log(url, text);
     throw error;
   }
 };
 
+const fetchJsonFromTarget = (url, options) => fetchJson(TARGET + url, options);
+
 export const checkRepo = async ({setLabel}) => {
   setLabel(LABELS.CHECKING);
-  const checkRepoData = await fetchJson(`/api/check-repo`);
+  const checkRepoData = await fetchJsonFromTarget(`/api/check-repo`);
 
   if (checkRepoData.status === `success`) {
     return checkRepoData.shouldClone;
@@ -30,7 +36,7 @@ export const checkRepo = async ({setLabel}) => {
 
 export const cloneRepo = async ({setLabel}) => {
   setLabel(LABELS.CLONING);
-  const cloneRepoData = await fetchJson(`/api/clone-repo`);
+  const cloneRepoData = await fetchJsonFromTarget(`/api/clone-repo`);
 
   if (cloneRepoData.status === `error`) {
     setLabel(LABELS.ERROR);
@@ -40,7 +46,7 @@ export const cloneRepo = async ({setLabel}) => {
 
 export const runReproduction = async (input, {setLabel}) => {
   setLabel(LABELS.RUNNING);
-  const sherlockData = await fetchJson(`/api/sherlock?code=${encodeURIComponent(input)}`);
+  const sherlockData = await fetchJsonFromTarget(`/api/sherlock?code=${encodeURIComponent(input)}`);
 
   if (sherlockData.status === `success`) {
     return sherlockData.executionResult;
@@ -59,3 +65,87 @@ export const runInput = async (input, {setLabel}) => {
   return await runReproduction(input, {setLabel});
 };
 
+export const encodeInput = (input) => Buffer.from(input).toString(ENCODING);
+
+export const decodeInput = (input) => Buffer.from(input, ENCODING).toString();
+
+export const getShareableUrl = (input) => new URL(`/playground?code=${encodeInput(input)}`, window.location.href);
+
+export const parseShareableUrl = (url) => {
+  const parsedUrl = new URL(url);
+  
+  return {
+    url,
+    decodedInput: decodeInput(parsedUrl.searchParams.get(`code`)),
+  };
+};
+
+export const openUrl = (url) => window.open(url);
+
+export const copyToClipboard = (text) => copy(text);
+
+export const getGithubBugReportTemplate = async () => {
+  const req = await fetch(`${RAW_REPO_URL}/master/.github/ISSUE_TEMPLATE/bug-report.md`);
+
+  return await req.text();
+};
+
+export const getFilledGithubBugReportTemplate = async (input) => {
+  // Remove frontmatter
+  const template = (await getGithubBugReportTemplate()).replace(/^---[\s\S]+---\n\n/, ``);;
+
+  return template.replace(
+    indentString(getPreview(`// Sherlock reproduction`), 2),
+    indentString(getShareableMarkdownLinkWithPreview(input), 2)
+  );
+};
+
+export const getShareableMarkdownLink = (input) => `[Playground](${getShareableUrl(input)})`;
+
+export const getPreview = (input) => dedent`
+  \`\`\`js repro
+  ${input}
+  \`\`\`
+`;
+
+export const getShareableMarkdownLinkWithPreview = (input) => dedent`
+  ---
+
+  ${getShareableMarkdownLink(input)}
+
+  ${getPreview(input)}
+
+  ---
+`;
+
+export const createSandbox = async (input) => {
+  const {'sandbox_id': id} = await fetchJson(`https://codesandbox.io/api/v1/sandboxes/define?json=1`, {
+    method: `POST`,
+    headers: {
+      'Content-Type': `application/json`,
+      Accept: `application/json`,
+    },
+    body: JSON.stringify({
+      files: {
+        'package.json': {
+          content: {
+            dependencies: {},
+          },
+        },
+        'index.js': {
+          content: input,
+        },
+        'sandbox.config.json': {
+          content: {
+            template: `node`,
+          },
+        },
+      },
+    }),
+  });
+
+  return {
+    id,
+    url: `https://codesandbox.io/s/${id}`,
+  };
+};
