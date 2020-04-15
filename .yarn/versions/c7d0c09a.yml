@@ -13,6 +13,7 @@ declined:
   - "@yarnpkg/plugin-github"
   - "@yarnpkg/plugin-http"
   - "@yarnpkg/plugin-init"
+  - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-link"
   - "@yarnpkg/plugin-node-modules"
   - "@yarnpkg/plugin-npm"
@@ -21,6 +22,7 @@ declined:
   - "@yarnpkg/plugin-patch"
   - "@yarnpkg/plugin-pnp"
   - "@yarnpkg/plugin-stage"
+  - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
   - vscode-zipfs
