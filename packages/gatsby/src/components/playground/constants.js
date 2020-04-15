@@ -73,18 +73,21 @@ export const LABELS = {
     color: `#d4d4d4`,
     help: `We're checking whether the repository needs to be cloned; please wait`,
     type: `info`,
+    loading: true,
   },
   CLONING: {
     text: `cloning the repo`,
     color: `#d4d4d4`,
     help: `We're cloning the repository to run your snippet; please wait`,
     type: `info`,
+    loading: true,
   },
   RUNNING: {
     text: `running the repro`,
     color: `#d4d4d4`,
     help: `We're running your snippet on the server; please wait`,
     type: `info`,
+    loading: true,
   },
   ERROR: {
     text: `internal error`,

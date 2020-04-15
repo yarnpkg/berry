@@ -7,8 +7,8 @@ import * as playgroundUtils                     from '../../utils/playgroundUtil
 import PlaygroundButton                         from './PlaygroundButton';
 import PlaygroundInput                          from './PlaygroundInput';
 import PlaygroundOutput                         from './PlaygroundOutput';
-import PlaygroundResults                        from './PlaygroundResults';
 import PlaygroundSelect                         from './PlaygroundSelect';
+import PlaygroundStatus                         from './PlaygroundStatus';
 
 import {DEFAULT_OUTPUT, SELECT_OPTIONS, LABELS} from './constants';
 
@@ -86,7 +86,8 @@ const Playground = () => {
       <Toolbar>
         <PlaygroundSelect select={select} options={SELECT_OPTIONS} onSelectChanged={onSelectChanged} />
         <PlaygroundButton onClick={runInput} children={`Run`} />
-        <PlaygroundResults label={label} />
+        <PlaygroundButton onClick={runInput} children={`GitHub`} />
+        <PlaygroundStatus label={label} />
       </Toolbar>
       <Display>
         <Left>
