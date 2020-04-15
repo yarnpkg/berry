@@ -6,6 +6,7 @@ import * as playgroundUtils                     from '../../utils/playgroundUtil
 
 import PlaygroundButton                         from './PlaygroundButton';
 import PlaygroundInput                          from './PlaygroundInput';
+import PlaygroundNotice                         from './PlaygroundNotice';
 import PlaygroundOutput                         from './PlaygroundOutput';
 import PlaygroundSelect                         from './PlaygroundSelect';
 import PlaygroundStatus                         from './PlaygroundStatus';
@@ -88,6 +89,7 @@ const Playground = () => {
         <PlaygroundButton onClick={runInput} children={`Run`} />
         <PlaygroundButton onClick={runInput} children={`GitHub`} />
         <PlaygroundStatus label={label} />
+        <PlaygroundNotice />
       </Toolbar>
       <Display>
         <Left>

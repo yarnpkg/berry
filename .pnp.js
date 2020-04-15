@@ -3007,6 +3007,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@iconify/icons-logos", [
+        ["npm:1.0.10", {
+          "packageLocation": "./.yarn/cache/@iconify-icons-logos-npm-1.0.10-425ce287dd-2.zip/node_modules/@iconify/icons-logos/",
+          "packageDependencies": [
+            ["@iconify/icons-logos", "npm:1.0.10"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@iconify/react", [
+        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.1.3", {
+          "packageLocation": "./.yarn/$$virtual/@iconify-react-virtual-f82315025e/0/cache/@iconify-react-npm-1.1.3-0d4ad55ffb-2.zip/node_modules/@iconify/react/",
+          "packageDependencies": [
+            ["@iconify/react", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.1.3"],
+            ["react", "npm:16.8.4"]
+          ],
+          "packagePeers": [
+            "react"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@jest/console", [
         ["npm:24.3.0", {
           "packageLocation": "./.yarn/cache/@jest-console-npm-24.3.0-6fa91f6a1c-2.zip/node_modules/@jest/console/",
@@ -4163,24 +4185,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "packagePeers": [
             "react"
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@mdi/js", [
-        ["npm:5.0.45", {
-          "packageLocation": "./.yarn/cache/@mdi-js-npm-5.0.45-2a5f14b366-2.zip/node_modules/@mdi/js/",
-          "packageDependencies": [
-            ["@mdi/js", "npm:5.0.45"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@mdi/react", [
-        ["npm:1.4.0", {
-          "packageLocation": "./.yarn/cache/@mdi-react-npm-1.4.0-04b73feedd-2.zip/node_modules/@mdi/react/",
-          "packageDependencies": [
-            ["@mdi/react", "npm:1.4.0"]
           ],
           "linkType": "HARD",
         }]
@@ -6198,9 +6202,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@emotion/styled", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:10.0.17"],
             ["@emotion/styled-base", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:10.0.7"],
             ["@haroenv/react-sparklines", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.7.1"],
+            ["@iconify/icons-logos", "npm:1.0.10"],
+            ["@iconify/react", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.1.3"],
             ["@loadable/component", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.12.0"],
-            ["@mdi/js", "npm:5.0.45"],
-            ["@mdi/react", "npm:1.4.0"],
             ["@reach/router", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.2.1"],
             ["@rehooks/component-size", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.0.3"],
             ["@strictsoftware/typedoc-plugin-monorepo", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#patch:@strictsoftware/typedoc-plugin-monorepo@npm%3A0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch::version=0.2.2&hash=3cb6af&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],

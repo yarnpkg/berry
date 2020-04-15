@@ -2385,6 +2385,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@iconify/icons-logos@npm:^1.0.10":
+  version: 1.0.10
+  resolution: "@iconify/icons-logos@npm:1.0.10"
+  checksum: 2/86bb66783581000df419f5d7a45cda1ce66f03c13e261d9b16c3ff41d2eae3b50f691dcf748782ad08b0609060f4a0a0a2e745a6cd6f22ef61e5a82c2adee5f3
+  languageName: node
+  linkType: hard
+
+"@iconify/react@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "@iconify/react@npm:1.1.3"
+  peerDependencies:
+    react: ^16.0.0
+  checksum: 2/99c71a569639461fc7848ded5fdc54be2f62d1808f680398b3175dde6dd6927dd7ff4a1e885d7a5e627a46eada9b3d2aecfd0d08190857b8f70f3b0f4382f346
+  languageName: node
+  linkType: hard
+
 "@jest/console@npm:^24.3.0":
   version: 24.3.0
   resolution: "@jest/console@npm:24.3.0"
@@ -3419,20 +3435,6 @@ __metadata:
   peerDependencies:
     react: ">=16.3.0"
   checksum: 2/686f53246f55424c18951ea90cd185b6a04736957cef3b750147944f8a2f88e7afa3f36716346de42fef241737f8ebb79a6a2e1d1038cb941839f06ee5bbfc34
-  languageName: node
-  linkType: hard
-
-"@mdi/js@npm:^5.0.45":
-  version: 5.0.45
-  resolution: "@mdi/js@npm:5.0.45"
-  checksum: 2/f701f031b670c3e3da7962f85b3c608143834d3f63d72e5e73642808b00bf06fc4a67cf63845270c25fa3dae521eb2916c231a269812e813bb49f6aa4779bd4f
-  languageName: node
-  linkType: hard
-
-"@mdi/react@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "@mdi/react@npm:1.4.0"
-  checksum: 2/da4eb5155b6db167dc9f5285f251c4015e73fbfcb592cf219e148dd70c3c05798ec56fba6da3465c3aaf9ac8afbea1f48897181d82db9ad67b0043a345be62f3
   languageName: node
   linkType: hard
 
@@ -5168,9 +5170,9 @@ __metadata:
     "@emotion/styled": ^10.0.17
     "@emotion/styled-base": ^10.0.7
     "@haroenv/react-sparklines": ^1.7.1
+    "@iconify/icons-logos": ^1.0.10
+    "@iconify/react": ^1.1.3
     "@loadable/component": ^5.12.0
-    "@mdi/js": ^5.0.45
-    "@mdi/react": ^1.4.0
     "@reach/router": ^1.1.1
     "@rehooks/component-size": ^1.0.3
     "@strictsoftware/typedoc-plugin-monorepo": "patch:@strictsoftware/typedoc-plugin-monorepo@^0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch"
