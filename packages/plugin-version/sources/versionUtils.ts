@@ -61,6 +61,8 @@ export async function fetchRoot(initialCwd: PortablePath) {
   return match;
 }
 
+// Note: This returns all changed files from the git diff, which can include
+// files not belonging to a workspace
 export async function fetchChangedFiles(root: PortablePath, {base}: {base: string}) {
   const {stdout: localStdout} = await execUtils.execvp(`git`, [`diff`, `--name-only`, `${base}`], {cwd: root, strict: true});
   const trackedFiles = localStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
@@ -207,7 +209,14 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
   if (versionFiles.length > 1)
     throw new UsageError(`Your current branch contains multiple versioning files; this isn't supported:\n- ${versionFiles.join(`\n- `)}`);
 
-  const changedWorkspaces = new Set(changedFiles.map(file => project.getWorkspaceByFilePath(file)));
+  const changedWorkspaces: Set<Workspace> = new Set(miscUtils.mapAndFilter(changedFiles, file => {
+    const workspace = project.tryWorkspaceByFilePath(file);
+    if (workspace === null)
+      return miscUtils.mapAndFilter.skip;
+
+    return workspace;
+  }));
+
   if (versionFiles.length === 0 && changedWorkspaces.size === 0 && !allowEmpty)
     return null;
 
