@@ -1,38 +1,20 @@
-import styled          from '@emotion/styled';
-import Icon            from '@mdi/react';
-import ReactTooltip    from 'react-tooltip';
-import React           from 'react';
+import styled           from '@emotion/styled';
+import React            from 'react';
+import tinycolor        from 'tinycolor2';
 
-import PlaygroundLabel from './PlaygroundLabel';
+import PlaygroundButton from './PlaygroundButton';
 
-const Results = styled.div`
-  grid-area: label;
-
-  text-align: center;
-
-  line-height: 1;
-
-  margin-top: 0.6rem;
+const Result = styled(PlaygroundButton)`
+  cursor: auto;
 `;
 
-const PlaygroundResults = ({labelState: [label]}) => (
-  <>
-    {label &&
-      <Results>
-        <PlaygroundLabel {...label} />
-        <br />
-        <ReactTooltip
-          type={label.type}
-          place={`top`}
-        />
-        <Icon
-          path={label.icon}
-          size={1.5}
-          data-tip={label.help}
-        />
-      </Results>
-    }
-  </>
+const PlaygroundResults = ({label: {type, color, text, help}}) => (
+  <Result style={{
+    background: color,
+    color: tinycolor(color).isDark() ? `#fff` : `#000`,
+  }} data-tip={help} data-type={type}>
+    {text}
+  </Result>
 );
 
 // eslint-disable-next-line arca/no-default-export

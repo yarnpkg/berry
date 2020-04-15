@@ -3,10 +3,10 @@ import Select from 'react-select';
 import React  from 'react';
 
 const StyledSelect = styled(Select)`
-  grid-area: select;
+  width: 320px;
 `;
 
-const PlaygroundSelect = ({selectState: [select], options, onSelectChanged}) => (
+const PlaygroundSelect = ({select, options, onSelectChanged}) => (
   <StyledSelect
     value={select}
     onChange={(selectedOption) => onSelectChanged(selectedOption)}

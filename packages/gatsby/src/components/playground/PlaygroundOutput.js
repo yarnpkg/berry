@@ -1,37 +1,23 @@
-import 'xterm/css/xterm.css';
 import styled   from '@emotion/styled';
-import Loadable from "@loadable/component";
+import ansiHTML from 'ansi-html';
 import React    from 'react';
 
-const XTerm = Loadable(() => import(`react-xterm`));
-
 const OutputContainer = styled.div`
-  grid-area: output;
-
+  width: 100%;
   height: 60vh;
 
-  .xterm {
-    padding: 10px;
-  }
+  padding: 10px 15px;
+
+  overflow: scroll;
+  background: #000000;
+
+  color: white;
+  white-space: pre;
+  font-family: monospace;
 `;
 
-const PlaygroundOutput = ({outputState: [output]}) => (
-  <OutputContainer>
-    <XTerm
-      value={output}
-      options={{
-        // Disable cursor
-        cursorStyle: `bar`,
-        cursorWidth: 0,
-
-        disableStdin: true,
-
-        rows: 16,
-
-        cols: 45,
-      }}
-    />
-  </OutputContainer>
+const PlaygroundOutput = ({value}) => (
+  <OutputContainer dangerouslySetInnerHTML={{__html: ansiHTML(value)}} />
 );
 
 // eslint-disable-next-line arca/no-default-export

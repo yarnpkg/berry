@@ -1,52 +1,61 @@
 import fetch    from 'unfetch';
 
-import {STATUS} from '../../src/components/playground/constants';
+import {LABELS} from '../../src/components/playground/constants';
 
-export const checkRepo = async ({statusState: [, setStatus]}) => {
-  setStatus(STATUS.CHECKING);
-  const checkRepoData = await (await fetch(`/playground/api/check-repo`)).json();
+const TARGET = `https://viko0.sse.codesandbox.io`;
+
+const fetchJson = async url => {
+  const req = await fetch(TARGET + url);
+  const text = await req.text();
+
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    console.log(TARGET + url, text);
+    throw error;
+  }
+};
+
+export const checkRepo = async ({setLabel}) => {
+  setLabel(LABELS.CHECKING);
+  const checkRepoData = await fetchJson(`/api/check-repo`);
 
   if (checkRepoData.status === `success`) {
     return checkRepoData.shouldClone;
   } else {
-    setStatus(STATUS.ERROR);
+    setLabel(LABELS.ERROR);
     throw new Error(`An error has occurred while checking the repository`);
   }
 };
 
-export const cloneRepo = async ({statusState: [, setStatus]}) => {
-  setStatus(STATUS.CLONING);
-  const cloneRepoData = await (await fetch(`/playground/api/clone-repo`)).json();
+export const cloneRepo = async ({setLabel}) => {
+  setLabel(LABELS.CLONING);
+  const cloneRepoData = await fetchJson(`/api/clone-repo`);
 
   if (cloneRepoData.status === `error`) {
-    setStatus(STATUS.ERROR);
+    setLabel(LABELS.ERROR);
     throw new Error(`An error has occurred while cloning the repository`);
   }
 };
 
-export const runReproduction = async (
-  {inputState: [input], statusState: [, setStatus]}
-) => {
-  setStatus(STATUS.RUNNING);
-  const sherlockData = await (await fetch(
-    `/playground/api/sherlock?code=${encodeURIComponent(input)}`
-  )).json();
+export const runReproduction = async (input, {setLabel}) => {
+  setLabel(LABELS.RUNNING);
+  const sherlockData = await fetchJson(`/api/sherlock?code=${encodeURIComponent(input)}`);
 
   if (sherlockData.status === `success`) {
-    setStatus(STATUS.FINISHED);
     return sherlockData.executionResult;
   } else {
-    setStatus(STATUS.ERROR);
+    setLabel(LABELS.ERROR);
     throw new Error(`An error has occurred while running the reproduction`);
   }
 };
 
-export const runInput = async (state) => {
-  const shouldClone = await checkRepo(state);
+export const runInput = async (input, {setLabel}) => {
+  const shouldClone = await checkRepo({setLabel});
 
   if (shouldClone)
-    cloneRepo(state);
+    await cloneRepo({setLabel});
 
-  return runReproduction(state);
+  return await runReproduction(input, {setLabel});
 };
 

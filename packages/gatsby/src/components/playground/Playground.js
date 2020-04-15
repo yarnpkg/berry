@@ -1,79 +1,104 @@
-import styled                           from '@emotion/styled';
-import React, {useState}                from 'react';
+import styled                                   from '@emotion/styled';
+import ReactTooltip                             from 'react-tooltip';
+import React, {useState}                        from 'react';
 
-import * as playgroundUtils             from '../../utils/playgroundUtils';
+import * as playgroundUtils                     from '../../utils/playgroundUtils';
 
-import PlaygroundInput                  from './PlaygroundInput';
+import PlaygroundButton                         from './PlaygroundButton';
+import PlaygroundInput                          from './PlaygroundInput';
+import PlaygroundOutput                         from './PlaygroundOutput';
+import PlaygroundResults                        from './PlaygroundResults';
+import PlaygroundSelect                         from './PlaygroundSelect';
 
-import PlaygroundOutput                 from './PlaygroundOutput';
-import PlaygroundResults                from './PlaygroundResults';
-import PlaygroundRunButton              from './PlaygroundRunButton';
-import PlaygroundSelect                 from './PlaygroundSelect';
-import PlaygroundStatus                 from './PlaygroundStatus';
-
-import {SELECT_OPTIONS, STATUS, LABELS} from './constants';
+import {DEFAULT_OUTPUT, SELECT_OPTIONS, LABELS} from './constants';
 
 const Container = styled.div`
-  margin: 8px;
+`;
 
-  display: grid;
-  grid-template-areas:
-    "select .     .      .      ."
-    "input  input .      output output"
-    "input  input status output output"
-    "input  input status output output"
-    "input  input run    output output"
-    "input  input label  output output"
-    "input  input label  output output"
-    "input  input .      output output";
-  grid-template-columns: 3fr 3fr 2fr 3fr 3fr;
-  grid-template-rows: 0.5fr 3.5fr 3.5fr 0.5fr 2fr 0.5fr 3.5fr 3.5fr;
-  grid-gap: 15px 30px;
+const Toolbar = styled.div`
+  display: flex;
 
-  max-height: 75vh;
+  margin: 10px;
+  margin-bottom: 5px;
+
+  > * {
+    margin-right: 10px;
+  }
+`;
+
+const Display = styled.div`
+  display: flex;
+
+  width: 100%;
+
+  padding: 5px;
+`;
+
+const Slot = styled.div`
+  width: 50%;
+
+  padding: 5px;
+
+  flex: none;
+`;
+
+const Left = styled(Slot)`
+`;
+
+const Right = styled(Slot)`
 `;
 
 const Playground = () => {
-  const selectState = useState(SELECT_OPTIONS.find((option) => option.selected));
-  const inputState = useState(SELECT_OPTIONS.find((option) => option.selected).predefinedInput);
-  const statusState = useState(STATUS.READY);
-  const labelState = useState(null);
-  const outputState = useState(``);
+  const [select, setSelect] = useState(SELECT_OPTIONS.find((option) => option.selected));
+  const [input, setInput] = useState(SELECT_OPTIONS.find((option) => option.selected).predefinedInput);
+  const [label, setLabel] = useState(LABELS.DEFAULT);
+  const [output, setOutput] = useState(DEFAULT_OUTPUT);
 
   const onSelectChanged = (selectedOption) => {
-    selectState[1](selectedOption);
-    inputState[1](selectedOption.predefinedInput);
+    setSelect(selectedOption);
+    setInput(`${selectedOption.predefinedInput}\n`);
   };
 
   const cleanup = () => {
-    labelState[1](null);
-    outputState[1](``);
+    setLabel(LABELS.DEFAULT);
+    setOutput(DEFAULT_OUTPUT);
   };
 
   const runInput = async () => {
     cleanup();
 
-    const {assertion, error} = await playgroundUtils.runInput({inputState, statusState});
+    const {assertion, error} = await playgroundUtils.runInput(input, {setLabel});
 
     if (assertion) {
-      labelState[1](LABELS.REPRODUCIBLE);
-      outputState[1](assertion);
+      setLabel(LABELS.REPRODUCIBLE);
+      setOutput(assertion);
     } else if (error) {
-      labelState[1](LABELS.BROKEN);
-      outputState[1](error);
+      setLabel(LABELS.BROKEN);
+      setOutput(error);
     } else {
-      labelState[1](LABELS.UNREPRODUCIBLE);
+      setLabel(LABELS.UNREPRODUCIBLE);
+      setOutput(DEFAULT_OUTPUT);
     }
   };
 
   return (
     <Container>
-      <PlaygroundSelect selectState={selectState} options={SELECT_OPTIONS} onSelectChanged={onSelectChanged} />
-      <PlaygroundInput inputState={inputState} />
-      <PlaygroundStatus statusState={statusState} />
-      <PlaygroundRunButton runInput={runInput} />
-      <PlaygroundResults labelState={labelState} />
-      <PlaygroundOutput outputState={outputState} />
+      <Toolbar>
+        <PlaygroundSelect select={select} options={SELECT_OPTIONS} onSelectChanged={onSelectChanged} />
+        <PlaygroundButton onClick={runInput} children={`Run`} />
+        <PlaygroundResults label={label} />
+      </Toolbar>
+      <Display>
+        <Left>
+          <PlaygroundInput value={input} onChange={setInput} />
+        </Left>
+        <Right>
+          <PlaygroundOutput value={output} />
+        </Right>
+      </Display>
+      <ReactTooltip
+        place={`top`}
+      />
     </Container>
   );
 };

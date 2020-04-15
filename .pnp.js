@@ -4351,6 +4351,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@rehooks/component-size", [
+        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.0.3", {
+          "packageLocation": "./.yarn/$$virtual/@rehooks-component-size-virtual-551dbc9789/0/cache/@rehooks-component-size-npm-1.0.3-1029c924e0-2.zip/node_modules/@rehooks/component-size/",
+          "packageDependencies": [
+            ["@rehooks/component-size", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.0.3"],
+            ["react", "npm:16.8.4"]
+          ],
+          "packagePeers": [
+            "react"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@sindresorhus/is", [
         ["npm:0.7.0", {
           "packageLocation": "./.yarn/cache/@sindresorhus-is-npm-0.7.0-306ce07075-2.zip/node_modules/@sindresorhus/is/",
@@ -4569,6 +4582,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-debug-npm-0.0.29-f3bd149c0c-2.zip/node_modules/@types/debug/",
           "packageDependencies": [
             ["@types/debug", "npm:0.0.29"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@types/dedent", [
+        ["npm:0.7.0", {
+          "packageLocation": "./.yarn/cache/@types-dedent-npm-0.7.0-6255895dfd-2.zip/node_modules/@types/dedent/",
+          "packageDependencies": [
+            ["@types/dedent", "npm:0.7.0"]
           ],
           "linkType": "HARD",
         }]
@@ -6180,8 +6202,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@mdi/js", "npm:5.0.45"],
             ["@mdi/react", "npm:1.4.0"],
             ["@reach/router", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.2.1"],
+            ["@rehooks/component-size", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.0.3"],
             ["@strictsoftware/typedoc-plugin-monorepo", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#patch:@strictsoftware/typedoc-plugin-monorepo@npm%3A0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch::version=0.2.2&hash=3cb6af&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],
             ["@types/babel__core", "npm:7.1.3"],
+            ["@types/dedent", "npm:0.7.0"],
             ["@types/json-schema", "npm:7.0.4"],
             ["@types/loadable__component", "npm:5.10.0"],
             ["@types/lodash", "npm:4.14.136"],
@@ -6189,8 +6213,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/tinycolor2", "npm:1.4.2"],
             ["@types/webpack", "npm:4.32.1"],
             ["algoliasearch", "npm:4.0.1"],
+            ["ansi-html", "npm:0.0.7"],
             ["bytes", "npm:3.1.0"],
             ["date-fns", "npm:2.0.0-beta.2"],
+            ["dedent", "npm:0.7.0"],
             ["es6-promise", "npm:4.2.6"],
             ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.13.6"],
             ["gatsby-image", "npm:2.0.31"],
@@ -6231,7 +6257,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-spinners", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:0.8.1"],
             ["react-tooltip", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:4.2.2"],
             ["react-transition-group", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.2.1"],
-            ["react-xterm", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#patch:react-xterm@npm%3A2.0.4#./.patches/react-xterm.patch::version=2.0.4&hash=b21709&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],
             ["regenerator-runtime", "npm:0.13.3"],
             ["remark-html", "npm:9.0.0"],
             ["remark-parse", "npm:6.0.3"],
@@ -6244,8 +6269,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["unfetch", "npm:4.1.0"],
             ["unified", "npm:7.1.0"],
             ["webpack", "npm:4.41.2"],
-            ["xss", "npm:1.0.6"],
-            ["xterm", "npm:4.5.0"]
+            ["xss", "npm:1.0.6"]
           ],
           "linkType": "SOFT",
         }]
@@ -11877,6 +11901,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["get-stream", "npm:2.3.1"],
             ["pify", "npm:2.3.0"],
             ["yauzl", "npm:2.10.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["dedent", [
+        ["npm:0.7.0", {
+          "packageLocation": "./.yarn/cache/dedent-npm-0.7.0-2dbb45a4c5-2.zip/node_modules/dedent/",
+          "packageDependencies": [
+            ["dedent", "npm:0.7.0"]
           ],
           "linkType": "HARD",
         }]
@@ -24759,21 +24792,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["react-xterm", [
-        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#patch:react-xterm@npm%3A2.0.4#./.patches/react-xterm.patch::version=2.0.4&hash=b21709&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby", {
-          "packageLocation": "./.yarn/$$virtual/react-xterm-virtual-dc45f6782d/0/cache/react-xterm-patch-bf7657b4bb-2.zip/node_modules/react-xterm/",
-          "packageDependencies": [
-            ["react-xterm", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#patch:react-xterm@npm%3A2.0.4#./.patches/react-xterm.patch::version=2.0.4&hash=b21709&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],
-            ["classnames", "npm:2.2.6"],
-            ["react", "npm:16.8.4"],
-            ["xterm", "npm:4.5.0"]
-          ],
-          "packagePeers": [
-            "react"
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["read", [
         ["npm:1.0.7", {
           "packageLocation": "./.yarn/cache/read-npm-1.0.7-950ec74ca8-2.zip/node_modules/read/",
@@ -30514,15 +30532,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/xtend-npm-4.0.1-6e130e3610-2.zip/node_modules/xtend/",
           "packageDependencies": [
             ["xtend", "npm:4.0.1"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["xterm", [
-        ["npm:4.5.0", {
-          "packageLocation": "./.yarn/cache/xterm-npm-4.5.0-4fba3c9aeb-2.zip/node_modules/xterm/",
-          "packageDependencies": [
-            ["xterm", "npm:4.5.0"]
           ],
           "linkType": "HARD",
         }]
