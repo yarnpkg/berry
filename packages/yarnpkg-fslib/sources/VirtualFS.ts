@@ -11,7 +11,9 @@ const NUMBER_REGEXP = /^[0-9]+$/;
 // $3: hash
 // $4: depth
 // $5: subpath
-const VIRTUAL_REGEXP = /^(\/(?:[^\/]+\/)*?\$\$virtual)((?:\/([^\/]+)(?:\/([^\/]+))?)?((?:\/.*)?))$/;
+const VIRTUAL_REGEXP = /^(\/(?:[^\/]+\/)*?\$\$virtual)((?:\/((?:[^\/]+-)?[a-f0-9]+)(?:\/([^\/]+))?)?((?:\/.*)?))$/;
+
+const VALID_COMPONENT = /^([^\/]+-)?[a-f0-9]+$/;
 
 export type VirtualFSOptions = {
   baseFs?: FakeFS<PortablePath>,
@@ -24,6 +26,9 @@ export class VirtualFS extends ProxiedFS<PortablePath, PortablePath> {
   static makeVirtualPath(base: PortablePath, component: Filename, to: PortablePath) {
     if (ppath.basename(base) !== `$$virtual`)
       throw new Error(`Assertion failed: Virtual folders must be named "$$virtual"`);
+
+    if (!ppath.basename(component).match(VALID_COMPONENT))
+      throw new Error(`Assertion failed: Virtual components must be ended by an hexadecimal hash`);
 
     // Obtains the relative distance between the virtual path and its actual target
     const target = ppath.relative(ppath.dirname(base), to);
@@ -42,7 +47,7 @@ export class VirtualFS extends ProxiedFS<PortablePath, PortablePath> {
 
   static resolveVirtual(p: PortablePath): PortablePath {
     const match = p.match(VIRTUAL_REGEXP);
-    if (!match)
+    if (!match || (!match[3] && match[5]))
       return p;
 
     const target = ppath.dirname(match[1] as PortablePath);

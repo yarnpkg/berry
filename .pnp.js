@@ -33767,7 +33767,8 @@ const NUMBER_REGEXP = /^[0-9]+$/; // $0: full path
 // $4: depth
 // $5: subpath
 
-const VIRTUAL_REGEXP = /^(\/(?:[^\/]+\/)*?\$\$virtual)((?:\/([^\/]+)(?:\/([^\/]+))?)?((?:\/.*)?))$/;
+const VIRTUAL_REGEXP = /^(\/(?:[^\/]+\/)*?\$\$virtual)((?:\/((?:[^\/]+-)?[a-f0-9]+)(?:\/([^\/]+))?)?((?:\/.*)?))$/;
+const VALID_COMPONENT = /^([^\/]+-)?[a-f0-9]+$/;
 
 class VirtualFS extends ProxiedFS_1.ProxiedFS {
   constructor({
@@ -33778,7 +33779,8 @@ class VirtualFS extends ProxiedFS_1.ProxiedFS {
   }
 
   static makeVirtualPath(base, component, to) {
-    if (path_1.ppath.basename(base) !== `$$virtual`) throw new Error(`Assertion failed: Virtual folders must be named "$$virtual"`); // Obtains the relative distance between the virtual path and its actual target
+    if (path_1.ppath.basename(base) !== `$$virtual`) throw new Error(`Assertion failed: Virtual folders must be named "$$virtual"`);
+    if (!path_1.ppath.basename(component).match(VALID_COMPONENT)) throw new Error(`Assertion failed: Virtual components must be ended by an hexadecimal hash`); // Obtains the relative distance between the virtual path and its actual target
 
     const target = path_1.ppath.relative(path_1.ppath.dirname(base), to);
     const segments = target.split(`/`); // Counts how many levels we need to go back to start applying the rest of the path
@@ -33794,7 +33796,7 @@ class VirtualFS extends ProxiedFS_1.ProxiedFS {
 
   static resolveVirtual(p) {
     const match = p.match(VIRTUAL_REGEXP);
-    if (!match) return p;
+    if (!match || !match[3] && match[5]) return p;
     const target = path_1.ppath.dirname(match[1]);
     if (!match[3] || !match[4]) return target;
     const isnum = NUMBER_REGEXP.test(match[4]);
