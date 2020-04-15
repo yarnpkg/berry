@@ -9582,12 +9582,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["cacheable-lookup", [
-        ["npm:0.2.1", {
-          "packageLocation": "./.yarn/cache/cacheable-lookup-npm-0.2.1-32a98ee097-2.zip/node_modules/cacheable-lookup/",
+        ["npm:4.1.2", {
+          "packageLocation": "./.yarn/cache/cacheable-lookup-npm-4.1.2-b5b38bf5b1-2.zip/node_modules/cacheable-lookup/",
           "packageDependencies": [
-            ["cacheable-lookup", "npm:0.2.1"],
-            ["@types/keyv", "npm:3.1.1"],
-            ["keyv", "npm:3.1.0"]
+            ["cacheable-lookup", "npm:4.1.2"],
+            ["@types/keyv", "npm:3.1.1"]
           ],
           "linkType": "HARD",
         }]
@@ -15521,7 +15520,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/cacheable-request", "npm:6.0.1"],
             ["@types/keyv", "npm:3.1.1"],
             ["@types/responselike", "npm:1.0.0"],
-            ["cacheable-lookup", "npm:0.2.1"],
+            ["cacheable-lookup", "npm:4.1.2"],
             ["cacheable-request", "npm:7.0.0"],
             ["decompress-response", "npm:5.0.0"],
             ["duplexer3", "npm:0.1.4"],

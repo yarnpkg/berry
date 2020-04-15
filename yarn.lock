@@ -7741,12 +7741,10 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"cacheable-lookup@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "cacheable-lookup@npm:0.2.1"
-  dependencies:
-    keyv: ^3.1.0
-  checksum: 2/7ebf0a26b08e6e0d43de3e1363c467e6869bb17aaab7196951598fe1c19578a44f1bd5190b251072c22922942b70251da63482a7cfaba70f9ef744a1d47246fa
+"cacheable-lookup@npm:^4.0.0":
+  version: 4.1.2
+  resolution: "cacheable-lookup@npm:4.1.2"
+  checksum: 2/92f7cac6a101765e47d5e7fd87899df6aafda5d66f8552bce83f8b7893dd8b76f4df3b54739c782ab0861027e6115dace58c2a938a58ac7d994fafb75fb41b39
   languageName: node
   linkType: hard
 
@@ -16742,7 +16740,7 @@ fsevents@^1.2.2:
   languageName: node
   linkType: hard
 
-"keyv@npm:^3.0.0, keyv@npm:^3.1.0":
+"keyv@npm:^3.0.0":
   version: 3.1.0
   resolution: "keyv@npm:3.1.0"
   dependencies:

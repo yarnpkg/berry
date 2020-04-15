@@ -9,18 +9,7 @@ import {Configuration}                                from './Configuration';
 
 const cache = new Map<string, Promise<Response<Buffer>>>();
 
-const dnsCache = new Map([[
-  // Workaround for issue: https://github.com/szmarczak/cacheable-lookup/issues/13
-  'cached-lookup:localhost:4', JSON.stringify({
-    value: [{
-      address: '127.0.0.1',
-      ttl: 268,
-      family: 4,
-      expires: Date.now() + 24 * 3600 * 1000,
-    }],
-    expires: Date.now() + 24 * 3600 * 1000,
-  }),
-]]);
+const dnsCache = new Map();
 
 const globalHttpAgent = new HttpAgent({keepAlive: true});
 const globalHttpsAgent = new HttpsAgent({keepAlive: true});
