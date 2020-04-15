@@ -209,14 +209,13 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
   if (versionFiles.length > 1)
     throw new UsageError(`Your current branch contains multiple versioning files; this isn't supported:\n- ${versionFiles.join(`\n- `)}`);
 
-  const changedWorkspaces: Set<Workspace> = new Set(miscUtils.mapAndFilter<PortablePath, Workspace>(changedFiles, file => {
+  const changedWorkspaces: Set<Workspace> = new Set(miscUtils.mapAndFilter(changedFiles, file => {
     const workspace = project.tryWorkspaceByFilePath(file);
     if (workspace === null)
       return miscUtils.mapAndFilter.skip;
 
     return workspace;
   }));
-
 
   if (versionFiles.length === 0 && changedWorkspaces.size === 0 && !allowEmpty)
     return null;
