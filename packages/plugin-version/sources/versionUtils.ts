@@ -20,6 +20,9 @@ export type Releases =
   Map<Workspace, Exclude<Decision, Decision.UNDECIDED>>;
 
 export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: string[]}) {
+  if (baseRefs.length === 0)
+    throw new UsageError(`Can't run this command with zero base refs specified.`);
+
   const ancestorBases = [];
 
   for (const candidate of baseRefs) {
