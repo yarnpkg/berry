@@ -11,7 +11,7 @@
       "default": "./.yarn/build-state.yml"
     },
     "cacheFolder": {
-      "description": "The path where the downloaded packages are stored on your system. They'll be normalized, compressed, and saved under the form of zip archives with standardized names. The cache is deemed to be relatively safe to be shared by multiple projects, even when multiple Yarn instances run at the same time on different projects.",
+      "description": "The path where the downloaded packages are stored on your system. They'll be normalized, compressed, and saved under the form of zip archives with standardized names. The cache is deemed to be relatively safe to be shared by multiple projects, even when multiple Yarn instances run at the same time on different projects. For setting a global cache folder, you should use `enableGlobalCache` instead.",
       "type": "string",
       "format": "uri-reference",
       "default": "./.yarn/cache"
