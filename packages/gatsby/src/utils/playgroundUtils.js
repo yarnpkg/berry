@@ -29,8 +29,8 @@ export const runReproduction = async (
 ) => {
   setStatus(STATUS.RUNNING);
   const sherlockData = await (await fetch(
-    `/playground/api/sherlock?code=${encodeURIComponent(input)}`)
-  ).json();
+    `/playground/api/sherlock?code=${encodeURIComponent(input)}`
+  )).json();
 
   if (sherlockData.status === `success`) {
     setStatus(STATUS.FINISHED);
