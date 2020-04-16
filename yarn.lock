@@ -5270,6 +5270,7 @@ __metadata:
     react-spinners: ^0.8.1
     react-tooltip: ^4.2.2
     react-transition-group: ^1.2.1
+    react-use-localstorage: ^3.4.1
     regenerator-runtime: ^0.13.3
     remark-html: ^9.0.0
     remark-parse: ^6.0.3
@@ -21889,6 +21890,15 @@ fsevents@^1.2.2:
     react: ">=16.6.0"
     react-dom: ">=16.6.0"
   checksum: 2/6d87fce48b825439175f8889ed0ecb0eca915e84933033f88d33e20fc0a5c1673cc482fb6a96e86a6f4120b56fdd80a276d424aff7e8384fbb240ff6f7206850
+  languageName: node
+  linkType: hard
+
+"react-use-localstorage@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "react-use-localstorage@npm:3.4.1"
+  peerDependencies:
+    react: ^16.10.2
+  checksum: 2/c04effb3c659701cb4d0e9bf06f35b926216443259bc306624ae440f0f65990234e6aee9c03707a26b40eabac580c0aa7d08636ceb6f91f6542ef70d12a11cff
   languageName: node
   linkType: hard
 

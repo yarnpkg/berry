@@ -34,10 +34,9 @@ export const DEFAULT_OUTPUT = dedent `
 `;
 
 export const SELECT_OPTIONS = [{
-  value: `empty`,
-  label: `Empty`,
+  value: `default`,
+  label: `Empty / Last Input`,
   predefinedInput: ``,
-  selected: true,
 }, {
   value: `yarn`,
   label: `Run a Yarn Command`,

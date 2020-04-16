@@ -3,6 +3,7 @@ import ReactTooltip                             from 'react-tooltip';
 import React, {useState, useEffect}             from 'react';
 
 import * as playgroundUtils                     from '../../utils/playgroundUtils';
+import useLocalStorage                          from '../../utils/useLocalStorage';
 
 import PlaygroundButton                         from './PlaygroundButton';
 import PlaygroundExportButton                   from './PlaygroundExportButton';
@@ -51,8 +52,8 @@ const Right = styled(Slot)`
 `;
 
 const Playground = () => {
-  const [select, setSelect] = useState(SELECT_OPTIONS.find((option) => option.selected));
-  const [input, setInput] = useState(SELECT_OPTIONS.find((option) => option.selected).predefinedInput);
+  const [select, setSelect] = useState(SELECT_OPTIONS.find((option) => option.value === `default`));
+  const [input, setInput] = useLocalStorage(`input`, SELECT_OPTIONS.find((option) => option.value === `default`).predefinedInput);
   const [label, setLabel] = useState(LABELS.DEFAULT);
   const [output, setOutput] = useState(DEFAULT_OUTPUT);
 
@@ -62,7 +63,7 @@ const Playground = () => {
     if (decodedInput) {
       setInput(decodedInput);
     }
-  });
+  }, [window.location.href]);
 
   const onSelectChanged = (selectedOption) => {
     setSelect(selectedOption);

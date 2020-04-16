@@ -63,6 +63,7 @@
     "react-spinners": "^0.8.1",
     "react-tooltip": "^4.2.2",
     "react-transition-group": "^1.2.1",
+    "react-use-localstorage": "^3.4.1",
     "regenerator-runtime": "^0.13.3",
     "remark-html": "^9.0.0",
     "remark-parse": "^6.0.3",
