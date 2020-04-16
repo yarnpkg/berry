@@ -7,13 +7,14 @@ HASHES=(
   # Patch   # Base    # Ranges
   "426f5a7" "e39bdc3" ">=3.0 <3.6"
   "bcb6dbf" "e39bdc3" ">=3.6 <3.9"
-  "4be321a" "d68295e" ">=3.9"
+  "4be321a" "bba19af" ">=3.9"
 )
 
 mkdir -p "$TEMP_DIR"
 if ! [[ -d "$TEMP_DIR"/clone ]]; then (
-  git clone git@github.com:arcanis/typescript "$TEMP_DIR"/clone
-  git remote add upstream git@github.com:microsoft/typescript
+    git clone git@github.com:arcanis/typescript "$TEMP_DIR"/clone
+    cd "$TEMP_DIR"/clone
+    git remote add upstream git@github.com:microsoft/typescript
 ); fi
 
 cd "$TEMP_DIR"/clone
@@ -77,4 +78,3 @@ node "$THIS_DIR"/../jsonEscape.js < "$PATCHFILE" \
   >> "$JSPATCH"
 echo ';' \
   >> "$JSPATCH"
-
