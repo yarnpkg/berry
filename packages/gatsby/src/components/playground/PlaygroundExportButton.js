@@ -7,23 +7,29 @@ import * as playgroundUtils              from '../../utils/playgroundUtils';
 
 import PlaygroundButton                  from './PlaygroundButton';
 
-import {REPO_URL}                        from './constants';
+import {REPO_URL, LABELS}                from './constants';
 
 
-const PlaygroundExportButton = ({input}) => {
+const PlaygroundExportButton = ({input, label}) => {
   const exportMenu = (
     <Menu selectable={false}>
-      <MenuItem onClick={async () => {
-        const bugReport = await playgroundUtils.getFilledGithubBugReportTemplate(input);
-        playgroundUtils.openUrl(`${REPO_URL}/issues/new?assignees=&labels=bug&template=bug-report.md&title=%5BBug%5D&body=${encodeURIComponent(bugReport)}`);
-      }}>
+      <MenuItem
+        disabled={label !== LABELS.REPRODUCIBLE}
+        onClick={async () => {
+          const bugReport = await playgroundUtils.getFilledGithubBugReportTemplate(input);
+          playgroundUtils.openUrl(`${REPO_URL}/issues/new?assignees=&labels=bug&template=bug-report.md&title=%5BBug%5D&body=${encodeURIComponent(bugReport)}`);
+        }}
+      >
         Report issue on GitHub
       </MenuItem>
 
-      <MenuItem onClick={() => {
-        const bugReport = playgroundUtils.getFilledGithubBugReportTemplate(input);
-        playgroundUtils.copyToClipboard(bugReport);
-      }}>
+      <MenuItem
+        disabled={label !== LABELS.REPRODUCIBLE}
+        onClick={() => {
+          const bugReport = playgroundUtils.getFilledGithubBugReportTemplate(input);
+          playgroundUtils.copyToClipboard(bugReport);
+        }}
+      >
         Copy as Markdown Issue
       </MenuItem>
 

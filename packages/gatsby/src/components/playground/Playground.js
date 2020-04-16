@@ -97,7 +97,7 @@ const Playground = () => {
       <Toolbar>
         <PlaygroundSelect select={select} options={SELECT_OPTIONS} onSelectChanged={onSelectChanged} />
         <PlaygroundButton onClick={runInput} children={`Run`} />
-        <PlaygroundExportButton input={input} />
+        <PlaygroundExportButton input={input} label={label} />
         <PlaygroundStatus label={label} />
         <PlaygroundNotice />
       </Toolbar>
