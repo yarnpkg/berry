@@ -1,20 +1,18 @@
-import got, {GotOptions, NormalizedOptions, Response} from 'got';
-import {Agent as HttpsAgent}                          from 'https';
-import {Agent as HttpAgent}                           from 'http';
-import micromatch                                     from 'micromatch';
-import plimit                                         from 'p-limit';
-import tunnel, {ProxyOptions}                         from 'tunnel';
-import {URL}                                          from 'url';
+import got, {ExtendOptions, NormalizedOptions, Response, BeforeRequestHook, BeforeRedirectHook} from 'got';
+import {Agent as HttpsAgent}                                                                    from 'https';
+import {Agent as HttpAgent}                                                                     from 'http';
+import micromatch                                                                               from 'micromatch';
+import plimit                                                                                   from 'p-limit';
+import tunnel, {ProxyOptions}                                                                   from 'tunnel';
+import {URL}                                                                                    from 'url';
 
-import {Configuration}                                from './Configuration';
+import {Configuration}                                                                          from './Configuration';
 
 const NETWORK_CONCURRENCY = 8;
 
 const limit = plimit(NETWORK_CONCURRENCY);
 
 const cache = new Map<string, Promise<Response<Buffer>>>();
-
-const dnsCache = new Map();
 
 const globalHttpAgent = new HttpAgent({keepAlive: true});
 const globalHttpsAgent = new HttpsAgent({keepAlive: true});
@@ -56,22 +54,19 @@ export async function request(target: string, body: Body, {configuration, header
   if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
     throw new Error(`Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
 
-  let agent;
-
   const httpProxy = configuration.get(`httpProxy`);
   const httpsProxy = configuration.get(`httpsProxy`);
-
-  if (url.protocol === `http:`)
-    agent = httpProxy
+  const agent = {
+    http: httpProxy
       ? tunnel.httpOverHttp(parseProxy(httpProxy))
-      : globalHttpAgent;
+      : globalHttpAgent,
+    https: httpsProxy
+      ? tunnel.httpsOverHttp(parseProxy(httpsProxy)) as HttpsAgent
+      : globalHttpsAgent,
+  };
 
-  if (url.protocol === `https:`)
-    agent = httpsProxy
-      ? tunnel.httpsOverHttp(parseProxy(httpsProxy))
-      : globalHttpsAgent;
 
-  const gotOptions: GotOptions = {agent, headers, method};
+  const gotOptions: ExtendOptions = {agent, headers, method};
   let hostname: string | undefined;
 
   gotOptions.responseType = json
@@ -88,23 +83,22 @@ export async function request(target: string, body: Body, {configuration, header
 
   const makeHooks = () => ({
     beforeRequest: [
-      (options: NormalizedOptions) => {
+      ((options: NormalizedOptions) => {
         hostname = options.url.hostname;
-      },
+      }) as BeforeRequestHook,
     ],
     beforeRedirect: [
-      (options: NormalizedOptions) => {
+      ((options: NormalizedOptions) => {
         if (options.headers && options.headers.authorization && options.url.hostname !== hostname) {
           delete options.headers.authorization;
         }
-      },
+      }) as unknown as BeforeRedirectHook,
     ],
   });
 
   //@ts-ignore
   const gotClient = got.extend({
     retry: 10,
-    dnsCache,
     ...gotOptions,
     hooks: makeHooks(),
   });
