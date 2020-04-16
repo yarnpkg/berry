@@ -69,7 +69,9 @@ export const encodeInput = (input) => Buffer.from(input).toString(ENCODING);
 
 export const decodeInput = (input) => Buffer.from(input, ENCODING).toString();
 
-export const getShareableUrl = (input) => new URL(`/playground?code=${encodeInput(input)}`, window.location.href);
+export const getShareableUrl = (input) => new URL(`/playground?code=${
+  encodeURIComponent(encodeInput(input))
+}`, window.location.href);
 
 export const parseShareableUrl = (url) => {
   const parsedUrl = new URL(url);

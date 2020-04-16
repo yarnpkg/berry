@@ -20,13 +20,20 @@ const PlaygroundExportButton = ({input}) => {
         Report issue on GitHub
       </MenuItem>
 
-      <Divider />
-
       <MenuItem onClick={() => {
         const bugReport = playgroundUtils.getFilledGithubBugReportTemplate(input);
         playgroundUtils.copyToClipboard(bugReport);
       }}>
         Copy as Markdown Issue
+      </MenuItem>
+
+      <Divider />
+
+      <MenuItem onClick={() => {
+        const link = playgroundUtils.getShareableUrl(input);
+        playgroundUtils.copyToClipboard(link);
+      }}>
+        Copy as Raw Link
       </MenuItem>
 
       <MenuItem onClick={() => {
