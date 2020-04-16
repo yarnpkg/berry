@@ -1,12 +1,12 @@
-import got, {GotOptions, NormalizedOptions, Response} from 'got';
-import {Agent as HttpsAgent}                          from 'https';
-import {Agent as HttpAgent}                           from 'http';
-import micromatch                                     from 'micromatch';
-import plimit                                         from 'p-limit';
-import tunnel, {ProxyOptions}                         from 'tunnel';
-import {URL}                                          from 'url';
+import got, {ExtendOptions, Response} from 'got';
+import {Agent as HttpsAgent}          from 'https';
+import {Agent as HttpAgent}           from 'http';
+import micromatch                     from 'micromatch';
+import plimit                         from 'p-limit';
+import tunnel, {ProxyOptions}         from 'tunnel';
+import {URL}                          from 'url';
 
-import {Configuration}                                from './Configuration';
+import {Configuration}                from './Configuration';
 
 const NETWORK_CONCURRENCY = 8;
 
@@ -54,23 +54,19 @@ export async function request(target: string, body: Body, {configuration, header
   if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
     throw new Error(`Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
 
-  let agent;
-
   const httpProxy = configuration.get(`httpProxy`);
   const httpsProxy = configuration.get(`httpsProxy`);
-
-  if (url.protocol === `http:`)
-    agent = httpProxy
+  const agent = {
+    http: httpProxy
       ? tunnel.httpOverHttp(parseProxy(httpProxy))
-      : globalHttpAgent;
+      : globalHttpAgent,
+    https: httpsProxy
+      ? tunnel.httpsOverHttp(parseProxy(httpsProxy)) as HttpsAgent
+      : globalHttpsAgent,
+  };
 
-  if (url.protocol === `https:`)
-    agent = httpsProxy
-      ? tunnel.httpsOverHttp(parseProxy(httpsProxy))
-      : globalHttpsAgent;
 
-  const gotOptions: GotOptions = {agent, headers, method};
-  let hostname: string | undefined;
+  const gotOptions: ExtendOptions = {agent, headers, method};
 
   gotOptions.responseType = json
     ? `json`
@@ -84,26 +80,10 @@ export async function request(target: string, body: Body, {configuration, header
     }
   }
 
-  const makeHooks = () => ({
-    beforeRequest: [
-      (options: NormalizedOptions) => {
-        hostname = options.url.hostname;
-      },
-    ],
-    beforeRedirect: [
-      (options: NormalizedOptions) => {
-        if (options.headers && options.headers.authorization && options.url.hostname !== hostname) {
-          delete options.headers.authorization;
-        }
-      },
-    ],
-  });
-
   //@ts-ignore
   const gotClient = got.extend({
     retry: 10,
     ...gotOptions,
-    hooks: makeHooks(),
   });
 
   return limit(() => gotClient(target) as unknown as Response<any>);
