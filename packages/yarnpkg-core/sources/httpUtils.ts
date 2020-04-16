@@ -1,12 +1,12 @@
-import got, {ExtendOptions, NormalizedOptions, Response, BeforeRequestHook, BeforeRedirectHook} from 'got';
-import {Agent as HttpsAgent}                                                                    from 'https';
-import {Agent as HttpAgent}                                                                     from 'http';
-import micromatch                                                                               from 'micromatch';
-import plimit                                                                                   from 'p-limit';
-import tunnel, {ProxyOptions}                                                                   from 'tunnel';
-import {URL}                                                                                    from 'url';
+import got, {ExtendOptions, Response} from 'got';
+import {Agent as HttpsAgent}          from 'https';
+import {Agent as HttpAgent}           from 'http';
+import micromatch                     from 'micromatch';
+import plimit                         from 'p-limit';
+import tunnel, {ProxyOptions}         from 'tunnel';
+import {URL}                          from 'url';
 
-import {Configuration}                                                                          from './Configuration';
+import {Configuration}                from './Configuration';
 
 const NETWORK_CONCURRENCY = 8;
 
@@ -67,7 +67,6 @@ export async function request(target: string, body: Body, {configuration, header
 
 
   const gotOptions: ExtendOptions = {agent, headers, method};
-  let hostname: string | undefined;
 
   gotOptions.responseType = json
     ? `json`
@@ -81,26 +80,10 @@ export async function request(target: string, body: Body, {configuration, header
     }
   }
 
-  const makeHooks = () => ({
-    beforeRequest: [
-      ((options: NormalizedOptions) => {
-        hostname = options.url.hostname;
-      }) as BeforeRequestHook,
-    ],
-    beforeRedirect: [
-      ((options: NormalizedOptions) => {
-        if (options.headers && options.headers.authorization && options.url.hostname !== hostname) {
-          delete options.headers.authorization;
-        }
-      }) as unknown as BeforeRedirectHook,
-    ],
-  });
-
   //@ts-ignore
   const gotClient = got.extend({
     retry: 10,
     ...gotOptions,
-    hooks: makeHooks(),
   });
 
   return limit(() => gotClient(target) as unknown as Response<any>);
