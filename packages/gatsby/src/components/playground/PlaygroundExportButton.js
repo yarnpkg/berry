@@ -10,13 +10,13 @@ import PlaygroundButton                  from './PlaygroundButton';
 import {REPO_URL, LABELS}                from './constants';
 
 
-const PlaygroundExportButton = ({input, label}) => {
+const PlaygroundExportButton = ({input, output, label}) => {
   const exportMenu = (
     <Menu selectable={false}>
       <MenuItem
         disabled={label !== LABELS.REPRODUCIBLE}
         onClick={async () => {
-          const bugReport = await playgroundUtils.getFilledGithubBugReportTemplate(input);
+          const bugReport = await playgroundUtils.getFilledGithubBugReportTemplate(input, output);
           playgroundUtils.openUrl(`${REPO_URL}/issues/new?assignees=&labels=bug&template=bug-report.md&title=%5BBug%5D&body=${encodeURIComponent(bugReport)}`);
         }}
       >
@@ -26,7 +26,7 @@ const PlaygroundExportButton = ({input, label}) => {
       <MenuItem
         disabled={label !== LABELS.REPRODUCIBLE}
         onClick={() => {
-          const bugReport = playgroundUtils.getFilledGithubBugReportTemplate(input);
+          const bugReport = playgroundUtils.getFilledGithubBugReportTemplate(input, output);
           playgroundUtils.copyToClipboard(bugReport);
         }}
       >
@@ -50,10 +50,10 @@ const PlaygroundExportButton = ({input, label}) => {
       </MenuItem>
 
       <MenuItem onClick={() => {
-        const linkWithPreview = playgroundUtils.getShareableMarkdownLinkWithPreview(input);
+        const linkWithPreview = playgroundUtils.getShareableMarkdownDigest(input, output);
         playgroundUtils.copyToClipboard(linkWithPreview);
       }}>
-        Copy as Markdown Link with Preview
+        Copy as Markdown Link with Preview and Output
       </MenuItem>
 
       <Divider />

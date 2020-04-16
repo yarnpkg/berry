@@ -92,13 +92,13 @@ export const getGithubBugReportTemplate = async () => {
   return await req.text();
 };
 
-export const getFilledGithubBugReportTemplate = async (input) => {
+export const getFilledGithubBugReportTemplate = async (input, output) => {
   // Remove frontmatter
   const template = (await getGithubBugReportTemplate()).replace(/^---[\s\S]+---\n\n/, ``);;
 
   return template.replace(
     indentString(getPreview(`// Sherlock reproduction`), 2),
-    indentString(getShareableMarkdownLinkWithPreview(input), 2)
+    indentString(getShareableMarkdownDigest(input, output), 2)
   );
 };
 
@@ -110,12 +110,22 @@ export const getPreview = (input) => dedent`
   \`\`\`
 `;
 
-export const getShareableMarkdownLinkWithPreview = (input) => dedent`
+export const getOutput = (output) => dedent`
+  Output:
+
+  \`\`\`
+  ${output}
+  \`\`\`
+`;
+
+export const getShareableMarkdownDigest = (input, output) => dedent`
   ---
 
   ${getShareableMarkdownLink(input)}
 
   ${getPreview(input)}
+
+  ${getOutput(output)}
 
   ---
 `;
