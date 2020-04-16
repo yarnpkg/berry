@@ -124,9 +124,9 @@ The `bundleDependencies` (or `bundledDependencies`) is an artifact of the past t
 
 So how to replace them? There are different ways:
 
-- If you need to patch a package, just fork it or reference it through `file:` or `portal:` (it's perfectly fine even for transitive dependencies to use those protocols).
+- If you need to patch a package, just fork it or reference it through `file:` (it's perfectly fine even for transitive dependencies to use this protocols). The `portal:` and `patch:` protocol are also options, although they'll only work for Yarn consumers.
 
-- If you need to ship a package to your customers as a standalone package, bundle it yourself using Webpack, Rollup, or similar tools.
+- If you need to ship a package to your customers as a standalone (no dependencies), bundle it yourself using Webpack, Rollup, or similar tools.
 
 ### If required: enable the `node-modules` plugin
 
