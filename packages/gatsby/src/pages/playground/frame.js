@@ -9,6 +9,9 @@ import {SEO, defaultKeywords} from '../../components/seo';
 
 const PlaygroundFrame = () => {
   useEffect(() => {
+    if (window.location !== window.parent.location)
+      return;
+
     if (process.env.NODE_ENV === `development`)
       return;
 
