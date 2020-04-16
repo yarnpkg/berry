@@ -1,6 +1,6 @@
 import styled                                   from '@emotion/styled';
 import ReactTooltip                             from 'react-tooltip';
-import React, {useState}                        from 'react';
+import React, {useState, useEffect}             from 'react';
 
 import * as playgroundUtils                     from '../../utils/playgroundUtils';
 
@@ -55,6 +55,14 @@ const Playground = () => {
   const [input, setInput] = useState(SELECT_OPTIONS.find((option) => option.selected).predefinedInput);
   const [label, setLabel] = useState(LABELS.DEFAULT);
   const [output, setOutput] = useState(DEFAULT_OUTPUT);
+
+  useEffect(() => {
+    const {decodedInput} = playgroundUtils.parseShareableUrl(window.location.href);
+
+    if (decodedInput) {
+      setInput(decodedInput);
+    }
+  });
 
   const onSelectChanged = (selectedOption) => {
     setSelect(selectedOption);

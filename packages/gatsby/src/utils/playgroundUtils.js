@@ -73,10 +73,10 @@ export const getShareableUrl = (input) => new URL(`/playground?code=${encodeInpu
 
 export const parseShareableUrl = (url) => {
   const parsedUrl = new URL(url);
-  
+
   return {
-    url,
-    decodedInput: decodeInput(parsedUrl.searchParams.get(`code`)),
+    url: parsedUrl,
+    decodedInput: decodeInput(parsedUrl.searchParams.get(`code`) || ``),
   };
 };
 
