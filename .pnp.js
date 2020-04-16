@@ -5833,6 +5833,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
+            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-compat", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-compat"],
@@ -5874,6 +5875,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
+            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-compat", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-compat"],
@@ -33788,7 +33790,8 @@ const NUMBER_REGEXP = /^[0-9]+$/; // $0: full path
 // $4: depth
 // $5: subpath
 
-const VIRTUAL_REGEXP = /^(\/(?:[^\/]+\/)*?\$\$virtual)((?:\/([^\/]+)(?:\/([^\/]+))?)?((?:\/.*)?))$/;
+const VIRTUAL_REGEXP = /^(\/(?:[^\/]+\/)*?\$\$virtual)((?:\/((?:[^\/]+-)?[a-f0-9]+)(?:\/([^\/]+))?)?((?:\/.*)?))$/;
+const VALID_COMPONENT = /^([^\/]+-)?[a-f0-9]+$/;
 
 class VirtualFS extends ProxiedFS_1.ProxiedFS {
   constructor({
@@ -33799,7 +33802,8 @@ class VirtualFS extends ProxiedFS_1.ProxiedFS {
   }
 
   static makeVirtualPath(base, component, to) {
-    if (path_1.ppath.basename(base) !== `$$virtual`) throw new Error(`Assertion failed: Virtual folders must be named "$$virtual"`); // Obtains the relative distance between the virtual path and its actual target
+    if (path_1.ppath.basename(base) !== `$$virtual`) throw new Error(`Assertion failed: Virtual folders must be named "$$virtual"`);
+    if (!path_1.ppath.basename(component).match(VALID_COMPONENT)) throw new Error(`Assertion failed: Virtual components must be ended by an hexadecimal hash`); // Obtains the relative distance between the virtual path and its actual target
 
     const target = path_1.ppath.relative(path_1.ppath.dirname(base), to);
     const segments = target.split(`/`); // Counts how many levels we need to go back to start applying the rest of the path
@@ -33815,7 +33819,7 @@ class VirtualFS extends ProxiedFS_1.ProxiedFS {
 
   static resolveVirtual(p) {
     const match = p.match(VIRTUAL_REGEXP);
-    if (!match) return p;
+    if (!match || !match[3] && match[5]) return p;
     const target = path_1.ppath.dirname(match[1]);
     if (!match[3] || !match[4]) return target;
     const isnum = NUMBER_REGEXP.test(match[4]);
