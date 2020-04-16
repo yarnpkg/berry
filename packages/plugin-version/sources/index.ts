@@ -6,6 +6,13 @@ import version                from './commands/version';
 
 const plugin: Plugin = {
   configuration: {
+    changesetBaseRefs: {
+      description: 'The base git refs that the current HEAD is compared against when detecting changes. Supports git branches, tags, and commits.',
+      type: SettingsType.STRING,
+      isArray: true,
+      isNullable: false,
+      default: [`master`, `origin/master`, `upstream/master`],
+    },
     deferredVersionFolder: {
       description: `Folder where are stored the versioning files`,
       type: SettingsType.ABSOLUTE_PATH,

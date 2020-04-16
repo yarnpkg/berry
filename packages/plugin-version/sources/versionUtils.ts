@@ -19,11 +19,13 @@ export enum Decision {
 export type Releases =
   Map<Workspace, Exclude<Decision, Decision.UNDECIDED>>;
 
-export async function fetchBase(root: PortablePath) {
-  const candidateBases = [`master`, `origin/master`, `upstream/master`];
+export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: string[]}) {
+  if (baseRefs.length === 0)
+    throw new UsageError(`Can't run this command with zero base refs specified.`);
+
   const ancestorBases = [];
 
-  for (const candidate of candidateBases) {
+  for (const candidate of baseRefs) {
     const {code} = await execUtils.execvp(`git`, [`merge-base`, candidate, `HEAD`], {cwd: root});
     if (code === 0) {
       ancestorBases.push(candidate);
@@ -31,7 +33,7 @@ export async function fetchBase(root: PortablePath) {
   }
 
   if (ancestorBases.length === 0)
-    throw new UsageError(`No ancestor could be found between any of HEAD and ${candidateBases.join(`, `)}`);
+    throw new UsageError(`No ancestor could be found between any of HEAD and ${baseRefs.join(`, `)}`);
 
   const {stdout: mergeBaseStdout} = await execUtils.execvp(`git`, [`merge-base`, `HEAD`, ...ancestorBases], {cwd: root, strict: true});
   const hash = mergeBaseStdout.trim();
@@ -196,7 +198,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
   const root = await fetchRoot(configuration.projectCwd);
 
   const base = root !== null
-    ? await fetchBase(root)
+    ? await fetchBase(root, {baseRefs: configuration.get('changesetBaseRefs')})
     : null;
 
   const changedFiles = root !== null

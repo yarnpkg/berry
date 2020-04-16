@@ -16,6 +16,14 @@
       "format": "uri-reference",
       "default": "./.yarn/cache"
     },
+    "changesetBaseRefs": {
+      "description": "The base git refs that the current HEAD is compared against in the version plugin. This overrides the default behavior of comparing against master, origin/master, and upstream/master. Supports git branches, tags, and commits.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": ["master", "origin/master", "upstream/master"]
+    },
     "checksumBehavior": {
       "description": "If `throw` (the default), Yarn will throw an exception on `yarn install` if it detects that a package doesn't match the checksum stored within the lockfile. If `update`, the lockfile checksum will be updated to match the new value. If `ignore`, the checksum check will not happen.",
       "enum": ["throw", "update", "ignore"],
