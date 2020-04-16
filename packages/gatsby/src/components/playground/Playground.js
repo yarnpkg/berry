@@ -63,7 +63,7 @@ const Playground = () => {
     if (decodedInput) {
       setInput(decodedInput);
     }
-  }, [window.location.href]);
+  });
 
   const onSelectChanged = (selectedOption) => {
     setSelect(selectedOption);
