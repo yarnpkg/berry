@@ -71,6 +71,43 @@ describe(`Features`, () => {
     );
 
     test(
+      `it should allow resolutions to top-level hoisting candidates (even if it's an unmet peer dependency)`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`peer-deps-lvl1`]: `1.0.0`,
+            [`one-fixed-dep`]: `1.0.0`,
+          },
+        },
+        {
+          pnpMode: `loose`,
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('peer-deps-lvl1')`)).resolves.toMatchObject({
+            name: `peer-deps-lvl1`,
+            version: `1.0.0`,
+            peerDependencies: {
+              [`no-deps`]: {
+                version: `1.0.0`,
+              },
+            },
+            dependencies: {
+              [`peer-deps-lvl2`]: {
+                peerDependencies: {
+                  [`no-deps`]: {
+                    version: `1.0.0`,
+                  },
+                },
+              },
+            },
+          });
+        },
+      ),
+    );
+
+    test(
       `it should log an exception if a dependency tries to require something it doesn't own but that can be accessed through hoisting`,
       makeTemporaryEnv(
         {

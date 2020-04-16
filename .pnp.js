@@ -40192,7 +40192,7 @@ function makeApi(runtimeState, opts) {
         // It's a bit of a hack, but it improves compatibility with the existing Node ecosystem. Hopefully we should eventually be able
         // to kill this logic and become stricter once pnp gets enough traction and the affected packages fix themselves.
 
-        if (typeof dependencyReference === `undefined`) {
+        if (dependencyReference == null) {
           if (issuerLocator.name !== null) {
             // To allow programs to become gradually stricter, starting from the v2 we enforce that workspaces cannot depend on fallbacks.
             // This works by having a list containing all their locators, and checking when a fallback is required whether it's one of them.
@@ -40208,7 +40208,7 @@ function makeApi(runtimeState, opts) {
                 break;
               }
 
-              if (typeof dependencyReference === `undefined` && fallbackReference === null) {
+              if (dependencyReference == null && fallbackReference === null) {
                 const reference = runtimeState.fallbackPool.get(dependencyName);
 
                 if (reference != null) {
@@ -40254,9 +40254,7 @@ function makeApi(runtimeState, opts) {
           }
         }
 
-        if (dependencyReference === null) throw error || new Error(`Assertion failed: Expected an error to have been set`);
-
-        if (typeof dependencyReference === `undefined`) {
+        if (dependencyReference == null) {
           if (fallbackReference === null || error === null) throw error || new Error(`Assertion failed: Expected an error to have been set`);
           dependencyReference = fallbackReference;
           const message = error.message.replace(/\n.*/g, ``);
