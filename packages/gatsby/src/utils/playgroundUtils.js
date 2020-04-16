@@ -159,3 +159,17 @@ export const createSandbox = async (input) => {
     url: `https://codesandbox.io/s/${id}`,
   };
 };
+
+export const isLocalStorageSupported = () => {
+  if (typeof window === `undefined`)
+    return false;
+
+  try {
+    const key = `__test-key__`;
+    localStorage.setItem(key, ``);
+    localStorage.removeItem(key);
+    return true;
+  } catch {
+    return false;
+  }
+};
