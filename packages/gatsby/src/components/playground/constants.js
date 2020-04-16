@@ -119,3 +119,5 @@ export const ENCODING = `base64`;
 export const REPO_URL = `https://github.com/yarnpkg/berry`;
 
 export const RAW_REPO_URL = `https://raw.githubusercontent.com/yarnpkg/berry`;
+
+export const SANDBOX_URL = `https://viko0.sse.codesandbox.io`;

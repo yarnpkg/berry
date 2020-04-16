@@ -1,12 +1,10 @@
-import {Buffer}                         from 'buffer';
-import copy                             from 'copy-to-clipboard';
-import dedent                           from 'dedent';
-import indentString                     from 'indent-string';
-import fetch                            from 'unfetch';
+import {Buffer}                                      from 'buffer';
+import copy                                          from 'copy-to-clipboard';
+import dedent                                        from 'dedent';
+import indentString                                  from 'indent-string';
+import fetch                                         from 'unfetch';
 
-import {LABELS, ENCODING, RAW_REPO_URL} from '../../src/components/playground/constants';
-
-const TARGET = `https://viko0.sse.codesandbox.io`;
+import {LABELS, ENCODING, RAW_REPO_URL, SANDBOX_URL} from '../../src/components/playground/constants';
 
 const fetchJson = async (url, options) => {
   const req = await fetch(url, options);
@@ -20,11 +18,11 @@ const fetchJson = async (url, options) => {
   }
 };
 
-const fetchJsonFromTarget = (url, options) => fetchJson(TARGET + url, options);
+const fetchJsonFromSandbox = (url, options) => fetchJson(SANDBOX_URL + url, options);
 
 export const checkRepo = async ({setLabel}) => {
   setLabel(LABELS.CHECKING);
-  const checkRepoData = await fetchJsonFromTarget(`/api/check-repo`);
+  const checkRepoData = await fetchJsonFromSandbox(`/api/check-repo`);
 
   if (checkRepoData.status === `success`) {
     return checkRepoData.shouldClone;
@@ -36,7 +34,7 @@ export const checkRepo = async ({setLabel}) => {
 
 export const cloneRepo = async ({setLabel}) => {
   setLabel(LABELS.CLONING);
-  const cloneRepoData = await fetchJsonFromTarget(`/api/clone-repo`);
+  const cloneRepoData = await fetchJsonFromSandbox(`/api/clone-repo`);
 
   if (cloneRepoData.status === `error`) {
     setLabel(LABELS.ERROR);
@@ -46,7 +44,7 @@ export const cloneRepo = async ({setLabel}) => {
 
 export const runReproduction = async (input, {setLabel}) => {
   setLabel(LABELS.RUNNING);
-  const sherlockData = await fetchJsonFromTarget(`/api/sherlock?code=${encodeURIComponent(input)}`);
+  const sherlockData = await fetchJsonFromSandbox(`/api/sherlock?code=${encodeURIComponent(input)}`);
 
   if (sherlockData.status === `success`) {
     return sherlockData.executionResult;
