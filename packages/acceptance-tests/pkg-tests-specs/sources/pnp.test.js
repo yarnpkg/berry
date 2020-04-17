@@ -1371,6 +1371,7 @@ describe(`Plug'n'Play`, () => {
   test(
     `it should remove lingering folders from the node_modules even when they contain dot-folders`,
     makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/node_modules/.bin`);
       await xfs.mkdirpPromise(`${path}/node_modules/.cache`);
       await xfs.mkdirpPromise(`${path}/node_modules/foo`);
 

@@ -178,7 +178,7 @@ export class PnpInstaller extends AbstractPnpInstaller {
       });
 
       const nonCacheEntries = directoryListing.filter(entry => {
-        return !entry.isDirectory() || !entry.name.startsWith(`.`);
+        return !entry.isDirectory() || entry.name === '.bin' || !entry.name.startsWith(`.`);
       });
 
       if (nonCacheEntries.length === directoryListing.length) {
