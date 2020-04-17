@@ -164,6 +164,13 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
   if (!(maxResults >= 0))
     throw new Error(`Invalid maxResults (${maxResults})`);
 
+  if (request.range !== `unknown`) {
+    return [{
+      descriptor: request,
+      reason: `Unambiguous explicit request`,
+    }];
+  }
+
   const existing = typeof workspace !== `undefined` && workspace !== null
     ? workspace.manifest[target].get(request.identHash) || null
     : null;
