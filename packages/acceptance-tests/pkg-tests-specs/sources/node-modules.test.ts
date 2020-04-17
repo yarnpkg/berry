@@ -112,7 +112,14 @@ describe('Node_Modules', () => {
         await writeFile(npath.toPortablePath(`${path}/dist/bin/index.js`), '');
 
         await expect(run(`install`)).resolves.toBeTruthy();
-        await expect(xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/.bin/pkg`))).resolves.toBeDefined();
+        const stats = await xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/.bin/pkg`));
+
+        expect(stats).toBeDefined();
+
+        if (process.platform !== 'win32') {
+          // Check that destination has 0o700 - execute for all permissions set
+          expect(stats.mode & 0o700).toEqual(0o700);
+        }
       },
     ),
   );
