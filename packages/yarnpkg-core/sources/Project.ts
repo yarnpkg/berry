@@ -473,20 +473,13 @@ export class Project {
   async validateEverything(opts: {
     validationWarnings: Array<{name: MessageName, text: string}>,
     validationErrors: Array<{name: MessageName, text: string}>,
-    problemCount: number,
     report: Report,
   }) {
-    const progress = Report.progressViaCounter(opts.problemCount);
-    opts.report.reportProgress(progress);
-
-    for (const warning of opts.validationWarnings) {
+    for (const warning of opts.validationWarnings)
       opts.report.reportWarning(warning.name, warning.text);
-      progress.tick();
-    }
 
     for (const error of opts.validationErrors) {
       opts.report.reportError(error.name, error.text);
-      progress.tick();
     }
   }
 
@@ -1401,7 +1394,7 @@ export class Project {
 
     if (problemCount > 0) {
       await opts.report.startTimerPromise(`Validation step`, async () => {
-        await this.validateEverything({validationWarnings, validationErrors, problemCount, report: opts.report});
+        await this.validateEverything({validationWarnings, validationErrors, report: opts.report});
       });
     }
 
