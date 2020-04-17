@@ -871,6 +871,7 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
       } else {
         await xfs.removePromise(symlinkPath);
         await symlinkPromise(target, symlinkPath);
+        await xfs.chmodPromise(target, 0o755);
       }
     }
   }
