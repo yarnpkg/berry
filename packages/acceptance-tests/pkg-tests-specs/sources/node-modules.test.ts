@@ -115,8 +115,11 @@ describe('Node_Modules', () => {
         const stats = await xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/.bin/pkg`));
 
         expect(stats).toBeDefined();
-        // Check that destination has 0o700 - execute for all permissions set
-        expect(stats.mode & 0o700).toEqual(0o700);
+
+        if (process.platform !== 'win32') {
+          // Check that destination has 0o700 - execute for all permissions set
+          expect(stats.mode & 0o700).toEqual(0o700);
+        }
       },
     ),
   );
