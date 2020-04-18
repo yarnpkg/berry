@@ -1,15 +1,15 @@
 {
   "name": "@yarnpkg/pnp",
-  "version": "2.0.0-rc.18",
+  "version": "2.0.0-rc.19",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/node": "^13.7.0",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.17"
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.18"
   },
   "devDependencies": {
-    "@yarnpkg/builder": "workspace:^2.0.0-rc.19",
-    "@yarnpkg/libzip": "workspace:^2.0.0-rc.10",
-    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.20",
+    "@yarnpkg/builder": "workspace:^2.0.0-rc.20",
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.11",
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.21",
     "typescript": "^3.8.3",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.2.1",

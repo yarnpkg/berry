@@ -1,17 +1,17 @@
 {
   "name": "@yarnpkg/plugin-github",
-  "version": "2.0.0-rc.14",
+  "version": "2.0.0-rc.15",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.17"
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.18"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.25",
-    "@yarnpkg/plugin-git": "^2.0.0-rc.17"
+    "@yarnpkg/core": "^2.0.0-rc.26",
+    "@yarnpkg/plugin-git": "^2.0.0-rc.18"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^2.0.0-rc.25",
-    "@yarnpkg/plugin-git": "workspace:^2.0.0-rc.17"
+    "@yarnpkg/core": "workspace:^2.0.0-rc.26",
+    "@yarnpkg/plugin-git": "workspace:^2.0.0-rc.18"
   },
   "scripts": {
     "test": "run test:unit packages/plugin-github",

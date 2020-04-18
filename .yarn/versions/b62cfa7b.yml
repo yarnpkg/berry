@@ -1,5 +1,0 @@
-releases:
-  "@yarnpkg/plugin-version": prerelease
-
-declined:
-  - "@yarnpkg/cli"

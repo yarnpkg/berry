@@ -360,25 +360,23 @@ module.exports = {
     category: `Workspace-related commands`,
     description: `run a command on all workspaces`,
     details: `
-        > In order to use this command you will need to add \`@yarnpkg/plugin-workspace-tools\` to your plugins. Check the documentation for \`yarn plugin import\` for more details.
+        This command will run a given sub-command on current and all its descendant workspaces. Various flags can alter the exact behavior of the command:
 
-        This command will run a given sub-command on all child workspaces that define it (any workspace that doesn't define it will be just skiped). Various flags can alter the exact behavior of the command:
-
-        - If \`-p,--parallel\` is set, the commands will run in parallel; they'll by default be limited to a number of parallel tasks roughly equal to half your core number, but that can be overriden via \`-j,--jobs\`.
+        - If \`-p,--parallel\` is set, the commands will be ran in parallel; they'll by default be limited to a number of parallel tasks roughly equal to half your core number, but that can be overridden via \`-j,--jobs\`.
 
         - If \`-p,--parallel\` and \`-i,--interlaced\` are both set, Yarn will print the lines from the output as it receives them. If \`-i,--interlaced\` wasn't set, it would instead buffer the output from each process and print the resulting buffers only after their source processes have exited.
 
-        - If \`-t,--topological\` is set, Yarn will only run a command after all workspaces that depend on it through the \`dependencies\` field have successfully finished executing. If \`--tological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
+        - If \`-t,--topological\` is set, Yarn will only run the command after all workspaces that depend on it through the \`dependencies\` field have successfully finished executing. If \`--tological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
 
-        - If \`--all\` is set, Yarn will run it on all the workspaces of a project. By default it runs the command only on child workspaces.
+        - If \`--all\` is set, Yarn will run the command on all the workspaces of a project. By default yarn runs the command only on current and all its descendant workspaces.
 
-        - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that musn't execute the script.
+        - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script.
 
         Adding the \`-v,--verbose\` flag will cause Yarn to print more information; in particular the name of the workspace that generated the output will be printed at the front of each line.
 
         If the command is \`run\` and the script being run does not exist the child workspace will be skipped without error.
       `,
-    examples: [[`Publish all the packages in a workspace`, `yarn workspaces foreach npm publish --tolerate-republish`], [`Run build script on all the packages in a workspace`, `yarn workspaces foreach run build`], [`Run build script on all the packages in a workspace in parallel, building dependent packages first`, `yarn workspaces foreach -pt run build`]]
+    examples: [[`Publish current and all descendant packages`, `yarn workspaces foreach npm publish --tolerate-republish`], [`Run build script on current and all descendant packages`, `yarn workspaces foreach run build`], [`Run build script on current and all descendant packages in parallel, building dependent packages first`, `yarn workspaces foreach -pt run build`]]
   });
 
   __decorate([clipanion_1.Command.String()], WorkspacesForeachCommand.prototype, "commandName", void 0);
