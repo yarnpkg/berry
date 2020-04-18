@@ -72,7 +72,7 @@ export class Manifest {
   /**
    * errors found in the raw manifest while loading
    */
-  public errors: ReadonlyArray<Error> = [];
+  public errors: Array<Error> = [];
 
   static readonly fileName = `package.json` as Filename;
 

@@ -470,6 +470,19 @@ export class Project {
     return null;
   }
 
+  async validateEverything(opts: {
+    validationWarnings: Array<{name: MessageName, text: string}>,
+    validationErrors: Array<{name: MessageName, text: string}>,
+    report: Report,
+  }) {
+    for (const warning of opts.validationWarnings)
+      opts.report.reportWarning(warning.name, warning.text);
+
+    for (const error of opts.validationErrors) {
+      opts.report.reportError(error.name, error.text);
+    }
+  }
+
   async resolveEverything(opts: {report: Report, lockfileOnly: true, resolver?: Resolver} | {report: Report, lockfileOnly?: boolean, cache: Cache, resolver?: Resolver}) {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
@@ -1367,19 +1380,21 @@ export class Project {
   }
 
   async install(opts: InstallOptions) {
-    const validationErrors: Array<string> = [];
-    for (const workspace of this.workspaces) {
-      for (const manifestError of workspace.manifest.errors) {
-        const workspaceName = structUtils.prettyWorkspace(this.configuration, workspace);
-        validationErrors.push(`${workspaceName}: ${manifestError.message}`);
-      }
-    }
+    const validationWarnings: Array<{name: MessageName, text: string}> = [];
+    const validationErrors: Array<{name: MessageName, text: string}> = [];
 
-    if (validationErrors.length > 0) {
+    await this.configuration.triggerHook(hooks => {
+      return hooks.validateProject;
+    }, this, {
+      reportWarning: (name: MessageName, text:string) => validationWarnings.push({name, text}),
+      reportError: (name: MessageName, text:string) => validationErrors.push({name, text}),
+    });
+
+    const problemCount = validationWarnings.length + validationErrors.length;
+
+    if (problemCount > 0) {
       await opts.report.startTimerPromise(`Validation step`, async () => {
-        for (const validationError of validationErrors) {
-          opts.report.reportWarning(MessageName.INVALID_MANIFEST, validationError);
-        }
+        await this.validateEverything({validationWarnings, validationErrors, report: opts.report});
       });
     }
 
