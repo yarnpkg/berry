@@ -6,8 +6,8 @@ TEMP_DIR="/tmp/ts-repo"
 HASHES=(
   # Patch   # Base    # Ranges
   "426f5a7" "e39bdc3" ">=3.0 <3.6"
-  "841cf00" "e39bdc3" ">=3.6 <3.9"
-  "841cf00" "d68295e" ">=3.9"
+  "a862446" "e39bdc3" ">=3.6 <3.9"
+  "a862446" "d68295e" ">=3.9"
 )
 
 mkdir -p "$TEMP_DIR"
@@ -54,12 +54,13 @@ while [[ ${#HASHES[@]} -gt 0 ]]; do
   cp -r lib "$TEMP_DIR"/orig/
 
   reset-git
-  git checkout "$HASH"
+  git checkout "$BASE"
+  git merge --no-edit "$HASH"
 
   yarn gulp local LKG
   cp -r lib/ "$TEMP_DIR"/patched/
 
-  DIFF="$THIS_DIR"/patch."${HASH}".diff
+  DIFF="$THIS_DIR"/patch."${HASH}"-on-"${BASE}".diff
 
   git diff --no-index "$TEMP_DIR"/orig "$TEMP_DIR"/patched \
     | perl -p -e"s#^--- #semver exclusivity $RANGE\n--- #" \
