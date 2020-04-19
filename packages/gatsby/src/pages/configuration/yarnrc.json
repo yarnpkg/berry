@@ -298,7 +298,7 @@
       }
     },
     "packageExtensions": {
-      "description": "Some packages may have been specified incorrectly with regard to their dependencies - for example with one dependency being missing, causing Yarn to refuse it the access. The `packageExtensions` fields offer a way to extend the existing package definitions with additional information. If you use it, consider sending a PR upstream and contributing your extension to the [`plugin-compat` database](https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts).",
+      "description": "Some packages may have been specified incorrectly with regard to their dependencies - for example with one dependency being missing, causing Yarn to refuse it the access. The `packageExtensions` fields offer a way to extend the existing package definitions with additional information. If you use it, consider sending a PR upstream and contributing your extension to the [`plugin-compat` database](https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts).\nNote: This field is made to add dependencies; if you need to rewrite existing ones, prefer the [`resolutions`](/configuration/manifest#resolutions) field.",
       "type": "object",
       "patternProperties": {
         "^(?:@([^/]+?)/)?([^/]+?)(?:@(.+))$": {
