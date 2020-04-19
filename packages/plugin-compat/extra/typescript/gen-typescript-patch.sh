@@ -3,6 +3,9 @@ set -ex
 THIS_DIR=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 TEMP_DIR="/tmp/ts-repo"
 
+PATCHFILE="$TEMP_DIR"/patch.tmp
+JSPATCH="$THIS_DIR"/../../sources/patches/typescript.patch.ts
+
 HASHES=(
   # Patch   # Base    # Ranges
   "426f5a7" "e39bdc3" ">=3.0 <3.6"
@@ -29,10 +32,7 @@ reset-git() {
   yarn
 }
 
-PATCHFILE="$TEMP_DIR"/patch.tmp
 rm -f "$PATCHFILE" && touch "$PATCHFILE"
-
-JSPATCH="$THIS_DIR"/../../sources/patches/typescript.patch.ts
 rm -f "$JSPATCH" && touch "$JSPATCH"
 
 while [[ ${#HASHES[@]} -gt 0 ]]; do
