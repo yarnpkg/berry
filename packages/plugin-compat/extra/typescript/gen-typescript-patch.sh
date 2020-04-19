@@ -6,7 +6,7 @@ TEMP_DIR="/tmp/ts-repo"
 HASHES=(
   # Patch   # Base    # Ranges
   "426f5a7" "e39bdc3" ">=3.0 <3.6"
-  "bcb6dbf" "e39bdc3" ">=3.6 <3.9"
+  "841cf00" "e39bdc3" ">=3.6 <3.9"
   "841cf00" "d68295e" ">=3.9"
 )
 
