@@ -7,7 +7,7 @@ HASHES=(
   # Patch   # Base    # Ranges
   "426f5a7" "e39bdc3" ">=3.0 <3.6"
   "bcb6dbf" "e39bdc3" ">=3.6 <3.9"
-  "4be321a" "bba19af" ">=3.9"
+  "841cf00" "d68295e" ">=3.9"
 )
 
 mkdir -p "$TEMP_DIR"
