@@ -24930,31 +24930,31 @@ typescript@^3.8.3:
 
 "typescript@patch:typescript@*#builtin<compat/typescript>":
   version: 3.7.4
-  resolution: "typescript@patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=c79188"
+  resolution: "typescript@patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=bcd8ea"
   bin:
     tsc: ./bin/tsc
     tsserver: ./bin/tsserver
-  checksum: 2/4f36eded6c32575e53a9459ccc0061f69daad53ce5e5f36c56216798f3930209aebea32b5f8f3f92f8fc5d7b6519a2b88dd26a1159c085906f4a52ea98b3de11
+  checksum: 2/b24c9d1964055377cd55de03e5485c5dd93742c4001fd56954615c87a9611ad73531cd17b99b77c5506299ca3a57528d1cebe289fa0b10a7b45a5bfee48e3244
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@3.7.x#builtin<compat/typescript>":
   version: 3.7.5
-  resolution: "typescript@patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=c79188"
+  resolution: "typescript@patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=bcd8ea"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 2/b752545a379ecd1318d897e4adce464591e827abf65e57f5da45f5ffc2e739cdfdf00a316c211b09615797ac1dfa4ead939de67cf6f3d1bcfc58d66167c1c391
+  checksum: 2/becbe0eb5f0bafa969b5debc7fda042cf6e19beb6412d640e76cb5a1ff65c0daba686bb42859cecce95249522bc7505290fd48fd06363d234551d9ba74331e3b
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@^3.8.3#builtin<compat/typescript>":
   version: 3.8.3
-  resolution: "typescript@patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=c79188"
+  resolution: "typescript@patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=bcd8ea"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 2/2950b292ac700898647d49ca5f07fa546f6c3d28983ba559c5b4fa360babdc1734493b7f5f72553735eaa401c850989d7bbbd70f739df3c0b7fc83c82e37d8a5
+  checksum: 2/4d39c3f8063e7a992c5a48ead91edae8ee0f01e6b8792f9ff4b2e812713f3b782f1f69d84d4b176053e6eed699248b4116e8693bfa03a313821fe8d191953938
   languageName: node
   linkType: hard
 
