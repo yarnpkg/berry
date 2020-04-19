@@ -42,13 +42,13 @@ checkout_vscode() {
 
 setup() {
   PM="$1"
-  if [ "${PM}" = "yarn" ]; then yarn set version berry || true >& /dev/null; fi
   shift
-
   echo
   echo 'Preparing a temporary folder...'
 
   cd "$(realpath "$(mktemp -d)")"
+  if [ "${PM}" = "yarn" ]; then yarn set version berry || true >& /dev/null; fi
+
   "$PM" "$@" >& /dev/null
   "$PM" add @sindresorhus/slugify >& /dev/null
 
@@ -96,7 +96,7 @@ step "Check that clicking on both 'namespace slugify {' and 'function slugify {'
 step "Check that double-clicking on both 'namespace slugify {' and 'function slugify {' leads you to the right symbols"
 
 
-setup yarn init -2y
+setup yarn init -y
 open_vscode "$(pwd)"
 
 step "Open index.ts, check that '@sindresorhus/slugify' has an error (cannot find module)"
@@ -109,7 +109,7 @@ step "Check that clicking on both 'namespace slugify {' and 'function slugify {'
 step "Check that double-clicking on both 'namespace slugify {' and 'function slugify {' leads you to the right symbols"
 
 
-setup yarn init -2y
+setup yarn init -y
 echo 'nodeLinker: node-modules' >> .yarnrc.yml
 yarn add typescript@2.7.1 >& /dev/null
 open_vscode "$(pwd)" 1
@@ -126,7 +126,7 @@ step "Check that clicking on both 'namespace slugify {' and 'function slugify {'
 step "Check that double-clicking on both 'namespace slugify {' and 'function slugify {' leads you to the right symbols"
 
 
-setup yarn init -2y
+setup yarn init -y
 echo 'nodeLinker: node-modules' >> .yarnrc.yml
 yarn add typescript@3.5.1 >& /dev/null
 open_vscode "$(pwd)" 1
@@ -143,7 +143,7 @@ step "Check that clicking on both 'namespace slugify {' and 'function slugify {'
 step "Check that double-clicking on both 'namespace slugify {' and 'function slugify {' leads you to the right symbols"
 
 
-setup yarn init -2y
+setup yarn init -y
 yarn add typescript@3.8 >& /dev/null
 yarn node "${YARN2_DIR}/packages/yarnpkg-pnpify/sources/boot-cli-dev.js" --sdk
 open_vscode "$(pwd)" 1
@@ -160,7 +160,26 @@ step "Check that clicking on both 'namespace slugify {' and 'function slugify {'
 step "Check that double-clicking on both 'namespace slugify {' and 'function slugify {' leads you to the right symbols. Note here intellisense is not apparent (https://github.com/microsoft/vscode/issues/59650)"
 
 
-setup yarn init -2y
+setup yarn init -y
+yarn add typescript@3.8 >& /dev/null
+yarn node "${YARN2_DIR}/packages/yarnpkg-pnpify/sources/boot-cli-dev.js" --sdk
+open_vscode "$(pwd)" 1
+
+step "Open index.ts"
+step "Ensure that ZipFS extension is installed and enabled"
+step "Press Command+Shift+P, 'Select TypeScript version', 'Use workspace version'"
+step "Check that 'Typescript 3.8-pnpify' appears in the bottom-right of the window"
+step "Disable the ZipFS extension"
+step "Press Command+Shift+P, 'Developer: Reload Window'"
+step "Check that 'Typescript 3.8-pnpify' appears in the bottom-right of the window"
+step "Check that 'x' has an error"
+step "Remove the ': number', the error should disappear"
+step "Command-click on '@sindresorhus/slugify', a toast error will appear (resource is not available)"
+step "Hover on 'slugify'. This will show tsdoc for the slugify function"
+step "Command-click on 'slugify'. This will show an empty bubble"
+
+
+setup yarn init -y
 yarn add typescript@3.8 >& /dev/null
 yarn node "${YARN2_DIR}/packages/yarnpkg-pnpify/sources/boot-cli-dev.js" --sdk
 open_vscode "$(pwd)"
