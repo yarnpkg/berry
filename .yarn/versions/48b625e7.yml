@@ -1,0 +1,6 @@
+releases:
+  "@yarnpkg/plugin-git": prerelease
+
+declined:
+  - "@yarnpkg/plugin-github"
+  - "@yarnpkg/cli"
