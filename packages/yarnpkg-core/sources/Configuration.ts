@@ -61,6 +61,7 @@ const IGNORED_ENV_VARIABLES = new Set([
 export const ENVIRONMENT_PREFIX = `yarn_`;
 export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc.yml`);
 export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
+export const SECRET = `********`;
 
 export enum SettingsType {
   ANY = 'ANY',
@@ -525,7 +526,7 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
 
 function hideSecrets(rawValue: unknown, definition: SettingsDefinitionNoDefault) {
   if (definition.type === SettingsType.SECRET && typeof rawValue === `string`)
-    return `********`;
+    return SECRET;
 
   if (definition.isArray && Array.isArray(rawValue)) {
     const newValue: Array<unknown> = [];
