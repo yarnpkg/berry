@@ -3,6 +3,9 @@
 /cli /cli/install 301
 /advanced /advanced/architecture 301
 
+/playground/* code=:value https://viko0.sse.codesandbox.io/:splat?code=:value 301
+/playground/* https://viko0.sse.codesandbox.io/:splat 301
+
 /install.sh https://classic.yarnpkg.com/install.sh 301
 
 /downloads/* https://classic.yarnpkg.com/downloads/:splat 301
