@@ -395,6 +395,20 @@ export class Project {
     return workspace;
   }
 
+  /**
+   * Import the dependencies of each resolved workspace into their own
+   * `Workspace` instance.
+   */
+  private refreshWorkspaceDependencies() {
+    for (const workspace of this.workspaces) {
+      const pkg = this.storedPackages.get(workspace.anchoredLocator.locatorHash);
+      if (!pkg)
+        throw new Error(`Assertion failed: Expected workspace to have been resolved`);
+
+      workspace.dependencies = new Map(pkg.dependencies);
+    }
+  }
+
   forgetTransientResolutions() {
     const resolver = this.configuration.makeResolver();
     const forgottenPackages = new Set();
@@ -897,17 +911,6 @@ export class Project {
       allResolutions.delete(descriptorHash);
     }
 
-    // Import the dependencies for each resolved workspaces into their own
-    // Workspace instance.
-
-    for (const workspace of this.workspaces) {
-      const pkg = allPackages.get(workspace.anchoredLocator.locatorHash);
-      if (!pkg)
-        throw new Error(`Assertion failed: Expected workspace to have been resolved`);
-
-      workspace.dependencies = new Map(pkg.dependencies);
-    }
-
     // Everything is done, we can now update our internal resolutions to
     // reference the new ones
 
@@ -918,6 +921,11 @@ export class Project {
     this.accessibleLocators = accessibleLocators;
     this.originalPackages = originalPackages;
     this.optionalBuilds = optionalBuilds;
+
+    // Now that the internal resolutions have been updated, we can refresh the
+    // dependencies of each resolved workspace's `Workspace` instance.
+
+    this.refreshWorkspaceDependencies();
   }
 
   async fetchEverything({cache, report, fetcher: userFetcher}: InstallOptions) {
@@ -1573,6 +1581,8 @@ export class Project {
       return await this.applyLightResolution();
 
     Object.assign(this, installState);
+
+    this.refreshWorkspaceDependencies();
   }
 
   async applyLightResolution() {
