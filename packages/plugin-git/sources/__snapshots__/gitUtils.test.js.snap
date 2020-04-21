@@ -19,3 +19,5 @@ exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-
 exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate.git#master 1`] = `"https://github.com/TooTallNate/util-deprecate.git#master"`;
 
 exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate.git#v1.0.0 1`] = `"https://github.com/TooTallNate/util-deprecate.git#v1.0.0"`;
+
+exports[`gitUtils should properly normalize ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1 1`] = `"ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
