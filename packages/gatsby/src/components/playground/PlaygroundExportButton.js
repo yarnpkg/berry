@@ -25,8 +25,8 @@ const PlaygroundExportButton = ({input, output, label}) => {
 
       <MenuItem
         disabled={label !== LABELS.REPRODUCIBLE}
-        onClick={() => {
-          const bugReport = playgroundUtils.getFilledGithubBugReportTemplate(input, output);
+        onClick={async () => {
+          const bugReport = await playgroundUtils.getFilledGithubBugReportTemplate(input, output);
           playgroundUtils.copyToClipboard(bugReport);
         }}
       >
