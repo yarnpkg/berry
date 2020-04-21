@@ -277,8 +277,9 @@ export class Project {
     const workspace = new Workspace(workspaceCwd, {project: this});
     await workspace.setup();
 
-    if (this.workspacesByIdent.has(workspace.locator.identHash))
-      throw new Error(`Duplicate workspace name ${structUtils.prettyIdent(this.configuration, workspace.locator)}`);
+    const dup = this.workspacesByIdent.get(workspace.locator.identHash);
+    if (typeof dup !== `undefined`)
+      throw new Error(`Duplicate workspace name ${structUtils.prettyIdent(this.configuration, workspace.locator)}: ${workspaceCwd} conflicts with ${dup.cwd}`);
 
     this.workspaces.push(workspace);
 
