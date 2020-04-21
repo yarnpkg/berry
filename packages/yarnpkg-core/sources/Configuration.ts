@@ -523,6 +523,42 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
   }
 }
 
+function hideSecrets(rawValue: unknown, definition: SettingsDefinitionNoDefault) {
+  if (definition.type === SettingsType.SECRET && typeof rawValue === `string`)
+    return `********`;
+
+  if (definition.isArray && Array.isArray(rawValue)) {
+    const newValue: Array<unknown> = [];
+
+    for (const value of rawValue)
+      newValue.push(hideSecrets(value, definition));
+
+    return newValue;
+  }
+
+  if (definition.type === SettingsType.MAP && rawValue instanceof Map) {
+    const newValue: Map<string, unknown> = new Map();
+
+    for (const [key, value] of rawValue.entries())
+      newValue.set(key, hideSecrets(value, definition.valueDefinition));
+
+    return newValue;
+  }
+
+  if (definition.type === SettingsType.SHAPE && rawValue instanceof Map) {
+    const newValue: Map<string, unknown> = new Map();
+
+    for (const [key, value] of rawValue.entries()) {
+      const propertyDefinition = definition.properties[key];
+      newValue.set(key, hideSecrets(value, propertyDefinition));
+    }
+
+    return newValue;
+  }
+
+  return rawValue;
+};
+
 function getEnvironmentSettings() {
   const environmentSettings: {[key: string]: any} = {};
 
@@ -927,6 +963,16 @@ export class Configuration {
       throw new Error(`Invalid configuration key "${key}"`);
 
     return this.values.get(key) as T;
+  }
+
+  getSecret<T = any>(key: string) {
+    const rawValue = this.get(key);
+    const definition = this.settings.get(key);
+
+    if (typeof definition === `undefined`)
+      throw new UsageError(`Couldn't find a configuration settings named "${key}"`);
+
+    return hideSecrets(rawValue, definition) as T;
   }
 
   getSubprocessStreams(logFile: PortablePath, {header, prefix, report}: {header?: string, prefix: string, report: Report}) {
