@@ -965,7 +965,7 @@ export class Configuration {
     return this.values.get(key) as T;
   }
 
-  getSecret<T = any>(key: string) {
+  getForDisplay<T = any>(key: string) {
     const rawValue = this.get(key);
     const definition = this.settings.get(key);
 

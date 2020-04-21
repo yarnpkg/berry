@@ -64,7 +64,7 @@ export default class ConfigSetCommand extends BaseCommand {
       // @ts-ignore: The Node typings forgot one field
       inspect.styles.name = `cyan`;
 
-      report.reportInfo(MessageName.UNNAMED, `Successfully set ${this.name} to:\n${inspect(updatedConfiguration.getSecret(this.name), {
+      report.reportInfo(MessageName.UNNAMED, `Successfully set ${this.name} to:\n${inspect(updatedConfiguration.getForDisplay(this.name), {
         depth: Infinity,
         colors: true,
         compact: false,
