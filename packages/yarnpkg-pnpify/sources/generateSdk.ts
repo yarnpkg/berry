@@ -197,6 +197,7 @@ const generateTypescriptWrapper = async (pnpApi: PnpApi, target: PortablePath) =
         ),
       ),
     ),
+    [`typescript.enablePromptUseWorkspaceTsdk`]: true,
   });
 };
 
