@@ -13,7 +13,7 @@ function getConfiguration(p: PortablePath) {
   ]));
 };
 
-async function createProject(configuration: Configuration, p: PortablePath, manifest?: object = {}) {
+async function createProject(configuration: Configuration, p: PortablePath, manifest: object = {}) {
   await xfs.writeFilePromise(ppath.join(p, toFilename(`package.json`)), JSON.stringify(manifest));
 
   return Project.find(configuration, p);
