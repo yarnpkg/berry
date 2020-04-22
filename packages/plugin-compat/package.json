@@ -8,6 +8,8 @@
   },
   "devDependencies": {
     "@yarnpkg/core": "workspace:^2.0.0-rc.26",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.18",
+    "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.18",
     "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.7"
   },
   "repository": {

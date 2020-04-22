@@ -4,4 +4,5 @@ module.exports = {
   modulePathIgnorePatterns: [`<rootDir>/packages/acceptance-tests`, `packages/gatsby/.cache`],
   reporters: [`default`, [require.resolve(`jest-junit`), {output: `<rootDir>/junit.xml`}]],
   setupFiles: [`@yarnpkg/cli/sources/polyfills.ts`],
+  testTimeout: 50000,
 };
