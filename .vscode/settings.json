@@ -12,5 +12,6 @@
   "eslint.nodePath": ".vscode/pnpify",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
-  }
+  },
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }
