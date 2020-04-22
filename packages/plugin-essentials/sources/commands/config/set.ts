@@ -59,10 +59,12 @@ export default class ConfigSetCommand extends BaseCommand {
         [this.name]: value,
       });
 
+      const updatedConfiguration = await Configuration.find(this.context.cwd, this.context.plugins);
+
       // @ts-ignore: The Node typings forgot one field
       inspect.styles.name = `cyan`;
 
-      report.reportInfo(MessageName.UNNAMED, `Successfully set ${this.name} to:\n${inspect(value, {
+      report.reportInfo(MessageName.UNNAMED, `Successfully set ${this.name} to:\n${inspect(updatedConfiguration.getForDisplay(this.name), {
         depth: Infinity,
         colors: true,
         compact: false,

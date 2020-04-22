@@ -1,8 +1,8 @@
-import {BaseCommand}                                            from '@yarnpkg/cli';
-import {Configuration, MessageName, SettingsType, StreamReport} from '@yarnpkg/core';
-import {miscUtils}                                              from '@yarnpkg/core';
-import {Command, Usage}                                         from 'clipanion';
-import {inspect}                                                from 'util';
+import {BaseCommand}                              from '@yarnpkg/cli';
+import {Configuration, MessageName, StreamReport} from '@yarnpkg/core';
+import {miscUtils}                                from '@yarnpkg/core';
+import {Command, Usage}                           from 'clipanion';
+import {inspect}                                  from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigCommand extends BaseCommand {
@@ -40,17 +40,6 @@ export default class ConfigCommand extends BaseCommand {
       strict: false,
     });
 
-    const getValue = (key: string) => {
-      const isSecret = configuration.settings.get(key)!.type === SettingsType.SECRET;
-      const rawValue = configuration.values.get(key)!;
-
-      if (isSecret && typeof rawValue === `string`) {
-        return `********`;
-      } else {
-        return rawValue;
-      }
-    };
-
     const report = await StreamReport.start({
       configuration,
       json: this.json,
@@ -69,7 +58,7 @@ export default class ConfigCommand extends BaseCommand {
         for (const key of keys) {
           const data = configuration.settings.get(key);
 
-          const effective = getValue(key);
+          const effective = configuration.getForDisplay(key);
           const source = configuration.sources.get(key);
 
           if (this.verbose) {
@@ -107,11 +96,11 @@ export default class ConfigCommand extends BaseCommand {
           }, 0);
 
           for (const [key, description] of keysAndDescriptions) {
-            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(getValue(key), inspectConfig)}`);
+            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(configuration.getForDisplay(key), inspectConfig)}`);
           }
         } else {
           for (const key of keys) {
-            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(getValue(key), inspectConfig)}`);
+            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(configuration.getForDisplay(key), inspectConfig)}`);
           }
         }
       }
