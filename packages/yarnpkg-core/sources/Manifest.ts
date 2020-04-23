@@ -37,6 +37,8 @@ export class Manifest {
 
   public name: Ident | null = null;
   public version: string | null = null;
+  public os: string[] | null = null;
+  public cpu: string[] | null = null;
 
   public type: string | null = null;
 
@@ -156,6 +158,26 @@ export class Manifest {
 
     if (typeof data.version === `string`)
       this.version = data.version;
+
+    if (Array.isArray(data.os)) {
+      for (const item of data.os) {
+        if (typeof item !== `string`) {
+          errors.push(new Error(`Parsing failed for the 'os' field`));
+        }
+      }
+
+      this.os = data.os;
+    }
+
+    if (Array.isArray(data.cpu)) {
+      for (const item of data.cpu) {
+        if (typeof item !== `string`) {
+          errors.push(new Error(`Parsing failed for the 'cpu' field`));
+        }
+      }
+
+      this.cpu = data.cpu;
+    }
 
     if (typeof data.type === `string`)
       this.type = data.type;

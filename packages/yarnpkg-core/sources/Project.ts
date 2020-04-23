@@ -995,7 +995,7 @@ export class Project {
     }));
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
-    const packageLocations: Map<LocatorHash, PortablePath> = new Map();
+    const packageLocations: Map<LocatorHash, PortablePath | null> = new Map();
     const packageBuildDirectives: Map<LocatorHash, { directives: BuildDirective[], buildLocations: PortablePath[] }> = new Map();
 
     // Step 1: Installing the packages on the disk
@@ -1055,11 +1055,15 @@ export class Project {
         packageLinkers.set(pkg.locatorHash, linker);
         packageLocations.set(pkg.locatorHash, installStatus.packageLocation);
 
-        if (installStatus.buildDirective) {
-          packageBuildDirectives.set(pkg.locatorHash, {
-            directives: installStatus.buildDirective,
-            buildLocations: [installStatus.packageLocation],
-          });
+        if (installStatus.packageLocation !== null) {
+          if (installStatus.buildDirective) {
+            packageBuildDirectives.set(pkg.locatorHash, {
+              directives: installStatus.buildDirective,
+              buildLocations: [installStatus.packageLocation],
+            });
+          }
+        } else {
+          this.accessibleLocators.delete(pkg.locatorHash);
         }
       }
     }
@@ -1077,8 +1081,10 @@ export class Project {
 
       const linkPackage = async (packageLinker: Linker, installer: Installer) => {
         const packageLocation = packageLocations.get(pkg.locatorHash);
-        if (!packageLocation)
+        if (typeof packageLocation === 'undefined')
           throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, pkg)}) should have been registered`);
+        else if (packageLocation === null)
+          return;
 
         const internalDependencies = [];
 
