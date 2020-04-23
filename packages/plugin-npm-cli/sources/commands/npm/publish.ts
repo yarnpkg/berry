@@ -104,6 +104,7 @@ export default class NpmPublishCommand extends BaseCommand {
           await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
             configuration,
             registry,
+            ident,
             json: true,
           });
         } catch (error) {
