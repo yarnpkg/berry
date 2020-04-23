@@ -1,7 +1,12 @@
 import {BaseCommand}                              from '@yarnpkg/cli';
 import {Configuration, StreamReport, MessageName} from '@yarnpkg/core';
 import {Command, Usage, UsageError}               from 'clipanion';
+import cloneDeep                                  from 'lodash/cloneDeep';
+import getPath                                    from 'lodash/get';
+import setPath                                    from 'lodash/set';
 import {inspect}                                  from 'util';
+
+import {convertMapsToObjects}                     from './get';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigSetCommand extends BaseCommand {
@@ -44,27 +49,47 @@ export default class ConfigSetCommand extends BaseCommand {
     if (!configuration.projectCwd)
       throw new UsageError(`This command must be run from within a project folder`);
 
-    const setting = configuration.settings.get(this.name);
+    const name = this.name.replace(/[.\[].*$/, ``);
+    const path = this.name.replace(/^[^.\[]*/, ``);
+
+    const setting = configuration.settings.get(name);
     if (typeof setting === `undefined`)
-      throw new UsageError(`Couldn't find a configuration settings named "${this.name}"`);
+      throw new UsageError(`Couldn't find a configuration settings named "${name}"`);
+
+    const value: unknown = this.json
+      ? JSON.parse(this.value)
+      : this.value;
+
+    await Configuration.updateConfiguration(configuration.projectCwd!, current => {
+      if (path) {
+        const clone = cloneDeep(current);
+        setPath(clone, this.name, value);
+        return clone;
+      } else {
+        return {
+          ...current,
+          [name]: value,
+        };
+      }
+    });
+
+    const updatedConfiguration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const redactedValue = updatedConfiguration.getRedacted(name);
+
+    const asObject = convertMapsToObjects(redactedValue);
+    const requestedObject = path
+      ? getPath(asObject, path)
+      : asObject;
 
     const report = await StreamReport.start({
       configuration,
       includeFooter: false,
       stdout: this.context.stdout,
     }, async report => {
-      const value: unknown = this.json ? JSON.parse(this.value) : this.value;
-
-      await Configuration.updateConfiguration(configuration.projectCwd!, {
-        [this.name]: value,
-      });
-
-      const updatedConfiguration = await Configuration.find(this.context.cwd, this.context.plugins);
-
       // @ts-ignore: The Node typings forgot one field
       inspect.styles.name = `cyan`;
 
-      report.reportInfo(MessageName.UNNAMED, `Successfully set ${this.name} to:\n${inspect(updatedConfiguration.getForDisplay(this.name), {
+      report.reportInfo(MessageName.UNNAMED, `Successfully set ${this.name} to ${inspect(requestedObject, {
         depth: Infinity,
         colors: true,
         compact: false,
