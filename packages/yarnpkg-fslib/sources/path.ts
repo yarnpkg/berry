@@ -86,9 +86,11 @@ export interface ConvertUtils {
   toPortablePath: (p: Path) => PortablePath;
 }
 
-const WINDOWS_PATH_REGEXP = /^[a-zA-Z]:.*$/;
-const PORTABLE_PATH_REGEXP = /^\/[a-zA-Z]:.*$/;
-const UNC_PORTABLE_PATH_REGEXP = /^\/\/.*$/;
+const WINDOWS_PATH_REGEXP = /^([a-zA-Z]:.*)$/;
+const UNC_WINDOWS_PATH_REGEXP = /^\\\\(.*)$/;
+
+const PORTABLE_PATH_REGEXP = /^\/([a-zA-Z]:.*)$/;
+const UNC_PORTABLE_PATH_REGEXP = /^\/unc\/(.*)$/;
 
 // Path should look like "/N:/berry/scripts/plugin-pack.js"
 // And transform to "N:\berry\scripts\plugin-pack.js"
@@ -96,11 +98,12 @@ function fromPortablePath(p: Path): NativePath {
   if (process.platform !== 'win32')
     return p as NativePath;
 
-  if (!(p.match(PORTABLE_PATH_REGEXP) || p.match(UNC_PORTABLE_PATH_REGEXP)))
-    return p as NativePath;
-
   if (p.match(PORTABLE_PATH_REGEXP))
-    p = p.substring(1);
+    p = p.replace(PORTABLE_PATH_REGEXP, `$1`);
+  else if (p.match(UNC_PORTABLE_PATH_REGEXP))
+    p = p.replace(UNC_PORTABLE_PATH_REGEXP, `\\\\$1`);
+  else
+    return p as NativePath;
 
   return p.replace(/\//g, `\\`);
 };
@@ -111,7 +114,12 @@ function toPortablePath(p: Path): PortablePath {
   if (process.platform !== 'win32')
     return p as PortablePath;
 
-  return (p.match(WINDOWS_PATH_REGEXP) ? `/${p}` : p).replace(/\\/g, `/`) as PortablePath;
+  if (p.match(WINDOWS_PATH_REGEXP))
+    p = p.replace(WINDOWS_PATH_REGEXP, `/$1`);
+  else if (p.match(UNC_WINDOWS_PATH_REGEXP))
+    p = p.replace(UNC_WINDOWS_PATH_REGEXP, `/unc/$1`);
+
+  return p.replace(/\\/g, `/`) as PortablePath;
 }
 
 export function convertPath<P extends Path>(targetPathUtils: PathUtils<P>, sourcePath: Path): P {
