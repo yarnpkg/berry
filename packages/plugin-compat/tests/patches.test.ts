@@ -59,10 +59,20 @@ async function testCandidate(locator: Locator) {
       report: new ThrowReport(),
     });
 
-    await expect(project.fetchEverything({
-      cache,
-      report: new ThrowReport(),
-    })).resolves.toBeUndefined();
+    let error: Error | null = null;
+
+    try {
+      await project.fetchEverything({
+        cache,
+        report: new ThrowReport(),
+      });
+    } catch (e) {
+      error = e;
+    }
+
+    if (error) {
+      expect(error.message).not.toContain(`Cannot apply hunk`);
+    }
   });
 }
 
