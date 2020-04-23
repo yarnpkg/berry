@@ -8,6 +8,34 @@ title: "Questions & Answers"
 # This code block gets replaced with the Table of Contents
 ```
 
+## Why should you upgrade to Yarn Modern?
+
+While the Yarn Classic line (1.x) remains a pilar of the JavaScript ecosystem, we recommend upgrading if possible. Why that?
+
+1. New features: On top of the classic features you're already used to, on top of the new ones you'll discover ([`yarn dlx`](/cli/dlx), [builtin `patch:` protocol](https://github.com/yarnpkg/berry/tree/master/packages/plugin-patch), ...), Modern offers plugins extending Yarn's featureset with [changesets](/features/release-workflow), [constraints](/features/constraints), [workspaces](/cli/workspaces/foreach), ...
+
+2. Efficiency: Modern features new install strategies, leading projects to only be a fraction of their past self; as an example, under the default configuration the stock CRA artifacts now only take 45MB instead of 237MB. Performances where improved as well, with most installs now only taking a few seconds even on extremely large projects. We even made it possible to reach [zero seconds](/features/zero-installs)!
+
+3. Extensibility: The Modern architecture allows you to build your own features should you need it. No more of you being blocked waiting for us to implement this feature you dream of - you can now do it yourself, according to your own specs! Focused workspaces, production installs, project validation, ...
+
+4. Stability: Modern comes after years of experience with maintaining Classic; it allowed us to finally fix longstanding design issues with how some features were implemented. Workspaces are now core components, the resolution pipeline has been streamlined, data structures are more efficient... as a result, Modern is much less likely to suffer from the kind of design flaws Classic may sometimes suffer from.
+
+5. Future proof: A big reason why we invested on Modern was that we were coming to a situation where developing new features on Classic was becoming difficult, being too likely we would break something in the process. The Modern architecture learned from our mistakes, and was designed to allow us to build features at a much higher pace - as evidenced by the numerous new features we ship.
+
+## How easy should you expect the migration from Classic to Modern to be?
+
+Generally a few main things will need to be taken care of:
+
+1. The settings format changed. We don't read the `.npmrc` or `.yarnrc` files anymore, instead consuming the settings from the [`.yarnrc.yml` file](https://yarnpkg.com/configuration/yarnrc).
+
+2. Some third party packages don't list their dependencies properly and will need to be helped through the [`packageExtensions`](https://yarnpkg.com/configuration/yarnrc#packageExtensions) settings.
+
+3. Support for text editors is pretty good, but you'll need to run the one-time-setup listed in our [SDK documentation](https://yarnpkg.com/advanced/editor-sdks).
+
+4. Some tools (mostly React Native and Flow) will require to downgrade to the `node_modules` install strategy by setting the [`nodeLinker`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) setting to `node-modules`. TypeScript doesn't have this problem.
+
+Most projects will only face those three problems, which can all be fixed in a good afternoon of work. For more detailed instructions, please see the detailed [migration guide](/advanced/migration).
+
 ## Which files should be gitignored?
 
 If you're using Zero-Installs:
@@ -27,8 +55,6 @@ If you're not using Zero-Installs:
 !.yarn/plugins
 .pnp.*
 ```
-
-### Details
 
 - `.yarn/unplugged` and `.yarn/build-state.yml` should likely always be ignored since they typically hold machine-specific build artifacts. Ignoring them might however prevent [Zero-Installs](https://yarnpkg.com/features/zero-installs) from working (to prevent this, set [`enableScripts`](/configuration/yarnrc#enableScripts) to `false`).
 
