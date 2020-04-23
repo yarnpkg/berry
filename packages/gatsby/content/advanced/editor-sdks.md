@@ -12,13 +12,14 @@ Smart IDEs (such as VSCode or IntelliJ) require special configuration for TypeSc
 
 ## Tools currently supported
 
-> **Note:** When using the `--sdk` flag, be aware that only the SDKs for the tools present in your package.json will be installed. Don't forget to run the command again after installing new ones in your project.
+> **Note:** When using the `--sdk` flag, be aware that only the SDKs for the tools present in your *root* package.json will be installed (the tool won't look at the dependencies from your other workspaces). So don't forget to run the command again should you change the set of tools used by your project!
 
-| Extension | Required package.json dependency |
+| Extension | Required `package.json` dependency |
 |---|---|
-| VS Code TypeScript Server | [typescript](https://yarnpkg.com/package/typescript) |
-| [vscode-eslint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) | [eslint](https://yarnpkg.com/package/eslint) |
-| [prettier-vscode extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) | [prettier](https://yarnpkg.com/package/prettier) |
+| Builtin VSCode TypeScript Server | [typescript](https://yarnpkg.com/package/typescript) |
+| [vscode-eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) | [eslint](https://yarnpkg.com/package/eslint) |
+| [prettier-vscode](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) | [prettier](https://yarnpkg.com/package/prettier) |
+|
 
 If you'd like to contribute more, [take a look here!](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-pnpify/sources/generateSdk.ts)
 
