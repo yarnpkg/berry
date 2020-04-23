@@ -88,6 +88,7 @@ export interface ConvertUtils {
 
 const WINDOWS_PATH_REGEXP = /^[a-zA-Z]:.*$/;
 const PORTABLE_PATH_REGEXP = /^\/[a-zA-Z]:.*$/;
+const UNC_PORTABLE_PATH_REGEXP = /^\/\/.*$/;
 
 // Path should look like "/N:/berry/scripts/plugin-pack.js"
 // And transform to "N:\berry\scripts\plugin-pack.js"
@@ -95,8 +96,14 @@ function fromPortablePath(p: Path): NativePath {
   if (process.platform !== 'win32')
     return p as NativePath;
 
-  return p.match(PORTABLE_PATH_REGEXP) ? p.substring(1).replace(/\//g, `\\`) : p;
-}
+  if (!(p.match(PORTABLE_PATH_REGEXP) || p.match(UNC_PORTABLE_PATH_REGEXP)))
+    return p as NativePath;
+
+  if (p.match(PORTABLE_PATH_REGEXP))
+    p = p.substring(1);
+
+  return p.replace(/\//g, `\\`);
+};
 
 // Path should look like "N:/berry/scripts/plugin-pack.js"
 // And transform to "/N:/berry/scripts/plugin-pack.js"
