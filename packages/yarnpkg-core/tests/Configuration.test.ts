@@ -3,7 +3,7 @@ import NpmPlugin               from '@yarnpkg/plugin-npm';
 
 import {Configuration, SECRET} from '../sources/Configuration';
 
-async function initializeConfiguration<T>(value: unknown, cb: (dir: PortablePath) => Promise<T>) {
+async function initializeConfiguration<T>(value: {[key: string]: any}, cb: (dir: PortablePath) => Promise<T>) {
   return await xfs.mktempPromise(async dir => {
     await Configuration.updateConfiguration(dir, value);
 
@@ -26,8 +26,8 @@ describe(`Configuration`, () => {
         plugins: new Set([`@yarnpkg/plugin-npm`]),
       });
 
-      const firstToken = configuration.getForDisplay(`npmAuthToken`);
-      const secondToken = configuration.getForDisplay(`npmScopes`).get(`myScope`).get(`npmAuthToken`);
+      const firstToken = configuration.getRedacted(`npmAuthToken`);
+      const secondToken = configuration.getRedacted(`npmScopes`).get(`myScope`).get(`npmAuthToken`);
 
       expect(firstToken).toEqual(SECRET);
       expect(secondToken).toEqual(SECRET);

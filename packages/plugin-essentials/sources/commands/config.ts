@@ -58,7 +58,7 @@ export default class ConfigCommand extends BaseCommand {
         for (const key of keys) {
           const data = configuration.settings.get(key);
 
-          const effective = configuration.getForDisplay(key);
+          const effective = configuration.getRedacted(key);
           const source = configuration.sources.get(key);
 
           if (this.verbose) {
@@ -96,11 +96,11 @@ export default class ConfigCommand extends BaseCommand {
           }, 0);
 
           for (const [key, description] of keysAndDescriptions) {
-            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(configuration.getForDisplay(key), inspectConfig)}`);
+            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(configuration.getRedacted(key), inspectConfig)}`);
           }
         } else {
           for (const key of keys) {
-            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(configuration.getForDisplay(key), inspectConfig)}`);
+            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(configuration.getRedacted(key), inspectConfig)}`);
           }
         }
       }

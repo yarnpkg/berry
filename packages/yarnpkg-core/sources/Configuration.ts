@@ -852,7 +852,7 @@ export class Configuration {
     return projectCwd;
   }
 
-  static async updateConfiguration(cwd: PortablePath, patch: any) {
+  static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: any} | ((current: any) => any)) {
     const rcFilename = getRcFilename();
     const configurationPath =  ppath.join(cwd, rcFilename as PortablePath);
 
@@ -864,6 +864,8 @@ export class Configuration {
 
     if (typeof patch === `function`)
       patch = patch(current);
+    if (typeof patch === `function`)
+      throw new Error(`Assertion failed: Invalid configuration type`);
 
     for (const key of Object.keys(patch)) {
       const currentValue = current[key];
@@ -966,7 +968,7 @@ export class Configuration {
     return this.values.get(key) as T;
   }
 
-  getForDisplay<T = any>(key: string) {
+  getRedacted<T = any>(key: string) {
     const rawValue = this.get(key);
     const definition = this.settings.get(key);
 
