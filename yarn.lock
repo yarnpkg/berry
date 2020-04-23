@@ -4062,13 +4062,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.14.150":
-  version: 4.14.150
-  resolution: "@types/lodash@npm:4.14.150"
-  checksum: 2/0e9ade0b8ace23845ffb1d17b91142abae183c997a96072339cc1ab34395e2f8bc20ad472b9efd879a8b11ee06ae9dde1b9c4c15ce2f63cbee3a558c30a7852d
-  languageName: node
-  linkType: hard
-
 "@types/lodash@npm:^4.14.136":
   version: 4.14.136
   resolution: "@types/lodash@npm:4.14.136"
@@ -5443,7 +5436,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
     "@types/inquirer": ^0.0.43
-    "@types/lodash": 4.14.150
+    "@types/lodash": ^4.14.136
     "@types/semver": ^7.1.0
     "@types/treeify": ^1.0.0
     "@yarnpkg/cli": "workspace:^2.0.0-rc.32"

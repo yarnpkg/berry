@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/inquirer": "^0.0.43",
-    "@types/lodash": "4.14.150",
+    "@types/lodash": "^4.14.136",
     "@types/semver": "^7.1.0",
     "@types/treeify": "^1.0.0",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.32",

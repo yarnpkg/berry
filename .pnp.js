@@ -4904,13 +4904,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/lodash", "npm:4.14.136"]
           ],
           "linkType": "HARD",
-        }],
-        ["npm:4.14.150", {
-          "packageLocation": "./.yarn/cache/@types-lodash-npm-4.14.150-a71293c86b-2.zip/node_modules/@types/lodash/",
-          "packageDependencies": [
-            ["@types/lodash", "npm:4.14.150"]
-          ],
-          "linkType": "HARD",
         }]
       ]],
       ["@types/micromatch", [
@@ -6605,7 +6598,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/plugin-essentials", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-essentials"],
             ["@types/inquirer", "npm:0.0.43"],
-            ["@types/lodash", "npm:4.14.150"],
+            ["@types/lodash", "npm:4.14.136"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/treeify", "npm:1.0.0"],
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
@@ -6631,7 +6624,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/plugin-essentials", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-essentials"],
             ["@types/inquirer", "npm:0.0.43"],
-            ["@types/lodash", "npm:4.14.150"],
+            ["@types/lodash", "npm:4.14.136"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/treeify", "npm:1.0.0"],
             ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],
@@ -6657,7 +6650,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/plugin-essentials", "workspace:packages/plugin-essentials"],
             ["@types/inquirer", "npm:0.0.43"],
-            ["@types/lodash", "npm:4.14.150"],
+            ["@types/lodash", "npm:4.14.136"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/treeify", "npm:1.0.0"],
             ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],
