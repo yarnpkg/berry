@@ -1015,22 +1015,24 @@ export class Project {
           if (scripts.has(scriptName))
             buildScripts.push([BuildType.SCRIPT, scriptName]);
 
-        let installStatus;
         try {
           for (const installer of installers.values()) {
-            installStatus = await installer.installPackage(pkg, fetchResult);
-            packageLocations.set(pkg.locatorHash, installStatus.packageLocation);
-            if (buildScripts.length > 0) {
-              packageBuildDirectives.set(pkg.locatorHash, {
-                directives: buildScripts,
-                buildLocations: [installStatus.packageLocation],
-              });
-            }
+            await installer.installPackage(pkg, fetchResult);
           }
         } finally {
           if (fetchResult.releaseFs) {
             fetchResult.releaseFs();
           }
+        }
+
+        const location = ppath.join(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
+        packageLocations.set(pkg.locatorHash, location);
+
+        if (buildScripts.length > 0) {
+          packageBuildDirectives.set(pkg.locatorHash, {
+            directives: buildScripts,
+            buildLocations: [location],
+          });
         }
       } else {
         const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));

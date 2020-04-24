@@ -10,7 +10,7 @@ export type MinimalLinkOptions = {
 };
 
 export type LinkOptions = MinimalLinkOptions & {
-  report: Report
+  report: Report,
 };
 
 /**

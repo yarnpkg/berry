@@ -79,8 +79,10 @@ export abstract class AbstractPnpInstaller implements Installer {
       !structUtils.isVirtualLocator(pkg) &&
       !this.opts.project.tryWorkspaceByLocator(pkg);
 
-    const manifest = !hasVirtualInstances ? await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs}) : null;
-    // Report incompatible package and continue linking it, but do not run build scripts
+    const manifest = !hasVirtualInstances
+      ? await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs})
+      : null;
+
     const isCompatible = this.checkAndReportManifestIncompatibility(manifest, pkg);
 
     const buildScripts = !hasVirtualInstances && isCompatible
