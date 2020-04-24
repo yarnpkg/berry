@@ -241,4 +241,34 @@ describe('Node_Modules', () => {
       },
     ),
   );
+
+  test(`should skip building incompatible package`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          dep: `portal:./dep`,
+        },
+      },
+      async ({path, run}) => {
+        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
+        nodeLinker: "node-modules"
+      `);
+
+        await writeJson(npath.toPortablePath(`${path}/dep/package.json`), {
+          name: `dep`,
+          version: `1.0.0`,
+          os: [`!${process.platform}`],
+          scripts: {
+            postinstall: `echo 'Shall not be run'`,
+          },
+        });
+
+        const stdout = (await run(`install`)).stdout;
+
+        expect(stdout).not.toContain(`Shall not be run`);
+        expect(stdout).toMatch(new RegExp(`dep@portal:./dep.*The platform ${process.platform} is incompatible with this module.`));
+      },
+    ),
+  );
 });

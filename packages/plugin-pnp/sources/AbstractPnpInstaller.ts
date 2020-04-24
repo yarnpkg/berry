@@ -29,8 +29,6 @@ function isCompatible(rules: string[], actual: string) {
   return isBlacklist && isNotWhitelist;
 };
 
-enum Compatibility {COMPATIBLE = 1, INCOMPATIBLE_OS = 2, INCOMPATIBLE_CPU = 3};
-
 export abstract class AbstractPnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
 
@@ -76,22 +74,12 @@ export abstract class AbstractPnpInstaller implements Installer {
     const key1 = structUtils.requirableIdent(pkg);
     const key2 = pkg.reference;
 
-    let manifest = null;
-
-    if (this.opts.unlinkIncompatiblePackages) {
-      manifest = await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
-      // Report incompatible package and skip linking it
-      if (!this.checkAndReportManifestIncompatibility(manifest, pkg)) {
-        return {packageLocation: null, buildDirective: null};
-      }
-    }
-
     const hasVirtualInstances =
       pkg.peerDependencies.size > 0 &&
       !structUtils.isVirtualLocator(pkg) &&
       !this.opts.project.tryWorkspaceByLocator(pkg);
 
-    manifest = !hasVirtualInstances ? await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs}) : null;
+    const manifest = !hasVirtualInstances ? await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs}) : null;
     // Report incompatible package and continue linking it, but do not run build scripts
     const isCompatible = this.checkAndReportManifestIncompatibility(manifest, pkg);
 

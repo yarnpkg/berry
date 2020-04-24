@@ -11,7 +11,7 @@ export enum BuildType {
 export type BuildDirective = [BuildType, string];
 
 export type InstallStatus = {
-  packageLocation: PortablePath | null,
+  packageLocation: PortablePath,
   buildDirective: Array<BuildDirective> | null,
 };
 

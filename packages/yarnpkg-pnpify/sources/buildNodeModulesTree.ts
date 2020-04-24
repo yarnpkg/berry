@@ -184,15 +184,14 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
           const pkgLocator = pnp.getLocator(name.replace('$wsroot$', ''), referencish);
 
           const depPkg = pnp.getPackageInformation(pkgLocator);
+          if (depPkg === null)
+            throw new Error(`Assertion failed: Expected the package to have been registered`);
+
           // Skip package self-references
           if (stringifyLocator(depLocator) === locatorKey)
             continue;
 
-          // depPkg can be null here in a very special case
-          // when the dependency package manifest has incompatible cpu or os and it was skipped from linking
-          if (depPkg) {
-            addPackageToTree(depPkg, depLocator, node, pkg);
-          }
+          addPackageToTree(depPkg, depLocator, node, pkg);
         }
       }
     }

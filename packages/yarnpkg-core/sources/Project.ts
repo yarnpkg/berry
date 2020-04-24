@@ -995,7 +995,7 @@ export class Project {
     }));
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
-    const packageLocations: Map<LocatorHash, PortablePath | null> = new Map();
+    const packageLocations: Map<LocatorHash, PortablePath> = new Map();
     const packageBuildDirectives: Map<LocatorHash, { directives: BuildDirective[], buildLocations: PortablePath[] }> = new Map();
 
     // Step 1: Installing the packages on the disk
@@ -1015,24 +1015,22 @@ export class Project {
           if (scripts.has(scriptName))
             buildScripts.push([BuildType.SCRIPT, scriptName]);
 
+        let installStatus;
         try {
           for (const installer of installers.values()) {
-            await installer.installPackage(pkg, fetchResult);
+            installStatus = await installer.installPackage(pkg, fetchResult);
+            packageLocations.set(pkg.locatorHash, installStatus.packageLocation);
+            if (buildScripts.length > 0) {
+              packageBuildDirectives.set(pkg.locatorHash, {
+                directives: buildScripts,
+                buildLocations: [installStatus.packageLocation],
+              });
+            }
           }
         } finally {
           if (fetchResult.releaseFs) {
             fetchResult.releaseFs();
           }
-        }
-
-        const location = ppath.join(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
-        packageLocations.set(pkg.locatorHash, location);
-
-        if (buildScripts.length > 0) {
-          packageBuildDirectives.set(pkg.locatorHash, {
-            directives: buildScripts,
-            buildLocations: [location],
-          });
         }
       } else {
         const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
@@ -1055,15 +1053,11 @@ export class Project {
         packageLinkers.set(pkg.locatorHash, linker);
         packageLocations.set(pkg.locatorHash, installStatus.packageLocation);
 
-        if (installStatus.packageLocation !== null) {
-          if (installStatus.buildDirective) {
-            packageBuildDirectives.set(pkg.locatorHash, {
-              directives: installStatus.buildDirective,
-              buildLocations: [installStatus.packageLocation],
-            });
-          }
-        } else {
-          this.accessibleLocators.delete(pkg.locatorHash);
+        if (installStatus.buildDirective) {
+          packageBuildDirectives.set(pkg.locatorHash, {
+            directives: installStatus.buildDirective,
+            buildLocations: [installStatus.packageLocation],
+          });
         }
       }
     }
@@ -1081,10 +1075,8 @@ export class Project {
 
       const linkPackage = async (packageLinker: Linker, installer: Installer) => {
         const packageLocation = packageLocations.get(pkg.locatorHash);
-        if (typeof packageLocation === 'undefined')
+        if (!packageLocation)
           throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, pkg)}) should have been registered`);
-        else if (packageLocation === null)
-          return;
 
         const internalDependencies = [];
 
