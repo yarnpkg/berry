@@ -1,7 +1,7 @@
 import {BaseCommand}                                               from '@yarnpkg/cli';
 import {Configuration, Project, StreamReport, MessageName, Report} from '@yarnpkg/core';
 import {execUtils, httpUtils, semverUtils}                         from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs}                        from '@yarnpkg/fslib';
+import {Filename, PortablePath, ppath, xfs, npath}                 from '@yarnpkg/fslib';
 import {Command, Usage, UsageError}                                from 'clipanion';
 import semver                                                      from 'semver';
 
@@ -71,7 +71,7 @@ export async function setVersion(project: Project, bundleVersion: string | null,
       const temporaryPath = ppath.join(tmpDir, `yarn.js` as Filename);
       await xfs.writeFilePromise(temporaryPath, bundleBuffer);
 
-      const {stdout} = await execUtils.execvp(process.execPath, [temporaryPath, `--version`], {
+      const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {
         cwd: project.cwd,
         env: {...process.env, YARN_IGNORE_PATH: `1`},
       });
