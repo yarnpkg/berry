@@ -213,7 +213,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@yarnpkg/plugin-npm", ["virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm", "workspace:packages/plugin-npm"]],
       ["@yarnpkg/plugin-npm-cli", ["virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-npm-cli", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-npm-cli", "workspace:packages/plugin-npm-cli"]],
       ["@yarnpkg/plugin-pack", ["virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-pack", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-pack", "workspace:packages/plugin-pack"]],
-      ["@yarnpkg/plugin-patch", ["virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-patch", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/plugin-patch", "workspace:packages/plugin-patch"]],
+      ["@yarnpkg/plugin-patch", ["virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-patch", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-patch", "workspace:packages/plugin-patch"]],
       ["@yarnpkg/plugin-pnp", ["virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-pnp", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-pnp", "workspace:packages/plugin-pnp"]],
       ["@yarnpkg/plugin-stage", ["virtual:6c4ffdc97c0a8fe6a15cb1b353664a2d1556c0bef782dc06790db015a35ca3cd125eaf355368c58a3aaf6330c79507c16275fc3a3c13a847d89839cdae6b509e#workspace:packages/plugin-stage", "virtual:fe83f9ef9c4464094226f14d0d9d2637b43378711c838ce6194b5c44cf0a77e24228b8c6fd658da19ee3a86978a710abe61d8247e86d97ed3d11085117b10fce#workspace:packages/plugin-stage", "workspace:packages/plugin-stage"]],
       ["@yarnpkg/plugin-typescript", ["workspace:packages/plugin-typescript"]],
@@ -6141,7 +6141,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-npm-cli", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-npm-cli"],
             ["@yarnpkg/plugin-pack", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-pack"],
-            ["@yarnpkg/plugin-patch", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/plugin-patch"],
+            ["@yarnpkg/plugin-patch", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-patch"],
             ["@yarnpkg/plugin-pnp", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-pnp"],
             ["@yarnpkg/plugin-version", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-version"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
@@ -6447,10 +6447,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/$$virtual/@yarnpkg-plugin-compat-virtual-5fe64685a8/1/packages/plugin-compat/",
           "packageDependencies": [
             ["@yarnpkg/plugin-compat", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-compat"],
+            ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
+            ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],
-            ["@yarnpkg/plugin-patch", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/plugin-patch"]
+            ["@yarnpkg/plugin-patch", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-patch"]
           ],
           "packagePeers": [
             "@yarnpkg/core",
@@ -6462,8 +6464,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/$$virtual/@yarnpkg-plugin-compat-virtual-278bc71407/1/packages/plugin-compat/",
           "packageDependencies": [
             ["@yarnpkg/plugin-compat", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-compat"],
+            ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
+            ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-patch", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-patch"]
           ],
@@ -6477,10 +6481,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/plugin-compat/",
           "packageDependencies": [
             ["@yarnpkg/plugin-compat", "workspace:packages/plugin-compat"],
+            ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
+            ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],
-            ["@yarnpkg/plugin-patch", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/plugin-patch"]
+            ["@yarnpkg/plugin-patch", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-patch"]
           ],
           "linkType": "SOFT",
         }]
@@ -7120,6 +7126,23 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@yarnpkg/plugin-patch", [
+        ["virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-patch", {
+          "packageLocation": "./.yarn/$$virtual/@yarnpkg-plugin-patch-virtual-8a5ab312c8/1/packages/plugin-patch/",
+          "packageDependencies": [
+            ["@yarnpkg/plugin-patch", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-patch"],
+            ["@types/left-pad", "npm:1.2.0"],
+            ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
+            ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
+            ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
+            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
+            ["clipanion", "npm:2.1.5"]
+          ],
+          "packagePeers": [
+            "@yarnpkg/cli",
+            "@yarnpkg/core"
+          ],
+          "linkType": "SOFT",
+        }],
         ["virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-patch", {
           "packageLocation": "./.yarn/$$virtual/@yarnpkg-plugin-patch-virtual-58ec4e8030/1/packages/plugin-patch/",
           "packageDependencies": [
@@ -7133,22 +7156,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "packagePeers": [
             "@yarnpkg/cli",
-            "@yarnpkg/core"
-          ],
-          "linkType": "SOFT",
-        }],
-        ["virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/plugin-patch", {
-          "packageLocation": "./.yarn/$$virtual/@yarnpkg-plugin-patch-virtual-b67eefea63/1/packages/plugin-patch/",
-          "packageDependencies": [
-            ["@yarnpkg/plugin-patch", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/plugin-patch"],
-            ["@types/left-pad", "npm:1.2.0"],
-            ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],
-            ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
-            ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
-            ["clipanion", "npm:2.1.5"]
-          ],
-          "packagePeers": [
             "@yarnpkg/core"
           ],
           "linkType": "SOFT",
