@@ -1,10 +1,10 @@
-import styled                                      from '@emotion/styled';
-import {Link, graphql, useStaticQuery, withPrefix} from 'gatsby';
-import PropTypes                                   from 'prop-types';
-import React, {useState}                           from 'react';
+import styled                                              from '@emotion/styled';
+import {Link, graphql, useStaticQuery, withPrefix}         from 'gatsby';
+import PropTypes                                           from 'prop-types';
+import React, {useLayoutEffect, useMemo, useRef, useState} from 'react';
 
-import {Logo}                                      from './logo';
-import {ifDesktop, ifMobile}                       from './responsive';
+import {Logo}                                              from './logo';
+import {ifDesktop, ifMobile}                               from './responsive';
 
 const HeaderContainer = styled.div`
   ${ifDesktop} {
@@ -183,6 +183,9 @@ const MenuSearchBox = styled.div`
   }
 `;
 
+const SearchParent = styled.div`
+`;
+
 const MenuEntry = styled.div`
   ${ifDesktop} {
     &:hover {
@@ -231,6 +234,25 @@ const isActive = ({href, location}) => {
   return isMenuLinkActive || isHomeMenuLinkActive ? {className: 'active'} : null;
 };
 
+const SearchContainer = ({className}) => {
+  const el = useMemo(() => {
+    const input = document.createElement(`input`);
+    input.className = className;
+    input.placeholder = `Search the documentation`;
+    return input;
+  }, []);
+
+  const ref = useRef(null);
+
+  useLayoutEffect(() => {
+    if (ref.current === null) return;
+    ref.current.appendChild(el);
+  }, [ref.current]);
+
+  return <SearchParent ref={ref} />;
+};
+
+
 export const Header = ({children}) => {
   const data = useStaticQuery(graphql`
     query SiteQuery {
@@ -265,7 +287,7 @@ export const Header = ({children}) => {
             <Logo height={`3em`} align={`middle`} />
           </MenuLogo>
           <MenuSearchBox onlyIf={ifMobile}>
-            <input className={`docsearch-mobile`} placeholder={`Search the documentation`}/>
+            <SearchContainer className={`docsearch-mobile`} />
           </MenuSearchBox>
           <MenuToggle onClick={() => setExpanded(!expanded)}>
             {expanded ? `×` : `≡`}
@@ -283,7 +305,7 @@ export const Header = ({children}) => {
         </MenuNavigation>
 
         <MenuSearchBox onlyIf={ifDesktop}>
-          <input className={`docsearch-desktop`} placeholder={`Search the documentation`} />
+          <SearchContainer className={`docsearch-desktop`} />
         </MenuSearchBox>
       </MenuContainer>
       {children}
