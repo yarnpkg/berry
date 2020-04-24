@@ -154,6 +154,8 @@ const MenuSearchBox = styled.div`
   margin-left: auto;
   margin-right: 0;
 
+  flex: 1;
+
   padding: 0 1em;
 
   ${props => props.onlyIf()} {
@@ -171,8 +173,18 @@ const MenuSearchBox = styled.div`
     margin-right: 0;
   }
 
+  .algolia-autocomplete {
+    display: flex !important;
+
+    flex: 1;
+  }
+
   .docsearch-desktop, .docsearch-mobile {
-    width: 300px;
+    margin-left: auto;
+    margin-right: 0;
+
+    width: 100%;
+    max-width: 300px;
     height: 3em;
 
     border: 1px solid lightgrey;
@@ -184,6 +196,7 @@ const MenuSearchBox = styled.div`
 `;
 
 const SearchParent = styled.div`
+  flex: 1;
 `;
 
 const MenuEntry = styled.div`
