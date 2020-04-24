@@ -174,7 +174,7 @@ const MenuSearchBox = styled.div`
   }
 
   .algolia-autocomplete {
-    display: flex;
+    display: flex !important;
 
     flex: 1;
   }
