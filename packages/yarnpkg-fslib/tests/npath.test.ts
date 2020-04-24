@@ -102,7 +102,7 @@ describe(`Portable paths`, () => {
 
           it(`should support Long UNC Windows paths with dot (\\\\.\\[physical_device]\\)`, () => {
             const inputPath = '\\\\.\\PhysicalDevice\\user\\docs\\Letter.txt';
-            const outputPath = `/unc/./PhysicalDevice/user/docs/Letter.txt`;
+            const outputPath = `/unc/.dot/PhysicalDevice/user/docs/Letter.txt`;
             expect(npath.toPortablePath(inputPath)).toEqual(outputPath);
           });
         }
@@ -182,8 +182,8 @@ describe(`Portable paths`, () => {
             expect(npath.fromPortablePath(inputPath)).toEqual(outputPath);
           });
 
-          it(`should transform back Long UNC Windows paths with dot (/unc/./[physical_device]/)`, () => {
-            const inputPath = `/unc/./PhysicalDevice/user/docs/Letter.txt`;
+          it(`should transform back Long UNC Windows paths with dot (/unc/.dot/[physical_device]/)`, () => {
+            const inputPath = `/unc/.dot/PhysicalDevice/user/docs/Letter.txt`;
             const outputPath = '\\\\.\\PhysicalDevice\\user\\docs\\Letter.txt';
             expect(npath.fromPortablePath(inputPath)).toEqual(outputPath);
           });

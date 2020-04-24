@@ -87,10 +87,10 @@ export interface ConvertUtils {
 }
 
 const WINDOWS_PATH_REGEXP = /^([a-zA-Z]:.*)$/;
-const UNC_WINDOWS_PATH_REGEXP = /^\\\\(.*)$/;
+const UNC_WINDOWS_PATH_REGEXP = /^\\\\(\.\\)?(.*)$/;
 
 const PORTABLE_PATH_REGEXP = /^\/([a-zA-Z]:.*)$/;
-const UNC_PORTABLE_PATH_REGEXP = /^\/unc\/(.*)$/;
+const UNC_PORTABLE_PATH_REGEXP = /^\/unc\/(\.dot\/)?(.*)$/;
 
 // Path should look like "/N:/berry/scripts/plugin-pack.js"
 // And transform to "N:\berry\scripts\plugin-pack.js"
@@ -101,7 +101,7 @@ function fromPortablePath(p: Path): NativePath {
   if (p.match(PORTABLE_PATH_REGEXP))
     p = p.replace(PORTABLE_PATH_REGEXP, `$1`);
   else if (p.match(UNC_PORTABLE_PATH_REGEXP))
-    p = p.replace(UNC_PORTABLE_PATH_REGEXP, `\\\\$1`);
+    p = p.replace(UNC_PORTABLE_PATH_REGEXP, (match, p1, p2) => `\\\\${p1 ? `.\\` : ``}${p2}`);
   else
     return p as NativePath;
 
@@ -117,7 +117,7 @@ function toPortablePath(p: Path): PortablePath {
   if (p.match(WINDOWS_PATH_REGEXP))
     p = p.replace(WINDOWS_PATH_REGEXP, `/$1`);
   else if (p.match(UNC_WINDOWS_PATH_REGEXP))
-    p = p.replace(UNC_WINDOWS_PATH_REGEXP, `/unc/$1`);
+    p = p.replace(UNC_WINDOWS_PATH_REGEXP, (match, p1, p2) => `/unc/${p1 ? `.dot/` : ``}${p2}`);
 
   return p.replace(/\\/g, `/`) as PortablePath;
 }
