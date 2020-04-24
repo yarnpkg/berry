@@ -9,7 +9,7 @@ import {PROTOCOL}                                                               
 import * as npmHttpUtils                                                                                              from './npmHttpUtils';
 
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
-const NODE_GYP_MATCH = /\b(node-gyp|prebuild-install)\b/;
+const NODE_GYP_MATCH = /\b(node-gyp|prebuild-install|node-pre-gyp)\b/;
 
 export class NpmSemverResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
