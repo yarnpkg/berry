@@ -5,7 +5,7 @@ import {FakeFS, PortablePath, ppath}                                            
 import {PackageRegistry, PnpSettings}                                                                   from '@yarnpkg/pnp';
 import mm                                                                                               from 'micromatch';
 
-const isCompatible = (rules: string[], actual: string) => {
+function isCompatible(rules: string[], actual: string) {
   let isNotWhitelist = true;
   let isBlacklist = false;
 
@@ -28,6 +28,8 @@ const isCompatible = (rules: string[], actual: string) => {
   // Blacklists with whitelisted items should be treated as whitelists for `os` and `cpu` in `package.json`
   return isBlacklist && isNotWhitelist;
 };
+
+enum Compatibility {COMPATIBLE = 1, INCOMPATIBLE_OS = 2, INCOMPATIBLE_CPU = 3};
 
 export abstract class AbstractPnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
@@ -56,20 +58,30 @@ export abstract class AbstractPnpInstaller implements Installer {
    */
   abstract finalizeInstallWithPnp(pnpSettings: PnpSettings): Promise<Array<FinalizeInstallStatus> | void>;
 
+  private checkAndReportManifestIncompatibility(manifest: Manifest | null, pkg: Package): boolean {
+    if (manifest && manifest.os !== null && !isCompatible(manifest.os, process.platform)) {
+      this.opts.report.reportWarningOnce(MessageName.INCOMPATIBLE_OS, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} The platform ${process.platform} is incompatible with this module.`);
+      return false;
+    }
+
+    if (manifest && manifest.cpu !== null && !isCompatible(manifest.cpu, process.arch)) {
+      this.opts.report.reportWarningOnce(MessageName.INCOMPATIBLE_CPU, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} The CPU architecture ${process.arch} is incompatible with this module.`);
+      return false;
+    }
+
+    return true;
+  }
+
   async installPackage(pkg: Package, fetchResult: FetchResult) {
     const key1 = structUtils.requirableIdent(pkg);
     const key2 = pkg.reference;
 
-    const manifest = await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
+    let manifest = null;
 
-    if (manifest) {
-      if (manifest.os !== null && !isCompatible(manifest.os, process.platform)) {
-        this.opts.report.reportWarningOnce(MessageName.INCOMPATIBLE_OS, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} The platform ${process.platform} is incompatible with this module.`);
-        return {packageLocation: null, buildDirective: null};
-      }
-
-      if (manifest.cpu !== null && !isCompatible(manifest.cpu, process.arch)) {
-        this.opts.report.reportWarningOnce(MessageName.INCOMPATIBLE_CPU, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} The CPU architecture ${process.arch} is incompatible with this module.`);
+    if (this.opts.unlinkIncompatiblePackages) {
+      manifest = await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
+      // Report incompatible package and skip linking it
+      if (!this.checkAndReportManifestIncompatibility(manifest, pkg)) {
         return {packageLocation: null, buildDirective: null};
       }
     }
@@ -79,7 +91,11 @@ export abstract class AbstractPnpInstaller implements Installer {
       !structUtils.isVirtualLocator(pkg) &&
       !this.opts.project.tryWorkspaceByLocator(pkg);
 
-    const buildScripts = !hasVirtualInstances
+    manifest = !hasVirtualInstances ? await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs}) : null;
+    // Report incompatible package and continue linking it, but do not run build scripts
+    const isCompatible = this.checkAndReportManifestIncompatibility(manifest, pkg);
+
+    const buildScripts = !hasVirtualInstances && isCompatible
       ? await this.getBuildScripts(pkg, manifest, fetchResult)
       : [];
 

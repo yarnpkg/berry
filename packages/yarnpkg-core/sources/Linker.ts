@@ -11,6 +11,7 @@ export type MinimalLinkOptions = {
 
 export type LinkOptions = MinimalLinkOptions & {
   report: Report,
+  unlinkIncompatiblePackages?: boolean,
 };
 
 /**
