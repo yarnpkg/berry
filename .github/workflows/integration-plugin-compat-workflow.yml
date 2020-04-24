@@ -3,7 +3,7 @@ on:
     paths:
     - 'packages/plugin-compat/**'
 
-name: 'Integration plugin-compat'
+name: 'plugin-compat'
 jobs:
   plugin-compat:
     name: 'Testing plugin-compat'
