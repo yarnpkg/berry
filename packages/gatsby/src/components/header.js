@@ -236,7 +236,7 @@ const isActive = ({href, location}) => {
 
 const SearchContainer = ({className}) => {
   const el = useMemo(() => {
-    if (typeof document !== `undefined`) return;
+    if (typeof document === `undefined`) return;
     const input = document.createElement(`input`);
     input.className = className;
     input.placeholder = `Search the documentation`;
