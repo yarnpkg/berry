@@ -47,6 +47,12 @@
     "fsevents": {
       "built": false
     },
+    "gatsby": {
+      "built": false
+    },
+    "gatsby-cli": {
+      "built": false
+    },
     "gatsby-telemetry": {
       "built": false
     },

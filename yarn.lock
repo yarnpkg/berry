@@ -4488,13 +4488,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/algoliasearch@npm:^3.30.16":
-  version: 3.34.10
-  resolution: "@types/algoliasearch@npm:3.34.10"
-  checksum: 2/5a8f13e9a0d68ee049040770dbcdca6f4bf33da6df3a660c11dd815c644cd9bfaa6ff452213f770f99f4b61def80a9b75979db9bd9da3dd38d0a592c7c6ae9cd
-  languageName: node
-  linkType: hard
-
 "@types/anymatch@npm:*":
   version: 1.3.1
   resolution: "@types/anymatch@npm:1.3.1"
@@ -6208,11 +6201,11 @@ __metadata:
     qs: ^6.7.0
     rc-dropdown: ^3.0.2
     rc-menu: ^8.0.3
-    react: ^16.8.4
-    react-dom: ^16.8.4
+    react: ^16.13.1
+    react-dom: ^16.13.1
     react-helmet: ^5.2.0
     react-icons: ^3.7.0
-    react-instantsearch-dom: ^6.2.0
+    react-instantsearch-dom: ^6.4.0
     react-monaco-editor: ^0.36.0
     react-select: ^3.1.0
     react-spinners: ^0.8.1
@@ -6249,7 +6242,7 @@ __metadata:
   dependencies:
     "@types/react": ^16.8.0
     ink: ^2.3.0
-    react: ^16.8.4
+    react: ^16.13.1
     redux: ^4.0.0
   peerDependencies:
     ink: ^2.3.0
@@ -6308,6 +6301,10 @@ __metadata:
     date-fns:
       built: false
     fsevents:
+      built: false
+    gatsby:
+      built: false
+    gatsby-cli:
       built: false
     gatsby-telemetry:
       built: false
@@ -6494,7 +6491,7 @@ __metadata:
     clipanion: ^2.1.5
     diff: ^4.0.1
     ink: ^2.3.0
-    react: ^16.8.4
+    react: ^16.13.1
     semver: ^7.1.2
     typescript: ^3.8.3
   peerDependencies:
@@ -6687,7 +6684,7 @@ __metadata:
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.19"
     clipanion: ^2.1.5
     ink: ^2.3.0
-    react: ^16.8.4
+    react: ^16.13.1
     semver: ^7.1.2
     typescript: ^3.8.3
     yup: ^0.27.0
@@ -7008,14 +7005,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"algoliasearch-helper@npm:^3.0.0":
-  version: 3.1.0
-  resolution: "algoliasearch-helper@npm:3.1.0"
+"algoliasearch-helper@npm:^3.1.0":
+  version: 3.1.1
+  resolution: "algoliasearch-helper@npm:3.1.1"
   dependencies:
     events: ^1.1.1
   peerDependencies:
     algoliasearch: ">= 3.1 < 5"
-  checksum: 2/4d8d5810422febc7c09b77789b5066fb7551dfdd01eb62d19e61681d926e7e0815e32d576586934f8129e7a55b300c5e7c948035b496cb729918ea9f73e45dbc
+  checksum: 2/7bc002facc0d754a0372d0d1d53792faa2902d49d10372000a9d15e027e97617d5edefd07f7c8b7a3c21981e87935e9e943432e688895c6e2076a76dfa7ff8c2
   languageName: node
   linkType: hard
 
@@ -23538,17 +23535,17 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.8.4":
-  version: 16.8.4
-  resolution: "react-dom@npm:16.8.4"
+"react-dom@npm:^16.13.1":
+  version: 16.13.1
+  resolution: "react-dom@npm:16.13.1"
   dependencies:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
     prop-types: ^15.6.2
-    scheduler: ^0.13.4
+    scheduler: ^0.19.1
   peerDependencies:
-    react: ^16.0.0
-  checksum: 2/86201ca12ccc216e87f9e6c498e96e1089c0663f0e4106496ac26f38f3e93af8a3d8f7c4e899ce719166b84a230da1aa49351967b38019654083299757c9b4a8
+    react: ^16.13.1
+  checksum: 2/fb5c3ad41360c6a8674f33916aa895d05e79d063d31a6963074220c1cda9e07e880799d01670b4ebd570b4d3457584f13cc898b5033a05641e8e801f5611607e
   languageName: node
   linkType: hard
 
@@ -23563,6 +23560,13 @@ fsevents@~2.1.2:
   version: 6.0.7
   resolution: "react-error-overlay@npm:6.0.7"
   checksum: 2/35533e193f9ca6dbb5cffe6c52b748dc68dbab0b9e54cb5c12cd0d8fb48ee6dea67eb33d1a3e4483d0dc16664a22b3c4f7f86441daa6774d18501d1dbd0c8283
+  languageName: node
+  linkType: hard
+
+"react-fast-compare@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "react-fast-compare@npm:3.0.1"
+  checksum: 2/02825ff5f56938306b7924807f1f0aefeb50b47a9911e2ea0668c2a763bb920a7f474f80173f060bee6dc6346d3cae3432f2e24442085b8b524b9108f165504e
   languageName: node
   linkType: hard
 
@@ -23620,34 +23624,33 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-instantsearch-core@npm:^6.2.0":
-  version: 6.2.0
-  resolution: "react-instantsearch-core@npm:6.2.0"
+"react-instantsearch-core@npm:^6.4.0":
+  version: 6.4.0
+  resolution: "react-instantsearch-core@npm:6.4.0"
   dependencies:
     "@babel/runtime": ^7.1.2
-    "@types/algoliasearch": ^3.30.16
-    algoliasearch-helper: ^3.0.0
-    fast-deep-equal: ^2.0.1
+    algoliasearch-helper: ^3.1.0
     prop-types: ^15.5.10
+    react-fast-compare: ^3.0.0
   peerDependencies:
     react: ">= 16.3.0 < 17"
-  checksum: 2/e139a6bd7cd195180fcabc7ea096ecace38232f2c2ee5a46633114a3781e132b35feb7698f516ef1a5f98ca2c5a6d9d4ebbcede1d7c28a11d209f4cfa2f8df22
+  checksum: 2/8e15c2df46c8887e5fea68898a6ddc5ff6db7c2af6ba662fdff2ac3a4740a8201ddab5df9962df35a10799aafe07b7e958a9934ffd7aeb0dc8a833ff11157d0a
   languageName: node
   linkType: hard
 
-"react-instantsearch-dom@npm:^6.2.0":
-  version: 6.2.0
-  resolution: "react-instantsearch-dom@npm:6.2.0"
+"react-instantsearch-dom@npm:^6.4.0":
+  version: 6.4.0
+  resolution: "react-instantsearch-dom@npm:6.4.0"
   dependencies:
     "@babel/runtime": ^7.1.2
-    algoliasearch-helper: ^3.0.0
+    algoliasearch-helper: ^3.1.0
     classnames: ^2.2.5
     prop-types: ^15.5.10
-    react-instantsearch-core: ^6.2.0
+    react-instantsearch-core: ^6.4.0
   peerDependencies:
     react: ">= 16.3.0 < 17"
     react-dom: ">= 16.3.0 < 17"
-  checksum: 2/946559f6ad825110ea04e6e3a5b5936e0b9fa4c13e03b56e1e8c9619876fff5191e9382785e7b440f55091cd70850c8913930088c5fb8dc3f37cd802b3164870
+  checksum: 2/02f476e1e34679500e121f45f1efe29dde4535b16ba942a8e13f8480749ef21e72ad2c5136a83e91c2a2799177f108b6b7e60dcd4d980b458e20667f71fa314e
   languageName: node
   linkType: hard
 
@@ -23836,7 +23839,18 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react@npm:^16.8.0, react@npm:^16.8.4":
+"react@npm:^16.13.1":
+  version: 16.13.1
+  resolution: "react@npm:16.13.1"
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+    prop-types: ^15.6.2
+  checksum: 2/13dcc9ba8a7521ecc3d7e69998dbc5703ae9515308d06a94a474ad34b42f1fc109372265e924a8c9b11d20fa1828407c290b8f61617c36734c4ca907ae7e5f45
+  languageName: node
+  linkType: hard
+
+"react@npm:^16.8.0":
   version: 16.8.4
   resolution: "react@npm:16.8.4"
   dependencies:
@@ -25137,6 +25151,16 @@ resolve@^1.10.1:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
   checksum: 2/007678c559669029a5f8a029022548c2f39258b8087d1da0a3f5c5360abf3aa2794a87f56998151432f48910eca53331206cd712b751188623ca3d1bcab38b9f
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.19.1":
+  version: 0.19.1
+  resolution: "scheduler@npm:0.19.1"
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+  checksum: 2/804f990b9f370cca6d42b65f3cba2cc2bfed4973ee5623bed1ea36a6627842db8c891e2e5ac003f06f9ee892d1d3396921e27fa077346caf0213af05776e8dee
   languageName: node
   linkType: hard
 
