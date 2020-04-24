@@ -1,0 +1,8 @@
+{
+  "name": "gatsby-plugin-algolia-docsearch",
+  "version": "0.0.0",
+  "peerDependencies": {
+    "gatsby": "*",
+    "react": "*"
+  }
+}

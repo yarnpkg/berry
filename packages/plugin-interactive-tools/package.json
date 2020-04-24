@@ -7,7 +7,7 @@
     "clipanion": "^2.1.5",
     "diff": "^4.0.1",
     "ink": "^2.3.0",
-    "react": "^16.8.4",
+    "react": "^16.13.1",
     "semver": "^7.1.2"
   },
   "peerDependencies": {

@@ -39,6 +39,20 @@ module.exports = {
     `gatsby-plugin-emotion`,
     `gatsby-plugin-react-helmet`,
     {
+      resolve: `gatsby-plugin-algolia-docsearch`,
+      options: {
+        specs: [{
+          apiKey: `029f65f2c00301615fd14958b67d6730`,
+          indexName: `yarnpkg_next`,
+          inputSelector: `.docsearch-mobile`,
+        }, {
+          apiKey: `029f65f2c00301615fd14958b67d6730`,
+          indexName: `yarnpkg_next`,
+          inputSelector: `.docsearch-desktop`,
+        }],
+      },
+    },
+    {
       resolve: `gatsby-plugin-prefetch-google-fonts`,
       options: {
         fonts: [{
@@ -62,10 +76,12 @@ module.exports = {
       resolve: `gatsby-plugin-manifest`,
       options: {
         name: `Yarn`,
+        /* eslint-disable @typescript-eslint/camelcase */
         short_name: `yarn`,
         start_url: `/`,
         background_color: `#2188b6`,
         theme_color: `#2188b6`,
+        /* eslint-enable @typescript-eslint/camelcase */
         display: `minimal-ui`,
         icon: `src/images/yarn-kitten.svg`,
       },

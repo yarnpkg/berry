@@ -8,7 +8,7 @@
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.11",
     "clipanion": "^2.1.5",
     "ink": "^2.3.0",
-    "react": "^16.8.4",
+    "react": "^16.13.1",
     "semver": "^7.1.2",
     "yup": "^0.27.0"
   },
