@@ -1,4 +1,9 @@
 on:
+  push:
+    branches:
+    - master
+    paths:
+    - 'packages/plugin-compat/**'
   pull_request:
     paths:
     - 'packages/plugin-compat/**'
