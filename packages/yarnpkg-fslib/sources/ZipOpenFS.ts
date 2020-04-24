@@ -758,8 +758,16 @@ export class ZipOpenFS extends BasePortableFakeFS {
     if (this.zipInstances) {
       let zipFs = this.zipInstances.get(p);
 
-      if (!zipFs)
-        zipFs = new ZipFS(p, await getZipOptions());
+      if (!zipFs) {
+        const zipOptions = await getZipOptions();
+
+        // We need to recheck because concurrent getZipPromise calls may
+        // have instantiated the zip archive while we were waiting
+        zipFs = this.zipInstances.get(p);
+        if (!zipFs) {
+          zipFs = new ZipFS(p, zipOptions);
+        }
+      }
 
       // Removing then re-adding the field allows us to easily implement
       // a basic LRU garbage collection strategy

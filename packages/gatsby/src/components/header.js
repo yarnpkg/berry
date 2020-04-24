@@ -148,6 +148,41 @@ const MenuNavigation = styled.div`
   }
 `;
 
+const MenuSearchBox = styled.div`
+  display: none;
+
+  margin-left: auto;
+  margin-right: 0;
+
+  padding: 0 1em;
+
+  ${props => props.onlyIf()} {
+    display: flex;
+  }
+
+  ${ifMobile} {
+    width: 100%;
+  }
+
+  > * {
+    display: flex;
+
+    margin: auto;
+    margin-right: 0;
+  }
+
+  .docsearch-desktop, .docsearch-mobile {
+    width: 300px;
+    height: 3em;
+
+    border: 1px solid lightgrey;
+
+    padding: 0 1em;
+
+    font-size: 1em;
+  }
+`;
+
 const MenuEntry = styled.div`
   ${ifDesktop} {
     &:hover {
@@ -204,7 +239,6 @@ export const Header = ({children}) => {
           menuLinks {
             name
             link
-            external
           }
         }
       }
@@ -230,28 +264,27 @@ export const Header = ({children}) => {
           <MenuLogo to={`/`}>
             <Logo height={`3em`} align={`middle`} />
           </MenuLogo>
+          <MenuSearchBox onlyIf={ifMobile}>
+            <input className={`docsearch-mobile`} placeholder={`Search the documentation`}/>
+          </MenuSearchBox>
           <MenuToggle onClick={() => setExpanded(!expanded)}>
             {expanded ? `×` : `≡`}
           </MenuToggle>
         </MenuTools>
 
         <MenuNavigation className={expanded ? `expanded` : ``}>
-          {data.site.siteMetadata.menuLinks.map(({name, link, external}) => {
-            const LinkComponent = external
-              ? (({children, to}) => <a href={to} children={children}/>)
-              : Link;
-
-            return (
-              <React.Fragment key={name}>
-                <MenuEntry>
-                  <LinkComponent to={link} activeClassName={`active`} getProps={isActive}>
-                    {name}
-                  </LinkComponent>
-                </MenuEntry>
-              </React.Fragment>
-            );
-          })}
+          {data.site.siteMetadata.menuLinks.map(({name, link}) => <React.Fragment key={name}>
+            <MenuEntry>
+              <Link to={link} activeClassName={`active`} getProps={isActive}>
+                {name}
+              </Link>
+            </MenuEntry>
+          </React.Fragment>)}
         </MenuNavigation>
+
+        <MenuSearchBox onlyIf={ifDesktop}>
+          <input className={`docsearch-desktop`} placeholder={`Search the documentation`} />
+        </MenuSearchBox>
       </MenuContainer>
       {children}
     </HeaderContainer>
