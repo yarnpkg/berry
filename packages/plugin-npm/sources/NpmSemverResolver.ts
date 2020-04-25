@@ -11,6 +11,8 @@ import * as npmHttpUtils                                                        
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
 const NODE_GYP_MATCH = /\b(node-gyp|prebuild-install)\b/;
 
+const isNodeGypMissing = (manifest: Manifest | Package): boolean => !manifest.dependencies.has(NODE_GYP_IDENT.identHash) && !manifest.peerDependencies.has(NODE_GYP_IDENT.identHash);
+
 export class NpmSemverResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     if (!descriptor.range.startsWith(PROTOCOL))
@@ -99,17 +101,17 @@ export class NpmSemverResolver implements Resolver {
     // This is because the npm registry will automatically add a `node-gyp rebuild` install script
     // in the metadata if there is not already an install script and a binding.gyp file exists.
     // Also, node-gyp is not always set as a dependency in packages, so it will also be added if used in scripts.
-    if (!manifest.dependencies.has(NODE_GYP_IDENT.identHash) && !manifest.peerDependencies.has(NODE_GYP_IDENT.identHash)) {
+    let shouldReCheckNodeGyp = false;
+    if (isNodeGypMissing(manifest)) {
       for (const value of manifest.scripts.values()) {
         if (value.match(NODE_GYP_MATCH)) {
-          manifest.dependencies.set(NODE_GYP_IDENT.identHash, structUtils.makeDescriptor(NODE_GYP_IDENT, `latest`));
-          opts.report.reportWarning(MessageName.NODE_GYP_INJECTED, `${structUtils.prettyLocator(opts.project.configuration, locator)}: Implicit dependencies on node-gyp are discouraged`);
+          shouldReCheckNodeGyp = true;
           break;
         }
       }
     }
 
-    return {
+    const pkg = {
       ...locator,
 
       version,
@@ -125,5 +127,15 @@ export class NpmSemverResolver implements Resolver {
 
       bin: manifest.bin,
     };
+
+    if (shouldReCheckNodeGyp) {
+      const normalizedPkg = opts.project.configuration.normalizePackage(pkg);
+      if (isNodeGypMissing(normalizedPkg)) {
+        pkg.dependencies.set(NODE_GYP_IDENT.identHash, structUtils.makeDescriptor(NODE_GYP_IDENT, `latest`));
+        opts.report.reportWarning(MessageName.NODE_GYP_INJECTED, `${structUtils.prettyLocator(opts.project.configuration, locator)}: Implicit dependencies on node-gyp are discouraged`);
+      }
+    }
+
+    return pkg;
   }
 }
