@@ -121,9 +121,13 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
         : Buffer.concat(stderrChunks).toString(encoding);
 
       if (code === 0 || !strict) {
-        resolve({code, stdout, stderr});
+        resolve({
+          code, stdout, stderr,
+        });
       } else {
-        reject(new Error(`Child "${fileName}" exited with exit code ${code}\n\n${stderr}`));
+        reject(Object.assign(new Error(`Child "${fileName}" exited with exit code ${code}\n\n${stderr}`), {
+          code, stdout, stderr,
+        }));
       }
     });
   });

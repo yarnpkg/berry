@@ -5457,27 +5457,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^2.23.0":
-  version: 2.23.0
-  resolution: "@typescript-eslint/eslint-plugin@npm:2.23.0"
-  dependencies:
-    "@typescript-eslint/experimental-utils": 2.23.0
-    eslint-utils: ^1.4.3
-    functional-red-black-tree: ^1.0.1
-    regexpp: ^3.0.0
-    tsutils: ^3.17.1
-  peerDependencies:
-    "@typescript-eslint/parser": ^2.0.0
-    eslint: ^5.0.0 || ^6.0.0
-    typescript: "*"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 2/f8970f4fb5f1d1138bbee1bcf224612f214b2502ab3242dfabae475e2ce312b022b37ec0a16d3628aa53e0d780c0c4caa84fb79630fd9c964071b81b37c03401
-  languageName: node
-  linkType: hard
-
-"@typescript-eslint/eslint-plugin@npm:^2.24.0":
+"@typescript-eslint/eslint-plugin@npm:^2.24.0, @typescript-eslint/eslint-plugin@npm:^2.29.0":
   version: 2.29.0
   resolution: "@typescript-eslint/eslint-plugin@npm:2.29.0"
   dependencies:
@@ -6279,7 +6259,7 @@ __metadata:
     "@types/emscripten": ^1.38.0
     "@types/jest": ^24.0.25
     "@types/node": ^13.7.0
-    "@typescript-eslint/eslint-plugin": ^2.23.0
+    "@typescript-eslint/eslint-plugin": ^2.29.0
     "@typescript-eslint/parser": ^2.23.0
     "@yarnpkg/cli": "workspace:^2.0.0-rc.32"
     "@yarnpkg/core": "workspace:^2.0.0-rc.26"

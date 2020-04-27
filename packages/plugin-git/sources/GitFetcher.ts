@@ -49,10 +49,13 @@ export class GitFetcher implements Fetcher {
   async cloneFromRemote(locator: Locator, opts: FetchOptions) {
     const cloneTarget = await gitUtils.clone(locator.reference, opts.project.configuration);
 
+    const repoUrlParts = gitUtils.splitRepoUrl(locator.reference);
     const packagePath = ppath.join(cloneTarget, `package.tgz` as PortablePath);
+
     await scriptUtils.prepareExternalProject(cloneTarget, packagePath, {
       configuration: opts.project.configuration,
       report: opts.report,
+      workspace: repoUrlParts.extra.workspace,
     });
 
     const sourceBuffer = await xfs.readFilePromise(packagePath);
