@@ -110,7 +110,8 @@ describe(`Protocols`, () => {
             version: `1.0.0`,
           });
         },
-      )
+      ),
+      45000
     );
 
     test(
@@ -126,7 +127,8 @@ describe(`Protocols`, () => {
 
           await expect(source(`require('yarn-1-project')`)).resolves.toMatch(/\byarn\/1\.[0-9]+/);
         },
-      )
+      ),
+      45000
     );
 
     test(
@@ -142,7 +144,8 @@ describe(`Protocols`, () => {
 
           await expect(source(`require('npm-project')`)).resolves.toMatch(/\bnpm\/[0-9]+/);
         },
-      )
+      ),
+      45000
     );
   });
 });
