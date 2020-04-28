@@ -145,16 +145,19 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             : [];
 
           // Makes sure that we'll be using Yarn 1.x
-          const version = await execUtils.pipevp(`yarn`, [`set`, `version`, `classic`, `--only-if-needed`], {cwd, env, stdin, stdout, stderr});
+          const version = await execUtils.pipevp(`yarn`, [`set`, `version`, `classic`, `--only-if-needed`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
           if (version.code !== 0)
             return version.code;
+
+          // Otherwise Yarn 1 will pack the .yarn directory :(
+          await xfs.appendFilePromise(ppath.join(cwd, `.npmignore` as PortablePath), `/.yarn\n`);
 
           stdout.write(`\n`);
 
           // Run an install; we can't avoid it unless we inspect the
           // package.json, which I don't want to do to keep the codebase
           // clean (even if it has a slight perf cost when cloning v1 repos)
-          const install = await execUtils.pipevp(`yarn`, [`install`], {cwd, env, stdin, stdout, stderr});
+          const install = await execUtils.pipevp(`yarn`, [`install`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
           if (install.code !== 0)
             return install.code;
 

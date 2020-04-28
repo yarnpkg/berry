@@ -2,9 +2,16 @@ import {PortablePath, npath} from '@yarnpkg/fslib';
 import crossSpawn            from 'cross-spawn';
 import {Readable, Writable}  from 'stream';
 
+export enum EndStrategy {
+  Never,
+  ErrorCode,
+  Always,
+}
+
 export type PipevpOptions = {
   cwd: PortablePath,
   env?: {[key: string]: string | undefined},
+  end?: EndStrategy,
   strict?: boolean,
   stdin: Readable | null,
   stdout: Writable,
@@ -26,7 +33,7 @@ function sigintHandler() {
   // innermost process, whose end will cause our own to exit.
 }
 
-export async function pipevp(fileName: string, args: Array<string>, {cwd, env = process.env, strict = false, stdin = null, stdout, stderr}: PipevpOptions): Promise<{code: number}> {
+export async function pipevp(fileName: string, args: Array<string>, {cwd, env = process.env, strict = false, stdin = null, stdout, stderr, end = EndStrategy.Always}: PipevpOptions): Promise<{code: number}> {
   const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
 
   if (stdin === null)
@@ -52,14 +59,19 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
     stdin.pipe(child.stdin!);
 
   if (!hasFd(stdout))
-    child.stdout!.pipe(stdout);
+    child.stdout!.pipe(stdout, {end: false});
   if (!hasFd(stderr))
-    child.stderr!.pipe(stderr);
+    child.stderr!.pipe(stderr, {end: false});
 
   return new Promise((resolve, reject) => {
     child.on(`error`, error => {
       if (--sigintRefCount === 0)
         process.off(`SIGINT`, sigintHandler);
+
+      if (end === EndStrategy.Always || end === EndStrategy.ErrorCode) {
+        stdout.end();
+        stderr.end();
+      }
 
       reject(error);
     });
@@ -67,6 +79,11 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
     child.on(`close`, (code: number, sig: string) => {
       if (--sigintRefCount === 0)
         process.off(`SIGINT`, sigintHandler);
+
+      if (end === EndStrategy.Always || (end === EndStrategy.ErrorCode && code > 0)) {
+        stdout.end();
+        stderr.end();
+      }
 
       if (code === 0 || !strict) {
         resolve({code});

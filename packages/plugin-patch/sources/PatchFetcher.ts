@@ -1,5 +1,5 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
-import {Locator, MessageName}                       from '@yarnpkg/core';
+import {Locator}                                    from '@yarnpkg/core';
 import {miscUtils, structUtils}                     from '@yarnpkg/core';
 import {ppath, xfs, ZipFS, Filename, CwdFS}         from '@yarnpkg/fslib';
 import {getLibzipPromise}                           from '@yarnpkg/libzip';

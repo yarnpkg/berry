@@ -1,5 +1,5 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions, FetchResult} from '@yarnpkg/core';
-import {Locator, MessageName}                                    from '@yarnpkg/core';
+import {Locator}                                                 from '@yarnpkg/core';
 import {miscUtils, scriptUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
 import {PortablePath, ppath, xfs}                                from '@yarnpkg/fslib';
 

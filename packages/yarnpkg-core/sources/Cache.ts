@@ -5,7 +5,7 @@ import fs                                                      from 'fs';
 
 import {Configuration}                                         from './Configuration';
 import {MessageName}                                           from './MessageName';
-import {ReportError, Report}                                   from './Report';
+import {ReportError}                                           from './Report';
 import * as hashUtils                                          from './hashUtils';
 import * as miscUtils                                          from './miscUtils';
 import * as structUtils                                        from './structUtils';
@@ -13,7 +13,7 @@ import {LocatorHash, Locator}                                  from './types';
 
 // Each time we'll bump this number the cache hashes will change, which will
 // cause all files to be fetched again. Use with caution.
-const CACHE_VERSION = 2;
+const CACHE_VERSION = 3;
 
 export type FetchFromCacheOptions = {
   checksums: Map<LocatorHash, Locator>,
@@ -112,12 +112,16 @@ export class Cache {
       }
 
       if (expectedChecksum !== null && actualChecksum !== expectedChecksum) {
+        let checksumBehavior;
+
         // Using --check-cache overrides any preconfigured checksum behavior
-        const checksumBehavior = !this.check
-          ? expectedChecksum.match(/^[0-9]+\//) === null
-            ? `update`
-            : this.configuration.get(`checksumBehavior`)
-          : `throw`;
+        if (this.check)
+          checksumBehavior = `throw`;
+        // If the lockfile references an old cache format, we tolerate different checksums
+        else if (expectedChecksum.match(/^[0-9]+\//) === null || expectedChecksum.replace(/\/.*/, ``) !== actualChecksum.replace(/\/.*/, ``))
+          checksumBehavior = `update`;
+        else
+          checksumBehavior = this.configuration.get(`checksumBehavior`);
 
         switch (checksumBehavior) {
           case `ignore`:
