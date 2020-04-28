@@ -269,6 +269,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: true,
   },
+  preferAggregateCacheInfo: {
+    description: `If true, the CLI will only print a one-line report of any cache changes`,
+    type: SettingsType.BOOLEAN,
+    default: isCI,
+  },
   preferInteractive: {
     description: `If true, the CLI will automatically use the interactive mode when called from a TTY`,
     type: SettingsType.BOOLEAN,

@@ -5,7 +5,7 @@ import fs                                                      from 'fs';
 
 import {Configuration}                                         from './Configuration';
 import {MessageName}                                           from './MessageName';
-import {ReportError}                                           from './Report';
+import {ReportError, Report}                                   from './Report';
 import * as hashUtils                                          from './hashUtils';
 import * as miscUtils                                          from './miscUtils';
 import * as structUtils                                        from './structUtils';
@@ -93,7 +93,7 @@ export class Cache {
     }
   }
 
-  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, loader?: () => Promise<ZipFS>): Promise<[FakeFS<PortablePath>, () => void, string]> {
+  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, {onHit, onMiss, loader}: {onHit?: () => void, onMiss?: () => void, loader?: () => Promise<ZipFS>}): Promise<[FakeFS<PortablePath>, () => void, string]> {
     const cachePath = this.getLocatorPath(locator);
     const mirrorPath = this.getLocatorMirrorPath(locator);
 
@@ -207,7 +207,18 @@ export class Cache {
     for (let mutex; mutex = this.mutexes.get(locator.locatorHash);)
       await mutex;
 
-    const checksum = !baseFs.existsSync(cachePath)
+    const cacheExists = baseFs.existsSync(cachePath);
+
+    const action = cacheExists
+      ? onHit
+      : onMiss;
+
+    // Note: must be synchronous, otherwise the mutex may break (a concurrent
+    // execution may start while we're running the action)
+    if (action)
+      action();
+
+    const checksum = !cacheExists
       ? await loadPackageThroughMutex()
       : this.check
         ? await validateFileAgainstRemote(cachePath)
