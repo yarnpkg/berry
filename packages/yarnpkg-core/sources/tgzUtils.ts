@@ -64,7 +64,11 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
       return;
     }
 
-    const parts = ppath.normalize(npath.toPortablePath(entry.path)).split(/\//g);
+    const parts = ppath.normalize(npath.toPortablePath(entry.path)).replace(/\/$/, ``).split(/\//g);
+    if (parts.length <= stripComponents) {
+      entry.resume();
+      return;
+    }
 
     const slicePath = parts.slice(stripComponents).join(`/`) as PortablePath;
     const mappedPath = ppath.join(prefixPath, slicePath);

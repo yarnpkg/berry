@@ -128,10 +128,10 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
     let effectivePackageManager: PackageManager;
 
     if (packageManager !== null) {
-      stdout.write(`Installing the project using ${packageManager}\n`);
+      stdout.write(`Installing the project using ${packageManager}\n\n`);
       effectivePackageManager = packageManager;
     } else {
-      stdout.write(`No package manager detected; defaulting to Yarn\n`);
+      stdout.write(`No package manager detected; defaulting to Yarn\n\n`);
       effectivePackageManager = PackageManager.Yarn2;
     }
 

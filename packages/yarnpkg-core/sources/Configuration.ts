@@ -33,6 +33,8 @@ const chalkOptions = process.env.GITHUB_ACTIONS
     : {level: 0};
 
 const supportsColor = chalkOptions.level !== 0;
+const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS;
+
 const chalkInstance = new chalk.Instance(chalkOptions);
 
 const IGNORED_ENV_VARIABLES = new Set([
@@ -249,7 +251,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableHyperlinks: {
     description: `If true, the CLI is allowed to use hyperlinks in its output`,
     type: SettingsType.BOOLEAN,
-    default: supportsColor,
+    default: supportsHyperlinks,
     defaultText: `<dynamic>`,
   },
   enableInlineBuilds: {
