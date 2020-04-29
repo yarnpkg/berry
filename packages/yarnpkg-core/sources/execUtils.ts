@@ -63,15 +63,21 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
   if (!hasFd(stderr))
     child.stderr!.pipe(stderr, {end: false});
 
+  const closeStreams = () => {
+    for (const stream of new Set([stdout, stderr])) {
+      if (!hasFd(stream)) {
+        stream.end();
+      }
+    }
+  };
+
   return new Promise((resolve, reject) => {
     child.on(`error`, error => {
       if (--sigintRefCount === 0)
         process.off(`SIGINT`, sigintHandler);
 
-      if (end === EndStrategy.Always || end === EndStrategy.ErrorCode) {
-        stdout.end();
-        stderr.end();
-      }
+      if (end === EndStrategy.Always || end === EndStrategy.ErrorCode)
+        closeStreams();
 
       reject(error);
     });
@@ -80,10 +86,8 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
       if (--sigintRefCount === 0)
         process.off(`SIGINT`, sigintHandler);
 
-      if (end === EndStrategy.Always || (end === EndStrategy.ErrorCode && code > 0)) {
-        stdout.end();
-        stderr.end();
-      }
+      if (end === EndStrategy.Always || (end === EndStrategy.ErrorCode && code > 0))
+        closeStreams();
 
       if (code === 0 || !strict) {
         resolve({code});
