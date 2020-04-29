@@ -201,11 +201,29 @@ const generateTypescriptWrapper = async (pnpApi: PnpApi, target: PortablePath) =
   });
 };
 
+export const generateStylelintWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`stylelint` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeManifest();
+
+  await wrapper.writeBinary(`bin/stylelint.js` as PortablePath);
+  await wrapper.writeFile(`lib/index.js` as PortablePath);
+
+  await addVSCodeWorkspaceSettings(pnpApi, {
+    [`stylelint.stylelintPath`]: npath.fromPortablePath(
+      wrapper.getProjectPathTo(
+        `lib/index.js` as PortablePath,
+      ),
+    ),
+  });
+};
+
 const SDKS: Array<[string, (pnpApi: PnpApi, target: PortablePath) => Promise<void>]> = [
   [`eslint`, generateEslintWrapper],
   [`prettier`, generatePrettierWrapper],
   [`typescript-language-server`, generateTypescriptLanguageServerWrapper],
   [`typescript`, generateTypescriptWrapper],
+  [`stylelint`, generateStylelintWrapper],
 ];
 
 export const generateSdk = async (pnpApi: PnpApi): Promise<any> => {
