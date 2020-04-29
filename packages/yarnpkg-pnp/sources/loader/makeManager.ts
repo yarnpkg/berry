@@ -77,6 +77,10 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
       if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile())
         return candidate;
 
+      const cjsCandidate = ppath.join(curr, `.pnp.cjs` as Filename);
+      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile())
+        return cjsCandidate;
+
       next = ppath.dirname(curr);
     } while (curr !== PortablePath.root);
 
