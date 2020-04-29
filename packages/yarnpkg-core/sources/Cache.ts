@@ -13,7 +13,7 @@ import {LocatorHash, Locator}                                  from './types';
 
 // Each time we'll bump this number the cache hashes will change, which will
 // cause all files to be fetched again. Use with caution.
-const CACHE_VERSION = 2;
+const CACHE_VERSION = 3;
 
 export type FetchFromCacheOptions = {
   checksums: Map<LocatorHash, Locator>,
@@ -93,7 +93,7 @@ export class Cache {
     }
   }
 
-  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, loader?: () => Promise<ZipFS>): Promise<[FakeFS<PortablePath>, () => void, string]> {
+  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, {onHit, onMiss, loader}: {onHit?: () => void, onMiss?: () => void, loader?: () => Promise<ZipFS>}): Promise<[FakeFS<PortablePath>, () => void, string]> {
     const cachePath = this.getLocatorPath(locator);
     const mirrorPath = this.getLocatorMirrorPath(locator);
 
@@ -112,12 +112,16 @@ export class Cache {
       }
 
       if (expectedChecksum !== null && actualChecksum !== expectedChecksum) {
+        let checksumBehavior;
+
         // Using --check-cache overrides any preconfigured checksum behavior
-        const checksumBehavior = !this.check
-          ? expectedChecksum.match(/^[0-9]+\//) === null
-            ? `update`
-            : this.configuration.get(`checksumBehavior`)
-          : `throw`;
+        if (this.check)
+          checksumBehavior = `throw`;
+        // If the lockfile references an old cache format, we tolerate different checksums
+        else if (expectedChecksum.match(/^[0-9]+\//) === null || expectedChecksum.replace(/\/.*/, ``) !== actualChecksum.replace(/\/.*/, ``))
+          checksumBehavior = `update`;
+        else
+          checksumBehavior = this.configuration.get(`checksumBehavior`);
 
         switch (checksumBehavior) {
           case `ignore`:
@@ -207,7 +211,18 @@ export class Cache {
     for (let mutex; mutex = this.mutexes.get(locator.locatorHash);)
       await mutex;
 
-    const checksum = !baseFs.existsSync(cachePath)
+    const cacheExists = baseFs.existsSync(cachePath);
+
+    const action = cacheExists
+      ? onHit
+      : onMiss;
+
+    // Note: must be synchronous, otherwise the mutex may break (a concurrent
+    // execution may start while we're running the action)
+    if (action)
+      action();
+
+    const checksum = !cacheExists
       ? await loadPackageThroughMutex()
       : this.check
         ? await validateFileAgainstRemote(cachePath)

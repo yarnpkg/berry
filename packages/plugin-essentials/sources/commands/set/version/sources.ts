@@ -1,11 +1,10 @@
-import {BaseCommand}                                                  from '@yarnpkg/cli';
-import {WorkspaceRequiredError}                                       from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, StreamReport, execUtils} from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs}                    from '@yarnpkg/fslib';
-import {Command, Usage}                                               from 'clipanion';
-import {tmpdir}                                                       from 'os';
+import {BaseCommand}                                         from '@yarnpkg/cli';
+import {Configuration, MessageName, StreamReport, execUtils} from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, xfs}           from '@yarnpkg/fslib';
+import {Command, Usage}                                      from 'clipanion';
+import {tmpdir}                                              from 'os';
 
-import {setVersion}                                                   from '../version';
+import {setVersion}                                          from '../version';
 
 const PR_REGEXP = /^[0-9]+$/;
 
@@ -68,10 +67,6 @@ export default class SetVersionCommand extends BaseCommand {
   @Command.Path(`set`, `version`, `from`, `sources`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
-
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const target = typeof this.installPath !== `undefined`
       ? ppath.resolve(this.context.cwd, npath.toPortablePath(this.installPath))
@@ -147,7 +142,7 @@ export default class SetVersionCommand extends BaseCommand {
       const bundlePath = ppath.resolve(target, `packages/yarnpkg-cli/bundles/yarn.js` as PortablePath);
       const bundleBuffer = await xfs.readFilePromise(bundlePath);
 
-      await setVersion(project, `sources`, bundleBuffer, {
+      await setVersion(configuration, `sources`, bundleBuffer, {
         report,
       });
     });

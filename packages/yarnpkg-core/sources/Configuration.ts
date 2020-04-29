@@ -33,6 +33,8 @@ const chalkOptions = process.env.GITHUB_ACTIONS
     : {level: 0};
 
 const supportsColor = chalkOptions.level !== 0;
+const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS;
+
 const chalkInstance = new chalk.Instance(chalkOptions);
 
 const IGNORED_ENV_VARIABLES = new Set([
@@ -249,7 +251,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableHyperlinks: {
     description: `If true, the CLI is allowed to use hyperlinks in its output`,
     type: SettingsType.BOOLEAN,
-    default: supportsColor,
+    default: supportsHyperlinks,
     defaultText: `<dynamic>`,
   },
   enableInlineBuilds: {
@@ -268,6 +270,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `If true, the CLI is allowed to print the time spent executing commands`,
     type: SettingsType.BOOLEAN,
     default: true,
+  },
+  preferAggregateCacheInfo: {
+    description: `If true, the CLI will only print a one-line report of any cache changes`,
+    type: SettingsType.BOOLEAN,
+    default: isCI,
   },
   preferInteractive: {
     description: `If true, the CLI will automatically use the interactive mode when called from a TTY`,

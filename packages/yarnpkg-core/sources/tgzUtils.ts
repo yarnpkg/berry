@@ -1,6 +1,6 @@
-import {Filename, FakeFS, PortablePath, ZipCompression, ZipFS, NodeFS, ppath, xfs} from '@yarnpkg/fslib';
-import {getLibzipPromise}                                                          from '@yarnpkg/libzip';
-import {Parse}                                                                     from 'tar';
+import {Filename, FakeFS, PortablePath, ZipCompression, ZipFS, NodeFS, ppath, xfs, npath} from '@yarnpkg/fslib';
+import {getLibzipPromise}                                                                 from '@yarnpkg/libzip';
+import {Parse}                                                                            from 'tar';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>,
@@ -64,8 +64,14 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
       return;
     }
 
-    const parts = entry.path.split(/\//g);
-    const mappedPath = ppath.join(prefixPath, parts.slice(stripComponents).join(`/`));
+    const parts = ppath.normalize(npath.toPortablePath(entry.path)).replace(/\/$/, ``).split(/\//g);
+    if (parts.length <= stripComponents) {
+      entry.resume();
+      return;
+    }
+
+    const slicePath = parts.slice(stripComponents).join(`/`) as PortablePath;
+    const mappedPath = ppath.join(prefixPath, slicePath);
 
     const chunks: Array<Buffer> = [];
 

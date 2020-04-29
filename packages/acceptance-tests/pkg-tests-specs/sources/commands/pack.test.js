@@ -441,7 +441,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `could output the archive in a absolute destination`,
+      `it should support writing the archive in a absolute destination`,
       makeTemporaryEnv({
         name: 'test',
         version: '0.0.1',

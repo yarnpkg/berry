@@ -20,7 +20,7 @@
     "@types/emscripten": "^1.38.0",
     "@types/jest": "^24.0.25",
     "@types/node": "^13.7.0",
-    "@typescript-eslint/eslint-plugin": "^2.23.0",
+    "@typescript-eslint/eslint-plugin": "^2.29.0",
     "@typescript-eslint/parser": "^2.23.0",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.32",
     "@yarnpkg/core": "workspace:^2.0.0-rc.26",

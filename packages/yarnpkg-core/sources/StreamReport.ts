@@ -135,8 +135,12 @@ export class StreamReport extends Report {
     this.cacheHitCount += 1;
   }
 
-  reportCacheMiss(locator: Locator) {
+  reportCacheMiss(locator: Locator, message?: string) {
     this.cacheMissCount += 1;
+
+    if (typeof message !== `undefined` && !this.configuration.get(`preferAggregateCacheInfo`)) {
+      this.reportInfo(MessageName.FETCH_NOT_CACHED, message);
+    }
   }
 
   startTimerSync<T>(what: string, cb: () => T) {
@@ -154,7 +158,7 @@ export class StreamReport extends Report {
       const after = Date.now();
       this.indent -= 1;
 
-      if (this.configuration.get(`enableTimers`)) {
+      if (this.configuration.get(`enableTimers`) && after - before > 200) {
         this.reportInfo(null, `└ Completed in ${this.formatTiming(after - before)}`);
       } else {
         this.reportInfo(null, `└ Completed`);
@@ -183,10 +187,27 @@ export class StreamReport extends Report {
       if (GROUP !== null)
         this.stdout.write(GROUP.end(what));
 
-      if (this.configuration.get(`enableTimers`)) {
+      if (this.configuration.get(`enableTimers`) && after - before > 200) {
         this.reportInfo(null, `└ Completed in ${this.formatTiming(after - before)}`);
       } else {
         this.reportInfo(null, `└ Completed`);
+      }
+    }
+  }
+
+  async startCacheReport<T>(cb: () => Promise<T>) {
+    const cacheInfo = this.configuration.get(`preferAggregateCacheInfo`)
+      ? {cacheHitCount: this.cacheHitCount, cacheMissCount: this.cacheMissCount}
+      : null;
+
+    try {
+      return await cb();
+    } catch (error) {
+      this.reportExceptionOnce(error);
+      throw error;
+    } finally {
+      if (cacheInfo !== null) {
+        this.reportCacheChanges(cacheInfo);
       }
     }
   }
@@ -303,30 +324,9 @@ export class StreamReport extends Report {
     else
       installStatus = `Done`;
 
-    let fetchStatus = ``;
-
-    if (this.cacheHitCount > 1)
-      fetchStatus += ` - ${this.cacheHitCount} packages were already cached`;
-    else if (this.cacheHitCount === 1)
-      fetchStatus += ` - one package was already cached`;
-
-    if (this.cacheHitCount > 0) {
-      if (this.cacheMissCount > 1) {
-        fetchStatus += `, ${this.cacheMissCount} had to be fetched`;
-      } else if (this.cacheMissCount === 1) {
-        fetchStatus += `, one had to be fetched`;
-      }
-    } else {
-      if (this.cacheMissCount > 1) {
-        fetchStatus += ` - ${this.cacheMissCount} packages had to be fetched`;
-      } else if (this.cacheMissCount === 1) {
-        fetchStatus += ` - one package had to be fetched`;
-      }
-    }
-
     const timing = this.formatTiming(Date.now() - this.startTime);
     const message = this.configuration.get(`enableTimers`)
-      ? `${installStatus} in ${timing}${fetchStatus}`
+      ? `${installStatus} in ${timing}`
       : installStatus;
 
     if (this.errorCount > 0) {
@@ -356,6 +356,39 @@ export class StreamReport extends Report {
       this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${line}\n`);
 
     this.writeProgress();
+  }
+
+  private reportCacheChanges({cacheHitCount, cacheMissCount}: {cacheHitCount: number, cacheMissCount: number}) {
+    const cacheHitDelta = this.cacheHitCount - cacheHitCount;
+    const cacheMissDelta = this.cacheMissCount - cacheMissCount;
+
+    if (cacheHitDelta === 0 && cacheMissDelta === 0)
+      return;
+
+    let fetchStatus = ``;
+
+    if (this.cacheHitCount > 1)
+      fetchStatus += `${this.cacheHitCount} packages were already cached`;
+    else if (this.cacheHitCount === 1)
+      fetchStatus += ` - one package was already cached`;
+    else
+      fetchStatus += `No packages were cached`;
+
+    if (this.cacheHitCount > 0) {
+      if (this.cacheMissCount > 1) {
+        fetchStatus += `, ${this.cacheMissCount} had to be fetched`;
+      } else if (this.cacheMissCount === 1) {
+        fetchStatus += `, one had to be fetched`;
+      }
+    } else {
+      if (this.cacheMissCount > 1) {
+        fetchStatus += ` - ${this.cacheMissCount} packages had to be fetched`;
+      } else if (this.cacheMissCount === 1) {
+        fetchStatus += ` - one package had to be fetched`;
+      }
+    }
+
+    return this.reportInfo(MessageName.FETCH_NOT_CACHED, fetchStatus);
   }
 
   private clearProgress({delta = 0, clear = false}: {delta?: number, clear?: boolean}) {

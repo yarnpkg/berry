@@ -948,35 +948,37 @@ export class Project {
 
     const limit = pLimit(FETCHER_CONCURRENCY);
 
-    await Promise.all(locatorHashes.map(locatorHash => limit(async () => {
-      const pkg = this.storedPackages.get(locatorHash);
-      if (!pkg)
-        throw new Error(`Assertion failed: The locator should have been registered`);
+    await report.startCacheReport(async () => {
+      await Promise.all(locatorHashes.map(locatorHash => limit(async () => {
+        const pkg = this.storedPackages.get(locatorHash);
+        if (!pkg)
+          throw new Error(`Assertion failed: The locator should have been registered`);
 
-      if (structUtils.isVirtualLocator(pkg))
-        return;
+        if (structUtils.isVirtualLocator(pkg))
+          return;
 
-      let fetchResult;
-      try {
-        fetchResult = await fetcher.fetch(pkg, fetcherOptions);
-      } catch (error) {
-        error.message = `${structUtils.prettyLocator(this.configuration, pkg)}: ${error.message}`;
-        report.reportExceptionOnce(error);
-        firstError = error;
-        return;
-      }
+        let fetchResult;
+        try {
+          fetchResult = await fetcher.fetch(pkg, fetcherOptions);
+        } catch (error) {
+          error.message = `${structUtils.prettyLocator(this.configuration, pkg)}: ${error.message}`;
+          report.reportExceptionOnce(error);
+          firstError = error;
+          return;
+        }
 
-      if (fetchResult.checksum)
-        this.storedChecksums.set(pkg.locatorHash, fetchResult.checksum);
-      else
-        this.storedChecksums.delete(pkg.locatorHash);
+        if (fetchResult.checksum)
+          this.storedChecksums.set(pkg.locatorHash, fetchResult.checksum);
+        else
+          this.storedChecksums.delete(pkg.locatorHash);
 
-      if (fetchResult.releaseFs) {
-        fetchResult.releaseFs();
-      }
-    }).finally(() => {
-      progress.tick();
-    })));
+        if (fetchResult.releaseFs) {
+          fetchResult.releaseFs();
+        }
+      }).finally(() => {
+        progress.tick();
+      })));
+    });
 
     if (firstError) {
       throw firstError;
