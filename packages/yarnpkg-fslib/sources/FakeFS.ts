@@ -451,8 +451,12 @@ export abstract class FakeFS<P extends Path> {
     try {
       return await callback();
     } finally {
-      await this.closePromise(fd);
-      await this.unlinkPromise(lockPath);
+      try {
+        await this.unlinkPromise(lockPath);
+        await this.closePromise(fd);
+      } catch (error) {
+        // noop
+      }
     }
   }
 
