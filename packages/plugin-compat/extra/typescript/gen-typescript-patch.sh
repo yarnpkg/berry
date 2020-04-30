@@ -9,8 +9,8 @@ JSPATCH="$THIS_DIR"/../../sources/patches/typescript.patch.ts
 HASHES=(
   # Patch   # Base    # Ranges
   "426f5a7" "e39bdc3" ">=3.0 <3.6"
-  "16e6ce0" "e39bdc3" ">=3.6 <3.9"
-  "16e6ce0" "d68295e" ">=3.9"
+  "c670e7f" "e39bdc3" ">=3.6 <3.9"
+  "c670e7f" "d68295e" ">=3.9"
 )
 
 mkdir -p "$TEMP_DIR"
