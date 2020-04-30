@@ -1,6 +1,0 @@
-releases:
-  "@yarnpkg/fslib": prerelease
-  "@yarnpkg/plugin-compat": prerelease
-
-declined:
-  - "@yarnpkg/cli"

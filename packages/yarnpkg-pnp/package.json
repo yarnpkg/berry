@@ -4,7 +4,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/node": "^13.7.0",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.19"
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
   },
   "devDependencies": {
     "@yarnpkg/builder": "workspace:^2.0.0-rc.21",

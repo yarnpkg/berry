@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-compat",
-  "version": "2.0.0-rc.11",
+  "version": "2.0.0-rc.12",
   "main": "./sources/index.ts",
   "peerDependencies": {
     "@yarnpkg/core": "^2.0.0-rc.27",

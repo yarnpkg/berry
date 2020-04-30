@@ -7,7 +7,7 @@
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/core": "workspace:^2.0.0-rc.27",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.19",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
     "chalk": "^3.0.0",
     "comment-json": "^2.2.0",
     "cross-spawn": "6.0.5"

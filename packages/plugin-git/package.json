@@ -4,7 +4,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/semver": "^7.1.0",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.19",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
     "git-url-parse": "11.1.2",
     "semver": "^7.1.2"
   },

@@ -4,7 +4,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/semver": "^7.1.0",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.19",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
     "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.15",
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.20",
     "clipanion": "^2.1.5",

@@ -2,7 +2,7 @@
   "name": "@yarnpkg/plugin-node-modules",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.19",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
     "@yarnpkg/libzip": "workspace:^2.0.0-rc.11",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.11",
     "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.21",

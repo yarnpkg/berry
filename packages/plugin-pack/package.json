@@ -3,7 +3,7 @@
   "version": "2.0.0-rc.19",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.19",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
     "clipanion": "^2.1.5",
     "micromatch": "^4.0.2",
     "tar-stream": "^2.0.1"
