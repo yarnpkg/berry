@@ -62,7 +62,7 @@ jobs:
         node:
         - 10
         - 12
-        - 13
+        - 14
         platform:
         - ubuntu-latest
         - windows-latest
