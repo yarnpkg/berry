@@ -5979,7 +5979,7 @@ __metadata:
     "@types/webpack": ^4.32.1
     "@types/webpack-merge": ^4.1.5
     "@types/webpack-sources": ^0.1.5
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.29"
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.32"
     "@yarnpkg/core": "workspace:^2.0.0-rc.26"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.18"
     "@yarnpkg/monorepo": "workspace:0.0.0"
@@ -6004,7 +6004,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/cli@workspace:^2.0.0-rc.29, @yarnpkg/cli@workspace:^2.0.0-rc.32, @yarnpkg/cli@workspace:packages/yarnpkg-cli":
+"@yarnpkg/cli@workspace:^2.0.0-rc.32, @yarnpkg/cli@workspace:packages/yarnpkg-cli":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
