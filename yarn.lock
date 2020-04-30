@@ -5979,6 +5979,7 @@ __metadata:
     "@types/webpack": ^4.32.1
     "@types/webpack-merge": ^4.1.5
     "@types/webpack-sources": ^0.1.5
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.32"
     "@yarnpkg/core": "workspace:^2.0.0-rc.26"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.18"
     "@yarnpkg/monorepo": "workspace:0.0.0"
@@ -6014,7 +6015,6 @@ __metadata:
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.11"
     "@yarnpkg/plugin-compat": "workspace:^2.0.0-rc.10"
-    "@yarnpkg/plugin-constraints": "workspace:^2.0.0-rc.13"
     "@yarnpkg/plugin-dlx": "workspace:^2.0.0-rc.14"
     "@yarnpkg/plugin-essentials": "workspace:^2.0.0-rc.26"
     "@yarnpkg/plugin-file": "workspace:^2.0.0-rc.13"
@@ -6029,7 +6029,6 @@ __metadata:
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.19"
     "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.7"
     "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.20"
-    "@yarnpkg/plugin-version": "workspace:^2.0.0-rc.22"
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.21"
     "@yarnpkg/shell": "workspace:^2.0.0-rc.11"
     chalk: ^3.0.0
@@ -6318,7 +6317,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-constraints@workspace:^2.0.0-rc.13, @yarnpkg/plugin-constraints@workspace:packages/plugin-constraints":
+"@yarnpkg/plugin-constraints@workspace:packages/plugin-constraints":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-constraints@workspace:packages/plugin-constraints"
   dependencies:
@@ -6648,7 +6647,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-version@workspace:^2.0.0-rc.22, @yarnpkg/plugin-version@workspace:packages/plugin-version":
+"@yarnpkg/plugin-version@workspace:packages/plugin-version":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-version@workspace:packages/plugin-version"
   dependencies:

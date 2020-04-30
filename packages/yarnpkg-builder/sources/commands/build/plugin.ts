@@ -6,7 +6,7 @@ import path                         from 'path';
 import {RawSource}                  from 'webpack-sources';
 import webpack                      from 'webpack';
 
-import {isDynamicLib}               from '../../data/dynamicLibs';
+import {isDynamicLib}               from '../../tools/isDynamicLib';
 import {makeConfig}                 from '../../tools/makeConfig';
 import {reindent}                   from '../../tools/reindent';
 

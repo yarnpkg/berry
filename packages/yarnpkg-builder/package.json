@@ -6,6 +6,7 @@
     "@babel/core": "^7.7.4",
     "@babel/plugin-syntax-class-properties": "^7.2.0",
     "@babel/plugin-syntax-decorators": "^7.2.0",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.32",
     "@yarnpkg/core": "workspace:^2.0.0-rc.26",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.18",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.21",
