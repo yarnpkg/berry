@@ -2,10 +2,14 @@
 
 import {Ident, MessageName, Project, ReportError, Workspace} from '@yarnpkg/core';
 import {miscUtils, structUtils}                              from '@yarnpkg/core';
-import {xfs, ppath, PortablePath, toFilename}                from '@yarnpkg/fslib';
+import {xfs, ppath, PortablePath}                            from '@yarnpkg/fslib';
+// @ts-ignore
+import plLists                                               from 'tau-prolog/modules/lists';
 import pl                                                    from 'tau-prolog';
 
 import {linkProjectToSession}                                from './tauModule';
+
+plLists(pl);
 
 export type EnforcedDependency = {
   workspace: Workspace,
@@ -97,6 +101,7 @@ class Session {
     this.session = pl.create();
     linkProjectToSession(this.session, project);
 
+    this.session.consult(`:- use_module(library(lists)).`);
     this.session.consult(source);
   }
 
