@@ -106,16 +106,163 @@ module.exports = {
     value: true
   });
 
-  const foreach_1 = __importDefault(__webpack_require__(1));
+  const focus_1 = __importDefault(__webpack_require__(1));
+
+  const foreach_1 = __importDefault(__webpack_require__(5));
 
   const plugin = {
-    commands: [foreach_1.default]
+    commands: [focus_1.default, foreach_1.default]
   }; // eslint-disable-next-line arca/no-default-export
 
   exports.default = plugin;
 
   /***/ }),
   /* 1 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+
+
+  var __decorate = this && this.__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+        r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+        d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+  };
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  const cli_1 = __webpack_require__(2);
+
+  const core_1 = __webpack_require__(3);
+
+  const core_2 = __webpack_require__(3);
+
+  const clipanion_1 = __webpack_require__(4); // eslint-disable-next-line arca/no-default-export
+
+
+  class WorkspacesFocus extends cli_1.BaseCommand {
+    constructor() {
+      super(...arguments);
+      this.workspaces = [];
+      this.json = false;
+      this.production = false;
+    }
+
+    async execute() {
+      const configuration = await core_1.Configuration.find(this.context.cwd, this.context.plugins);
+      const {
+        project,
+        workspace
+      } = await core_1.Project.find(configuration, this.context.cwd);
+      const cache = await core_1.Cache.find(configuration);
+      let requiredWorkspaces;
+
+      if (this.workspaces.length === 0) {
+        if (!workspace) throw new cli_1.WorkspaceRequiredError(project.cwd, this.context.cwd);
+        requiredWorkspaces = new Set([workspace]);
+      } else {
+        requiredWorkspaces = new Set(this.workspaces.map(name => {
+          return project.getWorkspaceByIdent(core_2.structUtils.parseIdent(name));
+        }));
+      } // First we compute the dependency chain to see what workspaces are
+      // dependencies of the one we're trying to focus on.
+      //
+      // Note: remember that new elements can be added in a set even while
+      // iterating over it (because they're added at the end)
+
+
+      for (const workspace of requiredWorkspaces) {
+        for (const dependencyType of core_1.Manifest.hardDependencies) {
+          for (const descriptor of workspace.manifest.getForScope(dependencyType).values()) {
+            const matchingWorkspace = project.tryWorkspaceByDescriptor(descriptor);
+            if (matchingWorkspace === null) continue;
+            requiredWorkspaces.add(matchingWorkspace);
+          }
+        }
+      } // Then we go over each workspace that didn't get selected, and remove all
+      // their dependencies.
+
+
+      for (const workspace of project.workspaces) {
+        if (requiredWorkspaces.has(workspace)) {
+          if (this.production) {
+            workspace.manifest.devDependencies.clear();
+          }
+        } else {
+          workspace.manifest.dependencies.clear();
+          workspace.manifest.devDependencies.clear();
+          workspace.manifest.peerDependencies.clear();
+        }
+      } // And finally we can run the install, but we have to make sure we don't
+      // persist the project state on the disk (otherwise all workspaces would
+      // lose their dependencies!).
+
+
+      const report = await core_1.StreamReport.start({
+        configuration,
+        json: this.json,
+        stdout: this.context.stdout,
+        includeLogs: true
+      }, async report => {
+        await project.install({
+          cache,
+          report,
+          persistProject: false
+        });
+      });
+      return report.exitCode();
+    }
+
+  }
+
+  WorkspacesFocus.usage = clipanion_1.Command.Usage({
+    category: `Workspace-related commands`,
+    description: `install a single workspace and its dependencies`,
+    details: `
+        This command will run an install as if the specified workspaces (and all other workspaces they depend on) were the only ones in the project. If no workspaces are explicitly listed, the active one will be assumed.
+
+        Note that this command is only very moderately useful when using zero-installs, since the cache will contain all the packages anyway - meaning that the only difference between a full install and a focused install would just be a few extra lines in the \`.pnp.js\` file, at the cost of introducing an extra complexity.
+
+        If the \`--production\` flag is set, only regular dependencies will be installed, and dev dependencies will be omitted.
+
+        If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
+      `
+  });
+
+  __decorate([clipanion_1.Command.Rest()], WorkspacesFocus.prototype, "workspaces", void 0);
+
+  __decorate([clipanion_1.Command.Boolean(`--json`)], WorkspacesFocus.prototype, "json", void 0);
+
+  __decorate([clipanion_1.Command.Boolean(`--production`)], WorkspacesFocus.prototype, "production", void 0);
+
+  __decorate([clipanion_1.Command.Path(`workspaces`, `focus`)], WorkspacesFocus.prototype, "execute", null);
+
+  exports.default = WorkspacesFocus;
+
+  /***/ }),
+  /* 2 */
+  /***/ (function(module, exports) {
+
+  module.exports = require("@yarnpkg/cli");
+
+  /***/ }),
+  /* 3 */
+  /***/ (function(module, exports) {
+
+  module.exports = require("@yarnpkg/core");
+
+  /***/ }),
+  /* 4 */
+  /***/ (function(module, exports) {
+
+  module.exports = require("clipanion");
+
+  /***/ }),
+  /* 5 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -157,11 +304,11 @@ module.exports = {
 
   const clipanion_1 = __webpack_require__(4);
 
-  const os_1 = __webpack_require__(5);
+  const os_1 = __webpack_require__(6);
 
-  const p_limit_1 = __importDefault(__webpack_require__(6));
+  const p_limit_1 = __importDefault(__webpack_require__(7));
 
-  const yup = __importStar(__webpack_require__(8));
+  const yup = __importStar(__webpack_require__(9));
   /**
    * Retrieves all the child workspaces of a given root workspace recursively
    *
@@ -450,36 +597,18 @@ module.exports = {
   }
 
   /***/ }),
-  /* 2 */
-  /***/ (function(module, exports) {
-
-  module.exports = require("@yarnpkg/cli");
-
-  /***/ }),
-  /* 3 */
-  /***/ (function(module, exports) {
-
-  module.exports = require("@yarnpkg/core");
-
-  /***/ }),
-  /* 4 */
-  /***/ (function(module, exports) {
-
-  module.exports = require("clipanion");
-
-  /***/ }),
-  /* 5 */
+  /* 6 */
   /***/ (function(module, exports) {
 
   module.exports = require("os");
 
   /***/ }),
-  /* 6 */
+  /* 7 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const pTry = __webpack_require__(7);
+  const pTry = __webpack_require__(8);
 
   const pLimit = concurrency => {
   	if (concurrency < 1) {
@@ -533,7 +662,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 7 */
+  /* 8 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -545,7 +674,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 8 */
+  /* 9 */
   /***/ (function(module, exports) {
 
   module.exports = require("yup");

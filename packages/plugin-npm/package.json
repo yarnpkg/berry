@@ -1,19 +1,19 @@
 {
   "name": "@yarnpkg/plugin-npm",
-  "version": "2.0.0-rc.18",
+  "version": "2.0.0-rc.19",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.18",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.19",
     "inquirer": "^6.2.0",
     "semver": "^7.1.2"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.26"
+    "@yarnpkg/core": "^2.0.0-rc.27"
   },
   "devDependencies": {
     "@types/inquirer": "^0.0.43",
     "@types/semver": "^7.1.0",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.26"
+    "@yarnpkg/core": "workspace:^2.0.0-rc.27"
   },
   "repository": {
     "type": "git",
