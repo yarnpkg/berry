@@ -1,4 +1,5 @@
 releases:
+  "@yarnpkg/builder": prerelease
   "@yarnpkg/cli": prerelease
   "@yarnpkg/doctor": prerelease
 
@@ -6,6 +7,7 @@ declined:
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
   - "@yarnpkg/plugin-essentials"
+  - "@yarnpkg/plugin-exec"
   - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-node-modules"
@@ -18,3 +20,4 @@ declined:
   - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
   - "@yarnpkg/core"
+  - "@yarnpkg/pnp"
