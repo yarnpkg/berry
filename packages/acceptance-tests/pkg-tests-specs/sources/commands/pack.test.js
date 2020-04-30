@@ -141,7 +141,7 @@ describe(`Commands`, () => {
 
         await run(`install`);
 
-        await fsUtils.writeFile(`${path}/lib/foo.js`);
+        await fsUtils.writeFile(`${path}/lib/foo.js`, ``);
 
         const {stdout} = await run(`pack`, `--dry-run`);
         await expect(stdout).toMatch(/lib\/foo\.js/);
