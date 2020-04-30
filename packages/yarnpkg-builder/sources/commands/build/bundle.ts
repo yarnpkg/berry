@@ -1,3 +1,4 @@
+import {getDynamicLibs} from '@yarnpkg/cli';
 import chalk            from 'chalk';
 import cp               from 'child_process';
 import {Command, Usage} from 'clipanion';
@@ -8,7 +9,6 @@ import TerserPlugin     from 'terser-webpack-plugin';
 import {promisify}      from 'util';
 import webpack          from 'webpack';
 
-import {dynamicLibs}    from '../../data/dynamicLibs';
 import {findPlugins}    from '../../tools/findPlugins';
 import {makeConfig}     from '../../tools/makeConfig';
 
@@ -49,7 +49,7 @@ export default class BuildBundleCommand extends Command {
   async execute() {
     const basedir = process.cwd();
     const plugins = findPlugins({basedir, profile: this.profile, plugins: this.plugins});
-    const modules = Array.from(dynamicLibs).concat(plugins);
+    const modules = [...getDynamicLibs().keys()].concat(plugins);
     const output = `${basedir}/bundles/yarn.js`;
 
     let version = pkgJsonVersion(basedir);
