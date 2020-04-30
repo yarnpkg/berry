@@ -1,0 +1,5 @@
+releases:
+  "@yarnpkg/plugin-constraints": prerelease
+
+declined:
+  - "@yarnpkg/cli"
