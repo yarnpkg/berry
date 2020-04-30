@@ -27806,31 +27806,31 @@ typescript@^3.8.3:
 
 "typescript@patch:typescript@*#builtin<compat/typescript>":
   version: 3.7.4
-  resolution: "typescript@patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=8cac75"
+  resolution: "typescript@patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=0ea415"
   bin:
     tsc: ./bin/tsc
     tsserver: ./bin/tsserver
-  checksum: 3/29309609607ce4f135f24c8f7ab47fcd2363aee22c64be1b64a738efd807f7ab8db50ec7f43ddf81ffaf5afb2c545ad45ab989255f2f3d19f90c5ec1295e7005
+  checksum: 3/ae7c1709b264e4746200a9217cd00de0ea64b1a95b2ddbf3e0be773e3fd1085836ce9cb3fcced1a410ada8fb7566f668eaf9595e298db66288249f386189a520
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@3.7.x#builtin<compat/typescript>":
   version: 3.7.5
-  resolution: "typescript@patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=8cac75"
+  resolution: "typescript@patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=0ea415"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 3/1a14301d6ba069e0e9f0600dd7550135e81536ba796e9d62793b1150692476a4d1e09bcc8f24c05a9434ad1e024bcf4d1c21f11c88ef851f841006f167e0952e
+  checksum: 3/8ec50d9f9b9ec13a280d98a5d1b5db8b84005cc7bea5eebac3f97943567aa0d7c3c665d64a36eb6dccd2451db9b080100c6ae4b1b6a5277fc8814fe4662993e0
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@^3.8.3#builtin<compat/typescript>":
   version: 3.8.3
-  resolution: "typescript@patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=8cac75"
+  resolution: "typescript@patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=0ea415"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 3/a32f5bfbaf77de05a6f7da10baea27c76281d969a73405336e5f53afb465539e2246fa5b83b9d4032046e6484a8f9c331d042dddb00fb74a8499d5a559d58682
+  checksum: 3/7b29bcb0576cc81266c5b4e6f84bb5a760483fa80bcd7d9588b0d3e16063c733552acf686c8541b93be2cf29ec5d8360ec927509b11e4e723f0dc91366b9cb1a
   languageName: node
   linkType: hard
 
