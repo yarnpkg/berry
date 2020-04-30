@@ -19,6 +19,7 @@ export {AllDependencies, HardDependencies, Manifest, DependencyMeta, PeerDepende
 export {MessageName}                                                                                     from './MessageName';
 export {CommandContext, Hooks, Plugin}                                                                   from './Plugin';
 export {Project}                                                                                         from './Project';
+export {TAG_REGEXP}                                                                                      from './ProtocolResolver';
 export {ReportError, Report}                                                                             from './Report';
 export {Resolver, ResolveOptions, MinimalResolveOptions}                                                 from './Resolver';
 export {StreamReport}                                                                                    from './StreamReport';
