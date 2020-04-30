@@ -19,3 +19,6 @@ export YARN_ENABLE_INLINE_BUILDS=1
 # Otherwise git commit doesn't work, and some tools require it
 git config --global user.email "you@example.com"
 git config --global user.name "John Doe"
+
+# We want all e2e tests to fail on unhandled rejections
+export NODE_OPTIONS="--unhandled-rejections=strict"
