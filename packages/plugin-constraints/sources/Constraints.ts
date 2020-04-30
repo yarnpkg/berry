@@ -2,14 +2,14 @@
 
 import {Ident, MessageName, Project, ReportError, Workspace} from '@yarnpkg/core';
 import {miscUtils, structUtils}                              from '@yarnpkg/core';
-import {xfs, ppath, PortablePath, toFilename}                from '@yarnpkg/fslib';
+import {xfs, ppath, PortablePath}                            from '@yarnpkg/fslib';
 // @ts-ignore
 import plLists                                               from 'tau-prolog/modules/lists';
 import pl                                                    from 'tau-prolog';
 
-plLists(pl);
-
 import {linkProjectToSession}                                from './tauModule';
+
+plLists(pl);
 
 export type EnforcedDependency = {
   workspace: Workspace,

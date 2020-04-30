@@ -1,5 +1,5 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
-import {Locator, MessageName}                       from '@yarnpkg/core';
+import {Locator}                                    from '@yarnpkg/core';
 import {structUtils, tgzUtils}                      from '@yarnpkg/core';
 import semver                                       from 'semver';
 
