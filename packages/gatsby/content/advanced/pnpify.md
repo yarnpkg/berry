@@ -37,3 +37,8 @@ yarn pnpify tsc
 - Due to how PnPify emulates the `node_modules` directory, some problems are to be expected, especially with tools that watch directories inside `node_modules`.
 
 - PnPify isn't designed to be a long-term solution; its purpose is purely to help projects during their transition to the stricter Plug'n'Play module resolution scheme. Relying on PnPify doesn't allow you to take full advantage of everything Plug'n'Play has to offer, in particular perfect flattening and boundary checks.
+
+## IDE
+
+When using pnp with your favorite text editor, you may want to still use your extensions like ESLint or prettier. To do so, you may need to use `yarn pnpify --sdk`. More information on this 
+in the [editor sdks](/advanced/editor-sdks) section.
