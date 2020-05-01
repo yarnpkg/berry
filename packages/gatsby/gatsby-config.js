@@ -12,16 +12,16 @@ module.exports = {
       link: `/getting-started`,
     }, {
       name: `Configuration`,
-      link: `/configuration/manifest`,
+      link: `/configuration`,
     }, {
       name: `Features`,
-      link: `/features/pnp`,
+      link: `/features`,
     }, {
       name: `CLI`,
-      link: `/cli/install`,
+      link: `/cli`,
     }, {
       name: `Advanced`,
-      link: `/advanced/architecture`,
+      link: `/advanced`,
     }, {
       name: `API`,
       link: `/api`,
