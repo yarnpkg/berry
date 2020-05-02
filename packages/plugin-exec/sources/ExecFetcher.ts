@@ -113,6 +113,7 @@ export class ExecFetcher implements Fetcher {
           buildDir: npath.fromPortablePath(buildDir),
           locator: structUtils.stringifyLocator(locator),
         };
+
         await xfs.writeFilePromise(envFile, `
           // Expose 'Module' as a global variable
           Object.defineProperty(global, 'Module', {
@@ -136,10 +137,12 @@ export class ExecFetcher implements Fetcher {
             enumerable: true,
           });
         `);
+
         const envRequire = `--require ${npath.fromPortablePath(envFile)}`;
-        let NODE_OPTIONS = env.NODE_OPTIONS || ``;
-        NODE_OPTIONS = NODE_OPTIONS ? `${NODE_OPTIONS} ${envRequire}` : envRequire;
-        env.NODE_OPTIONS = NODE_OPTIONS;
+
+        env.NODE_OPTIONS = env.NODE_OPTIONS
+          ? `${env.NODE_OPTIONS} ${envRequire}`
+          : envRequire;
 
         stdout.write(`# This file contains the result of Yarn generating a package (${structUtils.stringifyLocator(locator)})\n`);
         stdout.write(`\n`);
