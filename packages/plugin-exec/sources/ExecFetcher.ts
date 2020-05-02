@@ -88,7 +88,7 @@ export class ExecFetcher implements Fetcher {
   private async generatePackage(cwd: PortablePath, locator: Locator, generatorPath: PortablePath, opts: FetchOptions) {
     return await xfs.mktempPromise(async binFolder => {
       const env = await scriptUtils.makeScriptEnv({project: opts.project, binFolder});
-      const envFile = ppath.join(cwd, `environment.js` as Filename);
+      const runtimeFile = ppath.join(cwd, `runtime.js` as Filename);
 
       return await xfs.mktempPromise(async logDir => {
         const logFile = ppath.join(logDir, `buildfile.log` as Filename);
@@ -114,7 +114,7 @@ export class ExecFetcher implements Fetcher {
           locator: structUtils.stringifyLocator(locator),
         };
 
-        await xfs.writeFilePromise(envFile, `
+        await xfs.writeFilePromise(runtimeFile, `
           // Expose 'Module' as a global variable
           Object.defineProperty(global, 'Module', {
             get: () => require('module'),
@@ -138,11 +138,15 @@ export class ExecFetcher implements Fetcher {
           });
         `);
 
-        const envRequire = `--require ${npath.fromPortablePath(envFile)}`;
+        let nodeOptions = env.NODE_OPTIONS || ``;
 
-        env.NODE_OPTIONS = env.NODE_OPTIONS
-          ? `${env.NODE_OPTIONS} ${envRequire}`
-          : envRequire;
+        const pnpRegularExpression = /\s*--require\s+\S*\.pnp\.c?js\s*/g;
+        nodeOptions = nodeOptions.replace(pnpRegularExpression, ` `).trim();
+
+        const runtimeRequire = `--require ${npath.fromPortablePath(runtimeFile)}`;
+        nodeOptions = nodeOptions ? `${runtimeRequire} ${nodeOptions}` : runtimeRequire;
+
+        env.NODE_OPTIONS = nodeOptions;
 
         stdout.write(`# This file contains the result of Yarn generating a package (${structUtils.stringifyLocator(locator)})\n`);
         stdout.write(`\n`);
