@@ -3,6 +3,7 @@ import {Configuration, MessageName, StreamReport, execUtils} from '@yarnpkg/core
 import {Filename, PortablePath, npath, ppath, xfs}           from '@yarnpkg/fslib';
 import {Command, Usage}                                      from 'clipanion';
 import {tmpdir}                                              from 'os';
+import path                                                  from 'path';
 
 import {setVersion}                                          from '../version';
 
@@ -29,8 +30,8 @@ const UPDATE_WORKFLOW = ({branch}: {branch: string}) => [
   [`git`, `clean`, `-dfx`],
 ];
 
-const BUILD_WORKFLOW = ({plugins, noMinify}: {noMinify: boolean, plugins: Array<string>}) => [
-  [`yarn`, `build:cli`, ...new Array<string>().concat(...plugins.map(plugin => [`--plugin`, plugin])), ...noMinify ? [`--no-minify`] : [], `|`],
+const BUILD_WORKFLOW = ({plugins, noMinify}: {noMinify: boolean, plugins: Array<string>}, target: PortablePath) => [
+  [`yarn`, `build:cli`, ...new Array<string>().concat(...plugins.map(plugin => [`--plugin`, path.resolve(target, plugin)])), ...noMinify ? [`--no-minify`] : [], `|`],
 ];
 
 // eslint-disable-next-line arca/no-default-export
@@ -135,7 +136,7 @@ export default class SetVersionCommand extends BaseCommand {
       report.reportInfo(MessageName.UNNAMED, `Building a fresh bundle`);
       report.reportSeparator();
 
-      await runWorkflow(BUILD_WORKFLOW(this));
+      await runWorkflow(BUILD_WORKFLOW(this, target));
 
       report.reportSeparator();
 

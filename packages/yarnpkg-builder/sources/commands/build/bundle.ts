@@ -48,7 +48,7 @@ export default class BuildBundleCommand extends Command {
   @Command.Path(`build`, `bundle`)
   async execute() {
     const basedir = process.cwd();
-    const plugins = findPlugins({basedir, profile: this.profile, plugins: this.plugins});
+    const plugins = findPlugins({basedir, profile: this.profile, plugins: this.plugins.map(plugin => path.resolve(plugin))});
     const modules = [...getDynamicLibs().keys()].concat(plugins);
     const output = `${basedir}/bundles/yarn.js`;
 
