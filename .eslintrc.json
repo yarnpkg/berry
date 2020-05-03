@@ -32,6 +32,7 @@
     "arca/newline-after-import-section": 2,
     "arca/no-default-export": 2,
     "array-bracket-spacing": 2,
+    "arrow-parens": ["error", "as-needed"],
     "arrow-spacing": 2,
     "comma-dangle": ["error", "always-multiline"],
     "computed-property-spacing": 2,

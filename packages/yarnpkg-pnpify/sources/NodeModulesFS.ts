@@ -254,15 +254,15 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
 
   async lstatPromise(p: PortablePath) {
     return this.resolveLink(p, `lstat`,
-      (stats) => PortableNodeModulesFS.makeSymlinkStats(stats),
-      async (resolvedPath) => await this.baseFs.lstatPromise(resolvedPath)
+      stats => PortableNodeModulesFS.makeSymlinkStats(stats),
+      async resolvedPath => await this.baseFs.lstatPromise(resolvedPath)
     );
   }
 
   lstatSync(p: PortablePath) {
     return this.resolveLink(p, `lstat`,
-      (stats) => PortableNodeModulesFS.makeSymlinkStats(stats),
-      (resolvedPath) => this.baseFs.lstatSync(this.resolveDirOrFilePath(resolvedPath))
+      stats => PortableNodeModulesFS.makeSymlinkStats(stats),
+      resolvedPath => this.baseFs.lstatSync(this.resolveDirOrFilePath(resolvedPath))
     );
   }
 
@@ -436,14 +436,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   async readlinkPromise(p: PortablePath) {
     return this.resolveLink(p, `readlink`,
       (_stats, targetPath) => targetPath,
-      async (targetPath) => await this.baseFs.readlinkPromise(this.resolveDirOrFilePath(targetPath))
+      async targetPath => await this.baseFs.readlinkPromise(this.resolveDirOrFilePath(targetPath))
     );
   }
 
   readlinkSync(p: PortablePath) {
     return this.resolveLink(p, `readlink`,
       (_stats, targetPath) => targetPath,
-      (targetPath) => this.baseFs.readlinkSync(this.resolveDirOrFilePath(targetPath))
+      targetPath => this.baseFs.readlinkSync(this.resolveDirOrFilePath(targetPath))
     );
   }
 
