@@ -2,6 +2,7 @@ import {Hooks as CoreHooks, Plugin, structUtils} from '@yarnpkg/core';
 import {Hooks as PatchHooks}                     from '@yarnpkg/plugin-patch';
 
 import {packageExtensions}                       from './extensions';
+import {commands, hooks}                         from './npm-proxy';
 import {patch as fseventsPatch}                  from './patches/fsevents.patch';
 import {patch as resolvePatch}                   from './patches/resolve.patch';
 import {patch as typescriptPatch}                from './patches/typescript.patch';
@@ -43,7 +44,9 @@ const plugin: Plugin<CoreHooks & PatchHooks> = {
         params: null,
       }));
     },
+    ...hooks,
   },
+  commands: commands,
 };
 
 // eslint-disable-next-line arca/no-default-export

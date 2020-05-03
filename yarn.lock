@@ -6328,8 +6328,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-compat@workspace:packages/plugin-compat"
   dependencies:
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.33"
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
+    "@yarnpkg/plugin-essentials": "workspace:^2.0.0-rc.27"
     "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.8"
+    clipanion: ^2.1.5
   peerDependencies:
     "@yarnpkg/core": ^2.0.0-rc.27
     "@yarnpkg/plugin-patch": ^2.0.0-rc.8
