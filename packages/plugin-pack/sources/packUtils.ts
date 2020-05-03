@@ -99,7 +99,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
       let resolveFn: Function;
       let rejectFn: Function;
 
-      let awaitTarget = new Promise((resolve, reject) => {
+      const awaitTarget = new Promise((resolve, reject) => {
         resolveFn = resolve;
         rejectFn = reject;
       });
@@ -311,7 +311,7 @@ function normalizePattern(pattern: string, {cwd}: {cwd: PortablePath}) {
 }
 
 function addIgnorePattern(target: Array<string>, pattern: string, {cwd}: {cwd: PortablePath}) {
-  let trimed = pattern.trim();
+  const trimed = pattern.trim();
 
   if (trimed === `` || trimed[0] === `#`)
     return;
@@ -341,7 +341,7 @@ function isIgnored(cwd: string, {globalList, ignoreLists}: {globalList: IgnoreLi
 
 function isMatch(path: string, patterns: Array<string>) {
   let inclusives = patterns;
-  let exclusives = [];
+  const exclusives = [];
 
   for (let t = 0; t < patterns.length; ++t) {
     if (patterns[t][0] !== `!`) {
@@ -366,7 +366,7 @@ function isMatch(path: string, patterns: Array<string>) {
 
 function isMatchBasename(path: string, patterns: Array<string>) {
   let paths = patterns;
-  let basenames = [];
+  const basenames = [];
 
   for (let t = 0; t < patterns.length; ++t) {
     if (patterns[t].includes(`/`)) {

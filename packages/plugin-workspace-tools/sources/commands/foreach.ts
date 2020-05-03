@@ -330,7 +330,7 @@ function getPrefix(workspace: Workspace, {configuration, commandIndex, verbose}:
   const ident = structUtils.convertToIdent(workspace.locator);
   const name = structUtils.stringifyIdent(ident);
 
-  let prefix = `[${name}]:`;
+  const prefix = `[${name}]:`;
 
   const colors = [`#2E86AB`, `#A23B72`, `#F18F01`, `#C73E1D`, `#CCE2A3`];
   const colorName = colors[commandIndex % colors.length];

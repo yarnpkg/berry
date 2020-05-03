@@ -24,7 +24,7 @@ export function makeSpec({parentLocator, path, generatorHash, protocol}: {parent
     : {} as {};
 
   return structUtils.makeRange({
-    protocol: protocol,
+    protocol,
     source: path,
     selector: path,
     params: {

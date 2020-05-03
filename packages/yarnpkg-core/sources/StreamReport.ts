@@ -424,7 +424,7 @@ export class StreamReport extends Report {
 
     const spinner = PROGRESS_FRAMES[this.progressFrame];
 
-    let styleName = this.configuration.get(`progressBarStyle`) || defaultStyle;
+    const styleName = this.configuration.get(`progressBarStyle`) || defaultStyle;
     if (!Object.prototype.hasOwnProperty.call(PROGRESS_STYLES, styleName))
       throw new Error(`Assertion failed: Invalid progress bar style`);
 

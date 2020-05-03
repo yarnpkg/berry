@@ -92,7 +92,7 @@ export default class VersionCommand extends BaseCommand {
         releaseStrategy = this.strategy;
       }
     } else {
-      let currentVersion = workspace.manifest.version;
+      const currentVersion = workspace.manifest.version;
 
       if (!isDeclined) {
         if (currentVersion === null)

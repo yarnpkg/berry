@@ -105,11 +105,11 @@ export default class RunCommand extends BaseCommand {
     // not workspaces). No particular reason except maybe security concerns.
 
     if (!this.topLevel && !this.binariesOnly && workspace && this.scriptName.includes(`:`)) {
-      let candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {
+      const candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {
         return workspace.manifest.scripts.has(this.scriptName) ? workspace : null;
       }));
 
-      let filteredWorkspaces = candidateWorkspaces.filter(workspace => {
+      const filteredWorkspaces = candidateWorkspaces.filter(workspace => {
         return workspace !== null;
       }) as Array<Workspace>;
 

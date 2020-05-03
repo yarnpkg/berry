@@ -239,7 +239,7 @@ export class Constraints {
   }
 
   private async genEnforcedDependencies(session: Session) {
-    let enforcedDependencies: Array<EnforcedDependency> = [];
+    const enforcedDependencies: Array<EnforcedDependency> = [];
 
     for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
       const workspaceCwd = ppath.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd) as PortablePath);
@@ -264,12 +264,12 @@ export class Constraints {
   }
 
   private async genEnforcedFields(session: Session) {
-    let enforcedFields: Array<EnforcedField> = [];
+    const enforcedFields: Array<EnforcedField> = [];
 
     for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), gen_enforced_field(WorkspaceCwd, FieldPath, FieldValue).`)) {
       const workspaceCwd = ppath.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd) as PortablePath);
       const fieldPath = parseLink(answer.links.FieldPath);
-      let fieldValue = parseLinkToJson(answer.links.FieldValue);
+      const fieldValue = parseLinkToJson(answer.links.FieldValue);
 
       if (workspaceCwd === null || fieldPath === null)
         throw new Error(`Invalid rule`);

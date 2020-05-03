@@ -113,7 +113,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     if (typeof p === `number`)
       return p;
 
-    let pnpPath = this.resolvePath(p);
+    const pnpPath = this.resolvePath(p);
 
     return pnpPath.resolvedPath;
   }
@@ -124,7 +124,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     if (typeof p === `number`)
       return p;
 
-    let pnpPath = this.resolvePath(p);
+    const pnpPath = this.resolvePath(p);
 
     return pnpPath.forwardedDirPath || pnpPath.resolvedPath;
   }

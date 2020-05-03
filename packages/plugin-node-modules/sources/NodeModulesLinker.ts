@@ -292,7 +292,7 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
     locatorMap.set(locatorStr, {
       target: PortablePath.dot,
       linkType: LinkType.HARD,
-      locations: locations,
+      locations,
       aliases: installRecord.aliases || [],
     });
 
@@ -306,7 +306,7 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
         locatorMap.set(aliasStr, {
           target: PortablePath.dot,
           linkType: LinkType.HARD,
-          locations: locations,
+          locations,
           aliases: [],
         });
       }
@@ -539,7 +539,7 @@ function isLinkLocator(locatorKey: LocatorKey): boolean {
 async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, projectRoot: PortablePath, {loadManifest}: {loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
   const locatorScriptMap = new Map<LocatorKey, Map<string, string>>();
   for (const [locatorKey, {locations}] of installState) {
-    let manifest = isLinkLocator(locatorKey) ? null : await loadManifest(locations[0]);
+    const manifest = isLinkLocator(locatorKey) ? null : await loadManifest(locations[0]);
 
     const bin = new Map();
     if (manifest) {
@@ -674,7 +674,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       await removeDir(location, {contentsOnly: location === rootNmDirPath});
     } else {
       for (const [segment, prevChildNode] of prevNode.children) {
-        let childNode = node.children.get(segment);
+        const childNode = node.children.get(segment);
         await removeOutdatedDirs(ppath.join(location, segment), prevChildNode, childNode);
       }
     }
@@ -682,12 +682,12 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
   // Find locations that existed previously, but no longer exist
   for (const [location, prevNode] of prevLocationTree) {
-    let node = locationTree.get(location);
+    const node = locationTree.get(location);
     for (const [segment, prevChildNode] of prevNode.children) {
       // '.' segment exists only for top-level locator, skip it
       if (segment === `.`)
         continue;
-      let childNode = node ? node.children.get(segment) : node;
+      const childNode = node ? node.children.get(segment) : node;
       await removeOutdatedDirs(ppath.join(location, segment), prevChildNode, childNode);
     }
   }
@@ -709,7 +709,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
         await removeDir(location, {contentsOnly: node.linkType === LinkType.HARD});
 
       for (const [segment, childNode] of node.children) {
-        let prevChildNode = prevNode.children.get(segment);
+        const prevChildNode = prevNode.children.get(segment);
         await cleanNewDirs(ppath.join(location, segment), childNode, prevChildNode);
       }
     }
@@ -717,12 +717,12 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
   // Find new locations that are being added/changed and need to be cleaned up first
   for (const [location, node] of locationTree) {
-    let prevNode = prevLocationTree.get(location);
+    const prevNode = prevLocationTree.get(location);
     for (const [segment, childNode] of node.children) {
       // '.' segment exists only for top-level locator, skip it
       if (segment === `.`)
         continue;
-      let prevChildNode = prevNode ? prevNode.children.get(segment) : prevNode;
+      const prevChildNode = prevNode ? prevNode.children.get(segment) : prevNode;
       await cleanNewDirs(ppath.join(location, segment), childNode, prevChildNode);
     }
   }

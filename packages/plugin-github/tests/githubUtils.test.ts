@@ -51,7 +51,7 @@ describe(`githubUtils`, () => {
   describe(`parseGithubUrl`, () => {
     for (const scenario of validScenarios) {
       it(`should properly parse GitHub urls (${scenario.url})`, () => {
-        let parsed = parseGithubUrl(scenario.url);
+        const parsed = parseGithubUrl(scenario.url);
 
         expect(parsed).toMatchObject({
           auth: scenario.auth,

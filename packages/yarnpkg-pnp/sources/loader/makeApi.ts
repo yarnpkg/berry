@@ -100,7 +100,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   function makeLogEntry(name: string, args: Array<any>) {
     return {
       fn: name,
-      args: args,
+      args,
       error: null as Error | null,
       result: null as any,
     };
@@ -663,7 +663,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions}: ResolveRequestOptions = {}): PortablePath | null {
-    let unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
+    const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
 
     if (unqualifiedPath === null)
       return null;

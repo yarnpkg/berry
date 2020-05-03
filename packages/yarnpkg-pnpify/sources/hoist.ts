@@ -157,7 +157,7 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
 
   const hoistedDependencies = rootNode === tree ? new Map() : getHoistedDependencies(rootNode);
 
-  let clonedTree: CloneTree = {clone: rootNode, children: new Map()};
+  const clonedTree: CloneTree = {clone: rootNode, children: new Map()};
   let hoistCandidates;
   do {
     hoistCandidates = getHoistCandidates(rootNode, rootNodePath, ancestorDependencies, hoistedDependencies, ancestorMap, options);
@@ -392,7 +392,7 @@ const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Locator
 };
 
 const selfCheck = (tree: HoisterWorkTree): string => {
-  let log: Array<string> = [];
+  const log: Array<string> = [];
 
   const seenNodes = new Set();
   const parents = new Set<HoisterWorkTree>();
