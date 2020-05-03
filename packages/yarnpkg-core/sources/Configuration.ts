@@ -76,7 +76,7 @@ export enum SettingsType {
   SECRET = 'SECRET',
   SHAPE = 'SHAPE',
   MAP = 'MAP',
-};
+}
 
 export enum FormatType {
   NAME = 'NAME',
@@ -87,7 +87,7 @@ export enum FormatType {
   SCOPE = 'SCOPE',
   ADDED = 'ADDED',
   REMOVED = 'REMOVED',
-};
+}
 
 export const formatColors = chalkOptions.level >= 3 ? new Map([
   [FormatType.NAME, `#d7875f`],
@@ -565,7 +565,7 @@ function hideSecrets(rawValue: unknown, definition: SettingsDefinitionNoDefault)
   }
 
   return rawValue;
-};
+}
 
 function getEnvironmentSettings() {
   const environmentSettings: {[key: string]: any} = {};
@@ -598,7 +598,7 @@ export enum ProjectLookup {
   LOCKFILE,
   MANIFEST,
   NONE,
-};
+}
 
 export class Configuration {
   public startingCwd: PortablePath;

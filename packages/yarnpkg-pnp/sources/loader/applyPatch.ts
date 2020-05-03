@@ -310,4 +310,4 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   };
 
   patchFs(fs, new PosixFS(opts.fakeFs));
-};
+}

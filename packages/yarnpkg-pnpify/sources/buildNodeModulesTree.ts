@@ -8,7 +8,7 @@ import {hoist, HoisterTree, HoisterResult}                  from './hoist';
 // Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
 // But because of this TypeScript requires @yarnpkg/pnp during runtime
 // To prevent this we redeclare LinkType enum here, to not depend on @yarnpkg/pnp during runtime
-export enum LinkType {HARD = 'HARD', SOFT = 'SOFT'};
+export enum LinkType {HARD = 'HARD', SOFT = 'SOFT'}
 
 // The list of directories stored within a node_modules (or node_modules/@foo)
 export type NodeModulesBaseNode = {
@@ -117,7 +117,7 @@ function isPortalLocator(locatorKey: LocatorKey): boolean {
     descriptor = structUtils.devirtualizeDescriptor(descriptor);
 
   return descriptor.range.startsWith('portal:');
-};
+}
 
 /**
  * Traverses PnP tree and produces input for the `RawHoister`

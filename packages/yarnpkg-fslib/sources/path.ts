@@ -106,7 +106,7 @@ function fromPortablePath(p: Path): NativePath {
     return p as NativePath;
 
   return p.replace(/\//g, `\\`);
-};
+}
 
 // Path should look like "N:/berry/scripts/plugin-pack.js"
 // And transform to "/N:/berry/scripts/plugin-pack.js"

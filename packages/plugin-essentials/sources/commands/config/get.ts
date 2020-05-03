@@ -106,4 +106,4 @@ export function convertMapsToObjects(arg: unknown): unknown {
   }
 
   return arg;
-};
+}

@@ -14,7 +14,7 @@ export enum Decision {
   MINOR = 'minor',
   PATCH = 'patch',
   PRERELEASE = 'prerelease',
-};
+}
 
 export type Releases =
   Map<Workspace, Exclude<Decision, Decision.UNDECIDED>>;

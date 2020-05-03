@@ -449,7 +449,7 @@ describe(`Commands`, () => {
         await run(`install`);
         const tmpDir = await xfs.mktempPromise();
 
-        await run(`pack`, `--out`, `${tmpDir}/test.tgz`);;
+        await run(`pack`, `--out`, `${tmpDir}/test.tgz`);
         expect(xfs.existsSync(`${tmpDir}/test.tgz`)).toEqual(true);
       }),
     );

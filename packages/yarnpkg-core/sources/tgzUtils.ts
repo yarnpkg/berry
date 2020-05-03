@@ -6,7 +6,7 @@ interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>,
   prefixPath?: PortablePath | null,
   compressionLevel?: ZipCompression,
-};
+}
 
 export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root, compressionLevel}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
   const tmpFolder = await xfs.mktempPromise();
@@ -24,7 +24,7 @@ interface ExtractBufferOptions {
   compressionLevel?: ZipCompression,
   prefixPath?: PortablePath,
   stripComponents?: number,
-};
+}
 
 export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
   const tmpFolder = await xfs.mktempPromise();

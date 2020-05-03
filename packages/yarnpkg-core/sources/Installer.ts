@@ -6,7 +6,7 @@ import {Descriptor, Locator, Package, LocatorHash} from './types';
 export enum BuildType {
   SCRIPT = 0,
   SHELLCODE = 1,
-};
+}
 
 export type BuildDirective = [BuildType, string];
 
@@ -71,4 +71,4 @@ export interface Installer {
    * Finalize the install by writing miscellaneous files to the disk.
    */
   finalizeInstall(): Promise<Array<FinalizeInstallStatus> | void>;
-};
+}

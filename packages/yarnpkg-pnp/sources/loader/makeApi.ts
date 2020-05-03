@@ -632,7 +632,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     }
 
     return ppath.normalize(unqualifiedPath);
-  };
+  }
 
   /**
    * Transforms an unqualified path into a qualified path by using the Node resolution algorithm (which automatically
@@ -652,7 +652,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         {unqualifiedPath},
       );
     }
-  };
+  }
 
   /**
    * Transforms a request into a fully qualified path.
@@ -676,7 +676,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       throw resolutionError;
     }
-  };
+  }
 
   function resolveVirtual(request: PortablePath) {
     const normalized = ppath.normalize(request);

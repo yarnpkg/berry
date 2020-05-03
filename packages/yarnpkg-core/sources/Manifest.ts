@@ -12,17 +12,17 @@ export type HardDependencies = 'dependencies' | 'devDependencies';
 
 export interface WorkspaceDefinition {
   pattern: string;
-};
+}
 
 export interface DependencyMeta {
   built?: boolean;
   optional?: boolean;
   unplugged?: boolean;
-};
+}
 
 export interface PeerDependencyMeta {
   optional?: boolean;
-};
+}
 
 export interface PublishConfig {
   access?: string;
@@ -30,7 +30,7 @@ export interface PublishConfig {
   module?: PortablePath;
   bin?: Map<string, PortablePath>;
   registry?: string;
-};
+}
 
 export class Manifest {
   public indent: string = `  `;
@@ -678,7 +678,7 @@ export class Manifest {
 
     return data;
   }
-};
+}
 
 function getIndent(content: string) {
   const indentMatch = content.match(/^[ \t]+/m);

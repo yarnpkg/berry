@@ -51,7 +51,7 @@ export interface Hooks {
     target: suggestUtils.Target,
     descriptor: Descriptor,
   ) => Promise<void>,
-};
+}
 
 const plugin: Plugin = {
   configuration: {

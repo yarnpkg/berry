@@ -4,7 +4,7 @@ import {useContext, useEffect} from 'react';
 export enum FocusRequest {
   BEFORE = 'before',
   AFTER = 'after',
-};
+}
 
 export type FocusRequestHandler =
   (request: FocusRequest) => void;

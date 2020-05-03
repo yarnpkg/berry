@@ -37,7 +37,7 @@ export class NodeModulesFS extends ProxiedFS<NativePath, PortablePath> {
 interface PortableNodeModulesFSOptions extends NodeModulesTreeOptions {
   baseFs?: FakeFS<PortablePath>
   pnpifyFs?: boolean;
-};
+}
 
 export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   private readonly baseFs: FakeFS<PortablePath>;

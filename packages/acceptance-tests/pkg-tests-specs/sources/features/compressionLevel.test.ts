@@ -7,7 +7,7 @@ function computeCacheSize(cacheDir: PortablePath): number {
     totalSize += xfs.statSync(ppath.join(cacheDir, filename)).size;
 
   return totalSize;
-};
+}
 
 describe(`Features`, () => {
   describe(`Compression Level`, () => {

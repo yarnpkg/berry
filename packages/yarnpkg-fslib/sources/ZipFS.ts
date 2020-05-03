@@ -1145,4 +1145,4 @@ export class ZipFS extends BasePortableFakeFS {
     const interval = setInterval(() => {}, 24 * 60 * 60 * 1000);
     return {on: () => {}, close: () => {clearInterval(interval);}};
   }
-};
+}

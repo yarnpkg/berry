@@ -1,4 +1,12 @@
 {
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended"
+  ],
+  "env": {
+    "node": true,
+    "es6": true
+  },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 6,
@@ -41,5 +49,19 @@
     "rest-spread-spacing": 2,
     "semi": 2,
     "template-curly-spacing": 2
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.test.{js,ts}"],
+      "env": {
+        "jest": true
+      }
+    },
+    {
+      "files": ["packages/acceptance-tests/pkg-tests-specs/**/*.test.{js,ts}"],
+      "globals": {
+        "makeTemporaryEnv": "readonly"
+      }
+    }
+  ]
 }

@@ -253,7 +253,7 @@ async function writeInstallState(project: Project, locatorMap: NodeModulesLocato
   await xfs.changeFilePromise(installStatePath, locatorState, {
     automaticNewlines: true,
   });
-};
+}
 
 async function findInstallState(project: Project, {unrollAliases = false}: {unrollAliases?: boolean} = {}): Promise<InstallState | null> {
   const rootPath = project.cwd;
@@ -314,7 +314,7 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
   }
 
   return {locatorMap, binSymlinks, locationTree: buildLocationTree(locatorMap, {skipPrefix: project.cwd})};
-};
+}
 
 const removeDir = async (dir: PortablePath, options: {contentsOnly: boolean, innerLoop?: boolean}): Promise<any> => {
   if (dir.split(ppath.sep).indexOf(NODE_MODULES) < 0)
@@ -526,7 +526,7 @@ function refineNodeModulesRoots(locationTree: LocationTree, binSymlinks: BinSyml
   }
 
   return {locationTree: refinedLocationTree, binSymlinks: refinedBinSymlinks};
-};
+}
 
 function isLinkLocator(locatorKey: LocatorKey): boolean {
   let descriptor = structUtils.parseDescriptor(locatorKey);
@@ -534,7 +534,7 @@ function isLinkLocator(locatorKey: LocatorKey): boolean {
     descriptor = structUtils.devirtualizeDescriptor(descriptor);
 
   return descriptor.range.startsWith('link:');
-};
+}
 
 async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, projectRoot: PortablePath, {loadManifest}: {loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
   const locatorScriptMap = new Map<LocatorKey, Map<string, string>>();
@@ -834,7 +834,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   } finally {
     reportedProgress.stop();
   }
-};
+}
 
 async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlinks: BinSymlinkMap) {
   // Delete outdated .bin folders

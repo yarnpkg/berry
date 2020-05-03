@@ -308,7 +308,7 @@ function normalizePattern(pattern: string, {cwd}: {cwd: PortablePath}) {
     pattern = `!${pattern}`;
 
   return pattern;
-};
+}
 
 function addIgnorePattern(target: Array<string>, pattern: string, {cwd}: {cwd: PortablePath}) {
   let trimed = pattern.trim();

@@ -7,7 +7,7 @@ export enum ActionType {
   ADD,
   REMOVE,
   MODIFY,
-};
+}
 
 export type FileAction = {
   action: ActionType,

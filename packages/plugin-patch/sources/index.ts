@@ -13,7 +13,7 @@ export interface Hooks {
     project: Project,
     name: string,
   ) => Promise<string | null | void>,
-};
+}
 
 const plugin: Plugin = {
   commands: [

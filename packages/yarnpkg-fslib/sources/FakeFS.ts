@@ -517,7 +517,7 @@ export abstract class FakeFS<P extends Path> {
       this.utimesSync(p, stat.atime, stat.mtime);
     }
   }
-};
+}
 
 export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
   protected constructor() {

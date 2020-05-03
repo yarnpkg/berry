@@ -12,13 +12,13 @@ export enum Target {
   REGULAR = 'dependencies',
   DEVELOPMENT = 'devDependencies',
   PEER = 'peerDependencies',
-};
+}
 
 export enum Modifier {
   CARET = '^',
   TILDE = '~',
   EXACT = '',
-};
+}
 
 export enum Strategy {
   /**
@@ -50,7 +50,7 @@ export enum Strategy {
    * versions of the package that are already within our cache.
    */
   CACHE = 'cache',
-};
+}
 
 export function getModifier(flags: {exact: boolean; caret: boolean; tilde: boolean}, project: Project): Modifier {
   if (flags.exact)

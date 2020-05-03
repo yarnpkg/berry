@@ -8,7 +8,7 @@ export enum ErrorCode {
   INTERNAL = 'INTERNAL',
   UNDECLARED_DEPENDENCY = 'UNDECLARED_DEPENDENCY',
   UNSUPPORTED = 'UNSUPPORTED',
-};
+}
 
 // Some errors are exposed as MODULE_NOT_FOUND for compatibility with packages
 // that expect this umbrella error when the resolution fails
