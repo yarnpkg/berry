@@ -232,7 +232,7 @@ type Splice = {
   type: `splice`,
   index: number,
   numToDelete: number,
-  linesToInsert: string[],
+  linesToInsert: Array<string>,
 };
 
 type Modification =
@@ -240,7 +240,7 @@ type Modification =
   | Pop
   | Splice;
 
-function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number): Modification[] | null {
+function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number): Array<Modification> | null {
   const result: Array<Modification> = [];
 
   for (const part of hunk.parts) {

@@ -13,7 +13,7 @@ export const walk = (
   {filter, relative = false}: {filter?: Array<string>, relative?: boolean} = {},
 ): Promise<Array<PortablePath>> => {
   return new Promise(resolve => {
-    const paths: PortablePath[] = [];
+    const paths: Array<PortablePath> = [];
 
     const walker = klaw(npath.fromPortablePath(source), {
       filter: (sourcePath: string) => {

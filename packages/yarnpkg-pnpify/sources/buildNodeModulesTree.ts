@@ -24,7 +24,7 @@ export type NodeModulesPackageNode = {
   linkType: LinkType,
   // Contains ["node_modules"] if there's nested n_m entries
   dirList?: undefined,
-  aliases: string[],
+  aliases: Array<string>,
 };
 
 /**
@@ -80,8 +80,8 @@ const stringifyLocator = (locator: PhysicalPackageLocator): LocatorKey => `${loc
 export type NodeModulesLocatorMap = Map<LocatorKey, {
   target: PortablePath;
   linkType: LinkType;
-  locations: PortablePath[];
-  aliases: string[];
+  locations: Array<PortablePath>;
+  aliases: Array<string>;
 }>
 
 export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLocatorMap => {
@@ -243,7 +243,7 @@ function getTargetLocatorPath(locator: PhysicalPackageLocator, pnp: PnpApi, opti
 const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, options: NodeModulesTreeOptions): NodeModulesTree => {
   const tree: NodeModulesTree = new Map();
 
-  const makeLeafNode = (locator: PhysicalPackageLocator, aliases: string[]): {locator: LocatorKey, target: PortablePath, linkType: LinkType, aliases: string[]} => {
+  const makeLeafNode = (locator: PhysicalPackageLocator, aliases: Array<string>): {locator: LocatorKey, target: PortablePath, linkType: LinkType, aliases: Array<string>} => {
     const {linkType, target} = getTargetLocatorPath(locator, pnp, options);
 
     return {
@@ -447,7 +447,7 @@ const dumpDepTree = (tree: HoisterResult) => {
     }
   };
 
-  const dumpPackage = (pkg: HoisterResult, parents: HoisterResult[], prefix = ``): string => {
+  const dumpPackage = (pkg: HoisterResult, parents: Array<HoisterResult>, prefix = ``): string => {
     if (parents.includes(pkg))
       return ``;
 

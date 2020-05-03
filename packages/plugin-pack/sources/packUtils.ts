@@ -232,7 +232,7 @@ export async function genPackList(workspace: Workspace) {
 }
 
 async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, ignoreList}: {hasExplicitFileList: boolean, globalList: IgnoreList, ignoreList: IgnoreList}) {
-  const list: PortablePath[] = [];
+  const list: Array<PortablePath> = [];
 
   const cwdFs = new JailFS(initialCwd);
   const cwdList: Array<[PortablePath, Array<IgnoreList>]> = [[PortablePath.root, [ignoreList]]];

@@ -386,7 +386,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   async readdirPromise(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<Dirent>> {
     const pnpPath = this.resolvePath(p);
     if (pnpPath.dirList || this.resolvePath(ppath.join(p, toFilename(`node_modules`))).dirList) {
-      let fsDirList: Filename[] = [];
+      let fsDirList: Array<Filename> = [];
       try {
         fsDirList = await this.baseFs.readdirPromise(pnpPath.resolvedPath);
       } catch (e) {
@@ -413,7 +413,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   readdirSync(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<Dirent> {
     const pnpPath = this.resolvePath(p);
     if (pnpPath.dirList || this.resolvePath(ppath.join(p, toFilename(`node_modules`))).dirList) {
-      let fsDirList: Filename[] = [];
+      let fsDirList: Array<Filename> = [];
       try {
         fsDirList = this.baseFs.readdirSync(pnpPath.resolvedPath);
       } catch (e) {

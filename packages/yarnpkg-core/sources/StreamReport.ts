@@ -349,7 +349,7 @@ export class StreamReport extends Report {
     this.writeLine(str);
   }
 
-  private writeLines(name: MessageName | null, lines: string[]) {
+  private writeLines(name: MessageName | null, lines: Array<string>) {
     this.clearProgress({delta: lines.length});
 
     for (const line of lines)

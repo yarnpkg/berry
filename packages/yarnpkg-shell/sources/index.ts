@@ -9,7 +9,7 @@ import {Handle, ProcessImplementation, ProtectedStream, Stdio, start}           
 
 export type Glob = {
   isGlobPattern: (arg: string) => boolean,
-  match: (pattern: string, options: {cwd: PortablePath, fs?: FakeFS<PortablePath>}) => Promise<string[]>,
+  match: (pattern: string, options: {cwd: PortablePath, fs?: FakeFS<PortablePath>}) => Promise<Array<string>>,
 };
 
 export type UserOptions = {

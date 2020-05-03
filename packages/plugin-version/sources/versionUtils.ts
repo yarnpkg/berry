@@ -19,7 +19,7 @@ export enum Decision {
 export type Releases =
   Map<Workspace, Exclude<Decision, Decision.UNDECIDED>>;
 
-export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: string[]}) {
+export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: Array<string>}) {
   if (baseRefs.length === 0)
     throw new UsageError(`Can't run this command with zero base refs specified.`);
 

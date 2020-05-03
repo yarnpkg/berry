@@ -100,7 +100,7 @@ export abstract class AbstractPnpInstaller implements Installer {
 
     return {
       packageLocation: packageRawLocation,
-      buildDirective: buildScripts.length > 0 ? buildScripts as BuildDirective[] : null,
+      buildDirective: buildScripts.length > 0 ? buildScripts as Array<BuildDirective> : null,
     };
   }
 

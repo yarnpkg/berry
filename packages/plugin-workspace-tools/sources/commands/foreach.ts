@@ -114,7 +114,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (!this.all && !cwdWorkspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    const command = this.cli.process([this.commandName, ...this.args]) as {path: string[], scriptName?: string};
+    const command = this.cli.process([this.commandName, ...this.args]) as {path: Array<string>, scriptName?: string};
     const scriptName = command.path.length === 1 && command.path[0] === `run` && typeof command.scriptName !== `undefined`
       ? command.scriptName
       : null;

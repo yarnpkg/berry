@@ -12,7 +12,7 @@ type Tuple = {
 
 type CloneTree = {clone: HoisterWorkTree, children: Map<HoisterWorkTree, CloneTree>};
 
-type HoistCandidate = { nodePath: HoisterWorkTree[], node: HoisterWorkTree };
+type HoistCandidate = { nodePath: Array<HoisterWorkTree>, node: HoisterWorkTree };
 type HoistCandidateSet = {node: HoisterWorkTree, weight: number, candidates: Set<HoistCandidate>};
 
 type HoistCandidates = Map<PackageName, HoistCandidateSet>;
@@ -238,10 +238,10 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
  */
 const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Locator>, ancestorDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, options: InternalHoistOptions): Set<HoistCandidateSet> => {
   const hoistCandidates: HoistCandidates = new Map();
-  const parents: Tuple[] = [];
+  const parents: Array<Tuple> = [];
   const seenNodes = new Set<HoisterWorkTree>();
 
-  const computeHoistCandidates = (nodePath: HoisterWorkTree[], locatorPath: Locator[], node: HoisterWorkTree) => {
+  const computeHoistCandidates = (nodePath: Array<HoisterWorkTree>, locatorPath: Array<Locator>, node: HoisterWorkTree) => {
     const isSeen = seenNodes.has(node);
 
     let reasonRoot;
@@ -392,7 +392,7 @@ const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Locator
 };
 
 const selfCheck = (tree: HoisterWorkTree): string => {
-  let log: string[] = [];
+  let log: Array<string> = [];
 
   const seenNodes = new Set();
   const parents = new Set<HoisterWorkTree>();

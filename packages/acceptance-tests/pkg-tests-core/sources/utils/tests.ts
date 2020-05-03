@@ -486,7 +486,7 @@ type RunFunction = (
   {path, run, source}:
   {
     path: string,
-    run: (...args: any[]) => Promise<ExecResult>,
+    run: (...args: Array<any>) => Promise<ExecResult>,
     source: (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>
   }
 ) => void;
@@ -520,7 +520,7 @@ export const generatePkgDriver = ({
         // Writes a new package.json file into our temporary directory
         await fsUtils.writeJson(npath.toPortablePath(`${path}/package.json`), await deepResolve(packageJson));
 
-        const run = (...args: any[]) => {
+        const run = (...args: Array<any>) => {
           let callDefinition = {};
 
           if (args.length > 0 && typeof args[args.length - 1] === `object`)

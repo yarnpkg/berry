@@ -119,7 +119,7 @@ type FileDeets = {
 
 export type Hunk = {
   header: HunkHeader,
-  parts: PatchMutationPart[],
+  parts: Array<PatchMutationPart>,
 };
 
 const emptyFilePatch = (): FileDeets => ({

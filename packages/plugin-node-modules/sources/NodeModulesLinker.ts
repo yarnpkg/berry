@@ -177,8 +177,8 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
     return manifest;
   }
 
-  private async getSourceBuildScripts(packageLocation: PortablePath, manifest: Manifest): Promise<BuildDirective[]> {
-    const buildScripts: BuildDirective[] = [];
+  private async getSourceBuildScripts(packageLocation: PortablePath, manifest: Manifest): Promise<Array<BuildDirective>> {
+    const buildScripts: Array<BuildDirective> = [];
     const {scripts} = manifest;
 
     for (const scriptName of [`preinstall`, `install`, `postinstall`])
@@ -390,7 +390,7 @@ type LocationRoot = PortablePath;
  */
 type LocationTree = Map<LocationRoot, LocationNode>
 
-const parseLocation = (location: PortablePath, {skipPrefix}: {skipPrefix: PortablePath}): {locationRoot: PortablePath, segments: Filename[]} => {
+const parseLocation = (location: PortablePath, {skipPrefix}: {skipPrefix: PortablePath}): {locationRoot: PortablePath, segments: Array<Filename>} => {
   const projectRelativePath = ppath.contains(skipPrefix, location);
   if (projectRelativePath === null)
     throw new Error(`Assertion failed: Cannot process a path that isn't part of the requested prefix (${location} isn't within ${skipPrefix})`);
@@ -599,7 +599,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   const {locationTree: prevLocationTree, binSymlinks: prevBinSymlinks} = refineNodeModulesRoots(preinstallState.locationTree, preinstallState.binSymlinks);
   const locationTree = buildLocationTree(installState, {skipPrefix: project.cwd});
 
-  const addQueue: Promise<void>[] = [];
+  const addQueue: Array<Promise<void>> = [];
   const addModule = async ({srcDir, dstDir, linkType}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType}) => {
     const promise: Promise<any> = (async () => {
       try {

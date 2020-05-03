@@ -115,7 +115,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     }
   });
 
-  setupFn(patchedFs, `exists`, (p: string, ...args: any[]) => {
+  setupFn(patchedFs, `exists`, (p: string, ...args: Array<any>) => {
     const hasCallback = typeof args[args.length - 1] === `function`;
     const callback = hasCallback ? args.pop() : () => {};
 
@@ -128,7 +128,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     });
   });
 
-  setupFn(patchedFs, `read`, (p: number, buffer: Buffer, ...args: any[]) => {
+  setupFn(patchedFs, `read`, (p: number, buffer: Buffer, ...args: Array<any>) => {
     const hasCallback = typeof args[args.length - 1] === `function`;
     const callback = hasCallback ? args.pop() : () => {};
 
