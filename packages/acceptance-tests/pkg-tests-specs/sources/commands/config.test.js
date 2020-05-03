@@ -1,6 +1,6 @@
 const {
   fs: {mkdirp, writeFile, createTemporaryFolder},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 const RC_FILENAME = `.spec-yarnrc`;
 const SUBFOLDER = `subfolder`;
@@ -82,17 +82,17 @@ function cleanupJsonOutput(output, path, homePath) {
   const homePathRegExp = new RegExp(homePath, `g`);
 
   for (const setting of Object.values(outputObject)) {
-    if (typeof setting.source === 'string') {
+    if (typeof setting.source === `string`) {
       setting.source = setting.source.replace(pathRegExp, FAKE_WORKSPACE_ROOT);
       setting.source = setting.source.replace(homePathRegExp, FAKE_HOME);
     }
 
-    if (typeof setting.default === 'string') {
+    if (typeof setting.default === `string`) {
       setting.default = setting.default.replace(pathRegExp, FAKE_WORKSPACE_ROOT);
       setting.default = setting.default.replace(homePathRegExp, FAKE_HOME);
     }
 
-    if (typeof setting.effective === 'string') {
+    if (typeof setting.effective === `string`) {
       setting.effective = setting.effective.replace(pathRegExp, FAKE_WORKSPACE_ROOT);
       setting.effective = setting.effective.replace(homePathRegExp, FAKE_HOME);
     }

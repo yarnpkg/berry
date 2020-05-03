@@ -204,7 +204,7 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
   readFilePromise(p: FSPath<P>, encoding?: string): Promise<Buffer>;
   readFilePromise(p: FSPath<P>, encoding?: string) {
     // This weird condition is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    if (encoding === 'utf8') {
+    if (encoding === `utf8`) {
       return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
     } else {
       return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
@@ -215,7 +215,7 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
   readFileSync(p: FSPath<P>, encoding?: string): Buffer;
   readFileSync(p: FSPath<P>, encoding?: string) {
     // This weird condition is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    if (encoding === 'utf8') {
+    if (encoding === `utf8`) {
       return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
     } else  {
       return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);

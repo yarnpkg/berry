@@ -66,27 +66,27 @@ export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
 export const SECRET = `********`;
 
 export enum SettingsType {
-  ANY = 'ANY',
-  BOOLEAN = 'BOOLEAN',
-  ABSOLUTE_PATH = 'ABSOLUTE_PATH',
-  LOCATOR = 'LOCATOR',
-  LOCATOR_LOOSE = 'LOCATOR_LOOSE',
-  NUMBER = 'NUMBER',
-  STRING = 'STRING',
-  SECRET = 'SECRET',
-  SHAPE = 'SHAPE',
-  MAP = 'MAP',
+  ANY = `ANY`,
+  BOOLEAN = `BOOLEAN`,
+  ABSOLUTE_PATH = `ABSOLUTE_PATH`,
+  LOCATOR = `LOCATOR`,
+  LOCATOR_LOOSE = `LOCATOR_LOOSE`,
+  NUMBER = `NUMBER`,
+  STRING = `STRING`,
+  SECRET = `SECRET`,
+  SHAPE = `SHAPE`,
+  MAP = `MAP`,
 }
 
 export enum FormatType {
-  NAME = 'NAME',
-  NUMBER = 'NUMBER',
-  PATH = 'PATH',
-  RANGE = 'RANGE',
-  REFERENCE = 'REFERENCE',
-  SCOPE = 'SCOPE',
-  ADDED = 'ADDED',
-  REMOVED = 'REMOVED',
+  NAME = `NAME`,
+  NUMBER = `NUMBER`,
+  PATH = `PATH`,
+  RANGE = `RANGE`,
+  REFERENCE = `REFERENCE`,
+  SCOPE = `SCOPE`,
+  ADDED = `ADDED`,
+  REMOVED = `REMOVED`,
 }
 
 export const formatColors = chalkOptions.level >= 3 ? new Map([
@@ -471,7 +471,7 @@ function parseShape(configuration: Configuration, path: string, value: unknown, 
 function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: PortablePath) {
   const result = new Map<string, any>();
 
-  if (typeof value !== 'object' || Array.isArray(value))
+  if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Map configuration settings "${path}" must be an object`);
 
   if (value === null)

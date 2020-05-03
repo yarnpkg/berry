@@ -1,6 +1,6 @@
 const {
   fs: {writeFile, writeJson},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 
 async function setupWorkspaces(path) {
@@ -38,7 +38,7 @@ async function setupWorkspaces(path) {
 }
 
 describe(`Commands`, () => {
-  describe('workspace <workspace-name> <sub-command>', () => {
+  describe(`workspace <workspace-name> <sub-command>`, () => {
     test(
       `runs a given command in the specified workspace`,
       makeTemporaryEnv(

@@ -344,7 +344,7 @@ describe(`Plug'n'Play`, () => {
       },
       async ({path, run, source}) => {
         const {stdout} = await run(`install`);
-        expect(stdout).not.toEqual(expect.stringContaining('YN0060'));
+        expect(stdout).not.toEqual(expect.stringContaining(`YN0060`));
       }
     ),
   );
@@ -360,7 +360,7 @@ describe(`Plug'n'Play`, () => {
       },
       async ({path, run, source}) => {
         const {stdout} = await run(`install`);
-        expect(stdout).toEqual(expect.stringContaining('YN0060'));
+        expect(stdout).toEqual(expect.stringContaining(`YN0060`));
       },
     ),
   );
@@ -747,7 +747,7 @@ describe(`Plug'n'Play`, () => {
   );
 
   testIf(
-    () => process.platform !== 'win32',
+    () => process.platform !== `win32`,
     `it should generate a file that can be used as an executable to resolve a request (valid request)`,
     makeTemporaryEnv(
       {
@@ -1005,7 +1005,7 @@ describe(`Plug'n'Play`, () => {
           `module.exports = "unplugged";\n`,
         );
 
-        await expect(source(`require('no-deps')`)).resolves.toEqual('unplugged');
+        await expect(source(`require('no-deps')`)).resolves.toEqual(`unplugged`);
       },
     ),
   );

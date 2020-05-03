@@ -35,8 +35,8 @@ export type Body = (
 );
 
 export enum Method {
-  GET = 'GET',
-  PUT = 'PUT',
+  GET = `GET`,
+  PUT = `PUT`,
 }
 
 export type Options = {

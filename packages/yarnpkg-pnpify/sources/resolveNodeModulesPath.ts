@@ -3,7 +3,7 @@ import {toFilename, npath, ppath}  from '@yarnpkg/fslib';
 
 import {NodeModulesTree, LinkType} from './buildNodeModulesTree';
 
-const NODE_MODULES = 'node_modules';
+const NODE_MODULES = `node_modules`;
 
 /**
  * Resolved `/node_modules` path inside PnP project info.
@@ -61,10 +61,10 @@ export const resolveNodeModulesPath = (inputPath: PortablePath, nodeModulesTree:
   if (firstIdx < 0)
     return result;
   let lastIdx = segments.lastIndexOf(NODE_MODULES);
-  if (typeof segments[lastIdx + 1] !== 'undefined')
+  if (typeof segments[lastIdx + 1] !== `undefined`)
     // We have the situation .../node_modules/{something or @something}
     lastIdx++;
-  if (segments[lastIdx][0] === '@' && typeof segments[lastIdx + 1] !== 'undefined')
+  if (segments[lastIdx][0] === `@` && typeof segments[lastIdx + 1] !== `undefined`)
     // We have the situation .../node_modules/@something/{foo}
     lastIdx++;
 
@@ -102,7 +102,7 @@ export const resolveNodeModulesPath = (inputPath: PortablePath, nodeModulesTree:
       result.dirList = lastNode.dirList;
       result.forwardedDirPath = npath.toPortablePath(segments.slice(0, firstIdx).join(ppath.sep));
       // If node_modules is inside .zip archive, we use parent folder as a statPath instead
-      if (result.forwardedDirPath.endsWith('.zip')) {
+      if (result.forwardedDirPath.endsWith(`.zip`)) {
         result.forwardedDirPath = ppath.dirname(result.forwardedDirPath);
       }
     }

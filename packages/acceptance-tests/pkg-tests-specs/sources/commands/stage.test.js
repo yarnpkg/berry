@@ -2,7 +2,7 @@ const {npath, xfs} = require(`@yarnpkg/fslib`);
 const {
   exec: {execFile},
   fs: {writeFile, writeJson, mkdirp},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
   describe(`stage`, () => {

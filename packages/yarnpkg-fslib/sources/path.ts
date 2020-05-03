@@ -95,7 +95,7 @@ const UNC_PORTABLE_PATH_REGEXP = /^\/unc\/(\.dot\/)?(.*)$/;
 // Path should look like "/N:/berry/scripts/plugin-pack.js"
 // And transform to "N:\berry\scripts\plugin-pack.js"
 function fromPortablePath(p: Path): NativePath {
-  if (process.platform !== 'win32')
+  if (process.platform !== `win32`)
     return p as NativePath;
 
   if (p.match(PORTABLE_PATH_REGEXP))
@@ -111,7 +111,7 @@ function fromPortablePath(p: Path): NativePath {
 // Path should look like "N:/berry/scripts/plugin-pack.js"
 // And transform to "/N:/berry/scripts/plugin-pack.js"
 function toPortablePath(p: Path): PortablePath {
-  if (process.platform !== 'win32')
+  if (process.platform !== `win32`)
     return p as PortablePath;
 
   if (p.match(WINDOWS_PATH_REGEXP))
@@ -127,7 +127,7 @@ export function convertPath<P extends Path>(targetPathUtils: PathUtils<P>, sourc
 }
 
 export function toFilename(filename: string): Filename {
-  if (npath.parse(filename as NativePath).dir !== '' || ppath.parse(filename as PortablePath).dir !== '')
+  if (npath.parse(filename as NativePath).dir !== `` || ppath.parse(filename as PortablePath).dir !== ``)
     throw new Error(`Invalid filename: "${filename}"`);
 
   return filename as any;

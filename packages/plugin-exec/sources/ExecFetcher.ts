@@ -79,7 +79,7 @@ export class ExecFetcher implements Fetcher {
 
         return await tgzUtils.makeArchiveFromDirectory(ppath.join(cwd, toFilename(`build`)), {
           prefixPath: structUtils.getIdentVendorPath(locator),
-          compressionLevel: opts.project.configuration.get('compressionLevel'),
+          compressionLevel: opts.project.configuration.get(`compressionLevel`),
         });
       });
     });

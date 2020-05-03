@@ -1,6 +1,6 @@
 const {
   fs: {readJson, unpackToDirectory, writeFile},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Plugins`, () => {
   describe(`typescript`, () => {

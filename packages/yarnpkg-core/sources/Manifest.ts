@@ -199,7 +199,7 @@ export class Manifest {
 
     if (typeof data.dependencies === `object` && data.dependencies !== null) {
       for (const [name, range] of Object.entries(data.dependencies)) {
-        if (typeof range !== 'string') {
+        if (typeof range !== `string`) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           continue;
         }
@@ -247,7 +247,7 @@ export class Manifest {
           continue;
         }
 
-        if (typeof range !== 'string' || !semver.validRange(range)) {
+        if (typeof range !== `string` || !semver.validRange(range)) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           range = `*`;
         }

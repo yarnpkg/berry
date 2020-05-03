@@ -30,7 +30,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   const debugLevel = Number(process.env.PNP_DEBUG_LEVEL);
 
   // @ts-ignore
-  const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding('natives')));
+  const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
 
   // Splits a require request into its components, or return null if the request is a file path
   const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
@@ -671,7 +671,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     try {
       return resolveUnqualified(unqualifiedPath, {extensions});
     } catch (resolutionError) {
-      if (resolutionError.pnpCode === 'QUALIFIED_PATH_RESOLUTION_FAILED')
+      if (resolutionError.pnpCode === `QUALIFIED_PATH_RESOLUTION_FAILED`)
         Object.assign(resolutionError.data, {request, issuer});
 
       throw resolutionError;

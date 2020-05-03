@@ -96,10 +96,10 @@ export function convertMapsToObjects(arg: unknown): unknown {
   if (arg instanceof Map)
     arg = Object.fromEntries(arg);
 
-  if (typeof arg === 'object' && arg !== null) {
+  if (typeof arg === `object` && arg !== null) {
     for (const key of Object.keys(arg)) {
       const value = arg[key as keyof object] as unknown;
-      if (typeof value === 'object' && value !== null) {
+      if (typeof value === `object` && value !== null) {
         (arg[key as keyof object] as unknown) = convertMapsToObjects(value);
       }
     }

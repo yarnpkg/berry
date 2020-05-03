@@ -22,7 +22,7 @@ describe(`patchedFs`, () => {
 
     const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
 
-    const id = patchedFs.openSync(file, "r");
+    const id = patchedFs.openSync(file, `r`);
 
     patchedFs.read(id, Buffer.alloc(1), 0, 1, 0, err => {
       patchedFs.closeSync(id);

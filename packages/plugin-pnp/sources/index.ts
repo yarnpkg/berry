@@ -33,7 +33,7 @@ async function setupScriptEnvironment(project: Project, env: {[key: string]: str
   const pnpPath: PortablePath = getPnpPath(project).main;
   const pnpRequire = `--require ${quotePathIfNeeded(npath.fromPortablePath(pnpPath))}`;
 
-  if (pnpPath.includes(' ') && semver.lt(process.versions.node, '12.0.0'))
+  if (pnpPath.includes(` `) && semver.lt(process.versions.node, `12.0.0`))
     throw new Error(`Expected the build location to not include spaces when using Node < 12.0.0 (${process.versions.node})`);
 
   if (xfs.existsSync(pnpPath)) {

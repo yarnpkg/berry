@@ -28,7 +28,7 @@ export default class ClipanionCommand extends Command<CommandContext> {
     const clipanionDefinitions = this.cli.definitions() as ExtendedDefinition[];
 
     const arePathsEqual = (path1: string, path2: string) =>
-      path1.split(' ').slice(1).join() === path2.split(' ').slice(1).join();
+      path1.split(` `).slice(1).join() === path2.split(` `).slice(1).join();
 
     const defaultPlugins: string[] = require(`@yarnpkg/cli/package.json`)[`@yarnpkg/builder`].bundles.standard;
 

@@ -343,7 +343,7 @@ const removeDir = async (dir: PortablePath, options: {contentsOnly: boolean, inn
       await xfs.rmdirPromise(dir);
     }
   } catch (e) {
-    if (e.code !== 'ENOENT' && e.code !== 'ENOTEMPTY') {
+    if (e.code !== `ENOENT` && e.code !== `ENOTEMPTY`) {
       throw e;
     }
   }
@@ -436,7 +436,7 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
       for (let idx = 0; idx < segments.length; ++idx) {
         const segment = segments[idx];
         // '.' segment exists only for top-level locator, skip it
-        if (segment !== '.') {
+        if (segment !== `.`) {
           const nextNode = miscUtils.getFactoryWithDefault(node.children, segment, makeNode);
 
           node.children.set(segment, nextNode);
@@ -455,7 +455,7 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
 };
 
 const symlinkPromise = async (srcDir: PortablePath, dstDir: PortablePath) =>
-  xfs.symlinkPromise(process.platform !== 'win32' ? ppath.relative(ppath.dirname(dstDir), srcDir) : srcDir, dstDir, process.platform === 'win32' ? 'junction' : undefined);
+  xfs.symlinkPromise(process.platform !== `win32` ? ppath.relative(ppath.dirname(dstDir), srcDir) : srcDir, dstDir, process.platform === `win32` ? `junction` : undefined);
 
 const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, innerLoop}: {baseFs: FakeFS<PortablePath>, innerLoop?: boolean}) => {
   await xfs.mkdirpPromise(dstDir);
@@ -533,7 +533,7 @@ function isLinkLocator(locatorKey: LocatorKey): boolean {
   if (structUtils.isVirtualDescriptor(descriptor))
     descriptor = structUtils.devirtualizeDescriptor(descriptor);
 
-  return descriptor.range.startsWith('link:');
+  return descriptor.range.startsWith(`link:`);
 }
 
 async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, projectRoot: PortablePath, {loadManifest}: {loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
@@ -545,7 +545,7 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
     if (manifest) {
       for (const [name, value] of manifest.bin) {
         const target = ppath.join(locations[0], value);
-        if (value !== '' && xfs.existsSync(target)) {
+        if (value !== `` && xfs.existsSync(target)) {
           bin.set(name, value);
         }
       }
@@ -685,7 +685,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     let node = locationTree.get(location);
     for (const [segment, prevChildNode] of prevNode.children) {
       // '.' segment exists only for top-level locator, skip it
-      if (segment === '.')
+      if (segment === `.`)
         continue;
       let childNode = node ? node.children.get(segment) : node;
       await removeOutdatedDirs(ppath.join(location, segment), prevChildNode, childNode);
@@ -720,7 +720,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     let prevNode = prevLocationTree.get(location);
     for (const [segment, childNode] of node.children) {
       // '.' segment exists only for top-level locator, skip it
-      if (segment === '.')
+      if (segment === `.`)
         continue;
       let prevChildNode = prevNode ? prevNode.children.get(segment) : prevNode;
       await cleanNewDirs(ppath.join(location, segment), childNode, prevChildNode);
@@ -853,7 +853,7 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
       if (!symlinks.has(name)) {
         // Remove outdated symlinks
         await xfs.removePromise(ppath.join(binDir, name));
-        if (process.platform === 'win32') {
+        if (process.platform === `win32`) {
           await xfs.removePromise(ppath.join(binDir, toFilename(`${name}.cmd`)));
         }
       }
@@ -866,7 +866,7 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
       if (prevTarget === target)
         continue;
 
-      if (process.platform === 'win32') {
+      if (process.platform === `win32`) {
         await cmdShim(npath.fromPortablePath(target), npath.fromPortablePath(symlinkPath), {createPwshFile: false});
       } else {
         await xfs.removePromise(symlinkPath);

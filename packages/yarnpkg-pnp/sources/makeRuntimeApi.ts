@@ -10,7 +10,7 @@ export const makeRuntimeApi = (settings: PnpSettings, basePath: string, fakeFs: 
   const data = generateSerializedState(settings);
   const state = hydrateRuntimeState(data, {basePath});
 
-  const pnpapiResolution = npath.join(basePath, '.pnp.js');
+  const pnpapiResolution = npath.join(basePath, `.pnp.js`);
 
   return makeApi(state, {fakeFs, pnpapiResolution});
 };

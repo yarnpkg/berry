@@ -282,7 +282,7 @@ function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number): Mod
         });
 
         if (part.noNewlineAtEndOfFile) {
-          result.push({type: "pop"});
+          result.push({type: `pop`});
         }
       } break;
 

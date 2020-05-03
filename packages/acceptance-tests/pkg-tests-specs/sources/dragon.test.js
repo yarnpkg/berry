@@ -2,7 +2,7 @@ import {xfs} from '@yarnpkg/fslib';
 
 const {
   fs: {writeFile, writeJson},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 // Here be dragons. The biggest and baddest tests, that just can't be described in a single line of summary. Because
 // of this, they each must be clearly documented and explained.

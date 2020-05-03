@@ -47,7 +47,7 @@ export class WatchManager extends EventEmitter {
     const watchEventEmitter = new WatchEventEmitter(this.dirWatchers, watchPath, watcherId);
     dirWatcher.eventEmitters.set(watcherId, watchEventEmitter);
 
-    watchEventEmitter.on('rename', (filename: string) => callback('rename', filename));
+    watchEventEmitter.on(`rename`, (filename: string) => callback(`rename`, filename));
 
     return watchEventEmitter;
   }
@@ -70,7 +70,7 @@ export class WatchManager extends EventEmitter {
 
       for (const entry of dirEntryDiff) {
         for (const watchEventEmitter of dirWatcher.eventEmitters.values()) {
-          watchEventEmitter.emit('rename', entry);
+          watchEventEmitter.emit(`rename`, entry);
         }
       }
       dirWatcher.dirEntries = newDirEntries;
