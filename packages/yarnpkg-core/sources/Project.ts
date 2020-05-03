@@ -1398,8 +1398,8 @@ export class Project {
     await this.configuration.triggerHook(hooks => {
       return hooks.validateProject;
     }, this, {
-      reportWarning: (name: MessageName, text:string) => validationWarnings.push({name, text}),
-      reportError: (name: MessageName, text:string) => validationErrors.push({name, text}),
+      reportWarning: (name: MessageName, text: string) => validationWarnings.push({name, text}),
+      reportError: (name: MessageName, text: string) => validationErrors.push({name, text}),
     });
 
     const problemCount = validationWarnings.length + validationErrors.length;
@@ -1494,7 +1494,7 @@ export class Project {
 
     const optimizedLockfile: {[key: string]: any} = {};
 
-    optimizedLockfile[`__metadata`] = {
+    optimizedLockfile.__metadata = {
       version: LOCKFILE_VERSION,
     };
 

@@ -73,10 +73,10 @@ function cleanupJsonOutput(output, path, homePath) {
   }
 
   // the default globalFolder contains the user's home folder, override that value
-  outputObject[`globalFolder`].default = `DEFAULT_GLOBAL_FOLDER`;
+  outputObject.globalFolder.default = `DEFAULT_GLOBAL_FOLDER`;
 
   // replace the generated registry server URL with a constant
-  outputObject[`npmRegistryServer`].effective = FAKE_REGISTRY_URL;
+  outputObject.npmRegistryServer.effective = FAKE_REGISTRY_URL;
 
   const pathRegExp = new RegExp(path, `g`);
   const homePathRegExp = new RegExp(homePath, `g`);

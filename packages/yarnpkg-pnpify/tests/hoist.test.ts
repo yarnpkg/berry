@@ -320,7 +320,7 @@ describe(`hoist`, () => {
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
 
-  it (`should keep peer dependency promise for the case where the package with same ident is a dependency of parent node`, () => {
+  it(`should keep peer dependency promise for the case where the package with same ident is a dependency of parent node`, () => {
     // . -> A -> B@X --> C
     //        -> C@Y
     //   -> B@X --> C

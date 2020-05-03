@@ -203,7 +203,7 @@ export const startPackageServer = (): Promise<string> => {
     type: RequestType.Repository;
   };
 
-  const processors: {[requestType in RequestType]:(parsedRequest: Request, request: IncomingMessage, response: ServerResponse) => Promise<void>} = {
+  const processors: {[requestType in RequestType]: (parsedRequest: Request, request: IncomingMessage, response: ServerResponse) => Promise<void>} = {
     async [RequestType.PackageInfo](parsedRequest, _, response) {
       if (parsedRequest.type !== RequestType.PackageInfo)
         throw new Error(`Assertion failed: Invalid request type`);
