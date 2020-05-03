@@ -41,6 +41,8 @@
     "no-tabs": 2,
     "no-trailing-spaces": 2,
     "no-unused-vars": "off",
+    "no-empty": ["error", {"allowEmptyCatch": true}],
+    "no-constant-condition": ["error", {"checkLoops": false}],
     "object-curly-spacing": 2,
     "padded-blocks": ["error", "never"],
     "prefer-template": 2,

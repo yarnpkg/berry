@@ -70,10 +70,8 @@ export const packToStream = (
     map: (header: any) => {
       header.name = npath.toPortablePath(header.name);
 
-      if (true) {
-        header.name = ppath.resolve(PortablePath.root, header.name);
-        header.name = ppath.relative(PortablePath.root, header.name);
-      }
+      header.name = ppath.resolve(PortablePath.root, header.name);
+      header.name = ppath.relative(PortablePath.root, header.name);
 
       if (virtualPath) {
         header.name = ppath.resolve(PortablePath.root, virtualPath, header.name);

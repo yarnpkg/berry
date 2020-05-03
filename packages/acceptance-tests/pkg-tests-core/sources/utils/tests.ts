@@ -351,11 +351,11 @@ export const startPackageServer = (): Promise<string> => {
 
     url = url.replace(/%2f/g, '/');
 
-    if (match = url.match(/^\/repositories\//)) {
+    if ((match = url.match(/^\/repositories\//))) {
       return {
         type: RequestType.Repository,
       };
-    } else if (match = url.match(/^\/-\/user\/org\.couchdb\.user:(.+)/)) {
+    } else if ((match = url.match(/^\/-\/user\/org\.couchdb\.user:(.+)/))) {
       const [, username] = match;
 
       return {
@@ -366,7 +366,7 @@ export const startPackageServer = (): Promise<string> => {
       return {
         type: RequestType.Whoami,
       };
-    } else if (match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)$/)) {
+    } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)$/))) {
       const [, scope, localName] = match;
 
       return {
@@ -374,7 +374,7 @@ export const startPackageServer = (): Promise<string> => {
         scope,
         localName,
       };
-    } else if (match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)\/(-|tralala)\/\2-(.*)\.tgz$/)) {
+    } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)\/(-|tralala)\/\2-(.*)\.tgz$/))) {
       const [, scope, localName, split, version] = match;
 
       if ((localName === `unconventional-tarball` || localName === `private-unconventional-tarball`) && split === `-`)

@@ -447,6 +447,8 @@ function prettyRangeNoColors(range: string): string {
     const abbrev = range.substr(VIRTUAL_PROTOCOL.length, VIRTUAL_ABBREVIATE);
 
     // I'm not satisfied of how the virtual packages appear in the output
+
+    // eslint-disable-next-line no-constant-condition
     return false ? `${nested} (virtual:${abbrev})` : `${nested} [${abbrev}]`;
   } else {
     return range.replace(/\?.*/, `?[...]`);

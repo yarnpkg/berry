@@ -208,7 +208,7 @@ export class Cache {
       }
     };
 
-    for (let mutex; mutex = this.mutexes.get(locator.locatorHash);)
+    for (let mutex; (mutex = this.mutexes.get(locator.locatorHash));)
       await mutex;
 
     const cacheExists = baseFs.existsSync(cachePath);
