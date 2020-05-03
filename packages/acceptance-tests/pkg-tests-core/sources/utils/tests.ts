@@ -148,7 +148,7 @@ export const getPackageHttpArchivePath = async (
   if (!packageVersionEntry)
     throw new Error(`Unknown version "${version}" for package "${name}"`);
 
-  const localName = name.replace(/^@[^\/]+\//, ``);
+  const localName = name.replace(/^@[^/]+\//, ``);
 
   const serverUrl = await startPackageServer();
   const archiveUrl = `${serverUrl}/${name}/-/${localName}-${version}.tgz`;
@@ -366,7 +366,7 @@ export const startPackageServer = (): Promise<string> => {
       return {
         type: RequestType.Whoami,
       };
-    } else if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)$/)) {
+    } else if (match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)$/)) {
       const [, scope, localName] = match;
 
       return {
@@ -374,7 +374,7 @@ export const startPackageServer = (): Promise<string> => {
         scope,
         localName,
       };
-    } else if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)\/(-|tralala)\/\2-(.*)\.tgz$/)) {
+    } else if (match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)\/(-|tralala)\/\2-(.*)\.tgz$/)) {
       const [, scope, localName, split, version] = match;
 
       if ((localName === `unconventional-tarball` || localName === `private-unconventional-tarball`) && split === `-`)

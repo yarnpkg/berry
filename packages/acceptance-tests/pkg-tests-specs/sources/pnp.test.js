@@ -894,7 +894,7 @@ describe(`Plug'n'Play`, () => {
 
         await run(`install`);
 
-        expect(await source(`require.resolve('no-deps')`)).toMatch(/[\\\/]node_modules[\\\/]no-deps[\\\/]/);
+        expect(await source(`require.resolve('no-deps')`)).toMatch(/[\\/]node_modules[\\/]no-deps[\\/]/);
       },
     ),
   );
@@ -916,7 +916,7 @@ describe(`Plug'n'Play`, () => {
 
         await run(`install`);
 
-        expect(await source(`require.resolve('peer-deps')`)).toMatch(/[\\\/]node_modules[\\\/]peer-deps[\\\/]/);
+        expect(await source(`require.resolve('peer-deps')`)).toMatch(/[\\/]node_modules[\\/]peer-deps[\\/]/);
       },
     ),
   );

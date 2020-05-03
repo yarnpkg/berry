@@ -97,7 +97,7 @@ export default class BuildBundleCommand extends Command {
         rules: [{
           // This file is particular in that it exposes the bundle
           // configuration to the bundle itself (primitive introspection).
-          test: /[\\\/]getPluginConfiguration\.val\.js$/,
+          test: /[\\/]getPluginConfiguration\.val\.js$/,
           use: {
             loader: require.resolve(`val-loader`),
             options: {modules, plugins},

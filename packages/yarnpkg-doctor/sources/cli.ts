@@ -54,7 +54,7 @@ function extractIdents(name: string) {
     // Webpack loaders can have query strings
     const partWithQs = part.replace(/\?.*/, ``);
 
-    const match = partWithQs.match(/^(?!\.{0,2}(\/|$))(@[^\/]*\/)?([^\/]+)/);
+    const match = partWithQs.match(/^(?!\.{0,2}(\/|$))(@[^/]*\/)?([^/]+)/);
     if (!match)
       continue;
 

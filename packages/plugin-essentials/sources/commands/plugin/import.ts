@@ -53,7 +53,7 @@ export default class PluginDlCommand extends BaseCommand {
 
       let pluginSpec: string;
       let pluginBuffer: Buffer;
-      if (this.name.match(/^\.{0,2}[\\\/]/) || npath.isAbsolute(this.name)) {
+      if (this.name.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.name)) {
         const candidatePath = ppath.resolve(this.context.cwd, npath.toPortablePath(this.name));
 
         report.reportInfo(MessageName.UNNAMED, `Reading ${configuration.format(candidatePath, `green`)}`);

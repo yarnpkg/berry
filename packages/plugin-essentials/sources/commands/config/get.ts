@@ -44,8 +44,8 @@ export default class ConfigSetCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
-    const name = this.name.replace(/[.\[].*$/, ``);
-    const path = this.name.replace(/^[^.\[]*/, ``);
+    const name = this.name.replace(/[.[].*$/, ``);
+    const path = this.name.replace(/^[^.[]*/, ``);
 
     const setting = configuration.settings.get(name);
     if (typeof setting === `undefined`)
