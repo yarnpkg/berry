@@ -1,4 +1,3 @@
-
 const {fs: {writeJson}} = require(`pkg-tests-core`);
 
 describe(`Protocols`, () => {

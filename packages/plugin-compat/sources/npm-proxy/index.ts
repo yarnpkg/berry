@@ -1,4 +1,3 @@
-
 import {Hooks as CoreHooks, Descriptor, Workspace} from '@yarnpkg/core';
 import {Hooks as EssentialsHooks}                  from '@yarnpkg/plugin-essentials';
 
