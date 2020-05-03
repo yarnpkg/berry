@@ -1,0 +1,54 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-cordova-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E Cordova'
+jobs:
+  chore:
+    name: 'Validating Cordova'
+    runs-on: ubuntu-latest
+
+    env:
+      YARN_PNP_MODE: 'loose'
+      YARN_PNP_FALLBACK_MODE: 'all'
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+        yarn init
+
+        # Required setup
+        yarn add cordova
+        mkdir www
+        echo '<?xml version="1.0" encoding="UTF-8"?><widget id="com.example.app" version="1.0.0"><name>AppName</name></widget>' | tee config.xml
+
+        # Tests npm view and npm install
+        yarn cordova platform add android
+        yarn cordova plugin add cordova-plugin-code-push
+
+        # Tests npm remove
+        yarn cordova plugin remove cordova-plugin-code-push
+        yarn cordova platform remove android
+
+        # Check npm didn't run
+        ls
+        ! test -e package-lock.json
