@@ -49,6 +49,7 @@
     "object-curly-spacing": 2,
     "padded-blocks": ["error", "never"],
     "prefer-template": 2,
+    "quote-props": ["error", "as-needed"],
     "react/jsx-uses-react": 1,
     "react/jsx-uses-vars": 1,
     "rest-spread-spacing": 2,

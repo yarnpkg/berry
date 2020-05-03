@@ -48,7 +48,7 @@ describe(`hoist`, () => {
     //   -> B
     const tree = {
       '.': {dependencies: [`A`]},
-      'A': {dependencies: [`B`]},
+      A: {dependencies: [`B`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
@@ -64,9 +64,9 @@ describe(`hoist`, () => {
     //   -> E
     const tree = {
       '.': {dependencies: [`C`]},
-      'C': {dependencies: [`A`]},
-      'A': {dependencies: [`B`, `D`]},
-      'B': {dependencies: [`A`, `E`]},
+      C: {dependencies: [`A`]},
+      A: {dependencies: [`B`, `D`]},
+      B: {dependencies: [`A`, `E`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
@@ -90,8 +90,8 @@ describe(`hoist`, () => {
     //   -> G@X
     const tree = {
       '.': {dependencies: [`A`, `C@Y`, `D@Y`]},
-      'A': {dependencies: [`B`, `C@Z`, `F@Z`]},
-      'B': {dependencies: [`C@X`, `F@X`]},
+      A: {dependencies: [`B`, `C@Z`, `F@Z`]},
+      B: {dependencies: [`C@X`, `F@X`]},
       'F@X': {dependencies: [`G@X`]},
       'C@X': {dependencies: [`D@X`]},
     };
@@ -108,8 +108,8 @@ describe(`hoist`, () => {
     //   -> C@Y
     const tree = {
       '.': {dependencies: [`A`, `C@Y`]},
-      'A': {dependencies: [`B`]},
-      'B': {dependencies: [`A`, `C@X`]},
+      A: {dependencies: [`B`]},
+      B: {dependencies: [`A`, `C@X`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
@@ -120,7 +120,7 @@ describe(`hoist`, () => {
     // should not be changed
     const tree = {
       '.': {dependencies: [`A`, `B@Y`]},
-      'A': {dependencies: [`B@X`]},
+      A: {dependencies: [`B@X`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
@@ -133,9 +133,9 @@ describe(`hoist`, () => {
     //   -> C -> B@Y
     const tree = {
       '.':   {dependencies: [`A`]},
-      'A':   {dependencies: [`B@X`]},
+      A:   {dependencies: [`B@X`]},
       'B@X': {dependencies: [`C`]},
-      'C':   {dependencies: [`B@Y`]},
+      C:   {dependencies: [`B@Y`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
@@ -151,9 +151,9 @@ describe(`hoist`, () => {
     //   -> C@X
     const tree = {
       '.':   {dependencies: [`A`, `B@Y`, `C@X`]},
-      'A':   {dependencies: [`B@X`, `C@X`]},
+      A:   {dependencies: [`B@X`, `C@X`]},
       'B@X': {dependencies: [`C@Y`]},
-      'C':   {dependencies: [`B@Y`]},
+      C:   {dependencies: [`B@Y`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
@@ -169,9 +169,9 @@ describe(`hoist`, () => {
     //   -> C@X
     const tree = {
       '.':   {dependencies: [`.`, `A`, `B@Y`, `C@X`]},
-      'A':   {dependencies: [`A`, `B@X`, `C@X`]},
+      A:   {dependencies: [`A`, `B@X`, `C@X`]},
       'B@X': {dependencies: [`B@X`, `C@Y`]},
-      'C':   {dependencies: [`B@Y`]},
+      C:   {dependencies: [`B@Y`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
@@ -192,12 +192,12 @@ describe(`hoist`, () => {
     //   -> B@Y
     const tree = {
       '.': {dependencies: [`A`, `C`, `D`, `E`, `F`]},
-      'A': {dependencies: [`B@X`]},
-      'C': {dependencies: [`B@X`]},
-      'D': {dependencies: [`B@Y`]},
-      'E': {dependencies: [`B@Y`]},
-      'F': {dependencies: [`G`]},
-      'G': {dependencies: [`B@Y`]},
+      A: {dependencies: [`B@X`]},
+      C: {dependencies: [`B@X`]},
+      D: {dependencies: [`B@Y`]},
+      E: {dependencies: [`B@Y`]},
+      F: {dependencies: [`G`]},
+      G: {dependencies: [`B@Y`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
@@ -212,8 +212,8 @@ describe(`hoist`, () => {
     //   -> D@Y
     const tree = {
       '.': {dependencies: [`A`, `D@Y`]},
-      'A': {dependencies: [`B`, `D@X`]},
-      'B': {dependencies: [`D@X`], peerNames: [`D`]},
+      A: {dependencies: [`B`, `D@X`]},
+      B: {dependencies: [`D@X`], peerNames: [`D`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
@@ -227,8 +227,8 @@ describe(`hoist`, () => {
     //   -> D@X
     const tree = {
       '.': {dependencies: [`A`]},
-      'A': {dependencies: [`B`, `D@X`]},
-      'B': {dependencies: [`D@X`], peerNames: [`D`]},
+      A: {dependencies: [`B`, `D@X`]},
+      B: {dependencies: [`D@X`], peerNames: [`D`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
@@ -244,7 +244,7 @@ describe(`hoist`, () => {
     //   -> C@Y
     const tree = {
       '.': {dependencies: [`A`, `B@X`, `C@Y`]},
-      'A': {dependencies: [`B@X`, `C@X`], peerNames: [`B`]},
+      A: {dependencies: [`B@X`, `C@X`], peerNames: [`B`]},
       'C@X': {dependencies: [`B@Y`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
@@ -258,8 +258,8 @@ describe(`hoist`, () => {
     //   -> C
     const tree = {
       '.': {dependencies: [`A`], peerNames: [`B`]},
-      'A': {dependencies: [`B`]},
-      'B': {dependencies: [`C`]},
+      A: {dependencies: [`B`]},
+      B: {dependencies: [`C`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
@@ -279,9 +279,9 @@ describe(`hoist`, () => {
     //   -> C@Z
     const tree = {
       '.': {dependencies: [`A`, `D`, `B@Y`, `C@Z`]},
-      'A': {dependencies: [`B@X`, `C@Y`]},
+      A: {dependencies: [`B@X`, `C@Y`]},
       'B@X': {dependencies: [`C@X`]},
-      'D': {dependencies: [`B@X`]},
+      D: {dependencies: [`B@X`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
@@ -310,12 +310,12 @@ describe(`hoist`, () => {
     //   -> C@Z
     const tree = {
       '.': {dependencies: [`A`, `E`, `F`, `B@Y`, `C@Z`, `D@Y`]},
-      'A': {dependencies: [`B@X`, `C@Y`]},
+      A: {dependencies: [`B@X`, `C@Y`]},
       'B@X': {dependencies: [`C@X`]},
       'C@X': {dependencies: [`D@X`]},
-      'E': {dependencies: [`B@X`]},
-      'F': {dependencies: [`G`]},
-      'G': {dependencies: [`B@X`, `D@Z`]},
+      E: {dependencies: [`B@X`]},
+      F: {dependencies: [`G`]},
+      G: {dependencies: [`B@X`, `D@Z`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
@@ -329,7 +329,7 @@ describe(`hoist`, () => {
     // `npm` and `yarn v1` will hoist B@X to the top, they have incorrect hoisting
     const tree = {
       '.': {dependencies: [`A`, `B@X#2`, `C@X`]},
-      'A': {dependencies: [`B@X#1`, `C@Y`]},
+      A: {dependencies: [`B@X#1`, `C@Y`]},
       'B@X#1': {dependencies: [`C@Y`], peerNames: [`C`]},
       'B@X#2': {dependencies: [`C@X`], peerNames: [`C`]},
     };
