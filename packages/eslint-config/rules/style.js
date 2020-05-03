@@ -48,6 +48,8 @@ module.exports = {
 
     'comma-dangle': [`error`, `always-multiline`],
 
+    'comma-spacing': 2,
+
     'computed-property-spacing': 2,
 
     'generator-star-spacing': [`error`, {
@@ -65,7 +67,7 @@ module.exports = {
 
     'no-mixed-spaces-and-tabs': 2,
 
-    'no-multiple-empty-lines': 2,
+    'no-multiple-empty-lines': [2, {max: 2, maxBOF: 0}],
 
     'no-tabs': 2,
 
