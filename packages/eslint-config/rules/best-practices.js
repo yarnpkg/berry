@@ -1,7 +1,7 @@
 module.exports = {
   plugins: [
-    '@typescript-eslint',
-    'arca',
+    `@typescript-eslint`,
+    `arca`,
   ],
 
   rules: {
@@ -25,7 +25,7 @@ module.exports = {
     'no-cond-assign': 2,
 
     'no-constant-condition': [`error`, {
-      checkLoops: false
+      checkLoops: false,
     }],
 
     'no-control-regex': 2,
@@ -33,7 +33,7 @@ module.exports = {
     'no-debugger': 2,
 
     'no-empty': [`error`, {
-      allowEmptyCatch: true
+      allowEmptyCatch: true,
     }],
 
     'no-empty-character-class': 2,
@@ -72,7 +72,7 @@ module.exports = {
 
     'prefer-const': [`error`, {
       destructuring: `all`,
-      ignoreReadBeforeAssign: true
+      ignoreReadBeforeAssign: true,
     }],
 
     'prefer-template': 2,

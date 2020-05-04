@@ -6118,6 +6118,8 @@ __metadata:
     eslint-plugin-react: "*"
     typescript: "*"
   peerDependenciesMeta:
+    eslint-plugin-react:
+      optional: true
     typescript:
       optional: true
   languageName: unknown

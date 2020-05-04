@@ -2,7 +2,6 @@ module.exports = {
   extends: [
     `./rules/best-practices`,
     `./rules/errors`,
-    `./rules/react`,
     `./rules/style`,
     `./rules/typescript`,
   ].map(require.resolve),
@@ -20,5 +19,5 @@ module.exports = {
     ecmaFeatures: {
       modules: true,
     },
-  }
+  },
 };

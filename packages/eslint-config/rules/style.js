@@ -1,20 +1,20 @@
 module.exports = {
   plugins: [
-    '@typescript-eslint',
-    'arca'
+    `@typescript-eslint`,
+    `arca`,
   ],
 
   rules: {
     '@typescript-eslint/array-type': [`error`, {
-      default: `generic`
+      default: `generic`,
     }],
 
     '@typescript-eslint/camelcase': [`error`, {
       allow: [
         `__non_webpack_module__`,
         `__non_webpack_require__`,
-        `^npm(_[a-z]+)+$`
-      ]
+        `^npm(_[a-z]+)+$`,
+      ],
     }],
 
     '@typescript-eslint/class-name-casing': 2,
@@ -23,7 +23,7 @@ module.exports = {
 
     '@typescript-eslint/indent': [`error`, 2, {
       SwitchCase: 1,
-      ignoredNodes: [`TSTypeParameterInstantiation`]
+      ignoredNodes: [`TSTypeParameterInstantiation`],
     }],
 
     '@typescript-eslint/quotes': [`error`, `backtick`],

@@ -10,6 +10,9 @@
     "typescript": "*"
   },
   "peerDependenciesMeta": {
+    "eslint-plugin-react": {
+      "optional": true
+    },
     "typescript": {
       "optional": true
     }

@@ -1,3 +1,6 @@
 module.exports = {
-  extends: '@yarnpkg'
+  extends: [
+    `@yarnpkg`,
+    `@yarnpkg/eslint-config/react`
+  ]
 };
