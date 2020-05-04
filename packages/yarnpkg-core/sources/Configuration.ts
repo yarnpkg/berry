@@ -332,7 +332,16 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: [],
     isArray: true,
   },
-
+  httpTimeout: {
+    description: `Timeout of each http request in milliseconds`,
+    type: SettingsType.NUMBER,
+    default: 60000,
+  },
+  httpRetry: {
+    description: `Retry times on http failure`,
+    type: SettingsType.NUMBER,
+    default: 3,
+  },
   // Settings related to security
   enableScripts: {
     description: `If true, packages are allowed to have install scripts by default`,
