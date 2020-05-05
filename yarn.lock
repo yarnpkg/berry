@@ -6107,7 +6107,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/eslint-config@workspace:^0.1.0, @yarnpkg/eslint-config@workspace:packages/eslint-config":
+"@yarnpkg/eslint-config@workspace:^0.0.0, @yarnpkg/eslint-config@workspace:packages/eslint-config":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/eslint-config@workspace:packages/eslint-config"
   peerDependencies:
@@ -6280,7 +6280,7 @@ __metadata:
     "@typescript-eslint/parser": ^2.23.0
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33"
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
-    "@yarnpkg/eslint-config": "workspace:^0.1.0"
+    "@yarnpkg/eslint-config": "workspace:^0.0.0"
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.22"
     babel-jest: ^24.5.0
     clipanion: ^2.1.5
