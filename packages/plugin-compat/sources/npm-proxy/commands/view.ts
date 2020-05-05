@@ -2,7 +2,7 @@ import {BaseCommand} from '@yarnpkg/cli';
 import {Command}     from 'clipanion';
 
 export class ViewCommand extends BaseCommand {
-  @Command.Boolean('--json')
+  @Command.Boolean(`--json`)
   json!: boolean;
 
   @Command.String()
@@ -10,6 +10,6 @@ export class ViewCommand extends BaseCommand {
 
   @Command.Path(`npm`, `view`)
   execute() {
-    return this.cli.run(['npm', 'info', this.package, this.json && '--json'].filter((x) => x) as string[]);
+    return this.cli.run([`npm`, `info`, this.package, this.json && `--json`].filter(x => x) as Array<string>);
   }
 }

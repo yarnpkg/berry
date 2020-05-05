@@ -8,17 +8,17 @@ export class InstallCommand extends BaseCommand {
   packages: Array<string> = [];
 
   //#region Ignored
-  @Command.Boolean('--save')
+  @Command.Boolean(`--save`)
   save!: boolean;
 
-  @Command.Boolean('-P,--save-prod,--production')
+  @Command.Boolean(`-P,--save-prod,--production`)
   production!: boolean;
   //#endregion
 
-  @Command.Boolean('-D,--save-dev')
+  @Command.Boolean(`-D,--save-dev`)
   devDependency: boolean = false;
 
-  @Command.Boolean('-O,--save-optional')
+  @Command.Boolean(`-O,--save-optional`)
   optional: boolean = false;
 
   @Command.Path(`npm`, `install`)
@@ -27,9 +27,9 @@ export class InstallCommand extends BaseCommand {
     enableNpmCompatOutput();
 
     return this.cli.run([
-      'add',
+      `add`,
       ...this.packages,
-      ...[this.devDependency && '-D', this.optional && '-O'].filter((arg) => arg).join(' '),
+      ...[this.devDependency && `-D`, this.optional && `-O`].filter(arg => arg).join(` `),
     ]);
   }
 }

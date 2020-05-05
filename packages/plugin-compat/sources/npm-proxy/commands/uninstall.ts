@@ -6,11 +6,11 @@ export class UninstallCommand extends BaseCommand {
   packages: Array<string> = [];
 
   // Ignored default
-  @Command.Boolean('--save')
+  @Command.Boolean(`--save`)
   save!: boolean;
 
   @Command.Path(`npm`, `uninstall`)
   execute() {
-    return this.cli.run(['remove', ...this.packages]);
+    return this.cli.run([`remove`, ...this.packages]);
   }
 }

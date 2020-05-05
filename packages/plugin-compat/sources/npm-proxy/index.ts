@@ -15,7 +15,7 @@ export function enableNpmCompatOutput() {
 
 export const hooks: EssentialsHooks & CoreHooks = {
   async setupScriptEnvironment(project, env, makePathWrapper) {
-    await makePathWrapper(`npm`, process.execPath, [process.argv[1], 'npm']);
+    await makePathWrapper(`npm`, process.execPath, [process.argv[1], `npm`]);
   },
   async afterWorkspaceDependencyAddition(workspace, target, descriptor) {
     installedDependencies.push([workspace, descriptor]);
@@ -25,7 +25,7 @@ export const hooks: EssentialsHooks & CoreHooks = {
   },
   async afterAllInstalled(project) {
     if (installedDependencies.length && emitNpmCompatOutput) {
-      console.log('NPM compat output:');
+      console.log(`NPM compat output:`);
       for (const [workspace, ident] of installedDependencies) {
         const descriptor = workspace.dependencies.get(ident.identHash)!;
         const resolution = project.storedResolutions.get(descriptor.descriptorHash)!;

@@ -46,7 +46,7 @@ const plugin: Plugin<CoreHooks & PatchHooks> = {
     },
     ...hooks,
   },
-  commands: commands,
+  commands,
 };
 
 // eslint-disable-next-line arca/no-default-export
