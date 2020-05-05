@@ -150,7 +150,7 @@ This will cause Yarn to install the project just like Yarn 1 used to, by copying
 
 | <div style="width:150px">Yarn Classic (1.x)</div> | <div style="width: 250px">Yarn (2.x)</div> | Notes |
 | ------------------ | -------------------------- | ----------------------------- |
-| `yarn create`   | `yarn dlx create-<name>`   | `yarn create` still work, but prefer using `yarn dlx` |
+| `yarn create`   | `yarn dlx create-<name>`   | `yarn create` still works, but prefer using `yarn dlx` |
 | `yarn global`   | `yarn dlx`                 | [Dedicated section](#use-yarn-dlx-instead-of-yarn-global) |
 | `yarn info`     | `yarn npm info`            ||
 | `yarn login`    | `yarn npm login`           ||
