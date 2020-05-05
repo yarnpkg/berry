@@ -46,7 +46,7 @@ Note that the doctor is intended to report any potential issue - it's then up to
 | `yarn global`   | `yarn dlx`                                   | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/821)  |
 | `yarn import`   | -                                            | Not implemented, please import using v1 first                       |
 | `yarn info`     | `yarn npm info`                              |                                                                     |
-| `yarn licenses` | -                                            | Not implemented                                                     |
+| `yarn licenses` | -                                            | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/1164) |
 | `yarn list`     | -                                            | Not implemented                                                     |
 | `yarn login`    | `yarn npm login`                             |                                                                     |
 | `yarn logout`   | -                                            | Not implemented, remove the credential from `.yarnrc.yml` instead   |
