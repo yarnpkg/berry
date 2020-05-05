@@ -39,25 +39,24 @@ Note that the doctor is intended to report any potential issue - it's then up to
 
 ### Changes in CLI commands
 
-| v1              | v2 substitute                | Notes                                                               |
-| --------------- | ---------------------------- | ------------------------------------------------------------------- |
-| `yarn audit`    | -                            | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/1187) |
-| `yarn check`    | `yarn install --check-files` | [Read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106)     |
-| `yarn create`   | -                            | Not implemented                                                     |
-| `yarn global`   | `yarn dlx`                   | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/821)  |
-| `yarn import`   | -                            | Not implemented                                                     |
-| `yarn info`     | `yarn npm info`              |                                                                     |
-| `yarn licenses` | -                            | Not implemented                                                     |
-| `yarn list`     | -                            | Not implemented                                                     |
-| `yarn login`    | `yarn npm login`             |                                                                     |
-| `yarn logout`   | -                            | Not implemented                                                     |
-| `yarn outdated` | `yarn upgrade-interactive`   | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/749)  |
-| `yarn owner`    | -                            | Not implemented                                                     |
-| `yarn publish`  | `yarn npm publish`           |                                                                     |
-| `yarn tag`      | -                            | Not implemented                                                     |
-| `yarn team`     | -                            | Not implemented                                                     |
-| `yarn unlink`   | -                            | Change `resolutions` field in the project-level manifest instead    |
-| `yarn upgrade`  | `yarn up`                    |                                                                     |
+| v1              | v2 substitute                                | Notes                                                               |
+| --------------- | -------------------------------------------- | ------------------------------------------------------------------- |
+| `yarn audit`    | -                                            | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/1187) |
+| `yarn check`    | `yarn install --immutable --immutable-cache` | [Read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106)     |
+| `yarn global`   | `yarn dlx`                                   | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/821)  |
+| `yarn import`   | -                                            | Not implemented, please import using v1 first                       |
+| `yarn info`     | `yarn npm info`                              |                                                                     |
+| `yarn licenses` | -                                            | Not implemented                                                     |
+| `yarn list`     | -                                            | Not implemented                                                     |
+| `yarn login`    | `yarn npm login`                             |                                                                     |
+| `yarn logout`   | -                                            | Not implemented, remove the credential from `.yarnrc.yml` instead   |
+| `yarn outdated` | `yarn upgrade-interactive`                   | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/749)  |
+| `yarn owner`    | -                                            | Not implemented                                                     |
+| `yarn publish`  | `yarn npm publish`                           |                                                                     |
+| `yarn tag`      | -                                            | Not implemented                                                     |
+| `yarn team`     | -                                            | Not implemented                                                     |
+| `yarn unlink`   | -                                            | Change `resolutions` field in the project-level manifest instead    |
+| `yarn upgrade`  | `yarn up`                                    | Upgrade across the whole project, not just current workspace        |
 
 ### Enable the PnP plugin when using Webpack 4
 
