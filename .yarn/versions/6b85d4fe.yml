@@ -3,6 +3,7 @@ releases:
   "@yarnpkg/plugin-compat": prerelease
 
 declined:
+  - "@yarnpkg/eslint-config"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
   - "@yarnpkg/plugin-essentials"
