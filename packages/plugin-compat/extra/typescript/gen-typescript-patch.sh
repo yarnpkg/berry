@@ -76,6 +76,8 @@ while [[ ${#HASHES[@]} -gt 0 ]]; do
     >> "$PATCHFILE"
 done
 
+echo '/* eslint-disable */' \
+  >> "$JSPATCH"
 echo 'export const patch =' \
   >> "$JSPATCH"
 node "$THIS_DIR"/../jsonEscape.js < "$PATCHFILE" \
