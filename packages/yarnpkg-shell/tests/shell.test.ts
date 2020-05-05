@@ -29,7 +29,7 @@ const bufferResult = async (command: string, args: Array<string> = [], options: 
         stdinChunks.push(chunk);
       });
 
-      return await new Promise (resolve => {
+      return await new Promise(resolve => {
         state.stdin.on(`end`, () => {
           const content = Buffer.concat(stdinChunks).toString().trim();
           state.stdout.write(`${content.replace(/(.)./g, `$1`)}\n`);

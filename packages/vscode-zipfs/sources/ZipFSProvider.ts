@@ -29,7 +29,7 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
     return stat;
   }
 
-  readDirectory(uri: vscode.Uri): [string, vscode.FileType][] {
+  readDirectory(uri: vscode.Uri): Array<[string, vscode.FileType]> {
     const listing = this.zipFs.readdirSync(uri.path as PortablePath);
     const results = [];
 
@@ -71,7 +71,7 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
     this.zipFs.mkdirSync(uri.path as PortablePath);
   }
 
-  private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
+  private _emitter = new vscode.EventEmitter<Array<vscode.FileChangeEvent>>();
   readonly onDidChangeFile = this._emitter.event;
 
   watch(resource: vscode.Uri, opts: any): vscode.Disposable {

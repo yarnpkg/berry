@@ -2,7 +2,7 @@ import {PortablePath, npath} from '@yarnpkg/fslib';
 import {Readable, Transform} from 'stream';
 
 export function escapeRegExp(str: string) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return str.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
 }
 
 export function assertNever(arg: never): never {
@@ -171,7 +171,7 @@ export class DefaultStream extends Transform {
 
 export function dynamicRequire(path: string) {
   // @ts-ignore
-  if (typeof __non_webpack_require__ !== 'undefined') {
+  if (typeof __non_webpack_require__ !== `undefined`) {
     // @ts-ignore
     return __non_webpack_require__(path);
   } else {

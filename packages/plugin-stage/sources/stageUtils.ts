@@ -7,7 +7,7 @@ export enum ActionType {
   ADD,
   REMOVE,
   MODIFY,
-};
+}
 
 export type FileAction = {
   action: ActionType,
@@ -136,7 +136,7 @@ export function genCommitMessage(consensus: Consensus, actions: Array<[ActionTyp
     if (consensus.useThirdPerson)
       verb += `s`;
 
-    let subjects = [what];
+    const subjects = [what];
 
     while (sorted.length > 0 && sorted[0][0] === type) {
       const [, what] = sorted.shift()!;

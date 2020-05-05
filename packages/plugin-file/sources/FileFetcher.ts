@@ -69,7 +69,7 @@ export class FileFetcher implements Fetcher {
       return await tgzUtils.makeArchiveFromDirectory(sourcePath, {
         baseFs: sourceFs,
         prefixPath: structUtils.getIdentVendorPath(locator),
-        compressionLevel: opts.project.configuration.get('compressionLevel'),
+        compressionLevel: opts.project.configuration.get(`compressionLevel`),
       });
     }, effectiveParentFetch.releaseFs);
   }

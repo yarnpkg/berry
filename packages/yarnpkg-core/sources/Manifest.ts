@@ -12,17 +12,17 @@ export type HardDependencies = 'dependencies' | 'devDependencies';
 
 export interface WorkspaceDefinition {
   pattern: string;
-};
+}
 
 export interface DependencyMeta {
   built?: boolean;
   optional?: boolean;
   unplugged?: boolean;
-};
+}
 
 export interface PeerDependencyMeta {
   optional?: boolean;
-};
+}
 
 export interface PublishConfig {
   access?: string;
@@ -30,7 +30,7 @@ export interface PublishConfig {
   module?: PortablePath;
   bin?: Map<string, PortablePath>;
   registry?: string;
-};
+}
 
 export class Manifest {
   public indent: string = `  `;
@@ -199,7 +199,7 @@ export class Manifest {
 
     if (typeof data.dependencies === `object` && data.dependencies !== null) {
       for (const [name, range] of Object.entries(data.dependencies)) {
-        if (typeof range !== 'string') {
+        if (typeof range !== `string`) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           continue;
         }
@@ -247,7 +247,7 @@ export class Manifest {
           continue;
         }
 
-        if (typeof range !== 'string' || !semver.validRange(range)) {
+        if (typeof range !== `string` || !semver.validRange(range)) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           range = `*`;
         }
@@ -678,7 +678,7 @@ export class Manifest {
 
     return data;
   }
-};
+}
 
 function getIndent(content: string) {
   const indentMatch = content.match(/^[ \t]+/m);

@@ -44,8 +44,8 @@ export default class ConfigSetCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
-    const name = this.name.replace(/[.\[].*$/, ``);
-    const path = this.name.replace(/^[^.\[]*/, ``);
+    const name = this.name.replace(/[.[].*$/, ``);
+    const path = this.name.replace(/^[^.[]*/, ``);
 
     const setting = configuration.settings.get(name);
     if (typeof setting === `undefined`)
@@ -96,14 +96,14 @@ export function convertMapsToObjects(arg: unknown): unknown {
   if (arg instanceof Map)
     arg = Object.fromEntries(arg);
 
-  if (typeof arg === 'object' && arg !== null) {
+  if (typeof arg === `object` && arg !== null) {
     for (const key of Object.keys(arg)) {
       const value = arg[key as keyof object] as unknown;
-      if (typeof value === 'object' && value !== null) {
+      if (typeof value === `object` && value !== null) {
         (arg[key as keyof object] as unknown) = convertMapsToObjects(value);
       }
     }
   }
 
   return arg;
-};
+}

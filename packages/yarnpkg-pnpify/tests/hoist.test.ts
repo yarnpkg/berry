@@ -1,11 +1,11 @@
 import {hoist, HoisterTree, HoisterResult} from '../sources/hoist';
 
-const toTree = (obj: any, key: string = '.', nodes = new Map()): HoisterTree => {
+const toTree = (obj: any, key: string = `.`, nodes = new Map()): HoisterTree => {
   let node = nodes.get(key);
   if (!node) {
     node = {
       name: key.match(/@?[^@]+/)![0],
-      reference: key.match(/@?[^@]+@?(.+)?/)![1] || '',
+      reference: key.match(/@?[^@]+@?(.+)?/)![1] || ``,
       dependencies: new Set<HoisterTree>(),
       peerNames: new Set<string>((obj[key] || {}).peerNames || []),
     };
@@ -40,20 +40,20 @@ const getTreeHeight = (tree: HoisterResult): number => {
   return maxHeight;
 };
 
-describe('hoist', () => {
-  it('should do very basic hoisting', () => {
+describe(`hoist`, () => {
+  it(`should do very basic hoisting`, () => {
     // . -> A -> B
     // should be hoisted to:
     // . -> A
     //   -> B
     const tree = {
-      '.': {dependencies: ['A']},
-      'A': {dependencies: ['B']},
+      '.': {dependencies: [`A`]},
+      A: {dependencies: [`B`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
 
-  it('should support basic cyclic dependencies', () => {
+  it(`should support basic cyclic dependencies`, () => {
     // . -> C -> A -> B -> A
     //             -> D -> E
     // should be hoisted to:
@@ -63,15 +63,15 @@ describe('hoist', () => {
     //   -> D
     //   -> E
     const tree = {
-      '.': {dependencies: ['C']},
-      'C': {dependencies: ['A']},
-      'A': {dependencies: ['B', 'D']},
-      'B': {dependencies: ['A', 'E']},
+      '.': {dependencies: [`C`]},
+      C: {dependencies: [`A`]},
+      A: {dependencies: [`B`, `D`]},
+      B: {dependencies: [`A`, `E`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
 
-  it('should keep require promise', () => {
+  it(`should keep require promise`, () => {
     // . -> A -> B -> C@X -> D@X
     //             -> F@X -> G@X
     //        -> C@Z
@@ -89,16 +89,16 @@ describe('hoist', () => {
     //   -> F@Z
     //   -> G@X
     const tree = {
-      '.': {dependencies: ['A', 'C@Y', 'D@Y']},
-      'A': {dependencies: ['B', 'C@Z', 'F@Z']},
-      'B': {dependencies: ['C@X', 'F@X']},
-      'F@X': {dependencies: ['G@X']},
-      'C@X': {dependencies: ['D@X']},
+      '.': {dependencies: [`A`, `C@Y`, `D@Y`]},
+      A: {dependencies: [`B`, `C@Z`, `F@Z`]},
+      B: {dependencies: [`C@X`, `F@X`]},
+      'F@X': {dependencies: [`G@X`]},
+      'C@X': {dependencies: [`D@X`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
-  it('should not forget hoisted dependencies', () => {
+  it(`should not forget hoisted dependencies`, () => {
     // . -> A -> B -> C@X
     //             -> A
     //   -> C@Y
@@ -107,40 +107,40 @@ describe('hoist', () => {
     //        -> C@X
     //   -> C@Y
     const tree = {
-      '.': {dependencies: ['A', 'C@Y']},
-      'A': {dependencies: ['B']},
-      'B': {dependencies: ['A', 'C@X']},
+      '.': {dependencies: [`A`, `C@Y`]},
+      A: {dependencies: [`B`]},
+      B: {dependencies: [`A`, `C@X`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
-  it('should not hoist different package with the same name', () => {
+  it(`should not hoist different package with the same name`, () => {
     // . -> A -> B@X
     //   -> B@Y
     // should not be changed
     const tree = {
-      '.': {dependencies: ['A', 'B@Y']},
-      'A': {dependencies: ['B@X']},
+      '.': {dependencies: [`A`, `B@Y`]},
+      A: {dependencies: [`B@X`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
-  it('should not hoist package that has several versions on the same tree path', () => {
+  it(`should not hoist package that has several versions on the same tree path`, () => {
     // . -> A -> B@X -> C -> B@Y
     // should be hoisted to:
     // . -> A
     //   -> B@X
     //   -> C -> B@Y
     const tree = {
-      '.':   {dependencies: ['A']},
-      'A':   {dependencies: ['B@X']},
-      'B@X': {dependencies: ['C']},
-      'C':   {dependencies: ['B@Y']},
+      '.':   {dependencies: [`A`]},
+      A:   {dependencies: [`B@X`]},
+      'B@X': {dependencies: [`C`]},
+      C:   {dependencies: [`B@Y`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
-  it('should perform deep hoisting', () => {
+  it(`should perform deep hoisting`, () => {
     // . -> A -> B@X -> C@Y
     //        -> C@X
     //   -> B@Y
@@ -150,15 +150,15 @@ describe('hoist', () => {
     //   -> B@Y
     //   -> C@X
     const tree = {
-      '.':   {dependencies: ['A', 'B@Y', 'C@X']},
-      'A':   {dependencies: ['B@X', 'C@X']},
-      'B@X': {dependencies: ['C@Y']},
-      'C':   {dependencies: ['B@Y']},
+      '.':   {dependencies: [`A`, `B@Y`, `C@X`]},
+      A:   {dependencies: [`B@X`, `C@X`]},
+      'B@X': {dependencies: [`C@Y`]},
+      C:   {dependencies: [`B@Y`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
 
-  it('should tolerate self-dependencies', () => {
+  it(`should tolerate self-dependencies`, () => {
     // . -> . -> A -> A -> B@X -> B@X -> C@Y
     //                  -> C@X
     //   -> B@Y
@@ -168,15 +168,15 @@ describe('hoist', () => {
     //   -> B@Y
     //   -> C@X
     const tree = {
-      '.':   {dependencies: ['.', 'A', 'B@Y', 'C@X']},
-      'A':   {dependencies: ['A', 'B@X', 'C@X']},
-      'B@X': {dependencies: ['B@X', 'C@Y']},
-      'C':   {dependencies: ['B@Y']},
+      '.':   {dependencies: [`.`, `A`, `B@Y`, `C@X`]},
+      A:   {dependencies: [`A`, `B@X`, `C@X`]},
+      'B@X': {dependencies: [`B@X`, `C@Y`]},
+      C:   {dependencies: [`B@Y`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
 
-  it('should honor package popularity when hoisting', () => {
+  it(`should honor package popularity when hoisting`, () => {
     // . -> A -> B@X
     //   -> C -> B@X
     //   -> D -> B@Y
@@ -191,18 +191,18 @@ describe('hoist', () => {
     //   -> G
     //   -> B@Y
     const tree = {
-      '.': {dependencies: ['A', 'C', 'D', 'E', 'F']},
-      'A': {dependencies: ['B@X']},
-      'C': {dependencies: ['B@X']},
-      'D': {dependencies: ['B@Y']},
-      'E': {dependencies: ['B@Y']},
-      'F': {dependencies: ['G']},
-      'G': {dependencies: ['B@Y']},
+      '.': {dependencies: [`A`, `C`, `D`, `E`, `F`]},
+      A: {dependencies: [`B@X`]},
+      C: {dependencies: [`B@X`]},
+      D: {dependencies: [`B@Y`]},
+      E: {dependencies: [`B@Y`]},
+      F: {dependencies: [`G`]},
+      G: {dependencies: [`B@Y`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
-  it('should honor peer dependencies', () => {
+  it(`should honor peer dependencies`, () => {
     // . -> A -> B --> D@X
     //        -> D@X
     //   -> D@Y
@@ -211,14 +211,14 @@ describe('hoist', () => {
     //        -> D@X
     //   -> D@Y
     const tree = {
-      '.': {dependencies: ['A', 'D@Y']},
-      'A': {dependencies: ['B', 'D@X']},
-      'B': {dependencies: ['D@X'], peerNames: ['D']},
+      '.': {dependencies: [`A`, `D@Y`]},
+      A: {dependencies: [`B`, `D@X`]},
+      B: {dependencies: [`D@X`], peerNames: [`D`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
-  it('should hoist dependencies after hoisting peer dep', () => {
+  it(`should hoist dependencies after hoisting peer dep`, () => {
     // . -> A -> B --> D@X
     //      -> D@X
     // should be hoisted to (B should be hoisted because its inherited dep D@X was hoisted):
@@ -226,14 +226,14 @@ describe('hoist', () => {
     //   -> B
     //   -> D@X
     const tree = {
-      '.': {dependencies: ['A']},
-      'A': {dependencies: ['B', 'D@X']},
-      'B': {dependencies: ['D@X'], peerNames: ['D']},
+      '.': {dependencies: [`A`]},
+      A: {dependencies: [`B`, `D@X`]},
+      B: {dependencies: [`D@X`], peerNames: [`D`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
 
-  it('should honor unhoisted peer dependencies', () => {
+  it(`should honor unhoisted peer dependencies`, () => {
     // . -> A --> B@X
     //        -> C@X -> B@Y
     //   -> B@X
@@ -243,28 +243,28 @@ describe('hoist', () => {
     //   -> B@X
     //   -> C@Y
     const tree = {
-      '.': {dependencies: ['A', 'B@X', 'C@Y']},
-      'A': {dependencies: ['B@X', 'C@X'], peerNames: ['B']},
-      'C@X': {dependencies: ['B@Y']},
+      '.': {dependencies: [`A`, `B@X`, `C@Y`]},
+      A: {dependencies: [`B@X`, `C@X`], peerNames: [`B`]},
+      'C@X': {dependencies: [`B@Y`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
 
-  it('should honor peer dependency promise for the same version of dependency', () => {
+  it(`should honor peer dependency promise for the same version of dependency`, () => {
     // . -> A -> B -> C
     //   --> B
     // should be hoisted to (B must not be hoisted to the top):
     // . -> A -> B
     //   -> C
     const tree = {
-      '.': {dependencies: ['A'], peerNames: ['B']},
-      'A': {dependencies: ['B']},
-      'B': {dependencies: ['C']},
+      '.': {dependencies: [`A`], peerNames: [`B`]},
+      A: {dependencies: [`B`]},
+      B: {dependencies: [`C`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
-  it('should hoist different copies of a package independently', () => {
+  it(`should hoist different copies of a package independently`, () => {
     // . -> A -> B@X -> C@X
     //        -> C@Y
     //   -> D -> B@X -> C@X
@@ -278,15 +278,15 @@ describe('hoist', () => {
     //   -> B@Y
     //   -> C@Z
     const tree = {
-      '.': {dependencies: ['A', 'D', 'B@Y', 'C@Z']},
-      'A': {dependencies: ['B@X', 'C@Y']},
-      'B@X': {dependencies: ['C@X']},
-      'D': {dependencies: ['B@X']},
+      '.': {dependencies: [`A`, `D`, `B@Y`, `C@Z`]},
+      A: {dependencies: [`B@X`, `C@Y`]},
+      'B@X': {dependencies: [`C@X`]},
+      D: {dependencies: [`B@X`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
 
-  it('should hoist different copies of a package independently (complicated case)', () => {
+  it(`should hoist different copies of a package independently (complicated case)`, () => {
     // . -> A -> B@X -> C@X -> D@X
     //        -> C@Y
     //   -> E -> B@X -> C@X -> D@X
@@ -309,18 +309,18 @@ describe('hoist', () => {
     //   -> D@Y
     //   -> C@Z
     const tree = {
-      '.': {dependencies: ['A', 'E', 'F', 'B@Y', 'C@Z', 'D@Y']},
-      'A': {dependencies: ['B@X', 'C@Y']},
-      'B@X': {dependencies: ['C@X']},
-      'C@X': {dependencies: ['D@X']},
-      'E': {dependencies: ['B@X']},
-      'F': {dependencies: ['G']},
-      'G': {dependencies: ['B@X', 'D@Z']},
+      '.': {dependencies: [`A`, `E`, `F`, `B@Y`, `C@Z`, `D@Y`]},
+      A: {dependencies: [`B@X`, `C@Y`]},
+      'B@X': {dependencies: [`C@X`]},
+      'C@X': {dependencies: [`D@X`]},
+      E: {dependencies: [`B@X`]},
+      F: {dependencies: [`G`]},
+      G: {dependencies: [`B@X`, `D@Z`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
 
-  it ('should keep peer dependency promise for the case where the package with same ident is a dependency of parent node', () => {
+  it(`should keep peer dependency promise for the case where the package with same ident is a dependency of parent node`, () => {
     // . -> A -> B@X --> C
     //        -> C@Y
     //   -> B@X --> C
@@ -328,13 +328,13 @@ describe('hoist', () => {
     // B@X cannot be hoisted to the top from A, because its peer dependency promise will be violated in this case
     // `npm` and `yarn v1` will hoist B@X to the top, they have incorrect hoisting
     const tree = {
-      '.': {dependencies: ['A', 'B@X#2', 'C@X']},
-      'A': {dependencies: ['B@X#1', 'C@Y']},
-      'B@X#1': {dependencies: ['C@Y'], peerNames: ['C']},
-      'B@X#2': {dependencies: ['C@X'], peerNames: ['C']},
+      '.': {dependencies: [`A`, `B@X#2`, `C@X`]},
+      A: {dependencies: [`B@X#1`, `C@Y`]},
+      'B@X#1': {dependencies: [`C@Y`], peerNames: [`C`]},
+      'B@X#2': {dependencies: [`C@X`], peerNames: [`C`]},
     };
     const hoistedTree = hoist(toTree(tree), {check: true});
-    const [A] = Array.from(hoistedTree.dependencies).filter(x => x.name === 'A');
-    expect(Array.from(A.dependencies).filter(x => x.name === 'B')).toBeDefined();
+    const [A] = Array.from(hoistedTree.dependencies).filter(x => x.name === `A`);
+    expect(Array.from(A.dependencies).filter(x => x.name === `B`)).toBeDefined();
   });
 });

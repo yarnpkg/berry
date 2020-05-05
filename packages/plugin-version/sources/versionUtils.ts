@@ -8,18 +8,18 @@ import semver                                                                   
 const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
 
 export enum Decision {
-  UNDECIDED = 'undecided',
-  DECLINE = 'decline',
-  MAJOR = 'major',
-  MINOR = 'minor',
-  PATCH = 'patch',
-  PRERELEASE = 'prerelease',
-};
+  UNDECIDED = `undecided`,
+  DECLINE = `decline`,
+  MAJOR = `major`,
+  MINOR = `minor`,
+  PATCH = `patch`,
+  PRERELEASE = `prerelease`,
+}
 
 export type Releases =
   Map<Workspace, Exclude<Decision, Decision.UNDECIDED>>;
 
-export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: string[]}) {
+export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: Array<string>}) {
   if (baseRefs.length === 0)
     throw new UsageError(`Can't run this command with zero base refs specified.`);
 
@@ -198,7 +198,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
   const root = await fetchRoot(configuration.projectCwd);
 
   const base = root !== null
-    ? await fetchBase(root, {baseRefs: configuration.get('changesetBaseRefs')})
+    ? await fetchBase(root, {baseRefs: configuration.get(`changesetBaseRefs`)})
     : null;
 
   const changedFiles = root !== null

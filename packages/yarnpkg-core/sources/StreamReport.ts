@@ -349,7 +349,7 @@ export class StreamReport extends Report {
     this.writeLine(str);
   }
 
-  private writeLines(name: MessageName | null, lines: string[]) {
+  private writeLines(name: MessageName | null, lines: Array<string>) {
     this.clearProgress({delta: lines.length});
 
     for (const line of lines)
@@ -424,7 +424,7 @@ export class StreamReport extends Report {
 
     const spinner = PROGRESS_FRAMES[this.progressFrame];
 
-    let styleName = this.configuration.get(`progressBarStyle`) || defaultStyle;
+    const styleName = this.configuration.get(`progressBarStyle`) || defaultStyle;
     if (!Object.prototype.hasOwnProperty.call(PROGRESS_STYLES, styleName))
       throw new Error(`Assertion failed: Invalid progress bar style`);
 

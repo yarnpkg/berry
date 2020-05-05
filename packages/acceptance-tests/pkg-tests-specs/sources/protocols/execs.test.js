@@ -47,7 +47,7 @@ describe(`Protocols`, () => {
 
         await expect(source(`require('dynamic-pkg')`)).resolves.toEqual(
           expect.arrayContaining(
-            require(`module`).builtinModules.filter((name) => name !== `module` && !name.startsWith(`_`)).concat([`Module`]),
+            require(`module`).builtinModules.filter(name => name !== `module` && !name.startsWith(`_`)).concat([`Module`]),
           )
         );
       }),

@@ -6,7 +6,7 @@ import {NativePath, PortablePath, Path} from '@yarnpkg/fslib';
 // Apart from that, note that the "Data"-suffixed types are the ones stored
 // within the state files (hence why they only use JSON datatypes).
 
-export enum LinkType {HARD = 'HARD', SOFT = 'SOFT'};
+export enum LinkType {HARD = `HARD`, SOFT = `SOFT`}
 
 export type PhysicalPackageLocator = {name: string, reference: string};
 export type TopLevelPackageLocator = {name: null, reference: null};

@@ -9,7 +9,7 @@ import {Handle, ProcessImplementation, ProtectedStream, Stdio, start}           
 
 export type Glob = {
   isGlobPattern: (arg: string) => boolean,
-  match: (pattern: string, options: {cwd: PortablePath, fs?: FakeFS<PortablePath>}) => Promise<string[]>,
+  match: (pattern: string, options: {cwd: PortablePath, fs?: FakeFS<PortablePath>}) => Promise<Array<string>>,
 };
 
 export type UserOptions = {
@@ -109,7 +109,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
   [`__ysh_set_redirects`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
     let stdin = state.stdin;
     let stdout = state.stdout;
-    let stderr = state.stderr;
+    const stderr = state.stderr;
 
     const inputs: Array<() => Readable> = [];
     const outputs: Array<Writable> = [];

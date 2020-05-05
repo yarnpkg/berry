@@ -1,8 +1,8 @@
 const {
   fs: {readFile},
   tests: {startPackageServer},
-} = require('pkg-tests-core');
-const {parseSyml} = require('@yarnpkg/parsers');
+} = require(`pkg-tests-core`);
+const {parseSyml} = require(`@yarnpkg/parsers`);
 
 const ifNotWin32It = process.platform !== `win32`
   ? it

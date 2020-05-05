@@ -8,23 +8,23 @@ export interface Ident {
   identHash: IdentHash,
   scope: string | null,
   name: string,
-};
+}
 
 export type DescriptorHash = string & { __descriptor_hash: string };
 
 export interface Descriptor extends Ident {
   descriptorHash: DescriptorHash,
   range: string,
-};
+}
 
 export type LocatorHash = string & { __locator_hash: string };
 
 export interface Locator extends Ident {
   locatorHash: LocatorHash,
   reference: string,
-};
+}
 
-export enum LinkType { HARD = 'HARD', SOFT = 'SOFT' };
+export enum LinkType { HARD = `HARD`, SOFT = `SOFT` }
 
 export interface Package extends Locator {
   version: string | null,
@@ -44,4 +44,4 @@ export interface Package extends Locator {
   // binaries they export, which is too slow for a command that might be
   // called at every keystroke)
   bin: Map<string, PortablePath>,
-};
+}

@@ -119,7 +119,7 @@ type FileDeets = {
 
 export type Hunk = {
   header: HunkHeader,
-  parts: PatchMutationPart[],
+  parts: Array<PatchMutationPart>,
 };
 
 const emptyFilePatch = (): FileDeets => ({
@@ -206,7 +206,7 @@ function parsePatchLines(lines: Array<string>) {
       } else if (line.startsWith(`deleted file mode `)) {
         currentFilePatch.deletedFileMode = line.slice(`deleted file mode `.length).trim();
       } else if (line.startsWith(`new file mode `)) {
-        currentFilePatch.newFileMode = line.slice("new file mode ".length).trim();
+        currentFilePatch.newFileMode = line.slice(`new file mode `.length).trim();
       } else if (line.startsWith(`rename from `)) {
         currentFilePatch.renameFrom = line.slice(`rename from `.length).trim();
       } else if (line.startsWith(`rename to `)) {
@@ -242,7 +242,7 @@ function parsePatchLines(lines: Array<string>) {
         } break;
 
         case `pragma`: {
-          if (!line.startsWith("\\ No newline at end of file"))
+          if (!line.startsWith(`\\ No newline at end of file`))
             throw new Error(`Unrecognized pragma in patch file: ${line}`);
 
           if (!currentHunkMutationPart)
@@ -340,7 +340,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
       case `file deletion`: {
         const path = diffLineFromPath || fromPath;
         if (!path)
-          throw new Error("Bad parse state: no path given for file deletion");
+          throw new Error(`Bad parse state: no path given for file deletion`);
 
         result.push({
           type: `file deletion`,
@@ -432,11 +432,11 @@ export function verifyHunkIntegrity(hunk: Hunk) {
         originalLength += lines.length;
       } break;
 
-      case "deletion": {
+      case `deletion`: {
         originalLength += lines.length;
       } break;
 
-      case "insertion": {
+      case `insertion`: {
         patchedLength += lines.length;
       } break;
 

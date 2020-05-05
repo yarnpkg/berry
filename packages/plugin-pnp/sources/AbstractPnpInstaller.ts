@@ -100,7 +100,7 @@ export abstract class AbstractPnpInstaller implements Installer {
 
     return {
       packageLocation: packageRawLocation,
-      buildDirective: buildScripts.length > 0 ? buildScripts as BuildDirective[] : null,
+      buildDirective: buildScripts.length > 0 ? buildScripts as Array<BuildDirective> : null,
     };
   }
 
@@ -216,6 +216,6 @@ export abstract class AbstractPnpInstaller implements Installer {
       // Don't use ppath.join here, it ignores the `.`
       relativeFolder = `./${relativeFolder}` as PortablePath;
 
-    return relativeFolder.replace(/\/?$/, '/')  as PortablePath;
+    return relativeFolder.replace(/\/?$/, `/`)  as PortablePath;
   }
 }

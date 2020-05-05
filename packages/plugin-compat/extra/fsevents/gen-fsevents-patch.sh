@@ -8,6 +8,8 @@ echo $TEMP_DIR
 PATCHFILE="$THIS_DIR"/../../sources/patches/fsevents.patch.ts
 rm -f "$PATCHFILE" && touch "$PATCHFILE"
 
+echo '/* eslint-disable */' \
+  >> "$JSPATCH"
 echo 'export const patch =' \
   >> "$PATCHFILE"
 (cat "$THIS_DIR"/1.2.11.patch \

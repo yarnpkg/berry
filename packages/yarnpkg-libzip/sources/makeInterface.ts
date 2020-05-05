@@ -1,7 +1,7 @@
 const number64 = [
   `number`, // low
   `number`, // high
-] as 'number'[];
+] as Array<'number'>;
 
 export type Libzip = ReturnType<typeof makeInterface>;
 

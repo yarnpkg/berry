@@ -93,8 +93,8 @@ async function setAuthToken(registry: string, npmAuthToken: string, {configurati
 async function getCredentials(prompt: any, {registry, report}: {registry: string, report: Report}) {
   if (process.env.TEST_ENV) {
     return {
-      name: process.env.TEST_NPM_USER || '',
-      password: process.env.TEST_NPM_PASSWORD || '',
+      name: process.env.TEST_NPM_USER || ``,
+      password: process.env.TEST_NPM_PASSWORD || ``,
     };
   }
 

@@ -30,10 +30,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   const debugLevel = Number(process.env.PNP_DEBUG_LEVEL);
 
   // @ts-ignore
-  const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding('natives')));
+  const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
 
   // Splits a require request into its components, or return null if the request is a file path
-  const pathRegExp = /^(?![a-zA-Z]:[\\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^\/]+\/)?[^\/]+)\/*(.*|)$/;
+  const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
 
   // Matches if the path starts with a valid path qualifier (./, ../, /)
   // eslint-disable-next-line no-unused-vars
@@ -100,7 +100,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   function makeLogEntry(name: string, args: Array<any>) {
     return {
       fn: name,
-      args: args,
+      args,
       error: null as Error | null,
       result: null as any,
     };
@@ -632,7 +632,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     }
 
     return ppath.normalize(unqualifiedPath);
-  };
+  }
 
   /**
    * Transforms an unqualified path into a qualified path by using the Node resolution algorithm (which automatically
@@ -652,7 +652,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         {unqualifiedPath},
       );
     }
-  };
+  }
 
   /**
    * Transforms a request into a fully qualified path.
@@ -663,7 +663,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions}: ResolveRequestOptions = {}): PortablePath | null {
-    let unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
+    const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
 
     if (unqualifiedPath === null)
       return null;
@@ -671,12 +671,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     try {
       return resolveUnqualified(unqualifiedPath, {extensions});
     } catch (resolutionError) {
-      if (resolutionError.pnpCode === 'QUALIFIED_PATH_RESOLUTION_FAILED')
+      if (resolutionError.pnpCode === `QUALIFIED_PATH_RESOLUTION_FAILED`)
         Object.assign(resolutionError.data, {request, issuer});
 
       throw resolutionError;
     }
-  };
+  }
 
   function resolveVirtual(request: PortablePath) {
     const normalized = ppath.normalize(request);

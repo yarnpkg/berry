@@ -3,8 +3,8 @@ import {fs}         from 'pkg-tests-core';
 
 const {writeFile, writeJson} = fs;
 
-describe('Node_Modules', () => {
-  it('should install one dependency',
+describe(`Node_Modules`, () => {
+  it(`should install one dependency`,
     makeTemporaryEnv(
       {
         dependencies: {
@@ -98,7 +98,7 @@ describe('Node_Modules', () => {
   test(`should not fail if target bin link does not exist`,
     makeTemporaryEnv(
       {
-        name: 'pkg',
+        name: `pkg`,
         bin: `dist/bin/index.js`,
       },
       async ({path, run, source}) => {
@@ -109,14 +109,14 @@ describe('Node_Modules', () => {
         await expect(run(`install`)).resolves.toBeTruthy();
         await expect(xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/.bin/pkg`))).rejects.toThrow();
 
-        await writeFile(npath.toPortablePath(`${path}/dist/bin/index.js`), '');
+        await writeFile(npath.toPortablePath(`${path}/dist/bin/index.js`), ``);
 
         await expect(run(`install`)).resolves.toBeTruthy();
         const stats = await xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/.bin/pkg`));
 
         expect(stats).toBeDefined();
 
-        if (process.platform !== 'win32') {
+        if (process.platform !== `win32`) {
           // Check that destination has 0o700 - execute for all permissions set
           expect(stats.mode & 0o700).toEqual(0o700);
         }
@@ -132,7 +132,7 @@ describe('Node_Modules', () => {
         },
       },
       async ({path, run, source}) => {
-        await writeFile(npath.toPortablePath(`${path}/../one-fixed-dep.local/abc.js`), '');
+        await writeFile(npath.toPortablePath(`${path}/../one-fixed-dep.local/abc.js`), ``);
 
         await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
         nodeLinker: "node-modules"
@@ -156,12 +156,12 @@ describe('Node_Modules', () => {
       async ({path, run, source}) => {
         await writeJson(npath.toPortablePath(`${path}/../one-fixed-dep.local/package.json`), {
           name: `one-fixed-dep`,
-          bin: 'abc.js',
+          bin: `abc.js`,
           dependencies: {
             [`no-deps`]: `*`,
           },
         });
-        await writeFile(npath.toPortablePath(`${path}/../one-fixed-dep.local/abc.js`), '');
+        await writeFile(npath.toPortablePath(`${path}/../one-fixed-dep.local/abc.js`), ``);
 
         await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
           nodeLinker: "node-modules"

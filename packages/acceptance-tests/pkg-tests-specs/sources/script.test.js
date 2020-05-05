@@ -1,5 +1,5 @@
 const {npath, xfs} = require(`@yarnpkg/fslib`);
-const {isAbsolute, resolve} = require('path');
+const {isAbsolute, resolve} = require(`path`);
 
 const {
   fs: {createTemporaryFolder, makeFakeBinary, walk, readFile, writeJson},
@@ -170,9 +170,9 @@ describe(`Scripts tests`, () => {
       await run(`install`);
 
       await expect(source(`require('no-deps-scripted/log.js')`)).resolves.toEqual([
-        'preinstall',
-        'install',
-        'postinstall',
+        `preinstall`,
+        `install`,
+        `postinstall`,
       ]);
     }),
   );
@@ -251,7 +251,7 @@ describe(`Scripts tests`, () => {
 
         expect(itemPath).toBeDefined();
 
-        const content = await readFile(itemPath, 'utf8');
+        const content = await readFile(itemPath, `utf8`);
         await expect(content).toEqual(npath.fromPortablePath(itemPath));
       },
     ),
@@ -286,12 +286,12 @@ describe(`Scripts tests`, () => {
     `it should correctly run scripts when project path has space inside`,
     makeTemporaryEnv({
       private: true,
-      workspaces: ['packages/*'],
+      workspaces: [`packages/*`],
     }, async ({path, run, source}) => {
       await writeJson(`${path}/packages/test 1/package.json`, {
         scripts: {
-          ['ws:foo2']: `yarn run ws:foo`,
-          ['ws:foo']: `node -e 'console.log(1)'`,
+          [`ws:foo2`]: `yarn run ws:foo`,
+          [`ws:foo`]: `node -e 'console.log(1)'`,
         },
       });
 

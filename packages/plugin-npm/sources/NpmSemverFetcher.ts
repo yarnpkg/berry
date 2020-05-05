@@ -73,7 +73,7 @@ export class NpmSemverFetcher implements Fetcher {
     const path = NpmSemverFetcher.getLocatorUrl(locator);
 
     // From time to time the npm registry returns http urls instead of https 🤡
-    url = url.replace(/^https?:(\/\/(?:[^\/]+\.)?npmjs.org(?:$|\/))/, `https:$1`);
+    url = url.replace(/^https?:(\/\/(?:[^/]+\.)?npmjs.org(?:$|\/))/, `https:$1`);
 
     // The yarnpkg and npmjs registries are interchangeable for that matter, so we uniformize them
     registry = registry.replace(/^https:\/\/registry\.npmjs\.org($|\/)/, `https://registry.yarnpkg.com$1`);

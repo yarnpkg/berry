@@ -34,7 +34,7 @@ function sdk(cwd: NativePath) {
   let nextProjectRoot = npath.toPortablePath(cwd);
   let currProjectRoot = null;
 
-  let isCJS = '';
+  let isCJS = ``;
   while (nextProjectRoot !== currProjectRoot) {
     currProjectRoot = nextProjectRoot;
     nextProjectRoot = ppath.dirname(currProjectRoot);
@@ -43,7 +43,7 @@ function sdk(cwd: NativePath) {
       break;
 
     if (xfs.existsSync(ppath.join(currProjectRoot, `.pnp.cjs` as Filename))) {
-      isCJS = 'c';
+      isCJS = `c`;
       break;
     }
   }

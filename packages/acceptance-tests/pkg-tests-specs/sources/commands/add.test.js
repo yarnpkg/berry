@@ -2,8 +2,8 @@ import {xfs} from '@yarnpkg/fslib';
 
 const {
   tests: {getPackageDirectoryPath},
-} = require('pkg-tests-core');
-const {parseSyml} = require('@yarnpkg/parsers');
+} = require(`pkg-tests-core`);
+const {parseSyml} = require(`@yarnpkg/parsers`);
 
 describe(`Commands`, () => {
   describe(`add`, () => {
@@ -334,24 +334,20 @@ describe(`Commands`, () => {
         [`no-deps`]: `1.0.0`,
       },
     }, async ({path, run, source}) => {
-      let code;
-      let stdout;
-      let stderr;
-
       await run(`install`);
 
       const preUpgradeCache = await xfs.readdirPromise(`${path}/.yarn/cache`);
 
-      expect(preUpgradeCache.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeDefined();
+      expect(preUpgradeCache.find(entry => entry.includes(`no-deps-npm-1.0.0`))).toBeDefined();
 
-      ({code, stdout, stderr} = await run(`add`, `no-deps@2.0.0`));
+      const {code, stdout, stderr} = await run(`add`, `no-deps@2.0.0`);
 
       await expect({code, stdout, stderr}).toMatchSnapshot();
 
       const postUpgradeCache = await xfs.readdirPromise(`${path}/.yarn/cache`);
 
-      expect(postUpgradeCache.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeUndefined();
-      expect(postUpgradeCache.find(entry => entry.includes('no-deps-npm-2.0.0'))).toBeDefined();
+      expect(postUpgradeCache.find(entry => entry.includes(`no-deps-npm-1.0.0`))).toBeUndefined();
+      expect(postUpgradeCache.find(entry => entry.includes(`no-deps-npm-2.0.0`))).toBeDefined();
     }));
 
     test(`it should not clean the cache when cache lives outside the project`, makeTemporaryEnv({
@@ -370,14 +366,14 @@ describe(`Commands`, () => {
 
       cacheContent = await xfs.readdirPromise(sharedCachePath);
 
-      expect(cacheContent.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeDefined();
+      expect(cacheContent.find(entry => entry.includes(`no-deps-npm-1.0.0`))).toBeDefined();
 
       await run(`add`, `no-deps@2.0.0`, {env});
 
       cacheContent = await xfs.readdirPromise(sharedCachePath);
 
-      expect(cacheContent.find(entry => entry.includes('no-deps-npm-1.0.0'))).toBeDefined();
-      expect(cacheContent.find(entry => entry.includes('no-deps-npm-2.0.0'))).toBeDefined();
+      expect(cacheContent.find(entry => entry.includes(`no-deps-npm-1.0.0`))).toBeDefined();
+      expect(cacheContent.find(entry => entry.includes(`no-deps-npm-2.0.0`))).toBeDefined();
     }));
   });
 });

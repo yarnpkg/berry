@@ -22,4 +22,4 @@ export function useMinistore<T>(key?: string, initialValue?: T) {
     value = initialValue;
 
   return [value, setValue];
-};
+}

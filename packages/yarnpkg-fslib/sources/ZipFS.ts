@@ -124,7 +124,7 @@ export type ZipPathOptions = ZipBufferOptions & {
 };
 
 function toUnixTimestamp(time: Date | string | number) {
-  if (typeof time === 'string' && String(+time) === time)
+  if (typeof time === `string` && String(+time) === time)
     return +time;
 
   // @ts-ignore
@@ -171,7 +171,7 @@ export class ZipFS extends BasePortableFakeFS {
     this.libzip = opts.libzip;
 
     const pathOptions = opts as ZipPathOptions;
-    this.level = typeof pathOptions.level !== 'undefined'
+    this.level = typeof pathOptions.level !== `undefined`
       ? pathOptions.level
       : DEFAULT_COMPRESSION_LEVEL;
 
@@ -251,7 +251,7 @@ export class ZipFS extends BasePortableFakeFS {
 
       // If the raw path is a directory, register it
       // to prevent empty folder being skipped
-      if (raw.endsWith('/')) {
+      if (raw.endsWith(`/`)) {
         this.registerListing(p);
       }
     }
@@ -1145,4 +1145,4 @@ export class ZipFS extends BasePortableFakeFS {
     const interval = setInterval(() => {}, 24 * 60 * 60 * 1000);
     return {on: () => {}, close: () => {clearInterval(interval);}};
   }
-};
+}

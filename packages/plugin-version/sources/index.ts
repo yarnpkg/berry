@@ -7,7 +7,7 @@ import version                from './commands/version';
 const plugin: Plugin = {
   configuration: {
     changesetBaseRefs: {
-      description: 'The base git refs that the current HEAD is compared against when detecting changes. Supports git branches, tags, and commits.',
+      description: `The base git refs that the current HEAD is compared against when detecting changes. Supports git branches, tags, and commits.`,
       type: SettingsType.STRING,
       isArray: true,
       isNullable: false,

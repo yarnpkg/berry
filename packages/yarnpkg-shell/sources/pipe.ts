@@ -6,7 +6,7 @@ import {ShellOptions}                               from './index';
 enum Pipe {
   STDOUT = 0b01,
   STDERR = 0b10,
-};
+}
 
 // This is hell to type
 export type Stdio = [

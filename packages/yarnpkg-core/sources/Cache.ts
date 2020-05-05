@@ -49,7 +49,7 @@ export class Cache {
   }
 
   constructor(cacheCwd: PortablePath, {configuration, immutable = configuration.get<boolean>(`enableImmutableCache`), check = false}: {configuration: Configuration, immutable?: boolean, check?: boolean}) {
-    const compressionLevel = configuration.get('compressionLevel');
+    const compressionLevel = configuration.get(`compressionLevel`);
     this.compressionLevelSuffix = compressionLevel === DEFAULT_COMPRESSION_LEVEL ? `` : `-c${compressionLevel}`;
 
     this.configuration = configuration;
@@ -208,7 +208,7 @@ export class Cache {
       }
     };
 
-    for (let mutex; mutex = this.mutexes.get(locator.locatorHash);)
+    for (let mutex; (mutex = this.mutexes.get(locator.locatorHash));)
       await mutex;
 
     const cacheExists = baseFs.existsSync(cachePath);

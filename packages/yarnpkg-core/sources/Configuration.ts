@@ -66,28 +66,28 @@ export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
 export const SECRET = `********`;
 
 export enum SettingsType {
-  ANY = 'ANY',
-  BOOLEAN = 'BOOLEAN',
-  ABSOLUTE_PATH = 'ABSOLUTE_PATH',
-  LOCATOR = 'LOCATOR',
-  LOCATOR_LOOSE = 'LOCATOR_LOOSE',
-  NUMBER = 'NUMBER',
-  STRING = 'STRING',
-  SECRET = 'SECRET',
-  SHAPE = 'SHAPE',
-  MAP = 'MAP',
-};
+  ANY = `ANY`,
+  BOOLEAN = `BOOLEAN`,
+  ABSOLUTE_PATH = `ABSOLUTE_PATH`,
+  LOCATOR = `LOCATOR`,
+  LOCATOR_LOOSE = `LOCATOR_LOOSE`,
+  NUMBER = `NUMBER`,
+  STRING = `STRING`,
+  SECRET = `SECRET`,
+  SHAPE = `SHAPE`,
+  MAP = `MAP`,
+}
 
 export enum FormatType {
-  NAME = 'NAME',
-  NUMBER = 'NUMBER',
-  PATH = 'PATH',
-  RANGE = 'RANGE',
-  REFERENCE = 'REFERENCE',
-  SCOPE = 'SCOPE',
-  ADDED = 'ADDED',
-  REMOVED = 'REMOVED',
-};
+  NAME = `NAME`,
+  NUMBER = `NUMBER`,
+  PATH = `PATH`,
+  RANGE = `RANGE`,
+  REFERENCE = `REFERENCE`,
+  SCOPE = `SCOPE`,
+  ADDED = `ADDED`,
+  REMOVED = `REMOVED`,
+}
 
 export const formatColors = chalkOptions.level >= 3 ? new Map([
   [FormatType.NAME, `#d7875f`],
@@ -128,7 +128,7 @@ export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsTy
   default: any,
   defaultText?: any,
   isNullable?: boolean,
-  values?: any[],
+  values?: Array<any>,
 };
 
 export type SettingsDefinitionNoDefault =
@@ -471,7 +471,7 @@ function parseShape(configuration: Configuration, path: string, value: unknown, 
 function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: PortablePath) {
   const result = new Map<string, any>();
 
-  if (typeof value !== 'object' || Array.isArray(value))
+  if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Map configuration settings "${path}" must be an object`);
 
   if (value === null)
@@ -565,7 +565,7 @@ function hideSecrets(rawValue: unknown, definition: SettingsDefinitionNoDefault)
   }
 
   return rawValue;
-};
+}
 
 function getEnvironmentSettings() {
   const environmentSettings: {[key: string]: any} = {};
@@ -598,7 +598,7 @@ export enum ProjectLookup {
   LOCKFILE,
   MANIFEST,
   NONE,
-};
+}
 
 export class Configuration {
   public startingCwd: PortablePath;
@@ -1118,7 +1118,7 @@ export class Configuration {
     return pkg;
   }
 
-  async triggerHook<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, ...args: U): Promise<void> {
+  async triggerHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, ...args: U): Promise<void> {
     for (const plugin of this.plugins.values()) {
       const hooks = plugin.hooks as HooksDefinition;
       if (!hooks)
@@ -1132,13 +1132,13 @@ export class Configuration {
     }
   }
 
-  async triggerMultipleHooks<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, argsList: Array<U>): Promise<void> {
+  async triggerMultipleHooks<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, argsList: Array<U>): Promise<void> {
     for (const args of argsList) {
       await this.triggerHook(get, ...args);
     }
   }
 
-  async reduceHook<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((reduced: V, ...args: U) => Promise<V>) | undefined, initialValue: V, ...args: U): Promise<V> {
+  async reduceHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((reduced: V, ...args: U) => Promise<V>) | undefined, initialValue: V, ...args: U): Promise<V> {
     let value = initialValue;
 
     for (const plugin of this.plugins.values()) {
@@ -1156,7 +1156,7 @@ export class Configuration {
     return value;
   }
 
-  async firstHook<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => Promise<V>) | undefined, ...args: U): Promise<Exclude<V, void> | null> {
+  async firstHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => Promise<V>) | undefined, ...args: U): Promise<Exclude<V, void> | null> {
     for (const plugin of this.plugins.values()) {
       const hooks = plugin.hooks as HooksDefinition;
       if (!hooks)

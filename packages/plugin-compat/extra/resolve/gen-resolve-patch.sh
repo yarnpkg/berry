@@ -19,6 +19,8 @@ cp "$THIS_DIR"/normalize-options.js "$TEMP_DIR"/patched/package/lib/normalize-op
 PATCHFILE="$THIS_DIR"/../../sources/patches/resolve.patch.ts
 rm -f "$PATCHFILE" && touch "$PATCHFILE"
 
+echo '/* eslint-disable */' \
+  >> "$JSPATCH"
 echo 'export const patch =' \
   >> "$PATCHFILE"
 (git diff --no-index "$TEMP_DIR"/orig/package "$TEMP_DIR"/patched/package) \

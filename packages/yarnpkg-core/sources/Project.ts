@@ -999,7 +999,7 @@ export class Project {
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
     const packageLocations: Map<LocatorHash, PortablePath> = new Map();
-    const packageBuildDirectives: Map<LocatorHash, { directives: BuildDirective[], buildLocations: PortablePath[] }> = new Map();
+    const packageBuildDirectives: Map<LocatorHash, { directives: Array<BuildDirective>, buildLocations: Array<PortablePath> }> = new Map();
 
     // Step 1: Installing the packages on the disk
 
@@ -1223,7 +1223,7 @@ export class Project {
       return hash;
     };
 
-    const getBuildHash = (locator: Locator, buildLocations: PortablePath[]) => {
+    const getBuildHash = (locator: Locator, buildLocations: Array<PortablePath>) => {
       const builder = createHash(`sha512`);
 
       builder.update(globalHash);
@@ -1398,8 +1398,8 @@ export class Project {
     await this.configuration.triggerHook(hooks => {
       return hooks.validateProject;
     }, this, {
-      reportWarning: (name: MessageName, text:string) => validationWarnings.push({name, text}),
-      reportError: (name: MessageName, text:string) => validationErrors.push({name, text}),
+      reportWarning: (name: MessageName, text: string) => validationWarnings.push({name, text}),
+      reportError: (name: MessageName, text: string) => validationErrors.push({name, text}),
     });
 
     const problemCount = validationWarnings.length + validationErrors.length;
@@ -1494,7 +1494,7 @@ export class Project {
 
     const optimizedLockfile: {[key: string]: any} = {};
 
-    optimizedLockfile[`__metadata`] = {
+    optimizedLockfile.__metadata = {
       version: LOCKFILE_VERSION,
     };
 

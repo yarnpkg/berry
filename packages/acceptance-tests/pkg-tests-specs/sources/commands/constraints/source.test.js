@@ -1,8 +1,8 @@
 const {
   fs: {writeFile},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
-const {environments} = require('./environments');
+const {environments} = require(`./environments`);
 
 const constraints = {
   [`empty constraints`]: ``,
@@ -43,7 +43,7 @@ describe(`Commands`, () => {
               ({code, stdout, stderr} = error);
             }
 
-            stdout = stdout.replace(new RegExp(path, 'g'), 'WORKSPACE_ROOT');
+            stdout = stdout.replace(new RegExp(path, `g`), `WORKSPACE_ROOT`);
 
             expect({code, stdout, stderr}).toMatchSnapshot();
           }),

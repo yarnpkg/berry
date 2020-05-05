@@ -15,7 +15,7 @@ export type ApplyPatchOptions = {
 
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   // @ts-ignore
-  const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding('natives')));
+  const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
 
   /**
    * The cache that will be used for all accesses occuring outside of a PnP context.
@@ -141,7 +141,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     if (isMain) {
       // @ts-ignore
       process.mainModule = module;
-      module.id = '.';
+      module.id = `.`;
     }
 
     // Try to load the module, and remove it from the cache if it fails
@@ -197,7 +197,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       if (optionNames.size > 0) {
         throw makeError(
           ErrorCode.UNSUPPORTED,
-          `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(', ')})`
+          `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(`, `)})`
         );
       }
     }
@@ -310,4 +310,4 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   };
 
   patchFs(fs, new PosixFS(opts.fakeFs));
-};
+}
