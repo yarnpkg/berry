@@ -43,7 +43,7 @@ Note that the doctor is intended to report any potential issue - it's then up to
 | --------------- | -------------------------- | ----------------------------- |
 | `yarn audit`    | -                          | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/1187) |
 | `yarn check`    | -                          | [Read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106) |
-| `yarn create`   | `yarn dlx create-<name>`   | `yarn create` will still work as an alias, for new packages, use the new command instead. [Read more on GitHub](https://github.com/yarnpkg/berry/pull/1138) |
+| `yarn create`   | `yarn dlx create-<name>`   | `yarn create` will still work as an alias. For new packages, please use the new command instead. [Read more on GitHub](https://github.com/yarnpkg/berry/pull/1138) |
 | `yarn global`   | `yarn dlx`                 | [Read more](#use-yarn-dlx-instead-of-yarn-global) |
 | `yarn import`   | -                          | Not implemented, please import using v1 first |
 | `yarn info`     | `yarn npm info`            ||
