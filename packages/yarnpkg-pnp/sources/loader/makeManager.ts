@@ -68,7 +68,7 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
 
   function findApiPathFor(modulePath: NativePath) {
     let curr: PortablePath;
-    let next = npath.toPortablePath(modulePath);
+    let next = ppath.resolve(npath.toPortablePath(modulePath));
 
     do {
       curr = next;

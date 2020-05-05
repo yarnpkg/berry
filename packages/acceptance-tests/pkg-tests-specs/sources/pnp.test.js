@@ -588,9 +588,9 @@ describe(`Plug'n'Play`, () => {
             `require(require.resolve('no-deps', {paths: ${JSON.stringify([
               `${npath.fromPortablePath(path)}/workspace-a`,
               `${npath.fromPortablePath(path)}/workspace-b`,
-              '',
+              ``,
             ])}}))`,
-            { cwd: `${path}/workspace-a`}
+            {cwd: `${path}/workspace-a`}
           ),
         ).resolves.toMatchObject({
           name: `no-deps`,
