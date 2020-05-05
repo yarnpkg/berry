@@ -37,28 +37,6 @@ Run `npx @yarnpkg/doctor .` (or `yarn dlx @yarnpkg/doctor .`) in your project to
 
 Note that the doctor is intended to report any potential issue - it's then up to you to decide whether they are a false positive or not (for example it won't traverse Git repositories). For this reason we don't recommend using it as a CI tool.
 
-### Changes in CLI commands
-
-| v1              | v2 substitute              | Notes                         |
-| --------------- | -------------------------- | ----------------------------- |
-| `yarn audit`    | -                          | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/1187) |
-| `yarn check`    | -                          | [Read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106) |
-| `yarn create`   | `yarn dlx create-<name>`   | `yarn create` will still work as an alias. For new packages, please use the new command instead. [Read more on GitHub](https://github.com/yarnpkg/berry/pull/1138) |
-| `yarn global`   | `yarn dlx`                 | [Read more](#use-yarn-dlx-instead-of-yarn-global) |
-| `yarn import`   | -                          | Not implemented, please import using v1 first |
-| `yarn info`     | `yarn npm info`            ||
-| `yarn licenses` | -                          | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/1164) |
-| `yarn list`     | -                          | Not implemented |
-| `yarn login`    | `yarn npm login`           ||
-| `yarn logout`   | -                          | Not implemented, remove the credential from `.yarnrc.yml` instead |
-| `yarn outdated` | `yarn upgrade-interactive` | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/749) |
-| `yarn owner`    | -                          | Not implemented |
-| `yarn publish`  | `yarn npm publish`         ||
-| `yarn tag`      | -                          | Not implemented |
-| `yarn team`     | -                          | Not implemented |
-| `yarn unlink`   | -                          | Not implemented, change `resolutions` field in the project-level manifest instead |
-| `yarn upgrade`  | `yarn up`                  | Change in behavior - upgrade across the whole project, not just current workspace |
-
 ### Use `yarn dlx` instead of `yarn global`
 
 `yarn dlx` is designed to execute one off scripts that may have been installed as global packages with `yarn 1.x`. Managing system-wide packages is outside of the scope of `yarn`. To reflect this, `yarn global` has been removed. [Read more on GitHub](https://github.com/yarnpkg/berry/issues/821).
@@ -165,6 +143,47 @@ nodeLinker: node-modules
 This will cause Yarn to install the project just like Yarn 1 used to, by copying the packages into various `node_modules` folders.
 
 [More information about the `nodeLinker` option.](/configuration/yarnrc#nodeLinker)
+
+## CLI Commands
+
+### Renamed
+
+| <div style="width:150px">Yarn Classic (1.x)</div> | <div style="width: 250px">Yarn (2.x)</div> | Notes |
+| ------------------ | -------------------------- | ----------------------------- |
+| `yarn create`   | `yarn dlx create-<name>`   | `yarn create` still work, but prefer using `yarn dlx` |
+| `yarn global`   | `yarn dlx`                 | [Dedicated section](#use-yarn-dlx-instead-of-yarn-global) |
+| `yarn info`     | `yarn npm info`            ||
+| `yarn login`    | `yarn npm login`           ||
+| `yarn outdated` | `yarn upgrade-interactive` | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/749) |
+| `yarn publish`  | `yarn npm publish`         ||
+| `yarn upgrade`  | `yarn up`                  | Will now upgrade packages across all workspaces |
+
+### Deprecated
+
+| <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
+| ------------------ | ----------------------------- |
+| `yarn check`    | Cache integrity is now checked on regular installs; [read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106) |
+
+### Removed from core
+
+| <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
+| ------------------ | ----------------------------- |
+| `yarn audit`    | Relied on an undocumented proprietary protocol; [read more on GitHub](https://github.com/yarnpkg/berry/issues/1187) |
+| `yarn import`   | First import to Classic, then migrate to 2.x |
+| `yarn licenses` | Perfect use case for plugins; [read more on GitHub](https://github.com/yarnpkg/berry/issues/1164) |
+
+### Not implemented yet
+
+Those features simply haven't been implemented yet. Help welcome!
+
+| <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
+| ------------------ | ----------------------------- |
+| `yarn list`     | `yarn why` may provide some information in the meantime |
+| `yarn logout`   | Manually remove the tokens from the `.yarnrc.yml` in the meantime |
+| `yarn owner`    | Will eventually be available as `yarn npm owner` |
+| `yarn tag`      | Will eventually be available as `yarn npm tag` |
+| `yarn team`     | Will eventually be available as `yarn npm team` |
+| `yarn unlink`   | Manually remove the `resolutions` entries from the `package.json` file for now |
 
 ## Troubleshooting
 
