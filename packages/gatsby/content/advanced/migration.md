@@ -37,9 +37,27 @@ Run `npx @yarnpkg/doctor .` (or `yarn dlx @yarnpkg/doctor .`) in your project to
 
 Note that the doctor is intended to report any potential issue - it's then up to you to decide whether they are a false positive or not (for example it won't traverse Git repositories). For this reason we don't recommend using it as a CI tool.
 
-### Use `yarn dlx` instead of `yarn global`
+### Changes in CLI commands
 
-`yarn dlx` is designed to execute one off scripts that may have been installed as global packages with `yarn 1.x`. Managing system-wide packages is outside of the scope of `yarn`. To reflect this, `yarn global` has been removed. [Read more on GitHub](https://github.com/yarnpkg/berry/issues/821).
+| v1              | v2 substitute                | Notes                                                               |
+| --------------- | ---------------------------- | ------------------------------------------------------------------- |
+| `yarn audit`    | -                            | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/1187) |
+| `yarn check`    | `yarn install --check-files` | [Read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106)     |
+| `yarn create`   | -                            | Not implemented                                                     |
+| `yarn global`   | `yarn dlx`                   | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/821)  |
+| `yarn import`   | -                            | Not implemented                                                     |
+| `yarn info`     | `yarn npm info`              |                                                                     |
+| `yarn licenses` | -                            | Not implemented                                                     |
+| `yarn list`     | -                            | Not implemented                                                     |
+| `yarn login`    | `yarn npm login`             |                                                                     |
+| `yarn logout`   | -                            | Not implemented                                                     |
+| `yarn outdated` | `yarn upgrade-interactive`   | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/749)  |
+| `yarn owner`    | -                            | Not implemented                                                     |
+| `yarn publish`  | `yarn npm publish`           |                                                                     |
+| `yarn tag`      | -                            | Not implemented                                                     |
+| `yarn team`     | -                            | Not implemented                                                     |
+| `yarn unlink`   | -                            | Change `resolutions` field in the project-level manifest instead    |
+| `yarn upgrade`  | `yarn up`                    |                                                                     |
 
 ### Enable the PnP plugin when using Webpack 4
 
