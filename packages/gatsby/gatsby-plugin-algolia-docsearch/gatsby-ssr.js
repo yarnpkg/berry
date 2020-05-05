@@ -28,9 +28,13 @@ exports.onRenderBody = ({setHeadComponents, setPostBodyComponents}, {specs = []}
         type: `text/javascript`,
         dangerouslySetInnerHTML: {
           __html: `{
+            let docuSearchElem;
+
             const observer = new MutationObserver((mutations, instance) => {
-              const docuSearchElem = document.querySelector(${JSON.stringify(inputSelector)});
-              if (!docuSearchElem)
+              const previousElem = docuSearchElem;
+
+              docuSearchElem = document.querySelector(${JSON.stringify(inputSelector)});
+              if (!docuSearchElem || docuSearchElem === previousElem)
                 return;
 
               docsearch({
@@ -39,9 +43,6 @@ exports.onRenderBody = ({setHeadComponents, setPostBodyComponents}, {specs = []}
                 inputSelector: ${JSON.stringify(inputSelector)},
                 debug: ${JSON.stringify(debug)}
               });
-
-              // stop observing
-              instance.disconnect();
             });
 
             // start observing
