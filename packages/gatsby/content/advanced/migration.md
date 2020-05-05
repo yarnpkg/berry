@@ -39,24 +39,29 @@ Note that the doctor is intended to report any potential issue - it's then up to
 
 ### Changes in CLI commands
 
-| v1              | v2 substitute                                | Notes                                                               |
-| --------------- | -------------------------------------------- | ------------------------------------------------------------------- |
-| `yarn audit`    | -                                            | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/1187) |
-| `yarn check`    | `yarn install --immutable --immutable-cache` | [Read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106)     |
-| `yarn global`   | `yarn dlx`                                   | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/821)  |
-| `yarn import`   | -                                            | Not implemented, please import using v1 first                       |
-| `yarn info`     | `yarn npm info`                              |                                                                     |
-| `yarn licenses` | -                                            | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/1164) |
-| `yarn list`     | -                                            | Not implemented                                                     |
-| `yarn login`    | `yarn npm login`                             |                                                                     |
-| `yarn logout`   | -                                            | Not implemented, remove the credential from `.yarnrc.yml` instead   |
-| `yarn outdated` | `yarn upgrade-interactive`                   | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/749)  |
-| `yarn owner`    | -                                            | Not implemented                                                     |
-| `yarn publish`  | `yarn npm publish`                           |                                                                     |
-| `yarn tag`      | -                                            | Not implemented                                                     |
-| `yarn team`     | -                                            | Not implemented                                                     |
-| `yarn unlink`   | -                                            | Change `resolutions` field in the project-level manifest instead    |
-| `yarn upgrade`  | `yarn up`                                    | Upgrade across the whole project, not just current workspace        |
+| v1              | v2 substitute              | Notes                         |
+| --------------- | -------------------------- | ----------------------------- |
+| `yarn audit`    | -                          | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/1187) |
+| `yarn check`    | -                          | [Read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106) |
+| `yarn create`   | `yarn dlx create-<name>`   | `yarn create` will still work as an alias, for new packages, use the new command instead. [Read more on GitHub](https://github.com/yarnpkg/berry/pull/1138) |
+| `yarn global`   | `yarn dlx`                 | [Read more](#use-yarn-dlx-instead-of-yarn-global) |
+| `yarn import`   | -                          | Not implemented, please import using v1 first |
+| `yarn info`     | `yarn npm info`            ||
+| `yarn licenses` | -                          | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/1164) |
+| `yarn list`     | -                          | Not implemented |
+| `yarn login`    | `yarn npm login`           ||
+| `yarn logout`   | -                          | Not implemented, remove the credential from `.yarnrc.yml` instead |
+| `yarn outdated` | `yarn upgrade-interactive` | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/749) |
+| `yarn owner`    | -                          | Not implemented |
+| `yarn publish`  | `yarn npm publish`         ||
+| `yarn tag`      | -                          | Not implemented |
+| `yarn team`     | -                          | Not implemented |
+| `yarn unlink`   | -                          | Not implemented, change `resolutions` field in the project-level manifest instead |
+| `yarn upgrade`  | `yarn up`                  | Change in behavior - upgrade across the whole project, not just current workspace |
+
+### Use `yarn dlx` instead of `yarn global`
+
+`yarn dlx` is designed to execute one off scripts that may have been installed as global packages with `yarn 1.x`. Managing system-wide packages is outside of the scope of `yarn`. To reflect this, `yarn global` has been removed. [Read more on GitHub](https://github.com/yarnpkg/berry/issues/821).
 
 ### Enable the PnP plugin when using Webpack 4
 
