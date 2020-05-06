@@ -4,10 +4,6 @@ const {
 } = require(`pkg-tests-core`);
 const {parseSyml} = require(`@yarnpkg/parsers`);
 
-const ifNotWin32It = process.platform !== `win32`
-  ? it
-  : it.skip;
-
 const TESTED_URLS = {
   // We've picked util-deprecate because it doesn't have any dependency, and
   // thus doesn't crash when installing through our mock registry. We also
