@@ -34709,6 +34709,12 @@ exports.Filename = {
 exports.npath = Object.create(path_1.default);
 exports.ppath = Object.create(path_1.default.posix);
 
+exports.npath.cwd = () => process.cwd();
+
+exports.ppath.cwd = () => toPortablePath(process.cwd());
+
+exports.ppath.resolve = (...segments) => path_1.default.posix.resolve(exports.ppath.cwd(), ...segments);
+
 const contains = function (pathUtils, from, to) {
   from = pathUtils.normalize(from);
   to = pathUtils.normalize(to);
@@ -44685,11 +44691,7 @@ function makeManager(pnpapi, opts) {
 
   function findApiPathFor(modulePath) {
     let curr;
-    let next = fslib_1.npath.toPortablePath(modulePath); // let next = ppath.resolve(npath.toPortablePath(modulePath));
-
-    // console.error({
-    //   next
-    // });
+    let next = fslib_1.ppath.resolve(fslib_1.npath.toPortablePath(modulePath));
 
     do {
       curr = next;
