@@ -272,7 +272,7 @@ export async function executePackageScript(locator: Locator, scriptName: string,
     const {manifest, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, binFolder, cwd, lifecycleScript: scriptName});
 
     const script = manifest.scripts.get(scriptName);
-    if (!script)
+    if (typeof script === `undefined`)
       return;
 
     const realExecutor = async () => {
