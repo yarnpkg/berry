@@ -560,6 +560,46 @@ describe(`Plug'n'Play`, () => {
     ),
   );
 
+  testIf(
+    () => satisfies(process.versions.node, `>=8.9.0`),
+    `it should terminate when the 'paths' option from require.resolve includes empty string and there is no .pnp.js in the working dir`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`workspace-*`],
+      },
+      async ({path, run, source}) => {
+        await writeJson(`${path}/workspace-a/package.json`, {
+          name: `workspace-a`,
+          version: `1.0.0`,
+          dependencies: {[`no-deps`]: `1.0.0`},
+        });
+
+        await writeJson(`${path}/workspace-b/package.json`, {
+          name: `workspace-b`,
+          version: `1.0.0`,
+          dependencies: {[`no-deps`]: `2.0.0`, [`one-fixed-dep`]: `1.0.0`},
+        });
+
+        await run(`install`);
+
+        await expect(
+          source(
+            `require(require.resolve('no-deps', {paths: ${JSON.stringify([
+              `${npath.fromPortablePath(path)}/workspace-a`,
+              `${npath.fromPortablePath(path)}/workspace-b`,
+              ``,
+            ])}}))`,
+            {cwd: `${path}/workspace-a`}
+          ),
+        ).resolves.toMatchObject({
+          name: `no-deps`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
   // Skipped because not supported (we can't require files from within other dependency trees, since we couldn't
   // reconcile them together: dependency tree A could think that package X has deps Y@1 while dependency tree B
   // could think that X has deps Y@2 instead. Since they would share the same location on the disk, PnP wouldn't

@@ -34709,6 +34709,12 @@ exports.Filename = {
 exports.npath = Object.create(path_1.default);
 exports.ppath = Object.create(path_1.default.posix);
 
+exports.npath.cwd = () => process.cwd();
+
+exports.ppath.cwd = () => toPortablePath(process.cwd());
+
+exports.ppath.resolve = (...segments) => path_1.default.posix.resolve(exports.ppath.cwd(), ...segments);
+
 const contains = function (pathUtils, from, to) {
   from = pathUtils.normalize(from);
   to = pathUtils.normalize(to);
@@ -34736,16 +34742,15 @@ const UNC_PORTABLE_PATH_REGEXP = /^\/unc\/(\.dot\/)?(.*)$/; // Path should look 
 // And transform to "N:\berry\scripts\plugin-pack.js"
 
 function fromPortablePath(p) {
-  if (process.platform !== 'win32') return p;
+  if (process.platform !== `win32`) return p;
   if (p.match(PORTABLE_PATH_REGEXP)) p = p.replace(PORTABLE_PATH_REGEXP, `$1`);else if (p.match(UNC_PORTABLE_PATH_REGEXP)) p = p.replace(UNC_PORTABLE_PATH_REGEXP, (match, p1, p2) => `\\\\${p1 ? `.\\` : ``}${p2}`);else return p;
   return p.replace(/\//g, `\\`);
-}
-
-; // Path should look like "N:/berry/scripts/plugin-pack.js"
+} // Path should look like "N:/berry/scripts/plugin-pack.js"
 // And transform to "/N:/berry/scripts/plugin-pack.js"
 
+
 function toPortablePath(p) {
-  if (process.platform !== 'win32') return p;
+  if (process.platform !== `win32`) return p;
   if (p.match(WINDOWS_PATH_REGEXP)) p = p.replace(WINDOWS_PATH_REGEXP, `/$1`);else if (p.match(UNC_WINDOWS_PATH_REGEXP)) p = p.replace(UNC_WINDOWS_PATH_REGEXP, (match, p1, p2) => `/unc/${p1 ? `.dot/` : ``}${p2}`);
   return p.replace(/\\/g, `/`);
 }
@@ -34757,7 +34762,7 @@ function convertPath(targetPathUtils, sourcePath) {
 exports.convertPath = convertPath;
 
 function toFilename(filename) {
-  if (exports.npath.parse(filename).dir !== '' || exports.ppath.parse(filename).dir !== '') throw new Error(`Invalid filename: "${filename}"`);
+  if (exports.npath.parse(filename).dir !== `` || exports.ppath.parse(filename).dir !== ``) throw new Error(`Invalid filename: "${filename}"`);
   return filename;
 }
 
@@ -35315,7 +35320,7 @@ class FakeFS {
   async changeFilePromise(p, content, {
     automaticNewlines
   } = {}) {
-    let current = '';
+    let current = ``;
 
     try {
       current = await this.readFilePromise(p, `utf8`);
@@ -35330,7 +35335,7 @@ class FakeFS {
   changeFileSync(p, content, {
     automaticNewlines = false
   } = {}) {
-    let current = '';
+    let current = ``;
 
     try {
       current = this.readFileSync(p, `utf8`);
@@ -35494,7 +35499,6 @@ class FakeFS {
 
 exports.FakeFS = FakeFS;
 FakeFS.DEFAULT_TIME = 315532800;
-;
 
 class BasePortableFakeFS extends FakeFS {
   constructor() {
@@ -35719,7 +35723,7 @@ class ProxiedFS extends FakeFS_1.FakeFS {
 
   readFilePromise(p, encoding) {
     // This weird condition is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    if (encoding === 'utf8') {
+    if (encoding === `utf8`) {
       return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
     } else {
       return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
@@ -35728,7 +35732,7 @@ class ProxiedFS extends FakeFS_1.FakeFS {
 
   readFileSync(p, encoding) {
     // This weird condition is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    if (encoding === 'utf8') {
+    if (encoding === `utf8`) {
       return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
     } else {
       return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
@@ -36204,7 +36208,7 @@ function makeDefaultStats() {
 }
 
 function toUnixTimestamp(time) {
-  if (typeof time === 'string' && String(+time) === time) return +time; // @ts-ignore
+  if (typeof time === `string` && String(+time) === time) return +time; // @ts-ignore
 
   if (Number.isFinite(time)) {
     if (time < 0) {
@@ -36230,7 +36234,7 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
     this.readOnly = false;
     this.libzip = opts.libzip;
     const pathOptions = opts;
-    this.level = typeof pathOptions.level !== 'undefined' ? pathOptions.level : exports.DEFAULT_COMPRESSION_LEVEL;
+    this.level = typeof pathOptions.level !== `undefined` ? pathOptions.level : exports.DEFAULT_COMPRESSION_LEVEL;
 
     if (typeof source === `string`) {
       const {
@@ -36304,7 +36308,7 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
       this.registerEntry(p, t); // If the raw path is a directory, register it
       // to prevent empty folder being skipped
 
-      if (raw.endsWith('/')) {
+      if (raw.endsWith(`/`)) {
         this.registerListing(p);
       }
     }
@@ -37038,7 +37042,6 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
 }
 
 exports.ZipFS = ZipFS;
-;
 
 /***/ }),
 /* 9 */
@@ -37074,10 +37077,9 @@ var ErrorCode;
   ErrorCode["INTERNAL"] = "INTERNAL";
   ErrorCode["UNDECLARED_DEPENDENCY"] = "UNDECLARED_DEPENDENCY";
   ErrorCode["UNSUPPORTED"] = "UNSUPPORTED";
-})(ErrorCode = exports.ErrorCode || (exports.ErrorCode = {}));
-
-; // Some errors are exposed as MODULE_NOT_FOUND for compatibility with packages
+})(ErrorCode = exports.ErrorCode || (exports.ErrorCode = {})); // Some errors are exposed as MODULE_NOT_FOUND for compatibility with packages
 // that expect this umbrella error when the resolution fails
+
 
 const MODULE_NOT_FOUND_ERRORS = new Set([ErrorCode.BLACKLISTED, ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, ErrorCode.MISSING_DEPENDENCY, ErrorCode.MISSING_PEER_DEPENDENCY, ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, ErrorCode.UNDECLARED_DEPENDENCY]);
 /**
@@ -37114,7 +37116,7 @@ exports.makeError = makeError;
 function getIssuerModule(parent) {
   let issuer = parent;
 
-  while (issuer && (issuer.id === '[eval]' || issuer.id === '<repl>' || !issuer.filename)) issuer = issuer.parent;
+  while (issuer && (issuer.id === `[eval]` || issuer.id === `<repl>` || !issuer.filename)) issuer = issuer.parent;
 
   return issuer || null;
 }
@@ -37228,7 +37230,7 @@ manager = makeManager_1.makeManager(defaultApi, {
 
 exports.default = defaultApi;
 
-if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {
+if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === `internal/preload`) {
   defaultApi.setup();
 
   if (__non_webpack_module__.filename) {
@@ -37279,13 +37281,13 @@ if (process.mainModule === __non_webpack_module__) {
       processResolution(process.argv[2], process.argv[3]);
     }
   } else {
-    let buffer = '';
+    let buffer = ``;
     const decoder = new string_decoder_1.default.StringDecoder();
-    process.stdin.on('data', chunk => {
+    process.stdin.on(`data`, chunk => {
       buffer += decoder.write(chunk);
 
       do {
-        const index = buffer.indexOf('\n');
+        const index = buffer.indexOf(`\n`);
         if (index === -1) break;
         const line = buffer.slice(0, index);
         buffer = buffer.slice(index + 1);
@@ -37969,8 +37971,8 @@ const NUMBER_REGEXP = /^[0-9]+$/; // $0: full path
 // $4: depth
 // $5: subpath
 
-const VIRTUAL_REGEXP = /^(\/(?:[^\/]+\/)*?\$\$virtual)((?:\/((?:[^\/]+-)?[a-f0-9]+)(?:\/([^\/]+))?)?((?:\/.*)?))$/;
-const VALID_COMPONENT = /^([^\/]+-)?[a-f0-9]+$/;
+const VIRTUAL_REGEXP = /^(\/(?:[^/]+\/)*?\$\$virtual)((?:\/((?:[^/]+-)?[a-f0-9]+)(?:\/([^/]+))?)?((?:\/.*)?))$/;
+const VALID_COMPONENT = /^([^/]+-)?[a-f0-9]+$/;
 
 class VirtualFS extends ProxiedFS_1.ProxiedFS {
   constructor({
@@ -43632,7 +43634,7 @@ const internalTools_1 = __webpack_require__(11);
 
 function applyPatch(pnpapi, opts) {
   // @ts-ignore
-  const builtinModules = new Set(module_1.Module.builtinModules || Object.keys(process.binding('natives')));
+  const builtinModules = new Set(module_1.Module.builtinModules || Object.keys(process.binding(`natives`)));
   /**
    * The cache that will be used for all accesses occuring outside of a PnP context.
    */
@@ -43719,7 +43721,7 @@ function applyPatch(pnpapi, opts) {
     if (isMain) {
       // @ts-ignore
       process.mainModule = module;
-      module.id = '.';
+      module.id = `.`;
     } // Try to load the module, and remove it from the cache if it fails
 
 
@@ -43769,7 +43771,7 @@ function applyPatch(pnpapi, opts) {
       optionNames.delete(`plugnplay`);
 
       if (optionNames.size > 0) {
-        throw internalTools_1.makeError(internalTools_1.ErrorCode.UNSUPPORTED, `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(', ')})`);
+        throw internalTools_1.makeError(internalTools_1.ErrorCode.UNSUPPORTED, `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(`, `)})`);
       }
     }
 
@@ -43870,7 +43872,6 @@ function applyPatch(pnpapi, opts) {
 }
 
 exports.applyPatch = applyPatch;
-;
 
 /***/ }),
 /* 30 */
@@ -43970,9 +43971,9 @@ function makeApi(runtimeState, opts) {
   const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
   const debugLevel = Number(process.env.PNP_DEBUG_LEVEL); // @ts-ignore
 
-  const builtinModules = new Set(module_1.Module.builtinModules || Object.keys(process.binding('natives'))); // Splits a require request into its components, or return null if the request is a file path
+  const builtinModules = new Set(module_1.Module.builtinModules || Object.keys(process.binding(`natives`))); // Splits a require request into its components, or return null if the request is a file path
 
-  const pathRegExp = /^(?![a-zA-Z]:[\\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^\/]+\/)?[^\/]+)\/*(.*|)$/; // Matches if the path starts with a valid path qualifier (./, ../, /)
+  const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/; // Matches if the path starts with a valid path qualifier (./, ../, /)
   // eslint-disable-next-line no-unused-vars
 
   const isStrictRegExp = /^\.{0,2}\//; // Matches if the path must point to a directory (ie ends with /)
@@ -44036,7 +44037,7 @@ function makeApi(runtimeState, opts) {
   function makeLogEntry(name, args) {
     return {
       fn: name,
-      args: args,
+      args,
       error: null,
       result: null
     };
@@ -44509,12 +44510,11 @@ function makeApi(runtimeState, opts) {
 
     return fslib_2.ppath.normalize(unqualifiedPath);
   }
-
-  ;
   /**
    * Transforms an unqualified path into a qualified path by using the Node resolution algorithm (which automatically
    * appends ".js" / ".json", and transforms directory accesses into "index.js").
    */
+
 
   function resolveUnqualified(unqualifiedPath, {
     extensions = Object.keys(module_1.Module._extensions)
@@ -44532,8 +44532,6 @@ function makeApi(runtimeState, opts) {
       });
     }
   }
-
-  ;
   /**
    * Transforms a request into a fully qualified path.
    *
@@ -44542,11 +44540,12 @@ function makeApi(runtimeState, opts) {
    * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
    */
 
+
   function resolveRequest(request, issuer, {
     considerBuiltins,
     extensions
   } = {}) {
-    let unqualifiedPath = resolveToUnqualified(request, issuer, {
+    const unqualifiedPath = resolveToUnqualified(request, issuer, {
       considerBuiltins
     });
     if (unqualifiedPath === null) return null;
@@ -44556,15 +44555,13 @@ function makeApi(runtimeState, opts) {
         extensions
       });
     } catch (resolutionError) {
-      if (resolutionError.pnpCode === 'QUALIFIED_PATH_RESOLUTION_FAILED') Object.assign(resolutionError.data, {
+      if (resolutionError.pnpCode === `QUALIFIED_PATH_RESOLUTION_FAILED`) Object.assign(resolutionError.data, {
         request,
         issuer
       });
       throw resolutionError;
     }
   }
-
-  ;
 
   function resolveVirtual(request) {
     const normalized = fslib_2.ppath.normalize(request);
@@ -44694,7 +44691,7 @@ function makeManager(pnpapi, opts) {
 
   function findApiPathFor(modulePath) {
     let curr;
-    let next = fslib_1.npath.toPortablePath(modulePath);
+    let next = fslib_1.ppath.resolve(fslib_1.npath.toPortablePath(modulePath));
 
     do {
       curr = next;
