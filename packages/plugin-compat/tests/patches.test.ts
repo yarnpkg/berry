@@ -11,7 +11,7 @@ function getConfiguration(p: PortablePath) {
     [`@yarnpkg/plugin-npm`, NpmPlugin],
     [`@yarnpkg/plugin-patch`, PatchPlugin],
   ]));
-};
+}
 
 async function createProject(configuration: Configuration, p: PortablePath, manifest: object = {}) {
   await xfs.writeFilePromise(ppath.join(p, toFilename(`package.json`)), JSON.stringify(manifest));
@@ -78,7 +78,7 @@ async function testCandidate(locator: Locator) {
 
 const TEST_TIMEOUT = 100000000;
 
-const TEST_RANGES: Array<[string, string[]]> = [
+const TEST_RANGES: Array<[string, Array<string>]> = [
   [
     `fsevents`, [
       `^1`,
@@ -110,11 +110,20 @@ describe(`patches`, () => {
 
     it.each(ranges)(`should work with ${stringifiedIdent}@%s`, async range => {
       const descriptor = structUtils.makeDescriptor(ident, range);
-
       const candidates = await getDescriptorCandidates(descriptor);
 
+      const errors = [];
+
       for (const candidate of candidates) {
-        await testCandidate(candidate);
+        try {
+          await testCandidate(candidate);
+        } catch (error) {
+          errors.push(`--- ${candidate} ---\n${error.stack}`);
+        }
+      }
+
+      if (errors.length > 0) {
+        throw new Error(errors.join(`\n`));
       }
     }, TEST_TIMEOUT);
   });
