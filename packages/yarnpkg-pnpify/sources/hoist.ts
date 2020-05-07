@@ -510,10 +510,10 @@ const shrinkTree = (tree: HoisterWorkTree): HoisterResult => {
     dependencies: new Set(),
   };
 
-  const nodes = new Map<Locator, HoisterResult>([[tree.locator, treeCopy]]);
+  const nodes = new Map<HoisterWorkTree, HoisterResult>([[tree, treeCopy]]);
 
   const addNode = (node: HoisterWorkTree, parentNode: HoisterResult) => {
-    let resultNode = nodes.get(node.locator);
+    let resultNode = nodes.get(node);
     const isSeen = !!resultNode;
 
     if (!resultNode) {
@@ -526,7 +526,7 @@ const shrinkTree = (tree: HoisterWorkTree): HoisterResult => {
     parentNode.dependencies.add(resultNode);
 
     if (!isSeen) {
-      nodes.set(node.locator, resultNode);
+      nodes.set(node, resultNode);
       for (const dep of node.dependencies.values()) {
         if (!node.peerNames.has(dep.name)) {
           addNode(dep, resultNode);
