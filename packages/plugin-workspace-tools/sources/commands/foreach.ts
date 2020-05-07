@@ -266,6 +266,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
           }).join(`, `);
 
           report.reportError(MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected (${cycle})`);
+          return;
         }
 
         const exitCodes: Array<number> = await Promise.all(commandPromises);
