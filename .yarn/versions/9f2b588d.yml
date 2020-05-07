@@ -1,6 +1,7 @@
 releases:
   "@yarnpkg/cli": prerelease
   "@yarnpkg/core": prerelease
+  "@yarnpkg/eslint-config": minor
 
 declined:
   - "@yarnpkg/plugin-compat"
@@ -27,4 +28,7 @@ declined:
   - "@yarnpkg/plugin-workspace-tools"
   - "@yarnpkg/builder"
   - "@yarnpkg/doctor"
+  - "@yarnpkg/fslib"
+  - "@yarnpkg/libui"
   - "@yarnpkg/pnpify"
+  - "@yarnpkg/shell"
