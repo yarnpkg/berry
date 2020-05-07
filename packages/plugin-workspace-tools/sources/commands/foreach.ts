@@ -265,7 +265,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
             return structUtils.prettyLocator(configuration, workspace.anchoredLocator);
           }).join(`, `);
 
-          return report.reportError(MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected (${cycle})`);
+          report.reportError(MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected (${cycle})`);
         }
 
         const exitCodes: Array<number> = await Promise.all(commandPromises);
@@ -279,8 +279,6 @@ export default class WorkspacesForeachCommand extends BaseCommand {
           report.reportError(MessageName.UNNAMED, `The command failed for workspaces that are depended upon by other workspaces; can't satisfy the dependency graph`);
         }
       }
-
-      return 0;
     });
 
     if (finalExitCode !== null) {
