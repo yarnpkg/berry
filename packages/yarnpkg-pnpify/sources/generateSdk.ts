@@ -22,7 +22,7 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   `const absPnpApiPath = resolve(__dirname, relPnpApiPath);\n`,
   `const absRequire = (createRequire || createRequireFromPath)(absPnpApiPath);\n`,
   `\n`,
-  `if (existsSync(absPnpApiPath)) {\n`,
+  `if (existsSync(absPnpApiPath) && !process.versions.pnp) {\n`,
   `  // Setup the environment to be able to require ${module}\n`,
   `  require(absPnpApiPath).setup();\n`,
   ...(setupEnv || usePnpify ? [
