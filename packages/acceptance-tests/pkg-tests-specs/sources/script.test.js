@@ -283,6 +283,13 @@ describe(`Scripts tests`, () => {
   );
 
   test(
+    `it should correctly run empty install scripts`,
+    makeTemporaryEnv({dependencies: {[`no-deps-scripted-empty`]: `1.0.0`}}, async ({path, run, source}) => {
+      await run(`install`);
+    }),
+  );
+
+  test(
     `it should correctly run scripts when project path has space inside`,
     makeTemporaryEnv({
       private: true,

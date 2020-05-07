@@ -1579,14 +1579,18 @@ export class Project {
 
   async restoreInstallState() {
     const installStatePath = this.configuration.get<PortablePath>(`installStatePath`);
-    if (!xfs.existsSync(installStatePath))
-      return await this.applyLightResolution();
+    if (!xfs.existsSync(installStatePath)) {
+      await this.applyLightResolution();
+      return;
+    }
 
     const serializedState = await xfs.readFilePromise(installStatePath);
     const installState = v8.deserialize(await gunzip(serializedState) as Buffer);
 
-    if (installState.lockFileChecksum !== this.lockFileChecksum)
-      return await this.applyLightResolution();
+    if (installState.lockFileChecksum !== this.lockFileChecksum) {
+      await this.applyLightResolution();
+      return;
+    }
 
     Object.assign(this, installState);
 

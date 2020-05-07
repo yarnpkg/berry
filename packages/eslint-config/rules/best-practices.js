@@ -14,6 +14,8 @@ module.exports = {
 
     'arca/no-default-export': 2,
 
+    'consistent-return': 2,
+
     'dot-notation': 2,
 
     'no-async-promise-executor': 2,

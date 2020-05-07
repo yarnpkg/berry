@@ -14,7 +14,7 @@ export const useFocusRequest = function ({active, handler}: {active: boolean, ha
 
   useEffect(() => {
     if (!active || typeof handler === `undefined`)
-      return;
+      return undefined;
 
     const cb = (ch: any, key: any) => {
       if (key.name === `tab`) {

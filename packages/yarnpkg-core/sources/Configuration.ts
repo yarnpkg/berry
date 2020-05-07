@@ -522,8 +522,10 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
       if (configuration.projectCwd === null) {
         if (ppath.isAbsolute(definition.default)) {
           return ppath.normalize(definition.default);
-        } else if (definition.isNullable || definition.default === null) {
+        } else if (definition.isNullable) {
           return null;
+        } else {
+          throw new Error(`Assertion failed: The default value must either be absolute, or null`);
         }
       } else {
         if (Array.isArray(definition.default)) {

@@ -120,5 +120,7 @@ export default class RemoveCommand extends BaseCommand {
 
       return report.exitCode();
     }
+
+    return 0;
   }
 }

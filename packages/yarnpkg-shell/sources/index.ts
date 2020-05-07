@@ -597,6 +597,9 @@ function locateArgsVariableInArgument(arg: Argument): boolean {
     case `argument`: {
       return arg.segments.some(segment => locateArgsVariableInSegment(segment));
     } break;
+
+    default:
+      throw new Error(`Unreacheable`);
   }
 }
 

@@ -265,7 +265,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
             return structUtils.prettyLocator(configuration, workspace.anchoredLocator);
           }).join(`, `);
 
-          return report.reportError(MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected (${cycle})`);
+          report.reportError(MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected (${cycle})`);
+          return;
         }
 
         const exitCodes: Array<number> = await Promise.all(commandPromises);
