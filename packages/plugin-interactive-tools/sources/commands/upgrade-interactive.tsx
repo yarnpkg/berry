@@ -114,16 +114,19 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         label: descriptor.range,
       }];
 
-      suggestions.push({
-        value: resolution,
-        label: colorizeVersionDiff(descriptor.range, resolution),
-      });
+      if (resolution !== descriptor.range) {
+        suggestions.push({
+          value: resolution,
+          label: colorizeVersionDiff(descriptor.range, resolution),
+        });
+      }
 
-
-      suggestions.push({
-        value: dependency,
-        label: colorizeVersionDiff(descriptor.range, dependency),
-      });
+      if (dependency !== resolution && dependency !== descriptor.range) {
+        suggestions.push({
+          value: dependency,
+          label: colorizeVersionDiff(descriptor.range, dependency),
+        });
+      }
 
 
       return suggestions;
@@ -155,10 +158,9 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     const Header = () => {
       return (
         <Box flexDirection="row" marginLeft={4}>
-          <Box width={30}><Color bold underline gray>Name</Color></Box>
+          <Box width={45}><Color bold underline gray>Package</Color></Box>
           <Box width={15}><Color bold underline gray>Current</Color></Box>
-          <Box width={15}><Color bold underline gray>Range</Color></Box>
-          <Box width={15}><Color bold underline gray>Latest</Color></Box>
+          <Box width={15}><Color bold underline gray>Range/Latest</Color></Box>
         </Box>
       );
     };
@@ -176,7 +178,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       ]);
 
       return <Box>
-        <Box width={30}>
+        <Box width={45} textWrap="wrap">
           <Text bold>
             {structUtils.prettyIdent(configuration, descriptor)}
           </Text>

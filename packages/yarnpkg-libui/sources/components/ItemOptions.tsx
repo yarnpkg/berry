@@ -17,9 +17,9 @@ export const ItemOptions = function <T>({active, options, value, onChange, sizes
   return <>
     {options.map(({label}, index) => {
       if (index === selectedIndex) {
-        return <Box key={label} minWidth={sizes[index] || 0} paddingLeft={2}><Color>◉</Color> <Text bold underline>{label}</Text></Box>;
+        return <Box key={label} width={sizes[index] - 1 || 0} marginLeft={1} textWrap="truncate"><Color>◉</Color> <Text bold>{label}</Text></Box>;
       } else {
-        return <Box key={label} minWidth={sizes[index] || 0} paddingLeft={2}><Color>◯</Color> <Text bold>{label}</Text></Box>;
+        return <Box key={label} width={sizes[index] - 1 || 0} marginLeft={1} textWrap="truncate"><Color>◯</Color> <Text bold>{label}</Text></Box>;
       }
     })}
   </>;
