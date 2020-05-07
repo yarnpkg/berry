@@ -25,7 +25,7 @@
       "default": ["master", "origin/master", "upstream/master"]
     },
     "changesetIgnorePatterns": {
-      "description": "Files matching the following patterns (in terms of relative paths compared to the root of the repository) will be ignored by the `yarn version check` command.",
+      "description": "Files matching the following patterns (in terms of relative paths compared to the root of the project) will be ignored by the `yarn version check` command.",
       "type": "array",
       "items": {
         "type": "string"

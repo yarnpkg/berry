@@ -77,7 +77,7 @@ export async function fetchChangedFiles(root: PortablePath, {base, project}: {ba
   const changedFiles = [...new Set([...trackedFiles, ...untrackedFiles].sort())];
 
   return ignorePattern
-    ? changedFiles.filter(p => !ppath.relative(root, p).match(ignorePattern))
+    ? changedFiles.filter(p => !ppath.relative(project.cwd, p).match(ignorePattern))
     : changedFiles;
 }
 
