@@ -13,6 +13,12 @@ const plugin: Plugin = {
       isNullable: false,
       default: [`master`, `origin/master`, `upstream/master`],
     },
+    changesetIgnorePatterns: {
+      description: `Array of glob patterns; files matching them will be ignored when fetching the changed files`,
+      type: SettingsType.STRING,
+      default: [],
+      isArray: true,
+    },
     deferredVersionFolder: {
       description: `Folder where are stored the versioning files`,
       type: SettingsType.ABSOLUTE_PATH,

@@ -65,14 +65,20 @@ export async function fetchRoot(initialCwd: PortablePath) {
 
 // Note: This returns all changed files from the git diff, which can include
 // files not belonging to a workspace
-export async function fetchChangedFiles(root: PortablePath, {base}: {base: string}) {
+export async function fetchChangedFiles(root: PortablePath, {base, project}: {base: string, project: Project}) {
+  const ignorePattern = miscUtils.buildIgnorePattern(project.configuration.get(`changesetIgnorePatterns`));
+
   const {stdout: localStdout} = await execUtils.execvp(`git`, [`diff`, `--name-only`, `${base}`], {cwd: root, strict: true});
   const trackedFiles = localStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
 
   const {stdout: untrackedStdout} = await execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {cwd: root, strict: true});
   const untrackedFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
 
-  return [...new Set([...trackedFiles, ...untrackedFiles].sort())];
+  const changedFiles = [...new Set([...trackedFiles, ...untrackedFiles].sort())];
+
+  return ignorePattern
+    ? changedFiles.filter(p => !ppath.relative(project.cwd, p).match(ignorePattern))
+    : changedFiles;
 }
 
 type Await<T> = T extends {
@@ -202,7 +208,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
     : null;
 
   const changedFiles = root !== null
-    ? await fetchChangedFiles(root, {base: base!.hash})
+    ? await fetchChangedFiles(root, {base: base!.hash, project})
     : [];
 
   const deferredVersionFolder = configuration.get<PortablePath>(`deferredVersionFolder`);

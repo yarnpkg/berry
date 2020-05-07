@@ -24,6 +24,14 @@
       },
       "default": ["master", "origin/master", "upstream/master"]
     },
+    "changesetIgnorePatterns": {
+      "description": "Files matching the following patterns (in terms of relative paths compared to the root of the project) will be ignored by the `yarn version check` command.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": ["**/*.test.{js,ts}"]
+    },
     "checksumBehavior": {
       "description": "If `throw` (the default), Yarn will throw an exception on `yarn install` if it detects that a package doesn't match the checksum stored within the lockfile. If `update`, the lockfile checksum will be updated to match the new value. If `ignore`, the checksum check will not happen.",
       "enum": ["throw", "update", "ignore"],

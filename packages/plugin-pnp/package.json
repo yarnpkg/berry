@@ -8,7 +8,6 @@
     "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.15",
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.20",
     "clipanion": "^2.1.5",
-    "micromatch": "^4.0.2",
     "semver": "^7.1.2"
   },
   "peerDependencies": {
@@ -16,7 +15,6 @@
     "@yarnpkg/core": "^2.0.0-rc.27"
   },
   "devDependencies": {
-    "@types/micromatch": "^3.1.0",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33",
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
   },
