@@ -267,13 +267,13 @@ type ExecutePackageScriptOptions = {
   stderr: Writable,
 };
 
-export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
+export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions): Promise<number> {
   return await xfs.mktempPromise(async binFolder => {
     const {manifest, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, binFolder, cwd, lifecycleScript: scriptName});
 
     const script = manifest.scripts.get(scriptName);
     if (typeof script === `undefined`)
-      return;
+      return 1;
 
     const realExecutor = async () => {
       return await execute(script, args, {cwd: realCwd, env, stdin, stdout, stderr});
