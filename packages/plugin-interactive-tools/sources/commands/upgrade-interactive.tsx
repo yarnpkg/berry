@@ -185,7 +185,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         </Box>
         {suggestions !== null
           ? <ItemOptions active={active} options={suggestions} value={action} onChange={setAction} sizes={[15, 15, 15]} />
-          : <Box><Color gray>Fetching suggestions...</Color></Box>
+          : <Box marginLeft={2}><Color gray>Fetching suggestions...</Color></Box>
         }
       </Box>;
     };

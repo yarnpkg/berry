@@ -63,7 +63,7 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
     </Box>);
   }
 
-  return <Box flexDirection={`column`} width={`100%`} height={radius * size * 2 + size}>
+  return <Box flexDirection={`column`} width={`100%`}>
     {rendered}
   </Box>;
 };
