@@ -80,7 +80,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
 
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
     if (this.opts.project.configuration.get(`nodeLinker`) !== `node-modules`)
-      return;
+      return undefined;
 
     const defaultFsLayer = new VirtualFS({
       baseFs: new ZipOpenFS({

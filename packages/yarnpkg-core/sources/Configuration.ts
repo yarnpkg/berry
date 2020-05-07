@@ -520,11 +520,12 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
         return null;
 
       if (configuration.projectCwd === null) {
-        if (ppath.isAbsolute(definition.default)) {
+        if (ppath.isAbsolute(definition.default))
           return ppath.normalize(definition.default);
-        } else if (definition.isNullable || definition.default === null) {
+        else if (definition.isNullable || definition.default === null)
           return null;
-        }
+
+        return undefined;
       } else {
         if (Array.isArray(definition.default)) {
           return definition.default.map((entry: string) => ppath.resolve(configuration.projectCwd!, entry as PortablePath));

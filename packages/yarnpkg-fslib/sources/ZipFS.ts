@@ -310,6 +310,8 @@ export class ZipFS extends BasePortableFakeFS {
       this.baseFs.chmodSync(this.path, previousMod);
 
     this.ready = false;
+
+    return undefined;
   }
 
   discardAndClose() {
@@ -966,6 +968,8 @@ export class ZipFS extends BasePortableFakeFS {
 
     this.hydrateDirectory(resolvedP);
     this.chmodSync(resolvedP, mode);
+
+    return undefined;
   }
 
   async rmdirPromise(p: PortablePath) {

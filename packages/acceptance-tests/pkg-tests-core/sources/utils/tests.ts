@@ -247,6 +247,8 @@ export const startPackageServer = (): Promise<string> => {
 
       response.writeHead(200, {[`Content-Type`]: `application/json`});
       response.end(data);
+
+      return undefined;
     },
 
     async [RequestType.PackageTarball](parsedRequest, request, response) {
@@ -328,6 +330,8 @@ export const startPackageServer = (): Promise<string> => {
 
         return response.end(data);
       });
+
+      return undefined;
     },
     async [RequestType.Repository](parsedRequest, request, response) {
       staticServer(request as any, response as any, finalhandler(request, response));

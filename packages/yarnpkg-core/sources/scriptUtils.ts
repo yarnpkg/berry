@@ -164,9 +164,10 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
           stdout.write(`\n`);
 
           const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, `pack`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
-          if (pack.code !== 0) {
+          if (pack.code !== 0)
             return pack.code;
-          }
+
+          return undefined;
         }],
 
         [PackageManager.Yarn2, async () => {
@@ -179,9 +180,10 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
           // we're already operating within a Yarn 2 context (plus people should
           // really check-in their Yarn versions anyway).
           const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, `pack`, `--install-if-needed`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
-          if (pack.code !== 0) {
+          if (pack.code !== 0)
             return pack.code;
-          }
+
+          return undefined;
         }],
 
         [PackageManager.Npm, async () => {
@@ -213,6 +215,8 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
 
           // Only then can we move the pack to its rightful location
           await xfs.renamePromise(packTarget, outputPath);
+
+          return undefined;
         }],
       ]);
 

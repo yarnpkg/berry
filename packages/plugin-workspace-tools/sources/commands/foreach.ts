@@ -279,6 +279,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
           report.reportError(MessageName.UNNAMED, `The command failed for workspaces that are depended upon by other workspaces; can't satisfy the dependency graph`);
         }
       }
+
+      return undefined;
     });
 
     if (finalExitCode !== null) {

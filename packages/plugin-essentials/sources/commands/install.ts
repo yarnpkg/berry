@@ -100,9 +100,10 @@ export default class YarnCommand extends BaseCommand {
         }
       });
 
-      if (deprecationReport.hasErrors()) {
+      if (deprecationReport.hasErrors())
         return deprecationReport.exitCode();
-      }
+
+      return undefined;
     };
 
     // The ignoreEngines flag isn't implemented at the moment. I'm still

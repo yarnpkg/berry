@@ -133,6 +133,9 @@ function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
 
     case AuthType.NO_AUTH:
       return false;
+
+    default:
+      throw new Error(`Unreachable`);
   }
 }
 

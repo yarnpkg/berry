@@ -1591,6 +1591,8 @@ export class Project {
     Object.assign(this, installState);
 
     this.refreshWorkspaceDependencies();
+
+    return undefined;
   }
 
   async applyLightResolution() {

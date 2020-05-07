@@ -363,7 +363,7 @@ export class StreamReport extends Report {
     const cacheMissDelta = this.cacheMissCount - cacheMissCount;
 
     if (cacheHitDelta === 0 && cacheMissDelta === 0)
-      return;
+      return undefined;
 
     let fetchStatus = ``;
 
