@@ -525,7 +525,7 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
         } else if (definition.isNullable) {
           return null;
         } else {
-          throw new Error(`Assertion failed: The default value must either be absolute, or null`);
+          throw new Error(`Assertion failed: The default value must either be absolute, or null (${definition.description})`);
         }
       } else {
         if (Array.isArray(definition.default)) {
