@@ -207,12 +207,15 @@ export const startPackageServer = (): Promise<string> => {
     async [RequestType.PackageInfo](parsedRequest, _, response) {
       if (parsedRequest.type !== RequestType.PackageInfo)
         throw new Error(`Assertion failed: Invalid request type`);
+
       const {scope, localName} = parsedRequest;
       const name = scope ? `${scope}/${localName}` : localName;
 
       const packageEntry = await getPackageEntry(name);
-      if (!packageEntry)
-        return processError(response, 404, `Package not found: ${name}`);
+      if (!packageEntry) {
+        processError(response, 404, `Package not found: ${name}`);
+        return;
+      }
 
       let versions = Array.from(packageEntry.keys());
 
@@ -247,8 +250,6 @@ export const startPackageServer = (): Promise<string> => {
 
       response.writeHead(200, {[`Content-Type`]: `application/json`});
       response.end(data);
-
-      return undefined;
     },
 
     async [RequestType.PackageTarball](parsedRequest, request, response) {
@@ -296,9 +297,10 @@ export const startPackageServer = (): Promise<string> => {
       const otp = request.headers[`npm-otp`];
 
       const user = validLogins[username];
-      if (!user)
-        return processError(response, 401, `Unauthorized`);
-
+      if (!user) {
+        processError(response, 401, `Unauthorized`);
+        return;
+      }
 
       if (user.requiresOtp && user.otp !== otp) {
         response.writeHead(401, {
@@ -306,7 +308,8 @@ export const startPackageServer = (): Promise<string> => {
           [`www-authenticate`]: `OTP`,
         });
 
-        return response.end();
+        response.end();
+        return;
       }
 
       let rawData = ``;
@@ -330,9 +333,8 @@ export const startPackageServer = (): Promise<string> => {
 
         return response.end(data);
       });
-
-      return undefined;
     },
+
     async [RequestType.Repository](parsedRequest, request, response) {
       staticServer(request as any, response as any, finalhandler(request, response));
     },

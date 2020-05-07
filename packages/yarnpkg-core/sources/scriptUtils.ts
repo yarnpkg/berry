@@ -167,7 +167,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
           if (pack.code !== 0)
             return pack.code;
 
-          return undefined;
+          return 0;
         }],
 
         [PackageManager.Yarn2, async () => {
@@ -183,7 +183,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
           if (pack.code !== 0)
             return pack.code;
 
-          return undefined;
+          return 0;
         }],
 
         [PackageManager.Npm, async () => {
@@ -216,7 +216,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
           // Only then can we move the pack to its rightful location
           await xfs.renamePromise(packTarget, outputPath);
 
-          return undefined;
+          return 0;
         }],
       ]);
 
