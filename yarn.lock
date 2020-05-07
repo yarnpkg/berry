@@ -4903,6 +4903,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/micromatch@npm:4.0.1":
+  version: 4.0.1
+  resolution: "@types/micromatch@npm:4.0.1"
+  dependencies:
+    "@types/braces": "*"
+  checksum: 3/50c26e31fad668994476f8b027c83e86f849586ea1b971d0e16998bcb51f8522dd188c7e2511616d9148464631b5cd5dc5a073aa0a0475cb12b3e1b0b99f315d
+  languageName: node
+  linkType: hard
+
 "@types/micromatch@npm:^3.1.0":
   version: 3.1.0
   resolution: "@types/micromatch@npm:3.1.0"
@@ -6615,7 +6624,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pnp@workspace:packages/plugin-pnp"
   dependencies:
-    "@types/micromatch": ^3.1.0
     "@types/semver": ^7.1.0
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33"
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
@@ -6623,7 +6631,6 @@ __metadata:
     "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.15"
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.20"
     clipanion: ^2.1.5
-    micromatch: ^4.0.2
     semver: ^7.1.2
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.33
@@ -6670,6 +6677,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-version@workspace:packages/plugin-version"
   dependencies:
+    "@types/micromatch": 4.0.1
     "@types/react": ^16.8.0
     "@types/semver": ^7.1.0
     "@types/yup": 0.26.12
@@ -6682,6 +6690,7 @@ __metadata:
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.19"
     clipanion: ^2.1.5
     ink: ^2.3.0
+    micromatch: ^4.0.2
     react: ^16.13.1
     semver: ^7.1.2
     typescript: ^3.8.3

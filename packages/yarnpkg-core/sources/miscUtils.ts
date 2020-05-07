@@ -1,4 +1,5 @@
 import {PortablePath, npath} from '@yarnpkg/fslib';
+import micromatch            from 'micromatch';
 import {Readable, Transform} from 'stream';
 
 export function escapeRegExp(str: string) {
@@ -240,3 +241,22 @@ export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) 
     return asArray[index];
   });
 }
+
+/**
+ * Combines an Array of glob patterns into a regular expression.
+ *
+ * @param ignorePatterns An array of glob patterns
+ *
+ * @returns A `string` representing a regular expression or `null` if no glob patterns are provided
+ */
+export const buildIgnorePattern = (ignorePatterns: Array<string>) => {
+  if (ignorePatterns.length === 0)
+    return null;
+
+  return ignorePatterns.map(pattern => {
+    return `(${micromatch.makeRe(pattern, {
+      // @ts-ignore
+      windows: false,
+    }).source})`;
+  }).join(`|`);
+};
