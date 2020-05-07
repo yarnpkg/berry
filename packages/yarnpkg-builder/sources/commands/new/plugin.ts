@@ -60,7 +60,7 @@ export default class NewPluginCommand extends Command {
         [`@yarnpkg/core`]: require(`@yarnpkg/builder/package.json`).dependencies[`@yarnpkg/core`],
         [`@yarnpkg/builder`]: `^${require(`@yarnpkg/builder/package.json`).version}`,
         [`@types/node`]: `^${process.versions.node.split(`.`)[0]}.0.0`,
-        [`clipanion`]: require(`@yarnpkg/builder/package.json`).dependencies[`clipanion`],
+        [`clipanion`]: require(`@yarnpkg/builder/package.json`).dependencies.clipanion,
         [`typescript`]: `^3.3.3333`,
       },
       scripts: {

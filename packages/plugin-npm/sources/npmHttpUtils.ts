@@ -133,6 +133,9 @@ function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
 
     case AuthType.NO_AUTH:
       return false;
+
+    default:
+      throw new Error(`Unreachable`);
   }
 }
 
@@ -154,7 +157,7 @@ async function whoami(registry: string, headers: {[key: string]: string} | undef
 
 async function askForOtp() {
   if (process.env.TEST_ENV)
-    return process.env.TEST_NPM_2FA_TOKEN || '';
+    return process.env.TEST_NPM_2FA_TOKEN || ``;
 
   const prompt = inquirer.createPromptModule();
 
@@ -173,8 +176,8 @@ function isOtpError(error: any) {
     return false;
 
   try {
-    const authMethods = error.response.headers['www-authenticate'].split(/,\s*/).map((s: string) => s.toLowerCase());
-    return authMethods.includes('otp');
+    const authMethods = error.response.headers[`www-authenticate`].split(/,\s*/).map((s: string) => s.toLowerCase());
+    return authMethods.includes(`otp`);
   } catch (e) {
     return false;
   }

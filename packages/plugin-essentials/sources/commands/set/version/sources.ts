@@ -1,11 +1,11 @@
-import {BaseCommand}                                                  from '@yarnpkg/cli';
-import {WorkspaceRequiredError}                                       from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, StreamReport, execUtils} from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs}                    from '@yarnpkg/fslib';
-import {Command, Usage}                                               from 'clipanion';
-import {tmpdir}                                                       from 'os';
+import {BaseCommand}                                         from '@yarnpkg/cli';
+import {Configuration, MessageName, StreamReport, execUtils} from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, xfs}           from '@yarnpkg/fslib';
+import {Command, Usage}                                      from 'clipanion';
+import {tmpdir}                                              from 'os';
+import path                                                  from 'path';
 
-import {setVersion}                                                   from '../version';
+import {setVersion}                                          from '../version';
 
 const PR_REGEXP = /^[0-9]+$/;
 
@@ -30,8 +30,8 @@ const UPDATE_WORKFLOW = ({branch}: {branch: string}) => [
   [`git`, `clean`, `-dfx`],
 ];
 
-const BUILD_WORKFLOW = ({plugins, noMinify}: {noMinify: boolean, plugins: Array<string>}) => [
-  [`yarn`, `build:cli`, ...new Array<string>().concat(...plugins.map(plugin => [`--plugin`, plugin])), ...noMinify ? [`--no-minify`] : [], `|`],
+const BUILD_WORKFLOW = ({plugins, noMinify}: {noMinify: boolean, plugins: Array<string>}, target: PortablePath) => [
+  [`yarn`, `build:cli`, ...new Array<string>().concat(...plugins.map(plugin => [`--plugin`, path.resolve(target, plugin)])), ...noMinify ? [`--no-minify`] : [], `|`],
 ];
 
 // eslint-disable-next-line arca/no-default-export
@@ -68,10 +68,6 @@ export default class SetVersionCommand extends BaseCommand {
   @Command.Path(`set`, `version`, `from`, `sources`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
-
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const target = typeof this.installPath !== `undefined`
       ? ppath.resolve(this.context.cwd, npath.toPortablePath(this.installPath))
@@ -140,14 +136,14 @@ export default class SetVersionCommand extends BaseCommand {
       report.reportInfo(MessageName.UNNAMED, `Building a fresh bundle`);
       report.reportSeparator();
 
-      await runWorkflow(BUILD_WORKFLOW(this));
+      await runWorkflow(BUILD_WORKFLOW(this, target));
 
       report.reportSeparator();
 
       const bundlePath = ppath.resolve(target, `packages/yarnpkg-cli/bundles/yarn.js` as PortablePath);
       const bundleBuffer = await xfs.readFilePromise(bundlePath);
 
-      await setVersion(project, `sources`, bundleBuffer, {
+      await setVersion(configuration, `sources`, bundleBuffer, {
         report,
       });
     });

@@ -6,7 +6,7 @@ import path                         from 'path';
 import {RawSource}                  from 'webpack-sources';
 import webpack                      from 'webpack';
 
-import {isDynamicLib}               from '../../data/dynamicLibs';
+import {isDynamicLib}               from '../../tools/isDynamicLib';
 import {makeConfig}                 from '../../tools/makeConfig';
 import {reindent}                   from '../../tools/reindent';
 
@@ -14,7 +14,7 @@ import {reindent}                   from '../../tools/reindent';
 // their own (@arcanis/yarn-plugin-foo would override @yarnpkg/plugin-foo
 // as well as @mael/yarn-plugin-foo)
 const getNormalizedName = (name: string) => {
-  const parsing = name.match(/^(?:@yarnpkg\/|(?:@[^\/]+\/)?yarn-)(plugin-[^\/]+)/);
+  const parsing = name.match(/^(?:@yarnpkg\/|(?:@[^/]+\/)?yarn-)(plugin-[^/]+)/);
   if (parsing === null)
     throw new UsageError(`Invalid plugin name "${name}" - it should be "yarn-plugin-<something>"`);
 

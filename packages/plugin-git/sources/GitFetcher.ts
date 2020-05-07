@@ -1,5 +1,5 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions, FetchResult} from '@yarnpkg/core';
-import {Locator, MessageName}                                    from '@yarnpkg/core';
+import {Locator}                                                 from '@yarnpkg/core';
 import {miscUtils, scriptUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
 import {PortablePath, ppath, xfs}                                from '@yarnpkg/fslib';
 
@@ -23,14 +23,11 @@ export class GitFetcher implements Fetcher {
     if (result !== null)
       return result;
 
-    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(
-      locator,
-      expectedChecksum,
-      async () => {
-        opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote repository`);
-        return await this.cloneFromRemote(normalizedLocator, opts);
-      },
-    );
+    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
+      onHit: () => opts.report.reportCacheHit(locator),
+      onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote repository`),
+      loader: () => this.cloneFromRemote(normalizedLocator, opts),
+    });
 
     return {
       packageFs,
@@ -49,10 +46,13 @@ export class GitFetcher implements Fetcher {
   async cloneFromRemote(locator: Locator, opts: FetchOptions) {
     const cloneTarget = await gitUtils.clone(locator.reference, opts.project.configuration);
 
+    const repoUrlParts = gitUtils.splitRepoUrl(locator.reference);
     const packagePath = ppath.join(cloneTarget, `package.tgz` as PortablePath);
+
     await scriptUtils.prepareExternalProject(cloneTarget, packagePath, {
       configuration: opts.project.configuration,
       report: opts.report,
+      workspace: repoUrlParts.extra.workspace,
     });
 
     const sourceBuffer = await xfs.readFilePromise(packagePath);

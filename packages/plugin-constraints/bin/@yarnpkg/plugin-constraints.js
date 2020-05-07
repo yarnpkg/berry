@@ -110,9 +110,9 @@ module.exports = {
 
   const query_1 = __importDefault(__webpack_require__(2));
 
-  const source_1 = __importDefault(__webpack_require__(68));
+  const source_1 = __importDefault(__webpack_require__(69));
 
-  const constraints_1 = __importDefault(__webpack_require__(69));
+  const constraints_1 = __importDefault(__webpack_require__(70));
 
   const plugin = {
     configuration: {
@@ -380,12 +380,16 @@ module.exports = {
 
   const core_2 = __webpack_require__(1);
 
-  const fslib_1 = __webpack_require__(6);
+  const fslib_1 = __webpack_require__(6); // @ts-ignore
 
-  const tau_prolog_1 = __importDefault(__webpack_require__(7));
 
-  const tauModule_1 = __webpack_require__(14);
+  const lists_1 = __importDefault(__webpack_require__(7));
 
+  const tau_prolog_1 = __importDefault(__webpack_require__(8));
+
+  const tauModule_1 = __webpack_require__(15);
+
+  lists_1.default(tau_prolog_1.default);
   var DependencyType;
 
   (function (DependencyType) {
@@ -469,6 +473,7 @@ module.exports = {
     constructor(project, source) {
       this.session = tau_prolog_1.default.create();
       tauModule_1.linkProjectToSession(this.session, project);
+      this.session.consult(`:- use_module(library(lists)).`);
       this.session.consult(source);
     }
 
@@ -724,6 +729,441 @@ module.exports = {
   /* 7 */
   /***/ (function(module, exports, __webpack_require__) {
 
+  var pl;
+  (function( pl ) {
+  
+  	var predicates = function() {
+  		
+  		return {
+  			
+  			// append/2
+  			"append/2": [
+  				new pl.type.Rule(new pl.type.Term("append", [new pl.type.Var("X"),new pl.type.Var("L")]), new pl.type.Term("foldl", [new pl.type.Term("append", []),new pl.type.Var("X"),new pl.type.Term("[]", []),new pl.type.Var("L")]))
+  			],
+  
+  			// append/3
+  			"append/3": [
+  				new pl.type.Rule(new pl.type.Term("append", [new pl.type.Term("[]", []),new pl.type.Var("X"),new pl.type.Var("X")]), null),
+  				new pl.type.Rule(new pl.type.Term("append", [new pl.type.Term(".", [new pl.type.Var("H"),new pl.type.Var("T")]),new pl.type.Var("X"),new pl.type.Term(".", [new pl.type.Var("H"),new pl.type.Var("S")])]), new pl.type.Term("append", [new pl.type.Var("T"),new pl.type.Var("X"),new pl.type.Var("S")]))
+  			],
+  			
+  			// member/2
+  			"member/2": [
+  				new pl.type.Rule(new pl.type.Term("member", [new pl.type.Var("X"),new pl.type.Term(".", [new pl.type.Var("X"),new pl.type.Var("_")])]), null),
+  				new pl.type.Rule(new pl.type.Term("member", [new pl.type.Var("X"),new pl.type.Term(".", [new pl.type.Var("_"),new pl.type.Var("Xs")])]), new pl.type.Term("member", [new pl.type.Var("X"),new pl.type.Var("Xs")]))
+  			],
+  			
+  			// permutation/2
+  			"permutation/2": [
+  				new pl.type.Rule(new pl.type.Term("permutation", [new pl.type.Term("[]", []),new pl.type.Term("[]", [])]), null),
+  				new pl.type.Rule(new pl.type.Term("permutation", [new pl.type.Term(".", [new pl.type.Var("H"),new pl.type.Var("T")]),new pl.type.Var("S")]), new pl.type.Term(",", [new pl.type.Term("permutation", [new pl.type.Var("T"),new pl.type.Var("P")]),new pl.type.Term(",", [new pl.type.Term("append", [new pl.type.Var("X"),new pl.type.Var("Y"),new pl.type.Var("P")]),new pl.type.Term("append", [new pl.type.Var("X"),new pl.type.Term(".", [new pl.type.Var("H"),new pl.type.Var("Y")]),new pl.type.Var("S")])])]))
+  			],
+  			
+  			// maplist/2
+  			"maplist/2": [
+  				new pl.type.Rule(new pl.type.Term("maplist", [new pl.type.Var("_"),new pl.type.Term("[]", [])]), null),
+  				new pl.type.Rule(new pl.type.Term("maplist", [new pl.type.Var("P"),new pl.type.Term(".", [new pl.type.Var("X"),new pl.type.Var("Xs")])]), new pl.type.Term(",", [new pl.type.Term("call", [new pl.type.Var("P"),new pl.type.Var("X")]),new pl.type.Term("maplist", [new pl.type.Var("P"),new pl.type.Var("Xs")])]))
+  			],
+  			
+  			// maplist/3
+  			"maplist/3": [
+  				new pl.type.Rule(new pl.type.Term("maplist", [new pl.type.Var("_"),new pl.type.Term("[]", []),new pl.type.Term("[]", [])]), null),
+  				new pl.type.Rule(new pl.type.Term("maplist", [new pl.type.Var("P"),new pl.type.Term(".", [new pl.type.Var("A"),new pl.type.Var("As")]),new pl.type.Term(".", [new pl.type.Var("B"),new pl.type.Var("Bs")])]), new pl.type.Term(",", [new pl.type.Term("call", [new pl.type.Var("P"),new pl.type.Var("A"),new pl.type.Var("B")]),new pl.type.Term("maplist", [new pl.type.Var("P"),new pl.type.Var("As"),new pl.type.Var("Bs")])]))
+  			],
+  			
+  			// maplist/4
+  			"maplist/4": [
+  				new pl.type.Rule(new pl.type.Term("maplist", [new pl.type.Var("_"),new pl.type.Term("[]", []),new pl.type.Term("[]", []),new pl.type.Term("[]", [])]), null),
+  				new pl.type.Rule(new pl.type.Term("maplist", [new pl.type.Var("P"),new pl.type.Term(".", [new pl.type.Var("A"),new pl.type.Var("As")]),new pl.type.Term(".", [new pl.type.Var("B"),new pl.type.Var("Bs")]),new pl.type.Term(".", [new pl.type.Var("C"),new pl.type.Var("Cs")])]), new pl.type.Term(",", [new pl.type.Term("call", [new pl.type.Var("P"),new pl.type.Var("A"),new pl.type.Var("B"),new pl.type.Var("C")]),new pl.type.Term("maplist", [new pl.type.Var("P"),new pl.type.Var("As"),new pl.type.Var("Bs"),new pl.type.Var("Cs")])]))
+  			],
+  			
+  			// maplist/5
+  			"maplist/5": [
+  				new pl.type.Rule(new pl.type.Term("maplist", [new pl.type.Var("_"),new pl.type.Term("[]", []),new pl.type.Term("[]", []),new pl.type.Term("[]", []),new pl.type.Term("[]", [])]), null),
+  				new pl.type.Rule(new pl.type.Term("maplist", [new pl.type.Var("P"),new pl.type.Term(".", [new pl.type.Var("A"),new pl.type.Var("As")]),new pl.type.Term(".", [new pl.type.Var("B"),new pl.type.Var("Bs")]),new pl.type.Term(".", [new pl.type.Var("C"),new pl.type.Var("Cs")]),new pl.type.Term(".", [new pl.type.Var("D"),new pl.type.Var("Ds")])]), new pl.type.Term(",", [new pl.type.Term("call", [new pl.type.Var("P"),new pl.type.Var("A"),new pl.type.Var("B"),new pl.type.Var("C"),new pl.type.Var("D")]),new pl.type.Term("maplist", [new pl.type.Var("P"),new pl.type.Var("As"),new pl.type.Var("Bs"),new pl.type.Var("Cs"),new pl.type.Var("Ds")])]))
+  			],
+  			
+  			// maplist/6
+  			"maplist/6": [
+  				new pl.type.Rule(new pl.type.Term("maplist", [new pl.type.Var("_"),new pl.type.Term("[]", []),new pl.type.Term("[]", []),new pl.type.Term("[]", []),new pl.type.Term("[]", []),new pl.type.Term("[]", [])]), null),
+  				new pl.type.Rule(new pl.type.Term("maplist", [new pl.type.Var("P"),new pl.type.Term(".", [new pl.type.Var("A"),new pl.type.Var("As")]),new pl.type.Term(".", [new pl.type.Var("B"),new pl.type.Var("Bs")]),new pl.type.Term(".", [new pl.type.Var("C"),new pl.type.Var("Cs")]),new pl.type.Term(".", [new pl.type.Var("D"),new pl.type.Var("Ds")]),new pl.type.Term(".", [new pl.type.Var("E"),new pl.type.Var("Es")])]), new pl.type.Term(",", [new pl.type.Term("call", [new pl.type.Var("P"),new pl.type.Var("A"),new pl.type.Var("B"),new pl.type.Var("C"),new pl.type.Var("D"),new pl.type.Var("E")]),new pl.type.Term("maplist", [new pl.type.Var("P"),new pl.type.Var("As"),new pl.type.Var("Bs"),new pl.type.Var("Cs"),new pl.type.Var("Ds"),new pl.type.Var("Es")])]))
+  			],
+  			
+  			// maplist/7
+  			"maplist/7": [
+  				new pl.type.Rule(new pl.type.Term("maplist", [new pl.type.Var("_"),new pl.type.Term("[]", []),new pl.type.Term("[]", []),new pl.type.Term("[]", []),new pl.type.Term("[]", []),new pl.type.Term("[]", []),new pl.type.Term("[]", [])]), null),
+  				new pl.type.Rule(new pl.type.Term("maplist", [new pl.type.Var("P"),new pl.type.Term(".", [new pl.type.Var("A"),new pl.type.Var("As")]),new pl.type.Term(".", [new pl.type.Var("B"),new pl.type.Var("Bs")]),new pl.type.Term(".", [new pl.type.Var("C"),new pl.type.Var("Cs")]),new pl.type.Term(".", [new pl.type.Var("D"),new pl.type.Var("Ds")]),new pl.type.Term(".", [new pl.type.Var("E"),new pl.type.Var("Es")]),new pl.type.Term(".", [new pl.type.Var("F"),new pl.type.Var("Fs")])]), new pl.type.Term(",", [new pl.type.Term("call", [new pl.type.Var("P"),new pl.type.Var("A"),new pl.type.Var("B"),new pl.type.Var("C"),new pl.type.Var("D"),new pl.type.Var("E"),new pl.type.Var("F")]),new pl.type.Term("maplist", [new pl.type.Var("P"),new pl.type.Var("As"),new pl.type.Var("Bs"),new pl.type.Var("Cs"),new pl.type.Var("Ds"),new pl.type.Var("Es"),new pl.type.Var("Fs")])]))
+  			],
+  			
+  			// maplist/8
+  			"maplist/8": [
+  				new pl.type.Rule(new pl.type.Term("maplist", [new pl.type.Var("_"),new pl.type.Term("[]", []),new pl.type.Term("[]", []),new pl.type.Term("[]", []),new pl.type.Term("[]", []),new pl.type.Term("[]", []),new pl.type.Term("[]", []),new pl.type.Term("[]", [])]), null),
+  				new pl.type.Rule(new pl.type.Term("maplist", [new pl.type.Var("P"),new pl.type.Term(".", [new pl.type.Var("A"),new pl.type.Var("As")]),new pl.type.Term(".", [new pl.type.Var("B"),new pl.type.Var("Bs")]),new pl.type.Term(".", [new pl.type.Var("C"),new pl.type.Var("Cs")]),new pl.type.Term(".", [new pl.type.Var("D"),new pl.type.Var("Ds")]),new pl.type.Term(".", [new pl.type.Var("E"),new pl.type.Var("Es")]),new pl.type.Term(".", [new pl.type.Var("F"),new pl.type.Var("Fs")]),new pl.type.Term(".", [new pl.type.Var("G"),new pl.type.Var("Gs")])]), new pl.type.Term(",", [new pl.type.Term("call", [new pl.type.Var("P"),new pl.type.Var("A"),new pl.type.Var("B"),new pl.type.Var("C"),new pl.type.Var("D"),new pl.type.Var("E"),new pl.type.Var("F"),new pl.type.Var("G")]),new pl.type.Term("maplist", [new pl.type.Var("P"),new pl.type.Var("As"),new pl.type.Var("Bs"),new pl.type.Var("Cs"),new pl.type.Var("Ds"),new pl.type.Var("Es"),new pl.type.Var("Fs"),new pl.type.Var("Gs")])]))
+  			],
+  			
+  			// include/3
+  			"include/3": [
+  				new pl.type.Rule(new pl.type.Term("include", [new pl.type.Var("_"),new pl.type.Term("[]", []),new pl.type.Term("[]", [])]), null),
+  				new pl.type.Rule(new pl.type.Term("include", [new pl.type.Var("P"),new pl.type.Term(".", [new pl.type.Var("H"),new pl.type.Var("T")]),new pl.type.Var("L")]), new pl.type.Term(",", [new pl.type.Term("=..", [new pl.type.Var("P"),new pl.type.Var("A")]),new pl.type.Term(",", [new pl.type.Term("append", [new pl.type.Var("A"),new pl.type.Term(".", [new pl.type.Var("H"),new pl.type.Term("[]", [])]),new pl.type.Var("B")]),new pl.type.Term(",", [new pl.type.Term("=..", [new pl.type.Var("F"),new pl.type.Var("B")]),new pl.type.Term(",", [new pl.type.Term(";", [new pl.type.Term(",", [new pl.type.Term("call", [new pl.type.Var("F")]),new pl.type.Term(",", [new pl.type.Term("=", [new pl.type.Var("L"),new pl.type.Term(".", [new pl.type.Var("H"),new pl.type.Var("S")])]),new pl.type.Term("!", [])])]),new pl.type.Term("=", [new pl.type.Var("L"),new pl.type.Var("S")])]),new pl.type.Term("include", [new pl.type.Var("P"),new pl.type.Var("T"),new pl.type.Var("S")])])])])]))
+  			],
+  			
+  			// exclude/3
+  			"exclude/3": [
+  				new pl.type.Rule(new pl.type.Term("exclude", [new pl.type.Var("_"),new pl.type.Term("[]", []),new pl.type.Term("[]", [])]), null),
+  				new pl.type.Rule(new pl.type.Term("exclude", [new pl.type.Var("P"),new pl.type.Term(".", [new pl.type.Var("H"),new pl.type.Var("T")]),new pl.type.Var("S")]), new pl.type.Term(",", [new pl.type.Term("exclude", [new pl.type.Var("P"),new pl.type.Var("T"),new pl.type.Var("E")]),new pl.type.Term(",", [new pl.type.Term("=..", [new pl.type.Var("P"),new pl.type.Var("L")]),new pl.type.Term(",", [new pl.type.Term("append", [new pl.type.Var("L"),new pl.type.Term(".", [new pl.type.Var("H"),new pl.type.Term("[]", [])]),new pl.type.Var("Q")]),new pl.type.Term(",", [new pl.type.Term("=..", [new pl.type.Var("R"),new pl.type.Var("Q")]),new pl.type.Term(";", [new pl.type.Term(",", [new pl.type.Term("call", [new pl.type.Var("R")]),new pl.type.Term(",", [new pl.type.Term("!", []),new pl.type.Term("=", [new pl.type.Var("S"),new pl.type.Var("E")])])]),new pl.type.Term("=", [new pl.type.Var("S"),new pl.type.Term(".", [new pl.type.Var("H"),new pl.type.Var("E")])])])])])])]))
+  			],
+  			
+  			// foldl/4
+  			"foldl/4": [
+  				new pl.type.Rule(new pl.type.Term("foldl", [new pl.type.Var("_"),new pl.type.Term("[]", []),new pl.type.Var("I"),new pl.type.Var("I")]), null),
+  				new pl.type.Rule(new pl.type.Term("foldl", [new pl.type.Var("P"),new pl.type.Term(".", [new pl.type.Var("H"),new pl.type.Var("T")]),new pl.type.Var("I"),new pl.type.Var("R")]), new pl.type.Term(",", [new pl.type.Term("=..", [new pl.type.Var("P"),new pl.type.Var("L")]),new pl.type.Term(",", [new pl.type.Term("append", [new pl.type.Var("L"),new pl.type.Term(".", [new pl.type.Var("I"),new pl.type.Term(".", [new pl.type.Var("H"),new pl.type.Term(".", [new pl.type.Var("X"),new pl.type.Term("[]", [])])])]),new pl.type.Var("L2")]),new pl.type.Term(",", [new pl.type.Term("=..", [new pl.type.Var("P2"),new pl.type.Var("L2")]),new pl.type.Term(",", [new pl.type.Term("call", [new pl.type.Var("P2")]),new pl.type.Term("foldl", [new pl.type.Var("P"),new pl.type.Var("T"),new pl.type.Var("X"),new pl.type.Var("R")])])])])]))
+  			],
+  			
+  			// select/3
+  			"select/3": [
+  				new pl.type.Rule(new pl.type.Term("select", [new pl.type.Var("E"),new pl.type.Term(".", [new pl.type.Var("E"),new pl.type.Var("Xs")]),new pl.type.Var("Xs")]), null),
+  				new pl.type.Rule(new pl.type.Term("select", [new pl.type.Var("E"),new pl.type.Term(".", [new pl.type.Var("X"),new pl.type.Var("Xs")]),new pl.type.Term(".", [new pl.type.Var("X"),new pl.type.Var("Ys")])]), new pl.type.Term("select", [new pl.type.Var("E"),new pl.type.Var("Xs"),new pl.type.Var("Ys")]))
+  			],
+  			
+  			// sum_list/2
+  			"sum_list/2": [
+  				new pl.type.Rule(new pl.type.Term("sum_list", [new pl.type.Term("[]", []),new pl.type.Num(0, false)]), null),
+  				new pl.type.Rule(new pl.type.Term("sum_list", [new pl.type.Term(".", [new pl.type.Var("X"),new pl.type.Var("Xs")]),new pl.type.Var("S")]), new pl.type.Term(",", [new pl.type.Term("sum_list", [new pl.type.Var("Xs"),new pl.type.Var("Y")]),new pl.type.Term("is", [new pl.type.Var("S"),new pl.type.Term("+", [new pl.type.Var("X"),new pl.type.Var("Y")])])]))
+  			],
+  			
+  			// max_list/2
+  			"max_list/2": [
+  				new pl.type.Rule(new pl.type.Term("max_list", [new pl.type.Term(".", [new pl.type.Var("X"),new pl.type.Term("[]", [])]),new pl.type.Var("X")]), null),
+  				new pl.type.Rule(new pl.type.Term("max_list", [new pl.type.Term(".", [new pl.type.Var("X"),new pl.type.Var("Xs")]),new pl.type.Var("S")]), new pl.type.Term(",", [new pl.type.Term("max_list", [new pl.type.Var("Xs"),new pl.type.Var("Y")]),new pl.type.Term(";", [new pl.type.Term(",", [new pl.type.Term(">=", [new pl.type.Var("X"),new pl.type.Var("Y")]),new pl.type.Term(",", [new pl.type.Term("=", [new pl.type.Var("S"),new pl.type.Var("X")]),new pl.type.Term("!", [])])]),new pl.type.Term("=", [new pl.type.Var("S"),new pl.type.Var("Y")])])]))
+  			],
+  			
+  			// min_list/2
+  			"min_list/2": [
+  				new pl.type.Rule(new pl.type.Term("min_list", [new pl.type.Term(".", [new pl.type.Var("X"),new pl.type.Term("[]", [])]),new pl.type.Var("X")]), null),
+  				new pl.type.Rule(new pl.type.Term("min_list", [new pl.type.Term(".", [new pl.type.Var("X"),new pl.type.Var("Xs")]),new pl.type.Var("S")]), new pl.type.Term(",", [new pl.type.Term("min_list", [new pl.type.Var("Xs"),new pl.type.Var("Y")]),new pl.type.Term(";", [new pl.type.Term(",", [new pl.type.Term("=<", [new pl.type.Var("X"),new pl.type.Var("Y")]),new pl.type.Term(",", [new pl.type.Term("=", [new pl.type.Var("S"),new pl.type.Var("X")]),new pl.type.Term("!", [])])]),new pl.type.Term("=", [new pl.type.Var("S"),new pl.type.Var("Y")])])]))
+  			],
+  			
+  			// prod_list/2
+  			"prod_list/2": [
+  				new pl.type.Rule(new pl.type.Term("prod_list", [new pl.type.Term("[]", []),new pl.type.Num(1, false)]), null),
+  				new pl.type.Rule(new pl.type.Term("prod_list", [new pl.type.Term(".", [new pl.type.Var("X"),new pl.type.Var("Xs")]),new pl.type.Var("S")]), new pl.type.Term(",", [new pl.type.Term("prod_list", [new pl.type.Var("Xs"),new pl.type.Var("Y")]),new pl.type.Term("is", [new pl.type.Var("S"),new pl.type.Term("*", [new pl.type.Var("X"),new pl.type.Var("Y")])])]))
+  			],
+  			
+  			// last/2
+  			"last/2": [
+  				new pl.type.Rule(new pl.type.Term("last", [new pl.type.Term(".", [new pl.type.Var("X"),new pl.type.Term("[]", [])]),new pl.type.Var("X")]), null),
+  				new pl.type.Rule(new pl.type.Term("last", [new pl.type.Term(".", [new pl.type.Var("_"),new pl.type.Var("Xs")]),new pl.type.Var("X")]), new pl.type.Term("last", [new pl.type.Var("Xs"),new pl.type.Var("X")]))
+  			],
+  			
+  			// prefix/2
+  			"prefix/2": [
+  				new pl.type.Rule(new pl.type.Term("prefix", [new pl.type.Var("Part"),new pl.type.Var("Whole")]), new pl.type.Term("append", [new pl.type.Var("Part"),new pl.type.Var("_"),new pl.type.Var("Whole")]))
+  			],
+  			
+  			// nth0/3
+  			"nth0/3": [
+  				new pl.type.Rule(new pl.type.Term("nth0", [new pl.type.Var("X"),new pl.type.Var("Y"),new pl.type.Var("Z")]), new pl.type.Term(";", [new pl.type.Term("->", [new pl.type.Term("var", [new pl.type.Var("X")]),new pl.type.Term("nth", [new pl.type.Num(0, false),new pl.type.Var("X"),new pl.type.Var("Y"),new pl.type.Var("Z"),new pl.type.Var("_")])]),new pl.type.Term(",", [new pl.type.Term(">=", [new pl.type.Var("X"),new pl.type.Num(0, false)]),new pl.type.Term(",", [new pl.type.Term("nth", [new pl.type.Num(0, false),new pl.type.Var("X"),new pl.type.Var("Y"),new pl.type.Var("Z"),new pl.type.Var("_")]),new pl.type.Term("!", [])])])]))
+  			],
+  			
+  			// nth1/3
+  			"nth1/3": [
+  				new pl.type.Rule(new pl.type.Term("nth1", [new pl.type.Var("X"),new pl.type.Var("Y"),new pl.type.Var("Z")]), new pl.type.Term(";", [new pl.type.Term("->", [new pl.type.Term("var", [new pl.type.Var("X")]),new pl.type.Term("nth", [new pl.type.Num(1, false),new pl.type.Var("X"),new pl.type.Var("Y"),new pl.type.Var("Z"),new pl.type.Var("_")])]),new pl.type.Term(",", [new pl.type.Term(">", [new pl.type.Var("X"),new pl.type.Num(0, false)]),new pl.type.Term(",", [new pl.type.Term("nth", [new pl.type.Num(1, false),new pl.type.Var("X"),new pl.type.Var("Y"),new pl.type.Var("Z"),new pl.type.Var("_")]),new pl.type.Term("!", [])])])]))
+  			],
+  			
+  			// nth0/4
+  			"nth0/4": [
+  				new pl.type.Rule(new pl.type.Term("nth0", [new pl.type.Var("X"),new pl.type.Var("Y"),new pl.type.Var("Z"),new pl.type.Var("W")]), new pl.type.Term(";", [new pl.type.Term("->", [new pl.type.Term("var", [new pl.type.Var("X")]),new pl.type.Term("nth", [new pl.type.Num(0, false),new pl.type.Var("X"),new pl.type.Var("Y"),new pl.type.Var("Z"),new pl.type.Var("W")])]),new pl.type.Term(",", [new pl.type.Term(">=", [new pl.type.Var("X"),new pl.type.Num(0, false)]),new pl.type.Term(",", [new pl.type.Term("nth", [new pl.type.Num(0, false),new pl.type.Var("X"),new pl.type.Var("Y"),new pl.type.Var("Z"),new pl.type.Var("W")]),new pl.type.Term("!", [])])])]))
+  			],
+  			
+  			// nth1/4
+  			"nth1/4": [
+  				new pl.type.Rule(new pl.type.Term("nth1", [new pl.type.Var("X"),new pl.type.Var("Y"),new pl.type.Var("Z"),new pl.type.Var("W")]), new pl.type.Term(";", [new pl.type.Term("->", [new pl.type.Term("var", [new pl.type.Var("X")]),new pl.type.Term("nth", [new pl.type.Num(1, false),new pl.type.Var("X"),new pl.type.Var("Y"),new pl.type.Var("Z"),new pl.type.Var("W")])]),new pl.type.Term(",", [new pl.type.Term(">", [new pl.type.Var("X"),new pl.type.Num(0, false)]),new pl.type.Term(",", [new pl.type.Term("nth", [new pl.type.Num(1, false),new pl.type.Var("X"),new pl.type.Var("Y"),new pl.type.Var("Z"),new pl.type.Var("W")]),new pl.type.Term("!", [])])])]))
+  			],
+  			
+  			// nth/5
+  			// DO NOT EXPORT
+  			"nth/5": [
+  				new pl.type.Rule(new pl.type.Term("nth", [new pl.type.Var("N"),new pl.type.Var("N"),new pl.type.Term(".", [new pl.type.Var("X"),new pl.type.Var("Xs")]),new pl.type.Var("X"),new pl.type.Var("Xs")]), null),
+  				new pl.type.Rule(new pl.type.Term("nth", [new pl.type.Var("N"),new pl.type.Var("O"),new pl.type.Term(".", [new pl.type.Var("X"),new pl.type.Var("Xs")]),new pl.type.Var("Y"),new pl.type.Term(".", [new pl.type.Var("X"),new pl.type.Var("Ys")])]), new pl.type.Term(",", [new pl.type.Term("is", [new pl.type.Var("M"),new pl.type.Term("+", [new pl.type.Var("N"),new pl.type.Num(1, false)])]),new pl.type.Term("nth", [new pl.type.Var("M"),new pl.type.Var("O"),new pl.type.Var("Xs"),new pl.type.Var("Y"),new pl.type.Var("Ys")])]))
+  			],
+  			
+  			// length/2
+  			"length/2": function( thread, point, atom ) {
+  				var list = atom.args[0], length = atom.args[1];
+  				if( !pl.type.is_variable( length ) && !pl.type.is_integer( length ) ) {
+  					thread.throw_error( pl.error.type( "integer", length, atom.indicator ) );
+  				} else if( pl.type.is_integer( length ) && length.value < 0 ) {
+  					thread.throw_error( pl.error.domain( "not_less_than_zero", length, atom.indicator ) );
+  				} else {
+  					var newgoal = new pl.type.Term("length", [list, new pl.type.Num(0, false), length]);
+  					if( pl.type.is_integer( length ) )
+  						newgoal = new pl.type.Term( ",", [newgoal, new pl.type.Term( "!", [] )] );
+  					thread.prepend( [new pl.type.State(point.goal.replace(newgoal), point.substitution, point)] );
+  				}
+  			},
+  			
+  			// length/3
+  			// DO NOT EXPORT
+  			"length/3": [
+  				new pl.type.Rule(new pl.type.Term("length", [new pl.type.Term("[]", []),new pl.type.Var("N"),new pl.type.Var("N")]), null),
+  				new pl.type.Rule(new pl.type.Term("length", [new pl.type.Term(".", [new pl.type.Var("_"),new pl.type.Var("X")]),new pl.type.Var("A"),new pl.type.Var("N")]), new pl.type.Term(",", [new pl.type.Term("succ", [new pl.type.Var("A"),new pl.type.Var("B")]),new pl.type.Term("length", [new pl.type.Var("X"),new pl.type.Var("B"),new pl.type.Var("N")])]))
+  			],
+  			
+  			// replicate/3
+  			"replicate/3": function( thread, point, atom ) {
+  				var elem = atom.args[0], times = atom.args[1], list = atom.args[2];
+  				if( pl.type.is_variable( times ) ) {
+  					thread.throw_error( pl.error.instantiation( atom.indicator ) );
+  				} else if( !pl.type.is_integer( times ) ) {
+  					thread.throw_error( pl.error.type( "integer", times, atom.indicator ) );
+  				} else if( times.value < 0 ) {
+  					thread.throw_error( pl.error.domain( "not_less_than_zero", times, atom.indicator ) );
+  				} else if( !pl.type.is_variable( list ) && !pl.type.is_list( list ) ) {
+  					thread.throw_error( pl.error.type( "list", list, atom.indicator ) );
+  				} else {
+  					var replicate = new pl.type.Term( "[]" );
+  					for( var i = 0; i < times.value; i++ ) {
+  						replicate = new pl.type.Term( ".", [elem, replicate] );
+  					}
+  					thread.prepend( [new pl.type.State( point.goal.replace( new pl.type.Term( "=", [replicate, list] ) ), point.substitution, point )] );
+  				}
+  			},
+  
+  			// sort/2
+  			"sort/2": function( thread, point, atom ) {
+  				var list = atom.args[0], expected = atom.args[1];
+  				if( pl.type.is_variable( list ) ) {
+  					thread.throw_error( pl.error.instantiation( atom.indicator ) );
+  				} else if( !pl.type.is_variable( expected ) && !pl.type.is_fully_list( expected ) ) {
+  					thread.throw_error( pl.error.type( "list", expected, atom.indicator ) );
+  				} else {
+  					var arr = [];
+  					var pointer = list;
+  					while( pointer.indicator === "./2" ) {
+  						arr.push( pointer.args[0] );
+  						pointer = pointer.args[1];
+  					}
+  					if( pl.type.is_variable( pointer ) ) {
+  						thread.throw_error( pl.error.instantiation( atom.indicator ) );
+  					} else if( !pl.type.is_empty_list( pointer ) ) {
+  						thread.throw_error( pl.error.type( "list", list, atom.indicator ) );
+  					} else {
+  						var sorted_arr = arr.sort( pl.compare );
+  						for( var i = sorted_arr.length-1; i > 0; i-- ) {
+  							if( sorted_arr[i].equals(sorted_arr[i-1]) )
+  								sorted_arr.splice(i,1);
+  						}
+  						var sorted_list = new pl.type.Term( "[]" );
+  						for( var i = sorted_arr.length-1; i >= 0; i-- ) {
+  							sorted_list = new pl.type.Term( ".", [sorted_arr[i], sorted_list] );
+  						}
+  						thread.prepend( [new pl.type.State( point.goal.replace( new pl.type.Term( "=", [sorted_list, expected] ) ), point.substitution, point )] );
+  					}
+  				}
+  			},
+  			
+  			// msort/2
+  			"msort/2": function( thread, point, atom ) {
+  				var list = atom.args[0], expected = atom.args[1];
+  				if( pl.type.is_variable( list ) ) {
+  					thread.throw_error( pl.error.instantiation( atom.indicator ) );
+  				} else if( !pl.type.is_variable( expected ) && !pl.type.is_fully_list( expected ) ) {
+  					thread.throw_error( pl.error.type( "list", expected, atom.indicator ) );
+  				} else {
+  					var arr = [];
+  					var pointer = list;
+  					while( pointer.indicator === "./2" ) {
+  						arr.push( pointer.args[0] );
+  						pointer = pointer.args[1];
+  					}
+  					if( pl.type.is_variable( pointer ) ) {
+  						thread.throw_error( pl.error.instantiation( atom.indicator ) );
+  					} else if( !pl.type.is_empty_list( pointer ) ) {
+  						thread.throw_error( pl.error.type( "list", list, atom.indicator ) );
+  					} else {
+  						var sorted_arr = arr.sort( pl.compare );
+  						var sorted_list = new pl.type.Term( "[]" );
+  						for( var i = sorted_arr.length - 1; i >= 0; i-- ) {
+  							sorted_list = new pl.type.Term( ".", [sorted_arr[i], sorted_list] );
+  						}
+  						thread.prepend( [new pl.type.State( point.goal.replace( new pl.type.Term( "=", [sorted_list, expected] ) ), point.substitution, point )] );
+  					}
+  				}
+  			},
+  			
+  			// keysort/2
+  			"keysort/2": function( thread, point, atom ) {
+  				var list = atom.args[0], expected = atom.args[1];
+  				if( pl.type.is_variable( list ) ) {
+  					thread.throw_error( pl.error.instantiation( atom.indicator ) );
+  				} else if( !pl.type.is_variable( expected ) && !pl.type.is_fully_list( expected ) ) {
+  					thread.throw_error( pl.error.type( "list", expected, atom.indicator ) );
+  				} else {
+  					var arr = [];
+  					var elem;
+  					var pointer = list;
+  					while( pointer.indicator === "./2" ) {
+  						elem = pointer.args[0];
+  						if( pl.type.is_variable( elem ) ) {
+  							thread.throw_error( pl.error.instantiation( atom.indicator ) );
+  							return;
+  						} else if( !pl.type.is_term( elem ) || elem.indicator !== "-/2" ) {
+  							thread.throw_error( pl.error.type( "pair", elem, atom.indicator ) );
+  							return;
+  						}
+  						elem.args[0].pair = elem.args[1];
+  						arr.push( elem.args[0] );
+  						pointer = pointer.args[1];
+  					}
+  					if( pl.type.is_variable( pointer ) ) {
+  						thread.throw_error( pl.error.instantiation( atom.indicator ) );
+  					} else if( !pl.type.is_empty_list( pointer ) ) {
+  						thread.throw_error( pl.error.type( "list", list, atom.indicator ) );
+  					} else {
+  						var sorted_arr = arr.sort( pl.compare );
+  						var sorted_list = new pl.type.Term( "[]" );
+  						for( var i = sorted_arr.length - 1; i >= 0; i-- ) {
+  							sorted_list = new pl.type.Term( ".", [new pl.type.Term( "-", [sorted_arr[i], sorted_arr[i].pair] ), sorted_list] );
+  							delete sorted_arr[i].pair;
+  						}
+  						thread.prepend( [new pl.type.State( point.goal.replace( new pl.type.Term( "=", [sorted_list, expected] ) ), point.substitution, point )] );
+  					}
+  				}
+  			},
+  			
+  			// take/3
+  			"take/3": function( thread, point, atom ) {
+  				var number = atom.args[0], list = atom.args[1], take = atom.args[2];
+  				if( pl.type.is_variable( list ) || pl.type.is_variable( number ) ) {
+  					thread.throw_error( pl.error.instantiation( atom.indicator ) );
+  				} else if( !pl.type.is_list( list ) ) {
+  					thread.throw_error( pl.error.type( "list", list, atom.indicator ) );
+  				} else if( !pl.type.is_integer( number ) ) {
+  					thread.throw_error( pl.error.type( "integer", number, atom.indicator ) );
+  				} else if( !pl.type.is_variable( take ) && !pl.type.is_list( take ) ) {
+  					thread.throw_error( pl.error.type( "list", take, atom.indicator ) );
+  				} else {
+  					var i = number.value;
+  					var arr = [];
+  					var pointer = list;
+  					while( i > 0 && pointer.indicator === "./2" ) {
+  						arr.push( pointer.args[0] );
+  						pointer = pointer.args[1];
+  						i--;
+  					}
+  					if( i === 0 ) {
+  						var new_list = new pl.type.Term( "[]" );
+  						for( var i = arr.length - 1; i >= 0; i-- ) {
+  							new_list = new pl.type.Term( ".", [arr[i], new_list] );
+  						}
+  						thread.prepend( [new pl.type.State( point.goal.replace( new pl.type.Term( "=", [new_list, take] ) ), point.substitution, point )] );
+  					}
+  				}
+  			},
+  			
+  			// drop/3
+  			"drop/3": function( thread, point, atom ) {
+  				var number = atom.args[0], list = atom.args[1], drop = atom.args[2];
+  				if( pl.type.is_variable( list ) || pl.type.is_variable( number ) ) {
+  					thread.throw_error( pl.error.instantiation( atom.indicator ) );
+  				} else if( !pl.type.is_list( list ) ) {
+  					thread.throw_error( pl.error.type( "list", list, atom.indicator ) );
+  				} else if( !pl.type.is_integer( number ) ) {
+  					thread.throw_error( pl.error.type( "integer", number, atom.indicator ) );
+  				} else if( !pl.type.is_variable( drop ) && !pl.type.is_list( drop ) ) {
+  					thread.throw_error( pl.error.type( "list", drop, atom.indicator ) );
+  				} else {
+  					var i = number.value;
+  					var arr = [];
+  					var pointer = list;
+  					while( i > 0 && pointer.indicator === "./2" ) {
+  						arr.push( pointer.args[0] );
+  						pointer = pointer.args[1];
+  						i--;
+  					}
+  					if( i === 0 )
+  						thread.prepend( [new pl.type.State( point.goal.replace( new pl.type.Term( "=", [pointer, drop] ) ), point.substitution, point )] );
+  				}
+  			},
+  			
+  			// reverse/2
+  			"reverse/2": function( thread, point, atom ) {
+  				var list = atom.args[0], reversed = atom.args[1];
+  				var ins_list = pl.type.is_instantiated_list( list );
+  				var ins_reversed = pl.type.is_instantiated_list( reversed );
+  				if( pl.type.is_variable( list ) && pl.type.is_variable( reversed ) ) {
+  					thread.throw_error( pl.error.instantiation( atom.indicator ) );
+  				} else if( !pl.type.is_variable( list ) && !pl.type.is_fully_list( list ) ) {
+  					thread.throw_error( pl.error.type( "list", list, atom.indicator ) );
+  				} else if( !pl.type.is_variable( reversed ) && !pl.type.is_fully_list( reversed ) ) {
+  					thread.throw_error( pl.error.type( "list", reversed, atom.indicator ) );
+  				} else if( !ins_list && !ins_reversed ) {
+  					thread.throw_error( pl.error.instantiation( atom.indicator ) );
+  				} else {
+  					var pointer = ins_list ? list : reversed;
+  					var new_reversed = new pl.type.Term( "[]", [] );
+  					while( pointer.indicator === "./2" ) {
+  						new_reversed = new pl.type.Term( ".", [pointer.args[0], new_reversed] );
+  						pointer = pointer.args[1];
+  					}
+  					thread.prepend( [new pl.type.State( point.goal.replace( new pl.type.Term( "=", [new_reversed, ins_list ? reversed : list] ) ), point.substitution, point )] );
+  				}
+  			},
+  			
+  			// list_to_set/2
+  			"list_to_set/2": function( thread, point, atom ) {
+  				var list = atom.args[0], lset = atom.args[1];
+  				if( pl.type.is_variable( list ) ) {
+  					thread.throw_error( pl.error.instantiation( atom.indicator ) );
+  				} else {
+  					var pointer = list;
+  					var elems = [];
+  					while( pointer.indicator === "./2" ) {
+  						elems.push( pointer.args[0] );
+  						pointer = pointer.args[1];
+  					}
+  					if( pl.type.is_variable( pointer ) ) {
+  						thread.throw_error( pl.error.instantiation( atom.indicator ) );
+  					} else if( !pl.type.is_term( pointer ) || pointer.indicator !== "[]/0" ) {
+  						thread.throw_error( pl.error.type( "list", list, atom.indicator ) );
+  					} else {
+  						var arr = [], nub = new pl.type.Term( "[]", [] );
+  						var match;
+  						for( var i = 0; i < elems.length; i++ ) {
+  							match = false
+  							for( var j = 0; j < arr.length && !match; j++ ) {
+  								match = pl.compare( elems[i], arr[j] ) === 0;
+  							}
+  							if( !match )
+  								arr.push( elems[i] );
+  						}
+  						for( i = arr.length - 1; i >= 0; i-- )
+  							nub = new pl.type.Term( ".", [arr[i],nub] );
+  						thread.prepend( [new pl.type.State( point.goal.replace( new pl.type.Term( "=", [lset,nub] ) ), point.substitution, point )] );
+  					}
+  				}
+  			}
+  			
+  		};
+  	};
+  	
+  	var exports = ["append/2", "append/3", "member/2", "permutation/2", "maplist/2", "maplist/3", "maplist/4", "maplist/5", "maplist/6", "maplist/7", "maplist/8", "include/3", "exclude/3", "foldl/4", "sum_list/2", "max_list/2", "min_list/2", "prod_list/2", "last/2", "prefix/2", "nth0/3", "nth1/3", "nth0/4", "nth1/4", "length/2", "replicate/3", "select/3", "sort/2", "msort/2", "keysort/2", "take/3", "drop/3", "reverse/2", "list_to_set/2"];
+  
+  
+  	if( true ) {
+  		module.exports = function( p ) {
+  			pl = p;
+  			new pl.type.Module( "lists", predicates(), exports );
+  		};
+  	} else {}
+  
+  })( pl );
+
+
+  /***/ }),
+  /* 8 */
+  /***/ (function(module, exports, __webpack_require__) {
+
   (function() {
   	
   	// VERSION
@@ -849,7 +1289,7 @@ module.exports = {
   	nodejs_file_system = {
   		// Open file
   		open: function( path, type, mode ) {
-  			var fs = __webpack_require__(8);
+  			var fs = __webpack_require__(9);
   			var fd = fs.openSync( path, mode[0] );
   			if( mode === "read" && !fs.existsSync( path ) )
   				return null;
@@ -891,7 +1331,7 @@ module.exports = {
   		buffer: "",
   		get: function( length, _ ) {
   			var text;
-  			var readlineSync = __webpack_require__(9);
+  			var readlineSync = __webpack_require__(10);
   			while( nodejs_user_input.buffer.length < length )
   				nodejs_user_input.buffer += readlineSync.question();
   			text = nodejs_user_input.buffer.substr( 0, length );
@@ -7029,13 +7469,13 @@ module.exports = {
 
 
   /***/ }),
-  /* 8 */
+  /* 9 */
   /***/ (function(module, exports) {
 
   module.exports = require("fs");
 
   /***/ }),
-  /* 9 */
+  /* 10 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -7056,10 +7496,10 @@ module.exports = {
     ALGORITHM_HASH = 'sha256',
     DEFAULT_ERR_MSG = 'The current environment doesn\'t support interactive reading from TTY.',
 
-    fs = __webpack_require__(8),
+    fs = __webpack_require__(9),
     TTY = process.binding('tty_wrap').TTY,
-    childProc = __webpack_require__(10),
-    pathUtil = __webpack_require__(11),
+    childProc = __webpack_require__(11),
+    pathUtil = __webpack_require__(12),
 
     defaultOptions = {
       /* eslint-disable key-spacing */
@@ -7126,7 +7566,7 @@ module.exports = {
 
     function getTempfile(name) {
       var filepath, suffix = '', fd;
-      tempdir = tempdir || __webpack_require__(12).tmpdir();
+      tempdir = tempdir || __webpack_require__(13).tmpdir();
 
       while (true) {
         filepath = pathUtil.join(tempdir, name + suffix);
@@ -7151,7 +7591,7 @@ module.exports = {
       pathStderr = getTempfile('readline-sync.stderr'),
       pathExit = getTempfile('readline-sync.exit'),
       pathDone = getTempfile('readline-sync.done'),
-      crypto = __webpack_require__(13), shasum, decipher, password;
+      crypto = __webpack_require__(14), shasum, decipher, password;
 
     shasum = crypto.createHash(ALGORITHM_HASH);
     shasum.update('' + process.pid + (salt++) + Math.random());
@@ -8344,31 +8784,31 @@ module.exports = {
 
 
   /***/ }),
-  /* 10 */
+  /* 11 */
   /***/ (function(module, exports) {
 
   module.exports = require("child_process");
 
   /***/ }),
-  /* 11 */
+  /* 12 */
   /***/ (function(module, exports) {
 
   module.exports = require("path");
 
   /***/ }),
-  /* 12 */
+  /* 13 */
   /***/ (function(module, exports) {
 
   module.exports = require("os");
 
   /***/ }),
-  /* 13 */
+  /* 14 */
   /***/ (function(module, exports) {
 
   module.exports = require("crypto");
 
   /***/ }),
-  /* 14 */
+  /* 15 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -8386,11 +8826,11 @@ module.exports = {
 
   const core_1 = __webpack_require__(1);
 
-  const get_1 = __importDefault(__webpack_require__(15));
+  const get_1 = __importDefault(__webpack_require__(16));
 
-  const tau_prolog_1 = __importDefault(__webpack_require__(7));
+  const tau_prolog_1 = __importDefault(__webpack_require__(8));
 
-  const vm_1 = __importDefault(__webpack_require__(67)); // eslint-disable-next-line @typescript-eslint/camelcase
+  const vm_1 = __importDefault(__webpack_require__(68)); // eslint-disable-next-line @typescript-eslint/camelcase
 
 
   const {
@@ -8500,10 +8940,10 @@ module.exports = {
   exports.linkProjectToSession = linkProjectToSession;
 
   /***/ }),
-  /* 15 */
+  /* 16 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var baseGet = __webpack_require__(16);
+  var baseGet = __webpack_require__(17);
 
   /**
    * Gets the value at `path` of `object`. If the resolved value is
@@ -8539,11 +8979,11 @@ module.exports = {
 
 
   /***/ }),
-  /* 16 */
+  /* 17 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var castPath = __webpack_require__(17),
-      toKey = __webpack_require__(66);
+  var castPath = __webpack_require__(18),
+      toKey = __webpack_require__(67);
 
   /**
    * The base implementation of `_.get` without support for default values.
@@ -8569,13 +9009,13 @@ module.exports = {
 
 
   /***/ }),
-  /* 17 */
+  /* 18 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var isArray = __webpack_require__(18),
-      isKey = __webpack_require__(19),
-      stringToPath = __webpack_require__(28),
-      toString = __webpack_require__(63);
+  var isArray = __webpack_require__(19),
+      isKey = __webpack_require__(20),
+      stringToPath = __webpack_require__(29),
+      toString = __webpack_require__(64);
 
   /**
    * Casts `value` to a path array if it's not one.
@@ -8596,7 +9036,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 18 */
+  /* 19 */
   /***/ (function(module, exports) {
 
   /**
@@ -8628,11 +9068,11 @@ module.exports = {
 
 
   /***/ }),
-  /* 19 */
+  /* 20 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var isArray = __webpack_require__(18),
-      isSymbol = __webpack_require__(20);
+  var isArray = __webpack_require__(19),
+      isSymbol = __webpack_require__(21);
 
   /** Used to match property names within property paths. */
   var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
@@ -8663,11 +9103,11 @@ module.exports = {
 
 
   /***/ }),
-  /* 20 */
+  /* 21 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var baseGetTag = __webpack_require__(21),
-      isObjectLike = __webpack_require__(27);
+  var baseGetTag = __webpack_require__(22),
+      isObjectLike = __webpack_require__(28);
 
   /** `Object#toString` result references. */
   var symbolTag = '[object Symbol]';
@@ -8698,12 +9138,12 @@ module.exports = {
 
 
   /***/ }),
-  /* 21 */
+  /* 22 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var Symbol = __webpack_require__(22),
-      getRawTag = __webpack_require__(25),
-      objectToString = __webpack_require__(26);
+  var Symbol = __webpack_require__(23),
+      getRawTag = __webpack_require__(26),
+      objectToString = __webpack_require__(27);
 
   /** `Object#toString` result references. */
   var nullTag = '[object Null]',
@@ -8732,10 +9172,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 22 */
+  /* 23 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var root = __webpack_require__(23);
+  var root = __webpack_require__(24);
 
   /** Built-in value references. */
   var Symbol = root.Symbol;
@@ -8744,10 +9184,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 23 */
+  /* 24 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var freeGlobal = __webpack_require__(24);
+  var freeGlobal = __webpack_require__(25);
 
   /** Detect free variable `self`. */
   var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
@@ -8759,7 +9199,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 24 */
+  /* 25 */
   /***/ (function(module, exports) {
 
   /** Detect free variable `global` from Node.js. */
@@ -8769,10 +9209,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 25 */
+  /* 26 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var Symbol = __webpack_require__(22);
+  var Symbol = __webpack_require__(23);
 
   /** Used for built-in method references. */
   var objectProto = Object.prototype;
@@ -8821,7 +9261,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 26 */
+  /* 27 */
   /***/ (function(module, exports) {
 
   /** Used for built-in method references. */
@@ -8849,7 +9289,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 27 */
+  /* 28 */
   /***/ (function(module, exports) {
 
   /**
@@ -8884,10 +9324,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 28 */
+  /* 29 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var memoizeCapped = __webpack_require__(29);
+  var memoizeCapped = __webpack_require__(30);
 
   /** Used to match property names within property paths. */
   var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
@@ -8917,10 +9357,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 29 */
+  /* 30 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var memoize = __webpack_require__(30);
+  var memoize = __webpack_require__(31);
 
   /** Used as the maximum memoize cache size. */
   var MAX_MEMOIZE_SIZE = 500;
@@ -8949,10 +9389,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 30 */
+  /* 31 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var MapCache = __webpack_require__(31);
+  var MapCache = __webpack_require__(32);
 
   /** Error message constants. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -9028,14 +9468,14 @@ module.exports = {
 
 
   /***/ }),
-  /* 31 */
+  /* 32 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var mapCacheClear = __webpack_require__(32),
-      mapCacheDelete = __webpack_require__(57),
-      mapCacheGet = __webpack_require__(60),
-      mapCacheHas = __webpack_require__(61),
-      mapCacheSet = __webpack_require__(62);
+  var mapCacheClear = __webpack_require__(33),
+      mapCacheDelete = __webpack_require__(58),
+      mapCacheGet = __webpack_require__(61),
+      mapCacheHas = __webpack_require__(62),
+      mapCacheSet = __webpack_require__(63);
 
   /**
    * Creates a map cache object to store key-value pairs.
@@ -9066,12 +9506,12 @@ module.exports = {
 
 
   /***/ }),
-  /* 32 */
+  /* 33 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var Hash = __webpack_require__(33),
-      ListCache = __webpack_require__(48),
-      Map = __webpack_require__(56);
+  var Hash = __webpack_require__(34),
+      ListCache = __webpack_require__(49),
+      Map = __webpack_require__(57);
 
   /**
    * Removes all key-value entries from the map.
@@ -9093,14 +9533,14 @@ module.exports = {
 
 
   /***/ }),
-  /* 33 */
+  /* 34 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var hashClear = __webpack_require__(34),
-      hashDelete = __webpack_require__(44),
-      hashGet = __webpack_require__(45),
-      hashHas = __webpack_require__(46),
-      hashSet = __webpack_require__(47);
+  var hashClear = __webpack_require__(35),
+      hashDelete = __webpack_require__(45),
+      hashGet = __webpack_require__(46),
+      hashHas = __webpack_require__(47),
+      hashSet = __webpack_require__(48);
 
   /**
    * Creates a hash object.
@@ -9131,10 +9571,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 34 */
+  /* 35 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var nativeCreate = __webpack_require__(35);
+  var nativeCreate = __webpack_require__(36);
 
   /**
    * Removes all key-value entries from the hash.
@@ -9152,10 +9592,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 35 */
+  /* 36 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var getNative = __webpack_require__(36);
+  var getNative = __webpack_require__(37);
 
   /* Built-in method references that are verified to be native. */
   var nativeCreate = getNative(Object, 'create');
@@ -9164,11 +9604,11 @@ module.exports = {
 
 
   /***/ }),
-  /* 36 */
+  /* 37 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var baseIsNative = __webpack_require__(37),
-      getValue = __webpack_require__(43);
+  var baseIsNative = __webpack_require__(38),
+      getValue = __webpack_require__(44);
 
   /**
    * Gets the native function at `key` of `object`.
@@ -9187,13 +9627,13 @@ module.exports = {
 
 
   /***/ }),
-  /* 37 */
+  /* 38 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var isFunction = __webpack_require__(38),
-      isMasked = __webpack_require__(40),
-      isObject = __webpack_require__(39),
-      toSource = __webpack_require__(42);
+  var isFunction = __webpack_require__(39),
+      isMasked = __webpack_require__(41),
+      isObject = __webpack_require__(40),
+      toSource = __webpack_require__(43);
 
   /**
    * Used to match `RegExp`
@@ -9240,11 +9680,11 @@ module.exports = {
 
 
   /***/ }),
-  /* 38 */
+  /* 39 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var baseGetTag = __webpack_require__(21),
-      isObject = __webpack_require__(39);
+  var baseGetTag = __webpack_require__(22),
+      isObject = __webpack_require__(40);
 
   /** `Object#toString` result references. */
   var asyncTag = '[object AsyncFunction]',
@@ -9283,7 +9723,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 39 */
+  /* 40 */
   /***/ (function(module, exports) {
 
   /**
@@ -9320,10 +9760,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 40 */
+  /* 41 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var coreJsData = __webpack_require__(41);
+  var coreJsData = __webpack_require__(42);
 
   /** Used to detect methods masquerading as native. */
   var maskSrcKey = (function() {
@@ -9346,10 +9786,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 41 */
+  /* 42 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var root = __webpack_require__(23);
+  var root = __webpack_require__(24);
 
   /** Used to detect overreaching core-js shims. */
   var coreJsData = root['__core-js_shared__'];
@@ -9358,7 +9798,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 42 */
+  /* 43 */
   /***/ (function(module, exports) {
 
   /** Used for built-in method references. */
@@ -9390,7 +9830,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 43 */
+  /* 44 */
   /***/ (function(module, exports) {
 
   /**
@@ -9409,7 +9849,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 44 */
+  /* 45 */
   /***/ (function(module, exports) {
 
   /**
@@ -9432,10 +9872,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 45 */
+  /* 46 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var nativeCreate = __webpack_require__(35);
+  var nativeCreate = __webpack_require__(36);
 
   /** Used to stand-in for `undefined` hash values. */
   var HASH_UNDEFINED = '__lodash_hash_undefined__';
@@ -9468,10 +9908,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 46 */
+  /* 47 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var nativeCreate = __webpack_require__(35);
+  var nativeCreate = __webpack_require__(36);
 
   /** Used for built-in method references. */
   var objectProto = Object.prototype;
@@ -9497,10 +9937,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 47 */
+  /* 48 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var nativeCreate = __webpack_require__(35);
+  var nativeCreate = __webpack_require__(36);
 
   /** Used to stand-in for `undefined` hash values. */
   var HASH_UNDEFINED = '__lodash_hash_undefined__';
@@ -9526,14 +9966,14 @@ module.exports = {
 
 
   /***/ }),
-  /* 48 */
+  /* 49 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var listCacheClear = __webpack_require__(49),
-      listCacheDelete = __webpack_require__(50),
-      listCacheGet = __webpack_require__(53),
-      listCacheHas = __webpack_require__(54),
-      listCacheSet = __webpack_require__(55);
+  var listCacheClear = __webpack_require__(50),
+      listCacheDelete = __webpack_require__(51),
+      listCacheGet = __webpack_require__(54),
+      listCacheHas = __webpack_require__(55),
+      listCacheSet = __webpack_require__(56);
 
   /**
    * Creates an list cache object.
@@ -9564,7 +10004,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 49 */
+  /* 50 */
   /***/ (function(module, exports) {
 
   /**
@@ -9583,10 +10023,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 50 */
+  /* 51 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var assocIndexOf = __webpack_require__(51);
+  var assocIndexOf = __webpack_require__(52);
 
   /** Used for built-in method references. */
   var arrayProto = Array.prototype;
@@ -9624,10 +10064,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 51 */
+  /* 52 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var eq = __webpack_require__(52);
+  var eq = __webpack_require__(53);
 
   /**
    * Gets the index at which the `key` is found in `array` of key-value pairs.
@@ -9651,7 +10091,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 52 */
+  /* 53 */
   /***/ (function(module, exports) {
 
   /**
@@ -9694,10 +10134,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 53 */
+  /* 54 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var assocIndexOf = __webpack_require__(51);
+  var assocIndexOf = __webpack_require__(52);
 
   /**
    * Gets the list cache value for `key`.
@@ -9719,10 +10159,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 54 */
+  /* 55 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var assocIndexOf = __webpack_require__(51);
+  var assocIndexOf = __webpack_require__(52);
 
   /**
    * Checks if a list cache value for `key` exists.
@@ -9741,10 +10181,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 55 */
+  /* 56 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var assocIndexOf = __webpack_require__(51);
+  var assocIndexOf = __webpack_require__(52);
 
   /**
    * Sets the list cache `key` to `value`.
@@ -9773,11 +10213,11 @@ module.exports = {
 
 
   /***/ }),
-  /* 56 */
+  /* 57 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var getNative = __webpack_require__(36),
-      root = __webpack_require__(23);
+  var getNative = __webpack_require__(37),
+      root = __webpack_require__(24);
 
   /* Built-in method references that are verified to be native. */
   var Map = getNative(root, 'Map');
@@ -9786,10 +10226,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 57 */
+  /* 58 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var getMapData = __webpack_require__(58);
+  var getMapData = __webpack_require__(59);
 
   /**
    * Removes `key` and its value from the map.
@@ -9810,10 +10250,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 58 */
+  /* 59 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var isKeyable = __webpack_require__(59);
+  var isKeyable = __webpack_require__(60);
 
   /**
    * Gets the data for `map`.
@@ -9834,7 +10274,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 59 */
+  /* 60 */
   /***/ (function(module, exports) {
 
   /**
@@ -9855,10 +10295,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 60 */
+  /* 61 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var getMapData = __webpack_require__(58);
+  var getMapData = __webpack_require__(59);
 
   /**
    * Gets the map value for `key`.
@@ -9877,10 +10317,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 61 */
+  /* 62 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var getMapData = __webpack_require__(58);
+  var getMapData = __webpack_require__(59);
 
   /**
    * Checks if a map value for `key` exists.
@@ -9899,10 +10339,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 62 */
+  /* 63 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var getMapData = __webpack_require__(58);
+  var getMapData = __webpack_require__(59);
 
   /**
    * Sets the map `key` to `value`.
@@ -9927,10 +10367,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 63 */
+  /* 64 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var baseToString = __webpack_require__(64);
+  var baseToString = __webpack_require__(65);
 
   /**
    * Converts `value` to a string. An empty string is returned for `null`
@@ -9961,13 +10401,13 @@ module.exports = {
 
 
   /***/ }),
-  /* 64 */
+  /* 65 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var Symbol = __webpack_require__(22),
-      arrayMap = __webpack_require__(65),
-      isArray = __webpack_require__(18),
-      isSymbol = __webpack_require__(20);
+  var Symbol = __webpack_require__(23),
+      arrayMap = __webpack_require__(66),
+      isArray = __webpack_require__(19),
+      isSymbol = __webpack_require__(21);
 
   /** Used as references for various `Number` constants. */
   var INFINITY = 1 / 0;
@@ -10004,7 +10444,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 65 */
+  /* 66 */
   /***/ (function(module, exports) {
 
   /**
@@ -10031,10 +10471,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 66 */
+  /* 67 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var isSymbol = __webpack_require__(20);
+  var isSymbol = __webpack_require__(21);
 
   /** Used as references for various `Number` constants. */
   var INFINITY = 1 / 0;
@@ -10058,13 +10498,13 @@ module.exports = {
 
 
   /***/ }),
-  /* 67 */
+  /* 68 */
   /***/ (function(module, exports) {
 
   module.exports = require("vm");
 
   /***/ }),
-  /* 68 */
+  /* 69 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -10124,7 +10564,7 @@ module.exports = {
   exports.default = ConstraintsSourceCommand;
 
   /***/ }),
-  /* 69 */
+  /* 70 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -10158,11 +10598,11 @@ module.exports = {
 
   const clipanion_1 = __webpack_require__(4);
 
-  const get_1 = __importDefault(__webpack_require__(15));
+  const get_1 = __importDefault(__webpack_require__(16));
 
-  const set_1 = __importDefault(__webpack_require__(70));
+  const set_1 = __importDefault(__webpack_require__(71));
 
-  const unset_1 = __importDefault(__webpack_require__(76));
+  const unset_1 = __importDefault(__webpack_require__(77));
 
   const Constraints_1 = __webpack_require__(5); // eslint-disable-next-line arca/no-default-export
 
@@ -10385,10 +10825,10 @@ module.exports = {
   }
 
   /***/ }),
-  /* 70 */
+  /* 71 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var baseSet = __webpack_require__(71);
+  var baseSet = __webpack_require__(72);
 
   /**
    * Sets the value at `path` of `object`. If a portion of `path` doesn't exist,
@@ -10426,14 +10866,14 @@ module.exports = {
 
 
   /***/ }),
-  /* 71 */
+  /* 72 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var assignValue = __webpack_require__(72),
-      castPath = __webpack_require__(17),
-      isIndex = __webpack_require__(75),
-      isObject = __webpack_require__(39),
-      toKey = __webpack_require__(66);
+  var assignValue = __webpack_require__(73),
+      castPath = __webpack_require__(18),
+      isIndex = __webpack_require__(76),
+      isObject = __webpack_require__(40),
+      toKey = __webpack_require__(67);
 
   /**
    * The base implementation of `_.set`.
@@ -10479,11 +10919,11 @@ module.exports = {
 
 
   /***/ }),
-  /* 72 */
+  /* 73 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var baseAssignValue = __webpack_require__(73),
-      eq = __webpack_require__(52);
+  var baseAssignValue = __webpack_require__(74),
+      eq = __webpack_require__(53);
 
   /** Used for built-in method references. */
   var objectProto = Object.prototype;
@@ -10513,10 +10953,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 73 */
+  /* 74 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var defineProperty = __webpack_require__(74);
+  var defineProperty = __webpack_require__(75);
 
   /**
    * The base implementation of `assignValue` and `assignMergeValue` without
@@ -10544,10 +10984,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 74 */
+  /* 75 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var getNative = __webpack_require__(36);
+  var getNative = __webpack_require__(37);
 
   var defineProperty = (function() {
     try {
@@ -10561,7 +11001,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 75 */
+  /* 76 */
   /***/ (function(module, exports) {
 
   /** Used as references for various `Number` constants. */
@@ -10592,10 +11032,10 @@ module.exports = {
 
 
   /***/ }),
-  /* 76 */
+  /* 77 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var baseUnset = __webpack_require__(77);
+  var baseUnset = __webpack_require__(78);
 
   /**
    * Removes the property at `path` of `object`.
@@ -10632,13 +11072,13 @@ module.exports = {
 
 
   /***/ }),
-  /* 77 */
+  /* 78 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var castPath = __webpack_require__(17),
-      last = __webpack_require__(78),
-      parent = __webpack_require__(79),
-      toKey = __webpack_require__(66);
+  var castPath = __webpack_require__(18),
+      last = __webpack_require__(79),
+      parent = __webpack_require__(80),
+      toKey = __webpack_require__(67);
 
   /**
    * The base implementation of `_.unset`.
@@ -10658,7 +11098,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 78 */
+  /* 79 */
   /***/ (function(module, exports) {
 
   /**
@@ -10684,11 +11124,11 @@ module.exports = {
 
 
   /***/ }),
-  /* 79 */
+  /* 80 */
   /***/ (function(module, exports, __webpack_require__) {
 
-  var baseGet = __webpack_require__(16),
-      baseSlice = __webpack_require__(80);
+  var baseGet = __webpack_require__(17),
+      baseSlice = __webpack_require__(81);
 
   /**
    * Gets the parent value at `path` of `object`.
@@ -10706,7 +11146,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 80 */
+  /* 81 */
   /***/ (function(module, exports) {
 
   /**

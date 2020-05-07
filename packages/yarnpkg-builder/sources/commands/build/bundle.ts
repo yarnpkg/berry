@@ -1,3 +1,4 @@
+import {getDynamicLibs} from '@yarnpkg/cli';
 import chalk            from 'chalk';
 import cp               from 'child_process';
 import {Command, Usage} from 'clipanion';
@@ -8,7 +9,6 @@ import TerserPlugin     from 'terser-webpack-plugin';
 import {promisify}      from 'util';
 import webpack          from 'webpack';
 
-import {dynamicLibs}    from '../../data/dynamicLibs';
 import {findPlugins}    from '../../tools/findPlugins';
 import {makeConfig}     from '../../tools/makeConfig';
 
@@ -48,8 +48,8 @@ export default class BuildBundleCommand extends Command {
   @Command.Path(`build`, `bundle`)
   async execute() {
     const basedir = process.cwd();
-    const plugins = findPlugins({basedir, profile: this.profile, plugins: this.plugins});
-    const modules = Array.from(dynamicLibs).concat(plugins);
+    const plugins = findPlugins({basedir, profile: this.profile, plugins: this.plugins.map(plugin => path.resolve(plugin))});
+    const modules = [...getDynamicLibs().keys()].concat(plugins);
     const output = `${basedir}/bundles/yarn.js`;
 
     let version = pkgJsonVersion(basedir);
@@ -97,7 +97,7 @@ export default class BuildBundleCommand extends Command {
         rules: [{
           // This file is particular in that it exposes the bundle
           // configuration to the bundle itself (primitive introspection).
-          test: /[\\\/]getPluginConfiguration\.val\.js$/,
+          test: /[\\/]getPluginConfiguration\.val\.js$/,
           use: {
             loader: require.resolve(`val-loader`),
             options: {modules, plugins},

@@ -4,7 +4,7 @@ import * as ts                     from 'typescript';
 export enum CallType {
   REQUIRE,
   RESOLVE,
-};
+}
 
 export function prettyNodeLocation(configuration: Configuration, node: ts.Node) {
   const {fileName} = node.getSourceFile();

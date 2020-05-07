@@ -1,5 +1,5 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
-import {Locator, MessageName}                       from '@yarnpkg/core';
+import {Locator}                                    from '@yarnpkg/core';
 import {miscUtils, structUtils}                     from '@yarnpkg/core';
 import {ppath, xfs, ZipFS, Filename, CwdFS}         from '@yarnpkg/fslib';
 import {getLibzipPromise}                           from '@yarnpkg/libzip';
@@ -21,14 +21,11 @@ export class PatchFetcher implements Fetcher {
   async fetch(locator: Locator, opts: FetchOptions) {
     const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
 
-    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(
-      locator,
-      expectedChecksum,
-      async () => {
-        opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`);
-        return await this.patchPackage(locator, opts);
-      },
-    );
+    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
+      onHit: () => opts.report.reportCacheHit(locator),
+      onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`),
+      loader: () => this.patchPackage(locator, opts),
+    });
 
     return {
       packageFs,
@@ -54,7 +51,7 @@ export class PatchFetcher implements Fetcher {
     const copiedPackage = new ZipFS(tmpFile, {
       libzip,
       create: true,
-      level: opts.project.configuration.get('compressionLevel'),
+      level: opts.project.configuration.get(`compressionLevel`),
     });
 
     await copiedPackage.mkdirpPromise(prefixPath);
@@ -67,7 +64,7 @@ export class PatchFetcher implements Fetcher {
 
     const patchedPackage = new ZipFS(tmpFile, {
       libzip,
-      level: opts.project.configuration.get('compressionLevel'),
+      level: opts.project.configuration.get(`compressionLevel`),
     });
 
     const patchFs = new CwdFS(prefixPath, {baseFs: patchedPackage});

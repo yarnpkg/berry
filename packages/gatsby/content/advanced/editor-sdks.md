@@ -19,7 +19,7 @@ Smart IDEs (such as VSCode or IntelliJ) require special configuration for TypeSc
 | Builtin VSCode TypeScript Server | [typescript](https://yarnpkg.com/package/typescript) |
 | [vscode-eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) | [eslint](https://yarnpkg.com/package/eslint) |
 | [prettier-vscode](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) | [prettier](https://yarnpkg.com/package/prettier) |
-|
+| [vscode-stylelint](https://marketplace.visualstudio.com/items?itemName=stylelint.vscode-stylelint) | [stylelint](https://stylelint.io/)
 
 If you'd like to contribute more, [take a look here!](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-pnpify/sources/generateSdk.ts)
 

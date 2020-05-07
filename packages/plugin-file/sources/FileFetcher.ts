@@ -1,5 +1,5 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
-import {Locator, MessageName}                       from '@yarnpkg/core';
+import {Locator}                                    from '@yarnpkg/core';
 import {miscUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
 import {NodeFS, PortablePath, ppath}                from '@yarnpkg/fslib';
 
@@ -28,14 +28,11 @@ export class FileFetcher implements Fetcher {
   async fetch(locator: Locator, opts: FetchOptions) {
     const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
 
-    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(
-      locator,
-      expectedChecksum,
-      async () => {
-        opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`);
-        return await this.fetchFromDisk(locator, opts);
-      },
-    );
+    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
+      onHit: () => opts.report.reportCacheHit(locator),
+      onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`),
+      loader: () => this.fetchFromDisk(locator, opts),
+    });
 
     return {
       packageFs,
@@ -72,7 +69,7 @@ export class FileFetcher implements Fetcher {
       return await tgzUtils.makeArchiveFromDirectory(sourcePath, {
         baseFs: sourceFs,
         prefixPath: structUtils.getIdentVendorPath(locator),
-        compressionLevel: opts.project.configuration.get('compressionLevel'),
+        compressionLevel: opts.project.configuration.get(`compressionLevel`),
       });
     }, effectiveParentFetch.releaseFs);
   }

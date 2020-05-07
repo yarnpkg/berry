@@ -7,7 +7,7 @@ function computeCacheSize(cacheDir: PortablePath): number {
     totalSize += xfs.statSync(ppath.join(cacheDir, filename)).size;
 
   return totalSize;
-};
+}
 
 describe(`Features`, () => {
   describe(`Compression Level`, () => {
@@ -50,7 +50,7 @@ describe(`Features`, () => {
 
           await run(`install`);
 
-          let level6CacheSize = computeCacheSize(cacheDir);
+          const level6CacheSize = computeCacheSize(cacheDir);
 
           await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, `compressionLevel: 0\nchecksumBehavior: update\n`);
 

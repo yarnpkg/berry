@@ -135,8 +135,6 @@ module.exports = {
 
   const core_1 = __webpack_require__(2);
 
-  const core_2 = __webpack_require__(2);
-
   const fslib_1 = __webpack_require__(3);
 
   const constants_1 = __webpack_require__(4);
@@ -164,9 +162,10 @@ module.exports = {
 
     async fetch(locator, opts) {
       const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
-      const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, async () => {
-        opts.report.reportInfoOnce(core_2.MessageName.FETCH_NOT_CACHED, `${core_1.structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`);
-        return await this.fetchFromDisk(locator, opts);
+      const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
+        onHit: () => opts.report.reportCacheHit(locator),
+        onMiss: () => opts.report.reportCacheMiss(locator),
+        loader: () => this.fetchFromDisk(locator, opts)
       });
       return {
         packageFs,

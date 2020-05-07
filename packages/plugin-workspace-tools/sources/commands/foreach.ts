@@ -114,7 +114,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (!this.all && !cwdWorkspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    const command = this.cli.process([this.commandName, ...this.args]) as {path: string[], scriptName?: string};
+    const command = this.cli.process([this.commandName, ...this.args]) as {path: Array<string>, scriptName?: string};
     const scriptName = command.path.length === 1 && command.path[0] === `run` && typeof command.scriptName !== `undefined`
       ? command.scriptName
       : null;
@@ -265,7 +265,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
             return structUtils.prettyLocator(configuration, workspace.anchoredLocator);
           }).join(`, `);
 
-          return report.reportError(MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected (${cycle})`);
+          report.reportError(MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected (${cycle})`);
+          return;
         }
 
         const exitCodes: Array<number> = await Promise.all(commandPromises);
@@ -330,7 +331,7 @@ function getPrefix(workspace: Workspace, {configuration, commandIndex, verbose}:
   const ident = structUtils.convertToIdent(workspace.locator);
   const name = structUtils.stringifyIdent(ident);
 
-  let prefix = `[${name}]:`;
+  const prefix = `[${name}]:`;
 
   const colors = [`#2E86AB`, `#A23B72`, `#F18F01`, `#C73E1D`, `#CCE2A3`];
   const colorName = colors[commandIndex % colors.length];

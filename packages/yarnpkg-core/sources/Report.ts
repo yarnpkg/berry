@@ -29,10 +29,12 @@ export abstract class Report {
   private reportedErrors: Set<any> = new Set();
 
   abstract reportCacheHit(locator: Locator): void;
-  abstract reportCacheMiss(locator: Locator): void;
+  abstract reportCacheMiss(locator: Locator, message?: string): void;
 
   abstract startTimerPromise<T>(what: string, cb: () => Promise<T>): Promise<T>;
   abstract startTimerSync<T>(what: string, cb: () => T): T;
+
+  abstract startCacheReport<T>(cb: () => Promise<T>): Promise<T>;
 
   abstract reportSeparator(): void;
   abstract reportInfo(name: MessageName | null, text: string): void;

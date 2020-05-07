@@ -8,7 +8,7 @@ import {Filename, PortablePath, NativePath, npath, ppath} from './path';
 
 export {CreateReadStreamOptions}  from './FakeFS';
 export {CreateWriteStreamOptions} from './FakeFS';
-export {Dirent}                   from './FakeFS';
+export {Dirent, SymlinkType}      from './FakeFS';
 export {MkdirOptions}             from './FakeFS';
 export {WatchOptions}             from './FakeFS';
 export {WatchCallback}            from './FakeFS';
@@ -115,7 +115,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     }
   });
 
-  setupFn(patchedFs, `exists`, (p: string, ...args: any[]) => {
+  setupFn(patchedFs, `exists`, (p: string, ...args: Array<any>) => {
     const hasCallback = typeof args[args.length - 1] === `function`;
     const callback = hasCallback ? args.pop() : () => {};
 
@@ -128,7 +128,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     });
   });
 
-  setupFn(patchedFs, `read`, (p: number, buffer: Buffer, ...args: any[]) => {
+  setupFn(patchedFs, `read`, (p: number, buffer: Buffer, ...args: Array<any>) => {
     const hasCallback = typeof args[args.length - 1] === `function`;
     const callback = hasCallback ? args.pop() : () => {};
 

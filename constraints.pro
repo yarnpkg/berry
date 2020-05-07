@@ -57,6 +57,7 @@ gen_enforced_field(WorkspaceCwd, 'scripts.update-local', '<any value>') :-
   % Only if they don't have a script set
     \+ workspace_field(WorkspaceCwd, 'scripts.update-local', _).
 
+inline_compile('@yarnpkg/eslint-config').
 inline_compile('@yarnpkg/libui').
 
 gen_enforced_field(WorkspaceCwd, 'scripts.prepack', 'run build:compile "$(pwd)"') :-

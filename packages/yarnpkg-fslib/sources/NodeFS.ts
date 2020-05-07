@@ -292,7 +292,7 @@ export class NodeFS extends BasePortableFakeFS {
       if (withFileTypes) {
         this.realFs.readdir(npath.fromPortablePath(p), {withFileTypes: true}, this.makeCallback(resolve, reject) as any);
       } else {
-        this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback(value => resolve(value as Filename[]), reject));
+        this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback(value => resolve(value as Array<Filename>), reject));
       }
     });
   }
@@ -305,7 +305,7 @@ export class NodeFS extends BasePortableFakeFS {
     if (withFileTypes) {
       return this.realFs.readdirSync(npath.fromPortablePath(p), {withFileTypes: true} as any);
     } else {
-      return this.realFs.readdirSync(npath.fromPortablePath(p)) as Filename[];
+      return this.realFs.readdirSync(npath.fromPortablePath(p)) as Array<Filename>;
     }
   }
 

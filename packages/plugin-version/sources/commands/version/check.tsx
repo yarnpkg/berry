@@ -57,7 +57,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
 
     const versionFile = await versionUtils.openVersionFile(project);
     if (versionFile === null || versionFile.releaseRoots.size === 0)
-      return;
+      return 0;
 
     if (versionFile.root === null)
       throw new UsageError(`This command can only be run on Git repositories`);
@@ -261,6 +261,8 @@ export default class VersionApplyCommand extends Command<CommandContext> {
       versionFile.releases.set(workspace, decision);
 
     await versionFile.saveAll();
+
+    return undefined;
   }
 
   async executeStandard() {

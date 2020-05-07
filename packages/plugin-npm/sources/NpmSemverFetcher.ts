@@ -30,14 +30,11 @@ export class NpmSemverFetcher implements Fetcher {
   async fetch(locator: Locator, opts: FetchOptions) {
     const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
 
-    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(
-      locator,
-      expectedChecksum,
-      async () => {
-        opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote registry`);
-        return await this.fetchFromNetwork(locator, opts);
-      },
-    );
+    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
+      onHit: () => opts.report.reportCacheHit(locator),
+      onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote registry`),
+      loader: () => this.fetchFromNetwork(locator, opts),
+    });
 
     return {
       packageFs,
@@ -76,7 +73,7 @@ export class NpmSemverFetcher implements Fetcher {
     const path = NpmSemverFetcher.getLocatorUrl(locator);
 
     // From time to time the npm registry returns http urls instead of https 🤡
-    url = url.replace(/^https?:(\/\/(?:[^\/]+\.)?npmjs.org(?:$|\/))/, `https:$1`);
+    url = url.replace(/^https?:(\/\/(?:[^/]+\.)?npmjs.org(?:$|\/))/, `https:$1`);
 
     // The yarnpkg and npmjs registries are interchangeable for that matter, so we uniformize them
     registry = registry.replace(/^https:\/\/registry\.npmjs\.org($|\/)/, `https://registry.yarnpkg.com$1`);

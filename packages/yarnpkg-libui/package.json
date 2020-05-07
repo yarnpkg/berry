@@ -9,7 +9,7 @@
   "devDependencies": {
     "@types/react": "^16.8.0",
     "ink": "^2.3.0",
-    "react": "^16.8.4"
+    "react": "^16.13.1"
   },
   "repository": {
     "type": "git",

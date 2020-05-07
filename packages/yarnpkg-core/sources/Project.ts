@@ -60,6 +60,7 @@ export type InstallOptions = {
   report: Report,
   immutable?: boolean,
   lockfileOnly?: boolean,
+  persistProject?: boolean,
 };
 
 export class Project {
@@ -948,35 +949,37 @@ export class Project {
 
     const limit = pLimit(FETCHER_CONCURRENCY);
 
-    await Promise.all(locatorHashes.map(locatorHash => limit(async () => {
-      const pkg = this.storedPackages.get(locatorHash);
-      if (!pkg)
-        throw new Error(`Assertion failed: The locator should have been registered`);
+    await report.startCacheReport(async () => {
+      await Promise.all(locatorHashes.map(locatorHash => limit(async () => {
+        const pkg = this.storedPackages.get(locatorHash);
+        if (!pkg)
+          throw new Error(`Assertion failed: The locator should have been registered`);
 
-      if (structUtils.isVirtualLocator(pkg))
-        return;
+        if (structUtils.isVirtualLocator(pkg))
+          return;
 
-      let fetchResult;
-      try {
-        fetchResult = await fetcher.fetch(pkg, fetcherOptions);
-      } catch (error) {
-        error.message = `${structUtils.prettyLocator(this.configuration, pkg)}: ${error.message}`;
-        report.reportExceptionOnce(error);
-        firstError = error;
-        return;
-      }
+        let fetchResult;
+        try {
+          fetchResult = await fetcher.fetch(pkg, fetcherOptions);
+        } catch (error) {
+          error.message = `${structUtils.prettyLocator(this.configuration, pkg)}: ${error.message}`;
+          report.reportExceptionOnce(error);
+          firstError = error;
+          return;
+        }
 
-      if (fetchResult.checksum)
-        this.storedChecksums.set(pkg.locatorHash, fetchResult.checksum);
-      else
-        this.storedChecksums.delete(pkg.locatorHash);
+        if (fetchResult.checksum)
+          this.storedChecksums.set(pkg.locatorHash, fetchResult.checksum);
+        else
+          this.storedChecksums.delete(pkg.locatorHash);
 
-      if (fetchResult.releaseFs) {
-        fetchResult.releaseFs();
-      }
-    }).finally(() => {
-      progress.tick();
-    })));
+        if (fetchResult.releaseFs) {
+          fetchResult.releaseFs();
+        }
+      }).finally(() => {
+        progress.tick();
+      })));
+    });
 
     if (firstError) {
       throw firstError;
@@ -996,7 +999,7 @@ export class Project {
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
     const packageLocations: Map<LocatorHash, PortablePath> = new Map();
-    const packageBuildDirectives: Map<LocatorHash, { directives: BuildDirective[], buildLocations: PortablePath[] }> = new Map();
+    const packageBuildDirectives: Map<LocatorHash, { directives: Array<BuildDirective>, buildLocations: Array<PortablePath> }> = new Map();
 
     // Step 1: Installing the packages on the disk
 
@@ -1220,7 +1223,7 @@ export class Project {
       return hash;
     };
 
-    const getBuildHash = (locator: Locator, buildLocations: PortablePath[]) => {
+    const getBuildHash = (locator: Locator, buildLocations: Array<PortablePath>) => {
       const builder = createHash(`sha512`);
 
       builder.update(globalHash);
@@ -1395,8 +1398,8 @@ export class Project {
     await this.configuration.triggerHook(hooks => {
       return hooks.validateProject;
     }, this, {
-      reportWarning: (name: MessageName, text:string) => validationWarnings.push({name, text}),
-      reportError: (name: MessageName, text:string) => validationErrors.push({name, text}),
+      reportWarning: (name: MessageName, text: string) => validationWarnings.push({name, text}),
+      reportError: (name: MessageName, text: string) => validationErrors.push({name, text}),
     });
 
     const problemCount = validationWarnings.length + validationErrors.length;
@@ -1456,10 +1459,14 @@ export class Project {
 
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);
-      await this.cacheCleanup(opts);
+
+      if (typeof opts.persistProject === `undefined` || opts.persistProject) {
+        await this.cacheCleanup(opts);
+      }
     });
 
-    await this.persist();
+    if (typeof opts.persistProject === `undefined` || opts.persistProject)
+      await this.persist();
 
     await opts.report.startTimerPromise(`Link step`, async () => {
       await this.linkEverything(opts);
@@ -1487,7 +1494,7 @@ export class Project {
 
     const optimizedLockfile: {[key: string]: any} = {};
 
-    optimizedLockfile[`__metadata`] = {
+    optimizedLockfile.__metadata = {
       version: LOCKFILE_VERSION,
     };
 
@@ -1572,14 +1579,18 @@ export class Project {
 
   async restoreInstallState() {
     const installStatePath = this.configuration.get<PortablePath>(`installStatePath`);
-    if (!xfs.existsSync(installStatePath))
-      return await this.applyLightResolution();
+    if (!xfs.existsSync(installStatePath)) {
+      await this.applyLightResolution();
+      return;
+    }
 
     const serializedState = await xfs.readFilePromise(installStatePath);
     const installState = v8.deserialize(await gunzip(serializedState) as Buffer);
 
-    if (installState.lockFileChecksum !== this.lockFileChecksum)
-      return await this.applyLightResolution();
+    if (installState.lockFileChecksum !== this.lockFileChecksum) {
+      await this.applyLightResolution();
+      return;
+    }
 
     Object.assign(this, installState);
 

@@ -119,7 +119,7 @@ export async function loadPatchFiles(parentLocator: Locator | null, patchPaths: 
 
   // First we obtain the specification for all the patches that we'll have to
   // apply to the original package.
-  let patchFiles = await miscUtils.releaseAfterUseAsync(async () => {
+  const patchFiles = await miscUtils.releaseAfterUseAsync(async () => {
     return await Promise.all(patchPaths.map(async patchPath => visitPatchPath({
       onAbsolute: async () => {
         return await xfs.readFilePromise(patchPath, `utf8`);

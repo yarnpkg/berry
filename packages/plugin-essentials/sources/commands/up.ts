@@ -220,5 +220,7 @@ export default class UpCommand extends BaseCommand {
 
       return installReport.exitCode();
     }
+
+    return undefined;
   }
 }

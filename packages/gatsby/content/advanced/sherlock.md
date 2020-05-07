@@ -31,7 +31,7 @@ const foo = await ...;
 
 You can use all of Javascript inside the repro code, including `async/await`. In fact, you can even use top-level `await`! As far as the runtime go you should have access to all of Node's APIs, plus some extras:
 
-- In order to simplify some tasks that would be very menial otherwise (like spawning the Yarn process, or running a Node script in the generated environment), we provide a set of builtin functions that abstract these semantics. You can find the full reference inside [our repository](scripts/actions/sherlock-prepare.js), along with some documentation.
+- In order to simplify some tasks that would be very menial otherwise (like spawning the Yarn process, or running a Node script in the generated environment), we provide a set of builtin functions that abstract these semantics. You can find the full reference inside [our repository](https://github.com/yarnpkg/berry/tree/master/scripts/actions/sherlock-prepare.js), along with some documentation.
 
 - The [expect](https://jestjs.io/docs/en/expect) API is available globally and *must* be used to describe the assertions in your test (simply throwing will cause Sherlock to mark your reproduction case as broken).
 

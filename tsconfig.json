@@ -8,6 +8,7 @@
     "jsx": "react",
     "lib": ["dom", "es2017", "esnext", "esnext.asynciterable"],
     "module": "commonjs",
+    "noImplicitReturns": true,
     "strict": true,
     "target": "es2017",
     "declaration": true

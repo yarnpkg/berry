@@ -3,7 +3,7 @@ import {xfs} from '@yarnpkg/fslib';
 const {
   fs: {createTemporaryFolder, writeJson},
   tests: {getPackageDirectoryPath},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Protocols`, () => {
   describe(`portal:`, () => {

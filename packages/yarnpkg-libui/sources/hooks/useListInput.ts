@@ -6,7 +6,7 @@ export const useListInput = function <T>(value: T, values: Array<T>, {active, mi
 
   useEffect(() => {
     if (!active)
-      return;
+      return undefined;
 
     const cb = (ch: any, key: any) => {
       const index = values.indexOf(value);

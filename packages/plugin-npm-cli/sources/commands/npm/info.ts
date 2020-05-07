@@ -13,7 +13,7 @@ declare module '@npm/types' {
    * Add missing property `users` on interface `Packument`
    */
   interface Packument {
-    users: Record<string, boolean>[];
+    users: Array<Record<string, boolean>>;
   }
 }
 
@@ -26,7 +26,7 @@ type CombinedPackument = Omit<npm.Packument, 'versions'> & npm.PackumentVersion;
  * `CombinedPackument` with a `versions` field that is an array of tags
  */
 interface PackageInformation extends CombinedPackument {
-  versions: string[];
+  versions: Array<string>;
 }
 
 // eslint-disable-next-line arca/no-default-export
@@ -220,7 +220,7 @@ export default class InfoCommand extends BaseCommand {
 // Remove hidden properties recursively
 function clean(value: unknown): unknown {
   if (Array.isArray(value)) {
-    const result: unknown[] = [];
+    const result: Array<unknown> = [];
 
     for (let item of value) {
       item = clean(item);

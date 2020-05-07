@@ -3,7 +3,6 @@ import {FetchResult, Descriptor, Locator, Package, BuildDirective}              
 import {miscUtils, structUtils}                                                                         from '@yarnpkg/core';
 import {FakeFS, PortablePath, ppath}                                                                    from '@yarnpkg/fslib';
 import {PackageRegistry, PnpSettings}                                                                   from '@yarnpkg/pnp';
-import mm                                                                                               from 'micromatch';
 
 export abstract class AbstractPnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
@@ -100,7 +99,7 @@ export abstract class AbstractPnpInstaller implements Installer {
 
     return {
       packageLocation: packageRawLocation,
-      buildDirective: buildScripts.length > 0 ? buildScripts as BuildDirective[] : null,
+      buildDirective: buildScripts.length > 0 ? buildScripts as Array<BuildDirective> : null,
     };
   }
 
@@ -131,18 +130,6 @@ export abstract class AbstractPnpInstaller implements Installer {
       [null, this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator)],
     ]));
 
-    const buildIgnorePattern = (ignorePatterns: Array<string>) => {
-      if (ignorePatterns.length === 0)
-        return null;
-
-      return ignorePatterns.map(pattern => {
-        return `(${mm.makeRe(pattern, {
-          // @ts-ignore
-          windows: false,
-        }).source})`;
-      }).join(`|`);
-    };
-
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
     const blacklistedLocations = this.blacklistedPaths;
@@ -150,7 +137,7 @@ export abstract class AbstractPnpInstaller implements Installer {
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
     const fallbackPool = this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator).packageDependencies;
-    const ignorePattern = buildIgnorePattern([`.vscode/pnpify/**`, ...this.opts.project.configuration.get(`pnpIgnorePatterns`)]);
+    const ignorePattern = miscUtils.buildIgnorePattern([`.vscode/pnpify/**`, ...this.opts.project.configuration.get(`pnpIgnorePatterns`)]);
     const packageRegistry = this.packageRegistry;
     const shebang = this.opts.project.configuration.get(`pnpShebang`);
 
@@ -216,6 +203,6 @@ export abstract class AbstractPnpInstaller implements Installer {
       // Don't use ppath.join here, it ignores the `.`
       relativeFolder = `./${relativeFolder}` as PortablePath;
 
-    return relativeFolder.replace(/\/?$/, '/')  as PortablePath;
+    return relativeFolder.replace(/\/?$/, `/`)  as PortablePath;
   }
 }

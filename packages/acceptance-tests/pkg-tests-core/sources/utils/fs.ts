@@ -12,8 +12,8 @@ export const walk = (
   source: PortablePath,
   {filter, relative = false}: {filter?: Array<string>, relative?: boolean} = {},
 ): Promise<Array<PortablePath>> => {
-  return new Promise((resolve) => {
-    const paths: PortablePath[] = [];
+  return new Promise(resolve => {
+    const paths: Array<PortablePath> = [];
 
     const walker = klaw(npath.fromPortablePath(source), {
       filter: (sourcePath: string) => {
@@ -35,7 +35,7 @@ export const walk = (
       },
     });
 
-    walker.on('data', ({path: sourcePath}) => {
+    walker.on(`data`, ({path: sourcePath}) => {
       const itemPath = npath.toPortablePath(sourcePath);
       const relativePath = ppath.relative(source, itemPath);
 
@@ -46,7 +46,7 @@ export const walk = (
       return;
     });
 
-    walker.on('end', () => {
+    walker.on(`end`, () => {
       resolve(paths);
     });
   });
@@ -58,7 +58,7 @@ export const packToStream = (
 ): Gzip => {
   if (virtualPath) {
     if (!ppath.isAbsolute(virtualPath)) {
-      throw new Error('The virtual path has to be an absolute path');
+      throw new Error(`The virtual path has to be an absolute path`);
     } else {
       virtualPath = ppath.resolve(virtualPath);
     }
@@ -70,10 +70,8 @@ export const packToStream = (
     map: (header: any) => {
       header.name = npath.toPortablePath(header.name);
 
-      if (true) {
-        header.name = ppath.resolve(PortablePath.root, header.name);
-        header.name = ppath.relative(PortablePath.root, header.name);
-      }
+      header.name = ppath.resolve(PortablePath.root, header.name);
+      header.name = ppath.relative(PortablePath.root, header.name);
 
       if (virtualPath) {
         header.name = ppath.resolve(PortablePath.root, virtualPath, header.name);
@@ -86,8 +84,8 @@ export const packToStream = (
 
   packStream.pipe(zipperStream);
 
-  packStream.on('error', error => {
-    zipperStream.emit('error', error);
+  packStream.on(`error`, error => {
+    zipperStream.emit(`error`, error);
   });
 
   return zipperStream;
@@ -100,15 +98,15 @@ export const packToFile = (target: PortablePath, source: PortablePath, options: 
   packStream.pipe(tarballStream);
 
   return new Promise((resolve, reject) => {
-    tarballStream.on('error', (error: Error) => {
+    tarballStream.on(`error`, (error: Error) => {
       reject(error);
     });
 
-    packStream.on('error', (error: Error) => {
+    packStream.on(`error`, (error: Error) => {
       reject(error);
     });
 
-    tarballStream.on('close', () => {
+    tarballStream.on(`close`, () => {
       resolve();
     });
   });
@@ -122,19 +120,19 @@ export const unpackToDirectory = (target: PortablePath, source: PortablePath): P
   tarballStream.pipe(gunzipStream).pipe(extractStream);
 
   return new Promise((resolve, reject) => {
-    tarballStream.on('error', error => {
+    tarballStream.on(`error`, error => {
       reject(error);
     });
 
-    gunzipStream.on('error', error => {
+    gunzipStream.on(`error`, error => {
       reject(error);
     });
 
-    extractStream.on('error', error => {
+    extractStream.on(`error`, error => {
       reject(error);
     });
 
-    extractStream.on('finish', () => {
+    extractStream.on(`finish`, () => {
       resolve();
     });
   });
@@ -153,7 +151,7 @@ export const createTemporaryFolder = async (name?: Filename): Promise<PortablePa
 
 export const createTemporaryFile = async (filePath: PortablePath = `file` as PortablePath): Promise<PortablePath> => {
   if (ppath.normalize(filePath).match(/^(\.\.)?\//))
-    throw new Error('A temporary file path must be a forward path');
+    throw new Error(`A temporary file path must be a forward path`);
 
   const folderPath = await exports.createTemporaryFolder();
   return ppath.resolve(folderPath, filePath as PortablePath);
@@ -176,7 +174,7 @@ export const writeJson = (target: PortablePath, object: any): Promise<void> => {
 };
 
 export const readJson = async (source: PortablePath): Promise<any> => {
-  const fileContent = await exports.readFile(source, 'utf8');
+  const fileContent = await exports.readFile(source, `utf8`);
 
   try {
     return JSON.parse(fileContent);

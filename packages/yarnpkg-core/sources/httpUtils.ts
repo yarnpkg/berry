@@ -35,9 +35,9 @@ export type Body = (
 );
 
 export enum Method {
-  GET = 'GET',
-  PUT = 'PUT',
-};
+  GET = `GET`,
+  PUT = `PUT`,
+}
 
 export type Options = {
   configuration: Configuration,
@@ -80,9 +80,13 @@ export async function request(target: string, body: Body, {configuration, header
     }
   }
 
+  const timeout = configuration.get(`httpTimeout`);
+  const retry = configuration.get(`httpRetry`);
+
   //@ts-ignore
   const gotClient = got.extend({
-    retry: 10,
+    timeout,
+    retry,
     ...gotOptions,
   });
 

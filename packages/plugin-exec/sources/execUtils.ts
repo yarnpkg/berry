@@ -24,7 +24,7 @@ export function makeSpec({parentLocator, path, generatorHash, protocol}: {parent
     : {} as {};
 
   return structUtils.makeRange({
-    protocol: protocol,
+    protocol,
     source: path,
     selector: path,
     params: {
@@ -58,7 +58,8 @@ export async function loadGeneratorFile(range: string, protocol: string, opts: F
     parentFetch.releaseFs();
 
   const generatorFs = effectiveParentFetch.packageFs;
+  const generatorPath = ppath.resolve(effectiveParentFetch.prefixPath, path);
 
-  return await generatorFs.readFilePromise(path, `utf8`);
+  return await generatorFs.readFilePromise(generatorPath, `utf8`);
 }
 

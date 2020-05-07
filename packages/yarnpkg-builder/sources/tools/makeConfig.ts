@@ -32,8 +32,8 @@ export const makeConfig = (config: webpack.Configuration) => merge({
         loader: require.resolve(`babel-loader`),
         options: {
           plugins: [
-            [require.resolve("@babel/plugin-syntax-decorators"), {"legacy": true}],
-            [require.resolve("@babel/plugin-syntax-class-properties"), {"loose": true}],
+            [require.resolve(`@babel/plugin-syntax-decorators`), {legacy: true}],
+            [require.resolve(`@babel/plugin-syntax-class-properties`), {loose: true}],
             require.resolve(`babel-plugin-lazy-import`),
           ],
         },
