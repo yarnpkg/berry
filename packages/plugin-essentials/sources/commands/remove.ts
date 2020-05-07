@@ -121,6 +121,6 @@ export default class RemoveCommand extends BaseCommand {
       return report.exitCode();
     }
 
-    return undefined;
+    return 0;
   }
 }

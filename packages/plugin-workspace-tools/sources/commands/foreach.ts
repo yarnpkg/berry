@@ -280,7 +280,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
         }
       }
 
-      return undefined;
+      return 0;
     });
 
     if (finalExitCode !== null) {

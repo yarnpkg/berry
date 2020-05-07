@@ -100,10 +100,11 @@ export default class YarnCommand extends BaseCommand {
         }
       });
 
-      if (deprecationReport.hasErrors())
+      if (deprecationReport.hasErrors()) {
         return deprecationReport.exitCode();
-
-      return undefined;
+      } else {
+        return null;
+      }
     };
 
     // The ignoreEngines flag isn't implemented at the moment. I'm still
@@ -117,7 +118,7 @@ export default class YarnCommand extends BaseCommand {
         error: !isZeitNow,
       });
 
-      if (typeof exitCode !== `undefined`) {
+      if (exitCode !== null) {
         return exitCode;
       }
     }
@@ -132,7 +133,7 @@ export default class YarnCommand extends BaseCommand {
         error: false,
       });
 
-      if (typeof exitCode !== `undefined`) {
+      if (exitCode !== null) {
         return exitCode;
       }
     }
@@ -147,7 +148,7 @@ export default class YarnCommand extends BaseCommand {
         error: !isZeitNow,
       });
 
-      if (typeof exitCode !== `undefined`) {
+      if (exitCode !== null) {
         return exitCode;
       }
     }
@@ -160,7 +161,7 @@ export default class YarnCommand extends BaseCommand {
         error: true,
       });
 
-      if (typeof exitCode !== `undefined`) {
+      if (exitCode !== null) {
         return exitCode;
       }
     }
@@ -174,7 +175,7 @@ export default class YarnCommand extends BaseCommand {
         error: !isNetlify,
       });
 
-      if (typeof exitCode !== `undefined`) {
+      if (exitCode !== null) {
         return exitCode;
       }
     }

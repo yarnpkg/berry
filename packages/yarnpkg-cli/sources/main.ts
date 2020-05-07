@@ -94,7 +94,8 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
 
         if (iAmHere !== iShouldBeHere) {
           process.chdir(cwd);
-          return await run();
+          await run();
+          return;
         }
       }
 
@@ -107,8 +108,6 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
         stderr: process.stderr,
       });
     }
-
-    return undefined;
   }
 
   return run().catch(error => {

@@ -363,7 +363,7 @@ export class StreamReport extends Report {
     const cacheMissDelta = this.cacheMissCount - cacheMissCount;
 
     if (cacheHitDelta === 0 && cacheMissDelta === 0)
-      return undefined;
+      return;
 
     let fetchStatus = ``;
 
@@ -388,7 +388,7 @@ export class StreamReport extends Report {
       }
     }
 
-    return this.reportInfo(MessageName.FETCH_NOT_CACHED, fetchStatus);
+    this.reportInfo(MessageName.FETCH_NOT_CACHED, fetchStatus);
   }
 
   private clearProgress({delta = 0, clear = false}: {delta?: number, clear?: boolean}) {
