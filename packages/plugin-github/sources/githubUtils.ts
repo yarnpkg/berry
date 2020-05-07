@@ -35,7 +35,12 @@ export function parseGithubUrl(urlStr: string): ParsedGithubUrl {
 
   let [, auth, username, reponame, treeish = `master`] = match;
 
-  treeish = treeish.replace(/[^:]*:/, ``);
+  // Replace Treeish Protocol
+  treeish = treeish
+    // New-style: "commit=abcdef" (without the extras)
+    .replace(/[^=]*=/, ``)
+    // Old-style: "commit:abcdef"
+    .replace(/[^:]*:/, ``);
 
   return {auth, username, reponame, treeish};
 }
