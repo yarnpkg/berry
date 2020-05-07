@@ -525,7 +525,9 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
         } else if (definition.isNullable) {
           return null;
         } else {
-          throw new Error(`Assertion failed: The default value must either be absolute, or null (${definition.description})`);
+          // Reached when a relative path is the default but the current
+          // context is evaluated outside of a Yarn project
+          return undefined;
         }
       } else {
         if (Array.isArray(definition.default)) {
