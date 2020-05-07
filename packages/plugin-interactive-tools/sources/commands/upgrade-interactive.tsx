@@ -7,7 +7,7 @@ import {renderForm, SubmitInjectedComponent}                                    
 import {suggestUtils}                                                                                                      from '@yarnpkg/plugin-essentials';
 import {Command, Usage}                                                                                                    from 'clipanion';
 import {diffWords}                                                                                                         from 'diff';
-import {Box, Color}                                                                                                        from 'ink';
+import {Box, Text, Color}                                                                                                  from 'ink';
 import React, {useEffect, useState}                                                                                        from 'react';
 import semver                                                                                                              from 'semver';
 
@@ -109,26 +109,58 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         fetchUpdatedDescriptor(descriptor, descriptor.range, `latest`),
       ]);
 
-      const suggestions: Array<{value: string | null, label: string}> = [{
+      const suggestions: Array<{value: string | null, label: string }> = [{
         value: null,
         label: descriptor.range,
       }];
 
-      if (resolution !== descriptor.range) {
-        suggestions.push({
-          value: resolution,
-          label: colorizeVersionDiff(descriptor.range, resolution),
-        });
-      }
+      suggestions.push({
+        value: resolution,
+        label: colorizeVersionDiff(descriptor.range, resolution),
+      });
 
-      if (dependency !== resolution && dependency !== descriptor.range) {
-        suggestions.push({
-          value: dependency,
-          label: colorizeVersionDiff(descriptor.range, dependency),
-        });
-      }
+
+      suggestions.push({
+        value: dependency,
+        label: colorizeVersionDiff(descriptor.range, dependency),
+      });
+
 
       return suggestions;
+    };
+
+    const Promp = () => {
+      return (
+        <Box flexDirection="column">
+          <Color bold>Info:</Color>
+          <Box marginLeft={1}>
+          - Press <Color bold cyanBright>{`<up>`}</Color>/<Color bold cyanBright>{`<down>`}</Color> to select packages.
+          </Box>
+          <Box marginLeft={1}>
+          - Press <Color bold cyanBright>{`<left>`}</Color>/<Color bold cyanBright>{`<right>`}</Color> to select versions.
+          </Box>
+          <Box marginLeft={1}>
+          - Press <Color bold cyanBright>{`<enter>`}</Color> to install.
+          </Box>
+          <Box marginLeft={1}>
+          - Press <Color bold cyanBright>{`<ctrl+c>`}</Color> to abort.
+          </Box>
+          <Text bold>
+            <Color greenBright>?</Color> Pick the packages you want to upgrade.
+          </Text>
+        </Box>
+      );
+    };
+
+    const Header = () => {
+      return (
+        <Box flexDirection="row" marginLeft={4}>
+          <Box width={30}><Color bold underline gray>Name</Color></Box>
+          <Box width={15}><Color bold underline gray>Current</Color></Box>
+          <Box width={15}><Color bold underline gray>Range</Color></Box>
+          <Box width={15}><Color bold underline gray>Latest</Color></Box>
+        </Box>
+      );
     };
 
     const UpgradeEntry = ({active, descriptor}: {active: boolean, descriptor: Descriptor}) => {
@@ -144,8 +176,10 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       ]);
 
       return <Box>
-        <Box width={60}>
-          {structUtils.prettyIdent(configuration, descriptor)}
+        <Box width={30}>
+          <Text bold>
+            {structUtils.prettyIdent(configuration, descriptor)}
+          </Text>
         </Box>
         {suggestions !== null
           ? <ItemOptions active={active} options={suggestions} value={action} onChange={setAction} sizes={[15, 15, 15]} />
@@ -171,9 +205,8 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
 
       return <>
         <Box flexDirection={`column`}>
-          <Box textWrap={`wrap`} marginBottom={1}>
-            The following packages are direct dependencies of your project. Select those you want to upgrade, then press enter. Press ctrl-C to abort at any time:
-          </Box>
+          <Promp/>
+          <Header/>
           <ScrollableItems radius={10} children={sortedDependencies.map(descriptor => {
             return <UpgradeEntry key={descriptor.descriptorHash} active={false} descriptor={descriptor} />;
           })} />
