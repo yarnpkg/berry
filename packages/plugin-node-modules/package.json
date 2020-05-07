@@ -17,7 +17,7 @@
     "@yarnpkg/core": "^2.0.0-rc.27"
   },
   "devDependencies": {
-    "@types/micromatch": "^3.1.0",
+    "@types/micromatch": "^4.0.1",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33",
     "@yarnpkg/core": "workspace:^2.0.0-rc.27",
     "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.15"
