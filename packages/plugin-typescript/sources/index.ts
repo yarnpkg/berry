@@ -38,7 +38,7 @@ const afterWorkspaceDependencyAddition = async (
   const request = structUtils.makeDescriptor(structUtils.makeIdent(`types`, typesName), `unknown`);
   const suggestions = await suggestUtils.getSuggestedDescriptors(request, {workspace, project, cache, target, modifier, strategies});
 
-  let selected: Descriptor | null;
+  let selected: Descriptor;
   let askedQuestions = false;
 
   const nonNullSuggestions = suggestions.filter(suggestion => suggestion.descriptor !== null);
@@ -46,7 +46,7 @@ const afterWorkspaceDependencyAddition = async (
     return;
 
   if (nonNullSuggestions.length === 1) {
-    selected = nonNullSuggestions[0].descriptor;
+    selected = nonNullSuggestions[0].descriptor!;
   } else {
     askedQuestions = true;
     ({answer: selected} = await prompt({
@@ -63,9 +63,6 @@ const afterWorkspaceDependencyAddition = async (
       }),
     }));
   }
-
-  if (selected === null)
-    return;
 
   if (askedQuestions)
     process.stdout.write(`\n`);
