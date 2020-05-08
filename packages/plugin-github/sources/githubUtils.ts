@@ -35,13 +35,21 @@ export function parseGithubUrl(urlStr: string): ParsedGithubUrl {
   if (!match)
     throw new Error(invalidGithubUrlMessage(urlStr));
 
-  const [, auth, username, reponame, treeish] = match;
+  let [, auth, username, reponame, treeish = `master`] = match;
 
-  // The URLs have already been normalized by `gitUtils.resolveUrl`,
-  // so it's certain that the `commit` querystring parameter exists
-  const {commit} = querystring.parse(treeish);
+  const {commit} = querystring.parse(treeish) as {commit?: string};
 
-  return {auth, username, reponame, treeish: commit as string};
+  treeish =
+    // New style:
+    // The URLs have already been normalized by `gitUtils.resolveUrl`,
+    // so it's certain in the context of the `GithubFetcher`
+    // that the `commit` querystring parameter exists
+    commit
+    // Old style:
+    // Shouldn't ever be needed by the GithubFetcher
+    || treeish.replace(/[^:]*:/, ``);
+
+  return {auth, username, reponame, treeish};
 }
 
 export function invalidGithubUrlMessage(url: string): string {
