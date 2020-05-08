@@ -7,7 +7,7 @@ import {renderForm, SubmitInjectedComponent}                                    
 import {suggestUtils}                                                                                                      from '@yarnpkg/plugin-essentials';
 import {Command, Usage}                                                                                                    from 'clipanion';
 import {diffWords}                                                                                                         from 'diff';
-import {Box, Text, Color}                                                                                                  from 'ink';
+import {Box, Color, Text}                                                                                                  from 'ink';
 import React, {useEffect, useState}                                                                                        from 'react';
 import semver                                                                                                              from 'semver';
 
@@ -109,7 +109,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         fetchUpdatedDescriptor(descriptor, descriptor.range, `latest`),
       ]);
 
-      const suggestions: Array<{value: string | null, label: string }> = [{
+      const suggestions: Array<{value: string | null, label: string}> = [{
         value: null,
         label: descriptor.range,
       }];
@@ -128,11 +128,10 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         });
       }
 
-
       return suggestions;
     };
 
-    const Promp = () => {
+    const Prompt = () => {
       return (
         <Box flexDirection="column">
           <Color bold>Info:</Color>
@@ -207,7 +206,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
 
       return <>
         <Box flexDirection={`column`}>
-          <Promp/>
+          <Prompt/>
           <Header/>
           <ScrollableItems radius={10} children={sortedDependencies.map(descriptor => {
             return <UpgradeEntry key={descriptor.descriptorHash} active={false} descriptor={descriptor} />;
