@@ -1,3 +1,5 @@
-undecided:
-  - "@yarnpkg/plugin-interactive-tools"
+releases:
+  "@yarnpkg/plugin-interactive-tools": prerelease
+
+declined:
   - "@yarnpkg/libui"
