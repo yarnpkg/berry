@@ -386,6 +386,7 @@ describe(`Dragon tests`, () => {
 
         await expect(run(`install`)).resolves.toBeTruthy();
 
+        // All fixtures export/reexport `dragon-test-7-c` version, we expect that version 1.0.0 will be used by both `dragon-test-7-b` instances
         await expect(source(`require('dragon-test-7-a') + ':' + require('dragon-test-7-d')`)).resolves.toEqual(`1.0.0:1.0.0`);
 
         // C@X should not be hoisted from . -> A -> B@X
