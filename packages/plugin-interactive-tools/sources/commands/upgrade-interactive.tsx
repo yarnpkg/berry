@@ -158,7 +158,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     const Header = () => {
       return (
         <Box flexDirection="row" marginLeft={4}>
-          <Box width={45}><Color bold underline gray>Package</Color></Box>
+          <Box width={45}><Color bold underline gray>Name</Color></Box>
           <Box width={15}><Color bold underline gray>Current</Color></Box>
           <Box width={15}><Color bold underline gray>Range/Latest</Color></Box>
         </Box>
