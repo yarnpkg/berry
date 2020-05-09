@@ -147,17 +147,18 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           <Box marginLeft={1}>
           - Press <Color bold cyanBright>{`<ctrl+c>`}</Color> to abort.
           </Box>
-          <Text bold>
-            <Color greenBright>?</Color> Pick the packages you want to upgrade.
-          </Text>
         </Box>
       );
     };
 
     const Header = () => {
       return (
-        <Box flexDirection="row" marginLeft={4}>
-          <Box width={45}><Color bold underline gray>Name</Color></Box>
+        <Box flexDirection="row">
+          <Box width={49}>
+            <Text bold>
+              <Color greenBright>?</Color> Pick the packages you want to upgrade.
+            </Text>
+          </Box>
           <Box width={15}><Color bold underline gray>Current</Color></Box>
           <Box width={15}><Color bold underline gray>Range/Latest</Color></Box>
         </Box>
