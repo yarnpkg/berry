@@ -27,9 +27,13 @@ export async function copyPromise<P1 extends Path, P2 extends Path>(destinationF
   for (const operation of operations)
     await operation();
 
+  const updateTime = typeof destinationFs.lutimesPromise === 'function'
+    ? destinationFs.lutimesPromise
+    : destinationFs.utimesPromise;
+
   for (const [p, atime, mtime] of lutimes) {
     // await destinationFs.utimesPromise(p, atime, mtime);
-    return await (typeof destinationFs.lutimesPromise === 'function') ? destinationFs.lutimesPromise!(p, atime, mtime) : destinationFs.utimesPromise!(p, atime, mtime)
+    await updateTime!(p, atime, mtime)
   }
 }
 
