@@ -187,3 +187,9 @@ Yarn is a command line tool used to manage programming environments. Written in 
 ### Zero-Install
 
 See also: [Zero-Install](/features/zero-installs)
+
+### Build Scripts
+
+Refers to tasks executed following package installations; either as postinstall scripts or a binding.gyp file
+
+See also: [Lifecycle Scripts](/advanced/lifecycle-scripts)
