@@ -910,6 +910,14 @@ describe(`Shell`, () => {
           await xfs.writeFilePromise(ppath.join(tmpDir, `fooyb1.txt` as Filename), ``);
 
           await expect(bufferResult(
+            `echo (ab|xy)(12|89).txt`,
+            [],
+            {cwd: tmpDir}
+          )).resolves.toMatchObject({
+            stdout: `ab12.txt xy89.txt\n`,
+          });
+
+          await expect(bufferResult(
             `echo foo(x!(a)|y!(b))1.txt`,
             [],
             {cwd: tmpDir}
