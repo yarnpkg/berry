@@ -18,7 +18,7 @@ export async function copyPromise<P1 extends Path, P2 extends Path>(destinationF
   const normalizedSource = sourceFs.pathUtils.normalize(source);
 
   const operations: Operations = [];
-  const lutimes: LlUTimes<P1> = [];
+  const lutimes: LUTimes<P1> = [];
 
   await destinationFs.mkdirpPromise(destination);
 
