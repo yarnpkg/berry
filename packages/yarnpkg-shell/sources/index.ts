@@ -1,4 +1,4 @@
-import {PortablePath, npath, ppath, xfs, FakeFS}                                     from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, xfs, FakeFS, PosixFS, NativePath}                from '@yarnpkg/fslib';
 import {EnvSegment}                                                                  from '@yarnpkg/parsers';
 import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
 import fastGlob                                                                      from 'fast-glob';
@@ -9,7 +9,7 @@ import {Handle, ProcessImplementation, ProtectedStream, Stdio, start}           
 
 export type Glob = {
   isGlobPattern: (arg: string) => boolean,
-  match: (pattern: string, options: {cwd: PortablePath, fs?: FakeFS<PortablePath>}) => Promise<Array<string>>,
+  match: (pattern: string, options: {cwd: NativePath, fs?: FakeFS<NativePath>}) => Promise<Array<string>>,
 };
 
 export type UserOptions = {
@@ -277,7 +277,7 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
             } break;
 
             case `glob`: {
-              const matches = await opts.glob.match(segment.pattern, {cwd: state.cwd});
+              const matches = await opts.glob.match(segment.pattern, {cwd: npath.fromPortablePath(state.cwd)});
               if (!matches.length)
                 throw new Error(`No file matches found: "${segment.pattern}". Note: Glob patterns currently only support files that exist on the filesystem (Help Wanted)`);
 
@@ -654,8 +654,8 @@ export async function execute(command: string, args: Array<string> = [], {
   variables = {},
   glob = {
     isGlobPattern: fastGlob.isDynamicPattern,
-    // @ts-ignore: `fs` is based on `PortablePath`
-    match: (pattern: string, {cwd, fs = xfs}) => fastGlob(pattern, {cwd, fs}),
+    // @ts-ignore: `fs` is based on `NativePath`
+    match: (pattern: string, {cwd, fs = new PosixFS(xfs)}) => fastGlob(pattern, {cwd, fs}),
   },
 }: Partial<UserOptions> = {}) {
   const normalizedEnv: {[key: string]: string} = {};
