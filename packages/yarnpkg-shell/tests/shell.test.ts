@@ -659,16 +659,7 @@ describe(`Shell`, () => {
       it(`should support glob patterns with escape characters`, async () => {
         await xfs.mktempPromise(async tmpDir => {
           await xfs.writeFilePromise(ppath.join(tmpDir, `a{c,d}b.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `a*b.txt` as Filename), ``);
           await xfs.writeFilePromise(ppath.join(tmpDir, `a?b.txt` as Filename), ``);
-
-          await expect(bufferResult(
-            `echo a\\*b.txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `a*b.txt\n`,
-          });
 
           await expect(bufferResult(
             `echo a\\{c,d}b.txt`,
@@ -698,7 +689,7 @@ describe(`Shell`, () => {
           await xfs.writeFilePromise(ppath.join(tmpDir, `foo123.txt` as Filename), ``);
           await xfs.writeFilePromise(ppath.join(tmpDir, `BAR.txt` as Filename), ``);
           await xfs.writeFilePromise(ppath.join(tmpDir, `hello_world123.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `&434*)hello.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(tmpDir, `&434)hello.txt` as Filename), ``);
           await xfs.writeFilePromise(ppath.join(tmpDir, `😀.txt` as Filename), ``);
           await xfs.writeFilePromise(ppath.join(tmpDir, `__\n 👍w-ds^3�.txt` as Filename), ``);
 
@@ -723,7 +714,7 @@ describe(`Shell`, () => {
             [],
             {cwd: tmpDir}
           )).resolves.toMatchObject({
-            stdout: `&434*)hello.txt 123.txt BAR.txt abc.txt foo.txt foo123.txt hello_world123.txt\n`,
+            stdout: `&434)hello.txt 123.txt BAR.txt abc.txt foo.txt foo123.txt hello_world123.txt\n`,
           });
 
           await expect(bufferResult(
