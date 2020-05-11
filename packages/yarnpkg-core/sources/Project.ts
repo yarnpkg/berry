@@ -1331,6 +1331,9 @@ export class Project {
                   exitCode = 1;
                 }
 
+                stdout.end();
+                stderr.end();
+
                 if (exitCode === 0) {
                   nextBState.set(pkg.locatorHash, buildHash);
                   return true;
