@@ -1,6 +1,6 @@
 import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
 import {DEFAULT_COMPRESSION_LEVEL}                             from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                              from '@yarnpkg/parsers';
+import {parseSyml, stringifySyml, replaceEnvVariables}         from '@yarnpkg/parsers';
 import camelcase                                               from 'camelcase';
 import chalk                                                   from 'chalk';
 import {UsageError}                                            from 'clipanion';
@@ -825,6 +825,7 @@ export class Configuration {
           throw new UsageError(`Parse error when loading ${rcPath}; please check it's proper Yaml${tip}`);
         }
 
+        data = replaceEnvVariables(data);
         rcFiles.push({path: rcPath, cwd: currentCwd, data});
       }
 
@@ -840,7 +841,7 @@ export class Configuration {
 
     if (xfs.existsSync(homeRcFilePath)) {
       const content = await xfs.readFilePromise(homeRcFilePath, `utf8`);
-      const data = parseSyml(content) as any;
+      const data = replaceEnvVariables(parseSyml(content)) as any;
 
       return {path: homeRcFilePath, cwd: homeFolder, data};
     }
