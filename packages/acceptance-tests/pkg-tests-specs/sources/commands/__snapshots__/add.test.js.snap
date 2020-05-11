@@ -8,9 +8,19 @@ Object {
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
 ➤ YN0013: │ no-deps@npm:2.0.0 can't be found in the cache and will be fetched from the remote registry
-➤ YN0019: │ no-deps-npm-1.0.0-cf533b267a-3.zip appears to be unused - removing
+[
+  'no-deps@npm:2.0.0',
+  '/private/var/folders/2s/1qvdx9f97plgcgy4r6mr26x80000gn/T/xfs-b02aec8a/.yarn/cache/no-deps-npm-2.0.0-8c4f3f8395-108623ba32.zip',
+  '3/108623ba32cf1b5034a657f60dfa1f52b0f0014ed4de597a2f580be934b844304c19b91af8072ae82b1f4f8baa5605d1166678d20a46558442239b0747f0e110'
+]
+➤ YN0019: │ no-deps-npm-1.0.0-cf533b267a-492bfce9ad.zip appears to be unused - removing
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
+[
+  'no-deps@npm:2.0.0',
+  '/private/var/folders/2s/1qvdx9f97plgcgy4r6mr26x80000gn/T/xfs-b02aec8a/.yarn/cache/no-deps-npm-2.0.0-8c4f3f8395-108623ba32.zip',
+  '3/108623ba32cf1b5034a657f60dfa1f52b0f0014ed4de597a2f580be934b844304c19b91af8072ae82b1f4f8baa5605d1166678d20a46558442239b0747f0e110'
+]
 ➤ YN0000: └ Completed
 ➤ YN0000: Done
 ",

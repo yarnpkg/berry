@@ -189,6 +189,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
 
   // Settings related to the package manager internal names
+  cacheKeyOverride: {
+    description: `A global cache key override; used only for test purposes`,
+    type: SettingsType.STRING,
+    default: null,
+  },
   globalFolder: {
     description: `Folder where are stored the system-wide settings`,
     type: SettingsType.ABSOLUTE_PATH,
