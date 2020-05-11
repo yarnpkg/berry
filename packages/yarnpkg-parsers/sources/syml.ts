@@ -150,14 +150,14 @@ export function parseSyml(source: string) {
   return parseViaJsYaml(source);
 }
 
-export function replaceEnvVariables(source: string) {
+export function replaceEnvVariables(source: Object) {
   const sourceAsString = JSON.stringify(source);
   const splitByVariables = sourceAsString.split(/(\${[\w\d-:]+})/);
   const replacedVariables =  splitByVariables.map(stringPart => {
     const matched = stringPart.match(/^\${(?<variableName>[\d\w_]+)(?<colon>:)?-?(?<fallback>[^}]+)?}$/);
     if (!matched) return stringPart;
 
-    const {variableName, colon, fallback} = matched.groups;
+    const {variableName, colon, fallback} = matched.groups || {};
     const variableExist = Object.prototype.hasOwnProperty.call(process.env, variableName);
     const variableValue = process.env[variableName];
 
