@@ -2,7 +2,9 @@ import {xfs, ppath, Filename, PortablePath} from '@yarnpkg/fslib';
 import {execute, UserOptions}               from '@yarnpkg/shell';
 import {PassThrough}                        from 'stream';
 
-const ifNotWin32It = process.platform !== `win32`
+const isNotWin32 = process.platform !== `win32`;
+
+const ifNotWin32It = isNotWin32
   ? it
   : it.skip;
 
@@ -658,8 +660,30 @@ describe(`Shell`, () => {
 
       it(`should support glob patterns with escape characters`, async () => {
         await xfs.mktempPromise(async tmpDir => {
+          if (isNotWin32) {
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a*b.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a?b.txt` as Filename), ``);
+          }
+
           await xfs.writeFilePromise(ppath.join(tmpDir, `a{c,d}b.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `a?b.txt` as Filename), ``);
+
+          if (isNotWin32) {
+            await expect(bufferResult(
+              `echo a\\*b.txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `a*b.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo a\\?b.txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `a?b.txt\n`,
+            });
+          }
 
           await expect(bufferResult(
             `echo a\\{c,d}b.txt`,
@@ -667,14 +691,6 @@ describe(`Shell`, () => {
             {cwd: tmpDir}
           )).resolves.toMatchObject({
             stdout: `a{c,d}b.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo a\\?b.txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `a?b.txt\n`,
           });
         });
       });
@@ -691,7 +707,6 @@ describe(`Shell`, () => {
           await xfs.writeFilePromise(ppath.join(tmpDir, `hello_world123.txt` as Filename), ``);
           await xfs.writeFilePromise(ppath.join(tmpDir, `&434)hello.txt` as Filename), ``);
           await xfs.writeFilePromise(ppath.join(tmpDir, `😀.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `__\n 👍w-ds^3�.txt` as Filename), ``);
 
           await expect(bufferResult(
             `echo +([[:alnum:]]).txt`,

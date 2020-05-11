@@ -281,7 +281,7 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
               if (!matches.length)
                 throw new Error(`No file matches found: "${segment.pattern}". Note: Glob patterns currently only support files that exist on the filesystem (Help Wanted)`);
 
-              for (const match of matches) {
+              for (const match of matches.sort()) {
                 pushAndClose(match);
               }
             } break;
