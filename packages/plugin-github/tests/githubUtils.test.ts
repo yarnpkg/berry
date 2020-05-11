@@ -21,6 +21,12 @@ const validScenarios = [{
 }, {
   url: `https://github.com/owner/repo.git#abcdef`,
   auth: undefined, username: `owner`, reponame: `repo`, treeish: `abcdef`,
+}, {
+  url: `https://github.com/owner/repo.git#commit=abcdef`,
+  auth: undefined, username: `owner`, reponame: `repo`, treeish: `abcdef`,
+}, {
+  url: `https://github.com/owner/repo.git#commit=abcdef&workspace=foobar`,
+  auth: undefined, username: `owner`, reponame: `repo`, treeish: `abcdef`,
 }];
 
 const invalidScenarios = [{
