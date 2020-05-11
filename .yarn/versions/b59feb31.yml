@@ -1,8 +1,10 @@
 releases:
   "@yarnpkg/cli": prerelease
+  "@yarnpkg/core": prerelease
   "@yarnpkg/fslib": prerelease
 
 declined:
+  - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
   - "@yarnpkg/plugin-essentials"
@@ -26,7 +28,6 @@ declined:
   - "@yarnpkg/plugin-workspace-tools"
   - vscode-zipfs
   - "@yarnpkg/builder"
-  - "@yarnpkg/core"
   - "@yarnpkg/doctor"
   - "@yarnpkg/json-proxy"
   - "@yarnpkg/pnp"
