@@ -123,6 +123,8 @@ export default class BuildPluginCommand extends Command {
       });
     });
 
+    report.reportSeparator();
+
     if (buildErrors !== null) {
       report.reportError(MessageName.EXCEPTION, `${chalk.red(`✗`)} Failed to build ${prettyName}:`);
       report.reportError(MessageName.EXCEPTION, `${buildErrors}`);

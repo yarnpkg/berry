@@ -157,6 +157,8 @@ export default class BuildBundleCommand extends Command {
       });
     });
 
+    report.reportSeparator();
+
     if (buildErrors) {
       report.reportError(MessageName.EXCEPTION, `${chalk.red(`✗`)} Failed to build the CLI:`);
       report.reportError(MessageName.EXCEPTION, `${buildErrors}`);
@@ -164,8 +166,11 @@ export default class BuildBundleCommand extends Command {
       report.reportInfo(null, `${chalk.green(`✓`)} Done building the CLI!`);
       report.reportInfo(null, `${chalk.cyan(`?`)} Bundle path: ${configuration.format(output, FormatType.PATH)}`);
       report.reportInfo(null, `${chalk.cyan(`?`)} Bundle size: ${configuration.format(filesize(fs.statSync(output).size), FormatType.NUMBER)}`);
+
+      report.reportSeparator();
+
       for (const plugin of plugins) {
-        report.reportInfo(null, `    ${chalk.yellow(`→`)} ${structUtils.prettyIdent(configuration, structUtils.parseIdent(plugin))}`);
+        report.reportInfo(null, `${chalk.yellow(`→`)} ${structUtils.prettyIdent(configuration, structUtils.parseIdent(plugin))}`);
       }
     }
 
