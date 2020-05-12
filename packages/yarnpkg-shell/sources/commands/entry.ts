@@ -35,7 +35,7 @@ export default class EntryCommand extends Command {
       `$0 echo '*.js'`,
     ], [
       `Run a command with a redirection`,
-      `$0 echo 'Hello World > hello.txt'`,
+      `$0 echo Hello World '>' hello.txt`,
     ], [
       `Run a command with an escaped glob pattern (The double escape is needed in Unix shells)`,
       `$0 echo '"*.js"'`,
