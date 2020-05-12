@@ -34,14 +34,14 @@ export const packageExtensions: Array<[string, any]> = [
     },
   }],
   // https://github.com/sindresorhus/got/pull/1125
-  [`got@*`, {
+  [`got@<11`, {
     dependencies: {
       [`@types/responselike`]: `^1.0.0`,
       [`@types/keyv`]: `^3.1.1`,
     },
   }],
   // https://github.com/szmarczak/cacheable-lookup/pull/12
-  [`cacheable-lookup@*`, {
+  [`cacheable-lookup@<4.1.2`, {
     dependencies: {
       [`@types/keyv`]: `^3.1.1`,
     },
