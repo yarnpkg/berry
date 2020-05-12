@@ -11,6 +11,7 @@ import clipanionEntry                     from './commands/entries/clipanion';
 import helpEntry                          from './commands/entries/help';
 import runEntry                           from './commands/entries/run';
 import versionEntry                       from './commands/entries/version';
+import exec                               from './commands/exec';
 import install                            from './commands/install';
 import link                               from './commands/link';
 import node                               from './commands/node';
@@ -82,6 +83,7 @@ const plugin: Plugin = {
     add,
     bin,
     config,
+    exec,
     install,
     link,
     node,
