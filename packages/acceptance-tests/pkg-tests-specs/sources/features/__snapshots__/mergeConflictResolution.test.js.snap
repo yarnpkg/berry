@@ -6,6 +6,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 
 __metadata:
   version: 4
+  cacheKey: 3
 
 \\"no-deps@npm:*\\":
 <<<<<<< HEAD
@@ -53,6 +54,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 
 __metadata:
   version: 4
+  cacheKey: 3
 
 <<<<<<< HEAD
 no-deps@*:
