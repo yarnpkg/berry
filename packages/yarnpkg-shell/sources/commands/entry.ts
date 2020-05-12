@@ -12,7 +12,7 @@ export default class EntryCommand extends Command {
   args: Array<string> = [];
 
   @Command.String(`--cwd`)
-  cwd?: string;
+  cwd: string = process.cwd();
 
   static usage: Usage = {
     description: `run a command using yarn's portable shell`,
@@ -46,8 +46,6 @@ export default class EntryCommand extends Command {
   };
 
   async execute() {
-    const cwd = this.cwd ?? process.cwd();
-
     // We assume that all arguments have to be processed by our shell,
     // not by the user's shell
     const command = this.args.length > 0
@@ -55,7 +53,7 @@ export default class EntryCommand extends Command {
       : this.commandName;
 
     return await execute(command, [], {
-      cwd: npath.toPortablePath(cwd),
+      cwd: npath.toPortablePath(this.cwd),
       stdin: this.context.stdin,
       stdout: this.context.stdout,
       stderr: this.context.stderr,
