@@ -15,6 +15,7 @@ const VALID_PATTERNS = [
   `https://github.com/TooTallNate/util-deprecate.git#semver:v1.0.0`,
   `https://github.com/TooTallNate/util-deprecate.git#master`,
   `https://github.com/TooTallNate/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d`,
+  `https://github.com/TooTallNate/util-deprecate/tarball/b3562c2798507869edb767da869cd7b85487726d`,
   `git://github.com/TooTallNate/util-deprecate.git#v1.0.1`,
   `git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1`,
   `ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1`,

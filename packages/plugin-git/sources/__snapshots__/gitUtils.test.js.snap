@@ -32,12 +32,14 @@ exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-
 
 exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate.git#v1.0.0 1`] = `"https://github.com/TooTallNate/util-deprecate.git#v1.0.0"`;
 
+exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate/tarball/b3562c2798507869edb767da869cd7b85487726d 1`] = `"https://github.com/TooTallNate/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d"`;
+
 exports[`gitUtils should properly normalize ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1 1`] = `"ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
 
 exports[`gitUtils should properly split GitHubOrg/foo-bar.js 1`] = `
 Object {
   "extra": Object {},
-  "repo": "GitHubOrg/foo-bar.js",
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
   "treeish": Object {
     "protocol": "head",
     "request": "master",
@@ -48,7 +50,7 @@ Object {
 exports[`gitUtils should properly split GitHubOrg/foo-bar.js#commit:hash 1`] = `
 Object {
   "extra": Object {},
-  "repo": "GitHubOrg/foo-bar.js",
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
   "treeish": Object {
     "protocol": "commit",
     "request": "hash",
@@ -59,7 +61,7 @@ Object {
 exports[`gitUtils should properly split GitHubOrg/foo-bar.js#commit=hash 1`] = `
 Object {
   "extra": Object {},
-  "repo": "GitHubOrg/foo-bar.js",
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
   "treeish": Object {
     "protocol": "commit",
     "request": "hash",
@@ -72,7 +74,7 @@ Object {
   "extra": Object {
     "workspace": "foo",
   },
-  "repo": "GitHubOrg/foo-bar.js",
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
   "treeish": Object {
     "protocol": "commit",
     "request": "hash",
@@ -83,7 +85,7 @@ Object {
 exports[`gitUtils should properly split GitHubOrg/foo-bar.js#hash 1`] = `
 Object {
   "extra": Object {},
-  "repo": "GitHubOrg/foo-bar.js",
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
   "treeish": Object {
     "protocol": null,
     "request": "hash",
@@ -94,7 +96,7 @@ Object {
 exports[`gitUtils should properly split GitHubOrg/foo-bar.js#tag=hello 1`] = `
 Object {
   "extra": Object {},
-  "repo": "GitHubOrg/foo-bar.js",
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
   "treeish": Object {
     "protocol": "tag",
     "request": "hello",
@@ -107,7 +109,7 @@ Object {
   "extra": Object {
     "workspace": "foo",
   },
-  "repo": "GitHubOrg/foo-bar.js",
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
   "treeish": Object {
     "protocol": "head",
     "request": "master",
@@ -118,7 +120,7 @@ Object {
 exports[`gitUtils should properly split GitHubOrg/foo2bar.js 1`] = `
 Object {
   "extra": Object {},
-  "repo": "GitHubOrg/foo2bar.js",
+  "repo": "https://github.com/GitHubOrg/foo2bar.js.git",
   "treeish": Object {
     "protocol": "head",
     "request": "master",
@@ -151,7 +153,7 @@ Object {
 exports[`gitUtils should properly split github:GitHubOrg/foo-bar.js 1`] = `
 Object {
   "extra": Object {},
-  "repo": "github:GitHubOrg/foo-bar.js",
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
   "treeish": Object {
     "protocol": "head",
     "request": "master",
@@ -162,7 +164,7 @@ Object {
 exports[`gitUtils should properly split github:GitHubOrg/foo-bar.js#hash 1`] = `
 Object {
   "extra": Object {},
-  "repo": "github:GitHubOrg/foo-bar.js",
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
   "treeish": Object {
     "protocol": null,
     "request": "hash",
@@ -210,6 +212,17 @@ Object {
   "treeish": Object {
     "protocol": null,
     "request": "v1.0.0",
+  },
+}
+`;
+
+exports[`gitUtils should properly split https://github.com/TooTallNate/util-deprecate/tarball/b3562c2798507869edb767da869cd7b85487726d 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/TooTallNate/util-deprecate.git",
+  "treeish": Object {
+    "protocol": null,
+    "request": "b3562c2798507869edb767da869cd7b85487726d",
   },
 }
 `;

@@ -189,6 +189,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
 
   // Settings related to the package manager internal names
+  cacheKeyOverride: {
+    description: `A global cache key override; used only for test purposes`,
+    type: SettingsType.STRING,
+    default: null,
+  },
   globalFolder: {
     description: `Folder where are stored the system-wide settings`,
     type: SettingsType.ABSOLUTE_PATH,
@@ -522,8 +527,12 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
       if (configuration.projectCwd === null) {
         if (ppath.isAbsolute(definition.default)) {
           return ppath.normalize(definition.default);
-        } else if (definition.isNullable || definition.default === null) {
+        } else if (definition.isNullable) {
           return null;
+        } else {
+          // Reached when a relative path is the default but the current
+          // context is evaluated outside of a Yarn project
+          return undefined;
         }
       } else {
         if (Array.isArray(definition.default)) {

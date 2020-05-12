@@ -288,8 +288,10 @@ export class ZipFS extends BasePortableFakeFS {
     if (!this.ready)
       throw errors.EBUSY(`archive closed, close`);
 
-    if (this.readOnly)
-      return this.discardAndClose();
+    if (this.readOnly) {
+      this.discardAndClose();
+      return;
+    }
 
     const previousMod = this.baseFs.existsSync(this.path)
       ? this.baseFs.statSync(this.path).mode & 0o777
@@ -953,8 +955,10 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   mkdirSync(p: PortablePath, {mode = 0o755, recursive = false}: MkdirOptions = {}) {
-    if (recursive)
-      return this.mkdirpSync(p, {chmod: mode});
+    if (recursive) {
+      this.mkdirpSync(p, {chmod: mode});
+      return;
+    }
 
     if (this.readOnly)
       throw errors.EROFS(`mkdir '${p}'`);

@@ -39,7 +39,7 @@ export default class SetVersionCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     if (configuration.get(`yarnPath`) && this.onlyIfNeeded)
-      return;
+      return 0;
 
     let bundleUrl: string;
     if (this.version === `latest` || this.version === `berry`)

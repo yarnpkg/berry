@@ -78,6 +78,10 @@ export const packToStream = (
         header.name = ppath.relative(PortablePath.root, header.name);
       }
 
+      header.uid = 1;
+      header.gid = 1;
+      header.mtime = new Date(1589272747277);
+
       return header;
     },
   });

@@ -23,7 +23,7 @@ const plugin: Plugin<CoreHooks & PatchHooks> = {
     getBuiltinPatch: async (project, name) => {
       const TAG = `compat/`;
       if (!name.startsWith(TAG))
-        return;
+        return undefined;
 
       const ident = structUtils.parseIdent(name.slice(TAG.length));
       const patch = PATCHES.get(ident.identHash);

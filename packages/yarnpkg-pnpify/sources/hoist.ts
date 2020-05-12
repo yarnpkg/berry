@@ -147,7 +147,7 @@ const getHoistedDependencies = (rootNode: HoisterWorkTree): Map<PackageName, Hoi
  */
 const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath: Set<Locator>, parentAncestorDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, options: InternalHoistOptions, seenNodes: Set<HoisterWorkTree> = new Set()) => {
   if (seenNodes.has(rootNode))
-    return 0;
+    return;
   seenNodes.add(rootNode);
 
   const ancestorDependencies = new Map(parentAncestorDependencies);

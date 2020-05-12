@@ -10,6 +10,14 @@ title: "Lexicon"
 
 <!-- Note that all entries within this file must be alphabetically sorted -->
 
+### Build Scripts
+
+Refers to tasks executed right after the packages got installed; typically the `postinstall` scripts configured in the [`scripts` field](/configuration/manifest#scripts) from the manifest.
+
+Build scripts should be left to native dependencies, there is virtually no reason for pure JavaScript packages to use them. They have [significant side effects](/advanced/lifecycle-scripts#a-note-about-postinstall) on your users projects, so weight careful whether you really need them.
+
+See also: [Lifecycle Scripts](/advanced/lifecycle-scripts)
+
 ### Dependency
 
 A dependency (listed in the [`dependencies` field](/configuration/manifest#dependencies) of the manifest) describes a relationship between two packages.

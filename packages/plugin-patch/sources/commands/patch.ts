@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                                   from '@yarnpkg/cli';
-import {Cache, Configuration, Project, structUtils, StreamReport, MessageName} from '@yarnpkg/core';
-import {npath}                                                                 from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                                            from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                              from '@yarnpkg/cli';
+import {Cache, Configuration, Project, structUtils, StreamReport, MessageName, miscUtils} from '@yarnpkg/core';
+import {npath}                                                                            from '@yarnpkg/fslib';
+import {Command, Usage, UsageError}                                                       from 'clipanion';
 
-import * as patchUtils                                                         from '../patchUtils';
+import * as patchUtils                                                                    from '../patchUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PatchCommand extends BaseCommand {
@@ -30,8 +30,14 @@ export default class PatchCommand extends BaseCommand {
     let locator = structUtils.parseLocator(this.package);
 
     if (locator.reference === `unknown`) {
-      const candidateLocators = [...project.storedPackages.values()].filter(pkg => {
-        return pkg.identHash === locator.identHash;
+      const candidateLocators = miscUtils.mapAndFilter([...project.storedPackages.values()], pkg => {
+        if (pkg.identHash !== locator.identHash)
+          return miscUtils.mapAndFilter.skip;
+
+        if (structUtils.isVirtualLocator(pkg))
+          return miscUtils.mapAndFilter.skip;
+
+        return pkg;
       });
 
       if (candidateLocators.length === 0)

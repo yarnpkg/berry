@@ -1,4 +1,4 @@
-import {xfs} from "@yarnpkg/fslib";
+import {xfs} from '@yarnpkg/fslib';
 
 describe(`Mirror`, () => {
   describe(`enableMirror`, () => {

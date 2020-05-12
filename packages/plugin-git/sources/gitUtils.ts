@@ -17,6 +17,8 @@ const gitPatterns = [
   /^(?:git\+)?https?:[^#]+\/[^#]+\.git(?:#.*)?$/,
   /^git@[^#]+\/[^#]+\.git(?:#.*)?$/,
   /^(?:github:|https:\/\/github\.com\/)?(?!\.{1,2}\/)([a-zA-Z._0-9-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z._0-9-]+?)(?:\.git)?(?:#.*)?$/,
+  // GitHub `/tarball/` URLs
+  /^https:\/\/github\.com\/(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)\/tarball\/(.+)?$/,
 ];
 
 export enum TreeishProtocols {
@@ -45,6 +47,8 @@ export type RepoUrlParts = {
 };
 
 export function splitRepoUrl(url: string): RepoUrlParts {
+  url = normalizeRepoUrl(url);
+
   const hashIndex = url.indexOf(`#`);
   if (hashIndex === -1) {
     return {
@@ -125,6 +129,9 @@ export function normalizeRepoUrl(url: string) {
 
   // We support this as an alias to GitHub repositories
   url = url.replace(/^(?:github:|https:\/\/github\.com\/)?(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)(?:\.git)?(#.*)?$/, `https://github.com/$1/$2.git$3`);
+
+  // We support GitHub `/tarball/` URLs
+  url = url.replace(/^https:\/\/github\.com\/(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)\/tarball\/(.+)?$/, `https://github.com/$1/$2.git#$3`);
 
   return url;
 }
