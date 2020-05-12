@@ -10,7 +10,7 @@ export type CopyOptions = {
 export type Operations =
   Array<() => Promise<void>>;
 
-export type UTimes<P extends Path> =
+export type LUTimes<P extends Path> =
   Array<[P, Date, Date]>;
 
 export async function copyPromise<P1 extends Path, P2 extends Path>(destinationFs: FakeFS<P1>, destination: P1, sourceFs: FakeFS<P2>, source: P2, opts: CopyOptions) {
@@ -18,37 +18,42 @@ export async function copyPromise<P1 extends Path, P2 extends Path>(destinationF
   const normalizedSource = sourceFs.pathUtils.normalize(source);
 
   const operations: Operations = [];
-  const utimes: UTimes<P1> = [];
+  const lutimes: LUTimes<P1> = [];
 
   await destinationFs.mkdirpPromise(destination);
 
-  await copyImpl(operations, utimes, destinationFs, normalizedDestination, sourceFs, normalizedSource, opts);
+  await copyImpl(operations, lutimes, destinationFs, normalizedDestination, sourceFs, normalizedSource, opts);
 
   for (const operation of operations)
     await operation();
 
-  for (const [p, atime, mtime] of utimes) {
-    await destinationFs.utimesPromise(p, atime, mtime);
+  const updateTime = typeof destinationFs.lutimesPromise === `function`
+    ? destinationFs.lutimesPromise.bind(destinationFs)
+    : destinationFs.utimesPromise.bind(destinationFs);
+
+  for (const [p, atime, mtime] of lutimes) {
+    // await destinationFs.utimesPromise(p, atime, mtime);
+    await updateTime!(p, atime, mtime);
   }
 }
 
-async function copyImpl<P1 extends Path, P2 extends Path>(operations: Operations, utimes: UTimes<P1>, destinationFs: FakeFS<P1>, destination: P1, sourceFs: FakeFS<P2>, source: P2, opts: CopyOptions) {
+async function copyImpl<P1 extends Path, P2 extends Path>(operations: Operations, lutimes: LUTimes<P1>, destinationFs: FakeFS<P1>, destination: P1, sourceFs: FakeFS<P2>, source: P2, opts: CopyOptions) {
   const destinationStat = await maybeLStat(destinationFs, destination);
   const sourceStat = await sourceFs.lstatPromise(source);
 
-  utimes.push([destination, sourceStat.atime, sourceStat.mtime]);
+  lutimes.push([destination, sourceStat.atime, sourceStat.mtime]);
 
   switch (true) {
     case sourceStat.isDirectory(): {
-      await copyFolder(operations, utimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+      await copyFolder(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
     } break;
 
     case sourceStat.isFile(): {
-      await copyFile(operations, utimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+      await copyFile(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
     } break;
 
     case sourceStat.isSymbolicLink(): {
-      await copySymlink(operations, utimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+      await copySymlink(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
     } break;
 
     default: {
@@ -67,7 +72,7 @@ async function maybeLStat<P extends Path>(baseFs: FakeFS<P>, p: P) {
   }
 }
 
-async function copyFolder<P1 extends Path, P2 extends Path>(operations: Operations, utimes: UTimes<P1>, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions) {
+async function copyFolder<P1 extends Path, P2 extends Path>(operations: Operations, lutimes: LUTimes<P1>, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions) {
   if (destinationStat !== null && !destinationStat.isDirectory()) {
     if (opts.overwrite) {
       operations.push(async () => destinationFs.removePromise(destination));
@@ -83,11 +88,11 @@ async function copyFolder<P1 extends Path, P2 extends Path>(operations: Operatio
   const entries = await sourceFs.readdirPromise(source);
 
   await Promise.all(entries.map(async entry => {
-    await copyImpl(operations, utimes, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
+    await copyImpl(operations, lutimes, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
   }));
 }
 
-async function copyFile<P1 extends Path, P2 extends Path>(operations: Operations, utimes: UTimes<P1>, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions) {
+async function copyFile<P1 extends Path, P2 extends Path>(operations: Operations, lutimes: LUTimes<P1>, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions) {
   if (destinationStat !== null) {
     if (opts.overwrite) {
       operations.push(async () => destinationFs.removePromise(destination));
@@ -104,7 +109,7 @@ async function copyFile<P1 extends Path, P2 extends Path>(operations: Operations
   }
 }
 
-async function copySymlink<P1 extends Path, P2 extends Path>(operations: Operations, utimes: UTimes<P1>, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions) {
+async function copySymlink<P1 extends Path, P2 extends Path>(operations: Operations, lutimes: LUTimes<P1>, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions) {
   if (destinationStat !== null) {
     if (opts.overwrite) {
       operations.push(async () => destinationFs.removePromise(destination));
