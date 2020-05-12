@@ -143,6 +143,9 @@ describe(`Commands`, () => {
           archiveName2 = zipFiles2[0];
         }
 
+        // We need to replace the hash in the cache filename, otherwise the cache just won't find the archive
+        archiveName1 = archiveName1.replace(/[^-]+$/, archiveName2.match(/[^-]+$/)[0]);
+
         await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
           dependencies: {
             [`no-deps`]: `1.0.0`,

@@ -183,6 +183,7 @@ export class Project {
       // Protects against v1 lockfiles
       if (parsed.__metadata) {
         const lockfileVersion = parsed.__metadata.version;
+        const cacheKey = parsed.__metadata.cacheKey;
 
         for (const key of Object.keys(parsed)) {
           if (key === `__metadata`)
@@ -210,8 +211,13 @@ export class Project {
 
           const bin = manifest.bin;
 
-          if (data.checksum != null)
-            this.storedChecksums.set(locator.locatorHash, data.checksum);
+          if (data.checksum != null) {
+            const checksum = typeof cacheKey !== `undefined` && !data.checksum.includes(`/`)
+              ? `${cacheKey}/${data.checksum}`
+              : data.checksum;
+
+            this.storedChecksums.set(locator.locatorHash, checksum);
+          }
 
           if (lockfileVersion >= LOCKFILE_VERSION) {
             const pkg: Package = {...locator, version, languageName, linkType, dependencies, peerDependencies, dependenciesMeta, peerDependenciesMeta, bin};
@@ -1540,6 +1546,26 @@ export class Project {
 
       manifest.bin = new Map(pkg.bin);
 
+      let entryChecksum: string | undefined;
+      const checksum = this.storedChecksums.get(pkg.locatorHash);
+      if (typeof checksum !== `undefined`) {
+        const cacheKeyIndex = checksum.indexOf(`/`);
+        if (cacheKeyIndex === -1)
+          throw new Error(`Assertion failed: Expecte the checksum to reference its cache key`);
+
+        const cacheKey = checksum.slice(0, cacheKeyIndex);
+        const hash = checksum.slice(cacheKeyIndex + 1);
+
+        if (typeof optimizedLockfile.__metadata.cacheKey === `undefined`)
+          optimizedLockfile.__metadata.cacheKey = cacheKey;
+
+        if (cacheKey === optimizedLockfile.__metadata.cacheKey) {
+          entryChecksum = hash;
+        } else {
+          entryChecksum = checksum;
+        }
+      }
+
       optimizedLockfile[key] = {
         ...manifest.exportTo({}, {
           compatibilityMode: false,
@@ -1548,7 +1574,7 @@ export class Project {
         linkType: pkg.linkType.toLowerCase(),
 
         resolution: structUtils.stringifyLocator(pkg),
-        checksum: this.storedChecksums.get(pkg.locatorHash),
+        checksum: entryChecksum,
       };
     }
 

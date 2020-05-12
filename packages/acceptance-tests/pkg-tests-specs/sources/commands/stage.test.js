@@ -55,7 +55,7 @@ describe(`Commands`, () => {
             `${npath.fromPortablePath(`${path}/.pnp.js`)}\n`,
             `${npath.fromPortablePath(`${path}/.yarn/global/cache/no-deps-npm-1.0.0-cf533b267a-3.zip`)}\n`,
             `${npath.fromPortablePath(`${path}/.yarn/cache/.gitignore`)}\n`,
-            `${npath.fromPortablePath(`${path}/.yarn/cache/no-deps-npm-1.0.0-cf533b267a-3.zip`)}\n`,
+            `${npath.fromPortablePath(`${path}/.yarn/cache/no-deps-npm-1.0.0-cf533b267a-58e8c7e103.zip`)}\n`,
             `${npath.fromPortablePath(`${path}/.yarnrc.yml`)}\n`,
             `${npath.fromPortablePath(`${path}/package.json`)}\n`,
             `${npath.fromPortablePath(`${path}/yarn.lock`)}\n`,
