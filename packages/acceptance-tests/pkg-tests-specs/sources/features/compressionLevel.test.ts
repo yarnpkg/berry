@@ -19,6 +19,9 @@ describe(`Features`, () => {
             [`various-requires`]: `1.0.0`,
           },
         },
+        {
+          cacheKeyOverride: undefined,
+        },
         async ({path, run}) => {
           await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, ``);
           const cacheDir = `${path}/.yarn/cache` as PortablePath;
@@ -43,6 +46,9 @@ describe(`Features`, () => {
           dependencies: {
             [`various-requires`]: `1.0.0`,
           },
+        },
+        {
+          cacheKeyOverride: undefined,
         },
         async ({path, run}) => {
           await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, `compressionLevel: 6\n`);
