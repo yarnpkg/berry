@@ -1,4 +1,4 @@
-import {xfs} from '@yarnpkg/fslib';
+import {xfs, npath} from '@yarnpkg/fslib';
 
 const {
   fs: {writeFile, writeJson},
@@ -348,6 +348,52 @@ describe(`Dragon tests`, () => {
 
         await run(`install`);
       },
+    ),
+  );
+
+
+  test(`it should pass the dragon test 7`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          [`dragon-test-7-a`]: `1.0.0`,
+          [`dragon-test-7-d`]: `1.0.0`,
+          [`dragon-test-7-b`]: `2.0.0`,
+          [`dragon-test-7-c`]: `3.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        // node-modules linker should support hoisting the same package in different places of the tree in different ways
+        //
+        // . -> A -> B@X -> C@X
+        //        -> C@Y
+        //   -> D -> B@X -> C@X
+        //   -> B@Y
+        //   -> C@Z
+        // should be hoisted to:
+        // . -> A -> B@X -> C@X
+        //        -> C@Y
+        //   -> D -> B@X
+        //        -> C@X
+        //   -> B@Y
+        //   -> C@Z
+        //
+        // Two B@X instances should be hoisted differently in the tree
+        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
+          nodeLinker: "node-modules"
+        `);
+
+        await expect(run(`install`)).resolves.toBeTruthy();
+
+        // All fixtures export/reexport `dragon-test-7-c` version, we expect that version 1.0.0 will be used by both `dragon-test-7-b` instances
+        await expect(source(`require('dragon-test-7-a') + ':' + require('dragon-test-7-d')`)).resolves.toEqual(`1.0.0:1.0.0`);
+
+        // C@X should not be hoisted from . -> A -> B@X
+        await expect(xfs.existsPromise(`${path}/node_modules/dragon-test-7-a/node_modules/dragon-test-7-b/node_modules/dragon-test-7-c`)).resolves.toBeTruthy();
+        // C@X should be hoisted from . -> D -> B@X
+        await expect(xfs.existsPromise(`${path}/node_modules/dragon-test-7-d/node_modules/dragon-test-7-b/node_modules`)).resolves.toBeFalsy();
+      }
     ),
   );
 });
