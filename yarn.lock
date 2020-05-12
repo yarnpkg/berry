@@ -6268,6 +6268,7 @@ __metadata:
     "@babel/plugin-proposal-async-generator-functions": ^7.2.0
     "@babel/plugin-proposal-class-properties": ^7.3.3
     "@babel/plugin-proposal-decorators": ^7.4.4
+    "@babel/plugin-proposal-nullish-coalescing-operator": ^7.8.3
     "@babel/plugin-proposal-optional-chaining": ^7.7.5
     "@babel/plugin-transform-modules-commonjs": ^7.2.0
     "@babel/preset-env": ^7.3.1
@@ -6764,10 +6765,14 @@ __metadata:
   dependencies:
     "@types/cross-spawn": 6.0.0
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
+    "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.11"
+    clipanion: ^2.1.5
     cross-spawn: 6.0.5
     fast-glob: ^3.2.2
     stream-buffers: ^3.0.2
+  bin:
+    shell: ./sources/boot-cli-dev.js
   languageName: unknown
   linkType: soft
 
