@@ -1,11 +1,11 @@
-import {Cache, Descriptor, Plugin, Workspace} from '@yarnpkg/core';
-import {structUtils}                          from '@yarnpkg/core';
-import {Hooks as EssentialsHooks}             from '@yarnpkg/plugin-essentials';
-import {suggestUtils}                         from '@yarnpkg/plugin-essentials';
-import {Hooks as PackHooks}                   from '@yarnpkg/plugin-pack';
-import {prompt}                               from 'inquirer';
+import {Cache, Descriptor, Plugin, Workspace, ResolveOptions} from '@yarnpkg/core';
+import {structUtils, ThrowReport, DescriptorHash, Package}    from '@yarnpkg/core';
+import {Hooks as EssentialsHooks}                             from '@yarnpkg/plugin-essentials';
+import {suggestUtils}                                         from '@yarnpkg/plugin-essentials';
+import {Hooks as PackHooks}                                   from '@yarnpkg/plugin-pack';
+import semver                                                 from 'semver';
 
-import {hasDefinitelyTyped}                   from './typescriptUtils';
+import {hasDefinitelyTyped}                                   from './typescriptUtils';
 
 const getTypesName = (descriptor: Descriptor) => {
   return descriptor.scope
@@ -22,8 +22,16 @@ const afterWorkspaceDependencyAddition = async (
   if (descriptor.scope === `types`)
     return;
 
-  const project = workspace.project;
-  const configuration = project.configuration;
+  const {project} = workspace;
+  const {configuration} = project;
+
+  const resolver = configuration.makeResolver();
+  const resolveOptions: ResolveOptions = {
+    project,
+    resolver,
+    report: new ThrowReport(),
+  };
+
   const requiresInstallTypes = await hasDefinitelyTyped(descriptor, configuration);
 
   if (!requiresInstallTypes)
@@ -38,34 +46,31 @@ const afterWorkspaceDependencyAddition = async (
   const request = structUtils.makeDescriptor(structUtils.makeIdent(`types`, typesName), `unknown`);
   const suggestions = await suggestUtils.getSuggestedDescriptors(request, {workspace, project, cache, target, modifier, strategies});
 
-  let selected: Descriptor;
-  let askedQuestions = false;
-
   const nonNullSuggestions = suggestions.filter(suggestion => suggestion.descriptor !== null);
   if (nonNullSuggestions.length === 0)
     return;
 
-  if (nonNullSuggestions.length === 1) {
-    selected = nonNullSuggestions[0].descriptor!;
-  } else {
-    askedQuestions = true;
-    ({answer: selected} = await prompt({
-      type: `list`,
-      name: `answer`,
-      message: `Which range do you want to use?`,
-      choices: suggestions.map(({descriptor, reason}) => descriptor ? {
-        name: reason,
-        value: descriptor as Descriptor,
-        short: structUtils.prettyDescriptor(project.configuration, descriptor),
-      } : {
-        name: reason,
-        disabled: (): boolean => true,
-      }),
-    }));
-  }
+  let selected: Descriptor | null | undefined = null;
 
-  if (askedQuestions)
-    process.stdout.write(`\n`);
+  // Try reusing an existing version
+  if (strategies.includes(suggestUtils.Strategy.REUSE))
+    selected = nonNullSuggestions.find(suggestion => suggestion.reason.startsWith(`Reuse`))?.descriptor;
+
+  // If `strategies` doesn't include `Strategy.REUSE` or there's no existing
+  // version in the project, try computing it from the base descriptor
+  if (!selected) {
+    let {range} = descriptor;
+
+    // If the range is a tag, we have to resolve it into a semver version
+    if (!semver.validRange(range)) {
+      const originalCandidates = await resolver.getCandidates(descriptor, new Map<DescriptorHash,Package>(), resolveOptions);
+      range = structUtils.parseRange(originalCandidates[0].reference).selector;
+    }
+
+    // Make a descriptor with the `^<major>` range
+    // Note: semver can coerce ranges into versions
+    selected = structUtils.makeDescriptor(request, suggestUtils.Modifier.CARET + semver.coerce(range)!.major);
+  }
 
   workspace.manifest[target].set(
     selected.identHash,
