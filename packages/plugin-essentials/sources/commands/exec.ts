@@ -15,7 +15,7 @@ export default class ExecCommand extends BaseCommand {
   static usage: Usage = Command.Usage({
     description: `execute a shell command`,
     details: `
-      This command simply executes a shell command.
+      This command simply executes a shell binary within the context of the root directory of the active workspace.
 
       It also makes sure to call it in a way that's compatible with the current project (for example, on PnP projects the environment will be setup in such a way that PnP will be correctly injected into the environment).
     `,
