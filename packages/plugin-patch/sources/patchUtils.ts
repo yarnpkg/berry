@@ -1,8 +1,8 @@
-import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions, Package} from '@yarnpkg/core';
+import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions, Package, execUtils} from '@yarnpkg/core';
 
-import {npath, PortablePath, xfs, ppath, Filename, NodeFS}                                                      from '@yarnpkg/fslib';
+import {npath, PortablePath, xfs, ppath, Filename, NodeFS}                                                                 from '@yarnpkg/fslib';
 
-import {Hooks as PatchHooks}                                                                                    from './index';
+import {Hooks as PatchHooks}                                                                                               from './index';
 
 export {applyPatchFile} from './tools/apply';
 export {parsePatchFile} from './tools/parse';
@@ -171,4 +171,19 @@ export async function extractPackageToDisk(locator: Locator, {cache, project}: {
 
   xfs.detachTemp(temp);
   return temp;
+}
+
+export async function diffFolders(folderA: PortablePath, folderB: PortablePath) {
+  const folderAN = npath.fromPortablePath(folderA).replace(/\\/g, `/`);
+  const folderBN = npath.fromPortablePath(folderB).replace(/\\/g, `/`);
+
+  const {stdout} = await execUtils.execvp(`git`, [`diff`, `--ignore-cr-at-eol`, `--full-index`, `--no-index`, folderAN, folderBN], {
+    cwd:npath.toPortablePath(process.cwd()),
+  });
+
+  return stdout
+    .replace(new RegExp(`(a|b)${miscUtils.escapeRegExp(`/${folderAN.substr(folderAN.startsWith(`/`) ? 1 : 0)}/`)}`, `g`), `$1/`)
+    .replace(new RegExp(`(a|b)${miscUtils.escapeRegExp(`/${folderBN.substr(folderBN.startsWith(`/`) ? 1 : 0)}/`)}`, `g`), `$1/`)
+    .replace(new RegExp(miscUtils.escapeRegExp(`${folderAN}/`), `g`), ``)
+    .replace(new RegExp(miscUtils.escapeRegExp(`${folderBN}/`), `g`), ``);
 }
