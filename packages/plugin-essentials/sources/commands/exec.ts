@@ -2,7 +2,7 @@ import {BaseCommand}            from '@yarnpkg/cli';
 import {Configuration, Project} from '@yarnpkg/core';
 import {execUtils, scriptUtils} from '@yarnpkg/core';
 import {xfs}                    from '@yarnpkg/fslib';
-import {Command}                from 'clipanion';
+import {Command, Usage}         from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ExecCommand extends BaseCommand {
@@ -11,6 +11,19 @@ export default class ExecCommand extends BaseCommand {
 
   @Command.Proxy()
   args: Array<string> = [];
+
+  static usage: Usage = Command.Usage({
+    description: `execute a shell command`,
+    details: `
+      This command simply executes a shell command.
+
+      It also makes sure to call it in a way that's compatible with the current project (for example, on PnP projects the environment will be setup in such a way that PnP will be correctly injected into the environment).
+    `,
+    examples: [[
+      `Execute a shell command`,
+      `$0 exec echo Hello World`,
+    ]],
+  });
 
   @Command.Path(`exec`)
   async execute() {
