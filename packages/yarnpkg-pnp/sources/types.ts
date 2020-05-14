@@ -103,8 +103,9 @@ export type PnpApi = {
   findPackageLocator: (location: NativePath) => PhysicalPackageLocator | null,
 
   resolveToUnqualified: (request: string, issuer: NativePath | null, opts?: {considerBuiltins?: boolean}) => NativePath | null,
+  resolveUnqualifiedExport: (request: NativePath, unqualifiedPath: NativePath,  opts?: {env?: Array<string>, allowMissingDotInExports?: boolean}) => NativePath,
   resolveUnqualified: (unqualified: NativePath, opts?: {extensions?: Array<string>}) => NativePath,
-  resolveRequest: (request: string, issuer: NativePath | null, opts?: {considerBuiltins?: boolean, extensions?: Array<string>}) => NativePath | null,
+  resolveRequest: (request: string, issuer: NativePath | null, opts?: {considerBuiltins?: boolean, extensions?: Array<string>, env?: Array<string>, allowMissingDotInExports?: boolean}) => NativePath | null,
 
   // Extension method
   resolveVirtual?: (p: NativePath) => NativePath | null,

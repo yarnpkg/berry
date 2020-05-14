@@ -1,5 +1,6 @@
-import {FakeFS, NativePath, Path, PortablePath, VirtualFS, npath}                                           from '@yarnpkg/fslib';
 import {ppath, toFilename}                                                                                  from '@yarnpkg/fslib';
+import {FakeFS, NativePath, Path, PortablePath, VirtualFS, npath}                                           from '@yarnpkg/fslib';
+
 import {Module}                                                                                             from 'module';
 
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget} from '../types';
@@ -17,13 +18,19 @@ export type ResolveToUnqualifiedOptions = {
   considerBuiltins?: boolean,
 };
 
+export type ResolveUnqualifiedExportsOptions = {
+  env?: Array<string>,
+  allowMissingDotInExports?: boolean,
+}
+
 export type ResolveUnqualifiedOptions = {
   extensions?: Array<string>,
 };
 
 export type ResolveRequestOptions =
   ResolveToUnqualifiedOptions &
-  ResolveUnqualifiedOptions;
+  ResolveUnqualifiedOptions &
+  ResolveUnqualifiedExportsOptions;
 
 export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpApi {
   const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
@@ -91,7 +98,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     packageRegistry,
     packageLocatorsByLocations,
     packageLocationLengths,
-  } = runtimeState as RuntimeState;
+  } = runtimeState;
 
   /**
    * Allows to print useful logs just be setting a value in the environment
@@ -169,6 +176,174 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         return true;
 
     return false;
+  }
+
+  type StaticExports = string|Array<string>|null;
+  type ConditionalExports = {[env: string]: StaticExports|ConditionalExports};
+  type PathExports = {[path: string]: ConditionalExports | StaticExports};
+  type Exports = StaticExports | ConditionalExports | PathExports;
+
+  function isFullyQualifiedExportsObject(pkgExports: NonNullable<Exports>, locator: PackageLocator): pkgExports is PathExports {
+    if (typeof pkgExports === `string`)
+      return false;
+
+    let isFirst = true;
+    let isPath = true;
+
+    for (const key of Object.keys(pkgExports)) {
+      const isKeyPath = key.startsWith(`.`);
+
+      if (isFirst) {
+        isFirst = false;
+        isPath = isKeyPath;
+      } else if (isPath !== isKeyPath) {
+        throw makeError(
+          ErrorCode.ERR_INVALID_PACKAGE_CONFIG,
+          `"exports" cannot contain some keys starting with '.' and some not. The exports object must either be an object of package subpath keys or an object of main entry condition name keys only.`,
+          {locator},
+        );
+      }
+    }
+
+    return isPath;
+  }
+
+  function applyNodeModuleExports(unqualifiedPath: PortablePath, {env, allowMissingDot}: {env: Array<string>, allowMissingDot: boolean}): PortablePath {
+    const locator = findPackageLocator(ppath.join(unqualifiedPath, toFilename(`internal.js`)))!;
+    const {packageLocation} = getPackageInformation(locator)!;
+
+    const pathInModule = `.${unqualifiedPath.slice(packageLocation.length)}`;
+    let pkgExports: StaticExports|ConditionalExports|PathExports|undefined;
+
+    try {
+      ({exports: pkgExports} = JSON.parse(opts.fakeFs.readFileSync(ppath.join(packageLocation, toFilename(`package.json`)), `utf8`)));
+    } catch (error) {}
+
+    if (pkgExports == null)
+      // no exports are defined
+      return unqualifiedPath;
+
+    if (!isFullyQualifiedExportsObject(pkgExports, locator))
+      pkgExports = {[`.`]: pkgExports} as PathExports;
+
+    const exportedPaths = Object.keys(pkgExports);
+
+    if (allowMissingDot && pathInModule === `.` && !exportedPaths.includes(`.`))
+      return unqualifiedPath;
+
+    let longestMatchingKey = ``;
+    for (const key of exportedPaths) {
+      if (key === pathInModule || key.endsWith(`/`) && pathInModule.startsWith(key) && key.length > longestMatchingKey.length) {
+        longestMatchingKey = key;
+      }
+    }
+
+    if (longestMatchingKey === ``)
+      throw makePackagePathNotExportedError(locator, npath.fromPortablePath(packageLocation), pathInModule);
+
+    return resolvePackageExportsTarget(locator, packageLocation, pkgExports[longestMatchingKey], longestMatchingKey, pathInModule.slice(longestMatchingKey.length) as PortablePath, env);
+  }
+
+  function resolvePackageExportsTarget(locator: PackageLocator, packageLocation: PortablePath, target: ConditionalExports|StaticExports, targetKey: string, subpath: PortablePath, env: Array<string>): PortablePath {
+    if (typeof target === `string`) {
+      if (!target.startsWith(`./`)) {
+        const pkgPath = npath.join(npath.fromPortablePath(packageLocation), `package.json`);
+        throw makeError(ErrorCode.ERR_INVALID_PACKAGE_TARGET,
+          subpath
+            ? `Invalid "exports" target ${JSON.stringify(target)} defined for '${targetKey}' in the package config ${pkgPath}; targets must start with "./"`
+            : `Invalid "exports" main target ${JSON.stringify(target)} defined in the package config ${pkgPath}; targets must start with "./"`,
+          {locator},
+        );
+      }
+
+      const resolvedTargetPath = ppath.join(packageLocation, target as PortablePath);
+      if (!resolvedTargetPath.startsWith(`${packageLocation}/`) ||
+          resolvedTargetPath.indexOf(`/node_modules/`, packageLocation.length) !== -1) {
+        const pkgPath = npath.join(npath.fromPortablePath(packageLocation), `package.json`);
+        throw makeError(ErrorCode.ERR_INVALID_PACKAGE_TARGET,
+          subpath
+            ? `Invalid "exports" target ${JSON.stringify(target)} defined for '${targetKey}' in the package config ${pkgPath}`
+            : `Invalid "exports" main target ${JSON.stringify(target)} defined in the package config ${pkgPath}`,
+          {locator},
+        );
+      }
+
+      if (subpath.length > 0 && !target.endsWith(`/`)) {
+        const pkgPath = npath.join(npath.fromPortablePath(packageLocation), `package.json`);
+        throw makeError(ErrorCode.ERR_INVALID_PACKAGE_TARGET,
+          `Invalid "exports" target ${JSON.stringify(target)} defined for '${subpath}' in the package config ${pkgPath}`,
+          {locator}
+        );
+      }
+
+      const resolvedPath = ppath.normalize((resolvedTargetPath + subpath) as PortablePath);
+      if (resolvedPath.startsWith(resolvedTargetPath) &&
+          resolvedPath.indexOf(`/node_modules/`, packageLocation.length - 1) === -1)
+        return resolvedPath;
+
+      throw makeError(ErrorCode.ERR_INVALID_MODULE_SPECIFIER, `Package subpath '${subpath}' is not a valid module request for the "exports" resolution of ${npath.fromPortablePath(packageLocation)}${npath.sep}package.json`);
+    } else if (Array.isArray(target)) {
+      if (target.length === 0)
+        throw makePackagePathNotExportedError(locator, npath.fromPortablePath(packageLocation), targetKey + subpath);
+
+      let lastError: any;
+      for (const t of target) {
+        try {
+          return resolvePackageExportsTarget(locator, packageLocation, t, targetKey, subpath, env);
+        } catch (e) {
+          if (e.code !== ErrorCode.ERR_PACKAGE_PATH_NOT_EXPORTED && e.code !== ErrorCode.ERR_INVALID_PACKAGE_TARGET)
+            throw e;
+
+          lastError = e;
+        }
+      }
+
+      throw lastError;
+    } else if (typeof target === `object` && target !== null) {
+      const conditions = Object.keys(target);
+      if (conditions.some(isArrayIndex))
+        throw makeError(ErrorCode.ERR_INVALID_PACKAGE_CONFIG, `"exports" cannot contain numeric property keys.`, {locator});
+
+      for (const condition of conditions) {
+        if (env.includes(condition)) {
+          try {
+            return resolvePackageExportsTarget(locator, packageLocation, target[condition], targetKey, subpath, env);
+          } catch (e) {
+            if (e.code !== ErrorCode.ERR_PACKAGE_PATH_NOT_EXPORTED) {
+              throw e;
+            }
+          }
+        }
+      }
+
+      throw makePackagePathNotExportedError(locator, npath.fromPortablePath(packageLocation), targetKey + subpath);
+    } else if (target === null) {
+      throw makePackagePathNotExportedError(locator, npath.fromPortablePath(packageLocation), targetKey + subpath);
+    } else {
+      throw makeError(
+        ErrorCode.ERR_INVALID_PACKAGE_TARGET,
+        ``,
+        {locator},
+      );
+    }
+  }
+
+  // https://tc39.es/ecma262/#integer-index
+  function isArrayIndex(value: string) {
+    const number = Number(value);
+    if (String(number) !== value)
+      return false;
+    return Number.isInteger(number) && number >= 0 && number < (2 ** 32) - 1;
+  }
+
+  function makePackagePathNotExportedError(locator: PackageLocator, packageLocation: NativePath, pathInModule: string) {
+    let errorMessage: string;
+    if (pathInModule === `.`)
+      errorMessage = `No "exports" main resolved in ${packageLocation}${npath.sep}package.json`;
+    else
+      errorMessage = `Package subpath '${pathInModule}' is not defined by "exports" in ${packageLocation}${npath.sep}package.json`;
+
+    return makeError(ErrorCode.ERR_PACKAGE_PATH_NOT_EXPORTED, errorMessage, {locator});
   }
 
   /**
@@ -634,6 +809,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     return ppath.normalize(unqualifiedPath);
   }
 
+  function resolveUnqualifiedExport(request: PortablePath, unqualifiedPath: PortablePath,  {env = [`node` ,`require`], allowMissingDotInExports: allowMissingDot = true}: ResolveUnqualifiedExportsOptions = {}): PortablePath {
+    // exports only apply when requiring a package, not when requiring via an absolute/relative path
+    if (isStrictRegExp.test(request))
+      return unqualifiedPath;
+
+    return applyNodeModuleExports(unqualifiedPath, {env, allowMissingDot});
+  }
+
   /**
    * Transforms an unqualified path into a qualified path by using the Node resolution algorithm (which automatically
    * appends ".js" / ".json", and transforms directory accesses into "index.js").
@@ -662,11 +845,13 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
    */
 
-  function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions}: ResolveRequestOptions = {}): PortablePath | null {
-    const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
+  function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions, allowMissingDotInExports, env}: ResolveRequestOptions = {}): PortablePath | null {
+    let unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
 
     if (unqualifiedPath === null)
       return null;
+
+    unqualifiedPath = resolveUnqualifiedExport(request, unqualifiedPath, {allowMissingDotInExports, env});
 
     try {
       return resolveUnqualified(unqualifiedPath, {extensions});
@@ -725,6 +910,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         return null;
 
       return npath.fromPortablePath(resolution);
+    }),
+
+    resolveUnqualifiedExport: maybeLog(`resolveUnqualifiedExport`, (request: NativePath, unqualifiedPath: NativePath, opts?: ResolveUnqualifiedExportsOptions) => {
+      return npath.fromPortablePath(resolveUnqualifiedExport(npath.toPortablePath(request), npath.toPortablePath(unqualifiedPath), opts));
     }),
 
     resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath: NativePath, opts?: ResolveUnqualifiedOptions) => {

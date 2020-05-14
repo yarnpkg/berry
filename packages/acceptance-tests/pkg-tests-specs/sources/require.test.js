@@ -227,4 +227,28 @@ describe(`Require tests`, () => {
       },
     ),
   );
+
+  test(
+    `it should support package exports`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@exports/okay`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(source(`require('@exports/okay')`)).resolves.toBe(`main`);
+        await expect(source(`require('@exports/okay/conditional')`)).resolves.toBe(`conditional/node-require`);
+        await expect(source(`require('@exports/okay/exists')`)).resolves.toBe(`exists`);
+
+        await expect(source(`require('@exports/okay/package.json')`)).rejects.toMatchObject({
+          externalException: {
+            code: `MODULE_NOT_FOUND`,
+            message: expect.stringMatching(`Qualified path resolution failed`),
+            pnpCode: `QUALIFIED_PATH_RESOLUTION_FAILED`,
+          },
+        });
+      },
+    ),
+  );
 });
