@@ -146,12 +146,16 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     if (typeof (patchedFs as any)[origName] === `undefined`)
       continue;
 
+    const fakeImpl: Function = (fakeFs as any)[fnName];
+    if (typeof fakeImpl === `undefined`)
+      continue;
+
     const wrapper = (...args: Array<any>) => {
       const hasCallback = typeof args[args.length - 1] === `function`;
       const callback = hasCallback ? args.pop() : () => {};
 
       process.nextTick(() => {
-        fakeImpl(...args).then((result: any) => {
+        fakeImpl.apply(fakeFs, args).then((result: any) => {
           callback(null, result);
         }, (error: Error) => {
           callback(error);
@@ -159,7 +163,6 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
       });
     };
 
-    const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);
     setupFn(patchedFs, origName, wrapper);
   }
 
@@ -168,8 +171,11 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     if (typeof (patchedFs as any)[origName] === `undefined`)
       continue;
 
-    const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);
-    setupFn(patchedFs, origName, fakeImpl);
+    const fakeImpl: Function = (fakeFs as any)[fnName];
+    if (typeof fakeImpl === `undefined`)
+      continue;
+
+    setupFn(patchedFs, origName, fakeImpl.bind(fakeFs));
   }
 
   patchedFs.realpathSync.native = patchedFs.realpathSync;
