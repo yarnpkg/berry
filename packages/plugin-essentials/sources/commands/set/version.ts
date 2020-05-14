@@ -79,7 +79,7 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
   if (bundleVersion === null) {
     await xfs.mktempPromise(async tmpDir => {
-      const temporaryPath = ppath.join(tmpDir, `yarn.js` as Filename);
+      const temporaryPath = ppath.join(tmpDir, `yarn.cjs` as Filename);
       await xfs.writeFilePromise(temporaryPath, bundleBuffer);
 
       const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {
@@ -95,7 +95,7 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   }
 
   const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases` as PortablePath);
-  const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.js` as Filename);
+  const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.cjs` as Filename);
 
   const displayPath = ppath.relative(configuration.startingCwd, absolutePath);
   const projectPath = ppath.relative(projectCwd, absolutePath);
