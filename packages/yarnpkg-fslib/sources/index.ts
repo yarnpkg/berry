@@ -159,7 +159,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
       });
     };
 
-    const fakeImpl: Function = (fakeFs as any)[fnName];
+    const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);
     setupFn(patchedFs, origName, wrapper);
   }
 
@@ -168,7 +168,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     if (typeof (patchedFs as any)[origName] === `undefined`)
       continue;
 
-    const fakeImpl: Function = (fakeFs as any)[fnName];
+    const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);
     setupFn(patchedFs, origName, fakeImpl);
   }
 
