@@ -100,10 +100,8 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
 
   const setupFn = (target: any, name: string, replacement: any) => {
     const orig = target[name];
-    if (typeof orig === `undefined`)
-      return;
-
     target[name] = replacement;
+
     if (typeof orig[promisify.custom] !== `undefined`) {
       replacement[promisify.custom] = orig[promisify.custom];
     }
@@ -144,10 +142,11 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
   });
 
   for (const fnName of ASYNC_IMPLEMENTATIONS) {
-    const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);
     const origName = fnName.replace(/Promise$/, ``);
+    if (typeof (patchedFs as any)[origName] === `undefined`)
+      continue;
 
-    setupFn(patchedFs, origName, (...args: Array<any>) => {
+    const wrapper = (...args: Array<any>) => {
       const hasCallback = typeof args[args.length - 1] === `function`;
       const callback = hasCallback ? args.pop() : () => {};
 
@@ -158,13 +157,18 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
           callback(error);
         });
       });
-    });
+    };
+
+    const fakeImpl: Function = (fakeFs as any)[fnName];
+    setupFn(patchedFs, origName, wrapper);
   }
 
   for (const fnName of SYNC_IMPLEMENTATIONS) {
-    const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);
     const origName = fnName;
+    if (typeof (patchedFs as any)[origName] === `undefined`)
+      continue;
 
+    const fakeImpl: Function = (fakeFs as any)[fnName];
     setupFn(patchedFs, origName, fakeImpl);
   }
 
