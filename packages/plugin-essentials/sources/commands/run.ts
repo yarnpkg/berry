@@ -8,10 +8,12 @@ import {pluginCommands}                    from '../pluginCommands';
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends BaseCommand {
   @Command.Boolean(`--inspect`)
-  inspect: boolean = false;
+  @Command.String(`--inspect`)
+  inspect?: string | boolean = false;
 
   @Command.Boolean(`--inspect-brk`)
-  inspectBrk: boolean = false;
+  @Command.String(`--inspect-brk`)
+  inspectBrk?: string | boolean = false;
 
   // This flag is mostly used to give users a way to configure node-gyp. They
   // just have to add it as a top-level workspace.
@@ -59,6 +61,9 @@ export default class RunCommand extends BaseCommand {
     ], [
       `Inspect Webpack while running`,
       `$0 run --inspect-brk webpack`,
+    ], [
+      `Inspect Webpack while running with a custom debugger port`,
+      `$0 run --inspect-brk=9329 webpack`,
     ]],
   });
 
@@ -89,9 +94,9 @@ export default class RunCommand extends BaseCommand {
       const nodeArgs = [];
 
       if (this.inspect)
-        nodeArgs.push(`--inspect`);
+        nodeArgs.push(this.inspect === true ? `--inspect` : `--inspect=${this.inspect}`);
       if (this.inspectBrk)
-        nodeArgs.push(`--inspect-brk`);
+        nodeArgs.push(this.inspectBrk === true ? `--inspect-brk` : `--inspect-brk=${this.inspectBrk}`);
 
       return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, this.scriptName, this.args, {cwd: this.context.cwd, project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr, nodeArgs});
     }
