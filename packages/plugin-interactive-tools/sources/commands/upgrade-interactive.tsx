@@ -133,24 +133,21 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
 
     const Prompt = () => {
       return (
-        <Box flexDirection="column">
-          <Color bold>Info:</Color>
-          <Box flexDirection="row">
-            <Box flexDirection="column">
-              <Box marginLeft={1}>
-                <Text bold>-</Text> Press <Color bold cyanBright>{`<up>`}</Color>/<Color bold cyanBright>{`<down>`}</Color> to select packages.
-              </Box>
-              <Box marginLeft={1}>
-                <Text bold>-</Text> Press <Color bold cyanBright>{`<left>`}</Color>/<Color bold cyanBright>{`<right>`}</Color> to select versions.
-              </Box>
+        <Box flexDirection="row">
+          <Box flexDirection="column" width={49}>
+            <Box marginLeft={1}>
+             Press <Color bold cyanBright>{`<up>`}</Color>/<Color bold cyanBright>{`<down>`}</Color> to select packages.
             </Box>
-            <Box flexDirection="column">
-              <Box marginLeft={1}>
-                <Text bold>-</Text> Press <Color bold cyanBright>{`<enter>`}</Color> to install.
-              </Box>
-              <Box marginLeft={1}>
-                <Text bold>-</Text> Press <Color bold cyanBright>{`<ctrl+c>`}</Color> to abort.
-              </Box>
+            <Box marginLeft={1}>
+             Press <Color bold cyanBright>{`<left>`}</Color>/<Color bold cyanBright>{`<right>`}</Color> to select versions.
+            </Box>
+          </Box>
+          <Box flexDirection="column">
+            <Box marginLeft={1}>
+             Press <Color bold cyanBright>{`<enter>`}</Color> to install.
+            </Box>
+            <Box marginLeft={1}>
+             Press <Color bold cyanBright>{`<ctrl+c>`}</Color> to abort.
             </Box>
           </Box>
         </Box>
@@ -159,7 +156,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
 
     const Header = () => {
       return (
-        <Box flexDirection="row">
+        <Box flexDirection="row" paddingTop={1} paddingBottom={1}>
           <Box width={50}>
             <Text bold>
               <Color greenBright>?</Color> Pick the packages you want to upgrade.
