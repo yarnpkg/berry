@@ -11874,8 +11874,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         ["npm:4.3.0", {
           "packageLocation": "./.yarn/cache/cacheable-lookup-npm-4.3.0-8be209df70-5301b32a2b.zip/node_modules/cacheable-lookup/",
           "packageDependencies": [
-            ["cacheable-lookup", "npm:4.3.0"],
-            ["@types/keyv", "npm:3.1.1"]
+            ["cacheable-lookup", "npm:4.3.0"]
           ],
           "linkType": "HARD",
         }]
@@ -18164,7 +18163,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@sindresorhus/is", "npm:2.1.1"],
             ["@szmarczak/http-timer", "npm:4.0.5"],
             ["@types/cacheable-request", "npm:6.0.1"],
-            ["@types/keyv", "npm:3.1.1"],
             ["@types/responselike", "npm:1.0.0"],
             ["cacheable-lookup", "npm:4.3.0"],
             ["cacheable-request", "npm:7.0.1"],
@@ -34679,7 +34677,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 12);
+/******/ 	return __webpack_require__(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -34700,6 +34698,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 const path_1 = __importDefault(__webpack_require__(7));
+
+var PathType;
+
+(function (PathType) {
+  PathType[PathType["File"] = 0] = "File";
+  PathType[PathType["Portable"] = 1] = "Portable";
+  PathType[PathType["Native"] = 2] = "Native";
+})(PathType || (PathType = {}));
 
 exports.PortablePath = {
   root: `/`,
@@ -34793,12 +34799,19 @@ const fs_1 = __importDefault(__webpack_require__(2));
 
 const FakeFS_1 = __webpack_require__(3);
 
+const errors_1 = __webpack_require__(11);
+
 const path_1 = __webpack_require__(0);
 
 class NodeFS extends FakeFS_1.BasePortableFakeFS {
   constructor(realFs = fs_1.default) {
     super();
-    this.realFs = realFs;
+    this.realFs = realFs; // @ts-ignore
+
+    if (typeof this.realFs.lutimes !== `undefined`) {
+      this.lutimesPromise = this.lutimesPromiseImpl;
+      this.lutimesSync = this.lutimesSyncImpl;
+    }
   }
 
   getExtractHint() {
@@ -35019,6 +35032,22 @@ class NodeFS extends FakeFS_1.BasePortableFakeFS {
     this.realFs.utimesSync(path_1.npath.fromPortablePath(p), atime, mtime);
   }
 
+  async lutimesPromiseImpl(p, atime, mtime) {
+    // @ts-ignore: Not yet in DefinitelyTyped
+    const lutimes = this.realFs.lutimes;
+    if (typeof lutimes === `undefined`) throw errors_1.ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
+    return await new Promise((resolve, reject) => {
+      lutimes.call(this.realFs, path_1.npath.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
+    });
+  }
+
+  lutimesSyncImpl(p, atime, mtime) {
+    // @ts-ignore: Not yet in DefinitelyTyped
+    const lutimesSync = this.realFs.lutimesSync;
+    if (typeof lutimesSync === `undefined`) throw errors_1.ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
+    lutimesSync.call(this.realFs, path_1.npath.fromPortablePath(p), atime, mtime);
+  }
+
   async mkdirPromise(p, opts) {
     return await new Promise((resolve, reject) => {
       this.realFs.mkdir(path_1.npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
@@ -35139,7 +35168,7 @@ Object.defineProperty(exports, "__esModule", {
 
 const os_1 = __webpack_require__(9);
 
-const copyPromise_1 = __webpack_require__(13);
+const copyPromise_1 = __webpack_require__(14);
 
 const path_1 = __webpack_require__(0);
 
@@ -35883,12 +35912,11 @@ function getTempName(prefix) {
 }
 
 function patchFs(patchedFs, fakeFs) {
-  const SYNC_IMPLEMENTATIONS = new Set([`accessSync`, `appendFileSync`, `createReadStream`, `chmodSync`, `closeSync`, `copyFileSync`, `lstatSync`, `mkdirSync`, `openSync`, `readSync`, `readlinkSync`, `readFileSync`, `readdirSync`, `readlinkSync`, `realpathSync`, `renameSync`, `rmdirSync`, `statSync`, `symlinkSync`, `unlinkSync`, `utimesSync`, `watch`, `writeFileSync`, `writeSync`]);
-  const ASYNC_IMPLEMENTATIONS = new Set([`accessPromise`, `appendFilePromise`, `chmodPromise`, `closePromise`, `copyFilePromise`, `lstatPromise`, `mkdirPromise`, `openPromise`, `readdirPromise`, `realpathPromise`, `readFilePromise`, `readdirPromise`, `readlinkPromise`, `renamePromise`, `rmdirPromise`, `statPromise`, `symlinkPromise`, `unlinkPromise`, `utimesPromise`, `writeFilePromise`, `writeSync`]);
+  const SYNC_IMPLEMENTATIONS = new Set([`accessSync`, `appendFileSync`, `createReadStream`, `chmodSync`, `closeSync`, `copyFileSync`, `lstatSync`, `lutimesSync`, `mkdirSync`, `openSync`, `readSync`, `readlinkSync`, `readFileSync`, `readdirSync`, `readlinkSync`, `realpathSync`, `renameSync`, `rmdirSync`, `statSync`, `symlinkSync`, `unlinkSync`, `utimesSync`, `watch`, `writeFileSync`, `writeSync`]);
+  const ASYNC_IMPLEMENTATIONS = new Set([`accessPromise`, `appendFilePromise`, `chmodPromise`, `closePromise`, `copyFilePromise`, `lstatPromise`, `lutimesPromise`, `mkdirPromise`, `openPromise`, `readdirPromise`, `realpathPromise`, `readFilePromise`, `readdirPromise`, `readlinkPromise`, `renamePromise`, `rmdirPromise`, `statPromise`, `symlinkPromise`, `unlinkPromise`, `utimesPromise`, `writeFilePromise`, `writeSync`]);
 
   const setupFn = (target, name, replacement) => {
     const orig = target[name];
-    if (typeof orig === `undefined`) return;
     target[name] = replacement;
 
     if (typeof orig[util_1.promisify.custom] !== `undefined`) {
@@ -35927,25 +35955,32 @@ function patchFs(patchedFs, fakeFs) {
   });
 
   for (const fnName of ASYNC_IMPLEMENTATIONS) {
-    const fakeImpl = fakeFs[fnName].bind(fakeFs);
     const origName = fnName.replace(/Promise$/, ``);
-    setupFn(patchedFs, origName, (...args) => {
+    if (typeof patchedFs[origName] === `undefined`) continue;
+    const fakeImpl = fakeFs[fnName];
+    if (typeof fakeImpl === `undefined`) continue;
+
+    const wrapper = (...args) => {
       const hasCallback = typeof args[args.length - 1] === `function`;
       const callback = hasCallback ? args.pop() : () => {};
       process.nextTick(() => {
-        fakeImpl(...args).then(result => {
+        fakeImpl.apply(fakeFs, args).then(result => {
           callback(null, result);
         }, error => {
           callback(error);
         });
       });
-    });
+    };
+
+    setupFn(patchedFs, origName, wrapper);
   }
 
   for (const fnName of SYNC_IMPLEMENTATIONS) {
-    const fakeImpl = fakeFs[fnName].bind(fakeFs);
     const origName = fnName;
-    setupFn(patchedFs, origName, fakeImpl);
+    if (typeof patchedFs[origName] === `undefined`) continue;
+    const fakeImpl = fakeFs[fnName];
+    if (typeof fakeImpl === `undefined`) continue;
+    setupFn(patchedFs, origName, fakeImpl.bind(fakeFs));
   }
 
   patchedFs.realpathSync.native = patchedFs.realpathSync;
@@ -36099,7 +36134,7 @@ Object.defineProperty(exports, "__esModule", {
 
 const fs_1 = __webpack_require__(2);
 
-const stream_1 = __webpack_require__(14);
+const stream_1 = __webpack_require__(15);
 
 const util_1 = __webpack_require__(10);
 
@@ -36107,7 +36142,7 @@ const FakeFS_1 = __webpack_require__(3);
 
 const NodeFS_1 = __webpack_require__(1);
 
-const errors = __importStar(__webpack_require__(15));
+const errors = __importStar(__webpack_require__(11));
 
 const path_1 = __webpack_require__(0);
 
@@ -36344,7 +36379,12 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
   saveAndClose() {
     if (!this.path || !this.baseFs) throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);
     if (!this.ready) throw errors.EBUSY(`archive closed, close`);
-    if (this.readOnly) return this.discardAndClose();
+
+    if (this.readOnly) {
+      this.discardAndClose();
+      return;
+    }
+
     const previousMod = this.baseFs.existsSync(this.path) ? this.baseFs.statSync(this.path).mode & 0o777 : null;
     const rc = this.libzip.close(this.zip);
     if (rc === -1) throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip))); // this.libzip overrides the chmod when writing the archive, which is a weird
@@ -36892,9 +36932,13 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
     mode = 0o755,
     recursive = false
   } = {}) {
-    if (recursive) return this.mkdirpSync(p, {
-      chmod: mode
-    });
+    if (recursive) {
+      this.mkdirpSync(p, {
+        chmod: mode
+      });
+      return;
+    }
+
     if (this.readOnly) throw errors.EROFS(`mkdir '${p}'`);
     const resolvedP = this.resolveFilename(`mkdir '${p}'`, p);
     if (this.entries.has(resolvedP) || this.listings.has(resolvedP)) throw errors.EEXIST(`mkdir '${p}'`);
@@ -37069,6 +37113,77 @@ module.exports = require("util");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+function makeError(code, message) {
+  return Object.assign(new Error(`${code}: ${message}`), {
+    code
+  });
+}
+
+function EBUSY(message) {
+  return makeError(`EBUSY`, message);
+}
+
+exports.EBUSY = EBUSY;
+
+function ENOSYS(message, reason) {
+  return makeError(`ENOSYS`, `${message}, ${reason}`);
+}
+
+exports.ENOSYS = ENOSYS;
+
+function EINVAL(reason) {
+  return makeError(`EINVAL`, `invalid argument, ${reason}`);
+}
+
+exports.EINVAL = EINVAL;
+
+function EBADF(reason) {
+  return makeError(`EBADF`, `bad file descriptor, ${reason}`);
+}
+
+exports.EBADF = EBADF;
+
+function ENOENT(reason) {
+  return makeError(`ENOENT`, `no such file or directory, ${reason}`);
+}
+
+exports.ENOENT = ENOENT;
+
+function ENOTDIR(reason) {
+  return makeError(`ENOTDIR`, `not a directory, ${reason}`);
+}
+
+exports.ENOTDIR = ENOTDIR;
+
+function EISDIR(reason) {
+  return makeError(`EISDIR`, `illegal operation on a directory, ${reason}`);
+}
+
+exports.EISDIR = EISDIR;
+
+function EEXIST(reason) {
+  return makeError(`EEXIST`, `file already exists, ${reason}`);
+}
+
+exports.EEXIST = EEXIST;
+
+function EROFS(reason) {
+  return makeError(`EROFS`, `read-only filesystem, ${reason}`);
+}
+
+exports.EROFS = EROFS;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 var ErrorCode;
 
 (function (ErrorCode) {
@@ -37128,7 +37243,7 @@ function getIssuerModule(parent) {
 exports.getIssuerModule = getIssuerModule;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37302,7 +37417,7 @@ if (process.mainModule === __non_webpack_module__) {
 }
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37326,40 +37441,42 @@ async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
   const normalizedDestination = destinationFs.pathUtils.normalize(destination);
   const normalizedSource = sourceFs.pathUtils.normalize(source);
   const operations = [];
-  const utimes = [];
+  const lutimes = [];
   await destinationFs.mkdirpPromise(destination);
-  await copyImpl(operations, utimes, destinationFs, normalizedDestination, sourceFs, normalizedSource, opts);
+  await copyImpl(operations, lutimes, destinationFs, normalizedDestination, sourceFs, normalizedSource, opts);
 
   for (const operation of operations) await operation();
 
-  for (const [p, atime, mtime] of utimes) {
-    await destinationFs.utimesPromise(p, atime, mtime);
+  const updateTime = typeof destinationFs.lutimesPromise === `function` ? destinationFs.lutimesPromise.bind(destinationFs) : destinationFs.utimesPromise.bind(destinationFs);
+
+  for (const [p, atime, mtime] of lutimes) {
+    await updateTime(p, atime, mtime);
   }
 }
 
 exports.copyPromise = copyPromise;
 
-async function copyImpl(operations, utimes, destinationFs, destination, sourceFs, source, opts) {
+async function copyImpl(operations, lutimes, destinationFs, destination, sourceFs, source, opts) {
   const destinationStat = await maybeLStat(destinationFs, destination);
   const sourceStat = await sourceFs.lstatPromise(source);
-  utimes.push([destination, sourceStat.atime, sourceStat.mtime]);
+  lutimes.push([destination, sourceStat.atime, sourceStat.mtime]);
 
   switch (true) {
     case sourceStat.isDirectory():
       {
-        await copyFolder(operations, utimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+        await copyFolder(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
       }
       break;
 
     case sourceStat.isFile():
       {
-        await copyFile(operations, utimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+        await copyFile(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
       }
       break;
 
     case sourceStat.isSymbolicLink():
       {
-        await copySymlink(operations, utimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+        await copySymlink(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
       }
       break;
 
@@ -37381,7 +37498,7 @@ async function maybeLStat(baseFs, p) {
   }
 }
 
-async function copyFolder(operations, utimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
+async function copyFolder(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
   if (destinationStat !== null && !destinationStat.isDirectory()) {
     if (opts.overwrite) {
       operations.push(async () => destinationFs.removePromise(destination));
@@ -37396,11 +37513,11 @@ async function copyFolder(operations, utimes, destinationFs, destination, destin
   }));
   const entries = await sourceFs.readdirPromise(source);
   await Promise.all(entries.map(async entry => {
-    await copyImpl(operations, utimes, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
+    await copyImpl(operations, lutimes, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
   }));
 }
 
-async function copyFile(operations, utimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
+async function copyFile(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
   if (destinationStat !== null) {
     if (opts.overwrite) {
       operations.push(async () => destinationFs.removePromise(destination));
@@ -37417,7 +37534,7 @@ async function copyFile(operations, utimes, destinationFs, destination, destinat
   }
 }
 
-async function copySymlink(operations, utimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
+async function copySymlink(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
   if (destinationStat !== null) {
     if (opts.overwrite) {
       operations.push(async () => destinationFs.removePromise(destination));
@@ -37432,81 +37549,10 @@ async function copySymlink(operations, utimes, destinationFs, destination, desti
 }
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = require("stream");
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-function makeError(code, message) {
-  return Object.assign(new Error(`${code}: ${message}`), {
-    code
-  });
-}
-
-function EBUSY(message) {
-  return makeError(`EBUSY`, message);
-}
-
-exports.EBUSY = EBUSY;
-
-function ENOSYS(message, reason) {
-  return makeError(`ENOSYS`, `${message}, ${reason}`);
-}
-
-exports.ENOSYS = ENOSYS;
-
-function EINVAL(reason) {
-  return makeError(`EINVAL`, `invalid argument, ${reason}`);
-}
-
-exports.EINVAL = EINVAL;
-
-function EBADF(reason) {
-  return makeError(`EBADF`, `bad file descriptor, ${reason}`);
-}
-
-exports.EBADF = EBADF;
-
-function ENOENT(reason) {
-  return makeError(`ENOENT`, `no such file or directory, ${reason}`);
-}
-
-exports.ENOENT = ENOENT;
-
-function ENOTDIR(reason) {
-  return makeError(`ENOTDIR`, `not a directory, ${reason}`);
-}
-
-exports.ENOTDIR = ENOTDIR;
-
-function EISDIR(reason) {
-  return makeError(`EISDIR`, `illegal operation on a directory, ${reason}`);
-}
-
-exports.EISDIR = EISDIR;
-
-function EEXIST(reason) {
-  return makeError(`EEXIST`, `file already exists, ${reason}`);
-}
-
-exports.EEXIST = EEXIST;
-
-function EROFS(reason) {
-  return makeError(`EROFS`, `read-only filesystem, ${reason}`);
-}
-
-exports.EROFS = EROFS;
 
 /***/ }),
 /* 16 */
@@ -43634,7 +43680,7 @@ const module_1 = __webpack_require__(6);
 
 const url_1 = __webpack_require__(30);
 
-const internalTools_1 = __webpack_require__(11);
+const internalTools_1 = __webpack_require__(12);
 
 function applyPatch(pnpapi, opts) {
   // @ts-ignore
@@ -43969,7 +44015,7 @@ const fslib_2 = __webpack_require__(5);
 
 const module_1 = __webpack_require__(6);
 
-const internalTools_1 = __webpack_require__(11);
+const internalTools_1 = __webpack_require__(12);
 
 function makeApi(runtimeState, opts) {
   const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
@@ -44266,6 +44312,77 @@ function makeApi(runtimeState, opts) {
     return packageInformation;
   }
   /**
+   * Find all packages that depend on the specified one.
+   *
+   * Note: This is a private function; we expect consumers to implement it
+   * themselves. We keep it that way because this implementation isn't
+   * optimized at all, since we only need it when printing errors.
+   */
+
+
+  function findPackageDependents({
+    name,
+    reference
+  }) {
+    const dependents = [];
+
+    for (const [dependentName, packageInformationStore] of packageRegistry) {
+      if (dependentName === null) continue;
+
+      for (const [dependentReference, packageInformation] of packageInformationStore) {
+        if (dependentReference === null) continue;
+        const dependencyReference = packageInformation.packageDependencies.get(name);
+        if (dependencyReference !== reference) continue; // Don't forget that all packages depend on themselves
+
+        if (dependentName === name && dependentReference === reference) continue;
+        dependents.push({
+          name: dependentName,
+          reference: dependentReference
+        });
+      }
+    }
+
+    return dependents;
+  }
+  /**
+   * Find all packages that broke the peer dependency on X, starting from Y.
+   *
+   * Note: This is a private function; we expect consumers to implement it
+   * themselves. We keep it that way because this implementation isn't
+   * optimized at all, since we only need it when printing errors.
+   */
+
+
+  function findBrokenPeerDependencies(dependency, initialPackage) {
+    const brokenPackages = new Map();
+
+    const traversal = currentPackage => {
+      const dependents = findPackageDependents(currentPackage);
+
+      for (const dependent of dependents) {
+        const dependentInformation = getPackageInformationSafe(dependent);
+
+        if (dependentInformation.packagePeers.has(dependency)) {
+          traversal(dependent);
+        } else {
+          let brokenSet = brokenPackages.get(dependent.name);
+          if (typeof brokenSet === `undefined`) brokenPackages.set(dependent.name, brokenSet = new Set());
+          brokenSet.add(dependent.reference);
+        }
+      }
+    };
+
+    traversal(initialPackage);
+    const brokenList = [];
+
+    for (const name of [...brokenPackages.keys()].sort()) for (const reference of [...brokenPackages.get(name)].sort()) brokenList.push({
+      name,
+      reference
+    });
+
+    return brokenList;
+  }
+  /**
    * Finds the package locator that owns the specified path. If none is found, returns null instead.
    */
 
@@ -44448,12 +44565,25 @@ function makeApi(runtimeState, opts) {
               dependencyName
             });
           } else {
-            error = internalTools_1.makeError(internalTools_1.ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, {
-              request,
-              issuer,
-              issuerLocator: Object.assign({}, issuerLocator),
-              dependencyName
-            });
+            const brokenAncestors = findBrokenPeerDependencies(dependencyName, issuerLocator);
+
+            if (brokenAncestors.every(ancestor => isDependencyTreeRoot(ancestor))) {
+              error = internalTools_1.makeError(internalTools_1.ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
+                request,
+                issuer,
+                issuerLocator: Object.assign({}, issuerLocator),
+                dependencyName,
+                brokenAncestors
+              });
+            } else {
+              error = internalTools_1.makeError(internalTools_1.ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
+                request,
+                issuer,
+                issuerLocator: Object.assign({}, issuerLocator),
+                dependencyName,
+                brokenAncestors
+              });
+            }
           }
         } else if (dependencyReference === undefined) {
           if (isDependencyTreeRoot(issuerLocator)) {
