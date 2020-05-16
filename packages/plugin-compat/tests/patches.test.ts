@@ -118,7 +118,7 @@ describe(`patches`, () => {
         try {
           await testCandidate(candidate);
         } catch (error) {
-          errors.push(`--- ${candidate} ---\n${error.stack}`);
+          errors.push(`--- ${structUtils.stringifyLocator(candidate)} ---\n${error.stack}`);
         }
       }
 
