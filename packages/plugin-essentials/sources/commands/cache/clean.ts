@@ -14,11 +14,16 @@ export default class CacheCleanCommand extends BaseCommand {
   static usage: Usage = Command.Usage({
     description: `remove the shared cache files`,
     details: `
-      This command will remove all the files in the shared cache.
+      This command will remove all the files from the cache.
+
+      By default only the local cache will be cleaned. This behavior can be disabled with the \`--mirror\`, which will lead to the removal of the global cache files instead, or \`--all\` (which will remove both the local and global caches for the current project).
     `,
     examples: [[
-      `Remove all the shared archives`,
+      `Remove all the local archives`,
       `$0 cache clean`,
+    ], [
+      `Remove all the archives stored in the ~/.yarn directory`,
+      `$0 cache clean --mirror`,
     ]],
   });
 

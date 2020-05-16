@@ -15,14 +15,14 @@ export const packageExtensions: Array<[string, any]> = [
     },
   }],
   // https://github.com/sindresorhus/any-observable/pull/25
-  [`any-observable@*`, {
+  [`any-observable@<0.5.1`, {
     peerDependenciesMeta: {
       [`rxjs`]: optionalPeerDep,
       [`zenObservable`]: optionalPeerDep,
     },
   }],
   // https://github.com/keymetrics/pm2-io-agent/pull/125
-  [`@pm2/agent@*`, {
+  [`@pm2/agent@<1.0.4`, {
     dependencies: {
       [`debug`]: `*`,
     },
@@ -34,14 +34,14 @@ export const packageExtensions: Array<[string, any]> = [
     },
   }],
   // https://github.com/sindresorhus/got/pull/1125
-  [`got@*`, {
+  [`got@<11`, {
     dependencies: {
       [`@types/responselike`]: `^1.0.0`,
       [`@types/keyv`]: `^3.1.1`,
     },
   }],
   // https://github.com/szmarczak/cacheable-lookup/pull/12
-  [`cacheable-lookup@*`, {
+  [`cacheable-lookup@<4.1.2`, {
     dependencies: {
       [`@types/keyv`]: `^3.1.1`,
     },

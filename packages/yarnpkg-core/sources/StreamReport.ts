@@ -7,6 +7,8 @@ import {Locator}                    from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration,
+  forgettableBufferSize?: number,
+  forgettableNames?: Set<MessageName | null>,
   includeFooter?: boolean,
   includeInfos?: boolean,
   includeLogs?: boolean,
@@ -18,8 +20,8 @@ export type StreamReportOptions = {
 const PROGRESS_FRAMES = [`⠋`, `⠙`, `⠹`, `⠸`, `⠼`, `⠴`, `⠦`, `⠧`, `⠇`, `⠏`];
 const PROGRESS_INTERVAL = 80;
 
-const FORGETTABLE_NAMES = new Set<MessageName | null>([MessageName.FETCH_NOT_CACHED, MessageName.UNUSED_CACHE_ENTRY]);
-const FORGETTABLE_BUFFER_SIZE = 5;
+const BASE_FORGETTABLE_NAMES = new Set<MessageName | null>([MessageName.FETCH_NOT_CACHED, MessageName.UNUSED_CACHE_ENTRY]);
+const BASE_FORGETTABLE_BUFFER_SIZE = 5;
 
 const GROUP = process.env.GITHUB_ACTIONS
   ? {start: (what: string) => `::group::${what}\n`, end: (what: string) => `::endgroup::\n`}
@@ -110,12 +112,29 @@ export class StreamReport extends Report {
   private progressFrame: number = 0;
   private progressTimeout: ReturnType<typeof setTimeout> | null = null;
 
+  private forgettableBufferSize: number;
+  private forgettableNames: Set<MessageName | null>;
   private forgettableLines: Array<string> = [];
 
-  constructor({configuration, stdout, json = false, includeFooter = true, includeLogs = !json, includeInfos = includeLogs, includeWarnings = includeLogs}: StreamReportOptions) {
+  constructor({
+    configuration,
+    stdout,
+    json = false,
+    includeFooter = true,
+    includeLogs = !json,
+    includeInfos = includeLogs,
+    includeWarnings = includeLogs,
+    forgettableBufferSize = BASE_FORGETTABLE_BUFFER_SIZE,
+    forgettableNames = new Set(),
+  }: StreamReportOptions) {
     super();
 
     this.configuration = configuration;
+    this.forgettableBufferSize = forgettableBufferSize;
+    this.forgettableNames = new Set([
+      ...forgettableNames,
+      ...BASE_FORGETTABLE_NAMES,
+    ]);
     this.includeFooter = includeFooter;
     this.includeInfos = includeInfos;
     this.includeWarnings = includeWarnings;
@@ -225,10 +244,10 @@ export class StreamReport extends Report {
       return;
 
     if (!this.json) {
-      if (FORGETTABLE_NAMES.has(name)) {
+      if (this.forgettableNames.has(name)) {
         this.forgettableLines.push(text);
-        if (this.forgettableLines.length > FORGETTABLE_BUFFER_SIZE) {
-          while (this.forgettableLines.length > FORGETTABLE_BUFFER_SIZE)
+        if (this.forgettableLines.length > this.forgettableBufferSize) {
+          while (this.forgettableLines.length > this.forgettableBufferSize)
             this.forgettableLines.shift();
 
           this.writeLines(name, this.forgettableLines);

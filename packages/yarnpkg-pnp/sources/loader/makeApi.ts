@@ -345,6 +345,83 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   }
 
   /**
+   * Find all packages that depend on the specified one.
+   *
+   * Note: This is a private function; we expect consumers to implement it
+   * themselves. We keep it that way because this implementation isn't
+   * optimized at all, since we only need it when printing errors.
+   */
+
+  function findPackageDependents({name, reference}: PhysicalPackageLocator): Array<PhysicalPackageLocator> {
+    const dependents: Array<PhysicalPackageLocator> = [];
+
+    for (const [dependentName, packageInformationStore] of packageRegistry) {
+      if (dependentName === null)
+        continue;
+
+      for (const [dependentReference, packageInformation] of packageInformationStore) {
+        if (dependentReference === null)
+          continue;
+
+        const dependencyReference = packageInformation.packageDependencies.get(name);
+        if (dependencyReference !== reference)
+          continue;
+
+        // Don't forget that all packages depend on themselves
+        if (dependentName === name && dependentReference === reference)
+          continue;
+
+        dependents.push({
+          name: dependentName,
+          reference: dependentReference,
+        });
+      }
+    }
+
+    return dependents;
+  }
+
+  /**
+   * Find all packages that broke the peer dependency on X, starting from Y.
+   *
+   * Note: This is a private function; we expect consumers to implement it
+   * themselves. We keep it that way because this implementation isn't
+   * optimized at all, since we only need it when printing errors.
+   */
+
+  function findBrokenPeerDependencies(dependency: string, initialPackage: PhysicalPackageLocator): Array<PhysicalPackageLocator> {
+    const brokenPackages = new Map<string, Set<string>>();
+
+    const traversal = (currentPackage: PhysicalPackageLocator) => {
+      const dependents = findPackageDependents(currentPackage);
+
+      for (const dependent of dependents) {
+        const dependentInformation = getPackageInformationSafe(dependent);
+
+        if (dependentInformation.packagePeers.has(dependency)) {
+          traversal(dependent);
+        } else {
+          let brokenSet = brokenPackages.get(dependent.name);
+          if (typeof brokenSet === `undefined`)
+            brokenPackages.set(dependent.name, brokenSet = new Set());
+
+          brokenSet.add(dependent.reference);
+        }
+      }
+    };
+
+    traversal(initialPackage);
+
+    const brokenList: Array<PhysicalPackageLocator> = [];
+
+    for (const name of [...brokenPackages.keys()].sort())
+      for (const reference of [...brokenPackages.get(name)!].sort())
+        brokenList.push({name, reference});
+
+    return brokenList;
+  }
+
+  /**
    * Finds the package locator that owns the specified path. If none is found, returns null instead.
    */
 
@@ -567,11 +644,20 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
             {request, issuer, dependencyName},
           );
         } else {
-          error = makeError(
-            ErrorCode.MISSING_PEER_DEPENDENCY,
-            `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
-            {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName},
-          );
+          const brokenAncestors = findBrokenPeerDependencies(dependencyName, issuerLocator);
+          if (brokenAncestors.every(ancestor => isDependencyTreeRoot(ancestor))) {
+            error = makeError(
+              ErrorCode.MISSING_PEER_DEPENDENCY,
+              `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`,
+              {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName, brokenAncestors},
+            );
+          } else {
+            error = makeError(
+              ErrorCode.MISSING_PEER_DEPENDENCY,
+              `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`,
+              {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName, brokenAncestors},
+            );
+          }
         }
       } else if (dependencyReference === undefined) {
         if (isDependencyTreeRoot(issuerLocator)) {

@@ -1,4 +1,4 @@
-import {PortablePath, npath, ppath, xfs, FakeFS}                                     from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, xfs, FakeFS, PosixFS}                            from '@yarnpkg/fslib';
 import {EnvSegment}                                                                  from '@yarnpkg/parsers';
 import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
 import fastGlob                                                                      from 'fast-glob';
@@ -281,7 +281,7 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
               if (!matches.length)
                 throw new Error(`No file matches found: "${segment.pattern}". Note: Glob patterns currently only support files that exist on the filesystem (Help Wanted)`);
 
-              for (const match of matches) {
+              for (const match of matches.sort()) {
                 pushAndClose(match);
               }
             } break;
@@ -654,8 +654,11 @@ export async function execute(command: string, args: Array<string> = [], {
   variables = {},
   glob = {
     isGlobPattern: fastGlob.isDynamicPattern,
-    // @ts-ignore: `fs` is based on `PortablePath`
-    match: (pattern: string, {cwd, fs = xfs}) => fastGlob(pattern, {cwd, fs}),
+    match: (pattern: string, {cwd, fs = xfs}) => fastGlob(pattern, {
+      cwd: npath.fromPortablePath(cwd),
+      // @ts-ignore: `fs` is wrapped in `PosixFS`
+      fs: new PosixFS(fs),
+    }),
   },
 }: Partial<UserOptions> = {}) {
   const normalizedEnv: {[key: string]: string} = {};

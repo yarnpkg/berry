@@ -287,6 +287,24 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should mention which ancestor broke the peer dependency chain`,
+    makeTemporaryEnv(
+      {dependencies: {[`broken-peer-deps`]: `1.0.0`}},
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(source(`require('broken-peer-deps')`)).rejects.toMatchObject({
+          externalException: {
+            message: expect.stringContaining(`Ancestor breaking the chain: broken-peer-deps@npm:1.0.0`),
+            code: `MODULE_NOT_FOUND`,
+            pnpCode: `MISSING_PEER_DEPENDENCY`,
+          },
+        });
+      },
+    ),
+  );
+
+  test(
     `it should allow packages to require themselves`,
     makeTemporaryEnv(
       {
