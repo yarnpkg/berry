@@ -7,11 +7,11 @@
     "@yarnpkg/plugin-patch": "^2.0.0-rc.8"
   },
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.32",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.33",
     "@yarnpkg/core": "workspace:^2.0.0-rc.27",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.18",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
     "@yarnpkg/monorepo": "workspace:0.0.0",
-    "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.18",
+    "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.19",
     "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.8"
   },
   "repository": {

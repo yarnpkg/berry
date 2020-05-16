@@ -6005,7 +6005,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/cli@workspace:^2.0.0-rc.32, @yarnpkg/cli@workspace:^2.0.0-rc.33, @yarnpkg/cli@workspace:packages/yarnpkg-cli":
+"@yarnpkg/cli@workspace:^2.0.0-rc.33, @yarnpkg/cli@workspace:packages/yarnpkg-cli":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
@@ -6126,7 +6126,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/fslib@workspace:^2.0.0-rc.18, @yarnpkg/fslib@workspace:^2.0.0-rc.20, @yarnpkg/fslib@workspace:packages/yarnpkg-fslib":
+"@yarnpkg/fslib@workspace:^2.0.0-rc.20, @yarnpkg/fslib@workspace:packages/yarnpkg-fslib":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/fslib@workspace:packages/yarnpkg-fslib"
   dependencies:
@@ -6330,11 +6330,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-compat@workspace:packages/plugin-compat"
   dependencies:
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.32"
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.33"
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.18"
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
     "@yarnpkg/monorepo": "workspace:0.0.0"
-    "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.18"
+    "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.19"
     "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.8"
   peerDependencies:
     "@yarnpkg/core": ^2.0.0-rc.27
@@ -6567,7 +6567,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-npm@workspace:^2.0.0-rc.18, @yarnpkg/plugin-npm@workspace:^2.0.0-rc.19, @yarnpkg/plugin-npm@workspace:packages/plugin-npm":
+"@yarnpkg/plugin-npm@workspace:^2.0.0-rc.19, @yarnpkg/plugin-npm@workspace:packages/plugin-npm":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
