@@ -1195,6 +1195,9 @@ export class Configuration {
   }
 
   format(text: string, colorRequest: FormatType | string) {
+    if (colorRequest === FormatType.PATH)
+      text = npath.fromPortablePath(text);
+
     if (!this.get(`enableColors`))
       return text;
 
