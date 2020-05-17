@@ -8006,7 +8006,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     "@babel/template": ^7.4.4
   peerDependencies:
     "@babel/core": ^7
-  checksum: 3a0b1d65c8a8814b04e92083b5498b7eba088d9750510699e2b81b4035522f54a6f367caac800ab773af7ce65e7b2e342d85e560af24d417de2c0b3274d43abe
+  checksum: 8322a5dfa97b2ad89b785c45f488b0659fd79c2551104484943ed839dac3af4a235612d67171657a60e461a5d9539349b8778fd93617058e6eede16b4efc07bc
   languageName: node
   linkType: hard
 

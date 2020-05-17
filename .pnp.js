@@ -10738,7 +10738,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["babel-plugin-lazy-import", [
         ["virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit:ff060e230afb4f2f36a1c495be65271c14ae2e4b", {
-          "packageLocation": "./.yarn/$$virtual/babel-plugin-lazy-import-virtual-a418d38246/0/cache/babel-plugin-lazy-import-https-62f6f9525b-3a0b1d65c8.zip/node_modules/babel-plugin-lazy-import/",
+          "packageLocation": "./.yarn/$$virtual/babel-plugin-lazy-import-virtual-a418d38246/0/cache/babel-plugin-lazy-import-https-62f6f9525b-8322a5dfa9.zip/node_modules/babel-plugin-lazy-import/",
           "packageDependencies": [
             ["babel-plugin-lazy-import", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit:ff060e230afb4f2f36a1c495be65271c14ae2e4b"],
             ["@babel/core", "npm:7.7.4"],
