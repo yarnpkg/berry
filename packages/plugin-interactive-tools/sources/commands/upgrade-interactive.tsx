@@ -7,7 +7,7 @@ import {renderForm, SubmitInjectedComponent}                                    
 import {suggestUtils}                                                                                                      from '@yarnpkg/plugin-essentials';
 import {Command, Usage}                                                                                                    from 'clipanion';
 import {diffWords}                                                                                                         from 'diff';
-import {Box, Color}                                                                                                        from 'ink';
+import {Box, Color, Text}                                                                                                  from 'ink';
 import React, {useEffect, useState}                                                                                        from 'react';
 import semver                                                                                                              from 'semver';
 
@@ -131,6 +131,43 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       return suggestions;
     };
 
+    const Prompt = () => {
+      return (
+        <Box flexDirection="row">
+          <Box flexDirection="column" width={49}>
+            <Box marginLeft={1}>
+             Press <Color bold cyanBright>{`<up>`}</Color>/<Color bold cyanBright>{`<down>`}</Color> to select packages.
+            </Box>
+            <Box marginLeft={1}>
+             Press <Color bold cyanBright>{`<left>`}</Color>/<Color bold cyanBright>{`<right>`}</Color> to select versions.
+            </Box>
+          </Box>
+          <Box flexDirection="column">
+            <Box marginLeft={1}>
+             Press <Color bold cyanBright>{`<enter>`}</Color> to install.
+            </Box>
+            <Box marginLeft={1}>
+             Press <Color bold cyanBright>{`<ctrl+c>`}</Color> to abort.
+            </Box>
+          </Box>
+        </Box>
+      );
+    };
+
+    const Header = () => {
+      return (
+        <Box flexDirection="row" paddingTop={1} paddingBottom={1}>
+          <Box width={50}>
+            <Text bold>
+              <Color greenBright>?</Color> Pick the packages you want to upgrade.
+            </Text>
+          </Box>
+          <Box width={17}><Color bold underline gray>Current</Color></Box>
+          <Box width={17}><Color bold underline gray>Range/Latest</Color></Box>
+        </Box>
+      );
+    };
+
     const UpgradeEntry = ({active, descriptor}: {active: boolean, descriptor: Descriptor}) => {
       const [action, setAction] = useMinistore<string | null>(descriptor.descriptorHash, null);
       const [suggestions, setSuggestions] = useState<Array<{value: string | null, label: string}> | null>(null);
@@ -144,12 +181,14 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       ]);
 
       return <Box>
-        <Box width={60}>
-          {structUtils.prettyIdent(configuration, descriptor)}
+        <Box width={45} textWrap="wrap">
+          <Text bold>
+            {structUtils.prettyIdent(configuration, descriptor)}
+          </Text>
         </Box>
         {suggestions !== null
-          ? <ItemOptions active={active} options={suggestions} value={action} onChange={setAction} sizes={[15, 15, 15]} />
-          : <Box><Color gray>Fetching suggestions...</Color></Box>
+          ? <ItemOptions active={active} options={suggestions} value={action} onChange={setAction} sizes={[17, 17, 17]} />
+          : <Box marginLeft={2}><Color gray>Fetching suggestions...</Color></Box>
         }
       </Box>;
     };
@@ -171,9 +210,8 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
 
       return <>
         <Box flexDirection={`column`}>
-          <Box textWrap={`wrap`} marginBottom={1}>
-            The following packages are direct dependencies of your project. Select those you want to upgrade, then press enter. Press ctrl-C to abort at any time:
-          </Box>
+          <Prompt/>
+          <Header/>
           <ScrollableItems radius={10} children={sortedDependencies.map(descriptor => {
             return <UpgradeEntry key={descriptor.descriptorHash} active={false} descriptor={descriptor} />;
           })} />

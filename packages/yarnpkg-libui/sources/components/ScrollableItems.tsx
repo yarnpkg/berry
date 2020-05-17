@@ -54,8 +54,8 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
     const activeItem = active && key === activeKey;
 
     rendered.push(<Box key={key!} height={size}>
-      <Box marginLeft={2} marginRight={2}>
-        {activeItem ? <Color cyan>▶</Color> : ` `}
+      <Box marginLeft={1} marginRight={1}>
+        {activeItem ? <Color cyan bold>></Color> : ` `}
       </Box>
       <Box>
         {React.cloneElement(children[t], {active: activeItem})}
@@ -63,7 +63,7 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
     </Box>);
   }
 
-  return <Box flexDirection={`column`} width={`100%`} height={radius * size * 2 + size}>
+  return <Box flexDirection={`column`} width={`100%`}>
     {rendered}
   </Box>;
 };
