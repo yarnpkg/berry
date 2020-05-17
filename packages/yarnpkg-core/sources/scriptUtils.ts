@@ -149,8 +149,8 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
           if (version.code !== 0)
             return version.code;
 
-          // Otherwise Yarn 1 will pack the .yarn directory :(
-          await xfs.appendFilePromise(ppath.join(cwd, `.npmignore` as PortablePath), `/.yarn\n`);
+          // Otherwise Yarn 1 will pack the .yarn directory and .yarnrc.yml file :(
+          await xfs.appendFilePromise(ppath.join(cwd, `.npmignore` as PortablePath), `/.yarn*\n`);
 
           stdout.write(`\n`);
 
