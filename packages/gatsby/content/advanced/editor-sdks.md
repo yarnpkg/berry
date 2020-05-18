@@ -28,19 +28,13 @@ If you'd like to contribute more, [take a look here!](https://github.com/yarnpkg
 
 ### VSCode
 
-1. Add PnPify to your dependencies:
+1. Run the following command, which will generate a new directory called `.vscode/pnpify`:
 
 ```bash
-yarn add @yarnpkg/pnpify
+yarn dlx @yarnpkg/pnpify --sdk
 ```
 
-2. Run the following command, which will generate a new directory called `.vscode/pnpify`:
-
-```bash
-yarn pnpify --sdk
-```
-
-3. For safety reason VSCode requires you to explicitly activate the custom TS settings:
+2. For safety reason VSCode requires you to explicitly activate the custom TS settings:
 
   1. Press <kbd>ctrl+shift+p</kbd> in a TypeScript file
   2. Choose "Select TypeScript Version"
@@ -52,37 +46,25 @@ Note that VSCode might ask you to do Step 3 again from time to time, but apart f
 
 ### VIM / coc.nvim
 
-1. Add PnPify to your dependencies:
+1. Run the following command, which will generate a new directory called `.vscode/pnpify`:
 
 ```bash
-yarn add @yarnpkg/pnpify
+yarn dlx @yarnpkg/pnpify --sdk
 ```
 
-2. Run the following command, which will generate a new directory called `.vscode/pnpify`:
-
-```bash
-yarn pnpify --sdk
-```
-
-3. Set [`tsserver.tsdk`](https://github.com/neoclide/coc-tsserver#configuration-options) to `.vscode/pnpify/typescript/lib`
+2. Set [`tsserver.tsdk`](https://github.com/neoclide/coc-tsserver#configuration-options) to `.vscode/pnpify/typescript/lib`
 
 ### Emacs
 
 The SDK comes with a typescript-language-server wrapper which enables you to use the ts-ls LSP client.
 
-1. Add PnPify to your dependencies:
+1. Run the following command, which will generate a new directory called `.vscode/pnpify`:
 
 ```bash
-yarn add @yarnpkg/pnpify
+yarn dlx @yarnpkg/pnpify --sdk
 ```
 
-2. Run the following command, which will generate a new directory called `.vscode/pnpify`:
-
-```bash
-yarn pnpify --sdk
-```
-
-3. Create a `.dir-locals.el` with the following content to enable Flycheck and LSP support:
+2. Create a `.dir-locals.el` with the following content to enable Flycheck and LSP support:
 
 ```lisp
 ((typescript-mode
