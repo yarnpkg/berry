@@ -1,11 +1,11 @@
-import {Cache, Descriptor, Plugin, Workspace, ResolveOptions} from '@yarnpkg/core';
-import {structUtils, ThrowReport, DescriptorHash, Package}    from '@yarnpkg/core';
-import {Hooks as EssentialsHooks}                             from '@yarnpkg/plugin-essentials';
-import {suggestUtils}                                         from '@yarnpkg/plugin-essentials';
-import {Hooks as PackHooks}                                   from '@yarnpkg/plugin-pack';
-import semver                                                 from 'semver';
+import {Descriptor, Plugin, Workspace, ResolveOptions, Manifest, AllDependencies, DescriptorHash, Package} from '@yarnpkg/core';
+import {structUtils, ThrowReport, miscUtils}                                                               from '@yarnpkg/core';
+import {Hooks as EssentialsHooks}                                                                          from '@yarnpkg/plugin-essentials';
+import {suggestUtils}                                                                                      from '@yarnpkg/plugin-essentials';
+import {Hooks as PackHooks}                                                                                from '@yarnpkg/plugin-pack';
+import semver                                                                                              from 'semver';
 
-import {hasDefinitelyTyped}                                   from './typescriptUtils';
+import {hasDefinitelyTyped}                                                                                from './typescriptUtils';
 
 const getTypesName = (descriptor: Descriptor) => {
   return descriptor.scope
@@ -37,45 +37,50 @@ const afterWorkspaceDependencyAddition = async (
   if (!requiresInstallTypes)
     return;
 
-  const cache = await Cache.find(configuration);
   const typesName = getTypesName(descriptor);
 
-  const target = suggestUtils.Target.DEVELOPMENT;
-  const modifier = suggestUtils.Modifier.EXACT;
-
-  const request = structUtils.makeDescriptor(structUtils.makeIdent(`types`, typesName), `unknown`);
-  const suggestions = await suggestUtils.getSuggestedDescriptors(request, {workspace, project, cache, target, modifier, strategies});
-
-  const nonNullSuggestions = suggestions.filter(suggestion => suggestion.descriptor !== null);
-  if (nonNullSuggestions.length === 0)
-    return;
-
-  let selected: Descriptor | null | undefined = null;
-
-  // Try reusing an existing version
-  if (strategies.includes(suggestUtils.Strategy.REUSE))
-    selected = nonNullSuggestions.find(suggestion => suggestion.reason.startsWith(`Reuse`))?.descriptor;
-
-  // If `strategies` doesn't include `Strategy.REUSE` or there's no existing
-  // version in the project, try computing it from the base descriptor
-  if (!selected) {
-    let {range} = descriptor;
-
-    // If the range is a tag, we have to resolve it into a semver version
-    if (!semver.validRange(range)) {
-      const originalCandidates = await resolver.getCandidates(descriptor, new Map<DescriptorHash,Package>(), resolveOptions);
-      range = structUtils.parseRange(originalCandidates[0].reference).selector;
-    }
-
-    // Make a descriptor with the `^<major>` range
-    // Note: semver can coerce ranges into versions
-    selected = structUtils.makeDescriptor(request, suggestUtils.Modifier.CARET + semver.coerce(range)!.major);
+  let {range} = descriptor;
+  // If the range is a tag, we have to resolve it into a semver version
+  if (!semver.validRange(range)) {
+    const originalCandidates = await resolver.getCandidates(descriptor, new Map<DescriptorHash, Package>(), resolveOptions);
+    range = structUtils.parseRange(originalCandidates[0].reference).selector;
   }
 
-  workspace.manifest[target].set(
-    selected.identHash,
-    selected,
-  );
+  const coercedRange = `${suggestUtils.Modifier.CARET}${semver.coerce(range)!.major}`;
+  const atTypesDescriptor = structUtils.makeDescriptor(structUtils.makeIdent(`types`, typesName), coercedRange);
+
+  const projectSuggestions = miscUtils.mapAndFind(project.workspaces, workspace => {
+    const regularDependencyHash = workspace.manifest.dependencies.get(descriptor.identHash)?.descriptorHash;
+    const devDependencyHash = workspace.manifest.devDependencies.get(descriptor.identHash)?.descriptorHash;
+
+    // We only want workspaces that depend the exact same range as the original package
+    if (regularDependencyHash !== descriptor.descriptorHash && devDependencyHash !== descriptor.descriptorHash)
+      return miscUtils.mapAndFind.skip;
+
+    const atTypesDependencies: Array<[AllDependencies, Descriptor]> = [];
+
+    for (const type of Manifest.allDependencies) {
+      const atTypesDependency = workspace.manifest[type].get(atTypesDescriptor.identHash);
+      if (typeof atTypesDependency === `undefined`)
+        continue;
+
+      atTypesDependencies.push([type, atTypesDependency]);
+    }
+
+    // We only want workspaces that also depend on the appropriate @types package
+    if (atTypesDependencies.length === 0)
+      return miscUtils.mapAndFind.skip;
+
+    return atTypesDependencies;
+  });
+
+  if (typeof projectSuggestions !== `undefined`) {
+    for (const [dependencyType, atTypesDescriptor] of projectSuggestions) {
+      workspace.manifest[dependencyType].set(atTypesDescriptor.identHash, atTypesDescriptor);
+    }
+  } else {
+    workspace.manifest[dependencyTarget].set(atTypesDescriptor.identHash, atTypesDescriptor);
+  }
 };
 
 const afterWorkspaceDependencyRemoval = async (
@@ -86,16 +91,18 @@ const afterWorkspaceDependencyRemoval = async (
   if (descriptor.scope === `types`)
     return;
 
-  const target = suggestUtils.Target.DEVELOPMENT;
   const typesName = getTypesName(descriptor);
 
   const ident = structUtils.makeIdent(`types`, typesName);
-  const current = workspace.manifest[target].get(ident.identHash);
 
-  if (typeof current === `undefined`)
-    return;
+  for (const type of Manifest.allDependencies) {
+    const current = workspace.manifest[type].get(ident.identHash);
 
-  workspace.manifest[target].delete(ident.identHash);
+    if (typeof current === `undefined`)
+      continue;
+
+    workspace.manifest[type].delete(ident.identHash);
+  }
 };
 
 const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
