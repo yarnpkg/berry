@@ -10,7 +10,6 @@ import webpack                                                             from 
 
 import {isDynamicLib}                                                      from '../../tools/isDynamicLib';
 import {makeConfig}                                                        from '../../tools/makeConfig';
-import {reindent}                                                          from '../../tools/reindent';
 
 // The name gets normalized so that everyone can override some plugins by
 // their own (@arcanis/yarn-plugin-foo would override @yarnpkg/plugin-foo
@@ -84,16 +83,18 @@ export default class BuildPluginCommand extends Command {
                 compilation.hooks.optimizeChunkAssets.tap(`MyPlugin`, (chunks: Array<webpack.compilation.Chunk>) => {
                   for (const chunk of chunks) {
                     for (const file of chunk.files) {
-                      compilation.assets[file] = new RawSource(reindent(`
-                        /* eslint-disable*/
-                        module.exports = {
-                          name: ${JSON.stringify(name)},
-                          factory: function (require) {
-                            ${reindent(compilation.assets[file].source().replace(/^ +/, ``), 11)}
-                            return plugin;
-                          },
-                        };
-                      `));
+                      compilation.assets[file] = new RawSource(
+                        [
+                          `/* eslint-disable */`,
+                          `module.exports = {`,
+                          `name: ${JSON.stringify(name)},`,
+                          `factory: function (require) {`,
+                          compilation.assets[file].source(),
+                          `return plugin;`,
+                          `}`,
+                          `};`,
+                        ].join(`\n`)
+                      );
                     }
                   }
                 });
