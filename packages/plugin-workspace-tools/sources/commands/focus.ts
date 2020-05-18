@@ -91,6 +91,8 @@ export default class WorkspacesFocus extends BaseCommand {
       includeLogs: true,
     }, async (report: StreamReport) => {
       await project.install({cache, report, persistProject: false});
+      // Virtual package references may have changed so persist just the install state.
+      await project.persistInstallStateFile();
     });
 
     return report.exitCode();
