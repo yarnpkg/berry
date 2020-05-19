@@ -11,6 +11,7 @@
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33",
     "@yarnpkg/core": "workspace:^2.0.0-rc.27",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
+    "@yarnpkg/parsers": "workspace:^2.0.0-rc.11",
     "finalhandler": "^1.1.2",
     "invariant": "^2.2.4",
     "klaw": "^2.1.1",

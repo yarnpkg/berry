@@ -39,7 +39,7 @@ const afterWorkspaceDependencyAddition = async (
 
   const typesName = getTypesName(descriptor);
 
-  let {range} = descriptor;
+  let range = structUtils.parseRange(descriptor.range).selector;
   // If the range is a tag, we have to resolve it into a semver version
   if (!semver.validRange(range)) {
     const originalCandidates = await resolver.getCandidates(descriptor, new Map<DescriptorHash, Package>(), resolveOptions);
@@ -79,7 +79,17 @@ const afterWorkspaceDependencyAddition = async (
       workspace.manifest[dependencyType].set(atTypesDescriptor.identHash, atTypesDescriptor);
     }
   } else {
-    workspace.manifest[dependencyTarget].set(atTypesDescriptor.identHash, atTypesDescriptor);
+    // Return if the atTypes descriptor can't be resolved
+    try {
+      const atTypesCandidates = await resolver.getCandidates(atTypesDescriptor, new Map<DescriptorHash, Package>(), resolveOptions);
+      if (atTypesCandidates.length === 0) {
+        return;
+      }
+    } catch {
+      return;
+    }
+
+    workspace.manifest[suggestUtils.Target.DEVELOPMENT].set(atTypesDescriptor.identHash, atTypesDescriptor);
   }
 };
 

@@ -26179,6 +26179,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
+            ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["finalhandler", "npm:1.1.2"],
             ["invariant", "npm:2.2.4"],
             ["klaw", "npm:2.1.1"],
@@ -26207,10 +26208,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/acceptance-tests/pkg-tests-specs/",
           "packageDependencies": [
             ["pkg-tests-specs", "workspace:packages/acceptance-tests/pkg-tests-specs"],
+            ["@types/lodash", "npm:4.14.136"],
+            ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["fs-extra", "npm:7.0.1"],
+            ["lodash", "npm:4.17.15"],
             ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"],
             ["semver", "npm:7.1.2"]
           ],
