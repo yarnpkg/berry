@@ -33,6 +33,8 @@ You can use all of Javascript inside the repro code, including `async/await`. In
 
 - In order to simplify some tasks that would be very menial otherwise (like spawning the Yarn process, or running a Node script in the generated environment), we provide a set of builtin functions that abstract these semantics. You can find the full reference inside [our repository](https://github.com/yarnpkg/berry/tree/master/scripts/actions/sherlock-prepare.js), along with some documentation.
 
+  **Note:** All core plugins are enabled by default, you don't need to run yarn import on them again.
+
 - The [expect](https://jestjs.io/docs/en/expect) API is available globally and *must* be used to describe the assertions in your test (simply throwing will cause Sherlock to mark your reproduction case as broken).
 
 ## Examples
