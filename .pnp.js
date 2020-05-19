@@ -32285,7 +32285,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["typedoc-neo-theme", [
         ["npm:1.0.7", {
-          "packageLocation": "./.yarn/unplugged/typedoc-neo-theme-npm-1.0.7-d8a2223683/node_modules/typedoc-neo-theme/",
+          "packageLocation": "./.yarn/cache/typedoc-neo-theme-npm-1.0.7-d8a2223683-c789b77158.zip/node_modules/typedoc-neo-theme/",
           "packageDependencies": [
             ["typedoc-neo-theme", "npm:1.0.7"],
             ["typedoc", "virtual:d8a22236835ea6a343a6f368c384af7c307d527652163c1cfc56292a2b4e7d055c3e2d0ac6817157cd52f801ddf4aeddee76e681fa2e9a53e9fb60482401a352#npm:0.16.0"]

@@ -61,9 +61,6 @@
     "svg2png": {
       "unplugged": true
     },
-    "typedoc-neo-theme": {
-      "unplugged": true
-    },
     "webpack-cli": {
       "built": false
     }
