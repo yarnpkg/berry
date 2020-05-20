@@ -1,6 +1,7 @@
 module.exports = {
   plugins: [
     `@babel/plugin-transform-modules-commonjs`,
+    `@babel/plugin-syntax-dynamic-import`,
     `@babel/plugin-proposal-optional-chaining`,
     `@babel/plugin-proposal-nullish-coalescing-operator`,
     [`@babel/plugin-proposal-decorators`, {legacy: true}],
