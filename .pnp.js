@@ -15127,7 +15127,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["esbuild-wasm", [
         ["npm:0.3.5", {
-          "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.3.5-12335a0c47-a9fe11650d.zip/node_modules/esbuild-wasm/",
+          "packageLocation": "./.yarn/unplugged/esbuild-wasm-npm-0.3.5-12335a0c47/node_modules/esbuild-wasm/",
           "packageDependencies": [
             ["esbuild-wasm", "npm:0.3.5"]
           ],

@@ -6301,6 +6301,8 @@ __metadata:
       built: false
     date-fns:
       built: false
+    esbuild-wasm:
+      unplugged: true
     fsevents:
       built: false
     gatsby:
