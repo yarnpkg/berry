@@ -6310,8 +6310,6 @@ __metadata:
       built: false
     svg2png:
       unplugged: true
-    typedoc-neo-theme:
-      unplugged: true
     webpack-cli:
       built: false
   languageName: unknown
@@ -6670,7 +6668,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-version@workspace:packages/plugin-version"
   dependencies:
-    "@types/micromatch": ^4.0.1
     "@types/react": ^16.8.0
     "@types/semver": ^7.1.0
     "@types/yup": 0.26.12
@@ -6683,7 +6680,6 @@ __metadata:
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.19"
     clipanion: ^2.1.5
     ink: ^2.3.0
-    micromatch: ^4.0.2
     react: ^16.13.1
     semver: ^7.1.2
     typescript: ^3.8.3
