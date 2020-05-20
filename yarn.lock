@@ -6389,6 +6389,7 @@ __metadata:
     "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.7"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.11"
     clipanion: ^2.1.5
+    esbuild: ^0.3.5
     inquirer: ^6.2.0
     lodash: ^4.17.15
     semver: ^7.1.2
@@ -11962,6 +11963,15 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 6.1.0
   resolution: "es6-promisify@npm:6.1.0"
   checksum: c6ef2770b37ce330aec8394c67bdf03c9b1529d8f63eeeda3e34eed0c22ab1191e9b73b01c2772ca7d40a9c668031984d016229daf7ba211c793a4cf0046fc62
+  languageName: node
+  linkType: hard
+
+"esbuild@npm:^0.3.5":
+  version: 0.3.5
+  resolution: "esbuild@npm:0.3.5"
+  bin:
+    esbuild: bin/esbuild
+  checksum: 4039f813fccf8b7ac889a06c86a3464c46f1cebc25e3ec4fe641637ee2fb25b0a5bfd108bbe22dc9de8f72d30df18a78e5f58c657ad0a39164e3b672cfea0ecb
   languageName: node
   linkType: hard
 

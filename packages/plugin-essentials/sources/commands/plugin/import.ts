@@ -3,6 +3,7 @@ import {Configuration, MessageName, Project, ReportError, StreamReport, miscUtil
 import {httpUtils, structUtils}                                                    from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs}                                           from '@yarnpkg/fslib';
 import {Command, Usage}                                                            from 'clipanion';
+import esbuild                                                                     from 'esbuild';
 import {runInNewContext}                                                           from 'vm';
 
 import {getAvailablePlugins}                                                       from './list';
@@ -11,6 +12,9 @@ import {getAvailablePlugins}                                                    
 export default class PluginDlCommand extends BaseCommand {
   @Command.String()
   name!: string;
+
+  @Command.Boolean(`--no-minify`)
+  noMinify: boolean = false;
 
   static usage: Usage = Command.Usage({
     category: `Plugin-related commands`,
@@ -91,7 +95,18 @@ export default class PluginDlCommand extends BaseCommand {
       const vmExports = {} as any;
       const vmModule = {exports: vmExports};
 
-      runInNewContext(pluginBuffer.toString(), {
+      const service = await esbuild.startService();
+      const transformResult = await service.transform(pluginBuffer.toString(), {
+        loader: `tsx`,
+        minify: !this.noMinify,
+        sourcemap: false,
+        target: `es2017`,
+      });
+      service.stop();
+
+      const pluginSource = transformResult.js!;
+
+      runInNewContext(pluginSource, {
         module: vmModule,
         exports: vmExports,
       });
@@ -103,7 +118,7 @@ export default class PluginDlCommand extends BaseCommand {
 
       report.reportInfo(MessageName.UNNAMED, `Saving the new plugin in ${configuration.format(relativePath, `magenta`)}`);
       await xfs.mkdirpPromise(ppath.dirname(absolutePath));
-      await xfs.writeFilePromise(absolutePath, pluginBuffer);
+      await xfs.writeFilePromise(absolutePath, pluginSource);
 
       const pluginMeta = {
         path: relativePath,

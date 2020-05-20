@@ -8528,6 +8528,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["clipanion", "npm:2.1.5"],
+            ["esbuild", "npm:0.3.5"],
             ["inquirer", "npm:6.2.1"],
             ["lodash", "npm:4.17.15"],
             ["semver", "npm:7.1.2"],
@@ -8554,6 +8555,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["clipanion", "npm:2.1.5"],
+            ["esbuild", "npm:0.3.5"],
             ["inquirer", "npm:6.2.1"],
             ["lodash", "npm:4.17.15"],
             ["semver", "npm:7.1.2"],
@@ -8580,6 +8582,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["clipanion", "npm:2.1.5"],
+            ["esbuild", "npm:0.3.5"],
             ["inquirer", "npm:6.2.1"],
             ["lodash", "npm:4.17.15"],
             ["semver", "npm:7.1.2"],
@@ -15112,6 +15115,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/es6-promisify-npm-6.1.0-93a75d95cd-c6ef2770b3.zip/node_modules/es6-promisify/",
           "packageDependencies": [
             ["es6-promisify", "npm:6.1.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["esbuild", [
+        ["npm:0.3.5", {
+          "packageLocation": "./.yarn/unplugged/esbuild-npm-0.3.5-a52331cd44/node_modules/esbuild/",
+          "packageDependencies": [
+            ["esbuild", "npm:0.3.5"]
           ],
           "linkType": "HARD",
         }]
