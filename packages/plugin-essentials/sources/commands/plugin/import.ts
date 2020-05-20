@@ -3,7 +3,6 @@ import {Configuration, MessageName, Project, ReportError, StreamReport, miscUtil
 import {httpUtils, structUtils}                                                    from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs}                                           from '@yarnpkg/fslib';
 import {Command, Usage}                                                            from 'clipanion';
-import esbuild                                                                     from 'esbuild';
 import {runInNewContext}                                                           from 'vm';
 
 import {getAvailablePlugins}                                                       from './list';
@@ -94,6 +93,8 @@ export default class PluginDlCommand extends BaseCommand {
 
       const vmExports = {} as any;
       const vmModule = {exports: vmExports};
+
+      const esbuild = await import(`esbuild`);
 
       const service = await esbuild.startService();
       const transformResult = await service.transform(pluginBuffer.toString(), {
