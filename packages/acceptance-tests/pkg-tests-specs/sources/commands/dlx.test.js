@@ -1,6 +1,9 @@
 const {
-  tests: {setPackageWhitelist},
+  fs: {writeFile},
+  tests: {setPackageWhitelist, startPackageServer},
 } = require(`pkg-tests-core`);
+
+const AUTH_TOKEN = `686159dc-64b3-413e-a244-2de2b8d1c36f`;
 
 describe(`Commands`, () => {
   describe(`dlx`, () => {
@@ -55,6 +58,24 @@ describe(`Commands`, () => {
           });
         });
       }),
+    );
+
+    test(
+      `it should respect locally configured registry scopes`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `npmScopes:`,
+          `  private:`,
+          `    npmRegistryServer: "${url}"`,
+          `    npmAuthToken: ${AUTH_TOKEN}`,
+        ].join(`\n`));
+
+        await expect(run(`dlx`, `-q`, `@private/has-bin-entry`)).resolves.toMatchObject({
+          stdout: `1.0.0\n`,
+        });
+      })
     );
   });
 });
