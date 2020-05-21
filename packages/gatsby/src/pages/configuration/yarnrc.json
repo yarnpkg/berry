@@ -155,12 +155,12 @@
     "httpTimeout": {
       "description": "Timeout of each http request in milliseconds",
       "type": "number",
-      "default": "60000"
+      "default": 60000
     },
     "httpRetry": {
       "description": "Retry times on http failure",
       "type": "number",
-      "default": "3"
+      "default": 3
     },
     "ignoreCwd": {
       "description": "If true, the `--cwd` flag will be ignored.",
