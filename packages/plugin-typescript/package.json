@@ -4,7 +4,8 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.19",
-    "algoliasearch": "^4.0.1"
+    "algoliasearch": "^4.0.1",
+    "semver": "^7.1.2"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "^2.0.0-rc.33",
@@ -13,6 +14,7 @@
   },
   "devDependencies": {
     "@algolia/requester-common": "4.0.0-beta.14",
+    "@types/semver": "^7.1.0",
     "@yarnpkg/builder": "workspace:^2.0.0-rc.21",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33",
     "@yarnpkg/core": "workspace:^2.0.0-rc.27",

@@ -6650,12 +6650,14 @@ __metadata:
   resolution: "@yarnpkg/plugin-typescript@workspace:packages/plugin-typescript"
   dependencies:
     "@algolia/requester-common": 4.0.0-beta.14
+    "@types/semver": ^7.1.0
     "@yarnpkg/builder": "workspace:^2.0.0-rc.21"
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33"
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/plugin-essentials": "workspace:^2.0.0-rc.27"
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.19"
     algoliasearch: ^4.0.1
+    semver: ^7.1.2
     typescript: ^3.8.3
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.33
@@ -22164,6 +22166,7 @@ fsevents@~2.1.2:
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33"
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
+    "@yarnpkg/parsers": "workspace:^2.0.0-rc.11"
     finalhandler: ^1.1.2
     invariant: ^2.2.4
     klaw: ^2.1.1
@@ -22188,10 +22191,13 @@ fsevents@~2.1.2:
   version: 0.0.0-use.local
   resolution: "pkg-tests-specs@workspace:packages/acceptance-tests/pkg-tests-specs"
   dependencies:
+    "@types/lodash": ^4.14.136
+    "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.11"
     fs-extra: ^7.0.1
+    lodash: ^4.17.15
     pkg-tests-core: "workspace:0.0.0"
     semver: ^7.1.2
   languageName: unknown

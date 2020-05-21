@@ -26,6 +26,20 @@ export function mapAndFilter<In, Out>(array: Array<In>, cb: (value: In) => Out |
 const mapAndFilterSkip = Symbol();
 mapAndFilter.skip = mapAndFilterSkip;
 
+export function mapAndFind<In, Out>(array: Array<In>, cb: (value: In) => Out | typeof mapAndFindSkip): Out | undefined {
+  for (const value of array) {
+    const out = cb(value);
+    if (out !== mapAndFindSkip) {
+      return out;
+    }
+  }
+
+  return undefined;
+}
+
+const mapAndFindSkip = Symbol();
+mapAndFind.skip = mapAndFindSkip;
+
 export function getFactoryWithDefault<K, T>(map: Map<K, T>, key: K, factory: () => T) {
   let value = map.get(key);
 

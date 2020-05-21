@@ -38,6 +38,7 @@ export interface Hooks {
     workspace: Workspace,
     target: suggestUtils.Target,
     descriptor: Descriptor,
+    strategies: Array<suggestUtils.Strategy>
   ) => Promise<void>,
 
   afterWorkspaceDependencyReplacement?: (
