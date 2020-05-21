@@ -3,6 +3,37 @@ import {Configuration, Project}              from '@yarnpkg/core';
 import {scriptUtils, structUtils}            from '@yarnpkg/core';
 import {Filename, ppath, toFilename, xfs}    from '@yarnpkg/fslib';
 import {Command, Usage}                      from 'clipanion';
+import {Writable}                            from 'stream';
+
+class WritablePluginBufferStream extends Writable {
+  private chunks: Array<string> = [];
+
+  _write(chunk: any, encoding: string, callback: (error?: (Error | null)) => void): void {
+    const stringChunk = chunk.toString();
+    this.chunks.push(stringChunk);
+
+    // If this is true, the last line has been printed and we can end the stream
+    if (stringChunk.includes(`Done`))
+      this.end();
+
+    callback();
+  }
+
+  finishPromise(): Promise<string> {
+    return new Promise(resolve => {
+      this.on(`finish`, () => resolve(this.chunks.join(``)));
+    });
+  }
+}
+
+function getConfigurationKeysFromPluginModule(pluginModule: any): Array<string> {
+  const {configuration} = pluginModule.default;
+
+  if (typeof configuration === `undefined`)
+    return [];
+
+  return Object.keys(configuration);
+}
 
 // eslint-disable-next-line arca/no-default-export
 export default class DlxCommand extends BaseCommand {
@@ -44,14 +75,31 @@ export default class DlxCommand extends BaseCommand {
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`package.json`)), `{}\n`);
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`yarn.lock`)), ``);
 
-      const projectCwd = await Configuration.findProjectCwd(this.context.cwd, Filename.lockfile);
-      const localConfigPath = ppath.join(projectCwd!, toFilename(`.yarnrc.yml`));
+      const projectCwd = (await Configuration.findProjectCwd(this.context.cwd, Filename.lockfile))!;
+      const localConfigPath = ppath.join(projectCwd, toFilename(`.yarnrc.yml`));
       const tmpDirConfigPath = ppath.join(tmpDir, toFilename(`.yarnrc.yml`));
       if (await xfs.existsPromise(localConfigPath)) {
         await xfs.copyFilePromise(localConfigPath, tmpDirConfigPath);
-        await Configuration.updateConfiguration(tmpDirConfigPath, {
+        await Configuration.updateConfiguration(projectCwd, {
           enableGlobalCache: false,
         });
+
+        const bufferStream = new WritablePluginBufferStream();
+        await this.cli.run([`plugin`, `runtime`], {cwd: tmpDir, stdout: bufferStream});
+        const result = await bufferStream.finishPromise();
+
+        const {plugins, modules} = this.context.plugins;
+        const pluginNameArray = Array.from(plugins);
+
+        const allPluginConfigurationKeys = pluginNameArray.reduce<Array<string>>((allKeys, name) =>
+          [...allKeys, ...getConfigurationKeysFromPluginModule(modules.get(name))], []);
+
+        const activePlugins = Array.from(plugins).filter(plugin => result.includes(plugin));
+        const activePluginConfigurationKeys = activePlugins.reduce<Array<string>>((allKeys, name) =>
+          [...allKeys, ...getConfigurationKeysFromPluginModule(modules.get(name))], []);
+
+        const keysToRemove = allPluginConfigurationKeys.filter(key => !activePluginConfigurationKeys.includes(key));
+        await Configuration.removeConfigurationEntries(tmpDir, keysToRemove);
       } else {
         await xfs.writeFilePromise(tmpDirConfigPath, `enableGlobalCache: true\n`);
       }
