@@ -91,13 +91,15 @@ yarn test:lint --fix
 
 We use [constraints](/features/constraints) to enforce various rules across the repository. They are declared inside the [`constraints.pro` file](https://github.com/yarnpkg/berry/blob/master/constraints.pro) and their purposes are documented with comments.
 
-Constraints can be checked with `yarn constraints` and fixed with `yarn constraints --fix`.
+Constraints can be checked with `yarn constraints`, and fixed with `yarn constraints --fix`. Generally speaking:
 
-Rule highlights:
 - Workspaces must not depend on conflicting ranges of dependencies. Use the `-i,--interactive` flag and select "Reuse" when installing dependencies and you shouldn't ever have to deal with this rule.
+
 - Workspaces must not depend on non-workspace ranges of available workspaces. Use the `-i,--interactive` flag and select "Reuse" or "Attach" when installing dependencies and you shouldn't ever have to deal with this rule.
-- Workspaces must use a specific `repository` field.
+
 - Workspaces that are part of the standard bundle or plugins must have specific build scripts. The ones that aren't, must be declared inside the `constraints.pro` file with `inline_compile`.
+
+- Workspaces must point our repository through the `repository` field.
 
 ## Preparing your PR to be released
 
@@ -115,10 +117,9 @@ git checkout -
 yarn version check --interactive
 ```
 
-
 If it fails and you have no idea why, feel free to ping a maintainer and we'll do our best to help you.
 
-Note: If you modify a plugin included in the standard bundle, you should also bump `@yarnpkg/cli`.
+**Note:** If you modify one of the [default plugins](https://github.com/yarnpkg/berry#default-plugins), you will also need to bump `@yarnpkg/cli`.
 
 ## Writing documentation
 
