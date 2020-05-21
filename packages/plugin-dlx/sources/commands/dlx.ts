@@ -56,13 +56,10 @@ export default class DlxCommand extends BaseCommand {
           return {
             enableGlobalCache: true,
             plugins: current.plugins.map((plugin: any) => {
-              if (typeof plugin === `string` && xfs.existsSync(plugin as PortablePath))
+              if (typeof plugin === `string`)
                 return ppath.resolve(projectCwd, plugin as PortablePath);
 
-              if (xfs.existsSync(plugin.path as PortablePath))
-                return {spec: plugin.spec, path: ppath.resolve(projectCwd, plugin.path as PortablePath)};
-
-              return plugin;
+              return {spec: plugin.spec, path: ppath.resolve(projectCwd, plugin.path as PortablePath)};
             }),
           };
         });
