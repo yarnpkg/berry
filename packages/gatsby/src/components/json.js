@@ -1,4 +1,4 @@
-import React  from 'react';
+import React from 'react';
 
 import {
   Container,
@@ -20,6 +20,7 @@ const theme = {
     key: `#8ac6f2`,
     string: `#95e454`,
     boolean: `#f08080`,
+    number: `#ffd700`,
   },
 
   formatKey: key => {

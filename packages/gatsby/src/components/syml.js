@@ -20,6 +20,7 @@ const theme = {
     key: `#dfc47d`,
     string: `#cc9393`,
     boolean: `#eddd3d`,
+    number: `#ffd700`,
   },
 
   formatKey: key => {
