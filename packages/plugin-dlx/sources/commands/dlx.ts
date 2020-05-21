@@ -48,9 +48,10 @@ export default class DlxCommand extends BaseCommand {
       const localConfigPath = ppath.join(projectCwd!, toFilename(`.yarnrc.yml`));
       const tmpDirConfigPath = ppath.join(tmpDir, toFilename(`.yarnrc.yml`));
       if (await xfs.existsPromise(localConfigPath)) {
-        const originalContent = (await xfs.readFilePromise(localConfigPath)).toString();
-        const modifiedContent = originalContent.replace(`enableGlobalCache: false`, ``);
-        await xfs.writeFilePromise(tmpDirConfigPath, `${modifiedContent}\nenableGlobalCache: true\n`);
+        await xfs.copyFilePromise(localConfigPath, tmpDirConfigPath);
+        await Configuration.updateConfiguration(tmpDirConfigPath, {
+          enableGlobalCache: false,
+        });
       } else {
         await xfs.writeFilePromise(tmpDirConfigPath, `enableGlobalCache: true\n`);
       }
