@@ -77,5 +77,26 @@ describe(`Commands`, () => {
         });
       })
     );
+
+    test(
+      `it should not fail if plugin-specific configuration options are set in the local config file`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `plugins:`,
+          `  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`))}`,
+          `npmScopes:`,
+          `  private:`,
+          `    npmRegistryServer: "${url}"`,
+          `    npmAuthToken: ${AUTH_TOKEN}`,
+          `preferDeferredVersions: true`,
+        ].join(`\n`));
+
+        await expect(run(`dlx`, `-q`, `@private/has-bin-entry`)).resolves.toMatchObject({
+          stdout: `1.0.0\n`,
+        });
+      })
+    );
   });
 });
