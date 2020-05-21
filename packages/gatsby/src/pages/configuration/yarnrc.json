@@ -25,7 +25,7 @@
       "default": ["master", "origin/master", "upstream/master"]
     },
     "changesetIgnorePatterns": {
-      "description": "Files matching the following patterns (in terms of relative paths compared to the root of the project) will be ignored by the `yarn version check` command.",
+      "description": "An Array of glob patterns. Files matching the following patterns (in terms of relative paths compared to the root of the project) will be ignored by the `yarn version check` command.",
       "type": "array",
       "items": {
         "type": "string"
@@ -155,12 +155,12 @@
     "httpTimeout": {
       "description": "Timeout of each http request in milliseconds",
       "type": "number",
-      "default": "60000"
+      "default": 60000
     },
     "httpRetry": {
       "description": "Retry times on http failure",
       "type": "number",
-      "default": "3"
+      "default": 3
     },
     "ignoreCwd": {
       "description": "If true, the `--cwd` flag will be ignored.",
@@ -418,11 +418,13 @@
       "enum": ["none", "dependencies-only", "all"],
       "default": "dependencies-only"
     },
-    "pnpIgnorePattern": {
-      "description": "Files matching the following location (in term of relative path compared to the generated `.pnp.js` file) will not be covered by PnP and will use the regular Node resolution. Typically only needed if you have subprojects that aren't yet part of your workspace tree.",
-      "type": "string",
-      "format": "regex",
-      "default": "^\\./subdir/.*"
+    "pnpIgnorePatterns": {
+      "description": "An Array of glob patterns. Files matching the following locations (in term of relative path compared to the generated `.pnp.js` file) will not be covered by PnP and will use the regular Node resolution. Typically only needed if you have subprojects that aren't yet part of your workspace tree.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": ["./subdir/.*"]
     },
     "pnpMode": {
       "description": "If `strict` (the default), Yarn won't allow modules to require packages they don't explicitly list in their own dependencies. If `loose`, Yarn will allow access to the packages that would have been hoisted to the top-level under 1.x installs. Note that, even in loose mode, such calls are unsafe (hoisting rules aren't predictable) and should be discouraged.",

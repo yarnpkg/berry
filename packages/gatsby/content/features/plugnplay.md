@@ -4,6 +4,10 @@ path: /features/pnp
 title: "Plug'n'Play"
 ---
 
+> **PnP API**
+>
+> Are you a library author trying to make your library compatible with the Plug'n'Play installation strategy? Do you want to use the PnP API for something awesome? If the answer to any of these questions is yes, make sure to visit the [PnP API](/advanced/pnpapi) page after reading the introduction!
+
 Unveiled in September 2018, Plug'n'Play is a new innovative installation strategy for Node. Based on prior works from other languages (for example [autoload](https://getcomposer.org/doc/04-schema.md#autoload) from PHP), it presents interesting characteristics that build upon the regular commonjs `require` workflow in an almost completely backward-compatible way.
 
 ```toc
@@ -54,15 +58,20 @@ At runtime, packages that require unlisted dependencies will still be allowed to
 
 Note that the content of the fallback pool is undetermined - should a dependency tree contains multiple versions of a same package, there's no telling which one will be hoisted to the top-level! For this reason, a package accessing the fallback pool will still generate a warning (via the [process.emitWarning](https://nodejs.org/api/process.html#process_process_emitwarning_warning_type_code_ctor) API).
 
-This mode is an in-between between the `strict` PnP linker and the `node_modules` linker. For now, the `strict` mode will remain the default, but once the `2.1` release will be tagged, the `loose` mode will be expected to become the new default.
+This mode is an in-between between the `strict` PnP linker and the `node_modules` linker.
 
 In order to enable `loose` mode, make sure that the [`nodeLinker`](/configuration/yarnrc#nodeLinker) option is set to `pnp` (the default) and add the following into your local [`.yarnrc.yml`](/configuration/yarnrc) file:
-
 ```yaml
 pnpMode: loose
 ```
 
 [More information about the `pnpMode` option.](/configuration/yarnrc#pnpMode)
+
+### Caveat
+
+Because we *emit* warnings (instead of *throwing* errors) on resolution errors, applications can't *catch* them. This means that the common pattern of trying to `require` an optional peer dependency inside a try/catch block will print a warning at runtime if the dependency is missing, even though it shouldn't. This doesn't have any other runtime implications other than the fact that an incorrect warning that sometimes causes confusion is emitted, so it can be safely ignored.
+
+This is the reason why, unlike we originally planned, PnP `loose` mode **won't be** the default starting from 2.1. It will continue being supported as an alternative, helping in the transition to the default and recommended workflow - PnP `strict` mode. 
 
 ## Caveats and work-in-progress
 
@@ -115,3 +124,19 @@ The following tools unfortunately cannot be used with pure Plug'n'Play install (
 | VSCode Extension Manager (vsce) | Use the [vsce-yarn-patch](https://www.npmjs.com/package/vsce-yarn-patch) fork with the `node-modules` plugin enabled. The fork is required until [microsoft/vscode-vsce#379](https://github.com/microsoft/vscode-vsce/pull/379) is merged, as `vsce` currently uses the removed `yarn list` command |
 
 This list is kept up-to-date based on the latest release we've published starting from the v2. In case you notice something off in your own project please try to upgrade Yarn and the problematic package first, then feel free to file an issue. And maybe a PR? 😊
+
+## Frequently Asked Questions
+
+### Packages are stored inside Zip archives: How can I access their files?
+
+When using PnP, packages are stored and accessed directly inside the Zip archives from the cache.
+The PnP runtime (`.pnp.js`) automatically patches Node's `fs` module to add support for accessing files inside Zip archives. This way, you don't have to do anything special:
+
+```js
+const {readFileSync} = require(`fs`);
+
+// Looks similar to `/path/to/.yarn/cache/lodash-npm-4.17.11-1c592398b2-8b49646c65.zip/node_modules/lodash/ceil.js`
+const lodashCeilPath = require.resolve(`lodash/ceil`);
+
+console.log(readFileSync(lodashCeilPath));
+```

@@ -27,6 +27,27 @@ const foo = await ...;
 
 > **Important:** Note that the codefence is not only tagged `js`, but also `repro`. This is critical, as we don't want to execute every single snippet!
 
+## Developing your reproduction
+
+The easiest and most convenient way to develop your reproduction is by using the [Playground](/playground) (powered by [CodeSandbox](https://codesandbox.io/)).
+
+> Note: We ***strongly*** encourage you to use the Playground. It saves both you and us important time. Also, in the future, we *might* autoclose issues without a reproduction after a period of time, unless a contributor manually labels them as `reproducible`, so be prepared!
+
+### Features
+
+- A [Monaco Editor](https://microsoft.github.io/monaco-editor/) (the editor that powers VSCode) where you can write your reproduction.
+- A Terminal-like output where you can see the assertion or the error / playground tips if you haven't run anything yet.
+- A Menu for selecting reproduction templates. Note: Your last input is saved inside `localStorage` for future use.
+- The status of the playground (more information on hover).
+- An `Export` button that can be used to share the link of the playground and even copy/open an issue in our repo with the issue template filled with your reproduction (status has to be `reproducible`). You can also open the reproduction in CodeSandbox.
+- Shareable Playground URLs - You can export them by using the `Export` button and the code will be automatically imported inside the Playground when you access it through them.
+
+### Limitations
+
+- Reproductions are run inside a CodeSandbox container, so they're always running inside a Linux environment, with the Node version that CodeSandbox uses. This limitation also exists when running the reproduction with Sherlock inside an issue, so if you need to use a specific OS / Node version, you **have to** [develop your reproduction offline](#can-i-develop-my-reproduction-offline).
+- Don't use very large packages unless you absolutely have to - the sandbox won't like it.
+- The sandbox may go to sleep after some time. If that happens, reload the page to reboot it.
+
 ## Available functions
 
 You can use all of Javascript inside the repro code, including `async/await`. In fact, you can even use top-level `await`! As far as the runtime go you should have access to all of Node's APIs, plus some extras:
@@ -84,7 +105,7 @@ https://github.com/yarnpkg/berry/issues?q=is%3Aissue+label%3Areproducible+is%3Ac
 
 ### Can I develop my reproduction offline?
 
-It's a bit annoying to build a reproduction directly on the repository tracker as you'll get flooded with the email notifications from the bot. Until we improve this part of the workflow, you can use this tip to easily build a reproduction offline and only share it once it's ready:
+If you can't use the Playground, you can build a reproduction offline and only share it once it's ready:
 
 1. Clone our [repository](https://github.com/yarnpkg/berry)
 2. Go into it, and write your issue in a markdown file (as if you were on GitHub)

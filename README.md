@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://github.com/yarnpkg/berry"><img alt="GitHub Actions status" src="https://github.com/yarnpkg/berry/workflows/Integration/badge.svg"></a>
   <a href="https://discord.gg/yarnpkg"><img alt="Discord Chat" src="https://img.shields.io/discord/226791405589233664.svg"></a>
-  <a href="https://www.npmjs.com/package/yarn"><img alt="Latest Berry Release" src="https://img.shields.io/npm/v/yarn/berry"></a>
+  <a href="https://www.npmjs.com/package/@yarnpkg/cli"><img alt="Latest CLI Release" src="https://img.shields.io/npm/v/@yarnpkg/cli/latest?label=npm"></a>
 </p>
 
 ---
