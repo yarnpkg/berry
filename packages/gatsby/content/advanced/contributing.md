@@ -115,7 +115,10 @@ git checkout -
 yarn version check --interactive
 ```
 
+
 If it fails and you have no idea why, feel free to ping a maintainer and we'll do our best to help you.
+
+Note: If you modify a plugin included in the standard bundle, you should also bump `@yarnpkg/cli`.
 
 ## Writing documentation
 
