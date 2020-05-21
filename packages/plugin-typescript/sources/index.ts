@@ -45,8 +45,12 @@ const afterWorkspaceDependencyAddition = async (
     const originalCandidates = await resolver.getCandidates(descriptor, new Map<DescriptorHash, Package>(), resolveOptions);
     range = structUtils.parseRange(originalCandidates[0].reference).selector;
   }
+  
+  const semverRange = semver.coerce(range);
+  if (semverRange === null)
+    return;
 
-  const coercedRange = `${suggestUtils.Modifier.CARET}${semver.coerce(range)!.major}`;
+  const coercedRange = `${suggestUtils.Modifier.CARET}${semverRange!.major}`;
   const atTypesDescriptor = structUtils.makeDescriptor(structUtils.makeIdent(`types`, typesName), coercedRange);
 
   const projectSuggestions = miscUtils.mapAndFind(project.workspaces, workspace => {
