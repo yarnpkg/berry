@@ -4,6 +4,10 @@ path: /features/pnp
 title: "Plug'n'Play"
 ---
 
+> **PnP API**
+>
+> Are you a library author trying to make your library compatible with the Plug'n'Play installation strategy? Do you want to use the PnP API for something awesome? If the answer to any of these questions is yes, make sure to visit the [PnP API](/advanced/pnpapi) page after reading the introduction!
+
 Unveiled in September 2018, Plug'n'Play is a new innovative installation strategy for Node. Based on prior works from other languages (for example [autoload](https://getcomposer.org/doc/04-schema.md#autoload) from PHP), it presents interesting characteristics that build upon the regular commonjs `require` workflow in an almost completely backward-compatible way.
 
 ```toc
@@ -120,3 +124,19 @@ The following tools unfortunately cannot be used with pure Plug'n'Play install (
 | VSCode Extension Manager (vsce) | Use the [vsce-yarn-patch](https://www.npmjs.com/package/vsce-yarn-patch) fork with the `node-modules` plugin enabled. The fork is required until [microsoft/vscode-vsce#379](https://github.com/microsoft/vscode-vsce/pull/379) is merged, as `vsce` currently uses the removed `yarn list` command |
 
 This list is kept up-to-date based on the latest release we've published starting from the v2. In case you notice something off in your own project please try to upgrade Yarn and the problematic package first, then feel free to file an issue. And maybe a PR? 😊
+
+## Frequently Asked Questions
+
+### Packages are stored inside Zip archives: How can I access their files?
+
+When using PnP, packages are stored and accessed directly inside the Zip archives from the cache.
+The PnP runtime (`.pnp.js`) automatically patches Node's `fs` module to add support for accessing files inside Zip archives. This way, you don't have to do anything special:
+
+```js
+const {readFileSync} = require(`fs`);
+
+// Looks similar to `/path/to/.yarn/cache/lodash-npm-4.17.11-1c592398b2-8b49646c65.zip/node_modules/lodash/ceil.js`
+const lodashCeilPath = require.resolve(`lodash/ceil`);
+
+console.log(readFileSync(lodashCeilPath));
+```
