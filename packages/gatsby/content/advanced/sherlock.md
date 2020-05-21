@@ -29,7 +29,7 @@ const foo = await ...;
 
 ## Developing your reproduction
 
-The easiest and most convenient way to develop your reproduction is by using the [Playground](https://yarnpkg.com/playground) (powered by [CodeSandbox](https://codesandbox.io/)).
+The easiest and most convenient way to develop your reproduction is by using the [Playground](/playground) (powered by [CodeSandbox](https://codesandbox.io/)).
 
 > Note: We ***strongly*** encourage you to use the Playground. It saves both you and us important time. Also, in the future, we *might* autoclose issues without a reproduction after a period of time, unless a contributor manually labels them as `reproducible`, so be prepared!
 
