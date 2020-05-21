@@ -44,7 +44,8 @@ export default class DlxCommand extends BaseCommand {
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`package.json`)), `{}\n`);
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`yarn.lock`)), ``);
 
-      const localConfigPath = ppath.join(ppath.cwd(), toFilename(`.yarnrc.yml`));
+      const projectCwd = await Configuration.findProjectCwd(this.context.cwd, Filename.lockfile);
+      const localConfigPath = ppath.join(projectCwd!, toFilename(`.yarnrc.yml`));
       const tmpDirConfigPath = ppath.join(tmpDir, toFilename(`.yarnrc.yml`));
       if (await xfs.existsPromise(localConfigPath)) {
         const originalContent = (await xfs.readFilePromise(localConfigPath)).toString();
