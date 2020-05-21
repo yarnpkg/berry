@@ -13,7 +13,6 @@
 <!--- Don't worry if you miss something, chores are automatically tested. -->
 <!--- This checklist exists to help you remember doing the chores when you submit a PR. -->
 <!--- Put an `x` in all the boxes that apply. -->
-
 - [ ] I have read the [Contributing Guide](https://yarnpkg.com/advanced/contributing).
 
 <!-- See https://yarnpkg.com/advanced/contributing#preparing-your-pr-to-be-released for more details. -->
