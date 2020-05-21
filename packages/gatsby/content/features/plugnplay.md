@@ -54,15 +54,20 @@ At runtime, packages that require unlisted dependencies will still be allowed to
 
 Note that the content of the fallback pool is undetermined - should a dependency tree contains multiple versions of a same package, there's no telling which one will be hoisted to the top-level! For this reason, a package accessing the fallback pool will still generate a warning (via the [process.emitWarning](https://nodejs.org/api/process.html#process_process_emitwarning_warning_type_code_ctor) API).
 
-This mode is an in-between between the `strict` PnP linker and the `node_modules` linker. For now, the `strict` mode will remain the default, but once the `2.1` release will be tagged, the `loose` mode will be expected to become the new default.
+This mode is an in-between between the `strict` PnP linker and the `node_modules` linker.
 
 In order to enable `loose` mode, make sure that the [`nodeLinker`](/configuration/yarnrc#nodeLinker) option is set to `pnp` (the default) and add the following into your local [`.yarnrc.yml`](/configuration/yarnrc) file:
-
 ```yaml
 pnpMode: loose
 ```
 
 [More information about the `pnpMode` option.](/configuration/yarnrc#pnpMode)
+
+### Caveat
+
+Because we *emit* warnings (instead of *throwing* errors) on resolution errors, applications can't *catch* them. This means that the common pattern of trying to `require` an optional peer dependency inside a try/catch block will print a warning at runtime if the dependency is missing, even though it shouldn't. This doesn't have any other runtime implications other than the fact that an incorrect warning that sometimes causes confusion is emitted, so it can be safely ignored.
+
+This is the reason why, unlike we originally planned, PnP `loose` mode **won't be** the default starting from 2.1. It will continue being supported as an alternative, helping in the transition to the default and recommended workflow - PnP `strict` mode. 
 
 ## Caveats and work-in-progress
 
