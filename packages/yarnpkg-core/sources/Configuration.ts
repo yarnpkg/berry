@@ -914,31 +914,6 @@ export class Configuration {
     });
   }
 
-  static async removeConfigurationEntries(cwd: PortablePath, keys: Array<string>) {
-    const rcFilename = getRcFilename();
-    const configurationPath =  ppath.join(cwd, rcFilename as PortablePath);
-
-    const current = xfs.existsSync(configurationPath)
-      ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any
-      : {};
-
-    let patched = false;
-
-    for (const key of keys) {
-      if (key in current) {
-        delete current[key];
-        patched = true;
-      }
-    }
-
-    if (!patched)
-      return;
-
-    await xfs.changeFilePromise(configurationPath, stringifySyml(current), {
-      automaticNewlines: true,
-    });
-  }
-
   static async updateHomeConfiguration(patch: any) {
     const homeFolder = folderUtils.getHomeFolder();
 
