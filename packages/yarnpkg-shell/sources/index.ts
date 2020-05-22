@@ -392,7 +392,10 @@ function makeCommandAction(args: Array<string>, opts: ShellOptions, state: Shell
   if (name === `command`) {
     return makeProcess(rest[0], rest.slice(1), opts, {
       cwd: npath.fromPortablePath(state.cwd),
-      env: state.environment,
+      env: {
+        ...state.environment,
+        PWD: npath.fromPortablePath(state.cwd),
+      },
     });
   }
 
