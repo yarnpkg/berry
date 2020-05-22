@@ -108,7 +108,7 @@ export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {proj
 
   const pluginName = vmModule.exports.name;
 
-  const relativePath = `.yarn/plugins/${pluginName}.js` as PortablePath;
+  const relativePath = `.yarn/plugins/${pluginName}.cjs` as PortablePath;
   const absolutePath = ppath.resolve(project.cwd, relativePath);
 
   report.reportInfo(MessageName.UNNAMED, `Saving the new plugin in ${configuration.format(relativePath, `magenta`)}`);
