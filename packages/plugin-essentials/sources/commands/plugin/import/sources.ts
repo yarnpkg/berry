@@ -40,7 +40,7 @@ export default class PluginDlSourcesCommand extends BaseCommand {
     details: `
       This command clones the Yarn repository into a temporary folder, builds the specified contrib plugin and updates the configuration to reference it in further CLI invocations.
 
-      The plugin can be referenced by name.
+      The plugins can be referenced by their short name if sourced from the official Yarn repository.
     `,
     examples: [[
       `Build and activate the "@yarnpkg/plugin-exec" plugin`,
