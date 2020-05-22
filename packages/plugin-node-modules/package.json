@@ -1,5 +1,6 @@
 {
   "name": "@yarnpkg/plugin-node-modules",
+  "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",

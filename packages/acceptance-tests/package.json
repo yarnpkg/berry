@@ -1,5 +1,6 @@
 {
   "private": true,
+  "license": "BSD-2-Clause",
   "workspaces": [
     "pkg-tests-core",
     "pkg-tests-fixtures",

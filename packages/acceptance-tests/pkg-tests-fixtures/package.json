@@ -1,6 +1,7 @@
 {
     "name": "pkg-tests-fixtures",
     "private": true,
+    "license": "BSD-2-Clause",
     "dependencies": {
         "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
     },
