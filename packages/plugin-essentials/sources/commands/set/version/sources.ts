@@ -1,11 +1,11 @@
-import {BaseCommand}                                                                 from '@yarnpkg/cli';
-import {Configuration, MessageName, StreamReport, execUtils, CommandContext, Report} from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs}                                   from '@yarnpkg/fslib';
-import {Command, Usage}                                                              from 'clipanion';
-import {tmpdir}                                                                      from 'os';
-import path                                                                          from 'path';
+import {BaseCommand}                                                                            from '@yarnpkg/cli';
+import {Configuration, MessageName, StreamReport, execUtils, CommandContext, Report, hashUtils} from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, xfs}                                              from '@yarnpkg/fslib';
+import {Command, Usage}                                                                         from 'clipanion';
+import {tmpdir}                                                                                 from 'os';
+import path                                                                                     from 'path';
 
-import {setVersion}                                                                  from '../version';
+import {setVersion}                                                                             from '../version';
 
 const PR_REGEXP = /^[0-9]+$/;
 
@@ -71,7 +71,7 @@ export default class SetVersionSourcesCommand extends BaseCommand {
 
     const target = typeof this.installPath !== `undefined`
       ? ppath.resolve(this.context.cwd, npath.toPortablePath(this.installPath))
-      : ppath.resolve(npath.toPortablePath(tmpdir()), `yarnpkg-sources` as Filename);
+      : ppath.resolve(npath.toPortablePath(tmpdir()), `yarnpkg-sources` as Filename, hashUtils.makeHash(this.repository).slice(0, 6) as Filename);
 
     const report = await StreamReport.start({
       configuration,

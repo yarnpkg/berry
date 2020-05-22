@@ -1,5 +1,5 @@
 import {BaseCommand}                                                    from '@yarnpkg/cli';
-import {structUtils}                                                    from '@yarnpkg/core';
+import {structUtils, hashUtils}                                         from '@yarnpkg/core';
 import {Configuration, MessageName, Project, ReportError, StreamReport} from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs, Filename}                      from '@yarnpkg/fslib';
 import {Command, Usage}                                                 from 'clipanion';
@@ -57,7 +57,7 @@ export default class PluginDlSourcesCommand extends BaseCommand {
 
     const target = typeof this.installPath !== `undefined`
       ? ppath.resolve(this.context.cwd, npath.toPortablePath(this.installPath))
-      : ppath.resolve(npath.toPortablePath(tmpdir()), `yarnpkg-sources` as Filename);
+      : ppath.resolve(npath.toPortablePath(tmpdir()), `yarnpkg-sources` as Filename, hashUtils.makeHash(this.repository).slice(0, 6) as Filename);
 
     const report = await StreamReport.start({
       configuration,
