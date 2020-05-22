@@ -77,7 +77,7 @@ export default class SetVersionSourcesCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async (report: StreamReport) => {
-      await prepareRepo.bind(this)({configuration, report, target});
+      await prepareRepo(this, {configuration, report, target});
 
       report.reportSeparator();
       report.reportInfo(MessageName.UNNAMED, `Building a fresh bundle`);
@@ -129,15 +129,22 @@ export async function runWorkflow(workflow: Array<Array<string>>, {configuration
   }
 }
 
-export async function prepareRepo<T extends Omit<SetVersionSourcesCommand, 'plugins'>>(this: T, {configuration, report, target}: {configuration: Configuration, report: Report, target: PortablePath}) {
+export type PrepareSpec = {
+  branch: string;
+  context: CommandContext;
+  force: boolean;
+  repository: string;
+};
+
+export async function prepareRepo(spec: PrepareSpec, {configuration, report, target}: {configuration: Configuration, report: Report, target: PortablePath}) {
   let ready = false;
 
-  if (!this.force && xfs.existsSync(ppath.join(target, `.git` as Filename))) {
+  if (!spec.force && xfs.existsSync(ppath.join(target, `.git` as Filename))) {
     report.reportInfo(MessageName.UNNAMED, `Fetching the latest commits`);
     report.reportSeparator();
 
     try {
-      await runWorkflow(UPDATE_WORKFLOW(this), {configuration, context: this.context, target});
+      await runWorkflow(UPDATE_WORKFLOW(spec), {configuration, context: spec.context, target});
       ready = true;
     } catch (error) {
       report.reportSeparator();
@@ -152,6 +159,6 @@ export async function prepareRepo<T extends Omit<SetVersionSourcesCommand, 'plug
     await xfs.removePromise(target);
     await xfs.mkdirpPromise(target);
 
-    await runWorkflow(CLONE_WORKFLOW(this, target), {configuration, context: this.context, target});
+    await runWorkflow(CLONE_WORKFLOW(spec, target), {configuration, context: spec.context, target});
   }
 }

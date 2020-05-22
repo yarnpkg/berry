@@ -75,7 +75,7 @@ export default class PluginDlSourcesCommand extends BaseCommand {
       const pluginSpec = identStr;
       const pluginName = pluginSpec.replace(/@yarnpkg\//, ``);
 
-      await prepareRepo.bind(this)({configuration, report, target});
+      await prepareRepo(this, {configuration, report, target});
 
       report.reportSeparator();
       report.reportInfo(MessageName.UNNAMED, `Building a fresh ${pluginName}`);
