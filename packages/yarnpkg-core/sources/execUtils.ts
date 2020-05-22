@@ -51,7 +51,10 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
 
   const child = crossSpawn(fileName, args, {
     cwd: npath.fromPortablePath(cwd),
-    env,
+    env: {
+      ...env,
+      PWD: npath.fromPortablePath(cwd),
+    },
     stdio,
   });
 
@@ -119,7 +122,10 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
 
   const subprocess = crossSpawn(fileName, args, {
     cwd: npath.fromPortablePath(cwd),
-    env,
+    env: {
+      ...env,
+      PWD: npath.fromPortablePath(cwd),
+    },
     stdio,
   });
 
