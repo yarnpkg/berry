@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/gatsby",
   "private": true,
+  "license": "BSD-2-Clause",
   "dependencies": {
     "@babel/core": "^7.7.4",
     "@emotion/core": "^10.0.7",

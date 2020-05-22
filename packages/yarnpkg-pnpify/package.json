@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/pnpify",
   "version": "2.0.0-rc.22",
+  "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
   "types": "./sources/index.ts",

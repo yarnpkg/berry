@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/doctor",
   "version": "2.0.0-rc.17",
+  "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33",

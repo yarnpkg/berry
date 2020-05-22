@@ -45,7 +45,7 @@ const afterWorkspaceDependencyAddition = async (
     const originalCandidates = await resolver.getCandidates(descriptor, new Map<DescriptorHash, Package>(), resolveOptions);
     range = structUtils.parseRange(originalCandidates[0].reference).selector;
   }
-  
+
   const semverRange = semver.coerce(range);
   if (semverRange === null)
     return;

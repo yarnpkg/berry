@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/plugin-git",
   "version": "2.0.0-rc.19",
+  "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/semver": "^7.1.0",

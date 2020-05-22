@@ -1,6 +1,7 @@
 {
   "name": "pkg-tests-core",
   "private": true,
+  "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/invariant": "^2.2.30",

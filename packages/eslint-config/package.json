@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/eslint-config",
   "version": "0.0.0",
+  "license": "BSD-2-Clause",
   "peerDependencies": {
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
