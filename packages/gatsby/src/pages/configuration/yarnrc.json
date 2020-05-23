@@ -189,6 +189,19 @@
       "pattern": "^(?:(.+))$",
       "default": "0.0.1"
     },
+    "initFields": {
+      "description": "Additional fields to set when creating packages via the `init` command.",
+      "type": "object",
+      "patternProperties": {
+        "^(.+)$": {
+          "description": "All properties will be added verbatim to the generated package.json",
+          "default": "https://yarnpkg.com"
+        }
+      },
+      "default": {
+        "homepage": {}
+      }
+    },
     "installStatePath": {
       "description": "Path of the file where the install state will be persisted.",
       "type": "string",
