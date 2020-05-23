@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}     from '@yarnpkg/cli';
-import {Configuration, Project}                  from '@yarnpkg/core';
-import {scriptUtils, structUtils}                from '@yarnpkg/core';
-import {Filename, ppath, toFilename, xfs, npath} from '@yarnpkg/fslib';
-import {Command, Usage}                          from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                 from '@yarnpkg/cli';
+import {Configuration, Project}                              from '@yarnpkg/core';
+import {scriptUtils, structUtils}                            from '@yarnpkg/core';
+import {NativePath, Filename, ppath, toFilename, xfs, npath} from '@yarnpkg/fslib';
+import {Command, Usage}                                      from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class DlxCommand extends BaseCommand {
@@ -44,11 +44,13 @@ export default class DlxCommand extends BaseCommand {
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`package.json`)), `{}\n`);
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`yarn.lock`)), ``);
 
-      const tmpDirConfigPath = ppath.join(tmpDir, toFilename(`.yarnrc.yml`));
+      const targetYarnrc = ppath.join(tmpDir, toFilename(`.yarnrc.yml`));
       const projectCwd = await Configuration.findProjectCwd(this.context.cwd, Filename.lockfile);
-      if (projectCwd !== null && await xfs.existsPromise(ppath.join(projectCwd, toFilename(`.yarnrc.yml`)))) {
-        const localConfigPath = ppath.join(projectCwd, toFilename(`.yarnrc.yml`));
-        await xfs.copyFilePromise(localConfigPath, tmpDirConfigPath);
+
+      if (projectCwd !== null && xfs.existsSync(sourceYarnrc)) {
+        const sourceYarnrc = ppath.join(projectCwd, toFilename(`.yarnrc.yml`));
+        await xfs.copyFilePromise(sourceYarnrc, targetYarnrc);
+
         await Configuration.updateConfiguration(tmpDir, (current: any) => {
           if (typeof current.plugins === `undefined`)
             return {enableGlobalCache: true};
@@ -56,20 +58,24 @@ export default class DlxCommand extends BaseCommand {
           return {
             enableGlobalCache: true,
             plugins: current.plugins.map((plugin: any) => {
+              const sourcePath: NativePath = typeof plugin === `string`
+                ? plugin
+                : plugin.path;
+
+              const remapPath = npath.isAbsolute(sourcePath)
+                ? sourcePath
+                : npath.resolve(npath.fromPortablePath(projectCwd), sourcePath);
+
               if (typeof plugin === `string`) {
-                if (npath.isAbsolute(plugin))
-                  return plugin;
-
-                return npath.resolve(npath.fromPortablePath(projectCwd), plugin);
+                return remapPath;
+              } else {
+                return {path: remapPath, spec: plugin.spec};
               }
-
-              const path = npath.isAbsolute(plugin.path) ? plugin.path : npath.resolve(npath.fromPortablePath(projectCwd), plugin.path);
-              return {spec: plugin.spec, path};
             }),
           };
         });
       } else {
-        await xfs.writeFilePromise(tmpDirConfigPath, `enableGlobalCache: true\n`);
+        await xfs.writeFilePromise(targetYarnrc, `enableGlobalCache: true\n`);
       }
 
       const pkgs = typeof this.pkg !== `undefined`
