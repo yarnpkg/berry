@@ -55,7 +55,7 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
 
     rendered.push(<Box key={key!} height={size}>
       <Box marginLeft={1} marginRight={1}>
-        {activeItem ? <Color cyan bold>></Color> : ` `}
+        {activeItem ? <Color cyan bold>{`>`}</Color> : ` `}
       </Box>
       <Box>
         {React.cloneElement(children[t], {active: activeItem})}
