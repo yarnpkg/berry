@@ -67,7 +67,7 @@ export default class DlxCommand extends BaseCommand {
 
               const remapPath = npath.isAbsolute(sourcePath)
                 ? sourcePath
-                : npath.resolve(npath.fromPortablePath(projectCwd), sourcePath);
+                : npath.resolve(npath.fromPortablePath(projectCwd!), sourcePath);
 
               if (typeof plugin === `string`) {
                 return remapPath;
