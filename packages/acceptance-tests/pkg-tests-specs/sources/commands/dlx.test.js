@@ -1,5 +1,5 @@
 const {
-  fs: {writeFile, realpath, readFile},
+  fs: {writeFile, realpath},
   tests: {setPackageWhitelist, startPackageServer},
 } = require(`pkg-tests-core`);
 
