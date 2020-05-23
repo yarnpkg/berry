@@ -88,7 +88,7 @@ See also: [Singleton Package](#singleton-package)
 
 A peer-dependent package is a package that lists peer dependencies.
 
-See also: [Virtual Packages](#virtual-packages)
+See also: [Virtual Packages](#virtual-package)
 
 ### Plugin
 
