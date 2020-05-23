@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}            from '@yarnpkg/cli';
-import {Configuration, Project}                         from '@yarnpkg/core';
-import {scriptUtils, structUtils}                       from '@yarnpkg/core';
-import {Filename, ppath, toFilename, xfs, PortablePath} from '@yarnpkg/fslib';
-import {Command, Usage}                                 from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}     from '@yarnpkg/cli';
+import {Configuration, Project}                  from '@yarnpkg/core';
+import {scriptUtils, structUtils}                from '@yarnpkg/core';
+import {Filename, ppath, toFilename, xfs, npath} from '@yarnpkg/fslib';
+import {Command, Usage}                          from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class DlxCommand extends BaseCommand {
@@ -44,10 +44,10 @@ export default class DlxCommand extends BaseCommand {
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`package.json`)), `{}\n`);
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`yarn.lock`)), ``);
 
-      const projectCwd = (await Configuration.findProjectCwd(this.context.cwd, Filename.lockfile))!;
-      const localConfigPath = ppath.join(projectCwd, toFilename(`.yarnrc.yml`));
       const tmpDirConfigPath = ppath.join(tmpDir, toFilename(`.yarnrc.yml`));
-      if (await xfs.existsPromise(localConfigPath)) {
+      const projectCwd = await Configuration.findProjectCwd(this.context.cwd, Filename.lockfile);
+      if (projectCwd !== null && await xfs.existsPromise(ppath.join(projectCwd, toFilename(`.yarnrc.yml`)))) {
+        const localConfigPath = ppath.join(projectCwd, toFilename(`.yarnrc.yml`));
         await xfs.copyFilePromise(localConfigPath, tmpDirConfigPath);
         await Configuration.updateConfiguration(tmpDir, (current: any) => {
           if (typeof current.plugins === `undefined`)
