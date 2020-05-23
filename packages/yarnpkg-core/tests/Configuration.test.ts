@@ -33,4 +33,55 @@ describe(`Configuration`, () => {
       expect(secondToken).toEqual(SECRET);
     });
   });
+
+  describe(`Enviroment variables`, () => {
+    it(`should replace env variables`, async () => {
+      process.env.ENV_AUTH_TOKEN = `AAA-BBB-CCC`;
+      process.env.EMPTY_VARIABLE = ``;
+
+      await initializeConfiguration({
+        npmScopes: {
+          onlyEnv: {
+            npmAuthToken: `\${ENV_AUTH_TOKEN}`,
+          },
+          envInString: {
+            npmAuthToken: `beforeEnv-\${ENV_AUTH_TOKEN}-after-env`,
+          },
+          envSetWithFallback: {
+            npmAuthToken: `\${ENV_AUTH_TOKEN-fallback-value}`,
+          },
+          unsetEnvWithFallback: {
+            npmAuthToken: `\${NOT_EXISTING_ENV-fallback-value}`,
+          },
+          emptyEnvWithStrictFallback: {
+            npmAuthToken: `\${EMPTY_VARIABLE-fallback-value}`,
+          },
+          emptyEnvWithFallback: {
+            npmAuthToken: `\${EMPTY_VARIABLE:-fallback-for-empty-value}`,
+          },
+        },
+      }, async dir => {
+        const configuration = await Configuration.find(dir, {
+          modules: new Map([[`@yarnpkg/plugin-npm`, NpmPlugin]]),
+          plugins: new Set([`@yarnpkg/plugin-npm`]),
+        });
+
+        const getToken = (scope: string) => configuration.get(`npmScopes`).get(scope).get(`npmAuthToken`);
+
+        const onlyEnv = getToken(`onlyEnv`);
+        const envInString = getToken(`envInString`);
+        const envSetWithFallback = getToken(`envSetWithFallback`);
+        const unsetEnvWithFallback = getToken(`unsetEnvWithFallback`);
+        const emptyEnvWithStrictFallback = getToken(`emptyEnvWithStrictFallback`);
+        const emptyEnvWithFallback = getToken(`emptyEnvWithFallback`);
+
+        expect(onlyEnv).toEqual(`AAA-BBB-CCC`);
+        expect(envInString).toEqual(`beforeEnv-AAA-BBB-CCC-after-env`);
+        expect(envSetWithFallback).toEqual(`AAA-BBB-CCC`);
+        expect(unsetEnvWithFallback).toEqual(`fallback-value`);
+        expect(emptyEnvWithStrictFallback).toEqual(``);
+        expect(emptyEnvWithFallback).toEqual(`fallback-for-empty-value`);
+      });
+    });
+  });
 });
