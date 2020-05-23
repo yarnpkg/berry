@@ -74,7 +74,7 @@ const PackagePage = ({searchState, onSearchStateChange}) => {
           </Header>
         }
       >
-        <SEO title="Home" keywords={defaultKeywords} />
+        <SEO title={packageName} keywords={defaultKeywords} />
 
         <SearchResults
           onTagClick={tag => setTags([...tags, tag])}
