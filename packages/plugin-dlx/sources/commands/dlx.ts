@@ -47,8 +47,11 @@ export default class DlxCommand extends BaseCommand {
       const targetYarnrc = ppath.join(tmpDir, toFilename(`.yarnrc.yml`));
       const projectCwd = await Configuration.findProjectCwd(this.context.cwd, Filename.lockfile);
 
-      if (projectCwd !== null && xfs.existsSync(sourceYarnrc)) {
-        const sourceYarnrc = ppath.join(projectCwd, toFilename(`.yarnrc.yml`));
+      const sourceYarnrc = projectCwd !== null
+        ? ppath.join(projectCwd, toFilename(`.yarnrc.yml`))
+        : null;
+
+      if (sourceYarnrc !== null && xfs.existsSync(sourceYarnrc)) {
         await xfs.copyFilePromise(sourceYarnrc, targetYarnrc);
 
         await Configuration.updateConfiguration(tmpDir, (current: any) => {
