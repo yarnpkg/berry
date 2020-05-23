@@ -172,22 +172,11 @@
       "type": "boolean",
       "default": false
     },
-    "initLicense": {
-      "description": "License used when creating packages via the `init` command.",
-      "type": "string",
-      "default": "MIT"
-    },
     "initScope": {
       "description": "Scope used when creating packages via the `init` command.",
       "type": "string",
       "pattern": "^(?:([^/]+?))$",
       "default": "yarnpkg"
-    },
-    "initVersion": {
-      "description": "Version used when creating packages via the `init` command.",
-      "type": "string",
-      "pattern": "^(?:(.+))$",
-      "default": "0.0.1"
     },
     "initFields": {
       "description": "Additional fields to set when creating packages via the `init` command.",
