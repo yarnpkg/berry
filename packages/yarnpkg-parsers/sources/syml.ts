@@ -150,9 +150,8 @@ export function parseSyml(source: string) {
   return parseViaJsYaml(source);
 }
 
-export function replaceEnvVariables(source: Object) {
-  const sourceAsString = JSON.stringify(source);
-  const splitByVariables = sourceAsString.split(/(\${[\w\d-:]+})/);
+export function replaceEnvVariables(source: string): string {
+  const splitByVariables = source.split(/(\${[\w\d-:]+})/);
   const replacedVariables =  splitByVariables.map(stringPart => {
     const matched = stringPart.match(/^\${(?<variableName>[\d\w_]+)(?<colon>:)?-?(?<fallback>[^}]+)?}$/);
     if (!matched) return stringPart;
@@ -166,7 +165,7 @@ export function replaceEnvVariables(source: Object) {
     if (variableExist) return variableValue;
     if (fallback) return fallback;
     return ``;
-  }).join(``);
+  });
 
-  return JSON.parse(replacedVariables);
+  return replacedVariables.join(``);
 }

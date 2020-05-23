@@ -438,17 +438,19 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
     if (typeof value !== `string`)
       throw new Error(`Expected value to be a string`);
 
+    const valueWithReplacedVariables = replaceEnvVariables(value);
+
     switch (definition.type) {
       case SettingsType.ABSOLUTE_PATH:
-        return ppath.resolve(folder, npath.toPortablePath(value));
+        return ppath.resolve(folder, npath.toPortablePath(valueWithReplacedVariables));
       case SettingsType.LOCATOR_LOOSE:
-        return structUtils.parseLocator(value, false);
+        return structUtils.parseLocator(valueWithReplacedVariables, false);
       case SettingsType.NUMBER:
-        return parseInt(value);
+        return parseInt(valueWithReplacedVariables);
       case SettingsType.LOCATOR:
-        return structUtils.parseLocator(value);
+        return structUtils.parseLocator(valueWithReplacedVariables);
       default:
-        return value;
+        return valueWithReplacedVariables;
     }
   };
 
@@ -825,7 +827,6 @@ export class Configuration {
           throw new UsageError(`Parse error when loading ${rcPath}; please check it's proper Yaml${tip}`);
         }
 
-        data = replaceEnvVariables(data);
         rcFiles.push({path: rcPath, cwd: currentCwd, data});
       }
 
@@ -841,7 +842,7 @@ export class Configuration {
 
     if (xfs.existsSync(homeRcFilePath)) {
       const content = await xfs.readFilePromise(homeRcFilePath, `utf8`);
-      const data = replaceEnvVariables(parseSyml(content)) as any;
+      const data = parseSyml(content) as any;
 
       return {path: homeRcFilePath, cwd: homeFolder, data};
     }
