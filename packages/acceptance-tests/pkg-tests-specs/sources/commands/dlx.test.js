@@ -1,5 +1,5 @@
 const {
-  fs: {writeFile},
+  fs: {writeFile, realpath, readFile},
   tests: {setPackageWhitelist, startPackageServer},
 } = require(`pkg-tests-core`);
 
@@ -79,13 +79,36 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should not fail when plugins are locally enabled using a string entry`,
+      `it should not fail when plugins are locally enabled using a string entry with a relative path`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const url = await startPackageServer();
 
         await writeFile(`${path}/.yarnrc.yml`, [
           `plugins:`,
           `  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`))}`,
+          `npmScopes:`,
+          `  private:`,
+          `    npmRegistryServer: "${url}"`,
+          `    npmAuthToken: ${AUTH_TOKEN}`,
+          `preferDeferredVersions: true`,
+        ].join(`\n`));
+
+        await expect(run(`dlx`, `-q`, `@private/has-bin-entry`)).resolves.toMatchObject({
+          stdout: `1.0.0\n`,
+        });
+      })
+    );
+
+    test(
+      `it should not fail when plugins are locally enabled using a string entry with an absolute path`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        const relativePluginPath = require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`);
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `plugins:`,
+          `  - ${await realpath(relativePluginPath)}`,
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
