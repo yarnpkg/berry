@@ -44,6 +44,9 @@ describe(`Configuration`, () => {
           onlyEnv: {
             npmAuthToken: `\${ENV_AUTH_TOKEN}`,
           },
+          multipleEnvs: {
+            npmAuthToken: `\${ENV_AUTH_TOKEN}-separator-\${ENV_AUTH_TOKEN}`,
+          },
           envInString: {
             npmAuthToken: `beforeEnv-\${ENV_AUTH_TOKEN}-after-env`,
           },
@@ -69,6 +72,7 @@ describe(`Configuration`, () => {
         const getToken = (scope: string) => configuration.get(`npmScopes`).get(scope).get(`npmAuthToken`);
 
         const onlyEnv = getToken(`onlyEnv`);
+        const multipleEnvs = getToken(`multipleEnvs`);
         const envInString = getToken(`envInString`);
         const envSetWithFallback = getToken(`envSetWithFallback`);
         const unsetEnvWithFallback = getToken(`unsetEnvWithFallback`);
@@ -76,6 +80,7 @@ describe(`Configuration`, () => {
         const emptyEnvWithFallback = getToken(`emptyEnvWithFallback`);
 
         expect(onlyEnv).toEqual(`AAA-BBB-CCC`);
+        expect(multipleEnvs).toEqual(`AAA-BBB-CCC-separator-AAA-BBB-CCC`);
         expect(envInString).toEqual(`beforeEnv-AAA-BBB-CCC-after-env`);
         expect(envSetWithFallback).toEqual(`AAA-BBB-CCC`);
         expect(unsetEnvWithFallback).toEqual(`fallback-value`);
