@@ -71,7 +71,7 @@ pnpMode: loose
 
 Because we *emit* warnings (instead of *throwing* errors) on resolution errors, applications can't *catch* them. This means that the common pattern of trying to `require` an optional peer dependency inside a try/catch block will print a warning at runtime if the dependency is missing, even though it shouldn't. This doesn't have any other runtime implications other than the fact that an incorrect warning that sometimes causes confusion is emitted, so it can be safely ignored.
 
-This is the reason why, unlike we originally planned, PnP `loose` mode **won't be** the default starting from 2.1. It will continue being supported as an alternative, helping in the transition to the default and recommended workflow - PnP `strict` mode. 
+This is the reason why, unlike we originally planned, PnP `loose` mode **won't be** the default starting from 2.1. It will continue being supported as an alternative, helping in the transition to the default and recommended workflow - PnP `strict` mode.
 
 ## Caveats and work-in-progress
 
@@ -96,6 +96,7 @@ A lot of very common frontend tools now support Plug'n'Play natively!
 | Husky | Starting from 4.0.0-1+ |
 | Jest | Starting from 24.1+ |
 | Next.js | Starting from 9.1.2+ |
+| Parcel | Starting from 2.0.0-nightly.212+ |
 | Prettier | Starting from 1.17+ |
 | Rollup | Starting from `resolve` 1.9+ |
 | TypeScript-ESLint | Starting from 2.12+ |
