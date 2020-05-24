@@ -18,9 +18,9 @@ HASHES=(
 
 mkdir -p "$TEMP_DIR"
 if ! [[ -d "$TEMP_DIR"/clone ]]; then (
-    git clone git@github.com:arcanis/typescript "$TEMP_DIR"/clone
+    git clone https://github.com/arcanis/typescript "$TEMP_DIR"/clone
     cd "$TEMP_DIR"/clone
-    git remote add upstream git@github.com:microsoft/typescript
+    git remote add upstream https://github.com/microsoft/typescript
 ); fi
 
 cd "$TEMP_DIR"/clone
@@ -76,11 +76,4 @@ while [[ ${#HASHES[@]} -gt 0 ]]; do
     >> "$PATCHFILE"
 done
 
-echo '/* eslint-disable */' \
-  >> "$JSPATCH"
-echo 'export const patch =' \
-  >> "$JSPATCH"
-node "$THIS_DIR"/../jsonEscape.js < "$PATCHFILE" \
-  >> "$JSPATCH"
-echo ';' \
-  >> "$JSPATCH"
+node "$THIS_DIR/../createPatch.js" "$PATCHFILE" "$JSPATCH"
