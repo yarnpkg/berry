@@ -1,4 +1,5 @@
 import {Writable}                   from 'stream';
+import tty                          from 'tty';
 
 import {Configuration}              from './Configuration';
 import {MessageName}                from './MessageName';
@@ -245,6 +246,9 @@ export class StreamReport extends Report {
 
     if (!this.json) {
       if (this.forgettableNames.has(name)) {
+        if (this.stdout instanceof tty.WriteStream)
+          text = text.slice(0, this.stdout.columns);
+
         this.forgettableLines.push(text);
         if (this.forgettableLines.length > this.forgettableBufferSize) {
           while (this.forgettableLines.length > this.forgettableBufferSize)
