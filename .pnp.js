@@ -8133,7 +8133,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["camelcase", "npm:5.3.1"],
             ["chalk", "npm:3.0.0"],
             ["clipanion", "npm:2.1.5"],
-            ["cross-spawn", "npm:6.0.5"],
+            ["cross-spawn", "npm:7.0.3"],
             ["diff", "npm:4.0.1"],
             ["globby", "npm:10.0.1"],
             ["got", "npm:11.1.3"],
@@ -9280,7 +9280,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["chalk", "npm:3.0.0"],
             ["comment-json", "npm:2.2.0"],
-            ["cross-spawn", "npm:6.0.5"],
+            ["cross-spawn", "npm:7.0.3"],
             ["eslint", "npm:6.8.0"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=0ea415"]
           ],
@@ -9302,7 +9302,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["chalk", "npm:3.0.0"],
             ["comment-json", "npm:2.2.0"],
-            ["cross-spawn", "npm:6.0.5"],
+            ["cross-spawn", "npm:7.0.3"],
             ["eslint", "npm:6.8.0"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=0ea415"]
           ],
@@ -9319,7 +9319,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["clipanion", "npm:2.1.5"],
-            ["cross-spawn", "npm:6.0.5"],
+            ["cross-spawn", "npm:7.0.3"],
             ["fast-glob", "npm:3.2.2"],
             ["stream-buffers", "npm:3.0.2"]
           ],
@@ -13409,10 +13409,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["npm:7.0.2", {
-          "packageLocation": "./.yarn/cache/cross-spawn-npm-7.0.2-fef0e84eed-31ad173414.zip/node_modules/cross-spawn/",
+        ["npm:7.0.3", {
+          "packageLocation": "./.yarn/cache/cross-spawn-npm-7.0.3-e4ff3e65b3-51f10036f5.zip/node_modules/cross-spawn/",
           "packageDependencies": [
-            ["cross-spawn", "npm:7.0.2"],
+            ["cross-spawn", "npm:7.0.3"],
             ["path-key", "npm:3.1.1"],
             ["shebang-command", "npm:2.0.0"],
             ["which", "npm:2.0.2"]
@@ -15673,7 +15673,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/execa-npm-3.4.0-ac88a31854-6f1eb2d601.zip/node_modules/execa/",
           "packageDependencies": [
             ["execa", "npm:3.4.0"],
-            ["cross-spawn", "npm:7.0.2"],
+            ["cross-spawn", "npm:7.0.3"],
             ["get-stream", "npm:5.1.0"],
             ["human-signals", "npm:1.1.1"],
             ["is-stream", "npm:2.0.0"],
@@ -15690,7 +15690,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/execa-npm-4.0.0-fa9a81eac2-0abdf9aa79.zip/node_modules/execa/",
           "packageDependencies": [
             ["execa", "npm:4.0.0"],
-            ["cross-spawn", "npm:7.0.2"],
+            ["cross-spawn", "npm:7.0.3"],
             ["get-stream", "npm:5.1.0"],
             ["human-signals", "npm:1.1.1"],
             ["is-stream", "npm:2.0.0"],
