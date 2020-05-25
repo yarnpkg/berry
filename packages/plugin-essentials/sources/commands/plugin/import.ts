@@ -86,9 +86,9 @@ export default class PluginDlCommand extends BaseCommand {
 
         report.reportInfo(MessageName.UNNAMED, `Downloading ${configuration.format(pluginUrl, `green`)}`);
         pluginBuffer = await httpUtils.get(pluginUrl, {configuration});
-
-        await savePlugin(pluginSpec, pluginBuffer, {project, report});
       }
+
+      await savePlugin(pluginSpec, pluginBuffer, {project, report});
     });
 
     return report.exitCode();
