@@ -47,7 +47,6 @@ jobs:
 
         echo "{\"compilerOptions\": {  \"noImplicitAny\": true,  \"removeComments\": true,  \"preserveConstEnums\": true,  \"sourceMap\": true}}" | tee tsconfig.json
 
-        mkdir src
         echo "import * as _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'TS'], ' '))}; printHello();" | tee index.ts
 
         yarn parcel build index.ts
