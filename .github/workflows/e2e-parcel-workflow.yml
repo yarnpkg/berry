@@ -30,7 +30,7 @@ jobs:
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
-
+        echo Remove Me
         yarn init -p
         yarn add -D parcel@nightly lodash
 
