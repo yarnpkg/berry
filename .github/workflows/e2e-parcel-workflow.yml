@@ -77,6 +77,26 @@ jobs:
 
         rm -rf dist index.js data.yaml
 
+        # MDX
+
+        echo "import page from './page.mdx';console.log(page);" | tee index.js
+        echo "# Hello, *world*!<div style={{ padding: '20px', backgroundColor: 'tomato' }}><h3>This is JSX</h3></div>" | tee page.mdx
+
+        yarn parcel build index.js
+        [[ "$(node dist/index.js)" = "[Function: Ae] { isMDXComponent: true }" ]]
+
+        rm -rf dist index.js page.mdx
+
+        # Text
+
+        echo "import text from 'url:./text.txt';console.log(text);" | tee index.js
+        echo "Hello World" | tee text.txt
+
+        yarn parcel build index.js
+        [[ "$(node dist/index.js)" = "Hello World" ]]
+
+        rm -rf dist index.js text.txt
+
         # Tree-shaking
 
         echo "export function square(x) { return x * x } export function cube(x) { return x * x * x }" | tee math.js
@@ -104,16 +124,3 @@ jobs:
         ! cat dist/otherEntry.js | grep "cube"
 
         rm -rf dist src
-
-        # parcel-plugin-graphql-raw
-
-        yarn add -D parcel-plugin-graphql-raw graphql graphql-tag
-
-        echo "import schema from './schema.gql';console.log(schema);" | tee index.js
-        echo "type Query { hello: String }" | tee schema.gql
-
-        yarn parcel build index.js
-        [[ "$(node dist/index.js)" = "{\n  kind: 'Document',\n  definitions: [\n    {\n      kind: 'ObjectTypeDefinition',\n      name: [Object],\n      interfaces: [],\n      directives: [],\n      fields: [Array]\n    }\n  ],\n  loc: { start: 0, end: 29 }\n}" ]]
-
-        rm -rf dist index.js schema.gql
-
