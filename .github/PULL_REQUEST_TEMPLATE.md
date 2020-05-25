@@ -19,6 +19,6 @@
 <!-- Check with `yarn version check` and fix with `yarn version check -i` -->
 - [ ] I have set the packages that need to be released for my changes to be effective.
 
-<!-- See https://yarnpkg.com/advanced/contributing#checking-constraints for more details. -->
-<!-- Check with `yarn constraints` and fix with `yarn constraints --fix` -->
-- [ ] I have checked for unmet constraints.
+<!-- The "Testing chores" workflow validates that your PR follows our guidelines. -->
+<!-- If it doesn't pass, click on it to see details as to what your PR might be missing. -->
+- [ ] I have verified that all automated PR checks pass.
