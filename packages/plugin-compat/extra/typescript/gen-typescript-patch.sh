@@ -28,6 +28,9 @@ cd "$TEMP_DIR"/clone
 
 git cherry-pick --abort || true
 
+git config user.email "you@example.com"
+git config user.name "Your Name"
+
 git fetch origin
 git fetch upstream
 
