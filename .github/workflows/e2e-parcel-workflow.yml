@@ -43,7 +43,7 @@ jobs:
         rm -rf dist index.js
 
         # TypeScript
-        yarn add -D typescript @types/lodash
+        yarn add -D @types/lodash
 
         echo "{\"compilerOptions\": {  \"noImplicitAny\": true,  \"removeComments\": true,  \"preserveConstEnums\": true,  \"sourceMap\": true}}" | tee tsconfig.json
 
@@ -55,7 +55,7 @@ jobs:
         rm -rf dist index.ts tsconfig.json
 
         # Less
-        yarn add -D less bootstrap-less
+        yarn add -D bootstrap-less
 
         mkdir src
         echo "import './main.less';" | tee src/index.js
