@@ -618,6 +618,13 @@ export enum ProjectLookup {
   NONE,
 }
 
+export type FindProjectOptions = {
+  lookup?: ProjectLookup,
+  strict?: boolean,
+  usePlugins?: boolean,
+  useRc?: boolean,
+};
+
 export class Configuration {
   public startingCwd: PortablePath;
   public projectCwd: PortablePath | null;
@@ -662,7 +669,7 @@ export class Configuration {
    * way around).
    */
 
-  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {lookup = ProjectLookup.LOCKFILE, strict = true, useRc = true}: {lookup?: ProjectLookup, strict?: boolean, useRc?: boolean} = {}) {
+  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {lookup = ProjectLookup.LOCKFILE, strict = true, usePlugins = true, useRc = true}: FindProjectOptions = {}) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
@@ -718,26 +725,28 @@ export class Configuration {
         plugins.set(name, plugin);
       };
 
-      if (environmentSettings.plugins) {
-        for (const userProvidedPath of environmentSettings.plugins.split(`;`)) {
-          const pluginPath = ppath.resolve(startingCwd, npath.toPortablePath(userProvidedPath));
-          importPlugin(pluginPath, `<environment>`);
+      if (usePlugins) {
+        if (environmentSettings.plugins) {
+          for (const userProvidedPath of environmentSettings.plugins.split(`;`)) {
+            const pluginPath = ppath.resolve(startingCwd, npath.toPortablePath(userProvidedPath));
+            importPlugin(pluginPath, `<environment>`);
+          }
         }
-      }
 
-      for (const {path, cwd, data} of rcFiles) {
-        if (!useRc)
-          continue;
-        if (!Array.isArray(data.plugins))
-          continue;
+        for (const {path, cwd, data} of rcFiles) {
+          if (!useRc)
+            continue;
+          if (!Array.isArray(data.plugins))
+            continue;
 
-        for (const userPluginEntry of data.plugins) {
-          const userProvidedPath = typeof userPluginEntry !== `string`
-            ? userPluginEntry.path
-            : userPluginEntry;
+          for (const userPluginEntry of data.plugins) {
+            const userProvidedPath = typeof userPluginEntry !== `string`
+              ? userPluginEntry.path
+              : userPluginEntry;
 
-          const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
-          importPlugin(pluginPath, path);
+            const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
+            importPlugin(pluginPath, path);
+          }
         }
       }
     }

@@ -58,6 +58,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
     // If we didn't, we wouldn't even be able to run `yarn config` (which is recommended in the invalid config error message)
     const configuration = await Configuration.find(npath.toPortablePath(process.cwd()), pluginConfiguration, {
       strict: false,
+      usePlugins: false,
     });
 
     const yarnPath: PortablePath = configuration.get(`yarnPath`);
