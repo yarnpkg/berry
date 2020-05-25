@@ -55,7 +55,7 @@ jobs:
         rm -rf dist index.ts tsconfig.json
 
         # Less
-        yarn add -D less
+        yarn add -D less bootstrap-less
 
         mkdir src
         echo "import './main.less';" | tee src/index.js
