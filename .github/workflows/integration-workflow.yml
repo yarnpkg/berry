@@ -38,6 +38,32 @@ jobs:
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
+    - name: 'Check that the patch files are consistent with fresh builds'
+      run: |
+        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- packages/plugin-compat/sources/patches | wc -l) -gt 0 ]]; then
+          for generator in packages/plugin-compat/extra/*/gen-*-patch.sh; do
+            bash $generator;
+          done
+          [[ $(git diff --name-only packages/plugin-compat/sources/patches | wc -l) -eq 0 ]]
+        fi
+      shell: bash
+      if: |
+        github.event.pull_request != ''
+      env:
+        TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
+
+    - name: 'Check that the PnP hook is consistent with a fresh build'
+      run: |
+        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- packages/yarnpkg-pnp/sources/hook.js | wc -l) -gt 0 ]]; then
+          node ./scripts/run-yarn.js build:pnp:hook
+          [[ $(git diff --name-only packages/yarnpkg-pnp/sources/hook.js | wc -l) -eq 0 ]]
+        fi
+      shell: bash
+      if: |
+        github.event.pull_request != ''
+      env:
+        TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
+
     - name: 'Check that the PR describes which packages should be bumped (fix w/ "yarn version check -i")'
       run: |
         node ./scripts/run-yarn.js version check
