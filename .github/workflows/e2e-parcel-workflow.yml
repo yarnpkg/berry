@@ -70,7 +70,7 @@ jobs:
 
         # Yaml
         echo "import data from './data.yaml';console.log(data.berry.works.with[0]);" | tee index.js
-        echo "berry:\n  works:\n    with:\n      - Parcel" | tee data.yaml
+        echo "berry: {works: {with:  [Parcel]}}" | tee data.yaml
 
         yarn parcel build index.js
         [[ "$(node dist/index.js)" = "Parcel" ]]
