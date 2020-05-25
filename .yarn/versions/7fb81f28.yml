@@ -27,4 +27,5 @@ declined:
   - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-workspace-tools"
   - "@yarnpkg/doctor"
+  - "@yarnpkg/pnp"
   - "@yarnpkg/pnpify"
