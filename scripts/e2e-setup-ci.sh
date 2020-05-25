@@ -15,7 +15,7 @@ echo Yarn Path: $(which yarn)
 echo Yarn Version: $(yarn -v)
 
 # We want to see what fails (if anything fails)
-export YARN_ENABLE_INLINE_BUILDS=0
+export YARN_ENABLE_INLINE_BUILDS=1
 
 # Otherwise git commit doesn't work, and some tools require it
 git config --global user.email "you@example.com"
