@@ -1,4 +1,5 @@
 releases:
+  "@yarnpkg/builder": prerelease
   "@yarnpkg/cli": prerelease
   "@yarnpkg/core": prerelease
   "@yarnpkg/plugin-github": prerelease
@@ -25,6 +26,5 @@ declined:
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-workspace-tools"
-  - "@yarnpkg/builder"
   - "@yarnpkg/doctor"
   - "@yarnpkg/pnpify"
