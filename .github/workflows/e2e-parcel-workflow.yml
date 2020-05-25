@@ -59,13 +59,8 @@ jobs:
 
         mkdir src
         echo "import './main.less';" | tee src/index.js
-        echo "@import './other.less';.box:extend(.hotpink) {width: 200px;height: 200px;}" | tee src/main.less
-        echo ".hotpink {background: hotpink;}" | tee src/other.less
-
-        yarn parcel build src/index.js
-        [[ "$(cat dist/index.css)" = ".box,.hotpink{background:#ff69b4}.box{width:200px;height:200px}\n/*# sourceMappingURL=index.css.map */\n" ]]
-
         echo "@import 'bootstrap-less/bootstrap/index.less';@import './other.less';.box:extend(.hotpink) {width: 200px;height: 200px;}" | tee src/main.less
+        echo ".hotpink {background: hotpink;}" | tee src/other.less
 
         yarn parcel build src/index.js
 
