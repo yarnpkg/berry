@@ -87,13 +87,13 @@ jobs:
 
         rm -rf dist index.js page.mdx
 
-        # Text
+        # Assets
 
-        echo "import text from 'url:./text.txt';console.log(text);" | tee index.js
+        echo "import 'url:./text.txt';" | tee index.js
         echo "Hello World" | tee text.txt
 
         yarn parcel build index.js
-        [[ "$(node dist/index.js)" = "Hello World" ]]
+        ls dist | grep ".txt"
 
         rm -rf dist index.js text.txt
 
