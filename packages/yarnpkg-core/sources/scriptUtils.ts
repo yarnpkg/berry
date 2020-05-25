@@ -193,8 +193,10 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
           // one instead
           delete env.npm_config_user_agent;
 
-          // Apparently "npm ci" is how you get npm to actually use the lockfile
-          const install = await execUtils.pipevp(`npm`, [`ci`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
+          // We can't use `npm ci` because some projects don't have npm
+          // lockfiles that are up-to-date. Hopefully npm won't decide
+          // to change the versions randomly.
+          const install = await execUtils.pipevp(`npm`, [`install`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
           if (install.code !== 0)
             return install.code;
 

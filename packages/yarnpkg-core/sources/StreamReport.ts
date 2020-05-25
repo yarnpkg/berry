@@ -83,7 +83,6 @@ export class StreamReport extends Report {
     try {
       await cb(report);
     } catch (error) {
-      console.log(error.stack);
       report.reportExceptionOnce(error);
     } finally {
       await report.finalize();
@@ -248,7 +247,7 @@ export class StreamReport extends Report {
     if (!this.json) {
       if (this.forgettableNames.has(name)) {
         if (this.stdout instanceof tty.WriteStream)
-          text = text.slice(0, this.stdout.columns);
+          text = text.slice(0, this.stdout.columns - 1);
 
         this.forgettableLines.push(text);
         if (this.forgettableLines.length > this.forgettableBufferSize) {
