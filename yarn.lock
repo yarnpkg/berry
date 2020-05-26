@@ -6070,7 +6070,7 @@ __metadata:
     camelcase: ^5.3.1
     chalk: ^3.0.0
     clipanion: ^2.1.5
-    cross-spawn: 6.0.5
+    cross-spawn: 7.0.3
     diff: ^4.0.1
     globby: ^10.0.1
     got: ^11.1.3
@@ -6741,7 +6741,7 @@ __metadata:
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.20"
     chalk: ^3.0.0
     comment-json: ^2.2.0
-    cross-spawn: 6.0.5
+    cross-spawn: 7.0.3
     eslint: ^6.8.0
     typescript: ^3.8.3
   peerDependencies:
@@ -6766,7 +6766,7 @@ __metadata:
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.11"
     clipanion: ^2.1.5
-    cross-spawn: 6.0.5
+    cross-spawn: 7.0.3
     fast-glob: ^3.2.2
     stream-buffers: ^3.0.2
   bin:
@@ -7995,7 +7995,7 @@ __metadata:
 
 babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   version: 1.0.0
-  resolution: "babel-plugin-lazy-import@https://github.com/arcanis/babel-plugin-lazy-import.git#commit:ff060e230afb4f2f36a1c495be65271c14ae2e4b"
+  resolution: "babel-plugin-lazy-import@https://github.com/arcanis/babel-plugin-lazy-import.git#commit=ff060e230afb4f2f36a1c495be65271c14ae2e4b"
   dependencies:
     "@babel/helper-module-transforms": ^7.5.5
     "@babel/helper-plugin-utils": ^7.0.0
@@ -8004,7 +8004,7 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
     "@babel/template": ^7.4.4
   peerDependencies:
     "@babel/core": ^7
-  checksum: 3a0b1d65c8a8814b04e92083b5498b7eba088d9750510699e2b81b4035522f54a6f367caac800ab773af7ce65e7b2e342d85e560af24d417de2c0b3274d43abe
+  checksum: e5b5246c2b333a6110a8eff277048e944cd293904ec4bf1deeac3276d5fe17bee6f56c9e5b8ff6668c5450e7c5520a34ac2400b04e3bc41a44b5d97c6aaaee39
   languageName: node
   linkType: hard
 
@@ -10417,14 +10417,14 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:^7.0.0":
-  version: 7.0.2
-  resolution: "cross-spawn@npm:7.0.2"
+"cross-spawn@npm:7.0.3, cross-spawn@npm:^7.0.0":
+  version: 7.0.3
+  resolution: "cross-spawn@npm:7.0.3"
   dependencies:
     path-key: ^3.1.0
     shebang-command: ^2.0.0
     which: ^2.0.1
-  checksum: 31ad173414e82588537fb00b7c14533c8cfcfbfc87b4eb61c8d12aeb77c89c9afd0f0ef0f5bbe8a5204f888b127c7d8fb42ad22eeab5ac93502aa5f119a09846
+  checksum: 51f10036f5f1de781be98f4738d58b50c6d44f4f471069b8ab075b21605893ba1548654880f7310a29a732d6fc7cd481da6026169b9f0831cab0148a62fb397a
   languageName: node
   linkType: hard
 

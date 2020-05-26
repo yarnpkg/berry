@@ -3149,10 +3149,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["virtual:a418d382466ccc2ac6b3eae05cc3e136ab2700858a0d4b8de9a1c12223c4ea3d67e79f075d6dbb975a01ab56c683c1ce94d3f6965caea28a7c8a4c4d50b98acd#npm:7.4.4", {
-          "packageLocation": "./.yarn/$$virtual/@babel-plugin-transform-parameters-virtual-525a5b9e09/0/cache/@babel-plugin-transform-parameters-npm-7.4.4-73057dcc00-1eb2387f2c.zip/node_modules/@babel/plugin-transform-parameters/",
+        ["virtual:a96e6efd3262248fae2d286ca31b288ad38cafa2de114c27e622800df4004dcb3469792a260b05464c66f538aa0128efffa304614142ee92116ca471a14782d9#npm:7.4.4", {
+          "packageLocation": "./.yarn/$$virtual/@babel-plugin-transform-parameters-virtual-4259229fff/0/cache/@babel-plugin-transform-parameters-npm-7.4.4-73057dcc00-1eb2387f2c.zip/node_modules/@babel/plugin-transform-parameters/",
           "packageDependencies": [
-            ["@babel/plugin-transform-parameters", "virtual:a418d382466ccc2ac6b3eae05cc3e136ab2700858a0d4b8de9a1c12223c4ea3d67e79f075d6dbb975a01ab56c683c1ce94d3f6965caea28a7c8a4c4d50b98acd#npm:7.4.4"],
+            ["@babel/plugin-transform-parameters", "virtual:a96e6efd3262248fae2d286ca31b288ad38cafa2de114c27e622800df4004dcb3469792a260b05464c66f538aa0128efffa304614142ee92116ca471a14782d9#npm:7.4.4"],
             ["@babel/core", "npm:7.7.4"],
             ["@babel/helper-call-delegate", "npm:7.4.4"],
             ["@babel/helper-get-function-arity", "npm:7.0.0"],
@@ -7974,7 +7974,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["babel-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:8.0.6"],
-            ["babel-plugin-lazy-import", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit:ff060e230afb4f2f36a1c495be65271c14ae2e4b"],
+            ["babel-plugin-lazy-import", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit=ff060e230afb4f2f36a1c495be65271c14ae2e4b"],
             ["chalk", "npm:3.0.0"],
             ["clipanion", "npm:2.1.5"],
             ["filesize", "npm:4.1.2"],
@@ -8011,7 +8011,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["babel-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:8.0.6"],
-            ["babel-plugin-lazy-import", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit:ff060e230afb4f2f36a1c495be65271c14ae2e4b"],
+            ["babel-plugin-lazy-import", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit=ff060e230afb4f2f36a1c495be65271c14ae2e4b"],
             ["chalk", "npm:3.0.0"],
             ["clipanion", "npm:2.1.5"],
             ["filesize", "npm:4.1.2"],
@@ -8133,7 +8133,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["camelcase", "npm:5.3.1"],
             ["chalk", "npm:3.0.0"],
             ["clipanion", "npm:2.1.5"],
-            ["cross-spawn", "npm:6.0.5"],
+            ["cross-spawn", "npm:7.0.3"],
             ["diff", "npm:4.0.1"],
             ["globby", "npm:10.0.1"],
             ["got", "npm:11.1.3"],
@@ -9280,7 +9280,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["chalk", "npm:3.0.0"],
             ["comment-json", "npm:2.2.0"],
-            ["cross-spawn", "npm:6.0.5"],
+            ["cross-spawn", "npm:7.0.3"],
             ["eslint", "npm:6.8.0"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=0ea415"]
           ],
@@ -9302,7 +9302,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["chalk", "npm:3.0.0"],
             ["comment-json", "npm:2.2.0"],
-            ["cross-spawn", "npm:6.0.5"],
+            ["cross-spawn", "npm:7.0.3"],
             ["eslint", "npm:6.8.0"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=0ea415"]
           ],
@@ -9319,7 +9319,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["clipanion", "npm:2.1.5"],
-            ["cross-spawn", "npm:6.0.5"],
+            ["cross-spawn", "npm:7.0.3"],
             ["fast-glob", "npm:3.2.2"],
             ["stream-buffers", "npm:3.0.2"]
           ],
@@ -10737,15 +10737,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["babel-plugin-lazy-import", [
-        ["virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit:ff060e230afb4f2f36a1c495be65271c14ae2e4b", {
-          "packageLocation": "./.yarn/$$virtual/babel-plugin-lazy-import-virtual-a418d38246/0/cache/babel-plugin-lazy-import-https-62f6f9525b-3a0b1d65c8.zip/node_modules/babel-plugin-lazy-import/",
+        ["virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit=ff060e230afb4f2f36a1c495be65271c14ae2e4b", {
+          "packageLocation": "./.yarn/$$virtual/babel-plugin-lazy-import-virtual-a96e6efd32/0/cache/babel-plugin-lazy-import-https-0f0ba3c3c3-e5b5246c2b.zip/node_modules/babel-plugin-lazy-import/",
           "packageDependencies": [
-            ["babel-plugin-lazy-import", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit:ff060e230afb4f2f36a1c495be65271c14ae2e4b"],
+            ["babel-plugin-lazy-import", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit=ff060e230afb4f2f36a1c495be65271c14ae2e4b"],
             ["@babel/core", "npm:7.7.4"],
             ["@babel/helper-module-transforms", "npm:7.5.5"],
             ["@babel/helper-plugin-utils", "npm:7.0.0"],
             ["@babel/helpers", "npm:7.5.5"],
-            ["@babel/plugin-transform-parameters", "virtual:a418d382466ccc2ac6b3eae05cc3e136ab2700858a0d4b8de9a1c12223c4ea3d67e79f075d6dbb975a01ab56c683c1ce94d3f6965caea28a7c8a4c4d50b98acd#npm:7.4.4"],
+            ["@babel/plugin-transform-parameters", "virtual:a96e6efd3262248fae2d286ca31b288ad38cafa2de114c27e622800df4004dcb3469792a260b05464c66f538aa0128efffa304614142ee92116ca471a14782d9#npm:7.4.4"],
             ["@babel/template", "npm:7.4.4"]
           ],
           "packagePeers": [
@@ -13409,10 +13409,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["npm:7.0.2", {
-          "packageLocation": "./.yarn/cache/cross-spawn-npm-7.0.2-fef0e84eed-31ad173414.zip/node_modules/cross-spawn/",
+        ["npm:7.0.3", {
+          "packageLocation": "./.yarn/cache/cross-spawn-npm-7.0.3-e4ff3e65b3-51f10036f5.zip/node_modules/cross-spawn/",
           "packageDependencies": [
-            ["cross-spawn", "npm:7.0.2"],
+            ["cross-spawn", "npm:7.0.3"],
             ["path-key", "npm:3.1.1"],
             ["shebang-command", "npm:2.0.0"],
             ["which", "npm:2.0.2"]
@@ -15673,7 +15673,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/execa-npm-3.4.0-ac88a31854-6f1eb2d601.zip/node_modules/execa/",
           "packageDependencies": [
             ["execa", "npm:3.4.0"],
-            ["cross-spawn", "npm:7.0.2"],
+            ["cross-spawn", "npm:7.0.3"],
             ["get-stream", "npm:5.1.0"],
             ["human-signals", "npm:1.1.1"],
             ["is-stream", "npm:2.0.0"],
@@ -15690,7 +15690,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/execa-npm-4.0.0-fa9a81eac2-0abdf9aa79.zip/node_modules/execa/",
           "packageDependencies": [
             ["execa", "npm:4.0.0"],
-            ["cross-spawn", "npm:7.0.2"],
+            ["cross-spawn", "npm:7.0.3"],
             ["get-stream", "npm:5.1.0"],
             ["human-signals", "npm:1.1.1"],
             ["is-stream", "npm:2.0.0"],

@@ -8,7 +8,7 @@
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.11",
     "clipanion": "^2.1.5",
-    "cross-spawn": "6.0.5",
+    "cross-spawn": "7.0.3",
     "fast-glob": "^3.2.2",
     "stream-buffers": "^3.0.2"
   },
