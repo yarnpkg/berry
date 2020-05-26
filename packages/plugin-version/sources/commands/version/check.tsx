@@ -62,6 +62,32 @@ export default class VersionApplyCommand extends Command<CommandContext> {
     if (versionFile.root === null)
       throw new UsageError(`This command can only be run on Git repositories`);
 
+    const Prompt = () => {
+      return (
+        <Box flexDirection="row" paddingBottom={1}>
+          <Box flexDirection="column" width={100}>
+            <Box marginLeft={1}>
+               Press <Color bold cyanBright>{`<up>`}</Color>/<Color bold cyanBright>{`<down>`}</Color> to select workspaces.
+            </Box>
+            <Box marginLeft={1}>
+               Press <Color bold cyanBright>{`<left>`}</Color>/<Color bold cyanBright>{`<right>`}</Color> to select release strategies.
+            </Box>
+            <Box marginLeft={1}>
+               Press <Color bold cyanBright>{`<tab>`}</Color> to move the focus to the other group of workspaces.
+            </Box>
+          </Box>
+          <Box flexDirection="column">
+            <Box marginLeft={1}>
+               Press <Color bold cyanBright>{`<enter>`}</Color> to save.
+            </Box>
+            <Box marginLeft={1}>
+               Press <Color bold cyanBright>{`<ctrl+c>`}</Color> to abort.
+            </Box>
+          </Box>
+        </Box>
+      );
+    };
+
     const Undecided = ({workspace, active, decision, setDecision}: {workspace: Workspace, active?: boolean, decision: versionUtils.Decision, setDecision: (decision: versionUtils.Decision) => void}) => {
       const currentVersion = workspace.manifest.version;
       if (currentVersion === null)
@@ -210,6 +236,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
       }, [focus, setFocus]);
 
       return <Box width={80} flexDirection={`column`}>
+        <Prompt />
         <Box textWrap={`wrap`}>
           The following files have been modified in your local checkout.
         </Box>
