@@ -73,7 +73,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
                Press <Color bold cyanBright>{`<left>`}</Color>/<Color bold cyanBright>{`<right>`}</Color> to select release strategies.
             </Box>
             <Box marginLeft={1}>
-               Press <Color bold cyanBright>{`<tab>`}</Color> to move the focus to the other group of workspaces.
+               Press <Color bold cyanBright>{`<tab>`}</Color> to move the focus between the workspace groups.
             </Box>
           </Box>
           <Box flexDirection="column">
