@@ -352,7 +352,7 @@ export class ZipFS extends BasePortableFakeFS {
     source.copy(buffer, offset, realPosition, realPosition + length);
 
     const bytesRead = Math.max(0, Math.min(source.length - realPosition, length));
-    if (position === -1)
+    if (position === -1 || position === null)
       entry.cursor += bytesRead;
 
     return bytesRead;
