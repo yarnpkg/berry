@@ -1,9 +1,7 @@
 releases:
   "@yarnpkg/cli": prerelease
   "@yarnpkg/core": prerelease
-  "@yarnpkg/fslib": prerelease
-  "@yarnpkg/plugin-pnp": prerelease
-  "@yarnpkg/pnp": prerelease
+  "@yarnpkg/plugin-link": prerelease
 
 declined:
   - "@yarnpkg/plugin-compat"
@@ -17,19 +15,18 @@ declined:
   - "@yarnpkg/plugin-http"
   - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-interactive-tools"
-  - "@yarnpkg/plugin-link"
   - "@yarnpkg/plugin-node-modules"
   - "@yarnpkg/plugin-npm"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
   - "@yarnpkg/plugin-patch"
+  - "@yarnpkg/plugin-pnp"
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
-  - vscode-zipfs
   - "@yarnpkg/builder"
   - "@yarnpkg/doctor"
-  - "@yarnpkg/json-proxy"
+  - "@yarnpkg/fslib"
+  - "@yarnpkg/pnp"
   - "@yarnpkg/pnpify"
-  - "@yarnpkg/shell"
