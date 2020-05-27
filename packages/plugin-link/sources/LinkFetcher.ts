@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator}                                    from '@yarnpkg/core';
 import {structUtils}                                from '@yarnpkg/core';
-import {JailFS, NodeFS, ppath, PortablePath, CwdFS} from '@yarnpkg/fslib';
+import {JailFS, NodeFS, ppath, PortablePath}        from '@yarnpkg/fslib';
 
 import {LINK_PROTOCOL}                              from './constants';
 
@@ -48,7 +48,7 @@ export class LinkFetcher implements Fetcher {
     const sourcePath = ppath.resolve(effectiveParentFetch.prefixPath, path);
 
     if (parentFetch.localPath) {
-      return {packageFs: new CwdFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.root, localPath: sourcePath};
+      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.root, localPath: sourcePath};
     } else {
       return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.root};
     }
