@@ -27,7 +27,7 @@ export {npath, ppath, toFilename} from './path';
 export {AliasFS}                   from './AliasFS';
 export {FakeFS}                    from './FakeFS';
 export {CwdFS}                     from './CwdFS';
-export {JailFS, computeLevels}     from './JailFS';
+export {JailFS}                    from './JailFS';
 export {LazyFS}                    from './LazyFS';
 export {NoFS}                      from './NoFS';
 export {NodeFS}                    from './NodeFS';

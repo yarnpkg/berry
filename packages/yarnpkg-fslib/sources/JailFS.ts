@@ -14,25 +14,25 @@ export type JailFSOptions = {
 const JAIL_ROOT = PortablePath.root;
 const LEVEL_REGEXP = /^\.\.\/?/;
 
-/**
- * Computes the levels between 2 absolute paths.
- *
- * @param from An absolute PortablePath.
- * @param to An absolute PortablePath - an ancestor of `from`.
- */
-export function computeLevels(from: PortablePath, to: PortablePath) {
-  let relativePath = ppath.relative(from, to);
+export class JailFS extends ProxiedFS<PortablePath, PortablePath> {
+  /**
+   * Computes the levels between 2 absolute paths.
+   *
+   * @param from An absolute PortablePath.
+   * @param to An absolute PortablePath - an ancestor of `from`.
+   */
+  static computeLevels(from: PortablePath, to: PortablePath) {
+    let relativePath = ppath.relative(from, to);
 
-  let levels = 0;
-  while (relativePath.match(LEVEL_REGEXP)) {
-    relativePath = relativePath.replace(LEVEL_REGEXP, ``) as PortablePath;
-    ++levels;
+    let levels = 0;
+    while (relativePath.match(LEVEL_REGEXP)) {
+      relativePath = relativePath.replace(LEVEL_REGEXP, ``) as PortablePath;
+      ++levels;
+    }
+
+    return levels;
   }
 
-  return levels;
-}
-
-export class JailFS extends ProxiedFS<PortablePath, PortablePath> {
   private readonly target: PortablePath;
 
   protected readonly baseFs: FakeFS<PortablePath>;
