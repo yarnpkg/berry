@@ -1,8 +1,8 @@
-import {JailFS, PortablePath}  from '@yarnpkg/fslib';
+import {JailFS, PortablePath, computeLevels} from '@yarnpkg/fslib';
 
-import {Fetcher, FetchOptions} from './Fetcher';
-import {WorkspaceResolver}     from './WorkspaceResolver';
-import {Locator}               from './types';
+import {Fetcher, FetchOptions}               from './Fetcher';
+import {WorkspaceResolver}                   from './WorkspaceResolver';
+import {Locator}                             from './types';
 
 export class WorkspaceFetcher implements Fetcher {
   supports(locator: Locator) {
@@ -18,8 +18,9 @@ export class WorkspaceFetcher implements Fetcher {
 
   async fetch(locator: Locator, opts: FetchOptions) {
     const sourcePath = this.getWorkspace(locator, opts).cwd;
+    const levels = computeLevels(sourcePath, opts.project.cwd);
 
-    return {packageFs: new JailFS(sourcePath), prefixPath: PortablePath.root, localPath: sourcePath};
+    return {packageFs: new JailFS(sourcePath, {levels}), prefixPath: PortablePath.root, localPath: sourcePath};
   }
 
   getWorkspace(locator: Locator, opts: FetchOptions) {
