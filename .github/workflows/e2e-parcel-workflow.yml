@@ -96,7 +96,7 @@ jobs:
 
         yarn add react-dom react-select
 
-        echo "import page from './page.mdx'; console.log(`MDX Built`);" | tee index.js
+        echo "import page from './page.mdx'; console.log('MDX Built');" | tee index.js
         cat > page.mdx <<EOT
           import Select from 'react-select';
 
