@@ -36414,7 +36414,7 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
     const source = this.readFileSync(entry.p);
     source.copy(buffer, offset, realPosition, realPosition + length);
     const bytesRead = Math.max(0, Math.min(source.length - realPosition, length));
-    if (position === -1) entry.cursor += bytesRead;
+    if (position === -1 || position === null) entry.cursor += bytesRead;
     return bytesRead;
   }
 
@@ -44830,7 +44830,7 @@ function makeManager(pnpapi, opts) {
 
     if (typeof parent.pnpApiPath === `undefined`) {
       if (parent.filename !== null) {
-        return findApiPathFor(parent.filename);
+        return parent.pnpApiPath = findApiPathFor(parent.filename);
       } else {
         return initialApiPath;
       }

@@ -10,6 +10,6 @@ declare module "module" {
   function _load(request: string, parent: NodeModule | null | undefined, isMain: boolean): any;
 
   interface Module extends NodeModule {
-    pnpApiPath?: import('@yarnpkg/fslib').PortablePath;
+    pnpApiPath?: import('@yarnpkg/fslib').PortablePath | null;
   }
 }
