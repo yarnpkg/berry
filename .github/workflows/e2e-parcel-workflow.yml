@@ -94,8 +94,10 @@ jobs:
 
         # MDX
 
+        yarn add react-select
+
         echo "import page from './page.mdx';" | tee index.js
-        echo "# Hello, *world*!<div style={{ padding: '20px', backgroundColor: 'tomato' }}><h3>This is JSX</h3></div>" | tee page.mdx
+        echo "import Select from 'react-select'; # Hello, *world*!<div style={{ padding: '20px', backgroundColor: 'tomato' }}><h3>This is JSX</h3></div><Select />" | tee page.mdx
 
         yarn parcel build index.js
         ls dist | grep "index.js"
