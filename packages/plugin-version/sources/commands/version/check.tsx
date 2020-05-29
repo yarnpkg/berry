@@ -62,6 +62,29 @@ export default class VersionApplyCommand extends Command<CommandContext> {
     if (versionFile.root === null)
       throw new UsageError(`This command can only be run on Git repositories`);
 
+    const Prompt = () => {
+      return (
+        <Box flexDirection="row" paddingBottom={1}>
+          <Box flexDirection="column" width={60}>
+            <Box>
+               Press <Color bold cyanBright>{`<up>`}</Color>/<Color bold cyanBright>{`<down>`}</Color> to select workspaces.
+            </Box>
+            <Box>
+               Press <Color bold cyanBright>{`<left>`}</Color>/<Color bold cyanBright>{`<right>`}</Color> to select release strategies.
+            </Box>
+          </Box>
+          <Box flexDirection="column">
+            <Box marginLeft={1}>
+               Press <Color bold cyanBright>{`<enter>`}</Color> to save.
+            </Box>
+            <Box marginLeft={1}>
+               Press <Color bold cyanBright>{`<ctrl+c>`}</Color> to abort.
+            </Box>
+          </Box>
+        </Box>
+      );
+    };
+
     const Undecided = ({workspace, active, decision, setDecision}: {workspace: Workspace, active?: boolean, decision: versionUtils.Decision, setDecision: (decision: versionUtils.Decision) => void}) => {
       const currentVersion = workspace.manifest.version;
       if (currentVersion === null)
@@ -210,6 +233,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
       }, [focus, setFocus]);
 
       return <Box width={80} flexDirection={`column`}>
+        <Prompt />
         <Box textWrap={`wrap`}>
           The following files have been modified in your local checkout.
         </Box>
@@ -236,6 +260,9 @@ export default class VersionApplyCommand extends Command<CommandContext> {
         {dependentWorkspaces.size > 0 && <>
           <Box marginTop={1} textWrap={`wrap`}>
             The following workspaces depend on other workspaces that have been marked for release, and thus may need to be released as well:
+          </Box>
+          <Box>
+            (Press <Color bold cyanBright>{`<tab>`}</Color> to move the focus between the workspace groups.)
           </Box>
           {dependentWorkspaces.size > 5 ? <Box marginTop={1}>
             <Stats workspaces={dependentWorkspaces} releases={releases} />
