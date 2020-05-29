@@ -7,7 +7,7 @@
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33",
     "@yarnpkg/core": "workspace:^2.0.0-rc.27",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
-    "clipanion": "^2.1.5",
+    "clipanion": "^2.4.0",
     "globby": "^10.0.1",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
