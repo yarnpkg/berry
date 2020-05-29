@@ -36,7 +36,7 @@ export default class BuildPluginCommand extends Command {
   async execute() {
     const basedir = process.cwd();
     const portableBaseDir = npath.toPortablePath(basedir);
-    const configuration = new Configuration(portableBaseDir, portableBaseDir, new Map());
+    const configuration = Configuration.create(portableBaseDir);
 
     const {name: rawName} = require(`${basedir}/package.json`);
     const name = getNormalizedName(rawName);

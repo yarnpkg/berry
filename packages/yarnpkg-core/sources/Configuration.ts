@@ -436,7 +436,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
       return parseBoolean(value);
 
     if (typeof value !== `string`)
-      throw new Error(`Expected value to be a string`);
+      throw new Error(`Expected value (${value}) to be a string`);
 
     switch (definition.type) {
       case SettingsType.ABSOLUTE_PATH:
@@ -606,10 +606,10 @@ function getRcFilename() {
   const rcKey = `${ENVIRONMENT_PREFIX}rc_filename`;
 
   for (const [key, value] of Object.entries(process.env))
-    if (key.toLowerCase() === rcKey)
-      return value;
+    if (key.toLowerCase() === rcKey && typeof value === `string`)
+      return value as Filename;
 
-  return DEFAULT_RC_FILENAME;
+  return DEFAULT_RC_FILENAME as Filename;
 }
 
 export enum ProjectLookup {
@@ -618,9 +618,16 @@ export enum ProjectLookup {
   NONE,
 }
 
+export type FindProjectOptions = {
+  lookup?: ProjectLookup,
+  strict?: boolean,
+  usePath?: boolean,
+  useRc?: boolean,
+};
+
 export class Configuration {
   public startingCwd: PortablePath;
-  public projectCwd: PortablePath | null;
+  public projectCwd: PortablePath | null = null;
 
   public plugins: Map<string, Plugin> = new Map();
 
@@ -634,6 +641,34 @@ export class Configuration {
     range: string,
     patch: (pkg: Package) => void,
   }>> = new Map();
+
+  /**
+   * Instantiate a new configuration object with the default values from the
+   * core. You typically don't want to use this, as it will ignore the values
+   * configured in the rc files. Instead, prefer to use `Configuration#find`.
+   */
+
+  static create(startingCwd: PortablePath, plugins?: Map<string, Plugin>): Configuration;
+  static create(startingCwd: PortablePath, projectCwd: PortablePath | null, plugins?: Map<string, Plugin>): Configuration;
+  static create(startingCwd: PortablePath, projectCwdOrPlugins?: Map<string, Plugin> | PortablePath | null, maybePlugins?: Map<string, Plugin>) {
+    const configuration = new Configuration(startingCwd);
+
+    if (typeof projectCwdOrPlugins !== `undefined` && !(projectCwdOrPlugins instanceof Map))
+      configuration.projectCwd = projectCwdOrPlugins;
+
+    configuration.importSettings(coreDefinitions);
+
+    const plugins = typeof maybePlugins !== `undefined`
+      ? maybePlugins
+      : projectCwdOrPlugins instanceof Map
+        ? projectCwdOrPlugins
+        : new Map();
+
+    for (const [name, plugin] of plugins)
+      configuration.activatePlugin(name, plugin);
+
+    return configuration;
+  }
 
   /**
    * Instantiate a new configuration object exposing the configuration obtained
@@ -662,16 +697,83 @@ export class Configuration {
    * way around).
    */
 
-  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {lookup = ProjectLookup.LOCKFILE, strict = true, useRc = true}: {lookup?: ProjectLookup, strict?: boolean, useRc?: boolean} = {}) {
+  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {lookup = ProjectLookup.LOCKFILE, strict = true, usePath = false, useRc = true}: FindProjectOptions = {}) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
     const rcFiles = await Configuration.findRcFiles(startingCwd);
+    const homeRcFile = await Configuration.findHomeRcFile();
+
+    // First we will parse the `yarn-path` settings. Doing this now allows us
+    // to not have to load the plugins if there's a `yarn-path` configured.
+
+    type CoreKeys = keyof typeof coreDefinitions;
+    type CoreFields = {[key in CoreKeys]: any};
+
+    const pickCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename});
+    const excludeCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => rest;
+
+    const configuration = new Configuration(startingCwd);
+    configuration.importSettings(pickCoreFields(coreDefinitions));
+
+    configuration.useWithSource(`<environment>`, pickCoreFields(environmentSettings), startingCwd, {strict: false});
+    for (const {path, cwd, data} of rcFiles)
+      configuration.useWithSource(path, pickCoreFields(data), cwd, {strict: false});
+    if (homeRcFile)
+      configuration.useWithSource(homeRcFile.path, pickCoreFields(homeRcFile.data), homeRcFile.cwd, {strict: false});
+
+    if (usePath) {
+      const yarnPath: PortablePath = configuration.get<PortablePath>(`yarnPath`);
+      const ignorePath = configuration.get<boolean>(`ignorePath`);
+
+      if (yarnPath !== null && !ignorePath) {
+        return configuration;
+      }
+    }
+
+    // We need to know the project root before being able to truly instantiate
+    // our configuration, and to know that we need to know the lockfile name
+
+    const lockfileFilename = configuration.get<Filename>(`lockfileFilename`);
+
+    let projectCwd: PortablePath | null;
+    switch (lookup) {
+      case ProjectLookup.LOCKFILE: {
+        projectCwd = await Configuration.findProjectCwd(startingCwd, lockfileFilename);
+      } break;
+
+      case ProjectLookup.MANIFEST: {
+        projectCwd = await Configuration.findProjectCwd(startingCwd, null);
+      } break;
+
+      case ProjectLookup.NONE: {
+        if (xfs.existsSync(ppath.join(startingCwd, `package.json` as Filename))) {
+          projectCwd = ppath.resolve(startingCwd);
+        } else {
+          projectCwd = null;
+        }
+      } break;
+    }
+
+    // Great! We now have enough information to really start to setup the
+    // core configuration object.
+
+    configuration.startingCwd = startingCwd;
+    configuration.projectCwd = projectCwd;
+
+    configuration.importSettings(excludeCoreFields(coreDefinitions));
+
+    // Now that the configuration object is almost ready, we need to load all
+    // the configured plugins
+
     const plugins = new Map<string, Plugin>([
       [`@@core`, CorePlugin],
     ]);
 
-    const interop = (obj: any) => obj.__esModule ? obj.default : obj;
+    const interop =
+      (obj: any) => obj.__esModule
+        ? obj.default
+        : obj;
 
     if (pluginConfiguration !== null) {
       for (const request of pluginConfiguration.plugins.keys())
@@ -742,51 +844,14 @@ export class Configuration {
       }
     }
 
-    let lockfileFilename = DEFAULT_LOCK_FILENAME;
+    for (const [name, plugin] of plugins)
+      configuration.activatePlugin(name, plugin);
 
-    // We need to know the project root before being able to truly instantiate
-    // our configuration, and to know that we need to know the lockfile name
-    if (environmentSettings.lockfileFilename) {
-      lockfileFilename = environmentSettings.lockfileFilename;
-    } else {
-      for (const {data} of rcFiles) {
-        if (data.lockfileFilename) {
-          lockfileFilename = data.lockfileFilename;
-          break;
-        }
-      }
-    }
-
-    let projectCwd: PortablePath | null;
-    switch (lookup) {
-      case ProjectLookup.LOCKFILE: {
-        projectCwd = await Configuration.findProjectCwd(startingCwd, lockfileFilename);
-      } break;
-
-      case ProjectLookup.MANIFEST: {
-        projectCwd = await Configuration.findProjectCwd(startingCwd, null);
-      } break;
-
-      case ProjectLookup.NONE: {
-        if (xfs.existsSync(ppath.join(startingCwd, `package.json` as Filename))) {
-          projectCwd = ppath.resolve(startingCwd);
-        } else {
-          projectCwd = null;
-        }
-      } break;
-    }
-
-    const configuration = new Configuration(startingCwd, projectCwd, plugins);
-    configuration.useWithSource(`<environment>`, environmentSettings, startingCwd, {strict});
-
+    configuration.useWithSource(`<environment>`, excludeCoreFields(environmentSettings), startingCwd, {strict});
     for (const {path, cwd, data} of rcFiles)
-      configuration.useWithSource(path, data, cwd, {strict});
-
-    const rcFilename = configuration.get(`rcFilename`);
-    const homeRcFile = await Configuration.findHomeRcFile(rcFilename);
-
+      configuration.useWithSource(path, excludeCoreFields(data), cwd, {strict});
     if (homeRcFile)
-      configuration.useWithSource(homeRcFile.path, homeRcFile.data, homeRcFile.cwd, {strict});
+      configuration.useWithSource(homeRcFile.path, excludeCoreFields(homeRcFile.data), homeRcFile.cwd, {strict});
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
@@ -834,9 +899,11 @@ export class Configuration {
     return rcFiles;
   }
 
-  static async findHomeRcFile(rcFilename: string) {
+  static async findHomeRcFile() {
+    const rcFilename = getRcFilename();
+
     const homeFolder = folderUtils.getHomeFolder();
-    const homeRcFilePath = ppath.join(homeFolder, rcFilename as PortablePath);
+    const homeRcFilePath = ppath.join(homeFolder, rcFilename);
 
     if (xfs.existsSync(homeRcFilePath)) {
       const content = await xfs.readFilePromise(homeRcFilePath, `utf8`);
@@ -920,28 +987,25 @@ export class Configuration {
     return await Configuration.updateConfiguration(homeFolder, patch);
   }
 
-  constructor(startingCwd: PortablePath, projectCwd: PortablePath | null, plugins: Map<string, Plugin>) {
+  private constructor(startingCwd: PortablePath) {
     this.startingCwd = startingCwd;
-    this.projectCwd = projectCwd;
+  }
 
-    this.plugins = plugins;
+  activatePlugin(name: string, plugin: Plugin) {
+    this.plugins.set(name, plugin);
 
-    const importSettings = (definitions: {[name: string]: SettingsDefinition}) => {
-      for (const [name, definition] of Object.entries(definitions)) {
-        if (this.settings.has(name))
-          throw new Error(`Cannot redefine settings "${name}"`);
+    if (typeof plugin.configuration !== `undefined`) {
+      this.importSettings(plugin.configuration);
+    }
+  }
 
-        this.settings.set(name, definition);
-        this.values.set(name, getDefaultValue(this, definition));
-      }
-    };
+  private importSettings(definitions: {[name: string]: SettingsDefinition}) {
+    for (const [name, definition] of Object.entries(definitions)) {
+      if (this.settings.has(name))
+        throw new Error(`Cannot redefine settings "${name}"`);
 
-    importSettings(coreDefinitions);
-
-    for (const plugin of this.plugins.values()) {
-      if (plugin.configuration) {
-        importSettings(plugin.configuration);
-      }
+      this.settings.set(name, definition);
+      this.values.set(name, getDefaultValue(this, definition));
     }
   }
 
@@ -956,6 +1020,10 @@ export class Configuration {
 
   use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
     for (const key of Object.keys(data)) {
+      const value = data[key];
+      if (typeof value === `undefined`)
+        continue;
+
       // The plugins have already been loaded at this point
       if (key === `plugins`)
         continue;
@@ -981,7 +1049,7 @@ export class Configuration {
       if (this.sources.has(key) && !overwrite)
         continue;
 
-      this.values.set(key, parseValue(this, key, data[key], definition, folder));
+      this.values.set(key, parseValue(this, key, value, definition, folder));
       this.sources.set(key, source);
     }
   }

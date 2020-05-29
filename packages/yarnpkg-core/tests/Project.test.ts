@@ -4,7 +4,7 @@ import LinkPlugin                                                               
 import PnpPlugin                                                                       from '@yarnpkg/plugin-pnp';
 
 const getConfiguration = (p: PortablePath) => {
-  return new Configuration(p, p, new Map([
+  return Configuration.create(p, p, new Map([
     [`@yarnpkg/plugin-link`, LinkPlugin],
     [`@yarnpkg/plugin-pnp`, PnpPlugin],
   ]));

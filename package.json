@@ -29,7 +29,7 @@
     "@yarnpkg/eslint-config": "workspace:^0.0.0",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.22",
     "babel-jest": "^24.5.0",
-    "clipanion": "^2.1.5",
+    "clipanion": "^2.4.0",
     "eslint": "^6.8.0",
     "eslint-plugin-arca": "^0.9.0",
     "eslint-plugin-react": "^7.14.3",
@@ -42,6 +42,9 @@
   },
   "dependenciesMeta": {
     "core-js": {
+      "built": false
+    },
+    "core-js-pure": {
       "built": false
     },
     "date-fns": {

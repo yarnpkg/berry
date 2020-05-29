@@ -5981,7 +5981,7 @@ __metadata:
     babel-loader: ^8.0.6
     babel-plugin-lazy-import: arcanis/babel-plugin-lazy-import
     chalk: ^3.0.0
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     filesize: ^4.1.2
     pnp-webpack-plugin: ^1.4.3
     semver: ^7.1.2
@@ -6027,7 +6027,7 @@ __metadata:
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.22"
     "@yarnpkg/shell": "workspace:^2.0.0-rc.11"
     chalk: ^3.0.0
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     fromentries: ^1.2.0
     micromatch: ^4.0.2
     semver: ^7.1.2
@@ -6063,7 +6063,7 @@ __metadata:
     "@yarnpkg/shell": "workspace:^2.0.0-rc.11"
     camelcase: ^5.3.1
     chalk: ^3.0.0
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     cross-spawn: 7.0.3
     diff: ^4.0.1
     globby: ^10.0.1
@@ -6092,7 +6092,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
     "@yarnpkg/monorepo": "workspace:0.0.0"
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     globby: ^10.0.1
     micromatch: ^4.0.2
     p-limit: ^2.2.0
@@ -6279,7 +6279,7 @@ __metadata:
     "@yarnpkg/eslint-config": "workspace:^0.0.0"
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.22"
     babel-jest: ^24.5.0
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     eslint: ^6.8.0
     eslint-plugin-arca: ^0.9.0
     eslint-plugin-react: ^7.14.3
@@ -6291,6 +6291,8 @@ __metadata:
     typescript: ^3.8.3
   dependenciesMeta:
     core-js:
+      built: false
+    core-js-pure:
       built: false
     date-fns:
       built: false
@@ -6340,7 +6342,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33"
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     inquirer: ^6.2.0
     lodash: ^4.17.15
     node-emoji: ^1.8.1
@@ -6360,7 +6362,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
     "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.7"
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.33
     "@yarnpkg/core": ^2.0.0-rc.27
@@ -6380,7 +6382,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
     "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.7"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.11"
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     inquirer: ^6.2.0
     lodash: ^4.17.15
     semver: ^7.1.2
@@ -6461,7 +6463,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33"
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.33
     "@yarnpkg/core": ^2.0.0-rc.27
@@ -6480,7 +6482,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/libui": "workspace:^2.0.0-rc.7"
     "@yarnpkg/plugin-essentials": "workspace:^2.0.0-rc.27"
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     diff: ^4.0.1
     ink: ^2.3.0
     react: ^16.13.1
@@ -6519,7 +6521,7 @@ __metadata:
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.20"
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.22"
     "@zkochan/cmd-shim": ^4.3.0
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     micromatch: ^4.0.2
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.33
@@ -6541,7 +6543,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
     "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.19"
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.19"
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     inquirer: ^6.2.0
     semver: ^7.1.2
     ssri: ^6.0.1
@@ -6579,7 +6581,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
     "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.15"
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     micromatch: ^4.0.2
     tar-stream: ^2.0.1
   peerDependencies:
@@ -6597,7 +6599,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
     "@yarnpkg/libzip": "workspace:^2.0.0-rc.11"
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.33
     "@yarnpkg/core": ^2.0.0-rc.27
@@ -6614,7 +6616,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
     "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.15"
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.20"
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     semver: ^7.1.2
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.33
@@ -6630,7 +6632,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33"
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     typescript: ^3.8.3
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.33
@@ -6673,7 +6675,7 @@ __metadata:
     "@yarnpkg/libui": "workspace:^2.0.0-rc.7"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.11"
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.19"
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     ink: ^2.3.0
     react: ^16.13.1
     semver: ^7.1.2
@@ -6695,7 +6697,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33"
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     p-limit: ^2.2.0
     typescript: ^3.8.3
     yup: ^0.27.0
@@ -6758,7 +6760,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.11"
-    clipanion: ^2.1.5
+    clipanion: ^2.4.0
     cross-spawn: 7.0.3
     fast-glob: ^3.2.2
     stream-buffers: ^3.0.2
@@ -9583,12 +9585,10 @@ babel-plugin-lazy-import@arcanis/babel-plugin-lazy-import:
   languageName: node
   linkType: hard
 
-"clipanion@npm:^2.1.5":
-  version: 2.1.5
-  resolution: "clipanion@npm:2.1.5"
-  dependencies:
-    chalk: ^2.4.2
-  checksum: 70279d4cb7f9dbd1f152df62c62250a8c06afd48d8034dc9a1e65adab50b7a3d9ac25673c833dacc845c2e0a1a33deb2a1b45d63cf0387ca3532e2467fd2cfa9
+"clipanion@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "clipanion@npm:2.4.0"
+  checksum: 43030bb880562a0bd3246299c1c613b6522fc651f2112d7509178b81e7ebb489a0b9c1ca06c239737fdee00c83a230561f7e58a2defa6039d2cb16b6f7edb847
   languageName: node
   linkType: hard
 

@@ -10,7 +10,7 @@
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.20",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.22",
     "@zkochan/cmd-shim": "^4.3.0",
-    "clipanion": "^2.1.5",
+    "clipanion": "^2.4.0",
     "micromatch": "^4.0.2"
   },
   "peerDependencies": {
