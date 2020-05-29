@@ -3,6 +3,10 @@ import {PortablePath, ppath, Filename} from '@yarnpkg/fslib';
 
 import * as fsUtils                    from './fs';
 
+export async function readConfiguration(dir: PortablePath, {filename = DEFAULT_RC_FILENAME}: {filename?: Filename} = {}) {
+  return await fsUtils.readSyml(ppath.join(dir, filename));
+}
+
 export async function writeConfiguration(dir: PortablePath, value: {[key: string]: any}, {filename = DEFAULT_RC_FILENAME}: {filename?: Filename} = {}) {
   return await fsUtils.writeSyml(ppath.join(dir, filename), value);
 }

@@ -31,6 +31,7 @@
     "yup": "^0.27.0"
   },
   "devDependencies": {
+    "@types/yup": "0.26.12",
     "@yarnpkg/builder": "workspace:^2.0.0-rc.21",
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.22",
