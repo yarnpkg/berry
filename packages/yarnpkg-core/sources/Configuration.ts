@@ -720,7 +720,7 @@ export class Configuration {
     for (const {path, cwd, data} of rcFiles)
       configuration.useWithSource(path, pickCoreFields(data), cwd, {strict: false});
     if (homeRcFile)
-      configuration.useWithSource(homeRcFile.path, homeRcFile.data, homeRcFile.cwd, {strict: false});
+      configuration.useWithSource(homeRcFile.path, pickCoreFields(homeRcFile.data), homeRcFile.cwd, {strict: false});
 
     if (usePath) {
       const yarnPath: PortablePath = configuration.get<PortablePath>(`yarnPath`);
