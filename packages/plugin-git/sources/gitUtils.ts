@@ -273,7 +273,7 @@ export async function clone(url: string, configuration: Configuration) {
   const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};
 
   try {
-    await execUtils.execvp(`git`, [`clone`, `${normalizeRepoUrl(repo)}`, npath.fromPortablePath(directory)], execOpts);
+    await execUtils.execvp(`git`, [`clone`, `-c core.autocrlf=false`, `${normalizeRepoUrl(repo)}`, npath.fromPortablePath(directory)], execOpts);
     await execUtils.execvp(`git`, [`checkout`, `${request}`], execOpts);
   } catch (error) {
     error.message = `Repository clone failed: ${error.message}`;
