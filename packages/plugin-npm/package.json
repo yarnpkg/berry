@@ -5,7 +5,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
-    "inquirer": "^6.2.0",
+    "inquirer": "^7.1.0",
     "semver": "^7.1.2",
     "tslib": "^1.13.0"
   },

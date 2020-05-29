@@ -8375,7 +8375,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.4.0"],
-            ["inquirer", "npm:6.2.1"],
+            ["inquirer", "npm:7.1.0"],
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
             ["tau-prolog", "npm:0.2.66"],
@@ -8450,7 +8450,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["clipanion", "npm:2.4.0"],
-            ["inquirer", "npm:6.2.1"],
+            ["inquirer", "npm:7.1.0"],
             ["lodash", "npm:4.17.15"],
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.1.2"],
@@ -8479,7 +8479,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["clipanion", "npm:2.4.0"],
-            ["inquirer", "npm:6.2.1"],
+            ["inquirer", "npm:7.1.0"],
             ["lodash", "npm:4.17.15"],
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.1.2"],
@@ -8508,7 +8508,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["clipanion", "npm:2.4.0"],
-            ["inquirer", "npm:6.2.1"],
+            ["inquirer", "npm:7.1.0"],
             ["lodash", "npm:4.17.15"],
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.1.2"],
@@ -8821,7 +8821,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/semver", "npm:7.1.0"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["inquirer", "npm:6.2.1"],
+            ["inquirer", "npm:7.1.0"],
             ["semver", "npm:7.1.2"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -8838,7 +8838,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/semver", "npm:7.1.0"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["inquirer", "npm:6.2.1"],
+            ["inquirer", "npm:7.1.0"],
             ["semver", "npm:7.1.2"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -8861,7 +8861,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-npm", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-pack", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-pack"],
             ["clipanion", "npm:2.4.0"],
-            ["inquirer", "npm:6.2.1"],
+            ["inquirer", "npm:7.1.0"],
             ["semver", "npm:7.1.2"],
             ["ssri", "npm:6.0.1"],
             ["tslib", "npm:1.13.0"],
@@ -8890,7 +8890,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-npm", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-pack", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-pack"],
             ["clipanion", "npm:2.4.0"],
-            ["inquirer", "npm:6.2.1"],
+            ["inquirer", "npm:7.1.0"],
             ["semver", "npm:7.1.2"],
             ["ssri", "npm:6.0.1"],
             ["tslib", "npm:1.13.0"],
@@ -8919,7 +8919,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-npm", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-pack", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-pack"],
             ["clipanion", "npm:2.4.0"],
-            ["inquirer", "npm:6.2.1"],
+            ["inquirer", "npm:7.1.0"],
             ["semver", "npm:7.1.2"],
             ["ssri", "npm:6.0.1"],
             ["tslib", "npm:1.13.0"],
@@ -19823,26 +19823,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["npm:6.2.1", {
-          "packageLocation": "./.yarn/cache/inquirer-npm-6.2.1-67a548e7da-b5102d7aa2.zip/node_modules/inquirer/",
-          "packageDependencies": [
-            ["inquirer", "npm:6.2.1"],
-            ["ansi-escapes", "npm:3.1.0"],
-            ["chalk", "npm:2.4.2"],
-            ["cli-cursor", "npm:2.1.0"],
-            ["cli-width", "npm:2.2.0"],
-            ["external-editor", "npm:3.0.3"],
-            ["figures", "npm:2.0.0"],
-            ["lodash", "npm:4.17.15"],
-            ["mute-stream", "npm:0.0.7"],
-            ["run-async", "npm:2.3.0"],
-            ["rxjs", "npm:6.3.3"],
-            ["string-width", "npm:2.1.1"],
-            ["strip-ansi", "npm:5.0.0"],
-            ["through", "npm:2.3.8"]
-          ],
-          "linkType": "HARD",
-        }],
         ["npm:6.5.0", {
           "packageLocation": "./.yarn/cache/inquirer-npm-6.5.0-60501c9560-d0c1b73c32.zip/node_modules/inquirer/",
           "packageDependencies": [
@@ -29241,14 +29221,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["rxjs", [
-        ["npm:6.3.3", {
-          "packageLocation": "./.yarn/cache/rxjs-npm-6.3.3-5635372014-d0d7d576a0.zip/node_modules/rxjs/",
-          "packageDependencies": [
-            ["rxjs", "npm:6.3.3"],
-            ["tslib", "npm:1.13.0"]
-          ],
-          "linkType": "HARD",
-        }],
         ["npm:6.5.4", {
           "packageLocation": "./.yarn/cache/rxjs-npm-6.5.4-8c1301c00a-8e2b3c1c5c.zip/node_modules/rxjs/",
           "packageDependencies": [

@@ -6269,7 +6269,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
     clipanion: ^2.4.0
-    inquirer: ^6.2.0
+    inquirer: ^7.1.0
     lodash: ^4.17.15
     node-emoji: ^1.8.1
     tau-prolog: ^0.2.66
@@ -6312,7 +6312,7 @@ __metadata:
     "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.7"
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.11"
     clipanion: ^2.4.0
-    inquirer: ^6.2.0
+    inquirer: ^7.1.0
     lodash: ^4.17.15
     micromatch: ^4.0.2
     semver: ^7.1.2
@@ -6486,7 +6486,7 @@ __metadata:
     "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.19"
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.19"
     clipanion: ^2.4.0
-    inquirer: ^6.2.0
+    inquirer: ^7.1.0
     semver: ^7.1.2
     ssri: ^6.0.1
     tslib: ^1.13.0
@@ -6507,7 +6507,7 @@ __metadata:
     "@types/semver": ^7.1.0
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
-    inquirer: ^6.2.0
+    inquirer: ^7.1.0
     semver: ^7.1.2
     tslib: ^1.13.0
   peerDependencies:
@@ -12673,7 +12673,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"external-editor@npm:^3.0.0, external-editor@npm:^3.0.3":
+"external-editor@npm:^3.0.3":
   version: 3.0.3
   resolution: "external-editor@npm:3.0.3"
   dependencies:
@@ -16275,28 +16275,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"inquirer@npm:^6.2.0":
-  version: 6.2.1
-  resolution: "inquirer@npm:6.2.1"
-  dependencies:
-    ansi-escapes: ^3.0.0
-    chalk: ^2.0.0
-    cli-cursor: ^2.1.0
-    cli-width: ^2.0.0
-    external-editor: ^3.0.0
-    figures: ^2.0.0
-    lodash: ^4.17.10
-    mute-stream: 0.0.7
-    run-async: ^2.2.0
-    rxjs: ^6.1.0
-    string-width: ^2.1.0
-    strip-ansi: ^5.0.0
-    through: ^2.3.6
-  checksum: b5102d7aa25193c4386534713180d6ac66dbb7d49d14552c22215dc5c2cf9f00d41547e5e204d9bcbe9f564c6e4a7665d02a09dcb417aacd0d00ae332063f08e
-  languageName: node
-  linkType: hard
-
-"inquirer@npm:^7.0.0":
+"inquirer@npm:^7.0.0, inquirer@npm:^7.1.0":
   version: 7.1.0
   resolution: "inquirer@npm:7.1.0"
   dependencies:
@@ -24989,15 +24968,6 @@ resolve@^1.10.1:
   version: 4.0.8
   resolution: "rx-lite@npm:4.0.8"
   checksum: 8244e1096405e1ad0685403920994e0f458b6d0e508b82af523a12992f29d205f24acb10b3c8092c53c7d5235844c7e77b0417c2d76abca30178461e312dc6dc
-  languageName: node
-  linkType: hard
-
-"rxjs@npm:^6.1.0":
-  version: 6.3.3
-  resolution: "rxjs@npm:6.3.3"
-  dependencies:
-    tslib: ^1.9.0
-  checksum: d0d7d576a0c9f6849c90df97aa668a121ac48c8ee44a95120ab73b75941baefa08991a3c559a2ac5ac6375a7301b2da823a840f57fb85d9b7c1a9d1efb01153a
   languageName: node
   linkType: hard
 
