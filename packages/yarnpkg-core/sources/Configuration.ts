@@ -914,7 +914,7 @@ export class Configuration {
     });
   }
 
-  static async updateHomeConfiguration(patch: any) {
+  static async updateHomeConfiguration(patch: {[key: string]: any} | ((current: any) => any)) {
     const homeFolder = folderUtils.getHomeFolder();
 
     return await Configuration.updateConfiguration(homeFolder, patch);

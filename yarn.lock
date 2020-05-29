@@ -4854,13 +4854,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/json5@npm:0.0.30":
-  version: 0.0.30
-  resolution: "@types/json5@npm:0.0.30"
-  checksum: af9d434f14dc6337e16454944bca5eadbdf5d0e85a0ef59fe5e011eadabfe126f42f3913bf7fee478747cf34efd88061ac0e15ede07b83986ae31aa2ddda6232
-  languageName: node
-  linkType: hard
-
 "@types/keyv@npm:*, @types/keyv@npm:^3.1.1":
   version: 3.1.1
   resolution: "@types/keyv@npm:3.1.1"
@@ -6009,6 +6002,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
+    "@types/yup": 0.26.12
     "@yarnpkg/builder": "workspace:^2.0.0-rc.21"
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
@@ -6539,9 +6533,9 @@ __metadata:
   dependencies:
     "@npm/types": ^1.0.1
     "@types/inquirer": ^0.0.43
-    "@types/json5": 0.0.30
     "@types/semver": ^7.1.0
     "@types/ssri": ^6.0.1
+    "@types/yup": 0.26.12
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33"
     "@yarnpkg/core": "workspace:^2.0.0-rc.27"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
@@ -6549,7 +6543,6 @@ __metadata:
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.19"
     clipanion: ^2.1.5
     inquirer: ^6.2.0
-    json5: ^2.1.1
     semver: ^7.1.2
     ssri: ^6.0.1
     yup: ^0.27.0
@@ -18609,17 +18602,6 @@ fsevents@~2.1.2:
   bin:
     json5: lib/cli.js
   checksum: e07a8a338b081efe217a284e0d1b98a9c8125a4c8a06837665f79967ef44c861135bdc8c6b61bee7ef7692675951a498245c6dea3fe65612952350b26c43a517
-  languageName: node
-  linkType: hard
-
-"json5@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "json5@npm:2.1.1"
-  dependencies:
-    minimist: ^1.2.0
-  bin:
-    json5: lib/cli.js
-  checksum: fd755a9551d59acaa08c61ff9f1227a946d55af52d94b08fa5b4180471125f363f924606b56fa46ce94b171045d4e17502e6ccdc443e9a0bb1a2cef7b4875928
   languageName: node
   linkType: hard
 
