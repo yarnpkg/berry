@@ -6292,6 +6292,8 @@ __metadata:
   dependenciesMeta:
     core-js:
       built: false
+    core-js-pure:
+      built: false
     date-fns:
       built: false
     fsevents:
