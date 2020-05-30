@@ -6,7 +6,7 @@ import {Command, Usage}                      from 'clipanion';
 import {Writable}                            from 'stream';
 import {asTree}                              from 'treeify';
 
-type TreeNode = {[key: string]: TreeNode};
+export type TreeNode = {[key: string]: TreeNode};
 
 // eslint-disable-next-line arca/no-default-export
 export default class WhyCommand extends BaseCommand {
@@ -202,7 +202,7 @@ function whyRecursive(project: Project, identHash: IdentHash, {configuration, pe
   return tree;
 }
 
-function printTree(stdout: Writable, tree: TreeNode) {
+export function printTree(stdout: Writable, tree: TreeNode) {
   let treeOutput = asTree(tree, false, false);
 
   // A slight hack to add line returns between two workspaces

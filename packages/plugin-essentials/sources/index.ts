@@ -33,6 +33,7 @@ import workspace                          from './commands/workspace';
 import * as suggestUtils                  from './suggestUtils';
 
 export {suggestUtils};
+export {WorkspaceInfoTree} from './commands/workspaces/list';
 
 export interface Hooks {
   afterWorkspaceDependencyAddition?: (
