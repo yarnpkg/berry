@@ -23,7 +23,7 @@ export default class RemoveCommand extends BaseCommand {
 
       If the \`-A,--all\` option is set, the operation will be applied to all workspaces from the current project.
 
-      This command accepts glob patterns as arguments (if supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
+      This command accepts glob patterns as arguments (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
     `,
     examples: [[
       `Remove a dependency from the current project`,
