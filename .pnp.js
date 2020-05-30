@@ -8047,6 +8047,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-pnp", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-pnp"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],
+            ["array-flat-polyfill", "npm:1.0.1"],
             ["chalk", "npm:3.0.0"],
             ["clipanion", "npm:2.4.0"],
             ["fromentries", "npm:1.2.0"],
@@ -8088,6 +8089,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-pnp", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-pnp"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],
+            ["array-flat-polyfill", "npm:1.0.1"],
             ["chalk", "npm:3.0.0"],
             ["clipanion", "npm:2.4.0"],
             ["fromentries", "npm:1.2.0"],
@@ -9931,6 +9933,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/array-find-index-npm-1.0.2-a7d5fbff35-5320b3bd46.zip/node_modules/array-find-index/",
           "packageDependencies": [
             ["array-find-index", "npm:1.0.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["array-flat-polyfill", [
+        ["npm:1.0.1", {
+          "packageLocation": "./.yarn/cache/array-flat-polyfill-npm-1.0.1-2796802ded-4827aaf9bc.zip/node_modules/array-flat-polyfill/",
+          "packageDependencies": [
+            ["array-flat-polyfill", "npm:1.0.1"]
           ],
           "linkType": "HARD",
         }]

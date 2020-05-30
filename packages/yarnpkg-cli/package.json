@@ -24,6 +24,7 @@
     "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.8",
     "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.21",
     "@yarnpkg/shell": "workspace:^2.0.0-rc.11",
+    "array-flat-polyfill": "^1.0.1",
     "chalk": "^3.0.0",
     "clipanion": "^2.4.0",
     "fromentries": "^1.2.0",

@@ -6026,6 +6026,7 @@ __metadata:
     "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.21"
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.22"
     "@yarnpkg/shell": "workspace:^2.0.0-rc.11"
+    array-flat-polyfill: ^1.0.1
     chalk: ^3.0.0
     clipanion: ^2.4.0
     fromentries: ^1.2.0
@@ -7309,6 +7310,13 @@ __metadata:
   version: 1.0.2
   resolution: "array-find-index@npm:1.0.2"
   checksum: 5320b3bd4680eadee5191b8d8a4f01788f8761e11ae5d8d8f67e836308760d453c38300cdef41315e8adf24979083f73c353f651f1dc029ab3c712c1ef5ebf17
+  languageName: node
+  linkType: hard
+
+"array-flat-polyfill@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "array-flat-polyfill@npm:1.0.1"
+  checksum: 4827aaf9bc2a07b6d9eb1c5fdf6cb9eb3c92ba61453c9fc3d6f6d51bb9b5393f56e08cd8bbfd77a28db962db91715f8b7793ae24967e41f1a9abcb93d15d42fa
   languageName: node
   linkType: hard
 
