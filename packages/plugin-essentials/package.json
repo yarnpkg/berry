@@ -10,6 +10,7 @@
     "clipanion": "^2.4.0",
     "inquirer": "^6.2.0",
     "lodash": "^4.17.15",
+    "micromatch": "^4.0.2",
     "semver": "^7.1.2",
     "treeify": "^1.1.0",
     "yup": "^0.27.0"
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@types/inquirer": "^0.0.43",
     "@types/lodash": "^4.14.136",
+    "@types/micromatch": "^4.0.1",
     "@types/semver": "^7.1.0",
     "@types/treeify": "^1.0.0",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33",
