@@ -32,13 +32,13 @@ export default class RemoveCommand extends BaseCommand {
       `Remove a dependency from all workspaces at once`,
       `$0 remove lodash --all`,
     ], [
-      `Remove all dependencies matching a glob pattern from the current project (star)`,
+      `Remove all dependencies starting with \`eslint-\``,
       `$0 remove 'eslint-*'`,
     ], [
-      `Remove all dependencies matching a glob pattern from the current project (star & scoped)`,
+      `Remove all dependencies with the \`@babel\` scope`,
       `$0 remove '@babel/*'`,
     ], [
-      `Remove all dependencies matching a glob pattern from the current project (braces)`,
+      `Remove all dependencies matching \`react-dom\` or \`react-helmet\``,
       `$0 remove 'react-{dom,helmet}'`,
     ]],
   });

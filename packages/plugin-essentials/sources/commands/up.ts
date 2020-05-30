@@ -40,7 +40,7 @@ export default class UpCommand extends BaseCommand {
 
       This command accepts glob patterns as arguments (if valid Descriptors and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
-      **Note:** The range has to be static, only the package scopes and names can contain glob patterns.
+      **Note:** The ranges have to be static, only the package scopes and names can contain glob patterns.
     `,
     examples: [[
       `Upgrade all instances of lodash to the latest release`,
