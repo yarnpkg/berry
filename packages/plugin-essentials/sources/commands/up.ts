@@ -4,6 +4,7 @@ import {Project, StreamReport, Workspace}                           from '@yarnp
 import {structUtils}                                                from '@yarnpkg/core';
 import {Command, Usage, UsageError}                                 from 'clipanion';
 import inquirer                                                     from 'inquirer';
+import micromatch                                                   from 'micromatch';
 
 import * as suggestUtils                                            from '../suggestUtils';
 import {Hooks}                                                      from '..';
@@ -11,7 +12,7 @@ import {Hooks}                                                      from '..';
 // eslint-disable-next-line arca/no-default-export
 export default class UpCommand extends BaseCommand {
   @Command.Rest()
-  packages: Array<string> = [];
+  patterns: Array<string> = [];
 
   @Command.Boolean(`-i,--interactive`)
   interactive: boolean = false;
@@ -77,45 +78,52 @@ export default class UpCommand extends BaseCommand {
     ];
 
     const allSuggestionsPromises = [];
-    const unreferencedPackages = [];
+    const unreferencedPatterns = [];
 
-    for (const pseudoDescriptor of this.packages) {
-      const descriptor = structUtils.parseDescriptor(pseudoDescriptor);
+    for (const pattern of this.patterns) {
       let isReferenced = false;
+
+      // The range has to be static
+      const pseudoDescriptor = structUtils.parseDescriptor(pattern);
 
       for (const workspace of project.workspaces) {
         for (const target of [suggestUtils.Target.REGULAR, suggestUtils.Target.DEVELOPMENT]) {
-          const existing = workspace.manifest[target].get(descriptor.identHash);
-          if (!existing)
-            continue;
+          const descriptors = workspace.manifest.getForScope(target);
+          const stringifiedIdents = [...descriptors.values()].map(structUtils.stringifyIdent);
 
-          allSuggestionsPromises.push(Promise.resolve().then(async () => {
-            return [
-              workspace,
-              target,
-              existing,
-              await suggestUtils.getSuggestedDescriptors(descriptor, {project, workspace, cache, target, modifier, strategies}),
-            ] as [
-              Workspace,
-              suggestUtils.Target,
-              Descriptor,
-              Array<suggestUtils.Suggestion>
-            ];
-          }));
+          for (const stringifiedIdent of micromatch(stringifiedIdents, structUtils.stringifyIdent(pseudoDescriptor))) {
+            const ident = structUtils.parseIdent(stringifiedIdent);
+            const existingDescriptor = workspace.manifest[target].get(ident.identHash)!;
+            const request = structUtils.makeDescriptor(ident, pseudoDescriptor.range);
 
-          isReferenced = true;
+            allSuggestionsPromises.push(Promise.resolve().then(async () => {
+              return [
+                workspace,
+                target,
+                existingDescriptor,
+                await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, modifier, strategies}),
+              ] as [
+                Workspace,
+                suggestUtils.Target,
+                Descriptor,
+                Array<suggestUtils.Suggestion>
+              ];
+            }));
+
+            isReferenced = true;
+          }
         }
       }
 
       if (!isReferenced) {
-        unreferencedPackages.push(structUtils.prettyIdent(configuration, descriptor));
+        unreferencedPatterns.push(pattern);
       }
     }
 
-    if (unreferencedPackages.length > 1)
-      throw new UsageError(`Packages ${unreferencedPackages.join(`, `)} aren't referenced by any workspace`);
-    if (unreferencedPackages.length > 0)
-      throw new UsageError(`Package ${unreferencedPackages[0]} isn't referenced by any workspace`);
+    if (unreferencedPatterns.length > 1)
+      throw new UsageError(`Patterns ${unreferencedPatterns.join(`, `)} don't match any packages referenced by any workspace`);
+    if (unreferencedPatterns.length > 0)
+      throw new UsageError(`Pattern ${unreferencedPatterns[0]} doesn't match any packages referenced by any workspace`);
 
     const allSuggestions = await Promise.all(allSuggestionsPromises);
 

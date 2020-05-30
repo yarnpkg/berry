@@ -74,6 +74,10 @@ export default class RemoveCommand extends BaseCommand {
     for (const pattern of this.patterns) {
       let isReferenced = false;
 
+      // This isn't really needed - It's just for consistency:
+      // All patterns are either valid or not for all commands (e.g. remove, up)
+      const pseudoIdent = structUtils.parseIdent(pattern);
+
       for (const workspace of affectedWorkspaces) {
         const peerDependenciesMeta = [...workspace.manifest.peerDependenciesMeta.keys()];
         for (const stringifiedIdent of micromatch(peerDependenciesMeta, pattern)) {
@@ -87,7 +91,7 @@ export default class RemoveCommand extends BaseCommand {
           const descriptors = workspace.manifest.getForScope(target);
           const stringifiedIdents = [...descriptors.values()].map(structUtils.stringifyIdent);
 
-          for (const stringifiedIdent of micromatch(stringifiedIdents, pattern)) {
+          for (const stringifiedIdent of micromatch(stringifiedIdents, structUtils.stringifyIdent(pseudoIdent))) {
             const {identHash} = structUtils.parseIdent(stringifiedIdent);
             const removedDescriptor = descriptors.get(identHash)!;
 
