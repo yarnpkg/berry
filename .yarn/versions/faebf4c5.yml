@@ -3,6 +3,11 @@ releases:
   "@yarnpkg/cli": prerelease
   "@yarnpkg/core": prerelease
   "@yarnpkg/doctor": prerelease
+  "@yarnpkg/fslib": prerelease
+  "@yarnpkg/json-proxy": prerelease
+  "@yarnpkg/libui": prerelease
+  "@yarnpkg/libzip": prerelease
+  "@yarnpkg/parsers": prerelease
   "@yarnpkg/plugin-compat": prerelease
   "@yarnpkg/plugin-constraints": prerelease
   "@yarnpkg/plugin-dlx": prerelease
@@ -27,6 +32,8 @@ releases:
   "@yarnpkg/plugin-workspace-tools": prerelease
   "@yarnpkg/pnp": prerelease
   "@yarnpkg/pnpify": prerelease
+  "@yarnpkg/shell": prerelease
 
 declined:
+  - "@yarnpkg/eslint-config"
   - vscode-zipfs
