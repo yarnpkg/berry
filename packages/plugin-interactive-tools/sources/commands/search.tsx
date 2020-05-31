@@ -5,7 +5,7 @@ import {useMinistore}                        from '@yarnpkg/libui/sources/hooks/
 import {useSpace}                            from '@yarnpkg/libui/sources/hooks/useSpace';
 import {renderForm, SubmitInjectedComponent} from '@yarnpkg/libui/sources/misc/renderForm';
 import {Command, Usage}                      from 'clipanion';
-import TextInput                             from 'ink-text-input';
+import InkTextInput, {InkTextInputProps}     from 'ink-text-input';
 import {Box, Text, Color}                    from 'ink';
 import React, {useEffect, useState}          from 'react';
 
@@ -181,13 +181,16 @@ export default class SearchCommand extends BaseCommand {
         }
       }, [query]);
 
+      // Typescript is having problems with
+      // recognizing InkTextInput as a valid
+      // JSX element for some reason...
+      const TextInput = InkTextInput as unknown as React.ComponentClass<InkTextInputProps>;
+
       return <Box flexDirection={`column`}>
         <Prompt />
         <Box flexDirection={`row`}>
           <Text bold>Search: </Text>
           <Box width={41}>
-            {/*
-            // @ts-ignore */}
             <TextInput
               value={query}
               onChange={handleQueryOnChange}
