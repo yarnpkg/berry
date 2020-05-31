@@ -228,9 +228,14 @@ export default class SearchCommand extends BaseCommand {
     const devDependencies = Array.from(installRequests.keys()).filter(request => installRequests.get(request) === `dev`);
     const peerDependencies = Array.from(installRequests.keys()).filter(request => installRequests.get(request) === `peer`);
 
-    await this.cli.run([`add`, ...dependencies]);
-    await this.cli.run([`add`, `--dev`, ...devDependencies]);
-    await this.cli.run([`add`, `--peer`, ...peerDependencies]);
+    if (dependencies.length)
+      await this.cli.run([`add`, ...dependencies]);
+
+    if (devDependencies.length)
+      await this.cli.run([`add`, `--dev`, ...devDependencies]);
+
+    if (peerDependencies)
+      await this.cli.run([`add`, `--peer`, ...peerDependencies]);
 
     return 0;
   }
