@@ -14,10 +14,8 @@ export interface AlgoliaPackage {
   objectID: string
   name: string
   version: string
-  description: string
   repository?: AlgoliaPackageRepository
   owner: AlgoliaPackageOwner
-  humanDownloadsLast30Days: string
 }
 
 export interface AlgoliaPackageRepository {
@@ -41,10 +39,8 @@ export const search = async (
       attributesToRetrieve: [
         `name`,
         `version`,
-        `description`,
         `owner`,
         `repository`,
-        `humanDownloadsLast30Days`,
       ],
       page,
       hitsPerPage: 10,
