@@ -1,5 +1,5 @@
 import {BaseCommand}                         from '@yarnpkg/cli';
-import {Configuration, FormatType}           from '@yarnpkg/core';
+import {Configuration, structUtils}          from '@yarnpkg/core';
 import {ScrollableItems}                     from '@yarnpkg/libui/sources/components/ScrollableItems';
 import {useMinistore}                        from '@yarnpkg/libui/sources/hooks/useMinistore';
 import {useSpace}                            from '@yarnpkg/libui/sources/hooks/useSpace';
@@ -30,17 +30,6 @@ export default class SearchCommand extends BaseCommand {
   @Command.Path(`search`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-
-    const prettyName = (name: string) => {
-      const hasScope = name.includes(`/`);
-
-      if (hasScope) {
-        const [scope, descriptor] = name.split(`/`);
-        return <>{configuration.format(`${scope}/`, FormatType.SCOPE)}{configuration.format(descriptor, FormatType.NAME)}</>;
-      } else {
-        return configuration.format(name, FormatType.NAME);
-      }
-    };
 
     const Prompt = () => {
       return (
@@ -100,10 +89,12 @@ export default class SearchCommand extends BaseCommand {
         },
       });
 
+      const ident = structUtils.parseIdent(hit.name);
+
       return <Box>
         <Box width={45} textWrap="wrap">
           <Text bold>
-            {prettyName(hit.name)}
+            {structUtils.prettyIdent(configuration, ident)}
           </Text>
         </Box>
         <Box width={16} textWrap="truncate" marginLeft={1}>
@@ -120,10 +111,12 @@ export default class SearchCommand extends BaseCommand {
     const SelectedEntry = ({name, active}: {name: string, active: boolean}) => {
       const [action] = useMinistore<string | null>(name, null);
 
+      const ident = structUtils.parseIdent(name);
+
       return <Box>
         <Box width={47}>
           <Text bold>
-            {` - `}{prettyName(name)}
+            {` - `}{structUtils.prettyIdent(configuration, ident)}
           </Text>
         </Box>
         {targets.map(
