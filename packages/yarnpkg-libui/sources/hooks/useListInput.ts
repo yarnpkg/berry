@@ -1,7 +1,7 @@
 import {StdinContext}          from 'ink';
 import {useContext, useEffect} from 'react';
 
-export const useListInput = function <T>(value: T, values: Array<T>, {active, minus, plus, set, loop = true}: {active: boolean, minus: string, plus: string, set: (value: T) => void, loop: boolean}) {
+export const useListInput = function <T>(value: T, values: Array<T>, {active, minus, plus, set, loop = true}: {active: boolean, minus: string, plus: string, set: (value: T) => void, loop?: boolean}) {
   const {stdin} = useContext(StdinContext);
 
   useEffect(() => {
