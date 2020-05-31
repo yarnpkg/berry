@@ -8884,7 +8884,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.1.5"],
             ["diff", "npm:4.0.1"],
             ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:2.3.0"],
-            ["ink-spinner", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.1"],
             ["ink-text-input", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.2.2"],
             ["react", "npm:16.13.1"],
             ["semver", "npm:7.1.2"],
@@ -19947,21 +19946,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink-spinner", "virtual:5f094d30062ec9c59a75bb93cdad5f3a22ab23db3ce4b09d6993d4fc75e6a7cfa76f13fb67edfcf0816d46987236d359552ae9053a9e1fee90ad85e383a182d6#npm:3.0.1"],
             ["cli-spinners", "npm:1.3.1"],
             ["ink", "virtual:5f094d30062ec9c59a75bb93cdad5f3a22ab23db3ce4b09d6993d4fc75e6a7cfa76f13fb67edfcf0816d46987236d359552ae9053a9e1fee90ad85e383a182d6#npm:2.7.1"],
-            ["prop-types", "npm:15.7.2"],
-            ["react", "npm:16.13.1"]
-          ],
-          "packagePeers": [
-            "ink",
-            "react"
-          ],
-          "linkType": "HARD",
-        }],
-        ["virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.1", {
-          "packageLocation": "./.yarn/$$virtual/ink-spinner-virtual-bdaaeb2c8f/0/cache/ink-spinner-npm-3.0.1-aa362ef824-8493010d15.zip/node_modules/ink-spinner/",
-          "packageDependencies": [
-            ["ink-spinner", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.1"],
-            ["cli-spinners", "npm:1.3.1"],
-            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:2.3.0"],
             ["prop-types", "npm:15.7.2"],
             ["react", "npm:16.13.1"]
           ],
