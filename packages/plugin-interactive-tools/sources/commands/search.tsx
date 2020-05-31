@@ -42,6 +42,32 @@ export default class SearchCommand extends BaseCommand {
       }
     };
 
+    const Prompt = () => {
+      return (
+        <Box flexDirection="row">
+          <Box flexDirection="column" width={49}>
+            <Box marginLeft={1}>
+             Press <Color bold cyanBright>{`<up>`}</Color>/<Color bold cyanBright>{`<down>`}</Color> to move between packages.
+            </Box>
+            <Box marginLeft={1}>
+             Press <Color bold cyanBright>{`<space>`}</Color> to select a package.
+            </Box>
+            <Box marginLeft={1}>
+              Press <Color bold cyanBright>{`<space>`}</Color> again to change the target.
+            </Box>
+          </Box>
+          <Box flexDirection="column">
+            <Box marginLeft={1}>
+              Press <Color bold cyanBright>{`<enter>`}</Color> to install the selected packages.
+            </Box>
+            <Box marginLeft={1}>
+             Press <Color bold cyanBright>{`<ctrl+c>`}</Color> to abort.
+            </Box>
+          </Box>
+        </Box>
+      );
+    };
+
     const SearchColumnNames = () => {
       return <>
         <Box width={17}><Color bold underline gray>Owner</Color></Box>
@@ -102,7 +128,7 @@ export default class SearchCommand extends BaseCommand {
         </Box>
         {targets.map(
           target =>
-            <Box key={target} width={16} marginLeft={1}>
+            <Box key={target} width={14} marginLeft={1}>
               {action === target ? <Color green> ◉ </Color> : <Color yellow> ◯ </Color>}
               <Text bold>{target}</Text>
             </Box>
@@ -156,6 +182,7 @@ export default class SearchCommand extends BaseCommand {
       }, [query]);
 
       return <Box flexDirection={`column`}>
+        <Prompt />
         <Box flexDirection={`row`}>
           <Text bold>Search: </Text>
           <Box width={41}>
@@ -194,6 +221,14 @@ export default class SearchCommand extends BaseCommand {
     const installRequests = await renderForm(SearchApp, {});
     if (typeof installRequests === `undefined`)
       return 1;
+
+    const dependencies = Array.from(installRequests.keys()).filter(request => installRequests.get(request) === `regular`);
+    const devDependencies = Array.from(installRequests.keys()).filter(request => installRequests.get(request) === `dev`);
+    const peerDependencies = Array.from(installRequests.keys()).filter(request => installRequests.get(request) === `peer`);
+
+    await this.cli.run([`add`, ...dependencies]);
+    await this.cli.run([`add`, `--dev`, ...devDependencies]);
+    await this.cli.run([`add`, `--peer`, ...peerDependencies]);
 
     return 0;
   }
