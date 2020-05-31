@@ -131,7 +131,9 @@ export default class SearchCommand extends BaseCommand {
     };
 
     const PoweredByAlgolia = () => {
-      return <Text>Powered by <Color blue>Algolia</Color>.</Text>;
+      return <Box marginTop={1}>
+        <Text>Powered by <Color blue>Algolia</Color>.</Text>
+      </Box>;
     };
 
     const SearchApp: SubmitInjectedComponent<Map<string, unknown>> = ({useSubmit}) => {
@@ -186,7 +188,7 @@ export default class SearchCommand extends BaseCommand {
 
       return <Box flexDirection={`column`}>
         <Prompt />
-        <Box flexDirection={`row`}>
+        <Box flexDirection={`row`} marginTop={1}>
           <Text bold>Search: </Text>
           <Box width={41}>
             <TextInput
@@ -206,7 +208,7 @@ export default class SearchCommand extends BaseCommand {
             willReachEnd={fetchNextPageHits}
           /> : <Color gray>Start typing...</Color>
         }
-        <Box flexDirection={`row`}>
+        <Box flexDirection={`row`} marginTop={1}>
           <Box width={49}>
             <Text bold>Selected:</Text>
           </Box>
