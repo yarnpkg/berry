@@ -46,13 +46,7 @@ export default class SearchCommand extends BaseCommand {
       </>;
     };
 
-    const HitEntry = ({hit, active}: {hit: AlgoliaPackage, active?: boolean}) => {
-      // useInput(input => {
-      //   if (input === ` ` && active) {
-
-      //   }
-      // });
-
+    const HitEntry = ({hit}: {hit: AlgoliaPackage}) => {
       return <Box>
         <Box width={45} textWrap="wrap">
           <Text bold>
@@ -132,8 +126,6 @@ export default class SearchCommand extends BaseCommand {
             willReachEnd={fetchNextPageHits}
           /> : <Color gray>Start typing...</Color>
         }
-        <Text bold>Selected:</Text>
-        <Color gray>Select some packages...</Color>
       </Box>;
     };
 
