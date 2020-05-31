@@ -5,7 +5,6 @@ import {useMinistore}                        from '@yarnpkg/libui/sources/hooks/
 import {useSpace}                            from '@yarnpkg/libui/sources/hooks/useSpace';
 import {renderForm, SubmitInjectedComponent} from '@yarnpkg/libui/sources/misc/renderForm';
 import {Command, Usage}                      from 'clipanion';
-import Link                                  from 'ink-link';
 import InkTextInput, {InkTextInputProps}     from 'ink-text-input';
 import {Box, Text, Color}                    from 'ink';
 import React, {useEffect, useState}          from 'react';
@@ -91,11 +90,12 @@ export default class SearchCommand extends BaseCommand {
       });
 
       const ident = structUtils.parseIdent(hit.name);
+      const prettyIdent = structUtils.prettyIdent(configuration, ident);
 
       return <Box>
         <Box width={45} textWrap="wrap">
           <Text bold>
-            {structUtils.prettyIdent(configuration, ident)}
+            {prettyIdent}
           </Text>
         </Box>
         <Box width={16} textWrap="truncate" marginLeft={1}>
