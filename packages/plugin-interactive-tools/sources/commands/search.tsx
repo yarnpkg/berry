@@ -136,6 +136,10 @@ export default class SearchCommand extends BaseCommand {
       </Box>;
     };
 
+    const PoweredByAlgolia = () => {
+      return <Text>Powered by <Color blue>Algolia</Color>.</Text>;
+    };
+
     const SearchApp: SubmitInjectedComponent<Map<string, unknown>> = ({useSubmit}) => {
       const selectionMap = useMinistore();
       useSubmit(selectionMap);
@@ -219,6 +223,7 @@ export default class SearchCommand extends BaseCommand {
             name => <SelectedEntry key={name} name={name} active={false}/>
           ) : <Color gray>No selected packages...</Color>
         }
+        <PoweredByAlgolia />
       </Box>;
     };
 
