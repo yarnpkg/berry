@@ -46,7 +46,9 @@ export default class SearchCommand extends BaseCommand {
       </>;
     };
 
-    const HitEntry = ({hit}: {hit: AlgoliaPackage}) => {
+    const HitEntry = ({hit, active}: {hit: AlgoliaPackage, active?: boolean}) => {
+      const [action, setAction] = useMinistore<string | null>(hit.name, null);
+
       return <Box>
         <Box width={45} textWrap="wrap">
           <Text bold>
@@ -67,7 +69,10 @@ export default class SearchCommand extends BaseCommand {
     };
 
     const SearchApp: SubmitInjectedComponent<Map<string, unknown>> = ({useSubmit}) => {
-      useSubmit(useMinistore());
+      const selectionMap = useMinistore();
+      useSubmit(selectionMap);
+
+      const selectedPackages = Object.keys(selectionMap);
 
       const [query, setQuery] = useState<string>(``);
       const [page, setPage] = useState(0);
@@ -115,17 +120,26 @@ export default class SearchCommand extends BaseCommand {
           <Box width={40}>
             {/*
             // @ts-ignore */}
-            <TextInput value={query} onChange={handleQueryOnChange} placeholder={`i.e. babel, webpack, react...`} />
+            <TextInput
+              value={query}
+              onChange={handleQueryOnChange}
+              placeholder={`i.e. babel, webpack, react...`}
+              showCursor={false}
+            />
           </Box>
           <ColumnNames />
         </Box>
         {hits.length ?
           <ScrollableItems
-            radius={3}
+            radius={2}
             children={hits.map(hit => <HitEntry key={hit.name} hit={hit} />)}
             willReachEnd={fetchNextPageHits}
           /> : <Color gray>Start typing...</Color>
         }
+        <Text bold>Selected:</Text>
+        {selectedPackages.length ?
+          selectedPackages.map(key => <Text key={key}>{key}</Text>)
+          : <Color gray>No selected packages...</Color>}
       </Box>;
     };
 
