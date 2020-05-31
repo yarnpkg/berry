@@ -22,5 +22,8 @@
   "scripts": {
     "postpack": "find sources -name '*.js' -delete",
     "prepack": "yarn build:compile-inline \"$(pwd)\""
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }
