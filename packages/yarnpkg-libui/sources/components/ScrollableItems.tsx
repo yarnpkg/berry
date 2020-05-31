@@ -1,10 +1,12 @@
 import {Box, Color}                           from 'ink';
-import React, {useState}                      from 'react';
+import React, {useEffect, useState}           from 'react';
 
 import {FocusRequestHandler, useFocusRequest} from '../hooks/useFocusRequest';
 import {useListInput}                         from '../hooks/useListInput';
 
-export const ScrollableItems = ({active = true, children = [], radius = 10, size = 1, onFocusRequest}: {active?: boolean, children: Array<React.ReactElement>, radius?: number, size?: number, onFocusRequest?: FocusRequestHandler}) => {
+type WillReachEnd = () => void;
+
+export const ScrollableItems = ({active = true, children = [], radius = 10, size = 1, onFocusRequest, willReachEnd}: {active?: boolean, children: Array<React.ReactElement>, radius?: number, size?: number, onFocusRequest?: FocusRequestHandler, willReachEnd?: WillReachEnd}) => {
   const getKey = (child: React.ReactElement) => {
     if (child.key === null) {
       throw new Error(`Expected all children to have a key`);
@@ -18,6 +20,20 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
 
   const [activeKey, setActiveKey] = useState(initialKey);
   const activeIndex = keys.indexOf(activeKey);
+
+  useEffect(() => {
+    // If the active key is missing from the
+    // new keys, set it to the initalKey
+    if (!keys.includes(activeKey)) {
+      setActiveKey(initialKey);
+    }
+  }, [children]);
+
+  useEffect(() => {
+    if (willReachEnd && activeIndex >= keys.length - 2) {
+      willReachEnd();
+    }
+  }, [activeIndex]);
 
   useFocusRequest({
     active,
