@@ -6,7 +6,7 @@ import {useListInput}                         from '../hooks/useListInput';
 
 type WillReachEnd = () => void;
 
-export const ScrollableItems = ({active = true, children = [], radius = 10, size = 1, onFocusRequest, willReachEnd}: {active?: boolean, children: Array<React.ReactElement>, radius?: number, size?: number, onFocusRequest?: FocusRequestHandler, willReachEnd?: WillReachEnd}) => {
+export const ScrollableItems = ({active = true, children = [], radius = 10, size = 1, loop = true, onFocusRequest, willReachEnd}: {active?: boolean, children: Array<React.ReactElement>, radius?: number, size?: number, loop?: boolean, onFocusRequest?: FocusRequestHandler, willReachEnd?: WillReachEnd}) => {
   const getKey = (child: React.ReactElement) => {
     if (child.key === null) {
       throw new Error(`Expected all children to have a key`);
@@ -45,6 +45,7 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
     minus: `up`,
     plus: `down`,
     set: setActiveKey,
+    loop,
   });
 
   let min = activeIndex - radius;

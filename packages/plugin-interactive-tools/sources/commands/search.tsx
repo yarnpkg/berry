@@ -200,6 +200,7 @@ export default class SearchCommand extends BaseCommand {
         {hits.length ?
           <ScrollableItems
             radius={2}
+            loop={false}
             children={hits.map(hit => <HitEntry key={hit.name} hit={hit} active={false} />)}
             willReachEnd={fetchNextPageHits}
           /> : <Color gray>Start typing...</Color>
