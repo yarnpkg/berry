@@ -2,6 +2,7 @@ import {BaseCommand}                         from '@yarnpkg/cli';
 import {Configuration, FormatType}           from '@yarnpkg/core';
 import {ScrollableItems}                     from '@yarnpkg/libui/sources/components/ScrollableItems';
 import {useMinistore}                        from '@yarnpkg/libui/sources/hooks/useMinistore';
+import {useSpace}                            from '@yarnpkg/libui/sources/hooks/useSpace';
 import {renderForm, SubmitInjectedComponent} from '@yarnpkg/libui/sources/misc/renderForm';
 import {Command, Usage}                      from 'clipanion';
 import TextInput                             from 'ink-text-input';
@@ -9,6 +10,8 @@ import {Box, Text, Color}                    from 'ink';
 import React, {useEffect, useState}          from 'react';
 
 import {AlgoliaPackage, search}              from '../algolia';
+
+const targets = [`regular`, `dev`, `peer`];
 
 // eslint-disable-next-line arca/no-default-export
 export default class SearchCommand extends BaseCommand {
@@ -39,15 +42,37 @@ export default class SearchCommand extends BaseCommand {
       }
     };
 
-    const ColumnNames = () => {
+    const SearchColumnNames = () => {
       return <>
         <Box width={17}><Color bold underline gray>Owner</Color></Box>
         <Box width={17}><Color bold underline gray>Version</Color></Box>
       </>;
     };
 
-    const HitEntry = ({hit, active}: {hit: AlgoliaPackage, active?: boolean}) => {
+    const SelectedColumnNames = () => {
+      return <Box width={17}><Color bold underline gray>Target</Color></Box>;
+    };
+
+    const HitEntry = ({hit, active}: {hit: AlgoliaPackage, active: boolean}) => {
       const [action, setAction] = useMinistore<string | null>(hit.name, null);
+
+      useSpace({
+        active,
+        handler: () => {
+          if (!action) {
+            setAction(targets[0]);
+            return;
+          }
+
+          const nextIndex = targets.indexOf(action) + 1;
+
+          if (nextIndex === targets.length) {
+            setAction(null);
+          } else {
+            setAction(targets[nextIndex]);
+          }
+        },
+      });
 
       return <Box>
         <Box width={45} textWrap="wrap">
@@ -55,16 +80,33 @@ export default class SearchCommand extends BaseCommand {
             {prettyName(hit.name)}
           </Text>
         </Box>
-        <Box width={17}>
+        <Box width={16} textWrap="truncate" marginLeft={1}>
           <Text bold>
             {hit.owner.name}
           </Text>
         </Box>
-        <Box width={17}>
+        <Box width={16} textWrap="truncate" marginLeft={1}>
+          {hit.version}
+        </Box>
+      </Box>;
+    };
+
+    const SelectedEntry = ({name, active}: {name: string, active: boolean}) => {
+      const [action] = useMinistore<string | null>(name, null);
+
+      return <Box>
+        <Box width={47}>
           <Text bold>
-            {hit.version}
+            {` - `}{prettyName(name)}
           </Text>
         </Box>
+        {targets.map(
+          target =>
+            <Box key={target} width={16} marginLeft={1}>
+              {action === target ? <Color green> ◉ </Color> : <Color yellow> ◯ </Color>}
+              <Text bold>{target}</Text>
+            </Box>
+        )}
       </Box>;
     };
 
@@ -72,26 +114,21 @@ export default class SearchCommand extends BaseCommand {
       const selectionMap = useMinistore();
       useSubmit(selectionMap);
 
-      const selectedPackages = Object.keys(selectionMap);
+      const selectedPackages = Array.from(selectionMap.keys()).filter(pkg => selectionMap.get(pkg) !== null);
 
       const [query, setQuery] = useState<string>(``);
       const [page, setPage] = useState(0);
       const [hits, setHits] = useState<Array<AlgoliaPackage>>([]);
 
       const handleQueryOnChange = (newQuery: string) => {
-        // Ignore space clicks
-        if (newQuery.includes(` `))
+        // Ignore space and tab clicks
+        if (newQuery.match(/\t| /))
           return;
 
         setQuery(newQuery);
       };
 
       const fetchHits = async () => {
-        if (!query) {
-          setHits([]);
-          return;
-        }
-
         setPage(0);
 
         const res = await search(query);
@@ -111,13 +148,17 @@ export default class SearchCommand extends BaseCommand {
       };
 
       useEffect(() => {
-        fetchHits();
+        if (!query) {
+          setHits([]);
+        } else {
+          fetchHits();
+        }
       }, [query]);
 
       return <Box flexDirection={`column`}>
         <Box flexDirection={`row`}>
           <Text bold>Search: </Text>
-          <Box width={40}>
+          <Box width={41}>
             {/*
             // @ts-ignore */}
             <TextInput
@@ -127,19 +168,26 @@ export default class SearchCommand extends BaseCommand {
               showCursor={false}
             />
           </Box>
-          <ColumnNames />
+          <SearchColumnNames />
         </Box>
         {hits.length ?
           <ScrollableItems
             radius={2}
-            children={hits.map(hit => <HitEntry key={hit.name} hit={hit} />)}
+            children={hits.map(hit => <HitEntry key={hit.name} hit={hit} active={false} />)}
             willReachEnd={fetchNextPageHits}
           /> : <Color gray>Start typing...</Color>
         }
-        <Text bold>Selected:</Text>
+        <Box flexDirection={`row`}>
+          <Box width={49}>
+            <Text bold>Selected:</Text>
+          </Box>
+          <SelectedColumnNames />
+        </Box>
         {selectedPackages.length ?
-          selectedPackages.map(key => <Text key={key}>{key}</Text>)
-          : <Color gray>No selected packages...</Color>}
+          selectedPackages.map(
+            name => <SelectedEntry key={name} name={name} active={false}/>
+          ) : <Color gray>No selected packages...</Color>
+        }
       </Box>;
     };
 
