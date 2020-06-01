@@ -3,4 +3,5 @@ releases:
   "@yarnpkg/plugin-interactive-tools": prerelease
 
 declined:
+  - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-version"
