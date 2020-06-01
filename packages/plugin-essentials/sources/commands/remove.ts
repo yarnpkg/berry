@@ -89,11 +89,16 @@ export default class RemoveCommand extends BaseCommand {
 
         for (const target of targets) {
           const descriptors = workspace.manifest.getForScope(target);
-          const stringifiedIdents = [...descriptors.values()].map(structUtils.stringifyIdent);
+          const stringifiedIdents = [...descriptors.values()].map(stringifiedIdent => {
+            return structUtils.stringifyIdent(stringifiedIdent);
+          });
 
           for (const stringifiedIdent of micromatch(stringifiedIdents, structUtils.stringifyIdent(pseudoIdent))) {
             const {identHash} = structUtils.parseIdent(stringifiedIdent);
-            const removedDescriptor = descriptors.get(identHash)!;
+
+            const removedDescriptor = descriptors.get(identHash);
+            if (typeof removedDescriptor === `undefined`)
+              throw new Error(`Assertion failed: Expected the descriptor to be registered`);
 
             workspace.manifest[target].delete(identHash);
 
