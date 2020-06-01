@@ -105,7 +105,9 @@ export default class SearchCommand extends BaseCommand {
           </Text>
         </Box>
         <Box width={10} textWrap="truncate" marginLeft={1}>
-          {hit.version}
+          <Text italic>
+            {hit.version}
+          </Text>
         </Box>
         <Box width={16} textWrap="truncate" marginLeft={1}>
           {hit.humanDownloadsLast30Days}
