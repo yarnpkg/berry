@@ -101,5 +101,8 @@
     "@types/react-select": "3.0.11",
     "@types/tinycolor2": "1.4.2",
     "@types/webpack": "^4.32.1"
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }
