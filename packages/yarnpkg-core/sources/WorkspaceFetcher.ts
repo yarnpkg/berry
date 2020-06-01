@@ -19,7 +19,7 @@ export class WorkspaceFetcher implements Fetcher {
   async fetch(locator: Locator, opts: FetchOptions) {
     const sourcePath = this.getWorkspace(locator, opts).cwd;
 
-    return {packageFs: new CwdFS(sourcePath), prefixPath: sourcePath, localPath: sourcePath};
+    return {packageFs: new CwdFS(sourcePath), prefixPath: PortablePath.dot, localPath: sourcePath};
   }
 
   getWorkspace(locator: Locator, opts: FetchOptions) {

@@ -69,7 +69,10 @@ export abstract class AbstractPnpInstaller implements Installer {
       ? await this.transformPackage(pkg, manifest, fetchResult, dependencyMeta, {hasBuildScripts: buildScripts.length > 0})
       : fetchResult.packageFs;
 
-    const packageRawLocation = ppath.resolve(packageFs.getRealPath(), ppath.relative(PortablePath.root, fetchResult.prefixPath));
+    if (ppath.isAbsolute(fetchResult.prefixPath))
+      throw new Error(`Assertion failed: Expected the prefix path (${fetchResult.prefixPath}) to be relative to the parent`);
+
+    const packageRawLocation = ppath.resolve(packageFs.getRealPath(), fetchResult.prefixPath);
 
     const packageLocation = this.normalizeDirectoryPath(packageRawLocation);
     const packageDependencies = new Map<string, string | [string, string] | null>();

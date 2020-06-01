@@ -36407,7 +36407,7 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
     const source = this.readFileSync(entry.p);
     source.copy(buffer, offset, realPosition, realPosition + length);
     const bytesRead = Math.max(0, Math.min(source.length - realPosition, length));
-    if (position === -1 || position === null) entry.cursor += bytesRead;
+    if (position === -1) entry.cursor += bytesRead;
     return bytesRead;
   }
 
@@ -36837,10 +36837,9 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
     };else if (typeof opts === `string`) opts = {
       flag: `a`,
       encoding: opts
-    };else if (typeof opts.flag === `undefined`) opts = {
-      flag: `a`,
-      ...opts
-    };
+    };else if (typeof opts.flag === `undefined`) opts = Object.assign({
+      flag: `a`
+    }, opts);
     return this.writeFileSync(p, content, opts);
   }
 
@@ -37194,15 +37193,15 @@ function makeError(pnpCode, message, data = {}) {
     enumerable: false
   };
   return Object.defineProperties(new Error(message), {
-    code: { ...propertySpec,
+    code: Object.assign(Object.assign({}, propertySpec), {
       value: code
-    },
-    pnpCode: { ...propertySpec,
+    }),
+    pnpCode: Object.assign(Object.assign({}, propertySpec), {
       value: pnpCode
-    },
-    data: { ...propertySpec,
+    }),
+    data: Object.assign(Object.assign({}, propertySpec), {
       value: data
-    }
+    })
   });
 }
 
@@ -37228,6 +37227,17 @@ exports.getIssuerModule = getIssuerModule;
 
 "use strict";
 
+
+var __rest = this && this.__rest || function (s, e) {
+  var t = {};
+
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
 
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
@@ -37260,8 +37270,7 @@ const makeManager_1 = __webpack_require__(33); // We must copy the fs into a loc
 // 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
 
 
-const localFs = { ...fs_1.default
-};
+const localFs = Object.assign({}, fs_1.default);
 const nodeFs = new fslib_1.NodeFS(localFs);
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState_1.hydrateRuntimeState);
 const defaultPnpapiResolution = __filename; // We create a virtual filesystem that will do three things:
@@ -37287,18 +37296,19 @@ const defaultApi = Object.assign(makeApi_1.makeApi(defaultRuntimeState, {
    * to map it on `/` rather than the local directory path, or to use a
    * different FS layer than the default one).
    */
-  makeApi: ({
-    basePath = undefined,
-    fakeFs = defaultFsLayer,
-    pnpapiResolution = defaultPnpapiResolution,
-    ...rest
-  }) => {
+  makeApi: _a => {
+    var {
+      basePath = undefined,
+      fakeFs = defaultFsLayer,
+      pnpapiResolution = defaultPnpapiResolution
+    } = _a,
+        rest = __rest(_a, ["basePath", "fakeFs", "pnpapiResolution"]);
+
     const apiRuntimeState = typeof basePath !== `undefined` ? $$SETUP_STATE(hydrateRuntimeState_1.hydrateRuntimeState, basePath) : defaultRuntimeState;
-    return makeApi_1.makeApi(apiRuntimeState, {
+    return makeApi_1.makeApi(apiRuntimeState, Object.assign({
       fakeFs,
-      pnpapiResolution,
-      ...rest
-    });
+      pnpapiResolution
+    }, rest));
   },
 
   /**
@@ -37651,7 +37661,7 @@ class JailFS extends ProxiedFS_1.ProxiedFS {
   mapToBase(p) {
     const normalized = this.pathUtils.normalize(p);
     if (this.pathUtils.isAbsolute(p)) return this.pathUtils.resolve(this.target, this.pathUtils.relative(JAIL_ROOT, p));
-    if (normalized.match(/^\.\.\//)) throw new Error(`Resolving this path (${p}) would escape the jail`);
+    if (normalized.match(/^\.\.\/?/)) throw new Error(`Resolving this path (${p}) would escape the jail`);
     return this.pathUtils.resolve(this.target, p);
   }
 
@@ -43620,6 +43630,17 @@ module.exports = require("string_decoder");
 "use strict";
 
 
+var __rest = this && this.__rest || function (s, e) {
+  var t = {};
+
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
     "default": mod
@@ -43755,10 +43776,11 @@ function applyPatch(pnpapi, opts) {
 
     if (options && options.plugnplay === false) {
       const {
-        plugnplay,
-        ...rest
-      } = options; // Workaround a bug present in some version of Node (now fixed)
+        plugnplay
+      } = options,
+            rest = __rest(options, ["plugnplay"]); // Workaround a bug present in some version of Node (now fixed)
       // https://github.com/nodejs/node/pull/28078
+
 
       const forwardedOptions = Object.keys(rest).length > 0 ? rest : undefined;
 
@@ -44683,9 +44705,9 @@ function makeApi(runtimeState, opts) {
       const info = getPackageInformation(locator);
       if (info === null) return null;
       const packageLocation = fslib_1.npath.fromPortablePath(info.packageLocation);
-      const nativeInfo = { ...info,
+      const nativeInfo = Object.assign(Object.assign({}, info), {
         packageLocation
-      };
+      });
       return nativeInfo;
     },
     findPackageLocator: path => {
@@ -44801,7 +44823,7 @@ function makeManager(pnpapi, opts) {
 
     if (typeof parent.pnpApiPath === `undefined`) {
       if (parent.filename !== null) {
-        return parent.pnpApiPath = findApiPathFor(parent.filename);
+        return findApiPathFor(parent.filename);
       } else {
         return initialApiPath;
       }

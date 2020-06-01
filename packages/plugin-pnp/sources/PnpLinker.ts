@@ -95,7 +95,7 @@ export class PnpInstaller extends AbstractPnpInstaller {
         buildScripts.push([BuildType.SCRIPT, scriptName]);
 
     // Detect cases where a package has a binding.gyp but no install script
-    const bindingFilePath = ppath.resolve(fetchResult.prefixPath, toFilename(`binding.gyp`));
+    const bindingFilePath = ppath.join(fetchResult.prefixPath, toFilename(`binding.gyp`));
     if (!manifest.scripts.has(`install`) && fetchResult.packageFs.existsSync(bindingFilePath))
       buildScripts.push([BuildType.SHELLCODE, `node-gyp rebuild`]);
 
