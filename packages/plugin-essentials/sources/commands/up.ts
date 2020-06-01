@@ -109,7 +109,7 @@ export default class UpCommand extends BaseCommand {
           for (const stringifiedIdent of micromatch(stringifiedIdents, structUtils.stringifyIdent(pseudoDescriptor))) {
             const ident = structUtils.parseIdent(stringifiedIdent);
 
-            const existingDescriptor = workspace.manifest[target].get(ident.identHash)!;
+            const existingDescriptor = workspace.manifest[target].get(ident.identHash);
             if (typeof existingDescriptor === `undefined`)
               throw new Error(`Assertion failed: Expected the descriptor to be registered`);
 
