@@ -59,8 +59,9 @@ export default class SearchCommand extends BaseCommand {
 
     const SearchColumnNames = () => {
       return <>
-        <Box width={17}><Color bold underline gray>Owner</Color></Box>
-        <Box width={17}><Color bold underline gray>Version</Color></Box>
+        <Box width={15}><Color bold underline gray>Owner</Color></Box>
+        <Box width={11}><Color bold underline gray>Version</Color></Box>
+        <Box width={10}><Color bold underline gray>Downloads</Color></Box>
       </>;
     };
 
@@ -98,13 +99,16 @@ export default class SearchCommand extends BaseCommand {
             {prettyIdent}
           </Text>
         </Box>
-        <Box width={16} textWrap="truncate" marginLeft={1}>
+        <Box width={14} textWrap="truncate" marginLeft={1}>
           <Text bold>
             {hit.owner.name}
           </Text>
         </Box>
-        <Box width={16} textWrap="truncate" marginLeft={1}>
+        <Box width={10} textWrap="truncate" marginLeft={1}>
           {hit.version}
+        </Box>
+        <Box width={16} textWrap="truncate" marginLeft={1}>
+          {hit.humanDownloadsLast30Days}
         </Box>
       </Box>;
     };

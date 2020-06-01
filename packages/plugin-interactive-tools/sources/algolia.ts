@@ -16,6 +16,7 @@ export interface AlgoliaPackage {
   version: string
   repository?: AlgoliaPackageRepository
   owner: AlgoliaPackageOwner
+  humanDownloadsLast30Days: string
 }
 
 export interface AlgoliaPackageRepository {
@@ -42,6 +43,7 @@ export const search = async (
         `version`,
         `owner`,
         `repository`,
+        `humanDownloadsLast30Days`,
       ],
       page,
       hitsPerPage: 10,
