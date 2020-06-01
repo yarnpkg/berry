@@ -102,11 +102,17 @@ export default class UpCommand extends BaseCommand {
       for (const workspace of project.workspaces) {
         for (const target of [suggestUtils.Target.REGULAR, suggestUtils.Target.DEVELOPMENT]) {
           const descriptors = workspace.manifest.getForScope(target);
-          const stringifiedIdents = [...descriptors.values()].map(structUtils.stringifyIdent);
+          const stringifiedIdents = [...descriptors.values()].map(descriptor => {
+            return structUtils.stringifyIdent(descriptor);
+          });
 
           for (const stringifiedIdent of micromatch(stringifiedIdents, structUtils.stringifyIdent(pseudoDescriptor))) {
             const ident = structUtils.parseIdent(stringifiedIdent);
+
             const existingDescriptor = workspace.manifest[target].get(ident.identHash)!;
+            if (typeof existingDescriptor === `undefined`)
+              throw new Error(`Assertion failed: Expected the descriptor to be registered`);
+
             const request = structUtils.makeDescriptor(ident, pseudoDescriptor.range);
 
             allSuggestionsPromises.push(Promise.resolve().then(async () => {

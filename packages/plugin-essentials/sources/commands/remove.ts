@@ -89,8 +89,8 @@ export default class RemoveCommand extends BaseCommand {
 
         for (const target of targets) {
           const descriptors = workspace.manifest.getForScope(target);
-          const stringifiedIdents = [...descriptors.values()].map(stringifiedIdent => {
-            return structUtils.stringifyIdent(stringifiedIdent);
+          const stringifiedIdents = [...descriptors.values()].map(descriptor => {
+            return structUtils.stringifyIdent(descriptor);
           });
 
           for (const stringifiedIdent of micromatch(stringifiedIdents, structUtils.stringifyIdent(pseudoIdent))) {
