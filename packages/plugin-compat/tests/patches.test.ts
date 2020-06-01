@@ -6,7 +6,7 @@ import PatchPlugin                                                              
 import CompatPlugin                                                                                                from '../sources/index';
 
 function getConfiguration(p: PortablePath) {
-  return new Configuration(p, p, new Map([
+  return Configuration.create(p, p, new Map([
     [`@yarnpkg/plugin-compat`, CompatPlugin],
     [`@yarnpkg/plugin-npm`, NpmPlugin],
     [`@yarnpkg/plugin-patch`, PatchPlugin],
