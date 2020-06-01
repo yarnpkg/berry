@@ -1,6 +1,6 @@
 import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
 import {DEFAULT_COMPRESSION_LEVEL}                             from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml, replaceEnvVariables}         from '@yarnpkg/parsers';
+import {parseSyml, stringifySyml}                              from '@yarnpkg/parsers';
 import camelcase                                               from 'camelcase';
 import chalk                                                   from 'chalk';
 import {UsageError}                                            from 'clipanion';
@@ -438,7 +438,9 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
     if (typeof value !== `string`)
       throw new Error(`Expected value to be a string`);
 
-    const valueWithReplacedVariables = replaceEnvVariables(value);
+    const valueWithReplacedVariables = miscUtils.replaceEnvVariables(value, {
+      env: process.env,
+    });
 
     switch (definition.type) {
       case SettingsType.ABSOLUTE_PATH:
@@ -983,7 +985,15 @@ export class Configuration {
       if (this.sources.has(key) && !overwrite)
         continue;
 
-      this.values.set(key, parseValue(this, key, data[key], definition, folder));
+      let parsed;
+      try {
+        parsed = parseValue(this, key, data[key], definition, folder);
+      } catch (error) {
+        error.message += ` in ${source}`;
+        throw error;
+      }
+
+      this.values.set(key, parsed);
       this.sources.set(key, source);
     }
   }

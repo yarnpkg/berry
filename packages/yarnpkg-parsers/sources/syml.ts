@@ -149,18 +149,3 @@ function parseViaJsYaml(source: string) {
 export function parseSyml(source: string) {
   return parseViaJsYaml(source);
 }
-
-export function replaceEnvVariables(source: string) {
-  const regex = /\${(?<variableName>[\d\w_]+)(?<colon>:)?-?(?<fallback>[^}]+)?}/g;
-  return source.replace(regex, (...args) => {
-    const {variableName, colon, fallback} = args[args.length - 1];
-    const variableExist = Object.prototype.hasOwnProperty.call(process.env, variableName);
-    const variableValue = process.env[variableName];
-
-    if (variableValue) return variableValue;
-    if (variableExist && !variableValue && colon) return fallback;
-    if (variableExist) return variableValue;
-    if (fallback) return fallback;
-    return ``;
-  });
-}

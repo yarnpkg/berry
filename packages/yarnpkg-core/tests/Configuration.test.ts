@@ -34,7 +34,7 @@ describe(`Configuration`, () => {
     });
   });
 
-  describe(`Enviroment variables`, () => {
+  describe(`Environment variables`, () => {
     it(`should replace env variables`, async () => {
       process.env.ENV_AUTH_TOKEN = `AAA-BBB-CCC`;
       process.env.EMPTY_VARIABLE = ``;
@@ -86,6 +86,21 @@ describe(`Configuration`, () => {
         expect(unsetEnvWithFallback).toEqual(`fallback-value`);
         expect(emptyEnvWithStrictFallback).toEqual(``);
         expect(emptyEnvWithFallback).toEqual(`fallback-for-empty-value`);
+      });
+    });
+
+    it(`should forbid unset variables`, async () => {
+      await initializeConfiguration({
+        npmScopes: {
+          onlyEnv: {
+            npmAuthToken: `\${A_VARIABLE_THAT_DEFINITELY_DOESNT_EXIST}`,
+          },
+        },
+      }, async dir => {
+        await expect(Configuration.find(dir, {
+          modules: new Map([[`@yarnpkg/plugin-npm`, NpmPlugin]]),
+          plugins: new Set([`@yarnpkg/plugin-npm`]),
+        })).rejects.toThrow();
       });
     });
   });

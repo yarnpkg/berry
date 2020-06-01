@@ -3,4 +3,4 @@ export {parseShell}                                                             
 
 export {Resolution, parseResolution, stringifyResolution}                            from './resolution';
 
-export {parseSyml, stringifySyml,replaceEnvVariables}                                from './syml';
+export {parseSyml, stringifySyml}                                                    from './syml';
