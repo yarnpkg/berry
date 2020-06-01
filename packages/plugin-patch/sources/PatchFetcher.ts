@@ -1,10 +1,10 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
-import {Locator}                                    from '@yarnpkg/core';
-import {miscUtils, structUtils}                     from '@yarnpkg/core';
-import {ppath, xfs, ZipFS, Filename, CwdFS}         from '@yarnpkg/fslib';
-import {getLibzipPromise}                           from '@yarnpkg/libzip';
+import {Fetcher, FetchOptions, MinimalFetchOptions}       from '@yarnpkg/core';
+import {Locator}                                          from '@yarnpkg/core';
+import {miscUtils, structUtils}                           from '@yarnpkg/core';
+import {ppath, xfs, ZipFS, Filename, CwdFS, PortablePath} from '@yarnpkg/fslib';
+import {getLibzipPromise}                                 from '@yarnpkg/libzip';
 
-import * as patchUtils                              from './patchUtils';
+import * as patchUtils                                    from './patchUtils';
 
 export class PatchFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -67,7 +67,7 @@ export class PatchFetcher implements Fetcher {
       level: opts.project.configuration.get(`compressionLevel`),
     });
 
-    const patchFs = new CwdFS(prefixPath, {baseFs: patchedPackage});
+    const patchFs = new CwdFS(ppath.resolve(PortablePath.root, prefixPath), {baseFs: patchedPackage});
 
     for (const patchFile of patchFiles) {
       if (patchFile !== null) {

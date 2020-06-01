@@ -34807,6 +34807,10 @@ class NodeFS extends FakeFS_1.BasePortableFakeFS {
     return path_1.PortablePath.root;
   }
 
+  resolve(p) {
+    return path_1.ppath.resolve(p);
+  }
+
   async openPromise(p, flags, mode) {
     return await new Promise((resolve, reject) => {
       this.realFs.open(path_1.npath.fromPortablePath(p), flags, mode, this.makeCallback(resolve, reject));
@@ -35157,8 +35161,6 @@ const copyPromise_1 = __webpack_require__(14);
 
 const path_1 = __webpack_require__(0);
 
-const path_2 = __webpack_require__(0);
-
 class FakeFS {
   constructor(pathUtils) {
     this.pathUtils = pathUtils;
@@ -35325,7 +35327,7 @@ class FakeFS {
       if (!exists || overwrite) {
         if (exists) this.removeSync(destination);
         const target = baseFs.readlinkSync(source);
-        this.symlinkSync(path_2.convertPath(this.pathUtils, target), destination);
+        this.symlinkSync(path_1.convertPath(this.pathUtils, target), destination);
       }
     } else {
       throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
@@ -35520,11 +35522,7 @@ FakeFS.DEFAULT_TIME = 315532800;
 
 class BasePortableFakeFS extends FakeFS {
   constructor() {
-    super(path_2.ppath);
-  }
-
-  resolve(p) {
-    return this.pathUtils.resolve(path_1.PortablePath.root, p);
+    super(path_1.ppath);
   }
 
 }
@@ -36386,6 +36384,10 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
     if (!this.ready) throw errors.EBUSY(`archive closed, close`);
     this.libzip.discard(this.zip);
     this.ready = false;
+  }
+
+  resolve(p) {
+    return path_1.ppath.resolve(path_1.PortablePath.root, p);
   }
 
   async openPromise(p, flags, mode) {
@@ -37594,7 +37596,7 @@ class CwdFS extends ProxiedFS_1.ProxiedFS {
     baseFs = new NodeFS_1.NodeFS()
   } = {}) {
     super(path_1.ppath);
-    this.target = target;
+    this.target = this.pathUtils.normalize(target);
     this.baseFs = baseFs;
   }
 
@@ -37602,12 +37604,24 @@ class CwdFS extends ProxiedFS_1.ProxiedFS {
     return this.pathUtils.resolve(this.baseFs.getRealPath(), this.target);
   }
 
+  resolve(p) {
+    if (this.pathUtils.isAbsolute(p)) {
+      return path_1.ppath.normalize(p);
+    } else {
+      return this.baseFs.resolve(path_1.ppath.join(this.target, p));
+    }
+  }
+
   mapFromBase(path) {
-    return this.pathUtils.relative(this.getRealPath(), path);
+    return path;
   }
 
   mapToBase(path) {
-    return this.pathUtils.resolve(this.getRealPath(), path);
+    if (this.pathUtils.isAbsolute(path)) {
+      return path;
+    } else {
+      return this.pathUtils.join(this.target, path);
+    }
   }
 
 }
@@ -37657,7 +37671,7 @@ class JailFS extends ProxiedFS_1.ProxiedFS {
   mapToBase(p) {
     const normalized = this.pathUtils.normalize(p);
     if (this.pathUtils.isAbsolute(p)) return this.pathUtils.resolve(this.target, this.pathUtils.relative(JAIL_ROOT, p));
-    if (normalized.match(/^\.\.\//)) throw new Error(`Resolving this path (${p}) would escape the jail`);
+    if (normalized.match(/^\.\.\/?/)) throw new Error(`Resolving this path (${p}) would escape the jail`);
     return this.pathUtils.resolve(this.target, p);
   }
 
@@ -38153,6 +38167,10 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
         this.zipInstances.delete(path);
       }
     }
+  }
+
+  resolve(p) {
+    return this.baseFs.resolve(p);
   }
 
   remapFd(zipFs, fd) {
@@ -38809,7 +38827,7 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     requireSubpath = true
   } = {}) {
     if (typeof p !== `string`) return await discard();
-    const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(path_1.PortablePath.root, p));
+    const normalizedP = this.resolve(p);
     const zipInfo = this.findZip(normalizedP);
     if (!zipInfo) return await discard();
     if (requireSubpath && zipInfo.subPath === `/`) return await discard();
@@ -38820,7 +38838,7 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     requireSubpath = true
   } = {}) {
     if (typeof p !== `string`) return discard();
-    const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(path_1.PortablePath.root, p));
+    const normalizedP = this.resolve(p);
     const zipInfo = this.findZip(normalizedP);
     if (!zipInfo) return discard();
     if (requireSubpath && zipInfo.subPath === `/`) return discard();

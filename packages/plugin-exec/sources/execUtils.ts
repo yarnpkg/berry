@@ -1,5 +1,5 @@
 import {structUtils, FetchOptions, Ident, Locator} from '@yarnpkg/core';
-import {ppath, NodeFS, PortablePath, npath}        from '@yarnpkg/fslib';
+import {ppath, NodeFS, PortablePath, npath, CwdFS} from '@yarnpkg/fslib';
 
 
 export function parseSpec(spec: string) {
@@ -44,13 +44,13 @@ export async function loadGeneratorFile(range: string, protocol: string, opts: F
   // If the file target is an absolute path we can directly access it via its
   // location on the disk. Otherwise we must go through the package fs.
   const parentFetch = ppath.isAbsolute(path)
-    ? {packageFs: new NodeFS(), prefixPath: PortablePath.root, localPath: PortablePath.root}
+    ? {packageFs: new CwdFS(PortablePath.root), prefixPath: PortablePath.dot, localPath: PortablePath.root}
     : await opts.fetcher.fetch(parentLocator, opts);
 
   // If the package fs publicized its "original location" (for example like
   // in the case of "file:" packages), we use it to derive the real location.
   const effectiveParentFetch = parentFetch.localPath
-    ? {packageFs: new NodeFS(), prefixPath: parentFetch.localPath}
+    ? {packageFs: new CwdFS(PortablePath.root), prefixPath: ppath.relative(PortablePath.root, parentFetch.localPath)}
     : parentFetch;
 
   // Discard the parent fs unless we really need it to access the files
@@ -58,7 +58,7 @@ export async function loadGeneratorFile(range: string, protocol: string, opts: F
     parentFetch.releaseFs();
 
   const generatorFs = effectiveParentFetch.packageFs;
-  const generatorPath = ppath.resolve(effectiveParentFetch.prefixPath, path);
+  const generatorPath = ppath.join(effectiveParentFetch.prefixPath, path);
 
   return await generatorFs.readFilePromise(generatorPath, `utf8`);
 }

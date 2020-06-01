@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator}                                    from '@yarnpkg/core';
 import {miscUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
-import {NodeFS, PortablePath, ppath}                from '@yarnpkg/fslib';
+import {NodeFS, PortablePath, ppath, CwdFS}         from '@yarnpkg/fslib';
 
 import {TARBALL_REGEXP, PROTOCOL}                   from './constants';
 
@@ -43,13 +43,13 @@ export class TarballFileFetcher implements Fetcher {
     // If the file target is an absolute path we can directly access it via its
     // location on the disk. Otherwise we must go through the package fs.
     const parentFetch = ppath.isAbsolute(path)
-      ? {packageFs: new NodeFS(), prefixPath: PortablePath.root, localPath: PortablePath.root}
+      ? {packageFs: new CwdFS(PortablePath.root), prefixPath: PortablePath.dot, localPath: PortablePath.root}
       : await opts.fetcher.fetch(parentLocator, opts);
 
     // If the package fs publicized its "original location" (for example like
     // in the case of "file:" packages), we use it to derive the real location.
     const effectiveParentFetch = parentFetch.localPath
-      ? {packageFs: new NodeFS(), prefixPath: parentFetch.localPath}
+      ? {packageFs: new CwdFS(PortablePath.root), prefixPath: ppath.relative(PortablePath.root, parentFetch.localPath)}
       : parentFetch;
 
     // Discard the parent fs unless we really need it to access the files
@@ -57,7 +57,7 @@ export class TarballFileFetcher implements Fetcher {
       parentFetch.releaseFs();
 
     const sourceFs = effectiveParentFetch.packageFs;
-    const sourcePath = ppath.resolve(effectiveParentFetch.prefixPath, path);
+    const sourcePath = ppath.join(effectiveParentFetch.prefixPath, path);
     const sourceBuffer = await sourceFs.readFilePromise(sourcePath);
 
     return await miscUtils.releaseAfterUseAsync(async () => {
