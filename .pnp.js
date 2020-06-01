@@ -8507,6 +8507,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-essentials", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-essentials"],
             ["@types/inquirer", "npm:0.0.43"],
             ["@types/lodash", "npm:4.14.136"],
+            ["@types/micromatch", "npm:4.0.1"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/treeify", "npm:1.0.0"],
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
@@ -8517,6 +8518,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.4.0"],
             ["inquirer", "npm:6.2.1"],
             ["lodash", "npm:4.17.15"],
+            ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.1.2"],
             ["treeify", "npm:1.1.0"],
             ["yup", "npm:0.27.0"]
@@ -8533,6 +8535,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-essentials", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-essentials"],
             ["@types/inquirer", "npm:0.0.43"],
             ["@types/lodash", "npm:4.14.136"],
+            ["@types/micromatch", "npm:4.0.1"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/treeify", "npm:1.0.0"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
@@ -8543,6 +8546,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.4.0"],
             ["inquirer", "npm:6.2.1"],
             ["lodash", "npm:4.17.15"],
+            ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.1.2"],
             ["treeify", "npm:1.1.0"],
             ["yup", "npm:0.27.0"]
@@ -8559,6 +8563,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-essentials", "workspace:packages/plugin-essentials"],
             ["@types/inquirer", "npm:0.0.43"],
             ["@types/lodash", "npm:4.14.136"],
+            ["@types/micromatch", "npm:4.0.1"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/treeify", "npm:1.0.0"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
@@ -8569,6 +8574,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.4.0"],
             ["inquirer", "npm:6.2.1"],
             ["lodash", "npm:4.17.15"],
+            ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.1.2"],
             ["treeify", "npm:1.1.0"],
             ["yup", "npm:0.27.0"]
