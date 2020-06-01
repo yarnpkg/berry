@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Commands npm logout should logout a user from all registries when the -A,--all flag is used 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Successfully logged out of all registries
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands npm logout should logout a user from the default registry when no arguments are passed 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Successfully logged out of http://yarn.test.registry
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands npm logout should logout a user from the publish registry when the --publish flag is used 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Successfully logged out of https://npm.pkg.github.com
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands npm logout should logout a user from the scope publish registry when the -s,--scope and --publish flags are used 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Successfully logged out of https://fourth.yarn.test.registry
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands npm logout should logout a user from the scope registry when the -s,--scope flag is used 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Successfully logged out of https://third.yarn.test.registry
+➤ YN0000: Done
+",
+}
+`;

@@ -35,6 +35,7 @@ jobs:
         yarn add -D parcel@nightly lodash
 
         # JavaScript
+
         echo "import _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'JS'], ' '))}; printHello();" | tee index.js
 
         yarn parcel build index.js
@@ -42,19 +43,32 @@ jobs:
 
         rm -rf dist index.js
 
-        # TypeScript
-        yarn add -D @types/lodash
-
-        echo "{\"compilerOptions\": {  \"noImplicitAny\": true,  \"removeComments\": true,  \"preserveConstEnums\": true,  \"sourceMap\": true}}" | tee tsconfig.json
+        # TypeScript (Babel)
 
         echo "import * as _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'TS'], ' '))}; printHello();" | tee index.ts
 
         yarn parcel build index.ts
         [[ "$(node dist/index.js)" = "Hello TS" ]]
 
-        rm -rf dist index.ts tsconfig.json
+        rm -rf dist index.ts
+
+        # TypeScript (tsc)
+
+        yarn add -D @parcel/config-default @parcel/validator-typescript @types/lodash
+
+        echo "{\"extends\": \"@parcel/config-default\", \"validators\": {\"*.{ts,tsx}\": [\"@parcel/validator-typescript\"]}}" | tee .parcelrc
+
+        echo "{\"compilerOptions\": {  \"noImplicitAny\": true,  \"removeComments\": true,  \"preserveConstEnums\": true,  \"sourceMap\": true}, \"include\": [\"index.ts\"]}" | tee tsconfig.json
+
+        echo "import * as _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'TS'], ' '))}; printHello();" | tee index.ts
+
+        yarn parcel build index.ts
+        [[ "$(node dist/index.js)" = "Hello TS" ]]
+
+        rm -rf dist index.ts tsconfig.json .parcelrc
 
         # Less
+
         yarn add -D bootstrap-less
 
         mkdir src
@@ -69,6 +83,7 @@ jobs:
         rm -rf dist src
 
         # Yaml
+
         echo "import data from './data.yaml';console.log(data.berry.works.with[0]);" | tee index.js
         echo "berry: {works: {with:  [Parcel]}}" | tee data.yaml
 
@@ -79,11 +94,21 @@ jobs:
 
         # MDX
 
-        echo "import page from './page.mdx';" | tee index.js
-        echo "# Hello, *world*!<div style={{ padding: '20px', backgroundColor: 'tomato' }}><h3>This is JSX</h3></div>" | tee page.mdx
+        yarn add react-dom react-select
+
+        echo "import page from './page.mdx'; console.log('MDX Built');" | tee index.js
+        cat > page.mdx <<EOT
+          import Select from 'react-select';
+
+          # Hello, *world*!
+          <div style={{ padding: '20px', backgroundColor: 'tomato' }}>
+            <h3>This is JSX</h3>
+          </div>
+          <Select />
+        EOT
 
         yarn parcel build index.js
-        ls dist | grep "index.js"
+        [[ "$(node dist/index.js)" = "MDX Built" ]]
 
         rm -rf dist index.js page.mdx
 
