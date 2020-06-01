@@ -8346,7 +8346,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-select", "npm:3.0.11"],
             ["@types/tinycolor2", "npm:1.4.2"],
             ["@types/webpack", "npm:4.32.1"],
-            ["algoliasearch", "npm:4.0.1"],
+            ["algoliasearch", "npm:4.2.0"],
             ["ansi-html", "npm:0.0.7"],
             ["buffer", "npm:5.6.0"],
             ["bytes", "npm:3.1.0"],

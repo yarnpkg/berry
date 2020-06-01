@@ -14,7 +14,7 @@
     "@reach/router": "^1.1.1",
     "@rehooks/component-size": "^1.0.3",
     "@strictsoftware/typedoc-plugin-monorepo": "patch:@strictsoftware/typedoc-plugin-monorepo@^0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch",
-    "algoliasearch": "^4.0.1",
+    "algoliasearch": "^4.2.0",
     "ansi-html": "^0.0.7",
     "buffer": "^5.6.0",
     "bytes": "^3.1.0",
