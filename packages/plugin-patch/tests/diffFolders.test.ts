@@ -10,8 +10,8 @@ describe(`diffFolders`,  () => {
   for (const iterator of fs.readdirSync(npath.toPortablePath(fixtures))) {
     it(`Makes and parses diff for '${iterator}'`, async () => {
       const diff = await diffFolders(
-        npath.toPortablePath(npath.join(fixtures,iterator,`a`)),
-        npath.toPortablePath(npath.join(fixtures,iterator,`b`))
+        npath.toPortablePath(npath.join(fixtures, iterator, `a`)),
+        npath.toPortablePath(npath.join(fixtures, iterator, `b`))
       );
 
       expect(diff).toMatchSnapshot();
