@@ -36,6 +36,7 @@ export const search = async (
   const res = await client.search<AlgoliaPackage>(
     query,
     {
+      analyticsTags: [`yarn-plugin-interactive-tools`],
       attributesToRetrieve: [
         `name`,
         `version`,
