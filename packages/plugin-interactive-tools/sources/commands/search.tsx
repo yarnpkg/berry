@@ -35,13 +35,13 @@ export default class SearchCommand extends BaseCommand {
       return (
         <Box flexDirection="row">
           <Box flexDirection="column" width={48}>
-            <Box marginLeft={1}>
+            <Box>
              Press <Color bold cyanBright>{`<up>`}</Color>/<Color bold cyanBright>{`<down>`}</Color> to move between packages.
             </Box>
-            <Box marginLeft={1}>
+            <Box>
              Press <Color bold cyanBright>{`<space>`}</Color> to select a package.
             </Box>
-            <Box marginLeft={1}>
+            <Box>
               Press <Color bold cyanBright>{`<space>`}</Color> again to change the target.
             </Box>
           </Box>
