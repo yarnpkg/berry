@@ -16,7 +16,6 @@ const plugin: Plugin<GitHooks> = {
       try {
         return await fetcher.fetch(locator, opts);
       } catch (error) {
-        console.log(error);
         return null;
       }
     },

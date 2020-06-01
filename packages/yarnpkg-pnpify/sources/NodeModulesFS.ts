@@ -39,6 +39,8 @@ interface PortableNodeModulesFSOptions extends NodeModulesTreeOptions {
   pnpifyFs?: boolean;
 }
 
+const WRITE_FLAGS_REGEX = /[+wa]/;
+
 export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   private readonly baseFs: FakeFS<PortablePath>;
   private readonly options: PortableNodeModulesFSOptions;
@@ -83,6 +85,15 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     }
     for (const fullPath of pathStack.reverse()) {
       this.baseFs.mkdirSync(fullPath);
+    }
+  }
+
+  private persistVirtualParentFolder(p: FSPath<PortablePath>) {
+    if (typeof p !== `number`) {
+      const parentPath = this.resolvePath(ppath.dirname(p));
+      if (parentPath.dirList) {
+        this.persistPath(parentPath.resolvedPath);
+      }
     }
   }
 
@@ -157,10 +168,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   }
 
   async openPromise(p: PortablePath, flags: string, mode?: number) {
+    if (WRITE_FLAGS_REGEX.test(flags))
+      this.persistVirtualParentFolder(p);
     return await this.baseFs.openPromise(this.resolveFilePath(p), flags, mode);
   }
 
   openSync(p: PortablePath, flags: string, mode?: number) {
+    if (WRITE_FLAGS_REGEX.test(flags))
+      this.persistVirtualParentFolder(p);
     return this.baseFs.openSync(this.resolveFilePath(p), flags, mode);
   }
 
@@ -324,18 +339,13 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
 
   async mkdirPromise(p: PortablePath, opts: MkdirOptions) {
     const pnpPath = this.resolvePath(p);
-    const parentPath = this.resolvePath(ppath.dirname(p));
-    if (parentPath.dirList)
-      this.persistPath(parentPath.resolvedPath);
-
+    this.persistVirtualParentFolder(p);
     return this.baseFs.mkdirPromise(pnpPath.resolvedPath, opts);
   }
 
   mkdirSync(p: PortablePath, opts: MkdirOptions) {
     const pnpPath = this.resolvePath(p);
-    const parentPath = this.resolvePath(ppath.dirname(p));
-    if (parentPath.dirList)
-      this.persistPath(parentPath.resolvedPath);
+    this.persistVirtualParentFolder(p);
     return this.baseFs.mkdirSync(pnpPath.resolvedPath, opts);
   }
 

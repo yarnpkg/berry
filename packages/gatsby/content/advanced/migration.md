@@ -154,6 +154,7 @@ This will cause Yarn to install the project just like Yarn 1 used to, by copying
 | `yarn global`   | `yarn dlx`                 | [Dedicated section](#use-yarn-dlx-instead-of-yarn-global) |
 | `yarn info`     | `yarn npm info`            ||
 | `yarn login`    | `yarn npm login`           ||
+| `yarn logout`   | `yarn npm logout`          ||
 | `yarn outdated` | `yarn upgrade-interactive` | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/749) |
 | `yarn publish`  | `yarn npm publish`         ||
 | `yarn upgrade`  | `yarn up`                  | Will now upgrade packages across all workspaces |
@@ -179,7 +180,6 @@ Those features simply haven't been implemented yet. Help welcome!
 | <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
 | ------------------ | ----------------------------- |
 | `yarn list`     | `yarn why` may provide some information in the meantime |
-| `yarn logout`   | Manually remove the tokens from the `.yarnrc.yml` in the meantime |
 | `yarn owner`    | Will eventually be available as `yarn npm owner` |
 | `yarn tag`      | Will eventually be available as `yarn npm tag` |
 | `yarn team`     | Will eventually be available as `yarn npm team` |

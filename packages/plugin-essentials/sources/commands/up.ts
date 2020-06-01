@@ -4,6 +4,7 @@ import {Project, StreamReport, Workspace}                           from '@yarnp
 import {structUtils}                                                from '@yarnpkg/core';
 import {Command, Usage, UsageError}                                 from 'clipanion';
 import inquirer                                                     from 'inquirer';
+import micromatch                                                   from 'micromatch';
 
 import * as suggestUtils                                            from '../suggestUtils';
 import {Hooks}                                                      from '..';
@@ -11,7 +12,7 @@ import {Hooks}                                                      from '..';
 // eslint-disable-next-line arca/no-default-export
 export default class UpCommand extends BaseCommand {
   @Command.Rest()
-  packages: Array<string> = [];
+  patterns: Array<string> = [];
 
   @Command.Boolean(`-i,--interactive`)
   interactive: boolean = false;
@@ -31,11 +32,15 @@ export default class UpCommand extends BaseCommand {
   static usage: Usage = Command.Usage({
     description: `upgrade dependencies across the project`,
     details: `
-      This command upgrades a list of packages to their latest available version across the whole project (regardless of whether they're part of \`dependencies\` or \`devDependencies\` - \`peerDependencies\` won't be affected). This is a project-wide command: all workspaces will be upgraded in the process.
+      This command upgrades the packages matching the list of specified patterns to their latest available version across the whole project (regardless of whether they're part of \`dependencies\` or \`devDependencies\` - \`peerDependencies\` won't be affected). This is a project-wide command: all workspaces will be upgraded in the process.
 
       If \`-i,--interactive\` is set (or if the \`preferInteractive\` settings is toggled on) the command will offer various choices, depending on the detected upgrade paths. Some upgrades require this flag in order to resolve ambiguities.
 
       The, \`-C,--caret\`, \`-E,--exact\` and  \`-T,--tilde\` options have the same meaning as in the \`add\` command (they change the modifier used when the range is missing or a tag, and are ignored when the range is explicitly set).
+
+      This command accepts glob patterns as arguments (if valid Descriptors and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
+
+      **Note:** The ranges have to be static, only the package scopes and names can contain glob patterns.
     `,
     examples: [[
       `Upgrade all instances of lodash to the latest release`,
@@ -46,6 +51,15 @@ export default class UpCommand extends BaseCommand {
     ], [
       `Upgrade all instances of lodash to 1.2.3`,
       `$0 up lodash@1.2.3`,
+    ], [
+      `Upgrade all instances of packages with the \`@babel\` scope to the latest release`,
+      `$0 up '@babel/*'`,
+    ], [
+      `Upgrade all instances of packages containing the word \`jest\` to the latest release`,
+      `$0 up '*jest*'`,
+    ], [
+      `Upgrade all instances of packages with the \`@babel\` scope to 7.0.0`,
+      `$0 up '@babel/*@7.0.0'`,
     ]],
   });
 
@@ -77,45 +91,58 @@ export default class UpCommand extends BaseCommand {
     ];
 
     const allSuggestionsPromises = [];
-    const unreferencedPackages = [];
+    const unreferencedPatterns = [];
 
-    for (const pseudoDescriptor of this.packages) {
-      const descriptor = structUtils.parseDescriptor(pseudoDescriptor);
+    for (const pattern of this.patterns) {
       let isReferenced = false;
+
+      // The range has to be static
+      const pseudoDescriptor = structUtils.parseDescriptor(pattern);
 
       for (const workspace of project.workspaces) {
         for (const target of [suggestUtils.Target.REGULAR, suggestUtils.Target.DEVELOPMENT]) {
-          const existing = workspace.manifest[target].get(descriptor.identHash);
-          if (!existing)
-            continue;
+          const descriptors = workspace.manifest.getForScope(target);
+          const stringifiedIdents = [...descriptors.values()].map(descriptor => {
+            return structUtils.stringifyIdent(descriptor);
+          });
 
-          allSuggestionsPromises.push(Promise.resolve().then(async () => {
-            return [
-              workspace,
-              target,
-              existing,
-              await suggestUtils.getSuggestedDescriptors(descriptor, {project, workspace, cache, target, modifier, strategies}),
-            ] as [
-              Workspace,
-              suggestUtils.Target,
-              Descriptor,
-              Array<suggestUtils.Suggestion>
-            ];
-          }));
+          for (const stringifiedIdent of micromatch(stringifiedIdents, structUtils.stringifyIdent(pseudoDescriptor))) {
+            const ident = structUtils.parseIdent(stringifiedIdent);
 
-          isReferenced = true;
+            const existingDescriptor = workspace.manifest[target].get(ident.identHash);
+            if (typeof existingDescriptor === `undefined`)
+              throw new Error(`Assertion failed: Expected the descriptor to be registered`);
+
+            const request = structUtils.makeDescriptor(ident, pseudoDescriptor.range);
+
+            allSuggestionsPromises.push(Promise.resolve().then(async () => {
+              return [
+                workspace,
+                target,
+                existingDescriptor,
+                await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, modifier, strategies}),
+              ] as [
+                Workspace,
+                suggestUtils.Target,
+                Descriptor,
+                Array<suggestUtils.Suggestion>
+              ];
+            }));
+
+            isReferenced = true;
+          }
         }
       }
 
       if (!isReferenced) {
-        unreferencedPackages.push(structUtils.prettyIdent(configuration, descriptor));
+        unreferencedPatterns.push(pattern);
       }
     }
 
-    if (unreferencedPackages.length > 1)
-      throw new UsageError(`Packages ${unreferencedPackages.join(`, `)} aren't referenced by any workspace`);
-    if (unreferencedPackages.length > 0)
-      throw new UsageError(`Package ${unreferencedPackages[0]} isn't referenced by any workspace`);
+    if (unreferencedPatterns.length > 1)
+      throw new UsageError(`Patterns ${unreferencedPatterns.join(`, `)} don't match any packages referenced by any workspace`);
+    if (unreferencedPatterns.length > 0)
+      throw new UsageError(`Pattern ${unreferencedPatterns[0]} doesn't match any packages referenced by any workspace`);
 
     const allSuggestions = await Promise.all(allSuggestionsPromises);
 

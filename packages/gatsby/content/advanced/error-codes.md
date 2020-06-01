@@ -306,3 +306,8 @@ A package requests a peer dependency, but the range provided is not a valid semv
 ## YN0060 - `INCOMPATIBLE_PEER_DEPENDENCY`
 
 A package requests a peer dependency, but its parent in the dependency tree provides a version which does not satisfy the peer dependency's range. The parent should be altered to provide a valid version or the peer dependency range updated. This will not prevent resolution, but may leave the system in an incorrect state.
+
+## YN0061 - `DEPRECATED_PACKAGE`
+
+A package is marked as deprecated by the publisher. Avoid using it, use the alternative provided in the deprecation message instead.
+

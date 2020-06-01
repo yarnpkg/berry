@@ -5,7 +5,6 @@ module.exports = {
     `@babel/plugin-proposal-nullish-coalescing-operator`,
     [`@babel/plugin-proposal-decorators`, {legacy: true}],
     [`@babel/plugin-proposal-class-properties`, {loose: true}],
-    `@babel/plugin-proposal-async-generator-functions`,
   ],
   presets: [
     `@babel/preset-typescript`,

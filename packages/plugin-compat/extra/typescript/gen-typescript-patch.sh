@@ -18,14 +18,18 @@ HASHES=(
 
 mkdir -p "$TEMP_DIR"
 if ! [[ -d "$TEMP_DIR"/clone ]]; then (
-    git clone git@github.com:arcanis/typescript "$TEMP_DIR"/clone
+    git clone https://github.com/arcanis/typescript "$TEMP_DIR"/clone
     cd "$TEMP_DIR"/clone
-    git remote add upstream git@github.com:microsoft/typescript
+    git remote add upstream https://github.com/microsoft/typescript
 ); fi
 
+rm -rf "$TEMP_DIR"/builds
 cd "$TEMP_DIR"/clone
 
 git cherry-pick --abort || true
+
+git config user.email "you@example.com"
+git config user.name "Your Name"
 
 git fetch origin
 git fetch upstream
@@ -37,6 +41,40 @@ reset-git() {
   npm install --before "$(git show -s --format=%ci)"
 }
 
+build-dir-for() {
+  local HASH="$1"
+  local CHERRY_PICK="$2"
+
+  local BUILD_DIR="$TEMP_DIR"/builds/"$HASH"
+
+  if [[ ! -z "$CHERRY_PICK" ]]; then
+    BUILD_DIR="$BUILD_DIR-$CHERRY_PICK"
+  fi
+
+  echo "$BUILD_DIR"
+}
+
+make-build-for() {
+  local HASH="$1"
+  local CHERRY_PICK="$2"
+
+  local BUILD_DIR="$(build-dir-for "$HASH" "$CHERRY_PICK")"
+
+  if [[ ! -e "$BUILD_DIR" ]]; then
+    mkdir -p "$BUILD_DIR"
+    reset-git "$HASH"
+
+    if [[ ! -z "$CHERRY_PICK" ]]; then
+      git cherry-pick "$FIRST_PR_COMMIT"^.."$CHERRY_PICK"
+    fi
+
+    yarn gulp local LKG
+    cp -r lib/ "$BUILD_DIR"/
+  fi
+
+  echo "$BUILD_DIR"
+}
+
 rm -f "$PATCHFILE" && touch "$PATCHFILE"
 rm -f "$JSPATCH" && touch "$JSPATCH"
 
@@ -46,29 +84,18 @@ while [[ ${#HASHES[@]} -gt 0 ]]; do
   RANGE="${HASHES[2]}"
   HASHES=("${HASHES[@]:3}")
 
-  rm -rf "$TEMP_DIR"/orig
-  rm -rf "$TEMP_DIR"/patched
+  make-build-for "$BASE"
+  ORIG_DIR=$(build-dir-for "$BASE")
 
-  mkdir -p "$TEMP_DIR"/orig
-  mkdir -p "$TEMP_DIR"/patched
-
-  reset-git "$BASE"
-
-  yarn gulp local LKG
-  cp -r lib/ "$TEMP_DIR"/orig/
-
-  reset-git "$BASE"
-  git cherry-pick "$FIRST_PR_COMMIT"^.."$HASH"
-
-  yarn gulp local LKG
-  cp -r lib/ "$TEMP_DIR"/patched/
+  make-build-for "$BASE" "$HASH"
+  PATCHED_DIR=$(build-dir-for "$BASE" "$HASH")
 
   DIFF="$THIS_DIR"/patch."${HASH}"-on-"${BASE}".diff
 
-  git diff --no-index "$TEMP_DIR"/orig "$TEMP_DIR"/patched \
+  git diff --no-index "$ORIG_DIR" "$PATCHED_DIR" \
     | perl -p -e"s#^--- #semver exclusivity $RANGE\n--- #" \
-    | perl -p -e"s#$TEMP_DIR/orig##" \
-    | perl -p -e"s#$TEMP_DIR/patched##" \
+    | perl -p -e"s#$ORIG_DIR/#/#" \
+    | perl -p -e"s#$PATCHED_DIR/#/#" \
     | perl -p -e"s#__spreadArrays#[].concat#" \
     > "$DIFF"
 
@@ -76,11 +103,4 @@ while [[ ${#HASHES[@]} -gt 0 ]]; do
     >> "$PATCHFILE"
 done
 
-echo '/* eslint-disable */' \
-  >> "$JSPATCH"
-echo 'export const patch =' \
-  >> "$JSPATCH"
-node "$THIS_DIR"/../jsonEscape.js < "$PATCHFILE" \
-  >> "$JSPATCH"
-echo ';' \
-  >> "$JSPATCH"
+node "$THIS_DIR/../createPatch.js" "$PATCHFILE" "$JSPATCH"

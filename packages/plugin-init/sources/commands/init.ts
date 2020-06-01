@@ -43,6 +43,7 @@ export default class InitCommand extends BaseCommand {
       - \`initLicense\`
       - \`initScope\`
       - \`initVersion\`
+      - \`initFields\`
     `,
     examples: [[
       `Create a new package in the local directory`,
@@ -127,6 +128,10 @@ export default class InitCommand extends BaseCommand {
       await xfs.mkdirpPromise(this.context.cwd);
 
     const manifest = new Manifest();
+
+    const fields = Object.fromEntries(configuration.get<Map<string, any>>(`initFields`).entries());
+    manifest.load(fields);
+
     manifest.name = structUtils.makeIdent(configuration.get(`initScope`), ppath.basename(this.context.cwd));
     manifest.version = configuration.get(`initVersion`);
     manifest.private = this.private || this.workspace;

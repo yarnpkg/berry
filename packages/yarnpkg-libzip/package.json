@@ -27,5 +27,8 @@
   },
   "dependencies": {
     "@types/emscripten": "^1.38.0"
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }

@@ -5,6 +5,7 @@ import {Command, Usage, UsageError}                                        from 
 import filesize                                                            from 'filesize';
 import fs                                                                  from 'fs';
 import path                                                                from 'path';
+import TerserPlugin                                                        from 'terser-webpack-plugin';
 import {RawSource}                                                         from 'webpack-sources';
 import webpack                                                             from 'webpack';
 
@@ -24,6 +25,9 @@ const getNormalizedName = (name: string) => {
 
 // eslint-disable-next-line arca/no-default-export
 export default class BuildPluginCommand extends Command {
+  @Command.Boolean(`--no-minify`)
+  noMinify: boolean = false;
+
   static usage: Usage = Command.Usage({
     description: `build the local plugin`,
   });
@@ -32,7 +36,7 @@ export default class BuildPluginCommand extends Command {
   async execute() {
     const basedir = process.cwd();
     const portableBaseDir = npath.toPortablePath(basedir);
-    const configuration = new Configuration(portableBaseDir, portableBaseDir, new Map());
+    const configuration = Configuration.create(portableBaseDir);
 
     const {name: rawName} = require(`${basedir}/package.json`);
     const name = getNormalizedName(rawName);
@@ -56,6 +60,21 @@ export default class BuildPluginCommand extends Command {
         const compiler = webpack(makeConfig({
           context: basedir,
           entry: `.`,
+
+          ...!this.noMinify && {
+            mode: `production`,
+          },
+
+          ...!this.noMinify && {
+            optimization: {
+              minimizer: [
+                new TerserPlugin({
+                  cache: false,
+                  extractComments: false,
+                }),
+              ],
+            },
+          },
 
           output: {
             filename: path.basename(output),
@@ -131,7 +150,7 @@ export default class BuildPluginCommand extends Command {
       report.reportError(MessageName.EXCEPTION, `${buildErrors}`);
     } else {
       report.reportInfo(null, `${chalk.green(`✓`)} Done building ${prettyName}!`);
-      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle path: ${configuration.format(output, FormatType.PATH)})}`);
+      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle path: ${configuration.format(output, FormatType.PATH)}`);
       report.reportInfo(null, `${chalk.cyan(`?`)} Bundle size: ${configuration.format(filesize(fs.statSync(output).size), FormatType.NUMBER)}`);
     }
 

@@ -93,7 +93,7 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
 
     if (typeof parent.pnpApiPath === `undefined`) {
       if (parent.filename !== null) {
-        return findApiPathFor(parent.filename);
+        return parent.pnpApiPath = findApiPathFor(parent.filename);
       } else {
         return initialApiPath;
       }

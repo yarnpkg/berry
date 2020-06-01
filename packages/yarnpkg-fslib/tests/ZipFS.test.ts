@@ -99,4 +99,38 @@ describe(`ZipFS`, () => {
     asserts(zipFs2);
     zipFs2.discardAndClose();
   });
+
+  it(`should readSync file contents`, async () => {
+    const readFileContents = function (zipFs: ZipFS, p: PortablePath, position: number | null) {
+      const fd = zipFs.openSync(p, `r`);
+      const buffer = Buffer.alloc(8192);
+      try {
+        let size = 0;
+        let read = 0;
+        while ((read = zipFs.readSync(fd, buffer, 0, buffer.length, position)) !== 0)
+          size += read;
+
+        return buffer.toString(`utf-8`, 0, size);
+      } finally {
+        zipFs.closeSync(fd);
+      }
+    };
+    const readSyncAsserts = (zipFs: ZipFS) => {
+      const p = `/dir/file` as PortablePath;
+      expect(readFileContents(zipFs, p, -1)).toEqual(`file content`);
+      expect(readFileContents(zipFs, p, null)).toEqual(`file content`);
+    };
+
+    const libzip = getLibzipSync();
+    const tmpfile = ppath.resolve(xfs.mktempSync(), toFilename(`test2.zip`));
+    const zipFs = new ZipFS(tmpfile, {libzip, create: true});
+    await zipFs.mkdirPromise(`/dir` as PortablePath);
+    zipFs.writeFileSync(`/dir/file` as PortablePath, `file content`);
+    zipFs.saveAndClose();
+
+    const zipFs2 = new ZipFS(tmpfile, {libzip});
+    readSyncAsserts(zipFs2);
+    zipFs2.discardAndClose();
+  });
 });
+

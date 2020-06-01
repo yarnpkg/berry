@@ -42,6 +42,10 @@ gen_enforced_dependency(WorkspaceCwd, 'tslib', null, DependencyType) :-
 gen_enforced_field(WorkspaceCwd, 'license', 'BSD-2-Clause') :-
   workspace(WorkspacedCwd).
 
+% This rule will enforce that all packages must have a engines.node field of >=10.19.0
+gen_enforced_field(WorkspaceCwd, 'engines.node', '>=10.19.0') :-
+  workspace(WorkspacedCwd).
+
 % Required to make the package work with the GitHub Package Registry
 gen_enforced_field(WorkspaceCwd, 'repository.type', 'git') :-
   workspace(WorkspacedCwd).

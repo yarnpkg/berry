@@ -2,6 +2,7 @@ import {xfs} from '@yarnpkg/fslib';
 
 const {
   tests: {getPackageDirectoryPath},
+  yarn: {readManifest},
 } = require(`pkg-tests-core`);
 const {parseSyml} = require(`@yarnpkg/parsers`);
 
@@ -375,5 +376,22 @@ describe(`Commands`, () => {
       expect(cacheContent.find(entry => entry.includes(`no-deps-npm-1.0.0`))).toBeDefined();
       expect(cacheContent.find(entry => entry.includes(`no-deps-npm-2.0.0`))).toBeDefined();
     }));
+
+    test(
+      `it should show deprecation warnings for deprecated packages`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const {stdout} = await run(`add`, `no-deps-deprecated@1.0.0`);
+
+        // Check if the deprecation warning is shown
+        expect(stdout).toContain(`no-deps-deprecated@npm:1.0.0 is deprecated: ¯\\_(ツ)_/¯`);
+
+        // Check if the package is installed successfully
+        await expect(readManifest(path)).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps-deprecated`]: `1.0.0`,
+          },
+        });
+      }),
+    );
   });
 });

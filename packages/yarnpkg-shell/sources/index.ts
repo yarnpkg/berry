@@ -388,11 +388,17 @@ function makeCommandAction(args: Array<string>, opts: ShellOptions, state: Shell
   if (!opts.builtins.has(args[0]))
     args = [`command`, ...args];
 
+  const nativeCwd = npath.fromPortablePath(state.cwd);
+
+  let env = state.environment;
+  if (typeof env.PWD !== `undefined`)
+    env = {...env, PWD: nativeCwd};
+
   const [name, ...rest] = args;
   if (name === `command`) {
     return makeProcess(rest[0], rest.slice(1), opts, {
-      cwd: npath.fromPortablePath(state.cwd),
-      env: state.environment,
+      cwd: nativeCwd,
+      env,
     });
   }
 

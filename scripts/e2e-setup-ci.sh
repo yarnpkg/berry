@@ -10,8 +10,9 @@ cd "${TEMP_DIR}"
 # We want to ensure we're using the latest release
 export PATH="${HERE_DIR}/bin:${PATH}"
 
-echo $PATH
-which yarn
+echo PATH: $PATH
+echo Yarn Path: $(which yarn)
+echo Yarn Version: $(yarn -v)
 
 # We want to see what fails (if anything fails)
 export YARN_ENABLE_INLINE_BUILDS=1
