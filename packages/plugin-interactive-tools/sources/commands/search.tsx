@@ -132,7 +132,7 @@ export default class SearchCommand extends BaseCommand {
 
     const PoweredByAlgolia = () => {
       return <Box marginTop={1}>
-        <Text>Powered by <Color blue>Algolia</Color>.</Text>
+        <Text>Powered by Algolia.</Text>
       </Box>;
     };
 
