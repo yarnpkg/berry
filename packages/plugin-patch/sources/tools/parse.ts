@@ -1,5 +1,5 @@
-import {miscUtils}           from '@yarnpkg/core';
-import {PortablePath, npath} from '@yarnpkg/fslib';
+import {miscUtils}                  from '@yarnpkg/core';
+import {PortablePath, npath, ppath} from '@yarnpkg/fslib';
 
 const HEADER_REGEXP = /^@@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? @@.*/;
 
@@ -13,6 +13,10 @@ export type HunkHeader = {
     length: number,
   },
 };
+
+export function getPath(p: string) {
+  return ppath.relative(PortablePath.root, ppath.resolve(PortablePath.root, npath.toPortablePath(p)));
+}
 
 export function parseHunkHeaderLine(headerLine: string): HunkHeader {
   const match = headerLine.trim().match(HEADER_REGEXP);
@@ -330,8 +334,8 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
         result.push({
           type: `rename`,
           semverExclusivity,
-          fromPath: npath.toPortablePath(renameFrom),
-          toPath: npath.toPortablePath(renameTo),
+          fromPath: getPath(renameFrom),
+          toPath: getPath(renameTo),
         });
 
         destinationFilePath = renameTo;
@@ -346,7 +350,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
           type: `file deletion`,
           semverExclusivity,
           hunk: (hunks && hunks[0]) || null,
-          path: npath.toPortablePath(path),
+          path: getPath(path),
           mode: parseFileMode(deletedFileMode!),
           hash: beforeHash,
         });
@@ -361,7 +365,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
           type: `file creation`,
           semverExclusivity,
           hunk: (hunks && hunks[0]) || null,
-          path: npath.toPortablePath(path),
+          path: getPath(path),
           mode: parseFileMode(newFileMode!),
           hash: afterHash,
         });
@@ -381,7 +385,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
       result.push({
         type: `mode change`,
         semverExclusivity,
-        path: npath.toPortablePath(destinationFilePath),
+        path: getPath(destinationFilePath),
         oldMode: parseFileMode(oldMode),
         newMode: parseFileMode(newMode),
       });
@@ -391,7 +395,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
       result.push({
         type: `patch`,
         semverExclusivity,
-        path: npath.toPortablePath(destinationFilePath),
+        path: getPath(destinationFilePath),
         hunks,
         beforeHash,
         afterHash,

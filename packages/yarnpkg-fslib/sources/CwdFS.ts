@@ -15,7 +15,10 @@ export class CwdFS extends ProxiedFS<PortablePath, PortablePath> {
   constructor(target: PortablePath, {baseFs = new NodeFS()}: CwdFSOptions = {}) {
     super(ppath);
 
-    this.target = target;
+    if (!this.pathUtils.isAbsolute(target))
+      throw new Error(`CwdFS target should be an absolute path`);
+
+    this.target = this.pathUtils.normalize(target);
 
     this.baseFs = baseFs;
   }
@@ -25,10 +28,10 @@ export class CwdFS extends ProxiedFS<PortablePath, PortablePath> {
   }
 
   mapFromBase(path: PortablePath) {
-    return this.pathUtils.relative(this.getRealPath(), path);
+    return this.pathUtils.relative(this.target, path);
   }
 
   mapToBase(path: PortablePath) {
-    return this.pathUtils.resolve(this.getRealPath(), path);
+    return this.pathUtils.join(this.target, path);
   }
 }
