@@ -120,12 +120,14 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
   const stdoutChunks: Array<Buffer> = [];
   const stderrChunks: Array<Buffer> = [];
 
+  const nativeCwd = npath.fromPortablePath(cwd);
+
+  if (typeof env.PWD !== `undefined`)
+    env = {...env, PWD: nativeCwd};
+
   const subprocess = crossSpawn(fileName, args, {
-    cwd: npath.fromPortablePath(cwd),
-    env: {
-      ...env,
-      PWD: npath.fromPortablePath(cwd),
-    },
+    cwd: nativeCwd,
+    env,
     stdio,
   });
 
