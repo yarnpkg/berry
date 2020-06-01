@@ -30,5 +30,8 @@
   "devDependencies": {
     "@types/finalhandler": "1.1.0",
     "@types/serve-static": "1.13.3"
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }

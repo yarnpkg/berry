@@ -11,5 +11,8 @@
     "repository": {
         "type": "git",
         "url": "ssh://git@github.com/yarnpkg/berry.git"
+    },
+    "engines": {
+        "node": ">=10.19.0"
     }
 }

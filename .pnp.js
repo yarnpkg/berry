@@ -247,10 +247,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:7.7.4"
       ],
       [
-        "@babel/plugin-proposal-async-generator-functions",
-        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.2.0"
-      ],
-      [
         "@babel/plugin-proposal-class-properties",
         "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.3.3"
       ],
@@ -328,7 +324,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "clipanion",
-        "npm:2.1.5"
+        "npm:2.4.0"
       ],
       [
         "eslint",
@@ -377,7 +373,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@arcanis/sherlock", "npm:1.0.38"],
             ["@babel/cli", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.2.3"],
             ["@babel/core", "npm:7.7.4"],
-            ["@babel/plugin-proposal-async-generator-functions", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.2.0"],
             ["@babel/plugin-proposal-class-properties", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.3.3"],
             ["@babel/plugin-proposal-decorators", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.4.4"],
             ["@babel/plugin-proposal-nullish-coalescing-operator", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.8.3"],
@@ -397,7 +392,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/eslint-config", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/eslint-config"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["babel-jest", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:24.5.0"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["eslint", "npm:6.8.0"],
             ["eslint-plugin-arca", "npm:0.9.0"],
             ["eslint-plugin-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.14.3"],
@@ -1494,14 +1489,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.2.0", {
-          "packageLocation": "./.yarn/$$virtual/@babel-plugin-proposal-async-generator-functions-virtual-6bc187e1bf/0/cache/@babel-plugin-proposal-async-generator-functions-npm-7.2.0-bbca6d64b9-3141eb724b.zip/node_modules/@babel/plugin-proposal-async-generator-functions/",
+        ["virtual:765d85ff5c391528fae4c2ed2f1a944efc6f3bc99e33122544c740912c324811d4c7752bdfcb9850aedbf2917a4f4363b5f1ded25d77b3a7b44e004ee6f74d08#npm:7.2.0", {
+          "packageLocation": "./.yarn/$$virtual/@babel-plugin-proposal-async-generator-functions-virtual-88ae263e50/0/cache/@babel-plugin-proposal-async-generator-functions-npm-7.2.0-bbca6d64b9-3141eb724b.zip/node_modules/@babel/plugin-proposal-async-generator-functions/",
           "packageDependencies": [
-            ["@babel/plugin-proposal-async-generator-functions", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.2.0"],
+            ["@babel/plugin-proposal-async-generator-functions", "virtual:765d85ff5c391528fae4c2ed2f1a944efc6f3bc99e33122544c740912c324811d4c7752bdfcb9850aedbf2917a4f4363b5f1ded25d77b3a7b44e004ee6f74d08#npm:7.2.0"],
             ["@babel/core", "npm:7.7.4"],
             ["@babel/helper-plugin-utils", "npm:7.0.0"],
             ["@babel/helper-remap-async-to-generator", "npm:7.1.0"],
-            ["@babel/plugin-syntax-async-generators", "virtual:6bc187e1bfff8202f9a8ba4755f5cca0ec86b6bd753bc9f7117d9c494bd77b5e74da1ab8626479e3358f208b0f18165977ff2848d376729b25474a564caa2991#npm:7.2.0"]
+            ["@babel/plugin-syntax-async-generators", "virtual:765d85ff5c391528fae4c2ed2f1a944efc6f3bc99e33122544c740912c324811d4c7752bdfcb9850aedbf2917a4f4363b5f1ded25d77b3a7b44e004ee6f74d08#npm:7.2.0"]
           ],
           "packagePeers": [
             "@babel/core"
@@ -1883,10 +1878,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["virtual:6bc187e1bfff8202f9a8ba4755f5cca0ec86b6bd753bc9f7117d9c494bd77b5e74da1ab8626479e3358f208b0f18165977ff2848d376729b25474a564caa2991#npm:7.2.0", {
-          "packageLocation": "./.yarn/$$virtual/@babel-plugin-syntax-async-generators-virtual-cc857a2171/0/cache/@babel-plugin-syntax-async-generators-npm-7.2.0-40b1bc436b-d9b75cbbb3.zip/node_modules/@babel/plugin-syntax-async-generators/",
+        ["virtual:765d85ff5c391528fae4c2ed2f1a944efc6f3bc99e33122544c740912c324811d4c7752bdfcb9850aedbf2917a4f4363b5f1ded25d77b3a7b44e004ee6f74d08#npm:7.2.0", {
+          "packageLocation": "./.yarn/$$virtual/@babel-plugin-syntax-async-generators-virtual-eaa300881e/0/cache/@babel-plugin-syntax-async-generators-npm-7.2.0-40b1bc436b-d9b75cbbb3.zip/node_modules/@babel/plugin-syntax-async-generators/",
           "packageDependencies": [
-            ["@babel/plugin-syntax-async-generators", "virtual:6bc187e1bfff8202f9a8ba4755f5cca0ec86b6bd753bc9f7117d9c494bd77b5e74da1ab8626479e3358f208b0f18165977ff2848d376729b25474a564caa2991#npm:7.2.0"],
+            ["@babel/plugin-syntax-async-generators", "virtual:765d85ff5c391528fae4c2ed2f1a944efc6f3bc99e33122544c740912c324811d4c7752bdfcb9850aedbf2917a4f4363b5f1ded25d77b3a7b44e004ee6f74d08#npm:7.2.0"],
             ["@babel/core", "npm:7.7.4"],
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
@@ -3849,12 +3844,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/core", "npm:7.7.4"],
             ["@babel/helper-module-imports", "npm:7.0.0"],
             ["@babel/helper-plugin-utils", "npm:7.0.0"],
-            ["@babel/plugin-proposal-async-generator-functions", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.2.0"],
+            ["@babel/plugin-proposal-async-generator-functions", "virtual:765d85ff5c391528fae4c2ed2f1a944efc6f3bc99e33122544c740912c324811d4c7752bdfcb9850aedbf2917a4f4363b5f1ded25d77b3a7b44e004ee6f74d08#npm:7.2.0"],
             ["@babel/plugin-proposal-json-strings", "virtual:765d85ff5c391528fae4c2ed2f1a944efc6f3bc99e33122544c740912c324811d4c7752bdfcb9850aedbf2917a4f4363b5f1ded25d77b3a7b44e004ee6f74d08#npm:7.2.0"],
             ["@babel/plugin-proposal-object-rest-spread", "virtual:765d85ff5c391528fae4c2ed2f1a944efc6f3bc99e33122544c740912c324811d4c7752bdfcb9850aedbf2917a4f4363b5f1ded25d77b3a7b44e004ee6f74d08#npm:7.3.2"],
             ["@babel/plugin-proposal-optional-catch-binding", "virtual:765d85ff5c391528fae4c2ed2f1a944efc6f3bc99e33122544c740912c324811d4c7752bdfcb9850aedbf2917a4f4363b5f1ded25d77b3a7b44e004ee6f74d08#npm:7.2.0"],
             ["@babel/plugin-proposal-unicode-property-regex", "virtual:765d85ff5c391528fae4c2ed2f1a944efc6f3bc99e33122544c740912c324811d4c7752bdfcb9850aedbf2917a4f4363b5f1ded25d77b3a7b44e004ee6f74d08#npm:7.2.0"],
-            ["@babel/plugin-syntax-async-generators", "virtual:6bc187e1bfff8202f9a8ba4755f5cca0ec86b6bd753bc9f7117d9c494bd77b5e74da1ab8626479e3358f208b0f18165977ff2848d376729b25474a564caa2991#npm:7.2.0"],
+            ["@babel/plugin-syntax-async-generators", "virtual:765d85ff5c391528fae4c2ed2f1a944efc6f3bc99e33122544c740912c324811d4c7752bdfcb9850aedbf2917a4f4363b5f1ded25d77b3a7b44e004ee6f74d08#npm:7.2.0"],
             ["@babel/plugin-syntax-json-strings", "virtual:765d85ff5c391528fae4c2ed2f1a944efc6f3bc99e33122544c740912c324811d4c7752bdfcb9850aedbf2917a4f4363b5f1ded25d77b3a7b44e004ee6f74d08#npm:7.2.0"],
             ["@babel/plugin-syntax-object-rest-spread", "virtual:7fa15a54995aa35aaca7e6db26f9cafe58dfe17e87eb53096b115a3c117984e442501ba2f9a03ba458083e17f039368eae1074fa5915ec8eeeef82fa36dca33b#npm:7.2.0"],
             ["@babel/plugin-syntax-optional-catch-binding", "virtual:765d85ff5c391528fae4c2ed2f1a944efc6f3bc99e33122544c740912c324811d4c7752bdfcb9850aedbf2917a4f4363b5f1ded25d77b3a7b44e004ee6f74d08#npm:7.2.0"],
@@ -6694,15 +6689,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["@types/json5", [
-        ["npm:0.0.30", {
-          "packageLocation": "./.yarn/cache/@types-json5-npm-0.0.30-f1e41a4c3a-af9d434f14.zip/node_modules/@types/json5/",
-          "packageDependencies": [
-            ["@types/json5", "npm:0.0.30"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["@types/keyv", [
         ["npm:3.1.1", {
           "packageLocation": "./.yarn/cache/@types-keyv-npm-3.1.1-779a80f2c7-3aaf557d5b.zip/node_modules/@types/keyv/",
@@ -7976,7 +7962,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:8.0.6"],
             ["babel-plugin-lazy-import", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit=ff060e230afb4f2f36a1c495be65271c14ae2e4b"],
             ["chalk", "npm:3.0.0"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["filesize", "npm:4.1.2"],
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:7.1.2"],
@@ -8013,7 +7999,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:8.0.6"],
             ["babel-plugin-lazy-import", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit=ff060e230afb4f2f36a1c495be65271c14ae2e4b"],
             ["chalk", "npm:3.0.0"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["filesize", "npm:4.1.2"],
             ["pnp-webpack-plugin", "npm:1.4.3"],
             ["semver", "npm:7.1.2"],
@@ -8032,6 +8018,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/$$virtual/@yarnpkg-cli-virtual-cd2af72718/1/packages/yarnpkg-cli/",
           "packageDependencies": [
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
+            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -8056,7 +8043,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],
             ["chalk", "npm:3.0.0"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["fromentries", "npm:1.2.0"],
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.1.2"],
@@ -8072,6 +8059,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/yarnpkg-cli/",
           "packageDependencies": [
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
+            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -8096,7 +8084,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],
             ["chalk", "npm:3.0.0"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["fromentries", "npm:1.2.0"],
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.1.2"],
@@ -8132,7 +8120,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],
             ["camelcase", "npm:5.3.1"],
             ["chalk", "npm:3.0.0"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["cross-spawn", "npm:7.0.3"],
             ["diff", "npm:4.0.1"],
             ["globby", "npm:10.0.1"],
@@ -8163,7 +8151,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["globby", "npm:10.0.1"],
             ["micromatch", "npm:4.0.2"],
             ["p-limit", "npm:2.2.0"],
@@ -8364,7 +8352,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@arcanis/sherlock", "npm:1.0.38"],
             ["@babel/cli", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.2.3"],
             ["@babel/core", "npm:7.7.4"],
-            ["@babel/plugin-proposal-async-generator-functions", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.2.0"],
             ["@babel/plugin-proposal-class-properties", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.3.3"],
             ["@babel/plugin-proposal-decorators", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.4.4"],
             ["@babel/plugin-proposal-nullish-coalescing-operator", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.8.3"],
@@ -8384,7 +8371,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/eslint-config", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/eslint-config"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["babel-jest", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:24.5.0"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["eslint", "npm:6.8.0"],
             ["eslint-plugin-arca", "npm:0.9.0"],
             ["eslint-plugin-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.14.3"],
@@ -8457,7 +8444,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["inquirer", "npm:6.2.1"],
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.8.1"],
@@ -8476,7 +8463,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.4.0"]
           ],
           "packagePeers": [
             "@yarnpkg/cli",
@@ -8492,7 +8479,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.4.0"]
           ],
           "packagePeers": [
             "@yarnpkg/cli",
@@ -8508,7 +8495,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.4.0"]
           ],
           "linkType": "SOFT",
         }]
@@ -8527,7 +8514,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["inquirer", "npm:6.2.1"],
             ["lodash", "npm:4.17.15"],
             ["semver", "npm:7.1.2"],
@@ -8553,7 +8540,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["inquirer", "npm:6.2.1"],
             ["lodash", "npm:4.17.15"],
             ["semver", "npm:7.1.2"],
@@ -8579,7 +8566,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["inquirer", "npm:6.2.1"],
             ["lodash", "npm:4.17.15"],
             ["semver", "npm:7.1.2"],
@@ -8711,7 +8698,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.4.0"]
           ],
           "packagePeers": [
             "@yarnpkg/cli",
@@ -8726,7 +8713,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.4.0"]
           ],
           "packagePeers": [
             "@yarnpkg/cli",
@@ -8741,7 +8728,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.4.0"]
           ],
           "linkType": "SOFT",
         }]
@@ -8759,7 +8746,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/libui", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/yarnpkg-libui"],
             ["@yarnpkg/plugin-essentials", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-essentials"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["diff", "npm:4.0.1"],
             ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:2.3.0"],
             ["react", "npm:16.13.1"],
@@ -8808,7 +8795,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["@zkochan/cmd-shim", "npm:4.3.0"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
@@ -8832,7 +8819,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["@zkochan/cmd-shim", "npm:4.3.0"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["micromatch", "npm:4.0.2"]
           ],
           "packagePeers": [
@@ -8856,7 +8843,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["@zkochan/cmd-shim", "npm:4.3.0"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["micromatch", "npm:4.0.2"]
           ],
           "linkType": "SOFT",
@@ -8900,17 +8887,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-npm-cli", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-npm-cli"],
             ["@npm/types", "npm:1.0.1"],
             ["@types/inquirer", "npm:0.0.43"],
-            ["@types/json5", "npm:0.0.30"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/ssri", "npm:6.0.1"],
+            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-npm", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-pack", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-pack"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["inquirer", "npm:6.2.1"],
-            ["json5", "npm:2.1.1"],
             ["semver", "npm:7.1.2"],
             ["ssri", "npm:6.0.1"],
             ["yup", "npm:0.27.0"]
@@ -8929,17 +8915,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-npm-cli", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-npm-cli"],
             ["@npm/types", "npm:1.0.1"],
             ["@types/inquirer", "npm:0.0.43"],
-            ["@types/json5", "npm:0.0.30"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/ssri", "npm:6.0.1"],
+            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-npm", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-pack", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-pack"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["inquirer", "npm:6.2.1"],
-            ["json5", "npm:2.1.1"],
             ["semver", "npm:7.1.2"],
             ["ssri", "npm:6.0.1"],
             ["yup", "npm:0.27.0"]
@@ -8958,17 +8943,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-npm-cli", "workspace:packages/plugin-npm-cli"],
             ["@npm/types", "npm:1.0.1"],
             ["@types/inquirer", "npm:0.0.43"],
-            ["@types/json5", "npm:0.0.30"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/ssri", "npm:6.0.1"],
+            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-npm", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-pack", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-pack"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["inquirer", "npm:6.2.1"],
-            ["json5", "npm:2.1.1"],
             ["semver", "npm:7.1.2"],
             ["ssri", "npm:6.0.1"],
             ["yup", "npm:0.27.0"]
@@ -8987,7 +8971,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:6c4ffdc97c0a8fe6a15cb1b353664a2d1556c0bef782dc06790db015a35ca3cd125eaf355368c58a3aaf6330c79507c16275fc3a3c13a847d89839cdae6b509e#workspace:packages/plugin-stage"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["micromatch", "npm:4.0.2"],
             ["tar-stream", "npm:2.0.1"]
           ],
@@ -9007,7 +8991,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:9af797eaca9597d8ce3ab2f300dc3678fe1b6a7e9a9c8f1e28a40ffa76c2f3b3249454b171507aa93cb1cb92455654f3344ae77bd4a79f79fd0fbc16734faa67#workspace:packages/plugin-stage"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["micromatch", "npm:4.0.2"],
             ["tar-stream", "npm:2.0.1"]
           ],
@@ -9027,7 +9011,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:9af797eaca9597d8ce3ab2f300dc3678fe1b6a7e9a9c8f1e28a40ffa76c2f3b3249454b171507aa93cb1cb92455654f3344ae77bd4a79f79fd0fbc16734faa67#workspace:packages/plugin-stage"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["micromatch", "npm:4.0.2"],
             ["tar-stream", "npm:2.0.1"]
           ],
@@ -9044,7 +9028,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.4.0"]
           ],
           "packagePeers": [
             "@yarnpkg/cli",
@@ -9061,7 +9045,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.4.0"]
           ],
           "packagePeers": [
             "@yarnpkg/core"
@@ -9077,7 +9061,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
-            ["clipanion", "npm:2.1.5"]
+            ["clipanion", "npm:2.4.0"]
           ],
           "linkType": "SOFT",
         }]
@@ -9093,7 +9077,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:6c4ffdc97c0a8fe6a15cb1b353664a2d1556c0bef782dc06790db015a35ca3cd125eaf355368c58a3aaf6330c79507c16275fc3a3c13a847d89839cdae6b509e#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
@@ -9112,7 +9096,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:9af797eaca9597d8ce3ab2f300dc3678fe1b6a7e9a9c8f1e28a40ffa76c2f3b3249454b171507aa93cb1cb92455654f3344ae77bd4a79f79fd0fbc16734faa67#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["semver", "npm:7.1.2"]
           ],
           "packagePeers": [
@@ -9131,7 +9115,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-stage", "virtual:9af797eaca9597d8ce3ab2f300dc3678fe1b6a7e9a9c8f1e28a40ffa76c2f3b3249454b171507aa93cb1cb92455654f3344ae77bd4a79f79fd0fbc16734faa67#workspace:packages/plugin-stage"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["semver", "npm:7.1.2"]
           ],
           "linkType": "SOFT",
@@ -9146,7 +9130,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=0ea415"]
           ],
           "packagePeers": [
@@ -9163,7 +9147,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=0ea415"]
           ],
           "packagePeers": [
@@ -9180,7 +9164,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=0ea415"]
           ],
           "linkType": "SOFT",
@@ -9220,7 +9204,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/libui", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/yarnpkg-libui"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pack", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-pack"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:2.3.0"],
             ["react", "npm:16.13.1"],
             ["semver", "npm:7.1.2"],
@@ -9240,7 +9224,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["p-limit", "npm:2.2.0"],
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=0ea415"],
             ["yup", "npm:0.27.0"]
@@ -9318,7 +9302,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
-            ["clipanion", "npm:2.1.5"],
+            ["clipanion", "npm:2.4.0"],
             ["cross-spawn", "npm:7.0.3"],
             ["fast-glob", "npm:3.2.2"],
             ["stream-buffers", "npm:3.0.2"]
@@ -12493,11 +12477,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["npm:2.1.5", {
-          "packageLocation": "./.yarn/cache/clipanion-npm-2.1.5-aef0ebbd62-70279d4cb7.zip/node_modules/clipanion/",
+        ["npm:2.4.0", {
+          "packageLocation": "./.yarn/cache/clipanion-npm-2.4.0-631d1a56dc-43030bb880.zip/node_modules/clipanion/",
           "packageDependencies": [
-            ["clipanion", "npm:2.1.5"],
-            ["chalk", "npm:2.4.2"]
+            ["clipanion", "npm:2.4.0"]
           ],
           "linkType": "HARD",
         }]
@@ -13218,7 +13201,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["core-js-pure", [
         ["npm:3.6.5", {
-          "packageLocation": "./.yarn/unplugged/core-js-pure-npm-3.6.5-c634b57d82/node_modules/core-js-pure/",
+          "packageLocation": "./.yarn/cache/core-js-pure-npm-3.6.5-c634b57d82-91fc8e0b69.zip/node_modules/core-js-pure/",
           "packageDependencies": [
             ["core-js-pure", "npm:3.6.5"]
           ],
@@ -22303,14 +22286,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/json5-npm-2.1.0-8e9ce80b06-e07a8a338b.zip/node_modules/json5/",
           "packageDependencies": [
             ["json5", "npm:2.1.0"],
-            ["minimist", "npm:1.2.0"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:2.1.1", {
-          "packageLocation": "./.yarn/cache/json5-npm-2.1.1-bbee3956d5-fd755a9551.zip/node_modules/json5/",
-          "packageDependencies": [
-            ["json5", "npm:2.1.1"],
             ["minimist", "npm:1.2.0"]
           ],
           "linkType": "HARD",
@@ -36432,7 +36407,7 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
     const source = this.readFileSync(entry.p);
     source.copy(buffer, offset, realPosition, realPosition + length);
     const bytesRead = Math.max(0, Math.min(source.length - realPosition, length));
-    if (position === -1) entry.cursor += bytesRead;
+    if (position === -1 || position === null) entry.cursor += bytesRead;
     return bytesRead;
   }
 
@@ -36862,9 +36837,10 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
     };else if (typeof opts === `string`) opts = {
       flag: `a`,
       encoding: opts
-    };else if (typeof opts.flag === `undefined`) opts = Object.assign({
-      flag: `a`
-    }, opts);
+    };else if (typeof opts.flag === `undefined`) opts = {
+      flag: `a`,
+      ...opts
+    };
     return this.writeFileSync(p, content, opts);
   }
 
@@ -37218,15 +37194,15 @@ function makeError(pnpCode, message, data = {}) {
     enumerable: false
   };
   return Object.defineProperties(new Error(message), {
-    code: Object.assign(Object.assign({}, propertySpec), {
+    code: { ...propertySpec,
       value: code
-    }),
-    pnpCode: Object.assign(Object.assign({}, propertySpec), {
+    },
+    pnpCode: { ...propertySpec,
       value: pnpCode
-    }),
-    data: Object.assign(Object.assign({}, propertySpec), {
+    },
+    data: { ...propertySpec,
       value: data
-    })
+    }
   });
 }
 
@@ -37252,17 +37228,6 @@ exports.getIssuerModule = getIssuerModule;
 
 "use strict";
 
-
-var __rest = this && this.__rest || function (s, e) {
-  var t = {};
-
-  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
-
-  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
-  }
-  return t;
-};
 
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
@@ -37295,7 +37260,8 @@ const makeManager_1 = __webpack_require__(33); // We must copy the fs into a loc
 // 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
 
 
-const localFs = Object.assign({}, fs_1.default);
+const localFs = { ...fs_1.default
+};
 const nodeFs = new fslib_1.NodeFS(localFs);
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState_1.hydrateRuntimeState);
 const defaultPnpapiResolution = __filename; // We create a virtual filesystem that will do three things:
@@ -37321,19 +37287,18 @@ const defaultApi = Object.assign(makeApi_1.makeApi(defaultRuntimeState, {
    * to map it on `/` rather than the local directory path, or to use a
    * different FS layer than the default one).
    */
-  makeApi: _a => {
-    var {
-      basePath = undefined,
-      fakeFs = defaultFsLayer,
-      pnpapiResolution = defaultPnpapiResolution
-    } = _a,
-        rest = __rest(_a, ["basePath", "fakeFs", "pnpapiResolution"]);
-
+  makeApi: ({
+    basePath = undefined,
+    fakeFs = defaultFsLayer,
+    pnpapiResolution = defaultPnpapiResolution,
+    ...rest
+  }) => {
     const apiRuntimeState = typeof basePath !== `undefined` ? $$SETUP_STATE(hydrateRuntimeState_1.hydrateRuntimeState, basePath) : defaultRuntimeState;
-    return makeApi_1.makeApi(apiRuntimeState, Object.assign({
+    return makeApi_1.makeApi(apiRuntimeState, {
       fakeFs,
-      pnpapiResolution
-    }, rest));
+      pnpapiResolution,
+      ...rest
+    });
   },
 
   /**
@@ -43655,17 +43620,6 @@ module.exports = require("string_decoder");
 "use strict";
 
 
-var __rest = this && this.__rest || function (s, e) {
-  var t = {};
-
-  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
-
-  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
-  }
-  return t;
-};
-
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
     "default": mod
@@ -43801,11 +43755,10 @@ function applyPatch(pnpapi, opts) {
 
     if (options && options.plugnplay === false) {
       const {
-        plugnplay
-      } = options,
-            rest = __rest(options, ["plugnplay"]); // Workaround a bug present in some version of Node (now fixed)
+        plugnplay,
+        ...rest
+      } = options; // Workaround a bug present in some version of Node (now fixed)
       // https://github.com/nodejs/node/pull/28078
-
 
       const forwardedOptions = Object.keys(rest).length > 0 ? rest : undefined;
 
@@ -44730,9 +44683,9 @@ function makeApi(runtimeState, opts) {
       const info = getPackageInformation(locator);
       if (info === null) return null;
       const packageLocation = fslib_1.npath.fromPortablePath(info.packageLocation);
-      const nativeInfo = Object.assign(Object.assign({}, info), {
+      const nativeInfo = { ...info,
         packageLocation
-      });
+      };
       return nativeInfo;
     },
     findPackageLocator: path => {
@@ -44848,7 +44801,7 @@ function makeManager(pnpapi, opts) {
 
     if (typeof parent.pnpApiPath === `undefined`) {
       if (parent.filename !== null) {
-        return findApiPathFor(parent.filename);
+        return parent.pnpApiPath = findApiPathFor(parent.filename);
       } else {
         return initialApiPath;
       }

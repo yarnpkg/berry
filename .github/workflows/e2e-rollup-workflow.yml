@@ -9,10 +9,10 @@ on:
     - .github/workflows/e2e-rollup-workflow.yml
     - scripts/e2e-setup-ci.sh
 
-name: 'E2E rollup.js'
+name: 'E2E Rollup'
 jobs:
   chore:
-    name: 'Validating rollup.js'
+    name: 'Validating Rollup'
     runs-on: ubuntu-latest
 
     steps:
