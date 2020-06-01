@@ -2,6 +2,7 @@ releases:
   "@yarnpkg/cli": prerelease
   "@yarnpkg/core": prerelease
   "@yarnpkg/fslib": prerelease
+  "@yarnpkg/plugin-link": prerelease
   "@yarnpkg/plugin-pnp": prerelease
   "@yarnpkg/pnp": prerelease
 
