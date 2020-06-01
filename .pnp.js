@@ -34801,6 +34801,10 @@ class NodeFS extends FakeFS_1.BasePortableFakeFS {
     return path_1.PortablePath.root;
   }
 
+  resolve(p) {
+    return path_1.ppath.resolve(p);
+  }
+
   async openPromise(p, flags, mode) {
     return await new Promise((resolve, reject) => {
       this.realFs.open(path_1.npath.fromPortablePath(p), flags, mode, this.makeCallback(resolve, reject));
@@ -35151,8 +35155,6 @@ const copyPromise_1 = __webpack_require__(14);
 
 const path_1 = __webpack_require__(0);
 
-const path_2 = __webpack_require__(0);
-
 class FakeFS {
   constructor(pathUtils) {
     this.pathUtils = pathUtils;
@@ -35319,7 +35321,7 @@ class FakeFS {
       if (!exists || overwrite) {
         if (exists) this.removeSync(destination);
         const target = baseFs.readlinkSync(source);
-        this.symlinkSync(path_2.convertPath(this.pathUtils, target), destination);
+        this.symlinkSync(path_1.convertPath(this.pathUtils, target), destination);
       }
     } else {
       throw new Error(`Unsupported file type (file: ${source}, mode: 0o${stat.mode.toString(8).padStart(6, `0`)})`);
@@ -35514,11 +35516,7 @@ FakeFS.DEFAULT_TIME = 315532800;
 
 class BasePortableFakeFS extends FakeFS {
   constructor() {
-    super(path_2.ppath);
-  }
-
-  resolve(p) {
-    return this.pathUtils.resolve(path_1.PortablePath.root, p);
+    super(path_1.ppath);
   }
 
 }
@@ -36382,6 +36380,10 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
     this.ready = false;
   }
 
+  resolve(p) {
+    return path_1.ppath.resolve(path_1.PortablePath.root, p);
+  }
+
   async openPromise(p, flags, mode) {
     return this.openSync(p, flags, mode);
   }
@@ -36407,7 +36409,7 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
     const source = this.readFileSync(entry.p);
     source.copy(buffer, offset, realPosition, realPosition + length);
     const bytesRead = Math.max(0, Math.min(source.length - realPosition, length));
-    if (position === -1) entry.cursor += bytesRead;
+    if (position === -1 || position === null) entry.cursor += bytesRead;
     return bytesRead;
   }
 
@@ -36837,9 +36839,10 @@ class ZipFS extends FakeFS_1.BasePortableFakeFS {
     };else if (typeof opts === `string`) opts = {
       flag: `a`,
       encoding: opts
-    };else if (typeof opts.flag === `undefined`) opts = Object.assign({
-      flag: `a`
-    }, opts);
+    };else if (typeof opts.flag === `undefined`) opts = {
+      flag: `a`,
+      ...opts
+    };
     return this.writeFileSync(p, content, opts);
   }
 
@@ -37193,15 +37196,15 @@ function makeError(pnpCode, message, data = {}) {
     enumerable: false
   };
   return Object.defineProperties(new Error(message), {
-    code: Object.assign(Object.assign({}, propertySpec), {
+    code: { ...propertySpec,
       value: code
-    }),
-    pnpCode: Object.assign(Object.assign({}, propertySpec), {
+    },
+    pnpCode: { ...propertySpec,
       value: pnpCode
-    }),
-    data: Object.assign(Object.assign({}, propertySpec), {
+    },
+    data: { ...propertySpec,
       value: data
-    })
+    }
   });
 }
 
@@ -37227,17 +37230,6 @@ exports.getIssuerModule = getIssuerModule;
 
 "use strict";
 
-
-var __rest = this && this.__rest || function (s, e) {
-  var t = {};
-
-  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
-
-  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
-  }
-  return t;
-};
 
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
@@ -37270,7 +37262,8 @@ const makeManager_1 = __webpack_require__(33); // We must copy the fs into a loc
 // 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
 
 
-const localFs = Object.assign({}, fs_1.default);
+const localFs = { ...fs_1.default
+};
 const nodeFs = new fslib_1.NodeFS(localFs);
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState_1.hydrateRuntimeState);
 const defaultPnpapiResolution = __filename; // We create a virtual filesystem that will do three things:
@@ -37296,19 +37289,18 @@ const defaultApi = Object.assign(makeApi_1.makeApi(defaultRuntimeState, {
    * to map it on `/` rather than the local directory path, or to use a
    * different FS layer than the default one).
    */
-  makeApi: _a => {
-    var {
-      basePath = undefined,
-      fakeFs = defaultFsLayer,
-      pnpapiResolution = defaultPnpapiResolution
-    } = _a,
-        rest = __rest(_a, ["basePath", "fakeFs", "pnpapiResolution"]);
-
+  makeApi: ({
+    basePath = undefined,
+    fakeFs = defaultFsLayer,
+    pnpapiResolution = defaultPnpapiResolution,
+    ...rest
+  }) => {
     const apiRuntimeState = typeof basePath !== `undefined` ? $$SETUP_STATE(hydrateRuntimeState_1.hydrateRuntimeState, basePath) : defaultRuntimeState;
-    return makeApi_1.makeApi(apiRuntimeState, Object.assign({
+    return makeApi_1.makeApi(apiRuntimeState, {
       fakeFs,
-      pnpapiResolution
-    }, rest));
+      pnpapiResolution,
+      ...rest
+    });
   },
 
   /**
@@ -37598,7 +37590,7 @@ class CwdFS extends ProxiedFS_1.ProxiedFS {
     baseFs = new NodeFS_1.NodeFS()
   } = {}) {
     super(path_1.ppath);
-    this.target = target;
+    this.target = this.pathUtils.normalize(target);
     this.baseFs = baseFs;
   }
 
@@ -37606,12 +37598,24 @@ class CwdFS extends ProxiedFS_1.ProxiedFS {
     return this.pathUtils.resolve(this.baseFs.getRealPath(), this.target);
   }
 
+  resolve(p) {
+    if (this.pathUtils.isAbsolute(p)) {
+      return path_1.ppath.normalize(p);
+    } else {
+      return this.baseFs.resolve(path_1.ppath.join(this.target, p));
+    }
+  }
+
   mapFromBase(path) {
-    return this.pathUtils.relative(this.getRealPath(), path);
+    return path;
   }
 
   mapToBase(path) {
-    return this.pathUtils.resolve(this.getRealPath(), path);
+    if (this.pathUtils.isAbsolute(path)) {
+      return path;
+    } else {
+      return this.pathUtils.join(this.target, path);
+    }
   }
 
 }
@@ -38157,6 +38161,10 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
         this.zipInstances.delete(path);
       }
     }
+  }
+
+  resolve(p) {
+    return this.baseFs.resolve(p);
   }
 
   remapFd(zipFs, fd) {
@@ -38813,7 +38821,7 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     requireSubpath = true
   } = {}) {
     if (typeof p !== `string`) return await discard();
-    const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(path_1.PortablePath.root, p));
+    const normalizedP = this.resolve(p);
     const zipInfo = this.findZip(normalizedP);
     if (!zipInfo) return await discard();
     if (requireSubpath && zipInfo.subPath === `/`) return await discard();
@@ -38824,7 +38832,7 @@ class ZipOpenFS extends FakeFS_1.BasePortableFakeFS {
     requireSubpath = true
   } = {}) {
     if (typeof p !== `string`) return discard();
-    const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(path_1.PortablePath.root, p));
+    const normalizedP = this.resolve(p);
     const zipInfo = this.findZip(normalizedP);
     if (!zipInfo) return discard();
     if (requireSubpath && zipInfo.subPath === `/`) return discard();
@@ -43630,17 +43638,6 @@ module.exports = require("string_decoder");
 "use strict";
 
 
-var __rest = this && this.__rest || function (s, e) {
-  var t = {};
-
-  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
-
-  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
-  }
-  return t;
-};
-
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
     "default": mod
@@ -43776,11 +43773,10 @@ function applyPatch(pnpapi, opts) {
 
     if (options && options.plugnplay === false) {
       const {
-        plugnplay
-      } = options,
-            rest = __rest(options, ["plugnplay"]); // Workaround a bug present in some version of Node (now fixed)
+        plugnplay,
+        ...rest
+      } = options; // Workaround a bug present in some version of Node (now fixed)
       // https://github.com/nodejs/node/pull/28078
-
 
       const forwardedOptions = Object.keys(rest).length > 0 ? rest : undefined;
 
@@ -44705,9 +44701,9 @@ function makeApi(runtimeState, opts) {
       const info = getPackageInformation(locator);
       if (info === null) return null;
       const packageLocation = fslib_1.npath.fromPortablePath(info.packageLocation);
-      const nativeInfo = Object.assign(Object.assign({}, info), {
+      const nativeInfo = { ...info,
         packageLocation
-      });
+      };
       return nativeInfo;
     },
     findPackageLocator: path => {
@@ -44823,7 +44819,7 @@ function makeManager(pnpapi, opts) {
 
     if (typeof parent.pnpApiPath === `undefined`) {
       if (parent.filename !== null) {
-        return findApiPathFor(parent.filename);
+        return parent.pnpApiPath = findApiPathFor(parent.filename);
       } else {
         return initialApiPath;
       }
