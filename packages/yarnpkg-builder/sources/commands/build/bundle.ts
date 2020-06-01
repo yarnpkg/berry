@@ -51,7 +51,8 @@ export default class BuildBundleCommand extends Command {
   async execute() {
     const basedir = process.cwd();
     const portableBaseDir = npath.toPortablePath(basedir);
-    const configuration = new Configuration(portableBaseDir, portableBaseDir, new Map());
+
+    const configuration = Configuration.create(portableBaseDir);
 
     const plugins = findPlugins({basedir, profile: this.profile, plugins: this.plugins.map(plugin => path.resolve(plugin))});
     const modules = [...getDynamicLibs().keys()].concat(plugins);

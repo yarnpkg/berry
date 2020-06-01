@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
-import {Configuration, Project}              from '@yarnpkg/core';
-import {scriptUtils, structUtils}            from '@yarnpkg/core';
-import {Filename, ppath, toFilename, xfs}    from '@yarnpkg/fslib';
-import {Command, Usage}                      from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                 from '@yarnpkg/cli';
+import {Configuration, Project}                              from '@yarnpkg/core';
+import {scriptUtils, structUtils}                            from '@yarnpkg/core';
+import {NativePath, Filename, ppath, toFilename, xfs, npath} from '@yarnpkg/fslib';
+import {Command, Usage}                                      from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class DlxCommand extends BaseCommand {
@@ -43,7 +43,43 @@ export default class DlxCommand extends BaseCommand {
 
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`package.json`)), `{}\n`);
       await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`yarn.lock`)), ``);
-      await xfs.writeFilePromise(ppath.join(tmpDir, toFilename(`.yarnrc.yml`)), `enableGlobalCache: true\n`);
+
+      const targetYarnrc = ppath.join(tmpDir, toFilename(`.yarnrc.yml`));
+      const projectCwd = await Configuration.findProjectCwd(this.context.cwd, Filename.lockfile);
+
+      const sourceYarnrc = projectCwd !== null
+        ? ppath.join(projectCwd, toFilename(`.yarnrc.yml`))
+        : null;
+
+      if (sourceYarnrc !== null && xfs.existsSync(sourceYarnrc)) {
+        await xfs.copyFilePromise(sourceYarnrc, targetYarnrc);
+
+        await Configuration.updateConfiguration(tmpDir, (current: any) => {
+          if (typeof current.plugins === `undefined`)
+            return {enableGlobalCache: true};
+
+          return {
+            enableGlobalCache: true,
+            plugins: current.plugins.map((plugin: any) => {
+              const sourcePath: NativePath = typeof plugin === `string`
+                ? plugin
+                : plugin.path;
+
+              const remapPath = npath.isAbsolute(sourcePath)
+                ? sourcePath
+                : npath.resolve(npath.fromPortablePath(projectCwd!), sourcePath);
+
+              if (typeof plugin === `string`) {
+                return remapPath;
+              } else {
+                return {path: remapPath, spec: plugin.spec};
+              }
+            }),
+          };
+        });
+      } else {
+        await xfs.writeFilePromise(targetYarnrc, `enableGlobalCache: true\n`);
+      }
 
       const pkgs = typeof this.pkg !== `undefined`
         ? [this.pkg]

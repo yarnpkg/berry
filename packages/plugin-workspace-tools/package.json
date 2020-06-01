@@ -1,10 +1,11 @@
 {
   "name": "@yarnpkg/plugin-workspace-tools",
   "version": "2.0.0-rc.18",
+  "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
-    "clipanion": "^2.1.5",
+    "clipanion": "^2.4.0",
     "p-limit": "^2.2.0",
     "yup": "^0.27.0"
   },
@@ -35,5 +36,8 @@
   },
   "files": [
     "/lib/**/*"
-  ]
+  ],
+  "engines": {
+    "node": ">=10.19.0"
+  }
 }

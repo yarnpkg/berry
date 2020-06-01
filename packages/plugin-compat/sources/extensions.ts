@@ -69,4 +69,10 @@ export const packageExtensions: Array<[string, any]> = [
       [`postcss-scss`]: optionalPeerDep,
     },
   }],
+  // https://github.com/cssinjs/jss/pull/1315
+  [`jss-plugin-rule-value-function@<=10.1.1`, {
+    dependencies: {
+      [`tiny-warning`]: `^1.0.2`,
+    },
+  }],
 ];

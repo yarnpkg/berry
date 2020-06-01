@@ -1,4 +1,5 @@
 import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import {stringifySyml, parseSyml}                  from '@yarnpkg/parsers';
 import klaw                                        from 'klaw';
 import tarFs                                       from 'tar-fs';
 import zlib                                        from 'zlib';
@@ -177,6 +178,10 @@ export const writeJson = (target: PortablePath, object: any): Promise<void> => {
   return exports.writeFile(target, JSON.stringify(object));
 };
 
+export const writeSyml = (target: PortablePath, object: any): Promise<void> => {
+  return exports.writeFile(target, stringifySyml(object));
+};
+
 export const readJson = async (source: PortablePath): Promise<any> => {
   const fileContent = await exports.readFile(source, `utf8`);
 
@@ -184,6 +189,16 @@ export const readJson = async (source: PortablePath): Promise<any> => {
     return JSON.parse(fileContent);
   } catch (error) {
     throw new Error(`Invalid json file (${source})`);
+  }
+};
+
+export const readSyml = async (source: PortablePath): Promise<any> => {
+  const fileContent = await exports.readFile(source, `utf8`);
+
+  try {
+    return parseSyml(fileContent);
+  } catch (error) {
+    throw new Error(`Invalid syml file (${source})`);
   }
 };
 

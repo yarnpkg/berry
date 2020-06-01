@@ -1,6 +1,7 @@
 {
     "name": "pkg-tests-fixtures",
     "private": true,
+    "license": "BSD-2-Clause",
     "dependencies": {
         "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
     },
@@ -10,5 +11,8 @@
     "repository": {
         "type": "git",
         "url": "ssh://git@github.com/yarnpkg/berry.git"
+    },
+    "engines": {
+        "node": ">=10.19.0"
     }
 }

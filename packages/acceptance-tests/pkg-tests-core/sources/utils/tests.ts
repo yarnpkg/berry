@@ -488,10 +488,10 @@ export interface PackageDriver {
   withConfig: (definition: Record<string, any>) => PackageDriver;
 }
 
-type RunFunction = (
+export type RunFunction = (
   {path, run, source}:
   {
-    path: string,
+    path: PortablePath,
     run: (...args: Array<any>) => Promise<ExecResult>,
     source: (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>
   }

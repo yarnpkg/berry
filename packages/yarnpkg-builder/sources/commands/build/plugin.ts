@@ -5,12 +5,12 @@ import {Command, Usage, UsageError}                                        from 
 import filesize                                                            from 'filesize';
 import fs                                                                  from 'fs';
 import path                                                                from 'path';
+import TerserPlugin                                                        from 'terser-webpack-plugin';
 import {RawSource}                                                         from 'webpack-sources';
 import webpack                                                             from 'webpack';
 
 import {isDynamicLib}                                                      from '../../tools/isDynamicLib';
 import {makeConfig}                                                        from '../../tools/makeConfig';
-import {reindent}                                                          from '../../tools/reindent';
 
 // The name gets normalized so that everyone can override some plugins by
 // their own (@arcanis/yarn-plugin-foo would override @yarnpkg/plugin-foo
@@ -25,6 +25,9 @@ const getNormalizedName = (name: string) => {
 
 // eslint-disable-next-line arca/no-default-export
 export default class BuildPluginCommand extends Command {
+  @Command.Boolean(`--no-minify`)
+  noMinify: boolean = false;
+
   static usage: Usage = Command.Usage({
     description: `build the local plugin`,
   });
@@ -33,7 +36,7 @@ export default class BuildPluginCommand extends Command {
   async execute() {
     const basedir = process.cwd();
     const portableBaseDir = npath.toPortablePath(basedir);
-    const configuration = new Configuration(portableBaseDir, portableBaseDir, new Map());
+    const configuration = Configuration.create(portableBaseDir);
 
     const {name: rawName} = require(`${basedir}/package.json`);
     const name = getNormalizedName(rawName);
@@ -57,6 +60,21 @@ export default class BuildPluginCommand extends Command {
         const compiler = webpack(makeConfig({
           context: basedir,
           entry: `.`,
+
+          ...!this.noMinify && {
+            mode: `production`,
+          },
+
+          ...!this.noMinify && {
+            optimization: {
+              minimizer: [
+                new TerserPlugin({
+                  cache: false,
+                  extractComments: false,
+                }),
+              ],
+            },
+          },
 
           output: {
             filename: path.basename(output),
@@ -84,16 +102,18 @@ export default class BuildPluginCommand extends Command {
                 compilation.hooks.optimizeChunkAssets.tap(`MyPlugin`, (chunks: Array<webpack.compilation.Chunk>) => {
                   for (const chunk of chunks) {
                     for (const file of chunk.files) {
-                      compilation.assets[file] = new RawSource(reindent(`
-                        /* eslint-disable*/
-                        module.exports = {
-                          name: ${JSON.stringify(name)},
-                          factory: function (require) {
-                            ${reindent(compilation.assets[file].source().replace(/^ +/, ``), 11)}
-                            return plugin;
-                          },
-                        };
-                      `));
+                      compilation.assets[file] = new RawSource(
+                        [
+                          `/* eslint-disable */`,
+                          `module.exports = {`,
+                          `name: ${JSON.stringify(name)},`,
+                          `factory: function (require) {`,
+                          compilation.assets[file].source(),
+                          `return plugin;`,
+                          `}`,
+                          `};`,
+                        ].join(`\n`)
+                      );
                     }
                   }
                 });
@@ -130,7 +150,7 @@ export default class BuildPluginCommand extends Command {
       report.reportError(MessageName.EXCEPTION, `${buildErrors}`);
     } else {
       report.reportInfo(null, `${chalk.green(`✓`)} Done building ${prettyName}!`);
-      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle path: ${configuration.format(output, FormatType.PATH)})}`);
+      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle path: ${configuration.format(output, FormatType.PATH)}`);
       report.reportInfo(null, `${chalk.cyan(`?`)} Bundle size: ${configuration.format(filesize(fs.statSync(output).size), FormatType.NUMBER)}`);
     }
 

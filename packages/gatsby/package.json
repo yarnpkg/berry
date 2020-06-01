@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/gatsby",
   "private": true,
+  "license": "BSD-2-Clause",
   "dependencies": {
     "@babel/core": "^7.7.4",
     "@emotion/core": "^10.0.7",
@@ -100,5 +101,8 @@
     "@types/react-select": "3.0.11",
     "@types/tinycolor2": "1.4.2",
     "@types/webpack": "^4.32.1"
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }

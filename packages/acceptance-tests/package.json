@@ -1,5 +1,6 @@
 {
   "private": true,
+  "license": "BSD-2-Clause",
   "workspaces": [
     "pkg-tests-core",
     "pkg-tests-fixtures",
@@ -20,5 +21,8 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }

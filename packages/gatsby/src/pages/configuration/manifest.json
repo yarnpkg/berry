@@ -1,7 +1,7 @@
 {
   "title": "JSON Schema for Yarn Manifest files",
   "$schema": "https://json-schema.org/draft/2019-09/schema#",
-  "description": "Manifest files (also called `package.json` because of their name) contain everything needed to describe the settings unique to one particular package. Project will contain multiple such manifests if they use the workspace feature, as each workspace is described through its own manifest.",
+  "description": "Manifest files (also called `package.json` because of their name) contain everything needed to describe the settings unique to one particular package. Project will contain multiple such manifests if they use the workspace feature, as each workspace is described through its own manifest. Note that defaults for these fields can be set via the `initFields` settings.",
   "type": "object",
   "properties": {
     "name": {
@@ -28,7 +28,7 @@
       "default": true
     },
     "license": {
-      "description": "An SPDX identifier that indicates under which license is your package distributed. Note that the default license can be set via the `initLicense` settings.",
+      "description": "An SPDX identifier that indicates under which license is your package distributed.",
       "type": "string",
       "default": "MIT"
     },

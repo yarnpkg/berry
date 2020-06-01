@@ -1,12 +1,14 @@
 {
   "name": "vscode-zipfs",
   "private": true,
+  "license": "BSD-2-Clause",
   "publisher": "arcanis",
   "displayName": "ZipFS - a zip file system",
   "description": "Allows to easily inspect and modify files stored within zip archives.",
   "version": "1.0.2-1",
   "engines": {
-    "vscode": "^1.23.0"
+    "vscode": "^1.23.0",
+    "node": ">=10.19.0"
   },
   "categories": [
     "Other"

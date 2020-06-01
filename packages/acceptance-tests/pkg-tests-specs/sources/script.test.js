@@ -2,7 +2,7 @@ const {npath, xfs} = require(`@yarnpkg/fslib`);
 const {isAbsolute, resolve} = require(`path`);
 
 const {
-  fs: {createTemporaryFolder, makeFakeBinary, walk, readFile, writeJson},
+  fs: {createTemporaryFolder, makeFakeBinary, walk, readFile, writeJson, writeFile},
 } = require(`pkg-tests-core`);
 
 const globalName = makeTemporaryEnv.getPackageManagerName();
@@ -306,6 +306,42 @@ describe(`Scripts tests`, () => {
 
       await expect(run(`run`, `ws:foo2`)).resolves.toMatchObject({
         stdout: `1\n`,
+      });
+    })
+  );
+
+  test(
+    `it should setup the correct path for locally installed binaries`,
+    makeTemporaryEnv({
+      scripts: {
+        [`test`]: `node test`,
+      },
+      dependencies: {
+        [`has-bin-entries`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await writeFile(`${path}/test.js`, `
+      const {existsSync} = require('fs');
+      const {join} = require('path');
+
+      const files = ['has-bin-entries'];
+      if (process.platform === 'win32')
+        files.push('has-bin-entries.cmd');
+
+      for (const file of files) {
+        if (!existsSync(join(process.env.BERRY_BIN_FOLDER, file))) {
+          console.error('Expected ' + file + ' to exist');
+          process.exit(1);
+        }
+      }
+
+      console.log('ok');
+      `);
+
+      await expect(run(`test`)).resolves.toMatchObject({
+        stdout: `ok\n`,
       });
     })
   );

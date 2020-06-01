@@ -118,6 +118,7 @@ export class ExecFetcher implements Fetcher {
           // Expose 'Module' as a global variable
           Object.defineProperty(global, 'Module', {
             get: () => require('module'),
+            configurable: true,
             enumerable: false,
           });
 
@@ -125,6 +126,7 @@ export class ExecFetcher implements Fetcher {
           for (const name of Module.builtinModules.filter((name) => name !== 'module' && !name.startsWith('_'))) {
             Object.defineProperty(global, name, {
               get: () => require(name),
+              configurable: true,
               enumerable: false,
             });
           }
@@ -143,15 +145,12 @@ export class ExecFetcher implements Fetcher {
         const pnpRegularExpression = /\s*--require\s+\S*\.pnp\.c?js\s*/g;
         nodeOptions = nodeOptions.replace(pnpRegularExpression, ` `).trim();
 
-        const runtimeRequire = `--require ${npath.fromPortablePath(runtimeFile)}`;
-        nodeOptions = nodeOptions ? `${runtimeRequire} ${nodeOptions}` : runtimeRequire;
-
         env.NODE_OPTIONS = nodeOptions;
 
         stdout.write(`# This file contains the result of Yarn generating a package (${structUtils.stringifyLocator(locator)})\n`);
         stdout.write(`\n`);
 
-        const {code} = await execUtils.pipevp(process.execPath, [npath.fromPortablePath(generatorPath), structUtils.stringifyIdent(locator)], {cwd, env, stdin, stdout, stderr});
+        const {code} = await execUtils.pipevp(process.execPath, [`--require`, npath.fromPortablePath(runtimeFile), npath.fromPortablePath(generatorPath), structUtils.stringifyIdent(locator)], {cwd, env, stdin, stdout, stderr});
         if (code !== 0) {
           xfs.detachTemp(logDir);
           throw new Error(`Package generation failed (exit code ${code}, logs can be found here: ${logFile})`);

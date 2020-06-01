@@ -15,6 +15,7 @@ import exec                               from './commands/exec';
 import install                            from './commands/install';
 import link                               from './commands/link';
 import node                               from './commands/node';
+import pluginImportSources                from './commands/plugin/import/sources';
 import pluginImport                       from './commands/plugin/import';
 import pluginList                         from './commands/plugin/list';
 import pluginRuntime                      from './commands/plugin/runtime';
@@ -38,6 +39,7 @@ export interface Hooks {
     workspace: Workspace,
     target: suggestUtils.Target,
     descriptor: Descriptor,
+    strategies: Array<suggestUtils.Strategy>
   ) => Promise<void>,
 
   afterWorkspaceDependencyReplacement?: (
@@ -87,6 +89,7 @@ const plugin: Plugin = {
     install,
     link,
     node,
+    pluginImportSources,
     pluginImport,
     pluginList,
     pluginRuntime,

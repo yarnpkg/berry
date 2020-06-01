@@ -1,0 +1,151 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-parcel-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E Parcel'
+jobs:
+  chore:
+    name: 'Validating Parcel'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn init -p
+        yarn add -D parcel@nightly lodash
+
+        # JavaScript
+
+        echo "import _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'JS'], ' '))}; printHello();" | tee index.js
+
+        yarn parcel build index.js
+        [[ "$(node dist/index.js)" = "Hello JS" ]]
+
+        rm -rf dist index.js
+
+        # TypeScript (Babel)
+
+        echo "import * as _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'TS'], ' '))}; printHello();" | tee index.ts
+
+        yarn parcel build index.ts
+        [[ "$(node dist/index.js)" = "Hello TS" ]]
+
+        rm -rf dist index.ts
+
+        # TypeScript (tsc)
+
+        yarn add -D @parcel/config-default @parcel/validator-typescript @types/lodash
+
+        echo "{\"extends\": \"@parcel/config-default\", \"validators\": {\"*.{ts,tsx}\": [\"@parcel/validator-typescript\"]}}" | tee .parcelrc
+
+        echo "{\"compilerOptions\": {  \"noImplicitAny\": true,  \"removeComments\": true,  \"preserveConstEnums\": true,  \"sourceMap\": true}, \"include\": [\"index.ts\"]}" | tee tsconfig.json
+
+        echo "import * as _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'TS'], ' '))}; printHello();" | tee index.ts
+
+        yarn parcel build index.ts
+        [[ "$(node dist/index.js)" = "Hello TS" ]]
+
+        rm -rf dist index.ts tsconfig.json .parcelrc
+
+        # Less
+
+        yarn add -D bootstrap-less
+
+        mkdir src
+        echo "import './main.less';" | tee src/index.js
+        echo "@import 'bootstrap-less/bootstrap/index.less';@import './other.less';.box:extend(.hotpink) {width: 200px;height: 200px;}" | tee src/main.less
+        echo ".hotpink {background: hotpink;}" | tee src/other.less
+
+        yarn parcel build src/index.js
+
+        ls dist | grep "index.css"
+
+        rm -rf dist src
+
+        # Yaml
+
+        echo "import data from './data.yaml';console.log(data.berry.works.with[0]);" | tee index.js
+        echo "berry: {works: {with:  [Parcel]}}" | tee data.yaml
+
+        yarn parcel build index.js
+        [[ "$(node dist/index.js)" = "Parcel" ]]
+
+        rm -rf dist index.js data.yaml
+
+        # MDX
+
+        yarn add react-dom react-select
+
+        echo "import page from './page.mdx'; console.log('MDX Built');" | tee index.js
+        cat > page.mdx <<EOT
+          import Select from 'react-select';
+
+          # Hello, *world*!
+          <div style={{ padding: '20px', backgroundColor: 'tomato' }}>
+            <h3>This is JSX</h3>
+          </div>
+          <Select />
+        EOT
+
+        yarn parcel build index.js
+        [[ "$(node dist/index.js)" = "MDX Built" ]]
+
+        rm -rf dist index.js page.mdx
+
+        # Assets
+
+        echo "import 'url:./text.txt';" | tee index.js
+        echo "Hello World" | tee text.txt
+
+        yarn parcel build index.js
+        ls dist | grep ".txt"
+
+        rm -rf dist index.js text.txt
+
+        # Tree-shaking
+
+        echo "export function square(x) { return x * x } export function cube(x) { return x * x * x }" | tee math.js
+        echo "import { cube } from './math.js'; console.log(cube(5));" | tee index.js
+
+        yarn parcel build index.js
+        [[ "$(node dist/index.js)" = "125" ]]
+        ! cat dist/index.js | grep "square"
+
+        rm -rf dist index.js math.js
+
+        # Multiple entry modules
+
+        mkdir src
+        echo "import hyperCube from './hyperCube.js'; console.log(hyperCube(5));" | tee src/main.js
+        echo "import cube from './cube.js'; console.log(cube(5));" | tee src/otherEntry.js
+        echo "import square from './square.js'; export default function cube(x) { return square(x) * x; }" | tee src/cube.js
+        echo "import cube from './cube.js'; export default function hyperCube(x) { return cube(x) * x; }" | tee src/hyperCube.js
+        echo "export default function square(x) { return x * x; }" | tee src/square.js
+
+        yarn parcel build src/main.js src/otherEntry.js
+        [[ "$(node dist/main.js)" = "625" ]]
+        [[ "$(node dist/otherEntry.js)" = "125" ]]
+        ! cat dist/main.js | grep "cube"
+        ! cat dist/otherEntry.js | grep "cube"
+
+        rm -rf dist src

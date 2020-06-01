@@ -1,5 +1,6 @@
 {
   "name": "@yarnpkg/plugin-node-modules",
+  "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
@@ -9,7 +10,7 @@
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.20",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.22",
     "@zkochan/cmd-shim": "^4.3.0",
-    "clipanion": "^2.1.5",
+    "clipanion": "^2.4.0",
     "micromatch": "^4.0.2"
   },
   "peerDependencies": {
@@ -41,5 +42,8 @@
   },
   "files": [
     "/lib/**/*"
-  ]
+  ],
+  "engines": {
+    "node": ">=10.19.0"
+  }
 }
