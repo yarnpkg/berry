@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                               from '@yarnpkg/cli';
 import {Cache, Configuration, Project, StreamReport, Package, MessageName} from '@yarnpkg/core';
-import {structUtils}                                                       from '@yarnpkg/core';
+import {structUtils, semverUtils}                                          from '@yarnpkg/core';
 import {Command, Usage, UsageError}                                        from 'clipanion';
 import micromatch                                                          from 'micromatch';
 import semver                                                              from 'semver';
@@ -117,7 +117,7 @@ export default class UnplugCommand extends BaseCommand {
           if (!micromatch.isMatch(stringifiedIdent, structUtils.stringifyIdent(pseudoDescriptor)))
             continue;
 
-          if (pkg.version && !semver.satisfies(pkg.version, pseudoDescriptor.range))
+          if (pkg.version && !semverUtils.satisfiesWithPrereleases(pkg.version, pseudoDescriptor.range))
             continue;
 
           const version = pkg.version ?? `unknown`;
@@ -143,10 +143,14 @@ export default class UnplugCommand extends BaseCommand {
         }
       }
 
+      const projectOrWorkspaces = this.all
+        ? `the project`
+        : `any workspace`;
+
       if (unreferencedPatterns.length > 1)
-        throw new UsageError(`Patterns ${unreferencedPatterns.join(`, `)} don't match any packages referenced by any workspace`);
+        throw new UsageError(`Patterns ${unreferencedPatterns.join(`, `)} don't match any packages referenced by ${projectOrWorkspaces}`);
       if (unreferencedPatterns.length > 0)
-        throw new UsageError(`Pattern ${unreferencedPatterns[0]} doesn't match any packages referenced by any workspace`);
+        throw new UsageError(`Pattern ${unreferencedPatterns[0]} doesn't match any packages referenced by ${projectOrWorkspaces}`);
 
       await topLevelWorkspace.persistManifest();
 
