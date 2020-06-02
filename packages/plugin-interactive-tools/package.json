@@ -5,9 +5,11 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/libui": "workspace:^2.0.0-rc.7",
+    "algoliasearch": "^4.2.0",
     "clipanion": "^2.4.0",
     "diff": "^4.0.1",
     "ink": "^2.3.0",
+    "ink-text-input": "^3.2.2",
     "react": "^16.13.1",
     "semver": "^7.1.2"
   },

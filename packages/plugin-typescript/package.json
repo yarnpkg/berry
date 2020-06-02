@@ -5,7 +5,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.19",
-    "algoliasearch": "^4.0.1",
+    "algoliasearch": "^4.2.0",
     "semver": "^7.1.2"
   },
   "peerDependencies": {
