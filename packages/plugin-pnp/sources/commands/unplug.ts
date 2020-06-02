@@ -1,13 +1,20 @@
-import {BaseCommand, WorkspaceRequiredError}         from '@yarnpkg/cli';
-import {Cache, Configuration, Project, StreamReport} from '@yarnpkg/core';
-import {structUtils}                                 from '@yarnpkg/core';
-import {Command, Usage, UsageError}                  from 'clipanion';
-import micromatch                                    from 'micromatch';
+import {BaseCommand, WorkspaceRequiredError}                               from '@yarnpkg/cli';
+import {Cache, Configuration, Project, StreamReport, Package, MessageName} from '@yarnpkg/core';
+import {structUtils}                                                       from '@yarnpkg/core';
+import {Command, Usage, UsageError}                                        from 'clipanion';
+import micromatch                                                          from 'micromatch';
+import semver                                                              from 'semver';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UnplugCommand extends BaseCommand {
   @Command.Rest()
   patterns: Array<string> = [];
+
+  @Command.Boolean(`-A,--all`)
+  all: boolean = false;
+
+  @Command.Boolean(`--json`)
+  json: boolean = false;
 
   static usage: Usage = Command.Usage({
     description: `force the unpacking of a list of packages`,
@@ -20,7 +27,13 @@ export default class UnplugCommand extends BaseCommand {
 
       The unplug command sets a flag that's persisted in your top-level \`package.json\` through the \`dependenciesMeta\` field. As such, to undo its effects, just revert the changes made to the manifest and run \`yarn install\`.
 
+      By default, only packages referenced by workspaces are affected.
+
+      If \`-A,--all\` is set, packages from the entire project are affected.
+
       This command accepts glob patterns as arguments (if valid Descriptors and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
+
+      **Note:** The ranges have to be static, only the package scopes and names can contain glob patterns.
     `,
     examples: [[
       `Unplug lodash`,
@@ -31,6 +44,12 @@ export default class UnplugCommand extends BaseCommand {
     ], [
       `Unplug all packages with the \`@babel\` scope`,
       `yarn unplug '@babel/*'`,
+    ], [
+      `Unplug all instances of lodash referenced by the project`,
+      `yarn unplug lodash -A`,
+    ], [
+      `Unplug all packages (for testing purposes only, not recommended)`,
+      `yarn unplug -A '*'`,
     ]],
   });
 
@@ -43,46 +62,96 @@ export default class UnplugCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    const descriptors = [...project.storedDescriptors.values()];
-    const stringifiedDescriptors = descriptors.map(descriptor => structUtils.stringifyDescriptor(descriptor));
+    if (configuration.get(`nodeLinker`) !== `pnp`)
+      throw new UsageError(`This command can only be used if the \`nodeLinker\` option is set to \`pnp\``);
+
+    await project.restoreInstallState();
 
     const {topLevelWorkspace} = project;
 
-    const unreferencedPatterns = [];
+    let packages: Set<Package>;
+    if (this.all) {
+      packages = new Set(project.storedPackages.values());
+    } else {
+      packages = new Set();
+      for (const workspace of project.workspaces) {
+        for (const descriptor of workspace.dependencies.values()) {
+          const resolution = project.storedResolutions.get(descriptor.descriptorHash);
 
-    for (const pattern of this.patterns) {
-      let isReferenced = false;
+          if (typeof resolution === `undefined`)
+            throw new Error(`Assertion failed: Expected the resolution to have been registered`);
 
-      // This isn't really needed - It's just for consistency:
-      // All patterns are either valid or not for all commands (e.g. remove, up)
-      const pseudoDescriptor = structUtils.parseDescriptor(pattern);
+          const pkg = project.storedPackages.get(resolution);
 
-      for (const stringifiedDescriptor of micromatch(stringifiedDescriptors, structUtils.stringifyDescriptor(pseudoDescriptor))) {
-        const descriptor = structUtils.parseDescriptor(stringifiedDescriptor);
+          if (typeof pkg === `undefined`)
+            throw new Error(`Assertion failed: Expected the package to have been registered`);
 
-        const dependencyMeta = topLevelWorkspace.manifest.ensureDependencyMeta(descriptor);
-
-        dependencyMeta.unplugged = true;
-
-        isReferenced = true;
-      }
-
-      if (!isReferenced) {
-        unreferencedPatterns.push(pattern);
+          packages.add(pkg);
+        }
       }
     }
-
-    if (unreferencedPatterns.length > 1)
-      throw new UsageError(`Patterns ${unreferencedPatterns.join(`, `)} don't match any packages referenced by any workspace`);
-    if (unreferencedPatterns.length > 0)
-      throw new UsageError(`Pattern ${unreferencedPatterns[0]} doesn't match any packages referenced by any workspace`);
-
-    await topLevelWorkspace.persistManifest();
 
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
+      json: this.json,
     }, async report => {
+      const unreferencedPatterns = [];
+
+      for (const pattern of this.patterns) {
+        let isReferenced = false;
+
+        const patternDescriptor = structUtils.parseDescriptor(pattern);
+        const pseudoDescriptor = patternDescriptor.range !== `unknown`
+          ? patternDescriptor
+          : structUtils.makeDescriptor(patternDescriptor, `*`);
+
+        if (!semver.validRange(pseudoDescriptor.range))
+          throw new UsageError(`The range of the descriptor patterns must be a valid semver range (${structUtils.prettyDescriptor(configuration, pseudoDescriptor)})`);
+
+        for (const pkg of packages) {
+          if (structUtils.isVirtualLocator(pkg))
+            continue;
+
+          const stringifiedIdent = structUtils.stringifyIdent(pkg);
+          if (!micromatch.isMatch(stringifiedIdent, structUtils.stringifyIdent(pseudoDescriptor)))
+            continue;
+
+          if (pkg.version && !semver.satisfies(pkg.version, pseudoDescriptor.range))
+            continue;
+
+          const version = pkg.version ?? `unknown`;
+
+          const dependencyMeta = topLevelWorkspace.manifest.ensureDependencyMeta(
+            structUtils.makeDescriptor(pkg, version)
+          );
+          dependencyMeta.unplugged = true;
+
+          report.reportInfo(MessageName.UNNAMED, `Unplugged ${structUtils.prettyLocator(configuration, pkg)}`);
+
+          report.reportJson({
+            pattern,
+            locator: structUtils.stringifyLocator(pkg),
+            version,
+          });
+
+          isReferenced = true;
+        }
+
+        if (!isReferenced) {
+          unreferencedPatterns.push(pattern);
+        }
+      }
+
+      if (unreferencedPatterns.length > 1)
+        throw new UsageError(`Patterns ${unreferencedPatterns.join(`, `)} don't match any packages referenced by any workspace`);
+      if (unreferencedPatterns.length > 0)
+        throw new UsageError(`Pattern ${unreferencedPatterns[0]} doesn't match any packages referenced by any workspace`);
+
+      await topLevelWorkspace.persistManifest();
+
+      report.reportSeparator();
+
       await project.install({cache, report});
     });
 
