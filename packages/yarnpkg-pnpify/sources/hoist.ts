@@ -61,14 +61,14 @@ export const hoist = (tree: HoisterTree, opts: HoistOptions = {}): HoisterResult
     console.time(`hoist`);
 
   const treeCopy = cloneTree(tree);
-  const ancestorMap = buildAncestorMap(treeCopy);
 
-  hoistTo(treeCopy, treeCopy, new Set([treeCopy.locator]), new Map(), ancestorMap, options);
+  hoistTo(treeCopy, treeCopy, new Set([treeCopy.locator]), new Map(), options);
 
   if (options.debugLevel >= 0)
     console.timeEnd(`hoist`);
 
   if (options.debugLevel >= 3) {
+    const ancestorMap = buildAncestorMap(treeCopy);
     const identList = Array.from(ancestorMap.keys());
     identList.sort((key1, key2) => ancestorMap.get(key2)!.size - ancestorMap.get(key1)!.size);
     console.log(`Package popularity:`);
@@ -143,6 +143,28 @@ const decoupleNode = (originalNode: HoisterWorkTree): HoisterWorkTree => {
   return clone;
 };
 
+const getAllowedHoistIdents = (rootNode: HoisterWorkTree, ancestorMap: AncestorMap): Set<Ident> => {
+  const identMap = new Map<PackageName, Ident>();
+
+  for (const dep of rootNode.dependencies.values()) {
+    if (!rootNode.peerNames.has(dep.name)) {
+      identMap.set(dep.name, dep.ident);
+    }
+  }
+
+  const identList = Array.from(ancestorMap.keys());
+  identList.sort((key1, key2) => ancestorMap.get(key2)!.size - ancestorMap.get(key1)!.size);
+
+  for (const ident of identList) {
+    const name = ident.substring(0, ident.indexOf(`@`, 1));
+    if (!identMap.has(name)) {
+      identMap.set(name, ident);
+    }
+  }
+
+  return new Set(identMap.values());
+};
+
 /**
  * Performs hoisting all the dependencies down the tree to the root node.
  *
@@ -173,10 +195,14 @@ const decoupleNode = (originalNode: HoisterWorkTree): HoisterWorkTree => {
  * @param ancestorMap ancestor map
  * @param options hoisting options
  */
-const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath: Set<Locator>, parentAncestorDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, options: InternalHoistOptions, seenNodes: Set<HoisterWorkTree> = new Set()) => {
+const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath: Set<Locator>, parentAncestorDependencies: Map<PackageName, HoisterWorkTree>, options: InternalHoistOptions, seenNodes: Set<HoisterWorkTree> = new Set()) => {
   if (seenNodes.has(rootNode))
     return;
   seenNodes.add(rootNode);
+
+  const ancestorMap = buildAncestorMap(rootNode);
+
+  let allowedHoistIdents: Set<Ident> | null = getAllowedHoistIdents(rootNode, ancestorMap);
 
   const ancestorDependencies = new Map(parentAncestorDependencies);
   for (const dep of rootNode.dependencies.values())
@@ -188,7 +214,10 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
   const clonedTree: CloneTree = {clone: rootNode, children: new Map()};
   let hoistCandidates;
   do {
-    hoistCandidates = getHoistCandidates(rootNode, rootNodePath, ancestorDependencies, hoistedDependencies, ancestorMap, options);
+    hoistCandidates = getHoistCandidates(rootNode, rootNodePath, ancestorDependencies, hoistedDependencies, ancestorMap, options, allowedHoistIdents);
+    if (hoistCandidates.size === 0)
+      allowedHoistIdents = null;
+
     for (const hoistSet of hoistCandidates) {
       for (const {nodePath, node} of hoistSet.candidates) {
         let parentClonedNode = clonedTree;
@@ -233,7 +262,7 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
       const clone = decoupleNode(dependency);
       rootNode.dependencies.set(clone.name, clone);
       rootNodePath.add(clone.locator);
-      hoistTo(tree, clone, rootNodePath, ancestorDependencies, ancestorMap, options);
+      hoistTo(tree, clone, rootNodePath, ancestorDependencies, options);
       rootNodePath.delete(clone.locator);
     }
   }
@@ -248,7 +277,7 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
  * @param ancestorDependencies commulative dependencies of all root node ancestors, including root node dependencies
  * @param ancestorMap ancestor map to determine `dependency` version popularity
  */
-const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Locator>, ancestorDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, options: InternalHoistOptions): Set<HoistCandidateSet> => {
+const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Locator>, ancestorDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, ancestorMap: AncestorMap, options: InternalHoistOptions, allowedHoistIdents: Set<Ident> | null): Set<HoistCandidateSet> => {
   const hoistCandidates: HoistCandidates = new Map();
   const parents: Array<Tuple> = [];
   const seenNodes = new Set<HoisterWorkTree>();
@@ -375,7 +404,7 @@ const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Locator
       }
     }
 
-    if (!isSeen && locatorPath.indexOf(node.locator) < 0) {
+    if (allowedHoistIdents === null && !isSeen && locatorPath.indexOf(node.locator) < 0) {
       seenNodes.add(node);
       const parent = parents[parents.length - 1].node;
       const tuple = {parent, node};
@@ -394,7 +423,7 @@ const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Locator
     const tuple = {parent: rootNode, node: dep};
     parents.push(tuple);
     for (const subDep of dep.dependencies.values())
-      if (!dep.peerNames.has(subDep.name) && subDep.locator !== dep.locator)
+      if ((allowedHoistIdents === null || allowedHoistIdents.has(dep.ident)) && !dep.peerNames.has(subDep.name) && subDep.locator !== dep.locator)
         computeHoistCandidates([dep], [rootNode.locator, dep.locator], subDep);
 
     parents.pop();
@@ -559,14 +588,14 @@ const shrinkTree = (tree: HoisterWorkTree): HoisterResult => {
  * Builds mapping, where key is a dependent package locator and the value is the list of
  * ancestors who depend on this package.
  *
- * @param tree package tree
+ * @param rootNode package tree root node
  *
  * @returns ancestor map
  */
-const buildAncestorMap = (tree: HoisterWorkTree): AncestorMap => {
+const buildAncestorMap = (rootNode: HoisterWorkTree): AncestorMap => {
   const ancestorMap: AncestorMap = new Map();
 
-  const seenNodes = new Set<HoisterWorkTree>([tree]);
+  const seenNodes = new Set<HoisterWorkTree>([rootNode]);
 
   const addParent = (parentNode: HoisterWorkTree, node: HoisterWorkTree) => {
     const isSeen = !!seenNodes.has(node);
@@ -588,9 +617,9 @@ const buildAncestorMap = (tree: HoisterWorkTree): AncestorMap => {
     }
   };
 
-  for (const dep of tree.dependencies.values())
-    if (!tree.peerNames.has(dep.name))
-      addParent(tree, dep);
+  for (const dep of rootNode.dependencies.values())
+    if (!rootNode.peerNames.has(dep.name))
+      addParent(rootNode, dep);
 
   return ancestorMap;
 };
