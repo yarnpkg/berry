@@ -3,7 +3,7 @@ export type HoisterTree = {name: PackageName, reference: string, dependencies: S
 export type HoisterResult = {name: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
 type Locator = string;
 type Ident = string;
-type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, reasons: Map<PackageName, {root: HoisterWorkTree, reason: string}>};
+type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, {root: HoisterWorkTree, reason: string}>};
 
 type Tuple = {
   node: HoisterWorkTree,
@@ -115,6 +115,34 @@ const getHoistedDependencies = (rootNode: HoisterWorkTree): Map<PackageName, Hoi
   return hoistedDependencies;
 };
 
+const decoupleNode = (originalNode: HoisterWorkTree): HoisterWorkTree => {
+  if (originalNode.decoupled)
+    return originalNode;
+
+  const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons} = originalNode;
+  // To perform node hoisting from parent node we must clone parent nodes up to the root node,
+  // because some other package in the tree might depend on the parent package where hoisting
+  // cannot be performed
+  const clone = {
+    name,
+    references: new Set(references),
+    ident,
+    locator,
+    dependencies: new Map(dependencies),
+    originalDependencies: new Map(originalDependencies),
+    hoistedDependencies: new Map(hoistedDependencies),
+    peerNames: new Set(peerNames),
+    reasons: new Map(reasons),
+    decoupled: true,
+  };
+  const selfDep = clone.dependencies.get(name);
+  if (selfDep && selfDep.ident == clone.ident)
+    // Update self-reference
+    clone.dependencies.set(name, clone);
+
+  return clone;
+};
+
 /**
  * Performs hoisting all the dependencies down the tree to the root node.
  *
@@ -167,28 +195,10 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
         for (const originalNode of nodePath) {
           let nodeClone = parentClonedNode.children.get(originalNode);
           if (!nodeClone) {
-            const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons} = originalNode;
-            // To perform node hoisting from parent node we must clone parent nodes up to the root node,
-            // because some other package in the tree might depend on the parent package where hoisting
-            // cannot be performed
-            const clone = {
-              name,
-              references: new Set(references),
-              ident,
-              locator,
-              dependencies: new Map(dependencies),
-              originalDependencies: new Map(originalDependencies),
-              hoistedDependencies: new Map(hoistedDependencies),
-              peerNames: new Set(peerNames),
-              reasons: new Map(reasons),
-            };
+            const clone = decoupleNode(originalNode);
             nodeClone = {clone, children: new Map()};
-            const selfDep = clone.dependencies.get(name);
-            if (selfDep && selfDep.ident == clone.ident)
-              // Update self-reference
-              clone.dependencies.set(name, clone);
             parentClonedNode.children.set(originalNode, nodeClone);
-            parentClonedNode.clone.dependencies.set(name, clone);
+            parentClonedNode.clone.dependencies.set(clone.name, clone);
           }
           parentClonedNode = nodeClone;
         }
@@ -220,9 +230,11 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
 
   for (const dependency of rootNode.dependencies.values()) {
     if (!rootNode.peerNames.has(dependency.name) && !rootNodePath.has(dependency.locator)) {
-      rootNodePath.add(dependency.locator);
-      hoistTo(tree, dependency, rootNodePath, ancestorDependencies, ancestorMap, options);
-      rootNodePath.delete(dependency.locator);
+      const clone = decoupleNode(dependency);
+      rootNode.dependencies.set(clone.name, clone);
+      rootNodePath.add(clone.locator);
+      hoistTo(tree, clone, rootNodePath, ancestorDependencies, ancestorMap, options);
+      rootNodePath.delete(clone.locator);
     }
   }
 };
@@ -458,6 +470,7 @@ const cloneTree = (tree: HoisterTree): HoisterWorkTree => {
     hoistedDependencies: new Map(),
     peerNames: new Set(peerNames),
     reasons: new Map(),
+    decoupled: false,
   };
 
   const seenNodes = new Map<HoisterTree, HoisterWorkTree>([[tree, treeCopy]]);
@@ -478,6 +491,7 @@ const cloneTree = (tree: HoisterTree): HoisterWorkTree => {
         hoistedDependencies: new Map(),
         peerNames: new Set(peerNames),
         reasons: new Map(),
+        decoupled: false,
       };
       seenNodes.set(node, workNode);
     }
