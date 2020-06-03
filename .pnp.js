@@ -43790,6 +43790,40 @@ function applyPatch(pnpapi, opts) {
     return module.exports;
   };
 
+  function getIssuerSpecsFromPaths(paths) {
+    return paths.map(path => ({
+      apiPath: opts.manager.findApiPathFor(path),
+      path,
+      module: null
+    }));
+  }
+
+  function getIssuerSpecsFromModule(module) {
+    const issuer = internalTools_1.getIssuerModule(module);
+    const issuerPath = issuer !== null ? fslib_1.npath.dirname(issuer.filename) : process.cwd();
+    return [{
+      apiPath: opts.manager.getApiPathFromParent(issuer),
+      path: issuerPath,
+      module
+    }];
+  }
+
+  function makeFakeParent(path) {
+    const fakeParent = new module_1.Module(``);
+    const fakeFilePath = fslib_1.npath.join(path, `[file]`);
+    fakeParent.paths = module_1.Module._nodeModulePaths(fakeFilePath);
+    return fakeParent;
+  } // Splits a require request into its components, or return null if the request is a file path
+
+
+  const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
+
+  function getAbsoluteRequest(request, parent) {
+    if (fslib_1.npath.isAbsolute(request)) return request;
+    if (parent != null && request.match(pathRegExp) === null) return fslib_1.npath.resolve(fslib_1.npath.dirname(parent.filename), request);
+    return null;
+  }
+
   const originalModuleResolveFilename = module_1.Module._resolveFilename;
 
   module_1.Module._resolveFilename = function (request, parent, isMain, options) {
@@ -43825,32 +43859,21 @@ function applyPatch(pnpapi, opts) {
       }
     }
 
-    const getIssuerSpecsFromPaths = paths => {
-      return paths.map(path => ({
-        apiPath: opts.manager.findApiPathFor(path),
-        path: fslib_1.npath.toPortablePath(path),
-        module: null
-      }));
-    };
-
-    const getIssuerSpecsFromModule = module => {
-      const issuer = internalTools_1.getIssuerModule(module);
-      const issuerPath = issuer !== null ? fslib_1.npath.dirname(issuer.filename) : process.cwd();
-      return [{
-        apiPath: opts.manager.getApiPathFromParent(issuer),
-        path: fslib_1.npath.toPortablePath(issuerPath),
-        module
-      }];
-    };
-
-    const makeFakeParent = path => {
-      const fakeParent = new module_1.Module(``);
-      const fakeFilePath = fslib_1.ppath.join(path, `[file]`);
-      fakeParent.paths = module_1.Module._nodeModulePaths(fslib_1.npath.fromPortablePath(fakeFilePath));
-      return fakeParent;
-    };
-
     const issuerSpecs = options && options.paths ? getIssuerSpecsFromPaths(options.paths) : getIssuerSpecsFromModule(parent);
+    const absoluteRequest = getAbsoluteRequest(request, parent);
+
+    if (absoluteRequest !== null) {
+      const apiPath = opts.manager.findApiPathFor(absoluteRequest);
+
+      if (apiPath !== null) {
+        issuerSpecs.unshift({
+          apiPath,
+          path: `${fslib_1.npath.toPortablePath(absoluteRequest)}/`,
+          module: null
+        });
+      }
+    }
+
     let firstError;
 
     for (const {

@@ -160,6 +160,51 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     return module.exports;
   };
 
+
+  function getIssuerSpecsFromPaths(paths: Array<NativePath>) {
+    return paths.map(path => ({
+      apiPath: opts.manager.findApiPathFor(path),
+      path,
+      module: null,
+    }));
+  }
+
+  function getIssuerSpecsFromModule(module: NodeModule | null | undefined) {
+    const issuer = getIssuerModule(module);
+
+    const issuerPath = issuer !== null
+      ? npath.dirname(issuer.filename)
+      : process.cwd();
+
+    return [{
+      apiPath: opts.manager.getApiPathFromParent(issuer),
+      path: issuerPath,
+      module,
+    }];
+  }
+
+  function makeFakeParent(path: string) {
+    const fakeParent = new Module(``);
+
+    const fakeFilePath = npath.join(path, `[file]` as Filename);
+    fakeParent.paths = Module._nodeModulePaths(fakeFilePath);
+
+    return fakeParent;
+  }
+
+  // Splits a require request into its components, or return null if the request is a file path
+  const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
+
+  function getAbsoluteRequest(request: string, parent: Module | null | undefined) {
+    if (npath.isAbsolute(request))
+      return request;
+
+    if (parent != null && request.match(pathRegExp) === null)
+      return npath.resolve(npath.dirname(parent.filename), request);
+
+    return null;
+  }
+
   const originalModuleResolveFilename = Module._resolveFilename;
 
   Module._resolveFilename = function(request: string, parent: NodeModule | null | undefined, isMain: boolean, options?: {[key: string]: any}) {
@@ -202,40 +247,21 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       }
     }
 
-    const getIssuerSpecsFromPaths = (paths: Array<NativePath>) => {
-      return paths.map(path => ({
-        apiPath: opts.manager.findApiPathFor(path),
-        path: npath.toPortablePath(path),
-        module: null,
-      }));
-    };
-
-    const getIssuerSpecsFromModule = (module: NodeModule | null | undefined) => {
-      const issuer = getIssuerModule(module);
-
-      const issuerPath = issuer !== null
-        ? npath.dirname(issuer.filename)
-        : process.cwd();
-
-      return [{
-        apiPath: opts.manager.getApiPathFromParent(issuer),
-        path: npath.toPortablePath(issuerPath),
-        module,
-      }];
-    };
-
-    const makeFakeParent = (path: PortablePath) => {
-      const fakeParent = new Module(``);
-
-      const fakeFilePath = ppath.join(path, `[file]` as Filename);
-      fakeParent.paths = Module._nodeModulePaths(npath.fromPortablePath(fakeFilePath));
-
-      return fakeParent;
-    };
-
     const issuerSpecs = options && options.paths
       ? getIssuerSpecsFromPaths(options.paths)
       : getIssuerSpecsFromModule(parent);
+
+    const absoluteRequest = getAbsoluteRequest(request, parent);
+    if (absoluteRequest !== null) {
+      const apiPath = opts.manager.findApiPathFor(absoluteRequest);
+      if (apiPath !== null) {
+        issuerSpecs.unshift({
+          apiPath,
+          path: `${npath.toPortablePath(absoluteRequest)}/` as PortablePath,
+          module: null,
+        });
+      }
+    }
 
     let firstError;
 
