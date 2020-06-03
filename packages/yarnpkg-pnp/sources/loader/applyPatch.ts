@@ -247,7 +247,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       : getIssuerSpecsFromModule(parent);
 
     if (request.match(pathRegExp) === null) {
-      const parentDirectory = parent != null
+      const parentDirectory = parent?.filename != null
         ? npath.dirname(parent.filename)
         : null;
 

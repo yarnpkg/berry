@@ -43855,7 +43855,7 @@ function applyPatch(pnpapi, opts) {
     const issuerSpecs = options && options.paths ? getIssuerSpecsFromPaths(options.paths) : getIssuerSpecsFromModule(parent);
 
     if (request.match(pathRegExp) === null) {
-      const parentDirectory = parent != null ? fslib_1.npath.dirname(parent.filename) : null;
+      const parentDirectory = (parent === null || parent === void 0 ? void 0 : parent.filename) != null ? fslib_1.npath.dirname(parent.filename) : null;
       const absoluteRequest = fslib_1.npath.isAbsolute(request) ? request : parentDirectory !== null ? fslib_1.npath.resolve(parentDirectory, request) : null;
 
       if (absoluteRequest !== null) {
