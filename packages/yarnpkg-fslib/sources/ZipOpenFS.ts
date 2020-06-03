@@ -90,6 +90,10 @@ export class ZipOpenFS extends BasePortableFakeFS {
     }
   }
 
+  resolve(p: PortablePath) {
+    return this.baseFs.resolve(p);
+  }
+
   private remapFd(zipFs: ZipFS, fd: number) {
     const remappedFd = this.nextFd++ | ZIP_FD;
     this.fdMap.set(remappedFd, [zipFs, fd]);
@@ -654,7 +658,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     if (typeof p !== `string`)
       return await discard();
 
-    const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(PortablePath.root, p));
+    const normalizedP = this.resolve(p);
 
     const zipInfo = this.findZip(normalizedP);
     if (!zipInfo)
@@ -670,7 +674,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     if (typeof p !== `string`)
       return discard();
 
-    const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(PortablePath.root, p));
+    const normalizedP = this.resolve(p);
 
     const zipInfo = this.findZip(normalizedP);
     if (!zipInfo)

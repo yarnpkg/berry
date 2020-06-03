@@ -8,7 +8,7 @@ import {suggestUtils}                                                           
 import {Command, Usage}                                                                                                    from 'clipanion';
 import {diffWords}                                                                                                         from 'diff';
 import {Box, Color, Text}                                                                                                  from 'ink';
-import React, {useEffect, useState}                                                                                        from 'react';
+import React, {useEffect, useState, useRef}                                                                                from 'react';
 import semver                                                                                                              from 'semver';
 
 const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
@@ -172,9 +172,19 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       const [action, setAction] = useMinistore<string | null>(descriptor.descriptorHash, null);
       const [suggestions, setSuggestions] = useState<Array<{value: string | null, label: string}> | null>(null);
 
+      const mountedRef = useRef<boolean>(true);
+
+      useEffect(() => {
+        return () => {
+          mountedRef.current = false;
+        };
+      }, []);
+
       useEffect(() => {
         fetchSuggestions(descriptor).then(suggestions => {
-          setSuggestions(suggestions);
+          if (mountedRef.current) {
+            setSuggestions(suggestions);
+          }
         });
       }, [
         descriptor.descriptorHash,

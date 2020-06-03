@@ -323,6 +323,10 @@ export class ZipFS extends BasePortableFakeFS {
     this.ready = false;
   }
 
+  resolve(p: PortablePath) {
+    return ppath.resolve(PortablePath.root, p);
+  }
+
   async openPromise(p: PortablePath, flags: string, mode?: number) {
     return this.openSync(p, flags, mode);
   }

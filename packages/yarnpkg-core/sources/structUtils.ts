@@ -498,5 +498,5 @@ export function prettyWorkspace(configuration: Configuration, workspace: Workspa
  * them to a different location if that's a critical requirement.
  */
 export function getIdentVendorPath(ident: Ident) {
-  return `/node_modules/${requirableIdent(ident)}` as PortablePath;
+  return `node_modules/${requirableIdent(ident)}` as PortablePath;
 }

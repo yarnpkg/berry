@@ -1,6 +1,6 @@
 import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions, Package, execUtils} from '@yarnpkg/core';
 
-import {npath, PortablePath, xfs, ppath, Filename, NodeFS}                                                                 from '@yarnpkg/fslib';
+import {npath, PortablePath, xfs, ppath, Filename, NodeFS, NativePath, CwdFS}                                              from '@yarnpkg/fslib';
 
 import {Hooks as PatchHooks}                                                                                               from './index';
 
@@ -110,7 +110,7 @@ export async function loadPatchFiles(parentLocator: Locator | null, patchPaths: 
   // If the package fs publicized its "original location" (for example like
   // in the case of "file:" packages), we use it to derive the real location.
   const effectiveParentFetch = parentFetch && parentFetch.localPath
-    ? {packageFs: new NodeFS(), prefixPath: parentFetch.localPath, releaseFs: undefined}
+    ? {packageFs: new CwdFS(PortablePath.root), prefixPath: ppath.relative(PortablePath.root, parentFetch.localPath)}
     : parentFetch;
 
   // Discard the parent fs unless we really need it to access the files
@@ -178,12 +178,16 @@ export async function diffFolders(folderA: PortablePath, folderB: PortablePath) 
   const folderBN = npath.fromPortablePath(folderB).replace(/\\/g, `/`);
 
   const {stdout} = await execUtils.execvp(`git`, [`diff`, `--ignore-cr-at-eol`, `--full-index`, `--no-index`, folderAN, folderBN], {
-    cwd:npath.toPortablePath(process.cwd()),
+    cwd: npath.toPortablePath(process.cwd()),
   });
 
+  const normalizePath = folderAN.startsWith(`/`)
+    ? (p: NativePath) => p.slice(1)
+    : (p: NativePath) => p;
+
   return stdout
-    .replace(new RegExp(`(a|b)${miscUtils.escapeRegExp(`/${folderAN.substr(folderAN.startsWith(`/`) ? 1 : 0)}/`)}`, `g`), `$1/`)
-    .replace(new RegExp(`(a|b)${miscUtils.escapeRegExp(`/${folderBN.substr(folderBN.startsWith(`/`) ? 1 : 0)}/`)}`, `g`), `$1/`)
+    .replace(new RegExp(`(a|b)(${miscUtils.escapeRegExp(`/${normalizePath(folderAN)}/`)})`, `g`), `$1/`)
+    .replace(new RegExp(`(a|b)${miscUtils.escapeRegExp(`/${normalizePath(folderBN)}/`)}`, `g`), `$1/`)
     .replace(new RegExp(miscUtils.escapeRegExp(`${folderAN}/`), `g`), ``)
     .replace(new RegExp(miscUtils.escapeRegExp(`${folderBN}/`), `g`), ``);
 }

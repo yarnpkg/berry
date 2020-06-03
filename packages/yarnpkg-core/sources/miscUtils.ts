@@ -1,4 +1,5 @@
 import {PortablePath, npath} from '@yarnpkg/fslib';
+import {UsageError}          from 'clipanion';
 import micromatch            from 'micromatch';
 import {Readable, Transform} from 'stream';
 
@@ -263,7 +264,7 @@ export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) 
  *
  * @returns A `string` representing a regular expression or `null` if no glob patterns are provided
  */
-export const buildIgnorePattern = (ignorePatterns: Array<string>) => {
+export function buildIgnorePattern(ignorePatterns: Array<string>) {
   if (ignorePatterns.length === 0)
     return null;
 
@@ -273,4 +274,27 @@ export const buildIgnorePattern = (ignorePatterns: Array<string>) => {
       windows: false,
     }).source})`;
   }).join(`|`);
-};
+}
+
+export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: string | undefined}}) {
+  const regex = /\${(?<variableName>[\d\w_]+)(?<colon>:)?-?(?<fallback>[^}]+)?}/g;
+
+  return value.replace(regex, (...args) => {
+    const {variableName, colon, fallback} = args[args.length - 1];
+
+    const variableExist = Object.prototype.hasOwnProperty.call(env, variableName);
+    const variableValue = process.env[variableName];
+
+    if (variableValue)
+      return variableValue;
+    if (variableExist && !variableValue && colon)
+      return fallback;
+    if (variableExist)
+      return variableValue;
+    if (fallback)
+      return fallback;
+
+    throw new UsageError(`Environment variable not found (${variableName})`);
+  });
+}
+

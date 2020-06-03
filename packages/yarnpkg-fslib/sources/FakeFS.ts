@@ -523,10 +523,6 @@ export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
   protected constructor() {
     super(ppath);
   }
-
-  resolve(p: PortablePath) {
-    return this.pathUtils.resolve(PortablePath.root, p);
-  }
 }
 
 function getEndOfLine(content: string) {

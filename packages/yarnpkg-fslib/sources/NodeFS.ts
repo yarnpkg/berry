@@ -5,7 +5,7 @@ import {Dirent, SymlinkType}                                from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}               from './FakeFS';
 import {MkdirOptions, WatchOptions, WatchCallback, Watcher} from './FakeFS';
 import {ENOSYS}                                             from './errors';
-import {FSPath, PortablePath, Filename, npath}              from './path';
+import {FSPath, PortablePath, Filename, ppath, npath}       from './path';
 
 export class NodeFS extends BasePortableFakeFS {
   private readonly realFs: typeof fs;
@@ -28,6 +28,10 @@ export class NodeFS extends BasePortableFakeFS {
 
   getRealPath() {
     return PortablePath.root;
+  }
+
+  resolve(p: PortablePath) {
+    return ppath.resolve(p);
   }
 
   async openPromise(p: PortablePath, flags: string, mode?: number) {
