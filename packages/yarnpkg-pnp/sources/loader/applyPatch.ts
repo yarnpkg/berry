@@ -160,8 +160,13 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     return module.exports;
   };
 
+  type IssuerSpec = {
+    apiPath: PortablePath | null;
+    path: NativePath | null;
+    module: NodeModule | null | undefined;
+  };
 
-  function getIssuerSpecsFromPaths(paths: Array<NativePath>) {
+  function getIssuerSpecsFromPaths(paths: Array<NativePath>): Array<IssuerSpec> {
     return paths.map(path => ({
       apiPath: opts.manager.findApiPathFor(path),
       path,
@@ -169,7 +174,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     }));
   }
 
-  function getIssuerSpecsFromModule(module: NodeModule | null | undefined) {
+  function getIssuerSpecsFromModule(module: NodeModule | null | undefined): Array<IssuerSpec> {
     const issuer = getIssuerModule(module);
 
     const issuerPath = issuer !== null
@@ -194,16 +199,6 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
   // Splits a require request into its components, or return null if the request is a file path
   const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
-
-  function getAbsoluteRequest(request: string, parent: Module | null | undefined) {
-    if (npath.isAbsolute(request))
-      return request;
-
-    if (parent != null && request.match(pathRegExp) === null)
-      return npath.resolve(npath.dirname(parent.filename), request);
-
-    return null;
-  }
 
   const originalModuleResolveFilename = Module._resolveFilename;
 
@@ -251,15 +246,27 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       ? getIssuerSpecsFromPaths(options.paths)
       : getIssuerSpecsFromModule(parent);
 
-    const absoluteRequest = getAbsoluteRequest(request, parent);
-    if (absoluteRequest !== null) {
-      const apiPath = opts.manager.findApiPathFor(absoluteRequest);
-      if (apiPath !== null) {
-        issuerSpecs.unshift({
-          apiPath,
-          path: `${npath.toPortablePath(absoluteRequest)}/` as PortablePath,
-          module: null,
-        });
+    if (request.match(pathRegExp) === null) {
+      const parentDirectory = parent != null
+        ? npath.dirname(parent.filename)
+        : null;
+
+      const absoluteRequest = npath.isAbsolute(request)
+        ? request
+        : parentDirectory !== null
+          ? npath.resolve(parentDirectory, request)
+          : null;
+
+      if (absoluteRequest !== null) {
+        const apiPath = opts.manager.findApiPathFor(absoluteRequest);
+
+        if (apiPath !== null) {
+          issuerSpecs.unshift({
+            apiPath,
+            path: parentDirectory,
+            module: null,
+          });
+        }
       }
     }
 
@@ -274,8 +281,11 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
       try {
         if (issuerApi !== null) {
-          resolution = issuerApi.resolveRequest(request, `${path}/`);
+          resolution = issuerApi.resolveRequest(request, path !== null ? `${path}/` : null);
         } else {
+          if (path === null)
+            throw new Error(`Assertion failed: Expected the path to be set`);
+
           resolution = originalModuleResolveFilename.call(Module, request, module || makeFakeParent(path), isMain);
         }
       } catch (error) {

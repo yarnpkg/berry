@@ -43817,13 +43817,6 @@ function applyPatch(pnpapi, opts) {
 
 
   const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
-
-  function getAbsoluteRequest(request, parent) {
-    if (fslib_1.npath.isAbsolute(request)) return request;
-    if (parent != null && request.match(pathRegExp) === null) return fslib_1.npath.resolve(fslib_1.npath.dirname(parent.filename), request);
-    return null;
-  }
-
   const originalModuleResolveFilename = module_1.Module._resolveFilename;
 
   module_1.Module._resolveFilename = function (request, parent, isMain, options) {
@@ -43860,17 +43853,21 @@ function applyPatch(pnpapi, opts) {
     }
 
     const issuerSpecs = options && options.paths ? getIssuerSpecsFromPaths(options.paths) : getIssuerSpecsFromModule(parent);
-    const absoluteRequest = getAbsoluteRequest(request, parent);
 
-    if (absoluteRequest !== null) {
-      const apiPath = opts.manager.findApiPathFor(absoluteRequest);
+    if (request.match(pathRegExp) === null) {
+      const parentDirectory = parent != null ? fslib_1.npath.dirname(parent.filename) : null;
+      const absoluteRequest = fslib_1.npath.isAbsolute(request) ? request : parentDirectory !== null ? fslib_1.npath.resolve(parentDirectory, request) : null;
 
-      if (apiPath !== null) {
-        issuerSpecs.unshift({
-          apiPath,
-          path: `${fslib_1.npath.toPortablePath(absoluteRequest)}/`,
-          module: null
-        });
+      if (absoluteRequest !== null) {
+        const apiPath = opts.manager.findApiPathFor(absoluteRequest);
+
+        if (apiPath !== null) {
+          issuerSpecs.unshift({
+            apiPath,
+            path: parentDirectory,
+            module: null
+          });
+        }
       }
     }
 
@@ -43886,8 +43883,9 @@ function applyPatch(pnpapi, opts) {
 
       try {
         if (issuerApi !== null) {
-          resolution = issuerApi.resolveRequest(request, `${path}/`);
+          resolution = issuerApi.resolveRequest(request, path !== null ? `${path}/` : null);
         } else {
+          if (path === null) throw new Error(`Assertion failed: Expected the path to be set`);
           resolution = originalModuleResolveFilename.call(module_1.Module, request, module || makeFakeParent(path), isMain);
         }
       } catch (error) {
