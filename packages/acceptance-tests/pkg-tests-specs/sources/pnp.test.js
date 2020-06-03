@@ -1418,7 +1418,7 @@ describe(`Plug'n'Play`, () => {
           console.log(required);
         `);
 
-        await run(`node`, `${temp}/foo.js`, `no-deps`, `${path}/`);
+        await run(`node`, `${temp}/foo.js`, `no-deps`, `${npath.toPortablePath(path)}/`);
       });
     }),
   );
