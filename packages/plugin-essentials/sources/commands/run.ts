@@ -99,7 +99,7 @@ export default class RunCommand extends BaseCommand {
 
       if (this.inspectBrk) {
         if (typeof this.inspectBrk === `string`) {
-          nodeArgs.push(`--inspect--brk=${this.inspectBrk}`);
+          nodeArgs.push(`--inspect-brk=${this.inspectBrk}`);
         }
         else {
           nodeArgs.push(`--inspect-brk`);
