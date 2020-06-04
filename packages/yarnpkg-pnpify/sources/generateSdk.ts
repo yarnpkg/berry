@@ -177,6 +177,22 @@ export const generatePrettierWrapper = async (pnpApi: PnpApi, target: PortablePa
   });
 };
 
+export const generateJestWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`jest` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeManifest();
+
+  await wrapper.writeBinary(`index.js` as PortablePath);
+
+  await addVSCodeWorkspaceSettings(pnpApi, {
+    [`jest.pathToJest`]: npath.fromPortablePath(
+      wrapper.getProjectPathTo(
+        `index.js` as PortablePath,
+      ),
+    ),
+  });
+};
+
 export const generateTypescriptLanguageServerWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`typescript-language-server` as PortablePath, {pnpApi, target});
 
@@ -226,12 +242,14 @@ export const generateStylelintWrapper = async (pnpApi: PnpApi, target: PortableP
   });
 };
 
+
 const SDKS: Array<[string, (pnpApi: PnpApi, target: PortablePath) => Promise<void>]> = [
   [`eslint`, generateEslintWrapper],
   [`prettier`, generatePrettierWrapper],
   [`typescript-language-server`, generateTypescriptLanguageServerWrapper],
   [`typescript`, generateTypescriptWrapper],
   [`stylelint`, generateStylelintWrapper],
+  [`jest`, generateJestWrapper]
 ];
 
 export const generateSdk = async (pnpApi: PnpApi): Promise<any> => {
