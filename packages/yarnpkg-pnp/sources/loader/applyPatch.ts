@@ -160,6 +160,46 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     return module.exports;
   };
 
+  type IssuerSpec = {
+    apiPath: PortablePath | null;
+    path: NativePath | null;
+    module: NodeModule | null | undefined;
+  };
+
+  function getIssuerSpecsFromPaths(paths: Array<NativePath>): Array<IssuerSpec> {
+    return paths.map(path => ({
+      apiPath: opts.manager.findApiPathFor(path),
+      path,
+      module: null,
+    }));
+  }
+
+  function getIssuerSpecsFromModule(module: NodeModule | null | undefined): Array<IssuerSpec> {
+    const issuer = getIssuerModule(module);
+
+    const issuerPath = issuer !== null
+      ? npath.dirname(issuer.filename)
+      : process.cwd();
+
+    return [{
+      apiPath: opts.manager.getApiPathFromParent(issuer),
+      path: issuerPath,
+      module,
+    }];
+  }
+
+  function makeFakeParent(path: string) {
+    const fakeParent = new Module(``);
+
+    const fakeFilePath = npath.join(path, `[file]` as Filename);
+    fakeParent.paths = Module._nodeModulePaths(fakeFilePath);
+
+    return fakeParent;
+  }
+
+  // Splits a require request into its components, or return null if the request is a file path
+  const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
+
   const originalModuleResolveFilename = Module._resolveFilename;
 
   Module._resolveFilename = function(request: string, parent: NodeModule | null | undefined, isMain: boolean, options?: {[key: string]: any}) {
@@ -202,40 +242,33 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       }
     }
 
-    const getIssuerSpecsFromPaths = (paths: Array<NativePath>) => {
-      return paths.map(path => ({
-        apiPath: opts.manager.findApiPathFor(path),
-        path: npath.toPortablePath(path),
-        module: null,
-      }));
-    };
-
-    const getIssuerSpecsFromModule = (module: NodeModule | null | undefined) => {
-      const issuer = getIssuerModule(module);
-
-      const issuerPath = issuer !== null
-        ? npath.dirname(issuer.filename)
-        : process.cwd();
-
-      return [{
-        apiPath: opts.manager.getApiPathFromParent(issuer),
-        path: npath.toPortablePath(issuerPath),
-        module,
-      }];
-    };
-
-    const makeFakeParent = (path: PortablePath) => {
-      const fakeParent = new Module(``);
-
-      const fakeFilePath = ppath.join(path, `[file]` as Filename);
-      fakeParent.paths = Module._nodeModulePaths(npath.fromPortablePath(fakeFilePath));
-
-      return fakeParent;
-    };
-
     const issuerSpecs = options && options.paths
       ? getIssuerSpecsFromPaths(options.paths)
       : getIssuerSpecsFromModule(parent);
+
+    if (request.match(pathRegExp) === null) {
+      const parentDirectory = parent?.filename != null
+        ? npath.dirname(parent.filename)
+        : null;
+
+      const absoluteRequest = npath.isAbsolute(request)
+        ? request
+        : parentDirectory !== null
+          ? npath.resolve(parentDirectory, request)
+          : null;
+
+      if (absoluteRequest !== null) {
+        const apiPath = opts.manager.findApiPathFor(absoluteRequest);
+
+        if (apiPath !== null) {
+          issuerSpecs.unshift({
+            apiPath,
+            path: parentDirectory,
+            module: null,
+          });
+        }
+      }
+    }
 
     let firstError;
 
@@ -248,8 +281,11 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
       try {
         if (issuerApi !== null) {
-          resolution = issuerApi.resolveRequest(request, `${path}/`);
+          resolution = issuerApi.resolveRequest(request, path !== null ? `${path}/` : null);
         } else {
+          if (path === null)
+            throw new Error(`Assertion failed: Expected the path to be set`);
+
           resolution = originalModuleResolveFilename.call(Module, request, module || makeFakeParent(path), isMain);
         }
       } catch (error) {

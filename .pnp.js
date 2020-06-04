@@ -39363,7 +39363,6 @@ async function copySymlink(operations, lutimes, destinationFs, destination, dest
 
 
 
-
 class FakeFS_FakeFS {
   constructor(pathUtils) {
     this.pathUtils = pathUtils;
@@ -39725,10 +39724,6 @@ class FakeFS_BasePortableFakeFS extends FakeFS_FakeFS {
     super(ppath);
   }
 
-  resolve(p) {
-    return this.pathUtils.resolve(PortablePath.root, p);
-  }
-
 }
 
 function getEndOfLine(content) {
@@ -39798,6 +39793,10 @@ class NodeFS_NodeFS extends FakeFS_BasePortableFakeFS {
 
   getRealPath() {
     return PortablePath.root;
+  }
+
+  resolve(p) {
+    return ppath.resolve(p);
   }
 
   async openPromise(p, flags, mode) {
@@ -40717,6 +40716,10 @@ class ZipFS_ZipFS extends FakeFS_BasePortableFakeFS {
     this.ready = false;
   }
 
+  resolve(p) {
+    return ppath.resolve(PortablePath.root, p);
+  }
+
   async openPromise(p, flags, mode) {
     return this.openSync(p, flags, mode);
   }
@@ -41470,6 +41473,10 @@ class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
     }
   }
 
+  resolve(p) {
+    return this.baseFs.resolve(p);
+  }
+
   remapFd(zipFs, fd) {
     const remappedFd = this.nextFd++ | ZIP_FD;
     this.fdMap.set(remappedFd, [zipFs, fd]);
@@ -42124,7 +42131,7 @@ class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
     requireSubpath = true
   } = {}) {
     if (typeof p !== `string`) return await discard();
-    const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(PortablePath.root, p));
+    const normalizedP = this.resolve(p);
     const zipInfo = this.findZip(normalizedP);
     if (!zipInfo) return await discard();
     if (requireSubpath && zipInfo.subPath === `/`) return await discard();
@@ -42135,7 +42142,7 @@ class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
     requireSubpath = true
   } = {}) {
     if (typeof p !== `string`) return discard();
-    const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(PortablePath.root, p));
+    const normalizedP = this.resolve(p);
     const zipInfo = this.findZip(normalizedP);
     if (!zipInfo) return discard();
     if (requireSubpath && zipInfo.subPath === `/`) return discard();
@@ -42784,6 +42791,33 @@ function applyPatch(pnpapi, opts) {
     return module.exports;
   };
 
+  function getIssuerSpecsFromPaths(paths) {
+    return paths.map(path => ({
+      apiPath: opts.manager.findApiPathFor(path),
+      path,
+      module: null
+    }));
+  }
+
+  function getIssuerSpecsFromModule(module) {
+    const issuer = getIssuerModule(module);
+    const issuerPath = issuer !== null ? npath.dirname(issuer.filename) : process.cwd();
+    return [{
+      apiPath: opts.manager.getApiPathFromParent(issuer),
+      path: issuerPath,
+      module
+    }];
+  }
+
+  function makeFakeParent(path) {
+    const fakeParent = new external_module_["Module"](``);
+    const fakeFilePath = npath.join(path, `[file]`);
+    fakeParent.paths = external_module_["Module"]._nodeModulePaths(fakeFilePath);
+    return fakeParent;
+  } // Splits a require request into its components, or return null if the request is a file path
+
+
+  const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
   const originalModuleResolveFilename = external_module_["Module"]._resolveFilename;
 
   external_module_["Module"]._resolveFilename = function (request, parent, isMain, options) {
@@ -42819,32 +42853,25 @@ function applyPatch(pnpapi, opts) {
       }
     }
 
-    const getIssuerSpecsFromPaths = paths => {
-      return paths.map(path => ({
-        apiPath: opts.manager.findApiPathFor(path),
-        path: npath.toPortablePath(path),
-        module: null
-      }));
-    };
-
-    const getIssuerSpecsFromModule = module => {
-      const issuer = getIssuerModule(module);
-      const issuerPath = issuer !== null ? npath.dirname(issuer.filename) : process.cwd();
-      return [{
-        apiPath: opts.manager.getApiPathFromParent(issuer),
-        path: npath.toPortablePath(issuerPath),
-        module
-      }];
-    };
-
-    const makeFakeParent = path => {
-      const fakeParent = new external_module_["Module"](``);
-      const fakeFilePath = ppath.join(path, `[file]`);
-      fakeParent.paths = external_module_["Module"]._nodeModulePaths(npath.fromPortablePath(fakeFilePath));
-      return fakeParent;
-    };
-
     const issuerSpecs = options && options.paths ? getIssuerSpecsFromPaths(options.paths) : getIssuerSpecsFromModule(parent);
+
+    if (request.match(pathRegExp) === null) {
+      const parentDirectory = (parent === null || parent === void 0 ? void 0 : parent.filename) != null ? npath.dirname(parent.filename) : null;
+      const absoluteRequest = npath.isAbsolute(request) ? request : parentDirectory !== null ? npath.resolve(parentDirectory, request) : null;
+
+      if (absoluteRequest !== null) {
+        const apiPath = opts.manager.findApiPathFor(absoluteRequest);
+
+        if (apiPath !== null) {
+          issuerSpecs.unshift({
+            apiPath,
+            path: parentDirectory,
+            module: null
+          });
+        }
+      }
+    }
+
     let firstError;
 
     for (const {
@@ -42857,8 +42884,9 @@ function applyPatch(pnpapi, opts) {
 
       try {
         if (issuerApi !== null) {
-          resolution = issuerApi.resolveRequest(request, `${path}/`);
+          resolution = issuerApi.resolveRequest(request, path !== null ? `${path}/` : null);
         } else {
+          if (path === null) throw new Error(`Assertion failed: Expected the path to be set`);
           resolution = originalModuleResolveFilename.call(external_module_["Module"], request, module || makeFakeParent(path), isMain);
         }
       } catch (error) {

@@ -1402,6 +1402,28 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should allow external modules to require internal ones`,
+    makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await xfs.mktempPromise(async temp => {
+        await run(`install`);
+
+        await writeFile(`${temp}/foo.js`, `
+          const resolved = require.resolve(process.argv[2], {paths: [process.argv[3]]});
+          const required = require(resolved);
+
+          console.log(required);
+        `);
+
+        await run(`node`, `${npath.fromPortablePath(temp)}/foo.js`, `no-deps`, `${npath.fromPortablePath(path)}/`);
+      });
+    }),
+  );
+
+  test(
     `it should remove the lingering node_modules folders`,
     makeTemporaryEnv({}, async ({path, run, source}) => {
       await xfs.mkdirpPromise(`${path}/node_modules/foo`);
