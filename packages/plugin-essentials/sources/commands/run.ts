@@ -91,8 +91,7 @@ export default class RunCommand extends BaseCommand {
       if (this.inspect) {
         if (typeof this.inspect === `string`) {
           nodeArgs.push(`--inspect=${this.inspect}`);
-        }
-        else {
+        } else {
           nodeArgs.push(`--inspect`);
         }
       }
@@ -100,8 +99,7 @@ export default class RunCommand extends BaseCommand {
       if (this.inspectBrk) {
         if (typeof this.inspectBrk === `string`) {
           nodeArgs.push(`--inspect-brk=${this.inspectBrk}`);
-        }
-        else {
+        } else {
           nodeArgs.push(`--inspect-brk`);
         }
       }
