@@ -79,6 +79,31 @@ describe(`Features`, () => {
         });
       }),
     );
+
+    test.only(
+      `it should apply VSCode typescript server patching to support zip schemes`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`typescript`]: `file:${require.resolve('../../../../../.vscode/pnpify/typescript/lib/tsserver.js')}`,
+        },
+      }, async ({path, run, source}) => {
+
+        await run(`install`);
+        await pnpify([`--sdk`], path);
+
+        const rawOutput = await noPnpNode([`./.vscode/pnpify/typescript/lib/tsserver.js`], path);
+        const jsonOutput = JSON.parse(rawOutput);
+
+console.log('jsonOutput :>> ', jsonOutput);
+
+        // expect(jsonOutput).toMatchObject({
+        //   wrapper: {
+        //     name: `no-deps`,
+        //     version: `1.0.0`,
+        //   },
+        // });
+      }),
+    );
   });
 });
 
