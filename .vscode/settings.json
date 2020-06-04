@@ -13,5 +13,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "typescript.enablePromptUseWorkspaceTsdk": true
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "jest.pathToJest": "yarn run jest"
 }

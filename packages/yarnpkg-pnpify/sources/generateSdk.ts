@@ -178,18 +178,9 @@ export const generatePrettierWrapper = async (pnpApi: PnpApi, target: PortablePa
 };
 
 export const generateJestWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`jest` as PortablePath, {pnpApi, target});
-
-  await wrapper.writeManifest();
-
-  await wrapper.writeBinary(`index.js` as PortablePath);
-
+  // since jest already supports pnp we can just modify the run command
   await addVSCodeWorkspaceSettings(pnpApi, {
-    [`jest.pathToJest`]: npath.fromPortablePath(
-      wrapper.getProjectPathTo(
-        `index.js` as PortablePath,
-      ),
-    ),
+    [`jest.pathToJest`]:  `yarn run jest`,
   });
 };
 
@@ -249,7 +240,7 @@ const SDKS: Array<[string, (pnpApi: PnpApi, target: PortablePath) => Promise<voi
   [`typescript-language-server`, generateTypescriptLanguageServerWrapper],
   [`typescript`, generateTypescriptWrapper],
   [`stylelint`, generateStylelintWrapper],
-  [`jest`, generateJestWrapper]
+  [`jest`, generateJestWrapper],
 ];
 
 export const generateSdk = async (pnpApi: PnpApi): Promise<any> => {
