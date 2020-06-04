@@ -20,7 +20,6 @@ export const makeConfig = (config: webpack.Configuration) => merge({
 
   resolve: {
     extensions: [`.js`, `.ts`, `.tsx`, `.json`],
-    mainFields: [`main`],
     plugins: [PnpWebpackPlugin],
   },
 
@@ -30,17 +29,14 @@ export const makeConfig = (config: webpack.Configuration) => merge({
       exclude: /\.d\.ts$/,
       use: [{
         loader: require.resolve(`babel-loader`),
-        options: {
-          plugins: [
-            [require.resolve(`@babel/plugin-syntax-decorators`), {legacy: true}],
-            [require.resolve(`@babel/plugin-syntax-class-properties`), {loose: true}],
-            require.resolve(`babel-plugin-lazy-import`),
-          ],
-        },
       }, {
         loader: require.resolve(`ts-loader`),
         options: {
-          compilerOptions: {declaration: false},
+          compilerOptions: {
+            declaration: false,
+            module: `ESNext`,
+            moduleResolution: `node`,
+          },
         },
       }],
     }],

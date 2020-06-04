@@ -837,16 +837,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/types", "npm:7.2.2"]
           ],
           "linkType": "HARD",
-        }],
-        ["npm:7.4.4", {
-          "packageLocation": "./.yarn/cache/@babel-helper-call-delegate-npm-7.4.4-5db6f3d54e-1230372235.zip/node_modules/@babel/helper-call-delegate/",
-          "packageDependencies": [
-            ["@babel/helper-call-delegate", "npm:7.4.4"],
-            ["@babel/helper-hoist-variables", "npm:7.4.4"],
-            ["@babel/traverse", "npm:7.5.5"],
-            ["@babel/types", "npm:7.5.5"]
-          ],
-          "linkType": "HARD",
         }]
       ]],
       ["@babel/helper-compilation-targets", [
@@ -1075,14 +1065,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["npm:7.4.4", {
-          "packageLocation": "./.yarn/cache/@babel-helper-hoist-variables-npm-7.4.4-8a2c0c8fbf-0bd7272b8a.zip/node_modules/@babel/helper-hoist-variables/",
-          "packageDependencies": [
-            ["@babel/helper-hoist-variables", "npm:7.4.4"],
-            ["@babel/types", "npm:7.5.5"]
-          ],
-          "linkType": "HARD",
-        }],
         ["npm:7.8.3", {
           "packageLocation": "./.yarn/cache/@babel-helper-hoist-variables-npm-7.8.3-6031c194ad-b5a95ca28d.zip/node_modules/@babel/helper-hoist-variables/",
           "packageDependencies": [
@@ -1147,19 +1129,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/template", "npm:7.2.2"],
             ["@babel/types", "npm:7.2.2"],
             ["lodash", "npm:4.17.11"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:7.5.5", {
-          "packageLocation": "./.yarn/cache/@babel-helper-module-transforms-npm-7.5.5-cd153e23a8-f2e9093fc7.zip/node_modules/@babel/helper-module-transforms/",
-          "packageDependencies": [
-            ["@babel/helper-module-transforms", "npm:7.5.5"],
-            ["@babel/helper-module-imports", "npm:7.0.0"],
-            ["@babel/helper-simple-access", "npm:7.1.0"],
-            ["@babel/helper-split-export-declaration", "npm:7.4.4"],
-            ["@babel/template", "npm:7.4.4"],
-            ["@babel/types", "npm:7.5.5"],
-            ["lodash", "npm:4.17.15"]
           ],
           "linkType": "HARD",
         }],
@@ -1389,16 +1358,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["npm:7.5.5", {
-          "packageLocation": "./.yarn/cache/@babel-helpers-npm-7.5.5-2acf0131a5-9c6058991f.zip/node_modules/@babel/helpers/",
-          "packageDependencies": [
-            ["@babel/helpers", "npm:7.5.5"],
-            ["@babel/template", "npm:7.4.4"],
-            ["@babel/traverse", "npm:7.5.5"],
-            ["@babel/types", "npm:7.5.5"]
-          ],
-          "linkType": "HARD",
-        }],
         ["npm:7.7.4", {
           "packageLocation": "./.yarn/cache/@babel-helpers-npm-7.7.4-83963dc7c2-f054ca6a33.zip/node_modules/@babel/helpers/",
           "packageDependencies": [
@@ -1553,7 +1512,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/core", "npm:7.7.4"],
             ["@babel/helper-create-class-features-plugin", "virtual:648ba06458b69205b9d640e8c5b50aa22e7dee48527b0736b68ecff39542d68328b3ea2f90fea76b0ec7a6085b6de674b80f4c08297b063e6dc48e357c24214b#npm:7.5.5"],
             ["@babel/helper-plugin-utils", "npm:7.0.0"],
-            ["@babel/plugin-syntax-decorators", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:7.2.0"]
+            ["@babel/plugin-syntax-decorators", "virtual:b34e37f85731a93043708435d3428c840c2d64585b3979bf49faa87ad2e06f75d8b1b6739200280d960fc9a14c100767e511f8e016ccd80fc1e0430af9a087f9#npm:7.2.0"]
           ],
           "packagePeers": [
             "@babel/core"
@@ -1891,25 +1850,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["@babel/plugin-syntax-class-properties", [
-        ["virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:7.2.0", {
-          "packageLocation": "./.yarn/$$virtual/@babel-plugin-syntax-class-properties-virtual-bddc1dfabb/0/cache/@babel-plugin-syntax-class-properties-npm-7.2.0-e507d069c2-34f4e77d32.zip/node_modules/@babel/plugin-syntax-class-properties/",
-          "packageDependencies": [
-            ["@babel/plugin-syntax-class-properties", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:7.2.0"],
-            ["@babel/core", "npm:7.7.4"],
-            ["@babel/helper-plugin-utils", "npm:7.0.0"]
-          ],
-          "packagePeers": [
-            "@babel/core"
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["@babel/plugin-syntax-decorators", [
-        ["virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:7.2.0", {
-          "packageLocation": "./.yarn/$$virtual/@babel-plugin-syntax-decorators-virtual-4fe99cb1c8/0/cache/@babel-plugin-syntax-decorators-npm-7.2.0-5c8225a910-eb0f2eb2d7.zip/node_modules/@babel/plugin-syntax-decorators/",
+        ["virtual:b34e37f85731a93043708435d3428c840c2d64585b3979bf49faa87ad2e06f75d8b1b6739200280d960fc9a14c100767e511f8e016ccd80fc1e0430af9a087f9#npm:7.2.0", {
+          "packageLocation": "./.yarn/$$virtual/@babel-plugin-syntax-decorators-virtual-2ce5e7b726/0/cache/@babel-plugin-syntax-decorators-npm-7.2.0-5c8225a910-eb0f2eb2d7.zip/node_modules/@babel/plugin-syntax-decorators/",
           "packageDependencies": [
-            ["@babel/plugin-syntax-decorators", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:7.2.0"],
+            ["@babel/plugin-syntax-decorators", "virtual:b34e37f85731a93043708435d3428c840c2d64585b3979bf49faa87ad2e06f75d8b1b6739200280d960fc9a14c100767e511f8e016ccd80fc1e0430af9a087f9#npm:7.2.0"],
             ["@babel/core", "npm:7.7.4"],
             ["@babel/helper-plugin-utils", "npm:7.0.0"]
           ],
@@ -3143,20 +3088,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "@babel/core"
           ],
           "linkType": "HARD",
-        }],
-        ["virtual:a96e6efd3262248fae2d286ca31b288ad38cafa2de114c27e622800df4004dcb3469792a260b05464c66f538aa0128efffa304614142ee92116ca471a14782d9#npm:7.4.4", {
-          "packageLocation": "./.yarn/$$virtual/@babel-plugin-transform-parameters-virtual-4259229fff/0/cache/@babel-plugin-transform-parameters-npm-7.4.4-73057dcc00-1eb2387f2c.zip/node_modules/@babel/plugin-transform-parameters/",
-          "packageDependencies": [
-            ["@babel/plugin-transform-parameters", "virtual:a96e6efd3262248fae2d286ca31b288ad38cafa2de114c27e622800df4004dcb3469792a260b05464c66f538aa0128efffa304614142ee92116ca471a14782d9#npm:7.4.4"],
-            ["@babel/core", "npm:7.7.4"],
-            ["@babel/helper-call-delegate", "npm:7.4.4"],
-            ["@babel/helper-get-function-arity", "npm:7.0.0"],
-            ["@babel/helper-plugin-utils", "npm:7.0.0"]
-          ],
-          "packagePeers": [
-            "@babel/core"
-          ],
-          "linkType": "HARD",
         }]
       ]],
       ["@babel/plugin-transform-property-literals", [
@@ -4145,16 +4076,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/code-frame", "npm:7.0.0"],
             ["@babel/parser", "npm:7.7.4"],
             ["@babel/types", "npm:7.2.2"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:7.4.4", {
-          "packageLocation": "./.yarn/cache/@babel-template-npm-7.4.4-70497d8e10-fece766ad8.zip/node_modules/@babel/template/",
-          "packageDependencies": [
-            ["@babel/template", "npm:7.4.4"],
-            ["@babel/code-frame", "npm:7.0.0"],
-            ["@babel/parser", "npm:7.7.4"],
-            ["@babel/types", "npm:7.5.5"]
           ],
           "linkType": "HARD",
         }],
@@ -7947,8 +7868,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@babel/core", "npm:7.7.4"],
-            ["@babel/plugin-syntax-class-properties", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:7.2.0"],
-            ["@babel/plugin-syntax-decorators", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:7.2.0"],
             ["@types/filesize", "npm:4.1.0"],
             ["@types/terser-webpack-plugin", "npm:1.2.1"],
             ["@types/webpack", "npm:4.32.1"],
@@ -7960,7 +7879,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["babel-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:8.0.6"],
-            ["babel-plugin-lazy-import", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit=ff060e230afb4f2f36a1c495be65271c14ae2e4b"],
             ["chalk", "npm:3.0.0"],
             ["clipanion", "npm:2.4.0"],
             ["filesize", "npm:4.1.2"],
@@ -7984,8 +7902,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],
             ["@babel/core", "npm:7.7.4"],
-            ["@babel/plugin-syntax-class-properties", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:7.2.0"],
-            ["@babel/plugin-syntax-decorators", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:7.2.0"],
             ["@types/filesize", "npm:4.1.0"],
             ["@types/terser-webpack-plugin", "npm:1.2.1"],
             ["@types/webpack", "npm:4.32.1"],
@@ -7997,7 +7913,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/pnpify", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-pnpify"],
             ["babel-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:8.0.6"],
-            ["babel-plugin-lazy-import", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit=ff060e230afb4f2f36a1c495be65271c14ae2e4b"],
             ["chalk", "npm:3.0.0"],
             ["clipanion", "npm:2.4.0"],
             ["filesize", "npm:4.1.2"],
@@ -10724,24 +10639,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["babel-plugin-jest-hoist", "npm:24.9.0"],
             ["@types/babel__traverse", "npm:7.0.6"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["babel-plugin-lazy-import", [
-        ["virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit=ff060e230afb4f2f36a1c495be65271c14ae2e4b", {
-          "packageLocation": "./.yarn/$$virtual/babel-plugin-lazy-import-virtual-a96e6efd32/0/cache/babel-plugin-lazy-import-https-0f0ba3c3c3-e5b5246c2b.zip/node_modules/babel-plugin-lazy-import/",
-          "packageDependencies": [
-            ["babel-plugin-lazy-import", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#https://github.com/arcanis/babel-plugin-lazy-import.git#commit=ff060e230afb4f2f36a1c495be65271c14ae2e4b"],
-            ["@babel/core", "npm:7.7.4"],
-            ["@babel/helper-module-transforms", "npm:7.5.5"],
-            ["@babel/helper-plugin-utils", "npm:7.0.0"],
-            ["@babel/helpers", "npm:7.5.5"],
-            ["@babel/plugin-transform-parameters", "virtual:a96e6efd3262248fae2d286ca31b288ad38cafa2de114c27e622800df4004dcb3469792a260b05464c66f538aa0128efffa304614142ee92116ca471a14782d9#npm:7.4.4"],
-            ["@babel/template", "npm:7.4.4"]
-          ],
-          "packagePeers": [
-            "@babel/core"
           ],
           "linkType": "HARD",
         }]
@@ -43790,33 +43687,6 @@ function applyPatch(pnpapi, opts) {
     return module.exports;
   };
 
-  function getIssuerSpecsFromPaths(paths) {
-    return paths.map(path => ({
-      apiPath: opts.manager.findApiPathFor(path),
-      path,
-      module: null
-    }));
-  }
-
-  function getIssuerSpecsFromModule(module) {
-    const issuer = internalTools_1.getIssuerModule(module);
-    const issuerPath = issuer !== null ? fslib_1.npath.dirname(issuer.filename) : process.cwd();
-    return [{
-      apiPath: opts.manager.getApiPathFromParent(issuer),
-      path: issuerPath,
-      module
-    }];
-  }
-
-  function makeFakeParent(path) {
-    const fakeParent = new module_1.Module(``);
-    const fakeFilePath = fslib_1.npath.join(path, `[file]`);
-    fakeParent.paths = module_1.Module._nodeModulePaths(fakeFilePath);
-    return fakeParent;
-  } // Splits a require request into its components, or return null if the request is a file path
-
-
-  const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
   const originalModuleResolveFilename = module_1.Module._resolveFilename;
 
   module_1.Module._resolveFilename = function (request, parent, isMain, options) {
@@ -43852,25 +43722,32 @@ function applyPatch(pnpapi, opts) {
       }
     }
 
+    const getIssuerSpecsFromPaths = paths => {
+      return paths.map(path => ({
+        apiPath: opts.manager.findApiPathFor(path),
+        path: fslib_1.npath.toPortablePath(path),
+        module: null
+      }));
+    };
+
+    const getIssuerSpecsFromModule = module => {
+      const issuer = internalTools_1.getIssuerModule(module);
+      const issuerPath = issuer !== null ? fslib_1.npath.dirname(issuer.filename) : process.cwd();
+      return [{
+        apiPath: opts.manager.getApiPathFromParent(issuer),
+        path: fslib_1.npath.toPortablePath(issuerPath),
+        module
+      }];
+    };
+
+    const makeFakeParent = path => {
+      const fakeParent = new module_1.Module(``);
+      const fakeFilePath = fslib_1.ppath.join(path, `[file]`);
+      fakeParent.paths = module_1.Module._nodeModulePaths(fslib_1.npath.fromPortablePath(fakeFilePath));
+      return fakeParent;
+    };
+
     const issuerSpecs = options && options.paths ? getIssuerSpecsFromPaths(options.paths) : getIssuerSpecsFromModule(parent);
-
-    if (request.match(pathRegExp) === null) {
-      const parentDirectory = (parent === null || parent === void 0 ? void 0 : parent.filename) != null ? fslib_1.npath.dirname(parent.filename) : null;
-      const absoluteRequest = fslib_1.npath.isAbsolute(request) ? request : parentDirectory !== null ? fslib_1.npath.resolve(parentDirectory, request) : null;
-
-      if (absoluteRequest !== null) {
-        const apiPath = opts.manager.findApiPathFor(absoluteRequest);
-
-        if (apiPath !== null) {
-          issuerSpecs.unshift({
-            apiPath,
-            path: parentDirectory,
-            module: null
-          });
-        }
-      }
-    }
-
     let firstError;
 
     for (const {
@@ -43883,9 +43760,8 @@ function applyPatch(pnpapi, opts) {
 
       try {
         if (issuerApi !== null) {
-          resolution = issuerApi.resolveRequest(request, path !== null ? `${path}/` : null);
+          resolution = issuerApi.resolveRequest(request, `${path}/`);
         } else {
-          if (path === null) throw new Error(`Assertion failed: Expected the path to be set`);
           resolution = originalModuleResolveFilename.call(module_1.Module, request, module || makeFakeParent(path), isMain);
         }
       } catch (error) {
