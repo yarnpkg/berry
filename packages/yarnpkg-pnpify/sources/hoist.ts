@@ -169,7 +169,7 @@ const decoupleNode = (originalNode: HoisterWorkTree): HoisterWorkTree => {
  * @param ancestorMap ancestor map
  */
 const getHoistIdentMap = (rootNode: HoisterWorkTree, ancestorMap: AncestorMap): Map<PackageName, Array<Ident>> => {
-  const identMap = new Map<PackageName, Array<Ident>>();
+  const identMap = new Map<PackageName, Array<Ident>>([[rootNode.name, [rootNode.ident]]]);
 
   for (const dep of rootNode.dependencies.values()) {
     if (!rootNode.peerNames.has(dep.name)) {
@@ -340,67 +340,6 @@ const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Locator
 
     let isHoistable = hoistIdents.has(node.ident);
     if (isHoistable) {
-      const isRegularDepAtRoot = !rootNode.peerNames.has(node.name);
-      if (options.debugLevel >= 2 && !isRegularDepAtRoot)
-        reason = `- is a peer dependency at ${reasonRoot}`;
-      isHoistable = isRegularDepAtRoot;
-    }
-
-    let rootDep;
-
-    if (isHoistable) {
-      const isCompatibleIdent = (rootNode.name !== node.name || rootNode.ident === node.ident);
-      if (options.debugLevel >= 2 && !isCompatibleIdent)
-        reason = `- conflicts with ${reasonRoot}`;
-
-      isHoistable = isCompatibleIdent;
-    }
-
-    if (isHoistable) {
-      let isNameAvailable = false;
-      const hoistedDep = hoistedDependencies.get(node.name);
-      isNameAvailable = (!hoistedDep || hoistedDep.ident === node.ident);
-      if (options.debugLevel >= 2 && !isNameAvailable)
-        reason = `- filled by: ${prettyPrintLocator(hoistedDep!.locator)} at ${reasonRoot}`;
-      if (isNameAvailable) {
-        for (const tuple of parents) {
-          const parentDep = tuple.parent.dependencies.get(node.name);
-          if (parentDep && parentDep.ident !== node.ident) {
-            isNameAvailable = false;
-            if (options.debugLevel >= 2)
-              reason = `- filled by: ${prettyPrintLocator(parentDep!.locator)} at ${prettyPrintLocator(tuple.parent.locator)}`;
-            break;
-          }
-        }
-      }
-
-      isHoistable = isNameAvailable;
-    }
-
-    if (isHoistable && !rootDep) {
-      let areRegularDepsSatisfied = true;
-      // Check that hoisted dependencies of current node are satisifed
-      for (const dep of node.hoistedDependencies.values()) {
-        if (node.originalDependencies.has(dep.name)) {
-          const depNode = ancestorDependencies.get(dep.name);
-          if (!depNode) {
-            if (options.debugLevel >= 2)
-              reason = `- hoisted dependency ${prettyPrintLocator(dep.locator)} is absent at ${reasonRoot}`;
-            areRegularDepsSatisfied = false;
-          } else if (depNode.ident !== dep.ident) {
-            if (options.debugLevel >= 2)
-              reason = `- hoisted dependency ${prettyPrintLocator(dep.locator)} has a clash with ${prettyPrintLocator(depNode.locator)} at ${reasonRoot}`;
-            areRegularDepsSatisfied = false;
-          }
-        }
-        if (!areRegularDepsSatisfied) {
-          break;
-        }
-      }
-      isHoistable = areRegularDepsSatisfied;
-    }
-
-    if (isHoistable) {
       let arePeerDepsSatisfied = true;
       const checkList = new Set(node.peerNames);
       for (let idx = parents.length - 1; idx >= 0; idx--) {
@@ -423,6 +362,27 @@ const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Locator
         }
       }
       isHoistable = arePeerDepsSatisfied;
+    }
+
+    if (isHoistable) {
+      let isNameAvailable = false;
+      const hoistedDep = hoistedDependencies.get(node.name);
+      isNameAvailable = (!hoistedDep || hoistedDep.ident === node.ident);
+      if (options.debugLevel >= 2 && !isNameAvailable)
+        reason = `- filled by: ${prettyPrintLocator(hoistedDep!.locator)} at ${reasonRoot}`;
+      if (isNameAvailable) {
+        for (const tuple of parents) {
+          const parentDep = tuple.parent.dependencies.get(node.name);
+          if (parentDep && parentDep.ident !== node.ident) {
+            isNameAvailable = false;
+            if (options.debugLevel >= 2)
+              reason = `- filled by: ${prettyPrintLocator(parentDep!.locator)} at ${prettyPrintLocator(tuple.parent.locator)}`;
+            break;
+          }
+        }
+      }
+
+      isHoistable = isNameAvailable;
     }
 
     if (isHoistable) {
