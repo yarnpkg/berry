@@ -1,7 +1,7 @@
 releases:
   "@yarnpkg/plugin-essentials": prerelease
+  "@yarnpkg/cli": prerelease
 
 declined:
   - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-typescript"
-  - "@yarnpkg/cli"
