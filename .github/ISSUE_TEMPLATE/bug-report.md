@@ -19,6 +19,14 @@ The _minimal_ information needed to reproduce your issue (ideally a package.json
 
 IMPORTANT: We strongly prefer reproductions that use Sherlock. Please check our documentation for more information: https://yarnpkg.com/advanced/sherlock
 
+<details>
+  <summary>Reproduction</summary>
+
+  ```js repro
+  // Sherlock reproduction
+  ```
+</details>
+
 **Screenshots**
 
 If applicable, add screenshots to help explain your problem.

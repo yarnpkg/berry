@@ -2,7 +2,7 @@ import {xfs, ppath} from '@yarnpkg/fslib';
 
 const {
   fs: {writeJson},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
   describe(`install`, () => {
@@ -143,6 +143,9 @@ describe(`Commands`, () => {
           archiveName2 = zipFiles2[0];
         }
 
+        // We need to replace the hash in the cache filename, otherwise the cache just won't find the archive
+        archiveName1 = archiveName1.replace(/[^-]+$/, archiveName2.match(/[^-]+$/)[0]);
+
         await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
           dependencies: {
             [`no-deps`]: `1.0.0`,
@@ -169,10 +172,10 @@ describe(`Commands`, () => {
     );
 
     test(
-      "reports warning if published binary field is a path but no package name is set",
+      `reports warning if published binary field is a path but no package name is set`,
       makeTemporaryEnv(
         {
-          bin: "./bin/cli.js",
+          bin: `./bin/cli.js`,
         },
         async ({path, run, source}) => {
           await expect(run(`install`)).resolves.toMatchSnapshot();
@@ -181,17 +184,17 @@ describe(`Commands`, () => {
     );
 
     test(
-      "displays validation issues of nested workspaces",
+      `displays validation issues of nested workspaces`,
       makeTemporaryEnv(
         {
-          workspaces: ["packages"],
+          workspaces: [`packages`],
         },
         async ({path, run, source}) => {
           await writeJson(`${path}/packages/package.json`, {
-            workspaces: ["package-a"],
+            workspaces: [`package-a`],
           });
           await writeJson(`${path}/packages/package-a/package.json`, {
-            bin: "./bin/cli.js",
+            bin: `./bin/cli.js`,
           });
 
           await expect(run(`install`)).resolves.toMatchSnapshot();

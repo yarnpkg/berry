@@ -2,6 +2,11 @@
 /features /features/pnp 301
 /cli /cli/install 301
 /advanced /advanced/architecture 301
+/package/* /package 200
+
+
+/playground/* code=:value https://viko0.sse.codesandbox.io/:splat?code=:value 301
+/playground/* https://viko0.sse.codesandbox.io/:splat 301
 
 /install.sh https://classic.yarnpkg.com/install.sh 301
 

@@ -8,7 +8,7 @@ Object {
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
 ➤ YN0013: │ no-deps@npm:2.0.0 can't be found in the cache and will be fetched from the remote registry
-➤ YN0019: │ no-deps-npm-1.0.0-cf533b267a-2.zip appears to be unused - removing
+➤ YN0019: │ no-deps-npm-1.0.0-cf533b267a-58e8c7e103.zip appears to be unused - removing
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed

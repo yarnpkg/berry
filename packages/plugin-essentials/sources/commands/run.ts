@@ -7,11 +7,11 @@ import {pluginCommands}                    from '../pluginCommands';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends BaseCommand {
-  @Command.Boolean(`--inspect`)
-  inspect: boolean = false;
+  @Command.String(`--inspect`, {tolerateBoolean: true})
+  inspect: string | boolean = false;
 
-  @Command.Boolean(`--inspect-brk`)
-  inspectBrk: boolean = false;
+  @Command.String(`--inspect-brk`, {tolerateBoolean: true})
+  inspectBrk: string | boolean = false;
 
   // This flag is mostly used to give users a way to configure node-gyp. They
   // just have to add it as a top-level workspace.
@@ -88,10 +88,21 @@ export default class RunCommand extends BaseCommand {
     if (binary) {
       const nodeArgs = [];
 
-      if (this.inspect)
-        nodeArgs.push(`--inspect`);
-      if (this.inspectBrk)
-        nodeArgs.push(`--inspect-brk`);
+      if (this.inspect) {
+        if (typeof this.inspect === `string`) {
+          nodeArgs.push(`--inspect=${this.inspect}`);
+        } else {
+          nodeArgs.push(`--inspect`);
+        }
+      }
+
+      if (this.inspectBrk) {
+        if (typeof this.inspectBrk === `string`) {
+          nodeArgs.push(`--inspect-brk=${this.inspectBrk}`);
+        } else {
+          nodeArgs.push(`--inspect-brk`);
+        }
+      }
 
       return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, this.scriptName, this.args, {cwd: this.context.cwd, project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr, nodeArgs});
     }
@@ -105,11 +116,11 @@ export default class RunCommand extends BaseCommand {
     // not workspaces). No particular reason except maybe security concerns.
 
     if (!this.topLevel && !this.binariesOnly && workspace && this.scriptName.includes(`:`)) {
-      let candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {
+      const candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {
         return workspace.manifest.scripts.has(this.scriptName) ? workspace : null;
       }));
 
-      let filteredWorkspaces = candidateWorkspaces.filter(workspace => {
+      const filteredWorkspaces = candidateWorkspaces.filter(workspace => {
         return workspace !== null;
       }) as Array<Workspace>;
 

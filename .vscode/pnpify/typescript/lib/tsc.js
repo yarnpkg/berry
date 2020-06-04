@@ -10,8 +10,10 @@ const absPnpApiPath = resolve(__dirname, relPnpApiPath);
 const absRequire = (createRequire || createRequireFromPath)(absPnpApiPath);
 
 if (existsSync(absPnpApiPath)) {
-  // Setup the environment to be able to require typescript/lib/tsc.js
-  require(absPnpApiPath).setup();
+  if (!process.versions.pnp) {
+    // Setup the environment to be able to require typescript/lib/tsc.js
+    require(absPnpApiPath).setup();
+  }
 }
 
 // Defer to the real typescript/lib/tsc.js your application uses

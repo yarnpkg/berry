@@ -57,6 +57,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
     // Since we only care about a few very specific settings (yarn-path and ignore-path) we tolerate extra configuration key.
     // If we didn't, we wouldn't even be able to run `yarn config` (which is recommended in the invalid config error message)
     const configuration = await Configuration.find(npath.toPortablePath(process.cwd()), pluginConfiguration, {
+      usePath: true,
       strict: false,
     });
 
@@ -94,7 +95,8 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
 
         if (iAmHere !== iShouldBeHere) {
           process.chdir(cwd);
-          return await run();
+          await run();
+          return;
         }
       }
 

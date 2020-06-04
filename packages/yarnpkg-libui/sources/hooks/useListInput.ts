@@ -1,21 +1,41 @@
 import {StdinContext}          from 'ink';
 import {useContext, useEffect} from 'react';
 
-export const useListInput = function <T>(value: T, values: Array<T>, {active, minus, plus, set}: {active: boolean, minus: string, plus: string, set: (value: T) => void}) {
+export const useListInput = function <T>(value: T, values: Array<T>, {active, minus, plus, set, loop = true}: {active: boolean, minus: string, plus: string, set: (value: T) => void, loop?: boolean}) {
   const {stdin} = useContext(StdinContext);
 
   useEffect(() => {
     if (!active)
-      return;
+      return undefined;
 
     const cb = (ch: any, key: any) => {
       const index = values.indexOf(value);
       switch (key.name) {
         case minus: {
-          set(values[(values.length + index - 1) % values.length]);
+          const nextValueIndex = index - 1;
+
+          if (loop) {
+            set(values[(values.length + nextValueIndex) % values.length]);
+            return;
+          }
+
+          if (nextValueIndex < 0)
+            return;
+
+          set(values[nextValueIndex]);
         } break;
         case plus: {
-          set(values[(index + 1) % values.length]);
+          const nextValueIndex = index + 1;
+
+          if (loop) {
+            set(values[nextValueIndex % values.length]);
+            return;
+          }
+
+          if (nextValueIndex >= values.length)
+            return;
+
+          set(values[nextValueIndex]);
         } break;
       }
     };

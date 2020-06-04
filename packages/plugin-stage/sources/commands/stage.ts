@@ -49,7 +49,7 @@ export default class StageCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
 
-    let {driver, root} = await findDriver(project.cwd);
+    const {driver, root} = await findDriver(project.cwd);
 
     const basePaths: Array<PortablePath | null> = [
       configuration.get(`bstatePath`),

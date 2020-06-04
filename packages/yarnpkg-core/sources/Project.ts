@@ -48,6 +48,8 @@ const INSTALL_STATE_VERSION = 1;
 
 const MULTIPLE_KEYS_REGEXP = / *, */g;
 
+const FETCHER_CONCURRENCY = 32;
+
 const gzip = promisify(zlib.gzip);
 const gunzip = promisify(zlib.gunzip);
 
@@ -58,6 +60,7 @@ export type InstallOptions = {
   report: Report,
   immutable?: boolean,
   lockfileOnly?: boolean,
+  persistProject?: boolean,
 };
 
 export class Project {
@@ -180,6 +183,7 @@ export class Project {
       // Protects against v1 lockfiles
       if (parsed.__metadata) {
         const lockfileVersion = parsed.__metadata.version;
+        const cacheKey = parsed.__metadata.cacheKey;
 
         for (const key of Object.keys(parsed)) {
           if (key === `__metadata`)
@@ -207,8 +211,13 @@ export class Project {
 
           const bin = manifest.bin;
 
-          if (data.checksum != null)
-            this.storedChecksums.set(locator.locatorHash, data.checksum);
+          if (data.checksum != null) {
+            const checksum = typeof cacheKey !== `undefined` && !data.checksum.includes(`/`)
+              ? `${cacheKey}/${data.checksum}`
+              : data.checksum;
+
+            this.storedChecksums.set(locator.locatorHash, checksum);
+          }
 
           if (lockfileVersion >= LOCKFILE_VERSION) {
             const pkg: Package = {...locator, version, languageName, linkType, dependencies, peerDependencies, dependenciesMeta, peerDependenciesMeta, bin};
@@ -275,8 +284,9 @@ export class Project {
     const workspace = new Workspace(workspaceCwd, {project: this});
     await workspace.setup();
 
-    if (this.workspacesByIdent.has(workspace.locator.identHash))
-      throw new Error(`Duplicate workspace name ${structUtils.prettyIdent(this.configuration, workspace.locator)}`);
+    const dup = this.workspacesByIdent.get(workspace.locator.identHash);
+    if (typeof dup !== `undefined`)
+      throw new Error(`Duplicate workspace name ${structUtils.prettyIdent(this.configuration, workspace.locator)}: ${workspaceCwd} conflicts with ${dup.cwd}`);
 
     this.workspaces.push(workspace);
 
@@ -309,7 +319,7 @@ export class Project {
     return workspace;
   }
 
-  getWorkspaceByFilePath(filePath: PortablePath) {
+  tryWorkspaceByFilePath(filePath: PortablePath) {
     let bestWorkspace = null;
 
     for (const workspace of this.workspaces) {
@@ -324,9 +334,17 @@ export class Project {
     }
 
     if (!bestWorkspace)
-      throw new Error(`Workspace not found (${filePath})`);
+      return null;
 
     return bestWorkspace;
+  }
+
+  getWorkspaceByFilePath(filePath: PortablePath) {
+    const workspace = this.tryWorkspaceByFilePath(filePath);
+    if (!workspace)
+      throw new Error(`Workspace not found (${filePath})`);
+
+    return workspace;
   }
 
   tryWorkspaceByIdent(ident: Ident) {
@@ -383,6 +401,20 @@ export class Project {
       throw new Error(`Workspace not found (${structUtils.prettyLocator(this.configuration, locator)})`);
 
     return workspace;
+  }
+
+  /**
+   * Import the dependencies of each resolved workspace into their own
+   * `Workspace` instance.
+   */
+  private refreshWorkspaceDependencies() {
+    for (const workspace of this.workspaces) {
+      const pkg = this.storedPackages.get(workspace.anchoredLocator.locatorHash);
+      if (!pkg)
+        throw new Error(`Assertion failed: Expected workspace to have been resolved`);
+
+      workspace.dependencies = new Map(pkg.dependencies);
+    }
   }
 
   forgetTransientResolutions() {
@@ -458,6 +490,19 @@ export class Project {
     }
 
     return null;
+  }
+
+  async validateEverything(opts: {
+    validationWarnings: Array<{name: MessageName, text: string}>,
+    validationErrors: Array<{name: MessageName, text: string}>,
+    report: Report,
+  }) {
+    for (const warning of opts.validationWarnings)
+      opts.report.reportWarning(warning.name, warning.text);
+
+    for (const error of opts.validationErrors) {
+      opts.report.reportError(error.name, error.text);
+    }
   }
 
   async resolveEverything(opts: {report: Report, lockfileOnly: true, resolver?: Resolver} | {report: Report, lockfileOnly?: boolean, cache: Cache, resolver?: Resolver}) {
@@ -874,17 +919,6 @@ export class Project {
       allResolutions.delete(descriptorHash);
     }
 
-    // Import the dependencies for each resolved workspaces into their own
-    // Workspace instance.
-
-    for (const workspace of this.workspaces) {
-      const pkg = allPackages.get(workspace.anchoredLocator.locatorHash);
-      if (!pkg)
-        throw new Error(`Assertion failed: Expected workspace to have been resolved`);
-
-      workspace.dependencies = new Map(pkg.dependencies);
-    }
-
     // Everything is done, we can now update our internal resolutions to
     // reference the new ones
 
@@ -895,6 +929,11 @@ export class Project {
     this.accessibleLocators = accessibleLocators;
     this.originalPackages = originalPackages;
     this.optionalBuilds = optionalBuilds;
+
+    // Now that the internal resolutions have been updated, we can refresh the
+    // dependencies of each resolved workspace's `Workspace` instance.
+
+    this.refreshWorkspaceDependencies();
   }
 
   async fetchEverything({cache, report, fetcher: userFetcher}: InstallOptions) {
@@ -909,41 +948,44 @@ export class Project {
       return structUtils.stringifyLocator(pkg);
     }]);
 
-    const limit = pLimit(5);
     let firstError = false;
 
     const progress = Report.progressViaCounter(locatorHashes.length);
     report.reportProgress(progress);
 
-    await Promise.all(locatorHashes.map(locatorHash => limit(async () => {
-      const pkg = this.storedPackages.get(locatorHash);
-      if (!pkg)
-        throw new Error(`Assertion failed: The locator should have been registered`);
+    const limit = pLimit(FETCHER_CONCURRENCY);
 
-      if (structUtils.isVirtualLocator(pkg))
-        return;
+    await report.startCacheReport(async () => {
+      await Promise.all(locatorHashes.map(locatorHash => limit(async () => {
+        const pkg = this.storedPackages.get(locatorHash);
+        if (!pkg)
+          throw new Error(`Assertion failed: The locator should have been registered`);
 
-      let fetchResult;
-      try {
-        fetchResult = await fetcher.fetch(pkg, fetcherOptions);
-      } catch (error) {
-        error.message = `${structUtils.prettyLocator(this.configuration, pkg)}: ${error.message}`;
-        report.reportExceptionOnce(error);
-        firstError = error;
-        return;
-      }
+        if (structUtils.isVirtualLocator(pkg))
+          return;
 
-      if (fetchResult.checksum)
-        this.storedChecksums.set(pkg.locatorHash, fetchResult.checksum);
-      else
-        this.storedChecksums.delete(pkg.locatorHash);
+        let fetchResult;
+        try {
+          fetchResult = await fetcher.fetch(pkg, fetcherOptions);
+        } catch (error) {
+          error.message = `${structUtils.prettyLocator(this.configuration, pkg)}: ${error.message}`;
+          report.reportExceptionOnce(error);
+          firstError = error;
+          return;
+        }
 
-      if (fetchResult.releaseFs) {
-        fetchResult.releaseFs();
-      }
-    }).finally(() => {
-      progress.tick();
-    })));
+        if (fetchResult.checksum)
+          this.storedChecksums.set(pkg.locatorHash, fetchResult.checksum);
+        else
+          this.storedChecksums.delete(pkg.locatorHash);
+
+        if (fetchResult.releaseFs) {
+          fetchResult.releaseFs();
+        }
+      }).finally(() => {
+        progress.tick();
+      })));
+    });
 
     if (firstError) {
       throw firstError;
@@ -963,7 +1005,7 @@ export class Project {
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
     const packageLocations: Map<LocatorHash, PortablePath> = new Map();
-    const packageBuildDirectives: Map<LocatorHash, { directives: BuildDirective[], buildLocations: PortablePath[] }> = new Map();
+    const packageBuildDirectives: Map<LocatorHash, { directives: Array<BuildDirective>, buildLocations: Array<PortablePath> }> = new Map();
 
     // Step 1: Installing the packages on the disk
 
@@ -1187,7 +1229,7 @@ export class Project {
       return hash;
     };
 
-    const getBuildHash = (locator: Locator, buildLocations: PortablePath[]) => {
+    const getBuildHash = (locator: Locator, buildLocations: Array<PortablePath>) => {
       const builder = createHash(`sha512`);
 
       builder.update(globalHash);
@@ -1295,6 +1337,9 @@ export class Project {
                   exitCode = 1;
                 }
 
+                stdout.end();
+                stderr.end();
+
                 if (exitCode === 0) {
                   nextBState.set(pkg.locatorHash, buildHash);
                   return true;
@@ -1356,19 +1401,21 @@ export class Project {
   }
 
   async install(opts: InstallOptions) {
-    const validationErrors: Array<string> = [];
-    for (const workspace of this.workspaces) {
-      for (const manifestError of workspace.manifest.errors) {
-        const workspaceName = structUtils.prettyWorkspace(this.configuration, workspace);
-        validationErrors.push(`${workspaceName}: ${manifestError.message}`);
-      }
-    }
+    const validationWarnings: Array<{name: MessageName, text: string}> = [];
+    const validationErrors: Array<{name: MessageName, text: string}> = [];
 
-    if (validationErrors.length > 0) {
+    await this.configuration.triggerHook(hooks => {
+      return hooks.validateProject;
+    }, this, {
+      reportWarning: (name: MessageName, text: string) => validationWarnings.push({name, text}),
+      reportError: (name: MessageName, text: string) => validationErrors.push({name, text}),
+    });
+
+    const problemCount = validationWarnings.length + validationErrors.length;
+
+    if (problemCount > 0) {
       await opts.report.startTimerPromise(`Validation step`, async () => {
-        for (const validationError of validationErrors) {
-          opts.report.reportWarning(MessageName.INVALID_MANIFEST, validationError);
-        }
+        await this.validateEverything({validationWarnings, validationErrors, report: opts.report});
       });
     }
 
@@ -1421,10 +1468,14 @@ export class Project {
 
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);
-      await this.cacheCleanup(opts);
+
+      if (typeof opts.persistProject === `undefined` || opts.persistProject) {
+        await this.cacheCleanup(opts);
+      }
     });
 
-    await this.persist();
+    if (typeof opts.persistProject === `undefined` || opts.persistProject)
+      await this.persist();
 
     await opts.report.startTimerPromise(`Link step`, async () => {
       await this.linkEverything(opts);
@@ -1452,7 +1503,7 @@ export class Project {
 
     const optimizedLockfile: {[key: string]: any} = {};
 
-    optimizedLockfile[`__metadata`] = {
+    optimizedLockfile.__metadata = {
       version: LOCKFILE_VERSION,
     };
 
@@ -1495,6 +1546,26 @@ export class Project {
 
       manifest.bin = new Map(pkg.bin);
 
+      let entryChecksum: string | undefined;
+      const checksum = this.storedChecksums.get(pkg.locatorHash);
+      if (typeof checksum !== `undefined`) {
+        const cacheKeyIndex = checksum.indexOf(`/`);
+        if (cacheKeyIndex === -1)
+          throw new Error(`Assertion failed: Expecte the checksum to reference its cache key`);
+
+        const cacheKey = checksum.slice(0, cacheKeyIndex);
+        const hash = checksum.slice(cacheKeyIndex + 1);
+
+        if (typeof optimizedLockfile.__metadata.cacheKey === `undefined`)
+          optimizedLockfile.__metadata.cacheKey = cacheKey;
+
+        if (cacheKey === optimizedLockfile.__metadata.cacheKey) {
+          entryChecksum = hash;
+        } else {
+          entryChecksum = checksum;
+        }
+      }
+
       optimizedLockfile[key] = {
         ...manifest.exportTo({}, {
           compatibilityMode: false,
@@ -1503,7 +1574,7 @@ export class Project {
         linkType: pkg.linkType.toLowerCase(),
 
         resolution: structUtils.stringifyLocator(pkg),
-        checksum: this.storedChecksums.get(pkg.locatorHash),
+        checksum: entryChecksum,
       };
     }
 
@@ -1537,16 +1608,22 @@ export class Project {
 
   async restoreInstallState() {
     const installStatePath = this.configuration.get<PortablePath>(`installStatePath`);
-    if (!xfs.existsSync(installStatePath))
-      return await this.applyLightResolution();
+    if (!xfs.existsSync(installStatePath)) {
+      await this.applyLightResolution();
+      return;
+    }
 
     const serializedState = await xfs.readFilePromise(installStatePath);
     const installState = v8.deserialize(await gunzip(serializedState) as Buffer);
 
-    if (installState.lockFileChecksum !== this.lockFileChecksum)
-      return await this.applyLightResolution();
+    if (installState.lockFileChecksum !== this.lockFileChecksum) {
+      await this.applyLightResolution();
+      return;
+    }
 
     Object.assign(this, installState);
+
+    this.refreshWorkspaceDependencies();
   }
 
   async applyLightResolution() {

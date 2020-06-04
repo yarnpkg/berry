@@ -1,28 +1,29 @@
 {
   "name": "@yarnpkg/plugin-node-modules",
+  "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.17",
-    "@yarnpkg/libzip": "workspace:^2.0.0-rc.10",
-    "@yarnpkg/parsers": "workspace:^2.0.0-rc.10",
-    "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.19",
-    "@yarnpkg/pnp": "workspace:^2.0.0-rc.18",
-    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.20",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.11",
+    "@yarnpkg/parsers": "workspace:^2.0.0-rc.11",
+    "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.21",
+    "@yarnpkg/pnp": "workspace:^2.0.0-rc.20",
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.22",
     "@zkochan/cmd-shim": "^4.3.0",
-    "clipanion": "^2.1.5",
+    "clipanion": "^2.4.0",
     "micromatch": "^4.0.2"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.31",
-    "@yarnpkg/core": "^2.0.0-rc.25"
+    "@yarnpkg/cli": "^2.0.0-rc.33",
+    "@yarnpkg/core": "^2.0.0-rc.27"
   },
   "devDependencies": {
-    "@types/micromatch": "^3.1.0",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.31",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.25",
+    "@types/micromatch": "^4.0.1",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.33",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.27",
     "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.15"
   },
-  "version": "2.0.0-rc.8",
+  "version": "2.0.0-rc.9",
   "nextVersion": {
     "semver": "2.0.0-rc.5",
     "nonce": "1989925236539513"
@@ -41,5 +42,8 @@
   },
   "files": [
     "/lib/**/*"
-  ]
+  ],
+  "engines": {
+    "node": ">=10.19.0"
+  }
 }

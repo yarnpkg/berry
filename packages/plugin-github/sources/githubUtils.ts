@@ -1,3 +1,5 @@
+import querystring from 'querystring';
+
 type ParsedGithubUrl = {
   auth?: string;
   username: string;
@@ -6,8 +8,8 @@ type ParsedGithubUrl = {
 };
 
 const githubPatterns = [
-  /^https?:\/\/(?:([^/]+?)@)?github.com\/([^\/#]+)\/([^\/#]+)\/tarball\/([^\/#]+)(?:#(.*))?$/,
-  /^https?:\/\/(?:([^/]+?)@)?github.com\/([^\/#]+)\/([^\/#]+?)(?:\.git)?(?:#(.*))?$/,
+  /^https?:\/\/(?:([^/]+?)@)?github.com\/([^/#]+)\/([^/#]+)\/tarball\/([^/#]+)(?:#(.*))?$/,
+  /^https?:\/\/(?:([^/]+?)@)?github.com\/([^/#]+)\/([^/#]+?)(?:\.git)?(?:#(.*))?$/,
 ];
 
 /**
@@ -35,7 +37,17 @@ export function parseGithubUrl(urlStr: string): ParsedGithubUrl {
 
   let [, auth, username, reponame, treeish = `master`] = match;
 
-  treeish = treeish.replace(/[^:]*:/, ``);
+  const {commit} = querystring.parse(treeish) as {commit?: string};
+
+  treeish =
+    // New style:
+    // The URLs have already been normalized by `gitUtils.resolveUrl`,
+    // so it's certain in the context of the `GithubFetcher`
+    // that the `commit` querystring parameter exists
+    commit
+    // Old style:
+    // Shouldn't ever be needed by the GithubFetcher
+    || treeish.replace(/[^:]*:/, ``);
 
   return {auth, username, reponame, treeish};
 }

@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://github.com/yarnpkg/berry"><img alt="GitHub Actions status" src="https://github.com/yarnpkg/berry/workflows/Integration/badge.svg"></a>
   <a href="https://discord.gg/yarnpkg"><img alt="Discord Chat" src="https://img.shields.io/discord/226791405589233664.svg"></a>
-  <a href="https://www.npmjs.com/package/yarn"><img alt="Latest Berry Release" src="https://img.shields.io/npm/v/yarn/berry"></a>
+  <a href="https://www.npmjs.com/package/@yarnpkg/cli"><img alt="Latest CLI Release" src="https://img.shields.io/npm/v/@yarnpkg/cli/latest?label=npm"></a>
 </p>
 
 ---
@@ -21,7 +21,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
 - Yarn supports [plugins](https://yarnpkg.com/features/plugins); adding a plugin is as simple as adding it into your repository
 - Yarn supports Node by default but isn't limited to it - plugins can add support for other languages
 - Yarn supports [workspaces](https://yarnpkg.com/features/workspaces) natively, and its CLI takes advantage of that
-- Yarn uses a [portable shell](https://github.com/yarnpkg/berry/tree/master/packages/yarnpkg-shell#yarnpkgshell) to execute package scripts, guaranteeing they work the same way on Windows and Linux
+- Yarn uses a bash-like [portable shell](https://github.com/yarnpkg/berry/tree/master/packages/yarnpkg-shell#yarnpkgshell) to execute package scripts, guaranteeing they work the same way on Windows, Linux, and macOS
 - Yarn is first and foremost a [Node API](https://yarnpkg.com/api/) that can be used programmatically (via [@yarnpkg/core](packages/yarnpkg-core))
 - Yarn is written in [TypeScript](https://www.typescriptlang.org/) and is fully type-checked
 
@@ -49,7 +49,8 @@ On top of our classic integration tests, we also run Yarn every day against the 
 <tr><th>Toolchains</th><th>Tooling</th></tr>
 <tr><td valign="top">
 
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Angular/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-angular-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20NM%20Angular/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-nm-angular-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Angular%20over%20PnPify/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-pnpify-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20CRA/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-cra-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-gatsby-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Next/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-next-workflow.yml)<br/>
@@ -62,7 +63,9 @@ On top of our classic integration tests, we also run Yarn every day against the 
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Jest/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-jest-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Mocha/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-mocha-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20NYC/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-nyc-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Parcel/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-parcel-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Prettier/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-prettier-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Rollup/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-rollup-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20TypeScript/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-typescript-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Webpack/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-webpack-workflow.yml)<br/>
 </td></tr>

@@ -11,9 +11,11 @@ import clipanionEntry                     from './commands/entries/clipanion';
 import helpEntry                          from './commands/entries/help';
 import runEntry                           from './commands/entries/run';
 import versionEntry                       from './commands/entries/version';
+import exec                               from './commands/exec';
 import install                            from './commands/install';
 import link                               from './commands/link';
 import node                               from './commands/node';
+import pluginImportSources                from './commands/plugin/import/sources';
 import pluginImport                       from './commands/plugin/import';
 import pluginList                         from './commands/plugin/list';
 import pluginRuntime                      from './commands/plugin/runtime';
@@ -37,6 +39,7 @@ export interface Hooks {
     workspace: Workspace,
     target: suggestUtils.Target,
     descriptor: Descriptor,
+    strategies: Array<suggestUtils.Strategy>
   ) => Promise<void>,
 
   afterWorkspaceDependencyReplacement?: (
@@ -51,7 +54,7 @@ export interface Hooks {
     target: suggestUtils.Target,
     descriptor: Descriptor,
   ) => Promise<void>,
-};
+}
 
 const plugin: Plugin = {
   configuration: {
@@ -82,9 +85,11 @@ const plugin: Plugin = {
     add,
     bin,
     config,
+    exec,
     install,
     link,
     node,
+    pluginImportSources,
     pluginImport,
     pluginList,
     pluginRuntime,

@@ -28,21 +28,29 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
     `\n`,
   ] : []),
   `if (existsSync(absPnpApiPath)) {\n`,
-  `  // Setup the environment to be able to require ${module}\n`,
-  `  require(absPnpApiPath).setup();\n`,
-  ...(setupEnv || usePnpify ? [
-    `\n`,
-    `  // Prepare the environment (to be ready in case of child_process.spawn etc)\n`,
-  ] : []),
+  `  if (!process.versions.pnp) {\n`,
+  `    // Setup the environment to be able to require ${module}\n`,
+  `    require(absPnpApiPath).setup();\n`,
+  `  }\n`,
   ...(setupEnv ? [
-    `  process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || \`\`;\n`,
-    `  process.env.NODE_OPTIONS += \` -r \${absPnpApiPath}\`;\n`,
+    `\n`,
+    `  if (typeof global[\`__yarnpkg_sdk_has_setup_env__\`] === \`undefined\`) {\n`,
+    `    Object.defineProperty(global, \`__yarnpkg_sdk_has_setup_env__\`, {configurable: true, value: true});\n`,
+    `\n`,
+    `    process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || \`\`;\n`,
+    `    process.env.NODE_OPTIONS += \` -r \${absPnpApiPath}\`;\n`,
+    `  }\n`,
   ] : []),
   ...(usePnpify ? [
-    `  process.env.NODE_OPTIONS += \` -r \${pnpifyResolution}\`;\n`,
-    `  \n`,
-    `  // Apply PnPify to the current process\n`,
-    `  absRequire(\`@yarnpkg/pnpify\`).patchFs();\n`,
+    `\n`,
+    `  if (typeof global[\`__yarnpkg_sdk_is_using_pnpify__\`] === \`undefined\`) {\n`,
+    `    Object.defineProperty(global, \`__yarnpkg_sdk_is_using_pnpify__\`, {configurable: true, value: true});\n`,
+    `\n`,
+    `    process.env.NODE_OPTIONS += \` -r \${pnpifyResolution}\`;\n`,
+    `\n`,
+    `    // Apply PnPify to the current process\n`,
+    `    absRequire(\`@yarnpkg/pnpify\`).patchFs();\n`,
+    `  }\n`,
   ] : []),
   `}\n`,
   `\n`,
@@ -258,6 +266,24 @@ const generateTypescriptWrapper = async (pnpApi: PnpApi, target: PortablePath) =
         ),
       ),
     ),
+    [`typescript.enablePromptUseWorkspaceTsdk`]: true,
+  });
+};
+
+export const generateStylelintWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`stylelint` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeManifest();
+
+  await wrapper.writeBinary(`bin/stylelint.js` as PortablePath);
+  await wrapper.writeFile(`lib/index.js` as PortablePath);
+
+  await addVSCodeWorkspaceSettings(pnpApi, {
+    [`stylelint.stylelintPath`]: npath.fromPortablePath(
+      wrapper.getProjectPathTo(
+        `lib/index.js` as PortablePath,
+      ),
+    ),
   });
 };
 
@@ -266,6 +292,7 @@ const SDKS: Array<[string, (pnpApi: PnpApi, target: PortablePath) => Promise<voi
   [`prettier`, generatePrettierWrapper],
   [`typescript-language-server`, generateTypescriptLanguageServerWrapper],
   [`typescript`, generateTypescriptWrapper],
+  [`stylelint`, generateStylelintWrapper],
 ];
 
 export const generateSdk = async (pnpApi: PnpApi): Promise<any> => {

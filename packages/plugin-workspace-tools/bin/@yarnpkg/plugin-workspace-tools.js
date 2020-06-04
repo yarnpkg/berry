@@ -106,16 +106,163 @@ module.exports = {
     value: true
   });
 
-  const foreach_1 = __importDefault(__webpack_require__(1));
+  const focus_1 = __importDefault(__webpack_require__(1));
+
+  const foreach_1 = __importDefault(__webpack_require__(5));
 
   const plugin = {
-    commands: [foreach_1.default]
+    commands: [focus_1.default, foreach_1.default]
   }; // eslint-disable-next-line arca/no-default-export
 
   exports.default = plugin;
 
   /***/ }),
   /* 1 */
+  /***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+
+
+  var __decorate = this && this.__decorate || function (decorators, target, key, desc) {
+    var c = arguments.length,
+        r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+        d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+  };
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  const cli_1 = __webpack_require__(2);
+
+  const core_1 = __webpack_require__(3);
+
+  const core_2 = __webpack_require__(3);
+
+  const clipanion_1 = __webpack_require__(4); // eslint-disable-next-line arca/no-default-export
+
+
+  class WorkspacesFocus extends cli_1.BaseCommand {
+    constructor() {
+      super(...arguments);
+      this.workspaces = [];
+      this.json = false;
+      this.production = false;
+    }
+
+    async execute() {
+      const configuration = await core_1.Configuration.find(this.context.cwd, this.context.plugins);
+      const {
+        project,
+        workspace
+      } = await core_1.Project.find(configuration, this.context.cwd);
+      const cache = await core_1.Cache.find(configuration);
+      let requiredWorkspaces;
+
+      if (this.workspaces.length === 0) {
+        if (!workspace) throw new cli_1.WorkspaceRequiredError(project.cwd, this.context.cwd);
+        requiredWorkspaces = new Set([workspace]);
+      } else {
+        requiredWorkspaces = new Set(this.workspaces.map(name => {
+          return project.getWorkspaceByIdent(core_2.structUtils.parseIdent(name));
+        }));
+      } // First we compute the dependency chain to see what workspaces are
+      // dependencies of the one we're trying to focus on.
+      //
+      // Note: remember that new elements can be added in a set even while
+      // iterating over it (because they're added at the end)
+
+
+      for (const workspace of requiredWorkspaces) {
+        for (const dependencyType of core_1.Manifest.hardDependencies) {
+          for (const descriptor of workspace.manifest.getForScope(dependencyType).values()) {
+            const matchingWorkspace = project.tryWorkspaceByDescriptor(descriptor);
+            if (matchingWorkspace === null) continue;
+            requiredWorkspaces.add(matchingWorkspace);
+          }
+        }
+      } // Then we go over each workspace that didn't get selected, and remove all
+      // their dependencies.
+
+
+      for (const workspace of project.workspaces) {
+        if (requiredWorkspaces.has(workspace)) {
+          if (this.production) {
+            workspace.manifest.devDependencies.clear();
+          }
+        } else {
+          workspace.manifest.dependencies.clear();
+          workspace.manifest.devDependencies.clear();
+          workspace.manifest.peerDependencies.clear();
+        }
+      } // And finally we can run the install, but we have to make sure we don't
+      // persist the project state on the disk (otherwise all workspaces would
+      // lose their dependencies!).
+
+
+      const report = await core_1.StreamReport.start({
+        configuration,
+        json: this.json,
+        stdout: this.context.stdout,
+        includeLogs: true
+      }, async report => {
+        await project.install({
+          cache,
+          report,
+          persistProject: false
+        });
+      });
+      return report.exitCode();
+    }
+
+  }
+
+  WorkspacesFocus.usage = clipanion_1.Command.Usage({
+    category: `Workspace-related commands`,
+    description: `install a single workspace and its dependencies`,
+    details: `
+        This command will run an install as if the specified workspaces (and all other workspaces they depend on) were the only ones in the project. If no workspaces are explicitly listed, the active one will be assumed.
+
+        Note that this command is only very moderately useful when using zero-installs, since the cache will contain all the packages anyway - meaning that the only difference between a full install and a focused install would just be a few extra lines in the \`.pnp.js\` file, at the cost of introducing an extra complexity.
+
+        If the \`--production\` flag is set, only regular dependencies will be installed, and dev dependencies will be omitted.
+
+        If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
+      `
+  });
+
+  __decorate([clipanion_1.Command.Rest()], WorkspacesFocus.prototype, "workspaces", void 0);
+
+  __decorate([clipanion_1.Command.Boolean(`--json`)], WorkspacesFocus.prototype, "json", void 0);
+
+  __decorate([clipanion_1.Command.Boolean(`--production`)], WorkspacesFocus.prototype, "production", void 0);
+
+  __decorate([clipanion_1.Command.Path(`workspaces`, `focus`)], WorkspacesFocus.prototype, "execute", null);
+
+  exports.default = WorkspacesFocus;
+
+  /***/ }),
+  /* 2 */
+  /***/ (function(module, exports) {
+
+  module.exports = require("@yarnpkg/cli");
+
+  /***/ }),
+  /* 3 */
+  /***/ (function(module, exports) {
+
+  module.exports = require("@yarnpkg/core");
+
+  /***/ }),
+  /* 4 */
+  /***/ (function(module, exports) {
+
+  module.exports = require("clipanion");
+
+  /***/ }),
+  /* 5 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -157,11 +304,11 @@ module.exports = {
 
   const clipanion_1 = __webpack_require__(4);
 
-  const os_1 = __webpack_require__(5);
+  const os_1 = __webpack_require__(6);
 
-  const p_limit_1 = __importDefault(__webpack_require__(6));
+  const p_limit_1 = __importDefault(__webpack_require__(7));
 
-  const yup = __importStar(__webpack_require__(8));
+  const yup = __importStar(__webpack_require__(9));
   /**
    * Retrieves all the child workspaces of a given root workspace recursively
    *
@@ -360,25 +507,23 @@ module.exports = {
     category: `Workspace-related commands`,
     description: `run a command on all workspaces`,
     details: `
-        > In order to use this command you will need to add \`@yarnpkg/plugin-workspace-tools\` to your plugins. Check the documentation for \`yarn plugin import\` for more details.
+        This command will run a given sub-command on current and all its descendant workspaces. Various flags can alter the exact behavior of the command:
 
-        This command will run a given sub-command on all child workspaces that define it (any workspace that doesn't define it will be just skiped). Various flags can alter the exact behavior of the command:
-
-        - If \`-p,--parallel\` is set, the commands will run in parallel; they'll by default be limited to a number of parallel tasks roughly equal to half your core number, but that can be overriden via \`-j,--jobs\`.
+        - If \`-p,--parallel\` is set, the commands will be ran in parallel; they'll by default be limited to a number of parallel tasks roughly equal to half your core number, but that can be overridden via \`-j,--jobs\`.
 
         - If \`-p,--parallel\` and \`-i,--interlaced\` are both set, Yarn will print the lines from the output as it receives them. If \`-i,--interlaced\` wasn't set, it would instead buffer the output from each process and print the resulting buffers only after their source processes have exited.
 
-        - If \`-t,--topological\` is set, Yarn will only run a command after all workspaces that depend on it through the \`dependencies\` field have successfully finished executing. If \`--tological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
+        - If \`-t,--topological\` is set, Yarn will only run the command after all workspaces that depend on it through the \`dependencies\` field have successfully finished executing. If \`--tological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
 
-        - If \`--all\` is set, Yarn will run it on all the workspaces of a project. By default it runs the command only on child workspaces.
+        - If \`--all\` is set, Yarn will run the command on all the workspaces of a project. By default yarn runs the command only on current and all its descendant workspaces.
 
-        - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that musn't execute the script.
+        - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script.
 
         Adding the \`-v,--verbose\` flag will cause Yarn to print more information; in particular the name of the workspace that generated the output will be printed at the front of each line.
 
         If the command is \`run\` and the script being run does not exist the child workspace will be skipped without error.
       `,
-    examples: [[`Publish all the packages in a workspace`, `yarn workspaces foreach npm publish --tolerate-republish`], [`Run build script on all the packages in a workspace`, `yarn workspaces foreach run build`], [`Run build script on all the packages in a workspace in parallel, building dependent packages first`, `yarn workspaces foreach -pt run build`]]
+    examples: [[`Publish current and all descendant packages`, `yarn workspaces foreach npm publish --tolerate-republish`], [`Run build script on current and all descendant packages`, `yarn workspaces foreach run build`], [`Run build script on current and all descendant packages in parallel, building dependent packages first`, `yarn workspaces foreach -pt run build`]]
   });
 
   __decorate([clipanion_1.Command.String()], WorkspacesForeachCommand.prototype, "commandName", void 0);
@@ -452,36 +597,18 @@ module.exports = {
   }
 
   /***/ }),
-  /* 2 */
-  /***/ (function(module, exports) {
-
-  module.exports = require("@yarnpkg/cli");
-
-  /***/ }),
-  /* 3 */
-  /***/ (function(module, exports) {
-
-  module.exports = require("@yarnpkg/core");
-
-  /***/ }),
-  /* 4 */
-  /***/ (function(module, exports) {
-
-  module.exports = require("clipanion");
-
-  /***/ }),
-  /* 5 */
+  /* 6 */
   /***/ (function(module, exports) {
 
   module.exports = require("os");
 
   /***/ }),
-  /* 6 */
+  /* 7 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
 
-  const pTry = __webpack_require__(7);
+  const pTry = __webpack_require__(8);
 
   const pLimit = concurrency => {
   	if (concurrency < 1) {
@@ -535,7 +662,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 7 */
+  /* 8 */
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
@@ -547,7 +674,7 @@ module.exports = {
 
 
   /***/ }),
-  /* 8 */
+  /* 9 */
   /***/ (function(module, exports) {
 
   module.exports = require("yup");

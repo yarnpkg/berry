@@ -104,6 +104,7 @@ export default class NpmPublishCommand extends BaseCommand {
           await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
             configuration,
             registry,
+            ident,
             json: true,
           });
         } catch (error) {
@@ -136,7 +137,7 @@ async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, ta
 
   const name = structUtils.stringifyIdent(ident);
 
-  const shasum = createHash('sha1').update(buffer).digest('hex');
+  const shasum = createHash(`sha1`).update(buffer).digest(`hex`);
   const integrity = ssri.fromData(buffer).toString();
 
   if (typeof access === `undefined`) {

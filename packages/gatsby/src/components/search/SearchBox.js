@@ -83,7 +83,7 @@ const RawSearchBox = ({currentRefinement, refine, autoFocus}) => {
     e.preventDefault();
     e.stopPropagation();
 
-    navigate(`/package?${currentRefinement}`);
+    navigate(`/package/${currentRefinement}`);
   };
 
   return (
@@ -106,7 +106,7 @@ const RawSearchBox = ({currentRefinement, refine, autoFocus}) => {
         size="1"
       />
       <SubmitButton type="submit" title="Submit your search query."><IoIosSearch/></SubmitButton>
-      <ResetButton type="reset" title="Clear the search query." onClick={() => refine('')}><IoIosClose/></ResetButton>
+      <ResetButton type="reset" title="Clear the search query." onClick={() => refine(``)}><IoIosClose/></ResetButton>
     </SearchForm>
   );
 };

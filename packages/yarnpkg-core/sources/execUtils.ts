@@ -2,19 +2,21 @@ import {PortablePath, npath} from '@yarnpkg/fslib';
 import crossSpawn            from 'cross-spawn';
 import {Readable, Writable}  from 'stream';
 
+export enum EndStrategy {
+  Never,
+  ErrorCode,
+  Always,
+}
+
 export type PipevpOptions = {
   cwd: PortablePath,
   env?: {[key: string]: string | undefined},
+  end?: EndStrategy,
   strict?: boolean,
   stdin: Readable | null,
   stdout: Writable,
   stderr: Writable,
 };
-
-// Rather than attaching one SIGINT handler for each process, we
-// attach a single one and use a refcount to detect once it's no
-// longer needed.
-let sigintRefCount = 0;
 
 function hasFd(stream: null | Readable | Writable) {
   // @ts-ignore: Not sure how to typecheck this field
@@ -26,7 +28,12 @@ function sigintHandler() {
   // innermost process, whose end will cause our own to exit.
 }
 
-export async function pipevp(fileName: string, args: Array<string>, {cwd, env = process.env, strict = false, stdin = null, stdout, stderr}: PipevpOptions): Promise<{code: number}> {
+// Rather than attaching one SIGINT handler for each process, we
+// attach a single one and use a refcount to detect once it's no
+// longer needed.
+let sigintRefCount = 0;
+
+export async function pipevp(fileName: string, args: Array<string>, {cwd, env = process.env, strict = false, stdin = null, stdout, stderr, end = EndStrategy.Always}: PipevpOptions): Promise<{code: number}> {
   const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
 
   if (stdin === null)
@@ -44,7 +51,10 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
 
   const child = crossSpawn(fileName, args, {
     cwd: npath.fromPortablePath(cwd),
-    env,
+    env: {
+      ...env,
+      PWD: npath.fromPortablePath(cwd),
+    },
     stdio,
   });
 
@@ -52,14 +62,25 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
     stdin.pipe(child.stdin!);
 
   if (!hasFd(stdout))
-    child.stdout!.pipe(stdout);
+    child.stdout!.pipe(stdout, {end: false});
   if (!hasFd(stderr))
-    child.stderr!.pipe(stderr);
+    child.stderr!.pipe(stderr, {end: false});
+
+  const closeStreams = () => {
+    for (const stream of new Set([stdout, stderr])) {
+      if (!hasFd(stream)) {
+        stream.end();
+      }
+    }
+  };
 
   return new Promise((resolve, reject) => {
     child.on(`error`, error => {
       if (--sigintRefCount === 0)
         process.off(`SIGINT`, sigintHandler);
+
+      if (end === EndStrategy.Always || end === EndStrategy.ErrorCode)
+        closeStreams();
 
       reject(error);
     });
@@ -67,6 +88,9 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
     child.on(`close`, (code: number, sig: string) => {
       if (--sigintRefCount === 0)
         process.off(`SIGINT`, sigintHandler);
+
+      if (end === EndStrategy.Always || (end === EndStrategy.ErrorCode && code > 0))
+        closeStreams();
 
       if (code === 0 || !strict) {
         resolve({code});
@@ -96,8 +120,13 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
   const stdoutChunks: Array<Buffer> = [];
   const stderrChunks: Array<Buffer> = [];
 
+  const nativeCwd = npath.fromPortablePath(cwd);
+
+  if (typeof env.PWD !== `undefined`)
+    env = {...env, PWD: nativeCwd};
+
   const subprocess = crossSpawn(fileName, args, {
-    cwd: npath.fromPortablePath(cwd),
+    cwd: nativeCwd,
     env,
     stdio,
   });
@@ -121,9 +150,13 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
         : Buffer.concat(stderrChunks).toString(encoding);
 
       if (code === 0 || !strict) {
-        resolve({code, stdout, stderr});
+        resolve({
+          code, stdout, stderr,
+        });
       } else {
-        reject(new Error(`Child "${fileName}" exited with exit code ${code}\n\n${stderr}`));
+        reject(Object.assign(new Error(`Child "${fileName}" exited with exit code ${code}\n\n${stderr}`), {
+          code, stdout, stderr,
+        }));
       }
     });
   });

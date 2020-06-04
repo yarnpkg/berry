@@ -1,10 +1,12 @@
 import {Box, Color}                           from 'ink';
-import React, {useState}                      from 'react';
+import React, {useEffect, useState}           from 'react';
 
 import {FocusRequestHandler, useFocusRequest} from '../hooks/useFocusRequest';
 import {useListInput}                         from '../hooks/useListInput';
 
-export const ScrollableItems = ({active = true, children = [], radius = 10, size = 1, onFocusRequest}: {active?: boolean, children: Array<React.ReactElement>, radius?: number, size?: number, onFocusRequest?: FocusRequestHandler}) => {
+type WillReachEnd = () => void;
+
+export const ScrollableItems = ({active = true, children = [], radius = 10, size = 1, loop = true, onFocusRequest, willReachEnd}: {active?: boolean, children: Array<React.ReactElement>, radius?: number, size?: number, loop?: boolean, onFocusRequest?: FocusRequestHandler, willReachEnd?: WillReachEnd}) => {
   const getKey = (child: React.ReactElement) => {
     if (child.key === null) {
       throw new Error(`Expected all children to have a key`);
@@ -19,6 +21,20 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
   const [activeKey, setActiveKey] = useState(initialKey);
   const activeIndex = keys.indexOf(activeKey);
 
+  useEffect(() => {
+    // If the active key is missing from the
+    // new keys, set it to the initalKey
+    if (!keys.includes(activeKey)) {
+      setActiveKey(initialKey);
+    }
+  }, [children]);
+
+  useEffect(() => {
+    if (willReachEnd && activeIndex >= keys.length - 2) {
+      willReachEnd();
+    }
+  }, [activeIndex]);
+
   useFocusRequest({
     active,
     handler: onFocusRequest,
@@ -29,6 +45,7 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
     minus: `up`,
     plus: `down`,
     set: setActiveKey,
+    loop,
   });
 
   let min = activeIndex - radius;
@@ -54,8 +71,8 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
     const activeItem = active && key === activeKey;
 
     rendered.push(<Box key={key!} height={size}>
-      <Box marginLeft={2} marginRight={2}>
-        {activeItem ? <Color cyan>▶</Color> : ` `}
+      <Box marginLeft={1} marginRight={1}>
+        {activeItem ? <Color cyan bold>{`>`}</Color> : ` `}
       </Box>
       <Box>
         {React.cloneElement(children[t], {active: activeItem})}
@@ -63,7 +80,7 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
     </Box>);
   }
 
-  return <Box flexDirection={`column`} width={`100%`} height={radius * size * 2 + size}>
+  return <Box flexDirection={`column`} width={`100%`}>
     {rendered}
   </Box>;
 };

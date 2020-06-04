@@ -128,7 +128,7 @@ function parseViaJsYaml(source: string) {
   if (LEGACY_REGEXP.test(source))
     return parseViaPeg(source);
 
-  let value = safeLoad(source, {
+  const value = safeLoad(source, {
     schema: FAILSAFE_SCHEMA,
   });
 

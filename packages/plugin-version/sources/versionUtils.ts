@@ -8,22 +8,24 @@ import semver                                                                   
 const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
 
 export enum Decision {
-  UNDECIDED = 'undecided',
-  DECLINE = 'decline',
-  MAJOR = 'major',
-  MINOR = 'minor',
-  PATCH = 'patch',
-  PRERELEASE = 'prerelease',
-};
+  UNDECIDED = `undecided`,
+  DECLINE = `decline`,
+  MAJOR = `major`,
+  MINOR = `minor`,
+  PATCH = `patch`,
+  PRERELEASE = `prerelease`,
+}
 
 export type Releases =
   Map<Workspace, Exclude<Decision, Decision.UNDECIDED>>;
 
-export async function fetchBase(root: PortablePath) {
-  const candidateBases = [`master`, `origin/master`, `upstream/master`];
+export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: Array<string>}) {
+  if (baseRefs.length === 0)
+    throw new UsageError(`Can't run this command with zero base refs specified.`);
+
   const ancestorBases = [];
 
-  for (const candidate of candidateBases) {
+  for (const candidate of baseRefs) {
     const {code} = await execUtils.execvp(`git`, [`merge-base`, candidate, `HEAD`], {cwd: root});
     if (code === 0) {
       ancestorBases.push(candidate);
@@ -31,7 +33,7 @@ export async function fetchBase(root: PortablePath) {
   }
 
   if (ancestorBases.length === 0)
-    throw new UsageError(`No ancestor could be found between any of HEAD and ${candidateBases.join(`, `)}`);
+    throw new UsageError(`No ancestor could be found between any of HEAD and ${baseRefs.join(`, `)}`);
 
   const {stdout: mergeBaseStdout} = await execUtils.execvp(`git`, [`merge-base`, `HEAD`, ...ancestorBases], {cwd: root, strict: true});
   const hash = mergeBaseStdout.trim();
@@ -61,14 +63,22 @@ export async function fetchRoot(initialCwd: PortablePath) {
   return match;
 }
 
-export async function fetchChangedFiles(root: PortablePath, {base}: {base: string}) {
+// Note: This returns all changed files from the git diff, which can include
+// files not belonging to a workspace
+export async function fetchChangedFiles(root: PortablePath, {base, project}: {base: string, project: Project}) {
+  const ignorePattern = miscUtils.buildIgnorePattern(project.configuration.get(`changesetIgnorePatterns`));
+
   const {stdout: localStdout} = await execUtils.execvp(`git`, [`diff`, `--name-only`, `${base}`], {cwd: root, strict: true});
   const trackedFiles = localStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
 
   const {stdout: untrackedStdout} = await execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {cwd: root, strict: true});
   const untrackedFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
 
-  return [...new Set([...trackedFiles, ...untrackedFiles].sort())];
+  const changedFiles = [...new Set([...trackedFiles, ...untrackedFiles].sort())];
+
+  return ignorePattern
+    ? changedFiles.filter(p => !ppath.relative(project.cwd, p).match(ignorePattern))
+    : changedFiles;
 }
 
 type Await<T> = T extends {
@@ -194,11 +204,11 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
   const root = await fetchRoot(configuration.projectCwd);
 
   const base = root !== null
-    ? await fetchBase(root)
+    ? await fetchBase(root, {baseRefs: configuration.get(`changesetBaseRefs`)})
     : null;
 
   const changedFiles = root !== null
-    ? await fetchChangedFiles(root, {base: base!.hash})
+    ? await fetchChangedFiles(root, {base: base!.hash, project})
     : [];
 
   const deferredVersionFolder = configuration.get<PortablePath>(`deferredVersionFolder`);
@@ -207,7 +217,14 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
   if (versionFiles.length > 1)
     throw new UsageError(`Your current branch contains multiple versioning files; this isn't supported:\n- ${versionFiles.join(`\n- `)}`);
 
-  const changedWorkspaces = new Set(changedFiles.map(file => project.getWorkspaceByFilePath(file)));
+  const changedWorkspaces: Set<Workspace> = new Set(miscUtils.mapAndFilter(changedFiles, file => {
+    const workspace = project.tryWorkspaceByFilePath(file);
+    if (workspace === null)
+      return miscUtils.mapAndFilter.skip;
+
+    return workspace;
+  }));
+
   if (versionFiles.length === 0 && changedWorkspaces.size === 0 && !allowEmpty)
     return null;
 

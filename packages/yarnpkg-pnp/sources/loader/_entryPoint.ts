@@ -83,7 +83,7 @@ manager = makeManager(defaultApi, {
 // eslint-disable-next-line arca/no-default-export
 export default defaultApi;
 
-if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === 'internal/preload') {
+if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === `internal/preload`) {
   defaultApi.setup();
 
   if (__non_webpack_module__.filename) {
@@ -130,14 +130,14 @@ if (process.mainModule === __non_webpack_module__) {
       processResolution(process.argv[2], process.argv[3]);
     }
   } else {
-    let buffer = '';
+    let buffer = ``;
     const decoder = new StringDecoder.StringDecoder();
 
-    process.stdin.on('data', chunk => {
+    process.stdin.on(`data`, chunk => {
       buffer += decoder.write(chunk);
 
       do {
-        const index = buffer.indexOf('\n');
+        const index = buffer.indexOf(`\n`);
         if (index === -1)
           break;
 

@@ -37,7 +37,8 @@ jobs:
           v35@npm:typescript@3.5 \
           v36@npm:typescript@3.6 \
           v37@npm:typescript@3.7 \
-          v38@npm:typescript@3.8
+          v38@npm:typescript@3.8 \
+          beta@npm:typescript@beta
 
     - name: 'Running the integration test'
       run: |

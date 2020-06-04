@@ -9,48 +9,48 @@ export type Suggestion = {
 };
 
 export enum Target {
-  REGULAR = 'dependencies',
-  DEVELOPMENT = 'devDependencies',
-  PEER = 'peerDependencies',
-};
+  REGULAR = `dependencies`,
+  DEVELOPMENT = `devDependencies`,
+  PEER = `peerDependencies`,
+}
 
 export enum Modifier {
-  CARET = '^',
-  TILDE = '~',
-  EXACT = '',
-};
+  CARET = `^`,
+  TILDE = `~`,
+  EXACT = ``,
+}
 
 export enum Strategy {
   /**
    * If set, the suggest engine will offer to keep the current version if the
    * local workspace already depends on it.
    */
-  KEEP = 'keep',
+  KEEP = `keep`,
 
   /**
    * If set, the suggest engine will offer to fulfill the request by looking at
    * the ranges currently used by the other workspaces in the project.
    */
-  REUSE = 'reuse',
+  REUSE = `reuse`,
 
   /**
    * If set, the suggest engine will offer to fulfill the request by using any
    * workspace whose name would match the request.
    */
-  PROJECT = 'project',
+  PROJECT = `project`,
 
   /**
    * If set, the suggest engine will offer to fulfill the request by using
    * whatever `<request-name>@latest` would return.
    */
-  LATEST = 'latest',
+  LATEST = `latest`,
 
   /**
    * If set, the suggest engine will offer to fulfill the request based on the
    * versions of the package that are already within our cache.
    */
-  CACHE = 'cache',
-};
+  CACHE = `cache`,
+}
 
 export function getModifier(flags: {exact: boolean; caret: boolean; tilde: boolean}, project: Project): Modifier {
   if (flags.exact)
@@ -163,6 +163,13 @@ export async function extractDescriptorFromPath(path: PortablePath, {cache, cwd,
 export async function getSuggestedDescriptors(request: Descriptor, {project, workspace, cache, target, modifier, strategies, maxResults = Infinity}: {project: Project, workspace: Workspace, cache: Cache, target: Target, modifier: Modifier, strategies: Array<Strategy>, maxResults?: number}) {
   if (!(maxResults >= 0))
     throw new Error(`Invalid maxResults (${maxResults})`);
+
+  if (request.range !== `unknown`) {
+    return [{
+      descriptor: request,
+      reason: `Unambiguous explicit request`,
+    }];
+  }
 
   const existing = typeof workspace !== `undefined` && workspace !== null
     ? workspace.manifest[target].get(request.identHash) || null

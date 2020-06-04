@@ -2,7 +2,7 @@ const {npath, xfs} = require(`@yarnpkg/fslib`);
 const {
   exec: {execFile},
   fs: {writeFile, writeJson, mkdirp},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
   describe(`stage`, () => {
@@ -53,9 +53,9 @@ describe(`Commands`, () => {
         await expect(run(`stage`, `-n`, {cwd: path})).resolves.toMatchObject({
           stdout: [
             `${npath.fromPortablePath(`${path}/.pnp.js`)}\n`,
-            `${npath.fromPortablePath(`${path}/.yarn/global/cache/no-deps-npm-1.0.0-cf533b267a-2.zip`)}\n`,
+            `${npath.fromPortablePath(`${path}/.yarn/global/cache/no-deps-npm-1.0.0-cf533b267a-0.zip`)}\n`,
             `${npath.fromPortablePath(`${path}/.yarn/cache/.gitignore`)}\n`,
-            `${npath.fromPortablePath(`${path}/.yarn/cache/no-deps-npm-1.0.0-cf533b267a-2.zip`)}\n`,
+            `${npath.fromPortablePath(`${path}/.yarn/cache/no-deps-npm-1.0.0-cf533b267a-58e8c7e103.zip`)}\n`,
             `${npath.fromPortablePath(`${path}/.yarnrc.yml`)}\n`,
             `${npath.fromPortablePath(`${path}/package.json`)}\n`,
             `${npath.fromPortablePath(`${path}/yarn.lock`)}\n`,

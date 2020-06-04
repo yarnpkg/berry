@@ -12,13 +12,14 @@ Smart IDEs (such as VSCode or IntelliJ) require special configuration for TypeSc
 
 ## Tools currently supported
 
-> **Note:** When using the `--sdk` flag, be aware that only the SDKs for the tools present in your package.json will be installed. Don't forget to run the command again after installing new ones in your project.
+> **Note:** When using the `--sdk` flag, be aware that only the SDKs for the tools present in your *root* package.json will be installed (the tool won't look at the dependencies from your other workspaces). So don't forget to run the command again should you change the set of tools used by your project!
 
-| Extension | Required package.json dependency |
+| Extension | Required `package.json` dependency |
 |---|---|
-| VS Code TypeScript Server | [typescript](https://yarnpkg.com/package/typescript) |
-| [vscode-eslint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) | [eslint](https://yarnpkg.com/package/eslint) |
-| [prettier-vscode extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) | [prettier](https://yarnpkg.com/package/prettier) |
+| Builtin VSCode TypeScript Server | [typescript](https://yarnpkg.com/package/typescript) |
+| [vscode-eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) | [eslint](https://yarnpkg.com/package/eslint) |
+| [prettier-vscode](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) | [prettier](https://yarnpkg.com/package/prettier) |
+| [vscode-stylelint](https://marketplace.visualstudio.com/items?itemName=stylelint.vscode-stylelint) | [stylelint](https://stylelint.io/)
 
 If you'd like to contribute more, [take a look here!](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-pnpify/sources/generateSdk.ts)
 
@@ -27,19 +28,13 @@ If you'd like to contribute more, [take a look here!](https://github.com/yarnpkg
 
 ### VSCode
 
-1. Add PnPify to your dependencies:
+1. Run the following command, which will generate a new directory called `.vscode/pnpify`:
 
 ```bash
-yarn add @yarnpkg/pnpify
+yarn dlx @yarnpkg/pnpify --sdk
 ```
 
-2. Run the following command, which will generate a new directory called `.vscode/pnpify`:
-
-```bash
-yarn pnpify --sdk
-```
-
-3. For safety reason VSCode requires you to explicitly activate the custom TS settings:
+2. For safety reason VSCode requires you to explicitly activate the custom TS settings:
 
   1. Press <kbd>ctrl+shift+p</kbd> in a TypeScript file
   2. Choose "Select TypeScript Version"
@@ -51,37 +46,25 @@ Note that VSCode might ask you to do Step 3 again from time to time, but apart f
 
 ### VIM / coc.nvim
 
-1. Add PnPify to your dependencies:
+1. Run the following command, which will generate a new directory called `.vscode/pnpify`:
 
 ```bash
-yarn add @yarnpkg/pnpify
+yarn dlx @yarnpkg/pnpify --sdk
 ```
 
-2. Run the following command, which will generate a new directory called `.vscode/pnpify`:
-
-```bash
-yarn pnpify --sdk
-```
-
-3. Set [`tsserver.tsdk`](https://github.com/neoclide/coc-tsserver#configuration-options) to `.vscode/pnpify/typescript/lib`
+2. Set [`tsserver.tsdk`](https://github.com/neoclide/coc-tsserver#configuration-options) to `.vscode/pnpify/typescript/lib`
 
 ### Emacs
 
 The SDK comes with a typescript-language-server wrapper which enables you to use the ts-ls LSP client.
 
-1. Add PnPify to your dependencies:
+1. Run the following command, which will generate a new directory called `.vscode/pnpify`:
 
 ```bash
-yarn add @yarnpkg/pnpify
+yarn dlx @yarnpkg/pnpify --sdk
 ```
 
-2. Run the following command, which will generate a new directory called `.vscode/pnpify`:
-
-```bash
-yarn pnpify --sdk
-```
-
-3. Create a `.dir-locals.el` with the following content to enable Flycheck and LSP support:
+2. Create a `.dir-locals.el` with the following content to enable Flycheck and LSP support:
 
 ```lisp
 ((typescript-mode

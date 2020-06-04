@@ -1,12 +1,10 @@
-import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {structUtils}                                                               from '@yarnpkg/core';
-import {Descriptor, Locator, Package}                                              from '@yarnpkg/core';
+import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, TAG_REGEXP} from '@yarnpkg/core';
+import {structUtils}                                                                           from '@yarnpkg/core';
+import {Descriptor, Locator, Package}                                                          from '@yarnpkg/core';
 
-import {NpmSemverFetcher}                                                          from './NpmSemverFetcher';
-import {PROTOCOL}                                                                  from './constants';
-import * as npmHttpUtils                                                           from './npmHttpUtils';
-
-export const TAG_REGEXP = /^(?!v)[a-z0-9-]+$/i;
+import {NpmSemverFetcher}                                                                      from './NpmSemverFetcher';
+import {PROTOCOL}                                                                              from './constants';
+import * as npmHttpUtils                                                                       from './npmHttpUtils';
 
 export class NpmTagResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {

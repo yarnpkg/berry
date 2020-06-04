@@ -1,5 +1,5 @@
-import {miscUtils}           from '@yarnpkg/core';
-import {PortablePath, npath} from '@yarnpkg/fslib';
+import {miscUtils}                  from '@yarnpkg/core';
+import {PortablePath, npath, ppath} from '@yarnpkg/fslib';
 
 const HEADER_REGEXP = /^@@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? @@.*/;
 
@@ -13,6 +13,10 @@ export type HunkHeader = {
     length: number,
   },
 };
+
+export function getPath(p: string) {
+  return ppath.relative(PortablePath.root, ppath.resolve(PortablePath.root, npath.toPortablePath(p)));
+}
 
 export function parseHunkHeaderLine(headerLine: string): HunkHeader {
   const match = headerLine.trim().match(HEADER_REGEXP);
@@ -119,7 +123,7 @@ type FileDeets = {
 
 export type Hunk = {
   header: HunkHeader,
-  parts: PatchMutationPart[],
+  parts: Array<PatchMutationPart>,
 };
 
 const emptyFilePatch = (): FileDeets => ({
@@ -206,7 +210,7 @@ function parsePatchLines(lines: Array<string>) {
       } else if (line.startsWith(`deleted file mode `)) {
         currentFilePatch.deletedFileMode = line.slice(`deleted file mode `.length).trim();
       } else if (line.startsWith(`new file mode `)) {
-        currentFilePatch.newFileMode = line.slice("new file mode ".length).trim();
+        currentFilePatch.newFileMode = line.slice(`new file mode `.length).trim();
       } else if (line.startsWith(`rename from `)) {
         currentFilePatch.renameFrom = line.slice(`rename from `.length).trim();
       } else if (line.startsWith(`rename to `)) {
@@ -242,7 +246,7 @@ function parsePatchLines(lines: Array<string>) {
         } break;
 
         case `pragma`: {
-          if (!line.startsWith("\\ No newline at end of file"))
+          if (!line.startsWith(`\\ No newline at end of file`))
             throw new Error(`Unrecognized pragma in patch file: ${line}`);
 
           if (!currentHunkMutationPart)
@@ -330,8 +334,8 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
         result.push({
           type: `rename`,
           semverExclusivity,
-          fromPath: npath.toPortablePath(renameFrom),
-          toPath: npath.toPortablePath(renameTo),
+          fromPath: getPath(renameFrom),
+          toPath: getPath(renameTo),
         });
 
         destinationFilePath = renameTo;
@@ -340,13 +344,13 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
       case `file deletion`: {
         const path = diffLineFromPath || fromPath;
         if (!path)
-          throw new Error("Bad parse state: no path given for file deletion");
+          throw new Error(`Bad parse state: no path given for file deletion`);
 
         result.push({
           type: `file deletion`,
           semverExclusivity,
           hunk: (hunks && hunks[0]) || null,
-          path: npath.toPortablePath(path),
+          path: getPath(path),
           mode: parseFileMode(deletedFileMode!),
           hash: beforeHash,
         });
@@ -361,7 +365,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
           type: `file creation`,
           semverExclusivity,
           hunk: (hunks && hunks[0]) || null,
-          path: npath.toPortablePath(path),
+          path: getPath(path),
           mode: parseFileMode(newFileMode!),
           hash: afterHash,
         });
@@ -381,7 +385,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
       result.push({
         type: `mode change`,
         semverExclusivity,
-        path: npath.toPortablePath(destinationFilePath),
+        path: getPath(destinationFilePath),
         oldMode: parseFileMode(oldMode),
         newMode: parseFileMode(newMode),
       });
@@ -391,7 +395,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
       result.push({
         type: `patch`,
         semverExclusivity,
-        path: npath.toPortablePath(destinationFilePath),
+        path: getPath(destinationFilePath),
         hunks,
         beforeHash,
         afterHash,
@@ -432,11 +436,11 @@ export function verifyHunkIntegrity(hunk: Hunk) {
         originalLength += lines.length;
       } break;
 
-      case "deletion": {
+      case `deletion`: {
         originalLength += lines.length;
       } break;
 
-      case "insertion": {
+      case `insertion`: {
         patchedLength += lines.length;
       } break;
 

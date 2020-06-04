@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Protocols git: it should resolve a git dependency (git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1) 1`] = `"util-deprecate@git+ssh://git@github.com/TooTallNate/util-deprecate.git#commit:6e923f7d98a0afbe5b9c7db9d0f0029c1936746c"`;
+exports[`Protocols git: it should resolve a git dependency (git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1) 1`] = `"util-deprecate@git+ssh://git@github.com/TooTallNate/util-deprecate.git#commit=6e923f7d98a0afbe5b9c7db9d0f0029c1936746c"`;
 
-exports[`Protocols git: it should resolve a git dependency (git://github.com/TooTallNate/util-deprecate.git#v1.0.1) 1`] = `"util-deprecate@git://github.com/TooTallNate/util-deprecate.git#commit:6e923f7d98a0afbe5b9c7db9d0f0029c1936746c"`;
+exports[`Protocols git: it should resolve a git dependency (git://github.com/TooTallNate/util-deprecate.git#v1.0.1) 1`] = `"util-deprecate@git://github.com/TooTallNate/util-deprecate.git#commit=6e923f7d98a0afbe5b9c7db9d0f0029c1936746c"`;
 
-exports[`Protocols git: it should resolve a git dependency (https://github.com/TooTallNate/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d) 1`] = `"util-deprecate@https://github.com/TooTallNate/util-deprecate.git#commit:b3562c2798507869edb767da869cd7b85487726d"`;
+exports[`Protocols git: it should resolve a git dependency (https://github.com/TooTallNate/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d) 1`] = `"util-deprecate@https://github.com/TooTallNate/util-deprecate.git#commit=b3562c2798507869edb767da869cd7b85487726d"`;
 
-exports[`Protocols git: it should resolve a git dependency (https://github.com/TooTallNate/util-deprecate.git#master) 1`] = `"util-deprecate@https://github.com/TooTallNate/util-deprecate.git#commit:4bcc600d20e3a53ea27fa52c4d1fc49cc2d0eabb"`;
+exports[`Protocols git: it should resolve a git dependency (https://github.com/TooTallNate/util-deprecate.git#master) 1`] = `"util-deprecate@https://github.com/TooTallNate/util-deprecate.git#commit=4bcc600d20e3a53ea27fa52c4d1fc49cc2d0eabb"`;
 
-exports[`Protocols git: it should resolve a git dependency (https://github.com/TooTallNate/util-deprecate.git#semver:>=1.0.0 <1.0.2) 1`] = `"util-deprecate@https://github.com/TooTallNate/util-deprecate.git#commit:6e923f7d98a0afbe5b9c7db9d0f0029c1936746c"`;
+exports[`Protocols git: it should resolve a git dependency (https://github.com/TooTallNate/util-deprecate.git#semver:>=1.0.0 <1.0.2) 1`] = `"util-deprecate@https://github.com/TooTallNate/util-deprecate.git#commit=6e923f7d98a0afbe5b9c7db9d0f0029c1936746c"`;
 
-exports[`Protocols git: it should resolve a git dependency (https://github.com/TooTallNate/util-deprecate.git#semver:^1.0.0) 1`] = `"util-deprecate@https://github.com/TooTallNate/util-deprecate.git#commit:33db01af81b477bfb4feebe72c1b0867a0630310"`;
+exports[`Protocols git: it should resolve a git dependency (https://github.com/TooTallNate/util-deprecate.git#semver:^1.0.0) 1`] = `"util-deprecate@https://github.com/TooTallNate/util-deprecate.git#commit=33db01af81b477bfb4feebe72c1b0867a0630310"`;
 
-exports[`Protocols git: it should resolve a git dependency (https://github.com/TooTallNate/util-deprecate.git#v1.0.0) 1`] = `"util-deprecate@https://github.com/TooTallNate/util-deprecate.git#commit:29d8a5ce2c3591155ee571d857a59a993a277046"`;
+exports[`Protocols git: it should resolve a git dependency (https://github.com/TooTallNate/util-deprecate.git#v1.0.0) 1`] = `"util-deprecate@https://github.com/TooTallNate/util-deprecate.git#commit=29d8a5ce2c3591155ee571d857a59a993a277046"`;

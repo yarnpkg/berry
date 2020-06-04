@@ -4,7 +4,7 @@ import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
 import {Descriptor, Locator, DescriptorHash, Package}    from './types';
 
-export const TAG_REGEXP = /^[a-z]+$/;
+export const TAG_REGEXP = /^(?!v)[a-z0-9-.]+$/i;
 
 export class ProtocolResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {

@@ -62,6 +62,10 @@ export class LightReport extends Report {
     return await cb();
   }
 
+  async startCacheReport<T>(cb: () => Promise<T>) {
+    return await cb();
+  }
+
   reportSeparator() {
   }
 
@@ -78,6 +82,7 @@ export class LightReport extends Report {
 
   reportProgress(progress: AsyncIterable<{progress: number, title?: string}>) {
     const promise = Promise.resolve().then(async () => {
+      // eslint-disable-next-line no-empty-pattern
       for await (const {} of progress) {
         // No need to do anything; we just want to consume the progress events
       }

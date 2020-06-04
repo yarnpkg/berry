@@ -1,59 +1,106 @@
 set -ex
 
 THIS_DIR=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-TEMP_DIR="$(mktemp -d)"
+TEMP_DIR="/tmp/ts-repo"
+
+PATCHFILE="$TEMP_DIR"/patch.tmp
+JSPATCH="$THIS_DIR"/../../sources/patches/typescript.patch.ts
+
+FIRST_PR_COMMIT="5d50de3"
 
 HASHES=(
-  "426f5a7" ">=3 <3.6"
-  "bcb6dbf" ">3.6"
+  # Patch   # Base    # Ranges
+  "426f5a7" "e39bdc3" ">=3.0 <3.5"
+  "426f5a7" "cf7b2d4" ">=3.5 <3.6"
+  "2f85932" "e39bdc3" ">=3.6 <3.9"
+  "2f85932" "d68295e" ">=3.9"
 )
 
-git clone git@github.com:arcanis/typescript "$TEMP_DIR"/clone
+mkdir -p "$TEMP_DIR"
+if ! [[ -d "$TEMP_DIR"/clone ]]; then (
+    git clone https://github.com/arcanis/typescript "$TEMP_DIR"/clone
+    cd "$TEMP_DIR"/clone
+    git remote add upstream https://github.com/microsoft/typescript
+); fi
 
-mkdir -p "$TEMP_DIR"/orig
-mkdir -p "$TEMP_DIR"/patched
-
-reset-git() {
-  git checkout .
-  git clean -df
-
-  yarn
-}
-
+rm -rf "$TEMP_DIR"/builds
 cd "$TEMP_DIR"/clone
 
-reset-git
-git checkout master
+git cherry-pick --abort || true
 
-yarn gulp local LKG
-cp -r lib "$TEMP_DIR"/orig/
+git config user.email "you@example.com"
+git config user.name "Your Name"
+
+git fetch origin
+git fetch upstream
+
+reset-git() {
+  git reset --hard "$1"
+  git clean -df
+
+  npm install --before "$(git show -s --format=%ci)"
+}
+
+build-dir-for() {
+  local HASH="$1"
+  local CHERRY_PICK="$2"
+
+  local BUILD_DIR="$TEMP_DIR"/builds/"$HASH"
+
+  if [[ ! -z "$CHERRY_PICK" ]]; then
+    BUILD_DIR="$BUILD_DIR-$CHERRY_PICK"
+  fi
+
+  echo "$BUILD_DIR"
+}
+
+make-build-for() {
+  local HASH="$1"
+  local CHERRY_PICK="$2"
+
+  local BUILD_DIR="$(build-dir-for "$HASH" "$CHERRY_PICK")"
+
+  if [[ ! -e "$BUILD_DIR" ]]; then
+    mkdir -p "$BUILD_DIR"
+    reset-git "$HASH"
+
+    if [[ ! -z "$CHERRY_PICK" ]]; then
+      git cherry-pick "$FIRST_PR_COMMIT"^.."$CHERRY_PICK"
+    fi
+
+    yarn gulp local LKG
+    cp -r lib/ "$BUILD_DIR"/
+  fi
+
+  echo "$BUILD_DIR"
+}
+
+rm -f "$PATCHFILE" && touch "$PATCHFILE"
+rm -f "$JSPATCH" && touch "$JSPATCH"
 
 while [[ ${#HASHES[@]} -gt 0 ]]; do
   HASH="${HASHES[0]}"
-  RANGE="${HASHES[1]}"
-  HASHES=("${HASHES[@]:2}")
+  BASE="${HASHES[1]}"
+  RANGE="${HASHES[2]}"
+  HASHES=("${HASHES[@]:3}")
 
-  reset-git
-  git checkout "$HASH"
+  make-build-for "$BASE"
+  ORIG_DIR=$(build-dir-for "$BASE")
 
-  yarn gulp local LKG
-  cp -r lib/ "$TEMP_DIR"/patched/
+  make-build-for "$BASE" "$HASH"
+  PATCHED_DIR=$(build-dir-for "$BASE" "$HASH")
 
-  PATCHFILE="$THIS_DIR"/../../sources/patches/typescript.patch.ts
-  rm -f "$PATCHFILE" && touch "$PATCHFILE"
+  DIFF="$THIS_DIR"/patch."${HASH}"-on-"${BASE}".diff
 
-  git diff --no-index "$TEMP_DIR"/orig "$TEMP_DIR"/patched \
+  git diff --no-index "$ORIG_DIR" "$PATCHED_DIR" \
     | perl -p -e"s#^--- #semver exclusivity $RANGE\n--- #" \
-    | perl -p -e"s#$TEMP_DIR/orig##" \
-    | perl -p -e"s#$TEMP_DIR/patched##" \
+    | perl -p -e"s#$ORIG_DIR/#/#" \
+    | perl -p -e"s#$PATCHED_DIR/#/#" \
     | perl -p -e"s#__spreadArrays#[].concat#" \
-    >> "$TEMP_DIR"/patch.tmp || true
+    > "$DIFF"
+
+  cat "$DIFF" \
+    >> "$PATCHFILE"
 done
 
-echo 'export const patch =' \
-  >> "$PATCHFILE"
-node "$THIS_DIR"/../jsonEscape.js < "$TEMP_DIR"/patch.tmp \
-  >> "$PATCHFILE"
-echo ';' \
-  >> "$PATCHFILE"
-
+node "$THIS_DIR/../createPatch.js" "$PATCHFILE" "$JSPATCH"

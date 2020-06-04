@@ -68,7 +68,7 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
 
   function findApiPathFor(modulePath: NativePath) {
     let curr: PortablePath;
-    let next = npath.toPortablePath(modulePath);
+    let next = ppath.resolve(npath.toPortablePath(modulePath));
 
     do {
       curr = next;
@@ -76,6 +76,10 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
       const candidate = ppath.join(curr, `.pnp.js` as Filename);
       if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile())
         return candidate;
+
+      const cjsCandidate = ppath.join(curr, `.pnp.cjs` as Filename);
+      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile())
+        return cjsCandidate;
 
       next = ppath.dirname(curr);
     } while (curr !== PortablePath.root);
@@ -89,7 +93,7 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
 
     if (typeof parent.pnpApiPath === `undefined`) {
       if (parent.filename !== null) {
-        return findApiPathFor(parent.filename);
+        return parent.pnpApiPath = findApiPathFor(parent.filename);
       } else {
         return initialApiPath;
       }

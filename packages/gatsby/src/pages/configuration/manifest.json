@@ -1,7 +1,7 @@
 {
   "title": "JSON Schema for Yarn Manifest files",
   "$schema": "https://json-schema.org/draft/2019-09/schema#",
-  "description": "Manifest files (also called `package.json` because of their name) contain everything needed to describe the settings unique to one particular package. Project will contain multiple such manifests if they use the workspace feature, as each workspace is described through its own manifest.",
+  "description": "Manifest files (also called `package.json` because of their name) contain everything needed to describe the settings unique to one particular package. Project will contain multiple such manifests if they use the workspace feature, as each workspace is described through its own manifest. Note that defaults for these fields can be set via the `initFields` settings.",
   "type": "object",
   "properties": {
     "name": {
@@ -28,7 +28,7 @@
       "default": true
     },
     "license": {
-      "description": "An SPDX identifier that indicates under which license is your package distributed. Note that the default license can be set via the `initLicense` settings.",
+      "description": "An SPDX identifier that indicates under which license is your package distributed.",
       "type": "string",
       "default": "MIT"
     },
@@ -226,7 +226,7 @@
       }
     },
     "resolutions": {
-      "description": "This field allows you to instruct Yarn to use a specific resolution instead of anything the resolver would normally pick. This is useful to enforce all your packages to use a single version of a dependency, or backport a fix. The syntax for the resolution key accepts one level of specificity, so all the following examples are correct.",
+      "description": "This field allows you to instruct Yarn to use a specific resolution instead of anything the resolver would normally pick. This is useful to enforce all your packages to use a single version of a dependency, or backport a fix. The syntax for the resolution key accepts one level of specificity, so all the following examples are correct.\nNote: When a path is relative, like it can be with the `file:` and `portal:` protocols, it is resolved relative to the path of the project.",
       "type": "object",
       "patternProperties": {
         "^relay-compiler$": {

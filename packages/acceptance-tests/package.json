@@ -1,5 +1,6 @@
 {
   "private": true,
+  "license": "BSD-2-Clause",
   "workspaces": [
     "pkg-tests-core",
     "pkg-tests-fixtures",
@@ -7,9 +8,9 @@
     "pkg-tests-specs"
   ],
   "dependencies": {
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.31",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.25",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.17",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.33",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.27",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "is-wsl": "^2.1.1",
     "pkg-tests-core": "workspace:0.0.0"
@@ -20,5 +21,8 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }

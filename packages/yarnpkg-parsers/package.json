@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/parsers",
-  "version": "2.0.0-rc.10",
+  "version": "2.0.0-rc.11",
+  "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "js-yaml": "^3.10.0"
@@ -27,5 +28,8 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }

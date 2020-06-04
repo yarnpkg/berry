@@ -124,9 +124,9 @@ The `bundleDependencies` (or `bundledDependencies`) is an artifact of the past t
 
 So how to replace them? There are different ways:
 
-- If you need to patch a package, just fork it or reference it through `file:` or `portal:` (it's perfectly fine even for transitive dependencies to use those protocols).
+- If you need to patch a package, just fork it or reference it through `file:` (it's perfectly fine even for transitive dependencies to use this protocol). The `portal:` and `patch:` protocols are also options, although they'll only work for Yarn consumers.
 
-- If you need to ship a package to your customers as a standalone package, bundle it yourself using Webpack, Rollup, or similar tools.
+- If you need to ship a package to your customers as a standalone (no dependencies), bundle it yourself using Webpack, Rollup, or similar tools.
 
 ### If required: enable the `node-modules` plugin
 
@@ -143,6 +143,47 @@ nodeLinker: node-modules
 This will cause Yarn to install the project just like Yarn 1 used to, by copying the packages into various `node_modules` folders.
 
 [More information about the `nodeLinker` option.](/configuration/yarnrc#nodeLinker)
+
+## CLI Commands
+
+### Renamed
+
+| <div style="width:150px">Yarn Classic (1.x)</div> | <div style="width: 250px">Yarn (2.x)</div> | Notes |
+| ------------------ | -------------------------- | ----------------------------- |
+| `yarn create`   | `yarn dlx create-<name>`   | `yarn create` still works, but prefer using `yarn dlx` |
+| `yarn global`   | `yarn dlx`                 | [Dedicated section](#use-yarn-dlx-instead-of-yarn-global) |
+| `yarn info`     | `yarn npm info`            ||
+| `yarn login`    | `yarn npm login`           ||
+| `yarn logout`   | `yarn npm logout`          ||
+| `yarn outdated` | `yarn upgrade-interactive` | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/749) |
+| `yarn publish`  | `yarn npm publish`         ||
+| `yarn upgrade`  | `yarn up`                  | Will now upgrade packages across all workspaces |
+
+### Deprecated
+
+| <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
+| ------------------ | ----------------------------- |
+| `yarn check`    | Cache integrity is now checked on regular installs; [read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106) |
+
+### Removed from core
+
+| <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
+| ------------------ | ----------------------------- |
+| `yarn audit`    | Relied on an undocumented proprietary protocol; [read more on GitHub](https://github.com/yarnpkg/berry/issues/1187) |
+| `yarn import`   | First import to Classic, then migrate to 2.x |
+| `yarn licenses` | Perfect use case for plugins; [read more on GitHub](https://github.com/yarnpkg/berry/issues/1164) |
+
+### Not implemented yet
+
+Those features simply haven't been implemented yet. Help welcome!
+
+| <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
+| ------------------ | ----------------------------- |
+| `yarn list`     | `yarn why` may provide some information in the meantime |
+| `yarn owner`    | Will eventually be available as `yarn npm owner` |
+| `yarn tag`      | Will eventually be available as `yarn npm tag` |
+| `yarn team`     | Will eventually be available as `yarn npm team` |
+| `yarn unlink`   | Manually remove the `resolutions` entries from the `package.json` file for now |
 
 ## Troubleshooting
 
