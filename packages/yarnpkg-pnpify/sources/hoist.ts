@@ -115,6 +115,21 @@ const getHoistedDependencies = (rootNode: HoisterWorkTree): Map<PackageName, Hoi
   return hoistedDependencies;
 };
 
+/**
+ * This method clones the node and returns cloned node copy, if the node was not previously decoupled.
+ *
+ * The node is considered decoupled if there is no multiple parents to any node
+ * on the path from the dependency graph root up to this node. This means that there are no other
+ * nodes in dependency graph that somehow transitively use this node and hence node can be hoisted without
+ * side effects.
+ *
+ * The process of node decoupling is done by going from root node of the graph up to the node in concern
+ * and decoupling each node on this graph path.
+ *
+ * @param originalNode original node
+ *
+ * @returns decoupled node
+ */
 const decoupleNode = (originalNode: HoisterWorkTree): HoisterWorkTree => {
   if (originalNode.decoupled)
     return originalNode;
@@ -248,11 +263,9 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
         break;
       }
     }
-    // console.log(rootNode.ident, hoistCandidates.size);
 
     for (const hoistSet of hoistCandidates) {
       for (const {nodePath, node} of hoistSet.candidates) {
-        // console.log(nodePath.concat([node]).map(x => x.ident));
         let parentClonedNode = clonedTree;
         for (const originalNode of nodePath) {
           let nodeClone = parentClonedNode.children.get(originalNode);
