@@ -10,10 +10,8 @@ const absPnpApiPath = resolve(__dirname, relPnpApiPath);
 const absRequire = (createRequire || createRequireFromPath)(absPnpApiPath);
 
 if (existsSync(absPnpApiPath)) {
-  if (!process.versions.pnp) {
-    // Setup the environment to be able to require typescript/lib/tsserver.js
-    require(absPnpApiPath).setup();
-  }
+  // Setup the environment to be able to require typescript/lib/tsserver.js
+  require(absPnpApiPath).setup();
 }
 
 // Defer to the real typescript/lib/tsserver.js your application uses

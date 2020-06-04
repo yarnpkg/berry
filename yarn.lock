@@ -4891,6 +4891,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/prettier@npm:^2":
+  version: 2.0.1
+  resolution: "@types/prettier@npm:2.0.1"
+  checksum: fba408d98574b9790446bd5d5f1200a1baf164beea676eaad139320a1d1cdf54f2e411a865b253fc75fbadd1a096bb7eacbf13083fa7d26785e98dca57932b47
+  languageName: node
+  linkType: hard
+
 "@types/prop-types@npm:*":
   version: 15.5.8
   resolution: "@types/prop-types@npm:15.5.8"
@@ -6188,6 +6195,7 @@ __metadata:
     "@types/emscripten": ^1.38.0
     "@types/jest": ^24.0.25
     "@types/node": ^13.7.0
+    "@types/prettier": ^2
     "@typescript-eslint/eslint-plugin": ^2.29.0
     "@typescript-eslint/parser": ^2.23.0
     "@yarnpkg/cli": "workspace:^2.0.0-rc.33"
@@ -6204,6 +6212,7 @@ __metadata:
     jest-environment-node: ^24.5.0
     jest-junit: ^5.2.0
     micromatch: ^4.0.2
+    prettier: ^2.0.5
     typescript: ^3.8.3
   dependenciesMeta:
     core-js:
@@ -22705,7 +22714,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.0.4":
+"prettier@npm:^2.0.4, prettier@npm:^2.0.5":
   version: 2.0.5
   resolution: "prettier@npm:2.0.5"
   bin:
