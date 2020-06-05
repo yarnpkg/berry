@@ -1,5 +1,7 @@
 import {npath, ppath, xfs} from '@yarnpkg/fslib';
 import {spawn}             from 'child_process';
+import path from 'path'
+import {createRequire} from 'module'
 
 describe(`Features`, () => {
   describe(`Editor SDK`, () => {
@@ -80,29 +82,32 @@ describe(`Features`, () => {
       }),
     );
 
-    test.only(
-      `it should apply VSCode typescript server patching to support zip schemes`,
-      makeTemporaryEnv({
-        dependencies: {
-          [`typescript`]: `file:${require.resolve('../../../../../.vscode/pnpify/typescript/lib/tsserver.js')}`,
-        },
-      }, async ({path, run, source}) => {
+    /**
+     * Example messages matching '/\.zip\\//' within "send(msg)" - https://hastebin.com/zosibaseki
+     * Note that no messages were found matching '/^zip:\\/\\//' were found within "onMessage(message)"
+     */
+    test(
+      `it should patch message into VSCode typescript language extension for zip schemes`,
+      () => {
 
-        await run(`install`);
-        await pnpify([`--sdk`], path);
+        function addZipPrefix(str) {
+          if(str.match(/\.zip\//) && !str.match(/^zip:\/\//)) {
+              return `zip:${str}`;
+          }
+          return str;
+        }
 
-        const rawOutput = await noPnpNode([`./.vscode/pnpify/typescript/lib/tsserver.js`], path);
-        const jsonOutput = JSON.parse(rawOutput);
-
-console.log('jsonOutput :>> ', jsonOutput);
-
-        // expect(jsonOutput).toMatchObject({
-        //   wrapper: {
-        //     name: `no-deps`,
-        //     version: `1.0.0`,
-        //   },
-        // });
-      }),
+        // @todo - add some realistic non-posix test cases (then update in generateSdks.ts)
+        const testMap = [
+          [
+            '/DARWIN_USER/yarn2-bug-clone/.yarn/cache/@types-node-npm-13.7.0-6051c9578d-cfdb8577f6.zip/node_modules/@types/node/util.d.ts',
+            'zip:/DARWIN_USER/yarn2-bug-clone/.yarn/cache/@types-node-npm-13.7.0-6051c9578d-cfdb8577f6.zip/node_modules/@types/node/util.d.ts',
+          ],
+        ]
+        for (const [toLanguageExtension, withinLanguageExtension] of testMap) {
+          expect(addZipPrefix(toLanguageExtension)).toEqual(withinLanguageExtension);
+        }
+      }
     );
   });
 });
