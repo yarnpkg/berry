@@ -1,7 +1,7 @@
-import {npath, ppath, xfs} from '@yarnpkg/fslib';
-import {spawn}             from 'child_process';
-import path from 'path'
-import {createRequire} from 'module'
+import {npath, ppath, xfs}   from '@yarnpkg/fslib';
+import JSONStream            from 'JSONStream';
+import {execFileSync, spawn} from 'child_process';
+import {StringDecoder}       from 'string_decoder';
 
 describe(`Features`, () => {
   describe(`Editor SDK`, () => {
@@ -88,24 +88,73 @@ describe(`Features`, () => {
      */
     test(
       `it should patch message into VSCode typescript language extension for zip schemes`,
-      () => {
+      async () => {
+        const child = spawn(process.execPath, [require.resolve(`@yarnpkg/monorepo/.vscode/pnpify/typescript/lib/tsserver.js`)], {
+          cwd: npath.dirname(require.resolve(`@yarnpkg/monorepo/package.json`)),
+          stdio: `pipe`,
+          encoding: `utf8`,
+        });
 
-        function addZipPrefix(str) {
-          if(str.match(/\.zip\//) && !str.match(/^zip:\/\//)) {
-              return `zip:${str}`;
-          }
-          return str;
-        }
+        const watchFor = async marker => {
+          let timeout = null;
 
-        // @todo - add some realistic non-posix test cases (then update in generateSdks.ts)
-        const testMap = [
-          [
-            '/DARWIN_USER/yarn2-bug-clone/.yarn/cache/@types-node-npm-13.7.0-6051c9578d-cfdb8577f6.zip/node_modules/@types/node/util.d.ts',
-            'zip:/DARWIN_USER/yarn2-bug-clone/.yarn/cache/@types-node-npm-13.7.0-6051c9578d-cfdb8577f6.zip/node_modules/@types/node/util.d.ts',
-          ],
-        ]
-        for (const [toLanguageExtension, withinLanguageExtension] of testMap) {
-          expect(addZipPrefix(toLanguageExtension)).toEqual(withinLanguageExtension);
+          return await Promise.race([
+            new Promise(resolve => {
+              let data = ``;
+
+              child.stdout.on(`data`, chunk => {
+                data += chunk;
+                if (chunk.includes(marker)) {
+                  clearTimeout(timeout);
+                  resolve(true);
+                }
+              });
+            }),
+            new Promise(resolve => {
+              timeout = setTimeout(resolve, 10000);
+            }),
+          ]);
+        };
+
+        try {
+          // We get the path to something that's definitely in a zip archive
+          const lodashTypeDef = require.resolve(`@types/lodash/index.d.ts`).replace(/\\/g, `/`);
+
+          // We'll also use this file (which we control, so its content won't
+          // change) to get autocompletion infos. It depends on lodash too.
+          const ourUtilityFile = require.resolve(`./editorSdks.utility.ts`).replace(/\\/g, `/`);
+
+          // Some sanity check to make sure everything is A-OK
+          expect(lodashTypeDef).toContain(`.zip`);
+
+          const openPromise = expect(watchFor(`projectLoadingFinish`)).resolves.toEqual(true);
+
+          child.stdin.write(`${JSON.stringify({
+            seq: 0,
+            type: `request`,
+            command: `open`,
+            arguments: {file: `zip://${lodashTypeDef}`},
+          })}\n`);
+
+          await openPromise;
+
+          // "On windows platform, there must be a slash just after the ':' e.g. zip:/e:/prj/.yarn/cache/pack.zip/node_modules/....
+          // else the function 'isAbsolutePath' from resources.ts that is called in fileService.ts will return false"
+          // https://github.com/yarnpkg/berry/pull/1165/files#r408243689
+          const prefix = process.arch === `win32` ? `/` : ``;
+
+          const typeDefPromise = expect(watchFor(`zip:${prefix}${lodashTypeDef}`)).resolves.toEqual(true);
+
+          child.stdin.write(`${JSON.stringify({
+            seq: 1,
+            type: `request`,
+            command: `typeDefinition`,
+            arguments: {file: ourUtilityFile, line: 6, offset: 9},
+          })}\n`);
+
+          await typeDefPromise;
+        } finally {
+          child.stdin.end();
         }
       }
     );

@@ -24,7 +24,7 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   `const absRequire = (createRequire || createRequireFromPath)(absPnpApiPath);\n`,
   `\n`,
   ...(wrapModule ? [
-    `const moduleWrapper = ${wrapModule}`,
+    `const moduleWrapper = ${wrapModule.trim().replace(/^ {4}/gm, ``)}\n`,
     `\n`,
   ] : []),
   `if (existsSync(absPnpApiPath)) {\n`,
@@ -191,61 +191,44 @@ export const generateTypescriptLanguageServerWrapper = async (pnpApi: PnpApi, ta
 };
 
 const generateTypescriptWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const tsServerMonkeyPatch = `
+    tsserver => {
+      // VSCode sends the zip paths to TS using the "zip://" prefix, that TS
+      // doesn't understand. This layer makes sure to remove the protocol
+      // before forwarding it to TS, and to add it back on all returned paths.
 
-  const tsServerMonkeyPatch = `function(tsserverOrLib) {
-    const Session = tsserverOrLib.server.Session;
-    const {onMessage: originalOnMessage, send: originalSend} = Session.prototype;
-    Object.assign(Session.prototype, {
-        onMessage(/** @type {string} */message) {
-            let processed = message;
-            try {
-                const parsed = JSON.parse(message);
-                // process the message
-                processed = JSON.stringify(parsed, (key, value) => {
-                    if(typeof value === 'string') {
-                        // strip the zip:// prefix from paths
-                        return removeZipPrefix(value);
-                    }
-                    return value;
-                });
-            } catch(e) {
-                // we failed to parse and process the message
-                // pass it verbatim
-                throw e;
-            }
-            return originalOnMessage.call(this, processed);
-            // return originalOnMessage.call(this, message);
+      const {isAbsolute} = require(\`path\`);
+
+      const Session = tsserver.server.Session;
+      const {onMessage: originalOnMessage, send: originalSend} = Session.prototype;
+
+      return Object.assign(Session.prototype, {
+        onMessage(/** @type {string} */ message) {
+          return originalOnMessage.call(this, JSON.stringify(JSON.parse(message), (key, value) => {
+            return typeof value === 'string' ? removeZipPrefix(value) : value;
+          }));
         },
-        /** msg is an object that will be formatted / stringified */
-        send(msg) {
-            let processed = msg;
-            try {
-                // transform it
-                processed = JSON.parse(JSON.stringify(msg, (key, value) => {
-                    if(typeof value === 'string') {
-                        return addZipPrefix(value);
-                    }
-                    return value;
-                }));
-            } catch(e) {
-                // we failed to process; pass it verbatim
-                throw e;
-            }
-            return originalSend.call(this, processed);
-            // return originalSend.call(this, msg);
-        }
-    });
 
-    function addZipPrefix(str) {
-        if(str.match(/\.zip\\//) && !str.match(/^zip:\\/\\//)) {
-            return \`zip:\${str}\`;
+        send(/** @type {any} */ msg) {
+          return originalSend.call(this, JSON.parse(JSON.stringify(msg, (key, value) => {
+            return typeof value === 'string' ? addZipPrefix(value) : value;
+          })));
         }
-        return str;
-    }
-    function removeZipPrefix(str) {
-        return str.replace(/^zip:\\/\\//, '');
-    }
-  }`
+      });
+
+      function addZipPrefix(str) {
+        if (isAbsolute(str) && str.match(/\\.zip\\//) && !str.match(/^zip:\\/\\//)) {
+          return \`zip:\${str}\`;
+        } else {
+          return str;
+        }
+      }
+
+      function removeZipPrefix(str) {
+        return str.replace(/^zip:\\/\\//, \`\`);
+      }
+    };
+  `;
 
   const wrapper = new Wrapper(`typescript` as PortablePath, {pnpApi, target});
 
