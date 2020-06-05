@@ -167,7 +167,7 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
 const decoupleGraphPath = (nodePath: Array<HoisterWorkTree>): HoisterWorkTree => {
   let parentNode = nodePath[0];
   for (const node of nodePath.slice(1))
-    parentNode = decoupleGraphNode(parentNode, node);
+    parentNode = decoupleGraphNode(parentNode, parentNode.dependencies.get(node.name)!);
 
   return parentNode;
 };
