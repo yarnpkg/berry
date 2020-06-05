@@ -276,6 +276,41 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
 };
 
 /**
+ * Gets regular node dependencies only and sorts them in the order so that
+ * peer dependencies come before the dependency that rely on them.
+ *
+ * @param node graph node
+ * @returns sorted regular dependencies
+ */
+const getSortedReglarDependencies = (node: HoisterWorkTree): Set<HoisterWorkTree> => {
+  const dependencies: Set<HoisterWorkTree> = new Set();
+
+  const addDep = (dep: HoisterWorkTree, seenDeps = new Set()) => {
+    if (seenDeps.has(dep))
+      return;
+    seenDeps.add(dep);
+
+    for (const peerName of dep.peerNames) {
+      if (!node.peerNames.has(peerName)) {
+        const peerDep = node.dependencies.get(peerName);
+        if (peerDep && !dependencies.has(peerDep)) {
+          addDep(peerDep, seenDeps);
+        }
+      }
+    }
+    dependencies.add(dep);
+  };
+
+  for (const dep of node.dependencies.values()) {
+    if (!node.peerNames.has(dep.name)) {
+      addDep(dep);
+    }
+  }
+
+  return dependencies;
+};
+
+/**
  * Performs actual graph transformation, by hoisting packages to the root node.
  *
  * @param tree dependency tree
@@ -290,8 +325,8 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
   const seenNodes = new Set<HoisterWorkTree>();
 
   const hoist = (nodePath: Array<HoisterWorkTree>, locatorPath: Array<Locator>, node: HoisterWorkTree) => {
-    const isSeen = seenNodes.has(node);
-    seenNodes.add(node);
+    if (seenNodes.has(node))
+      return;
 
     let reasonRoot;
     let reason: string;
@@ -359,6 +394,13 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
         // Avoid adding other version of root node to itself
         if (rootNode.ident !== node.ident) {
           rootNode.dependencies.set(node.name, node);
+          seenNodes.add(node);
+
+          // Hoist newly added root node dependency subdependencies
+          for (const dep of getSortedReglarDependencies(node))
+            hoist([rootNode, node], [rootNode.locator, node.locator], dep);
+
+          seenNodes.delete(node);
         }
       } else {
         for (const reference of node.references) {
@@ -379,23 +421,28 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
       }
     }
 
-    if (!isSeen && !isHoistable && locatorPath.indexOf(node.locator) < 0) {
-      for (const dep of node.dependencies.values()) {
-        if (!node.peerNames.has(dep.name)) {
-          hoist([...nodePath, node], [...locatorPath, node.locator], dep);
-        }
-      }
+    if (!isHoistable && locatorPath.indexOf(node.locator) < 0) {
+      seenNodes.add(node);
+
+      for (const dep of getSortedReglarDependencies(node))
+        hoist([...nodePath, node], [...locatorPath, node.locator], dep);
+
+      seenNodes.delete(node);
     }
   };
 
   for (const dep of rootNode.dependencies.values()) {
     if (rootNode.peerNames.has(dep.name) || dep.locator === rootNode.locator)
       continue;
-    for (const subDep of dep.dependencies.values()) {
-      if (!dep.peerNames.has(subDep.name) && subDep.locator !== dep.locator) {
+    seenNodes.add(dep);
+
+    for (const subDep of getSortedReglarDependencies(dep)) {
+      if (subDep.locator !== dep.locator) {
         hoist([rootNode, dep], [rootNode.locator, dep.locator], subDep);
       }
     }
+
+    seenNodes.delete(dep);
   }
 
   return wasGraphChanged;
