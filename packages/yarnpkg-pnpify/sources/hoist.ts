@@ -126,15 +126,15 @@ const getHoistedDependencies = (rootNode: HoisterWorkTree): Map<PackageName, Hoi
  * The process of node decoupling is done by going from root node of the graph up to the node in concern
  * and decoupling each node on this graph path.
  *
- * @param originalNode original node
+ * @param node original node
  *
  * @returns decoupled node
  */
-const decoupleNode = (originalNode: HoisterWorkTree): HoisterWorkTree => {
-  if (originalNode.decoupled)
-    return originalNode;
+const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): HoisterWorkTree => {
+  if (node.decoupled)
+    return node;
 
-  const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons} = originalNode;
+  const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons} = node;
   // To perform node hoisting from parent node we must clone parent nodes up to the root node,
   // because some other package in the tree might depend on the parent package where hoisting
   // cannot be performed
@@ -155,7 +155,23 @@ const decoupleNode = (originalNode: HoisterWorkTree): HoisterWorkTree => {
     // Update self-reference
     clone.dependencies.set(name, clone);
 
+  parent.dependencies.set(clone.name, clone);
+
   return clone;
+};
+
+/**
+ * Decouples graph path all the way from decoupled graph node (tree node) up to the node in concern.
+ *
+ * @param nodePath graph path that starts from decoupled graph node up to the node in concern
+ * @returns decoupled node, the last one in `nodePath`
+ */
+const decoupleGraphPath = (nodePath: Array<HoisterWorkTree>): HoisterWorkTree => {
+  let parentNode = nodePath[0];
+  for (const node of nodePath.slice(1))
+    parentNode = decoupleGraphNode(parentNode, node);
+
+  return parentNode;
 };
 
 /**
@@ -242,7 +258,6 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
 
   const hoistedDependencies = rootNode === tree ? new Map() : getHoistedDependencies(rootNode);
 
-  const clonedTree: CloneTree = {clone: rootNode, children: new Map()};
   let hoistCandidates;
   do {
     hoistCandidates = getHoistCandidates(rootNode, rootNodePath, ancestorDependencies, hoistedDependencies, hoistIdents, options);
@@ -266,20 +281,10 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
 
     for (const hoistSet of hoistCandidates) {
       for (const {nodePath, node} of hoistSet.candidates) {
-        let parentClonedNode = clonedTree;
-        for (const originalNode of nodePath) {
-          let nodeClone = parentClonedNode.children.get(originalNode);
-          if (!nodeClone) {
-            const clone = decoupleNode(originalNode);
-            nodeClone = {clone, children: new Map()};
-            parentClonedNode.children.set(originalNode, nodeClone);
-            parentClonedNode.clone.dependencies.set(clone.name, clone);
-          }
-          parentClonedNode = nodeClone;
-        }
-        parentClonedNode.clone.dependencies.delete(node.name);
-        parentClonedNode.clone.hoistedDependencies.set(node.name, node);
-        parentClonedNode.clone.reasons.delete(node.name);
+        const parentNode = decoupleGraphPath(nodePath);
+        parentNode.dependencies.delete(node.name);
+        parentNode.hoistedDependencies.set(node.name, node);
+        parentNode.reasons.delete(node.name);
         const hoistedNode = rootNode.dependencies.get(node.name);
         hoistIdentMap.set(node.name, [node.ident]);
         // Add hoisted node to root node, in case it is not already there
@@ -306,8 +311,7 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
 
   for (const dependency of rootNode.dependencies.values()) {
     if (!rootNode.peerNames.has(dependency.name) && !rootNodePath.has(dependency.locator)) {
-      const clone = decoupleNode(dependency);
-      rootNode.dependencies.set(clone.name, clone);
+      const clone = decoupleGraphNode(rootNode, dependency);
       rootNodePath.add(clone.locator);
       hoistTo(tree, clone, rootNodePath, ancestorDependencies, options);
       rootNodePath.delete(clone.locator);
@@ -419,7 +423,7 @@ const getHoistCandidates = (rootNode: HoisterWorkTree, rootNodePath: Set<Locator
     parents.push(tuple);
     for (const subDep of dep.dependencies.values())
       if (!dep.peerNames.has(subDep.name) && subDep.locator !== dep.locator)
-        computeHoistCandidates([dep], [rootNode.locator, dep.locator], subDep);
+        computeHoistCandidates([rootNode, dep], [rootNode.locator, dep.locator], subDep);
 
     parents.pop();
   }
