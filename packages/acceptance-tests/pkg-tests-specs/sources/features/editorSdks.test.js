@@ -139,11 +139,6 @@ describe(`Features`, () => {
 
           await openPromise;
 
-          // "On windows platform, there must be a slash just after the ':' e.g. zip:/e:/prj/.yarn/cache/pack.zip/node_modules/....
-          // else the function 'isAbsolutePath' from resources.ts that is called in fileService.ts will return false"
-          // https://github.com/yarnpkg/berry/pull/1165/files#r408243689
-          const prefix = process.arch === `win32` ? `/` : ``;
-
           const typeDefPromise = expect(watchFor(`zip:${prefix}${lodashTypeDef}`)).resolves.toEqual(true);
 
           child.stdin.write(`${JSON.stringify({
