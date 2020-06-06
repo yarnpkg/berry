@@ -5,16 +5,6 @@ type Locator = string;
 type Ident = string;
 type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, {root: HoisterWorkTree, reason: string}>};
 
-type Tuple = {
-  node: HoisterWorkTree,
-  parent: HoisterWorkTree,
-}
-
-type HoistCandidate = { nodePath: Array<HoisterWorkTree>, node: HoisterWorkTree };
-type HoistCandidateSet = {node: HoisterWorkTree, candidates: Set<HoistCandidate>};
-
-type HoistCandidates = Map<PackageName, HoistCandidateSet>;
-
 /**
  * Mapping which packages depend on a given package. It is used to determine hoisting weight,
  * e.g. which one among the group of packages with the same name should be hoisted.
