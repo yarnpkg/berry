@@ -597,8 +597,12 @@ const areRealLocatorsEqual = (locatorKey1?: LocatorKey, locatorKey2?: LocatorKey
   if (!locatorKey1 || !locatorKey2)
     return locatorKey1 === locatorKey2;
 
-  const locator1 = structUtils.devirtualizeLocator(structUtils.parseLocator(locatorKey1));
-  const locator2 = structUtils.devirtualizeLocator(structUtils.parseLocator(locatorKey2));
+  let locator1 = structUtils.parseLocator(locatorKey1);
+  if (structUtils.isVirtualLocator(locator1))
+    locator1 = structUtils.devirtualizeLocator(locator1);
+  let locator2 = structUtils.parseLocator(locatorKey2);
+  if (structUtils.isVirtualLocator(locator2))
+    locator2 = structUtils.devirtualizeLocator(locator2);
 
   return structUtils.areLocatorsEqual(locator1, locator2);
 };

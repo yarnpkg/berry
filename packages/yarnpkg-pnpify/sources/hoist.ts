@@ -186,7 +186,7 @@ const getHoistIdentMap = (rootNode: HoisterWorkTree, ancestorMap: AncestorMap): 
 
   for (const ident of identList) {
     const name = ident.substring(0, ident.indexOf(`@`, 1));
-    if (!rootNode.peerNames.has(name) && !rootNode.dependencies.has(name)) {
+    if (!rootNode.peerNames.has(name)) {
       let idents = identMap.get(name);
       if (!idents) {
         idents = [];
@@ -242,10 +242,10 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
 
   let wasStateChanged;
   do {
-    wasStateChanged = hoistGraph(tree, rootNode, rootNodePath, hoistedDependencies, hoistIdents, hoistIdentMap, options);
+    wasStateChanged = hoistGraph(tree, rootNode, rootNodePath, hoistedDependencies, hoistIdents, options);
     if (!wasStateChanged) {
-      for (const idents of hoistIdentMap.values()) {
-        if (idents.length > 1) {
+      for (const [name, idents] of hoistIdentMap) {
+        if (idents.length > 1 && !rootNode.dependencies.has(name)) {
           hoistIdents.delete(idents[0]);
           idents.shift();
           hoistIdents.add(idents[0]);
@@ -306,10 +306,10 @@ const getSortedReglarDependencies = (node: HoisterWorkTree): Set<HoisterWorkTree
  * @param tree dependency tree
  * @param rootNode root package node
  * @param rootNodePath root node path in the tree
- * @param ancestorDependencies commulative dependencies of all root node ancestors, including root node dependencies
- * @param ancestorMap ancestor map to determine `dependency` version popularity
+ * @param hoistedDependencies map of dependencies that were hoisted to parent nodes
+ * @param hoistIdents idents that should be attempted to be hoisted to the root node
  */
-const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath: Set<Locator>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Set<Ident>, hoistIdentMap: Map<PackageName, Array<Ident>>, options: InternalHoistOptions): boolean => {
+const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath: Set<Locator>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Set<Ident>, options: InternalHoistOptions): boolean => {
   let wasGraphChanged = false;
 
   const seenNodes = new Set<HoisterWorkTree>();
@@ -378,7 +378,6 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
       parentNode.reasons.delete(node.name);
       wasGraphChanged = true;
       const hoistedNode = rootNode.dependencies.get(node.name);
-      hoistIdentMap.set(node.name, [node.ident]);
       // Add hoisted node to root node, in case it is not already there
       if (!hoistedNode) {
         // Avoid adding other version of root node to itself
