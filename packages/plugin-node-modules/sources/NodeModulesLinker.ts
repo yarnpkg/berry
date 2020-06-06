@@ -593,6 +593,16 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
   return binSymlinks;
 }
 
+const areRealLocatorsEqual = (locatorKey1?: LocatorKey, locatorKey2?: LocatorKey) => {
+  if (!locatorKey1 || !locatorKey2)
+    return locatorKey1 === locatorKey2;
+
+  const locator1 = structUtils.devirtualizeLocator(structUtils.parseLocator(locatorKey1));
+  const locator2 = structUtils.devirtualizeLocator(structUtils.parseLocator(locatorKey2));
+
+  return structUtils.areLocatorsEqual(locator1, locator2);
+};
+
 async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
   const rootNmDirPath = ppath.join(project.cwd, NODE_MODULES);
 
@@ -705,7 +715,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       // so that removeDir removed the whole directory
       await removeDir(location, {contentsOnly: node.linkType === LinkType.HARD});
     } else {
-      if (node.locator !== prevNode.locator)
+      if (!areRealLocatorsEqual(node.locator, prevNode.locator))
         await removeDir(location, {contentsOnly: node.linkType === LinkType.HARD});
 
       for (const [segment, childNode] of node.children) {
@@ -745,7 +755,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
             break;
           }
         }
-        if (node && node.locator !== prevLocator) {
+        if (node && !areRealLocatorsEqual(node.locator, prevLocator)) {
           const info = installState.get(node.locator!)!;
           const srcDir = info.target;
           const dstDir = curLocation;
