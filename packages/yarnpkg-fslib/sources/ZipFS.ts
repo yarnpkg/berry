@@ -115,12 +115,12 @@ export type ZipBufferOptions = {
   libzip: Libzip,
   readOnly?: boolean,
   stats?: Stats,
+  level?: ZipCompression,
 };
 
 export type ZipPathOptions = ZipBufferOptions & {
   baseFs?: FakeFS<PortablePath>,
   create?: boolean,
-  level?: ZipCompression,
 };
 
 function toUnixTimestamp(time: Date | string | number) {
