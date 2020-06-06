@@ -34,7 +34,7 @@ const moduleWrapper = tsserver => {
   });
 
   function addZipPrefix(str) {
-    if (isAbsolute(str) && str.match(/\.zip\//) && !str.match(/^zip:\/\//)) {
+    if (isAbsolute(str) && str.match(/\.zip\//) && !str.match(/^zip:/)) {
       return `zip:${str}`;
     } else {
       return str;
@@ -42,7 +42,7 @@ const moduleWrapper = tsserver => {
   }
 
   function removeZipPrefix(str) {
-    return str.replace(/^zip:\/\//, ``);
+    return str.replace(/^zip:/, ``);
   }
 };
 

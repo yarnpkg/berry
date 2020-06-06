@@ -217,7 +217,7 @@ const generateTypescriptWrapper = async (pnpApi: PnpApi, target: PortablePath) =
       });
 
       function addZipPrefix(str) {
-        if (isAbsolute(str) && str.match(/\\.zip\\//) && !str.match(/^zip:\\/\\//)) {
+        if (isAbsolute(str) && str.match(/\\.zip\\//) && !str.match(/^zip:/)) {
           return \`zip:\${str}\`;
         } else {
           return str;
@@ -225,7 +225,7 @@ const generateTypescriptWrapper = async (pnpApi: PnpApi, target: PortablePath) =
       }
 
       function removeZipPrefix(str) {
-        return str.replace(/^zip:\\/\\//, \`\`);
+        return str.replace(/^zip:/, \`\`);
       }
     };
   `;
