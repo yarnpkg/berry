@@ -10,13 +10,14 @@
     "@yarnpkg/core": "workspace:^2.0.0-rc.27",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
     "chalk": "^3.0.0",
+    "clipanion": "^2.4.0",
     "comment-json": "^2.2.0",
-    "cross-spawn": "7.0.3"
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "@types/chalk": "2.2.0",
     "@types/comment-json": "^1.1.1",
-    "@types/cross-spawn": "6.0.0",
+    "@types/lodash": "^4.14.136",
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.20",
     "eslint": "^6.8.0",

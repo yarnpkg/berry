@@ -1,9 +1,12 @@
+import {Report, MessageName}                       from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
 import {PnpApi}                                    from '@yarnpkg/pnp';
 import chalk                                       from 'chalk';
-import CJSON                                       from 'comment-json';
 
 import {dynamicRequire}                            from './dynamicRequire';
+
+import {BASE_SDKS}                                 from './sdks/base';
+import {VSCODE_SDKS}                               from './sdks/vscode';
 
 type TemplateOptions = {
   setupEnv?: boolean,
@@ -53,26 +56,7 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   `module.exports = absRequire(\`${module}\`);\n`,
 ].join(``);
 
-const addVSCodeWorkspaceSettings = async (pnpApi: PnpApi, settings: any) => {
-  const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
-  const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
-
-  const settingsPath = ppath.join(projectRoot, `.vscode/settings.json` as PortablePath);
-
-  const content = await xfs.existsPromise(settingsPath)
-    ? await xfs.readFilePromise(settingsPath, `utf8`)
-    : `{}`;
-
-  const data = CJSON.parse(content);
-  const patched = `${CJSON.stringify({...data, ...settings}, null, 2)}\n`;
-
-  await xfs.mkdirpPromise(ppath.dirname(settingsPath));
-  await xfs.changeFilePromise(settingsPath, patched, {
-    automaticNewlines: true,
-  });
-};
-
-class Wrapper {
+export class Wrapper {
   private name: PortablePath;
 
   private pnpApi: PnpApi;
@@ -142,129 +126,79 @@ class Wrapper {
   }
 }
 
-export const generateEslintWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`eslint` as PortablePath, {pnpApi, target});
 
-  await wrapper.writeManifest();
+export type GenerateBaseWrapper = (pnpApi: PnpApi, target: PortablePath) => Promise<Wrapper>;
 
-  await wrapper.writeBinary(`bin/eslint.js` as PortablePath);
-  await wrapper.writeFile(`lib/api.js` as PortablePath);
+export type GenerateEditorWrapper = (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => Promise<void>;
 
-  await addVSCodeWorkspaceSettings(pnpApi, {
-    [`eslint.nodePath`]: npath.fromPortablePath(
-      ppath.dirname(ppath.dirname(ppath.dirname(
-        wrapper.getProjectPathTo(
-          `lib/api.js` as PortablePath,
-        ),
-      ))),
-    ),
-  });
-};
+export type BaseSdks = Array<[string, GenerateBaseWrapper]>;
 
-export const generatePrettierWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`prettier` as PortablePath, {pnpApi, target});
+export type EditorSdks = Array<[string, GenerateEditorWrapper | null]>;
 
-  await wrapper.writeManifest();
+export const SUPPORTED_EDITORS = new Set([
+  `vscode` as const,
+]);
 
-  await wrapper.writeBinary(`index.js` as PortablePath);
-
-  await addVSCodeWorkspaceSettings(pnpApi, {
-    [`prettier.prettierPath`]: npath.fromPortablePath(
-      wrapper.getProjectPathTo(
-        `index.js` as PortablePath,
-      ),
-    ),
-  });
-};
-
-export const generateTypescriptLanguageServerWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`typescript-language-server` as PortablePath, {pnpApi, target});
-
-  await wrapper.writeManifest();
-
-  await wrapper.writeBinary(`lib/cli.js` as PortablePath);
-};
-
-const generateTypescriptWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`typescript` as PortablePath, {pnpApi, target});
-
-  await wrapper.writeManifest();
-
-  await wrapper.writeBinary(`bin/tsc` as PortablePath);
-  await wrapper.writeBinary(`bin/tsserver` as PortablePath);
-
-  await wrapper.writeFile(`lib/tsc.js` as PortablePath);
-  await wrapper.writeFile(`lib/tsserver.js` as PortablePath);
-  await wrapper.writeFile(`lib/typescript.js` as PortablePath);
-
-  await addVSCodeWorkspaceSettings(pnpApi, {
-    [`typescript.tsdk`]: npath.fromPortablePath(
-      ppath.dirname(
-        wrapper.getProjectPathTo(
-          `lib/tsserver.js` as PortablePath,
-        ),
-      ),
-    ),
-    [`typescript.enablePromptUseWorkspaceTsdk`]: true,
-  });
-};
-
-export const generateStylelintWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`stylelint` as PortablePath, {pnpApi, target});
-
-  await wrapper.writeManifest();
-
-  await wrapper.writeBinary(`bin/stylelint.js` as PortablePath);
-  await wrapper.writeFile(`lib/index.js` as PortablePath);
-
-  await addVSCodeWorkspaceSettings(pnpApi, {
-    [`stylelint.stylelintPath`]: npath.fromPortablePath(
-      wrapper.getProjectPathTo(
-        `lib/index.js` as PortablePath,
-      ),
-    ),
-  });
-};
-
-const SDKS: Array<[string, (pnpApi: PnpApi, target: PortablePath) => Promise<void>]> = [
-  [`eslint`, generateEslintWrapper],
-  [`prettier`, generatePrettierWrapper],
-  [`typescript-language-server`, generateTypescriptLanguageServerWrapper],
-  [`typescript`, generateTypescriptWrapper],
-  [`stylelint`, generateStylelintWrapper],
-];
-
-export const generateSdk = async (pnpApi: PnpApi): Promise<any> => {
+export const generateSdk = async (pnpApi: PnpApi, editors: typeof SUPPORTED_EDITORS | null, report: Report): Promise<void> => {
   const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
   const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
 
-  const targetFolder = ppath.join(projectRoot, `.vscode/pnpify` as PortablePath);
+  const targetFolder = ppath.join(projectRoot, `.yarn/pnpify` as PortablePath);
 
   if (xfs.existsSync(targetFolder)) {
-    console.log(`Cleaning up the existing SDK files...`);
+    report.reportInfo(null, `Cleaning up the existing SDK files...`);
     await xfs.removePromise(targetFolder);
   }
 
-  console.log(`Installing fresh SDKs for ${chalk.magenta(projectRoot)}:`);
-  console.log(``);
+  report.reportInfo(null, `Installing fresh SDKs for ${chalk.magenta(projectRoot)}:`);
+  report.reportSeparator();
+
+  if (editors !== null && editors.size > 0) {
+    report.reportInfo(null, `Editors:`);
+    for (const editor of editors) {
+      report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${editor}`);
+    }
+  } else {
+    report.reportInfo(null, `No editors have been provided as arguments. Updating the base SDK...`);
+  }
+  report.reportSeparator();
+
+  const EDITOR_SDKS = [
+    ...editors?.has(`vscode`) ? [VSCODE_SDKS] : [],
+  ];
+
+  report.reportInfo(null, `Dependencies:`);
 
   let skippedSome = false;
 
-  for (const [pkgName, generateWrapper] of SDKS) {
+  for (const [pkgName, generateBaseWrapper] of BASE_SDKS) {
     const displayName = pkgName.replace(/^[a-z]/g, $0 => $0.toUpperCase());
 
     if (topLevelInformation.packageDependencies.has(pkgName)) {
-      console.log(`  ${chalk.green(`✓`)} ${displayName}`);
-      await generateWrapper(pnpApi, targetFolder);
+      report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${displayName}`);
+      const wrapper = await generateBaseWrapper(pnpApi, targetFolder);
+
+      for (const sdks of EDITOR_SDKS) {
+        const editorSdk = sdks.find(sdk => sdk[0] === pkgName);
+
+        if (!editorSdk)
+          continue;
+
+        const [, generateEditorWrapper] = editorSdk;
+
+        if (!generateEditorWrapper)
+          continue;
+
+        await generateEditorWrapper(pnpApi, targetFolder, wrapper);
+      }
     } else {
-      console.log(`  ${chalk.yellow(`•`)} ${displayName} (dependency not found; skipped)`);
+      report.reportInfo(null, `${chalk.yellow(`•`)} ${displayName} (dependency not found; skipped)`);
       skippedSome = true;
     }
   }
 
   if (skippedSome) {
-    console.log(``);
-    console.log(`Note that in order to be detected those packages have to be listed as top-level`);
-    console.log(`dependencies (listing them into each individual workspace won't be enough).`);
+    report.reportSeparator();
+    report.reportInfo(null, `Note that in order to be detected those packages have to be listed as top-level dependencies (listing them into each individual workspace won't be enough).`);
   }
 };
