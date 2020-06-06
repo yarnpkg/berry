@@ -132,5 +132,17 @@ describe(`ZipFS`, () => {
     readSyncAsserts(zipFs2);
     zipFs2.discardAndClose();
   });
+
+  it(`can create a zip file in memory`, () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    zipFs.writeFileSync(`/foo.txt`as PortablePath, `Test`);
+
+    const zipContent = zipFs.getBufferAndClose();
+
+    const zipFs2 = new ZipFS(zipContent, {libzip});
+    expect(zipFs2.readFileSync(`/foo.txt` as PortablePath, `utf8`)).toEqual(`Test`);
+  });
 });
 
