@@ -28,7 +28,7 @@ describe(`Features`, () => {
         await run(`install`);
         await pnpify([`--sdk`], path);
 
-        const rawOutput = await noPnpNode([`./.vscode/pnpify/eslint/bin/eslint.js`], path);
+        const rawOutput = await noPnpNode([`./.yarn/pnpify/eslint/bin/eslint.js`], path);
         const jsonOutput = JSON.parse(rawOutput);
 
         expect(jsonOutput).toMatchObject({
@@ -68,7 +68,7 @@ describe(`Features`, () => {
         await run(`install`, {nodeLinker: `node-modules`});
         expect(xfs.existsSync(ppath.join(path, `.pnp.js`))).toEqual(false);
 
-        const rawOutput = await noPnpNode([`./.vscode/pnpify/eslint/bin/eslint.js`], path);
+        const rawOutput = await noPnpNode([`./.yarn/pnpify/eslint/bin/eslint.js`], path);
         const jsonOutput = JSON.parse(rawOutput);
 
         expect(jsonOutput).toMatchObject({
