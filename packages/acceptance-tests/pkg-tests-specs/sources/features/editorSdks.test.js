@@ -134,12 +134,12 @@ describe(`Features`, () => {
             seq: 0,
             type: `request`,
             command: `open`,
-            arguments: {file: `zip://${lodashTypeDef}`},
+            arguments: {file: `zip:${lodashTypeDef}`},
           })}\n`);
 
           await openPromise;
 
-          const typeDefPromise = expect(watchFor(`zip:${prefix}${lodashTypeDef}`)).resolves.toEqual(true);
+          const typeDefPromise = expect(watchFor(`zip:${lodashTypeDef}`)).resolves.toEqual(true);
 
           child.stdin.write(`${JSON.stringify({
             seq: 1,
