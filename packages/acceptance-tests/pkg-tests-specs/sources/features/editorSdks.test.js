@@ -110,7 +110,9 @@ describe(`Features`, () => {
               });
             }),
             new Promise((resolve, reject) => {
-              timeout = setTimeout(reject(new Error(`Timeout reached; server answered:\n\n${data}`)), 10000);
+              timeout = setTimeout(() => {
+                reject(new Error(`Timeout reached; server answered:\n\n${data}`));
+              }, 10000);
             }),
           ]);
         };
