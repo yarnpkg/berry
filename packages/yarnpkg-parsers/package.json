@@ -4,7 +4,8 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "js-yaml": "^3.10.0"
+    "js-yaml": "^3.10.0",
+    "tslib": "^1.13.0"
   },
   "devDependencies": {
     "pegjs": "^0.10.0"

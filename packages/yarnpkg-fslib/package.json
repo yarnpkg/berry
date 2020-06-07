@@ -5,7 +5,8 @@
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/libzip": "workspace:^2.0.0-rc.11"
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.11",
+    "tslib": "^1.13.0"
   },
   "scripts": {
     "postpack": "rm -rf lib",

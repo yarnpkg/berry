@@ -11,7 +11,8 @@
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.22",
     "@zkochan/cmd-shim": "^4.3.0",
     "clipanion": "^2.4.0",
-    "micromatch": "^4.0.2"
+    "micromatch": "^4.0.2",
+    "tslib": "^1.13.0"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "^2.0.0-rc.33",

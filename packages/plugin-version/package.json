@@ -11,6 +11,7 @@
     "ink": "^2.3.0",
     "react": "^16.13.1",
     "semver": "^7.1.2",
+    "tslib": "^1.13.0",
     "yup": "^0.27.0"
   },
   "peerDependencies": {

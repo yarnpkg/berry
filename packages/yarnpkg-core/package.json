@@ -29,6 +29,7 @@
     "semver": "^7.1.2",
     "stream-to-promise": "^2.2.0",
     "tar": "^4.4.6",
+    "tslib": "^1.13.0",
     "tunnel": "^0.0.6"
   },
   "devDependencies": {

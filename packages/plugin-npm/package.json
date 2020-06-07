@@ -6,7 +6,8 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
     "inquirer": "^6.2.0",
-    "semver": "^7.1.2"
+    "semver": "^7.1.2",
+    "tslib": "^1.13.0"
   },
   "peerDependencies": {
     "@yarnpkg/core": "^2.0.0-rc.27"
