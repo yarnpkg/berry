@@ -1,20 +1,20 @@
 {
   "name": "@yarnpkg/plugin-stage",
-  "version": "2.0.0-rc.15",
+  "version": "2.0.0-rc.16",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
     "clipanion": "^2.4.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.33",
-    "@yarnpkg/core": "^2.0.0-rc.27"
+    "@yarnpkg/cli": "^2.0.0-rc.34",
+    "@yarnpkg/core": "^2.0.0-rc.28"
   },
   "devDependencies": {
-    "@yarnpkg/builder": "workspace:^2.0.0-rc.21",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.33",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.27",
+    "@yarnpkg/builder": "workspace:^2.0.0-rc.22",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.34",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.28",
     "typescript": "^3.8.3"
   },
   "scripts": {
