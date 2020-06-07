@@ -49,7 +49,7 @@ Note that VSCode might ask you to do Step 3 again from time to time, but apart f
 1. Run the following command, which will generate a new directory called `.yarn/pnpify`:
 
 ```bash
-yarn dlx @yarnpkg/pnpify --sdk=vscode // until we create the vim sdks
+yarn dlx @yarnpkg/pnpify --sdk=base
 ```
 
 2. Set [`tsserver.tsdk`](https://github.com/neoclide/coc-tsserver#configuration-options) to `.yarn/pnpify/typescript/lib`
@@ -61,7 +61,7 @@ The SDK comes with a typescript-language-server wrapper which enables you to use
 1. Run the following command, which will generate a new directory called `.yarn/pnpify`:
 
 ```bash
-yarn dlx @yarnpkg/pnpify --sdk=vscode // until we create the emacs sdks
+yarn dlx @yarnpkg/pnpify --sdk=base
 ```
 
 2. Create a `.dir-locals.el` with the following content to enable Flycheck and LSP support:

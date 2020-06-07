@@ -7,7 +7,7 @@ import SdkCommand     from './commands/SdkCommand';
 
 const cli = new Cli({
   binaryLabel: `Yarn PnPify`,
-  binaryName: `pnpify`,
+  binaryName: `yarn pnpify`,
   binaryVersion: require(`@yarnpkg/pnpify/package.json`).version,
 });
 

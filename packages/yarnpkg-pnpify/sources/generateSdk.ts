@@ -238,18 +238,20 @@ export class Wrapper {
   }
 }
 
-export const generateSdk = async (pnpApi: PnpApi, editors: typeof SUPPORTED_EDITORS | null, report: Report): Promise<void> => {
+export const generateSdk = async (pnpApi: PnpApi, editors: typeof SUPPORTED_EDITORS | null, {report, base}: {report: Report, base: boolean}): Promise<void> => {
   const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
   const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
 
   const targetFolder = ppath.join(projectRoot, PNPIFY_FOLDER);
   const editorsFilePath = ppath.join(targetFolder, EditorsFile.fileName);
 
+  const hasEditorsFile = xfs.existsSync(editorsFilePath);
+
   const userEditors = editors ?? new Set<SupportedEditor>();
   validateEditors(userEditors);
 
   const editorsFile = new EditorsFile();
-  if (xfs.existsSync(editorsFilePath))
+  if (hasEditorsFile)
     await editorsFile.loadFile(editorsFilePath);
   const pnpifiedEditors = editorsFile.editors;
 
@@ -258,8 +260,13 @@ export const generateSdk = async (pnpApi: PnpApi, editors: typeof SUPPORTED_EDIT
     ...pnpifiedEditors,
   ]);
 
-  if (allEditors.size === 0)
-    throw new UsageError(`No editors have been provided as arguments and no existing editors could be found inside the ${chalk.magenta(EditorsFile.fileName)} file. Make sure to use \`yarn pnpify --sdk=<editors>\` inside non-pnpified projects`);
+  if (allEditors.size === 0 && !hasEditorsFile) {
+    if (base) {
+      report.reportInfo(null, `Installing the base SDK...`);
+    } else {
+      throw new UsageError(`No editors have been provided as arguments and no existing editors could be found inside the ${chalk.magenta(EditorsFile.fileName)} file. Make sure to use \`yarn pnpify --sdk=<editors>\` or \`yarn pnpify --sdk=base\` inside non-pnpified projects`);
+    }
+  }
 
   if (xfs.existsSync(targetFolder)) {
     report.reportInfo(null, `Cleaning up the existing SDK files...`);
@@ -272,13 +279,15 @@ export const generateSdk = async (pnpApi: PnpApi, editors: typeof SUPPORTED_EDIT
   report.reportInfo(null, `Installing fresh SDKs for ${chalk.magenta(projectRoot)}:`);
   report.reportSeparator();
 
-  report.reportInfo(null, `Editors:`);
-  for (const editor of userEditors)
-    report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(editor)} (user)`);
-  for (const editor of pnpifiedEditors)
-    if (!userEditors.has(editor))
-      report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(editor)} (editors file)`);
-  report.reportSeparator();
+  if (allEditors.size > 0) {
+    report.reportInfo(null, `Editors:`);
+    for (const editor of userEditors)
+      report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(editor)} (user)`);
+    for (const editor of pnpifiedEditors)
+      if (!userEditors.has(editor))
+        report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(editor)} (editors file)`);
+    report.reportSeparator();
+  }
 
   const EDITOR_SDKS = [
     ...allEditors.has(`vscode`) ? [VSCODE_SDKS] : [],
