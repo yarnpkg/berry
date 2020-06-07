@@ -14,8 +14,14 @@ function makeGitEnvironment() {
 const gitPatterns = [
   /^ssh:/,
   /^git(?:\+ssh)?:/,
-  /^(?:git\+)?https?:[^#]+\/[^#]+\.git(?:#.*)?$/,
+
+  // `git+` is optional, `.git` is required
+  /^(?:git\+)?https?:[^#]+\/[^#]+(?:\.git)(?:#.*)?$/,
+  // `git+` is required, `.git` is optional
+  /^(?:git\+)https?:[^#]+\/[^#]+(?:\.git)?(?:#.*)?$/,
+
   /^git@[^#]+\/[^#]+\.git(?:#.*)?$/,
+
   /^(?:github:|https:\/\/github\.com\/)?(?!\.{1,2}\/)([a-zA-Z._0-9-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z._0-9-]+?)(?:\.git)?(?:#.*)?$/,
   // GitHub `/tarball/` URLs
   /^https:\/\/github\.com\/(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)\/tarball\/(.+)?$/,

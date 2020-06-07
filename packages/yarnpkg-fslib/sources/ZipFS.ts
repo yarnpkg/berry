@@ -115,12 +115,12 @@ export type ZipBufferOptions = {
   libzip: Libzip,
   readOnly?: boolean,
   stats?: Stats,
+  level?: ZipCompression,
 };
 
 export type ZipPathOptions = ZipBufferOptions & {
   baseFs?: FakeFS<PortablePath>,
   create?: boolean,
-  level?: ZipCompression,
 };
 
 function toUnixTimestamp(time: Date | string | number) {
@@ -151,6 +151,7 @@ export class ZipFS extends BasePortableFakeFS {
 
   private readonly stats: Stats;
   private readonly zip: number;
+  private readonly lzSource: number | null = null;
   private readonly level: ZipCompression;
 
   private readonly listings: Map<PortablePath, Set<Filename>> = new Map();
@@ -163,9 +164,13 @@ export class ZipFS extends BasePortableFakeFS {
   private readOnly = false;
 
   constructor(p: PortablePath, opts: ZipPathOptions);
-  constructor(data: Buffer, opts: ZipBufferOptions);
+  /**
+   * Create a ZipFS in memory
+   * @param data If null; an empty zip file will be created
+   */
+  constructor(data: Buffer | null, opts: ZipBufferOptions);
 
-  constructor(source: PortablePath | Buffer, opts: ZipPathOptions | ZipBufferOptions) {
+  constructor(source: PortablePath | Buffer | null, opts: ZipPathOptions | ZipBufferOptions) {
     super();
 
     this.libzip = opts.libzip;
@@ -174,6 +179,17 @@ export class ZipFS extends BasePortableFakeFS {
     this.level = typeof pathOptions.level !== `undefined`
       ? pathOptions.level
       : DEFAULT_COMPRESSION_LEVEL;
+
+    if (source === null) {
+      source = Buffer.from([
+        0x50, 0x4B, 0x05, 0x06,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00,
+      ]);
+    }
 
     if (typeof source === `string`) {
       const {baseFs = new NodeFS()} = pathOptions;
@@ -222,6 +238,7 @@ export class ZipFS extends BasePortableFakeFS {
 
         try {
           this.zip = this.libzip.openFromSource(lzSource, flags, errPtr);
+          this.lzSource = lzSource;
         } catch (error) {
           this.libzip.source.free(lzSource);
           throw error;
@@ -279,6 +296,64 @@ export class ZipFS extends BasePortableFakeFS {
       throw new Error(`ZipFS don't have real paths when loaded from a buffer`);
 
     return this.path;
+  }
+
+  getBufferAndClose(): Buffer {
+    if (!this.ready)
+      throw errors.EBUSY(`archive closed, close`);
+
+    if (!this.lzSource)
+      throw new Error(`ZipFS was not created from a Buffer`);
+
+    try {
+      // Prevent close from cleaning up the source
+      this.libzip.source.keep(this.lzSource);
+
+      // Close the zip archive
+      if (this.libzip.close(this.zip) === -1)
+        throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
+
+      // Open the source for reading
+      if (this.libzip.source.open(this.lzSource) === -1)
+        throw new Error(this.libzip.error.strerror(this.libzip.source.error(this.lzSource)));
+
+      // Move to the end of source
+      if (this.libzip.source.seek(this.lzSource, 0, 0, this.libzip.SEEK_END) === -1)
+        throw new Error(this.libzip.error.strerror(this.libzip.source.error(this.lzSource)));
+
+      // Get the size of source
+      const size = this.libzip.source.tell(this.lzSource);
+
+      // Move to the start of source
+      if (this.libzip.source.seek(this.lzSource, 0, 0, this.libzip.SEEK_SET) === -1)
+        throw new Error(this.libzip.error.strerror(this.libzip.source.error(this.lzSource)));
+
+      const buffer = this.libzip.malloc(size);
+      if (!buffer)
+        throw new Error(`Couldn't allocate enough memory`);
+
+      try {
+        const rc = this.libzip.source.read(this.lzSource, buffer, size);
+
+        if (rc === -1)
+          throw new Error(this.libzip.error.strerror(this.libzip.source.error(this.lzSource)));
+        else if (rc < size)
+          throw new Error(`Incomplete read`);
+        else if (rc > size)
+          throw new Error(`Overread`);
+
+        const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
+        return Buffer.from(memory);
+      }
+      finally {
+        this.libzip.free(buffer);
+      }
+    }
+    finally {
+      this.libzip.source.close(this.lzSource);
+      this.libzip.source.free(this.lzSource);
+      this.ready = false;
+    }
   }
 
   saveAndClose() {
