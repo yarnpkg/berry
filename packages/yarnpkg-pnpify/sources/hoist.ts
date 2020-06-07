@@ -314,7 +314,7 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
 
   const seenNodes = new Set<HoisterWorkTree>();
 
-  const hoist = (nodePath: Array<HoisterWorkTree>, locatorPath: Array<Locator>, node: HoisterWorkTree) => {
+  const hoistNode = (nodePath: Array<HoisterWorkTree>, locatorPath: Array<Locator>, node: HoisterWorkTree) => {
     if (seenNodes.has(node))
       return;
 
@@ -383,13 +383,6 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
         // Avoid adding other version of root node to itself
         if (rootNode.ident !== node.ident) {
           rootNode.dependencies.set(node.name, node);
-          seenNodes.add(node);
-
-          // Hoist newly added root node dependency subdependencies
-          for (const dep of getSortedReglarDependencies(node))
-            hoist([rootNode, node], [rootNode.locator, node.locator], dep);
-
-          seenNodes.delete(node);
         }
       } else {
         for (const reference of node.references) {
@@ -414,7 +407,7 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
       seenNodes.add(node);
 
       for (const dep of getSortedReglarDependencies(node))
-        hoist([...nodePath, node], [...locatorPath, node.locator], dep);
+        hoistNode([...nodePath, node], [...locatorPath, node.locator], dep);
 
       seenNodes.delete(node);
     }
@@ -427,7 +420,7 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
 
     for (const subDep of getSortedReglarDependencies(dep)) {
       if (subDep.locator !== dep.locator) {
-        hoist([rootNode, dep], [rootNode.locator, dep.locator], subDep);
+        hoistNode([rootNode, dep], [rootNode.locator, dep.locator], subDep);
       }
     }
 
