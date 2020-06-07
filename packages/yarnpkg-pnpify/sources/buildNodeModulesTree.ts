@@ -140,7 +140,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
   const topLocatorKey = stringifyLocator(topLocator);
   for (const locator of pnpRoots) {
     if (stringifyLocator(locator) !== topLocatorKey) {
-      topPkg.packageDependencies.set(`$wsroot$${locator.name}`, locator.reference);
+      topPkg.packageDependencies.set(`${locator.name}$wsroot$`, locator.reference);
     }
   }
 
@@ -203,7 +203,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
 };
 
 function getTargetLocatorPath(locator: PhysicalPackageLocator, pnp: PnpApi, options: NodeModulesTreeOptions): {linkType: LinkType, target: PortablePath} {
-  const pkgLocator = pnp.getLocator(locator.name.replace(/^\$wsroot\$/, ``), locator.reference);
+  const pkgLocator = pnp.getLocator(locator.name.replace(`$wsroot$`, ``), locator.reference);
 
   const info = pnp.getPackageInformation(pkgLocator);
   if (info === null)
@@ -289,7 +289,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
       const nodeModulesLocation = ppath.join(nodeModulesDirPath, ...packageNameParts);
 
       const leafNode = makeLeafNode(locator, references.slice(1));
-      if (!dep.name.startsWith(`$wsroot$`)) {
+      if (!dep.name.endsWith(`$wsroot$`)) {
         tree.set(nodeModulesLocation, leafNode);
 
         const segments = nodeModulesLocation.split(`/`);
