@@ -9244,6 +9244,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["JSONStream", [
+        ["npm:1.3.5", {
+          "packageLocation": "./.yarn/cache/JSONStream-npm-1.3.5-1987f2e6dd-e9849f8a52.zip/node_modules/JSONStream/",
+          "packageDependencies": [
+            ["JSONStream", "npm:1.3.5"],
+            ["jsonparse", "npm:1.3.1"],
+            ["through", "npm:2.3.8"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["abab", [
         ["npm:2.0.0", {
           "packageLocation": "./.yarn/cache/abab-npm-2.0.0-0f5f432be3-c21bd81914.zip/node_modules/abab/",
@@ -22248,6 +22259,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["jsonparse", [
+        ["npm:1.3.1", {
+          "packageLocation": "./.yarn/cache/jsonparse-npm-1.3.1-b6fde74828-6669acd7b3.zip/node_modules/jsonparse/",
+          "packageDependencies": [
+            ["jsonparse", "npm:1.3.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["jsontoxml", [
         ["npm:1.0.1", {
           "packageLocation": "./.yarn/cache/jsontoxml-npm-1.0.1-2271184387-2a11092e68.zip/node_modules/jsontoxml/",
@@ -26114,6 +26134,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
+            ["JSONStream", "npm:1.3.5"],
             ["fs-extra", "npm:7.0.1"],
             ["lodash", "npm:4.17.15"],
             ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"],

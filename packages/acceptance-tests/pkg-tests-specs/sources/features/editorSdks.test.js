@@ -1,5 +1,7 @@
-import {npath, ppath, xfs} from '@yarnpkg/fslib';
-import {spawn}             from 'child_process';
+import {npath, ppath, xfs}   from '@yarnpkg/fslib';
+import JSONStream            from 'JSONStream';
+import {execFileSync, spawn} from 'child_process';
+import {StringDecoder}       from 'string_decoder';
 
 describe(`Features`, () => {
   describe(`Editor SDK`, () => {
@@ -78,6 +80,83 @@ describe(`Features`, () => {
           },
         });
       }),
+    );
+
+    /**
+     * Example messages matching '/\.zip\\//' within "send(msg)" - https://hastebin.com/zosibaseki
+     * Note that no messages were found matching '/^zip:\\/\\//' were found within "onMessage(message)"
+     */
+    test(
+      `it should patch message into VSCode typescript language extension for zip schemes`,
+      async () => {
+        const child = spawn(process.execPath, [require.resolve(`@yarnpkg/monorepo/.vscode/pnpify/typescript/lib/tsserver.js`)], {
+          cwd: npath.dirname(require.resolve(`@yarnpkg/monorepo/package.json`)),
+          stdio: `pipe`,
+          encoding: `utf8`,
+        });
+
+        const watchFor = async marker => {
+          let data = ``;
+          let timeout = null;
+
+          return await Promise.race([
+            new Promise(resolve => {
+              child.stdout.on(`data`, chunk => {
+                data += chunk;
+                if (data.includes(marker)) {
+                  clearTimeout(timeout);
+                  resolve(true);
+                }
+              });
+            }),
+            new Promise((resolve, reject) => {
+              // It's possible that the size of the project grows so that 20s
+              // isn't enough anymore. If that happens, we'll need to create
+              // a dummy project as test setup.
+              timeout = setTimeout(() => {
+                reject(new Error(`Timeout reached; server answered:\n\n${data}`));
+              }, 20000);
+            }),
+          ]);
+        };
+
+        try {
+          // We get the path to something that's definitely in a zip archive
+          const lodashTypeDef = require.resolve(`@types/lodash/index.d.ts`).replace(/\\/g, `/`);
+
+          // We'll also use this file (which we control, so its content won't
+          // change) to get autocompletion infos. It depends on lodash too.
+          const ourUtilityFile = require.resolve(`./editorSdks.utility.ts`).replace(/\\/g, `/`);
+
+          // Some sanity check to make sure everything is A-OK
+          expect(lodashTypeDef).toContain(`.zip`);
+
+          const openPromise = expect(watchFor(`projectLoadingFinish`)).resolves.toEqual(true);
+
+          child.stdin.write(`${JSON.stringify({
+            seq: 0,
+            type: `request`,
+            command: `open`,
+            arguments: {file: `zip:${lodashTypeDef}`},
+          })}\n`);
+
+          await openPromise;
+
+          const typeDefPromise = expect(watchFor(`zip:${lodashTypeDef}`)).resolves.toEqual(true);
+
+          child.stdin.write(`${JSON.stringify({
+            seq: 1,
+            type: `request`,
+            command: `typeDefinition`,
+            arguments: {file: ourUtilityFile, line: 6, offset: 9},
+          })}\n`);
+
+          await typeDefPromise;
+        } finally {
+          child.stdin.end();
+        }
+      },
+      45000
     );
   });
 });
