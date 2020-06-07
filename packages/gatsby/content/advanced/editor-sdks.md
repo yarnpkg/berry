@@ -6,6 +6,12 @@ title: "Editor SDKs"
 
 Smart IDEs (such as VSCode or IntelliJ) require special configuration for TypeScript to work. This page intends to be a collection of settings for each editor we've worked with - please contribute to this list!
 
+The editor SDKs and settings can be generated using the `yarn pnpify --sdk` (or `yarn dlx @yarnpkg/pnpify --sdk` if you don't need to install it locally) command. Its detailed documentation can be found on the [dedicated page](#/pnpify/cli/run).
+Generally speaking:
+- Use `yarn pnpify --sdk vscode,vim` to generate both the base SDKs and the settings for the specified supported editors.
+- Use `yarn pnpify --sdk base` to generate the base SDKs and then manually tweak the configuration of unsupported editors.
+- Use `yarn pnpify --sdk` to update all installed SDKs and editor settings.
+
 ```toc
 # This code block gets replaced with the Table of Contents
 ```
@@ -31,7 +37,7 @@ If you'd like to contribute more, [take a look here!](https://github.com/yarnpkg
 1. Run the following command, which will generate a new directory called `.yarn/pnpify`:
 
 ```bash
-yarn dlx @yarnpkg/pnpify --sdk=vscode
+yarn dlx @yarnpkg/pnpify --sdk vscode
 ```
 
 2. For safety reason VSCode requires you to explicitly activate the custom TS settings:
@@ -49,7 +55,7 @@ Note that VSCode might ask you to do Step 3 again from time to time, but apart f
 1. Run the following command, which will generate a new directory called `.yarn/pnpify`:
 
 ```bash
-yarn dlx @yarnpkg/pnpify --sdk=base
+yarn dlx @yarnpkg/pnpify --sdk base
 ```
 
 2. Set [`tsserver.tsdk`](https://github.com/neoclide/coc-tsserver#configuration-options) to `.yarn/pnpify/typescript/lib`
@@ -61,7 +67,7 @@ The SDK comes with a typescript-language-server wrapper which enables you to use
 1. Run the following command, which will generate a new directory called `.yarn/pnpify`:
 
 ```bash
-yarn dlx @yarnpkg/pnpify --sdk=base
+yarn dlx @yarnpkg/pnpify --sdk base
 ```
 
 2. Create a `.dir-locals.el` with the following content to enable Flycheck and LSP support:

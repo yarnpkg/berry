@@ -1,24 +1,22 @@
 import {StreamReport, Configuration}             from '@yarnpkg/core';
 import {NativePath, npath, ppath, xfs, Filename} from '@yarnpkg/fslib';
-import {Command, UsageError}                     from 'clipanion';
+import {Command}                                 from 'clipanion';
 
 import {dynamicRequire}                          from '../dynamicRequire';
 import {generateSdk, SUPPORTED_EDITORS}          from '../generateSdk';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SdkCommand extends Command {
+  @Command.String({required: false})
+  editors: string | null = null;
+
   @Command.String(`--cwd`)
   cwd: NativePath = process.cwd();
 
-  @Command.String(`--sdk`, {tolerateBoolean: true})
-  sdk: string | boolean = false;
-
   static usage = Command.Usage({
-    description: `generate editor SDKs`,
+    description: `generate editor SDKs and settings`,
     details: `
-      This command generates a new directory - \`.yarn/pnpify\`, which includes the base SDKs.
-
-      It can be used as \`yarn pnpify --sdk\` or \`yarn pnpify --sdk=<arguments>\`.
+      This command generates a new directory, \`.yarn/pnpify\`, which includes the base SDKs.
 
       When used without arguments, it:
 
@@ -26,33 +24,30 @@ export default class SdkCommand extends Command {
 
       - updates all existing SDKs and editor settings on already-pnpified projects
 
-      When used with the \`base\` argument, it only installs the base SDKs.
+      The optional \`[editors]\` argument is a comma-separated list of supported editors or \`base\`.
 
-      When used with the \`<editors>\` argument (\`vscode,vim\`), it installs the base SDKs and generates editor settings.
+      - When \`base\`, it only installs the base SDKs. Useful for when an editor is not yet supported and you need to manually update its settings.
 
-      The \`<editors>\` argument is a comma-separated list of supported editors.
+      - When it's a list of editors (e.g. \`vscode,vim\`), it installs the base SDKs and generates the corresponding editor settings.
 
-      List of supported editors: ${[...SUPPORTED_EDITORS].join(`, `)}.
+      List of supported editors: ${[...SUPPORTED_EDITORS].map(editor => `\`${editor}\``).join(`, `)}.
 
-      **Note:** This command always updates the already-installed SDKs, no matter which arguments are passed.
+      **Note:** This command always updates the already-installed SDKs and editor settings, no matter which arguments are passed.
     `,
     examples: [[
       `Generate the base SDKs`,
-      `$0 --sdk=base`,
+      `$0 --sdk base`,
     ], [
       `Generate the base SDKs and editor settings for supported editors`,
-      `$0 --sdk=vscode,vim`,
+      `$0 --sdk vscode,vim`,
     ], [
       `Update all generated SDKs and editor settings`,
       `$0 --sdk`,
     ]],
   });
 
+  @Command.Path(`--sdk`)
   async execute() {
-    // Handle --no-sdk case
-    if (this.sdk === false)
-      throw new UsageError(`The --sdk flag can't be set to false`);
-
     let nextProjectRoot = npath.toPortablePath(this.cwd);
     let currProjectRoot = null;
 
@@ -77,11 +72,11 @@ export default class SdkCommand extends Command {
     const pnpPath = ppath.join(currProjectRoot, `.pnp.${isCJS}js` as Filename);
     const pnpApi = dynamicRequire(pnpPath);
 
-    const base = this.sdk === `base`;
+    const base = this.editors === `base`;
 
-    const editors = this.sdk === true || base
+    const editors = this.editors === null || base
       ? null
-      : new Set(this.sdk.split(`,`));
+      : new Set(this.editors.split(`,`));
 
     const report = await StreamReport.start({
       configuration,

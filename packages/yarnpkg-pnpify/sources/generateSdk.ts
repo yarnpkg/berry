@@ -39,13 +39,28 @@ export type SetTemplate<S> = S extends Set<infer T> ? T : never;
 export type SupportedEditor = SetTemplate<typeof SUPPORTED_EDITORS>;
 
 export class EditorsFile {
-  public pnpifyVersion: string | null = null;
+  public __metadata: {
+    // The version of the format.
+    // Not currently used for anything,
+    // might be useful for third-parties to detect
+    // if different fields are supposed to exist inside the file
+    version: number | null;
+    // Might be used in the future to decide whether we
+    // actually need to update the SDKs or not
+    pnpifyVersion: string | null;
+  } = {
+    version: null,
+    pnpifyVersion: null,
+  };
 
   public editors: typeof SUPPORTED_EDITORS = new Set();
 
   public raw: {[key: string]: any} = {};
 
   static readonly fileName = `editors.yml` as Filename;
+
+  // Bump this every time the format changes
+  static readonly version = 1;
 
   async loadFile(path: PortablePath) {
     const content = await xfs.readFilePromise(path, `utf8`);
@@ -67,8 +82,14 @@ export class EditorsFile {
 
     this.raw = data;
 
-    if (typeof data.pnpifyVersion === `string`)
-      this.pnpifyVersion = data.pnpifyVersion;
+    if (typeof data.__metadata === `object` && data.__metadata !== null) {
+      if (typeof data.__metadata.version === `number`)
+        this.__metadata.version = data.__metadata.version;
+
+      if (typeof data.__metadata.pnpifyVersion === `string`) {
+        this.__metadata.pnpifyVersion = data.__metadata.pnpifyVersion;
+      }
+    }
 
     if (Array.isArray(data.editors)) {
       this.editors = new Set(data.editors);
@@ -77,7 +98,10 @@ export class EditorsFile {
   }
 
   exportTo(data: {[key: string]: any}) {
-    data.pnpifyVersion = require(`@yarnpkg/pnpify/package.json`).version;
+    data.__metadata = {
+      version: EditorsFile.version,
+      pnpifyVersion: require(`@yarnpkg/pnpify/package.json`).version,
+    };
 
     if (this.editors.size > 0)
       data.editors = [...this.editors];
@@ -260,13 +284,11 @@ export const generateSdk = async (pnpApi: PnpApi, editors: typeof SUPPORTED_EDIT
     ...pnpifiedEditors,
   ]);
 
-  if (allEditors.size === 0 && !hasEditorsFile) {
-    if (base) {
-      report.reportInfo(null, `Installing the base SDK...`);
-    } else {
-      throw new UsageError(`No editors have been provided as arguments and no existing editors could be found inside the ${chalk.magenta(EditorsFile.fileName)} file. Make sure to use \`yarn pnpify --sdk=<editors>\` or \`yarn pnpify --sdk=base\` inside non-pnpified projects`);
-    }
-  }
+  if (base)
+    report.reportInfo(null, `Installing the base SDK...`);
+
+  if (allEditors.size === 0 && !hasEditorsFile && !base)
+    throw new UsageError(`No editors have been provided as arguments and no existing editors could be found inside the ${chalk.magenta(EditorsFile.fileName)} file. Make sure to use \`yarn pnpify --sdk <editors>\` or \`yarn pnpify --sdk base\` inside non-pnpified projects`);
 
   if (xfs.existsSync(targetFolder)) {
     report.reportInfo(null, `Cleaning up the existing SDK files...`);
