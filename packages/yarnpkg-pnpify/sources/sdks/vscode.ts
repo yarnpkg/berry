@@ -5,6 +5,14 @@ import {mergeWith}                                  from 'lodash';
 
 import {Wrapper, GenerateEditorWrapper, EditorSdks} from '../generateSdk';
 
+export const merge = (object: unknown, source: unknown) =>
+  mergeWith(object, source, (objValue, srcValue) => {
+    if (Array.isArray(objValue))
+      return [...new Set(objValue.concat(srcValue))];
+
+    return undefined;
+  });
+
 export enum VSCodeConfiguration {
   settings = `settings.json`,
   extensions = `extensions.json`,
@@ -21,12 +29,7 @@ export const addVSCodeWorkspaceConfiguration = async (pnpApi: PnpApi, type: VSCo
     : `{}`;
 
   const data = CJSON.parse(content);
-  const patched = `${CJSON.stringify(mergeWith(data, patch, (objValue, srcValue) => {
-    if (Array.isArray(objValue))
-      return [...new Set(objValue.concat(srcValue))];
-
-    return undefined;
-  }), null, 2)}\n`;
+  const patched = `${CJSON.stringify(merge(data, patch), null, 2)}\n`;
 
   await xfs.mkdirpPromise(ppath.dirname(filePath));
   await xfs.changeFilePromise(filePath, patched, {
