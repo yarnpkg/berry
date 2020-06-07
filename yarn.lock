@@ -16232,6 +16232,27 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"inquirer@^7.1.0, inquirer@npm:^7.0.0":
+  version: 7.1.0
+  resolution: "inquirer@npm:7.1.0"
+  dependencies:
+    ansi-escapes: ^4.2.1
+    chalk: ^3.0.0
+    cli-cursor: ^3.1.0
+    cli-width: ^2.0.0
+    external-editor: ^3.0.3
+    figures: ^3.0.0
+    lodash: ^4.17.15
+    mute-stream: 0.0.8
+    run-async: ^2.4.0
+    rxjs: ^6.5.3
+    string-width: ^4.1.0
+    strip-ansi: ^6.0.0
+    through: ^2.3.6
+  checksum: 651838e841b5850a10edb5232d8fda9b119f71b9aa53ff8e52457c29729d86338d52175b8c50f77d9311c4b5b367f9d2090acfc4c54b6d643df59130d66b197a
+  languageName: node
+  linkType: hard
+
 "inquirer@npm:3.3.0":
   version: 3.3.0
   resolution: "inquirer@npm:3.3.0"
@@ -16275,9 +16296,9 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"inquirer@npm:^7.0.0, inquirer@npm:^7.1.0":
+"inquirer@patch:inquirer@^7.1.0#./.yarn/patches/inquirer.patch::locator=%40yarnpkg%2Fmonorepo%40workspace%3A.":
   version: 7.1.0
-  resolution: "inquirer@npm:7.1.0"
+  resolution: "inquirer@patch:inquirer@npm%3A7.1.0#./.yarn/patches/inquirer.patch::version=7.1.0&hash=75c2f9&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."
   dependencies:
     ansi-escapes: ^4.2.1
     chalk: ^3.0.0
@@ -16292,7 +16313,7 @@ fsevents@~2.1.2:
     string-width: ^4.1.0
     strip-ansi: ^6.0.0
     through: ^2.3.6
-  checksum: 651838e841b5850a10edb5232d8fda9b119f71b9aa53ff8e52457c29729d86338d52175b8c50f77d9311c4b5b367f9d2090acfc4c54b6d643df59130d66b197a
+  checksum: 59f20c3469c2a4df0d15a63a06ce6711e79c4971cbe7b7fc630b361231ebc569ba0514ee3c7f07816b9577d408cc7f6bd590daa1da22b3afa309c8af2d645bc9
   languageName: node
   linkType: hard
 

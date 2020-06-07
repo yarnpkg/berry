@@ -1,0 +1,224 @@
+diff --git a/lib/objects/choice.js b/lib/objects/choice.js
+index 1bc1acd..79abf87 100644
+--- a/lib/objects/choice.js
++++ b/lib/objects/choice.js
+@@ -1,5 +1,10 @@
+ 'use strict';
+-var _ = require('lodash');
++var _ = {
++  isString: require('lodash/isString'),
++  isNumber: require('lodash/isNumber'),
++  extend: require('lodash/extend'),
++  isFunction: require('lodash/isFunction')
++};
+ 
+ /**
+  * Choice object
+diff --git a/lib/objects/choices.js b/lib/objects/choices.js
+index e3c16d0..ba13648 100644
+--- a/lib/objects/choices.js
++++ b/lib/objects/choices.js
+@@ -1,6 +1,11 @@
+ 'use strict';
+ var assert = require('assert');
+-var _ = require('lodash');
++var _ = {
++  isNumber: require('lodash/isNumber'),
++  filter: require('lodash/filter'),
++  map: require('lodash/map'),
++  find: require('lodash/find')
++};
+ var Separator = require('./separator');
+ var Choice = require('./choice');
+ 
+diff --git a/lib/prompts/base.js b/lib/prompts/base.js
+index 6a7b19d..34a0c2f 100644
+--- a/lib/prompts/base.js
++++ b/lib/prompts/base.js
+@@ -3,8 +3,11 @@
+  * Base prompt implementation
+  * Should be extended by prompt types.
+  */
+-
+-var _ = require('lodash');
++var _ = {
++  assign: require('lodash/assign'),
++  defaults: require('lodash/defaults'),
++  clone: require('lodash/clone')
++};
+ var chalk = require('chalk');
+ var runAsync = require('run-async');
+ var { filter, flatMap, share, take, takeUntil } = require('rxjs/operators');
+diff --git a/lib/prompts/checkbox.js b/lib/prompts/checkbox.js
+index 1fee1d2..f4edf2f 100644
+--- a/lib/prompts/checkbox.js
++++ b/lib/prompts/checkbox.js
+@@ -3,7 +3,11 @@
+  * `list` type prompt
+  */
+ 
+-var _ = require('lodash');
++var _ = {
++  isArray: require('lodash/isArray'),
++  map: require('lodash/map'),
++  isString: require('lodash/isString')
++};
+ var chalk = require('chalk');
+ var cliCursor = require('cli-cursor');
+ var figures = require('figures');
+diff --git a/lib/prompts/confirm.js b/lib/prompts/confirm.js
+index 1ede6b8..31eb78f 100644
+--- a/lib/prompts/confirm.js
++++ b/lib/prompts/confirm.js
+@@ -3,7 +3,10 @@
+  * `confirm` type prompt
+  */
+ 
+-var _ = require('lodash');
++var _ = {
++  extend: require('lodash/extend'),
++  isBoolean: require('lodash/isBoolean')
++};
+ var chalk = require('chalk');
+ var { take, takeUntil } = require('rxjs/operators');
+ var Base = require('./base');
+diff --git a/lib/prompts/expand.js b/lib/prompts/expand.js
+index 5534a39..b8940d8 100644
+--- a/lib/prompts/expand.js
++++ b/lib/prompts/expand.js
+@@ -3,7 +3,12 @@
+  * `rawlist` type prompt
+  */
+ 
+-var _ = require('lodash');
++var _ = {
++  uniq: require('lodash/uniq'),
++  isString: require('lodash/isString'),
++  isNumber: require('lodash/isNumber'),
++  findIndex: require('lodash/findIndex')
++};
+ var chalk = require('chalk');
+ var { map, takeUntil } = require('rxjs/operators');
+ var Base = require('./base');
+diff --git a/lib/prompts/list.js b/lib/prompts/list.js
+index 8e3c5a2..4f391ae 100644
+--- a/lib/prompts/list.js
++++ b/lib/prompts/list.js
+@@ -3,7 +3,11 @@
+  * `list` type prompt
+  */
+ 
+-var _ = require('lodash');
++var _ = {
++  isNumber: require('lodash/isNumber'),
++  findIndex: require('lodash/findIndex'),
++  isString: require('lodash/isString')
++};
+ var chalk = require('chalk');
+ var figures = require('figures');
+ var cliCursor = require('cli-cursor');
+diff --git a/lib/prompts/rawlist.js b/lib/prompts/rawlist.js
+index 418114b..22a7dd5 100644
+--- a/lib/prompts/rawlist.js
++++ b/lib/prompts/rawlist.js
+@@ -3,7 +3,11 @@
+  * `rawlist` type prompt
+  */
+ 
+-var _ = require('lodash');
++var _ = {
++  extend: require('lodash/extend'),
++  isNumber: require('lodash/isNumber'),
++  findIndex: require('lodash/findIndex')
++};
+ var chalk = require('chalk');
+ var { map, takeUntil } = require('rxjs/operators');
+ var Base = require('./base');
+diff --git a/lib/ui/baseUI.js b/lib/ui/baseUI.js
+index 45248ef..3447f64 100644
+--- a/lib/ui/baseUI.js
++++ b/lib/ui/baseUI.js
+@@ -1,5 +1,8 @@
+ 'use strict';
+-var _ = require('lodash');
++var _ = {
++  extend: require('lodash/extend'),
++  omit: require('lodash/omit')
++};
+ var MuteStream = require('mute-stream');
+ var readline = require('readline');
+ 
+diff --git a/lib/ui/bottom-bar.js b/lib/ui/bottom-bar.js
+index b56d6d7..bed30c6 100644
+--- a/lib/ui/bottom-bar.js
++++ b/lib/ui/bottom-bar.js
+@@ -6,7 +6,9 @@
+ var through = require('through');
+ var Base = require('./baseUI');
+ var rlUtils = require('../utils/readline');
+-var _ = require('lodash');
++var _ = {
++  last: require('lodash/last')
++};
+ 
+ class BottomBar extends Base {
+   constructor(opt) {
+diff --git a/lib/ui/prompt.js b/lib/ui/prompt.js
+index 9735c99..af641ac 100644
+--- a/lib/ui/prompt.js
++++ b/lib/ui/prompt.js
+@@ -1,5 +1,11 @@
+ 'use strict';
+-var _ = require('lodash');
++var _ = {
++  isPlainObject: require('lodash/isPlainObject'),
++  clone: require('lodash/clone'),
++  isArray: require('lodash/isArray'),
++  set: require('lodash/set'),
++  isFunction: require('lodash/isFunction')
++};
+ var { defer, empty, from, of } = require('rxjs');
+ var { concatMap, filter, publish, reduce } = require('rxjs/operators');
+ var runAsync = require('run-async');
+diff --git a/lib/utils/paginator.js b/lib/utils/paginator.js
+index 272d104..ac86b41 100644
+--- a/lib/utils/paginator.js
++++ b/lib/utils/paginator.js
+@@ -1,6 +1,9 @@
+ 'use strict';
+ 
+-var _ = require('lodash');
++var _ = {
++  sum: require('lodash/sum'),
++  flatten: require('lodash/flatten')
++};
+ var chalk = require('chalk');
+ 
+ /**
+diff --git a/lib/utils/screen-manager.js b/lib/utils/screen-manager.js
+index 6b8f669..e839ce8 100644
+--- a/lib/utils/screen-manager.js
++++ b/lib/utils/screen-manager.js
+@@ -1,5 +1,8 @@
+ 'use strict';
+-var _ = require('lodash');
++var _ = {
++  last: require('lodash/last'),
++  flatten: require('lodash/flatten')
++};
+ var util = require('./readline');
+ var cliWidth = require('cli-width');
+ var stripAnsi = require('strip-ansi');
+diff --git a/lib/utils/utils.js b/lib/utils/utils.js
+index 942b35c..9ca776f 100644
+--- a/lib/utils/utils.js
++++ b/lib/utils/utils.js
+@@ -1,5 +1,7 @@
+ 'use strict';
+-var _ = require('lodash');
++var _ = {
++  isFunction: require('lodash/isFunction')
++};
+ var { from, of } = require('rxjs');
+ var runAsync = require('run-async');
+ 
