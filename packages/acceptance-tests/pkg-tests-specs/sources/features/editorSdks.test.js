@@ -110,9 +110,12 @@ describe(`Features`, () => {
               });
             }),
             new Promise((resolve, reject) => {
+              // It's possible that the size of the project grows so that 20s
+              // isn't enough anymore. If that happens, we'll need to create
+              // a dummy project as test setup.
               timeout = setTimeout(() => {
                 reject(new Error(`Timeout reached; server answered:\n\n${data}`));
-              }, 10000);
+              }, 20000);
             }),
           ]);
         };
@@ -152,7 +155,8 @@ describe(`Features`, () => {
         } finally {
           child.stdin.end();
         }
-      }
+      },
+      45000
     );
   });
 });
