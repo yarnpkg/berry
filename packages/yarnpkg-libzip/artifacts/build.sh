@@ -43,7 +43,7 @@ LIBZIP_REPO=arcanis/libzip
 [[ -f ./libzip-"$LIBZIP_VERSION"/build/lib/libzip.a ]] || (
   if [[ -n "$LIBZIP_REPO" ]]; then
     if ! [[ -e libzip-"$LIBZIP_VERSION" ]]; then
-      git clone git@github.com:"$LIBZIP_REPO" libzip-"$LIBZIP_VERSION"
+      git clone https://github.com/"$LIBZIP_REPO" libzip-"$LIBZIP_VERSION"
     fi
   else
     if ! [[ -e libzip-"$LIBZIP_VERSION".tar.gz ]]; then
