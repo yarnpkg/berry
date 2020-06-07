@@ -5,8 +5,6 @@ import {Command, UsageError}                     from 'clipanion';
 import {dynamicRequire}                          from '../dynamicRequire';
 import {generateSdk, SUPPORTED_EDITORS}          from '../generateSdk';
 
-type SetTemplate<S> = S extends Set<infer T> ? T : never;
-
 // eslint-disable-next-line arca/no-default-export
 export default class SdkCommand extends Command {
   @Command.String(`--cwd`)
@@ -16,6 +14,7 @@ export default class SdkCommand extends Command {
   sdk: string | boolean = false;
 
   async execute() {
+    // Handle --no-sdk case
     if (this.sdk === false)
       throw new UsageError(`The --sdk flag can't be set to false`);
 
@@ -45,27 +44,13 @@ export default class SdkCommand extends Command {
 
     const editors = this.sdk === true
       ? null
-      : new Set(this.sdk.split(`|`));
+      : new Set(this.sdk.split(`,`));
 
     const report = await StreamReport.start({
       configuration,
       includeFooter: false,
       stdout: this.context.stdout,
     }, async report => {
-      if (editors !== null) {
-        const unsupportedEditors: Array<string> = [];
-
-        for (const editor of editors) {
-          if (!SUPPORTED_EDITORS.has(editor as SetTemplate<typeof SUPPORTED_EDITORS>)) {
-            unsupportedEditors.push(editor);
-          }
-        }
-
-        if (unsupportedEditors.length > 0) {
-          throw new UsageError(`No supported editors with the following names could be found:\n${unsupportedEditors.join(`, `)}`);
-        }
-      }
-
       await generateSdk(pnpApi, editors as (typeof SUPPORTED_EDITORS | null), report);
     });
 
