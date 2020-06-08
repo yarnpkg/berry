@@ -242,10 +242,9 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
 
   for (const dependency of rootNode.dependencies.values()) {
     if (!rootNode.peerNames.has(dependency.name) && !rootNodePath.has(dependency.locator)) {
-      const clone = decoupleGraphNode(rootNode, dependency);
-      rootNodePath.add(clone.locator);
-      hoistTo(tree, clone, rootNodePath, options);
-      rootNodePath.delete(clone.locator);
+      rootNodePath.add(dependency.locator);
+      hoistTo(tree, dependency, rootNodePath, options);
+      rootNodePath.delete(dependency.locator);
     }
   }
 };
