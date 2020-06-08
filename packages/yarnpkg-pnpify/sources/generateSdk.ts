@@ -288,7 +288,7 @@ export const generateSdk = async (pnpApi: PnpApi, editors: typeof SUPPORTED_EDIT
     report.reportInfo(null, `Installing the base SDK...`);
 
   if (allEditors.size === 0 && !hasEditorsFile && !base)
-    throw new UsageError(`No editors have been provided as arguments and no existing editors could be found inside the ${chalk.magenta(EditorsFile.fileName)} file. Make sure to use \`yarn pnpify --sdk <editors>\` or \`yarn pnpify --sdk base\` inside non-pnpified projects`);
+    throw new UsageError(`No editors have been provided as arguments and no existing editors could be found inside the ${chalk.magenta(EditorsFile.fileName)} file. Make sure to use \`yarn pnpify --sdk <editors>\`, or run \`yarn pnpify --sdk base\` if you prefer to manage your own settings.`);
 
   if (xfs.existsSync(targetFolder)) {
     report.reportInfo(null, `Cleaning up the existing SDK files...`);
