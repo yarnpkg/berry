@@ -6,7 +6,7 @@ title: "Editor SDKs"
 
 Smart IDEs (such as VSCode or IntelliJ) require special configuration for TypeScript to work. This page intends to be a collection of settings for each editor we've worked with - please contribute to this list!
 
-The editor SDKs and settings can be generated using the `yarn pnpify --sdk` (or `yarn dlx @yarnpkg/pnpify --sdk` if you don't need to install it locally) command. Its detailed documentation can be found on the [dedicated page](/pnpify/cli/run).
+The editor SDKs and settings can be generated using the `yarn pnpify --sdk` (or `yarn dlx @yarnpkg/pnpify --sdk` if you don't need to install it locally) command. Its detailed documentation can be found on the [dedicated page](/pnpify/cli/--sdk).
 Generally speaking:
 - Use `yarn pnpify --sdk vscode vim` to generate both the base SDKs and the settings for the specified supported editors.
 - Use `yarn pnpify --sdk base` to generate the base SDKs and then manually tweak the configuration of unsupported editors.
