@@ -307,7 +307,7 @@ export const generateSdk = async (pnpApi: PnpApi, editors: typeof SUPPORTED_EDIT
       report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(editor)} (new ✨)`);
     for (const editor of pnpifiedEditors)
       if (!userEditors.has(editor))
-        report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(editor)} (editors file)`);
+        report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(editor)} (updated)`);
     report.reportSeparator();
   }
 
