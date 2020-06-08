@@ -319,7 +319,7 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
           const parentDepNode = parent.dependencies.get(name);
           if (parentDepNode) {
             if (options.debugLevel >= 2)
-              reason = `- peer dependency ${prettyPrintLocator(parentDepNode.locator)} from parent ${prettyPrintLocator(parent.locator)} was not hoisted to ${reasonRoot}, node path: ${nodePath.concat([node]).map(x => prettyPrintLocator(x.locator))}`;
+              reason = `- peer dependency ${prettyPrintLocator(parentDepNode.locator)} from parent ${prettyPrintLocator(parent.locator)} was not hoisted to ${reasonRoot}`;
             arePeerDepsSatisfied = false;
             break;
           }
