@@ -7,8 +7,8 @@ import {generateSdk, SUPPORTED_EDITORS}          from '../generateSdk';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SdkCommand extends Command {
-  @Command.String({required: false})
-  editors: string | null = null;
+  @Command.Rest()
+  editors: Array<string> = [];
 
   @Command.String(`--cwd`)
   cwd: NativePath = process.cwd();
@@ -24,11 +24,11 @@ export default class SdkCommand extends Command {
 
       - updates all existing SDKs and editor settings on already-pnpified projects
 
-      The optional \`[editors]\` argument is a comma-separated list of supported editors or \`base\`.
+      The optional \`editors\` rest argument is a list of supported editors or \`base\`.
 
       - When \`base\`, it only installs the base SDKs. Useful for when an editor is not yet supported and you need to manually update its settings.
 
-      - When it's a list of editors (e.g. \`vscode,vim\`), it installs the base SDKs and generates the corresponding editor settings.
+      - When a list of editors (e.g. \`vscode vim\`), it installs the base SDKs and generates the corresponding editor settings.
 
       List of supported editors: ${[...SUPPORTED_EDITORS].map(editor => `\`${editor}\``).join(`, `)}.
 
@@ -39,7 +39,7 @@ export default class SdkCommand extends Command {
       `$0 --sdk base`,
     ], [
       `Generate the base SDKs and editor settings for supported editors`,
-      `$0 --sdk vscode,vim`,
+      `$0 --sdk vscode vim`,
     ], [
       `Update all generated SDKs and editor settings`,
       `$0 --sdk`,
@@ -72,11 +72,11 @@ export default class SdkCommand extends Command {
     const pnpPath = ppath.join(currProjectRoot, `.pnp.${isCJS}js` as Filename);
     const pnpApi = dynamicRequire(pnpPath);
 
-    const base = this.editors === `base`;
+    const base = this.editors.length === 1 && this.editors[0] === `base`;
 
-    const editors = this.editors === null || base
+    const editors = this.editors.length === 0 || base
       ? null
-      : new Set(this.editors.split(`,`));
+      : new Set(this.editors);
 
     const report = await StreamReport.start({
       configuration,
