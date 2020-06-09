@@ -55,13 +55,15 @@ module.exports = function (_, opts) {
     return {packagePath, unqualifiedPath};
   };
 
+  const originalPaths = opts.paths || [];
+
   const packageIterator = (request, basedir, getCandidates, opts) => {
     const resolution = runPnpResolution(request, basedir);
     if (typeof resolution === `undefined`)
       return getCandidates();
 
     if (resolution === null)
-      return [];
+      return originalPaths.concat(basedir).map(file => path.join(file, request));
 
     return [resolution.unqualifiedPath];
   };
@@ -72,7 +74,7 @@ module.exports = function (_, opts) {
       return getNodeModulePaths();
 
     if (resolution === null)
-      return [];
+      return originalPaths.concat(basedir);
 
     // Stip the local named folder
     let nodeModules = path.dirname(resolution.packagePath);
@@ -88,14 +90,16 @@ module.exports = function (_, opts) {
   // the code is compatible with both `resolve` 1.9+ and `resolve` 1.15+
   let isInsideIterator = false;
 
-  opts.packageIterator = function (request, basedir, getCandidates, opts) {
-    isInsideIterator = true;
-    try {
-      return packageIterator(request, basedir, getCandidates, opts);
-    } finally {
-      isInsideIterator = false;
-    }
-  };
+  if (!opts.__skipPackageIterator) {
+    opts.packageIterator = function (request, basedir, getCandidates, opts) {
+      isInsideIterator = true;
+      try {
+        return packageIterator(request, basedir, getCandidates, opts);
+      } finally {
+        isInsideIterator = false;
+      }
+    };
+  }
 
   opts.paths = function (request, basedir, getNodeModulePaths, opts) {
     if (isInsideIterator)
