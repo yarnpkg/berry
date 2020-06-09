@@ -1,7 +1,7 @@
 name: 'Close stale issues'
 on:
   schedule:
-  - cron: '* * * * *'
+  - cron: '0 * * * *'
 
 jobs:
   stale:
@@ -14,13 +14,12 @@ jobs:
         stale-issue-message: |
           Hi! 👋
 
-          This issue looks stale, and doesn't feature the 'reproducible' label - which implies that you didn't provide a working reproduction using [Sherlock](https://yarnpkg.com/advanced/sherlock). As a result, it'll be closed in a few days unless a maintainer explicitly vouches for it.
+          This issue looks stale, and doesn't feature the `reproducible` label - which implies that you didn't provide a working reproduction using [Sherlock](https://yarnpkg.com/advanced/sherlock). As a result, it'll be closed in a few days unless a maintainer explicitly vouches for it or you edit your first post to include a formal reproduction (you can use the [playground](http://yarnpkg.com/playground) for that).
 
-          Note that we require Sherlock reproductions for long-lived issues (rather than standalone git repositories, for example) because we're a small team. Sherlock gives us the ability to check which bugs are still affecting the master branch at any given point, and decreases the amount of code we need to run on our own machines (thus leading to faster bug resolution faster).
+          Note that we require Sherlock reproductions for long-lived issues (rather than standalone git repositories or similar) because we're a small team. Sherlock gives us the ability to check which bugs are still affecting the master branch at any given point, and decreases the amount of code we need to run on our own machines (thus leading to faster bug resolution faster). It helps us help you! 😃
 
-          If you absolutely cannot reproduce a bug on Sherlock (for example because it's Windows-only), a maintainer will have to manually add the 'unholded' label.
+          If you absolutely *cannot* reproduce a bug on Sherlock (for example because it's a Windows-only issue), a maintainer will have to manually add the 'unholded' label.
 
-        debug-only: true
         remove-stale-when-updated: false
 
         days-before-stale: 30
