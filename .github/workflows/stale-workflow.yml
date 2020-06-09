@@ -18,7 +18,7 @@ jobs:
 
           Note that we require Sherlock reproductions for long-lived issues (rather than standalone git repositories or similar) because we're a small team. Sherlock gives us the ability to check which bugs are still affecting the master branch at any given point, and decreases the amount of code we need to run on our own machines (thus leading to faster bug resolution faster). It helps us help you! 😃
 
-          If you absolutely *cannot* reproduce a bug on Sherlock (for example because it's a Windows-only issue), a maintainer will have to manually add the 'unholded' label.
+          If you absolutely *cannot* reproduce a bug on Sherlock (for example because it's a Windows-only issue), a maintainer will have to manually add the `upholded` label.
 
         remove-stale-when-updated: false
 
