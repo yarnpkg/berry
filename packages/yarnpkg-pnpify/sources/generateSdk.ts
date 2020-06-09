@@ -240,17 +240,17 @@ export const generateSdk = async (pnpApi: PnpApi, editors: typeof SUPPORTED_EDIT
 
   const hasEditorsFile = xfs.existsSync(editorsFilePath);
 
-  const userEditors = editors ?? new Set<SupportedEditor>();
-  validateEditors(userEditors);
+  const requestedEditors = editors ?? new Set<SupportedEditor>();
+  validateEditors(requestedEditors);
 
   const editorsFile = new EditorsFile();
   if (hasEditorsFile)
     await editorsFile.loadFile(editorsFilePath);
-  const pnpifiedEditors = editorsFile.editors;
+  const preexistingEditors = editorsFile.editors;
 
   const allEditors = new Set([
-    ...userEditors,
-    ...pnpifiedEditors,
+    ...requestedEditors,
+    ...preexistingEditors,
   ]);
 
   if (base)
@@ -272,10 +272,10 @@ export const generateSdk = async (pnpApi: PnpApi, editors: typeof SUPPORTED_EDIT
 
   if (allEditors.size > 0) {
     report.reportInfo(null, `Editors:`);
-    for (const editor of userEditors)
+    for (const editor of requestedEditors)
       report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(editor)} (new ✨)`);
-    for (const editor of pnpifiedEditors)
-      if (!userEditors.has(editor))
+    for (const editor of preexistingEditors)
+      if (!requestedEditors.has(editor))
         report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(editor)} (updated 🔼)`);
     report.reportSeparator();
   }
