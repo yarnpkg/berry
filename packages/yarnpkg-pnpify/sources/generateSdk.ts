@@ -231,7 +231,9 @@ export class Wrapper {
   }
 }
 
-export const generateSdk = async (pnpApi: PnpApi, editors: typeof SUPPORTED_EDITORS | null, {report, base}: {report: Report, base: boolean}): Promise<void> => {
+export const generateSdk = async (pnpApi: PnpApi, requestedEditors: typeof SUPPORTED_EDITORS, {report, base}: {report: Report, base: boolean}): Promise<void> => {
+  validateEditors(requestedEditors);
+
   const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
   const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
 
@@ -239,9 +241,6 @@ export const generateSdk = async (pnpApi: PnpApi, editors: typeof SUPPORTED_EDIT
   const editorsFilePath = ppath.join(targetFolder, EDITORS_FILE);
 
   const hasEditorsFile = xfs.existsSync(editorsFilePath);
-
-  const requestedEditors = editors ?? new Set<SupportedEditor>();
-  validateEditors(requestedEditors);
 
   const editorsFile = new EditorsFile();
   if (hasEditorsFile)

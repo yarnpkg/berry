@@ -1,9 +1,9 @@
-import {StreamReport, Configuration}             from '@yarnpkg/core';
-import {NativePath, npath, ppath, xfs, Filename} from '@yarnpkg/fslib';
-import {Command}                                 from 'clipanion';
+import {StreamReport, Configuration}                     from '@yarnpkg/core';
+import {NativePath, npath, ppath, xfs, Filename}         from '@yarnpkg/fslib';
+import {Command}                                         from 'clipanion';
 
-import {dynamicRequire}                          from '../dynamicRequire';
-import {generateSdk, SUPPORTED_EDITORS}          from '../generateSdk';
+import {dynamicRequire}                                  from '../dynamicRequire';
+import {generateSdk, SUPPORTED_EDITORS, SupportedEditor} from '../generateSdk';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SdkCommand extends Command {
@@ -75,7 +75,7 @@ export default class SdkCommand extends Command {
     const base = this.editors.length === 1 && this.editors[0] === `base`;
 
     const editors = this.editors.length === 0 || base
-      ? null
+      ? new Set<SupportedEditor>()
       : new Set(this.editors);
 
     const report = await StreamReport.start({
@@ -83,7 +83,7 @@ export default class SdkCommand extends Command {
       includeFooter: false,
       stdout: this.context.stdout,
     }, async report => {
-      await generateSdk(pnpApi, editors as (typeof SUPPORTED_EDITORS | null), {report, base});
+      await generateSdk(pnpApi, editors as typeof SUPPORTED_EDITORS, {report, base});
     });
 
     return report.exitCode();
