@@ -28,4 +28,4 @@ jobs:
         only-labels: 'bug'
 
         stale-issue-label: 'stale'
-        exempt-issue-labels: 'reproducible,upholded'
+        exempt-issue-labels: 'reproducible,upholded,good first issue,help wanted'
