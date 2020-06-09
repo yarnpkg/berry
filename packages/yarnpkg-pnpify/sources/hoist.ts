@@ -149,20 +149,6 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
 };
 
 /**
- * Decouples graph path all the way from decoupled graph node (tree node) up to the node in concern.
- *
- * @param nodePath graph path that starts from decoupled graph node up to the node in concern
- * @returns decoupled node, the last one in `nodePath`
- */
-const decoupleGraphPath = (nodePath: Array<HoisterWorkTree>): HoisterWorkTree => {
-  let parentNode = nodePath[0];
-  for (const node of nodePath.slice(1))
-    parentNode = decoupleGraphNode(parentNode, parentNode.dependencies.get(node.name)!);
-
-  return parentNode;
-};
-
-/**
  * Builds a map of most popular packages that might be hoisted to the root node.
  *
  * The values in the map are idents sorted by popularity from most popular to less popular.
@@ -242,25 +228,23 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
 
   let wasStateChanged;
   do {
-    wasStateChanged = hoistGraph(tree, rootNode, rootNodePath, hoistedDependencies, hoistIdents, options);
-    if (!wasStateChanged) {
-      for (const [name, idents] of hoistIdentMap) {
-        if (idents.length > 1 && !rootNode.dependencies.has(name)) {
-          hoistIdents.delete(idents[0]);
-          idents.shift();
-          hoistIdents.add(idents[0]);
-          wasStateChanged = true;
-        }
+    hoistGraph(tree, rootNode, rootNodePath, hoistedDependencies, hoistIdents, options);
+    wasStateChanged = false;
+    for (const [name, idents] of hoistIdentMap) {
+      if (idents.length > 1 && !rootNode.dependencies.has(name)) {
+        hoistIdents.delete(idents[0]);
+        idents.shift();
+        hoistIdents.add(idents[0]);
+        wasStateChanged = true;
       }
     }
   } while (wasStateChanged);
 
   for (const dependency of rootNode.dependencies.values()) {
     if (!rootNode.peerNames.has(dependency.name) && !rootNodePath.has(dependency.locator)) {
-      const clone = decoupleGraphNode(rootNode, dependency);
-      rootNodePath.add(clone.locator);
-      hoistTo(tree, clone, rootNodePath, options);
-      rootNodePath.delete(clone.locator);
+      rootNodePath.add(dependency.locator);
+      hoistTo(tree, dependency, rootNodePath, options);
+      rootNodePath.delete(dependency.locator);
     }
   }
 };
@@ -309,12 +293,10 @@ const getSortedReglarDependencies = (node: HoisterWorkTree): Set<HoisterWorkTree
  * @param hoistedDependencies map of dependencies that were hoisted to parent nodes
  * @param hoistIdents idents that should be attempted to be hoisted to the root node
  */
-const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath: Set<Locator>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Set<Ident>, options: InternalHoistOptions): boolean => {
-  let wasGraphChanged = false;
-
+const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath: Set<Locator>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Set<Ident>, options: InternalHoistOptions) => {
   const seenNodes = new Set<HoisterWorkTree>();
 
-  const hoistNode = (nodePath: Array<HoisterWorkTree>, locatorPath: Array<Locator>, node: HoisterWorkTree) => {
+  const hoistNode = (nodePath: Array<HoisterWorkTree>, locatorPath: Array<Locator>, node: HoisterWorkTree, newNodes: Set<HoisterWorkTree>) => {
     if (seenNodes.has(node))
       return;
 
@@ -330,7 +312,7 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
       for (let idx = nodePath.length - 1; idx >= 1; idx--) {
         const parent = nodePath[idx];
         for (const name of checkList) {
-          if (parent.peerNames.has(name))
+          if (parent.peerNames.has(name) && parent.originalDependencies.has(name))
             continue;
 
           const parentDepNode = parent.dependencies.get(name);
@@ -372,17 +354,17 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
     }
 
     if (isHoistable) {
-      const parentNode = decoupleGraphPath(nodePath);
+      const parentNode = nodePath[nodePath.length - 1];
       parentNode.dependencies.delete(node.name);
       parentNode.hoistedDependencies.set(node.name, node);
       parentNode.reasons.delete(node.name);
-      wasGraphChanged = true;
       const hoistedNode = rootNode.dependencies.get(node.name);
       // Add hoisted node to root node, in case it is not already there
       if (!hoistedNode) {
         // Avoid adding other version of root node to itself
         if (rootNode.ident !== node.ident) {
           rootNode.dependencies.set(node.name, node);
+          newNodes.add(node);
         }
       } else {
         for (const reference of node.references) {
@@ -404,30 +386,36 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
     }
 
     if (!isHoistable && locatorPath.indexOf(node.locator) < 0) {
-      seenNodes.add(node);
+      const decoupledNode = decoupleGraphNode(nodePath[nodePath.length - 1], node);
+      seenNodes.add(decoupledNode);
 
       for (const dep of getSortedReglarDependencies(node))
-        hoistNode([...nodePath, node], [...locatorPath, node.locator], dep);
+        hoistNode([...nodePath, decoupledNode], [...locatorPath, node.locator], dep, newNodes);
 
-      seenNodes.delete(node);
+      seenNodes.delete(decoupledNode);
     }
   };
 
-  for (const dep of rootNode.dependencies.values()) {
-    if (rootNode.peerNames.has(dep.name) || dep.locator === rootNode.locator)
-      continue;
-    seenNodes.add(dep);
+  let newNodes;
+  let nextNewNodes = new Set(rootNode.dependencies.values());
+  do {
+    newNodes = nextNewNodes;
+    nextNewNodes = new Set();
+    for (const dep of newNodes) {
+      if (rootNode.peerNames.has(dep.name) || dep.locator === rootNode.locator)
+        continue;
+      const decoupledDep = decoupleGraphNode(rootNode, dep);
+      seenNodes.add(decoupledDep);
 
-    for (const subDep of getSortedReglarDependencies(dep)) {
-      if (subDep.locator !== dep.locator) {
-        hoistNode([rootNode, dep], [rootNode.locator, dep.locator], subDep);
+      for (const subDep of getSortedReglarDependencies(dep)) {
+        if (subDep.locator !== dep.locator) {
+          hoistNode([rootNode, decoupledDep], [rootNode.locator, dep.locator], subDep, nextNewNodes);
+        }
       }
+
+      seenNodes.delete(decoupledDep);
     }
-
-    seenNodes.delete(dep);
-  }
-
-  return wasGraphChanged;
+  } while (nextNewNodes.size > 0);
 };
 
 const selfCheck = (tree: HoisterWorkTree): string => {

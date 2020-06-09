@@ -290,6 +290,23 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
 
       const leafNode = makeLeafNode(locator, references.slice(1));
       if (!dep.name.endsWith(`$wsroot$`)) {
+        const prevNode = tree.get(nodeModulesLocation);
+        if (prevNode) {
+          if (prevNode.dirList) {
+            throw new Error(`Assertion failed: ${nodeModulesLocation} cannot merge dir node with leaf node`);
+          } else {
+            const locator1 = structUtils.parseLocator(prevNode.locator);
+            const locator2 = structUtils.parseLocator(leafNode.locator);
+
+            if (prevNode.linkType !== leafNode.linkType)
+              throw new Error(`Assertion failed: ${nodeModulesLocation} cannot merge nodes with different link types`);
+            else if (locator1.identHash !== locator2.identHash)
+              throw new Error(`Assertion failed: ${nodeModulesLocation} cannot merge nodes with different idents ${structUtils.stringifyLocator(locator1)} and ${structUtils.stringifyLocator(locator2)}`);
+
+            leafNode.aliases = [...leafNode.aliases, ...prevNode.aliases, structUtils.parseLocator(prevNode.locator).reference];
+          }
+        }
+
         tree.set(nodeModulesLocation, leafNode);
 
         const segments = nodeModulesLocation.split(`/`);
