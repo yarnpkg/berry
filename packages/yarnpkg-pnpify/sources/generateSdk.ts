@@ -1,4 +1,4 @@
-import {Report, MessageName}                       from '@yarnpkg/core';
+import {Report, MessageName, miscUtils}            from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                  from '@yarnpkg/parsers';
 import {PnpApi}                                    from '@yarnpkg/pnp';
@@ -15,9 +15,9 @@ export const PNPIFY_FOLDER = `.yarn/pnpify` as PortablePath;
 
 export const EDITORS_FILE = `editors.yml` as Filename;
 
-export const SUPPORTED_EDITORS = new Set([
-  `vscode` as const,
-]);
+export const SUPPORTED_EDITORS = new Map([
+  [`vscode`, VSCODE_SDKS],
+] as const);
 
 export const getDisplayName = (name: string) =>
   startCase(name).split(` `).map(word => capitalize(word)).join(` `);
@@ -36,12 +36,12 @@ export const validateEditors = (editors: Set<string>) => {
   }
 };
 
-export type SetTemplate<S> = S extends Set<infer T> ? T : never;
+export type MapKey<S> = S extends Map<infer K, infer V> ? K : never;
 
-export type SupportedEditor = SetTemplate<typeof SUPPORTED_EDITORS>;
+export type SupportedEditor = MapKey<typeof SUPPORTED_EDITORS>;
 
 export class EditorsFile {
-  public editors: typeof SUPPORTED_EDITORS = new Set();
+  public editors: Set<SupportedEditor> = new Set();
 
   public raw: {[key: string]: any} = {};
 
@@ -231,7 +231,7 @@ export class Wrapper {
   }
 }
 
-export const generateSdk = async (pnpApi: PnpApi, requestedEditors: typeof SUPPORTED_EDITORS, {report, base}: {report: Report, base: boolean}): Promise<void> => {
+export const generateSdk = async (pnpApi: PnpApi, requestedEditors: Set<SupportedEditor>, {report, base}: {report: Report, base: boolean}): Promise<void> => {
   validateEditors(requestedEditors);
 
   const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
@@ -279,9 +279,12 @@ export const generateSdk = async (pnpApi: PnpApi, requestedEditors: typeof SUPPO
     report.reportSeparator();
   }
 
-  const EDITOR_SDKS = [
-    ...allEditors.has(`vscode`) ? [VSCODE_SDKS] : [],
-  ];
+  const editorSdks = miscUtils.mapAndFilter(SUPPORTED_EDITORS.entries(), ([editor, sdk]) => {
+    if (!allEditors.has(editor))
+      return miscUtils.mapAndFilter.skip;
+
+    return sdk;
+  });
 
   report.reportInfo(null, `Dependencies:`);
 
@@ -294,7 +297,7 @@ export const generateSdk = async (pnpApi: PnpApi, requestedEditors: typeof SUPPO
       report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${displayName}`);
       const wrapper = await generateBaseWrapper(pnpApi, targetFolder);
 
-      for (const sdks of EDITOR_SDKS) {
+      for (const sdks of editorSdks) {
         const editorSdk = sdks.find(sdk => sdk[0] === pkgName);
 
         if (!editorSdk)

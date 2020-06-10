@@ -30,7 +30,7 @@ export default class SdkCommand extends Command {
 
       - When a list of editors (e.g. \`vscode vim\`), it installs the base SDKs and generates the corresponding editor settings.
 
-      List of supported editors: ${[...SUPPORTED_EDITORS].map(editor => `\`${editor}\``).join(`, `)}.
+      List of supported editors: ${[...SUPPORTED_EDITORS.keys()].map(editor => `\`${editor}\``).join(`, `)}.
 
       **Note:** This command always updates the already-installed SDKs and editor settings, no matter which arguments are passed.
     `,
@@ -83,7 +83,7 @@ export default class SdkCommand extends Command {
       includeFooter: false,
       stdout: this.context.stdout,
     }, async report => {
-      await generateSdk(pnpApi, editors as typeof SUPPORTED_EDITORS, {report, base});
+      await generateSdk(pnpApi, editors as Set<SupportedEditor>, {report, base});
     });
 
     return report.exitCode();
