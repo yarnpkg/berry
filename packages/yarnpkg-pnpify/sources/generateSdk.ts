@@ -279,7 +279,7 @@ export const generateSdk = async (pnpApi: PnpApi, requestedEditors: Set<Supporte
     report.reportSeparator();
   }
 
-  const editorSdks = miscUtils.mapAndFilter(SUPPORTED_EDITORS.entries(), ([editor, sdk]) => {
+  const editorSdks = miscUtils.mapAndFilter(SUPPORTED_EDITORS, ([editor, sdk]) => {
     if (!allEditors.has(editor))
       return miscUtils.mapAndFilter.skip;
 
