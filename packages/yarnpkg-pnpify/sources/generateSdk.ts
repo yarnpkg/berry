@@ -45,6 +45,10 @@ export class EditorsFile {
 
   public raw: {[key: string]: any} = {};
 
+  static hasEditorsFile(targetFolder: PortablePath) {
+    return xfs.existsSync(ppath.join(targetFolder, EDITORS_FILE));
+  }
+
   async loadFile(path: PortablePath) {
     const content = await xfs.readFilePromise(path, `utf8`);
 
@@ -240,10 +244,8 @@ export const generateSdk = async (pnpApi: PnpApi, requestedEditors: Set<Supporte
   const targetFolder = ppath.join(projectRoot, PNPIFY_FOLDER);
   const editorsFilePath = ppath.join(targetFolder, EDITORS_FILE);
 
-  const hasEditorsFile = xfs.existsSync(editorsFilePath);
-
   const editorsFile = new EditorsFile();
-  if (hasEditorsFile)
+  if (EditorsFile.hasEditorsFile(targetFolder))
     await editorsFile.loadFile(editorsFilePath);
   const preexistingEditors = editorsFile.editors;
 
@@ -252,7 +254,7 @@ export const generateSdk = async (pnpApi: PnpApi, requestedEditors: Set<Supporte
     ...preexistingEditors,
   ]);
 
-  if (allEditors.size === 0 && !hasEditorsFile && !onlyBase)
+  if (allEditors.size === 0 && !EditorsFile.hasEditorsFile(targetFolder) && !onlyBase)
     throw new UsageError(`No editors have been provided as arguments and no existing editors could be found inside the ${configuration.format(EDITORS_FILE, FormatType.PATH)} file. Make sure to use \`yarn pnpify --sdk <editors>\`, or run \`yarn pnpify --sdk base\` if you prefer to manage your own settings.`);
 
   // TODO: remove in next major
