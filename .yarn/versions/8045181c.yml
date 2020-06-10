@@ -1,6 +1,0 @@
-releases:
-  "@yarnpkg/libui": prerelease
-  "@yarnpkg/plugin-interactive-tools": prerelease
-
-declined:
-  - "@yarnpkg/plugin-version"

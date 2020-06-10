@@ -1,20 +1,20 @@
 {
   "name": "@yarnpkg/plugin-dlx",
-  "version": "2.0.0-rc.14",
+  "version": "2.0.0-rc.15",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.20",
-    "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.7",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
+    "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.8",
     "clipanion": "^2.4.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.33",
-    "@yarnpkg/core": "^2.0.0-rc.27"
+    "@yarnpkg/cli": "^2.0.0-rc.34",
+    "@yarnpkg/core": "^2.0.0-rc.28"
   },
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.33",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.27"
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.34",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.28"
   },
   "repository": {
     "type": "git",

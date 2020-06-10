@@ -1,15 +1,15 @@
 {
   "name": "@yarnpkg/plugin-compat",
-  "version": "2.0.0-rc.12",
+  "version": "2.0.0-rc.13",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.27",
-    "@yarnpkg/plugin-patch": "^2.0.0-rc.8"
+    "@yarnpkg/core": "^2.0.0-rc.28",
+    "@yarnpkg/plugin-patch": "^2.0.0-rc.9"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^2.0.0-rc.27",
-    "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.8"
+    "@yarnpkg/core": "workspace:^2.0.0-rc.28",
+    "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.9"
   },
   "repository": {
     "type": "git",

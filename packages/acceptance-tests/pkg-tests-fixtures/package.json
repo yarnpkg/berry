@@ -3,7 +3,7 @@
     "private": true,
     "license": "BSD-2-Clause",
     "dependencies": {
-        "@yarnpkg/fslib": "workspace:^2.0.0-rc.20"
+        "@yarnpkg/fslib": "workspace:^2.0.0-rc.21"
     },
     "scripts": {
         "copy-index": "find packages -type d -mindepth 1 -maxdepth 1 | while read pkg; do cp default-index.js \"$pkg/index.js\"; done"

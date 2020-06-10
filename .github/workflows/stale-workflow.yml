@@ -1,0 +1,31 @@
+name: 'Close stale issues'
+on:
+  schedule:
+  - cron: '0 * * * *'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/stale@v3
+      with:
+        repo-token: ${{secrets.YARNBOT_TOKEN}}
+
+        stale-issue-message: |
+          Hi! 👋
+
+          This issue looks stale, and doesn't feature the `reproducible` label - which implies that you didn't provide a working reproduction using [Sherlock](https://yarnpkg.com/advanced/sherlock). As a result, it'll be closed in a few days unless a maintainer explicitly vouches for it or you edit your first post to include a formal reproduction (you can use the [playground](http://yarnpkg.com/playground) for that).
+
+          Note that we require Sherlock reproductions for long-lived issues (rather than standalone git repositories or similar) because we're a small team. Sherlock gives us the ability to check which bugs are still affecting the master branch at any given point, and decreases the amount of code we need to run on our own machines (thus leading to faster bug resolutions). It helps us help you! 😃
+
+          If you absolutely *cannot* reproduce a bug on Sherlock (for example because it's a Windows-only issue), a maintainer will have to manually add the `upholded` label. Thanks for helping us triaging our repository! 🌟
+
+        remove-stale-when-updated: false
+
+        days-before-stale: 30
+        days-before-close: 5
+
+        only-labels: 'bug'
+
+        stale-issue-label: 'stale'
+        exempt-issue-labels: 'reproducible,upholded,good first issue,help wanted'
