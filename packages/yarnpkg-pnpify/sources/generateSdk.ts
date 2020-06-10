@@ -1,15 +1,15 @@
-import {Report, MessageName, miscUtils}            from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                  from '@yarnpkg/parsers';
-import {PnpApi}                                    from '@yarnpkg/pnp';
-import chalk                                       from 'chalk';
-import {UsageError}                                from 'clipanion';
-import {startCase, capitalize}                     from 'lodash';
+import {Report, MessageName, miscUtils, Configuration, FormatType} from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, xfs}                 from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                  from '@yarnpkg/parsers';
+import {PnpApi}                                                    from '@yarnpkg/pnp';
+import chalk                                                       from 'chalk';
+import {UsageError}                                                from 'clipanion';
+import {startCase, capitalize}                                     from 'lodash';
 
-import {dynamicRequire}                            from './dynamicRequire';
+import {dynamicRequire}                                            from './dynamicRequire';
 
-import {BASE_SDKS}                                 from './sdks/base';
-import {VSCODE_SDKS}                               from './sdks/vscode';
+import {BASE_SDKS}                                                 from './sdks/base';
+import {VSCODE_SDKS}                                               from './sdks/vscode';
 
 export const PNPIFY_FOLDER = `.yarn/pnpify` as PortablePath;
 
@@ -231,7 +231,7 @@ export class Wrapper {
   }
 }
 
-export const generateSdk = async (pnpApi: PnpApi, requestedEditors: Set<SupportedEditor>, {report, base}: {report: Report, base: boolean}): Promise<void> => {
+export const generateSdk = async (pnpApi: PnpApi, requestedEditors: Set<SupportedEditor>, {report, base, configuration}: {report: Report, base: boolean, configuration: Configuration}): Promise<void> => {
   validateEditors(requestedEditors);
 
   const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
@@ -253,13 +253,13 @@ export const generateSdk = async (pnpApi: PnpApi, requestedEditors: Set<Supporte
   ]);
 
   if (allEditors.size === 0 && !hasEditorsFile && !base)
-    throw new UsageError(`No editors have been provided as arguments and no existing editors could be found inside the ${chalk.magenta(EDITORS_FILE)} file. Make sure to use \`yarn pnpify --sdk <editors>\`, or run \`yarn pnpify --sdk base\` if you prefer to manage your own settings.`);
+    throw new UsageError(`No editors have been provided as arguments and no existing editors could be found inside the ${configuration.format(EDITORS_FILE, FormatType.PATH)} file. Make sure to use \`yarn pnpify --sdk <editors>\`, or run \`yarn pnpify --sdk base\` if you prefer to manage your own settings.`);
 
   // TODO: remove in next major
   const OLD_PNPIFY_FOLDER = `.vscode/pnpify` as PortablePath;
   const oldTargetFolder = ppath.join(projectRoot, OLD_PNPIFY_FOLDER);
   if (xfs.existsSync(oldTargetFolder)) {
-    report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files in the old ${chalk.magenta(OLD_PNPIFY_FOLDER)} folder. You might need to manually update existing references outside the ${chalk.magenta(`.vscode`)} folder (e.g. .gitignore)...`);
+    report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files in the old ${configuration.format(OLD_PNPIFY_FOLDER, FormatType.PATH)} folder. You might need to manually update existing references outside the ${configuration.format(`.vscode`, FormatType.PATH)} folder (e.g. .gitignore)...`);
     await xfs.removePromise(oldTargetFolder);
   }
 
@@ -271,10 +271,10 @@ export const generateSdk = async (pnpApi: PnpApi, requestedEditors: Set<Supporte
   editorsFile.editors = allEditors;
   await editorsFile.persist(targetFolder);
 
-  report.reportInfo(null, `Installing fresh SDKs for ${chalk.magenta(projectRoot)}:`);
+  report.reportInfo(null, `Installing fresh SDKs for ${configuration.format(projectRoot, FormatType.PATH)}:`);
   report.reportSeparator();
 
-  report.reportInfo(null, `Installing the base SDKs inside ${chalk.magenta(targetFolder)}...`);
+  report.reportInfo(null, `Installing the base SDKs inside ${configuration.format(targetFolder, FormatType.PATH)}...`);
   report.reportSeparator();
 
   if (allEditors.size > 0) {

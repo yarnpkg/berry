@@ -83,7 +83,7 @@ export default class SdkCommand extends Command {
       includeFooter: false,
       stdout: this.context.stdout,
     }, async report => {
-      await generateSdk(pnpApi, editors as Set<SupportedEditor>, {report, base});
+      await generateSdk(pnpApi, editors as Set<SupportedEditor>, {report, base, configuration});
     });
 
     return report.exitCode();
