@@ -1,7 +1,7 @@
 import {PortablePath, npath, ppath, xfs}            from '@yarnpkg/fslib';
 import {PnpApi}                                     from '@yarnpkg/pnp';
 import CJSON                                        from 'comment-json';
-import {mergeWith}                                  from 'lodash';
+import mergeWith                                    from 'lodash/mergeWith';
 
 import {Wrapper, GenerateEditorWrapper, EditorSdks} from '../generateSdk';
 
