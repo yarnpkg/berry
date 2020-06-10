@@ -4,7 +4,8 @@ import {parseSyml, stringifySyml}                                  from '@yarnpk
 import {PnpApi}                                                    from '@yarnpkg/pnp';
 import chalk                                                       from 'chalk';
 import {UsageError}                                                from 'clipanion';
-import {startCase, capitalize}                                     from 'lodash';
+import startCase                                                   from 'lodash/startCase';
+import capitalize                                                   from 'lodash/capitalize';
 
 import {dynamicRequire}                                            from './dynamicRequire';
 
