@@ -252,11 +252,16 @@ export const generateSdk = async (pnpApi: PnpApi, requestedEditors: Set<Supporte
     ...preexistingEditors,
   ]);
 
-  if (base)
-    report.reportInfo(null, `Installing the base SDK...`);
-
   if (allEditors.size === 0 && !hasEditorsFile && !base)
     throw new UsageError(`No editors have been provided as arguments and no existing editors could be found inside the ${chalk.magenta(EDITORS_FILE)} file. Make sure to use \`yarn pnpify --sdk <editors>\`, or run \`yarn pnpify --sdk base\` if you prefer to manage your own settings.`);
+
+  // TODO: remove in next major
+  const OLD_PNPIFY_FOLDER = `.vscode/pnpify` as PortablePath;
+  const oldTargetFolder = ppath.join(projectRoot, OLD_PNPIFY_FOLDER);
+  if (xfs.existsSync(oldTargetFolder)) {
+    report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files in the old ${chalk.magenta(OLD_PNPIFY_FOLDER)} folder. You might need to manually update existing references outside the ${chalk.magenta(`.vscode`)} folder (e.g. .gitignore)...`);
+    await xfs.removePromise(oldTargetFolder);
+  }
 
   if (xfs.existsSync(targetFolder)) {
     report.reportInfo(null, `Cleaning up the existing SDK files...`);
@@ -267,6 +272,9 @@ export const generateSdk = async (pnpApi: PnpApi, requestedEditors: Set<Supporte
   await editorsFile.persist(targetFolder);
 
   report.reportInfo(null, `Installing fresh SDKs for ${chalk.magenta(projectRoot)}:`);
+  report.reportSeparator();
+
+  report.reportInfo(null, `Installing the base SDKs inside ${chalk.magenta(targetFolder)}...`);
   report.reportSeparator();
 
   if (allEditors.size > 0) {
