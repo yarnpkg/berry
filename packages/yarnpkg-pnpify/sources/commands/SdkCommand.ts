@@ -74,7 +74,7 @@ export default class SdkCommand extends Command {
 
     const onlyBase = this.editors.length === 1 && this.editors[0] === `base`;
 
-    const editors = this.editors.length === 0 || base
+    const editors = this.editors.length === 0 || onlyBase
       ? new Set<SupportedEditor>()
       : new Set(this.editors);
 
