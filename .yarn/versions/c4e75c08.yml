@@ -1,5 +1,6 @@
 releases:
   "@yarnpkg/cli": prerelease
+  "@yarnpkg/core": prerelease
   "@yarnpkg/plugin-pnp": prerelease
   "@yarnpkg/pnpify": prerelease
 
@@ -9,7 +10,9 @@ declined:
   - "@yarnpkg/plugin-essentials"
   - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-link"
   - "@yarnpkg/plugin-node-modules"
+  - "@yarnpkg/plugin-npm"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
   - "@yarnpkg/plugin-patch"
@@ -19,6 +22,5 @@ declined:
   - "@yarnpkg/plugin-workspace-tools"
   - vscode-zipfs
   - "@yarnpkg/builder"
-  - "@yarnpkg/core"
   - "@yarnpkg/doctor"
   - "@yarnpkg/pnp"
