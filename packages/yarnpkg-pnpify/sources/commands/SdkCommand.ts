@@ -1,14 +1,14 @@
-import {StreamReport, Configuration}                     from '@yarnpkg/core';
-import {NativePath, npath, ppath, xfs, Filename}         from '@yarnpkg/fslib';
-import {Command}                                         from 'clipanion';
+import {StreamReport, Configuration}                               from '@yarnpkg/core';
+import {NativePath, npath, ppath, xfs, Filename}                   from '@yarnpkg/fslib';
+import {Command}                                                   from 'clipanion';
 
-import {dynamicRequire}                                  from '../dynamicRequire';
-import {generateSdk, SUPPORTED_EDITORS, SupportedEditor} from '../generateSdk';
+import {dynamicRequire}                                            from '../dynamicRequire';
+import {generateSdk, SUPPORTED_INTEGRATIONS, SupportedIntegration} from '../generateSdk';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SdkCommand extends Command {
   @Command.Rest()
-  editors: Array<string> = [];
+  integrations: Array<string> = [];
 
   @Command.String(`--cwd`)
   cwd: NativePath = process.cwd();
@@ -24,13 +24,13 @@ export default class SdkCommand extends Command {
 
       - updates all existing SDKs and editor settings on already-pnpified projects
 
-      The optional \`editors\` rest argument is a list of supported editors or \`base\`.
+      The optional \`integrations\` rest argument is a list of supported integrations or \`base\`.
 
       - When \`base\`, it only installs the base SDKs. Useful for when an editor is not yet supported and you need to manually update its settings.
 
       - When a list of editors (e.g. \`vscode vim\`), it installs the base SDKs and generates the corresponding editor settings.
 
-      List of supported editors: ${[...SUPPORTED_EDITORS.keys()].map(editor => `\`${editor}\``).join(`, `)}.
+      List of supported integrations: ${[...SUPPORTED_INTEGRATIONS.keys()].map(integration => `\`${integration}\``).join(`, `)}.
 
       **Note:** This command always updates the already-installed SDKs and editor settings, no matter which arguments are passed.
     `,
@@ -72,18 +72,18 @@ export default class SdkCommand extends Command {
     const pnpPath = ppath.join(currProjectRoot, `.pnp.${isCJS}js` as Filename);
     const pnpApi = dynamicRequire(pnpPath);
 
-    const onlyBase = this.editors.length === 1 && this.editors[0] === `base`;
+    const onlyBase = this.integrations.length === 1 && this.integrations[0] === `base`;
 
-    const editors = this.editors.length === 0 || onlyBase
-      ? new Set<SupportedEditor>()
-      : new Set(this.editors);
+    const integrations = this.integrations.length === 0 || onlyBase
+      ? new Set<SupportedIntegration>()
+      : new Set(this.integrations);
 
     const report = await StreamReport.start({
       configuration,
       includeFooter: false,
       stdout: this.context.stdout,
     }, async report => {
-      await generateSdk(pnpApi, editors as Set<SupportedEditor>, {report, onlyBase, configuration});
+      await generateSdk(pnpApi, integrations as Set<SupportedIntegration>, {report, onlyBase, configuration});
     });
 
     return report.exitCode();

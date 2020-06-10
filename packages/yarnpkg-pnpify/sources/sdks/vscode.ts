@@ -1,9 +1,9 @@
-import {PortablePath, npath, ppath, xfs}            from '@yarnpkg/fslib';
-import {PnpApi}                                     from '@yarnpkg/pnp';
-import CJSON                                        from 'comment-json';
-import mergeWith                                    from 'lodash/mergeWith';
+import {PortablePath, npath, ppath, xfs}                      from '@yarnpkg/fslib';
+import {PnpApi}                                               from '@yarnpkg/pnp';
+import CJSON                                                  from 'comment-json';
+import mergeWith                                              from 'lodash/mergeWith';
 
-import {Wrapper, GenerateEditorWrapper, EditorSdks} from '../generateSdk';
+import {Wrapper, GenerateIntegrationWrapper, IntegrationSdks} from '../generateSdk';
 
 export const merge = (object: unknown, source: unknown) =>
   mergeWith(object, source, (objValue, srcValue) => {
@@ -38,7 +38,7 @@ export const addVSCodeWorkspaceConfiguration = async (pnpApi: PnpApi, type: VSCo
 };
 
 
-export const generateEslintWrapper: GenerateEditorWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+export const generateEslintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`eslint.nodePath`]: npath.fromPortablePath(
       ppath.dirname(ppath.dirname(ppath.dirname(
@@ -56,7 +56,7 @@ export const generateEslintWrapper: GenerateEditorWrapper = async (pnpApi: PnpAp
   });
 };
 
-export const generatePrettierWrapper: GenerateEditorWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+export const generatePrettierWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`prettier.prettierPath`]: npath.fromPortablePath(
       wrapper.getProjectPathTo(
@@ -72,7 +72,7 @@ export const generatePrettierWrapper: GenerateEditorWrapper = async (pnpApi: Pnp
   });
 };
 
-export const generateTypescriptWrapper: GenerateEditorWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+export const generateTypescriptWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`typescript.tsdk`]: npath.fromPortablePath(
       ppath.dirname(
@@ -91,7 +91,7 @@ export const generateTypescriptWrapper: GenerateEditorWrapper = async (pnpApi: P
   });
 };
 
-export const generateStylelintWrapper: GenerateEditorWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+export const generateStylelintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`stylelint.stylelintPath`]: npath.fromPortablePath(
       wrapper.getProjectPathTo(
@@ -107,7 +107,7 @@ export const generateStylelintWrapper: GenerateEditorWrapper = async (pnpApi: Pn
   });
 };
 
-export const VSCODE_SDKS: EditorSdks = [
+export const VSCODE_SDKS: IntegrationSdks = [
   [`eslint`, generateEslintWrapper],
   [`prettier`, generatePrettierWrapper],
   [`typescript-language-server`, null],
