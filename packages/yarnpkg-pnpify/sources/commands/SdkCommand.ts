@@ -72,7 +72,7 @@ export default class SdkCommand extends Command {
     const pnpPath = ppath.join(currProjectRoot, `.pnp.${isCJS}js` as Filename);
     const pnpApi = dynamicRequire(pnpPath);
 
-    const base = this.editors.length === 1 && this.editors[0] === `base`;
+    const onlyBase = this.editors.length === 1 && this.editors[0] === `base`;
 
     const editors = this.editors.length === 0 || base
       ? new Set<SupportedEditor>()
@@ -83,7 +83,7 @@ export default class SdkCommand extends Command {
       includeFooter: false,
       stdout: this.context.stdout,
     }, async report => {
-      await generateSdk(pnpApi, editors as Set<SupportedEditor>, {report, base, configuration});
+      await generateSdk(pnpApi, editors as Set<SupportedEditor>, {report, onlyBase, configuration});
     });
 
     return report.exitCode();

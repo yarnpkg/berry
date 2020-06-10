@@ -231,7 +231,7 @@ export class Wrapper {
   }
 }
 
-export const generateSdk = async (pnpApi: PnpApi, requestedEditors: Set<SupportedEditor>, {report, base, configuration}: {report: Report, base: boolean, configuration: Configuration}): Promise<void> => {
+export const generateSdk = async (pnpApi: PnpApi, requestedEditors: Set<SupportedEditor>, {report, onlyBase, configuration}: {report: Report, onlyBase: boolean, configuration: Configuration}): Promise<void> => {
   validateEditors(requestedEditors);
 
   const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
@@ -252,7 +252,7 @@ export const generateSdk = async (pnpApi: PnpApi, requestedEditors: Set<Supporte
     ...preexistingEditors,
   ]);
 
-  if (allEditors.size === 0 && !hasEditorsFile && !base)
+  if (allEditors.size === 0 && !hasEditorsFile && !onlyBase)
     throw new UsageError(`No editors have been provided as arguments and no existing editors could be found inside the ${configuration.format(EDITORS_FILE, FormatType.PATH)} file. Make sure to use \`yarn pnpify --sdk <editors>\`, or run \`yarn pnpify --sdk base\` if you prefer to manage your own settings.`);
 
   // TODO: remove in next major
