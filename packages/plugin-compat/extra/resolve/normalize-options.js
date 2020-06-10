@@ -55,26 +55,39 @@ module.exports = function (_, opts) {
     return {packagePath, unqualifiedPath};
   };
 
-  const originalPaths = opts.paths || [];
+  const runPnpResolutionOnArray = (request, paths) => {
+    for (let i = 0; i < paths.length; i++) {
+      const resolution = runPnpResolution(request, paths[i]);
+      if (resolution || i === paths.length) {
+        return resolution;
+      }
+    }
+
+    return null;
+  };
+
+  const originalPaths = Array.isArray(opts.paths) ? opts.paths : [];
 
   const packageIterator = (request, basedir, getCandidates, opts) => {
-    const resolution = runPnpResolution(request, basedir);
+    const pathsToTest = [basedir].concat(originalPaths);
+    const resolution = runPnpResolutionOnArray(request, pathsToTest);
     if (typeof resolution === `undefined`)
       return getCandidates();
 
     if (resolution === null)
-      return originalPaths.concat(basedir).map(file => path.join(file, request));
+      return pathsToTest.map(file => path.join(file, request));
 
     return [resolution.unqualifiedPath];
   };
 
   const paths = (request, basedir, getNodeModulePaths, opts) => {
-    const resolution = runPnpResolution(request, basedir);
+    const pathsToTest = [basedir].concat(originalPaths);
+    const resolution = runPnpResolutionOnArray(request, pathsToTest);
     if (typeof resolution === `undefined`)
       return getNodeModulePaths();
 
     if (resolution === null)
-      return originalPaths.concat(basedir);
+      return pathsToTest;
 
     // Stip the local named folder
     let nodeModules = path.dirname(resolution.packagePath);

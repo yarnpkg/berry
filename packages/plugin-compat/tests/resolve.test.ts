@@ -31,4 +31,19 @@ describe(`ResolvePatch`, () => {
       } as any)
     ).toEqual(path.join(__dirname, `../sources/extensions.ts`));
   });
+
+  it(`can require dependency in paths`, () => {
+    expect(
+      resolve.sync(`got`, {
+        paths: [require.resolve(`@yarnpkg/core`)],
+      })
+    ).toEqual(require.resolve(`got`, {paths: [require.resolve(`@yarnpkg/core`)]}));
+
+    expect(
+      resolve.sync(`got`, {
+        paths: [require.resolve(`@yarnpkg/core`)],
+        __skipPackageIterator: true,
+      } as any)
+    ).toEqual(require.resolve(`got`, {paths: [require.resolve(`@yarnpkg/core`)]}));
+  });
 });
