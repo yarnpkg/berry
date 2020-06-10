@@ -33,7 +33,7 @@ export const validateIntegrations = (integrations: Set<string>) => {
   }
 
   if (unsupportedIntegrations.length > 0) {
-    throw new UsageError(`No supported integrations with the following names could be found: ${unsupportedIntegrations.join(`, `)}`);
+    throw new UsageError(`No supported integrations with the following names could be found: ${unsupportedIntegrations.join(`, `)}. Run \`yarn pnpify --sdk -h\` to see the list of supported integrations.`);
   }
 };
 
@@ -256,7 +256,7 @@ export const generateSdk = async (pnpApi: PnpApi, requestedIntegrations: Set<Sup
   ]);
 
   if (allIntegrations.size === 0 && !IntegrationsFile.hasIntegrationsFile(targetFolder) && !onlyBase)
-    throw new UsageError(`No integrations have been provided as arguments and no existing integrations could be found inside the ${configuration.format(INTEGRATIONS_FILE, FormatType.PATH)} file. Make sure to use \`yarn pnpify --sdk <integrations>\`, or run \`yarn pnpify --sdk base\` if you prefer to manage your own settings.`);
+    throw new UsageError(`No integrations have been provided as arguments and no existing integrations could be found inside the ${configuration.format(INTEGRATIONS_FILE, FormatType.PATH)} file. Make sure to use \`yarn pnpify --sdk <integrations>\`, or run \`yarn pnpify --sdk base\` if you prefer to manage your own settings. Run \`yarn pnpify --sdk -h\` to see the list of supported integrations.`);
 
   // TODO: remove in next major
   const OLD_PNPIFY_FOLDER = `.vscode/pnpify` as PortablePath;
