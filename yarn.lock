@@ -6649,15 +6649,17 @@ __metadata:
   dependencies:
     "@types/chalk": 2.2.0
     "@types/comment-json": ^1.1.1
-    "@types/cross-spawn": 6.0.0
+    "@types/lodash": ^4.14.136
     "@yarnpkg/core": "workspace:^2.0.0-rc.28"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.21"
     "@yarnpkg/monorepo": "workspace:0.0.0"
+    "@yarnpkg/parsers": "workspace:^2.0.0-rc.12"
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.21"
     chalk: ^3.0.0
+    clipanion: ^2.4.0
     comment-json: ^2.2.0
-    cross-spawn: 7.0.3
     eslint: ^6.8.0
+    lodash: ^4.17.15
     typescript: ^3.8.3
   peerDependencies:
     eslint: "*"

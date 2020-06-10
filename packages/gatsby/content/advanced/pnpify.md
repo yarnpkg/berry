@@ -32,6 +32,8 @@ yarn add @yarnpkg/pnpify
 yarn pnpify tsc
 ```
 
+More details about the run command can be found on its [dedicated page](/pnpify/cli/run).
+
 ## Caveat
 
 - Due to how PnPify emulates the `node_modules` directory, some problems are to be expected, especially with tools that watch directories inside `node_modules`.
