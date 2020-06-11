@@ -24754,44 +24754,44 @@ resolve@^1.10.1:
 
 "resolve@patch:resolve@1.1.7#builtin<compat/resolve>":
   version: 1.1.7
-  resolution: "resolve@patch:resolve@npm%3A1.1.7#builtin<compat/resolve>::version=1.1.7&hash=d38d5f"
+  resolution: "resolve@patch:resolve@npm%3A1.1.7#builtin<compat/resolve>::version=1.1.7&hash=e0cc83"
   checksum: 5238277188664a6948dd7288d16f1a09e098fb36d4f9b2c749130969c998faa9bccefd30fd618073af5210fdc768730cadfc15588bbee4fc64b257f20cab6783
   languageName: node
   linkType: hard
 
 "resolve@patch:resolve@1.9.0#builtin<compat/resolve>":
   version: 1.9.0
-  resolution: "resolve@patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=d38d5f"
+  resolution: "resolve@patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=e0cc83"
   dependencies:
     path-parse: ^1.0.6
-  checksum: 28bb5182f6faca30da791cbe2761c10c375615990f1bc714cb425813257a6e2d750fa88fe6f6245bda56e1ff0794237200da5a4467c683f6806bb55bb3eeb930
+  checksum: 8a5efa84b8e5df4c31b3fb2cbc19f23f09dd7b118f1bdc44d20f7eaace980e43bc9fa226aa739109727ea34fe9329bb5547783e12ae7512770b832276e2f6d08
   languageName: node
   linkType: hard
 
 "resolve@patch:resolve@^1.1.6#builtin<compat/resolve>, resolve@patch:resolve@^1.1.7#builtin<compat/resolve>, resolve@patch:resolve@^1.12.0#builtin<compat/resolve>, resolve@patch:resolve@^1.3.2#builtin<compat/resolve>, resolve@patch:resolve@^1.8.1#builtin<compat/resolve>":
   version: 1.14.1
-  resolution: "resolve@patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=d38d5f"
+  resolution: "resolve@patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=e0cc83"
   dependencies:
     path-parse: ^1.0.6
-  checksum: 23353a18b712e0287245b0c667368faf8505ca74f7ade28d694e167f2c406eac6c028f781aa0b05fddeaa1ff5ca02ca4ca343b467b873e16a2ad4ab152e3780f
+  checksum: f1b0f343c8a70321f82afbe1b1f7e11de5c1409601c450b31dcf12b8f52af2426445ef918d24ec2419a3ea03584b4c723101074236f605becf2c01d29ad0594f
   languageName: node
   linkType: hard
 
 "resolve@patch:resolve@^1.10.1#builtin<compat/resolve>":
   version: 1.12.0
-  resolution: "resolve@patch:resolve@npm%3A1.12.0#builtin<compat/resolve>::version=1.12.0&hash=d38d5f"
+  resolution: "resolve@patch:resolve@npm%3A1.12.0#builtin<compat/resolve>::version=1.12.0&hash=e0cc83"
   dependencies:
     path-parse: ^1.0.6
-  checksum: 31adf3580660ca5d4fde2710504cb1b37991216c0d95f8d617fcc52c371e63f96d29eca704abbb472b840c782791b7d1c06e990745747c29127187421b86270a
+  checksum: 27c291005ff3146e8993258a59a4e9e6704245bb935f203d4e411c0a6e1330cb27951e9348838de756b4530a650691c4cd7024c1f993bf11c4f322d522aa4d12
   languageName: node
   linkType: hard
 
 "resolve@patch:resolve@^1.13.1#builtin<compat/resolve>, resolve@patch:resolve@^1.15.1#builtin<compat/resolve>, resolve@patch:resolve@^1.17.0#builtin<compat/resolve>":
   version: 1.17.0
-  resolution: "resolve@patch:resolve@npm%3A1.17.0#builtin<compat/resolve>::version=1.17.0&hash=d38d5f"
+  resolution: "resolve@patch:resolve@npm%3A1.17.0#builtin<compat/resolve>::version=1.17.0&hash=e0cc83"
   dependencies:
     path-parse: ^1.0.6
-  checksum: b752d4ed79c432cd05ba80ecd067869eb3f60f5867e1d16ebb22f8ad280bfe2ff7ff71687d87fbad3e53b88d4d8404c747faabf0527843586c0d4afa6f16a064
+  checksum: a760516ba78c5949dd2dd2e3284a486a7101a77e3b9f796dcdc86196a1633f3bf5272ebfd5fb827683487fdfdc54cb320f0cec97ee1885c904836ce583d1601c
   languageName: node
   linkType: hard
 
