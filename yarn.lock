@@ -6222,8 +6222,6 @@ __metadata:
       built: false
     svg2png:
       unplugged: true
-    typescript:
-      unplugged: true
     webpack-cli:
       built: false
   languageName: unknown

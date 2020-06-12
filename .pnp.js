@@ -32232,28 +32232,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["typescript", [
         ["patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=56f99f", {
-          "packageLocation": "./.yarn/unplugged/typescript-patch-86b181d2c1/node_modules/typescript/",
+          "packageLocation": "./.yarn/cache/typescript-patch-86b181d2c1-ae7c1709b2.zip/node_modules/typescript/",
           "packageDependencies": [
             ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=56f99f"]
           ],
           "linkType": "HARD",
         }],
         ["patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=56f99f", {
-          "packageLocation": "./.yarn/unplugged/typescript-patch-ba3ae20b79/node_modules/typescript/",
+          "packageLocation": "./.yarn/cache/typescript-patch-ba3ae20b79-8ec50d9f9b.zip/node_modules/typescript/",
           "packageDependencies": [
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=56f99f"]
           ],
           "linkType": "HARD",
         }],
         ["patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=56f99f", {
-          "packageLocation": "./.yarn/unplugged/typescript-patch-ec5f4e2590/node_modules/typescript/",
+          "packageLocation": "./.yarn/cache/typescript-patch-ec5f4e2590-7b29bcb057.zip/node_modules/typescript/",
           "packageDependencies": [
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=56f99f"]
           ],
           "linkType": "HARD",
         }],
         ["patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=56f99f", {
-          "packageLocation": "./.yarn/unplugged/typescript-patch-9d7f903314/node_modules/typescript/",
+          "packageLocation": "./.yarn/cache/typescript-patch-9d7f903314-ed7d809c98.zip/node_modules/typescript/",
           "packageDependencies": [
             ["typescript", "patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=56f99f"]
           ],

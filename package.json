@@ -64,9 +64,6 @@
     "svg2png": {
       "unplugged": true
     },
-    "typescript": {
-      "unplugged": true
-    },
     "webpack-cli": {
       "built": false
     }
