@@ -88,9 +88,18 @@ describe(`Features`, () => {
      */
     test(
       `it should patch message into VSCode typescript language extension for zip schemes`,
-      async () => {
+      makeTemporaryEnv({
+        dependencies: {
+          [`has-types`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await xfs.writeFilePromise(`${path}/tsconfig.json`, `{}`);
+        await xfs.writeFilePromise(`${path}/index.ts`, `import 'has-types/module';`);
+
         const child = spawn(process.execPath, [require.resolve(`@yarnpkg/monorepo/.yarn/pnpify/typescript/lib/tsserver.js`)], {
-          cwd: npath.dirname(require.resolve(`@yarnpkg/monorepo/package.json`)),
+          cwd: npath.fromPortablePath(path),
           stdio: `pipe`,
           encoding: `utf8`,
         });
@@ -110,9 +119,6 @@ describe(`Features`, () => {
               });
             }),
             new Promise((resolve, reject) => {
-              // It's possible that the size of the project grows so that 20s
-              // isn't enough anymore. If that happens, we'll need to create
-              // a dummy project as test setup.
               timeout = setTimeout(() => {
                 reject(new Error(`Timeout reached; server answered:\n\n${data}`));
               }, 20000);
@@ -122,14 +128,13 @@ describe(`Features`, () => {
 
         try {
           // We get the path to something that's definitely in a zip archive
-          const lodashTypeDef = require.resolve(`@types/lodash/index.d.ts`).replace(/\\/g, `/`);
+          const thirdPartyDef = await source(`require.resolve('has-types/module.d.ts').replace(/\\\\/g, '/')`);
 
-          // We'll also use this file (which we control, so its content won't
-          // change) to get autocompletion infos. It depends on lodash too.
-          const ourUtilityFile = require.resolve(`./editorSdks.utility.ts`).replace(/\\/g, `/`);
+          // We'll also use this file to get autocompletion infos.
+          const ourUtilityFile = await source(`require.resolve('./index.ts').replace(/\\\\/g, '/')`);
 
           // Some sanity check to make sure everything is A-OK
-          expect(lodashTypeDef).toContain(`.zip`);
+          expect(thirdPartyDef).toContain(`.zip`);
 
           const openPromise = expect(watchFor(`semanticDiag`)).resolves.toEqual(true);
 
@@ -137,12 +142,12 @@ describe(`Features`, () => {
             seq: 0,
             type: `request`,
             command: `open`,
-            arguments: {file: `zip:${lodashTypeDef}`},
+            arguments: {file: `zip:${thirdPartyDef}`},
           })}\n`);
 
           await openPromise;
 
-          const typeDefPromise = expect(watchFor(`zip:${lodashTypeDef}`)).resolves.toEqual(true);
+          const typeDefPromise = expect(watchFor(`zip:${thirdPartyDef}`)).resolves.toEqual(true);
 
           child.stdin.write(`${JSON.stringify({
             seq: 1,
@@ -155,7 +160,7 @@ describe(`Features`, () => {
         } finally {
           child.stdin.end();
         }
-      },
+      }),
       45000
     );
   });
