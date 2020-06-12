@@ -131,7 +131,7 @@ describe(`Features`, () => {
           // Some sanity check to make sure everything is A-OK
           expect(lodashTypeDef).toContain(`.zip`);
 
-          const openPromise = expect(watchFor(`projectLoadingFinish`)).resolves.toEqual(true);
+          const openPromise = expect(watchFor(`semanticDiag`)).resolves.toEqual(true);
 
           child.stdin.write(`${JSON.stringify({
             seq: 0,
