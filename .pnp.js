@@ -42706,7 +42706,8 @@ function applyPatch(pnpapi, opts) {
     if (cacheEntry) return cacheEntry.exports; // Create a new module and store it into the cache
     // @ts-ignore
 
-    const module = new external_module_["Module"](modulePath, parent);
+    const module = new external_module_["Module"](modulePath, parent); // @ts-ignore
+
     module.pnpApiPath = moduleApiPath;
     entry.cache[modulePath] = module; // The main module is exposed as global variable
 
@@ -42720,6 +42721,7 @@ function applyPatch(pnpapi, opts) {
     let hasThrown = true;
 
     try {
+      // @ts-ignore
       module.load(modulePath);
       hasThrown = false;
     } finally {
@@ -43700,7 +43702,8 @@ function makeManager(pnpapi, opts) {
   function loadApiInstance(pnpApiPath) {
     const nativePath = npath.fromPortablePath(pnpApiPath); // @ts-ignore
 
-    const module = new external_module_["Module"](nativePath, null);
+    const module = new external_module_["Module"](nativePath, null); // @ts-ignore
+
     module.load(nativePath);
     return module.exports;
   }

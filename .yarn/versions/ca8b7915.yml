@@ -2,6 +2,7 @@ releases:
   "@yarnpkg/cli": prerelease
   "@yarnpkg/core": prerelease
   "@yarnpkg/plugin-compat": prerelease
+  "@yarnpkg/pnp": prerelease
 
 declined:
   - "@yarnpkg/plugin-constraints"
@@ -28,5 +29,4 @@ declined:
   - vscode-zipfs
   - "@yarnpkg/builder"
   - "@yarnpkg/doctor"
-  - "@yarnpkg/pnp"
   - "@yarnpkg/pnpify"
