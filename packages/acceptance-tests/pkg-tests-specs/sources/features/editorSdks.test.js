@@ -127,6 +127,8 @@ describe(`Features`, () => {
         };
 
         try {
+          await new Promise(resolve => setTimeout(resolve, 1500));
+
           // We get the path to something that's definitely in a zip archive
           const thirdPartyDef = await source(`require.resolve('has-types/module.d.ts').replace(/\\\\/g, '/')`);
 
