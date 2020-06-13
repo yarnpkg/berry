@@ -43726,19 +43726,51 @@ function makeManager(pnpapi, opts) {
     return apiEntry;
   }
 
-  function findApiPathFor(modulePath) {
+  const findApiPathCache = new Map();
+
+  function addToCache(start, end, target) {
     let curr;
-    let next = ppath.resolve(npath.toPortablePath(modulePath));
+    let next = start;
 
     do {
       curr = next;
+      findApiPathCache.set(curr, target);
+      next = ppath.dirname(curr);
+    } while (curr !== end);
+  }
+
+  function findApiPathFor(modulePath) {
+    let curr;
+    let next = ppath.resolve(npath.toPortablePath(modulePath));
+    const start = next;
+
+    do {
+      curr = next;
+      const cached = findApiPathCache.get(curr);
+
+      if (cached !== undefined) {
+        addToCache(start, curr, cached);
+        return cached;
+      }
+
       const candidate = ppath.join(curr, `.pnp.js`);
-      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile()) return candidate;
+
+      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile()) {
+        addToCache(start, curr, candidate);
+        return candidate;
+      }
+
       const cjsCandidate = ppath.join(curr, `.pnp.cjs`);
-      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile()) return cjsCandidate;
+
+      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile()) {
+        addToCache(start, curr, cjsCandidate);
+        return cjsCandidate;
+      }
+
       next = ppath.dirname(curr);
     } while (curr !== PortablePath.root);
 
+    addToCache(start, curr, null);
     return null;
   }
 
