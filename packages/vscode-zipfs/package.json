@@ -19,6 +19,7 @@
     "onFileSystem:zip"
   ],
   "main": "./build/index.js",
+  "sideEffects": false,
   "contributes": {
     "languages": [
       {
@@ -65,6 +66,7 @@
     }
   },
   "devDependencies": {
+    "@types/vscode": "^1.46.0",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
     "@yarnpkg/libzip": "workspace:^2.0.0-rc.12",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.24",

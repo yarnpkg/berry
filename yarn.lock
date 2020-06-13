@@ -5299,6 +5299,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/vscode@npm:^1.46.0":
+  version: 1.46.0
+  resolution: "@types/vscode@npm:1.46.0"
+  checksum: 68f95bf9dca6359c3889253ef1184a68127b8ca440f99e01fbb95457896cec523013d4a90e401c69caad59c4d7fe718c576d99eb789a7d57332221e59047950f
+  languageName: node
+  linkType: hard
+
 "@types/webpack-merge@npm:^4.1.5":
   version: 4.1.5
   resolution: "@types/webpack-merge@npm:4.1.5"
@@ -28735,6 +28742,7 @@ typescript@^3.9.5:
   version: 0.0.0-use.local
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
+    "@types/vscode": ^1.46.0
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.21"
     "@yarnpkg/libzip": "workspace:^2.0.0-rc.12"
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.24"

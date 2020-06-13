@@ -62,6 +62,11 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
 
       function addZipPrefix(str) {
         if (isAbsolute(str) && str.match(/\\.zip\\//) && !str.match(/^zip:/)) {
+          // Absolute VSCode \`Uri.fsPath\`s need to start with a slash.
+          // VSCode only adds it automatically for supported schemes,
+          // so we have to do it manually for the \`zip\` scheme.
+          if (str[0] !== \`/\`)
+            str = \`/\${str}\`;
           return \`zip:\${str}\`;
         } else {
           return str;
