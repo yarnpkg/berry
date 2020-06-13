@@ -1,7 +1,5 @@
-import {npath, ppath, xfs}   from '@yarnpkg/fslib';
-import JSONStream            from 'JSONStream';
-import {execFileSync, spawn} from 'child_process';
-import {StringDecoder}       from 'string_decoder';
+import {npath, ppath, xfs} from '@yarnpkg/fslib';
+import {spawn}             from 'child_process';
 
 describe(`Features`, () => {
   describe(`Editor SDK`, () => {

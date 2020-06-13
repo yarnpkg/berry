@@ -4,7 +4,6 @@
   "workspaces": [
     "pkg-tests-core",
     "pkg-tests-fixtures",
-    "pkg-tests-pnp",
     "pkg-tests-specs"
   ],
   "dependencies": {
