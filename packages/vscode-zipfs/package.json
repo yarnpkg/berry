@@ -7,7 +7,7 @@
   "description": "Allows to easily inspect and modify files stored within zip archives.",
   "version": "1.0.2-2",
   "engines": {
-    "vscode": "^1.23.0",
+    "vscode": "^1.46.0",
     "node": ">=10.19.0"
   },
   "categories": [
@@ -73,14 +73,17 @@
     "pnp-webpack-plugin": "^1.4.3",
     "ts-loader": "^6.2.1",
     "typescript": "^3.9.5",
-    "vsce": "^1.54.0",
+    "vsce": "^1.76.1",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.2.1"
   },
   "scripts": {
+    "vscode:prepublish": "run build",
+    "package:vscode-zipfs": "run package",
+    "package": "run vsce package --yarn",
     "build:vscode-zipfs": "run build",
     "build": "run webpack-cli",
-    "watch": "run webpack-cli --watch",
+    "watch": "run webpack-cli --watch --mode development",
     "code": "code --extensionDevelopmentPath=\"$(pwd)\" \"$(pwd)\""
   },
   "repository": {
