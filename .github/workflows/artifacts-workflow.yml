@@ -38,4 +38,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: vscode-zipfs
-        path: ./packages/vscode-zipfs/vscode-zipfs-*.vsix
+        path: ./packages/vscode-zipfs/*.vsix
