@@ -42793,7 +42793,7 @@ function applyPatch(pnpapi, opts) {
       const absoluteRequest = npath.isAbsolute(request) ? request : parentDirectory !== null ? npath.resolve(parentDirectory, request) : null;
 
       if (absoluteRequest !== null) {
-        const apiPath = opts.manager.findApiPathFor(absoluteRequest);
+        const apiPath = parentDirectory === npath.dirname(absoluteRequest) && (parent === null || parent === void 0 ? void 0 : parent.pnpApiPath) ? parent.pnpApiPath : opts.manager.findApiPathFor(absoluteRequest);
 
         if (apiPath !== null) {
           issuerSpecs.unshift({
