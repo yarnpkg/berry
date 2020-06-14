@@ -9,6 +9,9 @@ const relPnpApiPath = "../../../../.pnp.js";
 const absPnpApiPath = resolve(__dirname, relPnpApiPath);
 const absRequire = (createRequire || createRequireFromPath)(absPnpApiPath);
 
+process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || ``;
+process.env.NODE_OPTIONS += ` -r ${absPnpApiPath}`;
+
 const moduleWrapper = tsserver => {
   // VSCode sends the zip paths to TS using the "zip://" prefix, that TS
   // doesn't understand. This layer makes sure to remove the protocol
