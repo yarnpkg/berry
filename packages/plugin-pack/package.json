@@ -10,14 +10,14 @@
     "tar-stream": "^2.0.1"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.34",
-    "@yarnpkg/core": "^2.0.0-rc.28"
+    "@yarnpkg/cli": "^2.0.0-rc.35",
+    "@yarnpkg/core": "^2.0.0-rc.29"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",
     "@types/tar-stream": "1.6.0",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.34",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.28",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.35",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.29",
     "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.16"
   },
   "repository": {

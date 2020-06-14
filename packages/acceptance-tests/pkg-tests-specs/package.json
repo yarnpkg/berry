@@ -4,7 +4,7 @@
     "license": "BSD-2-Clause",
     "main": "./sources/index.js",
     "dependencies": {
-        "@yarnpkg/core": "workspace:^2.0.0-rc.28",
+        "@yarnpkg/core": "workspace:^2.0.0-rc.29",
         "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
         "@yarnpkg/monorepo": "workspace:0.0.0",
         "@yarnpkg/parsers": "workspace:^2.0.0-rc.12",

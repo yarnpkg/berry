@@ -8,10 +8,10 @@
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.21"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.28"
+    "@yarnpkg/core": "^2.0.0-rc.29"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^2.0.0-rc.28",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.29",
     "typescript": "^3.9.5"
   },
   "scripts": {
