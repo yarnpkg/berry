@@ -7,7 +7,7 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
     new VirtualFS({
       baseFs: new ZipOpenFS({
         libzip: getLibzipSync(),
-        useCache: false,
+        useCache: true,
       }),
     })
   );
