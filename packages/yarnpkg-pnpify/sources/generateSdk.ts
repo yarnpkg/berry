@@ -160,7 +160,8 @@ export type SupportedSdk =
  | 'prettier'
  | 'typescript-language-server'
  | 'typescript'
- | 'stylelint';
+ | 'stylelint'
+ | 'svelte-language-server';
 
 export type BaseSdks = Array<[SupportedSdk, GenerateBaseWrapper]>;
 

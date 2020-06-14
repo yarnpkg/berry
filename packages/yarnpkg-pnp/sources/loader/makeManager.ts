@@ -33,7 +33,9 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
 
     // @ts-ignore
     const module = new Module(nativePath, null);
+    // @ts-ignore
     module.load(nativePath);
+
     return module.exports;
   }
 

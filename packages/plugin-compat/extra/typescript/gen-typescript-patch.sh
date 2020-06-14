@@ -13,7 +13,7 @@ HASHES=(
   "426f5a7" "e39bdc3" ">=3.0 <3.5"
   "426f5a7" "cf7b2d4" ">=3.5 <3.6"
   "2f85932" "e39bdc3" ">=3.6 <3.9"
-  "2f85932" "d68295e" ">=3.9"
+  "3af06df" "551f0dd" ">=3.9"
 )
 
 mkdir -p "$TEMP_DIR"
@@ -65,7 +65,11 @@ make-build-for() {
     reset-git "$HASH"
 
     if [[ ! -z "$CHERRY_PICK" ]]; then
-      git cherry-pick "$FIRST_PR_COMMIT"^.."$CHERRY_PICK"
+      if git merge-base --is-ancestor "$HASH" "$CHERRY_PICK"; then
+        git merge --no-edit "$CHERRY_PICK"
+      else
+        git cherry-pick "$FIRST_PR_COMMIT"^.."$CHERRY_PICK"
+      fi
     fi
 
     yarn gulp local LKG

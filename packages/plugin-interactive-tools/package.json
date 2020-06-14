@@ -26,7 +26,7 @@
     "@yarnpkg/cli": "workspace:^2.0.0-rc.34",
     "@yarnpkg/core": "workspace:^2.0.0-rc.28",
     "@yarnpkg/plugin-essentials": "workspace:^2.0.0-rc.28",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.5"
   },
   "repository": {
     "type": "git",

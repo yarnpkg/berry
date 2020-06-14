@@ -96,33 +96,50 @@ describe(`Features`, () => {
         });
 
         const watchFor = async marker => {
-          let data = ``;
-          let timeout = null;
+          let stdall = ``;
+          let stdout = ``;
 
-          return await Promise.race([
-            new Promise(resolve => {
-              child.stdout.on(`data`, chunk => {
-                data += chunk;
-                if (data.includes(marker)) {
-                  clearTimeout(timeout);
-                  resolve(true);
-                }
-              });
-            }),
-            new Promise((resolve, reject) => {
-              // It's possible that the size of the project grows so that 20s
-              // isn't enough anymore. If that happens, we'll need to create
-              // a dummy project as test setup.
-              timeout = setTimeout(() => {
-                reject(new Error(`Timeout reached; server answered:\n\n${data}`));
-              }, 20000);
-            }),
-          ]);
+          return new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+              cleanup();
+              reject(new Error(`Timeout reached without matching "${marker}"; server answered:\n\n${stdall}`));
+            }, 20000);
+
+            const cleanup = () => {
+              clearTimeout(timeout);
+
+              child.stderr.off(`data`, onStderr);
+              child.stdout.off(`data`, onStdout);
+            };
+
+            const onStderr = chunk => {
+              stdall += chunk;
+            };
+
+            const onStdout = chunk => {
+              stdall += chunk;
+              stdout += chunk;
+              if (stdout.includes(marker)) {
+                cleanup();
+                resolve(true);
+              }
+            };
+
+            child.stderr.on(`data`, onStderr);
+            child.stdout.on(`data`, onStdout);
+          });
+        };
+
+        const runAndWait = async (marker, payload) => {
+          const promise = expect(watchFor(marker)).resolves.toEqual(true);
+          child.stdin.write(`${JSON.stringify(payload)}\n`);
+          return await promise;
         };
 
         try {
           // We get the path to something that's definitely in a zip archive
           const lodashTypeDef = require.resolve(`@types/lodash/index.d.ts`).replace(/\\/g, `/`);
+          const lodashTypeDir = lodashTypeDef.replace(/\/[^/]+$/, ``);
 
           // We'll also use this file (which we control, so its content won't
           // change) to get autocompletion infos. It depends on lodash too.
@@ -131,27 +148,21 @@ describe(`Features`, () => {
           // Some sanity check to make sure everything is A-OK
           expect(lodashTypeDef).toContain(`.zip`);
 
-          const openPromise = expect(watchFor(`projectLoadingFinish`)).resolves.toEqual(true);
+          console.log({lodashTypeDef, ourUtilityFile});
 
-          child.stdin.write(`${JSON.stringify({
+          await runAndWait(`projectLoadingFinish`, {
             seq: 0,
             type: `request`,
             command: `open`,
-            arguments: {file: `zip:${lodashTypeDef}`},
-          })}\n`);
+            arguments: {file: ourUtilityFile},
+          });
 
-          await openPromise;
-
-          const typeDefPromise = expect(watchFor(`zip:${lodashTypeDef}`)).resolves.toEqual(true);
-
-          child.stdin.write(`${JSON.stringify({
+          await runAndWait(`zip:${lodashTypeDir}`, {
             seq: 1,
             type: `request`,
             command: `typeDefinition`,
             arguments: {file: ourUtilityFile, line: 6, offset: 9},
-          })}\n`);
-
-          await typeDefPromise;
+          });
         } finally {
           child.stdin.end();
         }
