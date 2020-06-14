@@ -88,18 +88,9 @@ describe(`Features`, () => {
      */
     test(
       `it should patch message into VSCode typescript language extension for zip schemes`,
-      makeTemporaryEnv({
-        dependencies: {
-          [`has-types`]: `1.0.0`,
-        },
-      }, async ({path, run, source}) => {
-        await run(`install`);
-
-        await xfs.writeFilePromise(`${path}/tsconfig.json`, `{}`);
-        await xfs.writeFilePromise(`${path}/index.ts`, `import 'has-types/module';`);
-
+      async () => {
         const child = spawn(process.execPath, [require.resolve(`@yarnpkg/monorepo/.yarn/pnpify/typescript/lib/tsserver.js`)], {
-          cwd: npath.fromPortablePath(path),
+          cwd: npath.dirname(require.resolve(`@yarnpkg/monorepo/package.json`)),
           stdio: `pipe`,
           encoding: `utf8`,
         });
@@ -108,67 +99,74 @@ describe(`Features`, () => {
           let stdall = ``;
           let stdout = ``;
 
-          let timeout = null;
+          return new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+              cleanup();
+              reject(new Error(`Timeout reached without matching "${marker}"; server answered:\n\n${stdall}`));
+            }, 20000);
 
-          return await Promise.race([
-            new Promise(resolve => {
-              child.stderr.on(`data`, chunk => {
-                stdall += chunk;
-              });
-              child.stdout.on(`data`, chunk => {
-                stdall += chunk;
-                stdout += chunk;
-                if (stdout.includes(marker)) {
-                  clearTimeout(timeout);
-                  resolve(true);
-                }
-              });
-            }),
-            new Promise((resolve, reject) => {
-              timeout = setTimeout(() => {
-                reject(new Error(`Timeout reached; server answered:\n\n${stdall}`));
-              }, 20000);
-            }),
-          ]);
+            const cleanup = () => {
+              clearTimeout(timeout);
+
+              child.stderr.off(`data`, onStderr);
+              child.stdout.off(`data`, onStdout);
+            };
+
+            const onStderr = chunk => {
+              stdall += chunk;
+            };
+
+            const onStdout = chunk => {
+              stdall += chunk;
+              stdout += chunk;
+              if (stdout.includes(marker)) {
+                cleanup();
+                resolve(true);
+              }
+            };
+
+            child.stderr.on(`data`, onStderr);
+            child.stdout.on(`data`, onStdout);
+          });
+        };
+
+        const runAndWait = async (marker, payload) => {
+          const promise = expect(watchFor(marker)).resolves.toEqual(true);
+          child.stdin.write(`${JSON.stringify(payload)}\n`);
+          return await promise;
         };
 
         try {
-          await new Promise(resolve => setTimeout(resolve, 1500));
-
           // We get the path to something that's definitely in a zip archive
-          const thirdPartyDef = await source(`require.resolve('has-types/module.d.ts').replace(/\\\\/g, '/')`);
+          const lodashTypeDef = require.resolve(`@types/lodash/index.d.ts`).replace(/\\/g, `/`);
+          const lodashTypeDir = lodashTypeDef.replace(/\/[^/]+$/, ``);
 
-          // We'll also use this file to get autocompletion infos.
-          const ourUtilityFile = await source(`require.resolve('./index.ts').replace(/\\\\/g, '/')`);
+          // We'll also use this file (which we control, so its content won't
+          // change) to get autocompletion infos. It depends on lodash too.
+          const ourUtilityFile = require.resolve(`./editorSdks.utility.ts`).replace(/\\/g, `/`);
 
           // Some sanity check to make sure everything is A-OK
-          expect(thirdPartyDef).toContain(`.zip`);
+          expect(lodashTypeDef).toContain(`.zip`);
 
-          const openPromise = expect(watchFor(`semanticDiag`)).resolves.toEqual(true);
+          console.log({lodashTypeDef, ourUtilityFile});
 
-          child.stdin.write(`${JSON.stringify({
+          await runAndWait(`projectLoadingFinish`, {
             seq: 0,
             type: `request`,
             command: `open`,
-            arguments: {file: `zip:${thirdPartyDef}`},
-          })}\n`);
+            arguments: {file: ourUtilityFile},
+          });
 
-          await openPromise;
-
-          const typeDefPromise = expect(watchFor(`zip:${thirdPartyDef}`)).resolves.toEqual(true);
-
-          child.stdin.write(`${JSON.stringify({
+          await runAndWait(`zip:${lodashTypeDir}`, {
             seq: 1,
             type: `request`,
             command: `typeDefinition`,
             arguments: {file: ourUtilityFile, line: 6, offset: 9},
-          })}\n`);
-
-          await typeDefPromise;
+          });
         } finally {
           child.stdin.end();
         }
-      }),
+      },
       45000
     );
   });
