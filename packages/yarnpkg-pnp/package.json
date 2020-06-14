@@ -11,7 +11,7 @@
     "@yarnpkg/builder": "workspace:^2.0.0-rc.22",
     "@yarnpkg/libzip": "workspace:^2.0.0-rc.12",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.23",
-    "typescript": "^3.8.3",
+    "typescript": "^3.9.5",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.2.1",
     "webpack-sources": "^1.3.0"

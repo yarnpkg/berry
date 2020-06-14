@@ -132,6 +132,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     // @ts-ignore
     const module = new Module(modulePath, parent);
+    // @ts-ignore
     module.pnpApiPath = moduleApiPath;
 
     entry.cache[modulePath] = module;
@@ -149,6 +150,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     let hasThrown = true;
 
     try {
+    // @ts-ignore
       module.load(modulePath);
       hasThrown = false;
     } finally {
