@@ -107,10 +107,27 @@ export const generateStylelintWrapper: GenerateIntegrationWrapper = async (pnpAp
   });
 };
 
+export const generateSvelteLanguageServerWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
+    [`svelte.language-server.runtime`]: npath.fromPortablePath(
+      wrapper.getProjectPathTo(
+        `bin/server.js` as PortablePath,
+      ),
+    ),
+  });
+
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {
+    [`recommendations`]: [
+      `svelte.svelte-vscode`,
+    ],
+  });
+};
+
 export const VSCODE_SDKS: IntegrationSdks = [
   [`eslint`, generateEslintWrapper],
   [`prettier`, generatePrettierWrapper],
   [`typescript-language-server`, null],
   [`typescript`, generateTypescriptWrapper],
   [`stylelint`, generateStylelintWrapper],
+  [`svelte-language-server`, generateSvelteLanguageServerWrapper],
 ];

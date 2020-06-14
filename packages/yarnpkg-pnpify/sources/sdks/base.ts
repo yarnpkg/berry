@@ -99,10 +99,21 @@ export const generateStylelintBaseWrapper: GenerateBaseWrapper = async (pnpApi: 
   return wrapper;
 };
 
+export const generateSvelteLanguageServerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`svelte-language-server` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeManifest();
+
+  await wrapper.writeBinary(`bin/server.js` as PortablePath);
+
+  return wrapper;
+};
+
 export const BASE_SDKS: BaseSdks = [
   [`eslint`, generateEslintBaseWrapper],
   [`prettier`, generatePrettierBaseWrapper],
   [`typescript-language-server`, generateTypescriptLanguageServerBaseWrapper],
   [`typescript`, generateTypescriptBaseWrapper],
   [`stylelint`, generateStylelintBaseWrapper],
+  [`svelte-language-server`, generateSvelteLanguageServerBaseWrapper],
 ];
