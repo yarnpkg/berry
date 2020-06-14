@@ -105,14 +105,20 @@ describe(`Features`, () => {
         });
 
         const watchFor = async marker => {
-          let data = ``;
+          let stdall = ``;
+          let stdout = ``;
+
           let timeout = null;
 
           return await Promise.race([
             new Promise(resolve => {
+              child.stderr.on(`data`, chunk => {
+                stdall += chunk;
+              });
               child.stdout.on(`data`, chunk => {
-                data += chunk;
-                if (data.includes(marker)) {
+                stdall += chunk;
+                stdout += chunk;
+                if (stdout.includes(marker)) {
                   clearTimeout(timeout);
                   resolve(true);
                 }
@@ -120,7 +126,7 @@ describe(`Features`, () => {
             }),
             new Promise((resolve, reject) => {
               timeout = setTimeout(() => {
-                reject(new Error(`Timeout reached; server answered:\n\n${data}`));
+                reject(new Error(`Timeout reached; server answered:\n\n${stdall}`));
               }, 20000);
             }),
           ]);
