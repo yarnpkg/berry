@@ -34,6 +34,15 @@ gen_enforced_dependency(WorkspaceCwd, DependencyIdent, WorkspaceRange, Dependenc
         atom_concat('^', DependencyVersion, WorkspaceRange)
     ).
 
+% This rule enforces that all packages that depend on TypeScript must also depend on tslib
+gen_enforced_dependency(WorkspaceCwd, 'tslib', 'range', 'dependencies') :-
+  % Iterates over all TypeScript dependencies from all workspaces
+    workspace_has_dependency(WorkspaceCwd, 'typescript', _, DependencyType),
+  % Ignores the case when TypeScript is a peer dependency
+    DependencyType \= 'peerDependencies',
+  % Only proceed if the workspace doesn't already depend on tslib
+    \+ workspace_has_dependency(WorkspaceCwd, 'tslib', _, _).
+
 % This rule will enforce that all packages must have a "BSD-2-Clause" license field
 gen_enforced_field(WorkspaceCwd, 'license', 'BSD-2-Clause') :-
   workspace(WorkspacedCwd).

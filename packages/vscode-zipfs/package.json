@@ -89,5 +89,8 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "dependencies": {
+    "tslib": "^1.13.0"
   }
 }
