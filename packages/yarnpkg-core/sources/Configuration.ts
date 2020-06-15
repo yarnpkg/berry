@@ -268,7 +268,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableProgressBars: {
     description: `If true, the CLI is allowed to show a progress bar for long-running events`,
     type: SettingsType.BOOLEAN,
-    default: !isCI && process.stdout.isTTY,
+    default: !isCI && process.stdout.isTTY && process.stdout.columns > 22,
     defaultText: `<dynamic>`,
   },
   enableTimers: {
