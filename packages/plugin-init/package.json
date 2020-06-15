@@ -1,20 +1,20 @@
 {
   "name": "@yarnpkg/plugin-init",
-  "version": "2.0.0-rc.14",
+  "version": "2.0.0-rc.15",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
     "clipanion": "^2.4.1",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.35",
-    "@yarnpkg/core": "^2.0.0-rc.29"
+    "@yarnpkg/cli": "^2.0.0-rc.36",
+    "@yarnpkg/core": "^2.0.0-rc.30"
   },
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.35",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.29"
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.36",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.30"
   },
   "repository": {
     "type": "git",

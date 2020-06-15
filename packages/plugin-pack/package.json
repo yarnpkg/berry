@@ -1,25 +1,25 @@
 {
   "name": "@yarnpkg/plugin-pack",
-  "version": "2.0.0-rc.20",
+  "version": "2.0.0-rc.21",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
     "clipanion": "^2.4.1",
     "micromatch": "^4.0.2",
     "tar-stream": "^2.0.1",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.35",
-    "@yarnpkg/core": "^2.0.0-rc.29"
+    "@yarnpkg/cli": "^2.0.0-rc.36",
+    "@yarnpkg/core": "^2.0.0-rc.30"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",
     "@types/tar-stream": "1.6.0",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.35",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.29",
-    "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.16"
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.36",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.30",
+    "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.17"
   },
   "repository": {
     "type": "git",

@@ -4,10 +4,10 @@
     "license": "BSD-2-Clause",
     "main": "./sources/index.js",
     "dependencies": {
-        "@yarnpkg/core": "workspace:^2.0.0-rc.29",
-        "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
+        "@yarnpkg/core": "workspace:^2.0.0-rc.30",
+        "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
         "@yarnpkg/monorepo": "workspace:0.0.0",
-        "@yarnpkg/parsers": "workspace:^2.0.0-rc.12",
+        "@yarnpkg/parsers": "workspace:^2.0.0-rc.13",
         "fs-extra": "^7.0.1",
         "lodash": "^4.17.15",
         "pkg-tests-core": "workspace:0.0.0",

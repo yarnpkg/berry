@@ -1,16 +1,16 @@
 {
   "name": "@yarnpkg/core",
-  "version": "2.0.0-rc.29",
+  "version": "2.0.0-rc.30",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
-    "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.8",
-    "@yarnpkg/libzip": "workspace:^2.0.0-rc.12",
-    "@yarnpkg/parsers": "workspace:^2.0.0-rc.12",
-    "@yarnpkg/pnp": "workspace:^2.0.0-rc.22",
-    "@yarnpkg/shell": "workspace:^2.0.0-rc.12",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
+    "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.9",
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.13",
+    "@yarnpkg/parsers": "workspace:^2.0.0-rc.13",
+    "@yarnpkg/pnp": "workspace:^2.0.0-rc.23",
+    "@yarnpkg/shell": "workspace:^2.0.0-rc.13",
     "camelcase": "^5.3.1",
     "chalk": "^3.0.0",
     "clipanion": "^2.4.1",
@@ -42,10 +42,10 @@
     "@types/semver": "^7.1.0",
     "@types/tar": "^4.0.0",
     "@types/tunnel": "^0.0.0",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.35",
-    "@yarnpkg/plugin-link": "workspace:^2.0.0-rc.12",
-    "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.20",
-    "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.23"
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.36",
+    "@yarnpkg/plugin-link": "workspace:^2.0.0-rc.13",
+    "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.21",
+    "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.24"
   },
   "scripts": {
     "postpack": "rm -rf lib",

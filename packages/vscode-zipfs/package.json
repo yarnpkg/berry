@@ -5,7 +5,7 @@
   "publisher": "arcanis",
   "displayName": "ZipFS - a zip file system",
   "description": "Allows to easily inspect and modify files stored within zip archives.",
-  "version": "1.0.2-2",
+  "version": "1.0.2-3",
   "engines": {
     "vscode": "^1.46.0",
     "node": ">=10.19.0"
@@ -67,9 +67,9 @@
   },
   "devDependencies": {
     "@types/vscode": "^1.46.0",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
-    "@yarnpkg/libzip": "workspace:^2.0.0-rc.12",
-    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.24",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.13",
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.25",
     "pnp-webpack-plugin": "^1.4.3",
     "ts-loader": "^6.2.1",
     "typescript": "^3.9.5",

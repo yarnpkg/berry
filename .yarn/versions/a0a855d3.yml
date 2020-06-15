@@ -1,9 +1,0 @@
-releases:
-  "@yarnpkg/pnpify": prerelease
-  vscode-zipfs: prerelease
-
-declined:
-  - "@yarnpkg/plugin-node-modules"
-  - "@yarnpkg/builder"
-  - "@yarnpkg/cli"
-  - "@yarnpkg/pnp"
