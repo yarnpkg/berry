@@ -30,7 +30,7 @@ describe(`Features`, () => {
         await run(`install`);
         await pnpify([`--sdk`, `base`], path);
 
-        const rawOutput = await noPnpNode([`./.yarn/pnpify/eslint/bin/eslint.js`], path);
+        const rawOutput = await noPnpNode([`./.yarn/sdks/eslint/bin/eslint.js`], path);
         const jsonOutput = JSON.parse(rawOutput);
 
         expect(jsonOutput).toMatchObject({
@@ -70,7 +70,7 @@ describe(`Features`, () => {
         await run(`install`, {nodeLinker: `node-modules`});
         expect(xfs.existsSync(ppath.join(path, `.pnp.js`))).toEqual(false);
 
-        const rawOutput = await noPnpNode([`./.yarn/pnpify/eslint/bin/eslint.js`], path);
+        const rawOutput = await noPnpNode([`./.yarn/sdks/eslint/bin/eslint.js`], path);
         const jsonOutput = JSON.parse(rawOutput);
 
         expect(jsonOutput).toMatchObject({
@@ -89,7 +89,7 @@ describe(`Features`, () => {
     test(
       `it should patch message into VSCode typescript language extension for zip schemes`,
       async () => {
-        const child = spawn(process.execPath, [require.resolve(`@yarnpkg/monorepo/.yarn/pnpify/typescript/lib/tsserver.js`)], {
+        const child = spawn(process.execPath, [require.resolve(`@yarnpkg/monorepo/.yarn/sdks/typescript/lib/tsserver.js`)], {
           cwd: npath.dirname(require.resolve(`@yarnpkg/monorepo/package.json`)),
           stdio: `pipe`,
           encoding: `utf8`,

@@ -1,9 +1,9 @@
-import {StreamReport, Configuration}                               from '@yarnpkg/core';
-import {NativePath, npath, ppath, xfs, Filename}                   from '@yarnpkg/fslib';
-import {Command}                                                   from 'clipanion';
+import {StreamReport, Configuration}                                                                                   from '@yarnpkg/core';
+import {NativePath, npath, ppath, xfs, Filename}                                                                       from '@yarnpkg/fslib';
+import {Command, UsageError}                                                                                           from 'clipanion';
 
-import {dynamicRequire}                                            from '../dynamicRequire';
-import {generateSdk, SUPPORTED_INTEGRATIONS, SupportedIntegration} from '../generateSdk';
+import {dynamicRequire}                                                                                                from '../dynamicRequire';
+import {generateSdk, validateIntegrations, SUPPORTED_INTEGRATIONS, SupportedIntegration, SDK_FOLDER, IntegrationsFile} from '../generateSdk';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SdkCommand extends Command {
@@ -13,10 +13,13 @@ export default class SdkCommand extends Command {
   @Command.String(`--cwd`)
   cwd: NativePath = process.cwd();
 
+  @Command.Boolean(`-v,--verbose`)
+  verbose: boolean = false;
+
   static usage = Command.Usage({
     description: `generate editor SDKs and settings`,
     details: `
-      This command generates a new directory, \`.yarn/pnpify\`, which includes the base SDKs.
+      This command generates a new directory, \`.yarn/sdks\`, which includes the base SDKs.
 
       When used without arguments, it:
 
@@ -24,13 +27,13 @@ export default class SdkCommand extends Command {
 
       - updates all existing SDKs and editor settings on already-pnpified projects
 
-      The optional \`integrations\` rest argument is a list of supported integrations or \`base\`.
+      The optional integrations arguments are a set of supported integrations, or the keyword \`base\`.
 
-      - When \`base\`, it only installs the base SDKs. Useful for when an editor is not yet supported and you need to manually update its settings.
+      - When \`base\` is used, only the base SDKs will be generated. This is useful for when an editor is not yet supported and you plan to manage the settings yourself.
 
-      - When a list of editors (e.g. \`vscode vim\`), it installs the base SDKs and generates the corresponding editor settings.
+      - When a set of integrations is used (e.g. \`vscode\`, \`vim\`, ...), the base SDKs will be installed plus all the settings relevant to the corresponding environments (for example on VSCode it would set \`typescript.tsdk\`).
 
-      List of supported integrations: ${[...SUPPORTED_INTEGRATIONS.keys()].map(integration => `\`${integration}\``).join(`, `)}.
+      The supported integrations at this time are: ${[...SUPPORTED_INTEGRATIONS.keys()].map(integration => `\`${integration}\``).join(`, `)}.
 
       **Note:** This command always updates the already-installed SDKs and editor settings, no matter which arguments are passed.
     `,
@@ -74,16 +77,43 @@ export default class SdkCommand extends Command {
 
     const onlyBase = this.integrations.length === 1 && this.integrations[0] === `base`;
 
-    const integrations = this.integrations.length === 0 || onlyBase
+    const requestedIntegrations = this.integrations.length === 0 || onlyBase
       ? new Set<SupportedIntegration>()
-      : new Set(this.integrations);
+      : new Set(this.integrations as Array<SupportedIntegration>);
+
+    validateIntegrations(requestedIntegrations);
+
+    const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
+    const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
+
+    const integrationsFile = await IntegrationsFile.find(projectRoot);
+
+    const preexistingIntegrations = integrationsFile !== null
+      ? integrationsFile.integrations
+      : new Set<SupportedIntegration>();
+
+    const allIntegrations = new Set([
+      ...requestedIntegrations,
+      ...preexistingIntegrations,
+    ]);
+
+    if (allIntegrations.size === 0 && !onlyBase)
+      throw new UsageError(`No integrations have been provided as arguments, and no preexisting integrations could be found. Make sure to run \`yarn pnpify --sdk <integrations>\` first, or \`yarn pnpify --sdk base\` if you only need the SDK files and prefer to manage your own environment settings. Run \`yarn pnpify --sdk -h\` to see the list of supported integrations.`);
 
     const report = await StreamReport.start({
       configuration,
       includeFooter: false,
       stdout: this.context.stdout,
     }, async report => {
-      await generateSdk(pnpApi, integrations as Set<SupportedIntegration>, {report, onlyBase, configuration});
+      await generateSdk(pnpApi, {
+        requestedIntegrations,
+        preexistingIntegrations,
+      }, {
+        report,
+        onlyBase,
+        configuration,
+        verbose: this.verbose,
+      });
     });
 
     return report.exitCode();
