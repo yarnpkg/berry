@@ -1,9 +1,12 @@
-// @ts-ignore
-import PnpWebpackPlugin from 'pnp-webpack-plugin';
-import merge            from 'webpack-merge';
-import webpack          from 'webpack';
+import merge   from 'webpack-merge';
+import webpack from 'webpack';
 
-export const makeConfig = (config: webpack.Configuration) => merge({
+export type WebpackPlugin =
+  | ((this: webpack.Compiler, compiler: webpack.Compiler) => void)
+  | webpack.WebpackPluginInstance;
+
+// @ts-ignore: @types/webpack-merge depends on @types/webpack, which isn't compatible with the webpack 5 types
+export const makeConfig = (config: webpack.Configuration): webpack.Configuration => merge({
   mode: `none`,
   devtool: false,
 
@@ -20,7 +23,6 @@ export const makeConfig = (config: webpack.Configuration) => merge({
 
   resolve: {
     extensions: [`.js`, `.ts`, `.tsx`, `.json`],
-    plugins: [PnpWebpackPlugin],
   },
 
   module: {
@@ -49,8 +51,11 @@ export const makeConfig = (config: webpack.Configuration) => merge({
   },
 
   plugins: [
-    new webpack.IgnorePlugin(/^encoding$/, /node-fetch/),
+    new webpack.IgnorePlugin({
+      resourceRegExp: /^encoding$/,
+      contextRegExp: /node-fetch/,
+    }),
     new webpack.DefinePlugin({[`IS_WEBPACK`]: `true`}),
     new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1}),
   ],
-}, config);
+} as webpack.Configuration, config);

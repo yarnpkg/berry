@@ -10,7 +10,7 @@ import {RawSource}                                                         from 
 import webpack                                                             from 'webpack';
 
 import {isDynamicLib}                                                      from '../../tools/isDynamicLib';
-import {makeConfig}                                                        from '../../tools/makeConfig';
+import {makeConfig, WebpackPlugin}                                         from '../../tools/makeConfig';
 
 // The name gets normalized so that everyone can override some plugins by
 // their own (@arcanis/yarn-plugin-foo would override @yarnpkg/plugin-foo
@@ -74,7 +74,7 @@ export default class BuildPluginCommand extends Command {
                   terserOptions: {
                     ecma: 8,
                   },
-                }),
+                }) as WebpackPlugin,
               ],
             },
           },
@@ -87,7 +87,7 @@ export default class BuildPluginCommand extends Command {
           },
 
           externals: [
-            (context: any, request: string, callback: any) => {
+            ({context, request}, callback: any) => {
               if (request !== name && isDynamicLib(request)) {
                 callback(null, `commonjs ${request}`);
               } else {
@@ -101,10 +101,11 @@ export default class BuildPluginCommand extends Command {
             // get evaluated right now - until after we give it a custom require
             // function that will be able to fetch the dynamic modules.
             {apply: (compiler: webpack.Compiler) => {
-              compiler.hooks.compilation.tap(`MyPlugin`, (compilation: webpack.compilation.Compilation) => {
-                compilation.hooks.optimizeChunkAssets.tap(`MyPlugin`, (chunks: Array<webpack.compilation.Chunk>) => {
+              compiler.hooks.compilation.tap(`MyPlugin`, (compilation: webpack.Compilation) => {
+                compilation.hooks.optimizeChunkAssets.tap(`MyPlugin`, (chunks: Set<webpack.Chunk>) => {
                   for (const chunk of chunks) {
                     for (const file of chunk.files) {
+                      // @ts-ignore
                       compilation.assets[file] = new RawSource(
                         [
                           `/* eslint-disable */`,
@@ -136,7 +137,7 @@ export default class BuildPluginCommand extends Command {
           compiler.run((err, stats) => {
             if (err) {
               reject(err);
-            } else if (stats.compilation.errors.length > 0) {
+            } else if (stats && stats.compilation.errors.length > 0) {
               resolve(stats.toString(`errors-only`));
             } else {
               resolve(null);

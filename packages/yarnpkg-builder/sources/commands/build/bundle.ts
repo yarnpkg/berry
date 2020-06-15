@@ -12,7 +12,7 @@ import {promisify}                                                         from 
 import webpack                                                             from 'webpack';
 
 import {findPlugins}                                                       from '../../tools/findPlugins';
-import {makeConfig}                                                        from '../../tools/makeConfig';
+import {makeConfig, WebpackPlugin}                                         from '../../tools/makeConfig';
 
 const execFile = promisify(cp.execFile);
 
@@ -100,7 +100,7 @@ export default class BuildBundleCommand extends Command {
                   terserOptions: {
                     ecma: 8,
                   },
-                }),
+                }) as WebpackPlugin,
               ],
             },
           },
@@ -151,7 +151,7 @@ export default class BuildBundleCommand extends Command {
           compiler.run((err, stats) => {
             if (err) {
               reject(err);
-            } else if (stats.compilation.errors.length > 0) {
+            } else if (stats && stats.compilation.errors.length > 0) {
               resolve(stats.toString(`errors-only`));
             } else {
               resolve(null);

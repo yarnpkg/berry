@@ -78,7 +78,7 @@
     "unescape-html": "^1.1.0",
     "unfetch": "^4.1.0",
     "unified": "^7.1.0",
-    "webpack": "^4.41.2",
+    "webpack": "^5.0.0-beta.17",
     "xss": "^1.0.6"
   },
   "scripts": {
@@ -100,8 +100,7 @@
     "@types/loadable__component": "5.10.0",
     "@types/lodash": "^4.14.136",
     "@types/react-select": "3.0.11",
-    "@types/tinycolor2": "1.4.2",
-    "@types/webpack": "^4.32.1"
+    "@types/tinycolor2": "1.4.2"
   },
   "engines": {
     "node": ">=10.19.0"
