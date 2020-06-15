@@ -5,9 +5,10 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
-    "clipanion": "^2.4.0",
+    "clipanion": "^2.4.1",
     "micromatch": "^4.0.2",
-    "tar-stream": "^2.0.1"
+    "tar-stream": "^2.0.1",
+    "tslib": "^1.13.0"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "^2.0.0-rc.35",

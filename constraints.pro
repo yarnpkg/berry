@@ -34,10 +34,6 @@ gen_enforced_dependency(WorkspaceCwd, DependencyIdent, WorkspaceRange, Dependenc
         atom_concat('^', DependencyVersion, WorkspaceRange)
     ).
 
-% This rule will prevent all workspaces from depending on tslib
-gen_enforced_dependency(WorkspaceCwd, 'tslib', null, DependencyType) :-
-  workspace_has_dependency(WorkspaceCwd, 'tslib', _, DependencyType).
-
 % This rule will enforce that all packages must have a "BSD-2-Clause" license field
 gen_enforced_field(WorkspaceCwd, 'license', 'BSD-2-Clause') :-
   workspace(WorkspacedCwd).

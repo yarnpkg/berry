@@ -6,12 +6,13 @@
   "dependencies": {
     "@yarnpkg/libui": "workspace:^2.0.0-rc.8",
     "algoliasearch": "^4.2.0",
-    "clipanion": "^2.4.0",
+    "clipanion": "^2.4.1",
     "diff": "^4.0.1",
     "ink": "^2.3.0",
     "ink-text-input": "^3.2.2",
     "react": "^16.13.1",
-    "semver": "^7.1.2"
+    "semver": "^7.1.2",
+    "tslib": "^1.13.0"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "^2.0.0-rc.35",

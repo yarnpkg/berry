@@ -7,10 +7,11 @@
     "@yarnpkg/cli": "workspace:^2.0.0-rc.35",
     "@yarnpkg/core": "workspace:^2.0.0-rc.29",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
-    "clipanion": "^2.4.0",
+    "clipanion": "^2.4.1",
     "globby": "^10.0.1",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
+    "tslib": "^1.13.0",
     "typescript": "^3.9.5"
   },
   "devDependencies": {

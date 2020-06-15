@@ -11,9 +11,10 @@
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.12",
     "chalk": "^3.0.0",
-    "clipanion": "^2.4.0",
+    "clipanion": "^2.4.1",
     "comment-json": "^2.2.0",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "tslib": "^1.13.0"
   },
   "devDependencies": {
     "@types/chalk": "2.2.0",
