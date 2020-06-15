@@ -151,5 +151,5 @@ module.exports = {
 
 `@yarnpkg/builder` is a tool designed for creating, building, and managing complex plugins.
 
-Its documentation can be found on the [dedicated page](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-doctor/README.md).
+Its documentation can be found on the [dedicated page](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-builder/README.md).
 

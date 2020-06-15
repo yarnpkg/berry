@@ -40,8 +40,7 @@
     "release": "yarn npm publish"
   },
   "publishConfig": {
-    "bin": "./lib/boot.js",
-    "main": "./lib/cli.js"
+    "bin": "./lib/cli.js"
   },
   "files": [
     "/lib/**/*"
