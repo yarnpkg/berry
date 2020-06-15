@@ -12,7 +12,8 @@ import {dynamicRequire}                                            from './dynam
 import {BASE_SDKS}                                                 from './sdks/base';
 import {VSCODE_SDKS}                                               from './sdks/vscode';
 
-export const PNPIFY_FOLDER = `.yarn/pnpify` as PortablePath;
+export const OLD_SDK_FOLDER = `.vscode/pnpify` as PortablePath;
+export const SDK_FOLDER = `.yarn/sdks` as PortablePath;
 
 export const INTEGRATIONS_FILE = `integrations.yml` as Filename;
 
@@ -243,7 +244,7 @@ export const generateSdk = async (pnpApi: PnpApi, requestedIntegrations: Set<Sup
   const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
   const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
 
-  const targetFolder = ppath.join(projectRoot, PNPIFY_FOLDER);
+  const targetFolder = ppath.join(projectRoot, SDK_FOLDER);
   const integrationsFilePath = ppath.join(targetFolder, INTEGRATIONS_FILE);
 
   const integrationsFile = new IntegrationsFile();
@@ -260,9 +261,8 @@ export const generateSdk = async (pnpApi: PnpApi, requestedIntegrations: Set<Sup
     throw new UsageError(`No integrations have been provided as arguments and no existing integrations could be found inside the ${configuration.format(INTEGRATIONS_FILE, FormatType.PATH)} file. Make sure to use \`yarn pnpify --sdk <integrations>\`, or run \`yarn pnpify --sdk base\` if you prefer to manage your own settings. Run \`yarn pnpify --sdk -h\` to see the list of supported integrations.`);
 
   // TODO: remove in next major
-  const OLD_PNPIFY_FOLDER = `.vscode/pnpify` as PortablePath;
-  const oldTargetFolder = ppath.join(projectRoot, OLD_PNPIFY_FOLDER);
-  if (xfs.existsSync(oldTargetFolder)) {
+  const oldTargetFolder = ppath.join(projectRoot, OLD_SDK_FOLDER);
+  if (xfs.existsSync(oldTargetFolder) && !xfs.lstatSync(oldTargetFolder).isSymbolicLink()) {
     report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files in the old ${configuration.format(OLD_PNPIFY_FOLDER, FormatType.PATH)} folder. You might need to manually update existing references outside the ${configuration.format(`.vscode`, FormatType.PATH)} folder (e.g. .gitignore)...`);
     await xfs.removePromise(oldTargetFolder);
   }
@@ -282,7 +282,7 @@ export const generateSdk = async (pnpApi: PnpApi, requestedIntegrations: Set<Sup
     return sdk;
   });
 
-  await report.startTimerPromise(`Generating SDKs inside ${configuration.format(PNPIFY_FOLDER, FormatType.PATH)}`, async () => {
+  await report.startTimerPromise(`Generating SDKs inside ${configuration.format(SDK_FOLDER, FormatType.PATH)}`, async () => {
     const skipped = [];
 
     for (const [pkgName, generateBaseWrapper] of BASE_SDKS) {

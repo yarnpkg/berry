@@ -19,7 +19,7 @@ export default class SdkCommand extends Command {
   static usage = Command.Usage({
     description: `generate editor SDKs and settings`,
     details: `
-      This command generates a new directory, \`.yarn/pnpify\`, which includes the base SDKs.
+      This command generates a new directory, \`.yarn/sdks\`, which includes the base SDKs.
 
       When used without arguments, it:
 
@@ -27,13 +27,13 @@ export default class SdkCommand extends Command {
 
       - updates all existing SDKs and editor settings on already-pnpified projects
 
-      The optional \`integrations\` rest argument is a list of supported integrations or \`base\`.
+      The optional integrations arguments are a set of supported integrations, or the keyword \`base\`.
 
-      - When \`base\`, it only installs the base SDKs. Useful for when an editor is not yet supported and you need to manually update its settings.
+      - When \`base\` is used, only the base SDKs will be generated. This is useful for when an editor is not yet supported and you plan to manage the settings yourself.
 
-      - When a list of editors (e.g. \`vscode vim\`), it installs the base SDKs and generates the corresponding editor settings.
+      - When a set of integration is used (e.g. \`vscode\`, \`vim\`, ...), the base SDKs will be installed plus all the settings relevant to the corresponding environments (for example on VSCode it would set \`typescript.tsdk\`).
 
-      List of supported integrations: ${[...SUPPORTED_INTEGRATIONS.keys()].map(integration => `\`${integration}\``).join(`, `)}.
+      The supported integrations at this time are: ${[...SUPPORTED_INTEGRATIONS.keys()].map(integration => `\`${integration}\``).join(`, `)}.
 
       **Note:** This command always updates the already-installed SDKs and editor settings, no matter which arguments are passed.
     `,
