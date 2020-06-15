@@ -237,7 +237,7 @@ export class Wrapper {
   }
 }
 
-export const generateSdk = async (pnpApi: PnpApi, requestedIntegrations: Set<SupportedIntegration>, {report, onlyBase, configuration}: {report: Report, onlyBase: boolean, configuration: Configuration}): Promise<void> => {
+export const generateSdk = async (pnpApi: PnpApi, requestedIntegrations: Set<SupportedIntegration>, {report, onlyBase, verbose, configuration}: {report: Report, onlyBase: boolean, verbose: boolean, configuration: Configuration}): Promise<void> => {
   validateIntegrations(requestedIntegrations);
 
   const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
@@ -268,28 +268,12 @@ export const generateSdk = async (pnpApi: PnpApi, requestedIntegrations: Set<Sup
   }
 
   if (xfs.existsSync(targetFolder)) {
-    report.reportInfo(null, `Cleaning up the existing SDK files...`);
+    report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files...`);
     await xfs.removePromise(targetFolder);
   }
 
   integrationsFile.integrations = allIntegrations;
   await integrationsFile.persist(targetFolder);
-
-  report.reportInfo(null, `Installing fresh SDKs for ${configuration.format(projectRoot, FormatType.PATH)}:`);
-  report.reportSeparator();
-
-  report.reportInfo(null, `Installing the base SDKs inside ${configuration.format(targetFolder, FormatType.PATH)}...`);
-  report.reportSeparator();
-
-  if (allIntegrations.size > 0) {
-    report.reportInfo(null, `Integrations:`);
-    for (const integration of requestedIntegrations)
-      report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(integration)} (new ✨)`);
-    for (const integration of preexistingIntegrations)
-      if (!requestedIntegrations.has(integration))
-        report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(integration)} (updated 🔼)`);
-    report.reportSeparator();
-  }
 
   const integrationSdks = miscUtils.mapAndFilter(SUPPORTED_INTEGRATIONS, ([integration, sdk]) => {
     if (!allIntegrations.has(integration))
@@ -298,38 +282,52 @@ export const generateSdk = async (pnpApi: PnpApi, requestedIntegrations: Set<Sup
     return sdk;
   });
 
-  report.reportInfo(null, `Dependencies:`);
+  await report.startTimerPromise(`Generating SDKs inside ${configuration.format(PNPIFY_FOLDER, FormatType.PATH)}`, async () => {
+    const skipped = [];
 
-  let skippedSome = false;
+    for (const [pkgName, generateBaseWrapper] of BASE_SDKS) {
+      const displayName = getDisplayName(pkgName);
 
-  for (const [pkgName, generateBaseWrapper] of BASE_SDKS) {
-    const displayName = getDisplayName(pkgName);
+      if (topLevelInformation.packageDependencies.has(pkgName)) {
+        report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${displayName}`);
+        const wrapper = await generateBaseWrapper(pnpApi, targetFolder);
 
-    if (topLevelInformation.packageDependencies.has(pkgName)) {
-      report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${displayName}`);
-      const wrapper = await generateBaseWrapper(pnpApi, targetFolder);
+        for (const sdks of integrationSdks) {
+          const sdk = sdks.find(sdk => sdk[0] === pkgName);
+          if (!sdk)
+            continue;
 
-      for (const sdks of integrationSdks) {
-        const sdk = sdks.find(sdk => sdk[0] === pkgName);
+          const [, generateIntegrationWrapper] = sdk;
+          if (!generateIntegrationWrapper)
+            continue;
 
-        if (!sdk)
-          continue;
-
-        const [, generateIntegrationWrapper] = sdk;
-
-        if (!generateIntegrationWrapper)
-          continue;
-
-        await generateIntegrationWrapper(pnpApi, targetFolder, wrapper);
+          await generateIntegrationWrapper(pnpApi, targetFolder, wrapper);
+        }
+      } else {
+        skipped.push(displayName);
       }
-    } else {
-      report.reportInfo(null, `${chalk.yellow(`•`)} ${displayName} (dependency not found; skipped)`);
-      skippedSome = true;
     }
-  }
 
-  if (skippedSome) {
-    report.reportSeparator();
-    report.reportInfo(null, `Note that, in order to be detected, those packages have to be listed as top-level dependencies (listing them into each individual workspace won't be enough).`);
+    if (skipped.length > 0) {
+      if (verbose) {
+        for (const displayName of skipped) {
+          report.reportWarning(MessageName.UNNAMED, `${chalk.yellow(`•`)} ${displayName} (dependency not found; skipped)`);
+        }
+      } else {
+        report.reportWarning(MessageName.UNNAMED, `${chalk.yellow(`•`)} ${skipped.length} SDKs were skipped based on your root dependencies`);
+      }
+    }
+  });
+
+  if (allIntegrations.size > 0) {
+    await report.startTimerPromise(`Generating settings`, async () => {
+      for (const integration of allIntegrations) {
+        if (preexistingIntegrations.has(integration)) {
+          report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(integration)} (updated 🔼)`);
+        } else {
+          report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(integration)} (new ✨)`);
+        }
+      }
+    });
   }
 };

@@ -13,6 +13,9 @@ export default class SdkCommand extends Command {
   @Command.String(`--cwd`)
   cwd: NativePath = process.cwd();
 
+  @Command.Boolean(`-v,--verbose`)
+  verbose: boolean = false;
+
   static usage = Command.Usage({
     description: `generate editor SDKs and settings`,
     details: `
@@ -83,7 +86,12 @@ export default class SdkCommand extends Command {
       includeFooter: false,
       stdout: this.context.stdout,
     }, async report => {
-      await generateSdk(pnpApi, integrations as Set<SupportedIntegration>, {report, onlyBase, configuration});
+      await generateSdk(pnpApi, integrations as Set<SupportedIntegration>, {
+        report,
+        onlyBase,
+        configuration,
+        verbose: this.verbose,
+      });
     });
 
     return report.exitCode();
