@@ -10,13 +10,16 @@ import startCase                                                   from 'lodash/
 import {dynamicRequire}                                            from './dynamicRequire';
 
 import {BASE_SDKS}                                                 from './sdks/base';
+import {COC_VIM_SDKS}                                              from './sdks/cocvim';
 import {VSCODE_SDKS}                                               from './sdks/vscode';
 
-export const PNPIFY_FOLDER = `.yarn/pnpify` as PortablePath;
+export const OLD_SDK_FOLDER = `.vscode/pnpify` as PortablePath;
+export const SDK_FOLDER = `.yarn/sdks` as PortablePath;
 
 export const INTEGRATIONS_FILE = `integrations.yml` as Filename;
 
 export const SUPPORTED_INTEGRATIONS = new Map([
+  [`vim`, COC_VIM_SDKS],
   [`vscode`, VSCODE_SDKS],
 ] as const);
 
@@ -46,8 +49,17 @@ export class IntegrationsFile {
 
   public raw: {[key: string]: any} = {};
 
-  static hasIntegrationsFile(targetFolder: PortablePath) {
-    return xfs.existsSync(ppath.join(targetFolder, INTEGRATIONS_FILE));
+  static async find(projectRoot: PortablePath) {
+    const targetFolder = ppath.join(projectRoot, SDK_FOLDER);
+
+    const integrationPath = ppath.join(targetFolder, INTEGRATIONS_FILE);
+    if (!xfs.existsSync(integrationPath))
+      return null;
+
+    const integrationsFile = new IntegrationsFile();
+    await integrationsFile.loadFile(integrationPath);
+
+    return integrationsFile;
   }
 
   async loadFile(path: PortablePath) {
@@ -237,59 +249,37 @@ export class Wrapper {
   }
 }
 
-export const generateSdk = async (pnpApi: PnpApi, requestedIntegrations: Set<SupportedIntegration>, {report, onlyBase, configuration}: {report: Report, onlyBase: boolean, configuration: Configuration}): Promise<void> => {
-  validateIntegrations(requestedIntegrations);
+type AllIntegrations = {
+  requestedIntegrations: Set<SupportedIntegration>;
+  preexistingIntegrations: Set<SupportedIntegration>;
+};
 
+export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexistingIntegrations}: AllIntegrations, {report, onlyBase, verbose, configuration}: {report: Report, onlyBase: boolean, verbose: boolean, configuration: Configuration}): Promise<void> => {
   const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
   const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
 
-  const targetFolder = ppath.join(projectRoot, PNPIFY_FOLDER);
-  const integrationsFilePath = ppath.join(targetFolder, INTEGRATIONS_FILE);
-
-  const integrationsFile = new IntegrationsFile();
-  if (IntegrationsFile.hasIntegrationsFile(targetFolder))
-    await integrationsFile.loadFile(integrationsFilePath);
-  const preexistingIntegrations = integrationsFile.integrations;
+  const targetFolder = ppath.join(projectRoot, SDK_FOLDER);
 
   const allIntegrations = new Set([
     ...requestedIntegrations,
     ...preexistingIntegrations,
   ]);
 
-  if (allIntegrations.size === 0 && !IntegrationsFile.hasIntegrationsFile(targetFolder) && !onlyBase)
-    throw new UsageError(`No integrations have been provided as arguments and no existing integrations could be found inside the ${configuration.format(INTEGRATIONS_FILE, FormatType.PATH)} file. Make sure to use \`yarn pnpify --sdk <integrations>\`, or run \`yarn pnpify --sdk base\` if you prefer to manage your own settings. Run \`yarn pnpify --sdk -h\` to see the list of supported integrations.`);
-
   // TODO: remove in next major
-  const OLD_PNPIFY_FOLDER = `.vscode/pnpify` as PortablePath;
-  const oldTargetFolder = ppath.join(projectRoot, OLD_PNPIFY_FOLDER);
-  if (xfs.existsSync(oldTargetFolder)) {
-    report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files in the old ${configuration.format(OLD_PNPIFY_FOLDER, FormatType.PATH)} folder. You might need to manually update existing references outside the ${configuration.format(`.vscode`, FormatType.PATH)} folder (e.g. .gitignore)...`);
+  const oldTargetFolder = ppath.join(projectRoot, OLD_SDK_FOLDER);
+  if (xfs.existsSync(oldTargetFolder) && !xfs.lstatSync(oldTargetFolder).isSymbolicLink()) {
+    report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files in the old ${configuration.format(OLD_SDK_FOLDER, FormatType.PATH)} folder. You might need to manually update existing references outside the ${configuration.format(`.vscode`, FormatType.PATH)} folder (e.g. .gitignore)...`);
     await xfs.removePromise(oldTargetFolder);
   }
 
   if (xfs.existsSync(targetFolder)) {
-    report.reportInfo(null, `Cleaning up the existing SDK files...`);
+    report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files...`);
     await xfs.removePromise(targetFolder);
   }
 
+  const integrationsFile = new IntegrationsFile();
   integrationsFile.integrations = allIntegrations;
   await integrationsFile.persist(targetFolder);
-
-  report.reportInfo(null, `Installing fresh SDKs for ${configuration.format(projectRoot, FormatType.PATH)}:`);
-  report.reportSeparator();
-
-  report.reportInfo(null, `Installing the base SDKs inside ${configuration.format(targetFolder, FormatType.PATH)}...`);
-  report.reportSeparator();
-
-  if (allIntegrations.size > 0) {
-    report.reportInfo(null, `Integrations:`);
-    for (const integration of requestedIntegrations)
-      report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(integration)} (new ✨)`);
-    for (const integration of preexistingIntegrations)
-      if (!requestedIntegrations.has(integration))
-        report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(integration)} (updated 🔼)`);
-    report.reportSeparator();
-  }
 
   const integrationSdks = miscUtils.mapAndFilter(SUPPORTED_INTEGRATIONS, ([integration, sdk]) => {
     if (!allIntegrations.has(integration))
@@ -298,38 +288,52 @@ export const generateSdk = async (pnpApi: PnpApi, requestedIntegrations: Set<Sup
     return sdk;
   });
 
-  report.reportInfo(null, `Dependencies:`);
+  await report.startTimerPromise(`Generating SDKs inside ${configuration.format(SDK_FOLDER, FormatType.PATH)}`, async () => {
+    const skipped = [];
 
-  let skippedSome = false;
+    for (const [pkgName, generateBaseWrapper] of BASE_SDKS) {
+      const displayName = getDisplayName(pkgName);
 
-  for (const [pkgName, generateBaseWrapper] of BASE_SDKS) {
-    const displayName = getDisplayName(pkgName);
+      if (topLevelInformation.packageDependencies.has(pkgName)) {
+        report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${displayName}`);
+        const wrapper = await generateBaseWrapper(pnpApi, targetFolder);
 
-    if (topLevelInformation.packageDependencies.has(pkgName)) {
-      report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${displayName}`);
-      const wrapper = await generateBaseWrapper(pnpApi, targetFolder);
+        for (const sdks of integrationSdks) {
+          const sdk = sdks.find(sdk => sdk[0] === pkgName);
+          if (!sdk)
+            continue;
 
-      for (const sdks of integrationSdks) {
-        const sdk = sdks.find(sdk => sdk[0] === pkgName);
+          const [, generateIntegrationWrapper] = sdk;
+          if (!generateIntegrationWrapper)
+            continue;
 
-        if (!sdk)
-          continue;
-
-        const [, generateIntegrationWrapper] = sdk;
-
-        if (!generateIntegrationWrapper)
-          continue;
-
-        await generateIntegrationWrapper(pnpApi, targetFolder, wrapper);
+          await generateIntegrationWrapper(pnpApi, targetFolder, wrapper);
+        }
+      } else {
+        skipped.push(displayName);
       }
-    } else {
-      report.reportInfo(null, `${chalk.yellow(`•`)} ${displayName} (dependency not found; skipped)`);
-      skippedSome = true;
     }
-  }
 
-  if (skippedSome) {
-    report.reportSeparator();
-    report.reportInfo(null, `Note that, in order to be detected, those packages have to be listed as top-level dependencies (listing them into each individual workspace won't be enough).`);
+    if (skipped.length > 0) {
+      if (verbose) {
+        for (const displayName of skipped) {
+          report.reportWarning(MessageName.UNNAMED, `${chalk.yellow(`•`)} ${displayName} (dependency not found; skipped)`);
+        }
+      } else {
+        report.reportWarning(MessageName.UNNAMED, `${chalk.yellow(`•`)} ${skipped.length} SDKs were skipped based on your root dependencies`);
+      }
+    }
+  });
+
+  if (allIntegrations.size > 0) {
+    await report.startTimerPromise(`Generating settings`, async () => {
+      for (const integration of allIntegrations) {
+        if (preexistingIntegrations.has(integration)) {
+          report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(integration)} (updated 🔼)`);
+        } else {
+          report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(integration)} (new ✨)`);
+        }
+      }
+    });
   }
 };

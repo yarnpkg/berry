@@ -1,9 +1,9 @@
-import {PortablePath, npath, ppath, xfs}                      from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath}                           from '@yarnpkg/fslib';
 import {PnpApi}                                               from '@yarnpkg/pnp';
-import CJSON                                                  from 'comment-json';
 import mergeWith                                              from 'lodash/mergeWith';
 
 import {Wrapper, GenerateIntegrationWrapper, IntegrationSdks} from '../generateSdk';
+import * as sdkUtils                                          from '../sdkUtils';
 
 export const merge = (object: unknown, source: unknown) =>
   mergeWith(object, source, (objValue, srcValue) => {
@@ -19,24 +19,9 @@ export enum VSCodeConfiguration {
 }
 
 export const addVSCodeWorkspaceConfiguration = async (pnpApi: PnpApi, type: VSCodeConfiguration, patch: any) => {
-  const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
-  const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
-
-  const filePath = ppath.join(projectRoot, `.vscode` as PortablePath, type as PortablePath);
-
-  const content = await xfs.existsPromise(filePath)
-    ? await xfs.readFilePromise(filePath, `utf8`)
-    : `{}`;
-
-  const data = CJSON.parse(content);
-  const patched = `${CJSON.stringify(merge(data, patch), null, 2)}\n`;
-
-  await xfs.mkdirpPromise(ppath.dirname(filePath));
-  await xfs.changeFilePromise(filePath, patched, {
-    automaticNewlines: true,
-  });
+  const relativeFilePath = `.vscode/${type}` as PortablePath;
+  await sdkUtils.addSettingWorkspaceConfiguration(pnpApi, relativeFilePath, patch);
 };
-
 
 export const generateEslintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
