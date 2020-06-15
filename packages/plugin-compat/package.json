@@ -8,8 +8,10 @@
     "@yarnpkg/plugin-patch": "^2.0.0-rc.9"
   },
   "devDependencies": {
+    "@types/resolve": "^1.17.1",
     "@yarnpkg/core": "workspace:^2.0.0-rc.29",
-    "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.9"
+    "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.9",
+    "resolve": "^1.17.0"
   },
   "dependencies": {
     "tslib": "^1.13.0"
