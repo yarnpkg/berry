@@ -5,8 +5,9 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
-    "clipanion": "^2.4.0",
+    "clipanion": "^2.4.1",
     "p-limit": "^2.2.0",
+    "tslib": "^1.13.0",
     "yup": "^0.27.0"
   },
   "peerDependencies": {

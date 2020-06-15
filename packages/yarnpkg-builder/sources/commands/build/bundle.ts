@@ -97,6 +97,9 @@ export default class BuildBundleCommand extends Command {
                 new TerserPlugin({
                   cache: false,
                   extractComments: false,
+                  terserOptions: {
+                    ecma: 8,
+                  },
                 }),
               ],
             },
