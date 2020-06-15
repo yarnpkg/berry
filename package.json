@@ -39,9 +39,6 @@
     "micromatch": "^4.0.2",
     "typescript": "^3.9.5"
   },
-  "resolutions": {
-    "inquirer@^7.1.0": "patch:inquirer@^7.1.0#./.yarn/patches/inquirer.patch"
-  },
   "dependenciesMeta": {
     "core-js": {
       "built": false
