@@ -1,7 +1,8 @@
-import {xfs, npath} from '@yarnpkg/fslib';
-import {fs}         from 'pkg-tests-core';
+const {npath, xfs} = require(`@yarnpkg/fslib`);
 
-const {writeFile, writeJson} = fs;
+const {
+  fs: {writeFile, writeJson},
+} = require(`pkg-tests-core`);
 
 describe(`Node_Modules`, () => {
   it(`should install one dependency`,
@@ -267,6 +268,8 @@ describe(`Node_Modules`, () => {
         const stdout = (await run(`install`)).stdout;
 
         expect(stdout).not.toContain(`Shall not be run`);
+        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The platform ${process.platform} is incompatible with this module.*`));
+
         await expect(source(`require('dep')`)).rejects.toMatchObject({
           externalException: {
             code: `MODULE_NOT_FOUND`,

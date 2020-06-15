@@ -1544,6 +1544,8 @@ describe(`Plug'n'Play`, () => {
         const stdout = (await run(`install`)).stdout;
 
         expect(stdout).not.toContain(`Shall not be run`);
+        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The platform ${process.platform} is incompatible with this module.*`));
+
         await expect(source(`require('dep')`)).rejects.toMatchObject({
           externalException: {
             code: `MODULE_NOT_FOUND`,

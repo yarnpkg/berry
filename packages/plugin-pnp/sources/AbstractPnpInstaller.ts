@@ -4,12 +4,12 @@ import {miscUtils, structUtils}                                                 
 import {FakeFS, PortablePath, ppath}                                                                    from '@yarnpkg/fslib';
 import {PackageRegistry, PnpSettings}                                                                   from '@yarnpkg/pnp';
 
-function isCompatible(rules: string[], actual: string) {
+function isCompatible(rules: Array<string>, actual: string) {
   let isNotWhitelist = true;
   let isBlacklist = false;
 
   for (const rule of rules) {
-    if (rule[0] === '!') {
+    if (rule[0] === `!`) {
       isBlacklist = true;
 
       if (actual === rule.slice(1)) {
@@ -26,7 +26,7 @@ function isCompatible(rules: string[], actual: string) {
 
   // Blacklists with whitelisted items should be treated as whitelists for `os` and `cpu` in `package.json`
   return isBlacklist && isNotWhitelist;
-};
+}
 
 export abstract class AbstractPnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
@@ -55,14 +55,15 @@ export abstract class AbstractPnpInstaller implements Installer {
    */
   abstract finalizeInstallWithPnp(pnpSettings: PnpSettings): Promise<Array<FinalizeInstallStatus> | void>;
 
-  private isCompatiblePackage(manifest: Manifest | null, pkg: Package): boolean {
-    if (manifest) {
-      if (manifest.os !== null && !isCompatible(manifest.os, process.platform))
-        return false;
+  private checkAndReportManifestIncompatibility(manifest: Manifest | null, pkg: Package): boolean {
+    if (manifest && manifest.os !== null && !isCompatible(manifest.os, process.platform)) {
+      this.opts.report.reportWarningOnce(MessageName.INCOMPATIBLE_OS, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} The platform ${process.platform} is incompatible with this module, linking skipped.`);
+      return false;
+    }
 
-      if (manifest.cpu !== null && !isCompatible(manifest.cpu, process.arch)) {
-        return false;
-      }
+    if (manifest && manifest.cpu !== null && !isCompatible(manifest.cpu, process.arch)) {
+      this.opts.report.reportWarningOnce(MessageName.INCOMPATIBLE_CPU, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} The CPU architecture ${process.arch} is incompatible with this module, linking skipped.`);
+      return false;
     }
 
     return true;
@@ -78,7 +79,7 @@ export abstract class AbstractPnpInstaller implements Installer {
       !this.opts.project.tryWorkspaceByLocator(pkg);
 
     const manifest = await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
-    if (!this.isCompatiblePackage(manifest, pkg))
+    if (!this.checkAndReportManifestIncompatibility(manifest, pkg))
       return {packageLocation: null, buildDirective: null};
 
     const buildScripts = !hasVirtualInstances
