@@ -29,7 +29,19 @@ export default class BuildPluginCommand extends Command {
   noMinify: boolean = false;
 
   static usage: Usage = Command.Usage({
-    description: `build the local plugin`,
+    description: `build a local plugin`,
+    details: `
+      This command builds a local plugin.
+
+      If the \`--no-minify\` option is used, the plugin will be built in development mode, without any optimizations like minifying, symbol scrambling and treeshaking.
+    `,
+    examples: [[
+      `Build a local plugin`,
+      `$0 build plugin`,
+    ], [
+      `Build a local development plugin`,
+      `$0 build plugin --no-minify`,
+    ]],
   });
 
   @Command.Path(`build`, `plugin`)

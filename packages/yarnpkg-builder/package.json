@@ -2,7 +2,7 @@
   "name": "@yarnpkg/builder",
   "version": "2.0.0-rc.23",
   "license": "BSD-2-Clause",
-  "bin": "./sources/boot-dev.js",
+  "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
     "@babel/core": "^7.7.4",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.36",
@@ -28,7 +28,8 @@
     "@types/terser-webpack-plugin": "^3.0.0",
     "@types/webpack-merge": "^4.1.5",
     "@types/webpack-sources": "^1.4.0",
-    "@yarnpkg/monorepo": "workspace:0.0.0"
+    "@yarnpkg/monorepo": "workspace:0.0.0",
+    "typescript": "^3.9.5"
   },
   "peerDependencies": {
     "typescript": "*"
@@ -39,7 +40,8 @@
     "release": "yarn npm publish"
   },
   "publishConfig": {
-    "bin": "./lib/boot.js"
+    "bin": "./lib/boot.js",
+    "main": "./lib/cli.js"
   },
   "files": [
     "/lib/**/*"

@@ -1,25 +1,22 @@
 #!/usr/bin/env node
 
-import {Cli}              from 'clipanion';
+import {Cli, Command}     from 'clipanion';
 
 import BuildBundleCommand from './commands/build/bundle';
 import BuildPluginCommand from './commands/build/plugin';
-import HelpCommand        from './commands/help';
 import NewPluginCommand   from './commands/new/plugin';
-import VersionCommand     from './commands/version';
 
 const cli = new Cli({
-  binaryName: `yarn builder`,
+  binaryLabel: `Yarn Builder`,
+  binaryName: `builder`,
+  binaryVersion: require(`@yarnpkg/builder/package.json`).version,
 });
 
 cli.register(NewPluginCommand);
 cli.register(BuildBundleCommand);
 cli.register(BuildPluginCommand);
-cli.register(HelpCommand);
-cli.register(VersionCommand);
 
-cli.runExit(process.argv.slice(2), {
-  stdin: process.stdin,
-  stdout: process.stdout,
-  stderr: process.stderr,
-});
+cli.register(Command.Entries.Help);
+cli.register(Command.Entries.Version);
+
+cli.runExit(process.argv.slice(2), Cli.defaultContext);

@@ -5766,6 +5766,7 @@ __metadata:
     terser-webpack-plugin: ^3.0.4
     ts-loader: ^7.0.5
     tslib: ^1.13.0
+    typescript: ^3.9.5
     val-loader: ^2.1.1
     webpack: ^5.0.0-beta.17
     webpack-merge: ^4.2.2
@@ -5773,7 +5774,7 @@ __metadata:
   peerDependencies:
     typescript: "*"
   bin:
-    builder: ./sources/boot-dev.js
+    builder: ./sources/boot-cli-dev.js
   languageName: unknown
   linkType: soft
 

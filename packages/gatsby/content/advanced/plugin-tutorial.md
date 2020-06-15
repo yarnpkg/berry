@@ -14,7 +14,7 @@ Starting from the Yarn 2, Yarn now supports plugins. For more information about 
 
 Plugins are scripts that get loaded at runtime by Yarn, and that can inject new behaviors into it. They also can require some packages provided by Yarn itself, such as `@yarnpkg/core`. This allows you to use the exact same core API as the Yarn binary currently in use, kinda like if it was a peer dependency!
 
-> **Important:** Since plugins are loaded before Yarn starts (and thus before you make your first install), it's strongly advised to write your plugins in such a way that they work without dependencies. If that becomes difficult, know that we provide a tool that can bundle your plugins into a single Javascript file, ready to be published.
+> **Important:** Since plugins are loaded before Yarn starts (and thus before you make your first install), it's strongly advised to write your plugins in such a way that they work without dependencies. If that becomes difficult, know that we provide a powerful tool ([`@yarnpkg/builder`](#builder)) that can bundle your plugins into a single Javascript file, ready to be published.
 
 ## Writing our first plugin
 
@@ -146,3 +146,10 @@ module.exports = {
   },
 };
 ```
+
+## Builder
+
+`@yarnpkg/builder` is a tool designed for creating, building, and managing complex plugins.
+
+Its documentation can be found on the [dedicated page](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-doctor/README.md).
+
