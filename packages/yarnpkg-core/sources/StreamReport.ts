@@ -452,7 +452,7 @@ export class StreamReport extends Report {
 
     const PAD_LEFT = `➤ YN0000: ┌ `.length;
 
-    const maxWidth = Math.min(process.stdout.columns - PAD_LEFT, 80);
+    const maxWidth = Math.max(0, Math.min(process.stdout.columns - PAD_LEFT, 80));
     const scaledSize = Math.floor(style.size * maxWidth / 80);
 
     for (const {progress} of this.progress.values()) {
