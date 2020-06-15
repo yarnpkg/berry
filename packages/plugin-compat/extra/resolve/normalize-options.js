@@ -58,7 +58,7 @@ module.exports = function (_, opts) {
   const runPnpResolutionOnArray = (request, paths) => {
     for (let i = 0; i < paths.length; i++) {
       const resolution = runPnpResolution(request, paths[i]);
-      if (resolution || i === paths.length) {
+      if (resolution || i === paths.length - 1) {
         return resolution;
       }
     }
