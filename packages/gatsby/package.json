@@ -70,6 +70,7 @@
     "remark-html": "^9.0.0",
     "remark-parse": "^6.0.3",
     "tinycolor2": "^1.4.1",
+    "tslib": "^1.13.0",
     "typedoc": "next",
     "typedoc-neo-theme": "^1.0.7",
     "typedoc-plugin-yarn": "portal:./typedoc-plugin-yarn",

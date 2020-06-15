@@ -1,0 +1,41 @@
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+
+name: 'Artifacts'
+jobs:
+  chore:
+    name: 'Generating Artifacts'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+    - run: |
+        git fetch --no-tags --unshallow origin HEAD master
+
+    - name: 'Use Node.js 14.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 14.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: Upload the standard bundle
+      uses: actions/upload-artifact@v2
+      with:
+        name: bundle
+        path: ./packages/yarnpkg-cli/bundles/yarn.js
+
+    - name: 'Build the vscode-zipfs extension'
+      run: |
+        node ./scripts/run-yarn.js package:vscode-zipfs
+
+    - name: Upload the vscode-zipfs extension
+      uses: actions/upload-artifact@v2
+      with:
+        name: vscode-zipfs
+        path: ./packages/vscode-zipfs/vscode-zipfs-*.vsix

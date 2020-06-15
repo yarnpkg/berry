@@ -37,6 +37,7 @@
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
     "micromatch": "^4.0.2",
+    "tslib": "^1.13.0",
     "typescript": "^3.9.5"
   },
   "dependenciesMeta": {
