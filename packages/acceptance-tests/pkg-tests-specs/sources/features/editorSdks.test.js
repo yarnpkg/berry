@@ -136,12 +136,16 @@ describe(`Features`, () => {
 
         try {
           // We get the path to something that's definitely in a zip archive
-          const lodashTypeDef = require.resolve(`@types/lodash/index.d.ts`).replace(/\\/g, `/`);
+          const lodashTypeDef = require.resolve(`@types/lodash/index.d.ts`)
+            .replace(/\\/g, `/`)
+            .replace(/^\/?/, `/`);
           const lodashTypeDir = lodashTypeDef.replace(/\/[^/]+$/, ``);
 
           // We'll also use this file (which we control, so its content won't
           // change) to get autocompletion infos. It depends on lodash too.
-          const ourUtilityFile = require.resolve(`./editorSdks.utility.ts`).replace(/\\/g, `/`);
+          const ourUtilityFile = require.resolve(`./editorSdks.utility.ts`)
+            .replace(/\\/g, `/`)
+            .replace(/^\/?/, `/`);
 
           // Some sanity check to make sure everything is A-OK
           expect(lodashTypeDef).toContain(`.zip`);

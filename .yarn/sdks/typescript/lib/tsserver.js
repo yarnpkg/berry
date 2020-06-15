@@ -39,9 +39,7 @@ const moduleWrapper = tsserver => {
       // Absolute VSCode `Uri.fsPath`s need to start with a slash.
       // VSCode only adds it automatically for supported schemes,
       // so we have to do it manually for the `zip` scheme.
-      if (str[0] !== `/`)
-        str = `/${str}`;
-      return `zip:${str}`;
+      return `zip:${str}`.replace(/^\/?/, `/`);;
     } else {
       return str;
     }
