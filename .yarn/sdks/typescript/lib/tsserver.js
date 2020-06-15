@@ -34,8 +34,12 @@ const moduleWrapper = tsserver => {
   });
 
   function addZipPrefix(str) {
-    if (isAbsolute(str) && str.match(/\.zip\//) && !str.match(/^zip:/)) {
-      return `zip:${str}`;
+    // We add the `zip:` prefix to both `.zip/` paths and virtual paths
+    if (isAbsolute(str) && !str.match(/^zip:/) && (str.match(/\.zip\//) || str.match(/\$\$virtual\//))) {
+      // Absolute VSCode `Uri.fsPath`s need to start with a slash.
+      // VSCode only adds it automatically for supported schemes,
+      // so we have to do it manually for the `zip` scheme.
+      return `zip:${str.replace(/^\/?/, `/`)}`;
     } else {
       return str;
     }
