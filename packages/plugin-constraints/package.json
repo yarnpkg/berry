@@ -9,11 +9,12 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
-    "clipanion": "^2.4.0",
-    "inquirer": "^6.2.0",
+    "clipanion": "^2.4.1",
+    "inquirer": "^7.2.0",
     "lodash": "^4.17.15",
     "node-emoji": "^1.8.1",
-    "tau-prolog": "^0.2.66"
+    "tau-prolog": "^0.2.66",
+    "tslib": "^1.13.0"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "^2.0.0-rc.34",

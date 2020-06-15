@@ -7,10 +7,11 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.12",
-    "clipanion": "^2.4.0",
+    "clipanion": "^2.4.1",
     "cross-spawn": "7.0.3",
     "fast-glob": "^3.2.2",
-    "stream-buffers": "^3.0.2"
+    "stream-buffers": "^3.0.2",
+    "tslib": "^1.13.0"
   },
   "devDependencies": {
     "@types/cross-spawn": "6.0.0",

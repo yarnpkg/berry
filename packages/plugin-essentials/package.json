@@ -7,12 +7,13 @@
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
     "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.8",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.12",
-    "clipanion": "^2.4.0",
-    "inquirer": "^6.2.0",
+    "clipanion": "^2.4.1",
+    "inquirer": "^7.2.0",
     "lodash": "^4.17.15",
     "micromatch": "^4.0.2",
     "semver": "^7.1.2",
     "treeify": "^1.1.0",
+    "tslib": "^1.13.0",
     "yup": "^0.27.0"
   },
   "peerDependencies": {

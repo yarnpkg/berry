@@ -13,6 +13,9 @@
     "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.9",
     "resolve": "^1.17.0"
   },
+  "dependencies": {
+    "tslib": "^1.13.0"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
