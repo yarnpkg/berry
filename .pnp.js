@@ -7782,6 +7782,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["chalk", "npm:3.0.0"],
             ["clipanion", "npm:2.4.1"],
             ["filesize", "npm:4.1.2"],
+            ["fork-ts-checker-webpack-plugin", "npm:5.0.0"],
             ["semver", "npm:7.1.2"],
             ["terser-webpack-plugin", "virtual:f9bb67dfd69024370ec3034670580f61299de48db54e56b7b7f6be955f4b2d12b5a289b8059d2552dd17249e4be8d65829a6642d3165c21478efdb56c7a064e2#npm:3.0.4"],
             ["ts-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:7.0.5"],
@@ -7815,6 +7816,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["chalk", "npm:3.0.0"],
             ["clipanion", "npm:2.4.1"],
             ["filesize", "npm:4.1.2"],
+            ["fork-ts-checker-webpack-plugin", "npm:5.0.0"],
             ["semver", "npm:7.1.2"],
             ["terser-webpack-plugin", "virtual:f9bb67dfd69024370ec3034670580f61299de48db54e56b7b7f6be955f4b2d12b5a289b8059d2552dd17249e4be8d65829a6642d3165c21478efdb56c7a064e2#npm:3.0.4"],
             ["ts-loader", "virtual:5d170a96e3bd35439131aba7820e7b850e9381656d638624d34e228d96fc2f134ebf73b7eb6235db8cb822a7bcd252e04750d4dfcaeb49408c4e561390950138#npm:7.0.5"],
@@ -10157,6 +10159,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/asynckit-npm-0.4.0-c718858525-a024000b9d.zip/node_modules/asynckit/",
           "packageDependencies": [
             ["asynckit", "npm:0.4.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["at-least-node", [
+        ["npm:1.0.0", {
+          "packageLocation": "./.yarn/cache/at-least-node-npm-1.0.0-2b36e661fa-8f33efc162.zip/node_modules/at-least-node/",
+          "packageDependencies": [
+            ["at-least-node", "npm:1.0.0"]
           ],
           "linkType": "HARD",
         }]
@@ -14006,6 +14017,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["deepmerge", "npm:4.0.0"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:4.2.2", {
+          "packageLocation": "./.yarn/cache/deepmerge-npm-4.2.2-112165ced2-85abf8e004.zip/node_modules/deepmerge/",
+          "packageDependencies": [
+            ["deepmerge", "npm:4.2.2"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["default-gateway", [
@@ -16576,6 +16594,23 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["worker-rpc", "npm:0.1.1"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:5.0.0", {
+          "packageLocation": "./.yarn/cache/fork-ts-checker-webpack-plugin-npm-5.0.0-917501723c-116ae1b014.zip/node_modules/fork-ts-checker-webpack-plugin/",
+          "packageDependencies": [
+            ["fork-ts-checker-webpack-plugin", "npm:5.0.0"],
+            ["@babel/code-frame", "npm:7.8.3"],
+            ["chalk", "npm:2.4.2"],
+            ["cosmiconfig", "npm:6.0.0"],
+            ["deepmerge", "npm:4.2.2"],
+            ["fs-extra", "npm:9.0.1"],
+            ["memfs", "npm:3.2.0"],
+            ["minimatch", "npm:3.0.4"],
+            ["schema-utils", "npm:1.0.0"],
+            ["semver", "npm:5.6.0"],
+            ["tapable", "npm:1.1.1"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["form-data", [
@@ -16725,6 +16760,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["universalify", "npm:0.1.2"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:9.0.1", {
+          "packageLocation": "./.yarn/cache/fs-extra-npm-9.0.1-2925889105-b7374cb058.zip/node_modules/fs-extra/",
+          "packageDependencies": [
+            ["fs-extra", "npm:9.0.1"],
+            ["at-least-node", "npm:1.0.0"],
+            ["graceful-fs", "npm:4.2.2"],
+            ["jsonfile", "npm:6.0.1"],
+            ["universalify", "npm:1.0.0"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["fs-minipass", [
@@ -16741,6 +16787,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["fs-minipass", "npm:2.0.0"],
             ["minipass", "npm:3.0.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["fs-monkey", [
+        ["npm:1.0.1", {
+          "packageLocation": "./.yarn/cache/fs-monkey-npm-1.0.1-09aa6c6d04-2ecb8ef589.zip/node_modules/fs-monkey/",
+          "packageDependencies": [
+            ["fs-monkey", "npm:1.0.1"]
           ],
           "linkType": "HARD",
         }]
@@ -22247,6 +22302,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["graceful-fs", "npm:4.1.15"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:6.0.1", {
+          "packageLocation": "./.yarn/cache/jsonfile-npm-6.0.1-989c3a9870-ebd6932424.zip/node_modules/jsonfile/",
+          "packageDependencies": [
+            ["jsonfile", "npm:6.0.1"],
+            ["graceful-fs", "npm:4.1.15"],
+            ["universalify", "npm:1.0.0"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["jsonify", [
@@ -23463,6 +23527,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["map-age-cleaner", "npm:0.1.3"],
             ["mimic-fn", "npm:1.2.0"],
             ["p-is-promise", "npm:1.1.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["memfs", [
+        ["npm:3.2.0", {
+          "packageLocation": "./.yarn/cache/memfs-npm-3.2.0-d67a2c4185-48bf758246.zip/node_modules/memfs/",
+          "packageDependencies": [
+            ["memfs", "npm:3.2.0"],
+            ["fs-monkey", "npm:1.0.1"]
           ],
           "linkType": "HARD",
         }]
@@ -32814,6 +32888,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/universalify-npm-0.1.2-9b22d31d2d-420fc65473.zip/node_modules/universalify/",
           "packageDependencies": [
             ["universalify", "npm:0.1.2"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:1.0.0", {
+          "packageLocation": "./.yarn/cache/universalify-npm-1.0.0-eff81409f3-d74303a8d9.zip/node_modules/universalify/",
+          "packageDependencies": [
+            ["universalify", "npm:1.0.0"]
           ],
           "linkType": "HARD",
         }]
