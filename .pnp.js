@@ -41336,6 +41336,7 @@ class ZipFS_ZipFS extends FakeFS_BasePortableFakeFS {
 
 
 const ZIP_FD = 0x80000000;
+const FILE_PARTS_REGEX = /.*?(?<!\/|\\)\.zip(?=\/|\\|$)/;
 class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
   constructor({
     libzip,
@@ -41356,8 +41357,6 @@ class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
     this.filter = filter;
     this.maxOpenFiles = maxOpenFiles;
     this.readOnlyArchives = readOnlyArchives;
-    this.isZip = new Set();
-    this.notZip = new Set();
   }
 
   static async openPromise(fn, opts) {
@@ -42074,50 +42073,29 @@ class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
 
   findZip(p) {
     if (this.filter && !this.filter.test(p)) return null;
-    const parts = p.split(/\//g);
+    let filePath = ``;
 
-    for (let t = 2; t <= parts.length; ++t) {
-      const archivePath = parts.slice(0, t).join(`/`);
-      if (this.notZip.has(archivePath)) continue;
-      if (this.isZip.has(archivePath)) return {
-        archivePath,
-        subPath: this.pathUtils.resolve(PortablePath.root, parts.slice(t).join(`/`))
+    while (true) {
+      const parts = FILE_PARTS_REGEX.exec(p.substr(filePath.length));
+      if (!parts) return null;
+      filePath = this.pathUtils.join(filePath, parts[0]);
+
+      if (this.isZip.has(filePath) === false) {
+        if (this.notZip.has(filePath)) continue;
+
+        if (this.baseFs.lstatSync(filePath).isFile() === false) {
+          this.notZip.add(filePath);
+          continue;
+        }
+
+        this.isZip.add(filePath);
+      }
+
+      return {
+        archivePath: filePath,
+        subPath: this.pathUtils.resolve(PortablePath.root, p.substr(filePath.length))
       };
-      let realArchivePath = archivePath;
-      let stat;
-
-      while (true) {
-        try {
-          stat = this.baseFs.lstatSync(realArchivePath);
-        } catch (error) {
-          return null;
-        }
-
-        if (stat.isSymbolicLink()) {
-          realArchivePath = this.pathUtils.resolve(this.pathUtils.dirname(realArchivePath), this.baseFs.readlinkSync(realArchivePath));
-        } else {
-          break;
-        }
-      }
-
-      const isZip = stat.isFile() && this.pathUtils.extname(realArchivePath) === `.zip`;
-
-      if (isZip) {
-        this.isZip.add(archivePath);
-        return {
-          archivePath,
-          subPath: this.pathUtils.resolve(PortablePath.root, parts.slice(t).join(`/`))
-        };
-      } else {
-        this.notZip.add(archivePath);
-
-        if (stat.isFile()) {
-          return null;
-        }
-      }
     }
-
-    return null;
   }
 
   limitOpenFiles(max) {
