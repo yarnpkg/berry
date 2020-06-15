@@ -37,7 +37,6 @@ export const addVSCodeWorkspaceConfiguration = async (pnpApi: PnpApi, type: VSCo
   });
 };
 
-
 export const generateEslintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`eslint.nodePath`]: npath.fromPortablePath(

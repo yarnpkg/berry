@@ -10,6 +10,7 @@ import startCase                                                   from 'lodash/
 import {dynamicRequire}                                            from './dynamicRequire';
 
 import {BASE_SDKS}                                                 from './sdks/base';
+import {COC_VIM_SDKS}                                              from './sdks/cocvim';
 import {VSCODE_SDKS}                                               from './sdks/vscode';
 
 export const OLD_SDK_FOLDER = `.vscode/pnpify` as PortablePath;
@@ -18,6 +19,7 @@ export const SDK_FOLDER = `.yarn/sdks` as PortablePath;
 export const INTEGRATIONS_FILE = `integrations.yml` as Filename;
 
 export const SUPPORTED_INTEGRATIONS = new Map([
+  [`vim`, COC_VIM_SDKS],
   [`vscode`, VSCODE_SDKS],
 ] as const);
 
@@ -47,8 +49,17 @@ export class IntegrationsFile {
 
   public raw: {[key: string]: any} = {};
 
-  static hasIntegrationsFile(targetFolder: PortablePath) {
-    return xfs.existsSync(ppath.join(targetFolder, INTEGRATIONS_FILE));
+  static async find(projectRoot: PortablePath) {
+    const targetFolder = ppath.join(projectRoot, SDK_FOLDER);
+
+    const integrationPath = ppath.join(targetFolder, INTEGRATIONS_FILE);
+    if (!xfs.existsSync(integrationPath))
+      return null;
+
+    const integrationsFile = new IntegrationsFile();
+    await integrationsFile.loadFile(integrationPath);
+
+    return integrationsFile;
   }
 
   async loadFile(path: PortablePath) {
@@ -238,32 +249,26 @@ export class Wrapper {
   }
 }
 
-export const generateSdk = async (pnpApi: PnpApi, requestedIntegrations: Set<SupportedIntegration>, {report, onlyBase, verbose, configuration}: {report: Report, onlyBase: boolean, verbose: boolean, configuration: Configuration}): Promise<void> => {
-  validateIntegrations(requestedIntegrations);
+type AllIntegrations = {
+  requestedIntegrations: Set<SupportedIntegration>;
+  preexistingIntegrations: Set<SupportedIntegration>;
+};
 
+export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexistingIntegrations}: AllIntegrations, {report, onlyBase, verbose, configuration}: {report: Report, onlyBase: boolean, verbose: boolean, configuration: Configuration}): Promise<void> => {
   const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
   const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
 
   const targetFolder = ppath.join(projectRoot, SDK_FOLDER);
-  const integrationsFilePath = ppath.join(targetFolder, INTEGRATIONS_FILE);
-
-  const integrationsFile = new IntegrationsFile();
-  if (IntegrationsFile.hasIntegrationsFile(targetFolder))
-    await integrationsFile.loadFile(integrationsFilePath);
-  const preexistingIntegrations = integrationsFile.integrations;
 
   const allIntegrations = new Set([
     ...requestedIntegrations,
     ...preexistingIntegrations,
   ]);
 
-  if (allIntegrations.size === 0 && !IntegrationsFile.hasIntegrationsFile(targetFolder) && !onlyBase)
-    throw new UsageError(`No integrations have been provided as arguments and no existing integrations could be found inside the ${configuration.format(INTEGRATIONS_FILE, FormatType.PATH)} file. Make sure to use \`yarn pnpify --sdk <integrations>\`, or run \`yarn pnpify --sdk base\` if you prefer to manage your own settings. Run \`yarn pnpify --sdk -h\` to see the list of supported integrations.`);
-
   // TODO: remove in next major
   const oldTargetFolder = ppath.join(projectRoot, OLD_SDK_FOLDER);
   if (xfs.existsSync(oldTargetFolder) && !xfs.lstatSync(oldTargetFolder).isSymbolicLink()) {
-    report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files in the old ${configuration.format(OLD_PNPIFY_FOLDER, FormatType.PATH)} folder. You might need to manually update existing references outside the ${configuration.format(`.vscode`, FormatType.PATH)} folder (e.g. .gitignore)...`);
+    report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files in the old ${configuration.format(OLD_SDK_FOLDER, FormatType.PATH)} folder. You might need to manually update existing references outside the ${configuration.format(`.vscode`, FormatType.PATH)} folder (e.g. .gitignore)...`);
     await xfs.removePromise(oldTargetFolder);
   }
 
@@ -272,6 +277,7 @@ export const generateSdk = async (pnpApi: PnpApi, requestedIntegrations: Set<Sup
     await xfs.removePromise(targetFolder);
   }
 
+  const integrationsFile = new IntegrationsFile();
   integrationsFile.integrations = allIntegrations;
   await integrationsFile.persist(targetFolder);
 
