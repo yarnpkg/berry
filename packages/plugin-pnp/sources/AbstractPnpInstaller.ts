@@ -56,15 +56,14 @@ export abstract class AbstractPnpInstaller implements Installer {
    */
   abstract finalizeInstallWithPnp(pnpSettings: PnpSettings): Promise<Array<FinalizeInstallStatus> | void>;
 
-  private checkAndReportManifestIncompatibility(manifest: Manifest | null, pkg: Package): boolean {
-    if (manifest && manifest.os !== null && !isCompatible(manifest.os, process.platform)) {
-      this.opts.report.reportWarningOnce(MessageName.INCOMPATIBLE_OS, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} The platform ${process.platform} is incompatible with this module.`);
-      return false;
-    }
+  private isCompatiblePackage(manifest: Manifest | null, pkg: Package): boolean {
+    if (manifest) {
+      if (manifest.os !== null && !isCompatible(manifest.os, process.platform))
+        return false;
 
-    if (manifest && manifest.cpu !== null && !isCompatible(manifest.cpu, process.arch)) {
-      this.opts.report.reportWarningOnce(MessageName.INCOMPATIBLE_CPU, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} The CPU architecture ${process.arch} is incompatible with this module.`);
-      return false;
+      if (manifest.cpu !== null && !isCompatible(manifest.cpu, process.arch)) {
+        return false;
+      }
     }
 
     return true;
@@ -79,13 +78,11 @@ export abstract class AbstractPnpInstaller implements Installer {
       !structUtils.isVirtualLocator(pkg) &&
       !this.opts.project.tryWorkspaceByLocator(pkg);
 
-    const manifest = !hasVirtualInstances
-      ? await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs})
-      : null;
+    const manifest = await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
+    if (!this.isCompatiblePackage(manifest, pkg))
+      return {packageLocation: null, buildDirective: null};
 
-    const isCompatible = this.checkAndReportManifestIncompatibility(manifest, pkg);
-
-    const buildScripts = !hasVirtualInstances && isCompatible
+    const buildScripts = !hasVirtualInstances
       ? await this.getBuildScripts(pkg, manifest, fetchResult)
       : [];
 
@@ -233,7 +230,7 @@ export abstract class AbstractPnpInstaller implements Installer {
     return miscUtils.getFactoryWithDefault(packageStore, normalizedPath, () => ({
       packageLocation: normalizedPath,
       packageDependencies: new Map(),
-      packagePeers: new Set(),
+      packagePeers: new Set<string>(),
       linkType: LinkType.SOFT,
       discardFromLookup: false,
     }));
@@ -242,7 +239,7 @@ export abstract class AbstractPnpInstaller implements Installer {
   private trimBlacklistedPackages() {
     for (const packageStore of this.packageRegistry.values()) {
       for (const [key2, packageInformation] of packageStore) {
-        if (this.blacklistedPaths.has(packageInformation.packageLocation)) {
+        if (packageInformation.packageLocation && this.blacklistedPaths.has(packageInformation.packageLocation)) {
           packageStore.delete(key2);
         }
       }

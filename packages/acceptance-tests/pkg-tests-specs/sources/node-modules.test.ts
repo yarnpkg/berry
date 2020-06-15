@@ -242,15 +242,15 @@ describe('Node_Modules', () => {
     ),
   );
 
-  test(`should skip building incompatible package`,
+  test(`should skip linking incompatible package`,
     makeTemporaryEnv(
       {
         private: true,
         dependencies: {
-          dep: `portal:./dep`,
+          dep: `file:./dep`,
         },
       },
-      async ({path, run}) => {
+      async ({path, run, source}) => {
         await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
         nodeLinker: "node-modules"
       `);
@@ -267,7 +267,11 @@ describe('Node_Modules', () => {
         const stdout = (await run(`install`)).stdout;
 
         expect(stdout).not.toContain(`Shall not be run`);
-        expect(stdout).toMatch(new RegExp(`dep@portal:./dep.*The platform ${process.platform} is incompatible with this module.`));
+        await expect(source(`require('dep')`)).rejects.toMatchObject({
+          externalException: {
+            code: `MODULE_NOT_FOUND`,
+          },
+        });
       },
     ),
   );

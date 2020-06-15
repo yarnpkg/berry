@@ -133,7 +133,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
   if (topPkg === null)
     throw new Error(`Assertion failed: Expected the top-level package to have been registered`);
 
-  const topLocator = pnp.findPackageLocator(topPkg.packageLocation);
+  const topLocator = pnp.findPackageLocator(topPkg.packageLocation!);
   if (topLocator === null)
     throw new Error(`Assertion failed: Expected the top-level package to have a physical locator`);
 
