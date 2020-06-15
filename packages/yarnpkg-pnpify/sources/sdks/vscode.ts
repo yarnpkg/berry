@@ -18,7 +18,7 @@ export enum VSCodeConfiguration {
   extensions = `extensions.json`,
 }
 
-export const addVSCodeWorkspaceConfiguration = async (pnpApi: PnpApi, type: CocVimConfiguration, patch: any) => {
+export const addVSCodeWorkspaceConfiguration = async (pnpApi: PnpApi, type: VSCodeConfiguration, patch: any) => {
   const relativeFilePath = `.vscode/${type}` as PortablePath;
   await sdkUtils.addSettingWorkspaceConfiguration(pnpApi, relativeFilePath, patch);
 };
