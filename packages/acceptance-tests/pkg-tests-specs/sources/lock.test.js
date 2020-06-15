@@ -1,6 +1,6 @@
 const {
   tests: {setPackageWhitelist},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Lock tests`, () => {
   test(

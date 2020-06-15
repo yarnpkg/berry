@@ -102,6 +102,8 @@ export default class YarnCommand extends BaseCommand {
 
       if (deprecationReport.hasErrors()) {
         return deprecationReport.exitCode();
+      } else {
+        return null;
       }
     };
 
@@ -116,7 +118,7 @@ export default class YarnCommand extends BaseCommand {
         error: !isZeitNow,
       });
 
-      if (typeof exitCode !== `undefined`) {
+      if (exitCode !== null) {
         return exitCode;
       }
     }
@@ -131,7 +133,7 @@ export default class YarnCommand extends BaseCommand {
         error: false,
       });
 
-      if (typeof exitCode !== `undefined`) {
+      if (exitCode !== null) {
         return exitCode;
       }
     }
@@ -146,7 +148,7 @@ export default class YarnCommand extends BaseCommand {
         error: !isZeitNow,
       });
 
-      if (typeof exitCode !== `undefined`) {
+      if (exitCode !== null) {
         return exitCode;
       }
     }
@@ -159,7 +161,7 @@ export default class YarnCommand extends BaseCommand {
         error: true,
       });
 
-      if (typeof exitCode !== `undefined`) {
+      if (exitCode !== null) {
         return exitCode;
       }
     }
@@ -173,7 +175,7 @@ export default class YarnCommand extends BaseCommand {
         error: !isNetlify,
       });
 
-      if (typeof exitCode !== `undefined`) {
+      if (exitCode !== null) {
         return exitCode;
       }
     }

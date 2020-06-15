@@ -24,15 +24,15 @@ export type CommandContext = {
 
 export interface FetcherPlugin {
   new(): Fetcher;
-};
+}
 
 export interface LinkerPlugin {
   new(): Linker;
-};
+}
 
 export interface ResolverPlugin {
   new(): Resolver;
-};
+}
 
 export type Hooks = {
   // Called when the package extensions are setup. Can be used to inject new

@@ -1,8 +1,8 @@
 
-const {fs: {writeJson}} = require('pkg-tests-core');
+const {fs: {writeJson}} = require(`pkg-tests-core`);
 
-describe('Protocols', () => {
-  describe('workspace:', () => {
+describe(`Protocols`, () => {
+  describe(`workspace:`, () => {
     test(
       `it should recognize prereleases in wildcard ranges`,
       makeTemporaryEnv(

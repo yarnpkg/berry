@@ -1,7 +1,7 @@
 {
   "editor.tabSize": 2,
   "files.eol": "\n",
-  "typescript.tsdk": ".vscode/pnpify/typescript/lib",
+  "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "npm.packageManager": "yarn",
   "eslint.validate": [
     "javascript",
@@ -9,7 +9,7 @@
     "typescriptreact"
   ],
   "eslint.enable": true,
-  "eslint.nodePath": ".vscode/pnpify",
+  "eslint.nodePath": ".yarn/sdks",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },

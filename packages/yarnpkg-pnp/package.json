@@ -1,16 +1,18 @@
 {
   "name": "@yarnpkg/pnp",
-  "version": "2.0.0-rc.19",
+  "version": "2.0.0-rc.22",
+  "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/node": "^13.7.0",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.18"
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
+    "tslib": "^1.13.0"
   },
   "devDependencies": {
-    "@yarnpkg/builder": "workspace:^2.0.0-rc.20",
-    "@yarnpkg/libzip": "workspace:^2.0.0-rc.11",
-    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.21",
-    "typescript": "^3.8.3",
+    "@yarnpkg/builder": "workspace:^2.0.0-rc.22",
+    "@yarnpkg/libzip": "workspace:^2.0.0-rc.12",
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.24",
+    "typescript": "^3.9.5",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.2.1",
     "webpack-sources": "^1.3.0"
@@ -33,5 +35,8 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }

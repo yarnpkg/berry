@@ -1,6 +1,6 @@
 const {
   fs: {writeJson, writeFile},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 async function setupWorkspaces(path) {
   await writeFile(`${path}/mutexes/workspace-a`, ``);

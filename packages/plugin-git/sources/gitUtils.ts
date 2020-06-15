@@ -1,5 +1,6 @@
 import {Configuration, Locator, execUtils, structUtils} from '@yarnpkg/core';
 import {npath, xfs}                                     from '@yarnpkg/fslib';
+import querystring                                      from 'querystring';
 import semver                                           from 'semver';
 
 function makeGitEnvironment() {
@@ -13,10 +14,25 @@ function makeGitEnvironment() {
 const gitPatterns = [
   /^ssh:/,
   /^git(?:\+ssh)?:/,
-  /^(?:git\+)?https?:[^#]+\/[^#]+\.git(?:#.*)?$/,
+
+  // `git+` is optional, `.git` is required
+  /^(?:git\+)?https?:[^#]+\/[^#]+(?:\.git)(?:#.*)?$/,
+  // `git+` is required, `.git` is optional
+  /^(?:git\+)https?:[^#]+\/[^#]+(?:\.git)?(?:#.*)?$/,
+
   /^git@[^#]+\/[^#]+\.git(?:#.*)?$/,
+
   /^(?:github:|https:\/\/github\.com\/)?(?!\.{1,2}\/)([a-zA-Z._0-9-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z._0-9-]+?)(?:\.git)?(?:#.*)?$/,
+  // GitHub `/tarball/` URLs
+  /^https:\/\/github\.com\/(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)\/tarball\/(.+)?$/,
 ];
+
+export enum TreeishProtocols {
+  Commit = `commit`,
+  Head = `head`,
+  Tag = `tag`,
+  Semver = `semver`,
+}
 
 /**
  * Determines whether a given url is a valid github git url via regex
@@ -25,33 +41,91 @@ export function isGitUrl(url: string): boolean {
   return url ? gitPatterns.some(pattern => !!url.match(pattern)) : false;
 }
 
-export function splitRepoUrl(url: string) {
-  let repo: string;
-  let protocol: string | null;
-  let request: string;
+export type RepoUrlParts = {
+  repo: string;
+  treeish: {
+    protocol: TreeishProtocols | string | null,
+    request: string,
+  },
+  extra: {
+    [key: string]: string,
+  },
+};
+
+export function splitRepoUrl(url: string): RepoUrlParts {
+  url = normalizeRepoUrl(url);
 
   const hashIndex = url.indexOf(`#`);
   if (hashIndex === -1) {
-    repo = url;
-    protocol = `head`;
-    request = `master`;
-  } else {
-    repo = url.slice(0, hashIndex);
-
-    const colonIndex = url.indexOf(`:`, hashIndex);
-    if (colonIndex === -1) {
-      protocol = null;
-      request = url.slice(hashIndex + 1);
-    } else {
-      protocol = url.slice(hashIndex + 1, colonIndex);
-      request = url.slice(colonIndex + 1);
-    }
+    return {
+      repo: url,
+      treeish: {
+        protocol: TreeishProtocols.Head,
+        request: `master`,
+      },
+      extra: {},
+    };
   }
 
-  return {
-    repo,
-    treeish: {protocol, request},
-  };
+  const repo = url.slice(0, hashIndex);
+  const subsequent = url.slice(hashIndex + 1);
+
+  // New-style: "#commit=abcdef&workspace=foobar"
+  if (subsequent.match(/^[a-z]+=/)) {
+    const extra = querystring.parse(subsequent);
+
+    for (const [key, value] of Object.entries(extra))
+      if (typeof value !== `string`)
+        throw new Error(`Assertion failed: The ${key} parameter must be a literal string`);
+
+    const requestedProtocol = Object.values(TreeishProtocols).find(protocol => {
+      return Object.prototype.hasOwnProperty.call(extra, protocol);
+    });
+
+    let protocol: TreeishProtocols;
+    let request: string;
+
+    if (typeof requestedProtocol !== `undefined`) {
+      protocol = requestedProtocol;
+      request = extra[requestedProtocol]! as string;
+    } else {
+      protocol = TreeishProtocols.Head;
+      request = `master`;
+    }
+
+    for (const key of Object.values(TreeishProtocols))
+      delete extra[key];
+
+    return {
+      repo,
+      treeish: {protocol, request},
+      extra: extra as {
+        [key: string]: string,
+      },
+    };
+  }
+
+  // Old-style: "#commit:abcdef" or "#abcdef"
+  else {
+    const colonIndex = subsequent.indexOf(`:`);
+
+    let protocol: string | null;
+    let request: string;
+
+    if (colonIndex === -1) {
+      protocol = null;
+      request = subsequent;
+    } else {
+      protocol = subsequent.slice(0, colonIndex);
+      request = subsequent.slice(colonIndex + 1);
+    }
+
+    return {
+      repo,
+      treeish: {protocol, request},
+      extra: {},
+    };
+  }
 }
 
 export function normalizeRepoUrl(url: string) {
@@ -60,7 +134,10 @@ export function normalizeRepoUrl(url: string) {
   url = url.replace(/^git\+https:/, `https:`);
 
   // We support this as an alias to GitHub repositories
-  url = url.replace(/^(?:github:|https:\/\/github\.com\/)?(?!\.{1,2}\/)([a-zA-Z._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z._-]+?)(?:\.git)?(#.*)?$/, `https://github.com/$1/$2.git$3`);
+  url = url.replace(/^(?:github:|https:\/\/github\.com\/)?(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)(?:\.git)?(#.*)?$/, `https://github.com/$1/$2.git$3`);
+
+  // We support GitHub `/tarball/` URLs
+  url = url.replace(/^https:\/\/github\.com\/(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)\/tarball\/(.+)?$/, `https://github.com/$1/$2.git#$3`);
 
   return url;
 }
@@ -97,35 +174,44 @@ export async function lsRemote(repo: string, configuration: Configuration) {
 }
 
 export async function resolveUrl(url: string, configuration: Configuration) {
-  const {repo, treeish: {protocol, request}} = splitRepoUrl(url);
+  const {repo, treeish: {protocol, request}, extra} = splitRepoUrl(url);
   const refs = await lsRemote(repo, configuration);
 
-  const resolve = (protocol: string | null, request: string): string => {
+  const resolve = (protocol: TreeishProtocols | string | null, request: string): string => {
     switch (protocol) {
-      case `commit`: {
+      case TreeishProtocols.Commit: {
         if (!request.match(/^[a-f0-9]{40}$/))
           throw new Error(`Invalid commit hash`);
 
-        return `commit:${request}`;
+        return querystring.stringify({
+          ...extra,
+          commit: request,
+        });
       }
 
-      case `head`: {
+      case TreeishProtocols.Head: {
         const head = refs.get(`refs/heads/${request}`);
         if (typeof head === `undefined`)
           throw new Error(`Unknown head ("${request}")`);
 
-        return `commit:${head}`;
+        return querystring.stringify({
+          ...extra,
+          commit: head,
+        });
       }
 
-      case `tag`: {
+      case TreeishProtocols.Tag: {
         const tag = refs.get(`refs/tags/${request}`);
         if (typeof tag === `undefined`)
           throw new Error(`Unknown tag ("${request}")`);
 
-        return `commit:${tag}`;
+        return querystring.stringify({
+          ...extra,
+          commit: tag,
+        });
       }
 
-      case `semver`: {
+      case TreeishProtocols.Semver: {
         if (!semver.validRange(request))
           throw new Error(`Invalid range ("${request}")`);
 
@@ -141,17 +227,20 @@ export async function resolveUrl(url: string, configuration: Configuration) {
         if (bestVersion === null)
           throw new Error(`No matching range ("${request}")`);
 
-        return `commit:${semverTags.get(bestVersion)}`;
+        return querystring.stringify({
+          ...extra,
+          commit: semverTags.get(bestVersion),
+        });
       }
 
       case null: {
         let result: string | null;
 
-        if ((result = tryResolve(`commit`, request)) !== null)
+        if ((result = tryResolve(TreeishProtocols.Commit, request)) !== null)
           return result;
-        if ((result = tryResolve(`tag`, request)) !== null)
+        if ((result = tryResolve(TreeishProtocols.Tag, request)) !== null)
           return result;
-        if ((result = tryResolve(`head`, request)) !== null)
+        if ((result = tryResolve(TreeishProtocols.Head, request)) !== null)
           return result;
 
         if (request.match(/^[a-f0-9]+$/)) {
@@ -167,7 +256,7 @@ export async function resolveUrl(url: string, configuration: Configuration) {
     }
   };
 
-  const tryResolve = (protocol: string | null, request: string): string | null => {
+  const tryResolve = (protocol: TreeishProtocols | string | null, request: string): string | null => {
     try {
       return resolve(protocol, request);
     } catch (err) {
@@ -190,7 +279,7 @@ export async function clone(url: string, configuration: Configuration) {
   const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};
 
   try {
-    await execUtils.execvp(`git`, [`clone`, `${normalizeRepoUrl(repo)}`, npath.fromPortablePath(directory)], execOpts);
+    await execUtils.execvp(`git`, [`clone`, `-c core.autocrlf=false`, `${normalizeRepoUrl(repo)}`, npath.fromPortablePath(directory)], execOpts);
     await execUtils.execvp(`git`, [`checkout`, `${request}`], execOpts);
   } catch (error) {
     error.message = `Repository clone failed: ${error.message}`;

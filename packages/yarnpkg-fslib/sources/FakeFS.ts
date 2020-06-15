@@ -327,7 +327,7 @@ export abstract class FakeFS<P extends Path> {
   }
 
   async changeFilePromise(p: P, content: string, {automaticNewlines}: ChangeFileOptions = {}) {
-    let current = '';
+    let current = ``;
     try {
       current = await this.readFilePromise(p, `utf8`);
     } catch (error) {
@@ -345,7 +345,7 @@ export abstract class FakeFS<P extends Path> {
   }
 
   changeFileSync(p: P, content: string, {automaticNewlines = false}: ChangeFileOptions = {}) {
-    let current = '';
+    let current = ``;
     try {
       current = this.readFileSync(p, `utf8`);
     } catch (error) {
@@ -451,8 +451,12 @@ export abstract class FakeFS<P extends Path> {
     try {
       return await callback();
     } finally {
-      await this.closePromise(fd);
-      await this.unlinkPromise(lockPath);
+      try {
+        await this.unlinkPromise(lockPath);
+        await this.closePromise(fd);
+      } catch (error) {
+        // noop
+      }
     }
   }
 
@@ -513,15 +517,11 @@ export abstract class FakeFS<P extends Path> {
       this.utimesSync(p, stat.atime, stat.mtime);
     }
   }
-};
+}
 
 export abstract class BasePortableFakeFS extends FakeFS<PortablePath> {
   protected constructor() {
     super(ppath);
-  }
-
-  resolve(p: PortablePath) {
-    return this.pathUtils.resolve(PortablePath.root, p);
   }
 }
 

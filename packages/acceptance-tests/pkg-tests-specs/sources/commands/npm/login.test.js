@@ -1,7 +1,7 @@
 const {
   fs: {createTemporaryFolder, readFile, writeFile},
   tests: {startPackageServer},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 const SPEC_RC_FILENAME = `.spec-yarnrc`;
 const FAKE_REGISTRY_URL = `http://yarn.test.registry`;

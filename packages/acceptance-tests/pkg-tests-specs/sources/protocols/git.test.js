@@ -1,8 +1,8 @@
 const {
   fs: {readFile},
   tests: {startPackageServer},
-} = require('pkg-tests-core');
-const {parseSyml} = require('@yarnpkg/parsers');
+} = require(`pkg-tests-core`);
+const {parseSyml} = require(`@yarnpkg/parsers`);
 
 const TESTED_URLS = {
   // We've picked util-deprecate because it doesn't have any dependency, and
@@ -86,6 +86,66 @@ describe(`Protocols`, () => {
           await expect(source(`require('no-prepack')`)).resolves.toEqual(42);
         },
       )
+    );
+
+    test(
+      `it should support installing specific workspaces`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`pkg-a`]: startPackageServer().then(url => `${url}/repositories/workspaces.git#workspace=pkg-a`),
+            [`pkg-b`]: startPackageServer().then(url => `${url}/repositories/workspaces.git#workspace=pkg-b`),
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('pkg-a/package.json')`)).resolves.toMatchObject({
+            name: `pkg-a`,
+            version: `1.0.0`,
+          });
+
+          await expect(source(`require('pkg-b/package.json')`)).resolves.toMatchObject({
+            name: `pkg-b`,
+            version: `1.0.0`,
+          });
+        },
+      ),
+      45000
+    );
+
+    test(
+      `it should use Yarn Classic to setup classic repositories`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`yarn-1-project`]: startPackageServer().then(url => `${url}/repositories/yarn-1-project.git`),
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('yarn-1-project')`)).resolves.toMatch(/\byarn\/1\.[0-9]+/);
+        },
+      ),
+      45000
+    );
+
+    test(
+      `it should use npm to setup npm repositories`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`npm-project`]: startPackageServer().then(url => `${url}/repositories/npm-project.git`),
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('npm-project')`)).resolves.toMatch(/\bnpm\/[0-9]+/);
+        },
+      ),
+      45000
     );
   });
 });

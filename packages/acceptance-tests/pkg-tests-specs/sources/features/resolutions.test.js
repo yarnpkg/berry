@@ -3,7 +3,7 @@ import {xfs} from '@yarnpkg/fslib';
 const {
   fs: {writeFile, writeJson},
   tests: {getPackageArchivePath, getPackageDirectoryPath},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Features`, () => {
   describe(`Resolutions`, () => {

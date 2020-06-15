@@ -12,7 +12,7 @@ const NETWORK_CONCURRENCY = 8;
 
 const limit = plimit(NETWORK_CONCURRENCY);
 
-const cache = new Map<string, Promise<Response<Buffer>>>();
+const cache = new Map<string, Promise<Buffer> | Buffer>();
 
 const globalHttpAgent = new HttpAgent({keepAlive: true});
 const globalHttpsAgent = new HttpsAgent({keepAlive: true});
@@ -35,9 +35,9 @@ export type Body = (
 );
 
 export enum Method {
-  GET = 'GET',
-  PUT = 'PUT',
-};
+  GET = `GET`,
+  PUT = `PUT`,
+}
 
 export type Options = {
   configuration: Configuration,
@@ -80,9 +80,13 @@ export async function request(target: string, body: Body, {configuration, header
     }
   }
 
+  const timeout = configuration.get(`httpTimeout`);
+  const retry = configuration.get(`httpRetry`);
+
   //@ts-ignore
   const gotClient = got.extend({
-    retry: 10,
+    timeout,
+    retry,
     ...gotOptions,
   });
 
@@ -93,16 +97,20 @@ export async function get(target: string, {configuration, json, ...rest}: Option
   let entry = cache.get(target);
 
   if (!entry) {
-    entry = request(target, null, {configuration, ...rest});
+    entry = request(target, null, {configuration, ...rest}).then(response => {
+      cache.set(target, response.body);
+      return response.body;
+    });
     cache.set(target, entry);
   }
 
-  const response = await entry;
+  if (Buffer.isBuffer(entry) === false)
+    entry = await entry;
 
   if (json) {
-    return JSON.parse(response.body.toString());
+    return JSON.parse(entry.toString());
   } else {
-    return response.body;
+    return entry;
   }
 }
 

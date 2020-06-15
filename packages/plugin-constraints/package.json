@@ -1,30 +1,32 @@
 {
   "name": "@yarnpkg/plugin-constraints",
-  "version": "2.0.0-rc.13",
+  "version": "2.0.0-rc.15",
+  "license": "BSD-2-Clause",
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.18",
-    "clipanion": "^2.1.5",
-    "inquirer": "^6.2.0",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
+    "clipanion": "^2.4.1",
+    "inquirer": "^7.2.0",
     "lodash": "^4.17.15",
     "node-emoji": "^1.8.1",
-    "tau-prolog": "^0.2.66"
+    "tau-prolog": "^0.2.66",
+    "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.32",
-    "@yarnpkg/core": "^2.0.0-rc.26"
+    "@yarnpkg/cli": "^2.0.0-rc.35",
+    "@yarnpkg/core": "^2.0.0-rc.29"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",
     "@types/typescript": "2.0.0",
-    "@yarnpkg/builder": "workspace:^2.0.0-rc.20",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.32",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.26",
-    "typescript": "^3.8.3"
+    "@yarnpkg/builder": "workspace:^2.0.0-rc.22",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.35",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.29",
+    "typescript": "^3.9.5"
   },
   "scripts": {
     "build:plugin-constraints": "builder build plugin",
@@ -38,5 +40,8 @@
   },
   "files": [
     "/lib/**/*"
-  ]
+  ],
+  "engines": {
+    "node": ">=10.19.0"
+  }
 }

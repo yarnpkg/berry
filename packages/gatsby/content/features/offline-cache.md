@@ -4,9 +4,11 @@ path: /features/offline-cache
 title: "Offline Cache"
 ---
 
-The offline cache is a feature that allows Yarn to work just fine even should the network go down for any reason - whether it's because your employer didn't pay the utility bill or because the place where are hosted your packages becomes unavailable. It's also a critical part of [Zero-Installs](/features/zero-installs) and doesn't store more than a single file for each package - making it suitable for being stored within a repository, [as we actually do in the Yarn repository itself](https://github.com/yarnpkg/berry/tree/master/.yarn/cache).
+The offline cache is a feature that allows Yarn to work just fine even should the network go down for any reason - whether it's because your employer didn't pay the utility bill or because the place where your packages are hosted becomes unavailable. It's also a critical part of [Zero-Installs](/features/zero-installs) and doesn't store more than a single file for each package - making it suitable for being stored within a repository, [as we actually do in the Yarn repository itself](https://github.com/yarnpkg/berry/tree/master/.yarn/cache).
 
 The way it works is simple: each time a package is downloaded from a remote location ("remote" as a generic term in this context: dependencies listed through the `file:` protocol also have a remote, even if it will be the local filesystem in their case) a copy will be stored within the cache. The next time this same package will need to be installed, Yarn will leverage the version stored within cache instead of downloading its original source.
+
+The location of the local cache, relative to the root of the project, can be configured with the [`cacheFolder`](/configuration/yarnrc#cacheFolder) configuration option. By default, it is `.yarn/cache`.
 
 ```toc
 # This code block gets replaced with the Table of Contents
@@ -16,9 +18,15 @@ The way it works is simple: each time a package is downloaded from a remote loca
 
 Because the offline cache is leveraged to power PnP (files are read directly from within the zip archives), the cache cannot be disabled. That being said it's totally safe to remove the cache folder entirely if needed - it will simply be rebuilt the next time you run `yarn install`.
 
+The local cache can be disabled by [sharing the cache](#sharing-the-cache), in which case the global cache will be used.
+
+The global mirror can be disabled by using the [`enableMirror`](/configuration/yarnrc#enableMirror) configuration option. This is not recommended when using a local cache, as the global mirror is an abstraction between the local cache and the network, storing all downloaded packages for future use, to reduce install times.
+
 ## Cleaning the cache
 
-At the moment Yarn doesn't purge your cache from unneeded packages when you remove or upgrade them. To remove such unused files just periodically run [`yarn cache clean`](/cli/cache/clean). You can even make it [part of your CI](https://github.com/yarnpkg/berry/blob/master/azure-pipelines.yml#L28-L30)!
+Yarn automatically purges your cache from unneeded packages when you remove or upgrade them. In case you need to manually clean the cache, you can use the [`yarn cache clean`](/cli/cache/clean) command.
+
+The global mirror, however, has to be manually cleaned using the [`yarn cache clean --mirror`](/cli/cache/clean) command.
 
 ## Sharing the cache
 
@@ -29,6 +37,8 @@ Still, this might not make sense in every case. For example you might be working
 ```yaml
 enableGlobalCache: true
 ```
+
+The location of the shared cache is always [`<globalFolder>`](/configuration/yarnrc#globalFolder)`/cache`, which corresponds to the location of the global mirror.
 
 ## Cache integrity
 

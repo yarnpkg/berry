@@ -1,4 +1,4 @@
-const semver = require('semver');
+const semver = require(`semver`);
 
 describe(`Entry`, () => {
   describe(`version option`, () => {

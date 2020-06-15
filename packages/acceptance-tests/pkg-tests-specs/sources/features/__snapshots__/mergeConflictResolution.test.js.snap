@@ -6,6 +6,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 
 __metadata:
   version: 4
+  cacheKey: 0
 
 \\"no-deps@npm:*\\":
 <<<<<<< HEAD
@@ -38,7 +39,7 @@ Object {
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0019: │ no-deps-npm-1.0.0-cf533b267a-2.zip appears to be unused - removing
+➤ YN0019: │ no-deps-npm-1.0.0-cf533b267a-58e8c7e103.zip appears to be unused - removing
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
@@ -53,6 +54,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 
 __metadata:
   version: 4
+  cacheKey: 0
 
 <<<<<<< HEAD
 no-deps@*:

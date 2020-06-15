@@ -18,21 +18,12 @@ exports.YarnPlugin = class YarnPlugin extends ConverterComponent {
 
   onDeclarationBegin(context, reflection) {
     // Remove unnecessary reflections generated from virtual files
-    if (reflection.sources && reflection.sources[0].fileName.includes(`.yarn/$$virtual/`)) {
+    if (reflection.sources && reflection.sources[0].fileName.includes(`.yarn/$$virtual/`))
       CommentPlugin.removeReflection(context.project, reflection);
-      console.log(
-        `Removing unnecessary reflection generated from virtual file: `,
-        reflection.sources[0].fileName,
-      );
-    }
 
     // Remove unnecessary reference reflections
     if (reflection.kind === ReflectionKind.Reference) {
       CommentPlugin.removeReflection(context.project, reflection);
-      console.log(
-        `Removing unnecessary reference reflection: `,
-        reflection.name,
-      );
     }
   }
 };

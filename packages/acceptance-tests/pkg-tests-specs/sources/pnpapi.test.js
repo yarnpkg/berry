@@ -2,7 +2,7 @@ import {ppath, npath, xfs} from '@yarnpkg/fslib';
 
 const {
   fs: {writeFile, writeJson},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Plug'n'Play API`, () => {
   test(

@@ -26,9 +26,9 @@ describe(`Features`, () => {
         });
 
         await run(`install`);
-        await pnpify([`--sdk`], path);
+        await pnpify([`--sdk`, `base`], path);
 
-        const rawOutput = await noPnpNode([`./.vscode/pnpify/eslint/bin/eslint.js`], path);
+        const rawOutput = await noPnpNode([`./.yarn/sdks/eslint/bin/eslint.js`], path);
         const jsonOutput = JSON.parse(rawOutput);
 
         expect(jsonOutput).toMatchObject({
@@ -63,12 +63,12 @@ describe(`Features`, () => {
         });
 
         await run(`install`);
-        await pnpify([`--sdk`], path);
+        await pnpify([`--sdk`, `base`], path);
 
         await run(`install`, {nodeLinker: `node-modules`});
         expect(xfs.existsSync(ppath.join(path, `.pnp.js`))).toEqual(false);
 
-        const rawOutput = await noPnpNode([`./.vscode/pnpify/eslint/bin/eslint.js`], path);
+        const rawOutput = await noPnpNode([`./.yarn/sdks/eslint/bin/eslint.js`], path);
         const jsonOutput = JSON.parse(rawOutput);
 
         expect(jsonOutput).toMatchObject({
@@ -78,6 +78,98 @@ describe(`Features`, () => {
           },
         });
       }),
+    );
+
+    /**
+     * Example messages matching '/\.zip\\//' within "send(msg)" - https://hastebin.com/zosibaseki
+     * Note that no messages were found matching '/^zip:\\/\\//' were found within "onMessage(message)"
+     */
+    test(
+      `it should patch message into VSCode typescript language extension for zip schemes`,
+      async () => {
+        const child = spawn(process.execPath, [require.resolve(`@yarnpkg/monorepo/.yarn/sdks/typescript/lib/tsserver.js`)], {
+          cwd: npath.dirname(require.resolve(`@yarnpkg/monorepo/package.json`)),
+          stdio: `pipe`,
+          encoding: `utf8`,
+        });
+
+        const watchFor = async marker => {
+          let stdall = ``;
+          let stdout = ``;
+
+          return new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+              cleanup();
+              reject(new Error(`Timeout reached without matching "${marker}"; server answered:\n\n${stdall}`));
+            }, 20000);
+
+            const cleanup = () => {
+              clearTimeout(timeout);
+
+              child.stderr.off(`data`, onStderr);
+              child.stdout.off(`data`, onStdout);
+            };
+
+            const onStderr = chunk => {
+              stdall += chunk;
+            };
+
+            const onStdout = chunk => {
+              stdall += chunk;
+              stdout += chunk;
+              if (stdout.includes(marker)) {
+                cleanup();
+                resolve(true);
+              }
+            };
+
+            child.stderr.on(`data`, onStderr);
+            child.stdout.on(`data`, onStdout);
+          });
+        };
+
+        const runAndWait = async (marker, payload) => {
+          const promise = expect(watchFor(marker)).resolves.toEqual(true);
+          child.stdin.write(`${JSON.stringify(payload)}\n`);
+          return await promise;
+        };
+
+        try {
+          // We get the path to something that's definitely in a zip archive
+          const lodashTypeDef = require.resolve(`@types/lodash/index.d.ts`)
+            .replace(/\\/g, `/`)
+            .replace(/^\/?/, `/`);
+          const lodashTypeDir = lodashTypeDef.replace(/\/[^/]+$/, ``);
+
+          // We'll also use this file (which we control, so its content won't
+          // change) to get autocompletion infos. It depends on lodash too.
+          const ourUtilityFile = require.resolve(`./editorSdks.utility.ts`)
+            .replace(/\\/g, `/`)
+            .replace(/^\/?/, `/`);
+
+          // Some sanity check to make sure everything is A-OK
+          expect(lodashTypeDef).toContain(`.zip`);
+
+          console.log({lodashTypeDef, ourUtilityFile});
+
+          await runAndWait(`projectLoadingFinish`, {
+            seq: 0,
+            type: `request`,
+            command: `open`,
+            arguments: {file: ourUtilityFile},
+          });
+
+          await runAndWait(`zip:${lodashTypeDir}`, {
+            seq: 1,
+            type: `request`,
+            command: `typeDefinition`,
+            arguments: {file: ourUtilityFile, line: 6, offset: 9},
+          });
+        } finally {
+          child.stdin.end();
+        }
+      },
+      45000
     );
   });
 });
@@ -115,7 +207,7 @@ const noPnpNode = async (args, cwd) => {
 
 const pnpify = async (args, cwd) => {
   return new Promise((resolve, reject) => {
-    const child = spawn(process.execPath, [npath.join(__dirname, `../../../../yarnpkg-pnpify/sources/boot-cli-dev.js`), ...args], {
+    const child = spawn(process.execPath, [require.resolve(`@yarnpkg/monorepo/scripts/run-pnpify.js`), ...args], {
       cwd: npath.fromPortablePath(cwd),
       stdio: `ignore`,
     });

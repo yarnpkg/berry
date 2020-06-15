@@ -35,6 +35,30 @@ Its documentation and usage can be found on GitHub: [yarnpkg/berry/blob/master/p
 
 ## Frequently Asked Questions
 
+### Can I install a workspace of a project when using the `git:` protocol?
+
+Yes! Yarn supports workspaces even through git dependencies, using the following syntax:
+
+```json
+{
+  "dependencies": {
+    "my-pkg": "org/app#workspace=my-pkg"
+  }
+}
+```
+
+You can even combine it with the branch selectors:
+
+```json
+{
+  "dependencies": {
+    "my-pkg": "org/app#head=next&workspace=my-pkg"
+  }
+}
+```
+
+> **Note:** For this workflow to work, make sure that each individual workspaces can be built just by running `yarn install && yarn pack` into each individual workspace. In particular, avoid third-party release scripts unless they use `yarn pack` under the hood.
+
 ### Why can't I add dependencies through the `patch:` protocol?
 
 A Yarn install is split across multiple steps (described [here](/advanced/architecture#install-architecture)). Most importantly, we first fully resolve the dependency tree, and only then do we download the packages from their remote sources. Since patches occur during this second step, by the time we inject the new dependencies it's already too late as the dependency tree has already been frozen.

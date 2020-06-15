@@ -16,17 +16,10 @@ tar xvfz resolve-1.14.1.tgz 2> /dev/null
 
 cp "$THIS_DIR"/normalize-options.js "$TEMP_DIR"/patched/package/lib/normalize-options.js
 
-PATCHFILE="$THIS_DIR"/../../sources/patches/resolve.patch.ts
-rm -f "$PATCHFILE" && touch "$PATCHFILE"
-
-echo 'export const patch =' \
-  >> "$PATCHFILE"
-(git diff --no-index "$TEMP_DIR"/orig/package "$TEMP_DIR"/patched/package) \
+git diff --no-index "$TEMP_DIR"/orig/package "$TEMP_DIR"/patched/package \
   | perl -p -e"s#^--- #semver exclusivity >=1.9\n--- #" \
   | perl -p -e"s#$TEMP_DIR/orig/package##" \
   | perl -p -e"s#$TEMP_DIR/patched/package##" \
-  > "$TEMP_DIR"/patch.tmp || true
-node "$THIS_DIR"/../jsonEscape.js < "$TEMP_DIR"/patch.tmp \
-  >> "$PATCHFILE"
-echo ';' \
-  >> "$PATCHFILE"
+  > "$TEMP_DIR"/patch.tmp
+
+node "$THIS_DIR/../createPatch.js" "$TEMP_DIR"/patch.tmp "$THIS_DIR"/../../sources/patches/resolve.patch.ts

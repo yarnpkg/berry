@@ -115,16 +115,16 @@ export type ZipBufferOptions = {
   libzip: Libzip,
   readOnly?: boolean,
   stats?: Stats,
+  level?: ZipCompression,
 };
 
 export type ZipPathOptions = ZipBufferOptions & {
   baseFs?: FakeFS<PortablePath>,
   create?: boolean,
-  level?: ZipCompression,
 };
 
 function toUnixTimestamp(time: Date | string | number) {
-  if (typeof time === 'string' && String(+time) === time)
+  if (typeof time === `string` && String(+time) === time)
     return +time;
 
   // @ts-ignore
@@ -151,6 +151,7 @@ export class ZipFS extends BasePortableFakeFS {
 
   private readonly stats: Stats;
   private readonly zip: number;
+  private readonly lzSource: number | null = null;
   private readonly level: ZipCompression;
 
   private readonly listings: Map<PortablePath, Set<Filename>> = new Map();
@@ -163,17 +164,32 @@ export class ZipFS extends BasePortableFakeFS {
   private readOnly = false;
 
   constructor(p: PortablePath, opts: ZipPathOptions);
-  constructor(data: Buffer, opts: ZipBufferOptions);
+  /**
+   * Create a ZipFS in memory
+   * @param data If null; an empty zip file will be created
+   */
+  constructor(data: Buffer | null, opts: ZipBufferOptions);
 
-  constructor(source: PortablePath | Buffer, opts: ZipPathOptions | ZipBufferOptions) {
+  constructor(source: PortablePath | Buffer | null, opts: ZipPathOptions | ZipBufferOptions) {
     super();
 
     this.libzip = opts.libzip;
 
     const pathOptions = opts as ZipPathOptions;
-    this.level = typeof pathOptions.level !== 'undefined'
+    this.level = typeof pathOptions.level !== `undefined`
       ? pathOptions.level
       : DEFAULT_COMPRESSION_LEVEL;
+
+    if (source === null) {
+      source = Buffer.from([
+        0x50, 0x4B, 0x05, 0x06,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00,
+      ]);
+    }
 
     if (typeof source === `string`) {
       const {baseFs = new NodeFS()} = pathOptions;
@@ -222,6 +238,7 @@ export class ZipFS extends BasePortableFakeFS {
 
         try {
           this.zip = this.libzip.openFromSource(lzSource, flags, errPtr);
+          this.lzSource = lzSource;
         } catch (error) {
           this.libzip.source.free(lzSource);
           throw error;
@@ -251,7 +268,7 @@ export class ZipFS extends BasePortableFakeFS {
 
       // If the raw path is a directory, register it
       // to prevent empty folder being skipped
-      if (raw.endsWith('/')) {
+      if (raw.endsWith(`/`)) {
         this.registerListing(p);
       }
     }
@@ -281,6 +298,64 @@ export class ZipFS extends BasePortableFakeFS {
     return this.path;
   }
 
+  getBufferAndClose(): Buffer {
+    if (!this.ready)
+      throw errors.EBUSY(`archive closed, close`);
+
+    if (!this.lzSource)
+      throw new Error(`ZipFS was not created from a Buffer`);
+
+    try {
+      // Prevent close from cleaning up the source
+      this.libzip.source.keep(this.lzSource);
+
+      // Close the zip archive
+      if (this.libzip.close(this.zip) === -1)
+        throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
+
+      // Open the source for reading
+      if (this.libzip.source.open(this.lzSource) === -1)
+        throw new Error(this.libzip.error.strerror(this.libzip.source.error(this.lzSource)));
+
+      // Move to the end of source
+      if (this.libzip.source.seek(this.lzSource, 0, 0, this.libzip.SEEK_END) === -1)
+        throw new Error(this.libzip.error.strerror(this.libzip.source.error(this.lzSource)));
+
+      // Get the size of source
+      const size = this.libzip.source.tell(this.lzSource);
+
+      // Move to the start of source
+      if (this.libzip.source.seek(this.lzSource, 0, 0, this.libzip.SEEK_SET) === -1)
+        throw new Error(this.libzip.error.strerror(this.libzip.source.error(this.lzSource)));
+
+      const buffer = this.libzip.malloc(size);
+      if (!buffer)
+        throw new Error(`Couldn't allocate enough memory`);
+
+      try {
+        const rc = this.libzip.source.read(this.lzSource, buffer, size);
+
+        if (rc === -1)
+          throw new Error(this.libzip.error.strerror(this.libzip.source.error(this.lzSource)));
+        else if (rc < size)
+          throw new Error(`Incomplete read`);
+        else if (rc > size)
+          throw new Error(`Overread`);
+
+        const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
+        return Buffer.from(memory);
+      }
+      finally {
+        this.libzip.free(buffer);
+      }
+    }
+    finally {
+      this.libzip.source.close(this.lzSource);
+      this.libzip.source.free(this.lzSource);
+      this.ready = false;
+    }
+  }
+
   saveAndClose() {
     if (!this.path || !this.baseFs)
       throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);
@@ -288,8 +363,10 @@ export class ZipFS extends BasePortableFakeFS {
     if (!this.ready)
       throw errors.EBUSY(`archive closed, close`);
 
-    if (this.readOnly)
-      return this.discardAndClose();
+    if (this.readOnly) {
+      this.discardAndClose();
+      return;
+    }
 
     const previousMod = this.baseFs.existsSync(this.path)
       ? this.baseFs.statSync(this.path).mode & 0o777
@@ -321,6 +398,10 @@ export class ZipFS extends BasePortableFakeFS {
     this.ready = false;
   }
 
+  resolve(p: PortablePath) {
+    return ppath.resolve(PortablePath.root, p);
+  }
+
   async openPromise(p: PortablePath, flags: string, mode?: number) {
     return this.openSync(p, flags, mode);
   }
@@ -350,7 +431,7 @@ export class ZipFS extends BasePortableFakeFS {
     source.copy(buffer, offset, realPosition, realPosition + length);
 
     const bytesRead = Math.max(0, Math.min(source.length - realPosition, length));
-    if (position === -1)
+    if (position === -1 || position === null)
       entry.cursor += bytesRead;
 
     return bytesRead;
@@ -953,8 +1034,10 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   mkdirSync(p: PortablePath, {mode = 0o755, recursive = false}: MkdirOptions = {}) {
-    if (recursive)
-      return this.mkdirpSync(p, {chmod: mode});
+    if (recursive) {
+      this.mkdirpSync(p, {chmod: mode});
+      return;
+    }
 
     if (this.readOnly)
       throw errors.EROFS(`mkdir '${p}'`);
@@ -1145,4 +1228,4 @@ export class ZipFS extends BasePortableFakeFS {
     const interval = setInterval(() => {}, 24 * 60 * 60 * 1000);
     return {on: () => {}, close: () => {clearInterval(interval);}};
   }
-};
+}

@@ -12,7 +12,7 @@ const useScroll = () => {
   }
 
   useLayoutEffect(() => {
-    const id = window.location.pathname.split(`/`)[2];
+    const id = window.location.pathname.split(`/`)[1];
     const initPos = readBrowserStorage(id);
     ref.current.scrollTop = initPos == null ? 0 : parseInt(initPos, 10);
     return () => setBrowserStorage(id, ref.current.scrollTop);

@@ -8,6 +8,8 @@ const getColorForScalar = (theme, scalar) => {
     return theme.colors.string;
   if (typeof scalar === `boolean`)
     return theme.colors.boolean;
+  if (typeof scalar === `number`)
+    return theme.colors.number;
   return null;
 };
 

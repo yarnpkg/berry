@@ -3,6 +3,7 @@ import {Configuration, Cache, Descriptor, Project} from '@yarnpkg/core';
 import {StreamReport, Workspace}                   from '@yarnpkg/core';
 import {structUtils}                               from '@yarnpkg/core';
 import {Command, Usage, UsageError}                from 'clipanion';
+import micromatch                                  from 'micromatch';
 
 import * as suggestUtils                           from '../suggestUtils';
 import {Hooks}                                     from '..';
@@ -13,14 +14,16 @@ export default class RemoveCommand extends BaseCommand {
   all: boolean = false;
 
   @Command.Rest()
-  names: Array<string> = [];
+  patterns: Array<string> = [];
 
   static usage: Usage = Command.Usage({
     description: `remove dependencies from the project`,
     details: `
-      This command will remove the specified packages from the current workspace.
+      This command will remove the packages matching the specified patterns from the current workspace.
 
       If the \`-A,--all\` option is set, the operation will be applied to all workspaces from the current project.
+
+      This command accepts glob patterns as arguments (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
     `,
     examples: [[
       `Remove a dependency from the current project`,
@@ -28,6 +31,15 @@ export default class RemoveCommand extends BaseCommand {
     ], [
       `Remove a dependency from all workspaces at once`,
       `$0 remove lodash --all`,
+    ], [
+      `Remove all dependencies starting with \`eslint-\``,
+      `$0 remove 'eslint-*'`,
+    ], [
+      `Remove all dependencies with the \`@babel\` scope`,
+      `$0 remove '@babel/*'`,
+    ], [
+      `Remove all dependencies matching \`react-dom\` or \`react-helmet\``,
+      `$0 remove 'react-{dom,helmet}'`,
     ]],
   });
 
@@ -50,7 +62,7 @@ export default class RemoveCommand extends BaseCommand {
       suggestUtils.Target.PEER,
     ];
 
-    const unreferencedPackages = [];
+    const unreferencedPatterns = [];
     let hasChanged = false;
 
     const afterWorkspaceDependencyRemovalList: Array<[
@@ -59,28 +71,41 @@ export default class RemoveCommand extends BaseCommand {
       Descriptor
     ]> = [];
 
-    for (const entry of this.names) {
-      const ident = structUtils.parseIdent(entry);
+    for (const pattern of this.patterns) {
       let isReferenced = false;
 
+      // This isn't really needed - It's just for consistency:
+      // All patterns are either valid or not for all commands (e.g. remove, up)
+      const pseudoIdent = structUtils.parseIdent(pattern);
+
       for (const workspace of affectedWorkspaces) {
-        if (workspace.manifest.peerDependenciesMeta.has(ident.name)) {
-          workspace.manifest.peerDependenciesMeta.delete(ident.name);
+        const peerDependenciesMeta = [...workspace.manifest.peerDependenciesMeta.keys()];
+        for (const stringifiedIdent of micromatch(peerDependenciesMeta, pattern)) {
+          workspace.manifest.peerDependenciesMeta.delete(stringifiedIdent);
 
           hasChanged = true;
           isReferenced = true;
         }
 
         for (const target of targets) {
-          const current = workspace.manifest[target].get(ident.identHash);
+          const descriptors = workspace.manifest.getForScope(target);
+          const stringifiedIdents = [...descriptors.values()].map(descriptor => {
+            return structUtils.stringifyIdent(descriptor);
+          });
 
-          if (typeof current !== `undefined`) {
-            workspace.manifest[target].delete(ident.identHash);
+          for (const stringifiedIdent of micromatch(stringifiedIdents, structUtils.stringifyIdent(pseudoIdent))) {
+            const {identHash} = structUtils.parseIdent(stringifiedIdent);
+
+            const removedDescriptor = descriptors.get(identHash);
+            if (typeof removedDescriptor === `undefined`)
+              throw new Error(`Assertion failed: Expected the descriptor to be registered`);
+
+            workspace.manifest[target].delete(identHash);
 
             afterWorkspaceDependencyRemovalList.push([
               workspace,
               target,
-              current,
+              removedDescriptor,
             ]);
 
             hasChanged = true;
@@ -90,20 +115,24 @@ export default class RemoveCommand extends BaseCommand {
       }
 
       if (!isReferenced) {
-        unreferencedPackages.push(structUtils.prettyIdent(configuration, ident));
+        unreferencedPatterns.push(pattern);
       }
     }
 
-    const arent = unreferencedPackages.length > 1
-      ? `aren't`
-      : `isn't`;
+    const patterns = unreferencedPatterns.length > 1
+      ? `Patterns`
+      : `Pattern`;
+
+    const dont = unreferencedPatterns.length > 1
+      ? `don't`
+      : `doesn't`;
 
     const which = this.all
       ? `any`
       : `this`;
 
-    if (unreferencedPackages.length > 0)
-      throw new UsageError(`Package ${unreferencedPackages.join(`, `)} ${arent} referenced by ${which} workspace`);
+    if (unreferencedPatterns.length > 0)
+      throw new UsageError(`${patterns} ${unreferencedPatterns.join(`, `)} ${dont} match packages referenced by ${which} workspace`);
 
     if (hasChanged) {
       await configuration.triggerMultipleHooks(
@@ -120,5 +149,7 @@ export default class RemoveCommand extends BaseCommand {
 
       return report.exitCode();
     }
+
+    return 0;
   }
 }

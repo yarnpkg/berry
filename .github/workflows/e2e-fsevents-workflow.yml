@@ -31,7 +31,7 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
         yarn init
-        yarn add fsevents@^1
+        yarn add fsevents@^1 node-gyp
 
         cat > test.js <<EOT
           const assert = require('assert');

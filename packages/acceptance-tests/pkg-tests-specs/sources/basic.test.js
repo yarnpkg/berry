@@ -1,6 +1,6 @@
 const {
   tests: {getPackageArchivePath, getPackageHttpArchivePath, getPackageDirectoryPath},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Basic tests`, () => {
   test(

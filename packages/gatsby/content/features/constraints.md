@@ -152,7 +152,7 @@ Running `yarn constraints --fix` will instruct Yarn to fix the detected errors t
 gen_enforced_field(
   +WorkspaceCwd,
   -FieldPath,
-  -FieldValue
+  +FieldValue
 ).
 ```
 

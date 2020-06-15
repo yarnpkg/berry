@@ -12,7 +12,7 @@ let fsPatched = false;
 
 let pnp: PnpApi;
 try {
-  pnp = dynamicRequire('pnpapi');
+  pnp = dynamicRequire(`pnpapi`);
 } catch (e) {
 }
 

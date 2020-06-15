@@ -90,6 +90,10 @@ export class ZipOpenFS extends BasePortableFakeFS {
     }
   }
 
+  resolve(p: PortablePath) {
+    return this.baseFs.resolve(p);
+  }
+
   private remapFd(zipFs: ZipFS, fd: number) {
     const remappedFd = this.nextFd++ | ZIP_FD;
     this.fdMap.set(remappedFd, [zipFs, fd]);
@@ -654,7 +658,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     if (typeof p !== `string`)
       return await discard();
 
-    const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(PortablePath.root, p));
+    const normalizedP = this.resolve(p);
 
     const zipInfo = this.findZip(normalizedP);
     if (!zipInfo)
@@ -670,7 +674,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     if (typeof p !== `string`)
       return discard();
 
-    const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(PortablePath.root, p));
+    const normalizedP = this.resolve(p);
 
     const zipInfo = this.findZip(normalizedP);
     if (!zipInfo)
@@ -758,8 +762,16 @@ export class ZipOpenFS extends BasePortableFakeFS {
     if (this.zipInstances) {
       let zipFs = this.zipInstances.get(p);
 
-      if (!zipFs)
-        zipFs = new ZipFS(p, await getZipOptions());
+      if (!zipFs) {
+        const zipOptions = await getZipOptions();
+
+        // We need to recheck because concurrent getZipPromise calls may
+        // have instantiated the zip archive while we were waiting
+        zipFs = this.zipInstances.get(p);
+        if (!zipFs) {
+          zipFs = new ZipFS(p, zipOptions);
+        }
+      }
 
       // Removing then re-adding the field allows us to easily implement
       // a basic LRU garbage collection strategy

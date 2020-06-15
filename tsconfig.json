@@ -6,11 +6,13 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
-    "lib": ["dom", "es2017", "esnext", "esnext.asynciterable"],
+    "lib": ["dom", "esnext", "esnext.asynciterable"],
     "module": "commonjs",
+    "noImplicitReturns": true,
     "strict": true,
-    "target": "es2017",
-    "declaration": true
+    "target": "ES2018",
+    "declaration": true,
+    "importHelpers": true
   },
   "exclude": [
     "packages/*/lib",

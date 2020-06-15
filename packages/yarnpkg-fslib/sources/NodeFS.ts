@@ -4,7 +4,8 @@ import {CreateReadStreamOptions, CreateWriteStreamOptions}  from './FakeFS';
 import {Dirent, SymlinkType}                                from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}               from './FakeFS';
 import {MkdirOptions, WatchOptions, WatchCallback, Watcher} from './FakeFS';
-import {FSPath, PortablePath, Filename, npath}              from './path';
+import {ENOSYS}                                             from './errors';
+import {FSPath, PortablePath, Filename, ppath, npath}       from './path';
 
 export class NodeFS extends BasePortableFakeFS {
   private readonly realFs: typeof fs;
@@ -13,6 +14,12 @@ export class NodeFS extends BasePortableFakeFS {
     super();
 
     this.realFs = realFs;
+
+    // @ts-ignore
+    if (typeof this.realFs.lutimes !== `undefined`) {
+      this.lutimesPromise = this.lutimesPromiseImpl;
+      this.lutimesSync = this.lutimesSyncImpl;
+    }
   }
 
   getExtractHint() {
@@ -21,6 +28,10 @@ export class NodeFS extends BasePortableFakeFS {
 
   getRealPath() {
     return PortablePath.root;
+  }
+
+  resolve(p: PortablePath) {
+    return ppath.resolve(p);
   }
 
   async openPromise(p: PortablePath, flags: string, mode?: number) {
@@ -233,6 +244,26 @@ export class NodeFS extends BasePortableFakeFS {
     this.realFs.utimesSync(npath.fromPortablePath(p), atime, mtime);
   }
 
+  private async lutimesPromiseImpl(this: NodeFS, p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
+    // @ts-ignore: Not yet in DefinitelyTyped
+    const lutimes = this.realFs.lutimes;
+    if (typeof lutimes === `undefined`)
+      throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
+
+    return await new Promise<void>((resolve, reject) => {
+      lutimes.call(this.realFs, npath.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
+    });
+  }
+
+  private lutimesSyncImpl(this: NodeFS, p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
+    // @ts-ignore: Not yet in DefinitelyTyped
+    const lutimesSync = this.realFs.lutimesSync;
+    if (typeof lutimesSync === `undefined`)
+      throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
+
+    lutimesSync.call(this.realFs, npath.fromPortablePath(p), atime, mtime);
+  }
+
   async mkdirPromise(p: PortablePath, opts?: MkdirOptions) {
     return await new Promise<void>((resolve, reject) => {
       this.realFs.mkdir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
@@ -292,7 +323,7 @@ export class NodeFS extends BasePortableFakeFS {
       if (withFileTypes) {
         this.realFs.readdir(npath.fromPortablePath(p), {withFileTypes: true}, this.makeCallback(resolve, reject) as any);
       } else {
-        this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback(value => resolve(value as Filename[]), reject));
+        this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback(value => resolve(value as Array<Filename>), reject));
       }
     });
   }
@@ -305,7 +336,7 @@ export class NodeFS extends BasePortableFakeFS {
     if (withFileTypes) {
       return this.realFs.readdirSync(npath.fromPortablePath(p), {withFileTypes: true} as any);
     } else {
-      return this.realFs.readdirSync(npath.fromPortablePath(p)) as Filename[];
+      return this.realFs.readdirSync(npath.fromPortablePath(p)) as Array<Filename>;
     }
   }
 

@@ -1,7 +1,7 @@
 {
   "title": "JSON Schema for Yarnrc files",
   "$schema": "https://json-schema.org/draft/2019-09/schema#",
-  "description": "Yarnrc files (named this way because they must be called `.yarnrc.yml`) are the one place where you'll be able to configure Yarn's internal settings. While Yarn will automatically find them in the parent directories, they should usually be kept at the root of your project (often your repository). Starting from the v2, they **must** be written in valid Yaml and have the right extension (simply calling your file `.yarnrc` won't do).\n\nThose settings can also be defined through environment variables (at least for the simpler ones; arrays and objects aren't supported yet). To do this, just prefix the names and write them in snake case: `YARN_CACHE_FOLDER` will set the cache folder (such values will overwrite any that might have been defined in the RC files - use them sparingly).",
+  "description": "Yarnrc files (named this way because they must be called `.yarnrc.yml`) are the one place where you'll be able to configure Yarn's internal settings. While Yarn will automatically find them in the parent directories, they should usually be kept at the root of your project (often your repository). Starting from the v2, they **must** be written in valid Yaml and have the right extension (simply calling your file `.yarnrc` won't do).\n\nEnvironment variables can be accessed from setting definitions by using the `${NAME}` syntax when defining the values. By default Yarn will require the variables to be present, but this can be turned off by using either `${NAME-fallback}` (which will return `fallback` if `NAME` isn't set) or `${NAME:-fallback}` (which will return `fallback` if `NAME` isn't set, or is an empty string).\n\nFinally, note that most settings can also be defined through environment variables (at least for the simpler ones; arrays and objects aren't supported yet). To do this, just prefix the names and write them in snake case: `YARN_CACHE_FOLDER` will set the cache folder (such values will overwrite any that might have been defined in the RC files - use them sparingly).",
   "type": "object",
   "properties": {
     "bstatePath": {
@@ -23,6 +23,14 @@
         "type": "string"
       },
       "default": ["master", "origin/master", "upstream/master"]
+    },
+    "changesetIgnorePatterns": {
+      "description": "An Array of glob patterns. Files matching the following patterns (in terms of relative paths compared to the root of the project) will be ignored by the `yarn version check` command.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": ["**/*.test.{js,ts}"]
     },
     "checksumBehavior": {
       "description": "If `throw` (the default), Yarn will throw an exception on `yarn install` if it detects that a package doesn't match the checksum stored within the lockfile. If `update`, the lockfile checksum will be updated to match the new value. If `ignore`, the checksum check will not happen.",
@@ -144,6 +152,16 @@
       "format": "uri",
       "default": "http://proxy:4040"
     },
+    "httpTimeout": {
+      "description": "Timeout of each http request in milliseconds",
+      "type": "number",
+      "default": 60000
+    },
+    "httpRetry": {
+      "description": "Retry times on http failure",
+      "type": "number",
+      "default": 3
+    },
     "ignoreCwd": {
       "description": "If true, the `--cwd` flag will be ignored.",
       "type": "boolean",
@@ -154,22 +172,24 @@
       "type": "boolean",
       "default": false
     },
-    "initLicense": {
-      "description": "License used when creating packages via the `init` command.",
-      "type": "string",
-      "default": "MIT"
-    },
     "initScope": {
       "description": "Scope used when creating packages via the `init` command.",
       "type": "string",
       "pattern": "^(?:([^/]+?))$",
       "default": "yarnpkg"
     },
-    "initVersion": {
-      "description": "Version used when creating packages via the `init` command.",
-      "type": "string",
-      "pattern": "^(?:(.+))$",
-      "default": "0.0.1"
+    "initFields": {
+      "description": "Additional fields to set when creating packages via the `init` command.",
+      "type": "object",
+      "patternProperties": {
+        "^(.+)$": {
+          "description": "All properties will be added verbatim to the generated package.json",
+          "default": "https://yarnpkg.com"
+        }
+      },
+      "default": {
+        "homepage": {}
+      }
     },
     "installStatePath": {
       "description": "Path of the file where the install state will be persisted.",
@@ -400,11 +420,13 @@
       "enum": ["none", "dependencies-only", "all"],
       "default": "dependencies-only"
     },
-    "pnpIgnorePattern": {
-      "description": "Files matching the following location (in term of relative path compared to the generated `.pnp.js` file) will not be covered by PnP and will use the regular Node resolution. Typically only needed if you have subprojects that aren't yet part of your workspace tree.",
-      "type": "string",
-      "format": "regex",
-      "default": "^\\./subdir/.*"
+    "pnpIgnorePatterns": {
+      "description": "An Array of glob patterns. Files matching the following locations (in term of relative path compared to the generated `.pnp.js` file) will not be covered by PnP and will use the regular Node resolution. Typically only needed if you have subprojects that aren't yet part of your workspace tree.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": ["./subdir/.*"]
     },
     "pnpMode": {
       "description": "If `strict` (the default), Yarn won't allow modules to require packages they don't explicitly list in their own dependencies. If `loose`, Yarn will allow access to the packages that would have been hoisted to the top-level under 1.x installs. Note that, even in loose mode, such calls are unsafe (hoisting rules aren't predictable) and should be discouraged.",

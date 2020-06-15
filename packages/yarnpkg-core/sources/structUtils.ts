@@ -169,7 +169,7 @@ export function parseIdent(string: string): Ident {
 }
 
 export function tryParseIdent(string: string): Ident | null {
-  const match = string.match(/^(?:@([^\/]+?)\/)?([^\/]+)$/);
+  const match = string.match(/^(?:@([^/]+?)\/)?([^/]+)$/);
   if (!match)
     return null;
 
@@ -192,8 +192,8 @@ export function parseDescriptor(string: string, strict: boolean = false): Descri
 
 export function tryParseDescriptor(string: string, strict: boolean = false): Descriptor | null {
   const match = strict
-    ? string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))$/)
-    : string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))?$/);
+    ? string.match(/^(?:@([^/]+?)\/)?([^/]+?)(?:@(.+))$/)
+    : string.match(/^(?:@([^/]+?)\/)?([^/]+?)(?:@(.+))?$/);
 
   if (!match)
     return null;
@@ -223,8 +223,8 @@ export function parseLocator(string: string, strict: boolean = false): Locator {
 
 export function tryParseLocator(string: string, strict: boolean = false): Locator | null {
   const match = strict
-    ? string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))$/)
-    : string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))?$/);
+    ? string.match(/^(?:@([^/]+?)\/)?([^/]+?)(?:@(.+))$/)
+    : string.match(/^(?:@([^/]+?)\/)?([^/]+?)(?:@(.+))?$/);
 
   if (!match)
     return null;
@@ -447,6 +447,8 @@ function prettyRangeNoColors(range: string): string {
     const abbrev = range.substr(VIRTUAL_PROTOCOL.length, VIRTUAL_ABBREVIATE);
 
     // I'm not satisfied of how the virtual packages appear in the output
+
+    // eslint-disable-next-line no-constant-condition
     return false ? `${nested} (virtual:${abbrev})` : `${nested} [${abbrev}]`;
   } else {
     return range.replace(/\?.*/, `?[...]`);
@@ -496,5 +498,5 @@ export function prettyWorkspace(configuration: Configuration, workspace: Workspa
  * them to a different location if that's a critical requirement.
  */
 export function getIdentVendorPath(ident: Ident) {
-  return `/node_modules/${requirableIdent(ident)}` as PortablePath;
+  return `node_modules/${requirableIdent(ident)}` as PortablePath;
 }

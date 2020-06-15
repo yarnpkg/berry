@@ -167,7 +167,8 @@ export default class AddCommand extends BaseCommand {
     const afterWorkspaceDependencyAdditionList: Array<[
       Workspace,
       suggestUtils.Target,
-      Descriptor
+      Descriptor,
+      Array<suggestUtils.Strategy>
     ]> = [];
 
     const afterWorkspaceDependencyReplacementList: Array<[
@@ -230,6 +231,7 @@ export default class AddCommand extends BaseCommand {
             workspace,
             target,
             selected,
+            strategies,
           ]);
         } else {
           afterWorkspaceDependencyReplacementList.push([

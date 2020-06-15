@@ -1,6 +1,7 @@
 {
   "name": "pkg-tests-core",
   "private": true,
+  "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/invariant": "^2.2.30",
@@ -8,9 +9,10 @@
     "@types/minimatch": "^3.0.3",
     "@types/semver": "^7.1.0",
     "@types/tar-fs": "^1.16.1",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.32",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.26",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.18",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.35",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.29",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
+    "@yarnpkg/parsers": "workspace:^2.0.0-rc.12",
     "finalhandler": "^1.1.2",
     "invariant": "^2.2.4",
     "klaw": "^2.1.1",
@@ -28,5 +30,8 @@
   "devDependencies": {
     "@types/finalhandler": "1.1.0",
     "@types/serve-static": "1.13.3"
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }

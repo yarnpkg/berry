@@ -1,8 +1,8 @@
 const {npath, xfs} = require(`@yarnpkg/fslib`);
-const {isAbsolute, resolve} = require('path');
+const {isAbsolute, resolve} = require(`path`);
 
 const {
-  fs: {createTemporaryFolder, makeFakeBinary, walk, readFile, writeJson},
+  fs: {createTemporaryFolder, makeFakeBinary, walk, readFile, writeJson, writeFile},
 } = require(`pkg-tests-core`);
 
 const globalName = makeTemporaryEnv.getPackageManagerName();
@@ -170,9 +170,9 @@ describe(`Scripts tests`, () => {
       await run(`install`);
 
       await expect(source(`require('no-deps-scripted/log.js')`)).resolves.toEqual([
-        'preinstall',
-        'install',
-        'postinstall',
+        `preinstall`,
+        `install`,
+        `postinstall`,
       ]);
     }),
   );
@@ -251,7 +251,7 @@ describe(`Scripts tests`, () => {
 
         expect(itemPath).toBeDefined();
 
-        const content = await readFile(itemPath, 'utf8');
+        const content = await readFile(itemPath, `utf8`);
         await expect(content).toEqual(npath.fromPortablePath(itemPath));
       },
     ),
@@ -283,15 +283,22 @@ describe(`Scripts tests`, () => {
   );
 
   test(
+    `it should correctly run empty install scripts`,
+    makeTemporaryEnv({dependencies: {[`no-deps-scripted-empty`]: `1.0.0`}}, async ({path, run, source}) => {
+      await run(`install`);
+    }),
+  );
+
+  test(
     `it should correctly run scripts when project path has space inside`,
     makeTemporaryEnv({
       private: true,
-      workspaces: ['packages/*'],
+      workspaces: [`packages/*`],
     }, async ({path, run, source}) => {
       await writeJson(`${path}/packages/test 1/package.json`, {
         scripts: {
-          ['ws:foo2']: `yarn run ws:foo`,
-          ['ws:foo']: `node -e 'console.log(1)'`,
+          [`ws:foo2`]: `yarn run ws:foo`,
+          [`ws:foo`]: `node -e 'console.log(1)'`,
         },
       });
 
@@ -299,6 +306,42 @@ describe(`Scripts tests`, () => {
 
       await expect(run(`run`, `ws:foo2`)).resolves.toMatchObject({
         stdout: `1\n`,
+      });
+    })
+  );
+
+  test(
+    `it should setup the correct path for locally installed binaries`,
+    makeTemporaryEnv({
+      scripts: {
+        [`test`]: `node test`,
+      },
+      dependencies: {
+        [`has-bin-entries`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await writeFile(`${path}/test.js`, `
+      const {existsSync} = require('fs');
+      const {join} = require('path');
+
+      const files = ['has-bin-entries'];
+      if (process.platform === 'win32')
+        files.push('has-bin-entries.cmd');
+
+      for (const file of files) {
+        if (!existsSync(join(process.env.BERRY_BIN_FOLDER, file))) {
+          console.error('Expected ' + file + ' to exist');
+          process.exit(1);
+        }
+      }
+
+      console.log('ok');
+      `);
+
+      await expect(run(`test`)).resolves.toMatchObject({
+        stdout: `ok\n`,
       });
     })
   );

@@ -1,6 +1,7 @@
 import {BaseCommand, openWorkspace}         from '@yarnpkg/cli';
 import {Configuration, MessageName, Report} from '@yarnpkg/core';
 import {StreamReport}                       from '@yarnpkg/core';
+import {PortablePath}                       from '@yarnpkg/fslib';
 import {npmConfigUtils, npmHttpUtils}       from '@yarnpkg/plugin-npm';
 import {Command, Usage}                     from 'clipanion';
 import inquirer                             from 'inquirer';
@@ -45,15 +46,12 @@ export default class NpmLoginCommand extends BaseCommand {
       output: this.context.stdout as NodeJS.WriteStream,
     });
 
-    let registry: string;
-    if (this.scope && this.publish)
-      registry = npmConfigUtils.getScopeRegistry(this.scope, {configuration, type: npmConfigUtils.RegistryType.PUBLISH_REGISTRY});
-    else if (this.scope)
-      registry = npmConfigUtils.getScopeRegistry(this.scope, {configuration});
-    else if (this.publish)
-      registry = npmConfigUtils.getPublishRegistry((await openWorkspace(configuration, this.context.cwd)).manifest, {configuration});
-    else
-      registry = npmConfigUtils.getDefaultRegistry({configuration});
+    const registry: string = await getRegistry({
+      configuration,
+      cwd: this.context.cwd,
+      publish: this.publish,
+      scope: this.scope,
+    });
 
     const report = await StreamReport.start({
       configuration,
@@ -78,6 +76,19 @@ export default class NpmLoginCommand extends BaseCommand {
   }
 }
 
+export async function getRegistry({scope, publish, configuration, cwd}: {scope?: string, publish: boolean, configuration: Configuration, cwd: PortablePath}) {
+  if (scope && publish)
+    return npmConfigUtils.getScopeRegistry(scope, {configuration, type: npmConfigUtils.RegistryType.PUBLISH_REGISTRY});
+
+  if (scope)
+    return npmConfigUtils.getScopeRegistry(scope, {configuration});
+
+  if (publish)
+    return npmConfigUtils.getPublishRegistry((await openWorkspace(configuration, cwd)).manifest, {configuration});
+
+  return npmConfigUtils.getDefaultRegistry({configuration});
+}
+
 async function setAuthToken(registry: string, npmAuthToken: string, {configuration}: {configuration: Configuration}) {
   return await Configuration.updateHomeConfiguration({
     npmRegistries: (registries: {[key: string]: any} = {}) => ({
@@ -93,8 +104,8 @@ async function setAuthToken(registry: string, npmAuthToken: string, {configurati
 async function getCredentials(prompt: any, {registry, report}: {registry: string, report: Report}) {
   if (process.env.TEST_ENV) {
     return {
-      name: process.env.TEST_NPM_USER || '',
-      password: process.env.TEST_NPM_PASSWORD || '',
+      name: process.env.TEST_NPM_USER || ``,
+      password: process.env.TEST_NPM_PASSWORD || ``,
     };
   }
 

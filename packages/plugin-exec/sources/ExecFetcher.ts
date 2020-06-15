@@ -1,5 +1,5 @@
 import {execUtils, scriptUtils, structUtils, tgzUtils}                     from '@yarnpkg/core';
-import {Locator, MessageName}                                              from '@yarnpkg/core';
+import {Locator}                                                           from '@yarnpkg/core';
 import {Fetcher, FetchOptions, MinimalFetchOptions}                        from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, toFilename, xfs, NativePath} from '@yarnpkg/fslib';
 
@@ -47,14 +47,11 @@ export class ExecFetcher implements Fetcher {
   async fetch(locator: Locator, opts: FetchOptions) {
     const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
 
-    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(
-      locator,
-      expectedChecksum,
-      async () => {
-        opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`);
-        return await this.fetchFromDisk(locator, opts);
-      },
-    );
+    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
+      onHit: () => opts.report.reportCacheHit(locator),
+      onMiss: () => opts.report.reportCacheMiss(locator),
+      loader: () => this.fetchFromDisk(locator, opts),
+    });
 
     return {
       packageFs,
@@ -82,7 +79,7 @@ export class ExecFetcher implements Fetcher {
 
         return await tgzUtils.makeArchiveFromDirectory(ppath.join(cwd, toFilename(`build`)), {
           prefixPath: structUtils.getIdentVendorPath(locator),
-          compressionLevel: opts.project.configuration.get('compressionLevel'),
+          compressionLevel: opts.project.configuration.get(`compressionLevel`),
         });
       });
     });
@@ -91,7 +88,7 @@ export class ExecFetcher implements Fetcher {
   private async generatePackage(cwd: PortablePath, locator: Locator, generatorPath: PortablePath, opts: FetchOptions) {
     return await xfs.mktempPromise(async binFolder => {
       const env = await scriptUtils.makeScriptEnv({project: opts.project, binFolder});
-      const envFile = ppath.join(cwd, `environment.js` as Filename);
+      const runtimeFile = ppath.join(cwd, `runtime.js` as Filename);
 
       return await xfs.mktempPromise(async logDir => {
         const logFile = ppath.join(logDir, `buildfile.log` as Filename);
@@ -116,10 +113,12 @@ export class ExecFetcher implements Fetcher {
           buildDir: npath.fromPortablePath(buildDir),
           locator: structUtils.stringifyLocator(locator),
         };
-        await xfs.writeFilePromise(envFile, `
+
+        await xfs.writeFilePromise(runtimeFile, `
           // Expose 'Module' as a global variable
           Object.defineProperty(global, 'Module', {
             get: () => require('module'),
+            configurable: true,
             enumerable: false,
           });
 
@@ -127,6 +126,7 @@ export class ExecFetcher implements Fetcher {
           for (const name of Module.builtinModules.filter((name) => name !== 'module' && !name.startsWith('_'))) {
             Object.defineProperty(global, name, {
               get: () => require(name),
+              configurable: true,
               enumerable: false,
             });
           }
@@ -139,15 +139,18 @@ export class ExecFetcher implements Fetcher {
             enumerable: true,
           });
         `);
-        const envRequire = `--require ${npath.fromPortablePath(envFile)}`;
-        let NODE_OPTIONS = env.NODE_OPTIONS || ``;
-        NODE_OPTIONS = NODE_OPTIONS ? `${NODE_OPTIONS} ${envRequire}` : envRequire;
-        env.NODE_OPTIONS = NODE_OPTIONS;
+
+        let nodeOptions = env.NODE_OPTIONS || ``;
+
+        const pnpRegularExpression = /\s*--require\s+\S*\.pnp\.c?js\s*/g;
+        nodeOptions = nodeOptions.replace(pnpRegularExpression, ` `).trim();
+
+        env.NODE_OPTIONS = nodeOptions;
 
         stdout.write(`# This file contains the result of Yarn generating a package (${structUtils.stringifyLocator(locator)})\n`);
         stdout.write(`\n`);
 
-        const {code} = await execUtils.pipevp(process.execPath, [npath.fromPortablePath(generatorPath), structUtils.stringifyIdent(locator)], {cwd, env, stdin, stdout, stderr});
+        const {code} = await execUtils.pipevp(process.execPath, [`--require`, npath.fromPortablePath(runtimeFile), npath.fromPortablePath(generatorPath), structUtils.stringifyIdent(locator)], {cwd, env, stdin, stdout, stderr});
         if (code !== 0) {
           xfs.detachTemp(logDir);
           throw new Error(`Package generation failed (exit code ${code}, logs can be found here: ${logFile})`);

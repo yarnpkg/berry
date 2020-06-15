@@ -1,8 +1,8 @@
 const {
   fs: {writeFile},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
-const {environments} = require('./environments');
+const {environments} = require(`./environments`);
 
 const queries = {
   [`single predicate`]: `dependency_type(DependencyType).`,

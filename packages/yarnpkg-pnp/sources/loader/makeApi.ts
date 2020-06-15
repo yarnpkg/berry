@@ -30,10 +30,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   const debugLevel = Number(process.env.PNP_DEBUG_LEVEL);
 
   // @ts-ignore
-  const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding('natives')));
+  const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
 
   // Splits a require request into its components, or return null if the request is a file path
-  const pathRegExp = /^(?![a-zA-Z]:[\\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^\/]+\/)?[^\/]+)\/*(.*|)$/;
+  const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
 
   // Matches if the path starts with a valid path qualifier (./, ../, /)
   // eslint-disable-next-line no-unused-vars
@@ -100,7 +100,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   function makeLogEntry(name: string, args: Array<any>) {
     return {
       fn: name,
-      args: args,
+      args,
       error: null as Error | null,
       result: null as any,
     };
@@ -345,6 +345,83 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   }
 
   /**
+   * Find all packages that depend on the specified one.
+   *
+   * Note: This is a private function; we expect consumers to implement it
+   * themselves. We keep it that way because this implementation isn't
+   * optimized at all, since we only need it when printing errors.
+   */
+
+  function findPackageDependents({name, reference}: PhysicalPackageLocator): Array<PhysicalPackageLocator> {
+    const dependents: Array<PhysicalPackageLocator> = [];
+
+    for (const [dependentName, packageInformationStore] of packageRegistry) {
+      if (dependentName === null)
+        continue;
+
+      for (const [dependentReference, packageInformation] of packageInformationStore) {
+        if (dependentReference === null)
+          continue;
+
+        const dependencyReference = packageInformation.packageDependencies.get(name);
+        if (dependencyReference !== reference)
+          continue;
+
+        // Don't forget that all packages depend on themselves
+        if (dependentName === name && dependentReference === reference)
+          continue;
+
+        dependents.push({
+          name: dependentName,
+          reference: dependentReference,
+        });
+      }
+    }
+
+    return dependents;
+  }
+
+  /**
+   * Find all packages that broke the peer dependency on X, starting from Y.
+   *
+   * Note: This is a private function; we expect consumers to implement it
+   * themselves. We keep it that way because this implementation isn't
+   * optimized at all, since we only need it when printing errors.
+   */
+
+  function findBrokenPeerDependencies(dependency: string, initialPackage: PhysicalPackageLocator): Array<PhysicalPackageLocator> {
+    const brokenPackages = new Map<string, Set<string>>();
+
+    const traversal = (currentPackage: PhysicalPackageLocator) => {
+      const dependents = findPackageDependents(currentPackage);
+
+      for (const dependent of dependents) {
+        const dependentInformation = getPackageInformationSafe(dependent);
+
+        if (dependentInformation.packagePeers.has(dependency)) {
+          traversal(dependent);
+        } else {
+          let brokenSet = brokenPackages.get(dependent.name);
+          if (typeof brokenSet === `undefined`)
+            brokenPackages.set(dependent.name, brokenSet = new Set());
+
+          brokenSet.add(dependent.reference);
+        }
+      }
+    };
+
+    traversal(initialPackage);
+
+    const brokenList: Array<PhysicalPackageLocator> = [];
+
+    for (const name of [...brokenPackages.keys()].sort())
+      for (const reference of [...brokenPackages.get(name)!].sort())
+        brokenList.push({name, reference});
+
+    return brokenList;
+  }
+
+  /**
    * Finds the package locator that owns the specified path. If none is found, returns null instead.
    */
 
@@ -567,11 +644,20 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
             {request, issuer, dependencyName},
           );
         } else {
-          error = makeError(
-            ErrorCode.MISSING_PEER_DEPENDENCY,
-            `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`,
-            {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName},
-          );
+          const brokenAncestors = findBrokenPeerDependencies(dependencyName, issuerLocator);
+          if (brokenAncestors.every(ancestor => isDependencyTreeRoot(ancestor))) {
+            error = makeError(
+              ErrorCode.MISSING_PEER_DEPENDENCY,
+              `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`,
+              {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName, brokenAncestors},
+            );
+          } else {
+            error = makeError(
+              ErrorCode.MISSING_PEER_DEPENDENCY,
+              `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`,
+              {request, issuer, issuerLocator: Object.assign({}, issuerLocator), dependencyName, brokenAncestors},
+            );
+          }
         }
       } else if (dependencyReference === undefined) {
         if (isDependencyTreeRoot(issuerLocator)) {
@@ -632,7 +718,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     }
 
     return ppath.normalize(unqualifiedPath);
-  };
+  }
 
   /**
    * Transforms an unqualified path into a qualified path by using the Node resolution algorithm (which automatically
@@ -652,7 +738,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         {unqualifiedPath},
       );
     }
-  };
+  }
 
   /**
    * Transforms a request into a fully qualified path.
@@ -663,7 +749,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions}: ResolveRequestOptions = {}): PortablePath | null {
-    let unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
+    const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
 
     if (unqualifiedPath === null)
       return null;
@@ -671,12 +757,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     try {
       return resolveUnqualified(unqualifiedPath, {extensions});
     } catch (resolutionError) {
-      if (resolutionError.pnpCode === 'QUALIFIED_PATH_RESOLUTION_FAILED')
+      if (resolutionError.pnpCode === `QUALIFIED_PATH_RESOLUTION_FAILED`)
         Object.assign(resolutionError.data, {request, issuer});
 
       throw resolutionError;
     }
-  };
+  }
 
   function resolveVirtual(request: PortablePath) {
     const normalized = ppath.normalize(request);

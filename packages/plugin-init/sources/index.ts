@@ -19,6 +19,14 @@ const plugin: Plugin = {
       type: SettingsType.STRING,
       default: null,
     },
+    initFields: {
+      description: `Additional fields to set when creating packages via the init command`,
+      type: SettingsType.MAP,
+      valueDefinition: {
+        description: ``,
+        type: SettingsType.ANY,
+      },
+    },
   },
   commands: [
     init,

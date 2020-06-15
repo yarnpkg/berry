@@ -1,19 +1,21 @@
 {
   "name": "@yarnpkg/doctor",
-  "version": "2.0.0-rc.16",
+  "version": "2.0.0-rc.18",
+  "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.32",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.26",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.18",
-    "clipanion": "^2.1.5",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.35",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.29",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
+    "clipanion": "^2.4.1",
     "globby": "^10.0.1",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
-    "typescript": "^3.8.3"
+    "tslib": "^1.13.0",
+    "typescript": "^3.9.5"
   },
   "devDependencies": {
-    "@types/micromatch": "^3.1.0",
+    "@types/micromatch": "^4.0.1",
     "@yarnpkg/monorepo": "workspace:0.0.0"
   },
   "scripts": {
@@ -29,5 +31,8 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }

@@ -2,9 +2,23 @@
 
 exports[`gitUtils should properly normalize GitHubOrg/foo-bar.js 1`] = `"https://github.com/GitHubOrg/foo-bar.js.git"`;
 
+exports[`gitUtils should properly normalize GitHubOrg/foo-bar.js#commit:hash 1`] = `"https://github.com/GitHubOrg/foo-bar.js.git#commit:hash"`;
+
+exports[`gitUtils should properly normalize GitHubOrg/foo-bar.js#commit=hash 1`] = `"https://github.com/GitHubOrg/foo-bar.js.git#commit=hash"`;
+
+exports[`gitUtils should properly normalize GitHubOrg/foo-bar.js#commit=hash&workspace=foo 1`] = `"https://github.com/GitHubOrg/foo-bar.js.git#commit=hash&workspace=foo"`;
+
 exports[`gitUtils should properly normalize GitHubOrg/foo-bar.js#hash 1`] = `"https://github.com/GitHubOrg/foo-bar.js.git#hash"`;
 
-exports[`gitUtils should properly normalize GitHubOrg/foo2bar.js 1`] = `"GitHubOrg/foo2bar.js"`;
+exports[`gitUtils should properly normalize GitHubOrg/foo-bar.js#tag=hello 1`] = `"https://github.com/GitHubOrg/foo-bar.js.git#tag=hello"`;
+
+exports[`gitUtils should properly normalize GitHubOrg/foo-bar.js#workspace=foo 1`] = `"https://github.com/GitHubOrg/foo-bar.js.git#workspace=foo"`;
+
+exports[`gitUtils should properly normalize GitHubOrg/foo2bar.js 1`] = `"https://github.com/GitHubOrg/foo2bar.js.git"`;
+
+exports[`gitUtils should properly normalize git+https://github.com/TooTallNate/util-deprecate#v1.0.1 1`] = `"https://github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
+
+exports[`gitUtils should properly normalize git+https://github.com/TooTallNate/util-deprecate.git#v1.0.1 1`] = `"https://github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
 
 exports[`gitUtils should properly normalize git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1 1`] = `"git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
 
@@ -18,6 +32,234 @@ exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-
 
 exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate.git#master 1`] = `"https://github.com/TooTallNate/util-deprecate.git#master"`;
 
+exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate.git#semver:v1.0.0 1`] = `"https://github.com/TooTallNate/util-deprecate.git#semver:v1.0.0"`;
+
 exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate.git#v1.0.0 1`] = `"https://github.com/TooTallNate/util-deprecate.git#v1.0.0"`;
 
+exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate/tarball/b3562c2798507869edb767da869cd7b85487726d 1`] = `"https://github.com/TooTallNate/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d"`;
+
 exports[`gitUtils should properly normalize ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1 1`] = `"ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
+
+exports[`gitUtils should properly split GitHubOrg/foo-bar.js 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
+  "treeish": Object {
+    "protocol": "head",
+    "request": "master",
+  },
+}
+`;
+
+exports[`gitUtils should properly split GitHubOrg/foo-bar.js#commit:hash 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
+  "treeish": Object {
+    "protocol": "commit",
+    "request": "hash",
+  },
+}
+`;
+
+exports[`gitUtils should properly split GitHubOrg/foo-bar.js#commit=hash 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
+  "treeish": Object {
+    "protocol": "commit",
+    "request": "hash",
+  },
+}
+`;
+
+exports[`gitUtils should properly split GitHubOrg/foo-bar.js#commit=hash&workspace=foo 1`] = `
+Object {
+  "extra": Object {
+    "workspace": "foo",
+  },
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
+  "treeish": Object {
+    "protocol": "commit",
+    "request": "hash",
+  },
+}
+`;
+
+exports[`gitUtils should properly split GitHubOrg/foo-bar.js#hash 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
+  "treeish": Object {
+    "protocol": null,
+    "request": "hash",
+  },
+}
+`;
+
+exports[`gitUtils should properly split GitHubOrg/foo-bar.js#tag=hello 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
+  "treeish": Object {
+    "protocol": "tag",
+    "request": "hello",
+  },
+}
+`;
+
+exports[`gitUtils should properly split GitHubOrg/foo-bar.js#workspace=foo 1`] = `
+Object {
+  "extra": Object {
+    "workspace": "foo",
+  },
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
+  "treeish": Object {
+    "protocol": "head",
+    "request": "master",
+  },
+}
+`;
+
+exports[`gitUtils should properly split GitHubOrg/foo2bar.js 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/GitHubOrg/foo2bar.js.git",
+  "treeish": Object {
+    "protocol": "head",
+    "request": "master",
+  },
+}
+`;
+
+exports[`gitUtils should properly split git+https://github.com/TooTallNate/util-deprecate#v1.0.1 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/TooTallNate/util-deprecate.git",
+  "treeish": Object {
+    "protocol": null,
+    "request": "v1.0.1",
+  },
+}
+`;
+
+exports[`gitUtils should properly split git+https://github.com/TooTallNate/util-deprecate.git#v1.0.1 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/TooTallNate/util-deprecate.git",
+  "treeish": Object {
+    "protocol": null,
+    "request": "v1.0.1",
+  },
+}
+`;
+
+exports[`gitUtils should properly split git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "git+ssh://git@github.com/TooTallNate/util-deprecate.git",
+  "treeish": Object {
+    "protocol": null,
+    "request": "v1.0.1",
+  },
+}
+`;
+
+exports[`gitUtils should properly split git://github.com/TooTallNate/util-deprecate.git#v1.0.1 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "git://github.com/TooTallNate/util-deprecate.git",
+  "treeish": Object {
+    "protocol": null,
+    "request": "v1.0.1",
+  },
+}
+`;
+
+exports[`gitUtils should properly split github:GitHubOrg/foo-bar.js 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
+  "treeish": Object {
+    "protocol": "head",
+    "request": "master",
+  },
+}
+`;
+
+exports[`gitUtils should properly split github:GitHubOrg/foo-bar.js#hash 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
+  "treeish": Object {
+    "protocol": null,
+    "request": "hash",
+  },
+}
+`;
+
+exports[`gitUtils should properly split https://github.com/TooTallNate/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/TooTallNate/util-deprecate.git",
+  "treeish": Object {
+    "protocol": null,
+    "request": "b3562c2798507869edb767da869cd7b85487726d",
+  },
+}
+`;
+
+exports[`gitUtils should properly split https://github.com/TooTallNate/util-deprecate.git#master 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/TooTallNate/util-deprecate.git",
+  "treeish": Object {
+    "protocol": null,
+    "request": "master",
+  },
+}
+`;
+
+exports[`gitUtils should properly split https://github.com/TooTallNate/util-deprecate.git#semver:v1.0.0 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/TooTallNate/util-deprecate.git",
+  "treeish": Object {
+    "protocol": "semver",
+    "request": "v1.0.0",
+  },
+}
+`;
+
+exports[`gitUtils should properly split https://github.com/TooTallNate/util-deprecate.git#v1.0.0 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/TooTallNate/util-deprecate.git",
+  "treeish": Object {
+    "protocol": null,
+    "request": "v1.0.0",
+  },
+}
+`;
+
+exports[`gitUtils should properly split https://github.com/TooTallNate/util-deprecate/tarball/b3562c2798507869edb767da869cd7b85487726d 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "https://github.com/TooTallNate/util-deprecate.git",
+  "treeish": Object {
+    "protocol": null,
+    "request": "b3562c2798507869edb767da869cd7b85487726d",
+  },
+}
+`;
+
+exports[`gitUtils should properly split ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1 1`] = `
+Object {
+  "extra": Object {},
+  "repo": "ssh://git@github.com/TooTallNate/util-deprecate.git",
+  "treeish": Object {
+    "protocol": null,
+    "request": "v1.0.1",
+  },
+}
+`;

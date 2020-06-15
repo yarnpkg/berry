@@ -78,3 +78,5 @@ One problem with committing the deferred releases, however, is that it becomes i
 To solve this problem in an automated way, the `yarn version check` command appeared. When run, this command will figure out which packages changed and whether they are listed in the release definition file. If they aren't, an error will be thrown and - assuming you integrate this into a CI system such as the GitHub Actions - the PR author will be asked to fill out the release definition file.
 
 Writing this file can be tedious; fortunately `yarn version check` implements a very handy flag named `--interactive`. When set (`yarn version check --interactive`), Yarn will print a terminal interface that will summarize all the changed files, all the changed workspaces, all relevant dependent workspaces, and checkboxes for each entry allowing you to pick the release strategies you want to set for each workspace.
+
+The [`changesetIgnorePatterns`](/configuration/yarnrc#changesetIgnorePatterns) configuration option can be used to ignore files when checking which files have changed. It is useful for excluding files that don't affect the release process (e.g. test files).

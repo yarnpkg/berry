@@ -1,12 +1,15 @@
-import {BaseCommand}                                               from '@yarnpkg/cli';
-import {Configuration, Project, StreamReport, MessageName, Report} from '@yarnpkg/core';
-import {execUtils, httpUtils, semverUtils}                         from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs}                        from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                                from 'clipanion';
-import semver                                                      from 'semver';
+import {BaseCommand}                                      from '@yarnpkg/cli';
+import {Configuration, StreamReport, MessageName, Report} from '@yarnpkg/core';
+import {execUtils, httpUtils, semverUtils}                from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, xfs, npath}        from '@yarnpkg/fslib';
+import {Command, Usage, UsageError}                       from 'clipanion';
+import semver                                             from 'semver';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SetVersionCommand extends BaseCommand {
+  @Command.Boolean(`--only-if-needed`)
+  onlyIfNeeded: boolean = false;
+
   @Command.String()
   version!: string;
 
@@ -21,6 +24,9 @@ export default class SetVersionCommand extends BaseCommand {
       `Download the latest release from the Yarn repository`,
       `$0 set version latest`,
     ], [
+      `Download the latest classic release from the Yarn repository`,
+      `$0 set version classic`,
+    ], [
       `Download a specific Yarn 2 build`,
       `$0 set version 2.0.0-rc.30`,
     ], [
@@ -29,15 +35,19 @@ export default class SetVersionCommand extends BaseCommand {
     ]],
   });
 
+  // TODO: Remove alias in next major
+  @Command.Path(`policies`, `set-version`)
   @Command.Path(`set`, `version`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project} = await Project.find(configuration, this.context.cwd);
+    if (configuration.get(`yarnPath`) && this.onlyIfNeeded)
+      return 0;
 
     let bundleUrl: string;
-
-    if (this.version === `latest`)
+    if (this.version === `latest` || this.version === `berry`)
       bundleUrl = `https://github.com/yarnpkg/berry/raw/master/packages/yarnpkg-cli/bin/yarn.js`;
+    else if (this.version === `classic`)
+      bundleUrl = `https://nightly.yarnpkg.com/latest.js`;
     else if (semverUtils.satisfiesWithPrereleases(this.version, `>=2.0.0`))
       bundleUrl = `https://github.com/yarnpkg/berry/raw/%40yarnpkg/cli/${this.version}/packages/yarnpkg-cli/bin/yarn.js`;
     else if (semverUtils.satisfiesWithPrereleases(this.version, `^0.x || ^1.x`))
@@ -53,8 +63,7 @@ export default class SetVersionCommand extends BaseCommand {
     }, async (report: StreamReport) => {
       report.reportInfo(MessageName.UNNAMED, `Downloading ${configuration.format(bundleUrl, `green`)}`);
       const bundleBuffer = await httpUtils.get(bundleUrl, {configuration});
-
-      await setVersion(project, null, bundleBuffer, {report});
+      await setVersion(configuration, null, bundleBuffer, {report});
     });
 
     return report.exitCode();
@@ -65,14 +74,18 @@ type FetchReleasesOptions = {
   includePrereleases: boolean,
 };
 
-export async function setVersion(project: Project, bundleVersion: string | null, bundleBuffer: Buffer, {report}: {report: Report}) {
+export async function setVersion(configuration: Configuration, bundleVersion: string | null, bundleBuffer: Buffer, {report}: {report: Report}) {
+  const projectCwd = configuration.projectCwd
+    ? configuration.projectCwd
+    : configuration.startingCwd;
+
   if (bundleVersion === null) {
     await xfs.mktempPromise(async tmpDir => {
-      const temporaryPath = ppath.join(tmpDir, `yarn.js` as Filename);
+      const temporaryPath = ppath.join(tmpDir, `yarn.cjs` as Filename);
       await xfs.writeFilePromise(temporaryPath, bundleBuffer);
 
-      const {stdout} = await execUtils.execvp(process.execPath, [temporaryPath, `--version`], {
-        cwd: project.cwd,
+      const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {
+        cwd: projectCwd,
         env: {...process.env, YARN_IGNORE_PATH: `1`},
       });
 
@@ -83,16 +96,16 @@ export async function setVersion(project: Project, bundleVersion: string | null,
     });
   }
 
-  const releaseFolder = ppath.resolve(project.cwd, `.yarn/releases` as PortablePath);
-  const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.js` as Filename);
+  const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases` as PortablePath);
+  const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.cjs` as Filename);
 
-  const displayPath = ppath.relative(project.configuration.startingCwd, absolutePath);
-  const projectPath = ppath.relative(project.cwd, absolutePath);
+  const displayPath = ppath.relative(configuration.startingCwd, absolutePath);
+  const projectPath = ppath.relative(projectCwd, absolutePath);
 
-  const yarnPath = project.configuration.get(`yarnPath`);
+  const yarnPath = configuration.get(`yarnPath`);
   const updateConfig = yarnPath === null || yarnPath.startsWith(`${releaseFolder}/`);
 
-  report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${project.configuration.format(displayPath, `magenta`)}`);
+  report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${configuration.format(displayPath, `magenta`)}`);
 
   await xfs.removePromise(ppath.dirname(absolutePath));
   await xfs.mkdirpPromise(ppath.dirname(absolutePath));
@@ -101,7 +114,7 @@ export async function setVersion(project: Project, bundleVersion: string | null,
   await xfs.chmodPromise(absolutePath, 0o755);
 
   if (updateConfig) {
-    await Configuration.updateConfiguration(project.cwd, {
+    await Configuration.updateConfiguration(projectCwd, {
       yarnPath: projectPath,
     });
   }

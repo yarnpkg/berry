@@ -1,11 +1,11 @@
-import {BaseCommand}                                                               from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, miscUtils} from '@yarnpkg/core';
-import {httpUtils, structUtils}                                                    from '@yarnpkg/core';
-import {PortablePath, npath, ppath, xfs}                                           from '@yarnpkg/fslib';
-import {Command, Usage}                                                            from 'clipanion';
-import {runInNewContext}                                                           from 'vm';
+import {BaseCommand}                                                                       from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport, miscUtils, Report} from '@yarnpkg/core';
+import {httpUtils, structUtils}                                                            from '@yarnpkg/core';
+import {PortablePath, npath, ppath, xfs}                                                   from '@yarnpkg/fslib';
+import {Command, Usage}                                                                    from 'clipanion';
+import {runInNewContext}                                                                   from 'vm';
 
-import {getAvailablePlugins}                                                       from './list';
+import {getAvailablePlugins}                                                               from './list';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginDlCommand extends BaseCommand {
@@ -53,7 +53,7 @@ export default class PluginDlCommand extends BaseCommand {
 
       let pluginSpec: string;
       let pluginBuffer: Buffer;
-      if (this.name.match(/^\.{0,2}[\\\/]/) || npath.isAbsolute(this.name)) {
+      if (this.name.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.name)) {
         const candidatePath = ppath.resolve(this.context.cwd, npath.toPortablePath(this.name));
 
         report.reportInfo(MessageName.UNNAMED, `Reading ${configuration.format(candidatePath, `green`)}`);
@@ -88,55 +88,61 @@ export default class PluginDlCommand extends BaseCommand {
         pluginBuffer = await httpUtils.get(pluginUrl, {configuration});
       }
 
-      const vmExports = {} as any;
-      const vmModule = {exports: vmExports};
-
-      runInNewContext(pluginBuffer.toString(), {
-        module: vmModule,
-        exports: vmExports,
-      });
-
-      const pluginName = vmModule.exports.name;
-
-      const relativePath = `.yarn/plugins/${pluginName}.js` as PortablePath;
-      const absolutePath = ppath.resolve(project.cwd, relativePath);
-
-      report.reportInfo(MessageName.UNNAMED, `Saving the new plugin in ${configuration.format(relativePath, `magenta`)}`);
-      await xfs.mkdirpPromise(ppath.dirname(absolutePath));
-      await xfs.writeFilePromise(absolutePath, pluginBuffer);
-
-      const pluginMeta = {
-        path: relativePath,
-        spec: pluginSpec,
-      };
-
-      await Configuration.updateConfiguration(project.cwd, (current: any) => {
-        const plugins = [];
-        let hasBeenReplaced = false;
-
-        for (const entry of current.plugins || []) {
-          const userProvidedPath = typeof entry !== `string`
-            ? entry.path
-            : entry;
-
-          const pluginPath = ppath.resolve(project.cwd, npath.toPortablePath(userProvidedPath));
-          const {name} = miscUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
-
-          if (name !== pluginName) {
-            plugins.push(entry);
-          } else {
-            plugins.push(pluginMeta);
-            hasBeenReplaced = true;
-          }
-        }
-
-        if (!hasBeenReplaced)
-          plugins.push(pluginMeta);
-
-        return {plugins};
-      });
+      await savePlugin(pluginSpec, pluginBuffer, {project, report});
     });
 
     return report.exitCode();
   }
+}
+
+export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {project, report}: {project: Project, report: Report}) {
+  const {configuration} = project;
+
+  const vmExports = {} as any;
+  const vmModule = {exports: vmExports};
+
+  runInNewContext(pluginBuffer.toString(), {
+    module: vmModule,
+    exports: vmExports,
+  });
+
+  const pluginName = vmModule.exports.name;
+
+  const relativePath = `.yarn/plugins/${pluginName}.cjs` as PortablePath;
+  const absolutePath = ppath.resolve(project.cwd, relativePath);
+
+  report.reportInfo(MessageName.UNNAMED, `Saving the new plugin in ${configuration.format(relativePath, `magenta`)}`);
+  await xfs.mkdirpPromise(ppath.dirname(absolutePath));
+  await xfs.writeFilePromise(absolutePath, pluginBuffer);
+
+  const pluginMeta = {
+    path: relativePath,
+    spec: pluginSpec,
+  };
+
+  await Configuration.updateConfiguration(project.cwd, (current: any) => {
+    const plugins = [];
+    let hasBeenReplaced = false;
+
+    for (const entry of current.plugins || []) {
+      const userProvidedPath = typeof entry !== `string`
+        ? entry.path
+        : entry;
+
+      const pluginPath = ppath.resolve(project.cwd, npath.toPortablePath(userProvidedPath));
+      const {name} = miscUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
+
+      if (name !== pluginName) {
+        plugins.push(entry);
+      } else {
+        plugins.push(pluginMeta);
+        hasBeenReplaced = true;
+      }
+    }
+
+    if (!hasBeenReplaced)
+      plugins.push(pluginMeta);
+
+    return {plugins};
+  });
 }

@@ -1,0 +1,161 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`diffFolders Makes and parses diff for 'create' 1`] = `
+"diff --git a/foo.txt b/foo.txt
+new file mode 100644
+index 0000000000000000000000000000000000000000..257cc5642cb1a054f08cc83f2d943e56fd3ebe99
+--- /dev/null
++++ b/foo.txt
+@@ -0,0 +1 @@
++foo
+"
+`;
+
+exports[`diffFolders Makes and parses diff for 'create' 2`] = `
+Array [
+  Object {
+    "hash": "257cc5642cb1a054f08cc83f2d943e56fd3ebe99",
+    "hunk": Object {
+      "header": Object {
+        "original": Object {
+          "length": 0,
+          "start": 1,
+        },
+        "patched": Object {
+          "length": 1,
+          "start": 1,
+        },
+      },
+      "parts": Array [
+        Object {
+          "lines": Array [
+            "foo",
+          ],
+          "noNewlineAtEndOfFile": false,
+          "type": "insertion",
+        },
+      ],
+    },
+    "mode": 420,
+    "path": "foo.txt",
+    "semverExclusivity": null,
+    "type": "file creation",
+  },
+]
+`;
+
+exports[`diffFolders Makes and parses diff for 'remove' 1`] = `
+"diff --git a/foo.txt b/foo.txt
+deleted file mode 100644
+index 257cc5642cb1a054f08cc83f2d943e56fd3ebe99..0000000000000000000000000000000000000000
+--- a/foo.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-foo
+"
+`;
+
+exports[`diffFolders Makes and parses diff for 'remove' 2`] = `
+Array [
+  Object {
+    "hash": "257cc5642cb1a054f08cc83f2d943e56fd3ebe99",
+    "hunk": Object {
+      "header": Object {
+        "original": Object {
+          "length": 1,
+          "start": 1,
+        },
+        "patched": Object {
+          "length": 0,
+          "start": 1,
+        },
+      },
+      "parts": Array [
+        Object {
+          "lines": Array [
+            "foo",
+          ],
+          "noNewlineAtEndOfFile": false,
+          "type": "deletion",
+        },
+      ],
+    },
+    "mode": 420,
+    "path": "foo.txt",
+    "semverExclusivity": null,
+    "type": "file deletion",
+  },
+]
+`;
+
+exports[`diffFolders Makes and parses diff for 'rename' 1`] = `
+"diff --git a/foo.txt b/foo-new.txt
+similarity index 100%
+rename from foo.txt
+rename to foo-new.txt
+"
+`;
+
+exports[`diffFolders Makes and parses diff for 'rename' 2`] = `
+Array [
+  Object {
+    "fromPath": "foo.txt",
+    "semverExclusivity": null,
+    "toPath": "foo-new.txt",
+    "type": "rename",
+  },
+]
+`;
+
+exports[`diffFolders Makes and parses diff for 'update' 1`] = `
+"diff --git a/foo.txt b/foo.txt
+index 257cc5642cb1a054f08cc83f2d943e56fd3ebe99..5716ca5987cbf97d6bb54920bea6adde242d87e6 100644
+--- a/foo.txt
++++ b/foo.txt
+@@ -1 +1 @@
+-foo
++bar
+"
+`;
+
+exports[`diffFolders Makes and parses diff for 'update' 2`] = `
+Array [
+  Object {
+    "afterHash": "5716ca5987cbf97d6bb54920bea6adde242d87e6",
+    "beforeHash": "257cc5642cb1a054f08cc83f2d943e56fd3ebe99",
+    "hunks": Array [
+      Object {
+        "header": Object {
+          "original": Object {
+            "length": 1,
+            "start": 1,
+          },
+          "patched": Object {
+            "length": 1,
+            "start": 1,
+          },
+        },
+        "parts": Array [
+          Object {
+            "lines": Array [
+              "foo",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "deletion",
+          },
+          Object {
+            "lines": Array [
+              "bar",
+            ],
+            "noNewlineAtEndOfFile": false,
+            "type": "insertion",
+          },
+        ],
+      },
+    ],
+    "path": "foo.txt",
+    "semverExclusivity": null,
+    "type": "patch",
+  },
+]
+`;

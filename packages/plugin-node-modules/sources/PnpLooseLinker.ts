@@ -18,7 +18,7 @@ class PnpLooseInstaller extends PnpInstaller {
 
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
     if (this.opts.project.configuration.get(`pnpMode`) !== this.mode)
-      return;
+      return undefined;
 
     const defaultFsLayer = new VirtualFS({
       baseFs: new ZipOpenFS({

@@ -2,10 +2,14 @@
 
 import {Ident, MessageName, Project, ReportError, Workspace} from '@yarnpkg/core';
 import {miscUtils, structUtils}                              from '@yarnpkg/core';
-import {xfs, ppath, PortablePath, toFilename}                from '@yarnpkg/fslib';
+import {xfs, ppath, PortablePath}                            from '@yarnpkg/fslib';
+// @ts-ignore
+import plLists                                               from 'tau-prolog/modules/lists';
 import pl                                                    from 'tau-prolog';
 
 import {linkProjectToSession}                                from './tauModule';
+
+plLists(pl);
 
 export type EnforcedDependency = {
   workspace: Workspace,
@@ -21,9 +25,9 @@ export type EnforcedField = {
 };
 
 export enum DependencyType {
-  Dependencies = 'dependencies',
-  DevDependencies = 'devDependencies',
-  PeerDependencies = 'peerDependencies',
+  Dependencies = `dependencies`,
+  DevDependencies = `devDependencies`,
+  PeerDependencies = `peerDependencies`,
 }
 
 const DEPENDENCY_TYPES = [
@@ -88,7 +92,7 @@ function extractError(val: any) {
 // Node 8 doesn't have Symbol.asyncIterator
 // https://github.com/Microsoft/TypeScript/issues/14151#issuecomment-280812617
 if (Symbol.asyncIterator == null)
-  (Symbol as any).asyncIterator = Symbol.for('Symbol.asyncIterator');
+  (Symbol as any).asyncIterator = Symbol.for(`Symbol.asyncIterator`);
 
 class Session {
   private readonly session: pl.type.Session;
@@ -97,6 +101,7 @@ class Session {
     this.session = pl.create();
     linkProjectToSession(this.session, project);
 
+    this.session.consult(`:- use_module(library(lists)).`);
     this.session.consult(source);
   }
 
@@ -234,7 +239,7 @@ export class Constraints {
   }
 
   private async genEnforcedDependencies(session: Session) {
-    let enforcedDependencies: Array<EnforcedDependency> = [];
+    const enforcedDependencies: Array<EnforcedDependency> = [];
 
     for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
       const workspaceCwd = ppath.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd) as PortablePath);
@@ -259,12 +264,12 @@ export class Constraints {
   }
 
   private async genEnforcedFields(session: Session) {
-    let enforcedFields: Array<EnforcedField> = [];
+    const enforcedFields: Array<EnforcedField> = [];
 
     for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), gen_enforced_field(WorkspaceCwd, FieldPath, FieldValue).`)) {
       const workspaceCwd = ppath.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd) as PortablePath);
       const fieldPath = parseLink(answer.links.FieldPath);
-      let fieldValue = parseLinkToJson(answer.links.FieldValue);
+      const fieldValue = parseLinkToJson(answer.links.FieldValue);
 
       if (workspaceCwd === null || fieldPath === null)
         throw new Error(`Invalid rule`);

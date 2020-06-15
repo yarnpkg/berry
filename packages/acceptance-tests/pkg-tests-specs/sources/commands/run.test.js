@@ -129,11 +129,7 @@ describe(`Commands`, () => {
             },
           },
           async ({path, run, source}) => {
-            let code;
-            let stdout;
-            let stderr;
-
-            ({code, stdout, stderr} = await run(`run`));
+            const {code, stdout, stderr} = await run(`run`);
             expect({code, stdout, stderr}).toMatchSnapshot();
           }
         )

@@ -1,7 +1,7 @@
 const {
   fs: {writeJson},
   misc: {parseJsonStream},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
   describe(`workspace list -v,--verbose --json`, () => {

@@ -1,10 +1,10 @@
-import styled                                      from '@emotion/styled';
-import {Link, graphql, useStaticQuery, withPrefix} from 'gatsby';
-import PropTypes                                   from 'prop-types';
-import React, {useState}                           from 'react';
+import styled                                              from '@emotion/styled';
+import {Link, graphql, useStaticQuery, withPrefix}         from 'gatsby';
+import PropTypes                                           from 'prop-types';
+import React, {useLayoutEffect, useMemo, useRef, useState} from 'react';
 
-import {Logo}                                      from './logo';
-import {ifDesktop, ifMobile}                       from './responsive';
+import {Logo}                                              from './logo';
+import {ifDesktop, ifMobile}                               from './responsive';
 
 const HeaderContainer = styled.div`
   ${ifDesktop} {
@@ -148,6 +148,57 @@ const MenuNavigation = styled.div`
   }
 `;
 
+const MenuSearchBox = styled.div`
+  display: none;
+
+  margin-left: auto;
+  margin-right: 0;
+
+  flex: 1;
+
+  padding: 0 1em;
+
+  ${props => props.onlyIf()} {
+    display: flex;
+  }
+
+  ${ifMobile} {
+    width: 100%;
+  }
+
+  > * {
+    display: flex;
+
+    margin: auto;
+    margin-right: 0;
+  }
+
+  .algolia-autocomplete {
+    display: flex !important;
+
+    flex: 1;
+  }
+
+  .docsearch-desktop, .docsearch-mobile {
+    margin-left: auto;
+    margin-right: 0;
+
+    width: 100%;
+    max-width: 300px;
+    height: 3em;
+
+    border: 1px solid lightgrey;
+
+    padding: 0 1em;
+
+    font-size: 1em;
+  }
+`;
+
+const SearchParent = styled.div`
+  flex: 1;
+`;
+
 const MenuEntry = styled.div`
   ${ifDesktop} {
     &:hover {
@@ -196,6 +247,26 @@ const isActive = ({href, location}) => {
   return isMenuLinkActive || isHomeMenuLinkActive ? {className: 'active'} : null;
 };
 
+const SearchContainer = ({className}) => {
+  const el = useMemo(() => {
+    if (typeof document === `undefined`) return;
+    const input = document.createElement(`input`);
+    input.className = className;
+    input.placeholder = `Search the documentation`;
+    return input;
+  }, []);
+
+  const ref = useRef(null);
+
+  useLayoutEffect(() => {
+    if (ref.current === null) return;
+    ref.current.appendChild(el);
+  }, [ref.current]);
+
+  return <SearchParent ref={ref} />;
+};
+
+
 export const Header = ({children}) => {
   const data = useStaticQuery(graphql`
     query SiteQuery {
@@ -204,7 +275,6 @@ export const Header = ({children}) => {
           menuLinks {
             name
             link
-            external
           }
         }
       }
@@ -219,9 +289,9 @@ export const Header = ({children}) => {
   return <>
     <HeaderContainer>
       <NewsContainer>
-        <NewsOverlay href={`https://github.com/yarnpkg/berry`} />
+        <NewsOverlay href={`https://classic.yarnpkg.com`}/>
         <NewsInner>
-          <Highlight>Important:</Highlight> This documentation covers Yarn 2. For the 1.x doc, check <a href={`https://classic.yarnpkg.com`}>classic.yarnpkg.com</a>.
+          <Highlight>Important:</Highlight> This documentation covers Yarn 2. For 1.x docs, see classic.yarnpkg.com.
         </NewsInner>
       </NewsContainer>
 
@@ -230,28 +300,27 @@ export const Header = ({children}) => {
           <MenuLogo to={`/`}>
             <Logo height={`3em`} align={`middle`} />
           </MenuLogo>
+          <MenuSearchBox onlyIf={ifMobile}>
+            <SearchContainer className={`docsearch-mobile`} />
+          </MenuSearchBox>
           <MenuToggle onClick={() => setExpanded(!expanded)}>
             {expanded ? `×` : `≡`}
           </MenuToggle>
         </MenuTools>
 
         <MenuNavigation className={expanded ? `expanded` : ``}>
-          {data.site.siteMetadata.menuLinks.map(({name, link, external}) => {
-            const LinkComponent = external
-              ? (({children, to}) => <a href={to} children={children}/>)
-              : Link;
-
-            return (
-              <React.Fragment key={name}>
-                <MenuEntry>
-                  <LinkComponent to={link} activeClassName={`active`} getProps={isActive}>
-                    {name}
-                  </LinkComponent>
-                </MenuEntry>
-              </React.Fragment>
-            );
-          })}
+          {data.site.siteMetadata.menuLinks.map(({name, link}) => <React.Fragment key={name}>
+            <MenuEntry>
+              <Link to={link} activeClassName={`active`} getProps={isActive}>
+                {name}
+              </Link>
+            </MenuEntry>
+          </React.Fragment>)}
         </MenuNavigation>
+
+        <MenuSearchBox onlyIf={ifDesktop}>
+          <SearchContainer className={`docsearch-desktop`} />
+        </MenuSearchBox>
       </MenuContainer>
       {children}
     </HeaderContainer>

@@ -287,6 +287,24 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should mention which ancestor broke the peer dependency chain`,
+    makeTemporaryEnv(
+      {dependencies: {[`broken-peer-deps`]: `1.0.0`}},
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(source(`require('broken-peer-deps')`)).rejects.toMatchObject({
+          externalException: {
+            message: expect.stringContaining(`Ancestor breaking the chain: broken-peer-deps@npm:1.0.0`),
+            code: `MODULE_NOT_FOUND`,
+            pnpCode: `MISSING_PEER_DEPENDENCY`,
+          },
+        });
+      },
+    ),
+  );
+
+  test(
     `it should allow packages to require themselves`,
     makeTemporaryEnv(
       {
@@ -344,7 +362,7 @@ describe(`Plug'n'Play`, () => {
       },
       async ({path, run, source}) => {
         const {stdout} = await run(`install`);
-        expect(stdout).not.toEqual(expect.stringContaining('YN0060'));
+        expect(stdout).not.toEqual(expect.stringContaining(`YN0060`));
       }
     ),
   );
@@ -360,7 +378,7 @@ describe(`Plug'n'Play`, () => {
       },
       async ({path, run, source}) => {
         const {stdout} = await run(`install`);
-        expect(stdout).toEqual(expect.stringContaining('YN0060'));
+        expect(stdout).toEqual(expect.stringContaining(`YN0060`));
       },
     ),
   );
@@ -560,6 +578,46 @@ describe(`Plug'n'Play`, () => {
     ),
   );
 
+  testIf(
+    () => satisfies(process.versions.node, `>=8.9.0`),
+    `it should terminate when the 'paths' option from require.resolve includes empty string and there is no .pnp.js in the working dir`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`workspace-*`],
+      },
+      async ({path, run, source}) => {
+        await writeJson(`${path}/workspace-a/package.json`, {
+          name: `workspace-a`,
+          version: `1.0.0`,
+          dependencies: {[`no-deps`]: `1.0.0`},
+        });
+
+        await writeJson(`${path}/workspace-b/package.json`, {
+          name: `workspace-b`,
+          version: `1.0.0`,
+          dependencies: {[`no-deps`]: `2.0.0`, [`one-fixed-dep`]: `1.0.0`},
+        });
+
+        await run(`install`);
+
+        await expect(
+          source(
+            `require(require.resolve('no-deps', {paths: ${JSON.stringify([
+              `${npath.fromPortablePath(path)}/workspace-a`,
+              `${npath.fromPortablePath(path)}/workspace-b`,
+              ``,
+            ])}}))`,
+            {cwd: `${path}/workspace-a`}
+          ),
+        ).resolves.toMatchObject({
+          name: `no-deps`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
   // Skipped because not supported (we can't require files from within other dependency trees, since we couldn't
   // reconcile them together: dependency tree A could think that package X has deps Y@1 while dependency tree B
   // could think that X has deps Y@2 instead. Since they would share the same location on the disk, PnP wouldn't
@@ -747,7 +805,7 @@ describe(`Plug'n'Play`, () => {
   );
 
   testIf(
-    () => process.platform !== 'win32',
+    () => process.platform !== `win32`,
     `it should generate a file that can be used as an executable to resolve a request (valid request)`,
     makeTemporaryEnv(
       {
@@ -894,7 +952,7 @@ describe(`Plug'n'Play`, () => {
 
         await run(`install`);
 
-        expect(await source(`require.resolve('no-deps')`)).toMatch(/[\\\/]node_modules[\\\/]no-deps[\\\/]/);
+        expect(await source(`require.resolve('no-deps')`)).toMatch(/[\\/]node_modules[\\/]no-deps[\\/]/);
       },
     ),
   );
@@ -916,7 +974,7 @@ describe(`Plug'n'Play`, () => {
 
         await run(`install`);
 
-        expect(await source(`require.resolve('peer-deps')`)).toMatch(/[\\\/]node_modules[\\\/]peer-deps[\\\/]/);
+        expect(await source(`require.resolve('peer-deps')`)).toMatch(/[\\/]node_modules[\\/]peer-deps[\\/]/);
       },
     ),
   );
@@ -1005,7 +1063,7 @@ describe(`Plug'n'Play`, () => {
           `module.exports = "unplugged";\n`,
         );
 
-        await expect(source(`require('no-deps')`)).resolves.toEqual('unplugged');
+        await expect(source(`require('no-deps')`)).resolves.toEqual(`unplugged`);
       },
     ),
   );
@@ -1344,6 +1402,28 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should allow external modules to require internal ones`,
+    makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await xfs.mktempPromise(async temp => {
+        await run(`install`);
+
+        await writeFile(`${temp}/foo.js`, `
+          const resolved = require.resolve(process.argv[2], {paths: [process.argv[3]]});
+          const required = require(resolved);
+
+          console.log(required);
+        `);
+
+        await run(`node`, `${npath.fromPortablePath(temp)}/foo.js`, `no-deps`, `${npath.fromPortablePath(path)}/`);
+      });
+    }),
+  );
+
+  test(
     `it should remove the lingering node_modules folders`,
     makeTemporaryEnv({}, async ({path, run, source}) => {
       await xfs.mkdirpPromise(`${path}/node_modules/foo`);
@@ -1471,5 +1551,40 @@ describe(`Plug'n'Play`, () => {
         });
       },
     ),
+  );
+
+  test(
+    `it should work with pnpEnableInlining set to false`,
+    makeTemporaryEnv({}, {
+      pnpEnableInlining: false,
+    }, async ({path, run, source}) => {
+      await run(`add`, `no-deps`);
+
+      expect(xfs.existsSync(`${path}/.pnp.data.json`)).toBeTruthy();
+
+      await writeFile(`${path}/file.js`, `
+        console.log(require.resolve('no-deps'));
+      `);
+
+      await expect(run(`node`, `file.js`)).resolves.toBeTruthy();
+    }),
+  );
+
+  test(
+    `it should work with pnpEnableInlining set to false and with a custom pnpDataPath`,
+    makeTemporaryEnv({}, {
+      pnpEnableInlining: false,
+      pnpDataPath: `./.pnp.meta.json`,
+    }, async ({path, run, source}) => {
+      await run(`add`, `no-deps`);
+
+      expect(xfs.existsSync(`${path}/.pnp.meta.json`)).toBeTruthy();
+
+      await writeFile(`${path}/file.js`, `
+        console.log(require.resolve('no-deps'));
+      `);
+
+      await expect(run(`node`, `file.js`)).resolves.toBeTruthy();
+    }),
   );
 });

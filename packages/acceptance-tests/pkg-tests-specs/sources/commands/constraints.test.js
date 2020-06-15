@@ -1,8 +1,8 @@
 const {
   fs: {writeFile},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
-const {environments} = require('./constraints/environments');
+const {environments} = require(`./constraints/environments`);
 
 const constraints = {
   [`empty constraints`]: ``,

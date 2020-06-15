@@ -9,7 +9,7 @@ import semver                            from 'semver';
 import serveStatic                       from 'serve-static';
 import {Gzip}                            from 'zlib';
 
-const deepResolve = require('super-resolve');
+const deepResolve = require(`super-resolve`);
 
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
 
@@ -55,12 +55,12 @@ export const getPackageRegistry = (): Promise<PackageRegistry> => {
   return (packageRegistryPromise = (async () => {
     const packageRegistry = new Map();
     for (const packageFile of await fsUtils.walk(npath.toPortablePath(`${require(`pkg-tests-fixtures`)}/packages`), {
-      filter: ['package.json'],
+      filter: [`package.json`],
     })) {
       const packageJson = await fsUtils.readJson(packageFile);
 
       const {name, version} = packageJson;
-      if (name.startsWith('git-'))
+      if (name.startsWith(`git-`))
         continue;
 
       let packageEntry = packageRegistry.get(name);
@@ -68,7 +68,7 @@ export const getPackageRegistry = (): Promise<PackageRegistry> => {
         packageRegistry.set(name, (packageEntry = new Map()));
 
       packageEntry.set(version, {
-        path: require('path').posix.dirname(packageFile),
+        path: require(`path`).posix.dirname(packageFile),
         packageJson,
       });
     }
@@ -93,7 +93,7 @@ export const getPackageArchiveStream = async (name: string, version: string): Pr
     throw new Error(`Unknown version "${version}" for package "${name}"`);
 
   return fsUtils.packToStream(npath.toPortablePath(packageVersionEntry.path), {
-    virtualPath: npath.toPortablePath('/package'),
+    virtualPath: npath.toPortablePath(`/package`),
   });
 };
 
@@ -109,7 +109,7 @@ export const getPackageArchivePath = async (name: string, version: string): Prom
   const archivePath = await fsUtils.createTemporaryFile(toFilename(`${name}-${version}.tar.gz`));
 
   await fsUtils.packToFile(archivePath, npath.toPortablePath(packageVersionEntry.path), {
-    virtualPath: npath.toPortablePath('/package'),
+    virtualPath: npath.toPortablePath(`/package`),
   });
 
   return archivePath;
@@ -122,15 +122,15 @@ export const getPackageArchiveHash = async (
   const stream = await getPackageArchiveStream(name, version);
 
   return new Promise((resolve, reject) => {
-    const hash = crypto.createHash('sha1');
-    hash.setEncoding('hex');
+    const hash = crypto.createHash(`sha1`);
+    hash.setEncoding(`hex`);
 
     // Send the archive to the hash function
     stream.pipe(hash);
 
-    stream.on('end', () => {
+    stream.on(`end`, () => {
       const finalHash = hash.read();
-      invariant(finalHash, 'The hash should have been computated');
+      invariant(finalHash, `The hash should have been computated`);
       resolve(finalHash);
     });
   });
@@ -148,7 +148,7 @@ export const getPackageHttpArchivePath = async (
   if (!packageVersionEntry)
     throw new Error(`Unknown version "${version}" for package "${name}"`);
 
-  const localName = name.replace(/^@[^\/]+\//, ``);
+  const localName = name.replace(/^@[^/]+\//, ``);
 
   const serverUrl = await startPackageServer();
   const archiveUrl = `${serverUrl}/${name}/-/${localName}-${version}.tgz`;
@@ -178,11 +178,11 @@ export const startPackageServer = (): Promise<string> => {
     return Promise.resolve(packageServerUrl);
 
   enum RequestType {
-    Login = 'login',
-    PackageInfo = 'packageInfo',
-    PackageTarball = 'packageTarball',
-    Whoami = 'whoami',
-    Repository = 'repository',
+    Login = `login`,
+    PackageInfo = `packageInfo`,
+    PackageTarball = `packageTarball`,
+    Whoami = `whoami`,
+    Repository = `repository`,
   }
 
   type Request = {
@@ -203,16 +203,19 @@ export const startPackageServer = (): Promise<string> => {
     type: RequestType.Repository;
   };
 
-  const processors: {[requestType in RequestType]:(parsedRequest: Request, request: IncomingMessage, response: ServerResponse) => Promise<void>} = {
+  const processors: {[requestType in RequestType]: (parsedRequest: Request, request: IncomingMessage, response: ServerResponse) => Promise<void>} = {
     async [RequestType.PackageInfo](parsedRequest, _, response) {
       if (parsedRequest.type !== RequestType.PackageInfo)
         throw new Error(`Assertion failed: Invalid request type`);
+
       const {scope, localName} = parsedRequest;
       const name = scope ? `${scope}/${localName}` : localName;
 
       const packageEntry = await getPackageEntry(name);
-      if (!packageEntry)
-        return processError(response, 404, `Package not found: ${name}`);
+      if (!packageEntry) {
+        processError(response, 404, `Package not found: ${name}`);
+        return;
+      }
 
       let versions = Array.from(packageEntry.keys());
 
@@ -227,7 +230,7 @@ export const startPackageServer = (): Promise<string> => {
           ...(await Promise.all(
             versions.map(async version => {
               const packageVersionEntry = packageEntry.get(version);
-              invariant(packageVersionEntry, 'This can only exist');
+              invariant(packageVersionEntry, `This can only exist`);
 
               return {
                 [version as string]: Object.assign({}, packageVersionEntry!.packageJson, {
@@ -242,10 +245,10 @@ export const startPackageServer = (): Promise<string> => {
             }),
           )),
         ),
-        ['dist-tags']: {latest: semver.maxSatisfying(versions, '*')},
+        [`dist-tags`]: {latest: semver.maxSatisfying(versions, `*`)},
       });
 
-      response.writeHead(200, {['Content-Type']: 'application/json'});
+      response.writeHead(200, {[`Content-Type`]: `application/json`});
       response.end(data);
     },
 
@@ -269,11 +272,11 @@ export const startPackageServer = (): Promise<string> => {
       }
 
       response.writeHead(200, {
-        ['Content-Type']: 'application/octet-stream',
-        ['Transfer-Encoding']: 'chunked',
+        [`Content-Type`]: `application/octet-stream`,
+        [`Transfer-Encoding`]: `chunked`,
       });
 
-      const packStream = fsUtils.packToStream(npath.toPortablePath(packageVersionEntry.path), {virtualPath: npath.toPortablePath('/package')});
+      const packStream = fsUtils.packToStream(npath.toPortablePath(packageVersionEntry.path), {virtualPath: npath.toPortablePath(`/package`)});
       packStream.pipe(response);
     },
 
@@ -291,12 +294,13 @@ export const startPackageServer = (): Promise<string> => {
         throw new Error(`Assertion failed: Invalid request type`);
 
       const {username} = parsedRequest;
-      const otp = request.headers['npm-otp'];
+      const otp = request.headers[`npm-otp`];
 
       const user = validLogins[username];
-      if (!user)
-        return processError(response, 401, `Unauthorized`);
-
+      if (!user) {
+        processError(response, 401, `Unauthorized`);
+        return;
+      }
 
       if (user.requiresOtp && user.otp !== otp) {
         response.writeHead(401, {
@@ -304,13 +308,14 @@ export const startPackageServer = (): Promise<string> => {
           [`www-authenticate`]: `OTP`,
         });
 
-        return response.end();
+        response.end();
+        return;
       }
 
-      let rawData = '';
+      let rawData = ``;
 
-      request.on('data', chunk => rawData += chunk);
-      request.on('end', () => {
+      request.on(`data`, chunk => rawData += chunk);
+      request.on(`end`, () => {
         let body;
 
         try {
@@ -329,6 +334,7 @@ export const startPackageServer = (): Promise<string> => {
         return response.end(data);
       });
     },
+
     async [RequestType.Repository](parsedRequest, request, response) {
       staticServer(request as any, response as any, finalhandler(request, response));
     },
@@ -349,13 +355,13 @@ export const startPackageServer = (): Promise<string> => {
   const parseRequest = (url: string): Request | null => {
     let match: RegExpMatchArray|null;
 
-    url = url.replace(/%2f/g, '/');
+    url = url.replace(/%2f/g, `/`);
 
-    if (match = url.match(/^\/repositories\//)) {
+    if ((match = url.match(/^\/repositories\//))) {
       return {
         type: RequestType.Repository,
       };
-    } else if (match = url.match(/^\/-\/user\/org\.couchdb\.user:(.+)/)) {
+    } else if ((match = url.match(/^\/-\/user\/org\.couchdb\.user:(.+)/))) {
       const [, username] = match;
 
       return {
@@ -366,7 +372,7 @@ export const startPackageServer = (): Promise<string> => {
       return {
         type: RequestType.Whoami,
       };
-    } else if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)$/)) {
+    } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)$/))) {
       const [, scope, localName] = match;
 
       return {
@@ -374,7 +380,7 @@ export const startPackageServer = (): Promise<string> => {
         scope,
         localName,
       };
-    } else if (match = url.match(/^\/(?:(@[^\/]+)\/)?([^@\/][^\/]*)\/(-|tralala)\/\2-(.*)\.tgz$/)) {
+    } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)\/(-|tralala)\/\2-(.*)\.tgz$/))) {
       const [, scope, localName, split, version] = match;
 
       if ((localName === `unconventional-tarball` || localName === `private-unconventional-tarball`) && split === `-`)
@@ -398,7 +404,7 @@ export const startPackageServer = (): Promise<string> => {
 
       case RequestType.PackageInfo:
       case RequestType.PackageTarball: {
-        if (parsedRequest.scope && parsedRequest.scope.startsWith('@private')) {
+        if (parsedRequest.scope && parsedRequest.scope.startsWith(`@private`)) {
           return true;
         } else {
           return parsedRequest.localName.startsWith(`private`);
@@ -482,11 +488,11 @@ export interface PackageDriver {
   withConfig: (definition: Record<string, any>) => PackageDriver;
 }
 
-type RunFunction = (
+export type RunFunction = (
   {path, run, source}:
   {
-    path: string,
-    run: (...args: any[]) => Promise<ExecResult>,
+    path: PortablePath,
+    run: (...args: Array<any>) => Promise<ExecResult>,
     source: (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>
   }
 ) => void;
@@ -500,12 +506,12 @@ export const generatePkgDriver = ({
 }): PackageDriver => {
   const withConfig = (definition: Record<string, any>): PackageDriver => {
     const makeTemporaryEnv: PackageDriver = (packageJson, subDefinition, fn) => {
-      if (typeof subDefinition === 'function') {
+      if (typeof subDefinition === `function`) {
         fn = subDefinition as RunFunction;
         subDefinition = {};
       }
 
-      if (typeof fn !== 'function') {
+      if (typeof fn !== `function`) {
         throw new Error(
           // eslint-disable-next-line
           `Invalid test function (got ${typeof fn}) - you probably put the closing parenthesis of the "makeTemporaryEnv" utility at the wrong place`,
@@ -520,10 +526,10 @@ export const generatePkgDriver = ({
         // Writes a new package.json file into our temporary directory
         await fsUtils.writeJson(npath.toPortablePath(`${path}/package.json`), await deepResolve(packageJson));
 
-        const run = (...args: any[]) => {
+        const run = (...args: Array<any>) => {
           let callDefinition = {};
 
-          if (args.length > 0 && typeof args[args.length - 1] === 'object')
+          if (args.length > 0 && typeof args[args.length - 1] === `object`)
             callDefinition = args.pop();
 
           return runDriver(path, args, {

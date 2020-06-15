@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/monorepo",
   "private": true,
+  "license": "BSD-2-Clause",
   "workspaces": [
     "packages/*"
   ],
@@ -8,9 +9,9 @@
     "@arcanis/sherlock": "^1.0.38",
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.7.4",
-    "@babel/plugin-proposal-async-generator-functions": "^7.2.0",
     "@babel/plugin-proposal-class-properties": "^7.3.3",
     "@babel/plugin-proposal-decorators": "^7.4.4",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.8.3",
     "@babel/plugin-proposal-optional-chaining": "^7.7.5",
     "@babel/plugin-transform-modules-commonjs": "^7.2.0",
     "@babel/preset-env": "^7.3.1",
@@ -20,13 +21,14 @@
     "@types/emscripten": "^1.38.0",
     "@types/jest": "^24.0.25",
     "@types/node": "^13.7.0",
-    "@typescript-eslint/eslint-plugin": "^2.23.0",
+    "@typescript-eslint/eslint-plugin": "^2.29.0",
     "@typescript-eslint/parser": "^2.23.0",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.32",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.26",
-    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.21",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.35",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.29",
+    "@yarnpkg/eslint-config": "workspace:^0.1.0",
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.24",
     "babel-jest": "^24.5.0",
-    "clipanion": "^2.1.5",
+    "clipanion": "^2.4.1",
     "eslint": "^6.8.0",
     "eslint-plugin-arca": "^0.9.0",
     "eslint-plugin-react": "^7.14.3",
@@ -35,10 +37,14 @@
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
     "micromatch": "^4.0.2",
-    "typescript": "^3.8.3"
+    "tslib": "^1.13.0",
+    "typescript": "^3.9.5"
   },
   "dependenciesMeta": {
     "core-js": {
+      "built": false
+    },
+    "core-js-pure": {
       "built": false
     },
     "date-fns": {
@@ -47,21 +53,21 @@
     "fsevents": {
       "built": false
     },
+    "gatsby": {
+      "built": false
+    },
+    "gatsby-cli": {
+      "built": false
+    },
     "gatsby-telemetry": {
       "built": false
     },
     "svg2png": {
       "unplugged": true
     },
-    "typedoc-neo-theme": {
-      "unplugged": true
-    },
     "webpack-cli": {
       "built": false
     }
-  },
-  "resolutions": {
-    "xterm": "^4.5.0"
   },
   "scripts": {
     "build:plugin-commands": "node ./scripts/gen-plugin-commands.js > packages/plugin-essentials/sources/pluginCommands.ts",
@@ -80,5 +86,8 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }

@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/gatsby",
   "private": true,
+  "license": "BSD-2-Clause",
   "dependencies": {
     "@babel/core": "^7.7.4",
     "@emotion/core": "^10.0.7",
@@ -13,7 +14,7 @@
     "@reach/router": "^1.1.1",
     "@rehooks/component-size": "^1.0.3",
     "@strictsoftware/typedoc-plugin-monorepo": "patch:@strictsoftware/typedoc-plugin-monorepo@^0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch",
-    "algoliasearch": "^4.0.1",
+    "algoliasearch": "^4.2.0",
     "ansi-html": "^0.0.7",
     "buffer": "^5.6.0",
     "bytes": "^3.1.0",
@@ -21,8 +22,9 @@
     "date-fns": "^2.0.0-beta.2",
     "dedent": "^0.7.0",
     "es6-promise": "^4.2.6",
-    "gatsby": "^2.13.6",
+    "gatsby": "^2.20.31",
     "gatsby-image": "^2.0.31",
+    "gatsby-plugin-algolia-docsearch": "portal:./gatsby-plugin-algolia-docsearch",
     "gatsby-plugin-catch-links": "^2.2.0",
     "gatsby-plugin-clipanion-cli": "portal:./gatsby-plugin-clipanion-cli",
     "gatsby-plugin-emotion": "^4.1.4",
@@ -53,11 +55,11 @@
     "qs": "^6.7.0",
     "rc-dropdown": "^3.0.2",
     "rc-menu": "^8.0.3",
-    "react": "^16.8.4",
-    "react-dom": "^16.8.4",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
     "react-helmet": "^5.2.0",
     "react-icons": "^3.7.0",
-    "react-instantsearch-dom": "^6.2.0",
+    "react-instantsearch-dom": "^6.4.0",
     "react-monaco-editor": "^0.36.0",
     "react-select": "^3.1.0",
     "react-spinners": "^0.8.1",
@@ -68,10 +70,11 @@
     "remark-html": "^9.0.0",
     "remark-parse": "^6.0.3",
     "tinycolor2": "^1.4.1",
+    "tslib": "^1.13.0",
     "typedoc": "next",
     "typedoc-neo-theme": "^1.0.7",
     "typedoc-plugin-yarn": "portal:./typedoc-plugin-yarn",
-    "typescript": "^3.8.3",
+    "typescript": "^3.9.5",
     "unescape-html": "^1.1.0",
     "unfetch": "^4.1.0",
     "unified": "^7.1.0",
@@ -99,5 +102,8 @@
     "@types/react-select": "3.0.11",
     "@types/tinycolor2": "1.4.2",
     "@types/webpack": "^4.32.1"
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }

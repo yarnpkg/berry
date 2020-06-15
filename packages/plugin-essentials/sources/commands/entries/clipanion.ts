@@ -15,7 +15,7 @@ export default class ClipanionCommand extends Command<CommandContext> {
   async execute() {
     const {plugins} = await Configuration.find(this.context.cwd, this.context.plugins);
 
-    const pluginDefinitions: Array<[string, ClipanionDefinition[]]>  = [];
+    const pluginDefinitions: Array<[string, Array<ClipanionDefinition>]>  = [];
     for (const plugin of plugins) {
       const {commands} = plugin[1];
       if (commands) {
@@ -25,12 +25,12 @@ export default class ClipanionCommand extends Command<CommandContext> {
       }
     }
 
-    const clipanionDefinitions = this.cli.definitions() as ExtendedDefinition[];
+    const clipanionDefinitions = this.cli.definitions() as Array<ExtendedDefinition>;
 
     const arePathsEqual = (path1: string, path2: string) =>
-      path1.split(' ').slice(1).join() === path2.split(' ').slice(1).join();
+      path1.split(` `).slice(1).join() === path2.split(` `).slice(1).join();
 
-    const defaultPlugins: string[] = require(`@yarnpkg/cli/package.json`)[`@yarnpkg/builder`].bundles.standard;
+    const defaultPlugins: Array<string> = require(`@yarnpkg/cli/package.json`)[`@yarnpkg/builder`].bundles.standard;
 
     for (const pluginDefinition of pluginDefinitions) {
       const definitions = pluginDefinition[1];

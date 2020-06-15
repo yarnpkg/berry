@@ -11,9 +11,9 @@ const NUMBER_REGEXP = /^[0-9]+$/;
 // $3: hash
 // $4: depth
 // $5: subpath
-const VIRTUAL_REGEXP = /^(\/(?:[^\/]+\/)*?\$\$virtual)((?:\/((?:[^\/]+-)?[a-f0-9]+)(?:\/([^\/]+))?)?((?:\/.*)?))$/;
+const VIRTUAL_REGEXP = /^(\/(?:[^/]+\/)*?\$\$virtual)((?:\/((?:[^/]+-)?[a-f0-9]+)(?:\/([^/]+))?)?((?:\/.*)?))$/;
 
-const VALID_COMPONENT = /^([^\/]+-)?[a-f0-9]+$/;
+const VALID_COMPONENT = /^([^/]+-)?[a-f0-9]+$/;
 
 export type VirtualFSOptions = {
   baseFs?: FakeFS<PortablePath>,

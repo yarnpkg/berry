@@ -1,18 +1,20 @@
 import {PortablePath, npath} from '@yarnpkg/fslib';
+import {UsageError}          from 'clipanion';
+import micromatch            from 'micromatch';
 import {Readable, Transform} from 'stream';
 
 export function escapeRegExp(str: string) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return str.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
 }
 
 export function assertNever(arg: never): never {
   throw new Error(`Assertion failed: Unexpected object '${arg}'`);
 }
 
-export function mapAndFilter<In, Out>(array: Array<In>, cb: (value: In) => Out | typeof mapAndFilterSkip): Array<Out> {
+export function mapAndFilter<In, Out>(iterable: Iterable<In>, cb: (value: In) => Out | typeof mapAndFilterSkip): Array<Out> {
   const output: Array<Out> = [];
 
-  for (const value of array) {
+  for (const value of iterable) {
     const out = cb(value);
     if (out !== mapAndFilterSkip) {
       output.push(out);
@@ -24,6 +26,20 @@ export function mapAndFilter<In, Out>(array: Array<In>, cb: (value: In) => Out |
 
 const mapAndFilterSkip = Symbol();
 mapAndFilter.skip = mapAndFilterSkip;
+
+export function mapAndFind<In, Out>(iterable: Iterable<In>, cb: (value: In) => Out | typeof mapAndFindSkip): Out | undefined {
+  for (const value of iterable) {
+    const out = cb(value);
+    if (out !== mapAndFindSkip) {
+      return out;
+    }
+  }
+
+  return undefined;
+}
+
+const mapAndFindSkip = Symbol();
+mapAndFind.skip = mapAndFindSkip;
 
 export function getFactoryWithDefault<K, T>(map: Map<K, T>, key: K, factory: () => T) {
   let value = map.get(key);
@@ -171,7 +187,7 @@ export class DefaultStream extends Transform {
 
 export function dynamicRequire(path: string) {
   // @ts-ignore
-  if (typeof __non_webpack_require__ !== 'undefined') {
+  if (typeof __non_webpack_require__ !== `undefined`) {
     // @ts-ignore
     return __non_webpack_require__(path);
   } else {
@@ -240,3 +256,45 @@ export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) 
     return asArray[index];
   });
 }
+
+/**
+ * Combines an Array of glob patterns into a regular expression.
+ *
+ * @param ignorePatterns An array of glob patterns
+ *
+ * @returns A `string` representing a regular expression or `null` if no glob patterns are provided
+ */
+export function buildIgnorePattern(ignorePatterns: Array<string>) {
+  if (ignorePatterns.length === 0)
+    return null;
+
+  return ignorePatterns.map(pattern => {
+    return `(${micromatch.makeRe(pattern, {
+      // @ts-ignore
+      windows: false,
+    }).source})`;
+  }).join(`|`);
+}
+
+export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: string | undefined}}) {
+  const regex = /\${(?<variableName>[\d\w_]+)(?<colon>:)?-?(?<fallback>[^}]+)?}/g;
+
+  return value.replace(regex, (...args) => {
+    const {variableName, colon, fallback} = args[args.length - 1];
+
+    const variableExist = Object.prototype.hasOwnProperty.call(env, variableName);
+    const variableValue = process.env[variableName];
+
+    if (variableValue)
+      return variableValue;
+    if (variableExist && !variableValue && colon)
+      return fallback;
+    if (variableExist)
+      return variableValue;
+    if (fallback)
+      return fallback;
+
+    throw new UsageError(`Environment variable not found (${variableName})`);
+  });
+}
+

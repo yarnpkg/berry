@@ -37,4 +37,4 @@ export async function renderForm<T, C = React.ComponentType>(UserComponent: Subm
 
   await waitUntilExit();
   return returnedValue;
-};
+}

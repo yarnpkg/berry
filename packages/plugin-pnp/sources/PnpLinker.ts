@@ -20,13 +20,13 @@ const FORCED_UNPLUG_PACKAGES = new Set([
 
 const FORCED_UNPLUG_FILETYPES = new Set([
   // Windows can't execute exe files inside zip archives
-  '.exe',
+  `.exe`,
   // The c/c++ compiler can't read files from zip archives
-  '.h', '.hh', '.hpp', '.c', '.cc', '.cpp',
+  `.h`, `.hh`, `.hpp`, `.c`, `.cc`, `.cpp`,
   // The java runtime can't read files from zip archives
-  '.java', '.jar',
+  `.java`, `.jar`,
   // Node opens these through dlopen
-  '.node',
+  `.node`,
 ]);
 
 export class PnpLinker implements Linker {
@@ -95,7 +95,7 @@ export class PnpInstaller extends AbstractPnpInstaller {
         buildScripts.push([BuildType.SCRIPT, scriptName]);
 
     // Detect cases where a package has a binding.gyp but no install script
-    const bindingFilePath = ppath.resolve(fetchResult.prefixPath, toFilename(`binding.gyp`));
+    const bindingFilePath = ppath.join(fetchResult.prefixPath, toFilename(`binding.gyp`));
     if (!manifest.scripts.has(`install`) && fetchResult.packageFs.existsSync(bindingFilePath))
       buildScripts.push([BuildType.SHELLCODE, `node-gyp rebuild`]);
 
@@ -178,7 +178,7 @@ export class PnpInstaller extends AbstractPnpInstaller {
       });
 
       const nonCacheEntries = directoryListing.filter(entry => {
-        return !entry.isDirectory() || entry.name === '.bin' || !entry.name.startsWith(`.`);
+        return !entry.isDirectory() || entry.name === `.bin` || !entry.name.startsWith(`.`);
       });
 
       if (nonCacheEntries.length === directoryListing.length) {

@@ -1,7 +1,7 @@
 const {
   fs: {mkdirp, writeFile},
   misc: {parseJsonStream},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Features`, () => {
   describe(`Project detection`, () => {
