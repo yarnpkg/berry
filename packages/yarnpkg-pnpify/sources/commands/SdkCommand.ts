@@ -31,7 +31,7 @@ export default class SdkCommand extends Command {
 
       - When \`base\` is used, only the base SDKs will be generated. This is useful for when an editor is not yet supported and you plan to manage the settings yourself.
 
-      - When a set of integration is used (e.g. \`vscode\`, \`vim\`, ...), the base SDKs will be installed plus all the settings relevant to the corresponding environments (for example on VSCode it would set \`typescript.tsdk\`).
+      - When a set of integrations is used (e.g. \`vscode\`, \`vim\`, ...), the base SDKs will be installed plus all the settings relevant to the corresponding environments (for example on VSCode it would set \`typescript.tsdk\`).
 
       The supported integrations at this time are: ${[...SUPPORTED_INTEGRATIONS.keys()].map(integration => `\`${integration}\``).join(`, `)}.
 
