@@ -57,7 +57,7 @@ Note that VSCode might ask you to do Step 3 again from time to time, but apart f
 Run the following command, which will generate a new directory called `.yarn/sdks`:
 
 ```bash
-yarn dlx @yarnpkg/pnpify --sdk base
+yarn dlx @yarnpkg/pnpify --sdk vim
 ```
 
 ### Emacs
