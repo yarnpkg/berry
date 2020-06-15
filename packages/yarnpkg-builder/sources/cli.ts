@@ -4,6 +4,7 @@ import {Cli, Command}     from 'clipanion';
 
 import BuildBundleCommand from './commands/build/bundle';
 import BuildPluginCommand from './commands/build/plugin';
+import ClipanionCommand   from './commands/clipanion';
 import NewPluginCommand   from './commands/new/plugin';
 
 const cli = new Cli({
@@ -16,6 +17,7 @@ cli.register(NewPluginCommand);
 cli.register(BuildBundleCommand);
 cli.register(BuildPluginCommand);
 
+cli.register(ClipanionCommand);
 cli.register(Command.Entries.Help);
 cli.register(Command.Entries.Version);
 
