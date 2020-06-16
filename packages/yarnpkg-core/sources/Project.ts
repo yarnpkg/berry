@@ -1987,7 +1987,7 @@ function applyVirtualResolutionMutations({
             : `missing:`;
 
           if (typeof resolution === `undefined`)
-            throw new Error(`Assertion failed: Expected the resolution to have been registered`);
+            throw new Error(`Assertion failed: Expected the resolution for ${structUtils.prettyDescriptor(project.configuration, descriptor)} to have been registered`);
 
           return resolution;
         }));
@@ -1997,6 +1997,11 @@ function applyVirtualResolutionMutations({
           otherVirtualInstances.set(dependencyHash, virtualDescriptor);
           continue;
         }
+
+        // Since we're applying multiple pass, we might have already registered
+        // ourselves as the "master" descriptor in the previous pass.
+        if (masterDescriptor === virtualDescriptor)
+          continue;
 
         stable = false;
 
