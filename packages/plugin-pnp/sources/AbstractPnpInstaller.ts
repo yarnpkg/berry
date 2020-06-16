@@ -65,7 +65,7 @@ export abstract class AbstractPnpInstaller implements Installer {
     if (this.opts.skipIncompatiblePackageLinking && !isManifestCompatible)
       return {packageLocation: null, buildDirective: null};
 
-    const buildScripts = !hasVirtualInstances && isManifestCompatible
+    const buildScripts = !hasVirtualInstances
       ? await this.getBuildScripts(pkg, manifest, fetchResult)
       : [];
 
@@ -123,7 +123,7 @@ export abstract class AbstractPnpInstaller implements Installer {
 
     return {
       packageLocation: packageRawLocation,
-      buildDirective: buildScripts.length > 0 ? buildScripts as Array<BuildDirective> : null,
+      buildDirective: buildScripts.length > 0 && isManifestCompatible ? buildScripts as Array<BuildDirective> : null,
     };
   }
 
