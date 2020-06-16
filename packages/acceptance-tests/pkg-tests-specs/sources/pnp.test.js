@@ -1523,7 +1523,7 @@ describe(`Plug'n'Play`, () => {
     }),
   );
 
-  test(`should skip linking incompatible package`,
+  test(`should skip building incompatible package`,
     makeTemporaryEnv(
       {
         private: true,
@@ -1540,16 +1540,16 @@ describe(`Plug'n'Play`, () => {
             postinstall: `echo 'Shall not be run'`,
           },
         });
+        await writeFile(`${path}/dep/index.js`, `module.exports = require('./package.json');`);
 
         const stdout = (await run(`install`)).stdout;
 
         expect(stdout).not.toContain(`Shall not be run`);
-        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The platform ${process.platform} is incompatible with this module.*`));
+        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The platform ${process.platform} is incompatible with this module, building skipped.`));
 
-        await expect(source(`require('dep')`)).rejects.toMatchObject({
-          externalException: {
-            code: `MODULE_NOT_FOUND`,
-          },
+        await expect(source(`require('dep')`)).resolves.toMatchObject({
+          name: `dep`,
+          version: `1.0.0`,
         });
       },
     ),

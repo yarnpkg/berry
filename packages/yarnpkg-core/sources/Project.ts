@@ -1109,8 +1109,10 @@ export class Project {
 
           const isWorkspaceDependency = dependencyLinker === null;
 
-          if (packageLocations.get(dependency.locatorHash) !== null && (dependencyLinker === packageLinker || isWorkspace || isWorkspaceDependency)) {
-            internalDependencies.push([descriptor, dependency] as [Descriptor, Locator]);
+          if (dependencyLinker === packageLinker || isWorkspace || isWorkspaceDependency) {
+            if (packageLocations.get(dependency.locatorHash) !== null) {
+              internalDependencies.push([descriptor, dependency] as [Descriptor, Locator]);
+            }
           } else if (packageLocation !== null) {
             const externalEntry = miscUtils.getArrayWithDefault(externalDependents, resolution);
             externalEntry.push(packageLocation);

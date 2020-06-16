@@ -65,7 +65,7 @@ export class NodeModulesLinker implements Linker {
   }
 
   makeInstaller(opts: LinkOptions) {
-    return new NodeModulesInstaller(opts);
+    return new NodeModulesInstaller({...opts, skipIncompatiblePackageLinking: true});
   }
 }
 
