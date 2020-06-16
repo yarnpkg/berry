@@ -3,9 +3,8 @@ import {Configuration,  MessageName,  Project,  StreamReport} from '@yarnpkg/cor
 import {PortablePath, ppath, xfs}                             from '@yarnpkg/fslib';
 import {Command, Usage}                                       from 'clipanion';
 
-
 // eslint-disable-next-line arca/no-default-export
-export default class PluginDlCommand extends BaseCommand {
+export default class PluginRemoveCommand extends BaseCommand {
   @Command.String()
   name!: string;
 
@@ -31,14 +30,12 @@ export default class PluginDlCommand extends BaseCommand {
   @Command.Path(`plugin`, `remove`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project} = await Project.find(configuration, this.context.cwd);
 
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
     }, async report => {
-      const {project} = await Project.find(configuration, this.context.cwd);
-
-
       const pluginName = this.name;
 
       const relativePath = `.yarn/plugins/${pluginName}.js` as PortablePath;
@@ -53,9 +50,8 @@ export default class PluginDlCommand extends BaseCommand {
         spec: pluginName,
       };
 
-
       await Configuration.updateConfiguration(project.cwd, (current: any) => {
-        const plugins = current.plugins.filter((x:{path:string,spec:string}) => x.path !== pluginMeta.path );
+        const plugins = current.plugins.filter((x: {path: string, spec: string}) => x.path !== pluginMeta.path );
         return {plugins};
       });
     });
