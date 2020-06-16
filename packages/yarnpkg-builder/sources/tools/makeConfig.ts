@@ -9,7 +9,7 @@ export type WebpackPlugin =
   | webpack.WebpackPluginInstance;
 
 // fork-ts-checker-webpack-plugin doesn't search
-// for tsconfig.json files outside the project root :(
+// for tsconfig.json files outside process.cwd() :(
 export function findTsconfig() {
   let nextTsContextRoot = process.cwd();
   let currTsContextRoot = null;
