@@ -8,6 +8,10 @@ The Yarn workspaces aim to make working with [monorepos](/advanced/lexicon#monor
 
 First, some vocabulary: in the context of the workspace feature, a *project* is the whole directory tree making up your workspaces (often the repository itself). A *workspace* is a specific named package stored anywhere within the project. Finally, a *worktree* is the name given to private packages that list their own child workspaces. A project contains one or more worktrees, which may themselves contain any number of workspaces.
 
+```toc
+# This code block gets replaced with the Table of Contents
+```
+
 ## How to declare a worktree?
 
 Worktrees are defined through the traditional `package.json` files. What makes them special is that they have the following properties:

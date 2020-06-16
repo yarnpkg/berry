@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                                           from '@yarnpkg/cli';
-import {Cache, Configuration, Project, ThrowReport, structUtils, execUtils, miscUtils} from '@yarnpkg/core';
-import {npath, xfs, Filename, ppath}                                                   from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                                                    from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}        from '@yarnpkg/cli';
+import {Cache, Configuration, Project, structUtils} from '@yarnpkg/core';
+import {npath, xfs, Filename, ppath}                from '@yarnpkg/fslib';
+import {Command, Usage, UsageError}                 from 'clipanion';
 
-import * as patchUtils                                                                 from '../patchUtils';
+import * as patchUtils                              from '../patchUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PatchCommitCommand extends BaseCommand {
@@ -27,10 +27,7 @@ export default class PatchCommitCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    await project.resolveEverything({
-      lockfileOnly: true,
-      report: new ThrowReport(),
-    });
+    await project.restoreInstallState();
 
     const folderPath = ppath.resolve(this.context.cwd, npath.toPortablePath(this.patchFolder));
     const metaPath = ppath.join(folderPath, `.yarn-patch.json` as Filename);
@@ -46,16 +43,6 @@ export default class PatchCommitCommand extends BaseCommand {
 
     const originalPath = await patchUtils.extractPackageToDisk(locator, {cache, project});
 
-    const originalPathN = npath.fromPortablePath(originalPath);
-    const patchedPathN = npath.fromPortablePath(folderPath);
-
-    let {stdout} = await execUtils.execvp(`git`, [`diff`, `--no-index`, originalPathN, patchedPathN], {
-      cwd: this.context.cwd,
-    });
-
-    stdout = stdout.replace(new RegExp(miscUtils.escapeRegExp(originalPathN), `g`), ``);
-    stdout = stdout.replace(new RegExp(miscUtils.escapeRegExp(patchedPathN), `g`), ``);
-
-    this.context.stdout.write(stdout);
+    this.context.stdout.write(await patchUtils.diffFolders(originalPath,folderPath));
   }
 }

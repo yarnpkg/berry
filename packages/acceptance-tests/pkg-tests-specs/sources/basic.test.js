@@ -1,6 +1,6 @@
 const {
   tests: {getPackageArchivePath, getPackageHttpArchivePath, getPackageDirectoryPath},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Basic tests`, () => {
   test(
@@ -369,6 +369,23 @@ describe(`Basic tests`, () => {
               version: `2.0.0`,
             },
           },
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should allow accessing a package via too many slashes`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`various-requires`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(source(`require('various-requires//self')`)).resolves.toMatchObject({
+          name: `various-requires`,
+          version: `1.0.0`,
         });
       },
     ),

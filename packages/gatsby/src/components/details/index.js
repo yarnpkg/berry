@@ -17,7 +17,9 @@ import IcoPackageJson     from '../../images/detail/ico-package-json.svg';
 import IcoReadme          from '../../images/detail/ico-readme.svg';
 import IcoStargazers      from '../../images/detail/ico-stargazers.svg';
 import {algolia}          from '../config';
+import {ifDesktop}        from '../responsive';
 import {schema}           from '../schema';
+
 import {prefixURL, get}   from '../util';
 
 import {Aside}            from './Aside';
@@ -38,10 +40,11 @@ const Container = styled.div`
   padding: 0 15px;
   width: 1140px;
   max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
 `;
 
 const InvalidPackage = styled(Container)`
-  display: flex;
   flex-direction: column;
   text-align: center;
   color: #5a5a5a;
@@ -63,9 +66,11 @@ const Instructions = styled.div`
 `;
 
 const FileBrowserColumn = styled.section`
-  float: left;
-  padding: 0 15px;
-  width: 66.6666666667%;
+  width: 100%;
+  ${ifDesktop} {
+    width: calc(100% * 2 / 3);
+    padding: 0 15px;
+  }
 `;
 
 const DiBox = styled.div`
@@ -156,12 +161,9 @@ export const Di = ({icon, title, description}) => (
 
 const OBJECT_DOESNT_EXIST = 'ObjectID does not exist';
 
-const DetailsContainer = styled.div`
-  margin: 0 auto 0 auto;
-  padding: 0 15px 0 15px;
-  width: 1140px;
-  max-width: 100%;
+const DetailsContainer = styled(Container)`
   color: #5a5a5a;
+
   &:after {
     display: block;
     content: "";
@@ -174,9 +176,11 @@ const DetailsContainer = styled.div`
 `;
 
 const DetailsMain = styled.section`
-  padding: 0 15px;
-  float: left;
-  width: 66.6666666667%;
+  width: 100%;
+  ${ifDesktop} {
+    width: calc(100% * 2 / 3);
+    padding: 0 15px;
+  }
 `;
 
 const Section = styled.section`
@@ -330,7 +334,7 @@ export class Details extends Component {
       });
     } else if (host === 'gitlab.com') {
       const getGitlabFile = ({user, project, branch, filePath}) => {
-        // We need to use the Gitlab API because the raw url does not support cors
+        // We need to use the GitLab API because the raw url does not support cors
         // https://gitlab.com/gitlab-org/gitlab-ce/issues/25736
         // So we need to 'translate' raw urls to api urls.
         // E.g (https://gitlab.com/janslow/gitlab-fetch/raw/master/CHANGELOG.md) -> (https://gitlab.com/api/v4/projects/janslow%2Fgitlab-fetch/repository/files/CHANGELOG.md?ref=master)
@@ -435,15 +439,17 @@ export class Details extends Component {
     get({
       url: `https://bundlephobia.com/api/size?package=${name}@${version}`,
       type: 'json',
-    }).then(res =>
-      this.setState({
-        bundlesize: {
-          href: `https://bundlephobia.com/result?p=${name}@${version}`,
-          size: bytes(res.size),
-          gzip: bytes(res.gzip),
-        },
-      })
-    );
+    }).then(res => {
+      if (typeof res === 'object') {
+        this.setState({
+          bundlesize: {
+            href: `https://bundlephobia.com/result?p=${name}@${version}`,
+            size: bytes(res.size),
+            gzip: bytes(res.gzip),
+          },
+        });
+      }
+    });
   }
 
   maybeRenderReadme() {

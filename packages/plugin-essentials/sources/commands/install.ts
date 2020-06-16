@@ -46,7 +46,7 @@ export default class YarnCommand extends BaseCommand {
 
       - **Resolution:** First the package manager will resolve your dependencies. The exact way a dependency version is privileged over another isn't standardized outside of the regular semver guarantees. If a package doesn't resolve to what you would expect, check that all dependencies are correctly declared (also check our website for more information: ).
 
-      - **Fetch:** Then we download all the dependencies if needed, and make sure that they're all stored within our cache (check the value of \`cache-folder\` in \`yarn config\` to see where are stored the cache files).
+      - **Fetch:** Then we download all the dependencies if needed, and make sure that they're all stored within our cache (check the value of \`cacheFolder\` in \`yarn config\` to see where are stored the cache files).
 
       - **Link:** Then we send the dependency tree information to internal plugins tasked from writing them on the disk in some form (for example by generating the .pnp.js file you might know).
 
@@ -102,6 +102,8 @@ export default class YarnCommand extends BaseCommand {
 
       if (deprecationReport.hasErrors()) {
         return deprecationReport.exitCode();
+      } else {
+        return null;
       }
     };
 
@@ -116,7 +118,7 @@ export default class YarnCommand extends BaseCommand {
         error: !isZeitNow,
       });
 
-      if (typeof exitCode !== `undefined`) {
+      if (exitCode !== null) {
         return exitCode;
       }
     }
@@ -131,7 +133,7 @@ export default class YarnCommand extends BaseCommand {
         error: false,
       });
 
-      if (typeof exitCode !== `undefined`) {
+      if (exitCode !== null) {
         return exitCode;
       }
     }
@@ -146,7 +148,7 @@ export default class YarnCommand extends BaseCommand {
         error: !isZeitNow,
       });
 
-      if (typeof exitCode !== `undefined`) {
+      if (exitCode !== null) {
         return exitCode;
       }
     }
@@ -159,7 +161,7 @@ export default class YarnCommand extends BaseCommand {
         error: true,
       });
 
-      if (typeof exitCode !== `undefined`) {
+      if (exitCode !== null) {
         return exitCode;
       }
     }
@@ -173,7 +175,7 @@ export default class YarnCommand extends BaseCommand {
         error: !isNetlify,
       });
 
-      if (typeof exitCode !== `undefined`) {
+      if (exitCode !== null) {
         return exitCode;
       }
     }

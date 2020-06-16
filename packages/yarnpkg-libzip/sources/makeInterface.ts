@@ -1,7 +1,7 @@
 const number64 = [
   `number`, // low
   `number`, // high
-] as 'number'[];
+] as Array<'number'>;
 
 export type Libzip = ReturnType<typeof makeInterface>;
 
@@ -9,6 +9,10 @@ export const makeInterface = (libzip: EmscriptenModule) => ({
   // Those are getters because they can change after memory growth
   get HEAP8() { return libzip.HEAP8; },
   get HEAPU8() { return libzip.HEAPU8; },
+
+  SEEK_SET: 0,
+  SEEK_CUR: 1,
+  SEEK_END: 2,
 
   ZIP_CHECKCONS: 4,
   ZIP_CREATE: 1,
@@ -38,6 +42,10 @@ export const makeInterface = (libzip: EmscriptenModule) => ({
   ZIP_OPSYS_TANDEM: 0x11,
   ZIP_OPSYS_OS_400: 0x12,
   ZIP_OPSYS_OS_X: 0x13,
+
+  ZIP_CM_DEFAULT: -1,
+  ZIP_CM_STORE: 0,
+  ZIP_CM_DEFLATE: 8,
 
   uint08S: libzip._malloc(1),
   uint16S: libzip._malloc(2),
@@ -77,6 +85,7 @@ export const makeInterface = (libzip: EmscriptenModule) => ({
     getExternalAttributes: libzip.cwrap(`zip_file_get_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
     setExternalAttributes: libzip.cwrap(`zip_file_set_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
     setMtime: libzip.cwrap(`zip_file_set_mtime`, `number`, [`number`, ...number64, `number`, `number`]),
+    setCompression: libzip.cwrap(`zip_set_file_compression`, `number`, [`number`, ...number64, `number`, `number`]),
   },
 
   error: {
@@ -92,6 +101,13 @@ export const makeInterface = (libzip: EmscriptenModule) => ({
     fromUnattachedBuffer: libzip.cwrap(`zip_source_buffer_create`, `number`, [`number`, `number`, `number`, `number`]),
     fromBuffer: libzip.cwrap(`zip_source_buffer`, `number`, [`number`, `number`, ...number64, `number`]),
     free: libzip.cwrap(`zip_source_free`, null, [`number`]),
+    keep: libzip.cwrap(`zip_source_keep`, null, [`number`]),
+    open: libzip.cwrap(`zip_source_open`, `number`, [`number`]),
+    close: libzip.cwrap(`zip_source_close`, `number`, [`number`]),
+    seek: libzip.cwrap(`zip_source_seek`, `number`, [`number`, ...number64, `number`]),
+    tell: libzip.cwrap(`zip_source_tell`, `number`, [`number`]),
+    read: libzip.cwrap(`zip_source_read`, `number`, [`number`, `number`, `number`]),
+    error: libzip.cwrap(`zip_source_error`, `number`, [`number`]),
     setMtime: libzip.cwrap(`zip_source_set_mtime`, `number`, [`number`, `number`]),
   },
 

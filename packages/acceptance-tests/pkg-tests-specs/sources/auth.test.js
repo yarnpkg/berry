@@ -1,6 +1,7 @@
 const {
   fs: {writeFile},
-} = require('pkg-tests-core');
+  tests: {startPackageServer},
+} = require(`pkg-tests-core`);
 
 const AUTH_TOKEN = `686159dc-64b3-413e-a244-2de2b8d1c36f`;
 const AUTH_IDENT = `dXNlcm5hbWU6YSB2ZXJ5IHNlY3VyZSBwYXNzd29yZA==`; // username:a very secure password
@@ -84,6 +85,32 @@ describe(`Auth tests`, () => {
   );
 
   test(
+    `it should install scoped packages which require authentication if an authentication token is configured at the scope level`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@private/package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `npmScopes:`,
+          `  private:`,
+          `    npmRegistryServer: "${url}"`,
+          `    npmAuthToken: ${AUTH_TOKEN}`,
+        ].join(`\n`));
+
+        await run(`install`);
+
+        await expect(source(`require('@private/package')`)).resolves.toMatchObject({
+          name: `@private/package`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
     `it should install unscoped packages which require authentication if npmAlwaysAuth is set to true and an authentication token is present`,
     makeTemporaryEnv(
       {
@@ -125,6 +152,60 @@ describe(`Auth tests`, () => {
       },
       async ({path, run, source}) => {
         await writeFile(`${path}/.yarnrc.yml`, `npmAuthIdent: "${AUTH_IDENT}"\n`);
+
+        await run(`install`);
+
+        await expect(source(`require('@private/package')`)).resolves.toMatchObject({
+          name: `@private/package`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should install scoped packages which require authentication if an authentication ident is configured at the scope level`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@private/package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `npmScopes:`,
+          `  private:`,
+          `    npmRegistryServer: "${url}"`,
+          `    npmAuthIdent: ${AUTH_IDENT}`,
+        ].join(`\n`));
+
+        await run(`install`);
+
+        await expect(source(`require('@private/package')`)).resolves.toMatchObject({
+          name: `@private/package`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should normalize registries url keys`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@private/package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `npmScopes:`,
+          `  private:`,
+          `    npmRegistryServer: "${url}"`,
+          `npmRegistries:`,
+          `  "${url}/":`,  // Testing the trailing `/`
+          `    npmAuthToken: ${AUTH_TOKEN}`,
+        ].join(`\n`));
 
         await run(`install`);
 

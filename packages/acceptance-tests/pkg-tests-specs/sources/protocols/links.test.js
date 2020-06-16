@@ -1,9 +1,9 @@
-import {xfs, ppath} from '@yarnpkg/fslib';
+import {xfs} from '@yarnpkg/fslib';
 
 const {
   fs: {createTemporaryFolder, writeJson},
   tests: {getPackageDirectoryPath},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Protocols`, () => {
   describe(`portal:`, () => {
@@ -32,9 +32,11 @@ describe(`Protocols`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(source(`{ try { require('one-fixed-dep') } catch (error) { return error } }`)).resolves.toMatchObject({
-          code: `MODULE_NOT_FOUND`,
-          pnpCode: `UNDECLARED_DEPENDENCY`,
+        await expect(source(`require('one-fixed-dep')`)).rejects.toMatchObject({
+          externalException: {
+            code: `MODULE_NOT_FOUND`,
+            pnpCode: `UNDECLARED_DEPENDENCY`,
+          },
         });
       }),
     );
@@ -60,6 +62,46 @@ describe(`Protocols`, () => {
 
           await expect(source(`require('foo/data.json')`)).resolves.toMatchObject({
             data: 42,
+          });
+        },
+      ),
+    );
+
+    test(
+      `it shouldn't cause the paths to be discarded when covered by other fetchers (alphabetical before)`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`a-my-app`]: `link:.`,
+            [`no-deps`]: `1.0.0`,
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+            name: `no-deps`,
+            version: `1.0.0`,
+          });
+        },
+      ),
+    );
+
+    test(
+      `it shouldn't cause the paths to be discarded when covered by other fetchers (alphabetical after)`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+            [`z-my-app`]: `link:.`,
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+            name: `no-deps`,
+            version: `1.0.0`,
           });
         },
       ),

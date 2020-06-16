@@ -28,7 +28,7 @@ Remember that a [migration guide](https://yarnpkg.com/advanced/migration) is ava
 
   - The Yarn configuration has been revamped and *will not read the `.npmrc` files anymore.* This used to cause a lot of confusion as to where the configuration was coming from, so the logic is now very simple: Yarn will look in the current directory and all its ancestors for `.yarnrc.yml` files.
 
-      - Note that the configuration files are now called `.yarnrc.yml` and thus are expected to be valid YAML. The available settings are listed [here](https://next.yarnpkg.com/configuration/yarnrc).
+      - Note that the configuration files are now called `.yarnrc.yml` and thus are expected to be valid YAML. The available settings are listed [here](https://yarnpkg.com/configuration/yarnrc).
 
   - The lockfiles now generated should be compatible with Yaml, while staying compatible with old-style lockfiles. Old-style lockfiles will be automatically migrated, but that will require some round-trips to the registry to obtain more information that wasn't stored previously, so the first install will be slightly slower.
 
@@ -38,7 +38,7 @@ Remember that a [migration guide](https://yarnpkg.com/advanced/migration) is ava
 
 ### Package manifests (`package.json`)
 
-To see a comprehensive documentation about each possible field, please check our [documentation](https://next.yarnpkg.com/configuration/manifest).
+To see a comprehensive documentation about each possible field, please check our [documentation](https://yarnpkg.com/configuration/manifest).
 
   - Two new fields are now supported in the `publishConfig` key of your manifests: the `main`, `bin`, and `module` fields will be used to replace the value of their respective top-level counterparts in the manifest shipped along with the generated file.
 

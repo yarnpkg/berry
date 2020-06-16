@@ -1,7 +1,11 @@
-import {Plugin}       from '@yarnpkg/core';
+import {Plugin}               from '@yarnpkg/core';
 
-import {ExecFetcher}  from './ExecFetcher';
-import {ExecResolver} from './ExecResolver';
+import {ExecFetcher, ExecEnv} from './ExecFetcher';
+import {ExecResolver}         from './ExecResolver';
+import * as execUtils         from './execUtils';
+
+export {ExecEnv};
+export {execUtils};
 
 const plugin: Plugin = {
   fetchers: [

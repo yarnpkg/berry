@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/libzip",
-  "version": "2.0.0-rc.9",
+  "version": "2.0.0-rc.13",
+  "license": "BSD-2-Clause",
   "main": "./sources/sync.ts",
   "browser": "./sources/async.ts",
   "scripts": {
@@ -23,5 +24,12 @@
   "devDependencies": {
     "@types/prettier": "1.19.0",
     "prettier": "^1.19.1"
+  },
+  "dependencies": {
+    "@types/emscripten": "^1.38.0",
+    "tslib": "^1.13.0"
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }

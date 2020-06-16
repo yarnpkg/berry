@@ -1,11 +1,11 @@
-import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, Workspace, ThrowReport} from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                                 from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils}                                                           from '@yarnpkg/plugin-npm';
-import {packUtils}                                                                              from '@yarnpkg/plugin-pack';
-import {Command, Usage, UsageError}                                                             from 'clipanion';
-import {createHash}                                                                             from 'crypto';
-import ssri                                                                                     from 'ssri';
+import {BaseCommand, WorkspaceRequiredError}                                       from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport, Workspace} from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                    from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils}                                              from '@yarnpkg/plugin-npm';
+import {packUtils}                                                                 from '@yarnpkg/plugin-pack';
+import {Command, Usage, UsageError}                                                from 'clipanion';
+import {createHash}                                                                from 'crypto';
+import ssri                                                                        from 'ssri';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {
@@ -47,10 +47,7 @@ export default class NpmPublishCommand extends BaseCommand {
     if (workspace.manifest.name === null || workspace.manifest.version === null)
       throw new UsageError(`Workspaces must have valid names and versions to be published on an external registry`);
 
-    await project.resolveEverything({
-      lockfileOnly: true,
-      report: new ThrowReport(),
-    });
+    await project.restoreInstallState();
 
     // We store it so that TS knows that it's non-null
     const ident = workspace.manifest.name;
@@ -100,12 +97,14 @@ export default class NpmPublishCommand extends BaseCommand {
         const body = await makePublishBody(workspace, buffer, {
           access: this.access,
           tag: this.tag,
+          registry,
         });
 
         try {
           await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
             configuration,
             registry,
+            ident,
             json: true,
           });
         } catch (error) {
@@ -130,7 +129,7 @@ export default class NpmPublishCommand extends BaseCommand {
   }
 }
 
-async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag}: {access: string | undefined, tag: string}) {
+async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry}: {access: string | undefined, tag: string, registry: string}) {
   const configuration = workspace.project.configuration;
 
   const ident = workspace.manifest.name!;
@@ -138,7 +137,7 @@ async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, ta
 
   const name = structUtils.stringifyIdent(ident);
 
-  const shasum = createHash('sha1').update(buffer).digest('hex');
+  const shasum = createHash(`sha1`).update(buffer).digest(`hex`);
   const integrity = ssri.fromData(buffer).toString();
 
   if (typeof access === `undefined`) {
@@ -155,10 +154,17 @@ async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, ta
 
   const raw = await packUtils.genPackageManifest(workspace);
 
+  // This matches Lerna's logic:
+  // https://github.com/evocateur/libnpmpublish/blob/latest/publish.js#L142
+  // While the npm registry ignores the provided tarball URL, it's used by
+  // other registries such as verdaccio.
+  const tarballName = `${name}-${version}.tgz`;
+  const tarballURL = new URL(`${name}/-/${tarballName}`, registry);
+
   return {
     _id: name,
     _attachments: {
-      [`${name}-${version}.tgz`]: {
+      [tarballName]: {
         [`content_type`]: `application/octet-stream`,
         data: buffer.toString(`base64`),
         length: buffer.length,
@@ -186,7 +192,7 @@ async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, ta
           integrity,
 
           // the npm registry requires a tarball path, but it seems useless 🤷
-          tarball: `https://example.org/yarn/was/here.tgz`,
+          tarball: tarballURL.toString(),
         },
       },
     },

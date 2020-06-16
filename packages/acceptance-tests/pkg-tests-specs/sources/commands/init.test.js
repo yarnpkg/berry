@@ -1,6 +1,6 @@
 const {
   fs: {createTemporaryFolder, mkdirp, readJson},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
   describe(`add`, () => {

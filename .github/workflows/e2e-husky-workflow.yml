@@ -34,12 +34,11 @@ jobs:
         git init
         echo '/.yarn' > .gitignore
 
-        yarn init -p
-        yarn add -D husky@^4.0.0-beta.1 @commitlint/{cli,config-conventional}
-
+        echo '{"skipCI": false, "hooks": {"commit-msg": "commitlint -E HUSKY_GIT_PARAMS"}}' > .huskyrc
         echo 'module.exports = {extends: ["@commitlint/config-conventional"]};' > commitlint.config.js
 
-        echo '{"hooks": {"commit-msg": "commitlint -E HUSKY_GIT_PARAMS"}}' > .huskyrc
+        yarn init -p
+        yarn add -D husky@^4.0.0-beta.1 @commitlint/{cli,config-conventional}
 
         git add .
         ! git commit -m "Invalid commit message should fail pre-commit check"

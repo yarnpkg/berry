@@ -12,7 +12,11 @@ title: "Release Workflow"
 >
 > To access this feature, first install the `version` plugin: `yarn plugin import version`
 
-When working with monorepos, a hard task often is to figure out which packages should receive a new version when starting a new release. Yarn offers a few tools that aim to make this workflow easier without need for third-party tools (althought it's possible you may prefer the workflow offered by different implementations, of course!).
+When working with monorepos, a hard task often is to figure out which packages should receive a new version when starting a new release. Yarn offers a few tools that aim to make this workflow easier without need for third-party tools (although it's possible you may prefer the workflow offered by different implementations, of course!).
+
+```toc
+# This code block gets replaced with the Table of Contents
+```
 
 ## Auto-updated dependencies
 
@@ -36,13 +40,13 @@ Of course it's not that important when the packages from the monorepo are always
 
 ## Deferred versioning
 
-Starting from the 2.0, the `yarn version` command now accepts a new flag: `--deferred`. When set, this flag will cause the command to not immediatly change the `version` field of the local manifest, but to instead internally record an entry stating that the current package will need to receive an upgrade during the next release cycle. For example, the following:
+Starting from the 2.0, the `yarn version` command now accepts a new flag: `--deferred`. When set, this flag will cause the command to not immediately change the `version` field of the local manifest, but to instead internally record an entry stating that the current package will need to receive an upgrade during the next release cycle. For example, the following:
 
 ```bash
 yarn version minor --deferred
 ```
 
-Will not cause the `package.json` file to change! Instead, Yarn will create (or reuse, if you're inside a branch) a file within the `.yarn/releases` directory. This file will record the requested upgrade:
+Will not cause the `package.json` file to change! Instead, Yarn will create (or reuse, if you're inside a branch) a file within the `.yarn/versions` directory. This file will record the requested upgrade:
 
 ```yaml
 releases:
@@ -53,7 +57,7 @@ Then later on, once you're ready, just run `yarn version apply`. Yarn will then 
 
 ## Checked-in deferred records
 
-We've seen in the previous section that `yarn version patch` could store the future versions in an internal folder, `.yarn/releases`. But why is that? What good is it? To answer this question, consider a popular open-source project developed through a monorepo. This project receives many external pull requests, but they aren't released right away - they're often released as part of a batch. Every once in a while, the lead maintainer will take all the changes, convert them into new versions, and start the deployment.
+We've seen in the previous section that `yarn version patch` could store the future versions in an internal folder, `.yarn/versions`. But why is that? What good is it? To answer this question, consider a popular open-source project developed through a monorepo. This project receives many external pull requests, but they aren't released right away - they're often released as part of a batch. Every once in a while, the lead maintainer will take all the changes, convert them into new versions, and start the deployment.
 
 Let's focus on the part where changes have to be converted into versions. How does that work? This isn't easy. Taking Lerna, for example (the most popular version management tool for monorepos), you have two solutions:
 
@@ -73,4 +77,6 @@ One problem with committing the deferred releases, however, is that it becomes i
 
 To solve this problem in an automated way, the `yarn version check` command appeared. When run, this command will figure out which packages changed and whether they are listed in the release definition file. If they aren't, an error will be thrown and - assuming you integrate this into a CI system such as the GitHub Actions - the PR author will be asked to fill out the release definition file.
 
-Writing this file can be tedius; fortunately `yarn version check` implements a very handy flag named `--interactive`. When set (`yarn version check --interactive`), Yarn will print a terminal interface that will summarize all the changed files, all the changed workspaces, all relevant dependent workspaces, and checkboxes for wach entry allowing you to pick the release strategies you want to set for each workspace.
+Writing this file can be tedious; fortunately `yarn version check` implements a very handy flag named `--interactive`. When set (`yarn version check --interactive`), Yarn will print a terminal interface that will summarize all the changed files, all the changed workspaces, all relevant dependent workspaces, and checkboxes for each entry allowing you to pick the release strategies you want to set for each workspace.
+
+The [`changesetIgnorePatterns`](/configuration/yarnrc#changesetIgnorePatterns) configuration option can be used to ignore files when checking which files have changed. It is useful for excluding files that don't affect the release process (e.g. test files).

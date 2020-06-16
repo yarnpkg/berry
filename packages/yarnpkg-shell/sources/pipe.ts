@@ -6,7 +6,7 @@ import {ShellOptions}                               from './index';
 enum Pipe {
   STDOUT = 0b01,
   STDERR = 0b10,
-};
+}
 
 // This is hell to type
 export type Stdio = [
@@ -15,18 +15,22 @@ export type Stdio = [
   any
 ];
 
-type ProcessImplementation = (
+export type ProcessImplementation = (
   stdio: Stdio,
 ) => {
   stdin: Writable,
   promise: Promise<number>,
 };
 
-function nextTick() {
-  return new Promise(resolve => {
-    process.nextTick(resolve);
-  });
+function sigintHandler() {
+  // We don't want SIGINT to kill our process; we want it to kill the
+  // innermost process, whose end will cause our own to exit.
 }
+
+// Rather than attaching one SIGINT handler for each process, we
+// attach a single one and use a refcount to detect once it's no
+// longer needed.
+let sigintRefCount = 0;
 
 export function makeProcess(name: string, args: Array<string>, opts: ShellOptions, spawnOpts: any): ProcessImplementation {
   return (stdio: Stdio) => {
@@ -48,6 +52,9 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
       stderr,
     ]});
 
+    if (sigintRefCount++ === 0)
+      process.on(`SIGINT`, sigintHandler);
+
     if (stdio[0] instanceof Transform)
       stdio[0].pipe(child.stdin!);
     if (stdio[1] instanceof Transform)
@@ -59,6 +66,9 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
       stdin: child.stdin!,
       promise: new Promise(resolve => {
         child.on(`error`, error => {
+          if (--sigintRefCount === 0)
+            process.off(`SIGINT`, sigintHandler);
+
           // @ts-ignore
           switch (error.code) {
             case `ENOENT`: {
@@ -77,6 +87,9 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
         });
 
         child.on(`exit`, code => {
+          if (--sigintRefCount === 0)
+            process.off(`SIGINT`, sigintHandler);
+
           if (code !== null) {
             resolve(code);
           } else {
@@ -96,7 +109,7 @@ export function makeBuiltin(builtin: (opts: any) => Promise<number>): ProcessImp
 
     return {
       stdin,
-      promise: nextTick().then(() => builtin({
+      promise: Promise.resolve().then(() => builtin({
         stdin,
         stdout: stdio[1],
         stderr: stdio[2],

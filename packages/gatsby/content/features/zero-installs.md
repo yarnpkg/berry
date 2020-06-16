@@ -8,15 +8,19 @@ While not a feature in itself, the term "Zero Install" encompasses a lot of Yarn
 
 > **Important:** Zero-install is an *optional* philosophy. It has some drawbacks, and while we believe this workflow to be a defining feature for professional-grade projects we don't have any plans to ignore or deprecate the typical `yarn install` workflow in any way, now or in the future.
 
+```toc
+# This code block gets replaced with the Table of Contents
+```
+
 ## How does Yarn impact a project's stability?
 
 Yarn does its best to guarantee that running `yarn install` twice will give you the same result in both cases. The main way it does this is through a lockfile, which contains all the information needed for a project to be installed in a reproducible way across systems. But is it good enough?
 
 While Yarn does its best to guarantee that what works now will keep working, there's always the off chance that a future Yarn release will introduce a bug that will prevent you from installing your project. Or maybe your production environments will change and `yarn install` won't be able to write in the temporary directories anymore. Or maybe the network will fail and your packages won't be available anymore. Or maybe your credentials will rotate and you will start getting authentication issues. Or ... so many things can go wrong, and not all of them are things we can control.
 
-Note that these challenges are not unique to Yarn - you may remember a time where npm used to erase production servers due to a bug that reached one of their release. This is exactly what we mean: any code that runs is a code that can fail. And thanks to Murphy's law, we know that something that can fail *will* eventually fail. From there, it becomes clear that the only sure way to prevent such issues is to run the lower amount of code possible.
+Note that these challenges are not unique to Yarn — you may remember a time when npm used to erase production servers due to a bug that reached one of their releases. This is exactly what we mean: any code that runs is code that can fail. And thanks to Murphy's law, we know that something that can fail *will* eventually fail. From there, it becomes clear that the only sure way to prevent such issues is to run as little code as possible.
 
-## How to reach this "zero-install" state you're advocating for?
+## How do you reach this "zero-install" state you're advocating for?
 
 In order to make a project zero-install, you must be able to use it as soon as you clone it. This is very easy starting from Yarn 2!
 

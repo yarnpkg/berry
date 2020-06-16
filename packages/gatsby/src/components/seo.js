@@ -10,6 +10,8 @@ import PropTypes                 from 'prop-types';
 import Helmet                    from 'react-helmet';
 import React                     from 'react';
 
+export const defaultKeywords = [`package manager`, `yarn`, `yarnpkg`, `configuration`, `yarnrc`];
+
 export function SEO({description, lang, meta, keywords, title}) {
   const {site} = useStaticQuery(
     graphql`

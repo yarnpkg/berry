@@ -10,4 +10,4 @@ yarn plugin import workspace-tools
 
 ## Commands
 
-- [`yarn workspaces foreach`](https://next.yarnpkg.com/cli/workspaces/foreach)
+- [`yarn workspaces foreach`](https://yarnpkg.com/cli/workspaces/foreach)

@@ -12,17 +12,17 @@ export type HardDependencies = 'dependencies' | 'devDependencies';
 
 export interface WorkspaceDefinition {
   pattern: string;
-};
+}
 
 export interface DependencyMeta {
   built?: boolean;
   optional?: boolean;
   unplugged?: boolean;
-};
+}
 
 export interface PeerDependencyMeta {
   optional?: boolean;
-};
+}
 
 export interface PublishConfig {
   access?: string;
@@ -30,13 +30,15 @@ export interface PublishConfig {
   module?: PortablePath;
   bin?: Map<string, PortablePath>;
   registry?: string;
-};
+}
 
 export class Manifest {
   public indent: string = `  `;
 
   public name: Ident | null = null;
   public version: string | null = null;
+
+  public type: string | null = null;
 
   public ["private"]: boolean = false;
   public license: string | null = null;
@@ -63,20 +65,36 @@ export class Manifest {
   public files: Set<PortablePath> | null = null;
   public publishConfig: PublishConfig | null = null;
 
+  public preferUnplugged: boolean | null = null;
+
   public raw: {[key: string]: any} = {};
 
   /**
    * errors found in the raw manifest while loading
    */
-  public errors: ReadonlyArray<Error> = [];
+  public errors: Array<Error> = [];
 
   static readonly fileName = `package.json` as Filename;
 
   static readonly allDependencies: Array<AllDependencies> = [`dependencies`, `devDependencies`, `peerDependencies`];
   static readonly hardDependencies: Array<HardDependencies> = [`dependencies`, `devDependencies`];
 
-  static async find(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
-    return await Manifest.fromFile(ppath.join(path, toFilename(`package.json`)), {baseFs});
+  static async tryFind(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
+    const manifestPath = ppath.join(path, toFilename(`package.json`));
+
+    if (!await baseFs.existsPromise(manifestPath))
+      return null;
+
+    return await Manifest.fromFile(manifestPath, {baseFs});
+  }
+
+  static async find(path: PortablePath, {baseFs}: {baseFs?: FakeFS<PortablePath>} = {}) {
+    const manifest = await Manifest.tryFind(path, {baseFs});
+
+    if (manifest === null)
+      throw new Error(`Manifest not found`);
+
+    return manifest;
   }
 
   static async fromFile(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
@@ -139,6 +157,9 @@ export class Manifest {
     if (typeof data.version === `string`)
       this.version = data.version;
 
+    if (typeof data.type === `string`)
+      this.type = data.type;
+
     if (typeof data.private === `boolean`)
       this.private = data.private;
 
@@ -178,7 +199,7 @@ export class Manifest {
 
     if (typeof data.dependencies === `object` && data.dependencies !== null) {
       for (const [name, range] of Object.entries(data.dependencies)) {
-        if (typeof range !== 'string') {
+        if (typeof range !== `string`) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           continue;
         }
@@ -226,7 +247,7 @@ export class Manifest {
           continue;
         }
 
-        if (typeof range !== 'string' || !semver.validRange(range)) {
+        if (typeof range !== `string` || !semver.validRange(range)) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           range = `*`;
         }
@@ -378,6 +399,9 @@ export class Manifest {
       }
     }
 
+    if (typeof data.preferUnplugged === `boolean`)
+      this.preferUnplugged = data.preferUnplugged;
+
     this.errors = errors;
   }
 
@@ -518,6 +542,11 @@ export class Manifest {
     else
       delete data.version;
 
+    if (this.type !== null)
+      data.type = this.type;
+    else
+      delete data.type;
+
     if (this.private)
       data.private = true;
     else
@@ -642,9 +671,14 @@ export class Manifest {
     else
       delete data.files;
 
+    if (this.preferUnplugged !== null)
+      data.preferUnplugged = this.preferUnplugged;
+    else
+      delete data.preferUnplugged;
+
     return data;
   }
-};
+}
 
 function getIndent(content: string) {
   const indentMatch = content.match(/^[ \t]+/m);

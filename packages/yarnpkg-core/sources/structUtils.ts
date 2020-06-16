@@ -169,7 +169,7 @@ export function parseIdent(string: string): Ident {
 }
 
 export function tryParseIdent(string: string): Ident | null {
-  const match = string.match(/^(?:@([^\/]+?)\/)?([^\/]+)$/);
+  const match = string.match(/^(?:@([^/]+?)\/)?([^/]+)$/);
   if (!match)
     return null;
 
@@ -192,8 +192,8 @@ export function parseDescriptor(string: string, strict: boolean = false): Descri
 
 export function tryParseDescriptor(string: string, strict: boolean = false): Descriptor | null {
   const match = strict
-    ? string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))$/)
-    : string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))?$/);
+    ? string.match(/^(?:@([^/]+?)\/)?([^/]+?)(?:@(.+))$/)
+    : string.match(/^(?:@([^/]+?)\/)?([^/]+?)(?:@(.+))?$/);
 
   if (!match)
     return null;
@@ -223,8 +223,8 @@ export function parseLocator(string: string, strict: boolean = false): Locator {
 
 export function tryParseLocator(string: string, strict: boolean = false): Locator | null {
   const match = strict
-    ? string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))$/)
-    : string.match(/^(?:@([^\/]+?)\/)?([^\/]+?)(?:@(.+))?$/);
+    ? string.match(/^(?:@([^/]+?)\/)?([^/]+?)(?:@(.+))$/)
+    : string.match(/^(?:@([^/]+?)\/)?([^/]+?)(?:@(.+))?$/);
 
   if (!match)
     return null;
@@ -324,6 +324,13 @@ function encodeUnsafeCharacters(str: string) {
   return str;
 }
 
+function hasParams(params: querystring.ParsedUrlQuery | null): params is querystring.ParsedUrlQuery {
+  if (params === null)
+    return false;
+
+  return Object.entries(params).length > 0;
+}
+
 export function makeRange({protocol, source, selector, params}: {protocol: string | null, source: string | null, selector: string, params: querystring.ParsedUrlQuery | null}) {
   let range = ``;
 
@@ -334,7 +341,7 @@ export function makeRange({protocol, source, selector, params}: {protocol: strin
 
   range += encodeUnsafeCharacters(selector);
 
-  if (params !== null)
+  if (hasParams(params))
     range += `::${querystring.stringify(params)}`;
 
   return range;
@@ -347,17 +354,9 @@ export function makeRange({protocol, source, selector, params}: {protocol: strin
  * @param range range to convert
  */
 export function convertToManifestRange(range: string) {
-  const {protocol, source, selector} = parseRange(range);
-  if (!source)
-    return range;
+  const {params, protocol, source, selector} = parseRange(range);
 
-  const queryIndex = source.indexOf(`?`);
-  if (queryIndex === -1)
-    return range;
-
-  const params = querystring.parse(source.slice(queryIndex + 1));
-
-  for (const name of Object.keys(params))
+  for (const name in params)
     if (name.startsWith(`__`))
       delete params[name];
 
@@ -448,6 +447,8 @@ function prettyRangeNoColors(range: string): string {
     const abbrev = range.substr(VIRTUAL_PROTOCOL.length, VIRTUAL_ABBREVIATE);
 
     // I'm not satisfied of how the virtual packages appear in the output
+
+    // eslint-disable-next-line no-constant-condition
     return false ? `${nested} (virtual:${abbrev})` : `${nested} [${abbrev}]`;
   } else {
     return range.replace(/\?.*/, `?[...]`);
@@ -497,5 +498,5 @@ export function prettyWorkspace(configuration: Configuration, workspace: Workspa
  * them to a different location if that's a critical requirement.
  */
 export function getIdentVendorPath(ident: Ident) {
-  return `/node_modules/${requirableIdent(ident)}` as PortablePath;
+  return `node_modules/${requirableIdent(ident)}` as PortablePath;
 }

@@ -2,9 +2,9 @@ import {StdinContext}          from 'ink';
 import {useContext, useEffect} from 'react';
 
 export enum FocusRequest {
-  BEFORE = 'before',
-  AFTER = 'after',
-};
+  BEFORE = `before`,
+  AFTER = `after`,
+}
 
 export type FocusRequestHandler =
   (request: FocusRequest) => void;
@@ -14,7 +14,7 @@ export const useFocusRequest = function ({active, handler}: {active: boolean, ha
 
   useEffect(() => {
     if (!active || typeof handler === `undefined`)
-      return;
+      return undefined;
 
     const cb = (ch: any, key: any) => {
       if (key.name === `tab`) {

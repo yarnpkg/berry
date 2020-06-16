@@ -96,7 +96,7 @@ index 0000000..3e1267f
 +++ b/banana.ts
 @@ -0,0 +1 @@
 +this is a new file
-`.replace(/\n/g, "\r\n");
+`.replace(/\n/g, `\r\n`);
 
 const modeChangeAndModifyAndRename = `diff --git a/numbers.txt b/banana.txt
 old mode 100644

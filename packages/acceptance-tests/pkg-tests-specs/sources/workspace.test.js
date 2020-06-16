@@ -1,6 +1,6 @@
 const {
   fs: {readFile, writeFile, writeJson},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Workspaces tests`, () => {
   test(

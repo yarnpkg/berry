@@ -1,27 +1,27 @@
 {
   "name": "pkg-tests-core",
   "private": true,
+  "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/invariant": "^2.2.30",
     "@types/klaw": "^2.0.0",
     "@types/minimatch": "^3.0.3",
-    "@types/semver": "^6.0.2",
+    "@types/semver": "^7.1.0",
     "@types/tar-fs": "^1.16.1",
-    "@types/tmp": "^0.0.33",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.27",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.21",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.36",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.30",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
+    "@yarnpkg/parsers": "workspace:^2.0.0-rc.13",
     "finalhandler": "^1.1.2",
     "invariant": "^2.2.4",
     "klaw": "^2.1.1",
     "minimatch": "^3.0.4",
     "pkg-tests-fixtures": "workspace:0.0.0",
-    "semver": "^5.6.0",
+    "semver": "^7.1.2",
     "serve-static": "^1.14.1",
     "super-resolve": "^1.0.0",
-    "tar-fs": "^1.16.0",
-    "tmp": "^0.1.0"
+    "tar-fs": "^1.16.0"
   },
   "repository": {
     "type": "git",
@@ -30,5 +30,8 @@
   "devDependencies": {
     "@types/finalhandler": "1.1.0",
     "@types/serve-static": "1.13.3"
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }

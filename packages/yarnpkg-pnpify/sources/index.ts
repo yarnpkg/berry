@@ -12,7 +12,7 @@ let fsPatched = false;
 
 let pnp: PnpApi;
 try {
-  pnp = dynamicRequire('pnpapi');
+  pnp = dynamicRequire(`pnpapi`);
 } catch (e) {
 }
 
@@ -27,6 +27,11 @@ export const patchFs = () => {
 
 if (!process.mainModule)
   patchFs();
+
+export {
+  NodeModulesBaseNode,
+  NodeModulesPackageNode,
+} from './buildNodeModulesTree';
 
 export {
   NodeModulesFS,

@@ -99,7 +99,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
       let resolveFn: Function;
       let rejectFn: Function;
 
-      let awaitTarget = new Promise((resolve, reject) => {
+      const awaitTarget = new Promise((resolve, reject) => {
         resolveFn = resolve;
         rejectFn = reject;
       });
@@ -182,6 +182,7 @@ export async function genPackList(workspace: Workspace) {
   maybeRejectPath(configuration.get(`bstatePath`));
   maybeRejectPath(configuration.get(`cacheFolder`));
   maybeRejectPath(configuration.get(`globalFolder`));
+  maybeRejectPath(configuration.get(`installStatePath`));
   maybeRejectPath(configuration.get(`virtualFolder`));
   maybeRejectPath(configuration.get(`yarnPath`));
 
@@ -231,7 +232,7 @@ export async function genPackList(workspace: Workspace) {
 }
 
 async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, ignoreList}: {hasExplicitFileList: boolean, globalList: IgnoreList, ignoreList: IgnoreList}) {
-  const list: PortablePath[] = [];
+  const list: Array<PortablePath> = [];
 
   const cwdFs = new JailFS(initialCwd);
   const cwdList: Array<[PortablePath, Array<IgnoreList>]> = [[PortablePath.root, [ignoreList]]];
@@ -307,10 +308,10 @@ function normalizePattern(pattern: string, {cwd}: {cwd: PortablePath}) {
     pattern = `!${pattern}`;
 
   return pattern;
-};
+}
 
 function addIgnorePattern(target: Array<string>, pattern: string, {cwd}: {cwd: PortablePath}) {
-  let trimed = pattern.trim();
+  const trimed = pattern.trim();
 
   if (trimed === `` || trimed[0] === `#`)
     return;
@@ -340,7 +341,7 @@ function isIgnored(cwd: string, {globalList, ignoreLists}: {globalList: IgnoreLi
 
 function isMatch(path: string, patterns: Array<string>) {
   let inclusives = patterns;
-  let exclusives = [];
+  const exclusives = [];
 
   for (let t = 0; t < patterns.length; ++t) {
     if (patterns[t][0] !== `!`) {
@@ -365,7 +366,7 @@ function isMatch(path: string, patterns: Array<string>) {
 
 function isMatchBasename(path: string, patterns: Array<string>) {
   let paths = patterns;
-  let basenames = [];
+  const basenames = [];
 
   for (let t = 0; t < patterns.length; ++t) {
     if (patterns[t].includes(`/`)) {

@@ -1,0 +1,22 @@
+diff --git a/dist/external-module-map-plugin.js b/dist/external-module-map-plugin.js
+index 7f1a49cbc..5bbe35a41 100644
+--- a/dist/external-module-map-plugin.js
++++ b/dist/external-module-map-plugin.js
+@@ -61,7 +61,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
+          */
+         onBegin(context) {
+             this.moduleRenames = [];
+-            this.options.read({}, options_1.OptionsReadMode.Prefetch);
++            this.options.read({});
+             this.externalmap = (this.options.getValue('external-modulemap'));
+             if (!!this.externalmap) {
+                 try {
+@@ -81,7 +81,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
+             var fileName = node.fileName;
+             let match = this.mapRegEx.exec(fileName);
+             /*
+-
++
+             */
+             if (null != match) {
+                 console.log(' Mapping ', fileName, ' ==> ', match[1]);

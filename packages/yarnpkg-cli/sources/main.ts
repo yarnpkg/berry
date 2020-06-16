@@ -9,12 +9,18 @@ import {WelcomeCommand}                                     from './tools/Welcom
 function runBinary(path: PortablePath) {
   const physicalPath = npath.fromPortablePath(path);
 
+  process.on(`SIGINT`, () => {
+    // We don't want SIGINT to kill our process; we want it to kill the
+    // innermost process, whose end will cause our own to exit.
+  });
+
   if (physicalPath) {
     execFileSync(process.execPath, [physicalPath, ...process.argv.slice(2)], {
       stdio: `inherit`,
       env: {
         ...process.env,
         YARN_IGNORE_PATH: `1`,
+        YARN_IGNORE_CWD: `1`,
       },
     });
   } else {
@@ -23,6 +29,7 @@ function runBinary(path: PortablePath) {
       env: {
         ...process.env,
         YARN_IGNORE_PATH: `1`,
+        YARN_IGNORE_CWD: `1`,
       },
     });
   }
@@ -50,11 +57,13 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
     // Since we only care about a few very specific settings (yarn-path and ignore-path) we tolerate extra configuration key.
     // If we didn't, we wouldn't even be able to run `yarn config` (which is recommended in the invalid config error message)
     const configuration = await Configuration.find(npath.toPortablePath(process.cwd()), pluginConfiguration, {
+      usePath: true,
       strict: false,
     });
 
     const yarnPath: PortablePath = configuration.get(`yarnPath`);
     const ignorePath = configuration.get(`ignorePath`);
+    const ignoreCwd = configuration.get(`ignoreCwd`);
 
     if (yarnPath !== null && !ignorePath) {
       if (!xfs.existsSync(yarnPath)) {
@@ -80,13 +89,14 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       // @ts-ignore: The cwd is a global option defined by BaseCommand
       const cwd: string | undefined = command.cwd;
 
-      if (typeof cwd !== `undefined`) {
+      if (typeof cwd !== `undefined` && !ignoreCwd) {
         const iAmHere = realpathSync(process.cwd());
         const iShouldBeHere = realpathSync(cwd);
 
         if (iAmHere !== iShouldBeHere) {
           process.chdir(cwd);
-          return await run();
+          await run();
+          return;
         }
       }
 

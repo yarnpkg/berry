@@ -12,13 +12,13 @@ export class MultiResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     const resolver = this.tryResolverByDescriptor(descriptor, opts);
 
-    return resolver ? true : false;
+    return !!resolver;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
     const resolver = this.tryResolverByLocator(locator, opts);
 
-    return resolver ? true : false;
+    return !!resolver;
   }
 
   shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {

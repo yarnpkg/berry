@@ -4,7 +4,19 @@ path: /advanced/lexicon
 title: "Lexicon"
 ---
 
+```toc
+# This code block gets replaced with the Table of Contents
+```
+
 <!-- Note that all entries within this file must be alphabetically sorted -->
+
+### Build Scripts
+
+Refers to tasks executed right after the packages got installed; typically the `postinstall` scripts configured in the [`scripts` field](/configuration/manifest#scripts) from the manifest.
+
+Build scripts should be left to native dependencies, there is virtually no reason for pure JavaScript packages to use them. They have [significant side effects](/advanced/lifecycle-scripts#a-note-about-postinstall) on your users projects, so weight careful whether you really need them.
+
+See also: [Lifecycle Scripts](/advanced/lifecycle-scripts)
 
 ### Dependency
 
@@ -76,7 +88,7 @@ See also: [Singleton Package](#singleton-package)
 
 A peer-dependent package is a package that lists peer dependencies.
 
-See also: [Virtual Packages](#virtual-packages)
+See also: [Virtual Packages](#virtual-package)
 
 ### Plugin
 

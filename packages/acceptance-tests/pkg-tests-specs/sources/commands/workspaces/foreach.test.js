@@ -1,6 +1,6 @@
 const {
   fs: {writeJson, writeFile},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 async function setupWorkspaces(path) {
   await writeFile(`${path}/mutexes/workspace-a`, ``);
@@ -15,6 +15,7 @@ async function setupWorkspaces(path) {
     scripts: {
       print: `echo Test Workspace A`,
       start: `node server.js`,
+      testExit: `exit 0`,
     },
   });
 
@@ -25,6 +26,7 @@ async function setupWorkspaces(path) {
     scripts: {
       print: `echo Test Workspace B`,
       start: `node client.js`,
+      testExit: `exit 1`,
     },
     dependencies: {
       [`workspace-a`]: `workspace:*`,
@@ -82,7 +84,7 @@ async function setupWorkspaces(path) {
 describe(`Commands`, () => {
   describe(`workspace foreach`, () => {
     test(
-      `should run on child workspaces by default`,
+      `should run on current and descendant workspaces by default`,
       makeTemporaryEnv(
         {
           private: true,
@@ -388,6 +390,29 @@ describe(`Commands`, () => {
         await expect({code, stdout, stderr}).toMatchSnapshot();
       }
     ));
+
+    test(
+      `should return correct exit code when encountered errors in running scripts`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await setupWorkspaces(path);
+
+          let code;
+          try {
+            await run(`install`);
+            ({code} = await run(`workspaces`, `foreach`, `run`, `testExit`));
+          } catch (error) {
+            ({code} = error);
+          }
+
+          expect(code).toBe(1);
+        }
+      )
+    );
   });
 });
 

@@ -3,6 +3,16 @@ import {Filename, npath, ppath, PortablePath} from '../sources/path';
 import {xfs}                                  from '../sources';
 
 describe(`VirtualFS`, () => {
+  it(`should ignore non-hash virtual components`, () => {
+    const virtualPath = ppath.join(npath.toPortablePath(__dirname), `$$virtual` as Filename);
+    const virtualEntry = ppath.join(virtualPath, `package.json` as PortablePath);
+
+    const expected = virtualEntry;
+
+    const virtualFs = new VirtualFS();
+    expect(virtualFs.mapToBase(virtualEntry)).toEqual(expected);
+  });
+
   it(`shouldn't map non-number virtual components`, () => {
     const virtualPath = ppath.join(npath.toPortablePath(__dirname), `$$virtual` as Filename);
     const virtualEntry = ppath.join(virtualPath, `12345/invalid` as PortablePath);

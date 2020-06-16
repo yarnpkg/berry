@@ -1,7 +1,7 @@
 import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import {stringifySyml, parseSyml}                  from '@yarnpkg/parsers';
 import klaw                                        from 'klaw';
 import tarFs                                       from 'tar-fs';
-import tmp                                         from 'tmp';
 import zlib                                        from 'zlib';
 import {Gzip}                                      from 'zlib';
 
@@ -13,8 +13,8 @@ export const walk = (
   source: PortablePath,
   {filter, relative = false}: {filter?: Array<string>, relative?: boolean} = {},
 ): Promise<Array<PortablePath>> => {
-  return new Promise((resolve) => {
-    const paths: PortablePath[] = [];
+  return new Promise(resolve => {
+    const paths: Array<PortablePath> = [];
 
     const walker = klaw(npath.fromPortablePath(source), {
       filter: (sourcePath: string) => {
@@ -36,7 +36,7 @@ export const walk = (
       },
     });
 
-    walker.on('data', ({path: sourcePath}) => {
+    walker.on(`data`, ({path: sourcePath}) => {
       const itemPath = npath.toPortablePath(sourcePath);
       const relativePath = ppath.relative(source, itemPath);
 
@@ -47,7 +47,7 @@ export const walk = (
       return;
     });
 
-    walker.on('end', () => {
+    walker.on(`end`, () => {
       resolve(paths);
     });
   });
@@ -59,7 +59,7 @@ export const packToStream = (
 ): Gzip => {
   if (virtualPath) {
     if (!ppath.isAbsolute(virtualPath)) {
-      throw new Error('The virtual path has to be an absolute path');
+      throw new Error(`The virtual path has to be an absolute path`);
     } else {
       virtualPath = ppath.resolve(virtualPath);
     }
@@ -71,15 +71,17 @@ export const packToStream = (
     map: (header: any) => {
       header.name = npath.toPortablePath(header.name);
 
-      if (true) {
-        header.name = ppath.resolve(PortablePath.root, header.name);
-        header.name = ppath.relative(PortablePath.root, header.name);
-      }
+      header.name = ppath.resolve(PortablePath.root, header.name);
+      header.name = ppath.relative(PortablePath.root, header.name);
 
       if (virtualPath) {
         header.name = ppath.resolve(PortablePath.root, virtualPath, header.name);
         header.name = ppath.relative(PortablePath.root, header.name);
       }
+
+      header.uid = 1;
+      header.gid = 1;
+      header.mtime = new Date(1589272747277);
 
       return header;
     },
@@ -87,8 +89,8 @@ export const packToStream = (
 
   packStream.pipe(zipperStream);
 
-  packStream.on('error', error => {
-    zipperStream.emit('error', error);
+  packStream.on(`error`, error => {
+    zipperStream.emit(`error`, error);
   });
 
   return zipperStream;
@@ -101,15 +103,15 @@ export const packToFile = (target: PortablePath, source: PortablePath, options: 
   packStream.pipe(tarballStream);
 
   return new Promise((resolve, reject) => {
-    tarballStream.on('error', (error: Error) => {
+    tarballStream.on(`error`, (error: Error) => {
       reject(error);
     });
 
-    packStream.on('error', (error: Error) => {
+    packStream.on(`error`, (error: Error) => {
       reject(error);
     });
 
-    tarballStream.on('close', () => {
+    tarballStream.on(`close`, () => {
       resolve();
     });
   });
@@ -123,61 +125,41 @@ export const unpackToDirectory = (target: PortablePath, source: PortablePath): P
   tarballStream.pipe(gunzipStream).pipe(extractStream);
 
   return new Promise((resolve, reject) => {
-    tarballStream.on('error', error => {
+    tarballStream.on(`error`, error => {
       reject(error);
     });
 
-    gunzipStream.on('error', error => {
+    gunzipStream.on(`error`, error => {
       reject(error);
     });
 
-    extractStream.on('error', error => {
+    extractStream.on(`error`, error => {
       reject(error);
     });
 
-    extractStream.on('finish', () => {
+    extractStream.on(`finish`, () => {
       resolve();
     });
   });
 };
 
-export const createTemporaryFolder = (name?: Filename): Promise<PortablePath> => {
-  return new Promise<PortablePath>((resolve, reject) => {
-    tmp.dir({unsafeCleanup: true}, async (error: Error, dirPath: string) => {
-      if (error) {
-        reject(error);
-      } else {
-        let realPath = await xfs.realpathPromise(npath.toPortablePath(dirPath));
+export const createTemporaryFolder = async (name?: Filename): Promise<PortablePath> => {
+  let tmp = await xfs.mktempPromise();
 
-        if (name) {
-          realPath = ppath.join(realPath, name as PortablePath);
-          await exports.mkdirp(dirPath);
-        }
+  if (typeof name !== `undefined`) {
+    tmp = ppath.join(tmp, name);
+    await xfs.mkdirPromise(tmp);
+  }
 
-        resolve(realPath);
-      }
-    });
-  });
+  return tmp;
 };
 
-export const createTemporaryFile = async (filePath: PortablePath): Promise<PortablePath> => {
-  if (filePath) {
-    if (ppath.normalize(filePath).match(/^(\.\.)?\//))
-      throw new Error('A temporary file path must be a forward path');
+export const createTemporaryFile = async (filePath: PortablePath = `file` as PortablePath): Promise<PortablePath> => {
+  if (ppath.normalize(filePath).match(/^(\.\.)?\//))
+    throw new Error(`A temporary file path must be a forward path`);
 
-    const folderPath = await exports.createTemporaryFolder();
-    return ppath.resolve(folderPath, filePath as PortablePath);
-  } else {
-    return new Promise((resolve, reject) => {
-      tmp.file({discardDescriptor: true}, (error, filePath) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(npath.toPortablePath(filePath));
-        }
-      });
-    });
-  }
+  const folderPath = await exports.createTemporaryFolder();
+  return ppath.resolve(folderPath, filePath as PortablePath);
 };
 
 export const mkdirp = async (target: PortablePath): Promise<void> =>
@@ -196,13 +178,27 @@ export const writeJson = (target: PortablePath, object: any): Promise<void> => {
   return exports.writeFile(target, JSON.stringify(object));
 };
 
+export const writeSyml = (target: PortablePath, object: any): Promise<void> => {
+  return exports.writeFile(target, stringifySyml(object));
+};
+
 export const readJson = async (source: PortablePath): Promise<any> => {
-  const fileContent = await exports.readFile(source, 'utf8');
+  const fileContent = await exports.readFile(source, `utf8`);
 
   try {
     return JSON.parse(fileContent);
   } catch (error) {
     throw new Error(`Invalid json file (${source})`);
+  }
+};
+
+export const readSyml = async (source: PortablePath): Promise<any> => {
+  const fileContent = await exports.readFile(source, `utf8`);
+
+  try {
+    return parseSyml(fileContent);
+  } catch (error) {
+    throw new Error(`Invalid syml file (${source})`);
   }
 };
 

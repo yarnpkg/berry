@@ -1,13 +1,13 @@
-import {Libzip}                                                                from '@yarnpkg/libzip';
-import {constants}                                                             from 'fs';
+import {Libzip}                                                                                    from '@yarnpkg/libzip';
+import {constants}                                                                                 from 'fs';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS} from './FakeFS';
-import {Dirent}                                                                from './FakeFS';
-import {FakeFS, MkdirOptions, WriteFileOptions}                                from './FakeFS';
-import {WatchOptions, WatchCallback, Watcher}                                  from './FakeFS';
-import {NodeFS}                                                                from './NodeFS';
-import {ZipFS}                                                                 from './ZipFS';
-import {Filename, FSPath, PortablePath}                                        from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions} from './FakeFS';
+import {Dirent, SymlinkType}                                                                       from './FakeFS';
+import {FakeFS, MkdirOptions, WriteFileOptions}                                                    from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher}                                                      from './FakeFS';
+import {NodeFS}                                                                                    from './NodeFS';
+import {ZipFS}                                                                                     from './ZipFS';
+import {Filename, FSPath, PortablePath}                                                            from './path';
 
 const ZIP_FD = 0x80000000;
 
@@ -64,6 +64,10 @@ export class ZipOpenFS extends BasePortableFakeFS {
     this.notZip = new Set();
   }
 
+  getExtractHint(hints: ExtractHintOptions) {
+    return this.baseFs.getExtractHint(hints);
+  }
+
   getRealPath() {
     return this.baseFs.getRealPath();
   }
@@ -84,6 +88,10 @@ export class ZipOpenFS extends BasePortableFakeFS {
         this.zipInstances.delete(path);
       }
     }
+  }
+
+  resolve(p: PortablePath) {
+    return this.baseFs.resolve(p);
   }
 
   private remapFd(zipFs: ZipFS, fd: number) {
@@ -534,17 +542,17 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async symlinkPromise(target: PortablePath, p: PortablePath) {
+  async symlinkPromise(target: PortablePath, p: PortablePath, type?: SymlinkType) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.symlinkPromise(target, p);
+      return await this.baseFs.symlinkPromise(target, p, type);
     }, async (zipFs, {subPath}) => {
       return await zipFs.symlinkPromise(target, subPath);
     });
   }
 
-  symlinkSync(target: PortablePath, p: PortablePath) {
+  symlinkSync(target: PortablePath, p: PortablePath, type?: SymlinkType) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.symlinkSync(target, p);
+      return this.baseFs.symlinkSync(target, p, type);
     }, (zipFs, {subPath}) => {
       return zipFs.symlinkSync(target, subPath);
     });
@@ -650,7 +658,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     if (typeof p !== `string`)
       return await discard();
 
-    const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(PortablePath.root, p));
+    const normalizedP = this.resolve(p);
 
     const zipInfo = this.findZip(normalizedP);
     if (!zipInfo)
@@ -666,7 +674,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     if (typeof p !== `string`)
       return discard();
 
-    const normalizedP = this.pathUtils.normalize(this.pathUtils.resolve(PortablePath.root, p));
+    const normalizedP = this.resolve(p);
 
     const zipInfo = this.findZip(normalizedP);
     if (!zipInfo)
@@ -754,8 +762,16 @@ export class ZipOpenFS extends BasePortableFakeFS {
     if (this.zipInstances) {
       let zipFs = this.zipInstances.get(p);
 
-      if (!zipFs)
-        zipFs = new ZipFS(p, await getZipOptions());
+      if (!zipFs) {
+        const zipOptions = await getZipOptions();
+
+        // We need to recheck because concurrent getZipPromise calls may
+        // have instantiated the zip archive while we were waiting
+        zipFs = this.zipInstances.get(p);
+        if (!zipFs) {
+          zipFs = new ZipFS(p, zipOptions);
+        }
+      }
 
       // Removing then re-adding the field allows us to easily implement
       // a basic LRU garbage collection strategy
@@ -788,7 +804,14 @@ export class ZipOpenFS extends BasePortableFakeFS {
       let zipFs = this.zipInstances.get(p);
 
       if (!zipFs)
-        this.zipInstances.set(p, zipFs = new ZipFS(p, getZipOptions()));
+        zipFs = new ZipFS(p, getZipOptions());
+
+      // Removing then re-adding the field allows us to easily implement
+      // a basic LRU garbage collection strategy
+      this.zipInstances.delete(p);
+      this.zipInstances.set(p, zipFs);
+
+      this.limitOpenFiles(this.maxOpenFiles);
 
       return accept(zipFs);
     } else {

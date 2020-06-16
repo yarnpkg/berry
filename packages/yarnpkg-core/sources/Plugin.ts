@@ -5,8 +5,10 @@ import {Writable, Readable}                                     from 'stream';
 import {SettingsDefinition, PluginConfiguration, Configuration} from './Configuration';
 import {Fetcher}                                                from './Fetcher';
 import {Linker}                                                 from './Linker';
+import {MessageName}                                            from './MessageName';
 import {Project}                                                from './Project';
-import {Resolver}                                               from './Resolver';
+import {Resolver, ResolveOptions}                               from './Resolver';
+import {Workspace}                                              from './Workspace';
 import {Locator, Descriptor}                                    from './types';
 
 type ProcessEnvironment = {[key: string]: string};
@@ -22,15 +24,15 @@ export type CommandContext = {
 
 export interface FetcherPlugin {
   new(): Fetcher;
-};
+}
 
 export interface LinkerPlugin {
   new(): Linker;
-};
+}
 
 export interface ResolverPlugin {
   new(): Resolver;
-};
+}
 
 export type Hooks = {
   // Called when the package extensions are setup. Can be used to inject new
@@ -80,6 +82,7 @@ export type Hooks = {
     project: Project,
     locator: Locator,
     initialDependency: Descriptor,
+    extra: {resolver: Resolver, resolveOptions: ResolveOptions},
   ) => Promise<Descriptor>,
 
   // Called after the `install` method from the `Project` class successfully
@@ -87,6 +90,26 @@ export type Hooks = {
   afterAllInstalled?: (
     project: Project,
   ) => void,
+
+  // Called during the `Validation step` of the `install` method from the `Project`
+  // class.
+  validateProject?: (
+    project: Project,
+    report: {
+      reportWarning: (name: MessageName, text: string) => void,
+      reportError: (name: MessageName, text: string) => void,
+    }
+  ) => void;
+
+  // Called during the `Validation step` of the `install` method from the `Project`
+  // class by the `validateProject` hook.
+  validateWorkspace?: (
+    workspace: Workspace,
+    report: {
+      reportWarning: (name: MessageName, text: string) => void,
+      reportError: (name: MessageName, text: string) => void,
+    }
+  ) => void;
 };
 
 export type Plugin<PluginHooks = any> = {

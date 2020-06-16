@@ -1,15 +1,18 @@
-import {FakeFS, PortablePath, ZipFS, NodeFS, npath, ppath} from '@yarnpkg/fslib';
-import {getLibzipPromise}                                  from '@yarnpkg/libzip';
-import {Parse}                                             from 'tar';
-import {tmpNameSync}                                       from 'tmp';
+import {Filename, FakeFS, PortablePath, ZipCompression, ZipFS, NodeFS, ppath, xfs, npath} from '@yarnpkg/fslib';
+import {getLibzipPromise}                                                                 from '@yarnpkg/libzip';
+import {Parse}                                                                            from 'tar';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>,
   prefixPath?: PortablePath | null,
-};
+  compressionLevel?: ZipCompression,
+}
 
-export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
-  const zipFs = new ZipFS(npath.toPortablePath(tmpNameSync()), {create: true, libzip: await getLibzipPromise()});
+export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root, compressionLevel}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
+  const tmpFolder = await xfs.mktempPromise();
+  const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
+
+  const zipFs = new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise(), level: compressionLevel});
   const target = ppath.resolve(PortablePath.root, prefixPath!);
 
   await zipFs.copyPromise(target, source, {baseFs});
@@ -18,12 +21,17 @@ export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = n
 }
 
 interface ExtractBufferOptions {
+  compressionLevel?: ZipCompression,
   prefixPath?: PortablePath,
   stripComponents?: number,
-};
+}
 
 export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
-  return await extractArchiveTo(tgz, new ZipFS(npath.toPortablePath(tmpNameSync()), {create: true, libzip: await getLibzipPromise()}), opts);
+  const tmpFolder = await xfs.mktempPromise();
+  const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
+  const {compressionLevel, ...bufferOpts} = opts;
+
+  return await extractArchiveTo(tgz, new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise(), level: compressionLevel}), bufferOpts);
 }
 
 export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buffer, targetFs: T, {stripComponents = 0, prefixPath = PortablePath.dot}: ExtractBufferOptions = {}): Promise<T> {
@@ -56,8 +64,14 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
       return;
     }
 
-    const parts = entry.path.split(/\//g);
-    const mappedPath = ppath.join(prefixPath, parts.slice(stripComponents).join(`/`));
+    const parts = ppath.normalize(npath.toPortablePath(entry.path)).replace(/\/$/, ``).split(/\//g);
+    if (parts.length <= stripComponents) {
+      entry.resume();
+      return;
+    }
+
+    const slicePath = parts.slice(stripComponents).join(`/`) as PortablePath;
+    const mappedPath = ppath.join(prefixPath, slicePath);
 
     const chunks: Array<Buffer> = [];
 
@@ -94,7 +108,7 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
           targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
           targetFs.symlinkSync(entry.linkpath, mappedPath);
-          targetFs.lutimesSync!(mappedPath, defaultTime, defaultTime);
+          targetFs.lutimesSync?.(mappedPath, defaultTime, defaultTime);
         } break;
       }
     });

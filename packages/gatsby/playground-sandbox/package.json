@@ -1,0 +1,17 @@
+{
+  "name": "playground-sandbox",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@arcanis/sherlock": "^1.0.38",
+    "next": "canary",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "rimraf": "^3.0.2"
+  }
+}

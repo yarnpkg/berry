@@ -1,14 +1,14 @@
 export enum ErrorCode {
-  API_ERROR = 'API_ERROR',
-  BLACKLISTED = 'BLACKLISTED',
-  BUILTIN_NODE_RESOLUTION_FAILED = 'BUILTIN_NODE_RESOLUTION_FAILED',
-  MISSING_DEPENDENCY = 'MISSING_DEPENDENCY',
-  MISSING_PEER_DEPENDENCY = 'MISSING_PEER_DEPENDENCY',
-  QUALIFIED_PATH_RESOLUTION_FAILED = 'QUALIFIED_PATH_RESOLUTION_FAILED',
-  INTERNAL = 'INTERNAL',
-  UNDECLARED_DEPENDENCY = 'UNDECLARED_DEPENDENCY',
-  UNSUPPORTED = 'UNSUPPORTED',
-};
+  API_ERROR = `API_ERROR`,
+  BLACKLISTED = `BLACKLISTED`,
+  BUILTIN_NODE_RESOLUTION_FAILED = `BUILTIN_NODE_RESOLUTION_FAILED`,
+  MISSING_DEPENDENCY = `MISSING_DEPENDENCY`,
+  MISSING_PEER_DEPENDENCY = `MISSING_PEER_DEPENDENCY`,
+  QUALIFIED_PATH_RESOLUTION_FAILED = `QUALIFIED_PATH_RESOLUTION_FAILED`,
+  INTERNAL = `INTERNAL`,
+  UNDECLARED_DEPENDENCY = `UNDECLARED_DEPENDENCY`,
+  UNSUPPORTED = `UNSUPPORTED`,
+}
 
 // Some errors are exposed as MODULE_NOT_FOUND for compatibility with packages
 // that expect this umbrella error when the resolution fails
@@ -31,8 +31,25 @@ export function makeError(pnpCode: ErrorCode, message: string, data: Object = {}
     ? `MODULE_NOT_FOUND`
     : pnpCode;
 
-  return Object.assign(new Error(message), {
-    code, pnpCode, data,
+  const propertySpec = {
+    configurable: true,
+    writable: true,
+    enumerable: false,
+  };
+
+  return Object.defineProperties(new Error(message), {
+    code: {
+      ...propertySpec,
+      value: code,
+    },
+    pnpCode: {
+      ...propertySpec,
+      value: pnpCode,
+    },
+    data: {
+      ...propertySpec,
+      value: data,
+    },
   });
 }
 
@@ -44,7 +61,7 @@ export function makeError(pnpCode: ErrorCode, message: string, data: Object = {}
 export function getIssuerModule(parent: NodeModule | null | undefined): NodeModule | null {
   let issuer = parent;
 
-  while (issuer && (issuer.id === '[eval]' || issuer.id === '<repl>' || !issuer.filename))
+  while (issuer && (issuer.id === `[eval]` || issuer.id === `<repl>` || !issuer.filename))
     issuer = issuer.parent;
 
   return issuer || null;

@@ -1,10 +1,10 @@
-import {BaseCommand, WorkspaceRequiredError}              from '@yarnpkg/cli';
-import {Configuration, LocatorHash, Package, ThrowReport} from '@yarnpkg/core';
-import {IdentHash, Project}                               from '@yarnpkg/core';
-import {miscUtils, structUtils}                           from '@yarnpkg/core';
-import {Command, Usage}                                   from 'clipanion';
-import {Writable}                                         from 'stream';
-import {asTree}                                           from 'treeify';
+import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
+import {Configuration, LocatorHash, Package} from '@yarnpkg/core';
+import {IdentHash, Project}                  from '@yarnpkg/core';
+import {miscUtils, structUtils}              from '@yarnpkg/core';
+import {Command, Usage}                      from 'clipanion';
+import {Writable}                            from 'stream';
+import {asTree}                              from 'treeify';
 
 type TreeNode = {[key: string]: TreeNode};
 
@@ -42,10 +42,7 @@ export default class WhyCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    await project.resolveEverything({
-      lockfileOnly: true,
-      report: new ThrowReport(),
-    });
+    await project.restoreInstallState();
 
     const identHash = structUtils.parseIdent(this.package).identHash;
 

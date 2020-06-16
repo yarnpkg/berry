@@ -1,6 +1,6 @@
 const {
   fs: {mkdirp, writeJson},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 exports.environments = {
   [`empty project`]: async path => {

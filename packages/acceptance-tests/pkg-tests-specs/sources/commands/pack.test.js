@@ -16,6 +16,18 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it shouldn't pack Yarn files by default`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/index.js`, `module.exports = 42;\n`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        await expect(stdout).not.toMatch(/\.yarn\//);
+      }),
+    );
+
+    test(
       `it should only keep the files covered by the "files" field`,
       makeTemporaryEnv({
         files: [
@@ -129,7 +141,7 @@ describe(`Commands`, () => {
 
         await run(`install`);
 
-        await fsUtils.writeFile(`${path}/lib/foo.js`);
+        await fsUtils.writeFile(`${path}/lib/foo.js`, ``);
 
         const {stdout} = await run(`pack`, `--dry-run`);
         await expect(stdout).toMatch(/lib\/foo\.js/);
@@ -242,19 +254,19 @@ describe(`Commands`, () => {
     test(
       `it should replace the workspace: protocol correctly`,
       makeTemporaryEnv({
-        workspaces: ['./dependency', './dependant'],
+        workspaces: [`./dependency`, `./dependant`],
       }, async({path, run, source}) => {
         const dependency = `@test/dependency`;
         const dependant = `@test/dependant`;
 
         await fsUtils.writeJson(`${path}/dependency/package.json`, {
           name: dependency,
-          version: '1.0.0',
+          version: `1.0.0`,
         });
 
         await fsUtils.writeJson(`${path}/dependant/package.json`, {
           name: dependant,
-          version: '1.0.0',
+          version: `1.0.0`,
           dependencies: {
             [dependency]: `workspace:*`,
           },
@@ -323,8 +335,8 @@ describe(`Commands`, () => {
     test(
       `it should make the filename non-descriptive by default`,
       makeTemporaryEnv({
-        name: '@yarnpkg/core',
-        version: '0.0.1',
+        name: `@yarnpkg/core`,
+        version: `0.0.1`,
       }, async ({path, run, source}) => {
         await run(`install`);
 
@@ -336,8 +348,8 @@ describe(`Commands`, () => {
     test(
       `it should put the file relative to the workspace root by default`,
       makeTemporaryEnv({
-        name: '@scope/test',
-        version: '0.0.1',
+        name: `@scope/test`,
+        version: `0.0.1`,
       }, async ({path, run, source}) => {
         await xfs.mkdirpPromise(`${path}/subdir`);
 
@@ -351,8 +363,8 @@ describe(`Commands`, () => {
     test(
       `it should generate an archive with a custom name when using \`--out\``,
       makeTemporaryEnv({
-        name: '@scope/test',
-        version: '0.0.1',
+        name: `@scope/test`,
+        version: `0.0.1`,
       }, async ({path, run, source}) => {
         await run(`install`);
 
@@ -364,8 +376,8 @@ describe(`Commands`, () => {
     test(
       `it should put the file relative to the cwd when using \`--out\``,
       makeTemporaryEnv({
-        name: '@scope/test',
-        version: '0.0.1',
+        name: `@scope/test`,
+        version: `0.0.1`,
       }, async ({path, run, source}) => {
         await xfs.mkdirpPromise(`${path}/subdir`);
 
@@ -379,8 +391,8 @@ describe(`Commands`, () => {
     test(
       `it should replace the \`%s\` pattern in \`--out\``,
       makeTemporaryEnv({
-        name: '@scope/test',
-        version: '0.0.1',
+        name: `@scope/test`,
+        version: `0.0.1`,
       }, async ({path, run, source}) => {
         await run(`install`);
 
@@ -392,8 +404,8 @@ describe(`Commands`, () => {
     test(
       `it should replace the \`%v\` pattern in \`--out\``,
       makeTemporaryEnv({
-        name: '@scope/test',
-        version: '0.0.1',
+        name: `@scope/test`,
+        version: `0.0.1`,
       }, async ({path, run, source}) => {
         await run(`install`);
 
@@ -405,8 +417,8 @@ describe(`Commands`, () => {
     test(
       `it should replace as many patterns as needed in \`--out\``,
       makeTemporaryEnv({
-        name: '@scope/test',
-        version: '0.0.1',
+        name: `@scope/test`,
+        version: `0.0.1`,
       }, async ({path, run, source}) => {
         await run(`install`);
 
@@ -418,8 +430,8 @@ describe(`Commands`, () => {
     test(
       `it should replace \`%s\` even if the package has no scope`,
       makeTemporaryEnv({
-        name: 'test',
-        version: '0.0.1',
+        name: `test`,
+        version: `0.0.1`,
       }, async ({path, run, source}) => {
         await run(`install`);
 
@@ -429,15 +441,15 @@ describe(`Commands`, () => {
     );
 
     test(
-      `could output the archive in a absolute destination`,
+      `it should support writing the archive in a absolute destination`,
       makeTemporaryEnv({
-        name: 'test',
-        version: '0.0.1',
+        name: `test`,
+        version: `0.0.1`,
       }, async ({path, run, source}) => {
         await run(`install`);
         const tmpDir = await xfs.mktempPromise();
 
-        await run(`pack`, `--out`, `${tmpDir}/test.tgz`);;
+        await run(`pack`, `--out`, `${tmpDir}/test.tgz`);
         expect(xfs.existsSync(`${tmpDir}/test.tgz`)).toEqual(true);
       }),
     );

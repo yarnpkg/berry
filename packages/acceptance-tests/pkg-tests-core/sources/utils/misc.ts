@@ -36,7 +36,7 @@ export const filePatternMatch = (
   patterns: Array<string>,
   {matchBase = true, dot = true}: {matchBase?: boolean, dot?: boolean} = {},
 ): boolean => {
-  return exports.stringPatternMatch(posix.resolve('/', filePath), patterns, {matchBase, dot});
+  return exports.stringPatternMatch(posix.resolve(`/`, filePath), patterns, {matchBase, dot});
 };
 
 export const parseJsonStream = (

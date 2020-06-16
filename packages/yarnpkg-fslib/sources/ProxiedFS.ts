@@ -1,7 +1,7 @@
-import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS}            from './FakeFS';
-import {Dirent}                                                               from './FakeFS';
-import {MkdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher} from './FakeFS';
-import {FSPath, Filename, Path}                                               from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions} from './FakeFS';
+import {Dirent, SymlinkType}                                                           from './FakeFS';
+import {MkdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}          from './FakeFS';
+import {FSPath, Filename, Path}                                                        from './path';
 
 export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<P> {
   protected abstract readonly baseFs: FakeFS<IP>;
@@ -15,6 +15,10 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
    * Convert a path from the format supported by the base FS into the user one.
    */
   protected abstract mapFromBase(path: IP): P;
+
+  getExtractHint(hints: ExtractHintOptions) {
+    return this.baseFs.getExtractHint(hints);
+  }
 
   resolve(path: P)  {
     return this.mapFromBase(this.baseFs.resolve(this.mapToBase(path)));
@@ -188,19 +192,19 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.rmdirSync(this.mapToBase(p));
   }
 
-  symlinkPromise(target: P, p: P) {
-    return this.baseFs.symlinkPromise(this.mapToBase(target), this.mapToBase(p));
+  symlinkPromise(target: P, p: P, type?: SymlinkType) {
+    return this.baseFs.symlinkPromise(this.mapToBase(target), this.mapToBase(p), type);
   }
 
-  symlinkSync(target: P, p: P) {
-    return this.baseFs.symlinkSync(this.mapToBase(target), this.mapToBase(p));
+  symlinkSync(target: P, p: P, type?: SymlinkType) {
+    return this.baseFs.symlinkSync(this.mapToBase(target), this.mapToBase(p), type);
   }
 
   readFilePromise(p: FSPath<P>, encoding: 'utf8'): Promise<string>;
   readFilePromise(p: FSPath<P>, encoding?: string): Promise<Buffer>;
   readFilePromise(p: FSPath<P>, encoding?: string) {
     // This weird condition is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    if (encoding === 'utf8') {
+    if (encoding === `utf8`) {
       return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
     } else {
       return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
@@ -211,7 +215,7 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
   readFileSync(p: FSPath<P>, encoding?: string): Buffer;
   readFileSync(p: FSPath<P>, encoding?: string) {
     // This weird condition is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    if (encoding === 'utf8') {
+    if (encoding === `utf8`) {
       return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
     } else  {
       return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);

@@ -1,6 +1,6 @@
 const {
   fs: {readJson},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
   describe(`version check`, () => {

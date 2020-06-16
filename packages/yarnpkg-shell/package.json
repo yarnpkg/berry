@@ -1,17 +1,21 @@
 {
   "name": "@yarnpkg/shell",
-  "version": "2.0.0-rc.7",
+  "version": "2.0.0-rc.13",
+  "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
-    "@yarnpkg/parsers": "workspace:^2.0.0-rc.9",
-    "cross-spawn": "^6.0.5",
-    "stream-buffers": "^3.0.2"
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
+    "@yarnpkg/parsers": "workspace:^2.0.0-rc.13",
+    "clipanion": "^2.4.1",
+    "cross-spawn": "7.0.3",
+    "fast-glob": "^3.2.2",
+    "stream-buffers": "^3.0.2",
+    "tslib": "^1.13.0"
   },
   "devDependencies": {
     "@types/cross-spawn": "6.0.0",
-    "@types/tmp": "^0.0.33",
-    "tmp": "^0.1.0"
+    "@yarnpkg/monorepo": "workspace:0.0.0"
   },
   "scripts": {
     "postpack": "rm -rf lib",
@@ -21,6 +25,7 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
+    "bin": "./lib/cli.js",
     "typings": "./lib/index.d.ts"
   },
   "files": [
@@ -29,5 +34,8 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git"
+  },
+  "engines": {
+    "node": ">=10.19.0"
   }
 }

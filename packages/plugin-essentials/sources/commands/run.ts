@@ -1,12 +1,18 @@
-import {BaseCommand}                                    from '@yarnpkg/cli';
-import {Configuration, Project, Workspace, ThrowReport} from '@yarnpkg/core';
-import {scriptUtils, structUtils}                       from '@yarnpkg/core';
-import {Command, Usage, UsageError}                     from 'clipanion';
+import {BaseCommand}                       from '@yarnpkg/cli';
+import {Configuration, Project, Workspace} from '@yarnpkg/core';
+import {scriptUtils, structUtils}          from '@yarnpkg/core';
+import {Command, Usage, UsageError}        from 'clipanion';
 
-import {pluginCommands}                                 from '../pluginCommands';
+import {pluginCommands}                    from '../pluginCommands';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends BaseCommand {
+  @Command.String(`--inspect`, {tolerateBoolean: true})
+  inspect: string | boolean = false;
+
+  @Command.String(`--inspect-brk`, {tolerateBoolean: true})
+  inspectBrk: string | boolean = false;
+
   // This flag is mostly used to give users a way to configure node-gyp. They
   // just have to add it as a top-level workspace.
   @Command.Boolean(`-T,--top-level`, {hidden: true})
@@ -38,7 +44,7 @@ export default class RunCommand extends BaseCommand {
 
       - If the \`scripts\` field from your local package.json contains a matching script name, its definition will get executed.
 
-      - Otherwise, if one of the local workspace's dependencies exposes a binary with a matching name, this binary will get executed.
+      - Otherwise, if one of the local workspace's dependencies exposes a binary with a matching name, this binary will get executed (the \`--inspect\` and \`--inspect-brk\` options will then be forwarded to the underlying Node process).
 
       - Otherwise, if the specified name contains a colon character and if one of the workspaces in the project contains exactly one script with a matching name, then this script will get executed.
 
@@ -50,6 +56,9 @@ export default class RunCommand extends BaseCommand {
     ], [
       `Same thing, but without the "run" keyword`,
       `$0 test`,
+    ], [
+      `Inspect Webpack while running`,
+      `$0 run --inspect-brk webpack`,
     ]],
   });
 
@@ -58,10 +67,7 @@ export default class RunCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace, locator} = await Project.find(configuration, this.context.cwd);
 
-    await project.resolveEverything({
-      lockfileOnly: true,
-      report: new ThrowReport(),
-    });
+    await project.restoreInstallState();
 
     const effectiveLocator = this.topLevel
       ? project.topLevelWorkspace.anchoredLocator
@@ -79,8 +85,27 @@ export default class RunCommand extends BaseCommand {
     const binaries = await scriptUtils.getPackageAccessibleBinaries(effectiveLocator, {project});
     const binary = binaries.get(this.scriptName);
 
-    if (binary)
-      return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, this.scriptName, this.args, {cwd: this.context.cwd, project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
+    if (binary) {
+      const nodeArgs = [];
+
+      if (this.inspect) {
+        if (typeof this.inspect === `string`) {
+          nodeArgs.push(`--inspect=${this.inspect}`);
+        } else {
+          nodeArgs.push(`--inspect`);
+        }
+      }
+
+      if (this.inspectBrk) {
+        if (typeof this.inspectBrk === `string`) {
+          nodeArgs.push(`--inspect-brk=${this.inspectBrk}`);
+        } else {
+          nodeArgs.push(`--inspect-brk`);
+        }
+      }
+
+      return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, this.scriptName, this.args, {cwd: this.context.cwd, project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr, nodeArgs});
+    }
 
     // When it fails, we try to check whether it's a global script (ie we look
     // into all the workspaces to find one that exports this script). We only do
@@ -91,11 +116,11 @@ export default class RunCommand extends BaseCommand {
     // not workspaces). No particular reason except maybe security concerns.
 
     if (!this.topLevel && !this.binariesOnly && workspace && this.scriptName.includes(`:`)) {
-      let candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {
+      const candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {
         return workspace.manifest.scripts.has(this.scriptName) ? workspace : null;
       }));
 
-      let filteredWorkspaces = candidateWorkspaces.filter(workspace => {
+      const filteredWorkspaces = candidateWorkspaces.filter(workspace => {
         return workspace !== null;
       }) as Array<Workspace>;
 
@@ -111,6 +136,9 @@ export default class RunCommand extends BaseCommand {
         throw new UsageError(`Couldn't find a script name "${this.scriptName}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)}).`);
       }
     } else {
+      if (this.scriptName === `global`)
+        throw new UsageError(`The 'yarn global' commands have been removed in 2.x - consider using 'yarn dlx' or a third-party plugin instead`);
+
       const userCommand = [this.scriptName].concat(this.args);
 
       for (const [pluginName, candidates] of pluginCommands)

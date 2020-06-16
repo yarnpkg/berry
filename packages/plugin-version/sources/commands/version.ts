@@ -27,7 +27,7 @@ export default class VersionCommand extends BaseCommand {
   static schema = yup.object().shape({
     strategy: yup.string().test({
       name: `strategy`,
-      message: '${path} must be a semver range or one of ${strategies}',
+      message: `\${path} must be a semver range or one of \${strategies}`,
       params: {strategies: [...acceptedStrategies].join(`, `)},
       test: (range: string) => {
         return semver.valid(range) !== null || acceptedStrategies.has(range as any);
@@ -92,7 +92,7 @@ export default class VersionCommand extends BaseCommand {
         releaseStrategy = this.strategy;
       }
     } else {
-      let currentVersion = workspace.manifest.version;
+      const currentVersion = workspace.manifest.version;
 
       if (!isDeclined) {
         if (currentVersion === null)

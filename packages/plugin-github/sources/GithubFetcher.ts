@@ -1,8 +1,8 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@yarnpkg/core';
-import {Locator, MessageName}                          from '@yarnpkg/core';
+import {Locator}                                       from '@yarnpkg/core';
 import {httpUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
-import {PortablePath, CwdFS, npath, ppath, xfs}        from '@yarnpkg/fslib';
-import {tmpNameSync}                                   from 'tmp';
+import {PortablePath, CwdFS, ppath, xfs}               from '@yarnpkg/fslib';
+import {gitUtils}                                      from '@yarnpkg/plugin-git';
 
 import * as githubUtils                                from './githubUtils';
 
@@ -21,14 +21,11 @@ export class GithubFetcher implements Fetcher {
   async fetch(locator: Locator, opts: FetchOptions) {
     const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
 
-    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(
-      locator,
-      expectedChecksum,
-      async () => {
-        opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote repository`);
-        return await this.fetchFromNetwork(locator, opts);
-      },
-    );
+    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
+      onHit: () => opts.report.reportCacheHit(locator),
+      onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from GitHub`),
+      loader: () => this.fetchFromNetwork(locator, opts),
+    });
 
     return {
       packageFs,
@@ -43,24 +40,29 @@ export class GithubFetcher implements Fetcher {
       configuration: opts.project.configuration,
     });
 
-    const extractPath = npath.toPortablePath(tmpNameSync());
-    const extractTarget = new CwdFS(extractPath);
+    return await xfs.mktempPromise(async extractPath => {
+      const extractTarget = new CwdFS(extractPath);
 
-    await tgzUtils.extractArchiveTo(sourceBuffer, extractTarget, {
-      stripComponents: 1,
-    });
+      await tgzUtils.extractArchiveTo(sourceBuffer, extractTarget, {
+        stripComponents: 1,
+      });
 
-    const packagePath = ppath.join(extractPath, `package.tgz` as PortablePath);
-    await scriptUtils.prepareExternalProject(extractPath, packagePath, {
-      configuration: opts.project.configuration,
-      report: opts.report,
-    });
+      const repoUrlParts = gitUtils.splitRepoUrl(locator.reference);
+      const packagePath = ppath.join(extractPath, `package.tgz` as PortablePath);
 
-    const packedBuffer = await xfs.readFilePromise(packagePath);
+      await scriptUtils.prepareExternalProject(extractPath, packagePath, {
+        configuration: opts.project.configuration,
+        report: opts.report,
+        workspace: repoUrlParts.extra.workspace,
+      });
 
-    return await tgzUtils.convertToZip(packedBuffer, {
-      stripComponents: 1,
-      prefixPath: structUtils.getIdentVendorPath(locator),
+      const packedBuffer = await xfs.readFilePromise(packagePath);
+
+      return await tgzUtils.convertToZip(packedBuffer, {
+        compressionLevel: opts.project.configuration.get(`compressionLevel`),
+        prefixPath: structUtils.getIdentVendorPath(locator),
+        stripComponents: 1,
+      });
     });
   }
 

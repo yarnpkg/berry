@@ -1,10 +1,10 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
-import {Locator, MessageName}                       from '@yarnpkg/core';
-import {miscUtils, structUtils}                     from '@yarnpkg/core';
-import {ppath, xfs, ZipFS, Filename, CwdFS}         from '@yarnpkg/fslib';
-import {getLibzipPromise}                           from '@yarnpkg/libzip';
+import {Fetcher, FetchOptions, MinimalFetchOptions}       from '@yarnpkg/core';
+import {Locator}                                          from '@yarnpkg/core';
+import {miscUtils, structUtils}                           from '@yarnpkg/core';
+import {ppath, xfs, ZipFS, Filename, CwdFS, PortablePath} from '@yarnpkg/fslib';
+import {getLibzipPromise}                                 from '@yarnpkg/libzip';
 
-import * as patchUtils                              from './patchUtils';
+import * as patchUtils                                    from './patchUtils';
 
 export class PatchFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -21,14 +21,11 @@ export class PatchFetcher implements Fetcher {
   async fetch(locator: Locator, opts: FetchOptions) {
     const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
 
-    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(
-      locator,
-      expectedChecksum,
-      async () => {
-        opts.report.reportInfoOnce(MessageName.FETCH_NOT_CACHED, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`);
-        return await this.patchPackage(locator, opts);
-      },
-    );
+    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
+      onHit: () => opts.report.reportCacheHit(locator),
+      onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`),
+      loader: () => this.patchPackage(locator, opts),
+    });
 
     return {
       packageFs,
@@ -51,7 +48,12 @@ export class PatchFetcher implements Fetcher {
 
     const libzip = await getLibzipPromise();
 
-    const copiedPackage = new ZipFS(tmpFile, {libzip, create: true});
+    const copiedPackage = new ZipFS(tmpFile, {
+      libzip,
+      create: true,
+      level: opts.project.configuration.get(`compressionLevel`),
+    });
+
     await copiedPackage.mkdirpPromise(prefixPath);
 
     await miscUtils.releaseAfterUseAsync(async () => {
@@ -60,8 +62,12 @@ export class PatchFetcher implements Fetcher {
 
     copiedPackage.saveAndClose();
 
-    const patchedPackage = new ZipFS(tmpFile, {libzip});
-    const patchFs = new CwdFS(prefixPath, {baseFs: patchedPackage});
+    const patchedPackage = new ZipFS(tmpFile, {
+      libzip,
+      level: opts.project.configuration.get(`compressionLevel`),
+    });
+
+    const patchFs = new CwdFS(ppath.resolve(PortablePath.root, prefixPath), {baseFs: patchedPackage});
 
     for (const patchFile of patchFiles) {
       if (patchFile !== null) {

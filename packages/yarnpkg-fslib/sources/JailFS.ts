@@ -40,7 +40,7 @@ export class JailFS extends ProxiedFS<PortablePath, PortablePath> {
     if (this.pathUtils.isAbsolute(p))
       return this.pathUtils.resolve(this.target, this.pathUtils.relative(JAIL_ROOT, p));
 
-    if (normalized.match(/^\.\.\//))
+    if (normalized.match(/^\.\.\/?/))
       throw new Error(`Resolving this path (${p}) would escape the jail`);
 
     return this.pathUtils.resolve(this.target, p);

@@ -4,6 +4,36 @@
  * See: https://www.gatsbyjs.org/docs/node-apis/
  */
 
+const MonacoWebpackPlugin = require(`monaco-editor-webpack-plugin`);
+const fs = require(`fs`);
+const path = require(`path`);
+
+const regexExternalLink = /^(?:https?:)?\/\//;
+
+const staticRedirectsPath = path.join(__dirname, './static/_redirects');
+const staticRedirects = fs.readFileSync(staticRedirectsPath).toString();
+const redirectLines = staticRedirects.replace(/\n+/g,'\n').split('\n');
+
+const redirects = [];
+
+
+for (const redirectLine of redirectLines) {
+  const chunks = redirectLine.split(/\s/);
+  if (chunks.length !== 3)
+    continue;
+  const [fromPath, toPath, codeStr] = chunks;
+  const statusCode = parseInt(codeStr);
+  if (toPath.match(regexExternalLink))
+    continue;
+
+  redirects.push({
+    fromPath,
+    toPath,
+    isPermanent: statusCode === 301,
+    redirectInBrowser: true,
+  });
+}
+
 module.exports = {
   onCreateWebpackConfig: ({actions}) => {
     actions.setWebpackConfig({
@@ -12,6 +42,11 @@ module.exports = {
           [`@emotion/core`]: require.resolve(`@emotion/core`),
         },
       },
+      plugins: [
+        new MonacoWebpackPlugin({
+          languages: [`javascript`, `typescript`],
+        }),
+      ],
     });
   },
 
@@ -37,33 +72,9 @@ module.exports = {
       });
     }
 
-    createRedirect({
-      fromPath: `/configuration`,
-      toPath: `/configuration/manifest`,
-      redirectInBrowser: true,
-      isPermanent: true,
-    });
-
-    createRedirect({
-      fromPath: `/features`,
-      toPath: `/features/pnp`,
-      redirectInBrowser: true,
-      isPermanent: true,
-    });
-
-    createRedirect({
-      fromPath: `/cli`,
-      toPath: `/cli/install`,
-      redirectInBrowser: true,
-      isPermanent: true,
-    });
-
-    createRedirect({
-      fromPath: `/advanced`,
-      toPath: `/advanced/architecture`,
-      redirectInBrowser: true,
-      isPermanent: true,
-    });
+    for (const redirect of redirects) {
+      createRedirect(redirect);
+    }
   },
 
   onCreatePage: async ({page, actions: {createPage}}) => {
@@ -74,5 +85,5 @@ module.exports = {
       // Update the page.
       createPage(page);
     }
-  }
+  },
 };

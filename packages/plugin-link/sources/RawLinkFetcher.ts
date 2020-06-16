@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator}                                    from '@yarnpkg/core';
 import {structUtils}                                from '@yarnpkg/core';
-import {JailFS, NodeFS, ppath, PortablePath}        from '@yarnpkg/fslib';
+import {CwdFS, JailFS, NodeFS, ppath, PortablePath} from '@yarnpkg/fslib';
 
 import {RAW_LINK_PROTOCOL}                          from './constants';
 
@@ -31,13 +31,13 @@ export class RawLinkFetcher implements Fetcher {
     // If the link target is an absolute path we can directly access it via its
     // location on the disk. Otherwise we must go through the package fs.
     const parentFetch = ppath.isAbsolute(path)
-      ? {packageFs: new NodeFS(), prefixPath: PortablePath.root, localPath: PortablePath.root}
+      ? {packageFs: new CwdFS(PortablePath.root), prefixPath: PortablePath.dot, localPath: PortablePath.root}
       : await opts.fetcher.fetch(parentLocator, opts);
 
     // If the package fs publicized its "original location" (for example like
     // in the case of "file:" packages), we use it to derive the real location.
     const effectiveParentFetch = parentFetch.localPath
-      ? {packageFs: new NodeFS(), prefixPath: parentFetch.localPath}
+      ? {packageFs: new CwdFS(PortablePath.root), prefixPath: ppath.relative(PortablePath.root, parentFetch.localPath)}
       : parentFetch;
 
     // Discard the parent fs unless we really need it to access the files
@@ -45,12 +45,12 @@ export class RawLinkFetcher implements Fetcher {
       parentFetch.releaseFs();
 
     const sourceFs = effectiveParentFetch.packageFs;
-    const sourcePath = ppath.resolve(effectiveParentFetch.prefixPath, path);
+    const sourcePath = ppath.join(effectiveParentFetch.prefixPath, path);
 
     if (parentFetch.localPath) {
-      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.root, discardFromLookup: true, localPath: sourcePath};
+      return {packageFs: new CwdFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.dot, discardFromLookup: true, localPath: sourcePath};
     } else {
-      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.root, discardFromLookup: true};
+      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.dot, discardFromLookup: true};
     }
   }
 }

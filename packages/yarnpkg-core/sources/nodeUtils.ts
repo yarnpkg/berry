@@ -12,5 +12,5 @@ export function dynamicRequire(request: string): any {
 
 export function builtinModules(): Set<string> {
   // @ts-ignore
-  return new Set(Module.builtinModules || Object.keys(process.binding('natives')));
+  return new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
 }

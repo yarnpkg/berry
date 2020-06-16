@@ -9,48 +9,48 @@ export type Suggestion = {
 };
 
 export enum Target {
-  REGULAR = 'dependencies',
-  DEVELOPMENT = 'devDependencies',
-  PEER = 'peerDependencies',
-};
+  REGULAR = `dependencies`,
+  DEVELOPMENT = `devDependencies`,
+  PEER = `peerDependencies`,
+}
 
 export enum Modifier {
-  CARET = '^',
-  TILDE = '~',
-  EXACT = '',
-};
+  CARET = `^`,
+  TILDE = `~`,
+  EXACT = ``,
+}
 
 export enum Strategy {
   /**
    * If set, the suggest engine will offer to keep the current version if the
    * local workspace already depends on it.
    */
-  KEEP = 'keep',
+  KEEP = `keep`,
 
   /**
    * If set, the suggest engine will offer to fulfill the request by looking at
    * the ranges currently used by the other workspaces in the project.
    */
-  REUSE = 'reuse',
+  REUSE = `reuse`,
 
   /**
    * If set, the suggest engine will offer to fulfill the request by using any
    * workspace whose name would match the request.
    */
-  PROJECT = 'project',
+  PROJECT = `project`,
 
   /**
    * If set, the suggest engine will offer to fulfill the request by using
    * whatever `<request-name>@latest` would return.
    */
-  LATEST = 'latest',
+  LATEST = `latest`,
 
   /**
    * If set, the suggest engine will offer to fulfill the request based on the
    * versions of the package that are already within our cache.
    */
-  CACHE = 'cache',
-};
+  CACHE = `cache`,
+}
 
 export function getModifier(flags: {exact: boolean; caret: boolean; tilde: boolean}, project: Project): Modifier {
   if (flags.exact)
@@ -62,10 +62,10 @@ export function getModifier(flags: {exact: boolean; caret: boolean; tilde: boole
   return project.configuration.get<Modifier>(`defaultSemverRangePrefix`);
 }
 
-const SIMPLE_SEMVER = /^([\^~]?)[0-9+](?:\.[0-9]+){0,2}(?:-\S+)?$/;
+const SIMPLE_SEMVER = /^([\^~]?)[0-9]+(?:\.[0-9]+){0,2}(?:-\S+)?$/;
 
-export function extractModifier(descriptor: Descriptor, {project}: {project: Project}) {
-  const match = descriptor.range.match(SIMPLE_SEMVER);
+export function extractRangeModifier(range: string, {project}: {project: Project}) {
+  const match = range.match(SIMPLE_SEMVER);
 
   return match ? match[1] : project.configuration.get<Modifier>(`defaultSemverRangePrefix`);
 }
@@ -164,6 +164,13 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
   if (!(maxResults >= 0))
     throw new Error(`Invalid maxResults (${maxResults})`);
 
+  if (request.range !== `unknown`) {
+    return [{
+      descriptor: request,
+      reason: `Unambiguous explicit request`,
+    }];
+  }
+
   const existing = typeof workspace !== `undefined` && workspace !== null
     ? workspace.manifest[target].get(request.identHash) || null
     : null;
@@ -253,7 +260,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
   return suggested.slice(0, maxResults);
 }
 
-export async function fetchDescriptorFrom(ident: Ident, range: string, {project, cache, preserveModifier = true}: {project: Project, cache: Cache, preserveModifier?: boolean}) {
+export async function fetchDescriptorFrom(ident: Ident, range: string, {project, cache, preserveModifier = true}: {project: Project, cache: Cache, preserveModifier?: boolean | string}) {
   const latestDescriptor = structUtils.makeDescriptor(ident, range);
 
   const report = new ThrowReport();
@@ -280,8 +287,12 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   if (protocol === project.configuration.get(`defaultProtocol`))
     protocol = null;
 
-  if (semver.valid(selector) && preserveModifier) {
-    const modifier = extractModifier(latestDescriptor, {project});
+  if (semver.valid(selector) && preserveModifier !== false) {
+    const referenceRange = typeof preserveModifier === `string`
+      ? preserveModifier
+      : latestDescriptor.range;
+
+    const modifier = extractRangeModifier(referenceRange, {project});
     selector = modifier + selector;
   }
 

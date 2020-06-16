@@ -1,15 +1,13 @@
-import {InstallStatus, Installer, LinkOptions, LinkType, MessageName, DependencyMeta, FinalizeInstallStatus} from '@yarnpkg/core';
-import {FetchResult, Descriptor, Locator, Package, BuildDirective}                                           from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                                              from '@yarnpkg/core';
-import {FakeFS, PortablePath, ppath}                                                                         from '@yarnpkg/fslib';
-import {PackageRegistry, PnpSettings}                                                                        from '@yarnpkg/pnp';
-import mm                                                                                                    from 'micromatch';
+import {Installer, LinkOptions, LinkType, MessageName, DependencyMeta, FinalizeInstallStatus, Manifest} from '@yarnpkg/core';
+import {FetchResult, Descriptor, Locator, Package, BuildDirective}                                      from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                                         from '@yarnpkg/core';
+import {FakeFS, PortablePath, ppath}                                                                    from '@yarnpkg/fslib';
+import {PackageRegistry, PnpSettings}                                                                   from '@yarnpkg/pnp';
 
 export abstract class AbstractPnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
 
   private readonly blacklistedPaths: Set<PortablePath> = new Set();
-  private readonly discardedPaths: Set<PortablePath> = new  Set();
 
   constructor(protected opts: LinkOptions) {
     this.opts = opts;
@@ -18,14 +16,14 @@ export abstract class AbstractPnpInstaller implements Installer {
   /**
    * Called in order to know whether the specified package has build scripts.
    */
-  abstract getBuildScripts(locator: Locator, fetchResult: FetchResult): Promise<Array<BuildDirective>>;
+  abstract getBuildScripts(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult): Promise<Array<BuildDirective>>;
 
   /**
    * Called to transform the package before it's stored in the PnP map. For
    * example we use this in the PnP linker to materialize the packages within
    * their own directories when they have build scripts.
    */
-  abstract transformPackage(locator: Locator, dependencyMeta: DependencyMeta, packageFs: FakeFS<PortablePath>, flags: {hasBuildScripts: boolean}): Promise<FakeFS<PortablePath>>;
+  abstract transformPackage(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult, dependencyMeta: DependencyMeta, flags: {hasBuildScripts: boolean}): Promise<FakeFS<PortablePath>>;
 
   /**
    * Called with the full settings, ready to be used by the @yarnpkg/pnp
@@ -42,8 +40,12 @@ export abstract class AbstractPnpInstaller implements Installer {
       !structUtils.isVirtualLocator(pkg) &&
       !this.opts.project.tryWorkspaceByLocator(pkg);
 
+    const manifest = !hasVirtualInstances
+      ? await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs})
+      : null;
+
     const buildScripts = !hasVirtualInstances
-      ? await this.getBuildScripts(pkg, fetchResult)
+      ? await this.getBuildScripts(pkg, manifest, fetchResult)
       : [];
 
     if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`)) {
@@ -64,32 +66,43 @@ export abstract class AbstractPnpInstaller implements Installer {
     }
 
     const packageFs = !hasVirtualInstances && pkg.linkType !== LinkType.SOFT
-      ? await this.transformPackage(pkg, dependencyMeta, fetchResult.packageFs, {hasBuildScripts: buildScripts.length > 0})
+      ? await this.transformPackage(pkg, manifest, fetchResult, dependencyMeta, {hasBuildScripts: buildScripts.length > 0})
       : fetchResult.packageFs;
 
-    const packageRawLocation = ppath.resolve(packageFs.getRealPath(), ppath.relative(PortablePath.root, fetchResult.prefixPath));
+    if (ppath.isAbsolute(fetchResult.prefixPath))
+      throw new Error(`Assertion failed: Expected the prefix path (${fetchResult.prefixPath}) to be relative to the parent`);
+
+    const packageRawLocation = ppath.resolve(packageFs.getRealPath(), fetchResult.prefixPath);
 
     const packageLocation = this.normalizeDirectoryPath(packageRawLocation);
     const packageDependencies = new Map<string, string | [string, string] | null>();
     const packagePeers = new Set<string>();
 
-    for (const descriptor of pkg.peerDependencies.values()) {
-      packageDependencies.set(structUtils.requirableIdent(descriptor), null);
-      packagePeers.add(descriptor.name);
+    // Only virtual packages should have effective peer dependencies, but the
+    // workspaces are a special case because the original packages are kept in
+    // the dependency tree even after being virtualized; so in their case we
+    // just ignore their declared peer dependencies.
+    if (structUtils.isVirtualLocator(pkg)) {
+      for (const descriptor of pkg.peerDependencies.values()) {
+        packageDependencies.set(structUtils.requirableIdent(descriptor), null);
+        packagePeers.add(structUtils.stringifyIdent(descriptor));
+      }
     }
 
-    const packageStore = miscUtils.getMapWithDefault(this.packageRegistry, key1);
-    packageStore.set(key2, {packageLocation, packageDependencies, packagePeers, linkType: pkg.linkType});
+    miscUtils.getMapWithDefault(this.packageRegistry, key1).set(key2, {
+      packageLocation,
+      packageDependencies,
+      packagePeers,
+      linkType: pkg.linkType,
+      discardFromLookup: fetchResult.discardFromLookup || false,
+    });
 
     if (hasVirtualInstances)
       this.blacklistedPaths.add(packageLocation);
 
-    if (fetchResult.discardFromLookup)
-      this.discardedPaths.add(packageLocation);
-
     return {
       packageLocation: packageRawLocation,
-      buildDirective: buildScripts.length > 0 ? buildScripts as BuildDirective[] : null,
+      buildDirective: buildScripts.length > 0 ? buildScripts as Array<BuildDirective> : null,
     };
   }
 
@@ -120,26 +133,14 @@ export abstract class AbstractPnpInstaller implements Installer {
       [null, this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator)],
     ]));
 
-    const buildIgnorePattern = (ignorePatterns: Array<string>) => {
-      if (ignorePatterns.length === 0)
-        return null;
-
-      return ignorePatterns.map(pattern => {
-        return `(${mm.makeRe(pattern, {
-          // @ts-ignore
-          windows: false,
-        }).source})`;
-      }).join(`|`);
-    };
-
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
     const blacklistedLocations = this.blacklistedPaths;
-    const discardedLocations = this.discardedPaths;
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
-    const ignorePattern = buildIgnorePattern([`.vscode/pnpify/**`, ...this.opts.project.configuration.get(`pnpIgnorePatterns`)]);
+    const fallbackPool = this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator).packageDependencies;
+    const ignorePattern = miscUtils.buildIgnorePattern([`.yarn/sdks/**`, ...this.opts.project.configuration.get(`pnpIgnorePatterns`)]);
     const packageRegistry = this.packageRegistry;
     const shebang = this.opts.project.configuration.get(`pnpShebang`);
 
@@ -150,10 +151,10 @@ export abstract class AbstractPnpInstaller implements Installer {
 
     return await this.finalizeInstallWithPnp({
       blacklistedLocations,
-      discardedLocations,
       dependencyTreeRoots,
       enableTopLevelFallback,
       fallbackExclusionList,
+      fallbackPool,
       ignorePattern,
       packageRegistry,
       shebang,
@@ -179,18 +180,13 @@ export abstract class AbstractPnpInstaller implements Installer {
     const packageStore = miscUtils.getMapWithDefault(this.packageRegistry, `@@disk`);
     const normalizedPath = this.normalizeDirectoryPath(path);
 
-    let diskInformation = packageStore.get(normalizedPath);
-
-    if (!diskInformation) {
-      packageStore.set(normalizedPath, diskInformation = {
-        packageLocation: normalizedPath,
-        packageDependencies: new Map(),
-        packagePeers: new Set(),
-        linkType: LinkType.SOFT,
-      });
-    }
-
-    return diskInformation;
+    return miscUtils.getFactoryWithDefault(packageStore, normalizedPath, () => ({
+      packageLocation: normalizedPath,
+      packageDependencies: new Map(),
+      packagePeers: new Set(),
+      linkType: LinkType.SOFT,
+      discardFromLookup: false,
+    }));
   }
 
   private trimBlacklistedPackages() {
@@ -210,6 +206,6 @@ export abstract class AbstractPnpInstaller implements Installer {
       // Don't use ppath.join here, it ignores the `.`
       relativeFolder = `./${relativeFolder}` as PortablePath;
 
-    return relativeFolder.replace(/\/?$/, '/')  as PortablePath;
+    return relativeFolder.replace(/\/?$/, `/`)  as PortablePath;
   }
 }

@@ -1,0 +1,9 @@
+{
+  "name": "typedoc-plugin-yarn",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "typedoc": "next",
+    "typescript": "^3.8.3"
+  }
+}

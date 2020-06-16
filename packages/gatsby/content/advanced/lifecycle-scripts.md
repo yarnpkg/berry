@@ -18,6 +18,8 @@ Packages can define in the `scripts` field of their manifest various actions tha
 
 Note that we don't support every single lifecycle script originally present in npm. This is a deliberate decision based on the observation that too many lifecycle scripts make it difficult to know which one to use in which circumstances, leading to confusion and mistakes. We are open to add the missing ones on a case-by-case basis if compelling use cases are provided.
 
+> In particular, we intentionally don't support arbitrary `pre` and `post` hooks for user-defined scripts (such as `prestart`). This behavior, inherited from npm, caused scripts to be implicit rather than explicit, obfuscating the execution flow. It also led to surprising executions with `yarn serve` also running `yarn preserve`.
+
 ## A note about `postinstall`
 
 Postinstall scripts have very real consequences for your users. In most cases Yarn will keep the installed packages in its cache under their archive form, and will instruct Node to load the files directly from there. This lead to much smaller installs, and eventually to [Zero-Installs](/features/zero-installs).

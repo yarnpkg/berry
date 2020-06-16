@@ -1,27 +1,33 @@
 {
   "name": "@yarnpkg/plugin-npm-cli",
-  "version": "2.0.0-rc.13",
+  "version": "2.0.0-rc.20",
+  "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.15",
-    "clipanion": "^2.1.5",
-    "inquirer": "^6.2.0",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
+    "clipanion": "^2.4.1",
+    "inquirer": "^7.2.0",
+    "semver": "^7.1.2",
     "ssri": "^6.0.1",
+    "tslib": "^1.13.0",
     "yup": "^0.27.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.27",
-    "@yarnpkg/core": "^2.0.0-rc.21",
-    "@yarnpkg/plugin-npm": "^2.0.0-rc.14",
-    "@yarnpkg/plugin-pack": "^2.0.0-rc.17"
+    "@yarnpkg/cli": "^2.0.0-rc.36",
+    "@yarnpkg/core": "^2.0.0-rc.30",
+    "@yarnpkg/plugin-npm": "^2.0.0-rc.21",
+    "@yarnpkg/plugin-pack": "^2.0.0-rc.21"
   },
   "devDependencies": {
+    "@npm/types": "^1.0.1",
     "@types/inquirer": "^0.0.43",
+    "@types/semver": "^7.1.0",
     "@types/ssri": "^6.0.1",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.27",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.21",
-    "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.14",
-    "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.17"
+    "@types/yup": "0.26.12",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.36",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.30",
+    "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.21",
+    "@yarnpkg/plugin-pack": "workspace:^2.0.0-rc.21"
   },
   "repository": {
     "type": "git",
@@ -37,5 +43,8 @@
   },
   "files": [
     "/lib/**/*"
-  ]
+  ],
+  "engines": {
+    "node": ">=10.19.0"
+  }
 }

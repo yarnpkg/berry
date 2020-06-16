@@ -15,13 +15,13 @@ export type ApplyPatchOptions = {
 
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   // @ts-ignore
-  const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding('natives')));
+  const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
 
   /**
    * The cache that will be used for all accesses occuring outside of a PnP context.
    */
 
-  const defaultCache: typeof Module._cache = {};
+  const defaultCache: NodeJS.NodeRequireCache = {};
 
   /**
    * Used to disable the resolution hooks (for when we want to fallback to the previous resolution - we then need
@@ -88,10 +88,17 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       ? opts.manager.getApiEntry(parentApiPath, true).instance
       : null;
 
+    // Requests that aren't covered by the PnP runtime goes through the
+    // parent `_load` implementation. This is required for VSCode, for example,
+    // which override `_load` to provide additional builtins to its extensions.
+
+    if (parentApi === null)
+      return originalModuleLoad(request, parent, isMain);
+
     // The 'pnpapi' name is reserved to return the PnP api currently in use
     // by the program
 
-    if (parentApi !== null && request === `pnpapi`)
+    if (request === `pnpapi`)
       return parentApi;
 
     // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us
@@ -125,6 +132,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     // @ts-ignore
     const module = new Module(modulePath, parent);
+    // @ts-ignore
     module.pnpApiPath = moduleApiPath;
 
     entry.cache[modulePath] = module;
@@ -134,7 +142,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     if (isMain) {
       // @ts-ignore
       process.mainModule = module;
-      module.id = '.';
+      module.id = `.`;
     }
 
     // Try to load the module, and remove it from the cache if it fails
@@ -142,6 +150,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     let hasThrown = true;
 
     try {
+    // @ts-ignore
       module.load(modulePath);
       hasThrown = false;
     } finally {
@@ -152,6 +161,46 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     return module.exports;
   };
+
+  type IssuerSpec = {
+    apiPath: PortablePath | null;
+    path: NativePath | null;
+    module: NodeModule | null | undefined;
+  };
+
+  function getIssuerSpecsFromPaths(paths: Array<NativePath>): Array<IssuerSpec> {
+    return paths.map(path => ({
+      apiPath: opts.manager.findApiPathFor(path),
+      path,
+      module: null,
+    }));
+  }
+
+  function getIssuerSpecsFromModule(module: NodeModule | null | undefined): Array<IssuerSpec> {
+    const issuer = getIssuerModule(module);
+
+    const issuerPath = issuer !== null
+      ? npath.dirname(issuer.filename)
+      : process.cwd();
+
+    return [{
+      apiPath: opts.manager.getApiPathFromParent(issuer),
+      path: issuerPath,
+      module,
+    }];
+  }
+
+  function makeFakeParent(path: string) {
+    const fakeParent = new Module(``);
+
+    const fakeFilePath = npath.join(path, `[file]` as Filename);
+    fakeParent.paths = Module._nodeModulePaths(fakeFilePath);
+
+    return fakeParent;
+  }
+
+  // Splits a require request into its components, or return null if the request is a file path
+  const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
 
   const originalModuleResolveFilename = Module._resolveFilename;
 
@@ -190,45 +239,38 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       if (optionNames.size > 0) {
         throw makeError(
           ErrorCode.UNSUPPORTED,
-          `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(', ')})`
+          `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(`, `)})`
         );
       }
     }
 
-    const getIssuerSpecsFromPaths = (paths: Array<NativePath>) => {
-      return paths.map(path => ({
-        apiPath: opts.manager.findApiPathFor(path),
-        path: npath.toPortablePath(path),
-        module: null,
-      }));
-    };
-
-    const getIssuerSpecsFromModule = (module: NodeModule | null | undefined) => {
-      const issuer = getIssuerModule(module);
-
-      const issuerPath = issuer !== null
-        ? npath.dirname(issuer.filename)
-        : process.cwd();
-
-      return [{
-        apiPath: opts.manager.getApiPathFromParent(issuer),
-        path: npath.toPortablePath(issuerPath),
-        module,
-      }];
-    };
-
-    const makeFakeParent = (path: PortablePath) => {
-      const fakeParent = new Module(``);
-
-      const fakeFilePath = ppath.join(path, `[file]` as Filename);
-      fakeParent.paths = Module._nodeModulePaths(npath.fromPortablePath(fakeFilePath));
-
-      return fakeParent;
-    };
-
     const issuerSpecs = options && options.paths
       ? getIssuerSpecsFromPaths(options.paths)
       : getIssuerSpecsFromModule(parent);
+
+    if (request.match(pathRegExp) === null) {
+      const parentDirectory = parent?.filename != null
+        ? npath.dirname(parent.filename)
+        : null;
+
+      const absoluteRequest = npath.isAbsolute(request)
+        ? request
+        : parentDirectory !== null
+          ? npath.resolve(parentDirectory, request)
+          : null;
+
+      if (absoluteRequest !== null) {
+        const apiPath = opts.manager.findApiPathFor(absoluteRequest);
+
+        if (apiPath !== null) {
+          issuerSpecs.unshift({
+            apiPath,
+            path: parentDirectory,
+            module: null,
+          });
+        }
+      }
+    }
 
     let firstError;
 
@@ -241,8 +283,11 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
       try {
         if (issuerApi !== null) {
-          resolution = issuerApi.resolveRequest(request, `${path}/`);
+          resolution = issuerApi.resolveRequest(request, path !== null ? `${path}/` : null);
         } else {
+          if (path === null)
+            throw new Error(`Assertion failed: Expected the path to be set`);
+
           resolution = originalModuleResolveFilename.call(Module, request, module || makeFakeParent(path), isMain);
         }
       } catch (error) {
@@ -256,7 +301,13 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     }
 
     const requireStack = getRequireStack(parent);
-    firstError.requireStack = requireStack;
+
+    Object.defineProperty(firstError, `requireStack`, {
+      configurable: true,
+      writable: true,
+      enumerable: false,
+      value: requireStack,
+    });
 
     if (requireStack.length > 0)
       firstError.message += `\nRequire stack:\n- ${requireStack.join(`\n- `)}`;
@@ -297,4 +348,4 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   };
 
   patchFs(fs, new PosixFS(opts.fakeFs));
-};
+}

@@ -82,7 +82,7 @@ Object {
 }
 `;
 
-exports[`Commands workspace foreach should run on child workspaces by default 1`] = `
+exports[`Commands workspace foreach should run on current and descendant workspaces by default 1`] = `
 Object {
   "code": 0,
   "stderr": "",

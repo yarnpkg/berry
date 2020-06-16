@@ -20,7 +20,7 @@ type RegistryOptions = {
   ident: Ident,
   registry?: string,
 } | {
-  ident?: void,
+  ident?: Ident,
   registry: string;
 };
 
@@ -43,7 +43,7 @@ export async function get(path: string, {configuration, headers, ident, authType
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
 
-  const auth = getAuthenticationHeader(registry, {authType, configuration});
+  const auth = getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
 
@@ -54,39 +54,59 @@ export async function get(path: string, {configuration, headers, ident, authType
     url = new URL(registry + path);
   }
 
-  return await httpUtils.get(url.href, {configuration, headers, ...rest});
+  try {
+    return await httpUtils.get(url.href, {configuration, headers, ...rest});
+  } catch (error) {
+    if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
+      throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (as ${await whoami(registry, headers, {configuration})})`);
+    } else {
+      throw error;
+    }
+  }
 }
 
-export async function put(path: string, body: httpUtils.Body, {configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options) {
+export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options & {attemptedAs?: string}) {
   if (ident && typeof registry === `undefined`)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
 
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
 
-  const auth = getAuthenticationHeader(registry, {authType, configuration});
+  const auth = getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
 
   try {
     return await httpUtils.put(registry + path, body, {configuration, headers, ...rest});
   } catch (error) {
-    if (!isOtpError(error))
-      throw error;
+    if (!isOtpError(error)) {
+      if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
+        throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headers, {configuration})}` : `attempted as ${attemptedAs}`})`);
+      } else {
+        throw error;
+      }
+    }
 
     const otp = await askForOtp();
     const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
 
     // Retrying request with OTP
-    return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
+    try {
+      return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
+    } catch (error) {
+      if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
+        throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headersWithOtp, {configuration})}` : `attempted as ${attemptedAs}`})`);
+      } else {
+        throw error;
+      }
+    }
   }
 }
 
-function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration}: {authType?: AuthType, configuration: Configuration}) {
-  const registryConfiguration = npmConfigUtils.getRegistryConfiguration(registry, {configuration});
-  const effectiveConfiguration = registryConfiguration || configuration;
-
+function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration, ident}: {authType?: AuthType, configuration: Configuration, ident: RegistryOptions['ident']}) {
+  const effectiveConfiguration = npmConfigUtils.getAuthConfiguration(registry, {configuration, ident});
   const mustAuthenticate = shouldAuthenticate(effectiveConfiguration, authType);
+
   if (!mustAuthenticate)
     return null;
 
@@ -113,12 +133,31 @@ function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
 
     case AuthType.NO_AUTH:
       return false;
+
+    default:
+      throw new Error(`Unreachable`);
+  }
+}
+
+async function whoami(registry: string, headers: {[key: string]: string} | undefined, {configuration}: {configuration: Configuration}) {
+  if (typeof headers === `undefined` || typeof headers.authorization === `undefined` )
+    return `an anonymous user`;
+
+  try {
+    const response = await httpUtils.get(new URL(`${registry}/-/whoami`).href, {
+      configuration,
+      headers,
+    });
+
+    return response.username;
+  } catch {
+    return `an unknown user`;
   }
 }
 
 async function askForOtp() {
   if (process.env.TEST_ENV)
-    return process.env.TEST_NPM_2FA_TOKEN || '';
+    return process.env.TEST_NPM_2FA_TOKEN || ``;
 
   const prompt = inquirer.createPromptModule();
 
@@ -137,8 +176,8 @@ function isOtpError(error: any) {
     return false;
 
   try {
-    const authMethods = error.response.headers['www-authenticate'].split(/,\s*/).map((s: string) => s.toLowerCase());
-    return authMethods.includes('otp');
+    const authMethods = error.response.headers[`www-authenticate`].split(/,\s*/).map((s: string) => s.toLowerCase());
+    return authMethods.includes(`otp`);
   } catch (e) {
     return false;
   }

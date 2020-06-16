@@ -22,6 +22,10 @@ module.exports = {
     }, {
       name: `Advanced`,
       link: `/advanced`,
+    }, {
+      name: `API`,
+      link: `/api`,
+      external: true,
     }],
     algolia: {
       // Note that the appId and appKey are specific to Yarn's website - please
@@ -34,6 +38,20 @@ module.exports = {
   plugins: [
     `gatsby-plugin-emotion`,
     `gatsby-plugin-react-helmet`,
+    {
+      resolve: `gatsby-plugin-algolia-docsearch`,
+      options: {
+        specs: [{
+          apiKey: `029f65f2c00301615fd14958b67d6730`,
+          indexName: `yarnpkg_next`,
+          inputSelector: `.docsearch-mobile`,
+        }, {
+          apiKey: `029f65f2c00301615fd14958b67d6730`,
+          indexName: `yarnpkg_next`,
+          inputSelector: `.docsearch-desktop`,
+        }],
+      },
+    },
     {
       resolve: `gatsby-plugin-prefetch-google-fonts`,
       options: {
@@ -58,10 +76,12 @@ module.exports = {
       resolve: `gatsby-plugin-manifest`,
       options: {
         name: `Yarn`,
+        /* eslint-disable @typescript-eslint/camelcase */
         short_name: `yarn`,
         start_url: `/`,
         background_color: `#2188b6`,
         theme_color: `#2188b6`,
+        /* eslint-enable @typescript-eslint/camelcase */
         display: `minimal-ui`,
         icon: `src/images/yarn-kitten.svg`,
       },
@@ -76,14 +96,27 @@ module.exports = {
     {
       resolve: `gatsby-plugin-clipanion-cli`,
       options: {
-        argv0: `yarn`,
-        binary: `${__dirname}/../../scripts/run-yarn.js`,
+        binaries: [
+          {
+            namespace: null,
+            argv0: `yarn`,
+            binary: `${__dirname}/../../scripts/run-yarn.js`,
+          },
+          {
+            namespace: `pnpify`,
+            argv0: `pnpify`,
+            binary: `${__dirname}/../../scripts/run-pnpify.js`,
+          },
+        ],
       },
     },
     {
       resolve: `gatsby-transformer-remark`,
       options: {
         plugins: [
+          {
+            resolve: `gatsby-remark-table-of-contents`,
+          },
           `gatsby-remark-autolink-headers`,
           `gatsby-remark-prismjs`,
         ],
@@ -91,6 +124,9 @@ module.exports = {
     },
     {
       resolve: `gatsby-plugin-catch-links`,
+      options: {
+        excludePattern: /^\/api$/,
+      },
     },
     {
       resolve: `gatsby-plugin-remove-trailing-slashes`,
@@ -99,4 +135,4 @@ module.exports = {
     // To learn more, visit: https://gatsby.dev/offline
     // 'gatsby-plugin-offline',
   ],
-}
+};

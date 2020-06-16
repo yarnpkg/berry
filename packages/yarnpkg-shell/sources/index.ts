@@ -1,10 +1,16 @@
-import {PortablePath, npath, ppath, xfs}                                             from '@yarnpkg/fslib';
-import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
+import {PortablePath, npath, ppath, xfs, FakeFS, PosixFS}                            from '@yarnpkg/fslib';
 import {EnvSegment}                                                                  from '@yarnpkg/parsers';
+import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
+import fastGlob                                                                      from 'fast-glob';
 import {PassThrough, Readable, Writable}                                             from 'stream';
 
-import {Handle, ProtectedStream, Stdio, start}                                       from './pipe';
 import {makeBuiltin, makeProcess}                                                    from './pipe';
+import {Handle, ProcessImplementation, ProtectedStream, Stdio, start}                from './pipe';
+
+export type Glob = {
+  isGlobPattern: (arg: string) => boolean,
+  match: (pattern: string, options: {cwd: PortablePath, fs?: FakeFS<PortablePath>}) => Promise<Array<string>>,
+};
 
 export type UserOptions = {
   builtins: {[key: string]: ShellBuiltin},
@@ -14,6 +20,7 @@ export type UserOptions = {
   stdout: Writable,
   stderr: Writable,
   variables: {[key: string]: string},
+  glob: Glob,
 };
 
 export type ShellBuiltin = (
@@ -28,12 +35,14 @@ export type ShellOptions = {
   initialStdin: Readable,
   initialStdout: Writable,
   initialStderr: Writable,
+  glob: Glob,
 };
 
 export type ShellState = {
   cwd: PortablePath,
   environment: {[key: string]: string},
   exitCode: number | null,
+  procedures: {[key: string]: ProcessImplementation},
   stdin: Readable,
   stdout: Writable,
   stderr: Writable,
@@ -85,10 +94,22 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     return 0;
   }],
 
-  [`setredirects`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
+  [`__ysh_run_procedure`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
+    const procedure = state.procedures[args[0]];
+
+    const exitCode = await start(procedure, {
+      stdin: new ProtectedStream<Readable>(state.stdin),
+      stdout: new ProtectedStream<Writable>(state.stdout),
+      stderr: new ProtectedStream<Writable>(state.stderr),
+    }).run();
+
+    return exitCode;
+  }],
+
+  [`__ysh_set_redirects`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
     let stdin = state.stdin;
     let stdout = state.stdout;
-    let stderr = state.stderr;
+    const stderr = state.stderr;
 
     const inputs: Array<() => Readable> = [];
     const outputs: Array<Writable> = [];
@@ -255,14 +276,27 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
               push(segment.text);
             } break;
 
+            case `glob`: {
+              const matches = await opts.glob.match(segment.pattern, {cwd: state.cwd});
+              if (!matches.length)
+                throw new Error(`No file matches found: "${segment.pattern}". Note: Glob patterns currently only support files that exist on the filesystem (Help Wanted)`);
+
+              for (const match of matches.sort()) {
+                pushAndClose(match);
+              }
+            } break;
+
             case `shell`: {
               const raw = await executeBufferedSubshell(segment.shell, opts, state);
               if (segment.quoted) {
                 push(raw);
               } else {
-                for (const part of split(raw)) {
-                  pushAndClose(part);
-                }
+                const parts = split(raw);
+
+                for (let t = 0; t < parts.length - 1; ++t)
+                  pushAndClose(parts[t]);
+
+                push(parts[parts.length - 1]);
               }
             } break;
 
@@ -279,9 +313,12 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
                     }
                   } else {
                     for (const raw of opts.args) {
-                      for (const part of split(raw)) {
-                        pushAndClose(part);
-                      }
+                      const parts = split(raw);
+
+                      for (let t = 0; t < parts.length - 1; ++t)
+                        pushAndClose(parts[t]);
+
+                      push(parts[parts.length - 1]);
                     }
                   }
                 } break;
@@ -334,7 +371,7 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
     for (const [subtype, targets] of redirections.entries())
       redirectionArgs.splice(redirectionArgs.length, 0, subtype, String(targets.length), ...targets);
 
-    interpolated.splice(0, 0, `setredirects`, ...redirectionArgs, `--`);
+    interpolated.splice(0, 0, `__ysh_set_redirects`, ...redirectionArgs, `--`);
   }
 
   return interpolated;
@@ -351,11 +388,17 @@ function makeCommandAction(args: Array<string>, opts: ShellOptions, state: Shell
   if (!opts.builtins.has(args[0]))
     args = [`command`, ...args];
 
+  const nativeCwd = npath.fromPortablePath(state.cwd);
+
+  let env = state.environment;
+  if (typeof env.PWD !== `undefined`)
+    env = {...env, PWD: nativeCwd};
+
   const [name, ...rest] = args;
   if (name === `command`) {
     return makeProcess(rest[0], rest.slice(1), opts, {
-      cwd: npath.fromPortablePath(state.cwd),
-      env: state.environment,
+      cwd: nativeCwd,
+      env,
     });
   }
 
@@ -406,9 +449,25 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
       } break;
 
       case `subshell`: {
-      // We don't interpolate the subshell because it will be recursively
-      // interpolated within its own context
-        action = makeSubshellAction(current.subshell, opts, activeState);
+        const args = await interpolateArguments(current.args, opts, state);
+
+        // We don't interpolate the subshell because it will be recursively
+        // interpolated within its own context
+        const procedure = makeSubshellAction(current.subshell, opts, activeState);
+
+        if (args.length === 0) {
+          action = procedure;
+        } else {
+          let key;
+          do {
+            key = String(Math.random());
+          } while (Object.prototype.hasOwnProperty.call(activeState.procedures, key));
+
+          activeState.procedures = {...activeState.procedures};
+          activeState.procedures[key] = procedure;
+
+          action = makeCommandAction([...args, `__ysh_run_procedure`, key], opts, activeState);
+        }
       } break;
 
       case `envs`: {
@@ -544,6 +603,9 @@ function locateArgsVariableInArgument(arg: Argument): boolean {
     case `argument`: {
       return arg.segments.some(segment => locateArgsVariableInSegment(segment));
     } break;
+
+    default:
+      throw new Error(`Unreacheable`);
   }
 }
 
@@ -596,6 +658,14 @@ export async function execute(command: string, args: Array<string> = [], {
   stdout = process.stdout,
   stderr = process.stderr,
   variables = {},
+  glob = {
+    isGlobPattern: fastGlob.isDynamicPattern,
+    match: (pattern: string, {cwd, fs = xfs}) => fastGlob(pattern, {
+      cwd: npath.fromPortablePath(cwd),
+      // @ts-ignore: `fs` is wrapped in `PosixFS`
+      fs: new PosixFS(fs),
+    }),
+  },
 }: Partial<UserOptions> = {}) {
   const normalizedEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(env))
@@ -612,7 +682,7 @@ export async function execute(command: string, args: Array<string> = [], {
     (stdin as PassThrough).end();
   }
 
-  const ast = parseShell(command);
+  const ast = parseShell(command, glob);
 
   // If the shell line doesn't use the args, inject it at the end of the
   // right-most command
@@ -644,10 +714,12 @@ export async function execute(command: string, args: Array<string> = [], {
     initialStdin: stdin,
     initialStdout: stdout,
     initialStderr: stderr,
+    glob,
   }, {
     cwd,
     environment: normalizedEnv,
     exitCode: null,
+    procedures: {},
     stdin,
     stdout,
     stderr,

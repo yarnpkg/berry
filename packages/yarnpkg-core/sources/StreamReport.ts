@@ -7,6 +7,8 @@ import {Locator}                    from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration,
+  forgettableBufferSize?: number,
+  forgettableNames?: Set<MessageName | null>,
   includeFooter?: boolean,
   includeInfos?: boolean,
   includeLogs?: boolean,
@@ -17,6 +19,17 @@ export type StreamReportOptions = {
 
 const PROGRESS_FRAMES = [`⠋`, `⠙`, `⠹`, `⠸`, `⠼`, `⠴`, `⠦`, `⠧`, `⠇`, `⠏`];
 const PROGRESS_INTERVAL = 80;
+
+const BASE_FORGETTABLE_NAMES = new Set<MessageName | null>([MessageName.FETCH_NOT_CACHED, MessageName.UNUSED_CACHE_ENTRY]);
+const BASE_FORGETTABLE_BUFFER_SIZE = 5;
+
+const GROUP = process.env.GITHUB_ACTIONS
+  ? {start: (what: string) => `::group::${what}\n`, end: (what: string) => `::endgroup::\n`}
+  : process.env.TRAVIS
+    ? {start: (what: string) => `travis_fold:start:${what}\n`, end: (what: string) => `travis_fold:end:${what}\n`}
+    : process.env.GITLAB_CI
+      ? {start: (what: string) => `section_start:${Math.floor(Date.now() / 1000)}:${what.toLowerCase().replace(/\W+/g, `_`)}\r\x1b[0K${what}\n`, end: (what: string) => `section_end:${Math.floor(Date.now() / 1000)}:${what.toLowerCase().replace(/\W+/g, `_`)}\r\x1b[0K`}
+      : null;
 
 const now = new Date();
 
@@ -99,10 +112,29 @@ export class StreamReport extends Report {
   private progressFrame: number = 0;
   private progressTimeout: ReturnType<typeof setTimeout> | null = null;
 
-  constructor({configuration, stdout, json = false, includeFooter = true, includeLogs = !json, includeInfos = includeLogs, includeWarnings = includeLogs}: StreamReportOptions) {
+  private forgettableBufferSize: number;
+  private forgettableNames: Set<MessageName | null>;
+  private forgettableLines: Array<string> = [];
+
+  constructor({
+    configuration,
+    stdout,
+    json = false,
+    includeFooter = true,
+    includeLogs = !json,
+    includeInfos = includeLogs,
+    includeWarnings = includeLogs,
+    forgettableBufferSize = BASE_FORGETTABLE_BUFFER_SIZE,
+    forgettableNames = new Set(),
+  }: StreamReportOptions) {
     super();
 
     this.configuration = configuration;
+    this.forgettableBufferSize = forgettableBufferSize;
+    this.forgettableNames = new Set([
+      ...forgettableNames,
+      ...BASE_FORGETTABLE_NAMES,
+    ]);
     this.includeFooter = includeFooter;
     this.includeInfos = includeInfos;
     this.includeWarnings = includeWarnings;
@@ -122,8 +154,12 @@ export class StreamReport extends Report {
     this.cacheHitCount += 1;
   }
 
-  reportCacheMiss(locator: Locator) {
+  reportCacheMiss(locator: Locator, message?: string) {
     this.cacheMissCount += 1;
+
+    if (typeof message !== `undefined` && !this.configuration.get(`preferAggregateCacheInfo`)) {
+      this.reportInfo(MessageName.FETCH_NOT_CACHED, message);
+    }
   }
 
   startTimerSync<T>(what: string, cb: () => T) {
@@ -141,7 +177,7 @@ export class StreamReport extends Report {
       const after = Date.now();
       this.indent -= 1;
 
-      if (this.configuration.get(`enableTimers`)) {
+      if (this.configuration.get(`enableTimers`) && after - before > 200) {
         this.reportInfo(null, `└ Completed in ${this.formatTiming(after - before)}`);
       } else {
         this.reportInfo(null, `└ Completed`);
@@ -151,6 +187,9 @@ export class StreamReport extends Report {
 
   async startTimerPromise<T>(what: string, cb: () => Promise<T>) {
     this.reportInfo(null, `┌ ${what}`);
+
+    if (GROUP !== null)
+      this.stdout.write(GROUP.start(what));
 
     const before = Date.now();
     this.indent += 1;
@@ -164,7 +203,10 @@ export class StreamReport extends Report {
       const after = Date.now();
       this.indent -= 1;
 
-      if (this.configuration.get(`enableTimers`)) {
+      if (GROUP !== null)
+        this.stdout.write(GROUP.end(what));
+
+      if (this.configuration.get(`enableTimers`) && after - before > 200) {
         this.reportInfo(null, `└ Completed in ${this.formatTiming(after - before)}`);
       } else {
         this.reportInfo(null, `└ Completed`);
@@ -172,9 +214,26 @@ export class StreamReport extends Report {
     }
   }
 
+  async startCacheReport<T>(cb: () => Promise<T>) {
+    const cacheInfo = this.configuration.get(`preferAggregateCacheInfo`)
+      ? {cacheHitCount: this.cacheHitCount, cacheMissCount: this.cacheMissCount}
+      : null;
+
+    try {
+      return await cb();
+    } catch (error) {
+      this.reportExceptionOnce(error);
+      throw error;
+    } finally {
+      if (cacheInfo !== null) {
+        this.reportCacheChanges(cacheInfo);
+      }
+    }
+  }
+
   reportSeparator() {
     if (this.indent === 0) {
-      this.writeLine(``);
+      this.writeLineWithForgettableReset(``);
     } else {
       this.reportInfo(null, ``);
     }
@@ -185,7 +244,19 @@ export class StreamReport extends Report {
       return;
 
     if (!this.json) {
-      this.writeLine(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
+      if (this.forgettableNames.has(name)) {
+        this.forgettableLines.push(text);
+        if (this.forgettableLines.length > this.forgettableBufferSize) {
+          while (this.forgettableLines.length > this.forgettableBufferSize)
+            this.forgettableLines.shift();
+
+          this.writeLines(name, this.forgettableLines);
+        } else {
+          this.writeLine(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
+        }
+      } else {
+        this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
+      }
     } else {
       this.reportJson({type: `info`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -198,7 +269,7 @@ export class StreamReport extends Report {
       return;
 
     if (!this.json) {
-      this.writeLine(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
+      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `warning`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -208,7 +279,7 @@ export class StreamReport extends Report {
     this.errorCount += 1;
 
     if (!this.json) {
-      this.writeLine(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${this.formatIndent()}${text}`);
+      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -255,7 +326,7 @@ export class StreamReport extends Report {
 
   reportJson(data: any) {
     if (this.json) {
-      this.writeLine(`${JSON.stringify(data)}`);
+      this.writeLineWithForgettableReset(`${JSON.stringify(data)}`);
     }
   }
 
@@ -272,30 +343,9 @@ export class StreamReport extends Report {
     else
       installStatus = `Done`;
 
-    let fetchStatus = ``;
-
-    if (this.cacheHitCount > 1)
-      fetchStatus += ` - ${this.cacheHitCount} packages were already cached`;
-    else if (this.cacheHitCount === 1)
-      fetchStatus += ` - one package was already cached`;
-
-    if (this.cacheHitCount > 0) {
-      if (this.cacheMissCount > 1) {
-        fetchStatus += `, ${this.cacheMissCount} had to be fetched`;
-      } else if (this.cacheMissCount === 1) {
-        fetchStatus += `, one had to be fetched`;
-      }
-    } else {
-      if (this.cacheMissCount > 1) {
-        fetchStatus += ` - ${this.cacheMissCount} packages had to be fetched`;
-      } else if (this.cacheMissCount === 1) {
-        fetchStatus += ` - one package had to be fetched`;
-      }
-    }
-
     const timing = this.formatTiming(Date.now() - this.startTime);
     const message = this.configuration.get(`enableTimers`)
-      ? `${installStatus} in ${timing}${fetchStatus}`
+      ? `${installStatus} in ${timing}`
       : installStatus;
 
     if (this.errorCount > 0) {
@@ -311,6 +361,53 @@ export class StreamReport extends Report {
     this.clearProgress({clear: true});
     this.stdout.write(`${str}\n`);
     this.writeProgress();
+  }
+
+  private writeLineWithForgettableReset(str: string) {
+    this.forgettableLines = [];
+    this.writeLine(str);
+  }
+
+  private writeLines(name: MessageName | null, lines: Array<string>) {
+    this.clearProgress({delta: lines.length});
+
+    for (const line of lines)
+      this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${line}\n`);
+
+    this.writeProgress();
+  }
+
+  private reportCacheChanges({cacheHitCount, cacheMissCount}: {cacheHitCount: number, cacheMissCount: number}) {
+    const cacheHitDelta = this.cacheHitCount - cacheHitCount;
+    const cacheMissDelta = this.cacheMissCount - cacheMissCount;
+
+    if (cacheHitDelta === 0 && cacheMissDelta === 0)
+      return;
+
+    let fetchStatus = ``;
+
+    if (this.cacheHitCount > 1)
+      fetchStatus += `${this.cacheHitCount} packages were already cached`;
+    else if (this.cacheHitCount === 1)
+      fetchStatus += ` - one package was already cached`;
+    else
+      fetchStatus += `No packages were cached`;
+
+    if (this.cacheHitCount > 0) {
+      if (this.cacheMissCount > 1) {
+        fetchStatus += `, ${this.cacheMissCount} had to be fetched`;
+      } else if (this.cacheMissCount === 1) {
+        fetchStatus += `, one had to be fetched`;
+      }
+    } else {
+      if (this.cacheMissCount > 1) {
+        fetchStatus += ` - ${this.cacheMissCount} packages had to be fetched`;
+      } else if (this.cacheMissCount === 1) {
+        fetchStatus += ` - one package had to be fetched`;
+      }
+    }
+
+    this.reportInfo(MessageName.FETCH_NOT_CACHED, fetchStatus);
   }
 
   private clearProgress({delta = 0, clear = false}: {delta?: number, clear?: boolean}) {
@@ -346,7 +443,7 @@ export class StreamReport extends Report {
 
     const spinner = PROGRESS_FRAMES[this.progressFrame];
 
-    let styleName = this.configuration.get(`progressBarStyle`) || defaultStyle;
+    const styleName = this.configuration.get(`progressBarStyle`) || defaultStyle;
     if (!Object.prototype.hasOwnProperty.call(PROGRESS_STYLES, styleName))
       throw new Error(`Assertion failed: Invalid progress bar style`);
 
@@ -355,7 +452,7 @@ export class StreamReport extends Report {
 
     const PAD_LEFT = `➤ YN0000: ┌ `.length;
 
-    const maxWidth = Math.min(process.stdout.columns - PAD_LEFT, 80);
+    const maxWidth = Math.max(0, Math.min(process.stdout.columns - PAD_LEFT, 80));
     const scaledSize = Math.floor(style.size * maxWidth / 80);
 
     for (const {progress} of this.progress.values()) {
@@ -392,6 +489,23 @@ export class StreamReport extends Report {
     } else {
       return label;
     }
+  }
+
+  private formatNameWithHyperlink(name: MessageName | null) {
+    const code = this.formatName(name);
+
+    // Only print hyperlinks if allowed per configuration
+    if (!this.configuration.get(`enableHyperlinks`))
+      return code;
+
+    // Don't print hyperlinks for the generic messages
+    if (name === null || name === MessageName.UNNAMED)
+      return code;
+
+    const desc = MessageName[name];
+    const href = `https://yarnpkg.com/advanced/error-codes#${code}---${desc}`.toLowerCase();
+
+    return `\u001b]8;;${href}\u001b\\${code}\u001b]8;;\u001b\\`;
   }
 
   private formatIndent() {

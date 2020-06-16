@@ -1,6 +1,6 @@
 # `@yarnpkg/plugin-version`
 
-This plugin adds support for the new [release workflow](https://next.yarnpkg.com/features/release-workflow).
+This plugin adds support for the new [release workflow](https://yarnpkg.com/features/release-workflow).
 
 ## Install
 

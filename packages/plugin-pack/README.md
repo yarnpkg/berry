@@ -1,6 +1,6 @@
 # `@yarnpkg/plugin-pack`
 
-This plugin adds support for the [`yarn pack`](https://next.yarnpkg.com/cli/pack) command.
+This plugin adds support for the [`yarn pack`](https://yarnpkg.com/cli/pack) command.
 
 ## Install
 

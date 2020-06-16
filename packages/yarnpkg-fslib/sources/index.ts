@@ -1,35 +1,48 @@
-import fs                                from 'fs';
+import fs                                                 from 'fs';
+import os                                                 from 'os';
+import {promisify}                                        from 'util';
 
-import {FakeFS}                          from './FakeFS';
-import {NodeFS}                          from './NodeFS';
-import {PortablePath, NativePath, npath} from './path';
+import {FakeFS}                                           from './FakeFS';
+import {NodeFS}                                           from './NodeFS';
+import {Filename, PortablePath, NativePath, npath, ppath} from './path';
 
 export {CreateReadStreamOptions}  from './FakeFS';
 export {CreateWriteStreamOptions} from './FakeFS';
-export {Dirent}                   from './FakeFS';
+export {Dirent, SymlinkType}      from './FakeFS';
 export {MkdirOptions}             from './FakeFS';
 export {WatchOptions}             from './FakeFS';
 export {WatchCallback}            from './FakeFS';
 export {Watcher}                  from './FakeFS';
 export {WriteFileOptions}         from './FakeFS';
 export {normalizeLineEndings}     from './FakeFS';
+export {ExtractHintOptions}       from './FakeFS';
+
+export {DEFAULT_COMPRESSION_LEVEL} from './ZipFS';
+export {ZipCompression}            from './ZipFS';
 
 export {FSPath, Path, PortablePath, NativePath, Filename} from './path';
 export {ParsedPath, PathUtils, FormatInputPathObject} from './path';
 export {npath, ppath, toFilename} from './path';
 
-export {AliasFS}                  from './AliasFS';
-export {FakeFS}                   from './FakeFS';
-export {CwdFS}                    from './CwdFS';
-export {JailFS}                   from './JailFS';
-export {LazyFS}                   from './LazyFS';
-export {NoFS}                     from './NoFS';
-export {NodeFS}                   from './NodeFS';
-export {PosixFS}                  from './PosixFS';
-export {ProxiedFS}                from './ProxiedFS';
-export {VirtualFS}                from './VirtualFS';
-export {ZipFS}                    from './ZipFS';
-export {ZipOpenFS}                from './ZipOpenFS';
+export {AliasFS}                   from './AliasFS';
+export {FakeFS}                    from './FakeFS';
+export {CwdFS}                     from './CwdFS';
+export {JailFS}                    from './JailFS';
+export {LazyFS}                    from './LazyFS';
+export {NoFS}                      from './NoFS';
+export {NodeFS}                    from './NodeFS';
+export {PosixFS}                   from './PosixFS';
+export {ProxiedFS}                 from './ProxiedFS';
+export {VirtualFS}                 from './VirtualFS';
+export {ZipFS}                     from './ZipFS';
+export {ZipOpenFS}                 from './ZipOpenFS';
+
+function getTempName(prefix: string) {
+  const tmpdir = npath.toPortablePath(os.tmpdir());
+  const hash = Math.ceil(Math.random() * 0x100000000).toString(16).padStart(8, `0`);
+
+  return ppath.join(tmpdir, `${prefix}${hash}` as Filename);
+}
 
 export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void {
   const SYNC_IMPLEMENTATIONS = new Set([
@@ -40,6 +53,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `closeSync`,
     `copyFileSync`,
     `lstatSync`,
+    `lutimesSync`,
     `mkdirSync`,
     `openSync`,
     `readSync`,
@@ -66,6 +80,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `closePromise`,
     `copyFilePromise`,
     `lstatPromise`,
+    `lutimesPromise`,
     `mkdirPromise`,
     `openPromise`,
     `readdirPromise`,
@@ -83,15 +98,24 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `writeSync`,
   ]);
 
-  (patchedFs as any).existsSync = (p: string) => {
+  const setupFn = (target: any, name: string, replacement: any) => {
+    const orig = target[name];
+    target[name] = replacement;
+
+    if (typeof orig[promisify.custom] !== `undefined`) {
+      replacement[promisify.custom] = orig[promisify.custom];
+    }
+  };
+
+  setupFn(patchedFs, `existsSync`, (p: string) => {
     try {
       return fakeFs.existsSync(p);
     } catch (error) {
       return false;
     }
-  };
+  });
 
-  (patchedFs as any).exists = (p: string, ...args: any[]) => {
+  setupFn(patchedFs, `exists`, (p: string, ...args: Array<any>) => {
     const hasCallback = typeof args[args.length - 1] === `function`;
     const callback = hasCallback ? args.pop() : () => {};
 
@@ -102,9 +126,9 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         callback(false);
       });
     });
-  };
+  });
 
-  (patchedFs as any).read = (p: number, buffer: Buffer, ...args: any[]) => {
+  setupFn(patchedFs, `read`, (p: number, buffer: Buffer, ...args: Array<any>) => {
     const hasCallback = typeof args[args.length - 1] === `function`;
     const callback = hasCallback ? args.pop() : () => {};
 
@@ -115,31 +139,43 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         callback(error);
       });
     });
-  };
+  });
 
   for (const fnName of ASYNC_IMPLEMENTATIONS) {
-    const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);
     const origName = fnName.replace(/Promise$/, ``);
+    if (typeof (patchedFs as any)[origName] === `undefined`)
+      continue;
 
-    (patchedFs as any)[origName] = (...args: Array<any>) => {
+    const fakeImpl: Function = (fakeFs as any)[fnName];
+    if (typeof fakeImpl === `undefined`)
+      continue;
+
+    const wrapper = (...args: Array<any>) => {
       const hasCallback = typeof args[args.length - 1] === `function`;
       const callback = hasCallback ? args.pop() : () => {};
 
       process.nextTick(() => {
-        fakeImpl(...args).then((result: any) => {
+        fakeImpl.apply(fakeFs, args).then((result: any) => {
           callback(null, result);
         }, (error: Error) => {
           callback(error);
         });
       });
     };
+
+    setupFn(patchedFs, origName, wrapper);
   }
 
   for (const fnName of SYNC_IMPLEMENTATIONS) {
-    const fakeImpl: Function = (fakeFs as any)[fnName].bind(fakeFs);
     const origName = fnName;
+    if (typeof (patchedFs as any)[origName] === `undefined`)
+      continue;
 
-    (patchedFs as any)[origName] = fakeImpl;
+    const fakeImpl: Function = (fakeFs as any)[fnName];
+    if (typeof fakeImpl === `undefined`)
+      continue;
+
+    setupFn(patchedFs, origName, fakeImpl.bind(fakeFs));
   }
 
   patchedFs.realpathSync.native = patchedFs.realpathSync;
@@ -155,6 +191,8 @@ export function extendFs(realFs: typeof fs, fakeFs: FakeFS<NativePath>): typeof 
 }
 
 export type XFS = NodeFS & {
+  detachTemp(p: PortablePath): void;
+
   mktempSync(): PortablePath;
   mktempSync<T>(cb: (p: PortablePath) => T): T;
 
@@ -162,61 +200,110 @@ export type XFS = NodeFS & {
   mktempPromise<T>(cb: (p: PortablePath) => Promise<T>): Promise<T>;
 };
 
-export const xfs: XFS = Object.assign(new NodeFS(), {
-  mktempSync<T>(cb?: (p: PortablePath) => T) {
-    // We lazily load `tmp` because it injects itself into the `process`
-    // events (to clean the folders at exit time), and it may lead to
-    // large memory leaks. Better avoid loading it until we can't do
-    // otherwise (ideally the fix would be for `tmp` itself to only
-    // attach cleaners after the first call).
-    const tmp = require(`tmp`);
+const tmpdirs = new Set<PortablePath>();
 
-    const {name, removeCallback} = tmp.dirSync({unsafeCleanup: true});
-    if (typeof cb === `undefined`) {
-      return npath.toPortablePath(name);
-    } else {
+let cleanExitRegistered = false;
+
+function registerCleanExit() {
+  if (!cleanExitRegistered)
+    cleanExitRegistered = true;
+  else
+    return;
+
+  const cleanExit = () => {
+    process.off(`exit`, cleanExit);
+
+    for (const p of tmpdirs) {
+      tmpdirs.delete(p);
       try {
-        return cb(npath.toPortablePath(name));
-      } finally {
-        removeCallback();
+        xfs.removeSync(p);
+      } catch {
+        // Too bad if there's an error
+      }
+    }
+  };
+
+  process.on(`exit`, cleanExit);
+}
+
+export const xfs: XFS = Object.assign(new NodeFS(), {
+  detachTemp(p: PortablePath) {
+    tmpdirs.delete(p);
+  },
+
+  mktempSync<T>(this: XFS, cb?: (p: PortablePath) => T) {
+    registerCleanExit();
+
+    while (true) {
+      const p = getTempName(`xfs-`);
+
+      try {
+        this.mkdirSync(p);
+      } catch (error) {
+        if (error.code === `EEXIST`) {
+          continue;
+        } else {
+          throw error;
+        }
+      }
+
+      const realP = this.realpathSync(p);
+      tmpdirs.add(realP);
+
+      if (typeof cb !== `undefined`) {
+        try {
+          return cb(realP);
+        } finally {
+          if (tmpdirs.has(realP)) {
+            tmpdirs.delete(realP);
+            try {
+              this.removeSync(realP);
+            } catch {
+              // Too bad if there's an error
+            }
+          }
+        }
+      } else {
+        return p;
       }
     }
   },
 
-  mktempPromise<T>(cb?: (p: PortablePath) => Promise<T>) {
-    // We lazily load `tmp` because it injects itself into the `process`
-    // events (to clean the folders at exit time), and it may lead to
-    // large memory leaks. Better avoid loading it until we can't do
-    // otherwise (ideally the fix would be for `tmp` itself to only
-    // attach cleaners after the first call).
-    const tmp = require(`tmp`);
+  async mktempPromise<T>(this: XFS, cb?: (p: PortablePath) => Promise<T>) {
+    registerCleanExit();
 
-    if (typeof cb === `undefined`) {
-      return new Promise<PortablePath>((resolve, reject) => {
-        tmp.dir({unsafeCleanup: true}, (err: Error | null, path: NativePath) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(npath.toPortablePath(path));
+    while (true) {
+      const p = getTempName(`xfs-`);
+
+      try {
+        await this.mkdirPromise(p);
+      } catch (error) {
+        if (error.code === `EEXIST`) {
+          continue;
+        } else {
+          throw error;
+        }
+      }
+
+      const realP = await this.realpathPromise(p);
+      tmpdirs.add(realP);
+
+      if (typeof cb !== `undefined`) {
+        try {
+          return await cb(realP);
+        } finally {
+          if (tmpdirs.has(realP)) {
+            tmpdirs.delete(realP);
+            try {
+              await this.removePromise(realP);
+            } catch {
+              // Too bad if there's an error
+            }
           }
-        });
-      });
-    } else {
-      return new Promise<T>((resolve, reject) => {
-        tmp.dir({unsafeCleanup: true}, (err: Error | null, path: NativePath, cleanup: () => void) => {
-          if (err) {
-            reject(err);
-          } else {
-            Promise.resolve(npath.toPortablePath(path)).then(cb).then(result => {
-              cleanup();
-              resolve(result);
-            }, error => {
-              cleanup();
-              reject(error);
-            });
-          }
-        });
-      });
+        }
+      } else {
+        return realP;
+      }
     }
   },
 });

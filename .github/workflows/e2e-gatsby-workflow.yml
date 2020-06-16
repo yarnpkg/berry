@@ -6,7 +6,7 @@ on:
     - master
   pull_request:
     paths:
-    - .github/workflows/e2e-eslint-workflow.yml
+    - .github/workflows/e2e-gatsby-workflow.yml
     - scripts/e2e-setup-ci.sh
 
 name: 'E2E Gatsby'
@@ -30,5 +30,13 @@ jobs:
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
-        yarn dlx gatsby new my-gatsby && cd my-gatsby
+
+        yarn dlx gatsby new my-gatsby
+        cd my-gatsby
+
+        # Test production build
         yarn build
+
+        # Test development server (which includes development only loaders like eslint-loader)
+        # Redirect the output to log.txt and check if it contains "ERROR #"
+        yarn dlx start-server-and-test "yarn start > log.txt 2>&1" :8000 "! cat log.txt | grep \"ERROR #\""

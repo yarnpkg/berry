@@ -1,15 +1,15 @@
-import {Configuration, Manifest} from '@yarnpkg/core';
+import {Configuration, Manifest, Ident} from '@yarnpkg/core';
 
 export enum RegistryType {
-  FETCH_REGISTRY = 'npmRegistryServer',
-  PUBLISH_REGISTRY = 'npmPublishRegistry',
+  FETCH_REGISTRY = `npmRegistryServer`,
+  PUBLISH_REGISTRY = `npmPublishRegistry`,
 }
 
 export interface MapLike {
   get(key: string): any;
 }
 
-function normalizeRegistry(registry: string) {
+export function normalizeRegistry(registry: string) {
   return registry.replace(/\/$/, ``);
 }
 
@@ -50,7 +50,7 @@ export function getRegistryConfiguration(registry: string, {configuration}: {con
   if (typeof exactEntry !== `undefined`)
     return exactEntry;
 
-  const noProtocolEntry = registryConfigurations.get(registry.replace(/^[a-z]+:/, ''));
+  const noProtocolEntry = registryConfigurations.get(registry.replace(/^[a-z]+:/, ``));
   if (typeof noProtocolEntry !== `undefined`)
     return noProtocolEntry;
 
@@ -70,3 +70,13 @@ export function getScopeConfiguration(scope: string | null, {configuration}: {co
   return scopeConfiguration;
 }
 
+export function getAuthConfiguration(registry: string, {configuration, ident}: {configuration: Configuration, ident?: Ident}): MapLike {
+  const scopeConfiguration = ident && getScopeConfiguration(ident.scope, {configuration});
+
+  if (scopeConfiguration?.get(`npmAuthIdent`) || scopeConfiguration?.get(`npmAuthToken`))
+    return scopeConfiguration;
+
+  const registryConfiguration = getRegistryConfiguration(registry, {configuration});
+
+  return registryConfiguration || configuration;
+}

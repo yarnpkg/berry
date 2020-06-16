@@ -60,10 +60,7 @@ export default class PackCommand extends BaseCommand {
           report: new ThrowReport(),
         });
       } else {
-        await project.resolveEverything({
-          lockfileOnly: true,
-          report: new ThrowReport(),
-        });
+        await project.restoreInstallState();
       }
     }
 

@@ -2,7 +2,7 @@ import {npath} from '@yarnpkg/fslib';
 
 const {
   fs: {createTemporaryFolder, readJson, writeJson},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
   describe(`link`, () => {

@@ -3,7 +3,7 @@ import {homedir}                    from 'os';
 
 export function getDefaultGlobalFolder() {
   if (process.platform === `win32`) {
-    const base = npath.toPortablePath(process.env.LOCALAPPDATA || npath.join(homedir(), 'AppData', 'Local'));
+    const base = npath.toPortablePath(process.env.LOCALAPPDATA || npath.join(homedir(), `AppData`, `Local`));
     return ppath.resolve(base, `Yarn/Berry` as PortablePath);
   }
 
@@ -16,11 +16,11 @@ export function getDefaultGlobalFolder() {
 }
 
 export function getHomeFolder() {
-  return npath.toPortablePath(homedir() || '/usr/local/share');
+  return npath.toPortablePath(homedir() || `/usr/local/share`);
 }
 
 export function isFolderInside(target: PortablePath, parent: PortablePath) {
   const relative = ppath.relative(parent, target);
 
-  return relative && !relative.startsWith('..') && !ppath.isAbsolute(relative);
+  return relative && !relative.startsWith(`..`) && !ppath.isAbsolute(relative);
 }

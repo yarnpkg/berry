@@ -38,6 +38,7 @@ const SearchInput = styled.input`
   font: inherit;
   color: #2c8ebb;
   margin-left: 0.5em;
+  text-overflow: ellipsis;
 `;
 
 const IconButton = styled.button`
@@ -64,6 +65,7 @@ const IconButton = styled.button`
 
 const SubmitButton = styled(IconButton)`
   order: 1;
+  top: -2px;
   svg {
     top: 0.2em;
     left: 0.2em;
@@ -81,7 +83,7 @@ const RawSearchBox = ({currentRefinement, refine, autoFocus}) => {
     e.preventDefault();
     e.stopPropagation();
 
-    navigate(`/package?${currentRefinement}`);
+    navigate(`/package/${currentRefinement}`);
   };
 
   return (
@@ -104,7 +106,7 @@ const RawSearchBox = ({currentRefinement, refine, autoFocus}) => {
         size="1"
       />
       <SubmitButton type="submit" title="Submit your search query."><IoIosSearch/></SubmitButton>
-      <ResetButton type="reset" title="Clear the search query." onClick={() => refine('')}><IoIosClose/></ResetButton>
+      <ResetButton type="reset" title="Clear the search query." onClick={() => refine(``)}><IoIosClose/></ResetButton>
     </SearchForm>
   );
 };

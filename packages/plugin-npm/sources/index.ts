@@ -55,6 +55,7 @@ const plugin: Plugin = {
         description: ``,
         type: SettingsType.SHAPE,
         properties: {
+          ...authSettings,
           ...registrySettings,
         },
       },
@@ -63,6 +64,7 @@ const plugin: Plugin = {
     npmRegistries: {
       description: `Settings per registry`,
       type: SettingsType.MAP,
+      normalizeKeys: npmConfigUtils.normalizeRegistry,
       valueDefinition: {
         description: ``,
         type: SettingsType.SHAPE,

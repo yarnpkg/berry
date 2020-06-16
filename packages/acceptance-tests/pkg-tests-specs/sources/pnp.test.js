@@ -213,10 +213,11 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(source(`require('various-requires/invalid-require')`)).rejects.toBeTruthy();
-        await expect(source(`{ try { require('various-requires/invalid-require') } catch (error) { return error } }`)).resolves.toMatchObject({
-          code: `MODULE_NOT_FOUND`,
-          pnpCode: `UNDECLARED_DEPENDENCY`,
+        await expect(source(`require('various-requires/invalid-require')`)).rejects.toMatchObject({
+          externalException: {
+            code: `MODULE_NOT_FOUND`,
+            pnpCode: `UNDECLARED_DEPENDENCY`,
+          },
         });
       },
     ),
@@ -275,10 +276,29 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(source(`require('peer-deps')`)).rejects.toBeTruthy();
-        await expect(source(`{ try { require('peer-deps') } catch (error) { return error } }`)).resolves.toMatchObject({
-          code: `MODULE_NOT_FOUND`,
-          pnpCode: `MISSING_PEER_DEPENDENCY`,
+        await expect(source(`require('peer-deps')`)).rejects.toMatchObject({
+          externalException: {
+            code: `MODULE_NOT_FOUND`,
+            pnpCode: `MISSING_PEER_DEPENDENCY`,
+          },
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should mention which ancestor broke the peer dependency chain`,
+    makeTemporaryEnv(
+      {dependencies: {[`broken-peer-deps`]: `1.0.0`}},
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(source(`require('broken-peer-deps')`)).rejects.toMatchObject({
+          externalException: {
+            message: expect.stringContaining(`Ancestor breaking the chain: broken-peer-deps@npm:1.0.0`),
+            code: `MODULE_NOT_FOUND`,
+            pnpCode: `MISSING_PEER_DEPENDENCY`,
+          },
         });
       },
     ),
@@ -342,7 +362,7 @@ describe(`Plug'n'Play`, () => {
       },
       async ({path, run, source}) => {
         const {stdout} = await run(`install`);
-        expect(stdout).not.toEqual(expect.stringContaining('YN0060'));
+        expect(stdout).not.toEqual(expect.stringContaining(`YN0060`));
       }
     ),
   );
@@ -358,7 +378,7 @@ describe(`Plug'n'Play`, () => {
       },
       async ({path, run, source}) => {
         const {stdout} = await run(`install`);
-        expect(stdout).toEqual(expect.stringContaining('YN0060'));
+        expect(stdout).toEqual(expect.stringContaining(`YN0060`));
       },
     ),
   );
@@ -558,6 +578,46 @@ describe(`Plug'n'Play`, () => {
     ),
   );
 
+  testIf(
+    () => satisfies(process.versions.node, `>=8.9.0`),
+    `it should terminate when the 'paths' option from require.resolve includes empty string and there is no .pnp.js in the working dir`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`workspace-*`],
+      },
+      async ({path, run, source}) => {
+        await writeJson(`${path}/workspace-a/package.json`, {
+          name: `workspace-a`,
+          version: `1.0.0`,
+          dependencies: {[`no-deps`]: `1.0.0`},
+        });
+
+        await writeJson(`${path}/workspace-b/package.json`, {
+          name: `workspace-b`,
+          version: `1.0.0`,
+          dependencies: {[`no-deps`]: `2.0.0`, [`one-fixed-dep`]: `1.0.0`},
+        });
+
+        await run(`install`);
+
+        await expect(
+          source(
+            `require(require.resolve('no-deps', {paths: ${JSON.stringify([
+              `${npath.fromPortablePath(path)}/workspace-a`,
+              `${npath.fromPortablePath(path)}/workspace-b`,
+              ``,
+            ])}}))`,
+            {cwd: `${path}/workspace-a`}
+          ),
+        ).resolves.toMatchObject({
+          name: `no-deps`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
   // Skipped because not supported (we can't require files from within other dependency trees, since we couldn't
   // reconcile them together: dependency tree A could think that package X has deps Y@1 while dependency tree B
   // could think that X has deps Y@2 instead. Since they would share the same location on the disk, PnP wouldn't
@@ -745,7 +805,7 @@ describe(`Plug'n'Play`, () => {
   );
 
   testIf(
-    () => process.platform !== 'win32',
+    () => process.platform !== `win32`,
     `it should generate a file that can be used as an executable to resolve a request (valid request)`,
     makeTemporaryEnv(
       {
@@ -892,7 +952,7 @@ describe(`Plug'n'Play`, () => {
 
         await run(`install`);
 
-        expect(await source(`require.resolve('no-deps')`)).toMatch(/[\\\/]node_modules[\\\/]no-deps[\\\/]/);
+        expect(await source(`require.resolve('no-deps')`)).toMatch(/[\\/]node_modules[\\/]no-deps[\\/]/);
       },
     ),
   );
@@ -914,7 +974,7 @@ describe(`Plug'n'Play`, () => {
 
         await run(`install`);
 
-        expect(await source(`require.resolve('peer-deps')`)).toMatch(/[\\\/]node_modules[\\\/]peer-deps[\\\/]/);
+        expect(await source(`require.resolve('peer-deps')`)).toMatch(/[\\/]node_modules[\\/]peer-deps[\\/]/);
       },
     ),
   );
@@ -1003,7 +1063,7 @@ describe(`Plug'n'Play`, () => {
           `module.exports = "unplugged";\n`,
         );
 
-        await expect(source(`require('no-deps')`)).resolves.toEqual('unplugged');
+        await expect(source(`require('no-deps')`)).resolves.toEqual(`unplugged`);
       },
     ),
   );
@@ -1221,6 +1281,35 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should allow packages to define whether they should be unplugged (true)`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`prefer-unplugged-true`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
+        expect(listing).toHaveLength(1);
+      },
+    ),
+  );
+
+  test(
+    `it should allow packages to define whether they should be unplugged (false)`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`prefer-unplugged-false`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        expect(xfs.existsSync(`${path}/.yarn/unplugged`)).toEqual(false);
+      },
+    ),
+  );
+
+  test(
     `it should not cache the postinstall artifacts`,
     makeTemporaryEnv(
       {
@@ -1313,6 +1402,69 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should allow external modules to require internal ones`,
+    makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await xfs.mktempPromise(async temp => {
+        await run(`install`);
+
+        await writeFile(`${temp}/foo.js`, `
+          const resolved = require.resolve(process.argv[2], {paths: [process.argv[3]]});
+          const required = require(resolved);
+
+          console.log(required);
+        `);
+
+        await run(`node`, `${npath.fromPortablePath(temp)}/foo.js`, `no-deps`, `${npath.fromPortablePath(path)}/`);
+      });
+    }),
+  );
+
+  test(
+    `it should remove the lingering node_modules folders`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/node_modules/foo`);
+
+      await run(`install`);
+
+      await expect(xfs.readdirPromise(path)).resolves.not.toContain(`node_modules`);
+    }),
+  );
+
+  test(
+    `it shouldn't remove the lingering node_modules folders when they contain dot-folders`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/node_modules/.cache`);
+
+      await run(`install`);
+
+      await expect(xfs.readdirPromise(path)).resolves.toContain(`node_modules`);
+      await expect(xfs.readdirPromise(ppath.join(path, `node_modules`))).resolves.toEqual([
+        `.cache`,
+      ]);
+    }),
+  );
+
+  test(
+    `it should remove lingering folders from the node_modules even when they contain dot-folders`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/node_modules/.bin`);
+      await xfs.mkdirpPromise(`${path}/node_modules/.cache`);
+      await xfs.mkdirpPromise(`${path}/node_modules/foo`);
+
+      await run(`install`);
+
+      await expect(xfs.readdirPromise(path)).resolves.toContain(`node_modules`);
+      await expect(xfs.readdirPromise(ppath.join(path, `node_modules`))).resolves.toEqual([
+        `.cache`,
+      ]);
+    }),
+  );
+
+  test(
     `it should transparently support the "resolve" package`,
     makeTemporaryEnv(
       {
@@ -1333,5 +1485,76 @@ describe(`Plug'n'Play`, () => {
       },
     ),
     15000,
+  );
+
+  test(
+    `it shouldn't break the vscode builtin resolution`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      // VSCode has its own layer on top of `require` to provide extra builtins
+      // to the plugins. We don't want to accidentally break this:
+      //
+      // https://github.com/microsoft/vscode/blob/dcecb9eea6158f561ee703cbcace49b84048e6e3/src/vs/workbench/api/node/extHostExtensionService.ts#L23
+
+      await run(`install`);
+
+      const tmp = await xfs.mktempPromise();
+      await xfs.writeFilePromise(ppath.join(tmp, `index.js`), `
+        const realLoad = module.constructor._load;
+
+        module.constructor._load = function (name, ...args) {
+          if (name === 'foo') {
+            return 'this works';
+          } else {
+            return realLoad.call(this, name, ...args);
+          }
+        };
+
+        require(process.argv[2]).setup();
+
+        if (require('foo') !== 'this works') {
+          throw new Error('Assertion failed');
+        }
+      `);
+
+      cp.execFileSync(`node`, [
+        npath.fromPortablePath(`${tmp}/index.js`),
+        npath.fromPortablePath(`${path}/.pnp.js`),
+      ], {encoding: `utf-8`});
+    }),
+  );
+
+  test(
+    `it should work with pnpEnableInlining set to false`,
+    makeTemporaryEnv({}, {
+      pnpEnableInlining: false,
+    }, async ({path, run, source}) => {
+      await run(`add`, `no-deps`);
+
+      expect(xfs.existsSync(`${path}/.pnp.data.json`)).toBeTruthy();
+
+      await writeFile(`${path}/file.js`, `
+        console.log(require.resolve('no-deps'));
+      `);
+
+      await expect(run(`node`, `file.js`)).resolves.toBeTruthy();
+    }),
+  );
+
+  test(
+    `it should work with pnpEnableInlining set to false and with a custom pnpDataPath`,
+    makeTemporaryEnv({}, {
+      pnpEnableInlining: false,
+      pnpDataPath: `./.pnp.meta.json`,
+    }, async ({path, run, source}) => {
+      await run(`add`, `no-deps`);
+
+      expect(xfs.existsSync(`${path}/.pnp.meta.json`)).toBeTruthy();
+
+      await writeFile(`${path}/file.js`, `
+        console.log(require.resolve('no-deps'));
+      `);
+
+      await expect(run(`node`, `file.js`)).resolves.toBeTruthy();
+    }),
   );
 });

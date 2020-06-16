@@ -8,15 +8,19 @@
 
 export type ArgumentSegment =
   | {type: `text`, text: string}
+  | {type: `glob`, pattern: string}
   | {type: `shell`, shell: ShellLine, quoted: boolean}
   | {type: `variable`, name: string, defaultValue?: Array<ValueArgument>, quoted: boolean};
 
 export type Argument =
-  | {type: `redirection`, subtype: `>` | `<` | `>>` | `<<<`, args: Array<ValueArgument>}
+  | RedirectArgument
   | ValueArgument;
 
+export type RedirectArgument =
+  | {type: `redirection`, subtype: `>` | `<` | `>>` | `<<<`, args: Array<ValueArgument>};
+
 export type ValueArgument =
-| {type: `argument`, segments: Array<ArgumentSegment>};
+  | {type: `argument`, segments: Array<ArgumentSegment>};
 
 export type EnvSegment = {
   name: string,
@@ -30,6 +34,7 @@ export type Command = {
 } | {
   type: `subshell`,
   subshell: ShellLine,
+  args: Array<RedirectArgument>,
 } | {
   type: `envs`,
   envs: Array<EnvSegment>
@@ -56,4 +61,4 @@ export type CommandLineThen = {
 
 export type ShellLine = Array<CommandLine>;
 
-export declare const parse: (code: string) => ShellLine;
+export declare const parse: (code: string, options: {isGlobPattern: (arg: string) => boolean}) => ShellLine;

@@ -9,7 +9,7 @@ import vm                     from 'vm';
 // eslint-disable-next-line @typescript-eslint/camelcase
 const {is_atom: isAtom, is_variable: isVariable, is_instantiated_list: isInstantiatedList} = pl.type;
 
-function prependGoals(thread: pl.type.Thread, point: pl.type.State, goals: pl.type.Term<number, string>[]): void {
+function prependGoals(thread: pl.type.Thread, point: pl.type.State, goals: Array<pl.type.Term<number, string>>): void {
   thread.prepend(goals.map(
     goal => new pl.type.State(
       point.goal.replace(goal),
@@ -130,7 +130,7 @@ const tauModule = new pl.type.Module(`constraints`, {
 
     // Inject the variables into a sandbox
     const vars: {[key: string]: any} = {$$: value};
-    for (const [index, value] of (checkArgv.toJavaScript() as string[]).entries())
+    for (const [index, value] of (checkArgv.toJavaScript() as Array<string>).entries())
       vars[`$${index}`] = value;
 
     const result = vm.runInNewContext(checkCode.id, vars);

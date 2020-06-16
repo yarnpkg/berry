@@ -2,7 +2,7 @@ const {xfs} = require(`@yarnpkg/fslib`);
 const {
   fs: {readJson, writeJson},
   tests: {getPackageDirectoryPath},
-} = require('pkg-tests-core');
+} = require(`pkg-tests-core`);
 
 describe(`Protocols`, () => {
   describe(`portal:`, () => {

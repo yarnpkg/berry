@@ -1,4 +1,5 @@
 import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL}                             from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                              from '@yarnpkg/parsers';
 import camelcase                                               from 'camelcase';
 import chalk                                                   from 'chalk';
@@ -6,8 +7,8 @@ import {UsageError}                                            from 'clipanion';
 import isCI                                                    from 'is-ci';
 import semver                                                  from 'semver';
 import {PassThrough, Writable}                                 from 'stream';
-import {tmpNameSync}                                           from 'tmp';
 
+import {CorePlugin}                                            from './CorePlugin';
 import {Manifest}                                              from './Manifest';
 import {MultiFetcher}                                          from './MultiFetcher';
 import {MultiResolver}                                         from './MultiResolver';
@@ -32,6 +33,8 @@ const chalkOptions = process.env.GITHUB_ACTIONS
     : {level: 0};
 
 const supportsColor = chalkOptions.level !== 0;
+const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS;
+
 const chalkInstance = new chalk.Instance(chalkOptions);
 
 const IGNORED_ENV_VARIABLES = new Set([
@@ -46,34 +49,45 @@ const IGNORED_ENV_VARIABLES = new Set([
   // "flags" is set by Netlify; they use it to specify the flags to send to the
   // CLI when running the automatic `yarn install`
   `flags`,
+
+  // "gpg" and "profile" are used by the install.sh script:
+  // https://classic.yarnpkg.com/install.sh
+  `profile`,
+  `gpg`,
+
+  // "wrapOutput" was a variable used to indicate nested "yarn run" processes
+  // back in Yarn 1.
+  `wrapOutput`,
 ]);
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
 export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc.yml`);
 export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
+export const SECRET = `********`;
 
 export enum SettingsType {
-  ANY = 'ANY',
-  BOOLEAN = 'BOOLEAN',
-  ABSOLUTE_PATH = 'ABSOLUTE_PATH',
-  LOCATOR = 'LOCATOR',
-  LOCATOR_LOOSE = 'LOCATOR_LOOSE',
-  STRING = 'STRING',
-  SECRET = 'SECRET',
-  SHAPE = 'SHAPE',
-  MAP = 'MAP',
-};
+  ANY = `ANY`,
+  BOOLEAN = `BOOLEAN`,
+  ABSOLUTE_PATH = `ABSOLUTE_PATH`,
+  LOCATOR = `LOCATOR`,
+  LOCATOR_LOOSE = `LOCATOR_LOOSE`,
+  NUMBER = `NUMBER`,
+  STRING = `STRING`,
+  SECRET = `SECRET`,
+  SHAPE = `SHAPE`,
+  MAP = `MAP`,
+}
 
 export enum FormatType {
-  NAME = 'NAME',
-  NUMBER = 'NUMBER',
-  PATH = 'PATH',
-  RANGE = 'RANGE',
-  REFERENCE = 'REFERENCE',
-  SCOPE = 'SCOPE',
-  ADDED = 'ADDED',
-  REMOVED = 'REMOVED',
-};
+  NAME = `NAME`,
+  NUMBER = `NUMBER`,
+  PATH = `PATH`,
+  RANGE = `RANGE`,
+  REFERENCE = `REFERENCE`,
+  SCOPE = `SCOPE`,
+  ADDED = `ADDED`,
+  REMOVED = `REMOVED`,
+}
 
 export const formatColors = chalkOptions.level >= 3 ? new Map([
   [FormatType.NAME, `#d7875f`],
@@ -107,12 +121,14 @@ export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE>
 
 export type MapSettingsDefinition = BaseSettingsDefinition<SettingsType.MAP> & {
   valueDefinition: SettingsDefinitionNoDefault,
+  normalizeKeys?: (key: string) => string,
 };
 
 export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.SHAPE | SettingsType.MAP>> & {
   default: any,
   defaultText?: any,
   isNullable?: boolean,
+  values?: Array<any>,
 };
 
 export type SettingsDefinitionNoDefault =
@@ -166,8 +182,18 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: false,
   },
+  ignoreCwd: {
+    description: `If true, the \`--cwd\` flag will be ignored`,
+    type: SettingsType.BOOLEAN,
+    default: false,
+  },
 
   // Settings related to the package manager internal names
+  cacheKeyOverride: {
+    description: `A global cache key override; used only for test purposes`,
+    type: SettingsType.STRING,
+    default: null,
+  },
   globalFolder: {
     description: `Folder where are stored the system-wide settings`,
     type: SettingsType.ABSOLUTE_PATH,
@@ -177,6 +203,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `Folder where the cache files must be written`,
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.yarn/cache`,
+  },
+  compressionLevel: {
+    description: `Zip files compression level, from 0 to 9 or mixed (a variant of 9, which stores some files uncompressed, when compression doesn't yield good results)`,
+    type: SettingsType.NUMBER,
+    values: [`mixed`, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    default: DEFAULT_COMPRESSION_LEVEL,
   },
   virtualFolder: {
     description: `Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual)`,
@@ -192,6 +224,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `Name of the files where the Yarn dependency tree entries must be stored`,
     type: SettingsType.STRING,
     default: DEFAULT_LOCK_FILENAME,
+  },
+  installStatePath: {
+    description: `Path of the file where the install state will be persisted`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: `./.yarn/install-state.gz`,
   },
   rcFilename: {
     description: `Name of the files where the configuration can be found`,
@@ -216,6 +253,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: supportsColor,
     defaultText: `<dynamic>`,
   },
+  enableHyperlinks: {
+    description: `If true, the CLI is allowed to use hyperlinks in its output`,
+    type: SettingsType.BOOLEAN,
+    default: supportsHyperlinks,
+    defaultText: `<dynamic>`,
+  },
   enableInlineBuilds: {
     description: `If true, the CLI will print the build output on the command line`,
     type: SettingsType.BOOLEAN,
@@ -225,13 +268,18 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableProgressBars: {
     description: `If true, the CLI is allowed to show a progress bar for long-running events`,
     type: SettingsType.BOOLEAN,
-    default: !isCI && process.stdout.isTTY,
+    default: !isCI && process.stdout.isTTY && process.stdout.columns > 22,
     defaultText: `<dynamic>`,
   },
   enableTimers: {
     description: `If true, the CLI is allowed to print the time spent executing commands`,
     type: SettingsType.BOOLEAN,
     default: true,
+  },
+  preferAggregateCacheInfo: {
+    description: `If true, the CLI will only print a one-line report of any cache changes`,
+    type: SettingsType.BOOLEAN,
+    default: isCI,
   },
   preferInteractive: {
     description: `If true, the CLI will automatically use the interactive mode when called from a TTY`,
@@ -289,7 +337,16 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: [],
     isArray: true,
   },
-
+  httpTimeout: {
+    description: `Timeout of each http request in milliseconds`,
+    type: SettingsType.NUMBER,
+    default: 60000,
+  },
+  httpRetry: {
+    description: `Retry times on http failure`,
+    type: SettingsType.NUMBER,
+    default: 3,
+  },
   // Settings related to security
   enableScripts: {
     description: `If true, packages are allowed to have install scripts by default`,
@@ -371,22 +428,40 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
   if (value === null && !definition.isNullable && definition.default !== null)
     throw new Error(`Non-nullable configuration settings "${path}" cannot be set to null`);
 
-  if (definition.type === SettingsType.BOOLEAN)
-    return parseBoolean(value);
+  if (definition.values?.includes(value))
+    return value;
 
-  if (typeof value !== `string`)
-    throw new Error(`Expected value to be a string`);
+  const interpretValue = () => {
+    if (definition.type === SettingsType.BOOLEAN)
+      return parseBoolean(value);
 
-  switch (definition.type) {
-    case SettingsType.ABSOLUTE_PATH:
-      return ppath.resolve(folder, npath.toPortablePath(value));
-    case SettingsType.LOCATOR_LOOSE:
-      return structUtils.parseLocator(value, false);
-    case SettingsType.LOCATOR:
-      return structUtils.parseLocator(value);
-    default:
-      return value;
-  }
+    if (typeof value !== `string`)
+      throw new Error(`Expected value (${value}) to be a string`);
+
+    const valueWithReplacedVariables = miscUtils.replaceEnvVariables(value, {
+      env: process.env,
+    });
+
+    switch (definition.type) {
+      case SettingsType.ABSOLUTE_PATH:
+        return ppath.resolve(folder, npath.toPortablePath(valueWithReplacedVariables));
+      case SettingsType.LOCATOR_LOOSE:
+        return structUtils.parseLocator(valueWithReplacedVariables, false);
+      case SettingsType.NUMBER:
+        return parseInt(valueWithReplacedVariables);
+      case SettingsType.LOCATOR:
+        return structUtils.parseLocator(valueWithReplacedVariables);
+      default:
+        return valueWithReplacedVariables;
+    }
+  };
+
+  const interpreted = interpretValue();
+
+  if (definition.values && !definition.values.includes(interpreted))
+    throw new Error(`Invalid value, expected one of ${definition.values.join(`, `)}`);
+
+  return interpreted;
 }
 
 function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: PortablePath) {
@@ -414,20 +489,21 @@ function parseShape(configuration: Configuration, path: string, value: unknown, 
 function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: PortablePath) {
   const result = new Map<string, any>();
 
-  if (typeof value !== 'object' || Array.isArray(value))
+  if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Map configuration settings "${path}" must be an object`);
 
   if (value === null)
     return result;
 
   for (const [propKey, propValue] of Object.entries(value)) {
-    const subPath = `${path}['${propKey}']`;
+    const normalizedKey = definition.normalizeKeys? definition.normalizeKeys(propKey) : propKey;
+    const subPath = `${path}['${normalizedKey}']`;
 
     // @ts-ignore: SettingsDefinitionNoDefault has ... no default ... but
     // that's fine because we're guaranteed it's not undefined.
     const valueDefinition: SettingsDefinition = definition.valueDefinition;
 
-    result.set(propKey, parseValue(configuration, subPath, propValue, valueDefinition, folder));
+    result.set(normalizedKey, parseValue(configuration, subPath, propValue, valueDefinition, folder));
   }
 
   return result;
@@ -455,8 +531,12 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
       if (configuration.projectCwd === null) {
         if (ppath.isAbsolute(definition.default)) {
           return ppath.normalize(definition.default);
-        } else if (definition.isNullable || definition.default === null) {
+        } else if (definition.isNullable) {
           return null;
+        } else {
+          // Reached when a relative path is the default but the current
+          // context is evaluated outside of a Yarn project
+          return undefined;
         }
       } else {
         if (Array.isArray(definition.default)) {
@@ -471,6 +551,42 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
       return definition.default;
     } break;
   }
+}
+
+function hideSecrets(rawValue: unknown, definition: SettingsDefinitionNoDefault) {
+  if (definition.type === SettingsType.SECRET && typeof rawValue === `string`)
+    return SECRET;
+
+  if (definition.isArray && Array.isArray(rawValue)) {
+    const newValue: Array<unknown> = [];
+
+    for (const value of rawValue)
+      newValue.push(hideSecrets(value, definition));
+
+    return newValue;
+  }
+
+  if (definition.type === SettingsType.MAP && rawValue instanceof Map) {
+    const newValue: Map<string, unknown> = new Map();
+
+    for (const [key, value] of rawValue.entries())
+      newValue.set(key, hideSecrets(value, definition.valueDefinition));
+
+    return newValue;
+  }
+
+  if (definition.type === SettingsType.SHAPE && rawValue instanceof Map) {
+    const newValue: Map<string, unknown> = new Map();
+
+    for (const [key, value] of rawValue.entries()) {
+      const propertyDefinition = definition.properties[key];
+      newValue.set(key, hideSecrets(value, propertyDefinition));
+    }
+
+    return newValue;
+  }
+
+  return rawValue;
 }
 
 function getEnvironmentSettings() {
@@ -494,21 +610,28 @@ function getRcFilename() {
   const rcKey = `${ENVIRONMENT_PREFIX}rc_filename`;
 
   for (const [key, value] of Object.entries(process.env))
-    if (key.toLowerCase() === rcKey)
-      return value;
+    if (key.toLowerCase() === rcKey && typeof value === `string`)
+      return value as Filename;
 
-  return DEFAULT_RC_FILENAME;
+  return DEFAULT_RC_FILENAME as Filename;
 }
 
 export enum ProjectLookup {
   LOCKFILE,
   MANIFEST,
   NONE,
+}
+
+export type FindProjectOptions = {
+  lookup?: ProjectLookup,
+  strict?: boolean,
+  usePath?: boolean,
+  useRc?: boolean,
 };
 
 export class Configuration {
   public startingCwd: PortablePath;
-  public projectCwd: PortablePath | null;
+  public projectCwd: PortablePath | null = null;
 
   public plugins: Map<string, Plugin> = new Map();
 
@@ -518,10 +641,38 @@ export class Configuration {
 
   public invalid: Map<string, string> = new Map();
 
-  private packageExtensions: Map<IdentHash, Array<{
+  private packageExtensions?: Map<IdentHash, Array<{
     range: string,
     patch: (pkg: Package) => void,
   }>> = new Map();
+
+  /**
+   * Instantiate a new configuration object with the default values from the
+   * core. You typically don't want to use this, as it will ignore the values
+   * configured in the rc files. Instead, prefer to use `Configuration#find`.
+   */
+
+  static create(startingCwd: PortablePath, plugins?: Map<string, Plugin>): Configuration;
+  static create(startingCwd: PortablePath, projectCwd: PortablePath | null, plugins?: Map<string, Plugin>): Configuration;
+  static create(startingCwd: PortablePath, projectCwdOrPlugins?: Map<string, Plugin> | PortablePath | null, maybePlugins?: Map<string, Plugin>) {
+    const configuration = new Configuration(startingCwd);
+
+    if (typeof projectCwdOrPlugins !== `undefined` && !(projectCwdOrPlugins instanceof Map))
+      configuration.projectCwd = projectCwdOrPlugins;
+
+    configuration.importSettings(coreDefinitions);
+
+    const plugins = typeof maybePlugins !== `undefined`
+      ? maybePlugins
+      : projectCwdOrPlugins instanceof Map
+        ? projectCwdOrPlugins
+        : new Map();
+
+    for (const [name, plugin] of plugins)
+      configuration.activatePlugin(name, plugin);
+
+    return configuration;
+  }
 
   /**
    * Instantiate a new configuration object exposing the configuration obtained
@@ -550,14 +701,83 @@ export class Configuration {
    * way around).
    */
 
-  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {lookup = ProjectLookup.LOCKFILE, strict = true, useRc = true}: {lookup?: ProjectLookup, strict?: boolean, useRc?: boolean} = {}) {
+  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {lookup = ProjectLookup.LOCKFILE, strict = true, usePath = false, useRc = true}: FindProjectOptions = {}) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
     const rcFiles = await Configuration.findRcFiles(startingCwd);
-    const plugins = new Map();
+    const homeRcFile = await Configuration.findHomeRcFile();
 
-    const interop = (obj: any) => obj.__esModule ? obj.default : obj;
+    // First we will parse the `yarn-path` settings. Doing this now allows us
+    // to not have to load the plugins if there's a `yarn-path` configured.
+
+    type CoreKeys = keyof typeof coreDefinitions;
+    type CoreFields = {[key in CoreKeys]: any};
+
+    const pickCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename});
+    const excludeCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => rest;
+
+    const configuration = new Configuration(startingCwd);
+    configuration.importSettings(pickCoreFields(coreDefinitions));
+
+    configuration.useWithSource(`<environment>`, pickCoreFields(environmentSettings), startingCwd, {strict: false});
+    for (const {path, cwd, data} of rcFiles)
+      configuration.useWithSource(path, pickCoreFields(data), cwd, {strict: false});
+    if (homeRcFile)
+      configuration.useWithSource(homeRcFile.path, pickCoreFields(homeRcFile.data), homeRcFile.cwd, {strict: false});
+
+    if (usePath) {
+      const yarnPath: PortablePath = configuration.get<PortablePath>(`yarnPath`);
+      const ignorePath = configuration.get<boolean>(`ignorePath`);
+
+      if (yarnPath !== null && !ignorePath) {
+        return configuration;
+      }
+    }
+
+    // We need to know the project root before being able to truly instantiate
+    // our configuration, and to know that we need to know the lockfile name
+
+    const lockfileFilename = configuration.get<Filename>(`lockfileFilename`);
+
+    let projectCwd: PortablePath | null;
+    switch (lookup) {
+      case ProjectLookup.LOCKFILE: {
+        projectCwd = await Configuration.findProjectCwd(startingCwd, lockfileFilename);
+      } break;
+
+      case ProjectLookup.MANIFEST: {
+        projectCwd = await Configuration.findProjectCwd(startingCwd, null);
+      } break;
+
+      case ProjectLookup.NONE: {
+        if (xfs.existsSync(ppath.join(startingCwd, `package.json` as Filename))) {
+          projectCwd = ppath.resolve(startingCwd);
+        } else {
+          projectCwd = null;
+        }
+      } break;
+    }
+
+    // Great! We now have enough information to really start to setup the
+    // core configuration object.
+
+    configuration.startingCwd = startingCwd;
+    configuration.projectCwd = projectCwd;
+
+    configuration.importSettings(excludeCoreFields(coreDefinitions));
+
+    // Now that the configuration object is almost ready, we need to load all
+    // the configured plugins
+
+    const plugins = new Map<string, Plugin>([
+      [`@@core`, CorePlugin],
+    ]);
+
+    const interop =
+      (obj: any) => obj.__esModule
+        ? obj.default
+        : obj;
 
     if (pluginConfiguration !== null) {
       for (const request of pluginConfiguration.plugins.keys())
@@ -628,56 +848,21 @@ export class Configuration {
       }
     }
 
-    let lockfileFilename = DEFAULT_LOCK_FILENAME;
+    for (const [name, plugin] of plugins)
+      configuration.activatePlugin(name, plugin);
 
-    // We need to know the project root before being able to truly instantiate
-    // our configuration, and to know that we need to know the lockfile name
-    if (environmentSettings.lockfileFilename) {
-      lockfileFilename = environmentSettings.lockfileFilename;
-    } else {
-      for (const {data} of rcFiles) {
-        if (data.lockfileFilename) {
-          lockfileFilename = data.lockfileFilename;
-          break;
-        }
-      }
-    }
-
-    let projectCwd: PortablePath | null;
-    switch (lookup) {
-      case ProjectLookup.LOCKFILE: {
-        projectCwd = await Configuration.findProjectCwd(startingCwd, lockfileFilename);
-      } break;
-
-      case ProjectLookup.MANIFEST: {
-        projectCwd = await Configuration.findProjectCwd(startingCwd, null);
-      } break;
-
-      case ProjectLookup.NONE: {
-        if (xfs.existsSync(ppath.join(startingCwd, `package.json` as Filename))) {
-          projectCwd = ppath.resolve(startingCwd);
-        } else {
-          projectCwd = null;
-        }
-      } break;
-    }
-
-    const configuration = new Configuration(startingCwd, projectCwd, plugins);
-    configuration.useWithSource(`<environment>`, environmentSettings, startingCwd, {strict});
-
+    configuration.useWithSource(`<environment>`, excludeCoreFields(environmentSettings), startingCwd, {strict});
     for (const {path, cwd, data} of rcFiles)
-      configuration.useWithSource(path, data, cwd, {strict});
-
-    const rcFilename = configuration.get(`rcFilename`);
-    const homeRcFile = await Configuration.findHomeRcFile(rcFilename);
-
+      configuration.useWithSource(path, excludeCoreFields(data), cwd, {strict});
     if (homeRcFile)
-      configuration.useWithSource(homeRcFile.path, homeRcFile.data, homeRcFile.cwd, {strict});
+      configuration.useWithSource(homeRcFile.path, excludeCoreFields(homeRcFile.data), homeRcFile.cwd, {strict});
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
       configuration.sources.set(`cacheFolder`, `<internal>`);
     }
+
+    await configuration.refreshPackageExtensions();
 
     return configuration;
   }
@@ -718,9 +903,11 @@ export class Configuration {
     return rcFiles;
   }
 
-  static async findHomeRcFile(rcFilename: string) {
+  static async findHomeRcFile() {
+    const rcFilename = getRcFilename();
+
     const homeFolder = folderUtils.getHomeFolder();
-    const homeRcFilePath = ppath.join(homeFolder, rcFilename as PortablePath);
+    const homeRcFilePath = ppath.join(homeFolder, rcFilename);
 
     if (xfs.existsSync(homeRcFilePath)) {
       const content = await xfs.readFilePromise(homeRcFilePath, `utf8`);
@@ -761,7 +948,7 @@ export class Configuration {
     return projectCwd;
   }
 
-  static async updateConfiguration(cwd: PortablePath, patch: any) {
+  static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: any} | ((current: any) => any)) {
     const rcFilename = getRcFilename();
     const configurationPath =  ppath.join(cwd, rcFilename as PortablePath);
 
@@ -773,6 +960,8 @@ export class Configuration {
 
     if (typeof patch === `function`)
       patch = patch(current);
+    if (typeof patch === `function`)
+      throw new Error(`Assertion failed: Invalid configuration type`);
 
     for (const key of Object.keys(patch)) {
       const currentValue = current[key];
@@ -796,34 +985,31 @@ export class Configuration {
     });
   }
 
-  static async updateHomeConfiguration(patch: any) {
+  static async updateHomeConfiguration(patch: {[key: string]: any} | ((current: any) => any)) {
     const homeFolder = folderUtils.getHomeFolder();
 
     return await Configuration.updateConfiguration(homeFolder, patch);
   }
 
-  constructor(startingCwd: PortablePath, projectCwd: PortablePath | null, plugins: Map<string, Plugin>) {
+  private constructor(startingCwd: PortablePath) {
     this.startingCwd = startingCwd;
-    this.projectCwd = projectCwd;
+  }
 
-    this.plugins = plugins;
+  activatePlugin(name: string, plugin: Plugin) {
+    this.plugins.set(name, plugin);
 
-    const importSettings = (definitions: {[name: string]: SettingsDefinition}) => {
-      for (const [name, definition] of Object.entries(definitions)) {
-        if (this.settings.has(name))
-          throw new Error(`Cannot redefine settings "${name}"`);
+    if (typeof plugin.configuration !== `undefined`) {
+      this.importSettings(plugin.configuration);
+    }
+  }
 
-        this.settings.set(name, definition);
-        this.values.set(name, getDefaultValue(this, definition));
-      }
-    };
+  private importSettings(definitions: {[name: string]: SettingsDefinition}) {
+    for (const [name, definition] of Object.entries(definitions)) {
+      if (this.settings.has(name))
+        throw new Error(`Cannot redefine settings "${name}"`);
 
-    importSettings(coreDefinitions);
-
-    for (const plugin of this.plugins.values()) {
-      if (plugin.configuration) {
-        importSettings(plugin.configuration);
-      }
+      this.settings.set(name, definition);
+      this.values.set(name, getDefaultValue(this, definition));
     }
   }
 
@@ -838,6 +1024,10 @@ export class Configuration {
 
   use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
     for (const key of Object.keys(data)) {
+      const value = data[key];
+      if (typeof value === `undefined`)
+        continue;
+
       // The plugins have already been loaded at this point
       if (key === `plugins`)
         continue;
@@ -863,12 +1053,16 @@ export class Configuration {
       if (this.sources.has(key) && !overwrite)
         continue;
 
-      this.values.set(key, parseValue(this, key, data[key], definition, folder));
-      this.sources.set(key, source);
-
-      if (key === `packageExtensions`) {
-        this.refreshPackageExtensions();
+      let parsed;
+      try {
+        parsed = parseValue(this, key, data[key], definition, folder);
+      } catch (error) {
+        error.message += ` in ${source}`;
+        throw error;
       }
+
+      this.values.set(key, parsed);
+      this.sources.set(key, source);
     }
   }
 
@@ -879,11 +1073,20 @@ export class Configuration {
     return this.values.get(key) as T;
   }
 
-  getSubprocessStreams(prefix: string, {header, report}: {header?: string, report: Report}) {
+  getRedacted<T = any>(key: string) {
+    const rawValue = this.get(key);
+    const definition = this.settings.get(key);
+
+    if (typeof definition === `undefined`)
+      throw new UsageError(`Couldn't find a configuration settings named "${key}"`);
+
+    return hideSecrets(rawValue, definition) as T;
+  }
+
+  getSubprocessStreams(logFile: PortablePath, {header, prefix, report}: {header?: string, prefix: string, report: Report}) {
     let stdout: Writable;
     let stderr: Writable;
 
-    const logFile = npath.toPortablePath(tmpNameSync({prefix: `logfile-`, postfix: `.log`}));
     const logStream = xfs.createWriteStream(logFile);
 
     if (this.get(`enableInlineBuilds`)) {
@@ -906,7 +1109,7 @@ export class Configuration {
       }
     }
 
-    return {logFile, stdout, stderr};
+    return {stdout, stderr};
   }
 
   makeResolver() {
@@ -950,8 +1153,9 @@ export class Configuration {
     return linkers;
   }
 
-  refreshPackageExtensions() {
+  async refreshPackageExtensions() {
     this.packageExtensions = new Map();
+    const packageExtensions = this.packageExtensions;
 
     const registerPackageExtension = (descriptor: Descriptor, extensionData: any) => {
       if (!semver.validRange(descriptor.range))
@@ -960,7 +1164,7 @@ export class Configuration {
       const extension = new Manifest();
       extension.load(extensionData);
 
-      miscUtils.getArrayWithDefault(this.packageExtensions, descriptor.identHash).push({
+      miscUtils.getArrayWithDefault(packageExtensions, descriptor.identHash).push({
         range: descriptor.range,
         patch: pkg => {
           pkg.dependencies = new Map([...pkg.dependencies, ...extension.dependencies]);
@@ -974,7 +1178,7 @@ export class Configuration {
     for (const [descriptorString, extensionData] of this.get<Map<string, any>>(`packageExtensions`))
       registerPackageExtension(structUtils.parseDescriptor(descriptorString, true), extensionData);
 
-    this.triggerHook(hooks => {
+    await this.triggerHook(hooks => {
       return hooks.registerPackageExtensions;
     }, this, registerPackageExtension);
   }
@@ -984,6 +1188,9 @@ export class Configuration {
 
     // We use the extensions to define additional dependencies that weren't
     // properly listed in the original package definition
+
+    if (this.packageExtensions == null)
+      throw new Error(`refreshPackageExtensions has to be called before normalizing packages`);
 
     const extensionList = this.packageExtensions.get(original.identHash);
     if (typeof extensionList !== `undefined`) {
@@ -1009,7 +1216,7 @@ export class Configuration {
     return pkg;
   }
 
-  async triggerHook<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, ...args: U): Promise<void> {
+  async triggerHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, ...args: U): Promise<void> {
     for (const plugin of this.plugins.values()) {
       const hooks = plugin.hooks as HooksDefinition;
       if (!hooks)
@@ -1023,13 +1230,13 @@ export class Configuration {
     }
   }
 
-  async triggerMultipleHooks<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, argsList: Array<U>): Promise<void> {
+  async triggerMultipleHooks<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, argsList: Array<U>): Promise<void> {
     for (const args of argsList) {
       await this.triggerHook(get, ...args);
     }
   }
 
-  async reduceHook<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((reduced: V, ...args: U) => Promise<V>) | undefined, initialValue: V, ...args: U): Promise<V> {
+  async reduceHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((reduced: V, ...args: U) => Promise<V>) | undefined, initialValue: V, ...args: U): Promise<V> {
     let value = initialValue;
 
     for (const plugin of this.plugins.values()) {
@@ -1047,7 +1254,7 @@ export class Configuration {
     return value;
   }
 
-  async firstHook<U extends any[], V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => Promise<V>) | undefined, ...args: U): Promise<Exclude<V, void> | null> {
+  async firstHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => Promise<V>) | undefined, ...args: U): Promise<Exclude<V, void> | null> {
     for (const plugin of this.plugins.values()) {
       const hooks = plugin.hooks as HooksDefinition;
       if (!hooks)
@@ -1068,6 +1275,9 @@ export class Configuration {
   }
 
   format(text: string, colorRequest: FormatType | string) {
+    if (colorRequest === FormatType.PATH)
+      text = npath.fromPortablePath(text);
+
     if (!this.get(`enableColors`))
       return text;
 

@@ -4,7 +4,7 @@ set -e
 echo
 
 if [[ ${GITHUB_TOKEN:-""} == "" ]]; then
-  echo Expected a valid Github token in GITHUB_TOKEN, got nothing instead
+  echo Expected a valid GitHub token in GITHUB_TOKEN, got nothing instead
   exit 1
 fi
 
