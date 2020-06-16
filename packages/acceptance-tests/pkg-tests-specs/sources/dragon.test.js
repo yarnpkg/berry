@@ -351,7 +351,6 @@ describe(`Dragon tests`, () => {
     ),
   );
 
-
   test(`it should pass the dragon test 7`,
     makeTemporaryEnv(
       {
@@ -393,6 +392,55 @@ describe(`Dragon tests`, () => {
         await expect(xfs.existsPromise(`${path}/node_modules/dragon-test-7-a/node_modules/dragon-test-7-b/node_modules/dragon-test-7-c`)).resolves.toBeTruthy();
         // C@X should be hoisted from . -> D -> B@X
         await expect(xfs.existsPromise(`${path}/node_modules/dragon-test-7-d/node_modules/dragon-test-7-b/node_modules`)).resolves.toBeFalsy();
+      }
+    ),
+  );
+
+  test(`it should pass the dragon test 8`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          [`dragon-test-8-a`]: `1.0.0`,
+          [`dragon-test-8-b`]: `1.0.0`,
+          [`dragon-test-8-c`]: `1.0.0`,
+          [`dragon-test-8-d`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        // We want to deduplicate all the virtual instances as long as their
+        // effective dependencies are the same. However, in order to do that,
+        // we need to run the deduping recursively since deduping one package
+        // may lead to others being candidates for deduping.
+        //
+        // Reproducing the edge case we ran into is a bit tricky and heavily
+        // connected to our own algorithm. We need the following tree:
+        //
+        // . -> A -> B --> C
+        //             --> D
+        //        -> C
+        //        -> D --> C
+        //   -> B --> C
+        //        --> D
+        //   -> C
+        //   -> D --> C
+        //
+        // In this situation, the Yarn resolution will first traverse and
+        // register A, B, C, D. B and D will both get virtual instances. Then
+        // the traversal will leave the A branch and iterate on the remaining
+        // nodes in B, C, D. At this point B will still reference the
+        // non-deduplicated version of D (since we haven't traversed the second
+        // node yet), so the algorithm will leave it as it is. It's only once
+        // we keep iterating that D is deduplicated and thus we can deduplicate
+        // B as well.
+        //
+        // Note that this is also very dependent on the package names. If B was
+        // called E, this case wouldn't happen because D would be deduplicated
+        // first.
+
+        await expect(run(`install`)).resolves.toBeTruthy();
+
+        await expect(source(`require('dragon-test-8-a').dependencies['dragon-test-8-b'] === require('dragon-test-8-b')`)).resolves.toEqual(true);
       }
     ),
   );
