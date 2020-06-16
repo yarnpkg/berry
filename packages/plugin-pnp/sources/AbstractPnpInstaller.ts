@@ -4,30 +4,6 @@ import {miscUtils, structUtils}                                                 
 import {FakeFS, PortablePath, ppath}                                                                    from '@yarnpkg/fslib';
 import {PackageRegistry, PnpSettings}                                                                   from '@yarnpkg/pnp';
 
-function isCompatible(rules: Array<string>, actual: string) {
-  let isNotWhitelist = true;
-  let isBlacklist = false;
-
-  for (const rule of rules) {
-    if (rule[0] === `!`) {
-      isBlacklist = true;
-
-      if (actual === rule.slice(1)) {
-        return false;
-      }
-    } else {
-      isNotWhitelist = false;
-
-      if (rule === actual) {
-        return true;
-      }
-    }
-  }
-
-  // Blacklists with whitelisted items should be treated as whitelists for `os` and `cpu` in `package.json`
-  return isBlacklist && isNotWhitelist;
-}
-
 export type AbstractInstallerOptions = LinkOptions & {
   skipIncompatiblePackageLinking?: boolean;
 };
@@ -60,12 +36,12 @@ export abstract class AbstractPnpInstaller implements Installer {
   abstract finalizeInstallWithPnp(pnpSettings: PnpSettings): Promise<Array<FinalizeInstallStatus> | void>;
 
   private checkAndReportManifestIncompatibility(manifest: Manifest | null, pkg: Package): boolean {
-    if (manifest && manifest.os !== null && !isCompatible(manifest.os, process.platform)) {
+    if (manifest && !manifest.isCompatibleWithOS(process.platform)) {
       this.opts.report.reportWarningOnce(MessageName.INCOMPATIBLE_OS, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} The platform ${process.platform} is incompatible with this module, ${this.opts.skipIncompatiblePackageLinking ? `linking` : `building`} skipped.`);
       return false;
     }
 
-    if (manifest && manifest.cpu !== null && !isCompatible(manifest.cpu, process.arch)) {
+    if (manifest && !manifest.isCompatibleWithCPU(process.arch)) {
       this.opts.report.reportWarningOnce(MessageName.INCOMPATIBLE_CPU, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} The CPU architecture ${process.arch} is incompatible with this module, ${this.opts.skipIncompatiblePackageLinking ? `linking` : `building`} skipped.`);
       return false;
     }

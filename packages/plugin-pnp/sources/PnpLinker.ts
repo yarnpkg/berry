@@ -211,6 +211,9 @@ export class PnpInstaller extends AbstractPnpInstaller {
     if (typeof dependencyMeta.unplugged !== `undefined`)
       return dependencyMeta.unplugged;
 
+    if (manifest !== null && (!manifest.isCompatibleWithOS(process.platform) || !manifest.isCompatibleWithCPU(process.arch)))
+      return false;
+
     if (FORCED_UNPLUG_PACKAGES.has(ident.identHash))
       return true;
 

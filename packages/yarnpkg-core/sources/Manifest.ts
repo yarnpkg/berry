@@ -487,6 +487,14 @@ export class Manifest {
     return false;
   }
 
+  isCompatibleWithOS(os: string): boolean {
+    return this.os === null || isManifestFieldCompatible(this.os, os);
+  }
+
+  isCompatibleWithCPU(cpu: string): boolean {
+    return this.cpu === null || isManifestFieldCompatible(this.cpu, cpu);
+  }
+
   ensureDependencyMeta(descriptor: Descriptor) {
     if (descriptor.range !== `unknown` && !semver.valid(descriptor.range))
       throw new Error(`Invalid meta field range for '${structUtils.stringifyDescriptor(descriptor)}'`);
@@ -734,4 +742,28 @@ function stripBOM(content: string) {
   } else {
     return content;
   }
+}
+
+function isManifestFieldCompatible(rules: Array<string>, actual: string) {
+  let isNotWhitelist = true;
+  let isBlacklist = false;
+
+  for (const rule of rules) {
+    if (rule[0] === `!`) {
+      isBlacklist = true;
+
+      if (actual === rule.slice(1)) {
+        return false;
+      }
+    } else {
+      isNotWhitelist = false;
+
+      if (rule === actual) {
+        return true;
+      }
+    }
+  }
+
+  // Blacklists with whitelisted items should be treated as whitelists for `os` and `cpu` in `package.json`
+  return isBlacklist && isNotWhitelist;
 }
