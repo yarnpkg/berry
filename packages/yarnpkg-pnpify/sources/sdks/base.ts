@@ -61,8 +61,12 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
       });
 
       function addZipPrefix(str) {
-        if (isAbsolute(str) && str.match(/\\.zip\\//) && !str.match(/^zip:/)) {
-          return \`zip:\${str}\`;
+        // We add the \`zip:\` prefix to both \`.zip/\` paths and virtual paths
+        if (isAbsolute(str) && !str.match(/^zip:/) && (str.match(/\\.zip\\//) || str.match(/\\$\\$virtual\\//))) {
+          // Absolute VSCode \`Uri.fsPath\`s need to start with a slash.
+          // VSCode only adds it automatically for supported schemes,
+          // so we have to do it manually for the \`zip\` scheme.
+          return \`zip:\${str.replace(/^\\/?/, \`/\`)}\`;
         } else {
           return str;
         }
@@ -99,10 +103,21 @@ export const generateStylelintBaseWrapper: GenerateBaseWrapper = async (pnpApi: 
   return wrapper;
 };
 
+export const generateSvelteLanguageServerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`svelte-language-server` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeManifest();
+
+  await wrapper.writeBinary(`bin/server.js` as PortablePath);
+
+  return wrapper;
+};
+
 export const BASE_SDKS: BaseSdks = [
   [`eslint`, generateEslintBaseWrapper],
   [`prettier`, generatePrettierBaseWrapper],
   [`typescript-language-server`, generateTypescriptLanguageServerBaseWrapper],
   [`typescript`, generateTypescriptBaseWrapper],
   [`stylelint`, generateStylelintBaseWrapper],
+  [`svelte-language-server`, generateSvelteLanguageServerBaseWrapper],
 ];

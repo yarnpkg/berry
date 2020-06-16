@@ -11,7 +11,8 @@
     "noImplicitReturns": true,
     "strict": true,
     "target": "ES2018",
-    "declaration": true
+    "declaration": true,
+    "importHelpers": true
   },
   "exclude": [
     "packages/*/lib",

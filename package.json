@@ -23,12 +23,12 @@
     "@types/node": "^13.7.0",
     "@typescript-eslint/eslint-plugin": "^2.29.0",
     "@typescript-eslint/parser": "^2.23.0",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.34",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.28",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.36",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.30",
     "@yarnpkg/eslint-config": "workspace:^0.1.0",
-    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.23",
+    "@yarnpkg/pnpify": "workspace:^2.0.0-rc.25",
     "babel-jest": "^24.5.0",
-    "clipanion": "^2.4.0",
+    "clipanion": "^2.4.1",
     "eslint": "^6.8.0",
     "eslint-plugin-arca": "^0.9.0",
     "eslint-plugin-react": "^7.14.3",
@@ -37,7 +37,8 @@
     "jest-environment-node": "^24.5.0",
     "jest-junit": "^5.2.0",
     "micromatch": "^4.0.2",
-    "typescript": "^3.8.3"
+    "tslib": "^1.13.0",
+    "typescript": "^3.9.5"
   },
   "dependenciesMeta": {
     "core-js": {

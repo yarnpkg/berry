@@ -71,6 +71,9 @@ export default class BuildPluginCommand extends Command {
                 new TerserPlugin({
                   cache: false,
                   extractComments: false,
+                  terserOptions: {
+                    ecma: 8,
+                  },
                 }),
               ],
             },

@@ -36,7 +36,7 @@ If you'd like to contribute more, [take a look here!](https://github.com/yarnpkg
 
 ### VSCode
 
-1. Run the following command, which will generate a new directory called `.yarn/pnpify`:
+1. Run the following command, which will generate a new directory called `.yarn/sdks`:
 
 ```bash
 yarn dlx @yarnpkg/pnpify --sdk vscode
@@ -54,19 +54,17 @@ Note that VSCode might ask you to do Step 3 again from time to time, but apart f
 
 ### VIM / coc.nvim
 
-1. Run the following command, which will generate a new directory called `.yarn/pnpify`:
+Run the following command, which will generate a new directory called `.yarn/sdks`:
 
 ```bash
-yarn dlx @yarnpkg/pnpify --sdk base
+yarn dlx @yarnpkg/pnpify --sdk vim
 ```
-
-2. Set [`tsserver.tsdk`](https://github.com/neoclide/coc-tsserver#configuration-options) to `.yarn/pnpify/typescript/lib`
 
 ### Emacs
 
 The SDK comes with a typescript-language-server wrapper which enables you to use the ts-ls LSP client.
 
-1. Run the following command, which will generate a new directory called `.yarn/pnpify`:
+1. Run the following command, which will generate a new directory called `.yarn/sdks`:
 
 ```bash
 yarn dlx @yarnpkg/pnpify --sdk base
@@ -81,12 +79,12 @@ yarn dlx @yarnpkg/pnpify --sdk base
      (lsp-enabled-clients . (ts-ls eslint))
      (eval . (let ((project-directory (car (dir-locals-find-file "."))))
                (set (make-local-variable 'flycheck-javascript-eslint-executable)
-                    (concat project-directory ".yarn/pnpify/eslint/bin/eslint.js"))
+                    (concat project-directory ".yarn/sdks/eslint/bin/eslint.js"))
 
                (lsp-dependency 'typescript-language-server
-                               `(:system ,(concat project-directory ".yarn/pnpify/typescript-language-server/lib/cli.js")))
+                               `(:system ,(concat project-directory ".yarn/sdks/typescript-language-server/lib/cli.js")))
                (lsp-dependency 'typescript
-                               `(:system ,(concat project-directory ".yarn/pnpify/typescript/bin/tsserver")))
+                               `(:system ,(concat project-directory ".yarn/sdks/typescript/bin/tsserver")))
 
                ;; Re-(start) LSP to pick up the dependency changes above.
                (lsp)

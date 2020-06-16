@@ -4,13 +4,12 @@
   "workspaces": [
     "pkg-tests-core",
     "pkg-tests-fixtures",
-    "pkg-tests-pnp",
     "pkg-tests-specs"
   ],
   "dependencies": {
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.34",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.28",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.21",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.36",
+    "@yarnpkg/core": "workspace:^2.0.0-rc.30",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "is-wsl": "^2.1.1",
     "pkg-tests-core": "workspace:0.0.0"
