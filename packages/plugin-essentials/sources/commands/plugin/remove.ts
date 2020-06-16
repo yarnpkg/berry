@@ -38,7 +38,7 @@ export default class PluginRemoveCommand extends BaseCommand {
     }, async report => {
       const pluginName = this.name;
 
-      const relativePath = `.yarn/plugins/${pluginName}.js` as PortablePath;
+      const relativePath = `.yarn/plugins/${pluginName}.cjs` as PortablePath;
       const absolutePath = ppath.resolve(project.cwd, relativePath);
 
       report.reportInfo(MessageName.UNNAMED, `Removing the plugin ${configuration.format(relativePath, `magenta`)}`);
