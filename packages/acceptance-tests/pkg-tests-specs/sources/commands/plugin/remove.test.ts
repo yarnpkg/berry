@@ -16,7 +16,8 @@ describe(`Commands`, () => {
         expect(xfs.existsSync(absolutePluginPath)).toBeFalsy();
 
         const rcContent = await fs.readSyml(ppath.join(path, Filename.rc));
-        expect(rcContent).not.toHaveProperty(`plugins`);
+        expect(rcContent).toHaveProperty(`plugins`);
+        expect(rcContent.plugins).toHaveLength(0);
       }),
     );
   });
