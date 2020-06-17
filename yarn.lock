@@ -7303,7 +7303,6 @@ __metadata:
     unescape-html: ^1.1.0
     unfetch: ^4.1.0
     unified: ^7.1.0
-    webpack: ^5.0.0-beta.17
     xss: ^1.0.6
   languageName: unknown
   linkType: soft
@@ -31302,7 +31301,7 @@ typescript@^3.8.3:
   languageName: node
   linkType: hard
 
-"webpack@npm:4.43.0, webpack@npm:~4.43.0":
+"webpack@npm:4.43.0, webpack@npm:^4.5.0, webpack@npm:~4.43.0":
   version: 4.43.0
   resolution: "webpack@npm:4.43.0"
   dependencies:

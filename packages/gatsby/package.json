@@ -78,7 +78,6 @@
     "unescape-html": "^1.1.0",
     "unfetch": "^4.1.0",
     "unified": "^7.1.0",
-    "webpack": "^5.0.0-beta.17",
     "xss": "^1.0.6"
   },
   "scripts": {

@@ -9902,7 +9902,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["unescape-html", "npm:1.1.0"],
             ["unfetch", "npm:4.1.0"],
             ["unified", "npm:7.1.0"],
-            ["webpack", "npm:5.0.0-beta.17"],
             ["xss", "npm:1.0.6"]
           ],
           "linkType": "SOFT",
@@ -18230,7 +18229,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["favicons", "npm:5.3.0"],
             ["loader-utils", "npm:1.2.3"],
             ["lodash", "npm:4.17.15"],
-            ["webpack", "npm:5.0.0-beta.17"]
+            ["webpack", null]
           ],
           "packagePeers": [
             "webpack"
@@ -19758,7 +19757,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["html-react-parser", "virtual:856cbc387bd6a5b328b655b857152baf75a21c4d4cb561b33a64930a7961ad177fffb3c809e7488d3d722ed1be70afbfffaf1fa75358744f15f8fb208e6f28f3#npm:0.6.4"],
             ["lodash", "npm:4.17.15"],
             ["react", "npm:16.13.1"],
-            ["webpack", "npm:5.0.0-beta.17"]
+            ["webpack", null]
           ],
           "packagePeers": [
             "gatsby",
@@ -26793,11 +26792,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["monaco-editor-webpack-plugin", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.9.0"],
             ["loader-utils", "npm:1.2.3"],
             ["monaco-editor", "npm:0.20.0"],
-            ["webpack", "npm:5.0.0-beta.17"]
+            ["webpack", "npm:4.43.0"]
           ],
           "packagePeers": [
-            "monaco-editor",
-            "webpack"
+            "monaco-editor"
           ],
           "linkType": "HARD",
         }]
