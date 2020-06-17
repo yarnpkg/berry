@@ -1,7 +1,7 @@
-import {BaseCommand}                                          from '@yarnpkg/cli';
-import {Configuration,  MessageName,  Project,  StreamReport} from '@yarnpkg/core';
-import {PortablePath, ppath, xfs}                             from '@yarnpkg/fslib';
-import {Command, Usage}                                       from 'clipanion';
+import {BaseCommand}                                                                   from '@yarnpkg/cli';
+import {Configuration,  MessageName,  Project,  StreamReport, FormatType, structUtils} from '@yarnpkg/core';
+import {PortablePath, ppath, xfs}                                                      from '@yarnpkg/fslib';
+import {Command, Usage, UsageError}                                                    from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginRemoveCommand extends BaseCommand {
@@ -12,18 +12,16 @@ export default class PluginRemoveCommand extends BaseCommand {
     category: `Plugin-related commands`,
     description: `remove a plugin`,
     details: `
-      This command removes the specified plugin from the configuration and wont be able to reference it again untill you have installed the plugin.
+      This command deletes the specified plugin from the .yarn/plugins folder and removes it from the configuration.
 
-      <name> - The plugin name that was specified in the plugin name property.
-
-      NOTE: short hands are not allowed and wont be detected.
+      **Note:** The plugins have to be referenced by their name property, which can be obtained using the \`yarn plugin runtime\` command. Shorthands are not allowed.
    `,
     examples: [[
-      `Remove a plugin which was created using the shorthand notation or package name`,
+      `Remove a plugin imported from the Yarn repository`,
       `$0 plugin remove @yarnpkg/plugin-typescript`,
-    ],[
-      `Remove a plugin which was created locally`,
-      `$0 plugin remove pluginName`,
+    ], [
+      `Remove a plugin imported from a local file`,
+      `$0 plugin remove my-local-plugin`,
     ]],
   });
 
@@ -37,14 +35,20 @@ export default class PluginRemoveCommand extends BaseCommand {
       stdout: this.context.stdout,
     }, async report => {
       const pluginName = this.name;
+      const pluginIdent = structUtils.parseIdent(pluginName);
+
+      if (!configuration.plugins.has(pluginName))
+        throw new UsageError(`${structUtils.prettyIdent(configuration, pluginIdent)} isn't referenced by the current configuration`);
 
       const relativePath = `.yarn/plugins/${pluginName}.cjs` as PortablePath;
       const absolutePath = ppath.resolve(project.cwd, relativePath);
 
-      report.reportInfo(MessageName.UNNAMED, `Removing the plugin ${configuration.format(relativePath, `magenta`)}`);
+      if (xfs.existsSync(absolutePath)) {
+        report.reportInfo(MessageName.UNNAMED, `Removing ${configuration.format(relativePath, FormatType.PATH)}...`);
+        await xfs.removePromise(absolutePath);
+      }
 
-      await xfs.removePromise(absolutePath);
-
+      report.reportInfo(MessageName.UNNAMED, `Updating the configuration...`);
       await Configuration.updateConfiguration(project.cwd, (current: any) => {
         if (!Array.isArray(current.plugins))
           return {};
