@@ -11,7 +11,7 @@
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.25",
     "babel-loader": "^8.1.0",
     "chalk": "^3.0.0",
-    "clipanion": "^2.4.1",
+    "clipanion": "^2.4.2",
     "filesize": "^4.1.2",
     "fork-ts-checker-webpack-plugin": "^5.0.0",
     "semver": "^7.1.2",

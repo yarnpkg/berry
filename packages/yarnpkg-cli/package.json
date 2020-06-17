@@ -25,7 +25,7 @@
     "@yarnpkg/plugin-pnp": "workspace:^2.0.0-rc.24",
     "@yarnpkg/shell": "workspace:^2.0.0-rc.13",
     "chalk": "^3.0.0",
-    "clipanion": "^2.4.1",
+    "clipanion": "^2.4.2",
     "fromentries": "^1.2.0",
     "semver": "^7.1.2",
     "tslib": "^1.13.0",

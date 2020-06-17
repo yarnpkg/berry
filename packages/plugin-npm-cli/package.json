@@ -5,7 +5,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
-    "clipanion": "^2.4.1",
+    "clipanion": "^2.4.2",
     "inquirer": "^7.2.0",
     "semver": "^7.1.2",
     "ssri": "^6.0.1",
