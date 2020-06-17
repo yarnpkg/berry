@@ -45,13 +45,11 @@ export default class PluginRemoveCommand extends BaseCommand {
 
       await xfs.removePromise(absolutePath);
 
-      const pluginMeta = {
-        path: relativePath,
-        spec: pluginName,
-      };
-
       await Configuration.updateConfiguration(project.cwd, (current: any) => {
-        const plugins = current.plugins.filter((x: {path: string, spec: string}) => x.path !== pluginMeta.path );
+        if (!Array.isArray(current.plugins))
+          return {};
+
+        const plugins = current.plugins.filter((plugin: {path: string}) => plugin.path !== relativePath);
         return {plugins};
       });
     });
