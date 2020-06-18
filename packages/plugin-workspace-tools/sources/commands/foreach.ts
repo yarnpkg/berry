@@ -3,6 +3,7 @@ import {Configuration, LocatorHash, Project, Workspace}    from '@yarnpkg/core';
 import {DescriptorHash, MessageName, Report, StreamReport} from '@yarnpkg/core';
 import {miscUtils, structUtils}                            from '@yarnpkg/core';
 import {Command, Usage, UsageError}                        from 'clipanion';
+import micromatch                                          from 'micromatch';
 import {cpus}                                              from 'os';
 import pLimit                                              from 'p-limit';
 import {Writable}                                          from 'stream';
@@ -138,10 +139,10 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       if (scriptName === process.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace!.cwd)
         continue;
 
-      if (this.include.length > 0 && !this.include.includes(structUtils.stringifyIdent(workspace.locator)))
+      if (this.include.length > 0 && !micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.include))
         continue;
 
-      if (this.exclude.length > 0 && this.exclude.includes(structUtils.stringifyIdent(workspace.locator)))
+      if (this.exclude.length > 0 && micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.exclude))
         continue;
 
       if (this.private === false && workspace.manifest.private === true)
