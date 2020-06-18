@@ -94,7 +94,7 @@ export const generateStylelintWrapper: GenerateIntegrationWrapper = async (pnpAp
 
 export const generateSvelteLanguageServerWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
-    [`svelte.language-server.runtime`]: npath.fromPortablePath(
+    [`svelte.language-server.ls-path`]: npath.fromPortablePath(
       wrapper.getProjectPathTo(
         `bin/server.js` as PortablePath,
       ),
