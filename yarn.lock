@@ -25851,6 +25851,13 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"react-fast-compare@npm:*, react-fast-compare@npm:^3.1.1":
+  version: 3.2.0
+  resolution: "react-fast-compare@npm:3.2.0"
+  checksum: 6fe65c889eb4f326e97769135f97b3d63ac68737866f9c37f9625c9de4f5eaa9abed6f748eb3fd6a66808392118842916309cab7cfa99c67991f0c837433d6d2
+  languageName: node
+  linkType: hard
+
 "react-fast-compare@npm:^2.0.1":
   version: 2.0.4
   resolution: "react-fast-compare@npm:2.0.4"
@@ -25862,13 +25869,6 @@ fsevents@~2.1.2:
   version: 3.0.1
   resolution: "react-fast-compare@npm:3.0.1"
   checksum: 02825ff5f56938306b7924807f1f0aefeb50b47a9911e2ea0668c2a763bb920a7f474f80173f060bee6dc6346d3cae3432f2e24442085b8b524b9108f165504e
-  languageName: node
-  linkType: hard
-
-"react-fast-compare@npm:^3.1.1":
-  version: 3.2.0
-  resolution: "react-fast-compare@npm:3.2.0"
-  checksum: 6fe65c889eb4f326e97769135f97b3d63ac68737866f9c37f9625c9de4f5eaa9abed6f748eb3fd6a66808392118842916309cab7cfa99c67991f0c837433d6d2
   languageName: node
   linkType: hard
 

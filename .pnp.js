@@ -31249,6 +31249,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prop-types", "npm:15.7.2"],
             ["react", "npm:16.13.1"],
             ["react-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:16.13.1"],
+            ["react-fast-compare", "npm:3.2.0"],
             ["react-instantsearch-core", "virtual:eb5765c1be3f2b7a1a9c858067ab3666195e36c47c9b2fe716c62e4e446ec47422535a87f981ea7ae853716c3b5381687dfc4c840db6479d23905b3fdbd079bf#npm:6.6.0"]
           ],
           "packagePeers": [
