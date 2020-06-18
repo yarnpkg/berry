@@ -42059,9 +42059,13 @@ class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
       if (this.isZip.has(filePath) === false) {
         if (this.notZip.has(filePath)) continue;
 
-        if (this.baseFs.lstatSync(filePath).isFile() === false) {
-          this.notZip.add(filePath);
-          continue;
+        try {
+          if (this.baseFs.lstatSync(filePath).isFile() === false) {
+            this.notZip.add(filePath);
+            continue;
+          }
+        } catch (_a) {
+          return null;
         }
 
         this.isZip.add(filePath);
