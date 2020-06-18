@@ -37,6 +37,8 @@ export class Manifest {
 
   public name: Ident | null = null;
   public version: string | null = null;
+  public os: Array<string> | null = null;
+  public cpu: Array<string> | null = null;
 
   public type: string | null = null;
 
@@ -156,6 +158,32 @@ export class Manifest {
 
     if (typeof data.version === `string`)
       this.version = data.version;
+
+    if (Array.isArray(data.os)) {
+      const os: Array<string> = [];
+      this.os = os;
+
+      for (const item of data.os) {
+        if (typeof item !== `string`) {
+          errors.push(new Error(`Parsing failed for the 'os' field`));
+        } else {
+          os.push(item);
+        }
+      }
+    }
+
+    if (Array.isArray(data.cpu)) {
+      const cpu: Array<string> = [];
+      this.cpu = cpu;
+
+      for (const item of data.cpu) {
+        if (typeof item !== `string`) {
+          errors.push(new Error(`Parsing failed for the 'cpu' field`));
+        } else {
+          cpu.push(item);
+        }
+      }
+    }
 
     if (typeof data.type === `string`)
       this.type = data.type;
@@ -459,6 +487,14 @@ export class Manifest {
     return false;
   }
 
+  isCompatibleWithOS(os: string): boolean {
+    return this.os === null || isManifestFieldCompatible(this.os, os);
+  }
+
+  isCompatibleWithCPU(cpu: string): boolean {
+    return this.cpu === null || isManifestFieldCompatible(this.cpu, cpu);
+  }
+
   ensureDependencyMeta(descriptor: Descriptor) {
     if (descriptor.range !== `unknown` && !semver.valid(descriptor.range))
       throw new Error(`Invalid meta field range for '${structUtils.stringifyDescriptor(descriptor)}'`);
@@ -541,6 +577,16 @@ export class Manifest {
       data.version = this.version;
     else
       delete data.version;
+
+    if (this.os !== null)
+      data.os = this.os;
+    else
+      delete this.os;
+
+    if (this.cpu !== null)
+      data.cpu = this.cpu;
+    else
+      delete this.cpu;
 
     if (this.type !== null)
       data.type = this.type;
@@ -696,4 +742,28 @@ function stripBOM(content: string) {
   } else {
     return content;
   }
+}
+
+function isManifestFieldCompatible(rules: Array<string>, actual: string) {
+  let isNotWhitelist = true;
+  let isBlacklist = false;
+
+  for (const rule of rules) {
+    if (rule[0] === `!`) {
+      isBlacklist = true;
+
+      if (actual === rule.slice(1)) {
+        return false;
+      }
+    } else {
+      isNotWhitelist = false;
+
+      if (rule === actual) {
+        return true;
+      }
+    }
+  }
+
+  // Blacklists with whitelisted items should be treated as whitelists for `os` and `cpu` in `package.json`
+  return isBlacklist && isNotWhitelist;
 }

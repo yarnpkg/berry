@@ -1004,7 +1004,7 @@ export class Project {
     }));
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
-    const packageLocations: Map<LocatorHash, PortablePath> = new Map();
+    const packageLocations: Map<LocatorHash, PortablePath | null> = new Map();
     const packageBuildDirectives: Map<LocatorHash, { directives: Array<BuildDirective>, buildLocations: Array<PortablePath> }> = new Map();
 
     // Step 1: Installing the packages on the disk
@@ -1064,7 +1064,7 @@ export class Project {
         packageLinkers.set(pkg.locatorHash, linker);
         packageLocations.set(pkg.locatorHash, installStatus.packageLocation);
 
-        if (installStatus.buildDirective) {
+        if (installStatus.buildDirective && installStatus.packageLocation) {
           packageBuildDirectives.set(pkg.locatorHash, {
             directives: installStatus.buildDirective,
             buildLocations: [installStatus.packageLocation],
@@ -1086,7 +1086,7 @@ export class Project {
 
       const linkPackage = async (packageLinker: Linker, installer: Installer) => {
         const packageLocation = packageLocations.get(pkg.locatorHash);
-        if (!packageLocation)
+        if (typeof packageLocation === `undefined`)
           throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, pkg)}) should have been registered`);
 
         const internalDependencies = [];
@@ -1110,14 +1110,18 @@ export class Project {
           const isWorkspaceDependency = dependencyLinker === null;
 
           if (dependencyLinker === packageLinker || isWorkspace || isWorkspaceDependency) {
-            internalDependencies.push([descriptor, dependency] as [Descriptor, Locator]);
-          } else {
+            if (packageLocations.get(dependency.locatorHash) !== null) {
+              internalDependencies.push([descriptor, dependency] as [Descriptor, Locator]);
+            }
+          } else if (packageLocation !== null) {
             const externalEntry = miscUtils.getArrayWithDefault(externalDependents, resolution);
             externalEntry.push(packageLocation);
           }
         }
 
-        await installer.attachInternalDependencies(pkg, internalDependencies);
+        if (packageLocation !== null) {
+          await installer.attachInternalDependencies(pkg, internalDependencies);
+        }
       };
 
       if (isWorkspace) {
@@ -1968,46 +1972,61 @@ function applyVirtualResolutionMutations({
     for (const fn of [...firstPass, ...secondPass])
       fn();
 
-    for (const [physicalLocator, virtualDescriptor, virtualPackage] of newVirtualInstances) {
-      const otherVirtualInstances = miscUtils.getMapWithDefault(allVirtualInstances, physicalLocator.locatorHash);
+    let stable: boolean;
+    do {
+      stable = true;
 
-      // We take all the dependencies from the new virtual instance and
-      // generate a hash from it. By checking if this hash is already
-      // registered, we know whether we can trim the new version.
-      const dependencyHash = hashUtils.makeHash(...[...virtualPackage.dependencies.values()].map(descriptor => {
-        const resolution = descriptor.range !== `missing:`
-          ? allResolutions.get(descriptor.descriptorHash)
-          : `missing:`;
-
-        if (typeof resolution === `undefined`)
-          throw new Error(`Assertion failed: Expected the resolution to have been registered`);
-
-        return resolution;
-      }));
-
-      const masterDescriptor = otherVirtualInstances.get(dependencyHash);
-      if (typeof masterDescriptor === `undefined`) {
-        otherVirtualInstances.set(dependencyHash, virtualDescriptor);
-        continue;
-      }
-
-      allPackages.delete(virtualPackage.locatorHash);
-      allDescriptors.delete(virtualDescriptor.descriptorHash);
-      allResolutions.delete(virtualDescriptor.descriptorHash);
-
-      accessibleLocators.delete(virtualPackage.locatorHash);
-
-      const dependents = allVirtualDependents.get(virtualDescriptor.descriptorHash) || [];
-      const allDependents = [parentPackage.locatorHash, ...dependents];
-
-      for (const dependent of allDependents) {
-        const pkg = allPackages.get(dependent);
-        if (typeof pkg === `undefined`)
+      for (const [physicalLocator, virtualDescriptor, virtualPackage] of newVirtualInstances) {
+        if (!allPackages.has(virtualPackage.locatorHash))
           continue;
 
-        pkg.dependencies.set(virtualDescriptor.identHash, masterDescriptor);
+        const otherVirtualInstances = miscUtils.getMapWithDefault(allVirtualInstances, physicalLocator.locatorHash);
+
+        // We take all the dependencies from the new virtual instance and
+        // generate a hash from it. By checking if this hash is already
+        // registered, we know whether we can trim the new version.
+        const dependencyHash = hashUtils.makeHash(...[...virtualPackage.dependencies.values()].map(descriptor => {
+          const resolution = descriptor.range !== `missing:`
+            ? allResolutions.get(descriptor.descriptorHash)
+            : `missing:`;
+
+          if (typeof resolution === `undefined`)
+            throw new Error(`Assertion failed: Expected the resolution for ${structUtils.prettyDescriptor(project.configuration, descriptor)} to have been registered`);
+
+          return resolution;
+        }));
+
+        const masterDescriptor = otherVirtualInstances.get(dependencyHash);
+        if (typeof masterDescriptor === `undefined`) {
+          otherVirtualInstances.set(dependencyHash, virtualDescriptor);
+          continue;
+        }
+
+        // Since we're applying multiple pass, we might have already registered
+        // ourselves as the "master" descriptor in the previous pass.
+        if (masterDescriptor === virtualDescriptor)
+          continue;
+
+        stable = false;
+
+        allPackages.delete(virtualPackage.locatorHash);
+        allDescriptors.delete(virtualDescriptor.descriptorHash);
+        allResolutions.delete(virtualDescriptor.descriptorHash);
+
+        accessibleLocators.delete(virtualPackage.locatorHash);
+
+        const dependents = allVirtualDependents.get(virtualDescriptor.descriptorHash) || [];
+        const allDependents = [parentPackage.locatorHash, ...dependents];
+
+        for (const dependent of allDependents) {
+          const pkg = allPackages.get(dependent);
+          if (typeof pkg === `undefined`)
+            continue;
+
+          pkg.dependencies.set(virtualDescriptor.identHash, masterDescriptor);
+        }
       }
-    }
+    } while (!stable);
 
     for (const fn of [...thirdPass, ...fourthPass]) {
       fn();

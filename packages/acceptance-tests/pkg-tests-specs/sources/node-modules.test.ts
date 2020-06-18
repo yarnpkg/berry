@@ -1,7 +1,8 @@
-import {xfs, npath} from '@yarnpkg/fslib';
-import {fs}         from 'pkg-tests-core';
+const {npath, xfs} = require(`@yarnpkg/fslib`);
 
-const {writeFile, writeJson} = fs;
+const {
+  fs: {writeFile, writeJson},
+} = require(`pkg-tests-core`);
 
 describe(`Node_Modules`, () => {
   it(`should install one dependency`,
@@ -238,6 +239,42 @@ describe(`Node_Modules`, () => {
 
         expect(xfs.statSync(npath.toPortablePath(`${path}/node_modules`)).ino).toEqual(nmFolderInode);
         expect(xfs.statSync(npath.toPortablePath(`${path}/node_modules/no-deps`)).ino).toEqual(depFolderInode);
+      },
+    ),
+  );
+
+  test(`should skip linking incompatible package`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          dep: `file:./dep`,
+        },
+      },
+      async ({path, run, source}) => {
+        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
+        nodeLinker: "node-modules"
+      `);
+
+        await writeJson(npath.toPortablePath(`${path}/dep/package.json`), {
+          name: `dep`,
+          version: `1.0.0`,
+          os: [`!${process.platform}`],
+          scripts: {
+            postinstall: `echo 'Shall not be run'`,
+          },
+        });
+
+        const stdout = (await run(`install`)).stdout;
+
+        expect(stdout).not.toContain(`Shall not be run`);
+        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The platform ${process.platform} is incompatible with this module, linking skipped.`));
+
+        await expect(source(`require('dep')`)).rejects.toMatchObject({
+          externalException: {
+            code: `MODULE_NOT_FOUND`,
+          },
+        });
       },
     ),
   );

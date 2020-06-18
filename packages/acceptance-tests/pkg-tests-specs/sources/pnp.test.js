@@ -1523,6 +1523,38 @@ describe(`Plug'n'Play`, () => {
     }),
   );
 
+  test(`should skip building incompatible package`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          dep: `file:./dep`,
+        },
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/dep/package.json`), {
+          name: `dep`,
+          version: `1.0.0`,
+          os: [`!${process.platform}`],
+          scripts: {
+            postinstall: `echo 'Shall not be run'`,
+          },
+        });
+        await writeFile(`${path}/dep/index.js`, `module.exports = require('./package.json');`);
+
+        const stdout = (await run(`install`)).stdout;
+
+        expect(stdout).not.toContain(`Shall not be run`);
+        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The platform ${process.platform} is incompatible with this module, building skipped.`));
+
+        await expect(source(`require('dep')`)).resolves.toMatchObject({
+          name: `dep`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
   test(
     `it should work with pnpEnableInlining set to false`,
     makeTemporaryEnv({}, {

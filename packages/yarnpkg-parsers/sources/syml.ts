@@ -33,6 +33,9 @@ function stringifyValue(value: any, indentLevel: number, newLineIfObject: boolea
     return `${stringifyString(value)}\n`;
 
   if (Array.isArray(value)) {
+    if (value.length === 0)
+      return `[]\n`;
+
     const indent = `  `.repeat(indentLevel);
 
     const serialized = value.map(sub => {
