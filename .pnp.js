@@ -39047,7 +39047,8 @@ const PortablePath = {
 const Filename = {
   nodeModules: `node_modules`,
   manifest: `package.json`,
-  lockfile: `yarn.lock`
+  lockfile: `yarn.lock`,
+  rc: `.yarnrc.yml`
 };
 const npath = Object.create(external_path_default.a);
 const ppath = Object.create(external_path_default.a.posix);
