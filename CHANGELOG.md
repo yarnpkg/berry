@@ -8,7 +8,7 @@
 
 ### New commands
 
-- Running `yarn search` will open a rich interface to search for packages to install (requires the `workspace-tools` plugin).
+- Running `yarn search` will open a rich interface to search for packages to install (requires the `interactive-tools` plugin).
 - Running `yarn npm logout` will remove your credentials from your home directory.
 - Running `yarn plugin import from sources` will allow you to build plugins from the master branch of the our repository.
 - Running `yarn workspaces focus` will only install the current workspace, plus any other workspace it might depend on. The `--production` flag will only install their production dependencies.
@@ -58,6 +58,7 @@
 - Yarn will now exclude the node_modules folder from the workspace detection. As a result, listing `**/*` in your `workspaces` field will now detect all child packages as workspaces.
 - The cache names have changed in order to make the cache content-addressed. In particular, this mean that in the event where we need to fix a bug in the fetch steps, we won't need to bump a global cache key anymore.
 - The PnP linker now features an additional loose mode (optional, and enabled through the `pnpMode: loose` setting). Under this mode, Yarn will compute the list of packages that would have been hoisted under the node_modules linker, and let the application code access them with only a warning. This mode will however not become the default - warnings cannot be caught by the application code, and as a result the output of the loose mode can be quite verbose, often being more confusing than the strict mode.
+- Because we're aware of no incorrect hoisting bug on the v2 (but have discovered a few in the v1), and because its performances are about the same, the node_modules linker from Yarn 2 is now deemed more stable than the one from the v1, and we recommend users to migrate to it even if you don't want to use Plug'n'Play. More improvements are to come, but they'll mostly be in the user experience (for example to mix PnP and nm into a single install).
 
 ### Rendering
 
