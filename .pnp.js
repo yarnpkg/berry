@@ -8885,12 +8885,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-<<<<<<< refs/remotes/yarnpkg/master
-            ["clipanion", "npm:2.4.1"],
-            ["lodash", "npm:4.17.15"],
-=======
             ["clipanion", "npm:2.4.2"],
->>>>>>> chore: update some dependencies
+            ["lodash", "npm:4.17.15"],
             ["tslib", "npm:1.13.0"]
           ],
           "packagePeers": [
@@ -8907,12 +8903,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-<<<<<<< refs/remotes/yarnpkg/master
-            ["clipanion", "npm:2.4.1"],
-            ["lodash", "npm:4.17.15"],
-=======
             ["clipanion", "npm:2.4.2"],
->>>>>>> chore: update some dependencies
+            ["lodash", "npm:4.17.15"],
             ["tslib", "npm:1.13.0"]
           ],
           "packagePeers": [
@@ -8929,12 +8921,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-<<<<<<< refs/remotes/yarnpkg/master
-            ["clipanion", "npm:2.4.1"],
-            ["lodash", "npm:4.17.15"],
-=======
             ["clipanion", "npm:2.4.2"],
->>>>>>> chore: update some dependencies
+            ["lodash", "npm:4.17.15"],
             ["tslib", "npm:1.13.0"]
           ],
           "linkType": "SOFT",
@@ -9459,12 +9447,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-<<<<<<< refs/remotes/yarnpkg/master
-            ["clipanion", "npm:2.4.1"],
-            ["micromatch", "npm:4.0.2"],
-=======
             ["clipanion", "npm:2.4.2"],
->>>>>>> chore: update some dependencies
+            ["micromatch", "npm:4.0.2"],
             ["p-limit", "npm:2.2.0"],
             ["tslib", "npm:1.13.0"],
             ["typescript", "patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=64df9d"],
@@ -36026,7 +36010,8 @@ const PortablePath = {
 const Filename = {
   nodeModules: `node_modules`,
   manifest: `package.json`,
-  lockfile: `yarn.lock`
+  lockfile: `yarn.lock`,
+  rc: `.yarnrc.yml`
 };
 const npath = Object.create((path__WEBPACK_IMPORTED_MODULE_0___default()));
 const ppath = Object.create((path__WEBPACK_IMPORTED_MODULE_0___default().posix));
@@ -37824,6 +37809,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
 
 const ZIP_FD = 0x80000000;
+const FILE_PARTS_REGEX = /.*?(?<!\/)\.zip(?=\/|$)/;
 class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
   constructor({
     libzip,
@@ -37844,8 +37830,6 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
     this.filter = filter;
     this.maxOpenFiles = maxOpenFiles;
     this.readOnlyArchives = readOnlyArchives;
-    this.isZip = new Set();
-    this.notZip = new Set();
   }
 
   static async openPromise(fn, opts) {
@@ -38562,50 +38546,33 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
 
   findZip(p) {
     if (this.filter && !this.filter.test(p)) return null;
-    const parts = p.split(/\//g);
+    let filePath = ``;
 
-    for (let t = 2; t <= parts.length; ++t) {
-      const archivePath = parts.slice(0, t).join(`/`);
-      if (this.notZip.has(archivePath)) continue;
-      if (this.isZip.has(archivePath)) return {
-        archivePath,
-        subPath: this.pathUtils.resolve(sources_path/* PortablePath.root */.LZ.root, parts.slice(t).join(`/`))
-      };
-      let realArchivePath = archivePath;
-      let stat;
+    while (true) {
+      const parts = FILE_PARTS_REGEX.exec(p.substr(filePath.length));
+      if (!parts) return null;
+      filePath = this.pathUtils.join(filePath, parts[0]);
 
-      while (true) {
+      if (this.isZip.has(filePath) === false) {
+        if (this.notZip.has(filePath)) continue;
+
         try {
-          stat = this.baseFs.lstatSync(realArchivePath);
-        } catch (error) {
+          if (!this.baseFs.lstatSync(filePath).isFile()) {
+            this.notZip.add(filePath);
+            continue;
+          }
+        } catch (_a) {
           return null;
         }
 
-        if (stat.isSymbolicLink()) {
-          realArchivePath = this.pathUtils.resolve(this.pathUtils.dirname(realArchivePath), this.baseFs.readlinkSync(realArchivePath));
-        } else {
-          break;
-        }
+        this.isZip.add(filePath);
       }
 
-      const isZip = stat.isFile() && this.pathUtils.extname(realArchivePath) === `.zip`;
-
-      if (isZip) {
-        this.isZip.add(archivePath);
-        return {
-          archivePath,
-          subPath: this.pathUtils.resolve(sources_path/* PortablePath.root */.LZ.root, parts.slice(t).join(`/`))
-        };
-      } else {
-        this.notZip.add(archivePath);
-
-        if (stat.isFile()) {
-          return null;
-        }
-      }
+      return {
+        archivePath: filePath,
+        subPath: this.pathUtils.resolve(sources_path/* PortablePath.root */.LZ.root, p.substr(filePath.length))
+      };
     }
-
-    return null;
   }
 
   limitOpenFiles(max) {
@@ -39287,7 +39254,7 @@ function applyPatch(pnpapi, opts) {
       const absoluteRequest = sources_path/* npath.isAbsolute */.cS.isAbsolute(request) ? request : parentDirectory !== null ? sources_path/* npath.resolve */.cS.resolve(parentDirectory, request) : null;
 
       if (absoluteRequest !== null) {
-        const apiPath = opts.manager.findApiPathFor(absoluteRequest);
+        const apiPath = parentDirectory === sources_path/* npath.dirname */.cS.dirname(absoluteRequest) && (parent === null || parent === void 0 ? void 0 : parent.pnpApiPath) ? parent.pnpApiPath : opts.manager.findApiPathFor(absoluteRequest);
 
         if (apiPath !== null) {
           issuerSpecs.unshift({
@@ -40221,19 +40188,51 @@ function makeManager(pnpapi, opts) {
     return apiEntry;
   }
 
-  function findApiPathFor(modulePath) {
+  const findApiPathCache = new Map();
+
+  function addToCache(start, end, target) {
     let curr;
-    let next = sources_path/* ppath.resolve */.y1.resolve(sources_path/* npath.toPortablePath */.cS.toPortablePath(modulePath));
+    let next = start;
 
     do {
       curr = next;
+      findApiPathCache.set(curr, target);
+      next = sources_path/* ppath.dirname */.y1.dirname(curr);
+    } while (curr !== end);
+  }
+
+  function findApiPathFor(modulePath) {
+    const start = sources_path/* ppath.resolve */.y1.resolve(sources_path/* npath.toPortablePath */.cS.toPortablePath(modulePath));
+    let curr;
+    let next = start;
+
+    do {
+      curr = next;
+      const cached = findApiPathCache.get(curr);
+
+      if (cached !== undefined) {
+        addToCache(start, curr, cached);
+        return cached;
+      }
+
       const candidate = sources_path/* ppath.join */.y1.join(curr, `.pnp.js`);
-      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile()) return candidate;
+
+      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile()) {
+        addToCache(start, curr, candidate);
+        return candidate;
+      }
+
       const cjsCandidate = sources_path/* ppath.join */.y1.join(curr, `.pnp.cjs`);
-      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile()) return cjsCandidate;
+
+      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile()) {
+        addToCache(start, curr, cjsCandidate);
+        return cjsCandidate;
+      }
+
       next = sources_path/* ppath.dirname */.y1.dirname(curr);
     } while (curr !== sources_path/* PortablePath.root */.LZ.root);
 
+    addToCache(start, curr, null);
     return null;
   }
 
@@ -41734,288 +41733,6 @@ var NODEFS = {
       parts.push(node.name);
       node = node.parent;
     }
-<<<<<<< refs/remotes/yarnpkg/master
-    return bytes;
-  } catch (_) {
-    throw new Error("Converting base64 string to bytes failed.");
-  }
-}
-function tryParseAsDataURI(filename) {
-  if (!isDataURI(filename)) {
-    return;
-  }
-  return intArrayFromBase64(filename.slice(dataURIPrefix.length));
-}
-var asmLibraryArg = {
-  p: ___sys_chmod,
-  e: ___sys_fcntl64,
-  j: ___sys_fstat64,
-  o: ___sys_ioctl,
-  r: ___sys_open,
-  q: ___sys_read,
-  h: ___sys_rename,
-  s: ___sys_rmdir,
-  c: ___sys_stat64,
-  g: ___sys_unlink,
-  t: _emscripten_memcpy_big,
-  u: _emscripten_resize_heap,
-  f: _fd_close,
-  i: _fd_fdstat_get,
-  n: _fd_read,
-  l: _fd_seek,
-  d: _fd_write,
-  k: _gmtime,
-  memory: wasmMemory,
-  a: _setTempRet0,
-  table: wasmTable,
-  b: _time,
-  m: _timegm
-};
-var asm = createWasm();
-var ___wasm_call_ctors = (Module["___wasm_call_ctors"] = asm["v"]);
-var _zipstruct_stat = (Module["_zipstruct_stat"] = asm["w"]);
-var _zipstruct_statS = (Module["_zipstruct_statS"] = asm["x"]);
-var _zipstruct_stat_name = (Module["_zipstruct_stat_name"] = asm["y"]);
-var _zipstruct_stat_index = (Module["_zipstruct_stat_index"] = asm["z"]);
-var _zipstruct_stat_size = (Module["_zipstruct_stat_size"] = asm["A"]);
-var _zipstruct_stat_mtime = (Module["_zipstruct_stat_mtime"] = asm["B"]);
-var _zipstruct_error = (Module["_zipstruct_error"] = asm["C"]);
-var _zipstruct_errorS = (Module["_zipstruct_errorS"] = asm["D"]);
-var _zip_close = (Module["_zip_close"] = asm["E"]);
-var _zip_dir_add = (Module["_zip_dir_add"] = asm["F"]);
-var _zip_discard = (Module["_zip_discard"] = asm["G"]);
-var _zip_error_init_with_code = (Module["_zip_error_init_with_code"] =
-  asm["H"]);
-var _zip_get_error = (Module["_zip_get_error"] = asm["I"]);
-var _zip_file_get_error = (Module["_zip_file_get_error"] = asm["J"]);
-var _zip_error_strerror = (Module["_zip_error_strerror"] = asm["K"]);
-var _zip_fclose = (Module["_zip_fclose"] = asm["L"]);
-var _zip_file_add = (Module["_zip_file_add"] = asm["M"]);
-var _zip_file_get_external_attributes = (Module[
-  "_zip_file_get_external_attributes"
-] = asm["N"]);
-var _zip_file_set_external_attributes = (Module[
-  "_zip_file_set_external_attributes"
-] = asm["O"]);
-var _zip_file_set_mtime = (Module["_zip_file_set_mtime"] = asm["P"]);
-var _zip_fopen = (Module["_zip_fopen"] = asm["Q"]);
-var _zip_fopen_index = (Module["_zip_fopen_index"] = asm["R"]);
-var _zip_fread = (Module["_zip_fread"] = asm["S"]);
-var _zip_get_name = (Module["_zip_get_name"] = asm["T"]);
-var _zip_get_num_entries = (Module["_zip_get_num_entries"] = asm["U"]);
-var _zip_name_locate = (Module["_zip_name_locate"] = asm["V"]);
-var _zip_open = (Module["_zip_open"] = asm["W"]);
-var _zip_open_from_source = (Module["_zip_open_from_source"] = asm["X"]);
-var _zip_set_file_compression = (Module["_zip_set_file_compression"] =
-  asm["Y"]);
-var _zip_source_buffer = (Module["_zip_source_buffer"] = asm["Z"]);
-var _zip_source_buffer_create = (Module["_zip_source_buffer_create"] =
-  asm["_"]);
-var _zip_source_close = (Module["_zip_source_close"] = asm["$"]);
-var _zip_source_error = (Module["_zip_source_error"] = asm["aa"]);
-var _zip_source_free = (Module["_zip_source_free"] = asm["ba"]);
-var _zip_source_keep = (Module["_zip_source_keep"] = asm["ca"]);
-var _zip_source_open = (Module["_zip_source_open"] = asm["da"]);
-var _zip_source_read = (Module["_zip_source_read"] = asm["ea"]);
-var _zip_source_seek = (Module["_zip_source_seek"] = asm["fa"]);
-var _zip_source_set_mtime = (Module["_zip_source_set_mtime"] = asm["ga"]);
-var _zip_source_tell = (Module["_zip_source_tell"] = asm["ha"]);
-var _zip_stat = (Module["_zip_stat"] = asm["ia"]);
-var _zip_stat_index = (Module["_zip_stat_index"] = asm["ja"]);
-var ___errno_location = (Module["___errno_location"] = asm["ka"]);
-var __get_tzname = (Module["__get_tzname"] = asm["la"]);
-var __get_daylight = (Module["__get_daylight"] = asm["ma"]);
-var __get_timezone = (Module["__get_timezone"] = asm["na"]);
-var stackSave = (Module["stackSave"] = asm["oa"]);
-var stackRestore = (Module["stackRestore"] = asm["pa"]);
-var stackAlloc = (Module["stackAlloc"] = asm["qa"]);
-var _malloc = (Module["_malloc"] = asm["ra"]);
-var _free = (Module["_free"] = asm["sa"]);
-var dynCall_vi = (Module["dynCall_vi"] = asm["ta"]);
-Module["cwrap"] = cwrap;
-Module["getValue"] = getValue;
-var calledRun;
-function ExitStatus(status) {
-  this.name = "ExitStatus";
-  this.message = "Program terminated with exit(" + status + ")";
-  this.status = status;
-}
-dependenciesFulfilled = function runCaller() {
-  if (!calledRun) run();
-  if (!calledRun) dependenciesFulfilled = runCaller;
-};
-function run(args) {
-  args = args || arguments_;
-  if (runDependencies > 0) {
-    return;
-  }
-  preRun();
-  if (runDependencies > 0) return;
-  function doRun() {
-    if (calledRun) return;
-    calledRun = true;
-    Module["calledRun"] = true;
-    if (ABORT) return;
-    initRuntime();
-    preMain();
-    if (Module["onRuntimeInitialized"]) Module["onRuntimeInitialized"]();
-    postRun();
-  }
-  if (Module["setStatus"]) {
-    Module["setStatus"]("Running...");
-    setTimeout(function() {
-      setTimeout(function() {
-        Module["setStatus"]("");
-      }, 1);
-      doRun();
-    }, 1);
-  } else {
-    doRun();
-  }
-}
-Module["run"] = run;
-if (Module["preInit"]) {
-  if (typeof Module["preInit"] == "function")
-    Module["preInit"] = [Module["preInit"]];
-  while (Module["preInit"].length > 0) {
-    Module["preInit"].pop()();
-  }
-}
-noExitRuntime = true;
-run();
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports) {
-
-module.exports = require("crypto");
-
-/***/ }),
-/* 15 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: external "fs"
-var external_fs_ = __webpack_require__(1);
-var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_);
-
-// EXTERNAL MODULE: external "os"
-var external_os_ = __webpack_require__(4);
-var external_os_default = /*#__PURE__*/__webpack_require__.n(external_os_);
-
-// EXTERNAL MODULE: external "path"
-var external_path_ = __webpack_require__(2);
-var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
-
-// CONCATENATED MODULE: ../yarnpkg-fslib/sources/path.ts
-
-var PathType;
-
-(function (PathType) {
-  PathType[PathType["File"] = 0] = "File";
-  PathType[PathType["Portable"] = 1] = "Portable";
-  PathType[PathType["Native"] = 2] = "Native";
-})(PathType || (PathType = {}));
-
-const PortablePath = {
-  root: `/`,
-  dot: `.`
-};
-const Filename = {
-  nodeModules: `node_modules`,
-  manifest: `package.json`,
-  lockfile: `yarn.lock`,
-  rc: `.yarnrc.yml`
-};
-const npath = Object.create(external_path_default.a);
-const ppath = Object.create(external_path_default.a.posix);
-
-npath.cwd = () => process.cwd();
-
-ppath.cwd = () => toPortablePath(process.cwd());
-
-ppath.resolve = (...segments) => external_path_default.a.posix.resolve(ppath.cwd(), ...segments);
-
-const contains = function (pathUtils, from, to) {
-  from = pathUtils.normalize(from);
-  to = pathUtils.normalize(to);
-  if (from === to) return `.`;
-  if (!from.endsWith(pathUtils.sep)) from = from + pathUtils.sep;
-
-  if (to.startsWith(from)) {
-    return to.slice(from.length);
-  } else {
-    return null;
-  }
-};
-
-npath.fromPortablePath = fromPortablePath;
-npath.toPortablePath = toPortablePath;
-
-npath.contains = (from, to) => contains(npath, from, to);
-
-ppath.contains = (from, to) => contains(ppath, from, to);
-
-const WINDOWS_PATH_REGEXP = /^([a-zA-Z]:.*)$/;
-const UNC_WINDOWS_PATH_REGEXP = /^\\\\(\.\\)?(.*)$/;
-const PORTABLE_PATH_REGEXP = /^\/([a-zA-Z]:.*)$/;
-const UNC_PORTABLE_PATH_REGEXP = /^\/unc\/(\.dot\/)?(.*)$/; // Path should look like "/N:/berry/scripts/plugin-pack.js"
-// And transform to "N:\berry\scripts\plugin-pack.js"
-
-function fromPortablePath(p) {
-  if (process.platform !== `win32`) return p;
-  if (p.match(PORTABLE_PATH_REGEXP)) p = p.replace(PORTABLE_PATH_REGEXP, `$1`);else if (p.match(UNC_PORTABLE_PATH_REGEXP)) p = p.replace(UNC_PORTABLE_PATH_REGEXP, (match, p1, p2) => `\\\\${p1 ? `.\\` : ``}${p2}`);else return p;
-  return p.replace(/\//g, `\\`);
-} // Path should look like "N:/berry/scripts/plugin-pack.js"
-// And transform to "/N:/berry/scripts/plugin-pack.js"
-
-
-function toPortablePath(p) {
-  if (process.platform !== `win32`) return p;
-  if (p.match(WINDOWS_PATH_REGEXP)) p = p.replace(WINDOWS_PATH_REGEXP, `/$1`);else if (p.match(UNC_WINDOWS_PATH_REGEXP)) p = p.replace(UNC_WINDOWS_PATH_REGEXP, (match, p1, p2) => `/unc/${p1 ? `.dot/` : ``}${p2}`);
-  return p.replace(/\\/g, `/`);
-}
-
-function convertPath(targetPathUtils, sourcePath) {
-  return targetPathUtils === npath ? fromPortablePath(sourcePath) : toPortablePath(sourcePath);
-}
-function toFilename(filename) {
-  if (npath.parse(filename).dir !== `` || ppath.parse(filename).dir !== ``) throw new Error(`Invalid filename: "${filename}"`);
-  return filename;
-}
-// CONCATENATED MODULE: ../yarnpkg-fslib/sources/algorithms/copyPromise.ts
-
-
-async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
-  const normalizedDestination = destinationFs.pathUtils.normalize(destination);
-  const normalizedSource = sourceFs.pathUtils.normalize(source);
-  const operations = [];
-  const lutimes = [];
-  await destinationFs.mkdirpPromise(destination);
-  await copyImpl(operations, lutimes, destinationFs, normalizedDestination, sourceFs, normalizedSource, opts);
-
-  for (const operation of operations) await operation();
-
-  const updateTime = typeof destinationFs.lutimesPromise === `function` ? destinationFs.lutimesPromise.bind(destinationFs) : destinationFs.utimesPromise.bind(destinationFs);
-
-  for (const [p, atime, mtime] of lutimes) {
-    await updateTime(p, atime, mtime);
-  }
-}
-
-async function copyImpl(operations, lutimes, destinationFs, destination, sourceFs, source, opts) {
-  const destinationStat = await maybeLStat(destinationFs, destination);
-  const sourceStat = await sourceFs.lstatPromise(source);
-  lutimes.push([destination, sourceStat.atime, sourceStat.mtime]);
-
-  switch (true) {
-    case sourceStat.isDirectory():
-      {
-        await copyFolder(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
-=======
     parts.push(node.mount.opts.root);
     parts.reverse();
     return PATH.join.apply(null, parts);
@@ -42030,7 +41747,6 @@ async function copyImpl(operations, lutimes, destinationFs, destination, sourceF
       if (flags & k) {
         newFlags |= NODEFS.flagsForNodeMap[k];
         flags ^= k;
->>>>>>> chore: upgrade to webpack 5
       }
     }
     if (!flags) {
@@ -43556,60 +43272,6 @@ var FS = {
     } else {
       throw new Error("Unsupported data type");
     }
-<<<<<<< refs/remotes/yarnpkg/master
-
-    if (!persistent) return {
-      on: () => {},
-      close: () => {}
-    };
-    const interval = setInterval(() => {}, 24 * 60 * 60 * 1000);
-    return {
-      on: () => {},
-      close: () => {
-        clearInterval(interval);
-      }
-    };
-  }
-
-}
-// CONCATENATED MODULE: ../yarnpkg-fslib/sources/ZipOpenFS.ts
-
-
-
-
-
-const ZIP_FD = 0x80000000;
-const FILE_PARTS_REGEX = /.*?(?<!\/)\.zip(?=\/|$)/;
-class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
-  constructor({
-    libzip,
-    baseFs = new NodeFS_NodeFS(),
-    filter = null,
-    maxOpenFiles = Infinity,
-    readOnlyArchives = false,
-    useCache = true
-  }) {
-    super();
-    this.fdMap = new Map();
-    this.nextFd = 3;
-    this.isZip = new Set();
-    this.notZip = new Set();
-    this.libzip = libzip;
-    this.baseFs = baseFs;
-    this.zipInstances = useCache ? new Map() : null;
-    this.filter = filter;
-    this.maxOpenFiles = maxOpenFiles;
-    this.readOnlyArchives = readOnlyArchives;
-  }
-
-  static async openPromise(fn, opts) {
-    const zipOpenFs = new ZipOpenFS_ZipOpenFS(opts);
-
-    try {
-      return await fn(zipOpenFs);
-    } finally {
-      zipOpenFs.saveAndClose();
-=======
     FS.close(stream);
   },
   cwd: function() {
@@ -43619,7 +43281,6 @@ class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
     var lookup = FS.lookupPath(path, { follow: true });
     if (lookup.node === null) {
       throw new FS.ErrnoError(44);
->>>>>>> chore: upgrade to webpack 5
     }
     if (!FS.isDir(lookup.node.mode)) {
       throw new FS.ErrnoError(54);
@@ -44095,94 +43756,6 @@ class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
         }
       }
     });
-<<<<<<< refs/remotes/yarnpkg/master
-  }
-
-  async makeCallPromise(p, discard, accept, {
-    requireSubpath = true
-  } = {}) {
-    if (typeof p !== `string`) return await discard();
-    const normalizedP = this.resolve(p);
-    const zipInfo = this.findZip(normalizedP);
-    if (!zipInfo) return await discard();
-    if (requireSubpath && zipInfo.subPath === `/`) return await discard();
-    return await this.getZipPromise(zipInfo.archivePath, async zipFs => await accept(zipFs, zipInfo));
-  }
-
-  makeCallSync(p, discard, accept, {
-    requireSubpath = true
-  } = {}) {
-    if (typeof p !== `string`) return discard();
-    const normalizedP = this.resolve(p);
-    const zipInfo = this.findZip(normalizedP);
-    if (!zipInfo) return discard();
-    if (requireSubpath && zipInfo.subPath === `/`) return discard();
-    return this.getZipSync(zipInfo.archivePath, zipFs => accept(zipFs, zipInfo));
-  }
-
-  findZip(p) {
-    if (this.filter && !this.filter.test(p)) return null;
-    let filePath = ``;
-
-    while (true) {
-      const parts = FILE_PARTS_REGEX.exec(p.substr(filePath.length));
-      if (!parts) return null;
-      filePath = this.pathUtils.join(filePath, parts[0]);
-
-      if (this.isZip.has(filePath) === false) {
-        if (this.notZip.has(filePath)) continue;
-
-        try {
-          if (!this.baseFs.lstatSync(filePath).isFile()) {
-            this.notZip.add(filePath);
-            continue;
-          }
-        } catch (_a) {
-          return null;
-        }
-
-        this.isZip.add(filePath);
-      }
-
-      return {
-        archivePath: filePath,
-        subPath: this.pathUtils.resolve(PortablePath.root, p.substr(filePath.length))
-      };
-    }
-  }
-
-  limitOpenFiles(max) {
-    if (this.zipInstances === null) return;
-    let closeCount = this.zipInstances.size - max;
-
-    for (const [path, zipFs] of this.zipInstances.entries()) {
-      if (closeCount <= 0) break;
-      zipFs.saveAndClose();
-      this.zipInstances.delete(path);
-      closeCount -= 1;
-    }
-  }
-
-  async getZipPromise(p, accept) {
-    const getZipOptions = async () => ({
-      baseFs: this.baseFs,
-      libzip: this.libzip,
-      readOnly: this.readOnlyArchives,
-      stats: await this.baseFs.statPromise(p)
-    });
-
-    if (this.zipInstances) {
-      let zipFs = this.zipInstances.get(p);
-
-      if (!zipFs) {
-        const zipOptions = await getZipOptions(); // We need to recheck because concurrent getZipPromise calls may
-        // have instantiated the zip archive while we were waiting
-
-        zipFs = this.zipInstances.get(p);
-
-        if (!zipFs) {
-          zipFs = new ZipFS_ZipFS(p, zipOptions);
-=======
     var stream_ops = {};
     var keys = Object.keys(node.stream_ops);
     keys.forEach(function(key) {
@@ -44241,7 +43814,6 @@ class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
         if (preFinish) preFinish();
         if (!dontCreateFile) {
           FS.createDataFile(parent, name, byteArray, canRead, canWrite, canOwn);
->>>>>>> chore: upgrade to webpack 5
         }
         if (onload) onload();
         removeRunDependency(dep);
@@ -44630,26 +44202,6 @@ function ___sys_ioctl(fd, op, varargs) {
         if (!stream.tty) return -59;
         return 0;
       }
-<<<<<<< refs/remotes/yarnpkg/master
-    }
-
-    const issuerSpecs = options && options.paths ? getIssuerSpecsFromPaths(options.paths) : getIssuerSpecsFromModule(parent);
-
-    if (request.match(pathRegExp) === null) {
-      const parentDirectory = (parent === null || parent === void 0 ? void 0 : parent.filename) != null ? npath.dirname(parent.filename) : null;
-      const absoluteRequest = npath.isAbsolute(request) ? request : parentDirectory !== null ? npath.resolve(parentDirectory, request) : null;
-
-      if (absoluteRequest !== null) {
-        const apiPath = parentDirectory === npath.dirname(absoluteRequest) && (parent === null || parent === void 0 ? void 0 : parent.pnpApiPath) ? parent.pnpApiPath : opts.manager.findApiPathFor(absoluteRequest);
-
-        if (apiPath !== null) {
-          issuerSpecs.unshift({
-            apiPath,
-            path: parentDirectory,
-            module: null
-          });
-        }
-=======
       case 21510:
       case 21511:
       case 21512:
@@ -44658,7 +44210,6 @@ function ___sys_ioctl(fd, op, varargs) {
       case 21508: {
         if (!stream.tty) return -59;
         return 0;
->>>>>>> chore: upgrade to webpack 5
       }
       case 21519: {
         if (!stream.tty) return -59;
@@ -45215,61 +44766,11 @@ if (Module["preInit"]) {
 noExitRuntime = true;
 run();
 
-<<<<<<< refs/remotes/yarnpkg/master
-  const findApiPathCache = new Map();
-
-  function addToCache(start, end, target) {
-    let curr;
-    let next = start;
-
-    do {
-      curr = next;
-      findApiPathCache.set(curr, target);
-      next = ppath.dirname(curr);
-    } while (curr !== end);
-  }
-
-  function findApiPathFor(modulePath) {
-    const start = ppath.resolve(npath.toPortablePath(modulePath));
-    let curr;
-    let next = start;
-
-    do {
-      curr = next;
-      const cached = findApiPathCache.get(curr);
-
-      if (cached !== undefined) {
-        addToCache(start, curr, cached);
-        return cached;
-      }
-
-      const candidate = ppath.join(curr, `.pnp.js`);
-
-      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile()) {
-        addToCache(start, curr, candidate);
-        return candidate;
-      }
-
-      const cjsCandidate = ppath.join(curr, `.pnp.cjs`);
-
-      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile()) {
-        addToCache(start, curr, cjsCandidate);
-        return cjsCandidate;
-      }
-
-      next = ppath.dirname(curr);
-    } while (curr !== PortablePath.root);
-
-    addToCache(start, curr, null);
-    return null;
-  }
-=======
 
 /***/ }),
 
 /***/ 417:
 /***/ ((module) => {
->>>>>>> chore: upgrade to webpack 5
 
 "use strict";
 module.exports = require("crypto");
