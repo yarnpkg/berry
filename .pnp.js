@@ -39039,7 +39039,8 @@ const PortablePath = {
 const Filename = {
   nodeModules: `node_modules`,
   manifest: `package.json`,
-  lockfile: `yarn.lock`
+  lockfile: `yarn.lock`,
+  rc: `.yarnrc.yml`
 };
 const npath = Object.create(external_path_default.a);
 const ppath = Object.create(external_path_default.a.posix);
@@ -41303,6 +41304,7 @@ class ZipFS_ZipFS extends FakeFS_BasePortableFakeFS {
 
 
 const ZIP_FD = 0x80000000;
+const FILE_PARTS_REGEX = /.*?(?<!\/)\.zip(?=\/|$)/;
 class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
   constructor({
     libzip,
@@ -41323,8 +41325,6 @@ class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
     this.filter = filter;
     this.maxOpenFiles = maxOpenFiles;
     this.readOnlyArchives = readOnlyArchives;
-    this.isZip = new Set();
-    this.notZip = new Set();
   }
 
   static async openPromise(fn, opts) {
@@ -42041,50 +42041,33 @@ class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
 
   findZip(p) {
     if (this.filter && !this.filter.test(p)) return null;
-    const parts = p.split(/\//g);
+    let filePath = ``;
 
-    for (let t = 2; t <= parts.length; ++t) {
-      const archivePath = parts.slice(0, t).join(`/`);
-      if (this.notZip.has(archivePath)) continue;
-      if (this.isZip.has(archivePath)) return {
-        archivePath,
-        subPath: this.pathUtils.resolve(PortablePath.root, parts.slice(t).join(`/`))
-      };
-      let realArchivePath = archivePath;
-      let stat;
+    while (true) {
+      const parts = FILE_PARTS_REGEX.exec(p.substr(filePath.length));
+      if (!parts) return null;
+      filePath = this.pathUtils.join(filePath, parts[0]);
 
-      while (true) {
+      if (this.isZip.has(filePath) === false) {
+        if (this.notZip.has(filePath)) continue;
+
         try {
-          stat = this.baseFs.lstatSync(realArchivePath);
-        } catch (error) {
+          if (!this.baseFs.lstatSync(filePath).isFile()) {
+            this.notZip.add(filePath);
+            continue;
+          }
+        } catch (_a) {
           return null;
         }
 
-        if (stat.isSymbolicLink()) {
-          realArchivePath = this.pathUtils.resolve(this.pathUtils.dirname(realArchivePath), this.baseFs.readlinkSync(realArchivePath));
-        } else {
-          break;
-        }
+        this.isZip.add(filePath);
       }
 
-      const isZip = stat.isFile() && this.pathUtils.extname(realArchivePath) === `.zip`;
-
-      if (isZip) {
-        this.isZip.add(archivePath);
-        return {
-          archivePath,
-          subPath: this.pathUtils.resolve(PortablePath.root, parts.slice(t).join(`/`))
-        };
-      } else {
-        this.notZip.add(archivePath);
-
-        if (stat.isFile()) {
-          return null;
-        }
-      }
+      return {
+        archivePath: filePath,
+        subPath: this.pathUtils.resolve(PortablePath.root, p.substr(filePath.length))
+      };
     }
-
-    return null;
   }
 
   limitOpenFiles(max) {
@@ -42762,7 +42745,7 @@ function applyPatch(pnpapi, opts) {
       const absoluteRequest = npath.isAbsolute(request) ? request : parentDirectory !== null ? npath.resolve(parentDirectory, request) : null;
 
       if (absoluteRequest !== null) {
-        const apiPath = opts.manager.findApiPathFor(absoluteRequest);
+        const apiPath = parentDirectory === npath.dirname(absoluteRequest) && (parent === null || parent === void 0 ? void 0 : parent.pnpApiPath) ? parent.pnpApiPath : opts.manager.findApiPathFor(absoluteRequest);
 
         if (apiPath !== null) {
           issuerSpecs.unshift({
@@ -43696,19 +43679,51 @@ function makeManager(pnpapi, opts) {
     return apiEntry;
   }
 
-  function findApiPathFor(modulePath) {
+  const findApiPathCache = new Map();
+
+  function addToCache(start, end, target) {
     let curr;
-    let next = ppath.resolve(npath.toPortablePath(modulePath));
+    let next = start;
 
     do {
       curr = next;
+      findApiPathCache.set(curr, target);
+      next = ppath.dirname(curr);
+    } while (curr !== end);
+  }
+
+  function findApiPathFor(modulePath) {
+    const start = ppath.resolve(npath.toPortablePath(modulePath));
+    let curr;
+    let next = start;
+
+    do {
+      curr = next;
+      const cached = findApiPathCache.get(curr);
+
+      if (cached !== undefined) {
+        addToCache(start, curr, cached);
+        return cached;
+      }
+
       const candidate = ppath.join(curr, `.pnp.js`);
-      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile()) return candidate;
+
+      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile()) {
+        addToCache(start, curr, candidate);
+        return candidate;
+      }
+
       const cjsCandidate = ppath.join(curr, `.pnp.cjs`);
-      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile()) return cjsCandidate;
+
+      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile()) {
+        addToCache(start, curr, cjsCandidate);
+        return cjsCandidate;
+      }
+
       next = ppath.dirname(curr);
     } while (curr !== PortablePath.root);
 
+    addToCache(start, curr, null);
     return null;
   }
 
