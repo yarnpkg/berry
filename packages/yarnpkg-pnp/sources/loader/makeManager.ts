@@ -68,10 +68,10 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
     return apiEntry;
   }
 
-  const findApiPathCache = new Map<PortablePath,PortablePath | null>();
+  const findApiPathCache = new Map<PortablePath, PortablePath | null>();
 
   function addToCache(start: PortablePath, end: PortablePath, target: PortablePath | null) {
-    let curr;
+    let curr: PortablePath;
     let next = start;
 
     do {
@@ -82,9 +82,10 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
   }
 
   function findApiPathFor(modulePath: NativePath) {
+    const start = ppath.resolve(npath.toPortablePath(modulePath));
+
     let curr: PortablePath;
-    let next = ppath.resolve(npath.toPortablePath(modulePath));
-    const start = next;
+    let next = start;
 
     do {
       curr = next;

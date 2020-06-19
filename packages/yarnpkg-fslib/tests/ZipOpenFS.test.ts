@@ -1,7 +1,7 @@
-import {getLibzipSync}          from "@yarnpkg/libzip";
+import {getLibzipSync}          from '@yarnpkg/libzip';
 
-import {ppath, npath, Filename} from "../sources/path";
-import {ZipOpenFS}              from "../sources";
+import {ppath, npath, Filename} from '../sources/path';
+import {ZipOpenFS}              from '../sources';
 
 describe(`ZipOpenFS`, () => {
   it(`can read from a zip file`, () => {
