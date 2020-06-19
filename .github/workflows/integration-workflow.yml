@@ -20,38 +20,6 @@ jobs:
       with:
         node-version: 10.x
 
-    - name: 'Check that the Yarn files don''t change on new installs (fix w/ "yarn install")'
-      run: |
-        node ./scripts/run-yarn.js --immutable --immutable-cache
-      shell: bash
-      env:
-        YARN_ENABLE_NETWORK: 0
-
-    - name: 'Check that the cache files are consistent with their remote sources'
-      run: |
-        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- .yarn/cache | wc -l) -gt 0 ]]; then
-          node ./scripts/run-yarn.js --immutable --immutable-cache --check-cache
-        fi
-      shell: bash
-      if: |
-        github.event.pull_request != ''
-      env:
-        TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
-
-    - name: 'Check that the patch files are consistent with fresh builds'
-      run: |
-        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- packages/plugin-compat/sources/patches | wc -l) -gt 0 ]]; then
-          for generator in packages/plugin-compat/extra/*/gen-*-patch.sh; do
-            bash $generator;
-          done
-          [[ $(git diff --name-only packages/plugin-compat/sources/patches | wc -l) -eq 0 ]]
-        fi
-      shell: bash
-      if: |
-        github.event.pull_request != ''
-      env:
-        TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
-
     - name: 'Check that the PnP hook is consistent with a fresh build (prebuild)'
       run: |
         node ./scripts/run-yarn.js build:pnp:hook
@@ -62,77 +30,6 @@ jobs:
         name: hook
         path: packages/yarnpkg-pnp/sources/hook.js
 
-    - name: 'Check that the PnP hook is consistent with a fresh build'
+    - name: 'Debug'
       run: |
-        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- packages/yarnpkg-pnp/sources/hook.js | wc -l) -gt 0 ]]; then
-          [[ $(git diff --name-only packages/yarnpkg-pnp/sources/hook.js | wc -l) -eq 0 ]]
-        fi
-      shell: bash
-      if: |
-        github.event.pull_request != ''
-      env:
-        TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
-
-    - name: 'Check that the PR describes which packages should be bumped (fix w/ "yarn version check -i")'
-      run: |
-        node ./scripts/run-yarn.js version check
-      shell: bash
-      if: |
-        github.event.pull_request != ''
-
-    - name: 'Check for linting errors (fix w/ "yarn test:lint --fix")'
-      run: |
-        node ./scripts/run-yarn.js test:lint
-      shell: bash
-
-    - name: 'Check for unmet constraints (fix w/ "yarn constraints --fix")'
-      run: |
-        node ./scripts/run-yarn.js constraints
-      shell: bash
-
-  acceptance:
-    strategy:
-      fail-fast: false
-      matrix:
-        node:
-        - 10
-        - 12
-        - 14
-        platform:
-        - ubuntu-latest
-        - windows-latest
-        - macos-latest
-
-    name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x'
-    runs-on: ${{matrix.platform}}
-
-    steps:
-    - uses: actions/checkout@master
-
-    - name: 'Use Node.js ${{matrix.node}}.x'
-      uses: actions/setup-node@master
-      with:
-        node-version: ${{matrix.node}}.x
-
-    - name: 'Build the standard bundle & plugins'
-      run: |
-        node --version
-        node ./scripts/run-yarn.js build:cli --no-minify
-        node ./scripts/run-yarn.js build:plugin-constraints
-        node ./scripts/run-yarn.js build:plugin-exec
-        node ./scripts/run-yarn.js build:plugin-interactive-tools
-        node ./scripts/run-yarn.js build:plugin-stage
-        node ./scripts/run-yarn.js build:plugin-typescript
-        node ./scripts/run-yarn.js build:plugin-version
-        node ./scripts/run-yarn.js build:plugin-workspace-tools
-      shell: bash
-
-    - name: 'Run the integration tests'
-      run: |
-        node ./scripts/run-yarn.js test:integration --runInBand
-      shell: bash
-
-    - name: 'Run the unit tests'
-      run: |
-        node ./scripts/run-yarn.js test:unit
-      shell: bash
+        exit 1
