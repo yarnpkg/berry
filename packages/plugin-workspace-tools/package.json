@@ -6,6 +6,7 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
     "clipanion": "^2.4.1",
+    "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
     "tslib": "^1.13.0",
     "yup": "^0.27.0"
@@ -15,6 +16,7 @@
     "@yarnpkg/core": "^2.0.0-rc.30"
   },
   "devDependencies": {
+    "@types/micromatch": "^4.0.1",
     "@types/yup": "0.26.12",
     "@yarnpkg/builder": "workspace:^2.0.0-rc.23",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.36",
