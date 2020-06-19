@@ -188,8 +188,11 @@ export default class UpCommand extends BaseCommand {
         return suggestion.descriptor !== null;
       });
 
-      if (nonNullSuggestions.length === 1) {
-        selected = nonNullSuggestions[0].descriptor;
+      const firstSuggestedDescriptor = nonNullSuggestions[0].descriptor;
+      const areAllTheSame = nonNullSuggestions.every(suggestion => structUtils.areDescriptorsEqual(suggestion.descriptor, firstSuggestedDescriptor));
+
+      if (nonNullSuggestions.length === 1 || areAllTheSame) {
+        selected = firstSuggestedDescriptor;
       } else {
         askedQuestions = true;
         ({answer: selected} = await prompt({
