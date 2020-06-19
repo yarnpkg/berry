@@ -41312,7 +41312,7 @@ class ZipFS_ZipFS extends FakeFS_BasePortableFakeFS {
 
 
 const ZIP_FD = 0x80000000;
-const FILE_PARTS_REGEX = /.*?(?<!\/|\\)\.zip(?=\/|\\|$)/;
+const FILE_PARTS_REGEX = /.*?(?<!\/)\.zip(?=\/|$)/;
 class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
   constructor({
     libzip,
@@ -42060,7 +42060,7 @@ class ZipOpenFS_ZipOpenFS extends FakeFS_BasePortableFakeFS {
         if (this.notZip.has(filePath)) continue;
 
         try {
-          if (this.baseFs.lstatSync(filePath).isFile() === false) {
+          if (!this.baseFs.lstatSync(filePath).isFile()) {
             this.notZip.add(filePath);
             continue;
           }
@@ -43701,9 +43701,9 @@ function makeManager(pnpapi, opts) {
   }
 
   function findApiPathFor(modulePath) {
+    const start = ppath.resolve(npath.toPortablePath(modulePath));
     let curr;
-    let next = ppath.resolve(npath.toPortablePath(modulePath));
-    const start = next;
+    let next = start;
 
     do {
       curr = next;
