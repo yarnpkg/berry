@@ -6542,16 +6542,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["@types/is-ci", [
-        ["npm:2.0.0", {
-          "packageLocation": "./.yarn/cache/@types-is-ci-npm-2.0.0-1007c71303-870279b2fb.zip/node_modules/@types/is-ci/",
-          "packageDependencies": [
-            ["@types/is-ci", "npm:2.0.0"],
-            ["@types/ci-info", "npm:2.0.0"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["@types/istanbul-lib-coverage", [
         ["npm:1.1.0", {
           "packageLocation": "./.yarn/cache/@types-istanbul-lib-coverage-npm-1.1.0-766d15dead-ffa0554651.zip/node_modules/@types/istanbul-lib-coverage/",
@@ -8042,10 +8032,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/yarnpkg-core/",
           "packageDependencies": [
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
+            ["@types/ci-info", "npm:2.0.0"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/diff", "npm:4.0.2"],
             ["@types/got", "npm:8.3.5"],
-            ["@types/is-ci", "npm:2.0.0"],
             ["@types/micromatch", "npm:4.0.1"],
             ["@types/node", "npm:13.7.0"],
             ["@types/semver", "npm:7.1.0"],
@@ -8063,12 +8053,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],
             ["camelcase", "npm:5.3.1"],
             ["chalk", "npm:3.0.0"],
+            ["ci-info", "npm:2.0.0"],
             ["clipanion", "npm:2.4.1"],
             ["cross-spawn", "npm:7.0.3"],
             ["diff", "npm:4.0.1"],
             ["globby", "npm:10.0.1"],
             ["got", "npm:11.1.3"],
-            ["is-ci", "npm:2.0.0"],
             ["json-file-plus", "npm:3.3.1"],
             ["logic-solver", "npm:2.0.1"],
             ["micromatch", "npm:4.0.2"],

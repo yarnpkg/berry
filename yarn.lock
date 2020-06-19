@@ -4498,7 +4498,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ci-info@npm:*":
+"@types/ci-info@npm:^2":
   version: 2.0.0
   resolution: "@types/ci-info@npm:2.0.0"
   checksum: 89efcab6fdc38ae27febdf87e1de9b49bfff13778ca807f4a2236340d4fa53d446f4abe3c19a1b19619a295f1fac72d64c88eb49927e5f54a29c9cedb2ccd685
@@ -4706,15 +4706,6 @@ __metadata:
   version: 2.2.30
   resolution: "@types/invariant@npm:2.2.30"
   checksum: 882decca8479ce99ff8d2db5e55c07f289d6a61e87735db3092f7dbc06838f2cb8ca4e8ff0d9fa9c73294aea1623f86b82f04e6b932c04804b0db66fcfbc79cc
-  languageName: node
-  linkType: hard
-
-"@types/is-ci@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@types/is-ci@npm:2.0.0"
-  dependencies:
-    "@types/ci-info": "*"
-  checksum: 870279b2fb690288351bca6c06e83c50d706ebe5c6da59fdfef2b4ced65572a459005b8fc020863b4f84fc59a3a71e565210c18dafd4fe85e86e4bf579803e74
   languageName: node
   linkType: hard
 
@@ -5977,10 +5968,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
+    "@types/ci-info": ^2
     "@types/cross-spawn": 6.0.0
     "@types/diff": ^4.0.2
     "@types/got": ^8.3.4
-    "@types/is-ci": ^2.0.0
     "@types/micromatch": ^4.0.1
     "@types/node": ^13.7.0
     "@types/semver": ^7.1.0
@@ -5998,12 +5989,12 @@ __metadata:
     "@yarnpkg/shell": "workspace:^2.0.0-rc.13"
     camelcase: ^5.3.1
     chalk: ^3.0.0
+    ci-info: ^2.0.0
     clipanion: ^2.4.1
     cross-spawn: 7.0.3
     diff: ^4.0.1
     globby: ^10.0.1
     got: ^11.1.3
-    is-ci: ^2.0.0
     json-file-plus: ^3.3.1
     logic-solver: ^2.0.1
     micromatch: ^4.0.2

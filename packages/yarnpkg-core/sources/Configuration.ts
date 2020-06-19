@@ -1,10 +1,10 @@
-import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
 import {DEFAULT_COMPRESSION_LEVEL}                             from '@yarnpkg/fslib';
+import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                              from '@yarnpkg/parsers';
 import camelcase                                               from 'camelcase';
 import chalk                                                   from 'chalk';
+import {isCI}                                                  from 'ci-info';
 import {UsageError}                                            from 'clipanion';
-import isCI                                                    from 'is-ci';
 import semver                                                  from 'semver';
 import {PassThrough, Writable}                                 from 'stream';
 
