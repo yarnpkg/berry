@@ -48,7 +48,7 @@ export default class BuildBundleCommand extends Command {
     details: `
       This command builds the local bundle - the Yarn binary file that is installed in projects.
 
-      If the \`--no-minify\` option is used, the bundle will be built in development mode, without any optimizations like minifying, symbol scrambling and treeshaking.
+      If the \`--no-minify\` option is used, the bundle will be built in development mode, without any optimizations like minifying, symbol scrambling, and treeshaking.
 
       If the \`--no-git-hash\` option is used, the version of the bundle won't include the git hash of the current commit.
 

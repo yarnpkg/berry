@@ -33,7 +33,7 @@ export default class BuildPluginCommand extends Command {
     details: `
       This command builds a local plugin.
 
-      If the \`--no-minify\` option is used, the plugin will be built in development mode, without any optimizations like minifying, symbol scrambling and treeshaking.
+      If the \`--no-minify\` option is used, the plugin will be built in development mode, without any optimizations like minifying, symbol scrambling, and treeshaking.
     `,
     examples: [[
       `Build a local plugin`,
