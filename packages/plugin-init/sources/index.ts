@@ -27,6 +27,14 @@ const plugin: Plugin = {
         type: SettingsType.ANY,
       },
     },
+    initEditorConfig: {
+      description: `Extra rules to define in the generator editorconfig`,
+      type: SettingsType.MAP,
+      valueDefinition: {
+        description: ``,
+        type: SettingsType.ANY,
+      },
+    },
   },
   commands: [
     init,

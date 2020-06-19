@@ -6407,10 +6407,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-init@workspace:packages/plugin-init"
   dependencies:
+    "@types/lodash": ^4.14.136
     "@yarnpkg/cli": "workspace:^2.0.0-rc.36"
     "@yarnpkg/core": "workspace:^2.0.0-rc.30"
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.22"
     clipanion: ^2.4.1
+    lodash: ^4.17.15
     tslib: ^1.13.0
   peerDependencies:
     "@yarnpkg/cli": ^2.0.0-rc.36

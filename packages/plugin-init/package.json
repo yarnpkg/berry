@@ -6,6 +6,7 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
     "clipanion": "^2.4.1",
+    "lodash": "^4.17.15",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
@@ -13,6 +14,7 @@
     "@yarnpkg/core": "^2.0.0-rc.30"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.136",
     "@yarnpkg/cli": "workspace:^2.0.0-rc.36",
     "@yarnpkg/core": "workspace:^2.0.0-rc.30"
   },
