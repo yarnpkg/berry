@@ -210,7 +210,7 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should not recreated folders when package is updated`,
+  test(`should not recreate folders when package is updated`,
     makeTemporaryEnv(
       {
         private: true,
@@ -274,6 +274,34 @@ describe(`Node_Modules`, () => {
           externalException: {
             code: `MODULE_NOT_FOUND`,
           },
+        });
+      },
+    ),
+  );
+
+  test(`should support aliases`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+          [`no-deps2`]: `npm:no-deps@2.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
+          nodeLinker: "node-modules"
+        `);
+
+        await run(`install`);
+
+        await expect(source(`require('no-deps')`)).resolves.toEqual({
+          name: `no-deps`,
+          version: `1.0.0`,
+        });
+        await expect(source(`require('no-deps2')`)).resolves.toEqual({
+          name: `no-deps`,
+          version: `2.0.0`,
         });
       },
     ),

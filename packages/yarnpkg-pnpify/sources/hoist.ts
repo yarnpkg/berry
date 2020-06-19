@@ -1,6 +1,6 @@
 type PackageName = string;
-export type HoisterTree = {name: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>};
-export type HoisterResult = {name: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
+export type HoisterTree = {name: PackageName, identName?: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>};
+export type HoisterResult = {name: PackageName, identName?: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
 type Locator = string;
 type Ident = string;
 type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, {root: HoisterWorkTree, reason: string}>};
@@ -511,8 +511,8 @@ const cloneTree = (tree: HoisterTree): HoisterWorkTree => {
       seenNodes.set(node, workNode);
     }
 
-    parentNode.dependencies.set(workNode.name, workNode);
-    parentNode.originalDependencies.set(workNode.name, workNode);
+    parentNode.dependencies.set(node.identName || node.name, workNode);
+    parentNode.originalDependencies.set(node.identName || node.name, workNode);
 
     if (!isSeen) {
       for (const dep of node.dependencies) {
@@ -544,6 +544,8 @@ const cloneTree = (tree: HoisterTree): HoisterWorkTree => {
   return treeCopy;
 };
 
+const getIdentName = (locator: Locator) => locator.substring(0, locator.indexOf(`@`, 1));
+
 /**
  * Creates a clone of hoisted package tree with extra fields removed
  *
@@ -556,33 +558,39 @@ const shrinkTree = (tree: HoisterWorkTree): HoisterResult => {
     dependencies: new Set(),
   };
 
-  const nodes = new Map<HoisterWorkTree, HoisterResult>([[tree, treeCopy]]);
+  const seenNodes = new Set<HoisterWorkTree>([tree]);
 
-  const addNode = (node: HoisterWorkTree, parentNode: HoisterResult) => {
-    let resultNode = nodes.get(node);
-    const isSeen = !!resultNode;
+  const addNode = (key: PackageName, node: HoisterWorkTree, parentWorkNode: HoisterWorkTree, parentNode: HoisterResult) => {
+    const isSeen = seenNodes.has(node);
 
-    if (!resultNode) {
-      const {name, references} = node;
+    let resultNode: HoisterResult;
+    if (parentWorkNode === node) {
+      resultNode = parentNode;
+    } else {
+      const {name, references, locator} = node;
       resultNode = {
         name, references, dependencies: new Set<HoisterResult>(),
       };
+      if (key !== getIdentName(locator)) {
+        resultNode.name = key;
+        resultNode.identName = name;
+      }
     }
-
     parentNode.dependencies.add(resultNode);
 
     if (!isSeen) {
-      nodes.set(node, resultNode);
-      for (const dep of node.dependencies.values()) {
-        if (!node.peerNames.has(dep.name)) {
-          addNode(dep, resultNode);
+      seenNodes.add(node);
+      for (const [name, dep] of node.dependencies) {
+        if (!node.peerNames.has(name)) {
+          addNode(name, dep, node, resultNode);
         }
       }
+      seenNodes.delete(node);
     }
   };
 
-  for (const dep of tree.dependencies.values())
-    addNode(dep, treeCopy);
+  for (const [name, dep] of tree.dependencies)
+    addNode(name, dep, tree, treeCopy);
 
   return treeCopy;
 };
