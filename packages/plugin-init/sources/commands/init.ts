@@ -1,14 +1,18 @@
 import {BaseCommand}                         from '@yarnpkg/cli';
-import {Configuration, Manifest}             from '@yarnpkg/core';
+import {Configuration, Manifest, Project}    from '@yarnpkg/core';
 import {execUtils, scriptUtils, structUtils} from '@yarnpkg/core';
 import {xfs, ppath, Filename}                from '@yarnpkg/fslib';
 import {Command, Usage, UsageError}          from 'clipanion';
+import {merge}                               from 'lodash';
 import {inspect}                             from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class InitCommand extends BaseCommand {
   @Command.Boolean(`-2`, {hidden: true})
   usev2: boolean = false;
+
+  @Command.Boolean(`--assume-fresh-project`, {hidden: true})
+  assumeFreshProject: boolean = false;
 
   @Command.Boolean(`-y,--yes`, {hidden: true})
   yes: boolean = false;
@@ -19,11 +23,8 @@ export default class InitCommand extends BaseCommand {
   @Command.Boolean(`-w,--workspace`)
   workspace: boolean = false;
 
-  @Command.Boolean(`-l,--latest`)
-  latest: boolean = false;
-
-  @Command.String(`-i,--install`)
-  install?: string;
+  @Command.String(`-i,--install`, {tolerateBoolean: true})
+  install: string | boolean = false;
 
   static usage: Usage = Command.Usage({
     description: `create a new package`,
@@ -34,16 +35,9 @@ export default class InitCommand extends BaseCommand {
 
       If the \`-w,--workspace\` option is set, the package will be configured to accept a set of workspaces in the \`packages/\` directory.
 
-      If the \`-i,--install\` option is given a value, Yarn will first download it using \`yarn set version\` and only then forward the init call to the newly downloaded bundle.
+      If the \`-i,--install\` option is given a value, Yarn will first download it using \`yarn set version\` and only then forward the init call to the newly downloaded bundle. Without arguments, the downloaded bundle will be \`latest\`.
 
-      If the \`-l,--latest\` option is set, \`--install latest\` will be assumed.
-
-      The following settings can be used in order to affect what the generated package.json will look like:
-
-      - \`initLicense\`
-      - \`initScope\`
-      - \`initVersion\`
-      - \`initFields\`
+      The initial settings of the manifest can be changed by using the \`initScope\` and \`initFields\` configuration values. Additionally, Yarn will generate an EditorConfig file whose rules can be altered via \`initEditorConfig\`, and will initialize a Git repository in the current directory.
     `,
     examples: [[
       `Create a new package in the local directory`,
@@ -67,11 +61,9 @@ export default class InitCommand extends BaseCommand {
 
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
-    const install = typeof this.install !== `undefined`
-      ? this.install
-      : this.latest
-        ? `latest`
-        : null;
+    const install = this.install
+      ? this.install === true ? `latest` : this.install
+      : null;
 
     if (install !== null) {
       return await this.executeProxy(configuration, install);
@@ -100,15 +92,13 @@ export default class InitCommand extends BaseCommand {
 
     this.context.stdout.write(`\n`);
 
-    const args: Array<string> = [];
+    const args: Array<string> = [`--assume-fresh-project`];
     if (this.private)
       args.push(`-p`);
     if (this.workspace)
       args.push(`-w`);
     if (this.yes)
       args.push(`-y`);
-    if (this.latest)
-      args.push(`-l`);
 
     return await xfs.mktempPromise(async binFolder => {
       const {code} = await execUtils.pipevp(`yarn`, [`init`, ...args], {
@@ -124,6 +114,15 @@ export default class InitCommand extends BaseCommand {
   }
 
   async executeRegular(configuration: Configuration) {
+    let existingProject: {project: Project} | null = null;
+    if (!this.assumeFreshProject) {
+      try {
+        existingProject = await Project.find(configuration, this.context.cwd);
+      } catch {
+        existingProject = null;
+      }
+    }
+
     if (!xfs.existsSync(this.context.cwd))
       await xfs.mkdirpPromise(this.context.cwd);
 
@@ -158,5 +157,77 @@ export default class InitCommand extends BaseCommand {
 
     const manifestPath = ppath.join(this.context.cwd, Manifest.fileName);
     await xfs.changeFilePromise(manifestPath, `${JSON.stringify(serialized, null, 2)}\n`);
+
+    const readmePath = ppath.join(this.context.cwd, `README.md` as Filename);
+    if (!xfs.existsSync(readmePath))
+      await xfs.writeFilePromise(readmePath, `# ${structUtils.stringifyIdent(manifest.name)}\n`);
+
+    if (!existingProject) {
+      const lockfilePath = ppath.join(this.context.cwd, Filename.lockfile);
+      await xfs.writeFilePromise(lockfilePath, ``);
+
+      const gitattributesLines = [
+        `/.yarn/** linguist-vendored`,
+      ];
+
+      const gitattributesBody = gitattributesLines.map(line => {
+        return `${line}\n`;
+      }).join(``);
+
+      const gitattributesPath = ppath.join(this.context.cwd, `.gitattributes` as Filename);
+      if (!xfs.existsSync(gitattributesPath))
+        await xfs.writeFilePromise(gitattributesPath, gitattributesBody);
+
+      const gitignoreLines = [
+        `/.yarn/*`,
+        `!/.yarn/releases`,
+        `!/.yarn/plugins`,
+        `!/.yarn/sdks`,
+        ``,
+        `# Swap the comments on the following lines if you don't wish to use zero-installs`,
+        `# Documentation here: https://yarnpkg.com/features/zero-installs`,
+        `!/.yarn/cache`,
+        `#/.pnp.*`,
+      ];
+
+      const gitignoreBody = gitignoreLines.map(line => {
+        return `${line}\n`;
+      }).join(``);
+
+      const gitignorePath = ppath.join(this.context.cwd, `.gitignore` as Filename);
+      if (!xfs.existsSync(gitignorePath))
+        await xfs.writeFilePromise(gitignorePath, gitignoreBody);
+
+      const editorConfigProperties = {
+        [`*`]: {
+          endOfLine: `lf`,
+          insertFinalNewline: true,
+        },
+        [`*.{js,json,.yml}`]: {
+          charset: `utf-8`,
+          indentStyle: `space`,
+          indentSize: 2,
+        },
+      };
+
+      merge(editorConfigProperties, configuration.get(`initEditorConfig`));
+
+      let editorConfigBody = `root = true\n`;
+      for (const [selector, props] of Object.entries(editorConfigProperties)) {
+        editorConfigBody += `\n[${selector}]\n`;
+        for (const [propName, propValue] of Object.entries(props)) {
+          const snakeCaseName = propName.replace(/[A-Z]/g, $0 => `_${$0.toLowerCase()}`);
+          editorConfigBody += `${snakeCaseName} = ${propValue}\n`;
+        }
+      }
+
+      const editorConfigPath = ppath.join(this.context.cwd, `.editorconfig` as Filename);
+      if (!xfs.existsSync(editorConfigPath))
+        await xfs.writeFilePromise(editorConfigPath, editorConfigBody);
+
+      await execUtils.execvp(`git`, [`init`], {
+        cwd: this.context.cwd,
+      });
+    }
   }
 }

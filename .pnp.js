@@ -8669,10 +8669,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/$$virtual/@yarnpkg-plugin-init-virtual-bb60ce87e8/1/packages/plugin-init/",
           "packageDependencies": [
             ["@yarnpkg/plugin-init", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-init"],
+            ["@types/lodash", "npm:4.14.136"],
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.4.1"],
+            ["lodash", "npm:4.17.15"],
             ["tslib", "npm:1.13.0"]
           ],
           "packagePeers": [
@@ -8685,10 +8687,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/$$virtual/@yarnpkg-plugin-init-virtual-39bcb727de/1/packages/plugin-init/",
           "packageDependencies": [
             ["@yarnpkg/plugin-init", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-init"],
+            ["@types/lodash", "npm:4.14.136"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.4.1"],
+            ["lodash", "npm:4.17.15"],
             ["tslib", "npm:1.13.0"]
           ],
           "packagePeers": [
@@ -8701,10 +8705,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/plugin-init/",
           "packageDependencies": [
             ["@yarnpkg/plugin-init", "workspace:packages/plugin-init"],
+            ["@types/lodash", "npm:4.14.136"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.4.1"],
+            ["lodash", "npm:4.17.15"],
             ["tslib", "npm:1.13.0"]
           ],
           "linkType": "SOFT",
