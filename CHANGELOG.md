@@ -1,4 +1,90 @@
+# Changelog
+
 ## Master
+
+### Ecosystem
+
+- Packages can now declare they they *need* to be unpacked in order to be functional using the new `"preferUnplugged": true` field in the manifest. This will hurt the experience of your users (your project will be the only one that will require hard installs), so please refrain using this field unless there's no other choice.
+
+### New commands
+
+- Running `yarn search` will open a rich interface to search for packages to install (requires the `workspace-tools` plugin).
+- Running `yarn npm logout` will remove your credentials from your home directory.
+- Running `yarn plugin import from sources` will allow you to build plugins from the master branch of the our repository.
+- Running `yarn workspaces focus` will only install the current workspace, plus any other workspace it might depend on. The `--production` flag will only install their production dependencies.
+- Running `yarn exec` will execute the specified command at the root of the current workspace (reintroduced from the Classic branch).
+- Running `yarn create` is now an alias to `yarn dlx` (with the `create-` prefix.)
+
+### CLI
+
+- `yarn init` will now generate an [EditorConfig](https://editorconfig.org) file, and run `git init` on the resulting folder.
+- `yarn init` now supports a `-i` flag which will automatically pin the Yarn version in the project.
+- `yarn init` will now inject the settings from the `initFields` configuration setting when generating the initial manifest (future release will remove the now deprecated `initVersion` and `initLicense` settings).
+- `yarn init` will now initialize a workspace project if given the `-w` flag.
+- `yarn workspaces foreach` now support glob patterns in `--include` and `--exclude`.
+- `yarn set version` now as an alias called `yarn policies set-version` (will be deprecated in 3.x).
+- `yarn run` now supports the `--inspect` and `--inspect-brk` switches for binaries (for example `yarn run --inspect-brk jest`).
+- `yarn remove` and `yarn up` now support glob patterns.
+- `yarn dlx` now respects the local project configuration (particularly the configured registries). This is still experimental and will be further improved in the next months.
+- `yarn config get` (and `set`) can now access nested configuration values (for example, `yarn config get npmScopes.foo.npmRegistryServer` will tell you which server is configured for the given server, if any).
+- `yarn config get` will now hide its secrets (or rather yours) from the rest of the world. A new `--no-redacted` option will toggle off this behavior if needed.
+- `yarn config set` now has a `--json` option that will let Yarn know it should interpret the given value as a JSON object (useful to set server configuration, etc).
+- `yarn workspace foreach` will now exit with the expected status code if there's an error.
+
+### Configuration
+
+- Registry auth settings can now be declared per-scope (they previously had to be per-registry). This will be handy with the GitHub Package Registry model, where each scope may have different access tokens.
+- The configuration file now interpolates the values with the environment variables using the `${name}` syntax (strict by default; use `${name:-default}` to provide a default value).
+- The new `changesetIgnorePatterns` setting can be used to ignore some paths from the changeset detection from `yarn version check` (changes to those paths won't be taken into account when deciding which workspaces need to fresh releases).
+- The new `changesetBaseRef` setting can be used to change the name of the master branch that `yarn version check` will use in its changeset heuristic.
+- The new `httpTimeout` and `httpRetry` settings allow you to configure the behavior of the HTTP(s) requests.
+- The cache compression level can now be configured through `compressionLevel`. If you don't use Zero-Installs, using a value of `0` may yield speed improvements at little cost. 
+- Plugins are now loaded from the location of the RC file.
+
+### Protocols
+
+- The Git protocol has been improved, and now supports multiple patterns that were missing.
+- The Git protocol can now clone any workspace from a given repository. To do this, use the `owner/repo#workspace=name` syntax (which you can mix with branch names as usual).
+- The repositories cloned using the Git protocol will now automatically disable `core.autocrlf` so that the builds lead to deterministic results. Generally speaking, improvements have been made to avoid freshly built packages from generating different results.
+- Packages fetched using the Git protocol will now be built using either of Yarn 1, Yarn 2, npm, or pnpm. The choice will be made based on the content of the sources (for example, we will pack the project using `npm pack` if we detect a `package-lock.json`).
+- The `exec:` protocol has a different API. In particular, builtin modules can now be accessed without having to actually require them.
+
+### Installs
+
+- Deprecation warnings are now shown during installs.
+- The out-of-file PnP data generation has been fixed (it allows to generate the PnP data in a JSON file separated from the JS loader itself).
+- An edge case in the virtual instances deduplication has been fixed; packages with the same effective peer dependencies now always share the exact same instance.
+- The heuristic we use to locate zip files within paths has been improved. As a result, running ESLint on our repository now takes 28s instead of 57s.
+- Yarn will now exclude the node_modules folder from the workspace detection. As a result, listing `**/*` in your `workspaces` field will now detect all child packages as workspaces.
+- The cache names have changed in order to make the cache content-addressed. In particular, this mean that in the event where we need to fix a bug in the fetch steps, we won't need to bump a global cache key anymore.
+- The PnP linker now features an additional loose mode (optional, and enabled through the `pnpMode: loose` setting). Under this mode, Yarn will compute the list of packages that would have been hoisted under the node_modules linker, and let the application code access them with only a warning. This mode will however not become the default - warnings cannot be caught by the application code, and as a result the output of the loose mode can be quite verbose, often being more confusing than the strict mode.
+
+### Rendering
+
+- Rendering on small terminals (or terminals which didn't expose their size) could lead to failed assertions. This is now fixed.
+- The output of `yarn upgrade-interactive` has been revamped to reintroduce some elements that had been omitted when porting the command from the v1 to the v2.
+- Error codes are now hyperlinks on compatible terminals.
+
+### Third-party integrations
+
+- We have added `lutimes` support into Node itself, since it was otherwise impossible to implement perfect copy mechanisms (the copied symlinks would end up with different mtime than their originals).
+- The SDK files have been moved from `.vscode/pnpify` to `.yarn/sdks`.
+- Improvements have been made in the VSCode integration. In particular, the PnP support is now good enough that it started to fix some longstanding issues that VSCode had with properly naming workspaces.
+- We have contributed to VSCode support for third-party protocols with TypeScript. As a result, zip archives now properly support the "Jump to definition" workflow (this requires the [ZipFS](https://marketplace.visualstudio.com/items?itemName=arcanis.vscode-zipfs) extension to be installed).
+- The SDK output has been migrated to the same standard as the other commands.
+- The SDK can now prepare the development environment for both VSCode and Vim. More third-party tools have been added, such as the Svelte extension. Note: the SDK is only needed for editor integrations; you don't need it if you just want to author JavaScript on basic text editors.
+
+### Miscellaneous
+
+- Scripts can now use glob patterns, which will be resolved regardless of the underlying shell (so it'll work on Windows as well as Linux). Note that this only covers file globbing - using something like `echo {foo,bar}` won't work expect if there's actually a file named `foo` and/or `bar`.
+- Sending SIGKILL (or other signals) to the Yarn process wasn't causing the child processes to stop. Yarn will now forward the signal, and wait for its children to exit.
+- Some temporary folders weren't properly cleaned up; this has been fixed.
+- Support for the `.cjs` extension has been added to multiple files in order to make it easier to use `"type": "module"`.
+- The bundle has received various size and startup time optimizations.
+
+---
+
+## 2.0.0
 
 Remember that a [migration guide](https://yarnpkg.com/advanced/migration) is available to help you port your applications to Yarn 2.
 
