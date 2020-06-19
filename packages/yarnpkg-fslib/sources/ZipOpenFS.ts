@@ -11,7 +11,7 @@ import {Filename, FSPath, PortablePath}                                         
 
 const ZIP_FD = 0x80000000;
 
-const FILE_PARTS_REGEX = /.*?(?<!\/|\\)\.zip(?=\/|\\|$)/;
+const FILE_PARTS_REGEX = /.*?(?<!\/)\.zip(?=\/|$)/;
 
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS<PortablePath>,
@@ -686,7 +686,8 @@ export class ZipOpenFS extends BasePortableFakeFS {
   }
 
   private findZip(p: PortablePath) {
-    if (this.filter && !this.filter.test(p)) return null;
+    if (this.filter && !this.filter.test(p))
+      return null;
 
     let filePath = `` as PortablePath;
 
@@ -702,7 +703,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
           continue;
 
         try {
-          if (this.baseFs.lstatSync(filePath).isFile() === false) {
+          if (!this.baseFs.lstatSync(filePath).isFile()) {
             this.notZip.add(filePath);
             continue;
           }
