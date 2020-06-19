@@ -36272,7 +36272,7 @@ async function copyFile(operations, lutimes, destinationFs, destination, destina
   if (destinationFs === sourceFs) {
     operations.push(async () => destinationFs.copyFilePromise(source, destination, (external_fs_default()).constants.COPYFILE_FICLONE));
   } else {
-    operations.push(async () => destinationFs.writeFilePromise(destination, (await sourceFs.readFilePromise(source))));
+    operations.push(async () => destinationFs.writeFilePromise(destination, await sourceFs.readFilePromise(source)));
   }
 }
 
@@ -37231,7 +37231,7 @@ class ProxiedFS extends FakeFS/* FakeFS */.uY {
   }
 
   async realpathPromise(p) {
-    return this.mapFromBase((await this.baseFs.realpathPromise(this.mapToBase(p))));
+    return this.mapFromBase(await this.baseFs.realpathPromise(this.mapToBase(p)));
   }
 
   realpathSync(p) {
@@ -37385,7 +37385,7 @@ class ProxiedFS extends FakeFS/* FakeFS */.uY {
   }
 
   async readlinkPromise(p) {
-    return this.mapFromBase((await this.baseFs.readlinkPromise(this.mapToBase(p))));
+    return this.mapFromBase(await this.baseFs.readlinkPromise(this.mapToBase(p)));
   }
 
   readlinkSync(p) {
@@ -38574,7 +38574,7 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
     }, async (zipFs, {
       subPath
     }) => {
-      return this.remapFd(zipFs, (await zipFs.openPromise(subPath, flags, mode)));
+      return this.remapFd(zipFs, await zipFs.openPromise(subPath, flags, mode));
     });
   }
 
@@ -38703,7 +38703,7 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
       archivePath,
       subPath
     }) => {
-      return this.pathUtils.resolve((await this.baseFs.realpathPromise(archivePath)), this.pathUtils.relative(sources_path/* PortablePath.root */.LZ.root, (await zipFs.realpathPromise(subPath))));
+      return this.pathUtils.resolve(await this.baseFs.realpathPromise(archivePath), this.pathUtils.relative(sources_path/* PortablePath.root */.LZ.root, await zipFs.realpathPromise(subPath)));
     });
   }
 
@@ -39323,7 +39323,7 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
       this.limitOpenFiles(this.maxOpenFiles);
       return await accept(zipFs);
     } else {
-      const zipFs = new ZipFS(p, (await getZipOptions()));
+      const zipFs = new ZipFS(p, await getZipOptions());
 
       try {
         return await accept(zipFs);
@@ -39478,7 +39478,6 @@ function getLibzipSync() {
 async function getLibzipPromise() {
   return getLibzipSync();
 }
-
 // EXTERNAL MODULE: external "module"
 var external_module_ = __webpack_require__(282);
 var external_module_default = /*#__PURE__*/__webpack_require__.n(external_module_);
@@ -39492,17 +39491,6 @@ var external_os_ = __webpack_require__(87);
 var external_os_default = /*#__PURE__*/__webpack_require__.n(external_os_);
 
 // CONCATENATED MODULE: ../yarnpkg-fslib/sources/index.ts
-
-
-
-
-
-
-
-
-
-
-
 
 
 
