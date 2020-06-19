@@ -140,10 +140,10 @@ export class Cache {
     const baseFs = new NodeFS();
 
     const validateFile = async (path: PortablePath, refetchPath: PortablePath | null = null) => {
-      const actualChecksum = `${this.cacheKey}/${await hashUtils.checksumFile(path)}`;
+      const actualChecksum = `${this.cacheKey}/${await cachedChecksumFile(path)}`;
 
       if (refetchPath !== null) {
-        const previousChecksum = `${this.cacheKey}/${await hashUtils.checksumFile(refetchPath)}`;
+        const previousChecksum = `${this.cacheKey}/${await cachedChecksumFile(refetchPath)}`;
         if (actualChecksum !== previousChecksum) {
           throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `The remote archive doesn't match the local checksum - has the local cache been corrupted?`);
         }
@@ -325,4 +325,15 @@ function getCacheKeyComponent(checksum: string) {
 function getHashComponent(checksum: string) {
   const split = checksum.indexOf(`/`);
   return split !== -1 ? checksum.slice(split + 1) : checksum;
+}
+
+const checksumCache = new Map<PortablePath, string>();
+
+async function cachedChecksumFile(path: PortablePath) {
+  let checksum = checksumCache.get(path);
+  if (!checksum) {
+    checksum = await hashUtils.checksumFile(path);
+    checksumCache.set(path, checksum);
+  }
+  return checksum;
 }
