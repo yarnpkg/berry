@@ -40886,6 +40886,7 @@ class ZipFS_ZipFS extends FakeFS_BasePortableFakeFS {
     if (!this.ready) throw EBUSY(`archive closed, ${reason}`);
     let resolvedP = ppath.resolve(PortablePath.root, p);
     if (resolvedP === `/`) return PortablePath.root;
+    if (resolveLastComponent && (this.entries.has(resolvedP) || this.listings.has(resolvedP))) return resolvedP;
 
     while (true) {
       const parentP = this.resolveFilename(reason, ppath.dirname(resolvedP), true);
