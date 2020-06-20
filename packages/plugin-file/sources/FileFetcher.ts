@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator}                                    from '@yarnpkg/core';
 import {miscUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
-import {NodeFS, PortablePath, ppath, CwdFS}         from '@yarnpkg/fslib';
+import {PortablePath, ppath, CwdFS}                 from '@yarnpkg/fslib';
 
 import {PROTOCOL}                                   from './constants';
 
