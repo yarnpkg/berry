@@ -97,5 +97,5 @@ child_process.execFileSync(`yarn`, [`install`], {cwd: pathToRepo});
 child_process.execFileSync(`yarn`, [`pack`, `--out`, pathToArchive], {cwd: pathToSubpackage});
 
 // Send the package content into the build directory
-child_process.execFileSync(`tar`, [`xfz`, `--strip-components=1`, pathToArchive, `-C`, execEnv.buildDir]);
+child_process.execFileSync(`tar`, [`-x`, `-z`, `--strip-components=1`, `-f`, pathToArchive, `-C`, execEnv.buildDir]);
 ```
