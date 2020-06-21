@@ -1,13 +1,13 @@
-import {BaseCommand, WorkspaceRequiredError}                        from '@yarnpkg/cli';
-import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@yarnpkg/core';
-import {Project, StreamReport, Workspace}                           from '@yarnpkg/core';
-import {structUtils}                                                from '@yarnpkg/core';
-import {Command, Usage, UsageError}                                 from 'clipanion';
-import inquirer                                                     from 'inquirer';
-import micromatch                                                   from 'micromatch';
+import {BaseCommand, WorkspaceRequiredError}                                               from '@yarnpkg/cli';
+import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions} from '@yarnpkg/core';
+import {Project, StreamReport, Workspace}                                                  from '@yarnpkg/core';
+import {structUtils}                                                                       from '@yarnpkg/core';
+import {Command, Usage, UsageError}                                                        from 'clipanion';
+import inquirer                                                                            from 'inquirer';
+import micromatch                                                                          from 'micromatch';
 
-import * as suggestUtils                                            from '../suggestUtils';
-import {Hooks}                                                      from '..';
+import * as suggestUtils                                                                   from '../suggestUtils';
+import {Hooks}                                                                             from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpCommand extends BaseCommand {
@@ -172,7 +172,6 @@ export default class UpCommand extends BaseCommand {
       return checkReport.exitCode();
 
     let askedQuestions = false;
-    let hasChanged = false;
 
     const afterWorkspaceDependencyReplacementList: Array<[
       Workspace,
@@ -227,30 +226,30 @@ export default class UpCommand extends BaseCommand {
           current,
           selected,
         ]);
+      } else {
+        const resolver = configuration.makeResolver();
+        const resolveOptions: MinimalResolveOptions = {project, resolver};
+        const bound = resolver.bindDescriptor(current, workspace.anchoredLocator, resolveOptions);
 
-        hasChanged = true;
+        project.forgetResolution(bound);
       }
     }
 
-    if (hasChanged) {
-      await configuration.triggerMultipleHooks(
-        (hooks: Hooks) => hooks.afterWorkspaceDependencyReplacement,
-        afterWorkspaceDependencyReplacementList,
-      );
+    await configuration.triggerMultipleHooks(
+      (hooks: Hooks) => hooks.afterWorkspaceDependencyReplacement,
+      afterWorkspaceDependencyReplacementList,
+    );
 
-      if (askedQuestions)
-        this.context.stdout.write(`\n`);
+    if (askedQuestions)
+      this.context.stdout.write(`\n`);
 
-      const installReport = await StreamReport.start({
-        configuration,
-        stdout: this.context.stdout,
-      }, async report => {
-        await project.install({cache, report});
-      });
+    const installReport = await StreamReport.start({
+      configuration,
+      stdout: this.context.stdout,
+    }, async report => {
+      await project.install({cache, report});
+    });
 
-      return installReport.exitCode();
-    }
-
-    return undefined;
+    return installReport.exitCode();
   }
 }
