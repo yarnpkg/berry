@@ -417,8 +417,8 @@ export class Project {
     }
   }
 
-  forgetResolution(descriptor: Descriptor): void
-  forgetResolution(locator: Locator): void
+  forgetResolution(descriptor: Descriptor): void;
+  forgetResolution(locator: Locator): void;
   forgetResolution(dataStructure: Descriptor | Locator): void {
     for (const [descriptorHash, locatorHash] of this.storedResolutions) {
       const doDescriptorHashesMatch = `descriptorHash` in dataStructure
