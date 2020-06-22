@@ -3,7 +3,7 @@ export type HoisterTree = {name: PackageName, identName?: PackageName, reference
 export type HoisterResult = {name: PackageName, identName?: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
 type Locator = string;
 type Ident = string;
-type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, {root: HoisterWorkTree, reason: string}>};
+type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>};
 
 /**
  * Mapping which packages depend on a given package. It is used to determine hoisting weight,
@@ -228,7 +228,7 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
 
   let wasStateChanged;
   do {
-    hoistGraph(tree, rootNode, rootNodePath, hoistedDependencies, hoistIdents, options);
+    hoistGraph(tree, rootNode, rootNodePath, hoistedDependencies, hoistIdents, hoistIdentMap, options);
     wasStateChanged = false;
     for (const [name, idents] of hoistIdentMap) {
       if (idents.length > 1 && !rootNode.dependencies.has(name)) {
@@ -293,7 +293,7 @@ const getSortedReglarDependencies = (node: HoisterWorkTree): Set<HoisterWorkTree
  * @param hoistedDependencies map of dependencies that were hoisted to parent nodes
  * @param hoistIdents idents that should be attempted to be hoisted to the root node
  */
-const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath: Set<Locator>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Set<Ident>, options: InternalHoistOptions) => {
+const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath: Set<Locator>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Set<Ident>, hoistIdentMap: Map<Ident, Array<Ident>>, options: InternalHoistOptions) => {
   const seenNodes = new Set<HoisterWorkTree>();
 
   const hoistNode = (nodePath: Array<HoisterWorkTree>, locatorPath: Array<Locator>, node: HoisterWorkTree, newNodes: Set<HoisterWorkTree>) => {
@@ -306,6 +306,9 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
       reasonRoot = `${Array.from(rootNodePath).map(x => prettyPrintLocator(x)).join(`→`)}`;
 
     let isHoistable = hoistIdents.has(node.ident);
+    if (options.debugLevel >= 2 && !isHoistable)
+      reason = `- filled by: ${prettyPrintLocator(hoistIdentMap.get(node.name)![0])} at ${reasonRoot}`;
+
     if (isHoistable) {
       let arePeerDepsSatisfied = true;
       const checkList = new Set(node.peerNames);
@@ -379,10 +382,7 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
       }
     } else if (options.debugLevel >= 2) {
       const parent = nodePath[nodePath.length - 1];
-      const prevReason = parent.reasons.get(node.name);
-      if (!prevReason || prevReason.root === rootNode) {
-        parent.reasons.set(node.name, {reason: reason!, root: rootNode});
-      }
+      parent.reasons.set(node.name, reason!);
     }
 
     if (!isHoistable && locatorPath.indexOf(node.locator) < 0) {
@@ -679,8 +679,8 @@ const dumpDepTree = (tree: HoisterWorkTree) => {
     for (let idx = 0; idx < dependencies.length; idx++) {
       const dep = dependencies[idx];
       if (!pkg.peerNames.has(dep.name)) {
-        const reasonObj = pkg.reasons.get(dep.name);
-        str += `${prefix}${idx < dependencies.length - 1 ? `├─` : `└─`}${(parents.has(dep) ? `>` : ``) + prettyPrintLocator(dep.locator) + (reasonObj ? ` ${reasonObj.reason}`: ``)}\n`;
+        const reason = pkg.reasons.get(dep.name);
+        str += `${prefix}${idx < dependencies.length - 1 ? `├─` : `└─`}${(parents.has(dep) ? `>` : ``) + prettyPrintLocator(dep.locator) + (reason ? ` ${reason}`: ``)}\n`;
         str += dumpPackage(dep, parents, `${prefix}${idx < dependencies.length - 1 ?`│ ` : `  `}`);
       }
     }
