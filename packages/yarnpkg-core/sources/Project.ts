@@ -541,7 +541,7 @@ export class Project {
 
     const resolveOptions: ResolveOptions = opts.lockfileOnly
       ? {project: this, report: opts.report, resolver}
-      : {project: this, report: opts.report, resolver, fetchOptions: {project: this, cache: opts.cache, checksums: this.storedChecksums, report: opts.report, fetcher}};
+      : {project: this, report: opts.report, resolver, fetchOptions: {project: this, cache: opts.cache, checksums: this.storedChecksums, report: opts.report, fetcher, skipIntegrityCheck: false}};
 
     const allDescriptors = new Map<DescriptorHash, Descriptor>();
     const allPackages = new Map<LocatorHash, Package>();
@@ -938,7 +938,7 @@ export class Project {
 
   async fetchEverything({cache, report, fetcher: userFetcher}: InstallOptions) {
     const fetcher = userFetcher || this.configuration.makeFetcher();
-    const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
+    const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, skipIntegrityCheck: false};
 
     const locatorHashes = miscUtils.sortMap(this.storedResolutions.values(), [(locatorHash: LocatorHash) => {
       const pkg = this.storedPackages.get(locatorHash);
@@ -994,7 +994,7 @@ export class Project {
 
   async linkEverything({cache, report, fetcher: optFetcher}: InstallOptions) {
     const fetcher = optFetcher || this.configuration.makeFetcher();
-    const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
+    const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, skipIntegrityCheck: true};
 
     const linkers = this.configuration.getLinkers();
     const linkerOptions = {project: this, report};
