@@ -8,6 +8,8 @@ export type WebpackPlugin =
   | ((this: webpack.Compiler, compiler: webpack.Compiler) => void)
   | webpack.WebpackPluginInstance;
 
+const identity = <T>(value: T) => value;
+
 // fork-ts-checker-webpack-plugin doesn't search
 // for tsconfig.json files outside process.cwd() :(
 export function findTsconfig() {
@@ -30,7 +32,7 @@ export function findTsconfig() {
 }
 
 // @ts-ignore: @types/webpack-merge depends on @types/webpack, which isn't compatible with the webpack 5 types
-export const makeConfig = (config: webpack.Configuration): webpack.Configuration => merge({
+export const makeConfig = (config: webpack.Configuration): webpack.Configuration => merge(identity<webpack.Configuration>({
   mode: `none`,
   devtool: false,
 
@@ -57,7 +59,7 @@ export const makeConfig = (config: webpack.Configuration): webpack.Configuration
         loader: require.resolve(`babel-loader`),
       }, {
         loader: require.resolve(`ts-loader`),
-        options: {
+        options: identity<Partial<tsLoader.Options>>({
           compilerOptions: {
             declaration: false,
             module: `ESNext` as any,
@@ -65,7 +67,7 @@ export const makeConfig = (config: webpack.Configuration): webpack.Configuration
           },
           onlyCompileBundledFiles: true,
           transpileOnly: true,
-        } as tsLoader.Options,
+        }),
       }],
     }],
   },
@@ -89,4 +91,4 @@ export const makeConfig = (config: webpack.Configuration): webpack.Configuration
       },
     }),
   ],
-} as webpack.Configuration, config);
+}), config);
