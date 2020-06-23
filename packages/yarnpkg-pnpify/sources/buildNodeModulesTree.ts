@@ -151,10 +151,10 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
   };
 
   const nodes = new Map<string, HoisterTree>();
-  const getNodeKey = (identName: string, locator: PhysicalPackageLocator) => `${stringifyLocator(locator)}:${identName}`;
+  const getNodeKey = (name: string, locator: PhysicalPackageLocator) => `${stringifyLocator(locator)}:${name}`;
 
-  const addPackageToTree = (identName: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentPkg: PackageInformation<NativePath>) => {
-    const nodeKey = getNodeKey(identName, locator);
+  const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentPkg: PackageInformation<NativePath>) => {
+    const nodeKey = getNodeKey(name, locator);
     let node = nodes.get(nodeKey);
 
     const isSeen = !!node;
@@ -165,13 +165,13 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
 
     if (!node) {
       node = {
-        name: locator.name,
+        name,
         reference: locator.reference,
         dependencies: new Set(),
         peerNames: pkg.packagePeers,
       };
-      if (identName !== locator.name)
-        node.identName = identName;
+      if (name !== locator.name)
+        node.identName = locator.name;
 
       nodes.set(nodeKey, node);
     }
