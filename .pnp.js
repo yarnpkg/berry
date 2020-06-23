@@ -40891,7 +40891,7 @@ class ZipFS_ZipFS extends FakeFS_BasePortableFakeFS {
     if (resolveLastComponent && fileIndex !== undefined) {
       if (this.isSymbolicLink(fileIndex)) {
         const target = this.getFileSource(fileIndex).toString();
-        return ppath.resolve(ppath.dirname(resolvedP), target);
+        return this.resolveFilename(reason, ppath.resolve(ppath.dirname(resolvedP), target), true);
       } else {
         return resolvedP;
       }
