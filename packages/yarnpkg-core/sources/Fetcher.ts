@@ -14,7 +14,7 @@ export type FetchOptions = MinimalFetchOptions & {
   cache: Cache,
   checksums: Map<LocatorHash, string>,
   report: Report,
-  skipIntegrityCheck: boolean
+  skipIntegrityCheck?: boolean
 };
 
 export type FetchResult = {
