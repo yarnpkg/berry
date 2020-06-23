@@ -145,6 +145,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
 
   const packageTree: HoisterTree = {
     name: topLocator.name,
+    identName: topLocator.name,
     reference: topLocator.reference,
     peerNames: topPkg.packagePeers,
     dependencies: new Set<HoisterTree>(),
@@ -166,12 +167,11 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
     if (!node) {
       node = {
         name,
+        identName: locator.name,
         reference: locator.reference,
         dependencies: new Set(),
         peerNames: pkg.packagePeers,
       };
-      if (name !== locator.name)
-        node.identName = locator.name;
 
       nodes.set(nodeKey, node);
     }
@@ -282,7 +282,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
       if (dep === pkg)
         continue;
       const references = Array.from(dep.references).sort();
-      const locator = {name: dep.identName || dep.name, reference: references[0]};
+      const locator = {name: dep.identName, reference: references[0]};
       const {name, scope} = getPackageName(dep.name);
 
       const packageNameParts = scope

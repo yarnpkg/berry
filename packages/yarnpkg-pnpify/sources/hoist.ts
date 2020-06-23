@@ -1,6 +1,6 @@
 type PackageName = string;
-export type HoisterTree = {name: PackageName, identName?: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>};
-export type HoisterResult = {name: PackageName, identName?: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
+export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>};
+export type HoisterResult = {name: PackageName, identName: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
 type Locator = string;
 type Ident = string;
 type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>};
@@ -471,8 +471,8 @@ const cloneTree = (tree: HoisterTree): HoisterWorkTree => {
   const treeCopy: HoisterWorkTree = {
     name,
     references: new Set([reference]),
-    locator: makeLocator(identName || name, reference),
-    ident: makeIdent(identName || name, reference),
+    locator: makeLocator(identName, reference),
+    ident: makeIdent(identName, reference),
     dependencies: new Map(),
     originalDependencies: new Map(),
     hoistedDependencies: new Map(),
@@ -492,8 +492,8 @@ const cloneTree = (tree: HoisterTree): HoisterWorkTree => {
       workNode = {
         name,
         references: new Set([reference]),
-        locator: makeLocator(identName || name, reference),
-        ident: makeIdent(identName || name, reference),
+        locator: makeLocator(identName, reference),
+        ident: makeIdent(identName, reference),
         dependencies: new Map(),
         originalDependencies: new Map(),
         hoistedDependencies: new Map(),
@@ -675,7 +675,8 @@ const dumpDepTree = (tree: HoisterWorkTree) => {
       const dep = dependencies[idx];
       if (!pkg.peerNames.has(dep.name)) {
         const reason = pkg.reasons.get(dep.name);
-        str += `${prefix}${idx < dependencies.length - 1 ? `├─` : `└─`}${(parents.has(dep) ? `>` : ``) + prettyPrintLocator(dep.locator) + (reason ? ` ${reason}`: ``)}\n`;
+        const identName = getIdentName(dep.locator);
+        str += `${prefix}${idx < dependencies.length - 1 ? `├─` : `└─`}${(parents.has(dep) ? `>` : ``) + (identName !== dep.name ? `a:${dep.name}:` : ``) + prettyPrintLocator(dep.locator) + (reason ? ` ${reason}`: ``)}\n`;
         str += dumpPackage(dep, parents, `${prefix}${idx < dependencies.length - 1 ?`│ ` : `  `}`);
       }
     }
