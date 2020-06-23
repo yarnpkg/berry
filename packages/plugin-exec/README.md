@@ -98,4 +98,11 @@ child_process.execFileSync(`yarn`, [`pack`, `--out`, pathToArchive], {cwd: pathT
 
 // Send the package content into the build directory
 child_process.execFileSync(`tar`, [`-x`, `-z`, `--strip-components=1`, `-f`, pathToArchive, `-C`, execEnv.buildDir]);
+
+// Normalize emitted directories and files to 1980-01-01 access/modification time for a consistent checksum
+const defaultTime = 315532800;
+const files = child_process.execFileSync('find', [execEnv.buildDir]).toString().trim().split('\n');
+for (const file of files) {
+  fs.utimesSync(file, defaultTime, defaultTime);
+}
 ```
