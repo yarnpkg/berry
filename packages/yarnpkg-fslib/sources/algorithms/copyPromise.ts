@@ -86,6 +86,9 @@ async function copyFolder<P1 extends Path, P2 extends Path>(operations: Operatio
 
   const entries = await sourceFs.readdirPromise(source);
 
+  // Readdir isn't necessarily sorted on all systems
+  entries.sort();
+
   await Promise.all(entries.map(async entry => {
     await copyImpl(operations, lutimes, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
   }));
