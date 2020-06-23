@@ -70,12 +70,11 @@
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
     "@yarnpkg/libzip": "workspace:^2.0.0-rc.13",
     "@yarnpkg/pnpify": "workspace:^2.0.0-rc.25",
-    "pnp-webpack-plugin": "^1.4.3",
-    "ts-loader": "^6.2.1",
+    "ts-loader": "^7.0.5",
     "typescript": "^3.9.5",
     "vsce": "^1.76.1",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.2.1"
+    "webpack": "^5.0.0-beta.17",
+    "webpack-cli": "^4.0.0-beta.8"
   },
   "scripts": {
     "vscode:prepublish": "run build",

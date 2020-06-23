@@ -4,7 +4,7 @@ import {ExecFetcher, ExecEnv} from './ExecFetcher';
 import {ExecResolver}         from './ExecResolver';
 import * as execUtils         from './execUtils';
 
-export {ExecEnv};
+export type {ExecEnv};
 export {execUtils};
 
 const plugin: Plugin = {

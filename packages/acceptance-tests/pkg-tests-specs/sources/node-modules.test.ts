@@ -1,4 +1,4 @@
-const {npath, xfs} = require(`@yarnpkg/fslib`);
+import {xfs, npath} from '@yarnpkg/fslib';
 
 const {
   fs: {writeFile, writeJson},

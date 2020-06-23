@@ -107,6 +107,11 @@ module.exports = {
             argv0: `pnpify`,
             binary: `${__dirname}/../../scripts/run-pnpify.js`,
           },
+          {
+            namespace: `builder`,
+            argv0: `builder`,
+            binary: `${__dirname}/../../scripts/run-builder.js`,
+          },
         ],
       },
     },

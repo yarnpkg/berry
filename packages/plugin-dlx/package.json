@@ -6,7 +6,7 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
     "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.9",
-    "clipanion": "^2.4.1",
+    "clipanion": "^2.4.2",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {

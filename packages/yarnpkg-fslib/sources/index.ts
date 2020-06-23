@@ -6,23 +6,24 @@ import {FakeFS}                                           from './FakeFS';
 import {NodeFS}                                           from './NodeFS';
 import {Filename, PortablePath, NativePath, npath, ppath} from './path';
 
-export {CreateReadStreamOptions}  from './FakeFS';
-export {CreateWriteStreamOptions} from './FakeFS';
-export {Dirent, SymlinkType}      from './FakeFS';
-export {MkdirOptions}             from './FakeFS';
-export {WatchOptions}             from './FakeFS';
-export {WatchCallback}            from './FakeFS';
-export {Watcher}                  from './FakeFS';
-export {WriteFileOptions}         from './FakeFS';
-export {normalizeLineEndings}     from './FakeFS';
-export {ExtractHintOptions}       from './FakeFS';
+export {normalizeLineEndings}          from './FakeFS';
+export type {CreateReadStreamOptions}  from './FakeFS';
+export type {CreateWriteStreamOptions} from './FakeFS';
+export type {Dirent, SymlinkType}      from './FakeFS';
+export type {MkdirOptions}             from './FakeFS';
+export type {WatchOptions}             from './FakeFS';
+export type {WatchCallback}            from './FakeFS';
+export type {Watcher}                  from './FakeFS';
+export type {WriteFileOptions}         from './FakeFS';
+export type {ExtractHintOptions}       from './FakeFS';
 
-export {DEFAULT_COMPRESSION_LEVEL} from './ZipFS';
-export {ZipCompression}            from './ZipFS';
+export {DEFAULT_COMPRESSION_LEVEL}     from './ZipFS';
+export type {ZipCompression}           from './ZipFS';
 
-export {FSPath, Path, PortablePath, NativePath, Filename} from './path';
-export {ParsedPath, PathUtils, FormatInputPathObject} from './path';
-export {npath, ppath, toFilename} from './path';
+export {PortablePath, Filename}                            from './path';
+export type {FSPath, Path, NativePath}                     from './path';
+export type {ParsedPath, PathUtils, FormatInputPathObject} from './path';
+export {npath, ppath, toFilename}                          from './path';
 
 export {AliasFS}                   from './AliasFS';
 export {FakeFS}                    from './FakeFS';

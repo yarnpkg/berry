@@ -12,7 +12,7 @@ import {promisify}                                                         from 
 import webpack                                                             from 'webpack';
 
 import {findPlugins}                                                       from '../../tools/findPlugins';
-import {makeConfig}                                                        from '../../tools/makeConfig';
+import {makeConfig, WebpackPlugin}                                         from '../../tools/makeConfig';
 
 const execFile = promisify(cp.execFile);
 
@@ -45,6 +45,24 @@ export default class BuildBundleCommand extends Command {
 
   static usage: Usage = Command.Usage({
     description: `build the local bundle`,
+    details: `
+      This command builds the local bundle - the Yarn binary file that is installed in projects.
+
+      If the \`--no-minify\` option is used, the bundle will be built in development mode, without any optimizations like minifying, symbol scrambling, and treeshaking.
+
+      If the \`--no-git-hash\` option is used, the version of the bundle won't include the git hash of the current commit.
+
+      If the \`--profile\` flag is set, the bundle will only include the plugins that are part of the the specified profile.
+
+      If the \`--plugin\` flag is used, the bundle will also include the specified plugins besides the ones included in the specified profile.
+    `,
+    examples: [[
+      `Build the local bundle`,
+      `$0 build bundle`,
+    ], [
+      `Build the local development bundle`,
+      `$0 build bundle --no-minify`,
+    ]],
   });
 
   @Command.Path(`build`, `bundle`)
@@ -100,7 +118,7 @@ export default class BuildBundleCommand extends Command {
                   terserOptions: {
                     ecma: 8,
                   },
-                }),
+                }) as WebpackPlugin,
               ],
             },
           },
@@ -151,7 +169,7 @@ export default class BuildBundleCommand extends Command {
           compiler.run((err, stats) => {
             if (err) {
               reject(err);
-            } else if (stats.compilation.errors.length > 0) {
+            } else if (stats && stats.compilation.errors.length > 0) {
               resolve(stats.toString(`errors-only`));
             } else {
               resolve(null);

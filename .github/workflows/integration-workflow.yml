@@ -81,6 +81,11 @@ jobs:
         node ./scripts/run-yarn.js constraints
       shell: bash
 
+    - name: 'Check for type errors'
+      run: |
+        node ./scripts/run-yarn.js typecheck:all
+      shell: bash
+
   acceptance:
     strategy:
       fail-fast: false

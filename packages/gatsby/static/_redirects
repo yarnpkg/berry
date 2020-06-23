@@ -3,6 +3,7 @@
 /cli /cli/install 301
 /advanced /advanced/architecture 301
 /pnpify/cli /pnpify/cli/run 301
+/builder/cli /builder/cli/build/plugin 301
 /package/* /package 200
 
 /playground/* code=:value https://viko0.sse.codesandbox.io/:splat?code=:value 301

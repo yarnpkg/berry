@@ -8,7 +8,7 @@
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
     "@yarnpkg/plugin-stage": "workspace:^2.0.0-rc.17",
     "@yarnpkg/pnp": "workspace:^2.0.0-rc.23",
-    "clipanion": "^2.4.1",
+    "clipanion": "^2.4.2",
     "semver": "^7.1.2",
     "tslib": "^1.13.0"
   },
