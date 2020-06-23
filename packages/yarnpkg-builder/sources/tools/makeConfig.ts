@@ -1,9 +1,38 @@
-// @ts-ignore
-import PnpWebpackPlugin from 'pnp-webpack-plugin';
-import merge            from 'webpack-merge';
-import webpack          from 'webpack';
+import {npath, ppath, Filename, xfs} from '@yarnpkg/fslib';
+import ForkTsCheckerWebpackPlugin    from 'fork-ts-checker-webpack-plugin';
+import tsLoader                      from 'ts-loader';
+import merge                         from 'webpack-merge';
+import webpack                       from 'webpack';
 
-export const makeConfig = (config: webpack.Configuration) => merge({
+export type WebpackPlugin =
+  | ((this: webpack.Compiler, compiler: webpack.Compiler) => void)
+  | webpack.WebpackPluginInstance;
+
+const identity = <T>(value: T) => value;
+
+// fork-ts-checker-webpack-plugin doesn't search
+// for tsconfig.json files outside process.cwd() :(
+export function findTsconfig() {
+  let nextTsContextRoot = process.cwd();
+  let currTsContextRoot = null;
+
+  while (nextTsContextRoot !== currTsContextRoot) {
+    currTsContextRoot = nextTsContextRoot;
+    nextTsContextRoot = npath.dirname(currTsContextRoot);
+
+    if (xfs.existsSync(ppath.join(npath.toPortablePath(currTsContextRoot), `tsconfig.json` as Filename))) {
+      break;
+    }
+  }
+
+  if (nextTsContextRoot === currTsContextRoot)
+    throw new Error(`No tsconfig.json files could be found`);
+
+  return npath.join(currTsContextRoot, `tsconfig.json`);
+}
+
+// @ts-ignore: @types/webpack-merge depends on @types/webpack, which isn't compatible with the webpack 5 types
+export const makeConfig = (config: webpack.Configuration): webpack.Configuration => merge(identity<webpack.Configuration>({
   mode: `none`,
   devtool: false,
 
@@ -20,7 +49,6 @@ export const makeConfig = (config: webpack.Configuration) => merge({
 
   resolve: {
     extensions: [`.js`, `.ts`, `.tsx`, `.json`],
-    plugins: [PnpWebpackPlugin],
   },
 
   module: {
@@ -31,13 +59,15 @@ export const makeConfig = (config: webpack.Configuration) => merge({
         loader: require.resolve(`babel-loader`),
       }, {
         loader: require.resolve(`ts-loader`),
-        options: {
+        options: identity<Partial<tsLoader.Options>>({
           compilerOptions: {
             declaration: false,
-            module: `ESNext`,
-            moduleResolution: `node`,
+            module: `ESNext` as any,
+            moduleResolution: `node` as any,
           },
-        },
+          onlyCompileBundledFiles: true,
+          transpileOnly: true,
+        }),
       }],
     }],
   },
@@ -49,8 +79,16 @@ export const makeConfig = (config: webpack.Configuration) => merge({
   },
 
   plugins: [
-    new webpack.IgnorePlugin(/^encoding$/, /node-fetch/),
+    new webpack.IgnorePlugin({
+      resourceRegExp: /^encoding$/,
+      contextRegExp: /node-fetch/,
+    }),
     new webpack.DefinePlugin({[`IS_WEBPACK`]: `true`}),
     new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1}),
+    new ForkTsCheckerWebpackPlugin({
+      typescript: {
+        configFile: findTsconfig(),
+      },
+    }),
   ],
-}, config);
+}), config);

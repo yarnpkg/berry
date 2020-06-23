@@ -7,7 +7,7 @@
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
     "@yarnpkg/libui": "workspace:^2.0.0-rc.9",
     "@yarnpkg/parsers": "workspace:^2.0.0-rc.13",
-    "clipanion": "^2.4.1",
+    "clipanion": "^2.4.2",
     "ink": "^2.3.0",
     "react": "^16.13.1",
     "semver": "^7.1.2",

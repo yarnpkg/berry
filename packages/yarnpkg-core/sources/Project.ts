@@ -417,9 +417,25 @@ export class Project {
     }
   }
 
+  forgetResolution(descriptor: Descriptor): void;
+  forgetResolution(locator: Locator): void;
+  forgetResolution(dataStructure: Descriptor | Locator): void {
+    for (const [descriptorHash, locatorHash] of this.storedResolutions) {
+      const doDescriptorHashesMatch = `descriptorHash` in dataStructure
+        && dataStructure.descriptorHash === descriptorHash;
+      const doLocatorHashesMatch = `locatorHash` in dataStructure
+        && dataStructure.locatorHash === locatorHash;
+
+      if (doDescriptorHashesMatch || doLocatorHashesMatch) {
+        this.storedDescriptors.delete(descriptorHash);
+        this.storedResolutions.delete(descriptorHash);
+        this.originalPackages.delete(locatorHash);
+      }
+    }
+  }
+
   forgetTransientResolutions() {
     const resolver = this.configuration.makeResolver();
-    const forgottenPackages = new Set();
 
     for (const pkg of this.originalPackages.values()) {
       let shouldPersistResolution: boolean;
@@ -430,15 +446,7 @@ export class Project {
       }
 
       if (!shouldPersistResolution) {
-        this.originalPackages.delete(pkg.locatorHash);
-        forgottenPackages.add(pkg.locatorHash);
-      }
-    }
-
-    for (const [descriptorHash, locatorHash] of this.storedResolutions) {
-      if (forgottenPackages.has(locatorHash)) {
-        this.storedResolutions.delete(descriptorHash);
-        this.storedDescriptors.delete(descriptorHash);
+        this.forgetResolution(pkg);
       }
     }
   }

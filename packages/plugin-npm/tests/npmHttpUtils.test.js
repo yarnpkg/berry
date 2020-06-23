@@ -4,9 +4,9 @@ import {get}               from '@yarnpkg/plugin-npm/sources/npmHttpUtils';
 import {makeConfiguration} from './_makeConfiguration';
 
 jest.mock(`@yarnpkg/core`, () => ({
-  ...require.requireActual(`@yarnpkg/core`),
+  ...jest.requireActual(`@yarnpkg/core`),
   httpUtils: {
-    ...require.requireActual(`@yarnpkg/core`).httpUtils,
+    ...jest.requireActual(`@yarnpkg/core`).httpUtils,
     get: jest.fn(() => Promise.resolve()),
   },
 }));
