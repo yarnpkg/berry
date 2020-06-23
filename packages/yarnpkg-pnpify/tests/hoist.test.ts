@@ -2,9 +2,11 @@ import {hoist, HoisterTree, HoisterResult} from '../sources/hoist';
 
 const toTree = (obj: any, key: string = `.`, nodes = new Map()): HoisterTree => {
   let node = nodes.get(key);
+  const identName = key.match(/@?[^@]+/)![0];
   if (!node) {
     node = {
-      name: key.match(/@?[^@]+/)![0],
+      name: identName,
+      identName,
       reference: key.match(/@?[^@]+@?(.+)?/)![1] || ``,
       dependencies: new Set<HoisterTree>(),
       peerNames: new Set<string>((obj[key] || {}).peerNames || []),
