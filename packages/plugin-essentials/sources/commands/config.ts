@@ -58,7 +58,11 @@ export default class ConfigCommand extends BaseCommand {
         for (const key of keys) {
           const data = configuration.settings.get(key);
 
-          const effective = configuration.getRedacted(key);
+          const effective = configuration.getSpecial(key, {
+            hideSecrets: true,
+            getNativePaths: true,
+          });
+
           const source = configuration.sources.get(key);
 
           if (this.verbose) {

@@ -1080,14 +1080,17 @@ export class Configuration {
     return this.values.get(key) as T;
   }
 
-  getSpecial<T = any>(key: string, transforms: SettingTransforms) {
+  getSpecial<T = any>(key: string, {hideSecrets = false, getNativePaths = false}: Partial<SettingTransforms>) {
     const rawValue = this.get(key);
     const definition = this.settings.get(key);
 
     if (typeof definition === `undefined`)
       throw new UsageError(`Couldn't find a configuration settings named "${key}"`);
 
-    return transformConfiguration(rawValue, definition, transforms) as T;
+    return transformConfiguration(rawValue, definition, {
+      hideSecrets,
+      getNativePaths,
+    }) as T;
   }
 
   getSubprocessStreams(logFile: PortablePath, {header, prefix, report}: {header?: string, prefix: string, report: Report}) {

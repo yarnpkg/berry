@@ -1,8 +1,8 @@
-import {BaseCommand}                                                   from '@yarnpkg/cli';
-import {Configuration, StreamReport, SettingsDefinition, SettingsType} from '@yarnpkg/core';
-import {Command, Usage, UsageError}                                    from 'clipanion';
-import getPath                                                         from 'lodash/get';
-import {inspect}                                                       from 'util';
+import {BaseCommand}                 from '@yarnpkg/cli';
+import {Configuration, StreamReport} from '@yarnpkg/core';
+import {Command, Usage, UsageError}  from 'clipanion';
+import getPath                       from 'lodash/get';
+import {inspect}                     from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigSetCommand extends BaseCommand {
@@ -51,12 +51,12 @@ export default class ConfigSetCommand extends BaseCommand {
     if (typeof setting === `undefined`)
       throw new UsageError(`Couldn't find a configuration settings named "${name}"`);
 
-    const value = configuration.getSpecial(name, {
+    const displayedValue = configuration.getSpecial(name, {
       hideSecrets: !this.unsafe,
       getNativePaths: true,
     });
 
-    const asObject = convertMapsToObjects(value);
+    const asObject = convertMapsToObjects(displayedValue);
     const requestedObject = path
       ? getPath(asObject, path)
       : asObject;
