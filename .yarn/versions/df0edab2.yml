@@ -27,4 +27,5 @@ declined:
   - "@yarnpkg/builder"
   - "@yarnpkg/cli"
   - "@yarnpkg/doctor"
+  - "@yarnpkg/pnp"
   - "@yarnpkg/pnpify"

@@ -1,12 +1,12 @@
-import {FakeFS, PosixFS, npath, ppath, patchFs, PortablePath, Filename, NativePath} from '@yarnpkg/fslib';
-import fs                                                                           from 'fs';
-import {Module}                                                                     from 'module';
-import {URL, fileURLToPath}                                                         from 'url';
+import {FakeFS, PosixFS, npath, patchFs, PortablePath, Filename, NativePath} from '@yarnpkg/fslib';
+import fs                                                                    from 'fs';
+import {Module}                                                              from 'module';
+import {URL, fileURLToPath}                                                  from 'url';
 
-import {PnpApi}                                                                     from '../types';
+import {PnpApi}                                                              from '../types';
 
-import {ErrorCode, makeError, getIssuerModule}                                      from './internalTools';
-import {Manager}                                                                    from './makeManager';
+import {ErrorCode, makeError, getIssuerModule}                               from './internalTools';
+import {Manager}                                                             from './makeManager';
 
 export type ApplyPatchOptions = {
   fakeFs: FakeFS<PortablePath>,
