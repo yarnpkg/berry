@@ -137,45 +137,49 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
   if (topLocator === null)
     throw new Error(`Assertion failed: Expected the top-level package to have a physical locator`);
 
-  const topLocatorKey = stringifyLocator(topLocator);
   for (const locator of pnpRoots) {
-    if (stringifyLocator(locator) !== topLocatorKey) {
+    if (locator.name !== topLocator.name || locator.reference !== topLocator.reference) {
       topPkg.packageDependencies.set(`${locator.name}$wsroot$`, locator.reference);
     }
   }
 
   const packageTree: HoisterTree = {
     name: topLocator.name,
+    identName: topLocator.name,
     reference: topLocator.reference,
     peerNames: topPkg.packagePeers,
     dependencies: new Set<HoisterTree>(),
   };
 
-  const nodes = new Map<LocatorKey, HoisterTree>();
+  const nodes = new Map<string, HoisterTree>();
+  const getNodeKey = (name: string, locator: PhysicalPackageLocator) => `${stringifyLocator(locator)}:${name}`;
 
-  const addPackageToTree = (pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentPkg: PackageInformation<NativePath>) => {
-    const locatorKey = stringifyLocator(locator);
-    let node = nodes.get(locatorKey);
+  const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentPkg: PackageInformation<NativePath>) => {
+    const nodeKey = getNodeKey(name, locator);
+    let node = nodes.get(nodeKey);
 
     const isSeen = !!node;
-    if (!isSeen && locatorKey === topLocatorKey) {
+    if (!isSeen && locator.name === topLocator.name && locator.reference === topLocator.reference) {
       node = packageTree;
-      nodes.set(locatorKey, packageTree);
+      nodes.set(nodeKey, packageTree);
     }
 
     if (!node) {
-      nodes.set(locatorKey, node = {
-        name: locator.name,
+      node = {
+        name,
+        identName: locator.name,
         reference: locator.reference,
         dependencies: new Set(),
         peerNames: pkg.packagePeers,
-      });
+      };
+
+      nodes.set(nodeKey, node);
     }
 
     parent.dependencies.add(node);
 
     // If we link dependencies to file system we must not try to install children dependencies inside portal folders
-    const shouldAddChildrenDependencies = options.pnpifyFs || !isPortalLocator(locatorKey);
+    const shouldAddChildrenDependencies = options.pnpifyFs || !isPortalLocator(nodeKey);
 
     if (!isSeen && shouldAddChildrenDependencies) {
       for (const [name, referencish] of pkg.packageDependencies) {
@@ -188,16 +192,16 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
             throw new Error(`Assertion failed: Expected the package to have been registered`);
 
           // Skip package self-references
-          if (stringifyLocator(depLocator) === locatorKey)
+          if (depLocator.name === locator.name && depLocator.reference === locator.reference)
             continue;
 
-          addPackageToTree(depPkg, depLocator, node, pkg);
+          addPackageToTree(name, depPkg, depLocator, node, pkg);
         }
       }
     }
   };
 
-  addPackageToTree(topPkg, topLocator, packageTree, topPkg);
+  addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, topPkg);
 
   return packageTree;
 };
@@ -254,8 +258,8 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
     };
   };
 
-  const getPackageName = (locator: PhysicalPackageLocator): { name: Filename, scope: Filename | null } => {
-    const [nameOrScope, name] = locator.name.split(`/`);
+  const getPackageName = (identName: string): { name: Filename, scope: Filename | null } => {
+    const [nameOrScope, name] = identName.split(`/`);
 
     return name ? {
       scope: toFilename(nameOrScope),
@@ -278,8 +282,8 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
       if (dep === pkg)
         continue;
       const references = Array.from(dep.references).sort();
-      const locator = {name: dep.name, reference: references[0]};
-      const {name, scope} = getPackageName(locator);
+      const locator = {name: dep.identName, reference: references[0]};
+      const {name, scope} = getPackageName(dep.name);
 
       const packageNameParts = scope
         ? [scope, name]

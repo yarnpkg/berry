@@ -210,7 +210,7 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should not recreated folders when package is updated`,
+  test(`should not recreate folders when package is updated`,
     makeTemporaryEnv(
       {
         private: true,
@@ -274,6 +274,56 @@ describe(`Node_Modules`, () => {
           externalException: {
             code: `MODULE_NOT_FOUND`,
           },
+        });
+      },
+    ),
+  );
+
+  test(`should support aliases`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`packages/*`],
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+          [`no-deps2`]: `npm:no-deps@2.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
+          nodeLinker: "node-modules"
+        `);
+
+        await writeJson(npath.toPortablePath(`${path}/packages/workspace/package.json`), {
+          name: `workspace`,
+          version: `1.0.0`,
+          dependencies: {
+            [`no-deps`]: `npm:no-deps-bins@1.0.0`, // Should NOT be hoisted to the top
+            [`no-deps2`]: `npm:no-deps@2.0.0`,     // Should be hoisted to the top
+          },
+        });
+        await writeFile(`${path}/packages/workspace/index.js`,
+          `module.exports = require('./package.json');\n` +
+          `for (const key of ['dependencies', 'devDependencies', 'peerDependencies']) {\n` +
+          `    for (const dep of Object.keys(module.exports[key] || {})) {\n` +
+          `        module.exports[key][dep] = require(dep);\n` +
+          `    }}\n`);
+
+        await run(`install`);
+
+        await expect(source(`require('no-deps')`)).resolves.toEqual({
+          name: `no-deps`,
+          version: `1.0.0`,
+        });
+        await expect(source(`require('no-deps2')`)).resolves.toEqual({
+          name: `no-deps`,
+          version: `2.0.0`,
+        });
+        await expect(source(`require('workspace').dependencies['no-deps2'] === require('no-deps2')`)).resolves.toEqual(true);
+        await expect(source(`require('workspace').dependencies['no-deps']`)).resolves.toEqual({
+          bin: `./bin`,
+          name: `no-deps-bins`,
+          version: `1.0.0`,
         });
       },
     ),
