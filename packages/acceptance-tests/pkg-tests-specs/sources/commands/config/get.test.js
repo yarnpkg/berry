@@ -36,7 +36,9 @@ describe(`Commands`, () => {
     test(
       `it should print native paths`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        const value = await run(`config`, `get`, `cacheFolder`, `--no-redacted`);
+        const {stdout} = await run(`config`, `get`, `cacheFolder`, `--no-redacted`);
+        const value = stdout.trim();
+
         expect(value).toEqual(npath.fromPortablePath(value));
       }),
     );
