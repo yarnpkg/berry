@@ -100,11 +100,11 @@ export default class ConfigCommand extends BaseCommand {
           }, 0);
 
           for (const [key, description] of keysAndDescriptions) {
-            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(configuration.getRedacted(key), inspectConfig)}`);
+            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(configuration.getSpecial(key, {hideSecrets: true, getNativePaths: true}), inspectConfig)}`);
           }
         } else {
           for (const key of keys) {
-            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(configuration.getRedacted(key), inspectConfig)}`);
+            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(configuration.getSpecial(key, {hideSecrets: true, getNativePaths: true}), inspectConfig)}`);
           }
         }
       }
