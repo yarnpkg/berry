@@ -134,16 +134,16 @@ export class Cache {
     }
   }
 
-  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, {onHit, onMiss, loader}: {onHit?: () => void, onMiss?: () => void, loader?: () => Promise<ZipFS>}): Promise<[FakeFS<PortablePath>, () => void, string]> {
+  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, {onHit, onMiss, loader, skipIntegrityCheck}: {onHit?: () => void, onMiss?: () => void, loader?: () => Promise<ZipFS>, skipIntegrityCheck?: boolean}): Promise<[FakeFS<PortablePath>, () => void, string]> {
     const mirrorPath = this.getLocatorMirrorPath(locator);
 
     const baseFs = new NodeFS();
 
     const validateFile = async (path: PortablePath, refetchPath: PortablePath | null = null) => {
-      const actualChecksum = `${this.cacheKey}/${await hashUtils.checksumFile(path)}`;
+      const actualChecksum = (!skipIntegrityCheck || !expectedChecksum) ? `${this.cacheKey}/${await hashUtils.checksumFile(path)}` : expectedChecksum;
 
       if (refetchPath !== null) {
-        const previousChecksum = `${this.cacheKey}/${await hashUtils.checksumFile(refetchPath)}`;
+        const previousChecksum = (!skipIntegrityCheck || !expectedChecksum) ? `${this.cacheKey}/${await hashUtils.checksumFile(refetchPath)}` : expectedChecksum;
         if (actualChecksum !== previousChecksum) {
           throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `The remote archive doesn't match the local checksum - has the local cache been corrupted?`);
         }
