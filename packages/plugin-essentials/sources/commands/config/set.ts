@@ -74,9 +74,12 @@ export default class ConfigSetCommand extends BaseCommand {
     });
 
     const updatedConfiguration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const redactedValue = updatedConfiguration.getRedacted(name);
+    const displayedValue = updatedConfiguration.getSpecial(name, {
+      hideSecrets: true,
+      getNativePaths: true,
+    });
 
-    const asObject = convertMapsToObjects(redactedValue);
+    const asObject = convertMapsToObjects(displayedValue);
     const requestedObject = path
       ? getPath(asObject, path)
       : asObject;
