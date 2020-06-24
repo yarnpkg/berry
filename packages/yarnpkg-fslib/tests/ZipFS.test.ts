@@ -144,5 +144,21 @@ describe(`ZipFS`, () => {
     const zipFs2 = new ZipFS(zipContent, {libzip});
     expect(zipFs2.readFileSync(`/foo.txt` as PortablePath, `utf8`)).toEqual(`Test`);
   });
+
+  it(`can handle nested symlinks`, () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+    zipFs.writeFileSync(`/foo.txt`as PortablePath, `Test`);
+
+    zipFs.symlinkSync(`/foo.txt` as PortablePath, `/linkA` as PortablePath);
+    zipFs.symlinkSync(`/linkA` as PortablePath, `/linkB` as PortablePath);
+
+    const zipFs2 = new ZipFS(zipFs.getBufferAndClose(), {libzip});
+
+    expect(zipFs2.readFileSync(`/linkA` as PortablePath, `utf8`)).toEqual(`Test`);
+    expect(zipFs2.readFileSync(`/linkB` as PortablePath, `utf8`)).toEqual(`Test`);
+
+    zipFs2.discardAndClose();
+  });
 });
 

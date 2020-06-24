@@ -37385,6 +37385,16 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     if (!this.ready) throw EBUSY(`archive closed, ${reason}`);
     let resolvedP = sources_path/* ppath.resolve */.y1.resolve(sources_path/* PortablePath.root */.LZ.root, p);
     if (resolvedP === `/`) return sources_path/* PortablePath.root */.LZ.root;
+    const fileIndex = this.entries.get(resolvedP);
+
+    if (resolveLastComponent && fileIndex !== undefined) {
+      if (this.isSymbolicLink(fileIndex)) {
+        const target = this.getFileSource(fileIndex).toString();
+        return this.resolveFilename(reason, sources_path/* ppath.resolve */.y1.resolve(sources_path/* ppath.dirname */.y1.dirname(resolvedP), target), true);
+      } else {
+        return resolvedP;
+      }
+    }
 
     while (true) {
       const parentP = this.resolveFilename(reason, sources_path/* ppath.dirname */.y1.dirname(resolvedP), true);

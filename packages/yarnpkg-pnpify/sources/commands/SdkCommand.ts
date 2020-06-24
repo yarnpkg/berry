@@ -1,9 +1,9 @@
-import {StreamReport, Configuration}                                                                                   from '@yarnpkg/core';
-import {NativePath, npath, ppath, xfs, Filename}                                                                       from '@yarnpkg/fslib';
-import {Command, UsageError}                                                                                           from 'clipanion';
+import {StreamReport, Configuration}                                                                       from '@yarnpkg/core';
+import {NativePath, npath, ppath, xfs, Filename}                                                           from '@yarnpkg/fslib';
+import {Command, UsageError}                                                                               from 'clipanion';
 
-import {dynamicRequire}                                                                                                from '../dynamicRequire';
-import {generateSdk, validateIntegrations, SUPPORTED_INTEGRATIONS, SupportedIntegration, SDK_FOLDER, IntegrationsFile} from '../generateSdk';
+import {dynamicRequire}                                                                                    from '../dynamicRequire';
+import {generateSdk, validateIntegrations, SUPPORTED_INTEGRATIONS, SupportedIntegration, IntegrationsFile} from '../generateSdk';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SdkCommand extends Command {
