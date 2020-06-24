@@ -3,6 +3,7 @@ releases:
   "@yarnpkg/core": prerelease
   "@yarnpkg/fslib": prerelease
   "@yarnpkg/plugin-git": prerelease
+  "@yarnpkg/plugin-patch": prerelease
 
 declined:
   - "@yarnpkg/plugin-compat"
@@ -20,7 +21,6 @@ declined:
   - "@yarnpkg/plugin-npm"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
-  - "@yarnpkg/plugin-patch"
   - "@yarnpkg/plugin-pnp"
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"

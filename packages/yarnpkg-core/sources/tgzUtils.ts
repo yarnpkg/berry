@@ -15,7 +15,7 @@ export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = n
   const zipFs = new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise(), level: compressionLevel});
   const target = ppath.resolve(PortablePath.root, prefixPath!);
 
-  await zipFs.copyPromise(target, source, {baseFs});
+  await zipFs.copyPromise(target, source, {baseFs, stableTime: true, stableSort: true});
 
   return zipFs;
 }
