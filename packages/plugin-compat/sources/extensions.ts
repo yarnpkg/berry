@@ -75,4 +75,10 @@ export const packageExtensions: Array<[string, any]> = [
       [`tiny-warning`]: `^1.0.2`,
     },
   }],
+  // https://github.com/milesj/babel-plugin-typescript-to-proptypes/pull/38
+  [`babel-plugin-typescript-to-proptypes@*`, {
+    dependencies: {
+      [`@babel/types`]: `^7.10.3`,
+    },
+  }],
 ];
