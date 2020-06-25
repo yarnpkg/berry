@@ -51,11 +51,12 @@ export default class ConfigSetCommand extends BaseCommand {
     if (typeof setting === `undefined`)
       throw new UsageError(`Couldn't find a configuration settings named "${name}"`);
 
-    const value = this.unsafe
-      ? configuration.get(name)
-      : configuration.getRedacted(name);
+    const displayedValue = configuration.getSpecial(name, {
+      hideSecrets: !this.unsafe,
+      getNativePaths: true,
+    });
 
-    const asObject = convertMapsToObjects(value);
+    const asObject = convertMapsToObjects(displayedValue);
     const requestedObject = path
       ? getPath(asObject, path)
       : asObject;

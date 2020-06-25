@@ -714,6 +714,16 @@ export class ZipFS extends BasePortableFakeFS {
     if (resolvedP === `/`)
       return PortablePath.root;
 
+    const fileIndex = this.entries.get(resolvedP);
+    if (resolveLastComponent && fileIndex !== undefined) {
+      if (this.isSymbolicLink(fileIndex)) {
+        const target = this.getFileSource(fileIndex).toString() as PortablePath;
+        return this.resolveFilename(reason, ppath.resolve(ppath.dirname(resolvedP), target), true);
+      } else {
+        return resolvedP;
+      }
+    }
+
     while (true) {
       const parentP = this.resolveFilename(reason, ppath.dirname(resolvedP), true);
 

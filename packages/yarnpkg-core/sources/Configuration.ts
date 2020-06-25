@@ -553,15 +553,22 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
   }
 }
 
-function hideSecrets(rawValue: unknown, definition: SettingsDefinitionNoDefault) {
-  if (definition.type === SettingsType.SECRET && typeof rawValue === `string`)
+type SettingTransforms = {
+  hideSecrets: boolean;
+  getNativePaths: boolean;
+};
+
+function transformConfiguration(rawValue: unknown, definition: SettingsDefinitionNoDefault, transforms: SettingTransforms) {
+  if (definition.type === SettingsType.SECRET && typeof rawValue === `string` && transforms.hideSecrets)
     return SECRET;
+  if (definition.type === SettingsType.ABSOLUTE_PATH && typeof rawValue === `string` && transforms.getNativePaths)
+    return npath.fromPortablePath(rawValue);
 
   if (definition.isArray && Array.isArray(rawValue)) {
     const newValue: Array<unknown> = [];
 
     for (const value of rawValue)
-      newValue.push(hideSecrets(value, definition));
+      newValue.push(transformConfiguration(value, definition, transforms));
 
     return newValue;
   }
@@ -570,7 +577,7 @@ function hideSecrets(rawValue: unknown, definition: SettingsDefinitionNoDefault)
     const newValue: Map<string, unknown> = new Map();
 
     for (const [key, value] of rawValue.entries())
-      newValue.set(key, hideSecrets(value, definition.valueDefinition));
+      newValue.set(key, transformConfiguration(value, definition.valueDefinition, transforms));
 
     return newValue;
   }
@@ -580,7 +587,7 @@ function hideSecrets(rawValue: unknown, definition: SettingsDefinitionNoDefault)
 
     for (const [key, value] of rawValue.entries()) {
       const propertyDefinition = definition.properties[key];
-      newValue.set(key, hideSecrets(value, propertyDefinition));
+      newValue.set(key, transformConfiguration(value, propertyDefinition, transforms));
     }
 
     return newValue;
@@ -1073,14 +1080,17 @@ export class Configuration {
     return this.values.get(key) as T;
   }
 
-  getRedacted<T = any>(key: string) {
+  getSpecial<T = any>(key: string, {hideSecrets = false, getNativePaths = false}: Partial<SettingTransforms>) {
     const rawValue = this.get(key);
     const definition = this.settings.get(key);
 
     if (typeof definition === `undefined`)
       throw new UsageError(`Couldn't find a configuration settings named "${key}"`);
 
-    return hideSecrets(rawValue, definition) as T;
+    return transformConfiguration(rawValue, definition, {
+      hideSecrets,
+      getNativePaths,
+    }) as T;
   }
 
   getSubprocessStreams(logFile: PortablePath, {header, prefix, report}: {header?: string, prefix: string, report: Report}) {

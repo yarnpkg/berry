@@ -1,5 +1,5 @@
 import {structUtils, FetchOptions, Ident, Locator} from '@yarnpkg/core';
-import {ppath, NodeFS, PortablePath, npath, CwdFS} from '@yarnpkg/fslib';
+import {ppath, PortablePath, npath, CwdFS}         from '@yarnpkg/fslib';
 
 
 export function parseSpec(spec: string) {

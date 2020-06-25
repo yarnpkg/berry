@@ -1002,7 +1002,7 @@ export class Project {
 
   async linkEverything({cache, report, fetcher: optFetcher}: InstallOptions) {
     const fetcher = optFetcher || this.configuration.makeFetcher();
-    const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
+    const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, skipIntegrityCheck: true};
 
     const linkers = this.configuration.getLinkers();
     const linkerOptions = {project: this, report};
