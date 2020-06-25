@@ -88,6 +88,10 @@ export const makeInterface = (libzip: EmscriptenModule) => ({
     setCompression: libzip.cwrap(`zip_set_file_compression`, `number`, [`number`, ...number64, `number`, `number`]),
   },
 
+  ext: {
+    countSymlinks: libzip.cwrap(`zip_ext_count_symlinks`, `number`, [`number`]),
+  },
+
   error: {
     initWithCode: libzip.cwrap(`zip_error_init_with_code`, null, [`number`, `number`]),
     strerror: libzip.cwrap(`zip_error_strerror`, `string`, [`number`]),
