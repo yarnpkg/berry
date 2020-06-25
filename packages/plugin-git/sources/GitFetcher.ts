@@ -19,14 +19,18 @@ export class GitFetcher implements Fetcher {
     const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
     const normalizedLocator = gitUtils.normalizeLocator(locator);
 
-    const result = await this.downloadHosted(normalizedLocator, opts);
+    const checksums = new Map(opts.checksums);
+    checksums.set(normalizedLocator.locatorHash, expectedChecksum);
+    const nextOpts = {...opts, checksums};
+
+    const result = await this.downloadHosted(normalizedLocator, nextOpts);
     if (result !== null)
       return result;
 
     const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
       onHit: () => opts.report.reportCacheHit(locator),
       onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote repository`),
-      loader: () => this.cloneFromRemote(normalizedLocator, opts),
+      loader: () => this.cloneFromRemote(normalizedLocator, nextOpts),
       skipIntegrityCheck: opts.skipIntegrityCheck,
     });
 

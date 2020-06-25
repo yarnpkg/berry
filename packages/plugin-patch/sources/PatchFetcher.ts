@@ -58,7 +58,7 @@ export class PatchFetcher implements Fetcher {
     await copiedPackage.mkdirpPromise(prefixPath);
 
     await miscUtils.releaseAfterUseAsync(async () => {
-      await copiedPackage.copyPromise(prefixPath, sourceFetch.prefixPath, {baseFs: sourceFetch.packageFs});
+      await copiedPackage.copyPromise(prefixPath, sourceFetch.prefixPath, {baseFs: sourceFetch.packageFs, stableSort: true});
     }, sourceFetch.releaseFs);
 
     copiedPackage.saveAndClose();
