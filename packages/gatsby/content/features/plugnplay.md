@@ -48,7 +48,7 @@ This approach has various benefits:
 
 ## PnP `loose` mode
 
-Because the hoisting heuristics aren't standardized and predictable, PnP operating under strict mode will prevent packages to require dependencies that they don't explicitly list (even if one of their others dependencies happens to depend on it). This may cause issues with some packages.
+Because the hoisting heuristics aren't standardized and predictable, PnP operating under strict mode will prevent packages to require dependencies that they don't explicitly list (even if one of their other dependencies happens to depend on it). This may cause issues with some packages.
 
 To address this problem, Yarn ships with a "loose" mode which will cause the PnP linker to work in tandem with the `node-modules` hoister - we will first generate the list of packages that would have been hoisted to the top-level in a typical `node_modules` install, then remember this list as what we call the "fallback pool".
 
@@ -56,7 +56,7 @@ To address this problem, Yarn ships with a "loose" mode which will cause the PnP
 
 At runtime, packages that require unlisted dependencies will still be allowed to access them if any version of the dependency ended up in the fallback pool (which packages exactly are allowed to rely on the fallback pool can be tweaked with [pnpFallbackMode](/configuration/yarnrc#pnpFallbackMode)).
 
-Note that the content of the fallback pool is undetermined - should a dependency tree contains multiple versions of a same package, there's no telling which one will be hoisted to the top-level! For this reason, a package accessing the fallback pool will still generate a warning (via the [process.emitWarning](https://nodejs.org/api/process.html#process_process_emitwarning_warning_type_code_ctor) API).
+Note that the content of the fallback pool is undetermined - should a dependency tree contains multiple versions of the same package, there's no telling which one will be hoisted to the top-level! For this reason, a package accessing the fallback pool will still generate a warning (via the [process.emitWarning](https://nodejs.org/api/process.html#process_process_emitwarning_warning_type_code_ctor) API).
 
 This mode is an in-between between the `strict` PnP linker and the `node_modules` linker.
 
