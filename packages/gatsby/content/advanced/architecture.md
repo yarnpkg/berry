@@ -10,7 +10,7 @@ title: "Architecture"
 
 ## General architecture
 
-Yarn works through a core package (published as `@yarnpkg/core`) that exposes the various base components that make up a project. Some of components are classes that you might recognize from the API: `Configuration`, `Project`, `Workspace`, `Cache`, `Manifest`, and others. All those are provided by the core package.
+Yarn works through a core package (published as `@yarnpkg/core`) that exposes the various base components that make up a project. Some of the components are classes that you might recognize from the API: `Configuration`, `Project`, `Workspace`, `Cache`, `Manifest`, and others. All those are provided by the core package.
 
 The core itself doesn't do much - it merely contains the logic required to manage a project. In order to use this logic from the command-line Yarn provides an indirection called `@yarnpkg/cli` which, interestingly, doesn't do much either. It however has two very important responsibilities: it hydrates a project instance based on the current directory (`cwd`), and inject the prebuilt Yarn plugins into the environment.
 
