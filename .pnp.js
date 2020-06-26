@@ -35490,7 +35490,9 @@ var path = __webpack_require__(9);
 
 // CONCATENATED MODULE: ../yarnpkg-fslib/sources/algorithms/copyPromise.ts
 
+ // 1980-01-01, like Fedora
 
+const defaultTime = 315532800;
 async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
   const normalizedDestination = destinationFs.pathUtils.normalize(destination);
   const normalizedSource = sourceFs.pathUtils.normalize(source);
@@ -35511,7 +35513,7 @@ async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
 async function copyImpl(operations, lutimes, destinationFs, destination, sourceFs, source, opts) {
   const destinationStat = await maybeLStat(destinationFs, destination);
   const sourceStat = await sourceFs.lstatPromise(source);
-  lutimes.push([destination, sourceStat.atime, sourceStat.mtime]);
+  if (opts.stableTime) lutimes.push([destination, defaultTime, defaultTime]);else lutimes.push([destination, sourceStat.atime, sourceStat.mtime]);
 
   switch (true) {
     case sourceStat.isDirectory():
@@ -35564,9 +35566,16 @@ async function copyFolder(operations, lutimes, destinationFs, destination, desti
     mode: sourceStat.mode
   }));
   const entries = await sourceFs.readdirPromise(source);
-  await Promise.all(entries.map(async entry => {
-    await copyImpl(operations, lutimes, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
-  }));
+
+  if (opts.stableSort) {
+    for (const entry of entries.sort()) {
+      await copyImpl(operations, lutimes, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
+    }
+  } else {
+    await Promise.all(entries.map(async entry => {
+      await copyImpl(operations, lutimes, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
+    }));
+  }
 }
 
 async function copyFile(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
@@ -35735,10 +35744,14 @@ class FakeFS {
 
   async copyPromise(destination, source, {
     baseFs = this,
-    overwrite = true
+    overwrite = true,
+    stableSort = false,
+    stableTime = false
   } = {}) {
     return await copyPromise(this, destination, baseFs, source, {
-      overwrite
+      overwrite,
+      stableSort,
+      stableTime
     });
   }
 
@@ -35988,10 +36001,9 @@ function normalizeLineEndings(originalContent, newContent) {
 /* harmony export */   "LZ": () => /* binding */ PortablePath,
 /* harmony export */   "cS": () => /* binding */ npath,
 /* harmony export */   "y1": () => /* binding */ ppath,
-/* harmony export */   "CI": () => /* binding */ convertPath,
-/* harmony export */   "Zu": () => /* binding */ toFilename
+/* harmony export */   "CI": () => /* binding */ convertPath
 /* harmony export */ });
-/* unused harmony export Filename */
+/* unused harmony exports Filename, toFilename */
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(622);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
 
@@ -39548,68 +39560,65 @@ function makeApi(runtimeState, opts) {
   function applyNodeExtensionResolution(unqualifiedPath, candidates, {
     extensions
   }) {
-    // We use this "infinite while" so that we can restart the process as long as we hit package folders
-    while (true) {
-      let stat;
+    let stat;
+
+    try {
+      candidates.push(unqualifiedPath);
+      stat = opts.fakeFs.statSync(unqualifiedPath);
+    } catch (error) {} // If the file exists and is a file, we can stop right there
+
+
+    if (stat && !stat.isDirectory()) return opts.fakeFs.realpathSync(unqualifiedPath); // If the file is a directory, we must check if it contains a package.json with a "main" entry
+
+    if (stat && stat.isDirectory()) {
+      let pkgJson;
 
       try {
-        candidates.push(unqualifiedPath);
-        stat = opts.fakeFs.statSync(unqualifiedPath);
-      } catch (error) {} // If the file exists and is a file, we can stop right there
+        pkgJson = JSON.parse(opts.fakeFs.readFileSync(sources_path/* ppath.join */.y1.join(unqualifiedPath, `package.json`), `utf8`));
+      } catch (error) {}
 
+      let nextUnqualifiedPath;
+      if (pkgJson && pkgJson.main) nextUnqualifiedPath = sources_path/* ppath.resolve */.y1.resolve(unqualifiedPath, pkgJson.main); // If the "main" field changed the path, we start again from this new location
 
-      if (stat && !stat.isDirectory()) return opts.fakeFs.realpathSync(unqualifiedPath); // If the file is a directory, we must check if it contains a package.json with a "main" entry
-
-      if (stat && stat.isDirectory()) {
-        let pkgJson;
-
-        try {
-          pkgJson = JSON.parse(opts.fakeFs.readFileSync(sources_path/* ppath.join */.y1.join(unqualifiedPath, (0,sources_path/* toFilename */.Zu)(`package.json`)), `utf8`));
-        } catch (error) {}
-
-        let nextUnqualifiedPath;
-        if (pkgJson && pkgJson.main) nextUnqualifiedPath = sources_path/* ppath.resolve */.y1.resolve(unqualifiedPath, pkgJson.main); // If the "main" field changed the path, we start again from this new location
-
-        if (nextUnqualifiedPath && nextUnqualifiedPath !== unqualifiedPath) {
-          const resolution = applyNodeExtensionResolution(nextUnqualifiedPath, candidates, {
-            extensions
-          });
-
-          if (resolution !== null) {
-            return resolution;
-          }
-        }
-      } // Otherwise we check if we find a file that match one of the supported extensions
-
-
-      const qualifiedPath = extensions.map(extension => {
-        return `${unqualifiedPath}${extension}`;
-      }).find(candidateFile => {
-        candidates.push(candidateFile);
-        return opts.fakeFs.existsSync(candidateFile);
-      });
-      if (qualifiedPath) return qualifiedPath; // Otherwise, we check if the path is a folder - in such a case, we try to use its index
-
-      if (stat && stat.isDirectory()) {
-        const indexPath = extensions.map(extension => {
-          return sources_path/* ppath.format */.y1.format({
-            dir: unqualifiedPath,
-            name: (0,sources_path/* toFilename */.Zu)(`index`),
-            ext: extension
-          });
-        }).find(candidateFile => {
-          candidates.push(candidateFile);
-          return opts.fakeFs.existsSync(candidateFile);
+      if (nextUnqualifiedPath && nextUnqualifiedPath !== unqualifiedPath) {
+        const resolution = applyNodeExtensionResolution(nextUnqualifiedPath, candidates, {
+          extensions
         });
 
-        if (indexPath) {
-          return indexPath;
+        if (resolution !== null) {
+          return resolution;
         }
-      } // Otherwise there's nothing else we can do :(
+      }
+    } // Otherwise we check if we find a file that match one of the supported extensions
 
 
-      return null;
-    }
+    for (let i = 0, length = extensions.length; i < length; i++) {
+      const candidateFile = `${unqualifiedPath}${extensions[i]}`;
+      candidates.push(candidateFile);
+
+      if (opts.fakeFs.existsSync(candidateFile)) {
+        return candidateFile;
+      }
+    } // Otherwise, we check if the path is a folder - in such a case, we try to use its index
+
+
+    if (stat && stat.isDirectory()) {
+      for (let i = 0, length = extensions.length; i < length; i++) {
+        const candidateFile = sources_path/* ppath.format */.y1.format({
+          dir: unqualifiedPath,
+          name: `index`,
+          ext: extensions[i]
+        });
+        candidates.push(candidateFile);
+
+        if (opts.fakeFs.existsSync(candidateFile)) {
+          return candidateFile;
+        }
+      }
+    } // Otherwise there's nothing else we can do :(
+
+
+    return null;
   }
   /**
    * This function creates fake modules that can be used with the _resolveFilename function.
@@ -39642,7 +39651,7 @@ function makeApi(runtimeState, opts) {
 
 
   function callNativeResolution(request, issuer) {
-    if (issuer.endsWith(`/`)) issuer = sources_path/* ppath.join */.y1.join(issuer, (0,sources_path/* toFilename */.Zu)(`internal.js`)); // Since we would need to create a fake module anyway (to call _resolveLookupPath that
+    if (issuer.endsWith(`/`)) issuer = sources_path/* ppath.join */.y1.join(issuer, `internal.js`); // Since we would need to create a fake module anyway (to call _resolveLookupPath that
     // would give us the paths to give to _resolveFilename), we can as well not use
     // the {paths} option at all, since it internally makes _resolveFilename create another
     // fake module anyway.
