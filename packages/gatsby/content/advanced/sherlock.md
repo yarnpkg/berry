@@ -50,7 +50,7 @@ The easiest and most convenient way to develop your reproduction is by using the
 
 ## Available functions
 
-You can use all of Javascript inside the repro code, including `async/await`. In fact, you can even use top-level `await`! As far as the runtime go you should have access to all of Node's APIs, plus some extras:
+You can use all of Javascript inside the repro code, including `async/await`. In fact, you can even use top-level `await`! As far as the runtime goes you should have access to all of Node's APIs, plus some extras:
 
 - In order to simplify some tasks that would be very menial otherwise (like spawning the Yarn process, or running a Node script in the generated environment), we provide a set of builtin functions that abstract these semantics. You can find the full reference inside [our repository](https://github.com/yarnpkg/berry/tree/master/scripts/actions/sherlock-prepare.js), along with some documentation.
 
