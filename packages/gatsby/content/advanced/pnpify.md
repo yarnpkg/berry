@@ -14,7 +14,7 @@ Plug'n'Play is, by design, compatible with all projects that only make use of th
 
 ## PnPify
 
-PnPify is a tool designed to workaround these compatibility issues. It's not perfect - it brings its own set of caveats and doesn't allow you to leverage all the features that PnP has to offer - but it's often good enough to unblock you until better solutions are implemented.
+PnPify is a tool designed to work around these compatibility issues. It's not perfect - it brings its own set of caveats and doesn't allow you to leverage all the features that PnP has to offer - but it's often good enough to unblock you until better solutions are implemented.
 
 How it works is simple: when a non-PnP-compliant project tries to access the `node_modules` directories (for example through `readdir` or `readFile`), PnPify intercepts those calls and converts them into calls to the PnP API. Then, based on the result, it simulates the existence of a virtual `node_modules` folder that the underlying tool will then consume - still unaware that the files are extracted from a virtual filesystem.
 
