@@ -63,7 +63,7 @@ Two packages with build scripts have cyclic dependencies.
 
 Cyclic dependencies are a can of worms. They happen when a package `A` depends on a package `B` and vice-versa Sometime can arise through a chain of multiple packages - for example when `A` depends on `B`, which depends on `C`, which depends on `A`.
 
-While cyclic dependencies may work fine in the general Javascript case (and in fact Yarn won't warn you about it in most cases), they can cause issues as soon as build scripts are involved. Indeed, in order to build a package, we first must make sure that its own dependencies have been properly built. How can we do that when two packages reference each other? Since the first one to build cannot be deduced, such patterns will cause the build scripts of every affected packages to simply be ignored (and a warning emitted).
+While cyclic dependencies may work fine in the general Javascript case (and in fact Yarn won't warn you about it in most cases), they can cause issues as soon as build scripts are involved. Indeed, in order to build a package, we first must make sure that its own dependencies have been properly built. How can we do that when two packages reference each other? Since the first one to build cannot be deduced, such patterns will cause the build scripts of every affected package to simply be ignored (and a warning emitted).
 
 There's already good documentation online explaining how to get rid of cyclic dependencies, the simplest one being to extract the shared part of your program into a third package without dependencies. So the first case we described would become `A` depends on `C`, `B` depends on `C`, `C` doesn't depend on anything.
 
@@ -101,13 +101,13 @@ There are a few workarounds:
 
 A package must be built.
 
-This informational message occurs when Yarn wishes to let you know that a package will need to be built in order for the installation to complete. This usually occurs in only two cases: either the package never has been built before, or its previous build failed (returned a non-zero exit code).
+This informational message occurs when Yarn wishes to let you know that a package will need to be built for the installation to complete. This usually occurs in only two cases: either the package never has been built before, or its previous build failed (returned a non-zero exit code).
 
 ## YN0008 - `MUST_REBUILD`
 
 A package must be rebuilt.
 
-This information message occurs when Yarn wishes to let you know that a package will need to be rebuilt in order for the installation to complete. This usually occurs in a single case: when the package's dependency tree has changed. Note that this also include its transitive dependencies, which sometimes may cause surprising rebuilds (for example, if `A` depends on `B` that depends on `C@1`, and if Yarn decides for some reason that `C` should be bumped to `C@2`, then `A` will need to be rebuilt).
+This information message occurs when Yarn wishes to let you know that a package will need to be rebuilt in order for the installation to complete. This usually occurs in a single case: when the package's dependency tree has changed. Note that this also includes its transitive dependencies, which sometimes may cause surprising rebuilds (for example, if `A` depends on `B` that depends on `C@1`, and if Yarn decides for some reason that `C` should be bumped to `C@2`, then `A` will need to be rebuilt).
 
 ## YN0009 - `BUILD_FAILED`
 
@@ -305,7 +305,7 @@ A package requests a peer dependency, but the range provided is not a valid semv
 
 ## YN0060 - `INCOMPATIBLE_PEER_DEPENDENCY`
 
-A package requests a peer dependency, but its parent in the dependency tree provides a version which does not satisfy the peer dependency's range. The parent should be altered to provide a valid version or the peer dependency range updated. This will not prevent resolution, but may leave the system in an incorrect state.
+A package requests a peer dependency, but its parent in the dependency tree provides a version that does not satisfy the peer dependency's range. The parent should be altered to provide a valid version or the peer dependency range updated. This will not prevent resolution, but may leave the system in an incorrect state.
 
 ## YN0061 - `DEPRECATED_PACKAGE`
 
