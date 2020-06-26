@@ -215,32 +215,23 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
     // Otherwise we check if we find a file that match one of the supported extensions
 
-    const qualifiedPath = extensions
-      .map(extension => {
-        return `${unqualifiedPath}${extension}` as PortablePath;
-      })
-      .find(candidateFile => {
-        candidates.push(candidateFile);
-        return opts.fakeFs.existsSync(candidateFile);
-      });
-
-    if (qualifiedPath)
-      return qualifiedPath;
+    for (let i = 0, length = extensions.length; i < length; i++) {
+      const candidateFile = `${unqualifiedPath}${extensions[i]}` as PortablePath;
+      candidates.push(candidateFile);
+      if (opts.fakeFs.existsSync(candidateFile)) {
+        return candidateFile;
+      }
+    }
 
     // Otherwise, we check if the path is a folder - in such a case, we try to use its index
 
     if (stat && stat.isDirectory()) {
-      const indexPath = extensions
-        .map(extension => {
-          return ppath.format({dir: unqualifiedPath, name: `index` as Filename, ext: extension});
-        })
-        .find(candidateFile => {
-          candidates.push(candidateFile);
-          return opts.fakeFs.existsSync(candidateFile);
-        });
-
-      if (indexPath) {
-        return indexPath;
+      for (let i = 0, length = extensions.length; i < length; i++) {
+        const candidateFile = ppath.format({dir: unqualifiedPath, name: `index` as Filename, ext: extensions[i]});
+        candidates.push(candidateFile);
+        if (opts.fakeFs.existsSync(candidateFile)) {
+          return candidateFile;
+        }
       }
     }
 
