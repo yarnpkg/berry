@@ -102,6 +102,6 @@ yarn dlx @yarnpkg/pnpify --sdk base
 
 ## Caveat
 
-- Since the Yarn packages are kept within their archives, editors need to understand how to work with such paths should you want to actually open the files (for example when command-clicking on an import path originating from an external package). This can only be implemented by those editors, and we can't do much more than opening issues to ask for this feature to be implemented (for example, here's the VSCode issue: [#75559](https://github.com/microsoft/vscode/issues/75559)).
+- Since the Yarn packages are kept within their archives, editors need to understand how to work with such paths should you want to open the files (for example when command-clicking on an import path originating from an external package). This can only be implemented by those editors, and we can't do much more than opening issues to ask for this feature to be implemented (for example, here's the VSCode issue: [#75559](https://github.com/microsoft/vscode/issues/75559)).
 
   As a workaround, you can run `yarn unplug pkg-name` to instruct yarn to unzip the package, which will re-enable `Go to definition` functionality for the specific package.
