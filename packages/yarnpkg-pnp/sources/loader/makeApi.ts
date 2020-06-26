@@ -176,80 +176,77 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function applyNodeExtensionResolution(unqualifiedPath: PortablePath, candidates: Array<PortablePath>, {extensions}: {extensions: Array<string>}): PortablePath | null {
-    // We use this "infinite while" so that we can restart the process as long as we hit package folders
-    while (true) {
-      let stat;
+    let stat;
+
+    try {
+      candidates.push(unqualifiedPath);
+      stat = opts.fakeFs.statSync(unqualifiedPath);
+    } catch (error) {}
+
+    // If the file exists and is a file, we can stop right there
+
+    if (stat && !stat.isDirectory())
+      return opts.fakeFs.realpathSync(unqualifiedPath);
+
+    // If the file is a directory, we must check if it contains a package.json with a "main" entry
+
+    if (stat && stat.isDirectory()) {
+      let pkgJson;
 
       try {
-        candidates.push(unqualifiedPath);
-        stat = opts.fakeFs.statSync(unqualifiedPath);
+        pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(unqualifiedPath, toFilename(`package.json`)), `utf8`));
       } catch (error) {}
 
-      // If the file exists and is a file, we can stop right there
+      let nextUnqualifiedPath;
 
-      if (stat && !stat.isDirectory())
-        return opts.fakeFs.realpathSync(unqualifiedPath);
+      if (pkgJson && pkgJson.main)
+        nextUnqualifiedPath = ppath.resolve(unqualifiedPath, pkgJson.main);
 
-      // If the file is a directory, we must check if it contains a package.json with a "main" entry
+      // If the "main" field changed the path, we start again from this new location
 
-      if (stat && stat.isDirectory()) {
-        let pkgJson;
+      if (nextUnqualifiedPath && nextUnqualifiedPath !== unqualifiedPath) {
+        const resolution = applyNodeExtensionResolution(nextUnqualifiedPath, candidates, {extensions});
 
-        try {
-          pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(unqualifiedPath, toFilename(`package.json`)), `utf8`));
-        } catch (error) {}
-
-        let nextUnqualifiedPath;
-
-        if (pkgJson && pkgJson.main)
-          nextUnqualifiedPath = ppath.resolve(unqualifiedPath, pkgJson.main);
-
-        // If the "main" field changed the path, we start again from this new location
-
-        if (nextUnqualifiedPath && nextUnqualifiedPath !== unqualifiedPath) {
-          const resolution = applyNodeExtensionResolution(nextUnqualifiedPath, candidates, {extensions});
-
-          if (resolution !== null) {
-            return resolution;
-          }
+        if (resolution !== null) {
+          return resolution;
         }
       }
+    }
 
-      // Otherwise we check if we find a file that match one of the supported extensions
+    // Otherwise we check if we find a file that match one of the supported extensions
 
-      const qualifiedPath = extensions
+    const qualifiedPath = extensions
+      .map(extension => {
+        return `${unqualifiedPath}${extension}` as PortablePath;
+      })
+      .find(candidateFile => {
+        candidates.push(candidateFile);
+        return opts.fakeFs.existsSync(candidateFile);
+      });
+
+    if (qualifiedPath)
+      return qualifiedPath;
+
+    // Otherwise, we check if the path is a folder - in such a case, we try to use its index
+
+    if (stat && stat.isDirectory()) {
+      const indexPath = extensions
         .map(extension => {
-          return `${unqualifiedPath}${extension}` as PortablePath;
+          return ppath.format({dir: unqualifiedPath, name: toFilename(`index`), ext: extension});
         })
         .find(candidateFile => {
           candidates.push(candidateFile);
           return opts.fakeFs.existsSync(candidateFile);
         });
 
-      if (qualifiedPath)
-        return qualifiedPath;
-
-      // Otherwise, we check if the path is a folder - in such a case, we try to use its index
-
-      if (stat && stat.isDirectory()) {
-        const indexPath = extensions
-          .map(extension => {
-            return ppath.format({dir: unqualifiedPath, name: toFilename(`index`), ext: extension});
-          })
-          .find(candidateFile => {
-            candidates.push(candidateFile);
-            return opts.fakeFs.existsSync(candidateFile);
-          });
-
-        if (indexPath) {
-          return indexPath;
-        }
+      if (indexPath) {
+        return indexPath;
       }
-
-      // Otherwise there's nothing else we can do :(
-
-      return null;
     }
+
+    // Otherwise there's nothing else we can do :(
+
+    return null;
   }
 
   /**
