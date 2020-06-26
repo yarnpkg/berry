@@ -14,7 +14,7 @@ title: "Lexicon"
 
 Refers to tasks executed right after the packages got installed; typically the `postinstall` scripts configured in the [`scripts` field](/configuration/manifest#scripts) from the manifest.
 
-Build scripts should be left to native dependencies, there is virtually no reason for pure JavaScript packages to use them. They have [significant side effects](/advanced/lifecycle-scripts#a-note-about-postinstall) on your users projects, so weight careful whether you really need them.
+Build scripts should be left to native dependencies, there is virtually no reason for pure JavaScript packages to use them. They have [significant side effects](/advanced/lifecycle-scripts#a-note-about-postinstall) on your user's projects, so weight carefully whether you really need them.
 
 See also: [Lifecycle Scripts](/advanced/lifecycle-scripts)
 
@@ -22,7 +22,7 @@ See also: [Lifecycle Scripts](/advanced/lifecycle-scripts)
 
 A dependency (listed in the [`dependencies` field](/configuration/manifest#dependencies) of the manifest) describes a relationship between two packages.
 
-When a package A has a dependency B, Yarn guarantees that A will be able to access B if the install is successful. Note that this is the only promise we make regarding regular dependencies: in particular, there is no guarantee that the package B will be the same version than the one used in other parts of the application.
+When a package A has a dependency B, Yarn guarantees that A will be able to access B if the install is successful. Note that this is the only promise we make regarding regular dependencies: in particular, there is no guarantee that package B will be the same version than the one used in other parts of the application.
 
 See also: [Development Dependency](#development-dependency)
 
@@ -44,7 +44,7 @@ See also: [Peer Dependency](#peer-dependency)
 
 ### Fetcher
 
-Fetchers are the components tasked from extracting the full package data from a <abbr>reference</abbr>. For example, the npm fetcher would download the package tarballs from the npm registry.
+Fetchers are the components tasked with extracting the full package data from a <abbr>reference</abbr>. For example, the npm fetcher would download the package tarballs from the npm registry.
 
 See also: [Architecture](/advanced/architecture)
 
@@ -78,7 +78,7 @@ See also: [Workspaces](/features/workspaces)
 
 A dependency (listed in the [`peerDependencies` field](/configuration/manifest#peerDependencies) of the manifest) describes a relationship between two packages.
 
-Contrary to regular dependencies, a package A with a peer dependency on B doesn't guarantee that A will be able to access B - it's up to the package that depends on A to manually provide a version of B compatible with with request from A. This drawback has a good side too: the package instance of B that A will access is guaranteed to be the exact same one as the one used by the ancestor of A. This matters a lot when B uses `instanceof` checks or singletons.
+Contrary to regular dependencies, a package A with a peer dependency on B doesn't guarantee that A will be able to access B - it's up to the package that depends on A to manually provide a version of B compatible with request from A. This drawback has a good side too: the package instance of B that A will access is guaranteed to be the exact same one as the one used by the ancestor of A. This matters a lot when B uses `instanceof` checks or singletons.
 
 See also: [Development Dependencies](#development-dependencies)
 See also: [Peer Dependency](#peer-dependency)
@@ -92,7 +92,7 @@ See also: [Virtual Packages](#virtual-package)
 
 ### Plugin
 
-Plugins are a new concept introduced in Yarn 2+. Through the use of plugins Yarn can be extended and made even more powerful - whether it's through the addition of new <abbr>resolvers</abbr>, <abbr>fetchers</abbr>, or <abbr>linkers</abbr>.
+Plugins are a new concept introduced in Yarn 2+. Through the use of plugins, Yarn can be extended and made even more powerful - whether it's through the addition of new <abbr>resolvers</abbr>, <abbr>fetchers</abbr>, or <abbr>linkers</abbr>.
 
 See also: [Plugins](/features/plugins)
 See also: the [`Plugin` interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Plugin.ts#L67)
@@ -133,7 +133,7 @@ See also: [Protocols](/features/protocols)
 
 ### Resolver
 
-Resolvers are the components tasked from converting <abbr>descriptors</abbr> into <abbr>locators</abbr>, and extracting the package <abbr>manifests</abbr> from the package <abbr>locators</abbr>. For example, the npm resolver would check what versions are available on the npm registry and return all the candidates that satisfy the <abbr>semver</abbr> requirements, then would query the npm registry to fetch the full metadata associated to the selected resolution.
+Resolvers are the components tasked from converting <abbr>descriptors</abbr> into <abbr>locators</abbr>, and extracting the package <abbr>manifests</abbr> from the package <abbr>locators</abbr>. For example, the npm resolver would check what versions are available on the npm registry and return all the candidates that satisfy the <abbr>semver</abbr> requirements, then would query the npm registry to fetch the full metadata associated with the selected resolution.
 
 See also: [Architecture](/advanced/architecture)
 See also: the [`Resolver` interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Resolver.ts#L45)
@@ -166,7 +166,7 @@ Packages are unplugged in two cases: either explicitly when the [`unplugged` fie
 
 ### Virtual Package
 
-Because [peer-dependent packages](#peer-dependent-package) effectively define an *horizon* of possible dependency sets rather than an single static set of dependencies, a peer-dependent package may have multiple dependency sets. When this happens, the package will need to be instantiated at least once for each such set.
+Because [peer-dependent packages](#peer-dependent-package) effectively define an *horizon* of possible dependency sets rather than a single static set of dependencies, a peer-dependent package may have multiple dependency sets. When this happens, the package will need to be instantiated at least once for each such set.
 
 Since in Node-land the JS modules are instantiated based on their path (a file is never instantiated twice for any given path), and since PnP makes it so that packages are installed only once in any given project, the only way to instantiate those packages multiple times is to give them multiple paths while still referencing to the same on-disk location. That's where virtual packages come handy.
 
@@ -190,7 +190,7 @@ See also: [Workspaces](/features/workspaces)
 
 ### Yarn
 
-Yarn is a command line tool used to manage programming environments. Written in Javascript, it is mostly used along with others Javascript projects, but has capabilities that make it suitable to be used in various situations.
+Yarn is a command line tool used to manage programming environments. Written in Javascript, it is mostly used along with other Javascript projects but has capabilities that make it suitable to be used in various situations.
 
 ### Zero-Install
 
