@@ -20,7 +20,7 @@ The way installs used to work was simple: when running `yarn install` Yarn would
 
 - The `node_modules` directories typically contained gargantuan amounts of files. Generating them could make up for more than 70% of the time needed to run `yarn install`. Even having preexisting installations wouldn't save you, as package managers still had to diff the existing `node_modules` with what it should have been.
 
-- Because the `node_modules` generation was an I/O-heavy operation, package managers didn't have a lot of leeway to optimize it much further than just doing a simple file copy - and even though we could have used hardlinks or copy-on-write when possible, we would still have needed to diff the current state of the filesystem before making a bunch of syscalls to manipulate the disk.
+- Because the `node_modules` generation was an I/O-heavy operation, package managers didn't have a lot of leeways to optimize it much further than just doing a simple file copy - and even though we could have used hardlinks or copy-on-write when possible, we would still have needed to diff the current state of the filesystem before making a bunch of syscalls to manipulate the disk.
 
 - Because Node had no concept of packages, it also didn't know whether a file was _meant_ to be accessed (versus being available by the sheer virtue of hoisting). It was entirely possible that the code you wrote worked one day in development but broke later in production because you forgot to list one of your dependencies in your `package.json`.
 
@@ -48,7 +48,7 @@ This approach has various benefits:
 
 ## PnP `loose` mode
 
-Because the hoisting heuristics aren't standardized and predictable, PnP operating under strict mode will prevent packages to require dependencies that they don't explicitly list (even if one of their others dependencies happens to depend on it). This may cause issues with some packages.
+Because the hoisting heuristics aren't standardized and predictable, PnP operating under strict mode will prevent packages to require dependencies that they don't explicitly list (even if one of their other dependencies happens to depend on it). This may cause issues with some packages.
 
 To address this problem, Yarn ships with a "loose" mode which will cause the PnP linker to work in tandem with the `node-modules` hoister - we will first generate the list of packages that would have been hoisted to the top-level in a typical `node_modules` install, then remember this list as what we call the "fallback pool".
 
@@ -56,7 +56,7 @@ To address this problem, Yarn ships with a "loose" mode which will cause the PnP
 
 At runtime, packages that require unlisted dependencies will still be allowed to access them if any version of the dependency ended up in the fallback pool (which packages exactly are allowed to rely on the fallback pool can be tweaked with [pnpFallbackMode](/configuration/yarnrc#pnpFallbackMode)).
 
-Note that the content of the fallback pool is undetermined - should a dependency tree contains multiple versions of a same package, there's no telling which one will be hoisted to the top-level! For this reason, a package accessing the fallback pool will still generate a warning (via the [process.emitWarning](https://nodejs.org/api/process.html#process_process_emitwarning_warning_type_code_ctor) API).
+Note that the content of the fallback pool is undetermined - should a dependency tree contains multiple versions of the same package, there's no telling which one will be hoisted to the top-level! For this reason, a package accessing the fallback pool will still generate a warning (via the [process.emitWarning](https://nodejs.org/api/process.html#process_process_emitwarning_warning_type_code_ctor) API).
 
 This mode is an in-between between the `strict` PnP linker and the `node_modules` linker.
 

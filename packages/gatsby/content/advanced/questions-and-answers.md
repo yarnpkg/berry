@@ -14,21 +14,21 @@ While the Yarn Classic line (1.x) remains a pilar of the JavaScript ecosystem, w
 
 1. New features: On top of the classic features you're already used to, on top of the new ones you'll discover ([`yarn dlx`](/cli/dlx), [builtin `patch:` protocol](https://github.com/yarnpkg/berry/tree/master/packages/plugin-patch), ...), Modern offers plugins extending Yarn's featureset with [changesets](/features/release-workflow), [constraints](/features/constraints), [workspaces](/cli/workspaces/foreach), ...
 
-2. Efficiency: Modern features new install strategies, leading projects to only be a fraction of their past self; as an example, under the default configuration the stock CRA artifacts now only take 45MB instead of 237MB. Performances where improved as well, with most installs now only taking a few seconds even on extremely large projects. We even made it possible to reach [zero seconds](/features/zero-installs)!
+2. Efficiency: Modern features new install strategies, leading projects to only be a fraction of their past self; as an example, under the default configuration the stock CRA artifacts now only take 45MB instead of 237MB. Performances were improved as well, with most installs now only taking a few seconds even on extremely large projects. We even made it possible to reach [zero seconds](/features/zero-installs)!
 
 3. Extensibility: The Modern architecture allows you to build your own features should you need it. No more of you being blocked waiting for us to implement this feature you dream of - you can now do it yourself, according to your own specs! Focused workspaces, production installs, project validation, ...
 
 4. Stability: Modern comes after years of experience with maintaining Classic; it allowed us to finally fix longstanding design issues with how some features were implemented. Workspaces are now core components, the resolution pipeline has been streamlined, data structures are more efficient... as a result, Modern is much less likely to suffer from the kind of design flaws Classic may sometimes suffer from.
 
-5. Future proof: A big reason why we invested on Modern was that we were coming to a situation where developing new features on Classic was becoming difficult, being too likely we would break something in the process. The Modern architecture learned from our mistakes, and was designed to allow us to build features at a much higher pace - as evidenced by the numerous new features we ship.
+5. Future proof: A big reason why we invested in Modern was that we were coming to a situation where developing new features on Classic was becoming difficult, being too likely we would break something in the process. The Modern architecture learned from our mistakes, and was designed to allow us to build features at a much higher pace - as evidenced by the numerous new features we ship.
 
 ## How easy should you expect the migration from Classic to Modern to be?
 
-Generally a few main things will need to be taken care of:
+Generally, a few main things will need to be taken care of:
 
-1. The settings format changed. We don't read the `.npmrc` or `.yarnrc` files anymore, instead consuming the settings from the [`.yarnrc.yml` file](https://yarnpkg.com/configuration/yarnrc).
+1. The settings format changed. We don't read the `.npmrc` or `.yarnrc` files anymore, instead of consuming the settings from the [`.yarnrc.yml` file](https://yarnpkg.com/configuration/yarnrc).
 
-2. Some third party packages don't list their dependencies properly and will need to be helped through the [`packageExtensions`](https://yarnpkg.com/configuration/yarnrc#packageExtensions) settings.
+2. Some third-party packages don't list their dependencies properly and will need to be helped through the [`packageExtensions`](https://yarnpkg.com/configuration/yarnrc#packageExtensions) settings.
 
 3. Support for text editors is pretty good, but you'll need to run the one-time-setup listed in our [SDK documentation](https://yarnpkg.com/advanced/editor-sdks).
 
@@ -82,9 +82,9 @@ If you're not using Zero-Installs:
 
 Lockfiles are meant to always be stored along with your project sources - and this regardless of whether you're writing a standalone application or a distributed library.
 
-One persisting argument against checking-in the lockfile in the repository is about being made aware of potential problems against the latest versions of the library. People saying this argue that the lockfile being present prevents contributors from seeing such issues, as all dependencies are locked and appear fine until a consumer install the library and uses more recent (and incompatible) dependencies.
+One persisting argument against checking-in the lockfile in the repository is about being made aware of potential problems against the latest versions of the library. People saying this argue that the lockfile being present prevents contributors from seeing such issues, as all dependencies are locked and appear fine until a consumer installs the library and uses more recent (and incompatible) dependencies.
 
-Although tempting, this reasoning has a fatal flaw: removing the lockfile from the repository doesn't prevent this problem from happening. Contributors won't test against new versions unless they run an install, so older projects may never even notice such incompatibilities. Then, years later, users that want to work on an old project won't even be able to install it because it's latest known good state didn't get checked-in. Even without going all the way to "years later", new contributors will always have to ponder whether things broke because of their changes or because of an incompatible dependency - decreasing the amount of contributions you'll receive.
+Although tempting, this reasoning has a fatal flaw: removing the lockfile from the repository doesn't prevent this problem from happening. Contributors won't test against new versions unless they run an install, so older projects may never even notice such incompatibilities. Then, years later, users that want to work on an old project won't even be able to install it because it's latest known good state didn't get checked-in. Even without going all the way to "years later", new contributors will always have to ponder whether things broke because of their changes or because of an incompatible dependency - decreasing the number of contributions you'll receive.
 
 Lockfiles should **always** be kept within the repository. Continuous integration testing is a good idea, but should be left to continuous integration systems. For example, Yarn itself runs [daily tests](https://github.com/yarnpkg/berry#current-status) against the latest versions of major open-source frameworks and tools. [Dependabot](https://dependabot.com/#how-it-works) is also a good tool that allows you to track your dependencies updates in a more integrated way.
 
@@ -119,7 +119,7 @@ Then, from any workspace that contains its own `tsconfig.json`, you'll be able t
 
 Despite the first version of Yarn having been implemented by [Sebastian McKenzie](https://twitter.com/sebmck) while working at Facebook, the initial design received feedbacks from various other companies (such as [Tilde](https://www.tilde.io) via [Yehuda Katz](https://yehudakatz.com/2016/10/11/im-excited-to-work-on-yarn-the-new-js-package-manager-2/)) and the project was put into its own [GitHub organization](https://github.com/yarnpkg). Facebook kept investing in it during the following years (mostly because it proved to be a critical part of the RN ecosystem) but major contributions came from the open-source too.
 
-Nowadays the active development team is composed exclusively of people employed by non-founders companies. Facebook employees are of course still welcome to offer contributions to the project, but they would go through the same review process as any other.
+Nowadays the active development team is composed exclusively of people employed by non-founders companies. Facebook employees are of course still welcome to offer contributions to the project, but they would go through the same review process as everyone else.
 
 ## Why `registry.yarnpkg.com`? Does Facebook track us?
 
@@ -135,7 +135,7 @@ To this day, no analytics are emitted by Yarn itself.
 
 **Shrug 🤷‍♀️**
 
-At the time Yarn got released Yarn was effectively much faster than some of its competitors. Unfortunately, we failed to highlight that performances weren't the main reason why we kept working on Yarn. Performances come and go, so while we were super fast it wasn't so much because we were doing something incredibly well, but rather that the competing implementations had a serious bug. When that bug got fixed, our miscommunication became more apparent as some people thought that Yarn was all about performances.
+At the time Yarn got released Yarn was effectively much faster than some of its competitors. Unfortunately, we failed to highlight that performance wasn't the main reason why we kept working on Yarn. Performances come and go, so while we were super fast it wasn't so much because we were doing something incredibly well, but rather that the competing implementations had a serious bug. When that bug got fixed, our miscommunication became more apparent as some people thought that Yarn was all about performances.
 
 Put simply, our differences lie in our priorities. Different projects make different tradeoffs, and it's exactly what happens here. We prioritized workspaces because we felt like monorepos were providing significant value. We've spent significant resources pushing for Plug'n'Play (including through [dozens of contributions to third-party projects](https://github.com/pulls?utf8=%E2%9C%93&q=is%3Apr+author%3Aarcanis+archived%3Afalse+is%3Aclosed+pnp+-user%3Ayarnpkg+)) because we felt like this was important for the ecosystem. This is the main difference: we make our own informed decisions regarding the project roadmap.
 
