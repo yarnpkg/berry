@@ -1,5 +1,5 @@
 import {FakeFS, NativePath, Path, PortablePath, VirtualFS, npath}                                           from '@yarnpkg/fslib';
-import {ppath, toFilename}                                                                                  from '@yarnpkg/fslib';
+import {ppath, Filename}                                                                                    from '@yarnpkg/fslib';
 import {Module}                                                                                             from 'module';
 
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget} from '../types';
@@ -176,80 +176,68 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function applyNodeExtensionResolution(unqualifiedPath: PortablePath, candidates: Array<PortablePath>, {extensions}: {extensions: Array<string>}): PortablePath | null {
-    // We use this "infinite while" so that we can restart the process as long as we hit package folders
-    while (true) {
-      let stat;
+    let stat;
+
+    try {
+      candidates.push(unqualifiedPath);
+      stat = opts.fakeFs.statSync(unqualifiedPath);
+    } catch (error) {}
+
+    // If the file exists and is a file, we can stop right there
+
+    if (stat && !stat.isDirectory())
+      return opts.fakeFs.realpathSync(unqualifiedPath);
+
+    // If the file is a directory, we must check if it contains a package.json with a "main" entry
+
+    if (stat && stat.isDirectory()) {
+      let pkgJson;
 
       try {
-        candidates.push(unqualifiedPath);
-        stat = opts.fakeFs.statSync(unqualifiedPath);
+        pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(unqualifiedPath, `package.json` as Filename), `utf8`));
       } catch (error) {}
 
-      // If the file exists and is a file, we can stop right there
+      let nextUnqualifiedPath;
 
-      if (stat && !stat.isDirectory())
-        return opts.fakeFs.realpathSync(unqualifiedPath);
+      if (pkgJson && pkgJson.main)
+        nextUnqualifiedPath = ppath.resolve(unqualifiedPath, pkgJson.main);
 
-      // If the file is a directory, we must check if it contains a package.json with a "main" entry
+      // If the "main" field changed the path, we start again from this new location
 
-      if (stat && stat.isDirectory()) {
-        let pkgJson;
+      if (nextUnqualifiedPath && nextUnqualifiedPath !== unqualifiedPath) {
+        const resolution = applyNodeExtensionResolution(nextUnqualifiedPath, candidates, {extensions});
 
-        try {
-          pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(unqualifiedPath, toFilename(`package.json`)), `utf8`));
-        } catch (error) {}
-
-        let nextUnqualifiedPath;
-
-        if (pkgJson && pkgJson.main)
-          nextUnqualifiedPath = ppath.resolve(unqualifiedPath, pkgJson.main);
-
-        // If the "main" field changed the path, we start again from this new location
-
-        if (nextUnqualifiedPath && nextUnqualifiedPath !== unqualifiedPath) {
-          const resolution = applyNodeExtensionResolution(nextUnqualifiedPath, candidates, {extensions});
-
-          if (resolution !== null) {
-            return resolution;
-          }
+        if (resolution !== null) {
+          return resolution;
         }
       }
-
-      // Otherwise we check if we find a file that match one of the supported extensions
-
-      const qualifiedPath = extensions
-        .map(extension => {
-          return `${unqualifiedPath}${extension}` as PortablePath;
-        })
-        .find(candidateFile => {
-          candidates.push(candidateFile);
-          return opts.fakeFs.existsSync(candidateFile);
-        });
-
-      if (qualifiedPath)
-        return qualifiedPath;
-
-      // Otherwise, we check if the path is a folder - in such a case, we try to use its index
-
-      if (stat && stat.isDirectory()) {
-        const indexPath = extensions
-          .map(extension => {
-            return ppath.format({dir: unqualifiedPath, name: toFilename(`index`), ext: extension});
-          })
-          .find(candidateFile => {
-            candidates.push(candidateFile);
-            return opts.fakeFs.existsSync(candidateFile);
-          });
-
-        if (indexPath) {
-          return indexPath;
-        }
-      }
-
-      // Otherwise there's nothing else we can do :(
-
-      return null;
     }
+
+    // Otherwise we check if we find a file that match one of the supported extensions
+
+    for (let i = 0, length = extensions.length; i < length; i++) {
+      const candidateFile = `${unqualifiedPath}${extensions[i]}` as PortablePath;
+      candidates.push(candidateFile);
+      if (opts.fakeFs.existsSync(candidateFile)) {
+        return candidateFile;
+      }
+    }
+
+    // Otherwise, we check if the path is a folder - in such a case, we try to use its index
+
+    if (stat && stat.isDirectory()) {
+      for (let i = 0, length = extensions.length; i < length; i++) {
+        const candidateFile = ppath.format({dir: unqualifiedPath, name: `index` as Filename, ext: extensions[i]});
+        candidates.push(candidateFile);
+        if (opts.fakeFs.existsSync(candidateFile)) {
+          return candidateFile;
+        }
+      }
+    }
+
+    // Otherwise there's nothing else we can do :(
+
+    return null;
   }
 
   /**
@@ -283,7 +271,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   function callNativeResolution(request: PortablePath, issuer: PortablePath): NativePath | false {
     if (issuer.endsWith(`/`))
-      issuer = ppath.join(issuer, toFilename(`internal.js`));
+      issuer = ppath.join(issuer, `internal.js` as Filename);
 
     // Since we would need to create a fake module anyway (to call _resolveLookupPath that
     // would give us the paths to give to _resolveFilename), we can as well not use
