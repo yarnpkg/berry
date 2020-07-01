@@ -46,7 +46,9 @@ const moduleWrapper = tsserver => {
   }
 
   function removeZipPrefix(str) {
-    return str.replace(/^zip:/, ``);
+    return process.platform === 'win32'
+      ? str.replace(/^zip:\//, ``)
+      : str.replace(/^zip:/, ``);
   }
 };
 
