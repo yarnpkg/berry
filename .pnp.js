@@ -38845,68 +38845,96 @@ function patchFs(patchedFs, fakeFs) {
       replacement[external_util_.promisify.custom] = orig[external_util_.promisify.custom];
     }
   };
+  /** Callback implementations */
 
-  setupFn(patchedFs, `existsSync`, p => {
-    try {
-      return fakeFs.existsSync(p);
-    } catch (error) {
-      return false;
-    }
-  });
-  setupFn(patchedFs, `exists`, (p, ...args) => {
-    const hasCallback = typeof args[args.length - 1] === `function`;
-    const callback = hasCallback ? args.pop() : () => {};
-    process.nextTick(() => {
-      fakeFs.existsPromise(p).then(exists => {
-        callback(exists);
-      }, () => {
-        callback(false);
-      });
-    });
-  });
-  setupFn(patchedFs, `read`, (p, buffer, ...args) => {
-    const hasCallback = typeof args[args.length - 1] === `function`;
-    const callback = hasCallback ? args.pop() : () => {};
-    process.nextTick(() => {
-      fakeFs.readPromise(p, buffer, ...args).then(bytesRead => {
-        callback(null, bytesRead, buffer);
-      }, error => {
-        callback(error);
-      });
-    });
-  });
 
-  for (const fnName of ASYNC_IMPLEMENTATIONS) {
-    const origName = fnName.replace(/Promise$/, ``);
-    if (typeof patchedFs[origName] === `undefined`) continue;
-    const fakeImpl = fakeFs[fnName];
-    if (typeof fakeImpl === `undefined`) continue;
-
-    const wrapper = (...args) => {
+  {
+    setupFn(patchedFs, `exists`, (p, ...args) => {
       const hasCallback = typeof args[args.length - 1] === `function`;
       const callback = hasCallback ? args.pop() : () => {};
       process.nextTick(() => {
-        fakeImpl.apply(fakeFs, args).then(result => {
-          callback(null, result);
+        fakeFs.existsPromise(p).then(exists => {
+          callback(exists);
+        }, () => {
+          callback(false);
+        });
+      });
+    });
+    setupFn(patchedFs, `read`, (p, buffer, ...args) => {
+      const hasCallback = typeof args[args.length - 1] === `function`;
+      const callback = hasCallback ? args.pop() : () => {};
+      process.nextTick(() => {
+        fakeFs.readPromise(p, buffer, ...args).then(bytesRead => {
+          callback(null, bytesRead, buffer);
         }, error => {
           callback(error);
         });
       });
-    };
+    });
 
-    setupFn(patchedFs, origName, wrapper);
+    for (const fnName of ASYNC_IMPLEMENTATIONS) {
+      const origName = fnName.replace(/Promise$/, ``);
+      if (typeof patchedFs[origName] === `undefined`) continue;
+      const fakeImpl = fakeFs[fnName];
+      if (typeof fakeImpl === `undefined`) continue;
+
+      const wrapper = (...args) => {
+        const hasCallback = typeof args[args.length - 1] === `function`;
+        const callback = hasCallback ? args.pop() : () => {};
+        process.nextTick(() => {
+          fakeImpl.apply(fakeFs, args).then(result => {
+            callback(null, result);
+          }, error => {
+            callback(error);
+          });
+        });
+      };
+
+      setupFn(patchedFs, origName, wrapper);
+    }
+
+    patchedFs.realpath.native = patchedFs.realpath;
   }
+  /** Sync implementations */
 
-  for (const fnName of SYNC_IMPLEMENTATIONS) {
-    const origName = fnName;
-    if (typeof patchedFs[origName] === `undefined`) continue;
-    const fakeImpl = fakeFs[fnName];
-    if (typeof fakeImpl === `undefined`) continue;
-    setupFn(patchedFs, origName, fakeImpl.bind(fakeFs));
+  {
+    setupFn(patchedFs, `existsSync`, p => {
+      try {
+        return fakeFs.existsSync(p);
+      } catch (error) {
+        return false;
+      }
+    });
+
+    for (const fnName of SYNC_IMPLEMENTATIONS) {
+      const origName = fnName;
+      if (typeof patchedFs[origName] === `undefined`) continue;
+      const fakeImpl = fakeFs[fnName];
+      if (typeof fakeImpl === `undefined`) continue;
+      setupFn(patchedFs, origName, fakeImpl.bind(fakeFs));
+    }
+
+    patchedFs.realpathSync.native = patchedFs.realpathSync;
   }
+  /** Promise implementations */
 
-  patchedFs.realpathSync.native = patchedFs.realpathSync;
-  patchedFs.realpath.native = patchedFs.realpath;
+  {
+    // `fs.promises` is a getter that returns a reference to require(`fs/promises`),
+    // so we can just patch `fs.promises` and both will be updated
+    const patchedFsPromises = patchedFs.promises;
+
+    if (typeof patchedFsPromises !== `undefined`) {
+      // `fs.promises.exists` doesn't exist
+      for (const fnName of ASYNC_IMPLEMENTATIONS) {
+        const origName = fnName.replace(/Promise$/, ``);
+        if (typeof patchedFsPromises[origName] === `undefined`) continue;
+        const fakeImpl = fakeFs[fnName];
+        if (typeof fakeImpl === `undefined`) continue;
+        setupFn(patchedFsPromises, origName, fakeImpl.bind(fakeFs));
+      } // `fs.promises.realpath` doesn't have a `native` property
+
+    }
+  }
 }
 function extendFs(realFs, fakeFs) {
   const patchedFs = Object.create(realFs);
