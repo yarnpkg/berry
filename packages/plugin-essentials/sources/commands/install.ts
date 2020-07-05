@@ -33,7 +33,7 @@ export default class YarnCommand extends BaseCommand {
   @Command.Boolean(`--inline-builds`)
   inlineBuilds?: boolean;
 
-  @Command.String(`--cache-folder`)
+  @Command.String(`--cache-folder`, {hidden: true})
   cacheFolder?: string;
 
   @Command.Boolean(`--silent`, {hidden: true})
