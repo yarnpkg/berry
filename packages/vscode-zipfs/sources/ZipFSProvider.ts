@@ -17,12 +17,17 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
     const stat: any = this.fs.statSync(uri.fsPath);
 
     switch (true) {
-      case stat.isDirectory(): {
+      case stat.isDirectory():
+      case npath.extname(uri.fsPath) === `.zip`: {
         stat.type = vscode.FileType.Directory;
       } break;
 
       case stat.isFile(): {
         stat.type = vscode.FileType.File;
+      } break;
+
+      case stat.isSymbolicLink(): {
+        stat.type = vscode.FileType.SymbolicLink;
       } break;
 
       default: {
@@ -35,19 +40,11 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
 
   readDirectory(uri: vscode.Uri): Array<[string, vscode.FileType]> {
     const listing = this.fs.readdirSync(uri.fsPath);
-    const results = [];
 
-    for (const entry of listing) {
-      const entryStat = this.fs.statSync(npath.join(uri.fsPath, entry));
-
-      if (entryStat.isDirectory()) {
-        results.push([entry, vscode.FileType.Directory] as [string, vscode.FileType]);
-      } else {
-        results.push([entry, vscode.FileType.File] as [string, vscode.FileType]);
-      }
-    }
-
-    return results;
+    return listing.map(entry => {
+      const {type} = this.stat(vscode.Uri.joinPath(uri, entry));
+      return [entry, type];
+    });
   }
 
   readFile(uri: vscode.Uri): Uint8Array {
@@ -56,9 +53,9 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
 
   writeFile(uri: vscode.Uri, content: Uint8Array, options: {create: boolean, overwrite: boolean}): void {
     if (!options.create && !this.fs.existsSync(uri.fsPath))
-      throw new Error(``);
+      throw vscode.FileSystemError.FileNotFound(uri);
     if (options.create && !options.overwrite && this.fs.existsSync(uri.fsPath))
-      throw new Error(``);
+      throw vscode.FileSystemError.FileExists(uri);
 
     this.fs.writeFileSync(uri.fsPath, new Buffer(content));
   }
