@@ -6017,7 +6017,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["@strictsoftware/typedoc-plugin-monorepo", [
         ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#patch:@strictsoftware/typedoc-plugin-monorepo@npm%3A0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch::version=0.2.2&hash=3cb6af&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby", {
-          "packageLocation": "./.yarn/$$virtual/@strictsoftware-typedoc-plugin-monorepo-virtual-09b872f664/0/cache/@strictsoftware-typedoc-plugin-monorepo-patch-9155b53ad6-db882e4e0c.zip/node_modules/@strictsoftware/typedoc-plugin-monorepo/",
+          "packageLocation": "./.yarn/$$virtual/@strictsoftware-typedoc-plugin-monorepo-virtual-09b872f664/0/cache/@strictsoftware-typedoc-plugin-monorepo-patch-9155b53ad6-b8d5cc2e8a.zip/node_modules/@strictsoftware/typedoc-plugin-monorepo/",
           "packageDependencies": [
             ["@strictsoftware/typedoc-plugin-monorepo", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#patch:@strictsoftware/typedoc-plugin-monorepo@npm%3A0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch::version=0.2.2&hash=3cb6af&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],
             ["highlight.js", "npm:9.15.8"],
@@ -29344,7 +29344,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["resolve", [
         ["patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=3388aa", {
-          "packageLocation": "./.yarn/cache/resolve-patch-493d9f7c02-f6f7d0a2fe.zip/node_modules/resolve/",
+          "packageLocation": "./.yarn/cache/resolve-patch-493d9f7c02-3a0acfc6cc.zip/node_modules/resolve/",
           "packageDependencies": [
             ["resolve", "patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=3388aa"],
             ["path-parse", "npm:1.0.6"]
@@ -29352,7 +29352,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }],
         ["patch:resolve@npm%3A1.17.0#builtin<compat/resolve>::version=1.17.0&hash=3388aa", {
-          "packageLocation": "./.yarn/cache/resolve-patch-38ce149af0-99df12ab34.zip/node_modules/resolve/",
+          "packageLocation": "./.yarn/cache/resolve-patch-38ce149af0-4bcfb56886.zip/node_modules/resolve/",
           "packageDependencies": [
             ["resolve", "patch:resolve@npm%3A1.17.0#builtin<compat/resolve>::version=1.17.0&hash=3388aa"],
             ["path-parse", "npm:1.0.6"]
@@ -29360,7 +29360,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }],
         ["patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=3388aa", {
-          "packageLocation": "./.yarn/cache/resolve-patch-23a3403570-c7d647ca7f.zip/node_modules/resolve/",
+          "packageLocation": "./.yarn/cache/resolve-patch-23a3403570-1e933a9825.zip/node_modules/resolve/",
           "packageDependencies": [
             ["resolve", "patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=3388aa"],
             ["path-parse", "npm:1.0.6"]
@@ -32912,28 +32912,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["typescript", [
         ["patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=64df9d", {
-          "packageLocation": "./.yarn/cache/typescript-patch-d40194587d-ae7c1709b2.zip/node_modules/typescript/",
+          "packageLocation": "./.yarn/cache/typescript-patch-d40194587d-7f0e45c981.zip/node_modules/typescript/",
           "packageDependencies": [
             ["typescript", "patch:typescript@npm%3A3.7.4#builtin<compat/typescript>::version=3.7.4&hash=64df9d"]
           ],
           "linkType": "HARD",
         }],
         ["patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=64df9d", {
-          "packageLocation": "./.yarn/cache/typescript-patch-0b1ee95fa0-8ec50d9f9b.zip/node_modules/typescript/",
+          "packageLocation": "./.yarn/cache/typescript-patch-0b1ee95fa0-cf3413606d.zip/node_modules/typescript/",
           "packageDependencies": [
             ["typescript", "patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=64df9d"]
           ],
           "linkType": "HARD",
         }],
         ["patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=64df9d", {
-          "packageLocation": "./.yarn/cache/typescript-patch-c624345536-7b29bcb057.zip/node_modules/typescript/",
+          "packageLocation": "./.yarn/cache/typescript-patch-c624345536-dcadfa6d7c.zip/node_modules/typescript/",
           "packageDependencies": [
             ["typescript", "patch:typescript@npm%3A3.8.3#builtin<compat/typescript>::version=3.8.3&hash=64df9d"]
           ],
           "linkType": "HARD",
         }],
         ["patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=64df9d", {
-          "packageLocation": "./.yarn/cache/typescript-patch-7389ae8fe7-5849aa7c2d.zip/node_modules/typescript/",
+          "packageLocation": "./.yarn/cache/typescript-patch-7389ae8fe7-452cdd20d8.zip/node_modules/typescript/",
           "packageDependencies": [
             ["typescript", "patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=64df9d"]
           ],
