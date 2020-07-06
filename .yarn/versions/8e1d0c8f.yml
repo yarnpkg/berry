@@ -1,0 +1,9 @@
+releases:
+  "@yarnpkg/pnp": prerelease
+  "@yarnpkg/cli": prerelease
+
+declined:
+  - "@yarnpkg/plugin-node-modules"
+  - "@yarnpkg/plugin-pnp"
+  - "@yarnpkg/core"
+  - "@yarnpkg/pnpify"
