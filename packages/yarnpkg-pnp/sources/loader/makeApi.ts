@@ -380,7 +380,15 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   function findBrokenPeerDependencies(dependency: string, initialPackage: PhysicalPackageLocator): Array<PhysicalPackageLocator> {
     const brokenPackages = new Map<string, Set<string>>();
 
+    const alreadyVisited = new Set<string>();
+
     const traversal = (currentPackage: PhysicalPackageLocator) => {
+      const identifier = JSON.stringify(currentPackage.name);
+      if (alreadyVisited.has(identifier))
+        return;
+
+      alreadyVisited.add(identifier);
+
       const dependents = findPackageDependents(currentPackage);
 
       for (const dependent of dependents) {
