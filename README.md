@@ -67,7 +67,7 @@ We wish to thank the following companies for their support:
       </a>
     </td>
     <td>
-      <b><a href="https://www.cloudflare.com/">Cloudflare</a></b> has also been an historical partner. While we use them a bit less lately since we don't mirror the npm registry anymore, they still power our website to make its delivery as fast as possible.
+      <b><a href="https://www.cloudflare.com/">Cloudflare</a></b> has also been an historical partner. While we don't directly mirror the npm registry anymore, they still power our website to make its delivery as fast as possible.
     </td>
   </tr>
   <tr>
