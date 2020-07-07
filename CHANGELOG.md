@@ -28,6 +28,7 @@
 - `yarn run` now supports the `--inspect` and `--inspect-brk` switches for binaries (for example `yarn run --inspect-brk jest`).
 - `yarn remove` and `yarn up` now support glob patterns.
 - `yarn dlx` now respects the local project configuration (particularly the configured registries). This is still experimental and will be further improved in the next months.
+- `yarn dlx` now properly exits with an exit code when the underlying command returned an exit code too.
 - `yarn config get` (and `set`) can now access nested configuration values (for example, `yarn config get npmScopes.foo.npmRegistryServer` will tell you which server is configured for the given server, if any).
 - `yarn config get` will now hide its secrets (or rather yours) from the rest of the world. A new `--no-redacted` option will toggle off this behavior if needed.
 - `yarn config set` now has a `--json` option that will let Yarn know it should interpret the given value as a JSON object (useful to set server configuration, etc).
@@ -70,6 +71,7 @@
 
 ### Third-party integrations
 
+- The PnP hook will now display the list of packages that broke the peer dependency chain (it previously only showed the name of the package that wasn't provided the peer dependency, but not the name of which ancestor was responsible).
 - We have added `lutimes` support into Node itself, since it was otherwise impossible to implement perfect copy mechanisms (the copied symlinks would end up with different mtime than their originals).
 - The SDK files have been moved from `.vscode/pnpify` to `.yarn/sdks`.
 - Improvements have been made in the VSCode integration. In particular, the PnP support is now good enough that it started to fix some longstanding issues that VSCode had with properly naming workspaces.
