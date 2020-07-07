@@ -26,6 +26,15 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should return the exit code from the binary`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await expect(run(`dlx`, `-q`, `-p`, `has-bin-entries`, `has-bin-entries-with-exit-code`, `42`)).rejects.toMatchObject({
+          code: 42,
+        });
+      }),
+    );
+
+    test(
       `it should support running different binaries than the default one`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await expect(run(`dlx`, `-q`, `-p`, `has-bin-entries`, `has-bin-entries-with-relative-require`)).resolves.toMatchObject({
