@@ -50,8 +50,7 @@ describe(`Plug'n'Play API`, () => {
 
         await run(`install`);
 
-        const resolution = await source(`require('module').createRequire(require.resolve('workspace/package.json')).resolve('no-deps')`);
-        expect(resolution.match(/\.yarn/g)).toHaveLength(1);
+        await source(`require('module').createRequire(require.resolve('workspace/package.json')).resolve('no-deps')`);
       }),
     );
 
