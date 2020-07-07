@@ -25,6 +25,53 @@ Yarn is a modern package manager split into various packages. Its novel architec
 - Yarn is first and foremost a [Node API](https://yarnpkg.com/api/) that can be used programmatically (via [@yarnpkg/core](packages/yarnpkg-core))
 - Yarn is written in [TypeScript](https://www.typescriptlang.org/) and is fully type-checked
 
+## Our supports
+
+We wish to thank the following companies for their support:
+
+<table width="100%">
+  <tr>
+    <td>
+      <a href="https://www.datadoghq.com/">
+        <img src="https://user-images.githubusercontent.com/1037931/86770706-62299e00-c051-11ea-931a-2831c894ab6a.png" width="140"/>
+      </a>
+    </td>
+    <td>
+      <b><a href="https://www.datadoghq.com/">Datadog</a></b> has been sponsoring the time from our lead maintainer for more than a year now. They also upgraded our account so that we can benefit from long-term telemetry (<a href="https://github.com/yarnpkg/berry/issues/1250">RFC</a>).
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://www.netlify.com/">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Netlify_logo.svg" width="140"/>
+      </a>
+    </td>
+    <td>
+      <b><a href="https://www.netlify.com/">Netlify</a></b> has been the historical provider for our website since the very beginning. Each time we got issues, they jumped to our help. Their live previews have been super helpful in our development process.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://www.cloudflare.com/">
+       <img src="https://user-images.githubusercontent.com/1037931/86770912-bc2a6380-c051-11ea-9f99-97161b2d7cf2.png" width="140"/>
+      </a>
+    </td>
+    <td>
+      <b><a href="https://www.cloudflare.com/">Cloudflare</a></b> has also been an historical partner. While we use them a bit less lately since we don't mirror the npm registry anymore, they still power our website to make its delivery as fast as possible.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://www.algolia.com/">
+       <img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Algolia_logo.svg" width="140"/>
+      </a>
+    </td>
+    <td>
+      <b><a href="https://www.algolia.com/">Algolia</a></b> contributed a lot to our website. One of their engineers single-handedly maintained the classic website for a while, and they power the search engine we use on both versions of the documentation.
+    </td>
+  </tr>
+</table>
+
 ## Installation
 
 Consult the [Installation Guide](https://yarnpkg.com/getting-started/install).
@@ -153,3 +200,4 @@ The following packages are meant to be used by Yarn itself, and probably won't b
 
 - [@yarnpkg/builder](packages/yarnpkg-builder) contains a CLI tool to package berry and its plugins.
 - [@yarnpkg/cli](packages/yarnpkg-cli) is a CLI entry point built on top of [@yarnpkg/core](packages/yarnpkg-core).
+
