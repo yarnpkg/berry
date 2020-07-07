@@ -39477,7 +39477,6 @@ function makeApi(runtimeState, opts) {
   const fallbackLocators = []; // To avoid emitting the same warning multiple times
 
   const emittedWarnings = new Set();
-  if (runtimeState.enableTopLevelFallback === true) fallbackLocators.push(topLevelLocator);
 
   if (opts.compatibilityMode !== false) {
     // ESLint currently doesn't have any portable way for shared configs to
@@ -39719,7 +39718,7 @@ function makeApi(runtimeState, opts) {
    * Plug'n'Play standard, and any other key are third-party extensions. Third-party extensions are not allowed
    * to override the standard, and can only offer new methods.
    *
-   * If an new version of the Plug'n'Play standard is released and some extensions conflict with newly added
+   * If a new version of the Plug'n'Play standard is released and some extensions conflict with newly added
    * functions, they'll just have to fix the conflicts and bump their own version number.
    */
 
@@ -39983,11 +39982,13 @@ function makeApi(runtimeState, opts) {
                 break;
               }
 
-              if (dependencyReference == null && fallbackReference === null) {
-                const reference = runtimeState.fallbackPool.get(dependencyName);
+              if (runtimeState.enableTopLevelFallback) {
+                if (dependencyReference == null && fallbackReference === null) {
+                  const reference = runtimeState.fallbackPool.get(dependencyName);
 
-                if (reference != null) {
-                  fallbackReference = reference;
+                  if (reference != null) {
+                    fallbackReference = reference;
+                  }
                 }
               }
             }
@@ -40263,7 +40264,7 @@ function makeManager(pnpapi, opts) {
   }
 
   function findApiPathFor(modulePath) {
-    const start = sources_path/* ppath.resolve */.y1.resolve(sources_path/* npath.toPortablePath */.cS.toPortablePath(modulePath));
+    const start = VirtualFS.resolveVirtual(sources_path/* ppath.resolve */.y1.resolve(sources_path/* npath.toPortablePath */.cS.toPortablePath(modulePath)));
     let curr;
     let next = start;
 

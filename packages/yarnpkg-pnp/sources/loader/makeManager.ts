@@ -1,8 +1,8 @@
-import {FakeFS, Filename, NativePath, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
-import fs                                                              from 'fs';
-import {Module}                                                        from 'module';
+import {FakeFS, Filename, NativePath, PortablePath, VirtualFS, npath, ppath, xfs} from '@yarnpkg/fslib';
+import fs                                                                         from 'fs';
+import {Module}                                                                   from 'module';
 
-import {PnpApi}                                                        from '../types';
+import {PnpApi}                                                                   from '../types';
 
 export type ApiMetadata = {
   cache: typeof Module._cache,
@@ -82,7 +82,9 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
   }
 
   function findApiPathFor(modulePath: NativePath) {
-    const start = ppath.resolve(npath.toPortablePath(modulePath));
+    const start = VirtualFS.resolveVirtual(
+      ppath.resolve(npath.toPortablePath(modulePath)),
+    );
 
     let curr: PortablePath;
     let next = start;

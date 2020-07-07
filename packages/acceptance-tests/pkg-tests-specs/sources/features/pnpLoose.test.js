@@ -9,6 +9,7 @@ describe(`Features`, () => {
           },
         },
         {
+          pnpFallbackMode: `dependencies-only`,
           pnpMode: `loose`,
         },
         async ({path, run, source}) => {
@@ -34,6 +35,7 @@ describe(`Features`, () => {
           },
         },
         {
+          pnpFallbackMode: `dependencies-only`,
           pnpMode: `loose`,
         },
         async ({path, run, source}) => {
@@ -57,6 +59,7 @@ describe(`Features`, () => {
           },
         },
         {
+          pnpFallbackMode: `all`,
           pnpMode: `loose`,
         },
         async ({path, run, source}) => {
@@ -80,6 +83,7 @@ describe(`Features`, () => {
           },
         },
         {
+          pnpFallbackMode: `dependencies-only`,
           pnpMode: `loose`,
         },
         async ({path, run, source}) => {
@@ -117,6 +121,7 @@ describe(`Features`, () => {
           },
         },
         {
+          pnpFallbackMode: `dependencies-only`,
           pnpMode: `loose`,
         },
         async ({path, run, source}) => {

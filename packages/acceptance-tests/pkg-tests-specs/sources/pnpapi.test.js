@@ -4,6 +4,10 @@ const {
   fs: {writeFile, writeJson},
 } = require(`pkg-tests-core`);
 
+const skipIfNode10 = process.version.startsWith(`v10.`)
+  ? test.skip
+  : test;
+
 describe(`Plug'n'Play API`, () => {
   test(
     `it should expose VERSIONS`,
@@ -21,6 +25,32 @@ describe(`Plug'n'Play API`, () => {
         await run(`install`);
 
         await expect(source(`typeof require('pnpapi').resolveToUnqualified`)).resolves.toEqual(`function`);
+      }),
+    );
+
+    skipIfNode10(
+      `it shouldn't mess up when using createRequire on virtual files`,
+      makeTemporaryEnv({
+        private: true,
+        workspaces: [
+          `workspace`,
+        ],
+        dependencies: {
+          [`workspace`]: `workspace:*`,
+          [`no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await xfs.mkdirpPromise(`${path}/workspace`);
+        await xfs.writeJsonPromise(`${path}/workspace/package.json`, {
+          name: `workspace`,
+          peerDependencies: {
+            [`no-deps`]: `*`,
+          },
+        });
+
+        await run(`install`);
+
+        await source(`require('module').createRequire(require.resolve('workspace/package.json')).resolve('no-deps')`);
       }),
     );
 

@@ -51,9 +51,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   // To avoid emitting the same warning multiple times
   const emittedWarnings = new Set<string>();
 
-  if (runtimeState.enableTopLevelFallback === true)
-    fallbackLocators.push(topLevelLocator);
-
   if (opts.compatibilityMode !== false) {
     // ESLint currently doesn't have any portable way for shared configs to
     // specify their own plugins that should be used (cf issue #10125). This
@@ -304,7 +301,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * Plug'n'Play standard, and any other key are third-party extensions. Third-party extensions are not allowed
    * to override the standard, and can only offer new methods.
    *
-   * If an new version of the Plug'n'Play standard is released and some extensions conflict with newly added
+   * If a new version of the Plug'n'Play standard is released and some extensions conflict with newly added
    * functions, they'll just have to fix the conflicts and bump their own version number.
    */
 
@@ -618,10 +615,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
               break;
             }
 
-            if (dependencyReference == null && fallbackReference === null) {
-              const reference = runtimeState.fallbackPool.get(dependencyName);
-              if (reference != null) {
-                fallbackReference = reference;
+            if (runtimeState.enableTopLevelFallback) {
+              if (dependencyReference == null && fallbackReference === null) {
+                const reference = runtimeState.fallbackPool.get(dependencyName);
+                if (reference != null) {
+                  fallbackReference = reference;
+                }
               }
             }
           }
