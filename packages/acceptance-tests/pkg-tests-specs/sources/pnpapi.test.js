@@ -25,6 +25,33 @@ describe(`Plug'n'Play API`, () => {
     );
 
     test(
+      `it shouldn't mess up when using createRequire on virtual files`,
+      makeTemporaryEnv({
+        private: true,
+        workspaces: [
+          `workspace`,
+        ],
+        dependencies: {
+          [`workspace`]: `workspace:*`,
+          [`no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await xfs.mkdirpPromise(`${path}/workspace`);
+        await xfs.writeJsonPromise(`${path}/workspace/package.json`, {
+          name: `workspace`,
+          peerDependencies: {
+            [`no-deps`]: `*`,
+          },
+        });
+
+        await run(`install`);
+
+        const resolution = await source(`require('module').createRequire(require.resolve('workspace/package.json')).resolve('no-deps')`);
+        expect(resolution.match(/\.yarn/g)).toHaveLength(1);
+      }),
+    );
+
+    test(
       `it should expose resolveToUnqualified`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`install`);
