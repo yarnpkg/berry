@@ -42,12 +42,22 @@ We wish to thank the following companies for their support:
   </tr>
   <tr>
     <td>
+      <a href="https://sysgears.com/">
+        <img src="https://cdn3.sysgears.com/images/logo-128bacee32b1c70b00b6454397eeedc5.svg" width="140"/>
+      </a>
+    </td>
+    <td>
+      <b><a href="https://sysgears.com/">Sysgears</a></b> also sponsored time from very early in the 2.x development. In particular, their strong investment is the reason why Yarn 2 supports node_modules installs even better than it used to.
+    </td>
+  </tr>
+  <tr>
+    <td>
       <a href="https://www.netlify.com/">
         <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Netlify_logo.svg" width="140"/>
       </a>
     </td>
     <td>
-      <b><a href="https://www.netlify.com/">Netlify</a></b> has been the historical provider for our website since the very beginning. Each time we got issues, they jumped to our help. Their live previews have been super helpful in our development process.
+      <b><a href="https://www.netlify.com/">Netlify</a></b> has been the historical provider for our website. Each time we got issues, they jumped to our help. Their live previews have been super helpful in our development process.
     </td>
   </tr>
   <tr>
@@ -67,7 +77,7 @@ We wish to thank the following companies for their support:
       </a>
     </td>
     <td>
-      <b><a href="https://www.algolia.com/">Algolia</a></b> contributed a lot to our website. One of their engineers single-handedly maintained the classic website for a while, and they power the search engine we use on both versions of the documentation.
+      <b><a href="https://www.algolia.com/">Algolia</a></b> contributed a lot to our documentation over the years. They still power the search engine we use on both versions of the documentation.
     </td>
   </tr>
 </table>
