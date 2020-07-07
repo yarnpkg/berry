@@ -4,6 +4,10 @@ const {
   fs: {writeFile, writeJson},
 } = require(`pkg-tests-core`);
 
+const skipIfNode10 = process.version.startsWith(`v10.`)
+  ? test.skip
+  : test;
+
 describe(`Plug'n'Play API`, () => {
   test(
     `it should expose VERSIONS`,
@@ -24,7 +28,7 @@ describe(`Plug'n'Play API`, () => {
       }),
     );
 
-    test(
+    skipIfNode10(
       `it shouldn't mess up when using createRequire on virtual files`,
       makeTemporaryEnv({
         private: true,
