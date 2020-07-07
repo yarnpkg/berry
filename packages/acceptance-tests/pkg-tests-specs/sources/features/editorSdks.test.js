@@ -150,8 +150,6 @@ describe(`Features`, () => {
           // Some sanity check to make sure everything is A-OK
           expect(lodashTypeDef).toContain(`.zip`);
 
-          console.log({lodashTypeDef, ourUtilityFile});
-
           await runAndWait(`projectLoadingFinish`, {
             seq: 0,
             type: `request`,
