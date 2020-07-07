@@ -1,0 +1,23 @@
+releases:
+  "@yarnpkg/pnp": prerelease
+  "@yarnpkg/cli": prerelease
+
+declined:
+  - "@yarnpkg/plugin-node-modules"
+  - "@yarnpkg/plugin-pnp"
+  - "@yarnpkg/core"
+  - "@yarnpkg/pnpify"
+  - "@yarnpkg/plugin-constraints"
+  - "@yarnpkg/plugin-dlx"
+  - "@yarnpkg/plugin-essentials"
+  - "@yarnpkg/plugin-init"
+  - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-npm-cli"
+  - "@yarnpkg/plugin-pack"
+  - "@yarnpkg/plugin-patch"
+  - "@yarnpkg/plugin-stage"
+  - "@yarnpkg/plugin-typescript"
+  - "@yarnpkg/plugin-version"
+  - "@yarnpkg/plugin-workspace-tools"
+  - "@yarnpkg/builder"
+  - "@yarnpkg/doctor"

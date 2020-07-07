@@ -39791,8 +39791,12 @@ function makeApi(runtimeState, opts) {
 
   function findBrokenPeerDependencies(dependency, initialPackage) {
     const brokenPackages = new Map();
+    const alreadyVisited = new Set();
 
     const traversal = currentPackage => {
+      const identifier = JSON.stringify(currentPackage.name);
+      if (alreadyVisited.has(identifier)) return;
+      alreadyVisited.add(identifier);
       const dependents = findPackageDependents(currentPackage);
 
       for (const dependent of dependents) {
