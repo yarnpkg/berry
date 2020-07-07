@@ -39477,7 +39477,6 @@ function makeApi(runtimeState, opts) {
   const fallbackLocators = []; // To avoid emitting the same warning multiple times
 
   const emittedWarnings = new Set();
-  if (runtimeState.enableTopLevelFallback === true) fallbackLocators.push(topLevelLocator);
 
   if (opts.compatibilityMode !== false) {
     // ESLint currently doesn't have any portable way for shared configs to
@@ -39983,11 +39982,13 @@ function makeApi(runtimeState, opts) {
                 break;
               }
 
-              if (dependencyReference == null && fallbackReference === null) {
-                const reference = runtimeState.fallbackPool.get(dependencyName);
+              if (runtimeState.enableTopLevelFallback) {
+                if (dependencyReference == null && fallbackReference === null) {
+                  const reference = runtimeState.fallbackPool.get(dependencyName);
 
-                if (reference != null) {
-                  fallbackReference = reference;
+                  if (reference != null) {
+                    fallbackReference = reference;
+                  }
                 }
               }
             }
