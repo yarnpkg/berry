@@ -587,10 +587,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@arcanis/slice-ansi", [
-        ["npm:1.0.0", {
-          "packageLocation": "./.yarn/cache/@arcanis-slice-ansi-npm-1.0.0-da46558964-666037b5f9.zip/node_modules/@arcanis/slice-ansi/",
+        ["npm:1.0.1", {
+          "packageLocation": "./.yarn/cache/@arcanis-slice-ansi-npm-1.0.1-674ef70c82-66ad7ccc8c.zip/node_modules/@arcanis/slice-ansi/",
           "packageDependencies": [
-            ["@arcanis/slice-ansi", "npm:1.0.0"]
+            ["@arcanis/slice-ansi", "npm:1.0.1"],
+            ["grapheme-splitter", "npm:1.0.4"]
           ],
           "linkType": "HARD",
         }]
@@ -7111,7 +7112,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/yarnpkg-core/",
           "packageDependencies": [
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
-            ["@arcanis/slice-ansi", "npm:1.0.0"],
+            ["@arcanis/slice-ansi", "npm:1.0.1"],
             ["@types/ci-info", "npm:2.0.0"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/diff", "npm:4.0.2"],
@@ -17182,6 +17183,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/graceful-readlink-npm-1.0.1-6da4ca180d-a067577156.zip/node_modules/graceful-readlink/",
           "packageDependencies": [
             ["graceful-readlink", "npm:1.0.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["grapheme-splitter", [
+        ["npm:1.0.4", {
+          "packageLocation": "./.yarn/cache/grapheme-splitter-npm-1.0.4-648f2bf509-6875e94add.zip/node_modules/grapheme-splitter/",
+          "packageDependencies": [
+            ["grapheme-splitter", "npm:1.0.4"]
           ],
           "linkType": "HARD",
         }]

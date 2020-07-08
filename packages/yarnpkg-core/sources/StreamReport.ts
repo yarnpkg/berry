@@ -484,10 +484,15 @@ export class StreamReport extends Report {
   }
 
   private truncate(str: string, {truncate}: {truncate?: boolean} = {}) {
+    if (!this.configuration.get(`enableProgressBars`))
+      truncate = false;
+
     if (typeof truncate === `undefined`)
       truncate = this.configuration.get(`preferTruncatedLines`);
 
-    if (truncate && process.stdout.columns > 22)
+    // The -1 is to account for terminals that would wrap after
+    // the last column rather before the first overwrite
+    if (truncate)
       str = sliceAnsi(str, 0, process.stdout.columns - 1);
 
     return str;
@@ -518,7 +523,7 @@ export class StreamReport extends Report {
     const desc = MessageName[name];
     const href = `https://yarnpkg.com/advanced/error-codes#${code}---${desc}`.toLowerCase();
 
-    return `\u001b]8;;${href}\u001b\\${code}\u001b]8;;\u001b\\`;
+    return `\u001b]8;;${href}\u001b\\${code}\u001b]8;;\u001b\u001b\\`;
   }
 
   private formatIndent() {
