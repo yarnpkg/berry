@@ -37654,7 +37654,7 @@ function makeApi(runtimeState, opts) {
 
         const absoluteIssuer = sources_path/* ppath.resolve */.y1.resolve(issuer);
 
-        if (absoluteIssuer.match(isDirRegExp)) {
+        if (issuer.match(isDirRegExp)) {
           unqualifiedPath = sources_path/* ppath.normalize */.y1.normalize(sources_path/* ppath.join */.y1.join(absoluteIssuer, request));
         } else {
           unqualifiedPath = sources_path/* ppath.normalize */.y1.normalize(sources_path/* ppath.join */.y1.join(sources_path/* ppath.dirname */.y1.dirname(absoluteIssuer), request));

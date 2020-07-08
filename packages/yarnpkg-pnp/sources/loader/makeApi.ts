@@ -542,7 +542,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         // 2) ppath.join preserves trailing slashes
 
         const absoluteIssuer = ppath.resolve(issuer);
-        if (absoluteIssuer.match(isDirRegExp)) {
+        if (issuer.match(isDirRegExp)) {
           unqualifiedPath = ppath.normalize(ppath.join(absoluteIssuer, request));
         } else {
           unqualifiedPath = ppath.normalize(ppath.join(ppath.dirname(absoluteIssuer), request));
