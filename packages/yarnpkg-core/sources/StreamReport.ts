@@ -362,7 +362,7 @@ export class StreamReport extends Report {
 
   private writeLine(str: string, {truncate}: {truncate?: boolean} = {}) {
     this.clearProgress({clear: true});
-    this.stdout.write(this.truncate(`${str}\n`, {truncate}));
+    this.stdout.write(`${this.truncate(str, {truncate})}\n`);
     this.writeProgress();
   }
 
@@ -375,7 +375,7 @@ export class StreamReport extends Report {
     this.clearProgress({delta: lines.length});
 
     for (const line of lines)
-      this.stdout.write(this.truncate(line, {truncate}));
+      this.stdout.write(`${this.truncate(line, {truncate})}\n`);
 
     this.writeProgress();
   }
@@ -488,7 +488,7 @@ export class StreamReport extends Report {
       truncate = this.configuration.get(`preferTruncatedLines`);
 
     if (truncate && process.stdout.columns > 22)
-      str = sliceAnsi(str, 0, process.stdout.columns - 1).replace(/\n?$/, `\n`);
+      str = sliceAnsi(str, 0, process.stdout.columns - 1);
 
     return str;
   }
