@@ -142,6 +142,10 @@ export class StreamReport extends Report {
     this.stdout = stdout;
   }
 
+  hasWarnings() {
+    return this.warningCount > 0;
+  }
+
   hasErrors() {
     return this.errorCount > 0;
   }
