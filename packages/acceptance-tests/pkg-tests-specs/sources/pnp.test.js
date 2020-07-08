@@ -1598,8 +1598,8 @@ describe(`Plug'n'Play`, () => {
       await mkdirp(`${path}/foo`);
       await writeFile(`${path}/foo/index.js`, ``);
 
-      await expect(source(`require.resolve('./foo')`)).resolves.toEqual(`${path}/foo.js`);
-      await expect(source(`require.resolve('./foo/')`)).resolves.toEqual(`${path}/foo/index.js`);
+      await expect(source(`require.resolve('./foo')`)).resolves.toEqual(npath.fromPortablePath(`${path}/foo.js`));
+      await expect(source(`require.resolve('./foo/')`)).resolves.toEqual(npath.fromPortablePath(`${path}/foo/index.js`));
     }),
   );
 });
