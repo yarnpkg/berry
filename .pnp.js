@@ -586,6 +586,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@arcanis/slice-ansi", [
+        ["npm:1.0.1", {
+          "packageLocation": "./.yarn/cache/@arcanis-slice-ansi-npm-1.0.1-674ef70c82-66ad7ccc8c.zip/node_modules/@arcanis/slice-ansi/",
+          "packageDependencies": [
+            ["@arcanis/slice-ansi", "npm:1.0.1"],
+            ["grapheme-splitter", "npm:1.0.4"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@babel/cli", [
         ["virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1", {
           "packageLocation": "./.yarn/$$virtual/@babel-cli-virtual-814b70f4fb/0/cache/@babel-cli-npm-7.10.1-af5295896b-5a0b4a8186.zip/node_modules/@babel/cli/",
@@ -7102,6 +7112,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/yarnpkg-core/",
           "packageDependencies": [
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
+            ["@arcanis/slice-ansi", "npm:1.0.1"],
             ["@types/ci-info", "npm:2.0.0"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/diff", "npm:4.0.2"],
@@ -17172,6 +17183,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/graceful-readlink-npm-1.0.1-6da4ca180d-a067577156.zip/node_modules/graceful-readlink/",
           "packageDependencies": [
             ["graceful-readlink", "npm:1.0.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["grapheme-splitter", [
+        ["npm:1.0.4", {
+          "packageLocation": "./.yarn/cache/grapheme-splitter-npm-1.0.4-648f2bf509-6875e94add.zip/node_modules/grapheme-splitter/",
+          "packageDependencies": [
+            ["grapheme-splitter", "npm:1.0.4"]
           ],
           "linkType": "HARD",
         }]

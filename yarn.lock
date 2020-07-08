@@ -167,6 +167,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@arcanis/slice-ansi@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@arcanis/slice-ansi@npm:1.0.1"
+  dependencies:
+    grapheme-splitter: ^1.0.4
+  checksum: 66ad7ccc8c33bed24c6cf09431cab9a80aab599280367d9660705fc4caef0391d64ce013b86051e17c8206d248cc3566b89bd2d3249cebc957d82ab623b24ac5
+  languageName: node
+  linkType: hard
+
 "@babel/cli@npm:^7.10.1":
   version: 7.10.1
   resolution: "@babel/cli@npm:7.10.1"
@@ -5500,6 +5509,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
+    "@arcanis/slice-ansi": ^1.0.1
     "@types/ci-info": ^2
     "@types/cross-spawn": 6.0.0
     "@types/diff": ^4.0.2
@@ -14074,6 +14084,13 @@ fsevents@^1.2.7:
   version: 1.0.1
   resolution: "graceful-readlink@npm:1.0.1"
   checksum: a0675771561e8f8401ce4f8feddcc5bc3fc7370d7cc95c9dab3fff8e4bb6f69316072267075e2e54ecaeb2ba72019cf9bd334732cdb1582b5a0642dd33b5b0e0
+  languageName: node
+  linkType: hard
+
+"grapheme-splitter@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "grapheme-splitter@npm:1.0.4"
+  checksum: 6875e94add80360364a609e1fd0fe325e3b82326db2278dd36c1011a6bfc0e098811e791dedf9a88d4ae3f9d17a5c6a8d684948dd7b097f1f8d5ff905676e2b2
   languageName: node
   linkType: hard
 

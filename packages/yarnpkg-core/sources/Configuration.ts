@@ -286,6 +286,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: false,
   },
+  preferTruncatedLines: {
+    description: `If true, the CLI will truncate lines that would go beyond the size of the terminal`,
+    type: SettingsType.BOOLEAN,
+    default: false,
+  },
   progressBarStyle: {
     description: `Which style of progress bar should be used (only when progress bars are enabled)`,
     type: SettingsType.STRING,

@@ -5,6 +5,7 @@
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
+    "@arcanis/slice-ansi": "^1.0.1",
     "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
     "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.9",
     "@yarnpkg/libzip": "workspace:^2.0.0-rc.13",
