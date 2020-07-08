@@ -37667,12 +37667,17 @@ function makeApi(runtimeState, opts) {
             request,
             issuer
           });
-        }
+        } // We use ppath.join instead of ppath.resolve because:
+        // 1) The request is a relative path in this branch
+        // 2) ppath.join preserves trailing slashes
+
+
+        const absoluteIssuer = sources_path/* ppath.resolve */.y1.resolve(issuer);
 
         if (issuer.match(isDirRegExp)) {
-          unqualifiedPath = sources_path/* ppath.normalize */.y1.normalize(sources_path/* ppath.resolve */.y1.resolve(issuer, request));
+          unqualifiedPath = sources_path/* ppath.normalize */.y1.normalize(sources_path/* ppath.join */.y1.join(absoluteIssuer, request));
         } else {
-          unqualifiedPath = sources_path/* ppath.normalize */.y1.normalize(sources_path/* ppath.resolve */.y1.resolve(sources_path/* ppath.dirname */.y1.dirname(issuer), request));
+          unqualifiedPath = sources_path/* ppath.normalize */.y1.normalize(sources_path/* ppath.join */.y1.join(sources_path/* ppath.dirname */.y1.dirname(absoluteIssuer), request));
         }
       } // No need to use the return value; we just want to check the blacklist status
 

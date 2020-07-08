@@ -1,0 +1,25 @@
+releases:
+  "@yarnpkg/cli": prerelease
+  "@yarnpkg/plugin-node-modules": prerelease
+  "@yarnpkg/plugin-pnp": prerelease
+  "@yarnpkg/pnp": prerelease
+  "@yarnpkg/pnpify": prerelease
+
+declined:
+  - "@yarnpkg/plugin-compat"
+  - "@yarnpkg/plugin-constraints"
+  - "@yarnpkg/plugin-dlx"
+  - "@yarnpkg/plugin-essentials"
+  - "@yarnpkg/plugin-init"
+  - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-npm-cli"
+  - "@yarnpkg/plugin-pack"
+  - "@yarnpkg/plugin-patch"
+  - "@yarnpkg/plugin-stage"
+  - "@yarnpkg/plugin-typescript"
+  - "@yarnpkg/plugin-version"
+  - "@yarnpkg/plugin-workspace-tools"
+  - vscode-zipfs
+  - "@yarnpkg/builder"
+  - "@yarnpkg/core"
+  - "@yarnpkg/doctor"

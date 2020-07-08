@@ -537,10 +537,15 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           );
         }
 
+        // We use ppath.join instead of ppath.resolve because:
+        // 1) The request is a relative path in this branch
+        // 2) ppath.join preserves trailing slashes
+
+        const absoluteIssuer = ppath.resolve(issuer);
         if (issuer.match(isDirRegExp)) {
-          unqualifiedPath = ppath.normalize(ppath.resolve(issuer, request));
+          unqualifiedPath = ppath.normalize(ppath.join(absoluteIssuer, request));
         } else {
-          unqualifiedPath = ppath.normalize(ppath.resolve(ppath.dirname(issuer), request));
+          unqualifiedPath = ppath.normalize(ppath.join(ppath.dirname(absoluteIssuer), request));
         }
       }
 

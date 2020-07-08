@@ -3,7 +3,7 @@ const cp = require(`child_process`);
 const {satisfies} = require(`semver`);
 
 const {
-  fs: {createTemporaryFolder, readFile, writeFile, writeJson},
+  fs: {createTemporaryFolder, readFile, writeFile, writeJson, mkdirp},
   tests: {getPackageDirectoryPath, testIf},
 } = require(`pkg-tests-core`);
 
@@ -1587,6 +1587,19 @@ describe(`Plug'n'Play`, () => {
       `);
 
       await expect(run(`node`, `file.js`)).resolves.toBeTruthy();
+    }),
+  );
+
+  test(
+    `it should take trailing slashes into account when resolving paths`,
+    makeTemporaryEnv({},  async ({path, run, source}) => {
+      await writeFile(`${path}/foo.js`, ``);
+
+      await mkdirp(`${path}/foo`);
+      await writeFile(`${path}/foo/index.js`, ``);
+
+      await expect(source(`require.resolve('./foo')`)).resolves.toEqual(npath.fromPortablePath(`${path}/foo.js`));
+      await expect(source(`require.resolve('./foo/')`)).resolves.toEqual(npath.fromPortablePath(`${path}/foo/index.js`));
     }),
   );
 });
