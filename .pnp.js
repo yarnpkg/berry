@@ -6400,16 +6400,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["@types/webpack-merge", [
-        ["npm:4.1.5", {
-          "packageLocation": "./.yarn/cache/@types-webpack-merge-npm-4.1.5-2d7748bcf3-2988bb97d7.zip/node_modules/@types/webpack-merge/",
-          "packageDependencies": [
-            ["@types/webpack-merge", "npm:4.1.5"],
-            ["@types/webpack", "npm:4.32.1"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["@types/webpack-sources", [
         ["npm:1.4.0", {
           "packageLocation": "./.yarn/cache/@types-webpack-sources-npm-1.4.0-7215104c9f-fc237a6e8b.zip/node_modules/@types/webpack-sources/",
@@ -6955,7 +6945,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/core", "npm:7.10.2"],
             ["@types/filesize", "npm:4.1.0"],
             ["@types/terser-webpack-plugin", "npm:3.0.0"],
-            ["@types/webpack-merge", "npm:4.1.5"],
             ["@types/webpack-sources", "npm:1.4.0"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
@@ -6974,7 +6963,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=5b02a2"],
             ["val-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:2.1.1"],
             ["webpack", "npm:5.0.0-beta.17"],
-            ["webpack-merge", "npm:4.2.2"],
+            ["webpack-merge", "npm:5.0.8"],
             ["webpack-sources", "npm:1.4.3"]
           ],
           "packagePeers": [
@@ -6989,7 +6978,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/core", "npm:7.10.2"],
             ["@types/filesize", "npm:4.1.0"],
             ["@types/terser-webpack-plugin", "npm:3.0.0"],
-            ["@types/webpack-merge", "npm:4.1.5"],
             ["@types/webpack-sources", "npm:1.4.0"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
@@ -7008,7 +6996,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=5b02a2"],
             ["val-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:2.1.1"],
             ["webpack", "npm:5.0.0-beta.17"],
-            ["webpack-merge", "npm:4.2.2"],
+            ["webpack-merge", "npm:5.0.8"],
             ["webpack-sources", "npm:1.4.3"]
           ],
           "linkType": "SOFT",
@@ -11371,6 +11359,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/clone-buffer-npm-1.0.0-7a16490ce4-70d92e1482.zip/node_modules/clone-buffer/",
           "packageDependencies": [
             ["clone-buffer", "npm:1.0.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["clone-deep", [
+        ["npm:4.0.1", {
+          "packageLocation": "./.yarn/cache/clone-deep-npm-4.0.1-70adab92c8-b0146d66ca.zip/node_modules/clone-deep/",
+          "packageDependencies": [
+            ["clone-deep", "npm:4.0.1"],
+            ["is-plain-object", "npm:2.0.4"],
+            ["kind-of", "npm:6.0.2"],
+            ["shallow-clone", "npm:3.0.1"]
           ],
           "linkType": "HARD",
         }]
@@ -28029,6 +28029,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["shallow-clone", [
+        ["npm:3.0.1", {
+          "packageLocation": "./.yarn/cache/shallow-clone-npm-3.0.1-dab5873d0d-e329e054c2.zip/node_modules/shallow-clone/",
+          "packageDependencies": [
+            ["shallow-clone", "npm:3.0.1"],
+            ["kind-of", "npm:6.0.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["shallow-compare", [
         ["npm:1.2.2", {
           "packageLocation": "./.yarn/cache/shallow-compare-npm-1.2.2-b37b3d06d5-40709b5851.zip/node_modules/shallow-compare/",
@@ -32164,6 +32174,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:5.0.8", {
+          "packageLocation": "./.yarn/cache/webpack-merge-npm-5.0.8-60fd32e7dc-6a91c76abf.zip/node_modules/webpack-merge/",
+          "packageDependencies": [
+            ["webpack-merge", "npm:5.0.8"],
+            ["clone-deep", "npm:4.0.1"],
+            ["wildcard", "npm:2.0.0"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["webpack-sources", [
@@ -32353,6 +32372,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["widest-line", "npm:3.1.0"],
             ["string-width", "npm:4.2.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["wildcard", [
+        ["npm:2.0.0", {
+          "packageLocation": "./.yarn/cache/wildcard-npm-2.0.0-baedca033a-207baede4d.zip/node_modules/wildcard/",
+          "packageDependencies": [
+            ["wildcard", "npm:2.0.0"]
           ],
           "linkType": "HARD",
         }]

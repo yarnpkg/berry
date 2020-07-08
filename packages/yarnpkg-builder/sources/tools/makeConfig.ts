@@ -1,7 +1,7 @@
 import {npath, ppath, Filename, xfs} from '@yarnpkg/fslib';
 import ForkTsCheckerWebpackPlugin    from 'fork-ts-checker-webpack-plugin';
 import tsLoader                      from 'ts-loader';
-import merge                         from 'webpack-merge';
+import {merge}                       from 'webpack-merge';
 import webpack                       from 'webpack';
 
 export type WebpackPlugin =
@@ -31,7 +31,6 @@ export function findTsconfig() {
   return npath.join(currTsContextRoot, `tsconfig.json`);
 }
 
-// @ts-ignore: @types/webpack-merge depends on @types/webpack, which isn't compatible with the webpack 5 types
 export const makeConfig = (config: webpack.Configuration): webpack.Configuration => merge(identity<webpack.Configuration>({
   mode: `none`,
   devtool: false,
