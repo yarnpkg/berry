@@ -26,7 +26,7 @@ export default class DeduplicateCommand extends BaseCommand {
     details: `
       Duplicates are defined as descriptors with overlapping ranges being resolved and locked to different locators. They are a natural consequence of Yarn's deterministic installs, but they can sometimes pile up and unnecessarily increase the size of your project.
 
-      This command deduplicates dependencies in the current project by reusing (where possible) the locators that most descriptors have been resolved to. This includes both *upgrading* and *downgrading* dependencies where necessary.
+      This command deduplicates dependencies in the current project by reusing (where possible) the locators with the highest versions. This means that dependencies can only be upgraded, never downgraded.
 
       **Note:** Although it never produces a wrong dependency tree, this command should be used with caution, as it modifies the dependency tree, which can sometimes cause problems when packages specify wrong dependency ranges. It is recommended to also review the changes manually.
 
@@ -82,12 +82,10 @@ export default class DeduplicateCommand extends BaseCommand {
 
 export interface DeduplicationFactors {
   locatorsByIdent: Map<IdentHash, Set<LocatorHash>>;
-  locatorUsageCounts: Map<LocatorHash, number>;
 }
 
 export function getDeduplicationFactors(project: Project): DeduplicationFactors {
   const locatorsByIdent = new Map<IdentHash, Set<LocatorHash>>();
-  const locatorUsageCounts = new Map<LocatorHash, number>();
   for (const [descriptorHash, locatorHash] of project.storedResolutions) {
     const descriptor = project.storedDescriptors.get(descriptorHash);
     if (!descriptor)
@@ -96,12 +94,9 @@ export function getDeduplicationFactors(project: Project): DeduplicationFactors 
     if (!locatorsByIdent.has(descriptor.identHash))
       locatorsByIdent.set(descriptor.identHash, new Set());
     locatorsByIdent.get(descriptor.identHash)!.add(locatorHash);
-
-    const currentUsageCount = locatorUsageCounts.get(locatorHash);
-    locatorUsageCounts.set(locatorHash, (currentUsageCount ?? 0) + 1);
   }
 
-  return {locatorsByIdent, locatorUsageCounts};
+  return {locatorsByIdent};
 }
 
 export async function deduplicate(project: Project, patterns: Array<string>, {cache, report}: {cache: Cache, report: Report}) {
@@ -178,7 +173,7 @@ export async function deduplicate(project: Project, patterns: Array<string>, {ca
             if (!resolver.shouldPersistResolution(currentPackage, resolveOptions))
               return;
 
-            const {locatorsByIdent, locatorUsageCounts} = getDeduplicationFactors(project);
+            const {locatorsByIdent} = getDeduplicationFactors(project);
 
             const locators = locatorsByIdent.get(descriptor.identHash);
             if (!locators)
@@ -189,12 +184,6 @@ export async function deduplicate(project: Project, patterns: Array<string>, {ca
               return;
 
             const sortedLocators = [...locators].sort((a, b) => {
-              const aUsageCount = locatorUsageCounts.get(a)!;
-              const bUsageCount = locatorUsageCounts.get(b)!;
-
-              if (aUsageCount !== bUsageCount)
-                return aUsageCount - bUsageCount;
-
               const aPackage = project.storedPackages.get(a);
               const bPackage = project.storedPackages.get(b);
 
