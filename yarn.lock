@@ -4628,7 +4628,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^16.8.0, @types/react@npm:^16.x":
+"@types/react@npm:*, @types/react@npm:^16.8.0, @types/react@npm:^16.8.12, @types/react@npm:^16.8.6, @types/react@npm:^16.x":
   version: 16.9.2
   resolution: "@types/react@npm:16.9.2"
   dependencies:
@@ -5789,10 +5789,13 @@ __metadata:
   resolution: "@yarnpkg/plugin-compat@workspace:packages/plugin-compat"
   dependencies:
     "@types/resolve": ^1.17.1
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.36"
     "@yarnpkg/core": "workspace:^2.0.0-rc.30"
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.22"
+    "@yarnpkg/monorepo": "workspace:0.0.0"
+    "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.21"
     "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.10"
     resolve: ^1.17.0
-    tslib: ^1.13.0
   peerDependencies:
     "@yarnpkg/core": ^2.0.0-rc.30
     "@yarnpkg/plugin-patch": ^2.0.0-rc.10
@@ -7055,6 +7058,15 @@ __metadata:
   bin:
     atob: bin/atob.js
   checksum: 597c0d1a740bb6522c98bea8fe362ae9420b4203af588d2bd470326d9abd4504264956b8355923d7019a21527ef5e6526a7b4455862ec5178ccd81e0ea289d5f
+  languageName: node
+  linkType: hard
+
+"auto-bind@npm:^2.0.0":
+  version: 2.1.1
+  resolution: "auto-bind@npm:2.1.1"
+  dependencies:
+    "@types/react": ^16.8.12
+  checksum: 23bf83ad7a787d84468c82565b542dd06401f1f9d9888b452588a22b18b8ddb6694f8e43ccefd58b5b2010d760a4583aa4db3d070973d0eec55b48fd8116c4ad
   languageName: node
   linkType: hard
 
@@ -8701,6 +8713,16 @@ __metadata:
     colors:
       optional: true
   checksum: 6a2eed1fd28476953fbaeba596056cdda837345572cfca912fee649bb6d0e115325eb19f0b62aa23747128b6727f3bb7d3dc568ecbedd3af63636fb4a476ce26
+  languageName: node
+  linkType: hard
+
+"cli-truncate@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "cli-truncate@npm:1.1.0"
+  dependencies:
+    slice-ansi: ^1.0.0
+    string-width: ^2.0.0
+  checksum: 82ea80015b3d5158b822bf8dd37043f1054834749ccb978406f17ae187917d960ed00b43fb181517e0c32910a213c9f36f60e815e8d9484da2d76e808543e567
   languageName: node
   linkType: hard
 
@@ -15408,7 +15430,35 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"ink@npm:^2.3.0, ink@npm:^2.7.1":
+"ink@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "ink@npm:2.3.0"
+  dependencies:
+    "@types/react": ^16.8.6
+    arrify: ^1.0.1
+    auto-bind: ^2.0.0
+    chalk: ^2.4.1
+    cli-cursor: ^2.1.0
+    cli-truncate: ^1.1.0
+    is-ci: ^2.0.0
+    lodash.throttle: ^4.1.1
+    log-update: ^3.0.0
+    prop-types: ^15.6.2
+    react-reconciler: ^0.20.0
+    scheduler: ^0.13.2
+    signal-exit: ^3.0.2
+    slice-ansi: ^1.0.0
+    string-length: ^2.0.0
+    widest-line: ^2.0.0
+    wrap-ansi: ^5.0.0
+    yoga-layout-prebuilt: ^1.9.3
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 3d642cd813c86e09554fb9c825b67296439ccb5f1137933c61582375d31717f011c63f95fa0b007361db525fab13e62d72ca14ee1e4b4528aa80bbc4fee5986e
+  languageName: node
+  linkType: hard
+
+"ink@npm:^2.7.1":
   version: 2.7.1
   resolution: "ink@npm:2.7.1"
   dependencies:
@@ -22195,6 +22245,20 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"react-reconciler@npm:^0.20.0":
+  version: 0.20.4
+  resolution: "react-reconciler@npm:0.20.4"
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+    prop-types: ^15.6.2
+    scheduler: ^0.13.6
+  peerDependencies:
+    react: ^16.0.0
+  checksum: 1db1b825a743b905736efd6a5526b23c53ee1977590701f5246a8193fc39850c38ee3ba990232b2796262e0f52afa247e27f2df305058b622c62f8e3c7d44215
+  languageName: node
+  linkType: hard
+
 "react-reconciler@npm:^0.24.0":
   version: 0.24.0
   resolution: "react-reconciler@npm:0.24.0"
@@ -23598,6 +23662,16 @@ resolve@1.9.0:
   languageName: node
   linkType: hard
 
+"scheduler@npm:^0.13.2, scheduler@npm:^0.13.6":
+  version: 0.13.6
+  resolution: "scheduler@npm:0.13.6"
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+  checksum: 6778b87d7ff5820c8f5a1eff7f325c5ee45218e4be4bbaa937b3ec0c2d18e6799e1008e3ebc46591a84991f4313f43d5099a79b8a545a3a9261ca372ad645516
+  languageName: node
+  linkType: hard
+
 "scheduler@npm:^0.18.0":
   version: 0.18.0
   resolution: "scheduler@npm:0.18.0"
@@ -24143,6 +24217,15 @@ resolve@1.9.0:
   version: 3.0.0
   resolution: "slash@npm:3.0.0"
   checksum: fc3e8597d822ee3ba6cd76e9b001cd5be315f9b81c3a03a29bb611c003d1484e3b29a9e7bc020298fa669b585ff7c9268f44513f60c186216eb6af3111a3e838
+  languageName: node
+  linkType: hard
+
+"slice-ansi@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "slice-ansi@npm:1.0.0"
+  dependencies:
+    is-fullwidth-code-point: ^2.0.0
+  checksum: f9b7528def4df379ff5262f941414fe23d92b3f3bfe95861a1c9e87c16f94017e1716a6385dc5c6cb4385b2d016553442a99040915e4cf6fbd09680bcc173f1a
   languageName: node
   linkType: hard
 
@@ -24771,6 +24854,16 @@ resolve@1.9.0:
   version: 2.0.0
   resolution: "strict-uri-encode@npm:2.0.0"
   checksum: 775012e88b9d8dff939d514bf376d615a15e8228a5dd587a94ac3c71fce41aa3635cd808aa796e2c1cd33f3f2fe2fbf89b74ee18a504a1905efa1854311e04bb
+  languageName: node
+  linkType: hard
+
+"string-length@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "string-length@npm:2.0.0"
+  dependencies:
+    astral-regex: ^1.0.0
+    strip-ansi: ^4.0.0
+  checksum: 44d79c40a4c998b333e72c5772e1b7b140687a3039315fa0579b4967a6dd2bff6d20c06489241ff32f261a4614e2d326305353bc6db4001179d43bf96c90754f
   languageName: node
   linkType: hard
 
@@ -26320,7 +26413,7 @@ typescript@3.7.x:
 
 "typescript@patch:typescript@*#builtin<compat/typescript>, typescript@patch:typescript@^3.8.3#builtin<compat/typescript>, typescript@patch:typescript@^3.9.3#builtin<compat/typescript>, typescript@patch:typescript@^3.9.5#builtin<compat/typescript>":
   version: 3.9.5
-  resolution: "typescript@patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=64df9d"
+  resolution: "typescript@patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=5b02a2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -26330,7 +26423,7 @@ typescript@3.7.x:
 
 "typescript@patch:typescript@3.7.x#builtin<compat/typescript>":
   version: 3.7.5
-  resolution: "typescript@patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=64df9d"
+  resolution: "typescript@patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=5b02a2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver

@@ -9,12 +9,13 @@
   },
   "devDependencies": {
     "@types/resolve": "^1.17.1",
+    "@yarnpkg/cli": "workspace:^2.0.0-rc.36",
     "@yarnpkg/core": "workspace:^2.0.0-rc.30",
+    "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
+    "@yarnpkg/monorepo": "workspace:0.0.0",
+    "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.21",
     "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.10",
     "resolve": "^1.17.0"
-  },
-  "dependencies": {
-    "tslib": "^1.13.0"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,8 @@
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "run build:compile \"$(pwd)\""
+    "prepack": "run build:compile \"$(pwd)\"",
+    "test:plugin-compat": "run test:unit --config \"$(pwd)/jest.config.js\""
   },
   "publishConfig": {
     "main": "./lib/index.js",
