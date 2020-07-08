@@ -1,3 +1,4 @@
+import sliceAnsi                    from '@arcanis/slice-ansi';
 import {Writable}                   from 'stream';
 
 import {Configuration}              from './Configuration';
@@ -243,19 +244,21 @@ export class StreamReport extends Report {
     if (!this.includeInfos)
       return;
 
+    const message = `${this.configuration.format(`➤`, `blueBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`;
+
     if (!this.json) {
       if (this.forgettableNames.has(name)) {
-        this.forgettableLines.push(text);
+        this.forgettableLines.push(message);
         if (this.forgettableLines.length > this.forgettableBufferSize) {
           while (this.forgettableLines.length > this.forgettableBufferSize)
             this.forgettableLines.shift();
 
-          this.writeLines(name, this.forgettableLines);
+          this.writeLines(this.forgettableLines, {truncate: true});
         } else {
-          this.writeLine(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
+          this.writeLine(message, {truncate: true});
         }
       } else {
-        this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
+        this.writeLineWithForgettableReset(message);
       }
     } else {
       this.reportJson({type: `info`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
@@ -279,7 +282,7 @@ export class StreamReport extends Report {
     this.errorCount += 1;
 
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
+      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`, {truncate: false});
     } else {
       this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -357,22 +360,22 @@ export class StreamReport extends Report {
     }
   }
 
-  private writeLine(str: string) {
+  private writeLine(str: string, {truncate}: {truncate?: boolean} = {}) {
     this.clearProgress({clear: true});
-    this.stdout.write(`${str}\n`);
+    this.stdout.write(this.truncate(`${str}\n`, {truncate}));
     this.writeProgress();
   }
 
-  private writeLineWithForgettableReset(str: string) {
+  private writeLineWithForgettableReset(str: string, {truncate}: {truncate?: boolean} = {}) {
     this.forgettableLines = [];
-    this.writeLine(str);
+    this.writeLine(str, {truncate});
   }
 
-  private writeLines(name: MessageName | null, lines: Array<string>) {
+  private writeLines(lines: Array<string>, {truncate}: {truncate?: boolean} = {}) {
     this.clearProgress({delta: lines.length});
 
     for (const line of lines)
-      this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${line}\n`);
+      this.stdout.write(this.truncate(line, {truncate}));
 
     this.writeProgress();
   }
@@ -478,6 +481,16 @@ export class StreamReport extends Report {
     return timing < 60 * 1000
       ? `${Math.round(timing / 10) / 100}s`
       : `${Math.round(timing / 600) / 100}m`;
+  }
+
+  private truncate(str: string, {truncate}: {truncate?: boolean} = {}) {
+    if (typeof truncate === `undefined`)
+      truncate = this.configuration.get(`preferTruncatedLines`);
+
+    if (truncate && process.stdout.columns > 22)
+      str = sliceAnsi(str, 0, process.stdout.columns - 1).replace(/\n?$/, `\n`);
+
+    return str;
   }
 
   private formatName(name: MessageName | null) {

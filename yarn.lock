@@ -167,6 +167,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@arcanis/slice-ansi@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@arcanis/slice-ansi@npm:1.0.0"
+  checksum: 666037b5f9c5328786758035abde168d5e7ad9704c1f91c37d269921fdf5fba8cc14aeab9d420a367fd362135150278fd2897d21f4c04a202d8feca5a529d8e6
+  languageName: node
+  linkType: hard
+
 "@babel/cli@npm:^7.10.1":
   version: 7.10.1
   resolution: "@babel/cli@npm:7.10.1"
@@ -5500,6 +5507,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
+    "@arcanis/slice-ansi": ^1.0.0
     "@types/ci-info": ^2
     "@types/cross-spawn": 6.0.0
     "@types/diff": ^4.0.2

@@ -586,6 +586,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@arcanis/slice-ansi", [
+        ["npm:1.0.0", {
+          "packageLocation": "./.yarn/cache/@arcanis-slice-ansi-npm-1.0.0-da46558964-666037b5f9.zip/node_modules/@arcanis/slice-ansi/",
+          "packageDependencies": [
+            ["@arcanis/slice-ansi", "npm:1.0.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@babel/cli", [
         ["virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1", {
           "packageLocation": "./.yarn/$$virtual/@babel-cli-virtual-814b70f4fb/0/cache/@babel-cli-npm-7.10.1-af5295896b-5a0b4a8186.zip/node_modules/@babel/cli/",
@@ -7102,6 +7111,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/yarnpkg-core/",
           "packageDependencies": [
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
+            ["@arcanis/slice-ansi", "npm:1.0.0"],
             ["@types/ci-info", "npm:2.0.0"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/diff", "npm:4.0.2"],
