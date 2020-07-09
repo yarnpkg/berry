@@ -39,7 +39,7 @@ export default class AddCommand extends BaseCommand {
   preferDev: boolean = false;
 
   @Command.Boolean(`-i,--interactive`)
-  interactive: boolean = false;
+  interactive: boolean | null = null;
 
   @Command.Boolean(`--cached`)
   cached: boolean = false;
@@ -99,6 +99,8 @@ export default class AddCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
+    const interactive = this.interactive ?? configuration.get<boolean>(`preferInteractive`);
+
     // @ts-ignore
     const prompt = inquirer.createPromptModule({
       input: this.context.stdin as NodeJS.ReadStream,
@@ -108,7 +110,7 @@ export default class AddCommand extends BaseCommand {
     const modifier = suggestUtils.getModifier(this, project);
 
     const strategies = [
-      ...this.interactive ? [
+      ...interactive ? [
         suggestUtils.Strategy.REUSE,
       ] : [],
       suggestUtils.Strategy.PROJECT,
@@ -118,7 +120,7 @@ export default class AddCommand extends BaseCommand {
       suggestUtils.Strategy.LATEST,
     ];
 
-    const maxResults = this.interactive
+    const maxResults = interactive
       ? Infinity
       : 1;
 
