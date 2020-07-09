@@ -1,21 +1,21 @@
 {
   "name": "@yarnpkg/plugin-npm",
-  "version": "2.0.0-rc.21",
+  "version": "2.1.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
+    "@yarnpkg/fslib": "workspace:^2.1.0",
     "inquirer": "^7.2.0",
     "semver": "^7.1.2",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.30"
+    "@yarnpkg/core": "^2.1.0"
   },
   "devDependencies": {
     "@types/inquirer": "^0.0.43",
     "@types/semver": "^7.1.0",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.30"
+    "@yarnpkg/core": "workspace:^2.1.0"
   },
   "repository": {
     "type": "git",

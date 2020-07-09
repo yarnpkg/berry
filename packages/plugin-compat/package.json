@@ -1,20 +1,20 @@
 {
   "name": "@yarnpkg/plugin-compat",
-  "version": "2.0.0-rc.15",
+  "version": "2.1.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "peerDependencies": {
-    "@yarnpkg/core": "^2.0.0-rc.30",
-    "@yarnpkg/plugin-patch": "^2.0.0-rc.10"
+    "@yarnpkg/core": "^2.1.0",
+    "@yarnpkg/plugin-patch": "^2.1.0"
   },
   "devDependencies": {
     "@types/resolve": "^1.17.1",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.36",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.30",
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
+    "@yarnpkg/cli": "workspace:^2.1.0",
+    "@yarnpkg/core": "workspace:^2.1.0",
+    "@yarnpkg/fslib": "workspace:^2.1.0",
     "@yarnpkg/monorepo": "workspace:0.0.0",
-    "@yarnpkg/plugin-npm": "workspace:^2.0.0-rc.21",
-    "@yarnpkg/plugin-patch": "workspace:^2.0.0-rc.10",
+    "@yarnpkg/plugin-npm": "workspace:^2.1.0",
+    "@yarnpkg/plugin-patch": "workspace:^2.1.0",
     "resolve": "^1.17.0"
   },
   "repository": {
