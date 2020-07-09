@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/core",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "sideEffects": false,
@@ -43,7 +43,7 @@
     "@types/semver": "^7.1.0",
     "@types/tar": "^4.0.0",
     "@types/tunnel": "^0.0.0",
-    "@yarnpkg/cli": "workspace:^2.1.0",
+    "@yarnpkg/cli": "workspace:^2.1.1",
     "@yarnpkg/plugin-link": "workspace:^2.1.0",
     "@yarnpkg/plugin-npm": "workspace:^2.1.0",
     "@yarnpkg/plugin-pnp": "workspace:^2.1.0"
