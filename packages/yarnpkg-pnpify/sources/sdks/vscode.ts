@@ -1,9 +1,9 @@
-import {PortablePath, npath, ppath}                           from '@yarnpkg/fslib';
-import {PnpApi}                                               from '@yarnpkg/pnp';
-import mergeWith                                              from 'lodash/mergeWith';
+import {PortablePath, npath, ppath}                                                               from '@yarnpkg/fslib';
+import {PnpApi}                                                                                   from '@yarnpkg/pnp';
+import mergeWith                                                                                  from 'lodash/mergeWith';
 
-import {Wrapper, GenerateIntegrationWrapper, IntegrationSdks} from '../generateSdk';
-import * as sdkUtils                                          from '../sdkUtils';
+import {Wrapper, GenerateIntegrationWrapper, GenerateDefaultWrapper, IntegrationSdks, DefaultSdk} from '../generateSdk';
+import * as sdkUtils                                                                              from '../sdkUtils';
 
 export const merge = (object: unknown, source: unknown) =>
   mergeWith(object, source, (objValue, srcValue) => {
@@ -68,12 +68,6 @@ export const generateTypescriptWrapper: GenerateIntegrationWrapper = async (pnpA
     ),
     [`typescript.enablePromptUseWorkspaceTsdk`]: true,
   });
-
-  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {
-    [`recommendations`]: [
-      `arcanis.vscode-zipfs`,
-    ],
-  });
 };
 
 export const generateStylelintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
@@ -107,6 +101,25 @@ export const generateSvelteLanguageServerWrapper: GenerateIntegrationWrapper = a
     ],
   });
 };
+
+export const generateDefaultWrapper: GenerateDefaultWrapper = async (pnpApi: PnpApi) => {
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
+    [`search.exclude`]: {
+      [`**/.yarn`]: true,
+      [`**/.pnp.*`]: true,
+      [`**/yarn.lock`]: true,
+    },
+  });
+
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {
+    [`recommendations`]: [
+      `arcanis.vscode-zipfs`,
+    ],
+  });
+};
+
+// eslint-disable-next-line arca/no-default-export
+export default generateDefaultWrapper as DefaultSdk;
 
 export const VSCODE_SDKS: IntegrationSdks = [
   [`eslint`, generateEslintWrapper],
