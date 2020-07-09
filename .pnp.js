@@ -587,10 +587,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@arcanis/slice-ansi", [
-        ["npm:1.0.1", {
-          "packageLocation": "./.yarn/cache/@arcanis-slice-ansi-npm-1.0.1-674ef70c82-66ad7ccc8c.zip/node_modules/@arcanis/slice-ansi/",
+        ["npm:1.0.2", {
+          "packageLocation": "./.yarn/cache/@arcanis-slice-ansi-npm-1.0.2-f258a50730-1b45393630.zip/node_modules/@arcanis/slice-ansi/",
           "packageDependencies": [
-            ["@arcanis/slice-ansi", "npm:1.0.1"],
+            ["@arcanis/slice-ansi", "npm:1.0.2"],
             ["grapheme-splitter", "npm:1.0.4"]
           ],
           "linkType": "HARD",
@@ -7112,7 +7112,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/yarnpkg-core/",
           "packageDependencies": [
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
-            ["@arcanis/slice-ansi", "npm:1.0.1"],
+            ["@arcanis/slice-ansi", "npm:1.0.2"],
             ["@types/ci-info", "npm:2.0.0"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/diff", "npm:4.0.2"],

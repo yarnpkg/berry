@@ -167,12 +167,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@arcanis/slice-ansi@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@arcanis/slice-ansi@npm:1.0.1"
+"@arcanis/slice-ansi@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@arcanis/slice-ansi@npm:1.0.2"
   dependencies:
     grapheme-splitter: ^1.0.4
-  checksum: 66ad7ccc8c33bed24c6cf09431cab9a80aab599280367d9660705fc4caef0391d64ce013b86051e17c8206d248cc3566b89bd2d3249cebc957d82ab623b24ac5
+  checksum: 1b4539363054608b37f65d49d5c920a557d55f6231a73440213e3fd809fce8ed8c72b8b7939c4dbbbfd14647ce6e8d76c0df6cec19a744400c847ef6e76a1988
   languageName: node
   linkType: hard
 
@@ -5509,7 +5509,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
-    "@arcanis/slice-ansi": ^1.0.1
+    "@arcanis/slice-ansi": ^1.0.2
     "@types/ci-info": ^2
     "@types/cross-spawn": 6.0.0
     "@types/diff": ^4.0.2

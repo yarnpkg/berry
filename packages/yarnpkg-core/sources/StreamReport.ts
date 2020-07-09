@@ -523,7 +523,11 @@ export class StreamReport extends Report {
     const desc = MessageName[name];
     const href = `https://yarnpkg.com/advanced/error-codes#${code}---${desc}`.toLowerCase();
 
-    return `\u001b]8;;${href}\u001b\\${code}\u001b]8;;\u001b\u001b\\`;
+    // We use BELL as ST because it seems that iTerm doesn't properly support
+    // the \x1b\\ sequence described in the reference document
+    // https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda#the-escape-sequence
+
+    return `\u001b]8;;${href}\u0007${code}\u001b]8;;\u0007`;
   }
 
   private formatIndent() {
