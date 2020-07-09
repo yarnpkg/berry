@@ -4,6 +4,8 @@
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn import plugin from sources <name>`).
 
+- The home configuration (`.yarnrc.yml`) is now always non-strict to improve support for multiple projects with different Yarn versions on the same machine.
+
 ## 2.1.1
 
 - Fixed hyperlink rendering on iTerm
