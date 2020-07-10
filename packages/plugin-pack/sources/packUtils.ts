@@ -205,15 +205,16 @@ export async function genPackList(workspace: Workspace) {
     reject: [],
   };
 
-  if (workspace.manifest.publishConfig && workspace.manifest.publishConfig.main)
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.publishConfig.main));
-  else if (workspace.manifest.main)
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.main));
+  const main = workspace.manifest.publishConfig?.main ?? workspace.manifest.main;
+  const module = workspace.manifest.publishConfig?.module ?? workspace.manifest.module;
+  const bins = workspace.manifest.publishConfig?.bin ?? workspace.manifest.bin;
 
-  if (workspace.manifest.publishConfig && workspace.manifest.publishConfig.module)
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.publishConfig.module));
-  else if (workspace.manifest.module)
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.module));
+  if (main != null)
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, main));
+  if (module != null)
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, module));
+  for (const path of bins.values())
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, path));
 
   const hasExplicitFileList = workspace.manifest.files !== null;
   if (hasExplicitFileList) {

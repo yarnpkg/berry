@@ -197,6 +197,12 @@ export class Manifest {
     if (typeof data.languageName === `string`)
       this.languageName = data.languageName;
 
+    if (typeof data.main === `string`)
+      this.main = data.main;
+
+    if (typeof data.module === `string`)
+      this.module = data.module;
+
     if (typeof data.bin === `string`) {
       if (this.name !== null) {
         this.bin = new Map([[this.name.name, data.bin]]);
