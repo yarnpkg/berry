@@ -8,6 +8,10 @@
 
 - `yarn add` and `yarn up` will now respect the `preferInteractive` configuration option.
 
+### Configuration
+
+- The settings found in the home configuration file won't cause exceptions when consumed by older Yarn versions. Unsupported options will simply be silently ignored. This should improve the user experience when working with multiple projects configured with different Yarn versions.
+
 ## 2.1.1
 
 - Fixed hyperlink rendering on iTerm
