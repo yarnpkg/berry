@@ -1,6 +1,6 @@
 releases:
   "@yarnpkg/cli": prerelease
-  "@yarnpkg/plugin-essentials": minor
+  "@yarnpkg/plugin-essentials": patch
 
 declined:
   - "@yarnpkg/plugin-compat"
