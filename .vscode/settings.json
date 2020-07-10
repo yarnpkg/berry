@@ -16,7 +16,6 @@
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "search.exclude": {
     "**/.yarn": true,
-    "**/.pnp.*": true,
-    "**/yarn.lock": true
+    "**/.pnp.*": true
   }
 }

@@ -107,7 +107,6 @@ export const generateDefaultWrapper: GenerateDefaultWrapper = async (pnpApi: Pnp
     [`search.exclude`]: {
       [`**/.yarn`]: true,
       [`**/.pnp.*`]: true,
-      [`**/yarn.lock`]: true,
     },
   });
 
