@@ -22,4 +22,20 @@ describe(`ZipOpenFS`, () => {
 
     fs.discardAndClose();
   });
+
+  it(`doesn't close a ZipFS instance with open handles`, () => {
+    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
+
+    const fileHandle = fs.openSync(ZIP_FILE1, ``);
+
+    expect(fs.readFileSync(ZIP_FILE2, `utf8`)).toEqual(`foo\n`);
+
+    const buff = Buffer.alloc(4);
+    fs.readSync(fileHandle, buff, 0, 4, 0);
+    fs.closeSync(fileHandle);
+
+    expect(buff.toString(`utf8`)).toEqual(`foo\n`);
+
+    fs.discardAndClose();
+  });
 });

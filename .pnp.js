@@ -34888,6 +34888,10 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     return fd;
   }
 
+  hasOpenFileHandles() {
+    return !!this.fds.size;
+  }
+
   async readPromise(fd, buffer, offset, length, position) {
     return this.readSync(fd, buffer, offset, length, position);
   }
@@ -36356,6 +36360,7 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
 
     for (const [path, zipFs] of this.zipInstances.entries()) {
       if (closeCount <= 0) break;
+      if (zipFs.hasOpenFileHandles()) continue;
       zipFs.saveAndClose();
       this.zipInstances.delete(path);
       closeCount -= 1;
@@ -36415,8 +36420,8 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
       // a basic LRU garbage collection strategy
 
       this.zipInstances.delete(p);
+      this.limitOpenFiles(this.maxOpenFiles - 1);
       this.zipInstances.set(p, zipFs);
-      this.limitOpenFiles(this.maxOpenFiles);
       return accept(zipFs);
     } else {
       const zipFs = new ZipFS(p, getZipOptions());

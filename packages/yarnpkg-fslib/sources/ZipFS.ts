@@ -416,6 +416,10 @@ export class ZipFS extends BasePortableFakeFS {
     return fd;
   }
 
+  hasOpenFileHandles(): boolean {
+    return !!this.fds.size;
+  }
+
   async readPromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number | null) {
     return this.readSync(fd, buffer, offset, length, position);
   }
