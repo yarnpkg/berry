@@ -22,7 +22,7 @@ jobs:
 
     - name: 'Build the standard bundle'
       run: |
-        node ./scripts/run-yarn.js build:cli
+        node ./scripts/run-yarn.js build:cli+hook
 
     - name: Upload the standard bundle
       uses: actions/upload-artifact@v2
