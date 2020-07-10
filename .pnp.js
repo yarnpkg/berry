@@ -37861,7 +37861,7 @@ function makeApi(runtimeState, opts) {
     if (qualifiedPath) {
       return sources_path/* ppath.normalize */.y1.normalize(qualifiedPath);
     } else {
-      throw internalTools_makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Qualified path resolution failed - none of the candidates can be found on the disk.\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected candidate: ${candidate}\n`).join(``)}`, {
+      throw internalTools_makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Qualified path resolution failed - none of the candidates can be found on the disk.\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected candidate: ${sources_path/* ppath.normalize */.y1.normalize(candidate)}\n`).join(``)}`, {
         unqualifiedPath
       });
     }
