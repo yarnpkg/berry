@@ -802,7 +802,6 @@ export class ZipOpenFS extends BasePortableFakeFS {
       this.limitOpenFiles(this.maxOpenFiles - 1);
       this.zipInstances.set(p, zipFs);
 
-
       return accept(zipFs);
     } else {
       const zipFs = new ZipFS(p, getZipOptions());
