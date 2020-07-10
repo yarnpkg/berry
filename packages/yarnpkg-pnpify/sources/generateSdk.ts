@@ -11,7 +11,7 @@ import {dynamicRequire}                                            from './dynam
 
 import {BASE_SDKS}                                                 from './sdks/base';
 import {COC_VIM_SDKS}                                              from './sdks/cocvim';
-import DEFAULT_VSCODE_SDK, {VSCODE_SDKS}                           from './sdks/vscode';
+import {VSCODE_SDKS}                                               from './sdks/vscode';
 
 export const OLD_SDK_FOLDER = `.vscode/pnpify` as PortablePath;
 export const SDK_FOLDER = `.yarn/sdks` as PortablePath;
@@ -19,8 +19,8 @@ export const SDK_FOLDER = `.yarn/sdks` as PortablePath;
 export const INTEGRATIONS_FILE = `integrations.yml` as Filename;
 
 export const SUPPORTED_INTEGRATIONS = new Map([
-  [`vim`, [null, COC_VIM_SDKS]],
-  [`vscode`, [DEFAULT_VSCODE_SDK, VSCODE_SDKS]],
+  [`vim`, COC_VIM_SDKS],
+  [`vscode`, VSCODE_SDKS],
 ] as const);
 
 export const getDisplayName = (name: string) =>
@@ -179,9 +179,11 @@ export type SupportedSdk =
 
 export type BaseSdks = Array<[SupportedSdk, GenerateBaseWrapper]>;
 
-export type IntegrationSdks = Array<[SupportedSdk, GenerateIntegrationWrapper | null]>;
+export type IntegrationSdks = Array<
+  | [null, GenerateDefaultWrapper | null]
+  | [SupportedSdk, GenerateIntegrationWrapper | null]
+>;
 
-export type DefaultSdk = GenerateDefaultWrapper | null;
 
 export class Wrapper {
   private name: PortablePath;
@@ -295,6 +297,15 @@ export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexi
   await report.startTimerPromise(`Generating SDKs inside ${configuration.format(SDK_FOLDER, FormatType.PATH)}`, async () => {
     const skipped = [];
 
+    for (const sdks of integrationSdks) {
+      const defaultSdk = sdks.find(sdk => sdk[0] === null);
+      if (!defaultSdk)
+        continue;
+
+      const [, generateDefaultWrapper] = defaultSdk;
+      await (generateDefaultWrapper as GenerateDefaultWrapper | null)?.(pnpApi, targetFolder);
+    }
+
     for (const [pkgName, generateBaseWrapper] of BASE_SDKS) {
       const displayName = getDisplayName(pkgName);
 
@@ -302,9 +313,7 @@ export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexi
         report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${displayName}`);
         const wrapper = await generateBaseWrapper(pnpApi, targetFolder);
 
-        for (const [generateDefaultWrapper, sdks] of integrationSdks) {
-          await generateDefaultWrapper?.(pnpApi, targetFolder);
-
+        for (const sdks of integrationSdks) {
           const sdk = sdks.find(sdk => sdk[0] === pkgName);
           if (!sdk)
             continue;
