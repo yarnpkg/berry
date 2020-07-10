@@ -4,6 +4,8 @@
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn import plugin from sources <name>`).
 
+### CLI
+
 - `yarn add` and `yarn up` will now respect the `preferInteractive` configuration option.
 
 ## 2.1.1
