@@ -87,7 +87,9 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        expect(stdout).toMatch(/ok\.js/);
+        expect(stdout).toMatch(/ok1\.js/);
+        expect(stdout).toMatch(/ok2\.js/);
+        expect(stdout).toMatch(/ok3\.js/);
         expect(stdout).not.toMatch(/ko\.js/);
       }),
     );
