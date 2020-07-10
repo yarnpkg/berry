@@ -4,6 +4,10 @@
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn import plugin from sources <name>`).
 
+### Bugfixes
+
+- `yarn pack` will properly include main/module/bin files, even when not explicitly referenced through the `files` field.
+
 ## 2.1.1
 
 - Fixed hyperlink rendering on iTerm
@@ -48,7 +52,7 @@
 - The new `changesetBaseRef` setting can be used to change the name of the master branch that `yarn version check` will use in its changeset heuristic.
 - The new `httpTimeout` and `httpRetry` settings allow you to configure the behavior of the HTTP(s) requests.
 - The new `preferTruncatedLines` setting allow you to tell Yarn that it's ok if info and warning messages are truncated to fit in a single line (errors will always wrap as much as needed, and piping Yarn's output will toggle off this behaviour altogether).
-- The cache compression level can now be configured through `compressionLevel`. If you don't use Zero-Installs, using a value of `0` may yield speed improvements at little cost. 
+- The cache compression level can now be configured through `compressionLevel`. If you don't use Zero-Installs, using a value of `0` may yield speed improvements at little cost.
 - Plugins are now loaded from the location of the RC file.
 
 ### Protocols
