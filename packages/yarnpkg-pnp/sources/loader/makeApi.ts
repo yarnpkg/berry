@@ -708,10 +708,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       // Now that we know which package we should resolve to, we only have to find out the file location
 
-      const dependencyLocation = ppath.resolve(runtimeState.basePath, dependencyInformation.packageLocation);
+      // packageLocation is always absolute as it's returned by getPackageInformationSafe
+      const dependencyLocation = dependencyInformation.packageLocation;
 
       if (subPath) {
-        unqualifiedPath = ppath.resolve(dependencyLocation, subPath);
+        // We use ppath.join instead of ppath.resolve because:
+        // 1) subPath is always a relative path
+        // 2) ppath.join preserves trailing slashes
+        unqualifiedPath = ppath.join(dependencyLocation, subPath);
       } else {
         unqualifiedPath = dependencyLocation;
       }

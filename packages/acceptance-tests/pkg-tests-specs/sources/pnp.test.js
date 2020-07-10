@@ -1602,4 +1602,27 @@ describe(`Plug'n'Play`, () => {
       await expect(source(`require.resolve('./foo/')`)).resolves.toEqual(npath.fromPortablePath(`${path}/foo/index.js`));
     }),
   );
+
+  /**
+   * Trailing slashes inside the packageLocations of the PnP serialized state
+   * are inserted when the target is a folder. (e.g. `link:`, `workspace:`)
+   */
+  test(
+    `it should take trailing slashes inside the packageLocations of the PnP serialized state into account when resolving packages`,
+    makeTemporaryEnv({},  async ({path, run, source}) => {
+      await writeFile(`${path}/package.json`, JSON.stringify({
+        dependencies: {
+          [`pkg`]: `link:./package`,
+        },
+      }));
+
+      await mkdirp(`${path}/package`);
+      await writeFile(`${path}/package/index.js`, ``);
+
+      await run(`install`);
+
+      // This shouldn't be resolved to the package.json
+      await expect(source(`require.resolve('pkg')`)).resolves.toEqual(npath.fromPortablePath(`${path}/package/index.js`));
+    }),
+  );
 });
