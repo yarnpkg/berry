@@ -72,12 +72,16 @@ describe(`Commands`, () => {
     test(
       `it should always include the main file, even with a "files" field`,
       makeTemporaryEnv({
-        main: `ok.js`,
+        main: `ok1.js`,
+        module: `ok2.js`,
+        browser: `ok3.js`,
         files: [
           `/bad`,
         ],
       }, async ({path, run, source}) => {
-        await fsUtils.writeFile(`${path}/ok.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/ok1.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/ok2.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/ok3.js`, `module.exports = 42;\n`);
         await fsUtils.writeFile(`${path}/ko.js`, `module.exports = 42;\n`);
 
         await run(`install`);
