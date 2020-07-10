@@ -766,9 +766,8 @@ export class ZipOpenFS extends BasePortableFakeFS {
       // Removing then re-adding the field allows us to easily implement
       // a basic LRU garbage collection strategy
       this.zipInstances.delete(p);
+      this.limitOpenFiles(this.maxOpenFiles - 1);
       this.zipInstances.set(p, zipFs);
-
-      this.limitOpenFiles(this.maxOpenFiles);
 
       return await accept(zipFs);
     } else {

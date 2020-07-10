@@ -36392,8 +36392,8 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
 
 
       this.zipInstances.delete(p);
+      this.limitOpenFiles(this.maxOpenFiles - 1);
       this.zipInstances.set(p, zipFs);
-      this.limitOpenFiles(this.maxOpenFiles);
       return await accept(zipFs);
     } else {
       const zipFs = new ZipFS(p, await getZipOptions());
