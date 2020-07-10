@@ -738,7 +738,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     } else {
       throw makeError(
         ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED,
-        `Qualified path resolution failed - none of the candidates can be found on the disk.\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected candidate: ${candidate}\n`).join(``)}`,
+        `Qualified path resolution failed - none of the candidates can be found on the disk.\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected candidate: ${ppath.normalize(candidate)}\n`).join(``)}`,
         {unqualifiedPath},
       );
     }
