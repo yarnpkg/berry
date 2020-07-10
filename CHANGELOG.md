@@ -7,6 +7,7 @@
 ### CLI
 
 - `yarn add` and `yarn up` will now respect the `preferInteractive` configuration option.
+- `yarn config set` now supports the `-H,--home` flag, which causes it to update the home configuration instead of the project configuration.
 
 ### Configuration
 
