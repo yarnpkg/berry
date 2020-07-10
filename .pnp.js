@@ -37148,11 +37148,15 @@ function hydrateRuntimeState(data, {
   basePath
 }) {
   const portablePath = sources_path/* npath.toPortablePath */.cS.toPortablePath(basePath);
+  const absolutePortablePath = sources_path/* ppath.resolve */.y1.resolve(portablePath);
   const ignorePattern = data.ignorePatternData !== null ? new RegExp(data.ignorePatternData) : null;
   const packageRegistry = new Map(data.packageRegistryData.map(([packageName, packageStoreData]) => {
     return [packageName, new Map(packageStoreData.map(([packageReference, packageInformationData]) => {
       return [packageReference, {
-        packageLocation: sources_path/* ppath.resolve */.y1.resolve(portablePath, packageInformationData.packageLocation),
+        // We use ppath.join instead of ppath.resolve because:
+        // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
+        // 2) ppath.join preserves trailing slashes
+        packageLocation: sources_path/* ppath.join */.y1.join(absolutePortablePath, packageInformationData.packageLocation),
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
@@ -37823,12 +37827,16 @@ function makeApi(runtimeState, opts) {
             dependencyLocator: Object.assign({}, dependencyLocator)
           });
         } // Now that we know which package we should resolve to, we only have to find out the file location
+        // packageLocation is always absolute as it's returned by getPackageInformationSafe
 
 
-        const dependencyLocation = sources_path/* ppath.resolve */.y1.resolve(runtimeState.basePath, dependencyInformation.packageLocation);
+        const dependencyLocation = dependencyInformation.packageLocation;
 
         if (subPath) {
-          unqualifiedPath = sources_path/* ppath.resolve */.y1.resolve(dependencyLocation, subPath);
+          // We use ppath.join instead of ppath.resolve because:
+          // 1) subPath is always a relative path
+          // 2) ppath.join preserves trailing slashes
+          unqualifiedPath = sources_path/* ppath.join */.y1.join(dependencyLocation, subPath);
         } else {
           unqualifiedPath = dependencyLocation;
         }
