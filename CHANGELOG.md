@@ -4,7 +4,9 @@
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn import plugin from sources <name>`).
 
-- The home configuration (`.yarnrc.yml`) is now always non-strict to improve support for multiple projects with different Yarn versions on the same machine.
+### Configuration
+
+- The settings found in the home configuration file won't cause exceptions when consumed by older Yarn versions. Unsupported options will simply be silently ignored. This should improve the user experience when working with multiple projects configured with different Yarn versions.
 
 ## 2.1.1
 
