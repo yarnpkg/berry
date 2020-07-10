@@ -8,6 +8,15 @@
 
 - `yarn pack` will properly include main/module/bin files, even when not explicitly referenced through the `files` field.
 
+### CLI
+
+- `yarn add` and `yarn up` will now respect the `preferInteractive` configuration option.
+- `yarn config set` now supports the `-H,--home` flag, which causes it to update the home configuration instead of the project configuration.
+
+### Configuration
+
+- The settings found in the home configuration file won't cause exceptions when consumed by older Yarn versions. Unsupported options will simply be silently ignored. This should improve the user experience when working with multiple projects configured with different Yarn versions.
+
 ## 2.1.1
 
 - Fixed hyperlink rendering on iTerm
