@@ -4,6 +4,10 @@
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn import plugin from sources <name>`).
 
+### CLI
+
+- `yarn add` and `yarn up` will now respect the `preferInteractive` configuration option.
+
 ### Configuration
 
 - The settings found in the home configuration file won't cause exceptions when consumed by older Yarn versions. Unsupported options will simply be silently ignored. This should improve the user experience when working with multiple projects configured with different Yarn versions.
@@ -52,7 +56,7 @@
 - The new `changesetBaseRef` setting can be used to change the name of the master branch that `yarn version check` will use in its changeset heuristic.
 - The new `httpTimeout` and `httpRetry` settings allow you to configure the behavior of the HTTP(s) requests.
 - The new `preferTruncatedLines` setting allow you to tell Yarn that it's ok if info and warning messages are truncated to fit in a single line (errors will always wrap as much as needed, and piping Yarn's output will toggle off this behaviour altogether).
-- The cache compression level can now be configured through `compressionLevel`. If you don't use Zero-Installs, using a value of `0` may yield speed improvements at little cost. 
+- The cache compression level can now be configured through `compressionLevel`. If you don't use Zero-Installs, using a value of `0` may yield speed improvements at little cost.
 - Plugins are now loaded from the location of the RC file.
 
 ### Protocols

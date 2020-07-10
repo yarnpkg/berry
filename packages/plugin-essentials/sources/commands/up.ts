@@ -15,7 +15,7 @@ export default class UpCommand extends BaseCommand {
   patterns: Array<string> = [];
 
   @Command.Boolean(`-i,--interactive`)
-  interactive: boolean = false;
+  interactive: boolean | null = null;
 
   @Command.Boolean(`-v,--verbose`)
   verbose: boolean = false;
@@ -72,6 +72,8 @@ export default class UpCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
+    const interactive = this.interactive ?? configuration.get<boolean>(`preferInteractive`);
+
     // @ts-ignore
     const prompt = inquirer.createPromptModule({
       input: this.context.stdin as NodeJS.ReadStream,
@@ -80,7 +82,7 @@ export default class UpCommand extends BaseCommand {
 
     const modifier = suggestUtils.getModifier(this, project);
 
-    const strategies = this.interactive ? [
+    const strategies = interactive ? [
       suggestUtils.Strategy.KEEP,
       suggestUtils.Strategy.REUSE,
       suggestUtils.Strategy.PROJECT,
@@ -162,7 +164,7 @@ export default class UpCommand extends BaseCommand {
           } else {
             report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range`);
           }
-        } else if (nonNullSuggestions.length > 1 && !this.interactive) {
+        } else if (nonNullSuggestions.length > 1 && !interactive) {
           report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} has multiple possible upgrade strategies; use -i to disambiguate manually`);
         }
       }
