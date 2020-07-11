@@ -207,12 +207,15 @@ export async function genPackList(workspace: Workspace) {
 
   const main = workspace.manifest.publishConfig?.main ?? workspace.manifest.main;
   const module = workspace.manifest.publishConfig?.module ?? workspace.manifest.module;
+  const browser = workspace.manifest.publishConfig?.browser ?? workspace.manifest.browser;
   const bins = workspace.manifest.publishConfig?.bin ?? workspace.manifest.bin;
 
   if (main != null)
     ignoreList.accept.push(ppath.resolve(PortablePath.root, main));
   if (module != null)
     ignoreList.accept.push(ppath.resolve(PortablePath.root, module));
+  if (browser != null)
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, browser));
   for (const path of bins.values())
     ignoreList.accept.push(ppath.resolve(PortablePath.root, path));
 
