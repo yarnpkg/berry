@@ -34943,15 +34943,19 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
         clearImmediate(immediate);
       }
     });
+    const fd = this.openSync(p, ``);
     const immediate = setImmediate(() => {
       try {
         const data = this.readFileSync(p, encoding);
         stream.bytesRead = data.length;
-        stream.write(data);
-        stream.end();
+        stream.end(data);
+        stream.destroy();
       } catch (error) {
         stream.emit(`error`, error);
         stream.end();
+        stream.destroy();
+      } finally {
+        this.closeSync(fd);
       }
     });
     return stream;
@@ -34975,8 +34979,13 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
       stream.bytesWritten += chunkBuffer.length;
       chunks.push(chunkBuffer);
     });
+    const fd = this.openSync(p, ``);
     stream.on(`end`, () => {
-      this.writeFileSync(p, Buffer.concat(chunks), encoding);
+      try {
+        this.writeFileSync(p, Buffer.concat(chunks), encoding);
+      } finally {
+        this.closeSync(fd);
+      }
     });
     return stream;
   }
