@@ -489,16 +489,21 @@ export class ZipFS extends BasePortableFakeFS {
       },
     });
 
+    const fd = this.openSync(p, ``);
+
     const immediate = setImmediate(() => {
       try {
         const data = this.readFileSync(p, encoding);
 
         stream.bytesRead = data.length;
-        stream.write(data);
-        stream.end();
+        stream.end(data);
+        stream.destroy();
       } catch (error) {
         stream.emit(`error`, error);
         stream.end();
+        stream.destroy();
+      } finally {
+        this.closeSync(fd);
       }
     });
 

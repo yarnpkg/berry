@@ -3,8 +3,14 @@ import {getLibzipSync}          from '@yarnpkg/libzip';
 import {ppath, npath, Filename} from '../sources/path';
 import {ZipOpenFS}              from '../sources';
 
-const ZIP_FILE1 = ppath.join(npath.toPortablePath(__dirname),`fixtures/foo.zip/foo.txt` as Filename);
-const ZIP_FILE2 = ppath.join(npath.toPortablePath(__dirname), `fixtures/folder.zip/foo.zip/foo.txt` as Filename);
+const ZIP_FILE1 = ppath.join(
+  npath.toPortablePath(__dirname),
+  `fixtures/foo.zip/foo.txt` as Filename
+);
+const ZIP_FILE2 = ppath.join(
+  npath.toPortablePath(__dirname),
+  `fixtures/folder.zip/foo.zip/foo.txt` as Filename
+);
 
 describe(`ZipOpenFS`, () => {
   it(`can read from a zip file`, () => {
@@ -35,6 +41,40 @@ describe(`ZipOpenFS`, () => {
     fs.closeSync(fileHandle);
 
     expect(buff.toString(`utf8`)).toEqual(`foo\n`);
+
+    fs.discardAndClose();
+  });
+
+  it.only(`treats createReadStream as a open file handle`, async () => {
+    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
+
+    const chunks: Array<Buffer> = [];
+    await new Promise(resolve => {
+      let done = 0;
+
+      fs.createReadStream(ZIP_FILE1)
+        .on(`data`, (chunk: Buffer) => {
+          chunks.push(chunk);
+        })
+        .on(`close`, () => {
+          if (++done === 2) {
+            resolve();
+          }
+        });
+
+      fs.createReadStream(ZIP_FILE2)
+        .on(`data`, (chunk: Buffer) => {
+          chunks.push(chunk);
+        })
+        .on(`close`, () => {
+          if (++done === 2) {
+            resolve();
+          }
+        });
+    });
+
+    expect(chunks[0].toString(`utf8`)).toMatch(`foo\n`);
+    expect(chunks[1].toString(`utf8`)).toMatch(`foo\n`);
 
     fs.discardAndClose();
   });
