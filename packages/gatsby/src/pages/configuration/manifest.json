@@ -302,6 +302,14 @@
           "default": "./build/browser.js",
           "$comment": "{ \"anchor\": \"publishConfig.browser\" }"
         },
+        "executableFiles": {
+          "description": "By default, for portability reasons, no files except those listed in the bin field will be marked as executable in the resulting package archive. The executableFiles field lets you declare additional fields that must have the executable flag (+x) set even if they aren't directly accessible through the bin field.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri-reference"
+          }
+        },
         "main": {
           "$ref": "#/properties/main",
           "$comment": "{ \"anchor\": \"publishConfig.main\", \"overrides\": { \"description\": \"Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `main` field when generating the workspace tarball.\", \"default\": \"./build/index.js\" } }"

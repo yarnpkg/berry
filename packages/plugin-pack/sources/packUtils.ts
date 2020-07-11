@@ -86,6 +86,10 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
   if (typeof files === `undefined`)
     files = await genPackList(workspace);
 
+  const executableFiles = workspace.manifest.publishConfig?.executableFiles ?? new Set();
+  for (const value of workspace.manifest.bin.values())
+    executableFiles.add(value);
+
   const pack = tar.pack();
 
   process.nextTick(async () => {
@@ -95,6 +99,10 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
 
       const stat = await xfs.lstatPromise(source);
       const opts = {name: dest, mtime: new Date(315532800)};
+
+      const mode = executableFiles.has(file)
+        ? 0o755
+        : 0o644;
 
       let resolveFn: Function;
       let rejectFn: Function;
@@ -121,9 +129,9 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
         else
           content = await xfs.readFilePromise(source);
 
-        pack.entry({...opts, type: `file`}, content, cb);
+        pack.entry({...opts, mode, type: `file`}, content, cb);
       } else if (stat.isSymbolicLink()) {
-        pack.entry({...opts, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
+        pack.entry({...opts, mode, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
       }
 
       await awaitTarget;

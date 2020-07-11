@@ -24566,6 +24566,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["pkg-tests-specs", "workspace:packages/acceptance-tests/pkg-tests-specs"],
             ["@types/lodash", "npm:4.14.136"],
+            ["@types/tar", "npm:4.0.0"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
@@ -24573,7 +24574,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["fs-extra", "npm:7.0.1"],
             ["lodash", "npm:4.17.15"],
             ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"],
-            ["semver", "npm:7.3.2"]
+            ["semver", "npm:7.3.2"],
+            ["tar", "npm:4.4.13"]
           ],
           "linkType": "SOFT",
         }]
