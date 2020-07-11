@@ -45,7 +45,7 @@ describe(`ZipOpenFS`, () => {
     fs.discardAndClose();
   });
 
-  it.only(`treats createReadStream as a open file handle`, async () => {
+  it(`treats createReadStream as an open file handle`, async () => {
     const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
 
     const chunks: Array<Buffer> = [];
@@ -75,6 +75,29 @@ describe(`ZipOpenFS`, () => {
 
     expect(chunks[0].toString(`utf8`)).toMatch(`foo\n`);
     expect(chunks[1].toString(`utf8`)).toMatch(`foo\n`);
+
+    fs.discardAndClose();
+  });
+
+  it(`treats createWriteStream as an open file handle`, async () => {
+    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
+
+    const stream1 = fs.createWriteStream(ZIP_FILE1);
+    const stream2 = fs.createWriteStream(ZIP_FILE2);
+
+    await new Promise(resolve => {
+      let done = 0;
+      stream1.end(`foo`, () => {
+        if (++done === 2) {
+          resolve();
+        }
+      });
+      stream2.end(`bar`, () => {
+        if (++done === 2) {
+          resolve();
+        }
+      });
+    });
 
     fs.discardAndClose();
   });
