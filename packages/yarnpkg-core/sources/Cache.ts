@@ -11,9 +11,7 @@ import * as miscUtils                                          from './miscUtils
 import * as structUtils                                        from './structUtils';
 import {LocatorHash, Locator}                                  from './types';
 
-// Each time we'll bump this number the cache hashes will change, which will
-// cause all files to be fetched again. Use with caution.
-const CACHE_VERSION = 5;
+const CACHE_VERSION = 6;
 
 export type FetchFromCacheOptions = {
   checksums: Map<LocatorHash, Locator>,

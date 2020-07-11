@@ -1,5 +1,6 @@
-import {xfs}           from '@yarnpkg/fslib';
+import {xfs, npath}    from '@yarnpkg/fslib';
 import {fs as fsUtils} from 'pkg-tests-core';
+import tar             from 'tar';
 
 describe(`Commands`, () => {
   describe(`pack`, () => {
@@ -375,6 +376,73 @@ describe(`Commands`, () => {
         expect(stdout).not.toMatch(/lib\/changelog/);
         expect(stdout).toMatch(/CHANGELOG\.md/);
         expect(stdout).toMatch(/package\.json/);
+      }),
+    );
+
+    test(
+      `it should never set the +x flag on files in general`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await xfs.writeFilePromise(`${path}/index.js`, `module.exports = 42;`);
+        await xfs.chmodPromise(`${path}/index.js`, 0o755);
+
+        await run(`install`);
+        await run(`pack`);
+
+        const mode = await new Promise(resolve => {
+          tar.t({
+            file: npath.fromPortablePath(`${path}/package.tgz`),
+            onentry: entry => resolve(entry.mode),
+          }, [`package/index.js`]);
+        });
+
+        expect(mode).toEqual(0o644);
+      }),
+    );
+
+    test(
+      `it should set the +x flag on bin entries`,
+      makeTemporaryEnv({
+        name: `pkg`,
+        bin: `index.js`,
+      }, async ({path, run, source}) => {
+        await xfs.writeFilePromise(`${path}/index.js`, `module.exports = 42;`);
+
+        await run(`install`);
+        await run(`pack`);
+
+        const mode = await new Promise(resolve => {
+          tar.t({
+            file: npath.fromPortablePath(`${path}/package.tgz`),
+            onentry: entry => resolve(entry.mode),
+          }, [`package/index.js`]);
+        });
+
+        expect(mode).toEqual(0o755);
+      }),
+    );
+
+    test(
+      `it should set the +x flag executableFiles entries`,
+      makeTemporaryEnv({
+        publishConfig: {
+          executableFiles: [
+            `index.js`,
+          ],
+        },
+      }, async ({path, run, source}) => {
+        await xfs.writeFilePromise(`${path}/index.js`, `module.exports = 42;`);
+
+        await run(`install`);
+        await run(`pack`);
+
+        const mode = await new Promise(resolve => {
+          tar.t({
+            file: npath.fromPortablePath(`${path}/package.tgz`),
+            onentry: entry => resolve(entry.mode),
+          }, [`package/index.js`]);
+        });
+
+        expect(mode).toEqual(0o755);
       }),
     );
 

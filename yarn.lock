@@ -3,7 +3,7 @@
 
 __metadata:
   version: 4
-  cacheKey: 5
+  cacheKey: 6
 
 "@algolia/cache-browser-local-storage@npm:4.2.0":
   version: 4.2.0
@@ -20790,6 +20790,7 @@ fsevents@^1.2.7:
   resolution: "pkg-tests-specs@workspace:packages/acceptance-tests/pkg-tests-specs"
   dependencies:
     "@types/lodash": ^4.14.136
+    "@types/tar": ^4.0.0
     "@yarnpkg/core": "workspace:^2.1.1"
     "@yarnpkg/fslib": "workspace:^2.1.0"
     "@yarnpkg/monorepo": "workspace:0.0.0"
@@ -20798,6 +20799,7 @@ fsevents@^1.2.7:
     lodash: ^4.17.15
     pkg-tests-core: "workspace:0.0.0"
     semver: ^7.1.2
+    tar: ^4.4.6
   languageName: unknown
   linkType: soft
 
