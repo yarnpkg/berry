@@ -86,14 +86,18 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
   if (typeof files === `undefined`)
     files = await genPackList(workspace);
 
-  const executableFiles = workspace.manifest.publishConfig?.executableFiles ?? new Set();
+  const executableFiles = new Set<PortablePath>();
+  for (const value of workspace.manifest.publishConfig?.executableFiles ?? new Set())
+    executableFiles.add(ppath.normalize(value));
   for (const value of workspace.manifest.bin.values())
-    executableFiles.add(value);
+    executableFiles.add(ppath.normalize(value));
 
   const pack = tar.pack();
 
   process.nextTick(async () => {
-    for (const file of files!) {
+    for (const fileRequest of files!) {
+      const file = ppath.normalize(fileRequest);
+
       const source = ppath.resolve(workspace.cwd, file);
       const dest = ppath.join(`package` as PortablePath, file);
 
