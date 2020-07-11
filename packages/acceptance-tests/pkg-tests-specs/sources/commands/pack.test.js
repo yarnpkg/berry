@@ -11,7 +11,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).toMatch(/index\.js/);
+        expect(stdout).toMatch(/index\.js/);
       }),
     );
 
@@ -23,7 +23,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).not.toMatch(/\.yarn\//);
+        expect(stdout).not.toMatch(/\.yarn\//);
       }),
     );
 
@@ -43,10 +43,10 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).toMatch(/lib\/a\.js/);
-        await expect(stdout).toMatch(/lib\/b\.js/);
-        await expect(stdout).not.toMatch(/src\/a\.ts/);
-        await expect(stdout).toMatch(/src\/b\.ts/);
+        expect(stdout).toMatch(/lib\/a\.js/);
+        expect(stdout).toMatch(/lib\/b\.js/);
+        expect(stdout).not.toMatch(/src\/a\.ts/);
+        expect(stdout).toMatch(/src\/b\.ts/);
       }),
     );
 
@@ -63,9 +63,55 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).toMatch(/lib\/a\.js/);
-        await expect(stdout).toMatch(/lib\/b\.js/);
-        await expect(stdout).toMatch(/package\.json/);
+        expect(stdout).toMatch(/lib\/a\.js/);
+        expect(stdout).toMatch(/lib\/b\.js/);
+        expect(stdout).toMatch(/package\.json/);
+      }),
+    );
+
+    test(
+      `it should always include the main file, even with a "files" field`,
+      makeTemporaryEnv({
+        main: `ok1.js`,
+        module: `ok2.js`,
+        browser: `ok3.js`,
+        files: [
+          `/bad`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/ok1.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/ok2.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/ok3.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/ko.js`, `module.exports = 42;\n`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        expect(stdout).toMatch(/ok1\.js/);
+        expect(stdout).toMatch(/ok2\.js/);
+        expect(stdout).toMatch(/ok3\.js/);
+        expect(stdout).not.toMatch(/ko\.js/);
+      }),
+    );
+
+    test(
+      `it should always include the binary files, even with a "files" field`,
+      makeTemporaryEnv({
+        bin: {
+          ok: `ok.js`,
+        },
+        files: [
+          `/bad`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/ok.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/ko.js`, `module.exports = 42;\n`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        expect(stdout).toMatch(/ok\.js/);
+        expect(stdout).not.toMatch(/ko\.js/);
       }),
     );
 
@@ -83,8 +129,8 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).toMatch(/lib\/a\.js/);
-        await expect(stdout).not.toMatch(/lib\/b\.js/);
+        expect(stdout).toMatch(/lib\/a\.js/);
+        expect(stdout).not.toMatch(/lib\/b\.js/);
       }),
     );
 
@@ -101,8 +147,8 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).toMatch(/lib\/a\.js/);
-        await expect(stdout).toMatch(/lib\/b\.js/);
+        expect(stdout).toMatch(/lib\/a\.js/);
+        expect(stdout).toMatch(/lib\/b\.js/);
       }),
     );
 
@@ -114,7 +160,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).not.toMatch(/\.gitignore/);
+        expect(stdout).not.toMatch(/\.gitignore/);
       }),
     );
 
@@ -126,7 +172,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).not.toMatch(/\.npmignore/);
+        expect(stdout).not.toMatch(/\.npmignore/);
       }),
     );
 
@@ -144,7 +190,7 @@ describe(`Commands`, () => {
         await fsUtils.writeFile(`${path}/lib/foo.js`, ``);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).toMatch(/lib\/foo\.js/);
+        expect(stdout).toMatch(/lib\/foo\.js/);
       }),
     );
 
@@ -154,7 +200,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).not.toMatch(/\.yarn\/cache/);
+        expect(stdout).not.toMatch(/\.yarn\/cache/);
       }),
     );
 
@@ -164,7 +210,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).not.toMatch(/yarn\.lock/);
+        expect(stdout).not.toMatch(/yarn\.lock/);
       }),
     );
 
@@ -177,7 +223,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).not.toMatch(/index\.js/);
+        expect(stdout).not.toMatch(/index\.js/);
       }),
     );
 
@@ -190,7 +236,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).not.toMatch(/index\.js/);
+        expect(stdout).not.toMatch(/index\.js/);
       }),
     );
 
@@ -204,7 +250,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).not.toMatch(/__tests__/);
+        expect(stdout).not.toMatch(/__tests__/);
       }),
     );
 
@@ -219,8 +265,8 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).not.toMatch(/a\.js/);
-        await expect(stdout).toMatch(/b\.js/);
+        expect(stdout).not.toMatch(/a\.js/);
+        expect(stdout).toMatch(/b\.js/);
       }),
     );
 
@@ -307,9 +353,9 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).not.toMatch(/lib\/README/);
-        await expect(stdout).toMatch(/README\.md/);
-        await expect(stdout).toMatch(/package\.json/);
+        expect(stdout).not.toMatch(/lib\/README/);
+        expect(stdout).toMatch(/README\.md/);
+        expect(stdout).toMatch(/package\.json/);
       }),
     );
 
@@ -326,9 +372,9 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const {stdout} = await run(`pack`, `--dry-run`);
-        await expect(stdout).not.toMatch(/lib\/changelog/);
-        await expect(stdout).toMatch(/CHANGELOG\.md/);
-        await expect(stdout).toMatch(/package\.json/);
+        expect(stdout).not.toMatch(/lib\/changelog/);
+        expect(stdout).toMatch(/CHANGELOG\.md/);
+        expect(stdout).toMatch(/package\.json/);
       }),
     );
 

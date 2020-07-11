@@ -4,6 +4,10 @@
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn import plugin from sources <name>`).
 
+### Bugfixes
+
+- `yarn pack` will properly include main/module/bin files, even when not explicitly referenced through the `files` field.
+
 ### CLI
 
 - `yarn add` and `yarn up` will now respect the `preferInteractive` configuration option.
