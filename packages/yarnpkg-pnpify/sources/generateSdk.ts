@@ -167,6 +167,8 @@ export type GenerateBaseWrapper = (pnpApi: PnpApi, target: PortablePath) => Prom
 
 export type GenerateIntegrationWrapper = (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => Promise<void>;
 
+export type GenerateDefaultWrapper = (pnpApi: PnpApi, target: PortablePath) => Promise<void>;
+
 export type SupportedSdk =
  | 'eslint'
  | 'prettier'
@@ -177,7 +179,11 @@ export type SupportedSdk =
 
 export type BaseSdks = Array<[SupportedSdk, GenerateBaseWrapper]>;
 
-export type IntegrationSdks = Array<[SupportedSdk, GenerateIntegrationWrapper | null]>;
+export type IntegrationSdks = Array<
+  | [null, GenerateDefaultWrapper | null]
+  | [SupportedSdk, GenerateIntegrationWrapper | null]
+>;
+
 
 export class Wrapper {
   private name: PortablePath;
@@ -290,6 +296,15 @@ export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexi
 
   await report.startTimerPromise(`Generating SDKs inside ${configuration.format(SDK_FOLDER, FormatType.PATH)}`, async () => {
     const skipped = [];
+
+    for (const sdks of integrationSdks) {
+      const defaultSdk = sdks.find(sdk => sdk[0] === null);
+      if (!defaultSdk)
+        continue;
+
+      const [, generateDefaultWrapper] = defaultSdk;
+      await (generateDefaultWrapper as GenerateDefaultWrapper | null)?.(pnpApi, targetFolder);
+    }
 
     for (const [pkgName, generateBaseWrapper] of BASE_SDKS) {
       const displayName = getDisplayName(pkgName);
