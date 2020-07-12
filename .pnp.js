@@ -36827,6 +36827,7 @@ class PosixFS extends ProxiedFS {
 var external_url_ = __webpack_require__(835);
 
 // CONCATENATED MODULE: ./sources/loader/internalTools.ts
+
 var ErrorCode;
 
 (function (ErrorCode) {
@@ -36879,6 +36880,9 @@ function getIssuerModule(parent) {
   while (issuer && (issuer.id === `[eval]` || issuer.id === `<repl>` || !issuer.filename)) issuer = issuer.parent;
 
   return issuer || null;
+}
+function getPathForDisplay(p) {
+  return sources_path/* npath.normalize */.cS.normalize(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p));
 }
 // CONCATENATED MODULE: ./sources/loader/applyPatch.ts
 
@@ -37152,11 +37156,15 @@ function hydrateRuntimeState(data, {
   basePath
 }) {
   const portablePath = sources_path/* npath.toPortablePath */.cS.toPortablePath(basePath);
+  const absolutePortablePath = sources_path/* ppath.resolve */.y1.resolve(portablePath);
   const ignorePattern = data.ignorePatternData !== null ? new RegExp(data.ignorePatternData) : null;
   const packageRegistry = new Map(data.packageRegistryData.map(([packageName, packageStoreData]) => {
     return [packageName, new Map(packageStoreData.map(([packageReference, packageInformationData]) => {
       return [packageReference, {
-        packageLocation: sources_path/* ppath.resolve */.y1.resolve(portablePath, packageInformationData.packageLocation),
+        // We use ppath.join instead of ppath.resolve because:
+        // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
+        // 2) ppath.join preserves trailing slashes
+        packageLocation: sources_path/* ppath.join */.y1.join(absolutePortablePath, packageInformationData.packageLocation),
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
@@ -37603,8 +37611,9 @@ function makeApi(runtimeState, opts) {
       // something incompatible!
 
       if (locator === null) {
-        throw internalTools_makeError(ErrorCode.BLACKLISTED, `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${location}`, {
-          location
+        const locationForDisplay = getPathForDisplay(location);
+        throw internalTools_makeError(ErrorCode.BLACKLISTED, `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${locationForDisplay}`, {
+          location: locationForDisplay
         });
       }
 
@@ -37632,7 +37641,9 @@ function makeApi(runtimeState, opts) {
     // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
     if (request === `pnpapi`) return sources_path/* npath.toPortablePath */.cS.toPortablePath(opts.pnpapiResolution); // Bailout if the request is a native module
 
-    if (considerBuiltins && builtinModules.has(request)) return null; // We allow disabling the pnp resolution for some subpaths.
+    if (considerBuiltins && builtinModules.has(request)) return null;
+    const requestForDisplay = getPathForDisplay(request);
+    const issuerForDisplay = issuer && getPathForDisplay(issuer); // We allow disabling the pnp resolution for some subpaths.
     // This is because some projects, often legacy, contain multiple
     // levels of dependencies (ie. a yarn.lock inside a subfolder of
     // a yarn.lock). This is typically solved using workspaces, but
@@ -37648,9 +37659,9 @@ function makeApi(runtimeState, opts) {
         const result = callNativeResolution(request, issuer);
 
         if (result === false) {
-          throw internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp)\n\nRequire request: "${request}"\nRequired by: ${issuer}\n`, {
-            request,
-            issuer
+          throw internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp)\n\nRequire request: "${requestForDisplay}"\nRequired by: ${issuerForDisplay}\n`, {
+            request: requestForDisplay,
+            issuer: issuerForDisplay
           });
         }
 
@@ -37668,8 +37679,8 @@ function makeApi(runtimeState, opts) {
       } else {
         if (!issuer) {
           throw internalTools_makeError(ErrorCode.API_ERROR, `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`, {
-            request,
-            issuer
+            request: requestForDisplay,
+            issuer: issuerForDisplay
           });
         } // We use ppath.join instead of ppath.resolve because:
         // 1) The request is a relative path in this branch
@@ -37692,8 +37703,8 @@ function makeApi(runtimeState, opts) {
     else {
         if (!issuer) {
           throw internalTools_makeError(ErrorCode.API_ERROR, `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`, {
-            request,
-            issuer
+            request: requestForDisplay,
+            issuer: issuerForDisplay
           });
         }
 
@@ -37705,9 +37716,9 @@ function makeApi(runtimeState, opts) {
           const result = callNativeResolution(request, issuer);
 
           if (result === false) {
-            throw internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree).\n\nRequire path: "${request}"\nRequired by: ${issuer}\n`, {
-              request,
-              issuer
+            throw internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree).\n\nRequire path: "${requestForDisplay}"\nRequired by: ${issuerForDisplay}\n`, {
+              request: requestForDisplay,
+              issuer: issuerForDisplay
             });
           }
 
@@ -37755,26 +37766,26 @@ function makeApi(runtimeState, opts) {
 
         if (dependencyReference === null) {
           if (isDependencyTreeRoot(issuerLocator)) {
-            error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `Your application tried to access ${dependencyName} (a peer dependency); this isn't allowed as there is no ancestor to satisfy the requirement. Use a devDependency if needed.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, {
-              request,
-              issuer,
+            error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `Your application tried to access ${dependencyName} (a peer dependency); this isn't allowed as there is no ancestor to satisfy the requirement. Use a devDependency if needed.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+              request: requestForDisplay,
+              issuer: issuerForDisplay,
               dependencyName
             });
           } else {
             const brokenAncestors = findBrokenPeerDependencies(dependencyName, issuerLocator);
 
             if (brokenAncestors.every(ancestor => isDependencyTreeRoot(ancestor))) {
-              error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
-                request,
-                issuer,
+              error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
+                request: requestForDisplay,
+                issuer: issuerForDisplay,
                 issuerLocator: Object.assign({}, issuerLocator),
                 dependencyName,
                 brokenAncestors
               });
             } else {
-              error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
-                request,
-                issuer,
+              error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
+                request: requestForDisplay,
+                issuer: issuerForDisplay,
                 issuerLocator: Object.assign({}, issuerLocator),
                 dependencyName,
                 brokenAncestors
@@ -37783,15 +37794,15 @@ function makeApi(runtimeState, opts) {
           }
         } else if (dependencyReference === undefined) {
           if (isDependencyTreeRoot(issuerLocator)) {
-            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, {
-              request,
-              issuer,
+            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+              request: requestForDisplay,
+              issuer: issuerForDisplay,
               dependencyName
             });
           } else {
-            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, {
-              request,
-              issuer,
+            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
+              request: requestForDisplay,
+              issuer: issuerForDisplay,
               issuerLocator: Object.assign({}, issuerLocator),
               dependencyName
             });
@@ -37821,18 +37832,22 @@ function makeApi(runtimeState, opts) {
         const dependencyInformation = getPackageInformationSafe(dependencyLocator);
 
         if (!dependencyInformation.packageLocation) {
-          throw internalTools_makeError(ErrorCode.MISSING_DEPENDENCY, `A dependency seems valid but didn't get installed for some reason. This might be caused by a partial install, such as dev vs prod.\n\nRequired package: ${dependencyLocator.name}@${dependencyLocator.reference} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, {
-            request,
-            issuer,
+          throw internalTools_makeError(ErrorCode.MISSING_DEPENDENCY, `A dependency seems valid but didn't get installed for some reason. This might be caused by a partial install, such as dev vs prod.\n\nRequired package: ${dependencyLocator.name}@${dependencyLocator.reference} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
+            request: requestForDisplay,
+            issuer: issuerForDisplay,
             dependencyLocator: Object.assign({}, dependencyLocator)
           });
         } // Now that we know which package we should resolve to, we only have to find out the file location
+        // packageLocation is always absolute as it's returned by getPackageInformationSafe
 
 
-        const dependencyLocation = sources_path/* ppath.resolve */.y1.resolve(runtimeState.basePath, dependencyInformation.packageLocation);
+        const dependencyLocation = dependencyInformation.packageLocation;
 
         if (subPath) {
-          unqualifiedPath = sources_path/* ppath.resolve */.y1.resolve(dependencyLocation, subPath);
+          // We use ppath.join instead of ppath.resolve because:
+          // 1) subPath is always a relative path
+          // 2) ppath.join preserves trailing slashes
+          unqualifiedPath = sources_path/* ppath.join */.y1.join(dependencyLocation, subPath);
         } else {
           unqualifiedPath = dependencyLocation;
         }
@@ -37857,8 +37872,9 @@ function makeApi(runtimeState, opts) {
     if (qualifiedPath) {
       return sources_path/* ppath.normalize */.y1.normalize(qualifiedPath);
     } else {
-      throw internalTools_makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Qualified path resolution failed - none of the candidates can be found on the disk.\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected candidate: ${candidate}\n`).join(``)}`, {
-        unqualifiedPath
+      const unqualifiedPathForDisplay = getPathForDisplay(unqualifiedPath);
+      throw internalTools_makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Qualified path resolution failed - none of the candidates can be found on the disk.\n\nSource path: ${unqualifiedPathForDisplay}\n${candidates.map(candidate => `Rejected candidate: ${getPathForDisplay(candidate)}\n`).join(``)}`, {
+        unqualifiedPath: unqualifiedPathForDisplay
       });
     }
   }
@@ -37886,8 +37902,8 @@ function makeApi(runtimeState, opts) {
       });
     } catch (resolutionError) {
       if (resolutionError.pnpCode === `QUALIFIED_PATH_RESOLUTION_FAILED`) Object.assign(resolutionError.data, {
-        request,
-        issuer
+        request: getPathForDisplay(request),
+        issuer: issuer && getPathForDisplay(issuer)
       });
       throw resolutionError;
     }
