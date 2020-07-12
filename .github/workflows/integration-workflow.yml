@@ -52,11 +52,23 @@ jobs:
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
-    - name: 'Check that the PnP hook is consistent with a fresh build'
+    - name: 'Check that the PnP hook is consistent with a fresh build (fix w/ "yarn build:pnp:hook")'
       run: |
         if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- packages/yarnpkg-pnp/sources/hook.js | wc -l) -gt 0 ]]; then
           node ./scripts/run-yarn.js build:pnp:hook
           [[ $(git diff --name-only packages/yarnpkg-pnp/sources/hook.js | wc -l) -eq 0 ]]
+        fi
+      shell: bash
+      if: |
+        github.event.pull_request != ''
+      env:
+        TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
+
+    - name: 'Check that the pluginCommands file is consistent with a fresh build (fix w/ "yarn build:plugin-commands")'
+      run: |
+        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- packages/plugin-essentials/sources/pluginCommands.ts 'packages/*/sources/commands/**/*' | wc -l) -gt 0 ]]; then
+          node ./scripts/run-yarn.js build:plugin-commands
+          [[ $(git diff --name-only packages/plugin-essentials/sources/pluginCommands.ts | wc -l) -eq 0 ]]
         fi
       shell: bash
       if: |
