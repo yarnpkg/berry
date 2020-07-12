@@ -398,7 +398,7 @@ const parseLocation = (location: PortablePath, {skipPrefix}: {skipPrefix: Portab
   const allSegments = projectRelativePath
     .split(ppath.sep)
     // Ignore empty segments (after trailing slashes)
-    .filter(Boolean);
+    .filter(segment => segment !== ``);
   const nmIndex = allSegments.indexOf(NODE_MODULES);
 
   // Project path, up until the first node_modules segment
