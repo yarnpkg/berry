@@ -489,7 +489,7 @@ export class ZipFS extends BasePortableFakeFS {
       },
     });
 
-    const fd = this.openSync(p, ``);
+    const fd = this.openSync(p, `r`);
 
     const immediate = setImmediate(() => {
       try {
@@ -533,7 +533,7 @@ export class ZipFS extends BasePortableFakeFS {
       chunks.push(chunkBuffer);
     });
 
-    const fd = this.openSync(p, ``);
+    const fd = this.openSync(p, `w`);
     stream.on(`end`, () => {
       try {
         this.writeFileSync(p, Buffer.concat(chunks), encoding);
