@@ -8,6 +8,7 @@ export const pluginCommands = new Map([
     [`constraints`],
   ]],
   [`interactive-tools`, [
+    [`search`],
     [`upgrade-interactive`],
   ]],
   [`stage`, [
@@ -19,7 +20,7 @@ export const pluginCommands = new Map([
     [`version`],
   ]],
   [`workspace-tools`, [
+    [`workspaces`, `focus`],
     [`workspaces`, `foreach`],
-    [`workspace`],
   ]],
 ]);

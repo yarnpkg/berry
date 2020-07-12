@@ -6964,6 +6964,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@babel/core", "npm:7.10.2"],
             ["@types/filesize", "npm:4.1.0"],
+            ["@types/semver", "npm:7.1.0"],
             ["@types/terser-webpack-plugin", "npm:3.0.0"],
             ["@types/webpack-merge", "npm:4.1.5"],
             ["@types/webpack-sources", "npm:1.4.0"],
@@ -6998,6 +6999,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],
             ["@babel/core", "npm:7.10.2"],
             ["@types/filesize", "npm:4.1.0"],
+            ["@types/semver", "npm:7.1.0"],
             ["@types/terser-webpack-plugin", "npm:3.0.0"],
             ["@types/webpack-merge", "npm:4.1.5"],
             ["@types/webpack-sources", "npm:1.4.0"],
@@ -24566,6 +24568,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["pkg-tests-specs", "workspace:packages/acceptance-tests/pkg-tests-specs"],
             ["@types/lodash", "npm:4.14.136"],
+            ["@types/tar", "npm:4.0.0"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
@@ -24573,7 +24576,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["fs-extra", "npm:7.0.1"],
             ["lodash", "npm:4.17.15"],
             ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"],
-            ["semver", "npm:7.3.2"]
+            ["semver", "npm:7.3.2"],
+            ["tar", "npm:4.4.13"]
           ],
           "linkType": "SOFT",
         }]
@@ -33242,41 +33246,40 @@ const defaultTime = 315532800;
 async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
   const normalizedDestination = destinationFs.pathUtils.normalize(destination);
   const normalizedSource = sourceFs.pathUtils.normalize(source);
-  const operations = [];
-  const lutimes = [];
+  const prelayout = [];
+  const postlayout = [];
   await destinationFs.mkdirpPromise(destination);
-  await copyImpl(operations, lutimes, destinationFs, normalizedDestination, sourceFs, normalizedSource, opts);
-
-  for (const operation of operations) await operation();
-
   const updateTime = typeof destinationFs.lutimesPromise === `function` ? destinationFs.lutimesPromise.bind(destinationFs) : destinationFs.utimesPromise.bind(destinationFs);
+  await copyImpl(prelayout, postlayout, updateTime, destinationFs, normalizedDestination, sourceFs, normalizedSource, opts);
 
-  for (const [p, atime, mtime] of lutimes) {
-    await updateTime(p, atime, mtime);
-  }
+  for (const operation of prelayout) await operation();
+
+  await Promise.all(postlayout.map(operation => {
+    return operation();
+  }));
 }
 
-async function copyImpl(operations, lutimes, destinationFs, destination, sourceFs, source, opts) {
+async function copyImpl(prelayout, postlayout, updateTime, destinationFs, destination, sourceFs, source, opts) {
   const destinationStat = await maybeLStat(destinationFs, destination);
   const sourceStat = await sourceFs.lstatPromise(source);
-  if (opts.stableTime) lutimes.push([destination, defaultTime, defaultTime]);else lutimes.push([destination, sourceStat.atime, sourceStat.mtime]);
+  if (opts.stableTime) postlayout.push(() => updateTime(destination, defaultTime, defaultTime));else postlayout.push(() => updateTime(destination, sourceStat.atime, sourceStat.mtime));
 
   switch (true) {
     case sourceStat.isDirectory():
       {
-        await copyFolder(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+        await copyFolder(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
       }
       break;
 
     case sourceStat.isFile():
       {
-        await copyFile(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+        await copyFile(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
       }
       break;
 
     case sourceStat.isSymbolicLink():
       {
-        await copySymlink(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+        await copySymlink(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
       }
       break;
 
@@ -33287,7 +33290,9 @@ async function copyImpl(operations, lutimes, destinationFs, destination, sourceF
       break;
   }
 
-  operations.push(async () => destinationFs.chmodPromise(destination, sourceStat.mode & 0o777));
+  postlayout.push(() => {
+    return destinationFs.chmodPromise(destination, sourceStat.mode & 0o777);
+  });
 }
 
 async function maybeLStat(baseFs, p) {
@@ -33298,36 +33303,36 @@ async function maybeLStat(baseFs, p) {
   }
 }
 
-async function copyFolder(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
+async function copyFolder(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
   if (destinationStat !== null && !destinationStat.isDirectory()) {
     if (opts.overwrite) {
-      operations.push(async () => destinationFs.removePromise(destination));
+      prelayout.push(async () => destinationFs.removePromise(destination));
       destinationStat = null;
     } else {
       return;
     }
   }
 
-  if (destinationStat === null) operations.push(async () => destinationFs.mkdirPromise(destination, {
+  if (destinationStat === null) prelayout.push(async () => destinationFs.mkdirPromise(destination, {
     mode: sourceStat.mode
   }));
   const entries = await sourceFs.readdirPromise(source);
 
   if (opts.stableSort) {
     for (const entry of entries.sort()) {
-      await copyImpl(operations, lutimes, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
+      await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
     }
   } else {
     await Promise.all(entries.map(async entry => {
-      await copyImpl(operations, lutimes, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
+      await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
     }));
   }
 }
 
-async function copyFile(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
+async function copyFile(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
   if (destinationStat !== null) {
     if (opts.overwrite) {
-      operations.push(async () => destinationFs.removePromise(destination));
+      prelayout.push(async () => destinationFs.removePromise(destination));
       destinationStat = null;
     } else {
       return;
@@ -33335,16 +33340,16 @@ async function copyFile(operations, lutimes, destinationFs, destination, destina
   }
 
   if (destinationFs === sourceFs) {
-    operations.push(async () => destinationFs.copyFilePromise(source, destination, (external_fs_default()).constants.COPYFILE_FICLONE));
+    prelayout.push(async () => destinationFs.copyFilePromise(source, destination, (external_fs_default()).constants.COPYFILE_FICLONE));
   } else {
-    operations.push(async () => destinationFs.writeFilePromise(destination, await sourceFs.readFilePromise(source)));
+    prelayout.push(async () => destinationFs.writeFilePromise(destination, await sourceFs.readFilePromise(source)));
   }
 }
 
-async function copySymlink(operations, lutimes, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
+async function copySymlink(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
   if (destinationStat !== null) {
     if (opts.overwrite) {
-      operations.push(async () => destinationFs.removePromise(destination));
+      prelayout.push(async () => destinationFs.removePromise(destination));
       destinationStat = null;
     } else {
       return;
@@ -33352,7 +33357,7 @@ async function copySymlink(operations, lutimes, destinationFs, destination, dest
   }
 
   const target = await sourceFs.readlinkPromise(source);
-  operations.push(async () => destinationFs.symlinkPromise((0,path/* convertPath */.CI)(destinationFs.pathUtils, target), destination));
+  prelayout.push(async () => destinationFs.symlinkPromise((0,path/* convertPath */.CI)(destinationFs.pathUtils, target), destination));
 }
 // CONCATENATED MODULE: ../yarnpkg-fslib/sources/FakeFS.ts
 
@@ -34943,7 +34948,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
         clearImmediate(immediate);
       }
     });
-    const fd = this.openSync(p, ``);
+    const fd = this.openSync(p, `r`);
     const immediate = setImmediate(() => {
       try {
         const data = this.readFileSync(p, encoding);
@@ -34979,7 +34984,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
       stream.bytesWritten += chunkBuffer.length;
       chunks.push(chunkBuffer);
     });
-    const fd = this.openSync(p, ``);
+    const fd = this.openSync(p, `w`);
     stream.on(`end`, () => {
       try {
         this.writeFileSync(p, Buffer.concat(chunks), encoding);
@@ -36837,6 +36842,7 @@ class PosixFS extends ProxiedFS {
 var external_url_ = __webpack_require__(835);
 
 // CONCATENATED MODULE: ./sources/loader/internalTools.ts
+
 var ErrorCode;
 
 (function (ErrorCode) {
@@ -36889,6 +36895,9 @@ function getIssuerModule(parent) {
   while (issuer && (issuer.id === `[eval]` || issuer.id === `<repl>` || !issuer.filename)) issuer = issuer.parent;
 
   return issuer || null;
+}
+function getPathForDisplay(p) {
+  return sources_path/* npath.normalize */.cS.normalize(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p));
 }
 // CONCATENATED MODULE: ./sources/loader/applyPatch.ts
 
@@ -37162,11 +37171,15 @@ function hydrateRuntimeState(data, {
   basePath
 }) {
   const portablePath = sources_path/* npath.toPortablePath */.cS.toPortablePath(basePath);
+  const absolutePortablePath = sources_path/* ppath.resolve */.y1.resolve(portablePath);
   const ignorePattern = data.ignorePatternData !== null ? new RegExp(data.ignorePatternData) : null;
   const packageRegistry = new Map(data.packageRegistryData.map(([packageName, packageStoreData]) => {
     return [packageName, new Map(packageStoreData.map(([packageReference, packageInformationData]) => {
       return [packageReference, {
-        packageLocation: sources_path/* ppath.resolve */.y1.resolve(portablePath, packageInformationData.packageLocation),
+        // We use ppath.join instead of ppath.resolve because:
+        // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
+        // 2) ppath.join preserves trailing slashes
+        packageLocation: sources_path/* ppath.join */.y1.join(absolutePortablePath, packageInformationData.packageLocation),
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
@@ -37613,8 +37626,9 @@ function makeApi(runtimeState, opts) {
       // something incompatible!
 
       if (locator === null) {
-        throw internalTools_makeError(ErrorCode.BLACKLISTED, `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${location}`, {
-          location
+        const locationForDisplay = getPathForDisplay(location);
+        throw internalTools_makeError(ErrorCode.BLACKLISTED, `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${locationForDisplay}`, {
+          location: locationForDisplay
         });
       }
 
@@ -37642,7 +37656,9 @@ function makeApi(runtimeState, opts) {
     // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
     if (request === `pnpapi`) return sources_path/* npath.toPortablePath */.cS.toPortablePath(opts.pnpapiResolution); // Bailout if the request is a native module
 
-    if (considerBuiltins && builtinModules.has(request)) return null; // We allow disabling the pnp resolution for some subpaths.
+    if (considerBuiltins && builtinModules.has(request)) return null;
+    const requestForDisplay = getPathForDisplay(request);
+    const issuerForDisplay = issuer && getPathForDisplay(issuer); // We allow disabling the pnp resolution for some subpaths.
     // This is because some projects, often legacy, contain multiple
     // levels of dependencies (ie. a yarn.lock inside a subfolder of
     // a yarn.lock). This is typically solved using workspaces, but
@@ -37658,9 +37674,9 @@ function makeApi(runtimeState, opts) {
         const result = callNativeResolution(request, issuer);
 
         if (result === false) {
-          throw internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp)\n\nRequire request: "${request}"\nRequired by: ${issuer}\n`, {
-            request,
-            issuer
+          throw internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp)\n\nRequire request: "${requestForDisplay}"\nRequired by: ${issuerForDisplay}\n`, {
+            request: requestForDisplay,
+            issuer: issuerForDisplay
           });
         }
 
@@ -37678,8 +37694,8 @@ function makeApi(runtimeState, opts) {
       } else {
         if (!issuer) {
           throw internalTools_makeError(ErrorCode.API_ERROR, `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`, {
-            request,
-            issuer
+            request: requestForDisplay,
+            issuer: issuerForDisplay
           });
         } // We use ppath.join instead of ppath.resolve because:
         // 1) The request is a relative path in this branch
@@ -37702,8 +37718,8 @@ function makeApi(runtimeState, opts) {
     else {
         if (!issuer) {
           throw internalTools_makeError(ErrorCode.API_ERROR, `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`, {
-            request,
-            issuer
+            request: requestForDisplay,
+            issuer: issuerForDisplay
           });
         }
 
@@ -37715,9 +37731,9 @@ function makeApi(runtimeState, opts) {
           const result = callNativeResolution(request, issuer);
 
           if (result === false) {
-            throw internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree).\n\nRequire path: "${request}"\nRequired by: ${issuer}\n`, {
-              request,
-              issuer
+            throw internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree).\n\nRequire path: "${requestForDisplay}"\nRequired by: ${issuerForDisplay}\n`, {
+              request: requestForDisplay,
+              issuer: issuerForDisplay
             });
           }
 
@@ -37765,26 +37781,26 @@ function makeApi(runtimeState, opts) {
 
         if (dependencyReference === null) {
           if (isDependencyTreeRoot(issuerLocator)) {
-            error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `Your application tried to access ${dependencyName} (a peer dependency); this isn't allowed as there is no ancestor to satisfy the requirement. Use a devDependency if needed.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, {
-              request,
-              issuer,
+            error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `Your application tried to access ${dependencyName} (a peer dependency); this isn't allowed as there is no ancestor to satisfy the requirement. Use a devDependency if needed.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+              request: requestForDisplay,
+              issuer: issuerForDisplay,
               dependencyName
             });
           } else {
             const brokenAncestors = findBrokenPeerDependencies(dependencyName, issuerLocator);
 
             if (brokenAncestors.every(ancestor => isDependencyTreeRoot(ancestor))) {
-              error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
-                request,
-                issuer,
+              error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
+                request: requestForDisplay,
+                issuer: issuerForDisplay,
                 issuerLocator: Object.assign({}, issuerLocator),
                 dependencyName,
                 brokenAncestors
               });
             } else {
-              error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
-                request,
-                issuer,
+              error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
+                request: requestForDisplay,
+                issuer: issuerForDisplay,
                 issuerLocator: Object.assign({}, issuerLocator),
                 dependencyName,
                 brokenAncestors
@@ -37793,15 +37809,15 @@ function makeApi(runtimeState, opts) {
           }
         } else if (dependencyReference === undefined) {
           if (isDependencyTreeRoot(issuerLocator)) {
-            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuer}\n`, {
-              request,
-              issuer,
+            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+              request: requestForDisplay,
+              issuer: issuerForDisplay,
               dependencyName
             });
           } else {
-            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, {
-              request,
-              issuer,
+            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
+              request: requestForDisplay,
+              issuer: issuerForDisplay,
               issuerLocator: Object.assign({}, issuerLocator),
               dependencyName
             });
@@ -37831,18 +37847,22 @@ function makeApi(runtimeState, opts) {
         const dependencyInformation = getPackageInformationSafe(dependencyLocator);
 
         if (!dependencyInformation.packageLocation) {
-          throw internalTools_makeError(ErrorCode.MISSING_DEPENDENCY, `A dependency seems valid but didn't get installed for some reason. This might be caused by a partial install, such as dev vs prod.\n\nRequired package: ${dependencyLocator.name}@${dependencyLocator.reference} (via "${request}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuer})\n`, {
-            request,
-            issuer,
+          throw internalTools_makeError(ErrorCode.MISSING_DEPENDENCY, `A dependency seems valid but didn't get installed for some reason. This might be caused by a partial install, such as dev vs prod.\n\nRequired package: ${dependencyLocator.name}@${dependencyLocator.reference} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
+            request: requestForDisplay,
+            issuer: issuerForDisplay,
             dependencyLocator: Object.assign({}, dependencyLocator)
           });
         } // Now that we know which package we should resolve to, we only have to find out the file location
+        // packageLocation is always absolute as it's returned by getPackageInformationSafe
 
 
-        const dependencyLocation = sources_path/* ppath.resolve */.y1.resolve(runtimeState.basePath, dependencyInformation.packageLocation);
+        const dependencyLocation = dependencyInformation.packageLocation;
 
         if (subPath) {
-          unqualifiedPath = sources_path/* ppath.resolve */.y1.resolve(dependencyLocation, subPath);
+          // We use ppath.join instead of ppath.resolve because:
+          // 1) subPath is always a relative path
+          // 2) ppath.join preserves trailing slashes
+          unqualifiedPath = sources_path/* ppath.join */.y1.join(dependencyLocation, subPath);
         } else {
           unqualifiedPath = dependencyLocation;
         }
@@ -37867,8 +37887,9 @@ function makeApi(runtimeState, opts) {
     if (qualifiedPath) {
       return sources_path/* ppath.normalize */.y1.normalize(qualifiedPath);
     } else {
-      throw internalTools_makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Qualified path resolution failed - none of the candidates can be found on the disk.\n\nSource path: ${unqualifiedPath}\n${candidates.map(candidate => `Rejected candidate: ${candidate}\n`).join(``)}`, {
-        unqualifiedPath
+      const unqualifiedPathForDisplay = getPathForDisplay(unqualifiedPath);
+      throw internalTools_makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Qualified path resolution failed - none of the candidates can be found on the disk.\n\nSource path: ${unqualifiedPathForDisplay}\n${candidates.map(candidate => `Rejected candidate: ${getPathForDisplay(candidate)}\n`).join(``)}`, {
+        unqualifiedPath: unqualifiedPathForDisplay
       });
     }
   }
@@ -37896,8 +37917,8 @@ function makeApi(runtimeState, opts) {
       });
     } catch (resolutionError) {
       if (resolutionError.pnpCode === `QUALIFIED_PATH_RESOLUTION_FAILED`) Object.assign(resolutionError.data, {
-        request,
-        issuer
+        request: getPathForDisplay(request),
+        issuer: issuer && getPathForDisplay(issuer)
       });
       throw resolutionError;
     }

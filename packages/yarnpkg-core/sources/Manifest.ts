@@ -1,11 +1,11 @@
-import {FakeFS, Filename, NodeFS, PortablePath, ppath, toFilename} from '@yarnpkg/fslib';
-import {Resolution, parseResolution, stringifyResolution}          from '@yarnpkg/parsers';
-import semver                                                      from 'semver';
+import {FakeFS, Filename, NodeFS, PortablePath, npath, ppath, toFilename} from '@yarnpkg/fslib';
+import {Resolution, parseResolution, stringifyResolution}                 from '@yarnpkg/parsers';
+import semver                                                             from 'semver';
 
-import * as miscUtils                                              from './miscUtils';
-import * as structUtils                                            from './structUtils';
-import {IdentHash}                                                 from './types';
-import {Ident, Descriptor}                                         from './types';
+import * as miscUtils                                                     from './miscUtils';
+import * as structUtils                                                   from './structUtils';
+import {Ident, Descriptor}                                                from './types';
+import {IdentHash}                                                        from './types';
 
 export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
 export type HardDependencies = 'dependencies' | 'devDependencies';
@@ -31,6 +31,7 @@ export interface PublishConfig {
   browser?: PortablePath;
   bin?: Map<string, PortablePath>;
   registry?: string;
+  executableFiles?: Set<PortablePath>;
 }
 
 export class Manifest {
@@ -404,6 +405,19 @@ export class Manifest {
           }
 
           this.publishConfig.bin.set(key, value as PortablePath);
+        }
+      }
+
+      if (Array.isArray(data.publishConfig.executableFiles)) {
+        this.publishConfig.executableFiles = new Set();
+
+        for (const value of data.publishConfig.executableFiles) {
+          if (typeof value !== `string`) {
+            errors.push(new Error(`Invalid executable file definition`));
+            continue;
+          }
+
+          this.publishConfig.executableFiles.add(npath.toPortablePath(value));
         }
       }
     }
