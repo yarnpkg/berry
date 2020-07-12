@@ -5435,6 +5435,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.10.2
     "@types/filesize": 4.1.0
+    "@types/semver": ^7.1.0
     "@types/terser-webpack-plugin": ^3.0.0
     "@types/webpack-merge": ^4.1.5
     "@types/webpack-sources": ^1.4.0
