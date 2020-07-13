@@ -10,6 +10,7 @@
 
 ### Bugfixes
 
+- Requests won't timeout anymore as long as the server is still sending data.
 - `yarn pack` will properly include main/module/bin files, even when not explicitly referenced through the `files` field.
 
 ### CLI
