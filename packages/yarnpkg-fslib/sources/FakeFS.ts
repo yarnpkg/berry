@@ -83,7 +83,7 @@ export abstract class FakeFS<P extends Path> {
   abstract writeSync(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number): number;
   abstract writeSync(fd: number, buffer: string, position?: number): number;
 
-  abstract closePromise(fd: number): void;
+  abstract closePromise(fd: number): Promise<void>;
   abstract closeSync(fd: number): void;
 
   abstract createWriteStream(p: PathLike<P> | null, opts?: CreateWriteStreamOptions): WriteStream;
