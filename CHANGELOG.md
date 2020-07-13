@@ -10,6 +10,7 @@
 
 ### Bugfixes
 
+- Requests will not timeout when response takes more than `httpTimeout` to download and will rely on [`socket.setTimeout`](https://nodejs.org/api/net.html#net_socket_settimeout_timeout_callback) instead.
 - `yarn pack` will properly include main/module/bin files, even when not explicitly referenced through the `files` field.
 
 ### CLI
