@@ -1,6 +1,6 @@
-import {FakeFS}                          from './FakeFS';
-import {ProxiedFS}                       from './ProxiedFS';
-import {npath, NativePath, PortablePath} from './path';
+import {FakeFS}                                           from './FakeFS';
+import {ProxiedFS}                                        from './ProxiedFS';
+import {npath, NativePath, PortablePath, ppath, PathLike} from './path';
 
 export class PosixFS extends ProxiedFS<NativePath, PortablePath> {
   protected readonly baseFs: FakeFS<PortablePath>;
@@ -11,11 +11,11 @@ export class PosixFS extends ProxiedFS<NativePath, PortablePath> {
     this.baseFs = baseFs;
   }
 
-  protected mapFromBase(path: PortablePath) {
-    return npath.fromPortablePath(path);
+  protected mapFromBase(path: PathLike<PortablePath>) {
+    return npath.fromPortablePath(ppath.fromPathLike(path));
   }
 
-  protected mapToBase(path: NativePath) {
-    return npath.toPortablePath(path);
+  protected mapToBase(path: PathLike<NativePath>) {
+    return npath.toPortablePath(npath.fromPathLike(path));
   }
 }

@@ -267,6 +267,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"
       ],
       [
+        "@babel/plugin-transform-typescript",
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.4"
+      ],
+      [
         "@babel/preset-env",
         "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.2"
       ],
@@ -276,7 +280,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "@babel/preset-typescript",
-        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"
+        "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.4"
       ],
       [
         "@babel/register",
@@ -382,9 +386,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-proposal-nullish-coalescing-operator", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
             ["@babel/plugin-proposal-optional-chaining", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
             ["@babel/plugin-transform-modules-commonjs", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
+            ["@babel/plugin-transform-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.4"],
             ["@babel/preset-env", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.2"],
             ["@babel/preset-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
-            ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
+            ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.4"],
             ["@babel/register", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
             ["@types/emscripten", "npm:1.38.0"],
             ["@types/jest", "npm:24.0.25"],
@@ -626,6 +631,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/highlight", "npm:7.10.1"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:7.10.4", {
+          "packageLocation": "./.yarn/cache/@babel-code-frame-npm-7.10.4-ab1ee3c93e-05245d3b22.zip/node_modules/@babel/code-frame/",
+          "packageDependencies": [
+            ["@babel/code-frame", "npm:7.10.4"],
+            ["@babel/highlight", "npm:7.10.4"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@babel/compat-data", [
@@ -694,6 +707,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@babel/generator", "npm:7.10.2"],
             ["@babel/types", "npm:7.10.2"],
+            ["jsesc", "npm:2.5.2"],
+            ["lodash", "npm:4.17.15"],
+            ["source-map", "npm:0.5.7"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:7.10.4", {
+          "packageLocation": "./.yarn/cache/@babel-generator-npm-7.10.4-31a7b288a2-c5d6f98648.zip/node_modules/@babel/generator/",
+          "packageDependencies": [
+            ["@babel/generator", "npm:7.10.4"],
+            ["@babel/types", "npm:7.10.4"],
             ["jsesc", "npm:2.5.2"],
             ["lodash", "npm:4.17.15"],
             ["source-map", "npm:0.5.7"]
@@ -780,6 +804,23 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "@babel/core"
           ],
           "linkType": "HARD",
+        }],
+        ["virtual:b143cc259b079fdc2989f4ef9563ebcf554a41b81329dc8333be2a079c0ba700dae6ff28ece306c504dce392741ca56b9a6b249afa17d3832aec243a729c6c86#npm:7.10.4", {
+          "packageLocation": "./.yarn/$$virtual/@babel-helper-create-class-features-plugin-virtual-a4009305aa/0/cache/@babel-helper-create-class-features-plugin-npm-7.10.4-76a00bb044-6e80fdcec8.zip/node_modules/@babel/helper-create-class-features-plugin/",
+          "packageDependencies": [
+            ["@babel/helper-create-class-features-plugin", "virtual:b143cc259b079fdc2989f4ef9563ebcf554a41b81329dc8333be2a079c0ba700dae6ff28ece306c504dce392741ca56b9a6b249afa17d3832aec243a729c6c86#npm:7.10.4"],
+            ["@babel/core", "npm:7.10.2"],
+            ["@babel/helper-function-name", "npm:7.10.4"],
+            ["@babel/helper-member-expression-to-functions", "npm:7.10.4"],
+            ["@babel/helper-optimise-call-expression", "npm:7.10.4"],
+            ["@babel/helper-plugin-utils", "npm:7.10.4"],
+            ["@babel/helper-replace-supers", "npm:7.10.4"],
+            ["@babel/helper-split-export-declaration", "npm:7.10.4"]
+          ],
+          "packagePeers": [
+            "@babel/core"
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@babel/helper-create-regexp-features-plugin", [
@@ -831,6 +872,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/types", "npm:7.10.2"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:7.10.4", {
+          "packageLocation": "./.yarn/cache/@babel-helper-function-name-npm-7.10.4-153d80f559-41ab8f48bb.zip/node_modules/@babel/helper-function-name/",
+          "packageDependencies": [
+            ["@babel/helper-function-name", "npm:7.10.4"],
+            ["@babel/helper-get-function-arity", "npm:7.10.4"],
+            ["@babel/template", "npm:7.10.4"],
+            ["@babel/types", "npm:7.10.4"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@babel/helper-get-function-arity", [
@@ -839,6 +890,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@babel/helper-get-function-arity", "npm:7.10.1"],
             ["@babel/types", "npm:7.10.2"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:7.10.4", {
+          "packageLocation": "./.yarn/cache/@babel-helper-get-function-arity-npm-7.10.4-29a99c32bb-4f0ddd4340.zip/node_modules/@babel/helper-get-function-arity/",
+          "packageDependencies": [
+            ["@babel/helper-get-function-arity", "npm:7.10.4"],
+            ["@babel/types", "npm:7.10.4"]
           ],
           "linkType": "HARD",
         }]
@@ -859,6 +918,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@babel/helper-member-expression-to-functions", "npm:7.10.1"],
             ["@babel/types", "npm:7.10.2"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:7.10.4", {
+          "packageLocation": "./.yarn/cache/@babel-helper-member-expression-to-functions-npm-7.10.4-f37252d84b-512a2008f6.zip/node_modules/@babel/helper-member-expression-to-functions/",
+          "packageDependencies": [
+            ["@babel/helper-member-expression-to-functions", "npm:7.10.4"],
+            ["@babel/types", "npm:7.10.4"]
           ],
           "linkType": "HARD",
         }]
@@ -897,6 +964,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/types", "npm:7.10.2"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:7.10.4", {
+          "packageLocation": "./.yarn/cache/@babel-helper-optimise-call-expression-npm-7.10.4-135301e242-70dd5a6daf.zip/node_modules/@babel/helper-optimise-call-expression/",
+          "packageDependencies": [
+            ["@babel/helper-optimise-call-expression", "npm:7.10.4"],
+            ["@babel/types", "npm:7.10.4"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@babel/helper-plugin-utils", [
@@ -904,6 +979,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@babel-helper-plugin-utils-npm-7.10.1-c8f8e50ea8-31635ce618.zip/node_modules/@babel/helper-plugin-utils/",
           "packageDependencies": [
             ["@babel/helper-plugin-utils", "npm:7.10.1"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:7.10.4", {
+          "packageLocation": "./.yarn/cache/@babel-helper-plugin-utils-npm-7.10.4-af87df4f11-9f617e619a.zip/node_modules/@babel/helper-plugin-utils/",
+          "packageDependencies": [
+            ["@babel/helper-plugin-utils", "npm:7.10.4"]
           ],
           "linkType": "HARD",
         }],
@@ -950,6 +1032,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/types", "npm:7.10.2"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:7.10.4", {
+          "packageLocation": "./.yarn/cache/@babel-helper-replace-supers-npm-7.10.4-8bf69fb844-2d7e0627cd.zip/node_modules/@babel/helper-replace-supers/",
+          "packageDependencies": [
+            ["@babel/helper-replace-supers", "npm:7.10.4"],
+            ["@babel/helper-member-expression-to-functions", "npm:7.10.4"],
+            ["@babel/helper-optimise-call-expression", "npm:7.10.4"],
+            ["@babel/traverse", "npm:7.10.4"],
+            ["@babel/types", "npm:7.10.4"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@babel/helper-simple-access", [
@@ -971,6 +1064,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/types", "npm:7.10.2"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:7.10.4", {
+          "packageLocation": "./.yarn/cache/@babel-helper-split-export-declaration-npm-7.10.4-834d026d0a-d8536faa40.zip/node_modules/@babel/helper-split-export-declaration/",
+          "packageDependencies": [
+            ["@babel/helper-split-export-declaration", "npm:7.10.4"],
+            ["@babel/types", "npm:7.10.4"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@babel/helper-validator-identifier", [
@@ -978,6 +1079,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@babel-helper-validator-identifier-npm-7.10.1-f1a698e0bb-55ba553611.zip/node_modules/@babel/helper-validator-identifier/",
           "packageDependencies": [
             ["@babel/helper-validator-identifier", "npm:7.10.1"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:7.10.4", {
+          "packageLocation": "./.yarn/cache/@babel-helper-validator-identifier-npm-7.10.4-0689d787fa-25098ef842.zip/node_modules/@babel/helper-validator-identifier/",
+          "packageDependencies": [
+            ["@babel/helper-validator-identifier", "npm:7.10.4"]
           ],
           "linkType": "HARD",
         }]
@@ -1017,6 +1125,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["js-tokens", "npm:4.0.0"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:7.10.4", {
+          "packageLocation": "./.yarn/cache/@babel-highlight-npm-7.10.4-c7ff18fbba-c167b938af.zip/node_modules/@babel/highlight/",
+          "packageDependencies": [
+            ["@babel/highlight", "npm:7.10.4"],
+            ["@babel/helper-validator-identifier", "npm:7.10.4"],
+            ["chalk", "npm:2.4.2"],
+            ["js-tokens", "npm:4.0.0"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@babel/parser", [
@@ -1024,6 +1142,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@babel-parser-npm-7.10.2-5b2329500e-929624bbbc.zip/node_modules/@babel/parser/",
           "packageDependencies": [
             ["@babel/parser", "npm:7.10.2"],
+            ["@babel/types", "npm:7.10.2"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:7.10.4", {
+          "packageLocation": "./.yarn/cache/@babel-parser-npm-7.10.4-024d3bfebd-d56ba930b0.zip/node_modules/@babel/parser/",
+          "packageDependencies": [
+            ["@babel/parser", "npm:7.10.4"],
             ["@babel/types", "npm:7.10.2"]
           ],
           "linkType": "HARD",
@@ -1475,12 +1601,24 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@babel/plugin-syntax-typescript", [
-        ["virtual:dded5fd6d23cca7394c53f9bbacac472ab295cfe332cfaa0690387cd456af9b8742df498728411fd48c1eeb17df9537a7d19a244ac6fb6acdfaf96c7a340376c#npm:7.10.1", {
-          "packageLocation": "./.yarn/$$virtual/@babel-plugin-syntax-typescript-virtual-cb22ebf705/0/cache/@babel-plugin-syntax-typescript-npm-7.10.1-c5673b855e-e41b89946c.zip/node_modules/@babel/plugin-syntax-typescript/",
+        ["virtual:62f9f83f7c3dc815c4594a2b72dca96d7c33c81632bf24761f0aa4c1de183e80665e88c6cbf4103e3d8a8e13f30c3be76952aaf8031bd6bc7857b6a7b61a1d7c#npm:7.10.1", {
+          "packageLocation": "./.yarn/$$virtual/@babel-plugin-syntax-typescript-virtual-f4a79c6b82/0/cache/@babel-plugin-syntax-typescript-npm-7.10.1-c5673b855e-e41b89946c.zip/node_modules/@babel/plugin-syntax-typescript/",
           "packageDependencies": [
-            ["@babel/plugin-syntax-typescript", "virtual:dded5fd6d23cca7394c53f9bbacac472ab295cfe332cfaa0690387cd456af9b8742df498728411fd48c1eeb17df9537a7d19a244ac6fb6acdfaf96c7a340376c#npm:7.10.1"],
+            ["@babel/plugin-syntax-typescript", "virtual:62f9f83f7c3dc815c4594a2b72dca96d7c33c81632bf24761f0aa4c1de183e80665e88c6cbf4103e3d8a8e13f30c3be76952aaf8031bd6bc7857b6a7b61a1d7c#npm:7.10.1"],
             ["@babel/core", "npm:7.10.2"],
             ["@babel/helper-plugin-utils", "npm:7.10.1"]
+          ],
+          "packagePeers": [
+            "@babel/core"
+          ],
+          "linkType": "HARD",
+        }],
+        ["virtual:b143cc259b079fdc2989f4ef9563ebcf554a41b81329dc8333be2a079c0ba700dae6ff28ece306c504dce392741ca56b9a6b249afa17d3832aec243a729c6c86#npm:7.10.4", {
+          "packageLocation": "./.yarn/$$virtual/@babel-plugin-syntax-typescript-virtual-881cf07774/0/cache/@babel-plugin-syntax-typescript-npm-7.10.4-538671574b-9511691ac0.zip/node_modules/@babel/plugin-syntax-typescript/",
+          "packageDependencies": [
+            ["@babel/plugin-syntax-typescript", "virtual:b143cc259b079fdc2989f4ef9563ebcf554a41b81329dc8333be2a079c0ba700dae6ff28ece306c504dce392741ca56b9a6b249afa17d3832aec243a729c6c86#npm:7.10.4"],
+            ["@babel/core", "npm:7.10.2"],
+            ["@babel/helper-plugin-utils", "npm:7.10.4"]
           ],
           "packagePeers": [
             "@babel/core"
@@ -2086,14 +2224,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@babel/plugin-transform-typescript", [
-        ["virtual:9a5c6adb2b13b2ac6b081851db4d756bdb9026f5c2f64366e2aa80b112b9227e0b1ecd4d1742240654849d53b4e43db2fe82c833857df32ec558efb8de24f708#npm:7.10.1", {
-          "packageLocation": "./.yarn/$$virtual/@babel-plugin-transform-typescript-virtual-dded5fd6d2/0/cache/@babel-plugin-transform-typescript-npm-7.10.1-ca9954d5ca-f89cda5eb3.zip/node_modules/@babel/plugin-transform-typescript/",
+        ["virtual:b2098394578590870af9a06962e819af49c4848332cb86c47d6d1fa3b4b45e399de006ba23b96690e0cba8471cfdbc1f769b8c787f309140bcf0d8de58172d90#npm:7.10.1", {
+          "packageLocation": "./.yarn/$$virtual/@babel-plugin-transform-typescript-virtual-62f9f83f7c/0/cache/@babel-plugin-transform-typescript-npm-7.10.1-ca9954d5ca-f89cda5eb3.zip/node_modules/@babel/plugin-transform-typescript/",
           "packageDependencies": [
-            ["@babel/plugin-transform-typescript", "virtual:9a5c6adb2b13b2ac6b081851db4d756bdb9026f5c2f64366e2aa80b112b9227e0b1ecd4d1742240654849d53b4e43db2fe82c833857df32ec558efb8de24f708#npm:7.10.1"],
+            ["@babel/plugin-transform-typescript", "virtual:b2098394578590870af9a06962e819af49c4848332cb86c47d6d1fa3b4b45e399de006ba23b96690e0cba8471cfdbc1f769b8c787f309140bcf0d8de58172d90#npm:7.10.1"],
             ["@babel/core", "npm:7.10.2"],
             ["@babel/helper-create-class-features-plugin", "virtual:0fe070db6c34f9ec0c7a5e20b26fb0cafdc98a4f815048b2c55cf134c0eab4328f71a08566109b8bd064e801fc672b51265c6c5f3f3e1111b0bd347c78e95356#npm:7.10.2"],
             ["@babel/helper-plugin-utils", "npm:7.10.1"],
-            ["@babel/plugin-syntax-typescript", "virtual:dded5fd6d23cca7394c53f9bbacac472ab295cfe332cfaa0690387cd456af9b8742df498728411fd48c1eeb17df9537a7d19a244ac6fb6acdfaf96c7a340376c#npm:7.10.1"]
+            ["@babel/plugin-syntax-typescript", "virtual:62f9f83f7c3dc815c4594a2b72dca96d7c33c81632bf24761f0aa4c1de183e80665e88c6cbf4103e3d8a8e13f30c3be76952aaf8031bd6bc7857b6a7b61a1d7c#npm:7.10.1"]
+          ],
+          "packagePeers": [
+            "@babel/core"
+          ],
+          "linkType": "HARD",
+        }],
+        ["virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.4", {
+          "packageLocation": "./.yarn/$$virtual/@babel-plugin-transform-typescript-virtual-b143cc259b/0/cache/@babel-plugin-transform-typescript-npm-7.10.4-c18e6167a7-9b60a16eb7.zip/node_modules/@babel/plugin-transform-typescript/",
+          "packageDependencies": [
+            ["@babel/plugin-transform-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.4"],
+            ["@babel/core", "npm:7.10.2"],
+            ["@babel/helper-create-class-features-plugin", "virtual:b143cc259b079fdc2989f4ef9563ebcf554a41b81329dc8333be2a079c0ba700dae6ff28ece306c504dce392741ca56b9a6b249afa17d3832aec243a729c6c86#npm:7.10.4"],
+            ["@babel/helper-plugin-utils", "npm:7.10.4"],
+            ["@babel/plugin-syntax-typescript", "virtual:b143cc259b079fdc2989f4ef9563ebcf554a41b81329dc8333be2a079c0ba700dae6ff28ece306c504dce392741ca56b9a6b249afa17d3832aec243a729c6c86#npm:7.10.4"]
           ],
           "packagePeers": [
             "@babel/core"
@@ -2257,13 +2409,26 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@babel/preset-typescript", [
-        ["virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1", {
-          "packageLocation": "./.yarn/$$virtual/@babel-preset-typescript-virtual-9a5c6adb2b/0/cache/@babel-preset-typescript-npm-7.10.1-2a18599e49-7f2aadd75e.zip/node_modules/@babel/preset-typescript/",
+        ["virtual:afc38e32692f3265d88f1bdc8a06e21f9f41c4e03d3b3baccb430175d9c5eac3c6e46421df06b1bb50b2322c888040e8d08302f3270408a9d189fb42dd47b45c#npm:7.10.1", {
+          "packageLocation": "./.yarn/$$virtual/@babel-preset-typescript-virtual-b209839457/0/cache/@babel-preset-typescript-npm-7.10.1-2a18599e49-7f2aadd75e.zip/node_modules/@babel/preset-typescript/",
           "packageDependencies": [
-            ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
+            ["@babel/preset-typescript", "virtual:afc38e32692f3265d88f1bdc8a06e21f9f41c4e03d3b3baccb430175d9c5eac3c6e46421df06b1bb50b2322c888040e8d08302f3270408a9d189fb42dd47b45c#npm:7.10.1"],
             ["@babel/core", "npm:7.10.2"],
             ["@babel/helper-plugin-utils", "npm:7.10.1"],
-            ["@babel/plugin-transform-typescript", "virtual:9a5c6adb2b13b2ac6b081851db4d756bdb9026f5c2f64366e2aa80b112b9227e0b1ecd4d1742240654849d53b4e43db2fe82c833857df32ec558efb8de24f708#npm:7.10.1"]
+            ["@babel/plugin-transform-typescript", "virtual:b2098394578590870af9a06962e819af49c4848332cb86c47d6d1fa3b4b45e399de006ba23b96690e0cba8471cfdbc1f769b8c787f309140bcf0d8de58172d90#npm:7.10.1"]
+          ],
+          "packagePeers": [
+            "@babel/core"
+          ],
+          "linkType": "HARD",
+        }],
+        ["virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.4", {
+          "packageLocation": "./.yarn/$$virtual/@babel-preset-typescript-virtual-b62bf55f83/0/cache/@babel-preset-typescript-npm-7.10.4-74bf655e0f-e14357988c.zip/node_modules/@babel/preset-typescript/",
+          "packageDependencies": [
+            ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.4"],
+            ["@babel/core", "npm:7.10.2"],
+            ["@babel/helper-plugin-utils", "npm:7.10.4"],
+            ["@babel/plugin-transform-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.4"]
           ],
           "packagePeers": [
             "@babel/core"
@@ -2337,6 +2502,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/types", "npm:7.10.2"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:7.10.4", {
+          "packageLocation": "./.yarn/cache/@babel-template-npm-7.10.4-521586243b-23a5c4f7ab.zip/node_modules/@babel/template/",
+          "packageDependencies": [
+            ["@babel/template", "npm:7.10.4"],
+            ["@babel/code-frame", "npm:7.10.4"],
+            ["@babel/parser", "npm:7.10.4"],
+            ["@babel/types", "npm:7.10.4"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@babel/traverse", [
@@ -2355,6 +2530,22 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:7.10.4", {
+          "packageLocation": "./.yarn/cache/@babel-traverse-npm-7.10.4-10fc7f0d6b-4e4592a1d9.zip/node_modules/@babel/traverse/",
+          "packageDependencies": [
+            ["@babel/traverse", "npm:7.10.4"],
+            ["@babel/code-frame", "npm:7.10.4"],
+            ["@babel/generator", "npm:7.10.4"],
+            ["@babel/helper-function-name", "npm:7.10.4"],
+            ["@babel/helper-split-export-declaration", "npm:7.10.4"],
+            ["@babel/parser", "npm:7.10.4"],
+            ["@babel/types", "npm:7.10.4"],
+            ["debug", "virtual:ebe93d6532e43d78779479b0dabfe2d284fd2cc037fde073604e57fc384c1044e905ed82c7d081310a0af68c672c6a0a67f8fdbca758f0bd26d9fc4456fbf1af#npm:4.1.1"],
+            ["globals", "npm:11.10.0"],
+            ["lodash", "npm:4.17.15"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@babel/types", [
@@ -2363,6 +2554,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@babel/types", "npm:7.10.2"],
             ["@babel/helper-validator-identifier", "npm:7.10.1"],
+            ["lodash", "npm:4.17.15"],
+            ["to-fast-properties", "npm:2.0.0"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:7.10.4", {
+          "packageLocation": "./.yarn/cache/@babel-types-npm-7.10.4-1d2d978309-2ed310279e.zip/node_modules/@babel/types/",
+          "packageDependencies": [
+            ["@babel/types", "npm:7.10.4"],
+            ["@babel/helper-validator-identifier", "npm:7.10.4"],
             ["lodash", "npm:4.17.15"],
             ["to-fast-properties", "npm:2.0.0"]
           ],
@@ -7217,9 +7418,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-proposal-nullish-coalescing-operator", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
             ["@babel/plugin-proposal-optional-chaining", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
             ["@babel/plugin-transform-modules-commonjs", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
+            ["@babel/plugin-transform-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.4"],
             ["@babel/preset-env", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.2"],
             ["@babel/preset-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
-            ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
+            ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.4"],
             ["@babel/register", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
             ["@types/emscripten", "npm:1.38.0"],
             ["@types/jest", "npm:24.0.25"],
@@ -16183,7 +16385,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-proposal-nullish-coalescing-operator", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
             ["@babel/plugin-proposal-numeric-separator", "virtual:13f644fabe8b1a4b26192447fd388e437605135588a79dcd09671b3c42faed9c7c4794b11e2434391f4d864ce88ad6530511f9b8f1817434f05c9f56f23ab919#npm:7.10.1"],
             ["@babel/plugin-proposal-optional-chaining", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
-            ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
+            ["@babel/preset-typescript", "virtual:afc38e32692f3265d88f1bdc8a06e21f9f41c4e03d3b3baccb430175d9c5eac3c6e46421df06b1bb50b2322c888040e8d08302f3270408a9d189fb42dd47b45c#npm:7.10.1"],
             ["@babel/runtime", "npm:7.10.2"],
             ["babel-plugin-remove-graphql-queries", "virtual:afc38e32692f3265d88f1bdc8a06e21f9f41c4e03d3b3baccb430175d9c5eac3c6e46421df06b1bb50b2322c888040e8d08302f3270408a9d189fb42dd47b45c#npm:2.9.5"]
           ],
@@ -33071,8 +33273,8 @@ var external_os_ = __webpack_require__(87);
 var external_fs_ = __webpack_require__(747);
 var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_);
 
-// EXTERNAL MODULE: ../yarnpkg-fslib/sources/path.ts
-var path = __webpack_require__(9);
+// EXTERNAL MODULE: ../yarnpkg-fslib/sources/path.ts + 2 modules
+var path = __webpack_require__(783);
 
 // CONCATENATED MODULE: ../yarnpkg-fslib/sources/algorithms/copyPromise.ts
 
@@ -33080,8 +33282,8 @@ var path = __webpack_require__(9);
 
 const defaultTime = 315532800;
 async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
-  const normalizedDestination = destinationFs.pathUtils.normalize(destination);
-  const normalizedSource = sourceFs.pathUtils.normalize(source);
+  const normalizedDestination = destinationFs.pathUtils.normalize(destinationFs.pathUtils.fromPathLike(destination));
+  const normalizedSource = sourceFs.pathUtils.normalize(sourceFs.pathUtils.fromPathLike(source));
   const prelayout = [];
   const postlayout = [];
   await destinationFs.mkdirpPromise(destination);
@@ -33218,7 +33420,7 @@ class FakeFS {
     }
 
     if (stat.isDirectory()) {
-      for (const entry of await this.readdirPromise(p)) await this.removePromise(this.pathUtils.resolve(p, entry)); // 5 gives 1s worth of retries at worst
+      for (const entry of await this.readdirPromise(p)) await this.removePromise(this.pathUtils.resolve(this.pathUtils.fromPathLike(p), entry)); // 5 gives 1s worth of retries at worst
 
 
       for (let t = 0; t < 5; ++t) {
@@ -33253,7 +33455,7 @@ class FakeFS {
     }
 
     if (stat.isDirectory()) {
-      for (const entry of this.readdirSync(p)) this.removeSync(this.pathUtils.resolve(p, entry));
+      for (const entry of this.readdirSync(p)) this.removeSync(this.pathUtils.resolve(this.pathUtils.fromPathLike(p), entry));
 
       this.rmdirSync(p);
     } else {
@@ -33265,7 +33467,7 @@ class FakeFS {
     chmod,
     utimes
   } = {}) {
-    p = this.resolve(p);
+    p = this.resolve(this.pathUtils.fromPathLike(p));
     if (p === this.pathUtils.dirname(p)) return;
     const parts = p.split(this.pathUtils.sep);
 
@@ -33299,7 +33501,7 @@ class FakeFS {
     chmod,
     utimes
   } = {}) {
-    p = this.resolve(p);
+    p = this.resolve(this.pathUtils.fromPathLike(p));
     if (p === this.pathUtils.dirname(p)) return;
     const parts = p.split(this.pathUtils.sep);
 
@@ -33354,7 +33556,7 @@ class FakeFS {
       const directoryListing = baseFs.readdirSync(source);
 
       for (const entry of directoryListing) {
-        this.copySync(this.pathUtils.join(destination, entry), baseFs.pathUtils.join(source, entry), {
+        this.copySync(this.pathUtils.join(this.pathUtils.fromPathLike(destination), entry), baseFs.pathUtils.join(baseFs.pathUtils.fromPathLike(source), entry), {
           baseFs,
           overwrite
         });
@@ -33580,19 +33782,187 @@ function normalizeLineEndings(originalContent, newContent) {
 
 /***/ }),
 
-/***/ 9:
+/***/ 984:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "LZ": () => /* binding */ PortablePath,
-/* harmony export */   "cS": () => /* binding */ npath,
-/* harmony export */   "y1": () => /* binding */ ppath,
-/* harmony export */   "CI": () => /* binding */ convertPath
+/* harmony export */   "Vw": () => /* binding */ EBUSY,
+/* harmony export */   "bk": () => /* binding */ ENOSYS,
+/* harmony export */   "hq": () => /* binding */ EINVAL,
+/* harmony export */   "Ch": () => /* binding */ EBADF,
+/* harmony export */   "z6": () => /* binding */ ENOENT,
+/* harmony export */   "Ab": () => /* binding */ ENOTDIR,
+/* harmony export */   "GA": () => /* binding */ EISDIR,
+/* harmony export */   "cT": () => /* binding */ EEXIST,
+/* harmony export */   "YW": () => /* binding */ EROFS,
+/* harmony export */   "qg": () => /* binding */ ERR_INVALID_URL_SCHEME,
+/* harmony export */   "gP": () => /* binding */ ERR_INVALID_FILE_URL_HOST,
+/* harmony export */   "DN": () => /* binding */ ERR_INVALID_FILE_URL_PATH
 /* harmony export */ });
-/* unused harmony exports Filename, toFilename */
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(622);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
+function makeError(code, message) {
+  return Object.assign(new Error(`${code}: ${message}`), {
+    code
+  });
+} // FS
+// ------------------------------------------------------------------------
+
+
+function EBUSY(message) {
+  return makeError(`EBUSY`, message);
+}
+function ENOSYS(message, reason) {
+  return makeError(`ENOSYS`, `${message}, ${reason}`);
+}
+function EINVAL(reason) {
+  return makeError(`EINVAL`, `invalid argument, ${reason}`);
+}
+function EBADF(reason) {
+  return makeError(`EBADF`, `bad file descriptor, ${reason}`);
+}
+function ENOENT(reason) {
+  return makeError(`ENOENT`, `no such file or directory, ${reason}`);
+}
+function ENOTDIR(reason) {
+  return makeError(`ENOTDIR`, `not a directory, ${reason}`);
+}
+function EISDIR(reason) {
+  return makeError(`EISDIR`, `illegal operation on a directory, ${reason}`);
+}
+function EEXIST(reason) {
+  return makeError(`EEXIST`, `file already exists, ${reason}`);
+}
+function EROFS(reason) {
+  return makeError(`EROFS`, `read-only filesystem, ${reason}`);
+} // URL
+// ------------------------------------------------------------------------
+
+function ERR_INVALID_URL_SCHEME(expected) {
+  return makeError(`ERR_INVALID_URL_SCHEME`, `The URL must be ${expected}`);
+}
+function ERR_INVALID_FILE_URL_HOST(platform) {
+  return makeError(`ERR_INVALID_FILE_URL_HOST`, `File URL host must be "localhost" or empty on ${platform}`);
+}
+function ERR_INVALID_FILE_URL_PATH(reason) {
+  return makeError(`ERR_INVALID_FILE_URL_PATH`, `File URL path ${reason}`);
+}
+
+/***/ }),
+
+/***/ 783:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "LZ": () => /* binding */ PortablePath,
+  "iS": () => /* binding */ PathLike,
+  "cS": () => /* binding */ npath,
+  "y1": () => /* binding */ ppath,
+  "CI": () => /* binding */ convertPath
+});
+
+// UNUSED EXPORTS: PathType, Filename, toFilename, fromPathLike
+
+// EXTERNAL MODULE: external "path"
+var external_path_ = __webpack_require__(622);
+var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
+
+// EXTERNAL MODULE: external "url"
+var external_url_ = __webpack_require__(835);
+
+// CONCATENATED MODULE: ../yarnpkg-fslib/sources/buffer.ts
+
+class BasePathBuffer extends Buffer {
+  constructor(pathUtils, p, encoding) {
+    super(pathUtils.fromPathLike(p), encoding);
+  }
+
+}
+class PortablePathBuffer extends BasePathBuffer {
+  constructor(p, encoding) {
+    super(ppath, p, encoding);
+  }
+
+}
+class NativePathBuffer extends BasePathBuffer {
+  constructor(p, encoding) {
+    super(npath, p, encoding);
+  }
+
+}
+// EXTERNAL MODULE: ../yarnpkg-fslib/sources/errors.ts
+var errors = __webpack_require__(984);
+
+// CONCATENATED MODULE: ../yarnpkg-fslib/sources/url.ts
+
+
+
+
+const PROTOCOL = `file:`;
+class BaseFileURL extends external_url_.URL {
+  constructor(pathUtils, p) {
+    super(pathUtils.toFileURL(pathUtils.fromPathLike(p)).toString());
+  }
+
+}
+class PortableFileURL extends BaseFileURL {
+  constructor(p) {
+    super(ppath, p);
+  }
+
+}
+class NativeFileURL extends BaseFileURL {
+  constructor(p) {
+    super(npath, p);
+  }
+
+} // ------------------------------------------------------------------------
+// Because Node's URL conversion functions are platform specific, they don't work
+// correctly with PortablePaths on Windows, so we have to reimplement them here.
+// We only have to implement the posix conversion and we can forward the win32
+// conversion to the corresponding Node built-ins.
+// Reference: https://github.com/nodejs/node/blob/master/lib/internal/url.js
+
+function fileURLToPosixPath(url) {
+  var _a;
+
+  if (url.protocol !== PROTOCOL) throw errors/* ERR_INVALID_URL_SCHEME */.qg(PROTOCOL);
+  if (url.hostname !== ``) throw errors/* ERR_INVALID_FILE_URL_HOST */.gP(process.platform);
+  const {
+    pathname
+  } = url;
+
+  for (let n = 0; n < pathname.length; n++) {
+    if (pathname[n] === `%`) {
+      const third = ((_a = pathname.codePointAt(n + 2)) !== null && _a !== void 0 ? _a : 0) | 0x20;
+
+      if (pathname[n + 1] === `2` && third === 102) {
+        throw errors/* ERR_INVALID_FILE_URL_PATH */.DN(`must not include encoded / characters`);
+      }
+    }
+  }
+
+  return decodeURIComponent(pathname);
+}
+function fileURLToPath(url) {
+  return process.platform === `win32` ? (0,external_url_.fileURLToPath)(url) : fileURLToPosixPath(url);
+}
+function posixPathToFileURL(p) {
+  return Object.assign(new external_url_.URL(PROTOCOL), {
+    pathname: external_path_.posix.resolve(p) // Preserve trailing slashes
+    .replace(/\/?$/, p.endsWith(`/`) ? `/` : ``).replace(/%/g, `%25`) // In posix, "/" is a valid character in paths
+    .replace(/\\/g, `%5C`).replace(/\n/g, `%0A`).replace(/\r/g, `%0D`).replace(/\t/g, `%09`)
+  });
+}
+function pathToFileURL(p) {
+  return process.platform === `win32` ? (0,external_url_.pathToFileURL)(p) : posixPathToFileURL(p);
+}
+// CONCATENATED MODULE: ../yarnpkg-fslib/sources/path.ts
+
+
+
 
 var PathType;
 
@@ -33612,14 +33982,20 @@ const Filename = {
   lockfile: `yarn.lock`,
   rc: `.yarnrc.yml`
 };
-const npath = Object.create((path__WEBPACK_IMPORTED_MODULE_0___default()));
-const ppath = Object.create((path__WEBPACK_IMPORTED_MODULE_0___default().posix));
+const PathLike = {
+  isPathLike(value) {
+    return typeof value === `string` || Buffer.isBuffer(value) || value instanceof external_url_.URL;
+  }
+
+};
+const npath = Object.create((external_path_default()));
+const ppath = Object.create((external_path_default()).posix);
 
 npath.cwd = () => process.cwd();
 
 ppath.cwd = () => toPortablePath(process.cwd());
 
-ppath.resolve = (...segments) => path__WEBPACK_IMPORTED_MODULE_0___default().posix.resolve(ppath.cwd(), ...segments);
+ppath.resolve = (...segments) => external_path_default().posix.resolve(ppath.cwd(), ...segments);
 
 const contains = function (pathUtils, from, to) {
   from = pathUtils.normalize(from);
@@ -33640,6 +34016,32 @@ npath.toPortablePath = toPortablePath;
 npath.contains = (from, to) => contains(npath, from, to);
 
 ppath.contains = (from, to) => contains(ppath, from, to);
+
+npath.FileURL = NativeFileURL;
+ppath.FileURL = PortableFileURL;
+
+npath.fromFileURL = url => fileURLToPath(url);
+
+ppath.fromFileURL = url => fileURLToPosixPath(url);
+
+npath.toFileURL = p => pathToFileURL(p);
+
+ppath.toFileURL = p => posixPathToFileURL(p);
+
+npath.PathBuffer = NativePathBuffer;
+ppath.PathBuffer = PortablePathBuffer;
+
+npath.fromPathBuffer = (buffer, encoding) => buffer.toString(encoding);
+
+ppath.fromPathBuffer = (buffer, encoding) => buffer.toString(encoding);
+
+npath.toPathBuffer = (p, encoding) => new NativePathBuffer(p, encoding);
+
+ppath.toPathBuffer = (p, encoding) => new PortablePathBuffer(p, encoding);
+
+npath.fromPathLike = pathLike => fromPathLike(npath, pathLike);
+
+ppath.fromPathLike = pathLike => fromPathLike(ppath, pathLike);
 
 const WINDOWS_PATH_REGEXP = /^([a-zA-Z]:.*)$/;
 const UNC_WINDOWS_PATH_REGEXP = /^\\\\(\.\\)?(.*)$/;
@@ -33668,10 +34070,14 @@ function toFilename(filename) {
   if (npath.parse(filename).dir !== `` || ppath.parse(filename).dir !== ``) throw new Error(`Invalid filename: "${filename}"`);
   return filename;
 }
+function fromPathLike(pathUtils, pathLike) {
+  const path = Buffer.isBuffer(pathLike) ? pathLike.toString() : pathLike instanceof external_url_.URL ? pathUtils.fromFileURL(pathLike) : pathLike;
+  return convertPath(pathUtils, path);
+}
 
 /***/ }),
 
-/***/ 936:
+/***/ 875:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -33688,42 +34094,11 @@ var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_);
 // EXTERNAL MODULE: ../yarnpkg-fslib/sources/FakeFS.ts + 1 modules
 var FakeFS = __webpack_require__(398);
 
-// CONCATENATED MODULE: ../yarnpkg-fslib/sources/errors.ts
-function makeError(code, message) {
-  return Object.assign(new Error(`${code}: ${message}`), {
-    code
-  });
-}
+// EXTERNAL MODULE: ../yarnpkg-fslib/sources/errors.ts
+var errors = __webpack_require__(984);
 
-function EBUSY(message) {
-  return makeError(`EBUSY`, message);
-}
-function ENOSYS(message, reason) {
-  return makeError(`ENOSYS`, `${message}, ${reason}`);
-}
-function EINVAL(reason) {
-  return makeError(`EINVAL`, `invalid argument, ${reason}`);
-}
-function EBADF(reason) {
-  return makeError(`EBADF`, `bad file descriptor, ${reason}`);
-}
-function ENOENT(reason) {
-  return makeError(`ENOENT`, `no such file or directory, ${reason}`);
-}
-function ENOTDIR(reason) {
-  return makeError(`ENOTDIR`, `not a directory, ${reason}`);
-}
-function EISDIR(reason) {
-  return makeError(`EISDIR`, `illegal operation on a directory, ${reason}`);
-}
-function EEXIST(reason) {
-  return makeError(`EEXIST`, `file already exists, ${reason}`);
-}
-function EROFS(reason) {
-  return makeError(`EROFS`, `read-only filesystem, ${reason}`);
-}
-// EXTERNAL MODULE: ../yarnpkg-fslib/sources/path.ts
-var sources_path = __webpack_require__(9);
+// EXTERNAL MODULE: ../yarnpkg-fslib/sources/path.ts + 2 modules
+var sources_path = __webpack_require__(783);
 
 // CONCATENATED MODULE: ../yarnpkg-fslib/sources/NodeFS.ts
 
@@ -33750,17 +34125,17 @@ class NodeFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   resolve(p) {
-    return sources_path/* ppath.resolve */.y1.resolve(p);
+    return sources_path/* ppath.resolve */.y1.resolve(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p));
   }
 
   async openPromise(p, flags, mode) {
     return await new Promise((resolve, reject) => {
-      this.realFs.open(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), flags, mode, this.makeCallback(resolve, reject));
+      this.realFs.open(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), flags, mode, this.makeCallback(resolve, reject));
     });
   }
 
   openSync(p, flags, mode) {
-    return this.realFs.openSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), flags, mode);
+    return this.realFs.openSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), flags, mode);
   }
 
   async readPromise(fd, buffer, offset = 0, length = 0, position = -1) {
@@ -33808,100 +34183,100 @@ class NodeFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   createReadStream(p, opts) {
-    const realPath = p !== null ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p) : p;
+    const realPath = p !== null ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)) : p;
     return this.realFs.createReadStream(realPath, opts);
   }
 
   createWriteStream(p, opts) {
-    const realPath = p !== null ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p) : p;
+    const realPath = p !== null ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)) : p;
     return this.realFs.createWriteStream(realPath, opts);
   }
 
   async realpathPromise(p) {
     return await new Promise((resolve, reject) => {
-      this.realFs.realpath(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), {}, this.makeCallback(resolve, reject));
+      this.realFs.realpath(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), {}, this.makeCallback(resolve, reject));
     }).then(path => {
       return sources_path/* npath.toPortablePath */.cS.toPortablePath(path);
     });
   }
 
   realpathSync(p) {
-    return sources_path/* npath.toPortablePath */.cS.toPortablePath(this.realFs.realpathSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), {}));
+    return sources_path/* npath.toPortablePath */.cS.toPortablePath(this.realFs.realpathSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), {}));
   }
 
   async existsPromise(p) {
     return await new Promise(resolve => {
-      this.realFs.exists(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), resolve);
+      this.realFs.exists(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), resolve);
     });
   }
 
   accessSync(p, mode) {
-    return this.realFs.accessSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), mode);
+    return this.realFs.accessSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), mode);
   }
 
   async accessPromise(p, mode) {
     return await new Promise((resolve, reject) => {
-      this.realFs.access(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), mode, this.makeCallback(resolve, reject));
+      this.realFs.access(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), mode, this.makeCallback(resolve, reject));
     });
   }
 
   existsSync(p) {
-    return this.realFs.existsSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p));
+    return this.realFs.existsSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)));
   }
 
   async statPromise(p) {
     return await new Promise((resolve, reject) => {
-      this.realFs.stat(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), this.makeCallback(resolve, reject));
+      this.realFs.stat(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), this.makeCallback(resolve, reject));
     });
   }
 
   statSync(p) {
-    return this.realFs.statSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p));
+    return this.realFs.statSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)));
   }
 
   async lstatPromise(p) {
     return await new Promise((resolve, reject) => {
-      this.realFs.lstat(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), this.makeCallback(resolve, reject));
+      this.realFs.lstat(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), this.makeCallback(resolve, reject));
     });
   }
 
   lstatSync(p) {
-    return this.realFs.lstatSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p));
+    return this.realFs.lstatSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)));
   }
 
   async chmodPromise(p, mask) {
     return await new Promise((resolve, reject) => {
-      this.realFs.chmod(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), mask, this.makeCallback(resolve, reject));
+      this.realFs.chmod(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), mask, this.makeCallback(resolve, reject));
     });
   }
 
   chmodSync(p, mask) {
-    return this.realFs.chmodSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), mask);
+    return this.realFs.chmodSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), mask);
   }
 
   async renamePromise(oldP, newP) {
     return await new Promise((resolve, reject) => {
-      this.realFs.rename(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(oldP), sources_path/* npath.fromPortablePath */.cS.fromPortablePath(newP), this.makeCallback(resolve, reject));
+      this.realFs.rename(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(oldP)), sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(newP)), this.makeCallback(resolve, reject));
     });
   }
 
   renameSync(oldP, newP) {
-    return this.realFs.renameSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(oldP), sources_path/* npath.fromPortablePath */.cS.fromPortablePath(newP));
+    return this.realFs.renameSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(oldP)), sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(newP)));
   }
 
   async copyFilePromise(sourceP, destP, flags = 0) {
     return await new Promise((resolve, reject) => {
-      this.realFs.copyFile(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sourceP), sources_path/* npath.fromPortablePath */.cS.fromPortablePath(destP), flags, this.makeCallback(resolve, reject));
+      this.realFs.copyFile(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(sourceP)), sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(destP)), flags, this.makeCallback(resolve, reject));
     });
   }
 
   copyFileSync(sourceP, destP, flags = 0) {
-    return this.realFs.copyFileSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sourceP), sources_path/* npath.fromPortablePath */.cS.fromPortablePath(destP), flags);
+    return this.realFs.copyFileSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(sourceP)), sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(destP)), flags);
   }
 
   async appendFilePromise(p, content, opts) {
     return await new Promise((resolve, reject) => {
-      const fsNativePath = typeof p === `string` ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p) : p;
+      const fsNativePath = sources_path/* PathLike.isPathLike */.iS.isPathLike(p) ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)) : p;
 
       if (opts) {
         this.realFs.appendFile(fsNativePath, content, opts, this.makeCallback(resolve, reject));
@@ -33912,7 +34287,7 @@ class NodeFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   appendFileSync(p, content, opts) {
-    const fsNativePath = typeof p === `string` ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p) : p;
+    const fsNativePath = sources_path/* PathLike.isPathLike */.iS.isPathLike(p) ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)) : p;
 
     if (opts) {
       this.realFs.appendFileSync(fsNativePath, content, opts);
@@ -33923,7 +34298,7 @@ class NodeFS extends FakeFS/* BasePortableFakeFS */.fS {
 
   async writeFilePromise(p, content, opts) {
     return await new Promise((resolve, reject) => {
-      const fsNativePath = typeof p === `string` ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p) : p;
+      const fsNativePath = sources_path/* PathLike.isPathLike */.iS.isPathLike(p) ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)) : p;
 
       if (opts) {
         this.realFs.writeFile(fsNativePath, content, opts, this.makeCallback(resolve, reject));
@@ -33934,7 +34309,7 @@ class NodeFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   writeFileSync(p, content, opts) {
-    const fsNativePath = typeof p === `string` ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p) : p;
+    const fsNativePath = sources_path/* PathLike.isPathLike */.iS.isPathLike(p) ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)) : p;
 
     if (opts) {
       this.realFs.writeFileSync(fsNativePath, content, opts);
@@ -33945,81 +34320,83 @@ class NodeFS extends FakeFS/* BasePortableFakeFS */.fS {
 
   async unlinkPromise(p) {
     return await new Promise((resolve, reject) => {
-      this.realFs.unlink(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), this.makeCallback(resolve, reject));
+      this.realFs.unlink(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), this.makeCallback(resolve, reject));
     });
   }
 
   unlinkSync(p) {
-    return this.realFs.unlinkSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p));
+    return this.realFs.unlinkSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)));
   }
 
   async utimesPromise(p, atime, mtime) {
     return await new Promise((resolve, reject) => {
-      this.realFs.utimes(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
+      this.realFs.utimes(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), atime, mtime, this.makeCallback(resolve, reject));
     });
   }
 
   utimesSync(p, atime, mtime) {
-    this.realFs.utimesSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), atime, mtime);
+    this.realFs.utimesSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), atime, mtime);
   }
 
   async lutimesPromiseImpl(p, atime, mtime) {
     // @ts-ignore: Not yet in DefinitelyTyped
     const lutimes = this.realFs.lutimes;
-    if (typeof lutimes === `undefined`) throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
+    if (typeof lutimes === `undefined`) throw (0,errors/* ENOSYS */.bk)(`unavailable Node binding`, `lutimes '${p}'`);
     return await new Promise((resolve, reject) => {
-      lutimes.call(this.realFs, sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
+      lutimes.call(this.realFs, sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), atime, mtime, this.makeCallback(resolve, reject));
     });
   }
 
   lutimesSyncImpl(p, atime, mtime) {
     // @ts-ignore: Not yet in DefinitelyTyped
     const lutimesSync = this.realFs.lutimesSync;
-    if (typeof lutimesSync === `undefined`) throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
-    lutimesSync.call(this.realFs, sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), atime, mtime);
+    if (typeof lutimesSync === `undefined`) throw (0,errors/* ENOSYS */.bk)(`unavailable Node binding`, `lutimes '${p}'`);
+    lutimesSync.call(this.realFs, sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), atime, mtime);
   }
 
   async mkdirPromise(p, opts) {
     return await new Promise((resolve, reject) => {
-      this.realFs.mkdir(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      this.realFs.mkdir(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), opts, this.makeCallback(resolve, reject));
     });
   }
 
   mkdirSync(p, opts) {
-    return this.realFs.mkdirSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), opts);
+    return this.realFs.mkdirSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), opts);
   }
 
   async rmdirPromise(p) {
     return await new Promise((resolve, reject) => {
-      this.realFs.rmdir(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), this.makeCallback(resolve, reject));
+      this.realFs.rmdir(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), this.makeCallback(resolve, reject));
     });
   }
 
   rmdirSync(p) {
-    return this.realFs.rmdirSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p));
+    return this.realFs.rmdirSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)));
   }
 
   async symlinkPromise(target, p, type) {
-    const symlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
+    const targetPath = sources_path/* ppath.fromPathLike */.y1.fromPathLike(target);
+    const symlinkType = type || (targetPath.endsWith(`/`) ? `dir` : `file`);
     return await new Promise((resolve, reject) => {
-      this.realFs.symlink(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(target.replace(/\/+$/, ``)), sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), symlinkType, this.makeCallback(resolve, reject));
+      this.realFs.symlink(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(targetPath.replace(/\/+$/, ``)), sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), symlinkType, this.makeCallback(resolve, reject));
     });
   }
 
   symlinkSync(target, p, type) {
-    const symlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
-    return this.realFs.symlinkSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(target.replace(/\/+$/, ``)), sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), symlinkType);
+    const targetPath = sources_path/* ppath.fromPathLike */.y1.fromPathLike(target);
+    const symlinkType = type || (targetPath.endsWith(`/`) ? `dir` : `file`);
+    return this.realFs.symlinkSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(targetPath.replace(/\/+$/, ``)), sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), symlinkType);
   }
 
   async readFilePromise(p, encoding) {
     return await new Promise((resolve, reject) => {
-      const fsNativePath = typeof p === `string` ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p) : p;
+      const fsNativePath = sources_path/* PathLike.isPathLike */.iS.isPathLike(p) ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)) : p;
       this.realFs.readFile(fsNativePath, encoding, this.makeCallback(resolve, reject));
     });
   }
 
   readFileSync(p, encoding) {
-    const fsNativePath = typeof p === `string` ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p) : p;
+    const fsNativePath = sources_path/* PathLike.isPathLike */.iS.isPathLike(p) ? sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)) : p;
     return this.realFs.readFileSync(fsNativePath, encoding);
   }
 
@@ -34028,11 +34405,11 @@ class NodeFS extends FakeFS/* BasePortableFakeFS */.fS {
   } = {}) {
     return await new Promise((resolve, reject) => {
       if (withFileTypes) {
-        this.realFs.readdir(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), {
+        this.realFs.readdir(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), {
           withFileTypes: true
         }, this.makeCallback(resolve, reject));
       } else {
-        this.realFs.readdir(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), this.makeCallback(value => resolve(value), reject));
+        this.realFs.readdir(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), this.makeCallback(value => resolve(value), reject));
       }
     });
   }
@@ -34041,28 +34418,28 @@ class NodeFS extends FakeFS/* BasePortableFakeFS */.fS {
     withFileTypes
   } = {}) {
     if (withFileTypes) {
-      return this.realFs.readdirSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), {
+      return this.realFs.readdirSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), {
         withFileTypes: true
       });
     } else {
-      return this.realFs.readdirSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p));
+      return this.realFs.readdirSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)));
     }
   }
 
   async readlinkPromise(p) {
     return await new Promise((resolve, reject) => {
-      this.realFs.readlink(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), this.makeCallback(resolve, reject));
+      this.realFs.readlink(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), this.makeCallback(resolve, reject));
     }).then(path => {
       return sources_path/* npath.toPortablePath */.cS.toPortablePath(path);
     });
   }
 
   readlinkSync(p) {
-    return sources_path/* npath.toPortablePath */.cS.toPortablePath(this.realFs.readlinkSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p)));
+    return sources_path/* npath.toPortablePath */.cS.toPortablePath(this.realFs.readlinkSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p))));
   }
 
   watch(p, a, b) {
-    return this.realFs.watch(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), // @ts-ignore
+    return this.realFs.watch(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)), // @ts-ignore
     a, b);
   }
 
@@ -34375,6 +34752,7 @@ class VirtualFS extends ProxiedFS {
   }
 
   realpathSync(p) {
+    p = this.pathUtils.fromPathLike(p);
     const match = p.match(VIRTUAL_REGEXP);
     if (!match) return this.baseFs.realpathSync(p);
     if (!match[5]) return p;
@@ -34383,6 +34761,7 @@ class VirtualFS extends ProxiedFS {
   }
 
   async realpathPromise(p) {
+    p = this.pathUtils.fromPathLike(p);
     const match = p.match(VIRTUAL_REGEXP);
     if (!match) return await this.baseFs.realpathPromise(p);
     if (!match[5]) return p;
@@ -34391,11 +34770,11 @@ class VirtualFS extends ProxiedFS {
   }
 
   mapToBase(p) {
-    return VirtualFS.resolveVirtual(p);
+    return VirtualFS.resolveVirtual(this.pathUtils.fromPathLike(p));
   }
 
   mapFromBase(p) {
-    return p;
+    return this.pathUtils.fromPathLike(p);
   }
 
 }
@@ -34651,7 +35030,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   getBufferAndClose() {
-    if (!this.ready) throw EBUSY(`archive closed, close`);
+    if (!this.ready) throw errors/* EBUSY */.Vw(`archive closed, close`);
     if (!this.lzSource) throw new Error(`ZipFS was not created from a Buffer`);
 
     try {
@@ -34687,7 +35066,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
   saveAndClose() {
     if (!this.path || !this.baseFs) throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);
-    if (!this.ready) throw EBUSY(`archive closed, close`);
+    if (!this.ready) throw errors/* EBUSY */.Vw(`archive closed, close`);
 
     if (this.readOnly) {
       this.discardAndClose();
@@ -34707,13 +35086,13 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   discardAndClose() {
-    if (!this.ready) throw EBUSY(`archive closed, close`);
+    if (!this.ready) throw errors/* EBUSY */.Vw(`archive closed, close`);
     this.libzip.discard(this.zip);
     this.ready = false;
   }
 
   resolve(p) {
-    return sources_path/* ppath.resolve */.y1.resolve(sources_path/* PortablePath.root */.LZ.root, p);
+    return sources_path/* ppath.resolve */.y1.resolve(sources_path/* PortablePath.root */.LZ.root, sources_path/* ppath.fromPathLike */.y1.fromPathLike(p));
   }
 
   async openPromise(p, flags, mode) {
@@ -34724,7 +35103,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     const fd = this.nextFd++;
     this.fds.set(fd, {
       cursor: 0,
-      p
+      p: sources_path/* ppath.fromPathLike */.y1.fromPathLike(p)
     });
     return fd;
   }
@@ -34739,7 +35118,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
   readSync(fd, buffer, offset = 0, length = 0, position = -1) {
     const entry = this.fds.get(fd);
-    if (typeof entry === `undefined`) throw EBADF(`read`);
+    if (typeof entry === `undefined`) throw errors/* EBADF */.Ch(`read`);
     let realPosition;
     if (position === -1 || position === null) realPosition = entry.cursor;else realPosition = position;
     const source = this.readFileSync(entry.p);
@@ -34759,7 +35138,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
   writeSync(fd, buffer, offset, length, position) {
     const entry = this.fds.get(fd);
-    if (typeof entry === `undefined`) throw EBADF(`read`);
+    if (typeof entry === `undefined`) throw errors/* EBADF */.Ch(`read`);
     throw new Error(`Unimplemented`);
   }
 
@@ -34769,7 +35148,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
   closeSync(fd) {
     const entry = this.fds.get(fd);
-    if (typeof entry === `undefined`) throw EBADF(`read`);
+    if (typeof entry === `undefined`) throw errors/* EBADF */.Ch(`read`);
     this.fds.delete(fd);
   }
 
@@ -34779,7 +35158,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     if (p === null) throw new Error(`Unimplemented`);
     const stream = Object.assign(new external_stream_.PassThrough(), {
       bytesRead: 0,
-      path: p,
+      path: sources_path/* ppath.fromPathLike */.y1.fromPathLike(p),
       close: () => {
         clearImmediate(immediate);
       }
@@ -34805,11 +35184,11 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   createWriteStream(p, {
     encoding
   } = {}) {
-    if (this.readOnly) throw EROFS(`open '${p}'`);
+    if (this.readOnly) throw errors/* EROFS */.YW(`open '${p}'`);
     if (p === null) throw new Error(`Unimplemented`);
     const stream = Object.assign(new external_stream_.PassThrough(), {
       bytesWritten: 0,
-      path: p,
+      path: sources_path/* ppath.fromPathLike */.y1.fromPathLike(p),
       close: () => {
         stream.end();
       }
@@ -34837,7 +35216,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
   realpathSync(p) {
     const resolvedP = this.resolveFilename(`lstat '${p}'`, p);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`lstat '${p}'`);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw errors/* ENOENT */.z6(`lstat '${p}'`);
     return resolvedP;
   }
 
@@ -34846,10 +35225,10 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   existsSync(p) {
-    if (!this.ready) throw EBUSY(`archive closed, existsSync '${p}'`);
+    if (!this.ready) throw errors/* EBUSY */.Vw(`archive closed, existsSync '${p}'`);
 
     if (this.symlinkCount === 0) {
-      const resolvedP = sources_path/* ppath.resolve */.y1.resolve(sources_path/* PortablePath.root */.LZ.root, p);
+      const resolvedP = sources_path/* ppath.resolve */.y1.resolve(sources_path/* PortablePath.root */.LZ.root, sources_path/* ppath.fromPathLike */.y1.fromPathLike(p));
       return this.entries.has(resolvedP) || this.listings.has(resolvedP);
     }
 
@@ -34870,10 +35249,10 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
   accessSync(p, mode = external_fs_.constants.F_OK) {
     const resolvedP = this.resolveFilename(`access '${p}'`, p);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`access '${p}'`);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw errors/* ENOENT */.z6(`access '${p}'`);
 
     if (this.readOnly && mode & external_fs_.constants.W_OK) {
-      throw EROFS(`access '${p}'`);
+      throw errors/* EROFS */.YW(`access '${p}'`);
     }
   }
 
@@ -34882,9 +35261,10 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   statSync(p) {
+    p = sources_path/* ppath.fromPathLike */.y1.fromPathLike(p);
     const resolvedP = this.resolveFilename(`stat '${p}'`, p);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`stat '${p}'`);
-    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP)) throw ENOTDIR(`stat '${p}'`);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw errors/* ENOENT */.z6(`stat '${p}'`);
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP)) throw errors/* ENOTDIR */.Ab(`stat '${p}'`);
     return this.statImpl(`stat '${p}'`, resolvedP);
   }
 
@@ -34893,9 +35273,10 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   lstatSync(p) {
+    p = sources_path/* ppath.fromPathLike */.y1.fromPathLike(p);
     const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`lstat '${p}'`);
-    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP)) throw ENOTDIR(`lstat '${p}'`);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw errors/* ENOENT */.z6(`lstat '${p}'`);
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP)) throw errors/* ENOTDIR */.Ab(`lstat '${p}'`);
     return this.statImpl(`lstat '${p}'`, resolvedP);
   }
 
@@ -35002,8 +35383,8 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   resolveFilename(reason, p, resolveLastComponent = true) {
-    if (!this.ready) throw EBUSY(`archive closed, ${reason}`);
-    let resolvedP = sources_path/* ppath.resolve */.y1.resolve(sources_path/* PortablePath.root */.LZ.root, p);
+    if (!this.ready) throw errors/* EBUSY */.Vw(`archive closed, ${reason}`);
+    let resolvedP = sources_path/* ppath.resolve */.y1.resolve(sources_path/* PortablePath.root */.LZ.root, sources_path/* ppath.fromPathLike */.y1.fromPathLike(p));
     if (resolvedP === `/`) return sources_path/* PortablePath.root */.LZ.root;
     const fileIndex = this.entries.get(resolvedP);
 
@@ -35020,8 +35401,8 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
       const parentP = this.resolveFilename(reason, sources_path/* ppath.dirname */.y1.dirname(resolvedP), true);
       const isDir = this.listings.has(parentP);
       const doesExist = this.entries.has(parentP);
-      if (!isDir && !doesExist) throw ENOENT(reason);
-      if (!isDir) throw ENOTDIR(reason);
+      if (!isDir && !doesExist) throw errors/* ENOENT */.z6(reason);
+      if (!isDir) throw errors/* ENOTDIR */.Ab(reason);
       resolvedP = sources_path/* ppath.resolve */.y1.resolve(parentP, sources_path/* ppath.basename */.y1.basename(resolvedP));
       if (!resolveLastComponent || this.symlinkCount === 0) break;
       const index = this.libzip.name.locate(this.zip, resolvedP.slice(1));
@@ -35083,7 +35464,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   setFileSource(p, content) {
-    const target = sources_path/* ppath.relative */.y1.relative(sources_path/* PortablePath.root */.LZ.root, p);
+    const target = sources_path/* ppath.relative */.y1.relative(sources_path/* PortablePath.root */.LZ.root, sources_path/* ppath.fromPathLike */.y1.fromPathLike(p));
     const lzSource = this.allocateSource(content);
 
     try {
@@ -35147,7 +35528,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   chmodSync(p, mask) {
-    if (this.readOnly) throw EROFS(`chmod '${p}'`); // We don't allow to make the extracted entries group-writable
+    if (this.readOnly) throw errors/* EROFS */.YW(`chmod '${p}'`); // We don't allow to make the extracted entries group-writable
 
     mask &= 0o755;
     const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
@@ -35175,14 +35556,14 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   copyFileSync(sourceP, destP, flags = 0) {
-    if (this.readOnly) throw EROFS(`copyfile '${sourceP} -> '${destP}'`);
-    if ((flags & external_fs_.constants.COPYFILE_FICLONE_FORCE) !== 0) throw ENOSYS(`unsupported clone operation`, `copyfile '${sourceP}' -> ${destP}'`);
+    if (this.readOnly) throw errors/* EROFS */.YW(`copyfile '${sourceP} -> '${destP}'`);
+    if ((flags & external_fs_.constants.COPYFILE_FICLONE_FORCE) !== 0) throw errors/* ENOSYS */.bk(`unsupported clone operation`, `copyfile '${sourceP}' -> ${destP}'`);
     const resolvedSourceP = this.resolveFilename(`copyfile '${sourceP} -> ${destP}'`, sourceP);
     const indexSource = this.entries.get(resolvedSourceP);
-    if (typeof indexSource === `undefined`) throw EINVAL(`copyfile '${sourceP}' -> '${destP}'`);
+    if (typeof indexSource === `undefined`) throw errors/* EINVAL */.hq(`copyfile '${sourceP}' -> '${destP}'`);
     const resolvedDestP = this.resolveFilename(`copyfile '${sourceP}' -> ${destP}'`, destP);
     const indexDest = this.entries.get(resolvedDestP);
-    if ((flags & (external_fs_.constants.COPYFILE_EXCL | external_fs_.constants.COPYFILE_FICLONE_FORCE)) !== 0 && typeof indexDest !== `undefined`) throw EEXIST(`copyfile '${sourceP}' -> '${destP}'`);
+    if ((flags & (external_fs_.constants.COPYFILE_EXCL | external_fs_.constants.COPYFILE_FICLONE_FORCE)) !== 0 && typeof indexDest !== `undefined`) throw errors/* EEXIST */.cT(`copyfile '${sourceP}' -> '${destP}'`);
     const source = this.getFileSource(indexSource);
     const newIndex = this.setFileSource(resolvedDestP, source);
 
@@ -35196,7 +35577,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   appendFileSync(p, content, opts = {}) {
-    if (this.readOnly) throw EROFS(`open '${p}'`);
+    if (this.readOnly) throw errors/* EROFS */.YW(`open '${p}'`);
     if (typeof opts === `undefined`) opts = {
       flag: `a`
     };else if (typeof opts === `string`) opts = {
@@ -35214,10 +35595,10 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   writeFileSync(p, content, opts) {
-    if (typeof p !== `string`) throw EBADF(`read`);
-    if (this.readOnly) throw EROFS(`open '${p}'`);
+    if (!sources_path/* PathLike.isPathLike */.iS.isPathLike(p)) throw errors/* EBADF */.Ch(`read`);
+    if (this.readOnly) throw errors/* EROFS */.YW(`open '${p}'`);
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
-    if (this.listings.has(resolvedP)) throw EISDIR(`open '${p}'`);
+    if (this.listings.has(resolvedP)) throw errors/* EISDIR */.GA(`open '${p}'`);
     const index = this.entries.get(resolvedP);
     if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`)) content = Buffer.concat([this.getFileSource(index), Buffer.from(content)]);
     let encoding = null;
@@ -35243,7 +35624,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   utimesSync(p, atime, mtime) {
-    if (this.readOnly) throw EROFS(`utimes '${p}'`);
+    if (this.readOnly) throw errors/* EROFS */.YW(`utimes '${p}'`);
     const resolvedP = this.resolveFilename(`utimes '${p}'`, p);
     this.utimesImpl(resolvedP, mtime);
   }
@@ -35253,7 +35634,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   lutimesSync(p, atime, mtime) {
-    if (this.readOnly) throw EROFS(`lutimes '${p}'`);
+    if (this.readOnly) throw errors/* EROFS */.YW(`lutimes '${p}'`);
     const resolvedP = this.resolveFilename(`utimes '${p}'`, p, false);
     this.utimesImpl(resolvedP, mtime);
   }
@@ -35284,9 +35665,9 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
       return;
     }
 
-    if (this.readOnly) throw EROFS(`mkdir '${p}'`);
+    if (this.readOnly) throw errors/* EROFS */.YW(`mkdir '${p}'`);
     const resolvedP = this.resolveFilename(`mkdir '${p}'`, p);
-    if (this.entries.has(resolvedP) || this.listings.has(resolvedP)) throw EEXIST(`mkdir '${p}'`);
+    if (this.entries.has(resolvedP) || this.listings.has(resolvedP)) throw errors/* EEXIST */.cT(`mkdir '${p}'`);
     this.hydrateDirectory(resolvedP);
     this.chmodSync(resolvedP, mode);
   }
@@ -35312,11 +35693,11 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   symlinkSync(target, p) {
-    if (this.readOnly) throw EROFS(`symlink '${target}' -> '${p}'`);
+    if (this.readOnly) throw errors/* EROFS */.YW(`symlink '${target}' -> '${p}'`);
     const resolvedP = this.resolveFilename(`symlink '${target}' -> '${p}'`, p);
-    if (this.listings.has(resolvedP)) throw EISDIR(`symlink '${target}' -> '${p}'`);
-    if (this.entries.has(resolvedP)) throw EEXIST(`symlink '${target}' -> '${p}'`);
-    const index = this.setFileSource(resolvedP, target);
+    if (this.listings.has(resolvedP)) throw errors/* EISDIR */.GA(`symlink '${target}' -> '${p}'`);
+    if (this.entries.has(resolvedP)) throw errors/* EEXIST */.cT(`symlink '${target}' -> '${p}'`);
+    const index = this.setFileSource(resolvedP, sources_path/* ppath.fromPathLike */.y1.fromPathLike(target));
     this.registerEntry(resolvedP, index);
     const rc = this.libzip.file.setExternalAttributes(this.zip, index, 0, 0, this.libzip.ZIP_OPSYS_UNIX, (0o120000 | 0o777) << 16);
     if (rc === -1) throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
@@ -35335,15 +35716,16 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   readFileSync(p, encoding) {
-    if (typeof p !== `string`) throw EBADF(`read`); // This is messed up regarding the TS signatures
+    if (!sources_path/* PathLike.isPathLike */.iS.isPathLike(p)) throw errors/* EBADF */.Ch(`read`);
+    p = sources_path/* ppath.fromPathLike */.y1.fromPathLike(p); // This is messed up regarding the TS signatures
 
     if (typeof encoding === `object`) // @ts-ignore
       encoding = encoding ? encoding.encoding : undefined;
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`open '${p}'`); // Ensures that the last component is a directory, if the user said so (even if it is we'll throw right after with EISDIR anyway)
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw errors/* ENOENT */.z6(`open '${p}'`); // Ensures that the last component is a directory, if the user said so (even if it is we'll throw right after with EISDIR anyway)
 
-    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP)) throw ENOTDIR(`open '${p}'`);
-    if (this.listings.has(resolvedP)) throw EISDIR(`read`);
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP)) throw errors/* ENOTDIR */.Ab(`open '${p}'`);
+    if (this.listings.has(resolvedP)) throw errors/* EISDIR */.GA(`read`);
     const entry = this.entries.get(resolvedP);
     if (entry === undefined) throw new Error(`Unreachable`);
     const data = this.getFileSource(entry);
@@ -35362,13 +35744,13 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     withFileTypes
   } = {}) {
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`scandir '${p}'`);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw errors/* ENOENT */.z6(`scandir '${p}'`);
     const directoryListing = this.listings.get(resolvedP);
-    if (!directoryListing) throw ENOTDIR(`scandir '${p}'`);
+    if (!directoryListing) throw errors/* ENOTDIR */.Ab(`scandir '${p}'`);
     const entries = [...directoryListing];
     if (!withFileTypes) return entries;
     return entries.map(name => {
-      return Object.assign(this.statImpl(`lstat`, sources_path/* ppath.join */.y1.join(p, name)), {
+      return Object.assign(this.statImpl(`lstat`, sources_path/* ppath.join */.y1.join(sources_path/* ppath.fromPathLike */.y1.fromPathLike(p), name)), {
         name
       });
     });
@@ -35379,19 +35761,20 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   readlinkSync(p) {
+    p = sources_path/* ppath.fromPathLike */.y1.fromPathLike(p);
     const resolvedP = this.resolveFilename(`readlink '${p}'`, p, false);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`readlink '${p}'`); // Ensure that the last component is a directory (if it is we'll throw right after with EISDIR anyway)
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw errors/* ENOENT */.z6(`readlink '${p}'`); // Ensure that the last component is a directory (if it is we'll throw right after with EISDIR anyway)
 
-    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP)) throw ENOTDIR(`open '${p}'`);
-    if (this.listings.has(resolvedP)) throw EINVAL(`readlink '${p}'`);
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP)) throw errors/* ENOTDIR */.Ab(`open '${p}'`);
+    if (this.listings.has(resolvedP)) throw errors/* EINVAL */.hq(`readlink '${p}'`);
     const entry = this.entries.get(resolvedP);
     if (entry === undefined) throw new Error(`Unreachable`);
     const rc = this.libzip.file.getExternalAttributes(this.zip, entry, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
     if (rc === -1) throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
     const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
-    if (opsys !== this.libzip.ZIP_OPSYS_UNIX) throw EINVAL(`readlink '${p}'`);
+    if (opsys !== this.libzip.ZIP_OPSYS_UNIX) throw errors/* EINVAL */.hq(`readlink '${p}'`);
     const attributes = this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
-    if ((attributes & 0o170000) !== 0o120000) throw EINVAL(`readlink '${p}'`);
+    if ((attributes & 0o170000) !== 0o120000) throw errors/* EINVAL */.hq(`readlink '${p}'`);
     return this.getFileSource(entry).toString();
   }
 
@@ -36438,6 +36821,7 @@ var external_os_default = /*#__PURE__*/__webpack_require__.n(external_os_);
 
 
 
+
 function getTempName(prefix) {
   const tmpdir = sources_path/* npath.toPortablePath */.cS.toPortablePath(external_os_default().tmpdir());
   const hash = Math.ceil(Math.random() * 0x100000000).toString(16).padStart(8, `0`);
@@ -36666,11 +37050,11 @@ class PosixFS extends ProxiedFS {
   }
 
   mapFromBase(path) {
-    return sources_path/* npath.fromPortablePath */.cS.fromPortablePath(path);
+    return sources_path/* npath.fromPortablePath */.cS.fromPortablePath(sources_path/* ppath.fromPathLike */.y1.fromPathLike(path));
   }
 
   mapToBase(path) {
-    return sources_path/* npath.toPortablePath */.cS.toPortablePath(path);
+    return sources_path/* npath.toPortablePath */.cS.toPortablePath(sources_path/* npath.fromPathLike */.cS.fromPathLike(path));
   }
 
 }
@@ -36701,7 +37085,7 @@ const MODULE_NOT_FOUND_ERRORS = new Set([ErrorCode.BLACKLISTED, ErrorCode.BUILTI
  * by third-parties.
  */
 
-function internalTools_makeError(pnpCode, message, data = {}) {
+function makeError(pnpCode, message, data = {}) {
   const code = MODULE_NOT_FOUND_ERRORS.has(pnpCode) ? `MODULE_NOT_FOUND` : pnpCode;
   const propertySpec = {
     configurable: true,
@@ -36908,7 +37292,7 @@ function applyPatch(pnpapi, opts) {
       optionNames.delete(`plugnplay`);
 
       if (optionNames.size > 0) {
-        throw internalTools_makeError(ErrorCode.UNSUPPORTED, `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(`, `)})`);
+        throw makeError(ErrorCode.UNSUPPORTED, `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(`, `)})`);
       }
     }
 
@@ -37181,7 +37565,7 @@ function makeApi(runtimeState, opts) {
     const packageInformation = getPackageInformation(packageLocator);
 
     if (!packageInformation) {
-      throw internalTools_makeError(ErrorCode.INTERNAL, `Couldn't find a matching entry in the dependency tree for the specified parent (this is probably an internal error)`);
+      throw makeError(ErrorCode.INTERNAL, `Couldn't find a matching entry in the dependency tree for the specified parent (this is probably an internal error)`);
     }
 
     return packageInformation;
@@ -37463,7 +37847,7 @@ function makeApi(runtimeState, opts) {
 
       if (locator === null) {
         const locationForDisplay = getPathForDisplay(location);
-        throw internalTools_makeError(ErrorCode.BLACKLISTED, `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${locationForDisplay}`, {
+        throw makeError(ErrorCode.BLACKLISTED, `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${locationForDisplay}`, {
           location: locationForDisplay
         });
       }
@@ -37510,7 +37894,7 @@ function makeApi(runtimeState, opts) {
         const result = callNativeResolution(request, issuer);
 
         if (result === false) {
-          throw internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp)\n\nRequire request: "${requestForDisplay}"\nRequired by: ${issuerForDisplay}\n`, {
+          throw makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp)\n\nRequire request: "${requestForDisplay}"\nRequired by: ${issuerForDisplay}\n`, {
             request: requestForDisplay,
             issuer: issuerForDisplay
           });
@@ -37529,7 +37913,7 @@ function makeApi(runtimeState, opts) {
         unqualifiedPath = sources_path/* ppath.normalize */.y1.normalize(request);
       } else {
         if (!issuer) {
-          throw internalTools_makeError(ErrorCode.API_ERROR, `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`, {
+          throw makeError(ErrorCode.API_ERROR, `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`, {
             request: requestForDisplay,
             issuer: issuerForDisplay
           });
@@ -37553,7 +37937,7 @@ function makeApi(runtimeState, opts) {
     // particular the exact version for the given location on the dependency tree
     else {
         if (!issuer) {
-          throw internalTools_makeError(ErrorCode.API_ERROR, `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`, {
+          throw makeError(ErrorCode.API_ERROR, `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`, {
             request: requestForDisplay,
             issuer: issuerForDisplay
           });
@@ -37567,7 +37951,7 @@ function makeApi(runtimeState, opts) {
           const result = callNativeResolution(request, issuer);
 
           if (result === false) {
-            throw internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree).\n\nRequire path: "${requestForDisplay}"\nRequired by: ${issuerForDisplay}\n`, {
+            throw makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree).\n\nRequire path: "${requestForDisplay}"\nRequired by: ${issuerForDisplay}\n`, {
               request: requestForDisplay,
               issuer: issuerForDisplay
             });
@@ -37617,7 +38001,7 @@ function makeApi(runtimeState, opts) {
 
         if (dependencyReference === null) {
           if (isDependencyTreeRoot(issuerLocator)) {
-            error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `Your application tried to access ${dependencyName} (a peer dependency); this isn't allowed as there is no ancestor to satisfy the requirement. Use a devDependency if needed.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+            error = makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `Your application tried to access ${dependencyName} (a peer dependency); this isn't allowed as there is no ancestor to satisfy the requirement. Use a devDependency if needed.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
               request: requestForDisplay,
               issuer: issuerForDisplay,
               dependencyName
@@ -37626,7 +38010,7 @@ function makeApi(runtimeState, opts) {
             const brokenAncestors = findBrokenPeerDependencies(dependencyName, issuerLocator);
 
             if (brokenAncestors.every(ancestor => isDependencyTreeRoot(ancestor))) {
-              error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
+              error = makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
                 request: requestForDisplay,
                 issuer: issuerForDisplay,
                 issuerLocator: Object.assign({}, issuerLocator),
@@ -37634,7 +38018,7 @@ function makeApi(runtimeState, opts) {
                 brokenAncestors
               });
             } else {
-              error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
+              error = makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
                 request: requestForDisplay,
                 issuer: issuerForDisplay,
                 issuerLocator: Object.assign({}, issuerLocator),
@@ -37645,13 +38029,13 @@ function makeApi(runtimeState, opts) {
           }
         } else if (dependencyReference === undefined) {
           if (isDependencyTreeRoot(issuerLocator)) {
-            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+            error = makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
               request: requestForDisplay,
               issuer: issuerForDisplay,
               dependencyName
             });
           } else {
-            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
+            error = makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
               request: requestForDisplay,
               issuer: issuerForDisplay,
               issuerLocator: Object.assign({}, issuerLocator),
@@ -37683,7 +38067,7 @@ function makeApi(runtimeState, opts) {
         const dependencyInformation = getPackageInformationSafe(dependencyLocator);
 
         if (!dependencyInformation.packageLocation) {
-          throw internalTools_makeError(ErrorCode.MISSING_DEPENDENCY, `A dependency seems valid but didn't get installed for some reason. This might be caused by a partial install, such as dev vs prod.\n\nRequired package: ${dependencyLocator.name}@${dependencyLocator.reference} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
+          throw makeError(ErrorCode.MISSING_DEPENDENCY, `A dependency seems valid but didn't get installed for some reason. This might be caused by a partial install, such as dev vs prod.\n\nRequired package: ${dependencyLocator.name}@${dependencyLocator.reference} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
             request: requestForDisplay,
             issuer: issuerForDisplay,
             dependencyLocator: Object.assign({}, dependencyLocator)
@@ -37724,7 +38108,7 @@ function makeApi(runtimeState, opts) {
       return sources_path/* ppath.normalize */.y1.normalize(qualifiedPath);
     } else {
       const unqualifiedPathForDisplay = getPathForDisplay(unqualifiedPath);
-      throw internalTools_makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Qualified path resolution failed - none of the candidates can be found on the disk.\n\nSource path: ${unqualifiedPathForDisplay}\n${candidates.map(candidate => `Rejected candidate: ${getPathForDisplay(candidate)}\n`).join(``)}`, {
+      throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Qualified path resolution failed - none of the candidates can be found on the disk.\n\nSource path: ${unqualifiedPathForDisplay}\n${candidates.map(candidate => `Rejected candidate: ${getPathForDisplay(candidate)}\n`).join(``)}`, {
         unqualifiedPath: unqualifiedPathForDisplay
       });
     }
@@ -42585,7 +42969,7 @@ module.exports = require("util");
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(936);
+/******/ 	return __webpack_require__(875);
 /******/ })()
 .default;
 });

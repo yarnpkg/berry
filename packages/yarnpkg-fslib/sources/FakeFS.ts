@@ -1,9 +1,9 @@
-import {Dirent as NodeDirent, ReadStream, Stats, WriteStream} from 'fs';
-import {EOL}                                                  from 'os';
+import {Dirent as NodeDirent, ReadStream, Stats, WriteStream}      from 'fs';
+import {EOL}                                                       from 'os';
 
-import {copyPromise}                                          from './algorithms/copyPromise';
-import {FSPath, Path, PortablePath, PathUtils, Filename}      from './path';
-import {convertPath, ppath}                                   from './path';
+import {copyPromise}                                               from './algorithms/copyPromise';
+import {FSPath, Path, PortablePath, PathUtils, Filename, PathLike} from './path';
+import {convertPath, ppath}                                        from './path';
 
 export type Dirent = Exclude<NodeDirent, 'name'> & {
   name: Filename,
@@ -63,17 +63,17 @@ export abstract class FakeFS<P extends Path> {
   public readonly pathUtils: PathUtils<P>;
 
   protected constructor(pathUtils: PathUtils<P>) {
-    this.pathUtils =  pathUtils;
+    this.pathUtils = pathUtils;
   }
 
   abstract getExtractHint(hints: ExtractHintOptions): boolean;
 
   abstract getRealPath(): P;
 
-  abstract resolve(p: P): P;
+  abstract resolve(p: PathLike<P>): P;
 
-  abstract openPromise(p: P, flags: string, mode?: number): Promise<number>;
-  abstract openSync(p: P, flags: string, mode?: number): number;
+  abstract openPromise(p: PathLike<P>, flags: string, mode?: number): Promise<number>;
+  abstract openSync(p: PathLike<P>, flags: string, mode?: number): number;
 
   abstract readPromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number | null): Promise<number>;
   abstract readSync(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number | null): number;
@@ -86,66 +86,66 @@ export abstract class FakeFS<P extends Path> {
   abstract closePromise(fd: number): void;
   abstract closeSync(fd: number): void;
 
-  abstract createWriteStream(p: P | null, opts?: CreateWriteStreamOptions): WriteStream;
-  abstract createReadStream(p: P | null, opts?: CreateReadStreamOptions): ReadStream;
+  abstract createWriteStream(p: PathLike<P> | null, opts?: CreateWriteStreamOptions): WriteStream;
+  abstract createReadStream(p: PathLike<P> | null, opts?: CreateReadStreamOptions): ReadStream;
 
-  abstract realpathPromise(p: P): Promise<P>;
-  abstract realpathSync(p: P): P;
+  abstract realpathPromise(p: PathLike<P>): Promise<P>;
+  abstract realpathSync(p: PathLike<P>): P;
 
-  abstract readdirPromise(p: P): Promise<Array<Filename>>;
-  abstract readdirPromise(p: P, opts: {withFileTypes: false}): Promise<Array<Filename>>;
-  abstract readdirPromise(p: P, opts: {withFileTypes: true}): Promise<Array<Dirent>>;
-  abstract readdirPromise(p: P, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
+  abstract readdirPromise(p: PathLike<P>): Promise<Array<Filename>>;
+  abstract readdirPromise(p: PathLike<P>, opts: {withFileTypes: false}): Promise<Array<Filename>>;
+  abstract readdirPromise(p: PathLike<P>, opts: {withFileTypes: true}): Promise<Array<Dirent>>;
+  abstract readdirPromise(p: PathLike<P>, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
 
-  abstract readdirSync(p: P): Array<Filename>;
-  abstract readdirSync(p: P, opts: {withFileTypes: false}): Array<Filename>;
-  abstract readdirSync(p: P, opts: {withFileTypes: true}): Array<Dirent>;
-  abstract readdirSync(p: P, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
+  abstract readdirSync(p: PathLike<P>): Array<Filename>;
+  abstract readdirSync(p: PathLike<P>, opts: {withFileTypes: false}): Array<Filename>;
+  abstract readdirSync(p: PathLike<P>, opts: {withFileTypes: true}): Array<Dirent>;
+  abstract readdirSync(p: PathLike<P>, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
 
-  abstract existsPromise(p: P): Promise<boolean>;
-  abstract existsSync(p: P): boolean;
+  abstract existsPromise(p: PathLike<P>): Promise<boolean>;
+  abstract existsSync(p: PathLike<P>): boolean;
 
-  abstract accessPromise(p: P, mode?: number): Promise<void>;
-  abstract accessSync(p: P, mode?: number): void;
+  abstract accessPromise(p: PathLike<P>, mode?: number): Promise<void>;
+  abstract accessSync(p: PathLike<P>, mode?: number): void;
 
-  abstract statPromise(p: P): Promise<Stats>;
-  abstract statSync(p: P): Stats;
+  abstract statPromise(p: PathLike<P>): Promise<Stats>;
+  abstract statSync(p: PathLike<P>): Stats;
 
-  abstract lstatPromise(p: P): Promise<Stats>;
-  abstract lstatSync(p: P): Stats;
+  abstract lstatPromise(p: PathLike<P>): Promise<Stats>;
+  abstract lstatSync(p: PathLike<P>): Stats;
 
-  abstract chmodPromise(p: P, mask: number): Promise<void>;
-  abstract chmodSync(p: P, mask: number): void;
+  abstract chmodPromise(p: PathLike<P>, mask: number): Promise<void>;
+  abstract chmodSync(p: PathLike<P>, mask: number): void;
 
-  abstract mkdirPromise(p: P, opts?: MkdirOptions): Promise<void>;
-  abstract mkdirSync(p: P, opts?: MkdirOptions): void;
+  abstract mkdirPromise(p: PathLike<P>, opts?: MkdirOptions): Promise<void>;
+  abstract mkdirSync(p: PathLike<P>, opts?: MkdirOptions): void;
 
-  abstract rmdirPromise(p: P): Promise<void>;
-  abstract rmdirSync(p: P): void;
+  abstract rmdirPromise(p: PathLike<P>): Promise<void>;
+  abstract rmdirSync(p: PathLike<P>): void;
 
-  abstract symlinkPromise(target: P, p: P, type?: SymlinkType): Promise<void>;
-  abstract symlinkSync(target: P, p: P, type?: SymlinkType): void;
+  abstract symlinkPromise(target: PathLike<P>, p: PathLike<P>, type?: SymlinkType): Promise<void>;
+  abstract symlinkSync(target: PathLike<P>, p: PathLike<P>, type?: SymlinkType): void;
 
-  abstract renamePromise(oldP: P, newP: P): Promise<void>;
-  abstract renameSync(oldP: P, newP: P): void;
+  abstract renamePromise(oldP: PathLike<P>, newP: PathLike<P>): Promise<void>;
+  abstract renameSync(oldP: PathLike<P>, newP: PathLike<P>): void;
 
-  abstract copyFilePromise(sourceP: P, destP: P, flags?: number): Promise<void>;
-  abstract copyFileSync(sourceP: P, destP: P, flags?: number): void;
+  abstract copyFilePromise(sourceP: PathLike<P>, destP: PathLike<P>, flags?: number): Promise<void>;
+  abstract copyFileSync(sourceP: PathLike<P>, destP: PathLike<P>, flags?: number): void;
 
-  abstract appendFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
+  abstract appendFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): Promise<void>;
   abstract appendFileSync(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
 
-  abstract writeFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
+  abstract writeFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): Promise<void>;
   abstract writeFileSync(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
 
-  abstract unlinkPromise(p: P): Promise<void>;
-  abstract unlinkSync(p: P): void;
+  abstract unlinkPromise(p: PathLike<P>): Promise<void>;
+  abstract unlinkSync(p: PathLike<P>): void;
 
-  abstract utimesPromise(p: P, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
-  abstract utimesSync(p: P, atime: Date | string | number, mtime: Date | string | number): void;
+  abstract utimesPromise(p: PathLike<P>, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
+  abstract utimesSync(p: PathLike<P>, atime: Date | string | number, mtime: Date | string | number): void;
 
-  lutimesPromise?(p: P, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
-  lutimesSync?(p: P, atime: Date | string | number, mtime: Date | string | number): void;
+  lutimesPromise?(p: PathLike<P>, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
+  lutimesSync?(p: PathLike<P>, atime: Date | string | number, mtime: Date | string | number): void;
 
   abstract readFilePromise(p: FSPath<P>, encoding: 'utf8'): Promise<string>;
   abstract readFilePromise(p: FSPath<P>, encoding?: string): Promise<Buffer>;
@@ -153,13 +153,13 @@ export abstract class FakeFS<P extends Path> {
   abstract readFileSync(p: FSPath<P>, encoding: 'utf8'): string;
   abstract readFileSync(p: FSPath<P>, encoding?: string): Buffer;
 
-  abstract readlinkPromise(p: P): Promise<P>;
-  abstract readlinkSync(p: P): P;
+  abstract readlinkPromise(p: PathLike<P>): Promise<P>;
+  abstract readlinkSync(p: PathLike<P>): P;
 
-  abstract watch(p: P, cb?: WatchCallback): Watcher;
-  abstract watch(p: P, opts: WatchOptions, cb?: WatchCallback): Watcher;
+  abstract watch(p: PathLike<P>, cb?: WatchCallback): Watcher;
+  abstract watch(p: PathLike<P>, opts: WatchOptions, cb?: WatchCallback): Watcher;
 
-  async removePromise(p: P) {
+  async removePromise(p: PathLike<P>) {
     let stat;
     try {
       stat = await this.lstatPromise(p);
@@ -173,7 +173,7 @@ export abstract class FakeFS<P extends Path> {
 
     if (stat.isDirectory()) {
       for (const entry of await this.readdirPromise(p))
-        await this.removePromise(this.pathUtils.resolve(p, entry));
+        await this.removePromise(this.pathUtils.resolve(this.pathUtils.fromPathLike(p), entry));
 
       // 5 gives 1s worth of retries at worst
       for (let t = 0; t < 5; ++t) {
@@ -194,7 +194,7 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  removeSync(p: P) {
+  removeSync(p: PathLike<P>) {
     let stat;
     try {
       stat = this.lstatSync(p);
@@ -208,7 +208,7 @@ export abstract class FakeFS<P extends Path> {
 
     if (stat.isDirectory()) {
       for (const entry of this.readdirSync(p))
-        this.removeSync(this.pathUtils.resolve(p, entry));
+        this.removeSync(this.pathUtils.resolve(this.pathUtils.fromPathLike(p), entry));
 
       this.rmdirSync(p);
     } else {
@@ -216,8 +216,8 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  async mkdirpPromise(p: P, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}) {
-    p = this.resolve(p);
+  async mkdirpPromise(p: PathLike<P>, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}) {
+    p = this.resolve(this.pathUtils.fromPathLike(p));
     if (p === this.pathUtils.dirname(p))
       return;
 
@@ -250,8 +250,8 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  mkdirpSync(p: P, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}) {
-    p = this.resolve(p);
+  mkdirpSync(p: PathLike<P>, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}) {
+    p = this.resolve(this.pathUtils.fromPathLike(p));
     if (p === this.pathUtils.dirname(p))
       return;
 
@@ -284,16 +284,16 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  copyPromise(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean}): Promise<void>;
-  copyPromise<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean}): Promise<void>;
-  async copyPromise<P2 extends Path>(destination: P, source: P2, {baseFs = this as any, overwrite = true, stableSort = false, stableTime = false}: {baseFs?: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean} = {}) {
+  copyPromise(destination: PathLike<P>, source: PathLike<P>, options?: {baseFs?: undefined, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean}): Promise<void>;
+  copyPromise<P2 extends Path>(destination: PathLike<P>, source: PathLike<P2>, options: {baseFs: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean}): Promise<void>;
+  async copyPromise<P2 extends Path>(destination: PathLike<P>, source: PathLike<P2>, {baseFs = this as any, overwrite = true, stableSort = false, stableTime = false}: {baseFs?: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean} = {}) {
     return await copyPromise(this, destination, baseFs, source, {overwrite, stableSort, stableTime});
   }
 
   /** @deprecated Prefer using `copyPromise` instead */
-  copySync(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean}): void;
-  copySync<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean}): void;
-  copySync<P2 extends Path>(destination: P, source: P2, {baseFs = this as any, overwrite = true}: {baseFs?: FakeFS<P2>, overwrite?: boolean} = {}) {
+  copySync(destination: PathLike<P>, source: PathLike<P>, options?: {baseFs?: undefined, overwrite?: boolean}): void;
+  copySync<P2 extends Path>(destination: PathLike<P>, source: PathLike<P2>, options: {baseFs: FakeFS<P2>, overwrite?: boolean}): void;
+  copySync<P2 extends Path>(destination: PathLike<P>, source: PathLike<P2>, {baseFs = this as any, overwrite = true}: {baseFs?: FakeFS<P2>, overwrite?: boolean} = {}) {
     const stat = baseFs.lstatSync(source);
     const exists = this.existsSync(destination);
 
@@ -301,7 +301,11 @@ export abstract class FakeFS<P extends Path> {
       this.mkdirpSync(destination);
       const directoryListing = baseFs.readdirSync(source);
       for (const entry of directoryListing) {
-        this.copySync(this.pathUtils.join(destination, entry), baseFs.pathUtils.join(source, entry), {baseFs, overwrite});
+        this.copySync(
+          this.pathUtils.join(this.pathUtils.fromPathLike(destination), entry),
+          baseFs.pathUtils.join(baseFs.pathUtils.fromPathLike(source), entry),
+          {baseFs, overwrite}
+        );
       }
     } else if (stat.isFile()) {
       if (!exists || overwrite) {
@@ -327,7 +331,7 @@ export abstract class FakeFS<P extends Path> {
     this.chmodSync(destination, mode);
   }
 
-  async changeFilePromise(p: P, content: string, {automaticNewlines}: ChangeFileOptions = {}) {
+  async changeFilePromise(p: PathLike<P>, content: string, {automaticNewlines}: ChangeFileOptions = {}) {
     let current = ``;
     try {
       current = await this.readFilePromise(p, `utf8`);
@@ -345,7 +349,7 @@ export abstract class FakeFS<P extends Path> {
     await this.writeFilePromise(p, normalizedContent);
   }
 
-  changeFileSync(p: P, content: string, {automaticNewlines = false}: ChangeFileOptions = {}) {
+  changeFileSync(p: PathLike<P>, content: string, {automaticNewlines = false}: ChangeFileOptions = {}) {
     let current = ``;
     try {
       current = this.readFileSync(p, `utf8`);
@@ -363,7 +367,7 @@ export abstract class FakeFS<P extends Path> {
     this.writeFileSync(p, normalizedContent);
   }
 
-  async movePromise(fromP: P, toP: P) {
+  async movePromise(fromP: PathLike<P>, toP: PathLike<P>) {
     try {
       await this.renamePromise(fromP, toP);
     } catch (error) {
@@ -376,7 +380,7 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  moveSync(fromP: P, toP: P) {
+  moveSync(fromP: PathLike<P>, toP: PathLike<P>) {
     try {
       this.renameSync(fromP, toP);
     } catch (error) {
@@ -389,7 +393,7 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  async lockPromise<T>(affectedPath: P, callback: () => Promise<T>): Promise<T> {
+  async lockPromise<T>(affectedPath: PathLike<P>, callback: () => Promise<T>): Promise<T> {
     const lockPath = `${affectedPath}.flock` as P;
 
     const interval = 1000 / 60;
@@ -461,7 +465,7 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  async readJsonPromise(p: P) {
+  async readJsonPromise(p: PathLike<P>) {
     const content = await this.readFilePromise(p, `utf8`);
 
     try {
@@ -472,7 +476,7 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  async readJsonSync(p: P) {
+  async readJsonSync(p: PathLike<P>) {
     const content = this.readFileSync(p, `utf8`);
 
     try {
@@ -483,15 +487,15 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  async writeJsonPromise(p: P, data: any) {
+  async writeJsonPromise(p: PathLike<P>, data: any) {
     return await this.writeFilePromise(p, `${JSON.stringify(data, null, 2)}\n`);
   }
 
-  writeJsonSync(p: P, data: any) {
+  writeJsonSync(p: PathLike<P>, data: any) {
     return this.writeFileSync(p, `${JSON.stringify(data, null, 2)}\n`);
   }
 
-  async preserveTimePromise(p: P, cb: () => Promise<P | void>) {
+  async preserveTimePromise(p: PathLike<P>, cb: () => Promise<PathLike<P> | void>) {
     const stat = await this.lstatPromise(p);
 
     const result = await cb();
@@ -505,7 +509,7 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  async preserveTimeSync(p: P, cb: () => P | void) {
+  async preserveTimeSync(p: PathLike<P>, cb: () => PathLike<P> | void) {
     const stat = this.lstatSync(p);
 
     const result = cb();

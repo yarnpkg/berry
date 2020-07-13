@@ -1,6 +1,10 @@
-import path from 'path';
+import path                                                                                                                                from 'path';
+import {URL}                                                                                                                               from 'url';
 
-enum PathType {
+import {PathBuffer, PathBufferConstructor, NativePathBuffer, PortablePathBuffer}                                                           from './buffer';
+import {fileURLToPath, fileURLToPosixPath, pathToFileURL, posixPathToFileURL, FileURL, FileURLConstructor, NativeFileURL, PortableFileURL} from './url';
+
+export enum PathType {
   File,
   Portable,
   Native,
@@ -24,8 +28,16 @@ export const Filename = {
   rc: `.yarnrc.yml` as Filename,
 };
 
+export type PathLike<T extends Path> = T | PathBuffer<T> | FileURL<T>;
+
+export const PathLike = {
+  isPathLike(value: unknown): value is PathLike<Path> {
+    return typeof value === `string` || Buffer.isBuffer(value) || value instanceof URL;
+  },
+};
+
 // Some of the FS functions support file descriptors
-export type FSPath<T extends Path> = T | number;
+export type FSPath<T extends Path> = PathLike<T> | number;
 
 export const npath: PathUtils<NativePath> & ConvertUtils = Object.create(path) as any;
 export const ppath: PathUtils<PortablePath> = Object.create(path.posix) as any;
@@ -57,6 +69,27 @@ npath.toPortablePath = toPortablePath;
 
 npath.contains = (from: NativePath, to: NativePath) => contains(npath, from, to);
 ppath.contains = (from: PortablePath, to: PortablePath) => contains(ppath, from, to);
+
+npath.FileURL = NativeFileURL;
+ppath.FileURL = PortableFileURL;
+
+npath.fromFileURL = (url: FileURL<NativePath>) => fileURLToPath(url);
+ppath.fromFileURL = (url: FileURL<PortablePath>) => fileURLToPosixPath(url);
+
+npath.toFileURL = (p: NativePath) => pathToFileURL(p);
+ppath.toFileURL = (p: PortablePath) => posixPathToFileURL(p);
+
+npath.PathBuffer = NativePathBuffer;
+ppath.PathBuffer = PortablePathBuffer;
+
+npath.fromPathBuffer = (buffer: PathBuffer<NativePath>, encoding?: BufferEncoding) => buffer.toString(encoding);
+ppath.fromPathBuffer = (buffer: PathBuffer<PortablePath>, encoding?: BufferEncoding) => buffer.toString(encoding);
+
+npath.toPathBuffer = (p: NativePath, encoding?: BufferEncoding) => new NativePathBuffer(p, encoding);
+ppath.toPathBuffer = (p: PortablePath, encoding?: BufferEncoding) => new PortablePathBuffer(p, encoding);
+
+npath.fromPathLike = (pathLike: PathLike<NativePath>) => fromPathLike(npath, pathLike);
+ppath.fromPathLike = (pathLike: PathLike<PortablePath>) => fromPathLike(ppath, pathLike);
 
 export interface ParsedPath<P extends Path> {
   root: P;
@@ -93,6 +126,16 @@ export interface PathUtils<P extends Path> {
   format(pathObject: FormatInputPathObject<P>): P;
 
   contains(from: P, to: P): P | null;
+
+  PathBuffer: PathBufferConstructor<P>;
+  fromPathBuffer(buffer: PathBuffer<P>, encoding?: BufferEncoding): P;
+  toPathBuffer(p: P, encoding?: BufferEncoding): PathBuffer<P>;
+
+  FileURL: FileURLConstructor<P>;
+  fromFileURL(url: FileURL<P>): P;
+  toFileURL(p: P): FileURL<P>;
+
+  fromPathLike(pathLike: PathLike<P>): P;
 }
 
 export interface ConvertUtils {
@@ -145,4 +188,14 @@ export function toFilename(filename: string): Filename {
     throw new Error(`Invalid filename: "${filename}"`);
 
   return filename as any;
+}
+
+export function fromPathLike<P extends Path>(pathUtils: PathUtils<P>, pathLike: PathLike<P>): P {
+  const path = Buffer.isBuffer(pathLike)
+    ? pathLike.toString()
+    : pathLike instanceof URL
+      ? pathUtils.fromFileURL(pathLike)
+      : pathLike;
+
+  return convertPath(pathUtils, path);
 }

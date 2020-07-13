@@ -1,7 +1,7 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions} from './FakeFS';
 import {Dirent, SymlinkType}                                                           from './FakeFS';
 import {MkdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}          from './FakeFS';
-import {FSPath, Filename, Path}                                                        from './path';
+import {FSPath, Filename, Path, PathLike}                                              from './path';
 
 export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<P> {
   protected abstract readonly baseFs: FakeFS<IP>;
@@ -9,18 +9,18 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
   /**
    * Convert a path from the user format into what should be fed into the internal FS.
    */
-  protected abstract mapToBase(path: P): IP;
+  protected abstract mapToBase(path: PathLike<P>): IP;
 
   /**
    * Convert a path from the format supported by the base FS into the user one.
    */
-  protected abstract mapFromBase(path: IP): P;
+  protected abstract mapFromBase(path: PathLike<IP>): P;
 
   getExtractHint(hints: ExtractHintOptions) {
     return this.baseFs.getExtractHint(hints);
   }
 
-  resolve(path: P)  {
+  resolve(path: PathLike<P>)  {
     return this.mapFromBase(this.baseFs.resolve(this.mapToBase(path)));
   }
 
@@ -28,11 +28,11 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.mapFromBase(this.baseFs.getRealPath());
   }
 
-  openPromise(p: P, flags: string, mode?: number) {
+  openPromise(p: PathLike<P>, flags: string, mode?: number) {
     return this.baseFs.openPromise(this.mapToBase(p), flags, mode);
   }
 
-  openSync(p: P, flags: string, mode?: number) {
+  openSync(p: PathLike<P>, flags: string, mode?: number) {
     return this.baseFs.openSync(this.mapToBase(p), flags, mode);
   }
 
@@ -72,75 +72,75 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     this.baseFs.closeSync(fd);
   }
 
-  createReadStream(p: P | null, opts?: CreateReadStreamOptions) {
+  createReadStream(p: PathLike<P> | null, opts?: CreateReadStreamOptions) {
     return this.baseFs.createReadStream(p !== null ? this.mapToBase(p) : p, opts);
   }
 
-  createWriteStream(p: P | null, opts?: CreateWriteStreamOptions) {
+  createWriteStream(p: PathLike<P> | null, opts?: CreateWriteStreamOptions) {
     return this.baseFs.createWriteStream(p !== null ? this.mapToBase(p) : p, opts);
   }
 
-  async realpathPromise(p: P) {
+  async realpathPromise(p: PathLike<P>) {
     return this.mapFromBase(await this.baseFs.realpathPromise(this.mapToBase(p)));
   }
 
-  realpathSync(p: P) {
+  realpathSync(p: PathLike<P>) {
     return this.mapFromBase(this.baseFs.realpathSync(this.mapToBase(p)));
   }
 
-  existsPromise(p: P) {
+  existsPromise(p: PathLike<P>) {
     return this.baseFs.existsPromise(this.mapToBase(p));
   }
 
-  existsSync(p: P) {
+  existsSync(p: PathLike<P>) {
     return this.baseFs.existsSync(this.mapToBase(p));
   }
 
-  accessSync(p: P, mode?: number) {
+  accessSync(p: PathLike<P>, mode?: number) {
     return this.baseFs.accessSync(this.mapToBase(p), mode);
   }
 
-  accessPromise(p: P, mode?: number) {
+  accessPromise(p: PathLike<P>, mode?: number) {
     return this.baseFs.accessPromise(this.mapToBase(p), mode);
   }
 
-  statPromise(p: P) {
+  statPromise(p: PathLike<P>) {
     return this.baseFs.statPromise(this.mapToBase(p));
   }
 
-  statSync(p: P) {
+  statSync(p: PathLike<P>) {
     return this.baseFs.statSync(this.mapToBase(p));
   }
 
-  lstatPromise(p: P) {
+  lstatPromise(p: PathLike<P>) {
     return this.baseFs.lstatPromise(this.mapToBase(p));
   }
 
-  lstatSync(p: P) {
+  lstatSync(p: PathLike<P>) {
     return this.baseFs.lstatSync(this.mapToBase(p));
   }
 
-  chmodPromise(p: P, mask: number) {
+  chmodPromise(p: PathLike<P>, mask: number) {
     return this.baseFs.chmodPromise(this.mapToBase(p), mask);
   }
 
-  chmodSync(p: P, mask: number) {
+  chmodSync(p: PathLike<P>, mask: number) {
     return this.baseFs.chmodSync(this.mapToBase(p), mask);
   }
 
-  renamePromise(oldP: P, newP: P) {
+  renamePromise(oldP: PathLike<P>, newP: PathLike<P>) {
     return this.baseFs.renamePromise(this.mapToBase(oldP), this.mapToBase(newP));
   }
 
-  renameSync(oldP: P, newP: P) {
+  renameSync(oldP: PathLike<P>, newP: PathLike<P>) {
     return this.baseFs.renameSync(this.mapToBase(oldP), this.mapToBase(newP));
   }
 
-  copyFilePromise(sourceP: P, destP: P, flags: number = 0) {
+  copyFilePromise(sourceP: PathLike<P>, destP: PathLike<P>, flags: number = 0) {
     return this.baseFs.copyFilePromise(this.mapToBase(sourceP), this.mapToBase(destP), flags);
   }
 
-  copyFileSync(sourceP: P, destP: P, flags: number = 0) {
+  copyFileSync(sourceP: PathLike<P>, destP: PathLike<P>, flags: number = 0) {
     return this.baseFs.copyFileSync(this.mapToBase(sourceP), this.mapToBase(destP), flags);
   }
 
@@ -160,43 +160,43 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.writeFileSync(this.fsMapToBase(p), content, opts);
   }
 
-  unlinkPromise(p: P) {
+  unlinkPromise(p: PathLike<P>) {
     return this.baseFs.unlinkPromise(this.mapToBase(p));
   }
 
-  unlinkSync(p: P) {
+  unlinkSync(p: PathLike<P>) {
     return this.baseFs.unlinkSync(this.mapToBase(p));
   }
 
-  utimesPromise(p: P, atime: Date | string | number, mtime: Date | string | number) {
+  utimesPromise(p: PathLike<P>, atime: Date | string | number, mtime: Date | string | number) {
     return this.baseFs.utimesPromise(this.mapToBase(p), atime, mtime);
   }
 
-  utimesSync(p: P, atime: Date | string | number, mtime: Date | string | number) {
+  utimesSync(p: PathLike<P>, atime: Date | string | number, mtime: Date | string | number) {
     return this.baseFs.utimesSync(this.mapToBase(p), atime, mtime);
   }
 
-  mkdirPromise(p: P, opts?: MkdirOptions) {
+  mkdirPromise(p: PathLike<P>, opts?: MkdirOptions) {
     return this.baseFs.mkdirPromise(this.mapToBase(p), opts);
   }
 
-  mkdirSync(p: P, opts?: MkdirOptions) {
+  mkdirSync(p: PathLike<P>, opts?: MkdirOptions) {
     return this.baseFs.mkdirSync(this.mapToBase(p), opts);
   }
 
-  rmdirPromise(p: P) {
+  rmdirPromise(p: PathLike<P>) {
     return this.baseFs.rmdirPromise(this.mapToBase(p));
   }
 
-  rmdirSync(p: P) {
+  rmdirSync(p: PathLike<P>) {
     return this.baseFs.rmdirSync(this.mapToBase(p));
   }
 
-  symlinkPromise(target: P, p: P, type?: SymlinkType) {
+  symlinkPromise(target: PathLike<P>, p: PathLike<P>, type?: SymlinkType) {
     return this.baseFs.symlinkPromise(this.mapToBase(target), this.mapToBase(p), type);
   }
 
-  symlinkSync(target: P, p: P, type?: SymlinkType) {
+  symlinkSync(target: PathLike<P>, p: PathLike<P>, type?: SymlinkType) {
     return this.baseFs.symlinkSync(this.mapToBase(target), this.mapToBase(p), type);
   }
 
@@ -222,33 +222,33 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     }
   }
 
-  async readdirPromise(p: P): Promise<Array<Filename>>;
-  async readdirPromise(p: P, opts: {withFileTypes: false}): Promise<Array<Filename>>;
-  async readdirPromise(p: P, opts: {withFileTypes: true}): Promise<Array<Dirent>>;
-  async readdirPromise(p: P, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
-  async readdirPromise(p: P, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<Dirent>> {
+  async readdirPromise(p: PathLike<P>): Promise<Array<Filename>>;
+  async readdirPromise(p: PathLike<P>, opts: {withFileTypes: false}): Promise<Array<Filename>>;
+  async readdirPromise(p: PathLike<P>, opts: {withFileTypes: true}): Promise<Array<Dirent>>;
+  async readdirPromise(p: PathLike<P>, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
+  async readdirPromise(p: PathLike<P>, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<Dirent>> {
     return this.baseFs.readdirPromise(this.mapToBase(p), {withFileTypes: withFileTypes as any});
   }
 
-  readdirSync(p: P): Array<Filename>;
-  readdirSync(p: P, opts: {withFileTypes: false}): Array<Filename>;
-  readdirSync(p: P, opts: {withFileTypes: true}): Array<Dirent>;
-  readdirSync(p: P, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
-  readdirSync(p: P, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<Dirent> {
+  readdirSync(p: PathLike<P>): Array<Filename>;
+  readdirSync(p: PathLike<P>, opts: {withFileTypes: false}): Array<Filename>;
+  readdirSync(p: PathLike<P>, opts: {withFileTypes: true}): Array<Dirent>;
+  readdirSync(p: PathLike<P>, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
+  readdirSync(p: PathLike<P>, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<Dirent> {
     return this.baseFs.readdirSync(this.mapToBase(p), {withFileTypes: withFileTypes as any});
   }
 
-  async readlinkPromise(p: P) {
+  async readlinkPromise(p: PathLike<P>) {
     return this.mapFromBase(await this.baseFs.readlinkPromise(this.mapToBase(p)));
   }
 
-  readlinkSync(p: P) {
+  readlinkSync(p: PathLike<P>) {
     return this.mapFromBase(this.baseFs.readlinkSync(this.mapToBase(p)));
   }
 
-  watch(p: P, cb?: WatchCallback): Watcher;
-  watch(p: P, opts: WatchOptions, cb?: WatchCallback): Watcher;
-  watch(p: P, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
+  watch(p: PathLike<P>, cb?: WatchCallback): Watcher;
+  watch(p: PathLike<P>, opts: WatchOptions, cb?: WatchCallback): Watcher;
+  watch(p: PathLike<P>, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
     return this.baseFs.watch(
       this.mapToBase(p),
       // @ts-ignore

@@ -20,10 +20,13 @@ export type {ExtractHintOptions}       from './FakeFS';
 export {DEFAULT_COMPRESSION_LEVEL}     from './ZipFS';
 export type {ZipCompression}           from './ZipFS';
 
-export {PortablePath, Filename}                            from './path';
+export {PortablePath, Filename, PathLike}                  from './path';
 export type {FSPath, Path, NativePath}                     from './path';
 export type {ParsedPath, PathUtils, FormatInputPathObject} from './path';
 export {npath, ppath, toFilename}                          from './path';
+
+export {BaseFileURL}                      from './url';
+export type {FileURL, FileURLConstructor} from './url';
 
 export {AliasFS}                   from './AliasFS';
 export {FakeFS}                    from './FakeFS';

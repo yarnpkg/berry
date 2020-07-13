@@ -1,7 +1,7 @@
-import {FakeFS}              from './FakeFS';
-import {NodeFS}              from './NodeFS';
-import {ProxiedFS}           from './ProxiedFS';
-import {ppath, PortablePath} from './path';
+import {FakeFS}                        from './FakeFS';
+import {NodeFS}                        from './NodeFS';
+import {ProxiedFS}                     from './ProxiedFS';
+import {ppath, PortablePath, PathLike} from './path';
 
 export type JailFSOptions = {
   baseFs?: FakeFS<PortablePath>,
@@ -34,7 +34,9 @@ export class JailFS extends ProxiedFS<PortablePath, PortablePath> {
     return this.baseFs;
   }
 
-  protected mapToBase(p: PortablePath): PortablePath {
+  protected mapToBase(p: PathLike<PortablePath>): PortablePath {
+    p = this.pathUtils.fromPathLike(p);
+
     const normalized = this.pathUtils.normalize(p);
 
     if (this.pathUtils.isAbsolute(p))
@@ -46,7 +48,7 @@ export class JailFS extends ProxiedFS<PortablePath, PortablePath> {
     return this.pathUtils.resolve(this.target, p);
   }
 
-  protected mapFromBase(p: PortablePath): PortablePath {
-    return this.pathUtils.resolve(JAIL_ROOT, this.pathUtils.relative(this.target, p));
+  protected mapFromBase(p: PathLike<PortablePath>): PortablePath {
+    return this.pathUtils.resolve(JAIL_ROOT, this.pathUtils.relative(this.target, this.pathUtils.fromPathLike(p)));
   }
 }

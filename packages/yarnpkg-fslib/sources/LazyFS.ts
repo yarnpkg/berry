@@ -1,6 +1,6 @@
-import {FakeFS}          from './FakeFS';
-import {ProxiedFS}       from './ProxiedFS';
-import {Path, PathUtils} from './path';
+import {FakeFS}                    from './FakeFS';
+import {ProxiedFS}                 from './ProxiedFS';
+import {Path, PathUtils, PathLike} from './path';
 
 export type LazyFSFactory<P extends Path> = () => FakeFS<P>;
 
@@ -26,11 +26,11 @@ export class LazyFS<P extends Path> extends ProxiedFS<P, P> {
     this.instance = value;
   }
 
-  protected mapFromBase(p: P) {
-    return p;
+  protected mapFromBase(p: PathLike<P>) {
+    return this.pathUtils.fromPathLike(p);
   }
 
-  protected mapToBase(p: P) {
-    return p;
+  protected mapToBase(p: PathLike<P>) {
+    return this.pathUtils.fromPathLike(p);
   }
 }

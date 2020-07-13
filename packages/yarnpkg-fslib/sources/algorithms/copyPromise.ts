@@ -1,7 +1,7 @@
-import fs, {Stats}         from 'fs';
+import fs, {Stats}                   from 'fs';
 
-import {FakeFS}            from '../FakeFS';
-import {Path, convertPath} from '../path';
+import {FakeFS}                      from '../FakeFS';
+import {Path, convertPath, PathLike} from '../path';
 
 // 1980-01-01, like Fedora
 const defaultTime = 315532800;
@@ -18,9 +18,13 @@ export type Operations =
 export type LUTimes<P extends Path> =
   Array<[P, Date | number, Date | number]>;
 
-export async function copyPromise<P1 extends Path, P2 extends Path>(destinationFs: FakeFS<P1>, destination: P1, sourceFs: FakeFS<P2>, source: P2, opts: CopyOptions) {
-  const normalizedDestination = destinationFs.pathUtils.normalize(destination);
-  const normalizedSource = sourceFs.pathUtils.normalize(source);
+export async function copyPromise<P1 extends Path, P2 extends Path>(destinationFs: FakeFS<P1>, destination: PathLike<P1>, sourceFs: FakeFS<P2>, source: PathLike<P2>, opts: CopyOptions) {
+  const normalizedDestination = destinationFs.pathUtils.normalize(
+    destinationFs.pathUtils.fromPathLike(destination)
+  );
+  const normalizedSource = sourceFs.pathUtils.normalize(
+    sourceFs.pathUtils.fromPathLike(source)
+  );
 
   const prelayout: Operations = [];
   const postlayout: Operations = [];

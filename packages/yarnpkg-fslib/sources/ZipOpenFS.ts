@@ -7,7 +7,7 @@ import {FakeFS, MkdirOptions, WriteFileOptions}                                 
 import {WatchOptions, WatchCallback, Watcher}                                                      from './FakeFS';
 import {NodeFS}                                                                                    from './NodeFS';
 import {ZipFS}                                                                                     from './ZipFS';
-import {Filename, FSPath, PortablePath}                                                            from './path';
+import {Filename, FSPath, PortablePath, PathLike}                                                  from './path';
 
 const ZIP_FD = 0x80000000;
 
@@ -89,7 +89,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     }
   }
 
-  resolve(p: PortablePath) {
+  resolve(p: PathLike<PortablePath>) {
     return this.baseFs.resolve(p);
   }
 
@@ -99,7 +99,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return remappedFd;
   }
 
-  async openPromise(p: PortablePath, flags: string, mode?: number) {
+  async openPromise(p: PathLike<PortablePath>, flags: string, mode?: number) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.openPromise(p, flags, mode);
     }, async (zipFs, {subPath}) => {
@@ -107,7 +107,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  openSync(p: PortablePath, flags: string, mode?: number) {
+  openSync(p: PathLike<PortablePath>, flags: string, mode?: number) {
     return this.makeCallSync(p, () => {
       return this.baseFs.openSync(p, flags, mode);
     }, (zipFs, {subPath}) => {
@@ -215,7 +215,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return zipFs.closeSync(realFd);
   }
 
-  createReadStream(p: PortablePath | null, opts?: CreateReadStreamOptions) {
+  createReadStream(p: PathLike<PortablePath> | null, opts?: CreateReadStreamOptions) {
     if (p === null)
       return this.baseFs.createReadStream(p, opts);
 
@@ -226,7 +226,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  createWriteStream(p: PortablePath | null, opts?: CreateWriteStreamOptions) {
+  createWriteStream(p: PathLike<PortablePath> | null, opts?: CreateWriteStreamOptions) {
     if (p === null)
       return this.baseFs.createWriteStream(p, opts);
 
@@ -237,7 +237,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async realpathPromise(p: PortablePath) {
+  async realpathPromise(p: PathLike<PortablePath>) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.realpathPromise(p);
     }, async (zipFs, {archivePath, subPath}) => {
@@ -245,7 +245,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  realpathSync(p: PortablePath) {
+  realpathSync(p: PathLike<PortablePath>) {
     return this.makeCallSync(p, () => {
       return this.baseFs.realpathSync(p);
     }, (zipFs, {archivePath, subPath}) => {
@@ -253,7 +253,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async existsPromise(p: PortablePath) {
+  async existsPromise(p: PathLike<PortablePath>) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.existsPromise(p);
     }, async (zipFs, {subPath}) => {
@@ -261,7 +261,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  existsSync(p: PortablePath) {
+  existsSync(p: PathLike<PortablePath>) {
     return this.makeCallSync(p, () => {
       return this.baseFs.existsSync(p);
     }, (zipFs, {subPath}) => {
@@ -269,7 +269,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async accessPromise(p: PortablePath, mode?: number) {
+  async accessPromise(p: PathLike<PortablePath>, mode?: number) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.accessPromise(p, mode);
     }, async (zipFs, {subPath}) => {
@@ -277,7 +277,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  accessSync(p: PortablePath, mode?: number) {
+  accessSync(p: PathLike<PortablePath>, mode?: number) {
     return this.makeCallSync(p, () => {
       return this.baseFs.accessSync(p, mode);
     }, (zipFs, {subPath}) => {
@@ -285,7 +285,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async statPromise(p: PortablePath) {
+  async statPromise(p: PathLike<PortablePath>) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.statPromise(p);
     }, async (zipFs, {subPath}) => {
@@ -293,7 +293,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  statSync(p: PortablePath) {
+  statSync(p: PathLike<PortablePath>) {
     return this.makeCallSync(p, () => {
       return this.baseFs.statSync(p);
     }, (zipFs, {subPath}) => {
@@ -301,7 +301,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async lstatPromise(p: PortablePath) {
+  async lstatPromise(p: PathLike<PortablePath>) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.lstatPromise(p);
     }, async (zipFs, {subPath}) => {
@@ -309,7 +309,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  lstatSync(p: PortablePath) {
+  lstatSync(p: PathLike<PortablePath>) {
     return this.makeCallSync(p, () => {
       return this.baseFs.lstatSync(p);
     }, (zipFs, {subPath}) => {
@@ -317,7 +317,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async chmodPromise(p: PortablePath, mask: number) {
+  async chmodPromise(p: PathLike<PortablePath>, mask: number) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.chmodPromise(p, mask);
     }, async (zipFs, {subPath}) => {
@@ -325,7 +325,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  chmodSync(p: PortablePath, mask: number) {
+  chmodSync(p: PathLike<PortablePath>, mask: number) {
     return this.makeCallSync(p, () => {
       return this.baseFs.chmodSync(p, mask);
     }, (zipFs, {subPath}) => {
@@ -333,7 +333,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async renamePromise(oldP: PortablePath, newP: PortablePath) {
+  async renamePromise(oldP: PathLike<PortablePath>, newP: PathLike<PortablePath>) {
     return await this.makeCallPromise(oldP, async () => {
       return await this.makeCallPromise(newP, async () => {
         return await this.baseFs.renamePromise(oldP, newP);
@@ -353,7 +353,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  renameSync(oldP: PortablePath, newP: PortablePath) {
+  renameSync(oldP: PathLike<PortablePath>, newP: PathLike<PortablePath>) {
     return this.makeCallSync(oldP, () => {
       return this.makeCallSync(newP, () => {
         return this.baseFs.renameSync(oldP, newP);
@@ -373,8 +373,8 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async copyFilePromise(sourceP: PortablePath, destP: PortablePath, flags: number = 0) {
-    const fallback = async (sourceFs: FakeFS<PortablePath>, sourceP: PortablePath, destFs: FakeFS<PortablePath>, destP: PortablePath) => {
+  async copyFilePromise(sourceP: PathLike<PortablePath>, destP: PathLike<PortablePath>, flags: number = 0) {
+    const fallback = async (sourceFs: FakeFS<PortablePath>, sourceP: PathLike<PortablePath>, destFs: FakeFS<PortablePath>, destP: PathLike<PortablePath>) => {
       if ((flags & constants.COPYFILE_FICLONE_FORCE) !== 0)
         throw Object.assign(new Error(`EXDEV: cross-device clone not permitted, copyfile '${sourceP}' -> ${destP}'`), {code: `EXDEV`});
       if ((flags & constants.COPYFILE_EXCL) && await this.existsPromise(sourceP))
@@ -409,8 +409,8 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  copyFileSync(sourceP: PortablePath, destP: PortablePath, flags: number = 0) {
-    const fallback = (sourceFs: FakeFS<PortablePath>, sourceP: PortablePath, destFs: FakeFS<PortablePath>, destP: PortablePath) => {
+  copyFileSync(sourceP: PathLike<PortablePath>, destP: PathLike<PortablePath>, flags: number = 0) {
+    const fallback = (sourceFs: FakeFS<PortablePath>, sourceP: PathLike<PortablePath>, destFs: FakeFS<PortablePath>, destP: PathLike<PortablePath>) => {
       if ((flags & constants.COPYFILE_FICLONE_FORCE) !== 0)
         throw Object.assign(new Error(`EXDEV: cross-device clone not permitted, copyfile '${sourceP}' -> ${destP}'`), {code: `EXDEV`});
       if ((flags & constants.COPYFILE_EXCL) && this.existsSync(sourceP))
@@ -477,7 +477,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async unlinkPromise(p: PortablePath) {
+  async unlinkPromise(p: PathLike<PortablePath>) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.unlinkPromise(p);
     }, async (zipFs, {subPath}) => {
@@ -485,7 +485,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  unlinkSync(p: PortablePath) {
+  unlinkSync(p: PathLike<PortablePath>) {
     return this.makeCallSync(p, () => {
       return this.baseFs.unlinkSync(p);
     }, (zipFs, {subPath}) => {
@@ -493,7 +493,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async utimesPromise(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
+  async utimesPromise(p: PathLike<PortablePath>, atime: Date | string | number, mtime: Date | string | number) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.utimesPromise(p, atime, mtime);
     }, async (zipFs, {subPath}) => {
@@ -501,7 +501,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  utimesSync(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
+  utimesSync(p: PathLike<PortablePath>, atime: Date | string | number, mtime: Date | string | number) {
     return this.makeCallSync(p, () => {
       return this.baseFs.utimesSync(p, atime, mtime);
     }, (zipFs, {subPath}) => {
@@ -509,7 +509,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async mkdirPromise(p: PortablePath, opts?: MkdirOptions) {
+  async mkdirPromise(p: PathLike<PortablePath>, opts?: MkdirOptions) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.mkdirPromise(p, opts);
     }, async (zipFs, {subPath}) => {
@@ -517,7 +517,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  mkdirSync(p: PortablePath, opts?: MkdirOptions) {
+  mkdirSync(p: PathLike<PortablePath>, opts?: MkdirOptions) {
     return this.makeCallSync(p, () => {
       return this.baseFs.mkdirSync(p, opts);
     }, (zipFs, {subPath}) => {
@@ -525,7 +525,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async rmdirPromise(p: PortablePath) {
+  async rmdirPromise(p: PathLike<PortablePath>) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.rmdirPromise(p);
     }, async (zipFs, {subPath}) => {
@@ -533,7 +533,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  rmdirSync(p: PortablePath) {
+  rmdirSync(p: PathLike<PortablePath>) {
     return this.makeCallSync(p, () => {
       return this.baseFs.rmdirSync(p);
     }, (zipFs, {subPath}) => {
@@ -541,7 +541,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async symlinkPromise(target: PortablePath, p: PortablePath, type?: SymlinkType) {
+  async symlinkPromise(target: PathLike<PortablePath>, p: PathLike<PortablePath>, type?: SymlinkType) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.symlinkPromise(target, p, type);
     }, async (zipFs, {subPath}) => {
@@ -549,7 +549,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  symlinkSync(target: PortablePath, p: PortablePath, type?: SymlinkType) {
+  symlinkSync(target: PathLike<PortablePath>, p: PathLike<PortablePath>, type?: SymlinkType) {
     return this.makeCallSync(p, () => {
       return this.baseFs.symlinkSync(target, p, type);
     }, (zipFs, {subPath}) => {
@@ -589,11 +589,11 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
-  async readdirPromise(p: PortablePath, opts: {withFileTypes: false}): Promise<Array<Filename>>;
-  async readdirPromise(p: PortablePath, opts: {withFileTypes: true}): Promise<Array<Dirent>>;
-  async readdirPromise(p: PortablePath, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
-  async readdirPromise(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<Dirent>> {
+  async readdirPromise(p: PathLike<PortablePath>): Promise<Array<Filename>>;
+  async readdirPromise(p: PathLike<PortablePath>, opts: {withFileTypes: false}): Promise<Array<Filename>>;
+  async readdirPromise(p: PathLike<PortablePath>, opts: {withFileTypes: true}): Promise<Array<Dirent>>;
+  async readdirPromise(p: PathLike<PortablePath>, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
+  async readdirPromise(p: PathLike<PortablePath>, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<Dirent>> {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.readdirPromise(p, {withFileTypes: withFileTypes as any});
     }, async (zipFs, {subPath}) => {
@@ -603,11 +603,11 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  readdirSync(p: PortablePath): Array<Filename>;
-  readdirSync(p: PortablePath, opts: {withFileTypes: false}): Array<Filename>;
-  readdirSync(p: PortablePath, opts: {withFileTypes: true}): Array<Dirent>;
-  readdirSync(p: PortablePath, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
-  readdirSync(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<Dirent> {
+  readdirSync(p: PathLike<PortablePath>): Array<Filename>;
+  readdirSync(p: PathLike<PortablePath>, opts: {withFileTypes: false}): Array<Filename>;
+  readdirSync(p: PathLike<PortablePath>, opts: {withFileTypes: true}): Array<Dirent>;
+  readdirSync(p: PathLike<PortablePath>, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
+  readdirSync(p: PathLike<PortablePath>, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<Dirent> {
     return this.makeCallSync(p, () => {
       return this.baseFs.readdirSync(p, {withFileTypes: withFileTypes as any});
     }, (zipFs, {subPath}) => {
@@ -617,7 +617,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async readlinkPromise(p: PortablePath) {
+  async readlinkPromise(p: PathLike<PortablePath>) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.readlinkPromise(p);
     }, async (zipFs, {subPath}) => {
@@ -625,7 +625,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  readlinkSync(p: PortablePath) {
+  readlinkSync(p: PathLike<PortablePath>) {
     return this.makeCallSync(p, () => {
       return this.baseFs.readlinkSync(p);
     }, (zipFs, {subPath}) => {
@@ -633,9 +633,9 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  watch(p: PortablePath, cb?: WatchCallback): Watcher;
-  watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
-  watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
+  watch(p: PathLike<PortablePath>, cb?: WatchCallback): Watcher;
+  watch(p: PathLike<PortablePath>, opts: WatchOptions, cb?: WatchCallback): Watcher;
+  watch(p: PathLike<PortablePath>, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
     return this.makeCallSync(p, () => {
       return this.baseFs.watch(
         p,

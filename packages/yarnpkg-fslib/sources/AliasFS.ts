@@ -1,6 +1,6 @@
-import {FakeFS}          from './FakeFS';
-import {ProxiedFS}       from './ProxiedFS';
-import {Path, PathUtils} from './path';
+import {FakeFS}                    from './FakeFS';
+import {ProxiedFS}                 from './ProxiedFS';
+import {Path, PathUtils, PathLike} from './path';
 
 export type AliasFSOptions<P extends Path> = {
   baseFs: FakeFS<P>,
@@ -27,11 +27,11 @@ export class AliasFS<P extends Path> extends ProxiedFS<P, P> {
     return this.baseFs;
   }
 
-  protected mapFromBase(p: P) {
-    return p;
+  protected mapFromBase(p: PathLike<P>) {
+    return this.pathUtils.fromPathLike(p);
   }
 
-  protected mapToBase(p: P) {
-    return p;
+  protected mapToBase(p: PathLike<P>) {
+    return this.pathUtils.fromPathLike(p);
   }
 }

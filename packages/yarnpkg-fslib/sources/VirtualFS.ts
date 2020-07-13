@@ -1,7 +1,7 @@
-import {FakeFS, ExtractHintOptions}    from './FakeFS';
-import {NodeFS}                        from './NodeFS';
-import {ProxiedFS}                     from './ProxiedFS';
-import {Filename, PortablePath, ppath} from './path';
+import {FakeFS, ExtractHintOptions}              from './FakeFS';
+import {NodeFS}                                  from './NodeFS';
+import {ProxiedFS}                               from './ProxiedFS';
+import {Filename, PortablePath, ppath, PathLike} from './path';
 
 const NUMBER_REGEXP = /^[0-9]+$/;
 
@@ -79,7 +79,9 @@ export class VirtualFS extends ProxiedFS<PortablePath, PortablePath> {
     return this.baseFs.getRealPath();
   }
 
-  realpathSync(p: PortablePath) {
+  realpathSync(p: PathLike<PortablePath>) {
+    p = this.pathUtils.fromPathLike(p);
+
     const match = p.match(VIRTUAL_REGEXP);
     if (!match)
       return this.baseFs.realpathSync(p);
@@ -91,7 +93,9 @@ export class VirtualFS extends ProxiedFS<PortablePath, PortablePath> {
     return VirtualFS.makeVirtualPath(match[1] as PortablePath, match[3] as Filename, realpath);
   }
 
-  async realpathPromise(p: PortablePath) {
+  async realpathPromise(p: PathLike<PortablePath>) {
+    p = this.pathUtils.fromPathLike(p);
+
     const match = p.match(VIRTUAL_REGEXP);
     if (!match)
       return await this.baseFs.realpathPromise(p);
@@ -103,11 +107,11 @@ export class VirtualFS extends ProxiedFS<PortablePath, PortablePath> {
     return VirtualFS.makeVirtualPath(match[1] as PortablePath, match[3] as Filename, realpath);
   }
 
-  mapToBase(p: PortablePath): PortablePath {
-    return VirtualFS.resolveVirtual(p);
+  mapToBase(p: PathLike<PortablePath>): PortablePath {
+    return VirtualFS.resolveVirtual(this.pathUtils.fromPathLike(p));
   }
 
-  mapFromBase(p: PortablePath) {
-    return p;
+  mapFromBase(p: PathLike<PortablePath>) {
+    return this.pathUtils.fromPathLike(p);
   }
 }

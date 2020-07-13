@@ -8,7 +8,7 @@ import {FakeFS, MkdirOptions, WriteFileOptions}                                 
 import {WatchOptions, WatchCallback, Watcher}                                                      from './FakeFS';
 import {NodeFS}                                                                                    from './NodeFS';
 import * as errors                                                                                 from './errors';
-import {FSPath, PortablePath, npath, ppath, Filename}                                              from './path';
+import {FSPath, PortablePath, npath, ppath, Filename, PathLike}                                    from './path';
 
 export type ZipCompression = `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export const DEFAULT_COMPRESSION_LEVEL: ZipCompression = `mixed`;
@@ -402,17 +402,17 @@ export class ZipFS extends BasePortableFakeFS {
     this.ready = false;
   }
 
-  resolve(p: PortablePath) {
-    return ppath.resolve(PortablePath.root, p);
+  resolve(p: PathLike<PortablePath>) {
+    return ppath.resolve(PortablePath.root, ppath.fromPathLike(p));
   }
 
-  async openPromise(p: PortablePath, flags: string, mode?: number) {
+  async openPromise(p: PathLike<PortablePath>, flags: string, mode?: number) {
     return this.openSync(p, flags, mode);
   }
 
-  openSync(p: PortablePath, flags: string, mode?: number) {
+  openSync(p: PathLike<PortablePath>, flags: string, mode?: number) {
     const fd = this.nextFd++;
-    this.fds.set(fd, {cursor: 0, p});
+    this.fds.set(fd, {cursor: 0, p: ppath.fromPathLike(p)});
     return fd;
   }
 
@@ -477,13 +477,13 @@ export class ZipFS extends BasePortableFakeFS {
     this.fds.delete(fd);
   }
 
-  createReadStream(p: PortablePath | null, {encoding}: CreateReadStreamOptions = {}): ReadStream {
+  createReadStream(p: PathLike<PortablePath> | null, {encoding}: CreateReadStreamOptions = {}): ReadStream {
     if (p === null)
       throw new Error(`Unimplemented`);
 
     const stream = Object.assign(new PassThrough(), {
       bytesRead: 0,
-      path: p,
+      path: ppath.fromPathLike(p),
       close: () => {
         clearImmediate(immediate);
       },
@@ -510,7 +510,7 @@ export class ZipFS extends BasePortableFakeFS {
     return stream;
   }
 
-  createWriteStream(p: PortablePath | null, {encoding}: CreateWriteStreamOptions = {}): WriteStream {
+  createWriteStream(p: PathLike<PortablePath> | null, {encoding}: CreateWriteStreamOptions = {}): WriteStream {
     if (this.readOnly)
       throw errors.EROFS(`open '${p}'`);
 
@@ -519,7 +519,7 @@ export class ZipFS extends BasePortableFakeFS {
 
     const stream = Object.assign(new PassThrough(), {
       bytesWritten: 0,
-      path: p,
+      path: ppath.fromPathLike(p),
       close: () => {
         stream.end();
       },
@@ -545,11 +545,11 @@ export class ZipFS extends BasePortableFakeFS {
     return stream;
   }
 
-  async realpathPromise(p: PortablePath) {
+  async realpathPromise(p: PathLike<PortablePath>) {
     return this.realpathSync(p);
   }
 
-  realpathSync(p: PortablePath): PortablePath {
+  realpathSync(p: PathLike<PortablePath>): PortablePath {
     const resolvedP = this.resolveFilename(`lstat '${p}'`, p);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
@@ -558,16 +558,16 @@ export class ZipFS extends BasePortableFakeFS {
     return resolvedP;
   }
 
-  async existsPromise(p: PortablePath) {
+  async existsPromise(p: PathLike<PortablePath>) {
     return this.existsSync(p);
   }
 
-  existsSync(p: PortablePath): boolean {
+  existsSync(p: PathLike<PortablePath>): boolean {
     if (!this.ready)
       throw errors.EBUSY(`archive closed, existsSync '${p}'`);
 
     if (this.symlinkCount === 0) {
-      const resolvedP = ppath.resolve(PortablePath.root,p);
+      const resolvedP = ppath.resolve(PortablePath.root, ppath.fromPathLike(p));
       return this.entries.has(resolvedP) || this.listings.has(resolvedP);
     }
 
@@ -582,11 +582,11 @@ export class ZipFS extends BasePortableFakeFS {
     return this.entries.has(resolvedP) || this.listings.has(resolvedP);
   }
 
-  async accessPromise(p: PortablePath, mode?: number) {
+  async accessPromise(p: PathLike<PortablePath>, mode?: number) {
     return this.accessSync(p, mode);
   }
 
-  accessSync(p: PortablePath, mode: number = constants.F_OK) {
+  accessSync(p: PathLike<PortablePath>, mode: number = constants.F_OK) {
     const resolvedP = this.resolveFilename(`access '${p}'`, p);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
@@ -597,11 +597,13 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  async statPromise(p: PortablePath) {
+  async statPromise(p: PathLike<PortablePath>) {
     return this.statSync(p);
   }
 
-  statSync(p: PortablePath) {
+  statSync(p: PathLike<PortablePath>) {
+    p = ppath.fromPathLike(p);
+
     const resolvedP = this.resolveFilename(`stat '${p}'`, p);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
@@ -613,11 +615,13 @@ export class ZipFS extends BasePortableFakeFS {
     return this.statImpl(`stat '${p}'`, resolvedP);
   }
 
-  async lstatPromise(p: PortablePath) {
+  async lstatPromise(p: PathLike<PortablePath>) {
     return this.lstatSync(p);
   }
 
-  lstatSync(p: PortablePath) {
+  lstatSync(p: PathLike<PortablePath>) {
+    p = ppath.fromPathLike(p);
+
     const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
@@ -732,11 +736,11 @@ export class ZipFS extends BasePortableFakeFS {
     this.entries.set(p, index);
   }
 
-  private resolveFilename(reason: string, p: PortablePath, resolveLastComponent: boolean = true): PortablePath {
+  private resolveFilename(reason: string, p: PathLike<PortablePath>, resolveLastComponent: boolean = true): PortablePath {
     if (!this.ready)
       throw errors.EBUSY(`archive closed, ${reason}`);
 
-    let resolvedP = ppath.resolve(PortablePath.root, p);
+    let resolvedP = ppath.resolve(PortablePath.root, ppath.fromPathLike(p));
     if (resolvedP === `/`)
       return PortablePath.root;
 
@@ -821,8 +825,8 @@ export class ZipFS extends BasePortableFakeFS {
     return source;
   }
 
-  private setFileSource(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView) {
-    const target = ppath.relative(PortablePath.root, p);
+  private setFileSource(p: PathLike<PortablePath>, content: string | Buffer | ArrayBuffer | DataView) {
+    const target = ppath.relative(PortablePath.root, ppath.fromPathLike(p));
     const lzSource = this.allocateSource(content);
 
     try {
@@ -901,11 +905,11 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  async chmodPromise(p: PortablePath, mask: number) {
+  async chmodPromise(p: PathLike<PortablePath>, mask: number) {
     return this.chmodSync(p, mask);
   }
 
-  chmodSync(p: PortablePath, mask: number) {
+  chmodSync(p: PathLike<PortablePath>, mask: number) {
     if (this.readOnly)
       throw errors.EROFS(`chmod '${p}'`);
 
@@ -927,19 +931,19 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  async renamePromise(oldP: PortablePath, newP: PortablePath) {
+  async renamePromise(oldP: PathLike<PortablePath>, newP: PathLike<PortablePath>) {
     return this.renameSync(oldP, newP);
   }
 
-  renameSync(oldP: PortablePath, newP: PortablePath): never {
+  renameSync(oldP: PathLike<PortablePath>, newP: PathLike<PortablePath>): never {
     throw new Error(`Unimplemented`);
   }
 
-  async copyFilePromise(sourceP: PortablePath, destP: PortablePath, flags?: number) {
+  async copyFilePromise(sourceP: PathLike<PortablePath>, destP: PathLike<PortablePath>, flags?: number) {
     return this.copyFileSync(sourceP, destP, flags);
   }
 
-  copyFileSync(sourceP: PortablePath, destP: PortablePath, flags: number = 0) {
+  copyFileSync(sourceP: PathLike<PortablePath>, destP: PathLike<PortablePath>, flags: number = 0) {
     if (this.readOnly)
       throw errors.EROFS(`copyfile '${sourceP} -> '${destP}'`);
 
@@ -989,7 +993,7 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   writeFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    if (typeof p !== `string`)
+    if (!PathLike.isPathLike(p))
       throw errors.EBADF(`read`);
 
     if (this.readOnly)
@@ -1019,19 +1023,19 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  async unlinkPromise(p: PortablePath) {
+  async unlinkPromise(p: PathLike<PortablePath>) {
     return this.unlinkSync(p);
   }
 
-  unlinkSync(p: PortablePath) {
+  unlinkSync(p: PathLike<PortablePath>) {
     throw new Error(`Unimplemented`);
   }
 
-  async utimesPromise(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
+  async utimesPromise(p: PathLike<PortablePath>, atime: Date | string | number, mtime: Date | string | number) {
     return this.utimesSync(p, atime, mtime);
   }
 
-  utimesSync(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
+  utimesSync(p: PathLike<PortablePath>, atime: Date | string | number, mtime: Date | string | number) {
     if (this.readOnly)
       throw errors.EROFS(`utimes '${p}'`);
 
@@ -1040,11 +1044,11 @@ export class ZipFS extends BasePortableFakeFS {
     this.utimesImpl(resolvedP, mtime);
   }
 
-  async lutimesPromise(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
+  async lutimesPromise(p: PathLike<PortablePath>, atime: Date | string | number, mtime: Date | string | number) {
     return this.lutimesSync(p, atime, mtime);
   }
 
-  lutimesSync(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
+  lutimesSync(p: PathLike<PortablePath>, atime: Date | string | number, mtime: Date | string | number) {
     if (this.readOnly)
       throw errors.EROFS(`lutimes '${p}'`);
 
@@ -1068,11 +1072,11 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  async mkdirPromise(p: PortablePath, opts?: MkdirOptions) {
+  async mkdirPromise(p: PathLike<PortablePath>, opts?: MkdirOptions) {
     return this.mkdirSync(p, opts);
   }
 
-  mkdirSync(p: PortablePath, {mode = 0o755, recursive = false}: MkdirOptions = {}) {
+  mkdirSync(p: PathLike<PortablePath>, {mode = 0o755, recursive = false}: MkdirOptions = {}) {
     if (recursive) {
       this.mkdirpSync(p, {chmod: mode});
       return;
@@ -1090,11 +1094,11 @@ export class ZipFS extends BasePortableFakeFS {
     this.chmodSync(resolvedP, mode);
   }
 
-  async rmdirPromise(p: PortablePath) {
+  async rmdirPromise(p: PathLike<PortablePath>) {
     return this.rmdirSync(p);
   }
 
-  rmdirSync(p: PortablePath) {
+  rmdirSync(p: PathLike<PortablePath>) {
     throw new Error(`Unimplemented`);
   }
 
@@ -1109,11 +1113,11 @@ export class ZipFS extends BasePortableFakeFS {
     return index;
   }
 
-  async symlinkPromise(target: PortablePath, p: PortablePath) {
+  async symlinkPromise(target: PathLike<PortablePath>, p: PathLike<PortablePath>) {
     return this.symlinkSync(target, p);
   }
 
-  symlinkSync(target: PortablePath, p: PortablePath) {
+  symlinkSync(target: PathLike<PortablePath>, p: PathLike<PortablePath>) {
     if (this.readOnly)
       throw errors.EROFS(`symlink '${target}' -> '${p}'`);
 
@@ -1124,7 +1128,7 @@ export class ZipFS extends BasePortableFakeFS {
     if (this.entries.has(resolvedP))
       throw errors.EEXIST(`symlink '${target}' -> '${p}'`);
 
-    const index = this.setFileSource(resolvedP, target);
+    const index = this.setFileSource(resolvedP, ppath.fromPathLike(target));
     this.registerEntry(resolvedP, index);
 
     const rc = this.libzip.file.setExternalAttributes(this.zip, index, 0, 0, this.libzip.ZIP_OPSYS_UNIX, (0o120000 | 0o777) << 16);
@@ -1136,7 +1140,7 @@ export class ZipFS extends BasePortableFakeFS {
 
   readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;
   readFilePromise(p: FSPath<PortablePath>, encoding?: string): Promise<Buffer>;
-  async readFilePromise(p: PortablePath, encoding?: string) {
+  async readFilePromise(p: FSPath<PortablePath>, encoding?: string) {
     // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
     switch (encoding) {
       case `utf8`:
@@ -1149,8 +1153,10 @@ export class ZipFS extends BasePortableFakeFS {
   readFileSync(p: FSPath<PortablePath>, encoding: 'utf8'): string;
   readFileSync(p: FSPath<PortablePath>, encoding?: string): Buffer;
   readFileSync(p: FSPath<PortablePath>, encoding?: string) {
-    if (typeof p !== `string`)
+    if (!PathLike.isPathLike(p))
       throw errors.EBADF(`read`);
+
+    p = ppath.fromPathLike(p);
 
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
@@ -1177,19 +1183,19 @@ export class ZipFS extends BasePortableFakeFS {
     return encoding ? data.toString(encoding) : data;
   }
 
-  async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
-  async readdirPromise(p: PortablePath, opts: {withFileTypes: false}): Promise<Array<Filename>>;
-  async readdirPromise(p: PortablePath, opts: {withFileTypes: true}): Promise<Array<DirEntry>>;
-  async readdirPromise(p: PortablePath, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<DirEntry>>;
-  async readdirPromise(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<DirEntry>> {
+  async readdirPromise(p: PathLike<PortablePath>): Promise<Array<Filename>>;
+  async readdirPromise(p: PathLike<PortablePath>, opts: {withFileTypes: false}): Promise<Array<Filename>>;
+  async readdirPromise(p: PathLike<PortablePath>, opts: {withFileTypes: true}): Promise<Array<DirEntry>>;
+  async readdirPromise(p: PathLike<PortablePath>, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<DirEntry>>;
+  async readdirPromise(p: PathLike<PortablePath>, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<DirEntry>> {
     return this.readdirSync(p, {withFileTypes: withFileTypes as any});
   }
 
-  readdirSync(p: PortablePath): Array<Filename>;
-  readdirSync(p: PortablePath, opts: {withFileTypes: false}): Array<Filename>;
-  readdirSync(p: PortablePath, opts: {withFileTypes: true}): Array<DirEntry>;
-  readdirSync(p: PortablePath, opts: {withFileTypes: boolean}): Array<Filename> | Array<DirEntry>;
-  readdirSync(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<DirEntry> {
+  readdirSync(p: PathLike<PortablePath>): Array<Filename>;
+  readdirSync(p: PathLike<PortablePath>, opts: {withFileTypes: false}): Array<Filename>;
+  readdirSync(p: PathLike<PortablePath>, opts: {withFileTypes: true}): Array<DirEntry>;
+  readdirSync(p: PathLike<PortablePath>, opts: {withFileTypes: boolean}): Array<Filename> | Array<DirEntry>;
+  readdirSync(p: PathLike<PortablePath>, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<DirEntry> {
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`scandir '${p}'`);
@@ -1203,17 +1209,19 @@ export class ZipFS extends BasePortableFakeFS {
       return entries;
 
     return entries.map(name => {
-      return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
+      return Object.assign(this.statImpl(`lstat`, ppath.join(ppath.fromPathLike(p), name)), {
         name,
       });
     });
   }
 
-  async readlinkPromise(p: PortablePath) {
+  async readlinkPromise(p: PathLike<PortablePath>) {
     return this.readlinkSync(p);
   }
 
-  readlinkSync(p: PortablePath): PortablePath {
+  readlinkSync(p: PathLike<PortablePath>): PortablePath {
+    p = ppath.fromPathLike(p);
+
     const resolvedP = this.resolveFilename(`readlink '${p}'`, p, false);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`readlink '${p}'`);
@@ -1244,9 +1252,9 @@ export class ZipFS extends BasePortableFakeFS {
     return this.getFileSource(entry).toString() as PortablePath;
   }
 
-  watch(p: PortablePath, cb?: WatchCallback): Watcher;
-  watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
-  watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
+  watch(p: PathLike<PortablePath>, cb?: WatchCallback): Watcher;
+  watch(p: PathLike<PortablePath>, opts: WatchOptions, cb?: WatchCallback): Watcher;
+  watch(p: PathLike<PortablePath>, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
     let persistent: boolean;
 
     switch (typeof a) {

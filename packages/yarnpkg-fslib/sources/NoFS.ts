@@ -1,5 +1,5 @@
-import {FakeFS}              from './FakeFS';
-import {PortablePath, ppath} from './path';
+import {FakeFS}                        from './FakeFS';
+import {PortablePath, ppath, PathLike} from './path';
 
 const makeError = () => Object.assign(new Error(`ENOSYS: unsupported filesystem access`), {code: `ENOSYS`});
 
@@ -78,11 +78,11 @@ export class NoFS extends FakeFS<PortablePath> {
     throw makeError();
   }
 
-  async existsPromise(p: PortablePath): Promise<never> {
+  async existsPromise(p: PathLike<PortablePath>): Promise<never> {
     throw makeError();
   }
 
-  existsSync(p: PortablePath): never {
+  existsSync(p: PathLike<PortablePath>): never {
     throw makeError();
   }
 
@@ -102,11 +102,11 @@ export class NoFS extends FakeFS<PortablePath> {
     throw makeError();
   }
 
-  async lstatPromise(p: PortablePath): Promise<never> {
+  async lstatPromise(p: PathLike<PortablePath>): Promise<never> {
     throw makeError();
   }
 
-  lstatSync(p: PortablePath): never {
+  lstatSync(p: PathLike<PortablePath>): never {
     throw makeError();
   }
 

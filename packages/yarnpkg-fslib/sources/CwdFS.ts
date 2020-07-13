@@ -1,7 +1,7 @@
-import {FakeFS}              from './FakeFS';
-import {NodeFS}              from './NodeFS';
-import {ProxiedFS}           from './ProxiedFS';
-import {PortablePath, ppath} from './path';
+import {FakeFS}                        from './FakeFS';
+import {NodeFS}                        from './NodeFS';
+import {ProxiedFS}                     from './ProxiedFS';
+import {PortablePath, ppath, PathLike} from './path';
 
 export type CwdFSOptions = {
   baseFs?: FakeFS<PortablePath>,
@@ -24,7 +24,9 @@ export class CwdFS extends ProxiedFS<PortablePath, PortablePath> {
     return this.pathUtils.resolve(this.baseFs.getRealPath(), this.target);
   }
 
-  resolve(p: PortablePath) {
+  resolve(p: PathLike<PortablePath>) {
+    p = this.pathUtils.fromPathLike(p);
+
     if (this.pathUtils.isAbsolute(p)) {
       return ppath.normalize(p);
     } else {
@@ -32,11 +34,13 @@ export class CwdFS extends ProxiedFS<PortablePath, PortablePath> {
     }
   }
 
-  mapFromBase(path: PortablePath) {
-    return path;
+  mapFromBase(path: PathLike<PortablePath>) {
+    return this.pathUtils.fromPathLike(path);
   }
 
-  mapToBase(path: PortablePath) {
+  mapToBase(path: PathLike<PortablePath>) {
+    path = this.pathUtils.fromPathLike(path);
+
     if (this.pathUtils.isAbsolute(path)) {
       return path;
     } else {
