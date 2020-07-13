@@ -82,8 +82,8 @@ ppath.toFileURL = (p: PortablePath) => posixPathToFileURL(p);
 npath.PathBuffer = NativePathBuffer;
 ppath.PathBuffer = PortablePathBuffer;
 
-npath.fromPathBuffer = (buffer: PathBuffer<NativePath>, encoding?: BufferEncoding) => buffer.toString(encoding);
-ppath.fromPathBuffer = (buffer: PathBuffer<PortablePath>, encoding?: BufferEncoding) => buffer.toString(encoding);
+npath.fromPathBuffer = (buffer: PathBuffer<NativePath>) => buffer.toString();
+ppath.fromPathBuffer = (buffer: PathBuffer<PortablePath>) => buffer.toString();
 
 npath.toPathBuffer = (p: NativePath, encoding?: BufferEncoding) => new NativePathBuffer(p, encoding);
 ppath.toPathBuffer = (p: PortablePath, encoding?: BufferEncoding) => new PortablePathBuffer(p, encoding);
@@ -128,7 +128,7 @@ export interface PathUtils<P extends Path> {
   contains(from: P, to: P): P | null;
 
   PathBuffer: PathBufferConstructor<P>;
-  fromPathBuffer(buffer: PathBuffer<P>, encoding?: BufferEncoding): P;
+  fromPathBuffer(buffer: PathBuffer<P>): P;
   toPathBuffer(p: P, encoding?: BufferEncoding): PathBuffer<P>;
 
   FileURL: FileURLConstructor<P>;
@@ -192,7 +192,7 @@ export function toFilename(filename: string): Filename {
 
 export function fromPathLike<P extends Path>(pathUtils: PathUtils<P>, pathLike: PathLike<P>): P {
   const path = Buffer.isBuffer(pathLike)
-    ? pathLike.toString()
+    ? pathUtils.fromPathBuffer(pathLike)
     : pathLike instanceof URL
       ? pathUtils.fromFileURL(pathLike)
       : pathLike;

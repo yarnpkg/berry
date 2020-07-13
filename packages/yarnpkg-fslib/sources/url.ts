@@ -1,4 +1,3 @@
-import {posix}                                                                       from 'path';
 import {URL, fileURLToPath as fileURLToPathImpl, pathToFileURL as pathToFileURLImpl} from 'url';
 
 import * as errors                                                                   from './errors';
@@ -70,7 +69,7 @@ export function fileURLToPath(url: FileURL): NativePath {
 
 export function posixPathToFileURL(p: PortablePath) {
   return Object.assign(new URL(PROTOCOL), {
-    pathname: posix.resolve(p)
+    pathname: ppath.resolve(p)
       // Preserve trailing slashes
       .replace(/\/?$/, p.endsWith(`/`) ? `/` : ``)
       .replace(/%/g, `%25`)

@@ -25,6 +25,9 @@ export type {FSPath, Path, NativePath}                     from './path';
 export type {ParsedPath, PathUtils, FormatInputPathObject} from './path';
 export {npath, ppath, toFilename}                          from './path';
 
+export {BasePathBuffer}                         from './buffer';
+export type {PathBuffer, PathBufferConstructor} from './buffer';
+
 export {BaseFileURL}                      from './url';
 export type {FileURL, FileURLConstructor} from './url';
 
