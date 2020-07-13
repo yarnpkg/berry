@@ -33899,7 +33899,6 @@ var errors = __webpack_require__(984);
 
 
 
-
 const PROTOCOL = `file:`;
 class BaseFileURL extends external_url_.URL {
   constructor(pathUtils, p) {
@@ -33951,7 +33950,7 @@ function fileURLToPath(url) {
 }
 function posixPathToFileURL(p) {
   return Object.assign(new external_url_.URL(PROTOCOL), {
-    pathname: external_path_.posix.resolve(p) // Preserve trailing slashes
+    pathname: ppath.resolve(p) // Preserve trailing slashes
     .replace(/\/?$/, p.endsWith(`/`) ? `/` : ``).replace(/%/g, `%25`) // In posix, "/" is a valid character in paths
     .replace(/\\/g, `%5C`).replace(/\n/g, `%0A`).replace(/\r/g, `%0D`).replace(/\t/g, `%09`)
   });
@@ -34031,9 +34030,9 @@ ppath.toFileURL = p => posixPathToFileURL(p);
 npath.PathBuffer = NativePathBuffer;
 ppath.PathBuffer = PortablePathBuffer;
 
-npath.fromPathBuffer = (buffer, encoding) => buffer.toString(encoding);
+npath.fromPathBuffer = buffer => buffer.toString();
 
-ppath.fromPathBuffer = (buffer, encoding) => buffer.toString(encoding);
+ppath.fromPathBuffer = buffer => buffer.toString();
 
 npath.toPathBuffer = (p, encoding) => new NativePathBuffer(p, encoding);
 
@@ -34071,7 +34070,7 @@ function toFilename(filename) {
   return filename;
 }
 function fromPathLike(pathUtils, pathLike) {
-  const path = Buffer.isBuffer(pathLike) ? pathLike.toString() : pathLike instanceof external_url_.URL ? pathUtils.fromFileURL(pathLike) : pathLike;
+  const path = Buffer.isBuffer(pathLike) ? pathUtils.fromPathBuffer(pathLike) : pathLike instanceof external_url_.URL ? pathUtils.fromFileURL(pathLike) : pathLike;
   return convertPath(pathUtils, path);
 }
 
@@ -36800,6 +36799,7 @@ var external_os_ = __webpack_require__(87);
 var external_os_default = /*#__PURE__*/__webpack_require__.n(external_os_);
 
 // CONCATENATED MODULE: ../yarnpkg-fslib/sources/index.ts
+
 
 
 
