@@ -24,6 +24,27 @@ describe(`Node_Modules`, () => {
     )
   );
 
+  it(`should setup the right symlinks`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`has-symlinks`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(source(`require('has-symlinks/symlink')`)).resolves.toMatchObject({
+          name: `has-symlinks`,
+          version: `1.0.0`,
+        });
+      },
+    )
+  );
+
   test(
     `workspace packages shouldn't be hoisted if they conflict with root dependencies`,
     makeTemporaryEnv(
