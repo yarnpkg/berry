@@ -1679,7 +1679,12 @@ export class Project {
         report.reportError(MessageName.IMMUTABLE_CACHE, `${this.configuration.format(ppath.basename(entryPath), `magenta`)} appears to be unused and would marked for deletion, but the cache is immutable`);
       } else {
         report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${this.configuration.format(ppath.basename(entryPath), `magenta`)} appears to be unused - removing`);
-        await xfs.unlinkPromise(entryPath);
+        const fileInfo = await xfs.statPromise(entryPath);
+        if (fileInfo.isDirectory()) {
+          await xfs.rmdirPromise(entryPath);
+        } else {
+          await xfs.unlinkPromise(entryPath);
+        }
       }
     }
 
