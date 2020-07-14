@@ -3,7 +3,7 @@ import {Configuration, Manifest, Project}    from '@yarnpkg/core';
 import {execUtils, scriptUtils, structUtils} from '@yarnpkg/core';
 import {xfs, ppath, Filename}                from '@yarnpkg/fslib';
 import {Command, Usage, UsageError}          from 'clipanion';
-import {merge}                               from 'lodash';
+import merge                                 from 'lodash/merge';
 import {inspect}                             from 'util';
 
 // eslint-disable-next-line arca/no-default-export
