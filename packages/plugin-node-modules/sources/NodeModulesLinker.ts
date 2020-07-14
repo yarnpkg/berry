@@ -12,7 +12,6 @@ import {NodeModulesLocatorMap, buildLocatorMap}                   from '@yarnpkg
 import {PnpSettings, makeRuntimeApi}                              from '@yarnpkg/pnp';
 import cmdShim                                                    from '@zkochan/cmd-shim';
 import {UsageError}                                               from 'clipanion';
-import {SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS}                       from 'constants';
 import fs                                                         from 'fs';
 
 const STATE_FILE_VERSION = 1;
