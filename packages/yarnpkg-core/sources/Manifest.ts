@@ -1,11 +1,11 @@
-import {FakeFS, Filename, NodeFS, PortablePath, ppath, toFilename} from '@yarnpkg/fslib';
-import {Resolution, parseResolution, stringifyResolution}          from '@yarnpkg/parsers';
-import semver                                                      from 'semver';
+import {FakeFS, Filename, NodeFS, PortablePath, npath, ppath, toFilename} from '@yarnpkg/fslib';
+import {Resolution, parseResolution, stringifyResolution}                 from '@yarnpkg/parsers';
+import semver                                                             from 'semver';
 
-import * as miscUtils                                              from './miscUtils';
-import * as structUtils                                            from './structUtils';
-import {IdentHash}                                                 from './types';
-import {Ident, Descriptor}                                         from './types';
+import * as miscUtils                                                     from './miscUtils';
+import * as structUtils                                                   from './structUtils';
+import {Ident, Descriptor}                                                from './types';
+import {IdentHash}                                                        from './types';
 
 export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
 export type HardDependencies = 'dependencies' | 'devDependencies';
@@ -28,8 +28,10 @@ export interface PublishConfig {
   access?: string;
   main?: PortablePath;
   module?: PortablePath;
+  browser?: PortablePath;
   bin?: Map<string, PortablePath>;
   registry?: string;
+  executableFiles?: Set<PortablePath>;
 }
 
 export class Manifest {
@@ -47,6 +49,7 @@ export class Manifest {
 
   public main: PortablePath | null = null;
   public module: PortablePath | null = null;
+  public browser: PortablePath | null = null;
 
   public languageName: string | null = null;
 
@@ -196,6 +199,15 @@ export class Manifest {
 
     if (typeof data.languageName === `string`)
       this.languageName = data.languageName;
+
+    if (typeof data.main === `string`)
+      this.main = data.main;
+
+    if (typeof data.module === `string`)
+      this.module = data.module;
+
+    if (typeof data.browser === `string`)
+      this.browser = data.browser;
 
     if (typeof data.bin === `string`) {
       if (this.name !== null) {
@@ -368,11 +380,14 @@ export class Manifest {
       if (typeof data.publishConfig.main === `string`)
         this.publishConfig.main = data.publishConfig.main;
 
-      if (typeof data.publishConfig.registry === `string`)
-        this.publishConfig.registry = data.publishConfig.registry;
-
       if (typeof data.publishConfig.module === `string`)
         this.publishConfig.module = data.publishConfig.module;
+
+      if (typeof data.publishConfig.browser === `string`)
+        this.publishConfig.browser = data.publishConfig.browser;
+
+      if (typeof data.publishConfig.registry === `string`)
+        this.publishConfig.registry = data.publishConfig.registry;
 
       if (typeof data.publishConfig.bin === `string`) {
         if (this.name !== null) {
@@ -390,6 +405,19 @@ export class Manifest {
           }
 
           this.publishConfig.bin.set(key, value as PortablePath);
+        }
+      }
+
+      if (Array.isArray(data.publishConfig.executableFiles)) {
+        this.publishConfig.executableFiles = new Set();
+
+        for (const value of data.publishConfig.executableFiles) {
+          if (typeof value !== `string`) {
+            errors.push(new Error(`Invalid executable file definition`));
+            continue;
+          }
+
+          this.publishConfig.executableFiles.add(npath.toPortablePath(value));
         }
       }
     }
@@ -607,6 +635,21 @@ export class Manifest {
       data.languageName = this.languageName;
     else
       delete data.languageName;
+
+    if (this.main !== null)
+      data.main = this.main;
+    else
+      delete data.main;
+
+    if (this.module !== null)
+      data.module = this.module;
+    else
+      delete data.module;
+
+    if (this.browser !== null)
+      data.browser = this.browser;
+    else
+      delete data.browser;
 
     if (this.bin.size === 1 && this.name !== null && this.bin.has(this.name.name)) {
       data.bin = this.bin.get(this.name.name)!;

@@ -4,6 +4,24 @@
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn import plugin from sources <name>`).
 
+### Ecosystem
+
+- Packages can now use the `publishConfig.executableFiles` field in their manifests to indicate which files should keep the executable flag once packed in the archive. This is important as for portability reasons Yarn strips the executable flag from all files during packing (otherwise `yarn pack` would yield different outputs when run on Posix vs Windows). Files listed in the `bin` field are assumed executable by default, so you don't need to explicitly list them in `executableFiles`.
+
+### Bugfixes
+
+- Requests won't timeout anymore as long as the server is still sending data.
+- `yarn pack` will properly include main/module/bin files, even when not explicitly referenced through the `files` field.
+
+### CLI
+
+- `yarn add` and `yarn up` will now respect the `preferInteractive` configuration option.
+- `yarn config set` now supports the `-H,--home` flag, which causes it to update the home configuration instead of the project configuration.
+
+### Configuration
+
+- The settings found in the home configuration file won't cause exceptions when consumed by older Yarn versions. Unsupported options will simply be silently ignored. This should improve the user experience when working with multiple projects configured with different Yarn versions.
+
 ## 2.1.1
 
 - Fixed hyperlink rendering on iTerm
@@ -48,7 +66,7 @@
 - The new `changesetBaseRef` setting can be used to change the name of the master branch that `yarn version check` will use in its changeset heuristic.
 - The new `httpTimeout` and `httpRetry` settings allow you to configure the behavior of the HTTP(s) requests.
 - The new `preferTruncatedLines` setting allow you to tell Yarn that it's ok if info and warning messages are truncated to fit in a single line (errors will always wrap as much as needed, and piping Yarn's output will toggle off this behaviour altogether).
-- The cache compression level can now be configured through `compressionLevel`. If you don't use Zero-Installs, using a value of `0` may yield speed improvements at little cost. 
+- The cache compression level can now be configured through `compressionLevel`. If you don't use Zero-Installs, using a value of `0` may yield speed improvements at little cost.
 - Plugins are now loaded from the location of the RC file.
 
 ### Protocols

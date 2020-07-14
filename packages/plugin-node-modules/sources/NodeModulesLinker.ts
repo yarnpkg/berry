@@ -395,7 +395,10 @@ const parseLocation = (location: PortablePath, {skipPrefix}: {skipPrefix: Portab
   if (projectRelativePath === null)
     throw new Error(`Assertion failed: Cannot process a path that isn't part of the requested prefix (${location} isn't within ${skipPrefix})`);
 
-  const allSegments = projectRelativePath.split(ppath.sep);
+  const allSegments = projectRelativePath
+    .split(ppath.sep)
+    // Ignore empty segments (after trailing slashes)
+    .filter(segment => segment !== ``);
   const nmIndex = allSegments.indexOf(NODE_MODULES);
 
   // Project path, up until the first node_modules segment
