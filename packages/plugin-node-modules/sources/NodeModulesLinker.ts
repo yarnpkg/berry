@@ -458,7 +458,16 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
 };
 
 const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath) => {
-  if (process.platform == `win32` && xfs.lstatSync(srcPath).isDirectory()) {
+  let stats;
+
+  try {
+    if (process.platform === `win32`) {
+      stats = xfs.lstatSync(srcPath);
+    }
+  } catch (e) {
+  }
+
+  if (process.platform == `win32` && (!stats || stats.isDirectory())) {
     xfs.symlinkPromise(srcPath, dstPath, `junction`);
   } else {
     xfs.symlinkPromise(ppath.relative(ppath.dirname(dstPath), srcPath), dstPath);

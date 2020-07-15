@@ -2,6 +2,7 @@ import {xfs, npath} from '@yarnpkg/fslib';
 
 const {
   fs: {writeFile, writeJson},
+  tests: {testIf},
 } = require(`pkg-tests-core`);
 
 describe(`Node_Modules`, () => {
@@ -24,7 +25,9 @@ describe(`Node_Modules`, () => {
     )
   );
 
-  it(`should setup the right symlinks`,
+  testIf(
+    () => process.platform !== `win32`,
+    `should setup the right symlinks`,
     makeTemporaryEnv(
       {
         dependencies: {
