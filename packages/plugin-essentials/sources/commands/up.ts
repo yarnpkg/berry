@@ -3,7 +3,7 @@ import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResol
 import {Project, StreamReport, Workspace}                                                  from '@yarnpkg/core';
 import {structUtils}                                                                       from '@yarnpkg/core';
 import {Command, Usage, UsageError}                                                        from 'clipanion';
-import inquirer                                                                            from 'inquirer';
+import {prompt}                                                                            from 'enquirer';
 import micromatch                                                                          from 'micromatch';
 
 import * as suggestUtils                                                                   from '../suggestUtils';
@@ -73,12 +73,6 @@ export default class UpCommand extends BaseCommand {
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const interactive = this.interactive ?? configuration.get<boolean>(`preferInteractive`);
-
-    // @ts-ignore
-    const prompt = inquirer.createPromptModule({
-      input: this.context.stdin as NodeJS.ReadStream,
-      output: this.context.stdout as NodeJS.WriteStream,
-    });
 
     const modifier = suggestUtils.getModifier(this, project);
 
@@ -197,17 +191,25 @@ export default class UpCommand extends BaseCommand {
       } else {
         askedQuestions = true;
         ({answer: selected} = await prompt({
-          type: `list`,
+          type: `select`,
           name: `answer`,
           message: `Which range to you want to use in ${structUtils.prettyWorkspace(configuration, workspace)} ❯ ${target}?`,
-          choices: suggestions.map(({descriptor, reason}) => descriptor ? {
-            name: reason,
-            value: descriptor as Descriptor,
-            short: structUtils.prettyDescriptor(project.configuration, descriptor),
+          choices: suggestions.map(({descriptor, name, reason}) => descriptor ? {
+            name,
+            hint: reason,
+            descriptor,
           } : {
-            name: reason,
-            disabled: (): boolean => true,
+            name,
+            hint: reason,
+            disabled: true,
           }),
+          onCancel: () => process.exit(130),
+          result(name: string) {
+            // @ts-expect-error: The enquirer types don't include find
+            return this.find(name, `descriptor`);
+          },
+          stdin: this.context.stdin as NodeJS.ReadStream,
+          stdout: this.context.stdout as NodeJS.WriteStream,
         }));
       }
 

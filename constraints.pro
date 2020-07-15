@@ -34,6 +34,10 @@ gen_enforced_dependency(WorkspaceCwd, DependencyIdent, WorkspaceRange, Dependenc
         atom_concat('^', DependencyVersion, WorkspaceRange)
     ).
 
+% This rule enforces that all packages must not depend on inquirer - we use enquirer instead
+gen_enforced_dependency(WorkspaceCwd, 'inquirer', null, DependencyType) :-
+  workspace_has_dependency(WorkspaceCwd, 'inquirer', _, DependencyType).
+
 % This rule enforces that all packages that depend on TypeScript must also depend on tslib
 gen_enforced_dependency(WorkspaceCwd, 'tslib', 'range', 'dependencies') :-
   % Iterates over all TypeScript dependencies from all workspaces
