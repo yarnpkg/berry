@@ -5,6 +5,7 @@ import semver                                                                   
 
 export type Suggestion = {
   descriptor: Descriptor,
+  name: string,
   reason: string,
 };
 
@@ -167,7 +168,8 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
   if (request.range !== `unknown`) {
     return [{
       descriptor: request,
-      reason: `Unambiguous explicit request`,
+      name: `Use ${structUtils.prettyDescriptor(project.configuration, request)}`,
+      reason: `(unambiguous explicit request)`,
     }];
   }
 
@@ -184,8 +186,11 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
     switch (strategy) {
       case Strategy.KEEP: {
         if (existing) {
-          const reason = `Keep ${structUtils.prettyDescriptor(project.configuration, existing)} (no changes)`;
-          suggested.push({descriptor: existing, reason});
+          suggested.push({
+            descriptor: existing,
+            name: `Keep ${structUtils.prettyDescriptor(project.configuration, existing)}`,
+            reason: `(no changes)`,
+          });
         }
       } break;
 
@@ -196,21 +201,28 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
             if (strategies.includes(Strategy.KEEP))
               continue;
 
-          let reason = `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)} (originally used by ${structUtils.prettyLocator(project.configuration, locators[0])}`;
+          let reason = `(originally used by ${structUtils.prettyLocator(project.configuration, locators[0])}`;
 
           reason += locators.length > 1
             ? ` and ${locators.length - 1} other${locators.length > 2 ? `s` : ``})`
             : `)`;
 
-          suggested.push({descriptor, reason});
+          suggested.push({
+            descriptor,
+            name: `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)}`,
+            reason,
+          });
         }
       } break;
 
       case Strategy.CACHE: {
         for (const descriptor of project.storedDescriptors.values()) {
           if (descriptor.identHash === request.identHash) {
-            const reason = `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)} (already used somewhere in the lockfile)`;
-            suggested.push({descriptor, reason});
+            suggested.push({
+              descriptor,
+              name: `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)}`,
+              reason: `(already used somewhere in the lockfile)`,
+            });
           }
         }
       } break;
@@ -224,20 +236,32 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
         if (candidateWorkspace === null)
           continue;
 
-        const reason = `Attach ${structUtils.prettyWorkspace(project.configuration, candidateWorkspace)} (local workspace at ${candidateWorkspace.cwd})`;
-        suggested.push({descriptor: candidateWorkspace.anchoredDescriptor, reason});
+        suggested.push({
+          descriptor: candidateWorkspace.anchoredDescriptor,
+          name: `Attach ${structUtils.prettyWorkspace(project.configuration, candidateWorkspace)}`,
+          reason: `(local workspace at ${candidateWorkspace.cwd})`,
+        });
       } break;
 
       case Strategy.LATEST: {
         if (request.range !== `unknown`) {
-          const reason = `Use ${structUtils.prettyRange(project.configuration, request.range)} (explicit range requested)`;
-          suggested.push({descriptor: request, reason});
+          suggested.push({
+            descriptor: request,
+            name: `Use ${structUtils.prettyRange(project.configuration, request.range)}`,
+            reason: `(explicit range requested)`,
+          });
         } else if (target === Target.PEER) {
-          const reason = `Use * (catch-all peer dependency pattern)`;
-          suggested.push({descriptor: structUtils.makeDescriptor(request, `*`), reason});
+          suggested.push({
+            descriptor: structUtils.makeDescriptor(request, `*`),
+            name: `Use *`,
+            reason: `(catch-all peer dependency pattern)`,
+          });
         } else if (!project.configuration.get(`enableNetwork`)) {
-          const reason = `Resolve from latest ${project.configuration.format(`(unavailable because enableNetwork is toggled off)`, `grey`)}`;
-          suggested.push({descriptor: null, reason});
+          suggested.push({
+            descriptor: null,
+            name: `Resolve from latest`,
+            reason: project.configuration.format(`(unavailable because enableNetwork is toggled off)`, `grey`),
+          });
         } else {
           let latest;
           try {
@@ -249,8 +273,11 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
           if (latest) {
             latest = applyModifier(latest, modifier);
 
-            const reason = `Use ${structUtils.prettyDescriptor(project.configuration, latest)} (resolved from latest)`;
-            suggested.push({descriptor: latest, reason});
+            suggested.push({
+              descriptor: latest,
+              name: `Use ${structUtils.prettyDescriptor(project.configuration, latest)}`,
+              reason: `(resolved from latest)`,
+            });
           }
         }
       } break;
