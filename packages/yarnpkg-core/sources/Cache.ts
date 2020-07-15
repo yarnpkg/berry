@@ -193,8 +193,9 @@ export class Cache {
     const loadPackageThroughMirror = async () => {
       if (mirrorPath === null || !xfs.existsSync(mirrorPath)) {
         const zipFs = await loader!();
+        const realPath = zipFs.getRealPath();
         zipFs.saveAndClose();
-        return zipFs.getRealPath();
+        return realPath;
       }
 
       const tempDir = await xfs.mktempPromise();
