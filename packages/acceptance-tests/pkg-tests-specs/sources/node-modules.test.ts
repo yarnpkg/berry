@@ -2,6 +2,7 @@ import {xfs, npath} from '@yarnpkg/fslib';
 
 const {
   fs: {writeFile, writeJson},
+  tests: {testIf},
 } = require(`pkg-tests-core`);
 
 describe(`Node_Modules`, () => {
@@ -20,6 +21,29 @@ describe(`Node_Modules`, () => {
         await expect(source(`require('resolve').sync('resolve')`)).resolves.toEqual(
           await source(`require.resolve('resolve')`),
         );
+      },
+    )
+  );
+
+  testIf(
+    () => process.platform !== `win32`,
+    `should setup the right symlinks`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`has-symlinks`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(source(`require('has-symlinks/symlink')`)).resolves.toMatchObject({
+          name: `has-symlinks`,
+          version: `1.0.0`,
+        });
       },
     )
   );
