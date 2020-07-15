@@ -2,7 +2,7 @@ import {NativePath, PortablePath, Path, PathUtils, PathLike, PathType, ppath, np
 
 export const PATH_BUFFER_ENCODING = `latin1`;
 
-export class BasePathBuffer<P extends Path> extends Buffer {
+export abstract class BasePathBuffer<P extends Path> extends Buffer {
   declare public toString: (encoding?: BufferEncoding, start?: number, end?: number) => P;
 
   protected constructor(pathUtils: PathUtils<P>, p: PathLike<P>) {

@@ -5,7 +5,7 @@ import {NativePath, PortablePath, Path, PathUtils, PathLike, PathType, ppath, np
 
 const PROTOCOL = `file:`;
 
-export class BaseFileURL<P extends Path> extends URL {
+export abstract class BaseFileURL<P extends Path> extends URL {
   declare public protocol: typeof PROTOCOL;
 
   protected constructor(pathUtils: PathUtils<P>, p: PathLike<P>) {
