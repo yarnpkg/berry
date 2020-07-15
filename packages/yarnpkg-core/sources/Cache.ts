@@ -191,17 +191,18 @@ export class Cache {
     };
 
     const loadPackageThroughMirror = async () => {
-      if (mirrorPath === null || !xfs.existsSync(mirrorPath))
-        return await loader!();
+      if (mirrorPath === null || !xfs.existsSync(mirrorPath)) {
+        const zipFs = await loader!();
+        const realPath = zipFs.getRealPath();
+        zipFs.saveAndClose();
+        return realPath;
+      }
 
       const tempDir = await xfs.mktempPromise();
       const tempPath = ppath.join(tempDir, this.getVersionFilename(locator));
 
       await xfs.copyFilePromise(mirrorPath, tempPath, fs.constants.COPYFILE_FICLONE);
-
-      return new ZipFS(tempPath, {
-        libzip: await getLibzipPromise(),
-      });
+      return tempPath;
     };
 
     const loadPackage = async () => {
@@ -210,10 +211,7 @@ export class Cache {
       if (this.immutable)
         throw new ReportError(MessageName.IMMUTABLE_CACHE, `Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
 
-      const zipFs = await loadPackageThroughMirror();
-      const originalPath = zipFs.getRealPath();
-
-      zipFs.saveAndClose();
+      const originalPath = await loadPackageThroughMirror();
 
       await xfs.chmodPromise(originalPath, 0o644);
 
