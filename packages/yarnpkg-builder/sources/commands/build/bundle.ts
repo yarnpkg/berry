@@ -150,6 +150,15 @@ export default class BuildBundleCommand extends Command {
           },
 
           plugins: [
+            // esprima is only needed for parsing !!js/function, which isn't part of the FAILSAFE_SCHEMA.
+            // Unfortunately, js-yaml declares it as a hard dependency and requires the entire module,
+            // which causes webpack to add 0.13 MB of unused code to the bundle.
+            // Fortunately, js-yaml wraps the require call inside a try / catch block, so we can just ignore it.
+            // Reference: https://github.com/nodeca/js-yaml/blob/master/lib/js-yaml/type/js/function.js#L15
+            new webpack.IgnorePlugin({
+              resourceRegExp: /^esprima$/,
+              contextRegExp: /js-yaml/,
+            }),
             new webpack.BannerPlugin({
               entryOnly: true,
               banner: `#!/usr/bin/env node\n/* eslint-disable */`,
