@@ -4353,16 +4353,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/inquirer@npm:^0.0.43":
-  version: 0.0.43
-  resolution: "@types/inquirer@npm:0.0.43"
-  dependencies:
-    "@types/rx": "*"
-    "@types/through": "*"
-  checksum: 6afd34b3b60aedbb89c6caa1987bd66cc783d67f2c22578a1ab389ba3ef3db435c28de612d7679d4f6e23c32f96f5cb2b0395eeb2a1656b0ae06034ded32f53e
-  languageName: node
-  linkType: hard
-
 "@types/invariant@npm:^2.2.30":
   version: 2.2.30
   resolution: "@types/invariant@npm:2.2.30"
@@ -4686,133 +4676,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/rx-core-binding@npm:*":
-  version: 4.0.4
-  resolution: "@types/rx-core-binding@npm:4.0.4"
-  dependencies:
-    "@types/rx-core": "*"
-  checksum: bb5f8c75d825fbaae49c8185a350a96ebdbf20e39c11ddf4fe37ebc433566c7f6693c0f16068be2ed283c7264123e97aef0d8b43e42a9571a7cea93943b5ee92
-  languageName: node
-  linkType: hard
-
-"@types/rx-core@npm:*":
-  version: 4.0.3
-  resolution: "@types/rx-core@npm:4.0.3"
-  checksum: 9279b571251665976d8703c4c6a39ed13f0baa86d4cd613e3f9ea932bb49808d5f35384cd2b8f7d095a6588e6c50b569c36738e32a17391405813c37dbd75587
-  languageName: node
-  linkType: hard
-
-"@types/rx-lite-aggregates@npm:*":
-  version: 4.0.3
-  resolution: "@types/rx-lite-aggregates@npm:4.0.3"
-  dependencies:
-    "@types/rx-lite": "*"
-  checksum: 2d4a26d129d01211a53bbd5eef2f102576054609c2775b7d368f79b6403e2e91deec3a40f5895556ef998978961d761bd0b085a0d21b6cbc0ef798a6d48fff9b
-  languageName: node
-  linkType: hard
-
-"@types/rx-lite-async@npm:*":
-  version: 4.0.2
-  resolution: "@types/rx-lite-async@npm:4.0.2"
-  dependencies:
-    "@types/rx-lite": "*"
-  checksum: 84ba94c5558ec5a5a339e8812068d8724d83cb5ea393437a8805127edd7f41a3d8dad34ef11f54a37af98082b719834f26ca05285964740f66d8584c70df8e5b
-  languageName: node
-  linkType: hard
-
-"@types/rx-lite-backpressure@npm:*":
-  version: 4.0.3
-  resolution: "@types/rx-lite-backpressure@npm:4.0.3"
-  dependencies:
-    "@types/rx-lite": "*"
-  checksum: 1f4efe1623e1f955dd13e2388a616922a2ab6dcd604e80846a88a20f2221646bd3ab354c1b1be94a4a62a82d355869b0b04aa8967989bccc06c6996487ba2a61
-  languageName: node
-  linkType: hard
-
-"@types/rx-lite-coincidence@npm:*":
-  version: 4.0.3
-  resolution: "@types/rx-lite-coincidence@npm:4.0.3"
-  dependencies:
-    "@types/rx-lite": "*"
-  checksum: 2cfebb143bf214c97459e3974345efdf28c436572bff93c8eeb18b5887aa6f9b9923a27df1b8d33d401c31fadb8efb009f61b8a0e25f17c87bf9b4348a5bf119
-  languageName: node
-  linkType: hard
-
-"@types/rx-lite-experimental@npm:*":
-  version: 4.0.1
-  resolution: "@types/rx-lite-experimental@npm:4.0.1"
-  dependencies:
-    "@types/rx-lite": "*"
-  checksum: fd2491a9320399dce1446ca51ee170c0ba147bab63fdda99fa339e787884e863e159db0e938173b4e84fa87372989a153f2a914f39dcb903e4d2b0977c048946
-  languageName: node
-  linkType: hard
-
-"@types/rx-lite-joinpatterns@npm:*":
-  version: 4.0.1
-  resolution: "@types/rx-lite-joinpatterns@npm:4.0.1"
-  dependencies:
-    "@types/rx-lite": "*"
-  checksum: 262625fd2d8aaedd685d895f59e9d0d494d3625d638001c40ec7448847897c00cb88e2474796d7d55c2d185283285467491ff1c4c76e405270dc1f61137a9459
-  languageName: node
-  linkType: hard
-
-"@types/rx-lite-testing@npm:*":
-  version: 4.0.1
-  resolution: "@types/rx-lite-testing@npm:4.0.1"
-  dependencies:
-    "@types/rx-lite-virtualtime": "*"
-  checksum: 1f835489eac9c6c5103637a0b68e439f6c8bdfd90a3b5b0c022c5748fec7b0472e3451d59b35fcf4e53fed25666178ad37cff677c46b542d02a1d7e61eec3289
-  languageName: node
-  linkType: hard
-
-"@types/rx-lite-time@npm:*":
-  version: 4.0.3
-  resolution: "@types/rx-lite-time@npm:4.0.3"
-  dependencies:
-    "@types/rx-lite": "*"
-  checksum: 1fd33a8cfe67e374bd64d35d1987039f638b9d12b7e76ffd4e522b681063af2238da418ba5d8422284b821568f1f316003be0333aa653ce306b8fde035ca18b6
-  languageName: node
-  linkType: hard
-
-"@types/rx-lite-virtualtime@npm:*":
-  version: 4.0.3
-  resolution: "@types/rx-lite-virtualtime@npm:4.0.3"
-  dependencies:
-    "@types/rx-lite": "*"
-  checksum: 060e4d30e9a11f79208db39a3dd2b2e0ad23cd1a2541d0e0fa2ba290cacfdbc4e4b9976785e042bc38fc2d75d11749a90af15ab12da9ab0e22b5e93694b5c308
-  languageName: node
-  linkType: hard
-
-"@types/rx-lite@npm:*":
-  version: 4.0.6
-  resolution: "@types/rx-lite@npm:4.0.6"
-  dependencies:
-    "@types/rx-core": "*"
-    "@types/rx-core-binding": "*"
-  checksum: f65dba60ad0a868a349de04e5977af50f434e43e2a9ac1d3b5b3813da8ff2aff221396b22e84f989ce188077bcea319f51e2961db7dccc20dec66345fb8bd29e
-  languageName: node
-  linkType: hard
-
-"@types/rx@npm:*":
-  version: 4.1.1
-  resolution: "@types/rx@npm:4.1.1"
-  dependencies:
-    "@types/rx-core": "*"
-    "@types/rx-core-binding": "*"
-    "@types/rx-lite": "*"
-    "@types/rx-lite-aggregates": "*"
-    "@types/rx-lite-async": "*"
-    "@types/rx-lite-backpressure": "*"
-    "@types/rx-lite-coincidence": "*"
-    "@types/rx-lite-experimental": "*"
-    "@types/rx-lite-joinpatterns": "*"
-    "@types/rx-lite-testing": "*"
-    "@types/rx-lite-time": "*"
-    "@types/rx-lite-virtualtime": "*"
-  checksum: 77fc69dbbc89cc3c615cbc1e07e0068279af35ff6e7dbc85f5db5ef1f45c789c2f77fd1a78388a63090450d919194b545f4d5da8e189fa3156f7f3802ebe6166
-  languageName: node
-  linkType: hard
-
 "@types/semver@npm:^7.1.0":
   version: 7.1.0
   resolution: "@types/semver@npm:7.1.0"
@@ -4946,15 +4809,6 @@ __metadata:
     "@types/styled-system": "*"
     "@types/theme-ui": "*"
   checksum: 5b6d30cd5b06239716abfa4aea2f5c01e3bfc1bc365437324253098f6bb06dbe1d2c1323051bfad87de5d0a69569b1524a13489142844907178e17c2ed18f089
-  languageName: node
-  linkType: hard
-
-"@types/through@npm:*":
-  version: 0.0.29
-  resolution: "@types/through@npm:0.0.29"
-  dependencies:
-    "@types/node": "*"
-  checksum: d069cb307e9cf9531d2815ca04cbc6d7c39b1e93bb46c4e5941f246842e49ab9541bbdc89f9dd7e1adb93273a72b3109fa11ae8dea2edd3aea2032f29a5482a8
   languageName: node
   linkType: hard
 
@@ -5824,7 +5678,6 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.1.1"
     "@yarnpkg/fslib": "workspace:^2.1.0"
     clipanion: ^2.4.2
-    inquirer: ^7.2.0
     lodash: ^4.17.15
     node-emoji: ^1.8.1
     tau-prolog: ^0.2.66
@@ -5856,7 +5709,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
-    "@types/inquirer": ^0.0.43
     "@types/lodash": ^4.14.136
     "@types/micromatch": ^4.0.1
     "@types/semver": ^7.1.0
@@ -5867,7 +5719,7 @@ __metadata:
     "@yarnpkg/json-proxy": "workspace:^2.1.0"
     "@yarnpkg/parsers": "workspace:^2.1.0"
     clipanion: ^2.4.2
-    inquirer: ^7.2.0
+    enquirer: ^2.3.6
     lodash: ^4.17.15
     micromatch: ^4.0.2
     semver: ^7.1.2
@@ -6033,7 +5885,6 @@ __metadata:
   resolution: "@yarnpkg/plugin-npm-cli@workspace:packages/plugin-npm-cli"
   dependencies:
     "@npm/types": ^1.0.1
-    "@types/inquirer": ^0.0.43
     "@types/semver": ^7.1.0
     "@types/ssri": ^6.0.1
     "@types/yup": 0.26.12
@@ -6043,7 +5894,7 @@ __metadata:
     "@yarnpkg/plugin-npm": "workspace:^2.1.0"
     "@yarnpkg/plugin-pack": "workspace:^2.1.0"
     clipanion: ^2.4.2
-    inquirer: ^7.2.0
+    enquirer: ^2.3.6
     semver: ^7.1.2
     ssri: ^6.0.1
     tslib: ^1.13.0
@@ -6060,11 +5911,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
-    "@types/inquirer": ^0.0.43
     "@types/semver": ^7.1.0
     "@yarnpkg/core": "workspace:^2.1.1"
     "@yarnpkg/fslib": "workspace:^2.1.0"
-    inquirer: ^7.2.0
+    enquirer: ^2.3.6
     semver: ^7.1.2
     tslib: ^1.13.0
   peerDependencies:
@@ -6503,10 +6353,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ansi-colors@npm:^3.0.0, ansi-colors@npm:^3.2.1":
+"ansi-colors@npm:^3.0.0":
   version: 3.2.4
   resolution: "ansi-colors@npm:3.2.4"
   checksum: 86ec4a476ae8661237c0da58c0b4c48ea57719fdd80eed00132db09ee88d69f5caa5889e13ccd07489e710bf3b9fd85123729e0660384d4373e92ef6125c1fad
+  languageName: node
+  linkType: hard
+
+"ansi-colors@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "ansi-colors@npm:4.1.1"
+  checksum: 50d8dfbce25602caea1b170ecf4c71c4c9c58d2d1e3186fb5712848c0610d05fe60b8bb6a9eaebd9b54f1db3baf6f603e04214cce597cc7799bc9f47fd9a797a
   languageName: node
   linkType: hard
 
@@ -11011,12 +10868,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enquirer@npm:^2.3.4":
-  version: 2.3.5
-  resolution: "enquirer@npm:2.3.5"
+"enquirer@npm:^2.3.4, enquirer@npm:^2.3.6":
+  version: 2.3.6
+  resolution: "enquirer@npm:2.3.6"
   dependencies:
-    ansi-colors: ^3.2.1
-  checksum: 1745db4e9d40624abe89301ada7ab79771a8e8ad500d27e6d01b811ca43095b894b9c2b1cb82a4d441a338c5ad19e03cdf31c8a5a573f14013feaecc2c2f1073
+    ansi-colors: ^4.1.1
+  checksum: e249bb97bf7d5a91d51081547ea5aa1d849604e5de74feff2c48f7174fc6c9dfcfeea42ef5536e9a3be58964a248c322d6897269ae7bba3e1b6d24f152d9d685
   languageName: node
   linkType: hard
 
@@ -15537,7 +15394,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"inquirer@npm:^7.0.0, inquirer@npm:^7.2.0":
+"inquirer@npm:^7.0.0":
   version: 7.2.0
   resolution: "inquirer@npm:7.2.0"
   dependencies:

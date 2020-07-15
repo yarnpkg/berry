@@ -5597,17 +5597,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["@types/inquirer", [
-        ["npm:0.0.43", {
-          "packageLocation": "./.yarn/cache/@types-inquirer-npm-0.0.43-3a9b56072c-6afd34b3b6.zip/node_modules/@types/inquirer/",
-          "packageDependencies": [
-            ["@types/inquirer", "npm:0.0.43"],
-            ["@types/rx", "npm:4.1.1"],
-            ["@types/through", "npm:0.0.29"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["@types/invariant", [
         ["npm:2.2.30", {
           "packageLocation": "./.yarn/cache/@types-invariant-npm-2.2.30-726e43b330-882decca84.zip/node_modules/@types/invariant/",
@@ -5982,147 +5971,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["@types/rx", [
-        ["npm:4.1.1", {
-          "packageLocation": "./.yarn/cache/@types-rx-npm-4.1.1-c1eced3743-77fc69dbbc.zip/node_modules/@types/rx/",
-          "packageDependencies": [
-            ["@types/rx", "npm:4.1.1"],
-            ["@types/rx-core", "npm:4.0.3"],
-            ["@types/rx-core-binding", "npm:4.0.4"],
-            ["@types/rx-lite", "npm:4.0.6"],
-            ["@types/rx-lite-aggregates", "npm:4.0.3"],
-            ["@types/rx-lite-async", "npm:4.0.2"],
-            ["@types/rx-lite-backpressure", "npm:4.0.3"],
-            ["@types/rx-lite-coincidence", "npm:4.0.3"],
-            ["@types/rx-lite-experimental", "npm:4.0.1"],
-            ["@types/rx-lite-joinpatterns", "npm:4.0.1"],
-            ["@types/rx-lite-testing", "npm:4.0.1"],
-            ["@types/rx-lite-time", "npm:4.0.3"],
-            ["@types/rx-lite-virtualtime", "npm:4.0.3"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@types/rx-core", [
-        ["npm:4.0.3", {
-          "packageLocation": "./.yarn/cache/@types-rx-core-npm-4.0.3-7cdfd00e20-9279b57125.zip/node_modules/@types/rx-core/",
-          "packageDependencies": [
-            ["@types/rx-core", "npm:4.0.3"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@types/rx-core-binding", [
-        ["npm:4.0.4", {
-          "packageLocation": "./.yarn/cache/@types-rx-core-binding-npm-4.0.4-c7fb765518-bb5f8c75d8.zip/node_modules/@types/rx-core-binding/",
-          "packageDependencies": [
-            ["@types/rx-core-binding", "npm:4.0.4"],
-            ["@types/rx-core", "npm:4.0.3"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@types/rx-lite", [
-        ["npm:4.0.6", {
-          "packageLocation": "./.yarn/cache/@types-rx-lite-npm-4.0.6-e2f1fd43c5-f65dba60ad.zip/node_modules/@types/rx-lite/",
-          "packageDependencies": [
-            ["@types/rx-lite", "npm:4.0.6"],
-            ["@types/rx-core", "npm:4.0.3"],
-            ["@types/rx-core-binding", "npm:4.0.4"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@types/rx-lite-aggregates", [
-        ["npm:4.0.3", {
-          "packageLocation": "./.yarn/cache/@types-rx-lite-aggregates-npm-4.0.3-53159132d7-2d4a26d129.zip/node_modules/@types/rx-lite-aggregates/",
-          "packageDependencies": [
-            ["@types/rx-lite-aggregates", "npm:4.0.3"],
-            ["@types/rx-lite", "npm:4.0.6"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@types/rx-lite-async", [
-        ["npm:4.0.2", {
-          "packageLocation": "./.yarn/cache/@types-rx-lite-async-npm-4.0.2-b0e53cf5b1-84ba94c555.zip/node_modules/@types/rx-lite-async/",
-          "packageDependencies": [
-            ["@types/rx-lite-async", "npm:4.0.2"],
-            ["@types/rx-lite", "npm:4.0.6"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@types/rx-lite-backpressure", [
-        ["npm:4.0.3", {
-          "packageLocation": "./.yarn/cache/@types-rx-lite-backpressure-npm-4.0.3-7dabe0a549-1f4efe1623.zip/node_modules/@types/rx-lite-backpressure/",
-          "packageDependencies": [
-            ["@types/rx-lite-backpressure", "npm:4.0.3"],
-            ["@types/rx-lite", "npm:4.0.6"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@types/rx-lite-coincidence", [
-        ["npm:4.0.3", {
-          "packageLocation": "./.yarn/cache/@types-rx-lite-coincidence-npm-4.0.3-faf94b17e6-2cfebb143b.zip/node_modules/@types/rx-lite-coincidence/",
-          "packageDependencies": [
-            ["@types/rx-lite-coincidence", "npm:4.0.3"],
-            ["@types/rx-lite", "npm:4.0.6"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@types/rx-lite-experimental", [
-        ["npm:4.0.1", {
-          "packageLocation": "./.yarn/cache/@types-rx-lite-experimental-npm-4.0.1-864ac2562a-fd2491a932.zip/node_modules/@types/rx-lite-experimental/",
-          "packageDependencies": [
-            ["@types/rx-lite-experimental", "npm:4.0.1"],
-            ["@types/rx-lite", "npm:4.0.6"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@types/rx-lite-joinpatterns", [
-        ["npm:4.0.1", {
-          "packageLocation": "./.yarn/cache/@types-rx-lite-joinpatterns-npm-4.0.1-dff6d76f8e-262625fd2d.zip/node_modules/@types/rx-lite-joinpatterns/",
-          "packageDependencies": [
-            ["@types/rx-lite-joinpatterns", "npm:4.0.1"],
-            ["@types/rx-lite", "npm:4.0.6"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@types/rx-lite-testing", [
-        ["npm:4.0.1", {
-          "packageLocation": "./.yarn/cache/@types-rx-lite-testing-npm-4.0.1-4952860ab6-1f835489ea.zip/node_modules/@types/rx-lite-testing/",
-          "packageDependencies": [
-            ["@types/rx-lite-testing", "npm:4.0.1"],
-            ["@types/rx-lite-virtualtime", "npm:4.0.3"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@types/rx-lite-time", [
-        ["npm:4.0.3", {
-          "packageLocation": "./.yarn/cache/@types-rx-lite-time-npm-4.0.3-24261375a9-1fd33a8cfe.zip/node_modules/@types/rx-lite-time/",
-          "packageDependencies": [
-            ["@types/rx-lite-time", "npm:4.0.3"],
-            ["@types/rx-lite", "npm:4.0.6"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@types/rx-lite-virtualtime", [
-        ["npm:4.0.3", {
-          "packageLocation": "./.yarn/cache/@types-rx-lite-virtualtime-npm-4.0.3-eb0d8778dc-060e4d30e9.zip/node_modules/@types/rx-lite-virtualtime/",
-          "packageDependencies": [
-            ["@types/rx-lite-virtualtime", "npm:4.0.3"],
-            ["@types/rx-lite", "npm:4.0.6"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["@types/semver", [
         ["npm:7.1.0", {
           "packageLocation": "./.yarn/cache/@types-semver-npm-7.1.0-ce58bbc3b4-d4450e9851.zip/node_modules/@types/semver/",
@@ -6275,16 +6123,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:16.9.2"],
             ["@types/styled-system", "npm:5.1.9"],
             ["@types/theme-ui", "npm:0.3.4"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@types/through", [
-        ["npm:0.0.29", {
-          "packageLocation": "./.yarn/cache/@types-through-npm-0.0.29-5e43403e29-d069cb307e.zip/node_modules/@types/through/",
-          "packageDependencies": [
-            ["@types/through", "npm:0.0.29"],
-            ["@types/node", "npm:10.12.18"]
           ],
           "linkType": "HARD",
         }]
@@ -6923,7 +6761,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@webpack-cli/logger", "virtual:7aee127304dc95be1013a5768dcb7a1de9d65fbb71e5cb99aeb6bd050f1c61c7495836b797b34aab4877eda17c41626b72153fb7c7fb2142098b8521bda15f4b#npm:1.0.1-alpha.4"],
             ["chalk", "npm:3.0.0"],
             ["cross-spawn", "npm:7.0.3"],
-            ["enquirer", "npm:2.3.5"],
+            ["enquirer", "npm:2.3.6"],
             ["execa", "npm:4.0.2"]
           ],
           "linkType": "HARD",
@@ -7487,7 +7325,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "npm:2.4.2"],
-            ["inquirer", "npm:7.2.0"],
             ["lodash", "npm:4.17.15"],
             ["node-emoji", "npm:1.10.0"],
             ["tau-prolog", "npm:0.2.66"],
@@ -7551,7 +7388,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/$$virtual/@yarnpkg-plugin-essentials-virtual-ba2aa356ff/1/packages/plugin-essentials/",
           "packageDependencies": [
             ["@yarnpkg/plugin-essentials", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-essentials"],
-            ["@types/inquirer", "npm:0.0.43"],
             ["@types/lodash", "npm:4.14.136"],
             ["@types/micromatch", "npm:4.0.1"],
             ["@types/semver", "npm:7.1.0"],
@@ -7562,7 +7398,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["clipanion", "npm:2.4.2"],
-            ["inquirer", "npm:7.2.0"],
+            ["enquirer", "npm:2.3.6"],
             ["lodash", "npm:4.17.15"],
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.3.2"],
@@ -7580,7 +7416,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/$$virtual/@yarnpkg-plugin-essentials-virtual-a18b52070a/1/packages/plugin-essentials/",
           "packageDependencies": [
             ["@yarnpkg/plugin-essentials", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-essentials"],
-            ["@types/inquirer", "npm:0.0.43"],
             ["@types/lodash", "npm:4.14.136"],
             ["@types/micromatch", "npm:4.0.1"],
             ["@types/semver", "npm:7.1.0"],
@@ -7591,7 +7426,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["clipanion", "npm:2.4.2"],
-            ["inquirer", "npm:7.2.0"],
+            ["enquirer", "npm:2.3.6"],
             ["lodash", "npm:4.17.15"],
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.3.2"],
@@ -7609,7 +7444,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/plugin-essentials/",
           "packageDependencies": [
             ["@yarnpkg/plugin-essentials", "workspace:packages/plugin-essentials"],
-            ["@types/inquirer", "npm:0.0.43"],
             ["@types/lodash", "npm:4.14.136"],
             ["@types/micromatch", "npm:4.0.1"],
             ["@types/semver", "npm:7.1.0"],
@@ -7620,7 +7454,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["clipanion", "npm:2.4.2"],
-            ["inquirer", "npm:7.2.0"],
+            ["enquirer", "npm:2.3.6"],
             ["lodash", "npm:4.17.15"],
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.3.2"],
@@ -7935,11 +7769,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/$$virtual/@yarnpkg-plugin-npm-virtual-e1403461d9/1/packages/plugin-npm/",
           "packageDependencies": [
             ["@yarnpkg/plugin-npm", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-npm"],
-            ["@types/inquirer", "npm:0.0.43"],
             ["@types/semver", "npm:7.1.0"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["inquirer", "npm:7.2.0"],
+            ["enquirer", "npm:2.3.6"],
             ["semver", "npm:7.3.2"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -7952,11 +7785,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/plugin-npm/",
           "packageDependencies": [
             ["@yarnpkg/plugin-npm", "workspace:packages/plugin-npm"],
-            ["@types/inquirer", "npm:0.0.43"],
             ["@types/semver", "npm:7.1.0"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["inquirer", "npm:7.2.0"],
+            ["enquirer", "npm:2.3.6"],
             ["semver", "npm:7.3.2"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -7969,7 +7801,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/plugin-npm-cli", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-npm-cli"],
             ["@npm/types", "npm:1.0.1"],
-            ["@types/inquirer", "npm:0.0.43"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/ssri", "npm:6.0.1"],
             ["@types/yup", "npm:0.26.12"],
@@ -7979,7 +7810,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-npm", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-pack", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-pack"],
             ["clipanion", "npm:2.4.2"],
-            ["inquirer", "npm:7.2.0"],
+            ["enquirer", "npm:2.3.6"],
             ["semver", "npm:7.3.2"],
             ["ssri", "npm:6.0.1"],
             ["tslib", "npm:1.13.0"],
@@ -7998,7 +7829,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/plugin-npm-cli", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-npm-cli"],
             ["@npm/types", "npm:1.0.1"],
-            ["@types/inquirer", "npm:0.0.43"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/ssri", "npm:6.0.1"],
             ["@types/yup", "npm:0.26.12"],
@@ -8008,7 +7838,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-npm", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-pack", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-pack"],
             ["clipanion", "npm:2.4.2"],
-            ["inquirer", "npm:7.2.0"],
+            ["enquirer", "npm:2.3.6"],
             ["semver", "npm:7.3.2"],
             ["ssri", "npm:6.0.1"],
             ["tslib", "npm:1.13.0"],
@@ -8027,7 +7857,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/plugin-npm-cli", "workspace:packages/plugin-npm-cli"],
             ["@npm/types", "npm:1.0.1"],
-            ["@types/inquirer", "npm:0.0.43"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/ssri", "npm:6.0.1"],
             ["@types/yup", "npm:0.26.12"],
@@ -8037,7 +7866,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-npm", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-pack", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-pack"],
             ["clipanion", "npm:2.4.2"],
-            ["inquirer", "npm:7.2.0"],
+            ["enquirer", "npm:2.3.6"],
             ["semver", "npm:7.3.2"],
             ["ssri", "npm:6.0.1"],
             ["tslib", "npm:1.13.0"],
@@ -8696,6 +8525,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/ansi-colors-npm-3.2.4-f3147b79e7-86ec4a476a.zip/node_modules/ansi-colors/",
           "packageDependencies": [
             ["ansi-colors", "npm:3.2.4"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:4.1.1", {
+          "packageLocation": "./.yarn/cache/ansi-colors-npm-4.1.1-97ad42f223-50d8dfbce2.zip/node_modules/ansi-colors/",
+          "packageDependencies": [
+            ["ansi-colors", "npm:4.1.1"]
           ],
           "linkType": "HARD",
         }]
@@ -13808,11 +13644,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["enquirer", [
-        ["npm:2.3.5", {
-          "packageLocation": "./.yarn/cache/enquirer-npm-2.3.5-7ecfa8f293-1745db4e9d.zip/node_modules/enquirer/",
+        ["npm:2.3.6", {
+          "packageLocation": "./.yarn/cache/enquirer-npm-2.3.6-7899175762-e249bb97bf.zip/node_modules/enquirer/",
           "packageDependencies": [
-            ["enquirer", "npm:2.3.5"],
-            ["ansi-colors", "npm:3.2.4"]
+            ["enquirer", "npm:2.3.6"],
+            ["ansi-colors", "npm:4.1.1"]
           ],
           "linkType": "HARD",
         }]
@@ -32064,7 +31900,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["cli-table3", "npm:0.5.1"],
             ["command-line-args", "npm:5.1.1"],
             ["command-line-usage", "npm:6.1.0"],
-            ["enquirer", "npm:2.3.5"],
+            ["enquirer", "npm:2.3.6"],
             ["execa", "npm:3.4.0"],
             ["import-local", "npm:3.0.2"],
             ["interpret", "npm:2.2.0"],

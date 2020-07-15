@@ -1,14 +1,14 @@
-import {BuildDirective, MessageName, Project, FetchResult}        from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, LinkType}        from '@yarnpkg/core';
-import {Locator, Package, BuildType, FinalizeInstallStatus}       from '@yarnpkg/core';
 import {structUtils, Report, Manifest, miscUtils, DependencyMeta} from '@yarnpkg/core';
-import {VirtualFS, ZipOpenFS, xfs, FakeFS}                        from '@yarnpkg/fslib';
+import {Locator, Package, BuildType, FinalizeInstallStatus}       from '@yarnpkg/core';
+import {Linker, LinkOptions, MinimalLinkOptions, LinkType}        from '@yarnpkg/core';
+import {BuildDirective, MessageName, Project, FetchResult}        from '@yarnpkg/core';
 import {PortablePath, npath, ppath, toFilename, Filename}         from '@yarnpkg/fslib';
+import {VirtualFS, ZipOpenFS, xfs, FakeFS}                        from '@yarnpkg/fslib';
 import {getLibzipPromise}                                         from '@yarnpkg/libzip';
 import {parseSyml}                                                from '@yarnpkg/parsers';
 import {AbstractPnpInstaller}                                     from '@yarnpkg/plugin-pnp';
-import {NodeModulesLocatorMap, buildLocatorMap}                   from '@yarnpkg/pnpify';
 import {buildNodeModulesTree}                                     from '@yarnpkg/pnpify';
+import {NodeModulesLocatorMap, buildLocatorMap}                   from '@yarnpkg/pnpify';
 import {PnpSettings, makeRuntimeApi}                              from '@yarnpkg/pnp';
 import cmdShim                                                    from '@zkochan/cmd-shim';
 import {UsageError}                                               from 'clipanion';
@@ -457,8 +457,22 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
   return locationTree;
 };
 
-const symlinkPromise = async (srcDir: PortablePath, dstDir: PortablePath) =>
-  xfs.symlinkPromise(process.platform !== `win32` ? ppath.relative(ppath.dirname(dstDir), srcDir) : srcDir, dstDir, process.platform === `win32` ? `junction` : undefined);
+const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath) => {
+  let stats;
+
+  try {
+    if (process.platform === `win32`) {
+      stats = xfs.lstatSync(srcPath);
+    }
+  } catch (e) {
+  }
+
+  if (process.platform == `win32` && (!stats || stats.isDirectory())) {
+    xfs.symlinkPromise(srcPath, dstPath, `junction`);
+  } else {
+    xfs.symlinkPromise(ppath.relative(ppath.dirname(dstPath), srcPath), dstPath);
+  }
+};
 
 const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, innerLoop}: {baseFs: FakeFS<PortablePath>, innerLoop?: boolean}) => {
   await xfs.mkdirpPromise(dstDir);
@@ -475,7 +489,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
       }
     } else if (srcType.isSymbolicLink()) {
       const target = await baseFs.readlinkPromise(srcPath);
-      await symlinkPromise(ppath.resolve(srcPath, target), dstPath);
+      await symlinkPromise(ppath.resolve(ppath.dirname(dstPath), target), dstPath);
     } else {
       throw new Error(`Unsupported file type (file: ${srcPath}, mode: 0o${await xfs.statSync(srcPath).mode.toString(8).padStart(6, `0`)})`);
     }
