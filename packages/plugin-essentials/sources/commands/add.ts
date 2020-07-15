@@ -203,7 +203,7 @@ export default class AddCommand extends BaseCommand {
           }),
           onCancel: () => process.exit(130),
           result(name: string) {
-            // @ts-ignore: The enquirer types don't include find
+            // @ts-expect-error: The enquirer types don't include find
             return this.find(name, `descriptor`);
           },
           stdin: this.context.stdin as NodeJS.ReadStream,
