@@ -457,8 +457,13 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
   return locationTree;
 };
 
-const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath) =>
-  xfs.symlinkPromise(process.platform !== `win32` ? ppath.relative(ppath.dirname(dstPath), srcPath) : srcPath, dstPath, process.platform === `win32` && xfs.lstatSync(srcPath).isDirectory() ? `junction` : undefined);
+const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath) => {
+  if (process.platform == `win32` && xfs.lstatSync(srcPath).isDirectory()) {
+    xfs.symlinkPromise(srcPath, dstPath, `junction`);
+  } else {
+    xfs.symlinkPromise(ppath.relative(ppath.dirname(dstPath), srcPath), dstPath);
+  }
+};
 
 const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, innerLoop}: {baseFs: FakeFS<PortablePath>, innerLoop?: boolean}) => {
   await xfs.mkdirpPromise(dstDir);
