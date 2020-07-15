@@ -731,6 +731,9 @@ export class ZipOpenFS extends BasePortableFakeFS {
       if (closeCount <= 0)
         break;
 
+      if (zipFs.hasOpenFileHandles())
+        continue;
+
       zipFs.saveAndClose();
       this.zipInstances.delete(path);
 
@@ -763,9 +766,8 @@ export class ZipOpenFS extends BasePortableFakeFS {
       // Removing then re-adding the field allows us to easily implement
       // a basic LRU garbage collection strategy
       this.zipInstances.delete(p);
+      this.limitOpenFiles(this.maxOpenFiles - 1);
       this.zipInstances.set(p, zipFs);
-
-      this.limitOpenFiles(this.maxOpenFiles);
 
       return await accept(zipFs);
     } else {
@@ -796,9 +798,8 @@ export class ZipOpenFS extends BasePortableFakeFS {
       // Removing then re-adding the field allows us to easily implement
       // a basic LRU garbage collection strategy
       this.zipInstances.delete(p);
+      this.limitOpenFiles(this.maxOpenFiles - 1);
       this.zipInstances.set(p, zipFs);
-
-      this.limitOpenFiles(this.maxOpenFiles);
 
       return accept(zipFs);
     } else {

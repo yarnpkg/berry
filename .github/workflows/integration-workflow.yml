@@ -15,10 +15,10 @@ jobs:
     - run: |
         git fetch --no-tags --unshallow origin HEAD master
 
-    - name: 'Use Node.js 10.x'
+    - name: 'Use Node.js 12.x'
       uses: actions/setup-node@master
       with:
-        node-version: 10.x
+        node-version: 12.x
 
     - name: 'Check that the Yarn files don''t change on new installs (fix w/ "yarn install")'
       run: |
@@ -52,7 +52,7 @@ jobs:
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
-    - name: 'Check that the PnP hook is consistent with a fresh build (fix w/ "yarn build:pnp:hook")'
+    - name: 'Check that the PnP hook is consistent with a fresh build (fix w/ "git merge master && yarn build:pnp:hook")'
       run: |
         if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- packages/yarnpkg-pnp/sources/hook.js | wc -l) -gt 0 ]]; then
           node ./scripts/run-yarn.js build:pnp:hook

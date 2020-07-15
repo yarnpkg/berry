@@ -416,6 +416,10 @@ export class ZipFS extends BasePortableFakeFS {
     return fd;
   }
 
+  hasOpenFileHandles(): boolean {
+    return !!this.fds.size;
+  }
+
   async readPromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number | null) {
     return this.readSync(fd, buffer, offset, length, position);
   }
@@ -485,16 +489,21 @@ export class ZipFS extends BasePortableFakeFS {
       },
     });
 
+    const fd = this.openSync(p, `r`);
+
     const immediate = setImmediate(() => {
       try {
         const data = this.readFileSync(p, encoding);
 
         stream.bytesRead = data.length;
-        stream.write(data);
-        stream.end();
+        stream.end(data);
+        stream.destroy();
       } catch (error) {
         stream.emit(`error`, error);
         stream.end();
+        stream.destroy();
+      } finally {
+        this.closeSync(fd);
       }
     });
 
@@ -524,8 +533,13 @@ export class ZipFS extends BasePortableFakeFS {
       chunks.push(chunkBuffer);
     });
 
+    const fd = this.openSync(p, `w`);
     stream.on(`end`, () => {
-      this.writeFileSync(p, Buffer.concat(chunks), encoding);
+      try {
+        this.writeFileSync(p, Buffer.concat(chunks), encoding);
+      } finally {
+        this.closeSync(fd);
+      }
     });
 
     return stream;
