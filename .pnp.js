@@ -33874,21 +33874,22 @@ var external_url_ = __webpack_require__(835);
 
 // CONCATENATED MODULE: ../yarnpkg-fslib/sources/buffer.ts
 
+const PATH_BUFFER_ENCODING = `latin1`;
 class BasePathBuffer extends Buffer {
-  constructor(pathUtils, p, encoding) {
-    super(pathUtils.fromPathLike(p), encoding);
+  constructor(pathUtils, p) {
+    super(pathUtils.fromPathLike(p), PATH_BUFFER_ENCODING);
   }
 
 }
 class PortablePathBuffer extends BasePathBuffer {
-  constructor(p, encoding) {
-    super(ppath, p, encoding);
+  constructor(p) {
+    super(ppath, p);
   }
 
 }
 class NativePathBuffer extends BasePathBuffer {
-  constructor(p, encoding) {
-    super(npath, p, encoding);
+  constructor(p) {
+    super(npath, p);
   }
 
 }
@@ -34030,13 +34031,13 @@ ppath.toFileURL = p => posixPathToFileURL(p);
 npath.PathBuffer = NativePathBuffer;
 ppath.PathBuffer = PortablePathBuffer;
 
-npath.fromPathBuffer = buffer => buffer.toString();
+npath.fromPathBuffer = buffer => buffer.toString(PATH_BUFFER_ENCODING);
 
-ppath.fromPathBuffer = buffer => buffer.toString();
+ppath.fromPathBuffer = buffer => buffer.toString(PATH_BUFFER_ENCODING);
 
-npath.toPathBuffer = (p, encoding) => new NativePathBuffer(p, encoding);
+npath.toPathBuffer = p => new NativePathBuffer(p);
 
-ppath.toPathBuffer = (p, encoding) => new PortablePathBuffer(p, encoding);
+ppath.toPathBuffer = p => new PortablePathBuffer(p);
 
 npath.fromPathLike = pathLike => fromPathLike(npath, pathLike);
 

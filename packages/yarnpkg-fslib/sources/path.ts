@@ -1,7 +1,7 @@
 import path                                                                                                                                from 'path';
 import {URL}                                                                                                                               from 'url';
 
-import {PathBuffer, PathBufferConstructor, NativePathBuffer, PortablePathBuffer}                                                           from './buffer';
+import {PathBuffer, PathBufferConstructor, NativePathBuffer, PortablePathBuffer, PATH_BUFFER_ENCODING}                                     from './buffer';
 import {fileURLToPath, fileURLToPosixPath, pathToFileURL, posixPathToFileURL, FileURL, FileURLConstructor, NativeFileURL, PortableFileURL} from './url';
 
 export enum PathType {
@@ -82,11 +82,11 @@ ppath.toFileURL = (p: PortablePath) => posixPathToFileURL(p);
 npath.PathBuffer = NativePathBuffer;
 ppath.PathBuffer = PortablePathBuffer;
 
-npath.fromPathBuffer = (buffer: PathBuffer<NativePath>) => buffer.toString();
-ppath.fromPathBuffer = (buffer: PathBuffer<PortablePath>) => buffer.toString();
+npath.fromPathBuffer = (buffer: PathBuffer<NativePath>) => buffer.toString(PATH_BUFFER_ENCODING);
+ppath.fromPathBuffer = (buffer: PathBuffer<PortablePath>) => buffer.toString(PATH_BUFFER_ENCODING);
 
-npath.toPathBuffer = (p: NativePath, encoding?: BufferEncoding) => new NativePathBuffer(p, encoding);
-ppath.toPathBuffer = (p: PortablePath, encoding?: BufferEncoding) => new PortablePathBuffer(p, encoding);
+npath.toPathBuffer = (p: NativePath) => new NativePathBuffer(p);
+ppath.toPathBuffer = (p: PortablePath) => new PortablePathBuffer(p);
 
 npath.fromPathLike = (pathLike: PathLike<NativePath>) => fromPathLike(npath, pathLike);
 ppath.fromPathLike = (pathLike: PathLike<PortablePath>) => fromPathLike(ppath, pathLike);
@@ -129,7 +129,7 @@ export interface PathUtils<P extends Path> {
 
   PathBuffer: PathBufferConstructor<P>;
   fromPathBuffer(buffer: PathBuffer<P>): P;
-  toPathBuffer(p: P, encoding?: BufferEncoding): PathBuffer<P>;
+  toPathBuffer(p: P): PathBuffer<P>;
 
   FileURL: FileURLConstructor<P>;
   fromFileURL(url: FileURL<P>): P;

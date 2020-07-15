@@ -1,26 +1,28 @@
 import {NativePath, PortablePath, Path, PathUtils, PathLike, PathType, ppath, npath} from './path';
 
-export class BasePathBuffer<P extends Path> extends Buffer {
-  declare public toString: (encoding?: string, start?: number, end?: number) => P;
+export const PATH_BUFFER_ENCODING = `latin1`;
 
-  protected constructor(pathUtils: PathUtils<P>, p: PathLike<P>, encoding?: BufferEncoding) {
-    super(pathUtils.fromPathLike(p), encoding);
+export class BasePathBuffer<P extends Path> extends Buffer {
+  declare public toString: (encoding?: BufferEncoding, start?: number, end?: number) => P;
+
+  protected constructor(pathUtils: PathUtils<P>, p: PathLike<P>) {
+    super(pathUtils.fromPathLike(p), PATH_BUFFER_ENCODING);
   }
 }
 
 export class PortablePathBuffer extends BasePathBuffer<PortablePath> {
   declare _path_type: PathType.Portable | PathType.File;
 
-  constructor(p: PathLike<PortablePath>, encoding?: BufferEncoding) {
-    super(ppath, p, encoding);
+  constructor(p: PathLike<PortablePath>) {
+    super(ppath, p);
   }
 }
 
 export class NativePathBuffer extends BasePathBuffer<NativePath> {
   declare _path_type?: PathType.Native | PathType.File;
 
-  constructor(p: PathLike<NativePath>, encoding?: BufferEncoding) {
-    super(npath, p, encoding);
+  constructor(p: PathLike<NativePath>) {
+    super(npath, p);
   }
 }
 
