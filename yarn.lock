@@ -6353,7 +6353,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ansi-colors@npm:^3.0.0, ansi-colors@npm:^3.2.1":
+"ansi-colors@npm:^3.0.0":
   version: 3.2.4
   resolution: "ansi-colors@npm:3.2.4"
   checksum: 86ec4a476ae8661237c0da58c0b4c48ea57719fdd80eed00132db09ee88d69f5caa5889e13ccd07489e710bf3b9fd85123729e0660384d4373e92ef6125c1fad
@@ -10868,16 +10868,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enquirer@npm:^2.3.4":
-  version: 2.3.5
-  resolution: "enquirer@npm:2.3.5"
-  dependencies:
-    ansi-colors: ^3.2.1
-  checksum: 1745db4e9d40624abe89301ada7ab79771a8e8ad500d27e6d01b811ca43095b894b9c2b1cb82a4d441a338c5ad19e03cdf31c8a5a573f14013feaecc2c2f1073
-  languageName: node
-  linkType: hard
-
-"enquirer@npm:^2.3.6":
+"enquirer@npm:^2.3.4, enquirer@npm:^2.3.6":
   version: 2.3.6
   resolution: "enquirer@npm:2.3.6"
   dependencies:

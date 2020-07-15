@@ -6761,7 +6761,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@webpack-cli/logger", "virtual:7aee127304dc95be1013a5768dcb7a1de9d65fbb71e5cb99aeb6bd050f1c61c7495836b797b34aab4877eda17c41626b72153fb7c7fb2142098b8521bda15f4b#npm:1.0.1-alpha.4"],
             ["chalk", "npm:3.0.0"],
             ["cross-spawn", "npm:7.0.3"],
-            ["enquirer", "npm:2.3.5"],
+            ["enquirer", "npm:2.3.6"],
             ["execa", "npm:4.0.2"]
           ],
           "linkType": "HARD",
@@ -13644,14 +13644,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["enquirer", [
-        ["npm:2.3.5", {
-          "packageLocation": "./.yarn/cache/enquirer-npm-2.3.5-7ecfa8f293-1745db4e9d.zip/node_modules/enquirer/",
-          "packageDependencies": [
-            ["enquirer", "npm:2.3.5"],
-            ["ansi-colors", "npm:3.2.4"]
-          ],
-          "linkType": "HARD",
-        }],
         ["npm:2.3.6", {
           "packageLocation": "./.yarn/cache/enquirer-npm-2.3.6-7899175762-e249bb97bf.zip/node_modules/enquirer/",
           "packageDependencies": [
@@ -31908,7 +31900,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["cli-table3", "npm:0.5.1"],
             ["command-line-args", "npm:5.1.1"],
             ["command-line-usage", "npm:6.1.0"],
-            ["enquirer", "npm:2.3.5"],
+            ["enquirer", "npm:2.3.6"],
             ["execa", "npm:3.4.0"],
             ["import-local", "npm:3.0.2"],
             ["interpret", "npm:2.2.0"],
