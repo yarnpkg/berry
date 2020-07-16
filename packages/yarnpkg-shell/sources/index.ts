@@ -334,6 +334,10 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
                   }
                 } break;
 
+                case `RANDOM`: {
+                  push(String(Math.floor(Math.random() * /* 2 ** 15 */32768)));
+                } break;
+
                 default: {
                   const argIndex = parseInt(segment.name, 10);
 

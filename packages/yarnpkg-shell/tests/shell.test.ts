@@ -527,6 +527,37 @@ describe(`Shell`, () => {
         await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
       });
     });
+
+    it(`should support the RANDOM variable`, async () => {
+      async function getNumbers(result: Promise<{ exitCode: number; stdout: string; stderr: string; }>): Promise<Array<number>> {
+        const {exitCode, stdout, stderr} = await result;
+
+        if (exitCode !== 0)
+          throw new Error(stderr);
+
+        return stdout.trim().split(/\s*\/\s*/g).map(number => Number(number));
+      }
+
+      function validateRandomNumber(number: number) {
+        expect(number).toBeGreaterThanOrEqual(0);
+        expect(number).toBeLessThan(32768);
+      }
+
+      let numbers = await getNumbers(bufferResult(`echo $RANDOM`));
+      expect(numbers.length).toBe(1);
+      numbers.forEach(validateRandomNumber);
+
+      numbers = await getNumbers(bufferResult(`echo $RANDOM / $RANDOM / $RANDOM`));
+      expect(numbers.length).toBe(3);
+      numbers.forEach(validateRandomNumber);
+      // There's no guarantee for this, they're random numbers after all, but the chance of this
+      // occurring is 1 in 2 ** 30 or roughly 1 in 1 billion.
+      expect(numbers[0] === numbers[1] && numbers[1] === numbers[2]).toBe(false);
+
+      numbers = await getNumbers(bufferResult(`RANDOM=foo ; echo $RANDOM`));
+      expect(numbers.length).toBe(1);
+      numbers.forEach(validateRandomNumber);
+    });
   });
 
   describe(`Glob support`, () => {
