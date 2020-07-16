@@ -48,7 +48,7 @@ export const makeConfig = (config: webpack.Configuration): webpack.Configuration
   },
 
   resolve: {
-    extensions: [`.js`, `.ts`, `.tsx`, `.json`],
+    extensions: [`.mjs`, `.js`, `.ts`, `.tsx`, `.json`],
   },
 
   module: {

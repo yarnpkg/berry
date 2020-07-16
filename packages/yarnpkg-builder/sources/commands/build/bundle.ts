@@ -154,7 +154,7 @@ export default class BuildBundleCommand extends Command {
             // Unfortunately, js-yaml declares it as a hard dependency and requires the entire module,
             // which causes webpack to add 0.13 MB of unused code to the bundle.
             // Fortunately, js-yaml wraps the require call inside a try / catch block, so we can just ignore it.
-            // Reference: https://github.com/nodeca/js-yaml/blob/master/lib/js-yaml/type/js/function.js#L15
+            // Reference: https://github.com/nodeca/js-yaml/blob/34e5072f43fd36b08aaaad433da73c10d47c41e5/lib/js-yaml/type/js/function.js#L15
             new webpack.IgnorePlugin({
               resourceRegExp: /^esprima$/,
               contextRegExp: /js-yaml/,
