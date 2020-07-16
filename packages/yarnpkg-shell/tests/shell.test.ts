@@ -965,4 +965,139 @@ describe(`Shell`, () => {
       });
     });
   });
+
+  describe(`Calculations`, () => {
+    it(`should support integers`, async () => {
+      await expect(bufferResult(
+        `echo $(( 1 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `1\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( 134 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `134\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( 5693 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `5693\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( 5.93 ))`,
+      )).rejects.toThrowError(/Invalid number: "5\.93", only integers are allowed/);
+    });
+
+    it(`should support operations`, async () => {
+      await expect(bufferResult(
+        `echo $(( 1 + 2 -4 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `-1\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( 134 / 3 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `44\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( -134 / 3 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `-44\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( 4 * (2 + 3) * 5 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `100\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( 4 * 2 + 3 * 5 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `23\n`,
+      });
+    });
+
+    it(`should support arguments`, async () => {
+      await expect(bufferResult(
+        `echo $(( $0 + 2 ))`,
+        [`3`],
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `5\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( $0 / $1 ))`,
+        [`9`, `3`],
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `3\n`,
+      });
+    });
+
+    it(`should support variables and env`, async () => {
+      const opts = {
+        variables: {
+          three: `3`,
+          four: `4`,
+          notDeepEnough: `four`,
+          isThisDeepEnough: `notDeepEnough`,
+        },
+        env: {
+          one: `1`,
+          two: `2`,
+        },
+      };
+
+      await expect(bufferResult(
+        `echo $(( $three + 2 ))`,
+        [],
+        opts,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `5\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( $four * $two ))`,
+        [],
+        opts,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `8\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( three + one ))`,
+        [],
+        opts,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `4\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $((isThisDeepEnough+ one))`,
+        [],
+        opts,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `5\n`,
+      });
+    });
+  });
 });
