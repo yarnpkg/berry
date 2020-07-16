@@ -788,7 +788,7 @@ export async function execute(command: string, args: Array<string> = [], {
     stdin,
     stdout,
     stderr,
-    variables: Object.assign(Object.create(variables), {
+    variables: Object.assign({}, variables, {
       [`?`]: 0,
     }),
   });
