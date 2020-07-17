@@ -108,7 +108,7 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${configuration.format(displayPath, `magenta`)}`);
 
   await xfs.removePromise(ppath.dirname(absolutePath));
-  await xfs.mkdirpPromise(ppath.dirname(absolutePath));
+  await xfs.mkdirPromise(ppath.dirname(absolutePath), {recursive: true});
 
   await xfs.writeFilePromise(absolutePath, bundleBuffer);
   await xfs.chmodPromise(absolutePath, 0o755);
