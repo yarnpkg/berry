@@ -2,6 +2,7 @@ import {Libzip}                                                                 
 import {ReadStream, Stats, WriteStream, constants}                                                 from 'fs';
 import {PassThrough}                                                                               from 'stream';
 import {isDate}                                                                                    from 'util';
+import zlib                                                                                        from 'zlib';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions} from './FakeFS';
 import {FakeFS, MkdirOptions, WriteFileOptions}                                                    from './FakeFS';
@@ -871,11 +872,12 @@ export class ZipFS extends BasePortableFakeFS {
     if (rc === -1)
       throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
 
-    const size = this.libzip.struct.statSize(stat);
+    const size = this.libzip.struct.statCompSize(stat);
+    const compressionMethod = this.libzip.struct.statCompMethod(stat);
     const buffer = this.libzip.malloc(size);
 
     try {
-      const file = this.libzip.fopenIndex(this.zip, index, 0, 0);
+      const file = this.libzip.fopenIndex(this.zip, index, 0, this.libzip.ZIP_FL_COMPRESSED);
       if (file === 0)
         throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
 
@@ -892,7 +894,7 @@ export class ZipFS extends BasePortableFakeFS {
         const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
         const data = Buffer.from(memory);
 
-        return data;
+        return compressionMethod > 0 ? zlib.inflateRawSync(data) : data;
       } finally {
         this.libzip.fclose(file);
       }
