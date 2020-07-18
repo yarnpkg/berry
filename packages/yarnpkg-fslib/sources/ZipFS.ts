@@ -865,7 +865,9 @@ export class ZipFS extends BasePortableFakeFS {
     return (attributes & S_IFMT) === S_IFLNK;
   }
 
-  private getFileSource(index: number) {
+  private getFileSource(index: number): Buffer
+  private getFileSource(index: number, asyncDecompress: boolean ): Promise<Buffer>
+  private getFileSource(index: number, asyncDecompress: boolean = false): Promise<Buffer> | Buffer {
     const stat = this.libzip.struct.statS();
 
     const rc = this.libzip.statIndex(this.zip, index, 0, 0, stat);
@@ -894,7 +896,17 @@ export class ZipFS extends BasePortableFakeFS {
         const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
         const data = Buffer.from(memory);
 
-        return compressionMethod > 0 ? zlib.inflateRawSync(data) : data;
+        if (compressionMethod === 0) {
+          return data;
+        } else if (asyncDecompress) {
+          return new Promise((resolve, reject) => {
+            zlib.inflateRaw(data, (error, result) => {
+              error ? reject(error) : resolve(result);
+            });
+          });
+        } else {
+          return zlib.inflateRawSync(data);
+        }
       } finally {
         this.libzip.fclose(file);
       }
@@ -1139,25 +1151,34 @@ export class ZipFS extends BasePortableFakeFS {
   readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;
   readFilePromise(p: FSPath<PortablePath>, encoding?: string): Promise<Buffer>;
   async readFilePromise(p: PortablePath, encoding?: string) {
-    // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    switch (encoding) {
-      case `utf8`:
-        return this.readFileSync(p, encoding);
-      default:
-        return this.readFileSync(p, encoding);
-    }
+    // This is messed up regarding the TS signatures
+    if (typeof encoding === `object`)
+    // @ts-ignore
+      encoding = encoding ? encoding.encoding : undefined;
+
+    const data = await this.readFileBuffer(p, true);
+
+    return encoding ? data.toString(encoding) : data;
   }
 
   readFileSync(p: FSPath<PortablePath>, encoding: 'utf8'): string;
   readFileSync(p: FSPath<PortablePath>, encoding?: string): Buffer;
-  readFileSync(p: FSPath<PortablePath>, encoding?: string) {
-    if (typeof p !== `string`)
-      throw errors.EBADF(`read`);
-
+  readFileSync(p: PortablePath, encoding?: string) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
       // @ts-ignore
       encoding = encoding ? encoding.encoding : undefined;
+
+    const data = this.readFileBuffer(p);
+
+    return encoding ? data.toString(encoding) : data;
+  }
+
+  private readFileBuffer(p: PortablePath): Buffer
+  private readFileBuffer(p: PortablePath, asyncDecompress: true): Promise<Buffer>
+  private readFileBuffer(p: PortablePath, asyncDecompress: boolean = false): Buffer | Promise<Buffer> {
+    if (typeof p !== `string`)
+      throw errors.EBADF(`read`);
 
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
@@ -1174,9 +1195,7 @@ export class ZipFS extends BasePortableFakeFS {
     if (entry === undefined)
       throw new Error(`Unreachable`);
 
-    const data = this.getFileSource(entry);
-
-    return encoding ? data.toString(encoding) : data;
+    return this.getFileSource(entry, asyncDecompress);
   }
 
   async readdirPromise(p: PortablePath): Promise<Array<Filename>>;

@@ -160,5 +160,17 @@ describe(`ZipFS`, () => {
 
     zipFs2.discardAndClose();
   });
+
+  it.only(`returns the same content for sync and async reads`, async () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, `Test`);
+
+    const zipFs2 = new ZipFS(zipFs.getBufferAndClose(), {libzip});
+
+    expect(await zipFs2.readFilePromise(`/foo.txt` as PortablePath, `utf8`)).toEqual(
+      zipFs2.readFileSync(`/foo.txt` as PortablePath, `utf8`)
+    );
+  });
 });
 
