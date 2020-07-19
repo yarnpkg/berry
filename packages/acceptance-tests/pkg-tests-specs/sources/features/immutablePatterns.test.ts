@@ -47,20 +47,7 @@ describe(`Features`, () => {
 
           await run(`install`);
 
-          await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
-            dependencies: {
-              [`no-deps`]: `2.0.0`,
-            },
-          });
-
-          await run(`install`);
-
-          await xfs.unlinkPromise(ppath.join(path, Filename.lockfile));
-          await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
-            dependencies: {
-              [`no-deps`]: `1.0.0`,
-            },
-          });
+          await xfs.unlinkPromise(ppath.join(path, Filename.pnpJs));
 
           await expect(run(`install`, `--immutable`)).rejects.toThrow(/The checksum for .pnp.js has been modified by this install/);
         },
