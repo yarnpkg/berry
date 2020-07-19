@@ -6960,7 +6960,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/micromatch", "npm:4.0.1"],
             ["@types/node", "npm:13.7.0"],
             ["@types/semver", "npm:7.1.0"],
-            ["@types/tar", "npm:4.0.0"],
+            ["@types/tar-stream", "npm:1.6.0"],
             ["@types/tunnel", "npm:0.0.0"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -6989,7 +6989,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pretty-bytes", "npm:5.1.0"],
             ["semver", "npm:7.3.2"],
             ["stream-to-promise", "npm:2.2.0"],
-            ["tar", "npm:4.4.13"],
+            ["tar-stream", "npm:2.0.1"],
             ["tslib", "npm:1.13.0"],
             ["tunnel", "npm:0.0.6"]
           ],
