@@ -1,17 +1,8 @@
 import {PortablePath, npath, ppath}                                                   from '@yarnpkg/fslib';
 import {PnpApi}                                                                       from '@yarnpkg/pnp';
-import mergeWith                                                                      from 'lodash/mergeWith';
 
 import {Wrapper, GenerateIntegrationWrapper, GenerateDefaultWrapper, IntegrationSdks} from '../generateSdk';
 import * as sdkUtils                                                                  from '../sdkUtils';
-
-export const merge = (object: unknown, source: unknown) =>
-  mergeWith(object, source, (objValue, srcValue) => {
-    if (Array.isArray(objValue))
-      return [...new Set(objValue.concat(srcValue))];
-
-    return undefined;
-  });
 
 export enum VSCodeConfiguration {
   settings = `settings.json`,
