@@ -54,7 +54,7 @@ jobs:
 
         # TypeScript (tsc)
 
-        yarn add -D @parcel/config-default @parcel/validator-typescript @types/lodash
+        yarn add -D @parcel/config-default @parcel/validator-typescript @types/lodash typescript
 
         echo "{\"extends\": \"@parcel/config-default\", \"validators\": {\"*.{ts,tsx}\": [\"@parcel/validator-typescript\"]}}" | tee .parcelrc
 
@@ -94,7 +94,7 @@ jobs:
 
         # MDX
 
-        yarn add react-dom react-select
+        yarn add react react-dom react-select @mdx-js/mdx @mdx-js/react
 
         echo "import page from './page.mdx'; console.log('MDX Built');" | tee index.js
         cat > page.mdx <<EOT
