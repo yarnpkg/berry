@@ -32,7 +32,7 @@ jobs:
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add -D parcel@nightly lodash
+        yarn add -D parcel@nightly lodash @babel/core
 
         # JavaScript
 
