@@ -1,7 +1,7 @@
 releases:
   "@yarnpkg/cli": prerelease
-  "@yarnpkg/core": minor
-  "@yarnpkg/doctor": minor
+  "@yarnpkg/core": patch
+  "@yarnpkg/doctor": patch
 
 declined:
   - "@yarnpkg/plugin-compat"
