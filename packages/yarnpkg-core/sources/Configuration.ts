@@ -233,6 +233,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.yarn/install-state.gz`,
   },
+  immutablePatterns: {
+    description: `Array of glob patterns; files matching them won't be allowed to change during immutable installs`,
+    type: SettingsType.STRING,
+    default: [],
+    isArray: true,
+  },
   rcFilename: {
     description: `Name of the files where the configuration can be found`,
     type: SettingsType.STRING,
@@ -355,6 +361,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.NUMBER,
     default: 3,
   },
+
   // Settings related to security
   enableScripts: {
     description: `If true, packages are allowed to have install scripts by default`,
