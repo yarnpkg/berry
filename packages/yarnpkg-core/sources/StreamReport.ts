@@ -80,12 +80,29 @@ export class StreamReport extends Report {
   static async start(opts: StreamReportOptions, cb: (report: StreamReport) => Promise<void>) {
     const report = new this(opts);
 
+    const emitWarning = process.emitWarning;
+    process.emitWarning = (message, name) => {
+      if (typeof message !== `string`) {
+        const error = message;
+
+        message = error.message;
+        name = name ?? error.name;
+      }
+
+      const fullMessage = typeof name !== `undefined`
+        ? `${name}: ${message}`
+        : message;
+
+      report.reportWarning(MessageName.UNNAMED, fullMessage);
+    };
+
     try {
       await cb(report);
     } catch (error) {
       report.reportExceptionOnce(error);
     } finally {
       await report.finalize();
+      process.emitWarning = emitWarning;
     }
 
     return report;
