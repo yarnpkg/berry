@@ -69,7 +69,7 @@ jobs:
 
         # Less
 
-        yarn add -D bootstrap-less
+        yarn add -D bootstrap-less less
 
         mkdir src
         echo "import './main.less';" | tee src/index.js
