@@ -100,7 +100,6 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
 
         stream.on(`data`, (chunk: Buffer) => chunks.push(chunk));
         stream.on(`end`, () => {
-          targetFs.createWriteStream(mappedPath);
           targetFs.writeFileSync(mappedPath, Buffer.concat(chunks));
           targetFs.chmodSync(mappedPath, mode);
           targetFs.utimesSync(mappedPath, defaultTime, defaultTime);
