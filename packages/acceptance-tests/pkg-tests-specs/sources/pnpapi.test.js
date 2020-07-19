@@ -163,6 +163,7 @@ describe(`Plug'n'Play API`, () => {
               return [...pnp.getPackageInformation(pnp.getLocator('bar', deps.get('bar'))).packagePeers];
             }`),
           ).resolves.toEqual([
+            `@types/no-deps`,
             `no-deps`,
           ]);
         }),
