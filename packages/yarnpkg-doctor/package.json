@@ -8,7 +8,7 @@
     "@yarnpkg/core": "workspace:^2.1.1",
     "@yarnpkg/fslib": "workspace:^2.1.0",
     "clipanion": "^2.4.2",
-    "globby": "^10.0.1",
+    "globby": "^11.0.1",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
     "tslib": "^1.13.0",
