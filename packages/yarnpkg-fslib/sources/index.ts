@@ -200,7 +200,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     let patchedFsPromises;
     try {
       patchedFsPromises = patchedFs.promises;
-    } catch {
+    } finally {
       process.emitWarning = origEmitWarning;
     }
 
