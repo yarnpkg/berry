@@ -83,7 +83,7 @@ export async function request(target: string, body: Body, {configuration, header
   const socketTimeout = configuration.get(`httpTimeout`);
   const retry = configuration.get(`httpRetry`);
 
-  const got = await import(`got`);
+  const {default: got} = await import(`got`);
 
   //@ts-ignore
   const gotClient = got.extend({

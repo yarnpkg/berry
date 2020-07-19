@@ -1,9 +1,11 @@
 releases:
   "@yarnpkg/cli": prerelease
   "@yarnpkg/core": minor
+  "@yarnpkg/fslib": patch
   "@yarnpkg/plugin-compat": patch
   "@yarnpkg/plugin-git": patch
   "@yarnpkg/plugin-pnp": patch
+  "@yarnpkg/pnp": patch
 
 declined:
   - "@yarnpkg/plugin-constraints"
