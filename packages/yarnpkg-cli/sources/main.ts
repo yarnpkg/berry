@@ -61,8 +61,8 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
     const version = process.versions.node;
     const range = `>=10.17`;
 
-    if (!semverUtils.satisfiesWithPrereleases(version, range))
-      throw new UsageError(`This tool requires a Node version compatible with ${range} (got ${version})`);
+    if (!semverUtils.satisfiesWithPrereleases(version, range) && process.env.YARN_IGNORE_NODE !== `1`)
+      throw new UsageError(`This tool requires a Node version compatible with ${range} (got ${version}). Upgrade Node, or set \`YARN_IGNORE_NODE=1\` in your environment.`);
 
     // Since we only care about a few very specific settings (yarn-path and ignore-path) we tolerate extra configuration key.
     // If we didn't, we wouldn't even be able to run `yarn config` (which is recommended in the invalid config error message)

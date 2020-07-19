@@ -55,6 +55,9 @@ const IGNORED_ENV_VARIABLES = new Set([
   `profile`,
   `gpg`,
 
+  // "ignoreNode" is used to disable the Node version check
+  `ignoreNode`,
+
   // "wrapOutput" was a variable used to indicate nested "yarn run" processes
   // back in Yarn 1.
   `wrapOutput`,
