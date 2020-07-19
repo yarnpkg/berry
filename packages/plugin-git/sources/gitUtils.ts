@@ -13,12 +13,10 @@ function makeGitEnvironment() {
 
 const gitPatterns = [
   /^ssh:/,
-  /^git(?:\+ssh)?:/,
+  /^git(?:\+[^:]+)?:/,
 
   // `git+` is optional, `.git` is required
   /^(?:git\+)?https?:[^#]+\/[^#]+(?:\.git)(?:#.*)?$/,
-  // `git+` is required, `.git` is optional
-  /^(?:git\+)https?:[^#]+\/[^#]+(?:\.git)?(?:#.*)?$/,
 
   /^git@[^#]+\/[^#]+\.git(?:#.*)?$/,
 
@@ -129,9 +127,9 @@ export function splitRepoUrl(url: string): RepoUrlParts {
 }
 
 export function normalizeRepoUrl(url: string) {
-  // "git+https://" isn't an actual Git protocol. It's just a way to
-  // disambiguate that this URL points to a Git repository.
-  url = url.replace(/^git\+https:/, `https:`);
+  // "git+FOO:" isn't an actual Git protocol. It's just a way to disambiguate
+  // that this reference points to something that Git understands.
+  url = url.replace(/^git\+([^:]+):/, `$1:`);
 
   // We support this as an alias to GitHub repositories
   url = url.replace(/^(?:github:|https:\/\/github\.com\/)?(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)(?:\.git)?(#.*)?$/, `https://github.com/$1/$2.git$3`);

@@ -287,6 +287,26 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should implicitly allow @types accesses if there are matching peer dependencies`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`@types/no-deps`]: `1.0.0`,
+          [`peer-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(source(`require('peer-deps/get-types')`)).resolves.toMatchObject({
+          name: `@types/no-deps`,
+          version: `1.0.0`,
+        });
+      }
+    )
+  );
+
+  test(
     `it should mention which ancestor broke the peer dependency chain`,
     makeTemporaryEnv(
       {dependencies: {[`broken-peer-deps`]: `1.0.0`}},

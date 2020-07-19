@@ -1224,6 +1224,44 @@ export class Configuration {
       }
     }
 
+    // We also add implicit optional @types peer dependencies for each peer
+    // dependency. This is for compatibility reason, as many existing packages
+    // forget to define their @types/react optional peer dependency when they
+    // peer-depend on react.
+
+    const getTypesName = (descriptor: Descriptor) => {
+      return descriptor.scope
+        ? `${descriptor.scope}__${descriptor.name}`
+        : `${descriptor.name}`;
+    };
+
+    for (const descriptor of pkg.peerDependencies.values()) {
+      if (descriptor.scope === `@types`)
+        continue;
+
+      const typesName = getTypesName(descriptor);
+      const typesIdent = structUtils.makeIdent(`types`, typesName);
+
+      if (pkg.peerDependencies.has(typesIdent.identHash) || pkg.peerDependenciesMeta.has(typesIdent.identHash))
+        continue;
+
+      pkg.peerDependenciesMeta.set(structUtils.stringifyIdent(typesIdent), {
+        optional: true,
+      });
+    }
+
+    // I don't like implicit dependencies, but package authors are reluctant to
+    // use optional peer dependencies because they would print warnings in older
+    // npm releases.
+
+    for (const identString of pkg.peerDependenciesMeta.keys()) {
+      const ident = structUtils.parseIdent(identString);
+
+      if (!pkg.peerDependencies.has(ident.identHash)) {
+        pkg.peerDependencies.set(ident.identHash, structUtils.makeDescriptor(ident, `*`));
+      }
+    }
+
     // We sort the dependencies so that further iterations always occur in the
     // same order, regardless how the various registries formatted their output
 

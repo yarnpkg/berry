@@ -37,7 +37,7 @@ const now = new Date();
 // We only want to support environments that will out-of-the-box accept the
 // characters we want to use. Others can enforce the style from the project
 // configuration.
-const supportsEmojis = [`iTerm.app`, `Apple_Terminal`].includes(process.env.TERM_PROGRAM!);
+const supportsEmojis = [`iTerm.app`, `Apple_Terminal`].includes(process.env.TERM_PROGRAM!) || !!process.env.WT_SESSION;
 
 const makeRecord = <T>(obj: {[key: string]: T}) => obj;
 const PROGRESS_STYLES = makeRecord({
@@ -48,7 +48,7 @@ const PROGRESS_STYLES = makeRecord({
   },
   simba: {
     date: [19, 7],
-    chars: [`🌟`, `✨`],
+    chars: [`🦁`, `🌴`],
     size: 40,
   },
   jack: {
