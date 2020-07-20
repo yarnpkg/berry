@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                                   from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport} from '@yarnpkg/core';
-import {xfs, ppath}                                                            from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                              from '@yarnpkg/parsers';
-import {Command, Usage}                                                        from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                               from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, FormatType} from '@yarnpkg/core';
+import {xfs, ppath}                                                                        from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                          from '@yarnpkg/parsers';
+import {Command, Usage}                                                                    from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
@@ -54,7 +54,7 @@ export default class YarnCommand extends BaseCommand {
 
       Note that running this command is not part of the recommended workflow. Yarn supports zero-installs, which means that as long as you store your cache and your .pnp.js file inside your repository, everything will work without requiring any install right after cloning your repository or switching branches.
 
-      If the \`--immutable\` option is set, Yarn will abort with an error exit code if anything in the install artifacts (\`yarn.lock\`, \`.pnp.js\`, ...) was to be modified. For backward compatibility we offer an alias under the name of \`--frozen-lockfile\`, but it will be removed in a later release.
+      If the \`--immutable\` option is set, Yarn will abort with an error exit code if the lockfile was to be modified (other paths can be added using the \`immutablePaths\` configuration setting). For backward compatibility we offer an alias under the name of \`--frozen-lockfile\`, but it will be removed in a later release.
 
       If the \`--immutable-cache\` option is set, Yarn will abort with an error exit code if the cache folder was to be modified (either because files would be added, or because they'd be removed).
 
@@ -181,8 +181,8 @@ export default class YarnCommand extends BaseCommand {
     }
 
     const immutable = typeof this.immutable === `undefined` && typeof this.frozenLockfile === `undefined`
-      ? configuration.get(`enableImmutableInstalls`)
-      : this.immutable || this.frozenLockfile;
+      ? configuration.get<boolean>(`enableImmutableInstalls`) ?? false
+      : this.immutable ?? this.frozenLockfile ?? false;
 
     if (configuration.projectCwd !== null) {
       const fixReport = await StreamReport.start({
@@ -193,11 +193,31 @@ export default class YarnCommand extends BaseCommand {
       }, async report => {
         if (await autofixMergeConflicts(configuration, immutable)) {
           report.reportInfo(MessageName.AUTOMERGE_SUCCESS, `Automatically fixed merge conflicts 👍`);
+          report.reportSeparator();
         }
       });
 
       if (fixReport.hasErrors()) {
         return fixReport.exitCode();
+      }
+    }
+
+    if (configuration.projectCwd !== null) {
+      const telemetryReport = await StreamReport.start({
+        configuration,
+        json: this.json,
+        stdout: this.context.stdout,
+        includeFooter: false,
+      }, async report => {
+        if (Configuration.telemetry?.isNew) {
+          report.reportInfo(MessageName.TELEMETRY_NOTICE, `Yarn will periodically gather anonymous telemetry: https://yarnpkg.com/advanced/telemetry`);
+          report.reportInfo(MessageName.TELEMETRY_NOTICE, `Run ${configuration.format(`yarn config set --home enableTelemetry 0`, FormatType.CODE)} to disable`);
+          report.reportSeparator();
+        }
+      });
+
+      if (telemetryReport.hasErrors()) {
+        return telemetryReport.exitCode();
       }
     }
 

@@ -1,12 +1,16 @@
 import {Filename, FakeFS, PortablePath, ZipCompression, ZipFS, NodeFS, ppath, xfs, npath} from '@yarnpkg/fslib';
 import {getLibzipPromise}                                                                 from '@yarnpkg/libzip';
-import {Parse}                                                                            from 'tar';
+import tar                                                                                from 'tar-stream';
+import {promisify}                                                                        from 'util';
+import zlib                                                                               from 'zlib';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>,
   prefixPath?: PortablePath | null,
   compressionLevel?: ZipCompression,
 }
+
+const gunzip = promisify(zlib.gunzip);
 
 export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root, compressionLevel}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
   const tmpFolder = await xfs.mktempPromise();
@@ -38,15 +42,14 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
   // 1980-01-01, like Fedora
   const defaultTime = 315532800;
 
-  // @ts-ignore: Typescript doesn't want me to use new
-  const parser = new Parse();
+  const parser = tar.extract() as tar.Extract;
 
-  function ignore(entry: any) {
+  function ignore(entry: tar.Headers) {
     // Disallow absolute paths; might be malicious (ex: /etc/passwd)
-    if (entry[0] === `/`)
+    if (entry.name[0] === `/`)
       return true;
 
-    const parts = entry.path.split(/\//g);
+    const parts = entry.name.split(/\//g);
 
     // We also ignore paths that could lead to escaping outside the archive
     if (parts.some((part: string) => part === `..`))
@@ -58,71 +61,78 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
     return false;
   }
 
-  parser.on(`entry`, (entry: any) => {
-    if (ignore(entry)) {
-      entry.resume();
+  parser.on(`entry`, (header, stream, next) => {
+    if (ignore(header)) {
+      next();
       return;
     }
 
-    const parts = ppath.normalize(npath.toPortablePath(entry.path)).replace(/\/$/, ``).split(/\//g);
+    const parts = ppath.normalize(npath.toPortablePath(header.name)).replace(/\/$/, ``).split(/\//g);
     if (parts.length <= stripComponents) {
-      entry.resume();
+      stream.resume();
+      next();
       return;
     }
 
     const slicePath = parts.slice(stripComponents).join(`/`) as PortablePath;
     const mappedPath = ppath.join(prefixPath, slicePath);
 
-    const chunks: Array<Buffer> = [];
-
     let mode = 0o644;
 
     // If a single executable bit is set, normalize so that all are
-    if (entry.type === `Directory` || (entry.mode & 0o111) !== 0)
+    if (header.type === `directory` || ((header.mode ?? 0) & 0o111) !== 0)
       mode |= 0o111;
 
-    entry.on(`data`, (chunk: Buffer) => {
-      chunks.push(chunk);
-    });
+    switch (header.type) {
+      case `directory`: {
+        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
-    entry.on(`end`, () => {
-      switch (entry.type) {
-        case `Directory`: {
-          targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+        targetFs.mkdirSync(mappedPath);
+        targetFs.chmodSync(mappedPath, mode);
+        targetFs.utimesSync(mappedPath, defaultTime, defaultTime);
+        next();
+      } break;
 
-          targetFs.mkdirSync(mappedPath);
-          targetFs.chmodSync(mappedPath, mode);
-          targetFs.utimesSync(mappedPath, defaultTime, defaultTime);
-        } break;
+      case `file`: {
+        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
-        case `OldFile`:
-        case `File`: {
-          targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+        const chunks: Array<Buffer> = [];
 
+        stream.on(`data`, (chunk: Buffer) => chunks.push(chunk));
+        stream.on(`end`, () => {
           targetFs.writeFileSync(mappedPath, Buffer.concat(chunks));
           targetFs.chmodSync(mappedPath, mode);
           targetFs.utimesSync(mappedPath, defaultTime, defaultTime);
-        } break;
+          next();
+        });
+      } break;
 
-        case `SymbolicLink`: {
-          targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+      case `symlink`: {
+        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
-          targetFs.symlinkSync(entry.linkpath, mappedPath);
-          targetFs.lutimesSync?.(mappedPath, defaultTime, defaultTime);
-        } break;
+        targetFs.symlinkSync(header.linkname as PortablePath, mappedPath);
+        targetFs.lutimesSync?.(mappedPath, defaultTime, defaultTime);
+        next();
+      } break;
+
+      default: {
+        stream.resume();
+        next();
       }
-    });
+    }
   });
+
+  const gunzipped = await gunzip(tgz);
 
   return await new Promise<T>((resolve, reject) =>  {
     parser.on(`error`, (error: Error) => {
       reject(error);
     });
 
-    parser.on(`close`, () => {
+    parser.on(`finish`, () => {
       resolve(targetFs);
     });
 
-    parser.end(tgz);
+    parser.end(gunzipped);
   });
 }

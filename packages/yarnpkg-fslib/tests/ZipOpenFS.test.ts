@@ -101,4 +101,40 @@ describe(`ZipOpenFS`, () => {
 
     fs.discardAndClose();
   });
+
+  it(`closes ZipFS instances once they become stale`, async () => {
+    jest.useFakeTimers();
+
+    let time = Date.now();
+    jest.spyOn(Date, `now`).mockImplementation(() => time);
+    const advanceTimeBy = (ms: number) => {
+      time += ms;
+      jest.advanceTimersByTime(ms);
+    };
+
+    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxAge: 2000});
+
+    await fs.existsPromise(ZIP_FILE1);
+    // @ts-expect-error: zipInstances is private
+    expect(fs.zipInstances!.size).toEqual(1);
+
+    advanceTimeBy(1000);
+
+    fs.existsSync(ZIP_FILE2);
+    // @ts-expect-error: zipInstances is private
+    expect(fs.zipInstances!.size).toEqual(2);
+
+    advanceTimeBy(1000);
+
+    // @ts-expect-error: zipInstances is private
+    expect(fs.zipInstances!.size).toEqual(1);
+
+    advanceTimeBy(1000);
+
+    // @ts-expect-error: zipInstances is private
+    expect(fs.zipInstances!.size).toEqual(0);
+
+    fs.discardAndClose();
+    jest.restoreAllMocks();
+  });
 });

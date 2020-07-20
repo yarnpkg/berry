@@ -1,12 +1,12 @@
-import got, {ExtendOptions, Response} from 'got';
-import {Agent as HttpsAgent}          from 'https';
-import {Agent as HttpAgent}           from 'http';
-import micromatch                     from 'micromatch';
-import plimit                         from 'p-limit';
-import tunnel, {ProxyOptions}         from 'tunnel';
-import {URL}                          from 'url';
+import {ExtendOptions, Response} from 'got';
+import {Agent as HttpsAgent}     from 'https';
+import {Agent as HttpAgent}      from 'http';
+import micromatch                from 'micromatch';
+import plimit                    from 'p-limit';
+import tunnel, {ProxyOptions}    from 'tunnel';
+import {URL}                     from 'url';
 
-import {Configuration}                from './Configuration';
+import {Configuration}           from './Configuration';
 
 const NETWORK_CONCURRENCY = 8;
 
@@ -37,6 +37,7 @@ export type Body = (
 export enum Method {
   GET = `GET`,
   PUT = `PUT`,
+  POST = `POST`,
 }
 
 export type Options = {
@@ -83,6 +84,8 @@ export async function request(target: string, body: Body, {configuration, header
   const socketTimeout = configuration.get(`httpTimeout`);
   const retry = configuration.get(`httpRetry`);
 
+  const {default: got} = await import(`got`);
+
   //@ts-ignore
   const gotClient = got.extend({
     timeout: {
@@ -118,6 +121,12 @@ export async function get(target: string, {configuration, json, ...rest}: Option
 
 export async function put(target: string, body: Body, options: Options): Promise<Buffer> {
   const response = await request(target, body, {...options, method: Method.PUT});
+
+  return response.body;
+}
+
+export async function post(target: string, body: Body, options: Options): Promise<Buffer> {
+  const response = await request(target, body, {...options, method: Method.POST});
 
   return response.body;
 }

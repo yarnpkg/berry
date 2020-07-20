@@ -1,5 +1,5 @@
-import {DEFAULT_COMPRESSION_LEVEL}                             from '@yarnpkg/fslib';
 import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL}                             from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                              from '@yarnpkg/parsers';
 import camelcase                                               from 'camelcase';
 import chalk                                                   from 'chalk';
@@ -15,6 +15,7 @@ import {MultiResolver}                                         from './MultiReso
 import {Plugin, Hooks}                                         from './Plugin';
 import {ProtocolResolver}                                      from './ProtocolResolver';
 import {Report}                                                from './Report';
+import {TelemetryManager}                                      from './TelemetryManager';
 import {VirtualFetcher}                                        from './VirtualFetcher';
 import {VirtualResolver}                                       from './VirtualResolver';
 import {WorkspaceFetcher}                                      from './WorkspaceFetcher';
@@ -24,7 +25,7 @@ import * as miscUtils                                          from './miscUtils
 import * as nodeUtils                                          from './nodeUtils';
 import * as semverUtils                                        from './semverUtils';
 import * as structUtils                                        from './structUtils';
-import {IdentHash, Package, Descriptor}                        from './types';
+import {IdentHash, Package, Descriptor, Ident}                 from './types';
 
 const chalkOptions = process.env.GITHUB_ACTIONS
   ? {level: 2}
@@ -54,6 +55,9 @@ const IGNORED_ENV_VARIABLES = new Set([
   // https://classic.yarnpkg.com/install.sh
   `profile`,
   `gpg`,
+
+  // "ignoreNode" is used to disable the Node version check
+  `ignoreNode`,
 
   // "wrapOutput" was a variable used to indicate nested "yarn run" processes
   // back in Yarn 1.
@@ -87,6 +91,7 @@ export enum FormatType {
   SCOPE = `SCOPE`,
   ADDED = `ADDED`,
   REMOVED = `REMOVED`,
+  CODE = `CODE`,
 }
 
 export const formatColors = chalkOptions.level >= 3 ? new Map([
@@ -98,6 +103,7 @@ export const formatColors = chalkOptions.level >= 3 ? new Map([
   [FormatType.SCOPE, `#d75f00`],
   [FormatType.ADDED, `#5faf00`],
   [FormatType.REMOVED, `#d70000`],
+  [FormatType.CODE, `#87afff`],
 ]) : new Map([
   [FormatType.NAME, 173],
   [FormatType.RANGE, 37],
@@ -107,6 +113,7 @@ export const formatColors = chalkOptions.level >= 3 ? new Map([
   [FormatType.SCOPE, 166],
   [FormatType.ADDED, 70],
   [FormatType.REMOVED, 160],
+  [FormatType.CODE, 111],
 ]);
 
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
@@ -230,6 +237,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.yarn/install-state.gz`,
   },
+  immutablePatterns: {
+    description: `Array of glob patterns; files matching them won't be allowed to change during immutable installs`,
+    type: SettingsType.STRING,
+    default: [],
+    isArray: true,
+  },
   rcFilename: {
     description: `Name of the files where the configuration can be found`,
     type: SettingsType.STRING,
@@ -352,6 +365,24 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.NUMBER,
     default: 3,
   },
+
+  // Settings related to telemetry
+  enableTelemetry: {
+    description: `If true, telemetry will be periodically sent, following the rules in https://yarnpkg.com/advanced/telemetry`,
+    type: SettingsType.BOOLEAN,
+    default: !isCI,
+  },
+  telemetryInterval: {
+    description: `Minimal amount of time between two telemetry uploads, in days`,
+    type: SettingsType.NUMBER,
+    default: 7,
+  },
+  telemetryUserId: {
+    description: `If you desire to tell us which project you are, you can set this field. Completely optional and opt-in.`,
+    type: SettingsType.STRING,
+    default: null,
+  },
+
   // Settings related to security
   enableScripts: {
     description: `If true, packages are allowed to have install scripts by default`,
@@ -642,6 +673,8 @@ export type FindProjectOptions = {
 };
 
 export class Configuration {
+  public static telemetry: TelemetryManager | null = null;
+
   public startingCwd: PortablePath;
   public projectCwd: PortablePath | null = null;
 
@@ -653,8 +686,8 @@ export class Configuration {
 
   public invalid: Map<string, string> = new Map();
 
-  private packageExtensions?: Map<IdentHash, Array<{
-    range: string,
+  public packageExtensions: Map<IdentHash, Array<{
+    descriptor: Descriptor,
     patch: (pkg: Package) => void,
   }>> = new Map();
 
@@ -1182,7 +1215,7 @@ export class Configuration {
       extension.load(extensionData);
 
       miscUtils.getArrayWithDefault(packageExtensions, descriptor.identHash).push({
-        range: descriptor.range,
+        descriptor,
         patch: pkg => {
           pkg.dependencies = new Map([...pkg.dependencies, ...extension.dependencies]);
           pkg.peerDependencies = new Map([...pkg.peerDependencies, ...extension.peerDependencies]);
@@ -1214,8 +1247,8 @@ export class Configuration {
       const version = original.version;
 
       if (version !== null) {
-        const extensionEntry = extensionList.find(({range}) => {
-          return semverUtils.satisfiesWithPrereleases(version, range);
+        const extensionEntry = extensionList.find(({descriptor}) => {
+          return semverUtils.satisfiesWithPrereleases(version, descriptor.range);
         });
 
         if (typeof extensionEntry !== `undefined`) {
@@ -1224,11 +1257,49 @@ export class Configuration {
       }
     }
 
+    // We also add implicit optional @types peer dependencies for each peer
+    // dependency. This is for compatibility reason, as many existing packages
+    // forget to define their @types/react optional peer dependency when they
+    // peer-depend on react.
+
+    const getTypesName = (descriptor: Descriptor) => {
+      return descriptor.scope
+        ? `${descriptor.scope}__${descriptor.name}`
+        : `${descriptor.name}`;
+    };
+
+    for (const descriptor of pkg.peerDependencies.values()) {
+      if (descriptor.scope === `@types`)
+        continue;
+
+      const typesName = getTypesName(descriptor);
+      const typesIdent = structUtils.makeIdent(`types`, typesName);
+
+      if (pkg.peerDependencies.has(typesIdent.identHash) || pkg.peerDependenciesMeta.has(typesIdent.identHash))
+        continue;
+
+      pkg.peerDependenciesMeta.set(structUtils.stringifyIdent(typesIdent), {
+        optional: true,
+      });
+    }
+
+    // I don't like implicit dependencies, but package authors are reluctant to
+    // use optional peer dependencies because they would print warnings in older
+    // npm releases.
+
+    for (const identString of pkg.peerDependenciesMeta.keys()) {
+      const ident = structUtils.parseIdent(identString);
+
+      if (!pkg.peerDependencies.has(ident.identHash)) {
+        pkg.peerDependencies.set(ident.identHash, structUtils.makeDescriptor(ident, `*`));
+      }
+    }
+
     // We sort the dependencies so that further iterations always occur in the
     // same order, regardless how the various registries formatted their output
 
-    pkg.dependencies = new Map(miscUtils.sortMap(pkg.dependencies, ([, descriptor]) => descriptor.name));
-    pkg.peerDependencies = new Map(miscUtils.sortMap(pkg.peerDependencies, ([, descriptor]) => descriptor.name));
+    pkg.dependencies = new Map(miscUtils.sortMap(pkg.dependencies, ([, descriptor]) => structUtils.stringifyDescriptor(descriptor)));
+    pkg.peerDependencies = new Map(miscUtils.sortMap(pkg.peerDependencies, ([, descriptor]) => structUtils.stringifyDescriptor(descriptor)));
 
     return pkg;
   }

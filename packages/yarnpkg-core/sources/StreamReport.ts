@@ -37,7 +37,7 @@ const now = new Date();
 // We only want to support environments that will out-of-the-box accept the
 // characters we want to use. Others can enforce the style from the project
 // configuration.
-const supportsEmojis = [`iTerm.app`, `Apple_Terminal`].includes(process.env.TERM_PROGRAM!);
+const supportsEmojis = [`iTerm.app`, `Apple_Terminal`].includes(process.env.TERM_PROGRAM!) || !!process.env.WT_SESSION;
 
 const makeRecord = <T>(obj: {[key: string]: T}) => obj;
 const PROGRESS_STYLES = makeRecord({
@@ -48,7 +48,7 @@ const PROGRESS_STYLES = makeRecord({
   },
   simba: {
     date: [19, 7],
-    chars: [`🌟`, `✨`],
+    chars: [`🦁`, `🌴`],
     size: 40,
   },
   jack: {
@@ -80,12 +80,29 @@ export class StreamReport extends Report {
   static async start(opts: StreamReportOptions, cb: (report: StreamReport) => Promise<void>) {
     const report = new this(opts);
 
+    const emitWarning = process.emitWarning;
+    process.emitWarning = (message, name) => {
+      if (typeof message !== `string`) {
+        const error = message;
+
+        message = error.message;
+        name = name ?? error.name;
+      }
+
+      const fullMessage = typeof name !== `undefined`
+        ? `${name}: ${message}`
+        : message;
+
+      report.reportWarning(MessageName.UNNAMED, fullMessage);
+    };
+
     try {
       await cb(report);
     } catch (error) {
       report.reportExceptionOnce(error);
     } finally {
       await report.finalize();
+      process.emitWarning = emitWarning;
     }
 
     return report;
