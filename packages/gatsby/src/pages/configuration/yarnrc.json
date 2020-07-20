@@ -172,6 +172,14 @@
       "type": "boolean",
       "default": false
     },
+    "immutablePatterns": {
+      "description": "An array of patterns for files and directories that aren't allowed to change when running installs with the \\`--immutable\\` flag set.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": ["**/.pnp.js"]
+    },
     "initScope": {
       "description": "Scope used when creating packages via the `init` command.",
       "type": "string",

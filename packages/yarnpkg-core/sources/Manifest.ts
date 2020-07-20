@@ -551,15 +551,6 @@ export class Manifest {
     if (!peerDependencyMeta)
       this.peerDependenciesMeta.set(identString, peerDependencyMeta = {});
 
-    // I don't like implicit dependencies, but package authors are reluctant to
-    // use optional peer dependencies because they would print warnings in npm
-    // due to a bug in their server implementation. We've been waiting for them
-    // to fix it, but it's been a while now with no idea how close they are. So
-    // in the meantime the "peerDependenciesMeta" field will imply a generic
-    // peer dependency. Ref: https://github.com/npm/cli/pull/224
-    if (!this.peerDependencies.has(descriptor.identHash))
-      this.peerDependencies.set(descriptor.identHash, structUtils.makeDescriptor(descriptor, `*`));
-
     return peerDependencyMeta;
   }
 

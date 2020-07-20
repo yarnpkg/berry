@@ -193,7 +193,17 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
   {
     // `fs.promises` is a getter that returns a reference to require(`fs/promises`),
     // so we can just patch `fs.promises` and both will be updated
-    const patchedFsPromises = patchedFs.promises;
+
+    const origEmitWarning = process.emitWarning;
+    process.emitWarning = () => {};
+
+    let patchedFsPromises;
+    try {
+      patchedFsPromises = patchedFs.promises;
+    } finally {
+      process.emitWarning = origEmitWarning;
+    }
+
     if (typeof patchedFsPromises !== `undefined`) {
       // `fs.promises.exists` doesn't exist
 

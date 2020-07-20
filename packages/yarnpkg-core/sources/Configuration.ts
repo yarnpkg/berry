@@ -55,6 +55,9 @@ const IGNORED_ENV_VARIABLES = new Set([
   `profile`,
   `gpg`,
 
+  // "ignoreNode" is used to disable the Node version check
+  `ignoreNode`,
+
   // "wrapOutput" was a variable used to indicate nested "yarn run" processes
   // back in Yarn 1.
   `wrapOutput`,
@@ -230,6 +233,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.yarn/install-state.gz`,
   },
+  immutablePatterns: {
+    description: `Array of glob patterns; files matching them won't be allowed to change during immutable installs`,
+    type: SettingsType.STRING,
+    default: [],
+    isArray: true,
+  },
   rcFilename: {
     description: `Name of the files where the configuration can be found`,
     type: SettingsType.STRING,
@@ -352,6 +361,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.NUMBER,
     default: 3,
   },
+
   // Settings related to security
   enableScripts: {
     description: `If true, packages are allowed to have install scripts by default`,
@@ -1224,11 +1234,49 @@ export class Configuration {
       }
     }
 
+    // We also add implicit optional @types peer dependencies for each peer
+    // dependency. This is for compatibility reason, as many existing packages
+    // forget to define their @types/react optional peer dependency when they
+    // peer-depend on react.
+
+    const getTypesName = (descriptor: Descriptor) => {
+      return descriptor.scope
+        ? `${descriptor.scope}__${descriptor.name}`
+        : `${descriptor.name}`;
+    };
+
+    for (const descriptor of pkg.peerDependencies.values()) {
+      if (descriptor.scope === `@types`)
+        continue;
+
+      const typesName = getTypesName(descriptor);
+      const typesIdent = structUtils.makeIdent(`types`, typesName);
+
+      if (pkg.peerDependencies.has(typesIdent.identHash) || pkg.peerDependenciesMeta.has(typesIdent.identHash))
+        continue;
+
+      pkg.peerDependenciesMeta.set(structUtils.stringifyIdent(typesIdent), {
+        optional: true,
+      });
+    }
+
+    // I don't like implicit dependencies, but package authors are reluctant to
+    // use optional peer dependencies because they would print warnings in older
+    // npm releases.
+
+    for (const identString of pkg.peerDependenciesMeta.keys()) {
+      const ident = structUtils.parseIdent(identString);
+
+      if (!pkg.peerDependencies.has(ident.identHash)) {
+        pkg.peerDependencies.set(ident.identHash, structUtils.makeDescriptor(ident, `*`));
+      }
+    }
+
     // We sort the dependencies so that further iterations always occur in the
     // same order, regardless how the various registries formatted their output
 
-    pkg.dependencies = new Map(miscUtils.sortMap(pkg.dependencies, ([, descriptor]) => descriptor.name));
-    pkg.peerDependencies = new Map(miscUtils.sortMap(pkg.peerDependencies, ([, descriptor]) => descriptor.name));
+    pkg.dependencies = new Map(miscUtils.sortMap(pkg.dependencies, ([, descriptor]) => structUtils.stringifyDescriptor(descriptor)));
+    pkg.peerDependencies = new Map(miscUtils.sortMap(pkg.peerDependencies, ([, descriptor]) => structUtils.stringifyDescriptor(descriptor)));
 
     return pkg;
   }

@@ -159,6 +159,28 @@ export abstract class FakeFS<P extends Path> {
   abstract watch(p: P, cb?: WatchCallback): Watcher;
   abstract watch(p: P, opts: WatchOptions, cb?: WatchCallback): Watcher;
 
+  async * genTraversePromise(init: P, {stableSort = false}: {stableSort?: boolean} = {}) {
+    const stack = [init];
+
+    while (stack.length > 0) {
+      const p = stack.shift()!;
+      const entry = await this.lstatPromise(p);
+
+      if (entry.isDirectory()) {
+        const entries = await this.readdirPromise(p);
+        if (stableSort) {
+          for (const entry of entries.sort()) {
+            stack.push(this.pathUtils.join(p, entry));
+          }
+        } else {
+          throw new Error(`Not supported`);
+        }
+      } else {
+        yield p;
+      }
+    }
+  }
+
   async removePromise(p: P) {
     let stat;
     try {

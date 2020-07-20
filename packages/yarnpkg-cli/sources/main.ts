@@ -1,10 +1,10 @@
-import {Configuration, CommandContext, PluginConfiguration} from '@yarnpkg/core';
-import {PortablePath, npath, xfs}                           from '@yarnpkg/fslib';
-import {execFileSync}                                       from 'child_process';
-import {Cli}                                                from 'clipanion';
-import {realpathSync}                                       from 'fs';
+import {Configuration, CommandContext, PluginConfiguration, semverUtils} from '@yarnpkg/core';
+import {PortablePath, npath, xfs}                                        from '@yarnpkg/fslib';
+import {execFileSync}                                                    from 'child_process';
+import {Cli, UsageError}                                                 from 'clipanion';
+import {realpathSync}                                                    from 'fs';
 
-import {WelcomeCommand}                                     from './tools/WelcomeCommand';
+import {WelcomeCommand}                                                  from './tools/WelcomeCommand';
 
 function runBinary(path: PortablePath) {
   const physicalPath = npath.fromPortablePath(path);
@@ -54,6 +54,16 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
   }
 
   async function exec(cli: Cli<CommandContext>): Promise<void> {
+    // Non-exhaustive known requirements:
+    // - 10.16+ for Brotli support on `plugin-compat`
+    // - 10.17+ to silence `got` warning on `dns.promises`
+
+    const version = process.versions.node;
+    const range = `>=10.17`;
+
+    if (!semverUtils.satisfiesWithPrereleases(version, range) && process.env.YARN_IGNORE_NODE !== `1`)
+      throw new UsageError(`This tool requires a Node version compatible with ${range} (got ${version}). Upgrade Node, or set \`YARN_IGNORE_NODE=1\` in your environment.`);
+
     // Since we only care about a few very specific settings (yarn-path and ignore-path) we tolerate extra configuration key.
     // If we didn't, we wouldn't even be able to run `yarn config` (which is recommended in the invalid config error message)
     const configuration = await Configuration.find(npath.toPortablePath(process.cwd()), pluginConfiguration, {

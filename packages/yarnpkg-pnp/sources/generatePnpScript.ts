@@ -1,7 +1,7 @@
 import {generatePrettyJson}      from './generatePrettyJson';
 import {generateSerializedState} from './generateSerializedState';
 // @ts-ignore
-import template                  from './hook';
+import getTemplate               from './hook';
 import {SerializedState}         from './types';
 import {PnpSettings}             from './types';
 
@@ -21,7 +21,7 @@ function generateLoader(shebang: string | null | undefined, loader: string) {
     loader.replace(/^/gm, `  `),
     `}\n`,
     `\n`,
-    template,
+    getTemplate(),
   ].join(``);
 }
 
