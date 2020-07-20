@@ -10,7 +10,6 @@ export enum MetricName {
   PLUGIN_NAME = `pluginName`,
   INSTALL_COUNT = `installCount`,
   PROJECT_COUNT = `projectCount`,
-  NM_INSTALL_COUNT = `nmInstallCount`,
   WORKSPACE_COUNT = `workspaceCount`,
   DEPENDENCY_COUNT = `dependencyCount`,
   EXTENSION = `packageExtension`,
@@ -18,7 +17,7 @@ export enum MetricName {
 
 export type RegistryBlock = {
   values?: {[key in MetricName]?: Array<string>};
-  hits?: {[key in MetricName]?: number};
+  hits?: {[key in MetricName]?: {[extra: string]: number}};
   enumerators?: {[key in MetricName]?: Array<string>};
 };
 
@@ -33,7 +32,7 @@ export class TelemetryManager {
   private configuration: Configuration;
 
   private values: Map<MetricName, Set<string>> = new Map();
-  private hits: Map<MetricName, number> = new Map();
+  private hits: Map<MetricName, Map<string, number>> = new Map();
   private enumerators: Map<MetricName, Set<string>> = new Map();
 
   public isNew: boolean;
@@ -64,12 +63,8 @@ export class TelemetryManager {
     this.reportEnumerator(MetricName.PROJECT_COUNT, cwd);
   }
 
-  reportInstall() {
-    this.reportHit(MetricName.INSTALL_COUNT);
-  }
-
-  reportNmInstall() {
-    this.reportHit(MetricName.NM_INSTALL_COUNT);
+  reportInstall(nodeLinker: string) {
+    this.reportHit(MetricName.INSTALL_COUNT, nodeLinker);
   }
 
   reportPackageExtension(value: string) {
@@ -92,9 +87,10 @@ export class TelemetryManager {
     miscUtils.getSetWithDefault(this.enumerators, metric).add(value);
   }
 
-  private reportHit(metric: MetricName) {
-    const current = miscUtils.getFactoryWithDefault(this.hits, metric, () => 0);
-    this.hits.set(metric, current + 1);
+  private reportHit(metric: MetricName, extra: string = `*`) {
+    const ns = miscUtils.getMapWithDefault(this.hits, metric);
+    const current = miscUtils.getFactoryWithDefault(ns, extra, () => 0);
+    ns.set(extra, current + 1);
   }
 
   private getRegistryPath() {
@@ -151,46 +147,48 @@ export class TelemetryManager {
     }
   }
 
+  private applyChanges() {
+    const registryFile = this.getRegistryPath();
+
+    let content: RegistryFile;
+    try {
+      content = xfs.readJsonSync(registryFile);
+    } catch {
+      content = {};
+    }
+
+    const userId = this.configuration.get<string | null>(`telemetryUserId`) ?? `*`;
+
+    const blocks = content.blocks = content.blocks ?? {};
+    const block = blocks[userId] = blocks[userId] ?? {};
+
+    for (const key of this.hits.keys()) {
+      const store = block.hits = block.hits ?? {};
+      const ns = store[key] = store[key] ?? {};
+
+      for (const [extra, value] of this.hits.get(key)!) {
+        ns[extra] = (ns[extra] ?? 0) + value;
+      }
+    }
+
+    for (const field of [`values`, `enumerators`] as const) {
+      for (const key of this[field].keys()) {
+        const store = block[field] = block[field] ?? {};
+
+        store[key] = [...new Set([
+          ...store[key] ?? [],
+          ...this[field].get(key) ?? [],
+        ])];
+      }
+    }
+
+    xfs.writeJsonSync(registryFile, content);
+  }
+
   private startBuffer() {
     process.on(`exit`, () => {
       try {
-        const registryFile = this.getRegistryPath();
-
-        let content: RegistryFile;
-        try {
-          content = xfs.readJsonSync(registryFile);
-        } catch {
-          content = {};
-        }
-
-        const userId = this.configuration.get<string | null>(`telemetryUserId`) ?? `*`;
-
-        const blocks = content.blocks = content.blocks ?? {};
-        const block = blocks[userId] = blocks[userId] ?? {};
-
-        const getAllKeys = (field: keyof RegistryBlock) => {
-          return new Set([
-            ...Object.keys(block[field] ?? {}) as Array<MetricName>,
-            ...this[field].keys(),
-          ]);
-        };
-
-        for (const key of getAllKeys(`hits`)) {
-          const store = block.hits = block.hits ?? {};
-          store[key] = (store[key] ?? 0) + (this.hits.get(key) ?? 0);
-        }
-
-        for (const field of [`values`, `enumerators`] as const) {
-          for (const key of getAllKeys(field)) {
-            const store = block[field] = block[field] ?? {};
-            store[key] = [...new Set([
-              ...store[key] ?? [],
-              ...this[field].get(key) ?? [],
-            ])];
-          }
-        }
-
-        xfs.writeJsonSync(registryFile, content);
+        this.applyChanges();
       } catch {
         // Explicitly ignore errors
       }

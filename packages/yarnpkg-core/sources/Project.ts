@@ -1417,10 +1417,8 @@ export class Project {
   }
 
   async install(opts: InstallOptions) {
-    Configuration.telemetry?.reportInstall();
-
-    if (this.configuration.get(`nodeLinker`) === `node-modules`)
-      Configuration.telemetry?.reportNmInstall();
+    const nodeLinker = this.configuration.get<string>(`nodeLinker`);
+    Configuration.telemetry?.reportInstall(nodeLinker);
 
     for (const extensions of this.configuration.packageExtensions.values())
       for (const {descriptor} of extensions)

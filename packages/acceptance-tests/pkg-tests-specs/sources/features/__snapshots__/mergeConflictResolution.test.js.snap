@@ -36,6 +36,7 @@ Object {
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0048: Automatically fixed merge conflicts 👍
+
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
@@ -85,6 +86,7 @@ Object {
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0048: Automatically fixed merge conflicts 👍
+
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
