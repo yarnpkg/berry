@@ -1,5 +1,5 @@
 import {PortablePath, xfs, npath} from '@yarnpkg/fslib';
-import {createHash, BinaryLike}   from 'crypto';
+import {createHash}               from 'crypto';
 import globby                     from 'globby';
 
 export function makeHash<T extends string = string>(...args: Array<string | null>): T {
@@ -55,5 +55,5 @@ export async function checksumPattern(pattern: string, {cwd}: {cwd: PortablePath
   for (const sub of hashes)
     hash.update(sub);
 
-  return hash;
+  return hash.digest(`hex`);
 }

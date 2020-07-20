@@ -9,7 +9,11 @@ export abstract class BaseFileURL<P extends Path> extends URL {
   declare public protocol: typeof PROTOCOL;
 
   protected constructor(pathUtils: PathUtils<P>, p: PathLike<P>) {
-    super(pathUtils.toFileURL(pathUtils.fromPathLike(p)).toString());
+    const url = pathUtils.toFileURL(pathUtils.fromPathLike(p));
+    if (url.protocol !== PROTOCOL)
+      throw errors.ERR_INVALID_URL_SCHEME(PROTOCOL);
+
+    super(url.toString());
   }
 }
 

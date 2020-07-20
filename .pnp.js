@@ -36810,7 +36810,9 @@ var errors = __webpack_require__(984);
 const PROTOCOL = `file:`;
 class BaseFileURL extends external_url_.URL {
   constructor(pathUtils, p) {
-    super(pathUtils.toFileURL(pathUtils.fromPathLike(p)).toString());
+    const url = pathUtils.toFileURL(pathUtils.fromPathLike(p));
+    if (url.protocol !== PROTOCOL) throw errors/* ERR_INVALID_URL_SCHEME */.qg(PROTOCOL);
+    super(url.toString());
   }
 
 }
