@@ -37,7 +37,7 @@ export default class DlxCommand extends BaseCommand {
 
   @Command.Path(`dlx`)
   async execute() {
-    await xfs.mktempPromise(async baseDir => {
+    return await xfs.mktempPromise(async baseDir => {
       const tmpDir = ppath.join(baseDir, `dlx-${process.pid}` as Filename);
       await xfs.mkdirPromise(tmpDir);
 

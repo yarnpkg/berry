@@ -36,7 +36,7 @@ If you'd like to contribute more, [take a look here!](https://github.com/yarnpkg
 
 ### VSCode
 
-1. Run the following command, which will generate a new directory called `.yarn/pnpify`:
+1. Run the following command, which will generate a new directory called `.yarn/sdks`:
 
 ```bash
 yarn dlx @yarnpkg/pnpify --sdk vscode
@@ -54,47 +54,54 @@ Note that VSCode might ask you to do Step 3 again from time to time, but apart f
 
 ### VIM / coc.nvim
 
-1. Run the following command, which will generate a new directory called `.yarn/pnpify`:
+Run the following command, which will generate a new directory called `.yarn/sdks`:
 
 ```bash
-yarn dlx @yarnpkg/pnpify --sdk base
+yarn dlx @yarnpkg/pnpify --sdk vim
 ```
-
-2. Set [`tsserver.tsdk`](https://github.com/neoclide/coc-tsserver#configuration-options) to `.yarn/pnpify/typescript/lib`
 
 ### Emacs
 
 The SDK comes with a typescript-language-server wrapper which enables you to use the ts-ls LSP client.
 
-1. Run the following command, which will generate a new directory called `.yarn/pnpify`:
+1. Run the following command, which will generate a new directory called `.yarn/sdks`:
 
 ```bash
 yarn dlx @yarnpkg/pnpify --sdk base
 ```
 
-2. Create a `.dir-locals.el` with the following content to enable Flycheck and LSP support:
+2. Create a `.dir-locals.el` with the following content to enable Flycheck and LSP support and make sure LSP is loaded after local variables are applied to trigger the `eval-after-load`:
 
 ```lisp
 ((typescript-mode
   . (
      ;; Enable typescript-language-server and eslint LSP clients.
      (lsp-enabled-clients . (ts-ls eslint))
-     (eval . (let ((project-directory (car (dir-locals-find-file "."))))
+     (eval . (lexical-let ((project-directory (car (dir-locals-find-file default-directory))))
                (set (make-local-variable 'flycheck-javascript-eslint-executable)
-                    (concat project-directory ".yarn/pnpify/eslint/bin/eslint.js"))
+                    (concat project-directory ".yarn/sdks/eslint/bin/eslint.js"))
+
+               (eval-after-load 'lsp-clients
+                 '(progn
+                    (plist-put lsp-deps-providers
+                               :local (list :path (lambda (path) (concat project-directory ".yarn/sdks/" path))))))
 
                (lsp-dependency 'typescript-language-server
-                               `(:system ,(concat project-directory ".yarn/pnpify/typescript-language-server/lib/cli.js")))
+                               '(:local "typescript-language-server/lib/cli.js"))
                (lsp-dependency 'typescript
-                               `(:system ,(concat project-directory ".yarn/pnpify/typescript/bin/tsserver")))
+                               '(:local "typescript/bin/tsserver"))
 
-               ;; Re-(start) LSP to pick up the dependency changes above.
-               (lsp)
+               ;; Re-(start) LSP to pick up the dependency changes above. Or use
+               ;; `hack-local-variables-hook` as proposed in lsp-mode's FAQ:
+               ;; https://emacs-lsp.github.io/lsp-mode/page/faq/
+               ;; (lsp)
                )))))
 ```
 
+3. Do note, that you can rename `:local` as you'd like in case you have SDKs stored elsewhere (other than `.yarn/sdks/...`) in other projects.
+
 ## Caveat
 
-- Since the Yarn packages are kept within their archives, editors need to understand how to work with such paths should you want to actually open the files (for example when command-clicking on an import path originating from an external package). This can only be implemented by those editors, and we can't do much more than opening issues to ask for this feature to be implemented (for example, here's the VSCode issue: [#75559](https://github.com/microsoft/vscode/issues/75559)).
+- Since the Yarn packages are kept within their archives, editors need to understand how to work with such paths should you want to open the files (for example when command-clicking on an import path originating from an external package). This can only be implemented by those editors, and we can't do much more than opening issues to ask for this feature to be implemented (for example, here's the VSCode issue: [#75559](https://github.com/microsoft/vscode/issues/75559)).
 
   As a workaround, you can run `yarn unplug pkg-name` to instruct yarn to unzip the package, which will re-enable `Go to definition` functionality for the specific package.

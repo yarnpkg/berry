@@ -25,6 +25,7 @@ export class GithubFetcher implements Fetcher {
       onHit: () => opts.report.reportCacheHit(locator),
       onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from GitHub`),
       loader: () => this.fetchFromNetwork(locator, opts),
+      skipIntegrityCheck: opts.skipIntegrityCheck,
     });
 
     return {

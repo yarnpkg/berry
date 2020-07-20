@@ -1,7 +1,5 @@
-import {npath, ppath, xfs}   from '@yarnpkg/fslib';
-import JSONStream            from 'JSONStream';
-import {execFileSync, spawn} from 'child_process';
-import {StringDecoder}       from 'string_decoder';
+import {npath, ppath, xfs} from '@yarnpkg/fslib';
+import {spawn}             from 'child_process';
 
 describe(`Features`, () => {
   describe(`Editor SDK`, () => {
@@ -30,7 +28,7 @@ describe(`Features`, () => {
         await run(`install`);
         await pnpify([`--sdk`, `base`], path);
 
-        const rawOutput = await noPnpNode([`./.yarn/pnpify/eslint/bin/eslint.js`], path);
+        const rawOutput = await noPnpNode([`./.yarn/sdks/eslint/bin/eslint.js`], path);
         const jsonOutput = JSON.parse(rawOutput);
 
         expect(jsonOutput).toMatchObject({
@@ -70,7 +68,7 @@ describe(`Features`, () => {
         await run(`install`, {nodeLinker: `node-modules`});
         expect(xfs.existsSync(ppath.join(path, `.pnp.js`))).toEqual(false);
 
-        const rawOutput = await noPnpNode([`./.yarn/pnpify/eslint/bin/eslint.js`], path);
+        const rawOutput = await noPnpNode([`./.yarn/sdks/eslint/bin/eslint.js`], path);
         const jsonOutput = JSON.parse(rawOutput);
 
         expect(jsonOutput).toMatchObject({
@@ -89,7 +87,7 @@ describe(`Features`, () => {
     test(
       `it should patch message into VSCode typescript language extension for zip schemes`,
       async () => {
-        const child = spawn(process.execPath, [require.resolve(`@yarnpkg/monorepo/.yarn/pnpify/typescript/lib/tsserver.js`)], {
+        const child = spawn(process.execPath, [require.resolve(`@yarnpkg/monorepo/.yarn/sdks/typescript/lib/tsserver.js`)], {
           cwd: npath.dirname(require.resolve(`@yarnpkg/monorepo/package.json`)),
           stdio: `pipe`,
           encoding: `utf8`,
@@ -138,17 +136,19 @@ describe(`Features`, () => {
 
         try {
           // We get the path to something that's definitely in a zip archive
-          const lodashTypeDef = require.resolve(`@types/lodash/index.d.ts`).replace(/\\/g, `/`);
+          const lodashTypeDef = require.resolve(`@types/lodash/index.d.ts`)
+            .replace(/\\/g, `/`)
+            .replace(/^\/?/, `/`);
           const lodashTypeDir = lodashTypeDef.replace(/\/[^/]+$/, ``);
 
           // We'll also use this file (which we control, so its content won't
           // change) to get autocompletion infos. It depends on lodash too.
-          const ourUtilityFile = require.resolve(`./editorSdks.utility.ts`).replace(/\\/g, `/`);
+          const ourUtilityFile = require.resolve(`./editorSdks.utility.ts`)
+            .replace(/\\/g, `/`)
+            .replace(/^\/?/, `/`);
 
           // Some sanity check to make sure everything is A-OK
           expect(lodashTypeDef).toContain(`.zip`);
-
-          console.log({lodashTypeDef, ourUtilityFile});
 
           await runAndWait(`projectLoadingFinish`, {
             seq: 0,

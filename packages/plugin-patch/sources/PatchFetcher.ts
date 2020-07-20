@@ -25,6 +25,7 @@ export class PatchFetcher implements Fetcher {
       onHit: () => opts.report.reportCacheHit(locator),
       onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`),
       loader: () => this.patchPackage(locator, opts),
+      skipIntegrityCheck: opts.skipIntegrityCheck,
     });
 
     return {
@@ -57,7 +58,7 @@ export class PatchFetcher implements Fetcher {
     await copiedPackage.mkdirpPromise(prefixPath);
 
     await miscUtils.releaseAfterUseAsync(async () => {
-      await copiedPackage.copyPromise(prefixPath, sourceFetch.prefixPath, {baseFs: sourceFetch.packageFs});
+      await copiedPackage.copyPromise(prefixPath, sourceFetch.prefixPath, {baseFs: sourceFetch.packageFs, stableSort: true});
     }, sourceFetch.releaseFs);
 
     copiedPackage.saveAndClose();

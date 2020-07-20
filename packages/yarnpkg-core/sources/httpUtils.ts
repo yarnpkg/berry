@@ -1,12 +1,12 @@
-import got, {ExtendOptions, Response} from 'got';
-import {Agent as HttpsAgent}          from 'https';
-import {Agent as HttpAgent}           from 'http';
-import micromatch                     from 'micromatch';
-import plimit                         from 'p-limit';
-import tunnel, {ProxyOptions}         from 'tunnel';
-import {URL}                          from 'url';
+import {ExtendOptions, Response} from 'got';
+import {Agent as HttpsAgent}     from 'https';
+import {Agent as HttpAgent}      from 'http';
+import micromatch                from 'micromatch';
+import plimit                    from 'p-limit';
+import tunnel, {ProxyOptions}    from 'tunnel';
+import {URL}                     from 'url';
 
-import {Configuration}                from './Configuration';
+import {Configuration}           from './Configuration';
 
 const NETWORK_CONCURRENCY = 8;
 
@@ -81,12 +81,16 @@ export async function request(target: string, body: Body, {configuration, header
     }
   }
 
-  const timeout = configuration.get(`httpTimeout`);
+  const socketTimeout = configuration.get(`httpTimeout`);
   const retry = configuration.get(`httpRetry`);
+
+  const {default: got} = await import(`got`);
 
   //@ts-ignore
   const gotClient = got.extend({
-    timeout,
+    timeout: {
+      socket: socketTimeout,
+    },
     retry,
     ...gotOptions,
   });

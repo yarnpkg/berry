@@ -19,10 +19,15 @@ export default class ConfigSetCommand extends BaseCommand {
   @Command.Boolean(`--json`)
   json: boolean = false;
 
+  @Command.Boolean(`-H,--home`)
+  home: boolean = false;
+
   static usage: Usage = Command.Usage({
     description: `change a configuration settings`,
     details: `
       This command will set a configuration setting.
+
+      - If set, the \`-H,--home\` flag will update the home configuration instead of the project configuration.
 
       When used without the \`--json\` flag, it can only set a simple configuration setting (a string, a number, or a boolean).
 
@@ -60,7 +65,12 @@ export default class ConfigSetCommand extends BaseCommand {
       ? JSON.parse(this.value)
       : this.value;
 
-    await Configuration.updateConfiguration(configuration.projectCwd!, current => {
+    const updateConfiguration: (patch: ((current: any) => any)) => Promise<void> =
+      this.home
+        ? patch => Configuration.updateHomeConfiguration(patch)
+        : patch => Configuration.updateConfiguration(configuration.projectCwd!, patch);
+
+    await updateConfiguration(current => {
       if (path) {
         const clone = cloneDeep(current);
         setPath(clone, this.name, value);
@@ -74,9 +84,12 @@ export default class ConfigSetCommand extends BaseCommand {
     });
 
     const updatedConfiguration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const redactedValue = updatedConfiguration.getRedacted(name);
+    const displayedValue = updatedConfiguration.getSpecial(name, {
+      hideSecrets: true,
+      getNativePaths: true,
+    });
 
-    const asObject = convertMapsToObjects(redactedValue);
+    const asObject = convertMapsToObjects(displayedValue);
     const requestedObject = path
       ? getPath(asObject, path)
       : asObject;

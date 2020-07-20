@@ -4,7 +4,7 @@ import {Project, StreamReport, Workspace, Ident}                    from '@yarnp
 import {structUtils}                                                from '@yarnpkg/core';
 import {PortablePath}                                               from '@yarnpkg/fslib';
 import {Command, Usage, UsageError}                                 from 'clipanion';
-import inquirer                                                     from 'inquirer';
+import {prompt}                                                     from 'enquirer';
 
 import * as suggestUtils                                            from '../suggestUtils';
 import {Hooks}                                                      from '..';
@@ -39,7 +39,7 @@ export default class AddCommand extends BaseCommand {
   preferDev: boolean = false;
 
   @Command.Boolean(`-i,--interactive`)
-  interactive: boolean = false;
+  interactive: boolean | null = null;
 
   @Command.Boolean(`--cached`)
   cached: boolean = false;
@@ -99,16 +99,12 @@ export default class AddCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    // @ts-ignore
-    const prompt = inquirer.createPromptModule({
-      input: this.context.stdin as NodeJS.ReadStream,
-      output: this.context.stdout as NodeJS.WriteStream,
-    });
+    const interactive = this.interactive ?? configuration.get<boolean>(`preferInteractive`);
 
     const modifier = suggestUtils.getModifier(this, project);
 
     const strategies = [
-      ...this.interactive ? [
+      ...interactive ? [
         suggestUtils.Strategy.REUSE,
       ] : [],
       suggestUtils.Strategy.PROJECT,
@@ -118,7 +114,7 @@ export default class AddCommand extends BaseCommand {
       suggestUtils.Strategy.LATEST,
     ];
 
-    const maxResults = this.interactive
+    const maxResults = interactive
       ? Infinity
       : 1;
 
@@ -185,22 +181,33 @@ export default class AddCommand extends BaseCommand {
         return suggestion.descriptor !== null;
       });
 
-      if (nonNullSuggestions.length === 1) {
-        selected = nonNullSuggestions[0].descriptor;
+      const firstSuggestedDescriptor = nonNullSuggestions[0].descriptor;
+      const areAllTheSame = nonNullSuggestions.every(suggestion => structUtils.areDescriptorsEqual(suggestion.descriptor, firstSuggestedDescriptor));
+
+      if (nonNullSuggestions.length === 1 || areAllTheSame) {
+        selected = firstSuggestedDescriptor;
       } else {
         askedQuestions = true;
         ({answer: selected} = await prompt({
-          type: `list`,
+          type: `select`,
           name: `answer`,
           message: `Which range do you want to use?`,
-          choices: suggestions.map(({descriptor, reason}) => descriptor ? {
-            name: reason,
-            value: descriptor as Descriptor,
-            short: structUtils.prettyDescriptor(project.configuration, descriptor),
+          choices: suggestions.map(({descriptor, name, reason}) => descriptor ? {
+            name,
+            hint: reason,
+            descriptor,
           } : {
-            name: reason,
-            disabled: (): boolean => true,
+            name,
+            hint: reason,
+            disabled: true,
           }),
+          onCancel: () => process.exit(130),
+          result(name: string) {
+            // @ts-expect-error: The enquirer types don't include find
+            return this.find(name, `descriptor`);
+          },
+          stdin: this.context.stdin as NodeJS.ReadStream,
+          stdout: this.context.stdout as NodeJS.WriteStream,
         }));
       }
 

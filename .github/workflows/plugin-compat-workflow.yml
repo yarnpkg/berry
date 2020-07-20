@@ -1,0 +1,31 @@
+on:
+  push:
+    branches:
+    - master
+    paths:
+    - 'packages/plugin-compat/**'
+  pull_request:
+    paths:
+    - 'packages/plugin-compat/**'
+
+name: 'plugin-compat'
+jobs:
+  plugin-compat:
+    name: 'Testing plugin-compat'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Run the plugin-compat tests'
+      run: |
+        node ./scripts/run-yarn.js test:plugin-compat

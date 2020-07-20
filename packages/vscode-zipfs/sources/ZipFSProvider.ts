@@ -1,24 +1,33 @@
-import {ZipOpenFS, PortablePath} from '@yarnpkg/fslib';
-import {getLibzipSync}           from '@yarnpkg/libzip';
-import {posix}                   from 'path';
-import * as vscode               from 'vscode';
+import {ZipOpenFS, VirtualFS, PosixFS, npath} from '@yarnpkg/fslib';
+import {getLibzipSync}                        from '@yarnpkg/libzip';
+import * as vscode                            from 'vscode';
 
 export class ZipFSProvider implements vscode.FileSystemProvider {
-  private readonly zipFs = new ZipOpenFS({
-    libzip: getLibzipSync(),
-    useCache: false,
-  });
+  private readonly fs = new PosixFS(
+    new VirtualFS({
+      baseFs: new ZipOpenFS({
+        libzip: getLibzipSync(),
+        maxOpenFiles: 80,
+        useCache: true,
+      }),
+    })
+  );
 
   stat(uri: vscode.Uri): vscode.FileStat {
-    const stat: any = this.zipFs.statSync(uri.path as PortablePath);
+    const stat: any = this.fs.statSync(uri.fsPath);
 
     switch (true) {
-      case stat.isDirectory(): {
+      case stat.isDirectory():
+      case npath.extname(uri.fsPath) === `.zip`: {
         stat.type = vscode.FileType.Directory;
       } break;
 
       case stat.isFile(): {
         stat.type = vscode.FileType.File;
+      } break;
+
+      case stat.isSymbolicLink(): {
+        stat.type = vscode.FileType.SymbolicLink;
       } break;
 
       default: {
@@ -30,33 +39,25 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
   }
 
   readDirectory(uri: vscode.Uri): Array<[string, vscode.FileType]> {
-    const listing = this.zipFs.readdirSync(uri.path as PortablePath);
-    const results = [];
+    const listing = this.fs.readdirSync(uri.fsPath);
 
-    for (const entry of listing) {
-      const entryStat = this.zipFs.statSync(posix.join(uri.path, entry) as PortablePath);
-
-      if (entryStat.isDirectory()) {
-        results.push([entry, vscode.FileType.Directory] as [string, vscode.FileType]);
-      } else {
-        results.push([entry, vscode.FileType.File] as [string, vscode.FileType]);
-      }
-    }
-
-    return results;
+    return listing.map(entry => {
+      const {type} = this.stat(vscode.Uri.joinPath(uri, entry));
+      return [entry, type];
+    });
   }
 
   readFile(uri: vscode.Uri): Uint8Array {
-    return this.zipFs.readFileSync(uri.path as PortablePath);
+    return this.fs.readFileSync(uri.fsPath);
   }
 
   writeFile(uri: vscode.Uri, content: Uint8Array, options: {create: boolean, overwrite: boolean}): void {
-    if (!options.create && !this.zipFs.existsSync(uri.path as PortablePath))
-      throw new Error(``);
-    if (options.create && !options.overwrite && this.zipFs.existsSync(uri.path as PortablePath))
-      throw new Error(``);
+    if (!options.create && !this.fs.existsSync(uri.fsPath))
+      throw vscode.FileSystemError.FileNotFound(uri);
+    if (options.create && !options.overwrite && this.fs.existsSync(uri.fsPath))
+      throw vscode.FileSystemError.FileExists(uri);
 
-    this.zipFs.writeFileSync(uri.path as PortablePath, new Buffer(content));
+    this.fs.writeFileSync(uri.fsPath, new Buffer(content));
   }
 
   rename(oldUri: vscode.Uri, newUri: vscode.Uri, options: { overwrite: boolean }): void {
@@ -68,7 +69,7 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
   }
 
   createDirectory(uri: vscode.Uri): void {
-    this.zipFs.mkdirSync(uri.path as PortablePath);
+    this.fs.mkdirSync(uri.fsPath);
   }
 
   private _emitter = new vscode.EventEmitter<Array<vscode.FileChangeEvent>>();

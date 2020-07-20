@@ -11,6 +11,8 @@ import {Filename, FSPath, PortablePath}                                         
 
 const ZIP_FD = 0x80000000;
 
+const FILE_PARTS_REGEX = /.*?(?<!\/)\.zip(?=\/|$)/;
+
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS<PortablePath>,
   filter?: RegExp | null,
@@ -18,6 +20,11 @@ export type ZipOpenFSOptions = {
   maxOpenFiles?: number,
   readOnlyArchives?: boolean,
   useCache?: boolean,
+  /**
+   * Maximum age in ms.
+   * ZipFS instances are pruned from the cache if they aren't accessed within this amount of time.
+   */
+  maxAge?: number,
 };
 
 export class ZipOpenFS extends BasePortableFakeFS {
@@ -35,19 +42,20 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
   private readonly baseFs: FakeFS<PortablePath>;
 
-  private readonly zipInstances: Map<string, ZipFS> | null;
+  private readonly zipInstances: Map<string, {zipFs: ZipFS, expiresAt: number}> | null;
 
   private readonly fdMap: Map<number, [ZipFS, number]> = new Map();
   private nextFd = 3;
 
   private readonly filter: RegExp | null;
   private readonly maxOpenFiles: number;
+  private readonly maxAge: number;
   private readonly readOnlyArchives: boolean;
 
   private isZip: Set<string> = new Set();
   private notZip: Set<string> = new Set();
 
-  constructor({libzip, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true}: ZipOpenFSOptions) {
+  constructor({libzip, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true, maxAge = 5000}: ZipOpenFSOptions) {
     super();
 
     this.libzip = libzip;
@@ -59,9 +67,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     this.filter = filter;
     this.maxOpenFiles = maxOpenFiles;
     this.readOnlyArchives = readOnlyArchives;
-
-    this.isZip = new Set();
-    this.notZip = new Set();
+    this.maxAge = maxAge;
   }
 
   getExtractHint(hints: ExtractHintOptions) {
@@ -74,7 +80,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
   saveAndClose() {
     if (this.zipInstances) {
-      for (const [path, zipFs] of this.zipInstances.entries()) {
+      for (const [path, {zipFs}] of this.zipInstances.entries()) {
         zipFs.saveAndClose();
         this.zipInstances.delete(path);
       }
@@ -83,7 +89,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
   discardAndClose() {
     if (this.zipInstances) {
-      for (const [path, zipFs] of this.zipInstances.entries()) {
+      for (const [path, {zipFs}] of this.zipInstances.entries()) {
         zipFs.discardAndClose();
         this.zipInstances.delete(path);
       }
@@ -690,64 +696,70 @@ export class ZipOpenFS extends BasePortableFakeFS {
     if (this.filter && !this.filter.test(p))
       return null;
 
-    const parts = p.split(/\//g);
+    let filePath = `` as PortablePath;
 
-    for (let t = 2; t <= parts.length; ++t) {
-      const archivePath = parts.slice(0, t).join(`/`) as PortablePath;
+    while (true) {
+      const parts = FILE_PARTS_REGEX.exec(p.substr(filePath.length));
+      if (!parts)
+        return null;
 
-      if (this.notZip.has(archivePath))
-        continue;
+      filePath = this.pathUtils.join(filePath, parts[0] as PortablePath);
 
-      if (this.isZip.has(archivePath))
-        return {archivePath, subPath: this.pathUtils.resolve(PortablePath.root, parts.slice(t).join(`/`) as PortablePath)};
+      if (this.isZip.has(filePath) === false) {
+        if (this.notZip.has(filePath))
+          continue;
 
-      let realArchivePath = archivePath;
-      let stat;
-
-      while (true) {
         try {
-          stat = this.baseFs.lstatSync(realArchivePath);
-        } catch (error) {
+          if (!this.baseFs.lstatSync(filePath).isFile()) {
+            this.notZip.add(filePath);
+            continue;
+          }
+        } catch {
           return null;
         }
 
-        if (stat.isSymbolicLink()) {
-          realArchivePath = this.pathUtils.resolve(this.pathUtils.dirname(realArchivePath), this.baseFs.readlinkSync(realArchivePath));
-        } else {
-          break;
-        }
+        this.isZip.add(filePath);
       }
 
-      const isZip = stat.isFile() && this.pathUtils.extname(realArchivePath) === `.zip`;
-
-      if (isZip) {
-        this.isZip.add(archivePath);
-        return {archivePath, subPath: this.pathUtils.resolve(PortablePath.root, parts.slice(t).join(`/`) as PortablePath)};
-      } else {
-        this.notZip.add(archivePath);
-        if (stat.isFile()) {
-          return null;
-        }
-      }
+      return {
+        archivePath: filePath,
+        subPath: this.pathUtils.resolve(PortablePath.root, p.substr(filePath.length) as PortablePath),
+      };
     }
-
-    return null;
   }
 
-  private limitOpenFiles(max: number) {
+  private limitOpenFilesTimeout: NodeJS.Timeout | null = null;
+  private limitOpenFiles(max: number | null) {
     if (this.zipInstances === null)
       return;
 
-    let closeCount = this.zipInstances.size - max;
+    const now = Date.now();
+    let nextExpiresAt = now + this.maxAge;
+    let closeCount = max === null ? 0 : this.zipInstances.size - max;
 
-    for (const [path, zipFs] of this.zipInstances.entries()) {
-      if (closeCount <= 0)
+    for (const [path, {zipFs, expiresAt}] of this.zipInstances.entries()) {
+      if (zipFs.hasOpenFileHandles()) {
+        continue;
+      } else if (now >= expiresAt) {
+        zipFs.saveAndClose();
+        this.zipInstances.delete(path);
+        closeCount -= 1;
+        continue;
+      } else if (max === null || closeCount <= 0) {
+        nextExpiresAt = expiresAt;
         break;
+      }
 
       zipFs.saveAndClose();
       this.zipInstances.delete(path);
-
       closeCount -= 1;
+    }
+
+    if (this.limitOpenFilesTimeout === null && ((max === null && this.zipInstances.size > 0) || max !== null)) {
+      this.limitOpenFilesTimeout = setTimeout(() => {
+        this.limitOpenFilesTimeout = null;
+        this.limitOpenFiles(null);
+      }, nextExpiresAt - now).unref();
     }
   }
 
@@ -760,27 +772,30 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
 
     if (this.zipInstances) {
-      let zipFs = this.zipInstances.get(p);
+      let cachedZipFs = this.zipInstances.get(p);
 
-      if (!zipFs) {
+      if (!cachedZipFs) {
         const zipOptions = await getZipOptions();
 
         // We need to recheck because concurrent getZipPromise calls may
         // have instantiated the zip archive while we were waiting
-        zipFs = this.zipInstances.get(p);
-        if (!zipFs) {
-          zipFs = new ZipFS(p, zipOptions);
+        cachedZipFs = this.zipInstances.get(p);
+        if (!cachedZipFs) {
+          cachedZipFs = {
+            zipFs: new ZipFS(p, zipOptions),
+            expiresAt: 0,
+          };
         }
       }
 
       // Removing then re-adding the field allows us to easily implement
       // a basic LRU garbage collection strategy
       this.zipInstances.delete(p);
-      this.zipInstances.set(p, zipFs);
+      this.limitOpenFiles(this.maxOpenFiles - 1);
+      this.zipInstances.set(p, cachedZipFs);
 
-      this.limitOpenFiles(this.maxOpenFiles);
-
-      return await accept(zipFs);
+      cachedZipFs.expiresAt = Date.now() + this.maxAge;
+      return await accept(cachedZipFs.zipFs);
     } else {
       const zipFs = new ZipFS(p, await getZipOptions());
 
@@ -801,19 +816,23 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
 
     if (this.zipInstances) {
-      let zipFs = this.zipInstances.get(p);
+      let cachedZipFs = this.zipInstances.get(p);
 
-      if (!zipFs)
-        zipFs = new ZipFS(p, getZipOptions());
+      if (!cachedZipFs) {
+        cachedZipFs = {
+          zipFs: new ZipFS(p, getZipOptions()),
+          expiresAt: 0,
+        };
+      }
 
       // Removing then re-adding the field allows us to easily implement
       // a basic LRU garbage collection strategy
       this.zipInstances.delete(p);
-      this.zipInstances.set(p, zipFs);
+      this.limitOpenFiles(this.maxOpenFiles - 1);
+      this.zipInstances.set(p, cachedZipFs);
 
-      this.limitOpenFiles(this.maxOpenFiles);
-
-      return accept(zipFs);
+      cachedZipFs.expiresAt = Date.now() + this.maxAge;
+      return accept(cachedZipFs.zipFs);
     } else {
       const zipFs = new ZipFS(p, getZipOptions());
 

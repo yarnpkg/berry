@@ -1,0 +1,9 @@
+# Ignore everything
+*
+*/**
+
+# Whitelist
+!package.json
+!.vscodeignore
+!build/**
+!README.md

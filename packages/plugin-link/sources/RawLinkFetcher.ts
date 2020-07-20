@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator}                                    from '@yarnpkg/core';
 import {structUtils}                                from '@yarnpkg/core';
-import {CwdFS, JailFS, NodeFS, ppath, PortablePath} from '@yarnpkg/fslib';
+import {CwdFS, JailFS, ppath, PortablePath}         from '@yarnpkg/fslib';
 
 import {RAW_LINK_PROTOCOL}                          from './constants';
 

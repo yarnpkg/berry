@@ -174,10 +174,11 @@ export async function updateVersionFiles(project: Project) {
     const versionContent = await xfs.readFilePromise(versionPath, `utf8`);
     const versionData = parseSyml(versionContent);
 
-    if (typeof versionData.releases === `undefined`)
+    const releases = versionData?.releases;
+    if (!releases)
       continue;
 
-    for (const locatorStr of Object.keys(versionData.releases || {})) {
+    for (const locatorStr of Object.keys(releases)) {
       const locator = structUtils.parseLocator(locatorStr);
       const workspace = project.tryWorkspaceByLocator(locator);
 

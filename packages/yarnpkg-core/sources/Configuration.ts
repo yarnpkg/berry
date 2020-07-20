@@ -1,10 +1,10 @@
-import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
 import {DEFAULT_COMPRESSION_LEVEL}                             from '@yarnpkg/fslib';
+import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                              from '@yarnpkg/parsers';
 import camelcase                                               from 'camelcase';
 import chalk                                                   from 'chalk';
+import {isCI}                                                  from 'ci-info';
 import {UsageError}                                            from 'clipanion';
-import isCI                                                    from 'is-ci';
 import semver                                                  from 'semver';
 import {PassThrough, Writable}                                 from 'stream';
 
@@ -54,6 +54,9 @@ const IGNORED_ENV_VARIABLES = new Set([
   // https://classic.yarnpkg.com/install.sh
   `profile`,
   `gpg`,
+
+  // "ignoreNode" is used to disable the Node version check
+  `ignoreNode`,
 
   // "wrapOutput" was a variable used to indicate nested "yarn run" processes
   // back in Yarn 1.
@@ -230,6 +233,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.yarn/install-state.gz`,
   },
+  immutablePatterns: {
+    description: `Array of glob patterns; files matching them won't be allowed to change during immutable installs`,
+    type: SettingsType.STRING,
+    default: [],
+    isArray: true,
+  },
   rcFilename: {
     description: `Name of the files where the configuration can be found`,
     type: SettingsType.STRING,
@@ -268,7 +277,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableProgressBars: {
     description: `If true, the CLI is allowed to show a progress bar for long-running events`,
     type: SettingsType.BOOLEAN,
-    default: !isCI && process.stdout.isTTY,
+    default: !isCI && process.stdout.isTTY && process.stdout.columns > 22,
     defaultText: `<dynamic>`,
   },
   enableTimers: {
@@ -283,6 +292,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
   preferInteractive: {
     description: `If true, the CLI will automatically use the interactive mode when called from a TTY`,
+    type: SettingsType.BOOLEAN,
+    default: false,
+  },
+  preferTruncatedLines: {
+    description: `If true, the CLI will truncate lines that would go beyond the size of the terminal`,
     type: SettingsType.BOOLEAN,
     default: false,
   },
@@ -347,6 +361,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.NUMBER,
     default: 3,
   },
+
   // Settings related to security
   enableScripts: {
     description: `If true, packages are allowed to have install scripts by default`,
@@ -553,15 +568,22 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
   }
 }
 
-function hideSecrets(rawValue: unknown, definition: SettingsDefinitionNoDefault) {
-  if (definition.type === SettingsType.SECRET && typeof rawValue === `string`)
+type SettingTransforms = {
+  hideSecrets: boolean;
+  getNativePaths: boolean;
+};
+
+function transformConfiguration(rawValue: unknown, definition: SettingsDefinitionNoDefault, transforms: SettingTransforms) {
+  if (definition.type === SettingsType.SECRET && typeof rawValue === `string` && transforms.hideSecrets)
     return SECRET;
+  if (definition.type === SettingsType.ABSOLUTE_PATH && typeof rawValue === `string` && transforms.getNativePaths)
+    return npath.fromPortablePath(rawValue);
 
   if (definition.isArray && Array.isArray(rawValue)) {
     const newValue: Array<unknown> = [];
 
     for (const value of rawValue)
-      newValue.push(hideSecrets(value, definition));
+      newValue.push(transformConfiguration(value, definition, transforms));
 
     return newValue;
   }
@@ -570,7 +592,7 @@ function hideSecrets(rawValue: unknown, definition: SettingsDefinitionNoDefault)
     const newValue: Map<string, unknown> = new Map();
 
     for (const [key, value] of rawValue.entries())
-      newValue.set(key, hideSecrets(value, definition.valueDefinition));
+      newValue.set(key, transformConfiguration(value, definition.valueDefinition, transforms));
 
     return newValue;
   }
@@ -580,7 +602,7 @@ function hideSecrets(rawValue: unknown, definition: SettingsDefinitionNoDefault)
 
     for (const [key, value] of rawValue.entries()) {
       const propertyDefinition = definition.properties[key];
-      newValue.set(key, hideSecrets(value, propertyDefinition));
+      newValue.set(key, transformConfiguration(value, propertyDefinition, transforms));
     }
 
     return newValue;
@@ -854,8 +876,10 @@ export class Configuration {
     configuration.useWithSource(`<environment>`, excludeCoreFields(environmentSettings), startingCwd, {strict});
     for (const {path, cwd, data} of rcFiles)
       configuration.useWithSource(path, excludeCoreFields(data), cwd, {strict});
+    // The home configuration is never strict because it improves support for
+    // multiple projects using different Yarn versions on the same machine
     if (homeRcFile)
-      configuration.useWithSource(homeRcFile.path, excludeCoreFields(homeRcFile.data), homeRcFile.cwd, {strict});
+      configuration.useWithSource(homeRcFile.path, excludeCoreFields(homeRcFile.data), homeRcFile.cwd, {strict: false});
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
@@ -1073,14 +1097,17 @@ export class Configuration {
     return this.values.get(key) as T;
   }
 
-  getRedacted<T = any>(key: string) {
+  getSpecial<T = any>(key: string, {hideSecrets = false, getNativePaths = false}: Partial<SettingTransforms>) {
     const rawValue = this.get(key);
     const definition = this.settings.get(key);
 
     if (typeof definition === `undefined`)
       throw new UsageError(`Couldn't find a configuration settings named "${key}"`);
 
-    return hideSecrets(rawValue, definition) as T;
+    return transformConfiguration(rawValue, definition, {
+      hideSecrets,
+      getNativePaths,
+    }) as T;
   }
 
   getSubprocessStreams(logFile: PortablePath, {header, prefix, report}: {header?: string, prefix: string, report: Report}) {
@@ -1207,11 +1234,49 @@ export class Configuration {
       }
     }
 
+    // We also add implicit optional @types peer dependencies for each peer
+    // dependency. This is for compatibility reason, as many existing packages
+    // forget to define their @types/react optional peer dependency when they
+    // peer-depend on react.
+
+    const getTypesName = (descriptor: Descriptor) => {
+      return descriptor.scope
+        ? `${descriptor.scope}__${descriptor.name}`
+        : `${descriptor.name}`;
+    };
+
+    for (const descriptor of pkg.peerDependencies.values()) {
+      if (descriptor.scope === `@types`)
+        continue;
+
+      const typesName = getTypesName(descriptor);
+      const typesIdent = structUtils.makeIdent(`types`, typesName);
+
+      if (pkg.peerDependencies.has(typesIdent.identHash) || pkg.peerDependenciesMeta.has(typesIdent.identHash))
+        continue;
+
+      pkg.peerDependenciesMeta.set(structUtils.stringifyIdent(typesIdent), {
+        optional: true,
+      });
+    }
+
+    // I don't like implicit dependencies, but package authors are reluctant to
+    // use optional peer dependencies because they would print warnings in older
+    // npm releases.
+
+    for (const identString of pkg.peerDependenciesMeta.keys()) {
+      const ident = structUtils.parseIdent(identString);
+
+      if (!pkg.peerDependencies.has(ident.identHash)) {
+        pkg.peerDependencies.set(ident.identHash, structUtils.makeDescriptor(ident, `*`));
+      }
+    }
+
     // We sort the dependencies so that further iterations always occur in the
     // same order, regardless how the various registries formatted their output
 
-    pkg.dependencies = new Map(miscUtils.sortMap(pkg.dependencies, ([, descriptor]) => descriptor.name));
-    pkg.peerDependencies = new Map(miscUtils.sortMap(pkg.peerDependencies, ([, descriptor]) => descriptor.name));
+    pkg.dependencies = new Map(miscUtils.sortMap(pkg.dependencies, ([, descriptor]) => structUtils.stringifyDescriptor(descriptor)));
+    pkg.peerDependencies = new Map(miscUtils.sortMap(pkg.peerDependencies, ([, descriptor]) => structUtils.stringifyDescriptor(descriptor)));
 
     return pkg;
   }

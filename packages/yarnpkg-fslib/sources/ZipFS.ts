@@ -157,6 +157,8 @@ export class ZipFS extends BasePortableFakeFS {
   private readonly listings: Map<PortablePath, Set<Filename>> = new Map();
   private readonly entries: Map<PortablePath, number> = new Map();
 
+  private symlinkCount: number
+
   private readonly fds: Map<number, {cursor: number, p: PortablePath}> = new Map();
   private nextFd: number = 0;
 
@@ -272,6 +274,8 @@ export class ZipFS extends BasePortableFakeFS {
         this.registerListing(p);
       }
     }
+
+    this.symlinkCount = this.libzip.ext.countSymlinks(this.zip);
 
     this.ready = true;
   }
@@ -412,6 +416,10 @@ export class ZipFS extends BasePortableFakeFS {
     return fd;
   }
 
+  hasOpenFileHandles(): boolean {
+    return !!this.fds.size;
+  }
+
   async readPromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number | null) {
     return this.readSync(fd, buffer, offset, length, position);
   }
@@ -481,16 +489,21 @@ export class ZipFS extends BasePortableFakeFS {
       },
     });
 
+    const fd = this.openSync(p, `r`);
+
     const immediate = setImmediate(() => {
       try {
         const data = this.readFileSync(p, encoding);
 
         stream.bytesRead = data.length;
-        stream.write(data);
-        stream.end();
+        stream.end(data);
+        stream.destroy();
       } catch (error) {
         stream.emit(`error`, error);
         stream.end();
+        stream.destroy();
+      } finally {
+        this.closeSync(fd);
       }
     });
 
@@ -520,8 +533,13 @@ export class ZipFS extends BasePortableFakeFS {
       chunks.push(chunkBuffer);
     });
 
+    const fd = this.openSync(p, `w`);
     stream.on(`end`, () => {
-      this.writeFileSync(p, Buffer.concat(chunks), encoding);
+      try {
+        this.writeFileSync(p, Buffer.concat(chunks), encoding);
+      } finally {
+        this.closeSync(fd);
+      }
     });
 
     return stream;
@@ -545,6 +563,14 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   existsSync(p: PortablePath): boolean {
+    if (!this.ready)
+      throw errors.EBUSY(`archive closed, existsSync '${p}'`);
+
+    if (this.symlinkCount === 0) {
+      const resolvedP = ppath.resolve(PortablePath.root,p);
+      return this.entries.has(resolvedP) || this.listings.has(resolvedP);
+    }
+
     let resolvedP;
 
     try {
@@ -714,6 +740,16 @@ export class ZipFS extends BasePortableFakeFS {
     if (resolvedP === `/`)
       return PortablePath.root;
 
+    const fileIndex = this.entries.get(resolvedP);
+    if (resolveLastComponent && fileIndex !== undefined) {
+      if (this.symlinkCount !== 0 && this.isSymbolicLink(fileIndex)) {
+        const target = this.getFileSource(fileIndex).toString() as PortablePath;
+        return this.resolveFilename(reason, ppath.resolve(ppath.dirname(resolvedP), target), true);
+      } else {
+        return resolvedP;
+      }
+    }
+
     while (true) {
       const parentP = this.resolveFilename(reason, ppath.dirname(resolvedP), true);
 
@@ -726,7 +762,7 @@ export class ZipFS extends BasePortableFakeFS {
         throw errors.ENOTDIR(reason);
 
       resolvedP = ppath.resolve(parentP, ppath.basename(resolvedP));
-      if (!resolveLastComponent)
+      if (!resolveLastComponent || this.symlinkCount === 0)
         break;
 
       const index = this.libzip.name.locate(this.zip, resolvedP.slice(1));
@@ -813,6 +849,9 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   private isSymbolicLink(index: number) {
+    if (this.symlinkCount === 0)
+      return false;
+
     const attrs = this.libzip.file.getExternalAttributes(this.zip, index, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
     if (attrs === -1)
       throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
@@ -1089,9 +1128,10 @@ export class ZipFS extends BasePortableFakeFS {
     this.registerEntry(resolvedP, index);
 
     const rc = this.libzip.file.setExternalAttributes(this.zip, index, 0, 0, this.libzip.ZIP_OPSYS_UNIX, (0o120000 | 0o777) << 16);
-    if (rc === -1) {
+    if (rc === -1)
       throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
-    }
+
+    this.symlinkCount += 1;
   }
 
   readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;

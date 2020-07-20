@@ -1,6 +1,6 @@
 import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions, Package, execUtils} from '@yarnpkg/core';
 
-import {npath, PortablePath, xfs, ppath, Filename, NodeFS, NativePath, CwdFS}                                              from '@yarnpkg/fslib';
+import {npath, PortablePath, xfs, ppath, Filename, NativePath, CwdFS}                                                      from '@yarnpkg/fslib';
 
 import {Hooks as PatchHooks}                                                                                               from './index';
 
@@ -177,7 +177,7 @@ export async function diffFolders(folderA: PortablePath, folderB: PortablePath) 
   const folderAN = npath.fromPortablePath(folderA).replace(/\\/g, `/`);
   const folderBN = npath.fromPortablePath(folderB).replace(/\\/g, `/`);
 
-  const {stdout} = await execUtils.execvp(`git`, [`diff`, `--ignore-cr-at-eol`, `--full-index`, `--no-index`, folderAN, folderBN], {
+  const {stdout} = await execUtils.execvp(`git`, [`diff`, `--src-prefix=a/`, `--dst-prefix=b/`, `--ignore-cr-at-eol`, `--full-index`, `--no-index`, folderAN, folderBN], {
     cwd: npath.toPortablePath(process.cwd()),
   });
 

@@ -1,14 +1,14 @@
-import {posix}         from 'path';
+import {npath}         from '@yarnpkg/fslib';
 import * as vscode     from 'vscode';
 
 import {ZipFSProvider} from './ZipFSProvider';
 
 function mount(uri: vscode.Uri) {
-  const zipUri = vscode.Uri.parse(`zip:${uri.path}`);
+  const zipUri = vscode.Uri.parse(`zip:${uri.fsPath}`);
 
   if (vscode.workspace.getWorkspaceFolder(zipUri) === undefined) {
     vscode.workspace.updateWorkspaceFolders(vscode.workspace.workspaceFolders!.length, 0, {
-      name: posix.basename(zipUri.path),
+      name: npath.basename(zipUri.fsPath),
       uri: zipUri,
     });
   }

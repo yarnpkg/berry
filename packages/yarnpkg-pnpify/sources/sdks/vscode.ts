@@ -1,17 +1,8 @@
-import {PortablePath, npath, ppath, xfs}                      from '@yarnpkg/fslib';
-import {PnpApi}                                               from '@yarnpkg/pnp';
-import CJSON                                                  from 'comment-json';
-import mergeWith                                              from 'lodash/mergeWith';
+import {PortablePath, npath, ppath}                                                   from '@yarnpkg/fslib';
+import {PnpApi}                                                                       from '@yarnpkg/pnp';
 
-import {Wrapper, GenerateIntegrationWrapper, IntegrationSdks} from '../generateSdk';
-
-export const merge = (object: unknown, source: unknown) =>
-  mergeWith(object, source, (objValue, srcValue) => {
-    if (Array.isArray(objValue))
-      return [...new Set(objValue.concat(srcValue))];
-
-    return undefined;
-  });
+import {Wrapper, GenerateIntegrationWrapper, GenerateDefaultWrapper, IntegrationSdks} from '../generateSdk';
+import * as sdkUtils                                                                  from '../sdkUtils';
 
 export enum VSCodeConfiguration {
   settings = `settings.json`,
@@ -19,24 +10,24 @@ export enum VSCodeConfiguration {
 }
 
 export const addVSCodeWorkspaceConfiguration = async (pnpApi: PnpApi, type: VSCodeConfiguration, patch: any) => {
-  const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
-  const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
-
-  const filePath = ppath.join(projectRoot, `.vscode` as PortablePath, type as PortablePath);
-
-  const content = await xfs.existsPromise(filePath)
-    ? await xfs.readFilePromise(filePath, `utf8`)
-    : `{}`;
-
-  const data = CJSON.parse(content);
-  const patched = `${CJSON.stringify(merge(data, patch), null, 2)}\n`;
-
-  await xfs.mkdirpPromise(ppath.dirname(filePath));
-  await xfs.changeFilePromise(filePath, patched, {
-    automaticNewlines: true,
-  });
+  const relativeFilePath = `.vscode/${type}` as PortablePath;
+  await sdkUtils.addSettingWorkspaceConfiguration(pnpApi, relativeFilePath, patch);
 };
 
+export const generateDefaultWrapper: GenerateDefaultWrapper = async (pnpApi: PnpApi) => {
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
+    [`search.exclude`]: {
+      [`**/.yarn`]: true,
+      [`**/.pnp.*`]: true,
+    },
+  });
+
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {
+    [`recommendations`]: [
+      `arcanis.vscode-zipfs`,
+    ],
+  });
+};
 
 export const generateEslintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
@@ -83,12 +74,6 @@ export const generateTypescriptWrapper: GenerateIntegrationWrapper = async (pnpA
     ),
     [`typescript.enablePromptUseWorkspaceTsdk`]: true,
   });
-
-  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {
-    [`recommendations`]: [
-      `arcanis.vscode-zipfs`,
-    ],
-  });
 };
 
 export const generateStylelintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
@@ -109,7 +94,7 @@ export const generateStylelintWrapper: GenerateIntegrationWrapper = async (pnpAp
 
 export const generateSvelteLanguageServerWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
-    [`svelte.language-server.runtime`]: npath.fromPortablePath(
+    [`svelte.language-server.ls-path`]: npath.fromPortablePath(
       wrapper.getProjectPathTo(
         `bin/server.js` as PortablePath,
       ),
@@ -124,6 +109,7 @@ export const generateSvelteLanguageServerWrapper: GenerateIntegrationWrapper = a
 };
 
 export const VSCODE_SDKS: IntegrationSdks = [
+  [null, generateDefaultWrapper],
   [`eslint`, generateEslintWrapper],
   [`prettier`, generatePrettierWrapper],
   [`typescript-language-server`, null],

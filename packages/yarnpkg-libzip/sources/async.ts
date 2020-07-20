@@ -16,4 +16,4 @@ export async function getLibzipPromise() {
   }
 }
 
-export {Libzip} from './makeInterface';
+export type {Libzip} from './makeInterface';
