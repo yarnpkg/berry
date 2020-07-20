@@ -11,7 +11,7 @@ export abstract class BasePathBuffer<P extends Path> extends Buffer {
 }
 
 export class PortablePathBuffer extends BasePathBuffer<PortablePath> {
-  declare _path_type: PathType.Portable | PathType.File;
+  declare _path_type: PathType.Portable;
 
   constructor(p: PathLike<PortablePath>) {
     super(ppath, p);
@@ -19,7 +19,7 @@ export class PortablePathBuffer extends BasePathBuffer<PortablePath> {
 }
 
 export class NativePathBuffer extends BasePathBuffer<NativePath> {
-  declare _path_type?: PathType.Native | PathType.File;
+  declare _path_type?: PathType.Native;
 
   constructor(p: PathLike<NativePath>) {
     super(npath, p);
