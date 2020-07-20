@@ -37,6 +37,7 @@ export type Body = (
 export enum Method {
   GET = `GET`,
   PUT = `PUT`,
+  POST = `POST`,
 }
 
 export type Options = {
@@ -120,6 +121,12 @@ export async function get(target: string, {configuration, json, ...rest}: Option
 
 export async function put(target: string, body: Body, options: Options): Promise<Buffer> {
   const response = await request(target, body, {...options, method: Method.PUT});
+
+  return response.body;
+}
+
+export async function post(target: string, body: Body, options: Options): Promise<Buffer> {
+  const response = await request(target, body, {...options, method: Method.POST});
 
   return response.body;
 }

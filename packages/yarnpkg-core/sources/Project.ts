@@ -117,6 +117,10 @@ export class Project {
 
     const project = new Project(configuration.projectCwd, {configuration});
 
+    Configuration.telemetry?.reportProject(project.cwd);
+    Configuration.telemetry?.reportWorkspaceCount(project.workspaces.length);
+    Configuration.telemetry?.reportDependencyCount(project.workspaces.reduce((sum, workspace) => sum + workspace.manifest.dependencies.size + workspace.manifest.devDependencies.size, 0));
+
     await project.setupResolutions();
     await project.setupWorkspaces();
 
@@ -1413,6 +1417,13 @@ export class Project {
   }
 
   async install(opts: InstallOptions) {
+    const nodeLinker = this.configuration.get<string>(`nodeLinker`);
+    Configuration.telemetry?.reportInstall(nodeLinker);
+
+    for (const extensions of this.configuration.packageExtensions.values())
+      for (const {descriptor} of extensions)
+        Configuration.telemetry?.reportPackageExtension(structUtils.stringifyIdent(descriptor));
+
     const validationWarnings: Array<{name: MessageName, text: string}> = [];
     const validationErrors: Array<{name: MessageName, text: string}> = [];
 

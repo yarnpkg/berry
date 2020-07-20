@@ -494,7 +494,7 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  async readJsonSync(p: P) {
+  readJsonSync(p: P) {
     const content = this.readFileSync(p, `utf8`);
 
     try {

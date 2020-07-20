@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                                   from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport} from '@yarnpkg/core';
-import {xfs, ppath}                                                            from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                              from '@yarnpkg/parsers';
-import {Command, Usage}                                                        from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                               from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, FormatType} from '@yarnpkg/core';
+import {xfs, ppath}                                                                        from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                          from '@yarnpkg/parsers';
+import {Command, Usage}                                                                    from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
@@ -193,11 +193,31 @@ export default class YarnCommand extends BaseCommand {
       }, async report => {
         if (await autofixMergeConflicts(configuration, immutable)) {
           report.reportInfo(MessageName.AUTOMERGE_SUCCESS, `Automatically fixed merge conflicts 👍`);
+          report.reportSeparator();
         }
       });
 
       if (fixReport.hasErrors()) {
         return fixReport.exitCode();
+      }
+    }
+
+    if (configuration.projectCwd !== null) {
+      const telemetryReport = await StreamReport.start({
+        configuration,
+        json: this.json,
+        stdout: this.context.stdout,
+        includeFooter: false,
+      }, async report => {
+        if (Configuration.telemetry?.isNew) {
+          report.reportInfo(MessageName.TELEMETRY_NOTICE, `Yarn will periodically gather anonymous telemetry: https://yarnpkg.com/advanced/telemetry`);
+          report.reportInfo(MessageName.TELEMETRY_NOTICE, `Run ${configuration.format(`yarn config set --home enableTelemetry 0`, FormatType.CODE)} to disable`);
+          report.reportSeparator();
+        }
+      });
+
+      if (telemetryReport.hasErrors()) {
+        return telemetryReport.exitCode();
       }
     }
 

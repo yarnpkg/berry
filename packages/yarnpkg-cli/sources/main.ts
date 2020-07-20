@@ -1,10 +1,12 @@
-import {Configuration, CommandContext, PluginConfiguration, semverUtils} from '@yarnpkg/core';
-import {PortablePath, npath, xfs}                                        from '@yarnpkg/fslib';
-import {execFileSync}                                                    from 'child_process';
-import {Cli, UsageError}                                                 from 'clipanion';
-import {realpathSync}                                                    from 'fs';
+import {Configuration, CommandContext, PluginConfiguration, TelemetryManager, semverUtils} from '@yarnpkg/core';
+import {PortablePath, npath, xfs}                                                          from '@yarnpkg/fslib';
+import {execFileSync}                                                                      from 'child_process';
+import {Cli, UsageError}                                                                   from 'clipanion';
 
-import {WelcomeCommand}                                                  from './tools/WelcomeCommand';
+import {realpathSync}                                                                      from 'fs';
+
+import {pluginCommands}                                                                    from './pluginCommands';
+import {WelcomeCommand}                                                                    from './tools/WelcomeCommand';
 
 function runBinary(path: PortablePath) {
   const physicalPath = npath.fromPortablePath(path);
@@ -90,11 +92,23 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       if (ignorePath)
         delete process.env.YARN_IGNORE_PATH;
 
-      for (const plugin of configuration.plugins.values())
-        for (const command of plugin.commands || [])
+      const isTelemetryEnabled = configuration.get<boolean>(`enableTelemetry`);
+      if (isTelemetryEnabled)
+        Configuration.telemetry = new TelemetryManager(configuration, `puba9cdc10ec5790a2cf4969dd413a47270`);
+
+      Configuration.telemetry?.reportVersion(binaryVersion);
+
+      for (const [name, plugin] of configuration.plugins.entries()) {
+        if (pluginCommands.has(name.match(/^@yarnpkg\/plugin-(.*)$/)?.[1] ?? ``))
+          Configuration.telemetry?.reportPluginName(name);
+
+        for (const command of plugin.commands || []) {
           cli.register(command);
+        }
+      }
 
       const command = cli.process(process.argv.slice(2));
+      Configuration.telemetry?.reportCommandName(command.path.join(` `));
 
       // @ts-ignore: The cwd is a global option defined by BaseCommand
       const cwd: string | undefined = command.cwd;

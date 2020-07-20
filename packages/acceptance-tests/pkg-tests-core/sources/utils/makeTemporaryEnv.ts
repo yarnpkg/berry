@@ -42,6 +42,8 @@ const mte = generatePkgDriver({
         [`YARN_GLOBAL_FOLDER`]: `${nativePath}/.yarn/global`,
         [`YARN_NPM_REGISTRY_SERVER`]: registryUrl,
         [`YARN_UNSAFE_HTTP_WHITELIST`]: new URL(registryUrl).hostname,
+        // Otherwise we'd send telemetry event when running tests
+        [`YARN_ENABLE_TELEMETRY`]: `0`,
         // Otherwise snapshots relying on this would break each time it's bumped
         [`YARN_CACHE_KEY_OVERRIDE`]: `0`,
         // Otherwise the tests would break when C:\tmp is on a different drive than the repo

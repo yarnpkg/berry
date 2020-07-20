@@ -31,8 +31,6 @@ for (const name of folders) {
     cli.register(command);
 
   const defs = cli.definitions();
-  if (defs.length === 0)
-    continue;
 
   output += `  [\`${manifest.name.replace(/^@yarnpkg\/plugin-/, ``)}\`, [\n`;
 
