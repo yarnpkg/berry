@@ -48,10 +48,6 @@ export class TelemetryManager {
     this.startBuffer();
   }
 
-  get enabled() {
-    return this.configuration.get<boolean>(`enableTelemetry`);
-  }
-
   reportVersion(value: string) {
     this.reportValue(MetricName.VERSION, value);
   }
@@ -89,23 +85,14 @@ export class TelemetryManager {
   }
 
   private reportValue(metric: MetricName, value: string) {
-    if (!this.enabled)
-      return;
-
     miscUtils.getSetWithDefault(this.values, metric).add(value);
   }
 
   private reportEnumerator(metric: MetricName, value: string) {
-    if (!this.enabled)
-      return;
-
     miscUtils.getSetWithDefault(this.enumerators, metric).add(value);
   }
 
   private reportHit(metric: MetricName) {
-    if (!this.enabled)
-      return;
-
     const current = miscUtils.getFactoryWithDefault(this.hits, metric, () => 0);
     this.hits.set(metric, current + 1);
   }
@@ -116,9 +103,6 @@ export class TelemetryManager {
   }
 
   private sendReport(accountId: string) {
-    if (!this.enabled)
-      return;
-
     const registryFile = this.getRegistryPath();
 
     let content: RegistryFile;
