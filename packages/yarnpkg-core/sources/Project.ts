@@ -117,9 +117,9 @@ export class Project {
 
     const project = new Project(configuration.projectCwd, {configuration});
 
-    configuration.telemetry?.reportProject(project.cwd);
-    configuration.telemetry?.reportWorkspaceCount(project.workspaces.length);
-    configuration.telemetry?.reportDependencyCount(project.workspaces.reduce((sum, workspace) => sum + workspace.manifest.dependencies.size + workspace.manifest.devDependencies.size, 0));
+    Configuration.telemetry?.reportProject(project.cwd);
+    Configuration.telemetry?.reportWorkspaceCount(project.workspaces.length);
+    Configuration.telemetry?.reportDependencyCount(project.workspaces.reduce((sum, workspace) => sum + workspace.manifest.dependencies.size + workspace.manifest.devDependencies.size, 0));
 
     await project.setupResolutions();
     await project.setupWorkspaces();
@@ -1422,8 +1422,9 @@ export class Project {
     if (this.configuration.get(`nodeLinker`) === `node-modules`)
       Configuration.telemetry?.reportNmInstall();
 
-    for (const key of this.configuration.packageExtensions.keys())
-      Configuration.telemetry?.reportPackageExtension(key);
+    for (const extensions of this.configuration.packageExtensions.values())
+      for (const {descriptor} of extensions)
+        Configuration.telemetry?.reportPackageExtension(structUtils.stringifyIdent(descriptor));
 
     const validationWarnings: Array<{name: MessageName, text: string}> = [];
     const validationErrors: Array<{name: MessageName, text: string}> = [];
