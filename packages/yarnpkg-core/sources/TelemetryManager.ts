@@ -1,7 +1,7 @@
 import {Filename, xfs, PortablePath, ppath} from '@yarnpkg/fslib';
-import qs                                   from 'querystring';
 
 import {Configuration}                      from './Configuration';
+import * as httpUtils                       from './httpUtils';
 import * as miscUtils                       from './miscUtils';
 
 export enum MetricName {
@@ -16,11 +16,17 @@ export enum MetricName {
   EXTENSION = `packageExtension`,
 }
 
-export type RegistryFile = {
-  sendAt?: number;
+export type RegistryBlock = {
   values?: {[key in MetricName]?: Array<string>};
   hits?: {[key in MetricName]?: number};
   enumerators?: {[key in MetricName]?: Array<string>};
+};
+
+export type RegistryFile = {
+  lastUpdate?: number;
+  blocks?: {
+    [userId: string]: RegistryBlock;
+  };
 };
 
 export class TelemetryManager {
@@ -30,15 +36,20 @@ export class TelemetryManager {
   private hits: Map<MetricName, number> = new Map();
   private enumerators: Map<MetricName, Set<string>> = new Map();
 
+  public isNew: boolean;
+
   constructor(configuration: Configuration, accountId: string) {
     this.configuration = configuration;
 
+    const registryFile = this.getRegistryPath();
+    this.isNew = !xfs.existsSync(registryFile);
+
     this.sendReport(accountId);
     this.startBuffer();
+  }
 
-    if (configuration.projectCwd !== null) {
-      this.reportProject(configuration.projectCwd);
-    }
+  get enabled() {
+    return this.configuration.get<boolean>(`enableTelemetry`);
   }
 
   reportVersion(value: string) {
@@ -46,7 +57,7 @@ export class TelemetryManager {
   }
 
   reportCommandName(value: string) {
-    this.reportValue(MetricName.COMMAND_NAME, value);
+    this.reportValue(MetricName.COMMAND_NAME, value || `<none>`);
   }
 
   reportPluginName(value: string) {
@@ -65,6 +76,10 @@ export class TelemetryManager {
     this.reportHit(MetricName.NM_INSTALL_COUNT);
   }
 
+  reportPackageExtension(value: string) {
+    this.reportValue(MetricName.EXTENSION, value);
+  }
+
   reportWorkspaceCount(count: number) {
     this.reportValue(MetricName.WORKSPACE_COUNT, String(count));
   }
@@ -74,14 +89,23 @@ export class TelemetryManager {
   }
 
   private reportValue(metric: MetricName, value: string) {
+    if (!this.enabled)
+      return;
+
     miscUtils.getSetWithDefault(this.values, metric).add(value);
   }
 
   private reportEnumerator(metric: MetricName, value: string) {
+    if (!this.enabled)
+      return;
+
     miscUtils.getSetWithDefault(this.enumerators, metric).add(value);
   }
 
   private reportHit(metric: MetricName) {
+    if (!this.enabled)
+      return;
+
     const current = miscUtils.getFactoryWithDefault(this.hits, metric, () => 0);
     this.hits.set(metric, current + 1);
   }
@@ -92,6 +116,9 @@ export class TelemetryManager {
   }
 
   private sendReport(accountId: string) {
+    if (!this.enabled)
+      return;
+
     const registryFile = this.getRegistryPath();
 
     let content: RegistryFile;
@@ -102,20 +129,42 @@ export class TelemetryManager {
     }
 
     const now = Date.now();
-    if (content.sendAt ?? 0 >= now)
+    const interval = this.configuration.get<number>(`telemetryInterval`) * 24 * 60 * 60 * 1000;
+
+    const lastUpdate = content.lastUpdate ?? now - Math.floor(interval * Math.random());
+    const nextUpdate = lastUpdate + interval;
+
+    if (nextUpdate > now && content.lastUpdate != null)
       return;
 
     xfs.writeJsonSync(registryFile, {
-      sendAt: now + 7 * 24 * 60 * 60 * 1000,
+      lastUpdate: now,
     });
 
-    const body = qs.
+    if (nextUpdate > now)
+      return;
 
-      httpUtils.post(`https://www.google-analytics.com/collect`, body, {
+    if (!content.blocks)
+      return;
+
+    for (const [userId, block] of Object.entries(content.blocks ?? {})) {
+      if (Object.keys(block).length === 0)
+        continue;
+
+      const upload: any = block;
+      upload.userId = userId;
+
+      for (const key of Object.keys(upload.enumerators ?? {}))
+        upload.enumerators = upload.enumerators[key].length;
+
+      const rawUrl = `https://browser-http-intake.logs.datadoghq.eu/v1/input/${accountId}?ddsource=yarn`;
+
+      httpUtils.post(rawUrl, upload, {
         configuration: this.configuration,
-      }).catch(error => {
-      // Explicitly ignore errors
+      }).catch(() => {
+        // Nothing we can do
       });
+    }
   }
 
   private startBuffer() {
@@ -130,21 +179,26 @@ export class TelemetryManager {
           content = {};
         }
 
-        const getAllKeys = (field: keyof RegistryFile) => {
+        const userId = this.configuration.get<string | null>(`telemetryUserId`) ?? `*`;
+
+        const blocks = content.blocks = content.blocks ?? {};
+        const block = blocks[userId] = blocks[userId] ?? {};
+
+        const getAllKeys = (field: keyof RegistryBlock) => {
           return new Set([
-            ...Object.keys(content.values ?? {}) as Array<MetricName>,
+            ...Object.keys(block[field] ?? {}) as Array<MetricName>,
             ...this[field].keys(),
           ]);
         };
 
         for (const key of getAllKeys(`hits`)) {
-          const store = content.hits = content.hits ?? {};
+          const store = block.hits = block.hits ?? {};
           store[key] = (store[key] ?? 0) + (this.hits.get(key) ?? 0);
         }
 
         for (const field of [`values`, `enumerators`] as const) {
           for (const key of getAllKeys(field)) {
-            const store = content[field] = content[field] ?? {};
+            const store = block[field] = block[field] ?? {};
             store[key] = [...new Set([
               ...store[key] ?? [],
               ...this[field].get(key) ?? [],

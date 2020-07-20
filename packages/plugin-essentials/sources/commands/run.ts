@@ -1,9 +1,7 @@
-import {BaseCommand}                       from '@yarnpkg/cli';
+import {BaseCommand, pluginCommands}       from '@yarnpkg/cli';
 import {Configuration, Project, Workspace} from '@yarnpkg/core';
 import {scriptUtils, structUtils}          from '@yarnpkg/core';
 import {Command, Usage, UsageError}        from 'clipanion';
-
-import {pluginCommands}                    from '../pluginCommands';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends BaseCommand {

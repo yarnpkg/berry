@@ -71,7 +71,7 @@
     }
   },
   "scripts": {
-    "build:plugin-commands": "node ./scripts/gen-plugin-commands.js > packages/plugin-essentials/sources/pluginCommands.ts",
+    "build:plugin-commands": "node ./scripts/gen-plugin-commands.js > packages/yarnpkg-cli/sources/pluginCommands.ts",
     "build:compile": "rm -rf \"$0\"/lib && mkdir -p \"$0\"/lib && rsync -a --exclude '*.ts' --exclude '*.tsx' --include '*.d.ts' \"$0\"/sources/ \"$0\"/lib/ && node scripts/compile \"$@\"",
     "build:compile-inline": "find \"$0\"/sources -name '*.js' && babel \"$0\"/sources --out-dir \"$0\"/sources --extensions .ts,.tsx",
     "test:lint": "eslint \"packages/**/@(sources|tests)/**/!(libzip).@(tsx|ts|js)\"",
