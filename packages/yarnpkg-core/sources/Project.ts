@@ -118,11 +118,12 @@ export class Project {
     const project = new Project(configuration.projectCwd, {configuration});
 
     Configuration.telemetry?.reportProject(project.cwd);
-    Configuration.telemetry?.reportWorkspaceCount(project.workspaces.length);
-    Configuration.telemetry?.reportDependencyCount(project.workspaces.reduce((sum, workspace) => sum + workspace.manifest.dependencies.size + workspace.manifest.devDependencies.size, 0));
 
     await project.setupResolutions();
     await project.setupWorkspaces();
+
+    Configuration.telemetry?.reportWorkspaceCount(project.workspaces.length);
+    Configuration.telemetry?.reportDependencyCount(project.workspaces.reduce((sum, workspace) => sum + workspace.manifest.dependencies.size + workspace.manifest.devDependencies.size, 0));
 
     // If we're in a workspace, no need to go any further to find which package we're in
     const workspace = project.tryWorkspaceByCwd(packageCwd);
