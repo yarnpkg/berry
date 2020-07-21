@@ -149,7 +149,7 @@ export default class AddCommand extends BaseCommand {
           if (!project.configuration.get(`enableNetwork`)) {
             report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range (note: network resolution has been disabled)`);
           } else {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range`);
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `Package: ${structUtils.prettyDescriptor(configuration, request)} could not be found.`);
           }
         }
       }
