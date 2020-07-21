@@ -1,8 +1,9 @@
 releases:
   "@yarnpkg/cli": prerelease
-  "@yarnpkg/plugin-pnp": prerelease
+  "@yarnpkg/plugin-pnp": minor
 
 declined:
+  - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
   - "@yarnpkg/plugin-essentials"
