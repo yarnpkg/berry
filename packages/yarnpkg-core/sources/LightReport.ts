@@ -1,9 +1,10 @@
-import {Writable}      from 'stream';
+import {Writable}                            from 'stream';
 
-import {Configuration} from './Configuration';
-import {MessageName}   from './MessageName';
-import {Report}        from './Report';
-import {Locator}       from './types';
+import {Configuration}                       from './Configuration';
+import {MessageName}                         from './MessageName';
+import {Report}                              from './Report';
+import {formatNameWithHyperlink, formatName} from './StreamReport';
+import {Locator}                             from './types';
 
 export type LightReportOptions = {
   configuration: Configuration,
@@ -77,7 +78,7 @@ export class LightReport extends Report {
 
   reportError(name: MessageName, text: string) {
     this.errorCount += 1;
-    this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} ${this.formatName(name)}: ${text}\n`);
+    this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${text}\n`);
   }
 
   reportProgress(progress: AsyncIterable<{progress: number, title?: string}>) {
@@ -109,7 +110,10 @@ export class LightReport extends Report {
     }
   }
 
-  private formatName(name: MessageName) {
-    return `BR${name.toString(10).padStart(4, `0`)}`;
+  private formatNameWithHyperlink(name: MessageName | null) {
+    return formatNameWithHyperlink(name, {
+      configuration: this.configuration,
+      json: false,
+    });
   }
 }

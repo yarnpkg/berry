@@ -688,6 +688,7 @@ export class Configuration {
 
   public packageExtensions: Map<IdentHash, Array<{
     descriptor: Descriptor,
+    changes: Set<string>,
     patch: (pkg: Package) => void,
   }>> = new Map();
 
@@ -1216,6 +1217,16 @@ export class Configuration {
 
       miscUtils.getArrayWithDefault(packageExtensions, descriptor.identHash).push({
         descriptor,
+        changes: new Set([
+          ...[
+            ...extension.dependencies.values(),
+            ...extension.peerDependencies.values(),
+          ].map(descriptor => {
+            return structUtils.stringifyIdent(descriptor);
+          }),
+          ...extension.dependenciesMeta.keys(),
+          ...extension.peerDependenciesMeta.keys(),
+        ]),
         patch: pkg => {
           pkg.dependencies = new Map([...pkg.dependencies, ...extension.dependencies]);
           pkg.peerDependencies = new Map([...pkg.peerDependencies, ...extension.peerDependencies]);
