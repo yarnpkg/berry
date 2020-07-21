@@ -3,7 +3,7 @@ const cp = require(`child_process`);
 const {satisfies} = require(`semver`);
 
 const {
-  fs: {createTemporaryFolder, readFile, writeFile, writeJson},
+  fs: {createTemporaryFolder, readFile, writeFile, writeJson, mkdirp},
   tests: {getPackageDirectoryPath, testIf},
 } = require(`pkg-tests-core`);
 
@@ -284,6 +284,26 @@ describe(`Plug'n'Play`, () => {
         });
       },
     ),
+  );
+
+  test(
+    `it should implicitly allow @types accesses if there are matching peer dependencies`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`@types/no-deps`]: `1.0.0`,
+          [`peer-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(source(`require('peer-deps/get-types')`)).resolves.toMatchObject({
+          name: `@types/no-deps`,
+          version: `1.0.0`,
+        });
+      }
+    )
   );
 
   test(
@@ -1402,6 +1422,28 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should allow external modules to require internal ones`,
+    makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await xfs.mktempPromise(async temp => {
+        await run(`install`);
+
+        await writeFile(`${temp}/foo.js`, `
+          const resolved = require.resolve(process.argv[2], {paths: [process.argv[3]]});
+          const required = require(resolved);
+
+          console.log(required);
+        `);
+
+        await run(`node`, `${npath.fromPortablePath(temp)}/foo.js`, `no-deps`, `${npath.fromPortablePath(path)}/`);
+      });
+    }),
+  );
+
+  test(
     `it should remove the lingering node_modules folders`,
     makeTemporaryEnv({}, async ({path, run, source}) => {
       await xfs.mkdirpPromise(`${path}/node_modules/foo`);
@@ -1498,6 +1540,109 @@ describe(`Plug'n'Play`, () => {
         npath.fromPortablePath(`${tmp}/index.js`),
         npath.fromPortablePath(`${path}/.pnp.js`),
       ], {encoding: `utf-8`});
+    }),
+  );
+
+  test(`should skip building incompatible package`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          dep: `file:./dep`,
+        },
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/dep/package.json`), {
+          name: `dep`,
+          version: `1.0.0`,
+          os: [`!${process.platform}`],
+          scripts: {
+            postinstall: `echo 'Shall not be run'`,
+          },
+        });
+        await writeFile(`${path}/dep/index.js`, `module.exports = require('./package.json');`);
+
+        const stdout = (await run(`install`)).stdout;
+
+        expect(stdout).not.toContain(`Shall not be run`);
+        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The platform ${process.platform} is incompatible with this module, building skipped.`));
+
+        await expect(source(`require('dep')`)).resolves.toMatchObject({
+          name: `dep`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should work with pnpEnableInlining set to false`,
+    makeTemporaryEnv({}, {
+      pnpEnableInlining: false,
+    }, async ({path, run, source}) => {
+      await run(`add`, `no-deps`);
+
+      expect(xfs.existsSync(`${path}/.pnp.data.json`)).toBeTruthy();
+
+      await writeFile(`${path}/file.js`, `
+        console.log(require.resolve('no-deps'));
+      `);
+
+      await expect(run(`node`, `file.js`)).resolves.toBeTruthy();
+    }),
+  );
+
+  test(
+    `it should work with pnpEnableInlining set to false and with a custom pnpDataPath`,
+    makeTemporaryEnv({}, {
+      pnpEnableInlining: false,
+      pnpDataPath: `./.pnp.meta.json`,
+    }, async ({path, run, source}) => {
+      await run(`add`, `no-deps`);
+
+      expect(xfs.existsSync(`${path}/.pnp.meta.json`)).toBeTruthy();
+
+      await writeFile(`${path}/file.js`, `
+        console.log(require.resolve('no-deps'));
+      `);
+
+      await expect(run(`node`, `file.js`)).resolves.toBeTruthy();
+    }),
+  );
+
+  test(
+    `it should take trailing slashes into account when resolving paths`,
+    makeTemporaryEnv({},  async ({path, run, source}) => {
+      await writeFile(`${path}/foo.js`, ``);
+
+      await mkdirp(`${path}/foo`);
+      await writeFile(`${path}/foo/index.js`, ``);
+
+      await expect(source(`require.resolve('./foo')`)).resolves.toEqual(npath.fromPortablePath(`${path}/foo.js`));
+      await expect(source(`require.resolve('./foo/')`)).resolves.toEqual(npath.fromPortablePath(`${path}/foo/index.js`));
+    }),
+  );
+
+  /**
+   * Trailing slashes inside the packageLocations of the PnP serialized state
+   * are inserted when the target is a folder. (e.g. `link:`, `workspace:`)
+   */
+  test(
+    `it should take trailing slashes inside the packageLocations of the PnP serialized state into account when resolving packages`,
+    makeTemporaryEnv({},  async ({path, run, source}) => {
+      await writeFile(`${path}/package.json`, JSON.stringify({
+        dependencies: {
+          [`pkg`]: `link:./package`,
+        },
+      }));
+
+      await mkdirp(`${path}/package`);
+      await writeFile(`${path}/package/index.js`, ``);
+
+      await run(`install`);
+
+      // This shouldn't be resolved to the package.json
+      await expect(source(`require.resolve('pkg')`)).resolves.toEqual(npath.fromPortablePath(`${path}/package/index.js`));
     }),
   );
 });

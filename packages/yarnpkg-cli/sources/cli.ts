@@ -1,5 +1,4 @@
 import './polyfills';
-import './yupExtensions';
 
 import {YarnVersion}            from '@yarnpkg/core';
 

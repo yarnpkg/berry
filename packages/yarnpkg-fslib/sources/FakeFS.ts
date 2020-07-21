@@ -159,6 +159,28 @@ export abstract class FakeFS<P extends Path> {
   abstract watch(p: P, cb?: WatchCallback): Watcher;
   abstract watch(p: P, opts: WatchOptions, cb?: WatchCallback): Watcher;
 
+  async * genTraversePromise(init: P, {stableSort = false}: {stableSort?: boolean} = {}) {
+    const stack = [init];
+
+    while (stack.length > 0) {
+      const p = stack.shift()!;
+      const entry = await this.lstatPromise(p);
+
+      if (entry.isDirectory()) {
+        const entries = await this.readdirPromise(p);
+        if (stableSort) {
+          for (const entry of entries.sort()) {
+            stack.push(this.pathUtils.join(p, entry));
+          }
+        } else {
+          throw new Error(`Not supported`);
+        }
+      } else {
+        yield p;
+      }
+    }
+  }
+
   async removePromise(p: P) {
     let stat;
     try {
@@ -284,12 +306,13 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  copyPromise(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean}): Promise<void>;
-  copyPromise<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean}): Promise<void>;
-  async copyPromise<P2 extends Path>(destination: P, source: P2, {baseFs = this as any, overwrite = true}: {baseFs?: FakeFS<P2>, overwrite?: boolean} = {}) {
-    return await copyPromise(this, destination, baseFs, source, {overwrite});
+  copyPromise(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean}): Promise<void>;
+  copyPromise<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean}): Promise<void>;
+  async copyPromise<P2 extends Path>(destination: P, source: P2, {baseFs = this as any, overwrite = true, stableSort = false, stableTime = false}: {baseFs?: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean} = {}) {
+    return await copyPromise(this, destination, baseFs, source, {overwrite, stableSort, stableTime});
   }
 
+  /** @deprecated Prefer using `copyPromise` instead */
   copySync(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean}): void;
   copySync<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean}): void;
   copySync<P2 extends Path>(destination: P, source: P2, {baseFs = this as any, overwrite = true}: {baseFs?: FakeFS<P2>, overwrite?: boolean} = {}) {
@@ -471,7 +494,7 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  async readJsonSync(p: P) {
+  readJsonSync(p: P) {
     const content = this.readFileSync(p, `utf8`);
 
     try {

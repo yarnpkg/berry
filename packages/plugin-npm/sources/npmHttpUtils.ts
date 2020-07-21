@@ -1,6 +1,6 @@
 import {Configuration, Ident, httpUtils} from '@yarnpkg/core';
 import {MessageName, ReportError}        from '@yarnpkg/core';
-import inquirer                          from 'inquirer';
+import {prompt}                          from 'enquirer';
 
 import * as npmConfigUtils               from './npmConfigUtils';
 import {MapLike}                         from './npmConfigUtils';
@@ -159,13 +159,12 @@ async function askForOtp() {
   if (process.env.TEST_ENV)
     return process.env.TEST_NPM_2FA_TOKEN || ``;
 
-  const prompt = inquirer.createPromptModule();
-
   const {otp} = await prompt({
-    type: `input`,
+    type: `password`,
     name: `otp`,
     message: `One-time password:`,
-    validate: (input: string) => input.length > 0 ? true : `One-time password is required`,
+    required: true,
+    onCancel: () => process.exit(130),
   });
 
   return otp as string;

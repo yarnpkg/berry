@@ -11,10 +11,10 @@ export function assertNever(arg: never): never {
   throw new Error(`Assertion failed: Unexpected object '${arg}'`);
 }
 
-export function mapAndFilter<In, Out>(array: Array<In>, cb: (value: In) => Out | typeof mapAndFilterSkip): Array<Out> {
+export function mapAndFilter<In, Out>(iterable: Iterable<In>, cb: (value: In) => Out | typeof mapAndFilterSkip): Array<Out> {
   const output: Array<Out> = [];
 
-  for (const value of array) {
+  for (const value of iterable) {
     const out = cb(value);
     if (out !== mapAndFilterSkip) {
       output.push(out);
@@ -27,8 +27,8 @@ export function mapAndFilter<In, Out>(array: Array<In>, cb: (value: In) => Out |
 const mapAndFilterSkip = Symbol();
 mapAndFilter.skip = mapAndFilterSkip;
 
-export function mapAndFind<In, Out>(array: Array<In>, cb: (value: In) => Out | typeof mapAndFindSkip): Out | undefined {
-  for (const value of array) {
+export function mapAndFind<In, Out>(iterable: Iterable<In>, cb: (value: In) => Out | typeof mapAndFindSkip): Out | undefined {
+  for (const value of iterable) {
     const out = cb(value);
     if (out !== mapAndFindSkip) {
       return out;

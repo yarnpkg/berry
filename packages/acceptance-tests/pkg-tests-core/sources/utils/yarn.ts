@@ -14,3 +14,7 @@ export async function writeConfiguration(dir: PortablePath, value: {[key: string
 export async function readManifest(dir: PortablePath, {filename = Filename.manifest}: {filename?: Filename} = {}) {
   return await fsUtils.readJson(ppath.join(dir, filename));
 }
+
+export function getRelativePluginPath(name: string) {
+  return `.yarn/plugins/${name}.cjs` as PortablePath;
+}

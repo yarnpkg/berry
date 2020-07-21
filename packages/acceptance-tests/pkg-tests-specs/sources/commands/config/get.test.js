@@ -1,4 +1,4 @@
-import {xfs} from '@yarnpkg/fslib';
+import {npath, xfs} from '@yarnpkg/fslib';
 
 describe(`Commands`, () => {
   describe(`config get`, () => {
@@ -30,6 +30,16 @@ describe(`Commands`, () => {
         await expect(run(`config`, `get`, `npmAuthToken`, `--no-redacted`)).resolves.toMatchObject({
           stdout: `foobar\n`,
         });
+      }),
+    );
+
+    test(
+      `it should print native paths`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const {stdout} = await run(`config`, `get`, `cacheFolder`, `--no-redacted`);
+        const value = stdout.trim();
+
+        expect(value).toEqual(npath.fromPortablePath(value));
       }),
     );
 

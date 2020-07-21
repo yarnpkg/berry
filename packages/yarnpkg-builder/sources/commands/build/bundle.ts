@@ -7,23 +7,24 @@ import {Command, Usage}                                                    from 
 import filesize                                                            from 'filesize';
 import fs                                                                  from 'fs';
 import path                                                                from 'path';
+import semver                                                              from 'semver';
 import TerserPlugin                                                        from 'terser-webpack-plugin';
 import {promisify}                                                         from 'util';
 import webpack                                                             from 'webpack';
 
 import {findPlugins}                                                       from '../../tools/findPlugins';
-import {makeConfig}                                                        from '../../tools/makeConfig';
+import {makeConfig, WebpackPlugin}                                         from '../../tools/makeConfig';
 
 const execFile = promisify(cp.execFile);
 
-const pkgJsonVersion = (basedir: string) => {
+const pkgJsonVersion = (basedir: string): string => {
   return require(`${basedir}/package.json`).version;
 };
 
 const suggestHash = async (basedir: string) => {
   try {
     const unique = await execFile(`git`, [`show`, `-s`, `--pretty=format:%ad.%t`, `--date=short`], {cwd: basedir});
-    return `.git.${unique.stdout.trim().replace(/-/g, ``)}`;
+    return `git.${unique.stdout.trim().replace(/-/g, ``)}`;
   } catch {
     return null;
   }
@@ -45,6 +46,24 @@ export default class BuildBundleCommand extends Command {
 
   static usage: Usage = Command.Usage({
     description: `build the local bundle`,
+    details: `
+      This command builds the local bundle - the Yarn binary file that is installed in projects.
+
+      If the \`--no-minify\` option is used, the bundle will be built in development mode, without any optimizations like minifying, symbol scrambling, and treeshaking.
+
+      If the \`--no-git-hash\` option is used, the version of the bundle won't include the git hash of the current commit.
+
+      If the \`--profile\` flag is set, the bundle will only include the plugins that are part of the the specified profile.
+
+      If the \`--plugin\` flag is used, the bundle will also include the specified plugins besides the ones included in the specified profile.
+    `,
+    examples: [[
+      `Build the local bundle`,
+      `$0 build bundle`,
+    ], [
+      `Build the local development bundle`,
+      `$0 build bundle --no-minify`,
+    ]],
   });
 
   @Command.Path(`build`, `bundle`)
@@ -65,7 +84,9 @@ export default class BuildBundleCommand extends Command {
       : null;
 
     if (hash !== null)
-      version = version.replace(/-(.*)?$/, `-$1${hash}`);
+      version = semver.prerelease(version) !== null
+        ? `${version}.${hash}`
+        : `${version}-${hash}`;
 
     let buildErrors: string | null = null;
 
@@ -97,7 +118,10 @@ export default class BuildBundleCommand extends Command {
                 new TerserPlugin({
                   cache: false,
                   extractComments: false,
-                }),
+                  terserOptions: {
+                    ecma: 8,
+                  },
+                }) as WebpackPlugin,
               ],
             },
           },
@@ -126,6 +150,15 @@ export default class BuildBundleCommand extends Command {
           },
 
           plugins: [
+            // esprima is only needed for parsing !!js/function, which isn't part of the FAILSAFE_SCHEMA.
+            // Unfortunately, js-yaml declares it as a hard dependency and requires the entire module,
+            // which causes webpack to add 0.13 MB of unused code to the bundle.
+            // Fortunately, js-yaml wraps the require call inside a try / catch block, so we can just ignore it.
+            // Reference: https://github.com/nodeca/js-yaml/blob/34e5072f43fd36b08aaaad433da73c10d47c41e5/lib/js-yaml/type/js/function.js#L15
+            new webpack.IgnorePlugin({
+              resourceRegExp: /^esprima$/,
+              contextRegExp: /js-yaml/,
+            }),
             new webpack.BannerPlugin({
               entryOnly: true,
               banner: `#!/usr/bin/env node\n/* eslint-disable */`,
@@ -148,7 +181,7 @@ export default class BuildBundleCommand extends Command {
           compiler.run((err, stats) => {
             if (err) {
               reject(err);
-            } else if (stats.compilation.errors.length > 0) {
+            } else if (stats && stats.compilation.errors.length > 0) {
               resolve(stats.toString(`errors-only`));
             } else {
               resolve(null);

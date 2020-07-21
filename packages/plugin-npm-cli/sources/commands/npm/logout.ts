@@ -2,7 +2,6 @@ import {BaseCommand}                from '@yarnpkg/cli';
 import {Configuration, MessageName} from '@yarnpkg/core';
 import {StreamReport}               from '@yarnpkg/core';
 import {Command, Usage}             from 'clipanion';
-import * as yup                     from 'yup';
 
 import {getRegistry}                from './login';
 
@@ -16,10 +15,6 @@ export default class NpmLogoutCommand extends BaseCommand {
 
   @Command.Boolean(`-A,--all`)
   all: boolean = false;
-
-  static schema = yup.object()
-    .atMostOneOf([`scope`, `all`])
-    .atMostOneOf([`publish`, `all`]);
 
   static usage: Usage = Command.Usage({
     category: `Npm-related commands`,

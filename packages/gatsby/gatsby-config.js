@@ -96,8 +96,23 @@ module.exports = {
     {
       resolve: `gatsby-plugin-clipanion-cli`,
       options: {
-        argv0: `yarn`,
-        binary: `${__dirname}/../../scripts/run-yarn.js`,
+        binaries: [
+          {
+            namespace: null,
+            argv0: `yarn`,
+            binary: `${__dirname}/../../scripts/run-yarn.js`,
+          },
+          {
+            namespace: `pnpify`,
+            argv0: `pnpify`,
+            binary: `${__dirname}/../../scripts/run-pnpify.js`,
+          },
+          {
+            namespace: `builder`,
+            argv0: `builder`,
+            binary: `${__dirname}/../../scripts/run-builder.js`,
+          },
+        ],
       },
     },
     {

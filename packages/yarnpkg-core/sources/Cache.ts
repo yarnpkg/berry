@@ -11,9 +11,7 @@ import * as miscUtils                                          from './miscUtils
 import * as structUtils                                        from './structUtils';
 import {LocatorHash, Locator}                                  from './types';
 
-// Each time we'll bump this number the cache hashes will change, which will
-// cause all files to be fetched again. Use with caution.
-const CACHE_VERSION = 4;
+const CACHE_VERSION = 6;
 
 export type FetchFromCacheOptions = {
   checksums: Map<LocatorHash, Locator>,
@@ -134,16 +132,16 @@ export class Cache {
     }
   }
 
-  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, {onHit, onMiss, loader}: {onHit?: () => void, onMiss?: () => void, loader?: () => Promise<ZipFS>}): Promise<[FakeFS<PortablePath>, () => void, string]> {
+  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, {onHit, onMiss, loader, skipIntegrityCheck}: {onHit?: () => void, onMiss?: () => void, loader?: () => Promise<ZipFS>, skipIntegrityCheck?: boolean}): Promise<[FakeFS<PortablePath>, () => void, string]> {
     const mirrorPath = this.getLocatorMirrorPath(locator);
 
     const baseFs = new NodeFS();
 
     const validateFile = async (path: PortablePath, refetchPath: PortablePath | null = null) => {
-      const actualChecksum = `${this.cacheKey}/${await hashUtils.checksumFile(path)}`;
+      const actualChecksum = (!skipIntegrityCheck || !expectedChecksum) ? `${this.cacheKey}/${await hashUtils.checksumFile(path)}` : expectedChecksum;
 
       if (refetchPath !== null) {
-        const previousChecksum = `${this.cacheKey}/${await hashUtils.checksumFile(refetchPath)}`;
+        const previousChecksum = (!skipIntegrityCheck || !expectedChecksum) ? `${this.cacheKey}/${await hashUtils.checksumFile(refetchPath)}` : expectedChecksum;
         if (actualChecksum !== previousChecksum) {
           throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `The remote archive doesn't match the local checksum - has the local cache been corrupted?`);
         }
@@ -193,17 +191,18 @@ export class Cache {
     };
 
     const loadPackageThroughMirror = async () => {
-      if (mirrorPath === null || !xfs.existsSync(mirrorPath))
-        return await loader!();
+      if (mirrorPath === null || !xfs.existsSync(mirrorPath)) {
+        const zipFs = await loader!();
+        const realPath = zipFs.getRealPath();
+        zipFs.saveAndClose();
+        return realPath;
+      }
 
       const tempDir = await xfs.mktempPromise();
       const tempPath = ppath.join(tempDir, this.getVersionFilename(locator));
 
       await xfs.copyFilePromise(mirrorPath, tempPath, fs.constants.COPYFILE_FICLONE);
-
-      return new ZipFS(tempPath, {
-        libzip: await getLibzipPromise(),
-      });
+      return tempPath;
     };
 
     const loadPackage = async () => {
@@ -212,10 +211,7 @@ export class Cache {
       if (this.immutable)
         throw new ReportError(MessageName.IMMUTABLE_CACHE, `Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
 
-      const zipFs = await loadPackageThroughMirror();
-      const originalPath = zipFs.getRealPath();
-
-      zipFs.saveAndClose();
+      const originalPath = await loadPackageThroughMirror();
 
       await xfs.chmodPromise(originalPath, 0o644);
 

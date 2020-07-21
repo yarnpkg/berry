@@ -18,11 +18,6 @@ export type PipevpOptions = {
   stderr: Writable,
 };
 
-// Rather than attaching one SIGINT handler for each process, we
-// attach a single one and use a refcount to detect once it's no
-// longer needed.
-let sigintRefCount = 0;
-
 function hasFd(stream: null | Readable | Writable) {
   // @ts-ignore: Not sure how to typecheck this field
   return stream !== null && typeof stream.fd === `number`;
@@ -32,6 +27,11 @@ function sigintHandler() {
   // We don't want SIGINT to kill our process; we want it to kill the
   // innermost process, whose end will cause our own to exit.
 }
+
+// Rather than attaching one SIGINT handler for each process, we
+// attach a single one and use a refcount to detect once it's no
+// longer needed.
+let sigintRefCount = 0;
 
 export async function pipevp(fileName: string, args: Array<string>, {cwd, env = process.env, strict = false, stdin = null, stdout, stderr, end = EndStrategy.Always}: PipevpOptions): Promise<{code: number}> {
   const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];

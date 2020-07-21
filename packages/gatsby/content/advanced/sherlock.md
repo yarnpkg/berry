@@ -7,7 +7,7 @@ hidden: true
 
 In order to simplify our work maintaining Yarn, we ask you to help us by providing reproductions for the bugs you encounter. We can't stress this enough: under normal circumstances, **no reproduction will mean no help** and your issue may be closed for this reason.
 
-To help you help us, we use a tool called [Sherlock](https://github.com/arcanis/sherlock) which allows you to attach reproduction testcases to your issues. In a sense, it's a bit like if you were writing a Jest test directly in your issue. By using this system we can quickly check whether a problem can be reproduced, and whether our fix is the right one. It's win-win for everyone!
+To help you help us, we use a tool called [Sherlock](https://github.com/arcanis/sherlock) which allows you to attach reproduction testcases to your issues. In a sense, it's a bit like if you were writing a Jest test directly in your issue. By using this system we can quickly check whether a problem can be reproduced, and whether our fix is the right one. It's a win-win for everyone!
 
 ```toc
 # This code block gets replaced with the Table of Contents
@@ -50,7 +50,7 @@ The easiest and most convenient way to develop your reproduction is by using the
 
 ## Available functions
 
-You can use all of Javascript inside the repro code, including `async/await`. In fact, you can even use top-level `await`! As far as the runtime go you should have access to all of Node's APIs, plus some extras:
+You can use all of Javascript inside the repro code, including `async/await`. In fact, you can even use top-level `await`! As far as the runtime goes you should have access to all of Node's APIs, plus some extras:
 
 - In order to simplify some tasks that would be very menial otherwise (like spawning the Yarn process, or running a Node script in the generated environment), we provide a set of builtin functions that abstract these semantics. You can find the full reference inside [our repository](https://github.com/yarnpkg/berry/tree/master/scripts/actions/sherlock-prepare.js), along with some documentation.
 

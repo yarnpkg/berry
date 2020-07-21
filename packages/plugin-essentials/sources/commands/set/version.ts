@@ -35,6 +35,8 @@ export default class SetVersionCommand extends BaseCommand {
     ]],
   });
 
+  // TODO: Remove alias in next major
+  @Command.Path(`policies`, `set-version`)
   @Command.Path(`set`, `version`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);

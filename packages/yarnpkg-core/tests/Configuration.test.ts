@@ -26,8 +26,13 @@ describe(`Configuration`, () => {
         plugins: new Set([`@yarnpkg/plugin-npm`]),
       });
 
-      const firstToken = configuration.getRedacted(`npmAuthToken`);
-      const secondToken = configuration.getRedacted(`npmScopes`).get(`myScope`).get(`npmAuthToken`);
+      const firstToken = configuration.getSpecial(`npmAuthToken`, {
+        hideSecrets: true,
+      });
+
+      const secondToken = configuration.getSpecial(`npmScopes`, {
+        hideSecrets: true,
+      }).get(`myScope`).get(`npmAuthToken`);
 
       expect(firstToken).toEqual(SECRET);
       expect(secondToken).toEqual(SECRET);

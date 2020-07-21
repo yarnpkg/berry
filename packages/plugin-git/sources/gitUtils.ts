@@ -1,5 +1,6 @@
 import {Configuration, Locator, execUtils, structUtils} from '@yarnpkg/core';
 import {npath, xfs}                                     from '@yarnpkg/fslib';
+import {url}                                            from 'inspector';
 import querystring                                      from 'querystring';
 import semver                                           from 'semver';
 
@@ -13,9 +14,13 @@ function makeGitEnvironment() {
 
 const gitPatterns = [
   /^ssh:/,
-  /^git(?:\+ssh)?:/,
-  /^(?:git\+)?https?:[^#]+\/[^#]+\.git(?:#.*)?$/,
+  /^git(?:\+[^:]+)?:/,
+
+  // `git+` is optional, `.git` is required
+  /^(?:git\+)?https?:[^#]+\/[^#]+(?:\.git)(?:#.*)?$/,
+
   /^git@[^#]+\/[^#]+\.git(?:#.*)?$/,
+
   /^(?:github:|https:\/\/github\.com\/)?(?!\.{1,2}\/)([a-zA-Z._0-9-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z._0-9-]+?)(?:\.git)?(?:#.*)?$/,
   // GitHub `/tarball/` URLs
   /^https:\/\/github\.com\/(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)\/tarball\/(.+)?$/,
@@ -122,7 +127,7 @@ export function splitRepoUrl(url: string): RepoUrlParts {
   }
 }
 
-export function normalizeRepoUrl(url: string) {
+export function normalizeRepoUrl(url: string, {git = false}: {git?: boolean} = {}) {
   // "git+https://" isn't an actual Git protocol. It's just a way to
   // disambiguate that this URL points to a Git repository.
   url = url.replace(/^git\+https:/, `https:`);
@@ -132,6 +137,10 @@ export function normalizeRepoUrl(url: string) {
 
   // We support GitHub `/tarball/` URLs
   url = url.replace(/^https:\/\/github\.com\/(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)\/tarball\/(.+)?$/, `https://github.com/$1/$2.git#$3`);
+
+  // The `git+` prefix doesn't mean anything at all for Git
+  if (git)
+    url = url.replace(/^git\+([^:]+):/, `$1:`);
 
   return url;
 }
@@ -146,7 +155,7 @@ export async function lsRemote(repo: string, configuration: Configuration) {
 
   let res: {stdout: string};
   try {
-    res = await execUtils.execvp(`git`, [`ls-remote`, `--refs`, normalizeRepoUrl(repo)], {
+    res = await execUtils.execvp(`git`, [`ls-remote`, `--refs`, normalizeRepoUrl(repo, {git: true})], {
       cwd: configuration.startingCwd,
       env: makeGitEnvironment(),
       strict: true,
@@ -273,7 +282,7 @@ export async function clone(url: string, configuration: Configuration) {
   const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};
 
   try {
-    await execUtils.execvp(`git`, [`clone`, `-c core.autocrlf=false`, `${normalizeRepoUrl(repo)}`, npath.fromPortablePath(directory)], execOpts);
+    await execUtils.execvp(`git`, [`clone`, `-c core.autocrlf=false`, normalizeRepoUrl(repo, {git: true}), npath.fromPortablePath(directory)], execOpts);
     await execUtils.execvp(`git`, [`checkout`, `${request}`], execOpts);
   } catch (error) {
     error.message = `Repository clone failed: ${error.message}`;

@@ -55,24 +55,39 @@ module.exports = function (_, opts) {
     return {packagePath, unqualifiedPath};
   };
 
+  const runPnpResolutionOnArray = (request, paths) => {
+    for (let i = 0; i < paths.length; i++) {
+      const resolution = runPnpResolution(request, paths[i]);
+      if (resolution || i === paths.length - 1) {
+        return resolution;
+      }
+    }
+
+    return null;
+  };
+
+  const originalPaths = Array.isArray(opts.paths) ? opts.paths : [];
+
   const packageIterator = (request, basedir, getCandidates, opts) => {
-    const resolution = runPnpResolution(request, basedir);
+    const pathsToTest = [basedir].concat(originalPaths);
+    const resolution = runPnpResolutionOnArray(request, pathsToTest);
     if (typeof resolution === `undefined`)
       return getCandidates();
 
     if (resolution === null)
-      return [];
+      return pathsToTest.map(file => path.join(file, request));
 
     return [resolution.unqualifiedPath];
   };
 
   const paths = (request, basedir, getNodeModulePaths, opts) => {
-    const resolution = runPnpResolution(request, basedir);
+    const pathsToTest = [basedir].concat(originalPaths);
+    const resolution = runPnpResolutionOnArray(request, pathsToTest);
     if (typeof resolution === `undefined`)
       return getNodeModulePaths();
 
     if (resolution === null)
-      return [];
+      return pathsToTest;
 
     // Stip the local named folder
     let nodeModules = path.dirname(resolution.packagePath);
@@ -88,14 +103,16 @@ module.exports = function (_, opts) {
   // the code is compatible with both `resolve` 1.9+ and `resolve` 1.15+
   let isInsideIterator = false;
 
-  opts.packageIterator = function (request, basedir, getCandidates, opts) {
-    isInsideIterator = true;
-    try {
-      return packageIterator(request, basedir, getCandidates, opts);
-    } finally {
-      isInsideIterator = false;
-    }
-  };
+  if (!opts.__skipPackageIterator) {
+    opts.packageIterator = function (request, basedir, getCandidates, opts) {
+      isInsideIterator = true;
+      try {
+        return packageIterator(request, basedir, getCandidates, opts);
+      } finally {
+        isInsideIterator = false;
+      }
+    };
+  }
 
   opts.paths = function (request, basedir, getNodeModulePaths, opts) {
     if (isInsideIterator)

@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator}                                    from '@yarnpkg/core';
 import {miscUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
-import {NodeFS, PortablePath, ppath, CwdFS}         from '@yarnpkg/fslib';
+import {PortablePath, ppath, CwdFS}                 from '@yarnpkg/fslib';
 
 import {TARBALL_REGEXP, PROTOCOL}                   from './constants';
 
@@ -27,6 +27,7 @@ export class TarballFileFetcher implements Fetcher {
       onHit: () => opts.report.reportCacheHit(locator),
       onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`),
       loader: () => this.fetchFromDisk(locator, opts),
+      skipIntegrityCheck: opts.skipIntegrityCheck,
     });
 
     return {

@@ -28,7 +28,7 @@ export const patchFs = () => {
 if (!process.mainModule)
   patchFs();
 
-export {
+export type {
   NodeModulesBaseNode,
   NodeModulesPackageNode,
 } from './buildNodeModulesTree';
@@ -37,6 +37,7 @@ export {
   NodeModulesFS,
   buildNodeModulesTree,
   buildLocatorMap,
-  NodeModulesLocatorMap,
   getArchivePath,
 };
+export type {NodeModulesLocatorMap};
+

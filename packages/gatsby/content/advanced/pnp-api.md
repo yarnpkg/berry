@@ -48,7 +48,7 @@ The package information set describes the location where the package can be foun
 
 The `packagePeers` field, if present, indicates which dependencies have an enforced contract on using the exact same instance as the package that depends on them. This field is rarely useful in pure PnP context (because our instantiation guarantees are stricter and more predictable than this), but is required to properly generate a `node_modules` directory from a PnP map.
 
-The `linkType` field is only useful in specific cases - it describes whether the producer of the PnP API was asked to make the package available through an hard linkage (in which case all the `packageLocation` field is reputed being owned by the linker) or a soft linkage (in which case the `packageLocation` field represents a location outside of the sphere of influence of the linker).
+The `linkType` field is only useful in specific cases - it describes whether the producer of the PnP API was asked to make the package available through a hard linkage (in which case all the `packageLocation` field is reputed being owned by the linker) or a soft linkage (in which case the `packageLocation` field represents a location outside of the sphere of influence of the linker).
 
 ## Runtime Constants
 

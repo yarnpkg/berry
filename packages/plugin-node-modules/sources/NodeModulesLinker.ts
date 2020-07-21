@@ -1,14 +1,14 @@
-import {BuildDirective, MessageName, Project, FetchResult}        from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, LinkType}        from '@yarnpkg/core';
-import {Locator, Package, BuildType, FinalizeInstallStatus}       from '@yarnpkg/core';
 import {structUtils, Report, Manifest, miscUtils, DependencyMeta} from '@yarnpkg/core';
-import {VirtualFS, ZipOpenFS, xfs, FakeFS}                        from '@yarnpkg/fslib';
+import {Locator, Package, BuildType, FinalizeInstallStatus}       from '@yarnpkg/core';
+import {Linker, LinkOptions, MinimalLinkOptions, LinkType}        from '@yarnpkg/core';
+import {BuildDirective, MessageName, Project, FetchResult}        from '@yarnpkg/core';
 import {PortablePath, npath, ppath, toFilename, Filename}         from '@yarnpkg/fslib';
+import {VirtualFS, ZipOpenFS, xfs, FakeFS}                        from '@yarnpkg/fslib';
 import {getLibzipPromise}                                         from '@yarnpkg/libzip';
 import {parseSyml}                                                from '@yarnpkg/parsers';
 import {AbstractPnpInstaller}                                     from '@yarnpkg/plugin-pnp';
-import {NodeModulesLocatorMap, buildLocatorMap}                   from '@yarnpkg/pnpify';
 import {buildNodeModulesTree}                                     from '@yarnpkg/pnpify';
+import {NodeModulesLocatorMap, buildLocatorMap}                   from '@yarnpkg/pnpify';
 import {PnpSettings, makeRuntimeApi}                              from '@yarnpkg/pnp';
 import cmdShim                                                    from '@zkochan/cmd-shim';
 import {UsageError}                                               from 'clipanion';
@@ -65,7 +65,7 @@ export class NodeModulesLinker implements Linker {
   }
 
   makeInstaller(opts: LinkOptions) {
-    return new NodeModulesInstaller(opts);
+    return new NodeModulesInstaller({...opts, skipIncompatiblePackageLinking: true});
   }
 }
 
@@ -395,7 +395,10 @@ const parseLocation = (location: PortablePath, {skipPrefix}: {skipPrefix: Portab
   if (projectRelativePath === null)
     throw new Error(`Assertion failed: Cannot process a path that isn't part of the requested prefix (${location} isn't within ${skipPrefix})`);
 
-  const allSegments = projectRelativePath.split(ppath.sep);
+  const allSegments = projectRelativePath
+    .split(ppath.sep)
+    // Ignore empty segments (after trailing slashes)
+    .filter(segment => segment !== ``);
   const nmIndex = allSegments.indexOf(NODE_MODULES);
 
   // Project path, up until the first node_modules segment
@@ -454,8 +457,22 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
   return locationTree;
 };
 
-const symlinkPromise = async (srcDir: PortablePath, dstDir: PortablePath) =>
-  xfs.symlinkPromise(process.platform !== `win32` ? ppath.relative(ppath.dirname(dstDir), srcDir) : srcDir, dstDir, process.platform === `win32` ? `junction` : undefined);
+const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath) => {
+  let stats;
+
+  try {
+    if (process.platform === `win32`) {
+      stats = xfs.lstatSync(srcPath);
+    }
+  } catch (e) {
+  }
+
+  if (process.platform == `win32` && (!stats || stats.isDirectory())) {
+    xfs.symlinkPromise(srcPath, dstPath, `junction`);
+  } else {
+    xfs.symlinkPromise(ppath.relative(ppath.dirname(dstPath), srcPath), dstPath);
+  }
+};
 
 const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, innerLoop}: {baseFs: FakeFS<PortablePath>, innerLoop?: boolean}) => {
   await xfs.mkdirpPromise(dstDir);
@@ -472,7 +489,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
       }
     } else if (srcType.isSymbolicLink()) {
       const target = await baseFs.readlinkPromise(srcPath);
-      await symlinkPromise(ppath.resolve(srcPath, target), dstPath);
+      await symlinkPromise(ppath.resolve(ppath.dirname(dstPath), target), dstPath);
     } else {
       throw new Error(`Unsupported file type (file: ${srcPath}, mode: 0o${await xfs.statSync(srcPath).mode.toString(8).padStart(6, `0`)})`);
     }
@@ -593,6 +610,20 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
   return binSymlinks;
 }
 
+const areRealLocatorsEqual = (locatorKey1?: LocatorKey, locatorKey2?: LocatorKey) => {
+  if (!locatorKey1 || !locatorKey2)
+    return locatorKey1 === locatorKey2;
+
+  let locator1 = structUtils.parseLocator(locatorKey1);
+  if (structUtils.isVirtualLocator(locator1))
+    locator1 = structUtils.devirtualizeLocator(locator1);
+  let locator2 = structUtils.parseLocator(locatorKey2);
+  if (structUtils.isVirtualLocator(locator2))
+    locator2 = structUtils.devirtualizeLocator(locator2);
+
+  return structUtils.areLocatorsEqual(locator1, locator2);
+};
+
 async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
   const rootNmDirPath = ppath.join(project.cwd, NODE_MODULES);
 
@@ -705,7 +736,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       // so that removeDir removed the whole directory
       await removeDir(location, {contentsOnly: node.linkType === LinkType.HARD});
     } else {
-      if (node.locator !== prevNode.locator)
+      if (!areRealLocatorsEqual(node.locator, prevNode.locator))
         await removeDir(location, {contentsOnly: node.linkType === LinkType.HARD});
 
       for (const [segment, childNode] of node.children) {
@@ -745,7 +776,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
             break;
           }
         }
-        if (node && node.locator !== prevLocator) {
+        if (node && !areRealLocatorsEqual(node.locator, prevLocator)) {
           const info = installState.get(node.locator!)!;
           const srcDir = info.target;
           const dstDir = curLocation;

@@ -40,7 +40,7 @@ And that's it! Push your changes to your repository, checkout a new one somewher
 
 Yes, very much. To give you an idea, a `node_modules` folder of 135k uncompressed files (for a total of 1.2GB) gives a Yarn cache of 2k binary archives (for a total of 139MB). Git simply cannot support the former, while the latter is perfectly fine.
 
-Another huge difference is the number of changes. Back in Yarn 1, when updating a package, a huge amount of files had to be recreated, or even simply moved. When the same happens in a Yarn 2 install, you get a very predictable result: exactly one changed file for each added/removed package. This in turn has beneficial side effects in term of performance and security, since you can easily spot the invalid checksums on a per-package basis.
+Another huge difference is the number of changes. Back in Yarn 1, when updating a package, a huge amount of files had to be recreated, or even simply moved. When the same happens in a Yarn 2 install, you get a very predictable result: exactly one changed file for each added/removed package. This in turn has beneficial side effects in terms of performance and security, since you can easily spot the invalid checksums on a per-package basis.
 
 ### Does it have security implications?
 

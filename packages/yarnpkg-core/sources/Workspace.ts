@@ -69,6 +69,7 @@ export class Workspace {
         expandDirectories: false,
         onlyDirectories: true,
         onlyFiles: false,
+        ignore: [`**/node_modules`, `**/.git`, `**/.yarn`],
       });
 
       // It seems that the return value of globby isn't in any guaranteed order - not even the directory listing order

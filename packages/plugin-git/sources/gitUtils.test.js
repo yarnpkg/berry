@@ -19,6 +19,8 @@ const VALID_PATTERNS = [
   `git://github.com/TooTallNate/util-deprecate.git#v1.0.1`,
   `git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1`,
   `ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1`,
+  `git+https://github.com/TooTallNate/util-deprecate#v1.0.1`,
+  `git+https://github.com/TooTallNate/util-deprecate.git#v1.0.1`,
 ];
 
 const INVALID_PATTERNS = [

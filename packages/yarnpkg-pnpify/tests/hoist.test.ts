@@ -2,9 +2,11 @@ import {hoist, HoisterTree, HoisterResult} from '../sources/hoist';
 
 const toTree = (obj: any, key: string = `.`, nodes = new Map()): HoisterTree => {
   let node = nodes.get(key);
+  const identName = key.match(/@?[^@]+/)![0];
   if (!node) {
     node = {
-      name: key.match(/@?[^@]+/)![0],
+      name: identName,
+      identName,
       reference: key.match(/@?[^@]+@?(.+)?/)![1] || ``,
       dependencies: new Set<HoisterTree>(),
       peerNames: new Set<string>((obj[key] || {}).peerNames || []),
@@ -69,6 +71,50 @@ describe(`hoist`, () => {
       B: {dependencies: [`A`, `E`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
+  });
+
+  // it(`should support simple cyclic peer dependencies`, () => {
+  //   //   -> D -> A --> B
+  //   //        -> B --> C
+  //   //        -> C --> A
+  //   // Ideally should be hoisted to:
+  //   //   -> D
+  //   //   -> A
+  //   //   -> B
+  //   //   -> C
+  //   // but its difficult and its okay if hoister at least doesn't loop and leave the graph in original state
+
+  //   const tree = {
+  //     '.': {dependencies: [`D`]},
+  //     D: {dependencies: [`A`, `B`, `C`]},
+  //     A: {dependencies: [`B`], peerNames: [`B`]},
+  //     B: {dependencies: [`C`], peerNames: [`C`]},
+  //     C: {dependencies: [`A`], peerNames: [`A`]},
+  //   };
+  //   expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
+  // });
+
+  it(`should support cyclic peer dependencies`, () => {
+    // . -> E@X
+    //   -> D -> A --> B
+    //        -> B --> C
+    //        -> C --> A
+    //             --> E@Y
+    //        -> E@Y
+    // Should be hoisted to:
+    // . -> E@X
+    //   -> D -> A
+    //        -> B
+    //        -> C
+    //        -> E@Y
+    const tree = {
+      '.': {dependencies: [`D`, `E@X`]},
+      D: {dependencies: [`A`, `B`, `C`, `E@Y`]},
+      A: {dependencies: [`B`], peerNames: [`B`]},
+      B: {dependencies: [`C`], peerNames: [`C`]},
+      C: {dependencies: [`A`, `E@Y`], peerNames: [`A`, `E`]},
+    };
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
   it(`should keep require promise`, () => {

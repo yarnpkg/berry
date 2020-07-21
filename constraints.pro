@@ -34,23 +34,28 @@ gen_enforced_dependency(WorkspaceCwd, DependencyIdent, WorkspaceRange, Dependenc
         atom_concat('^', DependencyVersion, WorkspaceRange)
     ).
 
-% This rule will prevent all workspaces from depending on tslib
-gen_enforced_dependency(WorkspaceCwd, 'tslib', null, DependencyType) :-
-  workspace_has_dependency(WorkspaceCwd, 'tslib', _, DependencyType).
+% This rule enforces that all packages must not depend on inquirer - we use enquirer instead
+gen_enforced_dependency(WorkspaceCwd, 'inquirer', null, DependencyType) :-
+  workspace_has_dependency(WorkspaceCwd, 'inquirer', _, DependencyType).
+
+% This rule enforces that all packages that depend on TypeScript must also depend on tslib
+gen_enforced_dependency(WorkspaceCwd, 'tslib', 'range', 'dependencies') :-
+  % Iterates over all TypeScript dependencies from all workspaces
+    workspace_has_dependency(WorkspaceCwd, 'typescript', _, DependencyType),
+  % Ignores the case when TypeScript is a peer dependency
+    DependencyType \= 'peerDependencies',
+  % Only proceed if the workspace doesn't already depend on tslib
+    \+ workspace_has_dependency(WorkspaceCwd, 'tslib', _, _).
 
 % This rule will enforce that all packages must have a "BSD-2-Clause" license field
-gen_enforced_field(WorkspaceCwd, 'license', 'BSD-2-Clause') :-
-  workspace(WorkspacedCwd).
+gen_enforced_field(WorkspaceCwd, 'license', 'BSD-2-Clause').
 
 % This rule will enforce that all packages must have a engines.node field of >=10.19.0
-gen_enforced_field(WorkspaceCwd, 'engines.node', '>=10.19.0') :-
-  workspace(WorkspacedCwd).
+gen_enforced_field(WorkspaceCwd, 'engines.node', '>=10.19.0').
 
 % Required to make the package work with the GitHub Package Registry
-gen_enforced_field(WorkspaceCwd, 'repository.type', 'git') :-
-  workspace(WorkspacedCwd).
-gen_enforced_field(WorkspaceCwd, 'repository.url', 'ssh://git@github.com/yarnpkg/berry.git') :-
-  workspace(WorkspacedCwd).
+gen_enforced_field(WorkspaceCwd, 'repository.type', 'git').
+gen_enforced_field(WorkspaceCwd, 'repository.url', 'ssh://git@github.com/yarnpkg/berry.git').
 
 % This rule will require that the plugins that aren't embed in the CLI list a specific script that'll
 % be called as part of our release process (to rebuild them in the context of our repository)

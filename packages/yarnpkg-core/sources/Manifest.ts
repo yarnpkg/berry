@@ -1,11 +1,11 @@
-import {FakeFS, Filename, NodeFS, PortablePath, ppath, toFilename} from '@yarnpkg/fslib';
-import {Resolution, parseResolution, stringifyResolution}          from '@yarnpkg/parsers';
-import semver                                                      from 'semver';
+import {FakeFS, Filename, NodeFS, PortablePath, npath, ppath, toFilename} from '@yarnpkg/fslib';
+import {Resolution, parseResolution, stringifyResolution}                 from '@yarnpkg/parsers';
+import semver                                                             from 'semver';
 
-import * as miscUtils                                              from './miscUtils';
-import * as structUtils                                            from './structUtils';
-import {IdentHash}                                                 from './types';
-import {Ident, Descriptor}                                         from './types';
+import * as miscUtils                                                     from './miscUtils';
+import * as structUtils                                                   from './structUtils';
+import {Ident, Descriptor}                                                from './types';
+import {IdentHash}                                                        from './types';
 
 export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
 export type HardDependencies = 'dependencies' | 'devDependencies';
@@ -28,8 +28,10 @@ export interface PublishConfig {
   access?: string;
   main?: PortablePath;
   module?: PortablePath;
+  browser?: PortablePath;
   bin?: Map<string, PortablePath>;
   registry?: string;
+  executableFiles?: Set<PortablePath>;
 }
 
 export class Manifest {
@@ -37,6 +39,8 @@ export class Manifest {
 
   public name: Ident | null = null;
   public version: string | null = null;
+  public os: Array<string> | null = null;
+  public cpu: Array<string> | null = null;
 
   public type: string | null = null;
 
@@ -45,6 +49,7 @@ export class Manifest {
 
   public main: PortablePath | null = null;
   public module: PortablePath | null = null;
+  public browser: PortablePath | null = null;
 
   public languageName: string | null = null;
 
@@ -157,6 +162,32 @@ export class Manifest {
     if (typeof data.version === `string`)
       this.version = data.version;
 
+    if (Array.isArray(data.os)) {
+      const os: Array<string> = [];
+      this.os = os;
+
+      for (const item of data.os) {
+        if (typeof item !== `string`) {
+          errors.push(new Error(`Parsing failed for the 'os' field`));
+        } else {
+          os.push(item);
+        }
+      }
+    }
+
+    if (Array.isArray(data.cpu)) {
+      const cpu: Array<string> = [];
+      this.cpu = cpu;
+
+      for (const item of data.cpu) {
+        if (typeof item !== `string`) {
+          errors.push(new Error(`Parsing failed for the 'cpu' field`));
+        } else {
+          cpu.push(item);
+        }
+      }
+    }
+
     if (typeof data.type === `string`)
       this.type = data.type;
 
@@ -168,6 +199,15 @@ export class Manifest {
 
     if (typeof data.languageName === `string`)
       this.languageName = data.languageName;
+
+    if (typeof data.main === `string`)
+      this.main = data.main;
+
+    if (typeof data.module === `string`)
+      this.module = data.module;
+
+    if (typeof data.browser === `string`)
+      this.browser = data.browser;
 
     if (typeof data.bin === `string`) {
       if (this.name !== null) {
@@ -340,11 +380,14 @@ export class Manifest {
       if (typeof data.publishConfig.main === `string`)
         this.publishConfig.main = data.publishConfig.main;
 
-      if (typeof data.publishConfig.registry === `string`)
-        this.publishConfig.registry = data.publishConfig.registry;
-
       if (typeof data.publishConfig.module === `string`)
         this.publishConfig.module = data.publishConfig.module;
+
+      if (typeof data.publishConfig.browser === `string`)
+        this.publishConfig.browser = data.publishConfig.browser;
+
+      if (typeof data.publishConfig.registry === `string`)
+        this.publishConfig.registry = data.publishConfig.registry;
 
       if (typeof data.publishConfig.bin === `string`) {
         if (this.name !== null) {
@@ -362,6 +405,19 @@ export class Manifest {
           }
 
           this.publishConfig.bin.set(key, value as PortablePath);
+        }
+      }
+
+      if (Array.isArray(data.publishConfig.executableFiles)) {
+        this.publishConfig.executableFiles = new Set();
+
+        for (const value of data.publishConfig.executableFiles) {
+          if (typeof value !== `string`) {
+            errors.push(new Error(`Invalid executable file definition`));
+            continue;
+          }
+
+          this.publishConfig.executableFiles.add(npath.toPortablePath(value));
         }
       }
     }
@@ -459,6 +515,14 @@ export class Manifest {
     return false;
   }
 
+  isCompatibleWithOS(os: string): boolean {
+    return this.os === null || isManifestFieldCompatible(this.os, os);
+  }
+
+  isCompatibleWithCPU(cpu: string): boolean {
+    return this.cpu === null || isManifestFieldCompatible(this.cpu, cpu);
+  }
+
   ensureDependencyMeta(descriptor: Descriptor) {
     if (descriptor.range !== `unknown` && !semver.valid(descriptor.range))
       throw new Error(`Invalid meta field range for '${structUtils.stringifyDescriptor(descriptor)}'`);
@@ -486,15 +550,6 @@ export class Manifest {
     let peerDependencyMeta = this.peerDependenciesMeta.get(identString);
     if (!peerDependencyMeta)
       this.peerDependenciesMeta.set(identString, peerDependencyMeta = {});
-
-    // I don't like implicit dependencies, but package authors are reluctant to
-    // use optional peer dependencies because they would print warnings in npm
-    // due to a bug in their server implementation. We've been waiting for them
-    // to fix it, but it's been a while now with no idea how close they are. So
-    // in the meantime the "peerDependenciesMeta" field will imply a generic
-    // peer dependency. Ref: https://github.com/npm/cli/pull/224
-    if (!this.peerDependencies.has(descriptor.identHash))
-      this.peerDependencies.set(descriptor.identHash, structUtils.makeDescriptor(descriptor, `*`));
 
     return peerDependencyMeta;
   }
@@ -542,6 +597,16 @@ export class Manifest {
     else
       delete data.version;
 
+    if (this.os !== null)
+      data.os = this.os;
+    else
+      delete this.os;
+
+    if (this.cpu !== null)
+      data.cpu = this.cpu;
+    else
+      delete this.cpu;
+
     if (this.type !== null)
       data.type = this.type;
     else
@@ -561,6 +626,21 @@ export class Manifest {
       data.languageName = this.languageName;
     else
       delete data.languageName;
+
+    if (this.main !== null)
+      data.main = this.main;
+    else
+      delete data.main;
+
+    if (this.module !== null)
+      data.module = this.module;
+    else
+      delete data.module;
+
+    if (this.browser !== null)
+      data.browser = this.browser;
+    else
+      delete data.browser;
 
     if (this.bin.size === 1 && this.name !== null && this.bin.has(this.name.name)) {
       data.bin = this.bin.get(this.name.name)!;
@@ -696,4 +776,28 @@ function stripBOM(content: string) {
   } else {
     return content;
   }
+}
+
+function isManifestFieldCompatible(rules: Array<string>, actual: string) {
+  let isNotWhitelist = true;
+  let isBlacklist = false;
+
+  for (const rule of rules) {
+    if (rule[0] === `!`) {
+      isBlacklist = true;
+
+      if (actual === rule.slice(1)) {
+        return false;
+      }
+    } else {
+      isNotWhitelist = false;
+
+      if (rule === actual) {
+        return true;
+      }
+    }
+  }
+
+  // Blacklists with whitelisted items should be treated as whitelists for `os` and `cpu` in `package.json`
+  return isBlacklist && isNotWhitelist;
 }

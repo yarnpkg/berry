@@ -13,6 +13,9 @@ const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 5;
 
 export function makeIdent(scope: string | null, name: string): Ident {
+  if (scope?.startsWith(`@`))
+    throw new Error(`Invalid scope: don't prefix it with '@'`);
+
   return {identHash: hashUtils.makeHash<IdentHash>(scope, name), scope, name};
 }
 
