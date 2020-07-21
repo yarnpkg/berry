@@ -4,6 +4,9 @@ import {FileFetcher}         from './FileFetcher';
 import {FileResolver}        from './FileResolver';
 import {TarballFileFetcher}  from './TarballFileFetcher';
 import {TarballFileResolver} from './TarballFileResolver';
+import * as fileUtils        from './fileUtils';
+
+export {fileUtils};
 
 const plugin: Plugin = {
   fetchers: [
