@@ -1,5 +1,5 @@
 import {PortablePath, xfs, npath} from '@yarnpkg/fslib';
-import {createHash, BinaryLike}   from 'crypto';
+import {createHash}               from 'crypto';
 import globby                     from 'globby';
 
 export function makeHash<T extends string = string>(...args: Array<string | null>): T {
@@ -31,11 +31,30 @@ export function checksumFile(path: PortablePath) {
 }
 
 export async function checksumPattern(pattern: string, {cwd}: {cwd: PortablePath}) {
-  const listing = await globby(pattern, {
+  // Note: We use a two-pass glob instead of using the expandDirectories option
+  // from globby, because the native implementation is broken.
+  //
+  // Ref: https://github.com/sindresorhus/globby/issues/147
+
+  const dirListing = await globby(pattern, {
+    cwd: npath.fromPortablePath(cwd),
+    expandDirectories: false,
+    onlyDirectories: true,
+    unique: true,
+  });
+
+  const dirPatterns = dirListing.map(entry => {
+    return `${entry}/**/*`;
+  });
+
+  const listing = await globby([pattern, ...dirPatterns], {
     cwd: npath.fromPortablePath(cwd),
     expandDirectories: false,
     onlyFiles: false,
+    unique: true,
   });
+
+  listing.sort();
 
   const hashes = await Promise.all(listing.map(async entry => {
     const parts: Array<Buffer> = [Buffer.from(entry)];
@@ -55,5 +74,5 @@ export async function checksumPattern(pattern: string, {cwd}: {cwd: PortablePath
   for (const sub of hashes)
     hash.update(sub);
 
-  return hash;
+  return hash.digest(`hex`);
 }
