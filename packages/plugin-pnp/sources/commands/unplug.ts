@@ -21,7 +21,7 @@ export default class UnplugCommand extends BaseCommand {
     details: `
       This command will add the selectors matching the specified patterns to the list of packages that must be unplugged when installed.
 
-      A package being unplugged means that instead of being referenced directly through its archive, it will be unpacked at install time in the directory configured via \`virtualFolder\`.
+      A package being unplugged means that instead of being referenced directly through its archive, it will be unpacked at install time in the directory configured via \`pnpUnpluggedFolder\`.
 
       Unpacking a package isn't advised as a general tool because it makes it harder to store your packages within the repository. However, it's a good approach to quickly and safely debug some packages, and can even sometimes be required depending on the context (for example when the package contains shellscripts).
 
@@ -48,7 +48,7 @@ export default class UnplugCommand extends BaseCommand {
       `Unplug all instances of lodash referenced by the project`,
       `yarn unplug lodash -A`,
     ], [
-      `Unplug all packages (for testing purposes only, not recommended)`,
+      `Unplug all packages (only for testing, not recommended)`,
       `yarn unplug -A '*'`,
     ]],
   });
