@@ -1250,16 +1250,7 @@ export class ZipFS extends BasePortableFakeFS {
     if (entry === undefined)
       throw new Error(`Unreachable`);
 
-    const rc = this.libzip.file.getExternalAttributes(this.zip, entry, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
-    if (rc === -1)
-      throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
-
-    const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
-    if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
-      throw errors.EINVAL(`readlink '${p}'`);
-
-    const attributes = this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
-    if ((attributes & 0o170000) !== 0o120000)
+    if (!this.isSymbolicLink(entry))
       throw errors.EINVAL(`readlink '${p}'`);
 
     return this.getFileSource(entry).toString() as PortablePath;
