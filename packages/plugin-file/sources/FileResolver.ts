@@ -2,7 +2,6 @@ import {miscUtils, structUtils, hashUtils}               from '@yarnpkg/core';
 import {LinkType}                                        from '@yarnpkg/core';
 import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {npath, PortablePath, xfs}                        from '@yarnpkg/fslib';
 
 import {FILE_REGEXP, PROTOCOL}                           from './constants';
 import * as fileUtils                                    from './fileUtils';
@@ -51,6 +50,9 @@ export class FileResolver implements Resolver {
 
     const {path, parentLocator} = fileUtils.parseSpec(descriptor.range);
 
+    if (parentLocator === null)
+      throw new Error(`Assertion failed: The descriptor should have been bound`);
+
     const folderContents = await fileUtils.loadFolderContents(
       structUtils.makeLocator(descriptor,
         structUtils.makeRange({
@@ -58,8 +60,7 @@ export class FileResolver implements Resolver {
           source: path,
           selector: path,
           params: {
-            // The Descriptor should already be bound
-            locator: structUtils.stringifyLocator(parentLocator!),
+            locator: structUtils.stringifyLocator(parentLocator),
           },
         })
       ),
