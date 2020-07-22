@@ -1231,10 +1231,16 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   async readlinkPromise(p: PortablePath) {
-    return this.readlinkSync(p);
+    const entry = this.resolvelinkInternal(p);
+    return (await this.getFileSource(entry, true)).toString() as PortablePath;
   }
 
   readlinkSync(p: PortablePath): PortablePath {
+    const entry = this.resolvelinkInternal(p);
+    return this.getFileSource(entry).toString() as PortablePath;
+  }
+
+  private resolvelinkInternal(p: PortablePath) {
     const resolvedP = this.resolveFilename(`readlink '${p}'`, p, false);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`readlink '${p}'`);
@@ -1253,7 +1259,7 @@ export class ZipFS extends BasePortableFakeFS {
     if (!this.isSymbolicLink(entry))
       throw errors.EINVAL(`readlink '${p}'`);
 
-    return this.getFileSource(entry).toString() as PortablePath;
+    return entry;
   }
 
   watch(p: PortablePath, cb?: WatchCallback): Watcher;
