@@ -76,6 +76,38 @@ const defaultStyle = (supportsEmojis && Object.keys(PROGRESS_STYLES).find(name =
   return true;
 })) || `default`;
 
+export function formatName(name: MessageName | null, {configuration, json}: {configuration: Configuration, json: boolean}) {
+  const num = name === null ? 0 : name;
+  const label = `YN${num.toString(10).padStart(4, `0`)}`;
+
+  if (!json && name === null) {
+    return configuration.format(label, `grey`);
+  } else {
+    return label;
+  }
+}
+
+export function formatNameWithHyperlink(name: MessageName | null, {configuration, json}: {configuration: Configuration, json: boolean}) {
+  const code = formatName(name, {configuration, json});
+
+  // Only print hyperlinks if allowed per configuration
+  if (!configuration.get(`enableHyperlinks`))
+    return code;
+
+  // Don't print hyperlinks for the generic messages
+  if (name === null || name === MessageName.UNNAMED)
+    return code;
+
+  const desc = MessageName[name];
+  const href = `https://yarnpkg.com/advanced/error-codes#${code}---${desc}`.toLowerCase();
+
+  // We use BELL as ST because it seems that iTerm doesn't properly support
+  // the \x1b\\ sequence described in the reference document
+  // https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda#the-escape-sequence
+
+  return `\u001b]8;;${href}\u0007${code}\u001b]8;;\u0007`;
+}
+
 export class StreamReport extends Report {
   static async start(opts: StreamReportOptions, cb: (report: StreamReport) => Promise<void>) {
     const report = new this(opts);
@@ -516,35 +548,17 @@ export class StreamReport extends Report {
   }
 
   private formatName(name: MessageName | null) {
-    const num = name === null ? 0 : name;
-    const label = `YN${num.toString(10).padStart(4, `0`)}`;
-
-    if (!this.json && name === null) {
-      return this.configuration.format(label, `grey`);
-    } else {
-      return label;
-    }
+    return formatName(name, {
+      configuration: this.configuration,
+      json: this.json,
+    });
   }
 
   private formatNameWithHyperlink(name: MessageName | null) {
-    const code = this.formatName(name);
-
-    // Only print hyperlinks if allowed per configuration
-    if (!this.configuration.get(`enableHyperlinks`))
-      return code;
-
-    // Don't print hyperlinks for the generic messages
-    if (name === null || name === MessageName.UNNAMED)
-      return code;
-
-    const desc = MessageName[name];
-    const href = `https://yarnpkg.com/advanced/error-codes#${code}---${desc}`.toLowerCase();
-
-    // We use BELL as ST because it seems that iTerm doesn't properly support
-    // the \x1b\\ sequence described in the reference document
-    // https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda#the-escape-sequence
-
-    return `\u001b]8;;${href}\u0007${code}\u001b]8;;\u0007`;
+    return formatNameWithHyperlink(name, {
+      configuration: this.configuration,
+      json: this.json,
+    });
   }
 
   private formatIndent() {

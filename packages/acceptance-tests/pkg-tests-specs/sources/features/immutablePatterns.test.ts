@@ -122,5 +122,24 @@ describe(`Features`, () => {
         },
       )
     );
+
+    it(`shouldn't fail when a folder didn't change`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        },
+        {
+          nodeLinker: `node-modules`,
+        },
+        async ({path, run, source}) => {
+          await xfs.writeFilePromise(ppath.join(path, Filename.rc), `immutablePatterns: ["**/node_modules"]`);
+
+          await run(`install`);
+          await run(`install`, `--immutable`);
+        },
+      )
+    );
   });
 });

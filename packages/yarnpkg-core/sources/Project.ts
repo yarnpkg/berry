@@ -1422,8 +1422,9 @@ export class Project {
     Configuration.telemetry?.reportInstall(nodeLinker);
 
     for (const extensions of this.configuration.packageExtensions.values())
-      for (const {descriptor} of extensions)
-        Configuration.telemetry?.reportPackageExtension(structUtils.stringifyIdent(descriptor));
+      for (const {descriptor, changes} of extensions)
+        for (const change of changes)
+          Configuration.telemetry?.reportPackageExtension(`${structUtils.stringifyIdent(descriptor)}:${change}`);
 
     const validationWarnings: Array<{name: MessageName, text: string}> = [];
     const validationErrors: Array<{name: MessageName, text: string}> = [];
