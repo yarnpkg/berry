@@ -866,7 +866,7 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   private getFileSource(index: number): Buffer
-  private getFileSource(index: number, asyncDecompress: boolean ): Promise<Buffer>
+  private getFileSource(index: number, asyncDecompress: boolean): Promise<Buffer>
   private getFileSource(index: number, asyncDecompress: boolean = false): Promise<Buffer> | Buffer {
     const stat = this.libzip.struct.statS();
 
@@ -1200,11 +1200,10 @@ export class ZipFS extends BasePortableFakeFS {
   async readFilePromise(p: PortablePath, encoding?: string) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
-    // @ts-ignore
+      // @ts-ignore
       encoding = encoding ? encoding.encoding : undefined;
 
     const data = await this.readFileBuffer(p, true);
-
     return encoding ? data.toString(encoding) : data;
   }
 
@@ -1217,7 +1216,6 @@ export class ZipFS extends BasePortableFakeFS {
       encoding = encoding ? encoding.encoding : undefined;
 
     const data = this.readFileBuffer(p);
-
     return encoding ? data.toString(encoding) : data;
   }
 
