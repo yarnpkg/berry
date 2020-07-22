@@ -950,10 +950,26 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   async copyFilePromise(sourceP: PortablePath, destP: PortablePath, flags?: number) {
-    return this.copyFileSync(sourceP, destP, flags);
+    const {indexSource, indexDest, resolvedDestP} = this.prepareCopyFile(sourceP, destP, flags);
+    const source = await this.getFileSource(indexSource, true);
+    const newIndex = this.setFileSource(resolvedDestP, source);
+
+    if (newIndex !== indexDest) {
+      this.registerEntry(resolvedDestP, newIndex);
+    }
   }
 
   copyFileSync(sourceP: PortablePath, destP: PortablePath, flags: number = 0) {
+    const {indexSource, indexDest, resolvedDestP} = this.prepareCopyFile(sourceP, destP, flags);
+    const source = this.getFileSource(indexSource);
+    const newIndex = this.setFileSource(resolvedDestP, source);
+
+    if (newIndex !== indexDest) {
+      this.registerEntry(resolvedDestP, newIndex);
+    }
+  }
+
+  private prepareCopyFile(sourceP: PortablePath, destP: PortablePath, flags: number = 0) {
     if (this.readOnly)
       throw errors.EROFS(`copyfile '${sourceP} -> '${destP}'`);
 
@@ -972,12 +988,11 @@ export class ZipFS extends BasePortableFakeFS {
     if ((flags & (constants.COPYFILE_EXCL | constants.COPYFILE_FICLONE_FORCE)) !== 0 && typeof indexDest !== `undefined`)
       throw errors.EEXIST(`copyfile '${sourceP}' -> '${destP}'`);
 
-    const source = this.getFileSource(indexSource);
-    const newIndex = this.setFileSource(resolvedDestP, source);
-
-    if (newIndex !== indexDest) {
-      this.registerEntry(resolvedDestP, newIndex);
-    }
+    return {
+      indexSource,
+      resolvedDestP,
+      indexDest,
+    };
   }
 
   async appendFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
