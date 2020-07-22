@@ -1014,10 +1014,36 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   async writeFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    return this.writeFileSync(p, content, opts);
+    const {encoding, index, resolvedP} = this.prepareWriteFile(p, opts);
+
+    if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
+      content = Buffer.concat([await this.getFileSource(index, true), Buffer.from(content as any)]);
+
+    if (encoding !== null)
+      content = content.toString(encoding);
+
+    const newIndex = this.setFileSource(resolvedP, content);
+    if (newIndex !== index) {
+      this.registerEntry(resolvedP, newIndex);
+    }
   }
 
   writeFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    const {encoding, index, resolvedP} = this.prepareWriteFile(p, opts);
+
+    if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
+      content = Buffer.concat([this.getFileSource(index), Buffer.from(content as any)]);
+
+    if (encoding !== null)
+      content = content.toString(encoding);
+
+    const newIndex = this.setFileSource(resolvedP, content);
+    if (newIndex !== index) {
+      this.registerEntry(resolvedP, newIndex);
+    }
+  }
+
+  private prepareWriteFile(p: FSPath<PortablePath>, opts?: WriteFileOptions) {
     if (typeof p !== `string`)
       throw errors.EBADF(`read`);
 
@@ -1028,10 +1054,6 @@ export class ZipFS extends BasePortableFakeFS {
     if (this.listings.has(resolvedP))
       throw errors.EISDIR(`open '${p}'`);
 
-    const index = this.entries.get(resolvedP);
-    if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
-      content = Buffer.concat([this.getFileSource(index), Buffer.from(content as any)]);
-
     let encoding = null;
 
     if (typeof opts === `string`)
@@ -1039,13 +1061,13 @@ export class ZipFS extends BasePortableFakeFS {
     else if (typeof opts === `object` && opts.encoding)
       encoding = opts.encoding;
 
-    if (encoding !== null)
-      content = content.toString(encoding);
+    const index = this.entries.get(resolvedP);
 
-    const newIndex = this.setFileSource(resolvedP, content);
-    if (newIndex !== index) {
-      this.registerEntry(resolvedP, newIndex);
-    }
+    return {
+      encoding,
+      resolvedP,
+      index,
+    };
   }
 
   async unlinkPromise(p: PortablePath) {
