@@ -37,6 +37,9 @@ export default class DlxCommand extends BaseCommand {
 
   @Command.Path(`dlx`)
   async execute() {
+    // Disable telemetry to prevent each `dlx` call from counting as a project
+    Configuration.telemetry = null;
+
     return await xfs.mktempPromise(async baseDir => {
       const tmpDir = ppath.join(baseDir, `dlx-${process.pid}` as Filename);
       await xfs.mkdirPromise(tmpDir);
@@ -56,10 +59,11 @@ export default class DlxCommand extends BaseCommand {
 
         await Configuration.updateConfiguration(tmpDir, (current: any) => {
           if (typeof current.plugins === `undefined`)
-            return {enableGlobalCache: true};
+            return {enableGlobalCache: true, enableTelemetry: false};
 
           return {
             enableGlobalCache: true,
+            enableTelemetry: false,
             plugins: current.plugins.map((plugin: any) => {
               const sourcePath: NativePath = typeof plugin === `string`
                 ? plugin
@@ -78,7 +82,7 @@ export default class DlxCommand extends BaseCommand {
           };
         });
       } else {
-        await xfs.writeFilePromise(targetYarnrc, `enableGlobalCache: true\n`);
+        await xfs.writeFilePromise(targetYarnrc, `enableGlobalCache: true\nenableTelemetry: false\n`);
       }
 
       const pkgs = typeof this.pkg !== `undefined`
