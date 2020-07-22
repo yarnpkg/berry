@@ -3,13 +3,13 @@ releases:
   "@yarnpkg/plugin-essentials": patch
   "@yarnpkg/plugin-exec": patch
   "@yarnpkg/plugin-file": minor
+  "@yarnpkg/plugin-interactive-tools": patch
 
 declined:
   - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
   - "@yarnpkg/plugin-init"
-  - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-node-modules"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
