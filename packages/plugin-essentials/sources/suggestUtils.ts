@@ -1,6 +1,6 @@
 import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace, FetchOptions, ResolveOptions} from '@yarnpkg/core';
 import {structUtils}                                                                                                                from '@yarnpkg/core';
-import {ppath, PortablePath}                                                                                                        from '@yarnpkg/fslib';
+import {PortablePath}                                                                                                               from '@yarnpkg/fslib';
 import semver                                                                                                                       from 'semver';
 
 export type Suggestion = {
@@ -129,9 +129,7 @@ export async function findProjectDescriptors(ident: Ident, {project, target}: {p
   return matches;
 }
 
-export async function extractDescriptorFromPath(path: PortablePath, {cache, cwd, workspace}: {cache: Cache, cwd: PortablePath, workspace: Workspace}) {
-  path = normalizeFilePath(ppath.resolve(cwd, path), workspace);
-
+export async function extractDescriptorFromPath(path: PortablePath, {cache, workspace}: {cache: Cache, workspace: Workspace}) {
   const project = workspace.project;
 
   const descriptor = await fetchDescriptorFrom(structUtils.makeIdent(null, `archive`), path, {project: workspace.project, cache, workspace});
@@ -328,12 +326,3 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   return structUtils.makeDescriptor(bestLocator, structUtils.makeRange({protocol, source, params, selector}));
 }
 
-export function normalizeFilePath(path: PortablePath, workspace: Workspace) {
-  let relativePath = ppath.relative(workspace.cwd, path);
-
-  if (!relativePath.match(/^\.{0,2}\//))
-    // Don't use ppath.join here, it ignores the `.`
-    relativePath = `./${relativePath}` as PortablePath;
-
-  return relativePath;
-}
