@@ -1,7 +1,7 @@
-import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace} from '@yarnpkg/core';
-import {structUtils}                                                                                  from '@yarnpkg/core';
-import {ppath, PortablePath}                                                                          from '@yarnpkg/fslib';
-import semver                                                                                         from 'semver';
+import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace, FetchOptions, ResolveOptions} from '@yarnpkg/core';
+import {structUtils}                                                                                                                from '@yarnpkg/core';
+import {ppath, PortablePath}                                                                                                        from '@yarnpkg/fslib';
+import semver                                                                                                                       from 'semver';
 
 export type Suggestion = {
   descriptor: Descriptor,
@@ -130,12 +130,11 @@ export async function findProjectDescriptors(ident: Ident, {project, target}: {p
 }
 
 export async function extractDescriptorFromPath(path: PortablePath, {cache, cwd, workspace}: {cache: Cache, cwd: PortablePath, workspace: Workspace}) {
-  if (!ppath.isAbsolute(path))
-    path = ppath.resolve(cwd, path);
+  path = normalizeFilePath(ppath.resolve(cwd, path), workspace);
 
   const project = workspace.project;
 
-  const descriptor = await fetchDescriptorFrom(structUtils.makeIdent(null, `archive`), path, {project: workspace.project, cache});
+  const descriptor = await fetchDescriptorFrom(structUtils.makeIdent(null, `archive`), path, {project: workspace.project, cache, workspace});
   if (!descriptor)
     throw new Error(`Assertion failed: The descriptor should have been found`);
 
@@ -265,7 +264,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
         } else {
           let latest;
           try {
-            latest = await fetchDescriptorFrom(request, `latest`, {project, cache, preserveModifier: false});
+            latest = await fetchDescriptorFrom(request, `latest`, {project, cache, workspace, preserveModifier: false});
           } catch {
             // Just ignore errors
           }
@@ -287,7 +286,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
   return suggested.slice(0, maxResults);
 }
 
-export async function fetchDescriptorFrom(ident: Ident, range: string, {project, cache, preserveModifier = true}: {project: Project, cache: Cache, preserveModifier?: boolean | string}) {
+export async function fetchDescriptorFrom(ident: Ident, range: string, {project, cache, workspace, preserveModifier = true}: {project: Project, cache: Cache, workspace: Workspace, preserveModifier?: boolean | string}) {
   const latestDescriptor = structUtils.makeDescriptor(ident, range);
 
   const report = new ThrowReport();
@@ -295,11 +294,14 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   const fetcher = project.configuration.makeFetcher();
   const resolver = project.configuration.makeResolver();
 
-  const resolverOptions = {checksums: project.storedChecksums, project, cache, fetcher, report, resolver};
+  const fetchOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report, skipIntegrityCheck: true};
+  const resolveOptions: ResolveOptions = {...fetchOptions, resolver, fetchOptions};
+
+  const boundDescriptor = resolver.bindDescriptor(latestDescriptor, workspace.anchoredLocator, resolveOptions);
 
   let candidateLocators;
   try {
-    candidateLocators = await resolver.getCandidates(latestDescriptor, new Map(), resolverOptions);
+    candidateLocators = await resolver.getCandidates(boundDescriptor, new Map(), resolveOptions);
   } catch {
     return null;
   }
@@ -324,4 +326,14 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   }
 
   return structUtils.makeDescriptor(bestLocator, structUtils.makeRange({protocol, source, params, selector}));
+}
+
+export function normalizeFilePath(path: PortablePath, workspace: Workspace) {
+  let relativePath = ppath.relative(workspace.cwd, path);
+
+  if (!relativePath.match(/^\.{0,2}\//))
+    // Don't use ppath.join here, it ignores the `.`
+    relativePath = `./${relativePath}` as PortablePath;
+
+  return relativePath;
 }
