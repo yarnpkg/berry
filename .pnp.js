@@ -38350,16 +38350,16 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   async readlinkPromise(p) {
-    const entry = this.resolvelinkInternal(p);
+    const entry = this.prepareReadlink(p);
     return (await this.getFileSource(entry, true)).toString();
   }
 
   readlinkSync(p) {
-    const entry = this.resolvelinkInternal(p);
+    const entry = this.prepareReadlink(p);
     return this.getFileSource(entry).toString();
   }
 
-  resolvelinkInternal(p) {
+  prepareReadlink(p) {
     const resolvedP = this.resolveFilename(`readlink '${p}'`, p, false);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`readlink '${p}'`); // Ensure that the last component is a directory (if it is we'll throw right after with EISDIR anyway)
 

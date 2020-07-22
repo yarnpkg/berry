@@ -1276,16 +1276,16 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   async readlinkPromise(p: PortablePath) {
-    const entry = this.resolvelinkInternal(p);
+    const entry = this.prepareReadlink(p);
     return (await this.getFileSource(entry, true)).toString() as PortablePath;
   }
 
   readlinkSync(p: PortablePath): PortablePath {
-    const entry = this.resolvelinkInternal(p);
+    const entry = this.prepareReadlink(p);
     return this.getFileSource(entry).toString() as PortablePath;
   }
 
-  private resolvelinkInternal(p: PortablePath) {
+  private prepareReadlink(p: PortablePath) {
     const resolvedP = this.resolveFilename(`readlink '${p}'`, p, false);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`readlink '${p}'`);
