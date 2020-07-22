@@ -251,6 +251,9 @@ export class Details extends Component {
           // setHead(content);
           this.getDocuments();
 
+          // Fetch vulnerability information
+          this.getVulns(this.state.name, this.state.version);
+
           // Opens the file browser if the search has a 'files' param.
           const {files} = qs.parse(window.location.search, {
             ignoreQueryPrefix: true,
@@ -276,6 +279,22 @@ export class Details extends Component {
 
   componentWillUnmount() {
     window.removeEventListener('popstate', this._onPopState);
+  }
+
+  getVulns(libname, version) {
+    return get({
+      url: `https://snyk-widget.herokuapp.com/test/npm/lib/${libname}/${version}`,
+      type: 'json',
+      headers: { Authorization: 'uW9r=yW=J8*Ws+8MbTn8gW#UUxgzvyWyUHWQcc^c' },
+    })
+      .then(res => {
+        this.setState({['vulns']: res.vulns, ['vulnsUrl']: res.url});
+      })
+      .catch(err => {
+        if (err === 'retry') {
+          setTimeout(this.getVulns(libname, version), 200);
+        }
+      });
   }
 
   getGithub({url, state}) {
@@ -518,6 +537,8 @@ export class Details extends Component {
             keywords={this.state.keywords}
             version={this.state.version}
             types={this.state.types}
+            vulns={this.state.vulns}
+            vulnsUrl={this.state.vulnsUrl}
           />
           <Section id="readme">
             <SectionTitle icon={IcoReadme}>

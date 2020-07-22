@@ -3,6 +3,7 @@ import React                                   from 'react';
 
 import {License, Deprecated, Owner, Downloads, TypeScript} from '../hit';
 import {Keywords, safeMarkdown}                from '../util';
+import IcoSnyk                                 from '../../images/detail/ico-snyk.svg';
 
 const DescriptionText = styled.p`
   font-size: 1.25rem;
@@ -23,6 +24,35 @@ const Description = ({description, deprecated}) => (
     />
   </div>
 );
+
+const VulnLink = styled.a`
+  font-size: 0.825rem;
+  color: rgba(0,0,0,0.5);
+  letter-spacing: 0.3px;
+  margin-left: 8px;
+`;
+
+const VulnIcon = styled.img`
+  position: relative;
+  top: -2px;
+  vertical-align: middle;
+  border-style: none;
+`;
+
+const Vulnerabilities = ({vulns, url}) =>
+  vulns !== undefined ? (
+    <VulnLink
+      href={url}
+    >
+      <VulnIcon
+        width="22"
+        height="22"
+        alt="vulns"
+        src={IcoSnyk}
+      />
+      {vulns} vulnerabilities
+    </VulnLink>
+  ) : null;
 
 const PackageTitle = styled.h2`
   margin: .5rem .5rem .5rem 0;
@@ -50,6 +80,8 @@ export const Header = ({
   keywords,
   version,
   types,
+  vulns,
+  vulnsUrl,
 }) => (
   <header>
     <PackageTitle>{name}</PackageTitle>
@@ -63,6 +95,7 @@ export const Header = ({
       <Deprecated deprecated={deprecated} />
       <span>{version}</span>
       <TypeScript ts={types.ts} />
+      <Vulnerabilities vulns={vulns} url={vulnsUrl} />
     </PackageInfo>
     <Description description={description} deprecated={deprecated} />
     <Keywords keywords={keywords} />
