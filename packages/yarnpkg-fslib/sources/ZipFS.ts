@@ -996,7 +996,17 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   async appendFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    return this.appendFileSync(p, content, opts);
+    if (this.readOnly)
+      throw errors.EROFS(`open '${p}'`);
+
+    if (typeof opts === `undefined`)
+      opts = {flag: `a`};
+    else if (typeof opts === `string`)
+      opts = {flag: `a`, encoding: opts};
+    else if (typeof opts.flag === `undefined`)
+      opts = {flag: `a`, ...opts};
+
+    return this.writeFilePromise(p, content, opts);
   }
 
   appendFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts: WriteFileOptions = {}) {
