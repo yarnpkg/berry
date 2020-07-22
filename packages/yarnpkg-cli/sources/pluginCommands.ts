@@ -7,12 +7,16 @@ export const pluginCommands = new Map([
     [`constraints`, `source`],
     [`constraints`],
   ]],
+  [`exec`, [
+  ]],
   [`interactive-tools`, [
     [`search`],
     [`upgrade-interactive`],
   ]],
   [`stage`, [
     [`stage`],
+  ]],
+  [`typescript`, [
   ]],
   [`version`, [
     [`version`, `apply`],

@@ -26,6 +26,7 @@ export {TAG_REGEXP}                                                             
 export {ReportError, Report}                                                        from './Report';
 export type {Resolver, ResolveOptions, MinimalResolveOptions}                       from './Resolver';
 export {StreamReport}                                                               from './StreamReport';
+export {TelemetryManager}                                                           from './TelemetryManager';
 export {ThrowReport}                                                                from './ThrowReport';
 export {VirtualFetcher}                                                             from './VirtualFetcher';
 export {WorkspaceResolver}                                                          from './WorkspaceResolver';

@@ -1,40 +1,40 @@
-import {PortablePath, ppath, toFilename, xfs, normalizeLineEndings, Filename} from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                             from '@yarnpkg/parsers';
-import {UsageError}                                                           from 'clipanion';
-import {createHash}                                                           from 'crypto';
-import {structuredPatch}                                                      from 'diff';
+import {PortablePath, ppath, toFilename, xfs, normalizeLineEndings, Filename, npath} from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                    from '@yarnpkg/parsers';
+import {UsageError}                                                                  from 'clipanion';
+import {createHash}                                                                  from 'crypto';
+import {structuredPatch}                                                             from 'diff';
 // @ts-ignore
-import Logic                                                                  from 'logic-solver';
-import pLimit                                                                 from 'p-limit';
-import semver                                                                 from 'semver';
-import {promisify}                                                            from 'util';
-import v8                                                                     from 'v8';
-import zlib                                                                   from 'zlib';
+import Logic                                                                         from 'logic-solver';
+import pLimit                                                                        from 'p-limit';
+import semver                                                                        from 'semver';
+import {promisify}                                                                   from 'util';
+import v8                                                                            from 'v8';
+import zlib                                                                          from 'zlib';
 
-import {Cache}                                                                from './Cache';
-import {Configuration, FormatType}                                            from './Configuration';
-import {Fetcher}                                                              from './Fetcher';
-import {Installer, BuildDirective, BuildType}                                 from './Installer';
-import {LegacyMigrationResolver}                                              from './LegacyMigrationResolver';
-import {Linker}                                                               from './Linker';
-import {LockfileResolver}                                                     from './LockfileResolver';
-import {DependencyMeta, Manifest}                                             from './Manifest';
-import {MessageName}                                                          from './MessageName';
-import {MultiResolver}                                                        from './MultiResolver';
-import {Report, ReportError}                                                  from './Report';
-import {ResolveOptions, Resolver}                                             from './Resolver';
-import {RunInstallPleaseResolver}                                             from './RunInstallPleaseResolver';
-import {ThrowReport}                                                          from './ThrowReport';
-import {Workspace}                                                            from './Workspace';
-import {isFolderInside}                                                       from './folderUtils';
-import * as hashUtils                                                         from './hashUtils';
-import * as miscUtils                                                         from './miscUtils';
-import * as scriptUtils                                                       from './scriptUtils';
-import * as semverUtils                                                       from './semverUtils';
-import * as structUtils                                                       from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash}                               from './types';
-import {Descriptor, Ident, Locator, Package}                                  from './types';
-import {LinkType}                                                             from './types';
+import {Cache}                                                                       from './Cache';
+import {Configuration, FormatType}                                                   from './Configuration';
+import {Fetcher}                                                                     from './Fetcher';
+import {Installer, BuildDirective, BuildType}                                        from './Installer';
+import {LegacyMigrationResolver}                                                     from './LegacyMigrationResolver';
+import {Linker}                                                                      from './Linker';
+import {LockfileResolver}                                                            from './LockfileResolver';
+import {DependencyMeta, Manifest}                                                    from './Manifest';
+import {MessageName}                                                                 from './MessageName';
+import {MultiResolver}                                                               from './MultiResolver';
+import {Report, ReportError}                                                         from './Report';
+import {ResolveOptions, Resolver}                                                    from './Resolver';
+import {RunInstallPleaseResolver}                                                    from './RunInstallPleaseResolver';
+import {ThrowReport}                                                                 from './ThrowReport';
+import {Workspace}                                                                   from './Workspace';
+import {isFolderInside}                                                              from './folderUtils';
+import * as hashUtils                                                                from './hashUtils';
+import * as miscUtils                                                                from './miscUtils';
+import * as scriptUtils                                                              from './scriptUtils';
+import * as semverUtils                                                              from './semverUtils';
+import * as structUtils                                                              from './structUtils';
+import {IdentHash, DescriptorHash, LocatorHash}                                      from './types';
+import {Descriptor, Ident, Locator, Package}                                         from './types';
+import {LinkType}                                                                    from './types';
 
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
@@ -117,8 +117,13 @@ export class Project {
 
     const project = new Project(configuration.projectCwd, {configuration});
 
+    Configuration.telemetry?.reportProject(project.cwd);
+
     await project.setupResolutions();
     await project.setupWorkspaces();
+
+    Configuration.telemetry?.reportWorkspaceCount(project.workspaces.length);
+    Configuration.telemetry?.reportDependencyCount(project.workspaces.reduce((sum, workspace) => sum + workspace.manifest.dependencies.size + workspace.manifest.devDependencies.size, 0));
 
     // If we're in a workspace, no need to go any further to find which package we're in
     const workspace = project.tryWorkspaceByCwd(packageCwd);
@@ -1413,6 +1418,14 @@ export class Project {
   }
 
   async install(opts: InstallOptions) {
+    const nodeLinker = this.configuration.get<string>(`nodeLinker`);
+    Configuration.telemetry?.reportInstall(nodeLinker);
+
+    for (const extensions of this.configuration.packageExtensions.values())
+      for (const {descriptor, changes} of extensions)
+        for (const change of changes)
+          Configuration.telemetry?.reportPackageExtension(`${structUtils.stringifyIdent(descriptor)}:${change}`);
+
     const validationWarnings: Array<{name: MessageName, text: string}> = [];
     const validationErrors: Array<{name: MessageName, text: string}> = [];
 
@@ -1490,7 +1503,25 @@ export class Project {
       await this.persist();
 
     await opts.report.startTimerPromise(`Link step`, async () => {
+      const immutablePatterns = opts.immutable
+        ? [...new Set(this.configuration.get<Array<string>>(`immutablePatterns`))].sort()
+        : [];
+
+      const before = await Promise.all(immutablePatterns.map(async pattern => {
+        return hashUtils.checksumPattern(pattern, {cwd: this.cwd});
+      }));
+
       await this.linkEverything(opts);
+
+      const after = await Promise.all(immutablePatterns.map(async pattern => {
+        return hashUtils.checksumPattern(pattern, {cwd: this.cwd});
+      }));
+
+      for (let t = 0; t < immutablePatterns.length; ++t) {
+        if (before[t] !== after[t]) {
+          opts.report.reportError(MessageName.FROZEN_ARTIFACT_EXCEPTION, `The checksum for ${immutablePatterns[t]} has been modified by this install, which is explicitly forbidden.`);
+        }
+      }
     });
 
     await this.configuration.triggerHook(hooks => {

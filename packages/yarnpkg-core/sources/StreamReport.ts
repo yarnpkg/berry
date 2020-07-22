@@ -37,7 +37,7 @@ const now = new Date();
 // We only want to support environments that will out-of-the-box accept the
 // characters we want to use. Others can enforce the style from the project
 // configuration.
-const supportsEmojis = [`iTerm.app`, `Apple_Terminal`].includes(process.env.TERM_PROGRAM!);
+const supportsEmojis = [`iTerm.app`, `Apple_Terminal`].includes(process.env.TERM_PROGRAM!) || !!process.env.WT_SESSION;
 
 const makeRecord = <T>(obj: {[key: string]: T}) => obj;
 const PROGRESS_STYLES = makeRecord({
@@ -48,7 +48,7 @@ const PROGRESS_STYLES = makeRecord({
   },
   simba: {
     date: [19, 7],
-    chars: [`🌟`, `✨`],
+    chars: [`🦁`, `🌴`],
     size: 40,
   },
   jack: {
@@ -76,9 +76,57 @@ const defaultStyle = (supportsEmojis && Object.keys(PROGRESS_STYLES).find(name =
   return true;
 })) || `default`;
 
+export function formatName(name: MessageName | null, {configuration, json}: {configuration: Configuration, json: boolean}) {
+  const num = name === null ? 0 : name;
+  const label = `YN${num.toString(10).padStart(4, `0`)}`;
+
+  if (!json && name === null) {
+    return configuration.format(label, `grey`);
+  } else {
+    return label;
+  }
+}
+
+export function formatNameWithHyperlink(name: MessageName | null, {configuration, json}: {configuration: Configuration, json: boolean}) {
+  const code = formatName(name, {configuration, json});
+
+  // Only print hyperlinks if allowed per configuration
+  if (!configuration.get(`enableHyperlinks`))
+    return code;
+
+  // Don't print hyperlinks for the generic messages
+  if (name === null || name === MessageName.UNNAMED)
+    return code;
+
+  const desc = MessageName[name];
+  const href = `https://yarnpkg.com/advanced/error-codes#${code}---${desc}`.toLowerCase();
+
+  // We use BELL as ST because it seems that iTerm doesn't properly support
+  // the \x1b\\ sequence described in the reference document
+  // https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda#the-escape-sequence
+
+  return `\u001b]8;;${href}\u0007${code}\u001b]8;;\u0007`;
+}
+
 export class StreamReport extends Report {
   static async start(opts: StreamReportOptions, cb: (report: StreamReport) => Promise<void>) {
     const report = new this(opts);
+
+    const emitWarning = process.emitWarning;
+    process.emitWarning = (message, name) => {
+      if (typeof message !== `string`) {
+        const error = message;
+
+        message = error.message;
+        name = name ?? error.name;
+      }
+
+      const fullMessage = typeof name !== `undefined`
+        ? `${name}: ${message}`
+        : message;
+
+      report.reportWarning(MessageName.UNNAMED, fullMessage);
+    };
 
     try {
       await cb(report);
@@ -86,6 +134,7 @@ export class StreamReport extends Report {
       report.reportExceptionOnce(error);
     } finally {
       await report.finalize();
+      process.emitWarning = emitWarning;
     }
 
     return report;
@@ -499,35 +548,17 @@ export class StreamReport extends Report {
   }
 
   private formatName(name: MessageName | null) {
-    const num = name === null ? 0 : name;
-    const label = `YN${num.toString(10).padStart(4, `0`)}`;
-
-    if (!this.json && name === null) {
-      return this.configuration.format(label, `grey`);
-    } else {
-      return label;
-    }
+    return formatName(name, {
+      configuration: this.configuration,
+      json: this.json,
+    });
   }
 
   private formatNameWithHyperlink(name: MessageName | null) {
-    const code = this.formatName(name);
-
-    // Only print hyperlinks if allowed per configuration
-    if (!this.configuration.get(`enableHyperlinks`))
-      return code;
-
-    // Don't print hyperlinks for the generic messages
-    if (name === null || name === MessageName.UNNAMED)
-      return code;
-
-    const desc = MessageName[name];
-    const href = `https://yarnpkg.com/advanced/error-codes#${code}---${desc}`.toLowerCase();
-
-    // We use BELL as ST because it seems that iTerm doesn't properly support
-    // the \x1b\\ sequence described in the reference document
-    // https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda#the-escape-sequence
-
-    return `\u001b]8;;${href}\u0007${code}\u001b]8;;\u0007`;
+    return formatNameWithHyperlink(name, {
+      configuration: this.configuration,
+      json: this.json,
+    });
   }
 
   private formatIndent() {

@@ -110,6 +110,12 @@ export type Hooks = {
       reportError: (name: MessageName, text: string) => void,
     }
   ) => void;
+
+  // Used to notify the core of all the potential artifacts of the availabe linkers.
+  populateYarnPaths?: (
+    project: Project,
+    definePath: (path: PortablePath | null) => void,
+  ) => Promise<void>,
 };
 
 export type Plugin<PluginHooks = any> = {

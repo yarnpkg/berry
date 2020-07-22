@@ -120,6 +120,7 @@ describe(`Plug'n'Play API`, () => {
               return [...pnp.getPackageInformation(pnp.getLocator('peer-deps', deps.get('peer-deps'))).packagePeers];
             }`),
           ).resolves.toEqual([
+            `@types/no-deps`,
             `no-deps`,
           ]);
         }),
@@ -162,6 +163,7 @@ describe(`Plug'n'Play API`, () => {
               return [...pnp.getPackageInformation(pnp.getLocator('bar', deps.get('bar'))).packagePeers];
             }`),
           ).resolves.toEqual([
+            `@types/no-deps`,
             `no-deps`,
           ]);
         }),

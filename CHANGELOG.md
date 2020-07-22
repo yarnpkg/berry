@@ -12,15 +12,19 @@
 
 - Requests won't timeout anymore as long as the server is still sending data.
 - `yarn pack` will properly include main/module/bin files, even when not explicitly referenced through the `files` field.
+- Local git repositories can now be fetched via the `git+file:` protocol.
+- The progress bars will be properly styled when using the new Windows terminal on certain days.
 
 ### CLI
 
+- Yarn will now report an error when run through an incompatible Node version.
 - `yarn add` and `yarn up` will now respect the `preferInteractive` configuration option.
 - `yarn config set` now supports the `-H,--home` flag, which causes it to update the home configuration instead of the project configuration.
 
 ### Configuration
 
 - The settings found in the home configuration file won't cause exceptions when consumed by older Yarn versions. Unsupported options will simply be silently ignored. This should improve the user experience when working with multiple projects configured with different Yarn versions.
+- A new `immutablePaths` setting allow you to specify paths that must not change when running Yarn with the `--immutable` flag set. You can use it to detect unforeseen changes to your install artifacts, be it `.pnp.js` or `node_modules` files.
 
 ## 2.1.1
 
