@@ -66,6 +66,8 @@ export const makeInterface = (libzip: EmscriptenModule) => ({
   getName: libzip.cwrap(`zip_get_name`, `string`, [`number`, `number`, `number`]),
   getNumEntries: libzip.cwrap(`zip_get_num_entries`, `number`, [`number`, `number`]),
 
+  delete: libzip.cwrap(`zip_delete`, `number`, [`number`, `number`]),
+
   stat: libzip.cwrap(`zip_stat`, `number`, [`number`, `string`, `number`, `number`]),
   statIndex: libzip.cwrap(`zip_stat_index`, `number`, [`number`, ...number64, `number`, `number`]),
 

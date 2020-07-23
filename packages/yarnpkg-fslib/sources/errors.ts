@@ -37,3 +37,7 @@ export function EEXIST(reason: string) {
 export function EROFS(reason: string) {
   return makeError(`EROFS`, `read-only filesystem, ${reason}`);
 }
+
+export function ENOTEMPTY(reason: string) {
+  return makeError(`ENOTEMPTY`, `directory not empty, ${reason}`);
+}

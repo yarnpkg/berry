@@ -181,7 +181,7 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  async removePromise(p: P) {
+  async removePromise(p: P, {recursive = true}: {recursive?: boolean} = {}) {
     let stat;
     try {
       stat = await this.lstatPromise(p);
@@ -194,8 +194,9 @@ export abstract class FakeFS<P extends Path> {
     }
 
     if (stat.isDirectory()) {
-      for (const entry of await this.readdirPromise(p))
-        await this.removePromise(this.pathUtils.resolve(p, entry));
+      if (recursive)
+        for (const entry of await this.readdirPromise(p))
+          await this.removePromise(this.pathUtils.resolve(p, entry));
 
       // 5 gives 1s worth of retries at worst
       for (let t = 0; t < 5; ++t) {
@@ -216,7 +217,7 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  removeSync(p: P) {
+  removeSync(p: P, {recursive = true}: {recursive?: boolean} = {}) {
     let stat;
     try {
       stat = this.lstatSync(p);
@@ -229,8 +230,9 @@ export abstract class FakeFS<P extends Path> {
     }
 
     if (stat.isDirectory()) {
-      for (const entry of this.readdirSync(p))
-        this.removeSync(this.pathUtils.resolve(p, entry));
+      if (recursive)
+        for (const entry of this.readdirSync(p))
+          this.removeSync(this.pathUtils.resolve(p, entry));
 
       this.rmdirSync(p);
     } else {

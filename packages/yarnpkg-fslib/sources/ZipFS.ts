@@ -732,6 +732,18 @@ export class ZipFS extends BasePortableFakeFS {
     this.entries.set(p, index);
   }
 
+  private unregisterListing(p: PortablePath) {
+    this.listings.delete(p);
+
+    const parentListing = this.listings.get(ppath.dirname(p));
+    parentListing?.delete(ppath.basename(p));
+  }
+
+  private unregisterEntry(p: PortablePath) {
+    this.unregisterListing(p);
+    this.entries.delete(p);
+  }
+
   private resolveFilename(reason: string, p: PortablePath, resolveLastComponent: boolean = true): PortablePath {
     if (!this.ready)
       throw errors.EBUSY(`archive closed, ${reason}`);
@@ -1024,7 +1036,19 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   unlinkSync(p: PortablePath) {
-    throw new Error(`Unimplemented`);
+    if (this.readOnly)
+      throw errors.EROFS(`unlink '${p}'`);
+
+    const resolvedP = this.resolveFilename(`unlink '${p}'`, p);
+    if (this.listings.has(resolvedP))
+      throw errors.EISDIR(`unlink '${p}'`);
+
+    const index = this.entries.get(resolvedP);
+    if (typeof index === `undefined`)
+      throw errors.EINVAL(`unlink '${p}'`);
+
+    this.libzip.delete(this.zip, index);
+    this.unregisterEntry(resolvedP);
   }
 
   async utimesPromise(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
@@ -1095,7 +1119,24 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   rmdirSync(p: PortablePath) {
-    throw new Error(`Unimplemented`);
+    if (this.readOnly)
+      throw errors.EROFS(`rmdir '${p}'`);
+
+    const resolvedP = this.resolveFilename(`rmdir '${p}'`, p);
+
+    const directoryListing = this.listings.get(resolvedP);
+    if (!directoryListing)
+      throw errors.ENOTDIR(`rmdir '${p}'`);
+
+    if (directoryListing.size > 0)
+      throw errors.ENOTEMPTY(`rmdir '${p}'`);
+
+    const index = this.entries.get(resolvedP);
+    if (typeof index === `undefined`)
+      throw errors.EINVAL(`rmdir '${p}'`);
+
+    this.libzip.delete(this.zip, index);
+    this.unregisterEntry(resolvedP);
   }
 
   private hydrateDirectory(resolvedP: PortablePath) {
