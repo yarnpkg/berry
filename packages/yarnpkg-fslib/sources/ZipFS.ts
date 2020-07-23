@@ -866,8 +866,10 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   private getFileSource(index: number): Buffer
-  private getFileSource(index: number, asyncDecompress: boolean): Promise<Buffer>
-  private getFileSource(index: number, asyncDecompress: boolean = false): Promise<Buffer> | Buffer {
+  private getFileSource(index: number, opts: {asyncDecompress: false}): Buffer
+  private getFileSource(index: number, opts: {asyncDecompress: true}): Promise<Buffer>
+  private getFileSource(index: number, opts: {asyncDecompress: boolean}): Promise<Buffer> | Buffer
+  private getFileSource(index: number, opts: {asyncDecompress: boolean} = {asyncDecompress: false}): Promise<Buffer> | Buffer {
     const stat = this.libzip.struct.statS();
 
     const rc = this.libzip.statIndex(this.zip, index, 0, 0, stat);
@@ -898,7 +900,7 @@ export class ZipFS extends BasePortableFakeFS {
 
         if (compressionMethod === 0) {
           return data;
-        } else if (asyncDecompress) {
+        } else if (opts.asyncDecompress) {
           return new Promise((resolve, reject) => {
             zlib.inflateRaw(data, (error, result) => {
               error ? reject(error) : resolve(result);
@@ -951,7 +953,7 @@ export class ZipFS extends BasePortableFakeFS {
 
   async copyFilePromise(sourceP: PortablePath, destP: PortablePath, flags?: number) {
     const {indexSource, indexDest, resolvedDestP} = this.prepareCopyFile(sourceP, destP, flags);
-    const source = await this.getFileSource(indexSource, true);
+    const source = await this.getFileSource(indexSource, {asyncDecompress: true});
     const newIndex = this.setFileSource(resolvedDestP, source);
 
     if (newIndex !== indexDest) {
@@ -1027,7 +1029,7 @@ export class ZipFS extends BasePortableFakeFS {
     const {encoding, index, resolvedP} = this.prepareWriteFile(p, opts);
 
     if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
-      content = Buffer.concat([await this.getFileSource(index, true), Buffer.from(content as any)]);
+      content = Buffer.concat([await this.getFileSource(index, {asyncDecompress: true}), Buffer.from(content as any)]);
 
     if (encoding !== null)
       content = content.toString(encoding);
@@ -1203,7 +1205,7 @@ export class ZipFS extends BasePortableFakeFS {
       // @ts-ignore
       encoding = encoding ? encoding.encoding : undefined;
 
-    const data = await this.readFileBuffer(p, true);
+    const data = await this.readFileBuffer(p, {asyncDecompress: true});
     return encoding ? data.toString(encoding) : data;
   }
 
@@ -1220,8 +1222,10 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   private readFileBuffer(p: PortablePath): Buffer
-  private readFileBuffer(p: PortablePath, asyncDecompress: true): Promise<Buffer>
-  private readFileBuffer(p: PortablePath, asyncDecompress: boolean = false): Buffer | Promise<Buffer> {
+  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: false}): Buffer
+  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: true}): Promise<Buffer>
+  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: boolean}): Promise<Buffer> | Buffer
+  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: boolean} = {asyncDecompress: false}): Buffer | Promise<Buffer> {
     if (typeof p !== `string`)
       throw errors.EBADF(`read`);
 
@@ -1240,7 +1244,7 @@ export class ZipFS extends BasePortableFakeFS {
     if (entry === undefined)
       throw new Error(`Unreachable`);
 
-    return this.getFileSource(entry, asyncDecompress);
+    return this.getFileSource(entry, opts);
   }
 
   async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
@@ -1277,7 +1281,7 @@ export class ZipFS extends BasePortableFakeFS {
 
   async readlinkPromise(p: PortablePath) {
     const entry = this.prepareReadlink(p);
-    return (await this.getFileSource(entry, true)).toString() as PortablePath;
+    return (await this.getFileSource(entry, {asyncDecompress: true})).toString() as PortablePath;
   }
 
   readlinkSync(p: PortablePath): PortablePath {

@@ -35958,7 +35958,9 @@ async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
   const normalizedSource = sourceFs.pathUtils.normalize(source);
   const prelayout = [];
   const postlayout = [];
-  await destinationFs.mkdirpPromise(destination);
+  await destinationFs.mkdirPromise(destination, {
+    recursive: true
+  });
   const updateTime = typeof destinationFs.lutimesPromise === `function` ? destinationFs.lutimesPromise.bind(destinationFs) : destinationFs.utimesPromise.bind(destinationFs);
   await copyImpl(prelayout, postlayout, updateTime, destinationFs, normalizedDestination, sourceFs, normalizedSource, opts);
 
@@ -38022,7 +38024,9 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     return (attributes & S_IFMT) === S_IFLNK;
   }
 
-  getFileSource(index, asyncDecompress = false) {
+  getFileSource(index, opts = {
+    asyncDecompress: false
+  }) {
     const stat = this.libzip.struct.statS();
     const rc = this.libzip.statIndex(this.zip, index, 0, 0, stat);
     if (rc === -1) throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
@@ -38042,7 +38046,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
         if (compressionMethod === 0) {
           return data;
-        } else if (asyncDecompress) {
+        } else if (opts.asyncDecompress) {
           return new Promise((resolve, reject) => {
             external_zlib_default().inflateRaw(data, (error, result) => {
               error ? reject(error) : resolve(result);
@@ -38093,7 +38097,9 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
       indexDest,
       resolvedDestP
     } = this.prepareCopyFile(sourceP, destP, flags);
-    const source = await this.getFileSource(indexSource, true);
+    const source = await this.getFileSource(indexSource, {
+      asyncDecompress: true
+    });
     const newIndex = this.setFileSource(resolvedDestP, source);
 
     if (newIndex !== indexDest) {
@@ -38165,7 +38171,9 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
       index,
       resolvedP
     } = this.prepareWriteFile(p, opts);
-    if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`)) content = Buffer.concat([await this.getFileSource(index, true), Buffer.from(content)]);
+    if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`)) content = Buffer.concat([await this.getFileSource(index, {
+      asyncDecompress: true
+    }), Buffer.from(content)]);
     if (encoding !== null) content = content.toString(encoding);
     const newIndex = this.setFileSource(resolvedP, content);
 
@@ -38301,7 +38309,9 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`) // @ts-ignore
       encoding = encoding ? encoding.encoding : undefined;
-    const data = await this.readFileBuffer(p, true);
+    const data = await this.readFileBuffer(p, {
+      asyncDecompress: true
+    });
     return encoding ? data.toString(encoding) : data;
   }
 
@@ -38313,7 +38323,9 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     return encoding ? data.toString(encoding) : data;
   }
 
-  readFileBuffer(p, asyncDecompress = false) {
+  readFileBuffer(p, opts = {
+    asyncDecompress: false
+  }) {
     if (typeof p !== `string`) throw EBADF(`read`);
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`open '${p}'`); // Ensures that the last component is a directory, if the user said so (even if it is we'll throw right after with EISDIR anyway)
@@ -38322,7 +38334,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     if (this.listings.has(resolvedP)) throw EISDIR(`read`);
     const entry = this.entries.get(resolvedP);
     if (entry === undefined) throw new Error(`Unreachable`);
-    return this.getFileSource(entry, asyncDecompress);
+    return this.getFileSource(entry, opts);
   }
 
   async readdirPromise(p, {
@@ -38351,7 +38363,9 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
   async readlinkPromise(p) {
     const entry = this.prepareReadlink(p);
-    return (await this.getFileSource(entry, true)).toString();
+    return (await this.getFileSource(entry, {
+      asyncDecompress: true
+    })).toString();
   }
 
   readlinkSync(p) {
