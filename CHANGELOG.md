@@ -26,6 +26,10 @@
 - The settings found in the home configuration file won't cause exceptions when consumed by older Yarn versions. Unsupported options will simply be silently ignored. This should improve the user experience when working with multiple projects configured with different Yarn versions.
 - A new `immutablePaths` setting allow you to specify paths that must not change when running Yarn with the `--immutable` flag set. You can use it to detect unforeseen changes to your install artifacts, be it `.pnp.js` or `node_modules` files.
 
+### Miscellaneous
+
+- Scripts can now use the `$RANDOM` variable as well as simple calculations using `+`, `-`, `*`, `/` and `()` inside `$(())`
+
 ## 2.1.1
 
 - Fixed hyperlink rendering on iTerm
