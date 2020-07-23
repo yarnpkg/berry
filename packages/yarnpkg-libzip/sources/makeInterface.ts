@@ -128,4 +128,4 @@ export const makeInterface = (libzip: EmscriptenModule) => ({
     error: libzip.cwrap(`zipstruct_error`, `number`, []),
     errorS: libzip.cwrap(`zipstruct_errorS`, `number`, []),
   },
-});
+} as const);
