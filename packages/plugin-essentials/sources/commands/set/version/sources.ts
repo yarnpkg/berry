@@ -157,7 +157,7 @@ export async function prepareRepo(spec: PrepareSpec, {configuration, report, tar
     report.reportSeparator();
 
     await xfs.removePromise(target);
-    await xfs.mkdirpPromise(target);
+    await xfs.mkdirPromise(target, {recursive: true});
 
     await runWorkflow(CLONE_WORKFLOW(spec, target), {configuration, context: spec.context, target});
   }

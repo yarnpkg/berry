@@ -67,7 +67,7 @@ export default class RunCommand extends BaseCommand {
       const bstatePath = configuration.get<PortablePath>(`bstatePath`);
       const bstateFile = Project.generateBuildStateFile(nextBState, project.storedPackages);
 
-      await xfs.mkdirpPromise(ppath.dirname(bstatePath));
+      await xfs.mkdirPromise(ppath.dirname(bstatePath), {recursive: true});
       await xfs.changeFilePromise(bstatePath, bstateFile, {
         automaticNewlines: true,
       });

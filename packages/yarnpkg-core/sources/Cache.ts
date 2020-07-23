@@ -121,7 +121,7 @@ export class Cache {
 
   async setup() {
     if (!this.configuration.get(`enableGlobalCache`)) {
-      await xfs.mkdirpPromise(this.cwd);
+      await xfs.mkdirPromise(this.cwd, {recursive: true});
 
       const gitignorePath = ppath.resolve(this.cwd, toFilename(`.gitignore`));
       const gitignoreExists = await xfs.existsPromise(gitignorePath);
@@ -305,7 +305,7 @@ export class Cache {
     if (file === null)
       return await generator();
 
-    await xfs.mkdirpPromise(ppath.dirname(file));
+    await xfs.mkdirPromise(ppath.dirname(file), {recursive: true});
 
     return await xfs.lockPromise(file, async () => {
       return await generator();
