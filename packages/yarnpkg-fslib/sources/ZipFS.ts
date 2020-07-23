@@ -157,7 +157,7 @@ export class ZipFS extends BasePortableFakeFS {
   private readonly listings: Map<PortablePath, Set<Filename>> = new Map();
   private readonly entries: Map<PortablePath, number> = new Map();
 
-  private symlinkCount: number
+  private symlinkCount: number;
 
   private readonly fds: Map<number, {cursor: number, p: PortablePath}> = new Map();
   private nextFd: number = 0;
@@ -741,7 +741,13 @@ export class ZipFS extends BasePortableFakeFS {
 
   private unregisterEntry(p: PortablePath) {
     this.unregisterListing(p);
+
+    const entry = this.entries.get(p);
     this.entries.delete(p);
+
+    if (entry && this.isSymbolicLink(entry)) {
+      this.symlinkCount--;
+    }
   }
 
   private resolveFilename(reason: string, p: PortablePath, resolveLastComponent: boolean = true): PortablePath {
