@@ -475,7 +475,7 @@ const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath) => {
 };
 
 const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, innerLoop}: {baseFs: FakeFS<PortablePath>, innerLoop?: boolean}) => {
-  await xfs.mkdirpPromise(dstDir);
+  await xfs.mkdirPromise(dstDir, {recursive: true});
   const entries = await baseFs.readdirPromise(srcDir, {withFileTypes: true});
 
   const copy = async (dstPath: PortablePath, srcPath: PortablePath, srcType: fs.Dirent) => {
@@ -635,7 +635,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     const promise: Promise<any> = (async () => {
       try {
         if (linkType === LinkType.SOFT) {
-          await xfs.mkdirpPromise(ppath.dirname(dstDir));
+          await xfs.mkdirPromise(ppath.dirname(dstDir), {recursive: true});
           await symlinkPromise(ppath.resolve(srcDir), dstDir);
         } else {
           await copyPromise(dstDir, srcDir, {baseFs});
@@ -658,7 +658,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       const cloneDir = async (srcDir: PortablePath, dstDir: PortablePath, options?: { innerLoop?: boolean }) => {
         try {
           if (!options || !options.innerLoop)
-            await xfs.mkdirpPromise(dstDir);
+            await xfs.mkdirPromise(dstDir, {recursive: true});
 
           const entries = await xfs.readdirPromise(srcDir, {withFileTypes: true});
           for (const entry of entries) {
@@ -670,7 +670,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
             if (entry.isDirectory()) {
               if (entry.name !== NODE_MODULES || (options && options.innerLoop)) {
-                await xfs.mkdirpPromise(dst);
+                await xfs.mkdirPromise(dst, {recursive: true});
                 await cloneDir(src, dst, {innerLoop: true});
               }
             } else {
@@ -856,7 +856,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
     await Promise.all(addQueue);
 
-    await xfs.mkdirpPromise(rootNmDirPath);
+    await xfs.mkdirPromise(rootNmDirPath, {recursive: true});
 
     const binSymlinks = await createBinSymlinkMap(installState, locationTree, project.cwd, {loadManifest});
     await persistBinSymlinks(prevBinSymlinks, binSymlinks);
@@ -879,7 +879,7 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
   for (const [location, symlinks] of binSymlinks) {
     const binDir = ppath.join(location, NODE_MODULES, DOT_BIN);
     const prevSymlinks = previousBinSymlinks.get(location) || new Map();
-    await xfs.mkdirpPromise(binDir);
+    await xfs.mkdirPromise(binDir, {recursive: true});
     for (const name of prevSymlinks.keys()) {
       if (!symlinks.has(name)) {
         // Remove outdated symlinks

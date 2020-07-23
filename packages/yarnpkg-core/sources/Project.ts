@@ -1408,7 +1408,7 @@ export class Project {
       const bstatePath = this.configuration.get<PortablePath>(`bstatePath`);
       const bstateFile = Project.generateBuildStateFile(nextBState, this.storedPackages);
 
-      await xfs.mkdirpPromise(ppath.dirname(bstatePath));
+      await xfs.mkdirPromise(ppath.dirname(bstatePath), {recursive: true});
       await xfs.changeFilePromise(bstatePath, bstateFile, {
         automaticNewlines: true,
       });
@@ -1645,7 +1645,7 @@ export class Project {
 
     const installStatePath = this.configuration.get<PortablePath>(`installStatePath`);
 
-    await xfs.mkdirpPromise(ppath.dirname(installStatePath));
+    await xfs.mkdirPromise(ppath.dirname(installStatePath), {recursive: true});
     await xfs.writeFilePromise(installStatePath, serializedState as Buffer);
   }
 

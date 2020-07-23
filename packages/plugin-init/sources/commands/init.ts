@@ -80,7 +80,7 @@ export default class InitCommand extends BaseCommand {
       throw new UsageError(`Cannot use the --install flag when the current directory is already part of a project`);
 
     if (!xfs.existsSync(this.context.cwd))
-      await xfs.mkdirpPromise(this.context.cwd);
+      await xfs.mkdirPromise(this.context.cwd, {recursive: true});
 
     const lockfilePath = ppath.join(this.context.cwd, configuration.get<Filename>(`lockfileFilename`));
     if (!xfs.existsSync(lockfilePath))
@@ -124,7 +124,7 @@ export default class InitCommand extends BaseCommand {
     }
 
     if (!xfs.existsSync(this.context.cwd))
-      await xfs.mkdirpPromise(this.context.cwd);
+      await xfs.mkdirPromise(this.context.cwd, {recursive: true});
 
     const manifest = new Manifest();
 
@@ -137,7 +137,7 @@ export default class InitCommand extends BaseCommand {
     manifest.license = configuration.get(`initLicense`);
 
     if (this.workspace) {
-      await xfs.mkdirpPromise(ppath.join(this.context.cwd, `packages` as Filename));
+      await xfs.mkdirPromise(ppath.join(this.context.cwd, `packages` as Filename), {recursive: true});
       manifest.workspaceDefinitions = [{
         pattern: `packages/*`,
       }];
