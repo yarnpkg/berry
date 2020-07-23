@@ -22,6 +22,10 @@
 
 - The settings found in the home configuration file won't cause exceptions when consumed by older Yarn versions. Unsupported options will simply be silently ignored. This should improve the user experience when working with multiple projects configured with different Yarn versions.
 
+### Miscellaneous
+
+- Scripts can now use the `$RANDOM` variable as well as simple calculations using `+`, `-`, `*`, `/` and `()` inside `$(())`
+
 ## 2.1.1
 
 - Fixed hyperlink rendering on iTerm
