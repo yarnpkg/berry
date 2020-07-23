@@ -10,7 +10,7 @@ declined:
   - "@yarnpkg/plugin-essentials"
   - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-interactive-tools"
-  - "@yarnpkg/plugin-node-module"
+  - "@yarnpkg/plugin-node-modules"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
   - "@yarnpkg/plugin-patch"
