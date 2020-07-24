@@ -14,7 +14,7 @@ export default class WorkspacesFocus extends BaseCommand {
   @Command.Boolean(`--production`)
   production: boolean = false;
 
-  @Command.Boolean(`--all`)
+  @Command.Boolean(`-A,--all`)
   all: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -25,7 +25,7 @@ export default class WorkspacesFocus extends BaseCommand {
 
       Note that this command is only very moderately useful when using zero-installs, since the cache will contain all the packages anyway - meaning that the only difference between a full install and a focused install would just be a few extra lines in the \`.pnp.js\` file, at the cost of introducing an extra complexity.
 
-      If the \`--all\` flag is set, the entire project will be installed. Combine with \`--production\` to replicate the old \`yarn install --production\`.
+      If the \`-A,--all\` flag is set, the entire project will be installed. Combine with \`--production\` to replicate the old \`yarn install --production\`.
 
       If the \`--production\` flag is set, only regular dependencies will be installed, and dev dependencies will be omitted.
 
