@@ -1,4 +1,5 @@
 export type {ArgumentSegment, Argument, CommandChain, CommandLine, EnvSegment, ShellLine} from './grammars/shell';
+export type {ArithmeticExpression, ArithmeticPrimary}                                     from './grammars/shell';
 export {parseShell}                                                                       from './shell';
 
 export {parseResolution, stringifyResolution}                                             from './resolution';

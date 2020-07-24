@@ -2,6 +2,7 @@ import {Libzip}                                                                 
 import {ReadStream, Stats, WriteStream, constants}                                                 from 'fs';
 import {PassThrough}                                                                               from 'stream';
 import {isDate}                                                                                    from 'util';
+import zlib                                                                                        from 'zlib';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions} from './FakeFS';
 import {FakeFS, MkdirOptions, WriteFileOptions}                                                    from './FakeFS';
@@ -864,18 +865,23 @@ export class ZipFS extends BasePortableFakeFS {
     return (attributes & S_IFMT) === S_IFLNK;
   }
 
-  private getFileSource(index: number) {
+  private getFileSource(index: number): Buffer
+  private getFileSource(index: number, opts: {asyncDecompress: false}): Buffer
+  private getFileSource(index: number, opts: {asyncDecompress: true}): Promise<Buffer>
+  private getFileSource(index: number, opts: {asyncDecompress: boolean}): Promise<Buffer> | Buffer
+  private getFileSource(index: number, opts: {asyncDecompress: boolean} = {asyncDecompress: false}): Promise<Buffer> | Buffer {
     const stat = this.libzip.struct.statS();
 
     const rc = this.libzip.statIndex(this.zip, index, 0, 0, stat);
     if (rc === -1)
       throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
 
-    const size = this.libzip.struct.statSize(stat);
+    const size = this.libzip.struct.statCompSize(stat);
+    const compressionMethod = this.libzip.struct.statCompMethod(stat);
     const buffer = this.libzip.malloc(size);
 
     try {
-      const file = this.libzip.fopenIndex(this.zip, index, 0, 0);
+      const file = this.libzip.fopenIndex(this.zip, index, 0, this.libzip.ZIP_FL_COMPRESSED);
       if (file === 0)
         throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
 
@@ -892,7 +898,17 @@ export class ZipFS extends BasePortableFakeFS {
         const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
         const data = Buffer.from(memory);
 
-        return data;
+        if (compressionMethod === 0) {
+          return data;
+        } else if (opts.asyncDecompress) {
+          return new Promise((resolve, reject) => {
+            zlib.inflateRaw(data, (error, result) => {
+              error ? reject(error) : resolve(result);
+            });
+          });
+        } else {
+          return zlib.inflateRawSync(data);
+        }
       } finally {
         this.libzip.fclose(file);
       }
@@ -936,10 +952,26 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   async copyFilePromise(sourceP: PortablePath, destP: PortablePath, flags?: number) {
-    return this.copyFileSync(sourceP, destP, flags);
+    const {indexSource, indexDest, resolvedDestP} = this.prepareCopyFile(sourceP, destP, flags);
+    const source = await this.getFileSource(indexSource, {asyncDecompress: true});
+    const newIndex = this.setFileSource(resolvedDestP, source);
+
+    if (newIndex !== indexDest) {
+      this.registerEntry(resolvedDestP, newIndex);
+    }
   }
 
   copyFileSync(sourceP: PortablePath, destP: PortablePath, flags: number = 0) {
+    const {indexSource, indexDest, resolvedDestP} = this.prepareCopyFile(sourceP, destP, flags);
+    const source = this.getFileSource(indexSource);
+    const newIndex = this.setFileSource(resolvedDestP, source);
+
+    if (newIndex !== indexDest) {
+      this.registerEntry(resolvedDestP, newIndex);
+    }
+  }
+
+  private prepareCopyFile(sourceP: PortablePath, destP: PortablePath, flags: number = 0) {
     if (this.readOnly)
       throw errors.EROFS(`copyfile '${sourceP} -> '${destP}'`);
 
@@ -958,16 +990,25 @@ export class ZipFS extends BasePortableFakeFS {
     if ((flags & (constants.COPYFILE_EXCL | constants.COPYFILE_FICLONE_FORCE)) !== 0 && typeof indexDest !== `undefined`)
       throw errors.EEXIST(`copyfile '${sourceP}' -> '${destP}'`);
 
-    const source = this.getFileSource(indexSource);
-    const newIndex = this.setFileSource(resolvedDestP, source);
-
-    if (newIndex !== indexDest) {
-      this.registerEntry(resolvedDestP, newIndex);
-    }
+    return {
+      indexSource,
+      resolvedDestP,
+      indexDest,
+    };
   }
 
   async appendFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    return this.appendFileSync(p, content, opts);
+    if (this.readOnly)
+      throw errors.EROFS(`open '${p}'`);
+
+    if (typeof opts === `undefined`)
+      opts = {flag: `a`};
+    else if (typeof opts === `string`)
+      opts = {flag: `a`, encoding: opts};
+    else if (typeof opts.flag === `undefined`)
+      opts = {flag: `a`, ...opts};
+
+    return this.writeFilePromise(p, content, opts);
   }
 
   appendFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts: WriteFileOptions = {}) {
@@ -985,10 +1026,36 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   async writeFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    return this.writeFileSync(p, content, opts);
+    const {encoding, index, resolvedP} = this.prepareWriteFile(p, opts);
+
+    if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
+      content = Buffer.concat([await this.getFileSource(index, {asyncDecompress: true}), Buffer.from(content as any)]);
+
+    if (encoding !== null)
+      content = content.toString(encoding);
+
+    const newIndex = this.setFileSource(resolvedP, content);
+    if (newIndex !== index) {
+      this.registerEntry(resolvedP, newIndex);
+    }
   }
 
   writeFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+    const {encoding, index, resolvedP} = this.prepareWriteFile(p, opts);
+
+    if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
+      content = Buffer.concat([this.getFileSource(index), Buffer.from(content as any)]);
+
+    if (encoding !== null)
+      content = content.toString(encoding);
+
+    const newIndex = this.setFileSource(resolvedP, content);
+    if (newIndex !== index) {
+      this.registerEntry(resolvedP, newIndex);
+    }
+  }
+
+  private prepareWriteFile(p: FSPath<PortablePath>, opts?: WriteFileOptions) {
     if (typeof p !== `string`)
       throw errors.EBADF(`read`);
 
@@ -999,10 +1066,6 @@ export class ZipFS extends BasePortableFakeFS {
     if (this.listings.has(resolvedP))
       throw errors.EISDIR(`open '${p}'`);
 
-    const index = this.entries.get(resolvedP);
-    if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
-      content = Buffer.concat([this.getFileSource(index), Buffer.from(content as any)]);
-
     let encoding = null;
 
     if (typeof opts === `string`)
@@ -1010,13 +1073,13 @@ export class ZipFS extends BasePortableFakeFS {
     else if (typeof opts === `object` && opts.encoding)
       encoding = opts.encoding;
 
-    if (encoding !== null)
-      content = content.toString(encoding);
+    const index = this.entries.get(resolvedP);
 
-    const newIndex = this.setFileSource(resolvedP, content);
-    if (newIndex !== index) {
-      this.registerEntry(resolvedP, newIndex);
-    }
+    return {
+      encoding,
+      resolvedP,
+      index,
+    };
   }
 
   async unlinkPromise(p: PortablePath) {
@@ -1127,7 +1190,7 @@ export class ZipFS extends BasePortableFakeFS {
     const index = this.setFileSource(resolvedP, target);
     this.registerEntry(resolvedP, index);
 
-    const rc = this.libzip.file.setExternalAttributes(this.zip, index, 0, 0, this.libzip.ZIP_OPSYS_UNIX, (0o120000 | 0o777) << 16);
+    const rc = this.libzip.file.setExternalAttributes(this.zip, index, 0, 0, this.libzip.ZIP_OPSYS_UNIX, (S_IFLNK | 0o777) << 16);
     if (rc === -1)
       throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
 
@@ -1137,25 +1200,34 @@ export class ZipFS extends BasePortableFakeFS {
   readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;
   readFilePromise(p: FSPath<PortablePath>, encoding?: string): Promise<Buffer>;
   async readFilePromise(p: PortablePath, encoding?: string) {
-    // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    switch (encoding) {
-      case `utf8`:
-        return this.readFileSync(p, encoding);
-      default:
-        return this.readFileSync(p, encoding);
-    }
-  }
-
-  readFileSync(p: FSPath<PortablePath>, encoding: 'utf8'): string;
-  readFileSync(p: FSPath<PortablePath>, encoding?: string): Buffer;
-  readFileSync(p: FSPath<PortablePath>, encoding?: string) {
-    if (typeof p !== `string`)
-      throw errors.EBADF(`read`);
-
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
       // @ts-ignore
       encoding = encoding ? encoding.encoding : undefined;
+
+    const data = await this.readFileBuffer(p, {asyncDecompress: true});
+    return encoding ? data.toString(encoding) : data;
+  }
+
+  readFileSync(p: FSPath<PortablePath>, encoding: 'utf8'): string;
+  readFileSync(p: FSPath<PortablePath>, encoding?: string): Buffer;
+  readFileSync(p: PortablePath, encoding?: string) {
+    // This is messed up regarding the TS signatures
+    if (typeof encoding === `object`)
+      // @ts-ignore
+      encoding = encoding ? encoding.encoding : undefined;
+
+    const data = this.readFileBuffer(p);
+    return encoding ? data.toString(encoding) : data;
+  }
+
+  private readFileBuffer(p: PortablePath): Buffer
+  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: false}): Buffer
+  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: true}): Promise<Buffer>
+  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: boolean}): Promise<Buffer> | Buffer
+  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: boolean} = {asyncDecompress: false}): Buffer | Promise<Buffer> {
+    if (typeof p !== `string`)
+      throw errors.EBADF(`read`);
 
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
@@ -1172,9 +1244,7 @@ export class ZipFS extends BasePortableFakeFS {
     if (entry === undefined)
       throw new Error(`Unreachable`);
 
-    const data = this.getFileSource(entry);
-
-    return encoding ? data.toString(encoding) : data;
+    return this.getFileSource(entry, opts);
   }
 
   async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
@@ -1210,10 +1280,16 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   async readlinkPromise(p: PortablePath) {
-    return this.readlinkSync(p);
+    const entry = this.prepareReadlink(p);
+    return (await this.getFileSource(entry, {asyncDecompress: true})).toString() as PortablePath;
   }
 
   readlinkSync(p: PortablePath): PortablePath {
+    const entry = this.prepareReadlink(p);
+    return this.getFileSource(entry).toString() as PortablePath;
+  }
+
+  private prepareReadlink(p: PortablePath) {
     const resolvedP = this.resolveFilename(`readlink '${p}'`, p, false);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`readlink '${p}'`);
@@ -1229,19 +1305,10 @@ export class ZipFS extends BasePortableFakeFS {
     if (entry === undefined)
       throw new Error(`Unreachable`);
 
-    const rc = this.libzip.file.getExternalAttributes(this.zip, entry, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
-    if (rc === -1)
-      throw new Error(this.libzip.error.strerror(this.libzip.getError(this.zip)));
-
-    const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
-    if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
+    if (!this.isSymbolicLink(entry))
       throw errors.EINVAL(`readlink '${p}'`);
 
-    const attributes = this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
-    if ((attributes & 0o170000) !== 0o120000)
-      throw errors.EINVAL(`readlink '${p}'`);
-
-    return this.getFileSource(entry).toString() as PortablePath;
+    return entry;
   }
 
   watch(p: PortablePath, cb?: WatchCallback): Watcher;
