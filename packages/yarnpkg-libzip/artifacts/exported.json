@@ -45,6 +45,8 @@
     "_zipstruct_stat_mtime",
     "_zipstruct_error",
     "_zipstruct_errorS",
+    "_zipstruct_stat_comp_size",
+    "_zipstruct_stat_comp_method",
 
     "_zip_ext_count_symlinks"
 ]
