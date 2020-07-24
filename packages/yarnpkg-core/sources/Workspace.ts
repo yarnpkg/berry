@@ -1,14 +1,14 @@
-import {PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
-import globby                                        from 'globby';
-import semver                                        from 'semver';
+import {PortablePath, npath, ppath, xfs, Filename} from '@yarnpkg/fslib';
+import globby                                      from 'globby';
+import semver                                      from 'semver';
 
-import {Manifest}                                    from './Manifest';
-import {Project}                                     from './Project';
-import {WorkspaceResolver}                           from './WorkspaceResolver';
-import * as hashUtils                                from './hashUtils';
-import * as structUtils                              from './structUtils';
-import {IdentHash}                                   from './types';
-import {Descriptor, Locator}                         from './types';
+import {Manifest}                                  from './Manifest';
+import {Project}                                   from './Project';
+import {WorkspaceResolver}                         from './WorkspaceResolver';
+import * as hashUtils                              from './hashUtils';
+import * as structUtils                            from './structUtils';
+import {IdentHash}                                 from './types';
+import {Descriptor, Locator}                       from './types';
 
 export class Workspace {
   public readonly project: Project;
@@ -78,7 +78,7 @@ export class Workspace {
       for (const relativeCwd of relativeCwds) {
         const candidateCwd = ppath.resolve(this.cwd, npath.toPortablePath(relativeCwd));
 
-        if (xfs.existsSync(ppath.join(candidateCwd, toFilename(`package.json`)))) {
+        if (xfs.existsSync(ppath.join(candidateCwd, `package.json` as Filename))) {
           this.workspacesCwds.add(candidateCwd);
         }
       }

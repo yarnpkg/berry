@@ -1,12 +1,12 @@
-import {MessageName, ReportError, Report, Workspace, scriptUtils} from '@yarnpkg/core';
-import {FakeFS, JailFS, xfs, PortablePath, ppath, toFilename}     from '@yarnpkg/fslib';
-import {Hooks as StageHooks}                                      from '@yarnpkg/plugin-stage';
-import mm                                                         from 'micromatch';
-import {PassThrough}                                              from 'stream';
-import tar                                                        from 'tar-stream';
-import {createGzip}                                               from 'zlib';
+import {MessageName, ReportError, Report, Workspace, scriptUtils}       from '@yarnpkg/core';
+import {FakeFS, JailFS, xfs, PortablePath, ppath, toFilename, Filename} from '@yarnpkg/fslib';
+import {Hooks as StageHooks}                                            from '@yarnpkg/plugin-stage';
+import mm                                                               from 'micromatch';
+import {PassThrough}                                                    from 'stream';
+import tar                                                              from 'tar-stream';
+import {createGzip}                                                     from 'zlib';
 
-import {Hooks}                                                    from './';
+import {Hooks}                                                          from './';
 
 const NEVER_IGNORE = [
   `/package.json`,
@@ -274,9 +274,9 @@ async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, 
       }
 
       const localIgnoreList = hasNpmIgnore
-        ? await loadIgnoreList(cwdFs, cwd, toFilename(`.npmignore`))
+        ? await loadIgnoreList(cwdFs, cwd, `.npmignore` as Filename)
         : hasGitIgnore
-          ? await loadIgnoreList(cwdFs, cwd, toFilename(`.gitignore`))
+          ? await loadIgnoreList(cwdFs, cwd, `.gitignore` as Filename)
           : null;
 
       let nextIgnoreLists = localIgnoreList !== null

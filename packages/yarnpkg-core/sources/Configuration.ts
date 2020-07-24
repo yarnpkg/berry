@@ -65,8 +65,8 @@ const IGNORED_ENV_VARIABLES = new Set([
 ]);
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
-export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc.yml`);
-export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
+export const DEFAULT_RC_FILENAME = `.yarnrc.yml` as Filename;
+export const DEFAULT_LOCK_FILENAME = `yarn.lock` as Filename;
 export const SECRET = `********`;
 
 export enum SettingsType {
@@ -976,7 +976,7 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`))))
+      if (xfs.existsSync(ppath.join(currentCwd, `package.json` as Filename)))
         projectCwd = currentCwd;
 
       if (lockfileFilename !== null) {

@@ -123,7 +123,7 @@ export class Cache {
     if (!this.configuration.get(`enableGlobalCache`)) {
       await xfs.mkdirPromise(this.cwd, {recursive: true});
 
-      const gitignorePath = ppath.resolve(this.cwd, toFilename(`.gitignore`));
+      const gitignorePath = ppath.resolve(this.cwd, `.gitignore` as Filename);
       const gitignoreExists = await xfs.existsPromise(gitignorePath);
 
       if (!gitignoreExists) {
