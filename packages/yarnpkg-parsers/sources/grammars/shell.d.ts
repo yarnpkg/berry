@@ -10,7 +10,8 @@ export type ArgumentSegment =
   | {type: `text`, text: string}
   | {type: `glob`, pattern: string}
   | {type: `shell`, shell: ShellLine, quoted: boolean}
-  | {type: `variable`, name: string, defaultValue?: Array<ValueArgument>, quoted: boolean};
+  | {type: `variable`, name: string, defaultValue?: Array<ValueArgument>, quoted: boolean}
+  | {type: `arithmetic`, arithmetic: ArithmeticExpression};
 
 export type Argument =
   | RedirectArgument
@@ -45,7 +46,7 @@ export type CommandChain = Command & {
 };
 
 export type CommandChainThen = {
-  type: '|&' | '|',
+  type: `|&` | `|`,
   chain: CommandChain,
 };
 
@@ -55,10 +56,26 @@ export type CommandLine = {
 };
 
 export type CommandLineThen = {
-  type: '&&' | '||',
+  type: `&&` | `||`,
   line: CommandLine,
 };
 
 export type ShellLine = Array<CommandLine>;
+
+export type ArithmeticPrimary = {
+  type: `number`,
+  value: number,
+} | {
+  type: `variable`,
+  name: string,
+};
+
+export type ArithmeticOperatorExpression = {
+  type: `multiplication` | `division` | `addition` | `subtraction`;
+  left: ArithmeticExpression,
+  right: ArithmeticExpression,
+};
+
+export type ArithmeticExpression = ArithmeticPrimary | ArithmeticOperatorExpression;
 
 export declare const parse: (code: string, options: {isGlobPattern: (arg: string) => boolean}) => ShellLine;

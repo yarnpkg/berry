@@ -161,6 +161,17 @@ describe(`ZipFS`, () => {
     zipFs2.discardAndClose();
   });
 
+  it(`returns the same content for sync and async reads`, async () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, `Test`);
+
+    const zipFs2 = new ZipFS(zipFs.getBufferAndClose(), {libzip});
+
+    expect(await zipFs2.readFilePromise(`/foo.txt` as PortablePath, `utf8`)).toEqual(`Test`);
+    expect(zipFs2.readFileSync(`/foo.txt` as PortablePath, `utf8`)).toEqual(`Test`);
+  });
+
   it(`should support unlinking files`, () => {
     const libzip = getLibzipSync();
     const zipFs = new ZipFS(null, {libzip});

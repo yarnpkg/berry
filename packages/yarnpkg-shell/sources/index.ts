@@ -1,7 +1,8 @@
 import {PortablePath, npath, ppath, xfs, FakeFS, PosixFS}                            from '@yarnpkg/fslib';
-import {EnvSegment}                                                                  from '@yarnpkg/parsers';
 import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
+import {EnvSegment, ArithmeticExpression, ArithmeticPrimary}                         from '@yarnpkg/parsers';
 import fastGlob                                                                      from 'fast-glob';
+
 import {PassThrough, Readable, Writable}                                             from 'stream';
 
 import {makeBuiltin, makeProcess}                                                    from './pipe';
@@ -226,15 +227,110 @@ async function applyEnvVariables(environmentSegments: Array<EnvSegment>, opts: S
   }, {} as ShellState['environment']);
 }
 
+function split(raw: string) {
+  return raw.match(/[^ \r\n\t]+/g) || [];
+}
+
+async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, opts: ShellOptions, state: ShellState, push: (value: string) => void, pushAndClose = push) {
+  switch (segment.name) {
+    case `#`: {
+      push(String(opts.args.length));
+    } break;
+
+    case `@`: {
+      if (segment.quoted) {
+        for (const raw of opts.args) {
+          pushAndClose(raw);
+        }
+      } else {
+        for (const raw of opts.args) {
+          const parts = split(raw);
+
+          for (let t = 0; t < parts.length - 1; ++t)
+            pushAndClose(parts[t]);
+
+          push(parts[parts.length - 1]);
+        }
+      }
+    } break;
+
+    case `*`: {
+      const raw = opts.args.join(` `);
+      if (segment.quoted) {
+        push(raw);
+      } else {
+        for (const part of split(raw)) {
+          pushAndClose(part);
+        }
+      }
+    } break;
+
+    case `RANDOM`: {
+      push(String(Math.floor(Math.random() * 32768)));
+    } break;
+
+    default: {
+      const argIndex = parseInt(segment.name, 10);
+
+      if (Number.isFinite(argIndex)) {
+        if (!(argIndex >= 0 && argIndex < opts.args.length)) {
+          throw new Error(`Unbound argument #${argIndex}`);
+        } else {
+          push(opts.args[argIndex]);
+        }
+      } else {
+        if (Object.prototype.hasOwnProperty.call(state.variables, segment.name)) {
+          push(state.variables[segment.name]);
+        } else if (Object.prototype.hasOwnProperty.call(state.environment, segment.name)) {
+          push(state.environment[segment.name]);
+        } else if (segment.defaultValue) {
+          push((await interpolateArguments(segment.defaultValue, opts, state)).join(` `));
+        } else {
+          throw new Error(`Unbound variable "${segment.name}"`);
+        }
+      }
+    } break;
+  }
+}
+
+const operators = {
+  addition: (left: number, right: number) => left + right,
+  subtraction: (left: number, right: number) => left - right,
+  multiplication: (left: number, right: number) => left * right,
+  division: (left: number, right: number) => Math.trunc(left / right),
+};
+
+async function evaluateArithmetic(arithmetic: ArithmeticExpression, opts: ShellOptions, state: ShellState): Promise<number> {
+  if (arithmetic.type === `number`) {
+    if (!Number.isInteger(arithmetic.value)) {
+      throw new Error(`Invalid number: "${arithmetic.value}", only integers are allowed`);
+    } else {
+      return arithmetic.value;
+    }
+  } else if (arithmetic.type === `variable`) {
+    const parts: Array<string> = [];
+    await evaluateVariable({...arithmetic, quoted: true}, opts, state, result => parts.push(result));
+
+    const number = Number(parts.join(` `));
+
+    if (Number.isNaN(number)) {
+      return evaluateArithmetic({type: `variable`, name: parts.join(` `)}, opts, state);
+    } else {
+      return evaluateArithmetic({type: `number`, value: number}, opts, state);
+    }
+  } else {
+    return operators[arithmetic.type](
+      await evaluateArithmetic(arithmetic.left, opts, state),
+      await evaluateArithmetic(arithmetic.right, opts, state),
+    );
+  }
+}
+
 async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOptions, state: ShellState) {
   const redirections = new Map();
 
   const interpolated: Array<string> = [];
   let interpolatedSegments: Array<string> = [];
-
-  const split = (raw: string) => {
-    return raw.match(/[^ \r\n\t]+/g) || [];
-  };
 
   const push = (segment: string) => {
     interpolatedSegments.push(segment);
@@ -301,61 +397,11 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
             } break;
 
             case `variable`: {
-              switch (segment.name) {
-                case `#`: {
-                  push(String(opts.args.length));
-                } break;
+              await evaluateVariable(segment, opts, state, push, pushAndClose);
+            } break;
 
-                case `@`: {
-                  if (segment.quoted) {
-                    for (const raw of opts.args) {
-                      pushAndClose(raw);
-                    }
-                  } else {
-                    for (const raw of opts.args) {
-                      const parts = split(raw);
-
-                      for (let t = 0; t < parts.length - 1; ++t)
-                        pushAndClose(parts[t]);
-
-                      push(parts[parts.length - 1]);
-                    }
-                  }
-                } break;
-
-                case `*`: {
-                  const raw = opts.args.join(` `);
-                  if (segment.quoted) {
-                    push(raw);
-                  } else {
-                    for (const part of split(raw)) {
-                      pushAndClose(part);
-                    }
-                  }
-                } break;
-
-                default: {
-                  const argIndex = parseInt(segment.name, 10);
-
-                  if (Number.isFinite(argIndex)) {
-                    if (!(argIndex >= 0 && argIndex < opts.args.length)) {
-                      throw new Error(`Unbound argument #${argIndex}`);
-                    } else {
-                      push(opts.args[argIndex]);
-                    }
-                  } else {
-                    if (Object.prototype.hasOwnProperty.call(state.variables, segment.name)) {
-                      push(state.variables[segment.name]);
-                    } else if (Object.prototype.hasOwnProperty.call(state.environment, segment.name)) {
-                      push(state.environment[segment.name]);
-                    } else if (segment.defaultValue) {
-                      push((await interpolateArguments(segment.defaultValue, opts, state)).join(` `));
-                    } else {
-                      throw new Error(`Unbound variable "${segment.name}"`);
-                    }
-                  }
-                } break;
-              }
+            case `arithmetic`: {
+              push(String(await evaluateArithmetic(segment.arithmetic, opts, state)));
             } break;
           }
         }
@@ -578,10 +624,14 @@ async function executeShellLine(node: ShellLine, opts: ShellOptions, state: Shel
   return rightMostExitCode;
 }
 
-function locateArgsVariableInSegment(segment: ArgumentSegment): boolean {
+function locateArgsVariableInSegment(segment: ArgumentSegment|ArithmeticPrimary): boolean {
   switch (segment.type) {
     case `variable`: {
-      return segment.name === `@` || segment.name === `#` || segment.name === `*` || Number.isFinite(parseInt(segment.name, 10)) || (!!segment.defaultValue && segment.defaultValue.some(arg => locateArgsVariableInArgument(arg)));
+      return segment.name === `@` || segment.name === `#` || segment.name === `*` || Number.isFinite(parseInt(segment.name, 10)) || (`defaultValue` in segment && !!segment.defaultValue && segment.defaultValue.some(arg => locateArgsVariableInArgument(arg)));
+    } break;
+
+    case `arithmetic`: {
+      return locateArgsVariableInArithmetic(segment.arithmetic);
     } break;
 
     case `shell`: {
@@ -606,6 +656,21 @@ function locateArgsVariableInArgument(arg: Argument): boolean {
 
     default:
       throw new Error(`Unreacheable`);
+  }
+}
+
+function locateArgsVariableInArithmetic(arg: ArithmeticExpression): boolean {
+  switch (arg.type) {
+    case `variable`: {
+      return locateArgsVariableInSegment(arg);
+    } break;
+
+    case `number`: {
+      return false;
+    } break;
+
+    default:
+      return locateArgsVariableInArithmetic(arg.left) || locateArgsVariableInArithmetic(arg.right);
   }
 }
 
@@ -723,7 +788,7 @@ export async function execute(command: string, args: Array<string> = [], {
     stdin,
     stdout,
     stderr,
-    variables: Object.assign(Object.create(variables), {
+    variables: Object.assign({}, variables, {
       [`?`]: 0,
     }),
   });
