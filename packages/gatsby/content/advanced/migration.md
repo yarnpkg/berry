@@ -158,6 +158,7 @@ This will cause Yarn to install the project just like Yarn 1 used to, by copying
 | `yarn outdated` | `yarn upgrade-interactive` | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/749) |
 | `yarn publish`  | `yarn npm publish`         ||
 | `yarn upgrade`  | `yarn up`                  | Will now upgrade packages across all workspaces |
+| `yarn install --production` | `yarn workspaces focus --all --production` | Requires the `workspace-tools` plugin
 
 ### Deprecated
 
