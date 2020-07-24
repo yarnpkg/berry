@@ -1,6 +1,5 @@
 import {Configuration, Locator, execUtils, structUtils} from '@yarnpkg/core';
 import {npath, xfs}                                     from '@yarnpkg/fslib';
-import {url}                                            from 'inspector';
 import querystring                                      from 'querystring';
 import semver                                           from 'semver';
 

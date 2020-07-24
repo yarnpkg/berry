@@ -1,7 +1,7 @@
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta} from '@yarnpkg/core';
 import {FetchResult, Ident, Locator, Package, BuildDirective, BuildType}                from '@yarnpkg/core';
 import {miscUtils, structUtils}                                                         from '@yarnpkg/core';
-import {CwdFS, FakeFS, PortablePath, npath, ppath, toFilename, xfs, Filename}           from '@yarnpkg/fslib';
+import {CwdFS, FakeFS, PortablePath, npath, ppath, xfs, Filename}                       from '@yarnpkg/fslib';
 import {generateInlinedScript, generateSplitScript, PnpSettings}                        from '@yarnpkg/pnp';
 import {UsageError}                                                                     from 'clipanion';
 

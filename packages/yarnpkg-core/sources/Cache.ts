@@ -1,5 +1,5 @@
 import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename} from '@yarnpkg/fslib';
-import {ppath, toFilename, xfs, DEFAULT_COMPRESSION_LEVEL}     from '@yarnpkg/fslib';
+import {ppath, xfs, DEFAULT_COMPRESSION_LEVEL}                 from '@yarnpkg/fslib';
 import {getLibzipPromise}                                      from '@yarnpkg/libzip';
 import fs                                                      from 'fs';
 
