@@ -36261,8 +36261,11 @@ class FakeFS {
       return await callback();
     } finally {
       try {
-        await this.unlinkPromise(lockPath);
+        // closePromise needs to come before unlinkPromise otherwise another process can attempt
+        // to get the file handle after the unlink but before close resuling in
+        // EPERM: operation not permitted, open
         await this.closePromise(fd);
+        await this.unlinkPromise(lockPath);
       } catch (error) {// noop
       }
     }
