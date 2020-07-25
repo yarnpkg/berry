@@ -1,5 +1,5 @@
 import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename, AliasFS} from '@yarnpkg/fslib';
-import {ppath, toFilename, xfs, DEFAULT_COMPRESSION_LEVEL}              from '@yarnpkg/fslib';
+import {ppath, xfs, DEFAULT_COMPRESSION_LEVEL}                          from '@yarnpkg/fslib';
 import {getLibzipPromise}                                               from '@yarnpkg/libzip';
 import fs                                                               from 'fs';
 
@@ -123,7 +123,7 @@ export class Cache {
     if (!this.configuration.get(`enableGlobalCache`)) {
       await xfs.mkdirPromise(this.cwd, {recursive: true});
 
-      const gitignorePath = ppath.resolve(this.cwd, toFilename(`.gitignore`));
+      const gitignorePath = ppath.resolve(this.cwd, `.gitignore` as Filename);
       const gitignoreExists = await xfs.existsPromise(gitignorePath);
 
       if (!gitignoreExists) {

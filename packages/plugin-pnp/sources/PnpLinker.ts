@@ -1,7 +1,7 @@
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta} from '@yarnpkg/core';
 import {FetchResult, Ident, Locator, Package, BuildDirective, BuildType}                from '@yarnpkg/core';
 import {miscUtils, structUtils}                                                         from '@yarnpkg/core';
-import {CwdFS, FakeFS, PortablePath, npath, ppath, toFilename, xfs}                     from '@yarnpkg/fslib';
+import {CwdFS, FakeFS, PortablePath, npath, ppath, xfs, Filename}                       from '@yarnpkg/fslib';
 import {generateInlinedScript, generateSplitScript, PnpSettings}                        from '@yarnpkg/pnp';
 import {UsageError}                                                                     from 'clipanion';
 
@@ -95,7 +95,7 @@ export class PnpInstaller extends AbstractPnpInstaller {
         buildScripts.push([BuildType.SCRIPT, scriptName]);
 
     // Detect cases where a package has a binding.gyp but no install script
-    const bindingFilePath = ppath.join(fetchResult.prefixPath, toFilename(`binding.gyp`));
+    const bindingFilePath = ppath.join(fetchResult.prefixPath, `binding.gyp` as Filename);
     if (!manifest.scripts.has(`install`) && fetchResult.packageFs.existsSync(bindingFilePath))
       buildScripts.push([BuildType.SHELLCODE, `node-gyp rebuild`]);
 
@@ -169,7 +169,7 @@ export class PnpInstaller extends AbstractPnpInstaller {
     const nodeModules: Array<PortablePath> = [];
 
     for (const workspace of this.opts.project.workspaces) {
-      const nodeModulesPath = ppath.join(workspace.cwd, toFilename(`node_modules`));
+      const nodeModulesPath = ppath.join(workspace.cwd, `node_modules` as Filename);
       if (!xfs.existsSync(nodeModulesPath))
         continue;
 
