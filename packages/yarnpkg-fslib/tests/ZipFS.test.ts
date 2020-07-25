@@ -1,8 +1,8 @@
-import {getLibzipSync}                   from '@yarnpkg/libzip';
-import {Stats}                           from 'fs';
+import {getLibzipSync}                 from '@yarnpkg/libzip';
+import {Stats}                         from 'fs';
 
-import {PortablePath, ppath, toFilename} from '../sources/path';
-import {xfs, ZipFS}                      from '../sources';
+import {PortablePath, ppath, Filename} from '../sources/path';
+import {xfs, ZipFS}                    from '../sources';
 
 describe(`ZipFS`, () => {
   it(`should handle symlink correctly`, () => {
@@ -80,7 +80,7 @@ describe(`ZipFS`, () => {
     };
 
     const libzip = getLibzipSync();
-    const tmpfile = ppath.resolve(xfs.mktempSync(), toFilename(`test.zip`));
+    const tmpfile = ppath.resolve(xfs.mktempSync(), `test.zip` as Filename);
     const zipFs = new ZipFS(tmpfile, {libzip, create: true});
 
     zipFs.mkdirPromise(`/dir` as PortablePath);
@@ -122,7 +122,7 @@ describe(`ZipFS`, () => {
     };
 
     const libzip = getLibzipSync();
-    const tmpfile = ppath.resolve(xfs.mktempSync(), toFilename(`test2.zip`));
+    const tmpfile = ppath.resolve(xfs.mktempSync(), `test2.zip` as Filename);
     const zipFs = new ZipFS(tmpfile, {libzip, create: true});
     await zipFs.mkdirPromise(`/dir` as PortablePath);
     zipFs.writeFileSync(`/dir/file` as PortablePath, `file content`);

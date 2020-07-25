@@ -1,5 +1,5 @@
 import {MessageName, ReportError, Report, Workspace, scriptUtils} from '@yarnpkg/core';
-import {FakeFS, JailFS, xfs, PortablePath, ppath, toFilename}     from '@yarnpkg/fslib';
+import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename}       from '@yarnpkg/fslib';
 import {Hooks as StageHooks}                                      from '@yarnpkg/plugin-stage';
 import mm                                                         from 'micromatch';
 import {PassThrough}                                              from 'stream';
@@ -274,9 +274,9 @@ async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, 
       }
 
       const localIgnoreList = hasNpmIgnore
-        ? await loadIgnoreList(cwdFs, cwd, toFilename(`.npmignore`))
+        ? await loadIgnoreList(cwdFs, cwd, `.npmignore` as Filename)
         : hasGitIgnore
-          ? await loadIgnoreList(cwdFs, cwd, toFilename(`.gitignore`))
+          ? await loadIgnoreList(cwdFs, cwd, `.gitignore` as Filename)
           : null;
 
       let nextIgnoreLists = localIgnoreList !== null

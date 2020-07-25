@@ -43,7 +43,7 @@ export interface NodeModulesTreeOptions {
 }
 
 /** node_modules path segment */
-const NODE_MODULES = toFilename(`node_modules`);
+const NODE_MODULES = `node_modules` as Filename;
 
 /** Package locator key for usage inside maps */
 type LocatorKey = string;

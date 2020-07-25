@@ -1,5 +1,5 @@
 import {execUtils, Manifest, structUtils, IdentHash, Descriptor} from '@yarnpkg/core';
-import {PortablePath, npath, ppath, toFilename}                  from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, Filename}                    from '@yarnpkg/fslib';
 
 import * as stageUtils                                           from '../stageUtils';
 
@@ -92,7 +92,7 @@ async function genCommitMessage(cwd: PortablePath, changes: Array<stageUtils.Fil
 
 export const Driver = {
   async findRoot(cwd: PortablePath) {
-    return await stageUtils.findVcsRoot(cwd, {marker: toFilename(`.git`)});
+    return await stageUtils.findVcsRoot(cwd, {marker: `.git` as Filename});
   },
 
   async filterChanges(cwd: PortablePath, yarnRoots: Set<PortablePath>, yarnNames: Set<string>) {

@@ -1,11 +1,11 @@
-import {FakeFS, Filename, NodeFS, PortablePath, npath, ppath, toFilename} from '@yarnpkg/fslib';
-import {Resolution, parseResolution, stringifyResolution}                 from '@yarnpkg/parsers';
-import semver                                                             from 'semver';
+import {FakeFS, Filename, NodeFS, PortablePath, npath, ppath} from '@yarnpkg/fslib';
+import {Resolution, parseResolution, stringifyResolution}     from '@yarnpkg/parsers';
+import semver                                                 from 'semver';
 
-import * as miscUtils                                                     from './miscUtils';
-import * as structUtils                                                   from './structUtils';
-import {Ident, Descriptor}                                                from './types';
-import {IdentHash}                                                        from './types';
+import * as miscUtils                                         from './miscUtils';
+import * as structUtils                                       from './structUtils';
+import {Ident, Descriptor}                                    from './types';
+import {IdentHash}                                            from './types';
 
 export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
 export type HardDependencies = 'dependencies' | 'devDependencies';
@@ -85,7 +85,7 @@ export class Manifest {
   static readonly hardDependencies: Array<HardDependencies> = [`dependencies`, `devDependencies`];
 
   static async tryFind(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
-    const manifestPath = ppath.join(path, toFilename(`package.json`));
+    const manifestPath = ppath.join(path, `package.json` as Filename);
 
     if (!await baseFs.existsPromise(manifestPath))
       return null;
