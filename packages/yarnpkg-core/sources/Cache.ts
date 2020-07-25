@@ -291,6 +291,7 @@ export class Cache {
     }, message => {
       return `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${message}`;
     }), ppath);
+
     // We use an AliasFS to speed up getRealPath calls (e.g. VirtualFetcher.ensureVirtualLink)
     // (there's no need to create the lazy baseFs instance to gather the already-known cachePath)
     const aliasFs = new AliasFS(cachePath, {baseFs: lazyFs, pathUtils: ppath});
