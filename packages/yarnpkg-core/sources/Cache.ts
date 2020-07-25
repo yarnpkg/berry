@@ -1,15 +1,15 @@
-import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename} from '@yarnpkg/fslib';
-import {ppath, toFilename, xfs, DEFAULT_COMPRESSION_LEVEL}     from '@yarnpkg/fslib';
-import {getLibzipPromise}                                      from '@yarnpkg/libzip';
-import fs                                                      from 'fs';
+import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename, AliasFS} from '@yarnpkg/fslib';
+import {ppath, toFilename, xfs, DEFAULT_COMPRESSION_LEVEL}              from '@yarnpkg/fslib';
+import {getLibzipPromise}                                               from '@yarnpkg/libzip';
+import fs                                                               from 'fs';
 
-import {Configuration}                                         from './Configuration';
-import {MessageName}                                           from './MessageName';
-import {ReportError}                                           from './Report';
-import * as hashUtils                                          from './hashUtils';
-import * as miscUtils                                          from './miscUtils';
-import * as structUtils                                        from './structUtils';
-import {LocatorHash, Locator}                                  from './types';
+import {Configuration}                                                  from './Configuration';
+import {MessageName}                                                    from './MessageName';
+import {ReportError}                                                    from './Report';
+import * as hashUtils                                                   from './hashUtils';
+import * as miscUtils                                                   from './miscUtils';
+import * as structUtils                                                 from './structUtils';
+import {LocatorHash, Locator}                                           from './types';
 
 const CACHE_VERSION = 6;
 
@@ -292,13 +292,17 @@ export class Cache {
       return `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${message}`;
     }), ppath);
 
+    // We use an AliasFS to speed up getRealPath calls (e.g. VirtualFetcher.ensureVirtualLink)
+    // (there's no need to create the lazy baseFs instance to gather the already-known cachePath)
+    const aliasFs = new AliasFS(cachePath, {baseFs: lazyFs, pathUtils: ppath});
+
     const releaseFs = () => {
       if (zipFs !== null) {
         zipFs.discardAndClose();
       }
     };
 
-    return [lazyFs, releaseFs, checksum];
+    return [aliasFs, releaseFs, checksum];
   }
 
   private async writeFileWithLock<T>(file: PortablePath | null, generator: () => Promise<T>) {
