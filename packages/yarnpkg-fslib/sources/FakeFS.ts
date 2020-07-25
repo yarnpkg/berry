@@ -83,7 +83,7 @@ export abstract class FakeFS<P extends Path> {
   abstract writeSync(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number): number;
   abstract writeSync(fd: number, buffer: string, position?: number): number;
 
-  abstract closePromise(fd: number): void;
+  abstract closePromise(fd: number): Promise<void>;
   abstract closeSync(fd: number): void;
 
   abstract createWriteStream(p: P | null, opts?: CreateWriteStreamOptions): WriteStream;
@@ -475,8 +475,11 @@ export abstract class FakeFS<P extends Path> {
       return await callback();
     } finally {
       try {
-        await this.unlinkPromise(lockPath);
+        // closePromise needs to come before unlinkPromise otherwise another process can attempt
+        // to get the file handle after the unlink but before close resuling in
+        // EPERM: operation not permitted, open
         await this.closePromise(fd);
+        await this.unlinkPromise(lockPath);
       } catch (error) {
         // noop
       }
