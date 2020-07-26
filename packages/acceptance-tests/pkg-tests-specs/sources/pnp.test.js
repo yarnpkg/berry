@@ -141,6 +141,27 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it shouldn't print warning in the default install mode, even when the fallback is used`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`various-requires`]: `1.0.0`, [`no-deps`]: `1.0.0`},
+      },
+      {
+        // By default tests are executed with the fallback disabled; this
+        // setting forces this test to execute in the default mode instead
+        pnpFallbackMode: undefined,
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(run(`node`, `-e`, `require('various-requires/invalid-require')`)).resolves.toMatchObject({
+          stderr: ``,
+        });
+      },
+    ),
+  );
+
+  test(
     `it should not fallback workspaces by default to the top-level dependencies when they require an undeclared package`,
     makeTemporaryEnv(
       {

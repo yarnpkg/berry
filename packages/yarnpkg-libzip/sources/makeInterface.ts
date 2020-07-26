@@ -21,6 +21,7 @@ export const makeInterface = (libzip: EmscriptenModule) => ({
   ZIP_RDONLY: 16,
 
   ZIP_FL_OVERWRITE: 8192,
+  ZIP_FL_COMPRESSED: 4,
 
   ZIP_OPSYS_DOS: 0x00,
   ZIP_OPSYS_AMIGA: 0x01,
@@ -121,6 +122,8 @@ export const makeInterface = (libzip: EmscriptenModule) => ({
     statName: libzip.cwrap(`zipstruct_stat_name`, `string`, [`number`]),
     statIndex: libzip.cwrap(`zipstruct_stat_index`, `number`, [`number`]),
     statSize: libzip.cwrap(`zipstruct_stat_size`, `number`, [`number`]),
+    statCompSize: libzip.cwrap(`zipstruct_stat_comp_size`, `number`, [`number`]),
+    statCompMethod: libzip.cwrap(`zipstruct_stat_comp_method`, `number`, [`number`]),
     statMtime: libzip.cwrap(`zipstruct_stat_mtime`, `number`, [`number`]),
 
     error: libzip.cwrap(`zipstruct_error`, `number`, []),

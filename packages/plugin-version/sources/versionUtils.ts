@@ -295,7 +295,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
         }
       }
 
-      await xfs.mkdirpPromise(ppath.dirname(versionPath));
+      await xfs.mkdirPromise(ppath.dirname(versionPath), {recursive: true});
 
       await xfs.changeFilePromise(versionPath, stringifySyml(
         new stringifySyml.PreserveOrdering({

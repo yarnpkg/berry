@@ -1,6 +1,6 @@
 import {Dirent, Filename, MkdirOptions,ExtractHintOptions}        from '@yarnpkg/fslib';
 import {FSPath, NativePath, PortablePath, npath, ppath, PathLike} from '@yarnpkg/fslib';
-import {WatchOptions, WatchCallback, Watcher, toFilename}         from '@yarnpkg/fslib';
+import {WatchOptions, WatchCallback, Watcher}              from '@yarnpkg/fslib';
 import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}              from '@yarnpkg/fslib';
 import {CreateReadStreamOptions, CreateWriteStreamOptions}        from '@yarnpkg/fslib';
 import {PnpApi}                                                   from '@yarnpkg/pnp';
@@ -60,7 +60,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     this.watchManager = new WatchManager();
 
     const pnpRootPath = npath.toPortablePath(pnp.getPackageInformation(pnp.topLevel)!.packageLocation);
-    this.pnpFilePath = ppath.join(pnpRootPath, toFilename(`.pnp.js`));
+    this.pnpFilePath = ppath.join(pnpRootPath, `.pnp.js` as Filename);
 
     this.watchPnpFile(pnpRootPath);
   }
@@ -395,14 +395,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   async readdirPromise(p: PathLike<PortablePath>, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
   async readdirPromise(p: PathLike<PortablePath>, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<Dirent>> {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.dirList || this.resolvePath(ppath.join(ppath.fromPathLike(p), toFilename(`node_modules`))).dirList) {
+    if (pnpPath.dirList || this.resolvePath(ppath.join(ppath.fromPathLike(p), Filename.nodeModules)).dirList) {
       let fsDirList: Array<Filename> = [];
       try {
         fsDirList = await this.baseFs.readdirPromise(pnpPath.resolvedPath);
       } catch (e) {
         // Ignore errors
       }
-      const entries = Array.from(pnpPath.dirList || [toFilename(`node_modules`)]).concat(fsDirList).sort();
+      const entries = Array.from(pnpPath.dirList || [`node_modules` as Filename]).concat(fsDirList).sort();
       if (!withFileTypes)
         return entries;
 
@@ -422,14 +422,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   readdirSync(p: PathLike<PortablePath>, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
   readdirSync(p: PathLike<PortablePath>, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<Dirent> {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.dirList || this.resolvePath(ppath.join(ppath.fromPathLike(p), toFilename(`node_modules`))).dirList) {
+    if (pnpPath.dirList || this.resolvePath(ppath.join(ppath.fromPathLike(p), Filename.nodeModules)).dirList) {
       let fsDirList: Array<Filename> = [];
       try {
         fsDirList = this.baseFs.readdirSync(pnpPath.resolvedPath);
       } catch (e) {
         // Ignore errors
       }
-      const entries = Array.from(pnpPath.dirList || [toFilename(`node_modules`)]).concat(fsDirList).sort();
+      const entries = Array.from(pnpPath.dirList || [`node_modules` as Filename]).concat(fsDirList).sort();
       if (!withFileTypes)
         return entries;
 

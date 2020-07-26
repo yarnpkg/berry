@@ -69,13 +69,13 @@ export async function makeScriptEnv({project, binFolder, lifecycleScript}: {proj
 
   // Register some binaries that must be made available in all subprocesses
   // spawned by Yarn (we thus ensure that they always use the right version)
-  await makePathWrapper(binFolder, toFilename(`node`), process.execPath);
+  await makePathWrapper(binFolder, `node` as Filename, process.execPath);
 
   if (YarnVersion !== null) {
-    await makePathWrapper(binFolder, toFilename(`run`), process.execPath, [process.argv[1], `run`]);
-    await makePathWrapper(binFolder, toFilename(`yarn`), process.execPath, [process.argv[1]]);
-    await makePathWrapper(binFolder, toFilename(`yarnpkg`), process.execPath, [process.argv[1]]);
-    await makePathWrapper(binFolder, toFilename(`node-gyp`), process.execPath, [process.argv[1], `run`, `--top-level`, `node-gyp`]);
+    await makePathWrapper(binFolder, `run` as Filename, process.execPath, [process.argv[1], `run`]);
+    await makePathWrapper(binFolder, `yarn` as Filename, process.execPath, [process.argv[1]]);
+    await makePathWrapper(binFolder, `yarnpkg` as Filename, process.execPath, [process.argv[1]]);
+    await makePathWrapper(binFolder, `node-gyp` as Filename, process.execPath, [process.argv[1], `run`, `--top-level`, `node-gyp`]);
   }
 
   if (project)
