@@ -1,5 +1,6 @@
 releases:
   "@yarnpkg/cli": prerelease
+  "@yarnpkg/core": patch
   "@yarnpkg/plugin-essentials": patch
   "@yarnpkg/plugin-exec": patch
   "@yarnpkg/plugin-file": minor
@@ -20,5 +21,4 @@ declined:
   - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
   - "@yarnpkg/builder"
-  - "@yarnpkg/core"
   - "@yarnpkg/doctor"

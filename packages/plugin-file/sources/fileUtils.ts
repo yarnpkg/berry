@@ -73,5 +73,5 @@ export async function loadFolderContents(locator: Locator, protocol: string, opt
 
   folderFs.saveAndClose();
 
-  return await xfs.readFilePromise(folderFs.getRealPath(), `utf8`);
+  return await xfs.readFilePromise(folderFs.getRealPath());
 }
