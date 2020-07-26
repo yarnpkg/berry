@@ -53,7 +53,7 @@ export class FileResolver implements Resolver {
     if (parentLocator === null)
       throw new Error(`Assertion failed: The descriptor should have been bound`);
 
-    const folderContents = await fileUtils.loadFolderContents(
+    const archiveBuffer = await fileUtils.makeBufferFromLocator(
       structUtils.makeLocator(descriptor,
         structUtils.makeRange({
           protocol: PROTOCOL,
@@ -64,11 +64,10 @@ export class FileResolver implements Resolver {
           },
         })
       ),
-      PROTOCOL,
-      opts.fetchOptions,
+      {protocol: PROTOCOL, fetchOptions: opts.fetchOptions}
     );
 
-    const folderHash = hashUtils.makeHash(`${CACHE_VERSION}`, folderContents).slice(0, 6);
+    const folderHash = hashUtils.makeHash(`${CACHE_VERSION}`, archiveBuffer).slice(0, 6);
 
     return [fileUtils.makeLocator(descriptor, {parentLocator, path, folderHash, protocol: PROTOCOL})];
   }

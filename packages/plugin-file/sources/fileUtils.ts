@@ -37,14 +37,14 @@ export function makeLocator(ident: Ident, {parentLocator, path, folderHash, prot
   return structUtils.makeLocator(ident, makeSpec({parentLocator, path, folderHash, protocol}));
 }
 
-export async function loadFolderFs(locator: Locator, protocol: string, opts: FetchOptions): Promise<ZipFS> {
+export async function makeArchiveFromLocator(locator: Locator, {protocol, fetchOptions}: {protocol: string, fetchOptions: FetchOptions}): Promise<ZipFS> {
   const {parentLocator, path} = structUtils.parseFileStyleRange(locator.reference, {protocol});
 
   // If the file target is an absolute path we can directly access it via its
   // location on the disk. Otherwise we must go through the package fs.
   const parentFetch = ppath.isAbsolute(path)
     ? {packageFs: new CwdFS(PortablePath.root), prefixPath: PortablePath.dot, localPath: PortablePath.root}
-    : await opts.fetcher.fetch(parentLocator, opts);
+    : await fetchOptions.fetcher.fetch(parentLocator, fetchOptions);
 
   // If the package fs publicized its "original location" (for example like
   // in the case of "file:" packages), we use it to derive the real location.
@@ -63,13 +63,13 @@ export async function loadFolderFs(locator: Locator, protocol: string, opts: Fet
     return await tgzUtils.makeArchiveFromDirectory(sourcePath, {
       baseFs: sourceFs,
       prefixPath: structUtils.getIdentVendorPath(locator),
-      compressionLevel: opts.project.configuration.get(`compressionLevel`),
+      compressionLevel: fetchOptions.project.configuration.get(`compressionLevel`),
     });
   }, effectiveParentFetch.releaseFs);
 }
 
-export async function loadFolderContents(locator: Locator, protocol: string, opts: FetchOptions) {
-  const folderFs = await loadFolderFs(locator, protocol, opts);
+export async function makeBufferFromLocator(locator: Locator, {protocol, fetchOptions}: {protocol: string, fetchOptions: FetchOptions}) {
+  const folderFs = await makeArchiveFromLocator(locator, {protocol, fetchOptions});
 
   folderFs.saveAndClose();
 
