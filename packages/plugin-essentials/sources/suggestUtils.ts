@@ -295,6 +295,8 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   const fetchOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report, skipIntegrityCheck: true};
   const resolveOptions: ResolveOptions = {...fetchOptions, resolver, fetchOptions};
 
+  // The descriptor has to be bound for the resolvers that need a parent locator. (e.g. FileResolver)
+  // If we didn't bind it, `yarn add ./folder` wouldn't work.
   const boundDescriptor = resolver.bindDescriptor(latestDescriptor, workspace.anchoredLocator, resolveOptions);
 
   let candidateLocators;

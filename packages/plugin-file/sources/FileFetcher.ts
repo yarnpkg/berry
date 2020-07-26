@@ -46,6 +46,6 @@ export class FileFetcher implements Fetcher {
   }
 
   private async fetchFromDisk(locator: Locator, opts: FetchOptions) {
-    return fileUtils.loadFolderFs(locator, PROTOCOL, opts);
+    return fileUtils.makeArchiveFromLocator(locator, {protocol: PROTOCOL, fetchOptions: opts});
   }
 }
