@@ -21,7 +21,6 @@ exports[`Commands npm login it should login a user with OTP to a specific scope 
 "npmScopes:
   testScope:
     npmAuthToken: 686159dc-64b3-413e-a244-2de2b8d1c36f
-    npmPublishRegistry: \\"http://yarn.test.registry\\"
     npmRegistryServer: \\"http://yarn.test.registry\\"
 "
 `;
@@ -57,7 +56,6 @@ exports[`Commands npm login it should login a user with no OTP setup to a specif
 "npmScopes:
   testScope:
     npmAuthToken: 316158de-64b3-413e-a244-2de2b8d1c80f
-    npmPublishRegistry: \\"http://yarn.test.registry\\"
     npmRegistryServer: \\"http://yarn.test.registry\\"
 "
 `;

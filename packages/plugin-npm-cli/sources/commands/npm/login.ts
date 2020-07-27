@@ -95,8 +95,6 @@ async function setAuthToken(registry: string, npmAuthToken: string, {configurati
         ...scopes,
         [scope]: {
           ...scopes[scope],
-          npmRegistryServer: registry,
-          npmPublishRegistry: registry,
           npmAuthToken,
         },
       }),
