@@ -2,6 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}                              from '
 import {Cache, Configuration, Manifest, Project, StreamReport, Workspace} from '@yarnpkg/core';
 import {structUtils}                                                      from '@yarnpkg/core';
 import {Command, Usage}                                                   from 'clipanion';
+import * as yup                                                           from 'yup';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesFocus extends BaseCommand {
@@ -31,6 +32,15 @@ export default class WorkspacesFocus extends BaseCommand {
 
       If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
     `,
+  });
+
+  static schema = yup.object().shape({
+    all: yup.bool(),
+    workspaces: yup.array().when(`all`, {
+      is: true,
+      then: yup.array().max(0, `Cannot specify workspaces when using the --all flag`),
+      otherwise: yup.array(),
+    }),
   });
 
   @Command.Path(`workspaces`, `focus`)
