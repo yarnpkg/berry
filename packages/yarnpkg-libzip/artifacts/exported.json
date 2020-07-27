@@ -5,6 +5,7 @@
     "_zip_close",
     "_zip_error_init_with_code",
     "_zip_error_strerror",
+    "_zip_delete",
     "_zip_dir_add",
     "_zip_discard",
     "_zip_fclose",

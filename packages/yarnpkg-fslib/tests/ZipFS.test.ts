@@ -171,5 +171,82 @@ describe(`ZipFS`, () => {
     expect(await zipFs2.readFilePromise(`/foo.txt` as PortablePath, `utf8`)).toEqual(`Test`);
     expect(zipFs2.readFileSync(`/foo.txt` as PortablePath, `utf8`)).toEqual(`Test`);
   });
+
+  it(`should support unlinking files`, () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const dir = `/foo` as PortablePath;
+    zipFs.mkdirSync(dir);
+
+    const file = `/foo/bar.txt` as PortablePath;
+    zipFs.writeFileSync(file, `Test`);
+
+    expect(zipFs.existsSync(dir)).toBeTruthy();
+    expect(zipFs.existsSync(file)).toBeTruthy();
+
+    zipFs.unlinkSync(file);
+
+    expect(zipFs.existsSync(dir)).toBeTruthy();
+    expect(zipFs.existsSync(file)).toBeFalsy();
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should support removing empty directories`, () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const dir = `/foo` as PortablePath;
+    const subdir = `/foo/bar` as PortablePath;
+    zipFs.mkdirpSync(subdir);
+
+    expect(zipFs.existsSync(dir)).toBeTruthy();
+    expect(zipFs.existsSync(subdir)).toBeTruthy();
+
+    zipFs.rmdirSync(subdir);
+
+    expect(zipFs.existsSync(dir)).toBeTruthy();
+    expect(zipFs.existsSync(subdir)).toBeFalsy();
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should not support removing non-empty directories`, () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const dir = `/foo` as PortablePath;
+    zipFs.mkdirSync(dir);
+
+    const file = `/foo/bar.txt` as PortablePath;
+    zipFs.writeFileSync(file, `Test`);
+
+    expect(() => zipFs.rmdirSync(dir)).toThrowError(`ENOTEMPTY`);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should support removing non-empty directories via zipFs.removeSync`, () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const dir = `/foo` as PortablePath;
+    const subdir = `/foo/bar` as PortablePath;
+    zipFs.mkdirpSync(subdir);
+
+    const file = `/foo/bar/baz.txt` as PortablePath;
+    zipFs.writeFileSync(file, `Test`);
+
+    expect(zipFs.existsSync(dir)).toBeTruthy();
+    expect(zipFs.existsSync(subdir)).toBeTruthy();
+    expect(zipFs.existsSync(file)).toBeTruthy();
+
+    zipFs.removeSync(subdir);
+
+    expect(zipFs.existsSync(dir)).toBeTruthy();
+    expect(zipFs.existsSync(subdir)).toBeFalsy();
+    expect(zipFs.existsSync(file)).toBeFalsy();
+  });
 });
 
