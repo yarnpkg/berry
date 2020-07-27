@@ -67,7 +67,7 @@ export default class NpmLoginCommand extends BaseCommand {
         authType: npmHttpUtils.AuthType.NO_AUTH,
       }) as any;
 
-      await setAuthToken(registry, response.token, {configuration});
+      await setAuthToken(registry, response.token, {configuration, scope: this.scope});
       return report.reportInfo(MessageName.UNNAMED, `Successfully logged in`);
     });
 
@@ -88,7 +88,19 @@ export async function getRegistry({scope, publish, configuration, cwd}: {scope?:
   return npmConfigUtils.getDefaultRegistry({configuration});
 }
 
-async function setAuthToken(registry: string, npmAuthToken: string, {configuration}: {configuration: Configuration}) {
+async function setAuthToken(registry: string, npmAuthToken: string, {configuration, scope}: {configuration: Configuration, scope?: string}) {
+  if (scope) {
+    return await Configuration.updateHomeConfiguration({
+      npmScopes: (scopes: {[key: string]: any} = {}) => ({
+        ...scopes,
+        [scope]: {
+          ...scopes[scope],
+          npmAuthToken,
+        },
+      }),
+    });
+  }
+
   return await Configuration.updateHomeConfiguration({
     npmRegistries: (registries: {[key: string]: any} = {}) => ({
       ...registries,
