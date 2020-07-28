@@ -1,4 +1,3 @@
-import {xfs}  from '@yarnpkg/fslib';
 import {yarn} from 'pkg-tests-core';
 
 const {readManifest} = yarn;
