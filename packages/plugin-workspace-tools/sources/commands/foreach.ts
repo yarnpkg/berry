@@ -166,11 +166,16 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     let commandCount = 0;
     let finalExitCode: number | null = null;
 
+    let abortNextCommands = false;
+
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
     }, async report => {
       const runCommand = async (workspace: Workspace, {commandIndex}: {commandIndex: number}) => {
+        if (abortNextCommands)
+          return -1;
+
         if (!this.parallel && this.verbose && commandIndex > 1)
           report.reportSeparator();
 
@@ -194,6 +199,13 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
           if (this.verbose && emptyStdout && emptyStderr)
             report.reportInfo(null, `${prefix} Process exited without output (exit code ${exitCode})`);
+
+          if (exitCode === 130) {
+            // Process exited with the SIGINT signal, aka ctrl+c. Since the process didn't handle
+            // the signal but chose to exit, we should exit as well.
+            abortNextCommands = true;
+            finalExitCode = exitCode;
+          }
 
           return exitCode;
         } catch (err) {
@@ -275,7 +287,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
         // The order in which the exit codes will be processed is fairly
         // opaque, so better just return a generic "1" for determinism.
-        finalExitCode = typeof errorCode !== `undefined` ? 1 : finalExitCode;
+        if (finalExitCode === null)
+          finalExitCode = typeof errorCode !== `undefined` ? 1 : finalExitCode;
 
         if ((this.topological || this.topologicalDev) && typeof errorCode !== `undefined`) {
           report.reportError(MessageName.UNNAMED, `The command failed for workspaces that are depended upon by other workspaces; can't satisfy the dependency graph`);
