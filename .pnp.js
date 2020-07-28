@@ -35958,7 +35958,9 @@ async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
   const normalizedSource = sourceFs.pathUtils.normalize(source);
   const prelayout = [];
   const postlayout = [];
-  await destinationFs.mkdirpPromise(destination);
+  await destinationFs.mkdirPromise(destination, {
+    recursive: true
+  });
   const updateTime = typeof destinationFs.lutimesPromise === `function` ? destinationFs.lutimesPromise.bind(destinationFs) : destinationFs.utimesPromise.bind(destinationFs);
   await copyImpl(prelayout, postlayout, updateTime, destinationFs, normalizedDestination, sourceFs, normalizedSource, opts);
 
@@ -36413,7 +36415,7 @@ class FakeFS {
     }
   }
 
-  async readJsonSync(p) {
+  readJsonSync(p) {
     const content = this.readFileSync(p, `utf8`);
 
     try {
@@ -36519,7 +36521,13 @@ npath.cwd = () => process.cwd();
 
 ppath.cwd = () => toPortablePath(process.cwd());
 
-ppath.resolve = (...segments) => path__WEBPACK_IMPORTED_MODULE_0___default().posix.resolve(ppath.cwd(), ...segments);
+ppath.resolve = (...segments) => {
+  if (segments.length > 0 && ppath.isAbsolute(segments[0])) {
+    return path__WEBPACK_IMPORTED_MODULE_0___default().posix.resolve(...segments);
+  } else {
+    return path__WEBPACK_IMPORTED_MODULE_0___default().posix.resolve(ppath.cwd(), ...segments);
+  }
+};
 
 const contains = function (pathUtils, from, to) {
   from = pathUtils.normalize(from);
@@ -38549,7 +38557,7 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
       archivePath,
       subPath
     }) => {
-      return this.pathUtils.resolve(await this.baseFs.realpathPromise(archivePath), this.pathUtils.relative(sources_path/* PortablePath.root */.LZ.root, await zipFs.realpathPromise(subPath)));
+      return this.pathUtils.join(await this.baseFs.realpathPromise(archivePath), this.pathUtils.relative(sources_path/* PortablePath.root */.LZ.root, await zipFs.realpathPromise(subPath)));
     });
   }
 
@@ -38560,7 +38568,7 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
       archivePath,
       subPath
     }) => {
-      return this.pathUtils.resolve(this.baseFs.realpathSync(archivePath), this.pathUtils.relative(sources_path/* PortablePath.root */.LZ.root, zipFs.realpathSync(subPath)));
+      return this.pathUtils.join(this.baseFs.realpathSync(archivePath), this.pathUtils.relative(sources_path/* PortablePath.root */.LZ.root, zipFs.realpathSync(subPath)));
     });
   }
 
@@ -39106,7 +39114,7 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
 
       return {
         archivePath: filePath,
-        subPath: this.pathUtils.resolve(sources_path/* PortablePath.root */.LZ.root, p.substr(filePath.length))
+        subPath: this.pathUtils.join(sources_path/* PortablePath.root */.LZ.root, p.substr(filePath.length))
       };
     }
   }
