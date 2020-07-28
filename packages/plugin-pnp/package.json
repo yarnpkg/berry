@@ -9,6 +9,7 @@
     "@yarnpkg/plugin-stage": "workspace:^2.1.0",
     "@yarnpkg/pnp": "workspace:^2.1.0",
     "clipanion": "^2.4.2",
+    "micromatch": "^4.0.2",
     "semver": "^7.1.2",
     "tslib": "^1.13.0"
   },
@@ -17,6 +18,7 @@
     "@yarnpkg/core": "^2.1.1"
   },
   "devDependencies": {
+    "@types/micromatch": "^4.0.1",
     "@yarnpkg/cli": "workspace:^2.1.1",
     "@yarnpkg/core": "workspace:^2.1.1"
   },
