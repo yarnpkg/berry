@@ -1,31 +1,31 @@
-import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
-import {DEFAULT_COMPRESSION_LEVEL}                             from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                              from '@yarnpkg/parsers';
-import camelcase                                               from 'camelcase';
-import chalk                                                   from 'chalk';
-import {isCI}                                                  from 'ci-info';
-import {UsageError}                                            from 'clipanion';
-import semver                                                  from 'semver';
-import {PassThrough, Writable}                                 from 'stream';
+import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL}                 from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                  from '@yarnpkg/parsers';
+import camelcase                                   from 'camelcase';
+import chalk                                       from 'chalk';
+import {isCI}                                      from 'ci-info';
+import {UsageError}                                from 'clipanion';
+import semver                                      from 'semver';
+import {PassThrough, Writable}                     from 'stream';
 
-import {CorePlugin}                                            from './CorePlugin';
-import {Manifest}                                              from './Manifest';
-import {MultiFetcher}                                          from './MultiFetcher';
-import {MultiResolver}                                         from './MultiResolver';
-import {Plugin, Hooks}                                         from './Plugin';
-import {ProtocolResolver}                                      from './ProtocolResolver';
-import {Report}                                                from './Report';
-import {TelemetryManager}                                      from './TelemetryManager';
-import {VirtualFetcher}                                        from './VirtualFetcher';
-import {VirtualResolver}                                       from './VirtualResolver';
-import {WorkspaceFetcher}                                      from './WorkspaceFetcher';
-import {WorkspaceResolver}                                     from './WorkspaceResolver';
-import * as folderUtils                                        from './folderUtils';
-import * as miscUtils                                          from './miscUtils';
-import * as nodeUtils                                          from './nodeUtils';
-import * as semverUtils                                        from './semverUtils';
-import * as structUtils                                        from './structUtils';
-import {IdentHash, Package, Descriptor, Ident}                 from './types';
+import {CorePlugin}                                from './CorePlugin';
+import {Manifest}                                  from './Manifest';
+import {MultiFetcher}                              from './MultiFetcher';
+import {MultiResolver}                             from './MultiResolver';
+import {Plugin, Hooks}                             from './Plugin';
+import {ProtocolResolver}                          from './ProtocolResolver';
+import {Report}                                    from './Report';
+import {TelemetryManager}                          from './TelemetryManager';
+import {VirtualFetcher}                            from './VirtualFetcher';
+import {VirtualResolver}                           from './VirtualResolver';
+import {WorkspaceFetcher}                          from './WorkspaceFetcher';
+import {WorkspaceResolver}                         from './WorkspaceResolver';
+import * as folderUtils                            from './folderUtils';
+import * as miscUtils                              from './miscUtils';
+import * as nodeUtils                              from './nodeUtils';
+import * as semverUtils                            from './semverUtils';
+import * as structUtils                            from './structUtils';
+import {IdentHash, Package, Descriptor}            from './types';
 
 const chalkOptions = process.env.GITHUB_ACTIONS
   ? {level: 2}
@@ -65,8 +65,8 @@ const IGNORED_ENV_VARIABLES = new Set([
 ]);
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
-export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc.yml`);
-export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
+export const DEFAULT_RC_FILENAME = `.yarnrc.yml` as Filename;
+export const DEFAULT_LOCK_FILENAME = `yarn.lock` as Filename;
 export const SECRET = `********`;
 
 export enum SettingsType {
@@ -976,7 +976,7 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`))))
+      if (xfs.existsSync(ppath.join(currentCwd, `package.json` as Filename)))
         projectCwd = currentCwd;
 
       if (lockfileFilename !== null) {

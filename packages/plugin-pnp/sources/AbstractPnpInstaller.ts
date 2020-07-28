@@ -160,7 +160,7 @@ export abstract class AbstractPnpInstaller implements Installer {
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
-    const fallbackPool = this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator).packageDependencies;
+    const fallbackPool = new Map();
     const ignorePattern = miscUtils.buildIgnorePattern([`.yarn/sdks/**`, ...this.opts.project.configuration.get(`pnpIgnorePatterns`)]);
     const packageRegistry = this.packageRegistry;
     const shebang = this.opts.project.configuration.get(`pnpShebang`);

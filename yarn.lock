@@ -5964,6 +5964,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pnp@workspace:packages/plugin-pnp"
   dependencies:
+    "@types/micromatch": ^4.0.1
     "@types/semver": ^7.1.0
     "@yarnpkg/cli": "workspace:^2.1.1"
     "@yarnpkg/core": "workspace:^2.1.1"
@@ -5971,6 +5972,7 @@ __metadata:
     "@yarnpkg/plugin-stage": "workspace:^2.1.0"
     "@yarnpkg/pnp": "workspace:^2.1.0"
     clipanion: ^2.4.2
+    micromatch: ^4.0.2
     semver: ^7.1.2
     tslib: ^1.13.0
   peerDependencies:

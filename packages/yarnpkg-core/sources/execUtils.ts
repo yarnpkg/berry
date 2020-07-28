@@ -85,7 +85,7 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
       reject(error);
     });
 
-    child.on(`close`, (code: number, sig: string) => {
+    child.on(`close`, (code, sig) => {
       if (--sigintRefCount === 0)
         process.off(`SIGINT`, sigintHandler);
 
@@ -93,7 +93,7 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
         closeStreams();
 
       if (code === 0 || !strict) {
-        resolve({code});
+        resolve({code: getExitCode(code, sig)});
       } else if (code !== null) {
         reject(new Error(`Child "${fileName}" exited with exit code ${code}`));
       } else {
@@ -140,7 +140,7 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
   });
 
   return await new Promise((resolve, reject) => {
-    subprocess.on(`close`, (code: number) => {
+    subprocess.on(`close`, (code, signal) => {
       const stdout = encoding === `buffer`
         ? Buffer.concat(stdoutChunks)
         : Buffer.concat(stdoutChunks).toString(encoding);
@@ -151,13 +151,29 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
 
       if (code === 0 || !strict) {
         resolve({
-          code, stdout, stderr,
+          code: getExitCode(code, signal), stdout, stderr,
         });
       } else {
         reject(Object.assign(new Error(`Child "${fileName}" exited with exit code ${code}\n\n${stderr}`), {
-          code, stdout, stderr,
+          code: getExitCode(code, signal), stdout, stderr,
         }));
       }
     });
   });
+}
+
+const signalToCodeMap = new Map<NodeJS.Signals | null, number>([
+  [`SIGINT`, 2], // ctrl-c
+  [`SIGQUIT`, 3], // ctrl-\
+  [`SIGKILL`, 9], // hard kill
+  [`SIGTERM`, 15], // default signal for kill
+]);
+
+function getExitCode(code: number | null, signal: NodeJS.Signals | null): number {
+  const signalCode = signalToCodeMap.get(signal);
+  if (typeof signalCode !== `undefined`) {
+    return 128 + signalCode;
+  } else {
+    return code ?? 1;
+  }
 }
