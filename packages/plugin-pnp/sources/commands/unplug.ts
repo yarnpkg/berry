@@ -10,8 +10,8 @@ export default class UnplugCommand extends BaseCommand {
   @Command.Rest()
   patterns: Array<string> = [];
 
-  @Command.Boolean(`-A,--all`)
-  all: boolean = false;
+  @Command.Boolean(`-R,--recursive`)
+  recursive: boolean = false;
 
   @Command.Boolean(`--json`)
   json: boolean = false;
@@ -46,10 +46,10 @@ export default class UnplugCommand extends BaseCommand {
       `yarn unplug '@babel/*'`,
     ], [
       `Unplug all instances of lodash referenced by the project`,
-      `yarn unplug lodash -A`,
+      `yarn unplug lodash -R`,
     ], [
       `Unplug all packages (only for testing, not recommended)`,
-      `yarn unplug -A '*'`,
+      `yarn unplug -R '*'`,
     ]],
   });
 
@@ -70,7 +70,7 @@ export default class UnplugCommand extends BaseCommand {
     const {topLevelWorkspace} = project;
 
     let packages: Set<Package>;
-    if (this.all) {
+    if (this.recursive) {
       packages = new Set(project.storedPackages.values());
     } else {
       packages = new Set();
@@ -122,9 +122,7 @@ export default class UnplugCommand extends BaseCommand {
 
           const version = pkg.version ?? `unknown`;
 
-          const dependencyMeta = topLevelWorkspace.manifest.ensureDependencyMeta(
-            structUtils.makeDescriptor(pkg, version)
-          );
+          const dependencyMeta = topLevelWorkspace.manifest.ensureDependencyMeta(structUtils.makeDescriptor(pkg, version));
           dependencyMeta.unplugged = true;
 
           report.reportInfo(MessageName.UNNAMED, `Unplugged ${structUtils.prettyLocator(configuration, pkg)}`);
@@ -143,7 +141,7 @@ export default class UnplugCommand extends BaseCommand {
         }
       }
 
-      const projectOrWorkspaces = this.all
+      const projectOrWorkspaces = this.recursive
         ? `the project`
         : `any workspace`;
 
