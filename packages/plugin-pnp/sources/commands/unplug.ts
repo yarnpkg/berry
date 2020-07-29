@@ -1,11 +1,11 @@
-import {BaseCommand, WorkspaceRequiredError}                                           from '@yarnpkg/cli';
-import {Cache, Configuration, Project, StreamReport, Package, MessageName, FormatType} from '@yarnpkg/core';
-import {structUtils, semverUtils}                                                      from '@yarnpkg/core';
-import {Command, Usage, UsageError}                                                    from 'clipanion';
-import micromatch                                                                      from 'micromatch';
-import semver                                                                          from 'semver';
+import {BaseCommand, WorkspaceRequiredError}                                                                              from '@yarnpkg/cli';
+import {Cache, Configuration, Project, StreamReport, Package, MessageName, FormatType, LocatorHash, Workspace, miscUtils} from '@yarnpkg/core';
+import {structUtils, semverUtils}                                                                                         from '@yarnpkg/core';
+import {Command, Usage, UsageError}                                                                                       from 'clipanion';
+import micromatch                                                                                                         from 'micromatch';
+import semver                                                                                                             from 'semver';
 
-import * as pnpUtils                                                                   from '../pnpUtils';
+import * as pnpUtils                                                                                                      from '../pnpUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UnplugCommand extends BaseCommand {
@@ -72,90 +72,125 @@ export default class UnplugCommand extends BaseCommand {
 
     await project.restoreInstallState();
 
-    const {topLevelWorkspace} = project;
+    const unreferencedPatterns = new Set(this.patterns);
 
-    let packages: Set<Package>;
-    if (this.recursive) {
-      packages = new Set(project.storedPackages.values());
-    } else {
-      packages = new Set();
-      for (const workspace of project.workspaces) {
-        for (const descriptor of workspace.dependencies.values()) {
-          const resolution = project.storedResolutions.get(descriptor.descriptorHash);
+    const matchers = this.patterns.map(pattern => {
+      const patternDescriptor = structUtils.parseDescriptor(pattern);
+      const pseudoDescriptor = patternDescriptor.range !== `unknown`
+        ? patternDescriptor
+        : structUtils.makeDescriptor(patternDescriptor, `*`);
 
-          if (typeof resolution === `undefined`)
-            throw new Error(`Assertion failed: Expected the resolution to have been registered`);
+      if (!semver.validRange(pseudoDescriptor.range))
+        throw new UsageError(`The range of the descriptor patterns must be a valid semver range (${structUtils.prettyDescriptor(configuration, pseudoDescriptor)})`);
 
-          const pkg = project.storedPackages.get(resolution);
+      return (pkg: Package) => {
+        const stringifiedIdent = structUtils.stringifyIdent(pkg);
+        if (!micromatch.isMatch(stringifiedIdent, structUtils.stringifyIdent(pseudoDescriptor)))
+          return false;
 
-          if (typeof pkg === `undefined`)
-            throw new Error(`Assertion failed: Expected the package to have been registered`);
+        if (pkg.version && !semverUtils.satisfiesWithPrereleases(pkg.version, pseudoDescriptor.range))
+          return false;
 
-          packages.add(pkg);
+        unreferencedPatterns.delete(pattern);
+
+        return true;
+      };
+    });
+
+    const getAllMatchingPackages = () => {
+      const selection: Array<Package> = [];
+
+      for (const pkg of project.storedPackages.values())
+        if (!project.tryWorkspaceByLocator(pkg) && !structUtils.isVirtualLocator(pkg) && matchers.some(matcher => matcher(pkg)))
+          selection.push(pkg);
+
+      return selection;
+    };
+
+    const getSelectedPackages = (roots: Array<Workspace>) => {
+      const seen: Set<LocatorHash> = new Set();
+      const selection: Array<Package> = [];
+
+      const traverse = (pkg: Package, depth: number) => {
+        if (seen.has(pkg.locatorHash))
+          return;
+
+        seen.add(pkg.locatorHash);
+
+        if (!project.tryWorkspaceByLocator(pkg) && !structUtils.isVirtualLocator(pkg) && matchers.some(matcher => matcher(pkg)))
+          selection.push(pkg);
+
+        // Don't recurse unless requested
+        if (depth > 0 && !this.recursive)
+          return;
+
+        for (const dependency of pkg.dependencies.values()) {
+          const resolution = project.storedResolutions.get(dependency.descriptorHash);
+          if (!resolution)
+            throw new Error(`Assertion failed: The resolution should have been registered`);
+
+          const nextPkg = project.storedPackages.get(resolution);
+          if (!nextPkg)
+            throw new Error(`Assertion failed: The package should have been registered`);
+
+          traverse(nextPkg, depth + 1);
         }
+      };
+
+      for (const workspace of roots) {
+        const pkg = project.storedPackages.get(workspace.anchoredLocator.locatorHash);
+        if (!pkg)
+          throw new Error(`Assertion failed: The package should have been registered`);
+
+        traverse(pkg, 0);
       }
-    }
+
+      return selection;
+    };
+
+    let selection: Array<Package>;
+
+    // We can shortcut the execution if we want all the dependencies and
+    // transitive dependencies of all the branches: it means we want everything!
+    if (this.all && this.recursive)
+      selection = getAllMatchingPackages();
+    else if (this.all)
+      selection = getSelectedPackages(project.workspaces);
+    else
+      selection = getSelectedPackages([workspace]);
+
+    const projectOrWorkspaces = this.recursive
+      ? `the project`
+      : `any workspace`;
+
+    if (unreferencedPatterns.size > 1)
+      throw new UsageError(`Patterns ${[...unreferencedPatterns].join(`, `)} don't match any packages referenced by ${projectOrWorkspaces}`);
+    if (unreferencedPatterns.size > 0)
+      throw new UsageError(`Pattern ${[...unreferencedPatterns][0]} doesn't match any packages referenced by ${projectOrWorkspaces}`);
+
+    selection = miscUtils.sortMap(selection, pkg => {
+      return structUtils.stringifyLocator(pkg);
+    });
 
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
       json: this.json,
     }, async report => {
-      const unreferencedPatterns = [];
+      for (const pkg of selection) {
+        const version = pkg.version ?? `unknown`;
 
-      for (const pattern of this.patterns) {
-        let isReferenced = false;
+        const dependencyMeta = project.topLevelWorkspace.manifest.ensureDependencyMeta(structUtils.makeDescriptor(pkg, version));
+        dependencyMeta.unplugged = true;
 
-        const patternDescriptor = structUtils.parseDescriptor(pattern);
-        const pseudoDescriptor = patternDescriptor.range !== `unknown`
-          ? patternDescriptor
-          : structUtils.makeDescriptor(patternDescriptor, `*`);
-
-        if (!semver.validRange(pseudoDescriptor.range))
-          throw new UsageError(`The range of the descriptor patterns must be a valid semver range (${structUtils.prettyDescriptor(configuration, pseudoDescriptor)})`);
-
-        for (const pkg of packages) {
-          if (structUtils.isVirtualLocator(pkg))
-            continue;
-
-          const stringifiedIdent = structUtils.stringifyIdent(pkg);
-          if (!micromatch.isMatch(stringifiedIdent, structUtils.stringifyIdent(pseudoDescriptor)))
-            continue;
-
-          if (pkg.version && !semverUtils.satisfiesWithPrereleases(pkg.version, pseudoDescriptor.range))
-            continue;
-
-          const version = pkg.version ?? `unknown`;
-
-          const dependencyMeta = topLevelWorkspace.manifest.ensureDependencyMeta(structUtils.makeDescriptor(pkg, version));
-          dependencyMeta.unplugged = true;
-
-          report.reportInfo(MessageName.UNNAMED, `Unplugged ${structUtils.prettyLocator(configuration, pkg)} in ${configuration.format(pnpUtils.getUnpluggedPath(pkg, {configuration}), FormatType.PATH)}`);
-
-          report.reportJson({
-            pattern,
-            locator: structUtils.stringifyLocator(pkg),
-            version,
-          });
-
-          isReferenced = true;
-        }
-
-        if (!isReferenced) {
-          unreferencedPatterns.push(pattern);
-        }
+        report.reportInfo(MessageName.UNNAMED, `Will unpack ${structUtils.prettyLocator(configuration, pkg)} to ${configuration.format(pnpUtils.getUnpluggedPath(pkg, {configuration}), FormatType.PATH)}`);
+        report.reportJson({
+          locator: structUtils.stringifyLocator(pkg),
+          version,
+        });
       }
 
-      const projectOrWorkspaces = this.recursive
-        ? `the project`
-        : `any workspace`;
-
-      if (unreferencedPatterns.length > 1)
-        throw new UsageError(`Patterns ${unreferencedPatterns.join(`, `)} don't match any packages referenced by ${projectOrWorkspaces}`);
-      if (unreferencedPatterns.length > 0)
-        throw new UsageError(`Pattern ${unreferencedPatterns[0]} doesn't match any packages referenced by ${projectOrWorkspaces}`);
-
-      await topLevelWorkspace.persistManifest();
+      await project.topLevelWorkspace.persistManifest();
 
       report.reportSeparator();
 
