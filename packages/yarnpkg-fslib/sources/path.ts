@@ -34,7 +34,13 @@ export const ppath: PathUtils<PortablePath> = Object.create(path.posix) as any;
 npath.cwd = () => process.cwd();
 ppath.cwd = () => toPortablePath(process.cwd());
 
-ppath.resolve = (...segments: Array<string>) => path.posix.resolve(ppath.cwd(), ...segments) as PortablePath;
+ppath.resolve = (...segments: Array<PortablePath | Filename>) => {
+  if (segments.length > 0 && ppath.isAbsolute(segments[0])) {
+    return path.posix.resolve(...segments) as PortablePath;
+  } else {
+    return path.posix.resolve(ppath.cwd(), ...segments) as PortablePath;
+  }
+};
 
 const contains = function <T extends Path>(pathUtils: PathUtils<T>, from: T, to: T) {
   from = pathUtils.normalize(from);
