@@ -108,7 +108,8 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       }
 
       const command = cli.process(process.argv.slice(2));
-      Configuration.telemetry?.reportCommandName(command.path.join(` `));
+      if (!command.help)
+        Configuration.telemetry?.reportCommandName(command.path.join(` `));
 
       // @ts-ignore: The cwd is a global option defined by BaseCommand
       const cwd: string | undefined = command.cwd;
