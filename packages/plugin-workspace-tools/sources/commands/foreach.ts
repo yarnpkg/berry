@@ -36,8 +36,11 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   @Command.Proxy()
   args: Array<string> = [];
 
-  @Command.Boolean(`-a,--all`)
-  all: boolean = false;
+  @Command.Boolean(`-a`, {hidden: true})
+  allLegacy: boolean = false;
+
+  @Command.Boolean(`-A,--all`)
+  all?: boolean;
 
   @Command.Boolean(`-v,--verbose`)
   verbose: boolean = false;
@@ -87,7 +90,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       - If \`-t,--topological\` is set, Yarn will only run the command after all workspaces that depend on it through the \`dependencies\` field have successfully finished executing. If \`--topological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
 
-      - If \`--all\` is set, Yarn will run the command on all the workspaces of a project. By default yarn runs the command only on current and all its descendant workspaces.
+      - If \`-A,--all\` is set, Yarn will run the command on all the workspaces of a project. By default yarn runs the command only on current and all its descendant workspaces.
 
       - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
@@ -112,7 +115,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace: cwdWorkspace} = await Project.find(configuration, this.context.cwd);
 
-    if (!this.all && !cwdWorkspace)
+    const all = this.all ?? this.allLegacy;
+    if (!all && !cwdWorkspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const command = this.cli.process([this.commandName, ...this.args]) as {path: Array<string>, scriptName?: string};
@@ -123,7 +127,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (command.path.length === 0)
       throw new UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
 
-    const rootWorkspace = this.all
+    const rootWorkspace = all
       ? project.topLevelWorkspace
       : cwdWorkspace!;
 

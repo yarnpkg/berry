@@ -8,7 +8,7 @@ export default class LinkCommand extends BaseCommand {
   @Command.String()
   destination!: string;
 
-  @Command.Boolean(`--all`)
+  @Command.Boolean(`-A,--all`)
   all: boolean = false;
 
   @Command.Boolean(`-p,--private`)
