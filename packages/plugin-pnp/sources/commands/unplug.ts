@@ -1,11 +1,11 @@
-import {BaseCommand, WorkspaceRequiredError}                               from '@yarnpkg/cli';
-import {Cache, Configuration, Project, StreamReport, Package, MessageName} from '@yarnpkg/core';
-import {structUtils, semverUtils}                                          from '@yarnpkg/core';
-import {Command, Usage, UsageError}                                        from 'clipanion';
-import micromatch                                                          from 'micromatch';
-import semver                                                              from 'semver';
+import {BaseCommand, WorkspaceRequiredError}                                           from '@yarnpkg/cli';
+import {Cache, Configuration, Project, StreamReport, Package, MessageName, FormatType} from '@yarnpkg/core';
+import {structUtils, semverUtils}                                                      from '@yarnpkg/core';
+import {Command, Usage, UsageError}                                                    from 'clipanion';
+import micromatch                                                                      from 'micromatch';
+import semver                                                                          from 'semver';
 
-import * as pnpUtils                                                       from '../pnpUtils';
+import * as pnpUtils                                                                   from '../pnpUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UnplugCommand extends BaseCommand {
@@ -130,7 +130,7 @@ export default class UnplugCommand extends BaseCommand {
           const dependencyMeta = topLevelWorkspace.manifest.ensureDependencyMeta(structUtils.makeDescriptor(pkg, version));
           dependencyMeta.unplugged = true;
 
-          report.reportInfo(MessageName.UNNAMED, `Unplugged ${structUtils.prettyLocator(configuration, pkg)} in ${pnpUtils.getUnpluggedPath(locator, {configuration})}`);
+          report.reportInfo(MessageName.UNNAMED, `Unplugged ${structUtils.prettyLocator(configuration, pkg)} in ${configuration.format(pnpUtils.getUnpluggedPath(pkg, {configuration}), FormatType.PATH)}`);
 
           report.reportJson({
             pattern,
