@@ -5,10 +5,15 @@ import {Command, Usage, UsageError}                                        from 
 import micromatch                                                          from 'micromatch';
 import semver                                                              from 'semver';
 
+import * as pnpUtils                                                       from '../pnpUtils';
+
 // eslint-disable-next-line arca/no-default-export
 export default class UnplugCommand extends BaseCommand {
   @Command.Rest()
   patterns: Array<string> = [];
+
+  @Command.Boolean(`-A,--all`)
+  all: boolean = false;
 
   @Command.Boolean(`-R,--recursive`)
   recursive: boolean = false;
@@ -21,32 +26,32 @@ export default class UnplugCommand extends BaseCommand {
     details: `
       This command will add the selectors matching the specified patterns to the list of packages that must be unplugged when installed.
 
-      A package being unplugged means that instead of being referenced directly through its archive, it will be unpacked at install time in the directory configured via \`pnpUnpluggedFolder\`.
+      A package being unplugged means that instead of being referenced directly through its archive, it will be unpacked at install time in the directory configured via \`pnpUnpluggedFolder\`. Note that unpacking packages this way is generally not recommended because it'll make it harder to store your packages within the repository. However, it's a good approach to quickly and safely debug some packages, and can even sometimes be required depending on the context (for example when the package contains shellscripts).
 
-      Unpacking a package isn't advised as a general tool because it makes it harder to store your packages within the repository. However, it's a good approach to quickly and safely debug some packages, and can even sometimes be required depending on the context (for example when the package contains shellscripts).
+      Running the command will set a persistent flag inside your top-level \`package.json\`, in the \`dependenciesMeta\` field. As such, to undo its effects, you'll need to revert the changes made to the manifest and run \`yarn install\` to apply the modification.
 
-      The unplug command sets a flag that's persisted in your top-level \`package.json\` through the \`dependenciesMeta\` field. As such, to undo its effects, just revert the changes made to the manifest and run \`yarn install\`.
+      By default, only direct dependencies from the current workspace are affected. If \`-A,--all\` is set, direct dependencies from the entire project are affected. Using the \`-R,--recursive\` flag will affect transitive dependencies as well as direct ones.
 
-      By default, only packages referenced by workspaces are affected.
-
-      If \`-A,--all\` is set, packages from the entire project are affected.
-
-      This command accepts glob patterns as arguments (if valid Descriptors and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
-
-      **Note:** The ranges have to be static, only the package scopes and names can contain glob patterns.
+      This command accepts glob patterns inside the scope and name components (not the range). Make sure to escape the patterns to prevent your own shell from trying to expand them.
     `,
     examples: [[
-      `Unplug lodash`,
+      `Unplug the lodash dependency from the active workspace`,
       `yarn unplug lodash`,
+    ], [
+      `Unplug all instances of lodash referenced by any workspace`,
+      `yarn unplug lodash -A`,
+    ], [
+      `Unplug all instances of lodash referenced by the active workspace and its dependencies`,
+      `yarn unplug lodash -R`,
+    ], [
+      `Unplug all instances of lodash, anywhere`,
+      `yarn unplug lodash -AR`,
     ], [
       `Unplug one specific version of lodash`,
       `yarn unplug lodash@1.2.3`,
     ], [
       `Unplug all packages with the \`@babel\` scope`,
       `yarn unplug '@babel/*'`,
-    ], [
-      `Unplug all instances of lodash referenced by the project`,
-      `yarn unplug lodash -R`,
     ], [
       `Unplug all packages (only for testing, not recommended)`,
       `yarn unplug -R '*'`,
@@ -125,7 +130,7 @@ export default class UnplugCommand extends BaseCommand {
           const dependencyMeta = topLevelWorkspace.manifest.ensureDependencyMeta(structUtils.makeDescriptor(pkg, version));
           dependencyMeta.unplugged = true;
 
-          report.reportInfo(MessageName.UNNAMED, `Unplugged ${structUtils.prettyLocator(configuration, pkg)}`);
+          report.reportInfo(MessageName.UNNAMED, `Unplugged ${structUtils.prettyLocator(configuration, pkg)} in ${pnpUtils.getUnpluggedPath(locator, {configuration})}`);
 
           report.reportJson({
             pattern,

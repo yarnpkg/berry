@@ -6,6 +6,9 @@ import semver                                              from 'semver';
 
 import {PnpLinker}                                         from './PnpLinker';
 import unplug                                              from './commands/unplug';
+import * as pnpUtils                                       from './pnpUtils';
+
+export {pnpUtils};
 
 export const getPnpPath = (project: Project) => {
   let mainFilename;

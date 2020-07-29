@@ -7,6 +7,7 @@ import {UsageError}                                                             
 
 import {AbstractPnpInstaller}                                                           from './AbstractPnpInstaller';
 import {getPnpPath}                                                                     from './index';
+import * as pnpUtils                                                                    from './pnpUtils';
 
 const FORCED_UNPLUG_PACKAGES = new Set([
   // Some packages do weird stuff and MUST be unplugged. I don't like them.
@@ -193,12 +194,8 @@ export class PnpInstaller extends AbstractPnpInstaller {
     return nodeModules;
   }
 
-  private getUnpluggedPath(locator: Locator) {
-    return ppath.resolve(this.opts.project.configuration.get(`pnpUnpluggedFolder`), structUtils.slugifyLocator(locator));
-  }
-
   private async unplugPackage(locator: Locator, packageFs: FakeFS<PortablePath>) {
-    const unplugPath = this.getUnpluggedPath(locator);
+    const unplugPath = pnpUtils.getUnpluggedPath(locator, {configuration: this.opts.project.configuration});
     this.unpluggedPaths.add(unplugPath);
 
     await xfs.mkdirPromise(unplugPath, {recursive: true});
