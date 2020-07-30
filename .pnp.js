@@ -21116,15 +21116,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["ink-select-input", "virtual:122b30a93c44a2544c54ea1fd8b1d9d5897c2cd3c17bdd7419ea6a90ace98134f90d83f365267166bc04abac8c2f1a4ec02fbc08438bc94a3dbb187f190b70c8#npm:3.1.2"],
             ["@types/ink", null],
+            ["@types/react", null],
             ["arr-rotate", "npm:1.0.0"],
             ["figures", "npm:2.0.0"],
             ["ink", "virtual:b355cdf7e74491b33ed8f617ce90b7e2d7713727354c1fe0dd4b6be58017042fd59443b716658c4dad185fa40a65318028e943e265b0b14f654f7230ee44ec7e#npm:2.7.1"],
             ["lodash.isequal", "npm:4.5.0"],
-            ["prop-types", "npm:15.7.2"]
+            ["prop-types", "npm:15.7.2"],
+            ["react", "npm:16.13.1"]
           ],
           "packagePeers": [
             "@types/ink",
-            "ink"
+            "@types/react",
+            "ink",
+            "react"
           ],
           "linkType": "HARD",
         }]
@@ -39396,12 +39400,13 @@ function getTempName(prefix) {
 function patchFs(patchedFs, fakeFs) {
   const SYNC_IMPLEMENTATIONS = new Set([`accessSync`, `appendFileSync`, `createReadStream`, `chmodSync`, `closeSync`, `copyFileSync`, `lstatSync`, `lutimesSync`, `mkdirSync`, `openSync`, `readSync`, `readlinkSync`, `readFileSync`, `readdirSync`, `readlinkSync`, `realpathSync`, `renameSync`, `rmdirSync`, `statSync`, `symlinkSync`, `unlinkSync`, `utimesSync`, `watch`, `writeFileSync`, `writeSync`]);
   const ASYNC_IMPLEMENTATIONS = new Set([`accessPromise`, `appendFilePromise`, `chmodPromise`, `closePromise`, `copyFilePromise`, `lstatPromise`, `lutimesPromise`, `mkdirPromise`, `openPromise`, `readdirPromise`, `realpathPromise`, `readFilePromise`, `readdirPromise`, `readlinkPromise`, `renamePromise`, `rmdirPromise`, `statPromise`, `symlinkPromise`, `unlinkPromise`, `utimesPromise`, `writeFilePromise`, `writeSync`]);
+  const FILEHANDLE_IMPLEMENTATIONS = new Set([`appendFilePromise`, `chmodPromise`, `chownPromise`, `closePromise`, `readPromise`, `readFilePromise`, `statPromise`, `utimesPromise`, `writePromise`, `writeFilePromise`]);
 
   const setupFn = (target, name, replacement) => {
     const orig = target[name];
     target[name] = replacement;
 
-    if (typeof orig[external_util_.promisify.custom] !== `undefined`) {
+    if (typeof (orig === null || orig === void 0 ? void 0 : orig[external_util_.promisify.custom]) !== `undefined`) {
       replacement[external_util_.promisify.custom] = orig[external_util_.promisify.custom];
     }
   };
@@ -39499,10 +39504,34 @@ function patchFs(patchedFs, fakeFs) {
         const origName = fnName.replace(/Promise$/, ``);
         if (typeof patchedFsPromises[origName] === `undefined`) continue;
         const fakeImpl = fakeFs[fnName];
-        if (typeof fakeImpl === `undefined`) continue;
-        setupFn(patchedFsPromises, origName, fakeImpl.bind(fakeFs));
-      } // `fs.promises.realpath` doesn't have a `native` property
+        if (typeof fakeImpl === `undefined`) continue; // Open is a bit particular with fs.promises: it returns a file handle
+        // instance instead of the traditional file descriptor number
 
+        if (fnName === `open`) continue;
+        setupFn(patchedFsPromises, origName, fakeImpl.bind(fakeFs));
+      }
+
+      class FileHandle {
+        constructor(fd) {
+          this.fd = fd;
+        }
+
+      }
+
+      for (const fnName of FILEHANDLE_IMPLEMENTATIONS) {
+        const origName = fnName.replace(/Promise$/, ``);
+        const fakeImpl = fakeFs[fnName];
+        if (typeof fakeImpl === `undefined`) continue;
+        setupFn(FileHandle.prototype, origName, function (...args) {
+          return fakeImpl.call(fakeFs, this.fd, ...args);
+        });
+      }
+
+      setupFn(patchedFsPromises, `open`, async (...args) => {
+        // @ts-ignore
+        const fd = await fakeFs.openPromise(...args);
+        return new FileHandle(fd);
+      }); // `fs.promises.realpath` doesn't have a `native` property
     }
   }
 }

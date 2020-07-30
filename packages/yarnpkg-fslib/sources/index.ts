@@ -99,11 +99,24 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `writeSync`,
   ]);
 
+  const FILEHANDLE_IMPLEMENTATIONS = new Set([
+    `appendFilePromise`,
+    `chmodPromise`,
+    `chownPromise`,
+    `closePromise`,
+    `readPromise`,
+    `readFilePromise`,
+    `statPromise`,
+    `utimesPromise`,
+    `writePromise`,
+    `writeFilePromise`,
+  ]);
+
   const setupFn = (target: any, name: string, replacement: any) => {
     const orig = target[name];
     target[name] = replacement;
 
-    if (typeof orig[promisify.custom] !== `undefined`) {
+    if (typeof orig?.[promisify.custom] !== `undefined`) {
       replacement[promisify.custom] = orig[promisify.custom];
     }
   };
@@ -216,8 +229,36 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         if (typeof fakeImpl === `undefined`)
           continue;
 
+        // Open is a bit particular with fs.promises: it returns a file handle
+        // instance instead of the traditional file descriptor number
+        if (fnName === `open`)
+          continue;
+
         setupFn(patchedFsPromises, origName, fakeImpl.bind(fakeFs));
       }
+
+      class FileHandle {
+        constructor(public fd: number) {
+        }
+      }
+
+      for (const fnName of FILEHANDLE_IMPLEMENTATIONS) {
+        const origName = fnName.replace(/Promise$/, ``);
+
+        const fakeImpl: Function = (fakeFs as any)[fnName];
+        if (typeof fakeImpl === `undefined`)
+          continue;
+
+        setupFn(FileHandle.prototype, origName, function (this: FileHandle, ...args: Array<any>) {
+          return fakeImpl.call(fakeFs, this.fd, ...args);
+        });
+      }
+
+      setupFn(patchedFsPromises, `open`, async (...args: Array<any>) => {
+        // @ts-ignore
+        const fd = await fakeFs.openPromise(...args);
+        return new FileHandle(fd);
+      });
 
       // `fs.promises.realpath` doesn't have a `native` property
     }
