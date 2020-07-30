@@ -160,9 +160,12 @@ export default class YarnCommand extends BaseCommand {
       }
     }
 
-    // We want to prevent people from using --production with install command
+    // Since the production flag would yield a different lockfile than the
+    // regular installs, it's not part of the regular `install` command anymore.
+    // Instead, we expect users to use it with `yarn workspaces focus` (which can
+    // be used even outside of monorepos).
     if (typeof this.production !== `undefined`) {
-      const exitCode = await reportDeprecation(`The --production option is deprecated; you can only use it with focus command`, {
+      const exitCode = await reportDeprecation(`The --production option is deprecated on 'install'; use 'yarn workspaces focus' instead`, {
         error: true,
       });
 
@@ -171,7 +174,8 @@ export default class YarnCommand extends BaseCommand {
       }
     }
 
-    // We want to prevent people from using --non-interactive
+    // Yarn 2 isn't interactive during installs anyway, so there's no real point
+    // to this flag at the moment.
     if (typeof this.nonInteractive !== `undefined`) {
       const exitCode = await reportDeprecation(`The --non-interactive option is deprecated`, {
         error: !isGCF,
