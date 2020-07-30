@@ -18,6 +18,12 @@ export default class YarnCommand extends BaseCommand {
   @Command.Boolean(`--check-cache`)
   checkCache: boolean = false;
 
+  @Command.Boolean(`--production`, {hidden: true})
+  production?: boolean;
+
+  @Command.Boolean(`--non-interactive`, {hidden: true})
+  nonInteractive?: boolean;
+
   @Command.Boolean(`--frozen-lockfile`, {hidden: true})
   frozenLockfile?: boolean;
 
@@ -86,6 +92,7 @@ export default class YarnCommand extends BaseCommand {
 
     const isZeitNow = !!process.env.NOW_BUILDER;
     const isNetlify = !!process.env.NETLIFY;
+    const isGCF = !!process.env.FUNCTION_TARGET;
 
     const reportDeprecation = async (message: string, {error}: {error: boolean}) => {
       const deprecationReport = await StreamReport.start({
@@ -153,12 +160,34 @@ export default class YarnCommand extends BaseCommand {
       }
     }
 
+    // We want to prevent people from using --production with install command
+    if (typeof this.production !== `undefined`) {
+      const exitCode = await reportDeprecation(`The --production option is deprecated; you can only use it with focus command`, {
+        error: true,
+      });
+
+      if (exitCode !== null) {
+        return exitCode;
+      }
+    }
+
+    // We want to prevent people from using --non-interactive
+    if (typeof this.nonInteractive !== `undefined`) {
+      const exitCode = await reportDeprecation(`The --non-interactive option is deprecated`, {
+        error: !isGCF,
+      });
+
+      if (exitCode !== null) {
+        return exitCode;
+      }
+    }
+
     // We want to prevent people from using --frozen-lockfile
     // Note: it's been deprecated because we're now locking more than just the
     // lockfile - for example the PnP artifacts will also be locked.
     if (typeof this.frozenLockfile !== `undefined`) {
       const exitCode = await reportDeprecation(`The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`, {
-        error: true,
+        error: !isGCF,
       });
 
       if (exitCode !== null) {
