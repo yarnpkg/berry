@@ -39,7 +39,7 @@ jobs:
       run: |
         case ${{matrix.packageManager}} in
           yarn|yarn-nm)
-            node ./run-yarn.js build:cli --no-minify;;
+            node scripts/run-yarn.js build:cli --no-minify;;
           npm)
             npm install -g npm;;
           pnpm)
