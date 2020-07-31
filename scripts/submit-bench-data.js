@@ -29,6 +29,7 @@ for (const entry of benchmarkEntries) {
   series.push({
     metric: `perftest.duration`,
     tags: [`pm:${packageManager}`, `test:${testName}`, `subtest:${subtestName}`],
+    points,
   });
 }
 
