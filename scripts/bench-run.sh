@@ -17,8 +17,9 @@ prepare_yarn() {
 }
 
 bench() {
-  NAME=$1; shift
-  hyperfine --show-output "$@"
+  PACKAGE_MANAGER=$1; shift
+  TEST_NAME=$2; shift
+  hyperfine --show-output --min-runs=5 "$@"
 }
 
 cp "$HERE_DIR"/benchmarks/"$2".json package.json
@@ -26,19 +27,31 @@ cp "$HERE_DIR"/benchmarks/"$2".json package.json
 case $1 in
   yarn)
     prepare_yarn
-    bench install-full-cold --min-runs=5 -p 'rm -rf .yarn .pnp.* && yarn cache clean --all' 'yarn install'
+    bench yarn install-full-cold \
+      --warmup 1 \
+      --prepare 'rm -rf .yarn .pnp.* yarn.lock && yarn cache clean --all' \
+      'yarn install'
     ;;
   yarn-nm)
     prepare_yarn
-    bench install-full-cold --min-runs=5 -p 'rm -rf .yarn node_modules && yarn cache clean --all' 'YARN_NODE_LINKER=node-modules yarn install'
+    bench yarn-nm install-full-cold \
+      --warmup 1 \
+      --prepare 'rm -rf .yarn node_modules yarn.lock && yarn cache clean --all' \
+      'YARN_NODE_LINKER=node-modules yarn install'
     ;;
   npm)
     npm install -g npm
-    bench install-full-cold --min-runs=5 -p 'rm -rf node_modules && npm cache clean --force' 'npm ci'
+    bench npm install-full-cold \
+      --warmup 1 \
+      --prepare 'rm -rf node_modules package-lock.json && npm cache clean --force' \
+      'npm install'
     ;;
   pnpm)
     npm install -g pnpm
-    bench install-full-cold --min-runs=5 -p 'rm -rf node_modules ~/.pnpm-store' 'pnpm install'
+    bench pnpm install-full-cold \
+      --warmup 1 \
+      --prepare 'rm -rf node_modules ~/.pnpm-store pnpm-lock.yaml' \
+      'pnpm install'
     ;;
   *)
     echo "Invalid package manager ${$1}"
