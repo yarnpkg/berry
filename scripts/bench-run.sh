@@ -77,4 +77,4 @@ case $PACKAGE_MANAGER in
     return 1;;
 esac
 
-(cd "$HERE_DIR" && yarn node ./submit-bench-data.js "$PACKAGE_MANAGER" "$TEST_NAME" "$TEMP_DIR"
+(cd "$HERE_DIR" && yarn node ./submit-bench-data.js "$PACKAGE_MANAGER" "$TEST_NAME" "$TEMP_DIR")
