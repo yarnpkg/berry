@@ -9,6 +9,7 @@ name: 'Performance tests'
 jobs:
   benchmark:
     strategy:
+      fail-fast: false
       matrix:
         benchmark:
           - [Next.js, next]
@@ -18,7 +19,7 @@ jobs:
           - npm
           - pnpm
 
-    name: 'Benchmarking ${{matrix.benchmark[0]}} w/ {{matrix.packageManager}}'
+    name: 'Benchmarking ${{matrix.benchmark[0]}} w/ ${{matrix.packageManager}}'
     runs-on: ubuntu-latest
 
     steps:

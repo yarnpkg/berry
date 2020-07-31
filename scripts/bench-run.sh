@@ -40,7 +40,7 @@ case $1 in
     ;;
   pnpm)
     npm install -g pnpm
-    bench install-full-cold --min-runs=5 -p 'rm -rf node_modules && pnpm cache clean' 'pnpm install'
+    bench install-full-cold --min-runs=5 -p 'rm -rf node_modules ~/.pnpm-store' 'pnpm install'
     ;;
   *)
     echo "Invalid package manager ${$1}"
