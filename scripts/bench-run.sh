@@ -18,7 +18,7 @@ TEST_NAME=$1; shift
 cp "$HERE_DIR"/benchmarks/"$TEST_NAME".json package.json
 
 touch a
-if cp --reflink a b >& /dev/null; then
+  if cp --reflink a b >& /dev/null; then
   echo "Reflinks are supported"
 else
   echo "Reflink aren't supported! Installs may be quite slower than necessary"
@@ -27,7 +27,7 @@ fi
 case $PACKAGE_MANAGER in
   yarn)
     export YARN_GLOBAL_FOLDER="${TEMP_DIR}/.yarn-global"
-    export YARN_PATH="${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js"
+    export YARN_YARN_PATH="${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js"
     bench install-full-cold \
       --prepare 'rm -rf .yarn .pnp.* yarn.lock && yarn cache clean --all' \
       'yarn install'
