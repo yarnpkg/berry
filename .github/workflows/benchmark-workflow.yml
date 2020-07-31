@@ -18,7 +18,7 @@ jobs:
           - npm
           - pnpm
 
-    name: 'Benchmarking {{matrix.benchmark[0]}}'
+    name: 'Benchmarking ${{matrix.benchmark[0]}}'
     runs-on: ubuntu-latest
 
     steps:
@@ -31,4 +31,4 @@ jobs:
 
     - name: 'Prepares the test files'
       run: |
-        bash scripts/bench-run.sh '{{matrix.packageManager}}' '{{matrix.benchmark[1]}}'
+        bash scripts/bench-run.sh '${{matrix.packageManager}}' '${{matrix.benchmark[1]}}'
