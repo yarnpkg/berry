@@ -49,3 +49,5 @@ jobs:
     - name: 'Run the performance test'
       run: |
         bash scripts/bench-run.sh '${{matrix.packageManager}}' '${{matrix.benchmark[1]}}'
+      env:
+        DD_API_KEY: ${{secrets.DD_API_KEY}}
