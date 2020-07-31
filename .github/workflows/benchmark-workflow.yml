@@ -30,6 +30,11 @@ jobs:
       with:
         node-version: 14.x
 
-    - name: 'Prepares the test files'
+    - name: 'Install Hyperfine'
+      run: |
+        wget https://github.com/sharkdp/hyperfine/releases/download/v1.10.0/hyperfine_1.10.0_amd64.deb
+        sudo dpkg -i hyperfine_1.10.0_amd64.deb
+
+    - name: 'Prepare the test files'
       run: |
         bash scripts/bench-run.sh '${{matrix.packageManager}}' '${{matrix.benchmark[1]}}'

@@ -16,11 +16,8 @@ prepare_yarn() {
   echo "yarnPath: '${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js'" >> .yarnrc.yml
 }
 
-wget https://github.com/sharkdp/hyperfine/releases/download/v1.10.0/hyperfine_1.10.0_amd64.deb
-sudo dpkg -i hyperfine_1.10.0_amd64.deb
-
 bench() {
-  hyperfine "$@"
+  hyperfine --show-output "$@"
 }
 
 cp "$HERE_DIR"/benchmarks/"$2".json package.json
@@ -36,7 +33,7 @@ case $1 in
     ;;
   npm)
     npm install -g npm
-    bench install-full-cold --min-runs=5 -p 'rm -rf node_modules && npm cache clean' 'npm ci'
+    bench install-full-cold --min-runs=5 -p 'rm -rf node_modules && npm cache clean --force' 'npm ci'
     ;;
   pnpm)
     npm install -g pnpm
