@@ -7,53 +7,74 @@ TEMP_DIR="$(mktemp -d)"
 
 cd "${TEMP_DIR}"
 
-# Otherwise git commit doesn't work, and some tools require it
-git config --global user.email "you@example.com"
-git config --global user.name "John Doe"
-
-prepare_yarn() {
-  (cd "$HERE_DIR" && node ./run-yarn.js build:cli --no-minify)
-  echo "yarnPath: '${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js'" >> .yarnrc.yml
-}
-
 bench() {
-  PACKAGE_MANAGER=$1; shift
-  TEST_NAME=$2; shift
-  hyperfine --show-output --min-runs=5 "$@"
+  SUBTEST_NAME=$1; shift
+  hyperfine --export-json=bench-$SUBTEST_NAME.json --min-runs=5 --warmup=1 "$@"
 }
 
-cp "$HERE_DIR"/benchmarks/"$2".json package.json
+PACKAGE_MANAGER=$1; shift
+TEST_NAME=$1; shift
 
-case $1 in
+cp "$HERE_DIR"/benchmarks/"$TEST_NAME".json package.json
+
+case $PACKAGE_MANAGER in
   yarn)
-    prepare_yarn
-    bench yarn install-full-cold \
-      --warmup 1 \
+    echo "yarnPath: '${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js'" >> .yarnrc.yml
+    bench install-full-cold \
       --prepare 'rm -rf .yarn .pnp.* yarn.lock && yarn cache clean --all' \
+      'yarn install'
+    bench install-cache-only \
+      --prepare 'rm -rf .yarn .pnp.* yarn.lock' \
+      'yarn install'
+    bench install-cache-and-lock \
+      --prepare 'rm -rf .yarn .pnp.*' \
+      'yarn install'
+    bench install-ready \
       'yarn install'
     ;;
   yarn-nm)
-    prepare_yarn
-    bench yarn-nm install-full-cold \
-      --warmup 1 \
+    echo "yarnPath: '${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js'" >> .yarnrc.yml
+    bench install-full-cold \
       --prepare 'rm -rf .yarn node_modules yarn.lock && yarn cache clean --all' \
+      'YARN_NODE_LINKER=node-modules yarn install'
+    bench install-cache-only \
+      --prepare 'rm -rf .yarn node_modules yarn.lock' \
+      'YARN_NODE_LINKER=node-modules yarn install'
+    bench install-cache-and-lock \
+      --prepare 'rm -rf .yarn node_modules' \
+      'YARN_NODE_LINKER=node-modules yarn install'
+    bench install-ready \
       'YARN_NODE_LINKER=node-modules yarn install'
     ;;
   npm)
-    npm install -g npm
-    bench npm install-full-cold \
-      --warmup 1 \
+    bench install-full-cold \
       --prepare 'rm -rf node_modules package-lock.json && npm cache clean --force' \
+      'npm install'
+    bench install-cache-only \
+      --prepare 'rm -rf node_modules package-lock.json' \
+      'npm install'
+    bench install-cache-and-lock \
+      --prepare 'rm -rf node_modules' \
+      'npm install'
+    bench install-ready \
       'npm install'
     ;;
   pnpm)
-    npm install -g pnpm
-    bench pnpm install-full-cold \
-      --warmup 1 \
-      --prepare 'rm -rf node_modules ~/.pnpm-store pnpm-lock.yaml' \
+    bench install-full-cold \
+      --prepare 'rm -rf node_modules pnpm-lock.yaml ~/.pnpm-store' \
       'pnpm install'
+    bench install-cache-only \
+      --prepare 'rm -rf node_modules pnpm-lock.yaml' \
+      'pnpm install'
+    bench install-cache-and-lock \
+      --prepare 'rm -rf node_modules' \
+      'npm install'
+    bench install-ready \
+      'npm install'
     ;;
   *)
     echo "Invalid package manager ${$1}"
     return 1;;
 esac
+
+(cd "$HERE_DIR" && yarn node ./submit-bench-data.js "$PACKAGE_MANAGER" "$TEST_NAME" "$TEMP_DIR"
