@@ -38,7 +38,7 @@ for (const entry of benchmarkEntries) {
 if (process.env.DD_API_KEY) {
   const data = JSON.stringify({series}, null, 2);
 
-  const req = https.request(`https://api.datadoghq.com/api/v1/series?api_key=${process.env.DD_API_KEY}`, {
+  const req = https.request(`https://api.datadoghq.eu/api/v1/series?api_key=${process.env.DD_API_KEY}`, {
     method: `POST`,
     headers: {
       [`Content-Type`]: `application/json`,
