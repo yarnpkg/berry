@@ -17,6 +17,7 @@ prepare_yarn() {
 }
 
 bench() {
+  NAME=$1; shift
   hyperfine --show-output "$@"
 }
 
