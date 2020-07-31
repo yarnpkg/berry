@@ -17,7 +17,7 @@ const now = Math.floor(Date.now() / 1000);
 const series = [];
 
 for (const entry of benchmarkEntries) {
-  const metric = entry.match(BENCHMARK)[1];
+  const subtestName = entry.match(BENCHMARK)[1];
 
   const data = JSON.parse(fs.readFileSync(path.join(benchDir, entry), `utf8`));
   const points = data.results[0].times.map((timing, t) => [now + t * 10, timing]);
@@ -27,8 +27,8 @@ for (const entry of benchmarkEntries) {
     throw new Error(`Invalid data extraction (${mean} instead of ${data.results[0].mean})`);
 
   series.push({
-    metric,
-    tags: [`pm:${packageManager}`, `perftest:${testName}`],
+    metric: `perftest.duration`,
+    tags: [`pm:${packageManager}`, `test:${testName}`, `subtest:${subtestName}`],
   });
 }
 
