@@ -1,9 +1,6 @@
 on:
   schedule:
-  - cron: '0 */4 * * *'
-  push:
-    branches:
-    - mael/benchmark
+  - cron: '0 2-23/4 * * *'
 
 name: 'Performance tests'
 jobs:
