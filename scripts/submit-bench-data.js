@@ -1,6 +1,7 @@
 const fs = require(`fs`);
 const https = require(`https`);
 const path = require(`path`);
+const util = require(`util`);
 
 const packageManager = process.argv[2];
 const testName = process.argv[3];
@@ -41,6 +42,7 @@ if (process.env.DD_API_KEY) {
     },
   }, res => {
     console.log(`Data submitted; received status ${res.statusCode}`);
+    console.log(util.inspect(series, {depth: Infinity}));
     res.resume();
   });
 
