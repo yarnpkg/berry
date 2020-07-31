@@ -30,11 +30,13 @@ for (const entry of benchmarkEntries) {
   series.push({
     metric: `perftest.duration`,
     tags: [`pm:${packageManager}`, `test:${testName}`, `subtest:${subtestName}`],
-    points,
+    points: points.map(([timestamp, value]) => [`${timestamp}`, `${value}`]),
   });
 }
 
 if (process.env.DD_API_KEY) {
+  const data = JSON.stringify({series}, null, 2);
+
   const req = https.request(`https://api.datadoghq.com/api/v1/series?api_key=${process.env.DD_API_KEY}`, {
     method: `POST`,
     headers: {
@@ -42,7 +44,7 @@ if (process.env.DD_API_KEY) {
     },
   }, res => {
     console.log(`Data submitted; received status ${res.statusCode}`);
-    console.log(util.inspect(series, {depth: Infinity}));
+    console.log(data);
     res.resume();
   });
 
@@ -50,6 +52,6 @@ if (process.env.DD_API_KEY) {
     console.error(`problem with request: ${e.message}`);
   });
 
-  req.write(JSON.stringify({series}));
+  req.write(data);
   req.end();
 }
