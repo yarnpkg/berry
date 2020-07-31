@@ -18,7 +18,7 @@ jobs:
           - npm
           - pnpm
 
-    name: 'Benchmarking ${{matrix.benchmark[0]}}'
+    name: 'Benchmarking ${{matrix.benchmark[0]}} w/ {{matrix.packageManager}}'
     runs-on: ubuntu-latest
 
     steps:

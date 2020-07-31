@@ -12,7 +12,7 @@ git config --global user.email "you@example.com"
 git config --global user.name "John Doe"
 
 prepare_yarn() {
-  (cd "$HERE_DIR" && node ./run-yarn.js build:cli --no-minify))
+  (cd "$HERE_DIR" && node ./run-yarn.js build:cli --no-minify)
   echo "yarnPath: '${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js'" >> .yarnrc.yml
 }
 
