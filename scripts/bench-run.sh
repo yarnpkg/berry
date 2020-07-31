@@ -41,7 +41,8 @@ case $PACKAGE_MANAGER in
       'yarn install'
     ;;
   yarn-nm)
-    echo "yarnPath: '${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js'" >> .yarnrc.yml
+    export YARN_GLOBAL_FOLDER="${TEMP_DIR}/.yarn-global"
+    export YARN_YARN_PATH="${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js"
     bench install-full-cold \
       --prepare 'rm -rf .yarn node_modules yarn.lock && yarn cache clean --all' \
       'YARN_NODE_LINKER=node-modules yarn install'
