@@ -20,7 +20,7 @@ for (const entry of benchmarkEntries) {
   const metric = entry.match(BENCHMARK)[1];
 
   const data = JSON.parse(fs.readFileSync(path.join(benchDir, entry), `utf8`));
-  const points = data.results[0].times.map(timing => [now, timing]);
+  const points = data.results[0].times.map((timing, t) => [now + t * 10, timing]);
 
   const mean = points.reduce((acc, point) => acc + point[1], 0) / points.length;
   if (mean !== data.results[0].mean)
