@@ -1,0 +1,31 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+
+name: 'Performance tests'
+jobs:
+  benchmark:
+    strategy:
+      matrix:
+        benchmark:
+          - [Next.js, next]
+        packageManager:
+          - yarn
+          - yarn-nm
+          - npm
+          - pnpm
+
+    name: 'Benchmarking {{matrix.benchmark[0]}}'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 14.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 14.x
+
+    - name: 'Prepares the test files'
+      run: |
+        bash scripts/bench-run.sh '{{matrix.packageManager}}' '{{matrix.benchmark[1]}}'
