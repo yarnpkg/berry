@@ -1,0 +1,50 @@
+on:
+  schedule:
+  - cron: '0 2-23/4 * * *'
+
+name: 'Performance tests'
+jobs:
+  benchmark:
+    strategy:
+      fail-fast: false
+      matrix:
+        benchmark:
+          - [Next.js, next]
+        packageManager:
+          - yarn
+          - yarn-nm
+          - npm
+          - pnpm
+
+    name: 'Benchmarking ${{matrix.benchmark[0]}} w/ ${{matrix.packageManager}}'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 14.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 14.x
+
+    - name: 'Install Hyperfine'
+      run: |
+        wget https://github.com/sharkdp/hyperfine/releases/download/v1.10.0/hyperfine_1.10.0_amd64.deb
+        sudo dpkg -i hyperfine_1.10.0_amd64.deb
+
+    - name: 'Install the package manager'
+      run: |
+        case ${{matrix.packageManager}} in
+          yarn|yarn-nm)
+            node scripts/run-yarn.js build:cli --no-minify;;
+          npm)
+            npm install -g npm;;
+          pnpm)
+            npm install -g pnpm;;
+        esac
+
+    - name: 'Run the performance test'
+      run: |
+        bash scripts/bench-run.sh '${{matrix.packageManager}}' '${{matrix.benchmark[1]}}'
+      env:
+        DD_API_KEY: ${{secrets.DD_API_KEY}}
