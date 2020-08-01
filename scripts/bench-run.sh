@@ -9,7 +9,7 @@ cd "${TEMP_DIR}"
 
 bench() {
   SUBTEST_NAME=$1; shift
-  hyperfine --export-json=bench-$SUBTEST_NAME.json --min-runs=5 --warmup=1 "$@"
+  hyperfine --export-json=bench-$SUBTEST_NAME.json --min-runs=10 --warmup=1 "$@"
 }
 
 PACKAGE_MANAGER=$1; shift
