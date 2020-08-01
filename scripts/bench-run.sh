@@ -82,9 +82,9 @@ case $PACKAGE_MANAGER in
       'pnpm install'
     bench install-cache-and-lock \
       --prepare 'rm -rf node_modules' \
-      'npm install'
+      'pnpm install'
     bench install-ready \
-      'npm install'
+      'pnpm install'
     ;;
   *)
     echo "Invalid package manager ${$1}"
