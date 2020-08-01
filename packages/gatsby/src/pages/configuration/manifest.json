@@ -226,7 +226,7 @@
       }
     },
     "resolutions": {
-      "description": "This field allows you to instruct Yarn to use a specific resolution instead of anything the resolver would normally pick. This is useful to enforce all your packages to use a single version of a dependency, or backport a fix. The syntax for the resolution key accepts one level of specificity, so all the following examples are correct.\nNote: When a path is relative, like it can be with the `file:` and `portal:` protocols, it is resolved relative to the path of the project.",
+      "description": "This field allows you to instruct Yarn to use a specific resolution instead of anything the resolver would normally pick. This is useful to enforce all your packages to use a single version of a dependency, or backport a fix. The syntax for the resolution key accepts one level of specificity, so all the following examples are correct.\nNote: When a path is relative, like it can be with the `file:` and `portal:` protocols, it is resolved relative to the path of the project.\n\nNote that the `resolution` field can only be set at the root of the project, and will generate a warning if used in any other workspace.",
       "type": "object",
       "patternProperties": {
         "^relay-compiler$": {

@@ -1,7 +1,9 @@
-import {CwdFS, Filename, NativePath, PortablePath, ZipOpenFS} from '@yarnpkg/fslib';
 import {xfs, npath, ppath, toFilename}                        from '@yarnpkg/fslib';
+import {CwdFS, Filename, NativePath, PortablePath, ZipOpenFS} from '@yarnpkg/fslib';
 import {getLibzipPromise}                                     from '@yarnpkg/libzip';
 import {execute}                                              from '@yarnpkg/shell';
+import pLimit                                                 from 'p-limit';
+
 import {PassThrough, Readable, Writable}                      from 'stream';
 
 import {Configuration}                                        from './Configuration';
@@ -116,121 +118,126 @@ export async function makeScriptEnv({project, binFolder, lifecycleScript}: {proj
  * `yarn build` if a `package.json` is found.
  */
 
+const MAX_PREPARE_CONCURRENCY = 2;
+const prepareLimit = pLimit(MAX_PREPARE_CONCURRENCY);
+
 export async function prepareExternalProject(cwd: PortablePath, outputPath: PortablePath, {configuration, report, workspace = null}: {configuration: Configuration, report: Report, workspace?: string | null}) {
-  await xfs.mktempPromise(async logDir => {
-    const logFile = ppath.join(logDir, `pack.log` as Filename);
+  await prepareLimit(async () => {
+    await xfs.mktempPromise(async logDir => {
+      const logFile = ppath.join(logDir, `pack.log` as Filename);
 
-    const stdin = null;
-    const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: cwd, report});
+      const stdin = null;
+      const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: cwd, report});
 
-    const packageManager = await detectPackageManager(cwd);
-    let effectivePackageManager: PackageManager;
+      const packageManager = await detectPackageManager(cwd);
+      let effectivePackageManager: PackageManager;
 
-    if (packageManager !== null) {
-      stdout.write(`Installing the project using ${packageManager}\n\n`);
-      effectivePackageManager = packageManager;
-    } else {
-      stdout.write(`No package manager detected; defaulting to Yarn\n\n`);
-      effectivePackageManager = PackageManager.Yarn2;
-    }
+      if (packageManager !== null) {
+        stdout.write(`Installing the project using ${packageManager}\n\n`);
+        effectivePackageManager = packageManager;
+      } else {
+        stdout.write(`No package manager detected; defaulting to Yarn\n\n`);
+        effectivePackageManager = PackageManager.Yarn2;
+      }
 
-    await xfs.mktempPromise(async binFolder => {
-      const env = await makeScriptEnv({binFolder});
+      await xfs.mktempPromise(async binFolder => {
+        const env = await makeScriptEnv({binFolder});
 
-      const workflows = new Map([
-        [PackageManager.Yarn1, async () => {
-          const workspaceCli = workspace !== null
-            ? [`workspace`, workspace]
-            : [];
+        const workflows = new Map([
+          [PackageManager.Yarn1, async () => {
+            const workspaceCli = workspace !== null
+              ? [`workspace`, workspace]
+              : [];
 
-          // Makes sure that we'll be using Yarn 1.x
-          const version = await execUtils.pipevp(`yarn`, [`set`, `version`, `classic`, `--only-if-needed`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
-          if (version.code !== 0)
-            return version.code;
+            // Makes sure that we'll be using Yarn 1.x
+            const version = await execUtils.pipevp(`yarn`, [`set`, `version`, `classic`, `--only-if-needed`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
+            if (version.code !== 0)
+              return version.code;
 
-          // Otherwise Yarn 1 will pack the .yarn directory :(
-          await xfs.appendFilePromise(ppath.join(cwd, `.npmignore` as PortablePath), `/.yarn\n`);
+            // Otherwise Yarn 1 will pack the .yarn directory :(
+            await xfs.appendFilePromise(ppath.join(cwd, `.npmignore` as PortablePath), `/.yarn\n`);
 
-          stdout.write(`\n`);
+            stdout.write(`\n`);
 
-          // Run an install; we can't avoid it unless we inspect the
-          // package.json, which I don't want to do to keep the codebase
-          // clean (even if it has a slight perf cost when cloning v1 repos)
-          const install = await execUtils.pipevp(`yarn`, [`install`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
-          if (install.code !== 0)
-            return install.code;
+            // Run an install; we can't avoid it unless we inspect the
+            // package.json, which I don't want to do to keep the codebase
+            // clean (even if it has a slight perf cost when cloning v1 repos)
+            const install = await execUtils.pipevp(`yarn`, [`install`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
+            if (install.code !== 0)
+              return install.code;
 
-          stdout.write(`\n`);
+            stdout.write(`\n`);
 
-          const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, `pack`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
-          if (pack.code !== 0)
-            return pack.code;
+            const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, `pack`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
+            if (pack.code !== 0)
+              return pack.code;
 
-          return 0;
-        }],
+            return 0;
+          }],
 
-        [PackageManager.Yarn2, async () => {
-          const workspaceCli = workspace !== null
-            ? [`workspace`, workspace]
-            : [];
+          [PackageManager.Yarn2, async () => {
+            const workspaceCli = workspace !== null
+              ? [`workspace`, workspace]
+              : [];
 
-          // Yarn 2 supports doing the install and the pack in a single command,
-          // so we leverage that. We also don't need the "set version" call since
-          // we're already operating within a Yarn 2 context (plus people should
-          // really check-in their Yarn versions anyway).
-          const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, `pack`, `--install-if-needed`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
-          if (pack.code !== 0)
-            return pack.code;
+            // Yarn 2 supports doing the install and the pack in a single command,
+            // so we leverage that. We also don't need the "set version" call since
+            // we're already operating within a Yarn 2 context (plus people should
+            // really check-in their Yarn versions anyway).
+            const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, `pack`, `--install-if-needed`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
+            if (pack.code !== 0)
+              return pack.code;
 
-          return 0;
-        }],
+            return 0;
+          }],
 
-        [PackageManager.Npm, async () => {
-          if (workspace !== null)
-            throw new Error(`Workspaces aren't supported by npm, which has been detected as the primary package manager for ${cwd}`);
+          [PackageManager.Npm, async () => {
+            if (workspace !== null)
+              throw new Error(`Workspaces aren't supported by npm, which has been detected as the primary package manager for ${cwd}`);
 
-          // Otherwise npm won't properly set the user agent, using the Yarn
-          // one instead
-          delete env.npm_config_user_agent;
+            // Otherwise npm won't properly set the user agent, using the Yarn
+            // one instead
+            delete env.npm_config_user_agent;
 
-          // We can't use `npm ci` because some projects don't have npm
-          // lockfiles that are up-to-date. Hopefully npm won't decide
-          // to change the versions randomly.
-          const install = await execUtils.pipevp(`npm`, [`install`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
-          if (install.code !== 0)
-            return install.code;
+            // We can't use `npm ci` because some projects don't have npm
+            // lockfiles that are up-to-date. Hopefully npm won't decide
+            // to change the versions randomly.
+            const install = await execUtils.pipevp(`npm`, [`install`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
+            if (install.code !== 0)
+              return install.code;
 
-          const packStream = new PassThrough();
-          const packPromise = miscUtils.bufferStream(packStream);
+            const packStream = new PassThrough();
+            const packPromise = miscUtils.bufferStream(packStream);
 
-          packStream.pipe(stdout);
+            packStream.pipe(stdout);
 
-          // It seems that npm doesn't support specifying the pack output path,
-          // so we have to extract the stdout on top of forking it to the logs.
-          const pack = await execUtils.pipevp(`npm`, [`pack`, `--silent`], {cwd, env, stdin, stdout: packStream, stderr});
-          if (pack.code !== 0)
-            return pack.code;
+            // It seems that npm doesn't support specifying the pack output path,
+            // so we have to extract the stdout on top of forking it to the logs.
+            const pack = await execUtils.pipevp(`npm`, [`pack`, `--silent`], {cwd, env, stdin, stdout: packStream, stderr});
+            if (pack.code !== 0)
+              return pack.code;
 
-          const packOutput = (await packPromise).toString().trim();
-          const packTarget = ppath.resolve(cwd, npath.toPortablePath(packOutput));
+            const packOutput = (await packPromise).toString().trim();
+            const packTarget = ppath.resolve(cwd, npath.toPortablePath(packOutput));
 
-          // Only then can we move the pack to its rightful location
-          await xfs.renamePromise(packTarget, outputPath);
+            // Only then can we move the pack to its rightful location
+            await xfs.renamePromise(packTarget, outputPath);
 
-          return 0;
-        }],
-      ]);
+            return 0;
+          }],
+        ]);
 
-      const workflow = workflows.get(effectivePackageManager);
-      if (typeof workflow === `undefined`)
-        throw new Error(`Assertion failed: Unsupported workflow`);
+        const workflow = workflows.get(effectivePackageManager);
+        if (typeof workflow === `undefined`)
+          throw new Error(`Assertion failed: Unsupported workflow`);
 
-      const code = await workflow();
-      if (code === 0 || typeof code === `undefined`)
-        return;
+        const code = await workflow();
+        if (code === 0 || typeof code === `undefined`)
+          return;
 
-      xfs.detachTemp(logDir);
-      throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Packing the package failed (exit code ${code}, logs can be found here: ${logFile})`);
+        xfs.detachTemp(logDir);
+        throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Packing the package failed (exit code ${code}, logs can be found here: ${logFile})`);
+      });
     });
   });
 }
