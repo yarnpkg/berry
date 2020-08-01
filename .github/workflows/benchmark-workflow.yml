@@ -10,6 +10,7 @@ jobs:
       matrix:
         benchmark:
           - [Next.js, next]
+          - [Gatsby, gatsby]
         packageManager:
           - yarn
           - yarn-nm
