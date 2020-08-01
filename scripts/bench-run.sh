@@ -9,7 +9,7 @@ cd "${TEMP_DIR}"
 
 bench() {
   SUBTEST_NAME=$1; shift
-  hyperfine --export-json=bench-$SUBTEST_NAME.json --min-runs=10 --warmup=1 "$@"
+  hyperfine --show-output --export-json=bench-$SUBTEST_NAME.json --min-runs=10 --warmup=1 "$@"
 }
 
 PACKAGE_MANAGER=$1; shift
@@ -24,10 +24,16 @@ else
   echo "Reflink aren't supported! Installs may be quite slower than necessary"
 fi
 
+setup-yarn2() {
+  >> "$TEMP_DIR/.yarnrc.yml" echo \
+    "globalFolder: '${TEMP_DIR}/.yarn-global'"
+  >> "$TEMP_DIR/.yarnrc.yml" echo \
+    "yarnPath: '${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js'"
+}
+
 case $PACKAGE_MANAGER in
   yarn)
-    export YARN_GLOBAL_FOLDER="${TEMP_DIR}/.yarn-global"
-    export YARN_YARN_PATH="${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js"
+    setup-yarn2
     bench install-full-cold \
       --prepare 'rm -rf .yarn .pnp.* yarn.lock && yarn cache clean --all' \
       'yarn install'
@@ -41,8 +47,7 @@ case $PACKAGE_MANAGER in
       'yarn install'
     ;;
   yarn-nm)
-    export YARN_GLOBAL_FOLDER="${TEMP_DIR}/.yarn-global"
-    export YARN_YARN_PATH="${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js"
+    setup-yarn2
     bench install-full-cold \
       --prepare 'rm -rf .yarn node_modules yarn.lock && yarn cache clean --all' \
       'YARN_NODE_LINKER=node-modules yarn install'
