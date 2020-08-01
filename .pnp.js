@@ -9282,6 +9282,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["git-url-parse", "npm:11.1.2"],
+            ["p-limit", "npm:2.2.0"],
             ["semver", "npm:7.3.2"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -9299,6 +9300,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["git-url-parse", "npm:11.1.2"],
+            ["p-limit", "npm:2.2.0"],
             ["semver", "npm:7.3.2"],
             ["tslib", "npm:1.13.0"]
           ],

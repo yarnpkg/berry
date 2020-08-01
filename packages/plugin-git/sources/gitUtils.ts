@@ -1,5 +1,6 @@
 import {Configuration, Locator, execUtils, structUtils} from '@yarnpkg/core';
 import {npath, xfs}                                     from '@yarnpkg/fslib';
+import pLimit                                           from 'p-limit';
 import querystring                                      from 'querystring';
 import semver                                           from 'semver';
 
@@ -269,24 +270,29 @@ export async function resolveUrl(url: string, configuration: Configuration) {
   return `${repo}#${resolve(protocol, request)}`;
 }
 
+const MAX_CLONE_CONCURRENCY = 2;
+const prepareLimit = pLimit(MAX_CLONE_CONCURRENCY);
+
 export async function clone(url: string, configuration: Configuration) {
   if (!configuration.get(`enableNetwork`))
     throw new Error(`Network access has been disabled by configuration (${url})`);
 
-  const {repo, treeish: {protocol, request}} = splitRepoUrl(url);
-  if (protocol !== `commit`)
-    throw new Error(`Invalid treeish protocol when cloning`);
+  return await prepareLimit(async () => {
+    const {repo, treeish: {protocol, request}} = splitRepoUrl(url);
+    if (protocol !== `commit`)
+      throw new Error(`Invalid treeish protocol when cloning`);
 
-  const directory = await xfs.mktempPromise();
-  const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};
+    const directory = await xfs.mktempPromise();
+    const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};
 
-  try {
-    await execUtils.execvp(`git`, [`clone`, `-c core.autocrlf=false`, normalizeRepoUrl(repo, {git: true}), npath.fromPortablePath(directory)], execOpts);
-    await execUtils.execvp(`git`, [`checkout`, `${request}`], execOpts);
-  } catch (error) {
-    error.message = `Repository clone failed: ${error.message}`;
-    throw error;
-  }
+    try {
+      await execUtils.execvp(`git`, [`clone`, `-c core.autocrlf=false`, normalizeRepoUrl(repo, {git: true}), npath.fromPortablePath(directory)], execOpts);
+      await execUtils.execvp(`git`, [`checkout`, `${request}`], execOpts);
+    } catch (error) {
+      error.message = `Repository clone failed: ${error.message}`;
+      throw error;
+    }
 
-  return directory;
+    return directory;
+  });
 }

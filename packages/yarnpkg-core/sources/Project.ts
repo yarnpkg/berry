@@ -574,8 +574,6 @@ export class Project {
       nextResolutionPass.add(workspaceDescriptor.descriptorHash);
     }
 
-    const limit = pLimit(10);
-
     while (nextResolutionPass.size !== 0) {
       const currentResolutionPass = nextResolutionPass;
       nextResolutionPass = new Set();
@@ -653,7 +651,7 @@ export class Project {
       // match the given ranges. That will give us a set of candidate references
       // for each descriptor.
 
-      const passCandidates = new Map(await Promise.all(Array.from(currentResolutionPass).map(descriptorHash => limit(async () => {
+      const passCandidates = new Map(await Promise.all(Array.from(currentResolutionPass).map(async descriptorHash => {
         const descriptor = allDescriptors.get(descriptorHash);
         if (typeof descriptor === `undefined`)
           throw new Error(`Assertion failed: The descriptor should have been registered`);
@@ -674,7 +672,7 @@ export class Project {
           throw new Error(`No candidate found for ${structUtils.prettyDescriptor(this.configuration, descriptor)}`);
 
         return [descriptor.descriptorHash, candidateLocators] as [DescriptorHash, Array<Locator>];
-      }))));
+      })));
 
       // That's where we'll store our resolutions until everything has been
       // resolved and can be injected into the various stores.
