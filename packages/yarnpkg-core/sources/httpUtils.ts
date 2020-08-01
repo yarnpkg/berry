@@ -83,7 +83,6 @@ export async function request(target: string, body: Body, {configuration, header
 
   //@ts-ignore
   const gotClient = got.extend({
-    http2: true,
     timeout: {
       socket: socketTimeout,
     },
