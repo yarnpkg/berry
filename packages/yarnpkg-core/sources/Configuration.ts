@@ -1,11 +1,13 @@
-import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
 import {DEFAULT_COMPRESSION_LEVEL}                 from '@yarnpkg/fslib';
+import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                  from '@yarnpkg/parsers';
 import camelcase                                   from 'camelcase';
 import chalk                                       from 'chalk';
 import {isCI}                                      from 'ci-info';
 import {UsageError}                                from 'clipanion';
+import pLimit, {Limit}                             from 'p-limit';
 import semver                                      from 'semver';
+
 import {PassThrough, Writable}                     from 'stream';
 
 import {CorePlugin}                                from './CorePlugin';
@@ -365,6 +367,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.NUMBER,
     default: 3,
   },
+  networkConcurrency: {
+    description: `Maximal number of concurrent requests`,
+    type: SettingsType.NUMBER,
+    default: Infinity,
+  },
 
   // Settings related to telemetry
   enableTelemetry: {
@@ -691,6 +698,8 @@ export class Configuration {
     changes: Set<string>,
     patch: (pkg: Package) => void,
   }>> = new Map();
+
+  public limits: Map<string, Limit> = new Map();
 
   /**
    * Instantiate a new configuration object with the default values from the
@@ -1313,6 +1322,12 @@ export class Configuration {
     pkg.peerDependencies = new Map(miscUtils.sortMap(pkg.peerDependencies, ([, descriptor]) => structUtils.stringifyDescriptor(descriptor)));
 
     return pkg;
+  }
+
+  getLimit(key: string) {
+    return miscUtils.getFactoryWithDefault(this.limits, key, () => {
+      return pLimit(this.get<number>(key));
+    });
   }
 
   async triggerHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, ...args: U): Promise<void> {

@@ -90,7 +90,9 @@ export async function request(target: string, body: Body, {configuration, header
     ...gotOptions,
   });
 
-  return gotClient(target) as unknown as Response<any>;
+  return configuration.getLimit(`networkConcurrency`)(() => {
+    return gotClient(target) as unknown as Response<any>;
+  });
 }
 
 export async function get(target: string, {configuration, json, ...rest}: Options) {

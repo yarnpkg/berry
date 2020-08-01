@@ -216,6 +216,11 @@
       "format": "uri-reference",
       "default": "yarn.lock"
     },
+    "networkConcurrency": {
+      "description": "Defines how many requests are allowed to run at the same time. By default Yarn doesn't put limits on it, but it may sometimes be required when working behind proxies that don't handle too well large amount of requests.",
+      "type": "number",
+      "default": 8
+    },
     "nodeLinker": {
       "description": "Defines what linker should be used for installing Node packages (useful to enable the node-modules plugin), one of: `pnp`, `node-modules`.",
       "type": "string",
