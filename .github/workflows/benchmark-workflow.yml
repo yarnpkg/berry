@@ -1,6 +1,7 @@
 on:
   schedule:
   - cron: '0 2-23/4 * * *'
+  workflow_dispatch: {}
 
 name: 'Performance tests'
 jobs:
