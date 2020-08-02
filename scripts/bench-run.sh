@@ -2,18 +2,18 @@
 
 set -e
 
-HERE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-TEMP_DIR="$(mktemp -d)"
+PACKAGE_MANAGER=$1; shift
+TEST_NAME=$1; shift
+BENCH_DIR=$1; shift
 
-cd "${TEMP_DIR}"
+HERE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
+cd "$BENCH_DIR"
 
 bench() {
   SUBTEST_NAME=$1; shift
-  hyperfine --show-output --export-json=bench-$SUBTEST_NAME.json --min-runs=10 --warmup=1 "$@"
+  hyperfine --export-json=bench-$SUBTEST_NAME.json --min-runs=10 --warmup=1 "$@"
 }
-
-PACKAGE_MANAGER=$1; shift
-TEST_NAME=$1; shift
 
 cp "$HERE_DIR"/benchmarks/"$TEST_NAME".json package.json
 
@@ -25,9 +25,9 @@ else
 fi
 
 setup-yarn2() {
-  >> "$TEMP_DIR/.yarnrc.yml" echo \
-    "globalFolder: '${TEMP_DIR}/.yarn-global'"
-  >> "$TEMP_DIR/.yarnrc.yml" echo \
+  >> "$BENCH_DIR/.yarnrc.yml" echo \
+    "globalFolder: '${BENCH_DIR}/.yarn-global'"
+  >> "$BENCH_DIR/.yarnrc.yml" echo \
     "yarnPath: '${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js'"
 }
 
@@ -90,5 +90,3 @@ case $PACKAGE_MANAGER in
     echo "Invalid package manager ${$1}"
     return 1;;
 esac
-
-(cd "$HERE_DIR" && yarn node ./submit-bench-data.js "$PACKAGE_MANAGER" "$TEST_NAME" "$TEMP_DIR")

@@ -1,7 +1,12 @@
 on:
   schedule:
   - cron: '0 2-23/4 * * *'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      sendReport:
+        description: 'Whether to send the stats to the Datadog dashboards'
+        required: true
+        default: 'false'
 
 name: 'Performance tests'
 jobs:
@@ -45,8 +50,17 @@ jobs:
             npm install -g pnpm;;
         esac
 
+    - name: 'Creates a temporary directory'
+      run: |
+        BENCH_DIR=$(mktemp -d)
+        echo "::set-env name=BENCH_DIR::$BENCH_DIR"
+
     - name: 'Run the performance test'
       run: |
-        bash scripts/bench-run.sh '${{matrix.packageManager}}' '${{matrix.benchmark[1]}}'
+        bash scripts/bench-run.sh '${{matrix.packageManager}}' '${{matrix.benchmark[1]}}' "$BENCH_DIR"
+
+        if [[ '${{github.event.inputs.sendReport}}' != 'false' ]]; then
+          yarn node scripts/submit-bench-data.js '${{matrix.packageManager}}' '${{matrix.benchmark[1]}}' "$BENCH_DIR"
+        fi
       env:
         DD_API_KEY: ${{secrets.DD_API_KEY}}

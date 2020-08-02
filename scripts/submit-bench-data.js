@@ -1,7 +1,6 @@
 const fs = require(`fs`);
 const https = require(`https`);
 const path = require(`path`);
-const util = require(`util`);
 
 const packageManager = process.argv[2];
 const testName = process.argv[3];
@@ -18,18 +17,18 @@ const now = Math.floor(Date.now() / 1000);
 const series = [];
 
 if (process.env.GITHUB_EVENT_PATH)
-  console.log(fs.readFileSync(process.env.GITHUB_EVENT_PATH));
+  console.log(fs.readFileSync(process.env.GITHUB_EVENT_PATH, `utf8`));
 
 for (const entry of benchmarkEntries) {
   const subtestName = entry.match(BENCHMARK)[1];
 
   const data = JSON.parse(fs.readFileSync(path.join(benchDir, entry), `utf8`));
-  const points = [now, data.results[0].mean];
+  const points = [[now, data.results[0].mean]];
 
   series.push({
     metric: `perftest.duration`,
     type: `gauge`,
-    tags: [`pm:${packageManager}`, `test:${testName}`, `subtest:${subtestName}`, `iteration:2`],
+    tags: [`pm:${packageManager}`, `test:${testName}`, `subtest:${subtestName}`, `iteration:3`],
     points: points.map(([timestamp, value]) => [timestamp, value]),
   });
 }
