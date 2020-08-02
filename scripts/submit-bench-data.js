@@ -17,21 +17,20 @@ const benchmarkEntries = entries.filter(entry => {
 const now = Math.floor(Date.now() / 1000);
 const series = [];
 
+if (process.env.GITHUB_EVENT_PATH)
+  console.log(fs.readFileSync(process.env.GITHUB_EVENT_PATH));
+
 for (const entry of benchmarkEntries) {
   const subtestName = entry.match(BENCHMARK)[1];
 
   const data = JSON.parse(fs.readFileSync(path.join(benchDir, entry), `utf8`));
-  const points = data.results[0].times.map((timing, t) => [now + t * 10, timing]);
-
-  const mean = points.reduce((acc, point) => acc + point[1], 0) / points.length;
-  if (mean !== data.results[0].mean)
-    throw new Error(`Invalid data extraction (${mean} instead of ${data.results[0].mean})`);
+  const points = [now, data.results[0].mean];
 
   series.push({
     metric: `perftest.duration`,
     type: `gauge`,
-    tags: [`pm:${packageManager}`, `test:${testName}`, `subtest:${subtestName}`],
-    points: points.map(([timestamp, value]) => [`${timestamp}`, `${value}`]),
+    tags: [`pm:${packageManager}`, `test:${testName}`, `subtest:${subtestName}`, `iteration:2`],
+    points: points.map(([timestamp, value]) => [timestamp, value]),
   });
 }
 
