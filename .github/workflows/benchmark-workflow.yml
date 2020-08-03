@@ -18,6 +18,7 @@ jobs:
           - [Next.js, next]
           - [Gatsby, gatsby]
         packageManager:
+          - classic
           - yarn
           - yarn-nm
           - npm
@@ -48,6 +49,8 @@ jobs:
             npm install -g npm;;
           pnpm)
             npm install -g pnpm;;
+          classic)
+            npm install -g yarn;;
         esac
 
     - name: 'Creates a temporary directory'
