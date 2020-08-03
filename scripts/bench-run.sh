@@ -32,6 +32,19 @@ setup-yarn2() {
 }
 
 case $PACKAGE_MANAGER in
+  classic)
+    bench install-full-cold \
+      --prepare 'rm -rf node_modules yarn.lock && yarn cache clean' \
+      'yarn install'
+    bench install-cache-only \
+      --prepare 'rm -rf node_modules yarn.lock' \
+      'yarn install'
+    bench install-cache-and-lock \
+      --prepare 'rm -rf node_modules' \
+      'yarn install'
+    bench install-ready \
+      'yarn install'
+    ;;
   yarn)
     setup-yarn2
     bench install-full-cold \
