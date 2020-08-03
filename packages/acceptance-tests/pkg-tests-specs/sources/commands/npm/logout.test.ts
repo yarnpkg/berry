@@ -1,5 +1,5 @@
 import {Filename, xfs} from '@yarnpkg/fslib';
-import {fs, yarn}      from 'pkg-tests-core';
+import {yarn}          from 'pkg-tests-core';
 
 const SPEC_RC_FILENAME = `.spec-yarnrc` as Filename;
 
