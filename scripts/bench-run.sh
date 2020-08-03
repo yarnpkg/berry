@@ -29,8 +29,6 @@ setup-yarn2() {
     "globalFolder: '${BENCH_DIR}/.yarn-global'"
   >> "$BENCH_DIR/.yarnrc.yml" echo \
     "yarnPath: '${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js'"
-  >> "$BENCH_DIR/.yarnrc.yml" echo \
-    "enableScripts: false"
 }
 
 case $PACKAGE_MANAGER in
@@ -65,28 +63,28 @@ case $PACKAGE_MANAGER in
   npm)
     bench install-full-cold \
       --prepare 'rm -rf node_modules package-lock.json && npm cache clean --force' \
-      'npm install --ignore-scripts'
+      'npm install'
     bench install-cache-only \
       --prepare 'rm -rf node_modules package-lock.json' \
-      'npm install --ignore-scripts'
+      'npm install'
     bench install-cache-and-lock \
       --prepare 'rm -rf node_modules' \
-      'npm install --ignore-scripts'
+      'npm install'
     bench install-ready \
-      'npm install --ignore-scripts'
+      'npm install'
     ;;
   pnpm)
     bench install-full-cold \
       --prepare 'rm -rf node_modules pnpm-lock.yaml ~/.pnpm-store' \
-      'pnpm install --ignore-scripts'
+      'pnpm install'
     bench install-cache-only \
       --prepare 'rm -rf node_modules pnpm-lock.yaml' \
-      'pnpm install --ignore-scripts'
+      'pnpm install'
     bench install-cache-and-lock \
       --prepare 'rm -rf node_modules' \
-      'pnpm install --ignore-scripts'
+      'pnpm install'
     bench install-ready \
-      'pnpm install --ignore-scripts'
+      'pnpm install'
     ;;
   *)
     echo "Invalid package manager ${$1}"
