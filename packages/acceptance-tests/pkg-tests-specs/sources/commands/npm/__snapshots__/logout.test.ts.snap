@@ -5,7 +5,7 @@ Object {
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Successfully logged out from everything
-➤ YN0000: Successfully logged out from the registry
+➤ YN0000: Successfully logged out from http://yarn.test.registry
 ➤ YN0000: Done
 ",
 }
@@ -15,7 +15,7 @@ exports[`Commands npm logout should logout a user from the default registry when
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: Successfully logged out from the registry
+  "stdout": "➤ YN0000: Successfully logged out from http://yarn.test.registry
 ➤ YN0000: Done
 ",
 }
@@ -25,7 +25,7 @@ exports[`Commands npm logout should logout a user from the publish registry when
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: Successfully logged out from the registry
+  "stdout": "➤ YN0000: Successfully logged out from https://npm.pkg.github.com
 ➤ YN0000: Done
 ",
 }
@@ -35,7 +35,7 @@ exports[`Commands npm logout should logout a user from the scope registry when t
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: Successfully logged out from the scope
+  "stdout": "➤ YN0000: Successfully logged out from first
 ➤ YN0000: Done
 ",
 }

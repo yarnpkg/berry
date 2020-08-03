@@ -57,14 +57,15 @@ export default class DlxCommand extends BaseCommand {
       if (sourceYarnrc !== null && xfs.existsSync(sourceYarnrc)) {
         await xfs.copyFilePromise(sourceYarnrc, targetYarnrc);
 
-        await Configuration.updateConfiguration(tmpDir, (current: any) => {
-          if (typeof current.plugins === `undefined`)
-            return {enableGlobalCache: true, enableTelemetry: false};
-
-          return {
+        await Configuration.updateConfiguration(tmpDir, current => {
+          const nextConfiguration: {[key: string]: unknown} = {
+            ...current,
             enableGlobalCache: true,
             enableTelemetry: false,
-            plugins: current.plugins.map((plugin: any) => {
+          };
+
+          if (Array.isArray(current.plugins)) {
+            nextConfiguration.plugins = current.plugins.map((plugin: any) => {
               const sourcePath: NativePath = typeof plugin === `string`
                 ? plugin
                 : plugin.path;
@@ -78,8 +79,10 @@ export default class DlxCommand extends BaseCommand {
               } else {
                 return {path: remapPath, spec: plugin.spec};
               }
-            }),
-          };
+            });
+          }
+
+          return nextConfiguration;
         });
       } else {
         await xfs.writeFilePromise(targetYarnrc, `enableGlobalCache: true\nenableTelemetry: false\n`);
