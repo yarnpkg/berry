@@ -16,6 +16,6 @@ export async function readManifest(dir: PortablePath, {key, filename = Filename.
   return key != null ? data?.[key] : data;
 }
 
-export function getRelativePluginPath(name: string) {
-  return `.yarn/plugins/${name}.cjs` as PortablePath;
+export function getPluginPath(dir: PortablePath, name: string) {
+  return ppath.join(dir, `.yarn/plugins/${name}.cjs` as PortablePath);
 }
