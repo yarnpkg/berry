@@ -442,8 +442,8 @@ export class Project {
       deleteDescriptor(dataStructure.descriptorHash);
 
       // We delete unused locators
-      const resolutions = new Set(this.storedResolutions.values());
-      if (typeof locatorHash !== `undefined` && !resolutions.has(locatorHash)) {
+      const remainingResolutions = new Set(this.storedResolutions.values());
+      if (typeof locatorHash !== `undefined` && !remainingResolutions.has(locatorHash)) {
         deleteLocator(locatorHash);
       }
     }
