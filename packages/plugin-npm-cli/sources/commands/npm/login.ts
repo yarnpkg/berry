@@ -1,10 +1,10 @@
-import {BaseCommand, openWorkspace}         from '@yarnpkg/cli';
-import {Configuration, MessageName, Report} from '@yarnpkg/core';
-import {StreamReport}                       from '@yarnpkg/core';
-import {PortablePath}                       from '@yarnpkg/fslib';
-import {npmConfigUtils, npmHttpUtils}       from '@yarnpkg/plugin-npm';
-import {Command, Usage}                     from 'clipanion';
-import {prompt}                             from 'enquirer';
+import {BaseCommand, openWorkspace}                    from '@yarnpkg/cli';
+import {Configuration, MessageName, Report, miscUtils} from '@yarnpkg/core';
+import {StreamReport}                                  from '@yarnpkg/core';
+import {PortablePath}                                  from '@yarnpkg/fslib';
+import {npmConfigUtils, npmHttpUtils}                  from '@yarnpkg/plugin-npm';
+import {Command, Usage}                                from 'clipanion';
+import {prompt}                                        from 'enquirer';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmLoginCommand extends BaseCommand {
@@ -57,8 +57,8 @@ export default class NpmLoginCommand extends BaseCommand {
         stdin: this.context.stdin as NodeJS.ReadStream,
         stdout: this.context.stdout as NodeJS.WriteStream,
       });
-      const url = `/-/user/org.couchdb.user:${encodeURIComponent(credentials.name)}`;
 
+      const url = `/-/user/org.couchdb.user:${encodeURIComponent(credentials.name)}`;
       const response = await npmHttpUtils.put(url, credentials, {
         attemptedAs: credentials.name,
         configuration,
@@ -89,27 +89,30 @@ export async function getRegistry({scope, publish, configuration, cwd}: {scope?:
 }
 
 async function setAuthToken(registry: string, npmAuthToken: string, {configuration, scope}: {configuration: Configuration, scope?: string}) {
-  if (scope) {
-    return await Configuration.updateHomeConfiguration({
-      npmScopes: (scopes: {[key: string]: any} = {}) => ({
-        ...scopes,
-        [scope]: {
-          ...scopes[scope],
-          npmAuthToken,
-        },
-      }),
-    });
-  }
+  const makeUpdater = (entryName: string) => (unknownStore: unknown) => {
+    const store = miscUtils.isIndexableObject(unknownStore)
+      ? unknownStore
+      : {};
 
-  return await Configuration.updateHomeConfiguration({
-    npmRegistries: (registries: {[key: string]: any} = {}) => ({
-      ...registries,
-      [registry]: {
-        ...registries[registry],
+    const entryUnknown = store[entryName];
+    const entry = miscUtils.isIndexableObject(entryUnknown)
+      ? entryUnknown
+      : {};
+
+    return {
+      ...store,
+      [entryName]: {
+        ...entry,
         npmAuthToken,
       },
-    }),
-  });
+    };
+  };
+
+  const update = scope
+    ? {npmScopes: makeUpdater(scope)}
+    : {npmRegistries: makeUpdater(registry)};
+
+  return await Configuration.updateHomeConfiguration(update);
 }
 
 async function getCredentials({registry, report, stdin, stdout}: {registry: string, report: Report, stdin: NodeJS.ReadStream, stdout: NodeJS.WriteStream}) {

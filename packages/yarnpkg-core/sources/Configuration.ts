@@ -909,6 +909,7 @@ export class Configuration {
     configuration.useWithSource(`<environment>`, excludeCoreFields(environmentSettings), startingCwd, {strict});
     for (const {path, cwd, data} of rcFiles)
       configuration.useWithSource(path, excludeCoreFields(data), cwd, {strict});
+
     // The home configuration is never strict because it improves support for
     // multiple projects using different Yarn versions on the same machine
     if (homeRcFile)
@@ -1005,7 +1006,7 @@ export class Configuration {
     return projectCwd;
   }
 
-  static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: any} | ((current: any) => any)) {
+  static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: ((current: unknown) => unknown) | {} | undefined} | ((current: {[key: string]: unknown}) => {[key: string]: unknown})) {
     const rcFilename = getRcFilename();
     const configurationPath =  ppath.join(cwd, rcFilename as PortablePath);
 
@@ -1014,35 +1015,54 @@ export class Configuration {
       : {};
 
     let patched = false;
+    let replacement: {[key: string]: unknown};
 
-    if (typeof patch === `function`)
-      patch = patch(current);
-    if (typeof patch === `function`)
-      throw new Error(`Assertion failed: Invalid configuration type`);
+    if (typeof patch === `function`) {
+      try {
+        replacement = patch(current);
+      } catch {
+        replacement = patch({});
+      }
 
-    for (const key of Object.keys(patch)) {
-      const currentValue = current[key];
+      if (replacement === current) {
+        return;
+      }
+    } else {
+      replacement = current;
 
-      const nextValue = typeof patch[key] === `function`
-        ? patch[key](currentValue)
-        : patch[key];
+      for (const key of Object.keys(patch)) {
+        const currentValue = current[key];
+        const patchField = patch[key];
 
-      if (currentValue === nextValue)
-        continue;
+        let nextValue: unknown;
+        if (typeof patchField === `function`) {
+          try {
+            nextValue = patchField(currentValue);
+          } catch {
+            nextValue = patchField(undefined);
+          }
+        } else {
+          nextValue = patchField;
+        }
 
-      current[key] = nextValue;
-      patched = true;
+        if (currentValue === nextValue)
+          continue;
+
+        replacement[key] = nextValue;
+        patched = true;
+      }
+
+      if (!patched) {
+        return;
+      }
     }
 
-    if (!patched)
-      return;
-
-    await xfs.changeFilePromise(configurationPath, stringifySyml(current), {
+    await xfs.changeFilePromise(configurationPath, stringifySyml(replacement), {
       automaticNewlines: true,
     });
   }
 
-  static async updateHomeConfiguration(patch: {[key: string]: any} | ((current: any) => any)) {
+  static async updateHomeConfiguration(patch: {[key: string]: ((current: unknown) => unknown) | {} | undefined} | ((current: {[key: string]: unknown}) => {[key: string]: unknown})) {
     const homeFolder = folderUtils.getHomeFolder();
 
     return await Configuration.updateConfiguration(homeFolder, patch);

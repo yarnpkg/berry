@@ -41,6 +41,10 @@ export function mapAndFind<In, Out>(iterable: Iterable<In>, cb: (value: In) => O
 const mapAndFindSkip = Symbol();
 mapAndFind.skip = mapAndFindSkip;
 
+export function isIndexableObject(value: unknown): value is {[key: string]: unknown} {
+  return typeof value === `object` && value !== null;
+}
+
 export function getFactoryWithDefault<K, T>(map: Map<K, T>, key: K, factory: () => T) {
   let value = map.get(key);
 
