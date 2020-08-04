@@ -117,6 +117,7 @@ export class TelemetryManager {
     if (nextUpdate > now && content.lastUpdate != null)
       return;
 
+    xfs.mkdirSync(ppath.dirname(registryFile), {recursive: true});
     xfs.writeJsonSync(registryFile, {
       lastUpdate: now,
     });
@@ -182,6 +183,7 @@ export class TelemetryManager {
       }
     }
 
+    xfs.mkdirSync(ppath.dirname(registryFile), {recursive: true});
     xfs.writeJsonSync(registryFile, content);
   }
 

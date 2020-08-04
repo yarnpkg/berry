@@ -2,6 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}                              from '
 import {Cache, Configuration, Manifest, Project, StreamReport, Workspace} from '@yarnpkg/core';
 import {structUtils}                                                      from '@yarnpkg/core';
 import {Command, Usage}                                                   from 'clipanion';
+import * as yup                                                           from 'yup';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesFocus extends BaseCommand {
@@ -14,6 +15,9 @@ export default class WorkspacesFocus extends BaseCommand {
   @Command.Boolean(`--production`)
   production: boolean = false;
 
+  @Command.Boolean(`-A,--all`)
+  all: boolean = false;
+
   static usage: Usage = Command.Usage({
     category: `Workspace-related commands`,
     description: `install a single workspace and its dependencies`,
@@ -22,10 +26,21 @@ export default class WorkspacesFocus extends BaseCommand {
 
       Note that this command is only very moderately useful when using zero-installs, since the cache will contain all the packages anyway - meaning that the only difference between a full install and a focused install would just be a few extra lines in the \`.pnp.js\` file, at the cost of introducing an extra complexity.
 
+      If the \`-A,--all\` flag is set, the entire project will be installed. Combine with \`--production\` to replicate the old \`yarn install --production\`.
+
       If the \`--production\` flag is set, only regular dependencies will be installed, and dev dependencies will be omitted.
 
       If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
     `,
+  });
+
+  static schema = yup.object().shape({
+    all: yup.bool(),
+    workspaces: yup.array().when(`all`, {
+      is: true,
+      then: yup.array().max(0, `Cannot specify workspaces when using the --all flag`),
+      otherwise: yup.array(),
+    }),
   });
 
   @Command.Path(`workspaces`, `focus`)
@@ -35,7 +50,9 @@ export default class WorkspacesFocus extends BaseCommand {
     const cache = await Cache.find(configuration);
 
     let requiredWorkspaces: Set<Workspace>;
-    if (this.workspaces.length === 0) {
+    if (this.all) {
+      requiredWorkspaces = new Set(project.workspaces);
+    } else if (this.workspaces.length === 0) {
       if (!workspace)
         throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 

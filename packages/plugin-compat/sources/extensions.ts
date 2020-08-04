@@ -75,4 +75,10 @@ export const packageExtensions: Array<[string, any]> = [
       [`tiny-warning`]: `^1.0.2`,
     },
   }],
+  // https://github.com/vadimdemedes/ink-select-input/pull/26
+  [`ink-select-input@*`, {
+    peerDependencies: {
+      react: `^16.8.2`,
+    },
+  }],
 ];

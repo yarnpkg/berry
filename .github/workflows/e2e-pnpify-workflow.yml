@@ -37,6 +37,6 @@ jobs:
 
         yarn add @yarnpkg/pnpify @angular-devkit/core@next @babel/preset-env @babel/core -D
 
-        yarn unplug @angular/platform-browser @angular/core @angular/common @angular/compiler-cli
+        yarn unplug -AR @angular/platform-browser @angular/core @angular/common @angular/compiler-cli
 
         yarn pnpify ng build --aot

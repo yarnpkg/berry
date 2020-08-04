@@ -5,6 +5,7 @@
     "_zip_close",
     "_zip_error_init_with_code",
     "_zip_error_strerror",
+    "_zip_delete",
     "_zip_dir_add",
     "_zip_discard",
     "_zip_fclose",
@@ -45,6 +46,8 @@
     "_zipstruct_stat_mtime",
     "_zipstruct_error",
     "_zipstruct_errorS",
+    "_zipstruct_stat_comp_size",
+    "_zipstruct_stat_comp_method",
 
     "_zip_ext_count_symlinks"
 ]

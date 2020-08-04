@@ -1,10 +1,10 @@
-import {PortablePath, toFilename} from '@yarnpkg/fslib';
+import {PortablePath, Filename} from '@yarnpkg/fslib';
 
-import * as stageUtils            from '../stageUtils';
+import * as stageUtils          from '../stageUtils';
 
 export const Driver = {
   async findRoot(cwd: PortablePath) {
-    return await stageUtils.findVcsRoot(cwd, {marker: toFilename(`.hg`)});
+    return await stageUtils.findVcsRoot(cwd, {marker: `.hg` as Filename});
   },
 
   async filterChanges(cwd: string, paths: Set<string>, filenames: Set<string>) {

@@ -36,8 +36,11 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   @Command.Proxy()
   args: Array<string> = [];
 
-  @Command.Boolean(`-a,--all`)
-  all: boolean = false;
+  @Command.Boolean(`-a`, {hidden: true})
+  allLegacy: boolean = false;
+
+  @Command.Boolean(`-A,--all`)
+  all?: boolean;
 
   @Command.Boolean(`-v,--verbose`)
   verbose: boolean = false;
@@ -87,7 +90,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       - If \`-t,--topological\` is set, Yarn will only run the command after all workspaces that depend on it through the \`dependencies\` field have successfully finished executing. If \`--topological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
 
-      - If \`--all\` is set, Yarn will run the command on all the workspaces of a project. By default yarn runs the command only on current and all its descendant workspaces.
+      - If \`-A,--all\` is set, Yarn will run the command on all the workspaces of a project. By default yarn runs the command only on current and all its descendant workspaces.
 
       - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
@@ -112,7 +115,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace: cwdWorkspace} = await Project.find(configuration, this.context.cwd);
 
-    if (!this.all && !cwdWorkspace)
+    const all = this.all ?? this.allLegacy;
+    if (!all && !cwdWorkspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const command = this.cli.process([this.commandName, ...this.args]) as {path: Array<string>, scriptName?: string};
@@ -123,7 +127,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (command.path.length === 0)
       throw new UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
 
-    const rootWorkspace = this.all
+    const rootWorkspace = all
       ? project.topLevelWorkspace
       : cwdWorkspace!;
 
@@ -166,11 +170,16 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     let commandCount = 0;
     let finalExitCode: number | null = null;
 
+    let abortNextCommands = false;
+
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
     }, async report => {
       const runCommand = async (workspace: Workspace, {commandIndex}: {commandIndex: number}) => {
+        if (abortNextCommands)
+          return -1;
+
         if (!this.parallel && this.verbose && commandIndex > 1)
           report.reportSeparator();
 
@@ -194,6 +203,13 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
           if (this.verbose && emptyStdout && emptyStderr)
             report.reportInfo(null, `${prefix} Process exited without output (exit code ${exitCode})`);
+
+          if (exitCode === 130) {
+            // Process exited with the SIGINT signal, aka ctrl+c. Since the process didn't handle
+            // the signal but chose to exit, we should exit as well.
+            abortNextCommands = true;
+            finalExitCode = exitCode;
+          }
 
           return exitCode;
         } catch (err) {
@@ -275,7 +291,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
         // The order in which the exit codes will be processed is fairly
         // opaque, so better just return a generic "1" for determinism.
-        finalExitCode = typeof errorCode !== `undefined` ? 1 : finalExitCode;
+        if (finalExitCode === null)
+          finalExitCode = typeof errorCode !== `undefined` ? 1 : finalExitCode;
 
         if ((this.topological || this.topologicalDev) && typeof errorCode !== `undefined`) {
           report.reportError(MessageName.UNNAMED, `The command failed for workspaces that are depended upon by other workspaces; can't satisfy the dependency graph`);

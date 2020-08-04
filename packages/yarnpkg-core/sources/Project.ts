@@ -1,40 +1,40 @@
-import {PortablePath, ppath, toFilename, xfs, normalizeLineEndings, Filename, npath} from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                    from '@yarnpkg/parsers';
-import {UsageError}                                                                  from 'clipanion';
-import {createHash}                                                                  from 'crypto';
-import {structuredPatch}                                                             from 'diff';
+import {PortablePath, ppath, xfs, normalizeLineEndings, Filename} from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                 from '@yarnpkg/parsers';
+import {UsageError}                                               from 'clipanion';
+import {createHash}                                               from 'crypto';
+import {structuredPatch}                                          from 'diff';
 // @ts-ignore
-import Logic                                                                         from 'logic-solver';
-import pLimit                                                                        from 'p-limit';
-import semver                                                                        from 'semver';
-import {promisify}                                                                   from 'util';
-import v8                                                                            from 'v8';
-import zlib                                                                          from 'zlib';
+import Logic                                                      from 'logic-solver';
+import pLimit                                                     from 'p-limit';
+import semver                                                     from 'semver';
+import {promisify}                                                from 'util';
+import v8                                                         from 'v8';
+import zlib                                                       from 'zlib';
 
-import {Cache}                                                                       from './Cache';
-import {Configuration, FormatType}                                                   from './Configuration';
-import {Fetcher}                                                                     from './Fetcher';
-import {Installer, BuildDirective, BuildType}                                        from './Installer';
-import {LegacyMigrationResolver}                                                     from './LegacyMigrationResolver';
-import {Linker}                                                                      from './Linker';
-import {LockfileResolver}                                                            from './LockfileResolver';
-import {DependencyMeta, Manifest}                                                    from './Manifest';
-import {MessageName}                                                                 from './MessageName';
-import {MultiResolver}                                                               from './MultiResolver';
-import {Report, ReportError}                                                         from './Report';
-import {ResolveOptions, Resolver}                                                    from './Resolver';
-import {RunInstallPleaseResolver}                                                    from './RunInstallPleaseResolver';
-import {ThrowReport}                                                                 from './ThrowReport';
-import {Workspace}                                                                   from './Workspace';
-import {isFolderInside}                                                              from './folderUtils';
-import * as hashUtils                                                                from './hashUtils';
-import * as miscUtils                                                                from './miscUtils';
-import * as scriptUtils                                                              from './scriptUtils';
-import * as semverUtils                                                              from './semverUtils';
-import * as structUtils                                                              from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash}                                      from './types';
-import {Descriptor, Ident, Locator, Package}                                         from './types';
-import {LinkType}                                                                    from './types';
+import {Cache}                                                    from './Cache';
+import {Configuration, FormatType}                                from './Configuration';
+import {Fetcher}                                                  from './Fetcher';
+import {Installer, BuildDirective, BuildType}                     from './Installer';
+import {LegacyMigrationResolver}                                  from './LegacyMigrationResolver';
+import {Linker}                                                   from './Linker';
+import {LockfileResolver}                                         from './LockfileResolver';
+import {DependencyMeta, Manifest}                                 from './Manifest';
+import {MessageName}                                              from './MessageName';
+import {MultiResolver}                                            from './MultiResolver';
+import {Report, ReportError}                                      from './Report';
+import {ResolveOptions, Resolver}                                 from './Resolver';
+import {RunInstallPleaseResolver}                                 from './RunInstallPleaseResolver';
+import {ThrowReport}                                              from './ThrowReport';
+import {Workspace}                                                from './Workspace';
+import {isFolderInside}                                           from './folderUtils';
+import * as hashUtils                                             from './hashUtils';
+import * as miscUtils                                             from './miscUtils';
+import * as scriptUtils                                           from './scriptUtils';
+import * as semverUtils                                           from './semverUtils';
+import * as structUtils                                           from './structUtils';
+import {IdentHash, DescriptorHash, LocatorHash}                   from './types';
+import {Descriptor, Ident, Locator, Package}                      from './types';
+import {LinkType}                                                 from './types';
 
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
@@ -107,7 +107,7 @@ export class Project {
     while (currentCwd !== configuration.projectCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`)))) {
+      if (xfs.existsSync(ppath.join(currentCwd, `package.json` as Filename))) {
         packageCwd = currentCwd;
         break;
       }
@@ -574,8 +574,6 @@ export class Project {
       nextResolutionPass.add(workspaceDescriptor.descriptorHash);
     }
 
-    const limit = pLimit(10);
-
     while (nextResolutionPass.size !== 0) {
       const currentResolutionPass = nextResolutionPass;
       nextResolutionPass = new Set();
@@ -653,7 +651,7 @@ export class Project {
       // match the given ranges. That will give us a set of candidate references
       // for each descriptor.
 
-      const passCandidates = new Map(await Promise.all(Array.from(currentResolutionPass).map(descriptorHash => limit(async () => {
+      const passCandidates = new Map(await Promise.all(Array.from(currentResolutionPass).map(async descriptorHash => {
         const descriptor = allDescriptors.get(descriptorHash);
         if (typeof descriptor === `undefined`)
           throw new Error(`Assertion failed: The descriptor should have been registered`);
@@ -674,7 +672,7 @@ export class Project {
           throw new Error(`No candidate found for ${structUtils.prettyDescriptor(this.configuration, descriptor)}`);
 
         return [descriptor.descriptorHash, candidateLocators] as [DescriptorHash, Array<Locator>];
-      }))));
+      })));
 
       // That's where we'll store our resolutions until everything has been
       // resolved and can be injected into the various stores.
@@ -1408,7 +1406,7 @@ export class Project {
       const bstatePath = this.configuration.get<PortablePath>(`bstatePath`);
       const bstateFile = Project.generateBuildStateFile(nextBState, this.storedPackages);
 
-      await xfs.mkdirpPromise(ppath.dirname(bstatePath));
+      await xfs.mkdirPromise(ppath.dirname(bstatePath), {recursive: true});
       await xfs.changeFilePromise(bstatePath, bstateFile, {
         automaticNewlines: true,
       });
@@ -1645,7 +1643,7 @@ export class Project {
 
     const installStatePath = this.configuration.get<PortablePath>(`installStatePath`);
 
-    await xfs.mkdirpPromise(ppath.dirname(installStatePath));
+    await xfs.mkdirPromise(ppath.dirname(installStatePath), {recursive: true});
     await xfs.writeFilePromise(installStatePath, serializedState as Buffer);
   }
 

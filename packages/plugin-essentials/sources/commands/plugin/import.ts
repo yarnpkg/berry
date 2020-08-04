@@ -112,7 +112,7 @@ export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {proj
   const absolutePath = ppath.resolve(project.cwd, relativePath);
 
   report.reportInfo(MessageName.UNNAMED, `Saving the new plugin in ${configuration.format(relativePath, `magenta`)}`);
-  await xfs.mkdirpPromise(ppath.dirname(absolutePath));
+  await xfs.mkdirPromise(ppath.dirname(absolutePath), {recursive: true});
   await xfs.writeFilePromise(absolutePath, pluginBuffer);
 
   const pluginMeta = {

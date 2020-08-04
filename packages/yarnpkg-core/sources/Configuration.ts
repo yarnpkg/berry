@@ -1,31 +1,33 @@
-import {Filename, PortablePath, npath, ppath, toFilename, xfs} from '@yarnpkg/fslib';
-import {DEFAULT_COMPRESSION_LEVEL}                             from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                              from '@yarnpkg/parsers';
-import camelcase                                               from 'camelcase';
-import chalk                                                   from 'chalk';
-import {isCI}                                                  from 'ci-info';
-import {UsageError}                                            from 'clipanion';
-import semver                                                  from 'semver';
-import {PassThrough, Writable}                                 from 'stream';
+import {DEFAULT_COMPRESSION_LEVEL}                 from '@yarnpkg/fslib';
+import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                  from '@yarnpkg/parsers';
+import camelcase                                   from 'camelcase';
+import chalk                                       from 'chalk';
+import {isCI}                                      from 'ci-info';
+import {UsageError}                                from 'clipanion';
+import pLimit, {Limit}                             from 'p-limit';
+import semver                                      from 'semver';
 
-import {CorePlugin}                                            from './CorePlugin';
-import {Manifest}                                              from './Manifest';
-import {MultiFetcher}                                          from './MultiFetcher';
-import {MultiResolver}                                         from './MultiResolver';
-import {Plugin, Hooks}                                         from './Plugin';
-import {ProtocolResolver}                                      from './ProtocolResolver';
-import {Report}                                                from './Report';
-import {TelemetryManager}                                      from './TelemetryManager';
-import {VirtualFetcher}                                        from './VirtualFetcher';
-import {VirtualResolver}                                       from './VirtualResolver';
-import {WorkspaceFetcher}                                      from './WorkspaceFetcher';
-import {WorkspaceResolver}                                     from './WorkspaceResolver';
-import * as folderUtils                                        from './folderUtils';
-import * as miscUtils                                          from './miscUtils';
-import * as nodeUtils                                          from './nodeUtils';
-import * as semverUtils                                        from './semverUtils';
-import * as structUtils                                        from './structUtils';
-import {IdentHash, Package, Descriptor, Ident}                 from './types';
+import {PassThrough, Writable}                     from 'stream';
+
+import {CorePlugin}                                from './CorePlugin';
+import {Manifest}                                  from './Manifest';
+import {MultiFetcher}                              from './MultiFetcher';
+import {MultiResolver}                             from './MultiResolver';
+import {Plugin, Hooks}                             from './Plugin';
+import {ProtocolResolver}                          from './ProtocolResolver';
+import {Report}                                    from './Report';
+import {TelemetryManager}                          from './TelemetryManager';
+import {VirtualFetcher}                            from './VirtualFetcher';
+import {VirtualResolver}                           from './VirtualResolver';
+import {WorkspaceFetcher}                          from './WorkspaceFetcher';
+import {WorkspaceResolver}                         from './WorkspaceResolver';
+import * as folderUtils                            from './folderUtils';
+import * as miscUtils                              from './miscUtils';
+import * as nodeUtils                              from './nodeUtils';
+import * as semverUtils                            from './semverUtils';
+import * as structUtils                            from './structUtils';
+import {IdentHash, Package, Descriptor}            from './types';
 
 const chalkOptions = process.env.GITHUB_ACTIONS
   ? {level: 2}
@@ -65,8 +67,8 @@ const IGNORED_ENV_VARIABLES = new Set([
 ]);
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
-export const DEFAULT_RC_FILENAME = toFilename(`.yarnrc.yml`);
-export const DEFAULT_LOCK_FILENAME = toFilename(`yarn.lock`);
+export const DEFAULT_RC_FILENAME = `.yarnrc.yml` as Filename;
+export const DEFAULT_LOCK_FILENAME = `yarn.lock` as Filename;
 export const SECRET = `********`;
 
 export enum SettingsType {
@@ -364,6 +366,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `Retry times on http failure`,
     type: SettingsType.NUMBER,
     default: 3,
+  },
+  networkConcurrency: {
+    description: `Maximal number of concurrent requests`,
+    type: SettingsType.NUMBER,
+    default: Infinity,
   },
 
   // Settings related to telemetry
@@ -692,6 +699,8 @@ export class Configuration {
     patch: (pkg: Package) => void,
   }>> = new Map();
 
+  public limits: Map<string, Limit> = new Map();
+
   /**
    * Instantiate a new configuration object with the default values from the
    * core. You typically don't want to use this, as it will ignore the values
@@ -900,6 +909,7 @@ export class Configuration {
     configuration.useWithSource(`<environment>`, excludeCoreFields(environmentSettings), startingCwd, {strict});
     for (const {path, cwd, data} of rcFiles)
       configuration.useWithSource(path, excludeCoreFields(data), cwd, {strict});
+
     // The home configuration is never strict because it improves support for
     // multiple projects using different Yarn versions on the same machine
     if (homeRcFile)
@@ -976,7 +986,7 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`))))
+      if (xfs.existsSync(ppath.join(currentCwd, `package.json` as Filename)))
         projectCwd = currentCwd;
 
       if (lockfileFilename !== null) {
@@ -996,7 +1006,7 @@ export class Configuration {
     return projectCwd;
   }
 
-  static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: any} | ((current: any) => any)) {
+  static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: ((current: unknown) => unknown) | {} | undefined} | ((current: {[key: string]: unknown}) => {[key: string]: unknown})) {
     const rcFilename = getRcFilename();
     const configurationPath =  ppath.join(cwd, rcFilename as PortablePath);
 
@@ -1005,35 +1015,54 @@ export class Configuration {
       : {};
 
     let patched = false;
+    let replacement: {[key: string]: unknown};
 
-    if (typeof patch === `function`)
-      patch = patch(current);
-    if (typeof patch === `function`)
-      throw new Error(`Assertion failed: Invalid configuration type`);
+    if (typeof patch === `function`) {
+      try {
+        replacement = patch(current);
+      } catch {
+        replacement = patch({});
+      }
 
-    for (const key of Object.keys(patch)) {
-      const currentValue = current[key];
+      if (replacement === current) {
+        return;
+      }
+    } else {
+      replacement = current;
 
-      const nextValue = typeof patch[key] === `function`
-        ? patch[key](currentValue)
-        : patch[key];
+      for (const key of Object.keys(patch)) {
+        const currentValue = current[key];
+        const patchField = patch[key];
 
-      if (currentValue === nextValue)
-        continue;
+        let nextValue: unknown;
+        if (typeof patchField === `function`) {
+          try {
+            nextValue = patchField(currentValue);
+          } catch {
+            nextValue = patchField(undefined);
+          }
+        } else {
+          nextValue = patchField;
+        }
 
-      current[key] = nextValue;
-      patched = true;
+        if (currentValue === nextValue)
+          continue;
+
+        replacement[key] = nextValue;
+        patched = true;
+      }
+
+      if (!patched) {
+        return;
+      }
     }
 
-    if (!patched)
-      return;
-
-    await xfs.changeFilePromise(configurationPath, stringifySyml(current), {
+    await xfs.changeFilePromise(configurationPath, stringifySyml(replacement), {
       automaticNewlines: true,
     });
   }
 
-  static async updateHomeConfiguration(patch: {[key: string]: any} | ((current: any) => any)) {
+  static async updateHomeConfiguration(patch: {[key: string]: ((current: unknown) => unknown) | {} | undefined} | ((current: {[key: string]: unknown}) => {[key: string]: unknown})) {
     const homeFolder = folderUtils.getHomeFolder();
 
     return await Configuration.updateConfiguration(homeFolder, patch);
@@ -1313,6 +1342,12 @@ export class Configuration {
     pkg.peerDependencies = new Map(miscUtils.sortMap(pkg.peerDependencies, ([, descriptor]) => structUtils.stringifyDescriptor(descriptor)));
 
     return pkg;
+  }
+
+  getLimit(key: string) {
+    return miscUtils.getFactoryWithDefault(this.limits, key, () => {
+      return pLimit(this.get<number>(key));
+    });
   }
 
   async triggerHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, ...args: U): Promise<void> {
