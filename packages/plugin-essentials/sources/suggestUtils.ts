@@ -1,6 +1,6 @@
 import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace, FetchOptions, ResolveOptions} from '@yarnpkg/core';
 import {structUtils}                                                                                                                from '@yarnpkg/core';
-import {PortablePath}                                                                                                               from '@yarnpkg/fslib';
+import {PortablePath, ppath}                                                                                                        from '@yarnpkg/fslib';
 import semver                                                                                                                       from 'semver';
 
 export type Suggestion = {
@@ -129,8 +129,12 @@ export async function findProjectDescriptors(ident: Ident, {project, target}: {p
   return matches;
 }
 
-export async function extractDescriptorFromPath(path: PortablePath, {cache, workspace}: {cache: Cache, workspace: Workspace}) {
-  const project = workspace.project;
+export async function extractDescriptorFromPath(path: PortablePath, {cache, cwd, workspace}: {cache: Cache, cwd: PortablePath, workspace: Workspace}) {
+  path = ppath.relative(workspace.cwd, ppath.resolve(cwd, path));
+  if (!path.match(/^\.{0,2}\//))
+    path = `./${path}` as PortablePath;
+
+  const {project} = workspace;
 
   const descriptor = await fetchDescriptorFrom(structUtils.makeIdent(null, `archive`), path, {project: workspace.project, cache, workspace});
   if (!descriptor)
