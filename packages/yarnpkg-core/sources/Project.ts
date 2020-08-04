@@ -425,29 +425,36 @@ export class Project {
   forgetResolution(descriptor: Descriptor): void;
   forgetResolution(locator: Locator): void;
   forgetResolution(dataStructure: Descriptor | Locator): void {
-    // Forgetting a descriptor requires:
-    // - deleting the resolution of the descriptor
-    // - deleting the descriptor
+    const deleteDescriptor = (descriptorHash: DescriptorHash) => {
+      this.storedResolutions.delete(descriptorHash);
+      this.storedDescriptors.delete(descriptorHash);
+    };
+
+    const deleteLocator = (locatorHash: LocatorHash) => {
+      this.originalPackages.delete(locatorHash);
+      this.storedPackages.delete(locatorHash);
+      this.accessibleLocators.delete(locatorHash);
+    };
+
     if (`descriptorHash` in dataStructure) {
-      this.storedResolutions.delete(dataStructure.descriptorHash);
-      this.storedDescriptors.delete(dataStructure.descriptorHash);
+      const locatorHash = this.storedResolutions.get(dataStructure.descriptorHash);
+
+      deleteDescriptor(dataStructure.descriptorHash);
+
+      // We delete unused locators
+      const resolutions = new Set(this.storedResolutions.values());
+      if (typeof locatorHash !== `undefined` && !resolutions.has(locatorHash)) {
+        deleteLocator(locatorHash);
+      }
     }
 
-    // Forgetting a locator requires:
-    // - deleting the original package
-    // - deleting the stored package
-    // - deleting the accessible locator
-    // - deleting all resolutions resolved to the locator
-    // - deleting all descriptors resolved to the locator
     if (`locatorHash` in dataStructure) {
-      this.originalPackages.delete(dataStructure.locatorHash);
-      this.storedPackages.delete(dataStructure.locatorHash);
-      this.accessibleLocators.delete(dataStructure.locatorHash);
+      deleteLocator(dataStructure.locatorHash);
 
+      // We delete all of the descriptors that have been resolved to the locator
       for (const [descriptorHash, locatorHash] of this.storedResolutions) {
         if (locatorHash === dataStructure.locatorHash) {
-          this.storedResolutions.delete(descriptorHash);
-          this.storedDescriptors.delete(descriptorHash);
+          deleteDescriptor(descriptorHash);
         }
       }
     }
