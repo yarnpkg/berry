@@ -425,16 +425,37 @@ export class Project {
   forgetResolution(descriptor: Descriptor): void;
   forgetResolution(locator: Locator): void;
   forgetResolution(dataStructure: Descriptor | Locator): void {
-    for (const [descriptorHash, locatorHash] of this.storedResolutions) {
-      const doDescriptorHashesMatch = `descriptorHash` in dataStructure
-        && dataStructure.descriptorHash === descriptorHash;
-      const doLocatorHashesMatch = `locatorHash` in dataStructure
-        && dataStructure.locatorHash === locatorHash;
+    const deleteDescriptor = (descriptorHash: DescriptorHash) => {
+      this.storedResolutions.delete(descriptorHash);
+      this.storedDescriptors.delete(descriptorHash);
+    };
 
-      if (doDescriptorHashesMatch || doLocatorHashesMatch) {
-        this.storedDescriptors.delete(descriptorHash);
-        this.storedResolutions.delete(descriptorHash);
-        this.originalPackages.delete(locatorHash);
+    const deleteLocator = (locatorHash: LocatorHash) => {
+      this.originalPackages.delete(locatorHash);
+      this.storedPackages.delete(locatorHash);
+      this.accessibleLocators.delete(locatorHash);
+    };
+
+    if (`descriptorHash` in dataStructure) {
+      const locatorHash = this.storedResolutions.get(dataStructure.descriptorHash);
+
+      deleteDescriptor(dataStructure.descriptorHash);
+
+      // We delete unused locators
+      const remainingResolutions = new Set(this.storedResolutions.values());
+      if (typeof locatorHash !== `undefined` && !remainingResolutions.has(locatorHash)) {
+        deleteLocator(locatorHash);
+      }
+    }
+
+    if (`locatorHash` in dataStructure) {
+      deleteLocator(dataStructure.locatorHash);
+
+      // We delete all of the descriptors that have been resolved to the locator
+      for (const [descriptorHash, locatorHash] of this.storedResolutions) {
+        if (locatorHash === dataStructure.locatorHash) {
+          deleteDescriptor(descriptorHash);
+        }
       }
     }
   }
