@@ -12631,7 +12631,7 @@ fsevents@^1.2.7:
 
 "fsevents@patch:fsevents@^1.2.7#builtin<compat/fsevents>":
   version: 1.2.7
-  resolution: "fsevents@patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=ce6f39"
+  resolution: "fsevents@patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=d25972"
   dependencies:
     nan: ^2.9.2
     node-pre-gyp: ^0.10.0
@@ -12641,7 +12641,7 @@ fsevents@^1.2.7:
 
 "fsevents@patch:fsevents@^2.1.2#builtin<compat/fsevents>, fsevents@patch:fsevents@~2.1.2#builtin<compat/fsevents>":
   version: 2.1.3
-  resolution: "fsevents@patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=ce6f39"
+  resolution: "fsevents@patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=d25972"
   dependencies:
     node-gyp: latest
   checksum: 1411e3e0cffb0d40ff813103b1d1a633535d45cf338b595e5d925bea62def96004ba319674e560e060497f06a5dce242e4ae4cda483b8427c05a10b729d777e7

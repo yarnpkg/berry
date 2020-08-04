@@ -1,8 +1,8 @@
 diff --git a/fsevents.js b/fsevents.js
-semver exclusivity ^2.1.2
+semver exclusivity 2.1.1
 --- a/fsevents.js
 +++ b/fsevents.js
-@@ -21,13 +21,10 @@ function watch(path, handler) {
+@@ -21,11 +21,10 @@ function watch(path, handler) {
      throw new TypeError(`fsevents argument 2 must be a function and not a ${typeof handler}`);
    }
  
@@ -12,11 +12,10 @@ semver exclusivity ^2.1.2
 +  let vfs = new VFS(path, Native);
 +  vfs.watch(handler);
    return () => {
--    const result = instance
--      ? Promise.resolve(instance).then(Native.stop)
--      : Promise.resolve(undefined);
--    instance = undefined;
+-    const result = instance ? Promise.resolve(instance).then(Native.stop) : null;
+-    instance = null;
 -    return result;
 +    return vfs.stop();
    };
  }
+ 
