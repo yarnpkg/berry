@@ -1023,6 +1023,10 @@ export class Configuration {
       } catch {
         replacement = patch({});
       }
+
+      if (replacement === current) {
+        return;
+      }
     } else {
       replacement = current;
 

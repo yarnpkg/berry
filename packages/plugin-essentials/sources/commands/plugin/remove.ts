@@ -49,12 +49,21 @@ export default class PluginRemoveCommand extends BaseCommand {
       }
 
       report.reportInfo(MessageName.UNNAMED, `Updating the configuration...`);
-      await Configuration.updateConfiguration(project.cwd, (current: any) => {
+      await Configuration.updateConfiguration(project.cwd, (current: {[key: string]: unknown}) => {
         if (!Array.isArray(current.plugins))
-          return {};
+          return current;
 
-        const plugins = current.plugins.filter((plugin: {path: string}) => plugin.path !== relativePath);
-        return {plugins};
+        const plugins = current.plugins.filter((plugin: {path: string}) => {
+          return plugin.path !== relativePath;
+        });
+
+        if (current.plugins.length === plugins.length)
+          return current;
+
+        return {
+          ...current,
+          plugins,
+        };
       });
     });
 
