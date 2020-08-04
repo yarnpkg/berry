@@ -1,5 +1,5 @@
-import {xfs, ppath, Filename, PortablePath, npath} from '@yarnpkg/fslib';
-import {fs, yarn}                                  from 'pkg-tests-core';
+import {xfs, ppath, Filename, npath} from '@yarnpkg/fslib';
+import {fs, yarn}                    from 'pkg-tests-core';
 
 describe(`Commands`, () => {
   describe(`plugin remove`, () => {
