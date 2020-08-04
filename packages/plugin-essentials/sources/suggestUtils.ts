@@ -130,9 +130,12 @@ export async function findProjectDescriptors(ident: Ident, {project, target}: {p
 }
 
 export async function extractDescriptorFromPath(path: PortablePath, {cache, cwd, workspace}: {cache: Cache, cwd: PortablePath, workspace: Workspace}) {
-  path = ppath.relative(workspace.cwd, ppath.resolve(cwd, path));
-  if (!path.match(/^\.{0,2}\//))
-    path = `./${path}` as PortablePath;
+  if (!ppath.isAbsolute(path)) {
+    path = ppath.relative(workspace.cwd, ppath.resolve(cwd, path));
+    if (!path.match(/^\.{0,2}\//)) {
+      path = `./${path}` as PortablePath;
+    }
+  }
 
   const {project} = workspace;
 
