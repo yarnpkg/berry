@@ -25,7 +25,13 @@ export async function copyPromise<P1 extends Path, P2 extends Path>(destinationF
   const prelayout: Operations = [];
   const postlayout: Operations = [];
 
-  await destinationFs.mkdirPromise(destination, {recursive: true});
+  try {
+    await destinationFs.mkdirPromise(destination, {recursive: true});
+  } catch (error) {
+    if (error.code !== `EEXIST`) {
+      throw error;
+    }
+  }
 
   const updateTime = typeof destinationFs.lutimesPromise === `function`
     ? destinationFs.lutimesPromise.bind(destinationFs)

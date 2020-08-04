@@ -35832,9 +35832,17 @@ async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
   const normalizedSource = sourceFs.pathUtils.normalize(source);
   const prelayout = [];
   const postlayout = [];
-  await destinationFs.mkdirPromise(destination, {
-    recursive: true
-  });
+
+  try {
+    await destinationFs.mkdirPromise(destination, {
+      recursive: true
+    });
+  } catch (error) {
+    if (error.code !== `EEXIST`) {
+      throw error;
+    }
+  }
+
   const updateTime = typeof destinationFs.lutimesPromise === `function` ? destinationFs.lutimesPromise.bind(destinationFs) : destinationFs.utimesPromise.bind(destinationFs);
   await copyImpl(prelayout, postlayout, updateTime, destinationFs, normalizedDestination, sourceFs, normalizedSource, opts);
 
