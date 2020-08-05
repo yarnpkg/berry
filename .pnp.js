@@ -37889,8 +37889,10 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     this.unregisterListing(p);
     const entry = this.entries.get(p);
     this.entries.delete(p);
+    if (typeof entry === `undefined`) return;
+    this.fileSources.delete(entry);
 
-    if (entry && this.isSymbolicLink(entry)) {
+    if (this.isSymbolicLink(entry)) {
       this.symlinkCount--;
     }
   }
@@ -38222,9 +38224,12 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     if (this.listings.has(resolvedP)) throw EISDIR(`unlink '${p}'`);
     const index = this.entries.get(resolvedP);
     if (typeof index === `undefined`) throw EINVAL(`unlink '${p}'`);
-    const rc = this.libzip.delete(this.zip, index);
-    if (rc === -1) throw this.makeLibzipError(this.libzip.getError(this.zip));
     this.unregisterEntry(resolvedP);
+    const rc = this.libzip.delete(this.zip, index);
+
+    if (rc === -1) {
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    }
   }
 
   async utimesPromise(p, atime, mtime) {
@@ -38292,9 +38297,12 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     if (directoryListing.size > 0) throw ENOTEMPTY(`rmdir '${p}'`);
     const index = this.entries.get(resolvedP);
     if (typeof index === `undefined`) throw EINVAL(`rmdir '${p}'`);
-    const rc = this.libzip.delete(this.zip, index);
-    if (rc === -1) throw this.makeLibzipError(this.libzip.getError(this.zip));
     this.unregisterEntry(resolvedP);
+    const rc = this.libzip.delete(this.zip, index);
+
+    if (rc === -1) {
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    }
   }
 
   hydrateDirectory(resolvedP) {

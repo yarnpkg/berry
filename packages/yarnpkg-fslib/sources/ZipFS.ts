@@ -770,7 +770,12 @@ export class ZipFS extends BasePortableFakeFS {
     const entry = this.entries.get(p);
     this.entries.delete(p);
 
-    if (entry && this.isSymbolicLink(entry)) {
+    if (typeof entry === `undefined`)
+      return;
+
+    this.fileSources.delete(entry);
+
+    if (this.isSymbolicLink(entry)) {
       this.symlinkCount--;
     }
   }
@@ -1159,11 +1164,12 @@ export class ZipFS extends BasePortableFakeFS {
     if (typeof index === `undefined`)
       throw errors.EINVAL(`unlink '${p}'`);
 
-    const rc = this.libzip.delete(this.zip, index);
-    if (rc === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-
     this.unregisterEntry(resolvedP);
+
+    const rc = this.libzip.delete(this.zip, index);
+    if (rc === -1) {
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    }
   }
 
   async utimesPromise(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
@@ -1250,11 +1256,12 @@ export class ZipFS extends BasePortableFakeFS {
     if (typeof index === `undefined`)
       throw errors.EINVAL(`rmdir '${p}'`);
 
-    const rc = this.libzip.delete(this.zip, index);
-    if (rc === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-
     this.unregisterEntry(resolvedP);
+
+    const rc = this.libzip.delete(this.zip, index);
+    if (rc === -1) {
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    }
   }
 
   private hydrateDirectory(resolvedP: PortablePath) {
