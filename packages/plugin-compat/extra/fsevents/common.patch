@@ -2,40 +2,40 @@ diff --git a/vfs.js b/vfs.js
 new file mode 100644
 --- /dev/null
 +++ b/vfs.js
-@@ -0,0 +1,105 @@
+@@ -0,0 +1,104 @@
 +const path = require(`path`);
 +
-+const NUMBER_REGEXP = /^[0-9]+$/;
-+const VIRTUAL_REGEXP = /^(\/(?:[^\/]+\/)*?\$\$virtual)((?:\/([^\/]+)(?:\/([^\/]+))?)?((?:\/.*)?))$/;
++function getPnpApi() {
++  let pnpApi;
++  try {
++    if (process.versions.pnp) {
++      pnpApi = require(`pnpapi`);
++    }
++  } catch (ex) {}
++  return pnpApi;
++}
 +
 +function resolveVirtual(p) {
-+  const match = p.match(VIRTUAL_REGEXP);
-+  if (!match) return p;
-+
-+  const target = path.dirname(match[1]);
-+  if (!match[3] || !match[4]) return target;
-+
-+  const isnum = NUMBER_REGEXP.test(match[4]);
-+  if (!isnum) return p;
-+
-+  const depth = Number(match[4]);
-+  const backstep = `../`.repeat(depth);
-+  const subpath = match[5] || `.`;
-+
-+  return resolveVirtual(path.join(target, backstep, subpath));
++  const pnpapi = getPnpApi();
++  if (pnpapi) {
++    const resolved = pnpapi.resolveVirtual(p);
++    // pnp resolveVirtual will return null for non-virtual path.
++    return resolved == null ? p : resolved;
++  }
++  return p;
 +}
 +
 +function findVirtualPaths(root) {
 +  const paths = [];
-+  if (process.versions.pnp) {
-+    const pnp = require(`pnpapi`);
-+    for (const locator of pnp.getDependencyTreeRoots()) {
-+      const pkg = pnp.getPackageInformation(locator);
++  const pnpapi = getPnpApi();
++  if (pnpapi) {
++    for (const locator of pnpapi.getDependencyTreeRoots()) {
++      const pkg = pnpapi.getPackageInformation(locator);
 +      for (const [name, referencish] of pkg.packageDependencies) {
 +        if (referencish === null) continue;
 +        if (referencish.indexOf(`virtual:`) === 0) {
-+          const virtualLocator = pnp.getLocator(name, referencish);
-+          const virtualPkg = pnp.getPackageInformation(virtualLocator);
++          const virtualLocator = pnpapi.getLocator(name, referencish);
++          const virtualPkg = pnpapi.getPackageInformation(virtualLocator);
 +          if (virtualPkg && virtualPkg.packageLocation.indexOf(root) === 0) {
 +            // virtual path fall under root
 +            paths.push(virtualPkg.packageLocation);
@@ -46,7 +46,6 @@ new file mode 100644
 +  }
 +  return paths;
 +}
-+
 +
 +class VFS {
 +  constructor(p, Native) {
