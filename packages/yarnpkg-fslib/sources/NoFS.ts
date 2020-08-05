@@ -118,6 +118,14 @@ export class NoFS extends FakeFS<PortablePath> {
     throw makeError();
   }
 
+  async chownPromise(): Promise<never> {
+    throw makeError();
+  }
+
+  chownSync(): never {
+    throw makeError();
+  }
+
   async mkdirPromise(): Promise<never> {
     throw makeError();
   }
@@ -131,6 +139,14 @@ export class NoFS extends FakeFS<PortablePath> {
   }
 
   rmdirSync(): never {
+    throw makeError();
+  }
+
+  async linkPromise(): Promise<never> {
+    throw makeError();
+  }
+
+  linkSync(): never {
     throw makeError();
   }
 
@@ -203,6 +219,14 @@ export class NoFS extends FakeFS<PortablePath> {
   }
 
   readlinkSync(): never {
+    throw makeError();
+  }
+
+  async truncatePromise(): Promise<never> {
+    throw makeError();
+  }
+
+  truncateSync(): never {
     throw makeError();
   }
 

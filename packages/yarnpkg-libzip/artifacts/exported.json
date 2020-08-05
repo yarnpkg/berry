@@ -46,6 +46,7 @@
     "_zipstruct_stat_mtime",
     "_zipstruct_error",
     "_zipstruct_errorS",
+    "_zipstruct_error_code_zip",
     "_zipstruct_stat_comp_size",
     "_zipstruct_stat_comp_method",
 
