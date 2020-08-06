@@ -672,7 +672,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async truncatePromise(p: PortablePath, len: number) {
+  async truncatePromise(p: PortablePath, len?: number) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.truncatePromise(p, len);
     }, async (zipFs, {subPath}) => {
