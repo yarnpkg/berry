@@ -680,7 +680,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  truncateSync(p: PortablePath, len: number) {
+  truncateSync(p: PortablePath, len?: number) {
     return this.makeCallSync(p, () => {
       return this.baseFs.truncateSync(p, len);
     }, (zipFs, {subPath}) => {
