@@ -1439,7 +1439,7 @@ export class ZipFS extends BasePortableFakeFS {
     return await this.writeFilePromise(p, truncated);
   }
 
-  truncateSync(p: PortablePath, len: number) {
+  truncateSync(p: PortablePath, len: number = 0) {
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
 
     const index = this.entries.get(resolvedP);
