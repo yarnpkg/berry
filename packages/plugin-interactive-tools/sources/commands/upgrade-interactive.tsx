@@ -90,7 +90,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     };
 
     const fetchUpdatedDescriptor = async (descriptor: Descriptor, copyStyle: string, range: string) => {
-      const candidate = await suggestUtils.fetchDescriptorFrom(descriptor, range, {project, cache, preserveModifier: copyStyle});
+      const candidate = await suggestUtils.fetchDescriptorFrom(descriptor, range, {project, cache, preserveModifier: copyStyle, workspace});
 
       if (candidate !== null) {
         return candidate.range;

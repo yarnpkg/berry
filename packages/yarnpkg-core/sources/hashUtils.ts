@@ -1,8 +1,8 @@
 import {PortablePath, xfs, npath} from '@yarnpkg/fslib';
-import {createHash}               from 'crypto';
+import {createHash, BinaryLike}   from 'crypto';
 import globby                     from 'globby';
 
-export function makeHash<T extends string = string>(...args: Array<string | null>): T {
+export function makeHash<T extends string = string>(...args: Array<BinaryLike | null>): T {
   const hash = createHash(`sha512`);
 
   for (const arg of args)

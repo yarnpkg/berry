@@ -35832,7 +35832,7 @@ async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
   const normalizedSource = sourceFs.pathUtils.normalize(source);
   const prelayout = [];
   const postlayout = [];
-  await destinationFs.mkdirPromise(destination, {
+  await destinationFs.mkdirPromise(destinationFs.pathUtils.dirname(destination), {
     recursive: true
   });
   const updateTime = typeof destinationFs.lutimesPromise === `function` ? destinationFs.lutimesPromise.bind(destinationFs) : destinationFs.utimesPromise.bind(destinationFs);
@@ -38419,7 +38419,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     return entry;
   }
 
-  async truncatePromise(p, len) {
+  async truncatePromise(p, len = 0) {
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
     const index = this.entries.get(resolvedP);
     if (typeof index === `undefined`) throw EINVAL(`open '${p}'`);
@@ -38431,7 +38431,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     return await this.writeFilePromise(p, truncated);
   }
 
-  truncateSync(p, len) {
+  truncateSync(p, len = 0) {
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
     const index = this.entries.get(resolvedP);
     if (typeof index === `undefined`) throw EINVAL(`open '${p}'`);
