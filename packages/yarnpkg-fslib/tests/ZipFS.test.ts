@@ -327,6 +327,9 @@ describe(`ZipFS`, () => {
     zipFs.truncateSync(file, 10);
     expect(zipFs.readFileSync(file, `utf8`)).toStrictEqual(`12345${`\u0000`.repeat(5)}`);
 
+    zipFs.truncateSync(file);
+    expect(zipFs.readFileSync(file, `utf8`)).toStrictEqual(``);
+
     zipFs.discardAndClose();
   });
 });

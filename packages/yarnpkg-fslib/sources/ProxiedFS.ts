@@ -262,11 +262,11 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.mapFromBase(this.baseFs.readlinkSync(this.mapToBase(p)));
   }
 
-  async truncatePromise(p: P, len: number) {
+  async truncatePromise(p: P, len?: number) {
     return this.baseFs.truncatePromise(this.mapToBase(p), len);
   }
 
-  truncateSync(p: P, len: number) {
+  truncateSync(p: P, len?: number) {
     return this.baseFs.truncateSync(this.mapToBase(p), len);
   }
 

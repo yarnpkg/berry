@@ -473,11 +473,11 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     );
   }
 
-  async truncatePromise(p: PortablePath, len: number) {
+  async truncatePromise(p: PortablePath, len?: number) {
     return await this.baseFs.truncatePromise(this.resolveDirOrFilePath(p), len);
   }
 
-  truncateSync(p: PortablePath, len: number) {
+  truncateSync(p: PortablePath, len?: number) {
     return this.baseFs.truncateSync(this.resolveDirOrFilePath(p), len);
   }
 

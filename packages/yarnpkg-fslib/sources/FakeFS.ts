@@ -162,8 +162,8 @@ export abstract class FakeFS<P extends Path> {
   abstract readlinkPromise(p: P): Promise<P>;
   abstract readlinkSync(p: P): P;
 
-  abstract truncatePromise(p: P, len: number): Promise<void>;
-  abstract truncateSync(p: P, len: number): void;
+  abstract truncatePromise(p: P, len?: number): Promise<void>;
+  abstract truncateSync(p: P, len?: number): void;
 
   abstract watch(p: P, cb?: WatchCallback): Watcher;
   abstract watch(p: P, opts: WatchOptions, cb?: WatchCallback): Watcher;
