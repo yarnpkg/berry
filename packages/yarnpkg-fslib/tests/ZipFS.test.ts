@@ -248,5 +248,89 @@ describe(`ZipFS`, () => {
     expect(zipFs.existsSync(subdir)).toBeFalsy();
     expect(zipFs.existsSync(file)).toBeFalsy();
   });
+
+  it(`should support read after write`, () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const file = `/foo.txt` as PortablePath;
+    zipFs.writeFileSync(file, `Test`);
+
+    expect(zipFs.readFileSync(file, `utf8`)).toStrictEqual(`Test`);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should support write after read`, () => {
+    const tmpdir = xfs.mktempSync();
+    const archive = `${tmpdir}/archive.zip` as PortablePath;
+
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(archive, {libzip, create: true});
+
+    const file = `/foo.txt` as PortablePath;
+    zipFs.writeFileSync(file, `Hello World`);
+
+    zipFs.saveAndClose();
+
+    const zipFs2 = new ZipFS(archive, {libzip});
+
+    expect(zipFs2.readFileSync(file, `utf8`)).toStrictEqual(`Hello World`);
+    expect(() => zipFs2.writeFileSync(file, `Goodbye World`)).not.toThrow();
+
+    zipFs2.discardAndClose();
+  });
+
+  it(`should support write after write`, () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const file = `/foo.txt` as PortablePath;
+
+    zipFs.writeFileSync(file, `Hello World`);
+    expect(() => zipFs.writeFileSync(file, `Goodbye World`)).not.toThrow();
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should support read after read`, () => {
+    const tmpdir = xfs.mktempSync();
+    const archive = `${tmpdir}/archive.zip` as PortablePath;
+
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(archive, {libzip, create: true});
+
+    const file = `/foo.txt` as PortablePath;
+    zipFs.writeFileSync(file, `Hello World`);
+
+    zipFs.saveAndClose();
+
+    const zipFs2 = new ZipFS(archive, {libzip});
+
+    expect(zipFs2.readFileSync(file, `utf8`)).toStrictEqual(`Hello World`);
+    expect(zipFs2.readFileSync(file, `utf8`)).toStrictEqual(`Hello World`);
+
+    zipFs2.discardAndClose();
+  });
+
+  it(`should support truncate`, () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const file = `/foo.txt` as PortablePath;
+
+    zipFs.writeFileSync(file, `1234567890`);
+
+    zipFs.truncateSync(file, 5);
+    expect(zipFs.readFileSync(file, `utf8`)).toStrictEqual(`12345`);
+
+    zipFs.truncateSync(file, 10);
+    expect(zipFs.readFileSync(file, `utf8`)).toStrictEqual(`12345${`\u0000`.repeat(5)}`);
+
+    zipFs.truncateSync(file);
+    expect(zipFs.readFileSync(file, `utf8`)).toStrictEqual(``);
+
+    zipFs.discardAndClose();
+  });
 });
 

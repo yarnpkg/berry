@@ -340,6 +340,22 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
+  async chownPromise(p: PortablePath, uid: number, gid: number) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.chownPromise(p, uid, gid);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.chownPromise(subPath, uid, gid);
+    });
+  }
+
+  chownSync(p: PortablePath, uid: number, gid: number) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.chownSync(p, uid, gid);
+    }, (zipFs, {subPath}) => {
+      return zipFs.chownSync(subPath, uid, gid);
+    });
+  }
+
   async renamePromise(oldP: PortablePath, newP: PortablePath) {
     return await this.makeCallPromise(oldP, async () => {
       return await this.makeCallPromise(newP, async () => {
@@ -548,6 +564,22 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
+  async linkPromise(existingP: PortablePath, newP: PortablePath) {
+    return await this.makeCallPromise(newP, async () => {
+      return await this.baseFs.linkPromise(existingP, newP);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.linkPromise(existingP, subPath);
+    });
+  }
+
+  linkSync(existingP: PortablePath, newP: PortablePath) {
+    return this.makeCallSync(newP, () => {
+      return this.baseFs.linkSync(existingP, newP);
+    }, (zipFs, {subPath}) => {
+      return zipFs.linkSync(existingP, subPath);
+    });
+  }
+
   async symlinkPromise(target: PortablePath, p: PortablePath, type?: SymlinkType) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.symlinkPromise(target, p, type);
@@ -637,6 +669,22 @@ export class ZipOpenFS extends BasePortableFakeFS {
       return this.baseFs.readlinkSync(p);
     }, (zipFs, {subPath}) => {
       return zipFs.readlinkSync(subPath);
+    });
+  }
+
+  async truncatePromise(p: PortablePath, len?: number) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.truncatePromise(p, len);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.truncatePromise(subPath, len);
+    });
+  }
+
+  truncateSync(p: PortablePath, len?: number) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.truncateSync(p, len);
+    }, (zipFs, {subPath}) => {
+      return zipFs.truncateSync(subPath, len);
     });
   }
 

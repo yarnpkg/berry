@@ -5,10 +5,47 @@ const number64 = [
 
 export type Libzip = ReturnType<typeof makeInterface>;
 
+enum Errors {
+  ZIP_ER_OK = 0,
+  ZIP_ER_MULTIDISK = 1,
+  ZIP_ER_RENAME = 2,
+  ZIP_ER_CLOSE = 3,
+  ZIP_ER_SEEK = 4,
+  ZIP_ER_READ = 5,
+  ZIP_ER_WRITE = 6,
+  ZIP_ER_CRC = 7,
+  ZIP_ER_ZIPCLOSED = 8,
+  ZIP_ER_NOENT = 9,
+  ZIP_ER_EXISTS = 10,
+  ZIP_ER_OPEN = 11,
+  ZIP_ER_TMPOPEN = 12,
+  ZIP_ER_ZLIB = 13,
+  ZIP_ER_MEMORY = 14,
+  ZIP_ER_CHANGED = 15,
+  ZIP_ER_COMPNOTSUPP = 16,
+  ZIP_ER_EOF = 17,
+  ZIP_ER_INVAL = 18,
+  ZIP_ER_NOZIP = 19,
+  ZIP_ER_INTERNAL = 20,
+  ZIP_ER_INCONS = 21,
+  ZIP_ER_REMOVE = 22,
+  ZIP_ER_DELETED = 23,
+  ZIP_ER_ENCRNOTSUPP = 24,
+  ZIP_ER_RDONLY = 25,
+  ZIP_ER_NOPASSWD = 26,
+  ZIP_ER_WRONGPASSWD = 27,
+  ZIP_ER_OPNOTSUPP = 28,
+  ZIP_ER_INUSE = 29,
+  ZIP_ER_TELL = 30,
+  ZIP_ER_COMPRESSED_DATA = 31,
+}
+
 export const makeInterface = (libzip: EmscriptenModule) => ({
   // Those are getters because they can change after memory growth
   get HEAP8() { return libzip.HEAP8; },
   get HEAPU8() { return libzip.HEAPU8; },
+
+  errors: Errors,
 
   SEEK_SET: 0,
   SEEK_CUR: 1,
@@ -130,5 +167,6 @@ export const makeInterface = (libzip: EmscriptenModule) => ({
 
     error: libzip.cwrap(`zipstruct_error`, `number`, []),
     errorS: libzip.cwrap(`zipstruct_errorS`, `number`, []),
+    errorCodeZip: libzip.cwrap(`zipstruct_error_code_zip`, `number`, [`number`]),
   },
 } as const);

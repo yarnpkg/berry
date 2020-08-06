@@ -289,6 +289,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return this.baseFs.chmodSync(this.resolveDirOrFilePath(p), mask);
   }
 
+  async chownPromise(p: PortablePath, uid: number, gid: number) {
+    return await this.baseFs.chownPromise(this.resolveDirOrFilePath(p), uid, gid);
+  }
+
+  chownSync(p: PortablePath, uid: number, gid: number) {
+    return this.baseFs.chownSync(this.resolveDirOrFilePath(p), uid, gid);
+  }
+
   async renamePromise(oldP: PortablePath, newP: PortablePath) {
     return await this.baseFs.renamePromise(this.resolveDirOrFilePath(oldP), this.resolveDirOrFilePath(newP));
   }
@@ -355,6 +363,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
 
   rmdirSync(p: PortablePath) {
     return this.baseFs.rmdirSync(this.resolveDirOrFilePath(p));
+  }
+
+  async linkPromise(existingP: PortablePath, newP: PortablePath) {
+    return await this.baseFs.linkPromise(this.resolveDirOrFilePath(existingP), this.resolveDirOrFilePath(newP));
+  }
+
+  linkSync(existingP: PortablePath, newP: PortablePath) {
+    return this.baseFs.linkSync(this.resolveDirOrFilePath(existingP), this.resolveDirOrFilePath(newP));
   }
 
   async symlinkPromise(target: PortablePath, p: PortablePath) {
@@ -455,6 +471,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
       (_stats, targetPath) => targetPath,
       targetPath => this.baseFs.readlinkSync(this.resolveDirOrFilePath(targetPath))
     );
+  }
+
+  async truncatePromise(p: PortablePath, len?: number) {
+    return await this.baseFs.truncatePromise(this.resolveDirOrFilePath(p), len);
+  }
+
+  truncateSync(p: PortablePath, len?: number) {
+    return this.baseFs.truncateSync(this.resolveDirOrFilePath(p), len);
   }
 
   watch(p: PortablePath, cb?: WatchCallback): Watcher;

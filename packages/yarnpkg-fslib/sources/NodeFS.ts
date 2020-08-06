@@ -164,6 +164,16 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.chmodSync(npath.fromPortablePath(p), mask);
   }
 
+  async chownPromise(p: PortablePath, uid: number, gid: number) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.chown(npath.fromPortablePath(p), uid, gid, this.makeCallback(resolve, reject));
+    });
+  }
+
+  chownSync(p: PortablePath, uid: number, gid: number) {
+    return this.realFs.chownSync(npath.fromPortablePath(p), uid, gid);
+  }
+
   async renamePromise(oldP: PortablePath, newP: PortablePath) {
     return await new Promise<void>((resolve, reject) => {
       this.realFs.rename(npath.fromPortablePath(oldP), npath.fromPortablePath(newP), this.makeCallback(resolve, reject));
@@ -284,6 +294,16 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.rmdirSync(npath.fromPortablePath(p));
   }
 
+  async linkPromise(existingP: PortablePath, newP: PortablePath) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.link(npath.fromPortablePath(existingP), npath.fromPortablePath(newP), this.makeCallback(resolve, reject));
+    });
+  }
+
+  linkSync(existingP: PortablePath, newP: PortablePath) {
+    return this.realFs.linkSync(npath.fromPortablePath(existingP), npath.fromPortablePath(newP));
+  }
+
   async symlinkPromise(target: PortablePath, p: PortablePath, type?: SymlinkType) {
     const symlinkType: SymlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
 
@@ -350,6 +370,16 @@ export class NodeFS extends BasePortableFakeFS {
 
   readlinkSync(p: PortablePath) {
     return npath.toPortablePath(this.realFs.readlinkSync(npath.fromPortablePath(p)));
+  }
+
+  async truncatePromise(p: PortablePath, len?: number) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.truncate(npath.fromPortablePath(p), len, this.makeCallback(resolve, reject));
+    });
+  }
+
+  truncateSync(p: PortablePath, len?: number) {
+    return this.realFs.truncateSync(npath.fromPortablePath(p), len);
   }
 
   watch(p: PortablePath, cb?: WatchCallback): Watcher;

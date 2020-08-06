@@ -117,11 +117,17 @@ export abstract class FakeFS<P extends Path> {
   abstract chmodPromise(p: P, mask: number): Promise<void>;
   abstract chmodSync(p: P, mask: number): void;
 
+  abstract chownPromise(p: P, uid: number, gid: number): Promise<void>;
+  abstract chownSync(p: P, uid: number, gid: number): void;
+
   abstract mkdirPromise(p: P, opts?: MkdirOptions): Promise<void>;
   abstract mkdirSync(p: P, opts?: MkdirOptions): void;
 
   abstract rmdirPromise(p: P): Promise<void>;
   abstract rmdirSync(p: P): void;
+
+  abstract linkPromise(existingP: P, newP: P): Promise<void>;
+  abstract linkSync(existingP: P, newP: P): void;
 
   abstract symlinkPromise(target: P, p: P, type?: SymlinkType): Promise<void>;
   abstract symlinkSync(target: P, p: P, type?: SymlinkType): void;
@@ -155,6 +161,9 @@ export abstract class FakeFS<P extends Path> {
 
   abstract readlinkPromise(p: P): Promise<P>;
   abstract readlinkSync(p: P): P;
+
+  abstract truncatePromise(p: P, len?: number): Promise<void>;
+  abstract truncateSync(p: P, len?: number): void;
 
   abstract watch(p: P, cb?: WatchCallback): Watcher;
   abstract watch(p: P, opts: WatchOptions, cb?: WatchCallback): Watcher;
