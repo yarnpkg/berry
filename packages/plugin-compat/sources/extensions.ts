@@ -81,4 +81,10 @@ export const packageExtensions: Array<[string, any]> = [
       react: `^16.8.2`,
     },
   }],
+  // https://github.com/iarna/promise-inflight/pull/4
+  [`promise-inflight@*`, {
+    peerDependenciesMeta: {
+      [`bluebird`]: optionalPeerDep,
+    },
+  }],
 ];
