@@ -1319,7 +1319,6 @@ export class Project {
           throw new Error(`Assertion failed: The build directive should have been registered`);
 
         const buildHash = getBuildHash(pkg, buildInfo.buildLocations);
-        console.log(structUtils.prettyLocator(this.configuration, pkg), buildHash);
 
         // No need to rebuild the package if its hash didn't change
         if (Object.prototype.hasOwnProperty.call(bstate, pkg.locatorHash) && bstate[pkg.locatorHash] === buildHash) {
