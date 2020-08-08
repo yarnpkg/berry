@@ -47,6 +47,7 @@ const LOCKFILE_VERSION = 4;
 const INSTALL_STATE_VERSION = 1;
 
 const MULTIPLE_KEYS_REGEXP = / *, */g;
+const TRAILING_SLASH_REGEXP = /\/$/;
 
 const FETCHER_CONCURRENCY = 32;
 
@@ -523,7 +524,7 @@ export class Project {
         // not merely contained in a package.
         if (strict) {
           const location = await linker.findPackageLocation(locator, linkerOptions);
-          if (location !== cwd) {
+          if (location.replace(TRAILING_SLASH_REGEXP, ``) !== cwd.replace(TRAILING_SLASH_REGEXP, ``)) {
             continue;
           }
         }
