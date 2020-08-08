@@ -57,11 +57,20 @@ export class NpmSemverResolver implements Resolver {
     const versions = Object.keys(registryData.versions);
     const candidates = versions.filter(version => semver.satisfies(version, range));
 
-    candidates.sort((a, b) => {
+    const noDeprecatedCandidates = candidates.filter(version => {
+      return !registryData.versions[version].deprecated;
+    });
+
+    // If there are versions that aren't deprecated, use them
+    const finalCandidates = noDeprecatedCandidates.length > 0
+      ? noDeprecatedCandidates
+      : candidates;
+
+    finalCandidates.sort((a, b) => {
       return -semver.compare(a, b);
     });
 
-    return candidates.map(version => {
+    return finalCandidates.map(version => {
       const versionLocator = structUtils.makeLocator(descriptor, `${PROTOCOL}${version}`);
       const archiveUrl = registryData.versions[version].dist.tarball;
 
