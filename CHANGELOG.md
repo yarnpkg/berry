@@ -14,6 +14,8 @@
 - `yarn pack` will properly include main/module/bin files, even when not explicitly referenced through the `files` field.
 - Local git repositories can now be fetched via the `git+file:` protocol.
 - The progress bars will be properly styled when using the new Windows terminal on certain days.
+- Yarn will now avoid using deprecated versions of the dependencies, unless only deprecated versions are available for the requested ranges.
+- Build keys are now properly computed, which fixes issues where build scripts weren't always triggered when they should have been.
 
 ### CLI
 
