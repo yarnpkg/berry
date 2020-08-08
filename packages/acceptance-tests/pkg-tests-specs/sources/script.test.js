@@ -1,4 +1,4 @@
-const {npath, xfs} = require(`@yarnpkg/fslib`);
+const {npath, ppath, xfs} = require(`@yarnpkg/fslib`);
 const {isAbsolute, resolve} = require(`path`);
 
 const {
@@ -173,6 +173,108 @@ describe(`Scripts tests`, () => {
         `preinstall`,
         `install`,
         `postinstall`,
+      ]);
+    }),
+  );
+
+  test(
+    `it should trigger the postinstall scripts in the right order, children before parents`,
+    makeTemporaryEnv({
+      private: true,
+      workspaces: [
+        `child`,
+      ],
+      dependencies: {
+        [`child`]: `workspace:*`,
+      },
+      scripts: {
+        [`install`]: `echo 'module.exports.push("root");' >> log.js`,
+      },
+    }, async ({path, run, source}) => {
+      await xfs.mkdirPromise(ppath.join(path, `child`));
+      await xfs.writeJsonPromise(ppath.join(path, `child/package.json`), {
+        name: `child`,
+        scripts: {
+          [`install`]: `echo 'module.exports.push("child");' >> ../log.js`,
+        },
+      });
+
+      await xfs.writeFilePromise(ppath.join(path, `log.js`), `module.exports = [];\n`);
+      await run(`install`);
+
+      await expect(source(`require("./log")`)).resolves.toEqual([
+        `child`,
+        `root`,
+      ]);
+    }),
+  );
+
+  test(
+    `it should trigger the postinstall when a dependency gets its dependency tree modified`,
+    makeTemporaryEnv({
+      private: true,
+      workspaces: [
+        `child`,
+      ],
+      dependencies: {
+        [`child`]: `workspace:*`,
+      },
+      scripts: {
+        [`install`]: `echo 'module.exports.push("root");' >> log.js`,
+      },
+    }, async ({path, run, source}) => {
+      await xfs.mkdirPromise(ppath.join(path, `child`), {recursive: true});
+      await xfs.writeJsonPromise(ppath.join(path, `child/package.json`), {
+        name: `child`,
+        scripts: {
+          postinstall: `echo 'module.exports.push("child");' >> ../log.js`,
+        },
+      });
+
+      await run(`install`);
+      await xfs.writeFilePromise(ppath.join(path, `log.js`), `module.exports = [];\n`);
+
+      await run(`./child`, `add`, `no-deps@1.0.0`);
+
+      await expect(source(`require('./log')`)).resolves.toEqual([
+        `child`,
+        `root`,
+      ]);
+    }),
+  );
+
+  test(
+    `it shouldn't trigger the postinstall if an unrelated branch of the tree is modified`,
+    makeTemporaryEnv({
+      private: true,
+      workspaces: [
+        `packages/*`,
+      ],
+      dependencies: {
+        [`first`]: `workspace:*`,
+      },
+      scripts: {
+        [`install`]: `echo 'module.exports.push("root");' >> log.js`,
+      },
+    }, async ({path, run, source}) => {
+      await xfs.mkdirPromise(ppath.join(path, `packages/first`), {recursive: true});
+      await xfs.mkdirPromise(ppath.join(path, `packages/second`), {recursive: true});
+
+      await xfs.writeJsonPromise(ppath.join(path, `packages/first/package.json`), {
+        name: `first`,
+      });
+
+      await xfs.writeJsonPromise(ppath.join(path, `packages/second/package.json`), {
+        name: `bar`,
+      });
+
+      await run(`install`);
+      await xfs.writeFilePromise(ppath.join(path, `log.js`), `module.exports = [];`);
+
+      await run(`packages/second`, `add`, `no-deps@1.0.0`);
+
+      await expect(source(`require('./log')`)).resolves.toEqual([
+        // Must be empty, since the postinstall script shouldn't have run
       ]);
     }),
   );
