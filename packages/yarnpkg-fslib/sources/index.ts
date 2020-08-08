@@ -309,7 +309,9 @@ function registerCleanExit() {
     return;
 
   cleanExitRegistered = true;
-  process.once(`exit`, xfs.rmtempSync);
+  process.once(`exit`, () => {
+    xfs.rmtempSync();
+  });
 }
 
 export const xfs: XFS = Object.assign(new NodeFS(), {
