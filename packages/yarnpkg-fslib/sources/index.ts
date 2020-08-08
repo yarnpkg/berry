@@ -288,6 +288,16 @@ export type XFS = NodeFS & {
 
   mktempPromise(): Promise<PortablePath>;
   mktempPromise<T>(cb: (p: PortablePath) => Promise<T>): Promise<T>;
+
+  /**
+   * Unregisters and tries to remove all temp folders created by mktempSync and mktempPromise
+   */
+  rmtempPromise(): Promise<void>;
+
+  /**
+   * Unregisters and tries to remove all temp folders created by mktempSync and mktempPromise
+   */
+  rmtempSync(): void;
 };
 
 const tmpdirs = new Set<PortablePath>();
@@ -295,25 +305,11 @@ const tmpdirs = new Set<PortablePath>();
 let cleanExitRegistered = false;
 
 function registerCleanExit() {
-  if (!cleanExitRegistered)
-    cleanExitRegistered = true;
-  else
+  if (cleanExitRegistered)
     return;
 
-  const cleanExit = () => {
-    process.off(`exit`, cleanExit);
-
-    for (const p of tmpdirs) {
-      tmpdirs.delete(p);
-      try {
-        xfs.removeSync(p);
-      } catch {
-        // Too bad if there's an error
-      }
-    }
-  };
-
-  process.on(`exit`, cleanExit);
+  cleanExitRegistered = true;
+  process.once(`exit`, xfs.rmtempSync);
 }
 
 export const xfs: XFS = Object.assign(new NodeFS(), {
@@ -393,6 +389,28 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
         }
       } else {
         return realP;
+      }
+    }
+  },
+
+  async rmtempPromise() {
+    await Promise.all(Array.from(tmpdirs.values()).map(async p => {
+      tmpdirs.delete(p);
+      try {
+        await xfs.removePromise(p, {maxRetries: 0});
+      } catch {
+        // Too bad if there's an error
+      }
+    }));
+  },
+
+  rmtempSync() {
+    for (const p of tmpdirs) {
+      tmpdirs.delete(p);
+      try {
+        xfs.removeSync(p);
+      } catch {
+        // Too bad if there's an error
       }
     }
   },

@@ -190,7 +190,7 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  async removePromise(p: P, {recursive = true}: {recursive?: boolean} = {}) {
+  async removePromise(p: P, {recursive = true, maxRetries = 5}: {recursive?: boolean, maxRetries?: number} = {}) {
     let stat;
     try {
       stat = await this.lstatPromise(p);
@@ -208,19 +208,24 @@ export abstract class FakeFS<P extends Path> {
           await this.removePromise(this.pathUtils.resolve(p, entry));
 
       // 5 gives 1s worth of retries at worst
-      for (let t = 0; t < 5; ++t) {
+      let t = 0;
+      do {
         try {
           await this.rmdirPromise(p);
           break;
         } catch (error) {
           if (error.code === `EBUSY` || error.code === `ENOTEMPTY`) {
-            await new Promise(resolve => setTimeout(resolve, t * 100));
-            continue;
+            if (maxRetries === 0) {
+              break;
+            } else {
+              await new Promise(resolve => setTimeout(resolve, t * 100));
+              continue;
+            }
           } else {
             throw error;
           }
         }
-      }
+      } while (t++ < maxRetries);
     } else {
       await this.unlinkPromise(p);
     }
