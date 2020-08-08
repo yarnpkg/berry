@@ -250,8 +250,6 @@ export class Cache {
           ? onHit
           : onMiss;
 
-        // Note: must be synchronous, otherwise the mutex may break (a concurrent
-        // execution may start while we're running the action)
         if (action)
           action();
 
