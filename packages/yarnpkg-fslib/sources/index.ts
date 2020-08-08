@@ -290,12 +290,12 @@ export type XFS = NodeFS & {
   mktempPromise<T>(cb: (p: PortablePath) => Promise<T>): Promise<T>;
 
   /**
-   * Unregisters and tries to remove all temp folders created by mktempSync and mktempPromise
+   * Tries to remove all temp folders created by mktempSync and mktempPromise
    */
   rmtempPromise(): Promise<void>;
 
   /**
-   * Unregisters and tries to remove all temp folders created by mktempSync and mktempPromise
+   * Tries to remove all temp folders created by mktempSync and mktempPromise
    */
   rmtempSync(): void;
 };
@@ -397,9 +397,9 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
 
   async rmtempPromise() {
     await Promise.all(Array.from(tmpdirs.values()).map(async p => {
-      tmpdirs.delete(p);
       try {
         await xfs.removePromise(p, {maxRetries: 0});
+        tmpdirs.delete(p);
       } catch {
         // Too bad if there's an error
       }
@@ -408,9 +408,9 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
 
   rmtempSync() {
     for (const p of tmpdirs) {
-      tmpdirs.delete(p);
       try {
         xfs.removeSync(p);
+        tmpdirs.delete(p);
       } catch {
         // Too bad if there's an error
       }
