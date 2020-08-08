@@ -125,7 +125,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
         }
       }
 
-      cli.runExit(command, {
+      await cli.runExit(command, {
         cwd: npath.toPortablePath(process.cwd()),
         plugins: pluginConfiguration,
         quiet: false,
@@ -136,8 +136,10 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
     }
   }
 
-  return run().catch(error => {
-    process.stdout.write(error.stack || error.message);
-    process.exitCode = 1;
-  });
+  return run()
+    .catch(error => {
+      process.stdout.write(error.stack || error.message);
+      process.exitCode = 1;
+    })
+    .finally(() => xfs.rmtempPromise());
 }
