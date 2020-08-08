@@ -107,7 +107,7 @@ export class Project {
     while (currentCwd !== configuration.projectCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, `package.json` as Filename))) {
+      if (xfs.existsSync(ppath.join(currentCwd, Filename.manifest))) {
         packageCwd = currentCwd;
         break;
       }
@@ -132,11 +132,11 @@ export class Project {
 
     // Otherwise, we need to ask the project (which will in turn ask the linkers for help)
     // Note: the trailing slash is caused by a quirk in the PnP implementation that requires folders to end with a trailing slash to disambiguate them from regular files
-    const locator = await project.findLocatorForLocation(`${packageCwd}/` as PortablePath);
+    const locator = await project.findLocatorForLocation(`${packageCwd}/` as PortablePath, {strict: true});
     if (locator)
       return {project, locator, workspace: null};
 
-    throw new UsageError(`The nearest package directory (${packageCwd}) doesn't seem to be part of the project declared at ${project.cwd}. If the project directory is right, it might be that you forgot to list a workspace. If it isn't, it's likely because you have a yarn.lock file at the detected location, confusing the project detection.`);
+    throw new UsageError(`The nearest package directory (${configuration.format(packageCwd, FormatType.PATH)}) doesn't seem to be part of the project declared in ${configuration.format(project.cwd, FormatType.PATH)}.\n\n- If the project directory is right, it might be that you forgot to list ${configuration.format(ppath.relative(project.cwd, packageCwd), FormatType.PATH)} as a workspace.\n- If it isn't, it's likely because you have a yarn.lock or package.json file there, confusing the project root detection.`);
   }
 
   static generateBuildStateFile(buildState: Map<LocatorHash, string>, locatorStore: Map<LocatorHash, Locator>) {
@@ -510,7 +510,7 @@ export class Project {
     return dependencyMeta;
   }
 
-  async findLocatorForLocation(cwd: PortablePath) {
+  async findLocatorForLocation(cwd: PortablePath, {strict = false}: {strict?: boolean} = {}) {
     const report = new ThrowReport();
 
     const linkers = this.configuration.getLinkers();
@@ -519,6 +519,14 @@ export class Project {
     for (const linker of linkers) {
       const locator = await linker.findPackageLocator(cwd, linkerOptions);
       if (locator) {
+        // If strict mode, the specified cwd must be a package,
+        // not merely contained in a package.
+        if (strict) {
+          const location = await linker.findPackageLocation(locator, linkerOptions);
+          if (location !== cwd) {
+            continue;
+          }
+        }
         return locator;
       }
     }
