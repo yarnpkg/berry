@@ -972,13 +972,19 @@ export class Project {
     const fetcher = userFetcher || this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
 
-    const locatorHashes = miscUtils.sortMap(this.storedResolutions.values(), [(locatorHash: LocatorHash) => {
-      const pkg = this.storedPackages.get(locatorHash);
-      if (!pkg)
-        throw new Error(`Assertion failed: The locator should have been registered`);
+    const locatorHashes = Array.from(
+      new Set(
+        miscUtils.sortMap(this.storedResolutions.values(), [
+          (locatorHash: LocatorHash) => {
+            const pkg = this.storedPackages.get(locatorHash);
+            if (!pkg)
+              throw new Error(`Assertion failed: The locator should have been registered`);
 
-      return structUtils.stringifyLocator(pkg);
-    }]);
+            return structUtils.stringifyLocator(pkg);
+          },
+        ])
+      )
+    );
 
     let firstError = false;
 
