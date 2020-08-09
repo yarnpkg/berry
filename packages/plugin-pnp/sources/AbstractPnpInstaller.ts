@@ -221,12 +221,12 @@ export abstract class AbstractPnpInstaller implements Installer {
   }
 
   private normalizeDirectoryPath(folder: PortablePath) {
-    let relativeFolder = ppath.relative(this.opts.project.cwd, folder);
+    let relativeFolder: PortablePath = ppath.relative(this.opts.project.cwd, folder);
 
     if (!relativeFolder.match(/^\.{0,2}\//))
       // Don't use ppath.join here, it ignores the `.`
       relativeFolder = `./${relativeFolder}` as PortablePath;
 
-    return relativeFolder.replace(/\/?$/, `/`)  as PortablePath;
+    return relativeFolder.replace(/\/?$/, `/`) as PortablePath;
   }
 }
