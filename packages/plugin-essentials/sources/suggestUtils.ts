@@ -1,7 +1,7 @@
-import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace, FetchOptions, ResolveOptions} from '@yarnpkg/core';
-import {structUtils}                                                                                                                from '@yarnpkg/core';
-import {PortablePath, ppath}                                                                                                        from '@yarnpkg/fslib';
-import semver                                                                                                                       from 'semver';
+import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace, FetchOptions, ResolveOptions, Configuration} from '@yarnpkg/core';
+import {structUtils}                                                                                                                               from '@yarnpkg/core';
+import {PortablePath, ppath, xfs}                                                                                                                  from '@yarnpkg/fslib';
+import semver                                                                                                                                      from 'semver';
 
 export type Suggestion = {
   descriptor: Descriptor,
@@ -129,7 +129,7 @@ export async function findProjectDescriptors(ident: Ident, {project, target}: {p
   return matches;
 }
 
-export async function extractDescriptorFromPath(path: PortablePath, {cache, cwd, workspace}: {cache: Cache, cwd: PortablePath, workspace: Workspace}) {
+export async function extractDescriptorFromPath(path: PortablePath, {cwd, workspace}: {cwd: PortablePath, workspace: Workspace}) {
   if (!ppath.isAbsolute(path)) {
     path = ppath.relative(workspace.cwd, ppath.resolve(cwd, path));
     if (!path.match(/^\.{0,2}\//)) {
@@ -138,6 +138,9 @@ export async function extractDescriptorFromPath(path: PortablePath, {cache, cwd,
   }
 
   const {project} = workspace;
+
+  // We use a temporary cache so that we don't pollute the project cache with temporary archives
+  const cache = await makeTemporaryCache();
 
   const descriptor = await fetchDescriptorFrom(structUtils.makeIdent(null, `archive`), path, {project: workspace.project, cache, workspace});
   if (!descriptor)
@@ -335,3 +338,17 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   return structUtils.makeDescriptor(bestLocator, structUtils.makeRange({protocol, source, params, selector}));
 }
 
+export async function makeTemporaryCache() {
+  return await xfs.mktempPromise(async cacheDir => {
+    const configuration = Configuration.create(cacheDir);
+
+    configuration.useWithSource(cacheDir, {
+      // Don't pollute the mirror with temporary archives
+      enableMirror: false,
+      // Don't spend time compressing what gets deleted later
+      compressionLevel: 0,
+    }, cacheDir, {overwrite: true});
+
+    return new Cache(cacheDir, {configuration, check: false, immutable: false});
+  });
+}
