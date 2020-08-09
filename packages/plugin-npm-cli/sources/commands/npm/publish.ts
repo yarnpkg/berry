@@ -1,14 +1,19 @@
-import {BaseCommand, WorkspaceRequiredError}                                       from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, Workspace} from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                    from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils}                                              from '@yarnpkg/plugin-npm';
-import {packUtils}                                                                 from '@yarnpkg/plugin-pack';
-import {Command, Usage, UsageError}                                                from 'clipanion';
-import {createHash}                                                                from 'crypto';
-import ssri                                                                        from 'ssri';
+import { BaseCommand, WorkspaceRequiredError } from '@yarnpkg/cli';
+import { Configuration, MessageName, Project, ReportError, StreamReport, Workspace, Ident } from '@yarnpkg/core';
+import { miscUtils, structUtils } from '@yarnpkg/core';
+import { npmConfigUtils, npmHttpUtils } from '@yarnpkg/plugin-npm';
+import { packUtils } from '@yarnpkg/plugin-pack';
+import { Command, Usage, UsageError } from 'clipanion';
+import { createHash } from 'crypto';
+import ssri from 'ssri';
+import { Stream } from 'stream';
+import { xfs, ppath, PortablePath } from '@yarnpkg/fslib';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {
+  @Command.String()
+  tarballPath?: string;
+
   @Command.String(`--access`)
   access?: string;
 
@@ -37,99 +42,118 @@ export default class NpmPublishCommand extends BaseCommand {
   @Command.Path(`npm`, `publish`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const { project, workspace } = await Project.find(configuration, this.context.cwd);
+    const fromTarball = this.tarballPath !== undefined;
+    if (!fromTarball) { //if the tarball already exist, we don't any workspace.
+      if (!workspace)
+        throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+      if (workspace.manifest.private)
+        throw new UsageError(`Private workspaces cannot be published`);
+      if (workspace.manifest.name === null || workspace.manifest.version === null)
+        throw new UsageError(`Workspaces must have valid names and versions to be published on an external registry`);
+    }
+    const tarballPath = this.tarballPath !== undefined ? ppath.join(this.context.cwd, this.tarballPath as PortablePath) : undefined;
+    if (tarballPath !== undefined) {
+      const test = packUtils.getManifestFromTarball(tarballPath);
+    }
+    // await project.restoreInstallState();
 
-    if (workspace.manifest.private)
-      throw new UsageError(`Private workspaces cannot be published`);
-    if (workspace.manifest.name === null || workspace.manifest.version === null)
-      throw new UsageError(`Workspaces must have valid names and versions to be published on an external registry`);
+    // if (fromTarball)
+    //   //the tarball already exist, we must extract the manifest from it.
+    //   tar;
 
-    await project.restoreInstallState();
 
-    // We store it so that TS knows that it's non-null
-    const ident = workspace.manifest.name;
-    const version = workspace.manifest.version;
+    // // We store it so that TS knows that it's non-null
+    // const ident = workspace.manifest.name;
+    // const version = workspace.manifest.version;
 
-    const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
+    // const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, { configuration });
 
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
     }, async report => {
       // Not an error if --tolerate-republish is set
-      if (this.tolerateRepublish) {
-        try {
-          const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
-            configuration,
-            registry,
-            ident,
-            json: true,
-          });
+      // if (this.tolerateRepublish) {
+      //   try {
+      //     const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
+      //       configuration,
+      //       registry,
+      //       ident,
+      //       json: true,
+      //     });
 
-          if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
-            throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
+      //     if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
+      //       throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
 
-          if (Object.prototype.hasOwnProperty.call(registryData.versions, version)) {
-            report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
-            return;
-          }
-        } catch (error) {
-          if (error.name !== `HTTPError`) {
-            throw error;
-          } else if (error.response.statusCode !== 404) {
-            throw new ReportError(MessageName.NETWORK_ERROR, `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`);
-          }
-        }
-      }
+      //     if (Object.prototype.hasOwnProperty.call(registryData.versions, version)) {
+      //       report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
+      //       return;
+      //     }
+      //   } catch (error) {
+      //     if (error.name !== `HTTPError`) {
+      //       throw error;
+      //     } else if (error.response.statusCode !== 404) {
+      //       throw new ReportError(MessageName.NETWORK_ERROR, `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`);
+      //     }
+      //   }
+      // }
 
-      await packUtils.prepareForPack(workspace, {report}, async () => {
-        const files = await packUtils.genPackList(workspace);
+      // if (tarballPath === undefined) {
+      //   await packUtils.prepareForPack(workspace, { report }, async () => {
+      //     const files = await packUtils.genPackList(workspace);
 
-        for (const file of files)
-          report.reportInfo(null, file);
+      //     for (const file of files)
+      //       report.reportInfo(null, file);
 
-        const pack = await packUtils.genPackStream(workspace, files);
-        const buffer = await miscUtils.bufferStream(pack);
+      //     const pack = await packUtils.genPackStream(workspace, files);
+      //     const buffer = await miscUtils.bufferStream(pack);
+      //     await this.publishBuffer(workspace, buffer, ident, registry, configuration, report);
+      //   });
+      // } else {
+      //   await xfs.readFilePromise(tarballPath);
+      //   await this.publishBuffer(workspace, buffer, ident, registry, configuration, report);
+      // }
 
-        const body = await makePublishBody(workspace, buffer, {
-          access: this.access,
-          tag: this.tag,
-          registry,
-        });
 
-        try {
-          await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
-            configuration,
-            registry,
-            ident,
-            json: true,
-          });
-        } catch (error) {
-          if (error.name !== `HTTPError`) {
-            throw error;
-          } else {
-            const message = error.response.body && error.response.body.error
-              ? error.response.body.error
-              : `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`;
-
-            report.reportError(MessageName.NETWORK_ERROR, message);
-          }
-        }
-      });
-
-      if (!report.hasErrors()) {
-        report.reportInfo(MessageName.UNNAMED, `Package archive published`);
-      }
+      // if (!report.hasErrors()) {
+      //   report.reportInfo(MessageName.UNNAMED, `Package archive published`);
+      // }
     });
 
     return report.exitCode();
   }
+
+  async publishBuffer(workspace: Workspace, buffer: Buffer, ident: Ident, registry: string, configuration: Configuration, report: StreamReport) {
+    const body = await makePublishBody(workspace, buffer, {
+      access: this.access,
+      tag: this.tag,
+      registry,
+    });
+
+    try {
+      await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
+        configuration,
+        registry,
+        ident,
+        json: true,
+      });
+    } catch (error) {
+      if (error.name !== `HTTPError`) {
+        throw error;
+      } else {
+        const message = error.response.body && error.response.body.error
+          ? error.response.body.error
+          : `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`;
+
+        report.reportError(MessageName.NETWORK_ERROR, message);
+      }
+    }
+  }
 }
 
-async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry}: {access: string | undefined, tag: string, registry: string}) {
+async function makePublishBody(workspace: Workspace, buffer: Buffer, { access, tag, registry }: { access: string | undefined, tag: string, registry: string }) {
   const configuration = workspace.project.configuration;
 
   const ident = workspace.manifest.name!;

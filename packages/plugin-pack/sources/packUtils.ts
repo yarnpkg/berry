@@ -1,12 +1,13 @@
-import {MessageName, ReportError, Report, Workspace, scriptUtils} from '@yarnpkg/core';
-import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename}       from '@yarnpkg/fslib';
-import {Hooks as StageHooks}                                      from '@yarnpkg/plugin-stage';
-import mm                                                         from 'micromatch';
-import {PassThrough}                                              from 'stream';
-import tar                                                        from 'tar-stream';
-import {createGzip}                                               from 'zlib';
+import { MessageName, ReportError, Report, Workspace, scriptUtils, Manifest } from '@yarnpkg/core';
+import { FakeFS, JailFS, xfs, PortablePath, ppath, Filename } from '@yarnpkg/fslib';
+import { Hooks as StageHooks } from '@yarnpkg/plugin-stage';
+import mm from 'micromatch';
+import { PassThrough, Stream } from 'stream';
+import tar from 'tar-stream';
+import { createGzip, gunzip } from 'zlib';
 
-import {Hooks}                                                    from './';
+import { Hooks } from './';
+import { rejects } from 'assert';
 
 const NEVER_IGNORE = [
   `/package.json`,
@@ -54,14 +55,14 @@ export async function hasPackScripts(workspace: Workspace) {
   return false;
 }
 
-export async function prepareForPack(workspace: Workspace, {report}: {report: Report}, cb: () => Promise<void>) {
+export async function prepareForPack(workspace: Workspace, { report }: { report: Report }, cb: () => Promise<void>) {
   const stdin = null;
   const stdout = new PassThrough();
   const stderr = new PassThrough();
 
   if (await scriptUtils.hasWorkspaceScript(workspace, `prepack`)) {
     report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "prepack" lifecycle script`);
-    const exitCode = await scriptUtils.executeWorkspaceScript(workspace, `prepack`, [], {stdin, stdout, stderr});
+    const exitCode = await scriptUtils.executeWorkspaceScript(workspace, `prepack`, [], { stdin, stdout, stderr });
 
     if (exitCode !== 0) {
       throw new ReportError(MessageName.LIFECYCLE_SCRIPT, `Prepack script failed; run "yarn prepack" to investigate`);
@@ -74,7 +75,7 @@ export async function prepareForPack(workspace: Workspace, {report}: {report: Re
     if (await scriptUtils.hasWorkspaceScript(workspace, `postpack`)) {
       report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "postpack" lifecycle script`);
 
-      const exitCode = await scriptUtils.executeWorkspaceScript(workspace, `postpack`, [], {stdin, stdout, stderr});
+      const exitCode = await scriptUtils.executeWorkspaceScript(workspace, `postpack`, [], { stdin, stdout, stderr });
       if (exitCode !== 0) {
         report.reportWarning(MessageName.LIFECYCLE_SCRIPT, `Postpack script failed; run "yarn postpack" to investigate`);
       }
@@ -102,7 +103,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
       const dest = ppath.join(`package` as PortablePath, file);
 
       const stat = await xfs.lstatPromise(source);
-      const opts = {name: dest, mtime: new Date(315532800)};
+      const opts = { name: dest, mtime: new Date(315532800) };
 
       const mode = executableFiles.has(file)
         ? 0o755
@@ -133,9 +134,9 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
         else
           content = await xfs.readFilePromise(source);
 
-        pack.entry({...opts, mode, type: `file`}, content, cb);
+        pack.entry({ ...opts, mode, type: `file` }, content, cb);
       } else if (stat.isSymbolicLink()) {
-        pack.entry({...opts, mode, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
+        pack.entry({ ...opts, mode, type: `symlink`, linkname: await xfs.readlinkPromise(source) }, cb);
       }
 
       await awaitTarget;
@@ -160,6 +161,46 @@ export async function genPackageManifest(workspace: Workspace): Promise<object> 
   );
 
   return data;
+}
+
+function gunzipPromise(data: Buffer): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    gunzip(data, (error, result) => {
+      if (error !== null) reject(error);
+      resolve(result);
+    })
+  });
+}
+
+function getManifestFromTarballBuffer(buffer: Buffer): Promise<Manifest> {
+  const manifestPath = ppath.join(`package` as PortablePath, Manifest.fileName);
+  const extract = tar.extract();
+  return new Promise<Manifest>((resolve, reject) => {
+    extract.on('entry', (header, stream: Stream, next) => {
+      if (header.name === manifestPath) {
+        let chunks = '';
+        stream.on("data", (data) => chunks += data);
+        stream.on("end", () => {
+          extract.destroy();//destroy it, so finish event won't be emitted.
+          resolve(Manifest.fromText(chunks));
+          return;
+        });
+      }
+      next();
+    });
+    extract.on("finish", () => { //shouldn't be called when we found a manifest, the file would be destroyed.
+      console.log("ah");
+      reject(new Error("The tarball does not contain a manifest (package.json)."));
+    });
+    extract.write(buffer);
+    extract.end();
+  });
+}
+
+export async function getManifestFromTarball(tarballPath: PortablePath): Promise<Manifest> {
+  const tgz = await xfs.readFilePromise(tarballPath);
+  const tarballBuffer = await gunzipPromise(tgz);
+  return await getManifestFromTarballBuffer(tarballBuffer);
 }
 
 export async function genPackList(workspace: Workspace) {
@@ -236,7 +277,7 @@ export async function genPackList(workspace: Workspace) {
     ignoreList.reject.push(`/*`);
 
     for (const pattern of workspace.manifest.files!) {
-      addIgnorePattern(ignoreList.accept, pattern, {cwd: PortablePath.root});
+      addIgnorePattern(ignoreList.accept, pattern, { cwd: PortablePath.root });
     }
   }
 
@@ -247,7 +288,7 @@ export async function genPackList(workspace: Workspace) {
   });
 }
 
-async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, ignoreList}: {hasExplicitFileList: boolean, globalList: IgnoreList, ignoreList: IgnoreList}) {
+async function walk(initialCwd: PortablePath, { hasExplicitFileList, globalList, ignoreList }: { hasExplicitFileList: boolean, globalList: IgnoreList, ignoreList: IgnoreList }) {
   const list: Array<PortablePath> = [];
 
   const cwdFs = new JailFS(initialCwd);
@@ -257,7 +298,7 @@ async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, 
     const [cwd, ignoreLists] = cwdList.pop()!;
     const stat = await cwdFs.lstatPromise(cwd);
 
-    if (isIgnored(cwd, {globalList, ignoreLists: stat.isDirectory() ? null : ignoreLists}))
+    if (isIgnored(cwd, { globalList, ignoreLists: stat.isDirectory() ? null : ignoreLists }))
       continue;
 
     if (stat.isDirectory()) {
@@ -283,8 +324,8 @@ async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, 
         ? [localIgnoreList].concat(ignoreLists)
         : ignoreLists;
 
-      if (isIgnored(cwd, {globalList, ignoreLists}))
-        nextIgnoreLists = [...ignoreLists, {accept: [], reject: [`**/*`]}];
+      if (isIgnored(cwd, { globalList, ignoreLists }))
+        nextIgnoreLists = [...ignoreLists, { accept: [], reject: [`**/*`] }];
 
       for (const entry of entries) {
         cwdList.push([ppath.resolve(cwd, entry), nextIgnoreLists]);
@@ -306,12 +347,12 @@ async function loadIgnoreList(fs: FakeFS<PortablePath>, cwd: PortablePath, filen
   const data = await fs.readFilePromise(ppath.join(cwd, filename), `utf8`);
 
   for (const pattern of data.split(/\n/g))
-    addIgnorePattern(ignoreList.reject, pattern, {cwd});
+    addIgnorePattern(ignoreList.reject, pattern, { cwd });
 
   return ignoreList;
 }
 
-function normalizePattern(pattern: string, {cwd}: {cwd: PortablePath}) {
+function normalizePattern(pattern: string, { cwd }: { cwd: PortablePath }) {
   const negated = pattern[0] === `!`;
 
   if (negated)
@@ -326,16 +367,16 @@ function normalizePattern(pattern: string, {cwd}: {cwd: PortablePath}) {
   return pattern;
 }
 
-function addIgnorePattern(target: Array<string>, pattern: string, {cwd}: {cwd: PortablePath}) {
+function addIgnorePattern(target: Array<string>, pattern: string, { cwd }: { cwd: PortablePath }) {
   const trimed = pattern.trim();
 
   if (trimed === `` || trimed[0] === `#`)
     return;
 
-  target.push(normalizePattern(trimed, {cwd}));
+  target.push(normalizePattern(trimed, { cwd }));
 }
 
-function isIgnored(cwd: string, {globalList, ignoreLists}: {globalList: IgnoreList, ignoreLists: Array<IgnoreList> | null}) {
+function isIgnored(cwd: string, { globalList, ignoreLists }: { globalList: IgnoreList, ignoreLists: Array<IgnoreList> | null }) {
   if (isMatch(cwd, globalList.accept))
     return false;
   if (isMatch(cwd, globalList.reject))
@@ -397,9 +438,9 @@ function isMatchBasename(path: string, patterns: Array<string>) {
     }
   }
 
-  if (mm.isMatch(path, paths as any, {dot: true, nocase: true}))
+  if (mm.isMatch(path, paths as any, { dot: true, nocase: true }))
     return true;
-  if (mm.isMatch(path, basenames as any, {dot: true, basename: true, nocase: true}))
+  if (mm.isMatch(path, basenames as any, { dot: true, basename: true, nocase: true }))
     return true;
 
   return false;
