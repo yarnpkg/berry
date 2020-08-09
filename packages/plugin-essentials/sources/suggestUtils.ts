@@ -339,16 +339,16 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
 }
 
 export async function makeTemporaryCache() {
-  return await xfs.mktempPromise(async cacheDir => {
-    const configuration = Configuration.create(cacheDir);
+  const cacheDir = await xfs.mktempPromise();
 
-    configuration.useWithSource(cacheDir, {
-      // Don't pollute the mirror with temporary archives
-      enableMirror: false,
-      // Don't spend time compressing what gets deleted later
-      compressionLevel: 0,
-    }, cacheDir, {overwrite: true});
+  const configuration = Configuration.create(cacheDir);
 
-    return new Cache(cacheDir, {configuration, check: false, immutable: false});
-  });
+  configuration.useWithSource(cacheDir, {
+    // Don't pollute the mirror with temporary archives
+    enableMirror: false,
+    // Don't spend time compressing what gets deleted later
+    compressionLevel: 0,
+  }, cacheDir, {overwrite: true});
+
+  return new Cache(cacheDir, {configuration, check: false, immutable: false});
 }
