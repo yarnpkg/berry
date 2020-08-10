@@ -1,13 +1,12 @@
-import { BaseCommand, WorkspaceRequiredError } from '@yarnpkg/cli';
-import { Configuration, MessageName, Project, ReportError, StreamReport, Workspace, Ident } from '@yarnpkg/core';
-import { miscUtils, structUtils } from '@yarnpkg/core';
-import { npmConfigUtils, npmHttpUtils } from '@yarnpkg/plugin-npm';
-import { packUtils } from '@yarnpkg/plugin-pack';
-import { Command, Usage, UsageError } from 'clipanion';
-import { createHash } from 'crypto';
-import ssri from 'ssri';
-import { Stream } from 'stream';
-import { xfs, ppath, PortablePath } from '@yarnpkg/fslib';
+import {BaseCommand, WorkspaceRequiredError}                                             from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport, Manifest, Ident} from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                          from '@yarnpkg/core';
+import {PortablePath, xfs, ppath, npath}                                                 from '@yarnpkg/fslib';
+import {npmConfigUtils, npmHttpUtils}                                                    from '@yarnpkg/plugin-npm';
+import {packUtils}                                                                       from '@yarnpkg/plugin-pack';
+import {Command, Usage, UsageError}                                                      from 'clipanion';
+import {createHash}                                                                      from 'crypto';
+import ssri                                                                              from 'ssri';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {
@@ -25,9 +24,10 @@ export default class NpmPublishCommand extends BaseCommand {
 
   static usage: Usage = Command.Usage({
     category: `Npm-related commands`,
-    description: `publish the active workspace to the npm registry`,
+    description: `publish a package to the npm registry`,
     details: `
-      This command will pack the active workspace into a fresh archive and upload it to the npm registry.
+      This command will upload a package to the npm registry.
+      If no tarball path is given, it will pack the active workspace into a fresh archive and upload it to the npm registry.
 
       The package will by default be attached to the \`latest\` tag on the registry, but this behavior can be overriden by using the \`--tag\` option.
 
@@ -36,97 +36,96 @@ export default class NpmPublishCommand extends BaseCommand {
     examples: [[
       `Publish the active workspace`,
       `yarn npm publish`,
+    ],
+    [
+      `Publish a tarball`,
+      `yarn npm publish ./package.tgz`,
     ]],
   });
 
   @Command.Path(`npm`, `publish`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const { project, workspace } = await Project.find(configuration, this.context.cwd);
-    const fromTarball = this.tarballPath !== undefined;
-    if (!fromTarball) { //if the tarball already exist, we don't any workspace.
+    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const tgzPath: undefined | PortablePath = this.tarballPath == undefined ? undefined :
+      npath.isAbsolute( this.tarballPath) ? this.tarballPath as PortablePath : ppath.join(this.context.cwd, this.tarballPath as PortablePath);
+    let manifest: Manifest;
+    if (tgzPath !== undefined) { //if the tarball path was explicitly given, we must use it and ignore the workspace.
+      manifest = await packUtils.getManifestFromTarball(tgzPath);
+    } else {
       if (!workspace)
         throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
-
-      if (workspace.manifest.private)
-        throw new UsageError(`Private workspaces cannot be published`);
-      if (workspace.manifest.name === null || workspace.manifest.version === null)
-        throw new UsageError(`Workspaces must have valid names and versions to be published on an external registry`);
+      manifest = workspace.manifest;
     }
-    const tarballPath = this.tarballPath !== undefined ? ppath.join(this.context.cwd, this.tarballPath as PortablePath) : undefined;
-    if (tarballPath !== undefined) {
-      const test = packUtils.getManifestFromTarball(tarballPath);
-    }
-    // await project.restoreInstallState();
+    if (manifest.private)
+      throw new UsageError(`Private workspaces cannot be published`);
+    if (manifest.name === null || manifest.version === null)
+      throw new UsageError(`Workspaces must have valid names and versions to be published on an external registry`);
+    if (this.tarballPath === undefined) //No need to restore when we publish a tarball.
+      await project.restoreInstallState();
+    // We store it so that TS knows that it's non-null
+    const ident = manifest.name;
+    const version = manifest.version;
 
-    // if (fromTarball)
-    //   //the tarball already exist, we must extract the manifest from it.
-    //   tar;
-
-
-    // // We store it so that TS knows that it's non-null
-    // const ident = workspace.manifest.name;
-    // const version = workspace.manifest.version;
-
-    // const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, { configuration });
+    const registry = npmConfigUtils.getPublishRegistry(manifest, {configuration});
 
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
     }, async report => {
       // Not an error if --tolerate-republish is set
-      // if (this.tolerateRepublish) {
-      //   try {
-      //     const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
-      //       configuration,
-      //       registry,
-      //       ident,
-      //       json: true,
-      //     });
+      if (this.tolerateRepublish) {
+        try {
+          const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
+            configuration,
+            registry,
+            ident,
+            json: true,
+          });
 
-      //     if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
-      //       throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
+          if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
+            throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
 
-      //     if (Object.prototype.hasOwnProperty.call(registryData.versions, version)) {
-      //       report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
-      //       return;
-      //     }
-      //   } catch (error) {
-      //     if (error.name !== `HTTPError`) {
-      //       throw error;
-      //     } else if (error.response.statusCode !== 404) {
-      //       throw new ReportError(MessageName.NETWORK_ERROR, `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`);
-      //     }
-      //   }
-      // }
+          if (Object.prototype.hasOwnProperty.call(registryData.versions, version)) {
+            report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
+            return;
+          }
+        } catch (error) {
+          if (error.name !== `HTTPError`) {
+            throw error;
+          } else if (error.response.statusCode !== 404) {
+            throw new ReportError(MessageName.NETWORK_ERROR, `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`);
+          }
+        }
+      }
 
-      // if (tarballPath === undefined) {
-      //   await packUtils.prepareForPack(workspace, { report }, async () => {
-      //     const files = await packUtils.genPackList(workspace);
+      if (tgzPath === undefined) { //workspace was previously checked as defined if tgzPath is undefined.
+        await packUtils.prepareForPack(workspace!, {report}, async () => {
+          const files = await packUtils.genPackList(workspace!);
 
-      //     for (const file of files)
-      //       report.reportInfo(null, file);
+          for (const file of files)
+            report.reportInfo(null, file);
 
-      //     const pack = await packUtils.genPackStream(workspace, files);
-      //     const buffer = await miscUtils.bufferStream(pack);
-      //     await this.publishBuffer(workspace, buffer, ident, registry, configuration, report);
-      //   });
-      // } else {
-      //   await xfs.readFilePromise(tarballPath);
-      //   await this.publishBuffer(workspace, buffer, ident, registry, configuration, report);
-      // }
+          const pack = await packUtils.genPackStream(workspace!, files);
+          const buffer = await miscUtils.bufferStream(pack);
+          await this.publishBuffer(manifest, buffer, ident, registry, configuration, report);
+        });
+      } else {
+        const buffer = await xfs.readFilePromise(tgzPath);
+        await this.publishBuffer(manifest, buffer, ident, registry, configuration, report);
+      }
 
 
-      // if (!report.hasErrors()) {
-      //   report.reportInfo(MessageName.UNNAMED, `Package archive published`);
-      // }
+      if (!report.hasErrors()) {
+        report.reportInfo(MessageName.UNNAMED, `Package archive published`);
+      }
     });
 
     return report.exitCode();
   }
 
-  async publishBuffer(workspace: Workspace, buffer: Buffer, ident: Ident, registry: string, configuration: Configuration, report: StreamReport) {
-    const body = await makePublishBody(workspace, buffer, {
+  async publishBuffer(manifest: Manifest, buffer: Buffer, ident: Ident, registry: string, configuration: Configuration, report: StreamReport) {
+    const body = await makePublishBody(manifest, configuration, buffer, {
       access: this.access,
       tag: this.tag,
       registry,
@@ -153,11 +152,9 @@ export default class NpmPublishCommand extends BaseCommand {
   }
 }
 
-async function makePublishBody(workspace: Workspace, buffer: Buffer, { access, tag, registry }: { access: string | undefined, tag: string, registry: string }) {
-  const configuration = workspace.project.configuration;
-
-  const ident = workspace.manifest.name!;
-  const version = workspace.manifest.version!;
+async function makePublishBody(manifest: Manifest, configuration: Configuration, buffer: Buffer, {access, tag, registry}: { access: string | undefined, tag: string, registry: string }) {
+  const ident = manifest.name!;
+  const version = manifest.version!;
 
   const name = structUtils.stringifyIdent(ident);
 
@@ -165,8 +162,8 @@ async function makePublishBody(workspace: Workspace, buffer: Buffer, { access, t
   const integrity = ssri.fromData(buffer).toString();
 
   if (typeof access === `undefined`) {
-    if (workspace.manifest.publishConfig && typeof workspace.manifest.publishConfig.access === `string`) {
-      access = workspace.manifest.publishConfig.access;
+    if (manifest.publishConfig && typeof manifest.publishConfig.access === `string`) {
+      access = manifest.publishConfig.access;
     } else if (configuration.get(`npmPublishAccess`) !== null) {
       access = configuration.get(`npmPublishAccess`);
     } else if (ident.scope) {
@@ -176,7 +173,7 @@ async function makePublishBody(workspace: Workspace, buffer: Buffer, { access, t
     }
   }
 
-  const raw = await packUtils.genPackageManifest(workspace);
+  const raw = JSON.parse(JSON.stringify(manifest.raw));
 
   // This matches Lerna's logic:
   // https://github.com/evocateur/libnpmpublish/blob/latest/publish.js#L142
