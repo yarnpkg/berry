@@ -233,8 +233,7 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   getBufferAndClose(): Buffer {
-    if (!this.ready)
-      throw errors.EBUSY(`archive closed, close`);
+    this.prepareClose();
 
     if (!this.lzSource)
       throw new Error(`ZipFS was not created from a Buffer`);

@@ -37482,16 +37482,18 @@ class CustomStatWatcher extends external_events_.EventEmitter {
 
   start() {
     assertStatus(this.status, Status.Ready);
-    this.status = Status.Running; // Per the Node FS docs:
-    // "When an fs.watchFile operation results in an ENOENT error,
-    // it will invoke the listener once, with all the fields zeroed
-    // (or, for dates, the Unix Epoch)."
+    this.status = Status.Running; // Node allows other listeners to be registered up to 3 milliseconds
+    // after the watcher has been started, so that's what we're doing too
 
-    if (!this.fakeFs.existsSync(this.path)) {
-      // Node allows other listeners to be registered up to 3 milliseconds
-      // after the watcher has been started, so that's what we're doing too
-      setTimeout(() => this.emit(Event.Change, this.lastStats, this.lastStats), 3);
-    }
+    setTimeout(() => {
+      // Per the Node FS docs:
+      // "When an fs.watchFile operation results in an ENOENT error,
+      // it will invoke the listener once, with all the fields zeroed
+      // (or, for dates, the Unix Epoch)."
+      if (!this.fakeFs.existsSync(this.path)) {
+        this.emit(Event.Change, this.lastStats, this.lastStats);
+      }
+    }, 3);
   }
 
   stop() {
@@ -37754,7 +37756,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   getBufferAndClose() {
-    if (!this.ready) throw EBUSY(`archive closed, close`);
+    this.prepareClose();
     if (!this.lzSource) throw new Error(`ZipFS was not created from a Buffer`);
 
     try {

@@ -57,15 +57,17 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
     assertStatus(this.status, Status.Ready);
     this.status = Status.Running;
 
-    // Per the Node FS docs:
-    // "When an fs.watchFile operation results in an ENOENT error,
-    // it will invoke the listener once, with all the fields zeroed
-    // (or, for dates, the Unix Epoch)."
-    if (!this.fakeFs.existsSync(this.path)) {
-      // Node allows other listeners to be registered up to 3 milliseconds
-      // after the watcher has been started, so that's what we're doing too
-      setTimeout(() => this.emit(Event.Change, this.lastStats, this.lastStats), 3);
-    }
+    // Node allows other listeners to be registered up to 3 milliseconds
+    // after the watcher has been started, so that's what we're doing too
+    setTimeout(() => {
+      // Per the Node FS docs:
+      // "When an fs.watchFile operation results in an ENOENT error,
+      // it will invoke the listener once, with all the fields zeroed
+      // (or, for dates, the Unix Epoch)."
+      if (!this.fakeFs.existsSync(this.path)) {
+        this.emit(Event.Change, this.lastStats, this.lastStats);
+      }
+    }, 3);
   }
 
   stop() {
