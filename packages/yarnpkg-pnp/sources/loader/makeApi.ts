@@ -308,7 +308,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * functions, they'll just have to fix the conflicts and bump their own version number.
    */
 
-  const VERSIONS = {std: 4, resolveVirtual: 1};
+  const VERSIONS = {std: 3, resolveVirtual: 1};
 
   /**
    * We export a special symbol for easy access to the top level locator.

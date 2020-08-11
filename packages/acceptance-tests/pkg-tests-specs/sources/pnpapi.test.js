@@ -394,7 +394,7 @@ describe(`Plug'n'Play API`, () => {
     });
   });
 
-  describe(`std - v4`, () => {
+  describe(`std - vNext`, () => {
     describe(`resolveRequest`, () => {
       test(
         `it should throw detailed errors when a builtin is not found and the 'considerBuiltins' option is set to false`,

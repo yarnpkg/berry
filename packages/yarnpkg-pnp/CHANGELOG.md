@@ -1,6 +1,8 @@
 # Changelog
 
-## std - v4
+## std - vNext
+
+> Note: vNext denotes changes that haven't been included in a new std version yet, because they haven't altered the public API signatures.
 
 ### Bugfixes
 
