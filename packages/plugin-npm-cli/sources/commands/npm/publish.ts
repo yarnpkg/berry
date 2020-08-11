@@ -10,7 +10,7 @@ import ssri                                                                     
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {
-  @Command.String()
+  @Command.String({required: false})
   tarballPath?: string;
 
   @Command.String(`--access`)
@@ -108,7 +108,8 @@ export default class NpmPublishCommand extends BaseCommand {
 
           const pack = await packUtils.genPackStream(workspace!, files);
           const buffer = await miscUtils.bufferStream(pack);
-          await this.publishBuffer(manifest, buffer, ident, registry, configuration, report);
+          const tarballManifest = await packUtils.getManifestFromTgzBuffer(buffer);//genPackStream may have modified the manifest through plugins, so we grab the modified manifest from the tarball.
+          await this.publishBuffer(tarballManifest, buffer, ident, registry, configuration, report);
         });
       } else {
         const buffer = await xfs.readFilePromise(tgzPath);

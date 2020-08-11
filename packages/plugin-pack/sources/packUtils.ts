@@ -172,9 +172,13 @@ function gunzipPromise(data: Buffer): Promise<Buffer> {
 }
 
 /**
- * Retrieve the manifest from a Buffer formatted as a tarball.
- * @param buffer The tarball data.
+ * Retrieve the manifest from a Buffer of a gzipped tarball.
+ * @param buffer The gzipped tarball.
  */
+export async function getManifestFromTgzBuffer(buffer: Buffer): Promise<Manifest> {
+  return await getManifestFromTarballBuffer(await gunzipPromise(buffer));
+}
+
 function getManifestFromTarballBuffer(buffer: Buffer): Promise<Manifest> {
   const manifestPath = ppath.join(`package` as PortablePath, Manifest.fileName).toString();
   const extract = tar.extract();
