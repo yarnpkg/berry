@@ -93,6 +93,7 @@ export default class YarnCommand extends BaseCommand {
     const isZeitNow = !!process.env.NOW_BUILDER;
     const isNetlify = !!process.env.NETLIFY;
     const isGCF = !!process.env.FUNCTION_TARGET;
+    const isTravis = !!process.env.TRAVIS && !!process.env.CI ;
 
     const reportDeprecation = async (message: string, {error}: {error: boolean}) => {
       const deprecationReport = await StreamReport.start({
@@ -191,7 +192,7 @@ export default class YarnCommand extends BaseCommand {
     // lockfile - for example the PnP artifacts will also be locked.
     if (typeof this.frozenLockfile !== `undefined`) {
       const exitCode = await reportDeprecation(`The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`, {
-        error: !isGCF,
+        error: !isGCF && !isTravis,
       });
 
       if (exitCode !== null) {
