@@ -93,7 +93,7 @@ export default class YarnCommand extends BaseCommand {
     const isZeitNow = !!process.env.NOW_BUILDER;
     const isNetlify = !!process.env.NETLIFY;
     const isGCF = !!process.env.FUNCTION_TARGET;
-    const isTravis = !!process.env.TRAVIS && !!process.env.CI ;
+    const isTravis = !!process.env.TRAVIS && !!process.env.CI;
 
     const reportDeprecation = async (message: string, {error}: {error: boolean}) => {
       const deprecationReport = await StreamReport.start({
