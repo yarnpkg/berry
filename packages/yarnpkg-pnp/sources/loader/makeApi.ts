@@ -308,7 +308,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * functions, they'll just have to fix the conflicts and bump their own version number.
    */
 
-  const VERSIONS = {std: 3, resolveVirtual: 1};
+  const VERSIONS = {std: 4, resolveVirtual: 1};
 
   /**
    * We export a special symbol for easy access to the top level locator.
@@ -667,18 +667,34 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           }
         }
       } else if (dependencyReference === undefined) {
-        if (isDependencyTreeRoot(issuerLocator)) {
-          error = makeError(
-            ErrorCode.UNDECLARED_DEPENDENCY,
-            `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`,
-            {request: requestForDisplay, issuer: issuerForDisplay, dependencyName},
-          );
+        if (!considerBuiltins && builtinModules.has(request)) {
+          if (isDependencyTreeRoot(issuerLocator)) {
+            error = makeError(
+              ErrorCode.BUILTIN_NODE_RESOLUTION_DISABLED,
+              `Your application tried to access ${dependencyName}, (a builtin node module) but the builtin node resolution algorithm has been disabled; this can happen if your application is bundled to run outside of a NodeJS context; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`,
+              {request: requestForDisplay, issuer: issuerForDisplay, dependencyName},
+            );
+          } else {
+            error = makeError(
+              ErrorCode.BUILTIN_NODE_RESOLUTION_DISABLED,
+              `${issuerLocator.name} tried to access ${dependencyName}, (a builtin node module) but the builtin node resolution algorithm has been disabled; this can happen if your application is bundled to run outside of a NodeJS context; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`,
+              {request: requestForDisplay, issuer: issuerForDisplay, issuerLocator: Object.assign({}, issuerLocator), dependencyName},
+            );
+          }
         } else {
-          error = makeError(
-            ErrorCode.UNDECLARED_DEPENDENCY,
-            `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`,
-            {request: requestForDisplay, issuer: issuerForDisplay, issuerLocator: Object.assign({}, issuerLocator), dependencyName},
-          );
+          if (isDependencyTreeRoot(issuerLocator)) {
+            error = makeError(
+              ErrorCode.UNDECLARED_DEPENDENCY,
+              `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`,
+              {request: requestForDisplay, issuer: issuerForDisplay, dependencyName},
+            );
+          } else {
+            error = makeError(
+              ErrorCode.UNDECLARED_DEPENDENCY,
+              `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`,
+              {request: requestForDisplay, issuer: issuerForDisplay, issuerLocator: Object.assign({}, issuerLocator), dependencyName},
+            );
+          }
         }
       }
 
