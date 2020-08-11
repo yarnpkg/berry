@@ -1,13 +1,13 @@
-import {Libzip}                                                                                    from '@yarnpkg/libzip';
-import {constants}                                                                                 from 'fs';
+import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
+import {constants}                                                                                                                                   from 'fs';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions} from './FakeFS';
-import {Dirent, SymlinkType}                                                                       from './FakeFS';
-import {FakeFS, MkdirOptions, WriteFileOptions}                                                    from './FakeFS';
-import {WatchOptions, WatchCallback, Watcher}                                                      from './FakeFS';
-import {NodeFS}                                                                                    from './NodeFS';
-import {ZipFS}                                                                                     from './ZipFS';
-import {Filename, FSPath, PortablePath}                                                            from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileOptions, WatchFileCallback, StatWatcher} from './FakeFS';
+import {Dirent, SymlinkType}                                                                                                                         from './FakeFS';
+import {FakeFS, MkdirOptions, WriteFileOptions}                                                                                                      from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher}                                                                                                        from './FakeFS';
+import {NodeFS}                                                                                                                                      from './NodeFS';
+import {ZipFS}                                                                                                                                       from './ZipFS';
+import {Filename, FSPath, PortablePath}                                                                                                              from './path';
 
 const ZIP_FD = 0x80000000;
 
@@ -705,6 +705,34 @@ export class ZipOpenFS extends BasePortableFakeFS {
         a,
         b,
       );
+    });
+  }
+
+  watchFile(p: PortablePath, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, opts: WatchFileOptions, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.watchFile(
+        p,
+        // @ts-ignore
+        a,
+        b,
+      );
+    }, (zipFs, {subPath}) => {
+      return zipFs.watchFile(
+        subPath,
+        // @ts-ignore
+        a,
+        b,
+      );
+    });
+  }
+
+  unwatchFile(p: PortablePath, cb?: WatchFileCallback) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.unwatchFile(p, cb);
+    }, (zipFs, {subPath}) => {
+      return zipFs.unwatchFile(subPath, cb);
     });
   }
 

@@ -1,7 +1,7 @@
-import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions} from './FakeFS';
-import {Dirent, SymlinkType}                                                           from './FakeFS';
-import {MkdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}          from './FakeFS';
-import {FSPath, Filename, Path}                                                        from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from './FakeFS';
+import {Dirent, SymlinkType}                                                                                                             from './FakeFS';
+import {MkdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}                                                            from './FakeFS';
+import {FSPath, Filename, Path}                                                                                                          from './path';
 
 export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<P> {
   protected abstract readonly baseFs: FakeFS<IP>;
@@ -279,6 +279,21 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
       a,
       b,
     );
+  }
+
+  watchFile(p: P, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: P, opts: WatchFileOptions, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: P, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback) {
+    return this.baseFs.watchFile(
+      this.mapToBase(p),
+      // @ts-ignore
+      a,
+      b,
+    );
+  }
+
+  unwatchFile(p: P, cb?: WatchFileCallback) {
+    return this.baseFs.unwatchFile(this.mapToBase(p), cb);
   }
 
   private fsMapToBase(p: FSPath<P>) {

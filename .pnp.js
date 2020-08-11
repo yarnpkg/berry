@@ -35995,7 +35995,8 @@ class FakeFS {
   }
 
   async removePromise(p, {
-    recursive = true
+    recursive = true,
+    maxRetries = 5
   } = {}) {
     let stat;
 
@@ -36012,19 +36013,25 @@ class FakeFS {
     if (stat.isDirectory()) {
       if (recursive) for (const entry of await this.readdirPromise(p)) await this.removePromise(this.pathUtils.resolve(p, entry)); // 5 gives 1s worth of retries at worst
 
-      for (let t = 0; t < 5; ++t) {
+      let t = 0;
+
+      do {
         try {
           await this.rmdirPromise(p);
           break;
         } catch (error) {
           if (error.code === `EBUSY` || error.code === `ENOTEMPTY`) {
-            await new Promise(resolve => setTimeout(resolve, t * 100));
-            continue;
+            if (maxRetries === 0) {
+              break;
+            } else {
+              await new Promise(resolve => setTimeout(resolve, t * 100));
+              continue;
+            }
           } else {
             throw error;
           }
         }
-      }
+      } while (t++ < maxRetries);
     } else {
       await this.unlinkPromise(p);
     }
@@ -36473,7 +36480,7 @@ function toFilename(filename) {
 
 /***/ }),
 
-/***/ 936:
+/***/ 434:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -36912,6 +36919,15 @@ class NodeFS extends FakeFS/* BasePortableFakeFS */.fS {
     a, b);
   }
 
+  watchFile(p, a, b) {
+    return this.realFs.watchFile(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), // @ts-ignore
+    a, b);
+  }
+
+  unwatchFile(p, cb) {
+    return this.realFs.unwatchFile(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), cb);
+  }
+
   makeCallback(resolve, reject) {
     return (err, result) => {
       if (err) {
@@ -37177,6 +37193,15 @@ class ProxiedFS extends FakeFS/* FakeFS */.uY {
     a, b);
   }
 
+  watchFile(p, a, b) {
+    return this.baseFs.watchFile(this.mapToBase(p), // @ts-ignore
+    a, b);
+  }
+
+  unwatchFile(p, cb) {
+    return this.baseFs.unwatchFile(this.mapToBase(p), cb);
+  }
+
   fsMapToBase(p) {
     if (typeof p === `number`) {
       return p;
@@ -37279,20 +37304,15 @@ var external_util_ = __webpack_require__(669);
 var external_zlib_ = __webpack_require__(761);
 var external_zlib_default = /*#__PURE__*/__webpack_require__.n(external_zlib_);
 
-// CONCATENATED MODULE: ../yarnpkg-fslib/sources/ZipFS.ts
+// EXTERNAL MODULE: external "events"
+var external_events_ = __webpack_require__(614);
 
-
-
-
-
-
-
-
-const DEFAULT_COMPRESSION_LEVEL = `mixed`;
+// CONCATENATED MODULE: ../yarnpkg-fslib/sources/constants.ts
 const S_IFMT = 0o170000;
 const S_IFDIR = 0o040000;
 const S_IFREG = 0o100000;
 const S_IFLNK = 0o120000;
+// CONCATENATED MODULE: ../yarnpkg-fslib/sources/statUtils.ts
 
 class DirEntry {
   constructor() {
@@ -37329,7 +37349,6 @@ class DirEntry {
   }
 
 }
-
 class StatEntry {
   constructor() {
     this.dev = 0;
@@ -37369,7 +37388,6 @@ class StatEntry {
   }
 
 }
-
 function makeDefaultStats() {
   return Object.assign(new StatEntry(), {
     uid: 0,
@@ -37387,6 +37405,198 @@ function makeDefaultStats() {
     mode: S_IFREG | 0o644
   });
 }
+function makeEmptyStats() {
+  return Object.assign(makeDefaultStats(), {
+    nlink: 0,
+    blocks: 0,
+    mode: 0
+  });
+}
+function areStatsEqual(a, b) {
+  let areValuesEqual = true;
+
+  const compareValues = (a, b) => {
+    if (a !== b) {
+      areValuesEqual = false;
+    }
+  };
+
+  compareValues(a.atimeMs, b.atimeMs);
+  compareValues(a.birthtimeMs, b.birthtimeMs);
+  compareValues(a.blksize, b.blksize);
+  compareValues(a.blocks, b.blocks);
+  compareValues(a.ctimeMs, b.ctimeMs);
+  compareValues(a.dev, b.dev);
+  compareValues(a.gid, b.gid);
+  compareValues(a.ino, b.ino);
+  compareValues(a.isBlockDevice(), b.isBlockDevice());
+  compareValues(a.isCharacterDevice(), b.isCharacterDevice());
+  compareValues(a.isDirectory(), b.isDirectory());
+  compareValues(a.isFIFO(), b.isFIFO());
+  compareValues(a.isFile(), b.isFile());
+  compareValues(a.isSocket(), b.isSocket());
+  compareValues(a.isSymbolicLink(), b.isSymbolicLink());
+  compareValues(a.mode, b.mode);
+  compareValues(a.mtimeMs, b.mtimeMs);
+  compareValues(a.nlink, b.nlink);
+  compareValues(a.rdev, b.rdev);
+  compareValues(a.size, b.size);
+  compareValues(a.uid, b.uid);
+  return areValuesEqual;
+}
+// CONCATENATED MODULE: ../yarnpkg-fslib/sources/algorithms/watchFile.ts
+
+
+var Event;
+
+(function (Event) {
+  Event["Change"] = "change";
+  Event["Stop"] = "stop";
+})(Event || (Event = {}));
+
+var Status;
+
+(function (Status) {
+  Status["Ready"] = "ready";
+  Status["Running"] = "running";
+  Status["Stopped"] = "stopped";
+})(Status || (Status = {}));
+
+function assertStatus(current, expected) {
+  if (current !== expected) {
+    throw new Error(`Invalid StatWatcher status: expected '${expected}', got '${current}'`);
+  }
+}
+class CustomStatWatcher extends external_events_.EventEmitter {
+  constructor(fakeFs, path, {
+    bigint = false
+  } = {}) {
+    super();
+    this.status = Status.Ready;
+    this.changeListeners = new Map();
+    this.fakeFs = fakeFs;
+    this.path = path;
+    this.bigint = bigint;
+    this.lastStats = this.stat();
+  }
+
+  start() {
+    assertStatus(this.status, Status.Ready);
+    this.status = Status.Running; // Per the Node FS docs:
+    // "When an fs.watchFile operation results in an ENOENT error,
+    // it will invoke the listener once, with all the fields zeroed
+    // (or, for dates, the Unix Epoch)."
+
+    if (!this.fakeFs.existsSync(this.path)) {
+      // Node allows other listeners to be registered up to 3 milliseconds
+      // after the watcher has been started, so that's what we're doing too
+      setTimeout(() => this.emit(Event.Change, this.lastStats, this.lastStats), 3);
+    }
+  }
+
+  stop() {
+    assertStatus(this.status, Status.Running);
+    this.status = Status.Stopped;
+    this.emit(Event.Stop);
+  }
+
+  stat() {
+    try {
+      return this.fakeFs.statSync(this.path);
+    } catch (error) {
+      if (error.code === `ENOENT`) {
+        return makeEmptyStats();
+      } else {
+        throw error;
+      }
+    }
+  }
+  /**
+   * Creates an interval whose callback compares the current stats with the previous stats and notifies all listeners in case of changes.
+   *
+   * @param opts.persistent Decides whether the interval should be immediately unref-ed.
+   */
+
+
+  makeInterval(opts) {
+    const interval = setInterval(() => {
+      const currentStats = this.stat();
+      const previousStats = this.lastStats;
+      if (areStatsEqual(currentStats, previousStats)) return;
+      this.lastStats = currentStats;
+      this.emit(Event.Change, currentStats, previousStats);
+    }, opts.interval);
+    return opts.persistent ? interval : interval.unref();
+  }
+  /**
+   * Registers a listener and assigns it an interval.
+   */
+
+
+  registerChangeListener(listener, opts) {
+    this.addListener(Event.Change, listener);
+    this.changeListeners.set(listener, this.makeInterval(opts));
+  }
+  /**
+   * Unregisters the listener and clears the assigned interval.
+   */
+
+
+  unregisterChangeListener(listener) {
+    this.removeListener(Event.Change, listener);
+    const interval = this.changeListeners.get(listener);
+    if (typeof interval !== `undefined`) clearInterval(interval);
+    this.changeListeners.delete(listener);
+  }
+  /**
+   * Unregisters all listeners and clears all assigned intervals.
+   */
+
+
+  unregisterAllChangeListeners() {
+    for (const listener of this.changeListeners.keys()) {
+      this.unregisterChangeListener(listener);
+    }
+  }
+
+  hasChangeListeners() {
+    return this.changeListeners.size > 0;
+  }
+  /**
+   * Refs all stored intervals.
+   */
+
+
+  ref() {
+    for (const interval of this.changeListeners.values()) interval.ref();
+
+    return this;
+  }
+  /**
+   * Unrefs all stored intervals.
+   */
+
+
+  unref() {
+    for (const interval of this.changeListeners.values()) interval.unref();
+
+    return this;
+  }
+
+}
+// CONCATENATED MODULE: ../yarnpkg-fslib/sources/ZipFS.ts
+
+
+
+
+
+
+
+
+
+
+
+const DEFAULT_COMPRESSION_LEVEL = `mixed`;
 
 function toUnixTimestamp(time) {
   if (typeof time === `string` && String(+time) === time) return +time; // @ts-ignore
@@ -37419,6 +37629,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     this.fileSources = new Map();
     this.fds = new Map();
     this.nextFd = 0;
+    this.statWatchers = new Map();
     this.ready = false;
     this.readOnly = false;
     this.libzip = opts.libzip;
@@ -37578,9 +37789,17 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     }
   }
 
+  prepareClose() {
+    if (!this.ready) throw EBUSY(`archive closed, close`);
+
+    for (const p of this.statWatchers.keys()) {
+      this.unwatchFile(p);
+    }
+  }
+
   saveAndClose() {
     if (!this.path || !this.baseFs) throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);
-    if (!this.ready) throw EBUSY(`archive closed, close`);
+    this.prepareClose();
 
     if (this.readOnly) {
       this.discardAndClose();
@@ -37600,7 +37819,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   discardAndClose() {
-    if (!this.ready) throw EBUSY(`archive closed, close`);
+    this.prepareClose();
     this.libzip.discard(this.zip);
     this.ready = false;
   }
@@ -37909,6 +38128,15 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
     if (this.isSymbolicLink(entry)) {
       this.symlinkCount--;
+    }
+  }
+
+  deleteEntry(p, index) {
+    this.unregisterEntry(p);
+    const rc = this.libzip.delete(this.zip, index);
+
+    if (rc === -1) {
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
     }
   }
 
@@ -38239,12 +38467,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     if (this.listings.has(resolvedP)) throw EISDIR(`unlink '${p}'`);
     const index = this.entries.get(resolvedP);
     if (typeof index === `undefined`) throw EINVAL(`unlink '${p}'`);
-    this.unregisterEntry(resolvedP);
-    const rc = this.libzip.delete(this.zip, index);
-
-    if (rc === -1) {
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    }
+    this.deleteEntry(resolvedP, index);
   }
 
   async utimesPromise(p, atime, mtime) {
@@ -38312,12 +38535,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     if (directoryListing.size > 0) throw ENOTEMPTY(`rmdir '${p}'`);
     const index = this.entries.get(resolvedP);
     if (typeof index === `undefined`) throw EINVAL(`rmdir '${p}'`);
-    this.unregisterEntry(resolvedP);
-    const rc = this.libzip.delete(this.zip, index);
-
-    if (rc === -1) {
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    }
+    this.deleteEntry(p, index);
   }
 
   hydrateDirectory(resolvedP) {
@@ -38470,7 +38688,6 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
       default:
         {
-          // @ts-ignore
           ({
             persistent = true
           } = a);
@@ -38489,6 +38706,64 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
         clearInterval(interval);
       }
     };
+  }
+
+  watchFile(p, a, b) {
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    let bigint;
+    let persistent;
+    let interval;
+    let listener;
+
+    switch (typeof a) {
+      case `function`:
+        {
+          bigint = false;
+          persistent = true;
+          interval = 5007;
+          listener = a;
+        }
+        break;
+
+      default:
+        {
+          ({
+            bigint = false,
+            persistent = true,
+            interval = 5007
+          } = a);
+          listener = b;
+        }
+        break;
+    }
+
+    let statWatcher = this.statWatchers.get(resolvedP);
+
+    if (typeof statWatcher === `undefined`) {
+      statWatcher = new CustomStatWatcher(this, resolvedP, {
+        bigint
+      });
+      statWatcher.start();
+      this.statWatchers.set(resolvedP, statWatcher);
+    }
+
+    statWatcher.registerChangeListener(listener, {
+      persistent,
+      interval
+    });
+    return statWatcher;
+  }
+
+  unwatchFile(p, cb) {
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    const statWatcher = this.statWatchers.get(resolvedP);
+    if (!statWatcher) return;
+    if (typeof cb === `undefined`) statWatcher.unregisterAllChangeListeners();else statWatcher.unregisterChangeListener(cb);
+
+    if (!statWatcher.hasChangeListeners()) {
+      statWatcher.stop();
+      this.statWatchers.delete(resolvedP);
+    }
   }
 
 }
@@ -39279,6 +39554,28 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
     });
   }
 
+  watchFile(p, a, b) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.watchFile(p, // @ts-ignore
+      a, b);
+    }, (zipFs, {
+      subPath
+    }) => {
+      return zipFs.watchFile(subPath, // @ts-ignore
+      a, b);
+    });
+  }
+
+  unwatchFile(p, cb) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.unwatchFile(p, cb);
+    }, (zipFs, {
+      subPath
+    }) => {
+      return zipFs.unwatchFile(subPath, cb);
+    });
+  }
+
   async makeCallPromise(p, discard, accept, {
     requireSubpath = true
   } = {}) {
@@ -39643,6 +39940,8 @@ var external_os_default = /*#__PURE__*/__webpack_require__.n(external_os_);
 
 
 
+
+
 function getTempName(prefix) {
   const tmpdir = sources_path/* npath.toPortablePath */.cS.toPortablePath(external_os_default().tmpdir());
   const hash = Math.ceil(Math.random() * 0x100000000).toString(16).padStart(8, `0`);
@@ -39650,7 +39949,7 @@ function getTempName(prefix) {
 }
 
 function patchFs(patchedFs, fakeFs) {
-  const SYNC_IMPLEMENTATIONS = new Set([`accessSync`, `appendFileSync`, `createReadStream`, `chmodSync`, `chownSync`, `closeSync`, `copyFileSync`, `linkSync`, `lstatSync`, `lutimesSync`, `mkdirSync`, `openSync`, `readSync`, `readlinkSync`, `readFileSync`, `readdirSync`, `readlinkSync`, `realpathSync`, `renameSync`, `rmdirSync`, `statSync`, `symlinkSync`, `truncateSync`, `unlinkSync`, `utimesSync`, `watch`, `writeFileSync`, `writeSync`]);
+  const SYNC_IMPLEMENTATIONS = new Set([`accessSync`, `appendFileSync`, `createReadStream`, `chmodSync`, `chownSync`, `closeSync`, `copyFileSync`, `linkSync`, `lstatSync`, `lutimesSync`, `mkdirSync`, `openSync`, `readSync`, `readlinkSync`, `readFileSync`, `readdirSync`, `readlinkSync`, `realpathSync`, `renameSync`, `rmdirSync`, `statSync`, `symlinkSync`, `truncateSync`, `unlinkSync`, `unwatchFile`, `utimesSync`, `watch`, `watchFile`, `writeFileSync`, `writeSync`]);
   const ASYNC_IMPLEMENTATIONS = new Set([`accessPromise`, `appendFilePromise`, `chmodPromise`, `chownPromise`, `closePromise`, `copyFilePromise`, `linkPromise`, `lstatPromise`, `lutimesPromise`, `mkdirPromise`, `openPromise`, `readdirPromise`, `realpathPromise`, `readFilePromise`, `readdirPromise`, `readlinkPromise`, `renamePromise`, `rmdirPromise`, `statPromise`, `symlinkPromise`, `truncatePromise`, `unlinkPromise`, `utimesPromise`, `writeFilePromise`, `writeSync`]);
   const FILEHANDLE_IMPLEMENTATIONS = new Set([`appendFilePromise`, `chmodPromise`, `chownPromise`, `closePromise`, `readPromise`, `readFilePromise`, `statPromise`, `truncatePromise`, `utimesPromise`, `writePromise`, `writeFilePromise`]);
 
@@ -39796,22 +40095,11 @@ const tmpdirs = new Set();
 let cleanExitRegistered = false;
 
 function registerCleanExit() {
-  if (!cleanExitRegistered) cleanExitRegistered = true;else return;
-
-  const cleanExit = () => {
-    process.off(`exit`, cleanExit);
-
-    for (const p of tmpdirs) {
-      tmpdirs.delete(p);
-
-      try {
-        xfs.removeSync(p);
-      } catch (_a) {// Too bad if there's an error
-      }
-    }
-  };
-
-  process.on(`exit`, cleanExit);
+  if (cleanExitRegistered) return;
+  cleanExitRegistered = true;
+  process.once(`exit`, () => {
+    xfs.rmtempSync();
+  });
 }
 
 const xfs = Object.assign(new NodeFS(), {
@@ -39891,6 +40179,28 @@ const xfs = Object.assign(new NodeFS(), {
         }
       } else {
         return realP;
+      }
+    }
+  },
+
+  async rmtempPromise() {
+    await Promise.all(Array.from(tmpdirs.values()).map(async p => {
+      try {
+        await xfs.removePromise(p, {
+          maxRetries: 0
+        });
+        tmpdirs.delete(p);
+      } catch (_a) {// Too bad if there's an error
+      }
+    }));
+  },
+
+  rmtempSync() {
+    for (const p of tmpdirs) {
+      try {
+        xfs.removeSync(p);
+        tmpdirs.delete(p);
+      } catch (_a) {// Too bad if there's an error
       }
     }
   }
@@ -45710,6 +46020,14 @@ module.exports = require("crypto");
 
 /***/ }),
 
+/***/ 614:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("events");
+
+/***/ }),
+
 /***/ 747:
 /***/ ((module) => {
 
@@ -45841,7 +46159,7 @@ module.exports = require("zlib");
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(936);
+/******/ 	return __webpack_require__(434);
 /******/ })()
 .default;
 });

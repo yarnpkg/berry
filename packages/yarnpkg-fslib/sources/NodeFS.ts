@@ -1,11 +1,11 @@
-import fs, {Stats}                                          from 'fs';
+import fs, {Stats}                                                                                           from 'fs';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions}  from './FakeFS';
-import {Dirent, SymlinkType}                                from './FakeFS';
-import {BasePortableFakeFS, WriteFileOptions}               from './FakeFS';
-import {MkdirOptions, WatchOptions, WatchCallback, Watcher} from './FakeFS';
-import {ENOSYS}                                             from './errors';
-import {FSPath, PortablePath, Filename, ppath, npath}       from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, StatWatcher, WatchFileCallback, WatchFileOptions} from './FakeFS';
+import {Dirent, SymlinkType}                                                                                 from './FakeFS';
+import {BasePortableFakeFS, WriteFileOptions}                                                                from './FakeFS';
+import {MkdirOptions, WatchOptions, WatchCallback, Watcher}                                                  from './FakeFS';
+import {ENOSYS}                                                                                              from './errors';
+import {FSPath, PortablePath, Filename, ppath, npath}                                                        from './path';
 
 export class NodeFS extends BasePortableFakeFS {
   private readonly realFs: typeof fs;
@@ -391,6 +391,21 @@ export class NodeFS extends BasePortableFakeFS {
       a,
       b,
     );
+  }
+
+  watchFile(p: PortablePath, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, opts: WatchFileOptions, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback) {
+    return this.realFs.watchFile(
+      npath.fromPortablePath(p),
+      // @ts-ignore
+      a,
+      b,
+    ) as unknown as StatWatcher;
+  }
+
+  unwatchFile(p: PortablePath, cb?: WatchFileCallback) {
+    return this.realFs.unwatchFile(npath.fromPortablePath(p), cb);
   }
 
   private makeCallback<T>(resolve: (value?: T) => void, reject: (reject: NodeJS.ErrnoException) => void) {

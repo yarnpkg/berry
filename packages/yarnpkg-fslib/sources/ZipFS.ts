@@ -1,116 +1,21 @@
-import {Libzip}                                                                                    from '@yarnpkg/libzip';
-import {ReadStream, Stats, WriteStream, constants}                                                 from 'fs';
-import {PassThrough}                                                                               from 'stream';
-import {isDate}                                                                                    from 'util';
-import zlib                                                                                        from 'zlib';
+import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
+import {ReadStream, Stats, WriteStream, constants}                                                                                                   from 'fs';
+import {PassThrough}                                                                                                                                 from 'stream';
+import {isDate}                                                                                                                                      from 'util';
+import zlib                                                                                                                                          from 'zlib';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions} from './FakeFS';
-import {FakeFS, MkdirOptions, WriteFileOptions}                                                    from './FakeFS';
-import {WatchOptions, WatchCallback, Watcher}                                                      from './FakeFS';
-import {NodeFS}                                                                                    from './NodeFS';
-import * as errors                                                                                 from './errors';
-import {FSPath, PortablePath, npath, ppath, Filename}                                              from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from './FakeFS';
+import {FakeFS, MkdirOptions, WriteFileOptions}                                                                                                      from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher}                                                                                                        from './FakeFS';
+import {NodeFS}                                                                                                                                      from './NodeFS';
+import {CustomStatWatcher}                                                                                                                           from './algorithms/watchFile';
+import {S_IFLNK, S_IFDIR, S_IFMT, S_IFREG}                                                                                                           from './constants';
+import * as errors                                                                                                                                   from './errors';
+import {FSPath, PortablePath, npath, ppath, Filename}                                                                                                from './path';
+import * as statUtils                                                                                                                                from './statUtils';
 
 export type ZipCompression = `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export const DEFAULT_COMPRESSION_LEVEL: ZipCompression = `mixed`;
-
-const S_IFMT = 0o170000;
-
-const S_IFDIR = 0o040000;
-const S_IFREG = 0o100000;
-const S_IFLNK = 0o120000;
-
-class DirEntry {
-  public name: Filename = `` as Filename;
-  public mode: number = 0;
-
-  isBlockDevice() {
-    return false;
-  }
-
-  isCharacterDevice() {
-    return false;
-  }
-
-  isDirectory() {
-    return (this.mode & S_IFMT) === S_IFDIR;
-  }
-
-  isFIFO() {
-    return false;
-  }
-
-  isFile() {
-    return (this.mode & S_IFMT) === S_IFREG;
-  }
-
-  isSocket() {
-    return false;
-  }
-
-  isSymbolicLink() {
-    return (this.mode & S_IFMT) === S_IFLNK;
-  }
-}
-
-class StatEntry {
-  public dev: number = 0;
-  public ino: number = 0;
-  public mode: number = 0;
-  public nlink: number = 1;
-  public rdev: number = 0;
-  public blocks: number = 1;
-
-  isBlockDevice() {
-    return false;
-  }
-
-  isCharacterDevice() {
-    return false;
-  }
-
-  isDirectory() {
-    return (this.mode & S_IFMT) === S_IFDIR;
-  }
-
-  isFIFO() {
-    return false;
-  }
-
-  isFile() {
-    return (this.mode & S_IFMT) === S_IFREG;
-  }
-
-  isSocket() {
-    return false;
-  }
-
-  isSymbolicLink() {
-    return (this.mode & S_IFMT) === S_IFLNK;
-  }
-}
-
-function makeDefaultStats() {
-  return Object.assign(new StatEntry(), {
-    uid: 0,
-    gid: 0,
-
-    size: 0,
-    blksize: 0,
-
-    atimeMs: 0,
-    mtimeMs: 0,
-    ctimeMs: 0,
-    birthtimeMs: 0,
-
-    atime: new Date(0),
-    mtime: new Date(0),
-    ctime: new Date(0),
-    birthtime: new Date(0),
-
-    mode: S_IFREG | 0o644,
-  });
-}
 
 export type ZipBufferOptions = {
   libzip: Libzip,
@@ -170,6 +75,8 @@ export class ZipFS extends BasePortableFakeFS {
   private readonly fds: Map<number, {cursor: number, p: PortablePath}> = new Map();
   private nextFd: number = 0;
 
+  private statWatchers: Map<PortablePath, CustomStatWatcher<PortablePath>> = new Map();
+
   private ready = false;
   private readOnly = false;
 
@@ -218,13 +125,13 @@ export class ZipFS extends BasePortableFakeFS {
           this.stats = this.baseFs!.statSync(source);
         } catch (error) {
           if (error.code === `ENOENT` && pathOptions.create) {
-            this.stats = makeDefaultStats();
+            this.stats = statUtils.makeDefaultStats();
           } else {
             throw error;
           }
         }
       } else {
-        this.stats = makeDefaultStats();
+        this.stats = statUtils.makeDefaultStats();
       }
     }
 
@@ -385,12 +292,20 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
+  private prepareClose() {
+    if (!this.ready)
+      throw errors.EBUSY(`archive closed, close`);
+
+    for (const p of this.statWatchers.keys()) {
+      this.unwatchFile(p);
+    }
+  }
+
   saveAndClose() {
     if (!this.path || !this.baseFs)
       throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);
 
-    if (!this.ready)
-      throw errors.EBUSY(`archive closed, close`);
+    this.prepareClose();
 
     if (this.readOnly) {
       this.discardAndClose();
@@ -419,8 +334,7 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   discardAndClose() {
-    if (!this.ready)
-      throw errors.EBUSY(`archive closed, close`);
+    this.prepareClose();
 
     this.libzip.discard(this.zip);
 
@@ -694,7 +608,7 @@ export class ZipFS extends BasePortableFakeFS {
 
       const mode = type | (this.getUnixMode(entry, defaultMode) & 0o777);
 
-      return Object.assign(new StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
+      return Object.assign(new statUtils.StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
     }
 
     // Implicit directory
@@ -718,7 +632,7 @@ export class ZipFS extends BasePortableFakeFS {
 
       const mode = S_IFDIR | 0o755;
 
-      return Object.assign(new StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
+      return Object.assign(new statUtils.StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
     }
 
     throw new Error(`Unreachable`);
@@ -777,6 +691,15 @@ export class ZipFS extends BasePortableFakeFS {
 
     if (this.isSymbolicLink(entry)) {
       this.symlinkCount--;
+    }
+  }
+
+  private deleteEntry(p: PortablePath, index: number) {
+    this.unregisterEntry(p);
+
+    const rc = this.libzip.delete(this.zip, index);
+    if (rc === -1) {
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
     }
   }
 
@@ -1164,12 +1087,7 @@ export class ZipFS extends BasePortableFakeFS {
     if (typeof index === `undefined`)
       throw errors.EINVAL(`unlink '${p}'`);
 
-    this.unregisterEntry(resolvedP);
-
-    const rc = this.libzip.delete(this.zip, index);
-    if (rc === -1) {
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    }
+    this.deleteEntry(resolvedP, index);
   }
 
   async utimesPromise(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
@@ -1256,12 +1174,7 @@ export class ZipFS extends BasePortableFakeFS {
     if (typeof index === `undefined`)
       throw errors.EINVAL(`rmdir '${p}'`);
 
-    this.unregisterEntry(resolvedP);
-
-    const rc = this.libzip.delete(this.zip, index);
-    if (rc === -1) {
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    }
+    this.deleteEntry(p, index);
   }
 
   private hydrateDirectory(resolvedP: PortablePath) {
@@ -1362,17 +1275,17 @@ export class ZipFS extends BasePortableFakeFS {
 
   async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
   async readdirPromise(p: PortablePath, opts: {withFileTypes: false}): Promise<Array<Filename>>;
-  async readdirPromise(p: PortablePath, opts: {withFileTypes: true}): Promise<Array<DirEntry>>;
-  async readdirPromise(p: PortablePath, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<DirEntry>>;
-  async readdirPromise(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<DirEntry>> {
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: true}): Promise<Array<statUtils.DirEntry>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<statUtils.DirEntry>>;
+  async readdirPromise(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<statUtils.DirEntry>> {
     return this.readdirSync(p, {withFileTypes: withFileTypes as any});
   }
 
   readdirSync(p: PortablePath): Array<Filename>;
   readdirSync(p: PortablePath, opts: {withFileTypes: false}): Array<Filename>;
-  readdirSync(p: PortablePath, opts: {withFileTypes: true}): Array<DirEntry>;
-  readdirSync(p: PortablePath, opts: {withFileTypes: boolean}): Array<Filename> | Array<DirEntry>;
-  readdirSync(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<DirEntry> {
+  readdirSync(p: PortablePath, opts: {withFileTypes: true}): Array<statUtils.DirEntry>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: boolean}): Array<Filename> | Array<statUtils.DirEntry>;
+  readdirSync(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<statUtils.DirEntry> {
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`scandir '${p}'`);
@@ -1467,7 +1380,6 @@ export class ZipFS extends BasePortableFakeFS {
       } break;
 
       default: {
-        // @ts-ignore
         ({persistent = true} = a);
       } break;
     }
@@ -1477,5 +1389,68 @@ export class ZipFS extends BasePortableFakeFS {
 
     const interval = setInterval(() => {}, 24 * 60 * 60 * 1000);
     return {on: () => {}, close: () => {clearInterval(interval);}};
+  }
+
+  watchFile(p: PortablePath, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, opts: WatchFileOptions, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback) {
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+
+    let bigint: boolean;
+    let persistent: boolean;
+    let interval: number;
+
+    let listener: WatchFileCallback;
+
+    switch (typeof a) {
+      case `function`: {
+        bigint = false;
+        persistent = true;
+        interval = 5007;
+
+        listener = a;
+      } break;
+
+      default: {
+        ({
+          bigint = false,
+          persistent = true,
+          interval = 5007,
+        } = a);
+
+        listener = b!;
+      } break;
+    }
+
+    let statWatcher = this.statWatchers.get(resolvedP);
+    if (typeof statWatcher === `undefined`) {
+      statWatcher = new CustomStatWatcher<PortablePath>(this, resolvedP, {bigint});
+
+      statWatcher.start();
+
+      this.statWatchers.set(resolvedP, statWatcher);
+    }
+
+    statWatcher.registerChangeListener(listener, {persistent, interval});
+
+    return statWatcher;
+  }
+
+  unwatchFile(p: PortablePath, cb?: WatchFileCallback) {
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+
+    const statWatcher = this.statWatchers.get(resolvedP);
+    if (!statWatcher)
+      return;
+
+    if (typeof cb === `undefined`)
+      statWatcher.unregisterAllChangeListeners();
+    else
+      statWatcher.unregisterChangeListener(cb);
+
+    if (!statWatcher.hasChangeListeners()) {
+      statWatcher.stop();
+      this.statWatchers.delete(resolvedP);
+    }
   }
 }
