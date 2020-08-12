@@ -4,7 +4,7 @@ exports[`Commands config test (folder with rcfile / as json) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "{\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
+  "stdout": "{\\"key\\":\\"defaultLinkerName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"initScope\\",\\"effective\\":\\"my-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":null,\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}",
 }
@@ -14,7 +14,7 @@ exports[`Commands config test (folder with rcfile / showing explanation) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
+  "stdout": "➤ YN0000: defaultLinkerName - Default language mode that should be used when a package doesn't offer any insight - 'node'
 ➤ YN0000: initScope - Scope used when creating packages via the init command - 'my-test'
 ➤ YN0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - null",
 }
@@ -24,7 +24,7 @@ exports[`Commands config test (folder with rcfile / showing the source) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - <default> - 'node'
+  "stdout": "➤ YN0000: defaultLinkerName - <default> - 'node'
 ➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'my-test'
 ➤ YN0000: lastUpdateCheck - <default> - null",
 }
@@ -34,7 +34,7 @@ exports[`Commands config test (folder with rcfile / without flags) 1`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - 'node'
+  "stdout": "➤ YN0000: defaultLinkerName - 'node'
 ➤ YN0000: initScope - 'my-test'
 ➤ YN0000: lastUpdateCheck - null",
 }
@@ -44,7 +44,7 @@ exports[`Commands config test (folder with rcfile and rc in ancestor parent / as
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "{\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
+  "stdout": "{\\"key\\":\\"defaultLinkerName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"initScope\\",\\"effective\\":\\"my-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":\\"1555784893958\\",\\"source\\":\\"WORKSPACE_ROOT/.spec-yarnrc\\",\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}",
 }
@@ -54,7 +54,7 @@ exports[`Commands config test (folder with rcfile and rc in ancestor parent / sh
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
+  "stdout": "➤ YN0000: defaultLinkerName - Default language mode that should be used when a package doesn't offer any insight - 'node'
 ➤ YN0000: initScope - Scope used when creating packages via the init command - 'my-test'
 ➤ YN0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - '1555784893958'",
 }
@@ -64,7 +64,7 @@ exports[`Commands config test (folder with rcfile and rc in ancestor parent / sh
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - <default> - 'node'
+  "stdout": "➤ YN0000: defaultLinkerName - <default> - 'node'
 ➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'my-test'
 ➤ YN0000: lastUpdateCheck - WORKSPACE_ROOT/.spec-yarnrc - '1555784893958'",
 }
@@ -74,7 +74,7 @@ exports[`Commands config test (folder with rcfile and rc in ancestor parent / wi
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - 'node'
+  "stdout": "➤ YN0000: defaultLinkerName - 'node'
 ➤ YN0000: initScope - 'my-test'
 ➤ YN0000: lastUpdateCheck - '1555784893958'",
 }
@@ -84,7 +84,7 @@ exports[`Commands config test (folder with rcfile and rc in home folder / as jso
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "{\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"python\\",\\"source\\":\\"HOME/.spec-yarnrc\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
+  "stdout": "{\\"key\\":\\"defaultLinkerName\\",\\"effective\\":\\"python\\",\\"source\\":\\"HOME/.spec-yarnrc\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"initScope\\",\\"effective\\":\\"my-test\\",\\"source\\":\\"WORKSPACE_ROOT/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":\\"1555784893958\\",\\"source\\":\\"WORKSPACE_ROOT/.spec-yarnrc\\",\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}",
 }
@@ -94,7 +94,7 @@ exports[`Commands config test (folder with rcfile and rc in home folder / showin
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'python'
+  "stdout": "➤ YN0000: defaultLinkerName - Default language mode that should be used when a package doesn't offer any insight - 'python'
 ➤ YN0000: initScope - Scope used when creating packages via the init command - 'my-test'
 ➤ YN0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - '1555784893958'",
 }
@@ -104,7 +104,7 @@ exports[`Commands config test (folder with rcfile and rc in home folder / showin
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - HOME/.spec-yarnrc - 'python'
+  "stdout": "➤ YN0000: defaultLinkerName - HOME/.spec-yarnrc - 'python'
 ➤ YN0000: initScope - WORKSPACE_ROOT/.spec-yarnrc - 'my-test'
 ➤ YN0000: lastUpdateCheck - WORKSPACE_ROOT/.spec-yarnrc - '1555784893958'",
 }
@@ -114,7 +114,7 @@ exports[`Commands config test (folder with rcfile and rc in home folder / withou
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - 'python'
+  "stdout": "➤ YN0000: defaultLinkerName - 'python'
 ➤ YN0000: initScope - 'my-test'
 ➤ YN0000: lastUpdateCheck - '1555784893958'",
 }
@@ -124,7 +124,7 @@ exports[`Commands config test (folder with rcfile and rc in parent / as json) 1`
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "{\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
+  "stdout": "{\\"key\\":\\"defaultLinkerName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"initScope\\",\\"effective\\":\\"my-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":\\"1555784893958\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/.spec-yarnrc\\",\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}",
 }
@@ -134,7 +134,7 @@ exports[`Commands config test (folder with rcfile and rc in parent / showing exp
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
+  "stdout": "➤ YN0000: defaultLinkerName - Default language mode that should be used when a package doesn't offer any insight - 'node'
 ➤ YN0000: initScope - Scope used when creating packages via the init command - 'my-test'
 ➤ YN0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - '1555784893958'",
 }
@@ -144,7 +144,7 @@ exports[`Commands config test (folder with rcfile and rc in parent / showing the
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - <default> - 'node'
+  "stdout": "➤ YN0000: defaultLinkerName - <default> - 'node'
 ➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'my-test'
 ➤ YN0000: lastUpdateCheck - WORKSPACE_ROOT/subfolder/.spec-yarnrc - '1555784893958'",
 }
@@ -154,7 +154,7 @@ exports[`Commands config test (folder with rcfile and rc in parent / without fla
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - 'node'
+  "stdout": "➤ YN0000: defaultLinkerName - 'node'
 ➤ YN0000: initScope - 'my-test'
 ➤ YN0000: lastUpdateCheck - '1555784893958'",
 }
@@ -164,7 +164,7 @@ exports[`Commands config test (folder with rcfile without trailing newline / as 
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "{\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
+  "stdout": "{\\"key\\":\\"defaultLinkerName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"initScope\\",\\"effective\\":\\"my-test\\",\\"source\\":\\"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc\\",\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":null,\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}",
 }
@@ -174,7 +174,7 @@ exports[`Commands config test (folder with rcfile without trailing newline / sho
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
+  "stdout": "➤ YN0000: defaultLinkerName - Default language mode that should be used when a package doesn't offer any insight - 'node'
 ➤ YN0000: initScope - Scope used when creating packages via the init command - 'my-test'
 ➤ YN0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - null",
 }
@@ -184,7 +184,7 @@ exports[`Commands config test (folder with rcfile without trailing newline / sho
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - <default> - 'node'
+  "stdout": "➤ YN0000: defaultLinkerName - <default> - 'node'
 ➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'my-test'
 ➤ YN0000: lastUpdateCheck - <default> - null",
 }
@@ -194,7 +194,7 @@ exports[`Commands config test (folder with rcfile without trailing newline / wit
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - 'node'
+  "stdout": "➤ YN0000: defaultLinkerName - 'node'
 ➤ YN0000: initScope - 'my-test'
 ➤ YN0000: lastUpdateCheck - null",
 }
@@ -204,7 +204,7 @@ exports[`Commands config test (folder without rcfile in ancestry / as json) 1`] 
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "{\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
+  "stdout": "{\\"key\\":\\"defaultLinkerName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
 {\\"key\\":\\"initScope\\",\\"effective\\":null,\\"description\\":\\"Scope used when creating packages via the init command\\",\\"type\\":\\"STRING\\",\\"default\\":null}
 {\\"key\\":\\"lastUpdateCheck\\",\\"effective\\":null,\\"description\\":\\"Last timestamp we checked whether new Yarn versions were available\\",\\"type\\":\\"STRING\\",\\"default\\":null}",
 }
@@ -214,7 +214,7 @@ exports[`Commands config test (folder without rcfile in ancestry / showing expla
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
+  "stdout": "➤ YN0000: defaultLinkerName - Default language mode that should be used when a package doesn't offer any insight - 'node'
 ➤ YN0000: initScope - Scope used when creating packages via the init command - null
 ➤ YN0000: lastUpdateCheck - Last timestamp we checked whether new Yarn versions were available - null",
 }
@@ -224,7 +224,7 @@ exports[`Commands config test (folder without rcfile in ancestry / showing the s
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - <default> - 'node'
+  "stdout": "➤ YN0000: defaultLinkerName - <default> - 'node'
 ➤ YN0000: initScope - <default> - null
 ➤ YN0000: lastUpdateCheck - <default> - null",
 }
@@ -234,7 +234,7 @@ exports[`Commands config test (folder without rcfile in ancestry / without flags
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - 'node'
+  "stdout": "➤ YN0000: defaultLinkerName - 'node'
 ➤ YN0000: initScope - null
 ➤ YN0000: lastUpdateCheck - null",
 }

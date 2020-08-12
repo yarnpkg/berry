@@ -12,7 +12,7 @@ const FAKE_HOME = `HOME`;
 const FILTER = new RegExp([
   `initScope`,
   `lastUpdateCheck`,
-  `defaultLanguageName`,
+  `defaultLinkerName`,
 ].join(`|`));
 
 const environments = {
@@ -34,7 +34,7 @@ const environments = {
     await writeFile(`${path}/${RC_FILENAME}`, `initScope: value-to-override\nlastUpdateCheck: 1555784893958\n`);
   },
   [`folder with rcfile and rc in home folder`]: async ({path, homePath}) => {
-    await writeFile(`${homePath}/${RC_FILENAME}`, `initScope: value-to-override\ndefaultLanguageName: python\n`);
+    await writeFile(`${homePath}/${RC_FILENAME}`, `initScope: value-to-override\ndefaultLinkerName: python\n`);
     await writeFile(`${path}/${RC_FILENAME}`, `initScope: my-test\nlastUpdateCheck: 1555784893958\n`);
   },
 };

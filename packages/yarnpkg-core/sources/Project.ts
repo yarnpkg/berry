@@ -175,7 +175,7 @@ export class Project {
     this.lockFileChecksum = null;
 
     const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
-    const defaultLanguageName = this.configuration.get(`defaultLanguageName`);
+    const defaultLinkerName = this.configuration.get(`defaultLinkerName`);
 
     if (xfs.existsSync(lockfilePath)) {
       const content = await xfs.readFilePromise(lockfilePath, `utf8`);
@@ -205,7 +205,7 @@ export class Project {
 
           const version = manifest.version;
 
-          const linkerName = manifest.linkerName || defaultLanguageName;
+          const linkerName = manifest.linkerName || defaultLinkerName;
           const linkType = data.linkType.toUpperCase() as LinkType;
 
           const dependencies = manifest.dependencies;

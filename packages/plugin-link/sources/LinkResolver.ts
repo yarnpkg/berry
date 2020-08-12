@@ -56,7 +56,7 @@ export class LinkResolver implements Resolver {
 
       version: manifest.version ?? `0.0.0`,
 
-      linkerName: manifest.linkerName ?? opts.project.configuration.get<string>(`defaultLanguageName`),
+      linkerName: manifest.linkerName ?? opts.project.configuration.get<string>(`defaultLinkerName`),
       linkType: LinkType.SOFT,
 
       dependencies: new Map([...manifest.dependencies, ...manifest.devDependencies]),

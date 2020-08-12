@@ -316,7 +316,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
 
   // Settings related to how packages are interpreted by default
-  defaultLanguageName: {
+  defaultLinkerName: {
     description: `Default language mode that should be used when a package doesn't offer any insight`,
     type: SettingsType.STRING,
     default: `node`,
