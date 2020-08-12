@@ -5650,6 +5650,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@yarnpkg/plugin-cmake@workspace:packages/plugin-cmake":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/plugin-cmake@workspace:packages/plugin-cmake"
+  dependencies:
+    "@types/lodash": ^4.14.136
+    "@yarnpkg/builder": "workspace:^2.1.0"
+    "@yarnpkg/cli": "workspace:^2.1.1"
+    "@yarnpkg/core": "workspace:^2.1.1"
+    "@yarnpkg/fslib": "workspace:^2.1.0"
+    clipanion: ^2.4.4
+    lodash: ^4.17.15
+    tslib: ^1.13.0
+  peerDependencies:
+    "@yarnpkg/cli": ^2.1.1
+    "@yarnpkg/core": ^2.1.1
+  languageName: unknown
+  linkType: soft
+
 "@yarnpkg/plugin-compat@workspace:^2.1.0, @yarnpkg/plugin-compat@workspace:packages/plugin-compat":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-compat@workspace:packages/plugin-compat"

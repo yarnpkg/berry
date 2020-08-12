@@ -34,6 +34,9 @@ export class PnpLinker implements Linker {
   protected mode = `strict`;
 
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
+    if (pkg.languageName !== `node` && pkg.languageName !== `unknown`)
+      return false;
+
     if (opts.project.configuration.get(`nodeLinker`) !== `pnp`)
       return false;
 

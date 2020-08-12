@@ -33,4 +33,8 @@ package.tgz
 # We check-in the PnP hook because it would be heavy to regenerate it before each bundle build
 !/packages/yarnpkg-pnp/lib/hook.js
 
+# Artifacts from the cmake linker
+/.yarn/vendors/cmake
+/CMakeYarn.cmake
+
 /vscode-case-study
