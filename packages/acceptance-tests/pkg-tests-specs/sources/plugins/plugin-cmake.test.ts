@@ -1,8 +1,12 @@
 import {xfs, Filename, ppath} from '@yarnpkg/fslib';
 
+const ifNotWin32 = process.platform !== `win32`
+  ? test
+  : test.skip;
+
 describe(`Plugins`, () => {
   describe(`cmake`, () => {
-    test(
+    ifNotWin32(
       `it should support building simple program without transitive dependencies`,
       makeTemporaryEnv({
         dependencies: {
@@ -47,7 +51,7 @@ describe(`Plugins`, () => {
       }),
     );
 
-    test(
+    ifNotWin32(
       `it should support transitive dependencies`,
       makeTemporaryEnv({
         dependencies: {
