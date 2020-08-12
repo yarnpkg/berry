@@ -18,7 +18,7 @@ __metadata:
   resolution: \\"no-deps@npm:2.0.0\\"
   checksum: <checksum stripped>
 >>>>>>> 2.0.0
-  languageName: node
+  linkerName: node
   linkType: hard
 
 \\"root-workspace-0b6124@workspace:.\\":
@@ -26,7 +26,7 @@ __metadata:
   resolution: \\"root-workspace-0b6124@workspace:.\\"
   dependencies:
     no-deps: \\"*\\"
-  languageName: unknown
+  linkerName: unknown
   linkType: soft
 "
 `;
@@ -67,7 +67,7 @@ no-deps@*:
   version: 2.0.0
   resolution: \\"no-deps@npm:2.0.0\\"
   checksum: <checksum stripped>
-  languageName: node
+  linkerName: node
   linkType: hard
 
 \\"root-workspace-0b6124@workspace:.\\":
@@ -75,7 +75,7 @@ no-deps@*:
   resolution: \\"root-workspace-0b6124@workspace:.\\"
   dependencies:
     no-deps: \\"*\\"
-  languageName: unknown
+  linkerName: unknown
   linkType: soft
 >>>>>>> yarn2
 "

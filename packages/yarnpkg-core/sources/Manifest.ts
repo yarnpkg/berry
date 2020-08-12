@@ -51,7 +51,7 @@ export class Manifest {
   public module: PortablePath | null = null;
   public browser: PortablePath | null = null;
 
-  public languageName: string | null = null;
+  public linkerName: string | null = null;
 
   public bin: Map<string, PortablePath> = new Map();
   public scripts: Map<string, string> = new Map();
@@ -197,8 +197,8 @@ export class Manifest {
     if (typeof data.license === `string`)
       this.license = data.license;
 
-    if (typeof data.languageName === `string`)
-      this.languageName = data.languageName;
+    if (typeof data.linkerName === `string`)
+      this.linkerName = data.linkerName;
 
     if (typeof data.main === `string`)
       this.main = data.main;
@@ -622,10 +622,10 @@ export class Manifest {
     else
       delete data.license;
 
-    if (this.languageName !== null)
-      data.languageName = this.languageName;
+    if (this.linkerName !== null)
+      data.linkerName = this.linkerName;
     else
-      delete data.languageName;
+      delete data.linkerName;
 
     if (this.main !== null)
       data.main = this.main;

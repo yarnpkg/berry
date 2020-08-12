@@ -24,7 +24,7 @@ type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
 
 export class NodeModulesLinker implements Linker {
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
-    if (pkg.languageName !== `node` && pkg.languageName !== `unknown`)
+    if (pkg.linkerName !== `node` && pkg.linkerName !== `unknown`)
       return false;
 
     if (opts.project.configuration.get(`nodeLinker`) !== `node-modules`)

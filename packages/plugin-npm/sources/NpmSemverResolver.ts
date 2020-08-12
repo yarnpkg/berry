@@ -118,7 +118,7 @@ export class NpmSemverResolver implements Resolver {
 
       version,
 
-      languageName: manifest.languageName ?? `node`,
+      linkerName: manifest.linkerName ?? `node`,
       linkType: LinkType.HARD,
 
       dependencies: manifest.dependencies,

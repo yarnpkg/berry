@@ -1,7 +1,7 @@
 {
     "name": "cmake-one-dep",
     "version": "1.0.0",
-    "languageName": "cmake",
+    "linkerName": "cmake",
     "dependencies": {
       "cmake-no-deps": "1.0.0"
     },

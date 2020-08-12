@@ -29,7 +29,7 @@ export enum LinkType { HARD = `HARD`, SOFT = `SOFT` }
 export interface Package extends Locator {
   version: string | null,
 
-  languageName: string,
+  linkerName: string,
   linkType: LinkType,
 
   dependencies: Map<IdentHash, Descriptor>,

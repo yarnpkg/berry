@@ -1,5 +1,5 @@
 {
     "name": "cmake-no-deps",
     "version": "1.0.0",
-    "languageName": "cmake"
+    "linkerName": "cmake"
 }

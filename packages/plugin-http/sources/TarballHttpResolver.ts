@@ -57,7 +57,7 @@ export class TarballHttpResolver implements Resolver {
 
       version: manifest.version ?? `0.0.0`,
 
-      languageName: manifest.languageName ?? opts.project.configuration.get<string>(`defaultLanguageName`),
+      linkerName: manifest.linkerName ?? opts.project.configuration.get<string>(`defaultLanguageName`),
       linkType: LinkType.HARD,
 
       dependencies: manifest.dependencies,

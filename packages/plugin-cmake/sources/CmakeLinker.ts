@@ -8,7 +8,7 @@ import * as folderUtils                                                         
 
 export class CmakeLinker implements Linker {
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
-    if (pkg.languageName !== `cmake` && pkg.languageName !== `unknown`)
+    if (pkg.linkerName !== `cmake` && pkg.linkerName !== `unknown`)
       return false;
 
     return true;
