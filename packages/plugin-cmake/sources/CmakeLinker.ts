@@ -1,6 +1,8 @@
 import {Package, Linker, MinimalLinkOptions, Locator, LinkOptions, structUtils} from '@yarnpkg/core';
 import {PortablePath, ppath, xfs, Filename}                                     from '@yarnpkg/fslib';
 
+import {UsageError}                                                             from 'clipanion';
+
 import {CmakeInstaller}                                                         from './CmakeInstaller';
 import * as folderUtils                                                         from './folderUtils';
 
@@ -13,14 +15,15 @@ export class CmakeLinker implements Linker {
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
-    const pathmapFile = folderUtils.getPathmapPath({
-      configuration: opts.project.configuration,
-    });
+    const pathmapFile = folderUtils.getPathmapPath(opts.project.configuration);
+    if (!await xfs.existsPromise(pathmapFile))
+      throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running 'yarn install' might help`);
 
     const pathmap = await xfs.readJsonPromise(pathmapFile);
+
     const location = pathmap[structUtils.stringifyLocator(locator)];
     if (typeof location === `undefined`)
-      throw new Error(`Nope`);
+      throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the install registry - running 'yarn install' might help`);
 
     return ppath.join(opts.project.cwd, location);
   }

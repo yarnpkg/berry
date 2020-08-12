@@ -1,5 +1,5 @@
 import {Installer, Locator, FetchResult, Package, Descriptor, LinkOptions, structUtils, LinkType} from '@yarnpkg/core';
-import {PortablePath, xfs, Filename, ppath, npath}                                                from '@yarnpkg/fslib';
+import {PortablePath, xfs, ppath}                                                                 from '@yarnpkg/fslib';
 
 import * as folderUtils                                                                           from './folderUtils';
 
@@ -62,10 +62,7 @@ export class CmakeInstaller implements Installer {
     for (const [locatorStr, {packageLocation}] of this.dependencies)
       data[locatorStr] = ppath.relative(this.opts.project.cwd, packageLocation);
 
-    const pathmapFile = folderUtils.getPathmapPath({
-      configuration: this.opts.project.configuration,
-    });
-
+    const pathmapFile = folderUtils.getPathmapPath(this.opts.project.configuration);
     await xfs.writeFilePromise(pathmapFile, `${JSON.stringify(data, null, 2)}\n`);
   }
 
@@ -97,10 +94,7 @@ export class CmakeInstaller implements Installer {
     content += `  endforeach()\n`;
     content += `endfunction()\n`;
 
-    const defsFile = folderUtils.getCmakeDefsPath({
-      project: this.opts.project,
-    });
-
+    const defsFile = folderUtils.getCmakeDefsPath(this.opts.project);
     await xfs.writeFilePromise(defsFile, content);
   }
 }

@@ -13,9 +13,7 @@ const plugin: Plugin<Hooks> = {
   },
   hooks: {
     async setupScriptEnvironment(project, env, makePathWrapper) {
-      env.CMAKE_YARN_DEFINITION_FILE = folderUtils.getCmakeDefsPath({
-        project,
-      });
+      env.CMAKE_YARN_DEFINITION_FILE = folderUtils.getCmakeDefsPath(project);
     },
   },
   linkers: [
