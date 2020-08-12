@@ -2,6 +2,8 @@
 // yarn build:plugin-commands
 
 export const pluginCommands = new Map([
+  [`cmake`, [
+  ]],
   [`constraints`, [
     [`constraints`, `query`],
     [`constraints`, `source`],
