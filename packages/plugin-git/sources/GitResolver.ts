@@ -46,9 +46,9 @@ export class GitResolver implements Resolver {
     return {
       ...locator,
 
-      version: manifest.version || `0.0.0`,
+      version: manifest.version ?? `0.0.0`,
 
-      languageName: opts.project.configuration.get(`defaultLanguageName`),
+      languageName: manifest.languageName ?? opts.project.configuration.get<string>(`defaultLanguageName`),
       linkType: LinkType.HARD,
 
       dependencies: manifest.dependencies,

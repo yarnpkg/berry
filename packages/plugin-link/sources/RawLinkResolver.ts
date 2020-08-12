@@ -47,7 +47,7 @@ export class RawLinkResolver implements Resolver {
 
       version: `0.0.0`,
 
-      languageName: opts.project.configuration.get(`defaultLanguageName`),
+      languageName: manifest.languageName ?? opts.project.configuration.get<string>(`defaultLanguageName`),
       linkType: LinkType.SOFT,
 
       dependencies: new Map(),
