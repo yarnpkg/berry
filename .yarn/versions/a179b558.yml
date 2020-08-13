@@ -1,5 +1,5 @@
 releases:
-  "@yarnpkg/builder": minor
+  "@yarnpkg/builder": patch
   "@yarnpkg/cli": prerelease
   "@yarnpkg/core": minor
   "@yarnpkg/plugin-cmake": major
