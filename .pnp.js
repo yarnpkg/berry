@@ -36001,7 +36001,8 @@ class FakeFS {
   }
 
   async removePromise(p, {
-    recursive = true
+    recursive = true,
+    maxRetries = 5
   } = {}) {
     let stat;
 
@@ -36018,19 +36019,25 @@ class FakeFS {
     if (stat.isDirectory()) {
       if (recursive) for (const entry of await this.readdirPromise(p)) await this.removePromise(this.pathUtils.resolve(p, entry)); // 5 gives 1s worth of retries at worst
 
-      for (let t = 0; t < 5; ++t) {
+      let t = 0;
+
+      do {
         try {
           await this.rmdirPromise(p);
           break;
         } catch (error) {
           if (error.code === `EBUSY` || error.code === `ENOTEMPTY`) {
-            await new Promise(resolve => setTimeout(resolve, t * 100));
-            continue;
+            if (maxRetries === 0) {
+              break;
+            } else {
+              await new Promise(resolve => setTimeout(resolve, t * 100));
+              continue;
+            }
           } else {
             throw error;
           }
         }
-      }
+      } while (t++ < maxRetries);
     } else {
       await this.unlinkPromise(p);
     }
@@ -39802,22 +39809,11 @@ const tmpdirs = new Set();
 let cleanExitRegistered = false;
 
 function registerCleanExit() {
-  if (!cleanExitRegistered) cleanExitRegistered = true;else return;
-
-  const cleanExit = () => {
-    process.off(`exit`, cleanExit);
-
-    for (const p of tmpdirs) {
-      tmpdirs.delete(p);
-
-      try {
-        xfs.removeSync(p);
-      } catch (_a) {// Too bad if there's an error
-      }
-    }
-  };
-
-  process.on(`exit`, cleanExit);
+  if (cleanExitRegistered) return;
+  cleanExitRegistered = true;
+  process.once(`exit`, () => {
+    xfs.rmtempSync();
+  });
 }
 
 const xfs = Object.assign(new NodeFS(), {
@@ -39897,6 +39893,28 @@ const xfs = Object.assign(new NodeFS(), {
         }
       } else {
         return realP;
+      }
+    }
+  },
+
+  async rmtempPromise() {
+    await Promise.all(Array.from(tmpdirs.values()).map(async p => {
+      try {
+        await xfs.removePromise(p, {
+          maxRetries: 0
+        });
+        tmpdirs.delete(p);
+      } catch (_a) {// Too bad if there's an error
+      }
+    }));
+  },
+
+  rmtempSync() {
+    for (const p of tmpdirs) {
+      try {
+        xfs.removeSync(p);
+        tmpdirs.delete(p);
+      } catch (_a) {// Too bad if there's an error
       }
     }
   }
@@ -40891,19 +40909,36 @@ function makeApi(runtimeState, opts) {
             }
           }
         } else if (dependencyReference === undefined) {
-          if (isDependencyTreeRoot(issuerLocator)) {
-            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
-              request: requestForDisplay,
-              issuer: issuerForDisplay,
-              dependencyName
-            });
+          if (!considerBuiltins && builtinModules.has(request)) {
+            if (isDependencyTreeRoot(issuerLocator)) {
+              error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since ${dependencyName} isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+                request: requestForDisplay,
+                issuer: issuerForDisplay,
+                dependencyName
+              });
+            } else {
+              error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since ${dependencyName} isn't otherwise declared in ${issuerLocator.name}'s dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+                request: requestForDisplay,
+                issuer: issuerForDisplay,
+                issuerLocator: Object.assign({}, issuerLocator),
+                dependencyName
+              });
+            }
           } else {
-            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
-              request: requestForDisplay,
-              issuer: issuerForDisplay,
-              issuerLocator: Object.assign({}, issuerLocator),
-              dependencyName
-            });
+            if (isDependencyTreeRoot(issuerLocator)) {
+              error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+                request: requestForDisplay,
+                issuer: issuerForDisplay,
+                dependencyName
+              });
+            } else {
+              error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
+                request: requestForDisplay,
+                issuer: issuerForDisplay,
+                issuerLocator: Object.assign({}, issuerLocator),
+                dependencyName
+              });
+            }
           }
         }
 
