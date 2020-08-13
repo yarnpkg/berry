@@ -130,42 +130,42 @@ export async function findProjectDescriptors(ident: Ident, {project, target}: {p
 }
 
 export async function extractDescriptorFromPath(path: PortablePath, {cwd, workspace}: {cwd: PortablePath, workspace: Workspace}) {
-  if (!ppath.isAbsolute(path)) {
-    path = ppath.relative(workspace.cwd, ppath.resolve(cwd, path));
-    if (!path.match(/^\.{0,2}\//)) {
-      path = `./${path}` as PortablePath;
-    }
-  }
-
-  const {project} = workspace;
-
   // We use a temporary cache so that we don't pollute the project cache with temporary archives
-  const cache = await makeTemporaryCache();
+  return await makeTemporaryCache(async cache => {
+    if (!ppath.isAbsolute(path)) {
+      path = ppath.relative(workspace.cwd, ppath.resolve(cwd, path));
+      if (!path.match(/^\.{0,2}\//)) {
+        path = `./${path}` as PortablePath;
+      }
+    }
 
-  const descriptor = await fetchDescriptorFrom(structUtils.makeIdent(null, `archive`), path, {project: workspace.project, cache, workspace});
-  if (!descriptor)
-    throw new Error(`Assertion failed: The descriptor should have been found`);
+    const {project} = workspace;
 
-  const report = new ThrowReport();
+    const descriptor = await fetchDescriptorFrom(structUtils.makeIdent(null, `archive`), path, {project: workspace.project, cache, workspace});
+    if (!descriptor)
+      throw new Error(`Assertion failed: The descriptor should have been found`);
 
-  const resolver = project.configuration.makeResolver();
-  const fetcher = project.configuration.makeFetcher();
+    const report = new ThrowReport();
 
-  const resolverOptions = {checksums: project.storedChecksums, project, cache, fetcher, report, resolver};
+    const resolver = project.configuration.makeResolver();
+    const fetcher = project.configuration.makeFetcher();
 
-  // While not useful since it's an absolute path, descriptor always have to be bound before being sent to the fetchers
-  const boundDescriptor = resolver.bindDescriptor(descriptor, workspace.anchoredLocator, resolverOptions);
+    const resolverOptions = {checksums: project.storedChecksums, project, cache, fetcher, report, resolver};
 
-  // Since it's a file, we assume the returned descriptor is a valid locator
-  const locator = structUtils.convertDescriptorToLocator(boundDescriptor);
+    // While not useful since it's an absolute path, descriptor always have to be bound before being sent to the fetchers
+    const boundDescriptor = resolver.bindDescriptor(descriptor, workspace.anchoredLocator, resolverOptions);
 
-  const fetchResult = await fetcher.fetch(locator, resolverOptions);
-  const manifest = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
+    // Since it's a file, we assume the returned descriptor is a valid locator
+    const locator = structUtils.convertDescriptorToLocator(boundDescriptor);
 
-  if (!manifest.name)
-    throw new Error(`Target path doesn't have a name`);
+    const fetchResult = await fetcher.fetch(locator, resolverOptions);
+    const manifest = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
 
-  return structUtils.makeDescriptor(manifest.name, path);
+    if (!manifest.name)
+      throw new Error(`Target path doesn't have a name`);
+
+    return structUtils.makeDescriptor(manifest.name, path);
+  });
 }
 
 export async function getSuggestedDescriptors(request: Descriptor, {project, workspace, cache, target, modifier, strategies, maxResults = Infinity}: {project: Project, workspace: Workspace, cache: Cache, target: Target, modifier: Modifier, strategies: Array<Strategy>, maxResults?: number}) {
@@ -338,17 +338,17 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   return structUtils.makeDescriptor(bestLocator, structUtils.makeRange({protocol, source, params, selector}));
 }
 
-export async function makeTemporaryCache() {
-  const cacheDir = await xfs.mktempPromise();
+async function makeTemporaryCache<T>(cb: (cache: Cache) => Promise<T>) {
+  return await xfs.mktempPromise(async cacheDir => {
+    const configuration = Configuration.create(cacheDir);
 
-  const configuration = Configuration.create(cacheDir);
+    configuration.useWithSource(cacheDir, {
+      // Don't pollute the mirror with temporary archives
+      enableMirror: false,
+      // Don't spend time compressing what gets deleted later
+      compressionLevel: 0,
+    }, cacheDir, {overwrite: true});
 
-  configuration.useWithSource(cacheDir, {
-    // Don't pollute the mirror with temporary archives
-    enableMirror: false,
-    // Don't spend time compressing what gets deleted later
-    compressionLevel: 0,
-  }, cacheDir, {overwrite: true});
-
-  return new Cache(cacheDir, {configuration, check: false, immutable: false});
+    return await cb(new Cache(cacheDir, {configuration, check: false, immutable: false}));
+  });
 }
