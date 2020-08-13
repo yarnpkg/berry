@@ -39942,7 +39942,6 @@ var ErrorCode;
 (function (ErrorCode) {
   ErrorCode["API_ERROR"] = "API_ERROR";
   ErrorCode["BLACKLISTED"] = "BLACKLISTED";
-  ErrorCode["BUILTIN_NODE_RESOLUTION_DISABLED"] = "BUILTIN_NODE_RESOLUTION_DISABLED";
   ErrorCode["BUILTIN_NODE_RESOLUTION_FAILED"] = "BUILTIN_NODE_RESOLUTION_FAILED";
   ErrorCode["MISSING_DEPENDENCY"] = "MISSING_DEPENDENCY";
   ErrorCode["MISSING_PEER_DEPENDENCY"] = "MISSING_PEER_DEPENDENCY";
@@ -39954,7 +39953,7 @@ var ErrorCode;
 // that expect this umbrella error when the resolution fails
 
 
-const MODULE_NOT_FOUND_ERRORS = new Set([ErrorCode.BLACKLISTED, ErrorCode.BUILTIN_NODE_RESOLUTION_DISABLED, ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, ErrorCode.MISSING_DEPENDENCY, ErrorCode.MISSING_PEER_DEPENDENCY, ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, ErrorCode.UNDECLARED_DEPENDENCY]);
+const MODULE_NOT_FOUND_ERRORS = new Set([ErrorCode.BLACKLISTED, ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, ErrorCode.MISSING_DEPENDENCY, ErrorCode.MISSING_PEER_DEPENDENCY, ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, ErrorCode.UNDECLARED_DEPENDENCY]);
 /**
  * Simple helper function that assign an error code to an error, so that it can more easily be caught and used
  * by third-parties.
@@ -40906,13 +40905,13 @@ function makeApi(runtimeState, opts) {
         } else if (dependencyReference === undefined) {
           if (!considerBuiltins && builtinModules.has(request)) {
             if (isDependencyTreeRoot(issuerLocator)) {
-              error = internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_DISABLED, `Your application tried to access ${dependencyName}, (a builtin node module) but the builtin node resolution algorithm has been disabled; this can happen if your application is bundled to run outside of a NodeJS context; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+              error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since ${dependencyName} isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
                 request: requestForDisplay,
                 issuer: issuerForDisplay,
                 dependencyName
               });
             } else {
-              error = internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_DISABLED, `${issuerLocator.name} tried to access ${dependencyName}, (a builtin node module) but the builtin node resolution algorithm has been disabled; this can happen if your application is bundled to run outside of a NodeJS context; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
+              error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since ${dependencyName} isn't otherwise declared in ${issuerLocator.name}'s dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
                 request: requestForDisplay,
                 issuer: issuerForDisplay,
                 issuerLocator: Object.assign({}, issuerLocator),

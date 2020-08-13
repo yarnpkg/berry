@@ -32,6 +32,10 @@
 
 - Scripts can now use the `$RANDOM` variable as well as simple calculations using `+`, `-`, `*`, `/` and `()` inside `$(())`
 
+### Third-party integrations
+
+- The PnP hook will now display clearer error message when requiring Node builtins from contexts that can't access them out of the box (for example when accessing the `fs` module from within a Webpack browser bundle).
+
 ## 2.1.1
 
 - Fixed hyperlink rendering on iTerm

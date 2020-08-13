@@ -394,28 +394,6 @@ describe(`Plug'n'Play API`, () => {
     });
   });
 
-  describe(`std - vNext`, () => {
-    describe(`resolveRequest`, () => {
-      test(
-        `it should throw detailed errors when a builtin is not found and the 'considerBuiltins' option is set to false`,
-        makeTemporaryEnv(
-          {},
-          async ({path, run, source}) => {
-            await run(`install`);
-
-            await expect(source(`require('pnpapi').resolveRequest('fs', ${JSON.stringify(`${npath.fromPortablePath(path)}/`)}, {considerBuiltins: false})`)).rejects.toMatchObject({
-              externalException: {
-                message: expect.stringContaining(`Your application tried to access fs, (a builtin node module) but the builtin node resolution algorithm has been disabled; this can happen if your application is bundled to run outside of a NodeJS context;`),
-                code: `MODULE_NOT_FOUND`,
-                pnpCode: `BUILTIN_NODE_RESOLUTION_DISABLED`,
-              },
-            });
-          },
-        ),
-      );
-    });
-  });
-
   describe(`resolveVirtual - v1`, () => {
     describe(`resolveVirtual`, () => {
       test(
@@ -455,5 +433,25 @@ describe(`Plug'n'Play API`, () => {
         }),
       );
     });
+  });
+
+  describe(`Semantic Errors`, () => {
+    test(
+      `it should throw detailed errors when a builtin is not found and the 'considerBuiltins' option is set to false`,
+      makeTemporaryEnv(
+        {},
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('pnpapi').resolveRequest('fs', ${JSON.stringify(`${npath.fromPortablePath(path)}/`)}, {considerBuiltins: false})`)).rejects.toMatchObject({
+            externalException: {
+              message: expect.stringContaining(`Your application tried to access fs. While this module is usually interpreted as a Node builtin,`),
+              code: `MODULE_NOT_FOUND`,
+              pnpCode: `UNDECLARED_DEPENDENCY`,
+            },
+          });
+        },
+      ),
+    );
   });
 });
