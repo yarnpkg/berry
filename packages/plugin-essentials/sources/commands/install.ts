@@ -2,6 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}                                    
 import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, FormatType} from '@yarnpkg/core';
 import {xfs, ppath}                                                                        from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                                          from '@yarnpkg/parsers';
+import {TRAVIS}                                                                            from 'ci-info';
 import {Command, Usage}                                                                    from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
@@ -191,7 +192,7 @@ export default class YarnCommand extends BaseCommand {
     // lockfile - for example the PnP artifacts will also be locked.
     if (typeof this.frozenLockfile !== `undefined`) {
       const exitCode = await reportDeprecation(`The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`, {
-        error: !isGCF,
+        error: !isGCF && !TRAVIS,
       });
 
       if (exitCode !== null) {

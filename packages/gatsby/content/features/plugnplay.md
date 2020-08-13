@@ -99,9 +99,10 @@ A lot of very common frontend tools now support Plug'n'Play natively!
 | Parcel | Starting from 2.0.0-nightly.212+ |
 | Prettier | Starting from 1.17+ |
 | Rollup | Starting from `resolve` 1.9+ |
+| Storybook | Starting from 6.0+ |
+| TypeScript | Via [`plugin-compat`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-compat) (enabled by default)
 | TypeScript-ESLint | Starting from 2.12+ |
 | WebStorm | Starting from 2019.3+; See [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks) |
-| TypeScript | Via [`plugin-compat`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-compat) (enabled by default)
 | Webpack | Native | Starting from 5+ ([plugin](https://github.com/arcanis/pnp-webpack-plugin) available for 4.x) |
 
 #### Support via plugins

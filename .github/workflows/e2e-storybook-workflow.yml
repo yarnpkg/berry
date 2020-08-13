@@ -1,0 +1,37 @@
+#
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-storybook-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E Storybook'
+jobs:
+  chore:
+    name: 'Validating Storybook (with a React app)'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+        yarn dlx create-react-app my-cra && cd my-cra
+        yarn dlx -p @storybook/cli sb init --yes
+        yarn build-storybook
+
