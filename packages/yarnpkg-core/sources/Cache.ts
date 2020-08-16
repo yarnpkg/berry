@@ -124,7 +124,7 @@ export class Cache {
       await xfs.mkdirPromise(this.cwd, {recursive: true});
 
       const gitignorePath = ppath.resolve(this.cwd, `.gitignore` as Filename);
-      const gitignoreExists = await xfs.existsPromise(gitignorePath);
+      const gitignoreExists = await xfs.existsPromiseSafe(gitignorePath);
 
       if (!gitignoreExists) {
         await xfs.writeFilePromise(gitignorePath, `/.gitignore\n*.lock\n`);
@@ -183,7 +183,7 @@ export class Cache {
       const zipFs = await loader();
       const refetchPath = zipFs.getRealPath();
 
-      zipFs.saveAndClose();
+      await zipFs.saveAndClosePromise();
 
       await xfs.chmodPromise(refetchPath, 0o644);
 
@@ -191,10 +191,10 @@ export class Cache {
     };
 
     const loadPackageThroughMirror = async () => {
-      if (mirrorPath === null || !(await xfs.existsPromise(mirrorPath))) {
+      if (mirrorPath === null || !(await xfs.existsPromiseSafe(mirrorPath))) {
         const zipFs = await loader!();
         const realPath = zipFs.getRealPath();
-        zipFs.saveAndClose();
+        await zipFs.saveAndClosePromise();
         return realPath;
       }
 
@@ -243,7 +243,7 @@ export class Cache {
         const tentativeCachePath = this.getLocatorPath(locator, expectedChecksum);
 
         const cacheExists = tentativeCachePath !== null
-          ? await baseFs.existsPromise(tentativeCachePath)
+          ? await baseFs.existsPromiseSafe(tentativeCachePath)
           : false;
 
         const action = cacheExists

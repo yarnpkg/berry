@@ -34,7 +34,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     try {
       return await fn(zipOpenFs);
     } finally {
-      zipOpenFs.saveAndClose();
+      await zipOpenFs.saveAndClosePromise();
     }
   }
 
@@ -76,6 +76,15 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
   getRealPath() {
     return this.baseFs.getRealPath();
+  }
+
+  async saveAndClosePromise() {
+    if (this.zipInstances) {
+      await Promise.all([...this.zipInstances.entries()].map(async ([path, {zipFs}]) => {
+        await zipFs.saveAndClosePromise();
+        this.zipInstances?.delete(path);
+      }));
+    }
   }
 
   saveAndClose() {
@@ -400,7 +409,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     const fallback = async (sourceFs: FakeFS<PortablePath>, sourceP: PortablePath, destFs: FakeFS<PortablePath>, destP: PortablePath) => {
       if ((flags & constants.COPYFILE_FICLONE_FORCE) !== 0)
         throw Object.assign(new Error(`EXDEV: cross-device clone not permitted, copyfile '${sourceP}' -> ${destP}'`), {code: `EXDEV`});
-      if ((flags & constants.COPYFILE_EXCL) && await this.existsPromise(sourceP))
+      if ((flags & constants.COPYFILE_EXCL) && await this.existsPromiseSafe(sourceP))
         throw Object.assign(new Error(`EEXIST: file already exists, copyfile '${sourceP}' -> '${destP}'`), {code: `EEXIST`});
 
       let content;
@@ -850,7 +859,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
       try {
         return await accept(zipFs);
       } finally {
-        zipFs.saveAndClose();
+        await zipFs.saveAndClosePromise();
       }
     }
   }

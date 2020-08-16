@@ -389,9 +389,9 @@ describe(`Dragon tests`, () => {
         await expect(source(`require('dragon-test-7-a') + ':' + require('dragon-test-7-d')`)).resolves.toEqual(`1.0.0:1.0.0`);
 
         // C@X should not be hoisted from . -> A -> B@X
-        await expect(xfs.existsPromise(`${path}/node_modules/dragon-test-7-a/node_modules/dragon-test-7-b/node_modules/dragon-test-7-c`)).resolves.toBeTruthy();
+        await expect(xfs.existsPromiseSafe(`${path}/node_modules/dragon-test-7-a/node_modules/dragon-test-7-b/node_modules/dragon-test-7-c`)).resolves.toBeTruthy();
         // C@X should be hoisted from . -> D -> B@X
-        await expect(xfs.existsPromise(`${path}/node_modules/dragon-test-7-d/node_modules/dragon-test-7-b/node_modules`)).resolves.toBeFalsy();
+        await expect(xfs.existsPromiseSafe(`${path}/node_modules/dragon-test-7-d/node_modules/dragon-test-7-b/node_modules`)).resolves.toBeFalsy();
       }
     ),
   );

@@ -55,7 +55,7 @@ export async function fetchRoot(initialCwd: PortablePath) {
   let nextCwd = initialCwd;
   do {
     cwd = nextCwd;
-    if (await xfs.existsPromise(ppath.join(cwd, `.git` as Filename)))
+    if (await xfs.existsPromiseSafe(ppath.join(cwd, `.git` as Filename)))
       match = cwd;
     nextCwd = ppath.dirname(cwd);
   } while (match === null && nextCwd !== cwd);

@@ -385,6 +385,39 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
+  async saveAndClosePromise() {
+    if (!this.path || !this.baseFs)
+      throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);
+
+    if (!this.ready)
+      throw errors.EBUSY(`archive closed, close`);
+
+    if (this.readOnly) {
+      this.discardAndClose();
+      return;
+    }
+
+    const previousMod = await this.baseFs.existsPromiseSafe(this.path)
+      ? (await this.baseFs.statPromise(this.path)).mode & 0o777
+      : null;
+
+    const rc = this.libzip.close(this.zip);
+    if (rc === -1)
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+
+    // this.libzip overrides the chmod when writing the archive, which is a weird
+    // behavior I don't totally understand (plus the umask seems bogus in some
+    // weird cases - maybe related to emscripten?)
+    //
+    // See also https://github.com/nih-at/libzip/issues/77
+    if (previousMod === null)
+      await this.baseFs.chmodPromise(this.path, this.stats.mode);
+    else if (previousMod !== ((await this.baseFs.statPromise(this.path)).mode & 0o777))
+      await this.baseFs.chmodPromise(this.path, previousMod);
+
+    this.ready = false;
+  }
+
   saveAndClose() {
     if (!this.path || !this.baseFs)
       throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);

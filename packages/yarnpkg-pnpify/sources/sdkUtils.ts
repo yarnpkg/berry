@@ -17,7 +17,7 @@ export const addSettingWorkspaceConfiguration = async (pnpApi: PnpApi, relativeF
 
   const filePath = ppath.join(projectRoot, relativeFileName);
 
-  const content = await xfs.existsPromise(filePath)
+  const content = await xfs.existsPromiseSafe(filePath)
     ? await xfs.readFilePromise(filePath, `utf8`)
     : `{}`;
 

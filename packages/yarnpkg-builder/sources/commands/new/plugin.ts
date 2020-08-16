@@ -22,7 +22,7 @@ export default class NewPluginCommand extends Command {
   @Command.Path(`new`, `plugin`)
   async execute() {
     const target = npath.toPortablePath(path.resolve(this.target));
-    if (await xfs.existsPromise(target)) {
+    if (await xfs.existsPromiseSafe(target)) {
       const listing = await xfs.readdirPromise(target);
       if (listing.length !== 0) {
         throw new UsageError(`The target directory (${this.target}) isn't empty; aborting the scaffolding.`);

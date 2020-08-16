@@ -11,7 +11,7 @@ describe(`Commands`, () => {
         await run(`plugin`, `import`, helloWorldSource);
 
         const helloWorldPlugin = yarn.getPluginPath(path, `@yarnpkg/plugin-hello-world`);
-        await expect(xfs.existsPromise(helloWorldPlugin)).resolves.toEqual(true);
+        await expect(xfs.existsPromiseSafe(helloWorldPlugin)).resolves.toEqual(true);
 
         await expect(fs.readSyml(ppath.join(path, Filename.rc))).resolves.toEqual({
           plugins: [{

@@ -114,7 +114,7 @@ describe(`ZipOpenFS`, () => {
 
     const fs = new ZipOpenFS({libzip: getLibzipSync(), maxAge: 2000});
 
-    await fs.existsPromise(ZIP_FILE1);
+    await fs.existsPromiseSafe(ZIP_FILE1);
     // @ts-expect-error: zipInstances is private
     expect(fs.zipInstances!.size).toEqual(1);
 

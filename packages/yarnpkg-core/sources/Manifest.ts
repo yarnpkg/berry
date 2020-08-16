@@ -87,7 +87,7 @@ export class Manifest {
   static async tryFind(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
     const manifestPath = ppath.join(path, `package.json` as Filename);
 
-    if (!await baseFs.existsPromise(manifestPath))
+    if (!await baseFs.existsPromiseSafe(manifestPath))
       return null;
 
     return await Manifest.fromFile(manifestPath, {baseFs});

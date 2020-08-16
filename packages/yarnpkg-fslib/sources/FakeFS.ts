@@ -1,9 +1,9 @@
-import {Dirent as NodeDirent, ReadStream, Stats, WriteStream} from 'fs';
-import {EOL}                                                  from 'os';
+import {Dirent as NodeDirent, ReadStream, Stats, WriteStream, constants} from 'fs';
+import {EOL}                                                             from 'os';
 
-import {copyPromise}                                          from './algorithms/copyPromise';
-import {FSPath, Path, PortablePath, PathUtils, Filename}      from './path';
-import {convertPath, ppath}                                   from './path';
+import {copyPromise}                                                     from './algorithms/copyPromise';
+import {FSPath, Path, PortablePath, PathUtils, Filename}                 from './path';
+import {convertPath, ppath}                                              from './path';
 
 export type Dirent = Exclude<NodeDirent, 'name'> & {
   name: Filename,
@@ -102,6 +102,7 @@ export abstract class FakeFS<P extends Path> {
   abstract readdirSync(p: P, opts: {withFileTypes: true}): Array<Dirent>;
   abstract readdirSync(p: P, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
 
+  /** @deprecated: Prefer using `existsPromiseSafe` instead */
   abstract existsPromise(p: P): Promise<boolean>;
   abstract existsSync(p: P): boolean;
 
@@ -167,6 +168,15 @@ export abstract class FakeFS<P extends Path> {
 
   abstract watch(p: P, cb?: WatchCallback): Watcher;
   abstract watch(p: P, opts: WatchOptions, cb?: WatchCallback): Watcher;
+
+  async existsPromiseSafe(p: P): Promise<boolean> {
+    try {
+      await this.accessPromise(p, constants.F_OK);
+      return true;
+    } catch {
+      return false;
+    }
+  }
 
   async * genTraversePromise(init: P, {stableSort = false}: {stableSort?: boolean} = {}) {
     const stack = [init];

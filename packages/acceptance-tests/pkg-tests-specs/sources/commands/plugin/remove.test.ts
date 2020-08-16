@@ -16,7 +16,7 @@ describe(`Commands`, () => {
         const helloWorldPlugin = yarn.getPluginPath(path, `@yarnpkg/plugin-hello-world`);
         const helloUniversePlugin = yarn.getPluginPath(path, `@yarnpkg/plugin-hello-universe`);
 
-        await expect(xfs.existsPromise(helloWorldPlugin)).resolves.toEqual(true);
+        await expect(xfs.existsPromiseSafe(helloWorldPlugin)).resolves.toEqual(true);
         await expect(fs.readSyml(ppath.join(path, Filename.rc))).resolves.toEqual({
           plugins: [{
             path: ppath.relative(path, helloWorldPlugin),
@@ -29,7 +29,7 @@ describe(`Commands`, () => {
 
         await run(`plugin`, `remove`, `@yarnpkg/plugin-hello-world`);
 
-        await expect(xfs.existsPromise(helloWorldPlugin)).resolves.toEqual(false);
+        await expect(xfs.existsPromiseSafe(helloWorldPlugin)).resolves.toEqual(false);
         await expect(fs.readSyml(ppath.join(path, Filename.rc))).resolves.toEqual({
           plugins: [{
             path: ppath.relative(path, helloUniversePlugin),
