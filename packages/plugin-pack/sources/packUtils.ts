@@ -212,8 +212,7 @@ function getManifestFromTarballBuffer(buffer: Buffer): Promise<Manifest> {
  */
 export async function getManifestFromTarball(tarballPath: PortablePath): Promise<Manifest> {
   const tgz = await xfs.readFilePromise(tarballPath);
-  const tarballBuffer = await gunzipPromise(tgz);
-  return await getManifestFromTarballBuffer(tarballBuffer);
+  return await getManifestFromTgzBuffer(tgz);
 }
 
 export async function genPackList(workspace: Workspace) {
