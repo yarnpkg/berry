@@ -168,7 +168,7 @@ export default class DedupeCommand extends BaseCommand {
     const cache = await Cache.find(configuration);
 
     let dedupedPackageCount: number = 0;
-    await StreamReport.start({
+    const dedupeReport = await StreamReport.start({
       configuration,
       includeFooter: false,
       stdout: this.context.stdout,
@@ -176,6 +176,9 @@ export default class DedupeCommand extends BaseCommand {
     }, async report => {
       dedupedPackageCount = await dedupe({project, strategy: this.strategy, patterns: this.patterns, cache, report});
     });
+
+    if (dedupeReport.hasErrors())
+      return dedupeReport.exitCode();
 
     if (this.check) {
       return dedupedPackageCount ? 1 : 0;
@@ -266,8 +269,6 @@ export async function dedupe({strategy, project, patterns, cache, report}: Dedup
       )
     );
 
-    const prettyStrategy = configuration.format(strategy, FormatType.CODE);
-
     let packages: string;
     switch (dedupedPackageCount) {
       case 0: {
@@ -283,7 +284,8 @@ export async function dedupe({strategy, project, patterns, cache, report}: Dedup
       }
     }
 
-    report.reportInfo(MessageName.UNNAMED, `${packages} can be deduped using the strategy ${prettyStrategy}`);
+    const prettyStrategy = configuration.format(strategy, FormatType.CODE);
+    report.reportInfo(MessageName.UNNAMED, `${packages} can be deduped using the ${prettyStrategy} strategy`);
 
     return dedupedPackageCount;
   });
