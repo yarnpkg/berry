@@ -12631,20 +12631,20 @@ fsevents@^1.2.7:
 
 "fsevents@patch:fsevents@^1.2.7#builtin<compat/fsevents>":
   version: 1.2.7
-  resolution: "fsevents@patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=a1ec3e"
+  resolution: "fsevents@patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=58a163"
   dependencies:
     nan: ^2.9.2
     node-pre-gyp: ^0.10.0
-  checksum: bbf0b3dd8462ea03337da5cab6f75637bc696127add5753e5f9b231609695a2056c7824f4da78d00c831c39a47b87ce1b1d601ceb4ef3fcf019322b6677a9efb
+  checksum: a5e86a41b3c0d94f70783600bcf5f5c358b73036d5dcbc3c50521bcc5298cfd88e48103d05200544961f751d1356b0f8b7f59bdb00300fa0566ac99ace72d1da
   languageName: node
   linkType: hard
 
 "fsevents@patch:fsevents@^2.1.2#builtin<compat/fsevents>, fsevents@patch:fsevents@~2.1.2#builtin<compat/fsevents>":
   version: 2.1.3
-  resolution: "fsevents@patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=a1ec3e"
+  resolution: "fsevents@patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=58a163"
   dependencies:
     node-gyp: latest
-  checksum: 972dc3797aba6ce06ce4f502469d60e3781c0cbd2e72067fdb60221655d50f94c7ca69c7108b8336cad8b3819cd77c0c83a1239e5a50416baa22bef7ea52a7e9
+  checksum: f606894db5fbbc3da363a017dfb93214de7ca9a9f095c2caa95e3d9c4b93b7f00da529822832e202ca690d6ca78a101cf4f04a14d9377bfec7c34acf87e5c2cc
   languageName: node
   linkType: hard
 
