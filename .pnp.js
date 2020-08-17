@@ -36486,7 +36486,7 @@ function toFilename(filename) {
 
 /***/ }),
 
-/***/ 434:
+/***/ 170:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -37442,7 +37442,7 @@ function areStatsEqual(a, b) {
   if (a.uid !== b.uid) return false;
   return true;
 }
-// CONCATENATED MODULE: ../yarnpkg-fslib/sources/algorithms/watchFile.ts
+// CONCATENATED MODULE: ../yarnpkg-fslib/sources/algorithms/watchFile/CustomStatWatcher.ts
 
 
 var Event;
@@ -37584,6 +37584,75 @@ class CustomStatWatcher extends external_events_.EventEmitter {
   }
 
 }
+// CONCATENATED MODULE: ../yarnpkg-fslib/sources/algorithms/watchFile.ts
+
+const statWatchersByFakeFS = new WeakMap();
+function watchFile(fakeFs, path, a, b) {
+  let bigint;
+  let persistent;
+  let interval;
+  let listener;
+
+  switch (typeof a) {
+    case `function`:
+      {
+        bigint = false;
+        persistent = true;
+        interval = 5007;
+        listener = a;
+      }
+      break;
+
+    default:
+      {
+        ({
+          bigint = false,
+          persistent = true,
+          interval = 5007
+        } = a);
+        listener = b;
+      }
+      break;
+  }
+
+  let statWatchers = statWatchersByFakeFS.get(fakeFs);
+  if (typeof statWatchers === `undefined`) statWatchersByFakeFS.set(fakeFs, statWatchers = new Map());
+  let statWatcher = statWatchers.get(path);
+
+  if (typeof statWatcher === `undefined`) {
+    statWatcher = new CustomStatWatcher(fakeFs, path, {
+      bigint
+    });
+    statWatcher.start();
+    statWatchers.set(path, statWatcher);
+  }
+
+  statWatcher.registerChangeListener(listener, {
+    persistent,
+    interval
+  });
+  return statWatcher;
+}
+function unwatchFile(fakeFs, path, cb) {
+  const statWatchers = statWatchersByFakeFS.get(fakeFs);
+  if (typeof statWatchers === `undefined`) return;
+  const statWatcher = statWatchers.get(path);
+  if (typeof statWatcher === `undefined`) return;
+  if (typeof cb === `undefined`) statWatcher.unregisterAllChangeListeners();else statWatcher.unregisterChangeListener(cb);
+
+  if (!statWatcher.hasChangeListeners()) {
+    statWatcher.stop();
+    statWatchers.delete(path);
+  }
+}
+function unwatchAllFiles(fakeFs) {
+  const statWatchers = statWatchersByFakeFS.get(fakeFs);
+  if (typeof statWatchers === `undefined`) return;
+
+  for (const path of statWatchers.keys()) {
+    unwatchFile(fakeFs, path);
+  }
+}
 // CONCATENATED MODULE: ../yarnpkg-fslib/sources/ZipFS.ts
 
 
@@ -37629,7 +37698,6 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     this.fileSources = new Map();
     this.fds = new Map();
     this.nextFd = 0;
-    this.statWatchers = new Map();
     this.ready = false;
     this.readOnly = false;
     this.libzip = opts.libzip;
@@ -37791,10 +37859,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
   prepareClose() {
     if (!this.ready) throw EBUSY(`archive closed, close`);
-
-    for (const p of this.statWatchers.keys()) {
-      this.unwatchFile(p);
-    }
+    unwatchAllFiles(this);
   }
 
   saveAndClose() {
@@ -38710,60 +38775,12 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
   watchFile(p, a, b) {
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
-    let bigint;
-    let persistent;
-    let interval;
-    let listener;
-
-    switch (typeof a) {
-      case `function`:
-        {
-          bigint = false;
-          persistent = true;
-          interval = 5007;
-          listener = a;
-        }
-        break;
-
-      default:
-        {
-          ({
-            bigint = false,
-            persistent = true,
-            interval = 5007
-          } = a);
-          listener = b;
-        }
-        break;
-    }
-
-    let statWatcher = this.statWatchers.get(resolvedP);
-
-    if (typeof statWatcher === `undefined`) {
-      statWatcher = new CustomStatWatcher(this, resolvedP, {
-        bigint
-      });
-      statWatcher.start();
-      this.statWatchers.set(resolvedP, statWatcher);
-    }
-
-    statWatcher.registerChangeListener(listener, {
-      persistent,
-      interval
-    });
-    return statWatcher;
+    return watchFile(this, resolvedP, a, b);
   }
 
   unwatchFile(p, cb) {
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
-    const statWatcher = this.statWatchers.get(resolvedP);
-    if (!statWatcher) return;
-    if (typeof cb === `undefined`) statWatcher.unregisterAllChangeListeners();else statWatcher.unregisterChangeListener(cb);
-
-    if (!statWatcher.hasChangeListeners()) {
-      statWatcher.stop();
-      this.statWatchers.delete(resolvedP);
-    }
+    return unwatchFile(this, resolvedP, cb);
   }
 
 }
@@ -46176,7 +46193,7 @@ module.exports = require("zlib");
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(434);
+/******/ 	return __webpack_require__(170);
 /******/ })()
 .default;
 });

@@ -401,9 +401,6 @@ describe(`ZipFS`, () => {
     // The stop event should be emitted when there are no remaining change listeners
     expect(stopListener).toHaveBeenCalledTimes(1);
 
-    // @ts-expect-error: statWatchers is private
-    expect(zipFs.statWatchers.size).toStrictEqual(0);
-
     // The listener shouldn't be called after the file is unwatched
 
     zipFs.writeFileSync(file, `Test`);

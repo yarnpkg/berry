@@ -4,11 +4,11 @@ import {PassThrough}                                                            
 import {isDate}                                                                                                                                      from 'util';
 import zlib                                                                                                                                          from 'zlib';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from './FakeFS';
-import {FakeFS, MkdirOptions, WriteFileOptions}                                                                                                      from './FakeFS';
 import {WatchOptions, WatchCallback, Watcher}                                                                                                        from './FakeFS';
+import {FakeFS, MkdirOptions, WriteFileOptions}                                                                                                      from './FakeFS';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from './FakeFS';
 import {NodeFS}                                                                                                                                      from './NodeFS';
-import {CustomStatWatcher}                                                                                                                           from './algorithms/watchFile';
+import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from './algorithms/watchFile';
 import {S_IFLNK, S_IFDIR, S_IFMT, S_IFREG}                                                                                                           from './constants';
 import * as errors                                                                                                                                   from './errors';
 import {FSPath, PortablePath, npath, ppath, Filename}                                                                                                from './path';
@@ -74,8 +74,6 @@ export class ZipFS extends BasePortableFakeFS {
 
   private readonly fds: Map<number, {cursor: number, p: PortablePath}> = new Map();
   private nextFd: number = 0;
-
-  private statWatchers: Map<PortablePath, CustomStatWatcher<PortablePath>> = new Map();
 
   private ready = false;
   private readOnly = false;
@@ -295,9 +293,7 @@ export class ZipFS extends BasePortableFakeFS {
     if (!this.ready)
       throw errors.EBUSY(`archive closed, close`);
 
-    for (const p of this.statWatchers.keys()) {
-      this.unwatchFile(p);
-    }
+    unwatchAllFiles(this);
   }
 
   saveAndClose() {
@@ -1395,61 +1391,12 @@ export class ZipFS extends BasePortableFakeFS {
   watchFile(p: PortablePath, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback) {
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
 
-    let bigint: boolean;
-    let persistent: boolean;
-    let interval: number;
-
-    let listener: WatchFileCallback;
-
-    switch (typeof a) {
-      case `function`: {
-        bigint = false;
-        persistent = true;
-        interval = 5007;
-
-        listener = a;
-      } break;
-
-      default: {
-        ({
-          bigint = false,
-          persistent = true,
-          interval = 5007,
-        } = a);
-
-        listener = b!;
-      } break;
-    }
-
-    let statWatcher = this.statWatchers.get(resolvedP);
-    if (typeof statWatcher === `undefined`) {
-      statWatcher = new CustomStatWatcher<PortablePath>(this, resolvedP, {bigint});
-
-      statWatcher.start();
-
-      this.statWatchers.set(resolvedP, statWatcher);
-    }
-
-    statWatcher.registerChangeListener(listener, {persistent, interval});
-
-    return statWatcher;
+    return watchFile(this, resolvedP, a, b);
   }
 
-  unwatchFile(p: PortablePath, cb?: WatchFileCallback) {
+  unwatchFile(p: PortablePath, cb?: WatchFileCallback): void {
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
 
-    const statWatcher = this.statWatchers.get(resolvedP);
-    if (!statWatcher)
-      return;
-
-    if (typeof cb === `undefined`)
-      statWatcher.unregisterAllChangeListeners();
-    else
-      statWatcher.unregisterChangeListener(cb);
-
-    if (!statWatcher.hasChangeListeners()) {
-      statWatcher.stop();
-      this.statWatchers.delete(resolvedP);
-    }
+    return unwatchFile(this, resolvedP, cb);
   }
 }

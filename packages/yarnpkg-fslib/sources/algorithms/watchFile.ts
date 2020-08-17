@@ -1,167 +1,86 @@
-import {EventEmitter}                                             from 'events';
-import {Stats}                                                    from 'fs';
+import {FakeFS, WatchFileOptions, WatchFileCallback} from '../FakeFS';
+import {Path}                                        from '../path';
 
-import {StatWatcher, WatchFileCallback, WatchFileOptions, FakeFS} from '../FakeFS';
-import {Path}                                                     from '../path';
-import * as statUtils                                             from '../statUtils';
+import {CustomStatWatcher}                           from './watchFile/CustomStatWatcher';
 
-export enum Event {
-  Change = `change`,
-  Stop = `stop`
+const statWatchersByFakeFS = new WeakMap<FakeFS<Path>, Map<Path, CustomStatWatcher<Path>>>();
+
+export function watchFile<P extends Path>(
+  fakeFs: FakeFS<P>,
+  path: P,
+  a: WatchFileOptions | WatchFileCallback,
+  b?: WatchFileCallback
+) {
+  let bigint: boolean;
+  let persistent: boolean;
+  let interval: number;
+
+  let listener: WatchFileCallback;
+
+  switch (typeof a) {
+    case `function`: {
+      bigint = false;
+      persistent = true;
+      interval = 5007;
+
+      listener = a;
+    } break;
+
+    default: {
+      ({
+        bigint = false,
+        persistent = true,
+        interval = 5007,
+      } = a);
+
+      listener = b!;
+    } break;
+  }
+
+  let statWatchers = statWatchersByFakeFS.get(fakeFs);
+  if (typeof statWatchers === `undefined`)
+    statWatchersByFakeFS.set(fakeFs, statWatchers = new Map());
+
+  let statWatcher = statWatchers.get(path);
+  if (typeof statWatcher === `undefined`) {
+    statWatcher = new CustomStatWatcher<P>(fakeFs, path, {bigint});
+
+    statWatcher.start();
+
+    statWatchers.set(path, statWatcher);
+  }
+
+  statWatcher.registerChangeListener(listener, {persistent, interval});
+
+  return statWatcher as CustomStatWatcher<P>;
 }
 
-export enum Status {
-  Ready = `ready`,
-  Running = `running`,
-  Stopped = `stopped`,
-}
+export function unwatchFile<P extends Path>(fakeFs: FakeFS<P>, path: P, cb?: WatchFileCallback) {
+  const statWatchers = statWatchersByFakeFS.get(fakeFs);
+  if (typeof statWatchers === `undefined`)
+    return;
 
-export function assertStatus<T extends Status>(current: Status, expected: T): asserts current is T {
-  if (current !== expected) {
-    throw new Error(`Invalid StatWatcher status: expected '${expected}', got '${current}'`);
+  const statWatcher = statWatchers.get(path);
+  if (typeof statWatcher === `undefined`)
+    return;
+
+  if (typeof cb === `undefined`)
+    statWatcher.unregisterAllChangeListeners();
+  else
+    statWatcher.unregisterChangeListener(cb);
+
+  if (!statWatcher.hasChangeListeners()) {
+    statWatcher.stop();
+    statWatchers.delete(path);
   }
 }
 
-// `bigint` can only be set class-wide, because that's what Node does
-export type ListenerOptions = Omit<Required<WatchFileOptions>, 'bigint'>;
+export function unwatchAllFiles(fakeFs: FakeFS<Path>) {
+  const statWatchers = statWatchersByFakeFS.get(fakeFs);
+  if (typeof statWatchers === `undefined`)
+    return;
 
-export type CustomStatWatcherOptions = {
-  // BigInt Stats aren't currently implemented in the FS layer, so this is a no-op
-  bigint?: boolean,
-};
-
-export class CustomStatWatcher<P extends Path> extends EventEmitter implements StatWatcher {
-  public readonly fakeFs: FakeFS<P>;
-
-  public readonly path: P;
-
-  public readonly bigint: boolean;
-
-  private status: Status = Status.Ready;
-
-  private changeListeners: Map<WatchFileCallback, NodeJS.Timeout> = new Map();
-
-  private lastStats: Stats;
-
-  constructor(fakeFs: FakeFS<P>, path: P, {bigint = false}: CustomStatWatcherOptions = {}) {
-    super();
-
-    this.fakeFs = fakeFs;
-    this.path = path;
-    this.bigint = bigint;
-
-    this.lastStats = this.stat();
-  }
-
-  start() {
-    assertStatus(this.status, Status.Ready);
-    this.status = Status.Running;
-
-    // Node allows other listeners to be registered up to 3 milliseconds
-    // after the watcher has been started, so that's what we're doing too
-    setTimeout(() => {
-      // Per the Node FS docs:
-      // "When an fs.watchFile operation results in an ENOENT error,
-      // it will invoke the listener once, with all the fields zeroed
-      // (or, for dates, the Unix Epoch)."
-      if (!this.fakeFs.existsSync(this.path)) {
-        this.emit(Event.Change, this.lastStats, this.lastStats);
-      }
-    }, 3);
-  }
-
-  stop() {
-    assertStatus(this.status, Status.Running);
-    this.status = Status.Stopped;
-
-    this.emit(Event.Stop);
-  }
-
-  stat() {
-    try {
-      return this.fakeFs.statSync(this.path);
-    } catch (error) {
-      if (error.code === `ENOENT`) {
-        return statUtils.makeEmptyStats();
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  /**
-   * Creates an interval whose callback compares the current stats with the previous stats and notifies all listeners in case of changes.
-   *
-   * @param opts.persistent Decides whether the interval should be immediately unref-ed.
-   */
-  makeInterval(opts: ListenerOptions) {
-    const interval = setInterval(() => {
-      const currentStats = this.stat();
-      const previousStats = this.lastStats;
-
-      if (statUtils.areStatsEqual(currentStats, previousStats))
-        return;
-
-      this.lastStats = currentStats;
-
-      this.emit(Event.Change, currentStats, previousStats);
-    }, opts.interval);
-
-    return opts.persistent ? interval : interval.unref();
-  }
-
-  /**
-   * Registers a listener and assigns it an interval.
-   */
-  registerChangeListener(listener: WatchFileCallback, opts: ListenerOptions) {
-    this.addListener(Event.Change, listener);
-
-    this.changeListeners.set(listener, this.makeInterval(opts));
-  }
-
-  /**
-   * Unregisters the listener and clears the assigned interval.
-   */
-  unregisterChangeListener(listener: WatchFileCallback) {
-    this.removeListener(Event.Change, listener);
-
-    const interval = this.changeListeners.get(listener);
-    if (typeof interval !== `undefined`)
-      clearInterval(interval);
-
-    this.changeListeners.delete(listener);
-  }
-
-  /**
-   * Unregisters all listeners and clears all assigned intervals.
-   */
-  unregisterAllChangeListeners() {
-    for (const listener of this.changeListeners.keys()) {
-      this.unregisterChangeListener(listener);
-    }
-  }
-
-  hasChangeListeners() {
-    return this.changeListeners.size > 0;
-  }
-
-  /**
-   * Refs all stored intervals.
-   */
-  ref() {
-    for (const interval of this.changeListeners.values())
-      interval.ref();
-
-    return this;
-  }
-
-  /**
-   * Unrefs all stored intervals.
-   */
-  unref() {
-    for (const interval of this.changeListeners.values())
-      interval.unref();
-
-    return this;
+  for (const path of statWatchers.keys()) {
+    unwatchFile(fakeFs, path);
   }
 }
