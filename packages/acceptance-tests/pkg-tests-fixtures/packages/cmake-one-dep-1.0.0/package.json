@@ -1,0 +1,11 @@
+{
+    "name": "cmake-one-dep",
+    "version": "1.0.0",
+    "linkerName": "cmake",
+    "dependencies": {
+      "cmake-no-deps": "1.0.0"
+    },
+    "peerDependencies": {
+      "cmake-no-deps": "*"
+    }
+}

@@ -176,7 +176,7 @@ export class Project {
     this.lockFileChecksum = null;
 
     const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
-    const defaultLanguageName = this.configuration.get(`defaultLanguageName`);
+    const defaultLinkerName = this.configuration.get(`defaultLinkerName`);
 
     if (xfs.existsSync(lockfilePath)) {
       const content = await xfs.readFilePromise(lockfilePath, `utf8`);
@@ -206,7 +206,7 @@ export class Project {
 
           const version = manifest.version;
 
-          const languageName = manifest.languageName || defaultLanguageName;
+          const linkerName = manifest.linkerName || defaultLinkerName;
           const linkType = data.linkType.toUpperCase() as LinkType;
 
           const dependencies = manifest.dependencies;
@@ -226,7 +226,7 @@ export class Project {
           }
 
           if (lockfileVersion >= LOCKFILE_VERSION) {
-            const pkg: Package = {...locator, version, languageName, linkType, dependencies, peerDependencies, dependenciesMeta, peerDependenciesMeta, bin};
+            const pkg: Package = {...locator, version, linkerName, linkType, dependencies, peerDependencies, dependenciesMeta, peerDependenciesMeta, bin};
             this.originalPackages.set(pkg.locatorHash, pkg);
           }
 
@@ -1613,7 +1613,7 @@ export class Project {
         ? pkg.version
         : `0.0.0-use.local`;
 
-      manifest.languageName = pkg.languageName;
+      manifest.linkerName = pkg.linkerName;
 
       manifest.dependencies = new Map(pkg.dependencies);
       manifest.peerDependencies = new Map(pkg.peerDependencies);

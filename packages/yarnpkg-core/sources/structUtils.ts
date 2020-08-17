@@ -54,7 +54,7 @@ export function renamePackage(pkg: Package, locator: Locator): Package {
 
     version: pkg.version,
 
-    languageName: pkg.languageName,
+    linkerName: pkg.linkerName,
     linkType: pkg.linkType,
 
     dependencies: new Map(pkg.dependencies),

@@ -1,0 +1,1 @@
+# @yarnpkg/plugin-cmake

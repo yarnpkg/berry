@@ -11,6 +11,7 @@ import semver                                      from 'semver';
 import {PassThrough, Writable}                     from 'stream';
 
 import {CorePlugin}                                from './CorePlugin';
+import {Linker}                                    from './Linker';
 import {Manifest}                                  from './Manifest';
 import {MultiFetcher}                              from './MultiFetcher';
 import {MultiResolver}                             from './MultiResolver';
@@ -21,6 +22,7 @@ import {TelemetryManager}                          from './TelemetryManager';
 import {VirtualFetcher}                            from './VirtualFetcher';
 import {VirtualResolver}                           from './VirtualResolver';
 import {WorkspaceFetcher}                          from './WorkspaceFetcher';
+import {WorkspaceLinker}                           from './WorkspaceLinker';
 import {WorkspaceResolver}                         from './WorkspaceResolver';
 import * as folderUtils                            from './folderUtils';
 import * as miscUtils                              from './miscUtils';
@@ -314,7 +316,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
 
   // Settings related to how packages are interpreted by default
-  defaultLanguageName: {
+  defaultLinkerName: {
     description: `Default language mode that should be used when a package doesn't offer any insight`,
     type: SettingsType.STRING,
     default: `node`,
@@ -1224,7 +1226,7 @@ export class Configuration {
   }
 
   getLinkers() {
-    const linkers = [];
+    const linkers: Array<Linker> = [new WorkspaceLinker()];
 
     for (const plugin of this.plugins.values())
       for (const linker of plugin.linkers || [])

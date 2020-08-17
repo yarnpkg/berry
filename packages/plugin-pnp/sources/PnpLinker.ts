@@ -34,6 +34,9 @@ export class PnpLinker implements Linker {
   protected mode = `strict`;
 
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
+    if (pkg.linkerName !== `node` && pkg.linkerName !== `unknown`)
+      return false;
+
     if (opts.project.configuration.get(`nodeLinker`) !== `pnp`)
       return false;
 
@@ -46,15 +49,14 @@ export class PnpLinker implements Linker {
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
     const pnpPath = getPnpPath(opts.project).main;
     if (!xfs.existsSync(pnpPath))
-      throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
+      throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running 'yarn install' might help`);
 
     const pnpFile = miscUtils.dynamicRequireNoCache(pnpPath);
 
     const packageLocator = {name: structUtils.requirableIdent(locator), reference: locator.reference};
     const packageInformation = pnpFile.getPackageInformation(packageLocator);
-
     if (!packageInformation)
-      throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed PnP map - running an install might help`);
+      throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the install registry - running 'yarn install' might help`);
 
     return npath.toPortablePath(packageInformation.packageLocation);
   }

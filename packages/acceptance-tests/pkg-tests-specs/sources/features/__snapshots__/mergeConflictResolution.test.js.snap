@@ -18,16 +18,16 @@ __metadata:
   resolution: \\"no-deps@npm:2.0.0\\"
   checksum: <checksum stripped>
 >>>>>>> 2.0.0
-  languageName: node
   linkType: hard
+  linkerName: node
 
 \\"root-workspace-0b6124@workspace:.\\":
   version: 0.0.0-use.local
   resolution: \\"root-workspace-0b6124@workspace:.\\"
   dependencies:
     no-deps: \\"*\\"
-  languageName: unknown
   linkType: soft
+  linkerName: unknown
 "
 `;
 
@@ -67,16 +67,16 @@ no-deps@*:
   version: 2.0.0
   resolution: \\"no-deps@npm:2.0.0\\"
   checksum: <checksum stripped>
-  languageName: node
   linkType: hard
+  linkerName: node
 
 \\"root-workspace-0b6124@workspace:.\\":
   version: 0.0.0-use.local
   resolution: \\"root-workspace-0b6124@workspace:.\\"
   dependencies:
     no-deps: \\"*\\"
-  languageName: unknown
   linkType: soft
+  linkerName: unknown
 >>>>>>> yarn2
 "
 `;

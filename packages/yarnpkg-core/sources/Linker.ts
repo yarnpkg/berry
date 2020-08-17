@@ -29,7 +29,7 @@ export interface Linker {
   /**
    * This function must return true if the specified package is understood by
    * this linker. Given that this function takes a package definition as
-   * parameter (not only a locator), it's safe to use the languageName field
+   * parameter (not only a locator), it's safe to use the linkerName field
    * as detection method.
    *
    * @param locator The locator that needs to be validated.

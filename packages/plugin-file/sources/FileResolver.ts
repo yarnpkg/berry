@@ -85,9 +85,9 @@ export class FileResolver implements Resolver {
     return {
       ...locator,
 
-      version: manifest.version || `0.0.0`,
+      version: manifest.version ?? `0.0.0`,
 
-      languageName: opts.project.configuration.get(`defaultLanguageName`),
+      linkerName: manifest.linkerName ?? opts.project.configuration.get<string>(`defaultLinkerName`),
       linkType: LinkType.HARD,
 
       dependencies: manifest.dependencies,

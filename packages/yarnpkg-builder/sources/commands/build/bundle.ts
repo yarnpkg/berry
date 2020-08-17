@@ -204,7 +204,10 @@ export default class BuildBundleCommand extends Command {
       report.reportSeparator();
 
       for (const plugin of plugins) {
-        report.reportInfo(null, `${chalk.yellow(`→`)} ${structUtils.prettyIdent(configuration, structUtils.parseIdent(plugin))}`);
+        const manifestPath = require.resolve(`${plugin}/package.json`, {paths: [basedir]});
+        const pluginName = require(manifestPath).name;
+
+        report.reportInfo(null, `${chalk.yellow(`→`)} ${structUtils.prettyIdent(configuration, structUtils.parseIdent(pluginName))}`);
       }
     }
 

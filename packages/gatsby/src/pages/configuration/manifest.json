@@ -44,7 +44,7 @@
       "format": "uri-reference",
       "default": "./sources/index.mjs"
     },
-    "languageName": {
+    "linkerName": {
       "description": "An enumeration used by the linker plugins to figure which linker should install a specific package. Only some values are allowed, consult the documentation to know more.",
       "type": "string",
       "default": "node"
