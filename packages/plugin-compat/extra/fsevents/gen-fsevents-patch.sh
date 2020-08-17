@@ -13,7 +13,7 @@ cp -rf package copy
 
 cp "$THIS_DIR"/fsevents-1.2.11.js copy/fsevents.js
 cp "$THIS_DIR"/vfs.js copy/vfs.js
-git diff --src-prefix=a/ --dst-prefix=b/ --ignore-cr-at-eol --full-index --no-index package copy > "$THIS_DIR"/fsevents-1.2.11.patch || true
+git diff -U2 --src-prefix=a/ --dst-prefix=b/ --ignore-cr-at-eol --ignore-space-change --full-index --no-index package copy > "$THIS_DIR"/fsevents-1.2.11.patch || true
 
 rm -rf package copy
 
@@ -22,7 +22,7 @@ cp -rf package copy
 
 cp "$THIS_DIR"/fsevents-2.1.2.js copy/fsevents.js
 cp "$THIS_DIR"/vfs.js copy/vfs.js
-git diff --src-prefix=a/ --dst-prefix=b/ --ignore-cr-at-eol --full-index --no-index package copy > "$THIS_DIR"/fsevents-2.1.2.patch || true
+git diff -U2 --src-prefix=a/ --dst-prefix=b/ --ignore-cr-at-eol --ignore-space-change --full-index --no-index package copy > "$THIS_DIR"/fsevents-2.1.2.patch || true
 
 sed -i '' 's#a/package/#a/#' "$THIS_DIR"/fsevents-1.2.11.patch
 sed -i '' 's#b/copy/#b/#' "$THIS_DIR"/fsevents-1.2.11.patch

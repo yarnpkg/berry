@@ -25,7 +25,6 @@ function watch(path, handler) {
   let vfs = new VFS(path);
   let instance = Native.start(vfs.resolvedPath, vfs.wrap(handler));
   if (!instance) throw new Error(`could not watch: ${path}`);
-
   return () => {
     const result = instance
       ? Promise.resolve(instance).then(Native.stop)
