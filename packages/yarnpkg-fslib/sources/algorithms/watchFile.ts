@@ -43,9 +43,7 @@ export function watchFile<P extends Path>(
 
   let statWatcher = statWatchers.get(path);
   if (typeof statWatcher === `undefined`) {
-    statWatcher = new CustomStatWatcher<P>(fakeFs, path, {bigint});
-
-    statWatcher.start();
+    statWatcher = CustomStatWatcher.create<P>(fakeFs, path, {bigint});
 
     statWatchers.set(path, statWatcher);
   }

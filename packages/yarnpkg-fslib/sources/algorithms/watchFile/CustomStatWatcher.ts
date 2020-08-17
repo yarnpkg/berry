@@ -43,7 +43,15 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
 
   private lastStats: Stats;
 
-  constructor(fakeFs: FakeFS<P>, path: P, {bigint = false}: CustomStatWatcherOptions = {}) {
+  static create<P extends Path>(fakeFs: FakeFS<P>, path: P, opts?: CustomStatWatcherOptions) {
+    const statWatcher = new CustomStatWatcher<P>(fakeFs, path, opts);
+
+    statWatcher.start();
+
+    return statWatcher;
+  }
+
+  private constructor(fakeFs: FakeFS<P>, path: P, {bigint = false}: CustomStatWatcherOptions = {}) {
     super();
 
     this.fakeFs = fakeFs;

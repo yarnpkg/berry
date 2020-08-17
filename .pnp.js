@@ -37478,6 +37478,12 @@ class CustomStatWatcher extends external_events_.EventEmitter {
     this.lastStats = this.stat();
   }
 
+  static create(fakeFs, path, opts) {
+    const statWatcher = new CustomStatWatcher(fakeFs, path, opts);
+    statWatcher.start();
+    return statWatcher;
+  }
+
   start() {
     assertStatus(this.status, Status.Ready);
     this.status = Status.Running; // Node allows other listeners to be registered up to 3 milliseconds
@@ -37620,10 +37626,9 @@ function watchFile(fakeFs, path, a, b) {
   let statWatcher = statWatchers.get(path);
 
   if (typeof statWatcher === `undefined`) {
-    statWatcher = new CustomStatWatcher(fakeFs, path, {
+    statWatcher = CustomStatWatcher.create(fakeFs, path, {
       bigint
     });
-    statWatcher.start();
     statWatchers.set(path, statWatcher);
   }
 
