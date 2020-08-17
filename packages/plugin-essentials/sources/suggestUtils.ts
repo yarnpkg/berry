@@ -1,7 +1,7 @@
-import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace, FetchOptions, ResolveOptions} from '@yarnpkg/core';
-import {structUtils}                                                                                                                from '@yarnpkg/core';
-import {PortablePath, ppath}                                                                                                        from '@yarnpkg/fslib';
-import semver                                                                                                                       from 'semver';
+import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace, FetchOptions, ResolveOptions, Configuration} from '@yarnpkg/core';
+import {structUtils}                                                                                                                               from '@yarnpkg/core';
+import {PortablePath, ppath, xfs}                                                                                                                  from '@yarnpkg/fslib';
+import semver                                                                                                                                      from 'semver';
 
 export type Suggestion = {
   descriptor: Descriptor,
@@ -129,40 +129,43 @@ export async function findProjectDescriptors(ident: Ident, {project, target}: {p
   return matches;
 }
 
-export async function extractDescriptorFromPath(path: PortablePath, {cache, cwd, workspace}: {cache: Cache, cwd: PortablePath, workspace: Workspace}) {
-  if (!ppath.isAbsolute(path)) {
-    path = ppath.relative(workspace.cwd, ppath.resolve(cwd, path));
-    if (!path.match(/^\.{0,2}\//)) {
-      path = `./${path}` as PortablePath;
+export async function extractDescriptorFromPath(path: PortablePath, {cwd, workspace}: {cwd: PortablePath, workspace: Workspace}) {
+  // We use a temporary cache so that we don't pollute the project cache with temporary archives
+  return await makeTemporaryCache(async cache => {
+    if (!ppath.isAbsolute(path)) {
+      path = ppath.relative(workspace.cwd, ppath.resolve(cwd, path));
+      if (!path.match(/^\.{0,2}\//)) {
+        path = `./${path}` as PortablePath;
+      }
     }
-  }
 
-  const {project} = workspace;
+    const {project} = workspace;
 
-  const descriptor = await fetchDescriptorFrom(structUtils.makeIdent(null, `archive`), path, {project: workspace.project, cache, workspace});
-  if (!descriptor)
-    throw new Error(`Assertion failed: The descriptor should have been found`);
+    const descriptor = await fetchDescriptorFrom(structUtils.makeIdent(null, `archive`), path, {project: workspace.project, cache, workspace});
+    if (!descriptor)
+      throw new Error(`Assertion failed: The descriptor should have been found`);
 
-  const report = new ThrowReport();
+    const report = new ThrowReport();
 
-  const resolver = project.configuration.makeResolver();
-  const fetcher = project.configuration.makeFetcher();
+    const resolver = project.configuration.makeResolver();
+    const fetcher = project.configuration.makeFetcher();
 
-  const resolverOptions = {checksums: project.storedChecksums, project, cache, fetcher, report, resolver};
+    const resolverOptions = {checksums: project.storedChecksums, project, cache, fetcher, report, resolver};
 
-  // While not useful since it's an absolute path, descriptor always have to be bound before being sent to the fetchers
-  const boundDescriptor = resolver.bindDescriptor(descriptor, workspace.anchoredLocator, resolverOptions);
+    // While not useful since it's an absolute path, descriptor always have to be bound before being sent to the fetchers
+    const boundDescriptor = resolver.bindDescriptor(descriptor, workspace.anchoredLocator, resolverOptions);
 
-  // Since it's a file, we assume the returned descriptor is a valid locator
-  const locator = structUtils.convertDescriptorToLocator(boundDescriptor);
+    // Since it's a file, we assume the returned descriptor is a valid locator
+    const locator = structUtils.convertDescriptorToLocator(boundDescriptor);
 
-  const fetchResult = await fetcher.fetch(locator, resolverOptions);
-  const manifest = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
+    const fetchResult = await fetcher.fetch(locator, resolverOptions);
+    const manifest = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
 
-  if (!manifest.name)
-    throw new Error(`Target path doesn't have a name`);
+    if (!manifest.name)
+      throw new Error(`Target path doesn't have a name`);
 
-  return structUtils.makeDescriptor(manifest.name, path);
+    return structUtils.makeDescriptor(manifest.name, path);
+  });
 }
 
 export async function getSuggestedDescriptors(request: Descriptor, {project, workspace, cache, target, modifier, strategies, maxResults = Infinity}: {project: Project, workspace: Workspace, cache: Cache, target: Target, modifier: Modifier, strategies: Array<Strategy>, maxResults?: number}) {
@@ -335,3 +338,17 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   return structUtils.makeDescriptor(bestLocator, structUtils.makeRange({protocol, source, params, selector}));
 }
 
+async function makeTemporaryCache<T>(cb: (cache: Cache) => Promise<T>) {
+  return await xfs.mktempPromise(async cacheDir => {
+    const configuration = Configuration.create(cacheDir);
+
+    configuration.useWithSource(cacheDir, {
+      // Don't pollute the mirror with temporary archives
+      enableMirror: false,
+      // Don't spend time compressing what gets deleted later
+      compressionLevel: 0,
+    }, cacheDir, {overwrite: true});
+
+    return await cb(new Cache(cacheDir, {configuration, check: false, immutable: false}));
+  });
+}
