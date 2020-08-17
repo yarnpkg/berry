@@ -233,4 +233,12 @@ export class NoFS extends FakeFS<PortablePath> {
   watch(): never {
     throw makeError();
   }
+
+  watchFile(): never {
+    throw makeError();
+  }
+
+  unwatchFile(): never {
+    throw makeError();
+  }
 }
