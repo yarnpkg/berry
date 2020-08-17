@@ -7,7 +7,7 @@ import cleanCache                         from './commands/cache/clean';
 import getConfig                          from './commands/config/get';
 import setConfig                          from './commands/config/set';
 import config                             from './commands/config';
-import deduplicate                        from './commands/deduplicate';
+import dedupe                             from './commands/dedupe';
 import clipanionEntry                     from './commands/entries/clipanion';
 import helpEntry                          from './commands/entries/help';
 import runEntry                           from './commands/entries/run';
@@ -87,7 +87,7 @@ const plugin: Plugin = {
     add,
     bin,
     config,
-    deduplicate,
+    dedupe,
     exec,
     install,
     link,

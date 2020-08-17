@@ -11,7 +11,7 @@ import micromatch                                                               
 import semver                                                                                                                                                        from 'semver';
 
 // eslint-disable-next-line arca/no-default-export
-export default class DeduplicateCommand extends BaseCommand {
+export default class DedupeCommand extends BaseCommand {
   @Command.Rest()
   patterns: Array<string> = [];
 
@@ -36,20 +36,20 @@ export default class DeduplicateCommand extends BaseCommand {
     `,
     examples: [[
       `Deduplicate all packages`,
-      `$0 deduplicate`,
+      `$0 dedupe`,
     ], [
       `Deduplicate a specific package`,
-      `$0 deduplicate lodash`,
+      `$0 dedupe lodash`,
     ], [
       `Deduplicate all packages with the \`@babel\` scope`,
-      `$0 deduplicate '@babel/'`,
+      `$0 dedupe '@babel/*'`,
     ], [
       `Check for duplicates (can be used as a CI step)`,
-      `$0 deduplicate --check`,
+      `$0 dedupe --check`,
     ]],
   });
 
-  @Command.Path(`deduplicate`)
+  @Command.Path(`dedupe`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
