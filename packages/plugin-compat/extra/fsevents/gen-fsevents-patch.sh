@@ -24,13 +24,13 @@ cp "$THIS_DIR"/fsevents-2.1.2.js copy/fsevents.js
 cp "$THIS_DIR"/vfs.js copy/vfs.js
 git diff -U2 --src-prefix=a/ --dst-prefix=b/ --ignore-cr-at-eol --ignore-space-change --full-index --no-index package copy > "$THIS_DIR"/fsevents-2.1.2.patch || true
 
-sed -i '' 's#a/package/#a/#' "$THIS_DIR"/fsevents-1.2.11.patch
-sed -i '' 's#b/copy/#b/#' "$THIS_DIR"/fsevents-1.2.11.patch
-sed -i '' 's#^--- #semver exclusivity ^1\'$'\n''--- #' "$THIS_DIR"/fsevents-1.2.11.patch
+perl -p -i -e 's#a/package/#a/#' "$THIS_DIR"/fsevents-1.2.11.patch
+perl -p -i -e 's#b/copy/#b/#' "$THIS_DIR"/fsevents-1.2.11.patch
+perl -p -i -e 's#^--- #semver exclusivity ^1\'$'\n''--- #' "$THIS_DIR"/fsevents-1.2.11.patch
 
-sed -i '' 's#a/package/#a/#' "$THIS_DIR"/fsevents-2.1.2.patch
-sed -i '' 's#b/copy/#b/#' "$THIS_DIR"/fsevents-2.1.2.patch
-sed -i '' 's#^--- #semver exclusivity ^2.1\'$'\n''--- #' "$THIS_DIR"/fsevents-2.1.2.patch
+perl -p -i -e 's#a/package/#a/#' "$THIS_DIR"/fsevents-2.1.2.patch
+perl -p -i -e 's#b/copy/#b/#' "$THIS_DIR"/fsevents-2.1.2.patch
+perl -p -i -e 's#^--- #semver exclusivity ^2.1\'$'\n''--- #' "$THIS_DIR"/fsevents-2.1.2.patch
 
 cat "$THIS_DIR"/fsevents-1.2.11.patch \
     "$THIS_DIR"/fsevents-2.1.2.patch \
