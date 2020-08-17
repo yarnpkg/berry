@@ -4,11 +4,12 @@
  * - https://github.com/eps1lon/yarn-plugin-deduplicate
  */
 
-import {BaseCommand}                                                                                                        from '@yarnpkg/cli';
-import {Configuration, Project, ResolveOptions, ThrowReport, Cache, StreamReport, Resolver, miscUtils, Descriptor, Package} from '@yarnpkg/core';
-import {structUtils, IdentHash, LocatorHash, MessageName, Report, Fetcher, FetchOptions}                                    from '@yarnpkg/core';
-import {Command}                                                                                                            from 'clipanion';
-import micromatch                                                                                                           from 'micromatch';
+import {BaseCommand}                                                                                                                    from '@yarnpkg/cli';
+import {Configuration, Project, ResolveOptions, ThrowReport, Cache, StreamReport, Resolver, miscUtils, Descriptor, Package, FormatType} from '@yarnpkg/core';
+import {structUtils, IdentHash, LocatorHash, MessageName, Report, Fetcher, FetchOptions}                                                from '@yarnpkg/core';
+import {Command}                                                                                                                        from 'clipanion';
+import micromatch                                                                                                                       from 'micromatch';
+import * as yup                                                                                                                         from 'yup';
 
 export const dedupeSkip = Symbol(`dedupeSkip`);
 
@@ -23,19 +24,20 @@ export type DedupeAlgorithm = (project: Project, patterns: Array<string>, opts: 
   resolveOptions: ResolveOptions,
   fetcher: Fetcher,
   fetchOptions: FetchOptions,
-  report: Report,
 }) => Promise<Array<DedupePromise>>;
 
 export enum Strategy {
-  Highest = `highest`,
+  HIGHEST = `highest`,
 }
 
+const acceptedStrategies = new Set(Object.values(Strategy));
+
 export const DEDUPE_ALGORITHMS: Record<Strategy, DedupeAlgorithm> = {
-  highest: async (project, patterns, {resolver, fetcher, resolveOptions, fetchOptions, report}) => {
+  highest: async (project, patterns, {resolver, fetcher, resolveOptions, fetchOptions}) => {
     const locatorsByIdent = new Map<IdentHash, Set<LocatorHash>>();
     for (const [descriptorHash, locatorHash] of project.storedResolutions) {
       const descriptor = project.storedDescriptors.get(descriptorHash);
-      if (!descriptor)
+      if (typeof descriptor === `undefined`)
         throw new Error(`Assertion failed: The descriptor (${descriptorHash}) should have been registered`);
 
       miscUtils.getSetWithDefault(locatorsByIdent, descriptor.identHash).add(locatorHash);
@@ -112,13 +114,24 @@ export default class DedupeCommand extends BaseCommand {
   patterns: Array<string> = [];
 
   @Command.String(`-s,--strategy`)
-  strategy: Strategy = Strategy.Highest;
+  strategy: Strategy = Strategy.HIGHEST;
 
   @Command.Boolean(`--check`)
   check: boolean = false;
 
   @Command.Boolean(`--json`)
   json: boolean = false;
+
+  static schema = yup.object().shape({
+    strategy: yup.string().test({
+      name: `strategy`,
+      message: `\${path} must be one of \${strategies}`,
+      params: {strategies: [...acceptedStrategies].join(`, `)},
+      test: (strategy: string) => {
+        return acceptedStrategies.has(strategy as Strategy);
+      },
+    }),
+  });
 
   static usage = Command.Usage({
     description: `deduplicate dependencies with overlapping ranges`,
@@ -154,17 +167,18 @@ export default class DedupeCommand extends BaseCommand {
     const {project} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
-    const deduplicateReport = await StreamReport.start({
+    let dedupedPackageCount: number = 0;
+    await StreamReport.start({
       configuration,
       includeFooter: false,
       stdout: this.context.stdout,
       json: this.json,
     }, async report => {
-      await deduplicate(this.strategy, project, this.patterns, {cache, report});
+      dedupedPackageCount = await dedupe({project, strategy: this.strategy, patterns: this.patterns, cache, report});
     });
 
     if (this.check) {
-      return deduplicateReport.hasWarnings() ? 1 : 0;
+      return dedupedPackageCount ? 1 : 0;
     } else {
       const installReport = await StreamReport.start({
         configuration,
@@ -179,7 +193,15 @@ export default class DedupeCommand extends BaseCommand {
   }
 }
 
-export async function deduplicate(strategy: Strategy, project: Project, patterns: Array<string>, {cache, report}: {cache: Cache, report: Report}) {
+export type DedupeSpec = {
+  strategy: Strategy,
+  project: Project,
+  patterns: Array<string>,
+  cache: Cache,
+  report: Report,
+};
+
+export async function dedupe({strategy, project, patterns, cache, report}: DedupeSpec) {
   const {configuration} = project;
   const throwReport = new ThrowReport();
 
@@ -201,12 +223,14 @@ export async function deduplicate(strategy: Strategy, project: Project, patterns
     fetchOptions,
   };
 
-  await report.startTimerPromise(`Deduplication step`, async () => {
+  return await report.startTimerPromise(`Deduplication step`, async () => {
     const algorithm = DEDUPE_ALGORITHMS[strategy];
-    const dedupePromises = await algorithm(project, patterns, {resolver, resolveOptions, fetcher, fetchOptions, report});
+    const dedupePromises = await algorithm(project, patterns, {resolver, resolveOptions, fetcher, fetchOptions});
 
     const progress = StreamReport.progressViaCounter(dedupePromises.length);
     report.reportProgress(progress);
+
+    let dedupedPackageCount = 0;
 
     await Promise.all(
       dedupePromises.map(dedupePromise =>
@@ -215,13 +239,15 @@ export async function deduplicate(strategy: Strategy, project: Project, patterns
             if (dedupe === dedupeSkip)
               return;
 
+            dedupedPackageCount++;
+
             const {descriptor, currentPackage, updatedPackage} = dedupe;
 
-            report.reportWarning(
+            report.reportInfo(
               MessageName.UNNAMED,
               `${
                 structUtils.prettyDescriptor(configuration, descriptor)
-              } can be deduplicated from ${
+              } can be deduped from ${
                 structUtils.prettyLocator(configuration, currentPackage)
               } to ${
                 structUtils.prettyLocator(configuration, updatedPackage)
@@ -239,5 +265,26 @@ export async function deduplicate(strategy: Strategy, project: Project, patterns
           .finally(() => progress.tick())
       )
     );
+
+    const prettyStrategy = configuration.format(strategy, FormatType.CODE);
+
+    let packages: string;
+    switch (dedupedPackageCount) {
+      case 0: {
+        packages = `No packages`;
+      } break;
+
+      case 1: {
+        packages = `One package`;
+      } break;
+
+      default: {
+        packages = `${dedupedPackageCount} packages`;
+      }
+    }
+
+    report.reportInfo(MessageName.UNNAMED, `${packages} can be deduped using the strategy ${prettyStrategy}`);
+
+    return dedupedPackageCount;
   });
 }
