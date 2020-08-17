@@ -104,34 +104,68 @@ export function makeEmptyStats() {
 }
 
 export function areStatsEqual(a: Stats, b: Stats): boolean {
-  let areValuesEqual = true;
-  const compareValues = <T extends number | boolean>(a: T, b: T) => {
-    if (a !== b) {
-      areValuesEqual = false;
-    }
-  };
+  if (a.atimeMs !== b.atimeMs)
+    return false;
 
-  compareValues(a.atimeMs, b.atimeMs);
-  compareValues(a.birthtimeMs, b.birthtimeMs);
-  compareValues(a.blksize, b.blksize);
-  compareValues(a.blocks, b.blocks);
-  compareValues(a.ctimeMs, b.ctimeMs);
-  compareValues(a.dev, b.dev);
-  compareValues(a.gid, b.gid);
-  compareValues(a.ino, b.ino);
-  compareValues(a.isBlockDevice(), b.isBlockDevice());
-  compareValues(a.isCharacterDevice(), b.isCharacterDevice());
-  compareValues(a.isDirectory(), b.isDirectory());
-  compareValues(a.isFIFO(), b.isFIFO());
-  compareValues(a.isFile(), b.isFile());
-  compareValues(a.isSocket(), b.isSocket());
-  compareValues(a.isSymbolicLink(), b.isSymbolicLink());
-  compareValues(a.mode, b.mode);
-  compareValues(a.mtimeMs, b.mtimeMs);
-  compareValues(a.nlink, b.nlink);
-  compareValues(a.rdev, b.rdev);
-  compareValues(a.size, b.size);
-  compareValues(a.uid, b.uid);
+  if (a.birthtimeMs !== b.birthtimeMs)
+    return false;
 
-  return areValuesEqual;
+  if (a.blksize !== b.blksize)
+    return false;
+
+  if (a.blocks !== b.blocks)
+    return false;
+
+  if (a.ctimeMs !== b.ctimeMs)
+    return false;
+
+  if (a.dev !== b.dev)
+    return false;
+
+  if (a.gid !== b.gid)
+    return false;
+
+  if (a.ino !== b.ino)
+    return false;
+
+  if (a.isBlockDevice() !== b.isBlockDevice())
+    return false;
+
+  if (a.isCharacterDevice() !== b.isCharacterDevice())
+    return false;
+
+  if (a.isDirectory() !== b.isDirectory())
+    return false;
+
+  if (a.isFIFO() !== b.isFIFO())
+    return false;
+
+  if (a.isFile() !== b.isFile())
+    return false;
+
+  if (a.isSocket() !== b.isSocket())
+    return false;
+
+  if (a.isSymbolicLink() !== b.isSymbolicLink())
+    return false;
+
+  if (a.mode !== b.mode)
+    return false;
+
+  if (a.mtimeMs !== b.mtimeMs)
+    return false;
+
+  if (a.nlink !== b.nlink)
+    return false;
+
+  if (a.rdev !== b.rdev)
+    return false;
+
+  if (a.size !== b.size)
+    return false;
+
+  if (a.uid !== b.uid)
+    return false;
+
+  return true;
 }
