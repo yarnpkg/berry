@@ -43,6 +43,7 @@ case $PACKAGE_MANAGER in
       --prepare 'rm -rf node_modules' \
       'yarn install'
     bench install-ready \
+      --prepare 'rm node_modules/.yarn-integrity' \
       'yarn install'
     ;;
   yarn)
