@@ -298,7 +298,10 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
     if (options.debugLevel >= 2)
       reasonRoot = `${Array.from(rootNodePath).map(x => prettyPrintLocator(x)).join(`→`)}`;
 
-    let isHoistable = hoistIdents.has(node.ident);
+    const parentNode = nodePath[nodePath.length - 1];
+    // We cannot hoist self-references
+    const isSelfReference = node.name === parentNode.name;
+    let isHoistable = !isSelfReference && hoistIdents.has(node.ident);
     if (options.debugLevel >= 2 && !isHoistable)
       reason = `- filled by: ${prettyPrintLocator(hoistIdentMap.get(node.name)![0])} at ${reasonRoot}`;
 
@@ -350,7 +353,6 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
     }
 
     if (isHoistable) {
-      const parentNode = nodePath[nodePath.length - 1];
       parentNode.dependencies.delete(node.name);
       parentNode.hoistedDependencies.set(node.name, node);
       parentNode.reasons.delete(node.name);
@@ -484,7 +486,6 @@ const cloneTree = (tree: HoisterTree): HoisterWorkTree => {
   const seenNodes = new Map<HoisterTree, HoisterWorkTree>([[tree, treeCopy]]);
 
   const addNode = (node: HoisterTree, parentNode: HoisterWorkTree) => {
-    // Skip self-references
     let workNode = seenNodes.get(node);
     const isSeen = !!workNode;
     if (!workNode) {
