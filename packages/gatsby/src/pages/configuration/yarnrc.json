@@ -124,6 +124,11 @@
       "type": "boolean",
       "default": true
     },
+    "enableTelemetry": {
+      "description": "If true (the default outside of CI environments), Yarn will periodically send anonymous data to our servers tracking some usage information such as the number of dependency in your project, how many install you ran, etc. Consult the [Telemetry](/telemetry) page for more details about it.",
+      "type": "boolean",
+      "default": true
+    },
     "enableTimers": {
       "description": "If false, Yarn will not print the time spent running each sub-step when running various commands. This is typically needed for testing purposes, when you want each execution to have exactly the same output as the previous ones.",
       "type": "boolean",
@@ -172,6 +177,14 @@
       "type": "boolean",
       "default": false
     },
+    "immutablePatterns": {
+      "description": "An array of patterns for files and directories that aren't allowed to change when running installs with the \\`--immutable\\` flag set.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": ["**/.pnp.js"]
+    },
     "initScope": {
       "description": "Scope used when creating packages via the `init` command.",
       "type": "string",
@@ -202,6 +215,11 @@
       "type": "string",
       "format": "uri-reference",
       "default": "yarn.lock"
+    },
+    "networkConcurrency": {
+      "description": "Defines how many requests are allowed to run at the same time. By default Yarn doesn't put limits on it, but it may sometimes be required when working behind proxies that don't handle too well large amount of requests.",
+      "type": "number",
+      "default": 8
     },
     "nodeLinker": {
       "description": "Defines what linker should be used for installing Node packages (useful to enable the node-modules plugin), one of: `pnp`, `node-modules`.",
@@ -467,6 +485,16 @@
       "type": "string",
       "pattern": "^[^<>:;,?\"*|/]+$",
       "default": ".yarnrc.yml"
+    },
+    "telemetryInterval": {
+      "description": "This setting defines the minimal amount of time between two telemetry uploads, in days. By default we only send one request per week, making it impossible for us to track your usage with a lower granularity.",
+      "type": "number",
+      "default": 7
+    },
+    "telemetryUserId": {
+      "description": "By default, we don't assign unique IDs in the telemetry we send, so we have no way to know which data originates from which project. This setting can be used to force a user ID to be sent to our telemetry server. Frankly, it's only useful in some very specific use cases. For example, we use it on the Yarn repository in order to exclude our own usage from the public dashboards (since we necessarily run Yarn more often here than anywhere else, the resulting data would be biased).",
+      "type": "string",
+      "default": null
     },
     "unsafeHttpWhitelist": {
       "description": "This setting lists the hostnames for which using the HTTP protocol is allowed. Any other hostname will be required to use HTTPS instead. The reason behind this decision and more details can be found [here](https://github.com/yarnpkg/berry/pull/416).\n\nGlob patterns are supported.",

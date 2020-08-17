@@ -1,3 +1,4 @@
+import sliceAnsi                    from '@arcanis/slice-ansi';
 import {Writable}                   from 'stream';
 
 import {Configuration}              from './Configuration';
@@ -36,7 +37,7 @@ const now = new Date();
 // We only want to support environments that will out-of-the-box accept the
 // characters we want to use. Others can enforce the style from the project
 // configuration.
-const supportsEmojis = [`iTerm.app`, `Apple_Terminal`].includes(process.env.TERM_PROGRAM!);
+const supportsEmojis = [`iTerm.app`, `Apple_Terminal`].includes(process.env.TERM_PROGRAM!) || !!process.env.WT_SESSION;
 
 const makeRecord = <T>(obj: {[key: string]: T}) => obj;
 const PROGRESS_STYLES = makeRecord({
@@ -47,7 +48,7 @@ const PROGRESS_STYLES = makeRecord({
   },
   simba: {
     date: [19, 7],
-    chars: [`🌟`, `✨`],
+    chars: [`🦁`, `🌴`],
     size: 40,
   },
   jack: {
@@ -75,9 +76,57 @@ const defaultStyle = (supportsEmojis && Object.keys(PROGRESS_STYLES).find(name =
   return true;
 })) || `default`;
 
+export function formatName(name: MessageName | null, {configuration, json}: {configuration: Configuration, json: boolean}) {
+  const num = name === null ? 0 : name;
+  const label = `YN${num.toString(10).padStart(4, `0`)}`;
+
+  if (!json && name === null) {
+    return configuration.format(label, `grey`);
+  } else {
+    return label;
+  }
+}
+
+export function formatNameWithHyperlink(name: MessageName | null, {configuration, json}: {configuration: Configuration, json: boolean}) {
+  const code = formatName(name, {configuration, json});
+
+  // Only print hyperlinks if allowed per configuration
+  if (!configuration.get(`enableHyperlinks`))
+    return code;
+
+  // Don't print hyperlinks for the generic messages
+  if (name === null || name === MessageName.UNNAMED)
+    return code;
+
+  const desc = MessageName[name];
+  const href = `https://yarnpkg.com/advanced/error-codes#${code}---${desc}`.toLowerCase();
+
+  // We use BELL as ST because it seems that iTerm doesn't properly support
+  // the \x1b\\ sequence described in the reference document
+  // https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda#the-escape-sequence
+
+  return `\u001b]8;;${href}\u0007${code}\u001b]8;;\u0007`;
+}
+
 export class StreamReport extends Report {
   static async start(opts: StreamReportOptions, cb: (report: StreamReport) => Promise<void>) {
     const report = new this(opts);
+
+    const emitWarning = process.emitWarning;
+    process.emitWarning = (message, name) => {
+      if (typeof message !== `string`) {
+        const error = message;
+
+        message = error.message;
+        name = name ?? error.name;
+      }
+
+      const fullMessage = typeof name !== `undefined`
+        ? `${name}: ${message}`
+        : message;
+
+      report.reportWarning(MessageName.UNNAMED, fullMessage);
+    };
 
     try {
       await cb(report);
@@ -85,6 +134,7 @@ export class StreamReport extends Report {
       report.reportExceptionOnce(error);
     } finally {
       await report.finalize();
+      process.emitWarning = emitWarning;
     }
 
     return report;
@@ -247,19 +297,21 @@ export class StreamReport extends Report {
     if (!this.includeInfos)
       return;
 
+    const message = `${this.configuration.format(`➤`, `blueBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`;
+
     if (!this.json) {
       if (this.forgettableNames.has(name)) {
-        this.forgettableLines.push(text);
+        this.forgettableLines.push(message);
         if (this.forgettableLines.length > this.forgettableBufferSize) {
           while (this.forgettableLines.length > this.forgettableBufferSize)
             this.forgettableLines.shift();
 
-          this.writeLines(name, this.forgettableLines);
+          this.writeLines(this.forgettableLines, {truncate: true});
         } else {
-          this.writeLine(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
+          this.writeLine(message, {truncate: true});
         }
       } else {
-        this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
+        this.writeLineWithForgettableReset(message);
       }
     } else {
       this.reportJson({type: `info`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
@@ -283,7 +335,7 @@ export class StreamReport extends Report {
     this.errorCount += 1;
 
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
+      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`, {truncate: false});
     } else {
       this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -361,22 +413,22 @@ export class StreamReport extends Report {
     }
   }
 
-  private writeLine(str: string) {
+  private writeLine(str: string, {truncate}: {truncate?: boolean} = {}) {
     this.clearProgress({clear: true});
-    this.stdout.write(`${str}\n`);
+    this.stdout.write(`${this.truncate(str, {truncate})}\n`);
     this.writeProgress();
   }
 
-  private writeLineWithForgettableReset(str: string) {
+  private writeLineWithForgettableReset(str: string, {truncate}: {truncate?: boolean} = {}) {
     this.forgettableLines = [];
-    this.writeLine(str);
+    this.writeLine(str, {truncate});
   }
 
-  private writeLines(name: MessageName | null, lines: Array<string>) {
+  private writeLines(lines: Array<string>, {truncate}: {truncate?: boolean} = {}) {
     this.clearProgress({delta: lines.length});
 
     for (const line of lines)
-      this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(name)}: ${this.formatIndent()}${line}\n`);
+      this.stdout.write(`${this.truncate(line, {truncate})}\n`);
 
     this.writeProgress();
   }
@@ -484,32 +536,33 @@ export class StreamReport extends Report {
       : `${Math.round(timing / 600) / 100}m`;
   }
 
-  private formatName(name: MessageName | null) {
-    const num = name === null ? 0 : name;
-    const label = `YN${num.toString(10).padStart(4, `0`)}`;
+  private truncate(str: string, {truncate}: {truncate?: boolean} = {}) {
+    if (!this.configuration.get(`enableProgressBars`))
+      truncate = false;
 
-    if (!this.json && name === null) {
-      return this.configuration.format(label, `grey`);
-    } else {
-      return label;
-    }
+    if (typeof truncate === `undefined`)
+      truncate = this.configuration.get(`preferTruncatedLines`);
+
+    // The -1 is to account for terminals that would wrap after
+    // the last column rather before the first overwrite
+    if (truncate)
+      str = sliceAnsi(str, 0, process.stdout.columns - 1);
+
+    return str;
+  }
+
+  private formatName(name: MessageName | null) {
+    return formatName(name, {
+      configuration: this.configuration,
+      json: this.json,
+    });
   }
 
   private formatNameWithHyperlink(name: MessageName | null) {
-    const code = this.formatName(name);
-
-    // Only print hyperlinks if allowed per configuration
-    if (!this.configuration.get(`enableHyperlinks`))
-      return code;
-
-    // Don't print hyperlinks for the generic messages
-    if (name === null || name === MessageName.UNNAMED)
-      return code;
-
-    const desc = MessageName[name];
-    const href = `https://yarnpkg.com/advanced/error-codes#${code}---${desc}`.toLowerCase();
-
-    return `\u001b]8;;${href}\u001b\\${code}\u001b]8;;\u001b\\`;
+    return formatNameWithHyperlink(name, {
+      configuration: this.configuration,
+      json: this.json,
+    });
   }
 
   private formatIndent() {

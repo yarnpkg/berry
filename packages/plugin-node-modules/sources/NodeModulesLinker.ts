@@ -1,14 +1,14 @@
-import {BuildDirective, MessageName, Project, FetchResult}        from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, LinkType}        from '@yarnpkg/core';
-import {Locator, Package, BuildType, FinalizeInstallStatus}       from '@yarnpkg/core';
 import {structUtils, Report, Manifest, miscUtils, DependencyMeta} from '@yarnpkg/core';
-import {VirtualFS, ZipOpenFS, xfs, FakeFS}                        from '@yarnpkg/fslib';
+import {Locator, Package, BuildType, FinalizeInstallStatus}       from '@yarnpkg/core';
+import {Linker, LinkOptions, MinimalLinkOptions, LinkType}        from '@yarnpkg/core';
+import {BuildDirective, MessageName, Project, FetchResult}        from '@yarnpkg/core';
 import {PortablePath, npath, ppath, toFilename, Filename}         from '@yarnpkg/fslib';
+import {VirtualFS, ZipOpenFS, xfs, FakeFS}                        from '@yarnpkg/fslib';
 import {getLibzipPromise}                                         from '@yarnpkg/libzip';
 import {parseSyml}                                                from '@yarnpkg/parsers';
 import {AbstractPnpInstaller}                                     from '@yarnpkg/plugin-pnp';
-import {NodeModulesLocatorMap, buildLocatorMap}                   from '@yarnpkg/pnpify';
 import {buildNodeModulesTree}                                     from '@yarnpkg/pnpify';
+import {NodeModulesLocatorMap, buildLocatorMap}                   from '@yarnpkg/pnpify';
 import {PnpSettings, makeRuntimeApi}                              from '@yarnpkg/pnp';
 import cmdShim                                                    from '@zkochan/cmd-shim';
 import {UsageError}                                               from 'clipanion';
@@ -186,7 +186,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
         buildScripts.push([BuildType.SCRIPT, scriptName]);
 
     // Detect cases where a package has a binding.gyp but no install script
-    const bindingFilePath = ppath.resolve(packageLocation, toFilename(`binding.gyp`));
+    const bindingFilePath = ppath.resolve(packageLocation, `binding.gyp` as Filename);
     if (!scripts.has(`install`) && xfs.existsSync(bindingFilePath))
       buildScripts.push([BuildType.SHELLCODE, `node-gyp rebuild`]);
 
@@ -395,7 +395,10 @@ const parseLocation = (location: PortablePath, {skipPrefix}: {skipPrefix: Portab
   if (projectRelativePath === null)
     throw new Error(`Assertion failed: Cannot process a path that isn't part of the requested prefix (${location} isn't within ${skipPrefix})`);
 
-  const allSegments = projectRelativePath.split(ppath.sep);
+  const allSegments = projectRelativePath
+    .split(ppath.sep)
+    // Ignore empty segments (after trailing slashes)
+    .filter(segment => segment !== ``);
   const nmIndex = allSegments.indexOf(NODE_MODULES);
 
   // Project path, up until the first node_modules segment
@@ -454,11 +457,25 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
   return locationTree;
 };
 
-const symlinkPromise = async (srcDir: PortablePath, dstDir: PortablePath) =>
-  xfs.symlinkPromise(process.platform !== `win32` ? ppath.relative(ppath.dirname(dstDir), srcDir) : srcDir, dstDir, process.platform === `win32` ? `junction` : undefined);
+const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath) => {
+  let stats;
+
+  try {
+    if (process.platform === `win32`) {
+      stats = xfs.lstatSync(srcPath);
+    }
+  } catch (e) {
+  }
+
+  if (process.platform == `win32` && (!stats || stats.isDirectory())) {
+    xfs.symlinkPromise(srcPath, dstPath, `junction`);
+  } else {
+    xfs.symlinkPromise(ppath.relative(ppath.dirname(dstPath), srcPath), dstPath);
+  }
+};
 
 const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, innerLoop}: {baseFs: FakeFS<PortablePath>, innerLoop?: boolean}) => {
-  await xfs.mkdirpPromise(dstDir);
+  await xfs.mkdirPromise(dstDir, {recursive: true});
   const entries = await baseFs.readdirPromise(srcDir, {withFileTypes: true});
 
   const copy = async (dstPath: PortablePath, srcPath: PortablePath, srcType: fs.Dirent) => {
@@ -472,7 +489,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
       }
     } else if (srcType.isSymbolicLink()) {
       const target = await baseFs.readlinkPromise(srcPath);
-      await symlinkPromise(ppath.resolve(srcPath, target), dstPath);
+      await symlinkPromise(ppath.resolve(ppath.dirname(dstPath), target), dstPath);
     } else {
       throw new Error(`Unsupported file type (file: ${srcPath}, mode: 0o${await xfs.statSync(srcPath).mode.toString(8).padStart(6, `0`)})`);
     }
@@ -618,7 +635,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     const promise: Promise<any> = (async () => {
       try {
         if (linkType === LinkType.SOFT) {
-          await xfs.mkdirpPromise(ppath.dirname(dstDir));
+          await xfs.mkdirPromise(ppath.dirname(dstDir), {recursive: true});
           await symlinkPromise(ppath.resolve(srcDir), dstDir);
         } else {
           await copyPromise(dstDir, srcDir, {baseFs});
@@ -641,7 +658,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       const cloneDir = async (srcDir: PortablePath, dstDir: PortablePath, options?: { innerLoop?: boolean }) => {
         try {
           if (!options || !options.innerLoop)
-            await xfs.mkdirpPromise(dstDir);
+            await xfs.mkdirPromise(dstDir, {recursive: true});
 
           const entries = await xfs.readdirPromise(srcDir, {withFileTypes: true});
           for (const entry of entries) {
@@ -653,7 +670,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
             if (entry.isDirectory()) {
               if (entry.name !== NODE_MODULES || (options && options.innerLoop)) {
-                await xfs.mkdirpPromise(dst);
+                await xfs.mkdirPromise(dst, {recursive: true});
                 await cloneDir(src, dst, {innerLoop: true});
               }
             } else {
@@ -839,7 +856,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
     await Promise.all(addQueue);
 
-    await xfs.mkdirpPromise(rootNmDirPath);
+    await xfs.mkdirPromise(rootNmDirPath, {recursive: true});
 
     const binSymlinks = await createBinSymlinkMap(installState, locationTree, project.cwd, {loadManifest});
     await persistBinSymlinks(prevBinSymlinks, binSymlinks);
@@ -862,7 +879,7 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
   for (const [location, symlinks] of binSymlinks) {
     const binDir = ppath.join(location, NODE_MODULES, DOT_BIN);
     const prevSymlinks = previousBinSymlinks.get(location) || new Map();
-    await xfs.mkdirpPromise(binDir);
+    await xfs.mkdirPromise(binDir, {recursive: true});
     for (const name of prevSymlinks.keys()) {
       if (!symlinks.has(name)) {
         // Remove outdated symlinks

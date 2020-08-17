@@ -7,8 +7,8 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
     new VirtualFS({
       baseFs: new ZipOpenFS({
         libzip: getLibzipSync(),
-        maxOpenFiles: 80,
         useCache: true,
+        maxOpenFiles: 80,
       }),
     })
   );
@@ -64,8 +64,8 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
     throw new Error(`Not supported`);
   }
 
-  delete(uri: vscode.Uri): void {
-    throw new Error(`Not supported`);
+  delete(uri: vscode.Uri, options: {recursive: boolean}): void {
+    this.fs.removeSync(uri.fsPath, options);
   }
 
   createDirectory(uri: vscode.Uri): void {

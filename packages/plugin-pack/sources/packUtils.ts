@@ -1,5 +1,5 @@
 import {MessageName, ReportError, Report, Workspace, scriptUtils} from '@yarnpkg/core';
-import {FakeFS, JailFS, xfs, PortablePath, ppath, toFilename}     from '@yarnpkg/fslib';
+import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename}       from '@yarnpkg/fslib';
 import {Hooks as StageHooks}                                      from '@yarnpkg/plugin-stage';
 import mm                                                         from 'micromatch';
 import {PassThrough}                                              from 'stream';
@@ -86,15 +86,27 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
   if (typeof files === `undefined`)
     files = await genPackList(workspace);
 
+  const executableFiles = new Set<PortablePath>();
+  for (const value of workspace.manifest.publishConfig?.executableFiles ?? new Set())
+    executableFiles.add(ppath.normalize(value));
+  for (const value of workspace.manifest.bin.values())
+    executableFiles.add(ppath.normalize(value));
+
   const pack = tar.pack();
 
   process.nextTick(async () => {
-    for (const file of files!) {
+    for (const fileRequest of files!) {
+      const file = ppath.normalize(fileRequest);
+
       const source = ppath.resolve(workspace.cwd, file);
       const dest = ppath.join(`package` as PortablePath, file);
 
       const stat = await xfs.lstatPromise(source);
       const opts = {name: dest, mtime: new Date(315532800)};
+
+      const mode = executableFiles.has(file)
+        ? 0o755
+        : 0o644;
 
       let resolveFn: Function;
       let rejectFn: Function;
@@ -121,9 +133,9 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
         else
           content = await xfs.readFilePromise(source);
 
-        pack.entry({...opts, type: `file`}, content, cb);
+        pack.entry({...opts, mode, type: `file`}, content, cb);
       } else if (stat.isSymbolicLink()) {
-        pack.entry({...opts, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
+        pack.entry({...opts, mode, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
       }
 
       await awaitTarget;
@@ -205,15 +217,19 @@ export async function genPackList(workspace: Workspace) {
     reject: [],
   };
 
-  if (workspace.manifest.publishConfig && workspace.manifest.publishConfig.main)
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.publishConfig.main));
-  else if (workspace.manifest.main)
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.main));
+  const main = workspace.manifest.publishConfig?.main ?? workspace.manifest.main;
+  const module = workspace.manifest.publishConfig?.module ?? workspace.manifest.module;
+  const browser = workspace.manifest.publishConfig?.browser ?? workspace.manifest.browser;
+  const bins = workspace.manifest.publishConfig?.bin ?? workspace.manifest.bin;
 
-  if (workspace.manifest.publishConfig && workspace.manifest.publishConfig.module)
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.publishConfig.module));
-  else if (workspace.manifest.module)
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.module));
+  if (main != null)
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, main));
+  if (module != null)
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, module));
+  if (browser != null)
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, browser));
+  for (const path of bins.values())
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, path));
 
   const hasExplicitFileList = workspace.manifest.files !== null;
   if (hasExplicitFileList) {
@@ -258,9 +274,9 @@ async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, 
       }
 
       const localIgnoreList = hasNpmIgnore
-        ? await loadIgnoreList(cwdFs, cwd, toFilename(`.npmignore`))
+        ? await loadIgnoreList(cwdFs, cwd, `.npmignore` as Filename)
         : hasGitIgnore
-          ? await loadIgnoreList(cwdFs, cwd, toFilename(`.gitignore`))
+          ? await loadIgnoreList(cwdFs, cwd, `.gitignore` as Filename)
           : null;
 
       let nextIgnoreLists = localIgnoreList !== null

@@ -163,6 +163,7 @@ export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = fal
         location = firstGuess - offset;
         modifications = evaluateHunk(hunk, fileLines, location);
         if (modifications !== null) {
+          offset = -offset;
           break;
         }
       }

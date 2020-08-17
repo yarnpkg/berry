@@ -121,7 +121,7 @@ Note that the `pnpapi` builtin is *contextual*: while two packages from the same
 export const VERSIONS: {std: number, [key: string]: number};
 ```
 
-The `VERSIONS` object contains a set of numbers that detail which version of the API is currently exposed. The only version that is guaranteed to be there is `std`, which will refer to the version of this document. Other keys are meant to be used to describe extensions provided by third-party implementors.
+The `VERSIONS` object contains a set of numbers that detail which version of the API is currently exposed. The only version that is guaranteed to be there is `std`, which will refer to the version of this document. Other keys are meant to be used to describe extensions provided by third-party implementors. Versions will only be bumped when the signatures of the public API change.
 
 **Note:** The current version is 3. We bump it responsibly and strive to make each version backward-compatible with the previous ones, but as you can probably guess some features are only available with the latest versions.
 

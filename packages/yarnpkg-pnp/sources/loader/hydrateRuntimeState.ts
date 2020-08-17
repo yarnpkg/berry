@@ -8,6 +8,7 @@ export type HydrateRuntimeStateOptions = {
 
 export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRuntimeStateOptions): RuntimeState {
   const portablePath = npath.toPortablePath(basePath);
+  const absolutePortablePath = ppath.resolve(portablePath);
 
   const ignorePattern = data.ignorePatternData !== null
     ? new RegExp(data.ignorePatternData)
@@ -16,7 +17,10 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
   const packageRegistry = new Map(data.packageRegistryData.map(([packageName, packageStoreData]) => {
     return [packageName, new Map(packageStoreData.map(([packageReference, packageInformationData]) => {
       return [packageReference, {
-        packageLocation: ppath.resolve(portablePath, packageInformationData.packageLocation),
+        // We use ppath.join instead of ppath.resolve because:
+        // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
+        // 2) ppath.join preserves trailing slashes
+        packageLocation: ppath.join(absolutePortablePath, packageInformationData.packageLocation),
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,

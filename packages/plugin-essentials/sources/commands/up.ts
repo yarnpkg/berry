@@ -3,7 +3,7 @@ import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResol
 import {Project, StreamReport, Workspace}                                                  from '@yarnpkg/core';
 import {structUtils}                                                                       from '@yarnpkg/core';
 import {Command, Usage, UsageError}                                                        from 'clipanion';
-import inquirer                                                                            from 'inquirer';
+import {prompt}                                                                            from 'enquirer';
 import micromatch                                                                          from 'micromatch';
 
 import * as suggestUtils                                                                   from '../suggestUtils';
@@ -15,7 +15,7 @@ export default class UpCommand extends BaseCommand {
   patterns: Array<string> = [];
 
   @Command.Boolean(`-i,--interactive`)
-  interactive: boolean = false;
+  interactive: boolean | null = null;
 
   @Command.Boolean(`-v,--verbose`)
   verbose: boolean = false;
@@ -72,15 +72,11 @@ export default class UpCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    // @ts-ignore
-    const prompt = inquirer.createPromptModule({
-      input: this.context.stdin as NodeJS.ReadStream,
-      output: this.context.stdout as NodeJS.WriteStream,
-    });
+    const interactive = this.interactive ?? configuration.get<boolean>(`preferInteractive`);
 
     const modifier = suggestUtils.getModifier(this, project);
 
-    const strategies = this.interactive ? [
+    const strategies = interactive ? [
       suggestUtils.Strategy.KEEP,
       suggestUtils.Strategy.REUSE,
       suggestUtils.Strategy.PROJECT,
@@ -162,7 +158,7 @@ export default class UpCommand extends BaseCommand {
           } else {
             report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range`);
           }
-        } else if (nonNullSuggestions.length > 1 && !this.interactive) {
+        } else if (nonNullSuggestions.length > 1 && !interactive) {
           report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} has multiple possible upgrade strategies; use -i to disambiguate manually`);
         }
       }
@@ -195,17 +191,25 @@ export default class UpCommand extends BaseCommand {
       } else {
         askedQuestions = true;
         ({answer: selected} = await prompt({
-          type: `list`,
+          type: `select`,
           name: `answer`,
           message: `Which range to you want to use in ${structUtils.prettyWorkspace(configuration, workspace)} ❯ ${target}?`,
-          choices: suggestions.map(({descriptor, reason}) => descriptor ? {
-            name: reason,
-            value: descriptor as Descriptor,
-            short: structUtils.prettyDescriptor(project.configuration, descriptor),
+          choices: suggestions.map(({descriptor, name, reason}) => descriptor ? {
+            name,
+            hint: reason,
+            descriptor,
           } : {
-            name: reason,
-            disabled: (): boolean => true,
+            name,
+            hint: reason,
+            disabled: true,
           }),
+          onCancel: () => process.exit(130),
+          result(name: string) {
+            // @ts-expect-error: The enquirer types don't include find
+            return this.find(name, `descriptor`);
+          },
+          stdin: this.context.stdin as NodeJS.ReadStream,
+          stdout: this.context.stdout as NodeJS.WriteStream,
         }));
       }
 

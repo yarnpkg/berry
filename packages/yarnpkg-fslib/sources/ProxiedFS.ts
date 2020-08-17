@@ -128,6 +128,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.chmodSync(this.mapToBase(p), mask);
   }
 
+  chownPromise(p: P, uid: number, gid: number) {
+    return this.baseFs.chownPromise(this.mapToBase(p), uid, gid);
+  }
+
+  chownSync(p: P, uid: number, gid: number) {
+    return this.baseFs.chownSync(this.mapToBase(p), uid, gid);
+  }
+
   renamePromise(oldP: P, newP: P) {
     return this.baseFs.renamePromise(this.mapToBase(oldP), this.mapToBase(newP));
   }
@@ -192,6 +200,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.rmdirSync(this.mapToBase(p));
   }
 
+  linkPromise(existingP: P, newP: P) {
+    return this.baseFs.linkPromise(this.mapToBase(existingP), this.mapToBase(newP));
+  }
+
+  linkSync(existingP: P, newP: P) {
+    return this.baseFs.linkSync(this.mapToBase(existingP), this.mapToBase(newP));
+  }
+
   symlinkPromise(target: P, p: P, type?: SymlinkType) {
     return this.baseFs.symlinkPromise(this.mapToBase(target), this.mapToBase(p), type);
   }
@@ -244,6 +260,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
 
   readlinkSync(p: P) {
     return this.mapFromBase(this.baseFs.readlinkSync(this.mapToBase(p)));
+  }
+
+  async truncatePromise(p: P, len?: number) {
+    return this.baseFs.truncatePromise(this.mapToBase(p), len);
+  }
+
+  truncateSync(p: P, len?: number) {
+    return this.baseFs.truncateSync(this.mapToBase(p), len);
   }
 
   watch(p: P, cb?: WatchCallback): Watcher;

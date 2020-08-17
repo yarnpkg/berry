@@ -7,6 +7,7 @@ import {Command, Usage}                                                    from 
 import filesize                                                            from 'filesize';
 import fs                                                                  from 'fs';
 import path                                                                from 'path';
+import semver                                                              from 'semver';
 import TerserPlugin                                                        from 'terser-webpack-plugin';
 import {promisify}                                                         from 'util';
 import webpack                                                             from 'webpack';
@@ -16,14 +17,14 @@ import {makeConfig, WebpackPlugin}                                         from 
 
 const execFile = promisify(cp.execFile);
 
-const pkgJsonVersion = (basedir: string) => {
+const pkgJsonVersion = (basedir: string): string => {
   return require(`${basedir}/package.json`).version;
 };
 
 const suggestHash = async (basedir: string) => {
   try {
     const unique = await execFile(`git`, [`show`, `-s`, `--pretty=format:%ad.%t`, `--date=short`], {cwd: basedir});
-    return `.git.${unique.stdout.trim().replace(/-/g, ``)}`;
+    return `git.${unique.stdout.trim().replace(/-/g, ``)}`;
   } catch {
     return null;
   }
@@ -83,7 +84,9 @@ export default class BuildBundleCommand extends Command {
       : null;
 
     if (hash !== null)
-      version = version.replace(/-(.*)?$/, `-$1${hash}`);
+      version = semver.prerelease(version) !== null
+        ? `${version}.${hash}`
+        : `${version}-${hash}`;
 
     let buildErrors: string | null = null;
 
@@ -147,6 +150,15 @@ export default class BuildBundleCommand extends Command {
           },
 
           plugins: [
+            // esprima is only needed for parsing !!js/function, which isn't part of the FAILSAFE_SCHEMA.
+            // Unfortunately, js-yaml declares it as a hard dependency and requires the entire module,
+            // which causes webpack to add 0.13 MB of unused code to the bundle.
+            // Fortunately, js-yaml wraps the require call inside a try / catch block, so we can just ignore it.
+            // Reference: https://github.com/nodeca/js-yaml/blob/34e5072f43fd36b08aaaad433da73c10d47c41e5/lib/js-yaml/type/js/function.js#L15
+            new webpack.IgnorePlugin({
+              resourceRegExp: /^esprima$/,
+              contextRegExp: /js-yaml/,
+            }),
             new webpack.BannerPlugin({
               entryOnly: true,
               banner: `#!/usr/bin/env node\n/* eslint-disable */`,

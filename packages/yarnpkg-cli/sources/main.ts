@@ -1,10 +1,12 @@
-import {Configuration, CommandContext, PluginConfiguration} from '@yarnpkg/core';
-import {PortablePath, npath, xfs}                           from '@yarnpkg/fslib';
-import {execFileSync}                                       from 'child_process';
-import {Cli}                                                from 'clipanion';
-import {realpathSync}                                       from 'fs';
+import {Configuration, CommandContext, PluginConfiguration, TelemetryManager, semverUtils} from '@yarnpkg/core';
+import {PortablePath, npath, xfs}                                                          from '@yarnpkg/fslib';
+import {execFileSync}                                                                      from 'child_process';
+import {Cli, UsageError}                                                                   from 'clipanion';
 
-import {WelcomeCommand}                                     from './tools/WelcomeCommand';
+import {realpathSync}                                                                      from 'fs';
+
+import {pluginCommands}                                                                    from './pluginCommands';
+import {WelcomeCommand}                                                                    from './tools/WelcomeCommand';
 
 function runBinary(path: PortablePath) {
   const physicalPath = npath.fromPortablePath(path);
@@ -54,6 +56,16 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
   }
 
   async function exec(cli: Cli<CommandContext>): Promise<void> {
+    // Non-exhaustive known requirements:
+    // - 10.16+ for Brotli support on `plugin-compat`
+    // - 10.17+ to silence `got` warning on `dns.promises`
+
+    const version = process.versions.node;
+    const range = `>=10.17`;
+
+    if (!semverUtils.satisfiesWithPrereleases(version, range) && process.env.YARN_IGNORE_NODE !== `1`)
+      throw new UsageError(`This tool requires a Node version compatible with ${range} (got ${version}). Upgrade Node, or set \`YARN_IGNORE_NODE=1\` in your environment.`);
+
     // Since we only care about a few very specific settings (yarn-path and ignore-path) we tolerate extra configuration key.
     // If we didn't, we wouldn't even be able to run `yarn config` (which is recommended in the invalid config error message)
     const configuration = await Configuration.find(npath.toPortablePath(process.cwd()), pluginConfiguration, {
@@ -80,11 +92,24 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       if (ignorePath)
         delete process.env.YARN_IGNORE_PATH;
 
-      for (const plugin of configuration.plugins.values())
-        for (const command of plugin.commands || [])
+      const isTelemetryEnabled = configuration.get<boolean>(`enableTelemetry`);
+      if (isTelemetryEnabled)
+        Configuration.telemetry = new TelemetryManager(configuration, `puba9cdc10ec5790a2cf4969dd413a47270`);
+
+      Configuration.telemetry?.reportVersion(binaryVersion);
+
+      for (const [name, plugin] of configuration.plugins.entries()) {
+        if (pluginCommands.has(name.match(/^@yarnpkg\/plugin-(.*)$/)?.[1] ?? ``))
+          Configuration.telemetry?.reportPluginName(name);
+
+        for (const command of plugin.commands || []) {
           cli.register(command);
+        }
+      }
 
       const command = cli.process(process.argv.slice(2));
+      if (!command.help)
+        Configuration.telemetry?.reportCommandName(command.path.join(` `));
 
       // @ts-ignore: The cwd is a global option defined by BaseCommand
       const cwd: string | undefined = command.cwd;
@@ -100,7 +125,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
         }
       }
 
-      cli.runExit(command, {
+      await cli.runExit(command, {
         cwd: npath.toPortablePath(process.cwd()),
         plugins: pluginConfiguration,
         quiet: false,
@@ -111,8 +136,10 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
     }
   }
 
-  return run().catch(error => {
-    process.stdout.write(error.stack || error.message);
-    process.exitCode = 1;
-  });
+  return run()
+    .catch(error => {
+      process.stdout.write(error.stack || error.message);
+      process.exitCode = 1;
+    })
+    .finally(() => xfs.rmtempPromise());
 }

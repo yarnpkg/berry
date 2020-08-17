@@ -527,6 +527,37 @@ describe(`Shell`, () => {
         await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
       });
     });
+
+    it(`should support the RANDOM variable`, async () => {
+      async function getNumbers(result: Promise<{ exitCode: number; stdout: string; stderr: string; }>): Promise<Array<number>> {
+        const {exitCode, stdout, stderr} = await result;
+
+        if (exitCode !== 0)
+          throw new Error(stderr);
+
+        return stdout.trim().split(/\s*\/\s*/g).map(number => Number(number));
+      }
+
+      function validateRandomNumber(number: number) {
+        expect(number).toBeGreaterThanOrEqual(0);
+        expect(number).toBeLessThan(32768);
+      }
+
+      let numbers = await getNumbers(bufferResult(`echo $RANDOM`));
+      expect(numbers.length).toBe(1);
+      numbers.forEach(validateRandomNumber);
+
+      numbers = await getNumbers(bufferResult(`echo $RANDOM / $RANDOM / $RANDOM`));
+      expect(numbers.length).toBe(3);
+      numbers.forEach(validateRandomNumber);
+      // There's no guarantee for this, they're random numbers after all, but the chance of this
+      // occurring is 1 in 2 ** 30 or roughly 1 in 1 billion.
+      expect(numbers[0] === numbers[1] && numbers[1] === numbers[2]).toBe(false);
+
+      numbers = await getNumbers(bufferResult(`RANDOM=foo ; echo $RANDOM`));
+      expect(numbers.length).toBe(1);
+      numbers.forEach(validateRandomNumber);
+    });
   });
 
   describe(`Glob support`, () => {
@@ -931,6 +962,141 @@ describe(`Shell`, () => {
             stdout: `foox1.txt fooxb1.txt fooy1.txt fooya1.txt\n`,
           });
         });
+      });
+    });
+  });
+
+  describe(`Calculations`, () => {
+    it(`should support integers`, async () => {
+      await expect(bufferResult(
+        `echo $(( 1 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `1\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( 134 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `134\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( 5693 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `5693\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( 5.93 ))`,
+      )).rejects.toThrowError(/Invalid number: "5\.93", only integers are allowed/);
+    });
+
+    it(`should support operations`, async () => {
+      await expect(bufferResult(
+        `echo $(( 1 + 2 -4 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `-1\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( 134 / 3 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `44\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( -134 / 3 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `-44\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( 4 * (2 + 3) * 5 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `100\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( 4 * 2 + 3 * 5 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `23\n`,
+      });
+    });
+
+    it(`should support arguments`, async () => {
+      await expect(bufferResult(
+        `echo $(( $0 + 2 ))`,
+        [`3`],
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `5\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( $0 / $1 ))`,
+        [`9`, `3`],
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `3\n`,
+      });
+    });
+
+    it(`should support variables and env`, async () => {
+      const opts = {
+        variables: {
+          three: `3`,
+          four: `4`,
+          notDeepEnough: `four`,
+          isThisDeepEnough: `notDeepEnough`,
+        },
+        env: {
+          one: `1`,
+          two: `2`,
+        },
+      };
+
+      await expect(bufferResult(
+        `echo $(( $three + 2 ))`,
+        [],
+        opts,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `5\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( $four * $two ))`,
+        [],
+        opts,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `8\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( three + one ))`,
+        [],
+        opts,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `4\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $((isThisDeepEnough+ one))`,
+        [],
+        opts,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `5\n`,
       });
     });
   });

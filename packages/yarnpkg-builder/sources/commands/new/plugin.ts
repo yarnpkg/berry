@@ -29,8 +29,8 @@ export default class NewPluginCommand extends Command {
       }
     }
 
-    await xfs.mkdirpPromise(target);
-    await xfs.mkdirpPromise(ppath.join(target, `sources` as Filename));
+    await xfs.mkdirPromise(target, {recursive: true});
+    await xfs.mkdirPromise(ppath.join(target, `sources` as Filename), {recursive: true});
 
     await xfs.writeFilePromise(ppath.join(target, `sources/index.ts` as Filename), [
       `import {CommandContext, Plugin} from '@yarnpkg/core';\n`,

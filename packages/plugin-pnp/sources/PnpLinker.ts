@@ -1,12 +1,13 @@
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta} from '@yarnpkg/core';
 import {FetchResult, Ident, Locator, Package, BuildDirective, BuildType}                from '@yarnpkg/core';
 import {miscUtils, structUtils}                                                         from '@yarnpkg/core';
-import {CwdFS, FakeFS, PortablePath, npath, ppath, toFilename, xfs}                     from '@yarnpkg/fslib';
+import {CwdFS, FakeFS, PortablePath, npath, ppath, xfs, Filename}                       from '@yarnpkg/fslib';
 import {generateInlinedScript, generateSplitScript, PnpSettings}                        from '@yarnpkg/pnp';
 import {UsageError}                                                                     from 'clipanion';
 
 import {AbstractPnpInstaller}                                                           from './AbstractPnpInstaller';
 import {getPnpPath}                                                                     from './index';
+import * as pnpUtils                                                                    from './pnpUtils';
 
 const FORCED_UNPLUG_PACKAGES = new Set([
   // Some packages do weird stuff and MUST be unplugged. I don't like them.
@@ -95,7 +96,7 @@ export class PnpInstaller extends AbstractPnpInstaller {
         buildScripts.push([BuildType.SCRIPT, scriptName]);
 
     // Detect cases where a package has a binding.gyp but no install script
-    const bindingFilePath = ppath.join(fetchResult.prefixPath, toFilename(`binding.gyp`));
+    const bindingFilePath = ppath.join(fetchResult.prefixPath, `binding.gyp` as Filename);
     if (!manifest.scripts.has(`install`) && fetchResult.packageFs.existsSync(bindingFilePath))
       buildScripts.push([BuildType.SHELLCODE, `node-gyp rebuild`]);
 
@@ -169,7 +170,7 @@ export class PnpInstaller extends AbstractPnpInstaller {
     const nodeModules: Array<PortablePath> = [];
 
     for (const workspace of this.opts.project.workspaces) {
-      const nodeModulesPath = ppath.join(workspace.cwd, toFilename(`node_modules`));
+      const nodeModulesPath = ppath.join(workspace.cwd, `node_modules` as Filename);
       if (!xfs.existsSync(nodeModulesPath))
         continue;
 
@@ -193,15 +194,11 @@ export class PnpInstaller extends AbstractPnpInstaller {
     return nodeModules;
   }
 
-  private getUnpluggedPath(locator: Locator) {
-    return ppath.resolve(this.opts.project.configuration.get(`pnpUnpluggedFolder`), structUtils.slugifyLocator(locator));
-  }
-
   private async unplugPackage(locator: Locator, packageFs: FakeFS<PortablePath>) {
-    const unplugPath = this.getUnpluggedPath(locator);
+    const unplugPath = pnpUtils.getUnpluggedPath(locator, {configuration: this.opts.project.configuration});
     this.unpluggedPaths.add(unplugPath);
 
-    await xfs.mkdirpPromise(unplugPath);
+    await xfs.mkdirPromise(unplugPath, {recursive: true});
     await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: packageFs, overwrite: false});
 
     return new CwdFS(unplugPath);

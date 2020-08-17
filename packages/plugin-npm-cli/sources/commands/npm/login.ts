@@ -1,10 +1,10 @@
-import {BaseCommand, openWorkspace}         from '@yarnpkg/cli';
-import {Configuration, MessageName, Report} from '@yarnpkg/core';
-import {StreamReport}                       from '@yarnpkg/core';
-import {PortablePath}                       from '@yarnpkg/fslib';
-import {npmConfigUtils, npmHttpUtils}       from '@yarnpkg/plugin-npm';
-import {Command, Usage}                     from 'clipanion';
-import inquirer                             from 'inquirer';
+import {BaseCommand, openWorkspace}                    from '@yarnpkg/cli';
+import {Configuration, MessageName, Report, miscUtils} from '@yarnpkg/core';
+import {StreamReport}                                  from '@yarnpkg/core';
+import {PortablePath}                                  from '@yarnpkg/fslib';
+import {npmConfigUtils, npmHttpUtils}                  from '@yarnpkg/plugin-npm';
+import {Command, Usage}                                from 'clipanion';
+import {prompt}                                        from 'enquirer';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmLoginCommand extends BaseCommand {
@@ -40,12 +40,6 @@ export default class NpmLoginCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
-    // @ts-ignore
-    const prompt = inquirer.createPromptModule({
-      input: this.context.stdin as NodeJS.ReadStream,
-      output: this.context.stdout as NodeJS.WriteStream,
-    });
-
     const registry: string = await getRegistry({
       configuration,
       cwd: this.context.cwd,
@@ -57,9 +51,14 @@ export default class NpmLoginCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async report => {
-      const credentials = await getCredentials(prompt, {registry, report});
-      const url = `/-/user/org.couchdb.user:${encodeURIComponent(credentials.name)}`;
+      const credentials = await getCredentials({
+        registry,
+        report,
+        stdin: this.context.stdin as NodeJS.ReadStream,
+        stdout: this.context.stdout as NodeJS.WriteStream,
+      });
 
+      const url = `/-/user/org.couchdb.user:${encodeURIComponent(credentials.name)}`;
       const response = await npmHttpUtils.put(url, credentials, {
         attemptedAs: credentials.name,
         configuration,
@@ -68,7 +67,7 @@ export default class NpmLoginCommand extends BaseCommand {
         authType: npmHttpUtils.AuthType.NO_AUTH,
       }) as any;
 
-      await setAuthToken(registry, response.token, {configuration});
+      await setAuthToken(registry, response.token, {configuration, scope: this.scope});
       return report.reportInfo(MessageName.UNNAMED, `Successfully logged in`);
     });
 
@@ -89,19 +88,34 @@ export async function getRegistry({scope, publish, configuration, cwd}: {scope?:
   return npmConfigUtils.getDefaultRegistry({configuration});
 }
 
-async function setAuthToken(registry: string, npmAuthToken: string, {configuration}: {configuration: Configuration}) {
-  return await Configuration.updateHomeConfiguration({
-    npmRegistries: (registries: {[key: string]: any} = {}) => ({
-      ...registries,
-      [registry]: {
-        ...registries[registry],
+async function setAuthToken(registry: string, npmAuthToken: string, {configuration, scope}: {configuration: Configuration, scope?: string}) {
+  const makeUpdater = (entryName: string) => (unknownStore: unknown) => {
+    const store = miscUtils.isIndexableObject(unknownStore)
+      ? unknownStore
+      : {};
+
+    const entryUnknown = store[entryName];
+    const entry = miscUtils.isIndexableObject(entryUnknown)
+      ? entryUnknown
+      : {};
+
+    return {
+      ...store,
+      [entryName]: {
+        ...entry,
         npmAuthToken,
       },
-    }),
-  });
+    };
+  };
+
+  const update = scope
+    ? {npmScopes: makeUpdater(scope)}
+    : {npmRegistries: makeUpdater(registry)};
+
+  return await Configuration.updateHomeConfiguration(update);
 }
 
-async function getCredentials(prompt: any, {registry, report}: {registry: string, report: Report}) {
+async function getCredentials({registry, report, stdin, stdout}: {registry: string, report: Report, stdin: NodeJS.ReadStream, stdout: NodeJS.WriteStream}) {
   if (process.env.TEST_ENV) {
     return {
       name: process.env.TEST_NPM_USER || ``,
@@ -124,12 +138,18 @@ async function getCredentials(prompt: any, {registry, report}: {registry: string
     type: `input`,
     name: `username`,
     message: `Username:`,
-    validate: (input: string) => validateRequiredInput(input, `Username`),
+    required: true,
+    onCancel: () => process.exit(130),
+    stdin,
+    stdout,
   }, {
     type: `password`,
     name: `password`,
     message: isToken ? `Token:` : `Password:`,
-    validate: (input: string) => validateRequiredInput(input, `Password`),
+    required: true,
+    onCancel: () => process.exit(130),
+    stdin,
+    stdout,
   }]);
 
   report.reportSeparator();
@@ -138,10 +158,4 @@ async function getCredentials(prompt: any, {registry, report}: {registry: string
     name: username,
     password,
   };
-}
-
-function validateRequiredInput(input: string, message: string) {
-  return input.length > 0
-    ? true
-    : `${message} is required`;
 }

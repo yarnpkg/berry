@@ -49,24 +49,17 @@ export class PatchFetcher implements Fetcher {
 
     const libzip = await getLibzipPromise();
 
-    const copiedPackage = new ZipFS(tmpFile, {
+    const patchedPackage = new ZipFS(tmpFile, {
       libzip,
       create: true,
       level: opts.project.configuration.get(`compressionLevel`),
     });
 
-    await copiedPackage.mkdirpPromise(prefixPath);
+    await patchedPackage.mkdirpPromise(prefixPath);
 
     await miscUtils.releaseAfterUseAsync(async () => {
-      await copiedPackage.copyPromise(prefixPath, sourceFetch.prefixPath, {baseFs: sourceFetch.packageFs, stableSort: true});
+      await patchedPackage.copyPromise(prefixPath, sourceFetch.prefixPath, {baseFs: sourceFetch.packageFs, stableSort: true});
     }, sourceFetch.releaseFs);
-
-    copiedPackage.saveAndClose();
-
-    const patchedPackage = new ZipFS(tmpFile, {
-      libzip,
-      level: opts.project.configuration.get(`compressionLevel`),
-    });
 
     const patchFs = new CwdFS(ppath.resolve(PortablePath.root, prefixPath), {baseFs: patchedPackage});
 

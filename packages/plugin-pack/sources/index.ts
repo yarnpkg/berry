@@ -27,6 +27,9 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
     if (rawManifest.publishConfig.module)
       rawManifest.module = rawManifest.publishConfig.module;
 
+    if (rawManifest.publishConfig.browser)
+      rawManifest.browser = rawManifest.publishConfig.browser;
+
     if (rawManifest.publishConfig.bin) {
       rawManifest.bin = rawManifest.publishConfig.bin;
     }
