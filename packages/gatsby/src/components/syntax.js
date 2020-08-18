@@ -13,7 +13,7 @@ const getColorForScalar = (theme, scalar) => {
   return null;
 };
 
-export const Container = styled.div`
+export const Container = styled.article`
   padding: 1.5em;
 
   font-family: "PT Mono", monospace;
