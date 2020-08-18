@@ -75,7 +75,7 @@ make-build-for() {
 
     for n in {5..1}; do
       yarn gulp local LKG
-
+      
       if [[ $(stat -c%s lib/typescript.js) -gt 100000 ]]; then
         break
       else
@@ -83,6 +83,9 @@ make-build-for() {
         if [[ $n -eq 1 ]]; then
           exit 1
         fi
+
+        rm -rf lib
+        git reset --hard lib
       fi
     done
 
