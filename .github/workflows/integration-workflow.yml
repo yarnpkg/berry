@@ -44,22 +44,13 @@ jobs:
           for generator in packages/plugin-compat/extra/*/gen-*-patch.sh; do
             bash $generator;
           done
-          [[ $(git diff --name-only packages/plugin-compat/sources/patches | tee /dev/stderr | wc -l) -eq 0 ]] && echo ok || echo ko
+          [[ $(git diff --name-only packages/plugin-compat/sources/patches | tee /dev/stderr | wc -l) -eq 0 ]]
         fi
       shell: bash
       if: |
         github.event.pull_request != ''
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
-
-    - uses: actions/upload-artifact@v2
-      with:
-        name: patches
-        path: packages/plugin-compat/sources/patches
-
-    - name: debug
-      run: |
-        [[ $(git diff --name-only packages/plugin-compat/sources/patches | tee /dev/stderr | wc -l) -eq 0 ]]
 
     - name: 'Check that the PnP hook is consistent with a fresh build (fix w/ "git merge master && yarn build:pnp:hook")'
       run: |
