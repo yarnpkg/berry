@@ -39659,9 +39659,10 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
 
     for (const [path, {
       zipFs,
-      expiresAt
+      expiresAt,
+      refCount
     }] of this.zipInstances.entries()) {
-      if (zipFs.hasOpenFileHandles()) {
+      if (refCount !== 0 || zipFs.hasOpenFileHandles()) {
         continue;
       } else if (now >= expiresAt) {
         zipFs.saveAndClose();
@@ -39706,7 +39707,8 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
         if (!cachedZipFs) {
           cachedZipFs = {
             zipFs: new ZipFS(p, zipOptions),
-            expiresAt: 0
+            expiresAt: 0,
+            refCount: 0
           };
         }
       } // Removing then re-adding the field allows us to easily implement
@@ -39717,7 +39719,13 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
       this.limitOpenFiles(this.maxOpenFiles - 1);
       this.zipInstances.set(p, cachedZipFs);
       cachedZipFs.expiresAt = Date.now() + this.maxAge;
-      return await accept(cachedZipFs.zipFs);
+      cachedZipFs.refCount += 1;
+
+      try {
+        return await accept(cachedZipFs.zipFs);
+      } finally {
+        cachedZipFs.refCount -= 1;
+      }
     } else {
       const zipFs = new ZipFS(p, await getZipOptions());
 
@@ -39743,7 +39751,8 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
       if (!cachedZipFs) {
         cachedZipFs = {
           zipFs: new ZipFS(p, getZipOptions()),
-          expiresAt: 0
+          expiresAt: 0,
+          refCount: 0
         };
       } // Removing then re-adding the field allows us to easily implement
       // a basic LRU garbage collection strategy
