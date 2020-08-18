@@ -12,9 +12,42 @@ Yarn v2 is a very different software from the v1. While one of our aim is to mak
 # This code block gets replaced with the Table of Contents
 ```
 
-## General Advice
+## Step by step
 
-### Upgrade to Node 10 or 12
+In general, an upgrade can take from five minutes to a couple of hours, depending on the complexity of the project.
+
+1. Run `npm install -g yarn` to update the global yarn version to latest v1
+2. Go to project directory and perform the below steps
+3. Run `yarn set version berry` to enable v2 (cf [Install](/getting-started/install) for more details)
+4. Decide whether you want [Zero-Installs](/features/zero-installs) or not, and [configure the gitignore](/advanced/qa#which-files-should-be-gitignored) accordingly
+5. If you relied on any settings from `.npmrc` or `.yarnrc`, you'll need to replicate those into the [new format](/configuration/yarnrc)
+6. Commit the changes so far (`berry.js`, `.yarnrc.yml`, ...)
+7. Run `yarn install` to migrate the lockfile
+8. Commit the new changes (including the cache if you chose to use Zero-Installs)
+
+If you're using VSCode (or some other IDE with Intellisense-like feature):
+
+8. Run `yarn dlx @yarnpkg/pnpify --sdk vscode` to add TypeScript support (cf [Editor SDKs](/advanced/editor-sdks) for more details)
+9. Commit the changes if you want to avoid asking your contributors to run this step, or gitignore them otherwise
+10. Don't forget to switch the TypeScript version to "workspace" in VSCode
+
+Bonus ring:
+
+11. Run `yarn plugin import interactive-tools` if you want the [`upgrade-interactive`](/cli/upgrade-interactive) command
+12. Run `yarn plugin list` to see what other official plugins exist and might be useful
+13. Commit the yarn plugins
+
+Now you have a working yarn v2 setup, but your repository might still need some extra care. Some things you'll need to change:
+
+- There is no `node_modules` folder and no `.bin` folder. If you relied on these, [call `yarn run` instead](##call-binaries-using-yarn-run-rather-than-node_modulesbin).
+- Replace any calls to `node` that are not inside a Yarn script with `yarn node`
+- Custom pre-hooks (e.g. prestart) need to be called manually now
+
+All of this and more is documented in the following sections. In general, we advise you at this point to try to run your application and see what breaks, then check here to find out tips on how to correct your install.
+
+## General Advices
+
+### Upgrade to Node 10+
 
 Yarn doesn't support Node 8 anymore, as it's reached its end of life in December and won't receive any further update.
 
@@ -37,13 +70,51 @@ Run `npx @yarnpkg/doctor .` (or `yarn dlx @yarnpkg/doctor .`) in your project to
 
 Note that the doctor is intended to report any potential issue - it's then up to you to decide whether they are a false positive or not (for example it won't traverse Git repositories). For this reason we don't recommend using it as a CI tool.
 
+### Fix dependencies with `packageExtensions`
+
+Packages sometimes forget to list their dependencies. In the past it used to cause many subtle issues, so Yarn now defaults to prevent such unsound accesses. Still, we don't want it to prevent you from doing your work as long as you can do it in a safe and predictable way, so we came up with the [`packageExtensions`](/configuration/yarnrc#packageExtensions) setting.
+
+For example, if `react` was to forget to list a dependency on `prop-types`, you'd fix it like this:
+
+```yaml
+packageExtensions:
+  "react@*":
+    dependencies:
+      prop-types: "*"
+```
+
+And if a Babel plugin was missing its peer dependency on `@babel/core`, you'd fix it with:
+
+```yaml
+packageExtensions:
+  "@babel/plugin-something@*":
+    peerDependencies:
+      "@babel/core": "*"
+```
+
 ### Use `yarn dlx` instead of `yarn global`
 
 `yarn dlx` is designed to execute one off scripts that may have been installed as global packages with `yarn 1.x`. Managing system-wide packages is outside of the scope of `yarn`. To reflect this, `yarn global` has been removed. [Read more on GitHub](https://github.com/yarnpkg/berry/issues/821).
 
 ### Enable the PnP plugin when using Webpack 4
 
-Webpack 5 will support PnP natively, but if you use Webpack 4 you'll need to add the [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) plugin yourself.
+Webpack 5 supports PnP natively, but if you use Webpack 4 you'll need to add the [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) plugin yourself.
+
+### Upgrade `resolve` to 1.9+
+
+The `resolve` package is used by many tools in order to retrieve the dependencies for any given folder on the filesystem. It's compatible with Plug'n'Play, but only starting from 1.9+, so make sure you don't have an older release in your dependency tree (especially as transitive dependency).
+
+**Fix:** Open your lockfile, look for all the `resolve` entries that could match 1.9+ (for example `^1.0.0`), and remove them. Then run `yarn install` again. If you run `yarn why resolve`, you'll also get a good idea of which package is depending on outdated version of `resolve` - maybe you can upgrade them too?
+
+### Call binaries using `yarn run` rather than `node_modules/.bin`
+
+The `node_modules/.bin` folder is an implementation detail, and the PnP installs don't generate it at all. Rather than relying on its existence, just use the `yarn run` command which can start both scripts and binaries:
+
+```bash
+yarn run jest
+# or, using the shortcut:
+yarn jest
+```
 
 ### Call your scripts through `yarn node` rather than `node`
 
@@ -193,12 +264,6 @@ Those features simply haven't been implemented yet. Help welcome!
 Interestingly, this error often **doesn't** come from Yarn. In fact, seeing this message should be extremely rare when working with Yarn 2 projects and typically highlights that something is wrong in your setup.
 
 This error appears when Node is executed without the proper environment variables. In such a case, the underlying application won't be able to access the dependencies and Node will throw this message. To fix that, make sure that the script is called through `yarn node [...]` (instead of `node [...]`) if you run it from the command line.
-
-#### Make sure you use `resolve@1.9+`
-
-The `resolve` package is used by many tools in order to retrieve the dependencies for any given folder on the filesystem. It's compatible with Plug'n'Play, but only starting from 1.9+, so make sure you don't have an older release in your dependency tree (especially as transitive dependency).
-
-**Fix:** Open your lockfile, look for all the `resolve` entries that could match 1.9+ (for example `^1.0.0`), and remove them. Then run `yarn install` again. If you run `yarn why resolve`, you'll also get a good idea of which package is depending on outdated version of `resolve` - maybe you can upgrade them too?
 
 ### `A package is trying to access another package [...]`
 
