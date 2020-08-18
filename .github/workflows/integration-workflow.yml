@@ -44,6 +44,7 @@ jobs:
           for generator in packages/plugin-compat/extra/*/gen-*-patch.sh; do
             bash $generator;
           done
+          [[ $(git diff --name-only packages/plugin-compat/sources/patches | tee /dev/stderr | wc -l) -eq 0 ]] && echo ok || echo ko
         fi
       shell: bash
       if: |
