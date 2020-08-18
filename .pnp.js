@@ -8842,7 +8842,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["gatsby-plugin-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.6.11"],
             ["gatsby-remark-autolink-headers", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.5"],
             ["gatsby-remark-prismjs", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.5.4"],
-            ["gatsby-remark-table-of-contents", "npm:0.0.9"],
+            ["gatsby-remark-table-of-contents", "https://github.com/arcanis/gatsby-remark-table-of-contents.git#commit=d2c703bb06801ae992513f14599cde84d03a4aac"],
             ["gatsby-source-filesystem", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.0.23"],
             ["gatsby-transformer-remark", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.2"],
             ["gatsby-transformer-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.2.13"],
@@ -18850,10 +18850,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["gatsby-remark-table-of-contents", [
-        ["npm:0.0.9", {
-          "packageLocation": "./.yarn/cache/gatsby-remark-table-of-contents-npm-0.0.9-4458729b53-2dfd7edcf7.zip/node_modules/gatsby-remark-table-of-contents/",
+        ["https://github.com/arcanis/gatsby-remark-table-of-contents.git#commit=d2c703bb06801ae992513f14599cde84d03a4aac", {
+          "packageLocation": "./.yarn/cache/gatsby-remark-table-of-contents-https-6425034f06-59729bf6c1.zip/node_modules/gatsby-remark-table-of-contents/",
           "packageDependencies": [
-            ["gatsby-remark-table-of-contents", "npm:0.0.9"],
+            ["gatsby-remark-table-of-contents", "https://github.com/arcanis/gatsby-remark-table-of-contents.git#commit=d2c703bb06801ae992513f14599cde84d03a4aac"],
             ["js-yaml", "npm:3.13.1"],
             ["mdast-util-toc", "npm:4.2.0"]
           ],

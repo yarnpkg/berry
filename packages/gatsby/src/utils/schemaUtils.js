@@ -51,7 +51,7 @@ export const defaultCommentConfiguration = {
  * @param {string} [markdown]
  * @returns {JSX.Element | undefined}
  */
-export const renderHtmlFromMarkdown = (markdown) => (
+export const renderHtmlFromMarkdown = markdown => (
   markdown
     ? <div dangerouslySetInnerHTML={{__html: marked(markdown)}} />
     : undefined
@@ -61,7 +61,7 @@ export const renderHtmlFromMarkdown = (markdown) => (
  * @param {string} comment
  * @returns {typeof defaultCommentConfiguration | {}}
  */
-export const parseCommentAsJson = (comment) => {
+export const parseCommentAsJson = comment => {
   try {
     return JSON.parse(comment);
   } catch {
@@ -158,7 +158,7 @@ export const renderObjectProperty = (entry, mode) => {
   /** @type {JSX.Element[]} */
   const objectProperties = [];
   if (typeof entry[1].default === `object`) {
-    Object.keys(entry[1].default).map((propertyKey) => {
+    Object.keys(entry[1].default).map(propertyKey => {
       if (entry[1].properties && Object.prototype.hasOwnProperty.call(entry[1].properties, propertyKey)) {
         objectProperties.push(renderProperty([propertyKey, entry[1].properties[propertyKey]], mode, true));
       } else if (entry[1].patternProperties) {
@@ -213,7 +213,7 @@ export const renderArrayProperty = (entry, mode) => {
   /** @type {JSX.Element[]} */
   const arrayProperties = [];
   if (Array.isArray(entry[1].default)) {
-    entry[1].default.forEach((arrayProperty) => {
+    entry[1].default.forEach(arrayProperty => {
       arrayProperties.push(renderScalar(arrayProperty, mode));
     });
   }
@@ -283,7 +283,7 @@ export const convertSchemaToConfiguration = (schema, mode) => {
       <Main>
         {renderHtmlFromMarkdown(combinedSchema.description)}
       </Main>
-      {Object.entries(combinedSchema.properties).map((entry) => renderProperty(entry, mode, false))}
+      {Object.entries(combinedSchema.properties).map(entry => renderProperty(entry, mode, false))}
     </Container>
   );
 };

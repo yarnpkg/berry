@@ -122,7 +122,12 @@ module.exports = {
           {
             resolve: `gatsby-remark-table-of-contents`,
           },
-          `gatsby-remark-autolink-headers`,
+          {
+            resolve: `gatsby-remark-autolink-headers`,
+            options: {
+              offsetY: `100`,
+            },
+          },
           `gatsby-remark-prismjs`,
         ],
       },

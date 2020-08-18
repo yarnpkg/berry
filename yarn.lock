@@ -5500,7 +5500,7 @@ __metadata:
     gatsby-plugin-sharp: ^2.6.11
     gatsby-remark-autolink-headers: ^2.3.5
     gatsby-remark-prismjs: ^3.5.4
-    gatsby-remark-table-of-contents: ^0.0.9
+    gatsby-remark-table-of-contents: "arcanis/gatsby-remark-table-of-contents#patch-1"
     gatsby-source-filesystem: ^2.0.23
     gatsby-transformer-remark: ^2.3.2
     gatsby-transformer-sharp: ^2.2.13
@@ -13151,13 +13151,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"gatsby-remark-table-of-contents@npm:^0.0.9":
+"gatsby-remark-table-of-contents@arcanis/gatsby-remark-table-of-contents#patch-1":
   version: 0.0.9
-  resolution: "gatsby-remark-table-of-contents@npm:0.0.9"
+  resolution: "gatsby-remark-table-of-contents@https://github.com/arcanis/gatsby-remark-table-of-contents.git#commit=d2c703bb06801ae992513f14599cde84d03a4aac"
   dependencies:
     js-yaml: ^3.13.1
     mdast-util-toc: ^4.2.0
-  checksum: 2dfd7edcf754e1cdaf253df6f46c4ff22e02553c2626ac0a7a62caf113d69ce3cc44b1b78853fbc5b2fe9ba4109e61d09fcc983320d03609de6f13db95b61a38
+  checksum: 59729bf6c13366678e928e3906840ff5ed3b54cba52115b6de9ac532ef171a08c0ce26ce2dd92aa55fe2d89f3a93118777925e8250cb46208bf3e8b607f481ac
   languageName: node
   linkType: hard
 

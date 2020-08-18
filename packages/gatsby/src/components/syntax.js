@@ -1,7 +1,7 @@
-import {css}    from '@emotion/core';
-import styled   from '@emotion/styled';
-import {FaLink} from 'react-icons/fa';
-import React    from 'react';
+import {css}               from '@emotion/core';
+import styled              from '@emotion/styled';
+import {FaLink}            from 'react-icons/fa';
+import React, {useContext} from 'react';
 
 const getColorForScalar = (theme, scalar) => {
   if (typeof scalar === `string`)
@@ -13,7 +13,7 @@ const getColorForScalar = (theme, scalar) => {
   return null;
 };
 
-export const Container = styled.div`
+export const Container = styled.article`
   padding: 1.5em;
 
   font-family: "PT Mono", monospace;
@@ -114,14 +114,29 @@ const Description = styled.div`
   white-space: normal;
 `;
 
-const Describe = ({theme, description, anchor, children}) => description ? <>
-  <DescriptionAnchor id={`${anchor}`} theme={theme}>
-    <DescriptionContainer theme={theme}>
-      {<Description theme={theme}>
-        {description}
-      </Description>}
+const NestedSectionHeaderContext = React.createContext(1);
+
+const NestedSectionHeader = ({name, children}) => {
+  const depth = useContext(NestedSectionHeaderContext);
+
+  return <>
+    {React.createElement(`h${depth}`, {style: {display: `none`}}, name)}
+    <NestedSectionHeaderContext.Provider value={depth + 1}>
       {children}
-    </DescriptionContainer>
+    </NestedSectionHeaderContext.Provider>
+  </>;
+};
+
+const Describe = ({theme, name, description, anchor, children}) => description ? <>
+  <DescriptionAnchor id={`${anchor}`} theme={theme}>
+    <NestedSectionHeader name={name}>
+      <DescriptionContainer theme={theme}>
+        {<Description theme={theme}>
+          {description}
+        </Description>}
+        {children}
+      </DescriptionContainer>
+    </NestedSectionHeader>
   </DescriptionAnchor>
 </> : children;
 
@@ -147,8 +162,8 @@ const Key = ({theme, name, anchorTarget}) => <>
 export const Array = ({theme, name, suffix, anchorTarget, children}) => <div>
   <div>{name && <><Key theme={theme} name={name} anchorTarget={anchorTarget} /></>}{theme.arrays.leading}</div>
   <div style={{paddingLeft: `2em`}}>
-    {React.Children.map(children, child =>
-      <div style={{display: `flex`}}>
+    {React.Children.map(children, (child, index) =>
+      <div key={index} style={{display: `flex`}}>
         <div>{theme.arrays.prefix}</div>
         <div>
           {React.cloneElement(child, {suffix: theme.arrays.suffix})}
@@ -162,9 +177,11 @@ export const Array = ({theme, name, suffix, anchorTarget, children}) => <div>
 export const Dictionary = ({theme, name, suffix, anchorTarget, children, margin}) => <div>
   <div>{name && <><Key theme={theme} name={name} anchorTarget={anchorTarget} /></>}{theme.dictionaries.leading}</div>
   <div style={{paddingLeft: `2em`}} css={margin ? marginContainer : null} data-dictionaries-suffix={theme.dictionaries.suffix}>
-    {React.Children.map(children, child => <>
-      {React.cloneElement(child, {suffix: theme.dictionaries.suffix})}
-    </>)}
+    {React.Children.map(children, (child, index) =>
+      <React.Fragment key={index}>
+        {React.cloneElement(child, {suffix: theme.dictionaries.suffix})}
+      </React.Fragment>
+    )}
   </div>
   <div>{theme.dictionaries.trailing}{suffix}</div>
 </div>;
@@ -174,7 +191,7 @@ export const Scalar = ({theme, suffix, placeholder}) => <div>
 </div>;
 
 export const DictionaryProperty = ({theme, name, anchor = name, margin, description, children}) => <>
-  <Describe theme={theme} description={description} anchor={description ? anchor : null}>
+  <Describe theme={theme} name={name} description={description} anchor={description ? anchor : null}>
     <Dictionary theme={theme} name={name} margin={margin} anchorTarget={description ? anchor : null}>
       {children}
     </Dictionary>
@@ -182,7 +199,7 @@ export const DictionaryProperty = ({theme, name, anchor = name, margin, descript
 </>;
 
 export const ArrayProperty = ({theme, name, anchor = name, description, children}) => <>
-  <Describe theme={theme} description={description} anchor={description ? anchor : null}>
+  <Describe theme={theme} name={name} description={description} anchor={description ? anchor : null}>
     <Array theme={theme} name={name} anchorTarget={description ? anchor : null}>
       {children}
     </Array>
@@ -190,7 +207,7 @@ export const ArrayProperty = ({theme, name, anchor = name, description, children
 </>;
 
 export const ScalarProperty = ({theme, name, anchor = name, placeholder, description}) => <>
-  <Describe theme={theme} description={description} anchor={description ? anchor : null}>
+  <Describe theme={theme} name={name} description={description} anchor={description ? anchor : null}>
     <div>
       <Key theme={theme} name={name} anchorTarget={description ? anchor : null} /><span style={{color: getColorForScalar(theme, placeholder)}}>{theme.formatValue(placeholder)}</span>{theme.dictionaries.suffix}
     </div>
