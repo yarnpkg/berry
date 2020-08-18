@@ -1,18 +1,21 @@
-import {Filename} from '@yarnpkg/fslib';
-import {fs, yarn} from 'pkg-tests-core';
-
-const {createTemporaryFolder} = fs;
-const {writeConfiguration, readConfiguration} = yarn;
+import {Filename, xfs} from '@yarnpkg/fslib';
+import {yarn}          from 'pkg-tests-core';
 
 const SPEC_RC_FILENAME = `.spec-yarnrc` as Filename;
+
+const FAKE_FIRST_SCOPE = `first`;
+const FAKE_SECOND_SCOPE = `second`;
+const FAKE_THIRD_SCOPE = `third`;
 
 const FAKE_REGISTRY_URL = `http://yarn.test.registry`;
 const FAKE_PUBLISH_REGISTRY_URL = `https://npm.pkg.github.com`;
 const FAKE_THIRD_REGISTRY_URL = `https://third.yarn.test.registry`;
-const FAKE_FOURTH_REGISTRY_URL = `https://fourth.yarn.test.registry`;
+
+const CLASSIC_SCOPE_SETTINGS = {
+  npmAlwaysAuth: `true`,
+};
 
 const FAKE_REGISTRY_CREDENTIALS = {
-  npmAlwaysAuth: `true`,
   npmAuthIdent: `username:password`,
   npmAuthToken: `ffffffff-ffff-ffff-ffff-ffffffffffff`,
 };
@@ -25,14 +28,20 @@ describe(`Commands`, () => {
         npmRegistryServer: FAKE_REGISTRY_URL,
         npmPublishRegistry: FAKE_PUBLISH_REGISTRY_URL,
       }, async ({path, run, source}) => {
-        const homePath = await createTemporaryFolder();
-        await writeConfiguration(homePath, {
+        const homePath = await xfs.mktempPromise();
+
+        await yarn.writeConfiguration(homePath, {
           npmRegistries: {
             [FAKE_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
             [FAKE_PUBLISH_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
             [FAKE_THIRD_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
           },
-        }, {filename: SPEC_RC_FILENAME});
+          npmScopes: {
+            [FAKE_FIRST_SCOPE]: FAKE_REGISTRY_CREDENTIALS,
+          },
+        }, {
+          filename: SPEC_RC_FILENAME,
+        });
 
         let code: number;
         let stdout: string;
@@ -51,30 +60,47 @@ describe(`Commands`, () => {
           ({code, stdout, stderr} = error);
         }
 
-        await expect(readConfiguration(homePath, {filename: SPEC_RC_FILENAME})).resolves.toStrictEqual({
+        await expect(yarn.readConfiguration(homePath, {
+          filename: SPEC_RC_FILENAME,
+        })).resolves.toStrictEqual({
           npmRegistries: {
             [FAKE_PUBLISH_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
             [FAKE_THIRD_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
           },
+          npmScopes: {
+            [FAKE_FIRST_SCOPE]: FAKE_REGISTRY_CREDENTIALS,
+          },
         });
+
         expect({code, stdout, stderr}).toMatchSnapshot();
       })
     );
 
     it(
-      `should logout a user from all registries when the -A,--all flag is used`,
+      `should logout a user from all registries and all scopes when the -A,--all flag is used`,
       makeTemporaryEnv({}, {
         npmRegistryServer: FAKE_REGISTRY_URL,
         npmPublishRegistry: FAKE_PUBLISH_REGISTRY_URL,
       }, async ({path, run, source}) => {
-        const homePath = await createTemporaryFolder();
-        await writeConfiguration(homePath, {
+        const homePath = await xfs.mktempPromise();
+
+        await yarn.writeConfiguration(homePath, {
           npmRegistries: {
             [FAKE_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
             [FAKE_PUBLISH_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
             [FAKE_THIRD_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
           },
-        }, {filename: SPEC_RC_FILENAME});
+          npmScopes: {
+            [FAKE_FIRST_SCOPE]: FAKE_REGISTRY_CREDENTIALS,
+            [FAKE_SECOND_SCOPE]: CLASSIC_SCOPE_SETTINGS,
+            [FAKE_THIRD_SCOPE]: {
+              ...CLASSIC_SCOPE_SETTINGS,
+              ...FAKE_REGISTRY_CREDENTIALS,
+            },
+          },
+        }, {
+          filename: SPEC_RC_FILENAME,
+        });
 
         let code: number;
         let stdout: string;
@@ -93,7 +119,15 @@ describe(`Commands`, () => {
           ({code, stdout, stderr} = error);
         }
 
-        await expect(readConfiguration(homePath, {filename: SPEC_RC_FILENAME})).resolves.toStrictEqual({});
+        await expect(yarn.readConfiguration(homePath, {
+          filename: SPEC_RC_FILENAME,
+        })).resolves.toStrictEqual({
+          npmScopes: {
+            [FAKE_SECOND_SCOPE]: CLASSIC_SCOPE_SETTINGS,
+            [FAKE_THIRD_SCOPE]: CLASSIC_SCOPE_SETTINGS,
+          },
+        });
+
         expect({code, stdout, stderr}).toMatchSnapshot();
       })
     );
@@ -104,14 +138,17 @@ describe(`Commands`, () => {
         npmRegistryServer: FAKE_REGISTRY_URL,
         npmPublishRegistry: FAKE_PUBLISH_REGISTRY_URL,
       }, async ({path, run, source}) => {
-        const homePath = await createTemporaryFolder();
-        await writeConfiguration(homePath, {
+        const homePath = await xfs.mktempPromise();
+
+        await yarn.writeConfiguration(homePath, {
           npmRegistries: {
             [FAKE_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
             [FAKE_PUBLISH_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
             [FAKE_THIRD_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
           },
-        }, {filename: SPEC_RC_FILENAME});
+        }, {
+          filename: SPEC_RC_FILENAME,
+        });
 
         let code: number;
         let stdout: string;
@@ -130,12 +167,15 @@ describe(`Commands`, () => {
           ({code, stdout, stderr} = error);
         }
 
-        await expect(readConfiguration(homePath, {filename: SPEC_RC_FILENAME})).resolves.toStrictEqual({
+        await expect(yarn.readConfiguration(homePath, {
+          filename: SPEC_RC_FILENAME,
+        })).resolves.toStrictEqual({
           npmRegistries: {
             [FAKE_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
             [FAKE_THIRD_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
           },
         });
+
         expect({code, stdout, stderr}).toMatchSnapshot();
       })
     );
@@ -146,25 +186,16 @@ describe(`Commands`, () => {
         npmRegistryServer: FAKE_REGISTRY_URL,
         npmPublishRegistry: FAKE_PUBLISH_REGISTRY_URL,
       }, async ({path, run, source}) => {
-        // This can't be set in the subdefinition :(
-        await writeConfiguration(path, {
-          npmScopes: {
-            yarnpkg: {
-              npmRegistryServer: FAKE_THIRD_REGISTRY_URL,
-              npmPublishRegistry: FAKE_FOURTH_REGISTRY_URL,
-            },
-          },
-        }, {filename: SPEC_RC_FILENAME});
+        const homePath = await xfs.mktempPromise();
 
-        const homePath = await createTemporaryFolder();
-        await writeConfiguration(homePath, {
-          npmRegistries: {
-            [FAKE_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
-            [FAKE_PUBLISH_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
-            [FAKE_THIRD_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
-            [FAKE_FOURTH_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
+        await yarn.writeConfiguration(homePath, {
+          npmScopes: {
+            [FAKE_FIRST_SCOPE]: FAKE_REGISTRY_CREDENTIALS,
+            [FAKE_SECOND_SCOPE]: FAKE_REGISTRY_CREDENTIALS,
           },
-        }, {filename: SPEC_RC_FILENAME});
+        }, {
+          filename: SPEC_RC_FILENAME,
+        });
 
         let code: number;
         let stdout: string;
@@ -172,7 +203,7 @@ describe(`Commands`, () => {
 
         try {
           // @ts-ignore
-          ({code, stdout, stderr} = await run(`npm`, `logout`, `--scope`, `yarnpkg`, {
+          ({code, stdout, stderr} = await run(`npm`, `logout`, `--scope`, FAKE_FIRST_SCOPE, {
             env: {
               HOME: homePath,
               USERPROFILE: homePath,
@@ -183,67 +214,14 @@ describe(`Commands`, () => {
           ({code, stdout, stderr} = error);
         }
 
-        await expect(readConfiguration(homePath, {filename: SPEC_RC_FILENAME})).resolves.toStrictEqual({
-          npmRegistries: {
-            [FAKE_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
-            [FAKE_PUBLISH_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
-            [FAKE_FOURTH_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
-          },
-        });
-        expect({code, stdout, stderr}).toMatchSnapshot();
-      })
-    );
-
-    it(
-      `should logout a user from the scope publish registry when the -s,--scope and --publish flags are used`,
-      makeTemporaryEnv({}, {
-        npmRegistryServer: FAKE_REGISTRY_URL,
-        npmPublishRegistry: FAKE_PUBLISH_REGISTRY_URL,
-      }, async ({path, run, source}) => {
-        // This can't be set in the subdefinition :(
-        await writeConfiguration(path, {
+        await expect(yarn.readConfiguration(homePath, {
+          filename: SPEC_RC_FILENAME,
+        })).resolves.toStrictEqual({
           npmScopes: {
-            yarnpkg: {
-              npmRegistryServer: FAKE_THIRD_REGISTRY_URL,
-              npmPublishRegistry: FAKE_FOURTH_REGISTRY_URL,
-            },
-          },
-        }, {filename: SPEC_RC_FILENAME});
-
-        const homePath = await createTemporaryFolder();
-        await writeConfiguration(homePath, {
-          npmRegistries: {
-            [FAKE_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
-            [FAKE_PUBLISH_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
-            [FAKE_THIRD_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
-            [FAKE_FOURTH_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
-          },
-        }, {filename: SPEC_RC_FILENAME});
-
-        let code: number;
-        let stdout: string;
-        let stderr: string;
-
-        try {
-          // @ts-ignore
-          ({code, stdout, stderr} = await run(`npm`, `logout`, `--publish`, `--scope`, `yarnpkg`, {
-            env: {
-              HOME: homePath,
-              USERPROFILE: homePath,
-              YARN_RC_FILENAME: SPEC_RC_FILENAME,
-            },
-          }));
-        } catch (error) {
-          ({code, stdout, stderr} = error);
-        }
-
-        await expect(readConfiguration(homePath, {filename: SPEC_RC_FILENAME})).resolves.toStrictEqual({
-          npmRegistries: {
-            [FAKE_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
-            [FAKE_PUBLISH_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
-            [FAKE_THIRD_REGISTRY_URL]: FAKE_REGISTRY_CREDENTIALS,
+            [FAKE_SECOND_SCOPE]: FAKE_REGISTRY_CREDENTIALS,
           },
         });
+
         expect({code, stdout, stderr}).toMatchSnapshot();
       })
     );

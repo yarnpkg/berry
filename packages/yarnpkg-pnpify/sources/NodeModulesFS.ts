@@ -1,15 +1,15 @@
-import {Dirent, Filename, MkdirOptions,ExtractHintOptions} from '@yarnpkg/fslib';
-import {FSPath, NativePath, PortablePath, npath, ppath}    from '@yarnpkg/fslib';
-import {WatchOptions, WatchCallback, Watcher}              from '@yarnpkg/fslib';
-import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}       from '@yarnpkg/fslib';
-import {CreateReadStreamOptions, CreateWriteStreamOptions} from '@yarnpkg/fslib';
-import {PnpApi}                                            from '@yarnpkg/pnp';
-import fs                                                  from 'fs';
+import {Dirent, Filename, MkdirOptions,ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from '@yarnpkg/fslib';
+import {FSPath, NativePath, PortablePath, npath, ppath}                                                      from '@yarnpkg/fslib';
+import {WatchOptions, WatchCallback, Watcher}                                                                from '@yarnpkg/fslib';
+import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                                                         from '@yarnpkg/fslib';
+import {CreateReadStreamOptions, CreateWriteStreamOptions}                                                   from '@yarnpkg/fslib';
+import {PnpApi}                                                                                              from '@yarnpkg/pnp';
+import fs                                                                                                    from 'fs';
 
-import {WatchManager}                                      from './WatchManager';
-import {NodeModulesTreeOptions, NodeModulesTree}           from './buildNodeModulesTree';
-import {buildNodeModulesTree}                              from './buildNodeModulesTree';
-import {resolveNodeModulesPath, ResolvedPath}              from './resolveNodeModulesPath';
+import {WatchManager}                                                                                        from './WatchManager';
+import {NodeModulesTreeOptions, NodeModulesTree}                                                             from './buildNodeModulesTree';
+import {buildNodeModulesTree}                                                                                from './buildNodeModulesTree';
+import {resolveNodeModulesPath, ResolvedPath}                                                                from './resolveNodeModulesPath';
 
 export type NodeModulesFSOptions = {
   realFs?: typeof fs,
@@ -289,6 +289,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return this.baseFs.chmodSync(this.resolveDirOrFilePath(p), mask);
   }
 
+  async chownPromise(p: PortablePath, uid: number, gid: number) {
+    return await this.baseFs.chownPromise(this.resolveDirOrFilePath(p), uid, gid);
+  }
+
+  chownSync(p: PortablePath, uid: number, gid: number) {
+    return this.baseFs.chownSync(this.resolveDirOrFilePath(p), uid, gid);
+  }
+
   async renamePromise(oldP: PortablePath, newP: PortablePath) {
     return await this.baseFs.renamePromise(this.resolveDirOrFilePath(oldP), this.resolveDirOrFilePath(newP));
   }
@@ -355,6 +363,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
 
   rmdirSync(p: PortablePath) {
     return this.baseFs.rmdirSync(this.resolveDirOrFilePath(p));
+  }
+
+  async linkPromise(existingP: PortablePath, newP: PortablePath) {
+    return await this.baseFs.linkPromise(this.resolveDirOrFilePath(existingP), this.resolveDirOrFilePath(newP));
+  }
+
+  linkSync(existingP: PortablePath, newP: PortablePath) {
+    return this.baseFs.linkSync(this.resolveDirOrFilePath(existingP), this.resolveDirOrFilePath(newP));
   }
 
   async symlinkPromise(target: PortablePath, p: PortablePath) {
@@ -457,6 +473,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     );
   }
 
+  async truncatePromise(p: PortablePath, len?: number) {
+    return await this.baseFs.truncatePromise(this.resolveDirOrFilePath(p), len);
+  }
+
+  truncateSync(p: PortablePath, len?: number) {
+    return this.baseFs.truncateSync(this.resolveDirOrFilePath(p), len);
+  }
+
   watch(p: PortablePath, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback): Watcher {
@@ -467,11 +491,26 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
       return this.watchManager.registerWatcher(watchPath, pnpPath.dirList, callback);
     } else {
       return this.baseFs.watch(
-        p,
+        this.resolveDirOrFilePath(p),
         // @ts-ignore
         a,
         b,
       );
     }
+  }
+
+  watchFile(p: PortablePath, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, opts: WatchFileOptions, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback): StatWatcher {
+    return this.baseFs.watchFile(
+      this.resolveDirOrFilePath(p),
+      // @ts-ignore
+      a,
+      b,
+    );
+  }
+
+  unwatchFile(p: PortablePath, cb?: WatchFileCallback) {
+    return this.baseFs.unwatchFile(this.resolveDirOrFilePath(p), cb);
   }
 }

@@ -1,11 +1,11 @@
-import fs, {Stats}                                          from 'fs';
+import fs, {Stats}                                                                                           from 'fs';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions}  from './FakeFS';
-import {Dirent, SymlinkType}                                from './FakeFS';
-import {BasePortableFakeFS, WriteFileOptions}               from './FakeFS';
-import {MkdirOptions, WatchOptions, WatchCallback, Watcher} from './FakeFS';
-import {ENOSYS}                                             from './errors';
-import {FSPath, PortablePath, Filename, ppath, npath}       from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, StatWatcher, WatchFileCallback, WatchFileOptions} from './FakeFS';
+import {Dirent, SymlinkType}                                                                                 from './FakeFS';
+import {BasePortableFakeFS, WriteFileOptions}                                                                from './FakeFS';
+import {MkdirOptions, WatchOptions, WatchCallback, Watcher}                                                  from './FakeFS';
+import {ENOSYS}                                                                                              from './errors';
+import {FSPath, PortablePath, Filename, ppath, npath}                                                        from './path';
 
 export class NodeFS extends BasePortableFakeFS {
   private readonly realFs: typeof fs;
@@ -164,6 +164,16 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.chmodSync(npath.fromPortablePath(p), mask);
   }
 
+  async chownPromise(p: PortablePath, uid: number, gid: number) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.chown(npath.fromPortablePath(p), uid, gid, this.makeCallback(resolve, reject));
+    });
+  }
+
+  chownSync(p: PortablePath, uid: number, gid: number) {
+    return this.realFs.chownSync(npath.fromPortablePath(p), uid, gid);
+  }
+
   async renamePromise(oldP: PortablePath, newP: PortablePath) {
     return await new Promise<void>((resolve, reject) => {
       this.realFs.rename(npath.fromPortablePath(oldP), npath.fromPortablePath(newP), this.makeCallback(resolve, reject));
@@ -284,6 +294,16 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.rmdirSync(npath.fromPortablePath(p));
   }
 
+  async linkPromise(existingP: PortablePath, newP: PortablePath) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.link(npath.fromPortablePath(existingP), npath.fromPortablePath(newP), this.makeCallback(resolve, reject));
+    });
+  }
+
+  linkSync(existingP: PortablePath, newP: PortablePath) {
+    return this.realFs.linkSync(npath.fromPortablePath(existingP), npath.fromPortablePath(newP));
+  }
+
   async symlinkPromise(target: PortablePath, p: PortablePath, type?: SymlinkType) {
     const symlinkType: SymlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
 
@@ -352,6 +372,16 @@ export class NodeFS extends BasePortableFakeFS {
     return npath.toPortablePath(this.realFs.readlinkSync(npath.fromPortablePath(p)));
   }
 
+  async truncatePromise(p: PortablePath, len?: number) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.truncate(npath.fromPortablePath(p), len, this.makeCallback(resolve, reject));
+    });
+  }
+
+  truncateSync(p: PortablePath, len?: number) {
+    return this.realFs.truncateSync(npath.fromPortablePath(p), len);
+  }
+
   watch(p: PortablePath, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
@@ -361,6 +391,21 @@ export class NodeFS extends BasePortableFakeFS {
       a,
       b,
     );
+  }
+
+  watchFile(p: PortablePath, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, opts: WatchFileOptions, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback) {
+    return this.realFs.watchFile(
+      npath.fromPortablePath(p),
+      // @ts-ignore
+      a,
+      b,
+    ) as unknown as StatWatcher;
+  }
+
+  unwatchFile(p: PortablePath, cb?: WatchFileCallback) {
+    return this.realFs.unwatchFile(npath.fromPortablePath(p), cb);
   }
 
   private makeCallback<T>(resolve: (value?: T) => void, reject: (reject: NodeJS.ErrnoException) => void) {

@@ -191,7 +191,7 @@ export class Cache {
     };
 
     const loadPackageThroughMirror = async () => {
-      if (mirrorPath === null || !xfs.existsSync(mirrorPath)) {
+      if (mirrorPath === null || !(await xfs.existsPromise(mirrorPath))) {
         const zipFs = await loader!();
         const realPath = zipFs.getRealPath();
         zipFs.saveAndClose();
@@ -236,7 +236,38 @@ export class Cache {
     };
 
     const loadPackageThroughMutex = async () => {
-      const mutex = loadPackage();
+      const mutexedLoad = async () => {
+        // We don't yet know whether the cache path can be computed yet, since that
+        // depends on whether the cache is actually the mirror or not, and whether
+        // the checksum is known or not.
+        const tentativeCachePath = this.getLocatorPath(locator, expectedChecksum);
+
+        const cacheExists = tentativeCachePath !== null
+          ? await baseFs.existsPromise(tentativeCachePath)
+          : false;
+
+        const action = cacheExists
+          ? onHit
+          : onMiss;
+
+        if (action)
+          action();
+
+        if (!cacheExists) {
+          return loadPackage();
+        } else {
+          let checksum: string | null = null;
+          const cachePath = tentativeCachePath!;
+          if (this.check)
+            checksum = await validateFileAgainstRemote(cachePath);
+          else
+            checksum = await validateFile(cachePath);
+
+          return [cachePath, checksum] as const;
+        }
+      };
+
+      const mutex = mutexedLoad();
       this.mutexes.set(locator.locatorHash, mutex);
 
       try {
@@ -249,37 +280,7 @@ export class Cache {
     for (let mutex; (mutex = this.mutexes.get(locator.locatorHash));)
       await mutex;
 
-    // We don't yet know whether the cache path can be computed yet, since that
-    // depends on whether the cache is actually the mirror or not, and whether
-    // the checksum is known or not.
-    const tentativeCachePath = this.getLocatorPath(locator, expectedChecksum);
-
-    const cacheExists = tentativeCachePath !== null
-      ? baseFs.existsSync(tentativeCachePath)
-      : false;
-
-    const action = cacheExists
-      ? onHit
-      : onMiss;
-
-    // Note: must be synchronous, otherwise the mutex may break (a concurrent
-    // execution may start while we're running the action)
-    if (action)
-      action();
-
-    let cachePath: PortablePath;
-    let checksum: string;
-
-    if (!cacheExists) {
-      [cachePath, checksum] = await loadPackageThroughMutex();
-    } else {
-      cachePath = tentativeCachePath!;
-      if (this.check) {
-        checksum = await validateFileAgainstRemote(cachePath);
-      } else {
-        checksum = await validateFile(cachePath);
-      }
-    }
+    const [cachePath, checksum] = await loadPackageThroughMutex();
 
     this.markedFiles.add(cachePath);
 

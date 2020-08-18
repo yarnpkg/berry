@@ -120,7 +120,7 @@ export default class AddCommand extends BaseCommand {
 
     const allSuggestions = await Promise.all(this.packages.map(async pseudoDescriptor => {
       const request = pseudoDescriptor.match(/^\.{0,2}\//)
-        ? await suggestUtils.extractDescriptorFromPath(pseudoDescriptor as PortablePath, {cache, cwd: this.context.cwd, workspace})
+        ? await suggestUtils.extractDescriptorFromPath(pseudoDescriptor as PortablePath, {cwd: this.context.cwd, workspace})
         : structUtils.parseDescriptor(pseudoDescriptor);
 
       const target = suggestTarget(workspace, request, {

@@ -5,6 +5,9 @@ import {promisify}                                        from 'util';
 import {FakeFS}                                           from './FakeFS';
 import {NodeFS}                                           from './NodeFS';
 import {Filename, PortablePath, NativePath, npath, ppath} from './path';
+import * as statUtils                                     from './statUtils';
+
+export {statUtils};
 
 export {normalizeLineEndings}          from './FakeFS';
 export type {CreateReadStreamOptions}  from './FakeFS';
@@ -16,6 +19,9 @@ export type {WatchCallback}            from './FakeFS';
 export type {Watcher}                  from './FakeFS';
 export type {WriteFileOptions}         from './FakeFS';
 export type {ExtractHintOptions}       from './FakeFS';
+export type {WatchFileOptions}         from './FakeFS';
+export type {WatchFileCallback}        from './FakeFS';
+export type {StatWatcher}              from './FakeFS';
 
 export {DEFAULT_COMPRESSION_LEVEL}     from './ZipFS';
 export type {ZipCompression}           from './ZipFS';
@@ -51,8 +57,10 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `appendFileSync`,
     `createReadStream`,
     `chmodSync`,
+    `chownSync`,
     `closeSync`,
     `copyFileSync`,
+    `linkSync`,
     `lstatSync`,
     `lutimesSync`,
     `mkdirSync`,
@@ -67,9 +75,12 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `rmdirSync`,
     `statSync`,
     `symlinkSync`,
+    `truncateSync`,
     `unlinkSync`,
+    `unwatchFile`,
     `utimesSync`,
     `watch`,
+    `watchFile`,
     `writeFileSync`,
     `writeSync`,
   ]);
@@ -78,8 +89,10 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `accessPromise`,
     `appendFilePromise`,
     `chmodPromise`,
+    `chownPromise`,
     `closePromise`,
     `copyFilePromise`,
+    `linkPromise`,
     `lstatPromise`,
     `lutimesPromise`,
     `mkdirPromise`,
@@ -93,6 +106,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `rmdirPromise`,
     `statPromise`,
     `symlinkPromise`,
+    `truncatePromise`,
     `unlinkPromise`,
     `utimesPromise`,
     `writeFilePromise`,
@@ -107,6 +121,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `readPromise`,
     `readFilePromise`,
     `statPromise`,
+    `truncatePromise`,
     `utimesPromise`,
     `writePromise`,
     `writeFilePromise`,
@@ -281,6 +296,16 @@ export type XFS = NodeFS & {
 
   mktempPromise(): Promise<PortablePath>;
   mktempPromise<T>(cb: (p: PortablePath) => Promise<T>): Promise<T>;
+
+  /**
+   * Tries to remove all temp folders created by mktempSync and mktempPromise
+   */
+  rmtempPromise(): Promise<void>;
+
+  /**
+   * Tries to remove all temp folders created by mktempSync and mktempPromise
+   */
+  rmtempSync(): void;
 };
 
 const tmpdirs = new Set<PortablePath>();
@@ -288,25 +313,13 @@ const tmpdirs = new Set<PortablePath>();
 let cleanExitRegistered = false;
 
 function registerCleanExit() {
-  if (!cleanExitRegistered)
-    cleanExitRegistered = true;
-  else
+  if (cleanExitRegistered)
     return;
 
-  const cleanExit = () => {
-    process.off(`exit`, cleanExit);
-
-    for (const p of tmpdirs) {
-      tmpdirs.delete(p);
-      try {
-        xfs.removeSync(p);
-      } catch {
-        // Too bad if there's an error
-      }
-    }
-  };
-
-  process.on(`exit`, cleanExit);
+  cleanExitRegistered = true;
+  process.once(`exit`, () => {
+    xfs.rmtempSync();
+  });
 }
 
 export const xfs: XFS = Object.assign(new NodeFS(), {
@@ -386,6 +399,28 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
         }
       } else {
         return realP;
+      }
+    }
+  },
+
+  async rmtempPromise() {
+    await Promise.all(Array.from(tmpdirs.values()).map(async p => {
+      try {
+        await xfs.removePromise(p, {maxRetries: 0});
+        tmpdirs.delete(p);
+      } catch {
+        // Too bad if there's an error
+      }
+    }));
+  },
+
+  rmtempSync() {
+    for (const p of tmpdirs) {
+      try {
+        xfs.removeSync(p);
+        tmpdirs.delete(p);
+      } catch {
+        // Too bad if there's an error
       }
     }
   },

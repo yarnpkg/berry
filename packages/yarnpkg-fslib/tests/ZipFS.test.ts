@@ -1,8 +1,9 @@
 import {getLibzipSync}                 from '@yarnpkg/libzip';
 import {Stats}                         from 'fs';
 
+import {ZipFS}                         from '../sources/ZipFS';
 import {PortablePath, ppath, Filename} from '../sources/path';
-import {xfs, ZipFS}                    from '../sources';
+import {xfs, statUtils}                from '../sources';
 
 describe(`ZipFS`, () => {
   it(`should handle symlink correctly`, () => {
@@ -247,6 +248,170 @@ describe(`ZipFS`, () => {
     expect(zipFs.existsSync(dir)).toBeTruthy();
     expect(zipFs.existsSync(subdir)).toBeFalsy();
     expect(zipFs.existsSync(file)).toBeFalsy();
+  });
+
+  it(`should support read after write`, () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const file = `/foo.txt` as PortablePath;
+    zipFs.writeFileSync(file, `Test`);
+
+    expect(zipFs.readFileSync(file, `utf8`)).toStrictEqual(`Test`);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should support write after read`, () => {
+    const tmpdir = xfs.mktempSync();
+    const archive = `${tmpdir}/archive.zip` as PortablePath;
+
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(archive, {libzip, create: true});
+
+    const file = `/foo.txt` as PortablePath;
+    zipFs.writeFileSync(file, `Hello World`);
+
+    zipFs.saveAndClose();
+
+    const zipFs2 = new ZipFS(archive, {libzip});
+
+    expect(zipFs2.readFileSync(file, `utf8`)).toStrictEqual(`Hello World`);
+    expect(() => zipFs2.writeFileSync(file, `Goodbye World`)).not.toThrow();
+
+    zipFs2.discardAndClose();
+  });
+
+  it(`should support write after write`, () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const file = `/foo.txt` as PortablePath;
+
+    zipFs.writeFileSync(file, `Hello World`);
+    expect(() => zipFs.writeFileSync(file, `Goodbye World`)).not.toThrow();
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should support read after read`, () => {
+    const tmpdir = xfs.mktempSync();
+    const archive = `${tmpdir}/archive.zip` as PortablePath;
+
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(archive, {libzip, create: true});
+
+    const file = `/foo.txt` as PortablePath;
+    zipFs.writeFileSync(file, `Hello World`);
+
+    zipFs.saveAndClose();
+
+    const zipFs2 = new ZipFS(archive, {libzip});
+
+    expect(zipFs2.readFileSync(file, `utf8`)).toStrictEqual(`Hello World`);
+    expect(zipFs2.readFileSync(file, `utf8`)).toStrictEqual(`Hello World`);
+
+    zipFs2.discardAndClose();
+  });
+
+  it(`should support truncate`, () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const file = `/foo.txt` as PortablePath;
+
+    zipFs.writeFileSync(file, `1234567890`);
+
+    zipFs.truncateSync(file, 5);
+    expect(zipFs.readFileSync(file, `utf8`)).toStrictEqual(`12345`);
+
+    zipFs.truncateSync(file, 10);
+    expect(zipFs.readFileSync(file, `utf8`)).toStrictEqual(`12345${`\u0000`.repeat(5)}`);
+
+    zipFs.truncateSync(file);
+    expect(zipFs.readFileSync(file, `utf8`)).toStrictEqual(``);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should support watchFile and unwatchFile`, () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const file = `/foo.txt` as PortablePath;
+
+    const emptyStats = statUtils.makeEmptyStats();
+
+    const changeListener = jest.fn();
+    const stopListener = jest.fn();
+
+    jest.useFakeTimers();
+
+    const statWatcher = zipFs.watchFile(file, {interval: 1000}, changeListener);
+    statWatcher.on(`stop`, stopListener);
+
+    // The listener should be initially called with empty stats if the path doesn't exist,
+    // but only after 3 milliseconds, so that other listeners can be registered in that timespan
+    // (That's what Node does)
+
+    expect(changeListener).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(3);
+
+    expect(changeListener).toHaveBeenCalledTimes(1);
+    expect(changeListener).toHaveBeenCalledWith(emptyStats, emptyStats);
+
+    // The watcher should pick up changes in content
+
+    zipFs.writeFileSync(file, `Hello World`);
+    const first = zipFs.statSync(file);
+
+    jest.advanceTimersByTime(1000);
+
+    expect(changeListener).toHaveBeenCalledTimes(2);
+    expect(changeListener).toHaveBeenCalledWith(first, emptyStats);
+
+    // The watcher should only pick up the last changes in an interval
+
+    zipFs.writeFileSync(file, `This shouldn't be picked up`);
+
+    zipFs.writeFileSync(file, `Goodbye World`);
+    const second = zipFs.statSync(file);
+
+    jest.advanceTimersByTime(1000);
+
+    expect(changeListener).toHaveBeenCalledTimes(3);
+    expect(changeListener).toHaveBeenCalledWith(second, first);
+
+    // The watcher should pick up deletions
+
+    zipFs.unlinkSync(file);
+
+    jest.advanceTimersByTime(1000);
+
+    expect(changeListener).toHaveBeenCalledTimes(4);
+    expect(changeListener).toHaveBeenCalledWith(emptyStats, second);
+
+    // unwatchFile should work
+
+    expect(stopListener).not.toHaveBeenCalled();
+
+    zipFs.unwatchFile(file, changeListener);
+
+    // The stop event should be emitted when there are no remaining change listeners
+    expect(stopListener).toHaveBeenCalledTimes(1);
+
+    // The listener shouldn't be called after the file is unwatched
+
+    zipFs.writeFileSync(file, `Test`);
+
+    jest.advanceTimersByTime(1000);
+
+    expect(changeListener).toHaveBeenCalledTimes(4);
+
+    zipFs.discardAndClose();
+
+    // The watcher shouldn't keep the process running after the file is unwatched
   });
 });
 

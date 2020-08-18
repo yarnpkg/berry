@@ -41,3 +41,17 @@ export function EROFS(reason: string) {
 export function ENOTEMPTY(reason: string) {
   return makeError(`ENOTEMPTY`, `directory not empty, ${reason}`);
 }
+
+export function EOPNOTSUPP(reason: string) {
+  return makeError(`EOPNOTSUPP`, `operation not supported, ${reason}`);
+}
+
+export class LibzipError extends Error {
+  code: string;
+
+  constructor(message: string, code: string) {
+    super(message);
+    this.name = `Libzip Error`;
+    this.code = code;
+  }
+}

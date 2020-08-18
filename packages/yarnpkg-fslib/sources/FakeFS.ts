@@ -1,3 +1,4 @@
+import {EventEmitter}                                         from 'events';
 import {Dirent as NodeDirent, ReadStream, Stats, WriteStream} from 'fs';
 import {EOL}                                                  from 'os';
 
@@ -37,6 +38,12 @@ export type WatchOptions = Partial<{
   encoding: string,
 }> | string;
 
+export type WatchFileOptions = Partial<{
+  bigint: boolean,
+  persistent: boolean,
+  interval: number,
+}>;
+
 export type ChangeFileOptions = Partial<{
   automaticNewlines: boolean,
 }>;
@@ -48,7 +55,18 @@ export type WatchCallback = (
 
 export type Watcher = {
   on: any,
-  close: () => void;
+  close: () => void,
+};
+
+export type WatchFileCallback = (
+  current: Stats,
+  previous: Stats,
+) => void;
+
+export type StatWatcher = EventEmitter & {
+  // Node 14+
+  ref?: () => StatWatcher,
+  unref?: () => StatWatcher,
 };
 
 export type ExtractHintOptions = {
@@ -117,11 +135,17 @@ export abstract class FakeFS<P extends Path> {
   abstract chmodPromise(p: P, mask: number): Promise<void>;
   abstract chmodSync(p: P, mask: number): void;
 
+  abstract chownPromise(p: P, uid: number, gid: number): Promise<void>;
+  abstract chownSync(p: P, uid: number, gid: number): void;
+
   abstract mkdirPromise(p: P, opts?: MkdirOptions): Promise<void>;
   abstract mkdirSync(p: P, opts?: MkdirOptions): void;
 
   abstract rmdirPromise(p: P): Promise<void>;
   abstract rmdirSync(p: P): void;
+
+  abstract linkPromise(existingP: P, newP: P): Promise<void>;
+  abstract linkSync(existingP: P, newP: P): void;
 
   abstract symlinkPromise(target: P, p: P, type?: SymlinkType): Promise<void>;
   abstract symlinkSync(target: P, p: P, type?: SymlinkType): void;
@@ -156,8 +180,16 @@ export abstract class FakeFS<P extends Path> {
   abstract readlinkPromise(p: P): Promise<P>;
   abstract readlinkSync(p: P): P;
 
+  abstract truncatePromise(p: P, len?: number): Promise<void>;
+  abstract truncateSync(p: P, len?: number): void;
+
   abstract watch(p: P, cb?: WatchCallback): Watcher;
   abstract watch(p: P, opts: WatchOptions, cb?: WatchCallback): Watcher;
+
+  abstract watchFile(p: P, cb: WatchFileCallback): StatWatcher;
+  abstract watchFile(p: P, opts: WatchFileOptions, cb: WatchFileCallback): StatWatcher;
+
+  abstract unwatchFile(p: P, cb?: WatchFileCallback): void;
 
   async * genTraversePromise(init: P, {stableSort = false}: {stableSort?: boolean} = {}) {
     const stack = [init];
@@ -181,7 +213,7 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  async removePromise(p: P, {recursive = true}: {recursive?: boolean} = {}) {
+  async removePromise(p: P, {recursive = true, maxRetries = 5}: {recursive?: boolean, maxRetries?: number} = {}) {
     let stat;
     try {
       stat = await this.lstatPromise(p);
@@ -199,19 +231,24 @@ export abstract class FakeFS<P extends Path> {
           await this.removePromise(this.pathUtils.resolve(p, entry));
 
       // 5 gives 1s worth of retries at worst
-      for (let t = 0; t < 5; ++t) {
+      let t = 0;
+      do {
         try {
           await this.rmdirPromise(p);
           break;
         } catch (error) {
           if (error.code === `EBUSY` || error.code === `ENOTEMPTY`) {
-            await new Promise(resolve => setTimeout(resolve, t * 100));
-            continue;
+            if (maxRetries === 0) {
+              break;
+            } else {
+              await new Promise(resolve => setTimeout(resolve, t * 100));
+              continue;
+            }
           } else {
             throw error;
           }
         }
-      }
+      } while (t++ < maxRetries);
     } else {
       await this.unlinkPromise(p);
     }

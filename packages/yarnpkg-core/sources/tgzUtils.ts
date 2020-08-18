@@ -8,17 +8,25 @@ interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>,
   prefixPath?: PortablePath | null,
   compressionLevel?: ZipCompression,
+  inMemory?: boolean,
 }
 
 const gunzip = promisify(zlib.gunzip);
 
-export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root, compressionLevel}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
-  const tmpFolder = await xfs.mktempPromise();
-  const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
+export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root, compressionLevel, inMemory = false}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
+  const libzip = await getLibzipPromise();
 
-  const zipFs = new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise(), level: compressionLevel});
+  let zipFs;
+  if (inMemory) {
+    zipFs = new ZipFS(null, {libzip, level: compressionLevel});
+  } else {
+    const tmpFolder = await xfs.mktempPromise();
+    const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
+
+    zipFs = new ZipFS(tmpFile, {create: true, libzip, level: compressionLevel});
+  }
+
   const target = ppath.resolve(PortablePath.root, prefixPath!);
-
   await zipFs.copyPromise(target, source, {baseFs, stableTime: true, stableSort: true});
 
   return zipFs;

@@ -7,8 +7,8 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
     new VirtualFS({
       baseFs: new ZipOpenFS({
         libzip: getLibzipSync(),
-        // The cache is disabled because we need to support read after write (ZIP_ER_CHANGED)
-        useCache: false,
+        useCache: true,
+        maxOpenFiles: 80,
       }),
     })
   );

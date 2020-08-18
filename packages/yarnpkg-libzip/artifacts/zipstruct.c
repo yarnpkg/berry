@@ -54,6 +54,11 @@ struct zip_error * zipstruct_errorS(void)
     return &error;
 }
 
+int zipstruct_error_code_zip(struct zip_error * error)
+{
+    return error->zip_err;
+}
+
 unsigned int zipstruct_stat_comp_size(struct zip_stat * st)
 {
     return st->comp_size;
