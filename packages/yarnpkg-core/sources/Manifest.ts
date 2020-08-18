@@ -652,6 +652,11 @@ export class Manifest {
       delete data.bin;
     }
 
+    if (this.workspaceDefinitions.length > 0)
+      data.workspaces = this.workspaceDefinitions.map(({pattern}) => pattern);
+    else
+      delete data.workspaces;
+
     const regularDependencies = [];
     const optionalDependencies = [];
 
