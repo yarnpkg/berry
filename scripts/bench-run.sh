@@ -17,6 +17,9 @@ bench() {
 
 cp "$HERE_DIR"/benchmarks/"$TEST_NAME".json package.json
 
+mkdir dummy-pkg
+echo '{}' > dummy-pkg/package.json
+
 touch a
   if cp --reflink a b >& /dev/null; then
   echo "Reflinks are supported"
@@ -42,13 +45,9 @@ case $PACKAGE_MANAGER in
     bench install-cache-and-lock \
       --prepare 'rm -rf node_modules' \
       'yarn install'
-    # Note that Classic has a bailout when nothing changed at all. Since
-    # we want to benchmark the time it takes to run an install when there
-    # is very few I/O (for example during a `remove` operation), we need
-    # to bypass this bailout. We do this by simply touching the manifest.
     bench install-ready \
-      --prepare 'touch package.json' \
-      'yarn install'
+      --prepare 'yarn remove dummy-pkg || true' \
+      'yarn add dummy-pkg@link:./dummy-pkg'
     ;;
   yarn)
     setup-yarn2
@@ -62,7 +61,8 @@ case $PACKAGE_MANAGER in
       --prepare 'rm -rf .yarn .pnp.*' \
       'yarn install'
     bench install-ready \
-      'yarn install'
+      --prepare 'yarn remove dummy-pkg || true' \
+      'yarn add dummy-pkg@link:./dummy-pkg'
     ;;
   yarn-nm)
     setup-yarn2
@@ -77,6 +77,9 @@ case $PACKAGE_MANAGER in
       'YARN_NODE_LINKER=node-modules yarn install'
     bench install-ready \
       'YARN_NODE_LINKER=node-modules yarn install'
+    bench install-ready \
+      --prepare 'YARN_NODE_LINKER=node-modules yarn remove dummy-pkg || true' \
+      'YARN_NODE_LINKER=node-modules yarn add dummy-pkg@link:./dummy-pkg'
     ;;
   npm)
     bench install-full-cold \
@@ -89,7 +92,8 @@ case $PACKAGE_MANAGER in
       --prepare 'rm -rf node_modules' \
       'npm install'
     bench install-ready \
-      'npm install'
+      --prepare 'npm remove dummy-pkg || true' \
+      'npm add dummy-pkg@file:./dummy-pkg'
     ;;
   pnpm)
     bench install-full-cold \
@@ -101,17 +105,9 @@ case $PACKAGE_MANAGER in
     bench install-cache-and-lock \
       --prepare 'rm -rf node_modules' \
       'pnpm install'
-    # Note that Pnpm has a bailout when nothing changed at all. Since
-    # we want to benchmark the time it takes to run an install when there
-    # is very few I/O (for example during a `remove` operation), we need
-    # to bypass this bailout. We do this by running a remove operation on
-    # a package that isn't in the tree; this causes a "bug" in Pnpm that
-    # thinks a package got removed.
-    #
-    # Zoltan, if you see this and fix this bug: can you also add an option
-    # to skip the bailout? 😁
     bench install-ready \
-      'pnpm remove doesnt-exist'
+      --prepare 'pnpm remove dummy-pkg || true' \
+      'pnpm add dummy-pkg@link:./dummy-pkg'
     ;;
   *)
     echo "Invalid package manager ${$1}"
