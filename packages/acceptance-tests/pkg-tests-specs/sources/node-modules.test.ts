@@ -1,4 +1,4 @@
-import {xfs, npath} from '@yarnpkg/fslib';
+import {xfs, npath, PortablePath} from '@yarnpkg/fslib';
 
 const {
   fs: {writeFile, writeJson},
@@ -349,6 +349,61 @@ describe(`Node_Modules`, () => {
           name: `no-deps-bins`,
           version: `1.0.0`,
         });
+      },
+    ),
+  );
+
+  test(`should not hoist package peer dependent on parent if conflict exists`,
+    // . -> dep -> conflict@2 -> unhoistable --> conflict
+    //   -> conflict@1
+    // `unhoistable` cannot be hoisted to the top, otherwise it will use wrong `conflict` version
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          dep: `file:./dep`,
+          conflict: `file:./conflict1`,
+        },
+      },
+      async ({path, run, source}) => {
+        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
+        nodeLinker: "node-modules"
+      `);
+
+        await writeJson(npath.toPortablePath(`${path}/conflict1/package.json`), {
+          name: `conflict`,
+          version: `1.0.0`,
+        });
+
+        await writeJson(npath.toPortablePath(`${path}/conflict2/package.json`), {
+          name: `conflict`,
+          version: `2.0.0`,
+          dependencies: {
+            unhoistable: `file:../unhoistable`,
+          },
+        });
+
+        await writeJson(npath.toPortablePath(`${path}/dep/package.json`), {
+          name: `dep`,
+          version: `1.0.0`,
+          dependencies: {
+            conflict: `file:../conflict2`,
+          },
+        });
+
+        await writeJson(npath.toPortablePath(`${path}/unhoistable/package.json`), {
+          name: `unhoistable`,
+          version: `1.0.0`,
+          peerDependencies: {
+            conflict: `2.0.0`,
+          },
+        });
+        await writeFile(`${path}/packages/unhoistable/index.js`,
+          `module.exports = require('conflict/package.json').version`);
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/unhoistable` as PortablePath)).toBe(false);
       },
     ),
   );
