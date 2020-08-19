@@ -42,8 +42,12 @@ case $PACKAGE_MANAGER in
     bench install-cache-and-lock \
       --prepare 'rm -rf node_modules' \
       'yarn install'
+    # Note that Classic has a bailout when nothing changed at all. Since
+    # we want to benchmark the time it takes to run an install when there
+    # is very few I/O (for example during a `remove` operation), we need
+    # to bypass this bailout. We do this by simply touching the manifest.
     bench install-ready \
-      --prepare 'rm -rf node_modules/.yarn-integrity' \
+      --prepare 'touch package.json' \
       'yarn install'
     ;;
   yarn)
@@ -97,7 +101,17 @@ case $PACKAGE_MANAGER in
     bench install-cache-and-lock \
       --prepare 'rm -rf node_modules' \
       'pnpm install'
+    # Note that Pnpm has a bailout when nothing changed at all. Since
+    # we want to benchmark the time it takes to run an install when there
+    # is very few I/O (for example during a `remove` operation), we need
+    # to bypass this bailout. We do this by running a remove operation on
+    # a package that isn't in the tree; this causes a "bug" in Pnpm that
+    # thinks a package got removed.
+    #
+    # Zoltan, if you see this and fix this bug: can you also add an option
+    # to skip the bailout? 😁
     bench install-ready \
+      'pnpm remove doesnt-exist' \
       'pnpm install'
     ;;
   *)
