@@ -149,7 +149,7 @@ export default class DedupeCommand extends BaseCommand {
     details: `
       Duplicates are defined as descriptors with overlapping ranges being resolved and locked to different locators. They are a natural consequence of Yarn's deterministic installs, but they can sometimes pile up and unnecessarily increase the size of your project.
 
-      This command dedupes dependencies in the current project using different strategies (a single one is implemented at the moment):
+      This command dedupes dependencies in the current project using different strategies (only one is implemented at the moment):
 
       - \`highest\`: Reuses (where possible) the locators with the highest versions. This means that dependencies can only be upgraded, never downgraded. It's also guaranteed that it never takes more than a single pass to dedupe the entire dependency tree.
 
@@ -161,18 +161,13 @@ export default class DedupeCommand extends BaseCommand {
 
       ### In-depth explanation:
 
-      > Note: The examples will use lockfiles trimmed-down to only contain the information needed to understand why this command is needed.
-
       Yarn doesn't deduplicate dependencies by default, otherwise installs wouldn't be deterministic and the lockfile would be useless. What it actually does is that it tries to not duplicate dependencies in the first place.
 
-      **Example:**
+      **Example:** If \`foo@^2.3.4\` (a dependency of a dependency) has already been resolved to \`foo@2.3.4\`, running \`yarn add foo@*\`will cause Yarn to reuse \`foo@2.3.4\`, even if the latest \`foo\` is actually \`foo@2.10.14\`, thus preventing unnecessary duplication.
 
-      Running \`yarn add foo@*\` with the following lockfile (
-      \`\`\`yml
-      foo@^2.3.4:
-        resolution: foo@2.3.4
-      \`\`\`
-      ) will cause yarn to reuse \`foo@2.3.4\`, even if the latest \`foo\` is actually \`foo@2.10.14\`, thus preventing unnecessary duplication.
+      Duplication happens when Yarn can't unlock dependencies that have already been locked inside the lockfile.
+
+      **Example:** If \`foo@^2.3.4\` (a dependency of a dependency) has already been resolved to \`foo@2.3.4\`, running \`yarn add foo@2.10.14\` will cause Yarn to install \`foo@2.10.14\` because the existing resolution doesn't satisfy the range \`2.10.14\`. This behavior can lead to (sometimes) unwanted duplication, since now the lockfile contains 2 separate resolutions for the 2 \`foo\` descriptors, even though they have overlapping ranges, which means that the lockfile can be simplified so that both descriptors resolve to \`foo@2.10.14\`.
     `,
     examples: [[
       `Dedupe all packages`,
