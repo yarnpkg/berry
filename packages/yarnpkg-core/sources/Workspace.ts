@@ -62,25 +62,25 @@ export class Workspace {
     // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.anchoredLocator = structUtils.makeLocator(this.locator, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
 
-    for (const definition of this.manifest.workspaceDefinitions) {
-      const relativeCwds = await globby(definition.pattern, {
-        absolute: true,
-        cwd: npath.fromPortablePath(this.cwd),
-        expandDirectories: false,
-        onlyDirectories: true,
-        onlyFiles: false,
-        ignore: [`**/node_modules`, `**/.git`, `**/.yarn`],
-      });
+    const patterns = this.manifest.workspaceDefinitions.map(({pattern}) => pattern);
 
-      // It seems that the return value of globby isn't in any guaranteed order - not even the directory listing order
-      relativeCwds.sort();
+    const relativeCwds = await globby(patterns, {
+      absolute: true,
+      cwd: npath.fromPortablePath(this.cwd),
+      expandDirectories: false,
+      onlyDirectories: true,
+      onlyFiles: false,
+      ignore: [`**/node_modules`, `**/.git`, `**/.yarn`],
+    });
 
-      for (const relativeCwd of relativeCwds) {
-        const candidateCwd = ppath.resolve(this.cwd, npath.toPortablePath(relativeCwd));
+    // It seems that the return value of globby isn't in any guaranteed order - not even the directory listing order
+    relativeCwds.sort();
 
-        if (xfs.existsSync(ppath.join(candidateCwd, `package.json` as Filename))) {
-          this.workspacesCwds.add(candidateCwd);
-        }
+    for (const relativeCwd of relativeCwds) {
+      const candidateCwd = ppath.resolve(this.cwd, npath.toPortablePath(relativeCwd));
+
+      if (xfs.existsSync(ppath.join(candidateCwd, `package.json` as Filename))) {
+        this.workspacesCwds.add(candidateCwd);
       }
     }
   }
