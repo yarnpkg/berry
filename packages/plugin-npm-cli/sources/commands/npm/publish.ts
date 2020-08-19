@@ -1,11 +1,12 @@
-import {BaseCommand, WorkspaceRequiredError}                                       from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, Workspace} from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                    from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils}                                              from '@yarnpkg/plugin-npm';
-import {packUtils}                                                                 from '@yarnpkg/plugin-pack';
-import {Command, Usage, UsageError}                                                from 'clipanion';
-import {createHash}                                                                from 'crypto';
-import ssri                                                                        from 'ssri';
+import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport, Workspace, scriptUtils} from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                                 from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils}                                                           from '@yarnpkg/plugin-npm';
+import {packUtils}                                                                              from '@yarnpkg/plugin-pack';
+import {Command, Usage, UsageError}                                                             from 'clipanion';
+import {createHash}                                                                             from 'crypto';
+import ssri                                                                                     from 'ssri';
+import {PassThrough}                                                                            from 'stream';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {
@@ -82,6 +83,19 @@ export default class NpmPublishCommand extends BaseCommand {
           } else if (error.response.statusCode !== 404) {
             throw new ReportError(MessageName.NETWORK_ERROR, `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`);
           }
+        }
+      }
+
+      if (await scriptUtils.hasWorkspaceScript(workspace, `prepublish`)) {
+        const stdin = null;
+        const stdout = new PassThrough();
+        const stderr = new PassThrough();
+
+        report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "prepublish" lifecycle script`);
+        const exitCode = await scriptUtils.executeWorkspaceScript(workspace, `prepublish`, [], {stdin, stdout, stderr});
+
+        if (exitCode !== 0) {
+          throw new ReportError(MessageName.LIFECYCLE_SCRIPT, `Prepublish script failed; run "yarn prepublish" to investigate`);
         }
       }
 
