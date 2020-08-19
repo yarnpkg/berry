@@ -2,6 +2,10 @@
  * Prior work:
  * - https://github.com/atlassian/yarn-deduplicate
  * - https://github.com/eps1lon/yarn-plugin-deduplicate
+ *
+ * Goals of the `dedupe` command:
+ * - the deduplication algorithms shouldn't depend on semver; they should instead use the resolver candidate system
+ * - the deduplication should happen concurrently
  */
 
 import {BaseCommand}                                                                                                                    from '@yarnpkg/cli';
@@ -27,6 +31,13 @@ export type DedupeAlgorithm = (project: Project, patterns: Array<string>, opts: 
 }) => Promise<Array<DedupePromise>>;
 
 export enum Strategy {
+  /**
+   * This strategy dedupes a locator to the best candidate already installed in the project.
+   *
+   * Because of this, it's guaranteed that:
+   * - it never takes more than a single pass to dedupe all dependencies
+   * - dependencies are never downgraded
+   */
   HIGHEST = `highest`,
 }
 
@@ -116,7 +127,7 @@ export default class DedupeCommand extends BaseCommand {
   @Command.String(`-s,--strategy`)
   strategy: Strategy = Strategy.HIGHEST;
 
-  @Command.Boolean(`--check`)
+  @Command.Boolean(`-c,--check`)
   check: boolean = false;
 
   @Command.Boolean(`--json`)
@@ -138,22 +149,42 @@ export default class DedupeCommand extends BaseCommand {
     details: `
       Duplicates are defined as descriptors with overlapping ranges being resolved and locked to different locators. They are a natural consequence of Yarn's deterministic installs, but they can sometimes pile up and unnecessarily increase the size of your project.
 
-      This command deduplicates dependencies in the current project by reusing (where possible) the locators with the highest versions. This means that dependencies can only be upgraded, never downgraded.
+      This command dedupes dependencies in the current project using different strategies (a single one is implemented at the moment):
 
-      **Note:** Although it never produces a wrong dependency tree, this command should be used with caution, as it modifies the dependency tree, which can sometimes cause problems when packages specify wrong dependency ranges. It is recommended to also review the changes manually.
+      - \`highest\`: Reuses (where possible) the locators with the highest versions. This means that dependencies can only be upgraded, never downgraded. It's also guaranteed that it never takes more than a single pass to dedupe the entire dependency tree.
 
-      If set, the \`--check\` flag will only report the found duplicates, without persisting the modified dependency tree.
+      **Note:** Even though it never produces a wrong dependency tree, this command should be used with caution, as it modifies the dependency tree, which can sometimes cause problems when packages specify wrong dependency ranges. It is recommended to also review the changes manually.
+
+      If set, the \`-c,--check\` flag will only report the found duplicates, without persisting the modified dependency tree.
 
       This command accepts glob patterns as arguments (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
+
+      ### In-depth explanation:
+
+      > Note: The examples will use lockfiles trimmed-down to only contain the information needed to understand why this command is needed.
+
+      Yarn doesn't deduplicate dependencies by default, otherwise installs wouldn't be deterministic and the lockfile would be useless. What it actually does is that it tries to not duplicate dependencies in the first place.
+
+      **Example:**
+
+      Running \`yarn add foo@*\` with the following lockfile (
+      \`\`\`yml
+      foo@^2.3.4:
+        resolution: foo@2.3.4
+      \`\`\`
+      ) will cause yarn to reuse \`foo@2.3.4\`, even if the latest \`foo\` is actually \`foo@2.10.14\`, thus preventing unnecessary duplication.
     `,
     examples: [[
-      `Deduplicate all packages`,
+      `Dedupe all packages`,
       `$0 dedupe`,
     ], [
-      `Deduplicate a specific package`,
+      `Dedupe all packages using a specific strategy`,
+      `$0 dedupe --strategy highest`,
+    ], [
+      `Dedupe a specific package`,
       `$0 dedupe lodash`,
     ], [
-      `Deduplicate all packages with the \`@babel\` scope`,
+      `Dedupe all packages with the \`@babel/*\` scope`,
       `$0 dedupe '@babel/*'`,
     ], [
       `Check for duplicates (can be used as a CI step)`,
