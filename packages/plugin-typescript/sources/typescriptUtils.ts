@@ -1,5 +1,5 @@
 import {Request, Requester, Response} from '@algolia/requester-common';
-import {Configuration, Descriptor}    from '@yarnpkg/core';
+import {Configuration, Ident}         from '@yarnpkg/core';
 import {httpUtils, structUtils}       from '@yarnpkg/core';
 import algoliasearch                  from 'algoliasearch';
 
@@ -15,10 +15,10 @@ interface AlgoliaObj {
 }
 
 export const hasDefinitelyTyped = async (
-  descriptor: Descriptor,
+  ident: Ident,
   configuration: Configuration,
 ) => {
-  const stringifiedIdent = structUtils.stringifyIdent(descriptor);
+  const stringifiedIdent = structUtils.stringifyIdent(ident);
   const algoliaClient = createAlgoliaClient(configuration);
   const index = algoliaClient.initIndex(`npm-search`);
 

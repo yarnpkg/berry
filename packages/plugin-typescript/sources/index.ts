@@ -1,18 +1,18 @@
-import {Descriptor, Plugin, Workspace, ResolveOptions, Manifest, AllDependencies, DescriptorHash, Package} from '@yarnpkg/core';
-import {structUtils, ThrowReport, miscUtils}                                                               from '@yarnpkg/core';
-import {Hooks as EssentialsHooks}                                                                          from '@yarnpkg/plugin-essentials';
-import {suggestUtils}                                                                                      from '@yarnpkg/plugin-essentials';
-import {Hooks as PackHooks}                                                                                from '@yarnpkg/plugin-pack';
-import semver                                                                                              from 'semver';
+import {Descriptor, Plugin, Workspace, ResolveOptions, Manifest, AllDependencies, DescriptorHash, Package, Ident} from '@yarnpkg/core';
+import {structUtils, ThrowReport, miscUtils}                                                                      from '@yarnpkg/core';
+import {Hooks as EssentialsHooks}                                                                                 from '@yarnpkg/plugin-essentials';
+import {suggestUtils}                                                                                             from '@yarnpkg/plugin-essentials';
+import {Hooks as PackHooks}                                                                                       from '@yarnpkg/plugin-pack';
+import semver                                                                                                     from 'semver';
 
-import {hasDefinitelyTyped}                                                                                from './typescriptUtils';
+import {hasDefinitelyTyped}                                                                                       from './typescriptUtils';
 
 export {hasDefinitelyTyped};
 
-export const getTypesName = (descriptor: Descriptor) => {
-  return descriptor.scope
-    ? `${descriptor.scope}__${descriptor.name}`
-    : `${descriptor.name}`;
+export const getTypesName = (ident: Ident) => {
+  return ident.scope
+    ? `${ident.scope}__${ident.name}`
+    : `${ident.name}`;
 };
 
 const afterWorkspaceDependencyAddition = async (

@@ -79,18 +79,21 @@ function isValidDependency(ident: Ident, {workspace}: {workspace: Workspace}) {
   return false;
 }
 
-function checkForUndeclaredDependency(workspace: Workspace, referenceNode: ts.Node, moduleName: string, {configuration, report}: {configuration: Configuration, report: Report}) {
+async function checkForUndeclaredDependency(workspace: Workspace, referenceNode: ts.Node, moduleName: string, {configuration, report, isTypescript}: {configuration: Configuration, report: Report, isTypescript: boolean}) {
   if (BUILTINS.has(moduleName))
     return;
 
   const idents = extractIdents(moduleName);
 
   for (const ident of idents) {
-    if (isValidDependency(ident, {workspace}))
-      continue;
-
     const prettyLocation = ast.prettyNodeLocation(configuration, referenceNode);
-    report.reportError(MessageName.UNNAMED, `${prettyLocation}: Undeclared dependency on ${structUtils.prettyIdent(configuration, ident)}`);
+
+    if (!isValidDependency(ident, {workspace}))
+      report.reportError(MessageName.UNNAMED, `${prettyLocation}: Undeclared dependency on ${structUtils.prettyIdent(configuration, ident)}`);
+
+    if (isTypescript) {
+      await checkForUnmentTypes({workspace, prettyLocation, via: ident, configuration, report});
+    }
   }
 }
 
@@ -112,8 +115,10 @@ function checkForNodeModuleStrings(stringishNode: ts.StringLiteral | ts.NoSubsti
   }
 }
 
-function processFile(workspace: Workspace, file: ts.SourceFile, {configuration, report}: {configuration: Configuration, report: Report}) {
+async function processFile(workspace: Workspace, file: ts.SourceFile, {configuration, report, isTypescript}: {configuration: Configuration, report: Report, isTypescript: boolean}) {
   const importedModules = new Set<string>();
+
+  const dependencyChecks: Array<Promise<void>> = [];
 
   const processNode = (node: ts.Node) => {
     switch (node.kind) {
@@ -121,7 +126,7 @@ function processFile(workspace: Workspace, file: ts.SourceFile, {configuration, 
         const decl = node as ts.ImportDeclaration;
 
         const importTarget = ast.extractStaticString(decl.moduleSpecifier)!;
-        checkForUndeclaredDependency(workspace, decl, importTarget, {configuration, report});
+        dependencyChecks.push(checkForUndeclaredDependency(workspace, decl, importTarget, {configuration, report, isTypescript}));
       } break;
 
       case ts.SyntaxKind.ExportDeclaration: {
@@ -130,7 +135,7 @@ function processFile(workspace: Workspace, file: ts.SourceFile, {configuration, 
           break;
 
         const importTarget = ast.extractStaticString(decl.moduleSpecifier)!;
-        checkForUndeclaredDependency(workspace, decl, importTarget, {configuration, report});
+        dependencyChecks.push(checkForUndeclaredDependency(workspace, decl, importTarget, {configuration, report, isTypescript}));
       } break;
 
       case ts.SyntaxKind.CallExpression: {
@@ -144,7 +149,7 @@ function processFile(workspace: Workspace, file: ts.SourceFile, {configuration, 
         if (staticImport === null)
           break;
 
-        checkForUndeclaredDependency(workspace, call, staticImport, {configuration, report});
+        dependencyChecks.push(checkForUndeclaredDependency(workspace, call, staticImport, {configuration, report, isTypescript}));
       } break;
 
       case ts.SyntaxKind.PropertyAssignment: {
@@ -181,6 +186,9 @@ function processFile(workspace: Workspace, file: ts.SourceFile, {configuration, 
   };
 
   processNode(file);
+
+  await Promise.all(dependencyChecks);
+
   return importedModules;
 }
 
@@ -236,7 +244,9 @@ async function checkForUnmetPeerDependency(workspace: Workspace, dependencyType:
   report.reportError(MessageName.UNNAMED, `${prettyLocation}: Unmet transitive peer dependency on ${structUtils.prettyDescriptor(configuration, peer)}, via ${structUtils.prettyDescriptor(configuration, via)}`);
 }
 
-async function checkForUnmentTypes(workspace: Workspace, dependencyType: HardDependencies, via: Descriptor, {configuration, report}: {configuration: Configuration, report: Report}) {
+async function checkForUnmentTypes(opts: {workspace: Workspace, via: Ident, dependencyType?: HardDependencies,prettyLocation?: string, configuration: Configuration, report: Report}) {
+  let {via, workspace, configuration, dependencyType, report, prettyLocation} = opts;
+
   if (via.scope === `types`)
     return;
 
@@ -249,16 +259,21 @@ async function checkForUnmentTypes(workspace: Workspace, dependencyType: HardDep
   if (!requiresInstallTypes)
     return;
 
-  const propertyNode = await buildJsonNode(ppath.join(workspace.cwd, Manifest.fileName), [
-    dependencyType,
-    structUtils.stringifyIdent(via),
-  ]);
-  const prettyLocation = ast.prettyNodeLocation(configuration, propertyNode);
+  if (!prettyLocation) {
+    if (!dependencyType)
+      throw new Error(`Assertion failed: expected either a 'prettyLocation' or 'dependencyType', got neither`);
+
+    const propertyNode = await buildJsonNode(ppath.join(workspace.cwd, Manifest.fileName), [
+      dependencyType,
+      structUtils.stringifyIdent(via),
+    ]);
+    prettyLocation = ast.prettyNodeLocation(configuration, propertyNode);
+  }
 
   report.reportError(
     MessageName.UNNAMED,
     `${prettyLocation}: Undeclared ${
-      dependencyType === `dependencies` ? `dependency` : `devDependency`
+      dependencyType === `devDependencies` ? `devDependency` : `dependency`
     } on ${structUtils.prettyIdent(configuration, typesIdent)}`
   );
 }
@@ -304,7 +319,7 @@ async function processManifest(workspace: Workspace, {configuration, report, isT
       }
 
       if (isTypescript)
-        await checkForUnmentTypes(workspace, dependencyType, viaDescriptor, {configuration, report});
+        await checkForUnmentTypes({workspace, dependencyType, via: viaDescriptor, configuration, report});
 
       for (const peerDescriptor of pkg.peerDependencies.values()) {
         // No need to check optional peer dependencies at all
@@ -330,7 +345,7 @@ async function processWorkspace(workspace: Workspace, {configuration, fileList, 
     const parsed = await parseFile(p);
 
     if (parsed !== null)
-      processFile(workspace, parsed, {configuration, report});
+      await processFile(workspace, parsed, {configuration, report, isTypescript});
 
     progress.tick();
   }
