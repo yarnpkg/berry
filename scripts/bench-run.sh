@@ -18,7 +18,7 @@ bench() {
 cp "$HERE_DIR"/benchmarks/"$TEST_NAME".json package.json
 
 mkdir dummy-pkg
-echo '{}' > dummy-pkg/package.json
+echo '{"name": "dummy-pkg", "version": "0.0.0"}' > dummy-pkg/package.json
 
 touch a
   if cp --reflink a b >& /dev/null; then
