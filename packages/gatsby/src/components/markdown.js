@@ -7,6 +7,7 @@ import unified  from 'unified';
 import useCache from '../utils/useCache';
 
 const Container = styled.article`
+  line-height: 1.7;
 `;
 
 const Title = styled.h1`
@@ -51,11 +52,49 @@ const Content = styled.div`
   }
 
   .toc, p, ul, table {
-    margin: 1em 0;
+    margin: 1.5em 0;
   }
 
   .toc {
+    padding: 2em 3em;
+
     color: #007aa2;
+    background-color: #e4e9f7;
+  }
+
+  .toc ul {
+    margin: 1em 0;
+
+    padding-left: 2em;
+
+    list-style-type: upper-latin;
+    list-style-position: inside;
+  }
+
+  .toc-no-item ul {
+    list-style-type: none;
+  }
+
+  .toc ul ul {
+    list-style-type: none;
+  }
+
+  .toc > ul {
+    padding-left: 0;
+  }
+
+  .toc li {
+    margin: 0.5em 0;
+  }
+
+  .toc p {
+    display: inline;
+
+    margin: 0;
+  }
+
+  .toc a {
+    border-bottom: 0;
   }
 
   table {
@@ -98,6 +137,8 @@ const Content = styled.div`
     text-align: left;
 
     color: #007aa2;
+
+    font-family: "PT Mono";
   }
 
   pre code {

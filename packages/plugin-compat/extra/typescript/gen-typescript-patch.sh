@@ -73,7 +73,22 @@ make-build-for() {
       fi
     fi
 
-    yarn gulp local LKG
+    for n in {5..1}; do
+      yarn gulp local LKG
+      
+      if [[ $(stat -c%s lib/typescript.js) -gt 100000 ]]; then
+        break
+      else
+        echo "Something is wrong; typescript.js got generated with a stupid size" >& /dev/stderr
+        if [[ $n -eq 1 ]]; then
+          exit 1
+        fi
+
+        rm -rf lib
+        git reset --hard lib
+      fi
+    done
+
     cp -r lib/ "$BUILD_DIR"/
   fi
 

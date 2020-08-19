@@ -8842,7 +8842,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["gatsby-plugin-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.6.11"],
             ["gatsby-remark-autolink-headers", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.5"],
             ["gatsby-remark-prismjs", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.5.4"],
-            ["gatsby-remark-table-of-contents", "npm:0.0.9"],
+            ["gatsby-remark-table-of-contents", "https://github.com/arcanis/gatsby-remark-table-of-contents.git#commit=d2c703bb06801ae992513f14599cde84d03a4aac"],
             ["gatsby-source-filesystem", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.0.23"],
             ["gatsby-transformer-remark", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.2"],
             ["gatsby-transformer-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.2.13"],
@@ -12961,7 +12961,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["anymatch", "npm:2.0.0"],
             ["async-each", "npm:1.0.1"],
             ["braces", "npm:2.3.2"],
-            ["fsevents", "patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=495457"],
+            ["fsevents", "patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=9a3812"],
             ["glob-parent", "npm:3.1.0"],
             ["inherits", "npm:2.0.3"],
             ["is-binary-path", "npm:1.0.1"],
@@ -12979,7 +12979,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["chokidar", "npm:3.4.0"],
             ["anymatch", "npm:3.1.1"],
             ["braces", "npm:3.0.2"],
-            ["fsevents", "patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=495457"],
+            ["fsevents", "patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=9a3812"],
             ["glob-parent", "npm:5.1.0"],
             ["is-binary-path", "npm:2.1.0"],
             ["is-glob", "npm:4.0.1"],
@@ -17635,19 +17635,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["fsevents", [
-        ["patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=495457", {
-          "packageLocation": "./.yarn/unplugged/fsevents-patch-c16896bf90/node_modules/fsevents/",
+        ["patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=9a3812", {
+          "packageLocation": "./.yarn/unplugged/fsevents-patch-9eca6216ec/node_modules/fsevents/",
           "packageDependencies": [
-            ["fsevents", "patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=495457"],
+            ["fsevents", "patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=9a3812"],
             ["nan", "npm:2.14.0"],
             ["node-pre-gyp", "npm:0.10.3"]
           ],
           "linkType": "HARD",
         }],
-        ["patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=495457", {
-          "packageLocation": "./.yarn/unplugged/fsevents-patch-ef2bb5c6ad/node_modules/fsevents/",
+        ["patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=9a3812", {
+          "packageLocation": "./.yarn/unplugged/fsevents-patch-43d7acab0c/node_modules/fsevents/",
           "packageDependencies": [
-            ["fsevents", "patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=495457"],
+            ["fsevents", "patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=9a3812"],
             ["node-gyp", "npm:6.0.1"]
           ],
           "linkType": "HARD",
@@ -18853,10 +18853,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["gatsby-remark-table-of-contents", [
-        ["npm:0.0.9", {
-          "packageLocation": "./.yarn/cache/gatsby-remark-table-of-contents-npm-0.0.9-4458729b53-2dfd7edcf7.zip/node_modules/gatsby-remark-table-of-contents/",
+        ["https://github.com/arcanis/gatsby-remark-table-of-contents.git#commit=d2c703bb06801ae992513f14599cde84d03a4aac", {
+          "packageLocation": "./.yarn/cache/gatsby-remark-table-of-contents-https-6425034f06-59729bf6c1.zip/node_modules/gatsby-remark-table-of-contents/",
           "packageDependencies": [
-            ["gatsby-remark-table-of-contents", "npm:0.0.9"],
+            ["gatsby-remark-table-of-contents", "https://github.com/arcanis/gatsby-remark-table-of-contents.git#commit=d2c703bb06801ae992513f14599cde84d03a4aac"],
             ["js-yaml", "npm:3.13.1"],
             ["mdast-util-toc", "npm:4.2.0"]
           ],
@@ -22535,7 +22535,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/graceful-fs", "npm:4.1.3"],
             ["anymatch", "npm:3.1.1"],
             ["fb-watchman", "npm:2.0.0"],
-            ["fsevents", "patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=495457"],
+            ["fsevents", "patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=9a3812"],
             ["graceful-fs", "npm:4.2.4"],
             ["jest-serializer", "npm:26.0.0"],
             ["jest-util", "npm:26.0.1"],
@@ -36489,7 +36489,7 @@ function toFilename(filename) {
 
 /***/ }),
 
-/***/ 936:
+/***/ 170:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -36928,6 +36928,15 @@ class NodeFS extends FakeFS/* BasePortableFakeFS */.fS {
     a, b);
   }
 
+  watchFile(p, a, b) {
+    return this.realFs.watchFile(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), // @ts-ignore
+    a, b);
+  }
+
+  unwatchFile(p, cb) {
+    return this.realFs.unwatchFile(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), cb);
+  }
+
   makeCallback(resolve, reject) {
     return (err, result) => {
       if (err) {
@@ -37193,6 +37202,15 @@ class ProxiedFS extends FakeFS/* FakeFS */.uY {
     a, b);
   }
 
+  watchFile(p, a, b) {
+    return this.baseFs.watchFile(this.mapToBase(p), // @ts-ignore
+    a, b);
+  }
+
+  unwatchFile(p, cb) {
+    return this.baseFs.unwatchFile(this.mapToBase(p), cb);
+  }
+
   fsMapToBase(p) {
     if (typeof p === `number`) {
       return p;
@@ -37295,20 +37313,15 @@ var external_util_ = __webpack_require__(669);
 var external_zlib_ = __webpack_require__(761);
 var external_zlib_default = /*#__PURE__*/__webpack_require__.n(external_zlib_);
 
-// CONCATENATED MODULE: ../yarnpkg-fslib/sources/ZipFS.ts
+// EXTERNAL MODULE: external "events"
+var external_events_ = __webpack_require__(614);
 
-
-
-
-
-
-
-
-const DEFAULT_COMPRESSION_LEVEL = `mixed`;
+// CONCATENATED MODULE: ../yarnpkg-fslib/sources/constants.ts
 const S_IFMT = 0o170000;
 const S_IFDIR = 0o040000;
 const S_IFREG = 0o100000;
 const S_IFLNK = 0o120000;
+// CONCATENATED MODULE: ../yarnpkg-fslib/sources/statUtils.ts
 
 class DirEntry {
   constructor() {
@@ -37345,7 +37358,6 @@ class DirEntry {
   }
 
 }
-
 class StatEntry {
   constructor() {
     this.dev = 0;
@@ -37385,7 +37397,6 @@ class StatEntry {
   }
 
 }
-
 function makeDefaultStats() {
   return Object.assign(new StatEntry(), {
     uid: 0,
@@ -37403,6 +37414,266 @@ function makeDefaultStats() {
     mode: S_IFREG | 0o644
   });
 }
+function makeEmptyStats() {
+  return Object.assign(makeDefaultStats(), {
+    nlink: 0,
+    blocks: 0,
+    mode: 0
+  });
+}
+function areStatsEqual(a, b) {
+  if (a.atimeMs !== b.atimeMs) return false;
+  if (a.birthtimeMs !== b.birthtimeMs) return false;
+  if (a.blksize !== b.blksize) return false;
+  if (a.blocks !== b.blocks) return false;
+  if (a.ctimeMs !== b.ctimeMs) return false;
+  if (a.dev !== b.dev) return false;
+  if (a.gid !== b.gid) return false;
+  if (a.ino !== b.ino) return false;
+  if (a.isBlockDevice() !== b.isBlockDevice()) return false;
+  if (a.isCharacterDevice() !== b.isCharacterDevice()) return false;
+  if (a.isDirectory() !== b.isDirectory()) return false;
+  if (a.isFIFO() !== b.isFIFO()) return false;
+  if (a.isFile() !== b.isFile()) return false;
+  if (a.isSocket() !== b.isSocket()) return false;
+  if (a.isSymbolicLink() !== b.isSymbolicLink()) return false;
+  if (a.mode !== b.mode) return false;
+  if (a.mtimeMs !== b.mtimeMs) return false;
+  if (a.nlink !== b.nlink) return false;
+  if (a.rdev !== b.rdev) return false;
+  if (a.size !== b.size) return false;
+  if (a.uid !== b.uid) return false;
+  return true;
+}
+// CONCATENATED MODULE: ../yarnpkg-fslib/sources/algorithms/watchFile/CustomStatWatcher.ts
+
+
+var Event;
+
+(function (Event) {
+  Event["Change"] = "change";
+  Event["Stop"] = "stop";
+})(Event || (Event = {}));
+
+var Status;
+
+(function (Status) {
+  Status["Ready"] = "ready";
+  Status["Running"] = "running";
+  Status["Stopped"] = "stopped";
+})(Status || (Status = {}));
+
+function assertStatus(current, expected) {
+  if (current !== expected) {
+    throw new Error(`Invalid StatWatcher status: expected '${expected}', got '${current}'`);
+  }
+}
+class CustomStatWatcher extends external_events_.EventEmitter {
+  constructor(fakeFs, path, {
+    bigint = false
+  } = {}) {
+    super();
+    this.status = Status.Ready;
+    this.changeListeners = new Map();
+    this.fakeFs = fakeFs;
+    this.path = path;
+    this.bigint = bigint;
+    this.lastStats = this.stat();
+  }
+
+  static create(fakeFs, path, opts) {
+    const statWatcher = new CustomStatWatcher(fakeFs, path, opts);
+    statWatcher.start();
+    return statWatcher;
+  }
+
+  start() {
+    assertStatus(this.status, Status.Ready);
+    this.status = Status.Running; // Node allows other listeners to be registered up to 3 milliseconds
+    // after the watcher has been started, so that's what we're doing too
+
+    setTimeout(() => {
+      // Per the Node FS docs:
+      // "When an fs.watchFile operation results in an ENOENT error,
+      // it will invoke the listener once, with all the fields zeroed
+      // (or, for dates, the Unix Epoch)."
+      if (!this.fakeFs.existsSync(this.path)) {
+        this.emit(Event.Change, this.lastStats, this.lastStats);
+      }
+    }, 3);
+  }
+
+  stop() {
+    assertStatus(this.status, Status.Running);
+    this.status = Status.Stopped;
+    this.emit(Event.Stop);
+  }
+
+  stat() {
+    try {
+      return this.fakeFs.statSync(this.path);
+    } catch (error) {
+      if (error.code === `ENOENT`) {
+        return makeEmptyStats();
+      } else {
+        throw error;
+      }
+    }
+  }
+  /**
+   * Creates an interval whose callback compares the current stats with the previous stats and notifies all listeners in case of changes.
+   *
+   * @param opts.persistent Decides whether the interval should be immediately unref-ed.
+   */
+
+
+  makeInterval(opts) {
+    const interval = setInterval(() => {
+      const currentStats = this.stat();
+      const previousStats = this.lastStats;
+      if (areStatsEqual(currentStats, previousStats)) return;
+      this.lastStats = currentStats;
+      this.emit(Event.Change, currentStats, previousStats);
+    }, opts.interval);
+    return opts.persistent ? interval : interval.unref();
+  }
+  /**
+   * Registers a listener and assigns it an interval.
+   */
+
+
+  registerChangeListener(listener, opts) {
+    this.addListener(Event.Change, listener);
+    this.changeListeners.set(listener, this.makeInterval(opts));
+  }
+  /**
+   * Unregisters the listener and clears the assigned interval.
+   */
+
+
+  unregisterChangeListener(listener) {
+    this.removeListener(Event.Change, listener);
+    const interval = this.changeListeners.get(listener);
+    if (typeof interval !== `undefined`) clearInterval(interval);
+    this.changeListeners.delete(listener);
+  }
+  /**
+   * Unregisters all listeners and clears all assigned intervals.
+   */
+
+
+  unregisterAllChangeListeners() {
+    for (const listener of this.changeListeners.keys()) {
+      this.unregisterChangeListener(listener);
+    }
+  }
+
+  hasChangeListeners() {
+    return this.changeListeners.size > 0;
+  }
+  /**
+   * Refs all stored intervals.
+   */
+
+
+  ref() {
+    for (const interval of this.changeListeners.values()) interval.ref();
+
+    return this;
+  }
+  /**
+   * Unrefs all stored intervals.
+   */
+
+
+  unref() {
+    for (const interval of this.changeListeners.values()) interval.unref();
+
+    return this;
+  }
+
+}
+// CONCATENATED MODULE: ../yarnpkg-fslib/sources/algorithms/watchFile.ts
+
+const statWatchersByFakeFS = new WeakMap();
+function watchFile(fakeFs, path, a, b) {
+  let bigint;
+  let persistent;
+  let interval;
+  let listener;
+
+  switch (typeof a) {
+    case `function`:
+      {
+        bigint = false;
+        persistent = true;
+        interval = 5007;
+        listener = a;
+      }
+      break;
+
+    default:
+      {
+        ({
+          bigint = false,
+          persistent = true,
+          interval = 5007
+        } = a);
+        listener = b;
+      }
+      break;
+  }
+
+  let statWatchers = statWatchersByFakeFS.get(fakeFs);
+  if (typeof statWatchers === `undefined`) statWatchersByFakeFS.set(fakeFs, statWatchers = new Map());
+  let statWatcher = statWatchers.get(path);
+
+  if (typeof statWatcher === `undefined`) {
+    statWatcher = CustomStatWatcher.create(fakeFs, path, {
+      bigint
+    });
+    statWatchers.set(path, statWatcher);
+  }
+
+  statWatcher.registerChangeListener(listener, {
+    persistent,
+    interval
+  });
+  return statWatcher;
+}
+function unwatchFile(fakeFs, path, cb) {
+  const statWatchers = statWatchersByFakeFS.get(fakeFs);
+  if (typeof statWatchers === `undefined`) return;
+  const statWatcher = statWatchers.get(path);
+  if (typeof statWatcher === `undefined`) return;
+  if (typeof cb === `undefined`) statWatcher.unregisterAllChangeListeners();else statWatcher.unregisterChangeListener(cb);
+
+  if (!statWatcher.hasChangeListeners()) {
+    statWatcher.stop();
+    statWatchers.delete(path);
+  }
+}
+function unwatchAllFiles(fakeFs) {
+  const statWatchers = statWatchersByFakeFS.get(fakeFs);
+  if (typeof statWatchers === `undefined`) return;
+
+  for (const path of statWatchers.keys()) {
+    unwatchFile(fakeFs, path);
+  }
+}
+// CONCATENATED MODULE: ../yarnpkg-fslib/sources/ZipFS.ts
+
+
+
+
+
+
+
+
+
+
+
+const DEFAULT_COMPRESSION_LEVEL = `mixed`;
 
 function toUnixTimestamp(time) {
   if (typeof time === `string` && String(+time) === time) return +time; // @ts-ignore
@@ -37559,7 +37830,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   getBufferAndClose() {
-    if (!this.ready) throw EBUSY(`archive closed, close`);
+    this.prepareClose();
     if (!this.lzSource) throw new Error(`ZipFS was not created from a Buffer`);
 
     try {
@@ -37594,9 +37865,14 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     }
   }
 
+  prepareClose() {
+    if (!this.ready) throw EBUSY(`archive closed, close`);
+    unwatchAllFiles(this);
+  }
+
   saveAndClose() {
     if (!this.path || !this.baseFs) throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);
-    if (!this.ready) throw EBUSY(`archive closed, close`);
+    this.prepareClose();
 
     if (this.readOnly) {
       this.discardAndClose();
@@ -37616,7 +37892,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   discardAndClose() {
-    if (!this.ready) throw EBUSY(`archive closed, close`);
+    this.prepareClose();
     this.libzip.discard(this.zip);
     this.ready = false;
   }
@@ -37925,6 +38201,15 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
     if (this.isSymbolicLink(entry)) {
       this.symlinkCount--;
+    }
+  }
+
+  deleteEntry(p, index) {
+    this.unregisterEntry(p);
+    const rc = this.libzip.delete(this.zip, index);
+
+    if (rc === -1) {
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
     }
   }
 
@@ -38255,12 +38540,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     if (this.listings.has(resolvedP)) throw EISDIR(`unlink '${p}'`);
     const index = this.entries.get(resolvedP);
     if (typeof index === `undefined`) throw EINVAL(`unlink '${p}'`);
-    this.unregisterEntry(resolvedP);
-    const rc = this.libzip.delete(this.zip, index);
-
-    if (rc === -1) {
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    }
+    this.deleteEntry(resolvedP, index);
   }
 
   async utimesPromise(p, atime, mtime) {
@@ -38328,12 +38608,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     if (directoryListing.size > 0) throw ENOTEMPTY(`rmdir '${p}'`);
     const index = this.entries.get(resolvedP);
     if (typeof index === `undefined`) throw EINVAL(`rmdir '${p}'`);
-    this.unregisterEntry(resolvedP);
-    const rc = this.libzip.delete(this.zip, index);
-
-    if (rc === -1) {
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    }
+    this.deleteEntry(p, index);
   }
 
   hydrateDirectory(resolvedP) {
@@ -38486,7 +38761,6 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
       default:
         {
-          // @ts-ignore
           ({
             persistent = true
           } = a);
@@ -38505,6 +38779,16 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
         clearInterval(interval);
       }
     };
+  }
+
+  watchFile(p, a, b) {
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    return watchFile(this, resolvedP, a, b);
+  }
+
+  unwatchFile(p, cb) {
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    return unwatchFile(this, resolvedP, cb);
   }
 
 }
@@ -39295,6 +39579,28 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
     });
   }
 
+  watchFile(p, a, b) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.watchFile(p, // @ts-ignore
+      a, b);
+    }, (zipFs, {
+      subPath
+    }) => {
+      return zipFs.watchFile(subPath, // @ts-ignore
+      a, b);
+    });
+  }
+
+  unwatchFile(p, cb) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.unwatchFile(p, cb);
+    }, (zipFs, {
+      subPath
+    }) => {
+      return zipFs.unwatchFile(subPath, cb);
+    });
+  }
+
   async makeCallPromise(p, discard, accept, {
     requireSubpath = true
   } = {}) {
@@ -39356,9 +39662,10 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
 
     for (const [path, {
       zipFs,
-      expiresAt
+      expiresAt,
+      refCount
     }] of this.zipInstances.entries()) {
-      if (zipFs.hasOpenFileHandles()) {
+      if (refCount !== 0 || zipFs.hasOpenFileHandles()) {
         continue;
       } else if (now >= expiresAt) {
         zipFs.saveAndClose();
@@ -39403,7 +39710,8 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
         if (!cachedZipFs) {
           cachedZipFs = {
             zipFs: new ZipFS(p, zipOptions),
-            expiresAt: 0
+            expiresAt: 0,
+            refCount: 0
           };
         }
       } // Removing then re-adding the field allows us to easily implement
@@ -39414,7 +39722,13 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
       this.limitOpenFiles(this.maxOpenFiles - 1);
       this.zipInstances.set(p, cachedZipFs);
       cachedZipFs.expiresAt = Date.now() + this.maxAge;
-      return await accept(cachedZipFs.zipFs);
+      cachedZipFs.refCount += 1;
+
+      try {
+        return await accept(cachedZipFs.zipFs);
+      } finally {
+        cachedZipFs.refCount -= 1;
+      }
     } else {
       const zipFs = new ZipFS(p, await getZipOptions());
 
@@ -39440,7 +39754,8 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
       if (!cachedZipFs) {
         cachedZipFs = {
           zipFs: new ZipFS(p, getZipOptions()),
-          expiresAt: 0
+          expiresAt: 0,
+          refCount: 0
         };
       } // Removing then re-adding the field allows us to easily implement
       // a basic LRU garbage collection strategy
@@ -39659,6 +39974,8 @@ var external_os_default = /*#__PURE__*/__webpack_require__.n(external_os_);
 
 
 
+
+
 function getTempName(prefix) {
   const tmpdir = sources_path/* npath.toPortablePath */.cS.toPortablePath(external_os_default().tmpdir());
   const hash = Math.ceil(Math.random() * 0x100000000).toString(16).padStart(8, `0`);
@@ -39666,7 +39983,7 @@ function getTempName(prefix) {
 }
 
 function patchFs(patchedFs, fakeFs) {
-  const SYNC_IMPLEMENTATIONS = new Set([`accessSync`, `appendFileSync`, `createReadStream`, `chmodSync`, `chownSync`, `closeSync`, `copyFileSync`, `linkSync`, `lstatSync`, `lutimesSync`, `mkdirSync`, `openSync`, `readSync`, `readlinkSync`, `readFileSync`, `readdirSync`, `readlinkSync`, `realpathSync`, `renameSync`, `rmdirSync`, `statSync`, `symlinkSync`, `truncateSync`, `unlinkSync`, `utimesSync`, `watch`, `writeFileSync`, `writeSync`]);
+  const SYNC_IMPLEMENTATIONS = new Set([`accessSync`, `appendFileSync`, `createReadStream`, `chmodSync`, `chownSync`, `closeSync`, `copyFileSync`, `linkSync`, `lstatSync`, `lutimesSync`, `mkdirSync`, `openSync`, `readSync`, `readlinkSync`, `readFileSync`, `readdirSync`, `readlinkSync`, `realpathSync`, `renameSync`, `rmdirSync`, `statSync`, `symlinkSync`, `truncateSync`, `unlinkSync`, `unwatchFile`, `utimesSync`, `watch`, `watchFile`, `writeFileSync`, `writeSync`]);
   const ASYNC_IMPLEMENTATIONS = new Set([`accessPromise`, `appendFilePromise`, `chmodPromise`, `chownPromise`, `closePromise`, `copyFilePromise`, `linkPromise`, `lstatPromise`, `lutimesPromise`, `mkdirPromise`, `openPromise`, `readdirPromise`, `realpathPromise`, `readFilePromise`, `readdirPromise`, `readlinkPromise`, `renamePromise`, `rmdirPromise`, `statPromise`, `symlinkPromise`, `truncatePromise`, `unlinkPromise`, `utimesPromise`, `writeFilePromise`, `writeSync`]);
   const FILEHANDLE_IMPLEMENTATIONS = new Set([`appendFilePromise`, `chmodPromise`, `chownPromise`, `closePromise`, `readPromise`, `readFilePromise`, `statPromise`, `truncatePromise`, `utimesPromise`, `writePromise`, `writeFilePromise`]);
 
@@ -45754,6 +46071,14 @@ module.exports = require("crypto");
 
 /***/ }),
 
+/***/ 614:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("events");
+
+/***/ }),
+
 /***/ 747:
 /***/ ((module) => {
 
@@ -45885,7 +46210,7 @@ module.exports = require("zlib");
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(936);
+/******/ 	return __webpack_require__(170);
 /******/ })()
 .default;
 });

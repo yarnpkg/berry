@@ -1,15 +1,15 @@
-import {Dirent, Filename, MkdirOptions,ExtractHintOptions} from '@yarnpkg/fslib';
-import {FSPath, NativePath, PortablePath, npath, ppath}    from '@yarnpkg/fslib';
-import {WatchOptions, WatchCallback, Watcher}              from '@yarnpkg/fslib';
-import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}       from '@yarnpkg/fslib';
-import {CreateReadStreamOptions, CreateWriteStreamOptions} from '@yarnpkg/fslib';
-import {PnpApi}                                            from '@yarnpkg/pnp';
-import fs                                                  from 'fs';
+import {Dirent, Filename, MkdirOptions,ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from '@yarnpkg/fslib';
+import {FSPath, NativePath, PortablePath, npath, ppath}                                                      from '@yarnpkg/fslib';
+import {WatchOptions, WatchCallback, Watcher}                                                                from '@yarnpkg/fslib';
+import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                                                         from '@yarnpkg/fslib';
+import {CreateReadStreamOptions, CreateWriteStreamOptions}                                                   from '@yarnpkg/fslib';
+import {PnpApi}                                                                                              from '@yarnpkg/pnp';
+import fs                                                                                                    from 'fs';
 
-import {WatchManager}                                      from './WatchManager';
-import {NodeModulesTreeOptions, NodeModulesTree}           from './buildNodeModulesTree';
-import {buildNodeModulesTree}                              from './buildNodeModulesTree';
-import {resolveNodeModulesPath, ResolvedPath}              from './resolveNodeModulesPath';
+import {WatchManager}                                                                                        from './WatchManager';
+import {NodeModulesTreeOptions, NodeModulesTree}                                                             from './buildNodeModulesTree';
+import {buildNodeModulesTree}                                                                                from './buildNodeModulesTree';
+import {resolveNodeModulesPath, ResolvedPath}                                                                from './resolveNodeModulesPath';
 
 export type NodeModulesFSOptions = {
   realFs?: typeof fs,
@@ -491,11 +491,26 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
       return this.watchManager.registerWatcher(watchPath, pnpPath.dirList, callback);
     } else {
       return this.baseFs.watch(
-        p,
+        this.resolveDirOrFilePath(p),
         // @ts-ignore
         a,
         b,
       );
     }
+  }
+
+  watchFile(p: PortablePath, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, opts: WatchFileOptions, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback): StatWatcher {
+    return this.baseFs.watchFile(
+      this.resolveDirOrFilePath(p),
+      // @ts-ignore
+      a,
+      b,
+    );
+  }
+
+  unwatchFile(p: PortablePath, cb?: WatchFileCallback) {
+    return this.baseFs.unwatchFile(this.resolveDirOrFilePath(p), cb);
   }
 }

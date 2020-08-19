@@ -1,13 +1,13 @@
-import {Libzip}                                                                                    from '@yarnpkg/libzip';
-import {constants}                                                                                 from 'fs';
+import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
+import {constants}                                                                                                                                   from 'fs';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions} from './FakeFS';
-import {Dirent, SymlinkType}                                                                       from './FakeFS';
-import {FakeFS, MkdirOptions, WriteFileOptions}                                                    from './FakeFS';
-import {WatchOptions, WatchCallback, Watcher}                                                      from './FakeFS';
-import {NodeFS}                                                                                    from './NodeFS';
-import {ZipFS}                                                                                     from './ZipFS';
-import {Filename, FSPath, PortablePath}                                                            from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileOptions, WatchFileCallback, StatWatcher} from './FakeFS';
+import {Dirent, SymlinkType}                                                                                                                         from './FakeFS';
+import {FakeFS, MkdirOptions, WriteFileOptions}                                                                                                      from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher}                                                                                                        from './FakeFS';
+import {NodeFS}                                                                                                                                      from './NodeFS';
+import {ZipFS}                                                                                                                                       from './ZipFS';
+import {Filename, FSPath, PortablePath}                                                                                                              from './path';
 
 const ZIP_FD = 0x80000000;
 
@@ -42,7 +42,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
   private readonly baseFs: FakeFS<PortablePath>;
 
-  private readonly zipInstances: Map<string, {zipFs: ZipFS, expiresAt: number}> | null;
+  private readonly zipInstances: Map<string, {zipFs: ZipFS, expiresAt: number, refCount: number}> | null;
 
   private readonly fdMap: Map<number, [ZipFS, number]> = new Map();
   private nextFd = 3;
@@ -708,6 +708,34 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
+  watchFile(p: PortablePath, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, opts: WatchFileOptions, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.watchFile(
+        p,
+        // @ts-ignore
+        a,
+        b,
+      );
+    }, (zipFs, {subPath}) => {
+      return zipFs.watchFile(
+        subPath,
+        // @ts-ignore
+        a,
+        b,
+      );
+    });
+  }
+
+  unwatchFile(p: PortablePath, cb?: WatchFileCallback) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.unwatchFile(p, cb);
+    }, (zipFs, {subPath}) => {
+      return zipFs.unwatchFile(subPath, cb);
+    });
+  }
+
   private async makeCallPromise<T>(p: FSPath<PortablePath>, discard: () => Promise<T>, accept: (zipFS: ZipFS, zipInfo: {archivePath: PortablePath, subPath: PortablePath}) => Promise<T>, {requireSubpath = true}: {requireSubpath?: boolean} = {}): Promise<T> {
     if (typeof p !== `string`)
       return await discard();
@@ -785,8 +813,8 @@ export class ZipOpenFS extends BasePortableFakeFS {
     let nextExpiresAt = now + this.maxAge;
     let closeCount = max === null ? 0 : this.zipInstances.size - max;
 
-    for (const [path, {zipFs, expiresAt}] of this.zipInstances.entries()) {
-      if (zipFs.hasOpenFileHandles()) {
+    for (const [path, {zipFs, expiresAt, refCount}] of this.zipInstances.entries()) {
+      if (refCount !== 0 || zipFs.hasOpenFileHandles()) {
         continue;
       } else if (now >= expiresAt) {
         zipFs.saveAndClose();
@@ -832,6 +860,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
           cachedZipFs = {
             zipFs: new ZipFS(p, zipOptions),
             expiresAt: 0,
+            refCount: 0,
           };
         }
       }
@@ -843,7 +872,12 @@ export class ZipOpenFS extends BasePortableFakeFS {
       this.zipInstances.set(p, cachedZipFs);
 
       cachedZipFs.expiresAt = Date.now() + this.maxAge;
-      return await accept(cachedZipFs.zipFs);
+      cachedZipFs.refCount += 1;
+      try {
+        return await accept(cachedZipFs.zipFs);
+      } finally {
+        cachedZipFs.refCount -= 1;
+      }
     } else {
       const zipFs = new ZipFS(p, await getZipOptions());
 
@@ -870,6 +904,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
         cachedZipFs = {
           zipFs: new ZipFS(p, getZipOptions()),
           expiresAt: 0,
+          refCount: 0,
         };
       }
 

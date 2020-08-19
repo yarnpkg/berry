@@ -1,3 +1,4 @@
+import {EventEmitter}                                         from 'events';
 import {Dirent as NodeDirent, ReadStream, Stats, WriteStream} from 'fs';
 import {EOL}                                                  from 'os';
 
@@ -37,6 +38,12 @@ export type WatchOptions = Partial<{
   encoding: string,
 }> | string;
 
+export type WatchFileOptions = Partial<{
+  bigint: boolean,
+  persistent: boolean,
+  interval: number,
+}>;
+
 export type ChangeFileOptions = Partial<{
   automaticNewlines: boolean,
 }>;
@@ -48,7 +55,18 @@ export type WatchCallback = (
 
 export type Watcher = {
   on: any,
-  close: () => void;
+  close: () => void,
+};
+
+export type WatchFileCallback = (
+  current: Stats,
+  previous: Stats,
+) => void;
+
+export type StatWatcher = EventEmitter & {
+  // Node 14+
+  ref?: () => StatWatcher,
+  unref?: () => StatWatcher,
 };
 
 export type ExtractHintOptions = {
@@ -167,6 +185,11 @@ export abstract class FakeFS<P extends Path> {
 
   abstract watch(p: P, cb?: WatchCallback): Watcher;
   abstract watch(p: P, opts: WatchOptions, cb?: WatchCallback): Watcher;
+
+  abstract watchFile(p: P, cb: WatchFileCallback): StatWatcher;
+  abstract watchFile(p: P, opts: WatchFileOptions, cb: WatchFileCallback): StatWatcher;
+
+  abstract unwatchFile(p: P, cb?: WatchFileCallback): void;
 
   async * genTraversePromise(init: P, {stableSort = false}: {stableSort?: boolean} = {}) {
     const stack = [init];

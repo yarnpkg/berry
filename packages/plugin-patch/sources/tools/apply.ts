@@ -1,7 +1,7 @@
-import {miscUtils, semverUtils}              from '@yarnpkg/core';
-import {FakeFS, ppath, NodeFS, PortablePath} from '@yarnpkg/fslib';
+import {miscUtils, semverUtils, MessageName, ReportError} from '@yarnpkg/core';
+import {FakeFS, ppath, NodeFS, PortablePath}              from '@yarnpkg/fslib';
 
-import {ParsedPatchFile, FilePatch, Hunk}    from './parse';
+import {ParsedPatchFile, FilePatch, Hunk}                 from './parse';
 
 const DEFAULT_TIME = 315532800;
 
@@ -31,7 +31,7 @@ export async function applyPatchFile(effects: ParsedPatchFile, {baseFs = new Nod
       case `file deletion`: {
         if (dryRun) {
           if (!baseFs.existsSync(eff.path)) {
-            throw new Error(`Trying to delete file that doesn't exist: ${eff.path}`);
+            throw new Error(`Trying to delete a file that doesn't exist: ${eff.path}`);
           }
         } else {
           await preserveTime(baseFs, ppath.dirname(eff.path), async () => {
@@ -43,7 +43,7 @@ export async function applyPatchFile(effects: ParsedPatchFile, {baseFs = new Nod
       case `rename`: {
         if (dryRun) {
           if (!baseFs.existsSync(eff.fromPath)) {
-            throw new Error(`Trying to move file that doesn't exist: ${eff.fromPath}`);
+            throw new Error(`Trying to move a file that doesn't exist: ${eff.fromPath}`);
           }
         } else {
           await preserveTime(baseFs, ppath.dirname(eff.fromPath), async () => {
@@ -60,7 +60,7 @@ export async function applyPatchFile(effects: ParsedPatchFile, {baseFs = new Nod
       case `file creation`: {
         if (dryRun) {
           if (baseFs.existsSync(eff.path)) {
-            throw new Error(`Trying to create file that already exists: ${eff.path}`);
+            throw new Error(`Trying to create a file that already exists: ${eff.path}`);
           }
         } else {
           const fileContents = eff.hunk
@@ -180,7 +180,7 @@ export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = fal
     }
 
     if (modifications === null)
-      throw new Error(`Cannot apply hunk #${hunks.indexOf(hunk) + 1}`);
+      throw new ReportError(MessageName.PATCH_HUNK_FAILED, `Cannot apply hunk #${hunks.indexOf(hunk) + 1}`);
 
     result.push(modifications);
 

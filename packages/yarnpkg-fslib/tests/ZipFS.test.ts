@@ -1,8 +1,9 @@
 import {getLibzipSync}                 from '@yarnpkg/libzip';
 import {Stats}                         from 'fs';
 
+import {ZipFS}                         from '../sources/ZipFS';
 import {PortablePath, ppath, Filename} from '../sources/path';
-import {xfs, ZipFS}                    from '../sources';
+import {xfs, statUtils}                from '../sources';
 
 describe(`ZipFS`, () => {
   it(`should handle symlink correctly`, () => {
@@ -331,6 +332,86 @@ describe(`ZipFS`, () => {
     expect(zipFs.readFileSync(file, `utf8`)).toStrictEqual(``);
 
     zipFs.discardAndClose();
+  });
+
+  it(`should support watchFile and unwatchFile`, () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const file = `/foo.txt` as PortablePath;
+
+    const emptyStats = statUtils.makeEmptyStats();
+
+    const changeListener = jest.fn();
+    const stopListener = jest.fn();
+
+    jest.useFakeTimers();
+
+    const statWatcher = zipFs.watchFile(file, {interval: 1000}, changeListener);
+    statWatcher.on(`stop`, stopListener);
+
+    // The listener should be initially called with empty stats if the path doesn't exist,
+    // but only after 3 milliseconds, so that other listeners can be registered in that timespan
+    // (That's what Node does)
+
+    expect(changeListener).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(3);
+
+    expect(changeListener).toHaveBeenCalledTimes(1);
+    expect(changeListener).toHaveBeenCalledWith(emptyStats, emptyStats);
+
+    // The watcher should pick up changes in content
+
+    zipFs.writeFileSync(file, `Hello World`);
+    const first = zipFs.statSync(file);
+
+    jest.advanceTimersByTime(1000);
+
+    expect(changeListener).toHaveBeenCalledTimes(2);
+    expect(changeListener).toHaveBeenCalledWith(first, emptyStats);
+
+    // The watcher should only pick up the last changes in an interval
+
+    zipFs.writeFileSync(file, `This shouldn't be picked up`);
+
+    zipFs.writeFileSync(file, `Goodbye World`);
+    const second = zipFs.statSync(file);
+
+    jest.advanceTimersByTime(1000);
+
+    expect(changeListener).toHaveBeenCalledTimes(3);
+    expect(changeListener).toHaveBeenCalledWith(second, first);
+
+    // The watcher should pick up deletions
+
+    zipFs.unlinkSync(file);
+
+    jest.advanceTimersByTime(1000);
+
+    expect(changeListener).toHaveBeenCalledTimes(4);
+    expect(changeListener).toHaveBeenCalledWith(emptyStats, second);
+
+    // unwatchFile should work
+
+    expect(stopListener).not.toHaveBeenCalled();
+
+    zipFs.unwatchFile(file, changeListener);
+
+    // The stop event should be emitted when there are no remaining change listeners
+    expect(stopListener).toHaveBeenCalledTimes(1);
+
+    // The listener shouldn't be called after the file is unwatched
+
+    zipFs.writeFileSync(file, `Test`);
+
+    jest.advanceTimersByTime(1000);
+
+    expect(changeListener).toHaveBeenCalledTimes(4);
+
+    zipFs.discardAndClose();
+
+    // The watcher shouldn't keep the process running after the file is unwatched
   });
 });
 

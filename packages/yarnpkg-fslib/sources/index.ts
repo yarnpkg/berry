@@ -5,6 +5,9 @@ import {promisify}                                        from 'util';
 import {FakeFS}                                           from './FakeFS';
 import {NodeFS}                                           from './NodeFS';
 import {Filename, PortablePath, NativePath, npath, ppath} from './path';
+import * as statUtils                                     from './statUtils';
+
+export {statUtils};
 
 export {normalizeLineEndings}          from './FakeFS';
 export type {CreateReadStreamOptions}  from './FakeFS';
@@ -16,6 +19,9 @@ export type {WatchCallback}            from './FakeFS';
 export type {Watcher}                  from './FakeFS';
 export type {WriteFileOptions}         from './FakeFS';
 export type {ExtractHintOptions}       from './FakeFS';
+export type {WatchFileOptions}         from './FakeFS';
+export type {WatchFileCallback}        from './FakeFS';
+export type {StatWatcher}              from './FakeFS';
 
 export {DEFAULT_COMPRESSION_LEVEL}     from './ZipFS';
 export type {ZipCompression}           from './ZipFS';
@@ -71,8 +77,10 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `symlinkSync`,
     `truncateSync`,
     `unlinkSync`,
+    `unwatchFile`,
     `utimesSync`,
     `watch`,
+    `watchFile`,
     `writeFileSync`,
     `writeSync`,
   ]);
