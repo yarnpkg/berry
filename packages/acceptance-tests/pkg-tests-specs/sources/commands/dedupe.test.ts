@@ -85,6 +85,116 @@ describe(`Commands`, () => {
       });
     });
 
+    describe(`patterns`, () => {
+      it(
+        `should support selective dedupe (ident)`,
+        makeTemporaryEnv({}, async ({path, run, source}) => {
+          await setPackageWhitelist(new Map([
+            [`no-deps`, new Set([`1.0.0`])],
+            [`@types/is-number`, new Set([`1.0.0`])],
+          ]), async () => {
+            await run(`add`, `two-range-deps`);
+          });
+
+          await run(`add`, `no-deps@1.1.0`, `@types/is-number@2.0.0`);
+
+          await run(`dedupe`, `no-deps`);
+
+          await expect(source(`require('two-range-deps')`)).resolves.toMatchObject({
+            dependencies: {
+              [`no-deps`]: {
+                version: `1.1.0`,
+              },
+              [`@types/is-number`]: {
+                version: `1.0.0`,
+              },
+            },
+          });
+        })
+      );
+
+      it(
+        `should support selective dedupe (scoped ident)`,
+        makeTemporaryEnv({}, async ({path, run, source}) => {
+          await setPackageWhitelist(new Map([
+            [`no-deps`, new Set([`1.0.0`])],
+            [`@types/is-number`, new Set([`1.0.0`])],
+          ]), async () => {
+            await run(`add`, `two-range-deps`);
+          });
+
+          await run(`add`, `no-deps@1.1.0`, `@types/is-number@2.0.0`);
+
+          await run(`dedupe`, `@types/is-number`);
+
+          await expect(source(`require('two-range-deps')`)).resolves.toMatchObject({
+            dependencies: {
+              [`no-deps`]: {
+                version: `1.0.0`,
+              },
+              [`@types/is-number`]: {
+                version: `2.0.0`,
+              },
+            },
+          });
+        })
+      );
+
+      it(
+        `should support selective dedupe (ident glob)`,
+        makeTemporaryEnv({}, async ({path, run, source}) => {
+          await setPackageWhitelist(new Map([
+            [`no-deps`, new Set([`1.0.0`])],
+            [`@types/is-number`, new Set([`1.0.0`])],
+          ]), async () => {
+            await run(`add`, `two-range-deps`);
+          });
+
+          await run(`add`, `no-deps@1.1.0`, `@types/is-number@2.0.0`);
+
+          await run(`dedupe`, `no-*`);
+
+          await expect(source(`require('two-range-deps')`)).resolves.toMatchObject({
+            dependencies: {
+              [`no-deps`]: {
+                version: `1.1.0`,
+              },
+              [`@types/is-number`]: {
+                version: `1.0.0`,
+              },
+            },
+          });
+        })
+      );
+
+      it(
+        `should support selective dedupe (scoped ident glob)`,
+        makeTemporaryEnv({}, async ({path, run, source}) => {
+          await setPackageWhitelist(new Map([
+            [`no-deps`, new Set([`1.0.0`])],
+            [`@types/is-number`, new Set([`1.0.0`])],
+          ]), async () => {
+            await run(`add`, `two-range-deps`);
+          });
+
+          await run(`add`, `no-deps@1.1.0`, `@types/is-number@2.0.0`);
+
+          await run(`dedupe`, `@types/*`);
+
+          await expect(source(`require('two-range-deps')`)).resolves.toMatchObject({
+            dependencies: {
+              [`no-deps`]: {
+                version: `1.0.0`,
+              },
+              [`@types/is-number`]: {
+                version: `2.0.0`,
+              },
+            },
+          });
+        })
+      );
+    });
+
     describe(`flags`, () => {
       describe(`-c,--check`, () => {
         it(
