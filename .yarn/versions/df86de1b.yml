@@ -1,0 +1,3 @@
+releases:
+  "@yarnpkg/doctor": minor
+  "@yarnpkg/plugin-typescript": minor

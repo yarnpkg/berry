@@ -7,7 +7,9 @@ import semver                                                                   
 
 import {hasDefinitelyTyped}                                                                                from './typescriptUtils';
 
-const getTypesName = (descriptor: Descriptor) => {
+export {hasDefinitelyTyped};
+
+export const getTypesName = (descriptor: Descriptor) => {
   return descriptor.scope
     ? `${descriptor.scope}__${descriptor.name}`
     : `${descriptor.name}`;

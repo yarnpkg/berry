@@ -3,6 +3,7 @@
 import {getPluginConfiguration}                                                                                                                                                                            from '@yarnpkg/cli';
 import {Cache, Configuration, Project, Report, Workspace, structUtils, ProjectLookup, Manifest, Descriptor, HardDependencies, ThrowReport, StreamReport, MessageName, Ident, ResolveOptions, FetchOptions} from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs}                                                                                                                                                                   from '@yarnpkg/fslib';
+import {hasDefinitelyTyped, getTypesName}                                                                                                                                                                  from '@yarnpkg/plugin-typescript';
 import {Cli, Command}                                                                                                                                                                                      from 'clipanion';
 import globby                                                                                                                                                                                              from 'globby';
 import micromatch                                                                                                                                                                                          from 'micromatch';
@@ -235,6 +236,33 @@ async function checkForUnmetPeerDependency(workspace: Workspace, dependencyType:
   report.reportError(MessageName.UNNAMED, `${prettyLocation}: Unmet transitive peer dependency on ${structUtils.prettyDescriptor(configuration, peer)}, via ${structUtils.prettyDescriptor(configuration, via)}`);
 }
 
+async function checkForUnmentTypes(workspace: Workspace, dependencyType: HardDependencies, via: Descriptor, {configuration, report}: {configuration: Configuration, report: Report}) {
+  if (via.scope === `types`)
+    return;
+
+  const typesIdent = structUtils.makeIdent(`types`, getTypesName(via));
+
+  if (workspace.manifest.hasHardDependency(typesIdent))
+    return;
+
+  const requiresInstallTypes = await hasDefinitelyTyped(via, configuration);
+  if (!requiresInstallTypes)
+    return;
+
+  const propertyNode = await buildJsonNode(ppath.join(workspace.cwd, Manifest.fileName), [
+    dependencyType,
+    structUtils.stringifyIdent(via),
+  ]);
+  const prettyLocation = ast.prettyNodeLocation(configuration, propertyNode);
+
+  report.reportError(
+    MessageName.UNNAMED,
+    `${prettyLocation}: Undeclared ${
+      dependencyType === `dependencies` ? `dependency` : `devDependency`
+    } on ${structUtils.prettyIdent(configuration, typesIdent)}`
+  );
+}
+
 async function makeResolveFn(project: Project) {
   const cache = await Cache.find(project.configuration);
 
@@ -256,7 +284,7 @@ async function makeResolveFn(project: Project) {
   };
 }
 
-async function processManifest(workspace: Workspace, {configuration, report}: {configuration: Configuration, report: Report}) {
+async function processManifest(workspace: Workspace, {configuration, report, isTypescript}: {configuration: Configuration, report: Report, isTypescript: boolean}) {
   const resolveFn = await makeResolveFn(workspace.project);
 
   for (const dependencyType of Manifest.hardDependencies) {
@@ -275,6 +303,9 @@ async function processManifest(workspace: Workspace, {configuration, report}: {c
         continue;
       }
 
+      if (isTypescript)
+        await checkForUnmentTypes(workspace, dependencyType, viaDescriptor, {configuration, report});
+
       for (const peerDescriptor of pkg.peerDependencies.values()) {
         // No need to check optional peer dependencies at all
         const peerDependencyMeta = pkg.peerDependenciesMeta.get(structUtils.stringifyIdent(peerDescriptor));
@@ -287,7 +318,7 @@ async function processManifest(workspace: Workspace, {configuration, report}: {c
   }
 }
 
-async function processWorkspace(workspace: Workspace, {configuration, fileList, report}: {configuration: Configuration, fileList: Array<PortablePath>, report: Report}) {
+async function processWorkspace(workspace: Workspace, {configuration, fileList, report, isTypescript}: {configuration: Configuration, fileList: Array<PortablePath>, report: Report, isTypescript: boolean}) {
   const progress = StreamReport.progressViaCounter(fileList.length + 1);
   const reportedProgress = report.reportProgress(progress);
 
@@ -304,7 +335,7 @@ async function processWorkspace(workspace: Workspace, {configuration, fileList, 
     progress.tick();
   }
 
-  await processManifest(workspace, {configuration, report});
+  await processManifest(workspace, {configuration, report, isTypescript});
   progress.tick();
 
   await reportedProgress;
@@ -313,6 +344,9 @@ async function processWorkspace(workspace: Workspace, {configuration, fileList, 
 class EntryCommand extends Command {
   @Command.Boolean(`--scoped`)
   scoped: boolean = false;
+
+  @Command.Boolean(`--ts`)
+  isTypescript: boolean = false;
 
   @Command.String({required: false})
   cwd: string = `.`;
@@ -399,6 +433,7 @@ class EntryCommand extends Command {
                 configuration,
                 fileList,
                 report,
+                isTypescript: this.isTypescript,
               });
             });
           } catch {}

@@ -5416,6 +5416,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.1.1"
     "@yarnpkg/fslib": "workspace:^2.1.0"
     "@yarnpkg/monorepo": "workspace:0.0.0"
+    "@yarnpkg/plugin-typescript": "workspace:^2.1.0"
     clipanion: ^2.4.4
     globby: ^11.0.1
     micromatch: ^4.0.2
@@ -6000,7 +6001,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-typescript@workspace:packages/plugin-typescript":
+"@yarnpkg/plugin-typescript@workspace:^2.1.0, @yarnpkg/plugin-typescript@workspace:packages/plugin-typescript":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-typescript@workspace:packages/plugin-typescript"
   dependencies:
