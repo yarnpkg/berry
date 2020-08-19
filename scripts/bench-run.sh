@@ -111,8 +111,7 @@ case $PACKAGE_MANAGER in
     # Zoltan, if you see this and fix this bug: can you also add an option
     # to skip the bailout? 😁
     bench install-ready \
-      'pnpm remove doesnt-exist' \
-      'pnpm install'
+      'pnpm remove doesnt-exist'
     ;;
   *)
     echo "Invalid package manager ${$1}"
