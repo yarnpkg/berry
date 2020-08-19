@@ -226,6 +226,8 @@ async function checkForUnmetPeerDependency(workspace: Workspace, dependencyType:
     return;
   if (dependencyType === `devDependencies` && workspace.manifest.hasHardDependency(peer))
     return;
+  if (workspace.manifest.name?.identHash === peer.identHash)
+    return;
 
   const propertyNode = await buildJsonNode(ppath.join(workspace.cwd, Manifest.fileName), [dependencyType, structUtils.stringifyIdent(via)]);
   const prettyLocation = ast.prettyNodeLocation(configuration, propertyNode);
