@@ -383,4 +383,35 @@ describe(`hoist`, () => {
     const [A] = Array.from(hoistedTree.dependencies).filter(x => x.name === `A`);
     expect(Array.from(A.dependencies).filter(x => x.name === `B`)).toBeDefined();
   });
+
+  it(`should hoist cyclic peer dependencies`, () => {
+    // . -> A -> B -> C --> D
+    //             -> D --> E
+    //                  --> C
+    //             --> E
+    //
+    //             -> F --> G
+    //             -> G
+    //        -> C --> D
+    //        -> D --> E
+    //             --> C
+    //        -> E --> C
+    // should be hoisted to:
+    // . -> A
+    //   -> B
+    //   -> C
+    //   -> D
+    //   -> E
+    //   -> F
+    //   -> G
+    const tree = {
+      '.': {dependencies: [`A`]},
+      A: {dependencies: [`B`, `C`, `D`, `E`]},
+      B: {dependencies: [`C`, `D`, `E`, `F`, `G`], peerNames: [`E`]},
+      C: {dependencies: [`D`], peerNames: [`D`]},
+      D: {dependencies: [`E`, `C`], peerNames: [`E`, `C`]},
+      E: {dependencies: [`C`], peerNames: [`C`]},
+    };
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
+  });
 });
