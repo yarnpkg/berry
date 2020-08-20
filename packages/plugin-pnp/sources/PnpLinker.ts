@@ -30,8 +30,6 @@ const FORCED_UNPLUG_FILETYPES = new Set([
   `.node`,
 ]);
 
-type YARNRC_PATHS_TREE = Map<Filename, YARNRC_PATHS_TREE>;
-
 export class PnpLinker implements Linker {
   protected mode = `strict`;
 
