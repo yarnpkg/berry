@@ -29,7 +29,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
   const debugLevel = Number(process.env.PNP_DEBUG_LEVEL);
 
-  // @ts-ignore
+  // @ts-expect-error
   const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
 
   // Splits a require request into its components, or return null if the request is a file path
@@ -250,7 +250,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function makeFakeModule(path: NativePath): NodeModule {
-    // @ts-ignore
+    // @ts-expect-error
     const fakeModule = new Module(path, null);
     fakeModule.filename = path;
     fakeModule.paths = Module._nodeModulePaths(path);

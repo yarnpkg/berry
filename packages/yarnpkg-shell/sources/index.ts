@@ -748,7 +748,7 @@ export async function execute(command: string, args: Array<string> = [], {
     isGlobPattern: fastGlob.isDynamicPattern,
     match: (pattern: string, {cwd, fs = xfs}) => fastGlob(pattern, {
       cwd: npath.fromPortablePath(cwd),
-      // @ts-ignore: `fs` is wrapped in `PosixFS`
+      // @ts-expect-error: `fs` is wrapped in `PosixFS`
       fs: new PosixFS(fs),
     }),
   },
