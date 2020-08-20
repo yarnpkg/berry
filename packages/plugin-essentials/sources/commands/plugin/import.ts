@@ -143,6 +143,6 @@ export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {proj
     if (!hasBeenReplaced)
       plugins.push(pluginMeta);
 
-    return {plugins};
+    return {...current, plugins};
   });
 }
