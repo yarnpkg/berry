@@ -29,7 +29,6 @@ export class Workspace {
   // @ts-expect-error: This variable is set during the setup process
   public readonly manifest: Manifest;
 
-  // @ts-expect-error: This variable is set during the setup process
   public readonly workspacesCwds: Set<PortablePath> = new Set();
 
   // Generated at resolution; basically dependencies + devDependencies + child workspaces

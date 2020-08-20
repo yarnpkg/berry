@@ -33,7 +33,6 @@ function toUnixTimestamp(time: Date | string | number) {
   if (typeof time === `string` && String(+time) === time)
     return +time;
 
-  // @ts-expect-error
   if (Number.isFinite(time)) {
     if (time < 0) {
       return Date.now() / 1000;

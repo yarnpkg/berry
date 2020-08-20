@@ -33,10 +33,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   // @ts-expect-error
   process.versions.pnp = String(pnpapi.VERSIONS.std);
 
-  // @ts-expect-error
   const moduleExports = require(`module`);
 
-  // @ts-expect-error
   moduleExports.findPnpApi = (lookupSource: URL | NativePath) => {
     const lookupPath = lookupSource instanceof URL
       ? fileURLToPath(lookupSource)
@@ -140,7 +138,6 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     // The main module is exposed as global variable
 
     if (isMain) {
-      // @ts-expect-error
       process.mainModule = module;
       module.id = `.`;
     }

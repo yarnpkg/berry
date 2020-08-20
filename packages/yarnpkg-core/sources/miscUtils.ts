@@ -274,7 +274,6 @@ export function buildIgnorePattern(ignorePatterns: Array<string>) {
 
   return ignorePatterns.map(pattern => {
     return `(${micromatch.makeRe(pattern, {
-      // @ts-expect-error
       windows: false,
     }).source})`;
   }).join(`|`);
