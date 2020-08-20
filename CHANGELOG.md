@@ -16,6 +16,7 @@
 - The progress bars will be properly styled when using the new Windows terminal on certain days.
 - Yarn will now avoid using deprecated versions of the dependencies, unless only deprecated versions are available for the requested ranges.
 - Build keys are now properly computed, which fixes issues where build scripts weren't always triggered when they should have been.
+- Negated glob patterns in the `workspace` field will now be processed correctly.
 - Yarn will now allow relative paths inside the `workspace:` protocol to start with `./`
 
 ### CLI
