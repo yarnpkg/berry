@@ -4,6 +4,7 @@ import {httpUtils, structUtils}                                                 
 import {PortablePath, npath, ppath, xfs}                                                   from '@yarnpkg/fslib';
 import {Command, Usage}                                                                    from 'clipanion';
 import {runInNewContext}                                                                   from 'vm';
+import {URL}                                                                               from 'url';
 
 import {getAvailablePlugins}                                                               from './list';
 
