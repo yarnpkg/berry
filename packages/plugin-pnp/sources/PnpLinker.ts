@@ -30,6 +30,8 @@ const FORCED_UNPLUG_FILETYPES = new Set([
   `.node`,
 ]);
 
+type YARNRC_PATHS_TREE = Map<Filename, YARNRC_PATHS_TREE>;
+
 export class PnpLinker implements Linker {
   protected mode = `strict`;
 
@@ -166,12 +168,54 @@ export class PnpInstaller extends AbstractPnpInstaller {
     }
   }
 
+  private async getYarnrcPathsTree(rcFilename: Filename): Promise<YARNRC_PATHS_TREE> {
+    const rcTree = new Map();
+    let node = rcTree;
+    for (const workspace of this.opts.project.workspaces) {
+      if (workspace === this.opts.project.topLevelWorkspace)
+        continue;
+
+      const yarnrcPath = ppath.join(workspace.cwd, rcFilename);
+      if (await xfs.existsPromise(yarnrcPath)) {
+        const segments = yarnrcPath.split(ppath.sep).slice(1);
+        for (const segment of segments) {
+          const childNode = node.has(segment) ? node.get(segment) : new Map();
+          node.set(segment, childNode);
+          node = childNode;
+        }
+      }
+    }
+
+    return rcTree;
+  }
+
+  private isPathControlledByAnotherYarnrc(dstPath: PortablePath, rcPathTree: YARNRC_PATHS_TREE, rcFilename: Filename): boolean {
+    const segments = dstPath.split(ppath.sep).slice(1);
+    let node: YARNRC_PATHS_TREE | undefined = rcPathTree;
+    let isPathControlledByAnotherYarnrc = false;
+    for (const segment of segments) {
+      if (!node) {
+        break;
+      } else if (node.has(rcFilename)) {
+        isPathControlledByAnotherYarnrc = true;
+        break;
+      } else {
+        node = node.get(segment as Filename);
+      }
+    }
+
+    return isPathControlledByAnotherYarnrc;
+  }
+
   private async locateNodeModules() {
     const nodeModules: Array<PortablePath> = [];
+    const rcFilename = this.opts.project.configuration.get(`rcFilename`);
+    const yarnrcPathsTree = await this.getYarnrcPathsTree(rcFilename);
 
     for (const workspace of this.opts.project.workspaces) {
       const nodeModulesPath = ppath.join(workspace.cwd, `node_modules` as Filename);
-      if (!xfs.existsSync(nodeModulesPath))
+      if (this.isPathControlledByAnotherYarnrc(nodeModulesPath, yarnrcPathsTree, rcFilename)
+          || !xfs.existsSync(nodeModulesPath))
         continue;
 
       const directoryListing = await xfs.readdirPromise(nodeModulesPath, {
