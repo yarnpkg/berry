@@ -190,9 +190,9 @@ export class DefaultStream extends Transform {
 // of a web application, but is quite annoying when working with Node projects!
 
 export function dynamicRequire(path: string) {
-  // @ts-ignore
+  // @ts-expect-error
   if (typeof __non_webpack_require__ !== `undefined`) {
-    // @ts-ignore
+    // @ts-expect-error
     return __non_webpack_require__(path);
   } else {
     return require(path);
@@ -274,7 +274,6 @@ export function buildIgnorePattern(ignorePatterns: Array<string>) {
 
   return ignorePatterns.map(pattern => {
     return `(${micromatch.makeRe(pattern, {
-      // @ts-ignore
       windows: false,
     }).source})`;
   }).join(`|`);

@@ -76,7 +76,7 @@ export default class ConfigSetCommand extends BaseCommand {
         return report.exitCode();
       }
 
-      // @ts-ignore: The Node typings forgot one field
+      // @ts-expect-error: The Node typings forgot one field
       inspect.styles.name = `cyan`;
 
       this.context.stdout.write(`${inspect(requestedObject, {

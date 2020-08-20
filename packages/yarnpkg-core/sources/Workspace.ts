@@ -14,22 +14,21 @@ export class Workspace {
   public readonly project: Project;
   public readonly cwd: PortablePath;
 
-  // @ts-ignore: This variable is set during the setup process
+  // @ts-expect-error: This variable is set during the setup process
   public readonly relativeCwd: PortablePath;
 
-  // @ts-ignore: This variable is set during the setup process
+  // @ts-expect-error: This variable is set during the setup process
   public readonly anchoredDescriptor: Descriptor;
 
-  // @ts-ignore: This variable is set during the setup process
+  // @ts-expect-error: This variable is set during the setup process
   public readonly anchoredLocator: Locator;
 
-  // @ts-ignore: This variable is set during the setup process
+  // @ts-expect-error: This variable is set during the setup process
   public readonly locator: Locator;
 
-  // @ts-ignore: This variable is set during the setup process
+  // @ts-expect-error: This variable is set during the setup process
   public readonly manifest: Manifest;
 
-  // @ts-ignore: This variable is set during the setup process
   public readonly workspacesCwds: Set<PortablePath> = new Set();
 
   // Generated at resolution; basically dependencies + devDependencies + child workspaces
@@ -41,25 +40,25 @@ export class Workspace {
   }
 
   async setup() {
-    // @ts-ignore: It's ok to initialize it now
+    // @ts-expect-error: It's ok to initialize it now
     this.manifest = xfs.existsSync(ppath.join(this.cwd, Manifest.fileName))
       ? await Manifest.find(this.cwd)
       : new Manifest();
 
     // We use ppath.relative to guarantee that the default hash will be consistent even if the project is installed on different OS / path
-    // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
+    // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.relativeCwd = ppath.relative(this.project.cwd, this.cwd) || PortablePath.dot;
 
     const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashUtils.makeHash<string>(this.relativeCwd).substr(0, 6)}`);
     const reference = this.manifest.version ? this.manifest.version : `0.0.0`;
 
-    // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
+    // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.locator = structUtils.makeLocator(ident, reference);
 
-    // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
+    // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.anchoredDescriptor = structUtils.makeDescriptor(this.locator, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
 
-    // @ts-ignore: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
+    // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.anchoredLocator = structUtils.makeLocator(this.locator, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
 
     const patterns = this.manifest.workspaceDefinitions.map(({pattern}) => pattern);

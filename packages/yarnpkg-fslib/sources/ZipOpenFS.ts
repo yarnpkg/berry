@@ -694,14 +694,14 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return this.makeCallSync(p, () => {
       return this.baseFs.watch(
         p,
-        // @ts-ignore
+        // @ts-expect-error
         a,
         b,
       );
     }, (zipFs, {subPath}) => {
       return zipFs.watch(
         subPath,
-        // @ts-ignore
+        // @ts-expect-error
         a,
         b,
       );
@@ -714,14 +714,14 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return this.makeCallSync(p, () => {
       return this.baseFs.watchFile(
         p,
-        // @ts-ignore
+        // @ts-expect-error
         a,
         b,
       );
     }, (zipFs, {subPath}) => {
       return zipFs.watchFile(
         subPath,
-        // @ts-ignore
+        // @ts-expect-error
         a,
         b,
       );

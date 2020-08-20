@@ -19,7 +19,7 @@ export type PipevpOptions = {
 };
 
 function hasFd(stream: null | Readable | Writable) {
-  // @ts-ignore: Not sure how to typecheck this field
+  // @ts-expect-error: Not sure how to typecheck this field
   return stream !== null && typeof stream.fd === `number`;
 }
 

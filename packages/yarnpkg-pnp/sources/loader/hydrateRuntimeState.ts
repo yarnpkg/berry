@@ -40,7 +40,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
       if (packageInformationData.discardFromLookup)
         continue;
 
-      // @ts-ignore: TypeScript isn't smart enough to understand the type assertion
+      // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
       const packageLocator: PhysicalPackageLocator = {name: packageName, reference: packageReference};
       packageLocatorsByLocations.set(packageInformationData.packageLocation, packageLocator);
 

@@ -3,6 +3,7 @@ import {Configuration, MessageName, Project, ReportError, StreamReport, miscUtil
 import {httpUtils, structUtils}                                                            from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs}                                                   from '@yarnpkg/fslib';
 import {Command, Usage}                                                                    from 'clipanion';
+import {URL}                                                                               from 'url';
 import {runInNewContext}                                                                   from 'vm';
 
 import {getAvailablePlugins}                                                               from './list';
@@ -64,7 +65,6 @@ export default class PluginDlCommand extends BaseCommand {
         let pluginUrl: string;
         if (this.name.match(/^https?:/)) {
           try {
-            // @ts-ignore We don't want to add the dom to the TS env just for this line
             new URL(this.name);
           } catch {
             throw new ReportError(MessageName.INVALID_PLUGIN_REFERENCE, `Plugin specifier "${this.name}" is neither a plugin name nor a valid url`);

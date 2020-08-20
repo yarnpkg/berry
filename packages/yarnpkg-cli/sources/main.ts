@@ -111,7 +111,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       if (!command.help)
         Configuration.telemetry?.reportCommandName(command.path.join(` `));
 
-      // @ts-ignore: The cwd is a global option defined by BaseCommand
+      // @ts-expect-error: The cwd is a global option defined by BaseCommand
       const cwd: string | undefined = command.cwd;
 
       if (typeof cwd !== `undefined` && !ignoreCwd) {

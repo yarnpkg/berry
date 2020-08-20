@@ -33,7 +33,6 @@ function toUnixTimestamp(time: Date | string | number) {
   if (typeof time === `string` && String(+time) === time)
     return +time;
 
-  // @ts-ignore
   if (Number.isFinite(time)) {
     if (time < 0) {
       return Date.now() / 1000;
@@ -1223,7 +1222,7 @@ export class ZipFS extends BasePortableFakeFS {
   async readFilePromise(p: PortablePath, encoding?: string) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
-      // @ts-ignore
+      // @ts-expect-error
       encoding = encoding ? encoding.encoding : undefined;
 
     const data = await this.readFileBuffer(p, {asyncDecompress: true});
@@ -1235,7 +1234,7 @@ export class ZipFS extends BasePortableFakeFS {
   readFileSync(p: PortablePath, encoding?: string) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
-      // @ts-ignore
+      // @ts-expect-error
       encoding = encoding ? encoding.encoding : undefined;
 
     const data = this.readFileBuffer(p);

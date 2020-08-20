@@ -197,7 +197,7 @@ async function buildJsonNode(p: PortablePath, accesses: Array<string>) {
     /*setParentNodes */ true,
   );
 
-  // @ts-ignore
+  // @ts-expect-error
   let node: ts.Node = sourceFile.statements[0].expression;
   if (!node)
     throw new Error(`Invalid source tree`);

@@ -3,7 +3,7 @@ import {parseSyml, stringifySyml}                                 from '@yarnpkg
 import {UsageError}                                               from 'clipanion';
 import {createHash}                                               from 'crypto';
 import {structuredPatch}                                          from 'diff';
-// @ts-ignore
+// @ts-expect-error
 import Logic                                                      from 'logic-solver';
 import pLimit                                                     from 'p-limit';
 import semver                                                     from 'semver';

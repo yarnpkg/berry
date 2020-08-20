@@ -99,7 +99,7 @@ export default class ConfigSetCommand extends BaseCommand {
       includeFooter: false,
       stdout: this.context.stdout,
     }, async report => {
-      // @ts-ignore: The Node typings forgot one field
+      // @ts-expect-error: The Node typings forgot one field
       inspect.styles.name = `cyan`;
 
       report.reportInfo(MessageName.UNNAMED, `Successfully set ${this.name} to ${inspect(requestedObject, {
