@@ -82,6 +82,18 @@ export class NpmSemverResolver implements Resolver {
     });
   }
 
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+    const range = descriptor.range.slice(PROTOCOL.length);
+    const versions = references
+      .map(reference => reference.slice(PROTOCOL.length))
+      .filter(reference => semver.valid(reference));
+
+    return versions
+      .filter(version => semver.satisfies(version, range))
+      .sort((a, b) => -semver.compare(a, b))
+      .map(version => structUtils.makeLocator(descriptor, `${PROTOCOL}${version}`));
+  }
+
   async resolve(locator: Locator, opts: ResolveOptions) {
     const {selector} = structUtils.parseRange(locator.reference);
 

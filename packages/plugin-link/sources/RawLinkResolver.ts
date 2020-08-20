@@ -1,10 +1,10 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {Descriptor, Locator}                             from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {structUtils}                                     from '@yarnpkg/core';
-import {npath}                                           from '@yarnpkg/fslib';
+import {Resolver, ResolveOptions, MinimalResolveOptions, DescriptorHash, Package} from '@yarnpkg/core';
+import {Descriptor, Locator}                                                      from '@yarnpkg/core';
+import {LinkType}                                                                 from '@yarnpkg/core';
+import {structUtils}                                                              from '@yarnpkg/core';
+import {npath}                                                                    from '@yarnpkg/fslib';
 
-import {RAW_LINK_PROTOCOL}                               from './constants';
+import {RAW_LINK_PROTOCOL}                                                        from './constants';
 
 export class RawLinkResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -36,9 +36,17 @@ export class RawLinkResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
-    const path = descriptor.range.slice(RAW_LINK_PROTOCOL.length);
+    const locator = await this.getCandidateForDescriptor(descriptor, opts);
 
-    return [structUtils.makeLocator(descriptor, `${RAW_LINK_PROTOCOL}${npath.toPortablePath(path)}`)];
+    return [locator];
+  }
+
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+    const {reference: rawLinkReference} = await this.getCandidateForDescriptor(descriptor, opts);
+
+    return references
+      .filter(reference => reference === rawLinkReference)
+      .map(reference => structUtils.makeLocator(descriptor, reference));
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -58,5 +66,11 @@ export class RawLinkResolver implements Resolver {
 
       bin: new Map(),
     };
+  }
+
+  private async getCandidateForDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+    const path = descriptor.range.slice(RAW_LINK_PROTOCOL.length);
+
+    return structUtils.makeLocator(descriptor, `${RAW_LINK_PROTOCOL}${npath.toPortablePath(path)}`);
   }
 }

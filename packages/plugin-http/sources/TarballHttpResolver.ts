@@ -1,9 +1,9 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {miscUtils, structUtils}                          from '@yarnpkg/core';
+import {Resolver, ResolveOptions, MinimalResolveOptions, DescriptorHash, Package} from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest}                                            from '@yarnpkg/core';
+import {LinkType}                                                                 from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                   from '@yarnpkg/core';
 
-import {PROTOCOL_REGEXP, TARBALL_REGEXP}                 from './constants';
+import {PROTOCOL_REGEXP, TARBALL_REGEXP}                                          from './constants';
 
 export class TarballHttpResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -40,6 +40,14 @@ export class TarballHttpResolver implements Resolver {
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
     return [structUtils.convertDescriptorToLocator(descriptor)];
+  }
+
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+    const tarballReference = structUtils.convertDescriptorToLocator(descriptor).reference;
+
+    return references
+      .filter(reference => reference === tarballReference)
+      .map(reference => structUtils.makeLocator(descriptor, reference));
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

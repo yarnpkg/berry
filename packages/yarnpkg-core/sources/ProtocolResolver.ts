@@ -43,6 +43,10 @@ export class ProtocolResolver implements Resolver {
     return await opts.resolver.getCandidates(this.forwardDescriptor(descriptor, opts), dependencies, opts);
   }
 
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+    return await opts.resolver.getSatisfying(this.forwardDescriptor(descriptor, opts), references, dependencies, opts);
+  }
+
   async resolve(locator: Locator, opts: ResolveOptions) {
     const pkg = await opts.resolver.resolve(this.forwardLocator(locator, opts), opts);
 

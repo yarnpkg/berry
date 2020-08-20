@@ -1,10 +1,10 @@
-import {miscUtils, structUtils, hashUtils}               from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
+import {miscUtils, structUtils, hashUtils, DescriptorHash, Package} from '@yarnpkg/core';
+import {LinkType}                                                   from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest}                              from '@yarnpkg/core';
+import {Resolver, ResolveOptions, MinimalResolveOptions}            from '@yarnpkg/core';
 
-import {FILE_REGEXP, PROTOCOL}                           from './constants';
-import * as fileUtils                                    from './fileUtils';
+import {FILE_REGEXP, PROTOCOL}                                      from './constants';
+import * as fileUtils                                               from './fileUtils';
 
 // We use this for the folders to be regenerated without bumping the whole cache
 const CACHE_VERSION = 1;
@@ -45,31 +45,17 @@ export class FileResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
-    if (!opts.fetchOptions)
-      throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
+    const locator = await this.getCandidateForDescriptor(descriptor, opts);
 
-    const {path, parentLocator} = fileUtils.parseSpec(descriptor.range);
+    return [locator];
+  }
 
-    if (parentLocator === null)
-      throw new Error(`Assertion failed: The descriptor should have been bound`);
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+    const {reference: fileReference} = await this.getCandidateForDescriptor(descriptor, opts);
 
-    const archiveBuffer = await fileUtils.makeBufferFromLocator(
-      structUtils.makeLocator(descriptor,
-        structUtils.makeRange({
-          protocol: PROTOCOL,
-          source: path,
-          selector: path,
-          params: {
-            locator: structUtils.stringifyLocator(parentLocator),
-          },
-        })
-      ),
-      {protocol: PROTOCOL, fetchOptions: opts.fetchOptions}
-    );
-
-    const folderHash = hashUtils.makeHash(`${CACHE_VERSION}`, archiveBuffer).slice(0, 6);
-
-    return [fileUtils.makeLocator(descriptor, {parentLocator, path, folderHash, protocol: PROTOCOL})];
+    return references
+      .filter(reference => reference === fileReference)
+      .map(reference => structUtils.makeLocator(descriptor, reference));
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -98,5 +84,33 @@ export class FileResolver implements Resolver {
 
       bin: manifest.bin,
     };
+  }
+
+  private async getCandidateForDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+    if (!opts.fetchOptions)
+      throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
+
+    const {path, parentLocator} = fileUtils.parseSpec(descriptor.range);
+
+    if (parentLocator === null)
+      throw new Error(`Assertion failed: The descriptor should have been bound`);
+
+    const archiveBuffer = await fileUtils.makeBufferFromLocator(
+      structUtils.makeLocator(descriptor,
+        structUtils.makeRange({
+          protocol: PROTOCOL,
+          source: path,
+          selector: path,
+          params: {
+            locator: structUtils.stringifyLocator(parentLocator),
+          },
+        })
+      ),
+      {protocol: PROTOCOL, fetchOptions: opts.fetchOptions}
+    );
+
+    const folderHash = hashUtils.makeHash(`${CACHE_VERSION}`, archiveBuffer).slice(0, 6);
+
+    return fileUtils.makeLocator(descriptor, {parentLocator, path, folderHash, protocol: PROTOCOL});
   }
 }

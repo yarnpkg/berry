@@ -1,6 +1,6 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
-import {Descriptor, Locator}                             from './types';
+import {Descriptor, Locator, DescriptorHash, Package}    from './types';
 
 export class LockfileResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -49,6 +49,22 @@ export class LockfileResolver implements Resolver {
       throw new Error(`Expected the resolution to have been successful - package not found`);
 
     return [pkg];
+  }
+
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+    const convertedPkg = opts.project.originalPackages.get(structUtils.convertDescriptorToLocator(descriptor).locatorHash);
+
+    const resolution = opts.project.storedResolutions.get(descriptor.descriptorHash);
+    const resolutionPkg = typeof resolution !== `undefined`
+      ? opts.project.originalPackages.get(resolution)
+      : undefined;
+
+    return references
+      .filter(reference => [
+        convertedPkg?.reference,
+        resolutionPkg?.reference,
+      ].includes(reference))
+      .map(reference => structUtils.makeLocator(descriptor, reference));
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

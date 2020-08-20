@@ -1,10 +1,10 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest, Package}          from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {miscUtils, structUtils}                          from '@yarnpkg/core';
-import {npath}                                           from '@yarnpkg/fslib';
+import {Resolver, ResolveOptions, MinimalResolveOptions, DescriptorHash} from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest, Package}                          from '@yarnpkg/core';
+import {LinkType}                                                        from '@yarnpkg/core';
+import {miscUtils, structUtils}                                          from '@yarnpkg/core';
+import {npath}                                                           from '@yarnpkg/fslib';
 
-import {LINK_PROTOCOL}                                   from './constants';
+import {LINK_PROTOCOL}                                                   from './constants';
 
 export class LinkResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -36,9 +36,17 @@ export class LinkResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
-    const path = descriptor.range.slice(LINK_PROTOCOL.length);
+    const locator = await this.getCandidateForDescriptor(descriptor, opts);
 
-    return [structUtils.makeLocator(descriptor, `${LINK_PROTOCOL}${npath.toPortablePath(path)}`)];
+    return [locator];
+  }
+
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+    const {reference: linkReference} = await this.getCandidateForDescriptor(descriptor, opts);
+
+    return references
+      .filter(reference => reference === linkReference)
+      .map(reference => structUtils.makeLocator(descriptor, reference));
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
@@ -67,5 +75,11 @@ export class LinkResolver implements Resolver {
 
       bin: manifest.bin,
     };
+  }
+
+  private async getCandidateForDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+    const path = descriptor.range.slice(LINK_PROTOCOL.length);
+
+    return structUtils.makeLocator(descriptor, `${LINK_PROTOCOL}${npath.toPortablePath(path)}`);
   }
 }

@@ -7,7 +7,7 @@ import {Project}                                         from './Project';
 import {Report}                                          from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
-import {DescriptorHash, Descriptor, Locator}             from './types';
+import {DescriptorHash, Descriptor, Locator, Package}    from './types';
 
 const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>) => string]> = [
   // These ones come from Git urls
@@ -113,6 +113,19 @@ export class LegacyMigrationResolver implements Resolver {
       throw new Error(`Assertion failed: The resolution should have been registered`);
 
     return [resolution];
+  }
+
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+    if (!this.resolutions)
+      throw new Error(`Assertion failed: The resolution store should have been setup`);
+
+    const resolution = this.resolutions.get(descriptor.descriptorHash);
+    if (!resolution)
+      throw new Error(`Assertion failed: The resolution should have been registered`);
+
+    return references
+      .filter(reference => reference === resolution.reference)
+      .map(reference => structUtils.makeLocator(descriptor, reference));
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<never> {

@@ -1,9 +1,9 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {miscUtils, structUtils}                          from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
+import {Resolver, ResolveOptions, MinimalResolveOptions, DescriptorHash, Package} from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                   from '@yarnpkg/core';
+import {LinkType}                                                                 from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest}                                            from '@yarnpkg/core';
 
-import * as gitUtils                                     from './gitUtils';
+import * as gitUtils                                                              from './gitUtils';
 
 export class GitResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -27,10 +27,17 @@ export class GitResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
-    const reference = await gitUtils.resolveUrl(descriptor.range, opts.project.configuration);
-    const locator = structUtils.makeLocator(descriptor, reference);
+    const locator = await this.getCandidateForDescriptor(descriptor, opts);
 
     return [locator];
+  }
+
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+    const {reference: gitReference} = await this.getCandidateForDescriptor(descriptor, opts);
+
+    return references
+      .filter(reference => reference === gitReference)
+      .map(reference => structUtils.makeLocator(descriptor, reference));
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -59,5 +66,12 @@ export class GitResolver implements Resolver {
 
       bin: manifest.bin,
     };
+  }
+
+  private async getCandidateForDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+    const reference = await gitUtils.resolveUrl(descriptor.range, opts.project.configuration);
+    const locator = structUtils.makeLocator(descriptor, reference);
+
+    return locator;
   }
 }

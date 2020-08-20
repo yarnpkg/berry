@@ -1,5 +1,5 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import {Descriptor, Locator}                             from './types';
+import {Descriptor, Locator, DescriptorHash, Package}    from './types';
 
 export class VirtualResolver implements Resolver {
   static protocol = `virtual:`;
@@ -52,6 +52,14 @@ export class VirtualResolver implements Resolver {
     // you shouldn't need to call `getCandidates` anymore.
 
     throw new Error(`Assertion failed: calling "getCandidates" on a virtual descriptor is unsupported`);
+  }
+
+  async getSatisfying(descriptor: Descriptor, candidates: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions): Promise<never> {
+    // It's unsupported because packages inside the dependency tree should
+    // only become virtual AFTER they have all been resolved, by which point
+    // you shouldn't need to call `getSatisfying` anymore.
+
+    throw new Error(`Assertion failed: calling "getSatisfying" on a virtual descriptor is unsupported`);
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<never> {

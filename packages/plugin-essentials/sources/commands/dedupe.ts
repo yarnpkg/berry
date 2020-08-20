@@ -83,24 +83,32 @@ export const DEDUPE_ALGORITHMS: Record<Strategy, DedupeAlgorithm> = {
       if (locators.size === 1)
         return dedupeSkip;
 
+      const references = [...locators].map(locatorHash => {
+        const pkg = project.originalPackages.get(locatorHash);
+        if (typeof pkg === `undefined`)
+          throw new Error(`Assertion failed: The package (${locatorHash}) should have been registered`);
+
+        return pkg.reference;
+      });
+
       const resolutionDependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
       const dependencies = new Map(
-        resolutionDependencies.map(dependency => {
-          const resolution = project.storedResolutions.get(dependency.descriptorHash);
+        resolutionDependencies.map(({descriptorHash}) => {
+          const resolution = project.storedResolutions.get(descriptorHash);
           if (typeof resolution === `undefined`)
-            throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(project.configuration, dependency)}) should have been registered`);
+            throw new Error(`Assertion failed: The resolution (${descriptorHash}) should have been registered`);
 
-          const pkg = project.storedPackages.get(resolution);
+          const pkg = project.originalPackages.get(resolution);
           if (typeof pkg === `undefined`)
             throw new Error(`Assertion failed: The package (${resolution}) should have been registered`);
 
-          return [dependency.descriptorHash, pkg] as const;
+          return [descriptorHash, pkg] as const;
         })
       );
 
-      const candidates = await resolver.getCandidates(descriptor, dependencies, resolveOptions);
+      const candidates = await resolver.getSatisfying(descriptor, references, dependencies, resolveOptions);
 
-      const bestCandidate = candidates.find(({locatorHash}) => locators.has(locatorHash));
+      const bestCandidate = candidates[0];
       if (typeof bestCandidate === `undefined`)
         return dedupeSkip;
 

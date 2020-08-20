@@ -1,10 +1,10 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {miscUtils, structUtils}                          from '@yarnpkg/core';
-import {npath}                                           from '@yarnpkg/fslib';
+import {Resolver, ResolveOptions, MinimalResolveOptions, DescriptorHash, Package} from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest}                                            from '@yarnpkg/core';
+import {LinkType}                                                                 from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                   from '@yarnpkg/core';
+import {npath}                                                                    from '@yarnpkg/fslib';
 
-import {FILE_REGEXP, TARBALL_REGEXP, PROTOCOL}           from './constants';
+import {FILE_REGEXP, TARBALL_REGEXP, PROTOCOL}                                    from './constants';
 
 export class TarballFileResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -48,12 +48,17 @@ export class TarballFileResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
-    let path = descriptor.range;
+    const locator = await this.getCandidateForDescriptor(descriptor, opts);
 
-    if (path.startsWith(PROTOCOL))
-      path = path.slice(PROTOCOL.length);
+    return [locator];
+  }
 
-    return [structUtils.makeLocator(descriptor, `${PROTOCOL}${npath.toPortablePath(path)}`)];
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+    const {reference: tarballFileReference} = await this.getCandidateForDescriptor(descriptor, opts);
+
+    return references
+      .filter(reference => reference === tarballFileReference)
+      .map(reference => structUtils.makeLocator(descriptor, reference));
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -82,5 +87,14 @@ export class TarballFileResolver implements Resolver {
 
       bin: manifest.bin,
     };
+  }
+
+  private async getCandidateForDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
+    let path = descriptor.range;
+
+    if (path.startsWith(PROTOCOL))
+      path = path.slice(PROTOCOL.length);
+
+    return structUtils.makeLocator(descriptor, `${PROTOCOL}${npath.toPortablePath(path)}`);
   }
 }
