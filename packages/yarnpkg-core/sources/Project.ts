@@ -2058,16 +2058,25 @@ function applyVirtualResolutionMutations({
         // We take all the dependencies from the new virtual instance and
         // generate a hash from it. By checking if this hash is already
         // registered, we know whether we can trim the new version.
-        const dependencyHash = hashUtils.makeHash(...[...virtualPackage.dependencies.values()].map(descriptor => {
-          const resolution = descriptor.range !== `missing:`
-            ? allResolutions.get(descriptor.descriptorHash)
-            : `missing:`;
+        const dependencyHash = hashUtils.makeHash(
+          ...[...virtualPackage.dependencies.values()].map(descriptor => {
+            const resolution = descriptor.range !== `missing:`
+              ? allResolutions.get(descriptor.descriptorHash)
+              : `missing:`;
 
-          if (typeof resolution === `undefined`)
-            throw new Error(`Assertion failed: Expected the resolution for ${structUtils.prettyDescriptor(project.configuration, descriptor)} to have been registered`);
+            if (typeof resolution === `undefined`)
+              throw new Error(`Assertion failed: Expected the resolution for ${structUtils.prettyDescriptor(project.configuration, descriptor)} to have been registered`);
 
-          return resolution;
-        }));
+            return resolution;
+          }),
+          // We use the identHash to disambiguate between virtual descriptors
+          // with different base idents being resolved to the same virtual package.
+          // Note: We don't use the descriptorHash because the whole point of duplicate
+          // virtual descriptors is that they have different `virtual:` ranges.
+          // This causes the virtual descriptors with different base idents
+          // to be preserved, while the virtual package they resolve to gets deduped.
+          virtualDescriptor.identHash,
+        );
 
         const masterDescriptor = otherVirtualInstances.get(dependencyHash);
         if (typeof masterDescriptor === `undefined`) {
