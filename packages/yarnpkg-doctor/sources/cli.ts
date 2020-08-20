@@ -25,6 +25,7 @@ async function findFiles(pattern: string, cwd: PortablePath, {ignoredFolders = [
     absolute: true,
     cwd: npath.fromPortablePath(cwd),
     ignore: [`**/node_modules/**`, ...ignoredFolders.map(p => `${npath.fromPortablePath(p)}/**`)],
+    gitignore: true,
   });
 
   return files.map(p => {
