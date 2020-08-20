@@ -96,7 +96,7 @@ export class Workspace {
       ? range.slice(protocolIndex + 1)
       : range;
 
-    if (protocol === WorkspaceResolver.protocol && pathname === this.relativeCwd)
+    if (protocol === WorkspaceResolver.protocol && ppath.normalize(pathname as PortablePath) === this.relativeCwd)
       return true;
 
     if (protocol === WorkspaceResolver.protocol && pathname === `*`)
