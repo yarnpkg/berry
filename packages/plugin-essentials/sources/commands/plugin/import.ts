@@ -3,8 +3,8 @@ import {Configuration, MessageName, Project, ReportError, StreamReport, miscUtil
 import {httpUtils, structUtils}                                                            from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs}                                                   from '@yarnpkg/fslib';
 import {Command, Usage}                                                                    from 'clipanion';
-import {runInNewContext}                                                                   from 'vm';
 import {URL}                                                                               from 'url';
+import {runInNewContext}                                                                   from 'vm';
 
 import {getAvailablePlugins}                                                               from './list';
 
