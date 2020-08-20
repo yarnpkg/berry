@@ -470,6 +470,31 @@ function makeSubshellAction(ast: ShellLine, opts: ShellOptions, state: ShellStat
   };
 }
 
+function makeGroupAction(ast: ShellLine, opts: ShellOptions, state: ShellState) {
+  return (stdio: Stdio) => {
+    const stdin = new PassThrough();
+    const promise = executeShellLine(ast, opts, state);
+
+    return {stdin, promise};
+  };
+}
+
+function makeActionFromProcedure(procedure: ProcessImplementation, args: Array<string>, opts: ShellOptions, activeState: ShellState) {
+  if (args.length === 0) {
+    return procedure;
+  } else {
+    let key;
+    do {
+      key = String(Math.random());
+    } while (Object.prototype.hasOwnProperty.call(activeState.procedures, key));
+
+    activeState.procedures = {...activeState.procedures};
+    activeState.procedures[key] = procedure;
+
+    return makeCommandAction([...args, `__ysh_run_procedure`, key], opts, activeState);
+  }
+}
+
 async function executeCommandChain(node: CommandChain, opts: ShellOptions, state: ShellState) {
   let current: CommandChain | null = node;
   let pipeType = null;
@@ -501,19 +526,15 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
         // interpolated within its own context
         const procedure = makeSubshellAction(current.subshell, opts, activeState);
 
-        if (args.length === 0) {
-          action = procedure;
-        } else {
-          let key;
-          do {
-            key = String(Math.random());
-          } while (Object.prototype.hasOwnProperty.call(activeState.procedures, key));
+        action = makeActionFromProcedure(procedure, args, opts, activeState);
+      } break;
 
-          activeState.procedures = {...activeState.procedures};
-          activeState.procedures[key] = procedure;
+      case `group`: {
+        const args = await interpolateArguments(current.args, opts, state);
 
-          action = makeCommandAction([...args, `__ysh_run_procedure`, key], opts, activeState);
-        }
+        const procedure = makeGroupAction(current.group, opts, activeState);
+
+        action = makeActionFromProcedure(procedure, args, opts, activeState);
       } break;
 
       case `envs`: {

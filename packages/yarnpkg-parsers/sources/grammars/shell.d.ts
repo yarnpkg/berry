@@ -37,6 +37,10 @@ export type Command = {
   subshell: ShellLine,
   args: Array<RedirectArgument>,
 } | {
+  type: `group`,
+  group: ShellLine,
+  args: Array<RedirectArgument>,
+} | {
   type: `envs`,
   envs: Array<EnvSegment>
 };

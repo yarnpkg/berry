@@ -31,6 +31,8 @@
 ### Miscellaneous
 
 - Scripts can now use the `$RANDOM` variable as well as simple calculations using `+`, `-`, `*`, `/` and `()` inside `$(())`
+- Scripts can now use grouping curly braces (`{echo foo}`) to execute a command in the context of the current shell (without creating a subshell like in the case of `(echo foo)`).
+- Scripts can now end with a semicolon.
 
 ### Third-party integrations
 
