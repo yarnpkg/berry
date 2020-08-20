@@ -4,7 +4,7 @@
  * - https://github.com/eps1lon/yarn-plugin-deduplicate
  *
  * Goals of the `dedupe` command:
- * - the deduplication algorithms shouldn't depend on semver; they should instead use the resolver candidate system
+ * - the deduplication algorithms shouldn't depend on semver; they should instead use the resolver `getSatisfying` system
  * - the deduplication should happen concurrently
  */
 

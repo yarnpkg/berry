@@ -1,9 +1,9 @@
 import {PortablePath}                                    from '@yarnpkg/fslib';
 
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import * as structUtils                                  from './structUtils';
 import {Descriptor, Locator, DescriptorHash, Package}    from './types';
 import {LinkType}                                        from './types';
-import {structUtils}                                     from '.';
 
 export class WorkspaceResolver implements Resolver {
   static protocol = `workspace:`;
