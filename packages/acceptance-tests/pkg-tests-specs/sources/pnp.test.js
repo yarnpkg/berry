@@ -1505,19 +1505,19 @@ describe(`Plug'n'Play`, () => {
     }),
   );
 
-  test(`it should NOT remove lingering node_modules folders if their parent folder has yarnrc file`,
+  test(`it should NOT remove lingering node_modules inside folders matched by pnpIgnorePatterns`,
     makeTemporaryEnv({
       workspaces: [`foo`],
+    }, {
+      pnpIgnorePatterns: `foo/**`,
     }, async ({path, run, source}) => {
       await xfs.mkdirpPromise(`${path}/node_modules/foo`);
-      await xfs.writeFileSync(`${path}/.yarnrc.yml`, ``);
       await writeJson(`${path}/foo/package.json`, {
         name: `foo`,
         version: `1.0.0`,
         workspaces: [`baz`],
       });
       await xfs.mkdirpPromise(`${path}/foo/node_modules/dep`);
-      await xfs.writeFileSync(`${path}/foo/.yarnrc.yml`, ``);
       await writeJson(`${path}/foo/baz/package.json`, {
         name: `baz`,
         version: `1.0.0`,

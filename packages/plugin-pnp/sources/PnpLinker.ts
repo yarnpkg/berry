@@ -129,7 +129,7 @@ export class PnpInstaller extends AbstractPnpInstaller {
       return;
     }
 
-    const nodeModules = await this.locateNodeModules();
+    const nodeModules = await this.locateNodeModules(pnpSettings.ignorePattern);
     if (nodeModules.length > 0) {
       this.opts.report.reportWarning(MessageName.DANGEROUS_NODE_MODULES, `One or more node_modules have been detected and will be removed. This operation may take some time.`);
       for (const nodeModulesPath of nodeModules) {
@@ -168,54 +168,13 @@ export class PnpInstaller extends AbstractPnpInstaller {
     }
   }
 
-  private async getYarnrcPathsTree(rcFilename: Filename): Promise<YARNRC_PATHS_TREE> {
-    const rcTree = new Map();
-    let node = rcTree;
-    for (const workspace of this.opts.project.workspaces) {
-      if (workspace === this.opts.project.topLevelWorkspace)
-        continue;
-
-      const yarnrcPath = ppath.join(workspace.cwd, rcFilename);
-      if (await xfs.existsPromise(yarnrcPath)) {
-        const segments = yarnrcPath.split(ppath.sep).slice(1);
-        for (const segment of segments) {
-          const childNode = node.has(segment) ? node.get(segment) : new Map();
-          node.set(segment, childNode);
-          node = childNode;
-        }
-      }
-    }
-
-    return rcTree;
-  }
-
-  private isPathControlledByAnotherYarnrc(dstPath: PortablePath, rcPathTree: YARNRC_PATHS_TREE, rcFilename: Filename): boolean {
-    const segments = dstPath.split(ppath.sep).slice(1);
-    let node: YARNRC_PATHS_TREE | undefined = rcPathTree;
-    let isPathControlledByAnotherYarnrc = false;
-    for (const segment of segments) {
-      if (!node) {
-        break;
-      } else if (node.has(rcFilename)) {
-        isPathControlledByAnotherYarnrc = true;
-        break;
-      } else {
-        node = node.get(segment as Filename);
-      }
-    }
-
-    return isPathControlledByAnotherYarnrc;
-  }
-
-  private async locateNodeModules() {
+  private async locateNodeModules(ignorePattern?: string | null) {
     const nodeModules: Array<PortablePath> = [];
-    const rcFilename = this.opts.project.configuration.get(`rcFilename`);
-    const yarnrcPathsTree = await this.getYarnrcPathsTree(rcFilename);
+    const ignoreRegExp = ignorePattern ? new RegExp(ignorePattern) : null;
 
     for (const workspace of this.opts.project.workspaces) {
       const nodeModulesPath = ppath.join(workspace.cwd, `node_modules` as Filename);
-      if (this.isPathControlledByAnotherYarnrc(nodeModulesPath, yarnrcPathsTree, rcFilename)
-          || !xfs.existsSync(nodeModulesPath))
+      if (ignoreRegExp && ignoreRegExp.test(ppath.relative(this.opts.project.cwd, workspace.cwd)) || !xfs.existsSync(nodeModulesPath))
         continue;
 
       const directoryListing = await xfs.readdirPromise(nodeModulesPath, {
