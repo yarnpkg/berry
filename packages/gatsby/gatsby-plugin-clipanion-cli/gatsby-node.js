@@ -80,7 +80,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       const contentDigest = createContentDigest(content);
 
       createNode({
-        ...commands[t],
+        ...command,
         id: createNodeId(command.path),
         parent: null,
         children: [],
