@@ -81,7 +81,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
 
       createNode({
         ...commands[t],
-        id: createNodeId(t),
+        id: createNodeId(command.path),
         parent: null,
         children: [],
         internal: {
