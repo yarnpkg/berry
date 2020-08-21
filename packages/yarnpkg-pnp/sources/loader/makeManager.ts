@@ -8,6 +8,7 @@ export type ApiMetadata = {
   cache: typeof Module._cache,
   instance: PnpApi,
   stats: fs.Stats,
+  lastRefreshCheck: number
 };
 
 export type MakeManagerOptions = {
@@ -25,6 +26,7 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
       cache: Module._cache,
       instance: pnpapi,
       stats: initialApiStats,
+      lastRefreshCheck: Date.now(),
     }],
   ]);
 
@@ -40,6 +42,12 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
   }
 
   function refreshApiEntry(pnpApiPath: PortablePath, apiEntry: ApiMetadata) {
+    const timeNow = Date.now();
+    if (timeNow - apiEntry.lastRefreshCheck < 500)
+      return;
+
+    apiEntry.lastRefreshCheck = timeNow;
+
     const stats = opts.fakeFs.statSync(pnpApiPath);
 
     if (stats.mtime > apiEntry.stats.mtime) {
@@ -62,6 +70,7 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
         cache: {},
         instance: loadApiInstance(pnpApiPath),
         stats: opts.fakeFs.statSync(pnpApiPath),
+        lastRefreshCheck: Date.now(),
       });
     }
 
