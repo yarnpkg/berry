@@ -1,3 +1,4 @@
+#
 on:
   schedule:
   - cron: '0 */4 * * *'
@@ -6,13 +7,13 @@ on:
     - master
   pull_request:
     paths:
-    - .github/workflows/e2e-pnpify-workflow.yml
+    - .github/workflows/e2e-storybook-workflow.yml
     - scripts/e2e-setup-ci.sh
 
-name: 'E2E Angular over PnPify'
+name: 'E2E Storybook'
 jobs:
   chore:
-    name: 'Validating Angular over PnPify'
+    name: 'Validating Storybook (with a React app)'
     runs-on: ubuntu-latest
 
     steps:
@@ -21,7 +22,7 @@ jobs:
     - name: 'Use Node.js 10.x'
       uses: actions/setup-node@master
       with:
-        version: 10.x
+        node-version: 10.x
 
     - name: 'Build the standard bundle'
       run: |
@@ -30,13 +31,7 @@ jobs:
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
+        yarn dlx create-react-app my-cra && cd my-cra
+        yarn dlx -p @storybook/cli sb init --yes
+        yarn build-storybook
 
-        yarn dlx -p @angular/cli@next ng new berry-angular --interactive=false
-
-        cd berry-angular
-
-        yarn add @yarnpkg/pnpify @angular-devkit/core@next @babel/preset-env @babel/core -D
-
-        yarn unplug -AR @angular/platform-browser @angular/core @angular/common @angular/compiler-cli
-
-        yarn pnpify ng build --aot
