@@ -46,7 +46,7 @@ export class NpmSemverResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    const range = descriptor.range.slice(PROTOCOL.length);
+    const range = new semver.Range(descriptor.range.slice(PROTOCOL.length));
 
     const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(descriptor), {
       configuration: opts.project.configuration,
@@ -55,7 +55,7 @@ export class NpmSemverResolver implements Resolver {
     });
 
     const versions = Object.keys(registryData.versions);
-    const candidates = versions.filter(version => semver.satisfies(version, range));
+    const candidates = versions.filter(version => range.test(version));
 
     const noDeprecatedCandidates = candidates.filter(version => {
       return !registryData.versions[version].deprecated;
