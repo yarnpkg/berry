@@ -213,12 +213,12 @@ export class Wrapper {
     const manifest = dynamicRequire(npath.join(pkgInformation.packageLocation, `package.json`));
 
     await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
-    await xfs.writeFilePromise(absWrapperPath, JSON.stringify({
+    await xfs.writeFilePromise(absWrapperPath, `${JSON.stringify({
       name: this.name,
       version: `${manifest.version}-pnpify`,
       main: manifest.main,
       type: `commonjs`,
-    }, null, 2));
+    }, null, 2)}\n`);
   }
 
   async writeBinary(relPackagePath: PortablePath, options: TemplateOptions = {}) {
