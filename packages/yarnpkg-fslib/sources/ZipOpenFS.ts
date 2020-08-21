@@ -247,16 +247,16 @@ export class ZipOpenFS extends BasePortableFakeFS {
   async realpathPromise(p: PortablePath) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.realpathPromise(p);
-    }, async (zipFs, {archivePath, subPath}) => {
-      return this.pathUtils.join(await this.baseFs.realpathPromise(archivePath), this.pathUtils.relative(PortablePath.root, await zipFs.realpathPromise(subPath)));
+    }, async (zipFs, {subPath}) => {
+      return this.pathUtils.join(zipFs.getRealPath(), this.pathUtils.relative(PortablePath.root, await zipFs.realpathPromise(subPath)));
     });
   }
 
   realpathSync(p: PortablePath) {
     return this.makeCallSync(p, () => {
       return this.baseFs.realpathSync(p);
-    }, (zipFs, {archivePath, subPath}) => {
-      return this.pathUtils.join(this.baseFs.realpathSync(archivePath), this.pathUtils.relative(PortablePath.root, zipFs.realpathSync(subPath)));
+    }, (zipFs, {subPath}) => {
+      return this.pathUtils.join(zipFs.getRealPath(), this.pathUtils.relative(PortablePath.root, zipFs.realpathSync(subPath)));
     });
   }
 
