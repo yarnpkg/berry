@@ -175,7 +175,8 @@ export type SupportedSdk =
  | 'typescript-language-server'
  | 'typescript'
  | 'stylelint'
- | 'svelte-language-server';
+ | 'svelte-language-server'
+ | 'flow-bin';
 
 export type BaseSdks = Array<[SupportedSdk, GenerateBaseWrapper]>;
 

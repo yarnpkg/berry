@@ -115,6 +115,16 @@ export const generateSvelteLanguageServerBaseWrapper: GenerateBaseWrapper = asyn
   return wrapper;
 };
 
+export const generateFlowBinBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`flow-bin` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeManifest();
+
+  await wrapper.writeBinary(`cli.js` as PortablePath);
+
+  return wrapper;
+};
+
 export const BASE_SDKS: BaseSdks = [
   [`eslint`, generateEslintBaseWrapper],
   [`prettier`, generatePrettierBaseWrapper],
@@ -122,4 +132,5 @@ export const BASE_SDKS: BaseSdks = [
   [`typescript`, generateTypescriptBaseWrapper],
   [`stylelint`, generateStylelintBaseWrapper],
   [`svelte-language-server`, generateSvelteLanguageServerBaseWrapper],
+  [`flow-bin`, generateFlowBinBaseWrapper],
 ];
