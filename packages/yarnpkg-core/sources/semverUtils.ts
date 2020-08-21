@@ -46,3 +46,19 @@ export function satisfiesWithPrereleases(version: string | null, range: string, 
     });
   });
 }
+
+const rangesCache = new Map<string, semver.Range | null>();
+export function getRange(potentialRange: string): semver.Range | null {
+  let range = rangesCache.get(potentialRange);
+  if (range !== undefined)
+    return range;
+
+  try {
+    range = new semver.Range(potentialRange);
+  } catch {
+    range = null;
+  }
+
+  rangesCache.set(potentialRange, range);
+  return range;
+}

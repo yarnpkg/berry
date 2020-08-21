@@ -1,5 +1,5 @@
 import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest, DescriptorHash, Package} from '@yarnpkg/core';
-import {Descriptor, Locator}                                                                                          from '@yarnpkg/core';
+import {Descriptor, Locator, semverUtils}                                                                             from '@yarnpkg/core';
 import {LinkType}                                                                                                     from '@yarnpkg/core';
 import {structUtils}                                                                                                  from '@yarnpkg/core';
 import semver                                                                                                         from 'semver';
@@ -16,10 +16,7 @@ export class NpmSemverResolver implements Resolver {
     if (!descriptor.range.startsWith(PROTOCOL))
       return false;
 
-    if (!semver.validRange(descriptor.range.slice(PROTOCOL.length)))
-      return false;
-
-    return true;
+    return !!semverUtils.getRange(descriptor.range.slice(PROTOCOL.length));
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
@@ -46,7 +43,9 @@ export class NpmSemverResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    const range = new semver.Range(descriptor.range.slice(PROTOCOL.length));
+    const range = semverUtils.getRange(descriptor.range.slice(PROTOCOL.length));
+    if (range === null)
+      throw new Error(`Expected a valid range`);
 
     const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(descriptor), {
       configuration: opts.project.configuration,
