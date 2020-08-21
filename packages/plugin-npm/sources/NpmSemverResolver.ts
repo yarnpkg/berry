@@ -54,11 +54,12 @@ export class NpmSemverResolver implements Resolver {
       json: true,
     });
 
-    const versions = Object.keys(registryData.versions);
-    const candidates = versions.filter(version => range.test(version));
+    const candidates = Object.keys(registryData.versions)
+      .map(version => new semver.SemVer(version))
+      .filter(version => range.test(version));
 
     const noDeprecatedCandidates = candidates.filter(version => {
-      return !registryData.versions[version].deprecated;
+      return !registryData.versions[version.raw].deprecated;
     });
 
     // If there are versions that aren't deprecated, use them
@@ -67,12 +68,12 @@ export class NpmSemverResolver implements Resolver {
       : candidates;
 
     finalCandidates.sort((a, b) => {
-      return -semver.compare(a, b);
+      return -a.compare(b);
     });
 
     return finalCandidates.map(version => {
-      const versionLocator = structUtils.makeLocator(descriptor, `${PROTOCOL}${version}`);
-      const archiveUrl = registryData.versions[version].dist.tarball;
+      const versionLocator = structUtils.makeLocator(descriptor, `${PROTOCOL}${version.raw}`);
+      const archiveUrl = registryData.versions[version.raw].dist.tarball;
 
       if (NpmSemverFetcher.isConventionalTarballUrl(versionLocator, archiveUrl, {configuration: opts.project.configuration})) {
         return versionLocator;
