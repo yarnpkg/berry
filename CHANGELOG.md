@@ -18,6 +18,7 @@
 - Build keys are now properly computed, which fixes issues where build scripts weren't always triggered when they should have been.
 - Negated glob patterns in the `workspace` field will now be processed correctly.
 - Yarn will now allow relative paths inside the `workspace:` protocol to start with `./`
+- Yarn will now show the actual error when it fails to resolve a request during `yarn add` and `yarn up`
 
 ### CLI
 
