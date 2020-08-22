@@ -163,7 +163,7 @@ export default class DedupeCommand extends BaseCommand {
 
       **Note:** Even though it never produces a wrong dependency tree, this command should be used with caution, as it modifies the dependency tree, which can sometimes cause problems when packages strictly follow semver recommandations. It is recommended to also review the changes manually.
 
-      If set, the \`-c,--check\` flag will only report the found duplicates, without persisting the modified dependency tree.
+      If set, the \`-c,--check\` flag will only report the found duplicates, without persisting the modified dependency tree. If changes are found, the command will exit with a non-zero exit code, making it suitable for CI purposes.
 
       This command accepts glob patterns as arguments (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
