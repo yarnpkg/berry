@@ -6,6 +6,10 @@
  * Goals of the `dedupe` command:
  * - the deduplication algorithms shouldn't depend on semver; they should instead use the resolver `getSatisfying` system
  * - the deduplication should happen concurrently
+ *
+ * Note: We don't restore the install state because we already have everything we need inside the
+ * lockfile. Because of this, we use `project.originalPackages` instead of `project.storedPackages`
+ * (which also provides a safe-guard in case virtual descriptors ever make their way into the dedupe algorithm).
  */
 
 import {BaseCommand}                                                                                                                    from '@yarnpkg/cli';
@@ -53,9 +57,6 @@ export const DEDUPE_ALGORITHMS: Record<Strategy, DedupeAlgorithm> = {
     }
 
     return Array.from(project.storedDescriptors.values(), async descriptor => {
-      if (structUtils.isVirtualDescriptor(descriptor))
-        return null;
-
       if (patterns.length && !micromatch.isMatch(structUtils.stringifyIdent(descriptor), patterns))
         return null;
 
@@ -64,6 +65,7 @@ export const DEDUPE_ALGORITHMS: Record<Strategy, DedupeAlgorithm> = {
         throw new Error(`Assertion failed: The resolution (${descriptor.descriptorHash}) should have been registered`);
 
       // We only care about resolutions that are stored in the lockfile
+      // (we shouldn't accidentally try deduping virtual packages)
       const currentPackage = project.originalPackages.get(currentResolution);
       if (typeof currentPackage === `undefined`)
         return null;
