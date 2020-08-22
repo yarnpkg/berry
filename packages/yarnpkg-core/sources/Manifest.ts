@@ -288,7 +288,7 @@ export class Manifest {
           continue;
         }
 
-        if (typeof range !== `string` || !semverUtils.getRange(range)) {
+        if (typeof range !== `string` || !semverUtils.validRange(range)) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           range = `*`;
         }

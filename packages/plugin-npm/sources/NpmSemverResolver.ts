@@ -16,7 +16,7 @@ export class NpmSemverResolver implements Resolver {
     if (!descriptor.range.startsWith(PROTOCOL))
       return false;
 
-    return !!semverUtils.getRange(descriptor.range.slice(PROTOCOL.length));
+    return !!semverUtils.validRange(descriptor.range.slice(PROTOCOL.length));
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
@@ -43,7 +43,7 @@ export class NpmSemverResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    const range = semverUtils.getRange(descriptor.range.slice(PROTOCOL.length));
+    const range = semverUtils.validRange(descriptor.range.slice(PROTOCOL.length));
     if (range === null)
       throw new Error(`Expected a valid range`);
 

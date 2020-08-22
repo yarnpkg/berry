@@ -9,7 +9,7 @@ export const TAG_REGEXP = /^(?!v)[a-z0-9-.]+$/i;
 
 export class ProtocolResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (semverUtils.getRange(descriptor.range))
+    if (semverUtils.validRange(descriptor.range))
       return true;
 
     if (TAG_REGEXP.test(descriptor.range))

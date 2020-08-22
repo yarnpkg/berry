@@ -48,7 +48,10 @@ export function satisfiesWithPrereleases(version: string | null, range: string, 
 }
 
 const rangesCache = new Map<string, semver.Range | null>();
-export function getRange(potentialRange: string): semver.Range | null {
+/**
+ * A cached version of `new semver.Range(potentialRange)` that returns `null` on invalid ranges
+ */
+export function validRange(potentialRange: string): semver.Range | null {
   if (potentialRange.startsWith(`npm:`))
     return null;
 
