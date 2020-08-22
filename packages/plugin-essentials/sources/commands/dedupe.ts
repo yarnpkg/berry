@@ -61,7 +61,7 @@ export const DEDUPE_ALGORITHMS: Record<Strategy, DedupeAlgorithm> = {
 
       const currentResolution = project.storedResolutions.get(descriptor.descriptorHash);
       if (typeof currentResolution === `undefined`)
-        return null;
+        throw new Error(`Assertion failed: The resolution (${descriptor.descriptorHash}) should have been registered`);
 
       // We only care about resolutions that are stored in the lockfile
       const currentPackage = project.originalPackages.get(currentResolution);
