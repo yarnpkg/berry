@@ -114,10 +114,9 @@ export const DEDUPE_ALGORITHMS: Record<Strategy, DedupeAlgorithm> = {
 
       const updatedResolution = bestCandidate.locatorHash;
 
-      // We only care about resolutions that are stored in the lockfile
       const updatedPackage = project.originalPackages.get(updatedResolution);
       if (typeof updatedPackage === `undefined`)
-        return null;
+        throw new Error(`Assertion failed: The package (${updatedResolution}) should have been registered`);
 
       if (updatedResolution === currentResolution)
         return null;
