@@ -69,7 +69,7 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
           if (--sigintRefCount === 0)
             process.off(`SIGINT`, sigintHandler);
 
-          // @ts-ignore
+          // @ts-expect-error
           switch (error.code) {
             case `ENOENT`: {
               stdio[2].write(`command not found: ${name}\n`);

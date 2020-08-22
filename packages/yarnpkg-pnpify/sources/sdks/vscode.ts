@@ -108,6 +108,22 @@ export const generateSvelteLanguageServerWrapper: GenerateIntegrationWrapper = a
   });
 };
 
+export const generateFlowBinWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
+    [`flow.pathToFlow`]: npath.fromPortablePath(
+      `\${workspaceFolder}/${wrapper.getProjectPathTo(
+        `cli.js` as PortablePath,
+      )}`,
+    ),
+  });
+
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {
+    [`recommendations`]: [
+      `flowtype.flow-for-vscode`,
+    ],
+  });
+};
+
 export const VSCODE_SDKS: IntegrationSdks = [
   [null, generateDefaultWrapper],
   [`eslint`, generateEslintWrapper],
@@ -116,4 +132,5 @@ export const VSCODE_SDKS: IntegrationSdks = [
   [`typescript`, generateTypescriptWrapper],
   [`stylelint`, generateStylelintWrapper],
   [`svelte-language-server`, generateSvelteLanguageServerWrapper],
+  [`flow-bin`, generateFlowBinWrapper],
 ];

@@ -254,6 +254,46 @@ describe(`Shell`, () => {
       });
     });
 
+    it(`should execute a group when using grouping curly braces (within '||', shortcutted)`, async () => {
+      await expect(bufferResult(
+        `true || {echo hello; echo world}`,
+      )).resolves.toMatchObject({
+        stdout: ``,
+      });
+    });
+
+    it(`should execute a group when using grouping curly braces (within '||')`, async () => {
+      await expect(bufferResult(
+        `false || {echo hello; echo world}`,
+      )).resolves.toMatchObject({
+        stdout: `hello\nworld\n`,
+      });
+    });
+
+    it(`should execute a group when using grouping curly braces (within '&&', shortcutted)`, async () => {
+      await expect(bufferResult(
+        `false && {echo hello; echo world}`,
+      )).resolves.toMatchObject({
+        stdout: ``,
+      });
+    });
+
+    it(`should execute a group when using grouping curly braces (within '&&')`, async () => {
+      await expect(bufferResult(
+        `true && {echo hello; echo world}`,
+      )).resolves.toMatchObject({
+        stdout: `hello\nworld\n`,
+      });
+    });
+
+    it(`should allow groups to access the $? from the current shell`, async () => {
+      await expect(bufferResult(
+        `false; {echo $?}`,
+      )).resolves.toMatchObject({
+        stdout: `1\n`,
+      });
+    });
+
     it(`should expose the previous exit code via $?`, async () => {
       await expect(bufferResult(
         `true; echo $?`,
@@ -525,6 +565,34 @@ describe(`Shell`, () => {
         });
 
         await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
+      });
+    });
+
+    it(`should support redirections on groups`, async () => {
+      await xfs.mktempPromise(async tmpDir => {
+        const file = ppath.join(tmpDir, `file` as Filename);
+
+        await expect(bufferResult(
+          `{echo "hello world"} > "${file}"`,
+        )).resolves.toMatchObject({
+          stdout: ``,
+        });
+
+        await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
+      });
+    });
+
+    it(`shouldn't allow subshells to mutate the state of the parent shell`, async () => {
+      await expect(bufferResult(
+        `(FOO=hello); echo $FOO`,
+      )).rejects.toThrowError(`Unbound variable "FOO"`);
+    });
+
+    it(`should allow groups to mutate the state of the current shell`, async () => {
+      await expect(bufferResult(
+        `{FOO=hello}; echo $FOO`,
+      )).resolves.toMatchObject({
+        stdout: `hello\n`,
       });
     });
 

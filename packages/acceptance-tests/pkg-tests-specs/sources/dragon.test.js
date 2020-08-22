@@ -444,4 +444,48 @@ describe(`Dragon tests`, () => {
       }
     ),
   );
+
+  test(`it should pass the dragon test 9`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          [`first`]: `npm:peer-deps@1.0.0`,
+          [`second`]: `npm:peer-deps@1.0.0`,
+          [`no-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        // We don't want to dedupe virtual descriptors with different
+        // base idents being resolved to the same virtual package.
+        // We should instead preserve the different descriptors and
+        // only dedupe the virtual package they both resolve to.
+
+        // Reproducing this edge case requires the following tree,
+        // where `first` and `second` resolve to the same package.
+        //
+        // . -> first --> no-deps
+        //   -> second --> no-deps
+        //   -> no-deps
+        //
+        // The way it should work:
+        // - storedDescriptors should contain `first`, `second`, virtualized `first`, virtualized `second`
+        // - storedPackages should contain both the original and the virtualized package these descriptors resolve to
+        //
+        // The way it worked before:
+        // - storedDescriptors only contained `first` and virtualized `first`
+        // - storedPackages contained both the original and the virtualized package `first` resolved to
+        //
+        // Basically, it worked nearly the same way before, except for the fact
+        // that the virtual resolution algorithm deduped `second` out of existence.
+        //
+        // Issue: https://github.com/yarnpkg/berry/issues/1352
+
+        await expect(run(`install`)).resolves.toBeTruthy();
+
+        // The virtual descriptors should be different but the virtual package should be the same
+        await expect(source(`require('first') === require('second')`)).resolves.toEqual(true);
+      }
+    ),
+  );
 });

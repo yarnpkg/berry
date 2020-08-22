@@ -1,6 +1,6 @@
 import {generatePrettyJson}      from './generatePrettyJson';
 import {generateSerializedState} from './generateSerializedState';
-// @ts-ignore
+// @ts-expect-error
 import getTemplate               from './hook';
 import {SerializedState}         from './types';
 import {PnpSettings}             from './types';

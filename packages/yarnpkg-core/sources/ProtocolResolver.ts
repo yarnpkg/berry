@@ -18,7 +18,7 @@ export class ProtocolResolver implements Resolver {
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (semver.validRange(locator.reference))
+    if (semver.valid(locator.reference))
       return true;
 
     if (TAG_REGEXP.test(locator.reference))

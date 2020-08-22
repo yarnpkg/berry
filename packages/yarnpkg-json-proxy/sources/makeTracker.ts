@@ -67,7 +67,7 @@ function cloneValueDeep(value: any, filter: TrackingFilter): any {
           ? filter[key]
           : true;
 
-        // @ts-ignore
+        // @ts-expect-error
         clone[key] = cloneValueDeep(clone[key], nextFilter);
       }
 
@@ -164,7 +164,7 @@ const proxyHandlerSet = (version: TrackingVersion, filter: TrackingFilter, ensur
         source.add(key);
       };
 
-      // @ts-ignore
+      // @ts-expect-error
       default: return source[prop];
     }
   },
@@ -209,7 +209,7 @@ const proxyHandlerMap = (version: TrackingVersion, filter: TrackingFilter, ensur
         });
       };
 
-      // @ts-ignore
+      // @ts-expect-error
       default: return source[prop];
     }
   },
@@ -217,7 +217,7 @@ const proxyHandlerMap = (version: TrackingVersion, filter: TrackingFilter, ensur
 
 const proxyHandlerObject = (version: TrackingVersion, filter: TrackingFilter, ensureCloning: () => Object) => ({
   get(source: Object, prop: string | number | symbol): any {
-    // @ts-ignore
+    // @ts-expect-error
     const value = source[prop];
 
     // Typescript doesn't allow symbol in its index types
@@ -234,29 +234,29 @@ const proxyHandlerObject = (version: TrackingVersion, filter: TrackingFilter, en
     return makeValueObservable(value, version, nextFilter, () => {
       const clonedParent = ensureCloning();
 
-      // @ts-ignore
+      // @ts-expect-error
       const immutableValue = clonedParent[prop];
       const clonedValue = cloneValueChecked(immutableValue, version);
 
-      // @ts-ignore
+      // @ts-expect-error
       clonedParent[prop] = clonedValue;
 
       return clonedValue;
     });
   },
   set(source: Object, prop: string | number | symbol, value: any): boolean {
-    // @ts-ignore
+    // @ts-expect-error
     const currentValue = source[prop];
 
     if (!compareValuesDeep(currentValue, value)) {
       // We ensure that our parent is cloned, then assign the new value into it
       const clonedParent = ensureCloning();
 
-      // @ts-ignore
+      // @ts-expect-error
       clonedParent[prop] = cloneValueDeep(value, filter);
     }
 
-    // @ts-ignore
+    // @ts-expect-error
     source[prop] = value;
 
     return true;

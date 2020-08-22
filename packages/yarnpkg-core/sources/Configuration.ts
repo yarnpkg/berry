@@ -542,7 +542,7 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
     const normalizedKey = definition.normalizeKeys? definition.normalizeKeys(propKey) : propKey;
     const subPath = `${path}['${normalizedKey}']`;
 
-    // @ts-ignore: SettingsDefinitionNoDefault has ... no default ... but
+    // @ts-expect-error: SettingsDefinitionNoDefault has ... no default ... but
     // that's fine because we're guaranteed it's not undefined.
     const valueDefinition: SettingsDefinition = definition.valueDefinition;
 
@@ -1400,7 +1400,7 @@ export class Configuration {
 
       const ret = await hook(...args);
       if (typeof ret !== `undefined`) {
-        // @ts-ignore
+        // @ts-expect-error
         return ret;
       }
     }

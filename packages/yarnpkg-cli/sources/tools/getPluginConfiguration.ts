@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import packageJson           from '@yarnpkg/cli/package.json';
 import {PluginConfiguration} from '@yarnpkg/core';
 

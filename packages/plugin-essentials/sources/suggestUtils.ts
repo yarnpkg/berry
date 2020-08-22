@@ -9,6 +9,17 @@ export type Suggestion = {
   reason: string,
 };
 
+export type NullableSuggestion = {
+  descriptor: Descriptor | null,
+  name: string,
+  reason: string,
+}
+
+export type Results = {
+  suggestions: Array<NullableSuggestion>,
+  rejections: Array<Error>,
+}
+
 export enum Target {
   REGULAR = `dependencies`,
   DEVELOPMENT = `devDependencies`,
@@ -168,23 +179,35 @@ export async function extractDescriptorFromPath(path: PortablePath, {cwd, worksp
   });
 }
 
-export async function getSuggestedDescriptors(request: Descriptor, {project, workspace, cache, target, modifier, strategies, maxResults = Infinity}: {project: Project, workspace: Workspace, cache: Cache, target: Target, modifier: Modifier, strategies: Array<Strategy>, maxResults?: number}) {
+export async function getSuggestedDescriptors(request: Descriptor, {project, workspace, cache, target, modifier, strategies, maxResults = Infinity}: {project: Project, workspace: Workspace, cache: Cache, target: Target, modifier: Modifier, strategies: Array<Strategy>, maxResults?: number}): Promise<Results> {
   if (!(maxResults >= 0))
     throw new Error(`Invalid maxResults (${maxResults})`);
 
   if (request.range !== `unknown`) {
-    return [{
-      descriptor: request,
-      name: `Use ${structUtils.prettyDescriptor(project.configuration, request)}`,
-      reason: `(unambiguous explicit request)`,
-    }];
+    return {
+      suggestions: [{
+        descriptor: request,
+        name: `Use ${structUtils.prettyDescriptor(project.configuration, request)}`,
+        reason: `(unambiguous explicit request)`,
+      }],
+      rejections: [],
+    };
   }
 
   const existing = typeof workspace !== `undefined` && workspace !== null
     ? workspace.manifest[target].get(request.identHash) || null
     : null;
 
-  const suggested = [];
+  const suggested: Array<NullableSuggestion> = [];
+
+  const rejected: Array<Error> = [];
+  const trySuggest = async (cb: () => Promise<void>) => {
+    try {
+      await cb();
+    } catch (e) {
+      rejected.push(e);
+    }
+  };
 
   for (const strategy of strategies) {
     if (suggested.length >= maxResults)
@@ -192,106 +215,114 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
 
     switch (strategy) {
       case Strategy.KEEP: {
-        if (existing) {
-          suggested.push({
-            descriptor: existing,
-            name: `Keep ${structUtils.prettyDescriptor(project.configuration, existing)}`,
-            reason: `(no changes)`,
-          });
-        }
+        await trySuggest(async () => {
+          if (existing) {
+            suggested.push({
+              descriptor: existing,
+              name: `Keep ${structUtils.prettyDescriptor(project.configuration, existing)}`,
+              reason: `(no changes)`,
+            });
+          }
+        });
       } break;
 
       case Strategy.REUSE: {
-        for (const {descriptor, locators} of (await findProjectDescriptors(request, {project, target})).values()) {
-          // We don't print the "reuse" key for the current workspace if the KEEP strategy is set since that would be redundant
-          if (locators.length === 1 && locators[0].locatorHash === workspace.anchoredLocator.locatorHash)
-            if (strategies.includes(Strategy.KEEP))
-              continue;
+        await trySuggest(async () => {
+          for (const {descriptor, locators} of (await findProjectDescriptors(request, {project, target})).values()) {
+            // We don't print the "reuse" key for the current workspace if the KEEP strategy is set since that would be redundant
+            if (locators.length === 1 && locators[0].locatorHash === workspace.anchoredLocator.locatorHash)
+              if (strategies.includes(Strategy.KEEP))
+                continue;
 
-          let reason = `(originally used by ${structUtils.prettyLocator(project.configuration, locators[0])}`;
+            let reason = `(originally used by ${structUtils.prettyLocator(project.configuration, locators[0])}`;
 
-          reason += locators.length > 1
-            ? ` and ${locators.length - 1} other${locators.length > 2 ? `s` : ``})`
-            : `)`;
+            reason += locators.length > 1
+              ? ` and ${locators.length - 1} other${locators.length > 2 ? `s` : ``})`
+              : `)`;
 
-          suggested.push({
-            descriptor,
-            name: `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)}`,
-            reason,
-          });
-        }
-      } break;
-
-      case Strategy.CACHE: {
-        for (const descriptor of project.storedDescriptors.values()) {
-          if (descriptor.identHash === request.identHash) {
             suggested.push({
               descriptor,
               name: `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)}`,
-              reason: `(already used somewhere in the lockfile)`,
+              reason,
             });
           }
-        }
+        });
+      } break;
+
+      case Strategy.CACHE: {
+        await trySuggest(async () => {
+          for (const descriptor of project.storedDescriptors.values()) {
+            if (descriptor.identHash === request.identHash) {
+              suggested.push({
+                descriptor,
+                name: `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)}`,
+                reason: `(already used somewhere in the lockfile)`,
+              });
+            }
+          }
+        });
       } break;
 
       case Strategy.PROJECT: {
-        // Don't suggest a workspace to depend on itself
-        if (workspace.manifest.name !== null && request.identHash === workspace.manifest.name.identHash)
-          continue;
+        await trySuggest(async () => {
+          // Don't suggest a workspace to depend on itself
+          if (workspace.manifest.name !== null && request.identHash === workspace.manifest.name.identHash)
+            return;
 
-        const candidateWorkspace = project.tryWorkspaceByIdent(request);
-        if (candidateWorkspace === null)
-          continue;
+          const candidateWorkspace = project.tryWorkspaceByIdent(request);
+          if (candidateWorkspace === null)
+            return;
 
-        suggested.push({
-          descriptor: candidateWorkspace.anchoredDescriptor,
-          name: `Attach ${structUtils.prettyWorkspace(project.configuration, candidateWorkspace)}`,
-          reason: `(local workspace at ${candidateWorkspace.cwd})`,
+          suggested.push({
+            descriptor: candidateWorkspace.anchoredDescriptor,
+            name: `Attach ${structUtils.prettyWorkspace(project.configuration, candidateWorkspace)}`,
+            reason: `(local workspace at ${candidateWorkspace.cwd})`,
+          });
         });
       } break;
 
       case Strategy.LATEST: {
-        if (request.range !== `unknown`) {
-          suggested.push({
-            descriptor: request,
-            name: `Use ${structUtils.prettyRange(project.configuration, request.range)}`,
-            reason: `(explicit range requested)`,
-          });
-        } else if (target === Target.PEER) {
-          suggested.push({
-            descriptor: structUtils.makeDescriptor(request, `*`),
-            name: `Use *`,
-            reason: `(catch-all peer dependency pattern)`,
-          });
-        } else if (!project.configuration.get(`enableNetwork`)) {
-          suggested.push({
-            descriptor: null,
-            name: `Resolve from latest`,
-            reason: project.configuration.format(`(unavailable because enableNetwork is toggled off)`, `grey`),
-          });
-        } else {
-          let latest;
-          try {
-            latest = await fetchDescriptorFrom(request, `latest`, {project, cache, workspace, preserveModifier: false});
-          } catch {
-            // Just ignore errors
-          }
-
-          if (latest) {
-            latest = applyModifier(latest, modifier);
-
+        await trySuggest(async () => {
+          if (request.range !== `unknown`) {
             suggested.push({
-              descriptor: latest,
-              name: `Use ${structUtils.prettyDescriptor(project.configuration, latest)}`,
-              reason: `(resolved from latest)`,
+              descriptor: request,
+              name: `Use ${structUtils.prettyRange(project.configuration, request.range)}`,
+              reason: `(explicit range requested)`,
             });
+          } else if (target === Target.PEER) {
+            suggested.push({
+              descriptor: structUtils.makeDescriptor(request, `*`),
+              name: `Use *`,
+              reason: `(catch-all peer dependency pattern)`,
+            });
+          } else if (!project.configuration.get(`enableNetwork`)) {
+            suggested.push({
+              descriptor: null,
+              name: `Resolve from latest`,
+              reason: project.configuration.format(`(unavailable because enableNetwork is toggled off)`, `grey`),
+            });
+          } else {
+            let latest = await fetchDescriptorFrom(request, `latest`, {project, cache, workspace, preserveModifier: false});
+
+            if (latest) {
+              latest = applyModifier(latest, modifier);
+
+              suggested.push({
+                descriptor: latest,
+                name: `Use ${structUtils.prettyDescriptor(project.configuration, latest)}`,
+                reason: `(resolved from latest)`,
+              });
+            }
           }
-        }
+        });
       } break;
     }
   }
 
-  return suggested.slice(0, maxResults);
+  return {
+    suggestions: suggested.slice(0, maxResults),
+    rejections: rejected.slice(0, maxResults),
+  };
 }
 
 export async function fetchDescriptorFrom(ident: Ident, range: string, {project, cache, workspace, preserveModifier = true}: {project: Project, cache: Cache, workspace: Workspace, preserveModifier?: boolean | string}) {
@@ -309,12 +340,7 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   // If we didn't bind it, `yarn add ./folder` wouldn't work.
   const boundDescriptor = resolver.bindDescriptor(latestDescriptor, workspace.anchoredLocator, resolveOptions);
 
-  let candidateLocators;
-  try {
-    candidateLocators = await resolver.getCandidates(boundDescriptor, new Map(), resolveOptions);
-  } catch {
-    return null;
-  }
+  const candidateLocators = await resolver.getCandidates(boundDescriptor, new Map(), resolveOptions);
 
   if (candidateLocators.length === 0)
     return null;

@@ -7,6 +7,7 @@ import {Command, Usage, UsageError}                                             
 import {createHash}                                                                             from 'crypto';
 import ssri                                                                                     from 'ssri';
 import {PassThrough}                                                                            from 'stream';
+import {URL}                                                                                    from 'url';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {

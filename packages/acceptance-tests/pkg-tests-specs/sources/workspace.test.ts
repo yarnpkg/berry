@@ -1,8 +1,61 @@
-const {
-  fs: {readFile, writeFile, writeJson},
-} = require(`pkg-tests-core`);
+import {PortablePath} from '@yarnpkg/fslib';
+import {exec}         from 'pkg-tests-core';
+import {fs}           from 'pkg-tests-core';
+
+const {readFile, writeFile, writeJson} = fs;
+
+const getWorkspaces = async (run: (...args: Array<string>) => Promise<exec.ExecResult>) => {
+  const {stdout} = await run(`workspaces`, `list`, `--json`);
+  const workspaces: Array<string> = stdout
+    .trim()
+    .split(`\n`)
+    .map(line => JSON.parse(line))
+    .map(({location}) => location);
+
+  return workspaces;
+};
 
 describe(`Workspaces tests`, () => {
+  test(
+    `it should support basic glob patterns`,
+    makeTemporaryMonorepoEnv({
+      workspaces: [
+        `packages/*`,
+      ],
+    }, {
+      [`packages/foo`]: {},
+      [`packages/bar`]: {},
+      [`packages/baz`]: {},
+    }, async ({path, run, source}) => {
+      await expect(getWorkspaces(run)).resolves.toStrictEqual([
+        `.`,
+        `packages/bar`,
+        `packages/baz`,
+        `packages/foo`,
+      ]);
+    })
+  );
+
+  test(
+    `it should support negated glob patterns`,
+    makeTemporaryMonorepoEnv({
+      workspaces: [
+        `packages/*`,
+        `!packages/foo`,
+      ],
+    }, {
+      [`packages/foo`]: {},
+      [`packages/bar`]: {},
+      [`packages/baz`]: {},
+    }, async ({path, run, source}) => {
+      await expect(getWorkspaces(run)).resolves.toStrictEqual([
+        `.`,
+        `packages/bar`,
+        `packages/baz`,
+      ]);
+    })
+  );
+
   test(
     `it should not implicitely make workspaces require-able`,
     makeTemporaryEnv(
@@ -11,13 +64,13 @@ describe(`Workspaces tests`, () => {
         workspaces: [`packages/*`],
       },
       async ({path, run, source}) => {
-        await writeJson(`${path}/packages/workspace-a/package.json`, {
+        await writeJson(`${path}/packages/workspace-a/package.json` as PortablePath, {
           name: `workspace-a`,
           version: `1.0.0`,
         });
 
         await writeFile(
-          `${path}/packages/workspace-a/index.js`,
+          `${path}/packages/workspace-a/index.js` as PortablePath,
           `
             module.exports = 42;
           `,
@@ -42,7 +95,7 @@ describe(`Workspaces tests`, () => {
         },
       },
       async ({path, run, source}) => {
-        await writeJson(`${path}/packages/workspace-a/package.json`, {
+        await writeJson(`${path}/packages/workspace-a/package.json` as PortablePath, {
           name: `workspace-a`,
           version: `1.0.0`,
           dependencies: {
@@ -51,13 +104,13 @@ describe(`Workspaces tests`, () => {
         });
 
         await writeFile(
-          `${path}/packages/workspace-a/index.js`,
+          `${path}/packages/workspace-a/index.js` as PortablePath,
           `
             module.exports = require('workspace-b/package.json');
           `,
         );
 
-        await writeJson(`${path}/packages/workspace-b/package.json`, {
+        await writeJson(`${path}/packages/workspace-b/package.json` as PortablePath, {
           name: `workspace-b`,
           version: `1.0.0`,
           dependencies: {
@@ -66,7 +119,7 @@ describe(`Workspaces tests`, () => {
         });
 
         await writeFile(
-          `${path}/packages/workspace-b/index.js`,
+          `${path}/packages/workspace-b/index.js` as PortablePath,
           `
             module.exports = require('workspace-a/package.json');
           `,
@@ -96,7 +149,7 @@ describe(`Workspaces tests`, () => {
         },
       },
       async ({path, run, source}) => {
-        await writeJson(`${path}/packages/workspace/package.json`, {
+        await writeJson(`${path}/packages/workspace/package.json` as PortablePath, {
           name: `workspace`,
           version: `1.0.0`,
           dependencies: {
@@ -105,13 +158,13 @@ describe(`Workspaces tests`, () => {
         });
 
         await writeFile(
-          `${path}/packages/workspace/index.js`,
+          `${path}/packages/workspace/index.js` as PortablePath,
           `
             module.exports = require('no-deps/package.json');
           `,
         );
 
-        await writeJson(`${path}/packages/no-deps/package.json`, {
+        await writeJson(`${path}/packages/no-deps/package.json` as PortablePath, {
           name: `no-deps`,
           version: `1.0.0`,
         });
@@ -137,9 +190,9 @@ describe(`Workspaces tests`, () => {
         },
       },
       async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc.yml`, `enableTransparentWorkspaces: false\n`);
+        await writeFile(`${path}/.yarnrc.yml` as PortablePath, `enableTransparentWorkspaces: false\n`);
 
-        await writeJson(`${path}/packages/workspace/package.json`, {
+        await writeJson(`${path}/packages/workspace/package.json` as PortablePath, {
           name: `workspace`,
           version: `1.0.0`,
           dependencies: {
@@ -148,13 +201,13 @@ describe(`Workspaces tests`, () => {
         });
 
         await writeFile(
-          `${path}/packages/workspace/index.js`,
+          `${path}/packages/workspace/index.js` as PortablePath,
           `
             module.exports = require('no-deps/package.json');
           `,
         );
 
-        await writeJson(`${path}/packages/no-deps/package.json`, {
+        await writeJson(`${path}/packages/no-deps/package.json` as PortablePath, {
           name: `no-deps`,
           version: `1.0.0-local`,
         });
@@ -177,7 +230,7 @@ describe(`Workspaces tests`, () => {
         workspaces: [`packages/*`],
       },
       async ({path, run, source}) => {
-        await writeJson(`${path}/packages/workspace/package.json`, {
+        await writeJson(`${path}/packages/workspace/package.json` as PortablePath, {
           name: `workspace`,
           version: `1.0.0`,
           dependencies: {
@@ -204,7 +257,7 @@ describe(`Workspaces tests`, () => {
         workspaces: [`packages/*`],
       },
       async ({path, run, source}) => {
-        await writeJson(`${path}/packages/workspace/package.json`, {
+        await writeJson(`${path}/packages/workspace/package.json` as PortablePath, {
           name: `workspace`,
           version: `1.0.0`,
           scripts: {
@@ -214,13 +267,13 @@ describe(`Workspaces tests`, () => {
           },
         });
 
-        await writeFile(`${path}/packages/workspace/write.js`, `
+        await writeFile(`${path}/packages/workspace/write.js` as PortablePath, `
           require('fs').appendFileSync(process.argv[2], process.argv[3] + '\\n');
         `);
 
         await run(`install`);
 
-        await expect(readFile(`${path}/packages/workspace/workspace.dat`, `utf8`)).resolves.toEqual([
+        await expect(readFile(`${path}/packages/workspace/workspace.dat` as PortablePath, `utf8`)).resolves.toEqual([
           `Preinstall\n`,
           `Install\n`,
           `Postinstall\n`,

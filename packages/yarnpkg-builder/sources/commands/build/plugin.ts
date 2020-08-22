@@ -117,7 +117,7 @@ export default class BuildPluginCommand extends Command {
                 compilation.hooks.optimizeChunkAssets.tap(`MyPlugin`, (chunks: Set<webpack.Chunk>) => {
                   for (const chunk of chunks) {
                     for (const file of chunk.files) {
-                      // @ts-ignore
+                      // @ts-expect-error
                       compilation.assets[file] = new RawSource(
                         [
                           `/* eslint-disable */`,

@@ -270,7 +270,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
       }
 
       setupFn(patchedFsPromises, `open`, async (...args: Array<any>) => {
-        // @ts-ignore
+        // @ts-expect-error
         const fd = await fakeFs.openPromise(...args);
         return new FileHandle(fd);
       });

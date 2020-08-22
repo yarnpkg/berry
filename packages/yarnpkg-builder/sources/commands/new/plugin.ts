@@ -60,7 +60,7 @@ export default class NewPluginCommand extends Command {
       `export default plugin;\n`,
     ].join(``));
 
-    await xfs.writeFilePromise(ppath.join(target, `package.json` as Filename), JSON.stringify({
+    await xfs.writeJsonPromise(ppath.join(target, `package.json` as Filename), {
       name: `yarn-plugin-helloworld`,
       main: `./sources/index.ts`,
       dependencies: {
@@ -73,9 +73,9 @@ export default class NewPluginCommand extends Command {
       scripts: {
         build: `builder build plugin`,
       },
-    }, null, 2));
+    });
 
-    await xfs.writeFilePromise(ppath.join(target, `tsconfig.json` as Filename), JSON.stringify({
+    await xfs.writeJsonPromise(ppath.join(target, `tsconfig.json` as Filename), {
       compilerOptions: {
         experimentalDecorators: true,
         module: `commonjs`,
@@ -85,7 +85,7 @@ export default class NewPluginCommand extends Command {
       include: [
         `sources/**/*.ts`,
       ],
-    }, null, 2));
+    });
 
     this.context.stdout.write(`Scaffolding done! Just go into ${chalk.magenta(npath.fromPortablePath(target))} and run ${chalk.cyan(`yarn && yarn build`)} 🙂\n`);
   }

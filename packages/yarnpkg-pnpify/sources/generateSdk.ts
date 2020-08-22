@@ -175,7 +175,8 @@ export type SupportedSdk =
  | 'typescript-language-server'
  | 'typescript'
  | 'stylelint'
- | 'svelte-language-server';
+ | 'svelte-language-server'
+ | 'flow-bin';
 
 export type BaseSdks = Array<[SupportedSdk, GenerateBaseWrapper]>;
 
@@ -213,12 +214,12 @@ export class Wrapper {
     const manifest = dynamicRequire(npath.join(pkgInformation.packageLocation, `package.json`));
 
     await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
-    await xfs.writeFilePromise(absWrapperPath, JSON.stringify({
+    await xfs.writeJsonPromise(absWrapperPath, {
       name: this.name,
       version: `${manifest.version}-pnpify`,
       main: manifest.main,
       type: `commonjs`,
-    }, null, 2));
+    });
   }
 
   async writeBinary(relPackagePath: PortablePath, options: TemplateOptions = {}) {
