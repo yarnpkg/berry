@@ -49,6 +49,9 @@ export function satisfiesWithPrereleases(version: string | null, range: string, 
 
 const rangesCache = new Map<string, semver.Range | null>();
 export function getRange(potentialRange: string): semver.Range | null {
+  if (potentialRange.startsWith(`npm:`))
+    return null;
+
   let range = rangesCache.get(potentialRange);
   if (range !== undefined)
     return range;
