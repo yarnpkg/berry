@@ -15,13 +15,11 @@ import {Command}                                                                
 import micromatch                                                                                                                       from 'micromatch';
 import * as yup                                                                                                                         from 'yup';
 
-export const dedupeSkip = Symbol(`dedupeSkip`);
-
 export type DedupePromise = Promise<{
   descriptor: Descriptor,
   currentPackage: Package,
   updatedPackage: Package,
-} | typeof dedupeSkip>;
+} | null>;
 
 export type DedupeAlgorithm = (project: Project, patterns: Array<string>, opts: {
   resolver: Resolver,
@@ -56,32 +54,32 @@ export const DEDUPE_ALGORITHMS: Record<Strategy, DedupeAlgorithm> = {
 
     return Array.from(project.storedDescriptors.values(), async descriptor => {
       if (structUtils.isVirtualDescriptor(descriptor))
-        return dedupeSkip;
+        return null;
 
       if (patterns.length && !micromatch.isMatch(structUtils.stringifyIdent(descriptor), patterns))
-        return dedupeSkip;
+        return null;
 
       const currentResolution = project.storedResolutions.get(descriptor.descriptorHash);
       if (typeof currentResolution === `undefined`)
-        return dedupeSkip;
+        return null;
 
       // We only care about resolutions that are stored in the lockfile
       const currentPackage = project.originalPackages.get(currentResolution);
       if (typeof currentPackage === `undefined`)
-        return dedupeSkip;
+        return null;
 
       // No need to try deduping packages that are not persisted,
       // they will be resolved again anyways
       if (!resolver.shouldPersistResolution(currentPackage, resolveOptions))
-        return dedupeSkip;
+        return null;
 
       const locators = locatorsByIdent.get(descriptor.identHash);
       if (typeof locators === `undefined`)
-        return dedupeSkip;
+        return null;
 
       // No need to choose when there's only one possibility
       if (locators.size === 1)
-        return dedupeSkip;
+        return null;
 
       const references = [...locators].map(locatorHash => {
         const pkg = project.originalPackages.get(locatorHash);
@@ -110,17 +108,17 @@ export const DEDUPE_ALGORITHMS: Record<Strategy, DedupeAlgorithm> = {
 
       const bestCandidate = candidates[0];
       if (typeof bestCandidate === `undefined`)
-        return dedupeSkip;
+        return null;
 
       const updatedResolution = bestCandidate.locatorHash;
 
       // We only care about resolutions that are stored in the lockfile
       const updatedPackage = project.originalPackages.get(updatedResolution);
       if (typeof updatedPackage === `undefined`)
-        return dedupeSkip;
+        return null;
 
       if (updatedResolution === currentResolution)
-        return dedupeSkip;
+        return null;
 
       return {descriptor, currentPackage, updatedPackage};
     });
@@ -273,7 +271,7 @@ export async function dedupe({strategy, project, patterns, cache, report}: Dedup
       dedupePromises.map(dedupePromise =>
         dedupePromise
           .then(dedupe => {
-            if (dedupe === dedupeSkip)
+            if (dedupe === null)
               return;
 
             dedupedPackageCount++;
