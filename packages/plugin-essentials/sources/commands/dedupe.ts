@@ -161,7 +161,7 @@ export default class DedupeCommand extends BaseCommand {
 
       - \`highest\`: Reuses (where possible) the locators with the highest versions. This means that dependencies can only be upgraded, never downgraded. It's also guaranteed that it never takes more than a single pass to dedupe the entire dependency tree.
 
-      **Note:** Even though it never produces a wrong dependency tree, this command should be used with caution, as it modifies the dependency tree, which can sometimes cause problems when packages specify wrong dependency ranges. It is recommended to also review the changes manually.
+      **Note:** Even though it never produces a wrong dependency tree, this command should be used with caution, as it modifies the dependency tree, which can sometimes cause problems when packages strictly follow semver recommandations. It is recommended to also review the changes manually.
 
       If set, the \`-c,--check\` flag will only report the found duplicates, without persisting the modified dependency tree.
 
