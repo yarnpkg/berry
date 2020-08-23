@@ -38820,6 +38820,7 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
     this.nextFd = 3;
     this.isZip = new Set();
     this.notZip = new Set();
+    this.realPaths = new Map();
     this.limitOpenFilesTimeout = null;
     this.libzip = libzip;
     this.baseFs = baseFs;
@@ -39012,9 +39013,17 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.realpathPromise(p);
     }, async (zipFs, {
+      archivePath,
       subPath
     }) => {
-      return this.pathUtils.join(zipFs.getRealPath(), this.pathUtils.relative(sources_path/* PortablePath.root */.LZ.root, await zipFs.realpathPromise(subPath)));
+      let realArchivePath = this.realPaths.get(archivePath);
+
+      if (typeof realArchivePath === `undefined`) {
+        realArchivePath = await this.baseFs.realpathPromise(archivePath);
+        this.realPaths.set(archivePath, realArchivePath);
+      }
+
+      return this.pathUtils.join(realArchivePath, this.pathUtils.relative(sources_path/* PortablePath.root */.LZ.root, await zipFs.realpathPromise(subPath)));
     });
   }
 
@@ -39022,9 +39031,17 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
     return this.makeCallSync(p, () => {
       return this.baseFs.realpathSync(p);
     }, (zipFs, {
+      archivePath,
       subPath
     }) => {
-      return this.pathUtils.join(zipFs.getRealPath(), this.pathUtils.relative(sources_path/* PortablePath.root */.LZ.root, zipFs.realpathSync(subPath)));
+      let realArchivePath = this.realPaths.get(archivePath);
+
+      if (typeof realArchivePath === `undefined`) {
+        realArchivePath = this.baseFs.realpathSync(archivePath);
+        this.realPaths.set(archivePath, realArchivePath);
+      }
+
+      return this.pathUtils.join(realArchivePath, this.pathUtils.relative(sources_path/* PortablePath.root */.LZ.root, zipFs.realpathSync(subPath)));
     });
   }
 

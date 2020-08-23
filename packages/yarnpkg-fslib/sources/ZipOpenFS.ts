@@ -52,8 +52,9 @@ export class ZipOpenFS extends BasePortableFakeFS {
   private readonly maxAge: number;
   private readonly readOnlyArchives: boolean;
 
-  private isZip: Set<string> = new Set();
-  private notZip: Set<string> = new Set();
+  private isZip: Set<PortablePath> = new Set();
+  private notZip: Set<PortablePath> = new Set();
+  private realPaths: Map<PortablePath, PortablePath> = new Map()
 
   constructor({libzip, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true, maxAge = 5000}: ZipOpenFSOptions) {
     super();
@@ -247,16 +248,28 @@ export class ZipOpenFS extends BasePortableFakeFS {
   async realpathPromise(p: PortablePath) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.realpathPromise(p);
-    }, async (zipFs, {subPath}) => {
-      return this.pathUtils.join(zipFs.getRealPath(), this.pathUtils.relative(PortablePath.root, await zipFs.realpathPromise(subPath)));
+    }, async (zipFs, {archivePath, subPath}) => {
+      let realArchivePath = this.realPaths.get(archivePath);
+      if (typeof realArchivePath === `undefined`) {
+        realArchivePath = await this.baseFs.realpathPromise(archivePath);
+        this.realPaths.set(archivePath, realArchivePath);
+      }
+
+      return this.pathUtils.join(realArchivePath, this.pathUtils.relative(PortablePath.root, await zipFs.realpathPromise(subPath)));
     });
   }
 
   realpathSync(p: PortablePath) {
     return this.makeCallSync(p, () => {
       return this.baseFs.realpathSync(p);
-    }, (zipFs, {subPath}) => {
-      return this.pathUtils.join(zipFs.getRealPath(), this.pathUtils.relative(PortablePath.root, zipFs.realpathSync(subPath)));
+    }, (zipFs, {archivePath, subPath}) => {
+      let realArchivePath = this.realPaths.get(archivePath);
+      if (typeof realArchivePath === `undefined`) {
+        realArchivePath = this.baseFs.realpathSync(archivePath);
+        this.realPaths.set(archivePath, realArchivePath);
+      }
+
+      return this.pathUtils.join(realArchivePath, this.pathUtils.relative(PortablePath.root, zipFs.realpathSync(subPath)));
     });
   }
 
