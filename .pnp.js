@@ -37962,17 +37962,24 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     encoding
   } = {}) {
     if (p === null) throw new Error(`Unimplemented`);
-    const fd = this.openSync(p, `r`);
+    let fd = this.openSync(p, `r`);
+
+    const closeStream = () => {
+      if (fd === -1) return;
+      this.closeSync(fd);
+      fd = -1;
+    };
+
     const stream = Object.assign(new external_stream_.PassThrough(), {
       bytesRead: 0,
       path: p,
       close: () => {
         clearImmediate(immediate);
-        this.closeSync(fd);
+        closeStream();
       },
       _destroy: (error, callback) => {
         clearImmediate(immediate);
-        this.closeSync(fd);
+        closeStream();
         callback(error);
       }
     });
@@ -37987,7 +37994,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
         stream.end();
         stream.destroy();
       } finally {
-        this.closeSync(fd);
+        closeStream();
       }
     });
     return stream;
@@ -37999,17 +38006,16 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     if (this.readOnly) throw EROFS(`open '${p}'`);
     if (p === null) throw new Error(`Unimplemented`);
     const chunks = [];
-    const fd = this.openSync(p, `w`);
-    let streamClosed = false;
+    let fd = this.openSync(p, `w`);
 
     const closeStream = () => {
-      if (streamClosed) return;
-      streamClosed = true;
+      if (fd === -1) return;
 
       try {
         this.writeFileSync(p, Buffer.concat(chunks), encoding);
       } finally {
         this.closeSync(fd);
+        fd = -1;
       }
     };
 
@@ -38018,6 +38024,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
       path: p,
       close: () => {
         stream.end();
+        closeStream();
       },
       _destroy: (error, callback) => {
         closeStream();

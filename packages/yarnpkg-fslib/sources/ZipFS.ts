@@ -414,18 +414,25 @@ export class ZipFS extends BasePortableFakeFS {
     if (p === null)
       throw new Error(`Unimplemented`);
 
-    const fd = this.openSync(p, `r`);
+    let fd = this.openSync(p, `r`);
+
+    const closeStream = () => {
+      if (fd === -1)
+        return;
+      this.closeSync(fd);
+      fd = -1;
+    };
 
     const stream = Object.assign(new PassThrough(), {
       bytesRead: 0,
       path: p,
       close: () => {
         clearImmediate(immediate);
-        this.closeSync(fd);
+        closeStream();
       },
       _destroy: (error: Error | undefined, callback: (error?: Error) => void) => {
         clearImmediate(immediate);
-        this.closeSync(fd);
+        closeStream();
         callback(error);
       },
     });
@@ -442,7 +449,7 @@ export class ZipFS extends BasePortableFakeFS {
         stream.end();
         stream.destroy();
       } finally {
-        this.closeSync(fd);
+        closeStream();
       }
     });
 
@@ -458,18 +465,17 @@ export class ZipFS extends BasePortableFakeFS {
 
     const chunks: Array<Buffer> = [];
 
-    const fd = this.openSync(p, `w`);
+    let fd = this.openSync(p, `w`);
 
-    let streamClosed = false;
     const closeStream = () => {
-      if (streamClosed)
+      if (fd === -1)
         return;
-      streamClosed = true;
 
       try {
         this.writeFileSync(p, Buffer.concat(chunks), encoding);
       } finally {
         this.closeSync(fd);
+        fd = -1;
       }
     };
 
@@ -478,6 +484,7 @@ export class ZipFS extends BasePortableFakeFS {
       path: p,
       close: () => {
         stream.end();
+        closeStream();
       },
       _destroy: (error: Error | undefined, callback: (error?: Error) => void) => {
         closeStream();
