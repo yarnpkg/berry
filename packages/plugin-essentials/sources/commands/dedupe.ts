@@ -77,7 +77,7 @@ export const DEDUPE_ALGORITHMS: Record<Strategy, DedupeAlgorithm> = {
 
       const locators = locatorsByIdent.get(descriptor.identHash);
       if (typeof locators === `undefined`)
-        return null;
+        throw new Error(`Assertion failed: The resolutions (${descriptor.identHash}) should have been registered`);
 
       // No need to choose when there's only one possibility
       if (locators.size === 1)
@@ -145,7 +145,7 @@ export default class DedupeCommand extends BaseCommand {
 
       - \`highest\`: Reuses (where possible) the locators with the highest versions. This means that dependencies can only be upgraded, never downgraded. It's also guaranteed that it never takes more than a single pass to dedupe the entire dependency tree.
 
-      **Note:** Even though it never produces a wrong dependency tree, this command should be used with caution, as it modifies the dependency tree, which can sometimes cause problems when packages strictly follow semver recommandations. It is recommended to also review the changes manually.
+      **Note:** Even though it never produces a wrong dependency tree, this command should be used with caution, as it modifies the dependency tree, which can sometimes cause problems when packages don't strictly follow semver recommendations. Because of this, it is recommended to also review the changes manually.
 
       If set, the \`-c,--check\` flag will only report the found duplicates, without persisting the modified dependency tree. If changes are found, the command will exit with a non-zero exit code, making it suitable for CI purposes.
 
