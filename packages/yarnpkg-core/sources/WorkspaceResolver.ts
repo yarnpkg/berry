@@ -45,11 +45,7 @@ export class WorkspaceResolver implements Resolver {
   }
 
   async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    const workspace = opts.project.getWorkspaceByDescriptor(descriptor);
-
-    return references
-      .filter(reference => reference === workspace.anchoredLocator.reference)
-      .map(reference => structUtils.makeLocator(descriptor, reference));
+    return null;
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

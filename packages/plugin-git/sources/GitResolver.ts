@@ -27,17 +27,14 @@ export class GitResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
-    const locator = await this.getCandidateForDescriptor(descriptor, opts);
+    const reference = await gitUtils.resolveUrl(descriptor.range, opts.project.configuration);
+    const locator = structUtils.makeLocator(descriptor, reference);
 
     return [locator];
   }
 
   async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    const {reference: gitReference} = await this.getCandidateForDescriptor(descriptor, opts);
-
-    return references
-      .filter(reference => reference === gitReference)
-      .map(reference => structUtils.makeLocator(descriptor, reference));
+    return null;
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -66,12 +63,5 @@ export class GitResolver implements Resolver {
 
       bin: manifest.bin,
     };
-  }
-
-  private async getCandidateForDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
-    const reference = await gitUtils.resolveUrl(descriptor.range, opts.project.configuration);
-    const locator = structUtils.makeLocator(descriptor, reference);
-
-    return locator;
   }
 }

@@ -138,12 +138,15 @@ export interface Resolver {
    * locators are first. This will cause the resolution algorithm to prioritize
    * them if possible (it doesn't guarantee that they'll end up being used).
    *
+   * If the operation is unsupported by the resolver (i.e. if it can't be statically
+   * determined which references satisfy the target descriptor), `null` should be returned.
+   *
    * @param descriptor The target descriptor.
    * @param references The candidate references.
    * @param dependencies The resolution dependencies and their resolutions.
    * @param opts The resolution options.
    */
-  getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions): Promise<Array<Locator>>;
+  getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions): Promise<Array<Locator> | null>;
 
   /**
    * This function will, given a locator, return the full package definition

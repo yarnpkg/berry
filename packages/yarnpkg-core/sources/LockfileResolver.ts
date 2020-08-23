@@ -52,19 +52,7 @@ export class LockfileResolver implements Resolver {
   }
 
   async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    const convertedPkg = opts.project.originalPackages.get(structUtils.convertDescriptorToLocator(descriptor).locatorHash);
-
-    const resolution = opts.project.storedResolutions.get(descriptor.descriptorHash);
-    const resolutionPkg = typeof resolution !== `undefined`
-      ? opts.project.originalPackages.get(resolution)
-      : undefined;
-
-    return references
-      .filter(reference => [
-        convertedPkg?.reference,
-        resolutionPkg?.reference,
-      ].includes(reference))
-      .map(reference => structUtils.makeLocator(descriptor, reference));
+    return null;
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

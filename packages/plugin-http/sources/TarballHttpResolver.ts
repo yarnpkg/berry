@@ -43,11 +43,7 @@ export class TarballHttpResolver implements Resolver {
   }
 
   async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    const tarballReference = structUtils.convertDescriptorToLocator(descriptor).reference;
-
-    return references
-      .filter(reference => reference === tarballReference)
-      .map(reference => structUtils.makeLocator(descriptor, reference));
+    return null;
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

@@ -36,17 +36,13 @@ export class RawLinkResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
-    const locator = await this.getCandidateForDescriptor(descriptor, opts);
+    const path = descriptor.range.slice(RAW_LINK_PROTOCOL.length);
 
-    return [locator];
+    return [structUtils.makeLocator(descriptor, `${RAW_LINK_PROTOCOL}${npath.toPortablePath(path)}`)];
   }
 
   async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    const {reference: rawLinkReference} = await this.getCandidateForDescriptor(descriptor, opts);
-
-    return references
-      .filter(reference => reference === rawLinkReference)
-      .map(reference => structUtils.makeLocator(descriptor, reference));
+    return null;
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -66,11 +62,5 @@ export class RawLinkResolver implements Resolver {
 
       bin: new Map(),
     };
-  }
-
-  private async getCandidateForDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
-    const path = descriptor.range.slice(RAW_LINK_PROTOCOL.length);
-
-    return structUtils.makeLocator(descriptor, `${RAW_LINK_PROTOCOL}${npath.toPortablePath(path)}`);
   }
 }

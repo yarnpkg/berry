@@ -46,27 +46,6 @@ export class PatchResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    const locator = await this.getCandidateForDescriptor(descriptor, dependencies, opts);
-
-    return [locator];
-  }
-
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    const {reference: patchReference} = await this.getCandidateForDescriptor(descriptor, dependencies, opts);
-
-    return references
-      .filter(reference => reference === patchReference)
-      .map(reference => structUtils.makeLocator(descriptor, reference));
-  }
-
-  async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
-    const {sourceLocator} = patchUtils.parseLocator(locator);
-    const sourcePkg = await opts.resolver.resolve(sourceLocator, opts);
-
-    return {...sourcePkg, ...locator};
-  }
-
-  private async getCandidateForDescriptor(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
     if (!opts.fetchOptions)
       throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
 
@@ -79,6 +58,17 @@ export class PatchResolver implements Resolver {
 
     const patchHash = hashUtils.makeHash(`${CACHE_VERSION}`, ...patchFiles).slice(0, 6);
 
-    return patchUtils.makeLocator(descriptor, {parentLocator, sourcePackage, patchPaths, patchHash});
+    return [patchUtils.makeLocator(descriptor, {parentLocator, sourcePackage, patchPaths, patchHash})];
+  }
+
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+    return null;
+  }
+
+  async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
+    const {sourceLocator} = patchUtils.parseLocator(locator);
+    const sourcePkg = await opts.resolver.resolve(sourceLocator, opts);
+
+    return {...sourcePkg, ...locator};
   }
 }

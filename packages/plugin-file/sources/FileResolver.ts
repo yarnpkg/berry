@@ -45,17 +45,35 @@ export class FileResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
-    const locator = await this.getCandidateForDescriptor(descriptor, opts);
+    if (!opts.fetchOptions)
+      throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
 
-    return [locator];
+    const {path, parentLocator} = fileUtils.parseSpec(descriptor.range);
+
+    if (parentLocator === null)
+      throw new Error(`Assertion failed: The descriptor should have been bound`);
+
+    const archiveBuffer = await fileUtils.makeBufferFromLocator(
+      structUtils.makeLocator(descriptor,
+        structUtils.makeRange({
+          protocol: PROTOCOL,
+          source: path,
+          selector: path,
+          params: {
+            locator: structUtils.stringifyLocator(parentLocator),
+          },
+        })
+      ),
+      {protocol: PROTOCOL, fetchOptions: opts.fetchOptions}
+    );
+
+    const folderHash = hashUtils.makeHash(`${CACHE_VERSION}`, archiveBuffer).slice(0, 6);
+
+    return [fileUtils.makeLocator(descriptor, {parentLocator, path, folderHash, protocol: PROTOCOL})];
   }
 
   async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    const {reference: fileReference} = await this.getCandidateForDescriptor(descriptor, opts);
-
-    return references
-      .filter(reference => reference === fileReference)
-      .map(reference => structUtils.makeLocator(descriptor, reference));
+    return null;
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -84,33 +102,5 @@ export class FileResolver implements Resolver {
 
       bin: manifest.bin,
     };
-  }
-
-  private async getCandidateForDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
-    if (!opts.fetchOptions)
-      throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
-
-    const {path, parentLocator} = fileUtils.parseSpec(descriptor.range);
-
-    if (parentLocator === null)
-      throw new Error(`Assertion failed: The descriptor should have been bound`);
-
-    const archiveBuffer = await fileUtils.makeBufferFromLocator(
-      structUtils.makeLocator(descriptor,
-        structUtils.makeRange({
-          protocol: PROTOCOL,
-          source: path,
-          selector: path,
-          params: {
-            locator: structUtils.stringifyLocator(parentLocator),
-          },
-        })
-      ),
-      {protocol: PROTOCOL, fetchOptions: opts.fetchOptions}
-    );
-
-    const folderHash = hashUtils.makeHash(`${CACHE_VERSION}`, archiveBuffer).slice(0, 6);
-
-    return fileUtils.makeLocator(descriptor, {parentLocator, path, folderHash, protocol: PROTOCOL});
   }
 }

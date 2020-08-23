@@ -116,16 +116,7 @@ export class LegacyMigrationResolver implements Resolver {
   }
 
   async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    if (!this.resolutions)
-      throw new Error(`Assertion failed: The resolution store should have been setup`);
-
-    const resolution = this.resolutions.get(descriptor.descriptorHash);
-    if (!resolution)
-      throw new Error(`Assertion failed: The resolution should have been registered`);
-
-    return references
-      .filter(reference => reference === resolution.reference)
-      .map(reference => structUtils.makeLocator(descriptor, reference));
+    return null;
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<never> {

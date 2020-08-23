@@ -36,17 +36,13 @@ export class LinkResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
-    const locator = await this.getCandidateForDescriptor(descriptor, opts);
+    const path = descriptor.range.slice(LINK_PROTOCOL.length);
 
-    return [locator];
+    return [structUtils.makeLocator(descriptor, `${LINK_PROTOCOL}${npath.toPortablePath(path)}`)];
   }
 
   async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    const {reference: linkReference} = await this.getCandidateForDescriptor(descriptor, opts);
-
-    return references
-      .filter(reference => reference === linkReference)
-      .map(reference => structUtils.makeLocator(descriptor, reference));
+    return null;
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
@@ -75,11 +71,5 @@ export class LinkResolver implements Resolver {
 
       bin: manifest.bin,
     };
-  }
-
-  private async getCandidateForDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
-    const path = descriptor.range.slice(LINK_PROTOCOL.length);
-
-    return structUtils.makeLocator(descriptor, `${LINK_PROTOCOL}${npath.toPortablePath(path)}`);
   }
 }

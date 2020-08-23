@@ -39,17 +39,29 @@ export class ExecResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    const locator = await this.getCandidateForDescriptor(descriptor, opts);
+    if (!opts.fetchOptions)
+      throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
 
-    return [locator];
+    const {path, parentLocator} = execUtils.parseSpec(descriptor.range);
+
+    if (parentLocator === null)
+      throw new Error(`Assertion failed: The descriptor should have been bound`);
+
+    const generatorFile = await execUtils.loadGeneratorFile(structUtils.makeRange({
+      protocol: PROTOCOL,
+      source: path,
+      selector: path,
+      params: {
+        locator: structUtils.stringifyLocator(parentLocator),
+      },
+    }), PROTOCOL, opts.fetchOptions);
+    const generatorHash = hashUtils.makeHash(`${CACHE_VERSION}`, generatorFile).slice(0, 6);
+
+    return [execUtils.makeLocator(descriptor, {parentLocator, path, generatorHash, protocol: PROTOCOL})];
   }
 
   async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    const {reference: execReference} = await this.getCandidateForDescriptor(descriptor, opts);
-
-    return references
-      .filter(reference => reference === execReference)
-      .map(reference => structUtils.makeLocator(descriptor, reference));
+    return null;
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -78,27 +90,5 @@ export class ExecResolver implements Resolver {
 
       bin: manifest.bin,
     };
-  }
-
-  private async getCandidateForDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
-    if (!opts.fetchOptions)
-      throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
-
-    const {path, parentLocator} = execUtils.parseSpec(descriptor.range);
-
-    if (parentLocator === null)
-      throw new Error(`Assertion failed: The descriptor should have been bound`);
-
-    const generatorFile = await execUtils.loadGeneratorFile(structUtils.makeRange({
-      protocol: PROTOCOL,
-      source: path,
-      selector: path,
-      params: {
-        locator: structUtils.stringifyLocator(parentLocator),
-      },
-    }), PROTOCOL, opts.fetchOptions);
-    const generatorHash = hashUtils.makeHash(`${CACHE_VERSION}`, generatorFile).slice(0, 6);
-
-    return execUtils.makeLocator(descriptor, {parentLocator, path, generatorHash, protocol: PROTOCOL});
   }
 }

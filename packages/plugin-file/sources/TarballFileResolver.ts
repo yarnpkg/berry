@@ -48,17 +48,16 @@ export class TarballFileResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
-    const locator = await this.getCandidateForDescriptor(descriptor, opts);
+    let path = descriptor.range;
 
-    return [locator];
+    if (path.startsWith(PROTOCOL))
+      path = path.slice(PROTOCOL.length);
+
+    return [structUtils.makeLocator(descriptor, `${PROTOCOL}${npath.toPortablePath(path)}`)];
   }
 
   async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    const {reference: tarballFileReference} = await this.getCandidateForDescriptor(descriptor, opts);
-
-    return references
-      .filter(reference => reference === tarballFileReference)
-      .map(reference => structUtils.makeLocator(descriptor, reference));
+    return null;
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -87,14 +86,5 @@ export class TarballFileResolver implements Resolver {
 
       bin: manifest.bin,
     };
-  }
-
-  private async getCandidateForDescriptor(descriptor: Descriptor, opts: ResolveOptions) {
-    let path = descriptor.range;
-
-    if (path.startsWith(PROTOCOL))
-      path = path.slice(PROTOCOL.length);
-
-    return structUtils.makeLocator(descriptor, `${PROTOCOL}${npath.toPortablePath(path)}`);
   }
 }
