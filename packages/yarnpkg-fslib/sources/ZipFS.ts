@@ -414,15 +414,16 @@ export class ZipFS extends BasePortableFakeFS {
     if (p === null)
       throw new Error(`Unimplemented`);
 
+    const fd = this.openSync(p, `r`);
+
     const stream = Object.assign(new PassThrough(), {
       bytesRead: 0,
       path: p,
       close: () => {
         clearImmediate(immediate);
+        this.closeSync(fd);
       },
     });
-
-    const fd = this.openSync(p, `r`);
 
     const immediate = setImmediate(() => {
       try {

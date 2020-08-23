@@ -413,5 +413,18 @@ describe(`ZipFS`, () => {
 
     // The watcher shouldn't keep the process running after the file is unwatched
   });
+
+  it(`closes the fd created in createReadStream when the stream is closed early`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    zipFs.writeFileSync(`/foo.txt` as Filename, `foo`);
+
+    expect(zipFs.hasOpenFileHandles()).toBe(false);
+    const stream = zipFs.createReadStream(`/foo.txt` as Filename);
+    expect(zipFs.hasOpenFileHandles()).toBe(true);
+    stream.close();
+    expect(zipFs.hasOpenFileHandles()).toBe(false);
+
+    zipFs.discardAndClose();
+  });
 });
 
