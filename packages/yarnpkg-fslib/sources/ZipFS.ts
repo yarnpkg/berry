@@ -456,15 +456,34 @@ export class ZipFS extends BasePortableFakeFS {
     if (p === null)
       throw new Error(`Unimplemented`);
 
+    const chunks: Array<Buffer> = [];
+
+    const fd = this.openSync(p, `w`);
+
+    let streamClosed = false;
+    const closeStream = () => {
+      if (streamClosed)
+        return;
+      streamClosed = true;
+
+      try {
+        this.writeFileSync(p, Buffer.concat(chunks), encoding);
+      } finally {
+        this.closeSync(fd);
+      }
+    };
+
     const stream = Object.assign(new PassThrough(), {
       bytesWritten: 0,
       path: p,
       close: () => {
         stream.end();
       },
+      _destroy: (error: Error | undefined, callback: (error?: Error) => void) => {
+        closeStream();
+        callback(error);
+      },
     });
-
-    const chunks: Array<Buffer> = [];
 
     stream.on(`data`, chunk => {
       const chunkBuffer = Buffer.from(chunk);
@@ -472,13 +491,8 @@ export class ZipFS extends BasePortableFakeFS {
       chunks.push(chunkBuffer);
     });
 
-    const fd = this.openSync(p, `w`);
     stream.on(`end`, () => {
-      try {
-        this.writeFileSync(p, Buffer.concat(chunks), encoding);
-      } finally {
-        this.closeSync(fd);
-      }
+      closeStream();
     });
 
     return stream;
