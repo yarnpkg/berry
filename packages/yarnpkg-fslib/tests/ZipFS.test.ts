@@ -426,5 +426,18 @@ describe(`ZipFS`, () => {
 
     zipFs.discardAndClose();
   });
+
+  it(`should not crash when a createReadStream is destroyed`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    zipFs.writeFileSync(`/foo.txt` as Filename, `foo`);
+
+    expect(zipFs.hasOpenFileHandles()).toBe(false);
+    const stream = zipFs.createReadStream(`/foo.txt` as Filename);
+    expect(zipFs.hasOpenFileHandles()).toBe(true);
+    stream.destroy();
+    expect(zipFs.hasOpenFileHandles()).toBe(false);
+
+    zipFs.discardAndClose();
+  });
 });
 

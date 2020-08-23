@@ -423,6 +423,11 @@ export class ZipFS extends BasePortableFakeFS {
         clearImmediate(immediate);
         this.closeSync(fd);
       },
+      _destroy: (error: Error | undefined, callback: (error?: Error) => void) => {
+        clearImmediate(immediate);
+        this.closeSync(fd);
+        callback(error);
+      },
     });
 
     const immediate = setImmediate(() => {
