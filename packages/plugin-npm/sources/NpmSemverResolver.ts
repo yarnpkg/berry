@@ -83,7 +83,9 @@ export class NpmSemverResolver implements Resolver {
   }
 
   async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
-    const range = new semver.Range(descriptor.range.slice(PROTOCOL.length));
+    const range = semverUtils.validRange(descriptor.range.slice(PROTOCOL.length));
+    if (range === null)
+      throw new Error(`Expected a valid range, got ${descriptor.range.slice(PROTOCOL.length)}`);
 
     return references
       .map(reference => {
