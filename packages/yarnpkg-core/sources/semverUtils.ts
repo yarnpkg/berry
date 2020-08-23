@@ -56,7 +56,7 @@ export function validRange(potentialRange: string): semver.Range | null {
     return null;
 
   let range = rangesCache.get(potentialRange);
-  if (range !== undefined)
+  if (typeof range !== `undefined`)
     return range;
 
   try {
