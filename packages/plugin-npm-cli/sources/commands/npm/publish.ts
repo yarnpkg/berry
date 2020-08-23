@@ -6,7 +6,6 @@ import {packUtils}                                                              
 import {Command, Usage, UsageError}                                                             from 'clipanion';
 import {createHash}                                                                             from 'crypto';
 import ssri                                                                                     from 'ssri';
-import {PassThrough}                                                                            from 'stream';
 import {URL}                                                                                    from 'url';
 
 // eslint-disable-next-line arca/no-default-export

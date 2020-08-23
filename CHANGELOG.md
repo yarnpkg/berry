@@ -19,6 +19,7 @@
 - Negated glob patterns in the `workspace` field will now be processed correctly.
 - Yarn will now allow relative paths inside the `workspace:` protocol to start with `./`
 - Yarn will now show the actual error when it fails to resolve a request during `yarn add` and `yarn up`
+- Yarn will now show the actual error when a lifecycle script fails
 
 ### CLI
 
