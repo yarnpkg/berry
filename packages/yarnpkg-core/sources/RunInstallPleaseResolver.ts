@@ -34,7 +34,7 @@ export class RunInstallPleaseResolver implements Resolver {
     throw new ReportError(MessageName.MISSING_LOCKFILE_ENTRY, `This package doesn't seem to be present in your lockfile; try to make an install to update your resolutions`);
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: unknown, opts: ResolveOptions): Promise<never> {
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions): Promise<never> {
     throw new ReportError(MessageName.MISSING_LOCKFILE_ENTRY, `This package doesn't seem to be present in your lockfile; try to make an install to update your resolutions`);
   }
 

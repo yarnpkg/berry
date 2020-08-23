@@ -7,7 +7,7 @@ import {Project}                                         from './Project';
 import {Report}                                          from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
-import {DescriptorHash, Descriptor, Locator, Package}    from './types';
+import {DescriptorHash, Descriptor, Locator}             from './types';
 
 const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>) => string]> = [
   // These ones come from Git urls
@@ -115,7 +115,7 @@ export class LegacyMigrationResolver implements Resolver {
     return [resolution];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
     return null;
   }
 

@@ -82,7 +82,7 @@ export class NpmSemverResolver implements Resolver {
     });
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
     const range = descriptor.range.slice(PROTOCOL.length);
     const versions = references
       .map(reference => reference.slice(PROTOCOL.length))

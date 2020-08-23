@@ -1,10 +1,10 @@
-import {miscUtils, structUtils, hashUtils, DescriptorHash, Package} from '@yarnpkg/core';
-import {LinkType}                                                   from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                              from '@yarnpkg/core';
-import {Resolver, ResolveOptions, MinimalResolveOptions}            from '@yarnpkg/core';
+import {miscUtils, structUtils, hashUtils}               from '@yarnpkg/core';
+import {LinkType}                                        from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
 
-import {FILE_REGEXP, PROTOCOL}                                      from './constants';
-import * as fileUtils                                               from './fileUtils';
+import {FILE_REGEXP, PROTOCOL}                           from './constants';
+import * as fileUtils                                    from './fileUtils';
 
 // We use this for the folders to be regenerated without bumping the whole cache
 const CACHE_VERSION = 1;
@@ -72,7 +72,7 @@ export class FileResolver implements Resolver {
     return [fileUtils.makeLocator(descriptor, {parentLocator, path, folderHash, protocol: PROTOCOL})];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
     return null;
   }
 

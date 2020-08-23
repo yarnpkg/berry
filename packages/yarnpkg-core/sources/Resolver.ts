@@ -143,10 +143,9 @@ export interface Resolver {
    *
    * @param descriptor The target descriptor.
    * @param references The candidate references.
-   * @param dependencies The resolution dependencies and their resolutions.
    * @param opts The resolution options.
    */
-  getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions): Promise<Array<Locator> | null>;
+  getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions): Promise<Array<Locator> | null>;
 
   /**
    * This function will, given a locator, return the full package definition

@@ -1,10 +1,10 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions, DescriptorHash, Package} from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                                            from '@yarnpkg/core';
-import {LinkType}                                                                 from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                   from '@yarnpkg/core';
-import {npath}                                                                    from '@yarnpkg/fslib';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
+import {LinkType}                                        from '@yarnpkg/core';
+import {miscUtils, structUtils}                          from '@yarnpkg/core';
+import {npath}                                           from '@yarnpkg/fslib';
 
-import {FILE_REGEXP, TARBALL_REGEXP, PROTOCOL}                                    from './constants';
+import {FILE_REGEXP, TARBALL_REGEXP, PROTOCOL}           from './constants';
 
 export class TarballFileResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -56,7 +56,7 @@ export class TarballFileResolver implements Resolver {
     return [structUtils.makeLocator(descriptor, `${PROTOCOL}${npath.toPortablePath(path)}`)];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
     return null;
   }
 

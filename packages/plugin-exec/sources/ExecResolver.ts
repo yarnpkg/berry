@@ -60,7 +60,7 @@ export class ExecResolver implements Resolver {
     return [execUtils.makeLocator(descriptor, {parentLocator, path, generatorHash, protocol: PROTOCOL})];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
     return null;
   }
 

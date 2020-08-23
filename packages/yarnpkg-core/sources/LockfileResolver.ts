@@ -1,6 +1,6 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
-import {Descriptor, Locator, DescriptorHash, Package}    from './types';
+import {Descriptor, Locator}                             from './types';
 
 export class LockfileResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -51,7 +51,7 @@ export class LockfileResolver implements Resolver {
     return [pkg];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
     return null;
   }
 

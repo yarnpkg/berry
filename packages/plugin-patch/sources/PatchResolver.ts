@@ -61,7 +61,7 @@ export class PatchResolver implements Resolver {
     return [patchUtils.makeLocator(descriptor, {parentLocator, sourcePackage, patchPaths, patchHash})];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
     return null;
   }
 

@@ -1,10 +1,10 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions, DescriptorHash} from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest, Package}                          from '@yarnpkg/core';
-import {LinkType}                                                        from '@yarnpkg/core';
-import {miscUtils, structUtils}                                          from '@yarnpkg/core';
-import {npath}                                                           from '@yarnpkg/fslib';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest, Package}          from '@yarnpkg/core';
+import {LinkType}                                        from '@yarnpkg/core';
+import {miscUtils, structUtils}                          from '@yarnpkg/core';
+import {npath}                                           from '@yarnpkg/fslib';
 
-import {LINK_PROTOCOL}                                                   from './constants';
+import {LINK_PROTOCOL}                                   from './constants';
 
 export class LinkResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -41,7 +41,7 @@ export class LinkResolver implements Resolver {
     return [structUtils.makeLocator(descriptor, `${LINK_PROTOCOL}${npath.toPortablePath(path)}`)];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
     return null;
   }
 

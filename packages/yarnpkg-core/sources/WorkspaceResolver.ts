@@ -1,8 +1,7 @@
 import {PortablePath}                                    from '@yarnpkg/fslib';
 
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import * as structUtils                                  from './structUtils';
-import {Descriptor, Locator, DescriptorHash, Package}    from './types';
+import {Descriptor, Locator}                             from './types';
 import {LinkType}                                        from './types';
 
 export class WorkspaceResolver implements Resolver {
@@ -44,7 +43,7 @@ export class WorkspaceResolver implements Resolver {
     return [workspace.anchoredLocator];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
     return null;
   }
 

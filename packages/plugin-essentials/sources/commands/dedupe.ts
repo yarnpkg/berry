@@ -91,24 +91,9 @@ export const DEDUPE_ALGORITHMS: Record<Strategy, DedupeAlgorithm> = {
         return pkg.reference;
       });
 
-      const resolutionDependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
-      const dependencies = new Map(
-        resolutionDependencies.map(({descriptorHash}) => {
-          const resolution = project.storedResolutions.get(descriptorHash);
-          if (typeof resolution === `undefined`)
-            throw new Error(`Assertion failed: The resolution (${descriptorHash}) should have been registered`);
+      const candidates = await resolver.getSatisfying(descriptor, references, resolveOptions);
 
-          const pkg = project.originalPackages.get(resolution);
-          if (typeof pkg === `undefined`)
-            throw new Error(`Assertion failed: The package (${resolution}) should have been registered`);
-
-          return [descriptorHash, pkg] as const;
-        })
-      );
-
-      const candidates = await resolver.getSatisfying(descriptor, references, dependencies, resolveOptions);
-
-      const bestCandidate = candidates[0];
+      const bestCandidate = candidates?.[0];
       if (typeof bestCandidate === `undefined`)
         return null;
 
