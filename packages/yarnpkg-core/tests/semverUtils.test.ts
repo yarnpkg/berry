@@ -18,7 +18,10 @@ const SPECS: Specs = [
     [`1.1.x`, `1.1.1-a`, true],
     [`*`, `1.0.0-rc1`, true],
     [`^1.0.0-0`, `1.0.1-rc1`, true],
-    [`^1.0.0-rc2`, `1.0.1-rc1`, true],
+
+    // https://github.com/yarnpkg/berry/pull/1748#discussion_r475268862
+    // [`^1.0.0-rc2`, `1.0.1-rc1`, true],
+
     [`^1.0.0`, `1.0.1-rc1`, true],
     [`^1.0.0`, `1.1.0-rc1`, true],
     [`1 - 2`, `2.0.0-pre`, true],
