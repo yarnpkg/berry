@@ -2,6 +2,7 @@ import {PortablePath, npath, ppath, xfs, FakeFS, PosixFS}                       
 import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
 import {EnvSegment, ArithmeticExpression, ArithmeticPrimary}                         from '@yarnpkg/parsers';
 import fastGlob                                                                      from 'fast-glob';
+import {homedir}                                                                     from 'os';
 
 import {PassThrough, Readable, Writable}                                             from 'stream';
 
@@ -60,7 +61,7 @@ function cloneState(state: ShellState, mergeWith: Partial<ShellState> = {}) {
 }
 
 const BUILTINS = new Map<string, ShellBuiltin>([
-  [`cd`, async ([target, ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
+  [`cd`, async ([target = homedir(), ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
     const resolvedTarget = ppath.resolve(state.cwd, npath.toPortablePath(target));
     const stat = await xfs.statPromise(resolvedTarget);
 
@@ -87,7 +88,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
   }],
 
   [`exit`, async ([code, ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
-    return state.exitCode = parseInt(code, 10);
+    return state.exitCode = parseInt(code ?? state.variables[`?`], 10);
   }],
 
   [`echo`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
