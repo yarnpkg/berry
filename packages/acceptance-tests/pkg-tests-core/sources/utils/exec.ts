@@ -10,7 +10,7 @@ export type ExecResult = {
   stdout: string;
   stderr: string;
   code: number;
-} | Error & {
+} | cp.ExecException & {
   stdout: string;
   stderr: string;
 };

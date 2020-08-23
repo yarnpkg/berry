@@ -1,0 +1,8 @@
+{
+  "name": "two-range-deps",
+  "version": "1.0.0",
+  "dependencies": {
+      "no-deps": "^1.0.0",
+      "@types/is-number": ">=1.0.0"
+  }
+}
