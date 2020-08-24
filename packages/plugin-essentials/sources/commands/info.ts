@@ -161,7 +161,8 @@ export default class InfoCommand extends BaseCommand {
       miscUtils.getArrayWithDefault(allInstances, base.locatorHash).push(pkg);
     }
 
-    const infoTree: miscUtils.TreeNode = {children: {}};
+    const infoTreeChildren: miscUtils.TreeMap = {};
+    const infoTree: miscUtils.TreeNode = {children: infoTreeChildren};
 
     const fetcher = configuration.makeFetcher();
     const fetcherOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report: new ThrowReport(), skipIntegrityCheck: true};
@@ -219,37 +220,42 @@ export default class InfoCommand extends BaseCommand {
       if (!this.virtuals && isVirtual)
         continue;
 
-      const node: miscUtils.TreeNode = infoTree.children![structUtils.stringifyLocator(pkg)] = {
+      const nodeChildren: miscUtils.TreeMap = {};
+      const node: miscUtils.TreeNode = {
         value: [pkg, FormatType.LOCATOR],
-        children: {},
+        children: nodeChildren,
       };
+
+      infoTreeChildren[structUtils.stringifyLocator(pkg)] = node;
 
       const instances = allInstances.get(pkg.locatorHash);
       if (typeof instances !== `undefined`) {
-        node.children!.instances = {
+        nodeChildren.instances = {
           label: `Instances`,
           value: [instances.length, FormatType.NUMBER],
         };
       }
 
-      node.children!.version = {
+      nodeChildren.version = {
         label: `Version`,
         value: [pkg.version, FormatType.NO_HINT],
       };
 
       const registerData = (namespace: string, info: ReadonlyArray<[any, FormatType]> | {[key: string]: readonly [any, FormatType] | undefined}) => {
-        const namespaceNode: miscUtils.TreeNode = node.children![namespace] = {children: {}};
+        const namespaceNode: miscUtils.TreeNode = {};
+        nodeChildren[namespace] = namespaceNode;
 
         if (Array.isArray(info)) {
-          for (const [index, value] of info.entries()) {
-            namespaceNode.children![index] = {value};
-          }
+          namespaceNode.children = info.map(value => ({value}));
         } else {
+          const namespaceChildren: miscUtils.TreeMap = {};
+          namespaceNode.children = namespaceChildren;
+
           for (const [key, value] of Object.entries(info)) {
             if (typeof value === `undefined`)
               continue;
 
-            namespaceNode.children![key] = {
+            namespaceChildren[key] = {
               label: key,
               value,
             };

@@ -309,9 +309,11 @@ export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: 
 export type TreeNode = {
   label?: string,
   value?: readonly [any, FormatType],
-  children?: {
-    [key: string]: TreeNode,
-  };
+  children?: Array<TreeNode> | TreeMap;
+};
+
+export type TreeMap = {
+  [key: string]: TreeNode,
 };
 
 export type TreeifyNode = {
@@ -321,15 +323,19 @@ export type TreeifyNode = {
 export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configuration: Configuration}) {
   const target = {};
 
-  const copyTree = (printNode: {[key: string]: TreeNode}, targetNode: TreeifyNode) => {
-    for (const [key, {label, value, children}] of Object.entries(printNode)) {
+  const copyTree = (printNode: Array<TreeNode> | TreeMap, targetNode: TreeifyNode) => {
+    const iterator = Array.isArray(printNode)
+      ? printNode.entries()
+      : Object.entries(printNode);
+
+    for (const [key, {label, value, children}] of iterator) {
       const finalParts = [];
       if (typeof label !== `undefined`)
         finalParts.push(configuration.bold(label));
       if (typeof value !== `undefined`)
         finalParts.push(configuration.format(value[0], value[1]));
       if (finalParts.length === 0)
-        finalParts.push(configuration.bold(key));
+        finalParts.push(configuration.bold(`${key}`));
 
       const finalLabel = finalParts.join(`: `);
       const createdNode = targetNode[finalLabel] = {};
@@ -350,9 +356,14 @@ export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configu
 export function treeNodeToJson(printTree: TreeNode) {
   const target = {};
 
-  const copyTree = (printNode: {[key: string]: TreeNode}, targetNode: any) => {
-    for (const [key, {value, children}] of Object.entries(printNode)) {
-      const createdNode: any = targetNode[key] = {value, children: []};
+  const copyTree = (printNode: Array<TreeNode> | TreeMap, targetNode: any) => {
+    const iterator = Array.isArray(printNode)
+      ? printNode.entries()
+      : Object.entries(printNode);
+
+    for (const [key, {value, children}] of iterator) {
+      const createdNodeChildren = Array.isArray(children) ? [] : {};
+      const createdNode: any = targetNode[key] = {value, children: createdNodeChildren};
 
       if (typeof value !== `undefined`) {
         if (value[1] === FormatType.DESCRIPTOR)
@@ -369,11 +380,18 @@ export function treeNodeToJson(printTree: TreeNode) {
 
       if (typeof createdNode.value === `undefined`)
         delete createdNode.value;
-      if (createdNode.children.length === 0)
+
+      const childCount = typeof children !== `undefined`
+        ? Array.isArray(children)
+          ? children.length
+          : Object.keys(children).length
+        : 0;
+
+      if (childCount === 0)
         delete createdNode.children;
 
       if (typeof children !== `undefined`) {
-        copyTree(children, createdNode);
+        copyTree(children, createdNodeChildren);
       }
     }
   };
