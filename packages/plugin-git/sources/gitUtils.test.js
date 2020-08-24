@@ -19,6 +19,8 @@ const VALID_PATTERNS = [
   `git://github.com/TooTallNate/util-deprecate.git#v1.0.1`,
   `git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1`,
   `ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1`,
+  `git+ssh://git@github.com:yarnpkg/berry.git#v2.1.1`,
+  `ssh://git@github.com:yarnpkg/berry.git#v2.1.1`,
   `git+https://github.com/TooTallNate/util-deprecate#v1.0.1`,
   `git+https://github.com/TooTallNate/util-deprecate.git#v1.0.1`,
 ];
@@ -42,8 +44,11 @@ describe(`gitUtils`, () => {
   }
 
   for (const pattern of VALID_PATTERNS) {
-    it(`should properly normalize ${pattern}`, () => {
+    it(`should properly normalize ${pattern} ({ git: false })`, () => {
       expect(gitUtils.normalizeRepoUrl(pattern)).toMatchSnapshot();
+    });
+    it(`should properly normalize ${pattern} ({ git: true })`, () => {
+      expect(gitUtils.normalizeRepoUrl(pattern, {git: true})).toMatchSnapshot();
     });
   }
 
