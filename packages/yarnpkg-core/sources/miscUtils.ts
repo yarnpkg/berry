@@ -6,6 +6,7 @@ import micromatch                  from 'micromatch';
 import {Readable, Transform}       from 'stream';
 
 import {FormatType, Configuration} from './Configuration';
+import {structUtils}               from '.';
 
 export function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
@@ -194,9 +195,9 @@ export class DefaultStream extends Transform {
 // of a web application, but is quite annoying when working with Node projects!
 
 export function dynamicRequire(path: string) {
-  // @ts-ignore
+  // @ts-expect-error
   if (typeof __non_webpack_require__ !== `undefined`) {
-    // @ts-ignore
+    // @ts-expect-error
     return __non_webpack_require__(path);
   } else {
     return require(path);
@@ -278,7 +279,6 @@ export function buildIgnorePattern(ignorePatterns: Array<string>) {
 
   return ignorePatterns.map(pattern => {
     return `(${micromatch.makeRe(pattern, {
-      // @ts-ignore
       windows: false,
     }).source})`;
   }).join(`|`);
@@ -333,6 +333,44 @@ export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configu
 
       const finalLabel = finalParts.join(`: `);
       const createdNode = targetNode[finalLabel] = {};
+
+      if (typeof children !== `undefined`) {
+        copyTree(children, createdNode);
+      }
+    }
+  };
+
+  if (typeof printTree.children === `undefined`)
+    throw new Error(`The root node must only contain children`);
+
+  copyTree(printTree.children, target);
+  return target;
+}
+
+export function treeNodeToJson(printTree: TreeNode) {
+  const target = {};
+
+  const copyTree = (printNode: {[key: string]: TreeNode}, targetNode: any) => {
+    for (const [key, {value, children}] of Object.entries(printNode)) {
+      const createdNode: any = targetNode[key] = {value, children: []};
+
+      if (typeof value !== `undefined`) {
+        if (value[1] === FormatType.DESCRIPTOR)
+          createdNode.value[0] = structUtils.stringifyDescriptor(value[0]);
+        if (value[1] === FormatType.LOCATOR)
+          createdNode.value[0] = structUtils.stringifyLocator(value[0]);
+        if (value[1] === FormatType.RESOLUTION) {
+          createdNode.value[0] = {
+            descriptor: structUtils.stringifyDescriptor(value[0].descriptor),
+            locator: structUtils.stringifyLocator(value[0].locator),
+          };
+        }
+      }
+
+      if (typeof createdNode.value === `undefined`)
+        delete createdNode.value;
+      if (createdNode.children.length === 0)
+        delete createdNode.children;
 
       if (typeof children !== `undefined`) {
         copyTree(children, createdNode);

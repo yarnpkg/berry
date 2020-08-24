@@ -257,9 +257,14 @@ export default class InfoCommand extends BaseCommand {
         }
       };
 
-      if (!isVirtual)
+      if (!isVirtual) {
         for (const infoBuilder of builtinInfoBuilders)
           await infoBuilder(pkg, extraSet, registerData);
+
+        await configuration.triggerHook((hooks: Hooks) => {
+          return hooks.fetchPackageInfo;
+        }, pkg, extraSet, registerData);
+      }
 
       if (pkg.bin.size > 0 && !isVirtual) {
         registerData(`Exported Binaries`, [...pkg.bin.keys()].map(name => {
@@ -319,7 +324,7 @@ export default class InfoCommand extends BaseCommand {
 
 function printTree(tree: miscUtils.TreeNode, {configuration, stdout, json}: {configuration: Configuration, stdout: Writable, json: boolean}) {
   if (json) {
-    stdout.write(`${JSON.stringify(tree)}\n`);
+    stdout.write(`${JSON.stringify(miscUtils.treeNodeToJson(tree))}\n`);
     return;
   }
 
