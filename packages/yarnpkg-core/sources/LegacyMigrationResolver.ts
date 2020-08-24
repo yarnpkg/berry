@@ -115,6 +115,10 @@ export class LegacyMigrationResolver implements Resolver {
     return [resolution];
   }
 
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
+    return null;
+  }
+
   async resolve(locator: Locator, opts: ResolveOptions): Promise<never> {
     throw new Error(`Assertion failed: This resolver doesn't support resolving locators to packages`);
   }

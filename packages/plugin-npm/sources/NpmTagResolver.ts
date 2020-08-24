@@ -64,6 +64,11 @@ export class NpmTagResolver implements Resolver {
     }
   }
 
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
+    // We can't statically know if a tag resolves to a specific version without using the network
+    return null;
+  }
+
   async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
     // Once transformed into locators (through getCandidates), the tags are resolved by the NpmSemverResolver
     throw new Error(`Unreachable`);

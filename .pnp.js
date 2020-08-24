@@ -8683,6 +8683,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/diff", "npm:4.0.2"],
             ["@types/got", "npm:8.3.5"],
+            ["@types/lodash", "npm:4.14.136"],
             ["@types/micromatch", "npm:4.0.1"],
             ["@types/node", "npm:13.7.0"],
             ["@types/semver", "npm:7.1.0"],
@@ -8707,6 +8708,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["globby", "npm:11.0.1"],
             ["got", "npm:11.1.3"],
             ["json-file-plus", "npm:3.3.1"],
+            ["lodash", "npm:4.17.15"],
             ["logic-solver", "npm:2.0.1"],
             ["micromatch", "npm:4.0.2"],
             ["mkdirp", "npm:0.5.1"],
@@ -9153,6 +9155,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/treeify", "npm:1.0.0"],
             ["@types/yarnpkg__cli", null],
             ["@types/yarnpkg__core", null],
+            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -9187,6 +9190,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/treeify", "npm:1.0.0"],
             ["@types/yarnpkg__cli", null],
             ["@types/yarnpkg__core", null],
+            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -9219,6 +9223,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/micromatch", "npm:4.0.1"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/treeify", "npm:1.0.0"],
+            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -37959,14 +37964,27 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     encoding
   } = {}) {
     if (p === null) throw new Error(`Unimplemented`);
+    let fd = this.openSync(p, `r`);
+
+    const closeStream = () => {
+      if (fd === -1) return;
+      this.closeSync(fd);
+      fd = -1;
+    };
+
     const stream = Object.assign(new external_stream_.PassThrough(), {
       bytesRead: 0,
       path: p,
       close: () => {
         clearImmediate(immediate);
+        closeStream();
+      },
+      _destroy: (error, callback) => {
+        clearImmediate(immediate);
+        closeStream();
+        callback(error);
       }
     });
-    const fd = this.openSync(p, `r`);
     const immediate = setImmediate(() => {
       try {
         const data = this.readFileSync(p, encoding);
@@ -37978,7 +37996,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
         stream.end();
         stream.destroy();
       } finally {
-        this.closeSync(fd);
+        closeStream();
       }
     });
     return stream;
@@ -37989,26 +38007,39 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   } = {}) {
     if (this.readOnly) throw EROFS(`open '${p}'`);
     if (p === null) throw new Error(`Unimplemented`);
+    const chunks = [];
+    let fd = this.openSync(p, `w`);
+
+    const closeStream = () => {
+      if (fd === -1) return;
+
+      try {
+        this.writeFileSync(p, Buffer.concat(chunks), encoding);
+      } finally {
+        this.closeSync(fd);
+        fd = -1;
+      }
+    };
+
     const stream = Object.assign(new external_stream_.PassThrough(), {
       bytesWritten: 0,
       path: p,
       close: () => {
         stream.end();
+        closeStream();
+      },
+      _destroy: (error, callback) => {
+        closeStream();
+        callback(error);
       }
     });
-    const chunks = [];
     stream.on(`data`, chunk => {
       const chunkBuffer = Buffer.from(chunk);
       stream.bytesWritten += chunkBuffer.length;
       chunks.push(chunkBuffer);
     });
-    const fd = this.openSync(p, `w`);
     stream.on(`end`, () => {
-      try {
-        this.writeFileSync(p, Buffer.concat(chunks), encoding);
-      } finally {
-        this.closeSync(fd);
-      }
+      closeStream();
     });
     return stream;
   }

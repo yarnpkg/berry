@@ -3,9 +3,10 @@ import {Resolution, parseResolution, stringifyResolution}     from '@yarnpkg/par
 import semver                                                 from 'semver';
 
 import * as miscUtils                                         from './miscUtils';
+import * as semverUtils                                       from './semverUtils';
 import * as structUtils                                       from './structUtils';
-import {Ident, Descriptor}                                    from './types';
 import {IdentHash}                                            from './types';
+import {Ident, Descriptor}                                    from './types';
 
 export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
 export type HardDependencies = 'dependencies' | 'devDependencies';
@@ -287,7 +288,7 @@ export class Manifest {
           continue;
         }
 
-        if (typeof range !== `string` || !semver.validRange(range)) {
+        if (typeof range !== `string` || !semverUtils.validRange(range)) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           range = `*`;
         }

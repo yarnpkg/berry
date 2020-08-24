@@ -61,6 +61,10 @@ export class PatchResolver implements Resolver {
     return [patchUtils.makeLocator(descriptor, {parentLocator, sourcePackage, patchPaths, patchHash})];
   }
 
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
+    return null;
+  }
+
   async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
     const {sourceLocator} = patchUtils.parseLocator(locator);
     const sourcePkg = await opts.resolver.resolve(sourceLocator, opts);

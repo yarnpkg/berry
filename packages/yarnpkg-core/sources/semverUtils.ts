@@ -46,3 +46,25 @@ export function satisfiesWithPrereleases(version: string | null, range: string, 
     });
   });
 }
+
+const rangesCache = new Map<string, semver.Range | null>();
+/**
+ * A cached version of `new semver.Range(potentialRange)` that returns `null` on invalid ranges
+ */
+export function validRange(potentialRange: string): semver.Range | null {
+  if (potentialRange.indexOf(`:`) !== -1)
+    return null;
+
+  let range = rangesCache.get(potentialRange);
+  if (typeof range !== `undefined`)
+    return range;
+
+  try {
+    range = new semver.Range(potentialRange);
+  } catch {
+    range = null;
+  }
+
+  rangesCache.set(potentialRange, range);
+  return range;
+}
