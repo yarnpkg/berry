@@ -414,15 +414,28 @@ export class ZipFS extends BasePortableFakeFS {
     if (p === null)
       throw new Error(`Unimplemented`);
 
+    let fd = this.openSync(p, `r`);
+
+    const closeStream = () => {
+      if (fd === -1)
+        return;
+      this.closeSync(fd);
+      fd = -1;
+    };
+
     const stream = Object.assign(new PassThrough(), {
       bytesRead: 0,
       path: p,
       close: () => {
         clearImmediate(immediate);
+        closeStream();
+      },
+      _destroy: (error: Error | undefined, callback: (error?: Error) => void) => {
+        clearImmediate(immediate);
+        closeStream();
+        callback(error);
       },
     });
-
-    const fd = this.openSync(p, `r`);
 
     const immediate = setImmediate(() => {
       try {
@@ -436,7 +449,7 @@ export class ZipFS extends BasePortableFakeFS {
         stream.end();
         stream.destroy();
       } finally {
-        this.closeSync(fd);
+        closeStream();
       }
     });
 
@@ -450,15 +463,34 @@ export class ZipFS extends BasePortableFakeFS {
     if (p === null)
       throw new Error(`Unimplemented`);
 
+    const chunks: Array<Buffer> = [];
+
+    let fd = this.openSync(p, `w`);
+
+    const closeStream = () => {
+      if (fd === -1)
+        return;
+
+      try {
+        this.writeFileSync(p, Buffer.concat(chunks), encoding);
+      } finally {
+        this.closeSync(fd);
+        fd = -1;
+      }
+    };
+
     const stream = Object.assign(new PassThrough(), {
       bytesWritten: 0,
       path: p,
       close: () => {
         stream.end();
+        closeStream();
+      },
+      _destroy: (error: Error | undefined, callback: (error?: Error) => void) => {
+        closeStream();
+        callback(error);
       },
     });
-
-    const chunks: Array<Buffer> = [];
 
     stream.on(`data`, chunk => {
       const chunkBuffer = Buffer.from(chunk);
@@ -466,13 +498,8 @@ export class ZipFS extends BasePortableFakeFS {
       chunks.push(chunkBuffer);
     });
 
-    const fd = this.openSync(p, `w`);
     stream.on(`end`, () => {
-      try {
-        this.writeFileSync(p, Buffer.concat(chunks), encoding);
-      } finally {
-        this.closeSync(fd);
-      }
+      closeStream();
     });
 
     return stream;

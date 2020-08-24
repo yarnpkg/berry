@@ -36567,7 +36567,7 @@ var sources_path = __webpack_require__(9);
 class NodeFS extends FakeFS/* BasePortableFakeFS */.fS {
   constructor(realFs = (external_fs_default())) {
     super();
-    this.realFs = realFs; // @ts-ignore
+    this.realFs = realFs; // @ts-expect-error
 
     if (typeof this.realFs.lutimes !== `undefined`) {
       this.lutimesPromise = this.lutimesPromiseImpl;
@@ -36808,7 +36808,7 @@ class NodeFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   async lutimesPromiseImpl(p, atime, mtime) {
-    // @ts-ignore: Not yet in DefinitelyTyped
+    // @ts-expect-error: Not yet in DefinitelyTyped
     const lutimes = this.realFs.lutimes;
     if (typeof lutimes === `undefined`) throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
     return await new Promise((resolve, reject) => {
@@ -36817,7 +36817,7 @@ class NodeFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   lutimesSyncImpl(p, atime, mtime) {
-    // @ts-ignore: Not yet in DefinitelyTyped
+    // @ts-expect-error: Not yet in DefinitelyTyped
     const lutimesSync = this.realFs.lutimesSync;
     if (typeof lutimesSync === `undefined`) throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
     lutimesSync.call(this.realFs, sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), atime, mtime);
@@ -36926,12 +36926,12 @@ class NodeFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   watch(p, a, b) {
-    return this.realFs.watch(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), // @ts-ignore
+    return this.realFs.watch(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), // @ts-expect-error
     a, b);
   }
 
   watchFile(p, a, b) {
-    return this.realFs.watchFile(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), // @ts-ignore
+    return this.realFs.watchFile(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), // @ts-expect-error
     a, b);
   }
 
@@ -37200,12 +37200,12 @@ class ProxiedFS extends FakeFS/* FakeFS */.uY {
   }
 
   watch(p, a, b) {
-    return this.baseFs.watch(this.mapToBase(p), // @ts-ignore
+    return this.baseFs.watch(this.mapToBase(p), // @ts-expect-error
     a, b);
   }
 
   watchFile(p, a, b) {
-    return this.baseFs.watchFile(this.mapToBase(p), // @ts-ignore
+    return this.baseFs.watchFile(this.mapToBase(p), // @ts-expect-error
     a, b);
   }
 
@@ -37678,7 +37678,7 @@ function unwatchAllFiles(fakeFs) {
 const DEFAULT_COMPRESSION_LEVEL = `mixed`;
 
 function toUnixTimestamp(time) {
-  if (typeof time === `string` && String(+time) === time) return +time; // @ts-ignore
+  if (typeof time === `string` && String(+time) === time) return +time;
 
   if (Number.isFinite(time)) {
     if (time < 0) {
@@ -37964,14 +37964,27 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     encoding
   } = {}) {
     if (p === null) throw new Error(`Unimplemented`);
+    let fd = this.openSync(p, `r`);
+
+    const closeStream = () => {
+      if (fd === -1) return;
+      this.closeSync(fd);
+      fd = -1;
+    };
+
     const stream = Object.assign(new external_stream_.PassThrough(), {
       bytesRead: 0,
       path: p,
       close: () => {
         clearImmediate(immediate);
+        closeStream();
+      },
+      _destroy: (error, callback) => {
+        clearImmediate(immediate);
+        closeStream();
+        callback(error);
       }
     });
-    const fd = this.openSync(p, `r`);
     const immediate = setImmediate(() => {
       try {
         const data = this.readFileSync(p, encoding);
@@ -37983,7 +37996,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
         stream.end();
         stream.destroy();
       } finally {
-        this.closeSync(fd);
+        closeStream();
       }
     });
     return stream;
@@ -37994,26 +38007,39 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
   } = {}) {
     if (this.readOnly) throw EROFS(`open '${p}'`);
     if (p === null) throw new Error(`Unimplemented`);
+    const chunks = [];
+    let fd = this.openSync(p, `w`);
+
+    const closeStream = () => {
+      if (fd === -1) return;
+
+      try {
+        this.writeFileSync(p, Buffer.concat(chunks), encoding);
+      } finally {
+        this.closeSync(fd);
+        fd = -1;
+      }
+    };
+
     const stream = Object.assign(new external_stream_.PassThrough(), {
       bytesWritten: 0,
       path: p,
       close: () => {
         stream.end();
+        closeStream();
+      },
+      _destroy: (error, callback) => {
+        closeStream();
+        callback(error);
       }
     });
-    const chunks = [];
     stream.on(`data`, chunk => {
       const chunkBuffer = Buffer.from(chunk);
       stream.bytesWritten += chunkBuffer.length;
       chunks.push(chunkBuffer);
     });
-    const fd = this.openSync(p, `w`);
     stream.on(`end`, () => {
-      try {
-        this.writeFileSync(p, Buffer.concat(chunks), encoding);
-      } finally {
-        this.closeSync(fd);
-      }
+      closeStream();
     });
     return stream;
   }
@@ -38649,7 +38675,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
   async readFilePromise(p, encoding) {
     // This is messed up regarding the TS signatures
-    if (typeof encoding === `object`) // @ts-ignore
+    if (typeof encoding === `object`) // @ts-expect-error
       encoding = encoding ? encoding.encoding : undefined;
     const data = await this.readFileBuffer(p, {
       asyncDecompress: true
@@ -38659,7 +38685,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
   readFileSync(p, encoding) {
     // This is messed up regarding the TS signatures
-    if (typeof encoding === `object`) // @ts-ignore
+    if (typeof encoding === `object`) // @ts-expect-error
       encoding = encoding ? encoding.encoding : undefined;
     const data = this.readFileBuffer(p);
     return encoding ? data.toString(encoding) : data;
@@ -39571,24 +39597,24 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
 
   watch(p, a, b) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.watch(p, // @ts-ignore
+      return this.baseFs.watch(p, // @ts-expect-error
       a, b);
     }, (zipFs, {
       subPath
     }) => {
-      return zipFs.watch(subPath, // @ts-ignore
+      return zipFs.watch(subPath, // @ts-expect-error
       a, b);
     });
   }
 
   watchFile(p, a, b) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.watchFile(p, // @ts-ignore
+      return this.baseFs.watchFile(p, // @ts-expect-error
       a, b);
     }, (zipFs, {
       subPath
     }) => {
-      return zipFs.watchFile(subPath, // @ts-ignore
+      return zipFs.watchFile(subPath, // @ts-expect-error
       a, b);
     });
   }
@@ -40115,7 +40141,7 @@ function patchFs(patchedFs, fakeFs) {
       }
 
       setupFn(patchedFsPromises, `open`, async (...args) => {
-        // @ts-ignore
+        // @ts-expect-error
         const fd = await fakeFs.openPromise(...args);
         return new FileHandle(fd);
       }); // `fs.promises.realpath` doesn't have a `native` property
@@ -40328,7 +40354,7 @@ function getPathForDisplay(p) {
 
 
 function applyPatch(pnpapi, opts) {
-  // @ts-ignore
+  // @ts-expect-error
   const builtinModules = new Set(external_module_.Module.builtinModules || Object.keys(process.binding(`natives`)));
   /**
    * The cache that will be used for all accesses occuring outside of a PnP context.
@@ -40340,12 +40366,11 @@ function applyPatch(pnpapi, opts) {
    * a way to "reset" the environment temporarily)
    */
 
-  let enableNativeHooks = true; // @ts-ignore
+  let enableNativeHooks = true; // @ts-expect-error
 
-  process.versions.pnp = String(pnpapi.VERSIONS.std); // @ts-ignore
+  process.versions.pnp = String(pnpapi.VERSIONS.std);
 
-  const moduleExports = __webpack_require__(282); // @ts-ignore
-
+  const moduleExports = __webpack_require__(282);
 
   moduleExports.findPnpApi = lookupSource => {
     const lookupPath = lookupSource instanceof external_url_.URL ? (0,external_url_.fileURLToPath)(lookupSource) : lookupSource;
@@ -40407,15 +40432,14 @@ function applyPatch(pnpapi, opts) {
 
     const cacheEntry = entry.cache[modulePath];
     if (cacheEntry) return cacheEntry.exports; // Create a new module and store it into the cache
-    // @ts-ignore
+    // @ts-expect-error
 
-    const module = new external_module_.Module(modulePath, parent); // @ts-ignore
+    const module = new external_module_.Module(modulePath, parent); // @ts-expect-error
 
     module.pnpApiPath = moduleApiPath;
     entry.cache[modulePath] = module; // The main module is exposed as global variable
 
     if (isMain) {
-      // @ts-ignore
       process.mainModule = module;
       module.id = `.`;
     } // Try to load the module, and remove it from the cache if it fails
@@ -40424,7 +40448,7 @@ function applyPatch(pnpapi, opts) {
     let hasThrown = true;
 
     try {
-      // @ts-ignore
+      // @ts-expect-error
       module.load(modulePath);
       hasThrown = false;
     } finally {
@@ -40615,7 +40639,7 @@ function hydrateRuntimeState(data, {
   for (const [packageName, storeData] of data.packageRegistryData) {
     for (const [packageReference, packageInformationData] of storeData) {
       if (packageName === null !== (packageReference === null)) throw new Error(`Assertion failed: The name and reference should be null, or neither should`);
-      if (packageInformationData.discardFromLookup) continue; // @ts-ignore: TypeScript isn't smart enough to understand the type assertion
+      if (packageInformationData.discardFromLookup) continue; // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
 
       const packageLocator = {
         name: packageName,
@@ -40653,7 +40677,7 @@ function hydrateRuntimeState(data, {
 
 function makeApi(runtimeState, opts) {
   const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
-  const debugLevel = Number(process.env.PNP_DEBUG_LEVEL); // @ts-ignore
+  const debugLevel = Number(process.env.PNP_DEBUG_LEVEL); // @ts-expect-error
 
   const builtinModules = new Set(external_module_.Module.builtinModules || Object.keys(process.binding(`natives`))); // Splits a require request into its components, or return null if the request is a file path
 
@@ -40864,7 +40888,7 @@ function makeApi(runtimeState, opts) {
 
 
   function makeFakeModule(path) {
-    // @ts-ignore
+    // @ts-expect-error
     const fakeModule = new external_module_.Module(path, null);
     fakeModule.filename = path;
     fakeModule.paths = external_module_.Module._nodeModulePaths(path);
@@ -41440,9 +41464,9 @@ function makeManager(pnpapi, opts) {
   }]]);
 
   function loadApiInstance(pnpApiPath) {
-    const nativePath = sources_path/* npath.fromPortablePath */.cS.fromPortablePath(pnpApiPath); // @ts-ignore
+    const nativePath = sources_path/* npath.fromPortablePath */.cS.fromPortablePath(pnpApiPath); // @ts-expect-error
 
-    const module = new external_module_.Module(nativePath, null); // @ts-ignore
+    const module = new external_module_.Module(nativePath, null); // @ts-expect-error
 
     module.load(nativePath);
     return module.exports;
@@ -41622,11 +41646,9 @@ if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === `inter
   if (__non_webpack_module__.filename) {
     // We delete it from the cache in order to support the case where the CLI resolver is invoked from "yarn run"
     // It's annoying because it might cause some issues when the file is multiple times in NODE_OPTIONS, but it shouldn't happen anyway.
-    // @ts-ignore
     delete (external_module_default())._cache[__non_webpack_module__.filename];
   }
-} // @ts-ignore
-
+}
 
 if (process.mainModule === __non_webpack_module__) {
   const reportError = (code, message, data) => {
