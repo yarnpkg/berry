@@ -6,7 +6,6 @@ import {packUtils}                                                              
 import {Command, Usage, UsageError}                                                             from 'clipanion';
 import {createHash}                                                                             from 'crypto';
 import ssri                                                                                     from 'ssri';
-import {PassThrough}                                                                            from 'stream';
 import {URL}                                                                                    from 'url';
 
 // eslint-disable-next-line arca/no-default-export
@@ -87,18 +86,7 @@ export default class NpmPublishCommand extends BaseCommand {
         }
       }
 
-      if (await scriptUtils.hasWorkspaceScript(workspace, `prepublish`)) {
-        const stdin = null;
-        const stdout = new PassThrough();
-        const stderr = new PassThrough();
-
-        report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "prepublish" lifecycle script`);
-        const exitCode = await scriptUtils.executeWorkspaceScript(workspace, `prepublish`, [], {stdin, stdout, stderr});
-
-        if (exitCode !== 0) {
-          throw new ReportError(MessageName.LIFECYCLE_SCRIPT, `Prepublish script failed; run "yarn prepublish" to investigate`);
-        }
-      }
+      await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepublish`, {report});
 
       await packUtils.prepareForPack(workspace, {report}, async () => {
         const files = await packUtils.genPackList(workspace);
