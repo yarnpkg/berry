@@ -1,12 +1,11 @@
-import {MessageName, ReportError, Report, Workspace, scriptUtils} from '@yarnpkg/core';
-import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename}       from '@yarnpkg/fslib';
-import {Hooks as StageHooks}                                      from '@yarnpkg/plugin-stage';
-import mm                                                         from 'micromatch';
-import {PassThrough}                                              from 'stream';
-import tar                                                        from 'tar-stream';
-import {createGzip}                                               from 'zlib';
+import {Report, Workspace, scriptUtils}                     from '@yarnpkg/core';
+import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
+import {Hooks as StageHooks}                                from '@yarnpkg/plugin-stage';
+import mm                                                   from 'micromatch';
+import tar                                                  from 'tar-stream';
+import {createGzip}                                         from 'zlib';
 
-import {Hooks}                                                    from './';
+import {Hooks}                                              from './';
 
 const NEVER_IGNORE = [
   `/package.json`,
@@ -45,40 +44,22 @@ type IgnoreList = {
 };
 
 export async function hasPackScripts(workspace: Workspace) {
-  if (await scriptUtils.hasWorkspaceScript(workspace, `prepack`))
+  if (scriptUtils.hasWorkspaceScript(workspace, `prepack`))
     return true;
 
-  if (await scriptUtils.hasWorkspaceScript(workspace, `postpack`))
+  if (scriptUtils.hasWorkspaceScript(workspace, `postpack`))
     return true;
 
   return false;
 }
 
 export async function prepareForPack(workspace: Workspace, {report}: {report: Report}, cb: () => Promise<void>) {
-  const stdin = null;
-  const stdout = new PassThrough();
-  const stderr = new PassThrough();
-
-  if (await scriptUtils.hasWorkspaceScript(workspace, `prepack`)) {
-    report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "prepack" lifecycle script`);
-    const exitCode = await scriptUtils.executeWorkspaceScript(workspace, `prepack`, [], {stdin, stdout, stderr});
-
-    if (exitCode !== 0) {
-      throw new ReportError(MessageName.LIFECYCLE_SCRIPT, `Prepack script failed; run "yarn prepack" to investigate`);
-    }
-  }
+  await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepack`, {report});
 
   try {
     await cb();
   } finally {
-    if (await scriptUtils.hasWorkspaceScript(workspace, `postpack`)) {
-      report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "postpack" lifecycle script`);
-
-      const exitCode = await scriptUtils.executeWorkspaceScript(workspace, `postpack`, [], {stdin, stdout, stderr});
-      if (exitCode !== 0) {
-        report.reportWarning(MessageName.LIFECYCLE_SCRIPT, `Postpack script failed; run "yarn postpack" to investigate`);
-      }
-    }
+    await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `postpack`, {report});
   }
 }
 
