@@ -16,7 +16,7 @@ import semver from 'semver';
 export function satisfiesWithPrereleases(version: string | null, range: string, loose: boolean = false): boolean {
   let semverRange;
   try {
-    semverRange = new semver.Range(range, loose);
+    semverRange = new semver.Range(range, {includePrerelease: true, loose});
   } catch (err) {
     return false;
   }
@@ -26,7 +26,7 @@ export function satisfiesWithPrereleases(version: string | null, range: string, 
 
   let semverVersion: semver.SemVer;
   try {
-    semverVersion = new semver.SemVer(version, semverRange.loose);
+    semverVersion = new semver.SemVer(version, semverRange);
     if (semverVersion.prerelease) {
       semverVersion.prerelease = [];
     }

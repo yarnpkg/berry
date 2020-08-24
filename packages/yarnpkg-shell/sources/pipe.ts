@@ -3,7 +3,7 @@ import {PassThrough, Readable, Transform, Writable} from 'stream';
 
 import {ShellOptions}                               from './index';
 
-enum Pipe {
+export enum Pipe {
   STDOUT = 0b01,
   STDERR = 0b10,
 }
