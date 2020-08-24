@@ -6,7 +6,7 @@ import fastGlob                                                                 
 import {PassThrough, Readable, Writable}                                             from 'stream';
 
 import {makeBuiltin, makeProcess}                                                    from './pipe';
-import {Handle, ProcessImplementation, ProtectedStream, Stdio, start}                from './pipe';
+import {Handle, ProcessImplementation, ProtectedStream, Stdio, start, Pipe}          from './pipe';
 
 export type Glob = {
   isGlobPattern: (arg: string) => boolean,
@@ -563,11 +563,11 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
       // only or stdout and stderr
       switch (pipeType) {
         case `|`: {
-          execution = execution.pipeTo(action);
+          execution = execution.pipeTo(action, Pipe.STDOUT);
         } break;
 
         case `|&`: {
-          execution = execution.pipeTo(action);
+          execution = execution.pipeTo(action, Pipe.STDOUT | Pipe.STDERR);
         } break;
       }
     }
