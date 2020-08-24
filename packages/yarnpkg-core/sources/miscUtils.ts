@@ -1,7 +1,11 @@
-import {PortablePath, npath} from '@yarnpkg/fslib';
-import {UsageError}          from 'clipanion';
-import micromatch            from 'micromatch';
-import {Readable, Transform} from 'stream';
+import {PortablePath, npath}       from '@yarnpkg/fslib';
+import {UsageError}                from 'clipanion';
+import {applyPatch}                from 'diff';
+import micromatch                  from 'micromatch';
+
+import {Readable, Transform}       from 'stream';
+
+import {FormatType, Configuration} from './Configuration';
 
 export function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
@@ -287,7 +291,7 @@ export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: 
     const {variableName, colon, fallback} = args[args.length - 1];
 
     const variableExist = Object.prototype.hasOwnProperty.call(env, variableName);
-    const variableValue = process.env[variableName];
+    const variableValue = env[variableName];
 
     if (variableValue)
       return variableValue;
@@ -302,3 +306,43 @@ export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: 
   });
 }
 
+export type TreeNode = {
+  label?: string,
+  value?: readonly [any, FormatType],
+  children?: {
+    [key: string]: TreeNode,
+  };
+};
+
+export type TreeifyNode = {
+  [key: string]: TreeifyNode;
+}
+
+export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configuration: Configuration}) {
+  const target = {};
+
+  const copyTree = (printNode: {[key: string]: TreeNode}, targetNode: TreeifyNode) => {
+    for (const [key, {label, value, children}] of Object.entries(printNode)) {
+      const finalParts = [];
+      if (typeof label !== `undefined`)
+        finalParts.push(configuration.bold(label));
+      if (typeof value !== `undefined`)
+        finalParts.push(configuration.format(value[0], value[1]));
+      if (finalParts.length === 0)
+        finalParts.push(configuration.bold(key));
+
+      const finalLabel = finalParts.join(`: `);
+      const createdNode = targetNode[finalLabel] = {};
+
+      if (typeof children !== `undefined`) {
+        copyTree(children, createdNode);
+      }
+    }
+  };
+
+  if (typeof printTree.children === `undefined`)
+    throw new Error(`The root node must only contain children`);
+
+  copyTree(printTree.children, target);
+  return target;
+}

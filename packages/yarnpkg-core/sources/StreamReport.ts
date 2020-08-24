@@ -1,7 +1,7 @@
 import sliceAnsi                    from '@arcanis/slice-ansi';
 import {Writable}                   from 'stream';
 
-import {Configuration}              from './Configuration';
+import {Configuration, FormatType}  from './Configuration';
 import {MessageName}                from './MessageName';
 import {ProgressDefinition, Report} from './Report';
 import {Locator}                    from './types';
@@ -228,7 +228,7 @@ export class StreamReport extends Report {
       this.indent -= 1;
 
       if (this.configuration.get(`enableTimers`) && after - before > 200) {
-        this.reportInfo(null, `└ Completed in ${this.formatTiming(after - before)}`);
+        this.reportInfo(null, `└ Completed in ${this.configuration.format(after - before, FormatType.DURATION)}`);
       } else {
         this.reportInfo(null, `└ Completed`);
       }
@@ -257,7 +257,7 @@ export class StreamReport extends Report {
         this.stdout.write(GROUP.end(what));
 
       if (this.configuration.get(`enableTimers`) && after - before > 200) {
-        this.reportInfo(null, `└ Completed in ${this.formatTiming(after - before)}`);
+        this.reportInfo(null, `└ Completed in ${this.configuration.format(after - before, FormatType.DURATION)}`);
       } else {
         this.reportInfo(null, `└ Completed`);
       }
@@ -395,7 +395,7 @@ export class StreamReport extends Report {
     else
       installStatus = `Done`;
 
-    const timing = this.formatTiming(Date.now() - this.startTime);
+    const timing = this.configuration.format(Date.now() - this.startTime, FormatType.DURATION);
     const message = this.configuration.get(`enableTimers`)
       ? `${installStatus} in ${timing}`
       : installStatus;
@@ -524,12 +524,6 @@ export class StreamReport extends Report {
   private refreshProgress(delta: number = 0) {
     this.clearProgress({delta});
     this.writeProgress();
-  }
-
-  private formatTiming(timing: number) {
-    return timing < 60 * 1000
-      ? `${Math.round(timing / 10) / 100}s`
-      : `${Math.round(timing / 600) / 100}m`;
   }
 
   private truncate(str: string, {truncate}: {truncate?: boolean} = {}) {

@@ -1,4 +1,5 @@
 import {PortablePath, toFilename}               from '@yarnpkg/fslib';
+import micromatch                               from 'micromatch';
 import querystring                              from 'querystring';
 import semver                                   from 'semver';
 
@@ -8,6 +9,7 @@ import * as hashUtils                           from './hashUtils';
 import * as miscUtils                           from './miscUtils';
 import {IdentHash, DescriptorHash, LocatorHash} from './types';
 import {Ident, Descriptor, Locator, Package}    from './types';
+import {structUtils}                            from '.';
 
 const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 5;
@@ -487,6 +489,20 @@ export function sortDescriptors(descriptors: Iterable<Descriptor>) {
 
 export function prettyWorkspace(configuration: Configuration, workspace: Workspace) {
   return prettyIdent(configuration, workspace.locator);
+}
+
+export function prettyResolution(configuration: Configuration, descriptor: Descriptor, locator: Locator | null) {
+  const devirtualizedDescriptor = isVirtualDescriptor(descriptor)
+    ? devirtualizeDescriptor(descriptor)
+    : descriptor;
+
+  if (locator === null) {
+    return `${structUtils.prettyDescriptor(configuration, devirtualizedDescriptor)} → ${configuration.format(`✘`, `red`)}`;
+  } else if (devirtualizedDescriptor.identHash === locator.identHash) {
+    return `${structUtils.prettyDescriptor(configuration, devirtualizedDescriptor)} → ${prettyReference(configuration, locator.reference)}`;
+  } else {
+    return `${structUtils.prettyDescriptor(configuration, devirtualizedDescriptor)} → ${prettyLocator(configuration, locator)}`;
+  }
 }
 
 /**
