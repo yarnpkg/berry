@@ -38383,15 +38383,23 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
         const data = Buffer.from(memory);
 
         if (compressionMethod === 0) {
+          this.fileSources.set(index, data);
           return data;
         } else if (opts.asyncDecompress) {
           return new Promise((resolve, reject) => {
             external_zlib_default().inflateRaw(data, (error, result) => {
-              error ? reject(error) : resolve(result);
+              if (error) {
+                reject(error);
+              } else {
+                this.fileSources.set(index, result);
+                resolve(result);
+              }
             });
           });
         } else {
-          return external_zlib_default().inflateRawSync(data);
+          const decompressedData = external_zlib_default().inflateRawSync(data);
+          this.fileSources.set(index, decompressedData);
+          return decompressedData;
         }
       } finally {
         this.libzip.fclose(file);
@@ -38843,6 +38851,7 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
     this.nextFd = 3;
     this.isZip = new Set();
     this.notZip = new Set();
+    this.realPaths = new Map();
     this.limitOpenFilesTimeout = null;
     this.libzip = libzip;
     this.baseFs = baseFs;
@@ -39038,7 +39047,14 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
       archivePath,
       subPath
     }) => {
-      return this.pathUtils.join(await this.baseFs.realpathPromise(archivePath), this.pathUtils.relative(sources_path/* PortablePath.root */.LZ.root, await zipFs.realpathPromise(subPath)));
+      let realArchivePath = this.realPaths.get(archivePath);
+
+      if (typeof realArchivePath === `undefined`) {
+        realArchivePath = await this.baseFs.realpathPromise(archivePath);
+        this.realPaths.set(archivePath, realArchivePath);
+      }
+
+      return this.pathUtils.join(realArchivePath, this.pathUtils.relative(sources_path/* PortablePath.root */.LZ.root, await zipFs.realpathPromise(subPath)));
     });
   }
 
@@ -39049,7 +39065,14 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
       archivePath,
       subPath
     }) => {
-      return this.pathUtils.join(this.baseFs.realpathSync(archivePath), this.pathUtils.relative(sources_path/* PortablePath.root */.LZ.root, zipFs.realpathSync(subPath)));
+      let realArchivePath = this.realPaths.get(archivePath);
+
+      if (typeof realArchivePath === `undefined`) {
+        realArchivePath = this.baseFs.realpathSync(archivePath);
+        this.realPaths.set(archivePath, realArchivePath);
+      }
+
+      return this.pathUtils.join(realArchivePath, this.pathUtils.relative(sources_path/* PortablePath.root */.LZ.root, zipFs.realpathSync(subPath)));
     });
   }
 
@@ -41460,7 +41483,8 @@ function makeManager(pnpapi, opts) {
   const apiMetadata = new Map([[initialApiPath, {
     cache: external_module_.Module._cache,
     instance: pnpapi,
-    stats: initialApiStats
+    stats: initialApiStats,
+    lastRefreshCheck: Date.now()
   }]]);
 
   function loadApiInstance(pnpApiPath) {
@@ -41473,6 +41497,9 @@ function makeManager(pnpapi, opts) {
   }
 
   function refreshApiEntry(pnpApiPath, apiEntry) {
+    const timeNow = Date.now();
+    if (timeNow - apiEntry.lastRefreshCheck < 500) return;
+    apiEntry.lastRefreshCheck = timeNow;
     const stats = opts.fakeFs.statSync(pnpApiPath);
 
     if (stats.mtime > apiEntry.stats.mtime) {
@@ -41493,7 +41520,8 @@ function makeManager(pnpapi, opts) {
       apiMetadata.set(pnpApiPath, apiEntry = {
         cache: {},
         instance: loadApiInstance(pnpApiPath),
-        stats: opts.fakeFs.statSync(pnpApiPath)
+        stats: opts.fakeFs.statSync(pnpApiPath),
+        lastRefreshCheck: Date.now()
       });
     }
 

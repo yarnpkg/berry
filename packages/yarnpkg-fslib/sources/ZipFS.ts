@@ -901,15 +901,23 @@ export class ZipFS extends BasePortableFakeFS {
         const data = Buffer.from(memory);
 
         if (compressionMethod === 0) {
+          this.fileSources.set(index, data);
           return data;
         } else if (opts.asyncDecompress) {
           return new Promise((resolve, reject) => {
             zlib.inflateRaw(data, (error, result) => {
-              error ? reject(error) : resolve(result);
+              if (error) {
+                reject(error);
+              } else {
+                this.fileSources.set(index, result);
+                resolve(result);
+              }
             });
           });
         } else {
-          return zlib.inflateRawSync(data);
+          const decompressedData = zlib.inflateRawSync(data);
+          this.fileSources.set(index, decompressedData);
+          return decompressedData;
         }
       } finally {
         this.libzip.fclose(file);
