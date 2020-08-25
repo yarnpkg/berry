@@ -22,6 +22,7 @@
 - The portable shell will now support calling `cd` and `exit` without arguments
 - Yarn will now show the exit code when a lifecycle script fails
 - Yarn's portable shell will now also pipe the stderr when using the `|&` pipeline
+- Yarn's portable shell will now respect the left associativity of list operators
 
 ### CLI
 

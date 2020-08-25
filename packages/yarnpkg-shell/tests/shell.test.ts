@@ -715,6 +715,31 @@ describe(`Shell`, () => {
     });
   });
 
+  describe(`Lists`, () => {
+    it(`should execute lists with left associativity`, async () => {
+      await expect(bufferResult(
+        `inexistent && echo yes || echo no`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `no\n`,
+      });
+
+      await expect(bufferResult(
+        `inexistent || echo no && echo yes`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `no\nyes\n`,
+      });
+
+      await expect(bufferResult(
+        `inexistent && echo yes || inexistent && echo yes || echo no`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `no\n`,
+      });
+    });
+  });
+
   describe(`Glob support`, () => {
     describe(`Basic Syntax`, () => {
       it(`should support glob patterns with asterisk`, async () => {

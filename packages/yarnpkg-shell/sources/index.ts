@@ -592,40 +592,48 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
  * together thanks to the use of either of the `||` or `&&` operators.
  */
 async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: ShellState): Promise<number> {
-  if (!node.then)
-    return await executeCommandChain(node.chain, opts, state);
+  let code!: number;
+  const setCode = (newCode: number) => {
+    code = newCode;
 
-  const code = await executeCommandChain(node.chain, opts, state);
+    // We must update $?, which always contains the exit code from
+    // the right-most command
+    state.variables[`?`] = String(newCode);
+  };
 
-  // If the execution aborted (usually through "exit"), we must bailout
-  if (state.exitCode !== null)
-    return state.exitCode;
+  setCode(await executeCommandChain(node.chain, opts, state));
 
-  // We must update $?, which always contains the exit code from
-  // the right-most command
-  state.variables[`?`] = String(code);
+  // We use a loop because we must make sure that we respect
+  // the left associativity of lists, as per the bash spec.
+  // (e.g. `inexistent && echo yes || echo no` must be
+  // the same as `{inexistent && echo yes} || echo no`)
+  while (node.then) {
+    // If the execution aborted (usually through "exit"), we must bailout
+    if (state.exitCode !== null)
+      return state.exitCode;
 
-  switch (node.then.type) {
-    case `&&`: {
-      if (code === 0) {
-        return await executeCommandLine(node.then.line, opts, state);
-      } else {
-        return code;
-      }
-    } break;
+    switch (node.then.type) {
+      case `&&`: {
+        if (code === 0) {
+          setCode(await executeCommandChain(node.then.line.chain, opts, state));
+        }
+      } break;
 
-    case `||`: {
-      if (code !== 0) {
-        return await executeCommandLine(node.then.line, opts, state);
-      } else {
-        return code;
-      }
-    } break;
+      case `||`: {
+        if (code !== 0) {
+          setCode(await executeCommandChain(node.then.line.chain, opts, state));
+        }
+      } break;
 
-    default: {
-      throw new Error(`Unsupported command type: "${node.then.type}"`);
-    } break;
+      default: {
+        throw new Error(`Unsupported command type: "${node.then.type}"`);
+      } break;
+    }
+
+    node = node.then.line;
   }
+
+  return code;
 }
 
 async function executeShellLine(node: ShellLine, opts: ShellOptions, state: ShellState) {
