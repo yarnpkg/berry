@@ -140,6 +140,7 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
   });
 
   return await new Promise((resolve, reject) => {
+    subprocess.on(`error`, reject);
     subprocess.on(`close`, (code, signal) => {
       const stdout = encoding === `buffer`
         ? Buffer.concat(stdoutChunks)
