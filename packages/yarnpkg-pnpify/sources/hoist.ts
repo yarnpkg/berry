@@ -190,6 +190,41 @@ const getHoistIdentMap = (rootNode: HoisterWorkTree, popularityMap: PopularityMa
 };
 
 /**
+ * Gets regular node dependencies only and sorts them in the order so that
+ * peer dependencies come before the dependency that rely on them.
+ *
+ * @param node graph node
+ * @returns sorted regular dependencies
+ */
+const getSortedRegularDependencies = (node: HoisterWorkTree): Set<HoisterWorkTree> => {
+  const dependencies: Set<HoisterWorkTree> = new Set();
+
+  const addDep = (dep: HoisterWorkTree, seenDeps = new Set()) => {
+    if (seenDeps.has(dep))
+      return;
+    seenDeps.add(dep);
+
+    for (const peerName of dep.peerNames) {
+      if (!node.peerNames.has(peerName)) {
+        const peerDep = node.dependencies.get(peerName);
+        if (peerDep && !dependencies.has(peerDep)) {
+          addDep(peerDep, seenDeps);
+        }
+      }
+    }
+    dependencies.add(dep);
+  };
+
+  for (const dep of node.dependencies.values()) {
+    if (!node.peerNames.has(dep.name)) {
+      addDep(dep);
+    }
+  }
+
+  return dependencies;
+};
+
+/**
  * Performs hoisting all the dependencies down the tree to the root node.
  *
  * The algorithm used here reduces dependency graph by deduplicating
@@ -295,19 +330,18 @@ const getNodeHoistInfo = (rootNodePath: Set<Locator>, nodePath: Array<HoisterWor
     for (let idx = nodePath.length - 1; idx >= 1; idx--) {
       const parent = nodePath[idx];
       for (const name of checkList) {
-        if (parent.peerNames.has(name) && parent.originalDependencies.has(name)) {
-          dependsOn = null;
+        if (parent.peerNames.has(name) && parent.originalDependencies.has(name))
           continue;
-        }
 
         const parentDepNode = parent.dependencies.get(name);
         if (parentDepNode) {
-          if (outputReason)
-            reason = `- peer dependency ${prettyPrintLocator(parentDepNode.locator)} from parent ${prettyPrintLocator(parent.locator)} was not hoisted to ${reasonRoot}`;
           arePeerDepsSatisfied = false;
-          if (dependsOn !== null) {
-            dependsOn.add(parentDepNode);
+          if (idx === nodePath.length - 1) {
+            dependsOn!.add(parentDepNode);
           } else {
+            dependsOn = null;
+            if (outputReason)
+              reason = `- peer dependency ${prettyPrintLocator(parentDepNode.locator)} from parent ${prettyPrintLocator(parent.locator)} was not hoisted to ${reasonRoot}`;
             break;
           }
         }
@@ -343,16 +377,16 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
     if (seenNodes.has(parentNode))
       return;
 
-    const dependantTree = new Map<HoisterWorkTree, Set<HoisterWorkTree>>();
+    const dependantTree = new Map<PackageName, Set<PackageName>>();
     const hoistInfos = new Map<HoisterWorkTree, HoistInfo>();
-    for (const subDependency of parentNode.dependencies.values()) {
-      const hoistInfo = getNodeHoistInfo(rootNodePath, nodePath, subDependency, hoistedDependencies, hoistIdents, hoistIdentMap, {outputReason: options.debugLevel >= 2});
+    for (const subDependency of getSortedRegularDependencies(parentNode)) {
+      const hoistInfo = getNodeHoistInfo(rootNodePath, [...nodePath, parentNode], subDependency, hoistedDependencies, hoistIdents, hoistIdentMap, {outputReason: options.debugLevel >= 2});
       hoistInfos.set(subDependency, hoistInfo);
       if (hoistInfo.isHoistable === Hoistable.DEPENDS) {
         for (const node of hoistInfo.dependsOn) {
-          const nodeDependants = dependantTree.get(node) || new Set();
-          nodeDependants.add(subDependency);
-          dependantTree.set(node, nodeDependants);
+          const nodeDependants = dependantTree.get(node.name) || new Set();
+          nodeDependants.add(subDependency.name);
+          dependantTree.set(node.name, nodeDependants);
         }
       }
     }
@@ -362,8 +396,8 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
       if (!unhoistableNodes.has(node)) {
         unhoistableNodes.add(node);
         hoistInfos.set(node, hoistInfo);
-        for (const dependant of dependantTree.get(node) || []) {
-          addUnhoistableNode(dependant, hoistInfo);
+        for (const dependantName of dependantTree.get(node.name) || []) {
+          addUnhoistableNode(parentNode.dependencies.get(dependantName)!, hoistInfo);
         }
       }
     };
@@ -400,28 +434,30 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
       }
     }
 
-    for (const [node, hoistInfo] of hoistInfos) {
+    const children = getSortedRegularDependencies(parentNode);
+    for (const node of children) {
       if (unhoistableNodes.has(node) && locatorPath.indexOf(node.locator) < 0) {
+        const hoistInfo = hoistInfos.get(node)!;
+        if (hoistInfo.isHoistable === Hoistable.NO)
+          parentNode.reasons.set(node.name, hoistInfo.reason!);
+
         seenNodes.add(parentNode);
         const decoupledNode = decoupleGraphNode(parentNode, node);
 
         hoistNodeDependencies([...nodePath, parentNode], [...locatorPath, parentNode.locator], decoupledNode, nextNewNodes);
 
         seenNodes.delete(parentNode);
-        if (hoistInfo.isHoistable === Hoistable.NO) {
-          parentNode.reasons.set(node.name, hoistInfo.reason!);
-        }
       }
     }
   };
 
   let newNodes;
-  let nextNewNodes = new Set(rootNode.dependencies.values());
+  let nextNewNodes = new Set(getSortedRegularDependencies(rootNode));
   do {
     newNodes = nextNewNodes;
     nextNewNodes = new Set();
     for (const dep of newNodes) {
-      if (rootNode.peerNames.has(dep.name) || dep.locator === rootNode.locator)
+      if (dep.locator === rootNode.locator)
         continue;
       const decoupledDependency = decoupleGraphNode(rootNode, dep);
 
