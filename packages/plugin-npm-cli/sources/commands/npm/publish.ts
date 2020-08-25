@@ -67,7 +67,7 @@ export default class NpmPublishCommand extends BaseCommand {
             configuration,
             registry,
             ident,
-            json: true,
+            jsonResponse: true,
           });
 
           if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
@@ -108,7 +108,7 @@ export default class NpmPublishCommand extends BaseCommand {
             configuration,
             registry,
             ident,
-            json: true,
+            jsonResponse: true,
           });
         } catch (error) {
           if (error.name !== `HTTPError`) {

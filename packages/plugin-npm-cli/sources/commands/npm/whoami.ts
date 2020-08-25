@@ -54,7 +54,7 @@ export default class NpmWhoamiCommand extends BaseCommand {
           configuration,
           registry,
           authType: npmHttpUtils.AuthType.ALWAYS_AUTH,
-          json: true,
+          jsonResponse: true,
         });
 
         report.reportInfo(MessageName.UNNAMED, response.username);

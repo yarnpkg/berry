@@ -50,7 +50,7 @@ export class NpmSemverResolver implements Resolver {
     const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(descriptor), {
       configuration: opts.project.configuration,
       ident: descriptor,
-      json: true,
+      jsonResponse: true,
     });
 
     const candidates = Object.keys(registryData.versions)
@@ -111,7 +111,7 @@ export class NpmSemverResolver implements Resolver {
     const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(locator), {
       configuration: opts.project.configuration,
       ident: locator,
-      json: true,
+      jsonResponse: true,
     });
 
     if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
