@@ -52,8 +52,9 @@ export class ZipOpenFS extends BasePortableFakeFS {
   private readonly maxAge: number;
   private readonly readOnlyArchives: boolean;
 
-  private isZip: Set<string> = new Set();
-  private notZip: Set<string> = new Set();
+  private isZip: Set<PortablePath> = new Set();
+  private notZip: Set<PortablePath> = new Set();
+  private realPaths: Map<PortablePath, PortablePath> = new Map()
 
   constructor({libzip, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true, maxAge = 5000}: ZipOpenFSOptions) {
     super();
@@ -248,7 +249,13 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.realpathPromise(p);
     }, async (zipFs, {archivePath, subPath}) => {
-      return this.pathUtils.join(await this.baseFs.realpathPromise(archivePath), this.pathUtils.relative(PortablePath.root, await zipFs.realpathPromise(subPath)));
+      let realArchivePath = this.realPaths.get(archivePath);
+      if (typeof realArchivePath === `undefined`) {
+        realArchivePath = await this.baseFs.realpathPromise(archivePath);
+        this.realPaths.set(archivePath, realArchivePath);
+      }
+
+      return this.pathUtils.join(realArchivePath, this.pathUtils.relative(PortablePath.root, await zipFs.realpathPromise(subPath)));
     });
   }
 
@@ -256,7 +263,13 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return this.makeCallSync(p, () => {
       return this.baseFs.realpathSync(p);
     }, (zipFs, {archivePath, subPath}) => {
-      return this.pathUtils.join(this.baseFs.realpathSync(archivePath), this.pathUtils.relative(PortablePath.root, zipFs.realpathSync(subPath)));
+      let realArchivePath = this.realPaths.get(archivePath);
+      if (typeof realArchivePath === `undefined`) {
+        realArchivePath = this.baseFs.realpathSync(archivePath);
+        this.realPaths.set(archivePath, realArchivePath);
+      }
+
+      return this.pathUtils.join(realArchivePath, this.pathUtils.relative(PortablePath.root, zipFs.realpathSync(subPath)));
     });
   }
 
@@ -694,14 +707,14 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return this.makeCallSync(p, () => {
       return this.baseFs.watch(
         p,
-        // @ts-ignore
+        // @ts-expect-error
         a,
         b,
       );
     }, (zipFs, {subPath}) => {
       return zipFs.watch(
         subPath,
-        // @ts-ignore
+        // @ts-expect-error
         a,
         b,
       );
@@ -714,14 +727,14 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return this.makeCallSync(p, () => {
       return this.baseFs.watchFile(
         p,
-        // @ts-ignore
+        // @ts-expect-error
         a,
         b,
       );
     }, (zipFs, {subPath}) => {
       return zipFs.watchFile(
         subPath,
-        // @ts-ignore
+        // @ts-expect-error
         a,
         b,
       );

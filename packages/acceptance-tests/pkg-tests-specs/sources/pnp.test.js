@@ -1505,6 +1505,33 @@ describe(`Plug'n'Play`, () => {
     }),
   );
 
+  test(`it should NOT remove lingering node_modules inside folders matched by pnpIgnorePatterns`,
+    makeTemporaryEnv({
+      workspaces: [`foo`],
+    }, {
+      pnpIgnorePatterns: `foo/**`,
+    }, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/node_modules/foo`);
+      await writeJson(`${path}/foo/package.json`, {
+        name: `foo`,
+        version: `1.0.0`,
+        workspaces: [`baz`],
+      });
+      await xfs.mkdirpPromise(`${path}/foo/node_modules/dep`);
+      await writeJson(`${path}/foo/baz/package.json`, {
+        name: `baz`,
+        version: `1.0.0`,
+      });
+      await xfs.mkdirpPromise(`${path}/foo/baz/node_modules/dep`);
+
+      await run(`install`);
+
+      await expect(xfs.readdirPromise(path)).resolves.not.toContain(`node_modules`);
+      await expect(xfs.readdirPromise(`${path}/foo/baz`)).resolves.toContain(`node_modules`);
+      await expect(xfs.readdirPromise(`${path}/foo`)).resolves.toContain(`node_modules`);
+    }),
+  );
+
   test(
     `it should transparently support the "resolve" package`,
     makeTemporaryEnv(

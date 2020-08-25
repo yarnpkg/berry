@@ -19,7 +19,7 @@ export type PipevpOptions = {
 };
 
 function hasFd(stream: null | Readable | Writable) {
-  // @ts-ignore: Not sure how to typecheck this field
+  // @ts-expect-error: Not sure how to typecheck this field
   return stream !== null && typeof stream.fd === `number`;
 }
 
@@ -140,6 +140,7 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
   });
 
   return await new Promise((resolve, reject) => {
+    subprocess.on(`error`, reject);
     subprocess.on(`close`, (code, signal) => {
       const stdout = encoding === `buffer`
         ? Buffer.concat(stdoutChunks)

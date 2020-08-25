@@ -25,6 +25,7 @@ async function findFiles(pattern: string, cwd: PortablePath, {ignoredFolders = [
     absolute: true,
     cwd: npath.fromPortablePath(cwd),
     ignore: [`**/node_modules/**`, ...ignoredFolders.map(p => `${npath.fromPortablePath(p)}/**`)],
+    gitignore: true,
   });
 
   return files.map(p => {
@@ -196,7 +197,7 @@ async function buildJsonNode(p: PortablePath, accesses: Array<string>) {
     /*setParentNodes */ true,
   );
 
-  // @ts-ignore
+  // @ts-expect-error
   let node: ts.Node = sourceFile.statements[0].expression;
   if (!node)
     throw new Error(`Invalid source tree`);
@@ -225,6 +226,8 @@ async function checkForUnmetPeerDependency(workspace: Workspace, dependencyType:
   if (dependencyType === `dependencies` && workspace.manifest.hasConsumerDependency(peer))
     return;
   if (dependencyType === `devDependencies` && workspace.manifest.hasHardDependency(peer))
+    return;
+  if (workspace.manifest.name?.identHash === peer.identHash)
     return;
 
   const propertyNode = await buildJsonNode(ppath.join(workspace.cwd, Manifest.fileName), [dependencyType, structUtils.stringifyIdent(via)]);

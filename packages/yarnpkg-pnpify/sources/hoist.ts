@@ -226,7 +226,7 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
 
   const hoistIdentMap = getHoistIdentMap(rootNode, popularityMap);
 
-  const hoistIdents = new Set(Array.from(hoistIdentMap.values()).map(x => x[0]));
+  const hoistIdents = new Map(Array.from(hoistIdentMap.entries()).map(([k, v]) => [k, v[0]]));
 
   const hoistedDependencies = rootNode === tree ? new Map() : getHoistedDependencies(rootNode);
 
@@ -236,9 +236,9 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
     wasStateChanged = false;
     for (const [name, idents] of hoistIdentMap) {
       if (idents.length > 1 && !rootNode.dependencies.has(name)) {
-        hoistIdents.delete(idents[0]);
+        hoistIdents.delete(name);
         idents.shift();
-        hoistIdents.add(idents[0]);
+        hoistIdents.set(name, idents[0]);
         wasStateChanged = true;
       }
     }
@@ -253,14 +253,17 @@ const hoistTo = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath:
   }
 };
 
-const getNodeHoistInfo = (rootNodePath: Set<Locator>, nodePath: Array<HoisterWorkTree>, node: HoisterWorkTree, hoistedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Set<Ident>, hoistIdentMap: Map<Ident, Array<Ident>>, {outputReason}: {outputReason: boolean}): HoistInfo => {
+const getNodeHoistInfo = (rootNodePath: Set<Locator>, nodePath: Array<HoisterWorkTree>, node: HoisterWorkTree, hoistedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Map<PackageName, Ident>, hoistIdentMap: Map<Ident, Array<Ident>>, {outputReason}: {outputReason: boolean}): HoistInfo => {
   let reasonRoot;
   let reason: string | null = null;
   let dependsOn: Set<HoisterWorkTree> | null = new Set();
   if (outputReason)
     reasonRoot = `${Array.from(rootNodePath).map(x => prettyPrintLocator(x)).join(`→`)}`;
 
-  let isHoistable = hoistIdents.has(node.ident);
+  const parentNode = nodePath[nodePath.length - 1];
+  // We cannot hoist self-references
+  const isSelfReference = node.ident === parentNode.ident;
+  let isHoistable = hoistIdents.get(node.name) === node.ident && !isSelfReference;
   if (outputReason && !isHoistable)
     reason = `- filled by: ${prettyPrintLocator(hoistIdentMap.get(node.name)![0])} at ${reasonRoot}`;
 
@@ -333,7 +336,7 @@ const getNodeHoistInfo = (rootNodePath: Set<Locator>, nodePath: Array<HoisterWor
  * @param hoistedDependencies map of dependencies that were hoisted to parent nodes
  * @param hoistIdents idents that should be attempted to be hoisted to the root node
  */
-const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath: Set<Locator>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Set<Ident>, hoistIdentMap: Map<Ident, Array<Ident>>, options: InternalHoistOptions) => {
+const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePath: Set<Locator>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Map<PackageName, Ident>, hoistIdentMap: Map<Ident, Array<Ident>>, options: InternalHoistOptions) => {
   const seenNodes = new Set<HoisterWorkTree>();
 
   const hoistNodeDependencies = (nodePath: Array<HoisterWorkTree>, locatorPath: Array<Locator>, parentNode: HoisterWorkTree, newNodes: Set<HoisterWorkTree>) => {
@@ -500,7 +503,6 @@ const cloneTree = (tree: HoisterTree): HoisterWorkTree => {
   const seenNodes = new Map<HoisterTree, HoisterWorkTree>([[tree, treeCopy]]);
 
   const addNode = (node: HoisterTree, parentNode: HoisterWorkTree) => {
-    // Skip self-references
     let workNode = seenNodes.get(node);
     const isSeen = !!workNode;
     if (!workNode) {

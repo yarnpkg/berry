@@ -51,6 +51,10 @@ export class LockfileResolver implements Resolver {
     return [pkg];
   }
 
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
+    return null;
+  }
+
   async resolve(locator: Locator, opts: ResolveOptions) {
     const pkg = opts.project.originalPackages.get(locator.locatorHash);
 

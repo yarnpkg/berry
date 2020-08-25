@@ -41,6 +41,10 @@ export class LinkResolver implements Resolver {
     return [structUtils.makeLocator(descriptor, `${LINK_PROTOCOL}${npath.toPortablePath(path)}`)];
   }
 
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
+    return null;
+  }
+
   async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
     if (!opts.fetchOptions)
       throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);

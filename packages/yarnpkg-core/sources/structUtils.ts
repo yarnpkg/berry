@@ -294,13 +294,13 @@ export function parseRange<Opts extends ParseRangeOptions>(range: string, opts?:
     : null;
 
   return {
-    // @ts-ignore
+    // @ts-expect-error
     protocol,
-    // @ts-ignore
+    // @ts-expect-error
     source,
-    // @ts-ignore
+    // @ts-expect-error
     selector,
-    // @ts-ignore
+    // @ts-expect-error
     params,
   };
 }

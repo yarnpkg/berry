@@ -40,6 +40,12 @@ export class NpmRemapResolver implements Resolver {
     return await opts.resolver.getCandidates(nextDescriptor, dependencies, opts);
   }
 
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
+    const nextDescriptor = structUtils.parseDescriptor(descriptor.range.slice(PROTOCOL.length), true);
+
+    return opts.resolver.getSatisfying(nextDescriptor, references, opts);
+  }
+
   resolve(locator: Locator, opts: ResolveOptions): never {
     // Once transformed into locators, the descriptors are resolved by the NpmSemverResolver
     throw new Error(`Unreachable`);

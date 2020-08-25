@@ -132,7 +132,7 @@ export default class AddCommand extends BaseCommand {
 
       const suggestions = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, modifier, strategies, maxResults});
 
-      return [request, suggestions, target] as [Descriptor, Array<suggestUtils.Suggestion>, suggestUtils.Target];
+      return [request, suggestions, target] as const;
     }));
 
     const checkReport = await LightReport.start({
@@ -140,16 +140,22 @@ export default class AddCommand extends BaseCommand {
       stdout: this.context.stdout,
       suggestInstall: false,
     }, async report => {
-      for (const [request, suggestions] of allSuggestions) {
+      for (const [request, {suggestions, rejections}] of allSuggestions) {
         const nonNullSuggestions = suggestions.filter(suggestion => {
           return suggestion.descriptor !== null;
         });
 
         if (nonNullSuggestions.length === 0) {
+          const [firstError] = rejections;
+          if (typeof firstError === `undefined`)
+            throw new Error(`Assertion failed: Expected an error to have been set`);
+
+          const prettyError = this.cli.error(firstError);
+
           if (!project.configuration.get(`enableNetwork`)) {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range (note: network resolution has been disabled)`);
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range (note: network resolution has been disabled):\n\n${prettyError}`);
           } else {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range`);
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range:\n\n${prettyError}`);
           }
         }
       }
@@ -174,12 +180,12 @@ export default class AddCommand extends BaseCommand {
       Descriptor
     ]> = [];
 
-    for (const [/*request*/, suggestions, target] of allSuggestions) {
+    for (const [/*request*/, {suggestions}, target] of allSuggestions) {
       let selected: Descriptor;
 
       const nonNullSuggestions = suggestions.filter(suggestion => {
         return suggestion.descriptor !== null;
-      });
+      }) as Array<suggestUtils.Suggestion>;
 
       const firstSuggestedDescriptor = nonNullSuggestions[0].descriptor;
       const areAllTheSame = nonNullSuggestions.every(suggestion => structUtils.areDescriptorsEqual(suggestion.descriptor, firstSuggestedDescriptor));
