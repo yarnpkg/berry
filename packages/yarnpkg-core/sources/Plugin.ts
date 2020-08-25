@@ -6,7 +6,7 @@ import {SettingsDefinition, PluginConfiguration, Configuration} from './Configur
 import {Fetcher}                                                from './Fetcher';
 import {Linker}                                                 from './Linker';
 import {MessageName}                                            from './MessageName';
-import {Project}                                                from './Project';
+import {Project, InstallOptions}                                from './Project';
 import {Resolver, ResolveOptions}                               from './Resolver';
 import {Workspace}                                              from './Workspace';
 import {Locator, Descriptor}                                    from './types';
@@ -89,6 +89,7 @@ export type Hooks = {
   // completed.
   afterAllInstalled?: (
     project: Project,
+    options: InstallOptions
   ) => void,
 
   // Called during the `Validation step` of the `install` method from the `Project`
