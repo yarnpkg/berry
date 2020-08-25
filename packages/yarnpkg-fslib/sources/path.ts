@@ -34,9 +34,19 @@ export const ppath: PathUtils<PortablePath> = Object.create(path.posix) as any;
 npath.cwd = () => process.cwd();
 ppath.cwd = () => toPortablePath(process.cwd());
 
+const fixWindowsDriveRoot = (p: PortablePath): PortablePath => {
+  if (p.length == 3 && p[2] == `:`)
+    return `${p}/` as PortablePath;
+  return p as PortablePath;
+};
+
+ppath.dirname = (p: PortablePath): PortablePath => {
+  return fixWindowsDriveRoot(path.posix.dirname(p) as PortablePath);
+};
+
 ppath.resolve = (...segments: Array<PortablePath | Filename>) => {
   if (segments.length > 0 && ppath.isAbsolute(segments[0])) {
-    return path.posix.resolve(...segments) as PortablePath;
+    return fixWindowsDriveRoot(path.posix.resolve(...segments) as PortablePath);
   } else {
     return path.posix.resolve(ppath.cwd(), ...segments) as PortablePath;
   }
