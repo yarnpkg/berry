@@ -71,9 +71,10 @@ export async function request(target: string, body: Body, {configuration, header
     : `buffer`;
 
   if (body !== null) {
-    if (!jsonRequest && (typeof body === `string` || Buffer.isBuffer(body))) {
+    if (Buffer.isBuffer(body) || (!jsonRequest && typeof body === `string`)) {
       gotOptions.body = body;
     } else {
+      // @ts-expect-error: The got types only allow an object, but got can stringify any valid JSON
       gotOptions.json = body;
     }
   }
