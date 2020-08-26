@@ -1,5 +1,4 @@
 import {PortablePath, toFilename}               from '@yarnpkg/fslib';
-import micromatch                               from 'micromatch';
 import querystring                              from 'querystring';
 import semver                                   from 'semver';
 
