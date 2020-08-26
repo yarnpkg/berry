@@ -1,12 +1,13 @@
-import {xfs, npath, ppath, toFilename}                        from '@yarnpkg/fslib';
 import {CwdFS, Filename, NativePath, PortablePath, ZipOpenFS} from '@yarnpkg/fslib';
+import {xfs, npath, ppath, toFilename}                        from '@yarnpkg/fslib';
 import {getLibzipPromise}                                     from '@yarnpkg/libzip';
 import {execute}                                              from '@yarnpkg/shell';
+import capitalize                                             from 'lodash/capitalize';
 import pLimit                                                 from 'p-limit';
 
 import {PassThrough, Readable, Writable}                      from 'stream';
 
-import {Configuration}                                        from './Configuration';
+import {Configuration, FormatType}                            from './Configuration';
 import {Manifest}                                             from './Manifest';
 import {MessageName}                                          from './MessageName';
 import {Project}                                              from './Project';
@@ -179,6 +180,10 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             const workspaceCli = workspace !== null
               ? [`workspace`, workspace]
               : [];
+
+            // We enable inline builds, because nobody wants to
+            // read a logfile telling them to open another logfile
+            env.YARN_ENABLE_INLINE_BUILDS = `1`;
 
             // Yarn 2 supports doing the install and the pack in a single command,
             // so we leverage that. We also don't need the "set version" call since
@@ -353,8 +358,49 @@ export async function executeWorkspaceScript(workspace: Workspace, scriptName: s
   return await executePackageScript(workspace.anchoredLocator, scriptName, args, {cwd, project: workspace.project, stdin, stdout, stderr});
 }
 
-export async function hasWorkspaceScript(workspace: Workspace, scriptName: string) {
+export function hasWorkspaceScript(workspace: Workspace, scriptName: string) {
   return workspace.manifest.scripts.has(scriptName);
+}
+
+type ExecuteWorkspaceLifecycleScriptOptions = {
+  cwd?: PortablePath | undefined,
+  report: Report,
+};
+
+export async function executeWorkspaceLifecycleScript(workspace: Workspace, lifecycleScriptName: string, {cwd, report}: ExecuteWorkspaceLifecycleScriptOptions) {
+  const {configuration} = workspace.project;
+  const stdin = null;
+
+  await xfs.mktempPromise(async logDir => {
+    const logFile = ppath.join(logDir, `${lifecycleScriptName}.log` as PortablePath);
+
+    const header = `# This file contains the result of Yarn calling the "${lifecycleScriptName}" lifecycle script inside a workspace ("${workspace.cwd}")\n`;
+
+    const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {
+      report,
+      prefix: structUtils.prettyLocator(configuration, workspace.anchoredLocator),
+      header,
+    });
+
+    report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "${lifecycleScriptName}" lifecycle script`);
+
+    const exitCode = await executeWorkspaceScript(workspace, lifecycleScriptName, [], {cwd, stdin, stdout, stderr});
+
+    stdout.end();
+    stderr.end();
+
+    if (exitCode !== 0) {
+      xfs.detachTemp(logDir);
+
+      throw new ReportError(MessageName.LIFECYCLE_SCRIPT, `${capitalize(lifecycleScriptName)} script failed (exit code ${configuration.format(String(exitCode), FormatType.NUMBER)}, logs can be found here: ${configuration.format(logFile, FormatType.PATH)}); run ${configuration.format(`yarn ${lifecycleScriptName}`, FormatType.CODE)} to investigate`);
+    }
+  });
+}
+
+export async function maybeExecuteWorkspaceLifecycleScript(workspace: Workspace, lifecycleScriptName: string, opts: ExecuteWorkspaceLifecycleScriptOptions) {
+  if (hasWorkspaceScript(workspace, lifecycleScriptName)) {
+    await executeWorkspaceLifecycleScript(workspace, lifecycleScriptName, opts);
+  }
 }
 
 type GetPackageAccessibleBinariesOptions = {

@@ -44,7 +44,7 @@ jobs:
           for generator in packages/plugin-compat/extra/*/gen-*-patch.sh; do
             bash $generator;
           done
-          [[ $(git diff --name-only packages/plugin-compat/sources/patches | wc -l) -eq 0 ]]
+          [[ $(git diff --name-only packages/plugin-compat/sources/patches | tee /dev/stderr | wc -l) -eq 0 ]]
         fi
       shell: bash
       if: |
@@ -68,7 +68,7 @@ jobs:
       run: |
         if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- packages/yarnpkg-cli/sources/pluginCommands.ts 'packages/*/sources/commands/**/*' | wc -l) -gt 0 ]]; then
           node ./scripts/run-yarn.js build:plugin-commands
-          [[ $(git diff --name-only packages/yarnpkg-cli/sources/pluginCommands.ts | wc -l) -eq 0 ]]
+          [[ $(git diff --name-only packages/yarnpkg-cli/sources/pluginCommands.ts | tee /dev/stderr | wc -l) -eq 0 ]]
         fi
       shell: bash
       if: |

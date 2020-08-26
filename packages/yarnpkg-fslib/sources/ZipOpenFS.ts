@@ -42,7 +42,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
   private readonly baseFs: FakeFS<PortablePath>;
 
-  private readonly zipInstances: Map<string, {zipFs: ZipFS, expiresAt: number}> | null;
+  private readonly zipInstances: Map<string, {zipFs: ZipFS, expiresAt: number, refCount: number}> | null;
 
   private readonly fdMap: Map<number, [ZipFS, number]> = new Map();
   private nextFd = 3;
@@ -52,8 +52,9 @@ export class ZipOpenFS extends BasePortableFakeFS {
   private readonly maxAge: number;
   private readonly readOnlyArchives: boolean;
 
-  private isZip: Set<string> = new Set();
-  private notZip: Set<string> = new Set();
+  private isZip: Set<PortablePath> = new Set();
+  private notZip: Set<PortablePath> = new Set();
+  private realPaths: Map<PortablePath, PortablePath> = new Map()
 
   constructor({libzip, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true, maxAge = 5000}: ZipOpenFSOptions) {
     super();
@@ -248,7 +249,13 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.realpathPromise(p);
     }, async (zipFs, {archivePath, subPath}) => {
-      return this.pathUtils.join(await this.baseFs.realpathPromise(archivePath), this.pathUtils.relative(PortablePath.root, await zipFs.realpathPromise(subPath)));
+      let realArchivePath = this.realPaths.get(archivePath);
+      if (typeof realArchivePath === `undefined`) {
+        realArchivePath = await this.baseFs.realpathPromise(archivePath);
+        this.realPaths.set(archivePath, realArchivePath);
+      }
+
+      return this.pathUtils.join(realArchivePath, this.pathUtils.relative(PortablePath.root, await zipFs.realpathPromise(subPath)));
     });
   }
 
@@ -256,7 +263,13 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return this.makeCallSync(p, () => {
       return this.baseFs.realpathSync(p);
     }, (zipFs, {archivePath, subPath}) => {
-      return this.pathUtils.join(this.baseFs.realpathSync(archivePath), this.pathUtils.relative(PortablePath.root, zipFs.realpathSync(subPath)));
+      let realArchivePath = this.realPaths.get(archivePath);
+      if (typeof realArchivePath === `undefined`) {
+        realArchivePath = this.baseFs.realpathSync(archivePath);
+        this.realPaths.set(archivePath, realArchivePath);
+      }
+
+      return this.pathUtils.join(realArchivePath, this.pathUtils.relative(PortablePath.root, zipFs.realpathSync(subPath)));
     });
   }
 
@@ -694,14 +707,14 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return this.makeCallSync(p, () => {
       return this.baseFs.watch(
         p,
-        // @ts-ignore
+        // @ts-expect-error
         a,
         b,
       );
     }, (zipFs, {subPath}) => {
       return zipFs.watch(
         subPath,
-        // @ts-ignore
+        // @ts-expect-error
         a,
         b,
       );
@@ -714,14 +727,14 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return this.makeCallSync(p, () => {
       return this.baseFs.watchFile(
         p,
-        // @ts-ignore
+        // @ts-expect-error
         a,
         b,
       );
     }, (zipFs, {subPath}) => {
       return zipFs.watchFile(
         subPath,
-        // @ts-ignore
+        // @ts-expect-error
         a,
         b,
       );
@@ -813,8 +826,8 @@ export class ZipOpenFS extends BasePortableFakeFS {
     let nextExpiresAt = now + this.maxAge;
     let closeCount = max === null ? 0 : this.zipInstances.size - max;
 
-    for (const [path, {zipFs, expiresAt}] of this.zipInstances.entries()) {
-      if (zipFs.hasOpenFileHandles()) {
+    for (const [path, {zipFs, expiresAt, refCount}] of this.zipInstances.entries()) {
+      if (refCount !== 0 || zipFs.hasOpenFileHandles()) {
         continue;
       } else if (now >= expiresAt) {
         zipFs.saveAndClose();
@@ -860,6 +873,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
           cachedZipFs = {
             zipFs: new ZipFS(p, zipOptions),
             expiresAt: 0,
+            refCount: 0,
           };
         }
       }
@@ -871,7 +885,12 @@ export class ZipOpenFS extends BasePortableFakeFS {
       this.zipInstances.set(p, cachedZipFs);
 
       cachedZipFs.expiresAt = Date.now() + this.maxAge;
-      return await accept(cachedZipFs.zipFs);
+      cachedZipFs.refCount += 1;
+      try {
+        return await accept(cachedZipFs.zipFs);
+      } finally {
+        cachedZipFs.refCount -= 1;
+      }
     } else {
       const zipFs = new ZipFS(p, await getZipOptions());
 
@@ -898,6 +917,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
         cachedZipFs = {
           zipFs: new ZipFS(p, getZipOptions()),
           expiresAt: 0,
+          refCount: 0,
         };
       }
 

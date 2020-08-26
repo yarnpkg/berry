@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - master
+    - mael/fsevents-2
   pull_request:
     paths:
     - .github/workflows/e2e-fsevents-workflow.yml
@@ -30,8 +31,13 @@ jobs:
     - name: 'Running the integration test (FSEvents ^1)'
       run: |
         source scripts/e2e-setup-ci.sh
-        yarn init
-        yarn add fsevents@^1 node-gyp
+        yarn init -w
+
+        mkdir packages/foo
+        yarn packages/foo init
+        yarn packages/foo add -P lodash
+
+        yarn add fsevents@^1 node-gyp foo@workspace:0.0.0
 
         cat > test.js <<EOT
           const assert = require('assert');
@@ -45,7 +51,9 @@ jobs:
             });
           }
 
-          async function runTestOn(dir, fileName) {
+          async function runTestOn(dir, fileName, expectation) {
+            expectation.sort();
+
             const file = path.join(dir, fileName);
 
             const events = [];
@@ -61,10 +69,14 @@ jobs:
               if (events.length === 0)
                 throw new Error('No events recorded');
 
-              for (const [p] of events) {
-                if (!p.startsWith(dir)) {
-                  throw new Error(p);
-                }
+              const pList = events.map(pEntry => pEntry[0]);
+              pList.sort();
+
+              const currentJson = JSON.stringify(pList);
+              const expectedJson = JSON.stringify(expectation);
+
+              if (currentJson !== expectedJson) {
+                throw new Error('Expectation mismatch:\n  - ' + currentJson + '\n  - ' + expectedJson);
               }
             }
 
@@ -75,9 +87,9 @@ jobs:
             }
           }
 
-          async function registerTest(dir, fileName) {
+          async function registerTest(dir, fileName, expectation) {
             try {
-              await runTestOn(dir, fileName);
+              await runTestOn(dir, fileName, expectation);
               console.log('Succeeded test for ' + dir);
             } catch (error) {
               console.log('Failed test for ' + dir + ': ' + error.message);
@@ -85,10 +97,13 @@ jobs:
             }
           }
 
-          Promise.resolve().then(() => {
-            return registerTest(process.cwd(), 'hello');
-          }).then(() => {
-            return registerTest(process.cwd() + '/\$\$virtual/1234/0', 'world');
+          const rootDir = __dirname;
+          const virtualFooDir = path.dirname(require.resolve('foo/package.json'));
+
+          Promise.resolve().then(async () => {
+            await registerTest(rootDir, 'hello', [rootDir + '/hello']);
+            await registerTest(rootDir + '/\$\$virtual/1234/0', 'world', [rootDir + '/\$\$virtual/1234/0/world']);
+            await registerTest(rootDir, 'packages/foo/hello', [rootDir + '/packages/foo/hello', virtualFooDir + '/hello']);
           });
         EOT
 
@@ -97,8 +112,13 @@ jobs:
     - name: 'Running the integration test (FSEvents latest)'
       run: |
         source scripts/e2e-setup-ci.sh
-        yarn init
-        yarn add fsevents@latest
+        yarn init -w
+
+        mkdir packages/foo
+        yarn packages/foo init
+        yarn packages/foo add -P lodash
+
+        yarn add fsevents@latest foo@workspace:0.0.0
 
         cat > test.js <<EOT
           const assert = require('assert');
@@ -112,7 +132,9 @@ jobs:
             });
           }
 
-          async function runTestOn(dir, fileName) {
+          async function runTestOn(dir, fileName, expectation) {
+            expectation.sort();
+
             const file = path.join(dir, fileName);
 
             const events = [];
@@ -126,10 +148,14 @@ jobs:
               if (events.length === 0)
                 throw new Error('No events recorded');
 
-              for (const [p] of events) {
-                if (!p.startsWith(dir)) {
-                  throw new Error(p);
-                }
+              const pList = events.map(pEntry => pEntry[0]);
+              pList.sort();
+
+              const currentJson = JSON.stringify(pList);
+              const expectedJson = JSON.stringify(expectation);
+
+              if (currentJson !== expectedJson) {
+                throw new Error('Expectation mismatch:\n  - ' + currentJson + '\n  - ' + expectedJson);
               }
             }
 
@@ -140,9 +166,9 @@ jobs:
             }
           }
 
-          async function registerTest(dir, fileName) {
+          async function registerTest(dir, fileName, expectation) {
             try {
-              await runTestOn(dir, fileName);
+              await runTestOn(dir, fileName, expectation);
               console.log('Succeeded test for ' + dir);
             } catch (error) {
               console.log('Failed test for ' + dir + ': ' + error.message);
@@ -150,10 +176,13 @@ jobs:
             }
           }
 
-          Promise.resolve().then(() => {
-            return registerTest(process.cwd(), 'hello');
-          }).then(() => {
-            return registerTest(process.cwd() + '/\$\$virtual/1234/0', 'world');
+          const rootDir = __dirname;
+          const virtualFooDir = path.dirname(require.resolve('foo/package.json'));
+
+          Promise.resolve().then(async () => {
+            await registerTest(rootDir, 'hello', [rootDir + '/hello']);
+            await registerTest(rootDir + '/\$\$virtual/1234/0', 'world', [rootDir + '/\$\$virtual/1234/0/world']);
+            await registerTest(rootDir, 'packages/foo/hello', [rootDir + '/packages/foo/hello', virtualFooDir + '/hello']);
           });
         EOT
 

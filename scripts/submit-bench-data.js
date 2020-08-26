@@ -29,7 +29,7 @@ for (const entry of benchmarkEntries) {
   series.push({
     metric: `perftest.duration`,
     type: `gauge`,
-    tags: [`pm:${packageManager}`, `test:${testName}`, `subtest:${subtestName}`, `iteration:3`],
+    tags: [`pm:${packageManager}`, `test:${testName}`, `subtest:${subtestName}`, `iteration:4`],
     points: points.map(([timestamp, value]) => [timestamp, value]),
   });
 }

@@ -117,12 +117,7 @@ export default class UpCommand extends BaseCommand {
                 target,
                 existingDescriptor,
                 await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, modifier, strategies}),
-              ] as [
-                Workspace,
-                suggestUtils.Target,
-                Descriptor,
-                Array<suggestUtils.Suggestion>
-              ];
+              ] as const;
             }));
 
             isReferenced = true;
@@ -147,16 +142,22 @@ export default class UpCommand extends BaseCommand {
       stdout: this.context.stdout,
       suggestInstall: false,
     }, async report => {
-      for (const [/*workspace*/, /*target*/, existing, suggestions] of allSuggestions) {
+      for (const [/*workspace*/, /*target*/, existing, {suggestions, rejections}] of allSuggestions) {
         const nonNullSuggestions = suggestions.filter(suggestion => {
           return suggestion.descriptor !== null;
         });
 
         if (nonNullSuggestions.length === 0) {
+          const [firstError] = rejections;
+          if (typeof firstError === `undefined`)
+            throw new Error(`Assertion failed: Expected an error to have been set`);
+
+          const prettyError = this.cli.error(firstError);
+
           if (!project.configuration.get(`enableNetwork`)) {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range (note: network resolution has been disabled)`);
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range (note: network resolution has been disabled)\n\n${prettyError}`);
           } else {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range`);
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range\n\n${prettyError}`);
           }
         } else if (nonNullSuggestions.length > 1 && !interactive) {
           report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} has multiple possible upgrade strategies; use -i to disambiguate manually`);
@@ -176,12 +177,12 @@ export default class UpCommand extends BaseCommand {
       Descriptor
     ]> = [];
 
-    for (const [workspace, target, /*existing*/, suggestions] of allSuggestions) {
+    for (const [workspace, target, /*existing*/, {suggestions}] of allSuggestions) {
       let selected;
 
       const nonNullSuggestions = suggestions.filter(suggestion => {
         return suggestion.descriptor !== null;
-      });
+      }) as Array<suggestUtils.Suggestion>;
 
       const firstSuggestedDescriptor = nonNullSuggestions[0].descriptor;
       const areAllTheSame = nonNullSuggestions.every(suggestion => structUtils.areDescriptorsEqual(suggestion.descriptor, firstSuggestedDescriptor));

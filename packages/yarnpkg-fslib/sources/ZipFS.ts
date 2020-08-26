@@ -33,7 +33,6 @@ function toUnixTimestamp(time: Date | string | number) {
   if (typeof time === `string` && String(+time) === time)
     return +time;
 
-  // @ts-ignore
   if (Number.isFinite(time)) {
     if (time < 0) {
       return Date.now() / 1000;
@@ -415,15 +414,28 @@ export class ZipFS extends BasePortableFakeFS {
     if (p === null)
       throw new Error(`Unimplemented`);
 
+    let fd = this.openSync(p, `r`);
+
+    const closeStream = () => {
+      if (fd === -1)
+        return;
+      this.closeSync(fd);
+      fd = -1;
+    };
+
     const stream = Object.assign(new PassThrough(), {
       bytesRead: 0,
       path: p,
       close: () => {
         clearImmediate(immediate);
+        closeStream();
+      },
+      _destroy: (error: Error | undefined, callback: (error?: Error) => void) => {
+        clearImmediate(immediate);
+        closeStream();
+        callback(error);
       },
     });
-
-    const fd = this.openSync(p, `r`);
 
     const immediate = setImmediate(() => {
       try {
@@ -437,7 +449,7 @@ export class ZipFS extends BasePortableFakeFS {
         stream.end();
         stream.destroy();
       } finally {
-        this.closeSync(fd);
+        closeStream();
       }
     });
 
@@ -451,15 +463,34 @@ export class ZipFS extends BasePortableFakeFS {
     if (p === null)
       throw new Error(`Unimplemented`);
 
+    const chunks: Array<Buffer> = [];
+
+    let fd = this.openSync(p, `w`);
+
+    const closeStream = () => {
+      if (fd === -1)
+        return;
+
+      try {
+        this.writeFileSync(p, Buffer.concat(chunks), encoding);
+      } finally {
+        this.closeSync(fd);
+        fd = -1;
+      }
+    };
+
     const stream = Object.assign(new PassThrough(), {
       bytesWritten: 0,
       path: p,
       close: () => {
         stream.end();
+        closeStream();
+      },
+      _destroy: (error: Error | undefined, callback: (error?: Error) => void) => {
+        closeStream();
+        callback(error);
       },
     });
-
-    const chunks: Array<Buffer> = [];
 
     stream.on(`data`, chunk => {
       const chunkBuffer = Buffer.from(chunk);
@@ -467,13 +498,8 @@ export class ZipFS extends BasePortableFakeFS {
       chunks.push(chunkBuffer);
     });
 
-    const fd = this.openSync(p, `w`);
     stream.on(`end`, () => {
-      try {
-        this.writeFileSync(p, Buffer.concat(chunks), encoding);
-      } finally {
-        this.closeSync(fd);
-      }
+      closeStream();
     });
 
     return stream;
@@ -875,15 +901,23 @@ export class ZipFS extends BasePortableFakeFS {
         const data = Buffer.from(memory);
 
         if (compressionMethod === 0) {
+          this.fileSources.set(index, data);
           return data;
         } else if (opts.asyncDecompress) {
           return new Promise((resolve, reject) => {
             zlib.inflateRaw(data, (error, result) => {
-              error ? reject(error) : resolve(result);
+              if (error) {
+                reject(error);
+              } else {
+                this.fileSources.set(index, result);
+                resolve(result);
+              }
             });
           });
         } else {
-          return zlib.inflateRawSync(data);
+          const decompressedData = zlib.inflateRawSync(data);
+          this.fileSources.set(index, decompressedData);
+          return decompressedData;
         }
       } finally {
         this.libzip.fclose(file);
@@ -1223,7 +1257,7 @@ export class ZipFS extends BasePortableFakeFS {
   async readFilePromise(p: PortablePath, encoding?: string) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
-      // @ts-ignore
+      // @ts-expect-error
       encoding = encoding ? encoding.encoding : undefined;
 
     const data = await this.readFileBuffer(p, {asyncDecompress: true});
@@ -1235,7 +1269,7 @@ export class ZipFS extends BasePortableFakeFS {
   readFileSync(p: PortablePath, encoding?: string) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
-      // @ts-ignore
+      // @ts-expect-error
       encoding = encoding ? encoding.encoding : undefined;
 
     const data = this.readFileBuffer(p);

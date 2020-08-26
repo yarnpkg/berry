@@ -93,7 +93,11 @@ export default class YarnCommand extends BaseCommand {
 
     const isZeitNow = !!process.env.NOW_BUILDER;
     const isNetlify = !!process.env.NETLIFY;
-    const isGCF = !!process.env.FUNCTION_TARGET;
+
+    // These variables are used in Google Cloud Platform environment
+    // in process of deploying Google Cloud Functions and
+    // Google App Engine
+    const isGCP = !!process.env.FUNCTION_TARGET || !!process.env.GOOGLE_RUNTIME;
 
     const reportDeprecation = async (message: string, {error}: {error: boolean}) => {
       const deprecationReport = await StreamReport.start({
@@ -179,7 +183,7 @@ export default class YarnCommand extends BaseCommand {
     // to this flag at the moment.
     if (typeof this.nonInteractive !== `undefined`) {
       const exitCode = await reportDeprecation(`The --non-interactive option is deprecated`, {
-        error: !isGCF,
+        error: !isGCP,
       });
 
       if (exitCode !== null) {
@@ -192,7 +196,7 @@ export default class YarnCommand extends BaseCommand {
     // lockfile - for example the PnP artifacts will also be locked.
     if (typeof this.frozenLockfile !== `undefined`) {
       const exitCode = await reportDeprecation(`The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`, {
-        error: !isGCF && !TRAVIS,
+        error: !isGCP && !TRAVIS,
       });
 
       if (exitCode !== null) {

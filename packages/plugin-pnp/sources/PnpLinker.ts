@@ -127,7 +127,7 @@ export class PnpInstaller extends AbstractPnpInstaller {
       return;
     }
 
-    const nodeModules = await this.locateNodeModules();
+    const nodeModules = await this.locateNodeModules(pnpSettings.ignorePattern);
     if (nodeModules.length > 0) {
       this.opts.report.reportWarning(MessageName.DANGEROUS_NODE_MODULES, `One or more node_modules have been detected and will be removed. This operation may take some time.`);
       for (const nodeModulesPath of nodeModules) {
@@ -166,12 +166,13 @@ export class PnpInstaller extends AbstractPnpInstaller {
     }
   }
 
-  private async locateNodeModules() {
+  private async locateNodeModules(ignorePattern?: string | null) {
     const nodeModules: Array<PortablePath> = [];
+    const ignoreRegExp = ignorePattern ? new RegExp(ignorePattern) : null;
 
     for (const workspace of this.opts.project.workspaces) {
       const nodeModulesPath = ppath.join(workspace.cwd, `node_modules` as Filename);
-      if (!xfs.existsSync(nodeModulesPath))
+      if (ignoreRegExp && ignoreRegExp.test(ppath.relative(this.opts.project.cwd, workspace.cwd)) || !xfs.existsSync(nodeModulesPath))
         continue;
 
       const directoryListing = await xfs.readdirPromise(nodeModulesPath, {

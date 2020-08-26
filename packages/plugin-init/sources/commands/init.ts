@@ -146,7 +146,7 @@ export default class InitCommand extends BaseCommand {
     const serialized: any = {};
     manifest.exportTo(serialized);
 
-    // @ts-ignore: The Node typings forgot one field
+    // @ts-expect-error: The Node typings forgot one field
     inspect.styles.name = `cyan`;
 
     this.context.stdout.write(`${inspect(serialized, {

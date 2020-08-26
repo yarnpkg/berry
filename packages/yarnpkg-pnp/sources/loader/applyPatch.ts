@@ -14,7 +14,7 @@ export type ApplyPatchOptions = {
 };
 
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
-  // @ts-ignore
+  // @ts-expect-error
   const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
 
   /**
@@ -30,13 +30,11 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
   let enableNativeHooks = true;
 
-  // @ts-ignore
+  // @ts-expect-error
   process.versions.pnp = String(pnpapi.VERSIONS.std);
 
-  // @ts-ignore
   const moduleExports = require(`module`);
 
-  // @ts-ignore
   moduleExports.findPnpApi = (lookupSource: URL | NativePath) => {
     const lookupPath = lookupSource instanceof URL
       ? fileURLToPath(lookupSource)
@@ -130,9 +128,9 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     // Create a new module and store it into the cache
 
-    // @ts-ignore
+    // @ts-expect-error
     const module = new Module(modulePath, parent);
-    // @ts-ignore
+    // @ts-expect-error
     module.pnpApiPath = moduleApiPath;
 
     entry.cache[modulePath] = module;
@@ -140,7 +138,6 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     // The main module is exposed as global variable
 
     if (isMain) {
-      // @ts-ignore
       process.mainModule = module;
       module.id = `.`;
     }
@@ -150,7 +147,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     let hasThrown = true;
 
     try {
-    // @ts-ignore
+    // @ts-expect-error
       module.load(modulePath);
       hasThrown = false;
     } finally {

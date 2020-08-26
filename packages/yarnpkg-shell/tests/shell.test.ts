@@ -40,6 +40,23 @@ const bufferResult = async (command: string, args: Array<string> = [], options: 
         });
       });
     },
+
+    [`echo-stdin`]: async (args, opts, state) => {
+      const stdinChunks: Array<Buffer> = [];
+
+      state.stdin.on(`data`, chunk => {
+        stdinChunks.push(chunk);
+      });
+
+      return await new Promise(resolve => {
+        state.stdin.on(`end`, () => {
+          const content = Buffer.concat(stdinChunks).toString().trim();
+          state.stdout.write(`${content}\n`);
+
+          resolve(0);
+        });
+      });
+    },
   }});
 
   return {
@@ -107,54 +124,6 @@ describe(`Shell`, () => {
         `exit 42`,
       )).resolves.toMatchObject({
         exitCode: 42,
-      });
-    });
-
-    it(`should pipe the result of a command into another (two commands, builtin into native)`, async () => {
-      await expect(bufferResult([
-        `echo hello world`,
-        `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
-      ].join(` | `))).resolves.toMatchObject({
-        stdout: `HELLO WORLD\n`,
-      });
-    });
-
-    it(`should pipe the result of a command into another (two commands, native into pipe)`, async () => {
-      await expect(bufferResult([
-        `node -e 'process.stdout.write("abcdefgh\\\\n");'`,
-        `test-builtin`,
-      ].join(` | `))).resolves.toMatchObject({
-        stdout: `aceg\n`,
-      });
-    });
-
-    it(`should pipe the result of a command into another (three commands)`, async () => {
-      await expect(bufferResult([
-        `echo hello world`,
-        `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
-        `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().replace(/./g, $0 => \`{\${$0}}\`)))'`,
-      ].join(` | `))).resolves.toMatchObject({
-        stdout: `{H}{E}{L}{L}{O}{ }{W}{O}{R}{L}{D}\n`,
-      });
-    });
-
-    it(`should pipe the result of a command into another (no builtins)`, async () => {
-      await expect(bufferResult([
-        `node -e 'process.stdout.write("hello world\\\\n")'`,
-        `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
-        `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().replace(/./g, $0 => \`{\${$0}}\`)))'`,
-      ].join(` | `))).resolves.toMatchObject({
-        stdout: `{H}{E}{L}{L}{O}{ }{W}{O}{R}{L}{D}\n`,
-      });
-    });
-
-    it(`should pipe the result of a command into another (only builtins)`, async () => {
-      await expect(bufferResult([
-        `echo abcdefghijkl`,
-        `test-builtin`,
-        `test-builtin`,
-      ].join(` | `))).resolves.toMatchObject({
-        stdout: `aei\n`,
       });
     });
 
@@ -249,6 +218,46 @@ describe(`Shell`, () => {
     it(`should allow subshells to access the $? from the parent shell`, async () => {
       await expect(bufferResult(
         `false; (echo $?)`,
+      )).resolves.toMatchObject({
+        stdout: `1\n`,
+      });
+    });
+
+    it(`should execute a group when using grouping curly braces (within '||', shortcutted)`, async () => {
+      await expect(bufferResult(
+        `true || {echo hello; echo world}`,
+      )).resolves.toMatchObject({
+        stdout: ``,
+      });
+    });
+
+    it(`should execute a group when using grouping curly braces (within '||')`, async () => {
+      await expect(bufferResult(
+        `false || {echo hello; echo world}`,
+      )).resolves.toMatchObject({
+        stdout: `hello\nworld\n`,
+      });
+    });
+
+    it(`should execute a group when using grouping curly braces (within '&&', shortcutted)`, async () => {
+      await expect(bufferResult(
+        `false && {echo hello; echo world}`,
+      )).resolves.toMatchObject({
+        stdout: ``,
+      });
+    });
+
+    it(`should execute a group when using grouping curly braces (within '&&')`, async () => {
+      await expect(bufferResult(
+        `true && {echo hello; echo world}`,
+      )).resolves.toMatchObject({
+        stdout: `hello\nworld\n`,
+      });
+    });
+
+    it(`should allow groups to access the $? from the current shell`, async () => {
+      await expect(bufferResult(
+        `false; {echo $?}`,
       )).resolves.toMatchObject({
         stdout: `1\n`,
       });
@@ -514,7 +523,7 @@ describe(`Shell`, () => {
       });
     });
 
-    it(`should support redirections on subshells`, async () => {
+    it(`should support redirections on subshells (one command)`, async () => {
       await xfs.mktempPromise(async tmpDir => {
         const file = ppath.join(tmpDir, `file` as Filename);
 
@@ -525,6 +534,62 @@ describe(`Shell`, () => {
         });
 
         await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
+      });
+    });
+
+    it(`should support redirections on subshells (multiple commands)`, async () => {
+      await xfs.mktempPromise(async tmpDir => {
+        const file = ppath.join(tmpDir, `file` as Filename);
+
+        await expect(bufferResult(
+          `(echo "hello world"; echo "goodbye world") > "${file}"`,
+        )).resolves.toMatchObject({
+          stdout: ``,
+        });
+
+        await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\ngoodbye world\n`);
+      });
+    });
+
+    it(`should support redirections on groups (one command)`, async () => {
+      await xfs.mktempPromise(async tmpDir => {
+        const file = ppath.join(tmpDir, `file` as Filename);
+
+        await expect(bufferResult(
+          `{echo "hello world"} > "${file}"`,
+        )).resolves.toMatchObject({
+          stdout: ``,
+        });
+
+        await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
+      });
+    });
+
+    it(`should support redirections on groups (multiple commands)`, async () => {
+      await xfs.mktempPromise(async tmpDir => {
+        const file = ppath.join(tmpDir, `file` as Filename);
+
+        await expect(bufferResult(
+          `{echo "hello world"; echo "goodbye world"} > "${file}"`,
+        )).resolves.toMatchObject({
+          stdout: ``,
+        });
+
+        await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\ngoodbye world\n`);
+      });
+    });
+
+    it(`shouldn't allow subshells to mutate the state of the parent shell`, async () => {
+      await expect(bufferResult(
+        `(FOO=hello); echo $FOO`,
+      )).rejects.toThrowError(`Unbound variable "FOO"`);
+    });
+
+    it(`should allow groups to mutate the state of the current shell`, async () => {
+      await expect(bufferResult(
+        `{FOO=hello}; echo $FOO`,
+      )).resolves.toMatchObject({
+        stdout: `hello\n`,
       });
     });
 
@@ -557,6 +622,121 @@ describe(`Shell`, () => {
       numbers = await getNumbers(bufferResult(`RANDOM=foo ; echo $RANDOM`));
       expect(numbers.length).toBe(1);
       numbers.forEach(validateRandomNumber);
+    });
+  });
+
+  describe(`Pipelines`, () => {
+    describe(`|`, () => {
+      it(`should pipe the result of a command into another (two commands, builtin into native)`, async () => {
+        await expect(bufferResult([
+          `echo hello world`,
+          `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
+        ].join(` | `))).resolves.toMatchObject({
+          stdout: `HELLO WORLD\n`,
+        });
+      });
+
+      it(`should pipe the result of a command into another (two commands, native into pipe)`, async () => {
+        await expect(bufferResult([
+          `node -e 'process.stdout.write("abcdefgh\\\\n");'`,
+          `test-builtin`,
+        ].join(` | `))).resolves.toMatchObject({
+          stdout: `aceg\n`,
+        });
+      });
+
+      it(`should pipe the result of a command into another (three commands)`, async () => {
+        await expect(bufferResult([
+          `echo hello world`,
+          `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
+          `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().replace(/./g, $0 => \`{\${$0}}\`)))'`,
+        ].join(` | `))).resolves.toMatchObject({
+          stdout: `{H}{E}{L}{L}{O}{ }{W}{O}{R}{L}{D}\n`,
+        });
+      });
+
+      it(`should pipe the result of a command into another (no builtins)`, async () => {
+        await expect(bufferResult([
+          `node -e 'process.stdout.write("hello world\\\\n")'`,
+          `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
+          `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().replace(/./g, $0 => \`{\${$0}}\`)))'`,
+        ].join(` | `))).resolves.toMatchObject({
+          stdout: `{H}{E}{L}{L}{O}{ }{W}{O}{R}{L}{D}\n`,
+        });
+      });
+
+      it(`should pipe the result of a command into another (only builtins)`, async () => {
+        await expect(bufferResult([
+          `echo abcdefghijkl`,
+          `test-builtin`,
+          `test-builtin`,
+        ].join(` | `))).resolves.toMatchObject({
+          stdout: `aei\n`,
+        });
+      });
+
+      it(`should pipe the stdout of a command into another`, async () => {
+        await expect(bufferResult([
+          `node -e 'process.stdout.write("Hello World");'`,
+          `echo-stdin`,
+        ].join(` | `))).resolves.toMatchObject({
+          stdout: `Hello World\n`,
+        });
+      });
+
+      it(`shouldn't pipe the stderr of a command into another`, async () => {
+        await expect(bufferResult([
+          `node -e 'process.stderr.write("Hello World");'`,
+          `echo-stdin`,
+        ].join(` | `))).resolves.toMatchObject({
+          stdout: `\n`,
+        });
+      });
+    });
+
+    describe(`|&`, () => {
+      it(`should pipe the stdout of a command into another`, async () => {
+        await expect(bufferResult([
+          `node -e 'process.stdout.write("Hello World");'`,
+          `echo-stdin`,
+        ].join(` |& `))).resolves.toMatchObject({
+          stdout: `Hello World\n`,
+        });
+      });
+
+      it(`should pipe the stderr of a command into another`, async () => {
+        await expect(bufferResult([
+          `node -e 'process.stderr.write("Hello World");'`,
+          `echo-stdin`,
+        ].join(` |& `))).resolves.toMatchObject({
+          stdout: `Hello World\n`,
+        });
+      });
+    });
+  });
+
+  describe(`Lists`, () => {
+    it(`should execute lists with left associativity`, async () => {
+      await expect(bufferResult(
+        `inexistent && echo yes || echo no`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `no\n`,
+      });
+
+      await expect(bufferResult(
+        `inexistent || echo no && echo yes`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `no\nyes\n`,
+      });
+
+      await expect(bufferResult(
+        `inexistent && echo yes || inexistent && echo yes || echo no`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `no\n`,
+      });
     });
   });
 

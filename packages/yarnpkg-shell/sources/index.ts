@@ -2,11 +2,12 @@ import {PortablePath, npath, ppath, xfs, FakeFS, PosixFS}                       
 import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
 import {EnvSegment, ArithmeticExpression, ArithmeticPrimary}                         from '@yarnpkg/parsers';
 import fastGlob                                                                      from 'fast-glob';
+import {homedir}                                                                     from 'os';
 
 import {PassThrough, Readable, Writable}                                             from 'stream';
 
 import {makeBuiltin, makeProcess}                                                    from './pipe';
-import {Handle, ProcessImplementation, ProtectedStream, Stdio, start}                from './pipe';
+import {Handle, ProcessImplementation, ProtectedStream, Stdio, start, Pipe}          from './pipe';
 
 export type Glob = {
   isGlobPattern: (arg: string) => boolean,
@@ -60,7 +61,7 @@ function cloneState(state: ShellState, mergeWith: Partial<ShellState> = {}) {
 }
 
 const BUILTINS = new Map<string, ShellBuiltin>([
-  [`cd`, async ([target, ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
+  [`cd`, async ([target = homedir(), ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
     const resolvedTarget = ppath.resolve(state.cwd, npath.toPortablePath(target));
     const stat = await xfs.statPromise(resolvedTarget);
 
@@ -87,7 +88,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
   }],
 
   [`exit`, async ([code, ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
-    return state.exitCode = parseInt(code, 10);
+    return state.exitCode = parseInt(code ?? state.variables[`?`], 10);
   }],
 
   [`echo`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
@@ -470,6 +471,31 @@ function makeSubshellAction(ast: ShellLine, opts: ShellOptions, state: ShellStat
   };
 }
 
+function makeGroupAction(ast: ShellLine, opts: ShellOptions, state: ShellState) {
+  return (stdio: Stdio) => {
+    const stdin = new PassThrough();
+    const promise = executeShellLine(ast, opts, state);
+
+    return {stdin, promise};
+  };
+}
+
+function makeActionFromProcedure(procedure: ProcessImplementation, args: Array<string>, opts: ShellOptions, activeState: ShellState) {
+  if (args.length === 0) {
+    return procedure;
+  } else {
+    let key;
+    do {
+      key = String(Math.random());
+    } while (Object.prototype.hasOwnProperty.call(activeState.procedures, key));
+
+    activeState.procedures = {...activeState.procedures};
+    activeState.procedures[key] = procedure;
+
+    return makeCommandAction([...args, `__ysh_run_procedure`, key], opts, activeState);
+  }
+}
+
 async function executeCommandChain(node: CommandChain, opts: ShellOptions, state: ShellState) {
   let current: CommandChain | null = node;
   let pipeType = null;
@@ -501,19 +527,15 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
         // interpolated within its own context
         const procedure = makeSubshellAction(current.subshell, opts, activeState);
 
-        if (args.length === 0) {
-          action = procedure;
-        } else {
-          let key;
-          do {
-            key = String(Math.random());
-          } while (Object.prototype.hasOwnProperty.call(activeState.procedures, key));
+        action = makeActionFromProcedure(procedure, args, opts, activeState);
+      } break;
 
-          activeState.procedures = {...activeState.procedures};
-          activeState.procedures[key] = procedure;
+      case `group`: {
+        const args = await interpolateArguments(current.args, opts, state);
 
-          action = makeCommandAction([...args, `__ysh_run_procedure`, key], opts, activeState);
-        }
+        const procedure = makeGroupAction(current.group, opts, activeState);
+
+        action = makeActionFromProcedure(procedure, args, opts, activeState);
       } break;
 
       case `envs`: {
@@ -542,11 +564,11 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
       // only or stdout and stderr
       switch (pipeType) {
         case `|`: {
-          execution = execution.pipeTo(action);
+          execution = execution.pipeTo(action, Pipe.STDOUT);
         } break;
 
         case `|&`: {
-          execution = execution.pipeTo(action);
+          execution = execution.pipeTo(action, Pipe.STDOUT | Pipe.STDERR);
         } break;
       }
     }
@@ -570,40 +592,48 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
  * together thanks to the use of either of the `||` or `&&` operators.
  */
 async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: ShellState): Promise<number> {
-  if (!node.then)
-    return await executeCommandChain(node.chain, opts, state);
+  let code!: number;
+  const setCode = (newCode: number) => {
+    code = newCode;
 
-  const code = await executeCommandChain(node.chain, opts, state);
+    // We must update $?, which always contains the exit code from
+    // the right-most command
+    state.variables[`?`] = String(newCode);
+  };
 
-  // If the execution aborted (usually through "exit"), we must bailout
-  if (state.exitCode !== null)
-    return state.exitCode;
+  setCode(await executeCommandChain(node.chain, opts, state));
 
-  // We must update $?, which always contains the exit code from
-  // the right-most command
-  state.variables[`?`] = String(code);
+  // We use a loop because we must make sure that we respect
+  // the left associativity of lists, as per the bash spec.
+  // (e.g. `inexistent && echo yes || echo no` must be
+  // the same as `{inexistent && echo yes} || echo no`)
+  while (node.then) {
+    // If the execution aborted (usually through "exit"), we must bailout
+    if (state.exitCode !== null)
+      return state.exitCode;
 
-  switch (node.then.type) {
-    case `&&`: {
-      if (code === 0) {
-        return await executeCommandLine(node.then.line, opts, state);
-      } else {
-        return code;
-      }
-    } break;
+    switch (node.then.type) {
+      case `&&`: {
+        if (code === 0) {
+          setCode(await executeCommandChain(node.then.line.chain, opts, state));
+        }
+      } break;
 
-    case `||`: {
-      if (code !== 0) {
-        return await executeCommandLine(node.then.line, opts, state);
-      } else {
-        return code;
-      }
-    } break;
+      case `||`: {
+        if (code !== 0) {
+          setCode(await executeCommandChain(node.then.line.chain, opts, state));
+        }
+      } break;
 
-    default: {
-      throw new Error(`Unsupported command type: "${node.then.type}"`);
-    } break;
+      default: {
+        throw new Error(`Unsupported command type: "${node.then.type}"`);
+      } break;
+    }
+
+    node = node.then.line;
   }
+
+  return code;
 }
 
 async function executeShellLine(node: ShellLine, opts: ShellOptions, state: ShellState) {
@@ -727,7 +757,7 @@ export async function execute(command: string, args: Array<string> = [], {
     isGlobPattern: fastGlob.isDynamicPattern,
     match: (pattern: string, {cwd, fs = xfs}) => fastGlob(pattern, {
       cwd: npath.fromPortablePath(cwd),
-      // @ts-ignore: `fs` is wrapped in `PosixFS`
+      // @ts-expect-error: `fs` is wrapped in `PosixFS`
       fs: new PosixFS(fs),
     }),
   },

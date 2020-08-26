@@ -1,11 +1,12 @@
-import {BaseCommand, WorkspaceRequiredError}                                       from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, Workspace} from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                    from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils}                                              from '@yarnpkg/plugin-npm';
-import {packUtils}                                                                 from '@yarnpkg/plugin-pack';
-import {Command, Usage, UsageError}                                                from 'clipanion';
-import {createHash}                                                                from 'crypto';
-import ssri                                                                        from 'ssri';
+import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport, Workspace, scriptUtils} from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                                 from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils}                                                           from '@yarnpkg/plugin-npm';
+import {packUtils}                                                                              from '@yarnpkg/plugin-pack';
+import {Command, Usage, UsageError}                                                             from 'clipanion';
+import {createHash}                                                                             from 'crypto';
+import ssri                                                                                     from 'ssri';
+import {URL}                                                                                    from 'url';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {
@@ -84,6 +85,8 @@ export default class NpmPublishCommand extends BaseCommand {
           }
         }
       }
+
+      await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepublish`, {report});
 
       await packUtils.prepareForPack(workspace, {report}, async () => {
         const files = await packUtils.genPackList(workspace);
