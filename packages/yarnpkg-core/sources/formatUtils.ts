@@ -1,9 +1,9 @@
 import chalk                 from 'chalk';
 
 import {Configuration}       from './Configuration';
+import * as miscUtils        from './miscUtils';
 import * as structUtils      from './structUtils';
 import {Descriptor, Locator} from './types';
-import {miscUtils}           from '.';
 
 export enum Type {
   NO_HINT = `NO_HINT`,
