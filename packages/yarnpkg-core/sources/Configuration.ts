@@ -1468,7 +1468,7 @@ export class Configuration {
   format(descriptor: {locator: Locator, descriptor: Descriptor | null} | null, colorRequest: FormatType.DEPENDENT): string;
   format(text: number | null, colorRequest: FormatType.NUMBER | FormatType.SIZE | FormatType.DURATION): string;
   format(text: string | null, colorRequest: Exclude<FormatType, FormatType.NUMBER | FormatType.SIZE | FormatType.DURATION> | string): string;
-  format(text: Descriptor | Locator | {descriptor: Descriptor, locator: Locator | null} | number | string | null, colorRequest: FormatType | string) {
+  format(text: Descriptor | Locator | {descriptor: Descriptor | null, locator: Locator | null} | number | string | null, colorRequest: FormatType | string) {
     if (text === null) {
       colorRequest = FormatType.NULL;
       text = `null`;
