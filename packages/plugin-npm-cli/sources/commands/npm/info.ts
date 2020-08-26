@@ -169,7 +169,7 @@ export default class InfoCommand extends BaseCommand {
           serialized = {};
 
           for (const field of fields) {
-            // @ts-ignore
+            // @ts-expect-error
             const value = packageInformation[field];
 
             if (typeof value !== `undefined`) {
@@ -199,7 +199,7 @@ export default class InfoCommand extends BaseCommand {
       }
     });
 
-    // @ts-ignore: The Node typings forgot one field
+    // @ts-expect-error: The Node typings forgot one field
     inspect.styles.name = `cyan`;
 
     for (const serialized of infos) {

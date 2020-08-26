@@ -6,7 +6,7 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
-    "lib": ["dom", "esnext", "esnext.asynciterable"],
+    "lib": ["esnext", "esnext.asynciterable"],
     "module": "commonjs",
     "noImplicitReturns": true,
     "strict": true,

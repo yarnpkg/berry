@@ -27,6 +27,7 @@
     "@types/micromatch": "^4.0.1",
     "@types/semver": "^7.1.0",
     "@types/treeify": "^1.0.0",
+    "@types/yup": "0.26.12",
     "@yarnpkg/cli": "workspace:^2.1.1",
     "@yarnpkg/core": "workspace:^2.1.1"
   },

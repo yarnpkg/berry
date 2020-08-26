@@ -37,7 +37,7 @@
     "gatsby-plugin-sharp": "^2.6.11",
     "gatsby-remark-autolink-headers": "^2.3.5",
     "gatsby-remark-prismjs": "^3.5.4",
-    "gatsby-remark-table-of-contents": "^0.0.9",
+    "gatsby-remark-table-of-contents": "arcanis/gatsby-remark-table-of-contents#patch-1",
     "gatsby-source-filesystem": "^2.0.23",
     "gatsby-transformer-remark": "^2.3.2",
     "gatsby-transformer-sharp": "^2.2.13",

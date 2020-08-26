@@ -137,4 +137,17 @@ describe(`ZipOpenFS`, () => {
     fs.discardAndClose();
     jest.restoreAllMocks();
   });
+
+  it(`doesn't close zip files while they are in use`, async () => {
+    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
+
+    await Promise.all([
+      fs.readFilePromise(ZIP_FILE1),
+      fs.realpathPromise(ZIP_FILE1),
+      fs.readFilePromise(ZIP_FILE2),
+      fs.realpathPromise(ZIP_FILE2),
+    ]);
+
+    fs.discardAndClose();
+  });
 });

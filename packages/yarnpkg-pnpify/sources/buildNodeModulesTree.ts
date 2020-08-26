@@ -191,10 +191,6 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
           if (depPkg === null)
             throw new Error(`Assertion failed: Expected the package to have been registered`);
 
-          // Skip package self-references
-          if (depLocator.name === locator.name && depLocator.reference === locator.reference)
-            continue;
-
           addPackageToTree(name, depPkg, depLocator, node, pkg);
         }
       }

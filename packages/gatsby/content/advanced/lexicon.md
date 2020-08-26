@@ -5,7 +5,7 @@ title: "Lexicon"
 ---
 
 ```toc
-# This code block gets replaced with the Table of Contents
+className: toc toc-no-item
 ```
 
 <!-- Note that all entries within this file must be alphabetically sorted -->

@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import {safeLoad, FAILSAFE_SCHEMA} from 'js-yaml';
 
 import {parse}                     from './grammars/syml';

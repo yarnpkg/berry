@@ -15,7 +15,7 @@ export class NodeFS extends BasePortableFakeFS {
 
     this.realFs = realFs;
 
-    // @ts-ignore
+    // @ts-expect-error
     if (typeof this.realFs.lutimes !== `undefined`) {
       this.lutimesPromise = this.lutimesPromiseImpl;
       this.lutimesSync = this.lutimesSyncImpl;
@@ -255,7 +255,7 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   private async lutimesPromiseImpl(this: NodeFS, p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
-    // @ts-ignore: Not yet in DefinitelyTyped
+    // @ts-expect-error: Not yet in DefinitelyTyped
     const lutimes = this.realFs.lutimes;
     if (typeof lutimes === `undefined`)
       throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
@@ -266,7 +266,7 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   private lutimesSyncImpl(this: NodeFS, p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
-    // @ts-ignore: Not yet in DefinitelyTyped
+    // @ts-expect-error: Not yet in DefinitelyTyped
     const lutimesSync = this.realFs.lutimesSync;
     if (typeof lutimesSync === `undefined`)
       throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
@@ -387,7 +387,7 @@ export class NodeFS extends BasePortableFakeFS {
   watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
     return this.realFs.watch(
       npath.fromPortablePath(p),
-      // @ts-ignore
+      // @ts-expect-error
       a,
       b,
     );
@@ -398,7 +398,7 @@ export class NodeFS extends BasePortableFakeFS {
   watchFile(p: PortablePath, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback) {
     return this.realFs.watchFile(
       npath.fromPortablePath(p),
-      // @ts-ignore
+      // @ts-expect-error
       a,
       b,
     ) as unknown as StatWatcher;

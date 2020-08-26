@@ -17,6 +17,9 @@ bench() {
 
 cp "$HERE_DIR"/benchmarks/"$TEST_NAME".json package.json
 
+mkdir dummy-pkg
+echo '{"name": "dummy-pkg", "version": "0.0.0"}' > dummy-pkg/package.json
+
 touch a
   if cp --reflink a b >& /dev/null; then
   echo "Reflinks are supported"
@@ -43,8 +46,8 @@ case $PACKAGE_MANAGER in
       --prepare 'rm -rf node_modules' \
       'yarn install'
     bench install-ready \
-      --prepare 'rm -rf node_modules/.yarn-integrity' \
-      'yarn install'
+      --prepare 'yarn remove dummy-pkg || true' \
+      'yarn add dummy-pkg@link:./dummy-pkg'
     ;;
   yarn)
     setup-yarn2
@@ -58,7 +61,8 @@ case $PACKAGE_MANAGER in
       --prepare 'rm -rf .yarn .pnp.*' \
       'yarn install'
     bench install-ready \
-      'yarn install'
+      --prepare 'yarn remove dummy-pkg || true' \
+      'yarn add dummy-pkg@link:./dummy-pkg'
     ;;
   yarn-nm)
     setup-yarn2
@@ -73,6 +77,9 @@ case $PACKAGE_MANAGER in
       'YARN_NODE_LINKER=node-modules yarn install'
     bench install-ready \
       'YARN_NODE_LINKER=node-modules yarn install'
+    bench install-ready \
+      --prepare 'YARN_NODE_LINKER=node-modules yarn remove dummy-pkg || true' \
+      'YARN_NODE_LINKER=node-modules yarn add dummy-pkg@link:./dummy-pkg'
     ;;
   npm)
     bench install-full-cold \
@@ -85,7 +92,8 @@ case $PACKAGE_MANAGER in
       --prepare 'rm -rf node_modules' \
       'npm install'
     bench install-ready \
-      'npm install'
+      --prepare 'npm remove dummy-pkg || true' \
+      'npm add dummy-pkg@file:./dummy-pkg'
     ;;
   pnpm)
     bench install-full-cold \
@@ -98,7 +106,8 @@ case $PACKAGE_MANAGER in
       --prepare 'rm -rf node_modules' \
       'pnpm install'
     bench install-ready \
-      'pnpm install'
+      --prepare 'pnpm remove dummy-pkg || true' \
+      'pnpm add dummy-pkg@link:./dummy-pkg'
     ;;
   *)
     echo "Invalid package manager ${$1}"

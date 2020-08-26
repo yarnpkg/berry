@@ -1,6 +1,7 @@
 import {Configuration, Ident, httpUtils} from '@yarnpkg/core';
 import {MessageName, ReportError}        from '@yarnpkg/core';
 import {prompt}                          from 'enquirer';
+import {URL}                             from 'url';
 
 import * as npmConfigUtils               from './npmConfigUtils';
 import {MapLike}                         from './npmConfigUtils';

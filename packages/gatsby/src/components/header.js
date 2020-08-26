@@ -1,4 +1,7 @@
 import styled                                              from '@emotion/styled';
+import discordIcon                                         from '@iconify/icons-logos/discord';
+import githubIcon                                          from '@iconify/icons-logos/github-icon';
+import {InlineIcon}                                        from '@iconify/react';
 import {Link, graphql, useStaticQuery, withPrefix}         from 'gatsby';
 import PropTypes                                           from 'prop-types';
 import React, {useLayoutEffect, useMemo, useRef, useState} from 'react';
@@ -17,20 +20,26 @@ const HeaderContainer = styled.div`
 const NewsContainer = styled.div`
   position: relative;
 
+  height: 40px;
+
   padding: 0 1em;
 
   text-decoration: none;
-  line-height: 2.5em;
+  line-height: 40px;
 
   ${ifMobile} {
+    height: auto;
+
     white-space: pre-wrap;
-    line-height: 1.5em;
     text-align: center;
-    padding-top: 5px;
   }
 
   background: #2188b6;
   color: rgba(255, 255, 255, 0.8);
+`;
+
+const NewsLine = styled.div`
+  display: inline-block;
 `;
 
 const NewsOverlay = styled.a`
@@ -50,8 +59,6 @@ const NewsInner = styled.div`
 
   a {
     display: inline-block;
-
-    line-height: 2.5em;
 
     pointer-events: all;
 
@@ -169,7 +176,14 @@ const MenuSearchBox = styled.div`
   > * {
     display: flex;
 
-    margin: auto;
+    margin: auto 0.5em;
+  }
+
+  > :first-child {
+    margin-left: auto;
+  }
+
+  > :last-child {
     margin-right: 0;
   }
 
@@ -209,7 +223,7 @@ const MenuEntry = styled.div`
     display: flex;
     align-items: center;
 
-    height: 4rem;
+    height: 60px;
 
     border: 4px solid transparent;
 
@@ -234,8 +248,8 @@ const MenuEntry = styled.div`
 `;
 
 const isActive = ({href, location}) => {
-  const homeUrl = withPrefix('/');
-  const packageInfoUrl = withPrefix('/package/');
+  const homeUrl = withPrefix(`/`);
+  const packageInfoUrl = withPrefix(`/package/`);
 
   // Make all menu links (except home) active when itself or deeper routes are be current
   const isMenuLinkActive = href !== homeUrl && location.pathname.startsWith(href);
@@ -244,7 +258,7 @@ const isActive = ({href, location}) => {
   const isHomeMenuLinkActive = href === homeUrl
       && [homeUrl, packageInfoUrl].includes(location.pathname);
 
-  return isMenuLinkActive || isHomeMenuLinkActive ? {className: 'active'} : null;
+  return isMenuLinkActive || isHomeMenuLinkActive ? {className: `active`} : null;
 };
 
 const SearchContainer = ({className}) => {
@@ -291,7 +305,7 @@ export const Header = ({children}) => {
       <NewsContainer>
         <NewsOverlay href={`https://classic.yarnpkg.com`}/>
         <NewsInner>
-          <Highlight>Important:</Highlight> This documentation covers Yarn 2. For 1.x docs, see classic.yarnpkg.com.
+          <NewsLine><Highlight>Important:</Highlight> This documentation covers Yarn 2.</NewsLine> <NewsLine>For 1.x docs, see classic.yarnpkg.com.</NewsLine>
         </NewsInner>
       </NewsContainer>
 
@@ -320,6 +334,12 @@ export const Header = ({children}) => {
 
         <MenuSearchBox onlyIf={ifDesktop}>
           <SearchContainer className={`docsearch-desktop`} />
+          <a href={`https://github.com/yarnpkg/berry`}>
+            <InlineIcon icon={githubIcon} height={25}/>
+          </a>
+          <a href={`https://discord.com/invite/yarnpkg`}>
+            <InlineIcon icon={discordIcon} height={25}/>
+          </a>
         </MenuSearchBox>
       </MenuContainer>
       {children}

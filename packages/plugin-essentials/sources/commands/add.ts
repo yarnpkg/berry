@@ -57,7 +57,7 @@ export default class AddCommand extends BaseCommand {
 
       - If set, the \`-O,--optional\` flag will add the package to the \`optionalDependencies\` field and, in combination with the \`-P,--peer\` flag, it will add the package as an optional peer dependency. If the package was already listed in your \`dependencies\`, it will be upgraded to \`optionalDependencies\`. If the package was already listed in your \`peerDependencies\`, in combination with the \`-P,--peer\` flag, it will be upgraded to an optional peer dependency: \`"peerDependenciesMeta": { "<package>": { "optional": true } }\`
 
-      - If the added package doesn't specify a range at all its \`latest\` tag will be resolved and the returned version will be used to generate a new semver range (using the \`^\` modifier by default unless otherwise configured via the \`savePrefix\` configuration, or the \`~\` modifier if \`-T,--tilde\` is specified, or no modifier at all if \`-E,--exact\` is specified). Two exceptions to this rule: the first one is that if the package is a workspace then its local version will be used, and the second one is that if you use \`-P,--peer\` the default range will be \`*\` and won't be resolved at all.
+      - If the added package doesn't specify a range at all its \`latest\` tag will be resolved and the returned version will be used to generate a new semver range (using the \`^\` modifier by default unless otherwise configured via the \`defaultSemverRangePrefix\` configuration, or the \`~\` modifier if \`-T,--tilde\` is specified, or no modifier at all if \`-E,--exact\` is specified). Two exceptions to this rule: the first one is that if the package is a workspace then its local version will be used, and the second one is that if you use \`-P,--peer\` the default range will be \`*\` and won't be resolved at all.
 
       - If the added package specifies a tag range (such as \`latest\` or \`rc\`), Yarn will resolve this tag to a semver version and use that in the resulting package.json entry (meaning that \`yarn add foo@latest\` will have exactly the same effect as \`yarn add foo\`).
 
@@ -132,7 +132,7 @@ export default class AddCommand extends BaseCommand {
 
       const suggestions = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, modifier, strategies, maxResults});
 
-      return [request, suggestions, target] as [Descriptor, Array<suggestUtils.Suggestion>, suggestUtils.Target];
+      return [request, suggestions, target] as const;
     }));
 
     const checkReport = await LightReport.start({
@@ -140,16 +140,22 @@ export default class AddCommand extends BaseCommand {
       stdout: this.context.stdout,
       suggestInstall: false,
     }, async report => {
-      for (const [request, suggestions] of allSuggestions) {
+      for (const [request, {suggestions, rejections}] of allSuggestions) {
         const nonNullSuggestions = suggestions.filter(suggestion => {
           return suggestion.descriptor !== null;
         });
 
         if (nonNullSuggestions.length === 0) {
+          const [firstError] = rejections;
+          if (typeof firstError === `undefined`)
+            throw new Error(`Assertion failed: Expected an error to have been set`);
+
+          const prettyError = this.cli.error(firstError);
+
           if (!project.configuration.get(`enableNetwork`)) {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range (note: network resolution has been disabled)`);
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range (note: network resolution has been disabled):\n\n${prettyError}`);
           } else {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range`);
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range:\n\n${prettyError}`);
           }
         }
       }
@@ -174,12 +180,12 @@ export default class AddCommand extends BaseCommand {
       Descriptor
     ]> = [];
 
-    for (const [/*request*/, suggestions, target] of allSuggestions) {
+    for (const [/*request*/, {suggestions}, target] of allSuggestions) {
       let selected: Descriptor;
 
       const nonNullSuggestions = suggestions.filter(suggestion => {
         return suggestion.descriptor !== null;
-      });
+      }) as Array<suggestUtils.Suggestion>;
 
       const firstSuggestedDescriptor = nonNullSuggestions[0].descriptor;
       const areAllTheSame = nonNullSuggestions.every(suggestion => structUtils.areDescriptorsEqual(suggestion.descriptor, firstSuggestedDescriptor));

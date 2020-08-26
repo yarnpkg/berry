@@ -499,7 +499,6 @@ export class StreamReport extends Report {
     if (!Object.prototype.hasOwnProperty.call(PROGRESS_STYLES, styleName))
       throw new Error(`Assertion failed: Invalid progress bar style`);
 
-    // @ts-ignore
     const style = PROGRESS_STYLES[styleName];
 
     const PAD_LEFT = `➤ YN0000: ┌ `.length;

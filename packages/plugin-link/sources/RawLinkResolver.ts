@@ -41,6 +41,10 @@ export class RawLinkResolver implements Resolver {
     return [structUtils.makeLocator(descriptor, `${RAW_LINK_PROTOCOL}${npath.toPortablePath(path)}`)];
   }
 
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
+    return null;
+  }
+
   async resolve(locator: Locator, opts: ResolveOptions) {
     return {
       ...locator,

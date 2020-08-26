@@ -48,7 +48,7 @@ describe(`Commands`, () => {
         let stderr: string;
 
         try {
-          // @ts-ignore
+          // @ts-expect-error
           ({code, stdout, stderr} = await run(`npm`, `logout`, {
             env: {
               HOME: homePath,
@@ -107,7 +107,7 @@ describe(`Commands`, () => {
         let stderr: string;
 
         try {
-          // @ts-ignore
+          // @ts-expect-error
           ({code, stdout, stderr} = await run(`npm`, `logout`, `--all`, {
             env: {
               HOME: homePath,
@@ -155,7 +155,7 @@ describe(`Commands`, () => {
         let stderr: string;
 
         try {
-          // @ts-ignore
+          // @ts-expect-error
           ({code, stdout, stderr} = await run(`npm`, `logout`, `--publish`, {
             env: {
               HOME: homePath,
@@ -202,7 +202,7 @@ describe(`Commands`, () => {
         let stderr: string;
 
         try {
-          // @ts-ignore
+          // @ts-expect-error
           ({code, stdout, stderr} = await run(`npm`, `logout`, `--scope`, FAKE_FIRST_SCOPE, {
             env: {
               HOME: homePath,

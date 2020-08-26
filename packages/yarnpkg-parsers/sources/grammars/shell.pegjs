@@ -2,10 +2,14 @@ Start
   = line:ShellLine? { return line ? line : [] }
 
 ShellLine
-  = main:CommandLine then:ShellLineThen? { return [ main ].concat(then || []) }
+  = command:CommandLine S* type:ShellLineType then:ShellLineThen? { return [ command ].concat(then || []) }
+  / command:CommandLine S* type:ShellLineType? { return [ command ] }
 
 ShellLineThen
-  = S* ';' S* then:ShellLine S* { return then }
+  = S* then:ShellLine S* { return then }
+
+ShellLineType
+  = ';'
 
 CommandLine
   = chain:CommandChain then:CommandLineThen? { return then ? { chain, then } : { chain } }
@@ -33,6 +37,7 @@ VariableAssignment
 
 Command
   = S* "(" S* subshell:ShellLine S* ")" S* args:RedirectArgument* S* { return { type: `subshell`, subshell, args } }
+  / S* "{" S* group:ShellLine S* "}" S* args:RedirectArgument* S* { return { type: `group`, group, args } }
   / S* envs:VariableAssignment* S* args:Argument+ S* { return { type: `command`, args, envs } }
   / S* envs:VariableAssignment+ S* { return { type: `envs`, envs } }
 

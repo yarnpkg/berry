@@ -5369,6 +5369,7 @@ __metadata:
     "@types/cross-spawn": 6.0.0
     "@types/diff": ^4.0.2
     "@types/got": ^8.3.4
+    "@types/lodash": ^4.14.136
     "@types/micromatch": ^4.0.1
     "@types/node": ^13.7.0
     "@types/semver": ^7.1.0
@@ -5393,6 +5394,7 @@ __metadata:
     globby: ^11.0.1
     got: ^11.1.3
     json-file-plus: ^3.3.1
+    lodash: ^4.17.15
     logic-solver: ^2.0.1
     micromatch: ^4.0.2
     mkdirp: ^0.5.1
@@ -5500,7 +5502,7 @@ __metadata:
     gatsby-plugin-sharp: ^2.6.11
     gatsby-remark-autolink-headers: ^2.3.5
     gatsby-remark-prismjs: ^3.5.4
-    gatsby-remark-table-of-contents: ^0.0.9
+    gatsby-remark-table-of-contents: "arcanis/gatsby-remark-table-of-contents#patch-1"
     gatsby-source-filesystem: ^2.0.23
     gatsby-transformer-remark: ^2.3.2
     gatsby-transformer-sharp: ^2.2.13
@@ -5715,6 +5717,7 @@ __metadata:
     "@types/micromatch": ^4.0.1
     "@types/semver": ^7.1.0
     "@types/treeify": ^1.0.0
+    "@types/yup": 0.26.12
     "@yarnpkg/cli": "workspace:^2.1.1"
     "@yarnpkg/core": "workspace:^2.1.1"
     "@yarnpkg/fslib": "workspace:^2.1.0"
@@ -11860,7 +11863,7 @@ __metadata:
 
 "favicons-webpack-plugin@git+https://github.com/Creatiwity/favicons-webpack-plugin.git#0872de414061baaad0a2853c77ae75bc38b8bbbf":
   version: 0.0.9
-  resolution: "favicons-webpack-plugin@https://github.com/Creatiwity/favicons-webpack-plugin.git#commit:0872de414061baaad0a2853c77ae75bc38b8bbbf"
+  resolution: "favicons-webpack-plugin@https://github.com/Creatiwity/favicons-webpack-plugin.git#commit=0872de414061baaad0a2853c77ae75bc38b8bbbf"
   dependencies:
     core-js: ^2.5.7
     favicons: ^5.1.1
@@ -12633,20 +12636,20 @@ fsevents@^1.2.7:
 
 "fsevents@patch:fsevents@^1.2.7#builtin<compat/fsevents>":
   version: 1.2.7
-  resolution: "fsevents@patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=495457"
+  resolution: "fsevents@patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=9a3812"
   dependencies:
     nan: ^2.9.2
     node-pre-gyp: ^0.10.0
-  checksum: d56427b46c8efdc74f05853fd81e294d9dac9816d1ca9e536207b7ff85ccaccf3cce1ac03b573cffa83fb1bcab0eb077184de66790313e87b4f00db2247d882c
+  checksum: a5e86a41b3c0d94f70783600bcf5f5c358b73036d5dcbc3c50521bcc5298cfd88e48103d05200544961f751d1356b0f8b7f59bdb00300fa0566ac99ace72d1da
   languageName: node
   linkType: hard
 
 "fsevents@patch:fsevents@^2.1.2#builtin<compat/fsevents>, fsevents@patch:fsevents@~2.1.2#builtin<compat/fsevents>":
   version: 2.1.3
-  resolution: "fsevents@patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=495457"
+  resolution: "fsevents@patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=9a3812"
   dependencies:
     node-gyp: latest
-  checksum: 0005677b72f38a129a3cbe8c3794bdc83081a2bec53dfc03b085c2e5e4ca7a33a861a779d623313652df89746d97f79d24e4fef3b101c11c39ce1ea8a9690e18
+  checksum: 26277607d28562cf1bf99aa16944520b5d06db8e2181337a7ec23d4332c3b0045565a83914d8cd17b8063d32fccc67919a1313ff216132c454843ba3ebd75f5f
   languageName: node
   linkType: hard
 
@@ -13151,13 +13154,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"gatsby-remark-table-of-contents@npm:^0.0.9":
+"gatsby-remark-table-of-contents@arcanis/gatsby-remark-table-of-contents#patch-1":
   version: 0.0.9
-  resolution: "gatsby-remark-table-of-contents@npm:0.0.9"
+  resolution: "gatsby-remark-table-of-contents@https://github.com/arcanis/gatsby-remark-table-of-contents.git#commit=d2c703bb06801ae992513f14599cde84d03a4aac"
   dependencies:
     js-yaml: ^3.13.1
     mdast-util-toc: ^4.2.0
-  checksum: 2dfd7edcf754e1cdaf253df6f46c4ff22e02553c2626ac0a7a62caf113d69ce3cc44b1b78853fbc5b2fe9ba4109e61d09fcc983320d03609de6f13db95b61a38
+  checksum: 59729bf6c13366678e928e3906840ff5ed3b54cba52115b6de9ac532ef171a08c0ce26ce2dd92aa55fe2d89f3a93118777925e8250cb46208bf3e8b607f481ac
   languageName: node
   linkType: hard
 
