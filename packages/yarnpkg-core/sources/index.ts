@@ -1,5 +1,6 @@
 import * as execUtils   from './execUtils';
 import * as folderUtils from './folderUtils';
+import * as formatUtils from './formatUtils';
 import * as hashUtils   from './hashUtils';
 import * as httpUtils   from './httpUtils';
 import * as miscUtils   from './miscUtils';
@@ -40,6 +41,7 @@ export {hashUtils};
 export {httpUtils};
 export {execUtils};
 export {folderUtils};
+export {formatUtils};
 export {miscUtils};
 export {scriptUtils};
 export {semverUtils};

@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                         from '@yarnpkg/cli';
-import {Configuration, LocatorHash, Package, FormatType, Descriptor} from '@yarnpkg/core';
-import {IdentHash, Project}                                          from '@yarnpkg/core';
-import {miscUtils, structUtils, treeUtils}                           from '@yarnpkg/core';
-import {Command, Usage}                                              from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                          from '@yarnpkg/cli';
+import {Configuration, LocatorHash, Package, formatUtils, Descriptor} from '@yarnpkg/core';
+import {IdentHash, Project}                                           from '@yarnpkg/core';
+import {miscUtils, structUtils, treeUtils}                            from '@yarnpkg/core';
+import {Command, Usage}                                               from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WhyCommand extends BaseCommand {
@@ -87,14 +87,14 @@ function whySimple(project: Project, identHash: IdentHash, {configuration, peers
 
       if (node === null) {
         const key = structUtils.stringifyLocator(pkg);
-        rootChildren[key] = {value: [pkg, FormatType.LOCATOR], children: nodeChildren};
+        rootChildren[key] = {value: [pkg, formatUtils.Type.LOCATOR], children: nodeChildren};
       }
 
       const key = structUtils.stringifyLocator(nextPkg);
       nodeChildren[key] = {value: [{
         descriptor: dependency,
         locator: nextPkg,
-      }, FormatType.DEPENDENT]};
+      }, formatUtils.Type.DEPENDENT]};
     }
   }
 
@@ -165,9 +165,13 @@ function whyRecursive(project: Project, identHash: IdentHash, {configuration, pe
     if (!dependents.has(pkg.locatorHash))
       return;
 
+    const nodeValue = dependency !== null
+      ? formatUtils.tuple(formatUtils.Type.DEPENDENT, {locator: pkg, descriptor: dependency})
+      : formatUtils.tuple(formatUtils.Type.LOCATOR, pkg);
+
     const nodeChildren: treeUtils.TreeMap = {};
     const node: treeUtils.TreeNode = {
-      value: [{locator: pkg, descriptor: dependency}, FormatType.DEPENDENT],
+      value: nodeValue,
       children: nodeChildren,
     };
 

@@ -8,6 +8,9 @@ export function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
 }
 
+export function overrideType<T>(val: unknown): asserts val is T {
+}
+
 export function assertNever(arg: never): never {
   throw new Error(`Assertion failed: Unexpected object '${arg}'`);
 }

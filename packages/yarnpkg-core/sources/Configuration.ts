@@ -2,7 +2,6 @@ import {DEFAULT_COMPRESSION_LEVEL}                 from '@yarnpkg/fslib';
 import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                  from '@yarnpkg/parsers';
 import camelcase                                   from 'camelcase';
-import chalk                                       from 'chalk';
 import {isCI}                                      from 'ci-info';
 import {UsageError}                                from 'clipanion';
 import pLimit, {Limit}                             from 'p-limit';
@@ -23,22 +22,12 @@ import {VirtualResolver}                           from './VirtualResolver';
 import {WorkspaceFetcher}                          from './WorkspaceFetcher';
 import {WorkspaceResolver}                         from './WorkspaceResolver';
 import * as folderUtils                            from './folderUtils';
+import * as formatUtils                            from './formatUtils';
 import * as miscUtils                              from './miscUtils';
 import * as nodeUtils                              from './nodeUtils';
 import * as semverUtils                            from './semverUtils';
 import * as structUtils                            from './structUtils';
-import {IdentHash, Package, Descriptor, Locator}   from './types';
-
-const chalkOptions = process.env.GITHUB_ACTIONS
-  ? {level: 2}
-  : chalk.supportsColor
-    ? {level: chalk.supportsColor.level}
-    : {level: 0};
-
-const supportsColor = chalkOptions.level !== 0;
-const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS;
-
-const chalkInstance = new chalk.Instance(chalkOptions);
+import {IdentHash, Package, Descriptor}            from './types';
 
 const IGNORED_ENV_VARIABLES = new Set([
   // "binFolder" is the magic location where the parent process stored the
@@ -84,58 +73,8 @@ export enum SettingsType {
   MAP = `MAP`,
 }
 
-export enum FormatType {
-  NO_HINT = `NO_HINT`,
-  NAME = `NAME`,
-  NUMBER = `NUMBER`,
-  PATH = `PATH`,
-  URL = `URL`,
-  DESCRIPTOR = `DESCRIPTOR`,
-  RANGE = `RANGE`,
-  LOCATOR = `LOCATOR`,
-  REFERENCE = `REFERENCE`,
-  RESOLUTION = `RESOLUTION`,
-  DEPENDENT = `DEPENDENT`,
-  SCOPE = `SCOPE`,
-  ADDED = `ADDED`,
-  REMOVED = `REMOVED`,
-  CODE = `CODE`,
-  DURATION = `DURATION`,
-  SIZE = `SIZE`,
-  NULL = `NULL`,
-}
-
-export const formatColors = chalkOptions.level >= 3 ? new Map([
-  [FormatType.NO_HINT, null],
-  [FormatType.NAME, `#d7875f`],
-  [FormatType.RANGE, `#00afaf`],
-  [FormatType.REFERENCE, `#87afff`],
-  [FormatType.NUMBER, `#ffd700`],
-  [FormatType.PATH, `#d75fd7`],
-  [FormatType.URL, `#d75fd7`],
-  [FormatType.SCOPE, `#d75f00`],
-  [FormatType.ADDED, `#5faf00`],
-  [FormatType.REMOVED, `#d70000`],
-  [FormatType.CODE, `#87afff`],
-  [FormatType.DURATION, null],
-  [FormatType.SIZE, `#ffd700`],
-  [FormatType.NULL, `#a853b5`],
-]) : new Map([
-  [FormatType.NO_HINT, null],
-  [FormatType.NAME, 173],
-  [FormatType.RANGE, 37],
-  [FormatType.REFERENCE, 111],
-  [FormatType.NUMBER, 220],
-  [FormatType.PATH, 170],
-  [FormatType.URL, 170],
-  [FormatType.SCOPE, 166],
-  [FormatType.ADDED, 70],
-  [FormatType.REMOVED, 160],
-  [FormatType.CODE, 111],
-  [FormatType.DURATION, null],
-  [FormatType.SIZE, 220],
-  [FormatType.NULL, 129],
-]);
+export type FormatType = formatUtils.Type;
+export const FormatType = formatUtils.Type;
 
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
   description: string,
@@ -284,13 +223,13 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableColors: {
     description: `If true, the CLI is allowed to use colors in its output`,
     type: SettingsType.BOOLEAN,
-    default: supportsColor,
+    default: formatUtils.supportsColor,
     defaultText: `<dynamic>`,
   },
   enableHyperlinks: {
     description: `If true, the CLI is allowed to use hyperlinks in its output`,
     type: SettingsType.BOOLEAN,
-    default: supportsHyperlinks,
+    default: formatUtils.supportsHyperlinks,
     defaultText: `<dynamic>`,
   },
   enableInlineBuilds: {
@@ -1189,8 +1128,8 @@ export class Configuration {
     const logStream = xfs.createWriteStream(logFile);
 
     if (this.get(`enableInlineBuilds`)) {
-      const stdoutLineReporter = report.createStreamReporter(`${prefix} ${this.format(`STDOUT`, `green`)}`);
-      const stderrLineReporter = report.createStreamReporter(`${prefix} ${this.format(`STDERR`, `red`)}`);
+      const stdoutLineReporter = report.createStreamReporter(`${prefix} ${formatUtils.pretty(this, `STDOUT`, `green`)}`);
+      const stderrLineReporter = report.createStreamReporter(`${prefix} ${formatUtils.pretty(this, `STDERR`, `red`)}`);
 
       stdout = new PassThrough();
       stdout.pipe(stdoutLineReporter);
@@ -1427,86 +1366,10 @@ export class Configuration {
     return null;
   }
 
-  private formatUnit(number: number, unit: FormatType.NUMBER | FormatType.SIZE | FormatType.DURATION) {
-    if (unit === FormatType.DURATION) {
-      if (number > 1000 * 60) {
-        const minutes = Math.floor(number / 1000 / 60);
-        const seconds = Math.ceil((number - minutes * 60 * 1000) / 1000);
-        return seconds === 0 ? `${minutes}m` : `${minutes}m ${seconds}s`;
-      } else {
-        const seconds = Math.floor(number / 1000);
-        const milliseconds = number - seconds * 1000;
-        return milliseconds === 0 ? `${seconds}s` : `${seconds}s ${milliseconds}ms`;
-      }
-    }
-
-    if (unit === FormatType.SIZE) {
-      const thresholds = [`KB`, `MB`, `GB`, `TB`];
-
-      let power = thresholds.length;
-      while (power > 1 && number < 1024 ** power)
-        power -= 1;
-
-      const factor = 1024 ** power;
-      const value = Math.floor(number * 100 / factor) / 100;
-      return `${value} ${thresholds[power - 1]}`;
-    }
-
-    return `${number}`;
-  }
-
-  bold(text: string) {
-    if (!this.get(`enableColors`))
-      return text;
-
-    return chalk.bold(text);
-  }
-
-  format(descriptor: Descriptor | null, colorRequest: FormatType.DESCRIPTOR): string;
-  format(descriptor: Locator | null, colorRequest: FormatType.LOCATOR): string;
-  format(descriptor: {descriptor: Descriptor, locator: Locator | null} | null, colorRequest: FormatType.RESOLUTION): string;
-  format(descriptor: {locator: Locator, descriptor: Descriptor | null} | null, colorRequest: FormatType.DEPENDENT): string;
-  format(text: number | null, colorRequest: FormatType.NUMBER | FormatType.SIZE | FormatType.DURATION): string;
-  format(text: string | null, colorRequest: Exclude<FormatType, FormatType.NUMBER | FormatType.SIZE | FormatType.DURATION> | string): string;
-  format(text: Descriptor | Locator | {descriptor: Descriptor | null, locator: Locator | null} | number | string | null, colorRequest: FormatType | string) {
-    if (text === null) {
-      colorRequest = FormatType.NULL;
-      text = `null`;
-    } else if (typeof text === `number`) {
-      text = `${this.formatUnit(text, colorRequest as any)}`;
-    }
-
-    if (colorRequest === FormatType.DESCRIPTOR)
-      return structUtils.prettyDescriptor(this, text as Descriptor);
-    if (colorRequest === FormatType.LOCATOR)
-      return structUtils.prettyLocator(this, text as Locator);
-    if (colorRequest === FormatType.RESOLUTION)
-      return structUtils.prettyResolution(this, (text as any).descriptor, (text as any).locator);
-    if (colorRequest === FormatType.DEPENDENT)
-      return structUtils.prettyDependent(this, (text as any).locator, (text as any).descriptor);
-
-    if (typeof text !== `string`)
-      throw new Error(`Assertion failed: Expected the formatted to be a string by now`);
-
-    if (colorRequest === FormatType.PATH)
-      text = npath.fromPortablePath(text);
-
-    if (!this.get(`enableColors`))
-      return text;
-
-    let color = formatColors.get(colorRequest as FormatType);
-    if (color === null)
-      return text;
-
-    if (typeof color === `undefined`)
-      color = colorRequest;
-
-    const fn = typeof color === `number`
-      ? chalkInstance.ansi256(color)
-      : color.startsWith(`#`)
-        ? chalkInstance.hex(color)
-        : (chalkInstance as any)[color];
-
-    return fn(text);
+  /**
+   * @deprecated Prefer using formatUtils.pretty instead, which is type-safe
+   */
+  format(value: string, formatType: formatUtils.Type | string): string {
+    return formatUtils.pretty(this, value, formatType);
   }
 }

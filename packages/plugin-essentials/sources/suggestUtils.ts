@@ -1,5 +1,5 @@
 import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace, FetchOptions, ResolveOptions, Configuration} from '@yarnpkg/core';
-import {structUtils}                                                                                                                               from '@yarnpkg/core';
+import {formatUtils, structUtils}                                                                                                                  from '@yarnpkg/core';
 import {PortablePath, ppath, xfs}                                                                                                                  from '@yarnpkg/fslib';
 import semver                                                                                                                                      from 'semver';
 
@@ -299,7 +299,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
             suggested.push({
               descriptor: null,
               name: `Resolve from latest`,
-              reason: project.configuration.format(`(unavailable because enableNetwork is toggled off)`, `grey`),
+              reason: formatUtils.pretty(project.configuration, `(unavailable because enableNetwork is toggled off)`, `grey`),
             });
           } else {
             let latest = await fetchDescriptorFrom(request, `latest`, {project, cache, workspace, preserveModifier: false});

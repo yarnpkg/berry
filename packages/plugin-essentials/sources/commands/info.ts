@@ -1,10 +1,10 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                                                         from '@yarnpkg/cli';
-import {Configuration, Project, structUtils, Workspace, LocatorHash, Package, miscUtils, Locator, Cache, FormatType, FetchOptions, ThrowReport, Manifest, treeUtils} from '@yarnpkg/core';
-import {xfs}                                                                                                                                                         from '@yarnpkg/fslib';
-import {Command, Usage}                                                                                                                                              from 'clipanion';
-import mm                                                                                                                                                            from 'micromatch';
+import {BaseCommand, WorkspaceRequiredError}                                                                                                                          from '@yarnpkg/cli';
+import {Configuration, Project, structUtils, Workspace, LocatorHash, Package, formatUtils, miscUtils, Locator, Cache, FetchOptions, ThrowReport, Manifest, treeUtils} from '@yarnpkg/core';
+import {xfs}                                                                                                                                                          from '@yarnpkg/fslib';
+import {Command, Usage}                                                                                                                                               from 'clipanion';
+import mm                                                                                                                                                             from 'micromatch';
 
-import {Hooks}                                                                                                                                                       from '..';
+import {Hooks}                                                                                                                                                        from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class InfoCommand extends BaseCommand {
@@ -180,8 +180,8 @@ export default class InfoCommand extends BaseCommand {
         }
 
         registerData(`Manifest`, {
-          [`License`]: [manifest.license, FormatType.NO_HINT],
-          [`Homepage`]: [manifest.raw.homepage ?? null, FormatType.URL],
+          [`License`]: formatUtils.tuple(formatUtils.Type.NO_HINT, manifest.license),
+          [`Homepage`]: formatUtils.tuple(formatUtils.Type.URL, manifest.raw.homepage ?? null),
         });
       },
 
@@ -201,12 +201,12 @@ export default class InfoCommand extends BaseCommand {
         }
 
         const size = typeof stat !== `undefined`
-          ? [stat.size, FormatType.SIZE] as const
+          ? [stat.size, formatUtils.Type.SIZE] as const
           : undefined;
 
         registerData(`Cache`, {
-          [`Checksum`]: [checksum, FormatType.NO_HINT],
-          [`Path`]: [cachePath, FormatType.PATH],
+          [`Checksum`]: formatUtils.tuple(formatUtils.Type.NO_HINT, checksum),
+          [`Path`]: formatUtils.tuple(formatUtils.Type.PATH, cachePath),
           [`Size`]: size,
         });
       },
@@ -219,7 +219,7 @@ export default class InfoCommand extends BaseCommand {
 
       const nodeChildren: treeUtils.TreeMap = {};
       const node: treeUtils.TreeNode = {
-        value: [pkg, FormatType.LOCATOR],
+        value: [pkg, formatUtils.Type.LOCATOR],
         children: nodeChildren,
       };
 
@@ -229,16 +229,16 @@ export default class InfoCommand extends BaseCommand {
       if (typeof instances !== `undefined`) {
         nodeChildren.instances = {
           label: `Instances`,
-          value: [instances.length, FormatType.NUMBER],
+          value: formatUtils.tuple(formatUtils.Type.NUMBER, instances.length),
         };
       }
 
       nodeChildren.version = {
         label: `Version`,
-        value: [pkg.version, FormatType.NO_HINT],
+        value: formatUtils.tuple(formatUtils.Type.NO_HINT, pkg.version),
       };
 
-      const registerData = (namespace: string, info: ReadonlyArray<[any, FormatType]> | {[key: string]: readonly [any, FormatType] | undefined}) => {
+      const registerData = (namespace: string, info: Array<formatUtils.Tuple> | {[key: string]: formatUtils.Tuple | undefined}) => {
         const namespaceNode: treeUtils.TreeNode = {};
         nodeChildren[namespace] = namespaceNode;
 
@@ -271,14 +271,14 @@ export default class InfoCommand extends BaseCommand {
 
       if (pkg.bin.size > 0 && !isVirtual) {
         registerData(`Exported Binaries`, [...pkg.bin.keys()].map(name => {
-          return [name, FormatType.PATH];
+          return formatUtils.tuple(formatUtils.Type.PATH, name);
         }));
       }
 
       const dependents = dependentMap.get(pkg.locatorHash);
       if (typeof dependents !== `undefined` && dependents.length > 0) {
         registerData(`Dependents`, dependents.map(dependent => {
-          return [dependent, FormatType.LOCATOR];
+          return formatUtils.tuple(formatUtils.Type.LOCATOR, dependent);
         }));
       }
 
@@ -290,10 +290,10 @@ export default class InfoCommand extends BaseCommand {
             ? project.storedPackages.get(resolutionHash) ?? null
             : null;
 
-          return [{
+          return formatUtils.tuple(formatUtils.Type.RESOLUTION, {
             descriptor: dependency,
             locator: resolution,
-          }, FormatType.RESOLUTION];
+          });
         }));
       }
 
@@ -309,10 +309,10 @@ export default class InfoCommand extends BaseCommand {
             ? project.storedPackages.get(resolutionHash) ?? null
             : null;
 
-          return [{
+          return formatUtils.tuple(formatUtils.Type.RESOLUTION, {
             descriptor: peerDependency,
             locator: resolution,
-          }, FormatType.RESOLUTION];
+          });
         }));
       }
     }

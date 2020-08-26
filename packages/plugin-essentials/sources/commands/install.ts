@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                                               from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, FormatType} from '@yarnpkg/core';
-import {xfs, ppath}                                                                        from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                          from '@yarnpkg/parsers';
-import {TRAVIS}                                                                            from 'ci-info';
-import {Command, Usage}                                                                    from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils} from '@yarnpkg/core';
+import {xfs, ppath}                                                                         from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                           from '@yarnpkg/parsers';
+import {TRAVIS}                                                                             from 'ci-info';
+import {Command, Usage}                                                                     from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
@@ -249,7 +249,7 @@ export default class YarnCommand extends BaseCommand {
       }, async report => {
         if (Configuration.telemetry?.isNew) {
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Yarn will periodically gather anonymous telemetry: https://yarnpkg.com/advanced/telemetry`);
-          report.reportInfo(MessageName.TELEMETRY_NOTICE, `Run ${configuration.format(`yarn config set --home enableTelemetry 0`, FormatType.CODE)} to disable`);
+          report.reportInfo(MessageName.TELEMETRY_NOTICE, `Run ${formatUtils.pretty(configuration, `yarn config set --home enableTelemetry 0`, formatUtils.Type.CODE)} to disable`);
           report.reportSeparator();
         }
       });

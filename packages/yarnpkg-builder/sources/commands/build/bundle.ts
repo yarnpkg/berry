@@ -1,19 +1,18 @@
-import {getDynamicLibs}                                                    from '@yarnpkg/cli';
-import {StreamReport, MessageName, Configuration, structUtils, FormatType} from '@yarnpkg/core';
-import {npath}                                                             from '@yarnpkg/fslib';
-import chalk                                                               from 'chalk';
-import cp                                                                  from 'child_process';
-import {Command, Usage}                                                    from 'clipanion';
-import filesize                                                            from 'filesize';
-import fs                                                                  from 'fs';
-import path                                                                from 'path';
-import semver                                                              from 'semver';
-import TerserPlugin                                                        from 'terser-webpack-plugin';
-import {promisify}                                                         from 'util';
-import webpack                                                             from 'webpack';
+import {getDynamicLibs}                                                     from '@yarnpkg/cli';
+import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
+import {npath}                                                              from '@yarnpkg/fslib';
+import chalk                                                                from 'chalk';
+import cp                                                                   from 'child_process';
+import {Command, Usage}                                                     from 'clipanion';
+import fs                                                                   from 'fs';
+import path                                                                 from 'path';
+import semver                                                               from 'semver';
+import TerserPlugin                                                         from 'terser-webpack-plugin';
+import {promisify}                                                          from 'util';
+import webpack                                                              from 'webpack';
 
-import {findPlugins}                                                       from '../../tools/findPlugins';
-import {makeConfig, WebpackPlugin}                                         from '../../tools/makeConfig';
+import {findPlugins}                                                        from '../../tools/findPlugins';
+import {makeConfig, WebpackPlugin}                                          from '../../tools/makeConfig';
 
 const execFile = promisify(cp.execFile);
 
@@ -198,8 +197,8 @@ export default class BuildBundleCommand extends Command {
       report.reportError(MessageName.EXCEPTION, `${buildErrors}`);
     } else {
       report.reportInfo(null, `${chalk.green(`✓`)} Done building the CLI!`);
-      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle path: ${configuration.format(output, FormatType.PATH)}`);
-      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle size: ${configuration.format(filesize(fs.statSync(output).size), FormatType.NUMBER)}`);
+      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);
+      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle size: ${formatUtils.pretty(configuration, fs.statSync(output).size, formatUtils.Type.SIZE)}`);
 
       report.reportSeparator();
 

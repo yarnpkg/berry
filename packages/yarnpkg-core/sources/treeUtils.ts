@@ -1,12 +1,12 @@
-import {Writable}                  from 'stream';
-import {asTree}                    from 'treeify';
+import {Writable}       from 'stream';
+import {asTree}         from 'treeify';
 
-import {Configuration, FormatType} from './Configuration';
-import * as structUtils            from './structUtils';
+import {Configuration}  from './Configuration';
+import * as formatUtils from './formatUtils';
 
 export type TreeNode = {
   label?: string,
-  value?: readonly [any, FormatType],
+  value?: formatUtils.Tuple,
   children?: Array<TreeNode> | TreeMap;
 };
 
@@ -29,11 +29,11 @@ export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configu
     for (const [key, {label, value, children}] of iterator) {
       const finalParts = [];
       if (typeof label !== `undefined`)
-        finalParts.push(configuration.bold(label));
+        finalParts.push(formatUtils.applyStyle(configuration, label, formatUtils.Style.BOLD));
       if (typeof value !== `undefined`)
-        finalParts.push(configuration.format(value[0], value[1]));
+        finalParts.push(formatUtils.pretty(configuration, value[0], value[1]));
       if (finalParts.length === 0)
-        finalParts.push(configuration.bold(`${key}`));
+        finalParts.push(formatUtils.applyStyle(configuration, `${key}`, formatUtils.Style.BOLD));
 
       const finalLabel = finalParts.join(`: `);
       const createdNode = targetNode[finalLabel] = {};
@@ -61,37 +61,10 @@ export function treeNodeToJson(printTree: TreeNode) {
 
     for (const [key, {value, children}] of iterator) {
       const createdNodeChildren = Array.isArray(children) ? [] : {};
-      const createdNode: any = targetNode[key] = {value, children: createdNodeChildren};
+      const createdNode: any = targetNode[key] = {children: createdNodeChildren};
 
-      if (typeof value !== `undefined`) {
-        switch (value[1]) {
-          case FormatType.DESCRIPTOR: {
-            createdNode.value[0] = structUtils.stringifyDescriptor(value[0]);
-          } break;
-
-          case FormatType.LOCATOR: {
-            createdNode.value[0] = structUtils.stringifyLocator(value[0]);
-          } break;
-
-          case FormatType.RESOLUTION: {
-            createdNode.value[0] = {
-              descriptor: structUtils.stringifyDescriptor(value[0].descriptor),
-              locator: value[0].locator !== null
-                ? structUtils.stringifyLocator(value[0].locator)
-                : null,
-            };
-          } break;
-
-          case FormatType.DEPENDENT: {
-            createdNode.value[0] = {
-              locator: structUtils.stringifyLocator(value[0].locator),
-              descriptor: value[0].descriptor !== null
-                ? structUtils.stringifyDescriptor(value[0].descriptor)
-                : null,
-            };
-          } break;
-        }
-      }
+      if (typeof value !== `undefined`)
+        createdNode.value = formatUtils.json(value[0], value[1]);
 
       if (typeof createdNode.value === `undefined`)
         delete createdNode.value;
@@ -116,6 +89,11 @@ export function treeNodeToJson(printTree: TreeNode) {
 
   copyTree(printTree.children, target);
   return target;
+}
+
+export function emitList(values: Array<formatUtils.Tuple>, {configuration, stdout, json}: {configuration: Configuration, stdout: Writable, json: boolean}) {
+  const children = values.map(value => ({value}));
+  emitTree({children}, {configuration, stdout, json});
 }
 
 export function emitTree(tree: TreeNode, {configuration, stdout, json, separators = 0}: {configuration: Configuration, stdout: Writable, json: boolean, separators?: number}) {

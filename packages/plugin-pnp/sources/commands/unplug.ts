@@ -1,11 +1,11 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                              from '@yarnpkg/cli';
-import {Cache, Configuration, Project, StreamReport, Package, MessageName, FormatType, LocatorHash, Workspace, miscUtils} from '@yarnpkg/core';
-import {structUtils, semverUtils}                                                                                         from '@yarnpkg/core';
-import {Command, Usage, UsageError}                                                                                       from 'clipanion';
-import micromatch                                                                                                         from 'micromatch';
-import semver                                                                                                             from 'semver';
+import {BaseCommand, WorkspaceRequiredError}                                                                               from '@yarnpkg/cli';
+import {Cache, Configuration, Project, StreamReport, Package, MessageName, formatUtils, LocatorHash, Workspace, miscUtils} from '@yarnpkg/core';
+import {structUtils, semverUtils}                                                                                          from '@yarnpkg/core';
+import {Command, Usage, UsageError}                                                                                        from 'clipanion';
+import micromatch                                                                                                          from 'micromatch';
+import semver                                                                                                              from 'semver';
 
-import * as pnpUtils                                                                                                      from '../pnpUtils';
+import * as pnpUtils                                                                                                       from '../pnpUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UnplugCommand extends BaseCommand {
@@ -183,7 +183,7 @@ export default class UnplugCommand extends BaseCommand {
         const dependencyMeta = project.topLevelWorkspace.manifest.ensureDependencyMeta(structUtils.makeDescriptor(pkg, version));
         dependencyMeta.unplugged = true;
 
-        report.reportInfo(MessageName.UNNAMED, `Will unpack ${structUtils.prettyLocator(configuration, pkg)} to ${configuration.format(pnpUtils.getUnpluggedPath(pkg, {configuration}), FormatType.PATH)}`);
+        report.reportInfo(MessageName.UNNAMED, `Will unpack ${structUtils.prettyLocator(configuration, pkg)} to ${formatUtils.pretty(configuration, pnpUtils.getUnpluggedPath(pkg, {configuration}), formatUtils.Type.PATH)}`);
         report.reportJson({
           locator: structUtils.stringifyLocator(pkg),
           version,
