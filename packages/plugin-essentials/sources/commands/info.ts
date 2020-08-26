@@ -1,13 +1,10 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                                              from '@yarnpkg/cli';
-import {Configuration, Project, structUtils, Workspace, LocatorHash, Package, miscUtils, Locator, Cache, FormatType, FetchOptions, ThrowReport, Manifest} from '@yarnpkg/core';
-import {xfs}                                                                                                                                              from '@yarnpkg/fslib';
-import {Command, Usage}                                                                                                                                   from 'clipanion';
-import mm                                                                                                                                                 from 'micromatch';
-import {Writable}                                                                                                                                         from 'stream';
+import {BaseCommand, WorkspaceRequiredError}                                                                                                                         from '@yarnpkg/cli';
+import {Configuration, Project, structUtils, Workspace, LocatorHash, Package, miscUtils, Locator, Cache, FormatType, FetchOptions, ThrowReport, Manifest, treeUtils} from '@yarnpkg/core';
+import {xfs}                                                                                                                                                         from '@yarnpkg/fslib';
+import {Command, Usage}                                                                                                                                              from 'clipanion';
+import mm                                                                                                                                                            from 'micromatch';
 
-import {asTree}                                                                                                                                           from 'treeify';
-
-import {Hooks}                                                                                                                                            from '..';
+import {Hooks}                                                                                                                                                       from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class InfoCommand extends BaseCommand {
@@ -161,8 +158,8 @@ export default class InfoCommand extends BaseCommand {
       miscUtils.getArrayWithDefault(allInstances, base.locatorHash).push(pkg);
     }
 
-    const infoTreeChildren: miscUtils.TreeMap = {};
-    const infoTree: miscUtils.TreeNode = {children: infoTreeChildren};
+    const infoTreeChildren: treeUtils.TreeMap = {};
+    const infoTree: treeUtils.TreeNode = {children: infoTreeChildren};
 
     const fetcher = configuration.makeFetcher();
     const fetcherOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report: new ThrowReport(), skipIntegrityCheck: true};
@@ -220,8 +217,8 @@ export default class InfoCommand extends BaseCommand {
       if (!this.virtuals && isVirtual)
         continue;
 
-      const nodeChildren: miscUtils.TreeMap = {};
-      const node: miscUtils.TreeNode = {
+      const nodeChildren: treeUtils.TreeMap = {};
+      const node: treeUtils.TreeNode = {
         value: [pkg, FormatType.LOCATOR],
         children: nodeChildren,
       };
@@ -242,13 +239,13 @@ export default class InfoCommand extends BaseCommand {
       };
 
       const registerData = (namespace: string, info: ReadonlyArray<[any, FormatType]> | {[key: string]: readonly [any, FormatType] | undefined}) => {
-        const namespaceNode: miscUtils.TreeNode = {};
+        const namespaceNode: treeUtils.TreeNode = {};
         nodeChildren[namespace] = namespaceNode;
 
         if (Array.isArray(info)) {
           namespaceNode.children = info.map(value => ({value}));
         } else {
-          const namespaceChildren: miscUtils.TreeMap = {};
+          const namespaceChildren: treeUtils.TreeMap = {};
           namespaceNode.children = namespaceChildren;
 
           for (const [key, value] of Object.entries(info)) {
@@ -320,28 +317,11 @@ export default class InfoCommand extends BaseCommand {
       }
     }
 
-    printTree(infoTree, {
+    treeUtils.emitTree(infoTree, {
       configuration,
       json: this.json,
       stdout: this.context.stdout,
+      separators: 2,
     });
   }
-}
-
-function printTree(tree: miscUtils.TreeNode, {configuration, stdout, json}: {configuration: Configuration, stdout: Writable, json: boolean}) {
-  if (json) {
-    stdout.write(`${JSON.stringify(miscUtils.treeNodeToJson(tree))}\n`);
-    return;
-  }
-
-  let treeOutput = asTree(miscUtils.treeNodeToTreeify(tree, {configuration}) as any, false, false);
-
-  // A slight hack to add line returns between two workspaces
-  treeOutput = treeOutput.replace(/^([├└]─)/gm, `│\n$1`).replace(/^│\n/, ``);
-
-  // Another one for the second level fields. We run it twice because in some pathological cases the regex matches would
-  for (let t = 0; t < 2; ++t)
-    treeOutput = treeOutput.replace(/^([│ ].{2}[├│ ].{2}[^\n]+\n)(([│ ]).{2}[├└].{2}[^\n]*\n[│ ].{2}[│ ].{2}[├└]─)/gm, `$1$3  │\n$2`).replace(/^│\n/, ``);
-
-  stdout.write(treeOutput);
 }

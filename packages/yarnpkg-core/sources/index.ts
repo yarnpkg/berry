@@ -7,6 +7,7 @@ import * as scriptUtils from './scriptUtils';
 import * as semverUtils from './semverUtils';
 import * as structUtils from './structUtils';
 import * as tgzUtils    from './tgzUtils';
+import * as treeUtils   from './treeUtils';
 
 export {Cache}                                                                      from './Cache';
 export {DEFAULT_RC_FILENAME, DEFAULT_LOCK_FILENAME}                                 from './Configuration';
@@ -44,3 +45,4 @@ export {scriptUtils};
 export {semverUtils};
 export {structUtils};
 export {tgzUtils};
+export {treeUtils};

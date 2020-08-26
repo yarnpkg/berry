@@ -1,12 +1,11 @@
 import {PortablePath, npath}       from '@yarnpkg/fslib';
 import {UsageError}                from 'clipanion';
-import {applyPatch}                from 'diff';
 import micromatch                  from 'micromatch';
 
 import {Readable, Transform}       from 'stream';
 
 import {FormatType, Configuration} from './Configuration';
-import {structUtils}               from '.';
+import * as structUtils            from './structUtils';
 
 export function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
@@ -304,101 +303,4 @@ export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: 
 
     throw new UsageError(`Environment variable not found (${variableName})`);
   });
-}
-
-export type TreeNode = {
-  label?: string,
-  value?: readonly [any, FormatType],
-  children?: Array<TreeNode> | TreeMap;
-};
-
-export type TreeMap = {
-  [key: string]: TreeNode,
-};
-
-export type TreeifyNode = {
-  [key: string]: TreeifyNode;
-}
-
-export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configuration: Configuration}) {
-  const target = {};
-
-  const copyTree = (printNode: Array<TreeNode> | TreeMap, targetNode: TreeifyNode) => {
-    const iterator = Array.isArray(printNode)
-      ? printNode.entries()
-      : Object.entries(printNode);
-
-    for (const [key, {label, value, children}] of iterator) {
-      const finalParts = [];
-      if (typeof label !== `undefined`)
-        finalParts.push(configuration.bold(label));
-      if (typeof value !== `undefined`)
-        finalParts.push(configuration.format(value[0], value[1]));
-      if (finalParts.length === 0)
-        finalParts.push(configuration.bold(`${key}`));
-
-      const finalLabel = finalParts.join(`: `);
-      const createdNode = targetNode[finalLabel] = {};
-
-      if (typeof children !== `undefined`) {
-        copyTree(children, createdNode);
-      }
-    }
-  };
-
-  if (typeof printTree.children === `undefined`)
-    throw new Error(`The root node must only contain children`);
-
-  copyTree(printTree.children, target);
-  return target;
-}
-
-export function treeNodeToJson(printTree: TreeNode) {
-  const target = {};
-
-  const copyTree = (printNode: Array<TreeNode> | TreeMap, targetNode: any) => {
-    const iterator = Array.isArray(printNode)
-      ? printNode.entries()
-      : Object.entries(printNode);
-
-    for (const [key, {value, children}] of iterator) {
-      const createdNodeChildren = Array.isArray(children) ? [] : {};
-      const createdNode: any = targetNode[key] = {value, children: createdNodeChildren};
-
-      if (typeof value !== `undefined`) {
-        if (value[1] === FormatType.DESCRIPTOR)
-          createdNode.value[0] = structUtils.stringifyDescriptor(value[0]);
-        if (value[1] === FormatType.LOCATOR)
-          createdNode.value[0] = structUtils.stringifyLocator(value[0]);
-        if (value[1] === FormatType.RESOLUTION) {
-          createdNode.value[0] = {
-            descriptor: structUtils.stringifyDescriptor(value[0].descriptor),
-            locator: structUtils.stringifyLocator(value[0].locator),
-          };
-        }
-      }
-
-      if (typeof createdNode.value === `undefined`)
-        delete createdNode.value;
-
-      const childCount = typeof children !== `undefined`
-        ? Array.isArray(children)
-          ? children.length
-          : Object.keys(children).length
-        : 0;
-
-      if (childCount === 0)
-        delete createdNode.children;
-
-      if (typeof children !== `undefined`) {
-        copyTree(children, createdNodeChildren);
-      }
-    }
-  };
-
-  if (typeof printTree.children === `undefined`)
-    throw new Error(`The root node must only contain children`);
-
-  copyTree(printTree.children, target);
-  return target;
 }

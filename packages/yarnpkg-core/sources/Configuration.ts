@@ -95,6 +95,7 @@ export enum FormatType {
   LOCATOR = `LOCATOR`,
   REFERENCE = `REFERENCE`,
   RESOLUTION = `RESOLUTION`,
+  DEPENDENT = `DEPENDENT`,
   SCOPE = `SCOPE`,
   ADDED = `ADDED`,
   REMOVED = `REMOVED`,
@@ -1463,10 +1464,11 @@ export class Configuration {
 
   format(descriptor: Descriptor | null, colorRequest: FormatType.DESCRIPTOR): string;
   format(descriptor: Locator | null, colorRequest: FormatType.LOCATOR): string;
-  format(descriptor: {descriptor: Descriptor, locator: Locator} | null, colorRequest: FormatType.RESOLUTION): string;
+  format(descriptor: {descriptor: Descriptor, locator: Locator | null} | null, colorRequest: FormatType.RESOLUTION): string;
+  format(descriptor: {locator: Locator, descriptor: Descriptor | null} | null, colorRequest: FormatType.DEPENDENT): string;
   format(text: number | null, colorRequest: FormatType.NUMBER | FormatType.SIZE | FormatType.DURATION): string;
   format(text: string | null, colorRequest: Exclude<FormatType, FormatType.NUMBER | FormatType.SIZE | FormatType.DURATION> | string): string;
-  format(text: Descriptor | Locator | {descriptor: Descriptor, locator: Locator} | number | string | null, colorRequest: FormatType | string) {
+  format(text: Descriptor | Locator | {descriptor: Descriptor, locator: Locator | null} | number | string | null, colorRequest: FormatType | string) {
     if (text === null) {
       colorRequest = FormatType.NULL;
       text = `null`;
@@ -1480,6 +1482,8 @@ export class Configuration {
       return structUtils.prettyLocator(this, text as Locator);
     if (colorRequest === FormatType.RESOLUTION)
       return structUtils.prettyResolution(this, (text as any).descriptor, (text as any).locator);
+    if (colorRequest === FormatType.DEPENDENT)
+      return structUtils.prettyDependent(this, (text as any).locator, (text as any).descriptor);
 
     if (typeof text !== `string`)
       throw new Error(`Assertion failed: Expected the formatted to be a string by now`);

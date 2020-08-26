@@ -505,6 +505,14 @@ export function prettyResolution(configuration: Configuration, descriptor: Descr
   }
 }
 
+export function prettyDependent(configuration: Configuration, locator: Locator, descriptor: Descriptor | null) {
+  if (descriptor === null) {
+    return `${prettyLocator(configuration, locator)}`;
+  } else {
+    return `${prettyLocator(configuration, locator)} (via ${structUtils.prettyRange(configuration, descriptor.range)})`;
+  }
+}
+
 /**
  * The presence of a `node_modules` directory in the path is extremely common
  * in the JavaScript ecosystem to denote whether a path belongs to a vendor
