@@ -6,9 +6,9 @@ import {Configuration, FormatType}              from './Configuration';
 import {Workspace}                              from './Workspace';
 import * as hashUtils                           from './hashUtils';
 import * as miscUtils                           from './miscUtils';
+import * as structUtils                         from './structUtils';
 import {IdentHash, DescriptorHash, LocatorHash} from './types';
 import {Ident, Descriptor, Locator, Package}    from './types';
-import {structUtils}                            from '.';
 
 const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 5;
