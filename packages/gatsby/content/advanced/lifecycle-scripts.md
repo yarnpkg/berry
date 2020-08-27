@@ -16,6 +16,8 @@ Packages can define in the `scripts` field of their manifest various actions tha
 
 - **postinstall** is called after a package got successfully installed on the disk. It is guaranteed.
 
+- **prepare** is called both before a package is packed and published, on local `yarn install` without any arguments, and when installing git dependencies. This is run after prepublish.
+
 Note that we don't support every single lifecycle script originally present in npm. This is a deliberate decision based on the observation that too many lifecycle scripts make it difficult to know which one to use in which circumstances, leading to confusion and mistakes. We are open to add the missing ones on a case-by-case basis if compelling use cases are provided.
 
 > In particular, we intentionally don't support arbitrary `pre` and `post` hooks for user-defined scripts (such as `prestart`). This behavior, inherited from npm, caused scripts to be implicit rather than explicit, obfuscating the execution flow. It also led to surprising executions with `yarn serve` also running `yarn preserve`.
