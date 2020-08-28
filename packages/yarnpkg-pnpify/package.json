@@ -1,15 +1,15 @@
 {
   "name": "@yarnpkg/pnpify",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
   "types": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/core": "workspace:^2.1.1",
-    "@yarnpkg/fslib": "workspace:^2.1.0",
-    "@yarnpkg/parsers": "workspace:^2.1.0",
+    "@yarnpkg/core": "workspace:^2.2.0",
+    "@yarnpkg/fslib": "workspace:^2.2.0",
+    "@yarnpkg/parsers": "workspace:^2.2.0",
     "chalk": "^3.0.0",
     "clipanion": "^2.4.4",
     "comment-json": "^2.2.0",
@@ -21,7 +21,7 @@
     "@types/comment-json": "^1.1.1",
     "@types/lodash": "^4.14.136",
     "@yarnpkg/monorepo": "workspace:0.0.0",
-    "@yarnpkg/pnp": "workspace:^2.1.0",
+    "@yarnpkg/pnp": "workspace:^2.2.0",
     "eslint": "^6.8.0",
     "typescript": "^3.9.5"
   },
