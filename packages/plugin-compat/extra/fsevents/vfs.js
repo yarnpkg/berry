@@ -1,10 +1,9 @@
 const path = require(`path`);
 
-let pnpApi;
+let pnpApi = null;
 try {
   pnpApi = require(`pnpapi`);
 } catch {
-  pnpApi = {resolveVirtual: () => null};
 }
 
 function getVirtualLookupFn(pnpApi) {
@@ -74,27 +73,39 @@ function getVirtualLookupFn(pnpApi) {
   };
 }
 
-const resolveVirtualAliases = getVirtualLookupFn(pnpApi);
+if (pnpApi != null) {
+  const resolveVirtualAliases = getVirtualLookupFn(pnpApi);
 
-module.exports = class FsePnp {
-  constructor(p) {
-    this.normalizedPath = path.resolve(p);
-    this.resolvedPath = pnpApi.resolveVirtual(this.normalizedPath) || this.normalizedPath;
-  }
-
-  transpose(p) {
-    if (this.resolvedPath !== null) {
-      return this.normalizedPath + p.substr(this.resolvedPath.length);
-    } else {
-      return p;
+  module.exports = class FsePnp {
+    constructor(p) {
+      this.normalizedPath = path.resolve(p);
+      this.resolvedPath = pnpApi.resolveVirtual(this.normalizedPath) || this.normalizedPath;
     }
-  }
 
-  wrap(fn) {
-    return (path, ...args) => {
-      for (const entry of resolveVirtualAliases(path)) {
-        fn(this.transpose(entry), ...args);
+    transpose(p) {
+      if (this.resolvedPath !== null) {
+        return this.normalizedPath + p.substr(this.resolvedPath.length);
+      } else {
+        return p;
       }
-    };
-  }
-};
+    }
+
+    wrap(fn) {
+      return (path, ...args) => {
+        for (const entry of resolveVirtualAliases(path)) {
+          fn(this.transpose(entry), ...args);
+        }
+      };
+    }
+  };
+} else {
+  module.exports = class FsePnp {
+    constructor(p) {
+      this.resolvedPath = p;
+    }
+
+    wrap(fn) {
+      return fn;
+    }
+  };
+}
