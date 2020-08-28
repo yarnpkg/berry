@@ -601,12 +601,12 @@ export class Manifest {
     if (this.os !== null)
       data.os = this.os;
     else
-      delete this.os;
+      delete data.os;
 
     if (this.cpu !== null)
       data.cpu = this.cpu;
     else
-      delete this.cpu;
+      delete data.cpu;
 
     if (this.type !== null)
       data.type = this.type;
