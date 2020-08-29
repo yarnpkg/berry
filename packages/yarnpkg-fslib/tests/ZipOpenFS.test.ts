@@ -3,6 +3,8 @@ import {getLibzipSync}          from '@yarnpkg/libzip';
 import {ppath, npath, Filename} from '../sources/path';
 import {ZipOpenFS}              from '../sources';
 
+import {useFakeTime}            from './utils';
+
 const ZIP_FILE1 = ppath.join(
   npath.toPortablePath(__dirname),
   `fixtures/foo.zip/foo.txt` as Filename
@@ -11,21 +13,6 @@ const ZIP_FILE2 = ppath.join(
   npath.toPortablePath(__dirname),
   `fixtures/folder.zip/foo.zip/foo.txt` as Filename
 );
-
-async function useFakeTime(cb: (advanceTimeBy: (ms: number) => void) => void | Promise<void>) {
-  jest.useFakeTimers();
-
-  let time = Date.now();
-  jest.spyOn(Date, `now`).mockImplementation(() => time);
-  const advanceTimeBy = (ms: number) => {
-    time += ms;
-    jest.advanceTimersByTime(ms);
-  };
-
-  await cb(advanceTimeBy);
-
-  jest.restoreAllMocks();
-}
 
 describe(`ZipOpenFS`, () => {
   it(`can read from a zip file`, () => {
