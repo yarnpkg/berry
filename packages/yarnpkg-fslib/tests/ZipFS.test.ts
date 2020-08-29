@@ -5,6 +5,8 @@ import {ZipFS}                         from '../sources/ZipFS';
 import {PortablePath, ppath, Filename} from '../sources/path';
 import {xfs, statUtils}                from '../sources';
 
+import {useFakeTime}                   from './utils';
+
 describe(`ZipFS`, () => {
   it(`should handle symlink correctly`, () => {
     const expectSameStats = (a: Stats, b: Stats) => {
@@ -461,6 +463,21 @@ describe(`ZipFS`, () => {
     expect(zipFs.readFileSync(`/foo.txt` as Filename, `utf8`)).toBe(`foo`);
 
     zipFs.discardAndClose();
+  });
+
+  it(`should stop the watcher on closing the archive`, async () => {
+    await useFakeTime(advanceTimeBy => {
+      const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+      zipFs.writeFileSync(`/foo.txt` as PortablePath, `foo`);
+
+      zipFs.watchFile(`/foo.txt` as PortablePath, (current, previous) => {});
+
+      zipFs.discardAndClose();
+
+      // If the watcher wasn't stopped this will trigger `EBUSY: archive closed`
+      advanceTimeBy(100);
+    });
   });
 });
 

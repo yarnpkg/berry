@@ -37477,6 +37477,7 @@ class CustomStatWatcher extends external_events_.EventEmitter {
     super();
     this.status = Status.Ready;
     this.changeListeners = new Map();
+    this.startTimeout = null;
     this.fakeFs = fakeFs;
     this.path = path;
     this.bigint = bigint;
@@ -37494,11 +37495,12 @@ class CustomStatWatcher extends external_events_.EventEmitter {
     this.status = Status.Running; // Node allows other listeners to be registered up to 3 milliseconds
     // after the watcher has been started, so that's what we're doing too
 
-    setTimeout(() => {
-      // Per the Node FS docs:
+    this.startTimeout = setTimeout(() => {
+      this.startTimeout = null; // Per the Node FS docs:
       // "When an fs.watchFile operation results in an ENOENT error,
       // it will invoke the listener once, with all the fields zeroed
       // (or, for dates, the Unix Epoch)."
+
       if (!this.fakeFs.existsSync(this.path)) {
         this.emit(Event.Change, this.lastStats, this.lastStats);
       }
@@ -37508,6 +37510,12 @@ class CustomStatWatcher extends external_events_.EventEmitter {
   stop() {
     assertStatus(this.status, Status.Running);
     this.status = Status.Stopped;
+
+    if (this.startTimeout !== null) {
+      clearTimeout(this.startTimeout);
+      this.startTimeout = null;
+    }
+
     this.emit(Event.Stop);
   }
 
@@ -38834,6 +38842,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
 
 
+
 const ZIP_FD = 0x80000000;
 const FILE_PARTS_REGEX = /.*?(?<!\/)\.zip(?=\/|$)/;
 class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
@@ -38881,6 +38890,8 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   saveAndClose() {
+    unwatchAllFiles(this);
+
     if (this.zipInstances) {
       for (const [path, {
         zipFs
@@ -38892,6 +38903,8 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   discardAndClose() {
+    unwatchAllFiles(this);
+
     if (this.zipInstances) {
       for (const [path, {
         zipFs
@@ -39634,21 +39647,16 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
     return this.makeCallSync(p, () => {
       return this.baseFs.watchFile(p, // @ts-expect-error
       a, b);
-    }, (zipFs, {
-      subPath
-    }) => {
-      return zipFs.watchFile(subPath, // @ts-expect-error
-      a, b);
+    }, () => {
+      return watchFile(this, p, a, b);
     });
   }
 
   unwatchFile(p, cb) {
     return this.makeCallSync(p, () => {
       return this.baseFs.unwatchFile(p, cb);
-    }, (zipFs, {
-      subPath
-    }) => {
-      return zipFs.unwatchFile(subPath, cb);
+    }, () => {
+      return unwatchFile(this, p, cb);
     });
   }
 

@@ -43,6 +43,8 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
 
   private lastStats: Stats;
 
+  private startTimeout: NodeJS.Timeout | null = null;
+
   static create<P extends Path>(fakeFs: FakeFS<P>, path: P, opts?: CustomStatWatcherOptions) {
     const statWatcher = new CustomStatWatcher<P>(fakeFs, path, opts);
 
@@ -67,7 +69,9 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
 
     // Node allows other listeners to be registered up to 3 milliseconds
     // after the watcher has been started, so that's what we're doing too
-    setTimeout(() => {
+    this.startTimeout = setTimeout(() => {
+      this.startTimeout = null;
+
       // Per the Node FS docs:
       // "When an fs.watchFile operation results in an ENOENT error,
       // it will invoke the listener once, with all the fields zeroed
@@ -81,6 +85,11 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
   stop() {
     assertStatus(this.status, Status.Running);
     this.status = Status.Stopped;
+
+    if (this.startTimeout !== null) {
+      clearTimeout(this.startTimeout);
+      this.startTimeout = null;
+    }
 
     this.emit(Event.Stop);
   }
