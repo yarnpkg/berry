@@ -131,6 +131,12 @@ const Content = styled.div`
     background: #242424;
   }
 
+  summary p {
+    display: inline;
+
+    margin: 0;
+  }
+
   code {
     display: inline-block;
 
