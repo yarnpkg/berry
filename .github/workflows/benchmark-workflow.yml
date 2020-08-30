@@ -7,6 +7,10 @@ on:
         description: 'Whether to send the stats to the Datadog dashboards'
         required: true
         default: 'false'
+      hyperfineOptions:
+        description: 'Options passed to Hyperfine'
+        required: true
+        default: ''
 
 name: 'Performance tests'
 jobs:
@@ -67,3 +71,4 @@ jobs:
         fi
       env:
         DD_API_KEY: ${{secrets.DD_API_KEY}}
+        HYPERFINE_OPTIONS: ${{github.event.inputs.hyperfineOptions}}
