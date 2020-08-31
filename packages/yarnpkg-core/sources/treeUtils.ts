@@ -54,40 +54,32 @@ export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configu
 export function treeNodeToJson(printTree: TreeNode) {
   const target = {};
 
-  const copyTree = (printNode: Array<TreeNode> | TreeMap, targetNode: any) => {
-    const iterator = Array.isArray(printNode)
-      ? printNode.entries()
-      : Object.entries(printNode);
+  const copyTree = (printNode: TreeNode, targetNode: any) => {
+    if (typeof printNode.value !== `undefined`)
+      targetNode.value = formatUtils.json(printNode.value[0], printNode.value[1]);
 
-    for (const [key, {value, children}] of iterator) {
-      const createdNodeChildren = Array.isArray(children) ? [] : {};
-      const createdNode: any = targetNode[key] = {children: createdNodeChildren};
+    const iterator = Array.isArray(printNode.children)
+      ? printNode.children.entries()
+      : Object.entries(printNode.children ?? {});
 
-      if (typeof value !== `undefined`)
-        createdNode.value = formatUtils.json(value[0], value[1]);
+    const targetChildren: {[key: string]: any} = Array.isArray(printNode.children)
+      ? []
+      : {};
 
-      if (typeof createdNode.value === `undefined`)
-        delete createdNode.value;
+    for (const [key, child] of iterator) {
+      targetNode.children = targetChildren;
 
-      const childCount = typeof children !== `undefined`
-        ? Array.isArray(children)
-          ? children.length
-          : Object.keys(children).length
-        : 0;
+      const targetChild: any = {};
+      targetChildren[key] = targetChild;
 
-      if (childCount === 0)
-        delete createdNode.children;
-
-      if (typeof children !== `undefined`) {
-        copyTree(children, createdNodeChildren);
-      }
+      copyTree(child, targetChild);
     }
   };
 
   if (typeof printTree.children === `undefined`)
     throw new Error(`The root node must only contain children`);
 
-  copyTree(printTree.children, target);
+  copyTree(printTree, target);
   return target;
 }
 
@@ -98,7 +90,13 @@ export function emitList(values: Array<formatUtils.Tuple>, {configuration, stdou
 
 export function emitTree(tree: TreeNode, {configuration, stdout, json, separators = 0}: {configuration: Configuration, stdout: Writable, json: boolean, separators?: number}) {
   if (json) {
-    stdout.write(`${JSON.stringify(treeNodeToJson(tree))}\n`);
+    const iterator = Array.isArray(tree.children)
+      ? tree.children.values()
+      : Object.values(tree.children ?? {});
+
+    for (const child of iterator)
+      stdout.write(`${JSON.stringify(treeNodeToJson(child))}\n`);
+
     return;
   }
 
