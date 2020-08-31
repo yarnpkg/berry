@@ -1,7 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError}                                                                                                                          from '@yarnpkg/cli';
 import {Configuration, Project, structUtils, Workspace, LocatorHash, Package, formatUtils, miscUtils, Locator, Cache, FetchOptions, ThrowReport, Manifest, treeUtils} from '@yarnpkg/core';
 import {xfs}                                                                                                                                                          from '@yarnpkg/fslib';
-import {Command, Usage}                                                                                                                                               from 'clipanion';
+import {Command, Usage, UsageError}                                                                                                                                   from 'clipanion';
 import mm                                                                                                                                                             from 'micromatch';
 
 import {Hooks}                                                                                                                                                        from '..';
@@ -87,6 +87,9 @@ export default class InfoCommand extends BaseCommand {
 
         seen.set(hash, pkg);
 
+        if (structUtils.isVirtualLocator(pkg))
+          pass.push(structUtils.devirtualizeLocator(pkg).locatorHash);
+
         for (const dependency of pkg.dependencies.values()) {
           const resolution = project.storedResolutions.get(dependency.descriptorHash);
           if (typeof resolution === `undefined`)
@@ -99,40 +102,65 @@ export default class InfoCommand extends BaseCommand {
       return seen.values();
     };
 
-    const lookupSet = this.all
-      ? project.storedPackages.values()
-      : traverse(workspace!);
+    const findSelectedSet = ({all}: {all: boolean}) => {
+      const lookupSet = all
+        ? project.storedPackages.values()
+        : traverse(workspace!);
 
-    const matchers = this.patterns.map(pattern => {
-      const parsed = structUtils.parseLocator(pattern);
-      const regex = mm.makeRe(structUtils.stringifyIdent(parsed));
+      const matchers = this.patterns.map(pattern => {
+        const patternLocator = structUtils.parseLocator(pattern);
+        const identRegex = mm.makeRe(structUtils.stringifyIdent(patternLocator));
 
-      return (pkg: Package) => {
-        const stringifiedIdent = structUtils.stringifyIdent(pkg);
-        if (!regex.test(stringifiedIdent))
-          return false;
+        const patternIsVirtual = structUtils.isVirtualLocator(patternLocator);
+        const uvPatternLocator = patternIsVirtual
+          ? structUtils.devirtualizeLocator(patternLocator)
+          : patternLocator;
 
-        if (parsed.reference !== `unknown`) {
-          const checkReference = structUtils.isVirtualLocator(pkg)
-            ? structUtils.devirtualizeLocator(pkg).reference
-            : pkg.reference;
-
-          if (parsed.reference !== checkReference) {
+        return (pkg: Package) => {
+          const stringifiedIdent = structUtils.stringifyIdent(pkg);
+          if (!identRegex.test(stringifiedIdent))
             return false;
-          }
-        }
 
-        return true;
-      };
+          if (patternLocator.reference === `unknown`)
+            return true;
+
+          const pkgIsVirtual = structUtils.isVirtualLocator(pkg);
+          const uvPkgLocator = pkgIsVirtual
+            ? structUtils.devirtualizeLocator(pkg)
+            : pkg;
+
+          // If the pattern is explicitly virtual, we only accept this one virtual package, never the others
+          if (patternIsVirtual && pkgIsVirtual && patternLocator.reference !== pkg.reference)
+            return false;
+
+          // We only accept that belong to the current reference (or its base if it's a virtual package)
+          if (uvPatternLocator.reference !== uvPkgLocator.reference)
+            return false;
+
+          return true;
+        };
+      });
+
+      const sortedLookup = miscUtils.sortMap([...lookupSet], pkg => {
+        return structUtils.stringifyLocator(pkg);
+      });
+
+      return sortedLookup.filter(pkg => {
+        return matchers.length === 0 || matchers.some(matcher => matcher(pkg));
+      });
+    };
+
+    const selected = findSelectedSet({
+      all: this.all,
     });
 
-    const sortedLookup = miscUtils.sortMap([...lookupSet], pkg => {
-      return structUtils.stringifyLocator(pkg);
-    });
-
-    const selected = sortedLookup.filter(pkg => {
-      return matchers.length === 0 || matchers.some(matcher => matcher(pkg));
-    });
+    if (selected.length === 0) {
+      if (this.all || findSelectedSet({all: true}).length === 0) {
+        throw new UsageError(`No package matched your request`);
+      } else {
+        throw new UsageError(`No package matched your request in this workspace, but some matches were found elsewhere - run the command again with -A,--all to see them all`);
+      }
+    }
 
     const dependentMap = new Map<LocatorHash, Array<Locator>>();
 
@@ -227,13 +255,13 @@ export default class InfoCommand extends BaseCommand {
 
       const instances = allInstances.get(pkg.locatorHash);
       if (typeof instances !== `undefined`) {
-        nodeChildren.instances = {
+        nodeChildren.Instances = {
           label: `Instances`,
           value: formatUtils.tuple(formatUtils.Type.NUMBER, instances.length),
         };
       }
 
-      nodeChildren.version = {
+      nodeChildren.Version = {
         label: `Version`,
         value: formatUtils.tuple(formatUtils.Type.NO_HINT, pkg.version),
       };

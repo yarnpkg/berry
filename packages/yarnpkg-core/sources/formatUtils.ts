@@ -47,6 +47,8 @@ export const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS;
 const chalkInstance = new chalk.Instance(chalkOptions);
 
 const colors = new Map([
+  [Type.NO_HINT, null],
+
   [Type.NULL, [`#a853b5`, 129]],
 
   [Type.SCOPE, [`#d75f00`, 166]],
@@ -211,6 +213,9 @@ export function applyColor(configuration: Configuration, value: string, formatTy
     : color.startsWith(`#`)
       ? chalkInstance.hex(color)
       : (chalkInstance as any)[color];
+
+  if (typeof fn !== `function`)
+    throw new Error(`Invalid format type ${color}`);
 
   return fn(value);
 }

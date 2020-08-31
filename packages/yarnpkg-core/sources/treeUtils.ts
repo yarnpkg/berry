@@ -52,11 +52,13 @@ export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configu
 }
 
 export function treeNodeToJson(printTree: TreeNode) {
-  const target = {};
+  const copyTree = (printNode: TreeNode) => {
+    if (typeof printNode.children === `undefined`) {
+      if (typeof printNode.value === `undefined`)
+        throw new Error(`Assertion failed: Expected a value to be set if the children are missing`);
 
-  const copyTree = (printNode: TreeNode, targetNode: any) => {
-    if (typeof printNode.value !== `undefined`)
-      targetNode.value = formatUtils.json(printNode.value[0], printNode.value[1]);
+      return formatUtils.json(printNode.value[0], printNode.value[1]);
+    }
 
     const iterator = Array.isArray(printNode.children)
       ? printNode.children.entries()
@@ -66,21 +68,22 @@ export function treeNodeToJson(printTree: TreeNode) {
       ? []
       : {};
 
-    for (const [key, child] of iterator) {
-      targetNode.children = targetChildren;
+    for (const [key, child] of iterator)
+      targetChildren[key] = copyTree(child);
 
-      const targetChild: any = {};
-      targetChildren[key] = targetChild;
+    if (typeof printNode.value === `undefined`)
+      return targetChildren;
 
-      copyTree(child, targetChild);
-    }
+    return {
+      value: formatUtils.json(printNode.value[0], printNode.value[1]),
+      children: targetChildren,
+    };
   };
 
   if (typeof printTree.children === `undefined`)
     throw new Error(`The root node must only contain children`);
 
-  copyTree(printTree, target);
-  return target;
+  return copyTree(printTree);
 }
 
 export function emitList(values: Array<formatUtils.Tuple>, {configuration, stdout, json}: {configuration: Configuration, stdout: Writable, json: boolean}) {
