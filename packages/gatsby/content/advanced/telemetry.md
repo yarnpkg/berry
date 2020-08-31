@@ -2,6 +2,7 @@
 category: advanced
 path: /advanced/telemetry
 title: "Telemetry"
+description: An overview of Yarn's telemetry collection.
 ---
 
 ## Why does Yarn need some telemetry?

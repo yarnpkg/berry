@@ -2,6 +2,7 @@
 category: advanced
 path: /advanced/error-codes
 title: "Error Codes"
+description: A list of Yarn's error codes with detailed explanations.
 ---
 
 <!-- Never remove the entries in this file, as we want to support older releases -->

@@ -2,6 +2,7 @@
 category: advanced
 path: /advanced/contributing
 title: "Contributing"
+description: Yarn's contributing guide.
 ---
 
 Thanks for being here! Yarn gives a lot of importance to being a community project, and we rely on your help as much as you rely on ours. In order to help you help us, we've invested in an infra and documentation that should make contributing to Yarn very easy. If you have any feedback on what we could improve, please open an issue to discuss it!

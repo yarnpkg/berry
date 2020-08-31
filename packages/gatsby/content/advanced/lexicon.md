@@ -2,6 +2,7 @@
 category: advanced
 path: /advanced/lexicon
 title: "Lexicon"
+description: Definitions of common terms used throughout the documentation.
 ---
 
 ```toc

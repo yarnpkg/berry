@@ -2,6 +2,7 @@
 category: advanced
 path: /advanced/pnpapi
 title: "PnP API"
+description: In-depth documentation of the PnP API.
 ---
 
 ```toc
