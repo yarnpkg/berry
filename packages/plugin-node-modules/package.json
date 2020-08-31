@@ -15,13 +15,13 @@
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.2.1",
-    "@yarnpkg/core": "^2.2.1"
+    "@yarnpkg/cli": "^2.2.2",
+    "@yarnpkg/core": "^2.2.2"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",
-    "@yarnpkg/cli": "workspace:^2.2.1",
-    "@yarnpkg/core": "workspace:^2.2.1",
+    "@yarnpkg/cli": "workspace:^2.2.2",
+    "@yarnpkg/core": "workspace:^2.2.2",
     "@yarnpkg/plugin-stage": "workspace:^2.1.1"
   },
   "version": "2.1.1",
