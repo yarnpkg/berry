@@ -80,9 +80,6 @@ export function treeNodeToJson(printTree: TreeNode) {
     };
   };
 
-  if (typeof printTree.children === `undefined`)
-    throw new Error(`The root node must only contain children`);
-
   return copyTree(printTree);
 }
 

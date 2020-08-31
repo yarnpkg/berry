@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                                                            from '@yarnpkg/cli';
-import {Configuration, Project, Ident, structUtils, ReportError, MessageName, StreamReport, FormatType} from '@yarnpkg/core';
-import {ppath, Filename}                                                                                from '@yarnpkg/fslib';
-import {npmHttpUtils}                                                                                   from '@yarnpkg/plugin-npm';
-import {Command, UsageError, Usage}                                                                     from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                        from '@yarnpkg/cli';
+import {Configuration, Project, Ident, structUtils, ReportError, MessageName, StreamReport, formatUtils, treeUtils} from '@yarnpkg/core';
+import {ppath, Filename}                                                                                            from '@yarnpkg/fslib';
+import {npmHttpUtils}                                                                                               from '@yarnpkg/plugin-npm';
+import {Command, UsageError, Usage}                                                                                 from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmTagListCommand extends BaseCommand {
@@ -48,22 +48,21 @@ export default class NpmTagListCommand extends BaseCommand {
 
     const distTags = await getDistTags(ident, configuration);
 
-    const report = await StreamReport.start({
+    const tree: treeUtils.TreeNode = {
+      children: Object.entries(distTags).map(([tag, version]) => ({
+        value: formatUtils.tuple(formatUtils.Type.RESOLUTION, {
+          descriptor: structUtils.makeDescriptor(ident, tag),
+          locator: structUtils.makeLocator(ident, version),
+        }),
+      })),
+    };
+
+    return treeUtils.emitTree(tree, {
       configuration,
-      stdout: this.context.stdout,
-      includeFooter: false,
       json: this.json,
-    }, async report => {
-      report.reportInfo(MessageName.UNNAMED, `Tags for ${structUtils.prettyIdent(configuration, ident)}:`);
-      report.reportSeparator();
-
-      for (const [tag, version] of Object.entries(distTags)) {
-        report.reportInfo(MessageName.UNNAMED, `${configuration.format(tag, FormatType.RANGE)} -> ${configuration.format(version, FormatType.REFERENCE)}`);
-        report.reportJson({tag, version});
-      }
+      stdout: this.context.stdout,
+      separators: 1,
     });
-
-    return report.exitCode();
   }
 }
 

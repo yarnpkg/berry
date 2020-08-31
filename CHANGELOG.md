@@ -4,6 +4,10 @@
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn import plugin from sources <name>`).
 
+### CLI
+
+- The `yarn tag` commands have been ported over from Yarn Classic as `yarn npm tag`.
+
 ## 2.2.0
 
 ### Ecosystem
@@ -31,7 +35,6 @@
 - Yarn will now report an error when run through an incompatible Node version.
 - `yarn add` and `yarn up` will now respect the `preferInteractive` configuration option.
 - `yarn config set` now supports the `-H,--home` flag, which causes it to update the home configuration instead of the project configuration.
-- The `yarn tag` commands have been ported over from Yarn Classic as `yarn npm tag`.
 
 ### Configuration
 

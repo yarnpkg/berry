@@ -1,9 +1,9 @@
-import chalk                 from 'chalk';
+import chalk                        from 'chalk';
 
-import {Configuration}       from './Configuration';
-import * as miscUtils        from './miscUtils';
-import * as structUtils      from './structUtils';
-import {Descriptor, Locator} from './types';
+import {Configuration}              from './Configuration';
+import * as miscUtils               from './miscUtils';
+import * as structUtils             from './structUtils';
+import {Descriptor, Locator, Ident} from './types';
 
 export enum Type {
   NO_HINT = `NO_HINT`,
@@ -25,6 +25,7 @@ export enum Type {
   DURATION = `DURATION`,
   SIZE = `SIZE`,
 
+  IDENT = `IDENT`,
   DESCRIPTOR = `DESCRIPTOR`,
   LOCATOR = `LOCATOR`,
   RESOLUTION = `RESOLUTION`,
@@ -88,6 +89,15 @@ const transforms = {
     },
     json: (value: number) => {
       return value;
+    },
+  }),
+
+  [Type.IDENT]: validateTransform({
+    pretty: (configuration: Configuration, ident: Ident) => {
+      return structUtils.prettyIdent(configuration, ident);
+    },
+    json: (ident: Ident) => {
+      return structUtils.stringifyIdent(ident);
     },
   }),
 

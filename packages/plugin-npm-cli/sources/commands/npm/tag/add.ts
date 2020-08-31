@@ -1,10 +1,10 @@
-import {BaseCommand, WorkspaceRequiredError}                                        from '@yarnpkg/cli';
-import {Configuration, Project, structUtils, MessageName, StreamReport, FormatType} from '@yarnpkg/core';
-import {npmHttpUtils, npmConfigUtils}                                               from '@yarnpkg/plugin-npm';
-import {Command, UsageError, Usage}                                                 from 'clipanion';
-import semver                                                                       from 'semver';
+import {BaseCommand, WorkspaceRequiredError}                                         from '@yarnpkg/cli';
+import {Configuration, Project, structUtils, MessageName, StreamReport, formatUtils} from '@yarnpkg/core';
+import {npmHttpUtils, npmConfigUtils}                                                from '@yarnpkg/plugin-npm';
+import {Command, UsageError, Usage}                                                  from 'clipanion';
+import semver                                                                        from 'semver';
 
-import {getDistTags}                                                                from './list';
+import {getDistTags}                                                                 from './list';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmTagAddCommand extends BaseCommand {
@@ -37,13 +37,13 @@ export default class NpmTagAddCommand extends BaseCommand {
     const descriptor = structUtils.parseDescriptor(this.package, true);
     const version = descriptor.range;
     if (!semver.valid(version))
-      throw new UsageError(`The range ${configuration.format(descriptor.range, FormatType.RANGE)} must be a valid semver version`);
+      throw new UsageError(`The range ${formatUtils.pretty(configuration, descriptor.range, formatUtils.Type.RANGE)} must be a valid semver version`);
 
     const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
 
-    const prettyIdent = structUtils.prettyIdent(configuration, descriptor);
-    const prettyVersion = configuration.format(version, FormatType.RANGE);
-    const prettyTag = configuration.format(this.tag, FormatType.CODE);
+    const prettyIdent = formatUtils.pretty(configuration, descriptor, formatUtils.Type.IDENT);
+    const prettyVersion = formatUtils.pretty(configuration, version, formatUtils.Type.RANGE);
+    const prettyTag = formatUtils.pretty(configuration, this.tag, formatUtils.Type.CODE);
 
     const report = await StreamReport.start({
       configuration,

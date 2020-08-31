@@ -1,10 +1,10 @@
-import {BaseCommand, WorkspaceRequiredError}                                        from '@yarnpkg/cli';
-import {Configuration, Project, structUtils, MessageName, StreamReport, FormatType} from '@yarnpkg/core';
-import {npmHttpUtils, npmConfigUtils}                                               from '@yarnpkg/plugin-npm';
-import {Command, Usage, UsageError}                                                 from 'clipanion';
-import * as yup                                                                     from 'yup';
+import {BaseCommand, WorkspaceRequiredError}                                         from '@yarnpkg/cli';
+import {Configuration, Project, structUtils, MessageName, StreamReport, formatUtils} from '@yarnpkg/core';
+import {npmHttpUtils, npmConfigUtils}                                                from '@yarnpkg/plugin-npm';
+import {Command, Usage, UsageError}                                                  from 'clipanion';
+import * as yup                                                                      from 'yup';
 
-import {getDistTags}                                                                from './list';
+import {getDistTags}                                                                 from './list';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmTagRemoveCommand extends BaseCommand {
@@ -43,8 +43,8 @@ export default class NpmTagRemoveCommand extends BaseCommand {
 
     const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
 
-    const prettyTag = configuration.format(this.tag, FormatType.CODE);
-    const prettyIdent = structUtils.prettyIdent(configuration, ident);
+    const prettyTag = formatUtils.pretty(configuration, this.tag, formatUtils.Type.CODE);
+    const prettyIdent = formatUtils.pretty(configuration, ident, formatUtils.Type.IDENT);
 
     const distTags = await getDistTags(ident, configuration);
     if (!Object.prototype.hasOwnProperty.call(distTags, this.tag))
