@@ -5,14 +5,14 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/builder": "workspace:^2.1.1",
-    "@yarnpkg/fslib": "workspace:^2.2.0",
+    "@yarnpkg/fslib": "workspace:^2.2.1",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.2.0"
+    "@yarnpkg/core": "^2.2.1"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^2.2.0",
+    "@yarnpkg/core": "workspace:^2.2.1",
     "typescript": "^3.9.5"
   },
   "scripts": {

@@ -4,19 +4,19 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.2.0",
+    "@yarnpkg/fslib": "workspace:^2.2.1",
     "clipanion": "^2.4.4",
     "lodash": "^4.17.15",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.2.0",
-    "@yarnpkg/core": "^2.2.0"
+    "@yarnpkg/cli": "^2.2.1",
+    "@yarnpkg/core": "^2.2.1"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",
-    "@yarnpkg/cli": "workspace:^2.2.0",
-    "@yarnpkg/core": "workspace:^2.2.0"
+    "@yarnpkg/cli": "workspace:^2.2.1",
+    "@yarnpkg/core": "workspace:^2.2.1"
   },
   "repository": {
     "type": "git",

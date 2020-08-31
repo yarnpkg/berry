@@ -4,17 +4,17 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.2.0",
+    "@yarnpkg/fslib": "workspace:^2.2.1",
     "enquirer": "^2.3.6",
     "semver": "^7.1.2",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.2.0"
+    "@yarnpkg/core": "^2.2.1"
   },
   "devDependencies": {
     "@types/semver": "^7.1.0",
-    "@yarnpkg/core": "workspace:^2.2.0"
+    "@yarnpkg/core": "workspace:^2.2.1"
   },
   "repository": {
     "type": "git",

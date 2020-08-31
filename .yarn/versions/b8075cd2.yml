@@ -1,3 +1,0 @@
-releases:
-  "@yarnpkg/cli": patch
-  "@yarnpkg/core": patch
