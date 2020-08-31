@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                        from '@yarnpkg/cli';
-import {Configuration, Project, Ident, structUtils, ReportError, MessageName, StreamReport, formatUtils, treeUtils} from '@yarnpkg/core';
-import {ppath, Filename}                                                                                            from '@yarnpkg/fslib';
-import {npmHttpUtils}                                                                                               from '@yarnpkg/plugin-npm';
-import {Command, UsageError, Usage}                                                                                 from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                          from '@yarnpkg/cli';
+import {Configuration, Project, Ident, structUtils, ReportError, MessageName, formatUtils, treeUtils} from '@yarnpkg/core';
+import {ppath, Filename}                                                                              from '@yarnpkg/fslib';
+import {npmHttpUtils}                                                                                 from '@yarnpkg/plugin-npm';
+import {Command, UsageError, Usage}                                                                   from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmTagListCommand extends BaseCommand {
