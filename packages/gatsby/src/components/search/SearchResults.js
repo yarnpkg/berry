@@ -96,7 +96,8 @@ const RawSearchResults = ({searchState, searchResults, onTagClick, onOwnerClick}
   } else if (searchResults && searchResults.nbHits === 0) {
     const docMessage = `Were you looking for something in the {documentation_link}?`.split(/[{}]+/);
     docMessage[docMessage.indexOf(`documentation_link`)] = (
-      <a href={`/docs`}>documentation</a>
+      // I can't think of a better place to link this to
+      <a href={`/`}>documentation</a>
     );
 
     return (
