@@ -43,24 +43,24 @@ export const SearchProvider = ({
         hitsPerPage={5}
         // set page parameter by default, since we don't always show pagination
         page={0}
-        facets={['keywords']}
-        analyticsTags={['yarnpkg.com']}
+        facets={[`keywords`]}
+        analyticsTags={[`yarnpkg.com`]}
         attributesToRetrieve={[
-          'deprecated',
-          'description',
-          'downloadsLast30Days',
-          'homepage',
-          'humanDownloadsLast30Days',
-          'keywords',
-          'license',
-          'modified',
-          'name',
-          'owner',
-          'repository',
-          'types',
-          'version',
+          `deprecated`,
+          `description`,
+          `downloadsLast30Days`,
+          `homepage`,
+          `humanDownloadsLast30Days`,
+          `keywords`,
+          `license`,
+          `modified`,
+          `name`,
+          `owner`,
+          `repository`,
+          `types`,
+          `version`,
         ]}
-        attributesToHighlight={['name', 'description', 'keywords']}
+        attributesToHighlight={[`name`, `description`, `keywords`]}
       />
       {children}
     </InstantSearch>

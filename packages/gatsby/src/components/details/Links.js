@@ -40,7 +40,7 @@ const LinkBox = styled.span`
   }
 `;
 
-export const Link = ({site, url, display, tag = 'a'}) => {
+export const Link = ({site, url, display, tag = `a`}) => {
   const LinkElement = styled(tag)`
     display: flex;
     text-size-adjust: 100%;
@@ -75,12 +75,12 @@ const RepositoryLink = ({repository}) => {
     ) : null;
   }
 
-  const [provider] = repository.host.split('.');
+  const [provider] = repository.host.split(`.`);
 
   return (
     <Link
       site={provider}
-      url={`https://${host}/${encode(user)}/${encode(project)}${path || ''}`}
+      url={`https://${host}/${encode(user)}/${encode(project)}${path || ``}`}
       display={`${user}/${project}`}
     />
   );
@@ -102,7 +102,7 @@ export const Links = ({name, homepage, repository}) => (
       <Link
         site="homepage"
         url={homepage}
-        display={homepage.replace(/(http)?s?(:\/\/)?(www\.)?/, '')}
+        display={homepage.replace(/(http)?s?(:\/\/)?(www\.)?/, ``)}
       />
     ) : null}
     {repository ? <RepositoryLink repository={repository} /> : null}

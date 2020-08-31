@@ -68,7 +68,7 @@ export const Pagination = ({pagination}) => (
     {pagination ? (
       <AisPagination showFirst={false} showLast={false} scrollTo={true} />
     ) : (
-      <div style={{height: '3rem'}} />
+      <div style={{height: `3rem`}} />
     )}
   </PaginationContainer>
 );

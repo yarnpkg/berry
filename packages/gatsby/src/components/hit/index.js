@@ -130,7 +130,7 @@ const HitPopular = styled.span`
 export const Downloads = ({downloads = 0, humanDownloads}) => (
   <HitPopular
     className={`${getDownloadBucket(downloads)}`}
-    title={`${downloads.toLocaleString('en')} downloads in the last 30 days`}
+    title={`${downloads.toLocaleString(`en`)} downloads in the last 30 days`}
   >
     {humanDownloads}
   </HitPopular>
@@ -178,7 +178,7 @@ const HitRepoLink = styled(HitLink)`
 `;
 
 const Repository = ({repository, name}) => {
-  const [provider] = repository.host.split('.');
+  const [provider] = repository.host.split(`.`);
 
   return (
     <HitRepoLink
@@ -186,7 +186,7 @@ const Repository = ({repository, name}) => {
       title={`${provider} repository of ${name}`}
       href={`https://${repository.host}/${encode(repository.user)}/${encode(
         repository.project
-      )}${repository.path || ''}`}
+      )}${repository.path || ``}`}
     >
       {provider}
     </HitRepoLink>
@@ -306,10 +306,10 @@ export const Hit = ({hit, onTagClick, onOwnerClick, searchState}) => (
     </HitDescription>
     <Owner {...hit.owner} onClick={onOwnerClick} />
     <HitLastUpdate
-      title={`last updated ${new Date(hit.modified).toLocaleDateString('en')}`}
+      title={`last updated ${new Date(hit.modified).toLocaleDateString(`en`)}`}
     >
-      {'{time_distance} ago'.replace(
-        '{time_distance}',
+      {`{time_distance} ago`.replace(
+        `{time_distance}`,
         formatDistance(new Date(hit.modified), new Date())
       )}
     </HitLastUpdate>

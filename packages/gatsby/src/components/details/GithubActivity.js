@@ -28,13 +28,13 @@ const weeksAgoSinceLastCommit = ({weeklyData}) =>
 
 const formatWeeksSinceLastCommit = weeks => {
   if (weeks === -1)
-    return 'over a year ago';
+    return `over a year ago`;
 
   if (weeks < 1)
-    return 'less than a week ago';
+    return `less than a week ago`;
 
   if (weeks === 1)
-    return 'one week ago';
+    return `one week ago`;
 
   return `${weeks} weeks ago`;
 };

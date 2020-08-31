@@ -10,9 +10,9 @@ const path = require(`path`);
 
 const regexExternalLink = /^(?:https?:)?\/\//;
 
-const staticRedirectsPath = path.join(__dirname, './static/_redirects');
+const staticRedirectsPath = path.join(__dirname, `./static/_redirects`);
 const staticRedirects = fs.readFileSync(staticRedirectsPath).toString();
-const redirectLines = staticRedirects.replace(/\n+/g,'\n').split('\n');
+const redirectLines = staticRedirects.replace(/\n+/g,`\n`).split(`\n`);
 
 const redirects = [];
 

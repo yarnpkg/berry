@@ -67,7 +67,7 @@ export const Aside = ({
     />
     {repository &&
       isKnownRepositoryHost(repository.host) &&
-      (repository.host === 'github.com' ? (
+      (repository.host === `github.com` ? (
         <GithubActivity data={activity} repository={repository} />
       ) : (
         <Activity {...activity} repository={repository} />
