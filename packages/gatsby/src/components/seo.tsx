@@ -6,14 +6,24 @@
  */
 
 import {useStaticQuery, graphql} from 'gatsby';
-import PropTypes                 from 'prop-types';
 import Helmet                    from 'react-helmet';
 import React                     from 'react';
 
+import yarnKittenFull            from '../images/yarn-kitten-full.svg';
+import {Query}                   from '../types/queries';
+
 export const defaultKeywords = [`package manager`, `yarn`, `yarnpkg`, `configuration`, `yarnrc`];
 
-export function SEO({description, lang, meta, keywords, title}) {
-  const {site} = useStaticQuery(
+export type SEOProps = {
+  description?: string;
+  lang?: string;
+  meta?: Array<{name: string, content: string}>;
+  keywords?: Array<string>;
+  title: string;
+};
+
+export function SEO({description, lang = `en`, meta = [], keywords = [], title}: SEOProps) {
+  const {site} = useStaticQuery<Query>(
     graphql`
       query {
         site {
@@ -27,7 +37,7 @@ export function SEO({description, lang, meta, keywords, title}) {
     `
   );
 
-  const metaDescription = description || site.siteMetadata.description;
+  const metaDescription = description ?? site.siteMetadata.description;
 
   return (
     <Helmet
@@ -50,6 +60,14 @@ export function SEO({description, lang, meta, keywords, title}) {
           content: metaDescription,
         },
         {
+          property: `og:image`,
+          content: yarnKittenFull,
+        },
+        {
+          property: `og:image:alt`,
+          content: `Yarn Logo`,
+        },
+        {
           property: `og:type`,
           content: `website`,
         },
@@ -69,6 +87,14 @@ export function SEO({description, lang, meta, keywords, title}) {
           name: `twitter:description`,
           content: metaDescription,
         },
+        {
+          property: `twitter:image`,
+          content: yarnKittenFull,
+        },
+        {
+          property: `twitter:image:alt`,
+          content: `Yarn Logo`,
+        },
       ]
         .concat(
           keywords.length > 0
@@ -82,17 +108,3 @@ export function SEO({description, lang, meta, keywords, title}) {
     />
   );
 }
-
-SEO.defaultProps = {
-  lang: `en`,
-  meta: [],
-  keywords: [],
-};
-
-SEO.propTypes = {
-  description: PropTypes.string,
-  lang: PropTypes.string,
-  meta: PropTypes.array,
-  keywords: PropTypes.arrayOf(PropTypes.string),
-  title: PropTypes.string.isRequired,
-};
