@@ -145,17 +145,19 @@ export default class InfoCommand extends BaseCommand {
         return structUtils.stringifyLocator(pkg);
       });
 
-      return sortedLookup.filter(pkg => {
+      const selection = sortedLookup.filter(pkg => {
         return matchers.length === 0 || matchers.some(matcher => matcher(pkg));
       });
+
+      return {selection, sortedLookup};
     };
 
-    const selected = findSelectedSet({
+    const {selection, sortedLookup} = findSelectedSet({
       all: this.all,
     });
 
-    if (selected.length === 0) {
-      if (this.all || findSelectedSet({all: true}).length === 0) {
+    if (selection.length === 0) {
+      if (this.all || findSelectedSet({all: true}).selection.length === 0) {
         throw new UsageError(`No package matched your request`);
       } else {
         throw new UsageError(`No package matched your request in this workspace, but some matches were found elsewhere - run the command again with -A,--all to see them all`);
@@ -178,7 +180,7 @@ export default class InfoCommand extends BaseCommand {
 
     const allInstances = new Map<LocatorHash, Array<Package>>();
 
-    for (const pkg of selected) {
+    for (const pkg of sortedLookup) {
       if (!structUtils.isVirtualLocator(pkg))
         continue;
 
@@ -240,7 +242,7 @@ export default class InfoCommand extends BaseCommand {
       },
     ];
 
-    for (const pkg of selected) {
+    for (const pkg of selection) {
       const isVirtual = structUtils.isVirtualLocator(pkg);
       if (!this.virtuals && isVirtual)
         continue;
