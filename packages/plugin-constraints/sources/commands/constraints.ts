@@ -75,6 +75,9 @@ export default class ConstraintsCheckCommand extends BaseCommand {
 
       // save all modified manifests
       await Promise.all([...allSaves].map(async workspace => {
+        // Constraints modify the raw manifest so we need to reload it here
+        // otherwise changes are not persisted
+        workspace.manifest.load(workspace.manifest.raw);
         await workspace.persistManifest();
       }));
 

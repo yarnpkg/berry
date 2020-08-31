@@ -207,7 +207,7 @@ export class Manifest {
     if (typeof data.module === `string`)
       this.module = data.module;
 
-    if (typeof data.browser === `string`)
+    if (data.browser != null)
       this.browser = data.browser;
 
     if (typeof data.bin === `string`) {
@@ -601,12 +601,12 @@ export class Manifest {
     if (this.os !== null)
       data.os = this.os;
     else
-      delete this.os;
+      delete data.os;
 
     if (this.cpu !== null)
       data.cpu = this.cpu;
     else
-      delete this.cpu;
+      delete data.cpu;
 
     if (this.type !== null)
       data.type = this.type;

@@ -50,6 +50,12 @@ See also: [Architecture](/advanced/architecture)
 
 See also: the [`Fetcher` interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Fetcher.ts#L34)
 
+### Hoisting
+
+Hoisting is the act of transforming the dependency tree to optimize it by removing as many nodes as possible. There isn't a single way to decide how to transform the tree, and different package managers make different tradeoffs (some optimize for package popularity, package size, highest versions, ...). For this reason, no guarantee can be made regarding the final hoisting layout - except that packages will always be able to access the dependencies they listed in their [manifests](#Manifest).
+
+Because the hoisting is heavily connected to the filesystem and the Node resolution, its very design makes it easy to make an error and accidentally access packages without them being properly defined as dependencies - and thus without being accounted for during the hoisting process, making their very existence unpredictable. For this reason and others, hoisting got sidelined starting from Yarn 2 in favour of the [Plug'n'Play resolution](#plugnplay).
+
 ### Linker
 
 Linkers are the components that consume both a dependency tree and a store of package data, and generate in return disk artifacts specific to the environment they target. For example, the <abbr>Plug'n'Play</abbr> linker generates a single `.pnp.js` file.

@@ -3,6 +3,8 @@ import {getLibzipSync}          from '@yarnpkg/libzip';
 import {ppath, npath, Filename} from '../sources/path';
 import {ZipOpenFS}              from '../sources';
 
+import {useFakeTime}            from './utils';
+
 const ZIP_FILE1 = ppath.join(
   npath.toPortablePath(__dirname),
   `fixtures/foo.zip/foo.txt` as Filename
@@ -103,39 +105,31 @@ describe(`ZipOpenFS`, () => {
   });
 
   it(`closes ZipFS instances once they become stale`, async () => {
-    jest.useFakeTimers();
+    await useFakeTime(async advanceTimeBy => {
+      const fs = new ZipOpenFS({libzip: getLibzipSync(), maxAge: 2000});
 
-    let time = Date.now();
-    jest.spyOn(Date, `now`).mockImplementation(() => time);
-    const advanceTimeBy = (ms: number) => {
-      time += ms;
-      jest.advanceTimersByTime(ms);
-    };
+      await fs.existsPromise(ZIP_FILE1);
+      // @ts-expect-error: zipInstances is private
+      expect(fs.zipInstances!.size).toEqual(1);
 
-    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxAge: 2000});
+      advanceTimeBy(1000);
 
-    await fs.existsPromise(ZIP_FILE1);
-    // @ts-expect-error: zipInstances is private
-    expect(fs.zipInstances!.size).toEqual(1);
+      fs.existsSync(ZIP_FILE2);
+      // @ts-expect-error: zipInstances is private
+      expect(fs.zipInstances!.size).toEqual(2);
 
-    advanceTimeBy(1000);
+      advanceTimeBy(1000);
 
-    fs.existsSync(ZIP_FILE2);
-    // @ts-expect-error: zipInstances is private
-    expect(fs.zipInstances!.size).toEqual(2);
+      // @ts-expect-error: zipInstances is private
+      expect(fs.zipInstances!.size).toEqual(1);
 
-    advanceTimeBy(1000);
+      advanceTimeBy(1000);
 
-    // @ts-expect-error: zipInstances is private
-    expect(fs.zipInstances!.size).toEqual(1);
+      // @ts-expect-error: zipInstances is private
+      expect(fs.zipInstances!.size).toEqual(0);
 
-    advanceTimeBy(1000);
-
-    // @ts-expect-error: zipInstances is private
-    expect(fs.zipInstances!.size).toEqual(0);
-
-    fs.discardAndClose();
-    jest.restoreAllMocks();
+      fs.discardAndClose();
+    });
   });
 
   it(`doesn't close zip files while they are in use`, async () => {
@@ -149,5 +143,18 @@ describe(`ZipOpenFS`, () => {
     ]);
 
     fs.discardAndClose();
+  });
+
+  it(`doesn't crash when watching a file in a archive that gets closed`, async () => {
+    await useFakeTime(advanceTimeBy => {
+      const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
+
+      fs.watchFile(ZIP_FILE1, (current, previous) => {});
+      fs.watchFile(ZIP_FILE2, (current, previous) => {});
+
+      advanceTimeBy(100);
+
+      fs.discardAndClose();
+    });
   });
 });
