@@ -29,7 +29,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
         `category: ${namespaceTrailingSlash}cli\n`,
         `path: ${namespaceLeadingSlash}/cli/${url}\n`,
         `title: "\`${command.path}\`"\n`,
-        `description: ${description}\n`,
+        `description: ${JSON.stringify(description)}\n`,
         `---\n`,
       ].join(``));
 
