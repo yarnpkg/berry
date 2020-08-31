@@ -1,30 +1,3 @@
 releases:
-  "@yarnpkg/builder": patch
   "@yarnpkg/cli": patch
   "@yarnpkg/core": patch
-  "@yarnpkg/doctor": patch
-  "@yarnpkg/plugin-compat": patch
-  "@yarnpkg/plugin-constraints": patch
-  "@yarnpkg/plugin-dlx": patch
-  "@yarnpkg/plugin-essentials": patch
-  "@yarnpkg/plugin-exec": patch
-  "@yarnpkg/plugin-file": patch
-  "@yarnpkg/plugin-git": patch
-  "@yarnpkg/plugin-github": patch
-  "@yarnpkg/plugin-http": patch
-  "@yarnpkg/plugin-init": patch
-  "@yarnpkg/plugin-interactive-tools": patch
-  "@yarnpkg/plugin-link": patch
-  "@yarnpkg/plugin-node-modules": patch
-  "@yarnpkg/plugin-npm": patch
-  "@yarnpkg/plugin-npm-cli": patch
-  "@yarnpkg/plugin-pack": patch
-  "@yarnpkg/plugin-patch": patch
-  "@yarnpkg/plugin-pnp": patch
-  "@yarnpkg/plugin-stage": patch
-  "@yarnpkg/plugin-typescript": patch
-  "@yarnpkg/plugin-version": patch
-  "@yarnpkg/plugin-workspace-tools": patch
-  "@yarnpkg/pnp": patch
-  "@yarnpkg/pnpify": patch
-  vscode-zipfs: patch
