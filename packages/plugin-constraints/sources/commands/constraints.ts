@@ -1,7 +1,7 @@
 import {BaseCommand}                                                    from '@yarnpkg/cli';
 import {Configuration, IdentHash, Ident, Project, Workspace, miscUtils} from '@yarnpkg/core';
 import {MessageName, StreamReport, AllDependencies}                     from '@yarnpkg/core';
-import {structUtils}                                                    from '@yarnpkg/core';
+import {formatUtils, structUtils}                                       from '@yarnpkg/core';
 import {Command, Usage}                                                 from 'clipanion';
 import getPath                                                          from 'lodash/get';
 import setPath                                                          from 'lodash/set';
@@ -178,9 +178,9 @@ async function processFieldConstraints(toSave: Set<Workspace>, errors: Array<[Me
     for (const [fieldPath, byPathStore] of byWorkspacesStore) {
       const expectedValues = [...byPathStore];
       if (expectedValues.length > 2) {
-        errors.push([MessageName.CONSTRAINTS_AMBIGUITY, `${structUtils.prettyWorkspace(configuration, workspace)} must have a field ${configuration.format(fieldPath, `cyan`)} set to conflicting values ${expectedValues.slice(0, -1).map(expectedValue => configuration.format(String(expectedValue), `magenta`)).join(`, `)}, or ${configuration.format(String(expectedValues[expectedValues.length - 1]), `magenta`)}`]);
+        errors.push([MessageName.CONSTRAINTS_AMBIGUITY, `${structUtils.prettyWorkspace(configuration, workspace)} must have a field ${formatUtils.pretty(configuration, fieldPath, `cyan`)} set to conflicting values ${expectedValues.slice(0, -1).map(expectedValue => formatUtils.pretty(configuration, String(expectedValue), `magenta`)).join(`, `)}, or ${formatUtils.pretty(configuration, String(expectedValues[expectedValues.length - 1]), `magenta`)}`]);
       } else if (expectedValues.length > 1) {
-        errors.push([MessageName.CONSTRAINTS_AMBIGUITY, `${structUtils.prettyWorkspace(configuration, workspace)} must have a field ${configuration.format(fieldPath, `cyan`)} set to conflicting values ${configuration.format(String(expectedValues[0]), `magenta`)} or ${configuration.format(String(expectedValues[1]), `magenta`)}`]);
+        errors.push([MessageName.CONSTRAINTS_AMBIGUITY, `${structUtils.prettyWorkspace(configuration, workspace)} must have a field ${formatUtils.pretty(configuration, fieldPath, `cyan`)} set to conflicting values ${formatUtils.pretty(configuration, String(expectedValues[0]), `magenta`)} or ${formatUtils.pretty(configuration, String(expectedValues[1]), `magenta`)}`]);
       } else {
         const actualValue = getPath(workspace.manifest.raw, fieldPath);
         const [expectedValue] = expectedValues;
@@ -191,14 +191,14 @@ async function processFieldConstraints(toSave: Set<Workspace>, errors: Array<[Me
               await setWorkspaceField(workspace, fieldPath, expectedValue);
               toSave.add(workspace);
             } else {
-              errors.push([MessageName.CONSTRAINTS_MISSING_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} must have a field ${configuration.format(fieldPath, `cyan`)} set to ${configuration.format(String(expectedValue), `magenta`)}, but doesn't`]);
+              errors.push([MessageName.CONSTRAINTS_MISSING_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} must have a field ${formatUtils.pretty(configuration, fieldPath, `cyan`)} set to ${formatUtils.pretty(configuration, String(expectedValue), `magenta`)}, but doesn't`]);
             }
           } else if (JSON.stringify(actualValue) !== expectedValue) {
             if (fix) {
               await setWorkspaceField(workspace, fieldPath, expectedValue);
               toSave.add(workspace);
             } else {
-              errors.push([MessageName.CONSTRAINTS_INCOMPATIBLE_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} must have a field ${configuration.format(fieldPath, `cyan`)} set to ${configuration.format(String(expectedValue), `magenta`)}, but is set to ${configuration.format(JSON.stringify(actualValue), `magenta`)} instead`]);
+              errors.push([MessageName.CONSTRAINTS_INCOMPATIBLE_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} must have a field ${formatUtils.pretty(configuration, fieldPath, `cyan`)} set to ${formatUtils.pretty(configuration, String(expectedValue), `magenta`)}, but is set to ${formatUtils.pretty(configuration, JSON.stringify(actualValue), `magenta`)} instead`]);
             }
           }
         } else {
@@ -207,7 +207,7 @@ async function processFieldConstraints(toSave: Set<Workspace>, errors: Array<[Me
               await setWorkspaceField(workspace, fieldPath, null);
               toSave.add(workspace);
             } else {
-              errors.push([MessageName.CONSTRAINTS_EXTRANEOUS_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} has an extraneous field ${configuration.format(fieldPath, `cyan`)} set to ${configuration.format(String(expectedValue), `magenta`)}`]);
+              errors.push([MessageName.CONSTRAINTS_EXTRANEOUS_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} has an extraneous field ${formatUtils.pretty(configuration, fieldPath, `cyan`)} set to ${formatUtils.pretty(configuration, String(expectedValue), `magenta`)}`]);
             }
           }
         }

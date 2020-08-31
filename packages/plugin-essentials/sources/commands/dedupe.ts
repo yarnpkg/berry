@@ -12,12 +12,12 @@
  * (which also provides a safe-guard in case virtual descriptors ever make their way into the dedupe algorithm).
  */
 
-import {BaseCommand}                                                                                                                    from '@yarnpkg/cli';
-import {Configuration, Project, ResolveOptions, ThrowReport, Cache, StreamReport, Resolver, miscUtils, Descriptor, Package, FormatType} from '@yarnpkg/core';
-import {structUtils, IdentHash, LocatorHash, MessageName, Report, Fetcher, FetchOptions}                                                from '@yarnpkg/core';
-import {Command}                                                                                                                        from 'clipanion';
-import micromatch                                                                                                                       from 'micromatch';
-import * as yup                                                                                                                         from 'yup';
+import {BaseCommand}                                                                                                        from '@yarnpkg/cli';
+import {Configuration, Project, ResolveOptions, ThrowReport, Cache, StreamReport, Resolver, miscUtils, Descriptor, Package} from '@yarnpkg/core';
+import {formatUtils, structUtils, IdentHash, LocatorHash, MessageName, Report, Fetcher, FetchOptions}                       from '@yarnpkg/core';
+import {Command}                                                                                                            from 'clipanion';
+import micromatch                                                                                                           from 'micromatch';
+import * as yup                                                                                                             from 'yup';
 
 export type DedupePromise = Promise<{
   descriptor: Descriptor,
@@ -302,7 +302,7 @@ export async function dedupe({strategy, project, patterns, cache, report}: Dedup
       }
     }
 
-    const prettyStrategy = configuration.format(strategy, FormatType.CODE);
+    const prettyStrategy = formatUtils.pretty(configuration, strategy, formatUtils.Type.CODE);
     report.reportInfo(MessageName.UNNAMED, `${packages} can be deduped using the ${prettyStrategy} strategy`);
 
     return dedupedPackageCount;

@@ -4,6 +4,7 @@ import {Writable}                   from 'stream';
 import {Configuration}              from './Configuration';
 import {MessageName}                from './MessageName';
 import {ProgressDefinition, Report} from './Report';
+import * as formatUtils             from './formatUtils';
 import {Locator}                    from './types';
 
 export type StreamReportOptions = {
@@ -81,7 +82,7 @@ export function formatName(name: MessageName | null, {configuration, json}: {con
   const label = `YN${num.toString(10).padStart(4, `0`)}`;
 
   if (!json && name === null) {
-    return configuration.format(label, `grey`);
+    return formatUtils.pretty(configuration, label, `grey`);
   } else {
     return label;
   }
@@ -228,7 +229,7 @@ export class StreamReport extends Report {
       this.indent -= 1;
 
       if (this.configuration.get(`enableTimers`) && after - before > 200) {
-        this.reportInfo(null, `└ Completed in ${this.formatTiming(after - before)}`);
+        this.reportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
       } else {
         this.reportInfo(null, `└ Completed`);
       }
@@ -257,7 +258,7 @@ export class StreamReport extends Report {
         this.stdout.write(GROUP.end(what));
 
       if (this.configuration.get(`enableTimers`) && after - before > 200) {
-        this.reportInfo(null, `└ Completed in ${this.formatTiming(after - before)}`);
+        this.reportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
       } else {
         this.reportInfo(null, `└ Completed`);
       }
@@ -293,7 +294,7 @@ export class StreamReport extends Report {
     if (!this.includeInfos)
       return;
 
-    const message = `${this.configuration.format(`➤`, `blueBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`;
+    const message = `${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`;
 
     if (!this.json) {
       if (this.forgettableNames.has(name)) {
@@ -321,7 +322,7 @@ export class StreamReport extends Report {
       return;
 
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `yellowBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
+      this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `yellowBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `warning`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -331,7 +332,7 @@ export class StreamReport extends Report {
     this.errorCount += 1;
 
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${this.configuration.format(`➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`, {truncate: false});
+      this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`, {truncate: false});
     } else {
       this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -395,7 +396,7 @@ export class StreamReport extends Report {
     else
       installStatus = `Done`;
 
-    const timing = this.formatTiming(Date.now() - this.startTime);
+    const timing = formatUtils.pretty(this.configuration, Date.now() - this.startTime, formatUtils.Type.DURATION);
     const message = this.configuration.get(`enableTimers`)
       ? `${installStatus} in ${timing}`
       : installStatus;
@@ -512,7 +513,7 @@ export class StreamReport extends Report {
       const ok = style.chars[0].repeat(okSize);
       const ko = style.chars[1].repeat(scaledSize - okSize);
 
-      this.stdout.write(`${this.configuration.format(`➤`, `blueBright`)} ${this.formatName(null)}: ${spinner} ${ok}${ko}\n`);
+      this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${this.formatName(null)}: ${spinner} ${ok}${ko}\n`);
     }
 
     this.progressTimeout = setTimeout(() => {
@@ -523,12 +524,6 @@ export class StreamReport extends Report {
   private refreshProgress(delta: number = 0) {
     this.clearProgress({delta});
     this.writeProgress();
-  }
-
-  private formatTiming(timing: number) {
-    return timing < 60 * 1000
-      ? `${Math.round(timing / 10) / 100}s`
-      : `${Math.round(timing / 600) / 100}m`;
   }
 
   private truncate(str: string, {truncate}: {truncate?: boolean} = {}) {

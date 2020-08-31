@@ -1,11 +1,11 @@
-import {BaseCommand}                                                                            from '@yarnpkg/cli';
-import {Configuration, MessageName, StreamReport, execUtils, CommandContext, Report, hashUtils} from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs}                                              from '@yarnpkg/fslib';
-import {Command, Usage}                                                                         from 'clipanion';
-import {tmpdir}                                                                                 from 'os';
-import path                                                                                     from 'path';
+import {BaseCommand}                                                                                         from '@yarnpkg/cli';
+import {Configuration, MessageName, StreamReport, execUtils, formatUtils, CommandContext, Report, hashUtils} from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, xfs}                                                           from '@yarnpkg/fslib';
+import {Command, Usage}                                                                                      from 'clipanion';
+import {tmpdir}                                                                                              from 'os';
+import path                                                                                                  from 'path';
 
-import {setVersion}                                                                             from '../version';
+import {setVersion}                                                                                          from '../version';
 
 const PR_REGEXP = /^[0-9]+$/;
 
@@ -114,7 +114,7 @@ export async function runWorkflow(workflow: Array<Array<string>>, {configuration
         strict: true,
       });
     } else {
-      context.stdout.write(`${configuration.format(`  $ ${[fileName, ...args].join(` `)}`, `grey`)}\n`);
+      context.stdout.write(`${formatUtils.pretty(configuration, `  $ ${[fileName, ...args].join(` `)}`, `grey`)}\n`);
 
       try {
         await execUtils.execvp(fileName, args, {

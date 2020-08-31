@@ -1,10 +1,14 @@
 import {PortablePath, npath} from '@yarnpkg/fslib';
 import {UsageError}          from 'clipanion';
 import micromatch            from 'micromatch';
+
 import {Readable, Transform} from 'stream';
 
 export function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
+}
+
+export function overrideType<T>(val: unknown): asserts val is T {
 }
 
 export function assertNever(arg: never): never {
@@ -286,7 +290,7 @@ export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: 
     const {variableName, colon, fallback} = args[args.length - 1];
 
     const variableExist = Object.prototype.hasOwnProperty.call(env, variableName);
-    const variableValue = process.env[variableName];
+    const variableValue = env[variableName];
 
     if (variableValue)
       return variableValue;
@@ -300,4 +304,3 @@ export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: 
     throw new UsageError(`Environment variable not found (${variableName})`);
   });
 }
-

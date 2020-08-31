@@ -12,7 +12,7 @@ import v8                                                         from 'v8';
 import zlib                                                       from 'zlib';
 
 import {Cache}                                                    from './Cache';
-import {Configuration, FormatType}                                from './Configuration';
+import {Configuration}                                            from './Configuration';
 import {Fetcher}                                                  from './Fetcher';
 import {Installer, BuildDirective, BuildType}                     from './Installer';
 import {LegacyMigrationResolver}                                  from './LegacyMigrationResolver';
@@ -27,6 +27,7 @@ import {RunInstallPleaseResolver}                                 from './RunIns
 import {ThrowReport}                                              from './ThrowReport';
 import {Workspace}                                                from './Workspace';
 import {isFolderInside}                                           from './folderUtils';
+import * as formatUtils                                           from './formatUtils';
 import * as hashUtils                                             from './hashUtils';
 import * as miscUtils                                             from './miscUtils';
 import * as scriptUtils                                           from './scriptUtils';
@@ -137,7 +138,7 @@ export class Project {
     if (locator)
       return {project, locator, workspace: null};
 
-    throw new UsageError(`The nearest package directory (${configuration.format(packageCwd, FormatType.PATH)}) doesn't seem to be part of the project declared in ${configuration.format(project.cwd, FormatType.PATH)}.\n\n- If the project directory is right, it might be that you forgot to list ${configuration.format(ppath.relative(project.cwd, packageCwd), FormatType.PATH)} as a workspace.\n- If it isn't, it's likely because you have a yarn.lock or package.json file there, confusing the project root detection.`);
+    throw new UsageError(`The nearest package directory (${formatUtils.pretty(configuration, packageCwd, formatUtils.Type.PATH)}) doesn't seem to be part of the project declared in ${formatUtils.pretty(configuration, project.cwd, formatUtils.Type.PATH)}.\n\n- If the project directory is right, it might be that you forgot to list ${formatUtils.pretty(configuration, ppath.relative(project.cwd, packageCwd), formatUtils.Type.PATH)} as a workspace.\n- If it isn't, it's likely because you have a yarn.lock or package.json file there, confusing the project root detection.`);
   }
 
   static generateBuildStateFile(buildState: Map<LocatorHash, string>, locatorStore: Map<LocatorHash, Locator>) {
@@ -1398,7 +1399,7 @@ export class Project {
 
                 xfs.detachTemp(logDir);
 
-                const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${this.configuration.format(String(exitCode), FormatType.NUMBER)}, logs can be found here: ${this.configuration.format(logFile, FormatType.PATH)})`;
+                const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${formatUtils.pretty(this.configuration, exitCode, formatUtils.Type.NUMBER)}, logs can be found here: ${formatUtils.pretty(this.configuration, logFile, formatUtils.Type.PATH)})`;
                 report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
 
                 if (this.optionalBuilds.has(pkg.locatorHash)) {
@@ -1509,11 +1510,11 @@ export class Project {
             opts.report.reportInfo(null, `@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`);
             for (const line of hunk.lines) {
               if (line.startsWith(`+`)) {
-                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, this.configuration.format(line, FormatType.ADDED));
+                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, formatUtils.pretty(this.configuration, line, formatUtils.Type.ADDED));
               } else if (line.startsWith(`-`)) {
-                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, this.configuration.format(line, FormatType.REMOVED));
+                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, formatUtils.pretty(this.configuration, line, formatUtils.Type.REMOVED));
               } else {
-                opts.report.reportInfo(null, this.configuration.format(line, `grey`));
+                opts.report.reportInfo(null, formatUtils.pretty(this.configuration, line, `grey`));
               }
             }
           }
@@ -1741,9 +1742,9 @@ export class Project {
         continue;
 
       if (cache.immutable) {
-        report.reportError(MessageName.IMMUTABLE_CACHE, `${this.configuration.format(ppath.basename(entryPath), `magenta`)} appears to be unused and would marked for deletion, but the cache is immutable`);
+        report.reportError(MessageName.IMMUTABLE_CACHE, `${formatUtils.pretty(this.configuration, ppath.basename(entryPath), `magenta`)} appears to be unused and would marked for deletion, but the cache is immutable`);
       } else {
-        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${this.configuration.format(ppath.basename(entryPath), `magenta`)} appears to be unused - removing`);
+        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${formatUtils.pretty(this.configuration, ppath.basename(entryPath), `magenta`)} appears to be unused - removing`);
         await xfs.removePromise(entryPath);
       }
     }

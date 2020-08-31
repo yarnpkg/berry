@@ -1,16 +1,15 @@
-import {StreamReport, MessageName, Configuration, structUtils, FormatType} from '@yarnpkg/core';
-import {npath}                                                             from '@yarnpkg/fslib';
-import chalk                                                               from 'chalk';
-import {Command, Usage, UsageError}                                        from 'clipanion';
-import filesize                                                            from 'filesize';
-import fs                                                                  from 'fs';
-import path                                                                from 'path';
-import TerserPlugin                                                        from 'terser-webpack-plugin';
-import {RawSource}                                                         from 'webpack-sources';
-import webpack                                                             from 'webpack';
+import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
+import {npath}                                                              from '@yarnpkg/fslib';
+import chalk                                                                from 'chalk';
+import {Command, Usage, UsageError}                                         from 'clipanion';
+import fs                                                                   from 'fs';
+import path                                                                 from 'path';
+import TerserPlugin                                                         from 'terser-webpack-plugin';
+import {RawSource}                                                          from 'webpack-sources';
+import webpack                                                              from 'webpack';
 
-import {isDynamicLib}                                                      from '../../tools/isDynamicLib';
-import {makeConfig, WebpackPlugin}                                         from '../../tools/makeConfig';
+import {isDynamicLib}                                                       from '../../tools/isDynamicLib';
+import {makeConfig, WebpackPlugin}                                          from '../../tools/makeConfig';
 
 // The name gets normalized so that everyone can override some plugins by
 // their own (@arcanis/yarn-plugin-foo would override @yarnpkg/plugin-foo
@@ -166,8 +165,8 @@ export default class BuildPluginCommand extends Command {
       report.reportError(MessageName.EXCEPTION, `${buildErrors}`);
     } else {
       report.reportInfo(null, `${chalk.green(`✓`)} Done building ${prettyName}!`);
-      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle path: ${configuration.format(output, FormatType.PATH)}`);
-      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle size: ${configuration.format(filesize(fs.statSync(output).size), FormatType.NUMBER)}`);
+      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);
+      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle size: ${formatUtils.pretty(configuration, fs.statSync(output).size, formatUtils.Type.SIZE)}`);
     }
 
     return report.exitCode();

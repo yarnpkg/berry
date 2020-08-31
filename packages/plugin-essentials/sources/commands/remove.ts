@@ -132,7 +132,7 @@ export default class RemoveCommand extends BaseCommand {
       : `this`;
 
     if (unreferencedPatterns.length > 0)
-      throw new UsageError(`${patterns} ${unreferencedPatterns.join(`, `)} ${dont} match packages referenced by ${which} workspace`);
+      throw new UsageError(`${patterns} ${unreferencedPatterns.join(`, `)} ${dont} match any package referenced by ${which} workspace`);
 
     if (hasChanged) {
       await configuration.triggerMultipleHooks(

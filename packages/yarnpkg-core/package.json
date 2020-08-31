@@ -6,6 +6,7 @@
   "sideEffects": false,
   "dependencies": {
     "@arcanis/slice-ansi": "^1.0.2",
+    "@types/treeify": "^1.0.0",
     "@yarnpkg/fslib": "workspace:^2.2.1",
     "@yarnpkg/json-proxy": "workspace:^2.1.0",
     "@yarnpkg/libzip": "workspace:^2.2.0",
@@ -31,6 +32,7 @@
     "semver": "^7.1.2",
     "stream-to-promise": "^2.2.0",
     "tar-stream": "^2.0.1",
+    "treeify": "^1.1.0",
     "tslib": "^1.13.0",
     "tunnel": "^0.0.6"
   },

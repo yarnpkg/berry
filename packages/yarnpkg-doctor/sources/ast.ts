@@ -1,5 +1,5 @@
-import {Configuration, FormatType} from '@yarnpkg/core';
-import * as ts                     from 'typescript';
+import {Configuration, formatUtils} from '@yarnpkg/core';
+import * as ts                      from 'typescript';
 
 export enum CallType {
   REQUIRE,
@@ -14,9 +14,9 @@ export function prettyNodeLocation(configuration: Configuration, node: ts.Node) 
   );
 
   return [
-    `${configuration.format(fileName, FormatType.PATH)}`,
-    `${configuration.format(`${line + 1}`, FormatType.NUMBER)}`,
-    `${configuration.format(`${character + 1}`, FormatType.NUMBER)}`,
+    `${formatUtils.pretty(configuration, fileName, formatUtils.Type.PATH)}`,
+    `${formatUtils.pretty(configuration, line + 1, formatUtils.Type.NUMBER)}`,
+    `${formatUtils.pretty(configuration, character + 1, formatUtils.Type.NUMBER)}`,
   ].join(`:`);
 }
 

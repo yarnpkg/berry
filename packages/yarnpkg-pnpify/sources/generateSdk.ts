@@ -1,17 +1,17 @@
-import {Report, MessageName, miscUtils, Configuration, FormatType} from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs}                 from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                  from '@yarnpkg/parsers';
-import {PnpApi}                                                    from '@yarnpkg/pnp';
-import chalk                                                       from 'chalk';
-import {UsageError}                                                from 'clipanion';
-import capitalize                                                  from 'lodash/capitalize';
-import startCase                                                   from 'lodash/startCase';
+import {Report, MessageName, miscUtils, Configuration, formatUtils} from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, xfs}                  from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                   from '@yarnpkg/parsers';
+import {PnpApi}                                                     from '@yarnpkg/pnp';
+import chalk                                                        from 'chalk';
+import {UsageError}                                                 from 'clipanion';
+import capitalize                                                   from 'lodash/capitalize';
+import startCase                                                    from 'lodash/startCase';
 
-import {dynamicRequire}                                            from './dynamicRequire';
+import {dynamicRequire}                                             from './dynamicRequire';
 
-import {BASE_SDKS}                                                 from './sdks/base';
-import {COC_VIM_SDKS}                                              from './sdks/cocvim';
-import {VSCODE_SDKS}                                               from './sdks/vscode';
+import {BASE_SDKS}                                                  from './sdks/base';
+import {COC_VIM_SDKS}                                               from './sdks/cocvim';
+import {VSCODE_SDKS}                                                from './sdks/vscode';
 
 export const OLD_SDK_FOLDER = `.vscode/pnpify` as PortablePath;
 export const SDK_FOLDER = `.yarn/sdks` as PortablePath;
@@ -275,7 +275,7 @@ export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexi
   // TODO: remove in next major
   const oldTargetFolder = ppath.join(projectRoot, OLD_SDK_FOLDER);
   if (xfs.existsSync(oldTargetFolder) && !xfs.lstatSync(oldTargetFolder).isSymbolicLink()) {
-    report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files in the old ${configuration.format(OLD_SDK_FOLDER, FormatType.PATH)} folder. You might need to manually update existing references outside the ${configuration.format(`.vscode`, FormatType.PATH)} folder (e.g. .gitignore)...`);
+    report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files in the old ${formatUtils.pretty(configuration, OLD_SDK_FOLDER, formatUtils.Type.PATH)} folder. You might need to manually update existing references outside the ${formatUtils.pretty(configuration, `.vscode`, formatUtils.Type.PATH)} folder (e.g. .gitignore)...`);
     await xfs.removePromise(oldTargetFolder);
   }
 
@@ -295,7 +295,7 @@ export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexi
     return sdk;
   });
 
-  await report.startTimerPromise(`Generating SDKs inside ${configuration.format(SDK_FOLDER, FormatType.PATH)}`, async () => {
+  await report.startTimerPromise(`Generating SDKs inside ${formatUtils.pretty(configuration, SDK_FOLDER, formatUtils.Type.PATH)}`, async () => {
     const skipped = [];
 
     for (const sdks of integrationSdks) {

@@ -5374,6 +5374,7 @@ __metadata:
     "@types/node": ^13.7.0
     "@types/semver": ^7.1.0
     "@types/tar-stream": 1.6.0
+    "@types/treeify": ^1.0.0
     "@types/tunnel": ^0.0.0
     "@yarnpkg/cli": "workspace:^2.2.2"
     "@yarnpkg/fslib": "workspace:^2.2.1"
@@ -5404,6 +5405,7 @@ __metadata:
     semver: ^7.1.2
     stream-to-promise: ^2.2.0
     tar-stream: ^2.0.1
+    treeify: ^1.1.0
     tslib: ^1.13.0
     tunnel: ^0.0.6
   languageName: unknown
@@ -5729,7 +5731,6 @@ __metadata:
     lodash: ^4.17.15
     micromatch: ^4.0.2
     semver: ^7.1.2
-    treeify: ^1.1.0
     tslib: ^1.13.0
     yup: ^0.27.0
   peerDependencies:

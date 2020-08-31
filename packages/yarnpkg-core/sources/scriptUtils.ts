@@ -7,7 +7,7 @@ import pLimit                                                 from 'p-limit';
 
 import {PassThrough, Readable, Writable}                      from 'stream';
 
-import {Configuration, FormatType}                            from './Configuration';
+import {Configuration}                                        from './Configuration';
 import {Manifest}                                             from './Manifest';
 import {MessageName}                                          from './MessageName';
 import {Project}                                              from './Project';
@@ -16,6 +16,7 @@ import {StreamReport}                                         from './StreamRepo
 import {Workspace}                                            from './Workspace';
 import {YarnVersion}                                          from './YarnVersion';
 import * as execUtils                                         from './execUtils';
+import * as formatUtils                                       from './formatUtils';
 import * as miscUtils                                         from './miscUtils';
 import * as structUtils                                       from './structUtils';
 import {LocatorHash, Locator}                                 from './types';
@@ -392,7 +393,7 @@ export async function executeWorkspaceLifecycleScript(workspace: Workspace, life
     if (exitCode !== 0) {
       xfs.detachTemp(logDir);
 
-      throw new ReportError(MessageName.LIFECYCLE_SCRIPT, `${capitalize(lifecycleScriptName)} script failed (exit code ${configuration.format(String(exitCode), FormatType.NUMBER)}, logs can be found here: ${configuration.format(logFile, FormatType.PATH)}); run ${configuration.format(`yarn ${lifecycleScriptName}`, FormatType.CODE)} to investigate`);
+      throw new ReportError(MessageName.LIFECYCLE_SCRIPT, `${capitalize(lifecycleScriptName)} script failed (exit code ${formatUtils.pretty(configuration, exitCode, formatUtils.Type.NUMBER)}, logs can be found here: ${formatUtils.pretty(configuration, logFile, formatUtils.Type.PATH)}); run ${formatUtils.pretty(configuration, `yarn ${lifecycleScriptName}`, formatUtils.Type.CODE)} to investigate`);
     }
   });
 }

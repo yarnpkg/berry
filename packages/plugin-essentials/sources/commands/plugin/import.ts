@@ -1,6 +1,6 @@
 import {BaseCommand}                                                                       from '@yarnpkg/cli';
 import {Configuration, MessageName, Project, ReportError, StreamReport, miscUtils, Report} from '@yarnpkg/core';
-import {httpUtils, structUtils}                                                            from '@yarnpkg/core';
+import {formatUtils, httpUtils, structUtils}                                               from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs}                                                   from '@yarnpkg/fslib';
 import {Command, Usage}                                                                    from 'clipanion';
 import {URL}                                                                               from 'url';
@@ -57,7 +57,7 @@ export default class PluginDlCommand extends BaseCommand {
       if (this.name.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.name)) {
         const candidatePath = ppath.resolve(this.context.cwd, npath.toPortablePath(this.name));
 
-        report.reportInfo(MessageName.UNNAMED, `Reading ${configuration.format(candidatePath, `green`)}`);
+        report.reportInfo(MessageName.UNNAMED, `Reading ${formatUtils.pretty(configuration, candidatePath, `green`)}`);
 
         pluginSpec = ppath.relative(project.cwd, candidatePath);
         pluginBuffer = await xfs.readFilePromise(candidatePath);
@@ -84,7 +84,7 @@ export default class PluginDlCommand extends BaseCommand {
           pluginUrl = data[identStr].url;
         }
 
-        report.reportInfo(MessageName.UNNAMED, `Downloading ${configuration.format(pluginUrl, `green`)}`);
+        report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, pluginUrl, `green`)}`);
         pluginBuffer = await httpUtils.get(pluginUrl, {configuration});
       }
 
@@ -111,7 +111,7 @@ export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {proj
   const relativePath = `.yarn/plugins/${pluginName}.cjs` as PortablePath;
   const absolutePath = ppath.resolve(project.cwd, relativePath);
 
-  report.reportInfo(MessageName.UNNAMED, `Saving the new plugin in ${configuration.format(relativePath, `magenta`)}`);
+  report.reportInfo(MessageName.UNNAMED, `Saving the new plugin in ${formatUtils.pretty(configuration, relativePath, `magenta`)}`);
   await xfs.mkdirPromise(ppath.dirname(absolutePath), {recursive: true});
   await xfs.writeFilePromise(absolutePath, pluginBuffer);
 
