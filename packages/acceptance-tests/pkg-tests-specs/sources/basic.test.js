@@ -4,6 +4,20 @@ const {
 
 describe(`Basic tests`, () => {
   test(
+    `it should correctly handle browser fields in package.json`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`no-deps-browser-field`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+        await expect(source(`require('no-deps-browser-field')`)).resolves.toMatchObject({
+          './index.js': `./index.js`,
+        });
+      },
+    ),
+  );
+  test(
     `it should correctly install a single dependency that contains no sub-dependencies`,
     makeTemporaryEnv(
       {

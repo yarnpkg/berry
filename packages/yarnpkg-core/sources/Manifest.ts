@@ -207,7 +207,7 @@ export class Manifest {
     if (typeof data.module === `string`)
       this.module = data.module;
 
-    if (typeof data.browser === `string`)
+    if (data.browser != null)
       this.browser = data.browser;
 
     if (typeof data.bin === `string`) {
