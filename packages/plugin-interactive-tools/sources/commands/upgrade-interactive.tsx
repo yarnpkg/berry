@@ -1,15 +1,15 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                               from '@yarnpkg/cli';
-import {Cache, Configuration, Project, HardDependencies, miscUtils, structUtils, Descriptor, DescriptorHash, StreamReport} from '@yarnpkg/core';
-import {ItemOptions}                                                                                                       from '@yarnpkg/libui/sources/components/ItemOptions';
-import {ScrollableItems}                                                                                                   from '@yarnpkg/libui/sources/components/ScrollableItems';
-import {useMinistore}                                                                                                      from '@yarnpkg/libui/sources/hooks/useMinistore';
-import {renderForm, SubmitInjectedComponent}                                                                               from '@yarnpkg/libui/sources/misc/renderForm';
-import {suggestUtils}                                                                                                      from '@yarnpkg/plugin-essentials';
-import {Command, Usage}                                                                                                    from 'clipanion';
-import {diffWords}                                                                                                         from 'diff';
-import {Box, Color, Text}                                                                                                  from 'ink';
-import React, {useEffect, useState, useRef}                                                                                from 'react';
-import semver                                                                                                              from 'semver';
+import {BaseCommand, WorkspaceRequiredError}                                                                                            from '@yarnpkg/cli';
+import {Cache, Configuration, Project, HardDependencies, formatUtils, miscUtils, structUtils, Descriptor, DescriptorHash, StreamReport} from '@yarnpkg/core';
+import {ItemOptions}                                                                                                                    from '@yarnpkg/libui/sources/components/ItemOptions';
+import {ScrollableItems}                                                                                                                from '@yarnpkg/libui/sources/components/ScrollableItems';
+import {useMinistore}                                                                                                                   from '@yarnpkg/libui/sources/hooks/useMinistore';
+import {renderForm, SubmitInjectedComponent}                                                                                            from '@yarnpkg/libui/sources/misc/renderForm';
+import {suggestUtils}                                                                                                                   from '@yarnpkg/plugin-essentials';
+import {Command, Usage}                                                                                                                 from 'clipanion';
+import {diffWords}                                                                                                                      from 'diff';
+import {Box, Color, Text}                                                                                                               from 'ink';
+import React, {useEffect, useState, useRef}                                                                                             from 'react';
+import semver                                                                                                                           from 'semver';
 
 const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
 
@@ -42,7 +42,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
 
       for (const part of diff) {
         if (part.added) {
-          str += configuration.format(part.value, `green`);
+          str += formatUtils.pretty(configuration, part.value, `green`);
         } else if (!part.removed) {
           str += part.value;
         }
@@ -80,7 +80,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           if (color === null)
             color = SEMVER_COLORS[t - 1];
 
-          res += configuration.format(matchedTo[t], color);
+          res += formatUtils.pretty(configuration, matchedTo[t], color);
         } else {
           res += matchedTo[t];
         }

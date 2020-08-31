@@ -4,6 +4,7 @@ import {Configuration}           from './Configuration';
 import {MessageName}             from './MessageName';
 import {Report}                  from './Report';
 import {formatNameWithHyperlink} from './StreamReport';
+import * as formatUtils          from './formatUtils';
 import {Locator}                 from './types';
 
 export type LightReportOptions = {
@@ -78,7 +79,7 @@ export class LightReport extends Report {
 
   reportError(name: MessageName, text: string) {
     this.errorCount += 1;
-    this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${text}\n`);
+    this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${text}\n`);
   }
 
   reportProgress(progress: AsyncIterable<{progress: number, title?: string}>) {
@@ -102,10 +103,10 @@ export class LightReport extends Report {
 
   async finalize() {
     if (this.errorCount > 0) {
-      this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} Errors happened when preparing the environment required to run this command.\n`);
+      this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} Errors happened when preparing the environment required to run this command.\n`);
 
       if (this.suggestInstall) {
-        this.stdout.write(`${this.configuration.format(`➤`, `redBright`)} This might be caused by packages being missing from the lockfile, in which case running "yarn install" might help.\n`);
+        this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} This might be caused by packages being missing from the lockfile, in which case running "yarn install" might help.\n`);
       }
     }
   }

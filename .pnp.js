@@ -8688,6 +8688,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/node", "npm:13.7.0"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/tar-stream", "npm:1.6.0"],
+            ["@types/treeify", "npm:1.0.0"],
             ["@types/tunnel", "npm:0.0.0"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -8718,6 +8719,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.3.2"],
             ["stream-to-promise", "npm:2.2.0"],
             ["tar-stream", "npm:2.0.1"],
+            ["treeify", "npm:1.1.0"],
             ["tslib", "npm:1.13.0"],
             ["tunnel", "npm:0.0.6"]
           ],
@@ -9167,7 +9169,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.3.2"],
-            ["treeify", "npm:1.1.0"],
             ["tslib", "npm:1.13.0"],
             ["yup", "npm:0.27.0"]
           ],
@@ -9202,7 +9203,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.3.2"],
-            ["treeify", "npm:1.1.0"],
             ["tslib", "npm:1.13.0"],
             ["yup", "npm:0.27.0"]
           ],
@@ -9235,7 +9235,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash", "npm:4.17.15"],
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.3.2"],
-            ["treeify", "npm:1.1.0"],
             ["tslib", "npm:1.13.0"],
             ["yup", "npm:0.27.0"]
           ],
@@ -12963,7 +12962,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["anymatch", "npm:2.0.0"],
             ["async-each", "npm:1.0.1"],
             ["braces", "npm:2.3.2"],
-            ["fsevents", "patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=9a3812"],
+            ["fsevents", "patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=87eb42"],
             ["glob-parent", "npm:3.1.0"],
             ["inherits", "npm:2.0.3"],
             ["is-binary-path", "npm:1.0.1"],
@@ -12981,7 +12980,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["chokidar", "npm:3.4.0"],
             ["anymatch", "npm:3.1.1"],
             ["braces", "npm:3.0.2"],
-            ["fsevents", "patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=9a3812"],
+            ["fsevents", "patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=87eb42"],
             ["glob-parent", "npm:5.1.0"],
             ["is-binary-path", "npm:2.1.0"],
             ["is-glob", "npm:4.0.1"],
@@ -17637,19 +17636,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["fsevents", [
-        ["patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=9a3812", {
-          "packageLocation": "./.yarn/unplugged/fsevents-patch-9eca6216ec/node_modules/fsevents/",
+        ["patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=87eb42", {
+          "packageLocation": "./.yarn/unplugged/fsevents-patch-89f12f5290/node_modules/fsevents/",
           "packageDependencies": [
-            ["fsevents", "patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=9a3812"],
+            ["fsevents", "patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=87eb42"],
             ["nan", "npm:2.14.0"],
             ["node-pre-gyp", "npm:0.10.3"]
           ],
           "linkType": "HARD",
         }],
-        ["patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=9a3812", {
-          "packageLocation": "./.yarn/unplugged/fsevents-patch-43d7acab0c/node_modules/fsevents/",
+        ["patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=87eb42", {
+          "packageLocation": "./.yarn/unplugged/fsevents-patch-fd7e8c5233/node_modules/fsevents/",
           "packageDependencies": [
-            ["fsevents", "patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=9a3812"],
+            ["fsevents", "patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=87eb42"],
             ["node-gyp", "npm:6.0.1"]
           ],
           "linkType": "HARD",
@@ -22537,7 +22536,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/graceful-fs", "npm:4.1.3"],
             ["anymatch", "npm:3.1.1"],
             ["fb-watchman", "npm:2.0.0"],
-            ["fsevents", "patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=9a3812"],
+            ["fsevents", "patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=87eb42"],
             ["graceful-fs", "npm:4.2.4"],
             ["jest-serializer", "npm:26.0.0"],
             ["jest-util", "npm:26.0.1"],
@@ -37477,6 +37476,7 @@ class CustomStatWatcher extends external_events_.EventEmitter {
     super();
     this.status = Status.Ready;
     this.changeListeners = new Map();
+    this.startTimeout = null;
     this.fakeFs = fakeFs;
     this.path = path;
     this.bigint = bigint;
@@ -37494,11 +37494,12 @@ class CustomStatWatcher extends external_events_.EventEmitter {
     this.status = Status.Running; // Node allows other listeners to be registered up to 3 milliseconds
     // after the watcher has been started, so that's what we're doing too
 
-    setTimeout(() => {
-      // Per the Node FS docs:
+    this.startTimeout = setTimeout(() => {
+      this.startTimeout = null; // Per the Node FS docs:
       // "When an fs.watchFile operation results in an ENOENT error,
       // it will invoke the listener once, with all the fields zeroed
       // (or, for dates, the Unix Epoch)."
+
       if (!this.fakeFs.existsSync(this.path)) {
         this.emit(Event.Change, this.lastStats, this.lastStats);
       }
@@ -37508,6 +37509,12 @@ class CustomStatWatcher extends external_events_.EventEmitter {
   stop() {
     assertStatus(this.status, Status.Running);
     this.status = Status.Stopped;
+
+    if (this.startTimeout !== null) {
+      clearTimeout(this.startTimeout);
+      this.startTimeout = null;
+    }
+
     this.emit(Event.Stop);
   }
 
@@ -38834,6 +38841,7 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
 
 
 
+
 const ZIP_FD = 0x80000000;
 const FILE_PARTS_REGEX = /.*?(?<!\/)\.zip(?=\/|$)/;
 class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
@@ -38881,6 +38889,8 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   saveAndClose() {
+    unwatchAllFiles(this);
+
     if (this.zipInstances) {
       for (const [path, {
         zipFs
@@ -38892,6 +38902,8 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
   }
 
   discardAndClose() {
+    unwatchAllFiles(this);
+
     if (this.zipInstances) {
       for (const [path, {
         zipFs
@@ -39634,21 +39646,16 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
     return this.makeCallSync(p, () => {
       return this.baseFs.watchFile(p, // @ts-expect-error
       a, b);
-    }, (zipFs, {
-      subPath
-    }) => {
-      return zipFs.watchFile(subPath, // @ts-expect-error
-      a, b);
+    }, () => {
+      return watchFile(this, p, a, b);
     });
   }
 
   unwatchFile(p, cb) {
     return this.makeCallSync(p, () => {
       return this.baseFs.unwatchFile(p, cb);
-    }, (zipFs, {
-      subPath
-    }) => {
-      return zipFs.unwatchFile(subPath, cb);
+    }, () => {
+      return unwatchFile(this, p, cb);
     });
   }
 

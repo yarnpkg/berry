@@ -1,6 +1,6 @@
 import {BaseCommand}                                      from '@yarnpkg/cli';
 import {Configuration, StreamReport, MessageName, Report} from '@yarnpkg/core';
-import {execUtils, httpUtils, semverUtils}                from '@yarnpkg/core';
+import {execUtils, formatUtils, httpUtils, semverUtils}   from '@yarnpkg/core';
 import {Filename, PortablePath, ppath, xfs, npath}        from '@yarnpkg/fslib';
 import {Command, Usage, UsageError}                       from 'clipanion';
 import semver                                             from 'semver';
@@ -61,7 +61,7 @@ export default class SetVersionCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async (report: StreamReport) => {
-      report.reportInfo(MessageName.UNNAMED, `Downloading ${configuration.format(bundleUrl, `green`)}`);
+      report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleUrl, `green`)}`);
       const bundleBuffer = await httpUtils.get(bundleUrl, {configuration});
       await setVersion(configuration, null, bundleBuffer, {report});
     });
@@ -105,7 +105,7 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   const yarnPath = configuration.get(`yarnPath`);
   const updateConfig = yarnPath === null || yarnPath.startsWith(`${releaseFolder}/`);
 
-  report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${configuration.format(displayPath, `magenta`)}`);
+  report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${formatUtils.pretty(configuration, displayPath, `magenta`)}`);
 
   await xfs.removePromise(ppath.dirname(absolutePath));
   await xfs.mkdirPromise(ppath.dirname(absolutePath), {recursive: true});

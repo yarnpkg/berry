@@ -1,5 +1,6 @@
 import * as execUtils   from './execUtils';
 import * as folderUtils from './folderUtils';
+import * as formatUtils from './formatUtils';
 import * as hashUtils   from './hashUtils';
 import * as httpUtils   from './httpUtils';
 import * as miscUtils   from './miscUtils';
@@ -7,6 +8,7 @@ import * as scriptUtils from './scriptUtils';
 import * as semverUtils from './semverUtils';
 import * as structUtils from './structUtils';
 import * as tgzUtils    from './tgzUtils';
+import * as treeUtils   from './treeUtils';
 
 export {Cache}                                                                      from './Cache';
 export {DEFAULT_RC_FILENAME, DEFAULT_LOCK_FILENAME}                                 from './Configuration';
@@ -39,8 +41,10 @@ export {hashUtils};
 export {httpUtils};
 export {execUtils};
 export {folderUtils};
+export {formatUtils};
 export {miscUtils};
 export {scriptUtils};
 export {semverUtils};
 export {structUtils};
 export {tgzUtils};
+export {treeUtils};

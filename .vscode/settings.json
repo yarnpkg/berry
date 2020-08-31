@@ -13,6 +13,10 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
+  "pasteImage.path": "${projectRoot}/packages/gatsby/static",
+  "pasteImage.basePath": "${projectRoot}/packages/gatsby/static",
+  "pasteImage.forceUnixStyleSeparator": true,
+  "pasteImage.prefix": "/",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "search.exclude": {
     "**/.yarn": true,

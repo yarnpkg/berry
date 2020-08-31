@@ -5,7 +5,7 @@ const number64 = [
 
 export type Libzip = ReturnType<typeof makeInterface>;
 
-enum Errors {
+export enum Errors {
   ZIP_ER_OK = 0,
   ZIP_ER_MULTIDISK = 1,
   ZIP_ER_RENAME = 2,

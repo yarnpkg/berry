@@ -117,10 +117,13 @@ export class TelemetryManager {
     if (nextUpdate > now && content.lastUpdate != null)
       return;
 
-    xfs.mkdirSync(ppath.dirname(registryFile), {recursive: true});
-    xfs.writeJsonSync(registryFile, {
-      lastUpdate: now,
-    });
+    try {
+      xfs.mkdirSync(ppath.dirname(registryFile), {recursive: true});
+      xfs.writeJsonSync(registryFile, {lastUpdate: now});
+    } catch {
+      // In some cases this location is read-only. Too bad 🤷‍♀️
+      return;
+    }
 
     if (nextUpdate > now)
       return;

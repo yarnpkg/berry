@@ -1,7 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError}               from '@yarnpkg/cli';
 import {Configuration, LocatorHash, Project, Workspace}    from '@yarnpkg/core';
 import {DescriptorHash, MessageName, Report, StreamReport} from '@yarnpkg/core';
-import {miscUtils, structUtils}                            from '@yarnpkg/core';
+import {formatUtils, miscUtils, structUtils}               from '@yarnpkg/core';
 import {Command, Usage, UsageError}                        from 'clipanion';
 import micromatch                                          from 'micromatch';
 import {cpus}                                              from 'os';
@@ -354,5 +354,5 @@ function getPrefix(workspace: Workspace, {configuration, commandIndex, verbose}:
   const colors = [`#2E86AB`, `#A23B72`, `#F18F01`, `#C73E1D`, `#CCE2A3`];
   const colorName = colors[commandIndex % colors.length];
 
-  return configuration.format(prefix, colorName);
+  return formatUtils.pretty(configuration, prefix, colorName);
 }

@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                                                           from '@yarnpkg/cli';
-import {Cache, Configuration, MessageName, Project, StreamReport, Workspace, structUtils, ThrowReport} from '@yarnpkg/core';
-import {Filename, npath, ppath, xfs}                                                                   from '@yarnpkg/fslib';
-import {Command, Usage}                                                                                from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                        from '@yarnpkg/cli';
+import {Cache, Configuration, MessageName, Project, StreamReport, Workspace, formatUtils, structUtils, ThrowReport} from '@yarnpkg/core';
+import {Filename, npath, ppath, xfs}                                                                                from '@yarnpkg/fslib';
+import {Command, Usage}                                                                                             from 'clipanion';
 
-import * as packUtils                                                                                  from '../packUtils';
+import * as packUtils                                                                                               from '../packUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PackCommand extends BaseCommand {
@@ -96,7 +96,7 @@ export default class PackCommand extends BaseCommand {
       });
 
       if (!this.dryRun) {
-        report.reportInfo(MessageName.UNNAMED, `Package archive generated in ${configuration.format(target, `magenta`)}`);
+        report.reportInfo(MessageName.UNNAMED, `Package archive generated in ${formatUtils.pretty(configuration, target, `magenta`)}`);
         report.reportJson({output: target});
       }
     });
