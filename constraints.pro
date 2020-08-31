@@ -2,7 +2,7 @@ constraints_min_version(1).
 
 % This file is written in Prolog
 % It contains rules that the project must respect.
-% In order to see them in action, run `yarn constraints detail`
+% In order to see them in action, run `yarn constraints source`	
 
 % This rule will enforce that a workspace MUST depend on the same version of a dependency as the one used by the other workspaces
 gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange2, DependencyType) :-
