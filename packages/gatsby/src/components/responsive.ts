@@ -5,9 +5,6 @@ export const ifTallViewport = () => `@media (min-height: 600px)`;
 export type MediaFn = () => string;
 
 export function matchMedia(mediaFn: MediaFn) {
-  if (typeof window === `undefined`)
-    return null;
-
   const query = /@media (.+)/.exec(mediaFn())?.[1];
   if (!query)
     throw new Error(`Assertion failed: Expected a valid media query.`);
@@ -16,5 +13,5 @@ export function matchMedia(mediaFn: MediaFn) {
 }
 
 export function matchesMedia(mediaFn: MediaFn) {
-  return matchMedia(mediaFn)?.matches ?? false;
+  return matchMedia(mediaFn).matches;
 }
