@@ -61,19 +61,15 @@ const PackagePage = ({searchState, onSearchStateChange}) => {
 
   return (<>
     <SearchProvider searchState={searchState} onSearchStateChange={onSearchStateChange}>
-      <Layout header=
-        {
-          <Header>
-            <SearchBar
-              searchState={searchState}
-              tags={tags}
-              setTags={setTags}
-              owners={owners}
-              setOwners={setOwners}
-            />
-          </Header>
-        }
-      >
+      <Layout header={<Header />}>
+        <SearchBar
+          searchState={searchState}
+          tags={tags}
+          setTags={setTags}
+          owners={owners}
+          setOwners={setOwners}
+        />
+
         <SEO title={packageName} keywords={defaultKeywords} />
 
         <SearchResults
