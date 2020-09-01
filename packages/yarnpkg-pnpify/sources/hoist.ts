@@ -8,12 +8,13 @@
  * 2. You want to hoist every node possible to the top root node first,
  * then to each of its children etc, so you need to keep track what is your current
  * root node into which you are hoisting
- * 3. Traverse the tree from the current root node and for each package name
+ * 3. Traverse the dependency graph from the current root node and for each package name
  * that can be potentially hoisted to the current root node build a list of idents
  * in descending popularity. You will check in next steps whether most popular ident
  * for the given package name can be hoisted first, and if not, then you check the
  * lest popular ident, etc, until either some ident will be hoisted
- * or you run out of idents to check.
+ * or you run out of idents to check
+ * (no need to convert the graph to the tree when you build this popularity map).
  * 4. The children of the root node are already "hoisted", so you need to start
  * from the dependencies of these children. You take some child and
  * sort its dependencies so that regular dependencies without peer dependencies
