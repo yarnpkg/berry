@@ -1,3 +1,41 @@
+/**
+ * High-level node_modules hoisting algorithm recipe
+ *
+ * 1. Take input dependency graph and start traversing it,
+ * as you visit new node in the graph - clone it if there can be multiple paths
+ * to access the node from the graph root to the node, e.g. essentially represent
+ * the graph with a tree as you go, to make hoisting possible.
+ * 2. You want to hoist every node possible to the top root node first,
+ * then to each of its children etc, so you need to keep track what is your current
+ * root node into which you are hoisting
+ * 3. The children of the root node are already "hoisted", so you need to start
+ * from the dependencies of these children. You take some child and
+ * sort its dependencies so that regular dependencies without peer dependencies
+ * will come first and then those dependencies that peer depend on them.
+ * This is needed to make algorithm more efficient and hoist nodes which are easier
+ * to hoist first and then handle peer dependent nodes.
+ * 4. You take this sorted list of dependencies and check if each of them can be
+ * hoisted to the current root node. To answer is the node can be hoisted you check
+ * your constraints - require promise and peer dependency promise.
+ * The possible answers can be: YES - the node is hoistable to the current root,
+ * NO - the node is not hoistable to the current root
+ * and DEPENDS - the node is hoistable to the root if nodes X, Y, Z are hoistable
+ * to the root. The case DEPENDS happens when all the require and other
+ * constraints are met, except peer dependency constraints.
+ * 5. When you have hoistable answer for each dependency of a node you then build
+ * a list of nodes that are NOT hoistable. These are the nodes that have answer NO
+ * and the nodes that DEPENDS on these nodes. All the other nodes are hoistable,
+ * those that have answer YES and those that have answer DEPENDS,
+ * because they are cyclically dependent on each another
+ * 6. You hoist all the hoistable nodes to the current root and continue traversing
+ * the tree. Note, you need to track newly added nodes to the current root,
+ * because after you finished tree traversal you want to come back to these new nodes
+ * first thing and hoist everything from each of them to the current tree root.
+ * 7. After you have finished traversing newly hoisted current root nodes
+ * it means you cannot hoist anything to the current tree root and you need to pick
+ * the next node as current tree root and run the algorithm again
+ * until you run out of candidates for current tree root.
+ */
 type PackageName = string;
 export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>};
 export type HoisterResult = {name: PackageName, identName: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
