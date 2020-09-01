@@ -14,9 +14,11 @@ export const LayoutSearchBar = ({children, searchState, tags, setTags, owners, s
     setOwners={setOwners}
   />;
 
+  const isTallViewport = matchesMedia(ifTallViewport);
+
   return <>
-    <Layout header={<Header>{matchesMedia(ifTallViewport) ? searchBar : null}</Header>}>
-      {matchesMedia(ifTallViewport) ? null : searchBar}
+    <Layout header={<Header>{isTallViewport ? searchBar : null}</Header>}>
+      {isTallViewport ? null : searchBar}
       {children}
     </Layout>
   </>;
