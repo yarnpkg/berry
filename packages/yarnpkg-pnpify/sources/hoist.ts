@@ -8,30 +8,38 @@
  * 2. You want to hoist every node possible to the top root node first,
  * then to each of its children etc, so you need to keep track what is your current
  * root node into which you are hoisting
- * 3. The children of the root node are already "hoisted", so you need to start
+ * 3. Traverse the tree from the current root node and for each package name
+ * that can be potentially hoisted to the current root node build a list of idents
+ * in descending popularity. You will check in next steps whether most popular ident
+ * for the given package name can be hoisted first, and if not, then you check the
+ * lest popular ident, etc, until either some ident will be hoisted
+ * or you run out of idents to check.
+ * 4. The children of the root node are already "hoisted", so you need to start
  * from the dependencies of these children. You take some child and
  * sort its dependencies so that regular dependencies without peer dependencies
  * will come first and then those dependencies that peer depend on them.
  * This is needed to make algorithm more efficient and hoist nodes which are easier
  * to hoist first and then handle peer dependent nodes.
- * 4. You take this sorted list of dependencies and check if each of them can be
+ * 5. You take this sorted list of dependencies and check if each of them can be
  * hoisted to the current root node. To answer is the node can be hoisted you check
  * your constraints - require promise and peer dependency promise.
  * The possible answers can be: YES - the node is hoistable to the current root,
  * NO - the node is not hoistable to the current root
  * and DEPENDS - the node is hoistable to the root if nodes X, Y, Z are hoistable
  * to the root. The case DEPENDS happens when all the require and other
- * constraints are met, except peer dependency constraints.
- * 5. When you have hoistable answer for each dependency of a node you then build
+ * constraints are met, except peer dependency constraints. Note, that the nodes
+ * that are not package idents currently at the top of popularity list are considered
+ * to have the answer NO right away, before doing any other constraint checks.
+ * 6. When you have hoistable answer for each dependency of a node you then build
  * a list of nodes that are NOT hoistable. These are the nodes that have answer NO
  * and the nodes that DEPENDS on these nodes. All the other nodes are hoistable,
  * those that have answer YES and those that have answer DEPENDS,
  * because they are cyclically dependent on each another
- * 6. You hoist all the hoistable nodes to the current root and continue traversing
+ * 7. You hoist all the hoistable nodes to the current root and continue traversing
  * the tree. Note, you need to track newly added nodes to the current root,
  * because after you finished tree traversal you want to come back to these new nodes
  * first thing and hoist everything from each of them to the current tree root.
- * 7. After you have finished traversing newly hoisted current root nodes
+ * 8. After you have finished traversing newly hoisted current root nodes
  * it means you cannot hoist anything to the current tree root and you need to pick
  * the next node as current tree root and run the algorithm again
  * until you run out of candidates for current tree root.
