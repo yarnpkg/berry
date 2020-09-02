@@ -425,9 +425,18 @@ describe(`Shell`, () => {
       });
     });
 
-    it(`should support default arguments via \${...:-...}`, async () => {
+    it(`should support default arguments via \${ARG:-...}`, async () => {
       await expect(bufferResult(
         `echo "\${DOESNT_EXIST:-hello world}"`,
+      )).resolves.toMatchObject({
+        stdout: `hello world\n`,
+      });
+    });
+
+    it(`should support default arguments via \${N:-...}`, async () => {
+      await expect(bufferResult(
+        `echo "\${1:-hello world}"`,
+        [],
       )).resolves.toMatchObject({
         stdout: `hello world\n`,
       });
