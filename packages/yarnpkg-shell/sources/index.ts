@@ -360,6 +360,8 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
   };
 
   for (const commandArg of commandArgs) {
+    let isGlob = false;
+
     switch (commandArg.type) {
       case `redirection`: {
         const interpolatedArgs = await interpolateArguments(commandArg.args, opts, state);
@@ -376,13 +378,8 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
             } break;
 
             case `glob`: {
-              const matches = await opts.glob.match(segment.pattern, {cwd: state.cwd});
-              if (!matches.length)
-                throw new Error(`No file matches found: "${segment.pattern}". Note: Glob patterns currently only support files that exist on the filesystem (Help Wanted)`);
-
-              for (const match of matches.sort()) {
-                pushAndClose(match);
-              }
+              push(segment.pattern);
+              isGlob = true;
             } break;
 
             case `shell`: {
@@ -412,6 +409,20 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
     }
 
     close();
+
+    if (isGlob) {
+      const pattern = interpolated.pop();
+      if (typeof pattern === `undefined`)
+        throw new Error(`Assertion failed: Expected a glob pattern to have been set.`);
+
+      const matches = await opts.glob.match(pattern, {cwd: state.cwd});
+      if (matches.length === 0)
+        throw new Error(`No file matches found: "${pattern}". Note: Glob patterns currently only support files that exist on the filesystem (Help Wanted)`);
+
+      for (const match of matches.sort()) {
+        pushAndClose(match);
+      }
+    }
   }
 
   if (redirections.size > 0) {

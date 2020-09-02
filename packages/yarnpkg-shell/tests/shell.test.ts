@@ -1153,6 +1153,54 @@ describe(`Shell`, () => {
         });
       });
     });
+
+    describe(`Integrations`, () => {
+      it(`should work with environment variables`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const subdir = ppath.join(tmpDir, `subdir` as Filename);
+          await xfs.mkdirPromise(subdir);
+
+          await xfs.writeFilePromise(ppath.join(subdir, `a.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `b.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `c.txt` as Filename), ``);
+
+          await expect(bufferResult(
+            `echo $DIRNAME/*`,
+            [],
+            {cwd: tmpDir, env: {DIRNAME: `subdir`}}
+          )).resolves.toMatchObject({
+            stdout: `subdir/a.txt subdir/b.txt subdir/c.txt\n`,
+          });
+
+          await expect(bufferResult(
+            `echo \${DIRNAME}/*`,
+            [],
+            {cwd: tmpDir, env: {DIRNAME: `subdir`}}
+          )).resolves.toMatchObject({
+            stdout: `subdir/a.txt subdir/b.txt subdir/c.txt\n`,
+          });
+        });
+      });
+
+      it(`should work with arithmetics`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const subdir = ppath.join(tmpDir, `1234` as Filename);
+          await xfs.mkdirPromise(subdir);
+
+          await xfs.writeFilePromise(ppath.join(subdir, `a.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `b.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `c.txt` as Filename), ``);
+
+          await expect(bufferResult(
+            `echo $(( 1000 + 234 ))/*`,
+            [],
+            {cwd: tmpDir}
+          )).resolves.toMatchObject({
+            stdout: `1234/a.txt 1234/b.txt 1234/c.txt\n`,
+          });
+        });
+      });
+    });
   });
 
   describe(`Calculations`, () => {
