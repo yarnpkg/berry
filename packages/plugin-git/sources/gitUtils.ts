@@ -2,6 +2,7 @@ import {Configuration, Locator, execUtils, structUtils} from '@yarnpkg/core';
 import {npath, xfs}                                     from '@yarnpkg/fslib';
 import querystring                                      from 'querystring';
 import semver                                           from 'semver';
+import urlLib                                           from 'url';
 
 function makeGitEnvironment() {
   return {
@@ -137,9 +138,29 @@ export function normalizeRepoUrl(url: string, {git = false}: {git?: boolean} = {
   // We support GitHub `/tarball/` URLs
   url = url.replace(/^https:\/\/github\.com\/(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)\/tarball\/(.+)?$/, `https://github.com/$1/$2.git#$3`);
 
-  // The `git+` prefix doesn't mean anything at all for Git
-  if (git)
+  if (git) {
+    // The `git+` prefix doesn't mean anything at all for Git
     url = url.replace(/^git\+([^:]+):/, `$1:`);
+
+    // The `ssh://` prefix should be removed because so URLs won't work in Git:
+    //   ssh://git@github.com:yarnpkg/berry.git
+    //   git@github.com/yarnpkg/berry.git
+    // Git only allows:
+    //   git@github.com:yarnpkg/berry.git (no ssh)
+    //   ssh://git@github.com/yarnpkg/berry.git (no colon)
+    // So we should cut `ssh://`, but only in URLs that contain colon after the hostname
+
+    let parsedUrl: urlLib.UrlWithStringQuery | null;
+    try {
+      parsedUrl = urlLib.parse(url);
+    } catch {
+      parsedUrl = null;
+    }
+
+    if (parsedUrl && parsedUrl.protocol === `ssh:` && parsedUrl.path?.startsWith(`/:`)) {
+      url = url.replace(/^ssh:\/\//, ``);
+    }
+  }
 
   return url;
 }
