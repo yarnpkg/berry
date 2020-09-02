@@ -142,33 +142,22 @@ export function normalizeRepoUrl(url: string, {git = false}: {git?: boolean} = {
     // The `git+` prefix doesn't mean anything at all for Git
     url = url.replace(/^git\+([^:]+):/, `$1:`);
 
-    /*
-      The `ssh://` prefix should be removed because so URLs won't work in Git:
-        `ssh://git@github.com:yarnpkg/berry.git`.
-      Git only allows: `git@github.com:yarnpkg/berry.git` or
-        `ssh://git@github.com/yarnpkg/berry.git`.
-      But git doesn't allow `git@github.com/yarnpkg/berry.git` so
-      we should cut `ssh://` only in URLs that contain colon after a hostname.
-    */
-    const parsedUrl = urlLib.parse(url);
-    /*
-      For "ssh://git@github.com:yarnpkg/berry.git" the parsedUrl variable will look like:
-      Url {
-        protocol: 'ssh:',
-        slashes: true,
-        auth: 'git',
-        host: 'github.com',
-        port: null,
-        hostname: 'github.com',
-        hash: null,
-        search: null,
-        query: null,
-        pathname: '/:yarnpkg/berry.git',
-        path: '/:yarnpkg/berry.git',
-        href: 'ssh://git@github.com/:yarnpkg/berry.git'
-      }
-    */
-    if (parsedUrl.protocol === `ssh:` && parsedUrl.path?.startsWith(`/:`)) {
+    // The `ssh://` prefix should be removed because so URLs won't work in Git:
+    //   ssh://git@github.com:yarnpkg/berry.git
+    //   git@github.com/yarnpkg/berry.git
+    // Git only allows:
+    //   git@github.com:yarnpkg/berry.git (no ssh)
+    //   ssh://git@github.com/yarnpkg/berry.git (no colon)
+    // So we should cut `ssh://`, but only in URLs that contain colon after the hostname
+
+    let parsedUrl: urlLib.UrlWithStringQuery | null;
+    try {
+      parsedUrl = urlLib.parse(url);
+    } catch {
+      parsedUrl = null;
+    }
+
+    if (parsedUrl && parsedUrl.protocol === `ssh:` && parsedUrl.path?.startsWith(`/:`)) {
       url = url.replace(/^ssh:\/\//, ``);
     }
   }
