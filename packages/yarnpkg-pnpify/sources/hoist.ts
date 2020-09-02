@@ -345,8 +345,9 @@ const getNodeHoistInfo = (rootNodePath: Set<Locator>, nodePath: Array<HoisterWor
   const parentNode = nodePath[nodePath.length - 1];
   // We cannot hoist self-references
   const isSelfReference = node.ident === parentNode.ident;
-  let isHoistable = hoistIdents.get(node.name) === node.ident && !isSelfReference;
-  if (outputReason && !isHoistable)
+  const hoistedIdent = hoistIdents.get(node.name);
+  let isHoistable = hoistedIdent === node.ident && !isSelfReference;
+  if (outputReason && !isHoistable && hoistedIdent)
     reason = `- filled by: ${prettyPrintLocator(hoistIdentMap.get(node.name)![0])} at ${reasonRoot}`;
 
   if (isHoistable) {
