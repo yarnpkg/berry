@@ -104,6 +104,44 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
   }
 }
 
+export async function del(path: string, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options & {attemptedAs?: string}) {
+  if (ident && typeof registry === `undefined`)
+    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
+
+  if (typeof registry !== `string`)
+    throw new Error(`Assertion failed: The registry should be a string`);
+
+  const auth = getAuthenticationHeader(registry, {authType, configuration, ident});
+  if (auth)
+    headers = {...headers, authorization: auth};
+
+  try {
+    return await httpUtils.del(registry + path, {configuration, headers, ...rest});
+  } catch (error) {
+    if (!isOtpError(error)) {
+      if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
+        throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headers, {configuration})}` : `attempted as ${attemptedAs}`})`);
+      } else {
+        throw error;
+      }
+    }
+
+    const otp = await askForOtp();
+    const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
+
+    // Retrying request with OTP
+    try {
+      return await httpUtils.del(`${registry}${path}`, {configuration, headers: headersWithOtp, ...rest});
+    } catch (error) {
+      if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
+        throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headersWithOtp, {configuration})}` : `attempted as ${attemptedAs}`})`);
+      } else {
+        throw error;
+      }
+    }
+  }
+}
+
 function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration, ident}: {authType?: AuthType, configuration: Configuration, ident: RegistryOptions['ident']}) {
   const effectiveConfiguration = npmConfigUtils.getAuthConfiguration(registry, {configuration, ident});
   const mustAuthenticate = shouldAuthenticate(effectiveConfiguration, authType);

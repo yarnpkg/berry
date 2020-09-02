@@ -228,6 +228,7 @@ This will cause Yarn to install the project just like Yarn 1 used to, by copying
 | `yarn logout`   | `yarn npm logout`          ||
 | `yarn outdated` | `yarn upgrade-interactive` | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/749) |
 | `yarn publish`  | `yarn npm publish`         ||
+| `yarn tag`      | `yarn npm tag`             ||
 | `yarn upgrade`  | `yarn up`                  | Will now upgrade packages across all workspaces |
 | `yarn install --production` | `yarn workspaces focus --all --production` | Requires the `workspace-tools` plugin
 
@@ -253,7 +254,6 @@ Those features simply haven't been implemented yet. Help welcome!
 | ------------------ | ----------------------------- |
 | `yarn list`     | `yarn why` may provide some information in the meantime |
 | `yarn owner`    | Will eventually be available as `yarn npm owner` |
-| `yarn tag`      | Will eventually be available as `yarn npm tag` |
 | `yarn team`     | Will eventually be available as `yarn npm team` |
 | `yarn unlink`   | Manually remove the `resolutions` entries from the `package.json` file for now |
 

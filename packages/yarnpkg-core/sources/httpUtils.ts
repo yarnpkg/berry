@@ -33,16 +33,18 @@ export enum Method {
   GET = `GET`,
   PUT = `PUT`,
   POST = `POST`,
+  DELETE = `DELETE`,
 }
 
 export type Options = {
   configuration: Configuration,
   headers?: {[headerName: string]: string};
-  json?: boolean,
+  jsonRequest?: boolean,
+  jsonResponse?: boolean,
   method?: Method,
 };
 
-export async function request(target: string, body: Body, {configuration, headers, json, method = Method.GET}: Options) {
+export async function request(target: string, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Options) {
   if (!configuration.get(`enableNetwork`))
     throw new Error(`Network access have been disabled by configuration (${method} ${target})`);
 
@@ -64,14 +66,15 @@ export async function request(target: string, body: Body, {configuration, header
 
   const gotOptions: ExtendOptions = {agent, headers, method};
 
-  gotOptions.responseType = json
+  gotOptions.responseType = jsonResponse
     ? `json`
     : `buffer`;
 
   if (body !== null) {
-    if (typeof body === `string` || Buffer.isBuffer(body)) {
+    if (Buffer.isBuffer(body) || (!jsonRequest && typeof body === `string`)) {
       gotOptions.body = body;
     } else {
+      // @ts-expect-error: The got types only allow an object, but got can stringify any valid JSON
       gotOptions.json = body;
     }
   }
@@ -95,7 +98,7 @@ export async function request(target: string, body: Body, {configuration, header
   });
 }
 
-export async function get(target: string, {configuration, json, ...rest}: Options) {
+export async function get(target: string, {configuration, jsonResponse, ...rest}: Options) {
   let entry = cache.get(target);
 
   if (!entry) {
@@ -109,7 +112,7 @@ export async function get(target: string, {configuration, json, ...rest}: Option
   if (Buffer.isBuffer(entry) === false)
     entry = await entry;
 
-  if (json) {
+  if (jsonResponse) {
     return JSON.parse(entry.toString());
   } else {
     return entry;
@@ -124,6 +127,12 @@ export async function put(target: string, body: Body, options: Options): Promise
 
 export async function post(target: string, body: Body, options: Options): Promise<Buffer> {
   const response = await request(target, body, {...options, method: Method.POST});
+
+  return response.body;
+}
+
+export async function del(target: string, options: Options): Promise<Buffer> {
+  const response = await request(target, null, {...options, method: Method.DELETE});
 
   return response.body;
 }

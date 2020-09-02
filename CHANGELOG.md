@@ -4,6 +4,10 @@
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn import plugin from sources <name>`).
 
+### CLI
+
+- The `yarn tag` commands have been ported over from Yarn Classic as `yarn npm tag`.
+
 ## 2.2.0
 
 ### Ecosystem

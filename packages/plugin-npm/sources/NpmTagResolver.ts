@@ -41,7 +41,7 @@ export class NpmTagResolver implements Resolver {
     const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(descriptor), {
       configuration: opts.project.configuration,
       ident: descriptor,
-      json: true,
+      jsonResponse: true,
     });
 
     if (!Object.prototype.hasOwnProperty.call(registryData, `dist-tags`))

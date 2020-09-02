@@ -117,7 +117,7 @@ export default class InfoCommand extends BaseCommand {
           result = clean(await npmHttpUtils.get(identUrl, {
             configuration,
             ident: descriptor,
-            json: true,
+            jsonResponse: true,
           })) as npm.Packument;
         } catch (err) {
           if (err.name !== `HTTPError`) {

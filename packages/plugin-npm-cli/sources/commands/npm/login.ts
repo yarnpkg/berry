@@ -63,7 +63,7 @@ export default class NpmLoginCommand extends BaseCommand {
         attemptedAs: credentials.name,
         configuration,
         registry,
-        json: true,
+        jsonResponse: true,
         authType: npmHttpUtils.AuthType.NO_AUTH,
       }) as any;
 
