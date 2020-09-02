@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                                                          from '@yarnpkg/cli';
-import {Configuration, Project, Ident, structUtils, ReportError, MessageName, formatUtils, treeUtils} from '@yarnpkg/core';
-import {ppath, Filename}                                                                              from '@yarnpkg/fslib';
-import {npmHttpUtils}                                                                                 from '@yarnpkg/plugin-npm';
-import {Command, UsageError, Usage}                                                                   from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                     from '@yarnpkg/cli';
+import {Configuration, Project, Ident, structUtils, ReportError, MessageName, formatUtils, treeUtils, miscUtils} from '@yarnpkg/core';
+import {ppath, Filename}                                                                                         from '@yarnpkg/fslib';
+import {npmHttpUtils}                                                                                            from '@yarnpkg/plugin-npm';
+import {Command, UsageError, Usage}                                                                              from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmTagListCommand extends BaseCommand {
@@ -47,9 +47,10 @@ export default class NpmTagListCommand extends BaseCommand {
     }
 
     const distTags = await getDistTags(ident, configuration);
+    const distTagEntries = miscUtils.sortMap(Object.entries(distTags), ([tag]) => tag);
 
     const tree: treeUtils.TreeNode = {
-      children: Object.entries(distTags).map(([tag, version]) => ({
+      children: distTagEntries.map(([tag, version]) => ({
         value: formatUtils.tuple(formatUtils.Type.RESOLUTION, {
           descriptor: structUtils.makeDescriptor(ident, tag),
           locator: structUtils.makeLocator(ident, version),
@@ -61,7 +62,6 @@ export default class NpmTagListCommand extends BaseCommand {
       configuration,
       json: this.json,
       stdout: this.context.stdout,
-      separators: 1,
     });
   }
 }
