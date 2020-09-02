@@ -274,10 +274,12 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
       const argIndex = parseInt(segment.name, 10);
 
       if (Number.isFinite(argIndex)) {
-        if (!(argIndex >= 0 && argIndex < opts.args.length)) {
-          throw new Error(`Unbound argument #${argIndex}`);
-        } else {
+        if (argIndex >= 0 && argIndex < opts.args.length) {
           push(opts.args[argIndex]);
+        } else if (segment.defaultValue) {
+          push((await interpolateArguments(segment.defaultValue, opts, state)).join(` `));
+        } else {
+          throw new Error(`Unbound argument #${argIndex}`);
         }
       } else {
         if (Object.prototype.hasOwnProperty.call(state.variables, segment.name)) {

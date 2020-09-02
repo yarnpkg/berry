@@ -77,7 +77,8 @@
     "test:lint": "eslint --max-warnings 0 \"packages/**/@(sources|tests)/**/!(libzip).@(tsx|ts|js)\"",
     "test:unit": "jest",
     "sleep": "node ./x",
-    "typecheck:all": "tsc --noEmit"
+      "typecheck:all": "tsc --noEmit",
+      "foo": "echo ${1:-x}"
   },
   "sherlock": {
     "requireList": [
