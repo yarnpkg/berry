@@ -29,7 +29,7 @@ export interface PublishConfig {
   access?: string;
   main?: PortablePath;
   module?: PortablePath;
-  browser?: PortablePath;
+  browser?: PortablePath | Map<PortablePath, boolean | PortablePath>;
   bin?: Map<string, PortablePath>;
   registry?: string;
   executableFiles?: Set<PortablePath>;
@@ -50,7 +50,7 @@ export class Manifest {
 
   public main: PortablePath | null = null;
   public module: PortablePath | null = null;
-  public browser: PortablePath | null = null;
+  public browser: PortablePath | Map<PortablePath, boolean | PortablePath> | null = null;
 
   public languageName: string | null = null;
 
@@ -207,8 +207,13 @@ export class Manifest {
     if (typeof data.module === `string`)
       this.module = data.module;
 
-    if (data.browser != null)
-      this.browser = data.browser;
+    if (data.browser != null) {
+      if (typeof data.browser === `string`) {
+        this.browser = data.browser;
+      } else {
+        this.browser = new Map(Object.entries(data.browser) as Iterable<[PortablePath, PortablePath | boolean]>);
+      }
+    }
 
     if (typeof data.bin === `string`) {
       if (this.name !== null) {
@@ -386,6 +391,9 @@ export class Manifest {
 
       if (typeof data.publishConfig.browser === `string`)
         this.publishConfig.browser = data.publishConfig.browser;
+
+      if (typeof data.publishConfig.browser === `object` && data.publishConfig.browser !== null)
+        this.publishConfig.browser = new Map(Object.entries(data.publishConfig.browser) as Iterable<[PortablePath, PortablePath | boolean]>);
 
       if (typeof data.publishConfig.registry === `string`)
         this.publishConfig.registry = data.publishConfig.registry;
@@ -638,10 +646,20 @@ export class Manifest {
     else
       delete data.module;
 
-    if (this.browser !== null)
-      data.browser = this.browser;
-    else
+    if (this.browser !== null) {
+      const browser = this.browser;
+
+      if (typeof browser === `string`) {
+        data.browser = browser;
+      } else if (browser instanceof Map) {
+        data.browser = Object.assign({}, ...Array.from(browser.keys()).sort().map(name => {
+          return {[name]: browser.get(name)};
+        }));
+      }
+    } else {
       delete data.browser;
+    }
+
 
     if (this.bin.size === 1 && this.name !== null && this.bin.has(this.name.name)) {
       data.bin = this.bin.get(this.name.name)!;

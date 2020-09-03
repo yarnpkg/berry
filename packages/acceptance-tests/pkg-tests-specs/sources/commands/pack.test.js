@@ -96,6 +96,32 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should support when the "browser" field is an object`,
+      makeTemporaryEnv({
+        browser: {
+          [`ok1.js`]: false,
+          [`ok2.js`]: `ok3.js`,
+        },
+        files: [
+          `/bad`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/ok1.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/ok2.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/ok3.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/ko.js`, `module.exports = 42;\n`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        expect(stdout).toMatch(/ok1\.js/);
+        expect(stdout).toMatch(/ok2\.js/);
+        expect(stdout).toMatch(/ok3\.js/);
+        expect(stdout).not.toMatch(/ko\.js/);
+      }),
+    );
+
+    test(
       `it should always include the binary files, even with a "files" field`,
       makeTemporaryEnv({
         bin: {
