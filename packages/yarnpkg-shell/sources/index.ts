@@ -11,6 +11,8 @@ import {makeBuiltin, makeProcess}                                               
 
 export {globUtils};
 
+export type Glob = globUtils.Glob;
+
 export type UserOptions = {
   baseFs: FakeFS<PortablePath>,
   builtins: {[key: string]: ShellBuiltin},
