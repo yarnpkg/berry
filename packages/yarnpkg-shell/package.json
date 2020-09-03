@@ -10,11 +10,13 @@
     "clipanion": "^2.4.4",
     "cross-spawn": "7.0.3",
     "fast-glob": "^3.2.2",
+    "micromatch": "^4.0.2",
     "stream-buffers": "^3.0.2",
     "tslib": "^1.13.0"
   },
   "devDependencies": {
     "@types/cross-spawn": "6.0.0",
+    "@types/micromatch": "^4.0.1",
     "@yarnpkg/monorepo": "workspace:0.0.0"
   },
   "scripts": {

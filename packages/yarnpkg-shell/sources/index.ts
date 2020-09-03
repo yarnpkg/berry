@@ -1,18 +1,15 @@
-import {PortablePath, npath, ppath, xfs, FakeFS, PosixFS}                            from '@yarnpkg/fslib';
-import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
+import {PortablePath, npath, ppath, xfs}                                             from '@yarnpkg/fslib';
 import {EnvSegment, ArithmeticExpression, ArithmeticPrimary}                         from '@yarnpkg/parsers';
-import fastGlob                                                                      from 'fast-glob';
+import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
 import {homedir}                                                                     from 'os';
 
 import {PassThrough, Readable, Writable}                                             from 'stream';
 
-import {makeBuiltin, makeProcess}                                                    from './pipe';
+import * as globUtils                                                                from './globUtils';
 import {Handle, ProcessImplementation, ProtectedStream, Stdio, start, Pipe}          from './pipe';
+import {makeBuiltin, makeProcess}                                                    from './pipe';
 
-export type Glob = {
-  isGlobPattern: (arg: string) => boolean,
-  match: (pattern: string, options: {cwd: PortablePath, fs?: FakeFS<PortablePath>}) => Promise<Array<string>>,
-};
+export {globUtils};
 
 export type UserOptions = {
   builtins: {[key: string]: ShellBuiltin},
@@ -22,7 +19,7 @@ export type UserOptions = {
   stdout: Writable,
   stderr: Writable,
   variables: {[key: string]: string},
-  glob: Glob,
+  glob: globUtils.Glob,
 };
 
 export type ShellBuiltin = (
@@ -37,7 +34,7 @@ export type ShellOptions = {
   initialStdin: Readable,
   initialStdout: Writable,
   initialStderr: Writable,
-  glob: Glob,
+  glob: globUtils.Glob,
 };
 
 export type ShellState = {
@@ -766,14 +763,7 @@ export async function execute(command: string, args: Array<string> = [], {
   stdout = process.stdout,
   stderr = process.stderr,
   variables = {},
-  glob = {
-    isGlobPattern: fastGlob.isDynamicPattern,
-    match: (pattern: string, {cwd, fs = xfs}) => fastGlob(pattern, {
-      cwd: npath.fromPortablePath(cwd),
-      // @ts-expect-error: `fs` is wrapped in `PosixFS`
-      fs: new PosixFS(fs),
-    }),
-  },
+  glob = globUtils,
 }: Partial<UserOptions> = {}) {
   const normalizedEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(env))
