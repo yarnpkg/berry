@@ -50,7 +50,7 @@ git@github.com:yarnpkg/berry.git#head=master
 
 - Yarn will use either of Yarn, npm, or pnpm to pack the repository, based on the repository style (ie we'll use Yarn if there's a `yarn.lock`, npm if there's a `package-lock.json`, or pnpm if there's a `pnpm-lock.yaml`)
 
-- Workspaces can be cloned as long as the remote repository uses Yarn (we can't support pnpm because it doesn't have equivalent for the [`workspace` command](https://yarnpkg.com/cli/workspace)). Just reference the workspace by name in your range (you can optionally enforce the tag as well):
+- Workspaces can be cloned as long as the remote repository uses Yarn (we can't support pnpm because it doesn't have equivalent for the [`workspace` command](/cli/workspace)). Just reference the workspace by name in your range (you can optionally enforce the tag as well):
 
 ```
 git@github.com:yarnpkg/berry.git#workspace=@yarnpkg/shell&tag=@yarnpkg/shell/2.1.0
@@ -70,7 +70,7 @@ The `patch:` protocol is meant to be used with [`yarn patch`](/cli/patch) and [`
 patch:lodash@^1.0.0#./my-patch.diff
 ```
 
-Note that if you wish to update a transitive dependency (ie not directly yours), it's perfectly possible to use the [`resolutions` field](https://yarnpkg.com/configuration/manifest#resolutions).
+Note that if you wish to update a transitive dependency (ie not directly yours), it's perfectly possible to use the [`resolutions` field](/configuration/manifest#resolutions).
 
 ## Frequently Asked Questions
 
