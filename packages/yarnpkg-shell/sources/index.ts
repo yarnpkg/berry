@@ -1,4 +1,4 @@
-import {PortablePath, npath, ppath, xfs}                                             from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, FakeFS, NodeFS}                                  from '@yarnpkg/fslib';
 import {EnvSegment, ArithmeticExpression, ArithmeticPrimary}                         from '@yarnpkg/parsers';
 import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
 import {homedir}                                                                     from 'os';
@@ -12,6 +12,7 @@ import {makeBuiltin, makeProcess}                                               
 export {globUtils};
 
 export type UserOptions = {
+  baseFs: FakeFS<PortablePath>,
   builtins: {[key: string]: ShellBuiltin},
   cwd: PortablePath,
   env: {[key: string]: string | undefined},
@@ -30,6 +31,7 @@ export type ShellBuiltin = (
 
 export type ShellOptions = {
   args: Array<string>,
+  baseFs: FakeFS<PortablePath>,
   builtins: Map<string, ShellBuiltin>,
   initialStdin: Readable,
   initialStdout: Writable,
@@ -60,7 +62,7 @@ function cloneState(state: ShellState, mergeWith: Partial<ShellState> = {}) {
 const BUILTINS = new Map<string, ShellBuiltin>([
   [`cd`, async ([target = homedir(), ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
     const resolvedTarget = ppath.resolve(state.cwd, npath.toPortablePath(target));
-    const stat = await xfs.statPromise(resolvedTarget);
+    const stat = await opts.baseFs.statPromise(resolvedTarget);
 
     if (!stat.isDirectory()) {
       state.stderr.write(`cd: not a directory\n`);
@@ -125,7 +127,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
         switch (type) {
           case `<`: {
             inputs.push(() => {
-              return xfs.createReadStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u])));
+              return opts.baseFs.createReadStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u])));
             });
           } break;
           case `<<<`: {
@@ -139,10 +141,10 @@ const BUILTINS = new Map<string, ShellBuiltin>([
             });
           } break;
           case `>`: {
-            outputs.push(xfs.createWriteStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u]))));
+            outputs.push(opts.baseFs.createWriteStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u]))));
           } break;
           case `>>`: {
-            outputs.push(xfs.createWriteStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u])), {flags: `a`}));
+            outputs.push(opts.baseFs.createWriteStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u])), {flags: `a`}));
           } break;
         }
       }
@@ -412,7 +414,7 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
       if (typeof pattern === `undefined`)
         throw new Error(`Assertion failed: Expected a glob pattern to have been set.`);
 
-      const matches = await opts.glob.match(pattern, {cwd: state.cwd});
+      const matches = await opts.glob.match(pattern, {cwd: state.cwd, baseFs: opts.baseFs});
       if (matches.length === 0)
         throw new Error(`No file matches found: "${pattern}". Note: Glob patterns currently only support files that exist on the filesystem (Help Wanted)`);
 
@@ -756,6 +758,7 @@ function locateArgsVariable(node: ShellLine): boolean {
 }
 
 export async function execute(command: string, args: Array<string> = [], {
+  baseFs = new NodeFS(),
   builtins = {},
   cwd = npath.toPortablePath(process.cwd()),
   env = process.env,
@@ -808,6 +811,7 @@ export async function execute(command: string, args: Array<string> = [], {
 
   return await executeShellLine(ast, {
     args,
+    baseFs,
     builtins: normalizedBuiltins,
     initialStdin: stdin,
     initialStdout: stdout,

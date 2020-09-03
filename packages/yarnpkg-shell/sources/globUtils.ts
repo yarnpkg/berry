@@ -1,10 +1,11 @@
-import {PortablePath, FakeFS, NodeFS, npath, PosixFS} from '@yarnpkg/fslib';
-import fastGlob                                       from 'fast-glob';
-import micromatch                                     from 'micromatch';
+import {PortablePath, FakeFS, npath, PosixFS, extendFs} from '@yarnpkg/fslib';
+import fastGlob                                         from 'fast-glob';
+import fs                                               from 'fs';
+import micromatch                                       from 'micromatch';
 
 export type Glob = {
   isGlobPattern: (pattern: string) => boolean,
-  match: (pattern: string, options: {cwd: PortablePath, fs?: FakeFS<PortablePath>}) => Promise<Array<string>>,
+  match: (pattern: string, options: {cwd: PortablePath, baseFs: FakeFS<PortablePath>}) => Promise<Array<string>>,
 };
 
 export const micromatchOptions: micromatch.Options = {
@@ -37,11 +38,10 @@ export function isGlobPattern(pattern: string) {
   return true;
 }
 
-export function match(pattern: string, {cwd, fs = new NodeFS()}: {cwd: PortablePath, fs?: FakeFS<PortablePath>}) {
+export function match(pattern: string, {cwd, baseFs}: {cwd: PortablePath, baseFs: FakeFS<PortablePath>}) {
   return fastGlob(pattern, {
     ...fastGlobOptions,
     cwd: npath.fromPortablePath(cwd),
-    // @ts-expect-error: `fs` is wrapped in `PosixFS`
-    fs: new PosixFS(fs),
+    fs: extendFs(fs, new PosixFS(baseFs)),
   });
 }
