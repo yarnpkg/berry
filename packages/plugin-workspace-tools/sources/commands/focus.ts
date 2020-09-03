@@ -18,15 +18,24 @@ export default class WorkspacesFocus extends BaseCommand {
   @Command.Boolean(`-A,--all`, {description: `Install the entire project`})
   all: boolean = false;
 
+  @Command.Boolean(`--prune-cache`)
+  pruneCache: boolean = false;
+
   static usage: Usage = Command.Usage({
     category: `Workspace-related commands`,
     description: `install a single workspace and its dependencies`,
     details: `
       This command will run an install as if the specified workspaces (and all other workspaces they depend on) were the only ones in the project. If no workspaces are explicitly listed, the active one will be assumed.
 
-      Note that this command is only very moderately useful when using zero-installs, since the cache will contain all the packages anyway - meaning that the only difference between a full install and a focused install would just be a few extra lines in the \`.pnp.js\` file, at the cost of introducing an extra complexity.
+      If the \`-A,--all\` flag is set, the entire project will be installed. Combine with \`--production --prune-cache\` to replicate the old \`yarn install --production\`.
 
-      If the \`-A,--all\` flag is set, the entire project will be installed. Combine with \`--production\` to replicate the old \`yarn install --production\`.
+      If the \`--production\` flag is set, only regular dependencies will be installed, and dev dependencies will be omitted.
+
+      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
+
+      If the \`--prune-cache\` flag is set, the .yarn/cache will be pruned of all dependencies that do no match the other flags given.  This means that running this command again on a different workspace package may result in dependencies needing to be re-downloaded.
+
+      Note that this command is only very moderately useful when using zero-installs without the \`--prune-cache\` flag, since the cache will contain all the packages anyway - meaning that the only difference between a full install and a focused install would just be a few extra lines in the \`.pnp.js\` file, at the cost of introducing an extra complexity.
     `,
   });
 
@@ -104,6 +113,8 @@ export default class WorkspacesFocus extends BaseCommand {
       includeLogs: true,
     }, async (report: StreamReport) => {
       await project.install({cache, report, persistProject: false});
+      if (this.pruneCache)
+        await project.cacheCleanup({cache, report});
       // Virtual package references may have changed so persist just the install state.
       await project.persistInstallStateFile();
     });
