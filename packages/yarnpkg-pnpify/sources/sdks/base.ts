@@ -76,8 +76,8 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
 
       function removeZipPrefix(str) {
         return process.platform === 'win32'
-          ? str.replace(/^zip:\\//, \`\`)
-          : str.replace(/^zip:/, \`\`);
+          ? str.replace(/^\\^?zip:\\//, \`\`)
+          : str.replace(/^\\^?zip:/, \`\`);
       }
     };
   `;
