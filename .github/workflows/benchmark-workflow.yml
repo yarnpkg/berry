@@ -9,7 +9,7 @@ on:
         default: 'false'
       hyperfineOptions:
         description: 'Options passed to Hyperfine'
-        required: true
+        required: false
         default: ''
 
 name: 'Performance tests'

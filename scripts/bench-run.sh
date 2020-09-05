@@ -34,6 +34,15 @@ setup-yarn2() {
     "yarnPath: '${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js'"
 }
 
+setup-yarn2-nm() {
+  >> "$BENCH_DIR/.yarnrc.yml" echo \
+    "nodeLinker: node-modules"
+  >> "$BENCH_DIR/.yarnrc.yml" echo \
+    "enableGlobalCache: true"
+  >> "$BENCH_DIR/.yarnrc.yml" echo \
+    "compressionLevel: 0"
+}
+
 case $PACKAGE_MANAGER in
   classic)
     bench install-full-cold \
@@ -66,20 +75,21 @@ case $PACKAGE_MANAGER in
     ;;
   yarn-nm)
     setup-yarn2
+    setup-yarn2-nm
     bench install-full-cold \
       --prepare 'rm -rf .yarn node_modules yarn.lock && yarn cache clean --all' \
-      'YARN_NODE_LINKER=node-modules yarn install'
+      'yarn install'
     bench install-cache-only \
       --prepare 'rm -rf .yarn node_modules yarn.lock' \
-      'YARN_NODE_LINKER=node-modules yarn install'
+      'yarn install'
     bench install-cache-and-lock \
       --prepare 'rm -rf .yarn node_modules' \
-      'YARN_NODE_LINKER=node-modules yarn install'
+      'yarn install'
     bench install-ready \
-      'YARN_NODE_LINKER=node-modules yarn install'
+      'yarn install'
     bench install-ready \
-      --prepare 'YARN_NODE_LINKER=node-modules yarn remove dummy-pkg || true' \
-      'YARN_NODE_LINKER=node-modules yarn add dummy-pkg@link:./dummy-pkg'
+      --prepare 'yarn remove dummy-pkg || true' \
+      'yarn add dummy-pkg@link:./dummy-pkg'
     ;;
   npm)
     bench install-full-cold \
