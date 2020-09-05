@@ -25,7 +25,25 @@ jobs:
         days-before-stale: 30
         days-before-close: 5
 
-        only-labels: 'bug,probably resolved'
+        only-labels: 'bug'
 
         stale-issue-label: 'stale'
         exempt-issue-labels: 'reproducible,upholded,good first issue,help wanted'
+
+    - uses: actions/stale@v3
+      with:
+        repo-token: ${{secrets.YARNBOT_TOKEN}}
+
+        stale-issue-message: |
+          Hi! 👋
+
+          It seems like this issue as been marked as probably resolved, or missing important information blocking its progression. As a result, it'll be closed in a few days unless a maintainer explicitly vouches for it.
+
+        remove-stale-when-updated: true
+
+        days-before-stale: 30
+        days-before-close: 5
+
+        only-labels: 'waiting for feedback'
+
+        stale-issue-label: 'stale'
