@@ -186,9 +186,10 @@ async function whoami(registry: string, headers: {[key: string]: string} | undef
     const response = await httpUtils.get(new URL(`${registry}/-/whoami`).href, {
       configuration,
       headers,
+      jsonResponse: true,
     });
 
-    return response.username;
+    return response.username ?? `an unknown user`;
   } catch {
     return `an unknown user`;
   }
