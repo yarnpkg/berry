@@ -25,7 +25,7 @@ jobs:
         days-before-stale: 30
         days-before-close: 5
 
-        only-labels: 'bug'
+        only-labels: 'bug,probably resolved'
 
         stale-issue-label: 'stale'
         exempt-issue-labels: 'reproducible,upholded,good first issue,help wanted'
