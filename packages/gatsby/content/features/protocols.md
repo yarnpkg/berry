@@ -17,8 +17,9 @@ The following protocols can be used by any dependency entry listed in the `depen
 | Semver        | `^1.2.3`                                | Resolves from the default registry                                                                                              |
 | Tag           | `latest`                                | Resolves from the default registry                                                                                              |
 | Npm alias     | `npm:name@...`                          | Resolves from the npm registry                                                                                                  |
-| GitHub        | `foo/bar`                               | Alias for the `github:` protocol                                                                                                |
+| Git           | `git@github.com:foo/bar.git`            | Downloads a public package from a Git repository                                                                                |
 | GitHub        | `github:foo/bar`                        | Downloads a **public** package from GitHub                                                                                      |
+| GitHub        | `foo/bar`                               | Alias for the `github:` protocol                                                                                                |
 | File          | `file:./my-package`                     | Copies the target location into the cache                                                                                       |
 | Link          | `link:./my-folder`                      | Creates a link to the `./my-folder` folder (ignore dependencies)                                                                |
 | Patch         | `patch:left-pad@1.0.0#./my-patch.patch` | Creates a patched copy of the original package                                                                                  |
@@ -27,11 +28,49 @@ The following protocols can be used by any dependency entry listed in the `depen
 
 ## Details
 
-### `exec:`
+### Exec
 
 This protocol is experimental, and only available after installing an optional plugin.
 
 Its documentation and usage can be found on GitHub: [yarnpkg/berry/blob/master/packages/plugin-exec/README.md](https://github.com/yarnpkg/berry/blob/master/packages/plugin-exec/README.md).
+
+### Git
+
+The Git protocol, while fairly old, has been significantly improved starting from Yarn 2. In particular, some things to know:
+
+- The target repository won't be used as-is - it will first be packed using [`pack`](/cli/pack)
+
+- You can explicitly request a tag, commit, branch, or semver tag, by using one of those keywords (if you're missing the keyword, Yarn will look for the first thing that seems to match, as in prior versions):
+
+```
+git@github.com:yarnpkg/berry.git#tag=@yarnpkg/cli/2.2.0
+git@github.com:yarnpkg/berry.git#commit=a806c88
+git@github.com:yarnpkg/berry.git#head=master
+```
+
+- Yarn will use either of Yarn, npm, or pnpm to pack the repository, based on the repository style (ie we'll use Yarn if there's a `yarn.lock`, npm if there's a `package-lock.json`, or pnpm if there's a `pnpm-lock.yaml`)
+
+- Workspaces can be cloned as long as the remote repository uses Yarn (we can't support pnpm because it doesn't have equivalent for the [`workspace` command](/cli/workspace)). Just reference the workspace by name in your range (you can optionally enforce the tag as well):
+
+```
+git@github.com:yarnpkg/berry.git#workspace=@yarnpkg/shell&tag=@yarnpkg/shell/2.1.0
+```
+  
+### Patch
+
+The `patch:` protocol is meant to be used with [`yarn patch`](/cli/patch) and [`yarn patch-commit`](/cli/patch-commit). It allows you to change the sources for a package without having to completely fork the dependency. The intended workflow is:
+
+1. Find a package you want to patch (let's say `lodash@^1.0.0`)
+2. Run `yarn patch lodash`
+3. Edit the folder the command generated
+4. Once you're done, run `yarn patch-commit <path> > my-patch.diff`
+5. In your manifest, change the dependency from `^1.0.0` to:
+
+```
+patch:lodash@^1.0.0#./my-patch.diff
+```
+
+Note that if you wish to update a transitive dependency (ie not directly yours), it's perfectly possible to use the [`resolutions` field](/configuration/manifest#resolutions).
 
 ## Frequently Asked Questions
 
