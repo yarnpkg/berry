@@ -234,6 +234,10 @@ function split(raw: string) {
 
 async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, opts: ShellOptions, state: ShellState, push: (value: string) => void, pushAndClose = push) {
   switch (segment.name) {
+    case `$`: {
+      push(String(process.pid));
+    } break;
+
     case `#`: {
       push(String(opts.args.length));
     } break;
@@ -264,6 +268,10 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
           pushAndClose(part);
         }
       }
+    } break;
+
+    case `PPID`: {
+      push(String(process.ppid));
     } break;
 
     case `RANDOM`: {
