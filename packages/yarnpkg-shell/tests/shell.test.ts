@@ -317,6 +317,24 @@ describe(`Shell`, () => {
       });
     });
 
+    it(`should expose the shell pid via $$`, async () => {
+      await expect(bufferResult(
+        `echo $$`
+      )).resolves.toMatchObject({
+        // The shell runs in the same process as the tests
+        stdout: `${process.pid}\n`,
+      });
+    });
+
+    it(`should expose the shell ppid via $PPID`, async () => {
+      await expect(bufferResult(
+        `echo $PPID`
+      )).resolves.toMatchObject({
+        // The shell runs in the same process as the tests
+        stdout: `${process.ppid}\n`,
+      });
+    });
+
     it(`should set environment variables`, async () => {
       await expect(bufferResult(
         `PORT=1234 node -e 'process.stdout.write(process.env.PORT)'`
