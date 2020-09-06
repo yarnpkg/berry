@@ -4,7 +4,7 @@ path: /advanced/migration
 title: "Migration"
 ---
 
-Yarn v2 is a very different software from the v1. While one of our aim is to make the transition as easy as possible, some behaviors needed to be tweaked. To make things easier we've documented the most common problems that may arise when porting from one project to the other, along with suggestions to keep moving forward.
+Yarn v2 is a very different software from the v1. While one of our goals is to make the transition as easy as possible, some behaviors needed to be tweaked. To make things easier we've documented the most common problems that may arise when porting from one project to the other, along with suggestions to keep moving forward.
 
 **Important note:** This isn't a step-by-step guide. The best way to migrate is just to upgrade Yarn and see whether everything works. If it doesn't, go back to this guide and look for more context on the error you got. Most steps here aren't needed for most projects - we just tried to document all the tips that you could find handy if something breaks!
 
