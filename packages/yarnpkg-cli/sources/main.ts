@@ -78,7 +78,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
     const ignoreCwd = configuration.get(`ignoreCwd`);
 
     // Avoid unnecessary spawn when run directly
-    if (!ignorePath && !ignoreCwd && yarnPath === npath.toPortablePath(process.argv[1])) {
+    if (!ignorePath && !ignoreCwd && yarnPath === npath.toPortablePath(npath.resolve(process.argv[1]))) {
       process.env.YARN_IGNORE_PATH = `1`;
       process.env.YARN_IGNORE_CWD = `1`;
 
