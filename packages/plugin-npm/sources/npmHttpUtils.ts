@@ -33,9 +33,9 @@ export type Options = httpUtils.Options & AuthOptions & RegistryOptions;
  * It doesn't handle 403 Forbidden, as the npm registry uses it when the user attempts
  * a prohibited action, such as publishing a package with a similar name to an existing package.
  */
-export async function handleInvalidAuthenticationError(error: any, {registry, headers, configuration}: {registry: string, headers: {[key: string]: string} | undefined, configuration: Configuration}) {
+export async function handleInvalidAuthenticationError(error: any, {attemptedAs, registry, headers, configuration}: {attemptedAs?: string, registry: string, headers: {[key: string]: string} | undefined, configuration: Configuration}) {
   if (error.name === `HTTPError` && error.response.statusCode === 401) {
-    throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (as ${await whoami(registry, headers, {configuration})})`);
+    throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headers, {configuration})}` : `attempted as ${attemptedAs}`})`);
   }
 }
 
@@ -91,7 +91,7 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
     return await httpUtils.put(registry + path, body, {configuration, headers, ...rest});
   } catch (error) {
     if (!isOtpError(error)) {
-      await handleInvalidAuthenticationError(error, {registry, configuration, headers});
+      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
 
       throw error;
     }
@@ -103,7 +103,7 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
     try {
       return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
     } catch (error) {
-      await handleInvalidAuthenticationError(error, {registry, configuration, headers});
+      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
 
       throw error;
     }
@@ -125,7 +125,7 @@ export async function del(path: string, {attemptedAs, configuration, headers, id
     return await httpUtils.del(registry + path, {configuration, headers, ...rest});
   } catch (error) {
     if (!isOtpError(error)) {
-      await handleInvalidAuthenticationError(error, {registry, configuration, headers});
+      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
 
       throw error;
     }
@@ -137,7 +137,7 @@ export async function del(path: string, {attemptedAs, configuration, headers, id
     try {
       return await httpUtils.del(`${registry}${path}`, {configuration, headers: headersWithOtp, ...rest});
     } catch (error) {
-      await handleInvalidAuthenticationError(error, {registry, configuration, headers});
+      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
 
       throw error;
     }
