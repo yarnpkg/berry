@@ -10053,6 +10053,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/comment-json", "npm:1.1.1"],
             ["@types/eslint", null],
             ["@types/lodash", "npm:4.14.136"],
+            ["@types/micromatch", "npm:4.0.1"],
             ["@types/typescript", null],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -10064,6 +10065,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["comment-json", "npm:2.2.0"],
             ["eslint", "npm:6.8.0"],
             ["lodash", "npm:4.17.15"],
+            ["micromatch", "npm:4.0.2"],
             ["tslib", "npm:1.13.0"],
             ["typescript", "patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=5b02a2"]
           ],
@@ -10082,6 +10084,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/comment-json", "npm:1.1.1"],
             ["@types/eslint", null],
             ["@types/lodash", "npm:4.14.136"],
+            ["@types/micromatch", "npm:4.0.1"],
             ["@types/typescript", "npm:2.0.0"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -10093,6 +10096,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["comment-json", "npm:2.2.0"],
             ["eslint", "npm:6.8.0"],
             ["lodash", "npm:4.17.15"],
+            ["micromatch", "npm:4.0.2"],
             ["tslib", "npm:1.13.0"],
             ["typescript", "patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=5b02a2"]
           ],
@@ -10110,6 +10114,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/chalk", "npm:2.2.0"],
             ["@types/comment-json", "npm:1.1.1"],
             ["@types/lodash", "npm:4.14.136"],
+            ["@types/micromatch", "npm:4.0.1"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
@@ -10120,6 +10125,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["comment-json", "npm:2.2.0"],
             ["eslint", "npm:6.8.0"],
             ["lodash", "npm:4.17.15"],
+            ["micromatch", "npm:4.0.2"],
             ["tslib", "npm:1.13.0"],
             ["typescript", "patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=5b02a2"]
           ],

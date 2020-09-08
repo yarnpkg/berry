@@ -102,7 +102,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
     }
 
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
-    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false});
+    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false, nohoistPatterns: pnpSettings.nmNohoistPatterns});
     const locatorMap = buildLocatorMap(nmTree);
 
     await persistNodeModules(preinstallState, locatorMap, {
@@ -219,7 +219,7 @@ async function writeInstallState(project: Project, locatorMap: NodeModulesLocato
 
       locatorState += `    - ${JSON.stringify(internalPath)}\n`;
 
-      if (location === project.cwd) {
+      if (ppath.relative(location, project.cwd) === ``) {
         topLevelLocator = true;
       }
     }

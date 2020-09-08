@@ -35,6 +35,8 @@ export interface PublishConfig {
   executableFiles?: Set<PortablePath>;
 }
 
+enum WorkspaceFieldSyntax { ARRAY, OBJECT }
+
 export class Manifest {
   public indent: string = `  `;
 
@@ -62,6 +64,7 @@ export class Manifest {
   public peerDependencies: Map<IdentHash, Descriptor> = new Map();
 
   public workspaceDefinitions: Array<WorkspaceDefinition> = [];
+  public nohoistPatterns: Array<string> = [];
 
   public dependenciesMeta: Map<string, Map<string | null, DependencyMeta>> = new Map();
   public peerDependenciesMeta: Map<string, PeerDependencyMeta> = new Map();
@@ -79,6 +82,8 @@ export class Manifest {
    * errors found in the raw manifest while loading
    */
   public errors: Array<Error> = [];
+
+  private workspaceFieldSyntax: WorkspaceFieldSyntax = WorkspaceFieldSyntax.ARRAY;
 
   static readonly fileName = `package.json` as Filename;
 
@@ -303,11 +308,20 @@ export class Manifest {
       }
     }
 
-    const workspaces = Array.isArray(data.workspaces)
-      ? data.workspaces
-      : typeof data.workspaces === `object` && data.workspaces !== null && Array.isArray(data.workspaces.packages)
-        ? data.workspaces.packages
-        : [];
+    let workspaces = [];
+    let nohoist = [];
+    if (Array.isArray(data.workspaces)) {
+      this.workspaceFieldSyntax = WorkspaceFieldSyntax.ARRAY;
+      workspaces = data.workspaces;
+    } else if (typeof data.workspaces === `object` && data.workspaces !== null) {
+      this.workspaceFieldSyntax = WorkspaceFieldSyntax.OBJECT;
+      if (Array.isArray(data.workspaces.packages))
+        workspaces = data.workspaces.packages;
+
+      if (Array.isArray(data.workspaces.nohoist)) {
+        nohoist = data.workspaces.nohoist;
+      }
+    }
 
     for (const entry of workspaces) {
       if (typeof entry !== `string`) {
@@ -318,6 +332,15 @@ export class Manifest {
       this.workspaceDefinitions.push({
         pattern: entry,
       });
+    }
+
+    for (const entry of nohoist) {
+      if (typeof entry !== `string`) {
+        errors.push(new Error(`Invalid nohoist definition for '${entry}'`));
+        continue;
+      }
+
+      this.nohoistPatterns.push(entry);
     }
 
     if (typeof data.dependenciesMeta === `object` && data.dependenciesMeta !== null) {
@@ -671,9 +694,20 @@ export class Manifest {
       delete data.bin;
     }
 
-    if (this.workspaceDefinitions.length > 0)
-      data.workspaces = this.workspaceDefinitions.map(({pattern}) => pattern);
-    else
+    if (this.nohoistPatterns.length > 0) {
+      data.workspaces = {
+        nohoist: this.nohoistPatterns,
+      };
+    }
+    if (this.workspaceDefinitions.length > 0 || this.nohoistPatterns.length > 0) {
+      if (this.workspaceFieldSyntax === WorkspaceFieldSyntax.OBJECT) {
+        data.workspaces.packages = this.workspaceDefinitions.map(({pattern}) => pattern);
+      } else {
+        data.workspaces = this.workspaceDefinitions.map(({pattern}) => pattern);
+      }
+    }
+
+    if (this.workspaceDefinitions.length === 0 && this.nohoistPatterns.length === 0)
       delete data.workspaces;
 
     const regularDependencies = [];

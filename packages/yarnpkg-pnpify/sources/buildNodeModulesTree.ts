@@ -3,6 +3,8 @@ import {NativePath, PortablePath, Filename}                 from '@yarnpkg/fslib
 import {toFilename, npath, ppath}                           from '@yarnpkg/fslib';
 import {PnpApi, PhysicalPackageLocator, PackageInformation} from '@yarnpkg/pnp';
 
+import micromatch                                           from 'micromatch';
+
 import {hoist, HoisterTree, HoisterResult}                  from './hoist';
 
 // Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
@@ -40,10 +42,17 @@ export type NodeModulesTree = Map<PortablePath, NodeModulesBaseNode | NodeModule
 
 export interface NodeModulesTreeOptions {
   pnpifyFs?: boolean;
+  nohoistPatterns?: Array<{relativeCwd: string, nohoistPatterns: Array<string>}>;
 }
 
 /** node_modules path segment */
 const NODE_MODULES = `node_modules` as Filename;
+
+/**
+ * The workspace name suffix used internally by this implementation and appeneded to the name of workspace package.
+ * It is needed to create and distinguuish special nodes for workspaces
+ */
+const WORKSPACE_NAME_SUFFIX = `$wsroot$`;
 
 /** Package locator key for usage inside maps */
 type LocatorKey = string;
@@ -69,8 +78,8 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
  * @returns hoisted `node_modules` directories representation in-memory
  */
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
-  const packageTree = buildPackageTree(pnp, options);
-  const hoistedTree = hoist(packageTree);
+  const {packageTree, nohoistPatterns} = buildPackageTree(pnp, options);
+  const hoistedTree = hoist(packageTree, {nohoistMatches: namePath => micromatch.isMatch(namePath, nohoistPatterns, {strictSlashes: true})});
 
   return populateNodeModulesTree(pnp, hoistedTree, options);
 };
@@ -126,8 +135,17 @@ function isPortalLocator(locatorKey: LocatorKey): boolean {
  *
  * @returns package tree, packages info and locators
  */
-const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): HoisterTree => {
+const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, nohoistPatterns: Array<string> } => {
   const pnpRoots = pnp.getDependencyTreeRoots();
+
+  const relativeCwdNohoistMap = new Map();
+  if (options.nohoistPatterns) {
+    for (const pattern of options.nohoistPatterns) {
+      relativeCwdNohoistMap.set(pattern.relativeCwd, pattern.nohoistPatterns);
+    }
+  }
+
+  const nohoistPatterns: Array<string> = [];
 
   const topPkg = pnp.getPackageInformation(pnp.topLevel);
   if (topPkg === null)
@@ -139,7 +157,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
 
   for (const locator of pnpRoots) {
     if (locator.name !== topLocator.name || locator.reference !== topLocator.reference) {
-      topPkg.packageDependencies.set(`${locator.name}$wsroot$`, locator.reference);
+      topPkg.packageDependencies.set(`${locator.name}${WORKSPACE_NAME_SUFFIX}`, locator.reference);
     }
   }
 
@@ -154,7 +172,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
   const nodes = new Map<string, HoisterTree>();
   const getNodeKey = (name: string, locator: PhysicalPackageLocator) => `${stringifyLocator(locator)}:${name}`;
 
-  const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentPkg: PackageInformation<NativePath>) => {
+  const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, namePath: Array<string>) => {
     const nodeKey = getNodeKey(name, locator);
     let node = nodes.get(nodeKey);
 
@@ -176,6 +194,16 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
       nodes.set(nodeKey, node);
     }
 
+    if (node === packageTree || node.name.includes(WORKSPACE_NAME_SUFFIX)) {
+      const relativeCwd = ppath.relative(npath.toPortablePath(topPkg.packageLocation), npath.toPortablePath(pkg.packageLocation)) || PortablePath.dot;
+      const relativeCwdNohoistPatterns = relativeCwdNohoistMap.get(relativeCwd);
+      if (relativeCwdNohoistPatterns) {
+        for (const pattern of relativeCwdNohoistPatterns) {
+          nohoistPatterns.push([...namePath, pattern].join(`/`));
+        }
+      }
+    }
+
     parent.dependencies.add(node);
 
     // If we link dependencies to file system we must not try to install children dependencies inside portal folders
@@ -185,25 +213,25 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
       for (const [name, referencish] of pkg.packageDependencies) {
         if (referencish !== null && !node.peerNames.has(name)) {
           const depLocator = pnp.getLocator(name, referencish);
-          const pkgLocator = pnp.getLocator(name.replace(`$wsroot$`, ``), referencish);
+          const pkgLocator = pnp.getLocator(name.replace(WORKSPACE_NAME_SUFFIX, ``), referencish);
 
           const depPkg = pnp.getPackageInformation(pkgLocator);
           if (depPkg === null)
             throw new Error(`Assertion failed: Expected the package to have been registered`);
 
-          addPackageToTree(name, depPkg, depLocator, node, pkg);
+          addPackageToTree(name, depPkg, depLocator, node, [...namePath, name]);
         }
       }
     }
   };
 
-  addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, topPkg);
+  addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, [topLocator.name]);
 
-  return packageTree;
+  return {packageTree, nohoistPatterns};
 };
 
 function getTargetLocatorPath(locator: PhysicalPackageLocator, pnp: PnpApi, options: NodeModulesTreeOptions): {linkType: LinkType, target: PortablePath} {
-  const pkgLocator = pnp.getLocator(locator.name.replace(`$wsroot$`, ``), locator.reference);
+  const pkgLocator = pnp.getLocator(locator.name.replace(WORKSPACE_NAME_SUFFIX, ``), locator.reference);
 
   const info = pnp.getPackageInformation(pkgLocator);
   if (info === null)
@@ -289,7 +317,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
       const nodeModulesLocation = ppath.join(nodeModulesDirPath, ...packageNameParts);
 
       const leafNode = makeLeafNode(locator, references.slice(1));
-      if (!dep.name.endsWith(`$wsroot$`)) {
+      if (!dep.name.endsWith(WORKSPACE_NAME_SUFFIX)) {
         const prevNode = tree.get(nodeModulesLocation);
         if (prevNode) {
           if (prevNode.dirList) {
@@ -379,8 +407,8 @@ const benchmarkBuildTree = (pnp: PnpApi, options: NodeModulesTreeOptions): numbe
   const iterCount = 100;
   const startTime = Date.now();
   for (let iter = 0; iter < iterCount; iter++) {
-    const packageTree = buildPackageTree(pnp, options);
-    const hoistedTree = hoist(packageTree);
+    const {packageTree, nohoistPatterns} = buildPackageTree(pnp, options);
+    const hoistedTree = hoist(packageTree, {nohoistMatches: namePath => micromatch.isMatch(namePath, nohoistPatterns, {strictSlashes: true})});
     populateNodeModulesTree(pnp, hoistedTree, options);
   }
   const endTime = Date.now();

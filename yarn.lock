@@ -6100,6 +6100,7 @@ __metadata:
     "@types/chalk": 2.2.0
     "@types/comment-json": ^1.1.1
     "@types/lodash": ^4.14.136
+    "@types/micromatch": ^4.0.1
     "@yarnpkg/core": "workspace:^2.2.2"
     "@yarnpkg/fslib": "workspace:^2.2.1"
     "@yarnpkg/monorepo": "workspace:0.0.0"
@@ -6110,6 +6111,7 @@ __metadata:
     comment-json: ^2.2.0
     eslint: ^6.8.0
     lodash: ^4.17.15
+    micromatch: ^4.0.2
     tslib: ^1.13.0
     typescript: ^3.9.5
   peerDependencies:

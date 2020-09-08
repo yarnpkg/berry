@@ -158,6 +158,7 @@ export abstract class AbstractPnpInstaller implements Installer {
 
     const blacklistedLocations = this.blacklistedPaths;
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
+    const nmNohoistPatterns = this.opts.project.workspaces.map(({relativeCwd, manifest}) => ({relativeCwd, nohoistPatterns: manifest.nohoistPatterns}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
     const fallbackPool = new Map();
@@ -179,6 +180,7 @@ export abstract class AbstractPnpInstaller implements Installer {
       ignorePattern,
       packageRegistry,
       shebang,
+      nmNohoistPatterns,
     });
   }
 

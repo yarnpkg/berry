@@ -90,6 +90,9 @@ export type PnpSettings = {
   // getDependencyTreeRoots function. They are typically the workspace
   // locators.
   dependencyTreeRoots: Array<PhysicalPackageLocator>,
+
+  // node_modules nohoist pattern list for each workspace (used in PnP loose mode)
+  nmNohoistPatterns: Array<{relativeCwd: string, nohoistPatterns: Array<string>}>,
 };
 
 export type PnpApi = {
