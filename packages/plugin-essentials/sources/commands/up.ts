@@ -41,6 +41,8 @@ export default class UpCommand extends BaseCommand {
       This command accepts glob patterns as arguments (if valid Descriptors and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
       **Note:** The ranges have to be static, only the package scopes and names can contain glob patterns.
+
+      This command is similar to \`yarn upgrade --latest\` from Yarn 1, i.e., ignores the version range specified in \`package.json\`, but unlike \`yarn upgrade\` which only upgrades the current workspace, this command upgrades all workspaces.
     `,
     examples: [[
       `Upgrade all instances of lodash to the latest release`,
