@@ -1,6 +1,5 @@
 releases:
   "@yarnpkg/cli": patch
-  "@yarnpkg/doctor": patch
   "@yarnpkg/plugin-node-modules": patch
 
 declined:
@@ -20,3 +19,4 @@ declined:
   - "@yarnpkg/plugin-workspace-tools"
   - "@yarnpkg/builder"
   - "@yarnpkg/core"
+  - "@yarnpkg/doctor"
