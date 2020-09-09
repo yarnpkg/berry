@@ -10132,12 +10132,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],
             ["@types/cross-spawn", "npm:6.0.0"],
+            ["@types/micromatch", "npm:4.0.1"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["clipanion", "npm:2.4.4"],
             ["cross-spawn", "npm:7.0.3"],
             ["fast-glob", "npm:3.2.2"],
+            ["micromatch", "npm:4.0.2"],
             ["stream-buffers", "npm:3.0.2"],
             ["tslib", "npm:1.13.0"]
           ],
