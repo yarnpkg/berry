@@ -135,7 +135,7 @@
       "default": true
     },
     "enableTransparentWorkspaces": {
-      "description": "If false, Yarn won't anymore link workspaces just because their versions happen to match a semver range. Disabling this setting will require that all workspace accesses are made through the `workspace:` protocol. This is usually only needed in some very specific circumstances.",
+      "description": "If false, Yarn won't link workspaces just because their versions happen to match a semver range. Disabling this setting will require that all workspace accesses are made through the `workspace:` protocol. This is usually only needed in some very specific circumstances.",
       "type": "boolean",
       "default": true
     },
