@@ -50,7 +50,6 @@ function getVirtualLookupFn(pnpApi) {
       traverseDependencyTree(childLocator, pkg);
     }
 
-    seen.delete(key);
   };
 
   // Iterate on each workspace
