@@ -1,14 +1,14 @@
-import {structUtils, Report, Manifest, miscUtils, DependencyMeta} from '@yarnpkg/core';
-import {Locator, Package, BuildType, FinalizeInstallStatus}       from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, LinkType}        from '@yarnpkg/core';
 import {BuildDirective, MessageName, Project, FetchResult}        from '@yarnpkg/core';
-import {PortablePath, npath, ppath, toFilename, Filename}         from '@yarnpkg/fslib';
+import {Linker, LinkOptions, MinimalLinkOptions, LinkType}        from '@yarnpkg/core';
+import {Locator, Package, BuildType, FinalizeInstallStatus}       from '@yarnpkg/core';
+import {structUtils, Report, Manifest, miscUtils, DependencyMeta} from '@yarnpkg/core';
 import {VirtualFS, ZipOpenFS, xfs, FakeFS}                        from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, toFilename, Filename}         from '@yarnpkg/fslib';
 import {getLibzipPromise}                                         from '@yarnpkg/libzip';
 import {parseSyml}                                                from '@yarnpkg/parsers';
 import {AbstractPnpInstaller}                                     from '@yarnpkg/plugin-pnp';
-import {buildNodeModulesTree}                                     from '@yarnpkg/pnpify';
 import {NodeModulesLocatorMap, buildLocatorMap}                   from '@yarnpkg/pnpify';
+import {buildNodeModulesTree}                                     from '@yarnpkg/pnpify';
 import {PnpSettings, makeRuntimeApi}                              from '@yarnpkg/pnp';
 import cmdShim                                                    from '@zkochan/cmd-shim';
 import {UsageError}                                               from 'clipanion';
@@ -204,6 +204,7 @@ async function writeInstallState(project: Project, locatorMap: NodeModulesLocato
   locatorState += `  version: ${STATE_FILE_VERSION}\n`;
 
   const locators = Array.from(locatorMap.keys()).sort();
+  const topLevelLocator = structUtils.stringifyLocator(project.topLevelWorkspace.anchoredLocator);
 
   for (const locator of locators) {
     const installRecord = locatorMap.get(locator)!;
@@ -211,17 +212,12 @@ async function writeInstallState(project: Project, locatorMap: NodeModulesLocato
     locatorState += `${JSON.stringify(locator)}:\n`;
     locatorState += `  locations:\n`;
 
-    let topLevelLocator = false;
     for (const location of installRecord.locations) {
       const internalPath = ppath.contains(project.cwd, location);
       if (internalPath === null)
         throw new Error(`Assertion failed: Expected the path to be within the project (${location})`);
 
       locatorState += `    - ${JSON.stringify(internalPath)}\n`;
-
-      if (location === project.cwd) {
-        topLevelLocator = true;
-      }
     }
 
     if (installRecord.aliases.length > 0) {
@@ -231,7 +227,7 @@ async function writeInstallState(project: Project, locatorMap: NodeModulesLocato
       }
     }
 
-    if (topLevelLocator && binSymlinks.size > 0) {
+    if (locator === topLevelLocator && binSymlinks.size > 0) {
       locatorState += `  bin:\n`;
       for (const [location, symlinks] of binSymlinks) {
         const internalPath = ppath.contains(project.cwd, location);
