@@ -13,9 +13,10 @@ describe(`Node_Modules`, () => {
           [`resolve`]: `1.9.0`,
         },
       },
+      {
+        nodeLinker: `node-modules`,
+      },
       async ({path, run, source}) => {
-        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `nodeLinker: "node-modules"\n`);
-
         await run(`install`);
 
         await expect(source(`require('resolve').sync('resolve')`)).resolves.toEqual(
@@ -58,12 +59,11 @@ describe(`Node_Modules`, () => {
           [`no-deps`]: `*`,
         },
       },
+      {
+        enableTransparentWorkspaces: false,
+        nodeLinker: `node-modules`,
+      },
       async ({path, run, source}) => {
-        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
-          enableTransparentWorkspaces: false
-          nodeLinker: "node-modules"
-        `);
-
         await writeFile(
           npath.toPortablePath(`${path}/index.js`),
           `
@@ -102,11 +102,10 @@ describe(`Node_Modules`, () => {
           pkg: `file:./pkg`,
         },
       },
+      {
+        nodeLinker: `node-modules`,
+      },
       async ({path, run, source}) => {
-        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
-          nodeLinker: "node-modules"
-        `);
-
         await writeJson(npath.toPortablePath(`${path}/pkg/package.json`), {
           name: `pkg`,
           scripts: {
@@ -126,11 +125,10 @@ describe(`Node_Modules`, () => {
         name: `pkg`,
         bin: `dist/bin/index.js`,
       },
+      {
+        nodeLinker: `node-modules`,
+      },
       async ({path, run, source}) => {
-        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
-          nodeLinker: "node-modules"
-        `);
-
         await expect(run(`install`)).resolves.toBeTruthy();
         await expect(xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/.bin/pkg`))).rejects.toThrow();
 
@@ -156,12 +154,11 @@ describe(`Node_Modules`, () => {
           abc: `link:../abc`,
         },
       },
+      {
+        nodeLinker: `node-modules`,
+      },
       async ({path, run, source}) => {
         await writeFile(npath.toPortablePath(`${path}/../one-fixed-dep.local/abc.js`), ``);
-
-        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
-        nodeLinker: "node-modules"
-      `);
 
         await expect(run(`install`)).resolves.toBeTruthy();
 
@@ -178,6 +175,9 @@ describe(`Node_Modules`, () => {
           [`one-fixed-dep`]: `*`,
         },
       },
+      {
+        nodeLinker: `node-modules`,
+      },
       async ({path, run, source}) => {
         await writeJson(npath.toPortablePath(`${path}/../one-fixed-dep.local/package.json`), {
           name: `one-fixed-dep`,
@@ -187,10 +187,6 @@ describe(`Node_Modules`, () => {
           },
         });
         await writeFile(npath.toPortablePath(`${path}/../one-fixed-dep.local/abc.js`), ``);
-
-        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
-          nodeLinker: "node-modules"
-        `);
 
         await expect(run(`install`)).resolves.toBeTruthy();
 
@@ -214,11 +210,10 @@ describe(`Node_Modules`, () => {
         private: true,
         workspaces: [`packages/*`],
       },
+      {
+        nodeLinker: `node-modules`,
+      },
       async ({path, run, source}) => {
-        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
-          nodeLinker: "node-modules"
-        `);
-
         await writeJson(npath.toPortablePath(`${path}/packages/workspace/package.json`), {
           name: `workspace`,
           version: `1.0.0`,
@@ -242,11 +237,10 @@ describe(`Node_Modules`, () => {
           [`no-deps`]: `1.0.0`,
         },
       },
+      {
+        nodeLinker: `node-modules`,
+      },
       async ({path, run}) => {
-        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
-          nodeLinker: "node-modules"
-        `);
-
         await expect(run(`install`)).resolves.toBeTruthy();
 
         const nmFolderInode = xfs.statSync(npath.toPortablePath(`${path}/node_modules`)).ino;
@@ -275,11 +269,10 @@ describe(`Node_Modules`, () => {
           dep: `file:./dep`,
         },
       },
+      {
+        nodeLinker: `node-modules`,
+      },
       async ({path, run, source}) => {
-        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
-        nodeLinker: "node-modules"
-      `);
-
         await writeJson(npath.toPortablePath(`${path}/dep/package.json`), {
           name: `dep`,
           version: `1.0.0`,
@@ -313,11 +306,10 @@ describe(`Node_Modules`, () => {
           [`no-deps2`]: `npm:no-deps@2.0.0`,
         },
       },
+      {
+        nodeLinker: `node-modules`,
+      },
       async ({path, run, source}) => {
-        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
-          nodeLinker: "node-modules"
-        `);
-
         await writeJson(npath.toPortablePath(`${path}/packages/workspace/package.json`), {
           name: `workspace`,
           version: `1.0.0`,
@@ -365,11 +357,10 @@ describe(`Node_Modules`, () => {
           conflict: `file:./conflict1`,
         },
       },
+      {
+        nodeLinker: `node-modules`,
+      },
       async ({path, run, source}) => {
-        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
-        nodeLinker: "node-modules"
-      `);
-
         await writeJson(npath.toPortablePath(`${path}/conflict1/package.json`), {
           name: `conflict`,
           version: `1.0.0`,
@@ -404,6 +395,42 @@ describe(`Node_Modules`, () => {
         await run(`install`);
 
         expect(await xfs.existsPromise(`${path}/node_modules/unhoistable` as PortablePath)).toBe(false);
+      },
+    ),
+  );
+
+  test(`should not produce orphaned symlinks on dependency removal having bin entries`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          dep1: `file:./dep1`,
+          dep2: `file:./dep2`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/dep1/package.json`), {
+          name: `dep1`,
+          version: `1.0.0`,
+          bin: `bin1.js`,
+        });
+        await writeFile(`${path}/dep1/bin1.js`, ``);
+        await writeJson(npath.toPortablePath(`${path}/dep2/package.json`), {
+          name: `dep2`,
+          version: `1.0.0`,
+          bin: `bin2.js`,
+        });
+        await writeFile(`${path}/dep2/bin2.js`, ``);
+
+        await run(`install`);
+
+        const binPath = `${path}/node_modules/.bin/dep1` as PortablePath;
+        expect(xfs.lstatPromise(binPath)).resolves.toBeDefined();
+        await run(`remove`, `dep1`);
+        expect(xfs.lstatPromise(binPath)).rejects.toBeDefined();
       },
     ),
   );
