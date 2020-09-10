@@ -414,4 +414,37 @@ describe(`hoist`, () => {
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
+
+  it(`should not hoist single package if matched by nohoist matcher`, () => {
+    // . -> A -> B -> D
+    //   -> C -> D
+    // If nohoist matcher matches D, the result should be:
+    // . -> A
+    //   -> B -> D
+    //   -> C -> D
+    const tree = {
+      '.': {dependencies: [`A`, `C`]},
+      A: {dependencies: [`B`]},
+      B: {dependencies: [`D`]},
+      C: {dependencies: [`D`]},
+    };
+    const nohoistMatches = (namePath: string) => /[D]/.test(namePath);
+    expect(getTreeHeight(hoist(toTree(tree), {check: true, nohoistMatches}))).toEqual(3);
+  });
+
+  it(`should not hoist multiple package past nohoist root`, () => {
+    // . -> A -> B -> C -> D
+    // If nohoist matcher matches B, C and D, the result should be:
+    // . -> A
+    //   -> B -> C
+    //        -> D
+    const tree = {
+      '.': {dependencies: [`A`]},
+      A: {dependencies: [`B`]},
+      B: {dependencies: [`C`]},
+      C: {dependencies: [`D`]},
+    };
+    const nohoistMatches = (namePath: string) => /[BCD]/.test(namePath);
+    expect(getTreeHeight(hoist(toTree(tree), {check: true, nohoistMatches}))).toEqual(4);
+  });
 });
