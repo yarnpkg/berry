@@ -5,7 +5,6 @@ import {Command, Usage, UsageError}                                         from
 import fs                                                                   from 'fs';
 import path                                                                 from 'path';
 import TerserPlugin                                                         from 'terser-webpack-plugin';
-import {RawSource}                                                          from 'webpack-sources';
 import webpack                                                              from 'webpack';
 
 import {isDynamicLib}                                                       from '../../tools/isDynamicLib';
@@ -115,7 +114,7 @@ export default class BuildPluginCommand extends Command {
                   for (const chunk of chunks) {
                     for (const file of chunk.files) {
                       // @ts-expect-error
-                      compilation.assets[file] = new RawSource(
+                      compilation.assets[file] = new webpack.sources.RawSource(
                         [
                           `/* eslint-disable */`,
                           `module.exports = {`,
