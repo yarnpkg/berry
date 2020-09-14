@@ -46,11 +46,11 @@
  * until you run out of candidates for current tree root.
  */
 type PackageName = string;
-export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>};
+export type HoisterTree = {name: PackageName, identName: PackageName, dirName: string, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>};
 export type HoisterResult = {name: PackageName, identName: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
 type Locator = string;
 type Ident = string;
-type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>, originalNamePath?: string};
+type HoisterWorkTree = {name: PackageName, dirName: string, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>};
 
 /**
  * Mapping which packages depend on a given package alias + ident. It is used to determine hoisting weight,
@@ -81,13 +81,13 @@ const makeIdent = (name: string, reference: string) => {
 type HoistOptions = {
   check?: boolean;
   debugLevel?: number;
-  nohoistMatches?: (namePath: string) => boolean;
+  nohoistMatches?: (dirPath: string) => boolean;
 }
 
 type InternalHoistOptions = {
   check?: boolean;
   debugLevel: number;
-  nohoistMatches?: (namePath: string) => boolean;
+  nohoistMatches?: (dirPath: string) => boolean;
 }
 
 /**
@@ -173,12 +173,13 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
   if (node.decoupled)
     return node;
 
-  const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons, originalNamePath} = node;
+  const {name, dirName, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons} = node;
   // To perform node hoisting from parent node we must clone parent nodes up to the root node,
   // because some other package in the tree might depend on the parent package where hoisting
   // cannot be performed
   const clone = {
     name,
+    dirName,
     references: new Set(references),
     ident,
     locator,
@@ -188,7 +189,6 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
     peerNames: new Set(peerNames),
     reasons: new Map(reasons),
     decoupled: true,
-    originalNamePath,
   };
   const selfDep = clone.dependencies.get(name);
   if (selfDep && selfDep.ident == clone.ident)
@@ -440,9 +440,8 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
     for (const subDependency of getSortedRegularDependencies(parentNode)) {
       let hoistInfo: HoistInfo | null = null;
       if (options.nohoistMatches) {
-        const namePath = rootNodePath.concat(nodePath).concat(parentNode).concat(subDependency).map(x => x.originalNamePath || x.name).join(`/`);
-        isNohoistMatches = options.nohoistMatches(namePath);
-        // console.log(namePath, isNohoistMatches, isRootMatchesNohoist);
+        const dirPath = rootNodePath.concat(nodePath).concat(parentNode).concat(subDependency).map(x => x.dirName).join(`/`);
+        isNohoistMatches = options.nohoistMatches(dirPath);
         if (isNohoistMatches && !isRootMatchesNohoist) {
           hoistInfo = {isHoistable: Hoistable.NO, reason: null};
         }
@@ -478,8 +477,6 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
 
     for (const node of hoistInfos.keys()) {
       if (!unhoistableNodes.has(node)) {
-        // const namePath = rootNodePath.concat(nodePath).concat(parentNode).concat(node).map(x => x.originalNamePath || x.name).join(`/`);
-        // console.log(`hoist ${namePath} to ${rootNode.ident}`, isNohoistMatches, isRootMatchesNohoist);
         parentNode.dependencies.delete(node.name);
         parentNode.hoistedDependencies.set(node.name, node);
         parentNode.reasons.delete(node.name);
@@ -490,7 +487,7 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
           if (rootNode.ident !== node.ident) {
             rootNode.dependencies.set(node.name, node);
             if (options.nohoistMatches)
-              node.originalNamePath = nodePath.concat(parentNode).concat(node).map(x => x.originalNamePath || x.name).join(`/`);
+              node.dirName = nodePath.concat(parentNode).concat(node).map(x => x.dirName).join(`/`);
             newNodes.add(node);
           }
         } else {
@@ -536,8 +533,8 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
         continue;
       const decoupledDependency = decoupleGraphNode(rootNode, dep);
 
-      const rootNamePath = rootNodePath.map(x => x.originalNamePath || x.name).join(`/`);
-      const isRootMatchesNohoist = options.nohoistMatches ? options.nohoistMatches(rootNamePath) : false;
+      const rootDirPath = rootNodePath.map(x => x.dirName).join(`/`);
+      const isRootMatchesNohoist = options.nohoistMatches ? options.nohoistMatches(rootDirPath) : false;
       hoistNodeDependencies([], Array.from(rootNodePathLocators), decoupledDependency, nextNewNodes, isRootMatchesNohoist);
     }
   } while (nextNewNodes.size > 0);
@@ -599,9 +596,10 @@ const selfCheck = (tree: HoisterWorkTree): string => {
  * @param tree package tree clone
  */
 const cloneTree = (tree: HoisterTree): HoisterWorkTree => {
-  const {identName, name, reference, peerNames} = tree;
+  const {identName, name, reference, peerNames, dirName} = tree;
   const treeCopy: HoisterWorkTree = {
     name,
+    dirName,
     references: new Set([reference]),
     locator: makeLocator(identName, reference),
     ident: makeIdent(identName, reference),
@@ -619,9 +617,10 @@ const cloneTree = (tree: HoisterTree): HoisterWorkTree => {
     let workNode = seenNodes.get(node);
     const isSeen = !!workNode;
     if (!workNode) {
-      const {name, identName, reference, peerNames} = node;
+      const {name, identName, dirName, reference, peerNames} = node;
       workNode = {
         name,
+        dirName,
         references: new Set([reference]),
         locator: makeLocator(identName, reference),
         ident: makeIdent(identName, reference),

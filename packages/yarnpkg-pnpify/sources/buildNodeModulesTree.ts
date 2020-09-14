@@ -79,7 +79,7 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
  */
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
   const {packageTree, nohoistPatterns} = buildPackageTree(pnp, options);
-  const hoistedTree = hoist(packageTree, {nohoistMatches: namePath => micromatch.isMatch(namePath, nohoistPatterns, {strictSlashes: true})});
+  const hoistedTree = hoist(packageTree, {nohoistMatches: dirPath => micromatch.isMatch(dirPath, nohoistPatterns, {strictSlashes: true})});
 
   return populateNodeModulesTree(pnp, hoistedTree, options);
 };
@@ -164,6 +164,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
   const packageTree: HoisterTree = {
     name: topLocator.name,
     identName: topLocator.name,
+    dirName: topLocator.name,
     reference: topLocator.reference,
     peerNames: topPkg.packagePeers,
     dependencies: new Set<HoisterTree>(),
@@ -172,7 +173,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
   const nodes = new Map<string, HoisterTree>();
   const getNodeKey = (name: string, locator: PhysicalPackageLocator) => `${stringifyLocator(locator)}:${name}`;
 
-  const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, namePath: Array<string>) => {
+  const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, dirPath: Array<string>) => {
     const nodeKey = getNodeKey(name, locator);
     let node = nodes.get(nodeKey);
 
@@ -186,6 +187,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       node = {
         name,
         identName: locator.name,
+        dirName: name.replace(WORKSPACE_NAME_SUFFIX, ``),
         reference: locator.reference,
         dependencies: new Set(),
         peerNames: pkg.packagePeers,
@@ -199,7 +201,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       const relativeCwdNohoistPatterns = relativeCwdNohoistMap.get(relativeCwd);
       if (relativeCwdNohoistPatterns) {
         for (const pattern of relativeCwdNohoistPatterns) {
-          nohoistPatterns.push([...namePath, pattern].join(`/`));
+          nohoistPatterns.push([...dirPath, pattern].join(`/`));
         }
       }
     }
@@ -219,13 +221,13 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
           if (depPkg === null)
             throw new Error(`Assertion failed: Expected the package to have been registered`);
 
-          addPackageToTree(name, depPkg, depLocator, node, [...namePath, name]);
+          addPackageToTree(name, depPkg, depLocator, node, [...dirPath, node.dirName]);
         }
       }
     }
   };
 
-  addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, [topLocator.name]);
+  addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, []);
 
   return {packageTree, nohoistPatterns};
 };
@@ -408,7 +410,7 @@ const benchmarkBuildTree = (pnp: PnpApi, options: NodeModulesTreeOptions): numbe
   const startTime = Date.now();
   for (let iter = 0; iter < iterCount; iter++) {
     const {packageTree, nohoistPatterns} = buildPackageTree(pnp, options);
-    const hoistedTree = hoist(packageTree, {nohoistMatches: namePath => micromatch.isMatch(namePath, nohoistPatterns, {strictSlashes: true})});
+    const hoistedTree = hoist(packageTree, {nohoistMatches: dirPath => micromatch.isMatch(dirPath, nohoistPatterns, {strictSlashes: true})});
     populateNodeModulesTree(pnp, hoistedTree, options);
   }
   const endTime = Date.now();

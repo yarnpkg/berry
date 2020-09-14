@@ -7,6 +7,7 @@ const toTree = (obj: any, key: string = `.`, nodes = new Map()): HoisterTree => 
     node = {
       name: identName,
       identName,
+      dirName: identName,
       reference: key.match(/@?[^@]+@?(.+)?/)![1] || ``,
       dependencies: new Set<HoisterTree>(),
       peerNames: new Set<string>((obj[key] || {}).peerNames || []),

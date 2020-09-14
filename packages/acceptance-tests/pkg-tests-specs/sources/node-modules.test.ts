@@ -434,4 +434,81 @@ describe(`Node_Modules`, () => {
       },
     ),
   );
+
+  test(`should not hoist a single package matched by nohoist glob`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`workspace`],
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
+          name: `workspace`,
+          version: `1.0.0`,
+          workspaces: {
+            nohoist: [`**/dep`],
+          },
+          dependencies: {
+            dep: `file:./dep`,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/workspace/dep/package.json`), {
+          name: `dep`,
+          version: `1.0.0`,
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/dep` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep` as PortablePath)).toEqual(true);
+      },
+    )
+  );
+
+  test(`should not hoist multiple packages when matched by nohoist glob`,
+    // . -> workspace -> dep1 -> dep2
+    // if nohoist is `**/workspace/**` should be hoisted to:
+    // . -> workspace -> dep1
+    //                -> dep2
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: {
+          packages: [`workspace`],
+          nohoist: [`**/workspace/**`],
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
+          name: `workspace`,
+          version: `1.0.0`,
+          dependencies: {
+            dep1: `file:./dep1`,
+            dep2: `file:./dep2`,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/workspace/dep1/package.json`), {
+          name: `dep1`,
+          version: `1.0.0`,
+        });
+        await writeJson(npath.toPortablePath(`${path}/workspace/dep2/package.json`), {
+          name: `dep2`,
+          version: `1.0.0`,
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/dep1` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/node_modules/dep2` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep1` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep2` as PortablePath)).toEqual(true);
+      },
+    )
+  );
 });
