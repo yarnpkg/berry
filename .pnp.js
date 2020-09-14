@@ -40977,7 +40977,8 @@ function makeApi(runtimeState, opts) {
 
   const VERSIONS = {
     std: 3,
-    resolveVirtual: 1
+    resolveVirtual: 1,
+    getAllLocators: 1
   };
   /**
    * We export a special symbol for easy access to the top level locator.
@@ -41445,6 +41446,18 @@ function makeApi(runtimeState, opts) {
     getDependencyTreeRoots: () => {
       return [...runtimeState.dependencyTreeRoots];
     },
+
+    getAllLocators() {
+      const locators = [];
+
+      for (const [name, entry] of packageRegistry) for (const reference of entry.keys()) if (name !== null && reference !== null) locators.push({
+        name,
+        reference
+      });
+
+      return locators;
+    },
+
     getPackageInformation: locator => {
       const info = getPackageInformation(locator);
       if (info === null) return null;
