@@ -8,6 +8,15 @@
 
 - The `yarn tag` commands have been ported over from Yarn Classic as `yarn npm tag`.
 
+### Installs
+
+- Cyclic peer dependencies inside `node_modules` are hoisted now in all possible cases
+
+## Bugfixes
+
+- The bin symlinks are properly removed from `node_modules/.bin` when the corresponding dependencies
+  are removed. This bug was a regression starting from 2.2.0. Integration tests added to prevent future regressions.
+
 ## 2.2.0
 
 ### Ecosystem

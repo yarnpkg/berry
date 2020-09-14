@@ -768,405 +768,490 @@ describe(`Shell`, () => {
   });
 
   describe(`Glob support`, () => {
-    describe(`Basic Syntax`, () => {
-      it(`should support glob patterns with asterisk`, async () => {
+    describe(`Syntax`, () => {
+      describe(`Basic Syntax`, () => {
+        it(`should support glob patterns with asterisk`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `b.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `c.txt` as Filename), ``);
+
+            await expect(bufferResult(
+              `echo *`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `a.txt b.txt c.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo *.txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `a.txt b.txt c.txt\n`,
+            });
+          });
+        });
+
+        it(`should support glob patterns with globstar`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            await xfs.mkdirpPromise(ppath.join(tmpDir, `foo/bar` as PortablePath));
+
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo/b.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo/bar/c.txt` as Filename), ``);
+
+            await expect(bufferResult(
+              `echo **`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `a.txt foo foo/b.txt foo/bar foo/bar/c.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo **/*.txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `a.txt foo/b.txt foo/bar/c.txt\n`,
+            });
+          });
+        });
+
+        it(`should support glob patterns with question mark`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `ax.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `axxa.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a.txtx` as Filename), ``);
+
+            await expect(bufferResult(
+              `echo a?.txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `ax.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo a??a.txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `axxa.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo a.txt?`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `a.txtx\n`,
+            });
+          });
+        });
+
+        it(`should support glob patterns with sequence`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a1.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a2.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a3.txt` as Filename), ``);
+
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.js` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.ts` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.cs` as Filename), ``);
+
+            await expect(bufferResult(
+              `echo a[23].txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `a2.txt a3.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo foo.[jt]s`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `foo.js foo.ts\n`,
+            });
+
+            await expect(bufferResult(
+              `echo foo.[!jt]s`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `foo.cs\n`,
+            });
+
+            await expect(bufferResult(
+              `echo foo.[^jt]s`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `foo.cs\n`,
+            });
+          });
+        });
+
+        // This test worked before, but it worked by mistake. Even though escape
+        // characters were used, the arguments were still interpreted as glob patterns.
+        // The actual problem is that our shell doesn't support escaping correctly.
+
+        //   it(`should support glob patterns with escape characters`, async () => {
+        //     await xfs.mktempPromise(async tmpDir => {
+        //       await expect(bufferResult(
+        //         `echo a\\*b.txt`,
+        //         [],
+        //         {cwd: tmpDir}
+        //       )).resolves.toMatchObject({
+        //         stdout: `a*b.txt\n`,
+        //       });
+
+        //       await expect(bufferResult(
+        //         `echo a\\?b.txt`,
+        //         [],
+        //         {cwd: tmpDir}
+        //       )).resolves.toMatchObject({
+        //         stdout: `a?b.txt\n`,
+        //       });
+
+        //       await expect(bufferResult(
+        //         `echo a\\{c,d}b.txt`,
+        //         [],
+        //         {cwd: tmpDir}
+        //       )).resolves.toMatchObject({
+        //         stdout: `a{c,d}b.txt\n`,
+        //       });
+        //     });
+        //   });
+      });
+
+      describe(`Advanced Syntax`, () => {
+        it(`should support glob patterns with posix character classes`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            await xfs.writeFilePromise(ppath.join(tmpDir, `abc.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `123.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo123.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `BAR.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `hello_world123.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `&434)hello.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `😀.txt` as Filename), ``);
+
+            await expect(bufferResult(
+              `echo +([[:alnum:]]).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `123.txt BAR.txt abc.txt foo.txt foo123.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo +([[:alpha:]]).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `BAR.txt abc.txt foo.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo +([[:ascii:]]).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `&434)hello.txt 123.txt BAR.txt abc.txt foo.txt foo123.txt hello_world123.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo +([[:digit:]]).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `123.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo +([[:lower:]]).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `abc.txt foo.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo +([[:upper:]]).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `BAR.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo +([[:word:]]).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `123.txt BAR.txt abc.txt foo.txt foo123.txt hello_world123.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo +([[:xdigit:]]).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `123.txt abc.txt\n`,
+            });
+          });
+        });
+
+        it(`should support glob patterns with extglobs`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            await xfs.writeFilePromise(ppath.join(tmpDir, `f.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `fo.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `fooo.txt` as Filename), ``);
+
+            await expect(bufferResult(
+              `echo f@(o).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `fo.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo f*(o).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `f.txt fo.txt foo.txt fooo.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo f+(o).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `fo.txt foo.txt fooo.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo f?(o).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `f.txt fo.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo f!(o).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `f.txt\n`,
+            });
+          });
+        });
+
+        it(`should support glob patterns with braces`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `b.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `c.txt` as Filename), ``);
+
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.js` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.ts` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.vue` as Filename), ``);
+
+            await xfs.writeFilePromise(ppath.join(tmpDir, `cbaxbc.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `cbstbc.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `ftaxwy.txt` as Filename), ``);
+
+            await xfs.writeFilePromise(ppath.join(tmpDir, `abc.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `acd.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `ade.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `aef.txt` as Filename), ``);
+
+            await expect(bufferResult(
+              `echo {a,b}.txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `a.txt b.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo {cb,ft}{ax,st}{bc,wy}.txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `cbaxbc.txt cbstbc.txt ftaxwy.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo a{bc,{cd,{de,ef}}}.txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `abc.txt acd.txt ade.txt aef.txt\n`,
+            });
+          });
+        });
+
+        it(`should support glob patterns with regexp character classes`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            await xfs.writeFilePromise(ppath.join(tmpDir, `abcd.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `abcdxyz.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `12345.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `0123456789.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `abcdxyz0123456789.txt` as Filename), ``);
+
+            await expect(bufferResult(
+              `echo +([a-d]).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `abcd.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo +([1-5]).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `12345.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo +([a-d])+([x-z])+([0-9]).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `abcdxyz0123456789.txt\n`,
+            });
+          });
+        });
+
+        it(`should support glob patterns with regexp groups`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            await xfs.writeFilePromise(ppath.join(tmpDir, `ab12.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `pq56.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `xy89.txt` as Filename), ``);
+
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foox1.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `fooxa1.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `fooxb1.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `fooy1.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `fooya1.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `fooyb1.txt` as Filename), ``);
+
+            await expect(bufferResult(
+              `echo (ab|xy)(12|89).txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `ab12.txt xy89.txt\n`,
+            });
+
+            await expect(bufferResult(
+              `echo foo(x!(a)|y!(b))1.txt`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              stdout: `foox1.txt fooxb1.txt fooy1.txt fooya1.txt\n`,
+            });
+          });
+        });
+      });
+    });
+
+    describe(`Functionality`, () => {
+      it(`should include directories`, async () => {
         await xfs.mktempPromise(async tmpDir => {
           await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt` as Filename), ``);
           await xfs.writeFilePromise(ppath.join(tmpDir, `b.txt` as Filename), ``);
           await xfs.writeFilePromise(ppath.join(tmpDir, `c.txt` as Filename), ``);
+
+          await xfs.mkdirPromise(ppath.join(tmpDir, `d` as Filename));
+          await xfs.mkdirPromise(ppath.join(tmpDir, `e` as Filename));
 
           await expect(bufferResult(
             `echo *`,
             [],
             {cwd: tmpDir}
           )).resolves.toMatchObject({
-            stdout: `a.txt b.txt c.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo *.txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `a.txt b.txt c.txt\n`,
-          });
-        });
-      });
-
-      it(`should support glob patterns with globstar`, async () => {
-        await xfs.mktempPromise(async tmpDir => {
-          await xfs.mkdirpPromise(ppath.join(tmpDir, `foo/bar` as PortablePath));
-
-          await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `foo/b.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `foo/bar/c.txt` as Filename), ``);
-
-          await expect(bufferResult(
-            `echo **`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `a.txt foo/b.txt foo/bar/c.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo **/*.txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `a.txt foo/b.txt foo/bar/c.txt\n`,
-          });
-        });
-      });
-
-      it(`should support glob patterns with question mark`, async () => {
-        await xfs.mktempPromise(async tmpDir => {
-          await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `ax.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `axxa.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `a.txtx` as Filename), ``);
-
-          await expect(bufferResult(
-            `echo a?.txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `ax.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo a??a.txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `axxa.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo a.txt?`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `a.txtx\n`,
-          });
-        });
-      });
-
-      it(`should support glob patterns with sequence`, async () => {
-        await xfs.mktempPromise(async tmpDir => {
-          await xfs.writeFilePromise(ppath.join(tmpDir, `a1.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `a2.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `a3.txt` as Filename), ``);
-
-          await xfs.writeFilePromise(ppath.join(tmpDir, `foo.js` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `foo.ts` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `foo.cs` as Filename), ``);
-
-          await expect(bufferResult(
-            `echo a[23].txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `a2.txt a3.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo foo.[jt]s`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `foo.js foo.ts\n`,
-          });
-
-          await expect(bufferResult(
-            `echo foo.[!jt]s`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `foo.cs\n`,
-          });
-
-          await expect(bufferResult(
-            `echo foo.[^jt]s`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `foo.cs\n`,
-          });
-        });
-      });
-
-      it(`should support glob patterns with escape characters`, async () => {
-        await xfs.mktempPromise(async tmpDir => {
-          if (isNotWin32) {
-            await xfs.writeFilePromise(ppath.join(tmpDir, `a*b.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `a?b.txt` as Filename), ``);
-          }
-
-          await xfs.writeFilePromise(ppath.join(tmpDir, `a{c,d}b.txt` as Filename), ``);
-
-          if (isNotWin32) {
-            await expect(bufferResult(
-              `echo a\\*b.txt`,
-              [],
-              {cwd: tmpDir}
-            )).resolves.toMatchObject({
-              stdout: `a*b.txt\n`,
-            });
-
-            await expect(bufferResult(
-              `echo a\\?b.txt`,
-              [],
-              {cwd: tmpDir}
-            )).resolves.toMatchObject({
-              stdout: `a?b.txt\n`,
-            });
-          }
-
-          await expect(bufferResult(
-            `echo a\\{c,d}b.txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `a{c,d}b.txt\n`,
+            stdout: `a.txt b.txt c.txt d e\n`,
           });
         });
       });
     });
 
-    describe(`Advanced Syntax`, () => {
-      it(`should support glob patterns with posix character classes`, async () => {
+    describe(`Integrations`, () => {
+      it(`should work with environment variables`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          await xfs.writeFilePromise(ppath.join(tmpDir, `abc.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `foo.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `123.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `foo123.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `BAR.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `hello_world123.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `&434)hello.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `😀.txt` as Filename), ``);
+          const subdir = ppath.join(tmpDir, `subdir` as Filename);
+          await xfs.mkdirPromise(subdir);
+
+          await xfs.writeFilePromise(ppath.join(subdir, `a.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `b.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `c.txt` as Filename), ``);
 
           await expect(bufferResult(
-            `echo +([[:alnum:]]).txt`,
+            `echo $DIRNAME/*`,
             [],
-            {cwd: tmpDir}
+            {cwd: tmpDir, env: {DIRNAME: `subdir`}}
           )).resolves.toMatchObject({
-            stdout: `123.txt BAR.txt abc.txt foo.txt foo123.txt\n`,
+            stdout: `subdir/a.txt subdir/b.txt subdir/c.txt\n`,
           });
 
           await expect(bufferResult(
-            `echo +([[:alpha:]]).txt`,
+            `echo \${DIRNAME}/*`,
             [],
-            {cwd: tmpDir}
+            {cwd: tmpDir, env: {DIRNAME: `subdir`}}
           )).resolves.toMatchObject({
-            stdout: `BAR.txt abc.txt foo.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo +([[:ascii:]]).txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `&434)hello.txt 123.txt BAR.txt abc.txt foo.txt foo123.txt hello_world123.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo +([[:digit:]]).txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `123.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo +([[:lower:]]).txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `abc.txt foo.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo +([[:upper:]]).txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `BAR.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo +([[:word:]]).txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `123.txt BAR.txt abc.txt foo.txt foo123.txt hello_world123.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo +([[:xdigit:]]).txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `123.txt abc.txt\n`,
+            stdout: `subdir/a.txt subdir/b.txt subdir/c.txt\n`,
           });
         });
       });
 
-      it(`should support glob patterns with extglobs`, async () => {
+      it(`should work with subshells`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          await xfs.writeFilePromise(ppath.join(tmpDir, `f.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `fo.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `foo.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `fooo.txt` as Filename), ``);
+          const subdir = ppath.join(tmpDir, `subdir` as Filename);
+          await xfs.mkdirPromise(subdir);
+
+          await xfs.writeFilePromise(ppath.join(subdir, `a.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `b.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `c.txt` as Filename), ``);
 
           await expect(bufferResult(
-            `echo f@(o).txt`,
+            `echo $(echo subdir)/*`,
             [],
-            {cwd: tmpDir}
+            {cwd: tmpDir, env: {DIRNAME: `subdir`}}
           )).resolves.toMatchObject({
-            stdout: `fo.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo f*(o).txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `f.txt fo.txt foo.txt fooo.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo f+(o).txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `fo.txt foo.txt fooo.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo f?(o).txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `f.txt fo.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo f!(o).txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `f.txt\n`,
+            stdout: `subdir/a.txt subdir/b.txt subdir/c.txt\n`,
           });
         });
       });
 
-      it(`should support glob patterns with braces`, async () => {
+      it(`should work with arithmetics`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `b.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `c.txt` as Filename), ``);
+          const subdir = ppath.join(tmpDir, `1234` as Filename);
+          await xfs.mkdirPromise(subdir);
 
-          await xfs.writeFilePromise(ppath.join(tmpDir, `foo.js` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `foo.ts` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `foo.vue` as Filename), ``);
-
-          await xfs.writeFilePromise(ppath.join(tmpDir, `cbaxbc.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `cbstbc.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `ftaxwy.txt` as Filename), ``);
-
-          await xfs.writeFilePromise(ppath.join(tmpDir, `abc.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `acd.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `ade.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `aef.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `a.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `b.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `c.txt` as Filename), ``);
 
           await expect(bufferResult(
-            `echo {a,b}.txt`,
+            `echo $(( 1000 + 234 ))/*`,
             [],
             {cwd: tmpDir}
           )).resolves.toMatchObject({
-            stdout: `a.txt b.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo {cb,ft}{ax,st}{bc,wy}.txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `cbaxbc.txt cbstbc.txt ftaxwy.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo a{bc,{cd,{de,ef}}}.txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `abc.txt acd.txt ade.txt aef.txt\n`,
-          });
-        });
-      });
-
-      it(`should support glob patterns with regexp character classes`, async () => {
-        await xfs.mktempPromise(async tmpDir => {
-          await xfs.writeFilePromise(ppath.join(tmpDir, `abcd.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `abcdxyz.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `12345.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `0123456789.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `abcdxyz0123456789.txt` as Filename), ``);
-
-          await expect(bufferResult(
-            `echo +([a-d]).txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `abcd.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo +([1-5]).txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `12345.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo +([a-d])+([x-z])+([0-9]).txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `abcdxyz0123456789.txt\n`,
-          });
-        });
-      });
-
-      it(`should support glob patterns with regexp groups`, async () => {
-        await xfs.mktempPromise(async tmpDir => {
-          await xfs.writeFilePromise(ppath.join(tmpDir, `ab12.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `pq56.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `xy89.txt` as Filename), ``);
-
-          await xfs.writeFilePromise(ppath.join(tmpDir, `foox1.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `fooxa1.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `fooxb1.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `fooy1.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `fooya1.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `fooyb1.txt` as Filename), ``);
-
-          await expect(bufferResult(
-            `echo (ab|xy)(12|89).txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `ab12.txt xy89.txt\n`,
-          });
-
-          await expect(bufferResult(
-            `echo foo(x!(a)|y!(b))1.txt`,
-            [],
-            {cwd: tmpDir}
-          )).resolves.toMatchObject({
-            stdout: `foox1.txt fooxb1.txt fooy1.txt fooya1.txt\n`,
+            stdout: `1234/a.txt 1234/b.txt 1234/c.txt\n`,
           });
         });
       });
