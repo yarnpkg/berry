@@ -41,10 +41,12 @@ export type Options = {
   headers?: {[headerName: string]: string};
   jsonRequest?: boolean,
   jsonResponse?: boolean,
+  /** @deprecated use jsonRequest and jsonResponse instead */
+  json?: boolean;
   method?: Method,
 };
 
-export async function request(target: string, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Options) {
+export async function request(target: string, body: Body, {configuration, headers, json, jsonRequest = json, jsonResponse = json, method = Method.GET}: Options) {
   if (!configuration.get(`enableNetwork`))
     throw new Error(`Network access have been disabled by configuration (${method} ${target})`);
 
@@ -98,7 +100,7 @@ export async function request(target: string, body: Body, {configuration, header
   });
 }
 
-export async function get(target: string, {configuration, jsonResponse, ...rest}: Options) {
+export async function get(target: string, {configuration, json, jsonResponse = json, ...rest}: Options) {
   let entry = cache.get(target);
 
   if (!entry) {
