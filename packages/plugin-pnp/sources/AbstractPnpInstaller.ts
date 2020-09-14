@@ -65,6 +65,13 @@ export abstract class AbstractPnpInstaller implements Installer {
     if (this.opts.skipIncompatiblePackageLinking && !isManifestCompatible)
       return {packageLocation: null, buildDirective: null};
 
+    if (manifest) {
+      const nohoistGlobs = manifest.nohoistPatterns.filter(pattern => [``, `**`].indexOf(pattern) < 0);
+      if (nohoistGlobs.length > 0) {
+        this.opts.report.reportWarningOnce(MessageName.DEPRECATED_NOHOIST_GLOB, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} Support for nohoist globs ${JSON.stringify(nohoistGlobs)} is deprecated. Consider using 'nohoist: true' in corresponding workspaces instead.`);
+      }
+    }
+
     const buildScripts = !hasVirtualInstances
       ? await this.getBuildScripts(pkg, manifest, fetchResult)
       : [];

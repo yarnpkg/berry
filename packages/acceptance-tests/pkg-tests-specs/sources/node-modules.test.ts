@@ -460,8 +460,9 @@ describe(`Node_Modules`, () => {
           version: `1.0.0`,
         });
 
-        await run(`install`);
+        const stdout = (await run(`install`)).stdout;
 
+        expect(stdout).toMatch(new RegExp(`Support for nohoist globs .* is deprecated.*`));
         expect(await xfs.existsPromise(`${path}/node_modules/dep` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep` as PortablePath)).toEqual(true);
       },
@@ -502,8 +503,9 @@ describe(`Node_Modules`, () => {
           version: `1.0.0`,
         });
 
-        await run(`install`);
+        const stdout = (await run(`install`)).stdout;
 
+        expect(stdout).toMatch(new RegExp(`Support for nohoist globs .* is deprecated.*`));
         expect(await xfs.existsPromise(`${path}/node_modules/dep1` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/node_modules/dep2` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep1` as PortablePath)).toEqual(true);
@@ -548,8 +550,9 @@ describe(`Node_Modules`, () => {
           version: `1.0.0`,
         });
 
-        await run(`install`);
+        const stdout = (await run(`install`)).stdout;
 
+        expect(stdout).not.toMatch(new RegExp(`Support for nohoist globs .* is deprecated.*`));
         expect(await xfs.existsPromise(`${path}/node_modules/dep1` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/node_modules/dep2` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep1` as PortablePath)).toEqual(true);
@@ -584,8 +587,9 @@ describe(`Node_Modules`, () => {
           version: `1.0.0`,
         });
 
-        await run(`install`);
+        const stdout = (await run(`install`)).stdout;
 
+        expect(stdout).not.toMatch(new RegExp(`Support for nohoist globs .* is deprecated.*`));
         expect(await xfs.existsPromise(`${path}/node_modules/dep` as PortablePath)).toEqual(true);
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep` as PortablePath)).toEqual(false);
       },
