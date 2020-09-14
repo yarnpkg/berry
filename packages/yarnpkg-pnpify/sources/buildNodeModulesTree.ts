@@ -5,7 +5,7 @@ import {PnpApi, PhysicalPackageLocator, PackageInformation} from '@yarnpkg/pnp';
 
 import micromatch                                           from 'micromatch';
 
-import {hoist, HoisterTree, HoisterResult}                  from './hoist';
+import {hoist, HoisterTree, HoisterResult, HoistOptions}    from './hoist';
 
 // Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
 // But because of this TypeScript requires @yarnpkg/pnp during runtime
@@ -79,7 +79,12 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
  */
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
   const {packageTree, nohoistPatterns} = buildPackageTree(pnp, options);
-  const hoistedTree = hoist(packageTree, {nohoistMatches: dirPath => micromatch.isMatch(dirPath, nohoistPatterns, {strictSlashes: true})});
+
+  const hoistOptions: HoistOptions = {};
+  if (nohoistPatterns.length > 0)
+    hoistOptions.nohoistMatches = dirPath => micromatch.isMatch(dirPath, nohoistPatterns, {strictSlashes: true});
+
+  const hoistedTree = hoist(packageTree, hoistOptions);
 
   return populateNodeModulesTree(pnp, hoistedTree, options);
 };
@@ -141,7 +146,9 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
   const relativeCwdNohoistMap = new Map();
   if (options.nohoistPatterns) {
     for (const pattern of options.nohoistPatterns) {
-      relativeCwdNohoistMap.set(pattern.relativeCwd, pattern.nohoistPatterns);
+      if (pattern.nohoistPatterns.length > 1 || pattern.nohoistPatterns.length === 1 && pattern.nohoistPatterns[0].length > 0) {
+        relativeCwdNohoistMap.set(pattern.relativeCwd, pattern.nohoistPatterns);
+      }
     }
   }
 

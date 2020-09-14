@@ -78,7 +78,7 @@ const makeIdent = (name: string, reference: string) => {
   return makeLocator(name, realReference);
 };
 
-type HoistOptions = {
+export type HoistOptions = {
   check?: boolean;
   debugLevel?: number;
   nohoistMatches?: (dirPath: string) => boolean;
@@ -533,8 +533,11 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
         continue;
       const decoupledDependency = decoupleGraphNode(rootNode, dep);
 
-      const rootDirPath = rootNodePath.map(x => x.dirName).join(`/`);
-      const isRootMatchesNohoist = options.nohoistMatches ? options.nohoistMatches(rootDirPath) : false;
+      let isRootMatchesNohoist = false;
+      if (options.nohoistMatches) {
+        const rootDirPath = rootNodePath.map(x => x.dirName).join(`/`);
+        isRootMatchesNohoist = options.nohoistMatches(rootDirPath);
+      }
       hoistNodeDependencies([], Array.from(rootNodePathLocators), decoupledDependency, nextNewNodes, isRootMatchesNohoist);
     }
   } while (nextNewNodes.size > 0);
