@@ -318,8 +318,12 @@ export class Manifest {
       if (Array.isArray(data.workspaces.packages))
         workspaces = data.workspaces.packages;
 
-      if (Array.isArray(data.workspaces.nohoist)) {
-        nohoist = data.workspaces.nohoist;
+      if (typeof data.workspaces.nohoist === `boolean`) {
+        nohoist = data.workspaces.nohoist === true ? [`**`] : [``];
+      } else {
+        if (Array.isArray(data.workspaces.nohoist)) {
+          nohoist = data.workspaces.nohoist;
+        }
       }
     }
 
@@ -334,7 +338,7 @@ export class Manifest {
       });
     }
 
-    for (const entry of nohoist) {
+    for (const entry of nohoist || []) {
       if (typeof entry !== `string`) {
         errors.push(new Error(`Invalid nohoist definition for '${entry}'`));
         continue;
@@ -695,9 +699,14 @@ export class Manifest {
     }
 
     if (this.nohoistPatterns.length > 0) {
-      data.workspaces = {
-        nohoist: this.nohoistPatterns,
-      };
+      data.workspaces = {};
+      if (this.nohoistPatterns.length === 1 && this.nohoistPatterns[0] === `**`) {
+        data.workspaces.nohoist = true;
+      } else if (this.nohoistPatterns.length === 1 && this.nohoistPatterns[0] === ``) {
+        data.workspaces.nohoist = false;
+      } else {
+        data.workspaces.nohoist = this.nohoistPatterns;
+      }
     }
     if (this.workspaceDefinitions.length > 0 || this.nohoistPatterns.length > 0) {
       if (this.workspaceFieldSyntax === WorkspaceFieldSyntax.OBJECT) {
