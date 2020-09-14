@@ -106,6 +106,7 @@ export type PnpApi = {
   resolveUnqualified: (unqualified: NativePath, opts?: {extensions?: Array<string>}) => NativePath,
   resolveRequest: (request: string, issuer: NativePath | null, opts?: {considerBuiltins?: boolean, extensions?: Array<string>}) => NativePath | null,
 
-  // Extension method
+  // Extension methods
   resolveVirtual?: (p: NativePath) => NativePath | null,
+  getAllLocators?: () => Array<PhysicalPackageLocator>,
 };
