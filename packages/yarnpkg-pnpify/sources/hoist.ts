@@ -509,8 +509,7 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
 
     const children = getSortedRegularDependencies(parentNode);
     for (const node of children) {
-      const isSubTreeHoistable = (!isNohoistMatches || (isNohoistMatches && isRootMatchesNohoist));
-      if (isSubTreeHoistable && unhoistableNodes.has(node) && nextLocatorPath.indexOf(node.locator) < 0) {
+      if (unhoistableNodes.has(node) && nextLocatorPath.indexOf(node.locator) < 0) {
         const hoistInfo = hoistInfos.get(node)!;
         if (hoistInfo.isHoistable === Hoistable.NO)
           parentNode.reasons.set(node.name, hoistInfo.reason!);
