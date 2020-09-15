@@ -698,17 +698,15 @@ export class Manifest {
       delete data.bin;
     }
 
-    if (this.nohoistPatterns.length > 0) {
-      data.workspaces = {};
-      if (this.nohoistPatterns.length === 1 && this.nohoistPatterns[0] === `**`) {
-        data.workspaces.nohoist = true;
-      } else if (this.nohoistPatterns.length === 1 && this.nohoistPatterns[0] === ``) {
-        data.workspaces.nohoist = false;
-      } else {
-        data.workspaces.nohoist = this.nohoistPatterns;
-      }
-    }
-    if (this.workspaceDefinitions.length > 0 || this.nohoistPatterns.length > 0) {
+    data.workspaces = {};
+    if (this.nohoistPatterns.length === 1 && this.nohoistPatterns[0] === `**`)
+      data.workspaces.nohoist = true;
+    else if (this.nohoistPatterns.length === 1 && this.nohoistPatterns[0] === ``)
+      data.workspaces.nohoist = false;
+    else
+      data.workspaces.nohoist = this.nohoistPatterns;
+
+    if (this.workspaceDefinitions.length > 0) {
       if (this.workspaceFieldSyntax === WorkspaceFieldSyntax.OBJECT) {
         data.workspaces.packages = this.workspaceDefinitions.map(({pattern}) => pattern);
       } else {
@@ -716,7 +714,7 @@ export class Manifest {
       }
     }
 
-    if (this.workspaceDefinitions.length === 0 && this.nohoistPatterns.length === 0)
+    if (Object.keys(data.workspaces).length === 0)
       delete data.workspaces;
 
     const regularDependencies = [];

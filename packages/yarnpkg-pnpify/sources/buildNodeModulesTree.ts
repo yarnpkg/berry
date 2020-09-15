@@ -78,11 +78,18 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
  * @returns hoisted `node_modules` directories representation in-memory
  */
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
-  const {packageTree, nohoistPatterns} = buildPackageTree(pnp, options);
+  const {packageTree, nohoistPatterns, nohoistDirList} = buildPackageTree(pnp, options);
 
   const hoistOptions: HoistOptions = {};
-  if (nohoistPatterns.length > 0)
-    hoistOptions.nohoistMatches = dirPath => micromatch.isMatch(dirPath, nohoistPatterns, {strictSlashes: true});
+  if (nohoistPatterns.length > 0 || nohoistDirList.length > 0) {
+    hoistOptions.nohoistMatches = dirPath => {
+      for (const pattern of nohoistDirList)
+        if (dirPath.startsWith(pattern))
+          return true;
+
+      return nohoistPatterns.length > 0 ? micromatch.isMatch(dirPath, nohoistPatterns, {strictSlashes: true}) : false;
+    };
+  }
 
   const hoistedTree = hoist(packageTree, hoistOptions);
 
@@ -140,7 +147,7 @@ function isPortalLocator(locatorKey: LocatorKey): boolean {
  *
  * @returns package tree, packages info and locators
  */
-const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, nohoistPatterns: Array<string> } => {
+const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, nohoistPatterns: Array<string>, nohoistDirList: Array<string> } => {
   const pnpRoots = pnp.getDependencyTreeRoots();
 
   const relativeCwdNohoistMap = new Map();
@@ -153,6 +160,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
   }
 
   const nohoistPatterns: Array<string> = [];
+  const nohoistDirList: Array<string> = [];
 
   const topPkg = pnp.getPackageInformation(pnp.topLevel);
   if (topPkg === null)
@@ -208,7 +216,11 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       const relativeCwdNohoistPatterns = relativeCwdNohoistMap.get(relativeCwd);
       if (relativeCwdNohoistPatterns) {
         for (const pattern of relativeCwdNohoistPatterns) {
-          nohoistPatterns.push([...dirPath, pattern].join(`/`));
+          if (pattern === `**`) {
+            nohoistDirList.push(`${[...dirPath, node.dirName].join(`/`)}/`);
+          } else {
+            nohoistPatterns.push([...dirPath, node.dirName, pattern].join(`/`));
+          }
         }
       }
     }
@@ -236,7 +248,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, []);
 
-  return {packageTree, nohoistPatterns};
+  return {packageTree, nohoistPatterns, nohoistDirList};
 };
 
 function getTargetLocatorPath(locator: PhysicalPackageLocator, pnp: PnpApi, options: NodeModulesTreeOptions): {linkType: LinkType, target: PortablePath} {
