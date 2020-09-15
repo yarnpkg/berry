@@ -77,7 +77,14 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
     const ignorePath = configuration.get(`ignorePath`);
     const ignoreCwd = configuration.get(`ignoreCwd`);
 
-    if (yarnPath !== null && !ignorePath) {
+    // Avoid unnecessary spawn when run directly
+    if (!ignorePath && !ignoreCwd && yarnPath === npath.toPortablePath(npath.resolve(process.argv[1]))) {
+      process.env.YARN_IGNORE_PATH = `1`;
+      process.env.YARN_IGNORE_CWD = `1`;
+
+      await exec(cli);
+      return;
+    } else if (yarnPath !== null && !ignorePath) {
       if (!xfs.existsSync(yarnPath)) {
         process.stdout.write(cli.error(new Error(`The "yarn-path" option has been set (in ${configuration.sources.get(`yarnPath`)}), but the specified location doesn't exist (${yarnPath}).`)));
         process.exitCode = 1;

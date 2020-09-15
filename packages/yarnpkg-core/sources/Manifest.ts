@@ -703,7 +703,7 @@ export class Manifest {
       data.workspaces.nohoist = true;
     else if (this.nohoistPatterns.length === 1 && this.nohoistPatterns[0] === ``)
       data.workspaces.nohoist = false;
-    else
+    else if (this.nohoistPatterns.length > 0)
       data.workspaces.nohoist = this.nohoistPatterns;
 
     if (this.workspaceDefinitions.length > 0) {
