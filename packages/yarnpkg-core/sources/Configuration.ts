@@ -374,6 +374,14 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
       type: SettingsType.ANY,
     },
   },
+
+  // Node modules-specific setttings
+  nmHoistBorders: {
+    description: `Hoist borders for node_modules dependencies inside workspaces (you can override them in installConfig.hoistBorders package.json field). Values: workspace - do not hoist past workspace, dependencies - do not hoist past direct workspace dependencies (recommended), none - no borders, hoist everything to the top node_modules`,
+    type: SettingsType.STRING,
+    values: [`workspace`, `dependencies`, `none`],
+    default: `none`,
+  },
 };
 
 function parseBoolean(value: unknown) {

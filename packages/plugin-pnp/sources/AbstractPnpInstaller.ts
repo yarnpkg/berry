@@ -1,3 +1,4 @@
+import {HoistBorders}                                                                                   from '@yarnpkg/core';
 import {Installer, LinkOptions, LinkType, MessageName, DependencyMeta, FinalizeInstallStatus, Manifest} from '@yarnpkg/core';
 import {FetchResult, Descriptor, Locator, Package, BuildDirective}                                      from '@yarnpkg/core';
 import {miscUtils, structUtils}                                                                         from '@yarnpkg/core';
@@ -65,12 +66,12 @@ export abstract class AbstractPnpInstaller implements Installer {
     if (this.opts.skipIncompatiblePackageLinking && !isManifestCompatible)
       return {packageLocation: null, buildDirective: null};
 
-    if (manifest) {
-      const nohoistGlobs = manifest.nohoistPatterns.filter(pattern => [``, `**`].indexOf(pattern) < 0);
-      if (nohoistGlobs.length > 0) {
-        this.opts.report.reportWarningOnce(MessageName.DEPRECATED_NOHOIST_GLOB, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} Support for nohoist globs ${JSON.stringify(nohoistGlobs)} is deprecated. Consider using 'nohoist: true' in corresponding workspaces instead.`);
-      }
-    }
+    // if (manifest) {
+    //   const nohoistGlobs = manifest.nohoistPatterns.filter(pattern => [``, `**`].indexOf(pattern) < 0);
+    //   if (nohoistGlobs.length > 0) {
+    //     this.opts.report.reportWarningOnce(MessageName.DEPRECATED_NOHOIST_GLOB, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} Support for nohoist globs ${JSON.stringify(nohoistGlobs)} is deprecated. Consider using 'nohoist: true' in corresponding workspaces instead.`);
+    //   }
+    // }
 
     const buildScripts = !hasVirtualInstances
       ? await this.getBuildScripts(pkg, manifest, fetchResult)
@@ -165,7 +166,7 @@ export abstract class AbstractPnpInstaller implements Installer {
 
     const blacklistedLocations = this.blacklistedPaths;
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
-    const nmNohoistPatterns = this.opts.project.workspaces.map(({relativeCwd, manifest}) => ({relativeCwd, nohoistPatterns: manifest.nohoistPatterns}));
+    const nmHoistBordersByCwd= new Map(this.opts.project.workspaces.map(({relativeCwd, manifest}) => ([relativeCwd, manifest.installConfig?.hoistBorders || this.opts.project.configuration.get(`nmHoistBorders`) as HoistBorders])));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
     const fallbackPool = new Map();
@@ -187,7 +188,7 @@ export abstract class AbstractPnpInstaller implements Installer {
       ignorePattern,
       packageRegistry,
       shebang,
-      nmNohoistPatterns,
+      nmHoistBordersByCwd,
     });
   }
 

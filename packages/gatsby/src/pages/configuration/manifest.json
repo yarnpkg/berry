@@ -333,8 +333,21 @@
         "main": {},
         "module": {},
         "registry": {}
-      },
-      "$comment": "{ \"margin\": true }"
+      }
     }
+  },
+  "installConfig": {
+    "description": "This field contains various install-time settings",
+    "type": "object",
+    "properties": {
+      "hoistBorders": {
+        "description": "Define hoist borders for node_modules dependencies inside workspaces. Values: workspace - do not hoist past workspace, dependencies - do not hoist past direct workspace dependencies (recommended), none - no borders, hoist everything to the top node_modules",
+        "type": "string",
+        "enum": ["workspace", "dependencies", "none"],
+        "default": "public",
+        "$comment": "{ \"anchor\": \"installConfig.hoistBorders\" }"
+      }
+    },
+    "$comment": "{ \"margin\": true }"
   }
 }

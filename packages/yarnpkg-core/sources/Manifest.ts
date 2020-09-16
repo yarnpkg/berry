@@ -35,6 +35,12 @@ export interface PublishConfig {
   executableFiles?: Set<PortablePath>;
 }
 
+export enum HoistBorders { WORKSPACE = `workspace`, DEPENDENCIES = `dependencies`, NONE = `none` }
+
+export interface InstallConfig {
+  hoistBorders?: HoistBorders;
+}
+
 enum WorkspaceFieldSyntax { ARRAY, OBJECT }
 
 export class Manifest {
@@ -73,6 +79,7 @@ export class Manifest {
 
   public files: Set<PortablePath> | null = null;
   public publishConfig: PublishConfig | null = null;
+  public installConfig: InstallConfig | null = null;
 
   public preferUnplugged: boolean | null = null;
 
@@ -454,6 +461,18 @@ export class Manifest {
           }
 
           this.publishConfig.executableFiles.add(npath.toPortablePath(value));
+        }
+      }
+    }
+
+    if (typeof data.installConfig === `object` && data.installConfig !== null) {
+      this.installConfig = {};
+
+      if (typeof data.installConfig.hoistBorders === `string`) {
+        if (Object.values(HoistBorders).indexOf(data.installConfig.hoistBorders) >= 0) {
+          this.installConfig.hoistBorders = data.installConfig.hoistBorders;
+        } else {
+          errors.push(new Error(`Invalid hoistBorders value: '${data.installConfig.hoistBorders}'`));
         }
       }
     }

@@ -7,7 +7,6 @@ const toTree = (obj: any, key: string = `.`, nodes = new Map()): HoisterTree => 
     node = {
       name: identName,
       identName,
-      dirName: identName,
       reference: key.match(/@?[^@]+@?(.+)?/)![1] || ``,
       dependencies: new Set<HoisterTree>(),
       peerNames: new Set<string>((obj[key] || {}).peerNames || []),
@@ -416,10 +415,10 @@ describe(`hoist`, () => {
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
 
-  it(`should not hoist single package if matched by nohoist matcher`, () => {
+  it(`should not hoist packages past hoist boundary`, () => {
     // . -> A -> B -> D
     //   -> C -> D
-    // If nohoist matcher matches D, the result should be:
+    // If B and C are hoist borders, the result should be:
     // . -> A
     //   -> B -> D
     //   -> C -> D
@@ -429,13 +428,16 @@ describe(`hoist`, () => {
       B: {dependencies: [`D`]},
       C: {dependencies: [`D`]},
     };
-    const nohoistMatches = (namePath: string) => /[D]/.test(namePath);
-    expect(getTreeHeight(hoist(toTree(tree), {check: true, nohoistMatches}))).toEqual(3);
+    const hoistBorders = new Map([
+      [`.@`, new Set([`C`])],
+      [`A@`, new Set([`B`])],
+    ]);
+    expect(getTreeHeight(hoist(toTree(tree), {check: true, hoistBorders}))).toEqual(3);
   });
 
   it(`should not hoist multiple package past nohoist root`, () => {
-    // . -> A -> B -> C -> D
-    // If nohoist matcher matches B, C and D, the result should be:
+    // . -> A -> B -> C -> D -> E
+    // If B is a hoist border, the result should be:
     // . -> A
     //   -> B -> C
     //        -> D
@@ -444,8 +446,11 @@ describe(`hoist`, () => {
       A: {dependencies: [`B`]},
       B: {dependencies: [`C`]},
       C: {dependencies: [`D`]},
+      D: {dependencies: [`E`]},
     };
-    const nohoistMatches = (namePath: string) => /[BCD]/.test(namePath);
-    expect(getTreeHeight(hoist(toTree(tree), {check: true, nohoistMatches}))).toEqual(4);
+    const hoistBorders = new Map([
+      [`A@`, new Set([`B`])],
+    ]);
+    expect(getTreeHeight(hoist(toTree(tree), {check: true, hoistBorders}))).toEqual(3);
   });
 });

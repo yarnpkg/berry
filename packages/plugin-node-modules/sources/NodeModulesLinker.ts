@@ -102,7 +102,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
     }
 
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
-    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false, nohoistPatterns: pnpSettings.nmNohoistPatterns});
+    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false, hoistBordersByCwd: pnpSettings.nmHoistBordersByCwd});
     const locatorMap = buildLocatorMap(nmTree);
 
     await persistNodeModules(preinstallState, locatorMap, {

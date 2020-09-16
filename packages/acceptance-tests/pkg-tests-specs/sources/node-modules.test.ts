@@ -435,7 +435,10 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should not hoist a single package matched by nohoist glob`,
+  test(`should not hoist a single package past workspace hoist border`,
+    // . -> workspace -> dep
+    // should be hoisted to:
+    // . -> workspace -> dep
     makeTemporaryEnv(
       {
         private: true,
@@ -448,11 +451,11 @@ describe(`Node_Modules`, () => {
         await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
           name: `workspace`,
           version: `1.0.0`,
-          workspaces: {
-            nohoist: [`**/dep`],
-          },
           dependencies: {
             dep: `file:./dep`,
+          },
+          installConfig: {
+            hoistBorders: `workspace`,
           },
         });
         await writeJson(npath.toPortablePath(`${path}/workspace/dep/package.json`), {
@@ -460,18 +463,20 @@ describe(`Node_Modules`, () => {
           version: `1.0.0`,
         });
 
-        const stdout = (await run(`install`)).stdout;
+        await run(`install`);
 
-        expect(stdout).toMatch(new RegExp(`Support for nohoist globs .* is deprecated.*`));
+        // expect(stdout).toMatch(new RegExp(`Support for nohoist globs .* is deprecated.*`));
         expect(await xfs.existsPromise(`${path}/node_modules/dep` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep` as PortablePath)).toEqual(true);
+        // workspace symlink should NOT be hoisted to the top
+        expect(await xfs.existsPromise(`${path}/node_modules/workspace` as PortablePath)).toEqual(false);
       },
     )
   );
 
-  test(`should not hoist multiple packages when matched by nohoist glob`,
+  test(`should not hoist multiple packages past workspace hoist border`,
     // . -> workspace -> dep1 -> dep2
-    // if nohoist is `**/workspace/**` should be hoisted to:
+    // should be hoisted to:
     // . -> workspace -> dep1
     //                -> dep2
     makeTemporaryEnv(
@@ -479,11 +484,11 @@ describe(`Node_Modules`, () => {
         private: true,
         workspaces: {
           packages: [`workspace`],
-          nohoist: [`**/workspace/**`],
         },
       },
       {
         nodeLinker: `node-modules`,
+        nmHoistBorders: `workspace`,
       },
       async ({path, run, source}) => {
         await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
@@ -503,22 +508,22 @@ describe(`Node_Modules`, () => {
           version: `1.0.0`,
         });
 
-        const stdout = (await run(`install`)).stdout;
+        await run(`install`);
 
-        expect(stdout).toMatch(new RegExp(`Support for nohoist globs .* is deprecated.*`));
         expect(await xfs.existsPromise(`${path}/node_modules/dep1` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/node_modules/dep2` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep1` as PortablePath)).toEqual(true);
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep2` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/node_modules/workspace` as PortablePath)).toEqual(false);
       },
     )
   );
 
-  test(`should support nohoist: true`,
+  test(`should support dependencies hoist border`,
+    // . -> workspace -> dep1 -> dep2 -> dep3
+    // should be hoised to:
     // . -> workspace -> dep1 -> dep2
-    // if nohoist is `**/workspace/**` should be hoisted to:
-    // . -> workspace -> dep1
-    //                -> dep2
+    //                        -> dep3
     makeTemporaryEnv(
       {
         private: true,
@@ -533,40 +538,53 @@ describe(`Node_Modules`, () => {
         await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
           name: `workspace`,
           version: `1.0.0`,
-          workspaces: {
-            nohoist: true,
-          },
           dependencies: {
             dep1: `file:./dep1`,
-            dep2: `file:./dep2`,
+          },
+          installConfig: {
+            hoistBorders: `dependencies`,
           },
         });
         await writeJson(npath.toPortablePath(`${path}/workspace/dep1/package.json`), {
           name: `dep1`,
           version: `1.0.0`,
+          dependencies: {
+            dep2: `file:../dep2`,
+          },
         });
         await writeJson(npath.toPortablePath(`${path}/workspace/dep2/package.json`), {
           name: `dep2`,
           version: `1.0.0`,
+          dependencies: {
+            dep3: `file:../dep3`,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/workspace/dep3/package.json`), {
+          name: `dep3`,
+          version: `1.0.0`,
         });
 
-        const stdout = (await run(`install`)).stdout;
+        await run(`install`);
 
-        expect(stdout).not.toMatch(new RegExp(`Support for nohoist globs .* is deprecated.*`));
         expect(await xfs.existsPromise(`${path}/node_modules/dep1` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/node_modules/dep2` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/node_modules/dep3` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep1` as PortablePath)).toEqual(true);
-        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep2` as PortablePath)).toEqual(true);
-        expect((await readJson(`${path}/workspace/package.json`)).workspaces.nohoist).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep1/node_modules/dep2` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep1/node_modules/dep3` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/node_modules/workspace` as PortablePath)).toEqual(false);
       },
     )
   );
 
-  test(`should support nohoist: false`,
+  test(`should create symlink if workspace is a dependency AND it has hoist borders at the same time`,
     makeTemporaryEnv(
       {
         private: true,
         workspaces: [`workspace`],
+        dependencies: {
+          workspace: `workspace:*`,
+        },
       },
       {
         nodeLinker: `node-modules`,
@@ -575,11 +593,11 @@ describe(`Node_Modules`, () => {
         await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
           name: `workspace`,
           version: `1.0.0`,
-          workspaces: {
-            nohoist: false,
-          },
           dependencies: {
             dep: `file:./dep`,
+          },
+          installConfig: {
+            hoistBorders: `workspace`,
           },
         });
         await writeJson(npath.toPortablePath(`${path}/workspace/dep/package.json`), {
@@ -587,11 +605,13 @@ describe(`Node_Modules`, () => {
           version: `1.0.0`,
         });
 
-        const stdout = (await run(`install`)).stdout;
+        await run(`install`);
 
-        expect(stdout).not.toMatch(new RegExp(`Support for nohoist globs .* is deprecated.*`));
-        expect(await xfs.existsPromise(`${path}/node_modules/dep` as PortablePath)).toEqual(true);
-        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep` as PortablePath)).toEqual(false);
+        // expect(stdout).toMatch(new RegExp(`Support for nohoist globs .* is deprecated.*`));
+        expect(await xfs.existsPromise(`${path}/node_modules/dep` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep` as PortablePath)).toEqual(true);
+        // workspace symlink should be present at the top
+        expect(await xfs.existsPromise(`${path}/node_modules/workspace` as PortablePath)).toEqual(true);
       },
     )
   );
