@@ -465,7 +465,6 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        // expect(stdout).toMatch(new RegExp(`Support for nohoist globs .* is deprecated.*`));
         expect(await xfs.existsPromise(`${path}/node_modules/dep` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep` as PortablePath)).toEqual(true);
         // workspace symlink should NOT be hoisted to the top
@@ -607,7 +606,6 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        // expect(stdout).toMatch(new RegExp(`Support for nohoist globs .* is deprecated.*`));
         expect(await xfs.existsPromise(`${path}/node_modules/dep` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep` as PortablePath)).toEqual(true);
         // workspace symlink should be present at the top
