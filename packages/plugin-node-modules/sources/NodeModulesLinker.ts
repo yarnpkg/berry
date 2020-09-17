@@ -2,6 +2,7 @@ import {BuildDirective, MessageName, Project, FetchResult}        from '@yarnpkg
 import {Linker, LinkOptions, MinimalLinkOptions, LinkType}        from '@yarnpkg/core';
 import {Locator, Package, BuildType, FinalizeInstallStatus}       from '@yarnpkg/core';
 import {structUtils, Report, Manifest, miscUtils, DependencyMeta} from '@yarnpkg/core';
+import {HoistBorders}                                             from '@yarnpkg/core';
 import {VirtualFS, ZipOpenFS, xfs, FakeFS}                        from '@yarnpkg/fslib';
 import {PortablePath, npath, ppath, toFilename, Filename}         from '@yarnpkg/fslib';
 import {getLibzipPromise}                                         from '@yarnpkg/libzip';
@@ -102,7 +103,8 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
     }
 
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
-    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false, hoistBordersByCwd: pnpSettings.nmHoistBordersByCwd});
+    const hoistBordersByCwd= new Map(this.opts.project.workspaces.map(({relativeCwd, manifest}) => ([relativeCwd, manifest.installConfig?.hoistBorders || this.opts.project.configuration.get(`nmHoistBorders`) as HoistBorders])));
+    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false, hoistBordersByCwd});
     const locatorMap = buildLocatorMap(nmTree);
 
     await persistNodeModules(preinstallState, locatorMap, {
@@ -366,14 +368,14 @@ type LocationRoot = PortablePath;
  *               children: Map {
  *                 'react-hooks' => {
  *                   children: Map {},
- *                   locator: '@apollo/react-hooks:virtual:cf51d203f9119859b7628364a64433e4a73a44a577d2ffd0dfd5dd737a980bc6cddc70ed15c1faf959fc2ad6a8e103ce52fe188f2b175b5f4371d4381544d74e#npm:3.1.3'
+ *                   locator: '@apollo/react-hooks:virtual:cf...#npm:3.1.3'
  *                 }
  *               }
  *             }
  *           }
  *         }
  *       },
- *       locator: 'react-apollo:virtual:2499dbb93d824027565d71b0716c4fb8b548ad61955d0a0286bfb3c5b4058e227894b6691d96808c00f576db14870018375210362c26ee321ea99fd6ed041c74#npm:3.1.3'
+ *       locator: 'react-apollo:virtual:24...#npm:3.1.3'
  *     },
  *   },
  *   'packages/client' => children: Map {

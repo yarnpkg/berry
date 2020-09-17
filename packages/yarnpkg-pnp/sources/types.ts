@@ -1,4 +1,3 @@
-import {HoistBorders}                   from '@yarnpkg/core';
 import {NativePath, PortablePath, Path} from '@yarnpkg/fslib';
 
 // Note: most of those types are useless for most users. Just check the
@@ -91,9 +90,6 @@ export type PnpSettings = {
   // getDependencyTreeRoots function. They are typically the workspace
   // locators.
   dependencyTreeRoots: Array<PhysicalPackageLocator>,
-
-  // node_modules workspace hoist borders (used in PnP loose mode)
-  nmHoistBordersByCwd: Map<PortablePath, HoistBorders>,
 };
 
 export type PnpApi = {
