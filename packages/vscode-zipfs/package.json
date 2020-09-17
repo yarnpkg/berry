@@ -5,6 +5,7 @@
   "publisher": "arcanis",
   "displayName": "ZipFS - a zip file system",
   "description": "Allows to easily inspect and modify files stored within zip archives.",
+  "icon": "icon.png",
   "version": "2.2.1",
   "engines": {
     "vscode": "^1.46.0",
