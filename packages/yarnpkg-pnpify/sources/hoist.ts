@@ -87,13 +87,13 @@ export type HoistOptions = {
   /** Debug level */
   debugLevel?: DebugLevel;
   /** Hoist borders are defined by parent node locator and its dependency name. The dependency is considered a border, nothing can be hoisted past this dependency, but dependency can be hoisted */
-  hoistBorders?: Map<Locator, Set<PackageName>>;
+  hoistingLimits?: Map<Locator, Set<PackageName>>;
 }
 
 type InternalHoistOptions = {
   check?: boolean;
   debugLevel: DebugLevel;
-  hoistBorders: Map<Locator, Set<PackageName>>;
+  hoistingLimits: Map<Locator, Set<PackageName>>;
 }
 
 /**
@@ -109,8 +109,8 @@ type InternalHoistOptions = {
 export const hoist = (tree: HoisterTree, opts: HoistOptions = {}): HoisterResult => {
   const debugLevel = opts.debugLevel || Number(process.env.NM_DEBUG_LEVEL || DebugLevel.NONE);
   const check = opts.check || debugLevel >= DebugLevel.INTENSIVE_CHECK;
-  const hoistBorders = opts.hoistBorders || new Map();
-  const options: InternalHoistOptions = {check, debugLevel, hoistBorders};
+  const hoistingLimits = opts.hoistingLimits || new Map();
+  const options: InternalHoistOptions = {check, debugLevel, hoistingLimits};
 
   if (options.debugLevel >= DebugLevel.PERF)
     console.time(`hoist`);
@@ -612,7 +612,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
     const isSeen = !!workNode;
     if (!workNode) {
       const {name, identName, reference, peerNames} = node;
-      const dependenciesHoistBorders = options.hoistBorders.get(parentNode.locator);
+      const dependenciesNmHoistingLimits = options.hoistingLimits.get(parentNode.locator);
       workNode = {
         name,
         references: new Set([reference]),
@@ -624,7 +624,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
         peerNames: new Set(peerNames),
         reasons: new Map(),
         decoupled: true,
-        isHoistBorder: dependenciesHoistBorders ? dependenciesHoistBorders.has(name) : false,
+        isHoistBorder: dependenciesNmHoistingLimits ? dependenciesNmHoistingLimits.has(name) : false,
       };
       seenNodes.set(node, workNode);
     }

@@ -428,11 +428,11 @@ describe(`hoist`, () => {
       B: {dependencies: [`D`]},
       C: {dependencies: [`D`]},
     };
-    const hoistBorders = new Map([
+    const hoistingLimits = new Map([
       [`.@`, new Set([`C`])],
       [`A@`, new Set([`B`])],
     ]);
-    expect(getTreeHeight(hoist(toTree(tree), {check: true, hoistBorders}))).toEqual(3);
+    expect(getTreeHeight(hoist(toTree(tree), {check: true, hoistingLimits}))).toEqual(3);
   });
 
   it(`should not hoist multiple package past nohoist root`, () => {
@@ -448,9 +448,9 @@ describe(`hoist`, () => {
       C: {dependencies: [`D`]},
       D: {dependencies: [`E`]},
     };
-    const hoistBorders = new Map([
+    const hoistingLimits = new Map([
       [`A@`, new Set([`B`])],
     ]);
-    expect(getTreeHeight(hoist(toTree(tree), {check: true, hoistBorders}))).toEqual(3);
+    expect(getTreeHeight(hoist(toTree(tree), {check: true, hoistingLimits}))).toEqual(3);
   });
 });

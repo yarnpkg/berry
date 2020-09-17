@@ -35,10 +35,10 @@ export interface PublishConfig {
   executableFiles?: Set<PortablePath>;
 }
 
-export enum HoistBorders { WORKSPACE = `workspace`, DEPENDENCIES = `dependencies`, NONE = `none` }
+export enum NmHoistingLimits { WORKSPACE = `workspace`, DEPENDENCIES = `dependencies`, NONE = `none` }
 
 export interface InstallConfig {
-  hoistBorders?: HoistBorders;
+  hoistingLimits?: NmHoistingLimits;
 }
 
 export class Manifest {
@@ -311,7 +311,7 @@ export class Manifest {
     }
 
     if (typeof data.workspaces === `object` && data.workspaces.nohoist)
-      errors.push(new Error(`'nohoist' is deprecated, please use 'installConfig.hoistBorders' instead`));
+      errors.push(new Error(`'nohoist' is deprecated, please use 'installConfig.hoistingLimits' instead`));
 
     const workspaces = Array.isArray(data.workspaces)
       ? data.workspaces
@@ -444,11 +444,11 @@ export class Manifest {
     if (typeof data.installConfig === `object` && data.installConfig !== null) {
       this.installConfig = {};
 
-      if (typeof data.installConfig.hoistBorders === `string`) {
-        if (Object.values(HoistBorders).indexOf(data.installConfig.hoistBorders) >= 0) {
-          this.installConfig.hoistBorders = data.installConfig.hoistBorders;
+      if (typeof data.installConfig.hoistingLimits === `string`) {
+        if (Object.values(NmHoistingLimits).indexOf(data.installConfig.hoistingLimits) >= 0) {
+          this.installConfig.hoistingLimits = data.installConfig.hoistingLimits;
         } else {
-          errors.push(new Error(`Invalid hoistBorders value: '${data.installConfig.hoistBorders}'`));
+          errors.push(new Error(`Invalid hoistingLimits value: '${data.installConfig.hoistingLimits}'`));
         }
       }
     }

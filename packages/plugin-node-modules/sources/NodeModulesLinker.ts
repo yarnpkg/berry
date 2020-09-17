@@ -2,7 +2,7 @@ import {BuildDirective, MessageName, Project, FetchResult}        from '@yarnpkg
 import {Linker, LinkOptions, MinimalLinkOptions, LinkType}        from '@yarnpkg/core';
 import {Locator, Package, BuildType, FinalizeInstallStatus}       from '@yarnpkg/core';
 import {structUtils, Report, Manifest, miscUtils, DependencyMeta} from '@yarnpkg/core';
-import {HoistBorders}                                             from '@yarnpkg/core';
+import {NmHoistingLimits}                                             from '@yarnpkg/core';
 import {VirtualFS, ZipOpenFS, xfs, FakeFS}                        from '@yarnpkg/fslib';
 import {PortablePath, npath, ppath, toFilename, Filename}         from '@yarnpkg/fslib';
 import {getLibzipPromise}                                         from '@yarnpkg/libzip';
@@ -103,8 +103,8 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
     }
 
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
-    const hoistBordersByCwd= new Map(this.opts.project.workspaces.map(({relativeCwd, manifest}) => ([relativeCwd, manifest.installConfig?.hoistBorders || this.opts.project.configuration.get(`nmHoistBorders`) as HoistBorders])));
-    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false, hoistBordersByCwd});
+    const hoistingLimitsByCwd= new Map(this.opts.project.workspaces.map(({relativeCwd, manifest}) => ([relativeCwd, manifest.installConfig?.hoistingLimits || this.opts.project.configuration.get(`nmHoistingLimits`) as NmHoistingLimits])));
+    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false, hoistingLimitsByCwd});
     const locatorMap = buildLocatorMap(nmTree);
 
     await persistNodeModules(preinstallState, locatorMap, {

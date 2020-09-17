@@ -1,4 +1,4 @@
-import {structUtils, HoistBorders}                          from '@yarnpkg/core';
+import {structUtils, NmHoistingLimits}                          from '@yarnpkg/core';
 import {NativePath, PortablePath, Filename}                 from '@yarnpkg/fslib';
 import {toFilename, npath, ppath}                           from '@yarnpkg/fslib';
 import {PnpApi, PhysicalPackageLocator, PackageInformation} from '@yarnpkg/pnp';
@@ -40,7 +40,7 @@ export type NodeModulesTree = Map<PortablePath, NodeModulesBaseNode | NodeModule
 
 export interface NodeModulesTreeOptions {
   pnpifyFs?: boolean;
-  hoistBordersByCwd?: Map<PortablePath, HoistBorders>;
+  hoistingLimitsByCwd?: Map<PortablePath, NmHoistingLimits>;
 }
 
 /** node_modules path segment */
@@ -76,9 +76,9 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
  * @returns hoisted `node_modules` directories representation in-memory
  */
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
-  const {packageTree, hoistBorders} = buildPackageTree(pnp, options);
+  const {packageTree, hoistingLimits} = buildPackageTree(pnp, options);
 
-  const hoistedTree = hoist(packageTree, {hoistBorders});
+  const hoistedTree = hoist(packageTree, {hoistingLimits});
 
   return populateNodeModulesTree(pnp, hoistedTree, options);
 };
@@ -134,10 +134,10 @@ function isPortalLocator(locatorKey: LocatorKey): boolean {
  *
  * @returns package tree, packages info and locators
  */
-const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, hoistBorders: Map<LocatorKey, Set<string>> } => {
+const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, hoistingLimits: Map<LocatorKey, Set<string>> } => {
   const pnpRoots = pnp.getDependencyTreeRoots();
 
-  const hoistBorders = new Map<LocatorKey, Set<string>>();
+  const hoistingLimits = new Map<LocatorKey, Set<string>>();
 
   const topPkg = pnp.getPackageInformation(pnp.topLevel);
   if (topPkg === null)
@@ -190,8 +190,8 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
     if (isHoistBorder) {
       const parentLocatorKey = stringifyLocator({name: parent.identName, reference: parent.reference});
-      const dependencyBorders = hoistBorders.get(parentLocatorKey) || new Set();
-      hoistBorders.set(parentLocatorKey, dependencyBorders);
+      const dependencyBorders = hoistingLimits.get(parentLocatorKey) || new Set();
+      hoistingLimits.set(parentLocatorKey, dependencyBorders);
       dependencyBorders.add(node.name);
     }
 
@@ -210,12 +210,12 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
           if (depPkg === null)
             throw new Error(`Assertion failed: Expected the package to have been registered`);
 
-          const parentHoistBorders = options.hoistBordersByCwd?.get(parentRelativeCwd);
+          const parentNmHoistingLimits = options.hoistingLimitsByCwd?.get(parentRelativeCwd);
           const relativeCwd = ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;
-          const depHoistBorders = options.hoistBordersByCwd?.get(relativeCwd);
-          const isHoistBorder = parentHoistBorders === HoistBorders.DEPENDENCIES
-            || depHoistBorders === HoistBorders.DEPENDENCIES
-            || depHoistBorders === HoistBorders.WORKSPACE;
+          const depNmHoistingLimits = options.hoistingLimitsByCwd?.get(relativeCwd);
+          const isHoistBorder = parentNmHoistingLimits === NmHoistingLimits.DEPENDENCIES
+            || depNmHoistingLimits === NmHoistingLimits.DEPENDENCIES
+            || depNmHoistingLimits === NmHoistingLimits.WORKSPACE;
 
           addPackageToTree(depName, depPkg, depLocator, node, relativeCwd, isHoistBorder);
         }
@@ -225,7 +225,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, PortablePath.dot, false);
 
-  return {packageTree, hoistBorders};
+  return {packageTree, hoistingLimits};
 };
 
 function getTargetLocatorPath(locator: PhysicalPackageLocator, pnp: PnpApi, options: NodeModulesTreeOptions): {linkType: LinkType, target: PortablePath} {
@@ -407,8 +407,8 @@ const benchmarkBuildTree = (pnp: PnpApi, options: NodeModulesTreeOptions): numbe
   const iterCount = 100;
   const startTime = Date.now();
   for (let iter = 0; iter < iterCount; iter++) {
-    const {packageTree, hoistBorders} = buildPackageTree(pnp, options);
-    const hoistedTree = hoist(packageTree, {hoistBorders});
+    const {packageTree, hoistingLimits} = buildPackageTree(pnp, options);
+    const hoistedTree = hoist(packageTree, {hoistingLimits});
     populateNodeModulesTree(pnp, hoistedTree, options);
   }
   const endTime = Date.now();
