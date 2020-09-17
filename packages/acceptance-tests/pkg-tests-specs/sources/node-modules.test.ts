@@ -615,4 +615,24 @@ describe(`Node_Modules`, () => {
       },
     )
   );
+
+  test(`should warn about 'nohoist' usage and retain nohoist field in the manifest`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: {
+          nohoist: [`foo/**`],
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        const stdout = (await run(`install`)).stdout;
+
+        expect(stdout).toMatch(new RegExp(`'nohoist' is deprecated.*`));
+        expect(await readJson(`${path}/package.json`)).toHaveProperty(`workspaces.nohoist`);
+      },
+    )
+  );
 });
