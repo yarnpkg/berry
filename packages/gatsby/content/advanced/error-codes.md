@@ -310,8 +310,4 @@ A package requests a peer dependency, but its parent in the dependency tree prov
 ## YN0061 - `DEPRECATED_PACKAGE`
 
 A package is marked as deprecated by the publisher. Avoid using it, use the alternative provided in the deprecation message instead.
-
-## YN0067 - `DEPRECATED_NOHOIST_GLOB`
-
-`nohoist` glob usage is detected accross the project. Nohoist globs are considered an anti-pattern in Yarn 2+ and deprecated, because they require micromanagement from the end developers.
-Only `nohoist: true` is considered a valid usage for the `nohoist` feature for defining per-workspace hoisting boundaries.
+s

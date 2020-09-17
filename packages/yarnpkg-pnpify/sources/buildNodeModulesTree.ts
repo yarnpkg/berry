@@ -225,8 +225,6 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, PortablePath.dot, false);
 
-  console.log(hoistBorders);
-
   return {packageTree, hoistBorders};
 };
 
