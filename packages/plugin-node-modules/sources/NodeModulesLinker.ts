@@ -2,7 +2,7 @@ import {BuildDirective, MessageName, Project, FetchResult}        from '@yarnpkg
 import {Linker, LinkOptions, MinimalLinkOptions, LinkType}        from '@yarnpkg/core';
 import {Locator, Package, BuildType, FinalizeInstallStatus}       from '@yarnpkg/core';
 import {structUtils, Report, Manifest, miscUtils, DependencyMeta} from '@yarnpkg/core';
-import {NmHoistingLimits}                                             from '@yarnpkg/core';
+import {NmHoistingLimits}                                         from '@yarnpkg/core';
 import {VirtualFS, ZipOpenFS, xfs, FakeFS}                        from '@yarnpkg/fslib';
 import {PortablePath, npath, ppath, toFilename, Filename}         from '@yarnpkg/fslib';
 import {getLibzipPromise}                                         from '@yarnpkg/libzip';
