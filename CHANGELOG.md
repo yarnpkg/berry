@@ -10,6 +10,8 @@
 
 ### Installs
 
+- Hoisting borders support for `node_modules` installs added, they can be defined
+via `nmHoistBorders` global setting and `installConfig.hoistBorders` `package.json` field.
 - Cyclic peer dependencies inside `node_modules` are hoisted now in all possible cases
 
 ## Bugfixes
