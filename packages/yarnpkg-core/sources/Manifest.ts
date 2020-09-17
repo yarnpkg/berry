@@ -25,11 +25,6 @@ export interface PeerDependencyMeta {
   optional?: boolean;
 }
 
-export interface WorkspacesConfig {
-  nohoist?: Array<string>;
-  packages?: Array<WorkspaceDefinition>;
-}
-
 export interface PublishConfig {
   access?: string;
   main?: PortablePath;
@@ -72,7 +67,6 @@ export class Manifest {
   public devDependencies: Map<IdentHash, Descriptor> = new Map();
   public peerDependencies: Map<IdentHash, Descriptor> = new Map();
 
-  public workspaces: Array<WorkspaceDefinition> | WorkspacesConfig | null = [];
   public workspaceDefinitions: Array<WorkspaceDefinition> = [];
 
   public dependenciesMeta: Map<string, Map<string | null, DependencyMeta>> = new Map();
@@ -697,6 +691,18 @@ export class Manifest {
       }));
     } else {
       delete data.bin;
+    }
+
+    if (this.workspaceDefinitions.length > 0) {
+      if (this.raw.workspaces && !Array.isArray(this.raw.workspaces)) {
+        data.workspaces = {...this.raw.workspaces, packages: this.workspaceDefinitions.map(({pattern}) => pattern)};
+      } else {
+        data.workspaces = this.workspaceDefinitions.map(({pattern}) => pattern);
+      }
+    } else if (this.raw.workspaces && !Array.isArray(this.raw.workspaces) && Object.keys(this.raw.workspaces).length > 0) {
+      data.workspaces = this.raw.workspaces;
+    } else {
+      delete data.workspaces;
     }
 
     const regularDependencies = [];
