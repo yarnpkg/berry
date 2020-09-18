@@ -441,18 +441,24 @@ const hoistGraph = (tree: HoisterWorkTree, rootNode: HoisterWorkTree, rootNodePa
     }
 
     const unhoistableNodes = new Set<HoisterWorkTree>();
-    const addUnhoistableNode = (node: HoisterWorkTree, hoistInfo: HoistInfo) => {
+    const addUnhoistableNode = (node: HoisterWorkTree, hoistInfo: HoistInfo, reason: string) => {
       if (!unhoistableNodes.has(node)) {
         unhoistableNodes.add(node);
+        if (node.ident !== parentNode.ident)
+          hoistInfos.set(node, {isHoistable: Hoistable.NO, reason});
         for (const dependantName of dependantTree.get(node.name) || []) {
-          addUnhoistableNode(parentNode.dependencies.get(dependantName)!, hoistInfo);
+          addUnhoistableNode(parentNode.dependencies.get(dependantName)!, hoistInfo, reason);
         }
       }
     };
 
+    let reasonRoot;
+    if (options.debugLevel >= 2)
+      reasonRoot = `${Array.from(rootNodePath).map(x => prettyPrintLocator(x)).join(`→`)}`;
+
     for (const [node, hoistInfo] of hoistInfos)
       if (hoistInfo.isHoistable === Hoistable.NO)
-        addUnhoistableNode(node, hoistInfo);
+        addUnhoistableNode(node, hoistInfo, `- peer dependency ${prettyPrintLocator(node.locator)} from parent ${prettyPrintLocator(parentNode.locator)} was not hoisted to ${reasonRoot}`);
 
     for (const node of hoistInfos.keys()) {
       if (!unhoistableNodes.has(node)) {
