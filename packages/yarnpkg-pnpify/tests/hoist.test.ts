@@ -414,4 +414,23 @@ describe(`hoist`, () => {
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
+
+  it(`should respect transitive peer dependencies mixed with direct peer dependencies`, () => {
+    // . -> A -> B -> D --> C
+    //                  --> E
+    //             -> E
+    //             --> C
+    //        -> C@X
+    //   -> C@Y
+    // D cannot be hoisted to the top, otherwise it will use C@Y, instead of C@X
+    const tree = {
+      '.': {dependencies: [`A`, `C@Y`]},
+      A: {dependencies: [`B`, `C@X`]},
+      B: {dependencies: [`D`, `E`, `C@X`], peerNames: [`C`]},
+      D: {dependencies: [`C@X`, `E`], peerNames: [`C`, `E`]},
+    };
+    const hoistedTree = hoist(toTree(tree), {check: true, debugLevel: 2});
+    const D = Array.from(hoistedTree.dependencies).filter(x => x.name === `D`);
+    expect(D).toEqual([]);
+  });
 });

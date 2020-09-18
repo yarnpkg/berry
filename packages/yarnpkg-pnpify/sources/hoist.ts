@@ -384,14 +384,14 @@ const getNodeHoistInfo = (rootNodePath: Set<Locator>, nodePath: Array<HoisterWor
 
         const parentDepNode = parent.dependencies.get(name);
         if (parentDepNode) {
-          arePeerDepsSatisfied = false;
-          if (outputReason)
-            reason = `- peer dependency ${prettyPrintLocator(parentDepNode.locator)} from parent ${prettyPrintLocator(parent.locator)} was not hoisted to ${reasonRoot}`;
           if (idx === nodePath.length - 1) {
             dependsOn!.add(parentDepNode);
           } else {
             dependsOn = null;
-            break;
+            arePeerDepsSatisfied = false;
+            if (outputReason) {
+              reason = `- peer dependency ${prettyPrintLocator(parentDepNode.locator)} from parent ${prettyPrintLocator(parent.locator)} was not hoisted to ${reasonRoot}`;
+            }
           }
         }
         checkList.delete(name);
@@ -538,8 +538,8 @@ const selfCheck = (tree: HoisterWorkTree): string => {
       const prettyPrintTreePath = () => `${Array.from(parents).concat([node]).map(x => prettyPrintLocator(x.locator)).join(`→`)}`;
       if (node.peerNames.has(origDep.name)) {
         const parentDep = parentDeps.get(origDep.name);
-        if (parentDep !== dep) {
-          log.push(`${prettyPrintTreePath()} - broken peer promise: expected ${dep!.locator} but found ${parentDep ? parentDep.locator : parentDep}`);
+        if (parentDep !== dep || !parentDep || parentDep.locator !== origDep.locator) {
+          log.push(`${prettyPrintTreePath()} - broken peer promise: expected ${origDep!.locator} but found ${parentDep ? parentDep.locator : parentDep}`);
         }
       } else {
         if (!dep) {
