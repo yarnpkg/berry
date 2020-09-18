@@ -434,4 +434,64 @@ describe(`Node_Modules`, () => {
       },
     ),
   );
+
+  test(`should respect transitive peer dependencies`,
+    // . -> ws1 -> nm-core --> graphql
+    //          -> graphql@1
+    //   -> ws2 -> nm-core --> graphql
+    //          -> graphql@1
+    //   -> ws3 -> nm-express -> nm-core --> graphql
+    //                     --> graphql
+    //          -> graphql@2
+    // nm-core inside ws3 must not be hoisted to the top, otherwise it will use graphql@1 instead of graphql@2
+    // nm-express will not be hoisted to the top, because its nm-core instance must loose in popularity to nm-core instance dependent on graphql@1
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`ws*`],
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
+          name: `ws1`,
+          version: `1.0.0`,
+          dependencies: {
+            'nm-core': `1.0.0`,
+            graphql: `file:../graphql1`,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/ws2/package.json`), {
+          name: `ws2`,
+          version: `1.0.0`,
+          dependencies: {
+            'nm-core': `1.0.0`,
+            graphql: `file:../graphql1`,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/ws3/package.json`), {
+          name: `ws3`,
+          version: `1.0.0`,
+          dependencies: {
+            'nm-express': `1.0.0`,
+            graphql: `file:../graphql2`,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/graphql1/package.json`), {
+          name: `graphql`,
+          version: `1.0.0`,
+        });
+        await writeJson(npath.toPortablePath(`${path}/graphql2/package.json`), {
+          name: `graphql`,
+          version: `2.0.0`,
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/ws3/node_modules/nm-express` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/ws3/node_modules/nm-core` as PortablePath)).toEqual(true);
+      },
+    )
+  );
 });

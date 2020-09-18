@@ -1,0 +1,7 @@
+{
+  "name": "nm-core",
+  "version": "1.0.0",
+  "peerDependencies": {
+    "graphql": "1 || 2"
+  }
+}
