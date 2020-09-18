@@ -538,8 +538,8 @@ const selfCheck = (tree: HoisterWorkTree): string => {
       const prettyPrintTreePath = () => `${Array.from(parents).concat([node]).map(x => prettyPrintLocator(x.locator)).join(`→`)}`;
       if (node.peerNames.has(origDep.name)) {
         const parentDep = parentDeps.get(origDep.name);
-        if (parentDep !== dep || !parentDep || parentDep.locator !== origDep.locator) {
-          log.push(`${prettyPrintTreePath()} - broken peer promise: expected ${origDep!.locator} but found ${parentDep ? parentDep.locator : parentDep}`);
+        if (parentDep !== dep || !parentDep || parentDep.ident !== origDep.ident) {
+          log.push(`${prettyPrintTreePath()} - broken peer promise: expected ${origDep!.ident} but found ${parentDep ? parentDep.ident : parentDep}`);
         }
       } else {
         if (!dep) {

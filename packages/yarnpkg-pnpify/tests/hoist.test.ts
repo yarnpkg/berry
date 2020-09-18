@@ -429,7 +429,7 @@ describe(`hoist`, () => {
       B: {dependencies: [`D`, `E`, `C@X`], peerNames: [`C`]},
       D: {dependencies: [`C@X`, `E`], peerNames: [`C`, `E`]},
     };
-    const hoistedTree = hoist(toTree(tree), {check: true, debugLevel: 2});
+    const hoistedTree = hoist(toTree(tree), {check: true});
     const D = Array.from(hoistedTree.dependencies).filter(x => x.name === `D`);
     expect(D).toEqual([]);
   });
