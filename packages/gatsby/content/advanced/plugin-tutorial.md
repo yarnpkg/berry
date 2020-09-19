@@ -153,3 +153,146 @@ module.exports = {
 
 Its documentation can be found on the [dedicated page](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-builder/README.md).
 
+## Using a plugin to access rich information
+
+Some of Yarn's hooks allow us to integrate more closely by providing a global
+public object with rich metadata that Yarn collected about the project.
+
+In this example, we will integrate with the `afterAllInstalled` hook which
+gets invoked with an additional parameter that is the public Project object
+where you have access to all the information Yarn has collected about the
+project: dependencies, package manifest, workspace information, and so on.
+
+In the following `plugin-hello-brave-world.js` plugin example we will capture
+this object information in the `_` variable and write its content to a JSON
+file so we can further inspect it:
+
+```js
+const fs = require("fs");
+const util = require("util");
+
+module.exports = {
+  name: `plugin-hello-brave-world`,
+  factory: require => {
+    return {
+      default: {
+        hooks: {
+          afterAllInstalled(_) {
+            console.log("🎉 afterAllInstalled hook invoked");
+            fs.writeFileSync("afterAll.json", util.inspect(_, false, 10));
+          }
+        }
+      }
+    };
+  }
+};
+```
+
+The Project's object structure is defined in
+`packages/berry-core/sources/Project.ts` and a partial list of the root level
+keys the object has are:
+
+```
+Project {
+  configuration: {},
+  cwd: {},
+  workspaces: Map {},
+  storedResolutions: Map {},
+  storedDescriptors: Map {},
+  storedPackages: Map {},
+  storedChecksums: Map {},
+  ...
+}
+```
+
+Those `stored*` keys are going to help us understand the dependencies and
+build the tree for this project.
+
+To make things simple we're going to run this plugin on an npm project
+that has just dependency: `debug`. debug in-turn, has `ms` as a dependency
+as well.
+
+The `storedPackages` object is our entry point to get the list of dependencies
+for this project, and note that this object also has an entry for the actual
+project name as well which is denoted by the `reference: 'workspace:.` key.
+
+Let's see how the `debug` dependency looks like in the `storedPackages` Map:
+
+```
+ 'a1f870a4a95fff67eeac2388e06345982ebf1149c710f8efe18fe5d1967fec40db60987022a5c6fe55708167d1add4b63bc8ad6f755e20c6fba140d721180595' => { identHash:
+    'd027b0b474dd440d333c0ae6200111acff30aa5931aeacf1841b1eb9212edea377606a118ff0f8675b69eabe9ff00db4f2f16659519c82810c6b534f9b8ad82d',
+   scope: undefined,
+   name: 'debug',
+   locatorHash:
+    'a1f870a4a95fff67eeac2388e06345982ebf1149c710f8efe18fe5d1967fec40db60987022a5c6fe55708167d1add4b63bc8ad6f755e20c6fba140d721180595',
+   reference: 'npm:4.1.1',
+   version: '4.1.1',
+   languageName: 'node',
+   linkType: 'hard',
+   dependencies:
+    Map {
+      '299701b4a21f15498c990a6ec8bf49b0331f01e1d610cefaa6f7040bab1be634be89d1462245207c21d1334b31690861f303a0a71aa94f80445d80b9ee37eaf6' => { identHash:
+         '299701b4a21f15498c990a6ec8bf49b0331f01e1d610cefaa6f7040bab1be634be89d1462245207c21d1334b31690861f303a0a71aa94f80445d80b9ee37eaf6',
+        scope: undefined,
+        name: 'ms',
+        descriptorHash:
+         '0742408cf974a8f1cd5081a9aec19656dc8016eec3c6e2358f302902e6f1f87241f601911cb45e855f3b0d26160c1520715ae79904c5ed1d29f5383ab906440e',
+        range: 'npm:^2.1.1' } },
+   peerDependencies: Map {},
+   dependenciesMeta: Map {},
+   peerDependenciesMeta: Map {},
+   bin: Map {} },
+ '9455a02525b0e2c50eca4e204d71900a775107249d4245c1ea1f95e3f124c8a1d27484b29ccea934895da4d0273b22dc95cefd0561c39490cd7c86ab4404ca33' => { identHash:
+    '299701b4a21f15498c990a6ec8bf49b0331f01e1d610cefaa6f7040bab1be634be89d1462245207c21d1334b31690861f303a0a71aa94f80445d80b9ee37eaf6',
+   scope: undefined,
+   name: 'ms',
+   locatorHash:
+    '9455a02525b0e2c50eca4e204d71900a775107249d4245c1ea1f95e3f124c8a1d27484b29ccea934895da4d0273b22dc95cefd0561c39490cd7c86ab4404ca33',
+   reference: 'npm:2.1.2',
+   version: '2.1.2',
+   languageName: 'node',
+   linkType: 'hard',
+   dependencies: Map {},
+   peerDependencies: Map {},
+   dependenciesMeta: Map {},
+   peerDependenciesMeta: Map {},
+   bin: Map {} },
+```
+
+The `debug` entry has a unique hash to identify it, some metadata such as the
+resolved version, and another nested `dependencies` object which lists those dependencies that `debug` depends upon. You'll notice though that `ms` which
+shows up in the nested dependencies object isn't resolved, and it is only
+denoted by a `range`.
+
+To resolve the nested dependencies we need to use the `descriptorHash` and
+consult the `storedResolutions` map, which looks as follows:
+
+```
+  storedResolutions:
+   Map {
+     '35f50d92512bedba8fbf78bdeae4f2bce60934a798f5e0a0ab58b087fb7dc73880c7ffee2e135c15e48ca70687336bbdf4163e75da3f90b55da5ba5e41d36051' => '35f50d92512bedba8fbf78bdeae4f2bce60934a798f5e0a0ab58b087fb7dc73880c7ffee2e135c15e48ca70687336bbdf4163e75da3f90b55da5ba5e41d36051',
+     'ee78c55248c8a07a4079ce749bc462124c923d7b990785b50150c417b2821ca3363767b8dc304d80d4feae3faf9f95e1c2c46cebc582b81fe70a8f45a69b6377' => 'a1f870a4a95fff67eeac2388e06345982ebf1149c710f8efe18fe5d1967fec40db60987022a5c6fe55708167d1add4b63bc8ad6f755e20c6fba140d721180595',
+     '0742408cf974a8f1cd5081a9aec19656dc8016eec3c6e2358f302902e6f1f87241f601911cb45e855f3b0d26160c1520715ae79904c5ed1d29f5383ab906440e' => '9455a02525b0e2c50eca4e204d71900a775107249d4245c1ea1f95e3f124c8a1d27484b29ccea934895da4d0273b22dc95cefd0561c39490cd7c86ab4404ca33' },
+```
+
+We can find `ms`'s descriptorHash of `0742408cf974a8f1cd5081a9aec19656dc8016eec3c6e2358f302902e6f1f87241f601911cb45e855f3b0d26160c1520715ae79904c5ed1d29f5383ab906440e` to be the third element in `storedResolutions` and it references the hash `9455a02525b0e2c50eca4e204d71900a775107249d4245c1ea1f95e3f124c8a1d27484b29ccea934895da4d0273b22dc95cefd0561c39490cd7c86ab4404ca33` which is then mapped again to
+an dependency entry in the `storedPackages` map, but this time it's the fully
+resolved dependency metadata of `ms`:
+
+```
+ '9455a02525b0e2c50eca4e204d71900a775107249d4245c1ea1f95e3f124c8a1d27484b29ccea934895da4d0273b22dc95cefd0561c39490cd7c86ab4404ca33' => { identHash:
+    '299701b4a21f15498c990a6ec8bf49b0331f01e1d610cefaa6f7040bab1be634be89d1462245207c21d1334b31690861f303a0a71aa94f80445d80b9ee37eaf6',
+   scope: undefined,
+   name: 'ms',
+   locatorHash:
+    '9455a02525b0e2c50eca4e204d71900a775107249d4245c1ea1f95e3f124c8a1d27484b29ccea934895da4d0273b22dc95cefd0561c39490cd7c86ab4404ca33',
+   reference: 'npm:2.1.2',
+   version: '2.1.2',
+   languageName: 'node',
+   linkType: 'hard',
+   dependencies: Map {},
+   peerDependencies: Map {},
+   dependenciesMeta: Map {},
+   peerDependenciesMeta: Map {},
+   bin: Map {} },
+```
