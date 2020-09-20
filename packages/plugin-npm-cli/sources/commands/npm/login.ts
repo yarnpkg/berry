@@ -59,13 +59,65 @@ export default class NpmLoginCommand extends BaseCommand {
       });
 
       const url = `/-/user/org.couchdb.user:${encodeURIComponent(credentials.name)}`;
-      const response = await npmHttpUtils.put(url, credentials, {
-        attemptedAs: credentials.name,
-        configuration,
-        registry,
-        jsonResponse: true,
-        authType: npmHttpUtils.AuthType.NO_AUTH,
-      }) as any;
+
+      let response;
+      try {
+        response =  await npmHttpUtils.put(url, credentials, {
+          attemptedAs: credentials.name,
+          configuration,
+          registry,
+          jsonResponse: true,
+          authType: npmHttpUtils.AuthType.NO_AUTH,
+        }) as any;
+      } catch (error) {
+        if (error.name !== `HTTPError`)
+          throw error;
+        if (error.response.statusCode === 409) {
+          const userResponse = await npmHttpUtils.get(`${url}?write=true`, {
+            attemptedAs: credentials.name,
+            configuration,
+            registry,
+            jsonResponse: true,
+            authType: npmHttpUtils.AuthType.ALWAYS_AUTH,
+          }) as any;
+          if (userResponse?.ok?.match(credentials.name)) {
+            try {
+              response =  await npmHttpUtils.put(url, credentials, {
+                attemptedAs: credentials.name,
+                configuration,
+                registry,
+                jsonResponse: true,
+                authType: npmHttpUtils.AuthType.ALWAYS_AUTH,
+              }) as any;
+            } catch (error) {
+              const message = error.response.body && error.response.body.error
+                ? error.response.body.error
+                : `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`;
+
+              report.reportError(MessageName.NETWORK_ERROR, message);
+              throw error;
+            }
+          } else {
+            if (error.name !== `HTTPError`) {
+              throw error;
+            } else {
+              const message = error.response.body && error.response.body.error
+                ? error.response.body.error
+                : `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`;
+
+              report.reportError(MessageName.NETWORK_ERROR, message);
+              throw error;
+            }
+          }
+        } else {
+          const message = error.response.body && error.response.body.error
+            ? error.response.body.error
+            : `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`;
+
+          report.reportError(MessageName.NETWORK_ERROR, message);
+          throw error;
+        }
+      }
 
       await setAuthToken(registry, response.token, {configuration, scope: this.scope});
       return report.reportInfo(MessageName.UNNAMED, `Successfully logged in`);
