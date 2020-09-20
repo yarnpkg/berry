@@ -8867,7 +8867,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:16.13.1"],
             ["react-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:16.13.1"],
             ["react-helmet", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:6.1.0"],
-            ["react-icons", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.10.0"],
+            ["react-icons", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.11.0"],
             ["react-instantsearch-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:6.6.0"],
             ["react-monaco-editor", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:0.36.0"],
             ["react-select", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.1.0"],
@@ -17344,21 +17344,29 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["fork-ts-checker-webpack-plugin", "virtual:bfbe9d431aeea4f38ef0fbf5648a2193599d78433ad7f02d311def1742a6ccbefa9bf478308b848e37d3e342050fd5dd8b15514a9173e3fca5e1ba5c4271c000#npm:5.0.0"],
             ["@babel/code-frame", "npm:7.10.1"],
+            ["@types/eslint", null],
             ["@types/typescript", "npm:2.0.0"],
+            ["@types/webpack", null],
             ["chalk", "npm:2.4.2"],
             ["cosmiconfig", "npm:6.0.0"],
             ["deepmerge", "npm:4.2.2"],
+            ["eslint", null],
             ["fs-extra", "npm:9.0.1"],
             ["memfs", "npm:3.2.0"],
             ["minimatch", "npm:3.0.4"],
             ["schema-utils", "npm:1.0.0"],
             ["semver", "npm:5.6.0"],
             ["tapable", "npm:1.1.3"],
-            ["typescript", "patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=5b02a2"]
+            ["typescript", "patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=5b02a2"],
+            ["webpack", "npm:5.0.0-beta.17"]
           ],
           "packagePeers": [
+            "@types/eslint",
             "@types/typescript",
-            "typescript"
+            "@types/webpack",
+            "eslint",
+            "typescript",
+            "webpack"
           ],
           "linkType": "HARD",
         }],
@@ -17367,21 +17375,29 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["fork-ts-checker-webpack-plugin", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:5.0.0"],
             ["@babel/code-frame", "npm:7.10.1"],
+            ["@types/eslint", null],
             ["@types/typescript", null],
+            ["@types/webpack", null],
             ["chalk", "npm:2.4.2"],
             ["cosmiconfig", "npm:6.0.0"],
             ["deepmerge", "npm:4.2.2"],
+            ["eslint", null],
             ["fs-extra", "npm:9.0.1"],
             ["memfs", "npm:3.2.0"],
             ["minimatch", "npm:3.0.4"],
             ["schema-utils", "npm:1.0.0"],
             ["semver", "npm:5.6.0"],
             ["tapable", "npm:1.1.3"],
-            ["typescript", "patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=5b02a2"]
+            ["typescript", "patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=5b02a2"],
+            ["webpack", "npm:5.0.0-beta.17"]
           ],
           "packagePeers": [
+            "@types/eslint",
             "@types/typescript",
-            "typescript"
+            "@types/webpack",
+            "eslint",
+            "typescript",
+            "webpack"
           ],
           "linkType": "HARD",
         }]
@@ -18021,7 +18037,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:16.13.1"],
             ["react-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:16.13.1"],
             ["react-helmet", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:6.1.0"],
-            ["react-icons", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.10.0"],
+            ["react-icons", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.11.0"],
             ["strict-ui", "npm:0.1.3"],
             ["subscriptions-transport-ws", "virtual:e721af34745e2aded5d4d499d50f62b576dd2080eb1f2bb52977c4bfa58f87cba61c1a822a17998b163819d9d9ffb45f4e1cfaad85154aa3bbe0834010be88eb#npm:0.9.16"],
             ["theme-ui", "npm:0.4.0-highlight.0"],
@@ -18246,7 +18262,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prop-types", null],
             ["react", "npm:16.13.1"],
             ["react-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:16.13.1"],
-            ["react-icons", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.10.0"],
+            ["react-icons", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.11.0"],
             ["theme-ui", "virtual:acc3efd1ae23f68a76a32cb0a48de2b0b49cb6cfce8c636777e69ac5b766857af1ca48a99632c4c09f16915cb408d53bcc01b4508715d4330dd21d070928755f#npm:0.2.52"],
             ["yup", "npm:0.29.1"]
           ],
@@ -28606,10 +28622,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["react-icons", [
-        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.10.0", {
-          "packageLocation": "./.yarn/$$virtual/react-icons-virtual-aa1520ddb3/0/cache/react-icons-npm-3.10.0-a2589318d4-848c40d1db.zip/node_modules/react-icons/",
+        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.11.0", {
+          "packageLocation": "./.yarn/$$virtual/react-icons-virtual-85633a4ba4/0/cache/react-icons-npm-3.11.0-e58c838053-b629e024d4.zip/node_modules/react-icons/",
           "packageDependencies": [
-            ["react-icons", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.10.0"],
+            ["react-icons", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.11.0"],
             ["@types/react", null],
             ["camelcase", "npm:5.3.1"],
             ["react", "npm:16.13.1"]
