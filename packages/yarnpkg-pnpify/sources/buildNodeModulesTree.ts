@@ -183,7 +183,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
 
     if (!isSeen && shouldAddChildrenDependencies) {
       for (const [name, referencish] of pkg.packageDependencies) {
-        if (referencish !== null && !node.peerNames.has(name)) {
+        if (referencish !== null) {
           const depLocator = pnp.getLocator(name, referencish);
           const pkgLocator = pnp.getLocator(name.replace(`$wsroot$`, ``), referencish);
 
