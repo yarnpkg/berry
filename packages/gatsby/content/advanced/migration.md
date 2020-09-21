@@ -215,6 +215,16 @@ This will cause Yarn to install the project just like Yarn 1 used to, by copying
 
 [More information about the `nodeLinker` option.](/configuration/yarnrc#nodeLinker)
 
+### Replace `nohoist` by `nmHoistingLimits`
+
+The `nohoist` setting from Yarn 1 was made specifically for React Native (in order to help it support workspaces), but the way it worked (through glob patterns) was causing a lot of bugs and confusion, noone being really sure which patterns needed to be set. As a result, we've simplified this feature in order to only support three identified patterns.
+
+If you were using `nohoist`, we recommend you remove it from your manifest configuration and instead set [`nmHoistingLimits`](/configuration/yarnrc#nmHoistingLimits) in your yarnrc file:
+
+```yaml
+nmHoistingLimits: workspaces
+```
+
 ## CLI Commands
 
 ### Renamed
