@@ -221,6 +221,12 @@
       "type": "number",
       "default": 8
     },
+    "nmHoistingLimits": {
+      "description": "Defines the highest point where packages can be hoisted. One of `workspaces` (don't hoist packages past the workspace that depends on them), `dependencies` (packages aren't hoisted past the direct dependencies for each workspace), or `none` (the default, packages are hoisted as much as possible). This setting can be overriden per-workspace through the [`installConfig.hoistingLimits` field](/configuration/manifest#installConfig.hoistingLimits).",
+      "type": "string",
+      "enum": ["workspaces", "dependencies", "none"],
+      "default": "none"
+  },
     "nodeLinker": {
       "description": "Defines what linker should be used for installing Node packages (useful to enable the node-modules plugin), one of: `pnp`, `node-modules`.",
       "type": "string",

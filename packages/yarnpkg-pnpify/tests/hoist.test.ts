@@ -414,4 +414,43 @@ describe(`hoist`, () => {
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
+
+  it(`should not hoist packages past hoist boundary`, () => {
+    // . -> A -> B -> D
+    //   -> C -> D
+    // If B and C are hoist borders, the result should be:
+    // . -> A
+    //   -> B -> D
+    //   -> C -> D
+    const tree = {
+      '.': {dependencies: [`A`, `C`]},
+      A: {dependencies: [`B`]},
+      B: {dependencies: [`D`]},
+      C: {dependencies: [`D`]},
+    };
+    const hoistingLimits = new Map([
+      [`.@`, new Set([`C`])],
+      [`A@`, new Set([`B`])],
+    ]);
+    expect(getTreeHeight(hoist(toTree(tree), {check: true, hoistingLimits}))).toEqual(3);
+  });
+
+  it(`should not hoist multiple package past nohoist root`, () => {
+    // . -> A -> B -> C -> D -> E
+    // If B is a hoist border, the result should be:
+    // . -> A
+    //   -> B -> C
+    //        -> D
+    const tree = {
+      '.': {dependencies: [`A`]},
+      A: {dependencies: [`B`]},
+      B: {dependencies: [`C`]},
+      C: {dependencies: [`D`]},
+      D: {dependencies: [`E`]},
+    };
+    const hoistingLimits = new Map([
+      [`A@`, new Set([`B`])],
+    ]);
+    expect(getTreeHeight(hoist(toTree(tree), {check: true, hoistingLimits}))).toEqual(3);
+  });
 });

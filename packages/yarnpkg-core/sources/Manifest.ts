@@ -35,6 +35,10 @@ export interface PublishConfig {
   executableFiles?: Set<PortablePath>;
 }
 
+export interface InstallConfig {
+  hoistingLimits?: string;
+}
+
 export class Manifest {
   public indent: string = `  `;
 
@@ -70,6 +74,7 @@ export class Manifest {
 
   public files: Set<PortablePath> | null = null;
   public publishConfig: PublishConfig | null = null;
+  public installConfig: InstallConfig | null = null;
 
   public preferUnplugged: boolean | null = null;
 
@@ -303,6 +308,9 @@ export class Manifest {
       }
     }
 
+    if (typeof data.workspaces === `object` && data.workspaces.nohoist)
+      errors.push(new Error(`'nohoist' is deprecated, please use 'installConfig.hoistingLimits' instead`));
+
     const workspaces = Array.isArray(data.workspaces)
       ? data.workspaces
       : typeof data.workspaces === `object` && data.workspaces !== null && Array.isArray(data.workspaces.packages)
@@ -428,6 +436,16 @@ export class Manifest {
 
           this.publishConfig.executableFiles.add(npath.toPortablePath(value));
         }
+      }
+    }
+
+    if (typeof data.installConfig === `object` && data.installConfig !== null) {
+      this.installConfig = {};
+
+      if (typeof data.installConfig.hoistingLimits === `string`) {
+        this.installConfig.hoistingLimits = data.installConfig.hoistingLimits;
+      } else {
+        errors.push(new Error(`Invalid hoisting limits definition`));
       }
     }
 
@@ -671,10 +689,17 @@ export class Manifest {
       delete data.bin;
     }
 
-    if (this.workspaceDefinitions.length > 0)
-      data.workspaces = this.workspaceDefinitions.map(({pattern}) => pattern);
-    else
+    if (this.workspaceDefinitions.length > 0) {
+      if (this.raw.workspaces && !Array.isArray(this.raw.workspaces)) {
+        data.workspaces = {...this.raw.workspaces, packages: this.workspaceDefinitions.map(({pattern}) => pattern)};
+      } else {
+        data.workspaces = this.workspaceDefinitions.map(({pattern}) => pattern);
+      }
+    } else if (this.raw.workspaces && !Array.isArray(this.raw.workspaces) && Object.keys(this.raw.workspaces).length > 0) {
+      data.workspaces = this.raw.workspaces;
+    } else {
       delete data.workspaces;
+    }
 
     const regularDependencies = [];
     const optionalDependencies = [];

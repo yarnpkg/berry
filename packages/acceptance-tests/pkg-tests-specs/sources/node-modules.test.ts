@@ -1,7 +1,7 @@
 import {xfs, npath, PortablePath} from '@yarnpkg/fslib';
 
 const {
-  fs: {writeFile, writeJson},
+  fs: {readJson, writeFile, writeJson},
   tests: {testIf},
 } = require(`pkg-tests-core`);
 
@@ -433,5 +433,204 @@ describe(`Node_Modules`, () => {
         expect(xfs.lstatPromise(binPath)).rejects.toBeDefined();
       },
     ),
+  );
+
+  test(`should not hoist a single package past workspace hoist border`,
+    // . -> workspace -> dep
+    // should be hoisted to:
+    // . -> workspace -> dep
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`workspace`],
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
+          name: `workspace`,
+          version: `1.0.0`,
+          dependencies: {
+            dep: `file:./dep`,
+          },
+          installConfig: {
+            hoistingLimits: `workspaces`,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/workspace/dep/package.json`), {
+          name: `dep`,
+          version: `1.0.0`,
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/dep` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep` as PortablePath)).toEqual(true);
+        // workspace symlink should NOT be hoisted to the top
+        expect(await xfs.existsPromise(`${path}/node_modules/workspace` as PortablePath)).toEqual(false);
+      },
+    )
+  );
+
+  test(`should not hoist multiple packages past workspace hoist border`,
+    // . -> workspace -> dep1 -> dep2
+    // should be hoisted to:
+    // . -> workspace -> dep1
+    //                -> dep2
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: {
+          packages: [`workspace`],
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmHoistingLimits: `workspaces`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
+          name: `workspace`,
+          version: `1.0.0`,
+          dependencies: {
+            dep1: `file:./dep1`,
+            dep2: `file:./dep2`,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/workspace/dep1/package.json`), {
+          name: `dep1`,
+          version: `1.0.0`,
+        });
+        await writeJson(npath.toPortablePath(`${path}/workspace/dep2/package.json`), {
+          name: `dep2`,
+          version: `1.0.0`,
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/dep1` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/node_modules/dep2` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep1` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep2` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/node_modules/workspace` as PortablePath)).toEqual(false);
+      },
+    )
+  );
+
+  test(`should support dependencies hoist border`,
+    // . -> workspace -> dep1 -> dep2 -> dep3
+    // should be hoised to:
+    // . -> workspace -> dep1 -> dep2
+    //                        -> dep3
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: {
+          packages: [`workspace`],
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
+          name: `workspace`,
+          version: `1.0.0`,
+          dependencies: {
+            dep1: `file:./dep1`,
+          },
+          installConfig: {
+            hoistingLimits: `dependencies`,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/workspace/dep1/package.json`), {
+          name: `dep1`,
+          version: `1.0.0`,
+          dependencies: {
+            dep2: `file:../dep2`,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/workspace/dep2/package.json`), {
+          name: `dep2`,
+          version: `1.0.0`,
+          dependencies: {
+            dep3: `file:../dep3`,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/workspace/dep3/package.json`), {
+          name: `dep3`,
+          version: `1.0.0`,
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/dep1` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/node_modules/dep2` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/node_modules/dep3` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep1` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep1/node_modules/dep2` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep1/node_modules/dep3` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/node_modules/workspace` as PortablePath)).toEqual(false);
+      },
+    )
+  );
+
+  test(`should create symlink if workspace is a dependency AND it has hoist borders at the same time`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`workspace`],
+        dependencies: {
+          workspace: `workspace:*`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
+          name: `workspace`,
+          version: `1.0.0`,
+          dependencies: {
+            dep: `file:./dep`,
+          },
+          installConfig: {
+            hoistingLimits: `workspaces`,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/workspace/dep/package.json`), {
+          name: `dep`,
+          version: `1.0.0`,
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/dep` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep` as PortablePath)).toEqual(true);
+        // workspace symlink should be present at the top
+        expect(await xfs.existsPromise(`${path}/node_modules/workspace` as PortablePath)).toEqual(true);
+      },
+    )
+  );
+
+  test(`should warn about 'nohoist' usage and retain nohoist field in the manifest`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: {
+          nohoist: [`foo/**`],
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        const stdout = (await run(`install`)).stdout;
+
+        expect(stdout).toMatch(new RegExp(`'nohoist' is deprecated.*`));
+        expect(await readJson(`${path}/package.json`)).toHaveProperty(`workspaces.nohoist`);
+      },
+    )
   );
 });
