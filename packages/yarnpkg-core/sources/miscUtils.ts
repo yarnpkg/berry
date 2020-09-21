@@ -16,7 +16,7 @@ export function assertNever(arg: never): never {
 }
 
 export function validateEnum<T>(def: {[key: string]: T}, value: string): T {
-  if (!Object.prototype.hasOwnProperty.call(def, value) || def[value] !== (value as any))
+  if (!Object.values(def).includes(value as any))
     throw new Error(`Assertion failed: Invalid value for enumeration`);
 
   return value as any as T;
