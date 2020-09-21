@@ -821,7 +821,6 @@ export class Configuration {
           if (pluginRequireEntries.has(request)) {
             return pluginRequireEntries.get(request)();
           } else {
-            console.log(pluginRequireEntries);
             throw new UsageError(`This plugin cannot access the package referenced via ${request} which is neither a builtin, nor an exposed entry`);
           }
         };
