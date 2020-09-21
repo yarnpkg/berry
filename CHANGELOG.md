@@ -11,6 +11,8 @@
 ### Installs
 
 - Cyclic peer dependencies inside `node_modules` are hoisted now in all possible cases
+- `node-modules` linker is more forgiving now for packages with incorrect assumptions about hoisting layout,
+  thanks to maximizing package exposure at the top-level first and only after that minimizing package duplicates during hoisting.
 
 ## Bugfixes
 
