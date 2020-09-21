@@ -1,4 +1,4 @@
-import {structUtils, NmHoistingLimits}                      from '@yarnpkg/core';
+import {structUtils}                                        from '@yarnpkg/core';
 import {NativePath, PortablePath, Filename}                 from '@yarnpkg/fslib';
 import {toFilename, npath, ppath}                           from '@yarnpkg/fslib';
 import {PnpApi, PhysicalPackageLocator, PackageInformation} from '@yarnpkg/pnp';
@@ -8,7 +8,16 @@ import {hoist, HoisterTree, HoisterResult}                  from './hoist';
 // Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
 // But because of this TypeScript requires @yarnpkg/pnp during runtime
 // To prevent this we redeclare LinkType enum here, to not depend on @yarnpkg/pnp during runtime
-export enum LinkType {HARD = `HARD`, SOFT = `SOFT`}
+export enum LinkType {
+  HARD = `HARD`,
+  SOFT = `SOFT`,
+}
+
+export enum HoistingLimits {
+  WORKSPACES = `workspaces`,
+  DEPENDENCIES = `dependencies`,
+  NONE = `none`,
+}
 
 // The list of directories stored within a node_modules (or node_modules/@foo)
 export type NodeModulesBaseNode = {
@@ -40,7 +49,7 @@ export type NodeModulesTree = Map<PortablePath, NodeModulesBaseNode | NodeModule
 
 export interface NodeModulesTreeOptions {
   pnpifyFs?: boolean;
-  hoistingLimitsByCwd?: Map<PortablePath, NmHoistingLimits>;
+  hoistingLimitsByCwd?: Map<PortablePath, HoistingLimits>;
 }
 
 /** node_modules path segment */
@@ -210,12 +219,12 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
           if (depPkg === null)
             throw new Error(`Assertion failed: Expected the package to have been registered`);
 
-          const parentNmHoistingLimits = options.hoistingLimitsByCwd?.get(parentRelativeCwd);
+          const parentHoistingLimits = options.hoistingLimitsByCwd?.get(parentRelativeCwd);
           const relativeCwd = ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;
-          const depNmHoistingLimits = options.hoistingLimitsByCwd?.get(relativeCwd);
-          const isHoistBorder = parentNmHoistingLimits === NmHoistingLimits.DEPENDENCIES
-            || depNmHoistingLimits === NmHoistingLimits.DEPENDENCIES
-            || depNmHoistingLimits === NmHoistingLimits.WORKSPACE;
+          const depHoistingLimits = options.hoistingLimitsByCwd?.get(relativeCwd);
+          const isHoistBorder = parentHoistingLimits === HoistingLimits.DEPENDENCIES
+            || depHoistingLimits === HoistingLimits.DEPENDENCIES
+            || depHoistingLimits === HoistingLimits.WORKSPACES;
 
           addPackageToTree(depName, depPkg, depLocator, node, relativeCwd, isHoistBorder);
         }

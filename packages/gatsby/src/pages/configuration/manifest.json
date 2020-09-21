@@ -337,14 +337,14 @@
     }
   },
   "installConfig": {
-    "description": "This field contains various install-time settings",
+    "description": "This field contains various settings that alter how the workspace is installed.",
     "type": "object",
     "properties": {
       "hoistingLimits": {
-        "description": "Define hoist borders for node_modules dependencies inside workspaces. Values: workspace - do not hoist past workspace, dependencies - do not hoist past direct workspace dependencies (recommended), none - no borders, hoist everything to the top node_modules",
+        "description": "Defines the highest point where packages can be hoisted, overriding for the current workspace the value initially set for [`nmHoistingLimits`](/configuration/yarnrc#nmHoistingLimits).",
         "type": "string",
         "enum": ["workspace", "dependencies", "none"],
-        "default": "public",
+        "default": "none",
         "$comment": "{ \"anchor\": \"installConfig.hoistingLimits\" }"
       }
     },

@@ -35,10 +35,8 @@ export interface PublishConfig {
   executableFiles?: Set<PortablePath>;
 }
 
-export enum NmHoistingLimits { WORKSPACE = `workspace`, DEPENDENCIES = `dependencies`, NONE = `none` }
-
 export interface InstallConfig {
-  hoistingLimits?: NmHoistingLimits;
+  hoistingLimits?: string;
 }
 
 export class Manifest {
@@ -445,11 +443,9 @@ export class Manifest {
       this.installConfig = {};
 
       if (typeof data.installConfig.hoistingLimits === `string`) {
-        if (Object.values(NmHoistingLimits).indexOf(data.installConfig.hoistingLimits) >= 0) {
-          this.installConfig.hoistingLimits = data.installConfig.hoistingLimits;
-        } else {
-          errors.push(new Error(`Invalid hoistingLimits value: '${data.installConfig.hoistingLimits}'`));
-        }
+        this.installConfig.hoistingLimits = data.installConfig.hoistingLimits;
+      } else {
+        errors.push(new Error(`Invalid hoisting limits definition`));
       }
     }
 

@@ -455,7 +455,7 @@ describe(`Node_Modules`, () => {
             dep: `file:./dep`,
           },
           installConfig: {
-            hoistingLimits: `workspace`,
+            hoistingLimits: `workspaces`,
           },
         });
         await writeJson(npath.toPortablePath(`${path}/workspace/dep/package.json`), {
@@ -487,7 +487,7 @@ describe(`Node_Modules`, () => {
       },
       {
         nodeLinker: `node-modules`,
-        nmHoistingLimits: `workspace`,
+        nmHoistingLimits: `workspaces`,
       },
       async ({path, run, source}) => {
         await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
@@ -596,7 +596,7 @@ describe(`Node_Modules`, () => {
             dep: `file:./dep`,
           },
           installConfig: {
-            hoistingLimits: `workspace`,
+            hoistingLimits: `workspaces`,
           },
         });
         await writeJson(npath.toPortablePath(`${path}/workspace/dep/package.json`), {
