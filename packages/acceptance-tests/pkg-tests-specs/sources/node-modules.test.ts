@@ -436,15 +436,15 @@ describe(`Node_Modules`, () => {
   );
 
   test(`should respect transitive peer dependencies`,
-    // . -> ws1 -> nm-core --> graphql
-    //          -> graphql@1
-    //   -> ws2 -> nm-core --> graphql
-    //          -> graphql@1
-    //   -> ws3 -> nm-express -> nm-core --> graphql
-    //                     --> graphql
-    //          -> graphql@2
-    // nm-core inside ws3 must not be hoisted to the top, otherwise it will use graphql@1 instead of graphql@2
-    // nm-express will not be hoisted to the top, because its nm-core instance must loose in popularity to nm-core instance dependent on graphql@1
+    // . -> ws1 -> peer-deps-lvl2 --> no-deps
+    //          -> no-deps@1
+    //   -> ws2 -> peer-deps-lvl2 --> no-deps
+    //          -> no-deps@1
+    //   -> ws3 -> peer-deps-lvl1 -> peer-deps-lvl2 --> no-deps
+    //                            --> no-deps
+    //             no-deps@2
+    // peer-deps-lvl2 inside ws3 must not be hoisted to the top, otherwise it will use no-deps@1 instead of no-deps@2
+    // peer-deps-lvl1 will not be hoisted to the top, because its peer-deps-lvl2 instance must loose in popularity to peer-deps-lvl2 instance dependent on no-deps@1
     makeTemporaryEnv(
       {
         private: true,
@@ -458,39 +458,31 @@ describe(`Node_Modules`, () => {
           name: `ws1`,
           version: `1.0.0`,
           dependencies: {
-            'nm-core': `1.0.0`,
-            graphql: `file:../graphql1`,
+            'peer-deps-lvl2': `1.0.0`,
+            'no-deps': `1.0.0`,
           },
         });
         await writeJson(npath.toPortablePath(`${path}/ws2/package.json`), {
           name: `ws2`,
           version: `1.0.0`,
           dependencies: {
-            'nm-core': `1.0.0`,
-            graphql: `file:../graphql1`,
+            'peer-deps-lvl2': `1.0.0`,
+            'no-deps': `1.0.0`,
           },
         });
         await writeJson(npath.toPortablePath(`${path}/ws3/package.json`), {
           name: `ws3`,
           version: `1.0.0`,
           dependencies: {
-            'nm-express': `1.0.0`,
-            graphql: `file:../graphql2`,
+            'peer-deps-lvl1': `1.0.0`,
+            'no-deps': `2.0.0`,
           },
-        });
-        await writeJson(npath.toPortablePath(`${path}/graphql1/package.json`), {
-          name: `graphql`,
-          version: `1.0.0`,
-        });
-        await writeJson(npath.toPortablePath(`${path}/graphql2/package.json`), {
-          name: `graphql`,
-          version: `2.0.0`,
         });
 
         await run(`install`);
 
-        expect(await xfs.existsPromise(`${path}/ws3/node_modules/nm-express` as PortablePath)).toEqual(true);
-        expect(await xfs.existsPromise(`${path}/ws3/node_modules/nm-core` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/ws3/node_modules/peer-deps-lvl1` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/ws3/node_modules/peer-deps-lvl2` as PortablePath)).toEqual(true);
       },
     )
   );
