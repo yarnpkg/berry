@@ -48,28 +48,13 @@ plugins:
 
 That's it! You have your first plugin, congratulations! Of course it doesn't do much (or anything at all, really), but we'll see how to extend it to make it more powerful.
 
-## Using hooks
+## All-in-one plugin builder
 
-Plugins can register to various events in the Yarn lifetime, and provide them additional information to alter their behavior. To do this, you just need to declare a new `hooks` property in your plugin and add members for each hook you want to listen to:
+As we saw, plugins are meant to be standalone JavaScript source files. It's very possible to author them by hand, especially if you only need a small one, but once you start adding multiple commands it can become a bit more complicated. To make this process easyer, we maintain a package called `@yarnpkg/builder`. This builder is to Yarn what Next.js is to web development - it's a tool designed to help creating, building, and managing complex plugins written in TypeScript.
 
-```js
-module.exports = {
-  name: `plugin-hello-world`,
-  factory: require => ({
-    hooks: {
-      setupScriptEnvironment(scriptEnv) {
-        scriptEnv.HELLO_WORLD = `my first plugin!`;
-      },
-    },
-  })
-};
-```
+Its documentation can be found on the [dedicated page](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-builder/README.md), but remember that you're not required to use it. Sometimes good old scripts are just fine!
 
-In this example, we registered to the `setupScriptEnvironment` hook and used it to inject an argument into the environment. Now, each time you'll run a script, you'll see that your env will contain a new value called `HELLO_WORLD`!
-
-Hooks are numerous, and we're still working on them. Some might be added, removed, or changed, based on your feedback. So if you'd like to do something hooks don't allow you to do yet, come tell us!
-
-## Using commands
+## Adding commands
 
 Plugins can also register their own commands. To do this, we just have to write them using the [`clipanion`](https://github.com/arcanis/clipanion) library - and we don't even have to add it to our dependencies! Let's see an example:
 
@@ -147,39 +132,59 @@ module.exports = {
 };
 ```
 
-## Builder
+## Using hooks
 
-`@yarnpkg/builder` is a tool designed for creating, building, and managing complex plugins.
-
-Its documentation can be found on the [dedicated page](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-builder/README.md).
-
-## Using a plugin to access rich information
-
-Some of Yarn's hooks allow us to integrate more closely by providing a global
-public object with rich metadata that Yarn collected about the project.
-
-In this example, we will integrate with the `afterAllInstalled` hook which
-gets invoked with an additional parameter that is the public Project object
-where you have access to all the information Yarn has collected about the
-project: dependencies, package manifest, workspace information, and so on.
-
-In the following `plugin-hello-brave-world.js` plugin example we will capture
-this object information in the `_` variable and write its content to a JSON
-file so we can further inspect it:
+Plugins can register to various events in the Yarn lifetime, and provide them additional information to alter their behavior. To do this, you just need to declare a new `hooks` property in your plugin and add members for each hook you want to listen to:
 
 ```js
-const fs = require("fs");
-const util = require("util");
+module.exports = {
+  name: `plugin-hello-world`,
+  factory: require => ({
+    hooks: {
+      setupScriptEnvironment(scriptEnv) {
+        scriptEnv.HELLO_WORLD = `my first plugin!`;
+      },
+    },
+  })
+};
+```
+
+In this example, we registered to the `setupScriptEnvironment` hook and used it to inject an argument into the environment. Now, each time you'll run a script, you'll see that your env will contain a new value called `HELLO_WORLD`!
+
+Hooks are numerous, and we're still working on them. Some might be added, removed, or changed, based on your feedback. So if you'd like to do something hooks don't allow you to do yet, come tell us!
+
+> **Note:** We don't yet have a list of hooks. If you're interested to improve this documentation by generating the hook list from our source code, please contact us on our Discord server!
+
+## Using a the Yarn API
+
+Most Yarn's hooks are called with various arguments that tell you more about the context under which the hook is being called. The exact argument list is different for each hook, but in general they are of the types defined in the [`@yarnpkg/core` library](/api).
+
+In this example, we will integrate with the `afterAllInstalled` hook in order to print some basic information about the dependency tree after each install. This hook gets invoked with an additional parameter that is the public [`Project`](/api/classes/yarnpkg_core.project.html) instance where lie most of the information Yarn has collected about the project: dependencies, package manifests, workspace information, and so on.
+
+```js
+const fs = require(`fs`);
+const util = require(`util`);
 
 module.exports = {
-  name: `plugin-hello-brave-world`,
+  name: `plugin-project-info`,
   factory: require => {
+    const {structUtils} = require(`@yarnpkg/core`);
+
     return {
       default: {
         hooks: {
-          afterAllInstalled(_) {
-            console.log("🎉 afterAllInstalled hook invoked");
-            fs.writeFileSync("afterAll.json", util.inspect(_, false, 10));
+          afterAllInstalled(project) {
+            let descriptorCount = 0;
+            for (const descriptor of project.storedDescriptors.values())
+              if (!structUtils.isVirtualDescriptor(descriptor))
+                descriptorCount += 1;
+
+            let packageCount = 0;
+            for (const pkg of project.storedPackages.values())
+              if (!structUtils.isVirtualLocator(pkg))
+                packageCount += 1;
+
+            console.log(`This project contains ${descriptorCount} different descriptors that resolve to ${packageCount} packages`);
           }
         }
       }
@@ -188,111 +193,9 @@ module.exports = {
 };
 ```
 
-The Project's object structure is defined in
-`packages/berry-core/sources/Project.ts` and a partial list of the root level
-keys the object has are:
+This is getting interesting. As you can see, we accessed the [`storedDescriptors`](/api/classes/yarnpkg_core.project.html#storeddescriptors) and [`storedPackages`](/api/classes/yarnpkg_core.project.html#storedpackages) fields from our project instance, and iterated over them to obtain the number of non-virtual items (virtual packages are described in more details [here](/advanced/lexicon#virtual-package)). This is a very simple use case, but we could have done many more things: the project root is located in the [`cwd`](/api/classes/yarnpkg_core.project.html#cwd) property, the workspaces are exposed as [`workspaces`](https://yarnpkg.com/api/classes/yarnpkg_core.project.html#workspaces), the link between descriptors and packages can be made via [`storedResolutions`](/api/classes/yarnpkg_core.project.html#storedresolutions), ... etc.
 
-```
-Project {
-  configuration: {},
-  cwd: {},
-  workspaces: Map {},
-  storedResolutions: Map {},
-  storedDescriptors: Map {},
-  storedPackages: Map {},
-  storedChecksums: Map {},
-  ...
-}
-```
+Note that we've only scratched the surface of the `Project` class instance! The Yarn core provides many other classes (and hooks) that allow you to work with the cache, download packages, trigger http requests, ... and much more, as listed in the [API documentation](/api/). Next time you want to write a plugin, give it a look, there's almost certainly an utility there that will allow you to avoid having to reimplement the wheel.
 
-Those `stored*` keys are going to help us understand the dependencies and
-build the tree for this project.
+> **Note:** Our API documentation is still in its infancy and could benefit from the help of dedicated technical writers. In the meantime, we recommend that you also give a look at the source code from the [core plugins](https://github.com/yarnpkg/berry/tree/master/packages), as they all use exactly the same primitives as the ones you can access from your own plugins! For instance, the [TypeScript plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript), which auto-adds `@types` dependency when needed, implements this feature [through a hook](https://github.com/yarnpkg/berry/blob/master/packages/plugin-typescript/sources/index.ts#L133-L134).
 
-To make things simple we're going to run this plugin on an npm project
-that has just dependency: `debug`. debug in-turn, has `ms` as a dependency
-as well.
-
-The `storedPackages` object is our entry point to get the list of dependencies
-for this project, and note that this object also has an entry for the actual
-project name as well which is denoted by the `reference: 'workspace:.` key.
-
-Let's see how the `debug` dependency looks like in the `storedPackages` Map:
-
-```
- 'a1f870a4a95fff67eeac2388e06345982ebf1149c710f8efe18fe5d1967fec40db60987022a5c6fe55708167d1add4b63bc8ad6f755e20c6fba140d721180595' => { identHash:
-    'd027b0b474dd440d333c0ae6200111acff30aa5931aeacf1841b1eb9212edea377606a118ff0f8675b69eabe9ff00db4f2f16659519c82810c6b534f9b8ad82d',
-   scope: undefined,
-   name: 'debug',
-   locatorHash:
-    'a1f870a4a95fff67eeac2388e06345982ebf1149c710f8efe18fe5d1967fec40db60987022a5c6fe55708167d1add4b63bc8ad6f755e20c6fba140d721180595',
-   reference: 'npm:4.1.1',
-   version: '4.1.1',
-   languageName: 'node',
-   linkType: 'hard',
-   dependencies:
-    Map {
-      '299701b4a21f15498c990a6ec8bf49b0331f01e1d610cefaa6f7040bab1be634be89d1462245207c21d1334b31690861f303a0a71aa94f80445d80b9ee37eaf6' => { identHash:
-         '299701b4a21f15498c990a6ec8bf49b0331f01e1d610cefaa6f7040bab1be634be89d1462245207c21d1334b31690861f303a0a71aa94f80445d80b9ee37eaf6',
-        scope: undefined,
-        name: 'ms',
-        descriptorHash:
-         '0742408cf974a8f1cd5081a9aec19656dc8016eec3c6e2358f302902e6f1f87241f601911cb45e855f3b0d26160c1520715ae79904c5ed1d29f5383ab906440e',
-        range: 'npm:^2.1.1' } },
-   peerDependencies: Map {},
-   dependenciesMeta: Map {},
-   peerDependenciesMeta: Map {},
-   bin: Map {} },
- '9455a02525b0e2c50eca4e204d71900a775107249d4245c1ea1f95e3f124c8a1d27484b29ccea934895da4d0273b22dc95cefd0561c39490cd7c86ab4404ca33' => { identHash:
-    '299701b4a21f15498c990a6ec8bf49b0331f01e1d610cefaa6f7040bab1be634be89d1462245207c21d1334b31690861f303a0a71aa94f80445d80b9ee37eaf6',
-   scope: undefined,
-   name: 'ms',
-   locatorHash:
-    '9455a02525b0e2c50eca4e204d71900a775107249d4245c1ea1f95e3f124c8a1d27484b29ccea934895da4d0273b22dc95cefd0561c39490cd7c86ab4404ca33',
-   reference: 'npm:2.1.2',
-   version: '2.1.2',
-   languageName: 'node',
-   linkType: 'hard',
-   dependencies: Map {},
-   peerDependencies: Map {},
-   dependenciesMeta: Map {},
-   peerDependenciesMeta: Map {},
-   bin: Map {} },
-```
-
-The `debug` entry has a unique hash to identify it, some metadata such as the
-resolved version, and another nested `dependencies` object which lists those dependencies that `debug` depends upon. You'll notice though that `ms` which
-shows up in the nested dependencies object isn't resolved, and it is only
-denoted by a `range`.
-
-To resolve the nested dependencies we need to use the `descriptorHash` and
-consult the `storedResolutions` map, which looks as follows:
-
-```
-  storedResolutions:
-   Map {
-     '35f50d92512bedba8fbf78bdeae4f2bce60934a798f5e0a0ab58b087fb7dc73880c7ffee2e135c15e48ca70687336bbdf4163e75da3f90b55da5ba5e41d36051' => '35f50d92512bedba8fbf78bdeae4f2bce60934a798f5e0a0ab58b087fb7dc73880c7ffee2e135c15e48ca70687336bbdf4163e75da3f90b55da5ba5e41d36051',
-     'ee78c55248c8a07a4079ce749bc462124c923d7b990785b50150c417b2821ca3363767b8dc304d80d4feae3faf9f95e1c2c46cebc582b81fe70a8f45a69b6377' => 'a1f870a4a95fff67eeac2388e06345982ebf1149c710f8efe18fe5d1967fec40db60987022a5c6fe55708167d1add4b63bc8ad6f755e20c6fba140d721180595',
-     '0742408cf974a8f1cd5081a9aec19656dc8016eec3c6e2358f302902e6f1f87241f601911cb45e855f3b0d26160c1520715ae79904c5ed1d29f5383ab906440e' => '9455a02525b0e2c50eca4e204d71900a775107249d4245c1ea1f95e3f124c8a1d27484b29ccea934895da4d0273b22dc95cefd0561c39490cd7c86ab4404ca33' },
-```
-
-We can find `ms`'s descriptorHash of `0742408cf974a8f1cd5081a9aec19656dc8016eec3c6e2358f302902e6f1f87241f601911cb45e855f3b0d26160c1520715ae79904c5ed1d29f5383ab906440e` to be the third element in `storedResolutions` and it references the hash `9455a02525b0e2c50eca4e204d71900a775107249d4245c1ea1f95e3f124c8a1d27484b29ccea934895da4d0273b22dc95cefd0561c39490cd7c86ab4404ca33` which is then mapped again to
-an dependency entry in the `storedPackages` map, but this time it's the fully
-resolved dependency metadata of `ms`:
-
-```
- '9455a02525b0e2c50eca4e204d71900a775107249d4245c1ea1f95e3f124c8a1d27484b29ccea934895da4d0273b22dc95cefd0561c39490cd7c86ab4404ca33' => { identHash:
-    '299701b4a21f15498c990a6ec8bf49b0331f01e1d610cefaa6f7040bab1be634be89d1462245207c21d1334b31690861f303a0a71aa94f80445d80b9ee37eaf6',
-   scope: undefined,
-   name: 'ms',
-   locatorHash:
-    '9455a02525b0e2c50eca4e204d71900a775107249d4245c1ea1f95e3f124c8a1d27484b29ccea934895da4d0273b22dc95cefd0561c39490cd7c86ab4404ca33',
-   reference: 'npm:2.1.2',
-   version: '2.1.2',
-   languageName: 'node',
-   linkType: 'hard',
-   dependencies: Map {},
-   peerDependencies: Map {},
-   dependenciesMeta: Map {},
-   peerDependenciesMeta: Map {},
-   bin: Map {} },
-```
