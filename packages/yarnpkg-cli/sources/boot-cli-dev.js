@@ -55,5 +55,9 @@ function getPluginConfiguration() {
     pluginConfiguration.modules.set(`@yarnpkg/${folder}`, require(`../../${folder}`));
   }
 
+  const {getDynamicLibs} = require(`./tools/getDynamicLibs`);
+  for (const [name, module] of getDynamicLibs())
+    pluginConfiguration.modules.set(name, module);
+
   return pluginConfiguration;
 }
