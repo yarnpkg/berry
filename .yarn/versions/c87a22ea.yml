@@ -1,8 +1,8 @@
 releases:
-  "@yarnpkg/cli": patch
-  "@yarnpkg/core": patch
-  "@yarnpkg/plugin-node-modules": patch
-  "@yarnpkg/pnpify": patch
+  "@yarnpkg/cli": minor
+  "@yarnpkg/core": minor
+  "@yarnpkg/plugin-node-modules": minor
+  "@yarnpkg/pnpify": minor
 
 declined:
   - "@yarnpkg/plugin-compat"

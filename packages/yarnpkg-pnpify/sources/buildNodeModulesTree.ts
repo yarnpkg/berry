@@ -13,7 +13,7 @@ export enum LinkType {
   SOFT = `SOFT`,
 }
 
-export enum HoistingLimits {
+export enum NodeModulesHoistingLimits {
   WORKSPACES = `workspaces`,
   DEPENDENCIES = `dependencies`,
   NONE = `none`,
@@ -49,7 +49,7 @@ export type NodeModulesTree = Map<PortablePath, NodeModulesBaseNode | NodeModule
 
 export interface NodeModulesTreeOptions {
   pnpifyFs?: boolean;
-  hoistingLimitsByCwd?: Map<PortablePath, HoistingLimits>;
+  hoistingLimitsByCwd?: Map<PortablePath, NodeModulesHoistingLimits>;
 }
 
 /** node_modules path segment */
@@ -222,9 +222,9 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
           const parentHoistingLimits = options.hoistingLimitsByCwd?.get(parentRelativeCwd);
           const relativeCwd = ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;
           const depHoistingLimits = options.hoistingLimitsByCwd?.get(relativeCwd);
-          const isHoistBorder = parentHoistingLimits === HoistingLimits.DEPENDENCIES
-            || depHoistingLimits === HoistingLimits.DEPENDENCIES
-            || depHoistingLimits === HoistingLimits.WORKSPACES;
+          const isHoistBorder = parentHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
+            || depHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
+            || depHoistingLimits === NodeModulesHoistingLimits.WORKSPACES;
 
           addPackageToTree(depName, depPkg, depLocator, node, relativeCwd, isHoistBorder);
         }

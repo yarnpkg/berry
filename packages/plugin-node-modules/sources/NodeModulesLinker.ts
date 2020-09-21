@@ -1,19 +1,18 @@
-import {BuildDirective, MessageName, Project, FetchResult}        from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, LinkType}        from '@yarnpkg/core';
-import {Locator, Package, BuildType, FinalizeInstallStatus}       from '@yarnpkg/core';
-import {structUtils, Report, Manifest, miscUtils, DependencyMeta} from '@yarnpkg/core';
-import {NmHoistingLimits}                                         from '@yarnpkg/core';
-import {VirtualFS, ZipOpenFS, xfs, FakeFS}                        from '@yarnpkg/fslib';
-import {PortablePath, npath, ppath, toFilename, Filename}         from '@yarnpkg/fslib';
-import {getLibzipPromise}                                         from '@yarnpkg/libzip';
-import {parseSyml}                                                from '@yarnpkg/parsers';
-import {AbstractPnpInstaller}                                     from '@yarnpkg/plugin-pnp';
-import {NodeModulesLocatorMap, buildLocatorMap}                   from '@yarnpkg/pnpify';
-import {buildNodeModulesTree}                                     from '@yarnpkg/pnpify';
-import {PnpSettings, makeRuntimeApi}                              from '@yarnpkg/pnp';
-import cmdShim                                                    from '@zkochan/cmd-shim';
-import {UsageError}                                               from 'clipanion';
-import fs                                                         from 'fs';
+import {BuildDirective, MessageName, Project, FetchResult}                 from '@yarnpkg/core';
+import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                 from '@yarnpkg/core';
+import {Locator, Package, BuildType, FinalizeInstallStatus}                from '@yarnpkg/core';
+import {structUtils, Report, Manifest, miscUtils, DependencyMeta}          from '@yarnpkg/core';
+import {VirtualFS, ZipOpenFS, xfs, FakeFS}                                 from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, toFilename, Filename}                  from '@yarnpkg/fslib';
+import {getLibzipPromise}                                                  from '@yarnpkg/libzip';
+import {parseSyml}                                                         from '@yarnpkg/parsers';
+import {AbstractPnpInstaller}                                              from '@yarnpkg/plugin-pnp';
+import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits} from '@yarnpkg/pnpify';
+import {buildNodeModulesTree}                                              from '@yarnpkg/pnpify';
+import {PnpSettings, makeRuntimeApi}                                       from '@yarnpkg/pnp';
+import cmdShim                                                             from '@zkochan/cmd-shim';
+import {UsageError}                                                        from 'clipanion';
+import fs                                                                  from 'fs';
 
 const STATE_FILE_VERSION = 1;
 const NODE_MODULES = `node_modules` as Filename;
@@ -102,8 +101,10 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
       preinstallState = {locatorMap: new Map(), binSymlinks: new Map(), locationTree: new Map()};
     }
 
+    const defaultHoistingLimit = this.opts.project.configuration.get<string>(`nmHoistingLimits`);
+
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
-    const hoistingLimitsByCwd= new Map(this.opts.project.workspaces.map(({relativeCwd, manifest}) => ([relativeCwd, manifest.installConfig?.hoistingLimits || this.opts.project.configuration.get(`nmHoistingLimits`) as NmHoistingLimits])));
+    const hoistingLimitsByCwd = new Map(this.opts.project.workspaces.map(({relativeCwd, manifest}) => ([relativeCwd, miscUtils.validateEnum(NodeModulesHoistingLimits, manifest.installConfig?.hoistingLimits ?? defaultHoistingLimit)])));
     const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false, hoistingLimitsByCwd});
     const locatorMap = buildLocatorMap(nmTree);
 
