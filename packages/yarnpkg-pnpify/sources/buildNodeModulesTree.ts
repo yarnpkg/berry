@@ -210,10 +210,10 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     const shouldAddChildrenDependencies = options.pnpifyFs || !isPortalLocator(nodeKey);
 
     if (!isSeen && shouldAddChildrenDependencies) {
-      for (const [name, referencish] of pkg.packageDependencies) {
+      for (const [depName, referencish] of pkg.packageDependencies) {
         if (referencish !== null) {
-          const depLocator = pnp.getLocator(name, referencish);
-          const pkgLocator = pnp.getLocator(name.replace(WORKSPACE_NAME_SUFFIX, ``), referencish);
+          const depLocator = pnp.getLocator(depName, referencish);
+          const pkgLocator = pnp.getLocator(depName.replace(WORKSPACE_NAME_SUFFIX, ``), referencish);
 
           const depPkg = pnp.getPackageInformation(pkgLocator);
           if (depPkg === null)
@@ -226,7 +226,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
             || depHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
             || depHoistingLimits === NodeModulesHoistingLimits.WORKSPACES;
 
-          addPackageToTree(name, depPkg, depLocator, node, relativeCwd, isHoistBorder);
+          addPackageToTree(depName, depPkg, depLocator, node, relativeCwd, isHoistBorder);
         }
       }
     }

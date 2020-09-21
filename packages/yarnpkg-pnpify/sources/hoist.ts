@@ -471,8 +471,8 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
     };
 
     let reasonRoot;
-    if (options.debugLevel >= 2)
-      reasonRoot = `${Array.from(rootNodePath).map(x => prettyPrintLocator(x)).join(`→`)}`;
+    if (options.debugLevel >= DebugLevel.REASONS)
+      reasonRoot = `${Array.from(rootNodePathLocators).map(x => prettyPrintLocator(x)).join(`→`)}`;
 
     for (const [node, hoistInfo] of hoistInfos)
       if (hoistInfo.isHoistable === Hoistable.NO)
