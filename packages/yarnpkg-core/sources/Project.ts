@@ -1440,7 +1440,7 @@ export class Project {
     // package (and avoid rebuilding it later if it didn't change).
 
     if (nextBState.size > 0) {
-      const bstatePath = this.configuration.get<PortablePath>(`bstatePath`);
+      const bstatePath = this.configuration.get(`bstatePath`);
       const bstateFile = Project.generateBuildStateFile(nextBState, this.storedPackages);
 
       await xfs.mkdirPromise(ppath.dirname(bstatePath), {recursive: true});
@@ -1453,7 +1453,7 @@ export class Project {
   }
 
   async install(opts: InstallOptions) {
-    const nodeLinker = this.configuration.get<string>(`nodeLinker`);
+    const nodeLinker = this.configuration.get(`nodeLinker`);
     Configuration.telemetry?.reportInstall(nodeLinker);
 
     for (const extensions of this.configuration.packageExtensions.values())
@@ -1539,7 +1539,7 @@ export class Project {
 
     await opts.report.startTimerPromise(`Link step`, async () => {
       const immutablePatterns = opts.immutable
-        ? [...new Set(this.configuration.get<Array<string>>(`immutablePatterns`))].sort()
+        ? [...new Set(this.configuration.get(`immutablePatterns`))].sort()
         : [];
 
       const before = await Promise.all(immutablePatterns.map(async pattern => {
@@ -1678,14 +1678,14 @@ export class Project {
     const installState = {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, lockFileChecksum};
     const serializedState = await gzip(v8.serialize(installState));
 
-    const installStatePath = this.configuration.get<PortablePath>(`installStatePath`);
+    const installStatePath = this.configuration.get(`installStatePath`);
 
     await xfs.mkdirPromise(ppath.dirname(installStatePath), {recursive: true});
     await xfs.writeFilePromise(installStatePath, serializedState as Buffer);
   }
 
   async restoreInstallState() {
-    const installStatePath = this.configuration.get<PortablePath>(`installStatePath`);
+    const installStatePath = this.configuration.get(`installStatePath`);
     if (!xfs.existsSync(installStatePath)) {
       await this.applyLightResolution();
       return;

@@ -65,6 +65,16 @@ export interface Hooks {
   ) => Promise<void>,
 }
 
+declare module '@yarnpkg/core' {
+  interface ConfigurationValueMap {
+    enableImmutableInstalls: boolean;
+    // Can't use Modifier here because there are actually two instances of this module:
+    // One in packages/plugin-essentials and one virtual package.
+    // Defining this property with two different enum instances leads to a compiler error.
+    defaultSemverRangePrefix: `^` | `~` | ``;
+  }
+}
+
 const plugin: Plugin = {
   configuration: {
     enableImmutableInstalls: {

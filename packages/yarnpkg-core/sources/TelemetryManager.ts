@@ -109,7 +109,7 @@ export class TelemetryManager {
     }
 
     const now = Date.now();
-    const interval = this.configuration.get<number>(`telemetryInterval`) * 24 * 60 * 60 * 1000;
+    const interval = this.configuration.get(`telemetryInterval`) * 24 * 60 * 60 * 1000;
 
     const lastUpdate = content.lastUpdate ?? now - Math.floor(interval * Math.random());
     const nextUpdate = lastUpdate + interval;
@@ -161,7 +161,7 @@ export class TelemetryManager {
       content = {};
     }
 
-    const userId = this.configuration.get<string | null>(`telemetryUserId`) ?? `*`;
+    const userId = this.configuration.get(`telemetryUserId`) ?? `*`;
 
     const blocks = content.blocks = content.blocks ?? {};
     const block = blocks[userId] = blocks[userId] ?? {};

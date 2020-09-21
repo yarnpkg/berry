@@ -99,7 +99,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       if (ignorePath)
         delete process.env.YARN_IGNORE_PATH;
 
-      const isTelemetryEnabled = configuration.get<boolean>(`enableTelemetry`);
+      const isTelemetryEnabled = configuration.get(`enableTelemetry`);
       if (isTelemetryEnabled)
         Configuration.telemetry = new TelemetryManager(configuration, `puba9cdc10ec5790a2cf4969dd413a47270`);
 

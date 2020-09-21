@@ -10,6 +10,12 @@ import npmTagList             from './commands/npm/tag/list';
 import npmTagRemove           from './commands/npm/tag/remove';
 import npmWhoami              from './commands/npm/whoami';
 
+declare module '@yarnpkg/core' {
+  interface ConfigurationValueMap {
+    npmPublishAccess: string|null;
+  }
+}
+
 const plugin: Plugin = {
   configuration: {
     npmPublishAccess: {

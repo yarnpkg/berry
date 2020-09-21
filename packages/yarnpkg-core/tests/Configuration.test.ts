@@ -74,7 +74,7 @@ describe(`Configuration`, () => {
           plugins: new Set([`@yarnpkg/plugin-npm`]),
         });
 
-        const getToken = (scope: string) => configuration.get(`npmScopes`).get(scope).get(`npmAuthToken`);
+        const getToken = (scope: string) => configuration.get(`npmScopes`).get(scope)!.get(`npmAuthToken`);
 
         const onlyEnv = getToken(`onlyEnv`);
         const multipleEnvs = getToken(`multipleEnvs`);

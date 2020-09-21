@@ -110,7 +110,7 @@ export type VersionFile = {
 export async function resolveVersionFiles(project: Project) {
   const candidateReleases = new Map<Workspace, string>();
 
-  const deferredVersionFolder = project.configuration.get<PortablePath>(`deferredVersionFolder`);
+  const deferredVersionFolder = project.configuration.get(`deferredVersionFolder`);
   if (!xfs.existsSync(deferredVersionFolder))
     return new Map();
 
@@ -152,7 +152,7 @@ export async function resolveVersionFiles(project: Project) {
 }
 
 export async function clearVersionFiles(project: Project) {
-  const deferredVersionFolder = project.configuration.get<PortablePath>(`deferredVersionFolder`);
+  const deferredVersionFolder = project.configuration.get(`deferredVersionFolder`);
   if (!xfs.existsSync(deferredVersionFolder))
     return;
 
@@ -160,7 +160,7 @@ export async function clearVersionFiles(project: Project) {
 }
 
 export async function updateVersionFiles(project: Project) {
-  const deferredVersionFolder = project.configuration.get<PortablePath>(`deferredVersionFolder`);
+  const deferredVersionFolder = project.configuration.get(`deferredVersionFolder`);
   if (!xfs.existsSync(deferredVersionFolder))
     return;
 
@@ -212,7 +212,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
     ? await fetchChangedFiles(root, {base: base!.hash, project})
     : [];
 
-  const deferredVersionFolder = configuration.get<PortablePath>(`deferredVersionFolder`);
+  const deferredVersionFolder = configuration.get(`deferredVersionFolder`);
   const versionFiles = changedFiles.filter(p => ppath.contains(deferredVersionFolder, p) !== null);
 
   if (versionFiles.length > 1)

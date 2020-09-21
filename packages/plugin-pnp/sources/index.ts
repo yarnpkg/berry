@@ -59,6 +59,19 @@ async function populateYarnPaths(project: Project, definePath: (path: PortablePa
   definePath(project.configuration.get(`pnpUnpluggedFolder`));
 }
 
+declare module '@yarnpkg/core' {
+  interface ConfigurationValueMap {
+    nodeLinker: string;
+    pnpMode: string;
+    pnpShebang: string;
+    pnpIgnorePatterns: Array<string>;
+    pnpEnableInlining: boolean;
+    pnpFallbackMode: string;
+    pnpUnpluggedFolder: PortablePath;
+    pnpDataPath: PortablePath;
+  }
+}
+
 const plugin: Plugin<CoreHooks & StageHooks> = {
   hooks: {
     populateYarnPaths,

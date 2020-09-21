@@ -147,7 +147,7 @@ async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, ta
     if (workspace.manifest.publishConfig && typeof workspace.manifest.publishConfig.access === `string`) {
       access = workspace.manifest.publishConfig.access;
     } else if (configuration.get(`npmPublishAccess`) !== null) {
-      access = configuration.get(`npmPublishAccess`);
+      access = configuration.get(`npmPublishAccess`)!;
     } else if (ident.scope) {
       access = `restricted`;
     } else {

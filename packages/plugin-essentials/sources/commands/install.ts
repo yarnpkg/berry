@@ -219,7 +219,7 @@ export default class YarnCommand extends BaseCommand {
     }
 
     const immutable = typeof this.immutable === `undefined` && typeof this.frozenLockfile === `undefined`
-      ? configuration.get<boolean>(`enableImmutableInstalls`) ?? false
+      ? configuration.get(`enableImmutableInstalls`) ?? false
       : this.immutable ?? this.frozenLockfile ?? false;
 
     if (configuration.projectCwd !== null) {

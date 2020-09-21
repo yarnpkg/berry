@@ -82,7 +82,7 @@ export default class InitCommand extends BaseCommand {
     if (!xfs.existsSync(this.context.cwd))
       await xfs.mkdirPromise(this.context.cwd, {recursive: true});
 
-    const lockfilePath = ppath.join(this.context.cwd, configuration.get<Filename>(`lockfileFilename`));
+    const lockfilePath = ppath.join(this.context.cwd, configuration.get(`lockfileFilename`));
     if (!xfs.existsSync(lockfilePath))
       await xfs.writeFilePromise(lockfilePath, ``);
 
@@ -128,7 +128,7 @@ export default class InitCommand extends BaseCommand {
 
     const manifest = new Manifest();
 
-    const fields = Object.fromEntries(configuration.get<Map<string, any>>(`initFields`).entries());
+    const fields = Object.fromEntries(configuration.get(`initFields`).entries());
     manifest.load(fields);
 
     manifest.name = structUtils.makeIdent(configuration.get(`initScope`), ppath.basename(this.context.cwd));

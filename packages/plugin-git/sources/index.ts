@@ -12,6 +12,12 @@ export interface Hooks {
   ) => Promise<FetchResult | null>,
 }
 
+declare module '@yarnpkg/core' {
+  interface ConfigurationValueMap {
+    cloneConcurrency: number;
+  }
+}
+
 const plugin: Plugin = {
   configuration: {
     cloneConcurrency: {
