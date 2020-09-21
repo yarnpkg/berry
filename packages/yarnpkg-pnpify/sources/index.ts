@@ -1,11 +1,10 @@
 import {patchFs as fslibPatchFs}               from '@yarnpkg/fslib';
 import {PnpApi}                                from '@yarnpkg/pnp';
-
 import fs                                      from 'fs';
 
 import {NodeModulesFS}                         from './NodeModulesFS';
-import {buildNodeModulesTree, buildLocatorMap} from './buildNodeModulesTree';
 import {NodeModulesLocatorMap, getArchivePath} from './buildNodeModulesTree';
+import {buildNodeModulesTree, buildLocatorMap} from './buildNodeModulesTree';
 import {dynamicRequire}                        from './dynamicRequire';
 
 let fsPatched = false;
@@ -34,10 +33,15 @@ export type {
 } from './buildNodeModulesTree';
 
 export {
+  NodeModulesHoistingLimits,
+} from './buildNodeModulesTree';
+
+export {
   NodeModulesFS,
   buildNodeModulesTree,
   buildLocatorMap,
   getArchivePath,
 };
+
 export type {NodeModulesLocatorMap};
 
