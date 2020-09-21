@@ -57,7 +57,7 @@ type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident
  * e.g. which one among the group of packages with the same name should be hoisted.
  * The package having the biggest number of parents using this package will be hoisted.
  */
-type PreferenceMap = Map<string, { minDepth: number, peerDependents: Set<Ident>, dependents: Set<Ident> }>;
+type PreferenceMap = Map<string, { peerDependents: Set<Ident>, dependents: Set<Ident> }>;
 
 enum Hoistable { YES, NO, DEPENDS }
 type HoistInfo = {
@@ -222,8 +222,6 @@ const getHoistIdentMap = (rootNode: HoisterWorkTree, preferenceMap: PreferenceMa
     const entry2 = preferenceMap.get(key2)!;
     if (entry2.peerDependents.size !== entry1.peerDependents.size) {
       return entry2.peerDependents.size - entry1.peerDependents.size;
-    } else if (entry1.minDepth !== entry2.minDepth) {
-      return entry1.minDepth - entry2.minDepth;
     } else {
       return entry2.dependents.size - entry1.dependents.size;
     }
@@ -718,19 +716,17 @@ const buildPreferenceMap = (rootNode: HoisterWorkTree): PreferenceMap => {
     const key = getPreferenceKey(node);
     let entry = preferenceMap.get(key);
     if (!entry) {
-      entry = {minDepth: Number.MAX_SAFE_INTEGER, dependents: new Set<Ident>(), peerDependents: new Set<Ident>()};
+      entry = {dependents: new Set<Ident>(), peerDependents: new Set<Ident>()};
       preferenceMap.set(key, entry);
     }
     return entry;
   };
 
-  const addDependent = (dependent: HoisterWorkTree, node: HoisterWorkTree, depth: number) => {
+  const addDependent = (dependent: HoisterWorkTree, node: HoisterWorkTree) => {
     const isSeen = !!seenNodes.has(node);
 
     const entry = getOrCreatePreferenceEntry(node);
     entry.dependents.add(dependent.ident);
-    if (depth < entry.minDepth)
-      entry.minDepth = depth;
 
     if (!isSeen) {
       seenNodes.add(node);
@@ -739,7 +735,7 @@ const buildPreferenceMap = (rootNode: HoisterWorkTree): PreferenceMap => {
           const entry = getOrCreatePreferenceEntry(dep);
           entry.peerDependents.add(node.ident);
         } else {
-          addDependent(node, dep, depth + 1);
+          addDependent(node, dep);
         }
       }
     }
@@ -747,9 +743,7 @@ const buildPreferenceMap = (rootNode: HoisterWorkTree): PreferenceMap => {
 
   for (const dep of rootNode.dependencies.values())
     if (!rootNode.peerNames.has(dep.name))
-      addDependent(rootNode, dep, 1);
-
-  // console.log(require(`util`).inspect(preferenceMap, false, null));
+      addDependent(rootNode, dep);
 
   return preferenceMap;
 };
