@@ -1102,7 +1102,7 @@ export class Configuration {
           ? [...previousValue, ...parsed as Map<string, any>]
           : [...parsed as Map<string, any>, ...previousValue]
         ));
-        this.sources.set(key, `${this.sources.get(key)}, source`);
+        this.sources.set(key, `${this.sources.get(key)}, ${source}`);
       } else {
         this.values.set(key, parsed);
         this.sources.set(key, source);
