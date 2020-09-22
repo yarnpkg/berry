@@ -10,11 +10,11 @@
  * root node into which you are hoisting
  * 3. Traverse the dependency graph from the current root node and for each package name
  * that can be potentially hoisted to the current root node build a list of idents
- * in descending popularity. You will check in next steps whether most popular ident
+ * in descending hoisting preference. You will check in next steps whether most preferred ident
  * for the given package name can be hoisted first, and if not, then you check the
- * lest popular ident, etc, until either some ident will be hoisted
+ * less preferred ident, etc, until either some ident will be hoisted
  * or you run out of idents to check
- * (no need to convert the graph to the tree when you build this popularity map).
+ * (no need to convert the graph to the tree when you build this preference map).
  * 4. The children of the root node are already "hoisted", so you need to start
  * from the dependencies of these children. You take some child and
  * sort its dependencies so that regular dependencies without peer dependencies
@@ -29,7 +29,7 @@
  * and DEPENDS - the node is hoistable to the root if nodes X, Y, Z are hoistable
  * to the root. The case DEPENDS happens when all the require and other
  * constraints are met, except peer dependency constraints. Note, that the nodes
- * that are not package idents currently at the top of popularity list are considered
+ * that are not package idents currently at the top of preference list are considered
  * to have the answer NO right away, before doing any other constraint checks.
  * 6. When you have hoistable answer for each dependency of a node you then build
  * a list of nodes that are NOT hoistable. These are the nodes that have answer NO
@@ -57,7 +57,7 @@ type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident
  * e.g. which one among the group of packages with the same name should be hoisted.
  * The package having the biggest number of parents using this package will be hoisted.
  */
-type PopularityMap = Map<string, Set<Ident>>;
+type PreferenceMap = Map<string, { peerDependents: Set<Ident>, dependents: Set<Ident> }>;
 
 enum Hoistable { YES, NO, DEPENDS }
 type HoistInfo = {
@@ -207,16 +207,16 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
 };
 
 /**
- * Builds a map of most popular packages that might be hoisted to the root node.
+ * Builds a map of most preferred packages that might be hoisted to the root node.
  *
- * The values in the map are idents sorted by popularity from most popular to less popular.
+ * The values in the map are idents sorted by preference from most preferred to less preferred.
  * If the root node has already some version of a package, the value array will contain only
  * one element, since it is not possible for other versions of a package to be hoisted.
  *
  * @param rootNode root node
- * @param popularityMap popularity map
+ * @param preferenceMap preference map
  */
-const getHoistIdentMap = (rootNode: HoisterWorkTree, popularityMap: PopularityMap): Map<PackageName, Array<Ident>> => {
+const getHoistIdentMap = (rootNode: HoisterWorkTree, preferenceMap: PreferenceMap): Map<PackageName, Array<Ident>> => {
   const identMap = new Map<PackageName, Array<Ident>>([[rootNode.name, [rootNode.ident]]]);
 
   for (const dep of rootNode.dependencies.values()) {
@@ -225,8 +225,16 @@ const getHoistIdentMap = (rootNode: HoisterWorkTree, popularityMap: PopularityMa
     }
   }
 
-  const keyList = Array.from(popularityMap.keys());
-  keyList.sort((key1, key2) => popularityMap.get(key2)!.size - popularityMap.get(key1)!.size);
+  const keyList = Array.from(preferenceMap.keys());
+  keyList.sort((key1, key2) => {
+    const entry1 = preferenceMap.get(key1)!;
+    const entry2 = preferenceMap.get(key2)!;
+    if (entry2.peerDependents.size !== entry1.peerDependents.size) {
+      return entry2.peerDependents.size - entry1.peerDependents.size;
+    } else {
+      return entry2.dependents.size - entry1.dependents.size;
+    }
+  });
 
   for (const key of keyList) {
     const name = key.substring(0, key.indexOf(`@`, 1));
@@ -316,9 +324,9 @@ const hoistTo = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>, ro
     return;
   seenNodes.add(rootNode);
 
-  const popularityMap = buildPopularityMap(rootNode);
+  const preferenceMap = buildPreferenceMap(rootNode);
 
-  const hoistIdentMap = getHoistIdentMap(rootNode, popularityMap);
+  const hoistIdentMap = getHoistIdentMap(rootNode, preferenceMap);
 
   const hoistIdents = new Map(Array.from(hoistIdentMap.entries()).map(([k, v]) => [k, v[0]]));
 
@@ -725,30 +733,38 @@ const shrinkTree = (tree: HoisterWorkTree): HoisterResult => {
  *
  * @param rootNode package tree root node
  *
- * @returns popularity map
+ * @returns preference map
  */
-const buildPopularityMap = (rootNode: HoisterWorkTree): PopularityMap => {
-  const popularityMap: PopularityMap = new Map();
+const buildPreferenceMap = (rootNode: HoisterWorkTree): PreferenceMap => {
+  const preferenceMap: PreferenceMap = new Map();
 
   const seenNodes = new Set<HoisterWorkTree>([rootNode]);
-  const getPopularityKey = (node: HoisterWorkTree) => `${node.name}@${node.ident}`;
+  const getPreferenceKey = (node: HoisterWorkTree) => `${node.name}@${node.ident}`;
 
-  const addParent = (parentNode: HoisterWorkTree, node: HoisterWorkTree) => {
+  const getOrCreatePreferenceEntry = (node: HoisterWorkTree) => {
+    const key = getPreferenceKey(node);
+    let entry = preferenceMap.get(key);
+    if (!entry) {
+      entry = {dependents: new Set<Ident>(), peerDependents: new Set<Ident>()};
+      preferenceMap.set(key, entry);
+    }
+    return entry;
+  };
+
+  const addDependent = (dependent: HoisterWorkTree, node: HoisterWorkTree) => {
     const isSeen = !!seenNodes.has(node);
 
-    const key = getPopularityKey(node);
-    let parents = popularityMap.get(key);
-    if (!parents) {
-      parents = new Set<Ident>();
-      popularityMap.set(key, parents);
-    }
-    parents.add(parentNode.ident);
+    const entry = getOrCreatePreferenceEntry(node);
+    entry.dependents.add(dependent.ident);
 
     if (!isSeen) {
       seenNodes.add(node);
       for (const dep of node.dependencies.values()) {
-        if (!node.peerNames.has(dep.name)) {
-          addParent(node, dep);
+        if (node.peerNames.has(dep.name)) {
+          const entry = getOrCreatePreferenceEntry(dep);
+          entry.peerDependents.add(node.ident);
+        } else {
+          addDependent(node, dep);
         }
       }
     }
@@ -756,9 +772,9 @@ const buildPopularityMap = (rootNode: HoisterWorkTree): PopularityMap => {
 
   for (const dep of rootNode.dependencies.values())
     if (!rootNode.peerNames.has(dep.name))
-      addParent(rootNode, dep);
+      addDependent(rootNode, dep);
 
-  return popularityMap;
+  return preferenceMap;
 };
 
 const prettyPrintLocator = (locator: Locator) => {
