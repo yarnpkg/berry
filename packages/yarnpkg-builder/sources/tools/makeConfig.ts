@@ -81,7 +81,7 @@ export const makeConfig = (config: webpack.Configuration): webpack.Configuration
 
   plugins: [
     new BuildPlugin({
-      output: !process.env.CI,
+      output: true,
       context: npath.join(process.cwd(), '../..'),
       datadog: {
         apiKey: process.env.DD_API_KEY,
