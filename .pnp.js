@@ -3628,10 +3628,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@datadog/build-plugin", [
-        ["npm:0.3.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40datadog%2Fbuild-plugin%2F0.3.2%2F92bb5d31f0463b9c175da48fcdbc5a6743ba65d9b337383c4a2deae2ad7dd531", {
-          "packageLocation": "./.yarn/cache/@datadog-build-plugin-npm-0.3.2-9cf3040e80-238bda9166.zip/node_modules/@datadog/build-plugin/",
+        ["npm:0.3.3::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40datadog%2Fbuild-plugin%2F0.3.3%2Fad7a0df570ca851177ffaa54b23c75549d094402075efff0a9be2b841e22b27e", {
+          "packageLocation": "./.yarn/cache/@datadog-build-plugin-npm-0.3.3-a9528f0360-9e8c6d79cb.zip/node_modules/@datadog/build-plugin/",
           "packageDependencies": [
-            ["@datadog/build-plugin", "npm:0.3.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40datadog%2Fbuild-plugin%2F0.3.2%2F92bb5d31f0463b9c175da48fcdbc5a6743ba65d9b337383c4a2deae2ad7dd531"],
+            ["@datadog/build-plugin", "npm:0.3.3::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40datadog%2Fbuild-plugin%2F0.3.3%2Fad7a0df570ca851177ffaa54b23c75549d094402075efff0a9be2b841e22b27e"],
             ["chalk", "npm:2.3.1"],
             ["fs-extra", "npm:7.0.1"]
           ],
@@ -8497,7 +8497,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/builder", "virtual:142f2540721377707149f0b1d7ad0188d020f822e234abcdca162642d42824b344a1ac44bd6035644a0ca9babd62eb7d72923350ac75b876b51e87eb92b3e464#workspace:packages/yarnpkg-builder"],
             ["@babel/core", "npm:7.10.2"],
-            ["@datadog/build-plugin", "npm:0.3.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40datadog%2Fbuild-plugin%2F0.3.2%2F92bb5d31f0463b9c175da48fcdbc5a6743ba65d9b337383c4a2deae2ad7dd531"],
+            ["@datadog/build-plugin", "npm:0.3.3::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40datadog%2Fbuild-plugin%2F0.3.3%2Fad7a0df570ca851177ffaa54b23c75549d094402075efff0a9be2b841e22b27e"],
             ["@types/filesize", "npm:4.1.0"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/terser-webpack-plugin", "npm:3.0.0"],
@@ -8535,7 +8535,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@babel/core", "npm:7.10.2"],
-            ["@datadog/build-plugin", "npm:0.3.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40datadog%2Fbuild-plugin%2F0.3.2%2F92bb5d31f0463b9c175da48fcdbc5a6743ba65d9b337383c4a2deae2ad7dd531"],
+            ["@datadog/build-plugin", "npm:0.3.3::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40datadog%2Fbuild-plugin%2F0.3.3%2Fad7a0df570ca851177ffaa54b23c75549d094402075efff0a9be2b841e22b27e"],
             ["@types/filesize", "npm:4.1.0"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/terser-webpack-plugin", "npm:3.0.0"],
@@ -8573,7 +8573,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],
             ["@babel/core", "npm:7.10.2"],
-            ["@datadog/build-plugin", "npm:0.3.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40datadog%2Fbuild-plugin%2F0.3.2%2F92bb5d31f0463b9c175da48fcdbc5a6743ba65d9b337383c4a2deae2ad7dd531"],
+            ["@datadog/build-plugin", "npm:0.3.3::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40datadog%2Fbuild-plugin%2F0.3.3%2Fad7a0df570ca851177ffaa54b23c75549d094402075efff0a9be2b841e22b27e"],
             ["@types/filesize", "npm:4.1.0"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/terser-webpack-plugin", "npm:3.0.0"],
