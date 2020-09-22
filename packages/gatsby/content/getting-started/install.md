@@ -36,11 +36,11 @@ Once you've followed the instructions (running `yarn --version` from your home d
 cd ~/path/to/project
 ```
 
-3. Run the following command:
+3. Run _one_ of the following commands:
 
 ```bash
-yarn policies set-version berry # below v1.22
-yarn set version berry          # on v1.22+
+yarn policies set-version berry # yarn --version < v1.22
+yarn set version berry          # yarn --version === v1.22+
 ```
 
 > "Berry" is the codename for the Yarn 2 release line. It's also the name of our [repository](https://github.com/yarnpkg/berry)!
