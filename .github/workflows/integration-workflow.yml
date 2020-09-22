@@ -134,6 +134,8 @@ jobs:
         node ./scripts/run-yarn.js build:plugin-version
         node ./scripts/run-yarn.js build:plugin-workspace-tools
       shell: bash
+      env:
+        DD_API_KEY: ${{ secrets.DD_API_KEY }}
 
     - name: 'Run the integration tests'
       run: |
