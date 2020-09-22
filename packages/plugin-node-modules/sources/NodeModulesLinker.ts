@@ -1,4 +1,4 @@
-import {BuildDirective, MessageName, Project, FetchResult, ReportError}    from '@yarnpkg/core';
+import {BuildDirective, MessageName, Project, FetchResult}                 from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                 from '@yarnpkg/core';
 import {Locator, Package, BuildType, FinalizeInstallStatus}                from '@yarnpkg/core';
 import {structUtils, Report, Manifest, miscUtils, DependencyMeta}          from '@yarnpkg/core';
