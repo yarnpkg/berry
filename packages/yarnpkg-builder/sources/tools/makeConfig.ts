@@ -1,4 +1,4 @@
-import { BuildPlugin }               from '@datadog/build-plugin/dist/webpack';
+import {BuildPlugin}               from '@datadog/build-plugin/dist/webpack';
 import {npath, ppath, Filename, xfs} from '@yarnpkg/fslib';
 import ForkTsCheckerWebpackPlugin    from 'fork-ts-checker-webpack-plugin';
 import tsLoader                      from 'ts-loader';
@@ -82,6 +82,7 @@ export const makeConfig = (config: webpack.Configuration): webpack.Configuration
   plugins: [
     new BuildPlugin({
       output: !process.env.CI,
+      context: npath.join(process.cwd(), '../..'),
       datadog: {
         apiKey: process.env.DD_API_KEY,
         prefix: 'webpack',
