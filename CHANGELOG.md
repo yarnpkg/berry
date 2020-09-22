@@ -18,6 +18,7 @@ via `nmHoistingLimits` global setting and `installConfig.hoistingLimits` `packag
 
 - The bin symlinks are properly removed from `node_modules/.bin` when the corresponding dependencies
   are removed. This bug was a regression starting from 2.2.0. Integration tests added to prevent future regressions.
+- Transitive peer dependency requirements will be respected by `node-modules` linker in more edge cases
 
 ## 2.2.0
 

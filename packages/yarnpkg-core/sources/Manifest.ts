@@ -442,10 +442,16 @@ export class Manifest {
     if (typeof data.installConfig === `object` && data.installConfig !== null) {
       this.installConfig = {};
 
-      if (typeof data.installConfig.hoistingLimits === `string`) {
-        this.installConfig.hoistingLimits = data.installConfig.hoistingLimits;
-      } else {
-        errors.push(new Error(`Invalid hoisting limits definition`));
+      for (const key of Object.keys(data.installConfig)) {
+        if (key === `hoistingLimits`) {
+          if (typeof data.installConfig.hoistingLimits === `string`) {
+            this.installConfig.hoistingLimits = data.installConfig.hoistingLimits;
+          } else {
+            errors.push(new Error(`Invalid hoisting limits definition`));
+          }
+        } else {
+          errors.push(new Error(`Unrecognized installConfig key: ${key}`));
+        }
       }
     }
 

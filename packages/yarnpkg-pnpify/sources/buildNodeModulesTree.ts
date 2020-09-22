@@ -211,7 +211,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
     if (!isSeen && shouldAddChildrenDependencies) {
       for (const [depName, referencish] of pkg.packageDependencies) {
-        if (referencish !== null && !node.peerNames.has(depName)) {
+        if (referencish !== null) {
           const depLocator = pnp.getLocator(depName, referencish);
           const pkgLocator = pnp.getLocator(depName.replace(WORKSPACE_NAME_SUFFIX, ``), referencish);
 

@@ -395,14 +395,14 @@ const getNodeHoistInfo = (rootNodePathLocators: Set<Locator>, nodePath: Array<Ho
 
         const parentDepNode = parent.dependencies.get(name);
         if (parentDepNode) {
-          arePeerDepsSatisfied = false;
-          if (outputReason)
-            reason = `- peer dependency ${prettyPrintLocator(parentDepNode.locator)} from parent ${prettyPrintLocator(parent.locator)} was not hoisted to ${reasonRoot}`;
           if (idx === nodePath.length - 1) {
             dependsOn!.add(parentDepNode);
           } else {
             dependsOn = null;
-            break;
+            arePeerDepsSatisfied = false;
+            if (outputReason) {
+              reason = `- peer dependency ${prettyPrintLocator(parentDepNode.locator)} from parent ${prettyPrintLocator(parent.locator)} was not hoisted to ${reasonRoot}`;
+            }
           }
         }
         checkList.delete(name);
@@ -459,18 +459,24 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
     }
 
     const unhoistableNodes = new Set<HoisterWorkTree>();
-    const addUnhoistableNode = (node: HoisterWorkTree, hoistInfo: HoistInfo) => {
+    const addUnhoistableNode = (node: HoisterWorkTree, hoistInfo: HoistInfo, reason: string) => {
       if (!unhoistableNodes.has(node)) {
         unhoistableNodes.add(node);
+        if (node.ident !== parentNode.ident)
+          hoistInfos.set(node, {isHoistable: Hoistable.NO, reason});
         for (const dependantName of dependantTree.get(node.name) || []) {
-          addUnhoistableNode(parentNode.dependencies.get(dependantName)!, hoistInfo);
+          addUnhoistableNode(parentNode.dependencies.get(dependantName)!, hoistInfo, reason);
         }
       }
     };
 
+    let reasonRoot;
+    if (options.debugLevel >= DebugLevel.REASONS)
+      reasonRoot = `${Array.from(rootNodePathLocators).map(x => prettyPrintLocator(x)).join(`→`)}`;
+
     for (const [node, hoistInfo] of hoistInfos)
       if (hoistInfo.isHoistable === Hoistable.NO)
-        addUnhoistableNode(node, hoistInfo);
+        addUnhoistableNode(node, hoistInfo, `- peer dependency ${prettyPrintLocator(node.locator)} from parent ${prettyPrintLocator(parentNode.locator)} was not hoisted to ${reasonRoot}`);
 
     for (const node of hoistInfos.keys()) {
       if (!unhoistableNodes.has(node)) {
@@ -558,8 +564,8 @@ const selfCheck = (tree: HoisterWorkTree): string => {
       const prettyPrintTreePath = () => `${Array.from(parents).concat([node]).map(x => prettyPrintLocator(x.locator)).join(`→`)}`;
       if (node.peerNames.has(origDep.name)) {
         const parentDep = parentDeps.get(origDep.name);
-        if (parentDep !== dep) {
-          log.push(`${prettyPrintTreePath()} - broken peer promise: expected ${dep!.locator} but found ${parentDep ? parentDep.locator : parentDep}`);
+        if (parentDep !== dep || !parentDep || parentDep.ident !== origDep.ident) {
+          log.push(`${prettyPrintTreePath()} - broken peer promise: expected ${origDep!.ident} but found ${parentDep ? parentDep.ident : parentDep}`);
         }
       } else {
         if (!dep) {

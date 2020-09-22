@@ -101,10 +101,22 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
       preinstallState = {locatorMap: new Map(), binSymlinks: new Map(), locationTree: new Map()};
     }
 
-    const defaultHoistingLimit = this.opts.project.configuration.get<string>(`nmHoistingLimits`);
+    const defaultHoistingLimits = this.opts.project.configuration.get<NodeModulesHoistingLimits>(`nmHoistingLimits`);
 
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
-    const hoistingLimitsByCwd = new Map(this.opts.project.workspaces.map(({relativeCwd, manifest}) => ([relativeCwd, miscUtils.validateEnum(NodeModulesHoistingLimits, manifest.installConfig?.hoistingLimits ?? defaultHoistingLimit)])));
+    const hoistingLimitsByCwd = new Map(this.opts.project.workspaces.map(
+      workspace => {
+        const {relativeCwd, manifest} = workspace;
+        let hoistingLimits = defaultHoistingLimits;
+        try {
+          hoistingLimits = miscUtils.validateEnum(NodeModulesHoistingLimits, manifest.installConfig?.hoistingLimits ?? defaultHoistingLimits);
+        } catch (e) {
+          const workspaceName = structUtils.prettyWorkspace(this.opts.project.configuration, workspace);
+          this.opts.report.reportWarning(MessageName.INVALID_MANIFEST, `${workspaceName}: Invalid 'installConfig.hoistingLimits' value. Expected one of ${Object.values(NodeModulesHoistingLimits).join(`, `)}, using default: "${hoistingLimits}"`);
+        }
+        return [relativeCwd, hoistingLimits];
+      }
+    ));
     const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false, hoistingLimitsByCwd});
     const locatorMap = buildLocatorMap(nmTree);
 
