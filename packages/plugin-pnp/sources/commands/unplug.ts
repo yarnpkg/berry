@@ -101,6 +101,8 @@ export default class UnplugCommand extends BaseCommand {
       const selection: Array<Package> = [];
 
       for (const pkg of project.storedPackages.values())
+        // Note: We can safely skip virtual packages here, as the
+        // devirtualized copy will always exist inside storedPackages.
         if (!project.tryWorkspaceByLocator(pkg) && !structUtils.isVirtualLocator(pkg) && matchers.some(matcher => matcher(pkg)))
           selection.push(pkg);
 
@@ -117,7 +119,9 @@ export default class UnplugCommand extends BaseCommand {
 
         seen.add(pkg.locatorHash);
 
-        if (!project.tryWorkspaceByLocator(pkg) && !structUtils.isVirtualLocator(pkg) && matchers.some(matcher => matcher(pkg)))
+        // Note: We shouldn't skip virtual packages, as
+        // we don't iterate over the devirtualized copies.
+        if (!project.tryWorkspaceByLocator(pkg) && matchers.some(matcher => matcher(pkg)))
           selection.push(pkg);
 
         // Don't recurse unless requested
