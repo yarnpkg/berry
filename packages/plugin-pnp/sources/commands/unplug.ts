@@ -153,24 +153,25 @@ export default class UnplugCommand extends BaseCommand {
     };
 
     let selection: Array<Package>;
+    let projectOrWorkspaces: string;
 
     // We can shortcut the execution if we want all the dependencies and
     // transitive dependencies of all the branches: it means we want everything!
-    if (this.all && this.recursive)
+    if (this.all && this.recursive) {
       selection = getAllMatchingPackages();
-    else if (this.all)
+      projectOrWorkspaces = `the project`;
+    } else if (this.all) {
       selection = getSelectedPackages(project.workspaces);
-    else
+      projectOrWorkspaces = `any workspace`;
+    } else {
       selection = getSelectedPackages([workspace]);
-
-    const projectOrWorkspaces = this.recursive
-      ? `the project`
-      : `any workspace`;
+      projectOrWorkspaces = `this workspace`;
+    }
 
     if (unreferencedPatterns.size > 1)
-      throw new UsageError(`Patterns ${[...unreferencedPatterns].join(`, `)} don't match any packages referenced by ${projectOrWorkspaces}`);
+      throw new UsageError(`Patterns ${formatUtils.prettyList(configuration, unreferencedPatterns, formatUtils.Type.CODE)} don't match any packages referenced by ${projectOrWorkspaces}`);
     if (unreferencedPatterns.size > 0)
-      throw new UsageError(`Pattern ${[...unreferencedPatterns][0]} doesn't match any packages referenced by ${projectOrWorkspaces}`);
+      throw new UsageError(`Pattern ${formatUtils.prettyList(configuration, unreferencedPatterns, formatUtils.Type.CODE)} doesn't match any packages referenced by ${projectOrWorkspaces}`);
 
     selection = miscUtils.sortMap(selection, pkg => {
       return structUtils.stringifyLocator(pkg);
