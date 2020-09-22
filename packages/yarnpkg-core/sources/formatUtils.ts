@@ -1,3 +1,5 @@
+import {npath}                      from '@yarnpkg/fslib';
+
 import chalk                        from 'chalk';
 
 import {Configuration}              from './Configuration';
@@ -179,6 +181,15 @@ const transforms = {
       return size;
     },
   }),
+
+  [Type.PATH]: validateTransform({
+    pretty: (configuration: Configuration, filePath: string) => {
+      return applyColor(configuration, npath.fromPortablePath(filePath), Type.PATH);
+    },
+    json: (filePath: string) => {
+      return npath.fromPortablePath(filePath) as string;
+    },
+  }),
 };
 
 type AllTransforms = typeof transforms;
@@ -236,7 +247,7 @@ export function pretty<T extends Type>(configuration: Configuration, value: Sour
 
   if (Object.prototype.hasOwnProperty.call(transforms, formatType)) {
     miscUtils.overrideType<keyof AllTransforms>(formatType);
-    return transforms[formatType].pretty(configuration, value as any);
+    return transforms[formatType].pretty(configuration, value as never);
   }
 
   if (typeof value !== `string`)
@@ -251,7 +262,7 @@ export function json<T extends Type>(value: Source<T>, formatType: T | string): 
 
   if (Object.prototype.hasOwnProperty.call(transforms, formatType)) {
     miscUtils.overrideType<keyof AllTransforms>(formatType);
-    return transforms[formatType].json(value as any);
+    return transforms[formatType].json(value as never);
   }
 
   if (typeof value !== `string`)
