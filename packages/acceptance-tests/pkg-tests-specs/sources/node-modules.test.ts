@@ -436,42 +436,25 @@ describe(`Node_Modules`, () => {
   );
 
   test(`should respect transitive peer dependencies`,
-    // . -> ws1 -> peer-deps-lvl2 --> no-deps
-    //          -> no-deps@1
-    //   -> ws2 -> peer-deps-lvl2 --> no-deps
-    //          -> no-deps@1
-    //   -> ws3 -> peer-deps-lvl1 -> peer-deps-lvl2 --> no-deps
-    //                            --> no-deps
-    //             no-deps@2
-    // peer-deps-lvl2 inside ws3 must not be hoisted to the top, otherwise it will use no-deps@1 instead of no-deps@2
-    // peer-deps-lvl1 will not be hoisted to the top, because its peer-deps-lvl2 instance must loose in popularity to peer-deps-lvl2 instance dependent on no-deps@1
+    // . -> no-deps@1
+    //   -> workspace -> peer-deps-lvl1 -> peer-deps-lvl2 --> no-deps
+    //                                  --> no-deps
+    //                -> no-deps@2
+    // peer-deps-lvl2 inside workspace must not be hoisted to the top, otherwise it will use no-deps@1 instead of no-deps@2
     makeTemporaryEnv(
       {
         private: true,
-        workspaces: [`ws*`],
+        workspaces: [`workspace`],
+        dependencies: {
+          'no-deps': `1.0.0`,
+        },
       },
       {
         nodeLinker: `node-modules`,
       },
       async ({path, run, source}) => {
-        await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
-          name: `ws1`,
-          version: `1.0.0`,
-          dependencies: {
-            'peer-deps-lvl2': `1.0.0`,
-            'no-deps': `1.0.0`,
-          },
-        });
-        await writeJson(npath.toPortablePath(`${path}/ws2/package.json`), {
-          name: `ws2`,
-          version: `1.0.0`,
-          dependencies: {
-            'peer-deps-lvl2': `1.0.0`,
-            'no-deps': `1.0.0`,
-          },
-        });
-        await writeJson(npath.toPortablePath(`${path}/ws3/package.json`), {
-          name: `ws3`,
+        await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
+          name: `workspace`,
           version: `1.0.0`,
           dependencies: {
             'peer-deps-lvl1': `1.0.0`,
@@ -481,8 +464,8 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        expect(await xfs.existsPromise(`${path}/ws3/node_modules/peer-deps-lvl1` as PortablePath)).toEqual(true);
-        expect(await xfs.existsPromise(`${path}/ws3/node_modules/peer-deps-lvl2` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/workspace/node_modules/peer-deps-lvl1` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/workspace/node_modules/peer-deps-lvl2` as PortablePath)).toEqual(true);
       },
     )
   );
