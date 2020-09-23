@@ -48,28 +48,13 @@ plugins:
 
 That's it! You have your first plugin, congratulations! Of course it doesn't do much (or anything at all, really), but we'll see how to extend it to make it more powerful.
 
-## Using hooks
+## All-in-one plugin builder
 
-Plugins can register to various events in the Yarn lifetime, and provide them additional information to alter their behavior. To do this, you just need to declare a new `hooks` property in your plugin and add members for each hook you want to listen to:
+As we saw, plugins are meant to be standalone JavaScript source files. It's very possible to author them by hand, especially if you only need a small one, but once you start adding multiple commands it can become a bit more complicated. To make this process easyer, we maintain a package called `@yarnpkg/builder`. This builder is to Yarn what Next.js is to web development - it's a tool designed to help creating, building, and managing complex plugins written in TypeScript.
 
-```js
-module.exports = {
-  name: `plugin-hello-world`,
-  factory: require => ({
-    hooks: {
-      setupScriptEnvironment(scriptEnv) {
-        scriptEnv.HELLO_WORLD = `my first plugin!`;
-      },
-    },
-  })
-};
-```
+Its documentation can be found on the [dedicated page](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-builder/README.md), but remember that you're not required to use it. Sometimes good old scripts are just fine!
 
-In this example, we registered to the `setupScriptEnvironment` hook and used it to inject an argument into the environment. Now, each time you'll run a script, you'll see that your env will contain a new value called `HELLO_WORLD`!
-
-Hooks are numerous, and we're still working on them. Some might be added, removed, or changed, based on your feedback. So if you'd like to do something hooks don't allow you to do yet, come tell us!
-
-## Using commands
+## Adding commands
 
 Plugins can also register their own commands. To do this, we just have to write them using the [`clipanion`](https://github.com/arcanis/clipanion) library - and we don't even have to add it to our dependencies! Let's see an example:
 
@@ -147,9 +132,70 @@ module.exports = {
 };
 ```
 
-## Builder
+## Using hooks
 
-`@yarnpkg/builder` is a tool designed for creating, building, and managing complex plugins.
+Plugins can register to various events in the Yarn lifetime, and provide them additional information to alter their behavior. To do this, you just need to declare a new `hooks` property in your plugin and add members for each hook you want to listen to:
 
-Its documentation can be found on the [dedicated page](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-builder/README.md).
+```js
+module.exports = {
+  name: `plugin-hello-world`,
+  factory: require => ({
+    hooks: {
+      setupScriptEnvironment(scriptEnv) {
+        scriptEnv.HELLO_WORLD = `my first plugin!`;
+      },
+    },
+  })
+};
+```
+
+In this example, we registered to the `setupScriptEnvironment` hook and used it to inject an argument into the environment. Now, each time you'll run a script, you'll see that your env will contain a new value called `HELLO_WORLD`!
+
+Hooks are numerous, and we're still working on them. Some might be added, removed, or changed, based on your feedback. So if you'd like to do something hooks don't allow you to do yet, come tell us!
+
+> **Note:** We don't yet have a list of hooks. If you're interested to improve this documentation by generating the hook list from our source code, please contact us on our Discord server!
+
+## Using a the Yarn API
+
+Most Yarn's hooks are called with various arguments that tell you more about the context under which the hook is being called. The exact argument list is different for each hook, but in general they are of the types defined in the [`@yarnpkg/core` library](/api).
+
+In this example, we will integrate with the `afterAllInstalled` hook in order to print some basic information about the dependency tree after each install. This hook gets invoked with an additional parameter that is the public [`Project`](/api/classes/yarnpkg_core.project.html) instance where lie most of the information Yarn has collected about the project: dependencies, package manifests, workspace information, and so on.
+
+```js
+const fs = require(`fs`);
+const util = require(`util`);
+
+module.exports = {
+  name: `plugin-project-info`,
+  factory: require => {
+    const {structUtils} = require(`@yarnpkg/core`);
+
+    return {
+      default: {
+        hooks: {
+          afterAllInstalled(project) {
+            let descriptorCount = 0;
+            for (const descriptor of project.storedDescriptors.values())
+              if (!structUtils.isVirtualDescriptor(descriptor))
+                descriptorCount += 1;
+
+            let packageCount = 0;
+            for (const pkg of project.storedPackages.values())
+              if (!structUtils.isVirtualLocator(pkg))
+                packageCount += 1;
+
+            console.log(`This project contains ${descriptorCount} different descriptors that resolve to ${packageCount} packages`);
+          }
+        }
+      }
+    };
+  }
+};
+```
+
+This is getting interesting. As you can see, we accessed the [`storedDescriptors`](/api/classes/yarnpkg_core.project.html#storeddescriptors) and [`storedPackages`](/api/classes/yarnpkg_core.project.html#storedpackages) fields from our project instance, and iterated over them to obtain the number of non-virtual items (virtual packages are described in more details [here](/advanced/lexicon#virtual-package)). This is a very simple use case, but we could have done many more things: the project root is located in the [`cwd`](/api/classes/yarnpkg_core.project.html#cwd) property, the workspaces are exposed as [`workspaces`](https://yarnpkg.com/api/classes/yarnpkg_core.project.html#workspaces), the link between descriptors and packages can be made via [`storedResolutions`](/api/classes/yarnpkg_core.project.html#storedresolutions), ... etc.
+
+Note that we've only scratched the surface of the `Project` class instance! The Yarn core provides many other classes (and hooks) that allow you to work with the cache, download packages, trigger http requests, ... and much more, as listed in the [API documentation](/api/). Next time you want to write a plugin, give it a look, there's almost certainly an utility there that will allow you to avoid having to reimplement the wheel.
+
+> **Note:** Our API documentation is still in its infancy and could benefit from the help of dedicated technical writers. In the meantime, we recommend that you also give a look at the source code from the [core plugins](https://github.com/yarnpkg/berry/tree/master/packages), as they all use exactly the same primitives as the ones you can access from your own plugins! For instance, the [TypeScript plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript), which auto-adds `@types` dependency when needed, implements this feature [through a hook](https://github.com/yarnpkg/berry/blob/master/packages/plugin-typescript/sources/index.ts#L133-L134).
 
