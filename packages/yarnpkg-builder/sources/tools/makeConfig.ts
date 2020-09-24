@@ -1,4 +1,3 @@
-import {BuildPlugin}                 from '@datadog/build-plugin/dist/webpack';
 import {npath, ppath, Filename, xfs} from '@yarnpkg/fslib';
 import ForkTsCheckerWebpackPlugin    from 'fork-ts-checker-webpack-plugin';
 import tsLoader                      from 'ts-loader';
@@ -80,7 +79,7 @@ export const makeConfig = (config: webpack.Configuration): webpack.Configuration
   },
 
   plugins: [
-    new BuildPlugin({
+    process.env.BUILD_MONITORING_ENABLED && new (require(`@datadog/build-plugin/dist/webpack`))({
       disabled: !process.env.BUILD_MONITORING_ENABLED,
       output: true,
       context: npath.join(process.cwd(), `../..`),
@@ -106,5 +105,5 @@ export const makeConfig = (config: webpack.Configuration): webpack.Configuration
         configFile: findTsconfig(),
       },
     }),
-  ],
+  ].filter((plugin: any): plugin is webpack.WebpackPluginInstance => !!plugin),
 }), config);
