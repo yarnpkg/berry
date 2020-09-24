@@ -65,6 +65,8 @@ const WORKSPACE_NAME_SUFFIX = `$wsroot$`;
 /** Package locator key for usage inside maps */
 type LocatorKey = string;
 
+type WorkspaceTree = {workspaceLocator?: PhysicalPackageLocator, children: Map<Filename, WorkspaceTree>};
+
 /**
  * Returns path to archive, if package location is inside the archive.
  *
@@ -148,6 +150,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
   const pnpRoots = pnp.getDependencyTreeRoots();
 
   const hoistingLimits = new Map<LocatorKey, Set<string>>();
+  const workspaceDependenciesMap = new Map<LocatorKey, Set<PhysicalPackageLocator>>();
 
   const topPkg = pnp.getPackageInformation(pnp.topLevel);
   if (topPkg === null)
@@ -159,9 +162,53 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   const topPkgPortableLocation = npath.toPortablePath(topPkg.packageLocation);
 
-  for (const locator of pnpRoots) {
-    if (locator.name !== topLocator.name || locator.reference !== topLocator.reference) {
-      topPkg.packageDependencies.set(`${locator.name}${WORKSPACE_NAME_SUFFIX}`, locator.reference);
+  const topLocatorKey = stringifyLocator(topLocator);
+
+  if (options.project) {
+    const workspaceTree: WorkspaceTree = {children: new Map()};
+    const cwdSegments = options.project.cwd.split(ppath.sep);
+    for (const [cwd, workspace] of options.project.workspacesByCwd) {
+      const segments = cwd.split(ppath.sep).slice(cwdSegments.length);
+      let node = workspaceTree;
+      for (const segment of segments) {
+        let nextNode = node.children.get(segment as Filename);
+        if (!nextNode) {
+          nextNode = {children: new Map()};
+          node.children.set(segment as Filename, nextNode);
+        }
+        node = nextNode;
+      }
+      node.workspaceLocator = workspace.anchoredLocator;
+    }
+
+    const addWorkspace = (node: WorkspaceTree, parentWorkspaceLocator: PhysicalPackageLocator) => {
+      if (node.workspaceLocator) {
+        const parentLocatorKey = stringifyLocator(parentWorkspaceLocator);
+        let dependencies = workspaceDependenciesMap.get(parentLocatorKey);
+        if (!dependencies) {
+          dependencies = new Set();
+          workspaceDependenciesMap.set(parentLocatorKey, dependencies);
+        }
+        dependencies.add(node.workspaceLocator);
+      }
+      for (const child of node.children.values()) {
+        addWorkspace(child, node.workspaceLocator || parentWorkspaceLocator);
+      }
+    };
+
+    for (const child of workspaceTree.children.values()) {
+      addWorkspace(child, workspaceTree.workspaceLocator!);
+    }
+  } else {
+    for (const locator of pnpRoots) {
+      if (locator.name !== topLocator.name || locator.reference !== topLocator.reference) {
+        let dependencies = workspaceDependenciesMap.get(topLocatorKey);
+        if (!dependencies) {
+          dependencies = new Set();
+          workspaceDependenciesMap.set(topLocatorKey, dependencies);
+        }
+        dependencies.add(locator);
+      }
     }
   }
 
@@ -183,7 +230,6 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     const isSeen = !!node;
     if (!isSeen && locator.name === topLocator.name && locator.reference === topLocator.reference) {
       node = packageTree;
-      console.log(pkg);
       nodes.set(nodeKey, packageTree);
     }
 
@@ -222,6 +268,14 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
             console.log(`${locator.name} pick ${peerName} from ${parent.name}: ${parentDependencies.get(peerName)}`);
           }
         }
+      }
+    }
+
+    const locatorKey = stringifyLocator(locator);
+    const workspaceDependencies = workspaceDependenciesMap.get(locatorKey);
+    if (workspaceDependencies) {
+      for (const workspaceLocator of workspaceDependencies) {
+        allDependencies.set(`${workspaceLocator.name}${WORKSPACE_NAME_SUFFIX}`, workspaceLocator.reference);
       }
     }
 
