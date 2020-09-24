@@ -265,7 +265,6 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
         for (const peerName of node.peerNames) {
           if (!pkg.packagePeers.has(peerName)) {
             allDependencies.set(peerName, parentDependencies.get(peerName) || null);
-            console.log(`${locator.name} pick ${peerName} from ${parent.name}: ${parentDependencies.get(peerName)}`);
           }
         }
       }
