@@ -124,6 +124,7 @@ jobs:
 
     - name: 'Build the standard bundle & plugins'
       run: |
+        export BUILD_MONITORING_ENABLED=1
         node --version
         node ./scripts/run-yarn.js build:cli --no-minify
         node ./scripts/run-yarn.js build:plugin-constraints
