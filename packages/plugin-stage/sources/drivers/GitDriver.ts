@@ -130,7 +130,7 @@ export const Driver = {
         const actions = [stageUtils.ActionType.CREATE, stageUtils.ActionType.MODIFY, stageUtils.ActionType.DELETE] as const;
         const action = actions.find(action => changePrefix[action].includes(prefix));
 
-        if (action) {
+        if (action !== undefined) {
           return [{
             action,
             path,
