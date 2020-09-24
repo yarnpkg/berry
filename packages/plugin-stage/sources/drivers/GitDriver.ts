@@ -148,13 +148,13 @@ export const Driver = {
   async makeStage(cwd: PortablePath, changeList: Array<stageUtils.FileAction>) {
     const localPaths = changeList.map(file => npath.fromPortablePath(file.path));
 
-    await execUtils.execvp(`git`, [`add`, `-N`, `--`, ...localPaths], {cwd, strict: true});
+    await execUtils.execvp(`git`, [`add`, `--`, ...localPaths], {cwd, strict: true});
   },
 
   async makeCommit(cwd: PortablePath, changeList: Array<stageUtils.FileAction>, commitMessage: string) {
-    this.makeStage(cwd, changeList);
-
     const localPaths = changeList.map(file => npath.fromPortablePath(file.path));
+
+    await execUtils.execvp(`git`, [`add`, `-N`, `--`, ...localPaths], {cwd, strict: true});
 
     await execUtils.execvp(`git`, [`commit`, `-m`, `${commitMessage}\n\n${MESSAGE_MARKER}\n`, `--`, ...localPaths], {cwd, strict: true});
   },
