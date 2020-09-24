@@ -97,6 +97,8 @@ export default class StageCommand extends BaseCommand {
         await driver.makeCommit(root, changeList, commitMessage);
       } else if (this.reset) {
         await driver.makeReset(root, changeList);
+      } else {
+        await driver.makeStage(root, changeList);
       }
     }
   }
