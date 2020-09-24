@@ -1,4 +1,4 @@
-import {BuildPlugin}               from '@datadog/build-plugin/dist/webpack';
+import {BuildPlugin}                 from '@datadog/build-plugin/dist/webpack';
 import {npath, ppath, Filename, xfs} from '@yarnpkg/fslib';
 import ForkTsCheckerWebpackPlugin    from 'fork-ts-checker-webpack-plugin';
 import tsLoader                      from 'ts-loader';
@@ -83,17 +83,17 @@ export const makeConfig = (config: webpack.Configuration): webpack.Configuration
     new BuildPlugin({
       disabled: !process.env.BUILD_MONITORING_ENABLED,
       output: true,
-      context: npath.join(process.cwd(), '../..'),
+      context: npath.join(process.cwd(), `../..`),
       datadog: {
         apiKey: process.env.DD_API_KEY,
-        prefix: 'webpack',
+        prefix: `webpack`,
         tags: [
-          `branchname:${process.env.CIRCLE_BRANCH || 'branch'}`,
-          `sha:${process.env.CIRCLE_SHA1 || 'local'}`,
-          `jobname:${process.env.CIRCLE_JOB || 'job'}`,
-          `ci:${process.env.CI ? 1 : 0}`
-        ]
-      }
+          `branchname:${process.env.CIRCLE_BRANCH || `branch`}`,
+          `sha:${process.env.CIRCLE_SHA1 || `local`}`,
+          `jobname:${process.env.CIRCLE_JOB || `job`}`,
+          `ci:${process.env.CI ? 1 : 0}`,
+        ],
+      },
     }),
     new webpack.IgnorePlugin({
       resourceRegExp: /^encoding$/,
