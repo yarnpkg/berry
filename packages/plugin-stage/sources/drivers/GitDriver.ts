@@ -163,7 +163,6 @@ export const Driver = {
     const localPaths = changeList.map(file => npath.fromPortablePath(file.path));
 
     await execUtils.execvp(`git`, [`add`, `-N`, `--`, ...localPaths], {cwd, strict: true});
-
     await execUtils.execvp(`git`, [`commit`, `-m`, `${commitMessage}\n\n${MESSAGE_MARKER}\n`, `--`, ...localPaths], {cwd, strict: true});
   },
 
