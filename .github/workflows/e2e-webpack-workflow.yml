@@ -32,13 +32,15 @@ jobs:
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add -D webpack@^5.0.0-alpha.24 webpack-cli@^3.3.8 lodash
+        yarn add -D webpack@next webpack-cli@next lodash
 
         # Vanilla webpack
         echo "const path = require('path'); module.exports = { entry: './src/index.js', output: { filename: 'main.js', path: path.resolve(__dirname, 'dist')} };" | tee webpack.config.js
 
         mkdir src
         echo "import _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'webpack'], ' '))}; printHello();" | tee src/index.js
+        
+        yarn webpack info
 
         yarn webpack
         [[ "$(node dist/main.js)" = "Hello webpack" ]]
