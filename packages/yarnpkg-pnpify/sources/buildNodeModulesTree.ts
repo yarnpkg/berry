@@ -1,9 +1,9 @@
-import {structUtils}                                        from '@yarnpkg/core';
-import {NativePath, PortablePath, Filename}                 from '@yarnpkg/fslib';
-import {toFilename, npath, ppath}                           from '@yarnpkg/fslib';
-import {PnpApi, PhysicalPackageLocator, PackageInformation} from '@yarnpkg/pnp';
+import {structUtils, Project}                                                 from '@yarnpkg/core';
+import {NativePath, PortablePath, Filename}                                   from '@yarnpkg/fslib';
+import {toFilename, npath, ppath}                                             from '@yarnpkg/fslib';
+import {PnpApi, PhysicalPackageLocator, PackageInformation, DependencyTarget} from '@yarnpkg/pnp';
 
-import {hoist, HoisterTree, HoisterResult}                  from './hoist';
+import {hoist, HoisterTree, HoisterResult}                                    from './hoist';
 
 // Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
 // But because of this TypeScript requires @yarnpkg/pnp during runtime
@@ -50,6 +50,7 @@ export type NodeModulesTree = Map<PortablePath, NodeModulesBaseNode | NodeModule
 export interface NodeModulesTreeOptions {
   pnpifyFs?: boolean;
   hoistingLimitsByCwd?: Map<PortablePath, NodeModulesHoistingLimits>;
+  project?: Project;
 }
 
 /** node_modules path segment */
@@ -175,13 +176,14 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
   const nodes = new Map<string, HoisterTree>();
   const getNodeKey = (name: string, locator: PhysicalPackageLocator) => `${stringifyLocator(locator)}:${name}`;
 
-  const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentRelativeCwd: PortablePath, isHoistBorder: boolean) => {
+  const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentDependencies: Map<string, DependencyTarget>, parentRelativeCwd: PortablePath, isHoistBorder: boolean) => {
     const nodeKey = getNodeKey(name, locator);
     let node = nodes.get(nodeKey);
 
     const isSeen = !!node;
     if (!isSeen && locator.name === topLocator.name && locator.reference === topLocator.reference) {
       node = packageTree;
+      console.log(pkg);
       nodes.set(nodeKey, packageTree);
     }
 
@@ -204,13 +206,32 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       dependencyBorders.add(node.name);
     }
 
+    const allDependencies = new Map(pkg.packageDependencies);
+
+    if (options.project) {
+      const workspace = options.project.workspacesByCwd.get(npath.toPortablePath(pkg.packageLocation.slice(0, -1)));
+      if (workspace) {
+        node.peerNames = new Set([
+          ...pkg.packagePeers,
+          ...Array.from(workspace.manifest.peerDependencies.values()).map(x => x.scope ? `@${x.scope}/${x.name}` : x.name),
+          ...Array.from(workspace.manifest.peerDependenciesMeta.keys()),
+        ]);
+        for (const peerName of node.peerNames) {
+          if (!pkg.packagePeers.has(peerName)) {
+            allDependencies.set(peerName, parentDependencies.get(peerName) || null);
+            console.log(`${locator.name} pick ${peerName} from ${parent.name}: ${parentDependencies.get(peerName)}`);
+          }
+        }
+      }
+    }
+
     parent.dependencies.add(node);
 
     // If we link dependencies to file system we must not try to install children dependencies inside portal folders
     const shouldAddChildrenDependencies = options.pnpifyFs || !isPortalLocator(nodeKey);
 
     if (!isSeen && shouldAddChildrenDependencies) {
-      for (const [depName, referencish] of pkg.packageDependencies) {
+      for (const [depName, referencish] of allDependencies) {
         if (referencish !== null) {
           const depLocator = pnp.getLocator(depName, referencish);
           const pkgLocator = pnp.getLocator(depName.replace(WORKSPACE_NAME_SUFFIX, ``), referencish);
@@ -220,19 +241,19 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
             throw new Error(`Assertion failed: Expected the package to have been registered`);
 
           const parentHoistingLimits = options.hoistingLimitsByCwd?.get(parentRelativeCwd);
-          const relativeCwd = ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;
-          const depHoistingLimits = options.hoistingLimitsByCwd?.get(relativeCwd);
+          const relativeDepCwd = ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;
+          const depHoistingLimits = options.hoistingLimitsByCwd?.get(relativeDepCwd);
           const isHoistBorder = parentHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
             || depHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
             || depHoistingLimits === NodeModulesHoistingLimits.WORKSPACES;
 
-          addPackageToTree(depName, depPkg, depLocator, node, relativeCwd, isHoistBorder);
+          addPackageToTree(depName, depPkg, depLocator, node, allDependencies, relativeDepCwd, isHoistBorder);
         }
       }
     }
   };
 
-  addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, PortablePath.dot, false);
+  addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, topPkg.packageDependencies, PortablePath.dot, false);
 
   return {packageTree, hoistingLimits};
 };
