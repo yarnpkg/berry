@@ -5,7 +5,7 @@
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
     "@babel/core": "^7.10.2",
-    "@datadog/build-plugin": "0.3.3",
+    "@datadog/build-plugin": "0.3.5",
     "@yarnpkg/cli": "workspace:^2.2.2",
     "@yarnpkg/core": "workspace:^2.2.2",
     "@yarnpkg/fslib": "workspace:^2.2.1",
