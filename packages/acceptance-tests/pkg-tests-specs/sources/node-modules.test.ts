@@ -669,4 +669,48 @@ describe(`Node_Modules`, () => {
       },
     )
   );
+
+  test(`should inherit workspace peer dependencies from upper-level workspaces`,
+    // . -> foo(workspace) -> bar(workspace) --> no-deps@1
+    //                     -> no-deps@1
+    //   -> no-deps@2
+    // bar must not be hoisted to the top, otherwise it will use no-deps@2 instead of no-deps@1
+    // please note that bar directory must be nested inside foo directory,
+    // otherwise with hoisting turned off bar will pick up no-deps@2
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`foo`],
+        dependencies: {
+          'no-deps': `2.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
+          name: `foo`,
+          version: `1.0.0`,
+          workspaces: [`bar`],
+          dependencies: {
+            'no-deps': `1.0.0`,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/foo/bar/package.json`), {
+          name: `bar`,
+          version: `1.0.0`,
+          workspaces: [`bar`],
+          peerDependencies: {
+            'no-deps': `*`,
+          },
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/bar` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/foo/node_modules/bar` as PortablePath)).toEqual(true);
+      },
+    )
+  );
 });
