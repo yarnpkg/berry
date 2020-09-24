@@ -79,7 +79,7 @@ export const makeConfig = (config: webpack.Configuration): webpack.Configuration
   },
 
   plugins: [
-    process.env.BUILD_MONITORING_ENABLED && new (require(`@datadog/build-plugin/dist/webpack`))({
+    process.env.BUILD_MONITORING_ENABLED && new (require(`@datadog/build-plugin/dist/webpack`).BuildPlugin)({
       disabled: !process.env.BUILD_MONITORING_ENABLED,
       output: true,
       context: npath.join(process.cwd(), `../..`),
