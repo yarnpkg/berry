@@ -246,8 +246,9 @@ export function pretty<T extends Type>(configuration: Configuration, value: Sour
     return applyColor(configuration, `null`, Type.NULL);
 
   if (Object.prototype.hasOwnProperty.call(transforms, formatType)) {
-    miscUtils.overrideType<keyof AllTransforms>(formatType);
-    return transforms[formatType].pretty(configuration, value as never);
+    const transform = transforms[formatType as keyof typeof transforms];
+    const typedTransform = transform as Extract<typeof transform, {pretty: (configuration: Configuration, val: Source<T>) => any}>;
+    return typedTransform.pretty(configuration, value);
   }
 
   if (typeof value !== `string`)
