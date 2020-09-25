@@ -113,5 +113,5 @@ export const makeConfig = (config: webpack.Configuration): webpack.Configuration
         configFile: findTsconfig(),
       },
     }),
-  ].filter((plugin: any): plugin is webpack.WebpackPluginInstance => !!plugin),
+  ],
 }), config);
