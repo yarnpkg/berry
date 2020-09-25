@@ -76,6 +76,40 @@ export async function get(path: string, {configuration, headers, ident, authType
   }
 }
 
+export async function post(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options & {attemptedAs?: string}) {
+  if (ident && typeof registry === `undefined`)
+    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
+
+  if (typeof registry !== `string`)
+    throw new Error(`Assertion failed: The registry should be a string`);
+
+  const auth = getAuthenticationHeader(registry, {authType, configuration, ident});
+  if (auth)
+    headers = {...headers, authorization: auth};
+
+  try {
+    return await httpUtils.post(registry + path, body, {configuration, headers, ...rest});
+  } catch (error) {
+    if (!isOtpError(error)) {
+      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
+
+      throw error;
+    }
+
+    const otp = await askForOtp();
+    const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
+
+    // Retrying request with OTP
+    try {
+      return await httpUtils.post(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
+    } catch (error) {
+      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
+
+      throw error;
+    }
+  }
+}
+
 export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options & {attemptedAs?: string}) {
   if (ident && typeof registry === `undefined`)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
