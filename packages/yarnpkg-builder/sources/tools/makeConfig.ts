@@ -44,9 +44,9 @@ function getBuildPlugin() {
       apiKey: process.env.DD_API_KEY,
       prefix: `webpack`,
       tags: [
-        `branchname:${process.env.CIRCLE_BRANCH || `branch`}`,
-        `sha:${process.env.CIRCLE_SHA1 || `local`}`,
-        `jobname:${process.env.CIRCLE_JOB || `job`}`,
+        `branchname:${process.env.GITHUB_REF || `branch`}`,
+        `sha:${process.env.GITHUB_SHA || `local`}`,
+        `jobname:${process.env.GITHUB_EVENT_NAME || `job`}`,
         `ci:${process.env.CI ? 1 : 0}`,
       ],
     },
