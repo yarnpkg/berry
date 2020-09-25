@@ -54,6 +54,18 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
         `\`\`\`\n`,
       ].join(``));
 
+      if (command.options.length > 0) {
+        sections.push([
+          `## Options\n`,
+          `\n`,
+          `| Definition | Description |\n`,
+          `| ---------- | ----------- |\n`,
+          ...command.options.map(
+            ({definition, description}) => `| \`${definition}\` | ${description} |\n`
+          ),
+        ].join(``));
+      }
+
       if (command.examples && command.examples.length > 0) {
         sections.push([
           `## Examples\n`,
