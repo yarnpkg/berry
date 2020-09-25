@@ -31,6 +31,28 @@ export function findTsconfig() {
   return npath.join(currTsContextRoot, `tsconfig.json`);
 }
 
+// We don't want to add the BuildPlugin outside of our infra.
+function getBuildPlugin() {
+  if (!process.env.BUILD_MONITORING_ENABLED)
+    return [];
+
+
+  const BuildPlugin = require(`@datadog/build-plugin/dist/webpack`).BuildPlugin;
+  return [new BuildPlugin({
+    context: npath.join(process.cwd(), `../..`),
+    datadog: {
+      apiKey: process.env.DD_API_KEY,
+      prefix: `webpack`,
+      tags: [
+        `branchname:${process.env.GITHUB_REF || `branch`}`,
+        `sha:${process.env.GITHUB_SHA || `local`}`,
+        `jobname:${process.env.GITHUB_EVENT_NAME || `job`}`,
+        `ci:${process.env.CI ? 1 : 0}`,
+      ],
+    },
+  })];
+}
+
 // @ts-expect-error: @types/webpack-merge depends on @types/webpack, which isn't compatible with the webpack 5 types
 export const makeConfig = (config: webpack.Configuration): webpack.Configuration => merge(identity<webpack.Configuration>({
   mode: `none`,
@@ -79,6 +101,7 @@ export const makeConfig = (config: webpack.Configuration): webpack.Configuration
   },
 
   plugins: [
+    ...getBuildPlugin(),
     new webpack.IgnorePlugin({
       resourceRegExp: /^encoding$/,
       contextRegExp: /node-fetch/,

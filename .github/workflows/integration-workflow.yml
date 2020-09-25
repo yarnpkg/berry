@@ -124,6 +124,7 @@ jobs:
 
     - name: 'Build the standard bundle & plugins'
       run: |
+        export BUILD_MONITORING_ENABLED=1
         node --version
         node ./scripts/run-yarn.js build:cli --no-minify
         node ./scripts/run-yarn.js build:plugin-constraints
@@ -134,6 +135,8 @@ jobs:
         node ./scripts/run-yarn.js build:plugin-version
         node ./scripts/run-yarn.js build:plugin-workspace-tools
       shell: bash
+      env:
+        DD_API_KEY: ${{ secrets.DD_API_KEY }}
 
     - name: 'Run the integration tests'
       run: |

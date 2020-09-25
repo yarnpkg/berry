@@ -3627,6 +3627,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@datadog/build-plugin", [
+        ["npm:0.3.5", {
+          "packageLocation": "./.yarn/cache/@datadog-build-plugin-npm-0.3.5-54f6e07b7b-5a4f201317.zip/node_modules/@datadog/build-plugin/",
+          "packageDependencies": [
+            ["@datadog/build-plugin", "npm:0.3.5"],
+            ["chalk", "npm:2.3.1"],
+            ["fs-extra", "npm:7.0.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@emotion/babel-plugin-jsx-pragmatic", [
         ["virtual:e88d87b9d739c13ee4d5bbc266ed15a22c580c178441a0c33bf9288d70a1e591060633e1cceaa882f6d70f89e54f7491f2da563e52e6c40181258a2d0b6fd3fd#npm:0.1.5", {
           "packageLocation": "./.yarn/$$virtual/@emotion-babel-plugin-jsx-pragmatic-virtual-46184129f1/0/cache/@emotion-babel-plugin-jsx-pragmatic-npm-0.1.5-515e3ee1a1-3957a41cac.zip/node_modules/@emotion/babel-plugin-jsx-pragmatic/",
@@ -8486,6 +8497,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/builder", "virtual:142f2540721377707149f0b1d7ad0188d020f822e234abcdca162642d42824b344a1ac44bd6035644a0ca9babd62eb7d72923350ac75b876b51e87eb92b3e464#workspace:packages/yarnpkg-builder"],
             ["@babel/core", "npm:7.10.2"],
+            ["@datadog/build-plugin", "npm:0.3.5"],
             ["@types/filesize", "npm:4.1.0"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/terser-webpack-plugin", "npm:3.0.0"],
@@ -8523,6 +8535,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@babel/core", "npm:7.10.2"],
+            ["@datadog/build-plugin", "npm:0.3.5"],
             ["@types/filesize", "npm:4.1.0"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/terser-webpack-plugin", "npm:3.0.0"],
@@ -8560,6 +8573,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],
             ["@babel/core", "npm:7.10.2"],
+            ["@datadog/build-plugin", "npm:0.3.5"],
             ["@types/filesize", "npm:4.1.0"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/terser-webpack-plugin", "npm:3.0.0"],
@@ -12826,6 +12840,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["has-ansi", "npm:2.0.0"],
             ["strip-ansi", "npm:3.0.1"],
             ["supports-color", "npm:2.0.0"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:2.3.1", {
+          "packageLocation": "./.yarn/cache/chalk-npm-2.3.1-f10c7b2b06-dadd19a62c.zip/node_modules/chalk/",
+          "packageDependencies": [
+            ["chalk", "npm:2.3.1"],
+            ["ansi-styles", "npm:3.2.1"],
+            ["escape-string-regexp", "npm:1.0.5"],
+            ["supports-color", "npm:5.5.0"]
           ],
           "linkType": "HARD",
         }],
