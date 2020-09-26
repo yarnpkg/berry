@@ -15,7 +15,7 @@ via `nmHoistingLimits` global setting and `installConfig.hoistingLimits` `packag
 - Cyclic peer dependencies inside `node_modules` are hoisted now in all possible cases
 - `node-modules` linker is more forgiving now for packages with incorrect assumptions about hoisting layout,
   thanks to maximizing package exposure at the top-level first and only after that minimizing package duplicates during hoisting.
-- In case of `node_modules` the workspace peer dependencies are no longer ingnored. They are picked up
+- In case of `node_modules` the workspace peer dependencies are no longer ignored. They are picked up
   from the closest workspace, that is upper in directory hierarchy.
 
 ## Bugfixes
