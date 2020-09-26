@@ -10,7 +10,7 @@ import {Hooks}                                                              from
 
 // eslint-disable-next-line arca/no-default-export
 export default class RemoveCommand extends BaseCommand {
-  @Command.Boolean(`-A,--all`)
+  @Command.Boolean(`-A,--all`, {description: `Apply the operation to all workspaces from the current project`})
   all: boolean = false;
 
   @Command.Rest()
@@ -20,8 +20,6 @@ export default class RemoveCommand extends BaseCommand {
     description: `remove dependencies from the project`,
     details: `
       This command will remove the packages matching the specified patterns from the current workspace.
-
-      If the \`-A,--all\` option is set, the operation will be applied to all workspaces from the current project.
 
       This command accepts glob patterns as arguments (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
     `,

@@ -10,13 +10,13 @@ import {URL}                                                                    
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {
-  @Command.String(`--access`)
+  @Command.String(`--access`, {description: `The access for the published package (public or restricted)`})
   access?: string;
 
-  @Command.String(`--tag`)
+  @Command.String(`--tag`, {description: `The tag on the registry that the package should be attached to`})
   tag: string = `latest`;
 
-  @Command.Boolean(`--tolerate-republish`)
+  @Command.Boolean(`--tolerate-republish`, {description: `Warn and exit when republishing an already existing version of a package`})
   tolerateRepublish: boolean = false;
 
   static usage: Usage = Command.Usage({

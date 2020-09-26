@@ -5,10 +5,10 @@ import {Command, Usage, UsageError}        from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends BaseCommand {
-  @Command.String(`--inspect`, {tolerateBoolean: true})
+  @Command.String(`--inspect`, {tolerateBoolean: true, description: `Forwarded to the underlying Node process when executing a binary`})
   inspect: string | boolean = false;
 
-  @Command.String(`--inspect-brk`, {tolerateBoolean: true})
+  @Command.String(`--inspect-brk`, {tolerateBoolean: true, description: `Forwarded to the underlying Node process when executing a binary`})
   inspectBrk: string | boolean = false;
 
   // This flag is mostly used to give users a way to configure node-gyp. They
@@ -42,7 +42,7 @@ export default class RunCommand extends BaseCommand {
 
       - If the \`scripts\` field from your local package.json contains a matching script name, its definition will get executed.
 
-      - Otherwise, if one of the local workspace's dependencies exposes a binary with a matching name, this binary will get executed (the \`--inspect\` and \`--inspect-brk\` options will then be forwarded to the underlying Node process).
+      - Otherwise, if one of the local workspace's dependencies exposes a binary with a matching name, this binary will get executed.
 
       - Otherwise, if the specified name contains a colon character and if one of the workspaces in the project contains exactly one script with a matching name, then this script will get executed.
 

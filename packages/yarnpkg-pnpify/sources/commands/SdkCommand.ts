@@ -10,10 +10,10 @@ export default class SdkCommand extends Command {
   @Command.Rest()
   integrations: Array<string> = [];
 
-  @Command.String(`--cwd`)
+  @Command.String(`--cwd`, {description: `The directory to run the command in`})
   cwd: NativePath = process.cwd();
 
-  @Command.Boolean(`-v,--verbose`)
+  @Command.Boolean(`-v,--verbose`, {description: `Print all skipped dependencies`})
   verbose: boolean = false;
 
   static usage = Command.Usage({
