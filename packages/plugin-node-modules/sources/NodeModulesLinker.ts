@@ -117,7 +117,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
         return [relativeCwd, hoistingLimits];
       }
     ));
-    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false, hoistingLimitsByCwd});
+    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false, hoistingLimitsByCwd, project: this.opts.project});
     const locatorMap = buildLocatorMap(nmTree);
 
     await persistNodeModules(preinstallState, locatorMap, {
