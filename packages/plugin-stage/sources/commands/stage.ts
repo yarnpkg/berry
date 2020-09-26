@@ -92,7 +92,7 @@ export default class StageCommand extends BaseCommand {
       }
     } else {
       if (this.reset) {
-        const stagedChangeList = await driver.filterChanges(root, yarnPaths, yarnNames, true);
+        const stagedChangeList = await driver.filterChanges(root, yarnPaths, yarnNames, {staged: true});
         if (stagedChangeList.length === 0) {
           this.context.stdout.write(`No staged changes found!`);
         } else {
