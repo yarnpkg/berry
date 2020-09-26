@@ -257,6 +257,10 @@ export function pretty<T extends Type>(configuration: Configuration, value: Sour
   return applyColor(configuration, value, formatType);
 }
 
+export function prettyList<T extends Type>(configuration: Configuration, values: Iterable<Source<T>>, formatType: T | string, {separator = `, `}: {separator?: string} = {}): string {
+  return [...values].map(value => pretty(configuration, value, formatType)).join(separator);
+}
+
 export function json<T extends Type>(value: Source<T>, formatType: T | string): any {
   if (value === null)
     return null;
