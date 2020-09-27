@@ -10,7 +10,7 @@ import {savePlugin}                                                     from '..
 
 import {getAvailablePlugins}                                            from '../list';
 
-const BUILD_WORKFLOW = ({pluginName, noMinify}: {noMinify: boolean, pluginName: string}, target: PortablePath) => [
+const buildWorkflow = ({pluginName, noMinify}: {noMinify: boolean, pluginName: string}, target: PortablePath) => [
   [`yarn`, `build:${pluginName}`, ...noMinify ? [`--no-minify`] : [], `|`],
 ];
 
@@ -81,7 +81,7 @@ export default class PluginDlSourcesCommand extends BaseCommand {
       report.reportInfo(MessageName.UNNAMED, `Building a fresh ${pluginName}`);
       report.reportSeparator();
 
-      await runWorkflow(BUILD_WORKFLOW({
+      await runWorkflow(buildWorkflow({
         pluginName,
         noMinify: this.noMinify,
       }, target), {configuration, context: this.context, target});

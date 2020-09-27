@@ -7,7 +7,7 @@ export const MinistoreContext = React.createContext<{
   set: (key: string, value: any) => void,
 } | null>(null);
 
-export const Application = function <T>({children}: {children: React.ReactElement}) {
+export const Application = ({children}: {children: React.ReactElement}) => {
   const {setRawMode} = useContext(StdinContext);
 
   useEffect(() => {

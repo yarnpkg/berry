@@ -17,20 +17,20 @@ function getBranchRef(branch: string) {
   }
 }
 
-const CLONE_WORKFLOW = ({repository, branch}: {repository: string, branch: string}, target: PortablePath) => [
+const cloneWorkflow = ({repository, branch}: {repository: string, branch: string}, target: PortablePath) => [
   [`git`, `init`, npath.fromPortablePath(target)],
   [`git`, `remote`, `add`, `origin`, repository],
   [`git`, `fetch`, `origin`, getBranchRef(branch)],
   [`git`, `reset`, `--hard`, `FETCH_HEAD`],
 ];
 
-const UPDATE_WORKFLOW = ({branch}: {branch: string}) => [
+const updateWorkflow = ({branch}: {branch: string}) => [
   [`git`, `fetch`, `origin`, getBranchRef(branch), `--force`],
   [`git`, `reset`, `--hard`, `FETCH_HEAD`],
   [`git`, `clean`, `-dfx`],
 ];
 
-const BUILD_WORKFLOW = ({plugins, noMinify}: {noMinify: boolean, plugins: Array<string>}, target: PortablePath) => [
+const buildWorkflow = ({plugins, noMinify}: {noMinify: boolean, plugins: Array<string>}, target: PortablePath) => [
   [`yarn`, `build:cli`, ...new Array<string>().concat(...plugins.map(plugin => [`--plugin`, path.resolve(target, plugin)])), ...noMinify ? [`--no-minify`] : [], `|`],
 ];
 
@@ -83,7 +83,7 @@ export default class SetVersionSourcesCommand extends BaseCommand {
       report.reportInfo(MessageName.UNNAMED, `Building a fresh bundle`);
       report.reportSeparator();
 
-      await runWorkflow(BUILD_WORKFLOW(this, target), {configuration, context: this.context, target});
+      await runWorkflow(buildWorkflow(this, target), {configuration, context: this.context, target});
 
       report.reportSeparator();
 
@@ -144,7 +144,7 @@ export async function prepareRepo(spec: PrepareSpec, {configuration, report, tar
     report.reportSeparator();
 
     try {
-      await runWorkflow(UPDATE_WORKFLOW(spec), {configuration, context: spec.context, target});
+      await runWorkflow(updateWorkflow(spec), {configuration, context: spec.context, target});
       ready = true;
     } catch (error) {
       report.reportSeparator();
@@ -159,6 +159,6 @@ export async function prepareRepo(spec: PrepareSpec, {configuration, report, tar
     await xfs.removePromise(target);
     await xfs.mkdirPromise(target, {recursive: true});
 
-    await runWorkflow(CLONE_WORKFLOW(spec, target), {configuration, context: spec.context, target});
+    await runWorkflow(cloneWorkflow(spec, target), {configuration, context: spec.context, target});
   }
 }

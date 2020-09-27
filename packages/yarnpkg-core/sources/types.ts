@@ -2,7 +2,7 @@ import {PortablePath}                       from '@yarnpkg/fslib';
 
 import {DependencyMeta, PeerDependencyMeta} from './Manifest';
 
-export type IdentHash = string & { __ident_hash: string };
+export type IdentHash = string & { __identHash: string };
 
 export interface Ident {
   identHash: IdentHash,
@@ -10,14 +10,14 @@ export interface Ident {
   name: string,
 }
 
-export type DescriptorHash = string & { __descriptor_hash: string };
+export type DescriptorHash = string & { __descriptorHash: string };
 
 export interface Descriptor extends Ident {
   descriptorHash: DescriptorHash,
   range: string,
 }
 
-export type LocatorHash = string & { __locator_hash: string };
+export type LocatorHash = string & { __locatorHash: string };
 
 export interface Locator extends Ident {
   locatorHash: LocatorHash,

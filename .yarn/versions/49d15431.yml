@@ -1,5 +1,9 @@
+releases:
+  "@yarnpkg/eslint-config": minor
+
 declined:
   - "@yarnpkg/plugin-constraints"
+  - "@yarnpkg/plugin-essentials"
   - "@yarnpkg/plugin-exec"
   - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-npm"
@@ -14,6 +18,7 @@ declined:
   - "@yarnpkg/core"
   - "@yarnpkg/doctor"
   - "@yarnpkg/fslib"
+  - "@yarnpkg/libui"
   - "@yarnpkg/pnp"
   - "@yarnpkg/pnpify"
   - "@yarnpkg/shell"

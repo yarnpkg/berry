@@ -70,10 +70,6 @@ export default class SetVersionCommand extends BaseCommand {
   }
 }
 
-type FetchReleasesOptions = {
-  includePrereleases: boolean,
-};
-
 export async function setVersion(configuration: Configuration, bundleVersion: string | null, bundleBuffer: Buffer, {report}: {report: Report}) {
   const projectCwd = configuration.projectCwd
     ? configuration.projectCwd
