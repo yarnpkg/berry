@@ -1,7 +1,8 @@
-import {miscUtils, semverUtils, MessageName, ReportError} from '@yarnpkg/core';
-import {FakeFS, ppath, NodeFS, PortablePath}              from '@yarnpkg/fslib';
+import {miscUtils, semverUtils}                              from '@yarnpkg/core';
+import {FakeFS, ppath, NodeFS, PortablePath}                 from '@yarnpkg/fslib';
 
-import {ParsedPatchFile, FilePatch, Hunk}                 from './parse';
+import {UnmatchedHunkError}                                  from './UnmatchedHunkError';
+import {ParsedPatchFile, FilePatch, Hunk, PatchMutationType} from './parse';
 
 const DEFAULT_TIME = 315532800;
 
@@ -180,7 +181,7 @@ export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = fal
     }
 
     if (modifications === null)
-      throw new ReportError(MessageName.PATCH_HUNK_FAILED, `Cannot apply hunk #${hunks.indexOf(hunk) + 1}`);
+      throw new UnmatchedHunkError(hunks.indexOf(hunk), hunk);
 
     result.push(modifications);
 
@@ -246,8 +247,8 @@ function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number): Arr
 
   for (const part of hunk.parts) {
     switch (part.type) {
-      case `deletion`:
-      case `context`: {
+      case PatchMutationType.Context:
+      case PatchMutationType.Deletion: {
         for (const line of part.lines) {
           const originalLine = fileLines[offset];
 
@@ -257,7 +258,7 @@ function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number): Arr
           offset += 1;
         }
 
-        if (part.type === `deletion`) {
+        if (part.type === PatchMutationType.Deletion) {
           result.push({
             type: `splice`,
             index: offset - part.lines.length,
@@ -274,7 +275,7 @@ function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number): Arr
         }
       } break;
 
-      case `insertion`: {
+      case PatchMutationType.Insertion: {
         result.push({
           type: `splice`,
           index: offset,
