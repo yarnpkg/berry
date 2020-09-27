@@ -9,7 +9,7 @@ try {
 function getVirtualLookupFn(pnpApi) {
   const reverseMap = new Map();
 
-  for (const locator of pnpApi.getAllPackages()) {
+  for (const locator of pnpApi.getAllLocators()) {
     const pkg = pnpApi.getPackageInformation(locator);
     console.assert(pkg, `The package information should be available`);
 
