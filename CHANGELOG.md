@@ -7,6 +7,7 @@
 ### CLI
 
 - The `yarn tag` commands have been ported over from Yarn Classic as `yarn npm tag`.
+- On Windows, npm binaries now uses a native binjumper to avoid `Terminate batch job (Y/N)?` prompts from cmd
 
 ### Installs
 
