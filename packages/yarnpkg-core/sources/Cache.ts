@@ -11,7 +11,7 @@ import * as miscUtils                                                   from './
 import * as structUtils                                                 from './structUtils';
 import {LocatorHash, Locator}                                           from './types';
 
-const CACHE_VERSION = 6;
+const CACHE_VERSION = 7;
 
 export type FetchFromCacheOptions = {
   checksums: Map<LocatorHash, Locator>,
