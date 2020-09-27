@@ -79,7 +79,10 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
 
   const findApiPathCache = new Map<PortablePath, PortablePath | null>();
 
-  function addToCache(start: PortablePath, end: PortablePath, target: PortablePath | null) {
+  function addToCacheAndReturn(start: PortablePath, end: PortablePath, target: PortablePath | null) {
+    if (target !== null)
+      target = VirtualFS.resolveVirtual(target);
+
     let curr: PortablePath;
     let next = start;
 
@@ -88,12 +91,12 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
       findApiPathCache.set(curr, target);
       next = ppath.dirname(curr);
     } while (curr !== end);
+
+    return target;
   }
 
   function findApiPathFor(modulePath: NativePath) {
-    const start = VirtualFS.resolveVirtual(
-      ppath.resolve(npath.toPortablePath(modulePath)),
-    );
+    const start = ppath.resolve(npath.toPortablePath(modulePath));
 
     let curr: PortablePath;
     let next = start;
@@ -102,28 +105,21 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
       curr = next;
 
       const cached = findApiPathCache.get(curr);
-      if (cached !== undefined) {
-        addToCache(start, curr, cached);
-        return cached;
-      }
+      if (cached !== undefined)
+        return addToCacheAndReturn(start, curr, cached);
 
       const candidate = ppath.join(curr, `.pnp.js` as Filename);
-      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile()) {
-        addToCache(start, curr, candidate);
-        return candidate;
-      }
+      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile())
+        return addToCacheAndReturn(start, curr, candidate);
 
       const cjsCandidate = ppath.join(curr, `.pnp.cjs` as Filename);
-      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile()) {
-        addToCache(start, curr, cjsCandidate);
-        return cjsCandidate;
-      }
+      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile())
+        return addToCacheAndReturn(start, curr, cjsCandidate);
 
       next = ppath.dirname(curr);
     } while (curr !== PortablePath.root);
 
-    addToCache(start, curr, null);
-    return null;
+    return addToCacheAndReturn(start, curr, null);
   }
 
   function getApiPathFromParent(parent: Module | null | undefined): PortablePath | null {
