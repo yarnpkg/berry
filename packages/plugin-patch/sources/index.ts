@@ -15,6 +15,12 @@ export interface Hooks {
   ) => Promise<string | null | void>,
 }
 
+declare module '@yarnpkg/core' {
+  interface ConfigurationValueMap {
+    enableInlineHunks: boolean;
+  }
+}
+
 const plugin: Plugin = {
   configuration: {
     enableInlineHunks: {
