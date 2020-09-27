@@ -54,18 +54,6 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
         `\`\`\`\n`,
       ].join(``));
 
-      if (command.options.length > 0) {
-        sections.push([
-          `## Options\n`,
-          `\n`,
-          `| <div style="width:180px">Definition</div> | Description |\n`,
-          `| ---------- | ----------- |\n`,
-          ...command.options.map(
-            ({definition, description}) => `| \`${definition}\` | ${description} |\n`
-          ),
-        ].join(``));
-      }
-
       if (command.examples && command.examples.length > 0) {
         sections.push([
           `## Examples\n`,
@@ -76,6 +64,18 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
             `${example}\n`,
             `\`\`\`\n`,
           ].join(``)),
+        ].join(``));
+      }
+
+      if (command.options.length > 0) {
+        sections.push([
+          `## Options\n`,
+          `\n`,
+          `| <div style="width:180px">Definition</div> | Description |\n`,
+          `| ---------- | ----------- |\n`,
+          ...command.options.map(
+            ({definition, description}) => `| \`${definition}\` | ${description} |\n`
+          ),
         ].join(``));
       }
 
