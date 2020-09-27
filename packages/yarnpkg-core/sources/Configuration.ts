@@ -1141,16 +1141,16 @@ export class Configuration {
     }
   }
 
-  useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
+  useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, opts?: {strict?: boolean, overwrite?: boolean}) {
     try {
-      this.use(source, data, folder, {strict, overwrite});
+      this.use(source, data, folder, opts);
     } catch (error) {
       error.message += ` (in ${source})`;
       throw error;
     }
   }
 
-  use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
+  use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean} = {}) {
     for (const key of Object.keys(data)) {
       const value = data[key];
       if (typeof value === `undefined`)
@@ -1178,7 +1178,7 @@ export class Configuration {
         }
       }
 
-      if (this.sources.has(key) && !overwrite)
+      if (this.sources.has(key) && !(overwrite || definition.type === SettingsType.MAP))
         continue;
 
       let parsed;
@@ -1189,8 +1189,17 @@ export class Configuration {
         throw error;
       }
 
-      this.values.set(key, parsed);
-      this.sources.set(key, source);
+      if (definition.type === SettingsType.MAP) {
+        const previousValue = this.values.get(key) as Map<string, any>;
+        this.values.set(key, new Map(overwrite
+          ? [...previousValue, ...parsed as Map<string, any>]
+          : [...parsed as Map<string, any>, ...previousValue]
+        ));
+        this.sources.set(key, `${this.sources.get(key)}, ${source}`);
+      } else {
+        this.values.set(key, parsed);
+        this.sources.set(key, source);
+      }
     }
   }
 

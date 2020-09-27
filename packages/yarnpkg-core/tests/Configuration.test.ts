@@ -109,4 +109,78 @@ describe(`Configuration`, () => {
       });
     });
   });
+
+  describe(`merging properties`, () => {
+    it(`should merge map properties`, async () => {
+      await initializeConfiguration({
+        npmRegistryServer: `https://foo.server`,
+        npmScopes: {
+          foo: {
+            npmAuthToken: `token for foo`,
+          },
+        },
+      }, async dir => {
+        const configuration = await Configuration.find(dir, {
+          modules: new Map([[`@yarnpkg/plugin-npm`, NpmPlugin]]),
+          plugins: new Set([`@yarnpkg/plugin-npm`]),
+        });
+
+        configuration.useWithSource(`second file`, {
+          npmRegistryServer: `http://bar.server`,
+          npmScopes: {
+            foo: {
+              npmAlwaysAuth: true,
+            },
+            bar: {
+              npmAlwaysAuth: true,
+            },
+          },
+        }, dir);
+
+        expect(configuration.get(`npmRegistryServer`)).toBe(`https://foo.server`);
+
+        const scopeConfiguration = configuration.get(`npmScopes`);
+        expect(scopeConfiguration.get(`foo`).get(`npmAuthToken`)).toBe(`token for foo`);
+        expect(scopeConfiguration.get(`foo`).get(`npmAlwaysAuth`)).toBe(false);
+
+        expect(scopeConfiguration.get(`bar`).get(`npmAlwaysAuth`)).toBe(true);
+      });
+    });
+
+    it(`should overwrite map properties`, async () => {
+      await initializeConfiguration({
+        npmRegistryServer: `https://foo.server`,
+        npmScopes: {
+          foo: {
+            npmAuthToken: `token for foo`,
+          },
+        },
+      }, async dir => {
+        const configuration = await Configuration.find(dir, {
+          modules: new Map([[`@yarnpkg/plugin-npm`, NpmPlugin]]),
+          plugins: new Set([`@yarnpkg/plugin-npm`]),
+        });
+
+        configuration.useWithSource(`second file`, {
+          npmRegistryServer: `http://bar.server`,
+          npmScopes: {
+            foo: {
+              npmAlwaysAuth: true,
+            },
+            bar: {
+              npmAlwaysAuth: true,
+            },
+          },
+        }, dir, {overwrite: true});
+
+        expect(configuration.get(`npmRegistryServer`)).toBe(`http://bar.server`);
+
+        const scopeConfiguration = configuration.get(`npmScopes`);
+        expect(scopeConfiguration.get(`foo`).get(`npmAuthToken`)).toBe(null);
+        expect(scopeConfiguration.get(`foo`).get(`npmAlwaysAuth`)).toBe(true);
+
+        expect(scopeConfiguration.get(`bar`).get(`npmAlwaysAuth`)).toBe(true);
+      });
+    });
+  });
 });
