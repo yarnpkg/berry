@@ -101,7 +101,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
       preinstallState = {locatorMap: new Map(), binSymlinks: new Map(), locationTree: new Map()};
     }
 
-    const defaultHoistingLimits = this.opts.project.configuration.get<NodeModulesHoistingLimits>(`nmHoistingLimits`);
+    const defaultHoistingLimits = this.opts.project.configuration.get(`nmHoistingLimits`) as NodeModulesHoistingLimits;
 
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
     const hoistingLimitsByCwd = new Map(this.opts.project.workspaces.map(

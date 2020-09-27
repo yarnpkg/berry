@@ -41592,7 +41592,8 @@ function makeManager(pnpapi, opts) {
 
   const findApiPathCache = new Map();
 
-  function addToCache(start, end, target) {
+  function addToCacheAndReturn(start, end, target) {
+    if (target !== null) target = VirtualFS.resolveVirtual(target);
     let curr;
     let next = start;
 
@@ -41601,41 +41602,27 @@ function makeManager(pnpapi, opts) {
       findApiPathCache.set(curr, target);
       next = sources_path/* ppath.dirname */.y1.dirname(curr);
     } while (curr !== end);
+
+    return target;
   }
 
   function findApiPathFor(modulePath) {
-    const start = VirtualFS.resolveVirtual(sources_path/* ppath.resolve */.y1.resolve(sources_path/* npath.toPortablePath */.cS.toPortablePath(modulePath)));
+    const start = sources_path/* ppath.resolve */.y1.resolve(sources_path/* npath.toPortablePath */.cS.toPortablePath(modulePath));
     let curr;
     let next = start;
 
     do {
       curr = next;
       const cached = findApiPathCache.get(curr);
-
-      if (cached !== undefined) {
-        addToCache(start, curr, cached);
-        return cached;
-      }
-
+      if (cached !== undefined) return addToCacheAndReturn(start, curr, cached);
       const candidate = sources_path/* ppath.join */.y1.join(curr, `.pnp.js`);
-
-      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile()) {
-        addToCache(start, curr, candidate);
-        return candidate;
-      }
-
+      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile()) return addToCacheAndReturn(start, curr, candidate);
       const cjsCandidate = sources_path/* ppath.join */.y1.join(curr, `.pnp.cjs`);
-
-      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile()) {
-        addToCache(start, curr, cjsCandidate);
-        return cjsCandidate;
-      }
-
+      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile()) return addToCacheAndReturn(start, curr, cjsCandidate);
       next = sources_path/* ppath.dirname */.y1.dirname(curr);
     } while (curr !== sources_path/* PortablePath.root */.LZ.root);
 
-    addToCache(start, curr, null);
-    return null;
+    return addToCacheAndReturn(start, curr, null);
   }
 
   function getApiPathFromParent(parent) {

@@ -206,7 +206,7 @@ export function tuple<T extends Type>(formatType: T, value: Source<T>): Tuple<T>
 }
 
 export function applyStyle(configuration: Configuration, text: string, flags: Style): string {
-  if (!configuration.get<boolean>(`enableColors`))
+  if (!configuration.get(`enableColors`))
     return text;
 
   if (flags & Style.BOLD)
@@ -216,7 +216,7 @@ export function applyStyle(configuration: Configuration, text: string, flags: St
 }
 
 export function applyColor(configuration: Configuration, value: string, formatType: Type | string): string {
-  if (!configuration.get<boolean>(`enableColors`))
+  if (!configuration.get(`enableColors`))
     return value;
 
   const colorSpec = colors.get(formatType as Type);

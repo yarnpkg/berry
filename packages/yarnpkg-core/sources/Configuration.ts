@@ -376,6 +376,97 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
 };
 
+export interface MapConfigurationValue<T extends object> {
+  get<K extends keyof T>(key: K): T[K];
+}
+
+export interface ConfigurationValueMap {
+  lastUpdateCheck: string | null;
+
+  yarnPath: PortablePath;
+  ignorePath: boolean;
+  ignoreCwd: boolean;
+
+  cacheKeyOverride: string | null;
+  globalFolder: PortablePath;
+  cacheFolder: PortablePath;
+  compressionLevel: `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+  virtualFolder: PortablePath;
+  bstatePath: PortablePath;
+  lockfileFilename: Filename;
+  installStatePath: PortablePath;
+  immutablePatterns: Array<string>;
+  rcFilename: Filename;
+  enableGlobalCache: boolean;
+  enableAbsoluteVirtuals: boolean;
+
+  enableColors: boolean;
+  enableHyperlinks: boolean;
+  enableInlineBuilds: boolean;
+  enableProgressBars: boolean;
+  enableTimers: boolean;
+  preferAggregateCacheInfo: boolean;
+  preferInteractive: boolean;
+  preferTruncatedLines: boolean;
+  progressBarStyle: string | undefined;
+
+  defaultLanguageName: string;
+  defaultProtocol: string;
+  enableTransparentWorkspaces: boolean;
+
+  enableMirror: boolean;
+  enableNetwork: boolean;
+  httpProxy: string;
+  httpsProxy: string;
+  unsafeHttpWhitelist: Array<string>;
+  httpTimeout: number;
+  httpRetry: number;
+  networkConcurrency: number;
+
+  // Settings related to telemetry
+  enableTelemetry: boolean;
+  telemetryInterval: number;
+  telemetryUserId: string | null;
+
+  // Settings related to security
+  enableScripts: boolean;
+  enableImmutableCache: boolean;
+  checksumBehavior: string;
+
+  // Package patching - to fix incorrect definitions
+  packageExtensions: Map<string, any>;
+}
+
+type SimpleDefinitionForType<T> = SimpleSettingsDefinition & {
+  type:
+  | (T extends boolean ? SettingsType.BOOLEAN : never)
+  | (T extends number ? SettingsType.NUMBER : never)
+  | (T extends PortablePath ? SettingsType.ABSOLUTE_PATH : never)
+  | (T extends string ? SettingsType.LOCATOR | SettingsType.LOCATOR_LOOSE | SettingsType.SECRET | SettingsType.STRING : never)
+  | SettingsType.ANY
+  ;
+};
+
+type DefinitionForTypeHelper<T> = T extends Map<string, infer U>
+  ? (MapSettingsDefinition & {valueDefinition: Omit<DefinitionForType<U>, 'default'>})
+  : T extends MapConfigurationValue<infer U>
+    ? (ShapeSettingsDefinition & {properties: ConfigurationDefinitionMap<U>})
+    : SimpleDefinitionForType<T>;
+
+type DefinitionForType<T> = T extends Array<infer U>
+  ? (DefinitionForTypeHelper<U> & {isArray: true})
+  : (DefinitionForTypeHelper<T> & {isArray?: false});
+
+// We use this type to enforce that the types defined in the
+// `ConfigurationValueMap` interface match what's listed in
+// the `configuration` field from plugin definitions
+//
+// Note: it doesn't currently support checking enumerated types
+// against what's actually put in the `values` field.
+export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
+  [K in keyof V]: DefinitionForType<V[K]>;
+}
+
 function parseBoolean(value: unknown) {
   switch (value) {
     case `true`:
@@ -740,8 +831,8 @@ export class Configuration {
       configuration.useWithSource(homeRcFile.path, pickCoreFields(homeRcFile.data), homeRcFile.cwd, {strict: false});
 
     if (usePath) {
-      const yarnPath: PortablePath = configuration.get<PortablePath>(`yarnPath`);
-      const ignorePath = configuration.get<boolean>(`ignorePath`);
+      const yarnPath = configuration.get(`yarnPath`);
+      const ignorePath = configuration.get(`ignorePath`);
 
       if (yarnPath !== null && !ignorePath) {
         return configuration;
@@ -751,7 +842,7 @@ export class Configuration {
     // We need to know the project root before being able to truly instantiate
     // our configuration, and to know that we need to know the lockfile name
 
-    const lockfileFilename = configuration.get<Filename>(`lockfileFilename`);
+    const lockfileFilename = configuration.get(`lockfileFilename`);
 
     let projectCwd: PortablePath | null;
     switch (lookup) {
@@ -1038,8 +1129,10 @@ export class Configuration {
     }
   }
 
-  private importSettings(definitions: {[name: string]: SettingsDefinition}) {
+  private importSettings(definitions: {[name: string]: SettingsDefinition | undefined}) {
     for (const [name, definition] of Object.entries(definitions)) {
+      if (definition == null)
+        continue;
       if (this.settings.has(name))
         throw new Error(`Cannot redefine settings "${name}"`);
 
@@ -1101,11 +1194,16 @@ export class Configuration {
     }
   }
 
-  get<T = any>(key: string) {
+  get<K extends keyof ConfigurationValueMap>(key: K): ConfigurationValueMap[K];
+  /** @deprecated pass in a known configuration key instead */
+  get<T>(key: string): T;
+  /** @note Type will change to unknown in a future major version */
+  get(key: string): any;
+  get(key: string) {
     if (!this.values.has(key))
       throw new Error(`Invalid configuration key "${key}"`);
 
-    return this.values.get(key) as T;
+    return this.values.get(key);
   }
 
   getSpecial<T = any>(key: string, {hideSecrets = false, getNativePaths = false}: Partial<SettingTransforms>) {
@@ -1223,7 +1321,7 @@ export class Configuration {
       });
     };
 
-    for (const [descriptorString, extensionData] of this.get<Map<string, any>>(`packageExtensions`))
+    for (const [descriptorString, extensionData] of this.get(`packageExtensions`))
       registerPackageExtension(structUtils.parseDescriptor(descriptorString, true), extensionData);
 
     await this.triggerHook(hooks => {
