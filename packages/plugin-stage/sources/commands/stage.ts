@@ -91,12 +91,20 @@ export default class StageCommand extends BaseCommand {
         }
       }
     } else {
-      if (changeList.length === 0) {
+      if (this.reset) {
+        const stagedChangeList = await driver.filterChanges(root, yarnPaths, yarnNames, {staged: true});
+        if (stagedChangeList.length === 0) {
+          this.context.stdout.write(`No staged changes found!`);
+        } else {
+          await driver.makeReset(root, stagedChangeList);
+        }
+      } else if (changeList.length === 0) {
         this.context.stdout.write(`No changes found!`);
       } else if (this.commit) {
         await driver.makeCommit(root, changeList, commitMessage);
-      } else if (this.reset) {
-        await driver.makeReset(root, changeList);
+      } else {
+        await driver.makeStage(root, changeList);
+        this.context.stdout.write(commitMessage);
       }
     }
   }
