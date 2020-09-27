@@ -58,7 +58,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
         sections.push([
           `## Options\n`,
           `\n`,
-          `| Definition | Description |\n`,
+          `| <div style="width:180px">Definition</div> | Description |\n`,
           `| ---------- | ----------- |\n`,
           ...command.options.map(
             ({definition, description}) => `| \`${definition}\` | ${description} |\n`
