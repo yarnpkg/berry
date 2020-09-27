@@ -7,7 +7,7 @@ import {Locator}       from './types';
 export class ReportError extends Error {
   public reportCode: MessageName;
 
-  constructor(code: MessageName, message: string) {
+  constructor(code: MessageName, message: string, public reportExtra?: (report: Report) => void) {
     super(message);
 
     this.reportCode = code;
@@ -104,18 +104,20 @@ export abstract class Report {
     }
   }
 
-  reportErrorOnce(name: MessageName, text: string, opts?: {key?: any}) {
+  reportErrorOnce(name: MessageName, text: string, opts?: {key?: any, reportExtra?: (report: Report) => void}) {
     const key = opts && opts.key ? opts.key : text;
 
     if (!this.reportedErrors.has(key)) {
       this.reportedErrors.add(key);
       this.reportError(name, text);
+
+      opts?.reportExtra?.(this);
     }
   }
 
   reportExceptionOnce(error: Error | ReportError) {
     if (isReportError(error)) {
-      this.reportErrorOnce(error.reportCode, error.message, {key: error});
+      this.reportErrorOnce(error.reportCode, error.message, {key: error, reportExtra: error.reportExtra});
     } else {
       this.reportErrorOnce(MessageName.EXCEPTION, error.stack || error.message, {key: error});
     }
