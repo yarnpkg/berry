@@ -2,9 +2,9 @@ import {CwdFS, Filename, NativePath, PortablePath, ZipOpenFS} from '@yarnpkg/fsl
 import {xfs, npath, ppath, toFilename}                        from '@yarnpkg/fslib';
 import {getLibzipPromise}                                     from '@yarnpkg/libzip';
 import {execute}                                              from '@yarnpkg/shell';
+import {getBinjumper}                                         from "binjumper";
 import capitalize                                             from 'lodash/capitalize';
 import pLimit                                                 from 'p-limit';
-
 import {PassThrough, Readable, Writable}                      from 'stream';
 
 import {Configuration}                                        from './Configuration';
@@ -29,8 +29,13 @@ enum PackageManager {
 }
 
 async function makePathWrapper(location: PortablePath, name: Filename, argv0: NativePath, args: Array<string> = []) {
-  if (process.platform === `win32`)
-    await xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.cmd`}), `@"${argv0}" ${args.map(arg => `"${arg.replace(`"`, `""`)}"`).join(` `)} %*\n`);
+  if (process.platform === `win32`) {
+    await Promise.all([
+      xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.exe`}), getBinjumper()),
+      xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.exe.info`}), [argv0, ...args].join(`\n`)),
+      xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.cmd`}), `@"${argv0}" ${args.map(arg => `"${arg.replace(`"`, `""`)}"`).join(` `)} %*\n`),
+    ]);
+  }
 
   await xfs.writeFilePromise(ppath.join(location, name), `#!/bin/sh\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
   await xfs.chmodPromise(ppath.join(location, name), 0o755);
