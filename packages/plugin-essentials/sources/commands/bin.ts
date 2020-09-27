@@ -11,7 +11,7 @@ export default class BinCommand extends BaseCommand {
   @Command.Boolean(`-v,--verbose`, {description: `Print both the binary name and the locator of the package that provides the binary`})
   verbose: boolean = false;
 
-  @Command.Boolean(`--json`, {description: `Follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec)`})
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   static usage: Usage = Command.Usage({

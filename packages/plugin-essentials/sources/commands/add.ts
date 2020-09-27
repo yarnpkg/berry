@@ -14,7 +14,7 @@ export default class AddCommand extends BaseCommand {
   @Command.Rest()
   packages: Array<string> = [];
 
-  @Command.Boolean(`--json`, {description: `Follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec)`})
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   @Command.Boolean(`-E,--exact`, {description: `Don't use any semver modifier on the resolved range`})

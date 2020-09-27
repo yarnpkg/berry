@@ -37,7 +37,7 @@ export default class InfoCommand extends BaseCommand {
   @Command.String(`-f,--fields`, {description: `A comma-separated list of manifest fields that should be displayed`})
   fields?: string;
 
-  @Command.Boolean(`--json`, {description: `Follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec)`})
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   static usage: Usage = Command.Usage({

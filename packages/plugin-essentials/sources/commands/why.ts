@@ -12,7 +12,7 @@ export default class WhyCommand extends BaseCommand {
   @Command.Boolean(`-R,--recursive`, {description: `List, for each workspace, what are all the paths that lead to the dependency`})
   recursive: boolean = false;
 
-  @Command.Boolean(`--json`, {description: `Follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec)`})
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   @Command.Boolean(`--peers`, {description: `Also print the peer dependencies that match the specified name`})

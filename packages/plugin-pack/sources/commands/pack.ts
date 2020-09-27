@@ -15,7 +15,7 @@ export default class PackCommand extends BaseCommand {
   @Command.Boolean(`-n,--dry-run`, {description: `Print the file paths without actually generating the package archive`})
   dryRun: boolean = false;
 
-  @Command.Boolean(`--json`, {description: `Follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec)`})
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   @Command.String(`--filename`, {hidden: false, description: outDescription})

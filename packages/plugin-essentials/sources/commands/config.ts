@@ -12,7 +12,7 @@ export default class ConfigCommand extends BaseCommand {
   @Command.Boolean(`--why`, {description: `Print the reason why a setting is set a particular way`})
   why: boolean = false;
 
-  @Command.Boolean(`--json`, {description: `Follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec)`})
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   static usage: Usage = Command.Usage({

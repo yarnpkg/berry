@@ -9,7 +9,7 @@ export default class WorkspacesFocus extends BaseCommand {
   @Command.Rest()
   workspaces: Array<string> = [];
 
-  @Command.Boolean(`--json`, {description: `Follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec)`})
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   @Command.Boolean(`--production`, {description: `Only install regular dependencies by omitting dev dependencies`})

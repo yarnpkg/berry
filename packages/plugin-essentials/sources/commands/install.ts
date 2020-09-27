@@ -7,7 +7,7 @@ import {Command, Usage}                                                         
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
-  @Command.Boolean(`--json`, {description: `Follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec)`})
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   @Command.Boolean(`--immutable`, {description: `Abort with an error exit code if the lockfile was to be modified`})

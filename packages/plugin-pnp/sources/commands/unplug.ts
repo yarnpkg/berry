@@ -18,7 +18,7 @@ export default class UnplugCommand extends BaseCommand {
   @Command.Boolean(`-R,--recursive`, {description: `Unplug both direct and transitive dependencies`})
   recursive: boolean = false;
 
-  @Command.Boolean(`--json`, {description: `Follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec)`})
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   static usage: Usage = Command.Usage({

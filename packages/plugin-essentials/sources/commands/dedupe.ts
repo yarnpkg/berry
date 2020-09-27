@@ -122,7 +122,7 @@ export default class DedupeCommand extends BaseCommand {
   @Command.Boolean(`-c,--check`, {description: `Exit with exit code 1 when duplicates are found, without persisting the dependency tree`})
   check: boolean = false;
 
-  @Command.Boolean(`--json`, {description: `Follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec)`})
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   static schema = yup.object().shape({

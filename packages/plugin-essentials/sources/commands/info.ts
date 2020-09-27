@@ -26,7 +26,7 @@ export default class InfoCommand extends BaseCommand {
   @Command.Boolean(`--virtuals`, {description: `Print each instance of the virtual packages`})
   virtuals: boolean = false;
 
-  @Command.Boolean(`--json`, {description: `Follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec)`})
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   @Command.Rest()
