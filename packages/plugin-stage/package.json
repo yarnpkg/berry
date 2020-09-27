@@ -16,7 +16,7 @@
     "@yarnpkg/builder": "workspace:^2.1.1",
     "@yarnpkg/cli": "workspace:^2.2.2",
     "@yarnpkg/core": "workspace:^2.2.2",
-    "typescript": "^3.9.5"
+    "typescript": "4.1.0-beta"
   },
   "scripts": {
     "build:plugin-stage": "builder build plugin",

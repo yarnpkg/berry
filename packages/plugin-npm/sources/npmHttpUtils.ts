@@ -201,7 +201,7 @@ async function askForOtp() {
   if (process.env.TEST_ENV)
     return process.env.TEST_NPM_2FA_TOKEN || ``;
 
-  const {otp} = await prompt({
+  const {otp} = await prompt<{otp: string}>({
     type: `password`,
     name: `otp`,
     message: `One-time password:`,
@@ -209,7 +209,7 @@ async function askForOtp() {
     onCancel: () => process.exit(130),
   });
 
-  return otp as string;
+  return otp;
 }
 
 function isOtpError(error: any) {

@@ -140,10 +140,10 @@ describe(`Configuration`, () => {
         expect(configuration.get(`npmRegistryServer`)).toBe(`https://foo.server`);
 
         const scopeConfiguration = configuration.get(`npmScopes`);
-        expect(scopeConfiguration.get(`foo`).get(`npmAuthToken`)).toBe(`token for foo`);
-        expect(scopeConfiguration.get(`foo`).get(`npmAlwaysAuth`)).toBe(false);
+        expect(scopeConfiguration.get(`foo`)?.get(`npmAuthToken`)).toBe(`token for foo`);
+        expect(scopeConfiguration.get(`foo`)?.get(`npmAlwaysAuth`)).toBe(false);
 
-        expect(scopeConfiguration.get(`bar`).get(`npmAlwaysAuth`)).toBe(true);
+        expect(scopeConfiguration.get(`bar`)?.get(`npmAlwaysAuth`)).toBe(true);
       });
     });
 
@@ -176,10 +176,10 @@ describe(`Configuration`, () => {
         expect(configuration.get(`npmRegistryServer`)).toBe(`http://bar.server`);
 
         const scopeConfiguration = configuration.get(`npmScopes`);
-        expect(scopeConfiguration.get(`foo`).get(`npmAuthToken`)).toBe(null);
-        expect(scopeConfiguration.get(`foo`).get(`npmAlwaysAuth`)).toBe(true);
+        expect(scopeConfiguration.get(`foo`)?.get(`npmAuthToken`)).toBe(null);
+        expect(scopeConfiguration.get(`foo`)?.get(`npmAlwaysAuth`)).toBe(true);
 
-        expect(scopeConfiguration.get(`bar`).get(`npmAlwaysAuth`)).toBe(true);
+        expect(scopeConfiguration.get(`bar`)?.get(`npmAlwaysAuth`)).toBe(true);
       });
     });
   });

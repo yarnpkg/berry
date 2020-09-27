@@ -157,7 +157,7 @@ export default class InfoCommand extends BaseCommand {
          * @see `version` - The latest version that satisfies `descriptor.range` (if it is a valid range), else `fallbackVersion`
          * @see `versions` - All version tags of a package, sorted in ascending order
          */
-        const packageInformation: PackageInformation = {
+        const packageInformation: Partial<PackageInformation> = {
           ...result,
           ...release,
           version,
