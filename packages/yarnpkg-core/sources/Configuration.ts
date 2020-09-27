@@ -446,12 +446,23 @@ type SimpleDefinitionForType<T> = SimpleSettingsDefinition & {
   | SettingsType.ANY
   ;
 };
-type DefinitionForTypeHelper<T> =
-  T extends Map<string, infer U> ? (MapSettingsDefinition & {valueDefinition: Omit<DefinitionForType<U>, 'default'>}) :
-    T extends MapConfigurationValue<infer U> ? (ShapeSettingsDefinition & {properties: ConfigurationDefinitionMap<U>}) :
-      SimpleDefinitionForType<T>;
-type DefinitionForType<T> = T extends Array<infer U> ? (DefinitionForTypeHelper<U> & {isArray: true}) : (DefinitionForTypeHelper<T> & {isArray?: false});
 
+type DefinitionForTypeHelper<T> = T extends Map<string, infer U>
+  ? (MapSettingsDefinition & {valueDefinition: Omit<DefinitionForType<U>, 'default'>})
+  : T extends MapConfigurationValue<infer U>
+    ? (ShapeSettingsDefinition & {properties: ConfigurationDefinitionMap<U>})
+    : SimpleDefinitionForType<T>;
+
+type DefinitionForType<T> = T extends Array<infer U>
+  ? (DefinitionForTypeHelper<U> & {isArray: true})
+  : (DefinitionForTypeHelper<T> & {isArray?: false});
+
+// We use this type to enforce that the types defined in the
+// `ConfigurationValueMap` interface match what's listed in
+// the `configuration` field from plugin definitions
+//
+// Note: it doesn't currently support checking enumerated types
+// against what's actually put in the `values` field.
 export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
   [K in keyof V]: DefinitionForType<V[K]>;
 }

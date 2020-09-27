@@ -86,6 +86,7 @@ const plugin: Plugin = {
     defaultSemverRangePrefix: {
       description: `The default save prefix: '^', '~' or ''`,
       type: SettingsType.STRING,
+      values: [`^`, `~`, ``],
       default: suggestUtils.Modifier.CARET,
     },
   },
