@@ -99,7 +99,7 @@ export default class AddCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    const interactive = this.interactive ?? configuration.get<boolean>(`preferInteractive`);
+    const interactive = this.interactive ?? configuration.get(`preferInteractive`);
 
     const modifier = suggestUtils.getModifier(this, project);
 

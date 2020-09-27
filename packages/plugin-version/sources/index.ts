@@ -1,8 +1,19 @@
 import {Plugin, SettingsType} from '@yarnpkg/core';
 
+import {PortablePath}         from '@yarnpkg/fslib';
+
 import versionApply           from './commands/version/apply';
 import versionCheck           from './commands/version/check';
 import version                from './commands/version';
+
+declare module '@yarnpkg/core' {
+  interface ConfigurationValueMap {
+    changesetBaseRefs: Array<string>;
+    changesetIgnorePatterns: Array<string>;
+    deferredVersionFolder: PortablePath;
+    preferDeferredVersions: boolean;
+  }
+}
 
 const plugin: Plugin = {
   configuration: {
