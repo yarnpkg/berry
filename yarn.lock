@@ -3,7 +3,7 @@
 
 __metadata:
   version: 4
-  cacheKey: 6
+  cacheKey: 7
 
 "@algolia/cache-browser-local-storage@npm:4.2.0":
   version: 4.2.0
