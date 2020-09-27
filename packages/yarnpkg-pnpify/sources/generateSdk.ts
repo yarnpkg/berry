@@ -40,7 +40,7 @@ export const validateIntegrations = (integrations: Set<string>) => {
   }
 };
 
-export type MapKey<S> = S extends Map<infer K, infer V> ? K : never;
+export type MapKey<S> = S extends Map<infer K, any> ? K : never;
 
 export type SupportedIntegration = MapKey<typeof SUPPORTED_INTEGRATIONS>;
 

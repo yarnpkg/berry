@@ -49,14 +49,14 @@ export abstract class Report {
     let current = 0;
 
     let unlock: () => void;
-    let lock = new Promise(resolve => {
+    let lock = new Promise<void>(resolve => {
       unlock = resolve;
     });
 
     const set = (n: number) => {
       const thisUnlock = unlock;
 
-      lock = new Promise(resolve => {
+      lock = new Promise<void>(resolve => {
         unlock = resolve;
       });
 

@@ -51,7 +51,7 @@ describe(`ZipOpenFS`, () => {
     const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
 
     const chunks: Array<Buffer> = [];
-    await new Promise(resolve => {
+    await new Promise<void>(resolve => {
       let done = 0;
 
       fs.createReadStream(ZIP_FILE1)
@@ -87,7 +87,7 @@ describe(`ZipOpenFS`, () => {
     const stream1 = fs.createWriteStream(ZIP_FILE1);
     const stream2 = fs.createWriteStream(ZIP_FILE2);
 
-    await new Promise(resolve => {
+    await new Promise<void>(resolve => {
       let done = 0;
       stream1.end(`foo`, () => {
         if (++done === 2) {

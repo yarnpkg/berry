@@ -81,10 +81,6 @@ export async function fetchChangedFiles(root: PortablePath, {base, project}: {ba
     : changedFiles;
 }
 
-type Await<T> = T extends {
-  then(onfulfilled?: (value: infer U) => unknown): unknown;
-} ? U : T;
-
 export type VersionFile = {
   project: Project,
 
