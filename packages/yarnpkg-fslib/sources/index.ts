@@ -28,6 +28,7 @@ export type {ZipCompression}           from './ZipFS';
 
 export {PortablePath, Filename}                            from './path';
 export type {FSPath, Path, NativePath}                     from './path';
+export type {Absolute, Relative, Native, Portable, Flags}  from './path';
 export type {ParsedPath, PathUtils, FormatInputPathObject} from './path';
 export {npath, ppath, toFilename}                          from './path';
 
