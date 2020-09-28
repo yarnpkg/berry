@@ -9,7 +9,7 @@ import {parseSyml}                                                         from 
 import {AbstractPnpInstaller}                                              from '@yarnpkg/plugin-pnp';
 import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits} from '@yarnpkg/pnpify';
 import {buildNodeModulesTree}                                              from '@yarnpkg/pnpify';
-import {PnpSettings, makeRuntimeApi}                                       from '@yarnpkg/pnp';
+import {PnpSettings, makeRuntimeApi, PnpApi}                               from '@yarnpkg/pnp';
 import cmdShim                                                             from '@zkochan/cmd-shim';
 import {UsageError}                                                        from 'clipanion';
 import fs                                                                  from 'fs';
@@ -21,6 +21,7 @@ const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
 
 type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap};
 type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
+type LoadManifest = (locator: LocatorKey, installLocation: PortablePath) => Promise<Manifest>;
 
 export class NodeModulesLinker implements Linker {
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
@@ -124,7 +125,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
       baseFs: defaultFsLayer,
       project: this.opts.project,
       report: this.opts.report,
-      loadManifest: this.cachedManifestLoad.bind(this),
+      loadManifest: this.cachedManifestLoad.bind(this, pnp, defaultFsLayer),
     });
 
     const installStatuses: Array<FinalizeInstallStatus> = [];
@@ -142,7 +143,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
 
       const sourceLocation = npath.toPortablePath(installRecord.locations[0]);
 
-      const manifest = await this.cachedManifestLoad(sourceLocation);
+      const manifest = await this.cachedManifestLoad(pnp, defaultFsLayer, locatorKey, sourceLocation);
       const buildScripts = await this.getSourceBuildScripts(sourceLocation, manifest);
 
       if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`)) {
@@ -174,20 +175,26 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
     return installStatuses;
   }
 
-  private manifestCache: Map<PortablePath, Manifest> = new Map();
+  private manifestCache: Map<LocatorKey, Manifest> = new Map();
 
-  private async cachedManifestLoad(sourceLocation: PortablePath): Promise<Manifest> {
-    let manifest = this.manifestCache.get(sourceLocation);
+  private async cachedManifestLoad(pnp: PnpApi, baseFs: FakeFS<PortablePath>, locator: LocatorKey, installLocation: PortablePath): Promise<Manifest> {
+    let manifest = this.manifestCache.get(locator);
     if (manifest)
       return manifest;
 
     try {
-      manifest = await Manifest.find(sourceLocation);
+      // Optimization: try load manifest from inside node_modules first, if that fails - load from cached archive
+      manifest = await Manifest.find(installLocation);
     } catch (e) {
-      e.message = `While loading ${sourceLocation}: ${e.message}`;
-      throw e;
+      const fallbackLocation = npath.toPortablePath(pnp.getPackageInformation(structUtils.parseLocator(locator))!.packageLocation);
+      try {
+        manifest = await Manifest.find(fallbackLocation, {baseFs});
+      } catch (e) {
+        e.message = `While loading ${fallbackLocation}: ${e.message}`;
+        throw e;
+      }
     }
-    this.manifestCache.set(sourceLocation, manifest);
+    this.manifestCache.set(locator, manifest);
 
     return manifest;
   }
@@ -564,10 +571,10 @@ function isLinkLocator(locatorKey: LocatorKey): boolean {
   return descriptor.range.startsWith(`link:`);
 }
 
-async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, projectRoot: PortablePath, {loadManifest}: {loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
+async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, projectRoot: PortablePath, {loadManifest}: {loadManifest: LoadManifest}) {
   const locatorScriptMap = new Map<LocatorKey, Map<string, string>>();
   for (const [locatorKey, {locations}] of installState) {
-    const manifest = isLinkLocator(locatorKey) ? null : await loadManifest(locations[0]);
+    const manifest = isLinkLocator(locatorKey) ? null : await loadManifest(locatorKey, locations[0]);
 
     const bin = new Map();
     if (manifest) {
@@ -635,7 +642,7 @@ const areRealLocatorsEqual = (locatorKey1?: LocatorKey, locatorKey2?: LocatorKey
   return structUtils.areLocatorsEqual(locator1, locator2);
 };
 
-async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
+async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: LoadManifest}) {
   const rootNmDirPath = ppath.join(project.cwd, NODE_MODULES);
 
   const {locationTree: prevLocationTree, binSymlinks: prevBinSymlinks} = refineNodeModulesRoots(preinstallState.locationTree, preinstallState.binSymlinks);

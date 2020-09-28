@@ -17,6 +17,7 @@ via `nmHoistingLimits` global setting and `installConfig.hoistingLimits` `packag
   thanks to maximizing package exposure at the top-level first and only after that minimizing package duplicates during hoisting.
 - In case of `node_modules` the workspace peer dependencies are no longer ignored. They are picked up
   from the closest workspace, that is upper in directory hierarchy.
+- `node-modules` linker will not fail on running install after interrupted install
 
 ## Bugfixes
 
