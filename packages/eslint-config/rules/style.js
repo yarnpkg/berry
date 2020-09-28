@@ -67,6 +67,13 @@ module.exports = {
 
     'no-multiple-empty-lines': 2,
 
+    'no-multi-spaces': [`error`, {
+      exceptions: {
+        [`ImportDeclaration`]: true,
+        [`ExportNamedDeclaration`]: true,
+      },
+    }],
+
     'no-tabs': 2,
 
     'no-trailing-spaces': 2,
@@ -80,6 +87,8 @@ module.exports = {
     'rest-spread-spacing': 2,
 
     semi: 2,
+
+    'space-infix-ops': 2,
 
     'space-before-blocks': 2,
 

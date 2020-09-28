@@ -39,7 +39,7 @@ export default class WorkspacesListCommand extends BaseCommand {
           const mismatchedWorkspaceDependencies = new Set<Descriptor>();
 
           for (const dependencyType of Manifest.hardDependencies) {
-            for (const [identHash, descriptor]  of manifest.getForScope(dependencyType)) {
+            for (const [identHash, descriptor] of manifest.getForScope(dependencyType)) {
               const matchingWorkspace = project.tryWorkspaceByDescriptor(descriptor);
 
               if (matchingWorkspace === null) {

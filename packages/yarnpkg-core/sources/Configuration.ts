@@ -588,7 +588,7 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
     return result;
 
   for (const [propKey, propValue] of Object.entries(value)) {
-    const normalizedKey = definition.normalizeKeys? definition.normalizeKeys(propKey) : propKey;
+    const normalizedKey = definition.normalizeKeys ? definition.normalizeKeys(propKey) : propKey;
     const subPath = `${path}['${normalizedKey}']`;
 
     // @ts-expect-error: SettingsDefinitionNoDefault has ... no default ... but
@@ -1057,7 +1057,7 @@ export class Configuration {
 
   static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: ((current: unknown) => unknown) | {} | undefined} | ((current: {[key: string]: unknown}) => {[key: string]: unknown})) {
     const rcFilename = getRcFilename();
-    const configurationPath =  ppath.join(cwd, rcFilename as PortablePath);
+    const configurationPath = ppath.join(cwd, rcFilename as PortablePath);
 
     const current = xfs.existsSync(configurationPath)
       ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any

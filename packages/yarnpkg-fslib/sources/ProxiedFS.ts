@@ -20,7 +20,7 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.getExtractHint(hints);
   }
 
-  resolve(path: P)  {
+  resolve(path: P) {
     return this.mapFromBase(this.baseFs.resolve(this.mapToBase(path)));
   }
 
@@ -233,7 +233,7 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     // This weird condition is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
     if (encoding === `utf8`) {
       return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
-    } else  {
+    } else {
       return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
     }
   }

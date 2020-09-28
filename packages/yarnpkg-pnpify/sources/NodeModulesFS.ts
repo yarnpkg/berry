@@ -66,7 +66,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   }
 
   private watchPnpFile(pnpRootPath: PortablePath) {
-    this.baseFs.watch(pnpRootPath, {persistent: false},  (_, filename) => {
+    this.baseFs.watch(pnpRootPath, {persistent: false}, (_, filename) => {
       if (filename === `.pnp.js`) {
         delete require.cache[this.pnpFilePath];
         const pnp = require(this.pnpFilePath);

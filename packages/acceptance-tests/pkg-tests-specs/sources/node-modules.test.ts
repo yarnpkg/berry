@@ -315,7 +315,7 @@ describe(`Node_Modules`, () => {
           version: `1.0.0`,
           dependencies: {
             [`no-deps`]: `npm:no-deps-bins@1.0.0`, // Should NOT be hoisted to the top
-            [`no-deps2`]: `npm:no-deps@2.0.0`,     // Should be hoisted to the top
+            [`no-deps2`]: `npm:no-deps@2.0.0`, // Should be hoisted to the top
           },
         });
         await writeFile(`${path}/packages/workspace/index.js`,

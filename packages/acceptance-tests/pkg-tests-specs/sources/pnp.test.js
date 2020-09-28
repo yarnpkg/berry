@@ -1660,7 +1660,7 @@ describe(`Plug'n'Play`, () => {
 
   test(
     `it should take trailing slashes into account when resolving paths`,
-    makeTemporaryEnv({},  async ({path, run, source}) => {
+    makeTemporaryEnv({}, async ({path, run, source}) => {
       await writeFile(`${path}/foo.js`, ``);
 
       await mkdirp(`${path}/foo`);
@@ -1677,7 +1677,7 @@ describe(`Plug'n'Play`, () => {
    */
   test(
     `it should take trailing slashes inside the packageLocations of the PnP serialized state into account when resolving packages`,
-    makeTemporaryEnv({},  async ({path, run, source}) => {
+    makeTemporaryEnv({}, async ({path, run, source}) => {
       await writeFile(`${path}/package.json`, JSON.stringify({
         dependencies: {
           [`pkg`]: `link:./package`,

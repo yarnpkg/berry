@@ -81,7 +81,7 @@ export abstract class FakeFS<P extends Path> {
   public readonly pathUtils: PathUtils<P>;
 
   protected constructor(pathUtils: PathUtils<P>) {
-    this.pathUtils =  pathUtils;
+    this.pathUtils = pathUtils;
   }
 
   abstract getExtractHint(hints: ExtractHintOptions): boolean;

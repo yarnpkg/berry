@@ -119,7 +119,7 @@ export const packToFile = (target: PortablePath, source: PortablePath, options: 
 
 export const unpackToDirectory = (target: PortablePath, source: PortablePath): Promise<void> => {
   const tarballStream = xfs.createReadStream(source);
-  const gunzipStream =  zlib.createUnzip();
+  const gunzipStream = zlib.createUnzip();
   const extractStream = tarFs.extract(npath.fromPortablePath(target));
 
   tarballStream.pipe(gunzipStream).pipe(extractStream);

@@ -52,7 +52,7 @@ declare module '@yarnpkg/core' {
     npmPublishRegistry: string | null;
     npmRegistryServer: string;
 
-    npmScopes:  Map<string, MapConfigurationValue<{
+    npmScopes: Map<string, MapConfigurationValue<{
       npmAlwaysAuth: boolean;
       npmAuthIdent: string|null;
       npmAuthToken: string|null;

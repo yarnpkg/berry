@@ -29,7 +29,7 @@ export default class PluginListCommand extends BaseCommand {
       stdout: this.context.stdout,
     }, async report => {
       for (const name of configuration.plugins.keys()) {
-        const builtin  = this.context.plugins.plugins.has(name);
+        const builtin = this.context.plugins.plugins.has(name);
         let label = name;
 
         if (builtin)

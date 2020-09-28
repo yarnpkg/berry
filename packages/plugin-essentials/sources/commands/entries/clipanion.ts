@@ -15,7 +15,7 @@ export default class ClipanionCommand extends Command<CommandContext> {
   async execute() {
     const {plugins} = await Configuration.find(this.context.cwd, this.context.plugins);
 
-    const pluginDefinitions: Array<[string, Array<ClipanionDefinition>]>  = [];
+    const pluginDefinitions: Array<[string, Array<ClipanionDefinition>]> = [];
     for (const plugin of plugins) {
       const {commands} = plugin[1];
       if (commands) {

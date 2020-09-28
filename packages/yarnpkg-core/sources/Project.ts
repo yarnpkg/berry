@@ -1722,7 +1722,7 @@ export class Project {
     }
   }
 
-  async cacheCleanup({cache, report}: InstallOptions)  {
+  async cacheCleanup({cache, report}: InstallOptions) {
     const PRESERVED_FILES = new Set([
       `.gitignore`,
     ]);

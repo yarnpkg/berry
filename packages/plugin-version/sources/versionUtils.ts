@@ -365,7 +365,7 @@ export function getUndecidedDependentWorkspaces(versionFile: Pick<VersionFile, '
       continue;
 
     for (const dependencyType of Manifest.hardDependencies) {
-      for (const descriptor  of workspace.manifest.getForScope(dependencyType).values()) {
+      for (const descriptor of workspace.manifest.getForScope(dependencyType).values()) {
         const matchingWorkspace = versionFile.project.tryWorkspaceByDescriptor(descriptor);
         if (matchingWorkspace === null)
           continue;

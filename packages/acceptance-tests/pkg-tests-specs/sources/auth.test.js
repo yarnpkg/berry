@@ -203,7 +203,7 @@ describe(`Auth tests`, () => {
           `  private:`,
           `    npmRegistryServer: "${url}"`,
           `npmRegistries:`,
-          `  "${url}/":`,  // Testing the trailing `/`
+          `  "${url}/":`, // Testing the trailing `/`
           `    npmAuthToken: ${AUTH_TOKEN}`,
         ].join(`\n`));
 

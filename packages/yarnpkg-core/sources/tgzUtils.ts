@@ -132,7 +132,7 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
 
   const gunzipped = await gunzip(tgz);
 
-  return await new Promise<T>((resolve, reject) =>  {
+  return await new Promise<T>((resolve, reject) => {
     parser.on(`error`, (error: Error) => {
       reject(error);
     });

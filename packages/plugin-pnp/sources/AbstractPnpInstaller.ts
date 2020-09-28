@@ -227,6 +227,6 @@ export abstract class AbstractPnpInstaller implements Installer {
       // Don't use ppath.join here, it ignores the `.`
       relativeFolder = `./${relativeFolder}` as PortablePath;
 
-    return relativeFolder.replace(/\/?$/, `/`)  as PortablePath;
+    return relativeFolder.replace(/\/?$/, `/`) as PortablePath;
   }
 }

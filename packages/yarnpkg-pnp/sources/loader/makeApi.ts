@@ -844,7 +844,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     },
 
     resolveToUnqualified: maybeLog(`resolveToUnqualified`, (request: NativePath, issuer: NativePath | null, opts?: ResolveToUnqualifiedOptions) => {
-      const portableIssuer = issuer !== null ?  npath.toPortablePath(issuer) : null;
+      const portableIssuer = issuer !== null ? npath.toPortablePath(issuer) : null;
 
       const resolution = resolveToUnqualified(npath.toPortablePath(request), portableIssuer, opts);
       if (resolution === null)
