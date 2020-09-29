@@ -19,21 +19,21 @@ function getTransitiveDependencies(project: Project, roots: Array<DescriptorHash
   // Final result set
   const transitiveDependencies = new Set<DescriptorHash>();
 
-  const {storedResolutions, originalPackages} = project;
+  const {storedResolutions, storedPackages} = project;
 
   while (queue.length > 0) {
     const descriptorHash = queue.shift();
     const locatorHash = storedResolutions.get(descriptorHash as DescriptorHash);
-    const originalPackage = originalPackages.get(locatorHash as LocatorHash);
+    const storedPackage = storedPackages.get(locatorHash as LocatorHash);
 
-    if (!originalPackage)
+    if (!storedPackage)
       continue;
 
     // Add the dependency to the result set
     transitiveDependencies.add(descriptorHash as DescriptorHash);
 
     // Enqueue any dependencies of the dependency for processing
-    const dependencyDescriptorHashes = Array.from(originalPackage.dependencies.values()).map(dependency => dependency.descriptorHash);
+    const dependencyDescriptorHashes = Array.from(storedPackage.dependencies.values()).map(dependency => dependency.descriptorHash);
     dependencyDescriptorHashes.forEach(enqueue);
   }
 
@@ -52,7 +52,7 @@ function setDifference<T>(x: Set<T>, y: Set<T>): Set<T> {
 export function getTransitiveDevDependencies(
   project: Project,
   workspace: Workspace,
-): Set<string> {
+): Set<DescriptorHash> {
   // Enumerate the top-level package manifest as well as any workspace manifests
   const manifests = [workspace.manifest, ...project.workspaces.map(workspace => workspace.manifest)];
 

@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                                        from '@yarnpkg/cli';
-import {Configuration, Descriptor, Project, ReportError, StreamReport, MessageName} from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils}                                               from '@yarnpkg/plugin-npm';
-import {Command, Usage}                                                             from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                from '@yarnpkg/cli';
+import {Configuration, Descriptor, Project, ReportError, StreamReport, MessageName, structUtils, treeUtils} from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils}                                                                       from '@yarnpkg/plugin-npm';
+import {Command, Usage}                                                                                     from 'clipanion';
 
-import {getTransitiveDevDependencies}                                               from './auditUtils';
+import {getTransitiveDevDependencies}                                                                       from './auditUtils';
 
 export enum Severity {
   Info = `info`,
@@ -124,6 +124,8 @@ export default class AuditCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
+    await project.restoreInstallState();
+
     const report = await StreamReport.start({
       configuration,
       includeFooter: false,
@@ -134,16 +136,15 @@ export default class AuditCommand extends BaseCommand {
         [...acc, ...workspace.manifest.dependencies.values()], new Array());
       const requiredDevDependencies = project.workspaces.reduce((acc, workspace) =>
         [...acc, ...workspace.manifest.devDependencies.values()], new Array());
-      const requiredAllDependencies = [...requiredDependencies, ...requiredDevDependencies];
-      const requires = transformDescriptorIterableToRequiresObject(requiredAllDependencies);
+      const requires = transformDescriptorIterableToRequiresObject([...requiredDependencies, ...requiredDevDependencies]);
 
       const transitiveDevDependencies = getTransitiveDevDependencies(project, workspace);
       const dependencies = Array.from(project.originalPackages.values()).reduce((acc, cur) => ({
-        ...acc, [cur.scope ? `@${cur.scope}/${cur.name}` : cur.name]: {
+        ...acc, [structUtils.stringifyIdent(cur)]: {
           version: cur.version,
           integrity: cur.identHash,
           requires: transformDescriptorIterableToRequiresObject(cur.dependencies.values()),
-          dev: transitiveDevDependencies.has(cur.identHash),
+          dev: transitiveDevDependencies.has(structUtils.convertLocatorToDescriptor(structUtils.convertPackageToLocator(cur)).descriptorHash),
         },
       }), {});
 
@@ -174,6 +175,14 @@ export default class AuditCommand extends BaseCommand {
 
       if (isError(result.metadata.vulnerabilities, this.severity)) {
         report.reportError(MessageName.EXCEPTION, JSON.stringify(result, undefined, 2));
+        const auditTreeChildren: treeUtils.TreeMap = {};
+        const auditTree: treeUtils.TreeNode = {children: auditTreeChildren};
+        treeUtils.emitTree(auditTree, {
+          configuration,
+          json: this.json,
+          stdout: this.context.stdout,
+          separators: 2,
+        });
       }
     });
 
@@ -183,7 +192,7 @@ export default class AuditCommand extends BaseCommand {
 
 function transformDescriptorIterableToRequiresObject(descriptors: Iterable<Descriptor>): { [key: string]: string } {
   return Array.from(descriptors).reduce((acc, cur) => ({
-    ...acc, [cur.scope ? `@${cur.scope}/${cur.name}` : cur.name]: cur.range,
+    ...acc, [structUtils.stringifyIdent(cur)]: cur.range,
   }), {});
 }
 
