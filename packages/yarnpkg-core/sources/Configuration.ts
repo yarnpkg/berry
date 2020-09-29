@@ -300,12 +300,17 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   httpProxy: {
     description: `URL of the http proxy that must be used for outgoing http requests`,
     type: SettingsType.STRING,
-    default: null,
+    default: process.env.HTTP_PROXY || process.env.http_proxy || null,
   },
   httpsProxy: {
     description: `URL of the http proxy that must be used for outgoing https requests`,
     type: SettingsType.STRING,
-    default: null,
+    default: process.env.HTTPS_PROXY || process.env.https_proxy || null,
+  },
+  noProxy: {
+    description: `Comma-separated list of URLs, hostnames, and domain names to exclude from proxying`,
+    type: SettingsType.STRING,
+    default: process.env.NO_PROXY || process.env.no_proxy || null,
   },
   unsafeHttpWhitelist: {
     description: `List of the hostnames for which http queries are allowed (glob patterns are supported)`,
@@ -506,6 +511,7 @@ export interface ConfigurationValueMap {
   enableNetwork: boolean;
   httpProxy: string;
   httpsProxy: string;
+  noProxy: string;
   unsafeHttpWhitelist: Array<string>;
   httpTimeout: number;
   httpRetry: number;

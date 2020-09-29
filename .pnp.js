@@ -8887,6 +8887,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "npm:2.6.2"],
             ["cross-spawn", "npm:7.0.3"],
             ["diff", "npm:4.0.1"],
+            ["gate-agent", "npm:0.2.3"],
             ["globby", "npm:11.0.1"],
             ["got", "npm:11.7.0"],
             ["json-file-plus", "npm:3.3.1"],
@@ -8900,8 +8901,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["stream-to-promise", "npm:2.2.0"],
             ["tar-stream", "npm:2.0.1"],
             ["treeify", "npm:1.1.0"],
-            ["tslib", "npm:1.13.0"],
-            ["tunnel", "npm:0.0.6"]
+            ["tslib", "npm:1.13.0"]
           ],
           "linkType": "SOFT",
         }]
@@ -17927,6 +17927,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/functional-red-black-tree-npm-1.0.1-ccfe924dcd-477ecaf62d.zip/node_modules/functional-red-black-tree/",
           "packageDependencies": [
             ["functional-red-black-tree", "npm:1.0.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["gate-agent", [
+        ["npm:0.2.3", {
+          "packageLocation": "./.yarn/cache/gate-agent-npm-0.2.3-c8d6982898-0fda3b3c04.zip/node_modules/gate-agent/",
+          "packageDependencies": [
+            ["gate-agent", "npm:0.2.3"],
+            ["debug", "virtual:ebe93d6532e43d78779479b0dabfe2d284fd2cc037fde073604e57fc384c1044e905ed82c7d081310a0af68c672c6a0a67f8fdbca758f0bd26d9fc4456fbf1af#npm:4.1.1"]
           ],
           "linkType": "HARD",
         }]
@@ -33596,13 +33606,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/tunnel-npm-0.0.4-14c43b87d4-81faf737a1.zip/node_modules/tunnel/",
           "packageDependencies": [
             ["tunnel", "npm:0.0.4"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:0.0.6", {
-          "packageLocation": "./.yarn/cache/tunnel-npm-0.0.6-b1c0830ea4-78fbb1a55a.zip/node_modules/tunnel/",
-          "packageDependencies": [
-            ["tunnel", "npm:0.0.6"]
           ],
           "linkType": "HARD",
         }]

@@ -5502,6 +5502,7 @@ __metadata:
     clipanion: ^2.6.2
     cross-spawn: 7.0.3
     diff: ^4.0.1
+    gate-agent: ^0.2.3
     globby: ^11.0.1
     got: ^11.7.0
     json-file-plus: ^3.3.1
@@ -5516,7 +5517,6 @@ __metadata:
     tar-stream: ^2.0.1
     treeify: ^1.1.0
     tslib: ^1.13.0
-    tunnel: ^0.0.6
   languageName: unknown
   linkType: soft
 
@@ -12866,6 +12866,18 @@ fsevents@^1.2.7:
   version: 1.0.1
   resolution: "functional-red-black-tree@npm:1.0.1"
   checksum: 477ecaf62d4f8d788876099b35ed4b97586b331e729d2d28d0df96b598863d21c18b8a45a6cbecb6c2bf7f5e5ef1e82a053570583ef9a0ff8336683ab42b8d14
+  languageName: node
+  linkType: hard
+
+"gate-agent@npm:^0.2.3":
+  version: 0.2.3
+  resolution: "gate-agent@npm:0.2.3"
+  dependencies:
+    debug: ^4.1.1
+  dependenciesMeta:
+    debug:
+      optional: true
+  checksum: 0fda3b3c041361b5873490a11e5984a0fbef9e6764372cac7c015ced106856a5bc0bb672a56c6e6e2e6f678d0bbd1afafa64c77da081480a17602643fcbdc5b5
   languageName: node
   linkType: hard
 
@@ -26245,13 +26257,6 @@ resolve@1.9.0:
   version: 0.0.4
   resolution: "tunnel@npm:0.0.4"
   checksum: 81faf737a19fd32f81de3cacc5681ad14937a9095f2f2ad5de5e57721d3dd846758321ce04856450d008c3c20174cb06e4481c54e4043e8ad07671e6e01294dd
-  languageName: node
-  linkType: hard
-
-"tunnel@npm:^0.0.6":
-  version: 0.0.6
-  resolution: "tunnel@npm:0.0.6"
-  checksum: 78fbb1a55a44fc8de6a497923bf7bf6e7b14b396e0ddaf11fe624ab7f646a0d2ada03f6dcb4a80940faed9649e30d229114f218e8906badd12ded2323a6f666b
   languageName: node
   linkType: hard
 
