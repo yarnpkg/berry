@@ -178,7 +178,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
         }
         node = nextNode;
       }
-      node.workspaceLocator = workspace.anchoredLocator;
+      node.workspaceLocator = {name: structUtils.stringifyIdent(workspace.anchoredLocator), reference: workspace.anchoredLocator.reference};
     }
 
     const addWorkspace = (node: WorkspaceTree, parentWorkspaceLocator: PhysicalPackageLocator) => {
@@ -259,7 +259,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       if (workspace) {
         node.peerNames = new Set([
           ...pkg.packagePeers,
-          ...Array.from(workspace.manifest.peerDependencies.values()).map(x => x.scope ? `@${x.scope}/${x.name}` : x.name),
+          ...Array.from(workspace.manifest.peerDependencies.values(), x => structUtils.stringifyIdent(x)),
           ...Array.from(workspace.manifest.peerDependenciesMeta.keys()),
         ]);
         for (const peerName of node.peerNames) {
