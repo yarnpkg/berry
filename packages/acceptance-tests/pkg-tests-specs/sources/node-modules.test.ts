@@ -713,4 +713,30 @@ describe(`Node_Modules`, () => {
       },
     )
   );
+
+  test(`should install dependencies in scoped workspaces`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`foo`],
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
+          name: `@scope/foo`,
+          version: `1.0.0`,
+          dependencies: {
+            'no-deps': `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/@scope/foo` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/node_modules/no-deps` as PortablePath)).toEqual(true);
+      },
+    )
+  );
 });
