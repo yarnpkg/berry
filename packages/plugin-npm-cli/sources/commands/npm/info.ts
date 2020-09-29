@@ -34,13 +34,14 @@ export default class InfoCommand extends BaseCommand {
   @Command.Rest()
   packages!: string;
 
-  @Command.String(`-f,--fields`)
+  @Command.String(`-f,--fields`, {description: `A comma-separated list of manifest fields that should be displayed`})
   fields?: string;
 
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   static usage: Usage = Command.Usage({
+    category: `Npm-related commands`,
     description: `show information about a package`,
     details: `
       This command will fetch information about a package from the npm registry, and prints it in a tree format.
@@ -52,8 +53,6 @@ export default class InfoCommand extends BaseCommand {
       If the \`-f,--fields\` option is set, it's a comma-separated list of fields which will be used to only display part of the package informations.
 
       By default, this command won't return the \`dist\`, \`readme\`, and \`users\` fields, since they are often very long. To explicitly request those fields, explicitly list them with the \`--fields\` flag or request the output in JSON mode.
-
-      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
     `,
     examples: [[
       `Show all available information about react (except the \`dist\`, \`readme\`, and \`users\` fields)`,

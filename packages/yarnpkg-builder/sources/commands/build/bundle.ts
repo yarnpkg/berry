@@ -31,30 +31,22 @@ const suggestHash = async (basedir: string) => {
 
 // eslint-disable-next-line arca/no-default-export
 export default class BuildBundleCommand extends Command {
-  @Command.String(`--profile`)
+  @Command.String(`--profile`, {description: `Only include plugins that are part of the the specified profile`})
   profile: string = `standard`;
 
-  @Command.Array(`--plugin`)
+  @Command.Array(`--plugin`, {description: `An array of plugins that should be included besides the ones specified in the profile`})
   plugins: Array<string> = [];
 
-  @Command.Boolean(`--no-git-hash`)
+  @Command.Boolean(`--no-git-hash`, {description: `Don't include the git hash of the current commit in bundle version`})
   noGitHash: boolean = false;
 
-  @Command.Boolean(`--no-minify`)
+  @Command.Boolean(`--no-minify`, {description: `Build a bundle for development, without optimizations (minifying, mangling, treeshaking)`})
   noMinify: boolean = false;
 
   static usage: Usage = Command.Usage({
     description: `build the local bundle`,
     details: `
       This command builds the local bundle - the Yarn binary file that is installed in projects.
-
-      If the \`--no-minify\` option is used, the bundle will be built in development mode, without any optimizations like minifying, symbol scrambling, and treeshaking.
-
-      If the \`--no-git-hash\` option is used, the version of the bundle won't include the git hash of the current commit.
-
-      If the \`--profile\` flag is set, the bundle will only include the plugins that are part of the the specified profile.
-
-      If the \`--plugin\` flag is used, the bundle will also include the specified plugins besides the ones included in the specified profile.
     `,
     examples: [[
       `Build the local bundle`,

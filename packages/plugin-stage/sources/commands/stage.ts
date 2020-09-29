@@ -14,16 +14,20 @@ const ALL_DRIVERS = [
 
 // eslint-disable-next-line arca/no-default-export
 export default class StageCommand extends BaseCommand {
-  @Command.Boolean(`-c,--commit`)
+  @Command.Boolean(`-c,--commit`, {description: `Commit the staged files`})
   commit: boolean = false;
 
-  @Command.Boolean(`-r,--reset`)
+  @Command.Boolean(`-r,--reset`, {description: `Remove all files from the staging area`})
   reset: boolean = false;
 
-  @Command.Boolean(`-u,--update`)
+  // TODO: implement it. Its purpose is, quoting @arcanis:
+  // "iirc I intended it to update (amend) the current
+  // commit if it exists, or to create a new one otherwise"
+  // TODO: unhide it and add a description once implemented
+  @Command.Boolean(`-u,--update`, {hidden: true})
   update: boolean = false;
 
-  @Command.Boolean(`-n,--dry-run`)
+  @Command.Boolean(`-n,--dry-run`, {description: `Print the commit message and the list of modified files without staging / committing`})
   dryRun: boolean = false;
 
   static usage: Usage = Command.Usage({

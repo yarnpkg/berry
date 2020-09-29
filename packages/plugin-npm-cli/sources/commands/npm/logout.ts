@@ -13,13 +13,13 @@ const LOGOUT_KEYS = new Set([
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmLogoutCommand extends BaseCommand {
-  @Command.String(`-s,--scope`)
+  @Command.String(`-s,--scope`, {description: `Logout of the registry configured for a given scope`})
   scope?: string;
 
-  @Command.Boolean(`--publish`)
+  @Command.Boolean(`--publish`, {description: `Logout of the publish registry`})
   publish: boolean = false;
 
-  @Command.Boolean(`-A,--all`)
+  @Command.Boolean(`-A,--all`, {description: `Logout of all registries`})
   all: boolean = false;
 
   static usage: Usage = Command.Usage({

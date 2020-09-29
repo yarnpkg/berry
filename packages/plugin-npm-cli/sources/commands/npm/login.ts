@@ -8,10 +8,10 @@ import {prompt}                                        from 'enquirer';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmLoginCommand extends BaseCommand {
-  @Command.String(`-s,--scope`)
+  @Command.String(`-s,--scope`, {description: `Login to the registry configured for a given scope`})
   scope?: string;
 
-  @Command.Boolean(`--publish`)
+  @Command.Boolean(`--publish`, {description: `Login to the publish registry`})
   publish: boolean = false;
 
   static usage: Usage = Command.Usage({

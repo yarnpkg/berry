@@ -7,16 +7,16 @@ import {Command, Usage}                                                         
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
-  @Command.Boolean(`--immutable`)
+  @Command.Boolean(`--immutable`, {description: `Abort with an error exit code if the lockfile was to be modified`})
   immutable?: boolean;
 
-  @Command.Boolean(`--immutable-cache`)
+  @Command.Boolean(`--immutable-cache`, {description: `Abort with an error exit code if the cache folder was to be modified`})
   immutableCache?: boolean;
 
-  @Command.Boolean(`--check-cache`)
+  @Command.Boolean(`--check-cache`, {description: `Always refetch the packages and ensure that their checksums are consistent`})
   checkCache: boolean = false;
 
   @Command.Boolean(`--production`, {hidden: true})
@@ -37,7 +37,7 @@ export default class YarnCommand extends BaseCommand {
   @Command.String(`--registry`, {hidden: true})
   registry?: string;
 
-  @Command.Boolean(`--inline-builds`)
+  @Command.Boolean(`--inline-builds`, {description: `Verbosely print the output of the build steps of dependencies`})
   inlineBuilds?: boolean;
 
   @Command.String(`--cache-folder`, {hidden: true})
@@ -68,8 +68,6 @@ export default class YarnCommand extends BaseCommand {
       If the \`--check-cache\` option is set, Yarn will always refetch the packages and will ensure that their checksum matches what's 1/ described in the lockfile 2/ inside the existing cache files (if present). This is recommended as part of your CI workflow if you're both following the Zero-Installs model and accepting PRs from third-parties, as they'd otherwise have the ability to alter the checked-in packages before submitting them.
 
       If the \`--inline-builds\` option is set, Yarn will verbosely print the output of the build steps of your dependencies (instead of writing them into individual files). This is likely useful mostly for debug purposes only when using Docker-like environments.
-
-      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
     `,
     examples: [[
       `Install the project`,

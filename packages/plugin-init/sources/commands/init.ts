@@ -17,13 +17,13 @@ export default class InitCommand extends BaseCommand {
   @Command.Boolean(`-y,--yes`, {hidden: true})
   yes: boolean = false;
 
-  @Command.Boolean(`-p,--private`)
+  @Command.Boolean(`-p,--private`, {description: `Initialize a private package`})
   private: boolean = false;
 
-  @Command.Boolean(`-w,--workspace`)
+  @Command.Boolean(`-w,--workspace`, {description: `Initialize a private workspace root with a \`packages/\` directory`})
   workspace: boolean = false;
 
-  @Command.String(`-i,--install`, {tolerateBoolean: true})
+  @Command.String(`-i,--install`, {tolerateBoolean: true, description: `Initialize a package with a specific bundle that will be locked in the project`})
   install: string | boolean = false;
 
   static usage: Usage = Command.Usage({
