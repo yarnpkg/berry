@@ -37,7 +37,7 @@ import * as suggestUtils                                        from './suggestU
 
 export {suggestUtils};
 
-export interface Hooks {
+interface EssentialHooks {
   afterWorkspaceDependencyAddition?: (
     workspace: Workspace,
     target: suggestUtils.Target,
@@ -63,6 +63,39 @@ export interface Hooks {
     extra: Set<string>,
     registerData: (namespace: string, data: Array<formatUtils.Tuple> | {[key: string]: formatUtils.Tuple | undefined}) => void,
   ) => Promise<void>,
+}
+
+/** @deprecated use Hooks from @yarnpkg/core instead */
+export type Hooks = EssentialHooks;
+
+declare module '@yarnpkg/core' {
+  interface Hooks {
+    afterWorkspaceDependencyAddition?: (
+      workspace: Workspace,
+      target: `${suggestUtils.Target}`,
+      descriptor: Descriptor,
+      strategies: Array<`${suggestUtils.Strategy}`>
+    ) => Promise<void>,
+
+    afterWorkspaceDependencyReplacement?: (
+      workspace: Workspace,
+      target: `${suggestUtils.Target}`,
+      fromDescriptor: Descriptor,
+      toDescriptor: Descriptor,
+    ) => Promise<void>,
+
+    afterWorkspaceDependencyRemoval?: (
+      workspace: Workspace,
+      target: `${suggestUtils.Target}`,
+      descriptor: Descriptor,
+    ) => Promise<void>,
+
+    fetchPackageInfo?: (
+      pkg: Package,
+      extra: Set<string>,
+      registerData: (namespace: string, data: Array<formatUtils.Tuple> | {[key: string]: formatUtils.Tuple | undefined}) => void,
+    ) => Promise<void>,
+  }
 }
 
 declare module '@yarnpkg/core' {

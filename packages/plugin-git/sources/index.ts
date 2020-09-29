@@ -4,7 +4,7 @@ import {GitFetcher}                                               from './GitFet
 import {GitResolver}                                              from './GitResolver';
 import * as gitUtils                                              from './gitUtils';
 
-export interface Hooks {
+interface GitHooks {
   fetchHostedRepository?: (
     current: FetchResult | null,
     locator: Locator,
@@ -12,9 +12,15 @@ export interface Hooks {
   ) => Promise<FetchResult | null>,
 }
 
+/** @deprecated use Hooks from @yarnpkg/core instead */
+export type Hooks = GitHooks;
+
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     cloneConcurrency: number;
+  }
+
+  interface Hooks extends GitHooks {
   }
 }
 

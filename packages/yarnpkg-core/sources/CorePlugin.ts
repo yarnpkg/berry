@@ -8,7 +8,7 @@ import {Descriptor, Locator}      from './types';
 
 export const CorePlugin: Plugin = {
   hooks: {
-    reduceDependency: (dependency: Descriptor, project: Project, locator: Locator, initialDependency: Descriptor, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) => {
+    reduceDependency: async (dependency: Descriptor, project: Project, locator: Locator, initialDependency: Descriptor, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) => {
       for (const {pattern, reference} of project.topLevelWorkspace.manifest.resolutions) {
         if (pattern.from && pattern.from.fullName !== structUtils.requirableIdent(locator))
           continue;

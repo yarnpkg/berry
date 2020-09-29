@@ -1,10 +1,9 @@
-import {Hooks as CoreHooks, Plugin, structUtils} from '@yarnpkg/core';
-import {Hooks as PatchHooks}                     from '@yarnpkg/plugin-patch';
+import {Plugin, structUtils}            from '@yarnpkg/core';
 
-import {packageExtensions}                       from './extensions';
-import {getPatch as getFseventsPatch}            from './patches/fsevents.patch';
-import {getPatch as getResolvePatch}             from './patches/resolve.patch';
-import {getPatch as getTypescriptPatch}          from './patches/typescript.patch';
+import {packageExtensions}              from './extensions';
+import {getPatch as getFseventsPatch}   from './patches/fsevents.patch';
+import {getPatch as getResolvePatch}    from './patches/resolve.patch';
+import {getPatch as getTypescriptPatch} from './patches/typescript.patch';
 
 const PATCHES = new Map([
   [structUtils.makeIdent(null, `fsevents`).identHash, getFseventsPatch],
@@ -12,7 +11,7 @@ const PATCHES = new Map([
   [structUtils.makeIdent(null, `typescript`).identHash, getTypescriptPatch],
 ]);
 
-const plugin: Plugin<CoreHooks & PatchHooks> = {
+const plugin: Plugin = {
   hooks: {
     registerPackageExtensions: async (configuration, registerPackageExtension) => {
       for (const [descriptorStr, extensionData] of packageExtensions) {

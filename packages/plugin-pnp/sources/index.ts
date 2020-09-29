@@ -1,12 +1,11 @@
-import {Hooks as CoreHooks, Plugin, Project, SettingsType} from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs}         from '@yarnpkg/fslib';
-import {Hooks as StageHooks}                               from '@yarnpkg/plugin-stage';
+import {Plugin, Project, SettingsType}             from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
 
-import semver                                              from 'semver';
+import semver                                      from 'semver';
 
-import {PnpLinker}                                         from './PnpLinker';
-import unplug                                              from './commands/unplug';
-import * as pnpUtils                                       from './pnpUtils';
+import {PnpLinker}                                 from './PnpLinker';
+import unplug                                      from './commands/unplug';
+import * as pnpUtils                               from './pnpUtils';
 
 export {pnpUtils};
 
@@ -72,7 +71,7 @@ declare module '@yarnpkg/core' {
   }
 }
 
-const plugin: Plugin<CoreHooks & StageHooks> = {
+const plugin: Plugin = {
   hooks: {
     populateYarnPaths,
     setupScriptEnvironment,

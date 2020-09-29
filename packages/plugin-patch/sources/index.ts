@@ -8,16 +8,22 @@ import * as patchUtils                 from './patchUtils';
 
 export {patchUtils};
 
-export interface Hooks {
+interface PatchHooks {
   getBuiltinPatch?: (
     project: Project,
     name: string,
   ) => Promise<string | null | void>,
 }
 
+/** @deprecated use Hooks from @yarnpkg/core instead */
+export type Hooks = PatchHooks;
+
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     enableInlineHunks: boolean;
+  }
+
+  interface Hooks extends PatchHooks {
   }
 }
 

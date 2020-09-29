@@ -1,8 +1,6 @@
 import {Descriptor, Plugin, Workspace, ResolveOptions, Manifest, AllDependencies, DescriptorHash, Package} from '@yarnpkg/core';
 import {structUtils, ThrowReport, miscUtils}                                                               from '@yarnpkg/core';
-import {Hooks as EssentialsHooks}                                                                          from '@yarnpkg/plugin-essentials';
 import {suggestUtils}                                                                                      from '@yarnpkg/plugin-essentials';
-import {Hooks as PackHooks}                                                                                from '@yarnpkg/plugin-pack';
 import semver                                                                                              from 'semver';
 
 import {hasDefinitelyTyped}                                                                                from './typescriptUtils';
@@ -15,9 +13,9 @@ const getTypesName = (descriptor: Descriptor) => {
 
 const afterWorkspaceDependencyAddition = async (
   workspace: Workspace,
-  dependencyTarget: suggestUtils.Target,
+  dependencyTarget: unknown,
   descriptor: Descriptor,
-  strategies: Array<suggestUtils.Strategy>
+  strategies: unknown
 ) => {
   if (descriptor.scope === `types`)
     return;
@@ -99,7 +97,7 @@ const afterWorkspaceDependencyAddition = async (
 
 const afterWorkspaceDependencyRemoval = async (
   workspace: Workspace,
-  dependencyTarget: suggestUtils.Target,
+  dependencyTarget: unknown,
   descriptor: Descriptor,
 ) => {
   if (descriptor.scope === `types`)
@@ -128,7 +126,7 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
   }
 };
 
-const plugin: Plugin<EssentialsHooks & PackHooks> = {
+const plugin: Plugin = {
   hooks: {
     afterWorkspaceDependencyAddition,
     afterWorkspaceDependencyRemoval,

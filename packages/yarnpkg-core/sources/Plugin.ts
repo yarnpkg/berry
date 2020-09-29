@@ -34,7 +34,7 @@ export interface ResolverPlugin {
   new(): Resolver;
 }
 
-export type Hooks = {
+export interface Hooks {
   // Called when the package extensions are setup. Can be used to inject new
   // ones (for example, that's what the compat plugin uses to workaround
   // metadata problems).
@@ -117,9 +117,9 @@ export type Hooks = {
     project: Project,
     definePath: (path: PortablePath | null) => void,
   ) => Promise<void>,
-};
+}
 
-export type Plugin<PluginHooks = any> = {
+export type Plugin<PluginHooks = Hooks> = {
   configuration?: Partial<ConfigurationDefinitionMap>,
   commands?: Array<CommandClass<CommandContext>>,
   fetchers?: Array<FetcherPlugin>,

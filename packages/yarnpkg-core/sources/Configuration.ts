@@ -1415,6 +1415,9 @@ export class Configuration {
     });
   }
 
+  async triggerHook<U extends Array<any>, V>(get: (hooks: Hooks) => ((...args: U) => V) | undefined, ...args: U): Promise<void>;
+  /** @deprecated Use the version without HooksDefinition generic parameter */
+  async triggerHook<U extends Array<any>, V, HooksDefinition>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, ...args: U): Promise<void>;
   async triggerHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, ...args: U): Promise<void> {
     for (const plugin of this.plugins.values()) {
       const hooks = plugin.hooks as HooksDefinition;
@@ -1429,12 +1432,18 @@ export class Configuration {
     }
   }
 
+  async triggerMultipleHooks<U extends Array<any>, V>(get: (hooks: Hooks) => ((...args: U) => V) | undefined, argsList: Array<U>): Promise<void>;
+  /** @deprecated Use the version without HooksDefinition generic parameter */
+  async triggerMultipleHooks<U extends Array<any>, V, HooksDefinition>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, argsList: Array<U>): Promise<void>;
   async triggerMultipleHooks<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, argsList: Array<U>): Promise<void> {
     for (const args of argsList) {
       await this.triggerHook(get, ...args);
     }
   }
 
+  async reduceHook<U extends Array<any>, V>(get: (hooks: Hooks) => ((reduced: V, ...args: U) => Promise<V>) | undefined, initialValue: V, ...args: U): Promise<V>;
+  /** @deprecated Use the version without HooksDefinition generic parameter */
+  async reduceHook<U extends Array<any>, V, HooksDefinition>(get: (hooks: HooksDefinition) => ((reduced: V, ...args: U) => Promise<V>) | undefined, initialValue: V, ...args: U): Promise<V>;
   async reduceHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((reduced: V, ...args: U) => Promise<V>) | undefined, initialValue: V, ...args: U): Promise<V> {
     let value = initialValue;
 
@@ -1453,6 +1462,9 @@ export class Configuration {
     return value;
   }
 
+  async firstHook<U extends Array<any>, V>(get: (hooks: Hooks) => ((...args: U) => Promise<V>) | undefined, ...args: U): Promise<Exclude<V, void> | null>;
+  /** @deprecated Use the version without HooksDefinition generic parameter */
+  async firstHook<U extends Array<any>, V, HooksDefinition>(get: (hooks: HooksDefinition) => ((...args: U) => Promise<V>) | undefined, ...args: U): Promise<Exclude<V, void> | null>;
   async firstHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => Promise<V>) | undefined, ...args: U): Promise<Exclude<V, void> | null> {
     for (const plugin of this.plugins.values()) {
       const hooks = plugin.hooks as HooksDefinition;

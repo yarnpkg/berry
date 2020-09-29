@@ -1,9 +1,8 @@
-import {Plugin}            from '@yarnpkg/core';
-import {Hooks as GitHooks} from '@yarnpkg/plugin-git';
+import {Plugin}        from '@yarnpkg/core';
 
-import {GithubFetcher}     from './GithubFetcher';
+import {GithubFetcher} from './GithubFetcher';
 
-const plugin: Plugin<GitHooks> = {
+const plugin: Plugin = {
   hooks: {
     async fetchHostedRepository(previous, locator, opts) {
       if (previous !== null)

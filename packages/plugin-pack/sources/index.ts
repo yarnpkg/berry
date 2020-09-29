@@ -1,16 +1,24 @@
-import {Hooks as CoreHooks, Plugin, Workspace, structUtils} from '@yarnpkg/core';
-import {MessageName, ReportError}                           from '@yarnpkg/core';
+import {Plugin, Workspace, structUtils} from '@yarnpkg/core';
+import {MessageName, ReportError}       from '@yarnpkg/core';
 
-import pack                                                 from './commands/pack';
-import * as packUtils                                       from './packUtils';
+import pack                             from './commands/pack';
+import * as packUtils                   from './packUtils';
 
 export {packUtils};
 
-export interface Hooks {
+interface PackHooks {
   beforeWorkspacePacking?: (
     workspace: Workspace,
     rawManifest: object,
   ) => Promise<void>|void;
+}
+
+/** @deprecated use Hooks from @yarnpkg/core instead */
+export type Hooks = PackHooks;
+
+declare module '@yarnpkg/core' {
+  interface Hooks extends PackHooks {
+  }
 }
 
 const DEPENDENCY_TYPES = [`dependencies`, `devDependencies`, `peerDependencies`];
@@ -66,7 +74,7 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
   }
 };
 
-const plugin: Plugin<CoreHooks & Hooks> = {
+const plugin: Plugin = {
   hooks: {
     beforeWorkspacePacking,
   },
