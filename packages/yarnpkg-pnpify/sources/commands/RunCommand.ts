@@ -12,7 +12,7 @@ export default class RunCommand extends Command {
   @Command.Proxy()
   args: Array<string> = [];
 
-  @Command.String(`--cwd`)
+  @Command.String(`--cwd`, {description: `The directory to run the command in`})
   cwd: NativePath = process.cwd();
 
   static usage = Command.Usage({

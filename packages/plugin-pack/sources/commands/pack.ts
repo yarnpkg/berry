@@ -5,31 +5,27 @@ import {Command, Usage}                                                         
 
 import * as packUtils                                                                                               from '../packUtils';
 
+const outDescription = `Create the archive at the specified path`;
+
 // eslint-disable-next-line arca/no-default-export
 export default class PackCommand extends BaseCommand {
-  @Command.Boolean(`--install-if-needed`)
+  @Command.Boolean(`--install-if-needed`, {description: `Run a preliminary \`yarn install\` if the package contains build scripts`})
   installIfNeeded: boolean = false;
 
-  @Command.Boolean(`-n,--dry-run`)
+  @Command.Boolean(`-n,--dry-run`, {description: `Print the file paths without actually generating the package archive`})
   dryRun: boolean = false;
 
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
-  @Command.String(`--filename`, {hidden: false})
-  @Command.String(`-o,--out`)
+  @Command.String(`--filename`, {hidden: false, description: outDescription})
+  @Command.String(`-o,--out`, {description: outDescription})
   out?: string;
 
   static usage: Usage = Command.Usage({
     description: `generate a tarball from the active workspace`,
     details: `
       This command will turn the active workspace into a compressed archive suitable for publishing. The archive will by default be stored at the root of the workspace (\`package.tgz\`).
-
-      If the \`--install-if-needed\` flag is set Yarn will run a preliminary \`yarn install\` if the package contains build scripts.
-
-      If the \`-n,--dry-run\` flag is set the command will just print the file paths without actually generating the package archive.
-
-      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
 
       If the \`-o,---out\` is set the archive will be created at the specified path. The \`%s\` and \`%v\` variables can be used within the path and will be respectively replaced by the package name and version.
     `,

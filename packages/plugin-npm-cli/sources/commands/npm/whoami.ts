@@ -6,10 +6,10 @@ import {Command, Usage}               from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmWhoamiCommand extends BaseCommand {
-  @Command.String(`-s,--scope`)
+  @Command.String(`-s,--scope`, {description: `Print username for the registry configured for a given scope`})
   scope?: string;
 
-  @Command.Boolean(`--publish`)
+  @Command.Boolean(`--publish`, {description: `Print username for the publish registry`})
   publish: boolean = false;
 
   static usage: Usage = Command.Usage({

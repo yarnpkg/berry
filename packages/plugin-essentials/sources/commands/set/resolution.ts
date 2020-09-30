@@ -11,7 +11,7 @@ export default class SetResolutionCommand extends BaseCommand {
   @Command.String()
   resolution!: string;
 
-  @Command.Boolean(`-s,--save`)
+  @Command.Boolean(`-s,--save`, {description: `Persist the resolution inside the top-level manifest`})
   save: boolean = false;
 
   static usage: Usage = Command.Usage({

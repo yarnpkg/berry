@@ -8,25 +8,25 @@ import {Hooks}                                                                  
 
 // eslint-disable-next-line arca/no-default-export
 export default class InfoCommand extends BaseCommand {
-  @Command.Boolean(`-A,--all`)
+  @Command.Boolean(`-A,--all`, {description: `Print versions of a package from the whole project`})
   all: boolean = false;
 
-  @Command.Array(`-X,--extra`)
+  @Command.Array(`-X,--extra`, {description: `An array of requests of extra data provided by plugins`})
   extra: Array<string> = [];
 
-  @Command.Boolean(`--cache`)
+  @Command.Boolean(`--cache`, {description: `Print information about the cache entry of a package (path, size, checksum)`})
   cache: boolean = false;
 
-  @Command.Boolean(`--dependents`)
+  @Command.Boolean(`--dependents`, {description: `Print all dependents for each matching package`})
   dependents: boolean = false;
 
-  @Command.Boolean(`--manifest`)
+  @Command.Boolean(`--manifest`, {description: `Print data obtained by looking at the package archive (license, homepage, ...)`})
   manifest: boolean = false;
 
-  @Command.Boolean(`--virtuals`)
+  @Command.Boolean(`--virtuals`, {description: `Print each instance of the virtual packages`})
   virtuals: boolean = false;
 
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   @Command.Rest()
@@ -39,11 +39,7 @@ export default class InfoCommand extends BaseCommand {
 
       By default, if the locator reference is missing, Yarn will default to print the information about all versions of the package in the active workspace dependency tree. To instead print all versions of the package in the whole project, use the \`-A,--all\` flag.
 
-      Some fields will be hidden by default in order to keep the output readable, but can be selectively displayed by using additional options:\n
-
-      - The \`--dependents\` flag will print all dependents for each matching package.
-      - The \`--manifest\` flag will print data obtained by looking at the package archive (license, homepage, ...).
-      - The \`--virtuals\` flag will print each instance of the virtual packages.
+      Some fields will be hidden by default in order to keep the output readable, but can be selectively displayed by using additional options (\`--dependents\`, \`--manifest\`, \`--virtuals\`, ...) described in the option descriptions.
 
       Note that this command will only print the information directly related to the selected packages - if you wish to know why the package is there in the first place, use \`yarn why\` which will do just that (it also provides a \`-R,--recursive\` flag that may be of some help).
     `,

@@ -14,34 +14,34 @@ export default class AddCommand extends BaseCommand {
   @Command.Rest()
   packages: Array<string> = [];
 
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
-  @Command.Boolean(`-E,--exact`)
+  @Command.Boolean(`-E,--exact`, {description: `Don't use any semver modifier on the resolved range`})
   exact: boolean = false;
 
-  @Command.Boolean(`-T,--tilde`)
+  @Command.Boolean(`-T,--tilde`, {description: `Use the \`~\` semver modifier on the resolved range`})
   tilde: boolean = false;
 
-  @Command.Boolean(`-C,--caret`)
+  @Command.Boolean(`-C,--caret`, {description: `Use the \`^\` semver modifier on the resolved range`})
   caret: boolean = false;
 
-  @Command.Boolean(`-D,--dev`)
+  @Command.Boolean(`-D,--dev`, {description: `Add a package as a dev dependency`})
   dev: boolean = false;
 
-  @Command.Boolean(`-P,--peer`)
+  @Command.Boolean(`-P,--peer`, {description: `Add a package as a peer dependency`})
   peer: boolean = false;
 
-  @Command.Boolean(`-O,--optional`)
+  @Command.Boolean(`-O,--optional`, {description: `Add / upgrade a package to an optional regular / peer dependency`})
   optional: boolean = false;
 
-  @Command.Boolean(`--prefer-dev`)
+  @Command.Boolean(`--prefer-dev`, {description: `Add / upgrade a package to a dev dependency`})
   preferDev: boolean = false;
 
-  @Command.Boolean(`-i,--interactive`)
+  @Command.Boolean(`-i,--interactive`, {description: `Reuse the specified package from other workspaces in the project`})
   interactive: boolean | null = null;
 
-  @Command.Boolean(`--cached`)
+  @Command.Boolean(`--cached`, {description: `Reuse the highest version already used somewhere within the project`})
   cached: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -65,9 +65,7 @@ export default class AddCommand extends BaseCommand {
 
       If the \`-i,--interactive\` option is used (or if the \`preferInteractive\` settings is toggled on) the command will first try to check whether other workspaces in the project use the specified package and, if so, will offer to reuse them.
 
-      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
-
-      For a compilation of all the supported protocols, please consult the dedicated page from our website: .
+      For a compilation of all the supported protocols, please consult the dedicated page from our website: https://yarnpkg.com/features/protocols.
     `,
     examples: [[
       `Add a regular package to the current workspace`,

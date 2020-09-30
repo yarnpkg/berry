@@ -16,18 +16,16 @@ export default class ConfigSetCommand extends BaseCommand {
   @Command.String()
   value!: string;
 
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Set complex configuration settings to JSON values`})
   json: boolean = false;
 
-  @Command.Boolean(`-H,--home`)
+  @Command.Boolean(`-H,--home`, {description: `Update the home configuration instead of the project configuration`})
   home: boolean = false;
 
   static usage: Usage = Command.Usage({
     description: `change a configuration settings`,
     details: `
       This command will set a configuration setting.
-
-      - If set, the \`-H,--home\` flag will update the home configuration instead of the project configuration.
 
       When used without the \`--json\` flag, it can only set a simple configuration setting (a string, a number, or a boolean).
 

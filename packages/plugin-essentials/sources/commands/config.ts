@@ -6,27 +6,19 @@ import {inspect}                                  from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigCommand extends BaseCommand {
-  @Command.Boolean(`-v,--verbose`)
+  @Command.Boolean(`-v,--verbose`, {description: `Print the setting description on top of the regular key/value information`})
   verbose: boolean = false;
 
-  @Command.Boolean(`--why`)
+  @Command.Boolean(`--why`, {description: `Print the reason why a setting is set a particular way`})
   why: boolean = false;
 
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   static usage: Usage = Command.Usage({
     description: `display the current configuration`,
     details: `
       This command prints the current active configuration settings.
-
-      When used together with the \`-v,--verbose\` option, the output will contain the settings description on top of the regular key/value information.
-
-      When used together with the \`--why\` flag, the output will also contain the reason why a settings is set a particular way.
-
-      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
-
-      Note that the paths settings will be normalized - especially on Windows. It means that paths such as \`C:\\project\` will be transparently shown as \`/mnt/c/project\`.
     `,
     examples: [[
       `Print the active configuration settings`,

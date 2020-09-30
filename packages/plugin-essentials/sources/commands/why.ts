@@ -9,13 +9,13 @@ export default class WhyCommand extends BaseCommand {
   @Command.String()
   package!: string;
 
-  @Command.Boolean(`-R,--recursive`)
+  @Command.Boolean(`-R,--recursive`, {description: `List, for each workspace, what are all the paths that lead to the dependency`})
   recursive: boolean = false;
 
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
-  @Command.Boolean(`--peers`)
+  @Command.Boolean(`--peers`, {description: `Also print the peer dependencies that match the specified name`})
   peers: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -24,8 +24,6 @@ export default class WhyCommand extends BaseCommand {
       This command prints the exact reasons why a package appears in the dependency tree.
 
       If \`-R,--recursive\` is set, the listing will go in depth and will list, for each workspaces, what are all the paths that lead to the dependency. Note that the display is somewhat optimized in that it will not print the package listing twice for a single package, so if you see a leaf named "Foo" when looking for "Bar", it means that "Foo" already got printed higher in the tree.
-
-      If \`--peers\` is set, the command will also print the peer dependencies that match the specified name.
     `,
     examples: [[
       `Explain why lodash is used in your project`,

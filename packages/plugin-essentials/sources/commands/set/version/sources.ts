@@ -36,22 +36,22 @@ const buildWorkflow = ({plugins, noMinify}: {noMinify: boolean, plugins: Array<s
 
 // eslint-disable-next-line arca/no-default-export
 export default class SetVersionSourcesCommand extends BaseCommand {
-  @Command.String(`--path`)
+  @Command.String(`--path`, {description: `The path where the repository should be cloned to`})
   installPath?: string;
 
-  @Command.String(`--repository`)
+  @Command.String(`--repository`, {description: `The repository that should be cloned`})
   repository: string = `https://github.com/yarnpkg/berry.git`;
 
-  @Command.String(`--branch`)
+  @Command.String(`--branch`, {description: `The branch of the repository that should be cloned`})
   branch: string = `master`;
 
-  @Command.Array(`--plugin`)
+  @Command.Array(`--plugin`, {description: `An array of additional plugins that should be included in the bundle`})
   plugins: Array<string> = [];
 
-  @Command.Boolean(`--no-minify`)
+  @Command.Boolean(`--no-minify`, {description: `Build a bundle for development (debugging) - non-minified and non-mangled`})
   noMinify: boolean = false;
 
-  @Command.Boolean(`-f,--force`)
+  @Command.Boolean(`-f,--force`, {description: `Always clone the repository instead of trying to fetch the latest commits`})
   force: boolean = false;
 
   static usage: Usage = Command.Usage({

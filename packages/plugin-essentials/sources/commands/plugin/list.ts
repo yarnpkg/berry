@@ -14,7 +14,7 @@ export async function getAvailablePlugins(configuration: Configuration) {
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginDlCommand extends BaseCommand {
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   static usage: Usage = Command.Usage({
