@@ -1,7 +1,10 @@
 import {DescriptorHash, LocatorHash, Project, Workspace} from '@yarnpkg/core';
 
 // Enumerate all the transitive dependencies of a set of top-level packages
-function getTransitiveDependencies(project: Project, roots: Array<DescriptorHash>): Set<DescriptorHash> {
+function getTransitiveDependencies(
+  project: Project,
+  roots: Array<DescriptorHash>,
+): Set<DescriptorHash> {
   // Queue of dependency descriptorHashes to visit; set of already-visited patterns
   const queue: Array<DescriptorHash> = [];
   const descriptorHashes = new Set<DescriptorHash>();
@@ -33,7 +36,9 @@ function getTransitiveDependencies(project: Project, roots: Array<DescriptorHash
     transitiveDependencies.add(descriptorHash as DescriptorHash);
 
     // Enqueue any dependencies of the dependency for processing
-    const dependencyDescriptorHashes = Array.from(storedPackage.dependencies.values()).map(dependency => dependency.descriptorHash);
+    const dependencyDescriptorHashes = Array.from(
+      storedPackage.dependencies.values(),
+    ).map(dependency => dependency.descriptorHash);
     dependencyDescriptorHashes.forEach(enqueue);
   }
 
@@ -54,15 +59,55 @@ export function getTransitiveDevDependencies(
   workspace: Workspace,
 ): Set<DescriptorHash> {
   // Enumerate the top-level package manifest as well as any workspace manifests
-  const manifests = [workspace.manifest, ...project.workspaces.map(workspace => workspace.manifest)];
+  const manifests = [
+    workspace.manifest,
+    ...project.workspaces.map(workspace => workspace.manifest),
+  ];
 
   // Collect all the top-level production and development dependencies across all manifests
-  const productionRoots = manifests.map(manifest => Array.from(manifest.dependencies).map(([identHash, descriptor]) => descriptor.descriptorHash)).flat();
-  const developmentRoots = manifests.map(manifest => Array.from(manifest.devDependencies).map(([identHash, descriptor]) => descriptor.descriptorHash)).flat();
+  const productionDependencyIdentSet = new Set(
+    manifests
+      .map(manifest =>
+        Array.from(manifest.dependencies).map(
+          ([identHash, descriptor]) => identHash,
+        )
+      )
+      .flat()
+  );
+  const developmentDependencyIdentSet = new Set(
+    manifests
+      .map(manifest =>
+        Array.from(manifest.devDependencies).map(
+          ([identHash, descriptor]) => identHash,
+        )
+      )
+      .flat()
+  );
+
+  // Map workspace dependencies to descriptor hashes, filtered by the top-level production and development dependencies
+  const workspaceDependencies = project.workspaces
+    .map(workspace => Array.from(workspace.dependencies.values()))
+    .flat();
+  const productionRoots = workspaceDependencies
+    .filter(dependency =>
+      productionDependencyIdentSet.has(dependency.identHash),
+    )
+    .map(dependency => dependency.descriptorHash);
+  const developmentRoots = workspaceDependencies
+    .filter(dependency =>
+      developmentDependencyIdentSet.has(dependency.identHash),
+    )
+    .map(dependency => dependency.descriptorHash);
 
   // Enumerate all the transitive production and development dependencies
-  const productionDependencies = getTransitiveDependencies(project, productionRoots);
-  const developmentDependencies = getTransitiveDependencies(project, developmentRoots);
+  const productionDependencies = getTransitiveDependencies(
+    project,
+    productionRoots,
+  );
+  const developmentDependencies = getTransitiveDependencies(
+    project,
+    developmentRoots,
+  );
 
   // Exclude any development dependencies that are also production dependencies
   return setDifference(developmentDependencies, productionDependencies);

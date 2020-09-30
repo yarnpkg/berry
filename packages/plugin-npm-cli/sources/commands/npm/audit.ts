@@ -118,90 +118,149 @@ export default class AuditCommand extends BaseCommand {
 
   @Command.Path(`npm`, `audit`)
   async execute() {
-    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const configuration = await Configuration.find(
+      this.context.cwd,
+      this.context.plugins,
+    );
+    const {project, workspace} = await Project.find(
+      configuration,
+      this.context.cwd,
+    );
 
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     await project.restoreInstallState();
 
-    const report = await StreamReport.start({
-      configuration,
-      includeFooter: false,
-      json: this.json,
-      stdout: this.context.stdout,
-    }, async report => {
-      const requiredDependencies = project.workspaces.reduce((acc, workspace) =>
-        [...acc, ...workspace.manifest.dependencies.values()], new Array());
-      const requiredDevDependencies = project.workspaces.reduce((acc, workspace) =>
-        [...acc, ...workspace.manifest.devDependencies.values()], new Array());
-      const requires = transformDescriptorIterableToRequiresObject([...requiredDependencies, ...requiredDevDependencies]);
+    const report = await StreamReport.start(
+      {
+        configuration,
+        includeFooter: false,
+        json: this.json,
+        stdout: this.context.stdout,
+      },
+      async report => {
+        const requiredDependencies = project.workspaces.reduce(
+          (acc, workspace) => [
+            ...acc,
+            ...workspace.manifest.dependencies.values(),
+          ],
+          new Array(),
+        );
+        const requiredDevDependencies = project.workspaces.reduce(
+          (acc, workspace) => [
+            ...acc,
+            ...workspace.manifest.devDependencies.values(),
+          ],
+          new Array(),
+        );
+        const requires = transformDescriptorIterableToRequiresObject([
+          ...requiredDependencies,
+          ...requiredDevDependencies,
+        ]);
 
-      const transitiveDevDependencies = getTransitiveDevDependencies(project, workspace);
-      const dependencies = Array.from(project.originalPackages.values()).reduce((acc, cur) => ({
-        ...acc, [structUtils.stringifyIdent(cur)]: {
-          version: cur.version,
-          integrity: cur.identHash,
-          requires: transformDescriptorIterableToRequiresObject(cur.dependencies.values()),
-          dev: transitiveDevDependencies.has(structUtils.convertLocatorToDescriptor(structUtils.convertPackageToLocator(cur)).descriptorHash),
-        },
-      }), {});
+        const transitiveDevDependencies = getTransitiveDevDependencies(
+          project,
+          workspace,
+        );
+        const dependencies = Array.from(
+          project.originalPackages.values(),
+        ).reduce(
+          (acc, cur) => ({
+            ...acc,
+            [structUtils.stringifyIdent(cur)]: {
+              version: cur.version,
+              integrity: cur.identHash,
+              requires: transformDescriptorIterableToRequiresObject(
+                cur.dependencies.values(),
+              ),
+              dev: transitiveDevDependencies.has(
+                structUtils.convertLocatorToDescriptor(
+                  structUtils.convertPackageToLocator(cur),
+                ).descriptorHash,
+              ),
+            },
+          }),
+          {},
+        );
 
-      const body = {
-        requires,
-        dependencies,
-      };
-      const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
-
-      let result: AuditResponse;
-      try {
-        const url = `/-/npm/v1/security/audits`;
-        result = (await npmHttpUtils.post(url, body, {
-          authType: npmHttpUtils.AuthType.NO_AUTH,
+        const body = {
+          requires,
+          dependencies,
+        };
+        const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {
           configuration,
-          jsonResponse: true,
-          registry,
-        }) as unknown) as AuditResponse;
-      } catch (err) {
-        if (err.name !== `HTTPError`) {
-          throw err;
-        } else {
-          throw new ReportError(MessageName.EXCEPTION, err.toString());
+        });
+
+        let result: AuditResponse;
+        try {
+          const url = `/-/npm/v1/security/audits`;
+          result = ((await npmHttpUtils.post(url, body, {
+            authType: npmHttpUtils.AuthType.NO_AUTH,
+            configuration,
+            jsonResponse: true,
+            registry,
+          })) as unknown) as AuditResponse;
+        } catch (err) {
+          if (err.name !== `HTTPError`) {
+            throw err;
+          } else {
+            throw new ReportError(MessageName.EXCEPTION, err.toString());
+          }
+        }
+
+        report.reportJson(result);
+
+        if (isError(result.metadata.vulnerabilities, this.severity)) {
+          report.reportError(
+            MessageName.EXCEPTION,
+            JSON.stringify(result, undefined, 2),
+          );
+          const auditTreeChildren: treeUtils.TreeMap = {};
+          const auditTree: treeUtils.TreeNode = {children: auditTreeChildren};
+          treeUtils.emitTree(auditTree, {
+            configuration,
+            json: this.json,
+            stdout: this.context.stdout,
+            separators: 2,
+          });
         }
       }
-
-      report.reportJson(result);
-
-      if (isError(result.metadata.vulnerabilities, this.severity)) {
-        report.reportError(MessageName.EXCEPTION, JSON.stringify(result, undefined, 2));
-        const auditTreeChildren: treeUtils.TreeMap = {};
-        const auditTree: treeUtils.TreeNode = {children: auditTreeChildren};
-        treeUtils.emitTree(auditTree, {
-          configuration,
-          json: this.json,
-          stdout: this.context.stdout,
-          separators: 2,
-        });
-      }
-    });
+    );
 
     return report.exitCode();
   }
 }
 
-function transformDescriptorIterableToRequiresObject(descriptors: Iterable<Descriptor>): { [key: string]: string } {
-  return Array.from(descriptors).reduce((acc, cur) => ({
-    ...acc, [structUtils.stringifyIdent(cur)]: cur.range,
-  }), {});
+function transformDescriptorIterableToRequiresObject(
+  descriptors: Iterable<Descriptor>,
+): { [key: string]: string } {
+  return Array.from(descriptors).reduce(
+    (acc, cur) => ({
+      ...acc,
+      [structUtils.stringifyIdent(cur)]: cur.range,
+    }),
+    {}
+  );
 }
 
 function getSeverityInclusions(severity?: Severity): Set<Severity> {
   switch (severity) {
     case Severity.Info:
-      return new Set([Severity.Info, Severity.Low, Severity.Moderate, Severity.High, Severity.Critical]);
+      return new Set([
+        Severity.Info,
+        Severity.Low,
+        Severity.Moderate,
+        Severity.High,
+        Severity.Critical,
+      ]);
     case Severity.Low:
-      return new Set([Severity.Low, Severity.Moderate, Severity.High, Severity.Critical]);
+      return new Set([
+        Severity.Low,
+        Severity.Moderate,
+        Severity.High,
+        Severity.Critical,
+      ]);
     case Severity.Moderate:
       return new Set([Severity.Moderate, Severity.High, Severity.Critical]);
     case Severity.High:
@@ -213,14 +272,30 @@ function getSeverityInclusions(severity?: Severity): Set<Severity> {
   }
 }
 
-function filterVulnerabilities(vulnerabilities: AuditVulnerabilities, severity?: Severity): AuditVulnerabilities {
+function filterVulnerabilities(
+  vulnerabilities: AuditVulnerabilities,
+  severity?: Severity,
+): AuditVulnerabilities {
   const inclusions = getSeverityInclusions(severity);
-  return Object.keys(vulnerabilities).filter(key => inclusions.has(key as Severity)).reduce((acc, cur) => ({
-    ...acc,
-    [cur]: vulnerabilities[cur as Severity],
-  }), {}) as AuditVulnerabilities;
+  return Object.keys(vulnerabilities)
+    .filter(key => inclusions.has(key as Severity))
+    .reduce(
+      (acc, cur) => ({
+        ...acc,
+        [cur]: vulnerabilities[cur as Severity],
+      }),
+      {},
+    ) as AuditVulnerabilities;
 }
 
-function isError(vulnerabilities: AuditVulnerabilities, severity?: Severity): boolean {
-  return Object.values(filterVulnerabilities(vulnerabilities, severity)).reduce((acc, cur) => acc + cur, 0) > 0;
+function isError(
+  vulnerabilities: AuditVulnerabilities,
+  severity?: Severity,
+): boolean {
+  return (
+    Object.values(filterVulnerabilities(vulnerabilities, severity)).reduce(
+      (acc, cur) => acc + cur,
+      0,
+    ) > 0
+  );
 }
