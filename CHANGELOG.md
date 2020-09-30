@@ -6,11 +6,13 @@
 
 ### CLI
 
+- The `yarn tag` commands have been ported over from Yarn Classic as `yarn npm tag`.
 - The `yarn tag` set of commands has been ported over from Yarn Classic as `yarn npm tag`.
 - Running `yarn info` will now print many information about your dependencies. Various options are available to tweak the output, including `--json`. Plugin authors can provide their own information sections via the `fetchPackageInfo` hook.
 - Running `yarn stage` with the `-r,--reset` flag will now unstage all changes that seem related to Yarn.
 - All commands now document each of their options (run `yarn add -h` to see an example).
 - Publish registry errors will now be reported as is rather than being collapsed into a generic error message.
+- A native binary jumper will now be used on Windows to avoid the `Terminate batch job (Y/N)?` prompts when invoking dependency binaries.
 
 ### Installs
 
