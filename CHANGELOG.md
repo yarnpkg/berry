@@ -17,7 +17,7 @@
 
 ### PnP API
 
-The follozing changes only apply to the `pnp` linker (which is the default install strategy):
+The following changes only apply to the `pnp` linker (which is the default install strategy):
 
 - The `pnpapi` module now exposes a new function called `getAllLocators` allow you to access the list of all locators in the map without having to traverse the dependency tree. This method is considered a Yarn extension, so you should check for its existence if you plan to use it in your code.
 - When using a portal to a package that had peer dependencies, Yarn would loose the information required to resolve those peer dependencies. It will now properly resolve them the same way as all other packages in the dependency tree.
