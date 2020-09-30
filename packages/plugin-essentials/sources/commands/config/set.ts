@@ -102,7 +102,7 @@ export default class ConfigSetCommand extends BaseCommand {
 
       report.reportInfo(MessageName.UNNAMED, `Successfully set ${this.name} to ${inspect(requestedObject, {
         depth: Infinity,
-        colors: true,
+        colors: configuration.get(`enableColors`),
         compact: false,
       })}`);
     });

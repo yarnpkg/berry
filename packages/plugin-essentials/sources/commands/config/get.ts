@@ -81,7 +81,7 @@ export default class ConfigSetCommand extends BaseCommand {
 
       this.context.stdout.write(`${inspect(requestedObject, {
         depth: Infinity,
-        colors: true,
+        colors: configuration.get(`enableColors`),
         compact: false,
       })}\n`);
     }
