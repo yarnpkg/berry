@@ -6,7 +6,6 @@
 
 ### CLI
 
-- The `yarn tag` commands have been ported over from Yarn Classic as `yarn npm tag`.
 - The `yarn tag` set of commands has been ported over from Yarn Classic as `yarn npm tag`.
 - Running `yarn info` will now print many information about your dependencies. Various options are available to tweak the output, including `--json`. Plugin authors can provide their own information sections via the `fetchPackageInfo` hook.
 - Running `yarn stage` with the `-r,--reset` flag will now unstage all changes that seem related to Yarn.
