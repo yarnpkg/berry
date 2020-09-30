@@ -53,7 +53,7 @@ export default class ConfigSetCommand extends BaseCommand {
       throw new UsageError(`This command must be run from within a project folder`);
 
     const name = this.name.replace(/[.[].*$/, ``);
-    const path = this.name.replace(/^[^.[]*/, ``);
+    const path = this.name.replace(/^[^.[]*\.?/, ``);
 
     const setting = configuration.settings.get(name);
     if (typeof setting === `undefined`)
