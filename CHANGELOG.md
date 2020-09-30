@@ -29,6 +29,7 @@ The following changes only apply to the `node-modules` linker:
 - A new setting called `nmHoistingLimits` has appeared. It replaces what was previously known as `nohoist` in Yarn 1.
 - We are now more forgiving for packages that make incorrect assumptions about the hoisting layout by first trying to maximize package exposure at the top-level. Only after the top-level has been populated will we deduplicate the remaining packages.
 - Fixed some pathological cases around peer dependencies. In particular, workspaces' peer dependencies will now be resolved against their closest workspace ancestor (according to the directory hierarchy) rather than be ignored. Note that peer dependencies are inherently problematic with workspaces when using the `node-modules` linker, and that the strictly correct behavior can only be obtained by using the default Plug'n'Play linker.
+- Running install after an interrupted install is supported now and will result in a consistent install state
 
 ### Shell
 

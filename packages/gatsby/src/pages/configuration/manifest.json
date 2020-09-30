@@ -333,21 +333,25 @@
         "main": {},
         "module": {},
         "registry": {}
-      }
-    }
-  },
-  "installConfig": {
-    "description": "This field contains various settings that alter how the workspace is installed.",
-    "type": "object",
-    "properties": {
-      "hoistingLimits": {
-        "description": "Defines the highest point where packages can be hoisted, overriding for the current workspace the value initially set for [`nmHoistingLimits`](/configuration/yarnrc#nmHoistingLimits).",
-        "type": "string",
-        "enum": ["workspace", "dependencies", "none"],
-        "default": "none",
-        "$comment": "{ \"anchor\": \"installConfig.hoistingLimits\" }"
-      }
+      },
+      "$comment": "{ \"margin\": true }"
     },
-    "$comment": "{ \"margin\": true }"
+    "installConfig": {
+      "description": "This field contains various settings that alter how the workspace is installed.",
+      "type": "object",
+      "properties": {
+        "hoistingLimits": {
+          "description": "Defines the highest point where packages can be hoisted, overriding for the current workspace the value initially set for [`nmHoistingLimits`](/configuration/yarnrc#nmHoistingLimits). Valid values are `workspaces`, `dependencies` and `none`",
+          "type": "string",
+          "enum": ["workspaces", "dependencies", "none"],
+          "default": "none",
+          "$comment": "{ \"anchor\": \"installConfig.hoistingLimits\" }"
+        }
+      },
+      "default": {
+        "hoistingLimits": {}
+      },
+      "$comment": "{ \"margin\": true }"
+    }
   }
 }

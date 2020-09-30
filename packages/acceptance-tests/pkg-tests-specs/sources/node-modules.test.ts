@@ -739,4 +739,35 @@ describe(`Node_Modules`, () => {
       },
     )
   );
+
+  test(`should survive interrupted install`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`foo`],
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
+          name: `foo`,
+          dependencies: {
+            'has-bin-entries': `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        // Simulate interrupted install
+        await xfs.removePromise(`${path}/node_modules/has-bin-entries` as PortablePath);
+
+        await run(`add`, `has-bin-entries@2.0.0`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/has-bin-entries/package.json` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/node_modules/has-bin-entries/index.js` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/foo/node_modules/has-bin-entries/package.json` as PortablePath)).toEqual(true);
+      },
+    )
+  );
 });
