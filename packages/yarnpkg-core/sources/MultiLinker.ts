@@ -1,8 +1,10 @@
 import {PortablePath}                            from '@yarnpkg/fslib';
 
+import {Installer}                               from './Installer';
 import {Linker, MinimalLinkOptions, LinkOptions} from './Linker';
+import {MultiInstaller}                          from './MultiInstaller';
+import {getSetWithDefault}                       from './miscUtils';
 import {Package, LocatorHash, Locator}           from './types';
-import {miscUtils}                               from '.';
 
 export class MultiLinker implements Linker {
   private readonly linkers: Array<Linker>;
@@ -17,7 +19,7 @@ export class MultiLinker implements Linker {
 
     for (const linker of this.linkers) {
       if (linker.supportsPackage(pkg, opts)) {
-        const linkers = miscUtils.getSetWithDefault(this.packageLinkers, pkg.locatorHash);
+        const linkers = getSetWithDefault(this.packageLinkers, pkg.locatorHash);
         linkers.add(linker);
         isPackageSupported = true;
       }
@@ -53,6 +55,21 @@ export class MultiLinker implements Linker {
   }
 
   makeInstaller(opts: LinkOptions): Installer {
+    const linkerInstallerMap = new Map();
+    for (const linker of this.linkers) {
+      const installer = linker.makeInstaller(opts);
+      linkerInstallerMap.set(linker, installer);
+    }
 
+    const packageInstallers = new Map();
+    for (const [locatorHash, linkers] of this.packageLinkers) {
+      const installers = new Set();
+      for (const linker of linkers)
+        installers.add(linkerInstallerMap.get(linker));
+
+      packageInstallers.set(locatorHash, installers);
+    }
+
+    return new MultiInstaller(packageInstallers);
   }
 }
