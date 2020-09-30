@@ -10,6 +10,9 @@ export default class SdkCommand extends Command {
   @Command.Rest()
   integrations: Array<string> = [];
 
+  @Command.Array(`--compat`, {description: `SDKs that should use PnPify`})
+  withPnpify: Array<string> = [];
+
   @Command.String(`--cwd`, {description: `The directory to run the command in`})
   cwd: NativePath = process.cwd();
 
@@ -36,6 +39,8 @@ export default class SdkCommand extends Command {
       The supported integrations at this time are: ${[...SUPPORTED_INTEGRATIONS.keys()].map(integration => `\`${integration}\``).join(`, `)}.
 
       **Note:** This command always updates the already-installed SDKs and editor settings, no matter which arguments are passed.
+
+      In cases where an SDK does still not perform as expected, you may want to enable PnPify \`node_modules\` virtualization using the \`--compat\` switch.
     `,
     examples: [[
       `Generate the base SDKs`,
@@ -46,6 +51,9 @@ export default class SdkCommand extends Command {
     ], [
       `Update all generated SDKs and editor settings`,
       `$0 --sdk`,
+    ], [
+      `Generate the base SDKs and use PnPify in prettier`,
+      `$0 --sdk base --compat prettier`,
     ]],
   });
 
@@ -113,6 +121,7 @@ export default class SdkCommand extends Command {
         onlyBase,
         configuration,
         verbose: this.verbose,
+        withPnpify: this.withPnpify,
       });
     });
 
