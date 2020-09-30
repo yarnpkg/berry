@@ -51,7 +51,7 @@ export interface Linker {
    * @param locator The queried package.
    * @param opts The link options.
    */
-  findPackageLocation(locator: Locator, opts: LinkOptions): Promise<PortablePath>;
+  findPackageLocation(locator: Locator, opts: LinkOptions): Promise<PortablePath | Array<PortablePath>>;
 
   /**
    * This function must, given a specified location on the disk, find the

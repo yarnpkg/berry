@@ -38,7 +38,7 @@ export interface Installer {
    * @param pkg The package being installed
    * @param fetchResult The fetched information about the package
    */
-  installPackage(pkg: Package, fetchResult: FetchResult): Promise<InstallStatus>;
+  installPackage(pkg: Package, fetchResult: FetchResult): Promise<InstallStatus | Array<InstallStatus>>;
 
   /**
    * Link a package and its internal (same-linker) dependencies.
