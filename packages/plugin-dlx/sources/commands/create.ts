@@ -4,10 +4,10 @@ import {Command}     from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class CreateCommand extends BaseCommand {
-  @Command.String(`-p,--package`)
+  @Command.String(`-p,--package`, {description: `The package to run the provided command from`})
   pkg: string | undefined;
 
-  @Command.Boolean(`-q,--quiet`)
+  @Command.Boolean(`-q,--quiet`, {description: `Only report critical errors instead of printing the full install logs`})
   quiet: boolean = false;
 
   @Command.String()

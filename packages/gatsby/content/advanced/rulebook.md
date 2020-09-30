@@ -47,9 +47,11 @@ If Babel had instead defined Lodash 1 as its own dependency, the package manager
 
 </details>
 
-**Solution:** In most cases (when the missing dependency is a utility package), the fix is really just to add the missing entry to the [`dependencies` field](/configuration/manifest#dependencies). While often enough, three more complex cases sometimes arise:
+**Solution:** In most cases (when the missing dependency is a utility package), the fix is really just to add the missing entry to the [`dependencies` field](/configuration/manifest#dependencies). While often enough, a few more complex cases sometimes arise:
 
 - If your package is a plugin (for example `babel-plugin-transform-commonjs`) and the missing dependency is the core (for example `babel-core`), you would need to instead register the dependency inside the [`peerDependencies` field](/configuration/manifest#peerDependencies).
+
+- If your package is something that automatically loads plugins (for example `eslint`), peer dependencies obviously aren't an option as you can't reasonably list all plugins. Instead, you should use the [`createRequire` function](https://nodejs.org/api/module.html#module_module_createrequire_filename) (or its [polyfill](https://github.com/nuxt-contrib/create-require)) to load plugins *on behalf of* the configuration file that lists the plugins to load - be it the package.json or a custom one like the `.eslintrc.js` file.
 
 - If your package only requires the dependency in specific cases that the user control (for example `mikro-orm` which only depends on `sqlite3` if the consumer actually uses a SQLite3 database), use the [`peerDependenciesMeta` field](/configuration/manifest#peerDependenciesMeta.optional) to declare the peer dependency as optional and silence any warning when unmet.
 

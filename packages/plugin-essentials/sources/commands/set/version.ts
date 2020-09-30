@@ -7,7 +7,7 @@ import semver                                             from 'semver';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SetVersionCommand extends BaseCommand {
-  @Command.Boolean(`--only-if-needed`)
+  @Command.Boolean(`--only-if-needed`, {description: `Only lock the Yarn version if it isn't already locked`})
   onlyIfNeeded: boolean = false;
 
   @Command.String()

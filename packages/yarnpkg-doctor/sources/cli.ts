@@ -312,9 +312,6 @@ async function processWorkspace(workspace: Workspace, {configuration, fileList, 
 }
 
 class EntryCommand extends Command {
-  @Command.Boolean(`--scoped`)
-  scoped: boolean = false;
-
   @Command.String({required: false})
   cwd: string = `.`;
 
@@ -417,8 +414,15 @@ class EntryCommand extends Command {
   }
 }
 
-const cli = new Cli({binaryName: `yarn dlx @yarnpkg/doctor`});
+const cli = new Cli({
+  binaryLabel: `Yarn Doctor`,
+  binaryName: `yarn dlx @yarnpkg/doctor`,
+  binaryVersion: require(`@yarnpkg/doctor/package.json`).version,
+});
+
 cli.register(EntryCommand);
+cli.register(Command.Entries.Version);
+
 cli.runExit(process.argv.slice(2), {
   stdin: process.stdin,
   stdout: process.stdout,

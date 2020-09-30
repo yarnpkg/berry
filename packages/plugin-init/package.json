@@ -5,7 +5,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.2.1",
-    "clipanion": "^2.4.4",
+    "clipanion": "^2.6.2",
     "lodash": "^4.17.15",
     "tslib": "^1.13.0"
   },

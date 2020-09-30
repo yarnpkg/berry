@@ -14,19 +14,16 @@ export default class UpCommand extends BaseCommand {
   @Command.Rest()
   patterns: Array<string> = [];
 
-  @Command.Boolean(`-i,--interactive`)
+  @Command.Boolean(`-i,--interactive`, {description: `Offer various choices, depending on the detected upgrade paths`})
   interactive: boolean | null = null;
 
-  @Command.Boolean(`-v,--verbose`)
-  verbose: boolean = false;
-
-  @Command.Boolean(`-E,--exact`)
+  @Command.Boolean(`-E,--exact`, {description: `Don't use any semver modifier on the resolved range`})
   exact: boolean = false;
 
-  @Command.Boolean(`-T,--tilde`)
+  @Command.Boolean(`-T,--tilde`, {description: `Use the \`~\` semver modifier on the resolved range`})
   tilde: boolean = false;
 
-  @Command.Boolean(`-C,--caret`)
+  @Command.Boolean(`-C,--caret`, {description: `Use the \`^\` semver modifier on the resolved range`})
   caret: boolean = false;
 
   static usage: Usage = Command.Usage({

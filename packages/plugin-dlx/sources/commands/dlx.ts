@@ -6,10 +6,10 @@ import {Command, Usage}                          from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class DlxCommand extends BaseCommand {
-  @Command.String(`-p,--package`)
+  @Command.String(`-p,--package`, {description: `The package to run the provided command from`})
   pkg: string | undefined;
 
-  @Command.Boolean(`-q,--quiet`)
+  @Command.Boolean(`-q,--quiet`, {description: `Only report critical errors instead of printing the full install logs`})
   quiet: boolean = false;
 
   @Command.String()
@@ -24,8 +24,6 @@ export default class DlxCommand extends BaseCommand {
       This command will install a package within a temporary environment, and run its binary script if it contains any. The binary will run within the current cwd.
 
       By default Yarn will download the package named \`command\`, but this can be changed through the use of the \`-p,--package\` flag which will instruct Yarn to still run the same command but from a different package.
-
-      Also by default Yarn will print the full install logs when installing the given package. This behavior can be disabled by using the \`-q,--quiet\` flag which will instruct Yarn to only report critical errors.
 
       Using \`yarn dlx\` as a replacement of \`yarn add\` isn't recommended, as it makes your project non-deterministic (Yarn doesn't keep track of the packages installed through \`dlx\` - neither their name, nor their version).
     `,

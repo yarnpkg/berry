@@ -12,13 +12,13 @@ export default class UnplugCommand extends BaseCommand {
   @Command.Rest()
   patterns: Array<string> = [];
 
-  @Command.Boolean(`-A,--all`)
+  @Command.Boolean(`-A,--all`, {description: `Unplug direct dependencies from the entire project`})
   all: boolean = false;
 
-  @Command.Boolean(`-R,--recursive`)
+  @Command.Boolean(`-R,--recursive`, {description: `Unplug both direct and transitive dependencies`})
   recursive: boolean = false;
 
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   static usage: Usage = Command.Usage({
