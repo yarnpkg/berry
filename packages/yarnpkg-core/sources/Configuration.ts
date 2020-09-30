@@ -1,5 +1,5 @@
-import {DEFAULT_COMPRESSION_LEVEL}                 from '@yarnpkg/fslib';
 import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL}                 from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                  from '@yarnpkg/parsers';
 import camelcase                                   from 'camelcase';
 import {isCI}                                      from 'ci-info';
@@ -9,6 +9,7 @@ import semver                                      from 'semver';
 
 import {PassThrough, Writable}                     from 'stream';
 
+import {LogLevel}                                  from './ConfigurableReport';
 import {CorePlugin}                                from './CorePlugin';
 import {Manifest}                                  from './Manifest';
 import {MultiFetcher}                              from './MultiFetcher';
@@ -331,6 +332,17 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: Infinity,
   },
 
+  logFilter: {
+    description: `Override for log levels`,
+    type: SettingsType.MAP,
+    valueDefinition: {
+      description: `Log level override, set to null to remove override`,
+      type: SettingsType.STRING,
+      isNullable: true,
+      values: [LogLevel.DISCARD, LogLevel.ERROR, LogLevel.INFO, LogLevel.WARNING],
+    },
+  },
+
   // Settings related to telemetry
   enableTelemetry: {
     description: `If true, telemetry will be periodically sent, following the rules in https://yarnpkg.com/advanced/telemetry`,
@@ -422,6 +434,8 @@ export interface ConfigurationValueMap {
   httpTimeout: number;
   httpRetry: number;
   networkConcurrency: number;
+
+  logFilter: Map<string, LogLevel | null>;
 
   // Settings related to telemetry
   enableTelemetry: boolean;

@@ -1,11 +1,12 @@
-import sliceAnsi                    from '@arcanis/slice-ansi';
-import {Writable}                   from 'stream';
+import sliceAnsi                           from '@arcanis/slice-ansi';
+import {Writable}                          from 'stream';
 
-import {Configuration}              from './Configuration';
-import {MessageName}                from './MessageName';
-import {ProgressDefinition, Report} from './Report';
-import * as formatUtils             from './formatUtils';
-import {Locator}                    from './types';
+import {ConfigurableReport}                from './ConfigurableReport';
+import {Configuration}                     from './Configuration';
+import {MessageName, stringifyMessageName} from './MessageName';
+import {ProgressDefinition}                from './Report';
+import * as formatUtils                    from './formatUtils';
+import {Locator}                           from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration,
@@ -79,7 +80,7 @@ const defaultStyle = (supportsEmojis && Object.keys(PROGRESS_STYLES).find(name =
 
 export function formatName(name: MessageName | null, {configuration, json}: {configuration: Configuration, json: boolean}) {
   const num = name === null ? 0 : name;
-  const label = `YN${num.toString(10).padStart(4, `0`)}`;
+  const label = stringifyMessageName(num);
 
   if (!json && name === null) {
     return formatUtils.pretty(configuration, label, `grey`);
@@ -109,7 +110,7 @@ export function formatNameWithHyperlink(name: MessageName | null, {configuration
   return `\u001b]8;;${href}\u0007${code}\u001b]8;;\u0007`;
 }
 
-export class StreamReport extends Report {
+export class StreamReport extends ConfigurableReport {
   static async start(opts: StreamReportOptions, cb: (report: StreamReport) => Promise<void>) {
     const report = new this(opts);
 
@@ -126,7 +127,7 @@ export class StreamReport extends Report {
         ? `${name}: ${message}`
         : message;
 
-      report.reportWarning(MessageName.UNNAMED, fullMessage);
+      report.writeReportWarning(MessageName.UNNAMED, fullMessage);
     };
 
     try {
@@ -178,7 +179,7 @@ export class StreamReport extends Report {
     forgettableBufferSize = BASE_FORGETTABLE_BUFFER_SIZE,
     forgettableNames = new Set(),
   }: StreamReportOptions) {
-    super();
+    super(configuration);
 
     this.configuration = configuration;
     this.forgettableBufferSize = forgettableBufferSize;
@@ -209,12 +210,12 @@ export class StreamReport extends Report {
     this.cacheMissCount += 1;
 
     if (typeof message !== `undefined` && !this.configuration.get(`preferAggregateCacheInfo`)) {
-      this.reportInfo(MessageName.FETCH_NOT_CACHED, message);
+      this.writeReportInfo(MessageName.FETCH_NOT_CACHED, message);
     }
   }
 
   startTimerSync<T>(what: string, cb: () => T) {
-    this.reportInfo(null, `┌ ${what}`);
+    this.writeReportInfo(null, `┌ ${what}`);
 
     const before = Date.now();
     this.indent += 1;
@@ -229,15 +230,15 @@ export class StreamReport extends Report {
       this.indent -= 1;
 
       if (this.configuration.get(`enableTimers`) && after - before > 200) {
-        this.reportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
+        this.writeReportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
       } else {
-        this.reportInfo(null, `└ Completed`);
+        this.writeReportInfo(null, `└ Completed`);
       }
     }
   }
 
   async startTimerPromise<T>(what: string, cb: () => Promise<T>) {
-    this.reportInfo(null, `┌ ${what}`);
+    this.writeReportInfo(null, `┌ ${what}`);
 
     if (GROUP !== null)
       this.stdout.write(GROUP.start(what));
@@ -258,9 +259,9 @@ export class StreamReport extends Report {
         this.stdout.write(GROUP.end(what));
 
       if (this.configuration.get(`enableTimers`) && after - before > 200) {
-        this.reportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
+        this.writeReportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
       } else {
-        this.reportInfo(null, `└ Completed`);
+        this.writeReportInfo(null, `└ Completed`);
       }
     }
   }
@@ -286,11 +287,11 @@ export class StreamReport extends Report {
     if (this.indent === 0) {
       this.writeLineWithForgettableReset(``);
     } else {
-      this.reportInfo(null, ``);
+      this.writeReportInfo(null, ``);
     }
   }
 
-  reportInfo(name: MessageName | null, text: string) {
+  writeReportInfo(name: MessageName | null, text: string) {
     if (!this.includeInfos)
       return;
 
@@ -315,7 +316,7 @@ export class StreamReport extends Report {
     }
   }
 
-  reportWarning(name: MessageName, text: string) {
+  writeReportWarning(name: MessageName, text: string) {
     this.warningCount += 1;
 
     if (!this.includeWarnings)
@@ -328,7 +329,7 @@ export class StreamReport extends Report {
     }
   }
 
-  reportError(name: MessageName, text: string) {
+  writeReportError(name: MessageName, text: string) {
     this.errorCount += 1;
 
     if (!this.json) {
@@ -402,11 +403,11 @@ export class StreamReport extends Report {
       : installStatus;
 
     if (this.errorCount > 0) {
-      this.reportError(MessageName.UNNAMED, message);
+      this.writeReportError(MessageName.UNNAMED, message);
     } else if (this.warningCount > 0) {
-      this.reportWarning(MessageName.UNNAMED, message);
+      this.writeReportWarning(MessageName.UNNAMED, message);
     } else {
-      this.reportInfo(MessageName.UNNAMED, message);
+      this.writeReportInfo(MessageName.UNNAMED, message);
     }
   }
 
@@ -460,7 +461,7 @@ export class StreamReport extends Report {
       }
     }
 
-    this.reportInfo(MessageName.FETCH_NOT_CACHED, fetchStatus);
+    this.writeReportInfo(MessageName.FETCH_NOT_CACHED, fetchStatus);
   }
 
   private clearProgress({delta = 0, clear = false}: {delta?: number, clear?: boolean}) {

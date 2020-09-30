@@ -1,8 +1,8 @@
 import {Writable}                from 'stream';
 
+import {ConfigurableReport}      from './ConfigurableReport';
 import {Configuration}           from './Configuration';
 import {MessageName}             from './MessageName';
-import {Report}                  from './Report';
 import {formatNameWithHyperlink} from './StreamReport';
 import * as formatUtils          from './formatUtils';
 import {Locator}                 from './types';
@@ -13,7 +13,7 @@ export type LightReportOptions = {
   suggestInstall?: boolean,
 };
 
-export class LightReport extends Report {
+export class LightReport extends ConfigurableReport {
   static async start(opts: LightReportOptions, cb: (report: LightReport) => Promise<void>) {
     const report = new this(opts);
 
@@ -35,7 +35,7 @@ export class LightReport extends Report {
   private errorCount: number = 0;
 
   constructor({configuration, stdout, suggestInstall = true}: LightReportOptions) {
-    super();
+    super(configuration);
 
     this.configuration = configuration;
     this.stdout = stdout;
@@ -71,13 +71,13 @@ export class LightReport extends Report {
   reportSeparator() {
   }
 
-  reportInfo(name: MessageName | null, text: string) {
+  writeReportInfo(name: MessageName | null, text: string) {
   }
 
-  reportWarning(name: MessageName, text: string) {
+  writeReportWarning(name: MessageName, text: string) {
   }
 
-  reportError(name: MessageName, text: string) {
+  writeReportError(name: MessageName, text: string) {
     this.errorCount += 1;
     this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${text}\n`);
   }

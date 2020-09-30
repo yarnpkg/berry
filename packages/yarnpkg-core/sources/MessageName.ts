@@ -71,3 +71,7 @@ export enum MessageName {
   PATCH_HUNK_FAILED = 66,
   INVALID_CONFIGURATION_VALUE = 67
 }
+
+export function stringifyMessageName(name: MessageName | number): string {
+  return `YN${name.toString(10).padStart(4, `0`)}`;
+}
