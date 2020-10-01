@@ -1052,7 +1052,7 @@ export class Project {
     }));
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
-    const packageLocations: Map<LocatorHash, Set<PortablePath | null>> = new Map();
+    const packageLocations: Map<LocatorHash, Set<PortablePath> | null> = new Map();
     const packageBuildDirectives: Map<LocatorHash, { directives: Set<BuildDirective>, buildLocations: Set<PortablePath> }> = new Map();
 
     // Step 1: Installing the packages on the disk
@@ -1110,10 +1110,19 @@ export class Project {
         }
 
         packageLinkers.set(pkg.locatorHash, linker);
-        const locations = miscUtils.getSetWithDefault(packageLocations, locatorHash);
         const statuses = Array.isArray(installStatus) ? installStatus : [installStatus];
         for (const status of statuses) {
-          locations.add(status.packageLocation);
+          if (status.packageLocation === null && !packageLocations.has(locatorHash)) {
+            packageLocations.set(locatorHash, null);
+          } else if (status.packageLocation !== null) {
+            let locations = packageLocations.get(locatorHash);
+            if (!locations) {
+              locations = new Set<PortablePath>();
+              packageLocations.set(locatorHash, locations);
+            }
+            locations.add(status.packageLocation);
+          }
+
 
           if (status.buildDirective && status.packageLocation) {
             const directiveList = miscUtils.getFactoryWithDefault(packageBuildDirectives, pkg.locatorHash, () => ({directives: new Set(), buildLocations: new Set()}));
@@ -1138,8 +1147,8 @@ export class Project {
       const isWorkspace = this.tryWorkspaceByLocator(pkg) !== null;
 
       const linkPackage = async (packageLinker: Linker, installer: Installer) => {
-        const packageLocationSet = packageLocations.get(pkg.locatorHash);
-        if (typeof packageLocationSet === `undefined`)
+        const locations = packageLocations.get(pkg.locatorHash);
+        if (typeof locations === `undefined`)
           throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, pkg)}) should have been registered`);
 
         const internalDependencies = [];
@@ -1166,8 +1175,8 @@ export class Project {
             if (packageLocations.get(dependency.locatorHash) !== null) {
               internalDependencies.push([descriptor, dependency] as [Descriptor, Locator]);
             }
-          } else {
-            for (const location of packageLocationSet) {
+          } else if (locations !== null) {
+            for (const location of locations) {
               if (location !== null) {
                 const externalEntry = miscUtils.getArrayWithDefault(externalDependents, resolution);
                 externalEntry.push(location);
@@ -1176,7 +1185,7 @@ export class Project {
           }
         }
 
-        if (packageLocationSet !== null) {
+        if (locations !== null) {
           await installer.attachInternalDependencies(pkg, internalDependencies);
         }
       };
