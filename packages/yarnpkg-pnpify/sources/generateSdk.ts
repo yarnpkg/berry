@@ -121,7 +121,7 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   `\n`,
   `const {existsSync} = require(\`fs\`);\n`,
   `const {createRequire, createRequireFromPath} = require(\`module\`);\n`,
-  `const {resolve, dirname} = require(\`path\`);\n`,
+  `const {resolve} = require(\`path\`);\n`,
   `\n`,
   `const relPnpApiPath = ${JSON.stringify(npath.fromPortablePath(relPnpApiPath))};\n`,
   `\n`,
@@ -148,7 +148,9 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   ] : []),
   ...(usePnpify ? [
     `\n`,
+    `  const {dirname} = require(\`path\`);\n`,
     `  const pnpifyResolution = require.resolve(\`@yarnpkg/pnpify\`, {paths: [dirname(absPnpApiPath)]});\n`,
+    `\n`,
     `  if (typeof global[\`__yarnpkg_sdk_is_using_pnpify__\`] === \`undefined\`) {\n`,
     `    Object.defineProperty(global, \`__yarnpkg_sdk_is_using_pnpify__\`, {configurable: true, value: true});\n`,
     `\n`,
