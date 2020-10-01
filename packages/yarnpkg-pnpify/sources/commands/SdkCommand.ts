@@ -121,7 +121,7 @@ export default class SdkCommand extends Command {
         onlyBase,
         configuration,
         verbose: this.verbose,
-        withPnpify: this.compat,
+        compat: this.compat,
       });
     });
 
