@@ -1145,7 +1145,7 @@ export class Configuration {
     try {
       this.use(source, data, folder, opts);
     } catch (error) {
-      error.message += ` (in ${source})`;
+      error.message += ` (in ${formatUtils.pretty(this, source, formatUtils.Type.PATH)})`;
       throw error;
     }
   }
@@ -1185,7 +1185,7 @@ export class Configuration {
       try {
         parsed = parseValue(this, key, data[key], definition, folder);
       } catch (error) {
-        error.message += ` in ${source}`;
+        error.message += ` in ${formatUtils.pretty(this, source, formatUtils.Type.PATH)}`;
         throw error;
       }
 
