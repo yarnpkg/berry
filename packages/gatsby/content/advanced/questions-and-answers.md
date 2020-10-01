@@ -125,11 +125,11 @@ Nowadays the active development team is composed exclusively of people employed 
 
 **No.**
 
-When Yarn got created, the npm registry used to be served through Fastly. This was apparently affecting the install performances, so the initial team decided to partner with Cloudflare and setup a [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) that would simply better cache the requests before returning them. This setup didn't even have a backend.
+When Yarn got created, the npm registry used to be served through Fastly. This was apparently affecting the install performances, so the initial team decided to partner with Cloudflare and setup a [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) that would simply better cache the requests before returning them. This setup didn't even have a backend on our side.
 
 At some point npm switched to Cloudflare as well, and we turned off the proxy to replace it by a [CNAME](https://en.wikipedia.org/wiki/CNAME_record) ([proof](https://toolbox.googleapps.com/apps/dig/#CNAME/registry.yarnpkg.com)). We still keep the hostname for reliability reasons - while it stands to reason that the Yarn domain name will keep being maintained for as long as Yarn is being used, the same isn't necessarily true of the npm domain name. That gives us the ability to redirect to a read-only copy of the registry should the primary source become unavailable.
 
-To this day, no analytics are emitted by Yarn itself.
+While we do gather some basic [client-side telemetry](/advanced/telemetry), no http logs can ever even reach the Yarn project infrastructure - and even less Facebook, which has no control over the project (see also, [Is Yarn operated by Facebook?](/advanced/qa#is-yarn-operated-by-facebook)).
 
 ## Is Yarn faster than other package managers?
 
