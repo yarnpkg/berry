@@ -166,7 +166,7 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   wrapModule ? `module.exports = moduleWrapper(absRequire(\`${module}\`));\n` : `module.exports = absRequire(\`${module}\`);\n`,
 ].join(``);
 
-export type GenerateBaseWrapper = (pnpApi: PnpApi, target: PortablePath, compat: boolean) => Promise<Wrapper>;
+export type GenerateBaseWrapper = (pnpApi: PnpApi, target: PortablePath, usePnpify: boolean) => Promise<Wrapper>;
 
 export type GenerateIntegrationWrapper = (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => Promise<void>;
 
