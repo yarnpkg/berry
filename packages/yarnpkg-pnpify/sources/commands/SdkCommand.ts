@@ -11,7 +11,7 @@ export default class SdkCommand extends Command {
   integrations: Array<string> = [];
 
   @Command.Array(`--compat`, {description: `SDKs that should use PnPify`})
-  withPnpify: Array<string> = [];
+  compat: Array<string> = [];
 
   @Command.String(`--cwd`, {description: `The directory to run the command in`})
   cwd: NativePath = process.cwd();
@@ -121,7 +121,7 @@ export default class SdkCommand extends Command {
         onlyBase,
         configuration,
         verbose: this.verbose,
-        withPnpify: this.withPnpify,
+        withPnpify: this.compat,
       });
     });
 
