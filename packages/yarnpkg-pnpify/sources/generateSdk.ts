@@ -121,7 +121,7 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   `\n`,
   `const {existsSync} = require(\`fs\`);\n`,
   `const {createRequire, createRequireFromPath} = require(\`module\`);\n`,
-  `const {resolve, dirname} = require(\`path\`);\n`,
+  `const {resolve} = require(\`path\`);\n`,
   `\n`,
   `const relPnpApiPath = ${JSON.stringify(npath.fromPortablePath(relPnpApiPath))};\n`,
   `\n`,
@@ -148,7 +148,9 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   ] : []),
   ...(usePnpify ? [
     `\n`,
+    `  const {dirname} = require(\`path\`);\n`,
     `  const pnpifyResolution = require.resolve(\`@yarnpkg/pnpify\`, {paths: [dirname(absPnpApiPath)]});\n`,
+    `\n`,
     `  if (typeof global[\`__yarnpkg_sdk_is_using_pnpify__\`] === \`undefined\`) {\n`,
     `    Object.defineProperty(global, \`__yarnpkg_sdk_is_using_pnpify__\`, {configurable: true, value: true});\n`,
     `\n`,
@@ -164,7 +166,7 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   wrapModule ? `module.exports = moduleWrapper(absRequire(\`${module}\`));\n` : `module.exports = absRequire(\`${module}\`);\n`,
 ].join(``);
 
-export type GenerateBaseWrapper = (pnpApi: PnpApi, target: PortablePath) => Promise<Wrapper>;
+export type GenerateBaseWrapper = (pnpApi: PnpApi, target: PortablePath, compat: boolean) => Promise<Wrapper>;
 
 export type GenerateIntegrationWrapper = (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => Promise<void>;
 
@@ -262,7 +264,7 @@ type AllIntegrations = {
   preexistingIntegrations: Set<SupportedIntegration>;
 };
 
-export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexistingIntegrations}: AllIntegrations, {report, onlyBase, verbose, configuration}: {report: Report, onlyBase: boolean, verbose: boolean, configuration: Configuration}): Promise<void> => {
+export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexistingIntegrations}: AllIntegrations, {report, onlyBase, verbose, compat, configuration}: {report: Report, onlyBase: boolean, verbose: boolean, compat: Array<string>, configuration: Configuration}): Promise<void> => {
   const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
   const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
 
@@ -313,7 +315,7 @@ export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexi
 
       if (topLevelInformation.packageDependencies.has(pkgName)) {
         report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${displayName}`);
-        const wrapper = await generateBaseWrapper(pnpApi, targetFolder);
+        const wrapper = await generateBaseWrapper(pnpApi, targetFolder, compat.includes(pkgName));
 
         for (const sdks of integrationSdks) {
           const sdk = sdks.find(sdk => sdk[0] === pkgName);
