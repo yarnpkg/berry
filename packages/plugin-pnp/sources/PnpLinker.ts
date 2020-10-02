@@ -30,10 +30,13 @@ const FORCED_UNPLUG_FILETYPES = new Set([
   `.node`,
 ]);
 
+type SupportsPackage = (pkg: Package, opts: MinimalLinkOptions) => boolean;
+
 export class PnpLinker implements Linker {
   protected mode = `strict`;
 
-  supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
+  private readonly supportsPackageFunction: SupportsPackage;
+  private defaultSupportsPackage = (pkg: Package, opts: MinimalLinkOptions) => {
     if (opts.project.configuration.get(`nodeLinker`) !== `pnp`)
       return false;
 
@@ -41,6 +44,14 @@ export class PnpLinker implements Linker {
       return false;
 
     return true;
+  }
+
+  constructor(options: {supportsPackage?: SupportsPackage}) {
+    this.supportsPackageFunction = (options || {}).supportsPackage || this.defaultSupportsPackage;
+  }
+
+  supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
+    return this.supportsPackageFunction(pkg, opts);
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
