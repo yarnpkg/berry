@@ -26,6 +26,9 @@ export default class InfoCommand extends BaseCommand {
   @Command.Boolean(`--manifest`, {description: `Print data obtained by looking at the package archive (license, homepage, ...)`})
   manifest: boolean = false;
 
+  @Command.Boolean(`--name-only`, {description: `Only print the name for the matching packages`})
+  nameOnly: boolean = false;
+
   @Command.Boolean(`--virtuals`, {description: `Print each instance of the virtual packages`})
   virtuals: boolean = false;
 
@@ -276,6 +279,11 @@ export default class InfoCommand extends BaseCommand {
 
       infoTreeChildren[structUtils.stringifyLocator(pkg)] = node;
 
+      if (this.nameOnly) {
+        delete node.children;
+        continue;
+      }
+
       const instances = allInstances.get(pkg.locatorHash);
       if (typeof instances !== `undefined`) {
         nodeChildren.Instances = {
@@ -372,7 +380,7 @@ export default class InfoCommand extends BaseCommand {
       configuration,
       json: this.json,
       stdout: this.context.stdout,
-      separators: 2,
+      separators: this.nameOnly ? 0 : 2,
     });
   }
 }
