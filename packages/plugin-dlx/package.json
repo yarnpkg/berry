@@ -10,11 +10,11 @@
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.3.0",
+    "@yarnpkg/cli": "^2.3.1",
     "@yarnpkg/core": "^2.3.0"
   },
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:^2.3.0",
+    "@yarnpkg/cli": "workspace:^2.3.1",
     "@yarnpkg/core": "workspace:^2.3.0"
   },
   "repository": {

@@ -14,12 +14,12 @@
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.3.0",
+    "@yarnpkg/cli": "^2.3.1",
     "@yarnpkg/core": "^2.3.0"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",
-    "@yarnpkg/cli": "workspace:^2.3.0",
+    "@yarnpkg/cli": "workspace:^2.3.1",
     "@yarnpkg/core": "workspace:^2.3.0"
   },
   "repository": {
