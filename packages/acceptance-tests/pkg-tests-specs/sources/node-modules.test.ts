@@ -770,4 +770,36 @@ describe(`Node_Modules`, () => {
       },
     )
   );
+
+  test(`should respect peerDependencies with defaults in workspaces`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`foo`],
+        dependencies: {
+          'has-bin-entries': `2.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
+          name: `foo`,
+          peerDependencies: {
+            'has-bin-entries': `*`,
+          },
+          devDependencies: {
+            'has-bin-entries': `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(source(`require('foo/node_modules/has-bin-entries')`)).resolves.toMatchObject({
+          version: `1.0.0`,
+        });
+      },
+    )
+  );
 });

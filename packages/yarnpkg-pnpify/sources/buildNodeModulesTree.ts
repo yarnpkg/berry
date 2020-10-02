@@ -257,14 +257,14 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     if (options.project) {
       const workspace = options.project.workspacesByCwd.get(npath.toPortablePath(pkg.packageLocation.slice(0, -1)));
       if (workspace) {
-        node.peerNames = new Set([
-          ...pkg.packagePeers,
+        const peerCandidates = new Set([
           ...Array.from(workspace.manifest.peerDependencies.values(), x => structUtils.stringifyIdent(x)),
           ...Array.from(workspace.manifest.peerDependenciesMeta.keys()),
         ]);
-        for (const peerName of node.peerNames) {
-          if (!pkg.packagePeers.has(peerName)) {
+        for (const peerName of peerCandidates) {
+          if (!allDependencies.has(peerName)) {
             allDependencies.set(peerName, parentDependencies.get(peerName) || null);
+            node.peerNames.add(peerName);
           }
         }
       }
