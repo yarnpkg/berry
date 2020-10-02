@@ -4,6 +4,12 @@ const VALID_COMMANDS = [
   // It should allow shell lines to end with semicolons
   `echo foo;`,
 
+  // Redirections
+  ...[
+    `echo foo >& 1`,
+    `echo foo >&1`,
+  ],
+
   // Groups
   ...[
     // Parsable by bash
