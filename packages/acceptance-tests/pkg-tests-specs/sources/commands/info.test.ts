@@ -1,10 +1,4 @@
-// We need this to silence the TS warning about isolatedModule, since there's no import
-
-import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
-import {fs}                                 from 'pkg-tests-core';
-
-// eslint-disable-next-line
-export default null;
+import {PortablePath, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Commands`, () => {
   describe(`info`, () => {

@@ -2,7 +2,6 @@ import {BaseCommand, WorkspaceRequiredError}                                    
 import {Configuration, Project, structUtils, Workspace, LocatorHash, Package, formatUtils, miscUtils, Locator, Cache, FetchOptions, ThrowReport, Manifest, treeUtils} from '@yarnpkg/core';
 import {xfs}                                                                                                                                                          from '@yarnpkg/fslib';
 import {Command, Usage, UsageError}                                                                                                                                   from 'clipanion';
-import {initial}                                                                                                                                                      from 'lodash';
 import mm                                                                                                                                                             from 'micromatch';
 
 import {Hooks}                                                                                                                                                        from '..';
