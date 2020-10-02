@@ -92,7 +92,7 @@ export default class PackCommand extends BaseCommand {
       });
 
       if (!this.dryRun) {
-        report.reportInfo(MessageName.UNNAMED, `Package archive generated in ${formatUtils.pretty(configuration, target, `magenta`)}`);
+        report.reportInfo(MessageName.UNNAMED, `Package archive generated in ${formatUtils.pretty(configuration, target, formatUtils.Type.PATH)}`);
         report.reportJson({output: target});
       }
     });
