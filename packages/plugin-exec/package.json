@@ -1,18 +1,18 @@
 {
   "name": "@yarnpkg/plugin-exec",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/builder": "workspace:^2.1.1",
-    "@yarnpkg/fslib": "workspace:^2.2.1",
+    "@yarnpkg/builder": "workspace:^2.1.2",
+    "@yarnpkg/fslib": "workspace:^2.2.2",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.2.2"
+    "@yarnpkg/core": "^2.3.0"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^2.2.2",
+    "@yarnpkg/core": "workspace:^2.3.0",
     "typescript": "4.1.0-beta"
   },
   "scripts": {

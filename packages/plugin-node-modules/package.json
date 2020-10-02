@@ -3,28 +3,28 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.2.1",
-    "@yarnpkg/libzip": "workspace:^2.2.0",
-    "@yarnpkg/parsers": "workspace:^2.2.0",
-    "@yarnpkg/plugin-pnp": "workspace:^2.2.1",
-    "@yarnpkg/pnp": "workspace:^2.2.1",
-    "@yarnpkg/pnpify": "workspace:^2.2.1",
+    "@yarnpkg/fslib": "workspace:^2.2.2",
+    "@yarnpkg/libzip": "workspace:^2.2.1",
+    "@yarnpkg/parsers": "workspace:^2.2.1",
+    "@yarnpkg/plugin-pnp": "workspace:^2.3.0",
+    "@yarnpkg/pnp": "workspace:^2.3.0",
+    "@yarnpkg/pnpify": "workspace:^2.3.0",
     "@zkochan/cmd-shim": "^4.3.0",
     "clipanion": "^2.6.2",
     "micromatch": "^4.0.2",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.2.2",
-    "@yarnpkg/core": "^2.2.2"
+    "@yarnpkg/cli": "^2.3.0",
+    "@yarnpkg/core": "^2.3.0"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",
-    "@yarnpkg/cli": "workspace:^2.2.2",
-    "@yarnpkg/core": "workspace:^2.2.2",
-    "@yarnpkg/plugin-stage": "workspace:^2.1.1"
+    "@yarnpkg/cli": "workspace:^2.3.0",
+    "@yarnpkg/core": "workspace:^2.3.0",
+    "@yarnpkg/plugin-stage": "workspace:^2.1.2"
   },
-  "version": "2.1.1",
+  "version": "2.2.0",
   "nextVersion": {
     "semver": "2.0.0-rc.5",
     "nonce": "1989925236539513"
