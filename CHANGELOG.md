@@ -6,6 +6,17 @@
 
 ### CLI
 
+- Explicitly disable administrator rights for the native binary jumper on Windows. When a filename contains "install", "setup", "update", or "patch" Windows thinks it's an installer and requires administrator rights to start the binary
+
+## 2.3.1
+
+### CLI
+- Take into account peer dependency defaults when inheriting workspace peer dependencies in the node_modules linker
+
+## 2.3.0
+
+### CLI
+
 - The `yarn tag` set of commands has been ported over from Yarn Classic as `yarn npm tag`.
 - Running `yarn info` will now print many information about your dependencies. Various options are available to tweak the output, including `--json`. Plugin authors can provide their own information sections via the `fetchPackageInfo` hook.
 - Running `yarn stage` with the `-r,--reset` flag will now unstage all changes that seem related to Yarn.
