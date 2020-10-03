@@ -5651,6 +5651,7 @@ __metadata:
     react-icons: ^3.10.0
     react-instantsearch-dom: ^6.6.0
     react-monaco-editor: ^0.36.0
+    react-only: ^2.3.3
     react-select: ^3.1.0
     react-spinners: ^0.8.3
     react-tooltip: ^4.2.7
@@ -22278,6 +22279,15 @@ fsevents@^1.2.7:
   peerDependencies:
     react: ^16.x
   checksum: a734fab46ae5d0bfe0ceb6e9ef7015fb4ed8de17e8e3fabd420f6c3ed3e4b998c35cc6b7fb54ecde527103633fdca8c54b0180ddb288d7aa2a88868e8f25e021
+  languageName: node
+  linkType: hard
+
+"react-only@npm:^2.3.3":
+  version: 2.3.3
+  resolution: "react-only@npm:2.3.3"
+  peerDependencies:
+    react: ^16.8.0
+  checksum: 4dc641b625d2aac3b9a92f2420120562d14e466aff275138f4782fd002c4480d67d1e00be926abe63e4ba5c8866cb21257de59c2581e2475a3fe379bbcd422e4
   languageName: node
   linkType: hard
 
