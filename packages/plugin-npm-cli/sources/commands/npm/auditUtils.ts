@@ -57,12 +57,15 @@ function setDifference<T>(x: Set<T>, y: Set<T>): Set<T> {
 export function getTransitiveDevDependencies(
   project: Project,
   workspace: Workspace,
+  flags: {
+    recursive: boolean,
+  },
 ): Set<DescriptorHash> {
+  // Determine workspaces in scope
+  const workspaces = flags.recursive ? project.workspaces : [workspace];
+
   // Enumerate the top-level package manifest as well as any workspace manifests
-  const manifests = [
-    workspace.manifest,
-    ...project.workspaces.map(workspace => workspace.manifest),
-  ];
+  const manifests = workspaces.map(workspace => workspace.manifest);
 
   // Collect all the top-level production and development dependencies across all manifests
   const productionDependencyIdentSet = new Set(
@@ -85,7 +88,7 @@ export function getTransitiveDevDependencies(
   );
 
   // Map workspace dependencies to descriptor hashes, filtered by the top-level production and development dependencies
-  const workspaceDependencies = project.workspaces
+  const workspaceDependencies = workspaces
     .map(workspace => Array.from(workspace.dependencies.values()))
     .flat();
   const productionRoots = workspaceDependencies

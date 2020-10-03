@@ -1,9 +1,15 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                from '@yarnpkg/cli';
-import {Configuration, Descriptor, Project, ReportError, StreamReport, MessageName, structUtils, treeUtils} from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils}                                                                       from '@yarnpkg/plugin-npm';
-import {Command, Usage}                                                                                     from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                           from '@yarnpkg/cli';
+import {Configuration, Descriptor, Project, ReportError, StreamReport, MessageName, Workspace, structUtils, treeUtils} from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils}                                                                                  from '@yarnpkg/plugin-npm';
+import {Command, Usage}                                                                                                from 'clipanion';
 
-import {getTransitiveDevDependencies}                                                                       from './auditUtils';
+import {getTransitiveDevDependencies}                                                                                  from './auditUtils';
+
+export enum Environment {
+  All = `all`,
+  Production = `production`,
+  Development = `development`,
+}
 
 export enum Severity {
   Info = `info`,
@@ -87,11 +93,17 @@ interface AuditResponse {
 
 // eslint-disable-next-line arca/no-default-export
 export default class AuditCommand extends BaseCommand {
-  @Command.String(`--severity`)
-  severity: Severity = Severity.Info;
+  @Command.String(`--environment`)
+  environment: Environment = Environment.All;
 
   @Command.Boolean(`--json`)
   json: boolean = false;
+
+  @Command.Boolean(`-R,--recursive`)
+  recursive: boolean = false;
+
+  @Command.String(`--severity`)
+  severity: Severity = Severity.Info;
 
   static usage: Usage = Command.Usage({
     description: `perform a vulnerability audit against the installed packages`,
@@ -100,7 +112,9 @@ export default class AuditCommand extends BaseCommand {
 
       You must be online to perform the audit.
 
-      Applying the severity flag will limit the audit table to vulnerabilities of the corresponding severity and above.
+      If \`-R,--recursive\` is set, the report will go in depth and will, for each workspace, audit its dependencies.
+
+      Applying the \`--severity\` flag will limit the audit table to vulnerabilities of the corresponding severity and above.
 
       For scripting purposes, yarn audit also supports the --json flag, which will output the details for the issues in JSON-lines format (one JSON object per line) instead of plain text.
     `,
@@ -108,11 +122,17 @@ export default class AuditCommand extends BaseCommand {
       `Checks for known security issues with the installed packages. The output is a list of known issues.`,
       `yarn npm audit`,
     ], [
-      `Output moderate (or more severe) vulnerabilities`,
-      `yarn npm audit --severity moderate`,
+      `Limit auditing to \`dependencies\` (excludes \`devDependencies\`)`,
+      `yarn npm audit --environment production`,
     ], [
       `Show audit report as valid JSON`,
       `yarn npm audit --json`,
+    ], [
+      `Audit dependencies in all workspaces`,
+      `yarn npm audit --recursive`,
+    ], [
+      `Output moderate (or more severe) vulnerabilities`,
+      `yarn npm audit --severity moderate`,
     ]],
   });
 
@@ -140,53 +160,9 @@ export default class AuditCommand extends BaseCommand {
         stdout: this.context.stdout,
       },
       async report => {
-        const requiredDependencies = project.workspaces.reduce(
-          (acc, workspace) => [
-            ...acc,
-            ...workspace.manifest.dependencies.values(),
-          ],
-          new Array(),
-        );
-        const requiredDevDependencies = project.workspaces.reduce(
-          (acc, workspace) => [
-            ...acc,
-            ...workspace.manifest.devDependencies.values(),
-          ],
-          new Array(),
-        );
-        const requires = transformDescriptorIterableToRequiresObject([
-          ...requiredDependencies,
-          ...requiredDevDependencies,
-        ]);
-
-        const transitiveDevDependencies = getTransitiveDevDependencies(
-          project,
-          workspace,
-        );
-        const dependencies = Array.from(
-          project.originalPackages.values(),
-        ).reduce(
-          (acc, cur) => ({
-            ...acc,
-            [structUtils.stringifyIdent(cur)]: {
-              version: cur.version,
-              integrity: cur.identHash,
-              requires: transformDescriptorIterableToRequiresObject(
-                cur.dependencies.values(),
-              ),
-              dev: transitiveDevDependencies.has(
-                structUtils.convertLocatorToDescriptor(
-                  structUtils.convertPackageToLocator(cur),
-                ).descriptorHash,
-              ),
-            },
-          }),
-          {},
-        );
-
         const body = {
-          requires,
-          dependencies,
+          requires: this.getRequires(project, workspace),
+          dependencies: this.getDependencies(project, workspace),
         };
         const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {
           configuration,
@@ -229,6 +205,64 @@ export default class AuditCommand extends BaseCommand {
     );
 
     return report.exitCode();
+  }
+
+  private getRequires(project: Project, workspace: Workspace) {
+    const workspaces = this.recursive ? project.workspaces : [workspace];
+
+    const includeDependencies = [Environment.All, Environment.Production].includes(this.environment);
+    const requiredDependencies = includeDependencies ? workspaces.reduce(
+      (acc, workspace) => [
+        ...acc,
+        ...workspace.manifest.dependencies.values(),
+      ],
+      new Array(),
+    ) : [];
+
+    const includeDevDependencies = [Environment.All, Environment.Development].includes(this.environment);
+    const requiredDevDependencies = includeDevDependencies ? workspaces.reduce(
+      (acc, workspace) => [
+        ...acc,
+        ...workspace.manifest.devDependencies.values(),
+      ],
+      new Array(),
+    ) : [];
+
+    return transformDescriptorIterableToRequiresObject([
+      ...requiredDependencies,
+      ...requiredDevDependencies,
+    ]);
+  }
+
+  private getDependencies(project: Project, workspace: Workspace) {
+    const transitiveDevDependencies = getTransitiveDevDependencies(
+      project,
+      workspace,
+      {
+        recursive: this.recursive,
+      },
+    );
+
+    return Array.from(
+      project.originalPackages.values(),
+    ).reduce(
+      (acc, cur) => ({
+        ...acc,
+        [structUtils.stringifyIdent(cur)]: {
+          version: cur.version,
+          integrity: cur.identHash,
+          requires: transformDescriptorIterableToRequiresObject(
+            cur.dependencies.values(),
+          ),
+          dev: transitiveDevDependencies.has(
+            structUtils.convertLocatorToDescriptor(
+              structUtils.convertPackageToLocator(cur),
+            ).descriptorHash,
+          ),
+        },
+      }),
+      {},
+    );
   }
 }
 
