@@ -4,6 +4,54 @@
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn import plugin from sources <name>`).
 
+### CLI
+
+- The `yarn tag` set of commands has been ported over from Yarn Classic as `yarn npm tag`.
+- Running `yarn info` will now print many information about your dependencies. Various options are available to tweak the output, including `--json`. Plugin authors can provide their own information sections via the `fetchPackageInfo` hook.
+- Running `yarn stage` with the `-r,--reset` flag will now unstage all changes that seem related to Yarn.
+- All commands now document each of their options (run `yarn add -h` to see an example).
+- Publish registry errors will now be reported as is rather than being collapsed into a generic error message.
+- A native binary jumper will now be used on Windows to avoid the `Terminate batch job (Y/N)?` prompts when invoking dependency binaries.
+
+### Installs
+
+### PnP API
+
+The following changes only apply to the `pnp` linker (which is the default install strategy):
+
+- The `pnpapi` module now exposes a new function called `getAllLocators` allow you to access the list of all locators in the map without having to traverse the dependency tree. This method is considered a Yarn extension, so you should check for its existence if you plan to use it in your code.
+- When using a portal to a package that had peer dependencies, Yarn would loose the information required to resolve those peer dependencies. It will now properly resolve them the same way as all other packages in the dependency tree.
+
+The following changes only apply to the `node-modules` linker:
+
+- The bin symlinks will now be properly removed from the `node_modules/.bin` folder as their corresponding dependencies are removed.
+- A new setting called `nmHoistingLimits` has appeared. It replaces what was previously known as `nohoist` in Yarn 1.
+- We are now more forgiving for packages that make incorrect assumptions about the hoisting layout by first trying to maximize package exposure at the top-level. Only after the top-level has been populated will we deduplicate the remaining packages.
+- Fixed some pathological cases around peer dependencies. In particular, workspaces' peer dependencies will now be resolved against their closest workspace ancestor (according to the directory hierarchy) rather than be ignored. Note that peer dependencies are inherently problematic with workspaces when using the `node-modules` linker, and that the strictly correct behavior can only be obtained by using the default Plug'n'Play linker.
+- Running install after an interrupted install is supported now and will result in a consistent install state
+
+### Shell
+
+- Added support for `$$` and `$PPID`
+- Fixes some pathological globbing problems.
+
+### Bugfixes
+
+- The `yarn constraints --fix` command will now properly persist the changes on disk.
+- The `yarn unplug` command will now work when used on packages with peer dependencies.
+- The `yarn stage` command will now allow to stage files when called without the `-c,--commit` flag.
+- Fixes a performance regression when using FSEvents.
+
+### Miscellaneous
+
+- Removes extraneous subprocesses when using the `yarnPath` setting.
+
+### Third-party integrations
+
+- Updated the VSCode SDK to take into account changes in the TypeScript server protocol.
+- Added a few builtin extensions to improve compatibility with packages that weren't correctly listing their dependencies.
+- Updatedd the TypeScript patch to cover TypeScript 4.1.
+
 ## 2.2.0
 
 ### Ecosystem

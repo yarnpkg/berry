@@ -9,53 +9,18 @@ try {
 function getVirtualLookupFn(pnpApi) {
   const reverseMap = new Map();
 
-  const registerLocationAlias = (resolvedLocation, aliasLocation) => {
-    const aliases = reverseMap.get(resolvedLocation) || [resolvedLocation];
-    reverseMap.set(resolvedLocation, aliases);
-    aliases.push(aliasLocation);
-  };
-
-  const seen = new Set();
-
-  const getKey = locator =>
-    JSON.stringify(locator);
-
-  const isPeerDependency = (pkg, parentPkg, name) =>
-    getKey(pkg.packageDependencies.get(name)) === getKey(parentPkg.packageDependencies.get(name));
-
-  const traverseDependencyTree = (locator, parentPkg = null) => {
-    const key = getKey(locator);
-    if (seen.has(key))
-      return;
-
+  for (const locator of pnpApi.getAllLocators()) {
     const pkg = pnpApi.getPackageInformation(locator);
     console.assert(pkg, `The package information should be available`);
 
     const resolvedLocation = pnpApi.resolveVirtual(pkg.packageLocation);
-    if (resolvedLocation !== null)
-      registerLocationAlias(resolvedLocation, pkg.packageLocation);
+    if (resolvedLocation === null)
+      continue;
 
-    seen.add(key);
-
-    for (const [name, referencish] of pkg.packageDependencies) {
-      // Unmet peer dependencies
-      if (referencish === null)
-        continue;
-
-      // Avoid iterating on peer dependencies - very expensive
-      if (parentPkg !== null && isPeerDependency(pkg, parentPkg, name))
-        continue;
-
-      const childLocator = pnpApi.getLocator(name, referencish);
-      traverseDependencyTree(childLocator, pkg);
-    }
-
-    seen.delete(key);
-  };
-
-  // Iterate on each workspace
-  for (const locator of pnpApi.getDependencyTreeRoots())
-    traverseDependencyTree(locator);
+    const aliases = reverseMap.get(resolvedLocation) || [resolvedLocation];
+    reverseMap.set(resolvedLocation, aliases);
+    aliases.push(pkg.packageLocation);
+  }
 
   const keys = [...reverseMap.keys()].sort((a, b) => {
     return b.length - a.length;

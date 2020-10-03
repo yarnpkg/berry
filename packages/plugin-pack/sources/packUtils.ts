@@ -83,7 +83,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
       const dest = ppath.join(`package` as PortablePath, file);
 
       const stat = await xfs.lstatPromise(source);
-      const opts = {name: dest, mtime: new Date(315532800)};
+      const opts = {name: dest, mtime: new Date(315532800000)};
 
       const mode = executableFiles.has(file)
         ? 0o755
@@ -207,10 +207,19 @@ export async function genPackList(workspace: Workspace) {
     ignoreList.accept.push(ppath.resolve(PortablePath.root, main));
   if (module != null)
     ignoreList.accept.push(ppath.resolve(PortablePath.root, module));
-  if (browser != null)
+  if (typeof browser === `string`)
     ignoreList.accept.push(ppath.resolve(PortablePath.root, browser));
   for (const path of bins.values())
     ignoreList.accept.push(ppath.resolve(PortablePath.root, path));
+
+  if (browser instanceof Map) {
+    for (const [original, replacement] of browser.entries()) {
+      ignoreList.accept.push(ppath.resolve(PortablePath.root, original));
+      if (typeof replacement === `string`) {
+        ignoreList.accept.push(ppath.resolve(PortablePath.root, replacement));
+      }
+    }
+  }
 
   const hasExplicitFileList = workspace.manifest.files !== null;
   if (hasExplicitFileList) {

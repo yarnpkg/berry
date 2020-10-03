@@ -29,10 +29,14 @@ export interface PublishConfig {
   access?: string;
   main?: PortablePath;
   module?: PortablePath;
-  browser?: PortablePath;
+  browser?: PortablePath | Map<PortablePath, boolean | PortablePath>;
   bin?: Map<string, PortablePath>;
   registry?: string;
   executableFiles?: Set<PortablePath>;
+}
+
+export interface InstallConfig {
+  hoistingLimits?: string;
 }
 
 export class Manifest {
@@ -50,7 +54,7 @@ export class Manifest {
 
   public main: PortablePath | null = null;
   public module: PortablePath | null = null;
-  public browser: PortablePath | null = null;
+  public browser: PortablePath | Map<PortablePath, boolean | PortablePath> | null = null;
 
   public languageName: string | null = null;
 
@@ -70,6 +74,7 @@ export class Manifest {
 
   public files: Set<PortablePath> | null = null;
   public publishConfig: PublishConfig | null = null;
+  public installConfig: InstallConfig | null = null;
 
   public preferUnplugged: boolean | null = null;
 
@@ -207,8 +212,13 @@ export class Manifest {
     if (typeof data.module === `string`)
       this.module = data.module;
 
-    if (data.browser != null)
-      this.browser = data.browser;
+    if (data.browser != null) {
+      if (typeof data.browser === `string`) {
+        this.browser = data.browser;
+      } else {
+        this.browser = new Map(Object.entries(data.browser) as Iterable<[PortablePath, PortablePath | boolean]>);
+      }
+    }
 
     if (typeof data.bin === `string`) {
       if (this.name !== null) {
@@ -297,6 +307,9 @@ export class Manifest {
         this.peerDependencies.set(descriptor.identHash, descriptor);
       }
     }
+
+    if (typeof data.workspaces === `object` && data.workspaces.nohoist)
+      errors.push(new Error(`'nohoist' is deprecated, please use 'installConfig.hoistingLimits' instead`));
 
     const workspaces = Array.isArray(data.workspaces)
       ? data.workspaces
@@ -387,6 +400,9 @@ export class Manifest {
       if (typeof data.publishConfig.browser === `string`)
         this.publishConfig.browser = data.publishConfig.browser;
 
+      if (typeof data.publishConfig.browser === `object` && data.publishConfig.browser !== null)
+        this.publishConfig.browser = new Map(Object.entries(data.publishConfig.browser) as Iterable<[PortablePath, PortablePath | boolean]>);
+
       if (typeof data.publishConfig.registry === `string`)
         this.publishConfig.registry = data.publishConfig.registry;
 
@@ -419,6 +435,22 @@ export class Manifest {
           }
 
           this.publishConfig.executableFiles.add(npath.toPortablePath(value));
+        }
+      }
+    }
+
+    if (typeof data.installConfig === `object` && data.installConfig !== null) {
+      this.installConfig = {};
+
+      for (const key of Object.keys(data.installConfig)) {
+        if (key === `hoistingLimits`) {
+          if (typeof data.installConfig.hoistingLimits === `string`) {
+            this.installConfig.hoistingLimits = data.installConfig.hoistingLimits;
+          } else {
+            errors.push(new Error(`Invalid hoisting limits definition`));
+          }
+        } else {
+          errors.push(new Error(`Unrecognized installConfig key: ${key}`));
         }
       }
     }
@@ -638,10 +670,20 @@ export class Manifest {
     else
       delete data.module;
 
-    if (this.browser !== null)
-      data.browser = this.browser;
-    else
+    if (this.browser !== null) {
+      const browser = this.browser;
+
+      if (typeof browser === `string`) {
+        data.browser = browser;
+      } else if (browser instanceof Map) {
+        data.browser = Object.assign({}, ...Array.from(browser.keys()).sort().map(name => {
+          return {[name]: browser.get(name)};
+        }));
+      }
+    } else {
       delete data.browser;
+    }
+
 
     if (this.bin.size === 1 && this.name !== null && this.bin.has(this.name.name)) {
       data.bin = this.bin.get(this.name.name)!;
@@ -653,10 +695,17 @@ export class Manifest {
       delete data.bin;
     }
 
-    if (this.workspaceDefinitions.length > 0)
-      data.workspaces = this.workspaceDefinitions.map(({pattern}) => pattern);
-    else
+    if (this.workspaceDefinitions.length > 0) {
+      if (this.raw.workspaces && !Array.isArray(this.raw.workspaces)) {
+        data.workspaces = {...this.raw.workspaces, packages: this.workspaceDefinitions.map(({pattern}) => pattern)};
+      } else {
+        data.workspaces = this.workspaceDefinitions.map(({pattern}) => pattern);
+      }
+    } else if (this.raw.workspaces && !Array.isArray(this.raw.workspaces) && Object.keys(this.raw.workspaces).length > 0) {
+      data.workspaces = this.raw.workspaces;
+    } else {
       delete data.workspaces;
+    }
 
     const regularDependencies = [];
     const optionalDependencies = [];

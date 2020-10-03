@@ -1,20 +1,20 @@
-import {PortablePath, npath, ppath, xfs, FakeFS, PosixFS}                            from '@yarnpkg/fslib';
-import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
+import {PortablePath, npath, ppath, FakeFS, NodeFS}                                  from '@yarnpkg/fslib';
 import {EnvSegment, ArithmeticExpression, ArithmeticPrimary}                         from '@yarnpkg/parsers';
-import fastGlob                                                                      from 'fast-glob';
+import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
 import {homedir}                                                                     from 'os';
 
 import {PassThrough, Readable, Writable}                                             from 'stream';
 
-import {makeBuiltin, makeProcess}                                                    from './pipe';
+import * as globUtils                                                                from './globUtils';
 import {Handle, ProcessImplementation, ProtectedStream, Stdio, start, Pipe}          from './pipe';
+import {makeBuiltin, makeProcess}                                                    from './pipe';
 
-export type Glob = {
-  isGlobPattern: (arg: string) => boolean,
-  match: (pattern: string, options: {cwd: PortablePath, fs?: FakeFS<PortablePath>}) => Promise<Array<string>>,
-};
+export {globUtils};
+
+export type Glob = globUtils.Glob;
 
 export type UserOptions = {
+  baseFs: FakeFS<PortablePath>,
   builtins: {[key: string]: ShellBuiltin},
   cwd: PortablePath,
   env: {[key: string]: string | undefined},
@@ -22,7 +22,7 @@ export type UserOptions = {
   stdout: Writable,
   stderr: Writable,
   variables: {[key: string]: string},
-  glob: Glob,
+  glob: globUtils.Glob,
 };
 
 export type ShellBuiltin = (
@@ -33,11 +33,12 @@ export type ShellBuiltin = (
 
 export type ShellOptions = {
   args: Array<string>,
+  baseFs: FakeFS<PortablePath>,
   builtins: Map<string, ShellBuiltin>,
   initialStdin: Readable,
   initialStdout: Writable,
   initialStderr: Writable,
-  glob: Glob,
+  glob: globUtils.Glob,
 };
 
 export type ShellState = {
@@ -63,7 +64,7 @@ function cloneState(state: ShellState, mergeWith: Partial<ShellState> = {}) {
 const BUILTINS = new Map<string, ShellBuiltin>([
   [`cd`, async ([target = homedir(), ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
     const resolvedTarget = ppath.resolve(state.cwd, npath.toPortablePath(target));
-    const stat = await xfs.statPromise(resolvedTarget);
+    const stat = await opts.baseFs.statPromise(resolvedTarget);
 
     if (!stat.isDirectory()) {
       state.stderr.write(`cd: not a directory\n`);
@@ -128,7 +129,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
         switch (type) {
           case `<`: {
             inputs.push(() => {
-              return xfs.createReadStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u])));
+              return opts.baseFs.createReadStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u])));
             });
           } break;
           case `<<<`: {
@@ -142,10 +143,10 @@ const BUILTINS = new Map<string, ShellBuiltin>([
             });
           } break;
           case `>`: {
-            outputs.push(xfs.createWriteStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u]))));
+            outputs.push(opts.baseFs.createWriteStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u]))));
           } break;
           case `>>`: {
-            outputs.push(xfs.createWriteStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u])), {flags: `a`}));
+            outputs.push(opts.baseFs.createWriteStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u])), {flags: `a`}));
           } break;
         }
       }
@@ -188,7 +189,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     // Close all the outputs (since the shell never closes the output stream)
     await Promise.all(outputs.map(output => {
       // Wait until the output got flushed to the disk
-      return new Promise(resolve => {
+      return new Promise<void>(resolve => {
         output.on(`close`, () => {
           resolve();
         });
@@ -234,6 +235,10 @@ function split(raw: string) {
 
 async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, opts: ShellOptions, state: ShellState, push: (value: string) => void, pushAndClose = push) {
   switch (segment.name) {
+    case `$`: {
+      push(String(process.pid));
+    } break;
+
     case `#`: {
       push(String(opts.args.length));
     } break;
@@ -266,6 +271,10 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
       }
     } break;
 
+    case `PPID`: {
+      push(String(process.ppid));
+    } break;
+
     case `RANDOM`: {
       push(String(Math.floor(Math.random() * 32768)));
     } break;
@@ -274,10 +283,12 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
       const argIndex = parseInt(segment.name, 10);
 
       if (Number.isFinite(argIndex)) {
-        if (!(argIndex >= 0 && argIndex < opts.args.length)) {
-          throw new Error(`Unbound argument #${argIndex}`);
-        } else {
+        if (argIndex >= 0 && argIndex < opts.args.length) {
           push(opts.args[argIndex]);
+        } else if (segment.defaultValue) {
+          push((await interpolateArguments(segment.defaultValue, opts, state)).join(` `));
+        } else {
+          throw new Error(`Unbound argument #${argIndex}`);
         }
       } else {
         if (Object.prototype.hasOwnProperty.call(state.variables, segment.name)) {
@@ -358,6 +369,8 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
   };
 
   for (const commandArg of commandArgs) {
+    let isGlob = false;
+
     switch (commandArg.type) {
       case `redirection`: {
         const interpolatedArgs = await interpolateArguments(commandArg.args, opts, state);
@@ -374,13 +387,8 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
             } break;
 
             case `glob`: {
-              const matches = await opts.glob.match(segment.pattern, {cwd: state.cwd});
-              if (!matches.length)
-                throw new Error(`No file matches found: "${segment.pattern}". Note: Glob patterns currently only support files that exist on the filesystem (Help Wanted)`);
-
-              for (const match of matches.sort()) {
-                pushAndClose(match);
-              }
+              push(segment.pattern);
+              isGlob = true;
             } break;
 
             case `shell`: {
@@ -410,6 +418,20 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
     }
 
     close();
+
+    if (isGlob) {
+      const pattern = interpolated.pop();
+      if (typeof pattern === `undefined`)
+        throw new Error(`Assertion failed: Expected a glob pattern to have been set.`);
+
+      const matches = await opts.glob.match(pattern, {cwd: state.cwd, baseFs: opts.baseFs});
+      if (matches.length === 0)
+        throw new Error(`No file matches found: "${pattern}". Note: Glob patterns currently only support files that exist on the filesystem (Help Wanted)`);
+
+      for (const match of matches.sort()) {
+        pushAndClose(match);
+      }
+    }
   }
 
   if (redirections.size > 0) {
@@ -746,6 +768,7 @@ function locateArgsVariable(node: ShellLine): boolean {
 }
 
 export async function execute(command: string, args: Array<string> = [], {
+  baseFs = new NodeFS(),
   builtins = {},
   cwd = npath.toPortablePath(process.cwd()),
   env = process.env,
@@ -753,14 +776,7 @@ export async function execute(command: string, args: Array<string> = [], {
   stdout = process.stdout,
   stderr = process.stderr,
   variables = {},
-  glob = {
-    isGlobPattern: fastGlob.isDynamicPattern,
-    match: (pattern: string, {cwd, fs = xfs}) => fastGlob(pattern, {
-      cwd: npath.fromPortablePath(cwd),
-      // @ts-expect-error: `fs` is wrapped in `PosixFS`
-      fs: new PosixFS(fs),
-    }),
-  },
+  glob = globUtils,
 }: Partial<UserOptions> = {}) {
   const normalizedEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(env))
@@ -805,6 +821,7 @@ export async function execute(command: string, args: Array<string> = [], {
 
   return await executeShellLine(ast, {
     args,
+    baseFs,
     builtins: normalizedBuiltins,
     initialStdin: stdin,
     initialStdout: stdout,

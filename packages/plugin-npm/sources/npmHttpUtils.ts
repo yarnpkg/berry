@@ -27,6 +27,18 @@ type RegistryOptions = {
 
 export type Options = httpUtils.Options & AuthOptions & RegistryOptions;
 
+/**
+ * Consumes all 401 Unauthorized errors and reports them as `AUTHENTICATION_INVALID`.
+ *
+ * It doesn't handle 403 Forbidden, as the npm registry uses it when the user attempts
+ * a prohibited action, such as publishing a package with a similar name to an existing package.
+ */
+export async function handleInvalidAuthenticationError(error: any, {attemptedAs, registry, headers, configuration}: {attemptedAs?: string, registry: string, headers: {[key: string]: string} | undefined, configuration: Configuration}) {
+  if (error.name === `HTTPError` && error.response.statusCode === 401) {
+    throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headers, {configuration})}` : `attempted as ${attemptedAs}`})`);
+  }
+}
+
 export function getIdentUrl(ident: Ident) {
   if (ident.scope) {
     return `/@${ident.scope}%2f${ident.name}`;
@@ -58,11 +70,9 @@ export async function get(path: string, {configuration, headers, ident, authType
   try {
     return await httpUtils.get(url.href, {configuration, headers, ...rest});
   } catch (error) {
-    if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
-      throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (as ${await whoami(registry, headers, {configuration})})`);
-    } else {
-      throw error;
-    }
+    await handleInvalidAuthenticationError(error, {registry, configuration, headers});
+
+    throw error;
   }
 }
 
@@ -81,11 +91,9 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
     return await httpUtils.put(registry + path, body, {configuration, headers, ...rest});
   } catch (error) {
     if (!isOtpError(error)) {
-      if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
-        throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headers, {configuration})}` : `attempted as ${attemptedAs}`})`);
-      } else {
-        throw error;
-      }
+      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
+
+      throw error;
     }
 
     const otp = await askForOtp();
@@ -95,11 +103,43 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
     try {
       return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
     } catch (error) {
-      if (error.name === `HTTPError` && (error.response.statusCode === 401 || error.response.statusCode === 403)) {
-        throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headersWithOtp, {configuration})}` : `attempted as ${attemptedAs}`})`);
-      } else {
-        throw error;
-      }
+      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
+
+      throw error;
+    }
+  }
+}
+
+export async function del(path: string, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options & {attemptedAs?: string}) {
+  if (ident && typeof registry === `undefined`)
+    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
+
+  if (typeof registry !== `string`)
+    throw new Error(`Assertion failed: The registry should be a string`);
+
+  const auth = getAuthenticationHeader(registry, {authType, configuration, ident});
+  if (auth)
+    headers = {...headers, authorization: auth};
+
+  try {
+    return await httpUtils.del(registry + path, {configuration, headers, ...rest});
+  } catch (error) {
+    if (!isOtpError(error)) {
+      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
+
+      throw error;
+    }
+
+    const otp = await askForOtp();
+    const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
+
+    // Retrying request with OTP
+    try {
+      return await httpUtils.del(`${registry}${path}`, {configuration, headers: headersWithOtp, ...rest});
+    } catch (error) {
+      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
+
+      throw error;
     }
   }
 }
@@ -148,9 +188,10 @@ async function whoami(registry: string, headers: {[key: string]: string} | undef
     const response = await httpUtils.get(new URL(`${registry}/-/whoami`).href, {
       configuration,
       headers,
+      jsonResponse: true,
     });
 
-    return response.username;
+    return response.username ?? `an unknown user`;
   } catch {
     return `an unknown user`;
   }
@@ -160,7 +201,7 @@ async function askForOtp() {
   if (process.env.TEST_ENV)
     return process.env.TEST_NPM_2FA_TOKEN || ``;
 
-  const {otp} = await prompt({
+  const {otp} = await prompt<{otp: string}>({
     type: `password`,
     name: `otp`,
     message: `One-time password:`,
@@ -168,7 +209,7 @@ async function askForOtp() {
     onCancel: () => process.exit(130),
   });
 
-  return otp as string;
+  return otp;
 }
 
 function isOtpError(error: any) {

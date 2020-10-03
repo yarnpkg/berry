@@ -2,6 +2,16 @@ import {Plugin, SettingsType} from '@yarnpkg/core';
 
 import init                   from './commands/init';
 
+declare module '@yarnpkg/core' {
+  interface ConfigurationValueMap {
+    initLicense: string | null;
+    initScope: string | null;
+    initVersion: string | null;
+    initFields: Map<string, any>;
+    initEditorConfig: Map<string, any>;
+  }
+}
+
 const plugin: Plugin = {
   configuration: {
     initLicense: {

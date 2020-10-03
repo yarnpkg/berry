@@ -1,9 +1,11 @@
-import chalk                 from 'chalk';
+import {npath}                      from '@yarnpkg/fslib';
 
-import {Configuration}       from './Configuration';
-import * as miscUtils        from './miscUtils';
-import * as structUtils      from './structUtils';
-import {Descriptor, Locator} from './types';
+import chalk                        from 'chalk';
+
+import {Configuration}              from './Configuration';
+import * as miscUtils               from './miscUtils';
+import * as structUtils             from './structUtils';
+import {Descriptor, Locator, Ident} from './types';
 
 export enum Type {
   NO_HINT = `NO_HINT`,
@@ -25,6 +27,7 @@ export enum Type {
   DURATION = `DURATION`,
   SIZE = `SIZE`,
 
+  IDENT = `IDENT`,
   DESCRIPTOR = `DESCRIPTOR`,
   LOCATOR = `LOCATOR`,
   RESOLUTION = `RESOLUTION`,
@@ -88,6 +91,15 @@ const transforms = {
     },
     json: (value: number) => {
       return value;
+    },
+  }),
+
+  [Type.IDENT]: validateTransform({
+    pretty: (configuration: Configuration, ident: Ident) => {
+      return structUtils.prettyIdent(configuration, ident);
+    },
+    json: (ident: Ident) => {
+      return structUtils.stringifyIdent(ident);
     },
   }),
 
@@ -169,6 +181,15 @@ const transforms = {
       return size;
     },
   }),
+
+  [Type.PATH]: validateTransform({
+    pretty: (configuration: Configuration, filePath: string) => {
+      return applyColor(configuration, npath.fromPortablePath(filePath), Type.PATH);
+    },
+    json: (filePath: string) => {
+      return npath.fromPortablePath(filePath) as string;
+    },
+  }),
 };
 
 type AllTransforms = typeof transforms;
@@ -185,7 +206,7 @@ export function tuple<T extends Type>(formatType: T, value: Source<T>): Tuple<T>
 }
 
 export function applyStyle(configuration: Configuration, text: string, flags: Style): string {
-  if (!configuration.get<boolean>(`enableColors`))
+  if (!configuration.get(`enableColors`))
     return text;
 
   if (flags & Style.BOLD)
@@ -195,7 +216,7 @@ export function applyStyle(configuration: Configuration, text: string, flags: St
 }
 
 export function applyColor(configuration: Configuration, value: string, formatType: Type | string): string {
-  if (!configuration.get<boolean>(`enableColors`))
+  if (!configuration.get(`enableColors`))
     return value;
 
   const colorSpec = colors.get(formatType as Type);
@@ -225,8 +246,9 @@ export function pretty<T extends Type>(configuration: Configuration, value: Sour
     return applyColor(configuration, `null`, Type.NULL);
 
   if (Object.prototype.hasOwnProperty.call(transforms, formatType)) {
-    miscUtils.overrideType<keyof AllTransforms>(formatType);
-    return transforms[formatType].pretty(configuration, value as any);
+    const transform = transforms[formatType as keyof typeof transforms];
+    const typedTransform = transform as Extract<typeof transform, {pretty: (configuration: Configuration, val: Source<T>) => any}>;
+    return typedTransform.pretty(configuration, value);
   }
 
   if (typeof value !== `string`)
@@ -235,13 +257,17 @@ export function pretty<T extends Type>(configuration: Configuration, value: Sour
   return applyColor(configuration, value, formatType);
 }
 
+export function prettyList<T extends Type>(configuration: Configuration, values: Iterable<Source<T>>, formatType: T | string, {separator = `, `}: {separator?: string} = {}): string {
+  return [...values].map(value => pretty(configuration, value, formatType)).join(separator);
+}
+
 export function json<T extends Type>(value: Source<T>, formatType: T | string): any {
   if (value === null)
     return null;
 
   if (Object.prototype.hasOwnProperty.call(transforms, formatType)) {
     miscUtils.overrideType<keyof AllTransforms>(formatType);
-    return transforms[formatType].json(value as any);
+    return transforms[formatType].json(value as never);
   }
 
   if (typeof value !== `string`)

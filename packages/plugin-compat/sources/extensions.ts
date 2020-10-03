@@ -87,4 +87,66 @@ export const packageExtensions: Array<[string, any]> = [
       [`bluebird`]: optionalPeerDep,
     },
   }],
+  // https://github.com/casesandberg/reactcss/pull/153
+  [`reactcss@*`, {
+    peerDependencies: {
+      react: `*`,
+    },
+  }],
+  // https://github.com/casesandberg/react-color/pull/746
+  [`react-color@<=2.19.0`, {
+    peerDependencies: {
+      react: `*`,
+    },
+  }],
+  // https://github.com/angeloocana/gatsby-plugin-i18n/pull/145
+  [`gatsby-plugin-i18n@*`, {
+    dependencies: {
+      ramda: `^0.24.1`,
+    },
+  }],
+  // https://github.com/3rd-Eden/useragent/pull/159
+  [`useragent@^2.0.0`, {
+    dependencies: {
+      request: `^2.88.0`,
+      yamlparser: `0.0.x`,
+      semver: `5.5.x`,
+    },
+  }],
+  // https://github.com/apollographql/apollo-tooling/pull/2049
+  [`@apollographql/apollo-tools@*`, {
+    peerDependencies: {
+      graphql: `^14.2.1 || ^15.0.0`,
+    },
+  }],
+  // https://github.com/mbrn/material-table/pull/2374
+  [`material-table@^2.0.0`, {
+    dependencies: {
+      "@babel/runtime": `^7.11.2`,
+    },
+  }],
+  // https://github.com/babel/babel/pull/11118
+  [`@babel/parser@*`, {
+    dependencies: {
+      "@babel/types": `^7.8.3`,
+    },
+  }],
+  // https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/pull/507
+  [`fork-ts-checker-webpack-plugin@*`, {
+    peerDependencies: {
+      eslint: `>= 6`,
+      typescript: `>= 2.7`,
+      webpack: `>= 4`,
+    },
+    peerDependenciesMeta: {
+      eslint: optionalPeerDep,
+    },
+  }],
+  // https://github.com/react-component/animate/pull/89
+  [`rc-animate@*`, {
+    peerDependencies: {
+      react: `^15.0.0 || ^16.0.0`,
+      "react-dom": `^15.0.0 || ^16.0.0`,
+    },
+  }],
 ];

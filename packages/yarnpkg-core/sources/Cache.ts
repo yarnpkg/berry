@@ -11,7 +11,7 @@ import * as miscUtils                                                   from './
 import * as structUtils                                                 from './structUtils';
 import {LocatorHash, Locator}                                           from './types';
 
-const CACHE_VERSION = 6;
+const CACHE_VERSION = 7;
 
 export type FetchFromCacheOptions = {
   checksums: Map<LocatorHash, Locator>,
@@ -47,7 +47,7 @@ export class Cache {
     return cache;
   }
 
-  constructor(cacheCwd: PortablePath, {configuration, immutable = configuration.get<boolean>(`enableImmutableCache`), check = false}: {configuration: Configuration, immutable?: boolean, check?: boolean}) {
+  constructor(cacheCwd: PortablePath, {configuration, immutable = configuration.get(`enableImmutableCache`), check = false}: {configuration: Configuration, immutable?: boolean, check?: boolean}) {
     this.configuration = configuration;
     this.cwd = cacheCwd;
 

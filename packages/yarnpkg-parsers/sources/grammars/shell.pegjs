@@ -132,7 +132,7 @@ EnvVariable
   = [a-zA-Z0-9_]+ { return text() }
 
 Identifier
-  = [@*?#a-zA-Z0-9_-]+ { return text() }
+  = [$@*?#a-zA-Z0-9_-]+ { return text() }
 
 SpecialShellChars
   = [(){}<>$|&; \t"']

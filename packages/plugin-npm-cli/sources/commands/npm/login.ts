@@ -8,10 +8,10 @@ import {prompt}                                        from 'enquirer';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmLoginCommand extends BaseCommand {
-  @Command.String(`-s,--scope`)
+  @Command.String(`-s,--scope`, {description: `Login to the registry configured for a given scope`})
   scope?: string;
 
-  @Command.Boolean(`--publish`)
+  @Command.Boolean(`--publish`, {description: `Login to the publish registry`})
   publish: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -63,7 +63,7 @@ export default class NpmLoginCommand extends BaseCommand {
         attemptedAs: credentials.name,
         configuration,
         registry,
-        json: true,
+        jsonResponse: true,
         authType: npmHttpUtils.AuthType.NO_AUTH,
       }) as any;
 
@@ -134,7 +134,10 @@ async function getCredentials({registry, report, stdin, stdout}: {registry: stri
 
   report.reportSeparator();
 
-  const {username, password} = await prompt([{
+  const {username, password} = await prompt<{
+    username: string,
+    password: string,
+  }>([{
     type: `input`,
     name: `username`,
     message: `Username:`,

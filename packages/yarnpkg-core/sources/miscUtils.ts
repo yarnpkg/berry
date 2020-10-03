@@ -15,6 +15,13 @@ export function assertNever(arg: never): never {
   throw new Error(`Assertion failed: Unexpected object '${arg}'`);
 }
 
+export function validateEnum<T>(def: {[key: string]: T}, value: string): T {
+  if (!Object.values(def).includes(value as any))
+    throw new Error(`Assertion failed: Invalid value for enumeration`);
+
+  return value as any as T;
+}
+
 export function mapAndFilter<In, Out>(iterable: Iterable<In>, cb: (value: In) => Out | typeof mapAndFilterSkip): Array<Out> {
   const output: Array<Out> = [];
 

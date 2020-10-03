@@ -408,8 +408,8 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.unwatchFile(npath.fromPortablePath(p), cb);
   }
 
-  private makeCallback<T>(resolve: (value?: T) => void, reject: (reject: NodeJS.ErrnoException) => void) {
-    return (err: NodeJS.ErrnoException | null, result?: T) => {
+  private makeCallback<T>(resolve: (value: T) => void, reject: (reject: NodeJS.ErrnoException) => void) {
+    return (err: NodeJS.ErrnoException | null, result: T) => {
       if (err) {
         reject(err);
       } else {

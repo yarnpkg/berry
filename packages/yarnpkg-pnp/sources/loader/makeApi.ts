@@ -1,5 +1,6 @@
-import {FakeFS, NativePath, Path, PortablePath, VirtualFS, npath}                                           from '@yarnpkg/fslib';
 import {ppath, Filename}                                                                                    from '@yarnpkg/fslib';
+import {FakeFS, NativePath, Path, PortablePath, VirtualFS, npath}                                           from '@yarnpkg/fslib';
+
 import {Module}                                                                                             from 'module';
 
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget} from '../types';
@@ -308,7 +309,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * functions, they'll just have to fix the conflicts and bump their own version number.
    */
 
-  const VERSIONS = {std: 3, resolveVirtual: 1};
+  const VERSIONS = {std: 3, resolveVirtual: 1, getAllLocators: 1};
 
   /**
    * We export a special symbol for easy access to the top level locator.
@@ -813,6 +814,17 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
     getDependencyTreeRoots: () => {
       return [...runtimeState.dependencyTreeRoots];
+    },
+
+    getAllLocators() {
+      const locators: Array<PhysicalPackageLocator> = [];
+
+      for (const [name, entry] of packageRegistry)
+        for (const reference of entry.keys())
+          if (name !== null && reference !== null)
+            locators.push({name, reference});
+
+      return locators;
     },
 
     getPackageInformation: (locator: PackageLocator) => {

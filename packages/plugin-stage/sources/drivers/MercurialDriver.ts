@@ -15,6 +15,9 @@ export const Driver = {
     return ``;
   },
 
+  async makeStage(cwd: PortablePath, changeList: Array<stageUtils.FileAction>) {
+  },
+
   async makeCommit(cwd: PortablePath, changeList: Array<stageUtils.FileAction>, commitMessage: string) {
   },
 

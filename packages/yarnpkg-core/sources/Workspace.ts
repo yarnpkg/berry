@@ -107,7 +107,7 @@ export class Workspace {
     if (protocol === WorkspaceResolver.protocol)
       return semver.satisfies(this.manifest.version !== null ? this.manifest.version : `0.0.0`, pathname);
 
-    if (!this.project.configuration.get<boolean>(`enableTransparentWorkspaces`))
+    if (!this.project.configuration.get(`enableTransparentWorkspaces`))
       return false;
 
     if (this.manifest.version !== null)

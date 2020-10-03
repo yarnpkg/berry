@@ -447,7 +447,7 @@ describe(`ZipFS`, () => {
 
     const writeStream = zipFs.createWriteStream(`/foo.txt` as Filename);
 
-    await new Promise((resolve,reject) => {
+    await new Promise<void>((resolve,reject) => {
       writeStream.write(`foo`, err => {
         if (err) {
           reject(err);

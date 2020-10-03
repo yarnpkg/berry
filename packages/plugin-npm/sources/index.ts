@@ -1,47 +1,72 @@
-import {Plugin, SettingsType} from '@yarnpkg/core';
-import {SettingsDefinition}   from '@yarnpkg/core';
+import {Plugin, SettingsType}  from '@yarnpkg/core';
+import {MapConfigurationValue} from '@yarnpkg/core';
 
-import {NpmHttpFetcher}       from './NpmHttpFetcher';
-import {NpmRemapResolver}     from './NpmRemapResolver';
-import {NpmSemverFetcher}     from './NpmSemverFetcher';
-import {NpmSemverResolver}    from './NpmSemverResolver';
-import {NpmTagResolver}       from './NpmTagResolver';
-import * as npmConfigUtils    from './npmConfigUtils';
-import * as npmHttpUtils      from './npmHttpUtils';
+import {NpmHttpFetcher}        from './NpmHttpFetcher';
+import {NpmRemapResolver}      from './NpmRemapResolver';
+import {NpmSemverFetcher}      from './NpmSemverFetcher';
+import {NpmSemverResolver}     from './NpmSemverResolver';
+import {NpmTagResolver}        from './NpmTagResolver';
+import * as npmConfigUtils     from './npmConfigUtils';
+import * as npmHttpUtils       from './npmHttpUtils';
 
 export {npmConfigUtils};
 export {npmHttpUtils};
 
-const authSettings: {[name: string]: SettingsDefinition} = {
+const authSettings = {
   npmAlwaysAuth: {
     description: `URL of the selected npm registry (note: npm enterprise isn't supported)`,
-    type: SettingsType.BOOLEAN,
+    type: SettingsType.BOOLEAN as const,
     default: false,
   },
   npmAuthIdent: {
     description: `Authentication identity for the npm registry (_auth in npm and yarn v1)`,
-    type: SettingsType.SECRET,
+    type: SettingsType.SECRET as const,
     default: null,
   },
   npmAuthToken: {
     description: `Authentication token for the npm registry (_authToken in npm and yarn v1)`,
-    type: SettingsType.SECRET,
+    type: SettingsType.SECRET as const,
     default: null,
   },
 };
 
-const registrySettings: {[name: string]: SettingsDefinition} = {
+const registrySettings = {
   npmPublishRegistry: {
     description: `Registry to push packages to`,
-    type: SettingsType.STRING,
+    type: SettingsType.STRING as const,
     default: null,
   },
   npmRegistryServer: {
     description: `URL of the selected npm registry (note: npm enterprise isn't supported)`,
-    type: SettingsType.STRING,
+    type: SettingsType.STRING as const,
     default: `https://registry.yarnpkg.com`,
   },
 };
+
+declare module '@yarnpkg/core' {
+  interface ConfigurationValueMap {
+    npmAlwaysAuth: boolean;
+    npmAuthIdent: string|null;
+    npmAuthToken: string|null;
+
+    npmPublishRegistry: string | null;
+    npmRegistryServer: string;
+
+    npmScopes:  Map<string, MapConfigurationValue<{
+      npmAlwaysAuth: boolean;
+      npmAuthIdent: string|null;
+      npmAuthToken: string|null;
+
+      npmPublishRegistry: string | null;
+      npmRegistryServer: string;
+    }>>;
+    npmRegistries: Map<string, MapConfigurationValue<{
+      npmAlwaysAuth: boolean;
+      npmAuthIdent: string|null;
+      npmAuthToken: string|null;
+    }>>;
+  }
+}
 
 const plugin: Plugin = {
   configuration: {

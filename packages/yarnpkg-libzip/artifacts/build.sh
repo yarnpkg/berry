@@ -98,10 +98,11 @@ build() {
     -s ENVIRONMENT=node \
     -s NODERAWFS=1 \
     -s SINGLE_FILE=1 \
+    -s NODEJS_CATCH_EXIT=0 \
+    -s NODEJS_CATCH_REJECTION=0 \
     "$@" \
     -I./libzip-"$LIBZIP_VERSION"/build/local/include \
     -O3 \
-    --llvm-lto 1 \
     ./zipstruct.c \
     ./libzip-"$LIBZIP_VERSION"/build/local/lib/libzip.a \
     ./zlib-"$ZLIB_VERSION"/build/local/lib/libz.a
@@ -109,7 +110,6 @@ build() {
   cat > ../sources/"$name".js \
     <(echo "var frozenFs = Object.assign({}, require('fs'));") \
     <(sed 's/require("fs")/frozenFs/g' ./build.js \
-    | sed 's/process\["on"\]/(function(){})/g' \
     | sed 's/process\["binding"\]("constants")/({"fs":fs.constants})/g')
 
   yarn prettier --write ../sources/"$name".js

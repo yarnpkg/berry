@@ -9,6 +9,7 @@ module.exports = {
 
     '@typescript-eslint/no-unused-vars': [1, {
       args: `none`,
+      argsIgnorePattern: `^_`,
       ignoreRestSiblings: true,
     }],
 

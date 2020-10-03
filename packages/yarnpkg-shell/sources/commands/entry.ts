@@ -11,7 +11,7 @@ export default class EntryCommand extends Command {
   @Command.Proxy()
   args: Array<string> = [];
 
-  @Command.String(`--cwd`)
+  @Command.String(`--cwd`, {description: `The directory to run the command in`})
   cwd: string = process.cwd();
 
   static usage: Usage = {
