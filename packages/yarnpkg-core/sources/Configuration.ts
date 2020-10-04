@@ -1219,9 +1219,10 @@ export class Configuration {
       extensionsPerIdent.push([descriptor.range, extensionsPerRange]);
 
       for (const dependency of extension.dependencies.values())
-        extensionsPerRange.push({type: PackageExtensionType.Dependency, descriptor, active: false, description: `${structUtils.stringifyIdent(descriptor)} > ${structUtils.stringifyIdent(dependency)}`});
+        extensionsPerRange.push({type: PackageExtensionType.Dependency, descriptor: dependency, active: false, description: `${structUtils.stringifyIdent(descriptor)} > ${structUtils.stringifyIdent(dependency)}`});
       for (const peerDependency of extension.peerDependencies.values())
-        extensionsPerRange.push({type: PackageExtensionType.PeerDependency, descriptor, active: false, description: `${structUtils.stringifyIdent(descriptor)} >> ${structUtils.stringifyIdent(peerDependency)}`});
+        extensionsPerRange.push({type: PackageExtensionType.PeerDependency, descriptor: peerDependency, active: false, description: `${structUtils.stringifyIdent(descriptor)} >> ${structUtils.stringifyIdent(peerDependency)}`});
+
       for (const [selector, meta] of extension.peerDependenciesMeta) {
         for (const [key, value] of Object.entries(meta)) {
           extensionsPerRange.push({type: PackageExtensionType.PeerDependencyMeta, selector, key: key as keyof typeof meta, value, active: false, description: `${structUtils.stringifyIdent(descriptor)} >> ${selector} / ${key}`});
@@ -1268,8 +1269,12 @@ export class Configuration {
               } break;
 
               case PackageExtensionType.PeerDependencyMeta: {
-                pkg.peerDependenciesMeta.set(extension.selector, extension.meta);
+                miscUtils.getFactoryWithDefault(pkg.peerDependenciesMeta, extension.selector, () => ({} as PeerDependencyMeta))[extension.key] = extension.value;
                 extension.active = true;
+              } break;
+
+              default: {
+                miscUtils.assertNever(extension);
               } break;
             }
           }
