@@ -42,4 +42,4 @@ The location of the shared cache is always [`<globalFolder>`](/configuration/yar
 
 ## Cache integrity
 
-Because the archive checksums are stored within the lockfile, any cache corruption will be detected at install-time and you'll be asked to resolve the problem - either by removing the corrupted file, or updating the checksum. The later isn't meant to be done except for advanced users in extremely specific cases.
+Because the archive checksums are stored within the lockfile, any cache corruption will be detected at install-time and you'll be asked to resolve the problem - either by removing the corrupted file, or updating the checksum. The latter isn't meant to be done except for advanced users in extremely specific cases.
