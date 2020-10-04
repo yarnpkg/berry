@@ -88,6 +88,15 @@ describe(`Shell`, () => {
       });
     });
 
+    it(`should support the ":" builtin`, async () => {
+      await expect(bufferResult(
+        `:`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: ``,
+      });
+    });
+
     it(`should execute a regular command`, async () => {
       await expect(bufferResult(
         `echo hello`,
