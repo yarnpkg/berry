@@ -37547,23 +37547,9 @@ class CustomDir {
   }
 
   read(cb) {
-    let dirent = null;
-    let error = null;
-
-    try {
-      dirent = this.readSync();
-    } catch (e) {
-      error = e;
-    }
-
-    if (typeof cb !== `undefined`) return error !== null ? cb(error, null) : cb(null, dirent);
-    return new Promise((resolve, reject) => {
-      if (error !== null) {
-        reject(error);
-      } else {
-        resolve(dirent);
-      }
-    });
+    const dirent = this.readSync();
+    if (typeof cb !== `undefined`) return cb(null, dirent);
+    return Promise.resolve(dirent);
   }
 
   readSync() {
@@ -37572,8 +37558,7 @@ class CustomDir {
   }
 
   close(cb) {
-    this.throwIfClosed();
-    this.closed = true;
+    this.closeSync();
     if (typeof cb !== `undefined`) return cb(null);
     return Promise.resolve();
   }

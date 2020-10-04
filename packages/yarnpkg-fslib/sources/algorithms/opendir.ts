@@ -29,25 +29,12 @@ export class CustomDir<P extends Path> implements Dir<P> {
   read(): Promise<Dirent>;
   read(cb: (err: NodeJS.ErrnoException | null, dirent: Dirent | null) => void): void;
   read(cb?: (err: NodeJS.ErrnoException | null, dirent: Dirent | null) => void) {
-    let dirent: Dirent | null = null;
-    let error: NodeJS.ErrnoException | null = null;
-
-    try {
-      dirent = this.readSync();
-    } catch (e) {
-      error = e;
-    }
+    const dirent = this.readSync();
 
     if (typeof cb !== `undefined`)
-      return error !== null ? cb(error, null) : cb(null, dirent);
+      return cb(null, dirent);
 
-    return new Promise((resolve, reject) => {
-      if (error !== null) {
-        reject(error);
-      } else {
-        resolve(dirent);
-      }
-    });
+    return Promise.resolve(dirent);
   }
 
   readSync() {
@@ -59,8 +46,7 @@ export class CustomDir<P extends Path> implements Dir<P> {
   close(): Promise<void>;
   close(cb: NoParamCallback): void;
   close(cb?: NoParamCallback) {
-    this.throwIfClosed();
-    this.closed = true;
+    this.closeSync();
 
     if (typeof cb !== `undefined`)
       return cb(null);

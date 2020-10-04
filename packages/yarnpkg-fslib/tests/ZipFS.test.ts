@@ -513,7 +513,8 @@ describe(`ZipFS`, () => {
 
     expect(() => iter.next()).rejects.toThrow(`Directory handle was closed`);
     expect(() => dir.readSync()).toThrow(`Directory handle was closed`);
-    expect(() => dir.read()).rejects.toThrow(`Directory handle was closed`);
+    // It's important that this function throws synchronously, because that's what Node does
+    expect(() => dir.read()).toThrow(`Directory handle was closed`);
 
     zipFs.discardAndClose();
   });
