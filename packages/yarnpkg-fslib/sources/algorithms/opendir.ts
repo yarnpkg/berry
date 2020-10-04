@@ -5,23 +5,10 @@ import * as errors           from '../errors';
 import {Filename, Path}      from '../path';
 
 export class CustomDir<P extends Path> implements Dir<P> {
-  public nextDirent: () => Dirent | null;
-
   constructor(
     public readonly path: P,
-    public readonly fakeFs: FakeFS<P>,
-    public readonly entries: Array<Filename>,
-  ) {
-    this.nextDirent = () => {
-      const filename = entries.shift();
-      if (typeof filename === `undefined`)
-        return null;
-
-      return Object.assign(fakeFs.statSync(fakeFs.pathUtils.join(path, filename)), {
-        name: filename,
-      });
-    };
-  }
+    public nextDirent: () => Dirent | null,
+  ) {}
 
   public closed: boolean = false;
 
@@ -88,5 +75,15 @@ export class CustomDir<P extends Path> implements Dir<P> {
 }
 
 export function opendir<P extends Path>(path: P, fakeFs: FakeFS<P>, entries: Array<Filename>) {
-  return new CustomDir(path, fakeFs, entries);
+  const nextDirent = () => {
+    const filename = entries.shift();
+    if (typeof filename === `undefined`)
+      return null;
+
+    return Object.assign(fakeFs.statSync(fakeFs.pathUtils.join(path, filename)), {
+      name: filename,
+    });
+  };
+
+  return new CustomDir(path, nextDirent);
 }

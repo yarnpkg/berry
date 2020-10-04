@@ -37526,19 +37526,10 @@ var external_zlib_default = /*#__PURE__*/__webpack_require__.n(external_zlib_);
 // CONCATENATED MODULE: ../yarnpkg-fslib/sources/algorithms/opendir.ts
 
 class CustomDir {
-  constructor(path, fakeFs, entries) {
+  constructor(path, nextDirent) {
     this.path = path;
-    this.fakeFs = fakeFs;
-    this.entries = entries;
+    this.nextDirent = nextDirent;
     this.closed = false;
-
-    this.nextDirent = () => {
-      const filename = entries.shift();
-      if (typeof filename === `undefined`) return null;
-      return Object.assign(fakeFs.statSync(fakeFs.pathUtils.join(path, filename)), {
-        name: filename
-      });
-    };
   }
 
   throwIfClosed() {
@@ -37594,7 +37585,15 @@ class CustomDir {
 
 }
 function opendir(path, fakeFs, entries) {
-  return new CustomDir(path, fakeFs, entries);
+  const nextDirent = () => {
+    const filename = entries.shift();
+    if (typeof filename === `undefined`) return null;
+    return Object.assign(fakeFs.statSync(fakeFs.pathUtils.join(path, filename)), {
+      name: filename
+    });
+  };
+
+  return new CustomDir(path, nextDirent);
 }
 // EXTERNAL MODULE: external "events"
 var external_events_ = __webpack_require__(614);
