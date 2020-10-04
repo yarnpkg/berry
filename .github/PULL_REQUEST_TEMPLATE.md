@@ -21,4 +21,4 @@
 
 <!-- The "Testing chores" workflow validates that your PR follows our guidelines. -->
 <!-- If it doesn't pass, click on it to see details as to what your PR might be missing. -->
-- [ ] I have verified that all automated PR checks pass.
+- [ ] I will check that all automated PR checks pass before the PR gets reviewed.

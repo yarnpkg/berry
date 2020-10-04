@@ -8,25 +8,31 @@ import {Hooks}                                                                  
 
 // eslint-disable-next-line arca/no-default-export
 export default class InfoCommand extends BaseCommand {
-  @Command.Boolean(`-A,--all`)
+  @Command.Boolean(`-A,--all`, {description: `Print versions of a package from the whole project`})
   all: boolean = false;
 
-  @Command.Array(`-X,--extra`)
+  @Command.Boolean(`-R,--recursive`, {description: `Print information for all packages, including transitive dependencies`})
+  recursive: boolean = false;
+
+  @Command.Array(`-X,--extra`, {description: `An array of requests of extra data provided by plugins`})
   extra: Array<string> = [];
 
-  @Command.Boolean(`--cache`)
+  @Command.Boolean(`--cache`, {description: `Print information about the cache entry of a package (path, size, checksum)`})
   cache: boolean = false;
 
-  @Command.Boolean(`--dependents`)
+  @Command.Boolean(`--dependents`, {description: `Print all dependents for each matching package`})
   dependents: boolean = false;
 
-  @Command.Boolean(`--manifest`)
+  @Command.Boolean(`--manifest`, {description: `Print data obtained by looking at the package archive (license, homepage, ...)`})
   manifest: boolean = false;
 
-  @Command.Boolean(`--virtuals`)
+  @Command.Boolean(`--name-only`, {description: `Only print the name for the matching packages`})
+  nameOnly: boolean = false;
+
+  @Command.Boolean(`--virtuals`, {description: `Print each instance of the virtual packages`})
   virtuals: boolean = false;
 
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   @Command.Rest()
@@ -37,13 +43,9 @@ export default class InfoCommand extends BaseCommand {
     details: `
       This command prints various information related to the specified packages, accepting glob patterns.
 
-      By default, if the locator reference is missing, Yarn will default to print the information about all versions of the package in the active workspace dependency tree. To instead print all versions of the package in the whole project, use the \`-A,--all\` flag.
+      By default, if the locator reference is missing, Yarn will default to print the information about all the matching direct dependencies of the package for the active workspace. To instead print all versions of the package that are direct dependencies of any of your workspaces, use the \`-A,--all\` flag. Adding the \`-R,--recursive\` flag will also report transitive dependencies.
 
-      Some fields will be hidden by default in order to keep the output readable, but can be selectively displayed by using additional options:\n
-
-      - The \`--dependents\` flag will print all dependents for each matching package.
-      - The \`--manifest\` flag will print data obtained by looking at the package archive (license, homepage, ...).
-      - The \`--virtuals\` flag will print each instance of the virtual packages.
+      Some fields will be hidden by default in order to keep the output readable, but can be selectively displayed by using additional options (\`--dependents\`, \`--manifest\`, \`--virtuals\`, ...) described in the option descriptions.
 
       Note that this command will only print the information directly related to the selected packages - if you wish to know why the package is there in the first place, use \`yarn why\` which will do just that (it also provides a \`-R,--recursive\` flag that may be of some help).
     `,
@@ -72,9 +74,11 @@ export default class InfoCommand extends BaseCommand {
     if (this.manifest)
       extraSet.add(`manifest`);
 
-    const traverse = (workspace: Workspace) => {
+    const traverseWorkspace = (workspace: Workspace, {recursive}: {recursive: boolean}) => {
+      const initialHash = workspace.anchoredLocator.locatorHash;
+
       const seen = new Map<LocatorHash, Package>();
-      const pass = [workspace.anchoredLocator.locatorHash];
+      const pass = [initialHash];
 
       while (pass.length > 0) {
         const hash = pass.shift()!;
@@ -90,6 +94,9 @@ export default class InfoCommand extends BaseCommand {
         if (structUtils.isVirtualLocator(pkg))
           pass.push(structUtils.devirtualizeLocator(pkg).locatorHash);
 
+        if (!recursive && hash !== initialHash)
+          continue;
+
         for (const dependency of pkg.dependencies.values()) {
           const resolution = project.storedResolutions.get(dependency.descriptorHash);
           if (typeof resolution === `undefined`)
@@ -102,10 +109,31 @@ export default class InfoCommand extends BaseCommand {
       return seen.values();
     };
 
-    const findSelectedSet = ({all}: {all: boolean}) => {
-      const lookupSet = all
-        ? project.storedPackages.values()
-        : traverse(workspace!);
+    const traverseAllWorkspaces = ({recursive}: {recursive: boolean}) => {
+      const aggregate = new Map<LocatorHash, Package>();
+
+      for (const workspace of project.workspaces)
+        for (const pkg of traverseWorkspace(workspace, {recursive}))
+          aggregate.set(pkg.locatorHash, pkg);
+
+      return aggregate.values();
+    };
+
+    const getLookupSet = ({all, recursive}: {all: boolean, recursive: boolean}) => {
+      // Optimization: if both -A and -R are set, it means we care about the
+      // whole set of packages, no need for filtering
+      if (all && recursive)
+        return project.storedPackages.values();
+
+      if (all) {
+        return traverseAllWorkspaces({recursive});
+      } else {
+        return traverseWorkspace(workspace!, {recursive});
+      }
+    };
+
+    const findSelectedSet = ({all, recursive}: {all: boolean, recursive: boolean}) => {
+      const lookupSet = getLookupSet({all, recursive});
 
       const matchers = this.patterns.map(pattern => {
         const patternLocator = structUtils.parseLocator(pattern);
@@ -154,15 +182,11 @@ export default class InfoCommand extends BaseCommand {
 
     const {selection, sortedLookup} = findSelectedSet({
       all: this.all,
+      recursive: this.recursive,
     });
 
-    if (selection.length === 0) {
-      if (this.all || findSelectedSet({all: true}).selection.length === 0) {
-        throw new UsageError(`No package matched your request`);
-      } else {
-        throw new UsageError(`No package matched your request in this workspace, but some matches were found elsewhere - run the command again with -A,--all to see them all`);
-      }
-    }
+    if (selection.length === 0)
+      throw new UsageError(`No package matched your request`);
 
     const dependentMap = new Map<LocatorHash, Array<Locator>>();
 
@@ -254,6 +278,11 @@ export default class InfoCommand extends BaseCommand {
       };
 
       infoTreeChildren[structUtils.stringifyLocator(pkg)] = node;
+
+      if (this.nameOnly) {
+        delete node.children;
+        continue;
+      }
 
       const instances = allInstances.get(pkg.locatorHash);
       if (typeof instances !== `undefined`) {
@@ -351,7 +380,7 @@ export default class InfoCommand extends BaseCommand {
       configuration,
       json: this.json,
       stdout: this.context.stdout,
-      separators: 2,
+      separators: this.nameOnly ? 0 : 2,
     });
   }
 }

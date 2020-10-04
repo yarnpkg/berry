@@ -42,8 +42,14 @@ type FileMode =
   | typeof NON_EXECUTABLE_FILE_MODE
   | typeof EXECUTABLE_FILE_MODE;
 
-type PatchMutationPart = {
-  type: `context` | `insertion` | `deletion`,
+export enum PatchMutationType {
+  Context = `context`,
+  Insertion = `insertion`,
+  Deletion = `deletion`,
+}
+
+export type PatchMutationPart = {
+  type: PatchMutationType,
   lines: Array<string>,
   noNewlineAtEndOfFile: boolean,
 };
@@ -150,12 +156,12 @@ const emptyHunk = (headerLine: string): Hunk => ({
 
 const hunkLinetypes: {[k: string]: PatchMutationPart['type'] | `pragma` | `header`} = {
   [`@`]: `header`,
-  [`-`]: `deletion`,
-  [`+`]: `insertion`,
-  [` `]: `context`,
+  [`-`]: PatchMutationType.Deletion,
+  [`+`]: PatchMutationType.Insertion,
+  [` `]: PatchMutationType.Context,
   [`\\`]: `pragma`,
   // Treat blank lines as context
-  undefined: `context`,
+  undefined: PatchMutationType.Context,
 };
 
 function parsePatchLines(lines: Array<string>) {
@@ -255,9 +261,9 @@ function parsePatchLines(lines: Array<string>) {
           currentHunkMutationPart.noNewlineAtEndOfFile = true;
         } break;
 
-        case `insertion`:
-        case `deletion`:
-        case `context`: {
+        case PatchMutationType.Context:
+        case PatchMutationType.Deletion:
+        case PatchMutationType.Insertion: {
           if (!currentHunk)
             throw new Error(`Bad parser state: Hunk lines encountered before hunk header`);
 
@@ -431,16 +437,16 @@ export function verifyHunkIntegrity(hunk: Hunk) {
 
   for (const {type, lines} of hunk.parts) {
     switch (type) {
-      case `context`: {
+      case PatchMutationType.Context: {
         patchedLength += lines.length;
         originalLength += lines.length;
       } break;
 
-      case `deletion`: {
+      case PatchMutationType.Deletion: {
         originalLength += lines.length;
       } break;
 
-      case `insertion`: {
+      case PatchMutationType.Insertion: {
         patchedLength += lines.length;
       } break;
 

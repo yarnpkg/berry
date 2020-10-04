@@ -468,88 +468,6 @@ describe(`Shell`, () => {
       });
     });
 
-    it(`should support input redirections (file)`, async () => {
-      await xfs.mktempPromise(async tmpDir => {
-        const file = ppath.join(tmpDir, `file` as Filename);
-        await xfs.writeFilePromise(file, `hello world\n`);
-
-        await expect(bufferResult(
-          `cat < "${file}"`,
-        )).resolves.toMatchObject({
-          stdout: `hello world\n`,
-        });
-      });
-    });
-
-    it(`should support input redirections (string)`, async () => {
-      await expect(bufferResult(
-        `cat <<< "hello world"`,
-      )).resolves.toMatchObject({
-        stdout: `hello world\n`,
-      });
-    });
-
-    it(`should support output redirections (overwrite)`, async () => {
-      await xfs.mktempPromise(async tmpDir => {
-        const file = ppath.join(tmpDir, `file` as Filename);
-
-        await expect(bufferResult(
-          `echo "hello world" > "${file}"`,
-        )).resolves.toMatchObject({
-          stdout: ``,
-        });
-
-        await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
-      });
-    });
-
-    it(`should support output redirections (append)`, async () => {
-      await xfs.mktempPromise(async tmpDir => {
-        const file = ppath.join(tmpDir, `file` as Filename);
-        await xfs.writeFilePromise(file, `foo bar baz\n`);
-
-        await expect(bufferResult(
-          `echo "hello world" >> "${file}"`,
-        )).resolves.toMatchObject({
-          stdout: ``,
-        });
-
-        await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`foo bar baz\nhello world\n`);
-      });
-    });
-
-    it(`should support multiple outputs`, async () => {
-      await xfs.mktempPromise(async tmpDir => {
-        const file1 = ppath.join(tmpDir, `file1` as Filename);
-        const file2 = ppath.join(tmpDir, `file2` as Filename);
-
-        await expect(bufferResult(
-          `echo "hello world" > "${file1}" > "${file2}"`,
-        )).resolves.toMatchObject({
-          stdout: ``,
-        });
-
-        await expect(xfs.readFilePromise(file1, `utf8`)).resolves.toEqual(`hello world\n`);
-        await expect(xfs.readFilePromise(file2, `utf8`)).resolves.toEqual(`hello world\n`);
-      });
-    });
-
-    it(`should support multiple inputs`, async () => {
-      await xfs.mktempPromise(async tmpDir => {
-        const file1 = ppath.join(tmpDir, `file1` as Filename);
-        await xfs.writeFilePromise(file1, `foo bar baz\n`);
-
-        const file2 = ppath.join(tmpDir, `file2` as Filename);
-        await xfs.writeFilePromise(file2, `hello world\n`);
-
-        await expect(bufferResult(
-          `cat < "${file1}" < "${file2}"`,
-        )).resolves.toMatchObject({
-          stdout: `foo bar baz\nhello world\n`,
-        });
-      });
-    });
-
     it(`should support redirections on subshells (one command)`, async () => {
       await xfs.mktempPromise(async tmpDir => {
         const file = ppath.join(tmpDir, `file` as Filename);
@@ -649,6 +567,123 @@ describe(`Shell`, () => {
       numbers = await getNumbers(bufferResult(`RANDOM=foo ; echo $RANDOM`));
       expect(numbers.length).toBe(1);
       numbers.forEach(validateRandomNumber);
+    });
+  });
+
+  describe(`Redirections`, () => {
+    describe(`<`, () => {
+      it(`should support input redirections (file)`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file` as Filename);
+          await xfs.writeFilePromise(file, `hello world\n`);
+
+          await expect(bufferResult(
+            `cat < "${file}"`,
+          )).resolves.toMatchObject({
+            stdout: `hello world\n`,
+          });
+        });
+      });
+
+      it(`should support multiple inputs`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file1 = ppath.join(tmpDir, `file1` as Filename);
+          await xfs.writeFilePromise(file1, `foo bar baz\n`);
+
+          const file2 = ppath.join(tmpDir, `file2` as Filename);
+          await xfs.writeFilePromise(file2, `hello world\n`);
+
+          await expect(bufferResult(
+            `cat < "${file1}" < "${file2}"`,
+          )).resolves.toMatchObject({
+            stdout: `foo bar baz\nhello world\n`,
+          });
+        });
+      });
+    });
+
+    describe(`<<<`, () => {
+      it(`should support input redirections (string)`, async () => {
+        await expect(bufferResult(
+          `cat <<< "hello world"`,
+        )).resolves.toMatchObject({
+          stdout: `hello world\n`,
+        });
+      });
+    });
+
+    describe(`>`, () => {
+      it(`should support output redirections (overwrite)`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file` as Filename);
+
+          await expect(bufferResult(
+            `echo "hello world" > "${file}"`,
+          )).resolves.toMatchObject({
+            stdout: ``,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
+        });
+      });
+
+      it(`should support multiple outputs`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file1 = ppath.join(tmpDir, `file1` as Filename);
+          const file2 = ppath.join(tmpDir, `file2` as Filename);
+
+          await expect(bufferResult(
+            `echo "hello world" > "${file1}" > "${file2}"`,
+          )).resolves.toMatchObject({
+            stdout: ``,
+          });
+
+          await expect(xfs.readFilePromise(file1, `utf8`)).resolves.toEqual(`hello world\n`);
+          await expect(xfs.readFilePromise(file2, `utf8`)).resolves.toEqual(`hello world\n`);
+        });
+      });
+    });
+
+    describe(`>>`, () => {
+      it(`should support output redirections (append)`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file` as Filename);
+          await xfs.writeFilePromise(file, `foo bar baz\n`);
+
+          await expect(bufferResult(
+            `echo "hello world" >> "${file}"`,
+          )).resolves.toMatchObject({
+            stdout: ``,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`foo bar baz\nhello world\n`);
+        });
+      });
+    });
+
+    describe(`>&`, () => {
+      it(`should support stdout redirections (file descriptor)`, async () => {
+        await expect(bufferResult(
+          `echo "hello world" >& 1`,
+        )).resolves.toMatchObject({
+          stdout: `hello world\n`,
+        });
+
+        await expect(bufferResult(
+          `echo "hello world" >& 2`,
+        )).resolves.toMatchObject({
+          stderr: `hello world\n`,
+        });
+      });
+
+      it(`should support multiple stdout redirections (file descriptor)`, async () => {
+        await expect(bufferResult(
+          `echo "hello world" >& 1 >& 2`,
+        )).resolves.toMatchObject({
+          stdout: `hello world\n`,
+          stderr: `hello world\n`,
+        });
+      });
     });
   });
 

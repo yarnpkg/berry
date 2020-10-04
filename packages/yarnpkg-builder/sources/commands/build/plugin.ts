@@ -24,15 +24,13 @@ const getNormalizedName = (name: string) => {
 
 // eslint-disable-next-line arca/no-default-export
 export default class BuildPluginCommand extends Command {
-  @Command.Boolean(`--no-minify`)
+  @Command.Boolean(`--no-minify`, {description: `Build a plugin for development, without optimizations (minifying, mangling, treeshaking)`})
   noMinify: boolean = false;
 
   static usage: Usage = Command.Usage({
     description: `build a local plugin`,
     details: `
       This command builds a local plugin.
-
-      If the \`--no-minify\` option is used, the plugin will be built in development mode, without any optimizations like minifying, symbol scrambling, and treeshaking.
     `,
     examples: [[
       `Build a local plugin`,

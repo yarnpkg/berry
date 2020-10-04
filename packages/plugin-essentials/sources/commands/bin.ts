@@ -8,10 +8,10 @@ export default class BinCommand extends BaseCommand {
   @Command.String({required: false})
   name?: string;
 
-  @Command.Boolean(`-v,--verbose`)
+  @Command.Boolean(`-v,--verbose`, {description: `Print both the binary name and the locator of the package that provides the binary`})
   verbose: boolean = false;
 
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -20,8 +20,6 @@ export default class BinCommand extends BaseCommand {
       When used without arguments, this command will print the list of all the binaries available in the current workspace. Adding the \`-v,--verbose\` flag will cause the output to contain both the binary name and the locator of the package that provides the binary.
 
       When an argument is specified, this command will just print the path to the binary on the standard output and exit. Note that the reported path may be stored within a zip archive.
-
-      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
     `,
     examples: [[
       `List all the available binaries`,

@@ -1,10 +1,12 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions}       from '@yarnpkg/core';
-import {Locator}                                          from '@yarnpkg/core';
-import {miscUtils, structUtils}                           from '@yarnpkg/core';
-import {ppath, xfs, ZipFS, Filename, CwdFS, PortablePath} from '@yarnpkg/fslib';
-import {getLibzipPromise}                                 from '@yarnpkg/libzip';
+import {Fetcher, FetchOptions, MinimalFetchOptions, ReportError, MessageName} from '@yarnpkg/core';
+import {Locator}                                                              from '@yarnpkg/core';
+import {miscUtils, structUtils}                                               from '@yarnpkg/core';
+import {ppath, xfs, ZipFS, Filename, CwdFS, PortablePath}                     from '@yarnpkg/fslib';
+import {getLibzipPromise}                                                     from '@yarnpkg/libzip';
 
-import * as patchUtils                                    from './patchUtils';
+import * as patchUtils                                                        from './patchUtils';
+import {UnmatchedHunkError}                                                   from './tools/UnmatchedHunkError';
+import {reportHunk}                                                           from './tools/format';
 
 export class PatchFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -65,10 +67,30 @@ export class PatchFetcher implements Fetcher {
 
     for (const patchFile of patchFiles) {
       if (patchFile !== null) {
-        await patchUtils.applyPatchFile(patchUtils.parsePatchFile(patchFile), {
-          baseFs: patchFs,
-          version: sourceVersion,
-        });
+        try {
+          await patchUtils.applyPatchFile(patchUtils.parsePatchFile(patchFile), {
+            baseFs: patchFs,
+            version: sourceVersion,
+          });
+        } catch (err) {
+          if (!(err instanceof UnmatchedHunkError))
+            throw err;
+
+          const enableInlineHunks = opts.project.configuration.get(`enableInlineHunks`);
+          const suggestion = !enableInlineHunks
+            ? ` (set enableInlineHunks for details)`
+            : ``;
+
+          throw new ReportError(MessageName.PATCH_HUNK_FAILED, err.message + suggestion, report => {
+            if (!enableInlineHunks)
+              return;
+
+            reportHunk(err.hunk, {
+              configuration: opts.project.configuration,
+              report,
+            });
+          });
+        }
       }
     }
 

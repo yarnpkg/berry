@@ -6,15 +6,15 @@ enum PathType {
   Native,
 }
 
-export type PortablePath = string & { _path_type: PathType.File | PathType.Portable };
-export type NativePath = string & { _path_type?: PathType.File | PathType.Native };
+export type PortablePath = string & { __pathType: PathType.File | PathType.Portable };
+export type NativePath = string & { __pathType?: PathType.File | PathType.Native };
 
 export const PortablePath = {
   root: `/` as PortablePath,
   dot: `.` as PortablePath,
 };
 
-export type Filename = string & { _path_type: PathType.File };
+export type Filename = string & { __pathType: PathType.File };
 export type Path = PortablePath | NativePath;
 
 export const Filename = {

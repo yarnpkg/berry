@@ -11,7 +11,7 @@ import {Constraints, EnforcedDependency, EnforcedField}                 from '..
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsCheckCommand extends BaseCommand {
-  @Command.Boolean(`--fix`)
+  @Command.Boolean(`--fix`, {description: `Attempt to automatically fix unambiguous issues, following a multi-pass process`})
   fix: boolean = false;
 
   static usage: Usage = Command.Usage({

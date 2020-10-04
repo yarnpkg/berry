@@ -103,7 +103,7 @@ Constraints can be checked with `yarn constraints`, and fixed with `yarn constra
 
 ## Preparing your PR to be released
 
-In order to track which packages need to be released, we use the workflow described in the [following document](https://yarnpkg.com/advanced/managing-releases). To summarize, you must run `yarn version check --interactive` on each PR you make, and select which packages should be released again for your changes to be effective (and to which version), if any.
+In order to track which packages need to be released, we use the workflow described in the [following document](https://yarnpkg.com/features/release-workflow). To summarize, you must run `yarn version check --interactive` on each PR you make, and select which packages should be released again for your changes to be effective (and to which version), if any.
 
 You can check if you've set everything correctly with `yarn version check`.
 

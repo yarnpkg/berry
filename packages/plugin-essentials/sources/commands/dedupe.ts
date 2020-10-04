@@ -116,13 +116,13 @@ export default class DedupeCommand extends BaseCommand {
   @Command.Rest()
   patterns: Array<string> = [];
 
-  @Command.String(`-s,--strategy`)
+  @Command.String(`-s,--strategy`, {description: `The strategy to use when deduping dependencies`})
   strategy: Strategy = Strategy.HIGHEST;
 
-  @Command.Boolean(`-c,--check`)
+  @Command.Boolean(`-c,--check`, {description: `Exit with exit code 1 when duplicates are found, without persisting the dependency tree`})
   check: boolean = false;
 
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   static schema = yup.object().shape({

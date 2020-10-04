@@ -9,7 +9,7 @@ export default class NpmTagListCommand extends BaseCommand {
   @Command.String({required: false})
   package?: string;
 
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -19,8 +19,6 @@ export default class NpmTagListCommand extends BaseCommand {
       This command will list all tags of a package from the npm registry.
 
       If the package is not specified, Yarn will default to the current workspace.
-
-      If the \`--json\` flag is set, the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
     `,
     examples: [[
       `List all tags of package \`my-pkg\``,

@@ -30,6 +30,23 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should be able to unplug packages with peer dependencies`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`peer-deps`]: `npm:peer-deps@1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await run(`unplug`, `peer-deps`);
+
+        await expect(readManifest(path, {key: `dependenciesMeta`})).resolves.toEqual({
+          [`peer-deps@1.0.0`]: unplugged,
+        });
+      }),
+    );
+
+    test(
       `it should unplug all dependencies matching a glob pattern`,
       makeTemporaryEnv({
         dependencies: {

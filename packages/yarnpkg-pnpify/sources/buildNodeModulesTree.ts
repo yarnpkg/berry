@@ -1,14 +1,23 @@
-import {structUtils}                                        from '@yarnpkg/core';
-import {NativePath, PortablePath, Filename}                 from '@yarnpkg/fslib';
-import {toFilename, npath, ppath}                           from '@yarnpkg/fslib';
-import {PnpApi, PhysicalPackageLocator, PackageInformation} from '@yarnpkg/pnp';
+import {structUtils, Project}                                                 from '@yarnpkg/core';
+import {NativePath, PortablePath, Filename}                                   from '@yarnpkg/fslib';
+import {toFilename, npath, ppath}                                             from '@yarnpkg/fslib';
+import {PnpApi, PhysicalPackageLocator, PackageInformation, DependencyTarget} from '@yarnpkg/pnp';
 
-import {hoist, HoisterTree, HoisterResult}                  from './hoist';
+import {hoist, HoisterTree, HoisterResult}                                    from './hoist';
 
 // Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
 // But because of this TypeScript requires @yarnpkg/pnp during runtime
 // To prevent this we redeclare LinkType enum here, to not depend on @yarnpkg/pnp during runtime
-export enum LinkType {HARD = `HARD`, SOFT = `SOFT`}
+export enum LinkType {
+  HARD = `HARD`,
+  SOFT = `SOFT`,
+}
+
+export enum NodeModulesHoistingLimits {
+  WORKSPACES = `workspaces`,
+  DEPENDENCIES = `dependencies`,
+  NONE = `none`,
+}
 
 // The list of directories stored within a node_modules (or node_modules/@foo)
 export type NodeModulesBaseNode = {
@@ -40,13 +49,23 @@ export type NodeModulesTree = Map<PortablePath, NodeModulesBaseNode | NodeModule
 
 export interface NodeModulesTreeOptions {
   pnpifyFs?: boolean;
+  hoistingLimitsByCwd?: Map<PortablePath, NodeModulesHoistingLimits>;
+  project?: Project;
 }
 
 /** node_modules path segment */
 const NODE_MODULES = `node_modules` as Filename;
 
+/**
+ * The workspace name suffix used internally by this implementation and appeneded to the name of workspace package.
+ * It is needed to create and distinguuish special nodes for workspaces
+ */
+const WORKSPACE_NAME_SUFFIX = `$wsroot$`;
+
 /** Package locator key for usage inside maps */
 type LocatorKey = string;
+
+type WorkspaceTree = {workspaceLocator?: PhysicalPackageLocator, children: Map<Filename, WorkspaceTree>};
 
 /**
  * Returns path to archive, if package location is inside the archive.
@@ -69,8 +88,9 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
  * @returns hoisted `node_modules` directories representation in-memory
  */
 export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
-  const packageTree = buildPackageTree(pnp, options);
-  const hoistedTree = hoist(packageTree);
+  const {packageTree, hoistingLimits} = buildPackageTree(pnp, options);
+
+  const hoistedTree = hoist(packageTree, {hoistingLimits});
 
   return populateNodeModulesTree(pnp, hoistedTree, options);
 };
@@ -126,8 +146,11 @@ function isPortalLocator(locatorKey: LocatorKey): boolean {
  *
  * @returns package tree, packages info and locators
  */
-const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): HoisterTree => {
+const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, hoistingLimits: Map<LocatorKey, Set<string>> } => {
   const pnpRoots = pnp.getDependencyTreeRoots();
+
+  const hoistingLimits = new Map<LocatorKey, Set<string>>();
+  const workspaceDependenciesMap = new Map<LocatorKey, Set<PhysicalPackageLocator>>();
 
   const topPkg = pnp.getPackageInformation(pnp.topLevel);
   if (topPkg === null)
@@ -137,9 +160,55 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
   if (topLocator === null)
     throw new Error(`Assertion failed: Expected the top-level package to have a physical locator`);
 
-  for (const locator of pnpRoots) {
-    if (locator.name !== topLocator.name || locator.reference !== topLocator.reference) {
-      topPkg.packageDependencies.set(`${locator.name}$wsroot$`, locator.reference);
+  const topPkgPortableLocation = npath.toPortablePath(topPkg.packageLocation);
+
+  const topLocatorKey = stringifyLocator(topLocator);
+
+  if (options.project) {
+    const workspaceTree: WorkspaceTree = {children: new Map()};
+    const cwdSegments = options.project.cwd.split(ppath.sep);
+    for (const [cwd, workspace] of options.project.workspacesByCwd) {
+      const segments = cwd.split(ppath.sep).slice(cwdSegments.length);
+      let node = workspaceTree;
+      for (const segment of segments) {
+        let nextNode = node.children.get(segment as Filename);
+        if (!nextNode) {
+          nextNode = {children: new Map()};
+          node.children.set(segment as Filename, nextNode);
+        }
+        node = nextNode;
+      }
+      node.workspaceLocator = {name: structUtils.stringifyIdent(workspace.anchoredLocator), reference: workspace.anchoredLocator.reference};
+    }
+
+    const addWorkspace = (node: WorkspaceTree, parentWorkspaceLocator: PhysicalPackageLocator) => {
+      if (node.workspaceLocator) {
+        const parentLocatorKey = stringifyLocator(parentWorkspaceLocator);
+        let dependencies = workspaceDependenciesMap.get(parentLocatorKey);
+        if (!dependencies) {
+          dependencies = new Set();
+          workspaceDependenciesMap.set(parentLocatorKey, dependencies);
+        }
+        dependencies.add(node.workspaceLocator);
+      }
+      for (const child of node.children.values()) {
+        addWorkspace(child, node.workspaceLocator || parentWorkspaceLocator);
+      }
+    };
+
+    for (const child of workspaceTree.children.values()) {
+      addWorkspace(child, workspaceTree.workspaceLocator!);
+    }
+  } else {
+    for (const locator of pnpRoots) {
+      if (locator.name !== topLocator.name || locator.reference !== topLocator.reference) {
+        let dependencies = workspaceDependenciesMap.get(topLocatorKey);
+        if (!dependencies) {
+          dependencies = new Set();
+          workspaceDependenciesMap.set(topLocatorKey, dependencies);
+        }
+        dependencies.add(locator);
+      }
     }
   }
 
@@ -154,7 +223,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
   const nodes = new Map<string, HoisterTree>();
   const getNodeKey = (name: string, locator: PhysicalPackageLocator) => `${stringifyLocator(locator)}:${name}`;
 
-  const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentPkg: PackageInformation<NativePath>) => {
+  const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentDependencies: Map<string, DependencyTarget>, parentRelativeCwd: PortablePath, isHoistBorder: boolean) => {
     const nodeKey = getNodeKey(name, locator);
     let node = nodes.get(nodeKey);
 
@@ -176,34 +245,74 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): Hoister
       nodes.set(nodeKey, node);
     }
 
+    if (isHoistBorder) {
+      const parentLocatorKey = stringifyLocator({name: parent.identName, reference: parent.reference});
+      const dependencyBorders = hoistingLimits.get(parentLocatorKey) || new Set();
+      hoistingLimits.set(parentLocatorKey, dependencyBorders);
+      dependencyBorders.add(node.name);
+    }
+
+    const allDependencies = new Map(pkg.packageDependencies);
+
+    if (options.project) {
+      const workspace = options.project.workspacesByCwd.get(npath.toPortablePath(pkg.packageLocation.slice(0, -1)));
+      if (workspace) {
+        const peerCandidates = new Set([
+          ...Array.from(workspace.manifest.peerDependencies.values(), x => structUtils.stringifyIdent(x)),
+          ...Array.from(workspace.manifest.peerDependenciesMeta.keys()),
+        ]);
+        for (const peerName of peerCandidates) {
+          if (!allDependencies.has(peerName)) {
+            allDependencies.set(peerName, parentDependencies.get(peerName) || null);
+            node.peerNames.add(peerName);
+          }
+        }
+      }
+    }
+
+    const locatorKey = stringifyLocator(locator);
+    const workspaceDependencies = workspaceDependenciesMap.get(locatorKey);
+    if (workspaceDependencies) {
+      for (const workspaceLocator of workspaceDependencies) {
+        allDependencies.set(`${workspaceLocator.name}${WORKSPACE_NAME_SUFFIX}`, workspaceLocator.reference);
+      }
+    }
+
     parent.dependencies.add(node);
 
     // If we link dependencies to file system we must not try to install children dependencies inside portal folders
     const shouldAddChildrenDependencies = options.pnpifyFs || !isPortalLocator(nodeKey);
 
     if (!isSeen && shouldAddChildrenDependencies) {
-      for (const [name, referencish] of pkg.packageDependencies) {
-        if (referencish !== null && !node.peerNames.has(name)) {
-          const depLocator = pnp.getLocator(name, referencish);
-          const pkgLocator = pnp.getLocator(name.replace(`$wsroot$`, ``), referencish);
+      for (const [depName, referencish] of allDependencies) {
+        if (referencish !== null) {
+          const depLocator = pnp.getLocator(depName, referencish);
+          const pkgLocator = pnp.getLocator(depName.replace(WORKSPACE_NAME_SUFFIX, ``), referencish);
 
           const depPkg = pnp.getPackageInformation(pkgLocator);
           if (depPkg === null)
             throw new Error(`Assertion failed: Expected the package to have been registered`);
 
-          addPackageToTree(name, depPkg, depLocator, node, pkg);
+          const parentHoistingLimits = options.hoistingLimitsByCwd?.get(parentRelativeCwd);
+          const relativeDepCwd = ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;
+          const depHoistingLimits = options.hoistingLimitsByCwd?.get(relativeDepCwd);
+          const isHoistBorder = parentHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
+            || depHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
+            || depHoistingLimits === NodeModulesHoistingLimits.WORKSPACES;
+
+          addPackageToTree(depName, depPkg, depLocator, node, allDependencies, relativeDepCwd, isHoistBorder);
         }
       }
     }
   };
 
-  addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, topPkg);
+  addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, topPkg.packageDependencies, PortablePath.dot, false);
 
-  return packageTree;
+  return {packageTree, hoistingLimits};
 };
 
 function getTargetLocatorPath(locator: PhysicalPackageLocator, pnp: PnpApi, options: NodeModulesTreeOptions): {linkType: LinkType, target: PortablePath} {
-  const pkgLocator = pnp.getLocator(locator.name.replace(`$wsroot$`, ``), locator.reference);
+  const pkgLocator = pnp.getLocator(locator.name.replace(WORKSPACE_NAME_SUFFIX, ``), locator.reference);
 
   const info = pnp.getPackageInformation(pkgLocator);
   if (info === null)
@@ -275,7 +384,9 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
 
     for (const dep of pkg.dependencies) {
       // We do not want self-references in node_modules, since they confuse existing tools
-      if (dep === pkg)
+      if (dep.identName === pkg.identName.replace(WORKSPACE_NAME_SUFFIX, ``)
+        && dep.references.size === 1 && pkg.references.size === 1
+        && dep.references.keys().next().value === pkg.references.keys().next().value)
         continue;
       const references = Array.from(dep.references).sort();
       const locator = {name: dep.identName, reference: references[0]};
@@ -289,7 +400,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
       const nodeModulesLocation = ppath.join(nodeModulesDirPath, ...packageNameParts);
 
       const leafNode = makeLeafNode(locator, references.slice(1));
-      if (!dep.name.endsWith(`$wsroot$`)) {
+      if (!dep.name.endsWith(WORKSPACE_NAME_SUFFIX)) {
         const prevNode = tree.get(nodeModulesLocation);
         if (prevNode) {
           if (prevNode.dirList) {
@@ -379,8 +490,8 @@ const benchmarkBuildTree = (pnp: PnpApi, options: NodeModulesTreeOptions): numbe
   const iterCount = 100;
   const startTime = Date.now();
   for (let iter = 0; iter < iterCount; iter++) {
-    const packageTree = buildPackageTree(pnp, options);
-    const hoistedTree = hoist(packageTree);
+    const {packageTree, hoistingLimits} = buildPackageTree(pnp, options);
+    const hoistedTree = hoist(packageTree, {hoistingLimits});
     populateNodeModulesTree(pnp, hoistedTree, options);
   }
   const endTime = Date.now();

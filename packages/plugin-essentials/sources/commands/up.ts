@@ -1,32 +1,29 @@
-import {BaseCommand, WorkspaceRequiredError}                                               from '@yarnpkg/cli';
-import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions} from '@yarnpkg/core';
-import {Project, StreamReport, Workspace}                                                  from '@yarnpkg/core';
-import {structUtils}                                                                       from '@yarnpkg/core';
-import {Command, Usage, UsageError}                                                        from 'clipanion';
-import {prompt}                                                                            from 'enquirer';
-import micromatch                                                                          from 'micromatch';
+import {BaseCommand, WorkspaceRequiredError}                                                                        from '@yarnpkg/cli';
+import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions, formatUtils, FormatType} from '@yarnpkg/core';
+import {Project, StreamReport, Workspace}                                                                           from '@yarnpkg/core';
+import {structUtils}                                                                                                from '@yarnpkg/core';
+import {Command, Usage, UsageError}                                                                                 from 'clipanion';
+import {prompt}                                                                                                     from 'enquirer';
+import micromatch                                                                                                   from 'micromatch';
 
-import * as suggestUtils                                                                   from '../suggestUtils';
-import {Hooks}                                                                             from '..';
+import * as suggestUtils                                                                                            from '../suggestUtils';
+import {Hooks}                                                                                                      from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpCommand extends BaseCommand {
   @Command.Rest()
   patterns: Array<string> = [];
 
-  @Command.Boolean(`-i,--interactive`)
+  @Command.Boolean(`-i,--interactive`, {description: `Offer various choices, depending on the detected upgrade paths`})
   interactive: boolean | null = null;
 
-  @Command.Boolean(`-v,--verbose`)
-  verbose: boolean = false;
-
-  @Command.Boolean(`-E,--exact`)
+  @Command.Boolean(`-E,--exact`, {description: `Don't use any semver modifier on the resolved range`})
   exact: boolean = false;
 
-  @Command.Boolean(`-T,--tilde`)
+  @Command.Boolean(`-T,--tilde`, {description: `Use the \`~\` semver modifier on the resolved range`})
   tilde: boolean = false;
 
-  @Command.Boolean(`-C,--caret`)
+  @Command.Boolean(`-C,--caret`, {description: `Use the \`^\` semver modifier on the resolved range`})
   caret: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -74,7 +71,7 @@ export default class UpCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    const interactive = this.interactive ?? configuration.get<boolean>(`preferInteractive`);
+    const interactive = this.interactive ?? configuration.get(`preferInteractive`);
 
     const modifier = suggestUtils.getModifier(this, project);
 
@@ -133,9 +130,9 @@ export default class UpCommand extends BaseCommand {
     }
 
     if (unreferencedPatterns.length > 1)
-      throw new UsageError(`Patterns ${unreferencedPatterns.join(`, `)} don't match any packages referenced by any workspace`);
+      throw new UsageError(`Patterns ${formatUtils.prettyList(configuration, unreferencedPatterns, FormatType.CODE)} don't match any packages referenced by any workspace`);
     if (unreferencedPatterns.length > 0)
-      throw new UsageError(`Pattern ${unreferencedPatterns[0]} doesn't match any packages referenced by any workspace`);
+      throw new UsageError(`Pattern ${formatUtils.prettyList(configuration, unreferencedPatterns, FormatType.CODE)} doesn't match any packages referenced by any workspace`);
 
     const allSuggestions = await Promise.all(allSuggestionsPromises);
 

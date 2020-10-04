@@ -49,7 +49,15 @@ Argument
   / S* arg:ValueArgument { return arg }
 
 RedirectArgument
-  = S* redirect:(">>" / ">" / "<<<" / "<") arg:ValueArgument { return { type: `redirection`, subtype: redirect, args: [arg] } }
+  = S* redirect:RedirectType arg:ValueArgument { return { type: `redirection`, subtype: redirect, args: [arg] } }
+
+RedirectType
+  = '>>'
+  / '>&'
+  / '>'
+  / '<<<'
+  / '<&'
+  / '<'
 
 ValueArgument
   = S* arg:StrictValueArgument { return arg }

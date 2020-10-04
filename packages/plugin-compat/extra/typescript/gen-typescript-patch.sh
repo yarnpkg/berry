@@ -14,7 +14,8 @@ HASHES=(
   "426f5a7" "cf7b2d4" ">=3.5 <=3.6"
   "426f5a7" "cda54b8" ">3.6 <3.7"
   "2f85932" "e39bdc3" ">=3.7 <3.9"
-  "3af06df" "551f0dd" ">=3.9"
+  "3af06df" "551f0dd" ">=3.9 <4.1"
+  "ce3da5a" "69972a3" ">=4.1"
 )
 
 mkdir -p "$TEMP_DIR"
@@ -75,7 +76,7 @@ make-build-for() {
 
     for n in {5..1}; do
       yarn gulp local LKG
-      
+
       if [[ $(stat -c%s lib/typescript.js) -gt 100000 ]]; then
         break
       else

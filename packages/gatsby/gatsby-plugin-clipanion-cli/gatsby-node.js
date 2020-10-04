@@ -67,6 +67,18 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
         ].join(``));
       }
 
+      if (command.options.length > 0) {
+        sections.push([
+          `## Options\n`,
+          `\n`,
+          `| <div style="width:180px">Definition</div> | Description |\n`,
+          `| ---------- | ----------- |\n`,
+          ...command.options.map(
+            ({definition, description}) => `| \`${definition}\` | ${description} |\n`
+          ),
+        ].join(``));
+      }
+
       if (command.details) {
         sections.push([
           `## Details\n`,

@@ -34,7 +34,7 @@ describe(`Commands`, () => {
             let stderr;
 
             try {
-              ({code, stdout, stderr} = await run(`constraints`, `check`));
+              ({code, stdout, stderr} = await run(`constraints`));
             } catch (error) {
               ({code, stdout, stderr} = error);
             }
