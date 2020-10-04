@@ -1,15 +1,15 @@
-import {Dirent, Filename, MkdirOptions,ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from '@yarnpkg/fslib';
-import {FSPath, NativePath, PortablePath, npath, ppath}                                                      from '@yarnpkg/fslib';
-import {WatchOptions, WatchCallback, Watcher}                                                                from '@yarnpkg/fslib';
-import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                                                         from '@yarnpkg/fslib';
-import {CreateReadStreamOptions, CreateWriteStreamOptions}                                                   from '@yarnpkg/fslib';
-import {PnpApi}                                                                                              from '@yarnpkg/pnp';
-import fs                                                                                                    from 'fs';
+import {Dirent, Filename, MkdirOptions, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, OpenDirOptions, Dir} from '@yarnpkg/fslib';
+import {FSPath, NativePath, PortablePath, npath, ppath, opendir}                                                                   from '@yarnpkg/fslib';
+import {WatchOptions, WatchCallback, Watcher}                                                                                      from '@yarnpkg/fslib';
+import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                                                                               from '@yarnpkg/fslib';
+import {CreateReadStreamOptions, CreateWriteStreamOptions}                                                                         from '@yarnpkg/fslib';
+import {PnpApi}                                                                                                                    from '@yarnpkg/pnp';
+import fs                                                                                                                          from 'fs';
 
-import {WatchManager}                                                                                        from './WatchManager';
-import {NodeModulesTreeOptions, NodeModulesTree}                                                             from './buildNodeModulesTree';
-import {buildNodeModulesTree}                                                                                from './buildNodeModulesTree';
-import {resolveNodeModulesPath, ResolvedPath}                                                                from './resolveNodeModulesPath';
+import {WatchManager}                                                                                                              from './WatchManager';
+import {NodeModulesTreeOptions, NodeModulesTree}                                                                                   from './buildNodeModulesTree';
+import {buildNodeModulesTree}                                                                                                      from './buildNodeModulesTree';
+import {resolveNodeModulesPath, ResolvedPath}                                                                                      from './resolveNodeModulesPath';
 
 export type NodeModulesFSOptions = {
   realFs?: typeof fs,
@@ -177,6 +177,40 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     if (WRITE_FLAGS_REGEX.test(flags))
       this.persistVirtualParentFolder(p);
     return this.baseFs.openSync(this.resolveFilePath(p), flags, mode);
+  }
+
+  async opendirPromise(p: PortablePath, opts?: OpenDirOptions): Promise<Dir<PortablePath>> {
+    const pnpPath = this.resolvePath(p);
+    if (pnpPath.dirList || this.resolvePath(ppath.join(p, `node_modules` as Filename)).dirList) {
+      let fsDirList: Array<Filename> = [];
+      try {
+        fsDirList = await this.baseFs.readdirPromise(pnpPath.resolvedPath);
+      } catch (e) {
+        // Ignore errors
+      }
+      const entries = Array.from(pnpPath.dirList || [`node_modules` as Filename]).concat(fsDirList).sort();
+
+      return opendir(p, this, entries);
+    } else {
+      return await this.baseFs.opendirPromise(pnpPath.resolvedPath, opts);
+    }
+  }
+
+  opendirSync(p: PortablePath, opts?: OpenDirOptions): Dir<PortablePath> {
+    const pnpPath = this.resolvePath(p);
+    if (pnpPath.dirList || this.resolvePath(ppath.join(p, `node_modules` as Filename)).dirList) {
+      let fsDirList: Array<Filename> = [];
+      try {
+        fsDirList = this.baseFs.readdirSync(pnpPath.resolvedPath);
+      } catch (e) {
+        // Ignore errors
+      }
+      const entries = Array.from(pnpPath.dirList || [`node_modules` as Filename]).concat(fsDirList).sort();
+
+      return opendir(p, this, entries);
+    } else {
+      return this.baseFs.opendirSync(pnpPath.resolvedPath, opts);
+    }
   }
 
   async readPromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number) {

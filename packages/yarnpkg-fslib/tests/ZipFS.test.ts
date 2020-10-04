@@ -479,5 +479,41 @@ describe(`ZipFS`, () => {
       advanceTimeBy(100);
     });
   });
+
+  it(`should support opendir`, async () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const folder = `/foo` as PortablePath;
+    zipFs.mkdirSync(folder);
+
+    const firstFile = `/foo/1.txt` as PortablePath;
+    const secondFile = `/foo/2.txt` as PortablePath;
+    const thirdFile = `/foo/3.txt` as PortablePath;
+
+    zipFs.writeFileSync(firstFile, ``);
+    zipFs.writeFileSync(secondFile, ``);
+    zipFs.writeFileSync(thirdFile, ``);
+
+    const dir = zipFs.opendirSync(folder);
+
+    expect(dir.path).toStrictEqual(folder);
+
+    const iter = dir[Symbol.asyncIterator]();
+
+    expect((await iter.next()).value.name).toStrictEqual(ppath.basename(firstFile));
+    expect(dir.readSync()!.name).toStrictEqual(ppath.basename(secondFile));
+    expect((await dir.read())!.name).toStrictEqual(ppath.basename(thirdFile));
+
+    expect((await iter.next()).value).toBeUndefined();
+    expect(dir.readSync()).toBeNull();
+    expect(await dir.read()).toBeNull();
+
+    dir.closeSync();
+
+    expect(() => dir.readSync()).toThrow(`Directory handle was closed`);
+
+    zipFs.discardAndClose();
+  });
 });
 
