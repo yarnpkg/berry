@@ -9,8 +9,8 @@ export class CustomDir<P extends Path> implements Dir<P> {
 
   constructor(
     public readonly path: P,
-    public fakeFs: FakeFS<P>,
-    public entries: Array<Filename>,
+    public readonly fakeFs: FakeFS<P>,
+    public readonly entries: Array<Filename>,
   ) {
     this.nextDirent = () => {
       const filename = entries.shift();
