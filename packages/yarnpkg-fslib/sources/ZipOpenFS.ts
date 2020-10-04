@@ -133,6 +133,8 @@ export class ZipOpenFS extends BasePortableFakeFS {
       return await this.baseFs.opendirPromise(p, opts);
     }, async (zipFs, {subPath}) => {
       return await zipFs.opendirPromise(subPath, opts);
+    }, {
+      requireSubpath: false,
     });
   }
 
@@ -141,6 +143,8 @@ export class ZipOpenFS extends BasePortableFakeFS {
       return this.baseFs.opendirSync(p, opts);
     }, (zipFs, {subPath}) => {
       return zipFs.opendirSync(subPath, opts);
+    }, {
+      requireSubpath: false,
     });
   }
 

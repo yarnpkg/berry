@@ -190,7 +190,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
       }
       const entries = Array.from(pnpPath.dirList || [`node_modules` as Filename]).concat(fsDirList).sort();
 
-      return opendir(p, this, entries);
+      return opendir(this, p, entries);
     } else {
       return await this.baseFs.opendirPromise(pnpPath.resolvedPath, opts);
     }
@@ -207,7 +207,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
       }
       const entries = Array.from(pnpPath.dirList || [`node_modules` as Filename]).concat(fsDirList).sort();
 
-      return opendir(p, this, entries);
+      return opendir(this, p, entries);
     } else {
       return this.baseFs.opendirSync(pnpPath.resolvedPath, opts);
     }

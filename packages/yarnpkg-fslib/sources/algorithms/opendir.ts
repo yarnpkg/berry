@@ -4,10 +4,15 @@ import {Dir, Dirent, FakeFS} from '../FakeFS';
 import * as errors           from '../errors';
 import {Filename, Path}      from '../path';
 
+export type CustomDirOptions = {
+  onClose?: () => void;
+};
+
 export class CustomDir<P extends Path> implements Dir<P> {
   constructor(
     public readonly path: P,
-    public nextDirent: () => Dirent | null,
+    private readonly nextDirent: () => Dirent | null,
+    private readonly opts: CustomDirOptions = {},
   ) {}
 
   public closed: boolean = false;
@@ -56,11 +61,13 @@ export class CustomDir<P extends Path> implements Dir<P> {
 
   closeSync() {
     this.throwIfClosed();
+
+    this.opts.onClose?.();
     this.closed = true;
   }
 }
 
-export function opendir<P extends Path>(path: P, fakeFs: FakeFS<P>, entries: Array<Filename>) {
+export function opendir<P extends Path>(fakeFs: FakeFS<P>, path: P, entries: Array<Filename>, opts?: CustomDirOptions) {
   const nextDirent = () => {
     const filename = entries.shift();
     if (typeof filename === `undefined`)
@@ -71,5 +78,5 @@ export function opendir<P extends Path>(path: P, fakeFs: FakeFS<P>, entries: Arr
     });
   };
 
-  return new CustomDir(path, nextDirent);
+  return new CustomDir(path, nextDirent, opts);
 }

@@ -37526,9 +37526,10 @@ var external_zlib_default = /*#__PURE__*/__webpack_require__.n(external_zlib_);
 // CONCATENATED MODULE: ../yarnpkg-fslib/sources/algorithms/opendir.ts
 
 class CustomDir {
-  constructor(path, nextDirent) {
+  constructor(path, nextDirent, opts = {}) {
     this.path = path;
     this.nextDirent = nextDirent;
+    this.opts = opts;
     this.closed = false;
   }
 
@@ -37564,12 +37565,15 @@ class CustomDir {
   }
 
   closeSync() {
+    var _a, _b;
+
     this.throwIfClosed();
+    (_b = (_a = this.opts).onClose) === null || _b === void 0 ? void 0 : _b.call(_a);
     this.closed = true;
   }
 
 }
-function opendir(path, fakeFs, entries) {
+function opendir(fakeFs, path, entries, opts) {
   const nextDirent = () => {
     const filename = entries.shift();
     if (typeof filename === `undefined`) return null;
@@ -37578,7 +37582,7 @@ function opendir(path, fakeFs, entries) {
     });
   };
 
-  return new CustomDir(path, nextDirent);
+  return new CustomDir(path, nextDirent, opts);
 }
 // EXTERNAL MODULE: external "events"
 var external_events_ = __webpack_require__(614);
@@ -38204,7 +38208,15 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     const directoryListing = this.listings.get(resolvedP);
     if (!directoryListing) throw ENOTDIR(`opendir '${p}'`);
     const entries = [...directoryListing];
-    return opendir(resolvedP, this, entries);
+    const fd = this.openSync(resolvedP, `r`);
+
+    const onClose = () => {
+      this.closeSync(fd);
+    };
+
+    return opendir(this, resolvedP, entries, {
+      onClose
+    });
   }
 
   async readPromise(fd, buffer, offset, length, position) {
@@ -39231,6 +39243,8 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
       subPath
     }) => {
       return await zipFs.opendirPromise(subPath, opts);
+    }, {
+      requireSubpath: false
     });
   }
 
@@ -39241,6 +39255,8 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
       subPath
     }) => {
       return zipFs.opendirSync(subPath, opts);
+    }, {
+      requireSubpath: false
     });
   }
 

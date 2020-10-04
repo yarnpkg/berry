@@ -369,7 +369,13 @@ export class ZipFS extends BasePortableFakeFS {
 
     const entries = [...directoryListing];
 
-    return opendir(resolvedP, this, entries);
+    const fd = this.openSync(resolvedP, `r`);
+
+    const onClose = () => {
+      this.closeSync(fd);
+    };
+
+    return opendir(this, resolvedP, entries, {onClose});
   }
 
   async readPromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number | null) {
