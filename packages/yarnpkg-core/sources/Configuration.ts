@@ -335,7 +335,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableTelemetry: {
     description: `If true, telemetry will be periodically sent, following the rules in https://yarnpkg.com/advanced/telemetry`,
     type: SettingsType.BOOLEAN,
-    default: !isCI && process.stdout.isTTY,
+    default: true,
   },
   telemetryInterval: {
     description: `Minimal amount of time between two telemetry uploads, in days`,
