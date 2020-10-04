@@ -52,6 +52,50 @@ export type ShellState = {
   variables: {[key: string]: string},
 };
 
+enum StreamType {
+  Readable = 0b01,
+  Writable = 0b10,
+}
+
+function getFileDescriptorStream(fd: number, type: StreamType, state: ShellState) {
+  const stream = new PassThrough({autoDestroy: true});
+
+  switch (fd) {
+    case Pipe.STDIN: {
+      if ((type & StreamType.Readable) === StreamType.Readable)
+        state.stdin.pipe(stream, {end: false});
+
+      if ((type & StreamType.Writable) === StreamType.Writable && state.stdin instanceof Writable) {
+        stream.pipe(state.stdin, {end: false});
+      }
+    } break;
+
+    case Pipe.STDOUT: {
+      if ((type & StreamType.Readable) === StreamType.Readable)
+        state.stdout.pipe(stream, {end: false});
+
+      if ((type & StreamType.Writable) === StreamType.Writable) {
+        stream.pipe(state.stdout, {end: false});
+      }
+    } break;
+
+    case Pipe.STDERR: {
+      if ((type & StreamType.Readable) === StreamType.Readable)
+        state.stderr.pipe(stream, {end: false});
+
+      if ((type & StreamType.Writable) === StreamType.Writable) {
+        stream.pipe(state.stderr, {end: false});
+      }
+    } break;
+
+    default: {
+      throw new Error(`Bad file descriptor: ${fd}`);
+    }
+  }
+
+  return stream;
+}
+
 function cloneState(state: ShellState, mergeWith: Partial<ShellState> = {}) {
   const newState = {...state, ...mergeWith};
 
@@ -142,12 +186,23 @@ const BUILTINS = new Map<string, ShellBuiltin>([
               return input;
             });
           } break;
+          case `<&`: {
+            inputs.push(() => getFileDescriptorStream(Number(args[u]), StreamType.Readable, state));
+          } break;
+
           case `>`: {
             outputs.push(opts.baseFs.createWriteStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u]))));
           } break;
           case `>>`: {
             outputs.push(opts.baseFs.createWriteStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u])), {flags: `a`}));
           } break;
+          case `>&`: {
+            outputs.push(getFileDescriptorStream(Number(args[u]), StreamType.Writable, state));
+          } break;
+
+          default: {
+            throw new Error(`Unsupported redirection type: "${type}"`);
+          }
         }
       }
     }

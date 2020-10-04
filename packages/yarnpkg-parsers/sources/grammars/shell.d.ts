@@ -17,8 +17,11 @@ export type Argument =
   | RedirectArgument
   | ValueArgument;
 
-export type RedirectArgument =
-  | {type: `redirection`, subtype: `>` | `<` | `>>` | `<<<`, args: Array<ValueArgument>};
+export type RedirectArgument = {
+  type: `redirection`,
+  subtype: `>` | `<` | '>&' | '<&' | `>>` | `<<<`,
+  args: Array<ValueArgument>
+};
 
 export type ValueArgument =
   | {type: `argument`, segments: Array<ArgumentSegment>};

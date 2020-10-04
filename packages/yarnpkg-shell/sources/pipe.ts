@@ -4,6 +4,7 @@ import {PassThrough, Readable, Transform, Writable} from 'stream';
 import {ShellOptions}                               from './index';
 
 export enum Pipe {
+  STDIN = 0b00,
   STDOUT = 0b01,
   STDERR = 0b10,
 }
