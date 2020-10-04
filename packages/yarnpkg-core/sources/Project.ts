@@ -1474,9 +1474,10 @@ export class Project {
       });
     }
 
-    for (const extensions of this.configuration.packageExtensions.values())
-      for (const entry of extensions)
-        entry.active = false;
+    for (const extensionsByIdent of this.configuration.packageExtensions.values())
+      for (const [, extensionsByRange] of extensionsByIdent)
+        for (const extension of extensionsByRange)
+          extension.active = false;
 
     await opts.report.startTimerPromise(`Resolution step`, async () => {
       const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
