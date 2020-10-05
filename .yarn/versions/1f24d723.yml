@@ -1,5 +1,6 @@
 releases:
-  "@yarnpkg/fslib": patch
+  "@yarnpkg/cli": patch
+  "@yarnpkg/fslib": minor
   "@yarnpkg/plugin-pnp": patch
   "@yarnpkg/pnp": patch
 
@@ -25,7 +26,6 @@ declined:
   - "@yarnpkg/plugin-workspace-tools"
   - vscode-zipfs
   - "@yarnpkg/builder"
-  - "@yarnpkg/cli"
   - "@yarnpkg/core"
   - "@yarnpkg/doctor"
   - "@yarnpkg/json-proxy"
