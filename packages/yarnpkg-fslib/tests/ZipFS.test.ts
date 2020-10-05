@@ -518,5 +518,18 @@ describe(`ZipFS`, () => {
 
     zipFs.discardAndClose();
   });
+
+  it(`closes the fd created in opendir when the Dir is closed early`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    zipFs.mkdirSync(`/foo` as PortablePath);
+
+    expect(zipFs.hasOpenFileHandles()).toBe(false);
+    const dir = zipFs.opendirSync(`/foo` as Filename);
+    expect(zipFs.hasOpenFileHandles()).toBe(true);
+    dir.closeSync();
+    expect(zipFs.hasOpenFileHandles()).toBe(false);
+
+    zipFs.discardAndClose();
+  });
 });
 
