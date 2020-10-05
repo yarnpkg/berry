@@ -26,6 +26,12 @@ export type MkdirOptions = Partial<{
   mode: number,
 }>;
 
+export type RmdirOptions = Partial<{
+  maxRetries: number,
+  recursive: boolean,
+  retryDelay: number,
+}>;
+
 export type WriteFileOptions = Partial<{
   encoding: string,
   mode: number,
@@ -141,8 +147,8 @@ export abstract class FakeFS<P extends Path> {
   abstract mkdirPromise(p: P, opts?: MkdirOptions): Promise<void>;
   abstract mkdirSync(p: P, opts?: MkdirOptions): void;
 
-  abstract rmdirPromise(p: P): Promise<void>;
-  abstract rmdirSync(p: P): void;
+  abstract rmdirPromise(p: P, opts?: RmdirOptions): Promise<void>;
+  abstract rmdirSync(p: P, opts?: RmdirOptions): void;
 
   abstract linkPromise(existingP: P, newP: P): Promise<void>;
   abstract linkSync(existingP: P, newP: P): void;
