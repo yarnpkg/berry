@@ -57,7 +57,7 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
     if (options.create && !options.overwrite && this.fs.existsSync(uri.fsPath))
       throw vscode.FileSystemError.FileExists(uri);
 
-    this.fs.writeFileSync(uri.fsPath, new Buffer(content));
+    this.fs.writeFileSync(uri.fsPath, Buffer.from(content));
   }
 
   rename(oldUri: vscode.Uri, newUri: vscode.Uri, options: { overwrite: boolean }): void {
