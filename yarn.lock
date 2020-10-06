@@ -5434,6 +5434,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
+    "@types/ci-info": ^2
     "@types/yup": 0.26.12
     "@yarnpkg/builder": "workspace:^2.1.2"
     "@yarnpkg/core": "workspace:^2.3.0"
@@ -5459,6 +5460,7 @@ __metadata:
     "@yarnpkg/pnpify": "workspace:^2.3.1"
     "@yarnpkg/shell": "workspace:^2.3.0"
     chalk: ^3.0.0
+    ci-info: ^2.0.0
     clipanion: ^2.6.2
     fromentries: ^1.2.0
     micromatch: ^4.0.2

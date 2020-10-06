@@ -1456,11 +1456,6 @@ export class Project {
     const nodeLinker = this.configuration.get(`nodeLinker`);
     Configuration.telemetry?.reportInstall(nodeLinker);
 
-    for (const extensions of this.configuration.packageExtensions.values())
-      for (const {descriptor, changes} of extensions)
-        for (const change of changes)
-          Configuration.telemetry?.reportPackageExtension(`${structUtils.stringifyIdent(descriptor)}:${change}`);
-
     const validationWarnings: Array<{name: MessageName, text: string}> = [];
     const validationErrors: Array<{name: MessageName, text: string}> = [];
 
@@ -1478,6 +1473,11 @@ export class Project {
         await this.validateEverything({validationWarnings, validationErrors, report: opts.report});
       });
     }
+
+    for (const extensionsByIdent of this.configuration.packageExtensions.values())
+      for (const [, extensionsByRange] of extensionsByIdent)
+        for (const extension of extensionsByRange)
+          extension.active = false;
 
     await opts.report.startTimerPromise(`Resolution step`, async () => {
       const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
@@ -1525,6 +1525,12 @@ export class Project {
         }
       }
     });
+
+    for (const extensionsByIdent of this.configuration.packageExtensions.values())
+      for (const [, extensionsByRange] of extensionsByIdent)
+        for (const extension of extensionsByRange)
+          if (extension.active)
+            Configuration.telemetry?.reportPackageExtension(extension.description);
 
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);

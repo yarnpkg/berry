@@ -111,7 +111,7 @@ export class TelemetryManager {
     const now = Date.now();
     const interval = this.configuration.get(`telemetryInterval`) * 24 * 60 * 60 * 1000;
 
-    const lastUpdate = content.lastUpdate ?? now - Math.floor(interval * Math.random());
+    const lastUpdate = content.lastUpdate ?? now + interval + Math.floor(interval * Math.random());
     const nextUpdate = lastUpdate + interval;
 
     if (nextUpdate > now && content.lastUpdate != null)
@@ -139,7 +139,7 @@ export class TelemetryManager {
       upload.userId = userId;
 
       for (const key of Object.keys(upload.enumerators ?? {}))
-        upload.enumerators = upload.enumerators[key].length;
+        upload.enumerators[key] = upload.enumerators[key].length;
 
       const rawUrl = `https://browser-http-intake.logs.datadoghq.eu/v1/input/${accountId}?ddsource=yarn`;
 
