@@ -1,4 +1,4 @@
-import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, Dir, OpenDirOptions} from './FakeFS';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, Dir, OpendirOptions} from './FakeFS';
 import {Dirent, SymlinkType}                                                                                                                                  from './FakeFS';
 import {MkdirOptions, RmdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}                                                                   from './FakeFS';
 import {FSPath, Filename, Path}                                                                                                                               from './path';
@@ -36,11 +36,11 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.openSync(this.mapToBase(p), flags, mode);
   }
 
-  async opendirPromise(p: P, opts?: OpenDirOptions): Promise<Dir<P>> {
+  async opendirPromise(p: P, opts?: OpendirOptions): Promise<Dir<P>> {
     return Object.assign(await this.baseFs.opendirPromise(this.mapToBase(p), opts), {path: p});
   }
 
-  opendirSync(p: P, opts?: OpenDirOptions): Dir<P> {
+  opendirSync(p: P, opts?: OpendirOptions): Dir<P> {
     return Object.assign(this.baseFs.opendirSync(this.mapToBase(p), opts), {path: p});
   }
 

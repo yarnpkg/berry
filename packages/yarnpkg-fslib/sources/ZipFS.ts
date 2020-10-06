@@ -5,7 +5,7 @@ import {isDate}                                                                 
 import zlib                                                                                                                                          from 'zlib';
 
 import {WatchOptions, WatchCallback, Watcher, Dir}                                                                                                   from './FakeFS';
-import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpenDirOptions}                                                                        from './FakeFS';
+import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from './FakeFS';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from './FakeFS';
 import {NodeFS}                                                                                                                                      from './NodeFS';
 import {opendir}                                                                                                                                     from './algorithms/opendir';
@@ -354,11 +354,11 @@ export class ZipFS extends BasePortableFakeFS {
     return !!this.fds.size;
   }
 
-  async opendirPromise(p: PortablePath, opts?: OpenDirOptions) {
+  async opendirPromise(p: PortablePath, opts?: OpendirOptions) {
     return this.opendirSync(p, opts);
   }
 
-  opendirSync(p: PortablePath, opts: OpenDirOptions = {}): Dir<PortablePath> {
+  opendirSync(p: PortablePath, opts: OpendirOptions = {}): Dir<PortablePath> {
     const resolvedP = this.resolveFilename(`opendir '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`opendir '${p}'`);

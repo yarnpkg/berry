@@ -25,7 +25,7 @@ export type {ExtractHintOptions}       from './FakeFS';
 export type {WatchFileOptions}         from './FakeFS';
 export type {WatchFileCallback}        from './FakeFS';
 export type {StatWatcher}              from './FakeFS';
-export type {OpenDirOptions}           from './FakeFS';
+export type {OpendirOptions}           from './FakeFS';
 
 export {DEFAULT_COMPRESSION_LEVEL}     from './ZipFS';
 export type {ZipCompression}           from './ZipFS';

@@ -26,7 +26,7 @@ export type Dir<P extends Path> = {
   readSync(): Dirent | null;
 };
 
-export type OpenDirOptions = Partial<{
+export type OpendirOptions = Partial<{
   bufferSize: number;
 }>;
 
@@ -116,8 +116,8 @@ export abstract class FakeFS<P extends Path> {
 
   abstract resolve(p: P): P;
 
-  abstract opendirPromise(p: P, opts?: OpenDirOptions): Promise<Dir<P>>;
-  abstract opendirSync(p: P, opts?: OpenDirOptions): Dir<P>;
+  abstract opendirPromise(p: P, opts?: OpendirOptions): Promise<Dir<P>>;
+  abstract opendirSync(p: P, opts?: OpendirOptions): Dir<P>;
 
   abstract openPromise(p: P, flags: string, mode?: number): Promise<number>;
   abstract openSync(p: P, flags: string, mode?: number): number;

@@ -2,7 +2,7 @@ import {Libzip}                                                                 
 import {constants}                                                                                                                                   from 'fs';
 
 import {WatchOptions, WatchCallback, Watcher}                                                                                                        from './FakeFS';
-import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpenDirOptions}                                                                        from './FakeFS';
+import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from './FakeFS';
 import {Dirent, SymlinkType}                                                                                                                         from './FakeFS';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileOptions, WatchFileCallback, StatWatcher} from './FakeFS';
 import {NodeFS}                                                                                                                                      from './NodeFS';
@@ -128,7 +128,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async opendirPromise(p: PortablePath, opts?: OpenDirOptions) {
+  async opendirPromise(p: PortablePath, opts?: OpendirOptions) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.opendirPromise(p, opts);
     }, async (zipFs, {subPath}) => {
@@ -138,7 +138,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  opendirSync(p: PortablePath, opts?: OpenDirOptions) {
+  opendirSync(p: PortablePath, opts?: OpendirOptions) {
     return this.makeCallSync(p, () => {
       return this.baseFs.opendirSync(p, opts);
     }, (zipFs, {subPath}) => {

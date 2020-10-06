@@ -1,6 +1,6 @@
 import fs, {Stats}                                                                                                                from 'fs';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions, Dir, StatWatcher, WatchFileCallback, WatchFileOptions, OpenDirOptions} from './FakeFS';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, Dir, StatWatcher, WatchFileCallback, WatchFileOptions, OpendirOptions} from './FakeFS';
 import {Dirent, SymlinkType}                                                                                                      from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}                                                                                     from './FakeFS';
 import {MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher}                                                         from './FakeFS';
@@ -44,7 +44,7 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.openSync(npath.fromPortablePath(p), flags, mode);
   }
 
-  async opendirPromise(p: PortablePath, opts?: OpenDirOptions): Promise<Dir<PortablePath>> {
+  async opendirPromise(p: PortablePath, opts?: OpendirOptions): Promise<Dir<PortablePath>> {
     return await new Promise<Dir<NativePath>>((resolve, reject) => {
       if (typeof opts !== `undefined`) {
         this.realFs.opendir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject) as any);
@@ -56,7 +56,7 @@ export class NodeFS extends BasePortableFakeFS {
     });
   }
 
-  opendirSync(p: PortablePath, opts?: OpenDirOptions): Dir<PortablePath> {
+  opendirSync(p: PortablePath, opts?: OpendirOptions): Dir<PortablePath> {
     const dir = typeof opts !== `undefined`
       ? this.realFs.opendirSync(npath.fromPortablePath(p), opts) as Dir<NativePath>
       : this.realFs.opendirSync(npath.fromPortablePath(p)) as Dir<NativePath>;

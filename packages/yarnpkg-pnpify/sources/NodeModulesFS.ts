@@ -1,4 +1,4 @@
-import {Dirent, Filename, MkdirOptions, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, OpenDirOptions, Dir} from '@yarnpkg/fslib';
+import {Dirent, Filename, MkdirOptions, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, OpendirOptions, Dir} from '@yarnpkg/fslib';
 import {RmdirOptions}                                                                                                              from '@yarnpkg/fslib';
 import {FSPath, NativePath, PortablePath, npath, ppath, opendir}                                                                   from '@yarnpkg/fslib';
 import {WatchOptions, WatchCallback, Watcher}                                                                                      from '@yarnpkg/fslib';
@@ -180,7 +180,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return this.baseFs.openSync(this.resolveFilePath(p), flags, mode);
   }
 
-  async opendirPromise(p: PortablePath, opts?: OpenDirOptions): Promise<Dir<PortablePath>> {
+  async opendirPromise(p: PortablePath, opts?: OpendirOptions): Promise<Dir<PortablePath>> {
     const pnpPath = this.resolvePath(p);
     if (pnpPath.dirList || this.resolvePath(ppath.join(p, `node_modules` as Filename)).dirList) {
       let fsDirList: Array<Filename> = [];
@@ -197,7 +197,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     }
   }
 
-  opendirSync(p: PortablePath, opts?: OpenDirOptions): Dir<PortablePath> {
+  opendirSync(p: PortablePath, opts?: OpendirOptions): Dir<PortablePath> {
     const pnpPath = this.resolvePath(p);
     if (pnpPath.dirList || this.resolvePath(ppath.join(p, `node_modules` as Filename)).dirList) {
       let fsDirList: Array<Filename> = [];
