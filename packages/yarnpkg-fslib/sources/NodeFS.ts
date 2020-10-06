@@ -289,8 +289,7 @@ export class NodeFS extends BasePortableFakeFS {
       // TODO: always pass opts when min node version is 12.10+
       if (opts) {
         this.realFs.rmdir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
-      }
-      else {
+      } else {
         this.realFs.rmdir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
       }
     });
