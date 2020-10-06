@@ -37540,10 +37540,14 @@ class CustomDir {
   }
 
   async *[Symbol.asyncIterator]() {
-    let dirent; // eslint-disable-next-line no-cond-assign
+    try {
+      let dirent; // eslint-disable-next-line no-cond-assign
 
-    while ((dirent = await this.read()) !== null) {
-      yield dirent;
+      while ((dirent = await this.read()) !== null) {
+        yield dirent;
+      }
+    } finally {
+      await this.close();
     }
   }
 

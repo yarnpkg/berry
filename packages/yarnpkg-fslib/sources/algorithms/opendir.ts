@@ -24,10 +24,14 @@ export class CustomDir<P extends Path> implements Dir<P> {
   }
 
   async * [Symbol.asyncIterator]() {
-    let dirent: Dirent | null;
-    // eslint-disable-next-line no-cond-assign
-    while ((dirent = await this.read()) !== null) {
-      yield dirent;
+    try {
+      let dirent: Dirent | null;
+      // eslint-disable-next-line no-cond-assign
+      while ((dirent = await this.read()) !== null) {
+        yield dirent;
+      }
+    } finally {
+      await this.close();
     }
   }
 

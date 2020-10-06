@@ -506,10 +506,8 @@ describe(`ZipFS`, () => {
     expect((await dir.read())!.name).toStrictEqual(ppath.basename(thirdFile));
 
     expect((await iter.next()).value).toBeUndefined();
-    expect(dir.readSync()).toBeNull();
-    expect(await dir.read()).toBeNull();
 
-    dir.closeSync();
+    // Consuming the iterator should cause the Dir instance to close
 
     expect(() => iter.next()).rejects.toThrow(`Directory handle was closed`);
     expect(() => dir.readSync()).toThrow(`Directory handle was closed`);
