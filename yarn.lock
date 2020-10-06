@@ -4303,15 +4303,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/got@npm:^8.3.4":
-  version: 8.3.5
-  resolution: "@types/got@npm:8.3.5"
-  dependencies:
-    "@types/node": "*"
-  checksum: 341cb1fd733a7047cd48b3b78a5d91a168b22eb431e43435bc5a4e4596b49a5b0fddf21ebdd53ab17a2f69166fbbb819d23b49ee7f2b90aa44dbffb6fcbe7aff
-  languageName: node
-  linkType: hard
-
 "@types/graceful-fs@npm:^4.1.2":
   version: 4.1.3
   resolution: "@types/graceful-fs@npm:4.1.3"
@@ -5490,7 +5481,6 @@ __metadata:
     "@types/ci-info": ^2
     "@types/cross-spawn": 6.0.0
     "@types/diff": ^4.0.2
-    "@types/got": ^8.3.4
     "@types/lodash": ^4.14.136
     "@types/micromatch": ^4.0.1
     "@types/node": ^13.7.0

@@ -7178,16 +7178,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["@types/got", [
-        ["npm:8.3.5", {
-          "packageLocation": "./.yarn/cache/@types-got-npm-8.3.5-a96a7b7325-341cb1fd73.zip/node_modules/@types/got/",
-          "packageDependencies": [
-            ["@types/got", "npm:8.3.5"],
-            ["@types/node", "npm:10.12.18"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["@types/graceful-fs", [
         ["npm:4.1.3", {
           "packageLocation": "./.yarn/cache/@types-graceful-fs-npm-4.1.3-fa91c32dd0-5e2ec610a9.zip/node_modules/@types/graceful-fs/",
@@ -8797,7 +8787,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/ci-info", "npm:2.0.0"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/diff", "npm:4.0.2"],
-            ["@types/got", "npm:8.3.5"],
             ["@types/lodash", "npm:4.14.136"],
             ["@types/micromatch", "npm:4.0.1"],
             ["@types/node", "npm:13.7.0"],

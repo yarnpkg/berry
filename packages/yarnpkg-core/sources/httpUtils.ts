@@ -94,8 +94,10 @@ export async function request(target: string, body: Body, {configuration, header
       socket: socketTimeout,
     },
     retry,
-    rejectUnauthorized,
-    ...(caFilePath && {https: {certificateAuthority: await xfs.readFilePromise(caFilePath)}}),
+    https: {
+      rejectUnauthorized,
+      ...(caFilePath && {certificateAuthority: await xfs.readFilePromise(caFilePath)}),
+    },
     ...gotOptions,
   });
 

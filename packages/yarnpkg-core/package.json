@@ -42,7 +42,6 @@
     "@types/ci-info": "^2",
     "@types/cross-spawn": "6.0.0",
     "@types/diff": "^4.0.2",
-    "@types/got": "^8.3.4",
     "@types/lodash": "^4.14.136",
     "@types/micromatch": "^4.0.1",
     "@types/node": "^13.7.0",
