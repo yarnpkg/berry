@@ -22,20 +22,9 @@ const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
 type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap};
 type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
 
-type SupportsPackage = (pkg: Package, opts: MinimalLinkOptions) => boolean;
-
 export class NodeModulesLinker implements Linker {
-  private readonly supportsPackageFunction: SupportsPackage;
-  private defaultSupportsPackage = (pkg: Package, opts: MinimalLinkOptions) => {
-    return opts.project.configuration.get(`nodeLinker`) === `node-modules`;
-  }
-
-  constructor(options: {supportsPackage?: SupportsPackage}) {
-    this.supportsPackageFunction = (options || {}).supportsPackage || this.defaultSupportsPackage;
-  }
-
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
-    return this.supportsPackageFunction(pkg, opts);
+    return opts.project.configuration.get(`nodeLinker`) === `node-modules`;
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {

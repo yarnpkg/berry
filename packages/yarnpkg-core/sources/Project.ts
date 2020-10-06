@@ -524,8 +524,8 @@ export class Project {
         // If strict mode, the specified cwd must be a package,
         // not merely contained in a package.
         if (strict) {
-          const packageLocations = await linker.findPackageLocation(locator, linkerOptions);
-          if (Array.isArray(packageLocations) || packageLocations.replace(TRAILING_SLASH_REGEXP, ``) !== cwd.replace(TRAILING_SLASH_REGEXP, ``)) {
+          const location = await linker.findPackageLocation(locator, linkerOptions);
+          if (location.replace(TRAILING_SLASH_REGEXP, ``) !== cwd.replace(TRAILING_SLASH_REGEXP, ``)) {
             continue;
           }
         }
@@ -1052,8 +1052,8 @@ export class Project {
     }));
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
-    const packageLocations: Map<LocatorHash, Set<PortablePath> | null> = new Map();
-    const packageBuildDirectives: Map<LocatorHash, { directives: Set<BuildDirective>, buildLocations: Set<PortablePath> }> = new Map();
+    const packageLocations: Map<LocatorHash, PortablePath | null> = new Map();
+    const packageBuildDirectives: Map<LocatorHash, { directives: Array<BuildDirective>, buildLocations: Array<PortablePath> }> = new Map();
 
     // Step 1: Installing the packages on the disk
 
@@ -1083,12 +1083,12 @@ export class Project {
         }
 
         const location = ppath.join(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
-        packageLocations.set(pkg.locatorHash, new Set([location]));
+        packageLocations.set(pkg.locatorHash, location);
 
         if (buildScripts.length > 0) {
           packageBuildDirectives.set(pkg.locatorHash, {
-            directives: new Set(buildScripts),
-            buildLocations: new Set([location]),
+            directives: buildScripts,
+            buildLocations: [location],
           });
         }
       } else {
@@ -1110,27 +1110,13 @@ export class Project {
         }
 
         packageLinkers.set(pkg.locatorHash, linker);
-        const statuses = Array.isArray(installStatus) ? installStatus : [installStatus];
-        for (const status of statuses) {
-          if (status.packageLocation === null && !packageLocations.has(locatorHash)) {
-            packageLocations.set(locatorHash, null);
-          } else if (status.packageLocation !== null) {
-            let locations = packageLocations.get(locatorHash);
-            if (!locations) {
-              locations = new Set<PortablePath>();
-              packageLocations.set(locatorHash, locations);
-            }
-            locations.add(status.packageLocation);
-          }
+        packageLocations.set(pkg.locatorHash, installStatus.packageLocation);
 
-
-          if (status.buildDirective && status.packageLocation) {
-            const directiveList = miscUtils.getFactoryWithDefault(packageBuildDirectives, pkg.locatorHash, () => ({directives: new Set(), buildLocations: new Set()}));
-            for (const directive of status.buildDirective)
-              directiveList.directives.add(directive);
-
-            directiveList.buildLocations.add(status.packageLocation);
-          }
+        if (installStatus.buildDirective && installStatus.packageLocation) {
+          packageBuildDirectives.set(pkg.locatorHash, {
+            directives: installStatus.buildDirective,
+            buildLocations: [installStatus.packageLocation],
+          });
         }
       }
     }
@@ -1147,8 +1133,8 @@ export class Project {
       const isWorkspace = this.tryWorkspaceByLocator(pkg) !== null;
 
       const linkPackage = async (packageLinker: Linker, installer: Installer) => {
-        const locations = packageLocations.get(pkg.locatorHash);
-        if (typeof locations === `undefined`)
+        const packageLocation = packageLocations.get(pkg.locatorHash);
+        if (typeof packageLocation === `undefined`)
           throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(this.configuration, pkg)}) should have been registered`);
 
         const internalDependencies = [];
@@ -1175,17 +1161,13 @@ export class Project {
             if (packageLocations.get(dependency.locatorHash) !== null) {
               internalDependencies.push([descriptor, dependency] as [Descriptor, Locator]);
             }
-          } else if (locations !== null) {
-            for (const location of locations) {
-              if (location !== null) {
-                const externalEntry = miscUtils.getArrayWithDefault(externalDependents, resolution);
-                externalEntry.push(location);
-              }
-            }
+          } else if (packageLocation !== null) {
+            const externalEntry = miscUtils.getArrayWithDefault(externalDependents, resolution);
+            externalEntry.push(packageLocation);
           }
         }
 
-        if (locations !== null) {
+        if (packageLocation !== null) {
           await installer.attachInternalDependencies(pkg, internalDependencies);
         }
       };
@@ -1230,13 +1212,10 @@ export class Project {
       if (installStatuses) {
         for (const installStatus of installStatuses) {
           if (installStatus.buildDirective) {
-            const directiveList = miscUtils.getFactoryWithDefault(packageBuildDirectives, installStatus.locatorHash, () => ({directives: new Set(), buildLocations: new Set()}));
-            for (const directive of installStatus.buildDirective)
-              directiveList.directives.add(directive);
-
-            for (const location of installStatus.buildLocations) {
-              directiveList.buildLocations.add(location);
-            }
+            packageBuildDirectives.set(installStatus.locatorHash!, {
+              directives: installStatus.buildDirective,
+              buildLocations: installStatus.buildLocations,
+            });
           }
         }
       }
@@ -1302,7 +1281,7 @@ export class Project {
       return hash;
     };
 
-    const getBuildHash = (locator: Locator, buildLocations: Set<PortablePath>) => {
+    const getBuildHash = (locator: Locator, buildLocations: Array<PortablePath>) => {
       const builder = createHash(`sha512`);
 
       builder.update(globalHash);

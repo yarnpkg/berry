@@ -267,9 +267,8 @@ export async function hasPackageScript(locator: Locator, scriptName: string, {pr
     if (!linker)
       throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
 
-    const packageLocations = await linker.findPackageLocation(pkg, linkerOptions);
-    const location = Array.isArray(packageLocations) ? packageLocations[0] : packageLocations;
-    const packageFs = new CwdFS(location, {baseFs: zipOpenFs});
+    const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
+    const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
     const manifest = await Manifest.find(PortablePath.dot, {baseFs: packageFs});
 
     return manifest.scripts.has(scriptName);
@@ -336,14 +335,12 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
     for (const [binaryName, [, binaryPath]] of await getPackageAccessibleBinaries(locator, {project}))
       await makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath]);
 
-    const packageLocations = await linker.findPackageLocation(pkg, linkerOptions);
-    const location = Array.isArray(packageLocations) ? packageLocations[0] : packageLocations;
-
-    const packageFs = new CwdFS(location, {baseFs: zipOpenFs});
+    const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
+    const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
     const manifest = await Manifest.find(PortablePath.dot, {baseFs: packageFs});
 
     if (typeof cwd === `undefined`)
-      cwd = location;
+      cwd = packageLocation;
 
     return {manifest, binFolder, env, cwd};
   }, {
@@ -453,13 +450,10 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
     if (!linker)
       continue;
 
-    const packageLocations = await linker.findPackageLocation(dependency, linkerOptions);
-    const locations = Array.isArray(packageLocations) ? packageLocations : [packageLocations];
+    const packageLocation = await linker.findPackageLocation(dependency, linkerOptions);
 
-    for (const location of locations) {
-      for (const [name, target] of dependency.bin) {
-        binaries.set(name, [dependency, npath.fromPortablePath(ppath.resolve(location, target))]);
-      }
+    for (const [name, target] of dependency.bin) {
+      binaries.set(name, [dependency, npath.fromPortablePath(ppath.resolve(packageLocation, target))]);
     }
   }
 
