@@ -3,7 +3,7 @@ import fs, {Stats}                                                              
 import {CreateReadStreamOptions, CreateWriteStreamOptions, StatWatcher, WatchFileCallback, WatchFileOptions} from './FakeFS';
 import {Dirent, SymlinkType}                                                                                 from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}                                                                from './FakeFS';
-import {MkdirOptions, WatchOptions, WatchCallback, Watcher}                                                  from './FakeFS';
+import {MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher}                                    from './FakeFS';
 import {ENOSYS}                                                                                              from './errors';
 import {FSPath, PortablePath, Filename, ppath, npath}                                                        from './path';
 
@@ -284,14 +284,19 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.mkdirSync(npath.fromPortablePath(p), opts);
   }
 
-  async rmdirPromise(p: PortablePath) {
+  async rmdirPromise(p: PortablePath, opts?: RmdirOptions) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.rmdir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      // TODO: always pass opts when min node version is 12.10+
+      if (opts) {
+        this.realFs.rmdir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.rmdir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
     });
   }
 
-  rmdirSync(p: PortablePath) {
-    return this.realFs.rmdirSync(npath.fromPortablePath(p));
+  rmdirSync(p: PortablePath, opts?: RmdirOptions) {
+    return this.realFs.rmdirSync(npath.fromPortablePath(p), opts);
   }
 
   async linkPromise(existingP: PortablePath, newP: PortablePath) {

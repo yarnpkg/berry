@@ -37003,14 +37003,19 @@ class NodeFS extends FakeFS/* BasePortableFakeFS */.fS {
     return this.realFs.mkdirSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), opts);
   }
 
-  async rmdirPromise(p) {
+  async rmdirPromise(p, opts) {
     return await new Promise((resolve, reject) => {
-      this.realFs.rmdir(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), this.makeCallback(resolve, reject));
+      // TODO: always pass opts when min node version is 12.10+
+      if (opts) {
+        this.realFs.rmdir(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.rmdir(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
     });
   }
 
-  rmdirSync(p) {
-    return this.realFs.rmdirSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p));
+  rmdirSync(p, opts) {
+    return this.realFs.rmdirSync(sources_path/* npath.fromPortablePath */.cS.fromPortablePath(p), opts);
   }
 
   async linkPromise(existingP, newP) {
@@ -37295,12 +37300,12 @@ class ProxiedFS extends FakeFS/* FakeFS */.uY {
     return this.baseFs.mkdirSync(this.mapToBase(p), opts);
   }
 
-  rmdirPromise(p) {
-    return this.baseFs.rmdirPromise(this.mapToBase(p));
+  rmdirPromise(p, opts) {
+    return this.baseFs.rmdirPromise(this.mapToBase(p), opts);
   }
 
-  rmdirSync(p) {
-    return this.baseFs.rmdirSync(this.mapToBase(p));
+  rmdirSync(p, opts) {
+    return this.baseFs.rmdirSync(this.mapToBase(p), opts);
   }
 
   linkPromise(existingP, newP) {
@@ -38810,12 +38815,20 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     this.chmodSync(resolvedP, mode);
   }
 
-  async rmdirPromise(p) {
-    return this.rmdirSync(p);
+  async rmdirPromise(p, opts) {
+    return this.rmdirSync(p, opts);
   }
 
-  rmdirSync(p) {
+  rmdirSync(p, {
+    recursive = false
+  } = {}) {
     if (this.readOnly) throw EROFS(`rmdir '${p}'`);
+
+    if (recursive) {
+      this.removeSync(p);
+      return;
+    }
+
     const resolvedP = this.resolveFilename(`rmdir '${p}'`, p);
     const directoryListing = this.listings.get(resolvedP);
     if (!directoryListing) throw ENOTDIR(`rmdir '${p}'`);
@@ -39631,23 +39644,23 @@ class ZipOpenFS extends FakeFS/* BasePortableFakeFS */.fS {
     });
   }
 
-  async rmdirPromise(p) {
+  async rmdirPromise(p, opts) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.rmdirPromise(p);
+      return await this.baseFs.rmdirPromise(p, opts);
     }, async (zipFs, {
       subPath
     }) => {
-      return await zipFs.rmdirPromise(subPath);
+      return await zipFs.rmdirPromise(subPath, opts);
     });
   }
 
-  rmdirSync(p) {
+  rmdirSync(p, opts) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.rmdirSync(p);
+      return this.baseFs.rmdirSync(p, opts);
     }, (zipFs, {
       subPath
     }) => {
-      return zipFs.rmdirSync(subPath);
+      return zipFs.rmdirSync(subPath, opts);
     });
   }
 
