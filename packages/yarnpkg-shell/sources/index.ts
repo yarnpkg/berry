@@ -124,6 +124,10 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     return 0;
   }],
 
+  [`:`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
+    return 0;
+  }],
+
   [`true`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
     return 0;
   }],
