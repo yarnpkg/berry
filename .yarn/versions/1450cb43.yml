@@ -1,4 +1,5 @@
 releases:
+  "@yarnpkg/cli": minor
   "@yarnpkg/core": minor
 
 declined:
@@ -25,6 +26,5 @@ declined:
   - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
   - "@yarnpkg/builder"
-  - "@yarnpkg/cli"
   - "@yarnpkg/doctor"
   - "@yarnpkg/pnpify"
