@@ -38819,7 +38819,12 @@ class ZipFS extends FakeFS/* BasePortableFakeFS */.fS {
     recursive = false
   } = {}) {
     if (this.readOnly) throw EROFS(`rmdir '${p}'`);
-    if (recursive) return this.removeSync(p);
+
+    if (recursive) {
+      this.removeSync(p);
+      return;
+    }
+
     const resolvedP = this.resolveFilename(`rmdir '${p}'`, p);
     const directoryListing = this.listings.get(resolvedP);
     if (!directoryListing) throw ENOTDIR(`rmdir '${p}'`);
