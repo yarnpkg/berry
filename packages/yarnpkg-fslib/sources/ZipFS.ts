@@ -1190,8 +1190,10 @@ export class ZipFS extends BasePortableFakeFS {
     if (this.readOnly)
       throw errors.EROFS(`rmdir '${p}'`);
 
-    if (recursive)
-      return this.removeSync(p);
+    if (recursive) {
+      this.removeSync(p);
+      return;
+    }
 
     const resolvedP = this.resolveFilename(`rmdir '${p}'`, p);
 
