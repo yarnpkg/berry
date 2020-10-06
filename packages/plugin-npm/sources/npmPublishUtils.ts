@@ -1,10 +1,10 @@
-import {Workspace, structUtils} from "@yarnpkg/core";
-import {packUtils}              from "@yarnpkg/plugin-pack";
-import {createHash}             from "crypto";
-import ssri                     from "ssri";
+import {Workspace, structUtils} from '@yarnpkg/core'
+import {packUtils}              from '@yarnpkg/plugin-pack';
+import {createHash}             from 'crypto';
+import ssri                     from 'ssri';
 import {URL}                    from 'url';
 
-export async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry}: { access: string | undefined, tag: string, registry: string }) {
+export async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry}: {access: string | undefined, tag: string, registry: string}) {
   const configuration = workspace.project.configuration;
 
   const ident = workspace.manifest.name!;
