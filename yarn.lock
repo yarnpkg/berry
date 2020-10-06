@@ -4556,13 +4556,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/pify@npm:^3.0.2":
-  version: 3.0.2
-  resolution: "@types/pify@npm:3.0.2"
-  checksum: 999c73c2a0dbc3ddb7aa11b49a01b7b9ba3437974f876ca7af01950644baf33a321bb044ca121ccf5f06cfadfe89f803e6e5f272aefb0d1671e26929e3bd47a7
-  languageName: node
-  linkType: hard
-
 "@types/prettier@npm:1.19.0":
   version: 1.19.0
   resolution: "@types/prettier@npm:1.19.0"
@@ -20785,7 +20778,6 @@ fsevents@^1.2.7:
     "@types/klaw": ^2.0.0
     "@types/minimatch": ^3.0.3
     "@types/pem": ^1
-    "@types/pify": ^3.0.2
     "@types/semver": ^7.1.0
     "@types/serve-static": 1.13.3
     "@types/tar-fs": ^1.16.1
@@ -20798,7 +20790,6 @@ fsevents@^1.2.7:
     klaw: ^2.1.1
     minimatch: ^3.0.4
     pem: ^1.14.4
-    pify: ^4.0.1
     pkg-tests-fixtures: "workspace:0.0.0"
     semver: ^7.1.2
     serve-static: ^1.14.1

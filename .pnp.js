@@ -7472,15 +7472,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["@types/pify", [
-        ["npm:3.0.2", {
-          "packageLocation": "./.yarn/cache/@types-pify-npm-3.0.2-29252ca123-999c73c2a0.zip/node_modules/@types/pify/",
-          "packageDependencies": [
-            ["@types/pify", "npm:3.0.2"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["@types/prettier", [
         ["npm:1.19.0", {
           "packageLocation": "./.yarn/cache/@types-prettier-npm-1.19.0-a6b7c059dc-784aed651e.zip/node_modules/@types/prettier/",
@@ -27140,7 +27131,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/klaw", "npm:2.1.1"],
             ["@types/minimatch", "npm:3.0.3"],
             ["@types/pem", "npm:1.9.5"],
-            ["@types/pify", "npm:3.0.2"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/serve-static", "npm:1.13.3"],
             ["@types/tar-fs", "npm:1.16.1"],
@@ -27153,7 +27143,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["klaw", "npm:2.1.1"],
             ["minimatch", "npm:3.0.4"],
             ["pem", "npm:1.14.4"],
-            ["pify", "npm:4.0.1"],
             ["pkg-tests-fixtures", "workspace:packages/acceptance-tests/pkg-tests-fixtures"],
             ["semver", "npm:7.3.2"],
             ["serve-static", "npm:1.14.1"],
