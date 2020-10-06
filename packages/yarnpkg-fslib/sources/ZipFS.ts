@@ -5,7 +5,7 @@ import {isDate}                                                                 
 import zlib                                                                                                                                          from 'zlib';
 
 import {WatchOptions, WatchCallback, Watcher, Dir}                                                                                                   from './FakeFS';
-import {FakeFS, MkdirOptions, WriteFileOptions, OpenDirOptions}                                                                                      from './FakeFS';
+import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpenDirOptions}                                                                        from './FakeFS';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from './FakeFS';
 import {NodeFS}                                                                                                                                      from './NodeFS';
 import {opendir}                                                                                                                                     from './algorithms/opendir';
@@ -1207,13 +1207,18 @@ export class ZipFS extends BasePortableFakeFS {
     this.chmodSync(resolvedP, mode);
   }
 
-  async rmdirPromise(p: PortablePath) {
-    return this.rmdirSync(p);
+  async rmdirPromise(p: PortablePath, opts?: RmdirOptions) {
+    return this.rmdirSync(p, opts);
   }
 
-  rmdirSync(p: PortablePath) {
+  rmdirSync(p: PortablePath, {recursive = false}: RmdirOptions = {}) {
     if (this.readOnly)
       throw errors.EROFS(`rmdir '${p}'`);
+
+    if (recursive) {
+      this.removeSync(p);
+      return;
+    }
 
     const resolvedP = this.resolveFilename(`rmdir '${p}'`, p);
 
