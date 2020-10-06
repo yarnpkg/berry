@@ -1,4 +1,4 @@
-import {Workspace, structUtils} from '@yarnpkg/core'
+import {Workspace, structUtils} from '@yarnpkg/core';
 import {packUtils}              from '@yarnpkg/plugin-pack';
 import {createHash}             from 'crypto';
 import ssri                     from 'ssri';
