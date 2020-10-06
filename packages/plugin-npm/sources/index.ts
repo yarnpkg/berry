@@ -8,9 +8,11 @@ import {NpmSemverResolver}     from './NpmSemverResolver';
 import {NpmTagResolver}        from './NpmTagResolver';
 import * as npmConfigUtils     from './npmConfigUtils';
 import * as npmHttpUtils       from './npmHttpUtils';
+import * as npmPublishUtils    from './npmPublishUtils';
 
 export {npmConfigUtils};
 export {npmHttpUtils};
+export {npmPublishUtils};
 
 const authSettings = {
   npmAlwaysAuth: {
