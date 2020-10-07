@@ -10,7 +10,7 @@ const optionalPeerDep = {
 
 export const packageExtensions: Array<[string, PackageExtensionData]> = [
   // https://github.com/SamVerschueren/stream-to-observable/pull/5
-  [`@samverschueren/stream-to-observable@*`, {
+  [`@samverschueren/stream-to-observable@<0.3.1`, {
     peerDependenciesMeta: {
       [`rxjs`]: optionalPeerDep,
       [`zenObservable`]: optionalPeerDep,
@@ -30,7 +30,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/visionmedia/debug/pull/727
-  [`debug@*`, {
+  [`debug@<4.2.0`, {
     peerDependenciesMeta: {
       [`supports-color`]: optionalPeerDep,
     },
@@ -78,7 +78,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/vadimdemedes/ink-select-input/pull/26
-  [`ink-select-input@*`, {
+  [`ink-select-input@<4.1.0`, {
     peerDependencies: {
       react: `^16.8.2`,
     },
