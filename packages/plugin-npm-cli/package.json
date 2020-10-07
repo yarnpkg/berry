@@ -4,7 +4,7 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.2.2",
+    "@yarnpkg/fslib": "workspace:^2.3.0",
     "clipanion": "^2.6.2",
     "enquirer": "^2.3.6",
     "semver": "^7.1.2",
@@ -13,20 +13,20 @@
     "yup": "^0.27.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.3.1",
-    "@yarnpkg/core": "^2.3.0",
+    "@yarnpkg/cli": "^2.3.2",
+    "@yarnpkg/core": "^2.3.1",
     "@yarnpkg/plugin-npm": "^2.3.0",
-    "@yarnpkg/plugin-pack": "^2.2.1"
+    "@yarnpkg/plugin-pack": "^2.2.2"
   },
   "devDependencies": {
     "@npm/types": "^1.0.1",
     "@types/semver": "^7.1.0",
     "@types/ssri": "^6.0.1",
     "@types/yup": "0.26.12",
-    "@yarnpkg/cli": "workspace:^2.3.1",
-    "@yarnpkg/core": "workspace:^2.3.0",
+    "@yarnpkg/cli": "workspace:^2.3.2",
+    "@yarnpkg/core": "workspace:^2.3.1",
     "@yarnpkg/plugin-npm": "workspace:^2.3.0",
-    "@yarnpkg/plugin-pack": "workspace:^2.2.1"
+    "@yarnpkg/plugin-pack": "workspace:^2.2.2"
   },
   "repository": {
     "type": "git",
