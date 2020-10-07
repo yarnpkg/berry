@@ -176,4 +176,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       algoliasearch: `>= 3.1 < 5`,
     },
   }],
+  // https://github.com/algolia/react-instantsearch/pull/2975
+  [`react-instantsearch-dom@<=6.7.0`, {
+    dependencies: {
+      'react-fast-compare': `^3.0.0`,
+    },
+  }],
 ];
