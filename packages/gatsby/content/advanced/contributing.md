@@ -123,7 +123,7 @@ If it fails and you have no idea why, feel free to ping a maintainer and we'll d
 
 ## Writing documentation
 
-Our website is stored within the [`packages/gatsby`](https://github.com/yarnpkg/berry/tree/master/packages/gatsby) directory. *Do not manually edit the html files in the `docs` folder!* Instead, just make your changes in the Gatsby directory (for example you'd edit this very page [here](https://github.com/yarnpkg/berry/blob/master/packages/gatsby/content/advanced/plugin-tutorial.md)), then run the following command to spawn a local server and see your changes:
+Our website is stored within the [`packages/gatsby`](https://github.com/yarnpkg/berry/tree/master/packages/gatsby) directory. *Do not manually edit the html files in the `docs` folder!* Instead, just make your changes in the Gatsby directory (for example you'd edit this very page [here](https://github.com/yarnpkg/berry/blob/master/packages/gatsby/content/advanced/contributing.md)), then run the following command to spawn a local server and see your changes:
 
 ```bash
 yarn develop
