@@ -1,17 +1,22 @@
 import {PortablePath, npath, toFilename} from '@yarnpkg/fslib';
 import crypto                            from 'crypto';
 import finalhandler                      from 'finalhandler';
+import https                             from 'https';
 import http                              from 'http';
+
 import {IncomingMessage, ServerResponse} from 'http';
 import invariant                         from 'invariant';
 import {AddressInfo}                     from 'net';
+import pem                               from 'pem';
 import semver                            from 'semver';
 import serveStatic                       from 'serve-static';
-import {Gzip}                            from 'zlib';
+import {promisify}                       from 'util';
 
 const deepResolve = require(`super-resolve`);
 
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
+
+import {Gzip}       from 'zlib';
 
 import {ExecResult} from './exec';
 import * as fsUtils from './fs';
@@ -171,11 +176,16 @@ export const getPackageDirectoryPath = async (
   return packageVersionEntry.path;
 };
 
-let packageServerUrl: string | null = null;
+const packageServerUrls: {
+  http: string | null,
+  https: string | null,
+} = {http: null, https: null};
 
-export const startPackageServer = (): Promise<string> => {
-  if (packageServerUrl !== null)
-    return Promise.resolve(packageServerUrl);
+export const startPackageServer = ({type}: { type: keyof typeof packageServerUrls } = {type: `http`}): Promise<string> => {
+  const serverUrl = packageServerUrls[type];
+
+  if (serverUrl !== null)
+    return Promise.resolve(serverUrl);
 
   enum RequestType {
     Login = `login`,
@@ -444,41 +454,57 @@ export const startPackageServer = (): Promise<string> => {
   ];
 
   return new Promise((resolve, reject) => {
-    const server = http.createServer(
-      (req, res) =>
-        void (async () => {
-          try {
-            const parsedRequest = parseRequest(req.url!);
+    const listener: http.RequestListener = (req, res) =>
+      void (async () => {
+        try {
+          const parsedRequest = parseRequest(req.url!);
 
-            if (parsedRequest == null) {
-              processError(res, 404, `Invalid route: ${req.url}`);
-              return;
-            }
-
-            const {authorization} = req.headers;
-            if (authorization != null) {
-              if (!validAuthorizations.includes(authorization)) {
-                sendError(res, 401, `Invalid token`);
-                return;
-              }
-            } else if (needsAuth(parsedRequest)) {
-              sendError(res, 401, `Authentication required`);
-              return;
-            }
-
-            await processors[parsedRequest.type](parsedRequest, req, res);
-          } catch (error) {
-            processError(res, 500, error.stack);
+          if (parsedRequest == null) {
+            processError(res, 404, `Invalid route: ${req.url}`);
+            return;
           }
-        })(),
-    );
 
-    // We don't want the server to prevent the process from exiting
-    server.unref();
-    server.listen(() => {
-      const {port} = server.address() as AddressInfo;
-      resolve((packageServerUrl = `http://localhost:${port}`));
-    });
+          const {authorization} = req.headers;
+          if (authorization != null) {
+            if (!validAuthorizations.includes(authorization)) {
+              sendError(res, 401, `Invalid token`);
+              return;
+            }
+          } else if (needsAuth(parsedRequest)) {
+            sendError(res, 401, `Authentication required`);
+            return;
+          }
+
+          await processors[parsedRequest.type](parsedRequest, req, res);
+        } catch (error) {
+          processError(res, 500, error.stack);
+        }
+      })();
+
+    (async () => {
+      let server: https.Server | http.Server;
+
+      if (type === `https`) {
+        const certs = await getHttpsCertificates();
+
+        server = https.createServer({
+          cert: certs.server.certificate,
+          key: certs.server.clientKey,
+          ca: certs.ca.certificate,
+        }, listener);
+      } else if (type === `http`) {
+        server = http.createServer(listener);
+      } else {
+        throw new Error(`Invalid server type: ${type}`);
+      }
+
+      // We don't want the server to prevent the process from exiting
+      server.unref();
+      server.listen(() => {
+        const {port} = server.address() as AddressInfo;
+        resolve((packageServerUrls[type] = `${type}://localhost:${port}`));
+      });
+    })();
   });
 };
 
@@ -605,4 +631,36 @@ export const testIf = (condition: () => boolean, name: string,
   if (condition()) {
     test(name, execute, timeout);
   }
+};
+
+let httpsCertificates: {
+  server: pem.CertificateCreationResult;
+  ca: pem.CertificateCreationResult;
+};
+
+export const getHttpsCertificates = async () => {
+  if (httpsCertificates)
+    return httpsCertificates;
+
+  const createCSR = promisify<pem.CSRCreationOptions, { csr: string, clientKey: string }>(pem.createCSR);
+  const createCertificate = promisify<pem.CertificateCreationOptions, pem.CertificateCreationResult>(pem.createCertificate);
+
+  const {csr, clientKey} = await createCSR({commonName: `yarn`});
+  const caCertificate = await createCertificate({
+    csr,
+    clientKey,
+    selfSigned: true,
+  });
+
+  const serverCSRResult = await createCSR({commonName: `localhost`});
+
+  const serverCertificate = await createCertificate({
+    csr: serverCSRResult.csr,
+    clientKey: serverCSRResult.clientKey,
+    serviceKey: caCertificate.clientKey,
+    serviceCertificate:  caCertificate.certificate,
+    days: 365,
+  });
+
+  return (httpsCertificates = {server: serverCertificate, ca: caCertificate});
 };

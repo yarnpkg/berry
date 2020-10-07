@@ -330,6 +330,16 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.NUMBER,
     default: Infinity,
   },
+  caFilePath: {
+    description: `A path to a file containing one or multiple Certificate Authority signing certificates`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: null,
+  },
+  enableStrictSsl: {
+    description: `If false, SSL certificate errors will be ignored`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
 
   // Settings related to telemetry
   enableTelemetry: {
@@ -422,6 +432,8 @@ export interface ConfigurationValueMap {
   httpTimeout: number;
   httpRetry: number;
   networkConcurrency: number;
+  caFilePath: PortablePath;
+  enableStrictSsl: boolean;
 
   // Settings related to telemetry
   enableTelemetry: boolean;

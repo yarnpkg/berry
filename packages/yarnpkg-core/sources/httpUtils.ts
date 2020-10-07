@@ -1,3 +1,4 @@
+import {xfs}                     from '@yarnpkg/fslib';
 import {ExtendOptions, Response} from 'got';
 import {Agent as HttpsAgent}     from 'https';
 import {Agent as HttpAgent}      from 'http';
@@ -83,15 +84,20 @@ export async function request(target: string, body: Body, {configuration, header
 
   const socketTimeout = configuration.get(`httpTimeout`);
   const retry = configuration.get(`httpRetry`);
+  const caFilePath = configuration.get(`caFilePath`);
+  const rejectUnauthorized = configuration.get(`enableStrictSsl`);
 
   const {default: got} = await import(`got`);
 
-  //@ts-ignore
   const gotClient = got.extend({
     timeout: {
       socket: socketTimeout,
     },
     retry,
+    https: {
+      rejectUnauthorized,
+      ...(caFilePath && {certificateAuthority: await xfs.readFilePromise(caFilePath)}),
+    },
     ...gotOptions,
   });
 
