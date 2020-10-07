@@ -170,4 +170,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       graphql: `14 - 15`,
     },
   }],
+  // https://github.com/algolia/react-instantsearch/pull/2975
+  [`react-instantsearch-core@<=6.7.0`, {
+    peerDependencies: {
+      algoliasearch: `>= 3.1 < 5`,
+    },
+  }],
 ];
