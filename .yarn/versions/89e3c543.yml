@@ -1,5 +1,5 @@
 releases:
-  "@yarnpkg/cli": prerelease
+  "@yarnpkg/cli": patch
   "@yarnpkg/core": patch
   "@yarnpkg/plugin-essentials": patch
   "@yarnpkg/shell": minor
