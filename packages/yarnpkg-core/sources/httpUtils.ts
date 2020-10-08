@@ -92,7 +92,7 @@ export async function request(target: string, body: Body, {configuration, header
 
   for (const [glob, path] of configuration.get(`caFilePath`)) {
     if (micromatch.isMatch(url.hostname, glob)) {
-      extraHttpsOptions = {certificateAuthority: await xfs.readFilePromise(path)};
+      extraHttpsOptions.certificateAuthority = await xfs.readFilePromise(path);
       break;
     }
   }
