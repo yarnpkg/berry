@@ -24,6 +24,20 @@ function parseProxy(specifier: string) {
   return {proxy};
 }
 
+async function getCachedCertificate(caFilePath: PortablePath) {
+  let certificate = certCache.get(caFilePath);
+
+  if (!certificate) {
+    certificate = xfs.readFilePromise(caFilePath).then(cert => {
+      certCache.set(caFilePath, cert);
+      return cert;
+    });
+    certCache.set(caFilePath, certificate);
+  }
+
+  return Buffer.isBuffer(certificate) ? certificate : await certificate;;
+}
+
 export type Body = (
   {[key: string]: any} |
   string |
@@ -86,26 +100,21 @@ export async function request(target: string, body: Body, {configuration, header
   const socketTimeout = configuration.get(`httpTimeout`);
   const retry = configuration.get(`httpRetry`);
   const rejectUnauthorized = configuration.get(`enableStrictSsl`);
+  const globalCaFilePath = configuration.get(`caFilePath`);
 
   const {default: got} = await import(`got`);
 
   const extraHttpsOptions: HTTPSOptions = {};
 
-  for (const [glob, path] of configuration.get(`caFilePath`)) {
+  for (const [glob, scopeConfig] of configuration.get(`networkSettings`)) {
     if (micromatch.isMatch(url.hostname, glob)) {
-      let entry = certCache.get(path);
-
-      if (!entry) {
-        entry = xfs.readFilePromise(path).then(cert => {
-          certCache.set(path, cert);
-          return cert;
-        });
-        certCache.set(path, entry);
-      }
-
-      extraHttpsOptions.certificateAuthority = Buffer.isBuffer(entry) ? entry : await entry;
+      extraHttpsOptions.certificateAuthority = await getCachedCertificate(scopeConfig.get("caFilePath"));
       break;
     }
+  }
+
+  if (!extraHttpsOptions.certificateAuthority && globalCaFilePath) {
+    extraHttpsOptions.certificateAuthority = await getCachedCertificate(globalCaFilePath);
   }
 
   const gotClient = got.extend({

@@ -28,6 +28,35 @@ describe(`Https tests`, () => {
   );
 
   test(
+    `it should install when providing valid CA certificate via root caFilePath`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@private/package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        const url = await startPackageServer({type: `https`});
+        const certs = await getHttpsCertificates();
+
+        await writeFile(`${path}/rootCA.crt`, certs.ca.certificate);
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `caFilePath: ${path}/rootCA.crt`,
+          `npmScopes:`,
+          `  private:`,
+          `    npmRegistryServer: "${url}"`,
+          `    npmAuthToken: ${AUTH_TOKEN}`,
+        ].join(`\n`));
+
+        await run(`install`);
+
+        await expect(source(`require('@private/package')`)).resolves.toMatchObject({
+          name: `@private/package`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
     `it should install when providing valid CA certificate on wildcard`,
     makeTemporaryEnv(
       {
@@ -39,8 +68,9 @@ describe(`Https tests`, () => {
 
         await writeFile(`${path}/rootCA.crt`, certs.ca.certificate);
         await writeFile(`${path}/.yarnrc.yml`, [
-          `caFilePath:`,
-          `  "*": ${path}/rootCA.crt`,
+          `networkSettings:`,
+          `  "*":`,
+          `    caFilePath: ${path}/rootCA.crt`,
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
@@ -69,8 +99,9 @@ describe(`Https tests`, () => {
 
         await writeFile(`${path}/rootCA.crt`, certs.ca.certificate);
         await writeFile(`${path}/.yarnrc.yml`, [
-          `caFilePath:`,
-          `  "localhost": ${path}/rootCA.crt`,
+          `networkSettings:`,
+          `  "localhost":`,
+          `    caFilePath: ${path}/rootCA.crt`,
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
@@ -99,8 +130,9 @@ describe(`Https tests`, () => {
 
         await writeFile(`${path}/rootCA.crt`, certs.ca.certificate);
         await writeFile(`${path}/.yarnrc.yml`, [
-          `caFilePath:`,
-          `  "foo": ${path}/rootCA.crt`,
+          `networkSettings:`,
+          `  "foo":`,
+          `    caFilePath: ${path}/rootCA.crt`,
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
@@ -122,8 +154,7 @@ describe(`Https tests`, () => {
         const url = await startPackageServer({type: `https`});
 
         await writeFile(`${path}/.yarnrc.yml`, [
-          `caFilePath:`,
-          `  "localhost": ${path}/missing.crt`,
+          `caFilePath: ${path}/missing.crt`,
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
