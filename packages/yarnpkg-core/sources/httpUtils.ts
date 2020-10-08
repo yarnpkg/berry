@@ -35,7 +35,7 @@ async function getCachedCertificate(caFilePath: PortablePath) {
     certCache.set(caFilePath, certificate);
   }
 
-  return Buffer.isBuffer(certificate) ? certificate : await certificate;
+  return certificate;
 }
 
 export type Body = (
