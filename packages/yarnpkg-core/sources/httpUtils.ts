@@ -35,7 +35,7 @@ async function getCachedCertificate(caFilePath: PortablePath) {
     certCache.set(caFilePath, certificate);
   }
 
-  return Buffer.isBuffer(certificate) ? certificate : await certificate;;
+  return Buffer.isBuffer(certificate) ? certificate : await certificate;
 }
 
 export type Body = (
@@ -108,14 +108,14 @@ export async function request(target: string, body: Body, {configuration, header
 
   for (const [glob, scopeConfig] of configuration.get(`networkSettings`)) {
     if (micromatch.isMatch(url.hostname, glob)) {
-      extraHttpsOptions.certificateAuthority = await getCachedCertificate(scopeConfig.get("caFilePath"));
+      extraHttpsOptions.certificateAuthority = await getCachedCertificate(scopeConfig.get(`caFilePath`));
       break;
     }
   }
 
-  if (!extraHttpsOptions.certificateAuthority && globalCaFilePath) {
+  if (!extraHttpsOptions.certificateAuthority && globalCaFilePath)
     extraHttpsOptions.certificateAuthority = await getCachedCertificate(globalCaFilePath);
-  }
+
 
   const gotClient = got.extend({
     timeout: {
