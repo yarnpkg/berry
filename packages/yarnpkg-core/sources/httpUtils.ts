@@ -96,14 +96,15 @@ export async function request(target: string, body: Body, {configuration, header
       let entry = certCache.get(path);
 
       if (!entry) {
-        entry = xfs.readFilePromise(path);
+        entry = xfs.readFilePromise(path).then(cert => {
+          certCache.set(path, cert);
+          return cert;
+        });
         certCache.set(path, entry);
       }
 
-      if (Buffer.isBuffer(entry) === false)
-        entry = await entry;
+      extraHttpsOptions.certificateAuthority = Buffer.isBuffer(entry) ? entry : await entry;
 
-      extraHttpsOptions.certificateAuthority = entry;
       break;
     }
   }
