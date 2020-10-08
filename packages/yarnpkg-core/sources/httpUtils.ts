@@ -96,7 +96,7 @@ export async function request(target: string, body: Body, {configuration, header
       let entry = certCache.get(path);
 
       if (!entry) {
-        entry = await xfs.readFilePromise(path);
+        entry = xfs.readFilePromise(path);
         certCache.set(path, entry);
       }
 
