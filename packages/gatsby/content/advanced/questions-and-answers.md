@@ -60,7 +60,7 @@ If you're not using Zero-Installs:
 .pnp.*
 ```
 
-The files we recommend to add to `.gitignore` can depend on the type of project you're creating (Y = Yes, N = No, ? = Maybe):
+The files we recommend to **commit** to your repository can depend on the type of project you're creating (Y = Yes, N = No, ? = Maybe):
 
 |                          | Libraries | Applications | [Zero-Installs](/features/zero-installs) |
 |--------------------------|-----------|--------------|---------------|
