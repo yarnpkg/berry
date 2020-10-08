@@ -1,7 +1,8 @@
-import {npath}         from '@yarnpkg/fslib';
-import * as vscode     from 'vscode';
+import {npath}              from '@yarnpkg/fslib';
+import * as vscode          from 'vscode';
 
-import {ZipFSProvider} from './ZipFSProvider';
+import {registerYamlSchema} from './YamlSchema';
+import {ZipFSProvider}      from './ZipFSProvider';
 
 function mount(uri: vscode.Uri) {
   const zipUri = vscode.Uri.parse(`zip:${uri.fsPath}`);
@@ -14,7 +15,7 @@ function mount(uri: vscode.Uri) {
   }
 }
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.workspace.registerFileSystemProvider(`zip`, new ZipFSProvider(), {
     isCaseSensitive: true,
   }));
@@ -26,4 +27,6 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.commands.registerCommand(`zipfs.mountZipEditor`, () => {
     mount(vscode.window.activeTextEditor!.document.uri);
   }));
+
+  await registerYamlSchema();
 }
