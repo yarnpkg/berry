@@ -112,6 +112,28 @@ describe(`Https tests`, () => {
     ),
   );
 
+  test(
+    `it should throw error if CA cert file does not exist`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@private/package`]: `1.0.0`},
+      },
+      async ({path, run}) => {
+        const url = await startPackageServer({type: `https`});
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `caFilePath:`,
+          `  "localhost": ${path}/missing.crt`,
+          `npmScopes:`,
+          `  private:`,
+          `    npmRegistryServer: "${url}"`,
+          `    npmAuthToken: ${AUTH_TOKEN}`,
+        ].join(`\n`));
+
+        await expect(run(`install`)).rejects.toThrow(`ENOENT: no such file or directory`);
+      },
+    ),
+  );
 
   test(
     `it should allow bypassing ssl certificate errors`,
