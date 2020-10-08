@@ -100,7 +100,10 @@ export async function request(target: string, body: Body, {configuration, header
         certCache.set(path, entry);
       }
 
-      extraHttpsOptions.certificateAuthority = await entry;
+      if (Buffer.isBuffer(entry) === false)
+        entry = await entry;
+
+      extraHttpsOptions.certificateAuthority = entry;
       break;
     }
   }
