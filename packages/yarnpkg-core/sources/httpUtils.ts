@@ -89,7 +89,7 @@ export async function request(target: string, body: Body, {configuration, header
 
   const {default: got} = await import(`got`);
 
-  let extraHttpsOptions: HTTPSOptions = {};
+  const extraHttpsOptions: HTTPSOptions = {};
 
   for (const [glob, path] of configuration.get(`caFilePath`)) {
     if (micromatch.isMatch(url.hostname, glob)) {
