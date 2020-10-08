@@ -104,7 +104,6 @@ export async function request(target: string, body: Body, {configuration, header
       }
 
       extraHttpsOptions.certificateAuthority = Buffer.isBuffer(entry) ? entry : await entry;
-
       break;
     }
   }
