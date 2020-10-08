@@ -95,7 +95,9 @@ describe(`Https tests`, () => {
       },
       async ({path, run}) => {
         const url = await startPackageServer({type: `https`});
+        const certs = await getHttpsCertificates();
 
+        await writeFile(`${path}/rootCA.crt`, certs.ca.certificate);
         await writeFile(`${path}/.yarnrc.yml`, [
           `caFilePath:`,
           `  "foo": ${path}/rootCA.crt`,
