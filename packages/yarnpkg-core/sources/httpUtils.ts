@@ -84,22 +84,16 @@ export async function request(target: string, body: Body, {configuration, header
 
   const socketTimeout = configuration.get(`httpTimeout`);
   const retry = configuration.get(`httpRetry`);
-  const caFilePathMap = configuration.get(`caFilePath`);
   const rejectUnauthorized = configuration.get(`enableStrictSsl`);
 
   const {default: got} = await import(`got`);
 
   let extraHttpsOptions: HTTPSOptions = {};
 
-  if (caFilePathMap.size) {
-    let caFilePath: PortablePath | undefined;
-
-    micromatch.isMatch(url.hostname, Array.from(caFilePathMap.keys()), {onMatch: ({glob}) =>
-      caFilePath = caFilePathMap.get(glob),
-    });
-
-    if (caFilePath) {
-      extraHttpsOptions = {certificateAuthority: await xfs.readFilePromise(caFilePath)};
+  for (const [glob, path] of configuration.get(`caFilePath`)) {
+    if (micromatch.isMatch(url.hostname, glob)) {
+      extraHttpsOptions = {certificateAuthority: await xfs.readFilePromise(path)};
+      break;
     }
   }
 
