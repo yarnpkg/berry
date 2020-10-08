@@ -1,12 +1,12 @@
-import {xfs}                     from '@yarnpkg/fslib';
-import {ExtendOptions, Response} from 'got';
-import {Agent as HttpsAgent}     from 'https';
-import {Agent as HttpAgent}      from 'http';
-import micromatch                from 'micromatch';
-import tunnel, {ProxyOptions}    from 'tunnel';
-import {URL}                     from 'url';
+import {PortablePath, xfs}                     from '@yarnpkg/fslib';
+import {ExtendOptions, HTTPSOptions, Response} from 'got';
+import {Agent as HttpsAgent}                   from 'https';
+import {Agent as HttpAgent}                    from 'http';
+import micromatch                              from 'micromatch';
+import tunnel, {ProxyOptions}                  from 'tunnel';
+import {URL}                                   from 'url';
 
-import {Configuration}           from './Configuration';
+import {Configuration}                         from './Configuration';
 
 const cache = new Map<string, Promise<Buffer> | Buffer>();
 
@@ -84,10 +84,24 @@ export async function request(target: string, body: Body, {configuration, header
 
   const socketTimeout = configuration.get(`httpTimeout`);
   const retry = configuration.get(`httpRetry`);
-  const caFilePath = configuration.get(`caFilePath`);
+  const caFilePathMap = configuration.get(`caFilePath`);
   const rejectUnauthorized = configuration.get(`enableStrictSsl`);
 
   const {default: got} = await import(`got`);
+
+  let extraHttpsOptions: HTTPSOptions = {};
+
+  if (caFilePathMap.size) {
+    let caFilePath: PortablePath | undefined;
+
+    micromatch.isMatch(url.hostname, Array.from(caFilePathMap.keys()), {onMatch: ({glob}) =>
+      caFilePath = caFilePathMap.get(glob),
+    });
+
+    if (caFilePath) {
+      extraHttpsOptions = {certificateAuthority: await xfs.readFilePromise(caFilePath)};
+    }
+  }
 
   const gotClient = got.extend({
     timeout: {
@@ -96,7 +110,7 @@ export async function request(target: string, body: Body, {configuration, header
     retry,
     https: {
       rejectUnauthorized,
-      ...(caFilePath && {certificateAuthority: await xfs.readFilePromise(caFilePath)}),
+      ...extraHttpsOptions,
     },
     ...gotOptions,
   });

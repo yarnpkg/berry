@@ -16,6 +16,22 @@
       "format": "uri-reference",
       "default": "./.yarn/cache"
     },
+    "caFilePath": {
+      "description": "Map of hostnames to files containing one or multiple Certificate Authority signing certificates. Glob patterns are supported.",
+      "type": "object",
+      "patternProperties": {
+        "^(.+)$": {
+          "description": "Path to file containing one or multiple Certificate Authority signing certificates",
+          "format": "uri-reference",
+          "default": "./exampleCA.pem"
+        }
+      },
+      "default": {
+        "example.com": {},
+        "*.example.com": {},
+        "*": {}
+      }
+    },
     "changesetBaseRefs": {
       "description": "The base git refs that the current HEAD is compared against in the version plugin. This overrides the default behavior of comparing against master, origin/master, and upstream/master. Supports git branches, tags, and commits.",
       "type": "array",
@@ -124,6 +140,11 @@
       "type": "boolean",
       "default": true
     },
+    "enableStrictSsl": {
+      "description": "If false, SSL certificate errors will be ignored",
+      "type": "boolean",
+      "default": true
+    },
     "enableTelemetry": {
       "description": "If true (the default outside of CI environments), Yarn will periodically send anonymous data to our servers tracking some usage information such as the number of dependency in your project, how many install you ran, etc. Consult the [Telemetry](/telemetry) page for more details about it.",
       "type": "boolean",
@@ -226,7 +247,7 @@
       "type": "string",
       "enum": ["workspaces", "dependencies", "none"],
       "default": "none"
-  },
+    },
     "nodeLinker": {
       "description": "Defines what linker should be used for installing Node packages (useful to enable the node-modules plugin), one of: `pnp`, `node-modules`.",
       "type": "string",

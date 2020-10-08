@@ -28,7 +28,7 @@ describe(`Https tests`, () => {
   );
 
   test(
-    `it should install when providing valid root CA certificate`,
+    `it should install when providing valid CA certificate on wildcard`,
     makeTemporaryEnv(
       {
         dependencies: {[`@private/package`]: `1.0.0`},
@@ -39,7 +39,8 @@ describe(`Https tests`, () => {
 
         await writeFile(`${path}/rootCA.crt`, certs.ca.certificate);
         await writeFile(`${path}/.yarnrc.yml`, [
-          `caFilePath: ${path}/rootCA.crt`,
+          `caFilePath:`,
+          `  "*": ${path}/rootCA.crt`,
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
@@ -52,6 +53,59 @@ describe(`Https tests`, () => {
           name: `@private/package`,
           version: `1.0.0`,
         });
+      },
+    ),
+  );
+
+  test(
+    `it should install when providing valid CA certificate on hostname`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@private/package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        const url = await startPackageServer({type: `https`});
+        const certs = await getHttpsCertificates();
+
+        await writeFile(`${path}/rootCA.crt`, certs.ca.certificate);
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `caFilePath:`,
+          `  "localhost": ${path}/rootCA.crt`,
+          `npmScopes:`,
+          `  private:`,
+          `    npmRegistryServer: "${url}"`,
+          `    npmAuthToken: ${AUTH_TOKEN}`,
+        ].join(`\n`));
+
+        await run(`install`);
+
+        await expect(source(`require('@private/package')`)).resolves.toMatchObject({
+          name: `@private/package`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should fail to install if certificate doesn't match hostname`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@private/package`]: `1.0.0`},
+      },
+      async ({path, run}) => {
+        const url = await startPackageServer({type: `https`});
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `caFilePath:`,
+          `  "foo": ${path}/rootCA.crt`,
+          `npmScopes:`,
+          `  private:`,
+          `    npmRegistryServer: "${url}"`,
+          `    npmAuthToken: ${AUTH_TOKEN}`,
+        ].join(`\n`));
+
+        await expect(run(`install`)).rejects.toThrow(`RequestError: self signed certificate`);
       },
     ),
   );
