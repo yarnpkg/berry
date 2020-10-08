@@ -9,6 +9,7 @@ import {URL}                                   from 'url';
 import {Configuration}                         from './Configuration';
 
 const cache = new Map<string, Promise<Buffer> | Buffer>();
+const certCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
 
 const globalHttpAgent = new HttpAgent({keepAlive: true});
 const globalHttpsAgent = new HttpsAgent({keepAlive: true});
@@ -92,7 +93,14 @@ export async function request(target: string, body: Body, {configuration, header
 
   for (const [glob, path] of configuration.get(`caFilePath`)) {
     if (micromatch.isMatch(url.hostname, glob)) {
-      extraHttpsOptions.certificateAuthority = await xfs.readFilePromise(path);
+      let entry = certCache.get(path);
+
+      if (!entry) {
+        entry = await xfs.readFilePromise(path);
+        certCache.set(path, entry);
+      }
+
+      extraHttpsOptions.certificateAuthority = await entry;
       break;
     }
   }
