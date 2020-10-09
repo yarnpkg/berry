@@ -11,14 +11,14 @@ module.exports = {
       name: `Getting started`,
       link: `/getting-started`,
     }, {
-      name: `Configuration`,
-      link: `/configuration`,
-    }, {
       name: `Features`,
       link: `/features`,
     }, {
       name: `CLI`,
       link: `/cli`,
+    }, {
+      name: `Configuration`,
+      link: `/configuration`,
     }, {
       name: `Advanced`,
       link: `/advanced`,

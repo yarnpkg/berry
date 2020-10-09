@@ -1,6 +1,6 @@
 ---
-category: advanced
-path: /advanced/editor-sdks
+category: getting-started
+path: /getting-started/editor-sdks
 title: "Editor SDKs"
 ---
 
