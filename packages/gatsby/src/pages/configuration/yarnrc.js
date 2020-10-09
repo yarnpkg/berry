@@ -1,12 +1,13 @@
 import React                          from 'react';
 
+import yarnrcSchema                   from '../../../static/configuration/yarnrc.json';
 import {ConfigurationLayout}          from '../../components/layout-configuration';
+
 import {SEO, defaultKeywords}         from '../../components/seo';
 
 import {convertSchemaToConfiguration} from '../../utils/schemaUtils';
 
-import yarnrcSchema                   from './yarnrc.json';
-
+const configuration = convertSchemaToConfiguration(yarnrcSchema, `Syml`);
 
 const YarnrcDoc = () => <>
   <ConfigurationLayout>
@@ -15,7 +16,7 @@ const YarnrcDoc = () => <>
       description={`List of all the configuration option for Yarn (yarnrc files)`}
       keywords={defaultKeywords}
     />
-    {convertSchemaToConfiguration(yarnrcSchema, `Syml`)}
+    {configuration}
   </ConfigurationLayout>
 </>;
 
