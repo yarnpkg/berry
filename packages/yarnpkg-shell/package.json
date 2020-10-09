@@ -1,12 +1,12 @@
 {
   "name": "@yarnpkg/shell",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.2.2",
-    "@yarnpkg/parsers": "workspace:^2.2.1",
+    "@yarnpkg/fslib": "workspace:^2.3.0",
+    "@yarnpkg/parsers": "workspace:^2.3.0",
     "clipanion": "^2.6.2",
     "cross-spawn": "7.0.3",
     "fast-glob": "^3.2.2",
