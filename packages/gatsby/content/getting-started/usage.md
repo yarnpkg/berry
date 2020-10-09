@@ -4,7 +4,7 @@ path: /getting-started/usage
 title: "3 - Usage"
 ---
 
-Now that you have Yarn [installed](/getting-started/install), you can start using Yarn. Here are some of the most common commands you'll need.
+Now that you have Yarn [installed](/getting-started/install), you can start using it! Here are some of the most common commands you'll need.
 
 > **Migrating from Yarn 1**
 >
