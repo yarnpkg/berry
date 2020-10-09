@@ -39,7 +39,6 @@ const MenuEntry = styled(Link)`
   align-items: center;
 
   text-decoration: none;
-  font-weight: 600;
 
   color: #333333;
   background: #ffffff;

@@ -56,7 +56,7 @@ module.exports = {
       resolve: `gatsby-plugin-prefetch-google-fonts`,
       options: {
         fonts: [{
-          family: `Source Sans Pro`,
+          family: `Open Sans`,
           variants: [`300`, `400`, `600`, `700`],
         }, {
           family: `PT Mono`,
