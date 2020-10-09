@@ -4,7 +4,7 @@ exports[`Commands npm whoami it should print the npm registry username for a giv
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: testUser
+  "stdout": "➤ YN0000: anotherTestUser
 ➤ YN0000: Done
 ",
 }
