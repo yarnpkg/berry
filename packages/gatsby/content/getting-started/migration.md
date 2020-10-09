@@ -1,6 +1,6 @@
 ---
-category: advanced
-path: /advanced/migration
+category: getting-started
+path: /getting-started/migration
 title: "Migration"
 ---
 

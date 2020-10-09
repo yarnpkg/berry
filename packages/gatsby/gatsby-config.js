@@ -11,11 +11,11 @@ module.exports = {
       name: `Getting started`,
       link: `/getting-started`,
     }, {
-      name: `Configuration`,
-      link: `/configuration`,
-    }, {
       name: `Features`,
       link: `/features`,
+    }, {
+      name: `Configuration`,
+      link: `/configuration`,
     }, {
       name: `CLI`,
       link: `/cli`,

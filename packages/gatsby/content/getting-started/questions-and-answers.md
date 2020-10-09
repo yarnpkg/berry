@@ -1,6 +1,6 @@
 ---
-category: advanced
-path: /advanced/qa
+category: getting-started
+path: /getting-started/qa
 title: "Questions & Answers"
 ---
 
