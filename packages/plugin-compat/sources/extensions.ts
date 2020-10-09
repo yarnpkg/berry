@@ -157,7 +157,7 @@ export const packageExtensions: Array<[string, any]> = [
   }],
   // https://github.com/STRML/react-draggable/pull/525
   [`react-draggable@*`, {
-    dependencies: {
+    peerDependencies: {
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
     },
