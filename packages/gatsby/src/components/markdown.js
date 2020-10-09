@@ -37,7 +37,7 @@ const Content = styled.div`
 
     font-style: italic;
 
-    background-color: rgb(255 165 0 / 30%);
+    background-color: #fff3e2;
   }
 
   blockquote > p {
