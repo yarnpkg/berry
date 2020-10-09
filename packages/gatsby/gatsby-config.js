@@ -14,11 +14,11 @@ module.exports = {
       name: `Features`,
       link: `/features`,
     }, {
-      name: `Configuration`,
-      link: `/configuration`,
-    }, {
       name: `CLI`,
       link: `/cli`,
+    }, {
+      name: `Configuration`,
+      link: `/configuration`,
     }, {
       name: `Advanced`,
       link: `/advanced`,
