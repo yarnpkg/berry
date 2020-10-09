@@ -6006,7 +6006,6 @@ __metadata:
   dependencies:
     "@npm/types": ^1.0.1
     "@types/semver": ^7.1.0
-    "@types/ssri": ^6.0.1
     "@types/yup": 0.26.12
     "@yarnpkg/cli": "workspace:^2.3.2"
     "@yarnpkg/core": "workspace:^2.3.1"
@@ -6016,7 +6015,6 @@ __metadata:
     clipanion: ^2.6.2
     enquirer: ^2.3.6
     semver: ^7.1.2
-    ssri: ^6.0.1
     tslib: ^1.13.0
     yup: ^0.27.0
   peerDependencies:
@@ -6032,13 +6030,17 @@ __metadata:
   resolution: "@yarnpkg/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
     "@types/semver": ^7.1.0
+    "@types/ssri": ^6.0.1
     "@yarnpkg/core": "workspace:^2.3.1"
     "@yarnpkg/fslib": "workspace:^2.3.0"
+    "@yarnpkg/plugin-pack": "workspace:^2.2.2"
     enquirer: ^2.3.6
     semver: ^7.1.2
+    ssri: ^6.0.1
     tslib: ^1.13.0
   peerDependencies:
     "@yarnpkg/core": ^2.3.1
+    "@yarnpkg/plugin-pack": ^2.2.2
   languageName: unknown
   linkType: soft
 

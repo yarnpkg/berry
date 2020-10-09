@@ -7,14 +7,18 @@
     "@yarnpkg/fslib": "workspace:^2.3.0",
     "enquirer": "^2.3.6",
     "semver": "^7.1.2",
+    "ssri": "^6.0.1",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.3.1"
+    "@yarnpkg/core": "^2.3.1",
+    "@yarnpkg/plugin-pack": "^2.2.2"
   },
   "devDependencies": {
     "@types/semver": "^7.1.0",
-    "@yarnpkg/core": "workspace:^2.3.1"
+    "@types/ssri": "^6.0.1",
+    "@yarnpkg/core": "workspace:^2.3.1",
+    "@yarnpkg/plugin-pack": "workspace:^2.2.2"
   },
   "repository": {
     "type": "git",
