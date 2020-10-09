@@ -38,7 +38,6 @@ export const Main = styled.div`
 
   padding: 1em;
 
-  font-family: "Open Sans", sans-serif;
   white-space: normal;
 
   & + * {
@@ -110,7 +109,6 @@ const AnchorContainer = styled.a`
 const Description = styled.div`
   margin-bottom: 0.5em;
 
-  font-family: "Open Sans", sans-serif;
   white-space: normal;
 `;
 
