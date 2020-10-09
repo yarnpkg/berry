@@ -250,7 +250,7 @@ export const renderArrayProperty = (entry, mode) => {
  */
 export const renderProperty = (entry, mode, isNested) => {
   if (typeof entry[1] === `boolean`)
-    return;
+    return undefined;
 
   if (entry[1].type === `object`) {
     return renderObjectProperty(/** @type {[string, import('json-schema').JSONSchema7]} */ (entry), mode);
