@@ -12,18 +12,19 @@ title: "Protocols"
 
 The following protocols can be used by any dependency entry listed in the `dependencies` or `devDependencies` fields. While they work regardless of the context we strongly recommend you to only use semver ranges on published packages as they are the one common protocol whose semantic is clearly defined across all package managers.
 
-| Name          | Example                                 | Description                                                                                                                     |
-| ------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Semver        | `^1.2.3`                                | Resolves from the default registry                                                                                              |
-| Tag           | `latest`                                | Resolves from the default registry                                                                                              |
-| Npm alias     | `npm:name@...`                          | Resolves from the npm registry                                                                                                  |
-| Git           | `git@github.com:foo/bar.git`            | Downloads a public package from a Git repository                                                                                |
-| GitHub        | `github:foo/bar`                        | Downloads a **public** package from GitHub                                                                                      |
-| GitHub        | `foo/bar`                               | Alias for the `github:` protocol                                                                                                |
-| File          | `file:./my-package`                     | Copies the target location into the cache                                                                                       |
-| Link          | `link:./my-folder`                      | Creates a link to the `./my-folder` folder (ignore dependencies)                                                                |
-| Patch         | `patch:left-pad@1.0.0#./my-patch.patch` | Creates a patched copy of the original package                                                                                  |
-| Portal        | `portal:./my-folder`                    | Creates a link to the `./my-folder` folder (follow dependencies)                                                                |
+| Name          | Example                                 | Description                                                                                                                       |
+| ------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Semver        | `^1.2.3`                                | Resolves from the default registry                                                                                                 |
+| Tag           | `latest`                                | Resolves from the default registry                                                                                                 |
+| Npm alias     | `npm:name@...`                          | Resolves from the npm registry                                                                                                     |
+| Git           | `git@github.com:foo/bar.git`            | Downloads a public package from a Git repository                                                                                   |
+| GitHub        | `github:foo/bar`                        | Downloads a **public** package from GitHub                                                                                         |
+| GitHub        | `foo/bar`                               | Alias for the `github:` protocol                                                                                                   |
+| File          | `file:./my-package`                     | Copies the target location into the cache                                                                                         |
+| Link          | `link:./my-folder`                      | Creates a link to the `./my-folder` folder (ignore dependencies)                                                                   |
+| Patch         | `patch:left-pad@1.0.0#./my-patch.patch` | Creates a patched copy of the original package                                                                                     |
+| Portal        | `portal:./my-folder`                    | Creates a link to the `./my-folder` folder (follow dependencies)                                                                   |
+| Workspace     | `workpace:*`                            | Creates a link to a package in another workspace                                                                                   |
 | [Exec](#exec) | `exec:./my-generator-package`           | <sup>*Experimental & Plugin*</sup><br>Instructs Yarn to execute the specified Node script and use its output as package content |
 
 ## Details
@@ -71,6 +72,12 @@ patch:lodash@^1.0.0#./my-patch.diff
 ```
 
 Note that if you wish to update a transitive dependency (ie not directly yours), it's perfectly possible to use the [`resolutions` field](/configuration/manifest#resolutions).
+
+### Workspace
+
+The `workspace:` protocol is meant to be used with [workspaces](/features/workspaces#workspace-ranges-workspace). While Yarn automatically picks workspace resolutions when they match, there are times where you absolutely don't want to risk using a package from the remote registry even if the versions don't match (for example if your project isn't actually meant to be published and you just want to use the workspaces to better compartiment your code). 
+
+Our current recommendation is to use `workspace:*`, which will almost always do what you expect. See [the documentation of workspaces](/features/workspaces#workspace-ranges-workspace) for full details about this protocol.
 
 ## Frequently Asked Questions
 
