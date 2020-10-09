@@ -17,7 +17,7 @@ const Title = styled.h1`
 
   border-bottom: 1px solid;
 
-  font-weight: 300;
+  font-weight: 600;
   font-size: 2rem;
   line-height: 4rem;
 
@@ -29,14 +29,19 @@ const Title = styled.h1`
 const Content = styled.div`
   blockquote {
     margin-left: 0;
+    margin-right: 0;
 
-    border-left: 3px solid #859daf;
+    border-left: 5px solid #859daf;
 
-    padding-left: .5em;
+    padding: 1em;
 
     font-style: italic;
 
-    color: #859daf;
+    background-color: #fff3e2;
+  }
+
+  blockquote > p {
+    margin: 0;
   }
 
   a:not(.anchor) {
@@ -120,7 +125,7 @@ const Content = styled.div`
   h2, h3, h4 {
     padding-bottom: 0.2em;
 
-    font-weight: 300;
+    font-weight: 600;
   }
 
   pre {

@@ -57,7 +57,7 @@ module.exports = {
       options: {
         fonts: [{
           family: `Open Sans`,
-          variants: [`300`, `400`, `700`],
+          variants: [`300`, `400`, `600`, `700`],
         }, {
           family: `PT Mono`,
         }],
