@@ -2,7 +2,7 @@ import {Libzip}                                                                 
 import {constants}                                                                                                                                   from 'fs';
 
 import {WatchOptions, WatchCallback, Watcher}                                                                                                        from './FakeFS';
-import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions}                                                                                        from './FakeFS';
+import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from './FakeFS';
 import {Dirent, SymlinkType}                                                                                                                         from './FakeFS';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileOptions, WatchFileCallback, StatWatcher} from './FakeFS';
 import {NodeFS}                                                                                                                                      from './NodeFS';
@@ -125,6 +125,26 @@ export class ZipOpenFS extends BasePortableFakeFS {
       return this.baseFs.openSync(p, flags, mode);
     }, (zipFs, {subPath}) => {
       return this.remapFd(zipFs, zipFs.openSync(subPath, flags, mode));
+    });
+  }
+
+  async opendirPromise(p: PortablePath, opts?: OpendirOptions) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.opendirPromise(p, opts);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.opendirPromise(subPath, opts);
+    }, {
+      requireSubpath: false,
+    });
+  }
+
+  opendirSync(p: PortablePath, opts?: OpendirOptions) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.opendirSync(p, opts);
+    }, (zipFs, {subPath}) => {
+      return zipFs.opendirSync(subPath, opts);
+    }, {
+      requireSubpath: false,
     });
   }
 

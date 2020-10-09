@@ -4,10 +4,11 @@ import {PassThrough}                                                            
 import {isDate}                                                                                                                                      from 'util';
 import zlib                                                                                                                                          from 'zlib';
 
-import {WatchOptions, WatchCallback, Watcher}                                                                                                        from './FakeFS';
-import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions}                                                                                        from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher, Dir}                                                                                                   from './FakeFS';
+import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from './FakeFS';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from './FakeFS';
 import {NodeFS}                                                                                                                                      from './NodeFS';
+import {opendir}                                                                                                                                     from './algorithms/opendir';
 import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from './algorithms/watchFile';
 import {S_IFLNK, S_IFDIR, S_IFMT, S_IFREG}                                                                                                           from './constants';
 import * as errors                                                                                                                                   from './errors';
@@ -351,6 +352,30 @@ export class ZipFS extends BasePortableFakeFS {
 
   hasOpenFileHandles(): boolean {
     return !!this.fds.size;
+  }
+
+  async opendirPromise(p: PortablePath, opts?: OpendirOptions) {
+    return this.opendirSync(p, opts);
+  }
+
+  opendirSync(p: PortablePath, opts: OpendirOptions = {}): Dir<PortablePath> {
+    const resolvedP = this.resolveFilename(`opendir '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw errors.ENOENT(`opendir '${p}'`);
+
+    const directoryListing = this.listings.get(resolvedP);
+    if (!directoryListing)
+      throw errors.ENOTDIR(`opendir '${p}'`);
+
+    const entries = [...directoryListing];
+
+    const fd = this.openSync(resolvedP, `r`);
+
+    const onClose = () => {
+      this.closeSync(fd);
+    };
+
+    return opendir(this, resolvedP, entries, {onClose});
   }
 
   async readPromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number | null) {

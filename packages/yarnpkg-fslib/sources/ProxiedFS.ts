@@ -1,7 +1,7 @@
-import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from './FakeFS';
-import {Dirent, SymlinkType}                                                                                                             from './FakeFS';
-import {MkdirOptions, RmdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}                                              from './FakeFS';
-import {FSPath, Filename, Path}                                                                                                          from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, Dir, OpendirOptions} from './FakeFS';
+import {Dirent, SymlinkType}                                                                                                                                  from './FakeFS';
+import {MkdirOptions, RmdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}                                                                   from './FakeFS';
+import {FSPath, Filename, Path}                                                                                                                               from './path';
 
 export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<P> {
   protected abstract readonly baseFs: FakeFS<IP>;
@@ -34,6 +34,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
 
   openSync(p: P, flags: string, mode?: number) {
     return this.baseFs.openSync(this.mapToBase(p), flags, mode);
+  }
+
+  async opendirPromise(p: P, opts?: OpendirOptions): Promise<Dir<P>> {
+    return Object.assign(await this.baseFs.opendirPromise(this.mapToBase(p), opts), {path: p});
+  }
+
+  opendirSync(p: P, opts?: OpendirOptions): Dir<P> {
+    return Object.assign(this.baseFs.opendirSync(this.mapToBase(p), opts), {path: p});
   }
 
   async readPromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number | null) {

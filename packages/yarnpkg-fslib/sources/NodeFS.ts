@@ -1,11 +1,11 @@
-import fs, {Stats}                                                                                           from 'fs';
+import fs, {Stats}                                                                                                                from 'fs';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions, StatWatcher, WatchFileCallback, WatchFileOptions} from './FakeFS';
-import {Dirent, SymlinkType}                                                                                 from './FakeFS';
-import {BasePortableFakeFS, WriteFileOptions}                                                                from './FakeFS';
-import {MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher}                                    from './FakeFS';
-import {ENOSYS}                                                                                              from './errors';
-import {FSPath, PortablePath, Filename, ppath, npath}                                                        from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, Dir, StatWatcher, WatchFileCallback, WatchFileOptions, OpendirOptions} from './FakeFS';
+import {Dirent, SymlinkType}                                                                                                      from './FakeFS';
+import {BasePortableFakeFS, WriteFileOptions}                                                                                     from './FakeFS';
+import {MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher}                                                         from './FakeFS';
+import {ENOSYS}                                                                                                                   from './errors';
+import {FSPath, PortablePath, Filename, ppath, npath, NativePath}                                                                 from './path';
 
 export class NodeFS extends BasePortableFakeFS {
   private readonly realFs: typeof fs;
@@ -42,6 +42,26 @@ export class NodeFS extends BasePortableFakeFS {
 
   openSync(p: PortablePath, flags: string, mode?: number) {
     return this.realFs.openSync(npath.fromPortablePath(p), flags, mode);
+  }
+
+  async opendirPromise(p: PortablePath, opts?: OpendirOptions): Promise<Dir<PortablePath>> {
+    return await new Promise<Dir<NativePath>>((resolve, reject) => {
+      if (typeof opts !== `undefined`) {
+        this.realFs.opendir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject) as any);
+      } else {
+        this.realFs.opendir(npath.fromPortablePath(p), this.makeCallback(resolve, reject) as any);
+      }
+    }).then(dir => {
+      return Object.defineProperty(dir, `path`, {value: p, configurable: true, writable: true});
+    });
+  }
+
+  opendirSync(p: PortablePath, opts?: OpendirOptions): Dir<PortablePath> {
+    const dir = typeof opts !== `undefined`
+      ? this.realFs.opendirSync(npath.fromPortablePath(p), opts) as Dir<NativePath>
+      : this.realFs.opendirSync(npath.fromPortablePath(p)) as Dir<NativePath>;
+
+    return Object.defineProperty(dir, `path`, {value: p, configurable: true, writable: true});
   }
 
   async readPromise(fd: number, buffer: Buffer, offset: number = 0, length: number = 0, position: number | null = -1) {

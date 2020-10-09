@@ -7,12 +7,14 @@ import {NodeFS}                                           from './NodeFS';
 import {Filename, PortablePath, NativePath, npath, ppath} from './path';
 import * as statUtils                                     from './statUtils';
 
+export {opendir} from './algorithms/opendir';
+
 export {statUtils};
 
 export {normalizeLineEndings}          from './FakeFS';
 export type {CreateReadStreamOptions}  from './FakeFS';
 export type {CreateWriteStreamOptions} from './FakeFS';
-export type {Dirent, SymlinkType}      from './FakeFS';
+export type {Dirent, Dir, SymlinkType} from './FakeFS';
 export type {MkdirOptions}             from './FakeFS';
 export type {RmdirOptions}             from './FakeFS';
 export type {WatchOptions}             from './FakeFS';
@@ -23,6 +25,7 @@ export type {ExtractHintOptions}       from './FakeFS';
 export type {WatchFileOptions}         from './FakeFS';
 export type {WatchFileCallback}        from './FakeFS';
 export type {StatWatcher}              from './FakeFS';
+export type {OpendirOptions}           from './FakeFS';
 
 export {DEFAULT_COMPRESSION_LEVEL}     from './ZipFS';
 export type {ZipCompression}           from './ZipFS';
@@ -66,6 +69,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `lutimesSync`,
     `mkdirSync`,
     `openSync`,
+    `opendirSync`,
     `readSync`,
     `readlinkSync`,
     `readFileSync`,
@@ -98,6 +102,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `lutimesPromise`,
     `mkdirPromise`,
     `openPromise`,
+    `opendirPromise`,
     `readdirPromise`,
     `realpathPromise`,
     `readFilePromise`,

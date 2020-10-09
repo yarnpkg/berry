@@ -46,6 +46,14 @@ export function EOPNOTSUPP(reason: string) {
   return makeError(`EOPNOTSUPP`, `operation not supported, ${reason}`);
 }
 
+// ------------------------------------------------------------------------
+
+export function ERR_DIR_CLOSED() {
+  return makeError(`ERR_DIR_CLOSED`, `Directory handle was closed`);
+}
+
+// ------------------------------------------------------------------------
+
 export class LibzipError extends Error {
   code: string;
 
