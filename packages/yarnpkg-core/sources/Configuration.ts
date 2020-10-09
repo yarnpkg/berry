@@ -330,6 +330,21 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.NUMBER,
     default: Infinity,
   },
+  networkSettings: {
+    description: `Network settings per hostname (glob patterns are supported)`,
+    type: SettingsType.MAP,
+    valueDefinition: {
+      description: ``,
+      type: SettingsType.SHAPE,
+      properties: {
+        caFilePath: {
+          description: `Path to file containing one or multiple Certificate Authority signing certificates`,
+          type: SettingsType.ABSOLUTE_PATH,
+          default: null,
+        },
+      },
+    },
+  },
   caFilePath: {
     description: `A path to a file containing one or multiple Certificate Authority signing certificates`,
     type: SettingsType.ABSOLUTE_PATH,
@@ -432,6 +447,7 @@ export interface ConfigurationValueMap {
   httpTimeout: number;
   httpRetry: number;
   networkConcurrency: number;
+  networkSettings: Map<string, MapConfigurationValue<{ caFilePath: PortablePath }>>;
   caFilePath: PortablePath;
   enableStrictSsl: boolean;
 

@@ -1,14 +1,15 @@
-import {xfs}                     from '@yarnpkg/fslib';
-import {ExtendOptions, Response} from 'got';
-import {Agent as HttpsAgent}     from 'https';
-import {Agent as HttpAgent}      from 'http';
-import micromatch                from 'micromatch';
-import tunnel, {ProxyOptions}    from 'tunnel';
-import {URL}                     from 'url';
+import {PortablePath, xfs}                     from '@yarnpkg/fslib';
+import {ExtendOptions, HTTPSOptions, Response} from 'got';
+import {Agent as HttpsAgent}                   from 'https';
+import {Agent as HttpAgent}                    from 'http';
+import micromatch                              from 'micromatch';
+import tunnel, {ProxyOptions}                  from 'tunnel';
+import {URL}                                   from 'url';
 
-import {Configuration}           from './Configuration';
+import {Configuration}                         from './Configuration';
 
 const cache = new Map<string, Promise<Buffer> | Buffer>();
+const certCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
 
 const globalHttpAgent = new HttpAgent({keepAlive: true});
 const globalHttpsAgent = new HttpsAgent({keepAlive: true});
@@ -21,6 +22,20 @@ function parseProxy(specifier: string) {
     proxy.port = Number(url.port);
 
   return {proxy};
+}
+
+async function getCachedCertificate(caFilePath: PortablePath) {
+  let certificate = certCache.get(caFilePath);
+
+  if (!certificate) {
+    certificate = xfs.readFilePromise(caFilePath).then(cert => {
+      certCache.set(caFilePath, cert);
+      return cert;
+    });
+    certCache.set(caFilePath, certificate);
+  }
+
+  return certificate;
 }
 
 export type Body = (
@@ -84,10 +99,23 @@ export async function request(target: string, body: Body, {configuration, header
 
   const socketTimeout = configuration.get(`httpTimeout`);
   const retry = configuration.get(`httpRetry`);
-  const caFilePath = configuration.get(`caFilePath`);
   const rejectUnauthorized = configuration.get(`enableStrictSsl`);
+  const globalCaFilePath = configuration.get(`caFilePath`);
 
   const {default: got} = await import(`got`);
+
+  const extraHttpsOptions: HTTPSOptions = {};
+
+  for (const [glob, scopeConfig] of configuration.get(`networkSettings`)) {
+    if (micromatch.isMatch(url.hostname, glob)) {
+      extraHttpsOptions.certificateAuthority = await getCachedCertificate(scopeConfig.get(`caFilePath`));
+      break;
+    }
+  }
+
+  if (!extraHttpsOptions.certificateAuthority && globalCaFilePath)
+    extraHttpsOptions.certificateAuthority = await getCachedCertificate(globalCaFilePath);
+
 
   const gotClient = got.extend({
     timeout: {
@@ -96,7 +124,7 @@ export async function request(target: string, body: Body, {configuration, header
     retry,
     https: {
       rejectUnauthorized,
-      ...(caFilePath && {certificateAuthority: await xfs.readFilePromise(caFilePath)}),
+      ...extraHttpsOptions,
     },
     ...gotOptions,
   });
