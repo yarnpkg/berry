@@ -51,7 +51,7 @@ Most commonly, the following patterns should be ignored:
 !.yarn/cache
 .pnp.*
 
-# Include if using Zero-Installs:
+# (!) Only include if using Zero-Installs:
 !.yarn/unplugged 
 !.yarn/build-state.yml
 ```
