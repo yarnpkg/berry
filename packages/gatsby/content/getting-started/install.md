@@ -48,7 +48,7 @@ yarn set version berry
 
 > "Berry" is the codename for the Yarn 2 release line. It's also the name of our [repository](https://github.com/yarnpkg/berry)!
 
-4. Commit the `.yarn` and `.yarnrc.yml` changes
+4. Commit new & updated files. See: [Which files should be gitignored?](/advanced/qa#which-files-should-be-gitignored)
 
 ## Updating to the latest versions
 
