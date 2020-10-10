@@ -1,13 +1,11 @@
-import React                          from 'react';
+import React                                      from 'react';
 
-import yarnrcSchema                   from '../../../static/configuration/yarnrc.json';
-import {ConfigurationLayout}          from '../../components/layout-configuration';
+import yarnrcSchema                               from '../../../static/configuration/yarnrc.json';
+import {ConfigurationLayout}                      from '../../components/layout-configuration';
+import {SEO, defaultKeywords}                     from '../../components/seo';
+import {convertSchemaToConfiguration, SchemaMode} from '../../utils/schemaUtils';
 
-import {SEO, defaultKeywords}         from '../../components/seo';
-
-import {convertSchemaToConfiguration} from '../../utils/schemaUtils';
-
-const configuration = convertSchemaToConfiguration(yarnrcSchema, `Syml`);
+const configuration = convertSchemaToConfiguration(yarnrcSchema, {mode: SchemaMode.Syml});
 
 const YarnrcDoc = () => <>
   <ConfigurationLayout>
