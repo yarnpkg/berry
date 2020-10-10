@@ -1711,7 +1711,7 @@ describe(`Plug'n'Play`, () => {
 
         await xfs.writeFilePromise(
           `${portalTarget}/index.js`,
-          `module.exports = require('path').relative(__dirname, require.resolve('peer-deps-fixed', {paths: [__dirname]})).replace(/\\\\/g, '/')`
+          `module.exports = require.resolve('peer-deps-fixed', {paths: [__dirname]})`
         );
 
         await xfs.writeJsonPromise(`${path}/package.json`, {
@@ -1722,7 +1722,7 @@ describe(`Plug'n'Play`, () => {
 
         await run(`install`);
 
-        await expect(source(`require('portal')`)).resolves.toMatchSnapshot();
+        await expect(source(`require('portal')`)).resolves.toMatch(`peer-deps-fixed-virtual-`);
       });
     })
   );

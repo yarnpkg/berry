@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Plug'n'Play it should not loose the pnpapi on portals with virtual paths 1`] = `"../../../peer-deps-fixed-virtual-5906ff95f0/0/cache/peer-deps-fixed-npm-1.0.0-030dcb4b1c-61770e5840.zip/node_modules/peer-deps-fixed/index.js"`;
