@@ -80,7 +80,8 @@ export default class WorkspacesFocus extends BaseCommand {
 
     // Then we go over each workspace that didn't get selected, and remove all
     // their dependencies.
-
+    // Add the unselected workspaces into a list of evicted workspaces
+    const evictions = new Array<Workspace>();
     for (const workspace of project.workspaces) {
       if (requiredWorkspaces.has(workspace)) {
         if (this.production) {
@@ -90,7 +91,17 @@ export default class WorkspacesFocus extends BaseCommand {
         workspace.manifest.dependencies.clear();
         workspace.manifest.devDependencies.clear();
         workspace.manifest.peerDependencies.clear();
+        if (project.topLevelWorkspace !== workspace) {
+          evictions.push(workspace);
+        }
       }
+    }
+    
+    // Remove the unselected workspaces from the project's internal data structures
+    for (const evictedWorkspace of evictions){
+      project.workspacesByCwd.delete(evictedWorkspace.cwd);
+      project.workspacesByIdent.delete(evictedWorkspace.locator.identHash);
+      project.workspaces.splice(project.workspaces.indexOf(evictedWorkspace), 1);
     }
 
     // And finally we can run the install, but we have to make sure we don't
