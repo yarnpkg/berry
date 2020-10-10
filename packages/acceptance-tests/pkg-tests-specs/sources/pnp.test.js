@@ -1697,11 +1697,8 @@ describe(`Plug'n'Play`, () => {
   test(
     `it should not loose the pnpapi on portals with virtual paths`,
     makeTemporaryEnv({}, async ({path, run, source}) => {
-      const portalTarget = await createTemporaryFolder();
-
-      await writeFile(
-        `${portalTarget}/package.json`,
-        JSON.stringify({
+      await xfs.mktempPromise(async portalTarget => {
+        await xfs.writeJsonPromise(`${portalTarget}/package.json`, {
           name: `portal`,
           dependencies: {
             [`no-deps`]: `*`,
@@ -1710,26 +1707,23 @@ describe(`Plug'n'Play`, () => {
           peerDependencies: {
             [`left-pad`]: `*`,
           },
-        })
-      );
+        });
 
-      await writeFile(
-        `${portalTarget}/index.js`,
-        `module.exports = require('path').relative(__dirname, require.resolve('peer-deps-fixed', {paths: [__dirname]})).replace(/\\\\/g, '/')`
-      );
+        await xfs.writeFilePromise(
+          `${portalTarget}/index.js`,
+          `module.exports = require('path').relative(__dirname, require.resolve('peer-deps-fixed', {paths: [__dirname]})).replace(/\\\\/g, '/')`
+        );
 
-      await writeFile(
-        `${path}/package.json`,
-        JSON.stringify({
+        await xfs.writeJsonPromise(`${path}/package.json`, {
           dependencies: {
             [`portal`]: `portal:${portalTarget}`,
           },
-        })
-      );
+        });
 
-      await run(`install`);
+        await run(`install`);
 
-      await expect(source(`require('portal')`)).resolves.toMatchSnapshot();
+        await expect(source(`require('portal')`)).resolves.toMatchSnapshot();
+      });
     })
   );
 });
