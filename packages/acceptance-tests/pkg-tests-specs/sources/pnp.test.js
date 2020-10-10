@@ -1693,4 +1693,43 @@ describe(`Plug'n'Play`, () => {
       await expect(source(`require.resolve('pkg')`)).resolves.toEqual(npath.fromPortablePath(`${path}/package/index.js`));
     }),
   );
+
+  test(
+    `it should not loose the pnpapi on portals with virtual paths`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      const portalTarget = await createTemporaryFolder();
+
+      await writeFile(
+        `${portalTarget}/package.json`,
+        JSON.stringify({
+          name: `portal`,
+          dependencies: {
+            [`no-deps`]: `*`,
+            [`peer-deps-fixed`]: `*`,
+          },
+          peerDependencies: {
+            [`left-pad`]: `*`,
+          },
+        })
+      );
+
+      await writeFile(
+        `${portalTarget}/index.js`,
+        `module.exports = require('path').relative(__dirname, require.resolve('peer-deps-fixed', {paths: [__dirname]})).replace(/\\\\/g, '/')`
+      );
+
+      await writeFile(
+        `${path}/package.json`,
+        JSON.stringify({
+          dependencies: {
+            [`portal`]: `portal:${portalTarget}`,
+          },
+        })
+      );
+
+      await run(`install`);
+
+      await expect(source(`require('portal')`)).resolves.toMatchSnapshot();
+    })
+  );
 });
