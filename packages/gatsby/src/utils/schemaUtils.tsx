@@ -57,14 +57,6 @@ export type SchemaState = {
   renderAnchor: boolean;
 };
 
-export const getDescription = (name: string, definition: JSONSchema7) => (
-  definition.overrides?.description ?? (
-    definition.$ref
-      ? renderMarkdown(`See [\`${name}\`](#${name}).`)
-      : renderMarkdown(definition.description)
-  )
-);
-
 export const getAnchor = (state: SchemaState) => (
   state.renderAnchor ? state.pathSegments.join(`.`) : null
 );
@@ -73,6 +65,14 @@ export const renderMarkdown = (markdown: string | undefined) => (
   typeof markdown === `string`
     ? <div dangerouslySetInnerHTML={{__html: marked(markdown)}} />
     : null
+);
+
+export const renderDescription = (name: string, definition: JSONSchema7) => (
+  definition.overrides?.description ?? (
+    definition.$ref
+      ? renderMarkdown(`See [\`${name}\`](#${name}).`)
+      : renderMarkdown(definition.description)
+  )
 );
 
 export const renderScalar = (placeholder: JSONSchema7Type, state: SchemaState) => {
@@ -84,7 +84,7 @@ export const renderScalar = (placeholder: JSONSchema7Type, state: SchemaState) =
 };
 
 export const renderScalarProperty = (name: string, definition: JSONSchema7, state: SchemaState) => {
-  const description = getDescription(name, definition);
+  const description = renderDescription(name, definition);
 
   const ScalarProperty = SYNTAX_COMPONENTS.SCALAR_PROPERTIES[`${state.mode}ScalarProperty` as keyof typeof SYNTAX_COMPONENTS.SCALAR_PROPERTIES];
 
@@ -131,7 +131,7 @@ export const renderObjectProperty = (name: string, definition: JSONSchema7, {mod
     throw new Error(`Unsupported object definition`);
   });
 
-  const description = getDescription(name, definition);
+  const description = renderDescription(name, definition);
 
   const margin = definition.margin ?? (
     mode === SchemaMode.Syml
@@ -160,7 +160,7 @@ export const renderArrayProperty = (name: string, definition: JSONSchema7, state
 
   const arrayProperties = exampleItems.map(arrayProperty => renderScalar(arrayProperty, state));
 
-  const description = getDescription(name, definition);
+  const description = renderDescription(name, definition);
 
   const ArrayProperty = SYNTAX_COMPONENTS.ARRAY_PROPERTIES[`${state.mode}ArrayProperty` as keyof typeof SYNTAX_COMPONENTS.ARRAY_PROPERTIES];
 
