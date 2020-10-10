@@ -152,14 +152,14 @@ export const packageExtensions: Array<[string, any]> = [
   // https://github.com/react-bootstrap-table/react-bootstrap-table2/pull/1491
   [`react-bootstrap-table2-paginator@*`, {
     dependencies: {
-      "classnames": "^2.2.6"
+      classnames: `^2.2.6`,
     },
   }],
   // https://github.com/STRML/react-draggable/pull/525
-  [`react-draggable@*`, {
+  [`react-draggable@<=4.4.3`, {
     peerDependencies: {
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+      react: `>= 16.3.0`,
+      'react-dom': `>= 16.3.0`,
     },
   }],
 ];
