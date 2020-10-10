@@ -36,7 +36,7 @@ for (const redirectLine of redirectLines) {
 
 /** @type {import('gatsby').GatsbyNode} */
 module.exports = {
-  onCreateWebpackConfig: ({actions, plugins}) => {
+  onCreateWebpackConfig: ({actions}) => {
     actions.setWebpackConfig({
       node: {
         fs: `empty`,
