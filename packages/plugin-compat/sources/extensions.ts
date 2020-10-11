@@ -149,4 +149,17 @@ export const packageExtensions: Array<[string, any]> = [
       "react-dom": `^15.0.0 || ^16.0.0`,
     },
   }],
+  // https://github.com/react-bootstrap-table/react-bootstrap-table2/pull/1491
+  [`react-bootstrap-table2-paginator@*`, {
+    dependencies: {
+      classnames: `^2.2.6`,
+    },
+  }],
+  // https://github.com/STRML/react-draggable/pull/525
+  [`react-draggable@<=4.4.3`, {
+    peerDependencies: {
+      react: `>= 16.3.0`,
+      'react-dom': `>= 16.3.0`,
+    },
+  }],
 ];
