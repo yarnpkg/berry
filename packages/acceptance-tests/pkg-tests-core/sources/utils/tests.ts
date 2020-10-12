@@ -625,7 +625,7 @@ export const generatePkgDriver = ({
         try {
           await fn!({path, run, source});
         } catch (error) {
-          error.message = `Temporary fixture folder: ${path}\n\n${error.message}`;
+          error.message = `Temporary fixture folder: ${npath.fromPortablePath(path)}\n\n${error.message}`;
           throw error;
         }
       });
