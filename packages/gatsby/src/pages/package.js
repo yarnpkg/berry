@@ -1,11 +1,12 @@
-import styled                                       from '@emotion/styled';
-import React, {useState}                            from 'react';
+import styled                                                  from '@emotion/styled';
+import React, {useState}                                       from 'react';
 
-import {Details}                                    from '../components/details';
-import {LayoutSearchBar}                            from '../components/layout-search-bar';
-import {ifMobile}                                   from '../components/responsive';
-import {SearchProvider, SearchResults, withUrlSync} from '../components/search';
-import {SEO, defaultKeywords}                       from '../components/seo';
+import {Details}                                               from '../components/details';
+import {Header}                                                from '../components/header';
+import {Layout}                                                from '../components/layout';
+import {ifMobile}                                              from '../components/responsive';
+import {SearchProvider, SearchBar, SearchResults, withUrlSync} from '../components/search';
+import {SEO, defaultKeywords}                                  from '../components/seo';
 
 const DetailsContainer = styled.div`
   margin-top: 3rem;
@@ -32,13 +33,15 @@ const PackagePage = ({searchState, onSearchStateChange}) => {
 
   return (<>
     <SearchProvider searchState={searchState} onSearchStateChange={onSearchStateChange}>
-      <LayoutSearchBar
-        searchState={searchState}
-        tags={tags}
-        setTags={setTags}
-        owners={owners}
-        setOwners={setOwners}
-      >
+      <Layout header={<Header />}>
+        <SearchBar
+          searchState={searchState}
+          tags={tags}
+          setTags={setTags}
+          owners={owners}
+          setOwners={setOwners}
+        />
+
         <SEO title={packageName} keywords={defaultKeywords} />
 
         <SearchResults
@@ -50,7 +53,7 @@ const PackagePage = ({searchState, onSearchStateChange}) => {
             <Details objectID={packageName} />
           </DetailsContainer>
         }
-      </LayoutSearchBar>
+      </Layout>
     </SearchProvider>
   </>);
 };

@@ -1,18 +1,19 @@
-import {css}                        from '@emotion/core';
-import styled                       from '@emotion/styled';
-import React, {useState}            from 'react';
+import {css}                                   from '@emotion/core';
+import styled                                  from '@emotion/styled';
+import React, {useState}                       from 'react';
 
-import {LayoutSearchBar}            from '../components/layout-search-bar';
-import {ifDesktop, ifMobile}        from '../components/responsive';
-import {SearchResults, withUrlSync} from '../components/search';
-import {SearchProvider}             from '../components/search';
-import {SEO, defaultKeywords}       from '../components/seo';
-import agendaIcon                   from '../images/homeicons/agenda.svg';
-import laptopIcon                   from '../images/homeicons/laptop.svg';
-import noteIcon                     from '../images/homeicons/note.svg';
-import puzzleIcon                   from '../images/homeicons/puzzle.svg';
-import rocketIcon                   from '../images/homeicons/rocket.svg';
-import worldwideIcon                from '../images/homeicons/worldwide.svg';
+import {Header}                                from '../components/header';
+import {Layout}                                from '../components/layout';
+import {ifDesktop, ifMobile}                   from '../components/responsive';
+import {SearchProvider}                        from '../components/search';
+import {SearchBar, SearchResults, withUrlSync} from '../components/search';
+import {SEO, defaultKeywords}                  from '../components/seo';
+import agendaIcon                              from '../images/homeicons/agenda.svg';
+import laptopIcon                              from '../images/homeicons/laptop.svg';
+import noteIcon                                from '../images/homeicons/note.svg';
+import puzzleIcon                              from '../images/homeicons/puzzle.svg';
+import rocketIcon                              from '../images/homeicons/rocket.svg';
+import worldwideIcon                           from '../images/homeicons/worldwide.svg';
 
 const sectionStyle = css`
   width: 100%;
@@ -155,13 +156,15 @@ const IndexPage = ({data, searchState, onSearchStateChange}) => {
 
   return (<>
     <SearchProvider searchState={searchState} onSearchStateChange={onSearchStateChange}>
-      <LayoutSearchBar
-        searchState={searchState}
-        tags={tags}
-        setTags={setTags}
-        owners={owners}
-        setOwners={setOwners}
-      >
+      <Layout header={<Header />}>
+        <SearchBar
+          searchState={searchState}
+          tags={tags}
+          setTags={setTags}
+          owners={owners}
+          setOwners={setOwners}
+        />
+
         <SEO title="Home" keywords={defaultKeywords} />
 
         <SearchResults
@@ -223,7 +226,7 @@ const IndexPage = ({data, searchState, onSearchStateChange}) => {
             </Copy>
           </SectionContent>
         </Section>
-      </LayoutSearchBar>
+      </Layout>
     </SearchProvider>
   </>);
 };
