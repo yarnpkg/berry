@@ -283,17 +283,13 @@
         },
         "main": {
           "$ref": "#/properties/main",
-          "overrides": {
-            "description": "Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `main` field when generating the workspace tarball.",
-            "examples": ["./build/index.js"]
-          }
+          "description": "Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `main` field when generating the workspace tarball.",
+          "examples": ["./build/index.js"]
         },
         "module": {
           "$ref": "#/properties/module",
-          "overrides": {
-            "description": "Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `module` field when generating the workspace tarball.",
-            "examples": ["./build/index.mjs"]
-          }
+          "description": "Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `module` field when generating the workspace tarball.",
+          "examples": ["./build/index.mjs"]
         },
         "registry": {
           "description": "If present, will replace whatever registry is defined in the configuration when the package is about to be pushed to a remote location.",

@@ -380,9 +380,7 @@
           "properties": {
             "npmPublishRegistry": {
               "$ref": "#/properties/npmPublishRegistry",
-              "overrides": {
-                "examples": ["https://registry.yarnpkg.com"]
-              }
+              "examples": ["https://registry.yarnpkg.com"]
             },
             "npmRegistryServer": {
               "$ref": "#/properties/npmRegistryServer"

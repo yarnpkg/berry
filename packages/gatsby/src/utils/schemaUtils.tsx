@@ -1,7 +1,7 @@
 // @ts-expect-error: missing declaration
 import deref                                                                                            from 'json-schema-deref-sync';
 import type {JSONSchema7, JSONSchema7Definition, JSONSchema7Type}                                       from 'json-schema';
-import merge                                                                                            from 'lodash/merge';
+import mergeWith                                                                                        from 'lodash/mergeWith';
 import marked                                                                                           from 'marked';
 import React                                                                                            from 'react';
 
@@ -28,12 +28,7 @@ declare module 'json-schema' {
     /**
      * Used inside the configuration doc generation to override properties in the data referenced by a $ref.
      */
-    overrides?: {
-      description?: string;
-      exampleItems?: Array<unknown>;
-      exampleKeys?: Array<string>;
-      examples?: Array<string>;
-    };
+    overrides?: JSONSchema7;
   }
 }
 
@@ -196,9 +191,7 @@ export const convertSchemaToConfiguration = (schema: JSONSchema7, {mode}: {mode:
   //
   // "npmPublishRegistry": {
   //   "$ref": "#/properties/npmPublishRegistry",
-  //   "overrides": {
-  //     "examples": ["https://registry.yarnpkg.com"]
-  //   }
+  //   "examples": ["https://registry.yarnpkg.com"]
   // }
   //
   // We then dereference the original schema synchronously using json-schema-deref-sync,
@@ -207,11 +200,24 @@ export const convertSchemaToConfiguration = (schema: JSONSchema7, {mode}: {mode:
   // This means that our overrides aren't preserved in the dereferenced schema.
   //
   // Because of this, we merge the original schema with the dereferenced schema, which
-  // preserves the `$ref` property for future use and allows us to apply the overrides.
+  // preserves the `$ref` property for future use and allows us to store the overrides
+  // inside an `overrides` property so that we can apply them later.
 
   const dereferencedSchema: JSONSchema7 = deref(schema);
 
-  const combinedSchema = merge(schema, dereferencedSchema);
+  const combinedSchema = mergeWith(schema, dereferencedSchema, (value, srcValue): JSONSchema7 | undefined => {
+    if (typeof value !== `object` || value === null)
+      return undefined;
+
+    if (!Object.prototype.hasOwnProperty.call(value, `$ref`))
+      return undefined;
+
+    return {
+      $ref: value.$ref,
+      ...srcValue,
+      overrides: value,
+    };
+  });
 
   if (typeof combinedSchema.description === `undefined`)
     throw new Error(`Assertion failed: Expected the schema to have a description.`);
