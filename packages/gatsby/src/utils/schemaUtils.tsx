@@ -13,22 +13,22 @@ declare module 'json-schema' {
     /**
      * Example items for arrays.
      */
-    exampleItems?: Array<unknown>;
+    _exampleItems?: Array<unknown>;
 
     /**
      * Example keys for objects.
      */
-    exampleKeys?: Array<string>;
+    _exampleKeys?: Array<string>;
 
     /**
      * Used inside the configuration doc generation to set margins of objects.
      */
-    margin?: boolean;
+    _margin?: boolean;
 
     /**
      * Used inside the configuration doc generation to override properties in the data referenced by a $ref.
      */
-    overrides?: JSONSchema7;
+    _overrides?: JSONSchema7;
   }
 }
 
@@ -63,7 +63,7 @@ export const renderMarkdown = (markdown: string | undefined) => (
 );
 
 export const renderDescription = (name: string, definition: JSONSchema7) => (
-  definition.overrides?.description ?? (
+  definition._overrides?.description ?? (
     definition.$ref
       ? renderMarkdown(`See [\`${name}\`](#${name}).`)
       : renderMarkdown(definition.description)
@@ -83,7 +83,7 @@ export const renderScalarProperty = (name: string, definition: JSONSchema7, stat
 
   const ScalarProperty = SYNTAX_COMPONENTS.SCALAR_PROPERTIES[`${state.mode}ScalarProperty` as keyof typeof SYNTAX_COMPONENTS.SCALAR_PROPERTIES];
 
-  const examples = definition.overrides?.examples ?? definition.examples;
+  const examples = definition._overrides?.examples ?? definition.examples;
 
   const example = Array.isArray(examples) && typeof examples[0] !== `undefined`
     ? examples[0]
@@ -103,9 +103,9 @@ export const renderScalarProperty = (name: string, definition: JSONSchema7, stat
 };
 
 export const renderObjectProperty = (name: string, definition: JSONSchema7, {mode, pathSegments, renderAnchor}: SchemaState) => {
-  const exampleKeys = definition.overrides?.exampleKeys ?? definition.exampleKeys;
+  const exampleKeys = definition._overrides?._exampleKeys ?? definition._exampleKeys;
   if (!Array.isArray(exampleKeys))
-    throw new Error(`Missing exampleKeys in definition of ${name}`);
+    throw new Error(`Missing _exampleKeys in definition of ${name}`);
 
   const objectProperties = exampleKeys.map(propertyKey => {
     if (typeof propertyKey !== `string`)
@@ -128,7 +128,7 @@ export const renderObjectProperty = (name: string, definition: JSONSchema7, {mod
 
   const description = renderDescription(name, definition);
 
-  const margin = definition.margin ?? (
+  const margin = definition._margin ?? (
     mode === SchemaMode.Syml
       ? typeof definition.description !== `undefined`
       : false
@@ -149,9 +149,9 @@ export const renderObjectProperty = (name: string, definition: JSONSchema7, {mod
 };
 
 export const renderArrayProperty = (name: string, definition: JSONSchema7, state: SchemaState) => {
-  const exampleItems = definition.overrides?.exampleItems ?? definition.exampleItems ?? definition.default;
+  const exampleItems = definition._overrides?._exampleItems ?? definition._exampleItems ?? definition.default;
   if (!Array.isArray(exampleItems))
-    throw new Error(`Missing exampleItems / default in definition of ${name}`);
+    throw new Error(`Missing _exampleItems / default in definition of ${name}`);
 
   const arrayProperties = exampleItems.map(arrayProperty => renderScalar(arrayProperty, state));
 
@@ -215,7 +215,7 @@ export const convertSchemaToConfiguration = (schema: JSONSchema7, {mode}: {mode:
     return {
       $ref: value.$ref,
       ...srcValue,
-      overrides: value,
+      _overrides: value,
     };
   });
 

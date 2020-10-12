@@ -2,7 +2,19 @@
   "title": "JSON Schema for Yarn Manifest files",
   "$schema": "https://json-schema.org/draft/2019-09/schema#",
   "description": "Manifest files (also called `package.json` because of their name) contain everything needed to describe the settings unique to one particular package. Project will contain multiple such manifests if they use the workspace feature, as each workspace is described through its own manifest. Note that defaults for these fields can be set via the `initFields` settings.",
-  "$comment": "Rules: 1) Use `examples` for scalars, `exampleItems` for arrays, and `exampleKeys` for objects.",
+  "__info": [
+    "This file contains the JSON Schema for Yarn Manifest files and is:",
+    "1) Hosted on the Yarn Website at http://yarnpkg.com/configuration/manifest.json",
+    "2) Used to generate the documentation page at http://yarnpkg.com/configuration/manifest",
+
+    "Note: Properties prefixed with a single underscore (e.g. _exampleItems, _exampleKeys)",
+    "are unique to our documentation generation interpreter. All others will be picked up",
+    "by most JSON schema interpreters.",
+
+    "Rules:",
+    "1) Don't set a default if it's null, dynamic, or an object.",
+    "2) Use `examples` for scalars, `_exampleItems` for arrays, and `_exampleKeys` for objects."
+  ],
   "type": "object",
   "properties": {
     "name": {
@@ -62,8 +74,8 @@
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["my-bin"],
-      "margin": false
+      "_exampleKeys": ["my-bin"],
+      "_margin": false
     },
     "scripts": {
       "description": "A field used to list small shell scripts that will be executed when running `yarn run`. Scripts are by default executed by a miniature shell, so some advanced features might not be available (if you have more complex needs, we recommend you to just execute a Javascript file). Note that scripts containing `:` (the colon character) are globals to your project and can be called regardless of your current workspace. Finally, be aware that scripts are always executed relative to the closest workspace (never the cwd).",
@@ -86,7 +98,7 @@
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["test", "build", "count-words"]
+      "_exampleKeys": ["test", "build", "count-words"]
     },
     "dependencies": {
       "description": "The set of dependencies that must be made available to the current package in order for it to work properly. Consult the list of supported ranges for more information.",
@@ -99,7 +111,7 @@
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["webpack"]
+      "_exampleKeys": ["webpack"]
     },
     "optionalDependencies": {
       "description": "Similar to the `dependencies` field, except that these entries will not be required to build properly should they have any build script. Note that such dependencies must still be resolvable and fetchable (otherwise we couldn't store it in the lockfile, which could lead to non-reproducible installs) - only the build step is optional.\n\n**This field is usually not what you're looking for**, unless you depend on the `fsevents` package. If you need a package to be required only when a specific feature is used then use an optional peer dependency. Your users will have to satisfy it should they use the feature, but it won't cause the build errors to be silently swallowed when the feature is needed.",
@@ -112,7 +124,7 @@
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["fsevents"]
+      "_exampleKeys": ["fsevents"]
     },
     "devDependencies": {
       "description": "Similar to the `dependencies` field, except that these dependencies are only installed on local installs and will never be installed by the consumers of your package. Note that because that would lead to different install trees depending on whether the install is made in \"production\" or \"development\" mode, Yarn doesn't offer a way to prevent the installation of dev dependencies at the moment.",
@@ -125,7 +137,7 @@
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["webpack"]
+      "_exampleKeys": ["webpack"]
     },
     "peerDependencies": {
       "description": "Peer dependencies are inherited dependencies - the consumer of your package will be tasked to provide them. This is typically what you want when writing plugins, for example. Note that peer dependencies can also be listed as regular dependencies; in this case, Yarn will use the package provided by the ancestors if possible, but will fallback to the regular dependencies otherwise.",
@@ -138,7 +150,7 @@
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["react", "react-dom"]
+      "_exampleKeys": ["react", "react-dom"]
     },
     "workspaces": {
       "description": "Workspaces are an optional feature used by monorepos to split a large project into semi-independent subprojects, each one listing their own set of dependencies. The `workspaces` field is a list of glob patterns that match all directories that should become workspaces of your application.",
@@ -146,7 +158,7 @@
       "items": {
         "type": "string"
       },
-      "exampleItems": ["packages/*"]
+      "_exampleItems": ["packages/*"]
     },
     "dependenciesMeta": {
       "description": "This field lists some extra information related to the dependencies listed in the `dependencies` and `devDependencies` fields. In the context of a workspaced project most of these settings will affect *all workspaces* and as such must be specified at the *root* of the project (except if noted otherwise, the `dependenciesMeta` field will be ignored if found within a workspace).",
@@ -171,12 +183,12 @@
               "examples": [true]
             }
           },
-          "exampleKeys": ["built", "optional", "unplugged"],
-          "margin": true
+          "_exampleKeys": ["built", "optional", "unplugged"],
+          "_margin": true
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["fsevents"]
+      "_exampleKeys": ["fsevents"]
     },
     "peerDependenciesMeta": {
       "description": "This field lists some extra information related to the dependencies listed in the `peerDependencies` field.",
@@ -191,12 +203,12 @@
               "examples": [true]
             }
           },
-          "exampleKeys": ["optional"],
-          "margin": true
+          "_exampleKeys": ["optional"],
+          "_margin": true
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["react-dom"]
+      "_exampleKeys": ["react-dom"]
     },
     "resolutions": {
       "description": "This field allows you to instruct Yarn to use a specific resolution instead of anything the resolver would normally pick. This is useful to enforce all your packages to use a single version of a dependency, or backport a fix. The syntax for the resolution key accepts one level of specificity, so all the following examples are correct.\nNote: When a path is relative, like it can be with the `file:` and `portal:` protocols, it is resolved relative to the path of the project.\n\nNote that the `resolution` field can only be set at the root of the project, and will generate a warning if used in any other workspace.",
@@ -228,7 +240,7 @@
         }
       },
       "additionalProperties": false,
-      "exampleKeys": [
+      "_exampleKeys": [
         "relay-compiler",
         "webpack/memory-fs",
         "@babel/core/json5",
@@ -248,7 +260,7 @@
         "type": "string",
         "format": "uri-reference"
       },
-      "exampleItems": ["dist/**/*", "lib/**/*"]
+      "_exampleItems": ["dist/**/*", "lib/**/*"]
     },
     "publishConfig": {
       "description": "This field contains various settings that are only taken into consideration when a package is generated from your local sources (either through `yarn pack` or one of the publish commands like `yarn npm publish`).",
@@ -279,7 +291,7 @@
             "type": "string",
             "format": "uri-reference"
           },
-          "exampleItems": ["./dist/shim.js"]
+          "_exampleItems": ["./dist/shim.js"]
         },
         "main": {
           "$ref": "#/properties/main",
@@ -298,7 +310,7 @@
           "examples": ["https://npm.pkg.github.com"]
         }
       },
-      "exampleKeys": [
+      "_exampleKeys": [
         "access",
         "bin",
         "browser",
@@ -307,7 +319,7 @@
         "module",
         "registry"
       ],
-      "margin": true
+      "_margin": true
     },
     "installConfig": {
       "description": "This field contains various settings that alter how the workspace is installed.",
@@ -320,8 +332,8 @@
           "default": "none"
         }
       },
-      "exampleKeys": ["hoistingLimits"],
-      "margin": true
+      "_exampleKeys": ["hoistingLimits"],
+      "_margin": true
     }
   }
 }
