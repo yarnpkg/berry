@@ -1693,4 +1693,37 @@ describe(`Plug'n'Play`, () => {
       await expect(source(`require.resolve('pkg')`)).resolves.toEqual(npath.fromPortablePath(`${path}/package/index.js`));
     }),
   );
+
+  test(
+    `it should not loose the pnpapi on portals with virtual paths`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mktempPromise(async portalTarget => {
+        await xfs.writeJsonPromise(`${portalTarget}/package.json`, {
+          name: `portal`,
+          dependencies: {
+            [`no-deps`]: `*`,
+            [`peer-deps-fixed`]: `*`,
+          },
+          peerDependencies: {
+            [`left-pad`]: `*`,
+          },
+        });
+
+        await xfs.writeFilePromise(
+          `${portalTarget}/index.js`,
+          `module.exports = require.resolve('peer-deps-fixed', {paths: [__dirname]})`
+        );
+
+        await xfs.writeJsonPromise(`${path}/package.json`, {
+          dependencies: {
+            [`portal`]: `portal:${portalTarget}`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(source(`require('portal')`)).resolves.toMatch(`peer-deps-fixed-virtual-`);
+      });
+    })
+  );
 });

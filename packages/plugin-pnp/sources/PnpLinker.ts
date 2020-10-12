@@ -1,6 +1,6 @@
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta} from '@yarnpkg/core';
 import {FetchResult, Ident, Locator, Package, BuildDirective, BuildType}                from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                         from '@yarnpkg/core';
+import {miscUtils, structUtils, formatUtils}                                            from '@yarnpkg/core';
 import {CwdFS, FakeFS, PortablePath, npath, ppath, xfs, Filename}                       from '@yarnpkg/fslib';
 import {generateInlinedScript, generateSplitScript, PnpSettings}                        from '@yarnpkg/pnp';
 import {UsageError}                                                                     from 'clipanion';
@@ -46,7 +46,7 @@ export class PnpLinker implements Linker {
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
     const pnpPath = getPnpPath(opts.project).main;
     if (!xfs.existsSync(pnpPath))
-      throw new UsageError(`The project in ${opts.project.cwd}/package.json doesn't seem to have been installed - running an install there might help`);
+      throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
 
     const pnpFile = miscUtils.dynamicRequireNoCache(pnpPath);
 

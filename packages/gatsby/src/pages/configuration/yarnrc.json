@@ -16,6 +16,12 @@
       "format": "uri-reference",
       "default": "./.yarn/cache"
     },
+    "caFilePath": {
+      "description": "Path to file containing one or multiple Certificate Authority signing certificates",
+      "type": "string",
+      "format": "uri-reference",
+      "default": "./exampleCA.pem"
+    },
     "changesetBaseRefs": {
       "description": "The base git refs that the current HEAD is compared against in the version plugin. This overrides the default behavior of comparing against master, origin/master, and upstream/master. Supports git branches, tags, and commits.",
       "type": "array",
@@ -124,6 +130,11 @@
       "type": "boolean",
       "default": true
     },
+    "enableStrictSsl": {
+      "description": "If false, SSL certificate errors will be ignored",
+      "type": "boolean",
+      "default": true
+    },
     "enableTelemetry": {
       "description": "If true (the default outside of CI environments), Yarn will periodically send anonymous data to our servers tracking some usage information such as the number of dependency in your project, how many install you ran, etc. Consult the [Telemetry](/telemetry) page for more details about it.",
       "type": "boolean",
@@ -221,12 +232,36 @@
       "type": "number",
       "default": 8
     },
+    "networkSettings": {
+      "description": "Additional network settings, per hostname",
+      "type": "object",
+      "patternProperties": {
+        "^(.+)$": {
+          "description": "The hostname to override settings for (glob patterns are supported)",
+          "type": "object",
+          "properties": {
+            "caFilePath": {
+              "$ref": "#/properties/caFilePath",
+              "$comment": "{ \"anchor\": \"npmRegistries.caFilePath\" }"
+            }
+          },
+          "default": {
+            "caFilePath": {}
+          }
+        }
+      },
+      "default": {
+        "example.com": {},
+        "*.example.com": {},
+        "*": {}
+      }
+    },
     "nmHoistingLimits": {
       "description": "Defines the highest point where packages can be hoisted. One of `workspaces` (don't hoist packages past the workspace that depends on them), `dependencies` (packages aren't hoisted past the direct dependencies for each workspace), or `none` (the default, packages are hoisted as much as possible). This setting can be overriden per-workspace through the [`installConfig.hoistingLimits` field](/configuration/manifest#installConfig.hoistingLimits).",
       "type": "string",
       "enum": ["workspaces", "dependencies", "none"],
       "default": "none"
-  },
+    },
     "nodeLinker": {
       "description": "Defines what linker should be used for installing Node packages (useful to enable the node-modules plugin), one of: `pnp`, `node-modules`.",
       "type": "string",

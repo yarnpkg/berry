@@ -43,6 +43,12 @@ export default class ConfigSetCommand extends BaseCommand {
     ], [
       `Set a complex configuration setting (an Object) using the \`--json\` flag`,
       `yarn config set packageExtensions --json '{ "@babel/parser@*": { "dependencies": { "@babel/types": "*" } } }'`,
+    ], [
+      `Set a nested configuration setting`,
+      `yarn config set npmScopes.company.npmRegistryServer "https://npm.example.com"`,
+    ], [
+      `Set a nested configuration setting using indexed access for non-simple keys`,
+      `yarn config set 'npmRegistries["//npm.example.com"].npmAuthToken' "ffffffff-ffff-ffff-ffff-ffffffffffff"`,
     ]],
   });
 

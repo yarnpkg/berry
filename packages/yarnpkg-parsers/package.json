@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/parsers",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {

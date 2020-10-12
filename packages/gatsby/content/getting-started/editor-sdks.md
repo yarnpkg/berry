@@ -1,6 +1,6 @@
 ---
-category: advanced
-path: /advanced/editor-sdks
+category: getting-started
+path: /getting-started/editor-sdks
 title: "Editor SDKs"
 description: An overview of the editor SDKs used to bring PnP compatibility to editors.
 ---

@@ -1,6 +1,6 @@
 import {BaseCommand, openWorkspace}   from '@yarnpkg/cli';
 import {Configuration, MessageName}   from '@yarnpkg/core';
-import {StreamReport}                 from '@yarnpkg/core';
+import {StreamReport, structUtils}    from '@yarnpkg/core';
 import {npmConfigUtils, npmHttpUtils} from '@yarnpkg/plugin-npm';
 import {Command, Usage}               from 'clipanion';
 
@@ -55,6 +55,7 @@ export default class NpmWhoamiCommand extends BaseCommand {
           registry,
           authType: npmHttpUtils.AuthType.ALWAYS_AUTH,
           jsonResponse: true,
+          ident: this.scope ? structUtils.makeIdent(this.scope, ``) : undefined,
         });
 
         report.reportInfo(MessageName.UNNAMED, response.username);

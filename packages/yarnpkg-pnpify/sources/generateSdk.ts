@@ -121,7 +121,11 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   `\n`,
   `const {existsSync} = require(\`fs\`);\n`,
   `const {createRequire, createRequireFromPath} = require(\`module\`);\n`,
-  `const {resolve, dirname} = require(\`path\`);\n`,
+  ...(usePnpify ? [
+    `const {resolve, dirname} = require(\`path\`);\n`,
+  ] : [
+    `const {resolve} = require(\`path\`);\n`,
+  ]),
   `\n`,
   `const relPnpApiPath = ${JSON.stringify(npath.fromPortablePath(relPnpApiPath))};\n`,
   `\n`,
