@@ -57,6 +57,8 @@ const mte = generatePkgDriver({
         [`YARN_PNP_FALLBACK_MODE`]: `none`,
         // Otherwise tests fail on systems where this is globally set to true
         [`YARN_ENABLE_GLOBAL_CACHE`]: `false`,
+        // Older versions of Windows need this set to not have node throw an error
+        [`NODE_SKIP_PLATFORM_CHECK`]: `1`,
         ...rcEnv,
         ...env,
       },

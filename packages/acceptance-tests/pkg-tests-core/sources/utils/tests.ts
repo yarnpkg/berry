@@ -209,6 +209,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     version?: string;
   } | {
     type: RequestType.Whoami;
+    login: Login
   } | {
     type: RequestType.Repository;
   };
@@ -291,8 +292,11 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     },
 
     async [RequestType.Whoami](parsedRequest, request, response) {
+      if (parsedRequest.type !== RequestType.Whoami)
+        throw new Error(`Assertion failed: Invalid request type`);
+
       const data = JSON.stringify({
-        username: `username`,
+        username: parsedRequest.login.username,
       });
 
       response.writeHead(200, {[`Content-Type`]: `application/json`});
@@ -381,6 +385,8 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     } else if (url === `/-/whoami`) {
       return {
         type: RequestType.Whoami,
+        // Set later when login is parsed
+        login: null as any,
       };
     } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)$/))) {
       const [, scope, localName] = match;
@@ -428,6 +434,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
   };
 
   interface Login {
+    username: string;
     password: string;
     requiresOtp: boolean;
     otp?: string;
@@ -436,22 +443,31 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
 
   const validLogins: Record<string, Login> = {
     testUser: {
+      username: `testUser`,
       password: `password`,
       requiresOtp: true,
       otp: `1234`,
       npmAuthToken: `686159dc-64b3-413e-a244-2de2b8d1c36f`,
     },
     anotherTestUser: {
+      username: `anotherTestUser`,
       password: `password123`,
       requiresOtp: false,
       npmAuthToken: `316158de-64b3-413e-a244-2de2b8d1c80f`,
     },
+    username: {
+      username: `username`,
+      password: `a very secure password`,
+      npmAuthToken: `123456df-64b3-413e-a244-2de2b8d1c80f`,
+      requiresOtp: false,
+    },
   };
 
-  const validAuthorizations = [
-    `Bearer 686159dc-64b3-413e-a244-2de2b8d1c36f`,
-    `Basic dXNlcm5hbWU6YSB2ZXJ5IHNlY3VyZSBwYXNzd29yZA==`, // username:a very secure password
-  ];
+  const validAuthorizations = new Map<string, Login>([
+    [`Bearer 686159dc-64b3-413e-a244-2de2b8d1c36f`, validLogins.testUser],
+    [`Bearer 316158de-64b3-413e-a244-2de2b8d1c80f`, validLogins.anotherTestUser],
+    [`Basic dXNlcm5hbWU6YSB2ZXJ5IHNlY3VyZSBwYXNzd29yZA==`, validLogins.username],
+  ]);
 
   return new Promise((resolve, reject) => {
     const listener: http.RequestListener = (req, res) =>
@@ -466,9 +482,12 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
 
           const {authorization} = req.headers;
           if (authorization != null) {
-            if (!validAuthorizations.includes(authorization)) {
+            const auth = validAuthorizations.get(authorization);
+            if (!auth) {
               sendError(res, 401, `Invalid token`);
               return;
+            } else if (parsedRequest.type === RequestType.Whoami) {
+              parsedRequest.login = auth;
             }
           } else if (needsAuth(parsedRequest)) {
             sendError(res, 401, `Authentication required`);
