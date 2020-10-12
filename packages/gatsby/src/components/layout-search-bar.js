@@ -1,10 +1,9 @@
-import {Only}                                           from 'react-only';
-import React                                            from 'react';
+import React                          from 'react';
 
-import {Header}                                         from './header';
-import {Layout}                                         from './layout';
-import {ifShortViewport, ifTallViewport, getMediaQuery} from './responsive';
-import {SearchBar}                                      from './search/SearchBar';
+import {Header}                       from './header';
+import {Layout}                       from './layout';
+import {matchesMedia, ifTallViewport} from './responsive';
+import {SearchBar}                    from './search/SearchBar';
 
 export const LayoutSearchBar = ({children, searchState, tags, setTags, owners, setOwners}) => {
   const searchBar = <SearchBar
@@ -16,14 +15,8 @@ export const LayoutSearchBar = ({children, searchState, tags, setTags, owners, s
   />;
 
   return <>
-    <Layout header={
-      <Header>
-        <Only matchMedia={getMediaQuery(ifTallViewport)}>
-          {searchBar}
-        </Only>
-      </Header>
-    }>
-      <Only matchMedia={getMediaQuery(ifShortViewport)}>{searchBar}</Only>
+    <Layout header={<Header>{matchesMedia(ifTallViewport) ? searchBar : null}</Header>}>
+      {matchesMedia(ifTallViewport) ? null : searchBar}
       {children}
     </Layout>
   </>;
