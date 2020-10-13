@@ -1,12 +1,12 @@
 // based on: https://janosh.dev/blog/sticky-active-smooth-responsive-toc
 
-import React, { useState, useEffect, useLayoutEffect } from 'react'
-import { throttle }                                    from 'lodash'
-import { Global, css }                                 from '@emotion/core'
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
+import { throttle }                                            from 'lodash'
+import { Global, css }                                         from '@emotion/core'
 
-import styled                                          from '@emotion/styled'
-import { mediaQueries }                                from '../responsive'
-import loadable                                        from '@loadable/component'
+import styled                                                  from '@emotion/styled'
+import { mediaQueries }                                        from '../responsive'
+import loadable                                                from '@loadable/component'
 
 const ScrollIntoViewIfNeeded = loadable(() => import("react-scroll-into-view-if-needed"), { ssr: false })
 
@@ -120,6 +120,8 @@ const accumulateOffsetTop = (el, totalOffset = 0) => {
 export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
   const { throttleTime = 100 } = rest
 
+  const tocRef = useRef(null);
+
   const [headings, setHeadings] = useState({
     titles: [],
     nodes: [],
@@ -191,20 +193,24 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
         const activeIndex = offsets.findIndex(
           offset => offset > window.scrollY + HEADER_HEIGHT + 1
         )
-        isMounted && setActive(activeIndex === -1 ? titles.length - 1 : activeIndex - 1)
+
+        // ensure we don't set the active item if the toc isn't visible
+        // otherwise we will get weird scroll interactions
+        const isVisible = !!tocRef.current.offsetParent;
+
+        isMounted && isVisible && setActive(activeIndex === -1 ? titles.length - 1 : activeIndex - 1)
       }, throttleTime, { leading: false });
 
       window.addEventListener(`scroll`, scrollHandler);
 
-      //if (headings.nodes.length > 0) scrollHandler();
       return () => { scrollHandler.cancel(); window.removeEventListener(`scroll`, scrollHandler)}
     }
-  }, [headings, hashUpdated, isMounted])
+  }, [headings, hashUpdated, isMounted, tocRef])
 
   return (
     <>
       <Global styles={TocStyle} />
-      <TocDiv>
+      <TocDiv ref={tocRef}>
         <InnerAdjustHeight>
           <TocTitle>Table of Contents</TocTitle>
           <nav>
