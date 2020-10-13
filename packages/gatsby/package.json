@@ -61,6 +61,7 @@
     "react-icons": "^3.10.0",
     "react-instantsearch-dom": "^6.6.0",
     "react-monaco-editor": "^0.36.0",
+    "react-scroll-into-view-if-needed": "^2.1.7",
     "react-select": "^3.1.0",
     "react-spinners": "^0.8.3",
     "react-tooltip": "^4.2.7",
@@ -98,6 +99,7 @@
     "@types/json-schema": "^7.0.4",
     "@types/loadable__component": "5.10.0",
     "@types/lodash": "^4.14.136",
+    "@types/react-scroll-into-view-if-needed": "^2",
     "@types/react-select": "3.0.11",
     "@types/tinycolor2": "1.4.2"
   },

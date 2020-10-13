@@ -6,12 +6,16 @@ import { Global, css }                                 from '@emotion/core'
 
 import styled                                          from '@emotion/styled'
 import { mediaQueries }                                from '../responsive'
+import ScrollIntoViewIfNeeded                          from 'react-scroll-into-view-if-needed'
 
 export const TocDiv = styled.aside`
   right: 1em;
   grid-row: span 10;
   padding: 1em;
   height: max-content;
+  max-height: 80vh;
+  overflow-x: hidden;
+  overflow-y: auto;
 
   ${mediaQueries.maxLaptop} {
     display: none;
@@ -185,15 +189,17 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
         <TocTitle>Table of Contents</TocTitle>
         <nav>
           {headings.titles.map(({ title, depth }, index) => (
-            <TocLink
-              key={title}
-              active={active === index}
-              depth={depth - headings.minDepth}
-              href={`#${headings.nodes[index].id}`}
-              onClick={() => setActive(index)}
-            >
-              {title}
-            </TocLink>
+            <ScrollIntoViewIfNeeded active={active === index}>
+              <TocLink
+                key={title}
+                active={active === index}
+                depth={depth - headings.minDepth}
+                href={`#${headings.nodes[index].id}`}
+                onClick={() => setActive(index)}
+              >
+                {title}
+              </TocLink>
+            </ScrollIntoViewIfNeeded>
           ))}
         </nav>
       </TocDiv>

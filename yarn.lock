@@ -4617,6 +4617,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-scroll-into-view-if-needed@npm:^2":
+  version: 2.1.0
+  resolution: "@types/react-scroll-into-view-if-needed@npm:2.1.0"
+  dependencies:
+    "@types/react": "*"
+    scroll-into-view-if-needed: "*"
+  checksum: ec7ffa8350b2913bf52cf9a490a934e8f567849a267bef1dcbda219125b18751c6619804f722206e5d4a2b9789d0d54e1b2573f071950dd8b4675dc77c0eba83
+  languageName: node
+  linkType: hard
+
 "@types/react-select@npm:3.0.11":
   version: 3.0.11
   resolution: "@types/react-select@npm:3.0.11"
@@ -5592,6 +5602,7 @@ __metadata:
     "@types/json-schema": ^7.0.4
     "@types/loadable__component": 5.10.0
     "@types/lodash": ^4.14.136
+    "@types/react-scroll-into-view-if-needed": ^2
     "@types/react-select": 3.0.11
     "@types/tinycolor2": 1.4.2
     algoliasearch: ^4.2.0
@@ -5641,6 +5652,7 @@ __metadata:
     react-icons: ^3.10.0
     react-instantsearch-dom: ^6.6.0
     react-monaco-editor: ^0.36.0
+    react-scroll-into-view-if-needed: ^2.1.7
     react-select: ^3.1.0
     react-spinners: ^0.8.3
     react-tooltip: ^4.2.7
@@ -9161,6 +9173,13 @@ __metadata:
   version: 1.0.13
   resolution: "compute-scroll-into-view@npm:1.0.13"
   checksum: 2db9cd1e84bb385744835df046867c08bb5f24b4200a2c14d0601b09b31f4b9364956d74e0ded3e42f1693fe391c576718e0ae48de0ce8b3284a628f82a857a7
+  languageName: node
+  linkType: hard
+
+"compute-scroll-into-view@npm:^1.0.16":
+  version: 1.0.16
+  resolution: "compute-scroll-into-view@npm:1.0.16"
+  checksum: 5ba65c11c79a0accfced384842f40fc4e6d91d1308c0e49a5f9fa6a17160aef1cf4ea1cc854ecedd813ef8742b3b4d4e7dd8a14880aa39efc3359fb674bac8ba
   languageName: node
   linkType: hard
 
@@ -22361,6 +22380,16 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"react-scroll-into-view-if-needed@npm:^2.1.7":
+  version: 2.1.7
+  resolution: "react-scroll-into-view-if-needed@npm:2.1.7"
+  peerDependencies:
+    prop-types: ^15.6.1
+    react: ^16.0.0
+  checksum: 4aab2792810d18b707ef1459efa00bc9f01a1c86b960a4a332e3af4e5092bf2bf61420cc6552ae8f9a64433d63b77c3921e3ec47dd9a02d1cd07ba504cd8de6b
+  languageName: node
+  linkType: hard
+
 "react-select@npm:^3.1.0":
   version: 3.1.0
   resolution: "react-select@npm:3.1.0"
@@ -23763,6 +23792,15 @@ resolve@1.9.0:
     dom-helpers: ^3.4.0
     invariant: ^2.2.4
   checksum: 4bb66eb5b8ed4e23f58c1f8436b0a351cb2e299723540b1bc79017536e057d80f92991b8f8ad07feca62eec08da312b822bf50cab88f04dcae6c27fdd23ebbc9
+  languageName: node
+  linkType: hard
+
+"scroll-into-view-if-needed@npm:*":
+  version: 2.2.26
+  resolution: "scroll-into-view-if-needed@npm:2.2.26"
+  dependencies:
+    compute-scroll-into-view: ^1.0.16
+  checksum: 652f1924f5c60eebb019f6144d5cc884fda36413ff71a49ec5bed22455451bfe563e73a28dc76617f9778f6ae19c3c5bbf17378d0ab5bfce95d41ec9eb6dc623
   languageName: node
   linkType: hard
 
