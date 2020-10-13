@@ -4,7 +4,13 @@ import React                 from 'react';
 import {LayoutContentNav}    from '../components/layout-content-nav';
 import {PrerenderedMarkdown} from '../components/markdown';
 import {SEO}                 from '../components/seo';
+import { Global, css }       from '@emotion/core';
 
+const GlobalStyleOverrides = css`
+:root {
+  --header-border-bottom: 1px solid #cfdee9;
+}
+`;
 
 // eslint-disable-next-line arca/no-default-export
 export default function Template({data, pageContext: {category}}) {
@@ -12,6 +18,7 @@ export default function Template({data, pageContext: {category}}) {
   const {frontmatter, html} = markdownRemark;
 
   return <>
+    <Global styles={GlobalStyleOverrides} />
     <LayoutContentNav items={allMarkdownRemark.edges.map(({node}) => ({
       to: node.frontmatter.path,
       name: node.frontmatter.title,
