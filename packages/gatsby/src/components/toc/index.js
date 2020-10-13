@@ -42,8 +42,8 @@ export const TocLink = styled.a`
   }
   &::before {
     content: " ";
-    border-radius: 100px;
-    border-color: #000;
+    border-radius: 100%;
+
     width: 5px;
     height: 5px;
     display: ${props => props.depth >= 1 ? `inline-block` : `none`};
