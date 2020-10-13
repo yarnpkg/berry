@@ -78,7 +78,7 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
 
   // Controls which heading is currently highlighted as active.
   const [active, setActive] = useState()
-  const [hashUpdated, setHashUpdated] = useState()
+  const [hashUpdated, setHashUpdated] = useState(true)
   const [isMounted, setIsMounted] = useState(true)
 
   useLayoutEffect(() => {
@@ -134,9 +134,7 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
         const activeIndex = offsets.findIndex(
           offset => offset > window.scrollY + HEADER_HEIGHT + 1
         )
-        if (isMounted) {
-          setActive(activeIndex === -1 ? titles.length - 1 : activeIndex - 1)
-        }
+        isMounted && setActive(activeIndex === -1 ? titles.length - 1 : activeIndex - 1)
       }, throttleTime, { leading: false });
 
       window.addEventListener(`scroll`, scrollHandler);
