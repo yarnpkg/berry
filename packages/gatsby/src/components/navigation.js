@@ -83,9 +83,7 @@ const MenuEntry = styled(Link)`
 `;
 
 const Content = styled.div`
-  & > * {
-    overflow: auto;
-  }
+
 `;
 
 export const Navigation = ({items, children}) => {
