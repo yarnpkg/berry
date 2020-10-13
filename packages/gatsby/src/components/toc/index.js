@@ -14,8 +14,7 @@ export const TocDiv = styled.aside`
   padding: 1em;
   height: max-content;
   max-height: 80vh;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
 
   ${mediaQueries.maxLaptop} {
     display: none;
