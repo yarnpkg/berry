@@ -33,6 +33,18 @@ const TocStyle = css`
     display: none;
   }
 }
+
+@keyframes highlight {
+  from {background-color: rgb(255 165 0 / 30%)}
+  to {background-color: transparent;}
+}
+
+h1, h2, h3, h4 {
+  &:target {
+    animation-name: highlight;
+    animation-duration: 4s;
+  }
+}
 `;
 
 export const LayoutContentNav = ({items, children}) => {

@@ -1,6 +1,6 @@
 // based on: https://janosh.dev/blog/sticky-active-smooth-responsive-toc
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { throttle }                   from 'lodash'
 
 import styled                         from '@emotion/styled';
@@ -78,6 +78,16 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
 
   // Controls which heading is currently highlighted as active.
   const [active, setActive] = useState()
+  const [hashUpdated, setHashUpdated] = useState()
+  const [isMounted, setIsMounted] = useState(true)
+
+  useLayoutEffect(() => {
+    return () => { setIsMounted(false) }
+  }, [])
+
+  useLayoutEffect(() => {
+    window.addEventListener("hashchange", () => setHashUpdated(true))
+  }, [])
 
 
   // Read heading titles, depths and nodes from the DOM.
@@ -103,23 +113,39 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
     setHeadings({ titles, nodes, minDepth })
   }, [headingSelector, getTitle, getDepth])
   // Add scroll event listener to update currently active heading.
-  useEffect(() => {
-    // Throttling the scrollHandler saves computation and hence battery life.
-    const scrollHandler = throttle(() => {
-      const { titles, nodes } = headings
-      // Offsets need to be recomputed inside scrollHandler because
-      // lazily-loaded content increases offsets as user scrolls down.
-      const offsets = nodes.map(el => accumulateOffsetTop(el))
+  useLayoutEffect(() => {
+    if (hashUpdated) {
+      const { nodes } = headings;
+      const node = nodes.findIndex(n => `#${n.id}` === window.location.hash);
+      if (node >= 1) {
+        setActive(node);
+      }
+      setTimeout(() => isMounted && setHashUpdated(false), 100)
+    } else {
+      // Throttling the scrollHandler saves computation and hence battery life.
+      const scrollHandler = throttle(() => {
+        if (hashUpdated) return;
 
-      const activeIndex = offsets.findIndex(
-        offset => offset > window.scrollY + HEADER_HEIGHT + 1
-      )
-      setActive(activeIndex === -1 ? titles.length - 1 : activeIndex - 1)
-    }, throttleTime, { leading: false })
-    window.addEventListener(`scroll`, scrollHandler)
-    if (headings.nodes.length > 0) scrollHandler();
-    return () => window.removeEventListener(`scroll`, scrollHandler)
-  }, [headings])
+        const { titles, nodes } = headings
+        // Offsets need to be recomputed inside scrollHandler because
+        // lazily-loaded content increases offsets as user scrolls down.
+        const offsets = nodes.map(el => accumulateOffsetTop(el))
+
+        const activeIndex = offsets.findIndex(
+          offset => offset > window.scrollY + HEADER_HEIGHT + 1
+        )
+        if (isMounted) {
+          setActive(activeIndex === -1 ? titles.length - 1 : activeIndex - 1)
+        }
+      }, throttleTime, { leading: false });
+
+      window.addEventListener(`scroll`, scrollHandler);
+
+      //if (headings.nodes.length > 0) scrollHandler();
+      return () => { scrollHandler.cancel(); window.removeEventListener(`scroll`, scrollHandler)}
+    }
+  }, [headings, hashUpdated, isMounted])
+
   return (
     <>
       <TocDiv>
@@ -131,6 +157,7 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
               active={active === index}
               depth={depth - headings.minDepth}
               href={`#${headings.nodes[index].id}`}
+              onClick={() => setActive(index)}
             >
               {title}
             </TocLink>
