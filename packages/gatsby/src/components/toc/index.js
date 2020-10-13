@@ -31,7 +31,7 @@ export const TocTitle = styled.h2`
 
 export const TocLink = styled.a`
   cursor: pointer;
-  color: ${p => (p.active ? `var(--color-c)` : `var(--color-gray)`)};
+  color: ${p => (p.active ? `#000` : `#444`)};
   font-weight: ${props => props.active && `bold`};
   display: block;
   margin-left: ${props => props.depth + `em`};
