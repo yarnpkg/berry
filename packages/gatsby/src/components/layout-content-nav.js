@@ -20,7 +20,10 @@ const Container = styled.div`
   }
 `;
 
+// min-width: 0 otherwise the <pre> blocks break the layout
+// https://stackoverflow.com/questions/53599625/css-grid-pre-horizontal-scroll
 const ArticleContainer = styled.div`
+  min-width: 0;
   max-width: 1200px;
   grid-column: 1;
 `;
