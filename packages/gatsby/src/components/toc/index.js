@@ -6,7 +6,9 @@ import { Global, css }                                 from '@emotion/core'
 
 import styled                                          from '@emotion/styled'
 import { mediaQueries }                                from '../responsive'
-import ScrollIntoViewIfNeeded                          from 'react-scroll-into-view-if-needed'
+import loadable                                        from '@loadable/component'
+
+const ScrollIntoViewIfNeeded = loadable(() => import("react-scroll-into-view-if-needed"))
 
 export const TocDiv = styled.aside`
   right: 1em;
