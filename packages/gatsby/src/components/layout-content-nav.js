@@ -13,7 +13,6 @@ const Container = styled.div`
     padding: 1em;
   }
   ${mediaQueries.minLaptop} {
-    border-top: 1px solid #cfdee9;
     display: grid;
     grid-template-columns: auto 300px;
     gap: 0 2vw;

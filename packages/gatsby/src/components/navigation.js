@@ -47,9 +47,6 @@ const MenuEntry = styled(Link)`
     padding: 1em;
     position: relative;
 
-    &:first-of-type {
-      border-top: 1px solid #cfdee9;
-    }
     &:hover {
       background: hsl(204, 33%, 96%);
     }
