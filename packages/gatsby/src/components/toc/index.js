@@ -31,10 +31,14 @@ export const TocTitle = styled.h2`
 
 export const TocLink = styled.a`
   cursor: pointer;
-  color: ${p => (p.active ? `#000` : `#444`)};
+  color: ${p => (p.active ? `#000` : `#555`)};
   font-weight: ${props => props.active && `bold`};
   display: block;
   margin-left: ${props => props.depth + `em`};
+
+  :hover {
+    color: #000;
+  }
 `
 
 
