@@ -10,6 +10,12 @@ import loadable                                        from '@loadable/component
 
 const ScrollIntoViewIfNeeded = loadable(() => import("react-scroll-into-view-if-needed"), { ssr: false })
 
+// used to ensure a tiny bit of scroll area exists, so that overflow appears
+// otherwise ScrollIntoViewIfNeeded creates jumpy scroll
+export const InnerAdjustHeight = styled.div`
+  min-height: 80.1vh;
+`;
+
 export const TocDiv = styled.aside`
   right: 1em;
   grid-row: span 10;
@@ -26,6 +32,18 @@ export const TocDiv = styled.aside`
     grid-column: 2;
     position: sticky;
     top: 7em;
+  }
+
+  &::before {
+    content: " ";
+    border-radius: 100%;
+
+    width: 5px;
+    height: 5px;
+    display: ${props => props.depth >= 1 ? `inline-block` : `none`};
+    border:  ${props => props.active ? `1px solid #007aa2` : `1px solid #aaa`};;
+    margin-right: 6px;
+    ${props => props.active && `background-color: #007aa2`};
   }
 `
 
@@ -187,22 +205,24 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
     <>
       <Global styles={TocStyle} />
       <TocDiv>
-        <TocTitle>Table of Contents</TocTitle>
-        <nav>
-          {headings.titles.map(({ title, depth }, index) => (
-            <ScrollIntoViewIfNeeded active={active === index}>
-              <TocLink
-                key={title}
-                active={active === index}
-                depth={depth - headings.minDepth}
-                href={`#${headings.nodes[index].id}`}
-                onClick={() => setActive(index)}
-              >
-                {title}
-              </TocLink>
-            </ScrollIntoViewIfNeeded>
-          ))}
-        </nav>
+        <InnerAdjustHeight>
+          <TocTitle>Table of Contents</TocTitle>
+          <nav>
+            {headings.titles.map(({ title, depth }, index) => (
+              <ScrollIntoViewIfNeeded active={active === index}>
+                <TocLink
+                  key={title}
+                  active={active === index}
+                  depth={depth - headings.minDepth}
+                  href={`#${headings.nodes[index].id}`}
+                  onClick={() => setActive(index)}
+                >
+                  {title}
+                </TocLink>
+              </ScrollIntoViewIfNeeded>
+            ))}
+          </nav>
+        </InnerAdjustHeight>
       </TocDiv>
     </>
   )
