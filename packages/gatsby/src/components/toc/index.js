@@ -7,7 +7,6 @@ import styled                         from '@emotion/styled';
 import { mediaQueries }               from '../responsive'
 
 export const TocDiv = styled.aside`
-  line-height: 2.2em;
   right: 1em;
   grid-row: span 10;
   padding: 1em;
@@ -31,13 +30,26 @@ export const TocTitle = styled.h2`
 
 export const TocLink = styled.a`
   cursor: pointer;
-  color: ${p => (p.active ? `#000` : `#555`)};
-  font-weight: ${props => props.active && `bold`};
+  color: ${p => (p.active ? `#007aa2` : `#555`)};
+  font-weight: ${props => props.active && `600`};
   display: block;
-  margin-left: ${props => props.depth + `em`};
+  margin-left: ${props => props.depth * 0.75 + `em`};
+  margin-top: 0.8em;
+  padding-right: 10px;
 
   :hover {
-    color: #000;
+    color: #007aa2;
+  }
+  &::before {
+    content: " ";
+    border-radius: 100px;
+    border-color: #000;
+    width: 5px;
+    height: 5px;
+    display: ${props => props.depth >= 1 ? `inline-block` : `none`};
+    border:  ${props => props.active ? `1px solid #007aa2` : `1px solid #aaa`};;
+    margin-right: 6px;
+    ${props => props.active && `background-color: #007aa2`};
   }
 `
 
