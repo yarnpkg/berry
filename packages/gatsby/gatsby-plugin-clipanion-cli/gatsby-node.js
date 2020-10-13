@@ -68,13 +68,14 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       }
 
       if (command.options.length > 0) {
+        const addAnchor = (definition) => `<h3 id="${encodeURI(("options-" + definition).replace(/\-+/g, "-"))}" class="header-hidden">${definition}</h3>`;
         sections.push([
           `## Options\n`,
           `\n`,
           `| <div style="width:180px">Definition</div> | Description |\n`,
           `| ---------- | ----------- |\n`,
           ...command.options.map(
-            ({definition, description}) => `| \`${definition}\` | ${description} |\n`
+            ({definition, description}) => `| ${addAnchor(definition)}\`${definition}\` | ${description} |\n`
           ),
         ].join(``));
       }

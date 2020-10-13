@@ -41,6 +41,9 @@ export const TocLink = styled.a`
   }
 `
 
+// the fixed header height, should be adjusted if it changes
+export const HEADER_HEIGHT = 100;
+
 
 // Used to calculate each heading's offset from the top of the page.
 // This will be compared to window.scrollY to determine which heading
@@ -79,7 +82,7 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
       headingSelector || Array.from({ length: 6 }, (_, i) => `article h` + (i + 1))
     const nodes = Array.from(document.querySelectorAll(selector))
     const titles = nodes.map(node => ({
-      title: getTitle ? getTitle(node) : node.innerText,
+      title: getTitle ? getTitle(node) : (node.innerText || node.textContent),
       depth: getDepth ? getDepth(node) : Number(node.nodeName[1]),
     }))
     // Compute the minimum heading depth. Will be subtracted from each heading's
@@ -95,9 +98,9 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
       // Offsets need to be recomputed inside scrollHandler because
       // lazily-loaded content increases offsets as user scrolls down.
       const offsets = nodes.map(el => accumulateOffsetTop(el))
-      console.log(offsets);
+
       const activeIndex = offsets.findIndex(
-        offset => offset > window.scrollY + 200
+        offset => offset > window.scrollY + HEADER_HEIGHT + 1
       )
       setActive(activeIndex === -1 ? titles.length - 1 : activeIndex - 1)
     }, throttleTime)
