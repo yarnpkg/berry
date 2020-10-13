@@ -1,5 +1,4 @@
 import styled                   from '@emotion/styled';
-import { Global, css }          from '@emotion/core';
 import React                    from 'react';
 
 import {Layout}                 from './layout';
@@ -27,29 +26,11 @@ const ArticleContainer = styled.div`
   grid-column: 1;
 `;
 
-const TocStyle = css`
-.toc {
-  ${mediaQueries.minLaptop} {
-    display: none;
-  }
-}
 
-@keyframes highlight {
-  from {background-color: rgb(255 165 0 / 30%)}
-  to {background-color: transparent;}
-}
-
-h1, h2, h3, h4 {
-  &:target {
-    animation-name: highlight;
-    animation-duration: 4s;
-  }
-}
-`;
 
 export const LayoutContentNav = ({items, children}) => {
   return <>
-    <Global styles={TocStyle} />
+
     <Layout>
       <Navigation items={items}>
         <Container>

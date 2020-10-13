@@ -1,10 +1,11 @@
 // based on: https://janosh.dev/blog/sticky-active-smooth-responsive-toc
 
 import React, { useState, useEffect, useLayoutEffect } from 'react'
-import { throttle }                   from 'lodash'
+import { throttle }                                    from 'lodash'
+import { Global, css }                                 from '@emotion/core'
 
-import styled                         from '@emotion/styled';
-import { mediaQueries }               from '../responsive'
+import styled                                          from '@emotion/styled'
+import { mediaQueries }                                from '../responsive'
 
 export const TocDiv = styled.aside`
   right: 1em;
@@ -53,6 +54,32 @@ export const TocLink = styled.a`
   }
 `
 
+const TocStyle = css`
+.toc {
+  ${mediaQueries.minLaptop} {
+    display: none;
+  }
+}
+
+@keyframes highlight {
+  0% {background-color: rgb(255 165 0 / 30%)}
+  10% {background-color: transparent;}
+  20% {background-color: rgb(255 165 0 / 30%)}
+  30% {background-color: transparent;}
+  40% {background-color: rgb(255 165 0 / 30%)}
+  50% {background-color: transparent;}
+  60% {background-color: rgb(255 165 0 / 30%)}
+  to {background-color: transparent;}
+}
+
+h1, h2, h3, h4 {
+  &:target, &.header-nav-initial {
+    animation-name: highlight;
+    animation-duration: 4s;
+  }
+}
+`;
+
 // the fixed header height, should be adjusted if it changes
 export const HEADER_HEIGHT = 100;
 
@@ -82,6 +109,13 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
   const [isMounted, setIsMounted] = useState(true)
 
   useLayoutEffect(() => {
+    // apply initial class to header when navigating to the page
+    // in order for the animation to show
+    if (window.location.hash.length > 0) {
+      const el = document.getElementById(window.location.hash.slice(1));
+      el && el.classList.add("header-nav-initial");
+    }
+
     return () => { setIsMounted(false) }
   }, [])
 
@@ -146,6 +180,7 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
 
   return (
     <>
+      <Global styles={TocStyle} />
       <TocDiv>
         <TocTitle>Table of Contents</TocTitle>
         <nav>
