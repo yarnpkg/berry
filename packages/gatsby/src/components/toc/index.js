@@ -68,7 +68,7 @@ const accumulateOffsetTop = (el, totalOffset = 0) => {
   return totalOffset
 }
 export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
-  const { throttleTime = 200 } = rest
+  const { throttleTime = 100 } = rest
 
   const [headings, setHeadings] = useState({
     titles: [],
@@ -115,7 +115,7 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
         offset => offset > window.scrollY + HEADER_HEIGHT + 1
       )
       setActive(activeIndex === -1 ? titles.length - 1 : activeIndex - 1)
-    }, throttleTime)
+    }, throttleTime, { leading: false })
     window.addEventListener(`scroll`, scrollHandler)
     if (headings.nodes.length > 0) scrollHandler();
     return () => window.removeEventListener(`scroll`, scrollHandler)
