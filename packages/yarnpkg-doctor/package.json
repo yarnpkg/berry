@@ -4,7 +4,7 @@
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:^2.3.2",
+    "@yarnpkg/cli": "workspace:^2.3.3",
     "@yarnpkg/core": "workspace:^2.3.1",
     "@yarnpkg/fslib": "workspace:^2.3.0",
     "clipanion": "^2.6.2",
