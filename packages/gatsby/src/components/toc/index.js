@@ -8,6 +8,7 @@ import styled                                                  from '@emotion/st
 import { mediaQueries }                                        from '../responsive'
 import loadable                                                from '@loadable/component'
 
+// the component doesn't seem to support ssr, build fails without this:
 const ScrollIntoViewIfNeeded = loadable(() => import("react-scroll-into-view-if-needed"), { ssr: false })
 
 export const TocDiv = styled.aside`
@@ -130,25 +131,30 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
   const [active, setActive] = useState()
   const [hashUpdated, setHashUpdated] = useState(true)
   const [isMounted, setIsMounted] = useState(true)
-  const [pauseScrollUpdate, setPauseScrollUpdate] = useState(0) // this is a timestamp
+  const [pauseScrollUpdate, setPauseScrollUpdate] = useState(Date.now()) // this is a timestamp
 
+  // apply initial class to header when navigating to the page
+  // in order for the attention-grabber animation to appear
+  // (the css :target selector is not applied for navigation, only by anchor clicks)
   useLayoutEffect(() => {
-    // apply initial class to header when navigating to the page
-    // in order for the animation to show
     if (window.location.hash.length > 0) {
       const el = document.getElementById(window.location.hash.slice(1));
       el && el.classList.add("header-nav-initial");
     }
-
+    // keep track of whether this component unmounts, so we don't set state
     return () => { setIsMounted(false) }
   }, [])
 
-  useLayoutEffect(() => {
+  // set a flag when the hash was updated, so we can process it and set the active toc entry
+  useEffect(() => {
     const listener = () => setHashUpdated(true);
     window.addEventListener("hashchange", listener);
     return () => { window.removeEventListener("hashchange", listener) };
   }, [])
 
+  // used to pause processing any events that may result in the page being scrolled
+  // pauseScrollUpdate is a timestamp, and once set, it gets reset to 0 after 1 second
+  // used to disable additional scrolling when the page loads, and when a ToC entry is clicked by the user
   useEffect(() => {
     const unpause = () => isMounted && setPauseScrollUpdate(0);
     if (pauseScrollUpdate) {
@@ -221,7 +227,7 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
         <TocTitle>Table of Contents</TocTitle>
         <nav>
           {headings.titles.map(({ title, depth }, index) => (
-            <ScrollIntoViewIfNeeded key={title} active={active === index} options={{ scrollMode: "always", behavior: "smooth", boundary: tocRef.current }}>
+            <ScrollIntoViewIfNeeded key={title} active={!pauseScrollUpdate && active === index} options={{ scrollMode: "always", behavior: "smooth", boundary: tocRef.current }}>
               <TocLink
                 active={active === index}
                 depth={depth - headings.minDepth}
