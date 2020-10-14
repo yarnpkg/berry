@@ -10,12 +10,6 @@ import loadable                                                from '@loadable/c
 
 const ScrollIntoViewIfNeeded = loadable(() => import("react-scroll-into-view-if-needed"), { ssr: false })
 
-// used to ensure a tiny bit of scroll area exists, so that overflow appears
-// otherwise ScrollIntoViewIfNeeded creates jumpy scroll
-export const InnerAdjustHeight = styled.div`
-  min-height: 80.1vh;
-`;
-
 export const TocDiv = styled.aside`
   right: 1em;
   grid-row: span 10;
@@ -78,6 +72,10 @@ export const TocLink = styled.a`
 `
 
 const TocStyle = css`
+html {
+  scroll-behavior: smooth !important;
+}
+
 .toc {
   ${mediaQueries.minLaptop} {
     display: none;
@@ -132,6 +130,7 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
   const [active, setActive] = useState()
   const [hashUpdated, setHashUpdated] = useState(true)
   const [isMounted, setIsMounted] = useState(true)
+  const [pauseScrollUpdate, setPauseScrollUpdate] = useState(0) // this is a timestamp
 
   useLayoutEffect(() => {
     // apply initial class to header when navigating to the page
@@ -145,8 +144,18 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
   }, [])
 
   useLayoutEffect(() => {
-    window.addEventListener("hashchange", () => setHashUpdated(true))
+    const listener = () => setHashUpdated(true);
+    window.addEventListener("hashchange", listener);
+    return () => { window.removeEventListener("hashchange", listener) };
   }, [])
+
+  useEffect(() => {
+    const unpause = () => isMounted && setPauseScrollUpdate(0);
+    if (pauseScrollUpdate) {
+      const timeoutId = setTimeout(unpause, 1000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [pauseScrollUpdate, isMounted])
 
 
   // Read heading titles, depths and nodes from the DOM.
@@ -171,6 +180,7 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
     const minDepth = Math.min(...titles.map(h => h.depth))
     setHeadings({ titles, nodes, minDepth })
   }, [headingSelector, getTitle, getDepth])
+
   // Add scroll event listener to update currently active heading.
   useLayoutEffect(() => {
     if (hashUpdated) {
@@ -179,6 +189,7 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
       if (node >= 1) {
         setActive(node);
       }
+      // delay it slightly to ensure scrolling doesn't interfere
       setTimeout(() => isMounted && setHashUpdated(false), 100)
     } else {
       // Throttling the scrollHandler saves computation and hence battery life.
@@ -194,41 +205,37 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
           offset => offset > window.scrollY + HEADER_HEIGHT + 1
         )
 
-        // ensure we don't set the active item if the toc isn't visible
-        // otherwise we will get weird scroll interactions
-        const isVisible = !!tocRef.current.offsetParent;
-
-        isMounted && isVisible && setActive(activeIndex === -1 ? titles.length - 1 : activeIndex - 1)
+        !pauseScrollUpdate && isMounted && setActive(activeIndex === -1 ? titles.length - 1 : activeIndex - 1)
       }, throttleTime, { leading: false });
 
       window.addEventListener(`scroll`, scrollHandler);
 
       return () => { scrollHandler.cancel(); window.removeEventListener(`scroll`, scrollHandler)}
     }
-  }, [headings, hashUpdated, isMounted, tocRef])
+  }, [headings, hashUpdated, isMounted, tocRef, pauseScrollUpdate])
 
   return (
     <>
       <Global styles={TocStyle} />
       <TocDiv ref={tocRef}>
-        <InnerAdjustHeight>
-          <TocTitle>Table of Contents</TocTitle>
-          <nav>
-            {headings.titles.map(({ title, depth }, index) => (
-              <ScrollIntoViewIfNeeded active={active === index}>
-                <TocLink
-                  key={title}
-                  active={active === index}
-                  depth={depth - headings.minDepth}
-                  href={`#${headings.nodes[index].id}`}
-                  onClick={() => setActive(index)}
-                >
-                  {title}
-                </TocLink>
-              </ScrollIntoViewIfNeeded>
-            ))}
-          </nav>
-        </InnerAdjustHeight>
+        <TocTitle>Table of Contents</TocTitle>
+        <nav>
+          {headings.titles.map(({ title, depth }, index) => (
+            <ScrollIntoViewIfNeeded key={title} active={active === index} options={{ scrollMode: "always", behavior: "smooth", boundary: tocRef.current }}>
+              <TocLink
+                active={active === index}
+                depth={depth - headings.minDepth}
+                href={`#${headings.nodes[index].id}`}
+                onClick={() => {
+                  setPauseScrollUpdate(Date.now());
+                  setActive(index);
+                }}
+              >
+                {title}
+              </TocLink>
+            </ScrollIntoViewIfNeeded>
+          ))}
+        </nav>
       </TocDiv>
     </>
   )
