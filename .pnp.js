@@ -3536,6 +3536,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
+        ["npm:7.11.2", {
+          "packageLocation": "./.yarn/cache/@babel-runtime-npm-7.11.2-f2cfabd212-2f127ad60a.zip/node_modules/@babel/runtime/",
+          "packageDependencies": [
+            ["@babel/runtime", "npm:7.11.2"],
+            ["regenerator-runtime", "npm:0.13.5"]
+          ],
+          "linkType": "HARD",
+        }],
         ["npm:7.9.2", {
           "packageLocation": "./.yarn/cache/@babel-runtime-npm-7.9.2-68b4224984-50c65b4972.zip/node_modules/@babel/runtime/",
           "packageDependencies": [
@@ -9052,7 +9060,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["gatsby-plugin-react-helmet", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.3.4"],
             ["gatsby-plugin-remove-trailing-slashes", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.5"],
             ["gatsby-plugin-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.6.11"],
-            ["gatsby-remark-autolink-headers", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.5"],
+            ["gatsby-remark-autolink-headers", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.15"],
             ["gatsby-remark-prismjs", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.5.4"],
             ["gatsby-remark-table-of-contents", "https://github.com/arcanis/gatsby-remark-table-of-contents.git#commit=d2c703bb06801ae992513f14599cde84d03a4aac"],
             ["gatsby-source-filesystem", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.0.23"],
@@ -19186,15 +19194,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["gatsby-remark-autolink-headers", [
-        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.5", {
-          "packageLocation": "./.yarn/$$virtual/gatsby-remark-autolink-headers-virtual-60ffca1ecd/0/cache/gatsby-remark-autolink-headers-npm-2.3.5-af00f3c51b-45fb266c00.zip/node_modules/gatsby-remark-autolink-headers/",
+        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.15", {
+          "packageLocation": "./.yarn/$$virtual/gatsby-remark-autolink-headers-virtual-bfbcf92687/0/cache/gatsby-remark-autolink-headers-npm-2.3.15-6682dd297d-bd2a4dd3d0.zip/node_modules/gatsby-remark-autolink-headers/",
           "packageDependencies": [
-            ["gatsby-remark-autolink-headers", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.5"],
-            ["@babel/runtime", "npm:7.10.2"],
+            ["gatsby-remark-autolink-headers", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.15"],
+            ["@babel/runtime", "npm:7.11.2"],
             ["@types/gatsby", null],
             ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.23.3"],
             ["github-slugger", "npm:1.3.0"],
-            ["lodash", "npm:4.17.15"],
+            ["lodash", "npm:4.17.20"],
             ["mdast-util-to-string", "npm:1.1.0"],
             ["unist-util-visit", "npm:1.4.1"]
           ],
@@ -24089,6 +24097,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/lodash-npm-4.17.15-566d9324f7-aec3fbb757.zip/node_modules/lodash/",
           "packageDependencies": [
             ["lodash", "npm:4.17.15"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:4.17.20", {
+          "packageLocation": "./.yarn/cache/lodash-npm-4.17.20-c0db62021c-c62101d250.zip/node_modules/lodash/",
+          "packageDependencies": [
+            ["lodash", "npm:4.17.20"]
           ],
           "linkType": "HARD",
         }]

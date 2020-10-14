@@ -37,7 +37,7 @@
     "gatsby-plugin-react-helmet": "^3.3.4",
     "gatsby-plugin-remove-trailing-slashes": "^2.3.5",
     "gatsby-plugin-sharp": "^2.6.11",
-    "gatsby-remark-autolink-headers": "^2.3.5",
+    "gatsby-remark-autolink-headers": "^2.3.15",
     "gatsby-remark-prismjs": "^3.5.4",
     "gatsby-remark-table-of-contents": "arcanis/gatsby-remark-table-of-contents#patch-1",
     "gatsby-source-filesystem": "^2.0.23",
