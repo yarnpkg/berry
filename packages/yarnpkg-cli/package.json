@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
@@ -17,7 +17,7 @@
     "@yarnpkg/plugin-http": "workspace:^2.1.1",
     "@yarnpkg/plugin-init": "workspace:^2.2.1",
     "@yarnpkg/plugin-link": "workspace:^2.1.1",
-    "@yarnpkg/plugin-node-modules": "workspace:^2.2.1",
+    "@yarnpkg/plugin-node-modules": "workspace:^2.2.2",
     "@yarnpkg/plugin-npm": "workspace:^2.3.0",
     "@yarnpkg/plugin-npm-cli": "workspace:^2.2.0",
     "@yarnpkg/plugin-pack": "workspace:^2.2.2",
@@ -37,7 +37,7 @@
     "@types/yup": "0.26.12",
     "@yarnpkg/builder": "workspace:^2.1.2",
     "@yarnpkg/monorepo": "workspace:0.0.0",
-    "@yarnpkg/pnpify": "workspace:^2.3.2",
+    "@yarnpkg/pnpify": "workspace:^2.3.3",
     "micromatch": "^4.0.2",
     "typescript": "4.1.0-beta"
   },

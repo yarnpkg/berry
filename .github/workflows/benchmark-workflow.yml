@@ -50,7 +50,7 @@ jobs:
           yarn|yarn-nm)
             node scripts/run-yarn.js build:cli --no-minify;;
           npm)
-            npm install -g npm;;
+            npm install -g npm@^7;;
           pnpm)
             npm install -g pnpm;;
           classic)

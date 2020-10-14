@@ -10,12 +10,12 @@
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.3.2",
+    "@yarnpkg/cli": "^2.3.3",
     "@yarnpkg/core": "^2.3.1"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",
-    "@yarnpkg/cli": "workspace:^2.3.2",
+    "@yarnpkg/cli": "workspace:^2.3.3",
     "@yarnpkg/core": "workspace:^2.3.1"
   },
   "repository": {

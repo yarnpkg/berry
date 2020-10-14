@@ -47,7 +47,7 @@
     "@types/node": "^13.7.0",
     "@types/tar-stream": "1.6.0",
     "@types/tunnel": "^0.0.0",
-    "@yarnpkg/cli": "workspace:^2.3.2",
+    "@yarnpkg/cli": "workspace:^2.3.3",
     "@yarnpkg/plugin-link": "workspace:^2.1.1",
     "@yarnpkg/plugin-npm": "workspace:^2.3.0",
     "@yarnpkg/plugin-pnp": "workspace:^2.3.1"
