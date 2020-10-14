@@ -14,6 +14,8 @@
     "@reach/router": "^1.1.1",
     "@rehooks/component-size": "^1.0.3",
     "@strictsoftware/typedoc-plugin-monorepo": "patch:@strictsoftware/typedoc-plugin-monorepo@^0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch",
+    "@types/marked": "^1.1.0",
+    "@types/react": "^16.8.0",
     "algoliasearch": "^4.2.0",
     "ansi-html": "^0.0.7",
     "buffer": "^5.6.0",
@@ -43,7 +45,7 @@
     "gatsby-transformer-sharp": "^2.2.13",
     "highlight.js": "^9.15.8",
     "indent-string": "^4.0.0",
-    "json-ref-lite": "^1.1.0",
+    "json-schema-deref-sync": "^0.13.0",
     "lodash": "^4.17.15",
     "marked": "^0.6.3",
     "minimatch": "^3.0.4",
@@ -81,7 +83,7 @@
     "xss": "^1.0.6"
   },
   "scripts": {
-    "build:doc": "rm -rf .cache public && yarn build:api && gatsby build --prefix-paths \"$@\" && rsync -rtuc --delete public/ ../../docs/",
+    "build:doc": "rm -rf .cache public static/api && yarn build:api && gatsby build --prefix-paths \"$@\" && rsync -rtuc --delete public/ ../../docs/",
     "build:api": "typedoc",
     "develop": "gatsby develop",
     "serve": "gatsby serve",
