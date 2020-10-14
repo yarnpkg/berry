@@ -1,0 +1,4 @@
+declined:
+  - "@yarnpkg/plugin-constraints"
+  - "@yarnpkg/plugin-patch"
+  - "@yarnpkg/pnpify"
