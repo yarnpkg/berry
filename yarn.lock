@@ -4135,15 +4135,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chalk@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@types/chalk@npm:2.2.0"
-  dependencies:
-    chalk: "*"
-  checksum: 9cded9031f180268be59010fc1e13c7b4384e51f0ca8b75bc7a40bdd46f5f3c4859953525fb53663287e5bb25ca5df59396c276ce5c09e1a83aa7a2aec6a9f59
-  languageName: node
-  linkType: hard
-
 "@types/ci-info@npm:^2":
   version: 2.0.0
   resolution: "@types/ci-info@npm:2.0.0"
@@ -4407,15 +4398,6 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: dadc3a22b045559b73bde29303f3abb57b230680ca61b09c321243ca8d363eccbf80af6c3fa0a8a26a8dbffadba78481a89973d8c9764f728bb49ebc08b2095d
-  languageName: node
-  linkType: hard
-
-"@types/left-pad@npm:1.2.0":
-  version: 1.2.0
-  resolution: "@types/left-pad@npm:1.2.0"
-  dependencies:
-    left-pad: "*"
-  checksum: 1af27f7aa7e7dba6186e3be0ce130adb766a2aa4899e345642b6c675c7fe5582dddbfd7ccaf7d0d3fae89ce47c478e94d364c5d81c8af911d39fcbd05bc58f26
   languageName: node
   linkType: hard
 
@@ -4831,15 +4813,6 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 5dee8cf7ceffde87c1be165c5b5caecc5bbeee05cd862357f2dc93f5355dd295eb8275bf4cb1388dc00961e3d61e8cddc3f8d9bde817f1a977468c37074276b7
-  languageName: node
-  linkType: hard
-
-"@types/typescript@npm:2.0.0":
-  version: 2.0.0
-  resolution: "@types/typescript@npm:2.0.0"
-  dependencies:
-    typescript: "*"
-  checksum: 9400376e640aa2903537e7a18ca2eefc5d19e46611d9e67ee0268715d147de0eac94250341acaafe48d424ae99319c52381e42383da889e04003a2cc2d8cf39f
   languageName: node
   linkType: hard
 
@@ -5774,7 +5747,6 @@ __metadata:
   resolution: "@yarnpkg/plugin-constraints@workspace:packages/plugin-constraints"
   dependencies:
     "@types/lodash": ^4.14.136
-    "@types/typescript": 2.0.0
     "@yarnpkg/builder": "workspace:^2.1.2"
     "@yarnpkg/cli": "workspace:^2.3.3"
     "@yarnpkg/core": "workspace:^2.3.1"
@@ -6052,7 +6024,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-patch@workspace:packages/plugin-patch"
   dependencies:
-    "@types/left-pad": 1.2.0
     "@yarnpkg/cli": "workspace:^2.3.3"
     "@yarnpkg/core": "workspace:^2.3.1"
     "@yarnpkg/fslib": "workspace:^2.3.0"
@@ -6196,7 +6167,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify"
   dependencies:
-    "@types/chalk": 2.2.0
     "@types/comment-json": ^1.1.1
     "@types/lodash": ^4.14.136
     "@yarnpkg/core": "workspace:^2.3.1"
@@ -8410,17 +8380,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:*, chalk@npm:^2.0.0, chalk@npm:^2.0.1, chalk@npm:^2.1.0, chalk@npm:^2.3.0, chalk@npm:^2.4.1, chalk@npm:^2.4.2":
-  version: 2.4.2
-  resolution: "chalk@npm:2.4.2"
-  dependencies:
-    ansi-styles: ^3.2.1
-    escape-string-regexp: ^1.0.5
-    supports-color: ^5.3.0
-  checksum: 22c7b7b5bc761c882bb6516454a1a671923f1c53ff972860065aa0b28a195f230163c1d46ee88bcc7a03e5539177d896457d8bc727de7f244c6e87032743038e
-  languageName: node
-  linkType: hard
-
 "chalk@npm:1.1.3, chalk@npm:^1.0.0, chalk@npm:^1.1.3":
   version: 1.1.3
   resolution: "chalk@npm:1.1.3"
@@ -8442,6 +8401,17 @@ __metadata:
     escape-string-regexp: ^1.0.5
     supports-color: ^5.2.0
   checksum: dadd19a62c98d3a4a48e784cf39540ee4780774132329746f4cea6e89579865fa6c9f45dea75b17ab2ef6274031298990930312554dcadaa0e6f210b5141b485
+  languageName: node
+  linkType: hard
+
+"chalk@npm:^2.0.0, chalk@npm:^2.0.1, chalk@npm:^2.1.0, chalk@npm:^2.3.0, chalk@npm:^2.4.1, chalk@npm:^2.4.2":
+  version: 2.4.2
+  resolution: "chalk@npm:2.4.2"
+  dependencies:
+    ansi-styles: ^3.2.1
+    escape-string-regexp: ^1.0.5
+    supports-color: ^5.3.0
+  checksum: 22c7b7b5bc761c882bb6516454a1a671923f1c53ff972860065aa0b28a195f230163c1d46ee88bcc7a03e5539177d896457d8bc727de7f244c6e87032743038e
   languageName: node
   linkType: hard
 
@@ -17536,13 +17506,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"left-pad@npm:*":
-  version: 1.3.0
-  resolution: "left-pad@npm:1.3.0"
-  checksum: d27d5f51e3e25ffa7d4de92d62d740e723dfa7ce004f835592cc3e80d940303b29ceed43bf572a4071c58cb07a4558a40b50bfcbe2e1b911d2bef58c4e786613
-  languageName: node
-  linkType: hard
-
 "leven@npm:^3.1.0":
   version: 3.1.0
   resolution: "leven@npm:3.1.0"
@@ -26348,16 +26311,6 @@ resolve@1.9.0:
   languageName: node
   linkType: hard
 
-"typescript@*, typescript@^3.8.3, typescript@^3.9.3":
-  version: 3.9.5
-  resolution: "typescript@npm:3.9.5"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 15618435493667083eb43dc7b36c4d3dd47fd9e9c8a14f0ac4019bbf6124b6cc518b6ed506400913db1bf50831207ee8201b5d827680076930b562923f4f18a0
-  languageName: node
-  linkType: hard
-
 typescript@3.7.x:
   version: 3.7.5
   resolution: "typescript@npm:3.7.5"
@@ -26378,13 +26331,13 @@ typescript@4.1.0-beta:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@*#builtin<compat/typescript>, typescript@patch:typescript@^3.8.3#builtin<compat/typescript>, typescript@patch:typescript@^3.9.3#builtin<compat/typescript>":
+"typescript@^3.8.3, typescript@^3.9.3":
   version: 3.9.5
-  resolution: "typescript@patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=5bf698"
+  resolution: "typescript@npm:3.9.5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 452cdd20d801630727433a990652c1e65f5eb5586383dda60f178b4fbda5c7951256f9aa31327c73722af9b1b664e3a53d724aabfd8a68866e9b1631818f004c
+  checksum: 15618435493667083eb43dc7b36c4d3dd47fd9e9c8a14f0ac4019bbf6124b6cc518b6ed506400913db1bf50831207ee8201b5d827680076930b562923f4f18a0
   languageName: node
   linkType: hard
 
@@ -26405,6 +26358,16 @@ typescript@4.1.0-beta:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 8c5cbec8040fe7ed37ccbb721fd10389cf7a7a8e26013d7d7143d84feeea47108ab5b8c5eec52b28715acb85d5ce4a28bcfd8fd0a85cb61c2359a85bc1bb8f1b
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^3.8.3#builtin<compat/typescript>, typescript@patch:typescript@^3.9.3#builtin<compat/typescript>":
+  version: 3.9.5
+  resolution: "typescript@patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=5bf698"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 452cdd20d801630727433a990652c1e65f5eb5586383dda60f178b4fbda5c7951256f9aa31327c73722af9b1b664e3a53d724aabfd8a68866e9b1631818f004c
   languageName: node
   linkType: hard
 
