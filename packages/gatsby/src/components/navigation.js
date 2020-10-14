@@ -67,6 +67,10 @@ const MenuEntry = styled(Link)`
     &.active::before {
       background: #2188b6;
     }
+    &.active {
+      font-weight: 600;
+      color: rgb(0, 122, 162);
+    }
   }
   ${ifMobile} {
     flex-direction: column;
