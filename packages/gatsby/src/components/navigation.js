@@ -72,6 +72,7 @@ const MenuEntry = styled(Link)`
     }
   }
   ${ifMobile} {
+    flex-direction: column;
     padding: .5em;
     white-space: pre;
     border-bottom: 4px solid transparent;
@@ -80,6 +81,18 @@ const MenuEntry = styled(Link)`
       }
     }
   }
+`;
+
+const Tag = styled.code`
+  color: #007aa2;
+
+  font-family: "PT Mono";
+
+  ${ifDesktop} {
+    margin-left: auto;
+  }
+
+  font-size: 70%;
 `;
 
 const Content = styled.div`
@@ -94,9 +107,10 @@ export const Navigation = ({items, children}) => {
   return <>
     <Container>
       <Menu ref={scrollRef}>
-        {items.map(({to, name}) => <React.Fragment key={name}>
+        {items.map(({to, name, tag}) => <React.Fragment key={name}>
           <MenuEntry to={to} activeClassName={`active`}>
             {name.match(/^`.*`$/) ? <code>{name.slice(1, -1)}</code> : name}
+            {tag ? <Tag>{tag}</Tag> : null}
           </MenuEntry>
         </React.Fragment>)}
       </Menu>

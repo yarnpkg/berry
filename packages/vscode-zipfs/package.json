@@ -70,7 +70,7 @@
     "@types/vscode": "^1.46.0",
     "@yarnpkg/fslib": "workspace:^2.3.0",
     "@yarnpkg/libzip": "workspace:^2.2.1",
-    "@yarnpkg/pnpify": "workspace:^2.3.2",
+    "@yarnpkg/pnpify": "workspace:^2.3.3",
     "ts-loader": "^7.0.5",
     "typescript": "4.1.0-beta",
     "vsce": "^1.76.1",

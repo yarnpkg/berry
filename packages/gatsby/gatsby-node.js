@@ -34,9 +34,13 @@ for (const redirectLine of redirectLines) {
   });
 }
 
+/** @type {import('gatsby').GatsbyNode} */
 module.exports = {
   onCreateWebpackConfig: ({actions}) => {
     actions.setWebpackConfig({
+      node: {
+        fs: `empty`,
+      },
       resolve: {
         alias: {
           [`@emotion/core`]: require.resolve(`@emotion/core`),

@@ -1,12 +1,11 @@
-import React                          from 'react';
+import React                                      from 'react';
 
-import {ConfigurationLayout}          from '../../components/layout-configuration';
-import {SEO, defaultKeywords}         from '../../components/seo';
+import manifestSchema                             from '../../../static/configuration/manifest.json';
+import {ConfigurationLayout}                      from '../../components/layout-configuration';
+import {SEO, defaultKeywords}                     from '../../components/seo';
+import {convertSchemaToConfiguration, SchemaMode} from '../../utils/schemaUtils';
 
-import {convertSchemaToConfiguration} from '../../utils/schemaUtils';
-
-import manifestSchema                 from './manifest.json';
-
+const configuration = convertSchemaToConfiguration(manifestSchema, {mode: SchemaMode.Json});
 
 const PackageJsonDoc = () => <>
   <ConfigurationLayout>
@@ -15,7 +14,7 @@ const PackageJsonDoc = () => <>
       description={`List of all the supported fields for a Yarn project manifest (package.json files)`}
       keywords={defaultKeywords}
     />
-    {convertSchemaToConfiguration(manifestSchema, `Json`)}
+    {configuration}
   </ConfigurationLayout>
 </>;
 
