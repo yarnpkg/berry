@@ -32,7 +32,7 @@ jobs:
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add -D webpack@next webpack-cli@next lodash
+        yarn add -D webpack webpack-cli lodash
 
         # Vanilla webpack
         echo "const path = require('path'); module.exports = { entry: './src/index.js', output: { filename: 'main.js', path: path.resolve(__dirname, 'dist')} };" | tee webpack.config.js
