@@ -72,11 +72,15 @@ export const TocLink = styled.a`
   }
 `
 
-const TocStyle = css`
+// we enable smooth scrolling on a delay, because on page load it breaks scrolling
+// https://github.com/gatsbyjs/gatsby/issues/9948#issuecomment-561847544
+const SmoothScrollingStyle = css`
 html {
   scroll-behavior: smooth !important;
 }
+`;
 
+const TocStyle = css`
 .toc {
   ${mediaQueries.minLaptop} {
     display: none;
@@ -132,6 +136,13 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
   const [hashUpdated, setHashUpdated] = useState(true)
   const [isMounted, setIsMounted] = useState(true)
   const [pauseScrollUpdate, setPauseScrollUpdate] = useState(Date.now()) // this is a timestamp
+  const [enableSmoothScroll, setEnableSmoothScroll] = useState(false)
+
+  // set flag to enable smooth scrolling after a second
+  useEffect(() => {
+    const timeoutId = setTimeout(() => isMounted && setEnableSmoothScroll(true), 1000);
+    return () => clearTimeout(timeoutId);
+  }, [])
 
   // apply initial class to header when navigating to the page
   // in order for the attention-grabber animation to appear
@@ -222,6 +233,7 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
 
   return (
     <>
+      {enableSmoothScroll && <Global styles={SmoothScrollingStyle} />}
       <Global styles={TocStyle} />
       <TocDiv ref={tocRef}>
         <TocTitle>Table of Contents</TocTitle>
