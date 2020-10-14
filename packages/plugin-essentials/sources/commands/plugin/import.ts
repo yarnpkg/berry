@@ -57,7 +57,7 @@ export default class PluginDlCommand extends BaseCommand {
       if (this.name.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.name)) {
         const candidatePath = ppath.resolve(this.context.cwd, npath.toPortablePath(this.name));
 
-        report.reportInfo(MessageName.UNNAMED, `Reading ${formatUtils.pretty(configuration, candidatePath, `green`)}`);
+        report.reportInfo(MessageName.UNNAMED, `Reading ${formatUtils.pretty(configuration, candidatePath, formatUtils.Type.PATH)}`);
 
         pluginSpec = ppath.relative(project.cwd, candidatePath);
         pluginBuffer = await xfs.readFilePromise(candidatePath);
