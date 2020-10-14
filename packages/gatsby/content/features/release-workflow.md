@@ -80,3 +80,25 @@ To solve this problem in an automated way, the `yarn version check` command appe
 Writing this file can be tedious; fortunately `yarn version check` implements a very handy flag named `--interactive`. When set (`yarn version check --interactive`), Yarn will print a terminal interface that will summarize all the changed files, all the changed workspaces, all relevant dependent workspaces, and checkboxes for each entry allowing you to pick the release strategies you want to set for each workspace.
 
 The [`changesetIgnorePatterns`](/configuration/yarnrc#changesetIgnorePatterns) configuration option can be used to ignore files when checking which files have changed. It is useful for excluding files that don't affect the release process (e.g. test files).
+
+### Use with GitHub Actions
+
+#### Workflow
+
+Because the `version check` can be done quickly and independently of the rest of your CI workflow, it is recommended to run this check before installing dependencies to ensure it fails quickly. 
+
+```yaml
+- run: yarn version check 
+- run: yarn install
+- run: yarn test
+```
+
+
+#### Git Ancestries
+The `version` plugin requires access to Git's ancestry in order to be able to correctly infer which packages require version documents. When using the `actions/checkout@v2` or greater action on GitHub, the default behavior is for Git to fetch just the version being checked. To correct this, you will need to set a `fetch-depth` configuration value of zero to fetch all Git history:
+
+```yaml
+- uses: actions/checkout@v2
+  with:
+    fetch-depth: 0
+```
