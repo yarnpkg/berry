@@ -124,9 +124,21 @@ export default class VersionApplyCommand extends Command<CommandContext> {
         <Box>
           {strategies.map(strategy => {
             if (strategy === decision) {
-              return <Box key={strategy} paddingLeft={2}><Text color="green">◉ </Text> {strategy} </Box>;
+              return (
+                <Box key={strategy} paddingLeft={2}>
+                  <Text>
+                    <Text color="green">◉</Text>{`  `}{strategy}{` `}
+                  </Text>
+                </Box>
+              );
             } else {
-              return <Box key={strategy} paddingLeft={2}><Text color="yellow">◯ </Text> {strategy} </Box>;
+              return (
+                <Box key={strategy} paddingLeft={2}>
+                  <Text>
+                    <Text color="yellow">◯</Text>{`  `}{strategy}{` `}
+                  </Text>
+                </Box>
+              );
             }
           })}
         </Box>
