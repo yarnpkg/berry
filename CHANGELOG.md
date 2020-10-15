@@ -6,7 +6,7 @@
 
 ### Installs
 
-- Progress bars are not rendered more often than at 60 FPS, which makes all installs faster
+- Progress bars are rendered less often, which makes all installs faster
 
 ### CLI
 
