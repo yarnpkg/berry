@@ -162,6 +162,9 @@ export class StreamReport extends Report {
   private progressTime: number = 0;
   private progressFrame: number = 0;
   private progressTimeout: ReturnType<typeof setTimeout> | null = null;
+  private progressStyle: {date?: Array<number>, chars: Array<string>, size: number};
+  private progressMaxScaledSize: number;
+  private progressLastScaledSize: number = -1;
 
   private forgettableBufferSize: number;
   private forgettableNames: Set<MessageName | null>;
@@ -191,6 +194,16 @@ export class StreamReport extends Report {
     this.includeWarnings = includeWarnings;
     this.json = json;
     this.stdout = stdout;
+
+    const styleName = this.configuration.get(`progressBarStyle`) || defaultStyle;
+    if (!Object.prototype.hasOwnProperty.call(PROGRESS_STYLES, styleName))
+      throw new Error(`Assertion failed: Invalid progress bar style`);
+
+    this.progressStyle = PROGRESS_STYLES[styleName];
+    const PAD_LEFT = `➤ YN0000: ┌ `.length;
+
+    const maxWidth = Math.max(0, Math.min(process.stdout.columns - PAD_LEFT, 80));
+    this.progressMaxScaledSize = Math.floor(this.progressStyle.size * maxWidth / 80);
   }
 
   hasErrors() {
@@ -496,22 +509,11 @@ export class StreamReport extends Report {
 
     const spinner = PROGRESS_FRAMES[this.progressFrame];
 
-    const styleName = this.configuration.get(`progressBarStyle`) || defaultStyle;
-    if (!Object.prototype.hasOwnProperty.call(PROGRESS_STYLES, styleName))
-      throw new Error(`Assertion failed: Invalid progress bar style`);
-
-    const style = PROGRESS_STYLES[styleName];
-
-    const PAD_LEFT = `➤ YN0000: ┌ `.length;
-
-    const maxWidth = Math.max(0, Math.min(process.stdout.columns - PAD_LEFT, 80));
-    const scaledSize = Math.floor(style.size * maxWidth / 80);
-
     for (const {progress} of this.progress.values()) {
-      const okSize = scaledSize * progress;
+      const okSize = this.progressMaxScaledSize * progress;
 
-      const ok = style.chars[0].repeat(okSize);
-      const ko = style.chars[1].repeat(scaledSize - okSize);
+      const ok = this.progressStyle.chars[0].repeat(okSize);
+      const ko = this.progressStyle.chars[1].repeat(this.progressMaxScaledSize - okSize);
 
       this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${this.formatName(null)}: ${spinner} ${ok}${ko}\n`);
     }
@@ -522,8 +524,21 @@ export class StreamReport extends Report {
   }
 
   private refreshProgress(delta: number = 0) {
-    this.clearProgress({delta});
-    this.writeProgress();
+    if (this.progress.size === 0) {
+      this.clearProgress({delta});
+      this.writeProgress();
+    }
+
+    for (const {progress} of this.progress.values()) {
+      const progressScaledSize = Math.trunc(this.progressMaxScaledSize * progress);
+
+      if (progressScaledSize !== this.progressLastScaledSize) {
+        this.clearProgress({delta});
+        this.writeProgress();
+
+        this.progressLastScaledSize = progressScaledSize;
+      }
+    }
   }
 
   private truncate(str: string, {truncate}: {truncate?: boolean} = {}) {
