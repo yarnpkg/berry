@@ -263,7 +263,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
         </Box>
         <Box flexDirection={`column`} marginTop={1} paddingLeft={2}>
           {[...versionFile.changedFiles].map(file => <Box key={file}>
-            <Text color="grey">{versionFile.root}</Text>/{ppath.relative(versionFile.root, file)}
+            <Text><Text color="grey">{versionFile.root}</Text>/{ppath.relative(versionFile.root, file)}</Text>
           </Box>)}
         </Box>
         {versionFile.releaseRoots.size > 0 && <>
