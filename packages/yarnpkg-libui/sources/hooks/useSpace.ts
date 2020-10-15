@@ -1,11 +1,11 @@
-import {StdinContext}          from 'ink';
-import {useContext, useEffect} from 'react';
+import {useStdin}  from 'ink';
+import {useEffect} from 'react';
 
 export type SpaceHandler =
   () => void;
 
 export const useSpace = function ({active, handler}: {active: boolean, handler: SpaceHandler}) {
-  const {stdin} = useContext(StdinContext);
+  const {stdin} = useStdin();
 
   useEffect(() => {
     if (!active)
@@ -18,9 +18,13 @@ export const useSpace = function ({active, handler}: {active: boolean, handler: 
       }
     };
 
-    stdin.on(`keypress`, cb);
-    return () => {
-      stdin.off(`keypress`, cb);
-    };
-  }, [handler]);
+    if (stdin != null) {
+      stdin.on(`keypress`, cb);
+      return () => {
+        stdin.off(`keypress`, cb);
+      };
+    } else {
+      return undefined;
+    }
+  }, [handler, stdin]);
 };

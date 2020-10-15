@@ -1,4 +1,4 @@
-import {Box, Color}                           from 'ink';
+import {Box, Text}                            from 'ink';
 import React, {useEffect, useState}           from 'react';
 
 import {FocusRequestHandler, useFocusRequest} from '../hooks/useFocusRequest';
@@ -40,6 +40,7 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
     handler: onFocusRequest,
   });
 
+  console.log(`LIST INPUT`, active);
   useListInput(activeKey, keys, {
     active,
     minus: `up`,
@@ -72,7 +73,7 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
 
     rendered.push(<Box key={key!} height={size}>
       <Box marginLeft={1} marginRight={1}>
-        {activeItem ? <Color cyan bold>{`>`}</Color> : ` `}
+        {activeItem ? <Text color={`cyan`} bold>{`>`}</Text> : <Text> </Text>}
       </Box>
       <Box>
         {React.cloneElement(children[t], {active: activeItem})}

@@ -1,5 +1,5 @@
-import {StdinContext}                                    from 'ink';
-import React, {useContext, useEffect, useMemo, useState} from 'react';
+import {useStdin}                            from 'ink';
+import React, {useEffect, useMemo, useState} from 'react';
 
 export const MinistoreContext = React.createContext<{
   getAll: () => Map<string, any>,
@@ -8,10 +8,12 @@ export const MinistoreContext = React.createContext<{
 } | null>(null);
 
 export const Application = ({children}: {children: React.ReactElement}) => {
-  const {setRawMode} = useContext(StdinContext);
+  const stdin = useStdin();
 
   useEffect(() => {
-    setRawMode && setRawMode(true);
+    if (stdin?.setRawMode) {
+      stdin.setRawMode(true);
+    }
   }, []);
 
   const [data, setData] = useState(new Map());

@@ -1,14 +1,22 @@
-import {StdinContext}          from 'ink';
-import {useContext, useEffect} from 'react';
+import {useStdin}  from 'ink';
+import {useEffect} from 'react';
 
 export const useListInput = function <T>(value: T, values: Array<T>, {active, minus, plus, set, loop = true}: {active: boolean, minus: string, plus: string, set: (value: T) => void, loop?: boolean}) {
-  const {stdin} = useContext(StdinContext);
+  const {stdin} = useStdin();
 
   useEffect(() => {
-    if (!active)
+    if (!active) {
+      // @ts-ignore
+      console.log(`NOT ACTIVE`);
       return undefined;
+    } else {
+      console.log(`ACTIVE`);
+    }
+
 
     const cb = (ch: any, key: any) => {
+      // @ts-ignore
+      console.log(`KEYPRESS`);
       const index = values.indexOf(value);
       switch (key.name) {
         case minus: {
@@ -40,9 +48,15 @@ export const useListInput = function <T>(value: T, values: Array<T>, {active, mi
       }
     };
 
-    stdin.on(`keypress`, cb);
-    return () => {
-      stdin.off(`keypress`, cb);
-    };
-  }, [values, value, active]);
+    if (stdin != null) {
+      stdin.on(`keypress`, cb);
+      return () => {
+        stdin.off(`keypress`, cb);
+      };
+    } else {
+      // @ts-ignore
+      console.log(`?`);
+      return undefined;
+    }
+  }, [values, value, active, stdin]);
 };

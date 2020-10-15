@@ -5,8 +5,8 @@ import {useMinistore}                        from '@yarnpkg/libui/sources/hooks/
 import {useSpace}                            from '@yarnpkg/libui/sources/hooks/useSpace';
 import {renderForm, SubmitInjectedComponent} from '@yarnpkg/libui/sources/misc/renderForm';
 import {Command, Usage}                      from 'clipanion';
-import InkTextInput, {InkTextInputProps}     from 'ink-text-input';
-import {Box, Text, Color}                    from 'ink';
+import InkTextInput                          from 'ink-text-input';
+import {Box, Text}                           from 'ink';
 import React, {useEffect, useState}          from 'react';
 
 import {AlgoliaPackage, search}              from '../algolia';
@@ -36,21 +36,31 @@ export default class SearchCommand extends BaseCommand {
         <Box flexDirection="row">
           <Box flexDirection="column" width={48}>
             <Box>
-             Press <Color bold cyanBright>{`<up>`}</Color>/<Color bold cyanBright>{`<down>`}</Color> to move between packages.
+              <Text>
+                Press <Text bold color="cyanBright">{`<up>`}</Text>/<Text bold color="cyanBright">{`<down>`}</Text> to move between packages.
+              </Text>
             </Box>
             <Box>
-             Press <Color bold cyanBright>{`<space>`}</Color> to select a package.
+              <Text>
+                Press <Text bold color="cyanBright">{`<space>`}</Text> to select a package.
+              </Text>
             </Box>
             <Box>
-              Press <Color bold cyanBright>{`<space>`}</Color> again to change the target.
+              <Text>
+                Press <Text bold color="cyanBright">{`<space>`}</Text> again to change the target.
+              </Text>
             </Box>
           </Box>
           <Box flexDirection="column">
             <Box marginLeft={1}>
-              Press <Color bold cyanBright>{`<enter>`}</Color> to install the selected packages.
+              <Text>
+                Press <Text bold color="cyanBright">{`<enter>`}</Text> to install the selected packages.
+              </Text>
             </Box>
             <Box marginLeft={1}>
-             Press <Color bold cyanBright>{`<ctrl+c>`}</Color> to abort.
+              <Text>
+                Press <Text bold color="cyanBright">{`<ctrl+c>`}</Text> to abort.
+              </Text>
             </Box>
           </Box>
         </Box>
@@ -59,14 +69,14 @@ export default class SearchCommand extends BaseCommand {
 
     const SearchColumnNames = () => {
       return <>
-        <Box width={15}><Color bold underline gray>Owner</Color></Box>
-        <Box width={11}><Color bold underline gray>Version</Color></Box>
-        <Box width={10}><Color bold underline gray>Downloads</Color></Box>
+        <Box width={15}><Text bold underline color="gray">Owner</Text></Box>
+        <Box width={11}><Text bold underline color="gray">Version</Text></Box>
+        <Box width={10}><Text bold underline color="gray">Downloads</Text></Box>
       </>;
     };
 
     const SelectedColumnNames = () => {
-      return <Box width={17}><Color bold underline gray>Target</Color></Box>;
+      return <Box width={17}><Text bold underline color="gray">Target</Text></Box>;
     };
 
     const HitEntry = ({hit, active}: {hit: AlgoliaPackage, active: boolean}) => {
@@ -94,23 +104,25 @@ export default class SearchCommand extends BaseCommand {
       const prettyIdent = structUtils.prettyIdent(configuration, ident);
 
       return <Box>
-        <Box width={45} textWrap="wrap">
-          <Text bold>
+        <Box width={45} >
+          <Text bold >
             {prettyIdent}
           </Text>
         </Box>
-        <Box width={14} textWrap="truncate" marginLeft={1}>
-          <Text bold>
+        <Box width={14} marginLeft={1}>
+          <Text bold wrap="truncate" >
             {hit.owner.name}
           </Text>
         </Box>
-        <Box width={10} textWrap="truncate" marginLeft={1}>
-          <Text italic>
+        <Box width={10} marginLeft={1}>
+          <Text italic wrap="truncate">
             {hit.version}
           </Text>
         </Box>
-        <Box width={16} textWrap="truncate" marginLeft={1}>
-          {hit.humanDownloadsLast30Days}
+        <Box width={16} marginLeft={1}>
+          <Text wrap="truncate">
+            {hit.humanDownloadsLast30Days}
+          </Text>
         </Box>
       </Box>;
     };
@@ -129,7 +141,7 @@ export default class SearchCommand extends BaseCommand {
         {targets.map(
           target =>
             <Box key={target} width={14} marginLeft={1}>
-              {action === target ? <Color green> ◉ </Color> : <Color yellow> ◯ </Color>}
+              {action === target ? <Text color="green"> ◉ </Text> : <Text color="yellow"> ◯ </Text>}
               <Text bold>{target}</Text>
             </Box>
         )}
@@ -187,17 +199,12 @@ export default class SearchCommand extends BaseCommand {
         }
       }, [query]);
 
-      // Typescript is having problems with
-      // recognizing InkTextInput as a valid
-      // JSX element for some reason...
-      const TextInput = InkTextInput as unknown as React.ComponentClass<InkTextInputProps>;
-
       return <Box flexDirection={`column`}>
         <Prompt />
         <Box flexDirection={`row`} marginTop={1}>
           <Text bold>Search: </Text>
           <Box width={41}>
-            <TextInput
+            <InkTextInput
               value={query}
               onChange={handleQueryOnChange}
               placeholder={`i.e. babel, webpack, react...`}
@@ -212,7 +219,7 @@ export default class SearchCommand extends BaseCommand {
             loop={false}
             children={hits.map(hit => <HitEntry key={hit.name} hit={hit} active={false} />)}
             willReachEnd={fetchNextPageHits}
-          /> : <Color gray>Start typing...</Color>
+          /> : <Text color="gray">Start typing...</Text>
         }
         <Box flexDirection={`row`} marginTop={1}>
           <Box width={49}>
@@ -223,7 +230,7 @@ export default class SearchCommand extends BaseCommand {
         {selectedPackages.length ?
           selectedPackages.map(
             name => <SelectedEntry key={name} name={name} active={false}/>
-          ) : <Color gray>No selected packages...</Color>
+          ) : <Text color="gray">No selected packages...</Text>
         }
         <PoweredByAlgolia />
       </Box>;
