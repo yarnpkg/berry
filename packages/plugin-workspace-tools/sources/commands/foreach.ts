@@ -1,13 +1,13 @@
-import {BaseCommand, WorkspaceRequiredError}                                   from '@yarnpkg/cli';
-import {Configuration, Descriptor, IdentHash, LocatorHash, Project, Workspace} from '@yarnpkg/core';
-import {DescriptorHash, MessageName, Report, StreamReport}                     from '@yarnpkg/core';
-import {formatUtils, miscUtils, structUtils}                                   from '@yarnpkg/core';
-import {Command, Usage, UsageError}                                            from 'clipanion';
-import micromatch                                                              from 'micromatch';
-import {cpus}                                                                  from 'os';
-import pLimit                                                                  from 'p-limit';
-import {Writable}                                                              from 'stream';
-import * as yup                                                                from 'yup';
+import {BaseCommand, WorkspaceRequiredError}               from '@yarnpkg/cli';
+import {Configuration, LocatorHash, Project, Workspace}    from '@yarnpkg/core';
+import {DescriptorHash, MessageName, Report, StreamReport} from '@yarnpkg/core';
+import {formatUtils, miscUtils, structUtils}               from '@yarnpkg/core';
+import {Command, Usage, UsageError}                        from 'clipanion';
+import micromatch                                          from 'micromatch';
+import {cpus}                                              from 'os';
+import pLimit                                              from 'p-limit';
+import {Writable}                                          from 'stream';
+import * as yup                                            from 'yup';
 
 /**
  * Retrieves all the child workspaces of a given root workspace recursively
