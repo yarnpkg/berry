@@ -33,6 +33,7 @@ export const ItemOptions = function <T>({
     {options.map(({label}, index) => {
       const boxWidth = sizes[index] - 1 || 0;
       const simpleLabel = label
+        // https://stackoverflow.com/a/29497680
         // eslint-disable-next-line no-control-regex
         .replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, ``);
 
