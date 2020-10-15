@@ -7393,15 +7393,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["@types/keypress", [
-        ["npm:2.0.30", {
-          "packageLocation": "./.yarn/cache/@types-keypress-npm-2.0.30-837cd97abb-eb1484c6fc.zip/node_modules/@types/keypress/",
-          "packageDependencies": [
-            ["@types/keypress", "npm:2.0.30"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["@types/keyv", [
         ["npm:3.1.1", {
           "packageLocation": "./.yarn/cache/@types-keyv-npm-3.1.1-779a80f2c7-3aaf557d5b.zip/node_modules/@types/keyv/",
@@ -9123,7 +9114,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/libui", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/yarnpkg-libui"],
             ["@types/ink", null],
-            ["@types/keypress", "npm:2.0.30"],
             ["@types/react", "npm:16.9.2"],
             ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.7"],
             ["keypress", "npm:0.2.1"],
@@ -9143,7 +9133,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/yarnpkg-libui/",
           "packageDependencies": [
             ["@yarnpkg/libui", "workspace:packages/yarnpkg-libui"],
-            ["@types/keypress", "npm:2.0.30"],
             ["@types/react", "npm:16.9.2"],
             ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.7"],
             ["keypress", "npm:0.2.1"],

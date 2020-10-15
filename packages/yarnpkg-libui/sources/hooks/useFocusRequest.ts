@@ -1,6 +1,7 @@
 import {useStdin}  from 'ink';
-import keypress    from 'keypress';
 import {useEffect} from 'react';
+
+const keypress = require(`keypress`);
 
 export enum FocusRequest {
   BEFORE = `before`,

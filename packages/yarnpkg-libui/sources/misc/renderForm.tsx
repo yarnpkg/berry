@@ -1,8 +1,9 @@
 import {useApp, useStdin, render} from 'ink';
-import keypress                   from 'keypress';
 import React, {useEffect}         from 'react';
 
 import {Application}              from '../components/Application';
+
+const keypress = require(`keypress`);
 
 type InferProps<T> = T extends React.ComponentType<infer P> ? P : never;
 

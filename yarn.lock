@@ -4392,13 +4392,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/keypress@npm:^2.0.30":
-  version: 2.0.30
-  resolution: "@types/keypress@npm:2.0.30"
-  checksum: eb1484c6fcfe32b52737b48eb9ef3babebbc75dc025f36a2f32d3918a0e368ec0abc76c1a2a9390d7db67be98a1b689132793ed29b1452048ec0bd98c5f85e9d
-  languageName: node
-  linkType: hard
-
 "@types/keyv@npm:*, @types/keyv@npm:^3.1.1":
   version: 3.1.1
   resolution: "@types/keyv@npm:3.1.1"
@@ -5673,7 +5666,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/libui@workspace:packages/yarnpkg-libui"
   dependencies:
-    "@types/keypress": ^2.0.30
     "@types/react": ^16.8.0
     ink: ^3.0.7
     keypress: ^0.2.1
@@ -5736,6 +5728,8 @@ __metadata:
     tslib: ^1.13.0
     typescript: 4.1.0-beta
   dependenciesMeta:
+    "@types/keypress@2.0.30":
+      unplugged: true
     core-js:
       built: false
     core-js-pure:

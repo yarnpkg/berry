@@ -42,6 +42,9 @@
     "typescript": "4.1.0-beta"
   },
   "dependenciesMeta": {
+    "@types/keypress@2.0.30": {
+      "unplugged": true
+    },
     "core-js": {
       "built": false
     },

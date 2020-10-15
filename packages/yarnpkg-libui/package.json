@@ -8,7 +8,6 @@
     "react": "^16.8.4"
   },
   "devDependencies": {
-    "@types/keypress": "^2.0.30",
     "@types/react": "^16.8.0",
     "ink": "^3.0.7",
     "keypress": "^0.2.1",

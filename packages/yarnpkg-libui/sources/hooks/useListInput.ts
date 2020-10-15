@@ -1,6 +1,7 @@
 import {useStdin}  from 'ink';
-import keypress    from 'keypress';
 import {useEffect} from 'react';
+
+const keypress = require(`keypress`);
 
 export const useListInput = function <T>(value: T, values: Array<T>, {active, minus, plus, set, loop = true}: {active: boolean, minus: string, plus: string, set: (value: T) => void, loop?: boolean}) {
   const {stdin} = useStdin();
