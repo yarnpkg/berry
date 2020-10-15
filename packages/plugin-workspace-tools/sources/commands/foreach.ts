@@ -1,13 +1,13 @@
-import {BaseCommand, WorkspaceRequiredError}               from '@yarnpkg/cli';
-import {Configuration, LocatorHash, Project, Workspace}    from '@yarnpkg/core';
-import {DescriptorHash, MessageName, Report, StreamReport} from '@yarnpkg/core';
-import {formatUtils, miscUtils, structUtils}               from '@yarnpkg/core';
-import {Command, Usage, UsageError}                        from 'clipanion';
-import micromatch                                          from 'micromatch';
-import {cpus}                                              from 'os';
-import pLimit                                              from 'p-limit';
-import {Writable}                                          from 'stream';
-import * as yup                                            from 'yup';
+import {BaseCommand, WorkspaceRequiredError}                                   from '@yarnpkg/cli';
+import {Configuration, Descriptor, IdentHash, LocatorHash, Project, Workspace} from '@yarnpkg/core';
+import {DescriptorHash, MessageName, Report, StreamReport}                     from '@yarnpkg/core';
+import {formatUtils, miscUtils, structUtils}                                   from '@yarnpkg/core';
+import {Command, Usage, UsageError}                                            from 'clipanion';
+import micromatch                                                              from 'micromatch';
+import {cpus}                                                                  from 'os';
+import pLimit                                                                  from 'p-limit';
+import {Writable}                                                              from 'stream';
+import * as yup                                                                from 'yup';
 
 /**
  * Retrieves all the child workspaces of a given root workspace recursively
@@ -28,6 +28,30 @@ const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Projec
   return workspaceList;
 };
 
+/**
+ * Find workspaces marked as dependencies/devDependencies of the current workspace recursively.
+ *
+ * @param rootWorkspace root workspace
+ * @param project project
+ *
+ * @returns all the workspaces marked as dependencies
+ */
+const getWorkspaceDependenciesRecursive = (rootWorkspace: Workspace, project: Project): Array<Workspace> => {
+  const workspaceList = [];
+  const dependencies = new Map([
+    ...rootWorkspace.manifest.dependencies,
+    ...rootWorkspace.manifest.devDependencies,
+  ]);
+  for (const descriptor of dependencies.values()) {
+    const foundWorkspace = project.tryWorkspaceByDescriptor(descriptor);
+    if (foundWorkspace !== null) {
+      workspaceList.push(foundWorkspace);
+      workspaceList.concat(getWorkspaceDependenciesRecursive(foundWorkspace, project));
+    }
+  }
+  return workspaceList;
+};
+
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesForeachCommand extends BaseCommand {
   @Command.String()
@@ -39,6 +63,9 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   // TODO: remove in next major
   @Command.Boolean(`-a`, {hidden: true})
   allLegacy: boolean = false;
+
+  @Command.Boolean(`-R,--recursive`, {description: `Find packages via dependencies/devDependencies instead of using the workspaces field`})
+  recursive: boolean = false;
 
   @Command.Boolean(`-A,--all`, {description: `Run the command on all workspaces of a project`})
   all?: boolean;
@@ -93,6 +120,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       - If \`-A,--all\` is set, Yarn will run the command on all the workspaces of a project. By default yarn runs the command only on current and all its descendant workspaces.
 
+      - If \`-R,--recursive\` is set, Yarn will find workspaces to run the command on by recursively evaluating \`dependencies\` and \`devDependencies\` fields, instead of looking at the \`workspaces\` fields.
+
       - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
       Adding the \`-v,--verbose\` flag will cause Yarn to print more information; in particular the name of the workspace that generated the output will be printed at the front of each line.
@@ -132,7 +161,10 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       ? project.topLevelWorkspace
       : cwdWorkspace!;
 
-    const candidates = [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
+    const candidates = this.recursive
+      ? [rootWorkspace, ...getWorkspaceDependenciesRecursive(rootWorkspace, project)]
+      : [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
+
     const workspaces: Array<Workspace> = [];
 
     for (const workspace of candidates) {
