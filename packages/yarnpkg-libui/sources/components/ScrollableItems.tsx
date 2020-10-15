@@ -40,7 +40,6 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
     handler: onFocusRequest,
   });
 
-  console.log(`LIST INPUT`, active);
   useListInput(activeKey, keys, {
     active,
     minus: `up`,

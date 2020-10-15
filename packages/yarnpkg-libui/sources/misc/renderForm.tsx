@@ -1,4 +1,5 @@
 import {useApp, useStdin, render} from 'ink';
+import keypress                   from 'keypress';
 import React, {useEffect}         from 'react';
 
 import {Application}              from '../components/Application';
@@ -23,6 +24,7 @@ export async function renderForm<T, C = React.ComponentType>(UserComponent: Subm
       };
 
       if (stdin != null) {
+        keypress(stdin);
         stdin.on(`keypress`, cb);
         return () => {
           stdin.off(`keypress`, cb);

@@ -4392,6 +4392,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/keypress@npm:^2.0.30":
+  version: 2.0.30
+  resolution: "@types/keypress@npm:2.0.30"
+  checksum: eb1484c6fcfe32b52737b48eb9ef3babebbc75dc025f36a2f32d3918a0e368ec0abc76c1a2a9390d7db67be98a1b689132793ed29b1452048ec0bd98c5f85e9d
+  languageName: node
+  linkType: hard
+
 "@types/keyv@npm:*, @types/keyv@npm:^3.1.1":
   version: 3.1.1
   resolution: "@types/keyv@npm:3.1.1"
@@ -5666,8 +5673,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/libui@workspace:packages/yarnpkg-libui"
   dependencies:
+    "@types/keypress": ^2.0.30
     "@types/react": ^16.8.0
     ink: ^3.0.7
+    keypress: ^0.2.1
     react: ^16.13.1
     redux: ^4.0.0
     tslib: ^1.13.0
@@ -17433,6 +17442,13 @@ fsevents@^1.2.7:
   version: 0.7.0
   resolution: "kew@npm:0.7.0"
   checksum: be928d4248c934f38edda580144533bc93751f6b81d34e01cb1ff4196e63faf8957f5d54e7ef5c6529cbfdcc8f63a1acd53511e20955744b27c7eae965445775
+  languageName: node
+  linkType: hard
+
+"keypress@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "keypress@npm:0.2.1"
+  checksum: 58e7a757c806feed7800789a926721351eba50201da6db0d9646a43c855efadac3efe69b9ed0ea53dcef3f0b4bf4e76b4d2ab72f51a60af16cb335dd5ad03c30
   languageName: node
   linkType: hard
 

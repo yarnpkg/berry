@@ -197,7 +197,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           <Text bold>
             {structUtils.prettyIdent(configuration, descriptor)}
           </Text>
-          <Text dimColor>
+          <Text dimColor={!active}>
             {` `.padEnd(padLength, `_`)}
           </Text>
         </Box>

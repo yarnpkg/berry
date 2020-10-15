@@ -1,4 +1,5 @@
 import {useStdin}  from 'ink';
+import keypress    from 'keypress';
 import {useEffect} from 'react';
 
 export enum FocusRequest {
@@ -27,6 +28,7 @@ export const useFocusRequest = function ({active, handler}: {active: boolean, ha
     };
 
     if (stdin != null) {
+      keypress(stdin);
       stdin.on(`keypress`, cb);
       return () => {
         stdin.off(`keypress`, cb);
