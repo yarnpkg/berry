@@ -3536,6 +3536,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
+        ["npm:7.11.2", {
+          "packageLocation": "./.yarn/cache/@babel-runtime-npm-7.11.2-f2cfabd212-2f127ad60a.zip/node_modules/@babel/runtime/",
+          "packageDependencies": [
+            ["@babel/runtime", "npm:7.11.2"],
+            ["regenerator-runtime", "npm:0.13.5"]
+          ],
+          "linkType": "HARD",
+        }],
         ["npm:7.9.2", {
           "packageLocation": "./.yarn/cache/@babel-runtime-npm-7.9.2-68b4224984-50c65b4972.zip/node_modules/@babel/runtime/",
           "packageDependencies": [
@@ -7625,6 +7633,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@types/react-scroll-into-view-if-needed", [
+        ["npm:2.1.0", {
+          "packageLocation": "./.yarn/cache/@types-react-scroll-into-view-if-needed-npm-2.1.0-758a95a2db-ec7ffa8350.zip/node_modules/@types/react-scroll-into-view-if-needed/",
+          "packageDependencies": [
+            ["@types/react-scroll-into-view-if-needed", "npm:2.1.0"],
+            ["@types/react", "npm:16.9.2"],
+            ["scroll-into-view-if-needed", "npm:2.2.26"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@types/react-select", [
         ["npm:3.0.11", {
           "packageLocation": "./.yarn/cache/@types-react-select-npm-3.0.11-07a6c5dcc9-0521bc2313.zip/node_modules/@types/react-select/",
@@ -8949,6 +8968,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/lodash", "npm:4.14.136"],
             ["@types/marked", "npm:1.1.0"],
             ["@types/react", "npm:16.9.2"],
+            ["@types/react-scroll-into-view-if-needed", "npm:2.1.0"],
             ["@types/react-select", "npm:3.0.11"],
             ["@types/tinycolor2", "npm:1.4.2"],
             ["algoliasearch", "npm:4.2.0"],
@@ -8972,7 +8992,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["gatsby-plugin-react-helmet", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.3.4"],
             ["gatsby-plugin-remove-trailing-slashes", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.5"],
             ["gatsby-plugin-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.6.11"],
-            ["gatsby-remark-autolink-headers", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.5"],
+            ["gatsby-remark-autolink-headers", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.15"],
             ["gatsby-remark-prismjs", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.5.4"],
             ["gatsby-remark-table-of-contents", "https://github.com/arcanis/gatsby-remark-table-of-contents.git#commit=d2c703bb06801ae992513f14599cde84d03a4aac"],
             ["gatsby-source-filesystem", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.0.23"],
@@ -8998,6 +9018,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-icons", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.11.0"],
             ["react-instantsearch-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:6.6.0"],
             ["react-monaco-editor", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:0.36.0"],
+            ["react-scroll-into-view-if-needed", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.1.7"],
             ["react-select", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.1.0"],
             ["react-spinners", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:0.8.3"],
             ["react-tooltip", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:4.2.7"],
@@ -13772,6 +13793,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/compute-scroll-into-view-npm-1.0.13-a90e6ae136-2db9cd1e84.zip/node_modules/compute-scroll-into-view/",
           "packageDependencies": [
             ["compute-scroll-into-view", "npm:1.0.13"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:1.0.16", {
+          "packageLocation": "./.yarn/cache/compute-scroll-into-view-npm-1.0.16-a8a68c1929-5ba65c11c7.zip/node_modules/compute-scroll-into-view/",
+          "packageDependencies": [
+            ["compute-scroll-into-view", "npm:1.0.16"]
           ],
           "linkType": "HARD",
         }]
@@ -19032,15 +19060,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["gatsby-remark-autolink-headers", [
-        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.5", {
-          "packageLocation": "./.yarn/$$virtual/gatsby-remark-autolink-headers-virtual-60ffca1ecd/0/cache/gatsby-remark-autolink-headers-npm-2.3.5-af00f3c51b-45fb266c00.zip/node_modules/gatsby-remark-autolink-headers/",
+        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.15", {
+          "packageLocation": "./.yarn/$$virtual/gatsby-remark-autolink-headers-virtual-bfbcf92687/0/cache/gatsby-remark-autolink-headers-npm-2.3.15-6682dd297d-bd2a4dd3d0.zip/node_modules/gatsby-remark-autolink-headers/",
           "packageDependencies": [
-            ["gatsby-remark-autolink-headers", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.5"],
-            ["@babel/runtime", "npm:7.10.2"],
+            ["gatsby-remark-autolink-headers", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.15"],
+            ["@babel/runtime", "npm:7.11.2"],
             ["@types/gatsby", null],
             ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.23.3"],
             ["github-slugger", "npm:1.3.0"],
-            ["lodash", "npm:4.17.15"],
+            ["lodash", "npm:4.17.20"],
             ["mdast-util-to-string", "npm:1.1.0"],
             ["unist-util-visit", "npm:1.4.1"]
           ],
@@ -23926,6 +23954,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/lodash-npm-4.17.15-566d9324f7-aec3fbb757.zip/node_modules/lodash/",
           "packageDependencies": [
             ["lodash", "npm:4.17.15"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:4.17.20", {
+          "packageLocation": "./.yarn/cache/lodash-npm-4.17.20-c0db62021c-c62101d250.zip/node_modules/lodash/",
+          "packageDependencies": [
+            ["lodash", "npm:4.17.20"]
           ],
           "linkType": "HARD",
         }]
@@ -29240,6 +29275,25 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["react-scroll-into-view-if-needed", [
+        ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.1.7", {
+          "packageLocation": "./.yarn/$$virtual/react-scroll-into-view-if-needed-virtual-62da9c8a36/0/cache/react-scroll-into-view-if-needed-npm-2.1.7-27d82a1caa-4aab279281.zip/node_modules/react-scroll-into-view-if-needed/",
+          "packageDependencies": [
+            ["react-scroll-into-view-if-needed", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.1.7"],
+            ["@types/prop-types", null],
+            ["@types/react", "npm:16.9.2"],
+            ["prop-types", "npm:15.7.2"],
+            ["react", "npm:16.13.1"]
+          ],
+          "packagePeers": [
+            "@types/prop-types",
+            "@types/react",
+            "prop-types",
+            "react"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["react-select", [
         ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.1.0", {
           "packageLocation": "./.yarn/$$virtual/react-select-virtual-6f1c9910d0/0/cache/react-select-npm-3.1.0-1b47d8a245-95881de591.zip/node_modules/react-select/",
@@ -30762,6 +30816,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["scroll-into-view-if-needed", "npm:2.2.24"],
             ["compute-scroll-into-view", "npm:1.0.13"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:2.2.26", {
+          "packageLocation": "./.yarn/cache/scroll-into-view-if-needed-npm-2.2.26-4019eaf45c-652f1924f5.zip/node_modules/scroll-into-view-if-needed/",
+          "packageDependencies": [
+            ["scroll-into-view-if-needed", "npm:2.2.26"],
+            ["compute-scroll-into-view", "npm:1.0.16"]
           ],
           "linkType": "HARD",
         }]

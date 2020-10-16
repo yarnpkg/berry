@@ -42,3 +42,7 @@ th {
 th:last-child {
   width: 100%;
 }
+
+.header-code {
+  font-size: 1em;
+}

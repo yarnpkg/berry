@@ -1608,6 +1608,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.11.2":
+  version: 7.11.2
+  resolution: "@babel/runtime@npm:7.11.2"
+  dependencies:
+    regenerator-runtime: ^0.13.4
+  checksum: 2f127ad60a0f0568faa0044e5b48329d8166c7fd3a0a3ce774070010a1c441ebf5570f526dd6bb26e214fb1a01bb987ab6a4c3f60a00f04d02448939f4c61e1e
+  languageName: node
+  linkType: hard
+
 "@babel/standalone@npm:^7.10.2":
   version: 7.10.2
   resolution: "@babel/standalone@npm:7.10.2"
@@ -4581,6 +4590,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-scroll-into-view-if-needed@npm:^2":
+  version: 2.1.0
+  resolution: "@types/react-scroll-into-view-if-needed@npm:2.1.0"
+  dependencies:
+    "@types/react": "*"
+    scroll-into-view-if-needed: "*"
+  checksum: ec7ffa8350b2913bf52cf9a490a934e8f567849a267bef1dcbda219125b18751c6619804f722206e5d4a2b9789d0d54e1b2573f071950dd8b4675dc77c0eba83
+  languageName: node
+  linkType: hard
+
 "@types/react-select@npm:3.0.11":
   version: 3.0.11
   resolution: "@types/react-select@npm:3.0.11"
@@ -5549,6 +5568,7 @@ __metadata:
     "@types/lodash": ^4.14.136
     "@types/marked": ^1.1.0
     "@types/react": ^16.8.0
+    "@types/react-scroll-into-view-if-needed": ^2
     "@types/react-select": 3.0.11
     "@types/tinycolor2": 1.4.2
     algoliasearch: ^4.2.0
@@ -5572,7 +5592,7 @@ __metadata:
     gatsby-plugin-react-helmet: ^3.3.4
     gatsby-plugin-remove-trailing-slashes: ^2.3.5
     gatsby-plugin-sharp: ^2.6.11
-    gatsby-remark-autolink-headers: ^2.3.5
+    gatsby-remark-autolink-headers: ^2.3.15
     gatsby-remark-prismjs: ^3.5.4
     gatsby-remark-table-of-contents: "arcanis/gatsby-remark-table-of-contents#patch-1"
     gatsby-source-filesystem: ^2.0.23
@@ -5598,6 +5618,7 @@ __metadata:
     react-icons: ^3.10.0
     react-instantsearch-dom: ^6.6.0
     react-monaco-editor: ^0.36.0
+    react-scroll-into-view-if-needed: ^2.1.7
     react-select: ^3.1.0
     react-spinners: ^0.8.3
     react-tooltip: ^4.2.7
@@ -9115,6 +9136,13 @@ __metadata:
   version: 1.0.13
   resolution: "compute-scroll-into-view@npm:1.0.13"
   checksum: 2db9cd1e84bb385744835df046867c08bb5f24b4200a2c14d0601b09b31f4b9364956d74e0ded3e42f1693fe391c576718e0ae48de0ce8b3284a628f82a857a7
+  languageName: node
+  linkType: hard
+
+"compute-scroll-into-view@npm:^1.0.16":
+  version: 1.0.16
+  resolution: "compute-scroll-into-view@npm:1.0.16"
+  checksum: 5ba65c11c79a0accfced384842f40fc4e6d91d1308c0e49a5f9fa6a17160aef1cf4ea1cc854ecedd813ef8742b3b4d4e7dd8a14880aa39efc3359fb674bac8ba
   languageName: node
   linkType: hard
 
@@ -13216,18 +13244,18 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"gatsby-remark-autolink-headers@npm:^2.3.5":
-  version: 2.3.5
-  resolution: "gatsby-remark-autolink-headers@npm:2.3.5"
+"gatsby-remark-autolink-headers@npm:^2.3.15":
+  version: 2.3.15
+  resolution: "gatsby-remark-autolink-headers@npm:2.3.15"
   dependencies:
-    "@babel/runtime": ^7.10.2
+    "@babel/runtime": ^7.11.2
     github-slugger: ^1.3.0
-    lodash: ^4.17.15
+    lodash: ^4.17.20
     mdast-util-to-string: ^1.1.0
     unist-util-visit: ^1.4.1
   peerDependencies:
     gatsby: ^2.0.0
-  checksum: 45fb266c00b99cfe51e2dfea8bba1b6127f84c2f19584c74d28dcbcd9349916a08ac724f5bf6053a7a71be33c358665198f1f7b87376788c4b84341e258bc2db
+  checksum: bd2a4dd3d0ad42cb74a384fa68c60f9e3b8bf65a6f2bb5c15d2a4fcbe75455d99a57c8e118b4d85b87f2c83d2d5205ed11a00e04d8b225ca140a7e2105ba5799
   languageName: node
   linkType: hard
 
@@ -17878,6 +17906,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"lodash@npm:^4.17.20":
+  version: 4.17.20
+  resolution: "lodash@npm:4.17.20"
+  checksum: c62101d2500c383b5f174a7e9e6fe8098149ddd6e9ccfa85f36d4789446195f5c4afd3cfba433026bcaf3da271256566b04a2bf2618e5a39f6e67f8c12030cb6
+  languageName: node
+  linkType: hard
+
 "log-update@npm:^3.0.0":
   version: 3.2.0
   resolution: "log-update@npm:3.2.0"
@@ -22281,6 +22316,16 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"react-scroll-into-view-if-needed@npm:^2.1.7":
+  version: 2.1.7
+  resolution: "react-scroll-into-view-if-needed@npm:2.1.7"
+  peerDependencies:
+    prop-types: ^15.6.1
+    react: ^16.0.0
+  checksum: 4aab2792810d18b707ef1459efa00bc9f01a1c86b960a4a332e3af4e5092bf2bf61420cc6552ae8f9a64433d63b77c3921e3ec47dd9a02d1cd07ba504cd8de6b
+  languageName: node
+  linkType: hard
+
 "react-select@npm:^3.1.0":
   version: 3.1.0
   resolution: "react-select@npm:3.1.0"
@@ -23683,6 +23728,15 @@ resolve@1.9.0:
     dom-helpers: ^3.4.0
     invariant: ^2.2.4
   checksum: 4bb66eb5b8ed4e23f58c1f8436b0a351cb2e299723540b1bc79017536e057d80f92991b8f8ad07feca62eec08da312b822bf50cab88f04dcae6c27fdd23ebbc9
+  languageName: node
+  linkType: hard
+
+"scroll-into-view-if-needed@npm:*":
+  version: 2.2.26
+  resolution: "scroll-into-view-if-needed@npm:2.2.26"
+  dependencies:
+    compute-scroll-into-view: ^1.0.16
+  checksum: 652f1924f5c60eebb019f6144d5cc884fda36413ff71a49ec5bed22455451bfe563e73a28dc76617f9778f6ae19c3c5bbf17378d0ab5bfce95d41ec9eb6dc623
   languageName: node
   linkType: hard
 
