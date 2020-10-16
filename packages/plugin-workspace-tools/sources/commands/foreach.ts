@@ -36,17 +36,20 @@ const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Projec
  *
  * @returns all the workspaces marked as dependencies
  */
-const getWorkspaceDependenciesRecursive = (rootWorkspace: Workspace, project: Project): Array<Workspace> => {
-  const workspaceList = [];
+const getWorkspaceDependenciesRecursive = (rootWorkspace: Workspace, project: Project, evaluated: Set<Workspace>): Set<Workspace> => {
+  const workspaceList = new Set<Workspace>(evaluated);
   const dependencies = new Map([
     ...rootWorkspace.manifest.dependencies,
     ...rootWorkspace.manifest.devDependencies,
   ]);
   for (const descriptor of dependencies.values()) {
     const foundWorkspace = project.tryWorkspaceByDescriptor(descriptor);
-    if (foundWorkspace !== null) {
-      workspaceList.push(foundWorkspace);
-      workspaceList.concat(getWorkspaceDependenciesRecursive(foundWorkspace, project));
+    if (foundWorkspace !== null && !workspaceList.has(foundWorkspace)) {
+      workspaceList.add(foundWorkspace);
+      const nestedWorkspaces = getWorkspaceDependenciesRecursive(foundWorkspace, project, workspaceList);
+      for (const nestedWorkspace of nestedWorkspaces) {
+        workspaceList.add(nestedWorkspace);
+      }
     }
   }
   return workspaceList;
@@ -162,8 +165,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       : cwdWorkspace!;
 
     const candidates = this.recursive
-      ? [rootWorkspace, ...getWorkspaceDependenciesRecursive(rootWorkspace, project)]
-      : [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project, new Set())];
+      ? [rootWorkspace, ...getWorkspaceDependenciesRecursive(rootWorkspace, project, new Set())]
+      : [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
 
     const workspaces: Array<Workspace> = [];
 
