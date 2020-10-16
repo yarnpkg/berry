@@ -17,16 +17,12 @@ import * as yup                                            from 'yup';
  *
  * @returns all the child workspaces
  */
-const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Project, evaluated: Set<Workspace>): Set<Workspace> => {
-  const workspaceList = new Set<Workspace>(evaluated);
+const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Project): Array<Workspace> => {
+  const workspaceList = [];
   for (const childWorkspaceCwd of rootWorkspace.workspacesCwds) {
     const childWorkspace = project.workspacesByCwd.get(childWorkspaceCwd);
-    if (childWorkspace && !workspaceList.has(childWorkspace)) {
-      workspaceList.add(childWorkspace);
-      const nested = getWorkspaceChildrenRecursive(childWorkspace, project, workspaceList);
-      for (const nestedWorkspace of nested) {
-        workspaceList.add(nestedWorkspace);
-      }
+    if (childWorkspace) {
+      workspaceList.push(childWorkspace, ...getWorkspaceChildrenRecursive(childWorkspace, project));
     }
   }
   return workspaceList;
