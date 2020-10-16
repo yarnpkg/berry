@@ -1,8 +1,8 @@
 'use strict';
 
-const {EOL} = require('os');
-const path = require('path');
-const ts = require('typescript');
+const {EOL} = require(`os`);
+const path = require(`path`);
+const ts = require(`typescript`);
 
 /**
  * @param {string} tsConfigPath
@@ -37,7 +37,7 @@ exports.compile = compile;
  * @param {readonly import('typescript').Diagnostic[]} allDiagnostics
  */
 function reportErrors(allDiagnostics) {
-  const errorsAndWarnings = allDiagnostics.filter(function(d) {
+  const errorsAndWarnings = allDiagnostics.filter(d => {
     return d.category !== ts.DiagnosticCategory.Message;
   });
 
