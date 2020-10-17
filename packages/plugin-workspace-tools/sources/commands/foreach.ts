@@ -36,22 +36,21 @@ const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Projec
  *
  * @returns all the workspaces marked as dependencies
  */
-const getWorkspaceDependenciesRecursive = (rootWorkspace: Workspace, project: Project, evaluated: Set<Workspace>): Set<Workspace> => {
-  const workspaceList = new Set<Workspace>(evaluated);
-  const dependencies = new Map([
-    ...rootWorkspace.manifest.dependencies,
-    ...rootWorkspace.manifest.devDependencies,
-  ]);
-  for (const descriptor of dependencies.values()) {
-    const foundWorkspace = project.tryWorkspaceByDescriptor(descriptor);
-    if (foundWorkspace !== null && !workspaceList.has(foundWorkspace)) {
-      workspaceList.add(foundWorkspace);
-      const nestedWorkspaces = getWorkspaceDependenciesRecursive(foundWorkspace, project, workspaceList);
-      for (const nestedWorkspace of nestedWorkspaces) {
-        workspaceList.add(nestedWorkspace);
+const getWorkspaceDependenciesRecursive = (rootWorkspace: Workspace, project: Project): Set<Workspace> => {
+  const workspaceList = new Set<Workspace>();
+
+  const visitWorkspace = (workspace: Workspace) => {
+    const dependencies = new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]);
+    for (const descriptor of dependencies.values()) {
+      const foundWorkspace = project.tryWorkspaceByDescriptor(descriptor);
+      if (foundWorkspace !== null && !workspaceList.has(foundWorkspace)) {
+        workspaceList.add(foundWorkspace);
+        visitWorkspace(foundWorkspace);
       }
     }
-  }
+  };
+
+  visitWorkspace(rootWorkspace);
   return workspaceList;
 };
 
@@ -165,7 +164,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       : cwdWorkspace!;
 
     const candidates = this.recursive
-      ? [rootWorkspace, ...getWorkspaceDependenciesRecursive(rootWorkspace, project, new Set())]
+      ? [rootWorkspace, ...getWorkspaceDependenciesRecursive(rootWorkspace, project)]
       : [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
 
     const workspaces: Array<Workspace> = [];
