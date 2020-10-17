@@ -200,7 +200,7 @@ const IndexPage = ({data, searchState, onSearchStateChange}) => {
                   <h3>Workspaces</h3>
                   Split your project into sub-components kept within a single repository.
                 </SellingPoint>
-                <SellingPoint imgUrl={laptopIcon} href="features/zero-installs#how-does-yarn-impact-a-projects-stability">
+                <SellingPoint imgUrl={laptopIcon} href="/features/zero-installs#how-does-yarn-impact-a-projects-stability">
                   <h3>Stability</h3>
                   Yarn guarantees that an install that works now will continue to work the same way in the future.
                 </SellingPoint>
