@@ -81,21 +81,11 @@ Writing this file can be tedious; fortunately `yarn version check` implements a 
 
 The [`changesetIgnorePatterns`](/configuration/yarnrc#changesetIgnorePatterns) configuration option can be used to ignore files when checking which files have changed. It is useful for excluding files that don't affect the release process (e.g. test files).
 
-### Use with GitHub Actions
+### Caveat
 
-#### Workflow
+#### Commit history
 
-Because the `version check` can be done quickly and independently of the rest of your CI workflow, it is recommended to run this check before installing dependencies to ensure it fails quickly. 
-
-```yaml
-- run: yarn version check 
-- run: yarn install
-- run: yarn test
-```
-
-
-#### Git Ancestries
-The `version` plugin requires access to Git's ancestry in order to be able to correctly infer which packages require version documents. When using the `actions/checkout@v2` or greater action on GitHub, the default behavior is for Git to fetch just the version being checked. To correct this, you will need to set a `fetch-depth` configuration value of zero to fetch all Git history:
+The `version` plugin requires access to the commit history in order to be able to correctly infer which packages require release specifications. In particular, when using GitHub Actions with `actions/checkout@v2` or greater the default behavior is for Git to fetch just the version being checked, which would cause problems. To correct this, you will need to override the `fetch-depth` configuration value to fetch the whole commit history:
 
 ```yaml
 - uses: actions/checkout@v2
