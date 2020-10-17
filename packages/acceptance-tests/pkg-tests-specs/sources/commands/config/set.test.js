@@ -1,4 +1,5 @@
 import {xfs} from '@yarnpkg/fslib';
+import {EOL} from 'os';
 
 describe(`Commands`, () => {
   describe(`config set`, () => {
@@ -36,8 +37,8 @@ describe(`Commands`, () => {
         expect(stdout).toContain(`npmAlwaysAuth: false`);
 
         await expect(xfs.readFilePromise(`${path}/.yarnrc.yml`, `utf8`)).resolves.toContain(
-          `npmScopes:\n` +
-          `  yarnpkg:\n` +
+          `npmScopes:${EOL}` +
+          `  yarnpkg:${EOL}` +
           `    npmAlwaysAuth: false`,
         );
       }),
