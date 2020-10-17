@@ -235,7 +235,7 @@ export default class AuditCommand extends BaseCommand {
     return transformDescriptorIterableToRequiresObject([
       ...requiredDependencies,
       ...requiredDevDependencies,
-    ]);
+    ].filter(dependency => structUtils.parseRange(dependency.range).protocol == null));
   }
 
   private getDependencies(project: Project, workspace: Workspace) {
@@ -276,7 +276,7 @@ function transformDescriptorIterableToRequiresObject(
   return Array.from(descriptors).reduce(
     (acc, cur) => ({
       ...acc,
-      [structUtils.stringifyIdent(cur)]: cur.range,
+      [structUtils.stringifyIdent(cur)]: structUtils.parseRange(cur.range).selector,
     }),
     {}
   );
