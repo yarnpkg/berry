@@ -45,3 +45,7 @@ export function match(pattern: string, {cwd, baseFs}: {cwd: PortablePath, baseFs
     fs: extendFs(fs, new PosixFS(baseFs)),
   });
 }
+
+export function isBraceExpansion(pattern: string) {
+  return micromatch.scan(pattern, micromatchOptions).isBrace;
+}

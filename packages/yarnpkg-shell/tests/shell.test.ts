@@ -176,7 +176,7 @@ describe(`Shell`, () => {
       });
     });
 
-    it(`should immediatly stop the execution when calling 'exit'`, async () => {
+    it(`should immediately stop the execution when calling 'exit'`, async () => {
       await expect(bufferResult(
         `echo hello; exit 1; echo world`,
       )).resolves.toMatchObject({
@@ -272,103 +272,6 @@ describe(`Shell`, () => {
       });
     });
 
-    it(`should expose the previous exit code via $?`, async () => {
-      await expect(bufferResult(
-        `true; echo $?`,
-      )).resolves.toMatchObject({
-        stdout: `0\n`,
-      });
-
-      await expect(bufferResult(
-        `false; echo $?`,
-      )).resolves.toMatchObject({
-        stdout: `1\n`,
-      });
-    });
-
-    it(`should expose the number of arguments via $#`, async () => {
-      await expect(bufferResult(
-        `echo $#`,
-      )).resolves.toMatchObject({
-        stdout: `0\n`,
-      });
-
-      await expect(bufferResult(
-        `echo $#`,
-        [`hello`, `world`],
-      )).resolves.toMatchObject({
-        stdout: `2\n`,
-      });
-    });
-
-    it(`should expose individual arguments via $0, $1, ..., $n`, async () => {
-      await expect(bufferResult(
-        `echo $0`,
-        [`hello`, `world`],
-      )).resolves.toMatchObject({
-        stdout: `hello\n`,
-      });
-
-      await expect(bufferResult(
-        `echo $1`,
-        [`hello`, `world`],
-      )).resolves.toMatchObject({
-        stdout: `world\n`,
-      });
-    });
-
-    it(`should support argument spread via $@`, async () => {
-      await expect(bufferResult(
-        `node -p 'JSON.stringify(process.argv.slice(1))' "$@"`,
-        [`hello`, `world`],
-      )).resolves.toMatchObject({
-        stdout: `["hello","world"]\n`,
-      });
-    });
-
-    it(`should expose the shell pid via $$`, async () => {
-      await expect(bufferResult(
-        `echo $$`
-      )).resolves.toMatchObject({
-        // The shell runs in the same process as the tests
-        stdout: `${process.pid}\n`,
-      });
-    });
-
-    it(`should expose the shell ppid via $PPID`, async () => {
-      await expect(bufferResult(
-        `echo $PPID`
-      )).resolves.toMatchObject({
-        // The shell runs in the same process as the tests
-        stdout: `${process.ppid}\n`,
-      });
-    });
-
-    it(`should set environment variables`, async () => {
-      await expect(bufferResult(
-        `PORT=1234 node -e 'process.stdout.write(process.env.PORT)'`
-      )).resolves.toMatchObject({
-        stdout: `1234`,
-      });
-    });
-
-    it(`should support setting multiple environment variables`, async () => {
-      await expect(bufferResult(
-        `HOST="localhost" PORT=1234 node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`
-      )).resolves.toMatchObject({
-        stdout: `localhost:1234`,
-      });
-    });
-
-    it(`should support setting environment variables with shell interpolation`, async () => {
-      await expect(bufferResult(
-        `HOST="local"$(echo $0) PORT=1234 node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`,
-        [`host`]
-      )).resolves.toMatchObject({
-        stdout: `localhost:1234`,
-      });
-    });
-
     it(`should interpolate subshells with the proper split`, async () => {
       await expect(bufferResult(
         `echo $(echo foo)bar`,
@@ -382,98 +285,6 @@ describe(`Shell`, () => {
         `echo $(echo 'foo      bar')bar`,
       )).resolves.toMatchObject({
         stdout: `foo barbar\n`,
-      });
-    });
-
-    it(`should support setting env variable without command`, async () => {
-      await expect(bufferResult([
-        `FOO=1`,
-        `FOO=2`,
-        `node -e 'process.stdout.write(process.env.FOO)'`,
-      ].join(` ; `))).resolves.toMatchObject({
-        stdout: `2`,
-      });
-    });
-
-    it(`should evaluate variables once before starting execution`, async () => {
-      await expect(bufferResult([
-        `FOO=1`,
-        `FOO=2 echo $FOO`,
-      ].join(` ; `))).resolves.toMatchObject({
-        stdout: `1\n`,
-      });
-    });
-
-    it(`should clear an env variable if value is omitted`, async () => {
-      await expect(bufferResult(
-        `HOST="localhost" PORT=1234 HOST= node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`
-      )).resolves.toMatchObject({
-        stdout: `:1234`,
-      });
-    });
-
-    it(`env assignment prefix syntax shouldn't persist it to the environment`, async () => {
-      await expect(bufferResult([
-        `FOO=1`,
-        `FOO=2 echo hello`,
-        `echo $FOO`,
-      ].join(` ; `))).resolves.toMatchObject({
-        stdout: `hello\n1\n`,
-      });
-
-      await expect(bufferResult([
-        `FOO=1`,
-        `FOO=2 echo hello`,
-        `node -e 'process.stdout.write(process.env.FOO)'`,
-      ].join(` ; `))).resolves.toMatchObject({
-        stdout: `hello\n1`,
-      });
-
-      await expect(bufferResult(`FOO=2 echo hello ; echo $FOO`)).rejects.toThrowError(/Unbound variable/);
-    });
-
-    it(`should support multiple env assignment without command`, async () => {
-      await expect(bufferResult([
-        `FOO=1 BAR=2`,
-        `echo hello`,
-        `echo $BAR`,
-      ].join(` ; `))).resolves.toMatchObject({
-        stdout: `hello\n2\n`,
-      });
-    });
-
-    it(`should support using environment variables`, async () => {
-      await expect(bufferResult(
-        `echo $FOOBAR`,
-        [],
-        {env: {FOOBAR: `hello world`}}
-      )).resolves.toMatchObject({
-        stdout: `hello world\n`,
-      });
-    });
-
-    it(`should support default arguments via \${ARG:-...}`, async () => {
-      await expect(bufferResult(
-        `echo "\${DOESNT_EXIST:-hello world}"`,
-      )).resolves.toMatchObject({
-        stdout: `hello world\n`,
-      });
-    });
-
-    it(`should support default arguments via \${N:-...}`, async () => {
-      await expect(bufferResult(
-        `echo "\${1:-hello world}"`,
-        [],
-      )).resolves.toMatchObject({
-        stdout: `hello world\n`,
-      });
-    });
-
-    it(`should support empty default arguments`, async () => {
-      await expect(bufferResult(
-        `echo "foo\${DOESNT_EXIST:-}bar"`,
-      )).resolves.toMatchObject({
-        stdout: `foobar\n`,
       });
     });
 
@@ -536,7 +347,9 @@ describe(`Shell`, () => {
     it(`shouldn't allow subshells to mutate the state of the parent shell`, async () => {
       await expect(bufferResult(
         `(FOO=hello); echo $FOO`,
-      )).rejects.toThrowError(`Unbound variable "FOO"`);
+      )).resolves.toMatchObject({
+        stderr: `Unbound variable "FOO"\n`,
+      });
     });
 
     it(`should allow groups to mutate the state of the current shell`, async () => {
@@ -546,36 +359,261 @@ describe(`Shell`, () => {
         stdout: `hello\n`,
       });
     });
+  });
 
-    it(`should support the RANDOM variable`, async () => {
-      async function getNumbers(result: Promise<{ exitCode: number; stdout: string; stderr: string; }>): Promise<Array<number>> {
-        const {exitCode, stdout, stderr} = await result;
+  describe(`Variables`, () => {
+    describe(`Built-in variables`, () => {
+      it(`should expose the previous exit code via $?`, async () => {
+        await expect(bufferResult(
+          `true; echo $?`,
+        )).resolves.toMatchObject({
+          stdout: `0\n`,
+        });
 
-        if (exitCode !== 0)
-          throw new Error(stderr);
+        await expect(bufferResult(
+          `false; echo $?`,
+        )).resolves.toMatchObject({
+          stdout: `1\n`,
+        });
+      });
 
-        return stdout.trim().split(/\s*\/\s*/g).map(number => Number(number));
-      }
+      it(`should expose the number of arguments via $#`, async () => {
+        await expect(bufferResult(
+          `echo $#`,
+        )).resolves.toMatchObject({
+          stdout: `0\n`,
+        });
 
-      function validateRandomNumber(number: number) {
-        expect(number).toBeGreaterThanOrEqual(0);
-        expect(number).toBeLessThan(32768);
-      }
+        await expect(bufferResult(
+          `echo $#`,
+          [`hello`, `world`],
+        )).resolves.toMatchObject({
+          stdout: `2\n`,
+        });
+      });
 
-      let numbers = await getNumbers(bufferResult(`echo $RANDOM`));
-      expect(numbers.length).toBe(1);
-      numbers.forEach(validateRandomNumber);
+      it(`should expose individual arguments via $0, $1, ..., $n`, async () => {
+        await expect(bufferResult(
+          `echo $0`,
+          [`hello`, `world`],
+        )).resolves.toMatchObject({
+          stdout: `hello\n`,
+        });
 
-      numbers = await getNumbers(bufferResult(`echo $RANDOM / $RANDOM / $RANDOM`));
-      expect(numbers.length).toBe(3);
-      numbers.forEach(validateRandomNumber);
-      // There's no guarantee for this, they're random numbers after all, but the chance of this
-      // occurring is 1 in 2 ** 30 or roughly 1 in 1 billion.
-      expect(numbers[0] === numbers[1] && numbers[1] === numbers[2]).toBe(false);
+        await expect(bufferResult(
+          `echo $1`,
+          [`hello`, `world`],
+        )).resolves.toMatchObject({
+          stdout: `world\n`,
+        });
+      });
 
-      numbers = await getNumbers(bufferResult(`RANDOM=foo ; echo $RANDOM`));
-      expect(numbers.length).toBe(1);
-      numbers.forEach(validateRandomNumber);
+      it(`should support argument spread via $@`, async () => {
+        await expect(bufferResult(
+          `node -p 'JSON.stringify(process.argv.slice(1))' "$@"`,
+          [`hello`, `world`],
+        )).resolves.toMatchObject({
+          stdout: `["hello","world"]\n`,
+        });
+      });
+
+      it(`should expose the shell pid via $$`, async () => {
+        await expect(bufferResult(
+          `echo $$`
+        )).resolves.toMatchObject({
+          // The shell runs in the same process as the tests
+          stdout: `${process.pid}\n`,
+        });
+      });
+
+      it(`should expose the shell ppid via $PPID`, async () => {
+        await expect(bufferResult(
+          `echo $PPID`
+        )).resolves.toMatchObject({
+          // The shell runs in the same process as the tests
+          stdout: `${process.ppid}\n`,
+        });
+      });
+
+      it(`should support the $RANDOM variable`, async () => {
+        async function getNumbers(result: Promise<{ exitCode: number; stdout: string; stderr: string; }>): Promise<Array<number>> {
+          const {exitCode, stdout, stderr} = await result;
+
+          if (exitCode !== 0)
+            throw new Error(stderr);
+
+          return stdout.trim().split(/\s*\/\s*/g).map(number => Number(number));
+        }
+
+        function validateRandomNumber(number: number) {
+          expect(number).toBeGreaterThanOrEqual(0);
+          expect(number).toBeLessThan(32768);
+        }
+
+        let numbers = await getNumbers(bufferResult(`echo $RANDOM`));
+        expect(numbers.length).toBe(1);
+        numbers.forEach(validateRandomNumber);
+
+        numbers = await getNumbers(bufferResult(`echo $RANDOM / $RANDOM / $RANDOM`));
+        expect(numbers.length).toBe(3);
+        numbers.forEach(validateRandomNumber);
+        // There's no guarantee for this, they're random numbers after all, but the chance of this
+        // occurring is 1 in 2 ** 30 or roughly 1 in 1 billion.
+        expect(numbers[0] === numbers[1] && numbers[1] === numbers[2]).toBe(false);
+
+        numbers = await getNumbers(bufferResult(`RANDOM=foo ; echo $RANDOM`));
+        expect(numbers.length).toBe(1);
+        numbers.forEach(validateRandomNumber);
+      });
+    });
+
+    describe(`Setting variables`, () => {
+      describe(`Assignment prefix`, () => {
+        it(`should set environment variables`, async () => {
+          await expect(bufferResult(
+            `PORT=1234 node -e 'process.stdout.write(process.env.PORT)'`
+          )).resolves.toMatchObject({
+            stdout: `1234`,
+          });
+        });
+
+        it(`should support setting multiple environment variables`, async () => {
+          await expect(bufferResult(
+            `HOST="localhost" PORT=1234 node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`
+          )).resolves.toMatchObject({
+            stdout: `localhost:1234`,
+          });
+        });
+
+        it(`should support setting environment variables with shell interpolation`, async () => {
+          await expect(bufferResult(
+            `HOST="local"$(echo $0) PORT=1234 node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`,
+            [`host`]
+          )).resolves.toMatchObject({
+            stdout: `localhost:1234`,
+          });
+        });
+
+        it(`should clear an env variable if value is omitted`, async () => {
+          await expect(bufferResult(
+            `HOST="localhost" PORT=1234 HOST= node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`
+          )).resolves.toMatchObject({
+            stdout: `:1234`,
+          });
+        });
+
+        it(`env assignment prefix syntax shouldn't persist it to the environment`, async () => {
+          await expect(bufferResult([
+            `FOO=1`,
+            `FOO=2 echo hello`,
+            `echo $FOO`,
+          ].join(` ; `))).resolves.toMatchObject({
+            stdout: `hello\n1\n`,
+          });
+
+          await expect(bufferResult([
+            `FOO=1`,
+            `FOO=2 echo hello`,
+            `node -e 'process.stdout.write(process.env.FOO)'`,
+          ].join(` ; `))).resolves.toMatchObject({
+            stdout: `hello\n1`,
+          });
+
+          await expect(bufferResult(`FOO=2 echo hello ; echo $FOO`)).resolves.toMatchObject({
+            stderr: `Unbound variable "FOO"\n`,
+          });
+        });
+      });
+
+      describe(`Assignment without command`, () => {
+        it(`should support setting env variable without command`, async () => {
+          await expect(bufferResult([
+            `FOO=1`,
+            `FOO=2`,
+            `node -e 'process.stdout.write(process.env.FOO)'`,
+          ].join(` ; `))).resolves.toMatchObject({
+            stdout: `2`,
+          });
+        });
+
+        it(`should support multiple env assignment without command`, async () => {
+          await expect(bufferResult([
+            `FOO=1 BAR=2`,
+            `echo hello`,
+            `echo $BAR`,
+          ].join(` ; `))).resolves.toMatchObject({
+            stdout: `hello\n2\n`,
+          });
+        });
+
+        it(`should evaluate variables once before starting execution`, async () => {
+          await expect(bufferResult([
+            `FOO=1`,
+            `FOO=2 echo $FOO`,
+          ].join(` ; `))).resolves.toMatchObject({
+            stdout: `1\n`,
+          });
+        });
+      });
+    });
+
+    describe(`Using variables`, () => {
+      it(`should support using environment variables`, async () => {
+        await expect(bufferResult(
+          `echo $FOOBAR`,
+          [],
+          {env: {FOOBAR: `hello world`}}
+        )).resolves.toMatchObject({
+          stdout: `hello world\n`,
+        });
+      });
+
+      it(`should support default arguments via \${ARG:-...}`, async () => {
+        await expect(bufferResult(
+          `echo "\${DOESNT_EXIST:-hello world}"`,
+        )).resolves.toMatchObject({
+          stdout: `hello world\n`,
+        });
+      });
+
+      it(`should support default arguments via \${N:-...}`, async () => {
+        await expect(bufferResult(
+          `echo "\${1:-hello world}"`,
+          [],
+        )).resolves.toMatchObject({
+          stdout: `hello world\n`,
+        });
+      });
+
+      it(`should support empty default arguments`, async () => {
+        await expect(bufferResult(
+          `echo "foo\${DOESNT_EXIST:-}bar"`,
+        )).resolves.toMatchObject({
+          stdout: `foobar\n`,
+        });
+      });
+
+      describe(`Errors`, () => {
+        it(`should throw recoverable errors on unbound variables`, async () => {
+          await expect(bufferResult(
+            `echo $INEXISTENT && echo OK || echo KO`,
+          )).resolves.toMatchObject({
+            exitCode: 0,
+            stdout: `KO\n`,
+            stderr: `Unbound variable "INEXISTENT"\n`,
+          });
+        });
+
+        it(`should throw recoverable errors on unbound arguments`, async () => {
+          await expect(bufferResult(
+            `echo $42 && echo OK || echo KO`,
+          )).resolves.toMatchObject({
+            exitCode: 0,
+            stdout: `KO\n`,
+            stderr: `Unbound argument #42\n`,
+          });
+        });
+      });
     });
   });
 
@@ -691,6 +729,20 @@ describe(`Shell`, () => {
         )).resolves.toMatchObject({
           stdout: `hello world\n`,
           stderr: `hello world\n`,
+        });
+      });
+
+      it(`should throw recoverable errors when a bad file descriptor is encountered`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          await expect(bufferResult(
+            `echo "hello world" >& 42 && echo OK || echo KO`,
+            [],
+            {cwd: tmpDir}
+          )).resolves.toMatchObject({
+            exitCode: 0,
+            stdout: `KO\n`,
+            stderr: `Bad file descriptor: "42"\n`,
+          });
         });
       });
     });
@@ -1214,6 +1266,50 @@ describe(`Shell`, () => {
     });
 
     describe(`Functionality`, () => {
+      describe(`Errors`, () => {
+        it(`should throw recoverable errors when no matches are found`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            await expect(bufferResult(
+              `echo * && echo OK || echo KO`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              exitCode: 0,
+              stdout: `KO\n`,
+              stderr: `No matches found: "*"\n`,
+            });
+          });
+        });
+
+        it(`should include a brace expansion notice when no matches are found for a brace expansion pattern`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            await expect(bufferResult(
+              `echo {foo,bar}`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              exitCode: 1,
+              stdout: ``,
+              stderr: expect.stringContaining(`Note: Brace expansion of arbitrary strings isn't currently supported. For more details, please read this issue: https://github.com/yarnpkg/berry/issues/22`),
+            });
+          });
+        });
+
+        it(`should not include a brace expansion notice when no matches are found for a non-brace expansion pattern`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            await expect(bufferResult(
+              `echo *`,
+              [],
+              {cwd: tmpDir}
+            )).resolves.toMatchObject({
+              exitCode: 1,
+              stdout: ``,
+              stderr: expect.not.stringContaining(`Note: Brace expansion of arbitrary strings isn't currently supported. For more details, please read this issue: https://github.com/yarnpkg/berry/issues/22`),
+            });
+          });
+        });
+      });
+
       it(`should include directories`, async () => {
         await xfs.mktempPromise(async tmpDir => {
           await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt` as Filename), ``);
