@@ -73,8 +73,8 @@ async function * parseTar(tgz: Buffer) {
 }
 
 export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buffer, targetFs: T, {stripComponents = 0, prefixPath = PortablePath.dot}: ExtractBufferOptions = {}): Promise<T> {
-  // 1980-01-01, like Fedora
-  const defaultTime = 315532800;
+  // 1984-06-22T21:50:00.000Z
+  const defaultTime = 456789000;
 
   function ignore(entry: tar.ReadEntry) {
     // Disallow absolute paths; might be malicious (ex: /etc/passwd)
