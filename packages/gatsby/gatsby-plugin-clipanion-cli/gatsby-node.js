@@ -22,11 +22,14 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
 
       const url = command.path.split(` `).slice(1).join(`/`);
 
+      const description = `${command.description[0].toUpperCase()}${command.description.slice(1, -1)}.`;
+
       sections.push([
         `---\n`,
         `category: ${namespaceTrailingSlash}cli\n`,
         `path: ${namespaceLeadingSlash}/cli/${url}\n`,
         `title: "\`${command.path}\`"\n`,
+        `description: ${JSON.stringify(description)}\n`,
         `---\n`,
       ].join(``));
 
@@ -42,7 +45,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
 
       if (command.description) {
         sections.push([
-          `${command.description[0].toUpperCase()}${command.description.slice(1, -1)}.\n`,
+          `${description}\n`,
         ].join(``));
       }
 

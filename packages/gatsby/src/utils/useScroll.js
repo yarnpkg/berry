@@ -1,15 +1,15 @@
-import { useLayoutEffect, useRef } from "react";
+import {useLayoutEffect, useRef} from "react";
 
 const useScroll = () => {
   const ref = useRef();
 
   const readBrowserStorage = id => {
     return sessionStorage.getItem(`berry:navigation:${id}`);
-  }
+  };
 
   const setBrowserStorage = (id, pos) => {
     sessionStorage.setItem(`berry:navigation:${id}`, pos.toString());
-  }
+  };
 
   useLayoutEffect(() => {
     const id = window.location.pathname.split(`/`)[1];

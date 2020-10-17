@@ -18,6 +18,7 @@
   },
   "exclude": [
     "packages/*/lib",
-    "packages/yarnpkg-doctor/fixtures"
+    "packages/yarnpkg-doctor/fixtures",
+    "packages/gatsby"
   ]
 }

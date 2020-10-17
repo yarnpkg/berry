@@ -23,7 +23,7 @@ const deps = ({dependencies, title}) => {
                   {name}
                 </a>
               ))
-              .reduce((prev, curr) => [prev, ', ', curr])}
+              .reduce((prev, curr) => [prev, `, `, curr])}
           </details>
         ) : (
           title
@@ -47,14 +47,14 @@ export const Usage = ({
       <Di
         icon="dependencies"
         {...deps({
-          title: 'Dependencies',
-          dependencies: dependencies,
+          title: `Dependencies`,
+          dependencies,
         })}
       />
       <Di
         icon="devdependencies"
         {...deps({
-          title: 'DevDependencies',
+          title: `DevDependencies`,
           dependencies: devDependencies,
         })}
       />

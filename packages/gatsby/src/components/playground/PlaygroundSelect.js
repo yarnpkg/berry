@@ -9,7 +9,7 @@ const StyledSelect = styled(Select)`
 const PlaygroundSelect = ({select, options, onSelectChanged}) => (
   <StyledSelect
     value={select}
-    onChange={(selectedOption) => onSelectChanged(selectedOption)}
+    onChange={selectedOption => onSelectChanged(selectedOption)}
     options={options}
   >
   </StyledSelect>

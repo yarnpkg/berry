@@ -4608,6 +4608,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-helmet@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "@types/react-helmet@npm:6.1.0"
+  dependencies:
+    "@types/react": "*"
+  checksum: b7aaa3aa2d81cd3b14a0e77a858de86934a3400f4ec35945117edb3979b8a41130e70b8a27241de295195e365962a9b5bc149a2a029d23795fd0f6c740d1de77
+  languageName: node
+  linkType: hard
+
 "@types/react-lifecycles-compat@npm:^3.0.1":
   version: 3.0.1
   resolution: "@types/react-lifecycles-compat@npm:3.0.1"
@@ -5575,6 +5584,7 @@ __metadata:
     "@types/lodash": ^4.14.136
     "@types/marked": ^1.1.0
     "@types/react": ^16.8.0
+    "@types/react-helmet": ^6.1.0
     "@types/react-scroll-into-view-if-needed": ^2
     "@types/react-select": 3.0.11
     "@types/tinycolor2": 1.4.2

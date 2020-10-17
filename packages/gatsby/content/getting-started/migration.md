@@ -2,6 +2,7 @@
 category: getting-started
 path: /getting-started/migration
 title: "Migration"
+description: A step-by-step and in-depth migration guide from Yarn 1 (Classic) to Yarn 2 (Berry).
 ---
 
 Yarn v2 is a very different software from the v1. While one of our goals is to make the transition as easy as possible, some behaviors needed to be tweaked. To make things easier we've documented the most common problems that may arise when porting from one project to the other, along with suggestions to keep moving forward.

@@ -16,6 +16,7 @@
     "@strictsoftware/typedoc-plugin-monorepo": "patch:@strictsoftware/typedoc-plugin-monorepo@^0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch",
     "@types/marked": "^1.1.0",
     "@types/react": "^16.8.0",
+    "@types/react-helmet": "^6.1.0",
     "algoliasearch": "^4.2.0",
     "ansi-html": "^0.0.7",
     "buffer": "^5.6.0",
@@ -86,6 +87,7 @@
   "scripts": {
     "build:doc": "rm -rf .cache public static/api && yarn build:api && gatsby build --prefix-paths \"$@\" && rsync -rtuc --delete public/ ../../docs/",
     "build:api": "typedoc",
+    "develop:doc": "run develop",
     "develop": "gatsby develop",
     "serve": "gatsby serve",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\""

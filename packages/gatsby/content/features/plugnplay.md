@@ -2,6 +2,7 @@
 category: features
 path: /features/pnp
 title: "Plug'n'Play"
+description: An overview of Plug'n'Play, a powerful and innovative installation strategy for Node.
 ---
 
 > **PnP API**

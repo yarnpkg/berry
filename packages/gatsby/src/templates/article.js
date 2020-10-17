@@ -25,7 +25,8 @@ export default function Template({data, pageContext: {category}}) {
     }))}>
       <SEO
         title={frontmatter.title}
-        keywords={[`package manager`, `yarn`, `yarnpkg`, frontmatter.path.split('/').reverse()[0]]}
+        description={frontmatter.description}
+        keywords={[`package manager`, `yarn`, `yarnpkg`, frontmatter.path.split(`/`).reverse()[0]]}
       />
       <PrerenderedMarkdown title={frontmatter.title}>
         {html}
@@ -54,6 +55,7 @@ export const pageQuery = graphql`
       frontmatter {
         path
         title
+        description
       }
     }
   }

@@ -67,7 +67,7 @@ const ResultsFound = ({pagination, onTagClick, onOwnerClick, searchState}) => (
       <Stats
         translations={{
           stats: (num, time) =>
-            `found ${num.toLocaleString('en')} packages in ${time}ms`,
+            `found ${num.toLocaleString(`en`)} packages in ${time}ms`,
         }}
       />
     </StatsText>
@@ -75,7 +75,7 @@ const ResultsFound = ({pagination, onTagClick, onOwnerClick, searchState}) => (
     <Pagination pagination={pagination} />
     <SearchFooter>
       Search by Algolia
-      {' - '}
+      {` - `}
       <a href="https://discourse.algolia.com/t/2016-algolia-community-gift-yarn-package-search/319">
         read how it works
       </a>
@@ -94,9 +94,10 @@ const RawSearchResults = ({searchState, searchResults, onTagClick, onOwnerClick}
   if (isEmpty(searchState.query)) {
     return null;
   } else if (searchResults && searchResults.nbHits === 0) {
-    const docMessage = 'Were you looking for something in the {documentation_link}?'.split(/[{}]+/);
-    docMessage[docMessage.indexOf('documentation_link')] = (
-      <a href={`/docs`}>documentation</a>
+    const docMessage = `Were you looking for something in the {documentation_link}?`.split(/[{}]+/);
+    docMessage[docMessage.indexOf(`documentation_link`)] = (
+      // I can't think of a better place to link this to
+      <a href={`/`}>documentation</a>
     );
 
     return (

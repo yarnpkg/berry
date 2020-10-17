@@ -1,9 +1,9 @@
-import styled                                  from '@emotion/styled';
-import React                                   from 'react';
+import styled                                              from '@emotion/styled';
+import React                                               from 'react';
 
+import IcoSnyk                                             from '../../images/detail/ico-snyk.svg';
 import {License, Deprecated, Owner, Downloads, TypeScript} from '../hit';
-import {Keywords, safeMarkdown}                from '../util';
-import IcoSnyk                                 from '../../images/detail/ico-snyk.svg';
+import {Keywords, safeMarkdown}                            from '../util';
 
 const DescriptionText = styled.p`
   font-size: 1.25rem;

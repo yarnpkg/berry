@@ -16,37 +16,37 @@ const renderAndEscapeMarkdown = ({source, repository}) => {
     const {user, project, path, head, host} = repository;
 
     const prefixImage = href =>
-      host === 'github.com'
+      host === `github.com`
         ? prefixURL(href, {
-          base: 'https://raw.githubusercontent.com',
+          base: `https://raw.githubusercontent.com`,
           user,
           project,
-          head: head || 'master',
+          head: head || `master`,
           path,
         })
-        : host === 'gitlab.com'
+        : host === `gitlab.com`
           ? prefixURL(href, {
-            base: 'https://gitlab.com',
+            base: `https://gitlab.com`,
             user,
             project,
-            head: `raw/${head || 'master'}`,
-            path: path ? path.replace('tree', 'raw') : '',
+            head: `raw/${head || `master`}`,
+            path: path ? path.replace(`tree`, `raw`) : ``,
           })
           : prefixURL(href, {
-            base: 'https://bitbucket.org',
+            base: `https://bitbucket.org`,
             user,
             project,
-            head: `raw/${head || 'master'}`,
-            path: path ? path.replace('src', 'raw') : '',
+            head: `raw/${head || `master`}`,
+            path: path ? path.replace(`src`, `raw`) : ``,
           });
 
     const prefixLink = href =>
-      host === 'bitbucket.org'
+      host === `bitbucket.org`
         ? prefixURL(href, {
-          base: 'https://bitbucket.org',
+          base: `https://bitbucket.org`,
           user,
           project,
-          head: `src/${head || 'master'}`,
+          head: `src/${head || `master`}`,
           path,
         })
         : prefixURL(href, {
@@ -54,16 +54,16 @@ const renderAndEscapeMarkdown = ({source, repository}) => {
           base: `https://${host}`,
           user,
           project,
-          head: `blob/${head || 'master'}`,
+          head: `blob/${head || `master`}`,
           path,
         });
 
     // manually ask for sanitation of svgs, otherwise it will have wrong content-type
     function sanitizeSvg(href) {
       if (
-        href.indexOf('//') === -1 &&
+        href.indexOf(`//`) === -1 &&
         String.prototype.endsWith &&
-        href.endsWith('.svg')
+        href.endsWith(`.svg`)
       )
         return `${href}?sanitize=true`;
 
@@ -73,19 +73,19 @@ const renderAndEscapeMarkdown = ({source, repository}) => {
     renderer.image = (href, title, text) =>
       `<img src="${prefixImage(
         sanitizeSvg(href)
-      )}" title="${title || ''}" alt="${text}"/>`;
+      )}" title="${title || ``}" alt="${text}"/>`;
 
     renderer.link = (href, title, text) => {
       // No need to prefix hashes
-      if (href.startsWith('#'))
-        return `<a href="${href}" title="${title || ''}">${text}</a>`;
+      if (href.startsWith(`#`))
+        return `<a href="${href}" title="${title || ``}">${text}</a>`;
 
       // wrongly linked comments
       // see https://github.com/yarnpkg/website/issues/685
-      if (text.startsWith('!--'))
-        return '';
+      if (text.startsWith(`!--`))
+        return ``;
 
-      return `<a href="${prefixLink(href)}" title="${title || ''}">${text}</a>`;
+      return `<a href="${prefixLink(href)}" title="${title || ``}">${text}</a>`;
     };
 
     renderer.html = function(html) {
@@ -93,7 +93,7 @@ const renderAndEscapeMarkdown = ({source, repository}) => {
         /(src|href)="([^"]*)/g,
         (match, type, href) =>
           `${type}="${
-            type === 'href' ? prefixLink(href) : prefixImage(sanitizeSvg(href))
+            type === `href` ? prefixLink(href) : prefixImage(sanitizeSvg(href))
           }`
       );
     };
@@ -122,14 +122,14 @@ const renderAndEscapeMarkdown = ({source, repository}) => {
   return xss(marked(source, {renderer, mangle: false}), {
     whiteList: {
       ...xss.getDefaultWhiteList(),
-      code: ['class'],
-      span: ['class'],
-      h1: ['id'],
-      h2: ['id'],
-      h3: ['id'],
-      h4: ['id'],
-      h5: ['id'],
-      h6: ['id'],
+      code: [`class`],
+      span: [`class`],
+      h1: [`id`],
+      h2: [`id`],
+      h3: [`id`],
+      h4: [`id`],
+      h5: [`id`],
+      h6: [`id`],
     },
   });
 };

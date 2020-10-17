@@ -2,6 +2,7 @@
 category: advanced
 path: /advanced/architecture
 title: "Architecture"
+description: An overview of Yarn's architecture.
 ---
 
 ```toc
