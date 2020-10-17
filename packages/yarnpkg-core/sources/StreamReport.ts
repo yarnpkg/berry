@@ -521,7 +521,7 @@ export class StreamReport extends Report {
     this.progressTimeout = setTimeout(() => {
       this.progressLastScaledSize = -1;
       this.refreshProgress();
-    }, 1000 / 10);
+    }, PROGRESS_INTERVAL);
   }
 
   private refreshProgress(delta: number = 0) {
