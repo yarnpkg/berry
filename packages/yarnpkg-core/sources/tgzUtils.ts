@@ -47,8 +47,8 @@ export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
 }
 
 export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buffer, targetFs: T, {stripComponents = 0, prefixPath = PortablePath.dot}: ExtractBufferOptions = {}): Promise<T> {
-  // 1980-01-01, like Fedora
-  const defaultTime = 315532800;
+  // 1984-06-22T21:50:00.000Z
+  const defaultTime = 456789000;
 
   const parser = tar.extract() as tar.Extract;
 
