@@ -693,10 +693,7 @@ async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: 
     try {
       return await executeCommandChain(chain, opts, state);
     } catch (error) {
-      if (!(error instanceof ShellError))
-        throw error;
-
-      if (!error.recoverable)
+      if (!(error instanceof ShellError) || !error.recoverable)
         throw error;
 
       state.stderr.write(`${error.message}\n`);
