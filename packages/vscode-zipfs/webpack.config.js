@@ -4,7 +4,7 @@ module.exports = {
   mode: `production`,
   devtool: false,
 
-  target: `node`,
+  target: `node10.19`,
 
   context: __dirname,
   entry: `./sources/index.ts`,

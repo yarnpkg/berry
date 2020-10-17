@@ -11,15 +11,14 @@
   "devDependencies": {
     "@yarnpkg/builder": "workspace:^2.1.2",
     "@yarnpkg/libzip": "workspace:^2.2.1",
-    "@yarnpkg/pnpify": "workspace:^2.3.3",
+    "@yarnpkg/monorepo": "workspace:0.0.0",
     "typescript": "4.1.0-beta",
-    "webpack": "^5.0.0-beta.17",
-    "webpack-cli": "^4.0.0-beta.8",
-    "webpack-sources": "^1.4.3"
+    "webpack": "^5.1.1",
+    "webpack-cli": "^4.0.0-beta.8"
   },
   "scripts": {
-    "build:pnp:hook": "run pnpify webpack-cli --config webpack.config.hook.js",
-    "build:pnp": "run pnpify webpack-cli --config webpack.config.pkg.js",
+    "build:pnp:hook": "webpack-cli --config webpack.config.hook.js",
+    "build:pnp": "webpack-cli --config webpack.config.pkg.js",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile packages/yarnpkg-pnp --emitDeclarationOnly && run build:pnp",
     "release": "yarn npm publish",
