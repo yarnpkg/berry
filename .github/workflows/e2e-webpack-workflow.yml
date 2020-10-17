@@ -32,7 +32,7 @@ jobs:
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add -D webpack@next webpack-cli@next lodash
+        yarn add -D webpack webpack-cli lodash
 
         # Vanilla webpack
         echo "const path = require('path'); module.exports = { entry: './src/index.js', output: { filename: 'main.js', path: path.resolve(__dirname, 'dist')} };" | tee webpack.config.js
@@ -60,9 +60,9 @@ jobs:
         rm -rf dist src webpack.config.js
 
         # ts-loader
-        yarn add -D ts-loader typescript pnp-webpack-plugin @types/lodash
+        yarn add -D ts-loader typescript @types/lodash
 
-        echo "const PnpWebpackPlugin = require('pnp-webpack-plugin'); module.exports = {mode: 'none', entry: './src/index.ts',output: { filename: 'main.js'}, resolve: { extensions: ['.ts', '.tsx', '.js']},module: { rules: [ { test: /\.tsx?$/, loader: require.resolve('ts-loader'),options: PnpWebpackPlugin.tsLoaderOptions({/* ... regular options go there ... */}) }  ]}};" | tee webpack.config.js
+        echo "module.exports = {mode: 'none', entry: './src/index.ts',output: { filename: 'main.js'}, resolve: { extensions: ['.ts', '.tsx', '.js']},module: { rules: [ { test: /\.tsx?$/, loader: require.resolve('ts-loader') }  ]}};" | tee webpack.config.js
 
         echo "{\"compilerOptions\": {  \"noImplicitAny\": true,  \"removeComments\": true,  \"preserveConstEnums\": true,  \"sourceMap\": true}}" | tee tsconfig.json
 

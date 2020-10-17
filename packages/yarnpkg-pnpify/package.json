@@ -17,7 +17,6 @@
     "tslib": "^1.13.0"
   },
   "devDependencies": {
-    "@types/chalk": "2.2.0",
     "@types/comment-json": "^1.1.1",
     "@types/lodash": "^4.14.136",
     "@yarnpkg/monorepo": "workspace:0.0.0",

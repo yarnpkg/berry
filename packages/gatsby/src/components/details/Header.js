@@ -19,9 +19,9 @@ const Description = ({description, deprecated}) => (
         <strong dangerouslySetInnerHTML={safeMarkdown(deprecated)} />
       </DeprecatedText>
     ) : null}
-    <DescriptionText
+    {description && <DescriptionText
       dangerouslySetInnerHTML={safeMarkdown(description)}
-    />
+    />}
   </div>
 );
 

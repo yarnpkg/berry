@@ -47,9 +47,6 @@ const MenuEntry = styled(Link)`
     padding: 1em;
     position: relative;
 
-    &:first-of-type {
-      border-top: 1px solid #cfdee9;
-    }
     &:hover {
       background: hsl(204, 33%, 96%);
     }
@@ -69,6 +66,10 @@ const MenuEntry = styled(Link)`
     }
     &.active::before {
       background: #2188b6;
+    }
+    &.active {
+      font-weight: 600;
+      color: rgb(0, 122, 162);
     }
   }
   ${ifMobile} {
@@ -96,9 +97,7 @@ const Tag = styled.code`
 `;
 
 const Content = styled.div`
-  & > * {
-    overflow: auto;
-  }
+
 `;
 
 export const Navigation = ({items, children}) => {
