@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                           from '@yarnpkg/cli';
-import {Configuration, Descriptor, Project, ReportError, StreamReport, MessageName, Workspace, structUtils, treeUtils} from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils}                                                                                  from '@yarnpkg/plugin-npm';
-import {Command, Usage}                                                                                                from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                        from '@yarnpkg/cli';
+import {Configuration, Descriptor, Project, ReportError, StreamReport, MessageName, Workspace, formatUtils, structUtils, treeUtils} from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils}                                                                                               from '@yarnpkg/plugin-npm';
+import {Command, Usage}                                                                                                             from 'clipanion';
 
-import {getTransitiveDevDependencies}                                                                                  from './auditUtils';
+import {getTransitiveDevDependencies}                                                                                               from './auditUtils';
 
 export enum Environment {
   All = `all`,
@@ -188,18 +188,18 @@ export default class AuditCommand extends BaseCommand {
         report.reportJson(result);
 
         if (isError(result.metadata.vulnerabilities, this.severity)) {
-          report.reportError(
-            MessageName.EXCEPTION,
-            JSON.stringify(result, undefined, 2),
-          );
-          const auditTreeChildren: treeUtils.TreeMap = {};
-          const auditTree: treeUtils.TreeNode = {children: auditTreeChildren};
+          const auditTree = getReportTree(result);
           treeUtils.emitTree(auditTree, {
             configuration,
             json: this.json,
             stdout: this.context.stdout,
             separators: 2,
           });
+        } else {
+          report.reportInfo(
+            null,
+            `${Object.values(result.metadata.vulnerabilities).reduce((acc, cur) => acc + cur, 0)} vulnerabilities found in ${result.metadata.totalDependencies} packages audited.`,
+          );
         }
       }
     );
@@ -332,4 +332,61 @@ function isError(
       0,
     ) > 0
   );
+}
+
+function getReportTree(result: AuditResponse): treeUtils.TreeNode {
+  const auditTreeChildren: treeUtils.TreeMap = {};
+  const auditTree: treeUtils.TreeNode = {children: auditTreeChildren};
+
+  Object.values(result.advisories).forEach(advisory => {
+    auditTreeChildren[advisory.module_name] = {
+      label: advisory.module_name,
+      value: formatUtils.tuple(formatUtils.Type.RANGE, advisory.findings.map(finding => finding.version).join(`, `)),
+      children: {
+        Issue: {
+          label: `Issue`,
+          value: formatUtils.tuple(formatUtils.Type.NO_HINT, advisory.title),
+        },
+        URL: {
+          label: `URL`,
+          value: formatUtils.tuple(formatUtils.Type.URL, advisory.url),
+        },
+        Severity: {
+          label: `Severity`,
+          value: formatUtils.tuple(formatUtils.Type.NO_HINT, advisory.severity),
+        },
+        [`Vulnerable Versions`]: {
+          label: `Vulnerable Versions`,
+          value: formatUtils.tuple(formatUtils.Type.RANGE, advisory.vulnerable_versions),
+        },
+        [`Patched Versions`]: {
+          label: `Patched Versions`,
+          value: formatUtils.tuple(formatUtils.Type.RANGE, advisory.patched_versions),
+        },
+        Recommendation: {
+          label: `Recommendation`,
+          value: formatUtils.tuple(formatUtils.Type.NO_HINT, advisory.recommendation),
+        },
+        Paths: {
+          children: pathListToTreeNode(advisory.findings.map(finding => finding.paths).flat()),
+        },
+      },
+    };
+  });
+
+  return auditTree;
+}
+
+function pathListToTreeNode(paths: Array<string>): treeUtils.TreeMap {
+  const result: Record<string, {value: formatUtils.Tuple, children: treeUtils.TreeMap}> = {};
+
+  paths.map(path => path.split(`>`)).forEach(path => {
+    let node: treeUtils.TreeMap = result;
+    path.forEach(pkg => {
+      node[pkg] = node[pkg] ?? {value: formatUtils.tuple(formatUtils.Type.NAME, pkg), children: {}};
+      node = node[pkg].children as treeUtils.TreeMap;
+    });
+  });
+
+  return result;
 }
