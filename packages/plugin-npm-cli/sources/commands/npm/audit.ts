@@ -187,6 +187,12 @@ export default class AuditCommand extends BaseCommand {
 
         report.reportJson(result);
 
+        const uniqueVulnerabilityCount = Object.keys(result.advisories).length;
+        const totalVulnerabilityCount = Object.values(result.metadata.vulnerabilities).reduce((acc, cur) => acc + cur, 0);
+        const totalDependencyCount = result.metadata.totalDependencies;
+        const reportCount = uniqueVulnerabilityCount > 0 || totalVulnerabilityCount > 0 ? `${uniqueVulnerabilityCount} unique (${totalVulnerabilityCount} total)` : 0;
+        const reportSummary = `${reportCount} vulnerabilities found in ${totalDependencyCount} packages audited.`;
+
         if (isError(result.metadata.vulnerabilities, this.severity)) {
           const auditTree = getReportTree(result);
           treeUtils.emitTree(auditTree, {
@@ -195,11 +201,9 @@ export default class AuditCommand extends BaseCommand {
             stdout: this.context.stdout,
             separators: 2,
           });
+          report.reportError(MessageName.EXCEPTION, reportSummary);
         } else {
-          report.reportInfo(
-            null,
-            `${Object.values(result.metadata.vulnerabilities).reduce((acc, cur) => acc + cur, 0)} vulnerabilities found in ${result.metadata.totalDependencies} packages audited.`,
-          );
+          report.reportInfo(null, reportSummary);
         }
       }
     );
