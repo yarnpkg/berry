@@ -88,7 +88,7 @@ Consult the [Installation Guide](https://yarnpkg.com/getting-started/install).
 
 ## Migration
 
-Consult the [Migration Guide](https://yarnpkg.com/advanced/migration).
+Consult the [Migration Guide](https://yarnpkg.com/getting-started/migration).
 
 ## Documentation
 

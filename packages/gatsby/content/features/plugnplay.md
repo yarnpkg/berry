@@ -103,22 +103,22 @@ A lot of very common frontend tools now support Plug'n'Play natively!
 | Storybook | Starting from 6.0+ |
 | TypeScript | Via [`plugin-compat`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-compat) (enabled by default)
 | TypeScript-ESLint | Starting from 2.12+ |
-| WebStorm | Starting from 2019.3+; See [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks) |
+| WebStorm | Starting from 2019.3+; See [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
 | Webpack | Starting from 5+ ([plugin](https://github.com/arcanis/pnp-webpack-plugin) available for 4.x) |
 
 #### Support via plugins
 
 | <div style="width:150px">Project name</div> | Note |
 | --- | --- |
-| VSCode-ESLint | Follow [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks) |
-| VSCode | Follow [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks) |
+| VSCode-ESLint | Follow [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
+| VSCode | Follow [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
 | Webpack 4.x | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) (native starting from 5+) |
 
 #### Incompatible
 
 The following tools unfortunately cannot be used with pure Plug'n'Play install (even under loose mode).
 
-**Important:** Even if a tool is incompatible with Plug'n'Play, you can still enable the [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules). Just follow the [instructions](/advanced/migration#if-required-enable-the-node-modules-plugin) and you'll be ready to go in a minute 🙂
+**Important:** Even if a tool is incompatible with Plug'n'Play, you can still enable the [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules). Just follow the [instructions](/getting-started/migration#if-required-enable-the-node-modules-plugin) and you'll be ready to go in a minute 🙂
 
 | <div style="width:150px">Project name</div> | Note |
 | --- | --- |
