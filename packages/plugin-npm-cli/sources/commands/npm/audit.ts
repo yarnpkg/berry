@@ -170,7 +170,7 @@ export default class AuditCommand extends BaseCommand {
 
         let result: AuditResponse;
         try {
-          const url = `/-/npm/v1/security/audits`;
+          const url = `/-/npm/v1/security/audits/quick`;
           result = ((await npmHttpUtils.post(url, body, {
             authType: npmHttpUtils.AuthType.NO_AUTH,
             configuration,
