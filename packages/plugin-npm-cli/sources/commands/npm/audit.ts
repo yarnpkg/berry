@@ -93,14 +93,14 @@ interface AuditResponse {
 
 // eslint-disable-next-line arca/no-default-export
 export default class AuditCommand extends BaseCommand {
+  @Command.Boolean(`-A,--all`)
+  all: boolean = false;
+
   @Command.String(`--environment`)
   environment: Environment = Environment.All;
 
   @Command.Boolean(`--json`)
   json: boolean = false;
-
-  @Command.Boolean(`-R,--recursive`)
-  recursive: boolean = false;
 
   @Command.String(`--severity`)
   severity: Severity = Severity.Info;
@@ -112,7 +112,7 @@ export default class AuditCommand extends BaseCommand {
 
       You must be online to perform the audit.
 
-      If \`-R,--recursive\` is set, the report will go in depth and will, for each workspace, audit its dependencies.
+      If \`-A,--all\` is set, the report will include dependencies from the whole project.
 
       Applying the \`--severity\` flag will limit the audit table to vulnerabilities of the corresponding severity and above.
 
@@ -122,14 +122,14 @@ export default class AuditCommand extends BaseCommand {
       `Checks for known security issues with the installed packages. The output is a list of known issues.`,
       `yarn npm audit`,
     ], [
+      `Audit dependencies in all workspaces`,
+      `yarn npm audit --all`,
+    ], [
       `Limit auditing to \`dependencies\` (excludes \`devDependencies\`)`,
       `yarn npm audit --environment production`,
     ], [
       `Show audit report as valid JSON`,
       `yarn npm audit --json`,
-    ], [
-      `Audit dependencies in all workspaces`,
-      `yarn npm audit --recursive`,
     ], [
       `Output moderate (or more severe) vulnerabilities`,
       `yarn npm audit --severity moderate`,
@@ -208,7 +208,7 @@ export default class AuditCommand extends BaseCommand {
   }
 
   private getRequires(project: Project, workspace: Workspace) {
-    const workspaces = this.recursive ? project.workspaces : [workspace];
+    const workspaces = this.all ? project.workspaces : [workspace];
 
     const includeDependencies = [Environment.All, Environment.Production].includes(this.environment);
     const requiredDependencies = includeDependencies ? workspaces.reduce(
@@ -239,7 +239,7 @@ export default class AuditCommand extends BaseCommand {
       project,
       workspace,
       {
-        recursive: this.recursive,
+        all: this.all,
       },
     );
 

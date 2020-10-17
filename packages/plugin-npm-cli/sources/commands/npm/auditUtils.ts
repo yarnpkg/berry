@@ -58,11 +58,11 @@ export function getTransitiveDevDependencies(
   project: Project,
   workspace: Workspace,
   flags: {
-    recursive: boolean,
+    all: boolean,
   },
 ): Set<DescriptorHash> {
   // Determine workspaces in scope
-  const workspaces = flags.recursive ? project.workspaces : [workspace];
+  const workspaces = flags.all ? project.workspaces : [workspace];
 
   // Enumerate the top-level package manifest as well as any workspace manifests
   const manifests = workspaces.map(workspace => workspace.manifest);
