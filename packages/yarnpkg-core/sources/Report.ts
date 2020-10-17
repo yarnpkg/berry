@@ -21,6 +21,8 @@ export function isReportError(error: Error): error is ReportError {
 export type ProgressDefinition = {
   progress: number,
   title?: string,
+  lastScaledSize?: number,
+  lastRenderTime?: number
 };
 
 export abstract class Report {

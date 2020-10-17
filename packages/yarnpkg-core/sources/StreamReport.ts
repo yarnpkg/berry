@@ -164,7 +164,6 @@ export class StreamReport extends Report {
   private progressTimeout: ReturnType<typeof setTimeout> | null = null;
   private progressStyle: {date?: Array<number>, chars: Array<string>, size: number};
   private progressMaxScaledSize: number;
-  private progressLastScaledSize: number = -1;
 
   private forgettableBufferSize: number;
   private forgettableNames: Set<MessageName | null>;
@@ -519,7 +518,6 @@ export class StreamReport extends Report {
     }
 
     this.progressTimeout = setTimeout(() => {
-      this.progressLastScaledSize = -1;
       this.refreshProgress();
     }, PROGRESS_INTERVAL);
   }
@@ -530,14 +528,18 @@ export class StreamReport extends Report {
       this.writeProgress();
     }
 
-    for (const {progress} of this.progress.values()) {
+    const time = Date.now();
+
+    for (const progressDefinition of this.progress.values()) {
+      const {progress, lastScaledSize, lastRenderTime} = progressDefinition;
       const progressScaledSize = Math.trunc(this.progressMaxScaledSize * progress);
 
-      if (progressScaledSize !== this.progressLastScaledSize) {
+      if (progressScaledSize !== lastScaledSize || !lastRenderTime || time - lastRenderTime >= PROGRESS_INTERVAL) {
         this.clearProgress({delta});
         this.writeProgress();
 
-        this.progressLastScaledSize = progressScaledSize;
+        progressDefinition.lastScaledSize = progressScaledSize;
+        progressDefinition.lastRenderTime = time;
       }
     }
   }
