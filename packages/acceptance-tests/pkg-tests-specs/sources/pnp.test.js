@@ -960,7 +960,7 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
-    `it should not break relative requires for files within a blacklist`,
+    `it should not break relative requires for files matching pnpIgnorePatterns`,
     makeTemporaryEnv(
       {},
       {
