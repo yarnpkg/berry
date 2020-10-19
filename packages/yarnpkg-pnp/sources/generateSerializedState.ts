@@ -1,4 +1,4 @@
-import {LocationBlacklistData, PackageRegistryData}     from './types';
+import {IncompatibleLocationsData, PackageRegistryData} from './types';
 import {PackageStoreData, PnpSettings, SerializedState} from './types';
 
 // Keep this function is sync with its implementation in:
@@ -96,8 +96,8 @@ function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData
   return packageRegistryData;
 }
 
-function generateLocationBlacklistData(settings: PnpSettings): LocationBlacklistData {
-  return sortMap(settings.blacklistedLocations || [], location => location);
+function generateListOfIncompatibleLocations(settings: PnpSettings): IncompatibleLocationsData {
+  return sortMap(settings.incompatibleLocations || [], location => location);
 }
 
 export function generateSerializedState(settings: PnpSettings): SerializedState {
@@ -116,7 +116,7 @@ export function generateSerializedState(settings: PnpSettings): SerializedState 
 
     fallbackExclusionList: generateFallbackExclusionList(settings),
     fallbackPool: generateFallbackPoolData(settings),
-    locationBlacklistData: generateLocationBlacklistData(settings),
+    locationBlacklistData: generateListOfIncompatibleLocations(settings),
     packageRegistryData: generatePackageRegistryData(settings),
   };
 }

@@ -442,26 +442,26 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       if (typeof locator === `undefined`)
         continue;
 
-      // Ensures that the returned locator isn't a blacklisted one.
+      // Ensures that the returned locator isn't an incompatible one.
       //
-      // Blacklisted packages are packages that cannot be used because their dependencies cannot be deduced. This only
+      // Incompatible packages are packages that cannot be used because their dependencies cannot be deduced. This only
       // happens with peer dependencies, which effectively have different sets of dependencies depending on their
       // parents.
       //
       // In order to deambiguate those different sets of dependencies, the Yarn implementation of PnP will generate a
       // symlink for each combination of <package name>/<package version>/<dependent package> it will find, and will
-      // blacklist the target of those symlinks. By doing this, we ensure that files loaded through a specific path
+      // exclude the target of those symlinks. By doing this, we ensure that files loaded through a specific path
       // will always have the same set of dependencies, provided the symlinks are correctly preserved.
       //
       // Unfortunately, some tools do not preserve them, and when it happens PnP isn't able anymore to deduce the set of
-      // dependencies based on the path of the file that makes the require calls. But since we've blacklisted those
+      // dependencies based on the path of the file that makes the require calls. But since we've excluded those
       // paths, we're able to print a more helpful error message that points out that a third-party package is doing
       // something incompatible!
 
       if (locator === null) {
         const locationForDisplay = getPathForDisplay(location);
         throw makeError(
-          ErrorCode.BLACKLISTED,
+          ErrorCode.INCOMPATIBLE,
           `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${locationForDisplay}`,
           {location: locationForDisplay},
         );
@@ -557,7 +557,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         }
       }
 
-      // No need to use the return value; we just want to check the blacklist status
+      // No need to use the return value; we just want to check the compatibility status
       findPackageLocator(unqualifiedPath);
     }
 

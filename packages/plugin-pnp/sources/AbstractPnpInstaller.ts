@@ -11,7 +11,7 @@ export type AbstractInstallerOptions = LinkOptions & {
 export abstract class AbstractPnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
 
-  private readonly blacklistedPaths: Set<PortablePath> = new Set();
+  private readonly incompatiblePaths: Set<PortablePath> = new Set();
 
   constructor(protected opts: AbstractInstallerOptions) {
     this.opts = opts;
@@ -119,7 +119,7 @@ export abstract class AbstractPnpInstaller implements Installer {
     });
 
     if (hasVirtualInstances)
-      this.blacklistedPaths.add(packageLocation);
+      this.incompatiblePaths.add(packageLocation);
 
     return {
       packageLocation: packageRawLocation,
@@ -148,7 +148,7 @@ export abstract class AbstractPnpInstaller implements Installer {
   }
 
   async finalizeInstall() {
-    this.trimBlacklistedPackages();
+    this.trimIncompatiblePackages();
 
     this.packageRegistry.set(null, new Map([
       [null, this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator)],
@@ -156,7 +156,7 @@ export abstract class AbstractPnpInstaller implements Installer {
 
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
-    const blacklistedLocations = this.blacklistedPaths;
+    const incompatibleLocations = this.incompatiblePaths;
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
@@ -171,12 +171,12 @@ export abstract class AbstractPnpInstaller implements Installer {
           fallbackExclusionList.push({name: structUtils.requirableIdent(pkg), reference: pkg.reference});
 
     return await this.finalizeInstallWithPnp({
-      blacklistedLocations,
       dependencyTreeRoots,
       enableTopLevelFallback,
       fallbackExclusionList,
       fallbackPool,
       ignorePattern,
+      incompatibleLocations,
       packageRegistry,
       shebang,
     });
@@ -210,10 +210,10 @@ export abstract class AbstractPnpInstaller implements Installer {
     }));
   }
 
-  private trimBlacklistedPackages() {
+  private trimIncompatiblePackages() {
     for (const packageStore of this.packageRegistry.values()) {
       for (const [key2, packageInformation] of packageStore) {
-        if (packageInformation.packageLocation && this.blacklistedPaths.has(packageInformation.packageLocation)) {
+        if (packageInformation.packageLocation && this.incompatiblePaths.has(packageInformation.packageLocation)) {
           packageStore.delete(key2);
         }
       }

@@ -30,7 +30,7 @@ export type PackageStoreData = Array<[string | null, PackageInformationData<Port
 export type PackageRegistry = Map<string | null, PackageStore>;
 export type PackageRegistryData = Array<[string | null, PackageStoreData]>;
 
-export type LocationBlacklistData = Array<PortablePath>;
+export type IncompatibleLocationsData = Array<PortablePath>;
 export type LocationLengthData = Array<number>;
 
 // This is what is stored within the .pnp.meta.json file
@@ -41,7 +41,7 @@ export type SerializedState = {
   fallbackExclusionList: Array<[string, Array<string>]>,
   fallbackPool: Array<[string, DependencyTarget]>,
   ignorePatternData: string | null,
-  locationBlacklistData: LocationBlacklistData,
+  locationBlacklistData: IncompatibleLocationsData,
   packageRegistryData: PackageRegistryData,
   dependencyTreeRoots: Array<PhysicalPackageLocator>,
 };
@@ -61,10 +61,6 @@ export type RuntimeState = {
 
 // This is what the generation functions take as parameter
 export type PnpSettings = {
-  // Some locations that are not allowed to make a require call, period
-  // (usually the realpath of virtual packages)
-  blacklistedLocations?: Iterable<PortablePath>,
-
   // Whether the top-level dependencies should be made available to all the
   // dependency tree as a fallback (default is true)
   enableTopLevelFallback?: boolean,
@@ -79,6 +75,10 @@ export type PnpSettings = {
   // as being owned by a package (legacy settings used to help people migrate
   // to PnP + workspaces when they weren't using either)
   ignorePattern?: string | null,
+
+  // Some locations that are not allowed to make a require call, period
+  // (usually the realpath of virtual packages)
+  incompatibleLocations?: Iterable<PortablePath>,
 
   // The set of packages to store within the PnP map
   packageRegistry: PackageRegistry,
