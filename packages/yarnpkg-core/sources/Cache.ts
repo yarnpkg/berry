@@ -127,7 +127,7 @@ export class Cache {
       const gitignoreExists = await xfs.existsPromise(gitignorePath);
 
       if (!gitignoreExists) {
-        await xfs.writeFilePromise(gitignorePath, `/.gitignore\n*.lock\n`);
+        await xfs.writeFilePromise(gitignorePath, `/.gitignore\n*.lock\n*.flock\n`);
       }
     }
   }
