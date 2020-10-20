@@ -5488,7 +5488,7 @@ __metadata:
     "@yarnpkg/plugin-pnp": "workspace:^2.3.1"
     "@yarnpkg/pnp": "workspace:^2.3.1"
     "@yarnpkg/shell": "workspace:^2.4.0"
-    binjumper: ^0.1.2
+    binjumper: ^0.1.3
     camelcase: ^5.3.1
     chalk: ^3.0.0
     ci-info: ^2.0.0
@@ -7707,10 +7707,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"binjumper@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "binjumper@npm:0.1.2"
-  checksum: 01d013f07746b6092eb0373cc4b955ef9363b47371b72a3ed2ee67ef339eab3189625a5f4bba92b48f1e551fab948eb1ac51f62920aa5bfa59a2ff0d40478ebc
+"binjumper@npm:^0.1.3":
+  version: 0.1.3
+  resolution: "binjumper@npm:0.1.3"
+  checksum: 660000e5a55a9d6fedac4377f12595bcd114f2556200c7a44511ed6457d48d720f25719bdf85923188c0a3b467a753421a00e92fef44366d3998bb2e959d60db
   languageName: node
   linkType: hard
 
