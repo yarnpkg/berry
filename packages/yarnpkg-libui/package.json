@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@types/react": "^16.8.0",
-    "ink": "^2.3.0",
+    "ink": "^3.0.7",
     "react": "^16.13.1"
   },
   "repository": {
@@ -17,6 +17,7 @@
     "url": "ssh://git@github.com/yarnpkg/berry.git"
   },
   "dependencies": {
+    "keypress": "^0.2.1",
     "redux": "^4.0.0",
     "tslib": "^1.13.0"
   },

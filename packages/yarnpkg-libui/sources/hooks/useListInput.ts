@@ -1,8 +1,10 @@
-import {StdinContext}          from 'ink';
-import {useContext, useEffect} from 'react';
+import {useStdin}              from 'ink';
+import {useEffect}             from 'react';
+
+import {attachKeypressHandler} from '../misc/attachKeypressHandler';
 
 export const useListInput = function <T>(value: T, values: Array<T>, {active, minus, plus, set, loop = true}: {active: boolean, minus: string, plus: string, set: (value: T) => void, loop?: boolean}) {
-  const {stdin} = useContext(StdinContext);
+  const {stdin} = useStdin();
 
   useEffect(() => {
     if (!active)
@@ -40,9 +42,7 @@ export const useListInput = function <T>(value: T, values: Array<T>, {active, mi
       }
     };
 
-    stdin.on(`keypress`, cb);
-    return () => {
-      stdin.off(`keypress`, cb);
-    };
+
+    return attachKeypressHandler(stdin, cb);
   }, [values, value, active]);
 };
