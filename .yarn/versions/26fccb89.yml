@@ -1,6 +1,3 @@
-releases:
-  "@yarnpkg/core": minor
-
 declined:
   - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
@@ -26,5 +23,6 @@ declined:
   - "@yarnpkg/plugin-workspace-tools"
   - "@yarnpkg/builder"
   - "@yarnpkg/cli"
+  - "@yarnpkg/core"
   - "@yarnpkg/doctor"
   - "@yarnpkg/pnpify"
