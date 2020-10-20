@@ -125,7 +125,7 @@ export class Cache {
 
       const gitignorePath = ppath.resolve(this.cwd, `.gitignore` as Filename);
 
-      await xfs.changeFilePromise(gitignorePath, `/.gitignore\n*.lock\n*.flock\n`);
+      await xfs.changeFilePromise(gitignorePath, `/.gitignore\n*.flock\n`);
     }
   }
 
