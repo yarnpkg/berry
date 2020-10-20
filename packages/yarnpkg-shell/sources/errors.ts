@@ -1,14 +1,10 @@
-export type ShellErrorOptions = {
-  recoverable: boolean;
-};
-
+/**
+ * A recoverable shell error.
+ */
 export class ShellError extends Error {
-  public recoverable: boolean;
-
-  constructor(message: string, {recoverable}: ShellErrorOptions) {
+  constructor(message: string) {
     super(message);
 
     this.name = `ShellError`;
-    this.recoverable = recoverable;
   }
 }

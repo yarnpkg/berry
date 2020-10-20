@@ -4,13 +4,12 @@ import {EnvSegment, ArithmeticExpression, ArithmeticPrimary}                    
 import {homedir}                                                                     from 'os';
 import {PassThrough, Readable, Writable}                                             from 'stream';
 
-import {ShellError, ShellErrorOptions}                                               from './errors';
+import {ShellError}                                                                  from './errors';
 import * as globUtils                                                                from './globUtils';
 import {makeBuiltin, makeProcess}                                                    from './pipe';
 import {Handle, ProcessImplementation, ProtectedStream, Stdio, start, Pipe}          from './pipe';
 
 export {globUtils, ShellError};
-export type {ShellErrorOptions};
 
 export type Glob = globUtils.Glob;
 
@@ -90,7 +89,7 @@ function getFileDescriptorStream(fd: number, type: StreamType, state: ShellState
     } break;
 
     default: {
-      throw new ShellError(`Bad file descriptor: "${fd}"`, {recoverable: true});
+      throw new ShellError(`Bad file descriptor: "${fd}"`);
     }
   }
 
@@ -206,7 +205,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
           } break;
 
           default: {
-            throw new ShellError(`Assertion failed: Unsupported redirection type: "${type}"`, {recoverable: false});
+            throw new Error(`Assertion failed: Unsupported redirection type: "${type}"`);
           }
         }
       }
@@ -348,7 +347,7 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
         } else if (segment.defaultValue) {
           push((await interpolateArguments(segment.defaultValue, opts, state)).join(` `));
         } else {
-          throw new ShellError(`Unbound argument #${argIndex}`, {recoverable: true});
+          throw new ShellError(`Unbound argument #${argIndex}`);
         }
       } else {
         if (Object.prototype.hasOwnProperty.call(state.variables, segment.name)) {
@@ -358,7 +357,7 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
         } else if (segment.defaultValue) {
           push((await interpolateArguments(segment.defaultValue, opts, state)).join(` `));
         } else {
-          throw new ShellError(`Unbound variable "${segment.name}"`, {recoverable: true});
+          throw new ShellError(`Unbound variable "${segment.name}"`);
         }
       }
     } break;
@@ -376,7 +375,7 @@ async function evaluateArithmetic(arithmetic: ArithmeticExpression, opts: ShellO
   if (arithmetic.type === `number`) {
     if (!Number.isInteger(arithmetic.value)) {
       // ZSH allows non-integers, while bash throws at the parser level (unrecoverable)
-      throw new ShellError(`Invalid number: "${arithmetic.value}", only integers are allowed`, {recoverable: false});
+      throw new Error(`Invalid number: "${arithmetic.value}", only integers are allowed`);
     } else {
       return arithmetic.value;
     }
@@ -483,7 +482,7 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
     if (isGlob) {
       const pattern = interpolated.pop();
       if (typeof pattern === `undefined`)
-        throw new ShellError(`Assertion failed: Expected a glob pattern to have been set`, {recoverable: false});
+        throw new Error(`Assertion failed: Expected a glob pattern to have been set`);
 
       const matches = await opts.glob.match(pattern, {cwd: state.cwd, baseFs: opts.baseFs});
       if (matches.length === 0) {
@@ -491,7 +490,7 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
           ? `. Note: Brace expansion of arbitrary strings isn't currently supported. For more details, please read this issue: https://github.com/yarnpkg/berry/issues/22`
           : ``;
 
-        throw new ShellError(`No matches found: "${pattern}"${braceExpansionNotice}`, {recoverable: true});
+        throw new ShellError(`No matches found: "${pattern}"${braceExpansionNotice}`);
       }
 
       for (const match of matches.sort()) {
@@ -539,7 +538,7 @@ function makeCommandAction(args: Array<string>, opts: ShellOptions, state: Shell
 
   const builtin = opts.builtins.get(name);
   if (typeof builtin === `undefined`)
-    throw new ShellError(`Assertion failed: A builtin should exist for "${name}"`, {recoverable: false});
+    throw new Error(`Assertion failed: A builtin should exist for "${name}"`);
 
   return makeBuiltin(async ({stdin, stdout, stderr}) => {
     state.stdin = stdin;
@@ -634,7 +633,7 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
     }
 
     if (typeof action === `undefined`)
-      throw new ShellError(`Assertion failed: An action should have been generated`, {recoverable: false});
+      throw new Error(`Assertion failed: An action should have been generated`);
 
     if (pipeType === null) {
       // If we're processing the left-most segment of the command, we start a
@@ -646,7 +645,7 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
       });
     } else {
       if (execution === null)
-        throw new ShellError(`Assertion failed: The execution pipeline should have been setup`, {recoverable: false});
+        throw new Error(`Assertion failed: The execution pipeline should have been setup`);
 
       // Otherwise, depending on the exaxct pipe type, we either pipe stdout
       // only or stdout and stderr
@@ -670,7 +669,7 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
   }
 
   if (execution === null)
-    throw new ShellError(`Assertion failed: The execution pipeline should have been setup`, {recoverable: false});
+    throw new Error(`Assertion failed: The execution pipeline should have been setup`);
 
   return await execution.run();
 }
@@ -693,7 +692,7 @@ async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: 
     try {
       return await executeCommandChain(chain, opts, state);
     } catch (error) {
-      if (!(error instanceof ShellError) || !error.recoverable)
+      if (!(error instanceof ShellError))
         throw error;
 
       state.stderr.write(`${error.message}\n`);
@@ -727,7 +726,7 @@ async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: 
       } break;
 
       default: {
-        throw new ShellError(`Assertion failed: Unsupported command type: "${node.then.type}"`, {recoverable: false});
+        throw new Error(`Assertion failed: Unsupported command type: "${node.then.type}"`);
       } break;
     }
 
@@ -786,7 +785,7 @@ function locateArgsVariableInArgument(arg: Argument): boolean {
     } break;
 
     default:
-      throw new ShellError(`Assertion failed: Unsupported argument type: "${(arg as Argument).type}"`, {recoverable: false});
+      throw new Error(`Assertion failed: Unsupported argument type: "${(arg as Argument).type}"`);
   }
 }
 
