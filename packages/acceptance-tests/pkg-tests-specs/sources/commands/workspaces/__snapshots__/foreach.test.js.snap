@@ -19,6 +19,18 @@ Object {
 }
 `;
 
+exports[`Commands workspace foreach should include dependencies if using --recursive 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Test Workspace A
+➤ YN0000: Test Workspace C
+➤ YN0000: Test Workspace B
+➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands workspace foreach should never run the scripts on workspaces that match the --exclude list 1`] = `
 Object {
   "code": 0,
