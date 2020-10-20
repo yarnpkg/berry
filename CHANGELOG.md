@@ -12,6 +12,10 @@
 
 - Explicitly disable administrator rights for the native binary jumper on Windows. When a filename contains "install", "setup", "update", or "patch" Windows thinks it's an installer and requires administrator rights to start the binary
 
+### Shell
+
+- Some shell errors (`No matches found`, `Bad file descriptor`, `Unbound variable`, `Unbound argument`) will now be recoverable errors that make the shell continue on to the next command in the chain instead of hard crashes. Fixes cases such as `rm -rf ./inexistentFolder/* || true`.
+
 ## 2.3.1
 
 ### CLI
