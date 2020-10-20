@@ -61,10 +61,10 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   @Command.Boolean(`--topological-dev`, {description: `Run the command after all workspaces it depends on (regular + dev) have finished`})
   topologicalDev: boolean = false;
 
-  @Command.Array(`--include`, {description: `An array of glob pattern idents that acts as a whitelist of workspaces`})
+  @Command.Array(`--include`, {description: `An array of glob pattern idents; only matching workspaces will be traversed`})
   include: Array<string> = [];
 
-  @Command.Array(`--exclude`, {description: `An array of glob pattern idents that acts as a blacklist of workspaces`})
+  @Command.Array(`--exclude`, {description: `An array of glob pattern idents; matching workspaces won't be traversed`})
   exclude: Array<string> = [];
 
   @Command.Boolean(`--private`, {description: `Also run the command on private workspaces`})
