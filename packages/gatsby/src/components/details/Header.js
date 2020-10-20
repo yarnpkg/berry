@@ -94,7 +94,7 @@ export const Header = ({
       <License type={license} />
       <Deprecated deprecated={deprecated} />
       <span>{version}</span>
-      <TypeScript ts={types.ts} />
+      <TypeScript name={name} ts={types.ts} />
       <Vulnerabilities vulns={vulns} url={vulnsUrl} />
     </PackageInfo>
     <Description description={description} deprecated={deprecated} />
