@@ -201,7 +201,7 @@ The following changes only apply to the `node-modules` linker:
 
 ## 2.0.0
 
-Remember that a [migration guide](https://yarnpkg.com/advanced/migration) is available to help you port your applications to Yarn 2.
+Remember that a [migration guide](https://yarnpkg.com/getting-started/migration) is available to help you port your applications to Yarn 2.
 
 ### Notable fixes
 

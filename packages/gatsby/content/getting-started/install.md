@@ -7,7 +7,7 @@ description: Yarn's in-depth installation guide.
 
 > **Migrating from Yarn 1**
 >
-> We've been compiling helpful advice when porting over from Yarn 1 on the following [Migration Guide](/advanced/migration). Give it a look and contribute to it if you see things that aren't covered yet! Make sure to consult the [PnP Compatibility Table](/features/pnp#compatibility-table) and [enable the node-modules plugin](/advanced/migration#if-required-enable-the-node-modules-plugin) if required!
+> We've been compiling helpful advice when porting over from Yarn 1 on the following [Migration Guide](/getting-started/migration). Give it a look and contribute to it if you see things that aren't covered yet! Make sure to consult the [PnP Compatibility Table](/features/pnp#compatibility-table) and [enable the node-modules plugin](/getting-started/migration#if-required-enable-the-node-modules-plugin) if required!
 
 ```toc
 # This code block gets replaced with the Table of Contents
@@ -49,7 +49,7 @@ yarn set version berry
 
 > "Berry" is the codename for the Yarn 2 release line. It's also the name of our [repository](https://github.com/yarnpkg/berry)!
 
-4. Commit new & updated files. See: [Which files should be gitignored?](/advanced/qa#which-files-should-be-gitignored)
+4. Commit new & updated files. See: [Which files should be gitignored?](/getting-started/qa#which-files-should-be-gitignored)
 
 ## Updating to the latest versions
 

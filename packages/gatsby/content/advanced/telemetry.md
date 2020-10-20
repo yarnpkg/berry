@@ -13,7 +13,7 @@ Additionally, because of the lack of telemetry, some projects also had trouble t
 
 ## Will my information go to Facebook?
 
-No. [Yarn is not a Facebook project](/advanced/qa#is-yarn-operated-by-facebook), and Facebook won't receive **any** amount of data collected this way, and neither will Google, or Microsoft.
+No. [Yarn is not a Facebook project](/getting-started/qa#is-yarn-operated-by-facebook), and Facebook won't receive **any** amount of data collected this way, and neither will Google, or Microsoft.
 
 The data we collect are stored on [Datadog](https://www.datadoghq.com/), a trusted large-scale monitoring company with a heavy focus on security.
 

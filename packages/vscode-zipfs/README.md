@@ -1,6 +1,6 @@
 # ZipFS
 
-This extension adds support into VSCode to read files directly from zip archives. It's maintained as part of the Yarn toolchain. Using this extension together with the [Yarn SDK](https://yarnpkg.com/advanced/editor-sdks) will allow you to seamlessly open & edit files from your cache.
+This extension adds support into VSCode to read files directly from zip archives. It's maintained as part of the Yarn toolchain. Using this extension together with the [Yarn SDK](https://yarnpkg.com/getting-started/editor-sdks) will allow you to seamlessly open & edit files from your cache.
 
 ## New protocol: `zip:`
 

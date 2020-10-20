@@ -20,7 +20,7 @@ In general, an upgrade can take from five minutes to a couple of hours, dependin
 1. Run `npm install -g yarn` to update the global yarn version to latest v1
 2. Go to project directory and perform the below steps
 3. Run `yarn set version berry` to enable v2 (cf [Install](/getting-started/install) for more details)
-4. Decide whether you want [Zero-Installs](/features/zero-installs) or not, and [configure the gitignore](/advanced/qa#which-files-should-be-gitignored) accordingly
+4. Decide whether you want [Zero-Installs](/features/zero-installs) or not, and [configure the gitignore](/getting-started/qa#which-files-should-be-gitignored) accordingly
 5. If you relied on any settings from `.npmrc` or `.yarnrc`, you'll need to replicate those into the [new format](/configuration/yarnrc)
 6. Commit the changes so far (`berry.js`, `.yarnrc.yml`, ...)
 7. Run `yarn install` to migrate the lockfile
@@ -28,7 +28,7 @@ In general, an upgrade can take from five minutes to a couple of hours, dependin
 
 If you're using VSCode (or some other IDE with Intellisense-like feature):
 
-8. Run `yarn dlx @yarnpkg/pnpify --sdk vscode` to add TypeScript support (cf [Editor SDKs](/advanced/editor-sdks) for more details)
+8. Run `yarn dlx @yarnpkg/pnpify --sdk vscode` to add TypeScript support (cf [Editor SDKs](/getting-started/editor-sdks) for more details)
 9. Commit the changes if you want to avoid asking your contributors to run this step, or gitignore them otherwise
 10. Don't forget to switch the TypeScript version to "workspace" in VSCode
 
@@ -151,7 +151,7 @@ Into:
 
 ### Setup your IDE for PnP support
 
-We've written a [guide](/advanced/editor-sdks) entirely designed to explain you how to use Yarn with your IDE. Make sure to take a look at it, and maybe contribute to it if some instructions are unclear or missing!
+We've written a [guide](/getting-started/editor-sdks) entirely designed to explain you how to use Yarn with your IDE. Make sure to take a look at it, and maybe contribute to it if some instructions are unclear or missing!
 
 ### Update your configuration to the new settings
 
