@@ -158,10 +158,16 @@ export class StreamReport extends Report {
 
   private indent: number = 0;
 
-  private progress: Map<AsyncIterable<ProgressDefinition>, ProgressDefinition> = new Map();
+  private progress: Map<AsyncIterable<ProgressDefinition>, {
+    definition: ProgressDefinition,
+    lastScaledSize: number,
+  }> = new Map();
+
   private progressTime: number = 0;
   private progressFrame: number = 0;
   private progressTimeout: ReturnType<typeof setTimeout> | null = null;
+  private progressStyle: {date?: Array<number>, chars: Array<string>, size: number};
+  private progressMaxScaledSize: number;
 
   private forgettableBufferSize: number;
   private forgettableNames: Set<MessageName | null>;
@@ -182,15 +188,22 @@ export class StreamReport extends Report {
 
     this.configuration = configuration;
     this.forgettableBufferSize = forgettableBufferSize;
-    this.forgettableNames = new Set([
-      ...forgettableNames,
-      ...BASE_FORGETTABLE_NAMES,
-    ]);
+    this.forgettableNames = new Set([...forgettableNames, ...BASE_FORGETTABLE_NAMES]);
     this.includeFooter = includeFooter;
     this.includeInfos = includeInfos;
     this.includeWarnings = includeWarnings;
     this.json = json;
     this.stdout = stdout;
+
+    const styleName = this.configuration.get(`progressBarStyle`) || defaultStyle;
+    if (!Object.prototype.hasOwnProperty.call(PROGRESS_STYLES, styleName))
+      throw new Error(`Assertion failed: Invalid progress bar style`);
+
+    this.progressStyle = PROGRESS_STYLES[styleName];
+    const PAD_LEFT = `➤ YN0000: ┌ `.length;
+
+    const maxWidth = Math.max(0, Math.min(process.stdout.columns - PAD_LEFT, 80));
+    this.progressMaxScaledSize = Math.floor(this.progressStyle.size * maxWidth / 80);
   }
 
   hasErrors() {
@@ -347,7 +360,11 @@ export class StreamReport extends Report {
         title: undefined,
       };
 
-      this.progress.set(progressIt, progressDefinition);
+      this.progress.set(progressIt, {
+        definition: progressDefinition,
+        lastScaledSize: -1,
+      });
+
       this.refreshProgress(-1);
 
       for await (const {progress, title} of progressIt) {
@@ -496,34 +513,41 @@ export class StreamReport extends Report {
 
     const spinner = PROGRESS_FRAMES[this.progressFrame];
 
-    const styleName = this.configuration.get(`progressBarStyle`) || defaultStyle;
-    if (!Object.prototype.hasOwnProperty.call(PROGRESS_STYLES, styleName))
-      throw new Error(`Assertion failed: Invalid progress bar style`);
-
-    const style = PROGRESS_STYLES[styleName];
-
-    const PAD_LEFT = `➤ YN0000: ┌ `.length;
-
-    const maxWidth = Math.max(0, Math.min(process.stdout.columns - PAD_LEFT, 80));
-    const scaledSize = Math.floor(style.size * maxWidth / 80);
-
-    for (const {progress} of this.progress.values()) {
-      const okSize = scaledSize * progress;
-
-      const ok = style.chars[0].repeat(okSize);
-      const ko = style.chars[1].repeat(scaledSize - okSize);
+    for (const progress of this.progress.values()) {
+      const ok = this.progressStyle.chars[0].repeat(progress.lastScaledSize);
+      const ko = this.progressStyle.chars[1].repeat(this.progressMaxScaledSize - progress.lastScaledSize);
 
       this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${this.formatName(null)}: ${spinner} ${ok}${ko}\n`);
     }
 
     this.progressTimeout = setTimeout(() => {
       this.refreshProgress();
-    }, 1000 / 60);
+    }, PROGRESS_INTERVAL);
   }
 
   private refreshProgress(delta: number = 0) {
-    this.clearProgress({delta});
-    this.writeProgress();
+    let needsUpdate = false;
+
+    if (this.progress.size === 0) {
+      needsUpdate = true;
+    } else {
+      for (const progress of this.progress.values()) {
+        const refreshedScaledSize = Math.trunc(this.progressMaxScaledSize * progress.definition.progress);
+
+        const previousScaledSize = progress.lastScaledSize;
+        progress.lastScaledSize = refreshedScaledSize;
+
+        if (refreshedScaledSize !== previousScaledSize) {
+          needsUpdate = true;
+          break;
+        }
+      }
+    }
+
+    if (needsUpdate) {
+      this.clearProgress({delta});
+      this.writeProgress();
+    }
   }
 
   private truncate(str: string, {truncate}: {truncate?: boolean} = {}) {

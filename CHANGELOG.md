@@ -4,6 +4,10 @@
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn import plugin from sources <name>`).
 
+### Installs
+
+- Progress bars are rendered less often, which makes all installs faster
+
 ### CLI
 
 - Explicitly disable administrator rights for the native binary jumper on Windows. When a filename contains "install", "setup", "update", or "patch" Windows thinks it's an installer and requires administrator rights to start the binary
