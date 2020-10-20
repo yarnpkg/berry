@@ -16,13 +16,13 @@ export const ItemOptions = function <T>({active, options, value, onChange, sizes
 
   return <>
     {options.map(({label}, index) => {
-      const content = index === selectedIndex
+      const gem = index === selectedIndex
         ? <Text color="green">{` ◉ `}</Text>
         :  <Text color="yellow">{` ◯ `}</Text>;
       return (
         <Box key={label} width={sizes[index] - 1 || 0} marginLeft={1}>
           <Text wrap="truncate">
-            {content} {label}
+            {gem} {label}
           </Text>
         </Box>
       );
