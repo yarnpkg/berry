@@ -158,7 +158,11 @@ export class StreamReport extends Report {
 
   private indent: number = 0;
 
-  private progress: Map<AsyncIterable<ProgressDefinition>, ProgressDefinition> = new Map();
+  private progress: Map<AsyncIterable<ProgressDefinition>, {
+    definition: ProgressDefinition,
+    lastScaledSize: number,
+  }> = new Map();
+
   private progressTime: number = 0;
   private progressFrame: number = 0;
   private progressTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -184,10 +188,7 @@ export class StreamReport extends Report {
 
     this.configuration = configuration;
     this.forgettableBufferSize = forgettableBufferSize;
-    this.forgettableNames = new Set([
-      ...forgettableNames,
-      ...BASE_FORGETTABLE_NAMES,
-    ]);
+    this.forgettableNames = new Set([...forgettableNames, ...BASE_FORGETTABLE_NAMES]);
     this.includeFooter = includeFooter;
     this.includeInfos = includeInfos;
     this.includeWarnings = includeWarnings;
@@ -359,7 +360,11 @@ export class StreamReport extends Report {
         title: undefined,
       };
 
-      this.progress.set(progressIt, progressDefinition);
+      this.progress.set(progressIt, {
+        definition: progressDefinition,
+        lastScaledSize: -1,
+      });
+
       this.refreshProgress(-1);
 
       for await (const {progress, title} of progressIt) {
@@ -508,11 +513,9 @@ export class StreamReport extends Report {
 
     const spinner = PROGRESS_FRAMES[this.progressFrame];
 
-    for (const {progress} of this.progress.values()) {
-      const okSize = this.progressMaxScaledSize * progress;
-
-      const ok = this.progressStyle.chars[0].repeat(okSize);
-      const ko = this.progressStyle.chars[1].repeat(this.progressMaxScaledSize - okSize);
+    for (const progress of this.progress.values()) {
+      const ok = this.progressStyle.chars[0].repeat(progress.lastScaledSize);
+      const ko = this.progressStyle.chars[1].repeat(this.progressMaxScaledSize - progress.lastScaledSize);
 
       this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${this.formatName(null)}: ${spinner} ${ok}${ko}\n`);
     }
@@ -523,24 +526,27 @@ export class StreamReport extends Report {
   }
 
   private refreshProgress(delta: number = 0) {
+    let needsUpdate = false;
+
     if (this.progress.size === 0) {
-      this.clearProgress({delta});
-      this.writeProgress();
+      needsUpdate = true;
+    } else {
+      for (const progress of this.progress.values()) {
+        const refreshedScaledSize = Math.trunc(this.progressMaxScaledSize * progress.definition.progress);
+
+        const previousScaledSize = progress.lastScaledSize;
+        progress.lastScaledSize = refreshedScaledSize;
+
+        if (refreshedScaledSize !== previousScaledSize) {
+          needsUpdate = true;
+          break;
+        }
+      }
     }
 
-    const time = Date.now();
-
-    for (const progressDefinition of this.progress.values()) {
-      const {progress, lastScaledSize, lastRenderTime} = progressDefinition;
-      const progressScaledSize = Math.trunc(this.progressMaxScaledSize * progress);
-
-      if (progressScaledSize !== lastScaledSize || !lastRenderTime || time - lastRenderTime >= PROGRESS_INTERVAL) {
-        this.clearProgress({delta});
-        this.writeProgress();
-
-        progressDefinition.lastScaledSize = progressScaledSize;
-        progressDefinition.lastRenderTime = time;
-      }
+    if (needsUpdate) {
+      this.clearProgress({delta});
+      this.writeProgress();
     }
   }
 
