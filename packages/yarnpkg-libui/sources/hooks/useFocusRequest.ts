@@ -30,5 +30,5 @@ export const useFocusRequest = function ({active, handler}: {active: boolean, ha
 
 
     return attachKeypressHandler(stdin, cb);
-  }, [active, handler]);
+  }, [active, handler, stdin]);
 };

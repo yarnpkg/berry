@@ -44,5 +44,5 @@ export const useListInput = function <T>(value: T, values: Array<T>, {active, mi
 
 
     return attachKeypressHandler(stdin, cb);
-  }, [values, value, active]);
+  }, [values, value, active, stdin]);
 };

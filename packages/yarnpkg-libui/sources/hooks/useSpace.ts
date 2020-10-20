@@ -22,5 +22,5 @@ export const useSpace = function ({active, handler}: {active: boolean, handler: 
 
 
     return attachKeypressHandler(stdin, cb);
-  }, [handler]);
+  }, [handler, stdin]);
 };
