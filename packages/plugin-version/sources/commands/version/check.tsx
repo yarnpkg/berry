@@ -15,7 +15,7 @@ import * as versionUtils                                                        
 type Releases = Map<Workspace, Exclude<versionUtils.Decision, versionUtils.Decision.UNDECIDED>>;
 
 // eslint-disable-next-line arca/no-default-export
-export default class VersionApplyCommand extends Command<CommandContext> {
+export default class VersionCheckCommand extends Command<CommandContext> {
   @Command.Boolean(`-i,--interactive`, {description: `Open an interactive interface used to set version bumps`})
   interactive?: boolean;
 
