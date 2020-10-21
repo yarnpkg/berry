@@ -5898,6 +5898,7 @@ __metadata:
   peerDependencies:
     "@yarnpkg/core": ^2.3.1
     "@yarnpkg/plugin-git": ^2.2.0
+    "@yarnpkg/plugin-http": ^2.1.1
   languageName: unknown
   linkType: soft
 

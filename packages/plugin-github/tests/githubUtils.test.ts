@@ -2,39 +2,40 @@ import {isGithubUrl, parseGithubUrl, invalidGithubUrlMessage} from '../sources/g
 
 const validScenarios = [{
   url: `http://github.com/owner/repo.git`,
-  auth: undefined, username: `owner`, reponame: `repo`, treeish: `master`,
+  auth: undefined, username: `owner`, reponame: `repo`, treeish: `master`, workspace: undefined,
 }, {
   url: `https://github.com/owner/repo.git`,
-  auth: undefined, username: `owner`, reponame: `repo`, treeish: `master`,
+  auth: undefined, username: `owner`, reponame: `repo`, treeish: `master`, workspace: undefined,
 }, {
   url: `https://yarnpkg::;*%$:@github.com/owner/repo.git`,
-  auth: `yarnpkg::;*%$:`, username: `owner`, reponame: `repo`, treeish: `master`,
+  auth: `yarnpkg::;*%$:`, username: `owner`, reponame: `repo`, treeish: `master`, workspace: undefined,
 }, {
   url: `https://yarnpkg:$fooABC@:@github.com/owner/repo.git`,
-  auth: `yarnpkg:$fooABC@:`, username: `owner`, reponame: `repo`, treeish: `master`,
+  auth: `yarnpkg:$fooABC@:`, username: `owner`, reponame: `repo`, treeish: `master`, workspace: undefined,
 }, {
   url: `https://yarnpkg:password@github.com/owner/repo.git`,
-  auth: `yarnpkg:password`, username: `owner`, reponame: `repo`, treeish: `master`,
+  auth: `yarnpkg:password`, username: `owner`, reponame: `repo`, treeish: `master`, workspace: undefined,
 }, {
   url: `https://github.com/owner/repo.git#commit:abcdef`,
-  auth: undefined, username: `owner`, reponame: `repo`, treeish: `abcdef`,
+  auth: undefined, username: `owner`, reponame: `repo`, treeish: `abcdef`, workspace: undefined,
 }, {
   url: `https://github.com/owner/repo.git#abcdef`,
-  auth: undefined, username: `owner`, reponame: `repo`, treeish: `abcdef`,
+  auth: undefined, username: `owner`, reponame: `repo`, treeish: `abcdef`, workspace: undefined,
 }, {
   url: `https://github.com/owner/repo.git#commit=abcdef`,
-  auth: undefined, username: `owner`, reponame: `repo`, treeish: `abcdef`,
+  auth: undefined, username: `owner`, reponame: `repo`, treeish: `abcdef`, workspace: undefined,
 }, {
   url: `https://github.com/owner/repo.git#commit=abcdef&workspace=foobar`,
-  auth: undefined, username: `owner`, reponame: `repo`, treeish: `abcdef`,
+  auth: undefined, username: `owner`, reponame: `repo`, treeish: `abcdef`, workspace: `foobar`,
+}, {
+  url: `git://github.com/owner/repo`,
+  auth: undefined, username: `owner`, reponame: `repo`, treeish: `master`, workspace: undefined,
 }];
 
 const invalidScenarios = [{
   url: `shttp://github.com/owner/repo.git#master`,
 }, {
   url: `got://github.com/owner/repo#ff786f9f`,
-}, {
-  url: `git://github.com/owner/repo`,
 }, {
   url: `http://github.com/owner`,
 }];
