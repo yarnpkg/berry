@@ -417,40 +417,60 @@ export abstract class FakeFS<P extends Path> {
     this.chmodSync(destination, mode);
   }
 
-  async changeFilePromise(p: P, content: string, {automaticNewlines}: ChangeFileOptions = {}) {
-    let current = ``;
+  async changeFilePromise(p: P, content: Buffer): Promise<void>;
+  async changeFilePromise(p: P, content: string, opts?: ChangeFileOptions): Promise<void>;
+  async changeFilePromise(p: P, content: Buffer | string, {automaticNewlines}: ChangeFileOptions = {}) {
+    const encoding = typeof content === `string`
+      ? `utf8`
+      : undefined;
+
+    let current: Buffer | string | undefined;
     try {
-      current = await this.readFilePromise(p, `utf8`);
+      current = await this.readFilePromise(p, encoding);
     } catch (error) {
       // ignore errors, no big deal
     }
 
-    const normalizedContent = automaticNewlines
-      ? normalizeLineEndings(current, content)
-      : content;
-
-    if (current === normalizedContent)
+    if (Buffer.isBuffer(current) && Buffer.isBuffer(content) && content.compare(current) === 0)
       return;
 
-    await this.writeFilePromise(p, normalizedContent);
+    if (typeof current === `string` && typeof content === `string`) {
+      if (automaticNewlines)
+        content = normalizeLineEndings(current, content);
+
+      if (current === content) {
+        return;
+      }
+    }
+
+    await this.writeFilePromise(p, content);
   }
 
   changeFileSync(p: P, content: string, {automaticNewlines = false}: ChangeFileOptions = {}) {
-    let current = ``;
+    const encoding = typeof content === `string`
+      ? `utf8`
+      : undefined;
+
+    let current: Buffer | string | undefined;
     try {
-      current = this.readFileSync(p, `utf8`);
+      current = this.readFileSync(p, encoding);
     } catch (error) {
       // ignore errors, no big deal
     }
 
-    const normalizedContent = automaticNewlines
-      ? normalizeLineEndings(current, content)
-      : content;
-
-    if (current === normalizedContent)
+    if (Buffer.isBuffer(current) && Buffer.isBuffer(content) && content.compare(current) === 0)
       return;
 
-    this.writeFileSync(p, normalizedContent);
+    if (typeof current === `string` && typeof content === `string`) {
+      if (automaticNewlines)
+        content = normalizeLineEndings(current, content);
+
+      if (current === content) {
+        return;
+      }
+    }
+
+    this.writeFileSync(p, content);
   }
 
   async movePromise(fromP: P, toP: P) {
@@ -480,6 +500,7 @@ export abstract class FakeFS<P extends Path> {
   }
 
   async lockPromise<T>(affectedPath: P, callback: () => Promise<T>): Promise<T> {
+    return await callback();
     const lockPath = `${affectedPath}.flock` as P;
 
     const interval = 1000 / 60;
