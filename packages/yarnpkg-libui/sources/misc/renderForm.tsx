@@ -2,8 +2,7 @@ import {useApp, useStdin, render} from 'ink';
 import React, {useEffect}         from 'react';
 
 import {Application}              from '../components/Application';
-
-import {attachKeypressHandler}    from './attachKeypressHandler';
+import {useKeypress}              from '../hooks/useKeypress';
 
 type InferProps<T> = T extends React.ComponentType<infer P> ? P : never;
 
@@ -14,18 +13,17 @@ export async function renderForm<T, C = React.ComponentType>(UserComponent: Subm
 
   const useSubmit = (value: T) => {
     const {exit} = useApp();
-    const {stdin} = useStdin();
 
-    useEffect(() => {
-      const cb = (ch: any, key: any) => {
-        if (key.name === `return`) {
-          returnedValue = value;
-          exit();
-        }
-      };
+    useKeypress({active: true}, (ch, key) => {
+      if (key.name !== `return`)
+        return;
 
-      return attachKeypressHandler(stdin, cb);
-    }, [stdin, exit, value]);
+      returnedValue = value;
+      exit();
+    }, [
+      exit,
+      value,
+    ]);
   };
 
   const {waitUntilExit} = render(

@@ -36,9 +36,12 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
   }, [activeIndex]);
 
   useFocusRequest({
-    active,
-    handler: onFocusRequest,
-  });
+    active: active && !!onFocusRequest,
+  }, request => {
+    onFocusRequest?.(request);
+  }, [
+    onFocusRequest,
+  ]);
 
   useListInput(activeKey, keys, {
     active,

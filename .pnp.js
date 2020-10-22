@@ -9097,7 +9097,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/ink", null],
             ["@types/react", "npm:16.9.2"],
             ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.7"],
-            ["keypress", "npm:0.2.1"],
             ["react", "npm:16.13.1"],
             ["redux", "npm:4.0.5"],
             ["tslib", "npm:1.13.0"]
@@ -9116,7 +9115,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/libui", "workspace:packages/yarnpkg-libui"],
             ["@types/react", "npm:16.9.2"],
             ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.7"],
-            ["keypress", "npm:0.2.1"],
             ["react", "npm:16.13.1"],
             ["redux", "npm:4.0.5"],
             ["tslib", "npm:1.13.0"]
@@ -23779,15 +23777,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/kew-npm-0.7.0-313b8dfdfe-be928d4248.zip/node_modules/kew/",
           "packageDependencies": [
             ["kew", "npm:0.7.0"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["keypress", [
-        ["npm:0.2.1", {
-          "packageLocation": "./.yarn/cache/keypress-npm-0.2.1-7c7e730378-58e7a757c8.zip/node_modules/keypress/",
-          "packageDependencies": [
-            ["keypress", "npm:0.2.1"]
           ],
           "linkType": "HARD",
         }]

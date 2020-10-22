@@ -5679,7 +5679,6 @@ __metadata:
   dependencies:
     "@types/react": ^16.8.0
     ink: ^3.0.7
-    keypress: ^0.2.1
     react: ^16.13.1
     redux: ^4.0.0
     tslib: ^1.13.0
@@ -17541,13 +17540,6 @@ fsevents@^1.2.7:
   version: 0.7.0
   resolution: "kew@npm:0.7.0"
   checksum: be928d4248c934f38edda580144533bc93751f6b81d34e01cb1ff4196e63faf8957f5d54e7ef5c6529cbfdcc8f63a1acd53511e20955744b27c7eae965445775
-  languageName: node
-  linkType: hard
-
-"keypress@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "keypress@npm:0.2.1"
-  checksum: 58e7a757c806feed7800789a926721351eba50201da6db0d9646a43c855efadac3efe69b9ed0ea53dcef3f0b4bf4e76b4d2ab72f51a60af16cb335dd5ad03c30
   languageName: node
   linkType: hard
 

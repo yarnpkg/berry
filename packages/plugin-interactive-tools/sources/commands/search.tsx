@@ -1,17 +1,18 @@
 import {BaseCommand}                         from '@yarnpkg/cli';
 import {Configuration, structUtils}          from '@yarnpkg/core';
 import {ScrollableItems}                     from '@yarnpkg/libui/sources/components/ScrollableItems';
+import {useKeypress}                         from '@yarnpkg/libui/sources/hooks/useKeypress';
 import {useMinistore}                        from '@yarnpkg/libui/sources/hooks/useMinistore';
-import {useSpace}                            from '@yarnpkg/libui/sources/hooks/useSpace';
 import {renderForm, SubmitInjectedComponent} from '@yarnpkg/libui/sources/misc/renderForm';
 import {Command, Usage}                      from 'clipanion';
 import InkTextInput                          from 'ink-text-input';
 import {Box, Text}                           from 'ink';
+
 import React, {useEffect, useState}          from 'react';
 
 import {AlgoliaPackage, search}              from '../algolia';
 
-const targets = [`regular`, `dev`, `peer`];
+const TARGETS = [`regular`, `dev`, `peer`];
 
 // eslint-disable-next-line arca/no-default-export
 export default class SearchCommand extends BaseCommand {
@@ -82,23 +83,25 @@ export default class SearchCommand extends BaseCommand {
     const HitEntry = ({hit, active}: {hit: AlgoliaPackage, active: boolean}) => {
       const [action, setAction] = useMinistore<string | null>(hit.name, null);
 
-      useSpace({
-        active,
-        handler: () => {
-          if (!action) {
-            setAction(targets[0]);
-            return;
-          }
+      useKeypress({active}, (ch, key) => {
+        if (key.name !== `space`)
+          return;
 
-          const nextIndex = targets.indexOf(action) + 1;
+        if (!action) {
+          setAction(TARGETS[0]);
+          return;
+        }
 
-          if (nextIndex === targets.length) {
-            setAction(null);
-          } else {
-            setAction(targets[nextIndex]);
-          }
-        },
-      });
+        const nextIndex = TARGETS.indexOf(action) + 1;
+        if (nextIndex === TARGETS.length) {
+          setAction(null);
+        } else {
+          setAction(TARGETS[nextIndex]);
+        }
+      }, [
+        action,
+        setAction,
+      ]);
 
       const ident = structUtils.parseIdent(hit.name);
       const prettyIdent = structUtils.prettyIdent(configuration, ident);
@@ -140,7 +143,7 @@ export default class SearchCommand extends BaseCommand {
             {` - `}{structUtils.prettyIdent(configuration, ident)}
           </Text>
         </Box>
-        {targets.map(
+        {TARGETS.map(
           target =>
             <Box key={target} width={14} marginLeft={1}>
               <Text>

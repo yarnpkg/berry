@@ -1,7 +1,4 @@
-import {useStdin}              from 'ink';
-import {useEffect}             from 'react';
-
-import {attachKeypressHandler} from '../misc/attachKeypressHandler';
+import {useKeypress} from './useKeypress';
 
 export enum FocusRequest {
   BEFORE = `before`,
@@ -11,24 +8,14 @@ export enum FocusRequest {
 export type FocusRequestHandler =
   (request: FocusRequest) => void;
 
-export const useFocusRequest = function ({active, handler}: {active: boolean, handler?: FocusRequestHandler}) {
-  const {stdin} = useStdin();
-
-  useEffect(() => {
-    if (!active || typeof handler === `undefined`)
-      return undefined;
-
-    const cb = (ch: any, key: any) => {
-      if (key.name === `tab`) {
-        if (key.shift) {
-          handler(FocusRequest.BEFORE);
-        } else {
-          handler(FocusRequest.AFTER);
-        }
+export const useFocusRequest = function ({active}: {active: boolean}, handler: FocusRequestHandler, deps: Array<any>) {
+  useKeypress({active}, (ch, key) => {
+    if (key.name === `tab`) {
+      if (key.shift) {
+        handler!(FocusRequest.BEFORE);
+      } else {
+        handler!(FocusRequest.AFTER);
       }
-    };
-
-
-    return attachKeypressHandler(stdin, cb);
-  }, [active, handler, stdin]);
+    }
+  }, deps);
 };
