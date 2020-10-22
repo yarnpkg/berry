@@ -1,6 +1,14 @@
-import {DescriptorHash, Project, Workspace, formatUtils, structUtils, treeUtils, Descriptor} from '@yarnpkg/core';
+import {DescriptorHash, Project, Workspace, formatUtils, structUtils, treeUtils, Descriptor, miscUtils} from '@yarnpkg/core';
 
-import * as npmAuditTypes                                                                    from './npmAuditTypes';
+import * as npmAuditTypes                                                                               from './npmAuditTypes';
+
+export const allSeverities = [
+  npmAuditTypes.Severity.Info,
+  npmAuditTypes.Severity.Low,
+  npmAuditTypes.Severity.Moderate,
+  npmAuditTypes.Severity.High,
+  npmAuditTypes.Severity.Critical,
+];
 
 // Enumerate all the transitive dependencies of a set of top-level packages
 function getTransitiveDependencies(project: Project, roots: Array<DescriptorHash>) {
@@ -108,14 +116,6 @@ export function getSeverityInclusions(severity?: npmAuditTypes.Severity): Set<np
   if (typeof severity === `undefined`)
     return new Set();
 
-  const allSeverities = [
-    npmAuditTypes.Severity.Info,
-    npmAuditTypes.Severity.Low,
-    npmAuditTypes.Severity.Moderate,
-    npmAuditTypes.Severity.High,
-    npmAuditTypes.Severity.Critical,
-  ];
-
   const severityIndex = allSeverities.indexOf(severity);
   const severities = allSeverities.slice(severityIndex);
 
@@ -146,7 +146,7 @@ export function getReportTree(result: npmAuditTypes.AuditResponse) {
   const auditTreeChildren: treeUtils.TreeMap = {};
   const auditTree: treeUtils.TreeNode = {children: auditTreeChildren};
 
-  Object.values(result.advisories).forEach(advisory => {
+  for (const advisory of miscUtils.sortMap(Object.values(result.advisories), advisory => advisory.module_name)) {
     auditTreeChildren[advisory.module_name] = {
       label: advisory.module_name,
       value: formatUtils.tuple(formatUtils.Type.RANGE, advisory.findings.map(finding => finding.version).join(`, `)),
@@ -173,33 +173,16 @@ export function getReportTree(result: npmAuditTypes.AuditResponse) {
         },
         Recommendation: {
           label: `Recommendation`,
-          value: formatUtils.tuple(formatUtils.Type.NO_HINT, advisory.recommendation),
-        },
-        Paths: {
-          children: pathListToTreeNode(advisory.findings.map(finding => finding.paths).flat()),
+          value: formatUtils.tuple(formatUtils.Type.NO_HINT, advisory.recommendation.replace(/\n/g, ` `)),
         },
       },
     };
-  });
+  }
 
   return auditTree;
 }
 
-function pathListToTreeNode(paths: Array<string>): treeUtils.TreeMap {
-  const result: Record<string, {value: formatUtils.Tuple, children: treeUtils.TreeMap}> = {};
-
-  paths.map(path => path.split(`>`)).forEach(path => {
-    let node: treeUtils.TreeMap = result;
-    path.forEach(pkg => {
-      node[pkg] = node[pkg] ?? {value: formatUtils.tuple(formatUtils.Type.NAME, pkg), children: {}};
-      node = node[pkg].children as treeUtils.TreeMap;
-    });
-  });
-
-  return result;
-}
-
-export function getRequires(project: Project, workspace: Workspace, {all}: {all: boolean}) {
+export function getRequires(project: Project, workspace: Workspace, {all, environment}: {all: boolean, environment: npmAuditTypes.Environment}) {
   const workspaces = all
     ? project.workspaces
     : [workspace];
@@ -207,7 +190,7 @@ export function getRequires(project: Project, workspace: Workspace, {all}: {all:
   const includeDependencies = [
     npmAuditTypes.Environment.All,
     npmAuditTypes.Environment.Production,
-  ].includes(this.environment);
+  ].includes(environment);
 
   const requiredDependencies = [];
   if (includeDependencies)
@@ -218,7 +201,7 @@ export function getRequires(project: Project, workspace: Workspace, {all}: {all:
   const includeDevDependencies = [
     npmAuditTypes.Environment.All,
     npmAuditTypes.Environment.Development,
-  ].includes(this.environment);
+  ].includes(environment);
 
   const requiredDevDependencies = [];
   if (includeDevDependencies)
@@ -246,8 +229,7 @@ export function getDependencies(project: Project, workspace: Workspace, {all}: {
     },
   } = {};
 
-  // BUG: Should be storedPackage
-  for (const pkg of project.originalPackages.values()) {
+  for (const pkg of project.storedPackages.values()) {
     data[structUtils.stringifyIdent(pkg)] = {
       version: pkg.version ?? `0.0.0`,
       integrity: pkg.identHash,

@@ -1,15 +1,18 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                                     from '@yarnpkg/cli';
-import {Configuration, Descriptor, Project, ReportError, MessageName, Workspace, formatUtils, structUtils, treeUtils, LightReport, StreamReport} from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils}                                                                                                            from '@yarnpkg/plugin-npm';
-import {Command, Usage}                                                                                                                          from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
+import {Configuration, Project, ReportError, MessageName, treeUtils, LightReport, StreamReport} from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils}                                                           from '@yarnpkg/plugin-npm';
+import {Command, Usage}                                                                         from 'clipanion';
 
-import * as npmAuditTypes                                                                                                                        from '../../npmAuditTypes';
-import * as npmAuditUtils                                                                                                                        from '../../npmAuditUtils';
+import * as npmAuditTypes                                                                       from '../../npmAuditTypes';
+import * as npmAuditUtils                                                                       from '../../npmAuditUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class AuditCommand extends BaseCommand {
   @Command.Boolean(`-A,--all`)
   all: boolean = false;
+
+  @Command.Boolean(`-R,--recursive`)
+  recursive: boolean = false;
 
   @Command.String(`--environment`)
   environment: npmAuditTypes.Environment = npmAuditTypes.Environment.All;
@@ -23,15 +26,13 @@ export default class AuditCommand extends BaseCommand {
   static usage: Usage = Command.Usage({
     description: `perform a vulnerability audit against the installed packages`,
     details: `
-      Checks for known security issues with the installed packages. The output is a list of known issues.
+      This command checks for known security reports on the packages you use. The reports are by default extracted from the npm registry, and may or may not be relevant to your actual program (not all vulnerabilities affect all code paths).
 
-      You must be online to perform the audit.
+      For consistency with our other commands the default is to only check the direct dependencies for the active workspace. To extend this search to all workspaces, use \`-A,--all\`. To extend this search to both direct and transitive dependencies, use \`-R,--recursive\`.
 
-      If \`-A,--all\` is set, the report will include dependencies from the whole project.
+      Applying the \`--severity\` flag will limit the audit table to vulnerabilities of the corresponding severity and above. Valid values are ${npmAuditUtils.allSeverities.map(value => `\`${value}\``).join(`, `)}.
 
-      Applying the \`--severity\` flag will limit the audit table to vulnerabilities of the corresponding severity and above.
-
-      For scripting purposes, yarn audit also supports the --json flag, which will output the details for the issues in JSON-lines format (one JSON object per line) instead of plain text.
+      If the \`--json\` flag is set, Yarn will print the output exactly as received from the registry. Regardless of this flag, the process will exit with a non-zero exit code if a report is found for the selected packages.
     `,
     examples: [[
       `Checks for known security issues with the installed packages. The output is a list of known issues.`,
@@ -61,9 +62,17 @@ export default class AuditCommand extends BaseCommand {
 
     await project.restoreInstallState();
 
+    const requires = npmAuditUtils.getRequires(project, workspace, {all: this.all, environment: this.environment});
+    const dependencies = npmAuditUtils.getDependencies(project, workspace, {all: this.all});
+
+    if (!this.recursive)
+      for (const key of Object.keys(dependencies))
+        if (!Object.prototype.hasOwnProperty.call(requires, key))
+          delete dependencies[key];
+
     const body = {
-      requires: npmAuditUtils.getRequires(project, workspace, {all: this.all}),
-      dependencies: npmAuditUtils.getDependencies(project, workspace, {all: this.all}),
+      requires,
+      dependencies,
     };
 
     const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {
