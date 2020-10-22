@@ -250,7 +250,7 @@ export default class VersionApplyCommand extends Command<CommandContext> {
       }, [focus, setFocus]);
 
       return (
-        <Box width={80} flexDirection={`column`}>
+        <Box flexDirection={`column`}>
           <Prompt />
           <Box>
             <Text wrap="wrap">
