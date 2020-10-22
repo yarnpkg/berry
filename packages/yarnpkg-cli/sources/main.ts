@@ -1,6 +1,7 @@
 import {Configuration, CommandContext, PluginConfiguration, TelemetryManager, semverUtils} from '@yarnpkg/core';
 import {PortablePath, npath, xfs}                                                          from '@yarnpkg/fslib';
 import {execFileSync}                                                                      from 'child_process';
+import {isCI}                                                                              from 'ci-info';
 import {Cli, UsageError}                                                                   from 'clipanion';
 
 import {realpathSync}                                                                      from 'fs';
@@ -99,8 +100,8 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       if (ignorePath)
         delete process.env.YARN_IGNORE_PATH;
 
-      const isTelemetryEnabled = configuration.get<boolean>(`enableTelemetry`);
-      if (isTelemetryEnabled)
+      const isTelemetryEnabled = configuration.get(`enableTelemetry`);
+      if (isTelemetryEnabled && !isCI && process.stdout.isTTY)
         Configuration.telemetry = new TelemetryManager(configuration, `puba9cdc10ec5790a2cf4969dd413a47270`);
 
       Configuration.telemetry?.reportVersion(binaryVersion);

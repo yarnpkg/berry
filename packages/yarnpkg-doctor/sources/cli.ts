@@ -293,7 +293,7 @@ async function processWorkspace(workspace: Workspace, {configuration, fileList, 
   const reportedProgress = report.reportProgress(progress);
 
   for (const scriptName of workspace.manifest.scripts.keys())
-    if (scriptName.match(/^(pre|post)(?!(install|pack)$)/))
+    if (scriptName.match(/^(pre|post)(?!(install|pack)$)/) && !scriptName.match(/^prettier/))
       report.reportWarning(MessageName.UNNAMED, `User scripts prefixed with "pre" or "post" (like "${scriptName}") will not be called in sequence anymore; prefer calling prologues and epilogues explicitly`);
 
   for (const p of fileList) {
@@ -312,9 +312,6 @@ async function processWorkspace(workspace: Workspace, {configuration, fileList, 
 }
 
 class EntryCommand extends Command {
-  @Command.Boolean(`--scoped`)
-  scoped: boolean = false;
-
   @Command.String({required: false})
   cwd: string = `.`;
 
@@ -417,8 +414,15 @@ class EntryCommand extends Command {
   }
 }
 
-const cli = new Cli({binaryName: `yarn dlx @yarnpkg/doctor`});
+const cli = new Cli({
+  binaryLabel: `Yarn Doctor`,
+  binaryName: `yarn dlx @yarnpkg/doctor`,
+  binaryVersion: require(`@yarnpkg/doctor/package.json`).version,
+});
+
 cli.register(EntryCommand);
+cli.register(Command.Entries.Version);
+
 cli.runExit(process.argv.slice(2), {
   stdin: process.stdin,
   stdout: process.stdout,

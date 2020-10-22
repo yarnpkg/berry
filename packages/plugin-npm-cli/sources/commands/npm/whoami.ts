@@ -1,15 +1,15 @@
 import {BaseCommand, openWorkspace}   from '@yarnpkg/cli';
 import {Configuration, MessageName}   from '@yarnpkg/core';
-import {StreamReport}                 from '@yarnpkg/core';
+import {StreamReport, structUtils}    from '@yarnpkg/core';
 import {npmConfigUtils, npmHttpUtils} from '@yarnpkg/plugin-npm';
 import {Command, Usage}               from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmWhoamiCommand extends BaseCommand {
-  @Command.String(`-s,--scope`)
+  @Command.String(`-s,--scope`, {description: `Print username for the registry configured for a given scope`})
   scope?: string;
 
-  @Command.Boolean(`--publish`)
+  @Command.Boolean(`--publish`, {description: `Print username for the publish registry`})
   publish: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -55,6 +55,7 @@ export default class NpmWhoamiCommand extends BaseCommand {
           registry,
           authType: npmHttpUtils.AuthType.ALWAYS_AUTH,
           jsonResponse: true,
+          ident: this.scope ? structUtils.makeIdent(this.scope, ``) : undefined,
         });
 
         report.reportInfo(MessageName.UNNAMED, response.username);

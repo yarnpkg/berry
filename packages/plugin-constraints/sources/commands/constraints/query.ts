@@ -7,7 +7,7 @@ import {Constraints}            from '../../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsQueryCommand extends BaseCommand {
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   @Command.String()
@@ -18,8 +18,6 @@ export default class ConstraintsQueryCommand extends BaseCommand {
     description: `query the constraints fact database`,
     details: `
       This command will output all matches to the given prolog query.
-
-      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
     `,
     examples: [[
       `List all dependencies throughout the workspace`,

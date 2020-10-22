@@ -12,13 +12,13 @@ const Stargazers = ({stargazers, repository}) => {
   )
     return null;
 
-  const [provider] = repository.host.split('.');
-  const providerName = {github: 'GitHub', gitlab: 'GitLab'}[provider];
+  const [provider] = repository.host.split(`.`);
+  const providerName = {github: `GitHub`, gitlab: `GitLab`}[provider];
   return (
     <Di
       icon="stargazers"
       title={`${providerName} stargazers`}
-      description={stargazers.toLocaleString('en')}
+      description={stargazers.toLocaleString(`en`)}
     />
   );
 };
@@ -30,7 +30,7 @@ const Downloads = ({downloads, humanDownloads}) =>
       icon="downloads"
       title="Downloads last 30 days"
       description={
-        <span title={downloads.toLocaleString('en')}>
+        <span title={downloads.toLocaleString(`en`)}>
           {humanDownloads}
         </span>
       }
@@ -47,7 +47,7 @@ const Dependents = ({dependents, humanDependents, name}) =>
           href={`https://www.npmjs.com/browse/depended/${name}`}
           target="_blank"
           rel="noopener noreferrer"
-          title={dependents.toLocaleString('en')}
+          title={dependents.toLocaleString(`en`)}
         >
           {humanDependents}
         </a>
@@ -55,7 +55,7 @@ const Dependents = ({dependents, humanDependents, name}) =>
     />
   );
 
-const formatHits = (hits) => {
+const formatHits = hits => {
   if (hits >= 1e9)
     return `${Math.round(hits / 1e7) / 100}b`;
   else if (hits >= 1e6)
@@ -71,7 +71,7 @@ const JsDelivrHits = ({jsDelivrHits}) => (<Di
   icon="downloads"
   title="jsDelivr last 30 days"
   description={
-    <span title={jsDelivrHits.toLocaleString('en')}>
+    <span title={jsDelivrHits.toLocaleString(`en`)}>
       {formatHits(jsDelivrHits)}
     </span>
   }

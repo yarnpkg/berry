@@ -2,6 +2,7 @@
 category: features
 path: /features/offline-cache
 title: "Offline Cache"
+description: An overview of Yarn's offline cache, a feature that allows Yarn to work just fine even should the network go down for any reason.
 ---
 
 The offline cache is a feature that allows Yarn to work just fine even should the network go down for any reason - whether it's because your employer didn't pay the utility bill or because the place where your packages are hosted becomes unavailable. It's also a critical part of [Zero-Installs](/features/zero-installs) and doesn't store more than a single file for each package - making it suitable for being stored within a repository, [as we actually do in the Yarn repository itself](https://github.com/yarnpkg/berry/tree/master/.yarn/cache).
@@ -42,4 +43,4 @@ The location of the shared cache is always [`<globalFolder>`](/configuration/yar
 
 ## Cache integrity
 
-Because the archive checksums are stored within the lockfile, any cache corruption will be detected at install-time and you'll be asked to resolve the problem - either by removing the corrupted file, or updating the checksum. The later isn't meant to be done except for advanced users in extremely specific cases.
+Because the archive checksums are stored within the lockfile, any cache corruption will be detected at install-time and you'll be asked to resolve the problem - either by removing the corrupted file, or updating the checksum. The latter isn't meant to be done except for advanced users in extremely specific cases.

@@ -2,13 +2,16 @@
   "editor.tabSize": 2,
   "files.eol": "\n",
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
+  "typescript.tsserver.watchOptions": {
+    "watchFile": "useFsEventsOnParentDirectory",
+    "watchDirectory": "useFsEvents"
+  },
   "npm.packageManager": "yarn",
   "eslint.validate": [
     "javascript",
     "typescript",
     "typescriptreact"
   ],
-  "eslint.enable": true,
   "eslint.nodePath": ".yarn/sdks",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true

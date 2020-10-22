@@ -90,14 +90,28 @@ async function genCommitMessage(cwd: PortablePath, changes: Array<stageUtils.Fil
   return message;
 }
 
+const unstagedPrefixes = {
+  [stageUtils.ActionType.CREATE]: [` A `, `?? `],
+  [stageUtils.ActionType.MODIFY]: [` M `],
+  [stageUtils.ActionType.DELETE]: [` D `],
+};
+
+const stagedPrefixes = {
+  [stageUtils.ActionType.CREATE]: [`A  `],
+  [stageUtils.ActionType.MODIFY]: [`M  `],
+  [stageUtils.ActionType.DELETE]: [`D  `],
+};
+
 export const Driver = {
   async findRoot(cwd: PortablePath) {
     return await stageUtils.findVcsRoot(cwd, {marker: `.git` as Filename});
   },
 
-  async filterChanges(cwd: PortablePath, yarnRoots: Set<PortablePath>, yarnNames: Set<string>) {
+  async filterChanges(cwd: PortablePath, yarnRoots: Set<PortablePath>, yarnNames: Set<string>, opts?: { staged?: boolean }) {
     const {stdout} = await execUtils.execvp(`git`, [`status`, `-s`], {cwd, strict: true});
     const lines = stdout.toString().split(/\n/g);
+
+    const changePrefix = opts?.staged ? stagedPrefixes : unstagedPrefixes;
 
     const changes = ([] as Array<stageUtils.FileAction>).concat(...lines.map((line: string) => {
       if (line === ``)
@@ -107,28 +121,22 @@ export const Driver = {
       const path = ppath.resolve(cwd, line.slice(3) as PortablePath);
 
       // New directories need to be expanded to their content
-      if (prefix === `?? ` && line.endsWith(`/`)) {
+      if (!opts?.staged && prefix === `?? ` && line.endsWith(`/`)) {
         return stageUtils.expandDirectory(path).map(path => ({
           action: stageUtils.ActionType.CREATE,
           path,
         }));
-      } else if (prefix === ` A ` || prefix === `?? `) {
-        return [{
-          action: stageUtils.ActionType.CREATE,
-          path,
-        }];
-      } else if (prefix === ` M `) {
-        return [{
-          action: stageUtils.ActionType.MODIFY,
-          path,
-        }];
-      } else if (prefix === ` D `) {
-        return [{
-          action: stageUtils.ActionType.DELETE,
-          path,
-        }];
-      }
-      else {
+      } else {
+        const actions = [stageUtils.ActionType.CREATE, stageUtils.ActionType.MODIFY, stageUtils.ActionType.DELETE] as const;
+        const action = actions.find(action => changePrefix[action].includes(prefix));
+
+        if (action !== undefined) {
+          return [{
+            action,
+            path,
+          }];
+        }
+
         return [];
       }
     }));
@@ -143,6 +151,12 @@ export const Driver = {
 
   async genCommitMessage(cwd: PortablePath, changeList: Array<stageUtils.FileAction>) {
     return await genCommitMessage(cwd, changeList);
+  },
+
+  async makeStage(cwd: PortablePath, changeList: Array<stageUtils.FileAction>) {
+    const localPaths = changeList.map(file => npath.fromPortablePath(file.path));
+
+    await execUtils.execvp(`git`, [`add`, `--`, ...localPaths], {cwd, strict: true});
   },
 
   async makeCommit(cwd: PortablePath, changeList: Array<stageUtils.FileAction>, commitMessage: string) {

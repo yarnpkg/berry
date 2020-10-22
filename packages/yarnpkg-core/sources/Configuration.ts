@@ -10,7 +10,7 @@ import semver                                      from 'semver';
 import {PassThrough, Writable}                     from 'stream';
 
 import {CorePlugin}                                from './CorePlugin';
-import {Manifest}                                  from './Manifest';
+import {Manifest, PeerDependencyMeta}              from './Manifest';
 import {MultiFetcher}                              from './MultiFetcher';
 import {MultiResolver}                             from './MultiResolver';
 import {Plugin, Hooks}                             from './Plugin';
@@ -330,12 +330,37 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.NUMBER,
     default: Infinity,
   },
+  networkSettings: {
+    description: `Network settings per hostname (glob patterns are supported)`,
+    type: SettingsType.MAP,
+    valueDefinition: {
+      description: ``,
+      type: SettingsType.SHAPE,
+      properties: {
+        caFilePath: {
+          description: `Path to file containing one or multiple Certificate Authority signing certificates`,
+          type: SettingsType.ABSOLUTE_PATH,
+          default: null,
+        },
+      },
+    },
+  },
+  caFilePath: {
+    description: `A path to a file containing one or multiple Certificate Authority signing certificates`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: null,
+  },
+  enableStrictSsl: {
+    description: `If false, SSL certificate errors will be ignored`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
 
   // Settings related to telemetry
   enableTelemetry: {
     description: `If true, telemetry will be periodically sent, following the rules in https://yarnpkg.com/advanced/telemetry`,
     type: SettingsType.BOOLEAN,
-    default: !isCI,
+    default: true,
   },
   telemetryInterval: {
     description: `Minimal amount of time between two telemetry uploads, in days`,
@@ -375,6 +400,100 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     },
   },
 };
+
+export interface MapConfigurationValue<T extends object> {
+  get<K extends keyof T>(key: K): T[K];
+}
+
+export interface ConfigurationValueMap {
+  lastUpdateCheck: string | null;
+
+  yarnPath: PortablePath;
+  ignorePath: boolean;
+  ignoreCwd: boolean;
+
+  cacheKeyOverride: string | null;
+  globalFolder: PortablePath;
+  cacheFolder: PortablePath;
+  compressionLevel: `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+  virtualFolder: PortablePath;
+  bstatePath: PortablePath;
+  lockfileFilename: Filename;
+  installStatePath: PortablePath;
+  immutablePatterns: Array<string>;
+  rcFilename: Filename;
+  enableGlobalCache: boolean;
+  enableAbsoluteVirtuals: boolean;
+
+  enableColors: boolean;
+  enableHyperlinks: boolean;
+  enableInlineBuilds: boolean;
+  enableProgressBars: boolean;
+  enableTimers: boolean;
+  preferAggregateCacheInfo: boolean;
+  preferInteractive: boolean;
+  preferTruncatedLines: boolean;
+  progressBarStyle: string | undefined;
+
+  defaultLanguageName: string;
+  defaultProtocol: string;
+  enableTransparentWorkspaces: boolean;
+
+  enableMirror: boolean;
+  enableNetwork: boolean;
+  httpProxy: string;
+  httpsProxy: string;
+  unsafeHttpWhitelist: Array<string>;
+  httpTimeout: number;
+  httpRetry: number;
+  networkConcurrency: number;
+  networkSettings: Map<string, MapConfigurationValue<{ caFilePath: PortablePath }>>;
+  caFilePath: PortablePath;
+  enableStrictSsl: boolean;
+
+  // Settings related to telemetry
+  enableTelemetry: boolean;
+  telemetryInterval: number;
+  telemetryUserId: string | null;
+
+  // Settings related to security
+  enableScripts: boolean;
+  enableImmutableCache: boolean;
+  checksumBehavior: string;
+
+  // Package patching - to fix incorrect definitions
+  packageExtensions: Map<string, any>;
+}
+
+type SimpleDefinitionForType<T> = SimpleSettingsDefinition & {
+  type:
+  | (T extends boolean ? SettingsType.BOOLEAN : never)
+  | (T extends number ? SettingsType.NUMBER : never)
+  | (T extends PortablePath ? SettingsType.ABSOLUTE_PATH : never)
+  | (T extends string ? SettingsType.LOCATOR | SettingsType.LOCATOR_LOOSE | SettingsType.SECRET | SettingsType.STRING : never)
+  | SettingsType.ANY
+  ;
+};
+
+type DefinitionForTypeHelper<T> = T extends Map<string, infer U>
+  ? (MapSettingsDefinition & {valueDefinition: Omit<DefinitionForType<U>, 'default'>})
+  : T extends MapConfigurationValue<infer U>
+    ? (ShapeSettingsDefinition & {properties: ConfigurationDefinitionMap<U>})
+    : SimpleDefinitionForType<T>;
+
+type DefinitionForType<T> = T extends Array<infer U>
+  ? (DefinitionForTypeHelper<U> & {isArray: true})
+  : (DefinitionForTypeHelper<T> & {isArray?: false});
+
+// We use this type to enforce that the types defined in the
+// `ConfigurationValueMap` interface match what's listed in
+// the `configuration` field from plugin definitions
+//
+// Note: it doesn't currently support checking enumerated types
+// against what's actually put in the `values` field.
+export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
+  [K in keyof V]: DefinitionForType<V[K]>;
+}
 
 function parseBoolean(value: unknown) {
   switch (value) {
@@ -637,6 +756,21 @@ export type FindProjectOptions = {
   useRc?: boolean,
 };
 
+export enum PackageExtensionType {
+  Dependency = `Dependency`,
+  PeerDependency = `PeerDependency`,
+  PeerDependencyMeta = `PeerDependencyMeta`,
+}
+
+export type PackageExtension = (
+  | {type: PackageExtensionType.Dependency, descriptor: Descriptor}
+  | {type: PackageExtensionType.PeerDependency, descriptor: Descriptor}
+  | {type: PackageExtensionType.PeerDependencyMeta, selector: string, key: keyof PeerDependencyMeta, value: any}
+) & {
+  active: boolean,
+  description: string,
+};
+
 export class Configuration {
   public static telemetry: TelemetryManager | null = null;
 
@@ -651,11 +785,7 @@ export class Configuration {
 
   public invalid: Map<string, string> = new Map();
 
-  public packageExtensions: Map<IdentHash, Array<{
-    descriptor: Descriptor,
-    changes: Set<string>,
-    patch: (pkg: Package) => void,
-  }>> = new Map();
+  public packageExtensions: Map<IdentHash, Array<[string, Array<PackageExtension>]>> = new Map();
 
   public limits: Map<string, Limit> = new Map();
 
@@ -740,8 +870,8 @@ export class Configuration {
       configuration.useWithSource(homeRcFile.path, pickCoreFields(homeRcFile.data), homeRcFile.cwd, {strict: false});
 
     if (usePath) {
-      const yarnPath: PortablePath = configuration.get<PortablePath>(`yarnPath`);
-      const ignorePath = configuration.get<boolean>(`ignorePath`);
+      const yarnPath = configuration.get(`yarnPath`);
+      const ignorePath = configuration.get(`ignorePath`);
 
       if (yarnPath !== null && !ignorePath) {
         return configuration;
@@ -751,7 +881,7 @@ export class Configuration {
     // We need to know the project root before being able to truly instantiate
     // our configuration, and to know that we need to know the lockfile name
 
-    const lockfileFilename = configuration.get<Filename>(`lockfileFilename`);
+    const lockfileFilename = configuration.get(`lockfileFilename`);
 
     let projectCwd: PortablePath | null;
     switch (lookup) {
@@ -1038,8 +1168,10 @@ export class Configuration {
     }
   }
 
-  private importSettings(definitions: {[name: string]: SettingsDefinition}) {
+  private importSettings(definitions: {[name: string]: SettingsDefinition | undefined}) {
     for (const [name, definition] of Object.entries(definitions)) {
+      if (definition == null)
+        continue;
       if (this.settings.has(name))
         throw new Error(`Cannot redefine settings "${name}"`);
 
@@ -1048,16 +1180,16 @@ export class Configuration {
     }
   }
 
-  useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
+  useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, opts?: {strict?: boolean, overwrite?: boolean}) {
     try {
-      this.use(source, data, folder, {strict, overwrite});
+      this.use(source, data, folder, opts);
     } catch (error) {
-      error.message += ` (in ${source})`;
+      error.message += ` (in ${formatUtils.pretty(this, source, formatUtils.Type.PATH)})`;
       throw error;
     }
   }
 
-  use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean}) {
+  use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean} = {}) {
     for (const key of Object.keys(data)) {
       const value = data[key];
       if (typeof value === `undefined`)
@@ -1085,27 +1217,41 @@ export class Configuration {
         }
       }
 
-      if (this.sources.has(key) && !overwrite)
+      if (this.sources.has(key) && !(overwrite || definition.type === SettingsType.MAP))
         continue;
 
       let parsed;
       try {
         parsed = parseValue(this, key, data[key], definition, folder);
       } catch (error) {
-        error.message += ` in ${source}`;
+        error.message += ` in ${formatUtils.pretty(this, source, formatUtils.Type.PATH)}`;
         throw error;
       }
 
-      this.values.set(key, parsed);
-      this.sources.set(key, source);
+      if (definition.type === SettingsType.MAP) {
+        const previousValue = this.values.get(key) as Map<string, any>;
+        this.values.set(key, new Map(overwrite
+          ? [...previousValue, ...parsed as Map<string, any>]
+          : [...parsed as Map<string, any>, ...previousValue]
+        ));
+        this.sources.set(key, `${this.sources.get(key)}, ${source}`);
+      } else {
+        this.values.set(key, parsed);
+        this.sources.set(key, source);
+      }
     }
   }
 
-  get<T = any>(key: string) {
+  get<K extends keyof ConfigurationValueMap>(key: K): ConfigurationValueMap[K];
+  /** @deprecated pass in a known configuration key instead */
+  get<T>(key: string): T;
+  /** @note Type will change to unknown in a future major version */
+  get(key: string): any;
+  get(key: string) {
     if (!this.values.has(key))
       throw new Error(`Invalid configuration key "${key}"`);
 
-    return this.values.get(key) as T;
+    return this.values.get(key);
   }
 
   getSpecial<T = any>(key: string, {hideSecrets = false, getNativePaths = false}: Partial<SettingTransforms>) {
@@ -1202,28 +1348,24 @@ export class Configuration {
       const extension = new Manifest();
       extension.load(extensionData);
 
-      miscUtils.getArrayWithDefault(packageExtensions, descriptor.identHash).push({
-        descriptor,
-        changes: new Set([
-          ...[
-            ...extension.dependencies.values(),
-            ...extension.peerDependencies.values(),
-          ].map(descriptor => {
-            return structUtils.stringifyIdent(descriptor);
-          }),
-          ...extension.dependenciesMeta.keys(),
-          ...extension.peerDependenciesMeta.keys(),
-        ]),
-        patch: pkg => {
-          pkg.dependencies = new Map([...pkg.dependencies, ...extension.dependencies]);
-          pkg.peerDependencies = new Map([...pkg.peerDependencies, ...extension.peerDependencies]);
-          pkg.dependenciesMeta = new Map([...pkg.dependenciesMeta, ...extension.dependenciesMeta]);
-          pkg.peerDependenciesMeta = new Map([...pkg.peerDependenciesMeta, ...extension.peerDependenciesMeta]);
-        },
-      });
+      const extensionsPerIdent = miscUtils.getArrayWithDefault(packageExtensions, descriptor.identHash);
+
+      const extensionsPerRange: Array<PackageExtension> = [];
+      extensionsPerIdent.push([descriptor.range, extensionsPerRange]);
+
+      for (const dependency of extension.dependencies.values())
+        extensionsPerRange.push({type: PackageExtensionType.Dependency, descriptor: dependency, active: false, description: `${structUtils.stringifyIdent(descriptor)} > ${structUtils.stringifyIdent(dependency)}`});
+      for (const peerDependency of extension.peerDependencies.values())
+        extensionsPerRange.push({type: PackageExtensionType.PeerDependency, descriptor: peerDependency, active: false, description: `${structUtils.stringifyIdent(descriptor)} >> ${structUtils.stringifyIdent(peerDependency)}`});
+
+      for (const [selector, meta] of extension.peerDependenciesMeta) {
+        for (const [key, value] of Object.entries(meta)) {
+          extensionsPerRange.push({type: PackageExtensionType.PeerDependencyMeta, selector, key: key as keyof typeof meta, value, active: false, description: `${structUtils.stringifyIdent(descriptor)} >> ${selector} / ${key}`});
+        }
+      }
     };
 
-    for (const [descriptorString, extensionData] of this.get<Map<string, any>>(`packageExtensions`))
+    for (const [descriptorString, extensionData] of this.get(`packageExtensions`))
       registerPackageExtension(structUtils.parseDescriptor(descriptorString, true), extensionData);
 
     await this.triggerHook(hooks => {
@@ -1240,17 +1382,37 @@ export class Configuration {
     if (this.packageExtensions == null)
       throw new Error(`refreshPackageExtensions has to be called before normalizing packages`);
 
-    const extensionList = this.packageExtensions.get(original.identHash);
-    if (typeof extensionList !== `undefined`) {
+    const extensionsPerIdent = this.packageExtensions.get(original.identHash);
+    if (typeof extensionsPerIdent !== `undefined`) {
       const version = original.version;
 
       if (version !== null) {
-        const extensionEntry = extensionList.find(({descriptor}) => {
-          return semverUtils.satisfiesWithPrereleases(version, descriptor.range);
-        });
+        for (const [range, extensionsPerRange] of extensionsPerIdent) {
+          if (!semverUtils.satisfiesWithPrereleases(version, range))
+            continue;
 
-        if (typeof extensionEntry !== `undefined`) {
-          extensionEntry.patch(pkg);
+          for (const extension of extensionsPerRange) {
+            switch (extension.type) {
+              case PackageExtensionType.Dependency: {
+                pkg.dependencies.set(extension.descriptor.identHash, extension.descriptor);
+                extension.active = true;
+              } break;
+
+              case PackageExtensionType.PeerDependency: {
+                pkg.peerDependencies.set(extension.descriptor.identHash, extension.descriptor);
+                extension.active = true;
+              } break;
+
+              case PackageExtensionType.PeerDependencyMeta: {
+                miscUtils.getFactoryWithDefault(pkg.peerDependenciesMeta, extension.selector, () => ({} as PeerDependencyMeta))[extension.key] = extension.value;
+                extension.active = true;
+              } break;
+
+              default: {
+                miscUtils.assertNever(extension);
+              } break;
+            }
+          }
         }
       }
     }

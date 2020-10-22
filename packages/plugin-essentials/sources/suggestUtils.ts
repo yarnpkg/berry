@@ -71,7 +71,7 @@ export function getModifier(flags: {exact: boolean; caret: boolean; tilde: boole
     return Modifier.CARET;
   if (flags.tilde)
     return Modifier.TILDE;
-  return project.configuration.get<Modifier>(`defaultSemverRangePrefix`);
+  return project.configuration.get(`defaultSemverRangePrefix`) as Modifier;
 }
 
 const SIMPLE_SEMVER = /^([\^~]?)[0-9]+(?:\.[0-9]+){0,2}(?:-\S+)?$/;
@@ -79,7 +79,7 @@ const SIMPLE_SEMVER = /^([\^~]?)[0-9]+(?:\.[0-9]+){0,2}(?:-\S+)?$/;
 export function extractRangeModifier(range: string, {project}: {project: Project}) {
   const match = range.match(SIMPLE_SEMVER);
 
-  return match ? match[1] : project.configuration.get<Modifier>(`defaultSemverRangePrefix`);
+  return match ? match[1] : project.configuration.get(`defaultSemverRangePrefix`);
 }
 
 export function applyModifier(descriptor: Descriptor, modifier: Modifier) {

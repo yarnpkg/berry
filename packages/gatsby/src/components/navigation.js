@@ -47,9 +47,6 @@ const MenuEntry = styled(Link)`
     padding: 1em;
     position: relative;
 
-    &:first-of-type {
-      border-top: 1px solid #cfdee9;
-    }
     &:hover {
       background: hsl(204, 33%, 96%);
     }
@@ -70,8 +67,13 @@ const MenuEntry = styled(Link)`
     &.active::before {
       background: #2188b6;
     }
+    &.active {
+      font-weight: 600;
+      color: rgb(0, 122, 162);
+    }
   }
   ${ifMobile} {
+    flex-direction: column;
     padding: .5em;
     white-space: pre;
     border-bottom: 4px solid transparent;
@@ -82,10 +84,20 @@ const MenuEntry = styled(Link)`
   }
 `;
 
-const Content = styled.div`
-  & > * {
-    overflow: auto;
+const Tag = styled.code`
+  color: #007aa2;
+
+  font-family: "PT Mono";
+
+  ${ifDesktop} {
+    margin-left: auto;
   }
+
+  font-size: 70%;
+`;
+
+const Content = styled.div`
+
 `;
 
 export const Navigation = ({items, children}) => {
@@ -94,9 +106,10 @@ export const Navigation = ({items, children}) => {
   return <>
     <Container>
       <Menu ref={scrollRef}>
-        {items.map(({to, name}) => <React.Fragment key={name}>
+        {items.map(({to, name, tag}) => <React.Fragment key={name}>
           <MenuEntry to={to} activeClassName={`active`}>
             {name.match(/^`.*`$/) ? <code>{name.slice(1, -1)}</code> : name}
+            {tag ? <Tag>{tag}</Tag> : null}
           </MenuEntry>
         </React.Fragment>)}
       </Menu>

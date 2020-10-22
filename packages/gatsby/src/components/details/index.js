@@ -33,7 +33,7 @@ import {ReadMore}         from './ReadMore';
 const client = algoliasearch(algolia.appId, algolia.apiKey);
 const index = client.initIndex(algolia.indexName);
 
-const readmeErrorMessage = 'ERROR: No README data found!';
+const readmeErrorMessage = `ERROR: No README data found!`;
 
 const Container = styled.div`
   margin: 0 auto;
@@ -159,7 +159,7 @@ export const Di = ({icon, title, description}) => (
 //   head.querySelector('link[rel=canonical]').setAttribute('href', permalink);
 // }
 
-const OBJECT_DOESNT_EXIST = 'ObjectID does not exist';
+const OBJECT_DOESNT_EXIST = `ObjectID does not exist`;
 
 const DetailsContainer = styled(Container)`
   color: #5a5a5a;
@@ -274,24 +274,24 @@ export class Details extends Component {
         }
       });
 
-    window.addEventListener('popstate', this._onPopState);
+    window.addEventListener(`popstate`, this._onPopState);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('popstate', this._onPopState);
+    window.removeEventListener(`popstate`, this._onPopState);
   }
 
   getVulns(libname, version) {
     return get({
       url: `https://snyk-widget.herokuapp.com/test/npm/lib/${libname}/${version}`,
-      type: 'json',
-      headers: { Authorization: 'uW9r=yW=J8*Ws+8MbTn8gW#UUxgzvyWyUHWQcc^c' },
+      type: `json`,
+      headers: {Authorization: `uW9r=yW=J8*Ws+8MbTn8gW#UUxgzvyWyUHWQcc^c`},
     })
       .then(res => {
-        this.setState({['vulns']: res.vulns, ['vulnsUrl']: res.url});
+        this.setState({[`vulns`]: res.vulns, [`vulnsUrl`]: res.url});
       })
       .catch(err => {
-        if (err === 'retry') {
+        if (err === `retry`) {
           setTimeout(this.getVulns(libname, version), 200);
         }
       });
@@ -300,11 +300,11 @@ export class Details extends Component {
   getGithub({url, state}) {
     return get({
       url: `https://api.github.com/${url}`,
-      type: 'json',
+      type: `json`,
     })
       .then(res => this.setState({[state]: res}))
       .catch(err => {
-        if (err === 'retry') {
+        if (err === `retry`) {
           setTimeout(this.getGithub({url, state}), 200);
         }
       });
@@ -316,11 +316,11 @@ export class Details extends Component {
     const hasReadme =
       readme && readme.length > 0 && readme !== readmeErrorMessage;
 
-    if (host === 'github.com') {
+    if (host === `github.com`) {
       if (changelogFilename) {
         get({
           url: changelogFilename,
-          type: 'text',
+          type: `text`,
         }).then(res => {
           this.setState({changelog: res});
         });
@@ -329,14 +329,14 @@ export class Details extends Component {
       if (!hasReadme) {
         this.setState({readmeLoading: true});
         get({
-          url: prefixURL('README.md', {
-            base: 'https://raw.githubusercontent.com',
+          url: prefixURL(`README.md`, {
+            base: `https://raw.githubusercontent.com`,
             user,
             project,
             head: branch,
-            path: path.replace(/\/tree\//, ''),
+            path: path.replace(/\/tree\//, ``),
           }),
-          type: 'text',
+          type: `text`,
         })
           .then(res => this.setState({readme: res}))
           .catch(() => this.setState({readmeLoading: false}));
@@ -344,14 +344,14 @@ export class Details extends Component {
 
       this.getGithub({
         url: `repos/${user}/${project}/stats/commit_activity`,
-        state: 'activity',
+        state: `activity`,
       });
 
       this.getGithub({
         url: `repos/${user}/${project}`,
-        state: 'github',
+        state: `github`,
       });
-    } else if (host === 'gitlab.com') {
+    } else if (host === `gitlab.com`) {
       const getGitlabFile = ({user, project, branch, filePath}) => {
         // We need to use the GitLab API because the raw url does not support cors
         // https://gitlab.com/gitlab-org/gitlab-ce/issues/25736
@@ -363,19 +363,19 @@ export class Details extends Component {
         )}?ref=${branch}`;
         return get({
           url: apiUrl,
-          type: 'json',
-        }).then(res => res.encoding === 'base64' && atob(res.content));
+          type: `json`,
+        }).then(res => res.encoding === `base64` && atob(res.content));
       };
 
       get({
         url: `https://gitlab.com/api/v4/projects/${user}%2F${project}`,
-        type: 'json',
+        type: `json`,
       }).then(res => this.setState({gitlab: res}));
 
       // Fetch last commit
       get({
         url: `https://gitlab.com/api/v4/projects/${user}%2F${project}/repository/commits?per_page=1`,
-        type: 'json',
+        type: `json`,
       // eslint-disable-next-line @typescript-eslint/camelcase
       }).then(([{committed_date}]) => {
         const timeDistance = formatDistance(new Date(committed_date), new Date());
@@ -410,16 +410,16 @@ export class Details extends Component {
           this.setState({changelog: res})
         );
       }
-    } else if (host === 'bitbucket.org') {
+    } else if (host === `bitbucket.org`) {
       if (!hasReadme) {
         this.setState({readmeLoading: true});
 
         get({
           url: `https://bitbucket.org/${user}/${project}${
-            path ? path.replace('src', 'raw') : `/raw/${branch}`
+            path ? path.replace(`src`, `raw`) : `/raw/${branch}`
           }/README.md`,
-          type: 'text',
-          redirect: 'error', // Prevent being redirected to login page
+          type: `text`,
+          redirect: `error`, // Prevent being redirected to login page
         })
           .then(res => this.setState({changelog: res}))
           .catch(() => this.setState({readmeLoading: false}));
@@ -428,7 +428,7 @@ export class Details extends Component {
       // Fetch last commit
       get({
         url: `https://api.bitbucket.org/2.0/repositories/${user}/${project}/commits?pagelen=1`,
-        type: 'json',
+        type: `json`,
       }).then(({values: [{date}]}) => {
         const timeDistance = formatDistance(new Date(date), new Date());
         this.setState({
@@ -441,8 +441,8 @@ export class Details extends Component {
       if (changelogFilename) {
         get({
           url: changelogFilename,
-          type: 'text',
-          redirect: 'error', // Prevent being redirected to login page
+          type: `text`,
+          redirect: `error`, // Prevent being redirected to login page
         }).then(res => this.setState({changelog: res}));
       }
     }
@@ -457,9 +457,9 @@ export class Details extends Component {
 
     get({
       url: `https://bundlephobia.com/api/size?package=${name}@${version}`,
-      type: 'json',
+      type: `json`,
     }).then(res => {
-      if (typeof res === 'object') {
+      if (typeof res === `object`) {
         this.setState({
           bundlesize: {
             href: `https://bundlephobia.com/result?p=${name}@${version}`,
@@ -473,7 +473,7 @@ export class Details extends Component {
 
   maybeRenderReadme() {
     if (this.state.loaded) {
-      const {readmeLoading, readme = ''} = this.state;
+      const {readmeLoading, readme = ``} = this.state;
       if (readme.length === 0 || readme === readmeErrorMessage) {
         // Still loading
         if (readmeLoading)
@@ -514,9 +514,9 @@ export class Details extends Component {
         <Instructions>
           <Copyable pre="$ ">mkdir {this.props.objectID}</Copyable>
           <Copyable pre="$ ">cd {this.props.objectID}</Copyable>
-          <Copyable pre="$ ">yarn init</Copyable>
+          <Copyable pre="$ ">yarn init -2</Copyable>
           <p>Make your package</p>
-          <Copyable pre="$ ">yarn publish</Copyable>
+          <Copyable pre="$ ">yarn npm publish</Copyable>
         </Instructions>
       </InvalidPackage>
     );
@@ -618,15 +618,15 @@ export class Details extends Component {
     if (
       !repository ||
       !repository.host ||
-      repository.host === 'bitbucket.org'
+      repository.host === `bitbucket.org`
     )
       return -1;
 
 
-    if (repository.host === 'github.com' && github)
+    if (repository.host === `github.com` && github)
       return this.state.github.stargazers_count;
 
-    if (repository.host === 'gitlab.com' && gitlab)
+    if (repository.host === `gitlab.com` && gitlab)
       return this.state.gitlab.star_count;
 
     return 0;

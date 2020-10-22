@@ -15,14 +15,11 @@ export default class VersionCommand extends BaseCommand {
   @Command.String()
   strategy!: string;
 
-  @Command.Boolean(`-d,--deferred`)
+  @Command.Boolean(`-d,--deferred`, {description: `Prepare the version to be bumped during the next release cycle`})
   deferred?: boolean;
 
-  @Command.Boolean(`-i,--immediate`)
+  @Command.Boolean(`-i,--immediate`, {description: `Bump the version immediately`})
   immediate?: boolean;
-
-  @Command.Boolean(`-f,--force`)
-  force: boolean = false;
 
   static schema = yup.object().shape({
     strategy: yup.string().test({
@@ -53,7 +50,7 @@ export default class VersionCommand extends BaseCommand {
       For more information about the \`--deferred\` flag, consult our documentation ("Managing Releases").
     `,
     examples: [[
-      `Immediatly bump the version to the next major`,
+      `Immediately bump the version to the next major`,
       `yarn version major`,
     ], [
       `Prepare the version to be bumped to the next major`,

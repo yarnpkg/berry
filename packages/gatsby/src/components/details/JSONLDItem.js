@@ -23,16 +23,16 @@ import {packageLink} from '../util';
 export const JSONLDItem = ({name, description, keywords}) => (
   <script type="application/ld+json">
     {JSON.stringify({
-      '@context': 'http://schema.org',
-      '@type': 'SoftwareApplication',
-      name: name,
-      description: description,
+      '@context': `http://schema.org`,
+      '@type': `SoftwareApplication`,
+      name,
+      description,
       url: packageLink(name),
-      keywords: keywords.join(','),
-      applicationCategory: 'DeveloperApplication',
+      keywords: keywords.join(`,`),
+      applicationCategory: `DeveloperApplication`,
       offers: {
-        '@type': 'Offer',
-        price: '0.00',
+        '@type': `Offer`,
+        price: `0.00`,
       },
     })}
   </script>

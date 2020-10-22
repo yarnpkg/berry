@@ -8,21 +8,19 @@ export default class LinkCommand extends BaseCommand {
   @Command.String()
   destination!: string;
 
-  @Command.Boolean(`-A,--all`)
+  @Command.Boolean(`-A,--all`, {description: `Link all workspaces belonging to the target project to the current one`})
   all: boolean = false;
 
-  @Command.Boolean(`-p,--private`)
+  @Command.Boolean(`-p,--private`, {description: `Also link private workspaces belonging to the target project to the current one`})
   private: boolean = false;
 
-  @Command.Boolean(`-r,--relative`)
+  @Command.Boolean(`-r,--relative`, {description: `Link workspaces using relative paths instead of absolute paths`})
   relative: boolean = false;
 
   static usage: Usage = Command.Usage({
     description: `connect the local project to another one`,
     details: `
       This command will set a new \`resolutions\` field in the project-level manifest and point it to the workspace at the specified location (even if part of another project).
-
-      If the \`--all\` option is set, all workspaces belonging to the target project will be linked to the current one.
 
       There is no \`yarn unlink\` command. To unlink the workspaces from the current project one must revert the changes made to the \`resolutions\` field.
     `,

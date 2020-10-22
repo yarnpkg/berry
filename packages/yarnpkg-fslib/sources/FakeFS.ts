@@ -1,14 +1,34 @@
-import {EventEmitter}                                         from 'events';
-import {Dirent as NodeDirent, ReadStream, Stats, WriteStream} from 'fs';
-import {EOL}                                                  from 'os';
+import {EventEmitter}                                                          from 'events';
+import {Dirent as NodeDirent, ReadStream, Stats, WriteStream, NoParamCallback} from 'fs';
+import {EOL}                                                                   from 'os';
 
-import {copyPromise}                                          from './algorithms/copyPromise';
-import {FSPath, Path, PortablePath, PathUtils, Filename}      from './path';
-import {convertPath, ppath}                                   from './path';
+import {copyPromise}                                                           from './algorithms/copyPromise';
+import {FSPath, Path, PortablePath, PathUtils, Filename}                       from './path';
+import {convertPath, ppath}                                                    from './path';
 
 export type Dirent = Exclude<NodeDirent, 'name'> & {
   name: Filename,
 };
+
+export type Dir<P extends Path> = {
+  readonly path: P;
+
+  [Symbol.asyncIterator](): AsyncIterableIterator<Dirent>;
+
+  close(): Promise<void>;
+  close(cb: NoParamCallback): void;
+
+  closeSync(): void;
+
+  read(): Promise<Dirent | null>;
+  read(cb: (err: NodeJS.ErrnoException | null, dirent: Dirent | null) => void): void;
+
+  readSync(): Dirent | null;
+};
+
+export type OpendirOptions = Partial<{
+  bufferSize: number;
+}>;
 
 export type CreateReadStreamOptions = Partial<{
   encoding: string,
@@ -24,6 +44,12 @@ export type CreateWriteStreamOptions = Partial<{
 export type MkdirOptions = Partial<{
   recursive: boolean,
   mode: number,
+}>;
+
+export type RmdirOptions = Partial<{
+  maxRetries: number,
+  recursive: boolean,
+  retryDelay: number,
 }>;
 
 export type WriteFileOptions = Partial<{
@@ -90,6 +116,9 @@ export abstract class FakeFS<P extends Path> {
 
   abstract resolve(p: P): P;
 
+  abstract opendirPromise(p: P, opts?: OpendirOptions): Promise<Dir<P>>;
+  abstract opendirSync(p: P, opts?: OpendirOptions): Dir<P>;
+
   abstract openPromise(p: P, flags: string, mode?: number): Promise<number>;
   abstract openSync(p: P, flags: string, mode?: number): number;
 
@@ -141,8 +170,8 @@ export abstract class FakeFS<P extends Path> {
   abstract mkdirPromise(p: P, opts?: MkdirOptions): Promise<void>;
   abstract mkdirSync(p: P, opts?: MkdirOptions): void;
 
-  abstract rmdirPromise(p: P): Promise<void>;
-  abstract rmdirSync(p: P): void;
+  abstract rmdirPromise(p: P, opts?: RmdirOptions): Promise<void>;
+  abstract rmdirSync(p: P, opts?: RmdirOptions): void;
 
   abstract linkPromise(existingP: P, newP: P): Promise<void>;
   abstract linkSync(existingP: P, newP: P): void;

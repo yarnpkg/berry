@@ -85,7 +85,7 @@ const CopyableContent = styled.section`
   }
 `;
 
-export const Copyable = ({tag = 'div', pre, children}) => {
+export const Copyable = ({tag = `div`, pre, children}) => {
   const [statusImage, setImage] = useState(images.default);
 
   const copy = (toCopy, timeout = 2000) => {
@@ -96,13 +96,13 @@ export const Copyable = ({tag = 'div', pre, children}) => {
       }, timeout);
     };
 
-    let range = document.createRange();
+    const range = document.createRange();
     range.selectNode(toCopy);
     window.getSelection().removeAllRanges();
     window.getSelection().addRange(range);
     try {
       // Now that we've selected the anchor text, execute the copy command
-      const copy = document.execCommand('copy');
+      const copy = document.execCommand(`copy`);
       window.getSelection().removeAllRanges();
       if (copy === true) {
         setAndUnset({image: images.success, timeout});
@@ -129,7 +129,7 @@ export const Copyable = ({tag = 'div', pre, children}) => {
         <span ref={copyTextRef}>{children}</span>
       </Content>
       <object type="stop/styling">
-        <Button onClick={(event) => {
+        <Button onClick={event => {
           event.preventDefault();
           copy(copyTextRef.current);
         }}>

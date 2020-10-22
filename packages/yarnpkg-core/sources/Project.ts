@@ -1440,7 +1440,7 @@ export class Project {
     // package (and avoid rebuilding it later if it didn't change).
 
     if (nextBState.size > 0) {
-      const bstatePath = this.configuration.get<PortablePath>(`bstatePath`);
+      const bstatePath = this.configuration.get(`bstatePath`);
       const bstateFile = Project.generateBuildStateFile(nextBState, this.storedPackages);
 
       await xfs.mkdirPromise(ppath.dirname(bstatePath), {recursive: true});
@@ -1453,13 +1453,8 @@ export class Project {
   }
 
   async install(opts: InstallOptions) {
-    const nodeLinker = this.configuration.get<string>(`nodeLinker`);
+    const nodeLinker = this.configuration.get(`nodeLinker`);
     Configuration.telemetry?.reportInstall(nodeLinker);
-
-    for (const extensions of this.configuration.packageExtensions.values())
-      for (const {descriptor, changes} of extensions)
-        for (const change of changes)
-          Configuration.telemetry?.reportPackageExtension(`${structUtils.stringifyIdent(descriptor)}:${change}`);
 
     const validationWarnings: Array<{name: MessageName, text: string}> = [];
     const validationErrors: Array<{name: MessageName, text: string}> = [];
@@ -1478,6 +1473,11 @@ export class Project {
         await this.validateEverything({validationWarnings, validationErrors, report: opts.report});
       });
     }
+
+    for (const extensionsByIdent of this.configuration.packageExtensions.values())
+      for (const [, extensionsByRange] of extensionsByIdent)
+        for (const extension of extensionsByRange)
+          extension.active = false;
 
     await opts.report.startTimerPromise(`Resolution step`, async () => {
       const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
@@ -1526,6 +1526,12 @@ export class Project {
       }
     });
 
+    for (const extensionsByIdent of this.configuration.packageExtensions.values())
+      for (const [, extensionsByRange] of extensionsByIdent)
+        for (const extension of extensionsByRange)
+          if (extension.active)
+            Configuration.telemetry?.reportPackageExtension(extension.description);
+
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);
 
@@ -1539,7 +1545,7 @@ export class Project {
 
     await opts.report.startTimerPromise(`Link step`, async () => {
       const immutablePatterns = opts.immutable
-        ? [...new Set(this.configuration.get<Array<string>>(`immutablePatterns`))].sort()
+        ? [...new Set(this.configuration.get(`immutablePatterns`))].sort()
         : [];
 
       const before = await Promise.all(immutablePatterns.map(async pattern => {
@@ -1678,14 +1684,14 @@ export class Project {
     const installState = {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, lockFileChecksum};
     const serializedState = await gzip(v8.serialize(installState));
 
-    const installStatePath = this.configuration.get<PortablePath>(`installStatePath`);
+    const installStatePath = this.configuration.get(`installStatePath`);
 
     await xfs.mkdirPromise(ppath.dirname(installStatePath), {recursive: true});
     await xfs.writeFilePromise(installStatePath, serializedState as Buffer);
   }
 
   async restoreInstallState() {
-    const installStatePath = this.configuration.get<PortablePath>(`installStatePath`);
+    const installStatePath = this.configuration.get(`installStatePath`);
     if (!xfs.existsSync(installStatePath)) {
       await this.applyLightResolution();
       return;

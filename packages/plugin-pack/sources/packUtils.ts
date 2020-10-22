@@ -83,7 +83,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
       const dest = ppath.join(`package` as PortablePath, file);
 
       const stat = await xfs.lstatPromise(source);
-      const opts = {name: dest, mtime: new Date(315532800)};
+      const opts = {name: dest, mtime: new Date(315532800000)};
 
       const mode = executableFiles.has(file)
         ? 0o755

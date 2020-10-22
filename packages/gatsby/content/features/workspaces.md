@@ -2,6 +2,7 @@
 category: features
 path: /features/workspaces
 title: "Workspaces"
+description: An in-depth guide to Yarn's workspaces, a feature that provides an easy way to store multiple packages inside the same project.
 ---
 
 The Yarn workspaces aim to make working with [monorepos](/advanced/lexicon#monorepository) easy, solving one of the main use cases for `yarn link` in a more declarative way. In short, they allow multiple of your projects to live together in the same repository AND to cross-reference each others - any modification to one's source code being instantly applied to the others.

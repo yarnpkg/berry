@@ -669,4 +669,137 @@ describe(`Node_Modules`, () => {
       },
     )
   );
+
+  test(`should inherit workspace peer dependencies from upper-level workspaces`,
+    // . -> foo(workspace) -> bar(workspace) --> no-deps@1
+    //                     -> no-deps@1
+    //   -> no-deps@2
+    // bar must not be hoisted to the top, otherwise it will use no-deps@2 instead of no-deps@1
+    // please note that bar directory must be nested inside foo directory,
+    // otherwise with hoisting turned off bar will pick up no-deps@2
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`foo`],
+        dependencies: {
+          'no-deps': `2.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
+          name: `foo`,
+          version: `1.0.0`,
+          workspaces: [`bar`],
+          dependencies: {
+            'no-deps': `1.0.0`,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/foo/bar/package.json`), {
+          name: `bar`,
+          version: `1.0.0`,
+          workspaces: [`bar`],
+          peerDependencies: {
+            'no-deps': `*`,
+          },
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/bar` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/foo/node_modules/bar` as PortablePath)).toEqual(true);
+      },
+    )
+  );
+
+  test(`should install dependencies in scoped workspaces`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`foo`],
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
+          name: `@scope/foo`,
+          version: `1.0.0`,
+          dependencies: {
+            'no-deps': `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/@scope/foo` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/node_modules/no-deps` as PortablePath)).toEqual(true);
+      },
+    )
+  );
+
+  test(`should survive interrupted install`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`foo`],
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
+          name: `foo`,
+          dependencies: {
+            'has-bin-entries': `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        // Simulate interrupted install
+        await xfs.removePromise(`${path}/node_modules/has-bin-entries` as PortablePath);
+
+        await run(`add`, `has-bin-entries@2.0.0`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/has-bin-entries/package.json` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/node_modules/has-bin-entries/index.js` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/foo/node_modules/has-bin-entries/package.json` as PortablePath)).toEqual(true);
+      },
+    )
+  );
+
+  test(`should respect peerDependencies with defaults in workspaces`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`foo`],
+        dependencies: {
+          'has-bin-entries': `2.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
+          name: `foo`,
+          peerDependencies: {
+            'has-bin-entries': `*`,
+          },
+          devDependencies: {
+            'has-bin-entries': `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(source(`require('foo/node_modules/has-bin-entries')`)).resolves.toMatchObject({
+          version: `1.0.0`,
+        });
+      },
+    )
+  );
 });

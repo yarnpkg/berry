@@ -35,6 +35,7 @@ export type LocationLengthData = Array<number>;
 
 // This is what is stored within the .pnp.meta.json file
 export type SerializedState = {
+  // @eslint-ignore-next-line @typescript-eslint/naming-convention
   __info: Array<string>;
   enableTopLevelFallback: boolean,
   fallbackExclusionList: Array<[string, Array<string>]>,

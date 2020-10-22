@@ -23,7 +23,7 @@ export const ReadMoreIcon = styled.img`
   margin: 0 1em;
   vertical-align: middle;
   border-style: none;
-  transform: ${({collapsed}) => collapsed ? '' : 'rotate(180deg)'}
+  transform: ${({collapsed}) => collapsed ? `` : `rotate(180deg)`}
 `;
 
 const ReadMoreContent = styled.div`
@@ -40,7 +40,7 @@ const ReadMoreContent = styled.div`
   overflow: hidden;
   position: relative;
   margin-bottom: 0.2em;
-  max-height: ${({collapsed, contentHeight}) => collapsed ? `${contentHeight}px` : ''}
+  max-height: ${({collapsed, contentHeight}) => collapsed ? `${contentHeight}px` : ``}
 `;
 
 const ReadMoreContainer = styled.div`
@@ -126,9 +126,9 @@ export const ReadMore = ({text, height, children}) => {
   }, [height, collapsible]);
 
   return (
-    <ReadMoreContainer className={collapsed ? 'collapsed' : ''}>
+    <ReadMoreContainer className={collapsed ? `collapsed` : ``}>
       <ReadMoreContent
-        className={collapsed ? 'collapsed' : ''}
+        className={collapsed ? `collapsed` : ``}
         collapsed={collapsed}
         contentHeight={height}
         ref={contentRef}
@@ -137,10 +137,10 @@ export const ReadMore = ({text, height, children}) => {
       </ReadMoreContent>
       {collapsible && (
         <ReadMoreButton onClick={toggleCollapse}>
-          {collapsed ? text : 'Collapse'}
+          {collapsed ? text : `Collapse`}
           <ReadMoreIcon
             src={IcoReadMore}
-            alt={collapsed ? text : 'Collapse'}
+            alt={collapsed ? text : `Collapse`}
             collapsed={collapsed}
           />
         </ReadMoreButton>
@@ -151,5 +151,5 @@ export const ReadMore = ({text, height, children}) => {
 
 ReadMore.defaultProps = {
   height: 250,
-  className: '',
+  className: ``,
 };

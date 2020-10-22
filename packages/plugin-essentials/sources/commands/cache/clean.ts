@@ -5,18 +5,16 @@ import {Command, Usage}                     from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class CacheCleanCommand extends BaseCommand {
-  @Command.Boolean(`--mirror`)
+  @Command.Boolean(`--mirror`, {description: `Remove the global cache files instead of the local cache files`})
   mirror: boolean = false;
 
-  @Command.Boolean(`--all`)
+  @Command.Boolean(`--all`, {description: `Remove both the global cache files and the local cache files of the current project`})
   all: boolean = false;
 
   static usage: Usage = Command.Usage({
     description: `remove the shared cache files`,
     details: `
       This command will remove all the files from the cache.
-
-      By default only the local cache will be cleaned. This behavior can be disabled with the \`--mirror\`, which will lead to the removal of the global cache files instead, or \`--all\` (which will remove both the local and global caches for the current project).
     `,
     examples: [[
       `Remove all the local archives`,

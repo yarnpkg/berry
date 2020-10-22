@@ -2,6 +2,7 @@
 category: features
 path: /features/zero-installs
 title: 'Zero-Installs'
+description: An overview of Yarn's Zero-Installs, a feature provided by PnP which enables storing all dependencies inside the project's repository.
 ---
 
 While not a feature in itself, the term "Zero Install" encompasses a lot of Yarn features tailored around one specific goal - to make your projects as stable and fast as possible by removing the main source of entropy from the equation: Yarn itself.

@@ -17,13 +17,13 @@ export default class InitCommand extends BaseCommand {
   @Command.Boolean(`-y,--yes`, {hidden: true})
   yes: boolean = false;
 
-  @Command.Boolean(`-p,--private`)
+  @Command.Boolean(`-p,--private`, {description: `Initialize a private package`})
   private: boolean = false;
 
-  @Command.Boolean(`-w,--workspace`)
+  @Command.Boolean(`-w,--workspace`, {description: `Initialize a private workspace root with a \`packages/\` directory`})
   workspace: boolean = false;
 
-  @Command.String(`-i,--install`, {tolerateBoolean: true})
+  @Command.String(`-i,--install`, {tolerateBoolean: true, description: `Initialize a package with a specific bundle that will be locked in the project`})
   install: string | boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -82,7 +82,7 @@ export default class InitCommand extends BaseCommand {
     if (!xfs.existsSync(this.context.cwd))
       await xfs.mkdirPromise(this.context.cwd, {recursive: true});
 
-    const lockfilePath = ppath.join(this.context.cwd, configuration.get<Filename>(`lockfileFilename`));
+    const lockfilePath = ppath.join(this.context.cwd, configuration.get(`lockfileFilename`));
     if (!xfs.existsSync(lockfilePath))
       await xfs.writeFilePromise(lockfilePath, ``);
 
@@ -128,7 +128,7 @@ export default class InitCommand extends BaseCommand {
 
     const manifest = new Manifest();
 
-    const fields = Object.fromEntries(configuration.get<Map<string, any>>(`initFields`).entries());
+    const fields = Object.fromEntries(configuration.get(`initFields`).entries());
     manifest.load(fields);
 
     manifest.name = structUtils.makeIdent(configuration.get(`initScope`), ppath.basename(this.context.cwd));

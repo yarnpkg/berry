@@ -11,14 +11,14 @@ module.exports = {
       name: `Getting started`,
       link: `/getting-started`,
     }, {
-      name: `Configuration`,
-      link: `/configuration`,
-    }, {
       name: `Features`,
       link: `/features`,
     }, {
       name: `CLI`,
       link: `/cli`,
+    }, {
+      name: `Configuration`,
+      link: `/configuration`,
     }, {
       name: `Advanced`,
       link: `/advanced`,
@@ -57,7 +57,7 @@ module.exports = {
       options: {
         fonts: [{
           family: `Open Sans`,
-          variants: [`300`, `400`, `700`],
+          variants: [`300`, `400`, `600`, `700`],
         }, {
           family: `PT Mono`,
         }],

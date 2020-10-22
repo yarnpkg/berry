@@ -29,7 +29,7 @@ class PnpLooseInstaller extends PnpInstaller {
     });
 
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
-    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false});
+    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false, project: this.opts.project});
 
     const fallbackPool = new Map<string, DependencyTarget>();
     pnpSettings.fallbackPool = fallbackPool;

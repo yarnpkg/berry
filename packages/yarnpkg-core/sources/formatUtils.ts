@@ -206,7 +206,7 @@ export function tuple<T extends Type>(formatType: T, value: Source<T>): Tuple<T>
 }
 
 export function applyStyle(configuration: Configuration, text: string, flags: Style): string {
-  if (!configuration.get<boolean>(`enableColors`))
+  if (!configuration.get(`enableColors`))
     return text;
 
   if (flags & Style.BOLD)
@@ -216,7 +216,7 @@ export function applyStyle(configuration: Configuration, text: string, flags: St
 }
 
 export function applyColor(configuration: Configuration, value: string, formatType: Type | string): string {
-  if (!configuration.get<boolean>(`enableColors`))
+  if (!configuration.get(`enableColors`))
     return value;
 
   const colorSpec = colors.get(formatType as Type);
@@ -255,6 +255,10 @@ export function pretty<T extends Type>(configuration: Configuration, value: Sour
     throw new Error(`Assertion failed: Expected the value to be a string, got ${typeof value}`);
 
   return applyColor(configuration, value, formatType);
+}
+
+export function prettyList<T extends Type>(configuration: Configuration, values: Iterable<Source<T>>, formatType: T | string, {separator = `, `}: {separator?: string} = {}): string {
+  return [...values].map(value => pretty(configuration, value, formatType)).join(separator);
 }
 
 export function json<T extends Type>(value: Source<T>, formatType: T | string): any {

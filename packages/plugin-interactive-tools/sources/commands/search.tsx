@@ -1,17 +1,18 @@
 import {BaseCommand}                         from '@yarnpkg/cli';
 import {Configuration, structUtils}          from '@yarnpkg/core';
 import {ScrollableItems}                     from '@yarnpkg/libui/sources/components/ScrollableItems';
+import {useKeypress}                         from '@yarnpkg/libui/sources/hooks/useKeypress';
 import {useMinistore}                        from '@yarnpkg/libui/sources/hooks/useMinistore';
-import {useSpace}                            from '@yarnpkg/libui/sources/hooks/useSpace';
 import {renderForm, SubmitInjectedComponent} from '@yarnpkg/libui/sources/misc/renderForm';
 import {Command, Usage}                      from 'clipanion';
-import InkTextInput, {InkTextInputProps}     from 'ink-text-input';
-import {Box, Text, Color}                    from 'ink';
+import InkTextInput                          from 'ink-text-input';
+import {Box, Text}                           from 'ink';
+
 import React, {useEffect, useState}          from 'react';
 
 import {AlgoliaPackage, search}              from '../algolia';
 
-const targets = [`regular`, `dev`, `peer`];
+const TARGETS = [`regular`, `dev`, `peer`];
 
 // eslint-disable-next-line arca/no-default-export
 export default class SearchCommand extends BaseCommand {
@@ -36,21 +37,31 @@ export default class SearchCommand extends BaseCommand {
         <Box flexDirection="row">
           <Box flexDirection="column" width={48}>
             <Box>
-             Press <Color bold cyanBright>{`<up>`}</Color>/<Color bold cyanBright>{`<down>`}</Color> to move between packages.
+              <Text>
+                Press <Text bold color="cyanBright">{`<up>`}</Text>/<Text bold color="cyanBright">{`<down>`}</Text> to move between packages.
+              </Text>
             </Box>
             <Box>
-             Press <Color bold cyanBright>{`<space>`}</Color> to select a package.
+              <Text>
+                Press <Text bold color="cyanBright">{`<space>`}</Text> to select a package.
+              </Text>
             </Box>
             <Box>
-              Press <Color bold cyanBright>{`<space>`}</Color> again to change the target.
+              <Text>
+                Press <Text bold color="cyanBright">{`<space>`}</Text> again to change the target.
+              </Text>
             </Box>
           </Box>
           <Box flexDirection="column">
             <Box marginLeft={1}>
-              Press <Color bold cyanBright>{`<enter>`}</Color> to install the selected packages.
+              <Text>
+                Press <Text bold color="cyanBright">{`<enter>`}</Text> to install the selected packages.
+              </Text>
             </Box>
             <Box marginLeft={1}>
-             Press <Color bold cyanBright>{`<ctrl+c>`}</Color> to abort.
+              <Text>
+                Press <Text bold color="cyanBright">{`<ctrl+c>`}</Text> to abort.
+              </Text>
             </Box>
           </Box>
         </Box>
@@ -59,60 +70,66 @@ export default class SearchCommand extends BaseCommand {
 
     const SearchColumnNames = () => {
       return <>
-        <Box width={15}><Color bold underline gray>Owner</Color></Box>
-        <Box width={11}><Color bold underline gray>Version</Color></Box>
-        <Box width={10}><Color bold underline gray>Downloads</Color></Box>
+        <Box width={15}><Text bold underline color="gray">Owner</Text></Box>
+        <Box width={11}><Text bold underline color="gray">Version</Text></Box>
+        <Box width={10}><Text bold underline color="gray">Downloads</Text></Box>
       </>;
     };
 
     const SelectedColumnNames = () => {
-      return <Box width={17}><Color bold underline gray>Target</Color></Box>;
+      return <Box width={17}><Text bold underline color="gray">Target</Text></Box>;
     };
 
     const HitEntry = ({hit, active}: {hit: AlgoliaPackage, active: boolean}) => {
       const [action, setAction] = useMinistore<string | null>(hit.name, null);
 
-      useSpace({
-        active,
-        handler: () => {
-          if (!action) {
-            setAction(targets[0]);
-            return;
-          }
+      useKeypress({active}, (ch, key) => {
+        if (key.name !== `space`)
+          return;
 
-          const nextIndex = targets.indexOf(action) + 1;
+        if (!action) {
+          setAction(TARGETS[0]);
+          return;
+        }
 
-          if (nextIndex === targets.length) {
-            setAction(null);
-          } else {
-            setAction(targets[nextIndex]);
-          }
-        },
-      });
+        const nextIndex = TARGETS.indexOf(action) + 1;
+        if (nextIndex === TARGETS.length) {
+          setAction(null);
+        } else {
+          setAction(TARGETS[nextIndex]);
+        }
+      }, [
+        action,
+        setAction,
+      ]);
 
       const ident = structUtils.parseIdent(hit.name);
       const prettyIdent = structUtils.prettyIdent(configuration, ident);
 
-      return <Box>
-        <Box width={45} textWrap="wrap">
-          <Text bold>
-            {prettyIdent}
-          </Text>
+      return (
+        <Box>
+          <Box width={45}>
+            <Text bold wrap="wrap">
+              {prettyIdent}
+            </Text>
+          </Box>
+          <Box width={14} marginLeft={1}>
+            <Text bold wrap="truncate">
+              {hit.owner.name}
+            </Text>
+          </Box>
+          <Box width={10} marginLeft={1}>
+            <Text italic wrap="truncate">
+              {hit.version}
+            </Text>
+          </Box>
+          <Box width={16} marginLeft={1}>
+            <Text>
+              {hit.humanDownloadsLast30Days}
+            </Text>
+          </Box>
         </Box>
-        <Box width={14} textWrap="truncate" marginLeft={1}>
-          <Text bold>
-            {hit.owner.name}
-          </Text>
-        </Box>
-        <Box width={10} textWrap="truncate" marginLeft={1}>
-          <Text italic>
-            {hit.version}
-          </Text>
-        </Box>
-        <Box width={16} textWrap="truncate" marginLeft={1}>
-          {hit.humanDownloadsLast30Days}
-        </Box>
-      </Box>;
+      );
     };
 
     const SelectedEntry = ({name, active}: {name: string, active: boolean}) => {
@@ -126,21 +143,23 @@ export default class SearchCommand extends BaseCommand {
             {` - `}{structUtils.prettyIdent(configuration, ident)}
           </Text>
         </Box>
-        {targets.map(
+        {TARGETS.map(
           target =>
             <Box key={target} width={14} marginLeft={1}>
-              {action === target ? <Color green> ◉ </Color> : <Color yellow> ◯ </Color>}
-              <Text bold>{target}</Text>
+              <Text>
+                {action === target ? <Text color="green"> ◉ </Text> : <Text color="yellow"> ◯ </Text>}
+                <Text bold>{target}</Text>
+              </Text>
             </Box>
         )}
       </Box>;
     };
 
-    const PoweredByAlgolia = () => {
-      return <Box marginTop={1}>
+    const PoweredByAlgolia = () => (
+      <Box marginTop={1}>
         <Text>Powered by Algolia.</Text>
-      </Box>;
-    };
+      </Box>
+    );
 
     const SearchApp: SubmitInjectedComponent<Map<string, unknown>> = ({useSubmit}) => {
       const selectionMap = useMinistore();
@@ -187,46 +206,43 @@ export default class SearchCommand extends BaseCommand {
         }
       }, [query]);
 
-      // Typescript is having problems with
-      // recognizing InkTextInput as a valid
-      // JSX element for some reason...
-      const TextInput = InkTextInput as unknown as React.ComponentClass<InkTextInputProps>;
-
-      return <Box flexDirection={`column`}>
-        <Prompt />
-        <Box flexDirection={`row`} marginTop={1}>
-          <Text bold>Search: </Text>
-          <Box width={41}>
-            <TextInput
-              value={query}
-              onChange={handleQueryOnChange}
-              placeholder={`i.e. babel, webpack, react...`}
-              showCursor={false}
-            />
+      return (
+        <Box flexDirection={`column`}>
+          <Prompt />
+          <Box flexDirection={`row`} marginTop={1}>
+            <Text bold>Search: </Text>
+            <Box width={41}>
+              <InkTextInput
+                value={query}
+                onChange={handleQueryOnChange}
+                placeholder={`i.e. babel, webpack, react...`}
+                showCursor={false}
+              />
+            </Box>
+            <SearchColumnNames />
           </Box>
-          <SearchColumnNames />
-        </Box>
-        {hits.length ?
-          <ScrollableItems
-            radius={2}
-            loop={false}
-            children={hits.map(hit => <HitEntry key={hit.name} hit={hit} active={false} />)}
-            willReachEnd={fetchNextPageHits}
-          /> : <Color gray>Start typing...</Color>
-        }
-        <Box flexDirection={`row`} marginTop={1}>
-          <Box width={49}>
-            <Text bold>Selected:</Text>
+          {hits.length ?
+            <ScrollableItems
+              radius={2}
+              loop={false}
+              children={hits.map(hit => <HitEntry key={hit.name} hit={hit} active={false} />)}
+              willReachEnd={fetchNextPageHits}
+            /> : <Text color="gray">Start typing...</Text>
+          }
+          <Box flexDirection={`row`} marginTop={1}>
+            <Box width={49}>
+              <Text bold>Selected:</Text>
+            </Box>
+            <SelectedColumnNames />
           </Box>
-          <SelectedColumnNames />
+          {selectedPackages.length ?
+            selectedPackages.map(
+              name => <SelectedEntry key={name} name={name} active={false}/>
+            ) : <Text color="gray">No selected packages...</Text>
+          }
+          <PoweredByAlgolia />
         </Box>
-        {selectedPackages.length ?
-          selectedPackages.map(
-            name => <SelectedEntry key={name} name={name} active={false}/>
-          ) : <Color gray>No selected packages...</Color>
-        }
-        <PoweredByAlgolia />
-      </Box>;
+      );
     };
 
     const installRequests = await renderForm(SearchApp, {});
