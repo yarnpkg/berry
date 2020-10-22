@@ -62,8 +62,8 @@ export default class AuditCommand extends BaseCommand {
     await project.restoreInstallState();
 
     const body = {
-      requires: this.getRequires(project, workspace),
-      dependencies: this.getDependencies(project, workspace),
+      requires: npmAuditUtils.getRequires(project, workspace, {all: this.all}),
+      dependencies: npmAuditUtils.getDependencies(project, workspace, {all: this.all}),
     };
 
     const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {
@@ -94,9 +94,9 @@ export default class AuditCommand extends BaseCommand {
     if (httpReport.hasErrors())
       return httpReport.exitCode();
 
-    const hasError = isError(result.metadata.vulnerabilities, this.severity);
+    const hasError = npmAuditUtils.isError(result.metadata.vulnerabilities, this.severity);
     if (!this.json && hasError) {
-      treeUtils.emitTree(getReportTree(result), {
+      treeUtils.emitTree(npmAuditUtils.getReportTree(result), {
         configuration,
         json: this.json,
         stdout: this.context.stdout,
@@ -120,168 +120,4 @@ export default class AuditCommand extends BaseCommand {
 
     return outReport.exitCode();
   }
-
-  private getRequires(project: Project, workspace: Workspace) {
-    const workspaces = this.all
-      ? project.workspaces
-      : [workspace];
-
-    const includeDependencies = [
-      npmAuditTypes.Environment.All,
-      npmAuditTypes.Environment.Production,
-    ].includes(this.environment);
-
-    const requiredDependencies = [];
-    if (includeDependencies)
-      for (const workspace of workspaces)
-        for (const dependency of workspace.manifest.dependencies.values())
-          requiredDependencies.push(dependency);
-
-    const includeDevDependencies = [
-      npmAuditTypes.Environment.All,
-      npmAuditTypes.Environment.Development,
-    ].includes(this.environment);
-
-    const requiredDevDependencies = [];
-    if (includeDevDependencies)
-      for (const workspace of workspaces)
-        for (const dependency of workspace.manifest.devDependencies.values())
-          requiredDevDependencies.push(dependency);
-
-    return transformDescriptorIterableToRequiresObject([
-      ...requiredDependencies,
-      ...requiredDevDependencies,
-    ].filter(dependency => {
-      return structUtils.parseRange(dependency.range).protocol === null;
-    }));
-  }
-
-  private getDependencies(project: Project, workspace: Workspace) {
-    const transitiveDevDependencies = npmAuditUtils.getTransitiveDevDependencies(project, workspace, {all: this.all});
-
-    const data: {
-      [key: string]: {
-        version: string;
-        integrity: string;
-        requires: {[key: string]: string};
-        dev: boolean;
-      },
-    } = {};
-
-    // BUG: Should be storedPackage
-    for (const pkg of project.originalPackages.values()) {
-      data[structUtils.stringifyIdent(pkg)] = {
-        version: pkg.version ?? `0.0.0`,
-        integrity: pkg.identHash,
-        requires: transformDescriptorIterableToRequiresObject(pkg.dependencies.values()),
-        dev: transitiveDevDependencies.has(structUtils.convertLocatorToDescriptor(pkg).descriptorHash),
-      };
-    }
-
-    return data;
-  }
-}
-
-function transformDescriptorIterableToRequiresObject(descriptors: Iterable<Descriptor>) {
-  const data: {[key: string]: string} = {};
-
-  for (const descriptor of descriptors)
-    data[structUtils.stringifyIdent(descriptor)] = structUtils.parseRange(descriptor.range).selector;
-
-  return data;
-}
-
-function getSeverityInclusions(severity?: npmAuditTypes.Severity): Set<npmAuditTypes.Severity> {
-  if (typeof severity === `undefined`)
-    return new Set();
-
-  const allSeverities = [
-    npmAuditTypes.Severity.Info,
-    npmAuditTypes.Severity.Low,
-    npmAuditTypes.Severity.Moderate,
-    npmAuditTypes.Severity.High,
-    npmAuditTypes.Severity.Critical,
-  ];
-
-  const severityIndex = allSeverities.indexOf(severity);
-  const severities = allSeverities.slice(severityIndex);
-
-  return new Set(severities);
-}
-
-function filterVulnerabilities(vulnerabilities: npmAuditTypes.AuditVulnerabilities, severity?: npmAuditTypes.Severity) {
-  const inclusions = getSeverityInclusions(severity);
-
-  const filteredVulnerabilities: Partial<npmAuditTypes.AuditVulnerabilities> = {};
-  for (const key of inclusions)
-    filteredVulnerabilities[key] = vulnerabilities[key];
-
-  return filteredVulnerabilities;
-}
-
-function isError(vulnerabilities: npmAuditTypes.AuditVulnerabilities, severity?: npmAuditTypes.Severity): boolean {
-  const filteredVulnerabilities = filterVulnerabilities(vulnerabilities, severity);
-
-  for (const key of Object.keys(filteredVulnerabilities) as any as Array<npmAuditTypes.Severity>)
-    if (filteredVulnerabilities[key] ?? 0 > 0)
-      return true;
-
-  return false;
-}
-
-function getReportTree(result: npmAuditTypes.AuditResponse) {
-  const auditTreeChildren: treeUtils.TreeMap = {};
-  const auditTree: treeUtils.TreeNode = {children: auditTreeChildren};
-
-  Object.values(result.advisories).forEach(advisory => {
-    auditTreeChildren[advisory.module_name] = {
-      label: advisory.module_name,
-      value: formatUtils.tuple(formatUtils.Type.RANGE, advisory.findings.map(finding => finding.version).join(`, `)),
-      children: {
-        Issue: {
-          label: `Issue`,
-          value: formatUtils.tuple(formatUtils.Type.NO_HINT, advisory.title),
-        },
-        URL: {
-          label: `URL`,
-          value: formatUtils.tuple(formatUtils.Type.URL, advisory.url),
-        },
-        Severity: {
-          label: `Severity`,
-          value: formatUtils.tuple(formatUtils.Type.NO_HINT, advisory.severity),
-        },
-        [`Vulnerable Versions`]: {
-          label: `Vulnerable Versions`,
-          value: formatUtils.tuple(formatUtils.Type.RANGE, advisory.vulnerable_versions),
-        },
-        [`Patched Versions`]: {
-          label: `Patched Versions`,
-          value: formatUtils.tuple(formatUtils.Type.RANGE, advisory.patched_versions),
-        },
-        Recommendation: {
-          label: `Recommendation`,
-          value: formatUtils.tuple(formatUtils.Type.NO_HINT, advisory.recommendation),
-        },
-        Paths: {
-          children: pathListToTreeNode(advisory.findings.map(finding => finding.paths).flat()),
-        },
-      },
-    };
-  });
-
-  return auditTree;
-}
-
-function pathListToTreeNode(paths: Array<string>): treeUtils.TreeMap {
-  const result: Record<string, {value: formatUtils.Tuple, children: treeUtils.TreeMap}> = {};
-
-  paths.map(path => path.split(`>`)).forEach(path => {
-    let node: treeUtils.TreeMap = result;
-    path.forEach(pkg => {
-      node[pkg] = node[pkg] ?? {value: formatUtils.tuple(formatUtils.Type.NAME, pkg), children: {}};
-      node = node[pkg].children as treeUtils.TreeMap;
-    });
-  });
-
-  return result;
 }
