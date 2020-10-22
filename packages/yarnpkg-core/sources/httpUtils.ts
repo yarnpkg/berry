@@ -1,12 +1,12 @@
-import {PortablePath, xfs}                     from '@yarnpkg/fslib';
-import {ExtendOptions, HTTPSOptions, Response} from 'got';
-import {Agent as HttpsAgent}                   from 'https';
-import {Agent as HttpAgent}                    from 'http';
-import micromatch                              from 'micromatch';
-import tunnel, {ProxyOptions}                  from 'tunnel';
-import {URL}                                   from 'url';
+import {PortablePath, xfs}       from '@yarnpkg/fslib';
+import {ExtendOptions, Response} from 'got';
+import {Agent as HttpsAgent}     from 'https';
+import {Agent as HttpAgent}      from 'http';
+import micromatch                from 'micromatch';
+import tunnel, {ProxyOptions}    from 'tunnel';
+import {URL}                     from 'url';
 
-import {Configuration}                         from './Configuration';
+import {Configuration}           from './Configuration';
 
 const cache = new Map<string, Promise<Buffer> | Buffer>();
 const certCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
