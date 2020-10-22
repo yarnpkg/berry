@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
 export enum Environment {
   All = `all`,
   Production = `production`,
