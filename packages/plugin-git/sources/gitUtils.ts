@@ -1,8 +1,8 @@
-import {Configuration, Locator, execUtils, structUtils} from '@yarnpkg/core';
-import {npath, xfs}                                     from '@yarnpkg/fslib';
-import querystring                                      from 'querystring';
-import semver                                           from 'semver';
-import urlLib                                           from 'url';
+import {Configuration, Locator, execUtils, structUtils, httpUtils} from '@yarnpkg/core';
+import {npath, xfs}                                                from '@yarnpkg/fslib';
+import querystring                                                 from 'querystring';
+import semver                                                      from 'semver';
+import urlLib                                                      from 'url';
 
 function makeGitEnvironment() {
   return {
@@ -170,12 +170,17 @@ export function normalizeLocator(locator: Locator) {
 }
 
 export async function lsRemote(repo: string, configuration: Configuration) {
-  if (!configuration.get(`enableNetwork`))
+  const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
+
+  if (
+    !configuration.get(`enableNetwork`) ||
+    httpUtils.getNetworkSettings(normalizedRepoUrl, {configuration})?.config.get(`enableNetwork`) === false
+  )
     throw new Error(`Network access has been disabled by configuration (${repo})`);
 
   let res: {stdout: string};
   try {
-    res = await execUtils.execvp(`git`, [`ls-remote`, `--refs`, normalizeRepoUrl(repo, {git: true})], {
+    res = await execUtils.execvp(`git`, [`ls-remote`, `--refs`, normalizedRepoUrl], {
       cwd: configuration.startingCwd,
       env: makeGitEnvironment(),
       strict: true,
@@ -299,11 +304,16 @@ export async function clone(url: string, configuration: Configuration) {
     if (protocol !== `commit`)
       throw new Error(`Invalid treeish protocol when cloning`);
 
+    const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
+
+    if (httpUtils.getNetworkSettings(normalizedRepoUrl, {configuration})?.config.get(`enableNetwork`) === false)
+      throw new Error(`Network access has been disabled by configuration (${repo})`);
+
     const directory = await xfs.mktempPromise();
     const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};
 
     try {
-      await execUtils.execvp(`git`, [`clone`, `-c core.autocrlf=false`, normalizeRepoUrl(repo, {git: true}), npath.fromPortablePath(directory)], execOpts);
+      await execUtils.execvp(`git`, [`clone`, `-c core.autocrlf=false`, normalizedRepoUrl, npath.fromPortablePath(directory)], execOpts);
       await execUtils.execvp(`git`, [`checkout`, `${request}`], execOpts);
     } catch (error) {
       error.message = `Repository clone failed: ${error.message}`;
