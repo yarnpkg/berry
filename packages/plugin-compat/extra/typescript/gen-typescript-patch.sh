@@ -86,6 +86,7 @@ make-build-for() {
       else
         echo "Something is wrong; typescript.js got generated with a stupid size" >& /dev/stderr
         if [[ $n -eq 1 ]]; then
+          cat lib/typescript.js
           exit 1
         fi
 
