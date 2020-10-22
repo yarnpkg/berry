@@ -191,6 +191,14 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             // read a logfile telling them to open another logfile
             env.YARN_ENABLE_INLINE_BUILDS = `1`;
 
+            // If a lockfile doesn't exist we create a empty one to
+            // prevent the project root detection from thinking it's in an
+            // undeclared workspace when the user has a lockfile in their home
+            // directory on Windows
+            const lockfilePath = ppath.join(cwd, Filename.lockfile);
+            if (!(await xfs.existsPromise(lockfilePath)))
+              await xfs.writeFilePromise(lockfilePath, ``);
+
             // Yarn 2 supports doing the install and the pack in a single command,
             // so we leverage that. We also don't need the "set version" call since
             // we're already operating within a Yarn 2 context (plus people should
