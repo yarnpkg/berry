@@ -1,6 +1,7 @@
 import {WorkspaceRequiredError}                                                                                 from '@yarnpkg/cli';
 import {CommandContext, Configuration, MessageName, Project, StreamReport, Workspace, formatUtils, structUtils} from '@yarnpkg/core';
 import {ppath}                                                                                                  from '@yarnpkg/fslib';
+import {Gem}                                                                                                    from '@yarnpkg/libui/sources/components/Gem';
 import {ScrollableItems}                                                                                        from '@yarnpkg/libui/sources/components/ScrollableItems';
 import {FocusRequest}                                                                                           from '@yarnpkg/libui/sources/hooks/useFocusRequest';
 import {useListInput}                                                                                           from '@yarnpkg/libui/sources/hooks/useListInput';
@@ -124,13 +125,11 @@ export default class VersionCheckCommand extends Command<CommandContext> {
           </Box>
           <Box>
             {strategies.map(strategy => {
-              const gem = strategy === decision
-                ? <Text color="green">◉ </Text>
-                : <Text color="yellow">◯ </Text>;
+              const isGemActive = strategy === decision;
               return (
                 <Box key={strategy} paddingLeft={2}>
                   <Text>
-                    {gem} {strategy}
+                    <Gem active={isGemActive} /> {strategy}
                   </Text>
                 </Box>
               );
