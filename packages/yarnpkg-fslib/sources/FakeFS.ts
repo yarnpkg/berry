@@ -500,7 +500,6 @@ export abstract class FakeFS<P extends Path> {
   }
 
   async lockPromise<T>(affectedPath: P, callback: () => Promise<T>): Promise<T> {
-    return await callback();
     const lockPath = `${affectedPath}.flock` as P;
 
     const interval = 1000 / 60;

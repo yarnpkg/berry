@@ -17,4 +17,4 @@ if (existsSync(absPnpApiPath)) {
 }
 
 // Defer to the real typescript/bin/tsserver your application uses
-module.exports = absRequire(`/Users/mael.nison/typescript/built/local/tsserver`);
+module.exports = absRequire(`typescript/bin/tsserver`);
