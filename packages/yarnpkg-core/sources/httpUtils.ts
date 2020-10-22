@@ -38,6 +38,25 @@ async function getCachedCertificate(caFilePath: PortablePath) {
   return certificate;
 }
 
+/**
+ * Searches through networkSettings and returns the most specific match
+ */
+export function getNetworkSettings(target: string, opts: { configuration: Configuration }) {
+  // Sort the config by key length to match on the most specific pattern
+  const networkSettings = Array.from(opts.configuration.get(`networkSettings`)).sort(
+    ([keyA], [keyB]) => keyB.length - keyA.length
+  );
+
+  const url = new URL(target);
+  for (const [glob, config] of networkSettings) {
+    if (micromatch.isMatch(url.hostname, glob)) {
+      return {glob, config};
+    }
+  }
+
+  return null;
+}
+
 export type Body = (
   {[key: string]: any} |
   string |
@@ -66,6 +85,10 @@ export async function request(target: string, body: Body, {configuration, header
   if (!configuration.get(`enableNetwork`))
     throw new Error(`Network access have been disabled by configuration (${method} ${target})`);
 
+  const networkConfig = getNetworkSettings(target, {configuration});
+  if (networkConfig?.config.get(`enableNetwork`) === false)
+    throw new Error(`Requests to '${target}' has been blocked by 'networkSettings["${networkConfig.glob}"].enableNetwork'`);
+
   const url = new URL(target);
   if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
     throw new Error(`Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
@@ -80,7 +103,6 @@ export async function request(target: string, body: Body, {configuration, header
       ? tunnel.httpsOverHttp(parseProxy(httpsProxy)) as HttpsAgent
       : globalHttpsAgent,
   };
-
 
   const gotOptions: ExtendOptions = {agent, headers, method};
 
@@ -100,22 +122,9 @@ export async function request(target: string, body: Body, {configuration, header
   const socketTimeout = configuration.get(`httpTimeout`);
   const retry = configuration.get(`httpRetry`);
   const rejectUnauthorized = configuration.get(`enableStrictSsl`);
-  const globalCaFilePath = configuration.get(`caFilePath`);
+  const caFilePath = networkConfig?.config.get(`caFilePath`) ?? configuration.get(`caFilePath`);
 
   const {default: got} = await import(`got`);
-
-  const extraHttpsOptions: HTTPSOptions = {};
-
-  for (const [glob, scopeConfig] of configuration.get(`networkSettings`)) {
-    if (micromatch.isMatch(url.hostname, glob)) {
-      extraHttpsOptions.certificateAuthority = await getCachedCertificate(scopeConfig.get(`caFilePath`));
-      break;
-    }
-  }
-
-  if (!extraHttpsOptions.certificateAuthority && globalCaFilePath)
-    extraHttpsOptions.certificateAuthority = await getCachedCertificate(globalCaFilePath);
-
 
   const gotClient = got.extend({
     timeout: {
@@ -124,7 +133,7 @@ export async function request(target: string, body: Body, {configuration, header
     retry,
     https: {
       rejectUnauthorized,
-      ...extraHttpsOptions,
+      certificateAuthority: caFilePath ? await getCachedCertificate(caFilePath) : undefined,
     },
     ...gotOptions,
   });

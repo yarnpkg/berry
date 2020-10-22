@@ -299,6 +299,9 @@
           "properties": {
             "caFilePath": {
               "$ref": "#/properties/caFilePath"
+            },
+            "enableNetwork": {
+              "$ref": "#/properties/enableNetwork"
             }
           },
           "_exampleKeys": ["caFilePath"]
