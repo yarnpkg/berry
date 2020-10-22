@@ -1,8 +1,8 @@
-import {useApp, useStdin, render} from 'ink';
-import React, {useEffect}         from 'react';
+import {useApp, render} from 'ink';
+import React            from 'react';
 
-import {Application}              from '../components/Application';
-import {useKeypress}              from '../hooks/useKeypress';
+import {Application}    from '../components/Application';
+import {useKeypress}    from '../hooks/useKeypress';
 
 type InferProps<T> = T extends React.ComponentType<infer P> ? P : never;
 
