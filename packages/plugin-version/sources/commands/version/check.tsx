@@ -6,7 +6,7 @@ import {FocusRequest}                                                           
 import {useListInput}                                                                                           from '@yarnpkg/libui/sources/hooks/useListInput';
 import {renderForm}                                                                                             from '@yarnpkg/libui/sources/misc/renderForm';
 import {Command, Usage, UsageError}                                                                             from 'clipanion';
-import {Box, Color}                                                                                             from 'ink';
+import {Box, Text}                                                                                              from 'ink';
 import React, {useCallback, useState}                                                                           from 'react';
 import semver                                                                                                   from 'semver';
 
@@ -67,18 +67,26 @@ export default class VersionCheckCommand extends Command<CommandContext> {
         <Box flexDirection="row" paddingBottom={1}>
           <Box flexDirection="column" width={60}>
             <Box>
-               Press <Color bold cyanBright>{`<up>`}</Color>/<Color bold cyanBright>{`<down>`}</Color> to select workspaces.
+              <Text>
+                Press <Text bold color="cyanBright">{`<up>`}</Text>/<Text bold color="cyanBright">{`<down>`}</Text> to select workspaces.
+              </Text>
             </Box>
             <Box>
-               Press <Color bold cyanBright>{`<left>`}</Color>/<Color bold cyanBright>{`<right>`}</Color> to select release strategies.
+              <Text>
+                 Press <Text bold color="cyanBright">{`<left>`}</Text>/<Text bold color="cyanBright">{`<right>`}</Text> to select release strategies.
+              </Text>
             </Box>
           </Box>
           <Box flexDirection="column">
             <Box marginLeft={1}>
-               Press <Color bold cyanBright>{`<enter>`}</Color> to save.
+              <Text>
+                Press <Text bold color="cyanBright">{`<enter>`}</Text> to save.
+              </Text>
             </Box>
             <Box marginLeft={1}>
-               Press <Color bold cyanBright>{`<ctrl+c>`}</Color> to abort.
+              <Text>
+                Press <Text bold color="cyanBright">{`<ctrl+c>`}</Text> to abort.
+              </Text>
             </Box>
           </Box>
         </Box>
@@ -102,25 +110,34 @@ export default class VersionCheckCommand extends Command<CommandContext> {
       });
 
       const nextVersion = decision === versionUtils.Decision.UNDECIDED
-        ? <Color yellow>{currentVersion}</Color>
+        ? <Text color="yellow">{currentVersion}</Text>
         : decision === versionUtils.Decision.DECLINE
-          ? <Color green>{currentVersion}</Color>
-          : <><Color magenta>{currentVersion}</Color> → <Color green>{semver.inc(currentVersion, decision)}</Color></>;
+          ? <Text color="green">{currentVersion}</Text>
+          : <Text><Text color="magenta">{currentVersion}</Text> → <Text color="green">{semver.inc(currentVersion, decision)}</Text></Text>;
 
-      return <Box flexDirection={`column`}>
-        <Box>
-          {structUtils.prettyLocator(configuration, workspace.anchoredLocator)} - {nextVersion}
+      return (
+        <Box flexDirection={`column`}>
+          <Box>
+            <Text>
+              {structUtils.prettyLocator(configuration, workspace.anchoredLocator)} - {nextVersion}
+            </Text>
+          </Box>
+          <Box>
+            {strategies.map(strategy => {
+              const gem = strategy === decision
+                ? <Text color="green">◉ </Text>
+                : <Text color="yellow">◯ </Text>;
+              return (
+                <Box key={strategy} paddingLeft={2}>
+                  <Text>
+                    {gem} {strategy}
+                  </Text>
+                </Box>
+              );
+            })}
+          </Box>
         </Box>
-        <Box>
-          {strategies.map(strategy => {
-            if (strategy === decision) {
-              return <Box key={strategy} paddingLeft={2}><Color green>◉ </Color> {strategy} </Box>;
-            } else {
-              return <Box key={strategy} paddingLeft={2}><Color yellow>◯ </Color> {strategy} </Box>;
-            }
-          })}
-        </Box>
-      </Box>;
+      );
     };
 
     const getRelevancy = (releases: Releases) => {
@@ -207,7 +224,7 @@ export default class VersionCheckCommand extends Command<CommandContext> {
       parts.push(`${releaseCount} release${releaseCount === 1 ? `` : `s`}`);
       parts.push(`${remainingCount} remaining`);
 
-      return <Color yellow>{parts.join(`, `)}</Color>;
+      return <Text color="yellow">{parts.join(`, `)}</Text>;
     };
 
     const App = ({useSubmit}: {useSubmit: (value: Releases) => void}) => {
@@ -232,50 +249,68 @@ export default class VersionCheckCommand extends Command<CommandContext> {
         }
       }, [focus, setFocus]);
 
-      return <Box width={80} flexDirection={`column`}>
-        <Prompt />
-        <Box textWrap={`wrap`}>
-          The following files have been modified in your local checkout.
-        </Box>
-        <Box flexDirection={`column`} marginTop={1} paddingLeft={2}>
-          {[...versionFile.changedFiles].map(file => <Box key={file}>
-            <Color grey>{versionFile.root}</Color>/{ppath.relative(versionFile.root, file)}
-          </Box>)}
-        </Box>
-        {versionFile.releaseRoots.size > 0 && <>
-          <Box marginTop={1} textWrap={`wrap`}>
-            Because of those files having been modified, the following workspaces may need to be released again (note that private workspaces are also shown here, because even though they won't be published, releasing them will allow us to flag their dependents for potential re-release):
-          </Box>
-          {dependentWorkspaces.size > 3 ? <Box marginTop={1}>
-            <Stats workspaces={versionFile.releaseRoots} releases={releases} />
-          </Box> : null}
-          <Box marginTop={1} flexDirection={`column`}>
-            <ScrollableItems active={focus % 2 === 0} radius={1} size={2} onFocusRequest={handleFocusRequest}>
-              {[...versionFile.releaseRoots].map(workspace => {
-                return <Undecided key={workspace.cwd} workspace={workspace} decision={releases.get(workspace) || versionUtils.Decision.UNDECIDED} setDecision={decision => setWorkspaceRelease(workspace, decision)} />;
-              })}
-            </ScrollableItems>
-          </Box>
-        </>}
-        {dependentWorkspaces.size > 0 && <>
-          <Box marginTop={1} textWrap={`wrap`}>
-            The following workspaces depend on other workspaces that have been marked for release, and thus may need to be released as well:
-          </Box>
+      return (
+        <Box flexDirection={`column`}>
+          <Prompt />
           <Box>
-            (Press <Color bold cyanBright>{`<tab>`}</Color> to move the focus between the workspace groups.)
+            <Text wrap="wrap">
+              The following files have been modified in your local checkout.
+            </Text>
           </Box>
-          {dependentWorkspaces.size > 5 ? <Box marginTop={1}>
-            <Stats workspaces={dependentWorkspaces} releases={releases} />
-          </Box> : null}
-          <Box marginTop={1} flexDirection={`column`}>
-            <ScrollableItems active={focus % 2 === 1} radius={2} size={2} onFocusRequest={handleFocusRequest}>
-              {[...dependentWorkspaces].map(workspace => {
-                return <Undecided key={workspace.cwd} workspace={workspace} decision={releases.get(workspace) || versionUtils.Decision.UNDECIDED} setDecision={decision => setWorkspaceRelease(workspace, decision)} />;
-              })}
-            </ScrollableItems>
+          <Box flexDirection={`column`} marginTop={1} paddingLeft={2}>
+            {[...versionFile.changedFiles].map(file => (
+              <Box key={file}>
+                <Text>
+                  <Text color="grey">{versionFile.root}</Text>/{ppath.relative(versionFile.root, file)}
+                </Text>
+              </Box>
+            ))}
           </Box>
-        </>}
-      </Box>;
+          {versionFile.releaseRoots.size > 0 && <>
+            <Box marginTop={1}>
+              <Text wrap="wrap">
+                Because of those files having been modified, the following workspaces may need to be released again (note that private workspaces are also shown here, because even though they won't be published, releasing them will allow us to flag their dependents for potential re-release):
+              </Text>
+            </Box>
+            {dependentWorkspaces.size > 3 ? <Box marginTop={1}>
+              <Stats workspaces={versionFile.releaseRoots} releases={releases} />
+            </Box> : null}
+            <Box marginTop={1} flexDirection={`column`}>
+              <ScrollableItems active={focus % 2 === 0} radius={1} size={2} onFocusRequest={handleFocusRequest}>
+                {[...versionFile.releaseRoots].map(workspace => (
+                  <Undecided key={workspace.cwd} workspace={workspace} decision={releases.get(workspace) || versionUtils.Decision.UNDECIDED} setDecision={decision => setWorkspaceRelease(workspace, decision)} />
+                ))}
+              </ScrollableItems>
+            </Box>
+          </>}
+          {dependentWorkspaces.size > 0 ? (
+            <>
+              <Box marginTop={1}>
+                <Text wrap="wrap">
+                  The following workspaces depend on other workspaces that have been marked for release, and thus may need to be released as well:
+                </Text>
+              </Box>
+              <Box>
+                <Text>
+                  (Press <Text bold color="cyanBright">{`<tab>`}</Text> to move the focus between the workspace groups.)
+                </Text>
+              </Box>
+              {dependentWorkspaces.size > 5 ? (
+                <Box marginTop={1}>
+                  <Stats workspaces={dependentWorkspaces} releases={releases} />
+                </Box>
+              ) : null}
+              <Box marginTop={1} flexDirection={`column`}>
+                <ScrollableItems active={focus % 2 === 1} radius={2} size={2} onFocusRequest={handleFocusRequest}>
+                  {[...dependentWorkspaces].map(workspace => (
+                    <Undecided key={workspace.cwd} workspace={workspace} decision={releases.get(workspace) || versionUtils.Decision.UNDECIDED} setDecision={decision => setWorkspaceRelease(workspace, decision)} />
+                  ))}
+                </ScrollableItems>
+              </Box>
+            </>
+          ) : null}
+        </Box>
+      );
     };
 
     const decisions = await renderForm<Releases>(App, {versionFile});

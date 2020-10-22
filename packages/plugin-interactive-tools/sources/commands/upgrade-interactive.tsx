@@ -7,7 +7,7 @@ import {renderForm, SubmitInjectedComponent}                                    
 import {suggestUtils}                                                                                                                   from '@yarnpkg/plugin-essentials';
 import {Command, Usage}                                                                                                                 from 'clipanion';
 import {diffWords}                                                                                                                      from 'diff';
-import {Box, Color, Text}                                                                                                               from 'ink';
+import {Box, Text}                                                                                                                      from 'ink';
 import React, {useEffect, useState, useRef}                                                                                             from 'react';
 import semver                                                                                                                           from 'semver';
 
@@ -136,18 +136,26 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         <Box flexDirection="row">
           <Box flexDirection="column" width={49}>
             <Box marginLeft={1}>
-             Press <Color bold cyanBright>{`<up>`}</Color>/<Color bold cyanBright>{`<down>`}</Color> to select packages.
+              <Text>
+                Press <Text bold color="cyanBright">{`<up>`}</Text>/<Text bold color="cyanBright">{`<down>`}</Text> to select packages.
+              </Text>
             </Box>
             <Box marginLeft={1}>
-             Press <Color bold cyanBright>{`<left>`}</Color>/<Color bold cyanBright>{`<right>`}</Color> to select versions.
+              <Text>
+                Press <Text bold color="cyanBright">{`<left>`}</Text>/<Text bold color="cyanBright">{`<right>`}</Text> to select versions.
+              </Text>
             </Box>
           </Box>
           <Box flexDirection="column">
             <Box marginLeft={1}>
-             Press <Color bold cyanBright>{`<enter>`}</Color> to install.
+              <Text>
+                Press <Text bold color="cyanBright">{`<enter>`}</Text> to install.
+              </Text>
             </Box>
             <Box marginLeft={1}>
-             Press <Color bold cyanBright>{`<ctrl+c>`}</Color> to abort.
+              <Text>
+                Press <Text bold color="cyanBright">{`<ctrl+c>`}</Text> to abort.
+              </Text>
             </Box>
           </Box>
         </Box>
@@ -159,11 +167,11 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         <Box flexDirection="row" paddingTop={1} paddingBottom={1}>
           <Box width={50}>
             <Text bold>
-              <Color greenBright>?</Color> Pick the packages you want to upgrade.
+              <Text color="greenBright">?</Text> Pick the packages you want to upgrade.
             </Text>
           </Box>
-          <Box width={17}><Color bold underline gray>Current</Color></Box>
-          <Box width={17}><Color bold underline gray>Range/Latest</Color></Box>
+          <Box width={17}><Text bold underline color="gray">Current</Text></Box>
+          <Box width={17}><Text bold underline color="gray">Range/Latest</Text></Box>
         </Box>
       );
     };
@@ -191,14 +199,14 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       ]);
 
       return <Box>
-        <Box width={45} textWrap="wrap">
-          <Text bold>
+        <Box width={45}>
+          <Text bold wrap="wrap">
             {structUtils.prettyIdent(configuration, descriptor)}
           </Text>
         </Box>
         {suggestions !== null
           ? <ItemOptions active={active} options={suggestions} value={action} onChange={setAction} sizes={[17, 17, 17]} />
-          : <Box marginLeft={2}><Color gray>Fetching suggestions...</Color></Box>
+          : <Box marginLeft={2}><Text color="gray">Fetching suggestions...</Text></Box>
         }
       </Box>;
     };

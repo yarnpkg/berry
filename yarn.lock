@@ -4656,7 +4656,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^16.8.0, @types/react@npm:^16.8.12, @types/react@npm:^16.8.6, @types/react@npm:^16.x":
+"@types/react@npm:*, @types/react@npm:^16.8.0, @types/react@npm:^16.x":
   version: 16.9.2
   resolution: "@types/react@npm:16.9.2"
   dependencies:
@@ -4968,6 +4968,13 @@ __metadata:
   dependencies:
     "@types/yargs-parser": "*"
   checksum: 03117288be47750740fd8bb670cf987360fc49b374348ce0c17efa743dcfdb52aa97ce001c606924fb062fe24800f680d0db78e1e5bc32c5e3a9f0248050d4d7
+  languageName: node
+  linkType: hard
+
+"@types/yoga-layout@npm:1.9.2":
+  version: 1.9.2
+  resolution: "@types/yoga-layout@npm:1.9.2"
+  checksum: a701328c5e3614847a92778b6b5e63e9d3fb8494f8aa807b21ef9359aff1b9b443c540e96fe7119008fc3572990afb8855d44864ddc250bc21a2aa1bd497f53c
   languageName: node
   linkType: hard
 
@@ -5671,7 +5678,7 @@ __metadata:
   resolution: "@yarnpkg/libui@workspace:packages/yarnpkg-libui"
   dependencies:
     "@types/react": ^16.8.0
-    ink: ^2.3.0
+    ink: ^3.0.7
     react: ^16.13.1
     redux: ^4.0.0
     tslib: ^1.13.0
@@ -5945,8 +5952,8 @@ __metadata:
     algoliasearch: ^4.2.0
     clipanion: ^2.6.2
     diff: ^4.0.1
-    ink: ^2.3.0
-    ink-text-input: ^3.2.2
+    ink: ^3.0.7
+    ink-text-input: ^4.0.1
     react: ^16.13.1
     semver: ^7.1.2
     tslib: ^1.13.0
@@ -6149,7 +6156,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:^2.3.0"
     "@yarnpkg/plugin-pack": "workspace:^2.2.2"
     clipanion: ^2.6.2
-    ink: ^2.3.0
+    ink: ^3.0.7
     react: ^16.13.1
     semver: ^7.1.2
     tslib: ^1.13.0
@@ -7076,16 +7083,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"auto-bind@npm:^2.0.0":
-  version: 2.1.1
-  resolution: "auto-bind@npm:2.1.1"
-  dependencies:
-    "@types/react": ^16.8.12
-  checksum: 23bf83ad7a787d84468c82565b542dd06401f1f9d9888b452588a22b18b8ddb6694f8e43ccefd58b5b2010d760a4583aa4db3d070973d0eec55b48fd8116c4ad
-  languageName: node
-  linkType: hard
-
-"auto-bind@npm:^4.0.0":
+"auto-bind@npm:4.0.0, auto-bind@npm:^4.0.0":
   version: 4.0.0
   resolution: "auto-bind@npm:4.0.0"
   checksum: 8054fe5776afe69fb3e5726496dd0cd6f3f1f09ff897e22ffdae96b044b95411f0975e2447b50ff7f8f0167258f8dc859e253e30c298719f918a316e439ed29f
@@ -8513,7 +8511,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^4.0.0":
+"chalk@npm:^4.0.0, chalk@npm:^4.1.0":
   version: 4.1.0
   resolution: "chalk@npm:4.1.0"
   dependencies:
@@ -8770,16 +8768,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-truncate@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "cli-truncate@npm:1.1.0"
-  dependencies:
-    slice-ansi: ^1.0.0
-    string-width: ^2.0.0
-  checksum: 82ea80015b3d5158b822bf8dd37043f1054834749ccb978406f17ae187917d960ed00b43fb181517e0c32910a213c9f36f60e815e8d9484da2d76e808543e567
-  languageName: node
-  linkType: hard
-
 "cli-truncate@npm:^2.1.0":
   version: 2.1.0
   resolution: "cli-truncate@npm:2.1.0"
@@ -8924,6 +8912,15 @@ __metadata:
     chalk: ^2.4.1
     q: ^1.1.2
   checksum: 8724977fd035255e648ac9b3de3b476fe73390a8c92ae8b633b80fd4c37d82416a6a5591f2cdf0c8724a19e8d14c6871bc52bb52dac37187034102abb89866ef
+  languageName: node
+  linkType: hard
+
+"code-excerpt@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "code-excerpt@npm:3.0.0"
+  dependencies:
+    convert-to-spaces: ^1.0.1
+  checksum: b2920f9f6b4312a6a5b2e5bbe17bb20d7c3cfa18414adbcd2a818ef32dad471e4469ceaf7c0af34eb0575dfb732389f8a15d15dbdb5217116ad9c9f60fb680e8
   languageName: node
   linkType: hard
 
@@ -9373,6 +9370,13 @@ __metadata:
   dependencies:
     safe-buffer: ~5.1.1
   checksum: b10fbf041e3221c65e1ab67f05c8fcbad9c5fd078c62f4a6e05cb5fddc4b5a0e8a17c6a361c6a44f011b1a0c090b36aa88543be9dfa65da8c9e7f39c5de2d4df
+  languageName: node
+  linkType: hard
+
+"convert-to-spaces@npm:^1.0.1":
+  version: 1.0.2
+  resolution: "convert-to-spaces@npm:1.0.2"
+  checksum: eae216abcafaf7d1ca58ad46f542a9870eb95ca7f3df91b1e70c8ac666418b3b4da8d9edb14119032658c0a239228b5c4e911e8f9fa314396fab3606de59d541
   languageName: node
   linkType: hard
 
@@ -15495,44 +15499,16 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"ink-text-input@npm:^3.2.2":
-  version: 3.2.2
-  resolution: "ink-text-input@npm:3.2.2"
+"ink-text-input@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "ink-text-input@npm:4.0.1"
   dependencies:
-    chalk: ^3.0.0
-    prop-types: ^15.5.10
+    chalk: ^4.1.0
+    type-fest: ^0.15.1
   peerDependencies:
-    ink: ^2.0.0
+    ink: ^3.0.0-3
     react: ^16.5.2
-  checksum: 34565db24a6eeb7e885f4dac50c67b276a950472a6d908ac4f5cefd454cfd09e4bd4b7e6be9b15b302be3319e08a82607e0b07669d6b2bd37ab2754f26494666
-  languageName: node
-  linkType: hard
-
-"ink@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "ink@npm:2.3.0"
-  dependencies:
-    "@types/react": ^16.8.6
-    arrify: ^1.0.1
-    auto-bind: ^2.0.0
-    chalk: ^2.4.1
-    cli-cursor: ^2.1.0
-    cli-truncate: ^1.1.0
-    is-ci: ^2.0.0
-    lodash.throttle: ^4.1.1
-    log-update: ^3.0.0
-    prop-types: ^15.6.2
-    react-reconciler: ^0.20.0
-    scheduler: ^0.13.2
-    signal-exit: ^3.0.2
-    slice-ansi: ^1.0.0
-    string-length: ^2.0.0
-    widest-line: ^2.0.0
-    wrap-ansi: ^5.0.0
-    yoga-layout-prebuilt: ^1.9.3
-  peerDependencies:
-    react: ">=16.8.0"
-  checksum: 3d642cd813c86e09554fb9c825b67296439ccb5f1137933c61582375d31717f011c63f95fa0b007361db525fab13e62d72ca14ee1e4b4528aa80bbc4fee5986e
+  checksum: 3f81ce8041de44a7e092f586566504b42013e0458bc0b0dc4cd07dea2792a019ac124b49d9d0d61b72d2973fa8ae555c503f62c6a95a2a54e1426b7bd017a9ed
   languageName: node
   linkType: hard
 
@@ -15565,6 +15541,43 @@ fsevents@^1.2.7:
     "@types/react":
       optional: true
   checksum: 589e6eaaa56b73b8e5d5f800f56c1de9d9b73bc80bce479c2377a9b1bb6986c88c72d89c0c15def66c4aa824f998804a6a403d6cc8e72067f1622e9dcf6bf146
+  languageName: node
+  linkType: hard
+
+"ink@npm:^3.0.7":
+  version: 3.0.7
+  resolution: "ink@npm:3.0.7"
+  dependencies:
+    ansi-escapes: ^4.2.1
+    auto-bind: 4.0.0
+    chalk: ^4.1.0
+    cli-boxes: ^2.2.0
+    cli-cursor: ^3.1.0
+    cli-truncate: ^2.1.0
+    code-excerpt: ^3.0.0
+    indent-string: ^4.0.0
+    is-ci: ^2.0.0
+    lodash: ^4.17.20
+    patch-console: ^1.0.0
+    react-devtools-core: ^4.6.0
+    react-reconciler: ^0.24.0
+    scheduler: ^0.18.0
+    signal-exit: ^3.0.2
+    slice-ansi: ^3.0.0
+    stack-utils: ^2.0.2
+    string-length: ^3.1.0
+    type-fest: ^0.12.0
+    widest-line: ^3.1.0
+    wrap-ansi: ^6.2.0
+    ws: ^7.2.5
+    yoga-layout-prebuilt: ^1.9.6
+  peerDependencies:
+    "@types/react": ">=16.8.0"
+    react: ">=16.8.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 1e6163fc941b1d653cb1b7443d899514fa4f2ae6fb324318d2efcc116d744c149aa569f7825da753ad01207a333516b638edf0e46bf4c105b9ecdd932e711cca
   languageName: node
   linkType: hard
 
@@ -20551,6 +20564,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"patch-console@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "patch-console@npm:1.0.0"
+  checksum: fb9bcbea860617831a93cc666e0d27c96f859a2f6b1724a5371701c52d51cea16bf68384dd33d3a278315ac14d37b669d1e269f38c09d9bb808ed186137f9263
+  languageName: node
+  linkType: hard
+
 "path-browserify@npm:0.0.1":
   version: 0.0.1
   resolution: "path-browserify@npm:0.0.1"
@@ -22181,6 +22201,16 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"react-devtools-core@npm:^4.6.0":
+  version: 4.9.0
+  resolution: "react-devtools-core@npm:4.9.0"
+  dependencies:
+    shell-quote: ^1.6.1
+    ws: ^7
+  checksum: 0c757d2df10836794aacfd179a7502322839dac0d847f25f28f9aeb623deb5d9df4ba4ff9b952e241f0273362ae157dfeda01d427bf196e30de3da4f4e9d6743
+  languageName: node
+  linkType: hard
+
 "react-dom-core@npm:0.0.4":
   version: 0.0.4
   resolution: "react-dom-core@npm:0.0.4"
@@ -22361,20 +22391,6 @@ fsevents@^1.2.7:
   peerDependencies:
     react: ^16.x
   checksum: a734fab46ae5d0bfe0ceb6e9ef7015fb4ed8de17e8e3fabd420f6c3ed3e4b998c35cc6b7fb54ecde527103633fdca8c54b0180ddb288d7aa2a88868e8f25e021
-  languageName: node
-  linkType: hard
-
-"react-reconciler@npm:^0.20.0":
-  version: 0.20.4
-  resolution: "react-reconciler@npm:0.20.4"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-    prop-types: ^15.6.2
-    scheduler: ^0.13.6
-  peerDependencies:
-    react: ^16.0.0
-  checksum: 1db1b825a743b905736efd6a5526b23c53ee1977590701f5246a8193fc39850c38ee3ba990232b2796262e0f52afa247e27f2df305058b622c62f8e3c7d44215
   languageName: node
   linkType: hard
 
@@ -23791,16 +23807,6 @@ resolve@1.9.0:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.13.2, scheduler@npm:^0.13.6":
-  version: 0.13.6
-  resolution: "scheduler@npm:0.13.6"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-  checksum: 6778b87d7ff5820c8f5a1eff7f325c5ee45218e4be4bbaa937b3ec0c2d18e6799e1008e3ebc46591a84991f4313f43d5099a79b8a545a3a9261ca372ad645516
-  languageName: node
-  linkType: hard
-
 "scheduler@npm:^0.18.0":
   version: 0.18.0
   resolution: "scheduler@npm:0.18.0"
@@ -24238,6 +24244,13 @@ resolve@1.9.0:
   languageName: node
   linkType: hard
 
+"shell-quote@npm:^1.6.1":
+  version: 1.7.2
+  resolution: "shell-quote@npm:1.7.2"
+  checksum: 3b3d06814ca464cde8594c27bdd57a1f4c06b26ad2988b08b5819f97ac1edfd7cb7313fda1c909da33211972c72c5a7906b7da2b62078109f9d3274d3f404fa9
+  languageName: node
+  linkType: hard
+
 "shelljs@npm:^0.8.3":
   version: 0.8.3
   resolution: "shelljs@npm:0.8.3"
@@ -24375,15 +24388,6 @@ resolve@1.9.0:
   version: 3.0.0
   resolution: "slash@npm:3.0.0"
   checksum: fc3e8597d822ee3ba6cd76e9b001cd5be315f9b81c3a03a29bb611c003d1484e3b29a9e7bc020298fa669b585ff7c9268f44513f60c186216eb6af3111a3e838
-  languageName: node
-  linkType: hard
-
-"slice-ansi@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "slice-ansi@npm:1.0.0"
-  dependencies:
-    is-fullwidth-code-point: ^2.0.0
-  checksum: f9b7528def4df379ff5262f941414fe23d92b3f3bfe95861a1c9e87c16f94017e1716a6385dc5c6cb4385b2d016553442a99040915e4cf6fbd09680bcc173f1a
   languageName: node
   linkType: hard
 
@@ -25012,16 +25016,6 @@ resolve@1.9.0:
   version: 2.0.0
   resolution: "strict-uri-encode@npm:2.0.0"
   checksum: 775012e88b9d8dff939d514bf376d615a15e8228a5dd587a94ac3c71fce41aa3635cd808aa796e2c1cd33f3f2fe2fbf89b74ee18a504a1905efa1854311e04bb
-  languageName: node
-  linkType: hard
-
-"string-length@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "string-length@npm:2.0.0"
-  dependencies:
-    astral-regex: ^1.0.0
-    strip-ansi: ^4.0.0
-  checksum: 44d79c40a4c998b333e72c5772e1b7b140687a3039315fa0579b4967a6dd2bff6d20c06489241ff32f261a4614e2d326305353bc6db4001179d43bf96c90754f
   languageName: node
   linkType: hard
 
@@ -26380,6 +26374,20 @@ resolve@1.9.0:
   version: 0.11.0
   resolution: "type-fest@npm:0.11.0"
   checksum: 02e5cadf13590a5724cacf8d9133320efd173f6fb1b695fcb29e56551a315bf0f07ca988a780a1999b7b55bb3eaaa7f37223615207236d393af17bba6749dc95
+  languageName: node
+  linkType: hard
+
+"type-fest@npm:^0.12.0":
+  version: 0.12.0
+  resolution: "type-fest@npm:0.12.0"
+  checksum: e9e82ef5d1f3fbd39634626aa9a096b856e58271e9aafca0b6b56ef287443a776bb6c0ee784f7537306a69c0d028ced992b66b1d6552c7fa5d9717ee62206c21
+  languageName: node
+  linkType: hard
+
+"type-fest@npm:^0.15.1":
+  version: 0.15.1
+  resolution: "type-fest@npm:0.15.1"
+  checksum: 3851093599dc7abf49ea8bf7a11e4849f0ceb26a7c0b4df9dd7d709a1a2886dd189feabfcb411d0cec5b4381ca793bb9ce1615fce8d9fc63565ea6de0bb8ae2f
   languageName: node
   linkType: hard
 
@@ -28398,6 +28406,21 @@ typescript@4.1.0-beta:
   languageName: node
   linkType: hard
 
+"ws@npm:^7, ws@npm:^7.2.5":
+  version: 7.3.1
+  resolution: "ws@npm:7.3.1"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ^5.0.2
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 9302f1f6658c5f3ecd6d35d1c5a38ad708d8e5404cba66ad884ead072ef7a4c948f54d728649a2cb3af1865ca0e15f903e0e2ac9df30c1a0d4dd00d00e6e0d4a
+  languageName: node
+  linkType: hard
+
 "ws@npm:^7.1.2, ws@npm:^7.2.3, ws@npm:^7.3.0":
   version: 7.3.0
   resolution: "ws@npm:7.3.0"
@@ -28763,6 +28786,15 @@ typescript@4.1.0-beta:
   version: 1.9.3
   resolution: "yoga-layout-prebuilt@npm:1.9.3"
   checksum: 9dd6aa9aae7b7c147549d7d873d1cffccb84f9dea0cf39fbfa33efb75846c8e3838b40aa6c47652af0d7477bec8cc1813b77fd94837d1ea39ba984461d455d0b
+  languageName: node
+  linkType: hard
+
+"yoga-layout-prebuilt@npm:^1.9.6":
+  version: 1.10.0
+  resolution: "yoga-layout-prebuilt@npm:1.10.0"
+  dependencies:
+    "@types/yoga-layout": 1.9.2
+  checksum: e8db26850d5ea55d0538522245c2343d555e82d3528837cfb371040b4a877a7a4860aeb325e15fa5061bcca0a2dac6abd5af2051f584048009f2c5b4bb8afdf7
   languageName: node
   linkType: hard
 
