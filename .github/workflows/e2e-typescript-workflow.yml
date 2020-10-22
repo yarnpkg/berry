@@ -47,7 +47,7 @@ jobs:
         yarn init -p
         yarn add typescript
 
-        cp "$HERE_DIR"/scripts/test-typescript-patch.js .
+        cp "$HERE_DIR"/test-typescript-patch.js .
         yarn node ./test-typescript-patch.js
 
         yarn add ts-pnp left-pad @types/left-pad
