@@ -417,60 +417,40 @@ export abstract class FakeFS<P extends Path> {
     this.chmodSync(destination, mode);
   }
 
-  async changeFilePromise(p: P, content: Buffer): Promise<void>;
-  async changeFilePromise(p: P, content: string, opts?: ChangeFileOptions): Promise<void>;
-  async changeFilePromise(p: P, content: Buffer | string, {automaticNewlines}: ChangeFileOptions = {}) {
-    const encoding = typeof content === `string`
-      ? `utf8`
-      : undefined;
-
-    let current: Buffer | string | undefined;
+  async changeFilePromise(p: P, content: string, {automaticNewlines}: ChangeFileOptions = {}) {
+    let current = ``;
     try {
-      current = await this.readFilePromise(p, encoding);
+      current = await this.readFilePromise(p, `utf8`);
     } catch (error) {
       // ignore errors, no big deal
     }
 
-    if (Buffer.isBuffer(current) && Buffer.isBuffer(content) && content.compare(current) === 0)
+    const normalizedContent = automaticNewlines
+      ? normalizeLineEndings(current, content)
+      : content;
+
+    if (current === normalizedContent)
       return;
 
-    if (typeof current === `string` && typeof content === `string`) {
-      if (automaticNewlines)
-        content = normalizeLineEndings(current, content);
-
-      if (current === content) {
-        return;
-      }
-    }
-
-    await this.writeFilePromise(p, content);
+    await this.writeFilePromise(p, normalizedContent);
   }
 
   changeFileSync(p: P, content: string, {automaticNewlines = false}: ChangeFileOptions = {}) {
-    const encoding = typeof content === `string`
-      ? `utf8`
-      : undefined;
-
-    let current: Buffer | string | undefined;
+    let current = ``;
     try {
-      current = this.readFileSync(p, encoding);
+      current = this.readFileSync(p, `utf8`);
     } catch (error) {
       // ignore errors, no big deal
     }
 
-    if (Buffer.isBuffer(current) && Buffer.isBuffer(content) && content.compare(current) === 0)
+    const normalizedContent = automaticNewlines
+      ? normalizeLineEndings(current, content)
+      : content;
+
+    if (current === normalizedContent)
       return;
 
-    if (typeof current === `string` && typeof content === `string`) {
-      if (automaticNewlines)
-        content = normalizeLineEndings(current, content);
-
-      if (current === content) {
-        return;
-      }
-    }
-
-    this.writeFileSync(p, content);
+    this.writeFileSync(p, normalizedContent);
   }
 
   async movePromise(fromP: P, toP: P) {
