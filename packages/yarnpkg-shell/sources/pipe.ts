@@ -33,6 +33,26 @@ function sigintHandler() {
 // longer needed.
 let sigintRefCount = 0;
 
+// use of special builtins requires `shell:true` option to spawn
+// list taken from: https://pubs.opengroup.org/onlinepubs/009695399/idx/sbi.html
+const specialBuiltins = new Set([
+  `break`,
+  `colon`,
+  `continue`,
+  `dot`,
+  `eval`,
+  `exec`,
+  `exit`,
+  `export`,
+  `readonly`,
+  `return`,
+  `set`,
+  `shift`,
+  `times`,
+  `trap`,
+  `unset`,
+]);
+
 export function makeProcess(name: string, args: Array<string>, opts: ShellOptions, spawnOpts: any): ProcessImplementation {
   return (stdio: Stdio) => {
     const stdin = stdio[0] instanceof Transform
@@ -47,11 +67,18 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
       ? `pipe`
       : stdio[2];
 
-    const child = crossSpawn(name, args, {...spawnOpts, stdio: [
-      stdin,
-      stdout,
-      stderr,
-    ]});
+
+    const shell = specialBuiltins.has(name);
+
+    const child = crossSpawn(name, args, {
+      ...spawnOpts,
+      stdio: [
+        stdin,
+        stdout,
+        stderr,
+      ],
+      shell,
+    });
 
     if (sigintRefCount++ === 0)
       process.on(`SIGINT`, sigintHandler);
