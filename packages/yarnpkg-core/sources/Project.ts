@@ -91,6 +91,9 @@ export class Project {
   public storedPackages: Map<LocatorHash, Package> = new Map();
   public storedChecksums: Map<LocatorHash, string> = new Map();
 
+  private storedPackageMetas: Map<string, Record<string, any>> = new Map();
+  private packageMetaKeysAccessed: Set<string> = new Set();
+
   public accessibleLocators: Set<LocatorHash> = new Set();
   public originalPackages: Map<LocatorHash, Package> = new Map();
   public optionalBuilds: Set<LocatorHash> = new Set();
@@ -1040,7 +1043,7 @@ export class Project {
     }
   }
 
-  async linkEverything({cache, report, fetcher: optFetcher}: InstallOptions) {
+  async linkEverything({cache, report, fetcher: optFetcher, persistProject}: InstallOptions) {
     const fetcher = optFetcher || this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, skipIntegrityCheck: true};
 
@@ -1074,7 +1077,11 @@ export class Project {
 
         try {
           for (const installer of installers.values()) {
-            await installer.installPackage(pkg, fetchResult);
+            // Retrieve and pass packageMeta, but do not store it into the cache for workspace packages
+            let packageMeta;
+            if (installer.fetchPackageMeta)
+              packageMeta = await installer.fetchPackageMeta(pkg, fetchResult);
+            await installer.installPackage(pkg, fetchResult, packageMeta);
           }
         } finally {
           if (fetchResult.releaseFs) {
@@ -1102,7 +1109,18 @@ export class Project {
 
         let installStatus;
         try {
-          installStatus = await installer.installPackage(pkg, fetchResult);
+          let packageMeta;
+          let metaKey;
+          if (installer.getPackageMetaKey) {
+            metaKey = installer.getPackageMetaKey(pkg);
+            packageMeta = this.storedPackageMetas.get(metaKey);
+            this.packageMetaKeysAccessed.add(metaKey);
+          }
+          if (!packageMeta && metaKey && installer.fetchPackageMeta) {
+            packageMeta = await installer.fetchPackageMeta(pkg, fetchResult);
+            this.storedPackageMetas.set(metaKey, packageMeta);
+          }
+          installStatus = await installer.installPackage(pkg, fetchResult, packageMeta);
         } finally {
           if (fetchResult.releaseFs) {
             fetchResult.releaseFs();
@@ -1219,6 +1237,11 @@ export class Project {
           }
         }
       }
+    }
+
+    if (typeof persistProject === `undefined` || persistProject) {
+      this.cleanupPackageMetas();
+      await this.persist();
     }
 
     // Step 4: Build the packages in multiple steps
@@ -1456,6 +1479,8 @@ export class Project {
     const nodeLinker = this.configuration.get(`nodeLinker`);
     Configuration.telemetry?.reportInstall(nodeLinker);
 
+    await this.restoreStateForInstall();
+
     const validationWarnings: Array<{name: MessageName, text: string}> = [];
     const validationErrors: Array<{name: MessageName, text: string}> = [];
 
@@ -1539,9 +1564,6 @@ export class Project {
         await this.cacheCleanup(opts);
       }
     });
-
-    if (typeof opts.persistProject === `undefined` || opts.persistProject)
-      await this.persist();
 
     await opts.report.startTimerPromise(`Link step`, async () => {
       const immutablePatterns = opts.immutable
@@ -1679,15 +1701,35 @@ export class Project {
     });
   }
 
+  private cleanupPackageMetas() {
+    for (const key of this.storedPackageMetas.keys()) {
+      if (!this.packageMetaKeysAccessed.has(key)) {
+        this.storedPackageMetas.delete(key);
+      }
+    }
+  }
+
   async persistInstallStateFile() {
-    const {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, lockFileChecksum} = this;
-    const installState = {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, lockFileChecksum};
+    const {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, storedPackageMetas, lockFileChecksum} = this;
+    const installState = {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, storedPackageMetas, lockFileChecksum};
     const serializedState = await gzip(v8.serialize(installState));
 
     const installStatePath = this.configuration.get(`installStatePath`);
 
     await xfs.mkdirPromise(ppath.dirname(installStatePath), {recursive: true});
     await xfs.writeFilePromise(installStatePath, serializedState as Buffer);
+  }
+
+  async restoreStateForInstall() {
+    const installStatePath = this.configuration.get(`installStatePath`);
+    if (!xfs.existsSync(installStatePath))
+      return;
+
+    const serializedState = await xfs.readFilePromise(installStatePath);
+    const installState = v8.deserialize(await gunzip(serializedState) as Buffer);
+    if (installState.storedPackageMetas) {
+      Object.assign(this, {storedPackageMetas: installState.storedPackageMetas});
+    }
   }
 
   async restoreInstallState() {

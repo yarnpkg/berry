@@ -1,8 +1,9 @@
-import {Installer, LinkOptions, LinkType, MessageName, DependencyMeta, FinalizeInstallStatus, Manifest} from '@yarnpkg/core';
-import {FetchResult, Descriptor, Locator, Package, BuildDirective}                                      from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                                         from '@yarnpkg/core';
-import {FakeFS, PortablePath, ppath}                                                                    from '@yarnpkg/fslib';
-import {PackageRegistry, PnpSettings}                                                                   from '@yarnpkg/pnp';
+import {Installer, LinkOptions, LinkType, MessageName, DependencyMeta, FinalizeInstallStatus, Manifest, LocatorHash} from '@yarnpkg/core';
+import {FetchResult, Descriptor, Locator, Package, BuildDirective}                                                   from '@yarnpkg/core';
+import {PackageMeta}                                                                                                 from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                                                      from '@yarnpkg/core';
+import {FakeFS, PortablePath, ppath}                                                                                 from '@yarnpkg/fslib';
+import {PackageRegistry, PnpSettings}                                                                                from '@yarnpkg/pnp';
 
 export type AbstractInstallerOptions = LinkOptions & {
   skipIncompatiblePackageLinking?: boolean;
@@ -10,6 +11,7 @@ export type AbstractInstallerOptions = LinkOptions & {
 
 export abstract class AbstractPnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
+  private readonly packageMetas = new Map<LocatorHash, PackageMeta>();
 
   private readonly blacklistedPaths: Set<PortablePath> = new Set();
 
@@ -27,15 +29,15 @@ export abstract class AbstractPnpInstaller implements Installer {
    * example we use this in the PnP linker to materialize the packages within
    * their own directories when they have build scripts.
    */
-  abstract transformPackage(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult, dependencyMeta: DependencyMeta, flags: {hasBuildScripts: boolean}): Promise<FakeFS<PortablePath>>;
+  abstract transformPackage(locator: Locator, packageMeta: PackageMeta, fetchResult: FetchResult, dependencyMeta: DependencyMeta, flags: {hasBuildScripts: boolean}): Promise<FakeFS<PortablePath>>;
 
   /**
    * Called with the full settings, ready to be used by the @yarnpkg/pnp
    * package.
    */
-  abstract finalizeInstallWithPnp(pnpSettings: PnpSettings): Promise<Array<FinalizeInstallStatus> | void>;
+  abstract finalizeInstallWithPnp(pnpSettings: PnpSettings,  packageMetas: Map<LocatorHash, PackageMeta>): Promise<Array<FinalizeInstallStatus> | void>;
 
-  private checkAndReportManifestIncompatibility(manifest: Manifest | null, pkg: Package): boolean {
+  protected checkAndReportManifestIncompatibility(manifest: Manifest | null, pkg: Package): boolean {
     if (manifest && !manifest.isCompatibleWithOS(process.platform)) {
       this.opts.report.reportWarningOnce(MessageName.INCOMPATIBLE_OS, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} The platform ${process.platform} is incompatible with this module, ${this.opts.skipIncompatiblePackageLinking ? `linking` : `building`} skipped.`);
       return false;
@@ -49,25 +51,24 @@ export abstract class AbstractPnpInstaller implements Installer {
     return true;
   }
 
-  async installPackage(pkg: Package, fetchResult: FetchResult) {
+  abstract getPackageMetaKey(pkg: Package): string;
+  abstract fetchPackageMeta(pkg: Package, fetchResult: FetchResult): Promise<PackageMeta>;
+
+  async installPackage(pkg: Package, fetchResult: FetchResult, packageMeta: PackageMeta) {
+    this.packageMetas.set(pkg.locatorHash, packageMeta);
+
     const key1 = structUtils.requirableIdent(pkg);
     const key2 = pkg.reference;
+
+    const {isManifestCompatible, buildScripts} = packageMeta;
+
+    if (this.opts.skipIncompatiblePackageLinking && !isManifestCompatible)
+      return {packageLocation: null, buildDirective: null};
 
     const hasVirtualInstances =
       pkg.peerDependencies.size > 0 &&
       !structUtils.isVirtualLocator(pkg) &&
       !this.opts.project.tryWorkspaceByLocator(pkg);
-
-    const manifest = !hasVirtualInstances || this.opts.skipIncompatiblePackageLinking
-      ? await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs})
-      : null;
-    const isManifestCompatible = this.checkAndReportManifestIncompatibility(manifest, pkg);
-    if (this.opts.skipIncompatiblePackageLinking && !isManifestCompatible)
-      return {packageLocation: null, buildDirective: null};
-
-    const buildScripts = !hasVirtualInstances
-      ? await this.getBuildScripts(pkg, manifest, fetchResult)
-      : [];
 
     const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
 
@@ -87,7 +88,7 @@ export abstract class AbstractPnpInstaller implements Installer {
     }
 
     const packageFs = !hasVirtualInstances && pkg.linkType !== LinkType.SOFT
-      ? await this.transformPackage(pkg, manifest, fetchResult, dependencyMeta, {hasBuildScripts: buildScripts.length > 0})
+      ? await this.transformPackage(pkg, packageMeta, fetchResult, dependencyMeta, {hasBuildScripts: buildScripts.length > 0})
       : fetchResult.packageFs;
 
     if (ppath.isAbsolute(fetchResult.prefixPath))
@@ -179,7 +180,7 @@ export abstract class AbstractPnpInstaller implements Installer {
       ignorePattern,
       packageRegistry,
       shebang,
-    });
+    }, this.packageMetas);
   }
 
   private getPackageInformation(locator: Locator) {

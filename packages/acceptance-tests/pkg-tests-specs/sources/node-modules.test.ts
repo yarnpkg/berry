@@ -114,7 +114,7 @@ describe(`Node_Modules`, () => {
           },
         });
 
-        await expect(run(`install`)).resolves.toBeTruthy();
+        await expect(run(`install`, `--inline-builds`)).resolves.toBeTruthy();
       },
     ),
   );

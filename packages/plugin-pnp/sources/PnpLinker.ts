@@ -1,13 +1,13 @@
-import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta} from '@yarnpkg/core';
-import {FetchResult, Ident, Locator, Package, BuildDirective, BuildType}                from '@yarnpkg/core';
-import {miscUtils, structUtils, formatUtils}                                            from '@yarnpkg/core';
-import {CwdFS, FakeFS, PortablePath, npath, ppath, xfs, Filename}                       from '@yarnpkg/fslib';
-import {generateInlinedScript, generateSplitScript, PnpSettings}                        from '@yarnpkg/pnp';
-import {UsageError}                                                                     from 'clipanion';
+import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, PackageMeta} from '@yarnpkg/core';
+import {FetchResult, Ident, Locator, Package, BuildDirective, BuildType}                             from '@yarnpkg/core';
+import {miscUtils, structUtils, formatUtils}                                                         from '@yarnpkg/core';
+import {CwdFS, FakeFS, PortablePath, npath, ppath, xfs, Filename}                                    from '@yarnpkg/fslib';
+import {generateInlinedScript, generateSplitScript, PnpSettings}                                     from '@yarnpkg/pnp';
+import {UsageError}                                                                                  from 'clipanion';
 
-import {AbstractPnpInstaller}                                                           from './AbstractPnpInstaller';
-import {getPnpPath}                                                                     from './index';
-import * as pnpUtils                                                                    from './pnpUtils';
+import {AbstractPnpInstaller}                                                                        from './AbstractPnpInstaller';
+import {getPnpPath}                                                                                  from './index';
+import * as pnpUtils                                                                                 from './pnpUtils';
 
 const FORCED_UNPLUG_PACKAGES = new Set([
   // Some packages do weird stuff and MUST be unplugged. I don't like them.
@@ -85,6 +85,33 @@ export class PnpInstaller extends AbstractPnpInstaller {
 
   private readonly unpluggedPaths: Set<string> = new Set();
 
+  getPackageMetaKey(pkg: Package): string {
+    return `pnp1${pkg.locatorHash}`;
+  }
+
+  async fetchPackageMeta(pkg: Package, fetchResult: FetchResult): Promise<PackageMeta> {
+    const hasVirtualInstances =
+      pkg.peerDependencies.size > 0 &&
+      !structUtils.isVirtualLocator(pkg) &&
+      !this.opts.project.tryWorkspaceByLocator(pkg);
+
+    const manifest = !hasVirtualInstances || this.opts.skipIncompatiblePackageLinking
+      ? await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs})
+      : null;
+    const isManifestCompatible = this.checkAndReportManifestIncompatibility(manifest, pkg);
+
+    const buildScripts = !hasVirtualInstances
+      ? await this.getBuildScripts(pkg, manifest, fetchResult)
+      : [];
+
+    return {
+      isManifestCompatible,
+      buildScripts,
+      preferUnplugged: !manifest ? null : manifest.preferUnplugged,
+      extractHint: fetchResult.packageFs.getExtractHint({relevantExtensions:FORCED_UNPLUG_FILETYPES}),
+    };
+  }
+
   async getBuildScripts(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult): Promise<Array<BuildDirective>> {
     if (manifest === null)
       return [];
@@ -103,8 +130,8 @@ export class PnpInstaller extends AbstractPnpInstaller {
     return buildScripts;
   }
 
-  async transformPackage(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult, dependencyMeta: DependencyMeta, {hasBuildScripts}: {hasBuildScripts: boolean}) {
-    if (this.isUnplugged(locator, manifest, fetchResult, dependencyMeta, {hasBuildScripts})) {
+  async transformPackage(locator: Locator, packageMeta: PackageMeta, fetchResult: FetchResult, dependencyMeta: DependencyMeta, {hasBuildScripts}: {hasBuildScripts: boolean}) {
+    if (this.isUnplugged(locator, packageMeta, dependencyMeta, {hasBuildScripts})) {
       return this.unplugPackage(locator, fetchResult.packageFs);
     } else {
       return fetchResult.packageFs;
@@ -199,23 +226,25 @@ export class PnpInstaller extends AbstractPnpInstaller {
     const unplugPath = pnpUtils.getUnpluggedPath(locator, {configuration: this.opts.project.configuration});
     this.unpluggedPaths.add(unplugPath);
 
-    await xfs.mkdirPromise(unplugPath, {recursive: true});
-    await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: packageFs, overwrite: false});
+    if (!await xfs.existsPromise(unplugPath)) {
+      await xfs.mkdirPromise(unplugPath, {recursive: true});
+      await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: packageFs, overwrite: false});
+    }
 
     return new CwdFS(unplugPath);
   }
 
-  private isUnplugged(ident: Ident, manifest: Manifest | null, fetchResult: FetchResult, dependencyMeta: DependencyMeta, {hasBuildScripts}: {hasBuildScripts: boolean}) {
+  private isUnplugged(ident: Ident, packageMeta: PackageMeta, dependencyMeta: DependencyMeta, {hasBuildScripts}: {hasBuildScripts: boolean}) {
     if (typeof dependencyMeta.unplugged !== `undefined`)
       return dependencyMeta.unplugged;
 
     if (FORCED_UNPLUG_PACKAGES.has(ident.identHash))
       return true;
 
-    if (manifest !== null && manifest.preferUnplugged !== null)
-      return manifest.preferUnplugged;
+    if (packageMeta.preferUnplugged !== null)
+      return packageMeta.preferUnplugged;
 
-    if (hasBuildScripts || fetchResult.packageFs.getExtractHint({relevantExtensions:FORCED_UNPLUG_FILETYPES}))
+    if (hasBuildScripts || packageMeta.extractHint)
       return true;
 
     return false;

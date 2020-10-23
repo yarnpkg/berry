@@ -21,7 +21,30 @@ export type FinalizeInstallStatus = {
   buildDirective: Array<BuildDirective>,
 };
 
+export type PackageMeta = Record<any, any>;
+
 export interface Installer {
+  /**
+   * Returns cache key used to store package meta information.
+   *
+   * The key should be unique to the linker, the package and the meta format version used.
+   *
+   * @param pkg The package being installed
+   */
+  getPackageMetaKey?(pkg: Package): string;
+
+  /**
+   * Retrieves serializable meta information from the fetched information about the package.
+   *
+   * This meta information will be cached by the core.
+   * Installer can use the package meta information to skip accessing `fetchResult`
+   * in `installPackage` implementation.
+   *
+   * @param pkg The package being installed
+   * @param fetchResult The fetched information about the package
+   */
+  fetchPackageMeta?(pkg: Package, fetchResult: FetchResult): Promise<PackageMeta>;
+
   /**
    * Install a package on the disk.
    *
@@ -37,8 +60,9 @@ export interface Installer {
    *
    * @param pkg The package being installed
    * @param fetchResult The fetched information about the package
+   * @param packageMeta The meta information about the package
    */
-  installPackage(pkg: Package, fetchResult: FetchResult): Promise<InstallStatus>;
+  installPackage(pkg: Package, fetchResult: FetchResult, packageMeta?: PackageMeta): Promise<InstallStatus>;
 
   /**
    * Link a package and its internal (same-linker) dependencies.

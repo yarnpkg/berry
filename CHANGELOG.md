@@ -7,6 +7,7 @@
 ### Installs
 
 - Progress bars are rendered less often, which makes all installs faster
+- Recurrent installs are faster due to better manifest info caching
 
 ### CLI
 
