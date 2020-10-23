@@ -97,7 +97,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   exclude: Array<string> = [];
 
   @Command.Boolean(`--no-private`, {description: `Avoid running the command on private workspaces`})
-  private: boolean = true;
+  publicOnly: boolean = false;
 
   static schema = yup.object().shape({
     jobs: yup.number().min(2),
@@ -184,7 +184,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       if (this.exclude.length > 0 && micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.exclude))
         continue;
 
-      if (this.private === false && workspace.manifest.private === true)
+      if (this.publicOnly && workspace.manifest.private === true)
         continue;
 
       workspaces.push(workspace);
