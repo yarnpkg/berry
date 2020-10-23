@@ -70,10 +70,16 @@ export default class AuditCommand extends BaseCommand {
     const requires = npmAuditUtils.getRequires(project, workspace, {all: this.all, environment: this.environment});
     const dependencies = npmAuditUtils.getDependencies(project, workspace, {all: this.all});
 
-    if (!this.recursive)
-      for (const key of Object.keys(dependencies))
-        if (!Object.prototype.hasOwnProperty.call(requires, key))
+    if (!this.recursive) {
+      for (const key of Object.keys(dependencies)) {
+        if (!Object.prototype.hasOwnProperty.call(requires, key)) {
           delete dependencies[key];
+        }
+        else {
+          dependencies[key].requires = {};
+        }
+      }
+    }
 
     const body = {
       requires,
