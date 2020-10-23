@@ -33,6 +33,8 @@ export default class AuditCommand extends BaseCommand {
       Applying the \`--severity\` flag will limit the audit table to vulnerabilities of the corresponding severity and above. Valid values are ${npmAuditUtils.allSeverities.map(value => `\`${value}\``).join(`, `)}.
 
       If the \`--json\` flag is set, Yarn will print the output exactly as received from the registry. Regardless of this flag, the process will exit with a non-zero exit code if a report is found for the selected packages.
+
+      To understand the dependency tree requiring vulnerable packages, check the raw report with the \`--json\` flag or use \`yarn why <package>\` to get more information as to who depends on them.
     `,
     examples: [[
       `Checks for known security issues with the installed packages. The output is a list of known issues.`,
@@ -46,6 +48,9 @@ export default class AuditCommand extends BaseCommand {
     ], [
       `Show audit report as valid JSON`,
       `yarn npm audit --json`,
+    ], [
+      `Audit all direct and transitive dependencies`,
+      `yarn npm audit --recursive`,
     ], [
       `Output moderate (or more severe) vulnerabilities`,
       `yarn npm audit --severity moderate`,
@@ -105,7 +110,7 @@ export default class AuditCommand extends BaseCommand {
 
     const hasError = npmAuditUtils.isError(result.metadata.vulnerabilities, this.severity);
     if (!this.json && hasError) {
-      treeUtils.emitTree(npmAuditUtils.getReportTree(result), {
+      treeUtils.emitTree(npmAuditUtils.getReportTree(result, this.severity), {
         configuration,
         json: this.json,
         stdout: this.context.stdout,

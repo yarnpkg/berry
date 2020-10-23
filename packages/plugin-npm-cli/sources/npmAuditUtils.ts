@@ -142,11 +142,17 @@ export function isError(vulnerabilities: npmAuditTypes.AuditVulnerabilities, sev
   return false;
 }
 
-export function getReportTree(result: npmAuditTypes.AuditResponse) {
+export function getReportTree(result: npmAuditTypes.AuditResponse, severity?: npmAuditTypes.Severity) {
   const auditTreeChildren: treeUtils.TreeMap = {};
   const auditTree: treeUtils.TreeNode = {children: auditTreeChildren};
 
-  for (const advisory of miscUtils.sortMap(Object.values(result.advisories), advisory => advisory.module_name)) {
+  let advisories = Object.values(result.advisories);
+  if (severity != null) {
+    const inclusions = getSeverityInclusions(severity);
+    advisories = advisories.filter(advisory => inclusions.has(advisory.severity as npmAuditTypes.Severity));
+  }
+
+  for (const advisory of miscUtils.sortMap(advisories, advisory => advisory.module_name)) {
     auditTreeChildren[advisory.module_name] = {
       label: advisory.module_name,
       value: formatUtils.tuple(formatUtils.Type.RANGE, advisory.findings.map(finding => finding.version).join(`, `)),
@@ -170,6 +176,10 @@ export function getReportTree(result: npmAuditTypes.AuditResponse) {
         [`Patched Versions`]: {
           label: `Patched Versions`,
           value: formatUtils.tuple(formatUtils.Type.RANGE, advisory.patched_versions),
+        },
+        Paths: {
+          label: `Paths`,
+          value: formatUtils.tuple(formatUtils.Type.NO_HINT, Array.from(new Set(advisory.findings.map(finding => finding.paths).flat().map(path => path.split(`>`)[0]))).join(`, `)),
         },
         Recommendation: {
           label: `Recommendation`,
