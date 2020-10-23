@@ -96,8 +96,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   @Command.Array(`--exclude`, {description: `An array of glob pattern idents; matching workspaces won't be traversed`})
   exclude: Array<string> = [];
 
-  @Command.Boolean(`--private`, {description: `Also run the command on private workspaces`})
-  private: boolean = true;
+  @Command.Boolean(`--no-private`, {description: `Avoid running the command on private workspaces`})
+  publicOnly: boolean = false;
 
   static schema = yup.object().shape({
     jobs: yup.number().min(2),
@@ -184,7 +184,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       if (this.exclude.length > 0 && micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.exclude))
         continue;
 
-      if (this.private === false && workspace.manifest.private === true)
+      if (this.publicOnly && workspace.manifest.private === true)
         continue;
 
       workspaces.push(workspace);
