@@ -96,7 +96,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   @Command.Array(`--exclude`, {description: `An array of glob pattern idents; matching workspaces won't be traversed`})
   exclude: Array<string> = [];
 
-  @Command.Boolean(`--private`, {description: `Also run the command on private workspaces`})
+  @Command.Boolean(`--no-private`, {description: `Avoid running the command on private workspaces`})
   private: boolean = true;
 
   static schema = yup.object().shape({
