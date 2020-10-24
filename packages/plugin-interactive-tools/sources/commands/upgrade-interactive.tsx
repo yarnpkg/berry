@@ -197,7 +197,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       }, [
         descriptor.descriptorHash,
       ]);
-      const packageIdentifier = descriptor.scope ? `@${descriptor.scope}/${descriptor.name}` : descriptor.name;
+      const packageIdentifier = structUtils.stringifyIdent(descriptor);
       const padLength = Math.max(0, 45 - packageIdentifier.length);
 
       return <Box>
