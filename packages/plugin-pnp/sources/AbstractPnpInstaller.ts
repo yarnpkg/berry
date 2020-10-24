@@ -60,9 +60,7 @@ export abstract class AbstractPnpInstaller implements Installer {
     const key1 = structUtils.requirableIdent(pkg);
     const key2 = pkg.reference;
 
-    const {isManifestCompatible, buildScripts} = packageMeta;
-
-    if (this.opts.skipIncompatiblePackageLinking && !isManifestCompatible)
+    if (this.opts.skipIncompatiblePackageLinking && !packageMeta.isManifestCompatible)
       return {packageLocation: null, buildDirective: null};
 
     const hasVirtualInstances =
@@ -71,6 +69,7 @@ export abstract class AbstractPnpInstaller implements Installer {
       !this.opts.project.tryWorkspaceByLocator(pkg);
 
     const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
+    const buildScripts = [...packageMeta.buildScripts];
 
     if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`) && !dependencyMeta.built) {
       this.opts.report.reportWarningOnce(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but all build scripts have been disabled.`);
@@ -124,7 +123,7 @@ export abstract class AbstractPnpInstaller implements Installer {
 
     return {
       packageLocation: packageRawLocation,
-      buildDirective: buildScripts.length > 0 && isManifestCompatible ? buildScripts as Array<BuildDirective> : null,
+      buildDirective: buildScripts.length > 0 && packageMeta.isManifestCompatible ? buildScripts as Array<BuildDirective> : null,
     };
   }
 

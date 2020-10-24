@@ -172,7 +172,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
       if (!packageMeta)
         throw new Error(`Assertion failed: Expected the package to have package meta (${structUtils.prettyLocator(this.opts.project.configuration, locator)})`);
 
-      const buildScripts = packageMeta.nmBuildScripts;
+      const buildScripts = [...packageMeta.nmBuildScripts];
 
       if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`)) {
         this.opts.report.reportWarningOnce(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(this.opts.project.configuration, locator)} lists build scripts, but all build scripts have been disabled.`);
