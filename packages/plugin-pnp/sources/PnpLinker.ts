@@ -226,10 +226,8 @@ export class PnpInstaller extends AbstractPnpInstaller {
     const unplugPath = pnpUtils.getUnpluggedPath(locator, {configuration: this.opts.project.configuration});
     this.unpluggedPaths.add(unplugPath);
 
-    if (!await xfs.existsPromise(unplugPath)) {
-      await xfs.mkdirPromise(unplugPath, {recursive: true});
-      await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: packageFs, overwrite: false});
-    }
+    await xfs.mkdirPromise(unplugPath, {recursive: true});
+    await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: packageFs, overwrite: false});
 
     return new CwdFS(unplugPath);
   }
