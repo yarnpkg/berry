@@ -5595,6 +5595,7 @@ __metadata:
     "@types/react-scroll-into-view-if-needed": ^2
     "@types/react-select": 3.0.11
     "@types/tinycolor2": 1.4.2
+    "@yarnpkg/monorepo": "workspace:0.0.0"
     algoliasearch: ^4.2.0
     ansi-html: ^0.0.7
     buffer: ^5.6.0
