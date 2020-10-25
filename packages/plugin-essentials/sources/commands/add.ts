@@ -59,7 +59,7 @@ export default class AddCommand extends BaseCommand {
 
       - If the added package doesn't specify a range at all its \`latest\` tag will be resolved and the returned version will be used to generate a new semver range (using the \`^\` modifier by default unless otherwise configured via the \`defaultSemverRangePrefix\` configuration, or the \`~\` modifier if \`-T,--tilde\` is specified, or no modifier at all if \`-E,--exact\` is specified). Two exceptions to this rule: the first one is that if the package is a workspace then its local version will be used, and the second one is that if you use \`-P,--peer\` the default range will be \`*\` and won't be resolved at all.
 
-      - If the added package specifies a tag range (such as \`latest\` or \`rc\`), Yarn will resolve this tag to a semver version and use that in the resulting package.json entry (meaning that \`yarn add foo@latest\` will have exactly the same effect as \`yarn add foo\`).
+      - If the added package specifies a range (such as \`^1.0.0\`, \`latest\`, or \`rc\`), Yarn will add this range as-is in the resulting package.json entry (in particular, tags such as \`rc\` will be encoded as-is rather than being converted into a semver range).
 
       If the \`--cached\` option is used, Yarn will preferably reuse the highest version already used somewhere within the project, even if through a transitive dependency.
 
