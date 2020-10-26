@@ -1484,9 +1484,44 @@ export class Configuration {
     }
   }
 
+  /**
+   * Will trigger a requested hook in each plugin that provides said hook.
+   * Hooks requested via this call can not return a Promise and must be sync.
+   *
+   * @param get Function that returns the hook wanted to be triggered from a plugin.
+   * @param args Arguments to provide the requested hook.
+   */
+  triggerHookSync<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks:  HooksDefinition) => ((...args: U) => Exclude<V, Promise<any>>) | undefined, ...args: U): void {
+    for (const plugin of this.plugins.values()) {
+      const hooks = plugin.hooks as HooksDefinition;
+      if (!hooks)
+        continue;
+
+      const hook = get(hooks);
+      if (!hook)
+        continue;
+
+      hook(...args);
+    }
+  }
+
   async triggerMultipleHooks<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, argsList: Array<U>): Promise<void> {
     for (const args of argsList) {
       await this.triggerHook(get, ...args);
+    }
+  }
+
+  /**
+   * Will trigger a requested hook in each plugin that provides said hook.
+   * Hooks will be triggered once for each set of arguments provided.
+   * Hooks requested via this call can not return a Promise and must be sync.
+   *
+   * @param get Function that returns the hook wanted to be triggered from a plugin.
+   * @param argsList Array of Arguments to provide the requested hook.
+   */
+  triggerMultipleHooksSync<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => Exclude<V, Promise<any>>) | undefined, argsList: Array<U>): void {
+    for (const args of argsList) {
+      this.triggerHookSync(get, ...args);
     }
   }
 
@@ -1508,6 +1543,33 @@ export class Configuration {
     return value;
   }
 
+  /**
+   * Will trigger a requested hook that returns a value.
+   * Hooks requested via this call must accept an initialValue as the first parameter, set via by hook caller or a previous hook.
+   * Hooks requested via this call can not return a Promise and must be sync.
+   *
+   * @param get Function that returns the hook wanted to be triggered from a plugin.
+   * @param initialValue Value to return if no hooks are found or none want to return a value, this value is given to hooks unless one has updated it.
+   * @param args Arguments to provide the requested hook.
+   */
+  reduceHookSync<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((reduced: V, ...args: U) => V) | undefined, initialValue: V, ...args: U): V {
+    let value = initialValue;
+
+    for (const plugin of this.plugins.values()) {
+      const hooks = plugin.hooks as HooksDefinition;
+      if (!hooks)
+        continue;
+
+      const hook = get(hooks);
+      if (!hook)
+        continue;
+
+      value = hook(value, ...args);
+    }
+
+    return value;
+  }
+
   async firstHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => Promise<V>) | undefined, ...args: U): Promise<Exclude<V, void> | null> {
     for (const plugin of this.plugins.values()) {
       const hooks = plugin.hooks as HooksDefinition;
@@ -1519,6 +1581,34 @@ export class Configuration {
         continue;
 
       const ret = await hook(...args);
+      if (typeof ret !== `undefined`) {
+        // @ts-expect-error
+        return ret;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Will trigger a requested hook that returns a value and return the value of the first hook to return a non `undefined` value.
+   * No further hooks will be triggered once a return is given.
+   * Hooks requested via this call can not return a Promise and must be sync.
+   *
+   * @param get Function that returns the hook wanted to be triggered from a plugin.
+   * @param args Arguments to provide the requested hook.
+   */
+  firstHookSync<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, ...args: U): Exclude<V, void> | null {
+    for (const plugin of this.plugins.values()) {
+      const hooks = plugin.hooks as HooksDefinition;
+      if (!hooks)
+        continue;
+
+      const hook = get(hooks);
+      if (!hook)
+        continue;
+
+      const ret = hook(...args);
       if (typeof ret !== `undefined`) {
         // @ts-expect-error
         return ret;
