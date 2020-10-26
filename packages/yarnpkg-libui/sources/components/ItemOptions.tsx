@@ -1,11 +1,11 @@
 import {Box, Text}    from 'ink';
-import React          from 'react';
+import React, {memo}  from 'react';
 
 import {useListInput} from '../hooks/useListInput';
 
 import {Gem}          from './Gem';
 
-export const ItemOptions = function <T>({
+export const ItemOptions = memo(({
   active,
   skewer,
   options,
@@ -19,7 +19,7 @@ export const ItemOptions = function <T>({
   value: T,
   onChange: (value: T) => void,
   sizes?: Array<number>
-}) {
+}) => {
   const values = options.map(({value}) => value);
   const selectedIndex = values.indexOf(value);
 
@@ -52,4 +52,4 @@ export const ItemOptions = function <T>({
       );
     })}
   </>;
-};
+});

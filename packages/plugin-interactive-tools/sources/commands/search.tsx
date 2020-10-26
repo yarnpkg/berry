@@ -9,7 +9,7 @@ import {Command, Usage}                      from 'clipanion';
 import InkTextInput                          from 'ink-text-input';
 import {Box, Text}                           from 'ink';
 
-import React, {useEffect, useState}          from 'react';
+import React, {memo, useEffect, useState}    from 'react';
 
 import {AlgoliaPackage, search}              from '../algolia';
 
@@ -33,55 +33,53 @@ export default class SearchCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
-    const Prompt = () => {
-      return (
-        <Box flexDirection="row">
-          <Box flexDirection="column" width={48}>
-            <Box>
-              <Text>
+    const Prompt = memo(() => (
+      <Box flexDirection="row">
+        <Box flexDirection="column" width={48}>
+          <Box>
+            <Text>
                 Press <Text bold color="cyanBright">{`<up>`}</Text>/<Text bold color="cyanBright">{`<down>`}</Text> to move between packages.
-              </Text>
-            </Box>
-            <Box>
-              <Text>
-                Press <Text bold color="cyanBright">{`<space>`}</Text> to select a package.
-              </Text>
-            </Box>
-            <Box>
-              <Text>
-                Press <Text bold color="cyanBright">{`<space>`}</Text> again to change the target.
-              </Text>
-            </Box>
+            </Text>
           </Box>
-          <Box flexDirection="column">
-            <Box marginLeft={1}>
-              <Text>
-                Press <Text bold color="cyanBright">{`<enter>`}</Text> to install the selected packages.
-              </Text>
-            </Box>
-            <Box marginLeft={1}>
-              <Text>
-                Press <Text bold color="cyanBright">{`<ctrl+c>`}</Text> to abort.
-              </Text>
-            </Box>
+          <Box>
+            <Text>
+                Press <Text bold color="cyanBright">{`<space>`}</Text> to select a package.
+            </Text>
+          </Box>
+          <Box>
+            <Text>
+                Press <Text bold color="cyanBright">{`<space>`}</Text> again to change the target.
+            </Text>
           </Box>
         </Box>
-      );
-    };
+        <Box flexDirection="column">
+          <Box marginLeft={1}>
+            <Text>
+                Press <Text bold color="cyanBright">{`<enter>`}</Text> to install the selected packages.
+            </Text>
+          </Box>
+          <Box marginLeft={1}>
+            <Text>
+                Press <Text bold color="cyanBright">{`<ctrl+c>`}</Text> to abort.
+            </Text>
+          </Box>
+        </Box>
+      </Box>
+    ));
 
-    const SearchColumnNames = () => {
-      return <>
+    const SearchColumnNames = memo(() => (
+      <>
         <Box width={15}><Text bold underline color="gray">Owner</Text></Box>
         <Box width={11}><Text bold underline color="gray">Version</Text></Box>
         <Box width={10}><Text bold underline color="gray">Downloads</Text></Box>
-      </>;
-    };
+      </>
+    ));
 
-    const SelectedColumnNames = () => {
-      return <Box width={17}><Text bold underline color="gray">Target</Text></Box>;
-    };
+    const SelectedColumnNames = memo(() => (
+      <Box width={17}><Text bold underline color="gray">Target</Text></Box>
+    ));
 
-    const HitEntry = ({hit, active}: {hit: AlgoliaPackage, active: boolean}) => {
+    const HitEntry = memo(({hit, active}: {hit: AlgoliaPackage, active: boolean}) => {
       const [action, setAction] = useMinistore<string | null>(hit.name, null);
 
       useKeypress({active}, (ch, key) => {
@@ -131,9 +129,9 @@ export default class SearchCommand extends BaseCommand {
           </Box>
         </Box>
       );
-    };
+    });
 
-    const SelectedEntry = ({name, active}: {name: string, active: boolean}) => {
+    const SelectedEntry = memo(({name, active}: {name: string, active: boolean}) => {
       const [action] = useMinistore<string | null>(name, null);
 
       const ident = structUtils.parseIdent(name);
@@ -154,15 +152,15 @@ export default class SearchCommand extends BaseCommand {
             </Box>
         )}
       </Box>;
-    };
+    });
 
-    const PoweredByAlgolia = () => (
+    const PoweredByAlgolia = memo(() => (
       <Box marginTop={1}>
         <Text>Powered by Algolia.</Text>
       </Box>
-    );
+    ));
 
-    const SearchApp: SubmitInjectedComponent<Map<string, unknown>> = ({useSubmit}) => {
+    const SearchApp: SubmitInjectedComponent<Map<string, unknown>> = memo(({useSubmit}) => {
       const selectionMap = useMinistore();
       useSubmit(selectionMap);
 
@@ -244,7 +242,7 @@ export default class SearchCommand extends BaseCommand {
           <PoweredByAlgolia />
         </Box>
       );
-    };
+    });
 
     const installRequests = await renderForm(SearchApp, {});
     if (typeof installRequests === `undefined`)

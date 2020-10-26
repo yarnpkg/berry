@@ -8,7 +8,7 @@ import {useListInput}                                                           
 import {renderForm}                                                                                             from '@yarnpkg/libui/sources/misc/renderForm';
 import {Command, Usage, UsageError}                                                                             from 'clipanion';
 import {Box, Text}                                                                                              from 'ink';
-import React, {useCallback, useState}                                                                           from 'react';
+import React, {memo, useCallback, useState}                                                                     from 'react';
 import semver                                                                                                   from 'semver';
 
 import * as versionUtils                                                                                        from '../../versionUtils';
@@ -63,7 +63,7 @@ export default class VersionCheckCommand extends Command<CommandContext> {
     if (versionFile.root === null)
       throw new UsageError(`This command can only be run on Git repositories`);
 
-    const Prompt = () => {
+    const Prompt = memo(() => {
       return (
         <Box flexDirection="row" paddingBottom={1}>
           <Box flexDirection="column" width={60}>
@@ -92,9 +92,9 @@ export default class VersionCheckCommand extends Command<CommandContext> {
           </Box>
         </Box>
       );
-    };
+    });
 
-    const Undecided = ({workspace, active, decision, setDecision}: {workspace: Workspace, active?: boolean, decision: versionUtils.Decision, setDecision: (decision: versionUtils.Decision) => void}) => {
+    const Undecided = memo(({workspace, active, decision, setDecision}: {workspace: Workspace, active?: boolean, decision: versionUtils.Decision, setDecision: (decision: versionUtils.Decision) => void}) => {
       const currentVersion = workspace.manifest.version;
       if (currentVersion === null)
         throw new Error(`Assertion failed: The version should have been set (${structUtils.prettyLocator(configuration, workspace.anchoredLocator)})`);
@@ -137,7 +137,7 @@ export default class VersionCheckCommand extends Command<CommandContext> {
           </Box>
         </Box>
       );
-    };
+    });
 
     const getRelevancy = (releases: Releases) => {
       // Now, starting from all the workspaces that changed, we'll detect
@@ -226,7 +226,7 @@ export default class VersionCheckCommand extends Command<CommandContext> {
       return <Text color="yellow">{parts.join(`, `)}</Text>;
     };
 
-    const App = ({useSubmit}: {useSubmit: (value: Releases) => void}) => {
+    const App = memo(({useSubmit}: {useSubmit: (value: Releases) => void}) => {
       const [releases, setWorkspaceRelease] = useReleases();
       useSubmit(releases);
 
@@ -310,7 +310,7 @@ export default class VersionCheckCommand extends Command<CommandContext> {
           ) : null}
         </Box>
       );
-    };
+    });
 
     const decisions = await renderForm<Releases>(App, {versionFile});
     if (typeof decisions === `undefined`)

@@ -8,7 +8,7 @@ import {suggestUtils}                                                           
 import {Command, Usage}                                                                                                                 from 'clipanion';
 import {diffWords}                                                                                                                      from 'diff';
 import {Box, Text}                                                                                                                      from 'ink';
-import React, {useEffect, useState, useRef}                                                                                             from 'react';
+import React, {memo, useEffect, useState, useRef}                                                                                       from 'react';
 import semver                                                                                                                           from 'semver';
 
 const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
@@ -131,7 +131,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       return suggestions;
     };
 
-    const Prompt = () => {
+    const Prompt = memo(() => {
       return (
         <Box flexDirection="row">
           <Box flexDirection="column" width={49}>
@@ -160,9 +160,9 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           </Box>
         </Box>
       );
-    };
+    });
 
-    const Header = () => {
+    const Header = memo(() => {
       return (
         <Box flexDirection="row" paddingTop={1} paddingBottom={1}>
           <Box width={50}>
@@ -174,9 +174,9 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           <Box width={17}><Text bold underline color="gray">Range/Latest</Text></Box>
         </Box>
       );
-    };
+    });
 
-    const UpgradeEntry = ({active, descriptor}: {active: boolean, descriptor: Descriptor}) => {
+    const UpgradeEntry = memo(({active, descriptor}: {active: boolean, descriptor: Descriptor}) => {
       const [action, setAction] = useMinistore<string | null>(descriptor.descriptorHash, null);
       const [suggestions, setSuggestions] = useState<Array<{value: string | null, label: string}> | null>(null);
 
@@ -214,9 +214,9 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           : <Box marginLeft={2}><Text color="gray">Fetching suggestions...</Text></Box>
         }
       </Box>;
-    };
+    });
 
-    const GlobalListApp: SubmitInjectedComponent<Map<string, string | null>> = ({useSubmit}) => {
+    const GlobalListApp: SubmitInjectedComponent<Map<string, string | null>> = memo(({useSubmit}) => {
       useSubmit(useMinistore());
 
       const allDependencies = new Map<DescriptorHash, Descriptor>();
@@ -240,7 +240,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           })} />
         </Box>
       </>;
-    };
+    });
 
     const updateRequests = await renderForm(GlobalListApp, {});
     if (typeof updateRequests === `undefined`)

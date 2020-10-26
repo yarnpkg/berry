@@ -1,6 +1,6 @@
-import {useStdin}                            from 'ink';
-import React, {useEffect, useMemo, useState} from 'react';
-import {emitKeypressEvents}                  from 'readline';
+import {useStdin}                                  from 'ink';
+import React, {memo, useEffect, useMemo, useState} from 'react';
+import {emitKeypressEvents}                        from 'readline';
 
 export const MinistoreContext = React.createContext<{
   getAll: () => Map<string, any>,
@@ -8,7 +8,7 @@ export const MinistoreContext = React.createContext<{
   set: (key: string, value: any) => void,
 } | null>(null);
 
-export const Application = ({children}: {children: React.ReactElement}) => {
+export const Application = memo(({children}: {children: React.ReactElement}) => {
   const {stdin, setRawMode} = useStdin();
 
   useEffect(() => {
@@ -25,4 +25,4 @@ export const Application = ({children}: {children: React.ReactElement}) => {
   }), [data, setData]);
 
   return <MinistoreContext.Provider value={ministore} children={children} />;
-};
+});
