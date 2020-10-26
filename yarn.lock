@@ -5952,7 +5952,6 @@ __metadata:
     "@yarnpkg/libui": "workspace:^2.1.0"
     "@yarnpkg/plugin-essentials": "workspace:^2.3.2"
     algoliasearch: ^4.2.0
-    chalk: ^3.0.0
     clipanion: ^2.6.2
     diff: ^4.0.1
     ink: ^3.0.7
