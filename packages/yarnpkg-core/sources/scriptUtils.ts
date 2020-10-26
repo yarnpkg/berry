@@ -463,7 +463,18 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
     if (!linker)
       continue;
 
-    const packageLocation = await linker.findPackageLocation(dependency, linkerOptions);
+    let packageLocation: PortablePath | null = null;
+    try {
+      packageLocation = await linker.findPackageLocation(dependency, linkerOptions);
+    } catch (err) {
+      // Some packages may not be installed when they are incompatible
+      // with the current system.
+      if (err.code === `LOCATOR_NOT_INSTALLED`) {
+        continue;
+      } else {
+        throw err;
+      }
+    }
 
     for (const [name, target] of dependency.bin) {
       binaries.set(name, [dependency, npath.fromPortablePath(ppath.resolve(packageLocation, target))]);

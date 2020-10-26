@@ -38,8 +38,11 @@ export class NodeModulesLinker implements Linker {
       throw new UsageError(`Couldn't find the node_modules state file - running an install might help (findPackageLocation)`);
 
     const locatorInfo = installState.locatorMap.get(structUtils.stringifyLocator(locator));
-    if (!locatorInfo)
-      throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed node_modules map - running an install might help`);
+    if (!locatorInfo) {
+      const err = new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed node_modules map - running an install might help`);
+      (err as any).code = `LOCATOR_NOT_INSTALLED`;
+      throw err;
+    }
 
     return locatorInfo.locations[0];
   }
