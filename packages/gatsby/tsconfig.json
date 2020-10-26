@@ -1,7 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "allowJs": true,
     "lib": ["DOM", "ESNext"],
+    "noEmit": true
   },
   "exclude": []
 }

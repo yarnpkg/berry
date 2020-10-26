@@ -9008,6 +9008,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-scroll-into-view-if-needed", "npm:2.1.0"],
             ["@types/react-select", "npm:3.0.11"],
             ["@types/tinycolor2", "npm:1.4.2"],
+            ["@yarnpkg/monorepo", "workspace:."],
             ["algoliasearch", "npm:4.2.0"],
             ["ansi-html", "npm:0.0.7"],
             ["buffer", "npm:5.6.0"],
