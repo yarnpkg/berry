@@ -172,11 +172,9 @@ export function normalizeLocator(locator: Locator) {
 export async function lsRemote(repo: string, configuration: Configuration) {
   const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
 
-  if (
-    !configuration.get(`enableNetwork`) ||
-    httpUtils.getNetworkSettings(normalizedRepoUrl, {configuration})?.config.get(`enableNetwork`) === false
-  )
-    throw new Error(`Network access has been disabled by configuration (${repo})`);
+  const networkSettings = httpUtils.getNetworkSettings(normalizedRepoUrl, {configuration});
+  if (!networkSettings.enableNetwork)
+    throw new Error(`Requests to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
 
   let res: {stdout: string};
   try {
@@ -296,9 +294,6 @@ export async function resolveUrl(url: string, configuration: Configuration) {
 }
 
 export async function clone(url: string, configuration: Configuration) {
-  if (!configuration.get(`enableNetwork`))
-    throw new Error(`Network access has been disabled by configuration (${url})`);
-
   return await configuration.getLimit(`cloneConcurrency`)(async () => {
     const {repo, treeish: {protocol, request}} = splitRepoUrl(url);
     if (protocol !== `commit`)
@@ -306,8 +301,8 @@ export async function clone(url: string, configuration: Configuration) {
 
     const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
 
-    if (httpUtils.getNetworkSettings(normalizedRepoUrl, {configuration})?.config.get(`enableNetwork`) === false)
-      throw new Error(`Network access has been disabled by configuration (${repo})`);
+    if (httpUtils.getNetworkSettings(normalizedRepoUrl, {configuration}).enableNetwork === false)
+      throw new Error(`Requests to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
 
     const directory = await xfs.mktempPromise();
     const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};

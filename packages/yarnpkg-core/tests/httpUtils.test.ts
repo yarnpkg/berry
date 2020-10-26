@@ -24,7 +24,7 @@ describe(`httpUtils`, () => {
       );
 
       await expect(httpUtils.get(`https://registry.npmjs.org`, {configuration})).rejects.toMatchObject({
-        message: `Requests to 'https://registry.npmjs.org' has been blocked by 'networkSettings["*"].enableNetwork'`,
+        message: `Requests to 'https://registry.npmjs.org' has been blocked because of your configuration settings`,
       });
 
       await expect(httpUtils.get(`https://registry.yarnpkg.com`, {configuration, jsonResponse: true})).resolves.toMatchObject({

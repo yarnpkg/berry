@@ -47,14 +47,32 @@ export function getNetworkSettings(target: string, opts: { configuration: Config
     ([keyA], [keyB]) => keyB.length - keyA.length
   );
 
+  const mergedNetworkSettings: {
+    enableNetwork?: boolean,
+    caFilePath?: PortablePath | null,
+  } = { };
+
   const url = new URL(target);
   for (const [glob, config] of networkSettings) {
     if (micromatch.isMatch(url.hostname, glob)) {
-      return {glob, config};
+      const enableNetwork = config.get(`enableNetwork`);
+      if (enableNetwork !== null && typeof mergedNetworkSettings.enableNetwork === `undefined`)
+        mergedNetworkSettings.enableNetwork = enableNetwork;
+
+      const caFilePath = config.get(`caFilePath`);
+      if (caFilePath !== null && typeof mergedNetworkSettings.caFilePath === `undefined`) {
+        mergedNetworkSettings.caFilePath = caFilePath;
+      }
     }
   }
 
-  return null;
+  if (typeof mergedNetworkSettings.caFilePath === `undefined`)
+    mergedNetworkSettings.caFilePath = opts.configuration.get(`caFilePath`);
+
+  if (typeof mergedNetworkSettings.enableNetwork === `undefined`)
+    mergedNetworkSettings.enableNetwork = opts.configuration.get(`enableNetwork`);
+
+  return mergedNetworkSettings as Required<typeof mergedNetworkSettings>;
 }
 
 export type Body = (
@@ -82,12 +100,9 @@ export type Options = {
 };
 
 export async function request(target: string, body: Body, {configuration, headers, json, jsonRequest = json, jsonResponse = json, method = Method.GET}: Options) {
-  if (!configuration.get(`enableNetwork`))
-    throw new Error(`Network access have been disabled by configuration (${method} ${target})`);
-
   const networkConfig = getNetworkSettings(target, {configuration});
-  if (networkConfig?.config.get(`enableNetwork`) === false)
-    throw new Error(`Requests to '${target}' has been blocked by 'networkSettings["${networkConfig.glob}"].enableNetwork'`);
+  if (networkConfig.enableNetwork === false)
+    throw new Error(`Requests to '${target}' has been blocked because of your configuration settings`);
 
   const url = new URL(target);
   if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
@@ -122,7 +137,7 @@ export async function request(target: string, body: Body, {configuration, header
   const socketTimeout = configuration.get(`httpTimeout`);
   const retry = configuration.get(`httpRetry`);
   const rejectUnauthorized = configuration.get(`enableStrictSsl`);
-  const caFilePath = networkConfig?.config.get(`caFilePath`) ?? configuration.get(`caFilePath`);
+  const caFilePath = networkConfig.caFilePath;
 
   const {default: got} = await import(`got`);
 

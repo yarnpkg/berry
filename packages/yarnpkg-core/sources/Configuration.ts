@@ -345,7 +345,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
         enableNetwork: {
           description: `If false, the package manager will refuse to use the network if required to`,
           type: SettingsType.BOOLEAN,
-          default: true,
+          default: null,
         },
       },
     },
@@ -452,7 +452,7 @@ export interface ConfigurationValueMap {
   httpTimeout: number;
   httpRetry: number;
   networkConcurrency: number;
-  networkSettings: Map<string, MapConfigurationValue<{ caFilePath: PortablePath | null, enableNetwork: boolean }>>;
+  networkSettings: Map<string, MapConfigurationValue<{ caFilePath: PortablePath | null, enableNetwork: boolean | null }>>;
   caFilePath: PortablePath | null;
   enableStrictSsl: boolean;
 
