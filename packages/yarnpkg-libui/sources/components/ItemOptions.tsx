@@ -5,21 +5,22 @@ import {useListInput} from '../hooks/useListInput';
 
 import {Gem}          from './Gem';
 
-export const ItemOptions = memo(({
-  active,
-  skewer,
-  options,
-  value,
-  onChange,
-  sizes = [],
-}: {
+export interface ItemOptionsProps<T> {
   active: boolean,
   skewer?: boolean,
   options: Array<{value: T, label: string}>,
   value: T,
   onChange: (value: T) => void,
   sizes?: Array<number>
-}) => {
+}
+function ItemOptionsComponent<T>({
+  active,
+  skewer,
+  options,
+  value,
+  onChange,
+  sizes = [],
+}: ItemOptionsProps<T>) {
   const values = options.map(({value}) => value);
   const selectedIndex = values.indexOf(value);
 
@@ -52,4 +53,6 @@ export const ItemOptions = memo(({
       );
     })}
   </>;
-});
+}
+
+export const ItemOptions = memo(ItemOptionsComponent) as typeof ItemOptionsComponent;
