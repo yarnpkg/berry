@@ -3,6 +3,8 @@ releases:
   "@yarnpkg/plugin-http": minor
   "@yarnpkg/plugin-pnp": patch
   "@yarnpkg/plugin-stage": patch
+  "@yarnpkg/pnp": patch
+  "@yarnpkg/pnpify": patch
 
 declined:
   - "@yarnpkg/plugin-compat"
