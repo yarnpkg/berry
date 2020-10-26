@@ -1,6 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError}                                                                                            from '@yarnpkg/cli';
 import {Cache, Configuration, Project, HardDependencies, formatUtils, miscUtils, structUtils, Descriptor, DescriptorHash, StreamReport} from '@yarnpkg/core';
 import {ItemOptions}                                                                                                                    from '@yarnpkg/libui/sources/components/ItemOptions';
+import {Pad}                                                                                                                            from '@yarnpkg/libui/sources/components/Pad';
 import {ScrollableItems}                                                                                                                from '@yarnpkg/libui/sources/components/ScrollableItems';
 import {useMinistore}                                                                                                                   from '@yarnpkg/libui/sources/hooks/useMinistore';
 import {renderForm, SubmitInjectedComponent}                                                                                            from '@yarnpkg/libui/sources/misc/renderForm';
@@ -199,15 +200,12 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       ]);
       const packageIdentifier = structUtils.stringifyIdent(descriptor);
       const padLength = Math.max(0, 45 - packageIdentifier.length);
-
       return <Box>
         <Box width={45}>
           <Text bold>
             {structUtils.prettyIdent(configuration, descriptor)}
           </Text>
-          <Text dimColor={!active}>
-            {` `.padEnd(padLength, `_`)}
-          </Text>
+          <Pad active={active} length={padLength}/>
         </Box>
         {suggestions !== null
           ? <ItemOptions active={active} options={suggestions} value={action} skewer={true} onChange={setAction} sizes={[17, 17, 17]} />
