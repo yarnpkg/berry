@@ -1,5 +1,6 @@
 import {BaseCommand}                         from '@yarnpkg/cli';
 import {Configuration, structUtils}          from '@yarnpkg/core';
+import {Gem}                                 from '@yarnpkg/libui/sources/components/Gem';
 import {ScrollableItems}                     from '@yarnpkg/libui/sources/components/ScrollableItems';
 import {useKeypress}                         from '@yarnpkg/libui/sources/hooks/useKeypress';
 import {useMinistore}                        from '@yarnpkg/libui/sources/hooks/useMinistore';
@@ -147,7 +148,7 @@ export default class SearchCommand extends BaseCommand {
           target =>
             <Box key={target} width={14} marginLeft={1}>
               <Text>
-                {action === target ? <Text color="green"> ◉ </Text> : <Text color="yellow"> ◯ </Text>}
+                {` `}<Gem active={action===target} />{` `}
                 <Text bold>{target}</Text>
               </Text>
             </Box>

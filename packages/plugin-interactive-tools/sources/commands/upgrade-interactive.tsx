@@ -197,15 +197,20 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       }, [
         descriptor.descriptorHash,
       ]);
+      const packageIdentifier = structUtils.stringifyIdent(descriptor);
+      const padLength = Math.max(0, 45 - packageIdentifier.length);
 
       return <Box>
         <Box width={45}>
-          <Text bold wrap="wrap">
+          <Text bold>
             {structUtils.prettyIdent(configuration, descriptor)}
+          </Text>
+          <Text dimColor={!active}>
+            {` `.padEnd(padLength, `_`)}
           </Text>
         </Box>
         {suggestions !== null
-          ? <ItemOptions active={active} options={suggestions} value={action} onChange={setAction} sizes={[17, 17, 17]} />
+          ? <ItemOptions active={active} options={suggestions} value={action} skewer={true} onChange={setAction} sizes={[17, 17, 17]} />
           : <Box marginLeft={2}><Text color="gray">Fetching suggestions...</Text></Box>
         }
       </Box>;
