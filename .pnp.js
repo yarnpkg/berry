@@ -42079,6 +42079,7 @@ function makeApi(runtimeState, opts) {
 
 
   function findPackageLocator(location) {
+    if (isPathIgnored(location)) return null;
     let relativeLocation = normalizePath(ppath.relative(runtimeState.basePath, location));
     if (!relativeLocation.match(isStrictRegExp)) relativeLocation = `./${relativeLocation}`;
     if (location.match(isDirRegExp) && !relativeLocation.endsWith(`/`)) relativeLocation = `${relativeLocation}/`;
