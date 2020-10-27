@@ -1,6 +1,6 @@
-import chalk                  from 'chalk';
-import {Text}                 from 'ink';
-import React, {memo, useMemo} from 'react';
+import chalk  from 'chalk';
+import {Text} from 'ink';
+import React  from 'react';
 
 export interface PadProps {
   length: number
