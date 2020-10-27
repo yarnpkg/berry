@@ -53,8 +53,8 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
     if (stats.mtime > apiEntry.stats.mtime) {
       console.warn(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance (${pnpApiPath})`);
 
-      apiEntry.instance = loadApiInstance(pnpApiPath);
       apiEntry.stats = stats;
+      apiEntry.instance = loadApiInstance(pnpApiPath);
     }
   }
 
