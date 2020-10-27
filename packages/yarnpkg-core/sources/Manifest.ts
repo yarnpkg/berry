@@ -207,22 +207,28 @@ export class Manifest {
       this.languageName = data.languageName;
 
     if (typeof data.main === `string`)
-      this.main = data.main;
+      this.main = data.main.replace(/\\/g, `/`);
 
     if (typeof data.module === `string`)
-      this.module = data.module;
+      this.module = data.module.replace(/\\/g, `/`);
 
     if (data.browser != null) {
       if (typeof data.browser === `string`) {
-        this.browser = data.browser;
+        this.browser = data.browser.replace(/\\/g, `/`);
       } else {
-        this.browser = new Map(Object.entries(data.browser) as Iterable<[PortablePath, PortablePath | boolean]>);
+        this.browser = new Map();
+        for (const [key, value] of Object.entries(data.browser)) {
+          this.browser.set(
+            key.replace(/\\/g, `/`) as PortablePath,
+            typeof value === `string` ? (value.replace(/\\/g, `/`) as PortablePath) : (value as boolean)
+          );
+        }
       }
     }
 
     if (typeof data.bin === `string`) {
       if (this.name !== null) {
-        this.bin = new Map([[this.name.name, data.bin]]);
+        this.bin = new Map([[this.name.name, data.bin.replace(/\\/g, `/`)]]);
       } else {
         errors.push(new Error(`String bin field, but no attached package name`));
       }
@@ -233,7 +239,7 @@ export class Manifest {
           continue;
         }
 
-        this.bin.set(key, value as PortablePath);
+        this.bin.set(key, value.replace(/\\/g, `/`) as PortablePath);
       }
     }
 
@@ -392,13 +398,13 @@ export class Manifest {
         this.publishConfig.access = data.publishConfig.access;
 
       if (typeof data.publishConfig.main === `string`)
-        this.publishConfig.main = data.publishConfig.main;
+        this.publishConfig.main = data.publishConfig.main.replace(/\\/g, `/`);
 
       if (typeof data.publishConfig.module === `string`)
-        this.publishConfig.module = data.publishConfig.module;
+        this.publishConfig.module = data.publishConfig.module.replace(/\\/g, `/`);
 
       if (typeof data.publishConfig.browser === `string`)
-        this.publishConfig.browser = data.publishConfig.browser;
+        this.publishConfig.browser = data.publishConfig.browser.replace(/\\/g, `/`);
 
       if (typeof data.publishConfig.browser === `object` && data.publishConfig.browser !== null)
         this.publishConfig.browser = new Map(Object.entries(data.publishConfig.browser) as Iterable<[PortablePath, PortablePath | boolean]>);
@@ -408,7 +414,7 @@ export class Manifest {
 
       if (typeof data.publishConfig.bin === `string`) {
         if (this.name !== null) {
-          this.publishConfig.bin = new Map([[this.name.name, data.publishConfig.bin]]);
+          this.publishConfig.bin = new Map([[this.name.name, data.publishConfig.bin.replace(/\\/g, `/`)]]);
         } else {
           errors.push(new Error(`String bin field, but no attached package name`));
         }
@@ -421,7 +427,7 @@ export class Manifest {
             continue;
           }
 
-          this.publishConfig.bin.set(key, value as PortablePath);
+          this.publishConfig.bin.set(key, value.replace(/\\/g, `/`) as PortablePath);
         }
       }
 
@@ -434,7 +440,7 @@ export class Manifest {
             continue;
           }
 
-          this.publishConfig.executableFiles.add(npath.toPortablePath(value));
+          this.publishConfig.executableFiles.add(npath.toPortablePath(value.replace(/\\/g, `/`)));
         }
       }
     }
