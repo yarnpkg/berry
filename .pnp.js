@@ -36784,7 +36784,7 @@ function toFilename(filename) {
 
  // 1980-01-01, like Fedora
 
-const defaultTime = 315532800;
+const defaultTime = new Date(315532800 * 1000);
 async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
   const normalizedDestination = destinationFs.pathUtils.normalize(destination);
   const normalizedSource = sourceFs.pathUtils.normalize(source);
@@ -36804,26 +36804,32 @@ async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
 }
 
 async function copyImpl(prelayout, postlayout, updateTime, destinationFs, destination, sourceFs, source, opts) {
+  var _a, _b;
+
   const destinationStat = await maybeLStat(destinationFs, destination);
   const sourceStat = await sourceFs.lstatPromise(source);
-  if (opts.stableTime) postlayout.push(() => updateTime(destination, defaultTime, defaultTime));else postlayout.push(() => updateTime(destination, sourceStat.atime, sourceStat.mtime));
+  const referenceTime = opts.stableTime ? {
+    mtime: defaultTime,
+    atime: defaultTime
+  } : sourceStat;
+  let updated;
 
   switch (true) {
     case sourceStat.isDirectory():
       {
-        await copyFolder(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+        updated = await copyFolder(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
       }
       break;
 
     case sourceStat.isFile():
       {
-        await copyFile(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+        updated = await copyFile(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
       }
       break;
 
     case sourceStat.isSymbolicLink():
       {
-        await copySymlink(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+        updated = await copySymlink(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
       }
       break;
 
@@ -36834,9 +36840,17 @@ async function copyImpl(prelayout, postlayout, updateTime, destinationFs, destin
       break;
   }
 
-  postlayout.push(() => {
-    return destinationFs.chmodPromise(destination, sourceStat.mode & 0o777);
-  });
+  if (updated || ((_a = destinationStat === null || destinationStat === void 0 ? void 0 : destinationStat.mtime) === null || _a === void 0 ? void 0 : _a.getTime()) !== referenceTime.mtime.getTime() || ((_b = destinationStat === null || destinationStat === void 0 ? void 0 : destinationStat.atime) === null || _b === void 0 ? void 0 : _b.getTime()) !== referenceTime.atime.getTime()) {
+    postlayout.push(() => updateTime(destination, referenceTime.atime, referenceTime.mtime));
+    updated = true;
+  }
+
+  if (destinationStat === null || (destinationStat.mode & 0o777) !== (sourceStat.mode & 0o777)) {
+    postlayout.push(() => destinationFs.chmodPromise(destination, sourceStat.mode & 0o777));
+    updated = true;
+  }
+
+  return updated;
 }
 
 async function maybeLStat(baseFs, p) {
@@ -36853,24 +36867,38 @@ async function copyFolder(prelayout, postlayout, updateTime, destinationFs, dest
       prelayout.push(async () => destinationFs.removePromise(destination));
       destinationStat = null;
     } else {
-      return;
+      return false;
     }
   }
 
-  if (destinationStat === null) prelayout.push(async () => destinationFs.mkdirPromise(destination, {
-    mode: sourceStat.mode
-  }));
+  let updated = false;
+
+  if (destinationStat === null) {
+    prelayout.push(async () => destinationFs.mkdirPromise(destination, {
+      mode: sourceStat.mode
+    }));
+    updated = true;
+  }
+
   const entries = await sourceFs.readdirPromise(source);
 
   if (opts.stableSort) {
     for (const entry of entries.sort()) {
-      await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
+      if (await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts)) {
+        updated = true;
+      }
     }
   } else {
-    await Promise.all(entries.map(async entry => {
+    const entriesUpdateStatus = await Promise.all(entries.map(async entry => {
       await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
     }));
+
+    if (entriesUpdateStatus.some(status => status)) {
+      updated = true;
+    }
   }
+
+  return updated;
 }
 
 async function copyFile(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
@@ -36879,15 +36907,13 @@ async function copyFile(prelayout, postlayout, updateTime, destinationFs, destin
       prelayout.push(async () => destinationFs.removePromise(destination));
       destinationStat = null;
     } else {
-      return;
+      return false;
     }
   }
 
-  if (destinationFs === sourceFs) {
-    prelayout.push(async () => destinationFs.copyFilePromise(source, destination, (external_fs_default()).constants.COPYFILE_FICLONE));
-  } else {
-    prelayout.push(async () => destinationFs.writeFilePromise(destination, await sourceFs.readFilePromise(source)));
-  }
+  const op = destinationFs === sourceFs ? async () => destinationFs.copyFilePromise(source, destination, (external_fs_default()).constants.COPYFILE_FICLONE) : async () => destinationFs.writeFilePromise(destination, await sourceFs.readFilePromise(source));
+  prelayout.push(async () => op());
+  return true;
 }
 
 async function copySymlink(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
@@ -36896,12 +36922,14 @@ async function copySymlink(prelayout, postlayout, updateTime, destinationFs, des
       prelayout.push(async () => destinationFs.removePromise(destination));
       destinationStat = null;
     } else {
-      return;
+      return false;
     }
   }
 
-  const target = await sourceFs.readlinkPromise(source);
-  prelayout.push(async () => destinationFs.symlinkPromise(convertPath(destinationFs.pathUtils, target), destination));
+  prelayout.push(async () => {
+    await destinationFs.symlinkPromise(convertPath(destinationFs.pathUtils, await sourceFs.readlinkPromise(source)), destination);
+  });
+  return true;
 }
 // CONCATENATED MODULE: ../yarnpkg-fslib/sources/FakeFS.ts
 
@@ -42494,9 +42522,9 @@ function makeManager(pnpapi, opts) {
     const stats = opts.fakeFs.statSync(pnpApiPath);
 
     if (stats.mtime > apiEntry.stats.mtime) {
-      console.warn(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance (${pnpApiPath})`);
-      apiEntry.instance = loadApiInstance(pnpApiPath);
+      console.warn(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance (${npath.fromPortablePath(pnpApiPath)})`);
       apiEntry.stats = stats;
+      apiEntry.instance = loadApiInstance(pnpApiPath);
     }
   }
 
