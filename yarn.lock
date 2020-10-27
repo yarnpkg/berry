@@ -5679,6 +5679,7 @@ __metadata:
   resolution: "@yarnpkg/libui@workspace:packages/yarnpkg-libui"
   dependencies:
     "@types/react": ^16.8.0
+    chalk: ^3.0.0
     ink: ^3.0.7
     react: ^16.13.1
     redux: ^4.0.0

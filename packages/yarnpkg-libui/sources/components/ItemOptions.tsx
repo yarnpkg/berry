@@ -4,6 +4,7 @@ import React          from 'react';
 import {useListInput} from '../hooks/useListInput';
 
 import {Gem}          from './Gem';
+import {Pad}          from './Pad';
 
 export const ItemOptions = function <T>({
   active,
@@ -40,14 +41,12 @@ export const ItemOptions = function <T>({
         .replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, ``);
 
       const padWidth = Math.max(0, boxWidth - (simpleLabel).length - 2);
-      const padText = skewer ? ` `.padEnd(padWidth, `_`) : ``;
-
       return (
         <Box key={label} width={boxWidth} marginLeft={1}>
           <Text wrap="truncate">
-            <Gem active={isGemActive} /> {label}
+            <Gem active={isGemActive} />{` `}{label}
           </Text>
-          <Text dimColor={!active}>{padText}</Text>
+          { skewer ? <Pad active={active} length={padWidth}/> : null }
         </Box>
       );
     })}

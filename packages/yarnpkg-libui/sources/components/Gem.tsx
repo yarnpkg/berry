@@ -1,10 +1,11 @@
-import {Text}        from 'ink';
-import React, {memo} from 'react';
+import {Text}                 from 'ink';
+import React, {memo, useMemo} from 'react';
 
 export interface GemProps {
   active: boolean
 }
 export const Gem: React.FC<GemProps> = memo(({active}) => {
-  return active ? <Text color="green">{`◉`}</Text>
-    :  <Text color="yellow">{`◯`}</Text>;
+  const text = useMemo(() => active ? `◉` : `◯`, [active]);
+  const color = useMemo(() => active ? `green` : `yellow`, [active]);
+  return <Text color={color}>{text}</Text>;
 });
