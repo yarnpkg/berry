@@ -6,7 +6,14 @@ export interface PadProps {
   length: number
   active: boolean
 }
-export const Pad = memo(({length, active}: PadProps) => {
-  const text = useMemo(() => chalk.underline(` `.padEnd(length, ` `)), [length, active]);
+
+export const Pad = ({length, active}: PadProps) => {
+  if (length === 0)
+    return null;
+
+  const text = length > 1
+    ? ` ${chalk.underline(` `.repeat(length - 1))}`
+    : ` `;
+
   return <Text dimColor={!active}>{text}</Text>;
-});
+};
