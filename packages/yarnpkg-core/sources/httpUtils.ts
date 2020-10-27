@@ -43,14 +43,14 @@ async function getCachedCertificate(caFilePath: PortablePath) {
  */
 export function getNetworkSettings(target: string, opts: { configuration: Configuration }) {
   // Sort the config by key length to match on the most specific pattern
-  const networkSettings = Array.from(opts.configuration.get(`networkSettings`)).sort(
-    ([keyA], [keyB]) => keyB.length - keyA.length
-  );
+  const networkSettings = [...opts.configuration.get(`networkSettings`)].sort(([keyA], [keyB]) => {
+    return keyB.length - keyA.length;
+  });
 
   const mergedNetworkSettings: {
     enableNetwork?: boolean,
     caFilePath?: PortablePath | null,
-  } = { };
+  } = {};
 
   const url = new URL(target);
   for (const [glob, config] of networkSettings) {
@@ -102,7 +102,7 @@ export type Options = {
 export async function request(target: string, body: Body, {configuration, headers, json, jsonRequest = json, jsonResponse = json, method = Method.GET}: Options) {
   const networkConfig = getNetworkSettings(target, {configuration});
   if (networkConfig.enableNetwork === false)
-    throw new Error(`Requests to '${target}' has been blocked because of your configuration settings`);
+    throw new Error(`Request to '${target}' has been blocked because of your configuration settings`);
 
   const url = new URL(target);
   if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
@@ -120,7 +120,6 @@ export async function request(target: string, body: Body, {configuration, header
   };
 
   const gotOptions: ExtendOptions = {agent, headers, method};
-
   gotOptions.responseType = jsonResponse
     ? `json`
     : `buffer`;
@@ -141,6 +140,10 @@ export async function request(target: string, body: Body, {configuration, header
 
   const {default: got} = await import(`got`);
 
+  const certificateAuthority = caFilePath
+    ? await getCachedCertificate(caFilePath)
+    : undefined;
+
   const gotClient = got.extend({
     timeout: {
       socket: socketTimeout,
@@ -148,7 +151,7 @@ export async function request(target: string, body: Body, {configuration, header
     retry,
     https: {
       rejectUnauthorized,
-      certificateAuthority: caFilePath ? await getCachedCertificate(caFilePath) : undefined,
+      certificateAuthority,
     },
     ...gotOptions,
   });

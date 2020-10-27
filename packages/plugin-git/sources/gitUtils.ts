@@ -174,7 +174,7 @@ export async function lsRemote(repo: string, configuration: Configuration) {
 
   const networkSettings = httpUtils.getNetworkSettings(normalizedRepoUrl, {configuration});
   if (!networkSettings.enableNetwork)
-    throw new Error(`Requests to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
+    throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
 
   let res: {stdout: string};
   try {
@@ -300,9 +300,8 @@ export async function clone(url: string, configuration: Configuration) {
       throw new Error(`Invalid treeish protocol when cloning`);
 
     const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
-
     if (httpUtils.getNetworkSettings(normalizedRepoUrl, {configuration}).enableNetwork === false)
-      throw new Error(`Requests to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
+      throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
 
     const directory = await xfs.mktempPromise();
     const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};
