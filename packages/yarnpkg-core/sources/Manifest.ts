@@ -1,12 +1,12 @@
-import {FakeFS, Filename, NodeFS, PortablePath, npath, ppath} from '@yarnpkg/fslib';
-import {Resolution, parseResolution, stringifyResolution}     from '@yarnpkg/parsers';
-import semver                                                 from 'semver';
+import {FakeFS, Filename, NodeFS, PortablePath, ppath}    from '@yarnpkg/fslib';
+import {Resolution, parseResolution, stringifyResolution} from '@yarnpkg/parsers';
+import semver                                             from 'semver';
 
-import * as miscUtils                                         from './miscUtils';
-import * as semverUtils                                       from './semverUtils';
-import * as structUtils                                       from './structUtils';
-import {IdentHash}                                            from './types';
-import {Ident, Descriptor}                                    from './types';
+import * as miscUtils                                     from './miscUtils';
+import * as semverUtils                                   from './semverUtils';
+import * as structUtils                                   from './structUtils';
+import {IdentHash}                                        from './types';
+import {Ident, Descriptor}                                from './types';
 
 export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
 export type HardDependencies = 'dependencies' | 'devDependencies';
