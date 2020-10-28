@@ -17,7 +17,9 @@
   "activationEvents": [
     "workspaceContains:**/*.zip",
     "onLanguage:zip",
-    "onFileSystem:zip"
+    "onFileSystem:zip",
+    "onCommand:zipfs.mountZipFile",
+    "onCommand:zipfs.mountZipEditor"
   ],
   "main": "./build/index.js",
   "sideEffects": false,
