@@ -41715,7 +41715,7 @@ function makeApi(runtimeState, opts) {
   const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/; // Matches if the path starts with a valid path qualifier (./, ../, /)
   // eslint-disable-next-line no-unused-vars
 
-  const isStrictRegExp = /^\.{0,2}\//; // Matches if the path must point to a directory (ie ends with /)
+  const isStrictRegExp = /^(\/|\.{1,2}(\/|$))/; // Matches if the path must point to a directory (ie ends with /)
 
   const isDirRegExp = /\/$/; // We only instantiate one of those so that we can use strict-equal comparisons
 
