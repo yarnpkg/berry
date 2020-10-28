@@ -109,8 +109,8 @@ function trimRight(s: string) {
   return s.replace(/\s+$/, ``);
 }
 
-function linesAreEqual(a: string, b: string) {
-  return trimRight(a) === trimRight(b);
+function linesAreEqual(a: string, b: string, {ignoreWhiteSpace}: {ignoreWhiteSpace: boolean} = {ignoreWhiteSpace: false}) {
+  return ignoreWhiteSpace ? a.trim() === b.trim() : trimRight(a) === trimRight(b);
 }
 
 /**
@@ -136,9 +136,9 @@ function linesAreEqual(a: string, b: string) {
  */
 
 export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = false}: {baseFs: FakeFS<PortablePath>, dryRun?: boolean}) {
-  const mode = await baseFs.statSync(path).mode;
+  const mode = baseFs.statSync(path).mode;
 
-  const fileContents = await baseFs.readFileSync(path, `utf8`);
+  const fileContents = baseFs.readFileSync(path, `utf8`);
   const fileLines = fileContents.split(/\n/);
 
   const result: Array<Array<Modification>> = [];
@@ -147,40 +147,51 @@ export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = fal
   let maxFrozenLine = 0;
 
   for (const hunk of hunks) {
-    const firstGuess = Math.max(maxFrozenLine, hunk.header.patched.start + fixupOffset);
+    const findModifications = ({ignoreWhiteSpace}: {ignoreWhiteSpace: boolean} = {ignoreWhiteSpace: false}) => {
+      const firstGuess = Math.max(maxFrozenLine, hunk.header.patched.start + fixupOffset);
 
-    const maxPrefixFuzz = Math.max(0, firstGuess - maxFrozenLine);
-    const maxSuffixFuzz = Math.max(0, fileLines.length - firstGuess - hunk.header.original.length);
+      const maxPrefixFuzz = Math.max(0, firstGuess - maxFrozenLine);
+      const maxSuffixFuzz = Math.max(0, fileLines.length - firstGuess - hunk.header.original.length);
 
-    const maxFuzz = Math.max(maxPrefixFuzz, maxSuffixFuzz);
+      const maxFuzz = Math.max(maxPrefixFuzz, maxSuffixFuzz);
 
-    let offset = 0;
-    let location = 0;
+      let offset = 0;
+      let location = 0;
 
-    let modifications: ReturnType<typeof evaluateHunk> = null;
+      let modifications: ReturnType<typeof evaluateHunk> = null;
 
-    while (offset <= maxFuzz) {
-      if (offset <= maxPrefixFuzz) {
-        location = firstGuess - offset;
-        modifications = evaluateHunk(hunk, fileLines, location);
-        if (modifications !== null) {
-          offset = -offset;
-          break;
+      while (offset <= maxFuzz) {
+        if (offset <= maxPrefixFuzz) {
+          location = firstGuess - offset;
+          modifications = evaluateHunk(hunk, fileLines, location, {ignoreWhiteSpace});
+          if (modifications !== null) {
+            offset = -offset;
+            break;
+          }
         }
-      }
 
-      if (offset <= maxSuffixFuzz) {
-        location = firstGuess + offset;
-        modifications = evaluateHunk(hunk, fileLines, location);
-        if (modifications !== null) {
-          break;
+        if (offset <= maxSuffixFuzz) {
+          location = firstGuess + offset;
+          modifications = evaluateHunk(hunk, fileLines, location, {ignoreWhiteSpace});
+          if (modifications !== null) {
+            break;
+          }
         }
+
+        offset += 1;
       }
+      if (modifications === null) return null;
 
-      offset += 1;
-    }
+      return {modifications, offset, location};
+    };
 
-    if (modifications === null)
+    // if we don't find any hunks when using strict matching, try again without whitespaces
+    const {modifications, offset, location} =
+      findModifications()
+      || findModifications({ignoreWhiteSpace: true})
+      || {modifications: null, offset: null, location: null};
+
+    if (modifications === null || offset === null || location === null)
       throw new UnmatchedHunkError(hunks.indexOf(hunk), hunk);
 
     result.push(modifications);
@@ -242,7 +253,7 @@ type Modification =
   | Pop
   | Splice;
 
-function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number): Array<Modification> | null {
+function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number, {ignoreWhiteSpace}: {ignoreWhiteSpace: boolean} = {ignoreWhiteSpace: false}): Array<Modification> | null {
   const result: Array<Modification> = [];
 
   for (const part of hunk.parts) {
@@ -252,7 +263,7 @@ function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number): Arr
         for (const line of part.lines) {
           const originalLine = fileLines[offset];
 
-          if (originalLine == null || !linesAreEqual(originalLine, line))
+          if (originalLine == null || !linesAreEqual(originalLine, line, {ignoreWhiteSpace}))
             return null;
 
           offset += 1;
