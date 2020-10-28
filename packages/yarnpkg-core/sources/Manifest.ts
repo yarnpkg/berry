@@ -150,6 +150,13 @@ export class Manifest {
     this.indent = getIndent(content);
   }
 
+  /**
+   * Replaces all backslashes with slashes
+   */
+  private normalizeSlashes(str: string) {
+    return str.replace(/\\/g, `/`) as PortablePath;
+  }
+
   load(data: any) {
     if (typeof data !== `object` || data === null)
       throw new Error(`Utterly invalid manifest data (${data})`);
@@ -207,20 +214,20 @@ export class Manifest {
       this.languageName = data.languageName;
 
     if (typeof data.main === `string`)
-      this.main = data.main.replace(/\\/g, `/`);
+      this.main = this.normalizeSlashes(data.main);
 
     if (typeof data.module === `string`)
-      this.module = data.module.replace(/\\/g, `/`);
+      this.module = this.normalizeSlashes(data.module);
 
     if (data.browser != null) {
       if (typeof data.browser === `string`) {
-        this.browser = data.browser.replace(/\\/g, `/`);
+        this.browser = this.normalizeSlashes(data.browser);
       } else {
         this.browser = new Map();
         for (const [key, value] of Object.entries(data.browser)) {
           this.browser.set(
-            key.replace(/\\/g, `/`) as PortablePath,
-            typeof value === `string` ? (value.replace(/\\/g, `/`) as PortablePath) : (value as boolean)
+            this.normalizeSlashes(key) ,
+            typeof value === `string` ? this.normalizeSlashes(value) : (value as boolean)
           );
         }
       }
@@ -228,7 +235,7 @@ export class Manifest {
 
     if (typeof data.bin === `string`) {
       if (this.name !== null) {
-        this.bin = new Map([[this.name.name, data.bin.replace(/\\/g, `/`)]]);
+        this.bin = new Map([[this.name.name, this.normalizeSlashes(data.bin)]]);
       } else {
         errors.push(new Error(`String bin field, but no attached package name`));
       }
@@ -239,7 +246,7 @@ export class Manifest {
           continue;
         }
 
-        this.bin.set(key, value.replace(/\\/g, `/`) as PortablePath);
+        this.bin.set(key, this.normalizeSlashes(value));
       }
     }
 
@@ -398,13 +405,13 @@ export class Manifest {
         this.publishConfig.access = data.publishConfig.access;
 
       if (typeof data.publishConfig.main === `string`)
-        this.publishConfig.main = data.publishConfig.main.replace(/\\/g, `/`);
+        this.publishConfig.main = this.normalizeSlashes(data.publishConfig.main);
 
       if (typeof data.publishConfig.module === `string`)
-        this.publishConfig.module = data.publishConfig.module.replace(/\\/g, `/`);
+        this.publishConfig.module = this.normalizeSlashes(data.publishConfig.module);
 
       if (typeof data.publishConfig.browser === `string`)
-        this.publishConfig.browser = data.publishConfig.browser.replace(/\\/g, `/`);
+        this.publishConfig.browser = this.normalizeSlashes(data.publishConfig.browser);
 
       if (typeof data.publishConfig.browser === `object` && data.publishConfig.browser !== null)
         this.publishConfig.browser = new Map(Object.entries(data.publishConfig.browser) as Iterable<[PortablePath, PortablePath | boolean]>);
@@ -414,7 +421,7 @@ export class Manifest {
 
       if (typeof data.publishConfig.bin === `string`) {
         if (this.name !== null) {
-          this.publishConfig.bin = new Map([[this.name.name, data.publishConfig.bin.replace(/\\/g, `/`)]]);
+          this.publishConfig.bin = new Map([[this.name.name, this.normalizeSlashes(data.publishConfig.bin)]]);
         } else {
           errors.push(new Error(`String bin field, but no attached package name`));
         }
@@ -427,7 +434,7 @@ export class Manifest {
             continue;
           }
 
-          this.publishConfig.bin.set(key, value.replace(/\\/g, `/`) as PortablePath);
+          this.publishConfig.bin.set(key, this.normalizeSlashes(value));
         }
       }
 
@@ -440,7 +447,7 @@ export class Manifest {
             continue;
           }
 
-          this.publishConfig.executableFiles.add(npath.toPortablePath(value.replace(/\\/g, `/`)));
+          this.publishConfig.executableFiles.add(this.normalizeSlashes(value));
         }
       }
     }
