@@ -177,8 +177,8 @@ export function getReportTree(result: npmAuditTypes.AuditResponse, severity?: np
           label: `Patched Versions`,
           value: formatUtils.tuple(formatUtils.Type.RANGE, advisory.patched_versions),
         },
-        Paths: {
-          label: `Paths`,
+        Via: {
+          label: `Via`,
           value: formatUtils.tuple(formatUtils.Type.NO_HINT, Array.from(new Set(advisory.findings.map(finding => finding.paths).flat().map(path => path.split(`>`)[0]))).join(`, `)),
         },
         Recommendation: {
