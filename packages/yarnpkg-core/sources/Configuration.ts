@@ -342,6 +342,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
           type: SettingsType.ABSOLUTE_PATH,
           default: null,
         },
+        enableNetwork: {
+          description: `If false, the package manager will refuse to use the network if required to`,
+          type: SettingsType.BOOLEAN,
+          default: null,
+        },
       },
     },
   },
@@ -447,8 +452,8 @@ export interface ConfigurationValueMap {
   httpTimeout: number;
   httpRetry: number;
   networkConcurrency: number;
-  networkSettings: Map<string, MapConfigurationValue<{ caFilePath: PortablePath }>>;
-  caFilePath: PortablePath;
+  networkSettings: Map<string, MapConfigurationValue<{ caFilePath: PortablePath | null, enableNetwork: boolean | null }>>;
+  caFilePath: PortablePath | null;
   enableStrictSsl: boolean;
 
   // Settings related to telemetry
