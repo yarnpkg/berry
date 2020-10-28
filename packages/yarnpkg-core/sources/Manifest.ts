@@ -410,11 +410,19 @@ export class Manifest {
       if (typeof data.publishConfig.module === `string`)
         this.publishConfig.module = this.normalizeSlashes(data.publishConfig.module);
 
-      if (typeof data.publishConfig.browser === `string`)
-        this.publishConfig.browser = this.normalizeSlashes(data.publishConfig.browser);
-
-      if (typeof data.publishConfig.browser === `object` && data.publishConfig.browser !== null)
-        this.publishConfig.browser = new Map(Object.entries(data.publishConfig.browser) as Iterable<[PortablePath, PortablePath | boolean]>);
+      if (data.publishConfig.browser != null) {
+        if (typeof data.publishConfig.browser === `string`) {
+          this.publishConfig.browser = this.normalizeSlashes(data.publishConfig.browser);
+        } else {
+          this.publishConfig.browser = new Map();
+          for (const [key, value] of Object.entries(data.publishConfig.browser)) {
+            this.publishConfig.browser.set(
+              this.normalizeSlashes(key) ,
+              typeof value === `string` ? this.normalizeSlashes(value) : (value as boolean)
+            );
+          }
+        }
+      }
 
       if (typeof data.publishConfig.registry === `string`)
         this.publishConfig.registry = data.publishConfig.registry;
