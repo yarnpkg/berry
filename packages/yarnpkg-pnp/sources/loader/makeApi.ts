@@ -423,7 +423,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function findPackageLocator(location: PortablePath): PhysicalPackageLocator | null {
-    if (isPathIgnored(location)) return null;
+    if (isPathIgnored(location))
+      return null;
 
     let relativeLocation = normalizePath(ppath.relative(runtimeState.basePath, location));
 
