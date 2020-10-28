@@ -1,6 +1,7 @@
 
 import {Plugin, SettingsType} from '@yarnpkg/core';
 
+import npmAudit               from './commands/npm/audit';
 import npmInfo                from './commands/npm/info';
 import npmLogin               from './commands/npm/login';
 import npmLogout              from './commands/npm/logout';
@@ -25,6 +26,7 @@ const plugin: Plugin = {
     },
   },
   commands: [
+    npmAudit,
     npmInfo,
     npmLogin,
     npmLogout,
