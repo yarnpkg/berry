@@ -63,6 +63,7 @@ export type InstallOptions = {
   immutable?: boolean,
   lockfileOnly?: boolean,
   persistProject?: boolean,
+  skipBuild?: boolean,
 };
 
 export class Project {
@@ -1040,7 +1041,7 @@ export class Project {
     }
   }
 
-  async linkEverything({cache, report, fetcher: optFetcher}: InstallOptions) {
+  async linkEverything({cache, report, fetcher: optFetcher, skipBuild}: InstallOptions) {
     const fetcher = optFetcher || this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, skipIntegrityCheck: true};
 
@@ -1222,6 +1223,9 @@ export class Project {
     }
 
     // Step 4: Build the packages in multiple steps
+
+    if (skipBuild)
+      return;
 
     const readyPackages = new Set(this.storedPackages.keys());
     const buildablePackages = new Set(packageBuildDirectives.keys());
