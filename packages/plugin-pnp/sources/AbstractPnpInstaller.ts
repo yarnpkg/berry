@@ -61,6 +61,7 @@ export abstract class AbstractPnpInstaller implements Installer {
     const manifest = !hasVirtualInstances || this.opts.skipIncompatiblePackageLinking
       ? await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs})
       : null;
+
     const isManifestCompatible = this.checkAndReportManifestIncompatibility(manifest, pkg);
     if (this.opts.skipIncompatiblePackageLinking && !isManifestCompatible)
       return {packageLocation: null, buildDirective: null};
