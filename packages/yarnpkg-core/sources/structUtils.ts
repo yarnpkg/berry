@@ -14,6 +14,11 @@ import {Ident, Descriptor, Locator, Package}    from './types';
 const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 5;
 
+/**
+ * Creates an ident for a package
+ * @param scope the scope of the package without the `@` prefix, if available (for example `types`)
+ * @param name the name of the package
+ */
 export function makeIdent(scope: string | null, name: string): Ident {
   if (scope?.startsWith(`@`))
     throw new Error(`Invalid scope: don't prefix it with '@'`);
@@ -21,30 +26,61 @@ export function makeIdent(scope: string | null, name: string): Ident {
   return {identHash: hashUtils.makeHash<IdentHash>(scope, name), scope, name};
 }
 
+/**
+ * Creates an descriptor for a package
+ * @param ident the ident of the package (see `makeIdent`)
+ * @param range the range (for example `^1.0.0`)
+ */
 export function makeDescriptor(ident: Ident, range: string): Descriptor {
   return {identHash: ident.identHash, scope: ident.scope, name: ident.name, descriptorHash: hashUtils.makeHash<DescriptorHash>(ident.identHash, range), range};
 }
 
+/**
+ * Creates an locator for a package
+ * @param ident the ident of the package (see `makeIdent`)
+ * @param range the reference (for example `1.0.0`)
+ */
 export function makeLocator(ident: Ident, reference: string): Locator {
   return {identHash: ident.identHash, scope: ident.scope, name: ident.name, locatorHash: hashUtils.makeHash<LocatorHash>(ident.identHash, reference), reference};
 }
 
+/**
+ * Converts a compatible source to an ident
+ * @param source the source to convert
+ */
 export function convertToIdent(source: Descriptor | Locator | Package): Ident {
   return {identHash: source.identHash, scope: source.scope, name: source.name};
 }
 
+/**
+ * Converts a descriptor to a locator
+ * @param descriptor the descriptor to convert
+ */
 export function convertDescriptorToLocator(descriptor: Descriptor): Locator {
   return {identHash: descriptor.identHash, scope: descriptor.scope, name: descriptor.name, locatorHash: descriptor.descriptorHash as unknown as LocatorHash, reference: descriptor.range};
 }
 
+/**
+ * Converts a Locator to a descriptor
+ * @param locator the locator to convert
+ */
 export function convertLocatorToDescriptor(locator: Locator): Descriptor {
   return {identHash: locator.identHash, scope: locator.scope, name: locator.name, descriptorHash: locator.locatorHash as unknown as DescriptorHash, range: locator.reference};
 }
 
+/**
+ * Converts a package to a locator
+ * @param pkg the package to convert
+ */
 export function convertPackageToLocator(pkg: Package): Locator {
   return {identHash: pkg.identHash, scope: pkg.scope, name: pkg.name, locatorHash: pkg.locatorHash, reference: pkg.reference};
 }
 
+/**
+ * Renames a package by using a new locator
+ * @param pkg the package to convert
+ * @param locator the Locator to be used for the renamed package
+ */
 export function renamePackage(pkg: Package, locator: Locator): Package {
   return {
     identHash: locator.identHash,
@@ -69,10 +105,19 @@ export function renamePackage(pkg: Package, locator: Locator): Package {
   };
 }
 
+/**
+ * Creates a deep copy of a package
+ * @param pkg the package to copy
+ */
 export function copyPackage(pkg: Package) {
   return renamePackage(pkg, pkg);
 }
 
+/**
+ * Creates a new virtual descriptor from a non virtual one
+ * @param descriptor the descriptor to virtualize
+ * @param entropy a hash that provides uniqueness to this virtualized descriptor (normally a locator hash)
+ */
 export function virtualizeDescriptor(descriptor: Descriptor, entropy: string): Descriptor {
   if (entropy.includes(`#`))
     throw new Error(`Invalid entropy`);
@@ -80,6 +125,11 @@ export function virtualizeDescriptor(descriptor: Descriptor, entropy: string): D
   return makeDescriptor(descriptor, `virtual:${entropy}#${descriptor.range}`);
 }
 
+/**
+ * Creates a new virtual package from a non virtual one
+ * @param pkg the package to virtualize
+ * @param entropy a hash that provides uniqueness to this virtualized package (normally a locator hash)
+ */
 export function virtualizePackage(pkg: Package, entropy: string): Package {
   if (entropy.includes(`#`))
     throw new Error(`Invalid entropy`);
@@ -87,14 +137,26 @@ export function virtualizePackage(pkg: Package, entropy: string): Package {
   return renamePackage(pkg, makeLocator(pkg, `virtual:${entropy}#${pkg.reference}`));
 }
 
+/**
+ * Returns `true` if the descriptor is virtual
+ * @param descriptor the descriptor
+ */
 export function isVirtualDescriptor(descriptor: Descriptor): boolean {
   return descriptor.range.startsWith(VIRTUAL_PROTOCOL);
 }
 
+/**
+ * Returns `true` if the locator is virtual
+ * @param locator the locator
+ */
 export function isVirtualLocator(locator: Locator): boolean {
   return locator.reference.startsWith(VIRTUAL_PROTOCOL);
 }
 
+/**
+ * Returns a new devirtualized descriptor based on a virtualized descriptor
+ * @param descriptor the descriptor
+ */
 export function devirtualizeDescriptor(descriptor: Descriptor): Descriptor {
   if (!isVirtualDescriptor(descriptor))
     throw new Error(`Not a virtual descriptor`);
@@ -102,6 +164,10 @@ export function devirtualizeDescriptor(descriptor: Descriptor): Descriptor {
   return makeDescriptor(descriptor, descriptor.range.replace(/^[^#]*#/, ``));
 }
 
+/**
+ * Returns a new devirtualized locator based on a virtualized locator
+ * @param locator the locator
+ */
 export function devirtualizeLocator(locator: Locator): Locator {
   if (!isVirtualLocator(locator))
     throw new Error(`Not a virtual descriptor`);
@@ -123,14 +189,29 @@ export function bindLocator(locator: Locator, params: {[key: string]: string}) {
   return makeLocator(locator, `${locator.reference}::${querystring.stringify(params)}`);
 }
 
+/**
+ * Returns `true` if the idents are equal
+ * @param a first ident
+ * @param b second ident
+ */
 export function areIdentsEqual(a: Ident, b: Ident) {
   return a.identHash === b.identHash;
 }
 
+/**
+ * Returns `true` if the descriptors are equal
+ * @param a first descriptor
+ * @param b second descriptor
+ */
 export function areDescriptorsEqual(a: Descriptor, b: Descriptor) {
   return a.descriptorHash === b.descriptorHash;
 }
 
+/**
+ * Returns `true` if the locators are equal
+ * @param a first locator
+ * @param b second locator
+ */
 export function areLocatorsEqual(a: Locator, b: Locator) {
   return a.locatorHash === b.locatorHash;
 }
@@ -139,6 +220,8 @@ export function areLocatorsEqual(a: Locator, b: Locator) {
  * Virtual packages are considered equivalent when they belong to the same
  * package identity and have the same dependencies. Note that equivalence
  * is not the same as equality, as the references may be different.
+ * @param a first package
+ * @param b second package
  */
 export function areVirtualPackagesEquivalent(a: Package, b: Package) {
   if (!isVirtualLocator(a))
@@ -165,6 +248,12 @@ export function areVirtualPackagesEquivalent(a: Package, b: Package) {
   return true;
 }
 
+/**
+ * Parses a string into an ident.
+ *
+ * Throws an error if the ident cannot be parsed.
+ * @param string the ident string (for example `@types/lodash`)
+ */
 export function parseIdent(string: string): Ident {
   const ident = tryParseIdent(string);
   if (!ident)
@@ -173,6 +262,12 @@ export function parseIdent(string: string): Ident {
   return ident;
 }
 
+/**
+ * Parses a string into an ident.
+ *
+ * Returns `null` if the ident cannot be parsed.
+ * @param string the ident string (for example `@types/lodash`)
+ */
 export function tryParseIdent(string: string): Ident | null {
   const match = string.match(/^(?:@([^/]+?)\/)?([^/]+)$/);
   if (!match)
@@ -187,6 +282,13 @@ export function tryParseIdent(string: string): Ident | null {
   return makeIdent(realScope, name);
 }
 
+/**
+ * Parses a `string` into a descriptor
+ *
+ * Throws an error if the descriptor cannot be parsed.
+ * @param string the descriptor `string` (for example `lodash@^1.0.0`)
+ * @param strict if `false`, the range is optional (`unknown` will be used if it does not exist)
+ */
 export function parseDescriptor(string: string, strict: boolean = false): Descriptor {
   const descriptor = tryParseDescriptor(string, strict);
   if (!descriptor)
@@ -195,6 +297,13 @@ export function parseDescriptor(string: string, strict: boolean = false): Descri
   return descriptor;
 }
 
+/**
+ * Parses a `string` into a descriptor
+ *
+ * Returns `null` if the descriptor cannot be parsed.
+ * @param string the descriptor `string` (for example `lodash@^1.0.0`)
+ * @param strict if `false`, the range is optional (`unknown` will be used if it does not exist)
+ */
 export function tryParseDescriptor(string: string, strict: boolean = false): Descriptor | null {
   const match = strict
     ? string.match(/^(?:@([^/]+?)\/)?([^/]+?)(?:@(.+))$/)
@@ -218,6 +327,13 @@ export function tryParseDescriptor(string: string, strict: boolean = false): Des
   return makeDescriptor(makeIdent(realScope, name), realRange);
 }
 
+/**
+ * Parses a `string` into a locator
+ *
+ * Throws an error if the locator cannot be parsed.
+ * @param string the locator `string` (for example `lodash@1.0.0`)
+ * @param strict if `false`, the reference is optional (`unknown` will be used if it does not exist)
+ */
 export function parseLocator(string: string, strict: boolean = false): Locator {
   const locator = tryParseLocator(string, strict);
   if (!locator)
@@ -226,6 +342,13 @@ export function parseLocator(string: string, strict: boolean = false): Locator {
   return locator;
 }
 
+/**
+ * Parses a `string` into a locator
+ *
+ * Returns `null` if the locator cannot be parsed.
+ * @param string the locator `string` (for example `lodash@1.0.0`)
+ * @param strict if `false`, the reference is optional (`unknown` will be used if it does not exist)
+ */
 export function tryParseLocator(string: string, strict: boolean = false): Locator | null {
   const match = strict
     ? string.match(/^(?:@([^/]+?)\/)?([^/]+?)(?:@(.+))$/)
@@ -250,9 +373,13 @@ export function tryParseLocator(string: string, strict: boolean = false): Locato
 }
 
 type ParseRangeOptions = {
+  /** Throw an error if bindings are missing */
   requireBindings?: boolean,
+  /** Throw an error if the protocol is missing or is not the specified one */
   requireProtocol?: boolean | string,
+  /** Throw an error if the source is missing */
   requireSource?: boolean,
+  /** Whether to parse the selector as a query string */
   parseSelector?: boolean,
 };
 
@@ -262,6 +389,11 @@ type ParseRangeReturnType<Opts extends ParseRangeOptions> =
   & ({source: Opts extends {requireSource: true} ? string : string | null})
   & ({selector: Opts extends {parseSelector: true} ? querystring.ParsedUrlQuery : string});
 
+/**
+ * Parses a range into its constituents
+ * @param range
+ * @param opts
+ */
 export function parseRange<Opts extends ParseRangeOptions>(range: string, opts?: Opts): ParseRangeReturnType<Opts> {
   const match = range.match(/^([^#:]*:)?((?:(?!::)[^#])*)(?:#((?:(?!::).)*))?(?:::(.*))?$/);
   if (match === null)
@@ -307,6 +439,28 @@ export function parseRange<Opts extends ParseRangeOptions>(range: string, opts?:
   };
 }
 
+/**
+ * Parses a range and a protocol into a locator and path
+ * @param range the range
+ * @example
+ * ```
+ * parseFileStyleRange(
+ *   "portal:./gatsby-plugin-clipanion-cli::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby",
+ *   {protocol: "portal:"}
+ * )
+ * // returns
+ * {
+ *   parentLocator: {
+ *     identHash: ...,
+ *     scope: "yarnpkg",
+ *     name: "gatsby",
+ *     locatorHash: ...,
+ *     reference: "workspace:packages/gatsby"
+ *   },
+ *   path: "./gatsby-plugin-clipanion-cli"
+ * }
+ * ```
+ */
 export function parseFileStyleRange(range: string, {protocol}: {protocol: string}) {
   const {selector, params} = parseRange(range, {
     requireProtocol: protocol,
@@ -319,6 +473,7 @@ export function parseFileStyleRange(range: string, {protocol}: {protocol: string
   const parentLocator = parseLocator(params.locator, true);
   const path = selector as PortablePath;
 
+  console.log(arguments, {parentLocator, path})
   return {parentLocator, path};
 }
 
@@ -336,6 +491,21 @@ function hasParams(params: querystring.ParsedUrlQuery | null): params is queryst
   return Object.entries(params).length > 0;
 }
 
+/**
+ * Returns a `string` that defines a certain range
+ *
+ * @example
+ * ```
+ * makeRange({
+ *   protocol: 'patch:',
+ *   source: `resolve@npm:1.14.1`,
+ *   selector: 'builtin<compat/resolve>',
+ *   params: { version: '1.14.1', hash: '3388aa' }
+ * })
+ * // returns
+ * `patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=3388aa`
+ * ```
+ */
 export function makeRange({protocol, source, selector, params}: {protocol: string | null, source: string | null, selector: string, params: querystring.ParsedUrlQuery | null}) {
   let range = ``;
 
@@ -368,6 +538,10 @@ export function convertToManifestRange(range: string) {
   return makeRange({protocol, source, params, selector});
 }
 
+/**
+ * Returns a `string` from an ident (for example `@types/lodash`)
+ * @param ident the ident
+ */
 export function requirableIdent(ident: Ident) {
   if (ident.scope) {
     return `@${ident.scope}/${ident.name}`;
@@ -376,6 +550,10 @@ export function requirableIdent(ident: Ident) {
   }
 }
 
+/**
+ * Returns a `string` from an ident (for example `@types/lodash`)
+ * @param ident the ident
+ */
 export function stringifyIdent(ident: Ident) {
   if (ident.scope) {
     return `@${ident.scope}/${ident.name}`;
@@ -384,6 +562,10 @@ export function stringifyIdent(ident: Ident) {
   }
 }
 
+/**
+ * Returns a `string` from a descriptor (for example `@types/lodash@^1.0.0`)
+ * @param descriptor the descriptor
+ */
 export function stringifyDescriptor(descriptor: Descriptor) {
   if (descriptor.scope) {
     return `@${descriptor.scope}/${descriptor.name}@${descriptor.range}`;
@@ -392,6 +574,10 @@ export function stringifyDescriptor(descriptor: Descriptor) {
   }
 }
 
+/**
+ * Returns a `string` from a descriptor (for example `@types/lodash@1.0.0`)
+ * @param locator the locator
+ */
 export function stringifyLocator(locator: Locator) {
   if (locator.scope) {
     return `@${locator.scope}/${locator.name}@${locator.reference}`;
@@ -400,6 +586,10 @@ export function stringifyLocator(locator: Locator) {
   }
 }
 
+/**
+ * Returns a `string` from an ident, formatted as a slug (for example `@types-lodash`)
+ * @param ident the ident
+ */
 export function slugifyIdent(ident: Ident) {
   if (ident.scope !== null) {
     return `@${ident.scope}-${ident.name}`;
@@ -408,6 +598,10 @@ export function slugifyIdent(ident: Ident) {
   }
 }
 
+/**
+ * Returns a `string` from a locator, formatted as a slug (for example `@types-lodash-npm-1.0.0-abcdef1234`)
+ * @param ident the locator
+ */
 export function slugifyLocator(locator: Locator) {
   const {protocol, selector} = parseRange(locator.reference);
 
@@ -438,6 +632,11 @@ export function slugifyLocator(locator: Locator) {
   return toFilename(slug);
 }
 
+/**
+ * Returns a `string` that is suitable to be printed to `stdout` (contains colors)
+ * @param configuration the configuration (aka `.yarnrc.yml`)
+ * @param ident the ident
+ */
 export function prettyIdent(configuration: Configuration, ident: Ident): string {
   if (ident.scope) {
     return `${formatUtils.pretty(configuration, `@${ident.scope}/`, formatUtils.Type.SCOPE)}${formatUtils.pretty(configuration, ident.name, formatUtils.Type.NAME)}`;
@@ -460,26 +659,54 @@ function prettyRangeNoColors(range: string): string {
   }
 }
 
+/**
+ * Returns a `string` that is suitable to be printed to `stdout` (contains colors)
+ * @param configuration the configuration (aka `.yarnrc.yml`)
+ * @param range the range
+ */
 export function prettyRange(configuration: Configuration, range: string): string {
   return `${formatUtils.pretty(configuration, prettyRangeNoColors(range), formatUtils.Type.RANGE)}`;
 }
 
+/**
+ * Returns a `string` that is suitable to be printed to `stdout` (contains colors)
+ * @param configuration the configuration (aka `.yarnrc.yml`)
+ * @param descriptor the descriptor
+ */
 export function prettyDescriptor(configuration: Configuration, descriptor: Descriptor): string {
   return `${prettyIdent(configuration, descriptor)}${formatUtils.pretty(configuration, `@`, formatUtils.Type.RANGE)}${prettyRange(configuration, descriptor.range)}`;
 }
 
+/**
+ * Returns a `string` that is suitable to be printed to `stdout` (contains colors)
+ * @param configuration the configuration (aka `.yarnrc.yml`)
+ * @param reference the reference
+ */
 export function prettyReference(configuration: Configuration, reference: string) {
   return `${formatUtils.pretty(configuration, prettyRangeNoColors(reference), formatUtils.Type.REFERENCE)}`;
 }
 
+/**
+ * Returns a `string` that is suitable to be printed to `stdout` (contains colors)
+ * @param configuration the configuration (aka `.yarnrc.yml`)
+ * @param reference the locator
+ */
 export function prettyLocator(configuration: Configuration, locator: Locator): string {
   return `${prettyIdent(configuration, locator)}${formatUtils.pretty(configuration, `@`, formatUtils.Type.REFERENCE)}${prettyReference(configuration, locator.reference)}`;
 }
 
+/**
+ * Returns a `string` that is suitable to be printed to `stdout` (without colors)
+ * @param locator the locator
+ */
 export function prettyLocatorNoColors(locator: Locator) {
   return `${stringifyIdent(locator)}@${prettyRangeNoColors(locator.reference)}`;
 }
 
+/**
+ * Sorts a list of descriptors by their ident and range
+ * @param descriptors the descriptors
+ */
 export function sortDescriptors(descriptors: Iterable<Descriptor>) {
   return miscUtils.sortMap(descriptors, [
     descriptor => stringifyIdent(descriptor),
@@ -487,10 +714,21 @@ export function sortDescriptors(descriptors: Iterable<Descriptor>) {
   ]);
 }
 
+/**
+ * Returns a `string` that is suitable to be printed to `stdout` (contains colors)
+ * @param configuration the configuration (aka `.yarnrc.yml`)
+ * @param workspace the workspace
+ */
 export function prettyWorkspace(configuration: Configuration, workspace: Workspace) {
   return prettyIdent(configuration, workspace.locator);
 }
 
+/**
+ * Returns a `string` that is suitable to be printed to `stdout` (contains colors)
+ * @param configuration the configuration (aka `.yarnrc.yml`)
+ * @param descriptor the descriptor
+ * @param locator the locator (can be `null`)
+ */
 export function prettyResolution(configuration: Configuration, descriptor: Descriptor, locator: Locator | null): string {
   const devirtualizedDescriptor = isVirtualDescriptor(descriptor)
     ? devirtualizeDescriptor(descriptor)
@@ -505,6 +743,12 @@ export function prettyResolution(configuration: Configuration, descriptor: Descr
   }
 }
 
+/**
+ * Returns a `string` that is suitable to be printed to `stdout` (contains colors)
+ * @param configuration the configuration (aka `.yarnrc.yml`)
+ * @param locator the locator
+ * @param descriptor the descriptor (can be `null`)
+ */
 export function prettyDependent(configuration: Configuration, locator: Locator, descriptor: Descriptor | null) {
   if (descriptor === null) {
     return `${prettyLocator(configuration, locator)}`;
