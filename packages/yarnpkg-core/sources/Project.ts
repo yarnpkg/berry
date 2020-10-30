@@ -1941,6 +1941,9 @@ function applyVirtualResolutionMutations({
         continue;
       }
 
+      if (!project.tryWorkspaceByLocator(pkg))
+        accessibleLocators.add(pkg.locatorHash);
+
       // The stack overflow is checked against two level because a workspace
       // may have a dev dependency on another workspace that lists the first
       // one as a regular dependency. In this case the loop will break so we

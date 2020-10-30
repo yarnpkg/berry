@@ -48,8 +48,10 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     }
   }
 
-  for (const location of data.locationBlacklistData)
+  for (const location of data.locationBlacklistData) {
     packageLocatorsByLocations.set(location, null);
+    packageLocationLengths.add(location.length);
+  }
 
   const fallbackExclusionList = new Map(data.fallbackExclusionList.map(([packageName, packageReferences]) => {
     return [packageName, new Set(packageReferences)] as [string, Set<string>];

@@ -800,6 +800,28 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it should prevent resolving from the non-virtual path of a virtual package`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`peer-deps`]: getPackageDirectoryPath(`peer-deps`, `1.0.0`).then(path => `portal:${path}`),
+          [`no-deps`]: `2.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        const packageDirectoryPath = await getPackageDirectoryPath(`peer-deps`, `1.0.0`);
+        await expect(source(`require('pnpapi').findPackageLocator('${packageDirectoryPath}/')`)).rejects.toMatchObject({
+          externalException: {
+            pnpCode: `BLACKLISTED`,
+          },
+        });
+      },
+    ),
+  );
+
+  test(
     `it should export the PnP API through the 'pnpapi' name`,
     makeTemporaryEnv(
       {},
