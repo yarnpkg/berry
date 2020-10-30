@@ -2123,29 +2123,29 @@ function applyVirtualResolutionMutations({
   };
 
   const devirtualizeSingleInstanceWorkspaces = () => {
-    const packagesWithInstanceCount = new Map<IdentHash, {pkg: Package, descriptor: Descriptor, instanceCount: number}>();
+    const packagesWithInstanceCount = new Map<IdentHash, {virtualPackage: Package, descriptor: Descriptor, instanceCount: number}>();
 
     // find any workspaces that only have one instance
     for (const descriptor of allDescriptors.values()) {
       const resolution = allResolutions.get(descriptor.descriptorHash);
       if (!resolution) continue;
 
-      const pkg = allPackages.get(resolution);
-      if (!pkg) continue;
+      const virtualPackage = allPackages.get(resolution);
+      if (!virtualPackage) continue;
 
-      if (structUtils.isVirtualLocator(pkg) && project.tryWorkspaceByLocator(pkg)) {
-        packagesWithInstanceCount.set(pkg.identHash, {
-          pkg,
+      if (structUtils.isVirtualLocator(virtualPackage) && project.tryWorkspaceByLocator(virtualPackage)) {
+        packagesWithInstanceCount.set(virtualPackage.identHash, {
+          virtualPackage,
           descriptor,
-          instanceCount: (packagesWithInstanceCount.get(pkg.identHash)?.instanceCount ?? 0) + 1,
+          instanceCount: (packagesWithInstanceCount.get(virtualPackage.identHash)?.instanceCount ?? 0) + 1,
         });
       }
     }
 
     const singleInstancePackages = [...packagesWithInstanceCount.values()].filter(p => p.instanceCount === 1);
 
-    for (const {pkg, descriptor} of singleInstancePackages) {
-      const devirtualizedPackage = structUtils.devirtualizePackage(pkg);
+    for (const {virtualPackage, descriptor} of singleInstancePackages) {
+      const devirtualizedPackage = structUtils.devirtualizePackage(virtualPackage);
       const devirtualizedDescriptor = structUtils.devirtualizeDescriptor(descriptor);
 
       for (const {dependencies} of allPackages.values()) {
@@ -2155,9 +2155,23 @@ function applyVirtualResolutionMutations({
         }
       }
 
+      if (accessibleLocators.has(virtualPackage.locatorHash)) {
+        accessibleLocators.delete(virtualPackage.locatorHash);
+        accessibleLocators.add(devirtualizedPackage.locatorHash);
+      }
+
+      if (optionalBuilds.has(virtualPackage.locatorHash)) {
+        optionalBuilds.delete(virtualPackage.locatorHash);
+        optionalBuilds.add(devirtualizedPackage.locatorHash);
+      }
+
+      allResolutions.delete(descriptor.descriptorHash);
       allResolutions.set(devirtualizedDescriptor.descriptorHash, devirtualizedPackage.locatorHash);
+
+      allDescriptors.delete(descriptor.descriptorHash);
       allDescriptors.set(devirtualizedDescriptor.descriptorHash, devirtualizedDescriptor);
 
+      allPackages.delete(virtualPackage.locatorHash);
       allPackages.set(devirtualizedPackage.locatorHash, devirtualizedPackage);
     }
   };
