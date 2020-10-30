@@ -479,5 +479,55 @@ describe(`ZipFS`, () => {
       advanceTimeBy(100);
     });
   });
+
+  it(`should support opendir`, async () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const folder = `/foo` as PortablePath;
+    zipFs.mkdirSync(folder);
+
+    const firstFile = `/foo/1.txt` as PortablePath;
+    const secondFile = `/foo/2.txt` as PortablePath;
+    const thirdFile = `/foo/3.txt` as PortablePath;
+
+    zipFs.writeFileSync(firstFile, ``);
+    zipFs.writeFileSync(secondFile, ``);
+    zipFs.writeFileSync(thirdFile, ``);
+
+    const dir = zipFs.opendirSync(folder);
+
+    expect(dir.path).toStrictEqual(folder);
+
+    const iter = dir[Symbol.asyncIterator]();
+
+    expect((await iter.next()).value.name).toStrictEqual(ppath.basename(firstFile));
+    expect(dir.readSync()!.name).toStrictEqual(ppath.basename(secondFile));
+    expect((await dir.read())!.name).toStrictEqual(ppath.basename(thirdFile));
+
+    expect((await iter.next()).value).toBeUndefined();
+
+    // Consuming the iterator should cause the Dir instance to close
+
+    expect(() => iter.next()).rejects.toThrow(`Directory handle was closed`);
+    expect(() => dir.readSync()).toThrow(`Directory handle was closed`);
+    // It's important that this function throws synchronously, because that's what Node does
+    expect(() => dir.read()).toThrow(`Directory handle was closed`);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`closes the fd created in opendir when the Dir is closed early`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    zipFs.mkdirSync(`/foo` as PortablePath);
+
+    expect(zipFs.hasOpenFileHandles()).toBe(false);
+    const dir = zipFs.opendirSync(`/foo` as Filename);
+    expect(zipFs.hasOpenFileHandles()).toBe(true);
+    dir.closeSync();
+    expect(zipFs.hasOpenFileHandles()).toBe(false);
+
+    zipFs.discardAndClose();
+  });
 });
 

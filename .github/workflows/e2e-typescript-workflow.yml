@@ -28,6 +28,11 @@ jobs:
       run: |
         node ./scripts/run-yarn.js build:cli
 
+    - name: 'Checking some behaviors against the latest TypeScript'
+      run: |
+        yarn up typescript
+        yarn node ./scripts/test-typescript-patch.js
+
     - name: 'Installing all versions of TS'
       run: |
         source scripts/e2e-setup-ci.sh

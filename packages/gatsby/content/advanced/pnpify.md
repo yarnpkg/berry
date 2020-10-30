@@ -2,6 +2,7 @@
 category: advanced
 path: /advanced/pnpify
 title: "PnPify"
+description: An overview of PnPify, one of the PnP compatibility layers which emulates virtual node_modules directories and provides IDE support.
 ---
 
 ```toc
@@ -42,4 +43,4 @@ More details about the run command can be found on its [dedicated page](/pnpify/
 
 ## IDE Support
 
-When using Plug'n'Play installs with your favorite text editors you will probably want to keep using your extensions, like ESLint or Prettier. To do so, you may need to use `yarn pnpify --sdk`. For more information, consult the detailed documentation in the [editor sdks](/advanced/editor-sdks) section.
+When using Plug'n'Play installs with your favorite text editors you will probably want to keep using your extensions, like ESLint or Prettier. To do so, you may need to use `yarn pnpify --sdk`. For more information, consult the detailed documentation in the [editor sdks](/getting-started/editor-sdks) section.

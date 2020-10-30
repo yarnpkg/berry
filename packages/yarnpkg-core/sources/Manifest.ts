@@ -834,18 +834,18 @@ function stripBOM(content: string) {
 }
 
 function isManifestFieldCompatible(rules: Array<string>, actual: string) {
-  let isNotWhitelist = true;
-  let isBlacklist = false;
+  let isNotOnAllowlist = true;
+  let isOnDenylist = false;
 
   for (const rule of rules) {
     if (rule[0] === `!`) {
-      isBlacklist = true;
+      isOnDenylist = true;
 
       if (actual === rule.slice(1)) {
         return false;
       }
     } else {
-      isNotWhitelist = false;
+      isNotOnAllowlist = false;
 
       if (rule === actual) {
         return true;
@@ -853,6 +853,6 @@ function isManifestFieldCompatible(rules: Array<string>, actual: string) {
     }
   }
 
-  // Blacklists with whitelisted items should be treated as whitelists for `os` and `cpu` in `package.json`
-  return isBlacklist && isNotWhitelist;
+  // Denylists with allowlisted items should be treated as allowlists for `os` and `cpu` in `package.json`
+  return isOnDenylist && isNotOnAllowlist;
 }

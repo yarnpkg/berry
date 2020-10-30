@@ -43,6 +43,12 @@ export default class ConfigSetCommand extends BaseCommand {
     ], [
       `Set a complex configuration setting (an Object) using the \`--json\` flag`,
       `yarn config set packageExtensions --json '{ "@babel/parser@*": { "dependencies": { "@babel/types": "*" } } }'`,
+    ], [
+      `Set a nested configuration setting`,
+      `yarn config set npmScopes.company.npmRegistryServer "https://npm.example.com"`,
+    ], [
+      `Set a nested configuration setting using indexed access for non-simple keys`,
+      `yarn config set 'npmRegistries["//npm.example.com"].npmAuthToken' "ffffffff-ffff-ffff-ffff-ffffffffffff"`,
     ]],
   });
 
@@ -53,7 +59,7 @@ export default class ConfigSetCommand extends BaseCommand {
       throw new UsageError(`This command must be run from within a project folder`);
 
     const name = this.name.replace(/[.[].*$/, ``);
-    const path = this.name.replace(/^[^.[]*/, ``);
+    const path = this.name.replace(/^[^.[]*\.?/, ``);
 
     const setting = configuration.settings.get(name);
     if (typeof setting === `undefined`)
@@ -102,7 +108,7 @@ export default class ConfigSetCommand extends BaseCommand {
 
       report.reportInfo(MessageName.UNNAMED, `Successfully set ${this.name} to ${inspect(requestedObject, {
         depth: Infinity,
-        colors: true,
+        colors: configuration.get(`enableColors`),
         compact: false,
       })}`);
     });

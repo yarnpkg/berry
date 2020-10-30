@@ -8,14 +8,17 @@ JSPATCH="$THIS_DIR"/../../sources/patches/typescript.patch.ts
 
 FIRST_PR_COMMIT="5d50de3"
 
+# Defines which commits need to be cherry-picked onto which other commit to
+# generate a patch suitable for the specified range.
 HASHES=(
-  # Patch   # Base    # Ranges
-  "426f5a7" "e39bdc3" ">=3.2 <3.5"
-  "426f5a7" "cf7b2d4" ">=3.5 <=3.6"
-  "426f5a7" "cda54b8" ">3.6 <3.7"
-  "2f85932" "e39bdc3" ">=3.7 <3.9"
-  "3af06df" "551f0dd" ">=3.9 <4.1"
-  "ce3da5a" "69972a3" ">=4.1"
+  # From    # To      # Onto    # Ranges
+  "5d50de3" "426f5a7" "e39bdc3" ">=3.2 <3.5"
+  "5d50de3" "426f5a7" "cf7b2d4" ">=3.5 <=3.6"
+  "5d50de3" "426f5a7" "cda54b8" ">3.6 <3.7"
+  "5d50de3" "2f85932" "e39bdc3" ">=3.7 <3.9"
+  "5d50de3" "3af06df" "551f0dd" ">=3.9 <4.0"
+  "6dbdd2f" "6dbdd2f" "56865f7" ">=4.0 <4.1"
+  "746d79b" "746d79b" "69972a3" ">=4.1"
 )
 
 mkdir -p "$TEMP_DIR"
@@ -44,33 +47,34 @@ reset-git() {
 }
 
 build-dir-for() {
-  local HASH="$1"
-  local CHERRY_PICK="$2"
+  local CHERRYPICK_ONTO="$1"
+  local CHERRYPICK_TO="$2"
 
-  local BUILD_DIR="$TEMP_DIR"/builds/"$HASH"
+  local BUILD_DIR="$TEMP_DIR"/builds/"$CHERRYPICK_ONTO"
 
-  if [[ ! -z "$CHERRY_PICK" ]]; then
-    BUILD_DIR="$BUILD_DIR-$CHERRY_PICK"
+  if [[ ! -z "$CHERRYPICK_TO" ]]; then
+    BUILD_DIR="$BUILD_DIR-$CHERRYPICK_TO"
   fi
 
   echo "$BUILD_DIR"
 }
 
 make-build-for() {
-  local HASH="$1"
-  local CHERRY_PICK="$2"
+  local CHERRYPICK_ONTO="$1"
+  local CHERRYPICK_FROM="$2"
+  local CHERRYPICK_TO="$3"
 
-  local BUILD_DIR="$(build-dir-for "$HASH" "$CHERRY_PICK")"
+  local BUILD_DIR="$(build-dir-for "$CHERRYPICK_ONTO" "$CHERRYPICK_TO")"
 
   if [[ ! -e "$BUILD_DIR" ]]; then
     mkdir -p "$BUILD_DIR"
-    reset-git "$HASH"
+    reset-git "$CHERRYPICK_ONTO"
 
-    if [[ ! -z "$CHERRY_PICK" ]]; then
-      if git merge-base --is-ancestor "$HASH" "$CHERRY_PICK"; then
-        git merge --no-edit "$CHERRY_PICK"
+    if [[ ! -z "$CHERRYPICK_TO" ]]; then
+      if git merge-base --is-ancestor "$CHERRYPICK_ONTO" "$CHERRYPICK_TO"; then
+        git merge --no-edit "$CHERRYPICK_TO"
       else
-        git cherry-pick "$FIRST_PR_COMMIT"^.."$CHERRY_PICK"
+        git cherry-pick "$CHERRYPICK_FROM"^.."$CHERRYPICK_TO"
       fi
     fi
 
@@ -81,6 +85,8 @@ make-build-for() {
         break
       else
         echo "Something is wrong; typescript.js got generated with a stupid size" >& /dev/stderr
+        cat -e lib/typescript.js
+
         if [[ $n -eq 1 ]]; then
           exit 1
         fi
@@ -100,16 +106,17 @@ rm -f "$PATCHFILE" && touch "$PATCHFILE"
 rm -f "$JSPATCH" && touch "$JSPATCH"
 
 while [[ ${#HASHES[@]} -gt 0 ]]; do
-  HASH="${HASHES[0]}"
-  BASE="${HASHES[1]}"
-  RANGE="${HASHES[2]}"
-  HASHES=("${HASHES[@]:3}")
+  CHERRYPICK_FROM="${HASHES[0]}"
+  CHERRYPICK_TO="${HASHES[1]}"
+  CHERRYPICK_ONTO="${HASHES[2]}"
+  RANGE="${HASHES[3]}"
+  HASHES=("${HASHES[@]:4}")
 
-  make-build-for "$BASE"
-  ORIG_DIR=$(build-dir-for "$BASE")
+  make-build-for "$CHERRYPICK_ONTO"
+  ORIG_DIR=$(build-dir-for "$CHERRYPICK_ONTO")
 
-  make-build-for "$BASE" "$HASH"
-  PATCHED_DIR=$(build-dir-for "$BASE" "$HASH")
+  make-build-for "$CHERRYPICK_ONTO" "$CHERRYPICK_FROM" "$CHERRYPICK_TO"
+  PATCHED_DIR=$(build-dir-for "$CHERRYPICK_ONTO" "$CHERRYPICK_FROM")
 
   DIFF="$THIS_DIR"/patch."${HASH}"-on-"${BASE}".diff
 

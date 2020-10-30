@@ -8,8 +8,8 @@ export const ConfigurationLayout = ({children}) => <>
   <Layout>
     <Navigation
       items={[
-        {to: `/configuration/manifest`, name: `Manifests`},
-        {to: `/configuration/yarnrc`, name: `Yarnrc files`},
+        {to: `/configuration/manifest`, name: `Manifests`, tag: `package.json`},
+        {to: `/configuration/yarnrc`, name: `Yarnrc files`, tag: `.yarnrc.yml`},
       ]}
     >
       {children}

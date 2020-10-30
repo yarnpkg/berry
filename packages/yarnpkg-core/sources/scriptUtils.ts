@@ -2,9 +2,9 @@ import {CwdFS, Filename, NativePath, PortablePath, ZipOpenFS} from '@yarnpkg/fsl
 import {xfs, npath, ppath, toFilename}                        from '@yarnpkg/fslib';
 import {getLibzipPromise}                                     from '@yarnpkg/libzip';
 import {execute}                                              from '@yarnpkg/shell';
+import {getBinjumper}                                         from "binjumper";
 import capitalize                                             from 'lodash/capitalize';
 import pLimit                                                 from 'p-limit';
-
 import {PassThrough, Readable, Writable}                      from 'stream';
 
 import {Configuration}                                        from './Configuration';
@@ -29,8 +29,13 @@ enum PackageManager {
 }
 
 async function makePathWrapper(location: PortablePath, name: Filename, argv0: NativePath, args: Array<string> = []) {
-  if (process.platform === `win32`)
-    await xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.cmd`}), `@"${argv0}" ${args.map(arg => `"${arg.replace(`"`, `""`)}"`).join(` `)} %*\n`);
+  if (process.platform === `win32`) {
+    await Promise.all([
+      xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.exe`}), getBinjumper()),
+      xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.exe.info`}), [argv0, ...args].join(`\n`)),
+      xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.cmd`}), `@"${argv0}" ${args.map(arg => `"${arg.replace(`"`, `""`)}"`).join(` `)} %*\n`),
+    ]);
+  }
 
   await xfs.writeFilePromise(ppath.join(location, name), `#!/bin/sh\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
   await xfs.chmodPromise(ppath.join(location, name), 0o755);
@@ -185,6 +190,14 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             // We enable inline builds, because nobody wants to
             // read a logfile telling them to open another logfile
             env.YARN_ENABLE_INLINE_BUILDS = `1`;
+
+            // If a lockfile doesn't exist we create a empty one to
+            // prevent the project root detection from thinking it's in an
+            // undeclared workspace when the user has a lockfile in their home
+            // directory on Windows
+            const lockfilePath = ppath.join(cwd, Filename.lockfile);
+            if (!(await xfs.existsPromise(lockfilePath)))
+              await xfs.writeFilePromise(lockfilePath, ``);
 
             // Yarn 2 supports doing the install and the pack in a single command,
             // so we leverage that. We also don't need the "set version" call since
@@ -450,7 +463,18 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
     if (!linker)
       continue;
 
-    const packageLocation = await linker.findPackageLocation(dependency, linkerOptions);
+    let packageLocation: PortablePath | null = null;
+    try {
+      packageLocation = await linker.findPackageLocation(dependency, linkerOptions);
+    } catch (err) {
+      // Some packages may not be installed when they are incompatible
+      // with the current system.
+      if (err.code === `LOCATOR_NOT_INSTALLED`) {
+        continue;
+      } else {
+        throw err;
+      }
+    }
 
     for (const [name, target] of dependency.bin) {
       binaries.set(name, [dependency, npath.fromPortablePath(ppath.resolve(packageLocation, target))]);

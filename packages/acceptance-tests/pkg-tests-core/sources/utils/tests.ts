@@ -1,17 +1,22 @@
 import {PortablePath, npath, toFilename} from '@yarnpkg/fslib';
 import crypto                            from 'crypto';
 import finalhandler                      from 'finalhandler';
+import https                             from 'https';
 import http                              from 'http';
+
 import {IncomingMessage, ServerResponse} from 'http';
 import invariant                         from 'invariant';
 import {AddressInfo}                     from 'net';
+import pem                               from 'pem';
 import semver                            from 'semver';
 import serveStatic                       from 'serve-static';
-import {Gzip}                            from 'zlib';
+import {promisify}                       from 'util';
 
 const deepResolve = require(`super-resolve`);
 
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
+
+import {Gzip}       from 'zlib';
 
 import {ExecResult} from './exec';
 import * as fsUtils from './fs';
@@ -171,11 +176,16 @@ export const getPackageDirectoryPath = async (
   return packageVersionEntry.path;
 };
 
-let packageServerUrl: string | null = null;
+const packageServerUrls: {
+  http: string | null,
+  https: string | null,
+} = {http: null, https: null};
 
-export const startPackageServer = (): Promise<string> => {
-  if (packageServerUrl !== null)
-    return Promise.resolve(packageServerUrl);
+export const startPackageServer = ({type}: { type: keyof typeof packageServerUrls } = {type: `http`}): Promise<string> => {
+  const serverUrl = packageServerUrls[type];
+
+  if (serverUrl !== null)
+    return Promise.resolve(serverUrl);
 
   enum RequestType {
     Login = `login`,
@@ -199,6 +209,7 @@ export const startPackageServer = (): Promise<string> => {
     version?: string;
   } | {
     type: RequestType.Whoami;
+    login: Login
   } | {
     type: RequestType.Repository;
   };
@@ -281,8 +292,11 @@ export const startPackageServer = (): Promise<string> => {
     },
 
     async [RequestType.Whoami](parsedRequest, request, response) {
+      if (parsedRequest.type !== RequestType.Whoami)
+        throw new Error(`Assertion failed: Invalid request type`);
+
       const data = JSON.stringify({
-        username: `username`,
+        username: parsedRequest.login.username,
       });
 
       response.writeHead(200, {[`Content-Type`]: `application/json`});
@@ -371,6 +385,8 @@ export const startPackageServer = (): Promise<string> => {
     } else if (url === `/-/whoami`) {
       return {
         type: RequestType.Whoami,
+        // Set later when login is parsed
+        login: null as any,
       };
     } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)$/))) {
       const [, scope, localName] = match;
@@ -418,6 +434,7 @@ export const startPackageServer = (): Promise<string> => {
   };
 
   interface Login {
+    username: string;
     password: string;
     requiresOtp: boolean;
     otp?: string;
@@ -426,59 +443,87 @@ export const startPackageServer = (): Promise<string> => {
 
   const validLogins: Record<string, Login> = {
     testUser: {
+      username: `testUser`,
       password: `password`,
       requiresOtp: true,
       otp: `1234`,
       npmAuthToken: `686159dc-64b3-413e-a244-2de2b8d1c36f`,
     },
     anotherTestUser: {
+      username: `anotherTestUser`,
       password: `password123`,
       requiresOtp: false,
       npmAuthToken: `316158de-64b3-413e-a244-2de2b8d1c80f`,
     },
+    username: {
+      username: `username`,
+      password: `a very secure password`,
+      npmAuthToken: `123456df-64b3-413e-a244-2de2b8d1c80f`,
+      requiresOtp: false,
+    },
   };
 
-  const validAuthorizations = [
-    `Bearer 686159dc-64b3-413e-a244-2de2b8d1c36f`,
-    `Basic dXNlcm5hbWU6YSB2ZXJ5IHNlY3VyZSBwYXNzd29yZA==`, // username:a very secure password
-  ];
+  const validAuthorizations = new Map<string, Login>([
+    [`Bearer 686159dc-64b3-413e-a244-2de2b8d1c36f`, validLogins.testUser],
+    [`Bearer 316158de-64b3-413e-a244-2de2b8d1c80f`, validLogins.anotherTestUser],
+    [`Basic dXNlcm5hbWU6YSB2ZXJ5IHNlY3VyZSBwYXNzd29yZA==`, validLogins.username],
+  ]);
 
   return new Promise((resolve, reject) => {
-    const server = http.createServer(
-      (req, res) =>
-        void (async () => {
-          try {
-            const parsedRequest = parseRequest(req.url!);
+    const listener: http.RequestListener = (req, res) =>
+      void (async () => {
+        try {
+          const parsedRequest = parseRequest(req.url!);
 
-            if (parsedRequest == null) {
-              processError(res, 404, `Invalid route: ${req.url}`);
-              return;
-            }
-
-            const {authorization} = req.headers;
-            if (authorization != null) {
-              if (!validAuthorizations.includes(authorization)) {
-                sendError(res, 401, `Invalid token`);
-                return;
-              }
-            } else if (needsAuth(parsedRequest)) {
-              sendError(res, 401, `Authentication required`);
-              return;
-            }
-
-            await processors[parsedRequest.type](parsedRequest, req, res);
-          } catch (error) {
-            processError(res, 500, error.stack);
+          if (parsedRequest == null) {
+            processError(res, 404, `Invalid route: ${req.url}`);
+            return;
           }
-        })(),
-    );
 
-    // We don't want the server to prevent the process from exiting
-    server.unref();
-    server.listen(() => {
-      const {port} = server.address() as AddressInfo;
-      resolve((packageServerUrl = `http://localhost:${port}`));
-    });
+          const {authorization} = req.headers;
+          if (authorization != null) {
+            const auth = validAuthorizations.get(authorization);
+            if (!auth) {
+              sendError(res, 401, `Invalid token`);
+              return;
+            } else if (parsedRequest.type === RequestType.Whoami) {
+              parsedRequest.login = auth;
+            }
+          } else if (needsAuth(parsedRequest)) {
+            sendError(res, 401, `Authentication required`);
+            return;
+          }
+
+          await processors[parsedRequest.type](parsedRequest, req, res);
+        } catch (error) {
+          processError(res, 500, error.stack);
+        }
+      })();
+
+    (async () => {
+      let server: https.Server | http.Server;
+
+      if (type === `https`) {
+        const certs = await getHttpsCertificates();
+
+        server = https.createServer({
+          cert: certs.server.certificate,
+          key: certs.server.clientKey,
+          ca: certs.ca.certificate,
+        }, listener);
+      } else if (type === `http`) {
+        server = http.createServer(listener);
+      } else {
+        throw new Error(`Invalid server type: ${type}`);
+      }
+
+      // We don't want the server to prevent the process from exiting
+      server.unref();
+      server.listen(() => {
+        const {port} = server.address() as AddressInfo;
+        resolve((packageServerUrls[type] = `${type}://localhost:${port}`));
+      });
+    })();
   });
 };
 
@@ -580,7 +625,7 @@ export const generatePkgDriver = ({
         try {
           await fn!({path, run, source});
         } catch (error) {
-          error.message = `Temporary fixture folder: ${path}\n\n${error.message}`;
+          error.message = `Temporary fixture folder: ${npath.fromPortablePath(path)}\n\n${error.message}`;
           throw error;
         }
       });
@@ -605,4 +650,36 @@ export const testIf = (condition: () => boolean, name: string,
   if (condition()) {
     test(name, execute, timeout);
   }
+};
+
+let httpsCertificates: {
+  server: pem.CertificateCreationResult;
+  ca: pem.CertificateCreationResult;
+};
+
+export const getHttpsCertificates = async () => {
+  if (httpsCertificates)
+    return httpsCertificates;
+
+  const createCSR = promisify<pem.CSRCreationOptions, { csr: string, clientKey: string }>(pem.createCSR);
+  const createCertificate = promisify<pem.CertificateCreationOptions, pem.CertificateCreationResult>(pem.createCertificate);
+
+  const {csr, clientKey} = await createCSR({commonName: `yarn`});
+  const caCertificate = await createCertificate({
+    csr,
+    clientKey,
+    selfSigned: true,
+  });
+
+  const serverCSRResult = await createCSR({commonName: `localhost`});
+
+  const serverCertificate = await createCertificate({
+    csr: serverCSRResult.csr,
+    clientKey: serverCSRResult.clientKey,
+    serviceKey: caCertificate.clientKey,
+    serviceCertificate:  caCertificate.certificate,
+    days: 365,
+  });
+
+  return (httpsCertificates = {server: serverCertificate, ca: caCertificate});
 };

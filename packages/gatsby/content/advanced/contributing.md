@@ -2,6 +2,7 @@
 category: advanced
 path: /advanced/contributing
 title: "Contributing"
+description: Yarn's contributing guide.
 ---
 
 Thanks for being here! Yarn gives a lot of importance to being a community project, and we rely on your help as much as you rely on ours. In order to help you help us, we've invested in an infra and documentation that should make contributing to Yarn very easy. If you have any feedback on what we could improve, please open an issue to discuss it!
@@ -103,7 +104,7 @@ Constraints can be checked with `yarn constraints`, and fixed with `yarn constra
 
 ## Preparing your PR to be released
 
-In order to track which packages need to be released, we use the workflow described in the [following document](https://yarnpkg.com/features/release-workflow). To summarize, you must run `yarn version check --interactive` on each PR you make, and select which packages should be released again for your changes to be effective (and to which version), if any.
+In order to track which packages need to be released, we use the workflow described in the [following document](/features/release-workflow). To summarize, you must run `yarn version check --interactive` on each PR you make, and select which packages should be released again for your changes to be effective (and to which version), if any.
 
 You can check if you've set everything correctly with `yarn version check`.
 
@@ -123,7 +124,7 @@ If it fails and you have no idea why, feel free to ping a maintainer and we'll d
 
 ## Writing documentation
 
-Our website is stored within the [`packages/gatsby`](https://github.com/yarnpkg/berry/tree/master/packages/gatsby) directory. *Do not manually edit the html files in the `docs` folder!* Instead, just make your changes in the Gatsby directory (for example you'd edit this very page [here](https://github.com/yarnpkg/berry/blob/master/packages/gatsby/content/advanced/plugin-tutorial.md)), then run the following command to spawn a local server and see your changes:
+Our website is stored within the [`packages/gatsby`](https://github.com/yarnpkg/berry/tree/master/packages/gatsby) directory. *Do not manually edit the html files in the `docs` folder!* Instead, just make your changes in the Gatsby directory (for example you'd edit this very page [here](https://github.com/yarnpkg/berry/blob/master/packages/gatsby/content/advanced/contributing.md)), then run the following command to spawn a local server and see your changes:
 
 ```bash
 yarn develop

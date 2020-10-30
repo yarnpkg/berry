@@ -1,4 +1,4 @@
-import {xfs, npath, PortablePath} from '@yarnpkg/fslib';
+import {xfs, npath, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
 
 const {
   fs: {readJson, writeFile, writeJson},
@@ -738,5 +738,103 @@ describe(`Node_Modules`, () => {
         expect(await xfs.existsPromise(`${path}/node_modules/no-deps` as PortablePath)).toEqual(true);
       },
     )
+  );
+
+  test(`should survive interrupted install`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`foo`],
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
+          name: `foo`,
+          dependencies: {
+            'has-bin-entries': `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        // Simulate interrupted install
+        await xfs.removePromise(`${path}/node_modules/has-bin-entries` as PortablePath);
+
+        await run(`add`, `has-bin-entries@2.0.0`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/has-bin-entries/package.json` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/node_modules/has-bin-entries/index.js` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/foo/node_modules/has-bin-entries/package.json` as PortablePath)).toEqual(true);
+      },
+    )
+  );
+
+  test(`should respect peerDependencies with defaults in workspaces`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`foo`],
+        dependencies: {
+          'has-bin-entries': `2.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
+          name: `foo`,
+          peerDependencies: {
+            'has-bin-entries': `*`,
+          },
+          devDependencies: {
+            'has-bin-entries': `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(source(`require('foo/node_modules/has-bin-entries')`)).resolves.toMatchObject({
+          version: `1.0.0`,
+        });
+      },
+    )
+  );
+
+  it(`should allow running binaries unrelated to incompatible package`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          dep: `file:./dep`,
+          dep2: `file:./dep2`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await writeJson(ppath.resolve(path, `dep/package.json` as Filename), {
+          name: `dep`,
+          version: `1.0.0`,
+          os: [`!${process.platform}`],
+          bin: `./noop.js`,
+        });
+        await xfs.writeFilePromise(ppath.resolve(path, `dep/noop.js` as Filename), ``);
+
+        await writeJson(ppath.resolve(path, `dep2/package.json` as Filename), {
+          name: `dep2`,
+          version: `1.0.0`,
+          bin: `./echo.js`,
+        });
+        await xfs.writeFilePromise(ppath.resolve(path, `dep2/echo.js` as Filename), `console.log('echo')`);
+
+        await run(`install`);
+
+        await expect(run(`dep2`)).resolves.toMatchObject({stdout: `echo\n`});
+      },
+    ),
   );
 });

@@ -257,14 +257,14 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     if (options.project) {
       const workspace = options.project.workspacesByCwd.get(npath.toPortablePath(pkg.packageLocation.slice(0, -1)));
       if (workspace) {
-        node.peerNames = new Set([
-          ...pkg.packagePeers,
+        const peerCandidates = new Set([
           ...Array.from(workspace.manifest.peerDependencies.values(), x => structUtils.stringifyIdent(x)),
           ...Array.from(workspace.manifest.peerDependenciesMeta.keys()),
         ]);
-        for (const peerName of node.peerNames) {
-          if (!pkg.packagePeers.has(peerName)) {
+        for (const peerName of peerCandidates) {
+          if (!allDependencies.has(peerName)) {
             allDependencies.set(peerName, parentDependencies.get(peerName) || null);
+            node.peerNames.add(peerName);
           }
         }
       }
@@ -384,9 +384,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
 
     for (const dep of pkg.dependencies) {
       // We do not want self-references in node_modules, since they confuse existing tools
-      if (dep.identName === pkg.identName.replace(WORKSPACE_NAME_SUFFIX, ``)
-        && dep.references.size === 1 && pkg.references.size === 1
-        && dep.references.keys().next().value === pkg.references.keys().next().value)
+      if (dep === pkg || (pkg.identName.endsWith(WORKSPACE_NAME_SUFFIX) && dep.identName === pkg.identName.replace(WORKSPACE_NAME_SUFFIX, ``)))
         continue;
       const references = Array.from(dep.references).sort();
       const locator = {name: dep.identName, reference: references[0]};

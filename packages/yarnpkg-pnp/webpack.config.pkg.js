@@ -1,3 +1,5 @@
+require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
+
 const {makeConfig} = require(`@yarnpkg/builder/sources/tools/makeConfig`);
 
 module.exports = makeConfig({

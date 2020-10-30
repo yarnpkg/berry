@@ -1,7 +1,9 @@
 const path = require(`path`);
 
+/** @type {import('typedoc').TypeDocOptions} */
 module.exports = {
   name: `Yarn API`,
+  tsconfig: require.resolve(`@yarnpkg/monorepo/tsconfig.json`),
   inputFiles: [`../.`],
   mode: `modules`,
   out: `./static/api`,

@@ -5,14 +5,17 @@ import {ZipOpenFS}              from '../sources';
 
 import {useFakeTime}            from './utils';
 
-const ZIP_FILE1 = ppath.join(
+const ZIP_DIR1 = ppath.join(
   npath.toPortablePath(__dirname),
-  `fixtures/foo.zip/foo.txt` as Filename
+  `fixtures/foo.zip` as Filename
 );
-const ZIP_FILE2 = ppath.join(
+const ZIP_DIR2 = ppath.join(
   npath.toPortablePath(__dirname),
-  `fixtures/folder.zip/foo.zip/foo.txt` as Filename
+  `fixtures/folder.zip/foo.zip` as Filename
 );
+
+const ZIP_FILE1 = ppath.join(ZIP_DIR1, `foo.txt` as Filename);
+const ZIP_FILE2 = ppath.join(ZIP_DIR2, `foo.txt` as Filename);
 
 describe(`ZipOpenFS`, () => {
   it(`can read from a zip file`, () => {
@@ -156,5 +159,17 @@ describe(`ZipOpenFS`, () => {
 
       fs.discardAndClose();
     });
+  });
+
+  it(`treats Dir instances opened via opendir as open file handles`, () => {
+    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
+
+    const dir1 = fs.opendirSync(ZIP_DIR1);
+    const dir2 = fs.opendirSync(ZIP_DIR2);
+
+    expect(dir1.readSync()!.name).toStrictEqual(`foo.txt`);
+    expect(dir2.readSync()!.name).toStrictEqual(`foo.txt`);
+
+    fs.discardAndClose();
   });
 });

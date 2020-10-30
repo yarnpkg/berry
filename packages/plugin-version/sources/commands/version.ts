@@ -116,7 +116,7 @@ export default class VersionCommand extends BaseCommand {
     }
 
     const versionFile = await versionUtils.openVersionFile(project, {allowEmpty: true});
-    await versionFile.releases.set(workspace, releaseStrategy as any);
+    versionFile.releases.set(workspace, releaseStrategy as any);
     await versionFile.saveAll();
 
     if (!deferred) {

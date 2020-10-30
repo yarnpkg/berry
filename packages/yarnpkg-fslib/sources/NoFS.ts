@@ -30,6 +30,14 @@ export class NoFS extends FakeFS<PortablePath> {
     throw makeError();
   }
 
+  async opendirPromise(): Promise<never> {
+    throw makeError();
+  }
+
+  opendirSync(): never {
+    throw makeError();
+  }
+
   async readPromise(): Promise<never> {
     throw makeError();
   }

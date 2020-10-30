@@ -11,7 +11,7 @@ import {PassThrough, Writable}                     from 'stream';
 
 import {LogLevel}                                  from './ConfigurableReport';
 import {CorePlugin}                                from './CorePlugin';
-import {Manifest}                                  from './Manifest';
+import {Manifest, PeerDependencyMeta}              from './Manifest';
 import {MultiFetcher}                              from './MultiFetcher';
 import {MultiResolver}                             from './MultiResolver';
 import {Plugin, Hooks}                             from './Plugin';
@@ -331,6 +331,36 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.NUMBER,
     default: Infinity,
   },
+  networkSettings: {
+    description: `Network settings per hostname (glob patterns are supported)`,
+    type: SettingsType.MAP,
+    valueDefinition: {
+      description: ``,
+      type: SettingsType.SHAPE,
+      properties: {
+        caFilePath: {
+          description: `Path to file containing one or multiple Certificate Authority signing certificates`,
+          type: SettingsType.ABSOLUTE_PATH,
+          default: null,
+        },
+        enableNetwork: {
+          description: `If false, the package manager will refuse to use the network if required to`,
+          type: SettingsType.BOOLEAN,
+          default: null,
+        },
+      },
+    },
+  },
+  caFilePath: {
+    description: `A path to a file containing one or multiple Certificate Authority signing certificates`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: null,
+  },
+  enableStrictSsl: {
+    description: `If false, SSL certificate errors will be ignored`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
 
   logFilter: {
     description: `Override for log levels`,
@@ -347,7 +377,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableTelemetry: {
     description: `If true, telemetry will be periodically sent, following the rules in https://yarnpkg.com/advanced/telemetry`,
     type: SettingsType.BOOLEAN,
-    default: !isCI,
+    default: true,
   },
   telemetryInterval: {
     description: `Minimal amount of time between two telemetry uploads, in days`,
@@ -434,6 +464,9 @@ export interface ConfigurationValueMap {
   httpTimeout: number;
   httpRetry: number;
   networkConcurrency: number;
+  networkSettings: Map<string, MapConfigurationValue<{ caFilePath: PortablePath | null, enableNetwork: boolean | null }>>;
+  caFilePath: PortablePath | null;
+  enableStrictSsl: boolean;
 
   logFilter: Map<string, LogLevel | null>;
 
@@ -742,6 +775,21 @@ export type FindProjectOptions = {
   useRc?: boolean,
 };
 
+export enum PackageExtensionType {
+  Dependency = `Dependency`,
+  PeerDependency = `PeerDependency`,
+  PeerDependencyMeta = `PeerDependencyMeta`,
+}
+
+export type PackageExtension = (
+  | {type: PackageExtensionType.Dependency, descriptor: Descriptor}
+  | {type: PackageExtensionType.PeerDependency, descriptor: Descriptor}
+  | {type: PackageExtensionType.PeerDependencyMeta, selector: string, key: keyof PeerDependencyMeta, value: any}
+) & {
+  active: boolean,
+  description: string,
+};
+
 export class Configuration {
   public static telemetry: TelemetryManager | null = null;
 
@@ -756,11 +804,7 @@ export class Configuration {
 
   public invalid: Map<string, string> = new Map();
 
-  public packageExtensions: Map<IdentHash, Array<{
-    descriptor: Descriptor,
-    changes: Set<string>,
-    patch: (pkg: Package) => void,
-  }>> = new Map();
+  public packageExtensions: Map<IdentHash, Array<[string, Array<PackageExtension>]>> = new Map();
 
   public limits: Map<string, Limit> = new Map();
 
@@ -1159,7 +1203,7 @@ export class Configuration {
     try {
       this.use(source, data, folder, opts);
     } catch (error) {
-      error.message += ` (in ${source})`;
+      error.message += ` (in ${formatUtils.pretty(this, source, formatUtils.Type.PATH)})`;
       throw error;
     }
   }
@@ -1199,7 +1243,7 @@ export class Configuration {
       try {
         parsed = parseValue(this, key, data[key], definition, folder);
       } catch (error) {
-        error.message += ` in ${source}`;
+        error.message += ` in ${formatUtils.pretty(this, source, formatUtils.Type.PATH)}`;
         throw error;
       }
 
@@ -1323,25 +1367,21 @@ export class Configuration {
       const extension = new Manifest();
       extension.load(extensionData);
 
-      miscUtils.getArrayWithDefault(packageExtensions, descriptor.identHash).push({
-        descriptor,
-        changes: new Set([
-          ...[
-            ...extension.dependencies.values(),
-            ...extension.peerDependencies.values(),
-          ].map(descriptor => {
-            return structUtils.stringifyIdent(descriptor);
-          }),
-          ...extension.dependenciesMeta.keys(),
-          ...extension.peerDependenciesMeta.keys(),
-        ]),
-        patch: pkg => {
-          pkg.dependencies = new Map([...pkg.dependencies, ...extension.dependencies]);
-          pkg.peerDependencies = new Map([...pkg.peerDependencies, ...extension.peerDependencies]);
-          pkg.dependenciesMeta = new Map([...pkg.dependenciesMeta, ...extension.dependenciesMeta]);
-          pkg.peerDependenciesMeta = new Map([...pkg.peerDependenciesMeta, ...extension.peerDependenciesMeta]);
-        },
-      });
+      const extensionsPerIdent = miscUtils.getArrayWithDefault(packageExtensions, descriptor.identHash);
+
+      const extensionsPerRange: Array<PackageExtension> = [];
+      extensionsPerIdent.push([descriptor.range, extensionsPerRange]);
+
+      for (const dependency of extension.dependencies.values())
+        extensionsPerRange.push({type: PackageExtensionType.Dependency, descriptor: dependency, active: false, description: `${structUtils.stringifyIdent(descriptor)} > ${structUtils.stringifyIdent(dependency)}`});
+      for (const peerDependency of extension.peerDependencies.values())
+        extensionsPerRange.push({type: PackageExtensionType.PeerDependency, descriptor: peerDependency, active: false, description: `${structUtils.stringifyIdent(descriptor)} >> ${structUtils.stringifyIdent(peerDependency)}`});
+
+      for (const [selector, meta] of extension.peerDependenciesMeta) {
+        for (const [key, value] of Object.entries(meta)) {
+          extensionsPerRange.push({type: PackageExtensionType.PeerDependencyMeta, selector, key: key as keyof typeof meta, value, active: false, description: `${structUtils.stringifyIdent(descriptor)} >> ${selector} / ${key}`});
+        }
+      }
     };
 
     for (const [descriptorString, extensionData] of this.get(`packageExtensions`))
@@ -1361,17 +1401,37 @@ export class Configuration {
     if (this.packageExtensions == null)
       throw new Error(`refreshPackageExtensions has to be called before normalizing packages`);
 
-    const extensionList = this.packageExtensions.get(original.identHash);
-    if (typeof extensionList !== `undefined`) {
+    const extensionsPerIdent = this.packageExtensions.get(original.identHash);
+    if (typeof extensionsPerIdent !== `undefined`) {
       const version = original.version;
 
       if (version !== null) {
-        const extensionEntry = extensionList.find(({descriptor}) => {
-          return semverUtils.satisfiesWithPrereleases(version, descriptor.range);
-        });
+        for (const [range, extensionsPerRange] of extensionsPerIdent) {
+          if (!semverUtils.satisfiesWithPrereleases(version, range))
+            continue;
 
-        if (typeof extensionEntry !== `undefined`) {
-          extensionEntry.patch(pkg);
+          for (const extension of extensionsPerRange) {
+            switch (extension.type) {
+              case PackageExtensionType.Dependency: {
+                pkg.dependencies.set(extension.descriptor.identHash, extension.descriptor);
+                extension.active = true;
+              } break;
+
+              case PackageExtensionType.PeerDependency: {
+                pkg.peerDependencies.set(extension.descriptor.identHash, extension.descriptor);
+                extension.active = true;
+              } break;
+
+              case PackageExtensionType.PeerDependencyMeta: {
+                miscUtils.getFactoryWithDefault(pkg.peerDependenciesMeta, extension.selector, () => ({} as PeerDependencyMeta))[extension.key] = extension.value;
+                extension.active = true;
+              } break;
+
+              default: {
+                miscUtils.assertNever(extension);
+              } break;
+            }
+          }
         }
       }
     }

@@ -49,7 +49,7 @@ jobs:
     - name: 'Running node_modules install with self-validation'
       run: |
         source scripts/e2e-setup-ci.sh
-        git clone https://github.com/babel/babel.git -b next-8-dev
+        git clone https://github.com/babel/babel.git
         cd babel
         NM_DEBUG_LEVEL=1 YARN_NODE_LINKER=node-modules yarn
       shell: bash

@@ -28,6 +28,32 @@ const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Projec
   return workspaceList;
 };
 
+/**
+ * Find workspaces marked as dependencies/devDependencies of the current workspace recursively.
+ *
+ * @param rootWorkspace root workspace
+ * @param project project
+ *
+ * @returns all the workspaces marked as dependencies
+ */
+const getWorkspaceDependenciesRecursive = (rootWorkspace: Workspace, project: Project): Set<Workspace> => {
+  const workspaceList = new Set<Workspace>();
+
+  const visitWorkspace = (workspace: Workspace) => {
+    const dependencies = new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]);
+    for (const descriptor of dependencies.values()) {
+      const foundWorkspace = project.tryWorkspaceByDescriptor(descriptor);
+      if (foundWorkspace !== null && !workspaceList.has(foundWorkspace)) {
+        workspaceList.add(foundWorkspace);
+        visitWorkspace(foundWorkspace);
+      }
+    }
+  };
+
+  visitWorkspace(rootWorkspace);
+  return workspaceList;
+};
+
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesForeachCommand extends BaseCommand {
   @Command.String()
@@ -39,6 +65,9 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   // TODO: remove in next major
   @Command.Boolean(`-a`, {hidden: true})
   allLegacy: boolean = false;
+
+  @Command.Boolean(`-R,--recursive`, {description: `Find packages via dependencies/devDependencies instead of using the workspaces field`})
+  recursive: boolean = false;
 
   @Command.Boolean(`-A,--all`, {description: `Run the command on all workspaces of a project`})
   all?: boolean;
@@ -61,14 +90,14 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   @Command.Boolean(`--topological-dev`, {description: `Run the command after all workspaces it depends on (regular + dev) have finished`})
   topologicalDev: boolean = false;
 
-  @Command.Array(`--include`, {description: `An array of glob pattern idents that acts as a whitelist of workspaces`})
+  @Command.Array(`--include`, {description: `An array of glob pattern idents; only matching workspaces will be traversed`})
   include: Array<string> = [];
 
-  @Command.Array(`--exclude`, {description: `An array of glob pattern idents that acts as a blacklist of workspaces`})
+  @Command.Array(`--exclude`, {description: `An array of glob pattern idents; matching workspaces won't be traversed`})
   exclude: Array<string> = [];
 
-  @Command.Boolean(`--private`, {description: `Also run the command on private workspaces`})
-  private: boolean = true;
+  @Command.Boolean(`--no-private`, {description: `Avoid running the command on private workspaces`})
+  publicOnly: boolean = false;
 
   static schema = yup.object().shape({
     jobs: yup.number().min(2),
@@ -92,6 +121,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       - If \`-t,--topological\` is set, Yarn will only run the command after all workspaces that it depends on through the \`dependencies\` field have successfully finished executing. If \`--topological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
 
       - If \`-A,--all\` is set, Yarn will run the command on all the workspaces of a project. By default yarn runs the command only on current and all its descendant workspaces.
+
+      - If \`-R,--recursive\` is set, Yarn will find workspaces to run the command on by recursively evaluating \`dependencies\` and \`devDependencies\` fields, instead of looking at the \`workspaces\` fields.
 
       - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
@@ -132,7 +163,10 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       ? project.topLevelWorkspace
       : cwdWorkspace!;
 
-    const candidates = [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
+    const candidates = this.recursive
+      ? [rootWorkspace, ...getWorkspaceDependenciesRecursive(rootWorkspace, project)]
+      : [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
+
     const workspaces: Array<Workspace> = [];
 
     for (const workspace of candidates) {
@@ -150,7 +184,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       if (this.exclude.length > 0 && micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.exclude))
         continue;
 
-      if (this.private === false && workspace.manifest.private === true)
+      if (this.publicOnly && workspace.manifest.private === true)
         continue;
 
       workspaces.push(workspace);

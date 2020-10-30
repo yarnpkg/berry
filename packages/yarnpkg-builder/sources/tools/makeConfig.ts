@@ -41,6 +41,7 @@ function getBuildPlugin() {
   return [new BuildPlugin({
     context: npath.join(process.cwd(), `../..`),
     datadog: {
+      endPoint: `app.datadoghq.eu`,
       apiKey: process.env.DD_API_KEY,
       prefix: `webpack`,
       tags: [
@@ -58,7 +59,7 @@ export const makeConfig = (config: webpack.Configuration): webpack.Configuration
   mode: `none`,
   devtool: false,
 
-  target: `node`,
+  target: `node10.19`,
 
   node: {
     __dirname: false,

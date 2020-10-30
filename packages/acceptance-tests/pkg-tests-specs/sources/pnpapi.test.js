@@ -20,6 +20,15 @@ describe(`Plug'n'Play API`, () => {
 
   describe(`std - v1`, () => {
     test(
+      `it shouldn't report the project parent directory as being part of the project`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(source(`require('pnpapi').findPackageLocator('${npath.fromPortablePath(ppath.dirname(path))}/')`)).resolves.toEqual(null);
+      }),
+    );
+
+    test(
       `it should expose resolveToUnqualified`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`install`);

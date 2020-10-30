@@ -17,8 +17,8 @@ const SearchContainer = styled.div`
 
 // home page (/:lang/)
 const shouldFocus = path =>
-  path.endsWith('/') ||
-  path.replace(/\/[a-zA-Z-]+\/?/, '').length === 0;
+  path.endsWith(`/`) ||
+  path.replace(/\/[a-zA-Z-]+\/?/, ``).length === 0;
 
 class RefinementList extends Component {
   componentWillReceiveProps(newProps) {
@@ -47,11 +47,11 @@ class RefinementList extends Component {
 const VirtualRefinementList = connectRefinementList(RefinementList);
 
 export const SearchBar = ({searchState, onSearchStateChange, tags, setTags, owners, setOwners}) => (
-  <SearchContainer className={searchState.query ? 'searching' : ''}>
+  <SearchContainer className={searchState.query ? `searching` : ``}>
     <SearchBox
-      autoFocus={shouldFocus(typeof window !== 'undefined' ? window.location.pathname : '')}
+      autoFocus={shouldFocus(typeof window !== `undefined` ? window.location.pathname : ``)}
       translations={{
-        placeholder: 'Search packages (i.e. babel, webpack, react…)',
+        placeholder: `Search packages (i.e. babel, webpack, react…)`,
       }}
     />
     <VirtualRefinementList

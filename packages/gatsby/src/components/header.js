@@ -14,6 +14,7 @@ const HeaderContainer = styled.div`
     position: sticky;
     top: 0;
     z-index: 1;
+    border-bottom: var(--header-border-bottom);
   }
 `;
 
@@ -238,6 +239,8 @@ const MenuEntry = styled.div`
     ${ifDesktop} {
       &.active {
         border-bottom-color: #2188b6;
+        font-weight: 600;
+        color: rgb(0, 122, 162);
       }
     }
 
