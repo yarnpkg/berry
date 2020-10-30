@@ -42567,6 +42567,14 @@ function makeManager(pnpapi, opts) {
   }
 
   function findApiPathFor(modulePath) {
+    for (const [apiPath, apiEntry] of apiMetadata) {
+      const locator = apiEntry.instance.findPackageLocator(modulePath);
+
+      if (locator) {
+        return apiPath;
+      }
+    }
+
     const start = ppath.resolve(npath.toPortablePath(modulePath));
     let curr;
     let next = start;

@@ -96,6 +96,14 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
   }
 
   function findApiPathFor(modulePath: NativePath) {
+    for (const [apiPath, apiEntry] of apiMetadata) {
+      const locator = apiEntry.instance.findPackageLocator(modulePath);
+
+      if (locator) {
+        return apiPath;
+      }
+    }
+
     const start = ppath.resolve(npath.toPortablePath(modulePath));
 
     let curr: PortablePath;
