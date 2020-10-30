@@ -9,7 +9,6 @@ import semver                                      from 'semver';
 
 import {PassThrough, Writable}                     from 'stream';
 
-import {LogLevel}                                  from './ConfigurableReport';
 import {CorePlugin}                                from './CorePlugin';
 import {Manifest, PeerDependencyMeta}              from './Manifest';
 import {MultiFetcher}                              from './MultiFetcher';
@@ -369,7 +368,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
       description: `Log level override, set to null to remove override`,
       type: SettingsType.STRING,
       isNullable: true,
-      values: [LogLevel.DISCARD, LogLevel.ERROR, LogLevel.INFO, LogLevel.WARNING],
+      values: Object.values(formatUtils.LogLevel),
     },
   },
 
@@ -468,7 +467,7 @@ export interface ConfigurationValueMap {
   caFilePath: PortablePath | null;
   enableStrictSsl: boolean;
 
-  logFilter: Map<string, LogLevel | null>;
+  logFilter: Map<string, formatUtils.LogLevel | null>;
 
   // Settings related to telemetry
   enableTelemetry: boolean;
