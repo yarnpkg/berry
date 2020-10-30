@@ -150,13 +150,6 @@ export class Manifest {
     this.indent = getIndent(content);
   }
 
-  /**
-   * Replaces all backslashes with slashes
-   */
-  private normalizeSlashes(str: string) {
-    return str.replace(/\\/g, `/`) as PortablePath;
-  }
-
   load(data: any) {
     if (typeof data !== `object` || data === null)
       throw new Error(`Utterly invalid manifest data (${data})`);
@@ -214,20 +207,20 @@ export class Manifest {
       this.languageName = data.languageName;
 
     if (typeof data.main === `string`)
-      this.main = this.normalizeSlashes(data.main);
+      this.main = normalizeSlashes(data.main);
 
     if (typeof data.module === `string`)
-      this.module = this.normalizeSlashes(data.module);
+      this.module = normalizeSlashes(data.module);
 
     if (data.browser != null) {
       if (typeof data.browser === `string`) {
-        this.browser = this.normalizeSlashes(data.browser);
+        this.browser = normalizeSlashes(data.browser);
       } else {
         this.browser = new Map();
         for (const [key, value] of Object.entries(data.browser)) {
           this.browser.set(
-            this.normalizeSlashes(key) ,
-            typeof value === `string` ? this.normalizeSlashes(value) : (value as boolean)
+            normalizeSlashes(key) ,
+            typeof value === `string` ? normalizeSlashes(value) : (value as boolean)
           );
         }
       }
@@ -235,7 +228,7 @@ export class Manifest {
 
     if (typeof data.bin === `string`) {
       if (this.name !== null) {
-        this.bin = new Map([[this.name.name, this.normalizeSlashes(data.bin)]]);
+        this.bin = new Map([[this.name.name, normalizeSlashes(data.bin)]]);
       } else {
         errors.push(new Error(`String bin field, but no attached package name`));
       }
@@ -246,7 +239,7 @@ export class Manifest {
           continue;
         }
 
-        this.bin.set(key, this.normalizeSlashes(value));
+        this.bin.set(key, normalizeSlashes(value));
       }
     }
 
@@ -405,20 +398,20 @@ export class Manifest {
         this.publishConfig.access = data.publishConfig.access;
 
       if (typeof data.publishConfig.main === `string`)
-        this.publishConfig.main = this.normalizeSlashes(data.publishConfig.main);
+        this.publishConfig.main = normalizeSlashes(data.publishConfig.main);
 
       if (typeof data.publishConfig.module === `string`)
-        this.publishConfig.module = this.normalizeSlashes(data.publishConfig.module);
+        this.publishConfig.module = normalizeSlashes(data.publishConfig.module);
 
       if (data.publishConfig.browser != null) {
         if (typeof data.publishConfig.browser === `string`) {
-          this.publishConfig.browser = this.normalizeSlashes(data.publishConfig.browser);
+          this.publishConfig.browser = normalizeSlashes(data.publishConfig.browser);
         } else {
           this.publishConfig.browser = new Map();
           for (const [key, value] of Object.entries(data.publishConfig.browser)) {
             this.publishConfig.browser.set(
-              this.normalizeSlashes(key) ,
-              typeof value === `string` ? this.normalizeSlashes(value) : (value as boolean)
+              normalizeSlashes(key) ,
+              typeof value === `string` ? normalizeSlashes(value) : (value as boolean)
             );
           }
         }
@@ -429,7 +422,7 @@ export class Manifest {
 
       if (typeof data.publishConfig.bin === `string`) {
         if (this.name !== null) {
-          this.publishConfig.bin = new Map([[this.name.name, this.normalizeSlashes(data.publishConfig.bin)]]);
+          this.publishConfig.bin = new Map([[this.name.name, normalizeSlashes(data.publishConfig.bin)]]);
         } else {
           errors.push(new Error(`String bin field, but no attached package name`));
         }
@@ -442,7 +435,7 @@ export class Manifest {
             continue;
           }
 
-          this.publishConfig.bin.set(key, this.normalizeSlashes(value));
+          this.publishConfig.bin.set(key, normalizeSlashes(value));
         }
       }
 
@@ -455,7 +448,7 @@ export class Manifest {
             continue;
           }
 
-          this.publishConfig.executableFiles.add(this.normalizeSlashes(value));
+          this.publishConfig.executableFiles.add(normalizeSlashes(value));
         }
       }
     }
@@ -876,4 +869,8 @@ function isManifestFieldCompatible(rules: Array<string>, actual: string) {
 
   // Denylists with allowlisted items should be treated as allowlists for `os` and `cpu` in `package.json`
   return isOnDenylist && isNotOnAllowlist;
+}
+
+function normalizeSlashes(str: string) {
+  return str.replace(/\\/g, `/`) as PortablePath;
 }
