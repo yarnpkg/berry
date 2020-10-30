@@ -27,7 +27,7 @@ export function makeIdent(scope: string | null, name: string): Ident {
 }
 
 /**
- * Creates an descriptor for a package
+ * Creates a descriptor for a package
  * @param ident the ident of the package (see `makeIdent`)
  * @param range the range (for example `^1.0.0`)
  */
@@ -36,7 +36,7 @@ export function makeDescriptor(ident: Ident, range: string): Descriptor {
 }
 
 /**
- * Creates an locator for a package
+ * Creates a locator for a package
  * @param ident the ident of the package (see `makeIdent`)
  * @param range the reference (for example `1.0.0`)
  */
@@ -473,7 +473,6 @@ export function parseFileStyleRange(range: string, {protocol}: {protocol: string
   const parentLocator = parseLocator(params.locator, true);
   const path = selector as PortablePath;
 
-  console.log(arguments, {parentLocator, path})
   return {parentLocator, path};
 }
 

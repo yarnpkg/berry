@@ -34,7 +34,7 @@ export interface Ident {
 }
 
 /**
- * Unique hash of a package scope, name and version range.
+ * Unique hash of a package scope, name, and version range.
  *
  * Used as an identifier.
  *
