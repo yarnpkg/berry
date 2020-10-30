@@ -1,10 +1,9 @@
 import sliceAnsi                           from '@arcanis/slice-ansi';
 import {Writable}                          from 'stream';
 
-import {ConfigurableReport}                from './ConfigurableReport';
 import {Configuration}                     from './Configuration';
 import {MessageName, stringifyMessageName} from './MessageName';
-import {ProgressDefinition}                from './Report';
+import {ProgressDefinition, Report}        from './Report';
 import * as formatUtils                    from './formatUtils';
 import {Locator}                           from './types';
 
@@ -110,7 +109,7 @@ export function formatNameWithHyperlink(name: MessageName | null, {configuration
   return `\u001b]8;;${href}\u0007${code}\u001b]8;;\u0007`;
 }
 
-export class StreamReport extends ConfigurableReport {
+export class StreamReport extends Report {
   static async start(opts: StreamReportOptions, cb: (report: StreamReport) => Promise<void>) {
     const report = new this(opts);
 
@@ -127,7 +126,7 @@ export class StreamReport extends ConfigurableReport {
         ? `${name}: ${message}`
         : message;
 
-      report.writeReportWarning(MessageName.UNNAMED, fullMessage);
+      report.reportWarning(MessageName.UNNAMED, fullMessage);
     };
 
     try {
@@ -185,7 +184,9 @@ export class StreamReport extends ConfigurableReport {
     forgettableBufferSize = BASE_FORGETTABLE_BUFFER_SIZE,
     forgettableNames = new Set(),
   }: StreamReportOptions) {
-    super(configuration);
+    super();
+
+    formatUtils.addLogFilterSupport(this, {configuration});
 
     this.configuration = configuration;
     this.forgettableBufferSize = forgettableBufferSize;
@@ -223,12 +224,12 @@ export class StreamReport extends ConfigurableReport {
     this.cacheMissCount += 1;
 
     if (typeof message !== `undefined` && !this.configuration.get(`preferAggregateCacheInfo`)) {
-      this.writeReportInfo(MessageName.FETCH_NOT_CACHED, message);
+      this.reportInfo(MessageName.FETCH_NOT_CACHED, message);
     }
   }
 
   startTimerSync<T>(what: string, cb: () => T) {
-    this.writeReportInfo(null, `┌ ${what}`);
+    this.reportInfo(null, `┌ ${what}`);
 
     const before = Date.now();
     this.indent += 1;
@@ -243,15 +244,15 @@ export class StreamReport extends ConfigurableReport {
       this.indent -= 1;
 
       if (this.configuration.get(`enableTimers`) && after - before > 200) {
-        this.writeReportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
+        this.reportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
       } else {
-        this.writeReportInfo(null, `└ Completed`);
+        this.reportInfo(null, `└ Completed`);
       }
     }
   }
 
   async startTimerPromise<T>(what: string, cb: () => Promise<T>) {
-    this.writeReportInfo(null, `┌ ${what}`);
+    this.reportInfo(null, `┌ ${what}`);
 
     if (GROUP !== null)
       this.stdout.write(GROUP.start(what));
@@ -272,9 +273,9 @@ export class StreamReport extends ConfigurableReport {
         this.stdout.write(GROUP.end(what));
 
       if (this.configuration.get(`enableTimers`) && after - before > 200) {
-        this.writeReportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
+        this.reportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
       } else {
-        this.writeReportInfo(null, `└ Completed`);
+        this.reportInfo(null, `└ Completed`);
       }
     }
   }
@@ -300,11 +301,11 @@ export class StreamReport extends ConfigurableReport {
     if (this.indent === 0) {
       this.writeLineWithForgettableReset(``);
     } else {
-      this.writeReportInfo(null, ``);
+      this.reportInfo(null, ``);
     }
   }
 
-  writeReportInfo(name: MessageName | null, text: string) {
+  reportInfo(name: MessageName | null, text: string) {
     if (!this.includeInfos)
       return;
 
@@ -329,7 +330,7 @@ export class StreamReport extends ConfigurableReport {
     }
   }
 
-  writeReportWarning(name: MessageName, text: string) {
+  reportWarning(name: MessageName, text: string) {
     this.warningCount += 1;
 
     if (!this.includeWarnings)
@@ -342,7 +343,7 @@ export class StreamReport extends ConfigurableReport {
     }
   }
 
-  writeReportError(name: MessageName, text: string) {
+  reportError(name: MessageName, text: string) {
     this.errorCount += 1;
 
     if (!this.json) {
@@ -420,11 +421,11 @@ export class StreamReport extends ConfigurableReport {
       : installStatus;
 
     if (this.errorCount > 0) {
-      this.writeReportError(MessageName.UNNAMED, message);
+      this.reportError(MessageName.UNNAMED, message);
     } else if (this.warningCount > 0) {
-      this.writeReportWarning(MessageName.UNNAMED, message);
+      this.reportWarning(MessageName.UNNAMED, message);
     } else {
-      this.writeReportInfo(MessageName.UNNAMED, message);
+      this.reportInfo(MessageName.UNNAMED, message);
     }
   }
 
@@ -478,7 +479,7 @@ export class StreamReport extends ConfigurableReport {
       }
     }
 
-    this.writeReportInfo(MessageName.FETCH_NOT_CACHED, fetchStatus);
+    this.reportInfo(MessageName.FETCH_NOT_CACHED, fetchStatus);
   }
 
   private clearProgress({delta = 0, clear = false}: {delta?: number, clear?: boolean}) {
