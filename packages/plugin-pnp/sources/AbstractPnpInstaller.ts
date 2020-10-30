@@ -53,21 +53,13 @@ export abstract class AbstractPnpInstaller implements Installer {
     const key1 = structUtils.requirableIdent(pkg);
     const key2 = pkg.reference;
 
-    const hasVirtualInstances =
-      pkg.peerDependencies.size > 0 &&
-      !structUtils.isVirtualLocator(pkg) &&
-      !this.opts.project.tryWorkspaceByLocator(pkg);
+    const manifest = await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
 
-    const manifest = !hasVirtualInstances || this.opts.skipIncompatiblePackageLinking
-      ? await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs})
-      : null;
     const isManifestCompatible = this.checkAndReportManifestIncompatibility(manifest, pkg);
     if (this.opts.skipIncompatiblePackageLinking && !isManifestCompatible)
       return {packageLocation: null, buildDirective: null};
 
-    const buildScripts = !hasVirtualInstances
-      ? await this.getBuildScripts(pkg, manifest, fetchResult)
-      : [];
+    const buildScripts = await this.getBuildScripts(pkg, manifest, fetchResult);
 
     const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
 
@@ -86,7 +78,7 @@ export abstract class AbstractPnpInstaller implements Installer {
       buildScripts.length = 0;
     }
 
-    const packageFs = !hasVirtualInstances && pkg.linkType !== LinkType.SOFT
+    const packageFs = pkg.linkType !== LinkType.SOFT
       ? await this.transformPackage(pkg, manifest, fetchResult, dependencyMeta, {hasBuildScripts: buildScripts.length > 0})
       : fetchResult.packageFs;
 
@@ -117,9 +109,6 @@ export abstract class AbstractPnpInstaller implements Installer {
       linkType: pkg.linkType,
       discardFromLookup: fetchResult.discardFromLookup || false,
     });
-
-    if (hasVirtualInstances)
-      this.blacklistedPaths.add(packageLocation);
 
     return {
       packageLocation: packageRawLocation,
