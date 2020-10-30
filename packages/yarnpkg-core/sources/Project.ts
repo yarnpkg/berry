@@ -2122,8 +2122,48 @@ function applyVirtualResolutionMutations({
     }
   };
 
+  const devirtualizeWorkspacesIfPossible = () => {
+    const instances = new Map<IdentHash, {pkg: Package, descriptor: Descriptor, instanceCount: number}>();
+
+    // find any workspaces that only have one instance
+    for (const descriptor of allDescriptors.values()) {
+      const resolution = allResolutions.get(descriptor.descriptorHash);
+      if (!resolution) continue;
+
+      const pkg = allPackages.get(resolution);
+      if (!pkg) continue;
+
+      if (structUtils.isVirtualLocator(pkg)) {
+        if (project.tryWorkspaceByLocator(pkg)) {
+          instances.set(pkg.identHash, {pkg, descriptor, instanceCount: (instances.get(pkg.identHash)?.instanceCount ?? 0) + 1});
+        }
+      }
+    }
+
+    for (const [, {pkg, descriptor, instanceCount}] of instances) {
+      if (instanceCount === 1) {
+        const devirtualizedPackage = structUtils.devirtualizePackage(pkg);
+        const devirtualizedDescriptor = structUtils.devirtualizeDescriptor(descriptor);
+
+        for (const [,pkg] of allPackages) {
+          if (pkg.dependencies.has(descriptor.identHash)) {
+            pkg.dependencies.delete(descriptor.identHash);
+            pkg.dependencies.set(devirtualizedDescriptor.identHash, devirtualizedDescriptor);
+          }
+        }
+
+        allResolutions.set(devirtualizedDescriptor.descriptorHash, devirtualizedPackage.locatorHash);
+        allDescriptors.set(devirtualizedDescriptor.descriptorHash, devirtualizedDescriptor);
+
+        allPackages.set(devirtualizedPackage.locatorHash, devirtualizedPackage);
+      }
+    }
+  }
+
   for (const workspace of project.workspaces) {
     volatileDescriptors.delete(workspace.anchoredDescriptor.descriptorHash);
     resolvePeerDependencies(workspace.anchoredLocator, true, false);
   }
+
+  devirtualizeWorkspacesIfPossible();
 }

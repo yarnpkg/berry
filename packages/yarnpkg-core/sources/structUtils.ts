@@ -95,6 +95,13 @@ export function isVirtualLocator(locator: Locator): boolean {
   return locator.reference.startsWith(VIRTUAL_PROTOCOL);
 }
 
+export function devirtualizePackage(pkg: Package): Package {
+  if (!isVirtualLocator(pkg))
+    throw new Error(`Not a virtual package`);
+
+  return renamePackage(pkg, devirtualizeLocator(pkg));
+}
+
 export function devirtualizeDescriptor(descriptor: Descriptor): Descriptor {
   if (!isVirtualDescriptor(descriptor))
     throw new Error(`Not a virtual descriptor`);
