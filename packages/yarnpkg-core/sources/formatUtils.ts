@@ -338,11 +338,11 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
     return routeMessage(this, ...args, LogLevel.Info);
   };
 
-  report.reportInfo = function (...args) {
+  report.reportWarning = function (...args) {
     return routeMessage(this, ...args, LogLevel.Warning);
   };
 
-  report.reportInfo = function (...args) {
+  report.reportError = function (...args) {
     return routeMessage(this, ...args, LogLevel.Error);
   };
 }
