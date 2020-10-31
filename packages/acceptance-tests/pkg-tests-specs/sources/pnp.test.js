@@ -1726,4 +1726,37 @@ describe(`Plug'n'Play`, () => {
       });
     })
   );
+
+  test(
+    `it should not use the wrong pnpapi for a path owned by another pnpapi`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mktempPromise(async portalTarget => {
+        await xfs.writeJsonPromise(`${portalTarget}/package.json`, {
+          name: `portal`,
+          dependencies: {
+            [`no-deps`]: `*`,
+          },
+          peerDependencies: {
+            [`left-pad`]: `*`,
+          },
+        });
+
+        await xfs.writeFilePromise(
+          `${portalTarget}/index.js`,
+          `module.exports = require.resolve('no-deps', {paths: [__dirname]})`
+        );
+
+        await xfs.writeJsonPromise(`${path}/package.json`, {
+          dependencies: {
+            [`portal`]: `portal:${portalTarget}`,
+          },
+        });
+
+        await run(`install`, {cwd: portalTarget});
+        await run(`install`);
+
+        await expect(source(`require('portal')`)).resolves.toMatch(`no-deps-npm-2.0.0-`);
+      });
+    })
+  );
 });
