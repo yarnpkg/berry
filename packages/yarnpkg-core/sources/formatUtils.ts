@@ -297,7 +297,7 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
     .map(([key, level]) => [new RegExp(key), level] as const);
 
   const findLogLevel = (name: MessageName | null, text: string, defaultLevel: LogLevel) => {
-    if (logFilterByRegExp.length === 0 || name === null || name === MessageName.UNNAMED)
+    if (name === null || name === MessageName.UNNAMED)
       return defaultLevel;
 
     if (name !== null) {
@@ -306,6 +306,9 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
         return levelByName ?? defaultLevel;
       }
     }
+
+    if (logFilterByRegExp.length === 0)
+      return defaultLevel;
 
     for (const [regExp, logLevel] of logFilterByRegExp)
       if (regExp.test(text))

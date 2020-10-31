@@ -1,6 +1,6 @@
 describe(`Features`, () => {
   describe(`LogFilter`, () => {
-    test(`it should store allow configuration by message name`, makeTemporaryEnv({
+    test(`it should allow to filter by message name`, makeTemporaryEnv({
       dependencies: {
         [`no-deps-scripted`]: `1.0.0`,
       },
@@ -45,7 +45,7 @@ describe(`Features`, () => {
       expect(stdout).not.toMatch(/Done with warnings/);
     }));
 
-    test(`it should store allow configuration by message text`, makeTemporaryEnv({
+    test(`it should allow to filter by message text`, makeTemporaryEnv({
       dependencies: {
         [`no-deps-scripted`]: `1.0.0`,
       },
