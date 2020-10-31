@@ -40,6 +40,9 @@ export default class YarnCommand extends BaseCommand {
   @Command.Boolean(`--inline-builds`, {description: `Verbosely print the output of the build steps of dependencies`})
   inlineBuilds?: boolean;
 
+  @Command.Boolean(`--skip-builds`, {description: `Skip the build step altogether`})
+  skipBuilds?: boolean = false;
+
   @Command.String(`--cache-folder`, {hidden: true})
   cacheFolder?: string;
 
@@ -68,6 +71,8 @@ export default class YarnCommand extends BaseCommand {
       If the \`--check-cache\` option is set, Yarn will always refetch the packages and will ensure that their checksum matches what's 1/ described in the lockfile 2/ inside the existing cache files (if present). This is recommended as part of your CI workflow if you're both following the Zero-Installs model and accepting PRs from third-parties, as they'd otherwise have the ability to alter the checked-in packages before submitting them.
 
       If the \`--inline-builds\` option is set, Yarn will verbosely print the output of the build steps of your dependencies (instead of writing them into individual files). This is likely useful mostly for debug purposes only when using Docker-like environments.
+
+      If the \`--skip-builds\` option is set, Yarn will not run the build scripts at all. Note that this is different from setting \`enableScripts\` to false because the later will disable build scripts, and thus affect the content of the artifacts generated on disk, whereas the former will just disable the build step - but not the scripts themselves, which just won't run.
     `,
     examples: [[
       `Install the project`,
@@ -277,7 +282,7 @@ export default class YarnCommand extends BaseCommand {
       stdout: this.context.stdout,
       includeLogs: true,
     }, async (report: StreamReport) => {
-      await project.install({cache, report, immutable});
+      await project.install({cache, report, immutable, skipBuild: this.skipBuilds});
     });
 
     return report.exitCode();
