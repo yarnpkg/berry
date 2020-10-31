@@ -2123,7 +2123,7 @@ function applyVirtualResolutionMutations({
   };
 
   const devirtualizeSingleInstanceWorkspaces = () => {
-    const packagesWithInstanceCount = new Map<LocatorHash, {virtualPackage: Package, descriptor: Descriptor, instanceCount: number}>();
+    const packagesWithInstanceCount = new Map<IdentHash, {virtualPackage: Package, descriptor: Descriptor, instanceCount: number}>();
 
     // find any workspaces that only have one instance
     for (const descriptor of allDescriptors.values()) {
@@ -2134,10 +2134,10 @@ function applyVirtualResolutionMutations({
       if (!virtualPackage) continue;
 
       if (structUtils.isVirtualLocator(virtualPackage)) {
-        packagesWithInstanceCount.set(virtualPackage.locatorHash, {
+        packagesWithInstanceCount.set(virtualPackage.identHash, {
           virtualPackage,
           descriptor,
-          instanceCount: (packagesWithInstanceCount.get(virtualPackage.locatorHash)?.instanceCount ?? 0) + 1,
+          instanceCount: (packagesWithInstanceCount.get(virtualPackage.identHash)?.instanceCount ?? 0) + 1,
         });
       }
     }
