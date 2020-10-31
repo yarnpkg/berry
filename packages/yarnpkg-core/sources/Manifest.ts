@@ -1,12 +1,12 @@
-import {FakeFS, Filename, NodeFS, PortablePath, npath, ppath} from '@yarnpkg/fslib';
-import {Resolution, parseResolution, stringifyResolution}     from '@yarnpkg/parsers';
-import semver                                                 from 'semver';
+import {FakeFS, Filename, NodeFS, PortablePath, ppath}    from '@yarnpkg/fslib';
+import {Resolution, parseResolution, stringifyResolution} from '@yarnpkg/parsers';
+import semver                                             from 'semver';
 
-import * as miscUtils                                         from './miscUtils';
-import * as semverUtils                                       from './semverUtils';
-import * as structUtils                                       from './structUtils';
-import {IdentHash}                                            from './types';
-import {Ident, Descriptor}                                    from './types';
+import * as miscUtils                                     from './miscUtils';
+import * as semverUtils                                   from './semverUtils';
+import * as structUtils                                   from './structUtils';
+import {IdentHash}                                        from './types';
+import {Ident, Descriptor}                                from './types';
 
 export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
 export type HardDependencies = 'dependencies' | 'devDependencies';
@@ -207,22 +207,28 @@ export class Manifest {
       this.languageName = data.languageName;
 
     if (typeof data.main === `string`)
-      this.main = data.main;
+      this.main = normalizeSlashes(data.main);
 
     if (typeof data.module === `string`)
-      this.module = data.module;
+      this.module = normalizeSlashes(data.module);
 
     if (data.browser != null) {
       if (typeof data.browser === `string`) {
-        this.browser = data.browser;
+        this.browser = normalizeSlashes(data.browser);
       } else {
-        this.browser = new Map(Object.entries(data.browser) as Iterable<[PortablePath, PortablePath | boolean]>);
+        this.browser = new Map();
+        for (const [key, value] of Object.entries(data.browser)) {
+          this.browser.set(
+            normalizeSlashes(key) ,
+            typeof value === `string` ? normalizeSlashes(value) : (value as boolean)
+          );
+        }
       }
     }
 
     if (typeof data.bin === `string`) {
       if (this.name !== null) {
-        this.bin = new Map([[this.name.name, data.bin]]);
+        this.bin = new Map([[this.name.name, normalizeSlashes(data.bin)]]);
       } else {
         errors.push(new Error(`String bin field, but no attached package name`));
       }
@@ -233,7 +239,7 @@ export class Manifest {
           continue;
         }
 
-        this.bin.set(key, value as PortablePath);
+        this.bin.set(key, normalizeSlashes(value));
       }
     }
 
@@ -392,23 +398,31 @@ export class Manifest {
         this.publishConfig.access = data.publishConfig.access;
 
       if (typeof data.publishConfig.main === `string`)
-        this.publishConfig.main = data.publishConfig.main;
+        this.publishConfig.main = normalizeSlashes(data.publishConfig.main);
 
       if (typeof data.publishConfig.module === `string`)
-        this.publishConfig.module = data.publishConfig.module;
+        this.publishConfig.module = normalizeSlashes(data.publishConfig.module);
 
-      if (typeof data.publishConfig.browser === `string`)
-        this.publishConfig.browser = data.publishConfig.browser;
-
-      if (typeof data.publishConfig.browser === `object` && data.publishConfig.browser !== null)
-        this.publishConfig.browser = new Map(Object.entries(data.publishConfig.browser) as Iterable<[PortablePath, PortablePath | boolean]>);
+      if (data.publishConfig.browser != null) {
+        if (typeof data.publishConfig.browser === `string`) {
+          this.publishConfig.browser = normalizeSlashes(data.publishConfig.browser);
+        } else {
+          this.publishConfig.browser = new Map();
+          for (const [key, value] of Object.entries(data.publishConfig.browser)) {
+            this.publishConfig.browser.set(
+              normalizeSlashes(key) ,
+              typeof value === `string` ? normalizeSlashes(value) : (value as boolean)
+            );
+          }
+        }
+      }
 
       if (typeof data.publishConfig.registry === `string`)
         this.publishConfig.registry = data.publishConfig.registry;
 
       if (typeof data.publishConfig.bin === `string`) {
         if (this.name !== null) {
-          this.publishConfig.bin = new Map([[this.name.name, data.publishConfig.bin]]);
+          this.publishConfig.bin = new Map([[this.name.name, normalizeSlashes(data.publishConfig.bin)]]);
         } else {
           errors.push(new Error(`String bin field, but no attached package name`));
         }
@@ -421,7 +435,7 @@ export class Manifest {
             continue;
           }
 
-          this.publishConfig.bin.set(key, value as PortablePath);
+          this.publishConfig.bin.set(key, normalizeSlashes(value));
         }
       }
 
@@ -434,7 +448,7 @@ export class Manifest {
             continue;
           }
 
-          this.publishConfig.executableFiles.add(npath.toPortablePath(value));
+          this.publishConfig.executableFiles.add(normalizeSlashes(value));
         }
       }
     }
@@ -855,4 +869,8 @@ function isManifestFieldCompatible(rules: Array<string>, actual: string) {
 
   // Denylists with allowlisted items should be treated as allowlists for `os` and `cpu` in `package.json`
   return isOnDenylist && isNotOnAllowlist;
+}
+
+function normalizeSlashes(str: string) {
+  return str.replace(/\\/g, `/`) as PortablePath;
 }

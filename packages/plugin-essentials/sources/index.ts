@@ -33,9 +33,13 @@ import up                                                       from './commands
 import why                                                      from './commands/why';
 import listWorkspaces                                           from './commands/workspaces/list';
 import workspace                                                from './commands/workspace';
+import * as dedupeUtils                                         from './suggestUtils';
 import * as suggestUtils                                        from './suggestUtils';
 
-export {suggestUtils};
+export {
+  dedupeUtils,
+  suggestUtils,
+};
 
 export interface Hooks {
   afterWorkspaceDependencyAddition?: (
