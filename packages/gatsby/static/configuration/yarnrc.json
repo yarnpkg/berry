@@ -280,7 +280,7 @@
       "patternProperties": {
         ".*": {
           "description": "Log level to use, `info`, `warning`, or `error`, use `discard` to discard the message",
-          "default": null,
+          "examples": "discard",
           "oneOf": [
             {"type": "null"},
             {
@@ -290,14 +290,12 @@
                 "info",
                 "warning",
                 "error"
-              ]
+              ],
             }
           ]
         }
       },
-      "default": {
-        "YN0000": {}
-      }
+      "_exampleKeys": ["YN0005"]
     },
     "lockfileFilename": {
       "_package": "@yarnpkg/core",
