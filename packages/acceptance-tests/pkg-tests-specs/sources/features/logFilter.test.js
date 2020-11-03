@@ -56,26 +56,30 @@ describe(`Features`, () => {
       let {stdout} = await run(`install`);
       expect(stdout).toMatch(/lists build scripts/); // sanity check
 
-      await run(`config`, `set`, `logFilter["lists build scripts"]`, `discard`);
+      const key = `logFilter["no-deps-scripted@npm:1.0.0 lists build scripts, but its build has been explicitly disabled through configuration."]`;
+
+      await run(`config`, `set`, key, `discard`);
 
       ({stdout} = await run(`install`));
       expect(stdout).not.toMatch(/lists build scripts/);
+      expect(stdout).not.toMatch(/Failed with errors/);
+      expect(stdout).not.toMatch(/Done with warnings/);
 
-      await run(`config`, `set`, `logFilter["lists build scripts"]`, `info`);
+      await run(`config`, `set`, key, `info`);
 
       ({stdout} = await run(`install`));
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
 
-      await run(`config`, `set`, `logFilter["lists build scripts"]`, `warning`);
+      await run(`config`, `set`, key, `warning`);
 
       ({stdout} = await run(`install`));
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).toMatch(/Done with warnings/);
 
-      await run(`config`, `set`, `logFilter["lists build scripts"]`, `error`);
+      await run(`config`, `set`, key, `error`);
 
       let hadError = false;
       try {
@@ -87,6 +91,28 @@ describe(`Features`, () => {
       expect(hadError).toBe(true);
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).toMatch(/Failed with errors/);
+      expect(stdout).not.toMatch(/Done with warnings/);
+    }));
+
+    test(`it should allow to filter by message text with colors enabled`, makeTemporaryEnv({
+      dependencies: {
+        [`no-deps-scripted`]: `1.0.0`,
+      },
+      dependenciesMeta: {
+        [`no-deps-scripted`]: {built: false},
+      },
+    }, async ({path, run, source}) => {
+      let {stdout} = await run(`install`, {env: {FORCE_COLOR: 1}});
+      expect(stdout).toMatch(/lists build scripts/); // sanity check
+      expect(stdout).not.toMatch(/no-deps-scripted@npm:1.0.0 lists build scripts/); // sanity check
+
+      const key = `logFilter["no-deps-scripted@npm:1.0.0 lists build scripts, but its build has been explicitly disabled through configuration."]`;
+
+      await run(`config`, `set`, key, `info`);
+
+      ({stdout} = await run(`install`, {env: {FORCE_COLOR: 1}}));
+      expect(stdout).toMatch(/lists build scripts/);
+      expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
     }));
   });

@@ -292,9 +292,8 @@ export enum LogLevel {
 export function addLogFilterSupport(report: Report, {configuration}: {configuration: Configuration}) {
   const logFilter = configuration.get(`logFilter`);
 
-  const logFilterByRegExp = [...logFilter]
-    .filter(([key]) => !/^YN\d{4}$/.test(key))
-    .map(([key, level]) => [new RegExp(key), level] as const);
+  const logFilterByMessage = new Map([...logFilter]
+    .filter(([key]) => !/^YN\d{4}$/.test(key)));
 
   const findLogLevel = (name: MessageName | null, text: string, defaultLevel: LogLevel) => {
     if (name === null || name === MessageName.UNNAMED)
@@ -307,14 +306,10 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
       }
     }
 
-    if (logFilterByRegExp.length === 0)
+    if (logFilterByMessage.size === 0)
       return defaultLevel;
 
-    for (const [regExp, logLevel] of logFilterByRegExp)
-      if (regExp.test(text))
-        return logLevel ?? defaultLevel;
-
-    return defaultLevel;
+    return logFilterByMessage.get(chalk.reset(text)) ?? defaultLevel;
   };
 
   const reportInfo = report.reportInfo;
