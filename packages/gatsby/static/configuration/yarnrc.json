@@ -275,12 +275,12 @@
       "default": "./.yarn/install-state.gz"
     },
     "logFilter": {
-      "description": "Defines overrides for log levels for message names or regular expressions matching the log message text",
+      "description": "Defines overrides for log levels for message names or message text",
       "type": "object",
       "patternProperties": {
-        ".*": {
-          "description": "Log level to use, `info`, `warning`, or `error`, use `discard` to discard the message",
-          "examples": "discard",
+        "^YN.*": {
+          "description": "Log level to use for all messages with this name, `info`, `warning`, or `error`, use `discard` to discard all messages logged with this name",
+          "examples": ["error"],
           "oneOf": [
             {"type": "null"},
             {
@@ -290,12 +290,28 @@
                 "info",
                 "warning",
                 "error"
-              ],
+              ]
+            }
+          ]
+        },
+        ".*": {
+          "description": "Log level to use to use for this specific message, `info`, `warning`, or `error`, use `discard` to discard the message",
+          "examples": ["discard"],
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "string",
+              "enum": [
+                "discard",
+                "info",
+                "warning",
+                "error"
+              ]
             }
           ]
         }
       },
-      "_exampleKeys": ["YN0005"]
+      "_exampleKeys": ["YN0005", "\"example@npm:1.2.3 lists build scripts, but its build has been explicitly disabled through configuration.\""]
     },
     "lockfileFilename": {
       "_package": "@yarnpkg/core",
