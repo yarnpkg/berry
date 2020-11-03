@@ -659,11 +659,7 @@ describe(`Plug'n'Play`, () => {
     ),
   );
 
-  // Skipped because not supported (we can't require files from within other dependency trees, since we couldn't
-  // reconcile them together: dependency tree A could think that package X has deps Y@1 while dependency tree B
-  // could think that X has deps Y@2 instead. Since they would share the same location on the disk, PnP wouldn't
-  // be able to tell which one should be used)
-  test.skip(
+  test(
     `it should support the 'paths' option from require.resolve (different dependency trees)`,
     makeTemporaryEnv(
       {
