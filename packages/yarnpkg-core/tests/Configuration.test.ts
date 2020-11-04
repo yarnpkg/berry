@@ -182,5 +182,85 @@ describe(`Configuration`, () => {
         expect(scopeConfiguration.get(`bar`)?.get(`npmAlwaysAuth`)).toBe(true);
       });
     });
+
+    it(`should merge mergeable array properties`, async () => {
+      await initializeConfiguration({
+        logFilters: [
+          {
+            code: `YN0005`,
+            level: `info`,
+          },
+        ],
+
+        unsafeHttpWhitelist: [
+          `example.com`,
+        ],
+      }, async dir => {
+        const configuration = await Configuration.find(dir, null);
+
+        configuration.useWithSource(`second file`, {
+          logFilters: [
+            {
+              code: `YN0027`,
+              level: `error`,
+            },
+          ],
+
+          unsafeHttpWhitelist: [
+            `evil.com`,
+          ],
+        }, dir);
+
+        expect(configuration.get(`logFilters`)).toEqual([
+          new Map(Object.entries({
+            code: `YN0027`,
+            text: undefined,
+            level: `error`,
+          })),
+          new Map(Object.entries({
+            code: `YN0005`,
+            text: undefined,
+            level: `info`,
+          })),
+        ]);
+        expect(configuration.get(`unsafeHttpWhitelist`)).toEqual([
+          `example.com`,
+        ]);
+
+        configuration.useWithSource(`override file`, {
+          logFilters: [
+            {
+              code: `YN0066`,
+              level: `warning`,
+            },
+          ],
+
+          unsafeHttpWhitelist: [
+            `yarnpkg.com`,
+          ],
+        }, dir, {overwrite: true});
+
+        expect(configuration.get(`logFilters`)).toEqual([
+          new Map(Object.entries({
+            code: `YN0027`,
+            text: undefined,
+            level: `error`,
+          })),
+          new Map(Object.entries({
+            code: `YN0005`,
+            text: undefined,
+            level: `info`,
+          })),
+          new Map(Object.entries({
+            code: `YN0066`,
+            text: undefined,
+            level: `warning`,
+          })),
+        ]);
+        expect(configuration.get(`unsafeHttpWhitelist`)).toEqual([
+          `yarnpkg.com`,
+        ]);
+      });
+    });
   });
 });

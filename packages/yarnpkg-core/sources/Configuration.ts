@@ -79,8 +79,7 @@ export const FormatType = formatUtils.Type;
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
   description: string,
   type: T,
-  isArray?: boolean,
-};
+} & ({isArray?: false} | {isArray: true, concatenateValues?: boolean});
 
 export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE> & {
   properties: {[propertyName: string]: SettingsDefinition},
@@ -365,6 +364,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `Overrides for log levels`,
     type: SettingsType.SHAPE,
     isArray: true,
+    concatenateValues: true,
     properties: {
       code: {
         description: `Code of the messages covered by this override`,
@@ -1257,7 +1257,7 @@ export class Configuration {
         }
       }
 
-      if (this.sources.has(key) && !(overwrite || definition.type === SettingsType.MAP))
+      if (this.sources.has(key) && !(overwrite || definition.type === SettingsType.MAP || definition.isArray && definition.concatenateValues))
         continue;
 
       let parsed;
@@ -1274,6 +1274,13 @@ export class Configuration {
           ? [...previousValue, ...parsed as Map<string, any>]
           : [...parsed as Map<string, any>, ...previousValue]
         ));
+        this.sources.set(key, `${this.sources.get(key)}, ${source}`);
+      } else if (definition.isArray && definition.concatenateValues) {
+        const previousValue = this.values.get(key) as Array<unknown>;
+        this.values.set(key, overwrite
+          ? [...previousValue, ...parsed as Array<unknown>]
+          : [...parsed as Array<unknown>, ...previousValue]
+        );
         this.sources.set(key, `${this.sources.get(key)}, ${source}`);
       } else {
         this.values.set(key, parsed);
