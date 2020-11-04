@@ -228,7 +228,7 @@ export const Array = ({theme, name, suffix, anchorTarget, children}: PropsWithCh
     {React.Children.map(children, (child, index) =>
       <div key={index} style={{display: `flex`}}>
         <div>{theme.arrays.prefix}</div>
-        <div>
+        <div style={{width: `100%`}}>
           {React.cloneElement(child as JSX.Element, {suffix: theme.arrays.suffix})}
         </div>
       </div>
