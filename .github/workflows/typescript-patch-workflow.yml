@@ -4,7 +4,7 @@ on:
     - master
   pull_request:
     paths:
-    - .github/workflows/e2e-typescript-workflow.yml
+    - .github/workflows/typescript-patch-workflow.yml
     - packages/plugin-compat/sources/patches/typescript.patch.ts
     - scripts/e2e-setup-ci.sh
 
@@ -17,6 +17,7 @@ jobs:
     strategy:
       matrix:
         tsversion: [3.5, 3.6, 3.7, 3.8, 3.9, 4.0, beta]
+      fail-fast: false
     steps:
     - uses: actions/checkout@master
 
