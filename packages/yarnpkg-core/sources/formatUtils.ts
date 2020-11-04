@@ -286,13 +286,13 @@ export enum LogLevel {
 }
 
 /**
- * Add support support for the `logFilter` setting to the specified Report
+ * Add support support for the `logFilters` setting to the specified Report
  * instance.
  */
 export function addLogFilterSupport(report: Report, {configuration}: {configuration: Configuration}) {
-  const logFilter = configuration.get(`logFilter`);
+  const logFilters = configuration.get(`logFilters`);
 
-  const logFilterByMessage = new Map([...logFilter]
+  const logFilterByMessage = new Map([...logFilters]
     .filter(([key]) => !/^YN\d{4}$/.test(key)));
 
   const findLogLevel = (name: MessageName | null, text: string, defaultLevel: LogLevel) => {
@@ -300,7 +300,7 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
       return defaultLevel;
 
     if (name !== null) {
-      const levelByName = logFilter.get(stringifyMessageName(name));
+      const levelByName = logFilters.get(stringifyMessageName(name));
       if (typeof levelByName !== `undefined`) {
         return levelByName ?? defaultLevel;
       }

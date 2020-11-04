@@ -361,8 +361,8 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: true,
   },
 
-  logFilter: {
-    description: `Override for log levels`,
+  logFilters: {
+    description: `Overrides for log levels`,
     type: SettingsType.MAP,
     valueDefinition: {
       description: `Log level override, set to null to remove override`,
@@ -467,7 +467,7 @@ export interface ConfigurationValueMap {
   caFilePath: PortablePath | null;
   enableStrictSsl: boolean;
 
-  logFilter: Map<string, formatUtils.LogLevel | null>;
+  logFilters: Map<string, formatUtils.LogLevel | null>;
 
   // Settings related to telemetry
   enableTelemetry: boolean;

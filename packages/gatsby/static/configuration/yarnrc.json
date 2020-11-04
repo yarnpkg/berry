@@ -274,7 +274,7 @@
       "format": "uri-reference",
       "default": "./.yarn/install-state.gz"
     },
-    "logFilter": {
+    "logFilters": {
       "description": "Defines overrides for log levels for message names or message text",
       "type": "object",
       "patternProperties": {
