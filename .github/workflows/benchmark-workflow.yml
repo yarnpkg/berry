@@ -60,7 +60,7 @@ jobs:
     - name: 'Creates a temporary directory'
       run: |
         BENCH_DIR=$(mktemp -d)
-        echo "::set-env name=BENCH_DIR::$BENCH_DIR"
+        echo "BENCH_DIR=$BENCH_DIR" >> "$GITHUB_ENV"
 
     - name: 'Run the performance test'
       run: |
