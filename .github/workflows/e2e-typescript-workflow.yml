@@ -43,14 +43,20 @@ jobs:
           v36@npm:typescript@3.6 \
           v37@npm:typescript@3.7 \
           v38@npm:typescript@3.8 \
+          v39@npm:typescript@3.9 \
+          v40@npm:typescript@4.0 \
           beta@npm:typescript@beta
-
-    - name: 'Running the integration test'
+  test:
+    strategy:
+      matrix:
+        tsversion: [3.5, 3.6, 3.7, 3.8, 3.9, 4.0, beta]
+    steps:
+    - name: 'Running the integration test on ${{ matrix.tsversion }}'
       run: |
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add typescript
+        yarn add typescript@${{ matrix.tsversion }}
 
         yarn add ts-pnp left-pad @types/left-pad
 
