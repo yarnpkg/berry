@@ -1,6 +1,4 @@
 on:
-  schedule:
-  - cron: '0 */4 * * *'
   push:
     branches:
     - master
@@ -10,12 +8,15 @@ on:
     - packages/plugin-compat/sources/patches/typescript.patch.ts
     - scripts/e2e-setup-ci.sh
 
-name: 'E2E TypeScript'
+name: 'TypeScript PnP patch'
 jobs:
   chore:
-    name: 'Validating TypeScript'
+    name: 'Validating individual TypeScript versions'
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        tsversion: [3.5, 3.6, 3.7, 3.8, 3.9, 4.0, beta]
     steps:
     - uses: actions/checkout@master
 
@@ -27,32 +28,12 @@ jobs:
     - name: 'Build the standard bundle'
       run: |
         node ./scripts/run-yarn.js build:cli
-
-    - name: 'Checking some behaviors against the latest TypeScript'
-      run: |
-        yarn up typescript
-        yarn node ./scripts/test-typescript-patch.js
-
-    - name: 'Installing all versions of TS'
+    - name: 'Running the integration test on ${{ matrix.tsversion }}'
       run: |
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add \
-          v35@npm:typescript@3.5 \
-          v36@npm:typescript@3.6 \
-          v37@npm:typescript@3.7 \
-          v38@npm:typescript@3.8 \
-          v39@npm:typescript@3.9 \
-          v40@npm:typescript@4.0 \
-          beta@npm:typescript@beta
-
-    - name: 'Running the integration test'
-      run: |
-        source scripts/e2e-setup-ci.sh
-
-        yarn init -p
-        yarn add typescript
+        yarn add typescript@${{ matrix.tsversion }}
 
         yarn add ts-pnp left-pad @types/left-pad
 
