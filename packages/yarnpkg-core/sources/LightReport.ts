@@ -37,6 +37,8 @@ export class LightReport extends Report {
   constructor({configuration, stdout, suggestInstall = true}: LightReportOptions) {
     super();
 
+    formatUtils.addLogFilterSupport(this, {configuration});
+
     this.configuration = configuration;
     this.stdout = stdout;
     this.suggestInstall = suggestInstall;

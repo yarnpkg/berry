@@ -1,11 +1,11 @@
-import sliceAnsi                    from '@arcanis/slice-ansi';
-import {Writable}                   from 'stream';
+import sliceAnsi                           from '@arcanis/slice-ansi';
+import {Writable}                          from 'stream';
 
-import {Configuration}              from './Configuration';
-import {MessageName}                from './MessageName';
-import {ProgressDefinition, Report} from './Report';
-import * as formatUtils             from './formatUtils';
-import {Locator}                    from './types';
+import {Configuration}                     from './Configuration';
+import {MessageName, stringifyMessageName} from './MessageName';
+import {ProgressDefinition, Report}        from './Report';
+import * as formatUtils                    from './formatUtils';
+import {Locator}                           from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration,
@@ -79,7 +79,7 @@ const defaultStyle = (supportsEmojis && Object.keys(PROGRESS_STYLES).find(name =
 
 export function formatName(name: MessageName | null, {configuration, json}: {configuration: Configuration, json: boolean}) {
   const num = name === null ? 0 : name;
-  const label = `YN${num.toString(10).padStart(4, `0`)}`;
+  const label = stringifyMessageName(num);
 
   if (!json && name === null) {
     return formatUtils.pretty(configuration, label, `grey`);
@@ -185,6 +185,8 @@ export class StreamReport extends Report {
     forgettableNames = new Set(),
   }: StreamReportOptions) {
     super();
+
+    formatUtils.addLogFilterSupport(this, {configuration});
 
     this.configuration = configuration;
     this.forgettableBufferSize = forgettableBufferSize;

@@ -3,6 +3,8 @@ import styled                                 from '@emotion/styled';
 import {FaLink}                               from 'react-icons/fa';
 import React, {PropsWithChildren, useContext} from 'react';
 
+import {SymlScalar}                           from './syml';
+
 export type Theme = {
   colors: {
     background: string;
@@ -113,7 +115,7 @@ const marginContainer = css`
 `;
 
 const DescriptionAnchor = styled.div<ThemeProps>`
-  margin-top: -3em;
+  margin-top: -2.5em;
 
   padding: 1.5em 0;
 
@@ -222,11 +224,11 @@ export type ArrayProps = KeyProps & {
 
 export const Array = ({theme, name, suffix, anchorTarget, children}: PropsWithChildren<ArrayProps>) => <div>
   <div>{name && <><Key theme={theme} name={name} anchorTarget={anchorTarget} /></>}{theme.arrays.leading}</div>
-  <div style={{paddingLeft: `2em`}}>
+  <div style={{position: `relative`, paddingLeft: `2em`, top: !(children as any).every((child: any) => child.type === SymlScalar) ? `2em` : ``}}>
     {React.Children.map(children, (child, index) =>
       <div key={index} style={{display: `flex`}}>
         <div>{theme.arrays.prefix}</div>
-        <div>
+        <div style={{width: `100%`}}>
           {React.cloneElement(child as JSX.Element, {suffix: theme.arrays.suffix})}
         </div>
       </div>

@@ -12,6 +12,7 @@ import {
 
   Theme,
   ComponentPropsWithoutTheme,
+  Dictionary,
 } from './syntax';
 
 const theme: Theme = {
@@ -69,6 +70,10 @@ export const SymlObjectProperty = (props: ComponentPropsWithoutTheme<typeof Dict
 
 export const SymlScalarProperty = (props: ComponentPropsWithoutTheme<typeof ScalarProperty>) => {
   return <ScalarProperty {...props} theme={theme} />;
+};
+
+export const SymlDictionary = (props: ComponentPropsWithoutTheme<typeof Dictionary>) => {
+  return <Dictionary {...props} theme={theme}/>;
 };
 
 export const SymlScalar = (props: ComponentPropsWithoutTheme<typeof Scalar>) => {

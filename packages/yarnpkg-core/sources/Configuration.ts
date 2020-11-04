@@ -1,5 +1,5 @@
-import {DEFAULT_COMPRESSION_LEVEL}                 from '@yarnpkg/fslib';
 import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL}                 from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                  from '@yarnpkg/parsers';
 import camelcase                                   from 'camelcase';
 import {isCI}                                      from 'ci-info';
@@ -361,6 +361,31 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: true,
   },
 
+  logFilters: {
+    description: `Overrides for log levels`,
+    type: SettingsType.SHAPE,
+    isArray: true,
+    properties: {
+      code: {
+        description: `Code of the messages covered by this override`,
+        type: SettingsType.STRING,
+        default: undefined,
+      },
+      text: {
+        description: `Code of the texts covered by this override`,
+        type: SettingsType.STRING,
+        default: undefined,
+      },
+      level: {
+        description: `Log level override, set to null to remove override`,
+        type: SettingsType.STRING,
+        values: Object.values(formatUtils.LogLevel),
+        isNullable: true,
+        default: undefined,
+      },
+    },
+  },
+
   // Settings related to telemetry
   enableTelemetry: {
     description: `If true, telemetry will be periodically sent, following the rules in https://yarnpkg.com/advanced/telemetry`,
@@ -452,9 +477,11 @@ export interface ConfigurationValueMap {
   httpTimeout: number;
   httpRetry: number;
   networkConcurrency: number;
-  networkSettings: Map<string, MapConfigurationValue<{ caFilePath: PortablePath | null, enableNetwork: boolean | null }>>;
+  networkSettings: Map<string, MapConfigurationValue<{caFilePath: PortablePath | null, enableNetwork: boolean | null}>>;
   caFilePath: PortablePath | null;
   enableStrictSsl: boolean;
+
+  logFilters: Array<MapConfigurationValue<{code?: string, text?: string, level?: formatUtils.LogLevel | null}>>;
 
   // Settings related to telemetry
   enableTelemetry: boolean;
@@ -593,7 +620,9 @@ function parseShape(configuration: Configuration, path: string, value: unknown, 
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Object configuration settings "${path}" must be an object`);
 
-  const result: Map<string, any> = getDefaultValue(configuration, definition);
+  const result: Map<string, any> = getDefaultValue(configuration, definition, {
+    ignoreArrays: true,
+  });
 
   if (value === null)
     return result;
@@ -634,9 +663,12 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
   return result;
 }
 
-function getDefaultValue(configuration: Configuration, definition: SettingsDefinition) {
+function getDefaultValue(configuration: Configuration, definition: SettingsDefinition, {ignoreArrays = false}: {ignoreArrays?: boolean} = {}) {
   switch (definition.type) {
     case SettingsType.SHAPE: {
+      if (definition.isArray && !ignoreArrays)
+        return [];
+
       const result = new Map<string, any>();
 
       for (const [propKey, propDefinition] of Object.entries(definition.properties))
@@ -646,6 +678,9 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
     } break;
 
     case SettingsType.MAP: {
+      if (definition.isArray && !ignoreArrays)
+        return [];
+
       return new Map<string, any>();
     } break;
 
