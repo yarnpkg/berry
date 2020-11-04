@@ -8725,7 +8725,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=a72311"],
             ["val-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:2.1.1"],
             ["webpack", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:5.1.1"],
-            ["webpack-merge", "npm:5.0.8"]
+            ["webpack-merge", "npm:5.3.0"]
           ],
           "packagePeers": [
             "@types/typescript",
@@ -8760,7 +8760,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=a72311"],
             ["val-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:2.1.1"],
             ["webpack", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:5.1.1"],
-            ["webpack-merge", "npm:5.0.8"]
+            ["webpack-merge", "npm:5.3.0"]
           ],
           "linkType": "SOFT",
         }]
@@ -35644,10 +35644,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["npm:5.0.8", {
-          "packageLocation": "./.yarn/cache/webpack-merge-npm-5.0.8-60fd32e7dc-6a91c76abf.zip/node_modules/webpack-merge/",
+        ["npm:5.3.0", {
+          "packageLocation": "./.yarn/cache/webpack-merge-npm-5.3.0-40e1ef6a92-7486c5a45a.zip/node_modules/webpack-merge/",
           "packageDependencies": [
-            ["webpack-merge", "npm:5.0.8"],
+            ["webpack-merge", "npm:5.3.0"],
             ["clone-deep", "npm:4.0.1"],
             ["wildcard", "npm:2.0.0"]
           ],

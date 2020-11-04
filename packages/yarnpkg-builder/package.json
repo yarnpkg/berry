@@ -20,7 +20,7 @@
     "tslib": "^1.13.0",
     "val-loader": "^2.1.1",
     "webpack": "^5.1.1",
-    "webpack-merge": "^5.0.8"
+    "webpack-merge": "^5.3.0"
   },
   "devDependencies": {
     "@datadog/build-plugin": "0.3.6",
