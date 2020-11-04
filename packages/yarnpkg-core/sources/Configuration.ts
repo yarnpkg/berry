@@ -664,11 +664,11 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
 }
 
 function getDefaultValue(configuration: Configuration, definition: SettingsDefinition, {ignoreArrays = false}: {ignoreArrays?: boolean} = {}) {
-  if (definition.isArray && !ignoreArrays)
-    return [];
-
   switch (definition.type) {
     case SettingsType.SHAPE: {
+      if (definition.isArray && !ignoreArrays)
+        return [];
+
       const result = new Map<string, any>();
 
       for (const [propKey, propDefinition] of Object.entries(definition.properties))
@@ -678,6 +678,9 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
     } break;
 
     case SettingsType.MAP: {
+      if (definition.isArray && !ignoreArrays)
+        return [];
+
       return new Map<string, any>();
     } break;
 
