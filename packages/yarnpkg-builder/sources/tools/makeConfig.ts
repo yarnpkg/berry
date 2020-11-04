@@ -31,13 +31,10 @@ export function findTsconfig() {
   return npath.join(currTsContextRoot, `tsconfig.json`);
 }
 
-<<<<<<< HEAD
-=======
 // We don't want to add the BuildPlugin outside of our infra.
 function getBuildPlugin() {
   if (!process.env.BUILD_MONITORING_ENABLED)
     return [];
-
 
   const BuildPlugin = require(`@datadog/build-plugin/dist/webpack`).BuildPlugin;
   return [new BuildPlugin({
@@ -56,8 +53,6 @@ function getBuildPlugin() {
   })];
 }
 
-// @ts-expect-error: @types/webpack-merge depends on @types/webpack, which isn't compatible with the webpack 5 types
->>>>>>> origin/master
 export const makeConfig = (config: webpack.Configuration): webpack.Configuration => merge(identity<webpack.Configuration>({
   mode: `none`,
   devtool: false,
