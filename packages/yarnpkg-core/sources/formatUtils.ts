@@ -292,24 +292,40 @@ export enum LogLevel {
 export function addLogFilterSupport(report: Report, {configuration}: {configuration: Configuration}) {
   const logFilters = configuration.get(`logFilters`);
 
-  const logFilterByMessage = new Map([...logFilters]
-    .filter(([key]) => !/^YN\d{4}$/.test(key)));
+  const logFiltersByCode = new Map<string, LogLevel | null>();
+  const logFiltersByText = new Map<string, LogLevel | null>();
+
+  for (const {code, text, level} of logFilters) {
+    if (typeof level === `undefined`)
+      continue;
+
+    if (typeof code !== `undefined`)
+      logFiltersByCode.set(code, level);
+
+    if (typeof text !== `undefined`) {
+      logFiltersByText.set(text, level);
+    }
+  }
 
   const findLogLevel = (name: MessageName | null, text: string, defaultLevel: LogLevel) => {
     if (name === null || name === MessageName.UNNAMED)
       return defaultLevel;
 
-    if (name !== null) {
-      const levelByName = logFilters.get(stringifyMessageName(name));
-      if (typeof levelByName !== `undefined`) {
-        return levelByName ?? defaultLevel;
+    if (logFiltersByText.size > 0) {
+      const level = logFiltersByText.get(chalk.reset(text));
+      if (typeof level !== `undefined`) {
+        return level ?? defaultLevel;
       }
     }
 
-    if (logFilterByMessage.size === 0)
-      return defaultLevel;
+    if (logFiltersByText.size > 0) {
+      const level = logFiltersByCode.has(stringifyMessageName(name));
+      if (typeof level !== `undefined`) {
+        return level ?? defaultLevel;
+      }
+    }
 
-    return logFilterByMessage.get(chalk.reset(text)) ?? defaultLevel;
+    return defaultLevel;
   };
 
   const reportInfo = report.reportInfo;
