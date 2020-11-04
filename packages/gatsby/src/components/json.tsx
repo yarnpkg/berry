@@ -8,6 +8,7 @@ import {
   DictionaryProperty,
   ScalarProperty,
 
+  Dictionary,
   Scalar,
 
   Theme,
@@ -69,6 +70,10 @@ export const JsonObjectProperty = (props: ComponentPropsWithoutTheme<typeof Dict
 
 export const JsonScalarProperty = (props: ComponentPropsWithoutTheme<typeof ScalarProperty>) => {
   return <ScalarProperty {...props} theme={theme} />;
+};
+
+export const JsonDictionary = (props: ComponentPropsWithoutTheme<typeof Dictionary>) => {
+  return <Dictionary {...props} theme={theme}/>;
 };
 
 export const JsonScalar = (props: ComponentPropsWithoutTheme<typeof Scalar>) => {
