@@ -1,3 +1,13 @@
+const makeCodeFilter = level => JSON.stringify([{
+  code: `YN0005`,
+  level,
+}]);
+
+const makeTextFilter = level => JSON.stringify([{
+  text: `no-deps-scripted@npm:1.0.0 lists build scripts, but its build has been explicitly disabled through configuration.`,
+  level,
+}]);
+
 describe(`Features`, () => {
   describe(`LogFilters`, () => {
     test(`it should allow to filter by message name`, makeTemporaryEnv({
@@ -11,26 +21,26 @@ describe(`Features`, () => {
       let {stdout} = await run(`install`);
       expect(stdout).toMatch(/lists build scripts/); // sanity check
 
-      await run(`config`, `set`, `logFilters.YN0005`, `discard`);
+      await run(`config`, `set`, `logFilters`, `--json`, makeCodeFilter(`discard`));
 
       ({stdout} = await run(`install`));
       expect(stdout).not.toMatch(/lists build scripts/);
 
-      await run(`config`, `set`, `logFilters.YN0005`, `info`);
+      await run(`config`, `set`, `logFilters`, `--json`, makeCodeFilter(`info`));
 
       ({stdout} = await run(`install`));
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
 
-      await run(`config`, `set`, `logFilters.YN0005`, `warning`);
+      await run(`config`, `set`, `logFilters`, `--json`, makeCodeFilter(`warning`));
 
       ({stdout} = await run(`install`));
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).toMatch(/Done with warnings/);
 
-      await run(`config`, `set`, `logFilters.YN0005`, `error`);
+      await run(`config`, `set`, `logFilters`, `--json`, makeCodeFilter(`error`));
 
       let hadError = false;
       try {
@@ -56,30 +66,28 @@ describe(`Features`, () => {
       let {stdout} = await run(`install`);
       expect(stdout).toMatch(/lists build scripts/); // sanity check
 
-      const key = `logFilters["no-deps-scripted@npm:1.0.0 lists build scripts, but its build has been explicitly disabled through configuration."]`;
-
-      await run(`config`, `set`, key, `discard`);
+      await run(`config`, `set`, `logFilters`, `--json`, makeTextFilter(`discard`));
 
       ({stdout} = await run(`install`));
       expect(stdout).not.toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
 
-      await run(`config`, `set`, key, `info`);
+      await run(`config`, `set`, `logFilters`, `--json`, makeTextFilter(`info`));
 
       ({stdout} = await run(`install`));
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
 
-      await run(`config`, `set`, key, `warning`);
+      await run(`config`, `set`, `logFilters`, `--json`, makeTextFilter(`warning`));
 
       ({stdout} = await run(`install`));
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).toMatch(/Done with warnings/);
 
-      await run(`config`, `set`, key, `error`);
+      await run(`config`, `set`, `logFilters`, `--json`, makeTextFilter(`error`));
 
       let hadError = false;
       try {
@@ -106,9 +114,7 @@ describe(`Features`, () => {
       expect(stdout).toMatch(/lists build scripts/); // sanity check
       expect(stdout).not.toMatch(/no-deps-scripted@npm:1.0.0 lists build scripts/); // sanity check
 
-      const key = `logFilters["no-deps-scripted@npm:1.0.0 lists build scripts, but its build has been explicitly disabled through configuration."]`;
-
-      await run(`config`, `set`, key, `info`);
+      await run(`config`, `set`, `logFilters`, `--json`, makeTextFilter(`info`));
 
       ({stdout} = await run(`install`, {env: {FORCE_COLOR: 1}}));
       expect(stdout).toMatch(/lists build scripts/);

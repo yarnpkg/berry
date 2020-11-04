@@ -295,13 +295,16 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
   const logFiltersByCode = new Map<string, LogLevel | null>();
   const logFiltersByText = new Map<string, LogLevel | null>();
 
-  for (const {code, text, level} of logFilters) {
+  for (const filter of logFilters) {
+    const level = filter.get(`level`);
     if (typeof level === `undefined`)
       continue;
 
+    const code = filter.get(`code`);
     if (typeof code !== `undefined`)
       logFiltersByCode.set(code, level);
 
+    const text = filter.get(`text`);
     if (typeof text !== `undefined`) {
       logFiltersByText.set(text, level);
     }
@@ -318,8 +321,8 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
       }
     }
 
-    if (logFiltersByText.size > 0) {
-      const level = logFiltersByCode.has(stringifyMessageName(name));
+    if (logFiltersByCode.size > 0) {
+      const level = logFiltersByCode.get(stringifyMessageName(name));
       if (typeof level !== `undefined`) {
         return level ?? defaultLevel;
       }

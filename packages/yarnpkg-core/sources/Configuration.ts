@@ -364,6 +364,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   logFilters: {
     description: `Overrides for log levels`,
     type: SettingsType.SHAPE,
+    isArray: true,
     properties: {
       code: {
         description: `Code of the messages covered by this override`,
@@ -476,15 +477,11 @@ export interface ConfigurationValueMap {
   httpTimeout: number;
   httpRetry: number;
   networkConcurrency: number;
-  networkSettings: Map<string, MapConfigurationValue<{ caFilePath: PortablePath | null, enableNetwork: boolean | null }>>;
+  networkSettings: Map<string, MapConfigurationValue<{caFilePath: PortablePath | null, enableNetwork: boolean | null}>>;
   caFilePath: PortablePath | null;
   enableStrictSsl: boolean;
 
-  logFilters: Array<{
-    code?: string,
-    text?: string,
-    level?: formatUtils.LogLevel | null,
-  }>;
+  logFilters: Array<MapConfigurationValue<{code?: string, text?: string, level?: formatUtils.LogLevel | null}>>;
 
   // Settings related to telemetry
   enableTelemetry: boolean;
@@ -623,7 +620,9 @@ function parseShape(configuration: Configuration, path: string, value: unknown, 
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Object configuration settings "${path}" must be an object`);
 
-  const result: Map<string, any> = getDefaultValue(configuration, definition);
+  const result: Map<string, any> = getDefaultValue(configuration, definition, {
+    ignoreArrays: true,
+  });
 
   if (value === null)
     return result;
@@ -664,7 +663,10 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
   return result;
 }
 
-function getDefaultValue(configuration: Configuration, definition: SettingsDefinition) {
+function getDefaultValue(configuration: Configuration, definition: SettingsDefinition, {ignoreArrays = false}: {ignoreArrays?: boolean} = {}) {
+  if (definition.isArray && !ignoreArrays)
+    return [];
+
   switch (definition.type) {
     case SettingsType.SHAPE: {
       const result = new Map<string, any>();
