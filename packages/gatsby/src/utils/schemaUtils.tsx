@@ -1,12 +1,12 @@
 // @ts-expect-error: missing declaration
-import deref                                                                                            from 'json-schema-deref-sync';
-import type {JSONSchema7, JSONSchema7Definition, JSONSchema7Type}                                       from 'json-schema';
-import mergeWith                                                                                        from 'lodash/mergeWith';
-import marked                                                                                           from 'marked';
-import React                                                                                            from 'react';
+import deref                                                                                                            from 'json-schema-deref-sync';
+import type {JSONSchema7, JSONSchema7Definition, JSONSchema7Type}                                                       from 'json-schema';
+import mergeWith                                                                                                        from 'lodash/mergeWith';
+import marked                                                                                                           from 'marked';
+import React                                                                                                            from 'react';
 
-import {JsonContainer, JsonMain, JsonScalar, JsonScalarProperty, JsonObjectProperty, JsonArrayProperty} from '../components/json';
-import {SymlContainer, SymlMain, SymlScalar, SymlScalarProperty, SymlObjectProperty, SymlArrayProperty} from '../components/syml';
+import {JsonContainer, JsonMain, JsonDictionary, JsonScalar, JsonScalarProperty, JsonObjectProperty, JsonArrayProperty} from '../components/json';
+import {SymlContainer, SymlMain, SymlDictionary, SymlScalar, SymlScalarProperty, SymlObjectProperty, SymlArrayProperty} from '../components/syml';
 
 declare module 'json-schema' {
   export interface JSONSchema7 {
@@ -44,6 +44,7 @@ const SYNTAX_COMPONENTS = {
   SCALAR_PROPERTIES: {JsonScalarProperty, SymlScalarProperty},
   OBJECT_PROPERTIES: {JsonObjectProperty, SymlObjectProperty},
   ARRAY_PROPERTIES: {JsonArrayProperty, SymlArrayProperty},
+  DICTIONARIES: {JsonDictionary, SymlDictionary},
 } as const;
 
 export type SchemaState = {
@@ -153,7 +154,17 @@ export const renderArrayProperty = (name: string, definition: JSONSchema7, state
   if (!Array.isArray(exampleItems))
     throw new Error(`Missing _exampleItems / default in definition of ${name}`);
 
-  const arrayProperties = exampleItems.map(arrayProperty => renderScalar(arrayProperty, state));
+  const arrayProperties = exampleItems.map((arrayProperty, index) => {
+    if (typeof arrayProperty === `object` && arrayProperty !== null) {
+      const subDefinition = definition.items! as JSONSchema7;
+      return <>{Object.keys(arrayProperty).map(name => {
+        // @ts-ignore
+        return renderProperty(name, subDefinition.properties[name], {...state, pathSegments: [...state.pathSegments, `${index}`, name]});
+      })}</>;
+    } else {
+      return renderScalar(arrayProperty, state);
+    }
+  });
 
   const description = renderDescription(name, definition);
 
