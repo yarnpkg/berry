@@ -29,14 +29,16 @@ jobs:
     - name: 'Build the standard bundle'
       run: |
         node ./scripts/run-yarn.js build:cli
+    - name: 'Checking some behaviors against ${{ matrix.tsversion }}'
+      run: |
+        yarn up typescript@${{ matrix.tsversion }}
+        yarn node ./scripts/test-typescript-patch.js
     - name: 'Running the integration test on ${{ matrix.tsversion }}'
       run: |
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
         yarn add typescript@${{ matrix.tsversion }}
-
-        yarn node ./scripts/test-typescript-patch.js
 
         yarn add ts-pnp left-pad @types/left-pad
 
