@@ -47,10 +47,23 @@ jobs:
           v40@npm:typescript@4.0 \
           beta@npm:typescript@beta
   test:
+    name: 'Validating individual TypeScript versions'
+    runs-on: ubuntu-latest
+
     strategy:
       matrix:
         tsversion: [3.5, 3.6, 3.7, 3.8, 3.9, 4.0, beta]
     steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 10.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 10.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
     - name: 'Running the integration test on ${{ matrix.tsversion }}'
       run: |
         source scripts/e2e-setup-ci.sh
