@@ -2,6 +2,7 @@
 category: features
 path: /features/constraints
 title: "Constraints"
+description: An in-depth guide to Yarn's constraints, a feature that provides an easy way to enforce common rules across a project.
 ---
 
 > **Experimental**

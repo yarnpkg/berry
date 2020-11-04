@@ -1,32 +1,29 @@
-import {BaseCommand, WorkspaceRequiredError}                                               from '@yarnpkg/cli';
-import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions} from '@yarnpkg/core';
-import {Project, StreamReport, Workspace}                                                  from '@yarnpkg/core';
-import {structUtils}                                                                       from '@yarnpkg/core';
-import {Command, Usage, UsageError}                                                        from 'clipanion';
-import inquirer                                                                            from 'inquirer';
-import micromatch                                                                          from 'micromatch';
+import {BaseCommand, WorkspaceRequiredError}                                                                        from '@yarnpkg/cli';
+import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions, formatUtils, FormatType} from '@yarnpkg/core';
+import {Project, StreamReport, Workspace}                                                                           from '@yarnpkg/core';
+import {structUtils}                                                                                                from '@yarnpkg/core';
+import {Command, Usage, UsageError}                                                                                 from 'clipanion';
+import {prompt}                                                                                                     from 'enquirer';
+import micromatch                                                                                                   from 'micromatch';
 
-import * as suggestUtils                                                                   from '../suggestUtils';
-import {Hooks}                                                                             from '..';
+import * as suggestUtils                                                                                            from '../suggestUtils';
+import {Hooks}                                                                                                      from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpCommand extends BaseCommand {
   @Command.Rest()
   patterns: Array<string> = [];
 
-  @Command.Boolean(`-i,--interactive`)
-  interactive: boolean = false;
+  @Command.Boolean(`-i,--interactive`, {description: `Offer various choices, depending on the detected upgrade paths`})
+  interactive: boolean | null = null;
 
-  @Command.Boolean(`-v,--verbose`)
-  verbose: boolean = false;
-
-  @Command.Boolean(`-E,--exact`)
+  @Command.Boolean(`-E,--exact`, {description: `Don't use any semver modifier on the resolved range`})
   exact: boolean = false;
 
-  @Command.Boolean(`-T,--tilde`)
+  @Command.Boolean(`-T,--tilde`, {description: `Use the \`~\` semver modifier on the resolved range`})
   tilde: boolean = false;
 
-  @Command.Boolean(`-C,--caret`)
+  @Command.Boolean(`-C,--caret`, {description: `Use the \`^\` semver modifier on the resolved range`})
   caret: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -37,6 +34,8 @@ export default class UpCommand extends BaseCommand {
       If \`-i,--interactive\` is set (or if the \`preferInteractive\` settings is toggled on) the command will offer various choices, depending on the detected upgrade paths. Some upgrades require this flag in order to resolve ambiguities.
 
       The, \`-C,--caret\`, \`-E,--exact\` and  \`-T,--tilde\` options have the same meaning as in the \`add\` command (they change the modifier used when the range is missing or a tag, and are ignored when the range is explicitly set).
+
+      Generally you can see \`yarn up\` as a counterpart to what was \`yarn upgrade --latest\` in Yarn 1 (ie it ignores the ranges previously listed in your manifests), but unlike \`yarn upgrade\` which only upgraded dependencies in the current workspace, \`yarn up\` will upgrade all workspaces at the same time.
 
       This command accepts glob patterns as arguments (if valid Descriptors and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
@@ -72,15 +71,11 @@ export default class UpCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    // @ts-ignore
-    const prompt = inquirer.createPromptModule({
-      input: this.context.stdin as NodeJS.ReadStream,
-      output: this.context.stdout as NodeJS.WriteStream,
-    });
+    const interactive = this.interactive ?? configuration.get(`preferInteractive`);
 
     const modifier = suggestUtils.getModifier(this, project);
 
-    const strategies = this.interactive ? [
+    const strategies = interactive ? [
       suggestUtils.Strategy.KEEP,
       suggestUtils.Strategy.REUSE,
       suggestUtils.Strategy.PROJECT,
@@ -121,12 +116,7 @@ export default class UpCommand extends BaseCommand {
                 target,
                 existingDescriptor,
                 await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, modifier, strategies}),
-              ] as [
-                Workspace,
-                suggestUtils.Target,
-                Descriptor,
-                Array<suggestUtils.Suggestion>
-              ];
+              ] as const;
             }));
 
             isReferenced = true;
@@ -140,9 +130,9 @@ export default class UpCommand extends BaseCommand {
     }
 
     if (unreferencedPatterns.length > 1)
-      throw new UsageError(`Patterns ${unreferencedPatterns.join(`, `)} don't match any packages referenced by any workspace`);
+      throw new UsageError(`Patterns ${formatUtils.prettyList(configuration, unreferencedPatterns, FormatType.CODE)} don't match any packages referenced by any workspace`);
     if (unreferencedPatterns.length > 0)
-      throw new UsageError(`Pattern ${unreferencedPatterns[0]} doesn't match any packages referenced by any workspace`);
+      throw new UsageError(`Pattern ${formatUtils.prettyList(configuration, unreferencedPatterns, FormatType.CODE)} doesn't match any packages referenced by any workspace`);
 
     const allSuggestions = await Promise.all(allSuggestionsPromises);
 
@@ -151,18 +141,24 @@ export default class UpCommand extends BaseCommand {
       stdout: this.context.stdout,
       suggestInstall: false,
     }, async report => {
-      for (const [/*workspace*/, /*target*/, existing, suggestions] of allSuggestions) {
+      for (const [/*workspace*/, /*target*/, existing, {suggestions, rejections}] of allSuggestions) {
         const nonNullSuggestions = suggestions.filter(suggestion => {
           return suggestion.descriptor !== null;
         });
 
         if (nonNullSuggestions.length === 0) {
+          const [firstError] = rejections;
+          if (typeof firstError === `undefined`)
+            throw new Error(`Assertion failed: Expected an error to have been set`);
+
+          const prettyError = this.cli.error(firstError);
+
           if (!project.configuration.get(`enableNetwork`)) {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range (note: network resolution has been disabled)`);
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range (note: network resolution has been disabled)\n\n${prettyError}`);
           } else {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range`);
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range\n\n${prettyError}`);
           }
-        } else if (nonNullSuggestions.length > 1 && !this.interactive) {
+        } else if (nonNullSuggestions.length > 1 && !interactive) {
           report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} has multiple possible upgrade strategies; use -i to disambiguate manually`);
         }
       }
@@ -180,12 +176,12 @@ export default class UpCommand extends BaseCommand {
       Descriptor
     ]> = [];
 
-    for (const [workspace, target, /*existing*/, suggestions] of allSuggestions) {
+    for (const [workspace, target, /*existing*/, {suggestions}] of allSuggestions) {
       let selected;
 
       const nonNullSuggestions = suggestions.filter(suggestion => {
         return suggestion.descriptor !== null;
-      });
+      }) as Array<suggestUtils.Suggestion>;
 
       const firstSuggestedDescriptor = nonNullSuggestions[0].descriptor;
       const areAllTheSame = nonNullSuggestions.every(suggestion => structUtils.areDescriptorsEqual(suggestion.descriptor, firstSuggestedDescriptor));
@@ -195,17 +191,25 @@ export default class UpCommand extends BaseCommand {
       } else {
         askedQuestions = true;
         ({answer: selected} = await prompt({
-          type: `list`,
+          type: `select`,
           name: `answer`,
           message: `Which range to you want to use in ${structUtils.prettyWorkspace(configuration, workspace)} ❯ ${target}?`,
-          choices: suggestions.map(({descriptor, reason}) => descriptor ? {
-            name: reason,
-            value: descriptor as Descriptor,
-            short: structUtils.prettyDescriptor(project.configuration, descriptor),
+          choices: suggestions.map(({descriptor, name, reason}) => descriptor ? {
+            name,
+            hint: reason,
+            descriptor,
           } : {
-            name: reason,
-            disabled: (): boolean => true,
+            name,
+            hint: reason,
+            disabled: true,
           }),
+          onCancel: () => process.exit(130),
+          result(name: string) {
+            // @ts-expect-error: The enquirer types don't include find
+            return this.find(name, `descriptor`);
+          },
+          stdin: this.context.stdin as NodeJS.ReadStream,
+          stdout: this.context.stdout as NodeJS.WriteStream,
         }));
       }
 

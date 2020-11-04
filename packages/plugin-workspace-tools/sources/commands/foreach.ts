@@ -1,7 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError}               from '@yarnpkg/cli';
 import {Configuration, LocatorHash, Project, Workspace}    from '@yarnpkg/core';
 import {DescriptorHash, MessageName, Report, StreamReport} from '@yarnpkg/core';
-import {miscUtils, structUtils}                            from '@yarnpkg/core';
+import {formatUtils, miscUtils, structUtils}               from '@yarnpkg/core';
 import {Command, Usage, UsageError}                        from 'clipanion';
 import micromatch                                          from 'micromatch';
 import {cpus}                                              from 'os';
@@ -28,6 +28,32 @@ const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Projec
   return workspaceList;
 };
 
+/**
+ * Find workspaces marked as dependencies/devDependencies of the current workspace recursively.
+ *
+ * @param rootWorkspace root workspace
+ * @param project project
+ *
+ * @returns all the workspaces marked as dependencies
+ */
+const getWorkspaceDependenciesRecursive = (rootWorkspace: Workspace, project: Project): Set<Workspace> => {
+  const workspaceList = new Set<Workspace>();
+
+  const visitWorkspace = (workspace: Workspace) => {
+    const dependencies = new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]);
+    for (const descriptor of dependencies.values()) {
+      const foundWorkspace = project.tryWorkspaceByDescriptor(descriptor);
+      if (foundWorkspace !== null && !workspaceList.has(foundWorkspace)) {
+        workspaceList.add(foundWorkspace);
+        visitWorkspace(foundWorkspace);
+      }
+    }
+  };
+
+  visitWorkspace(rootWorkspace);
+  return workspaceList;
+};
+
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesForeachCommand extends BaseCommand {
   @Command.String()
@@ -36,35 +62,42 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   @Command.Proxy()
   args: Array<string> = [];
 
-  @Command.Boolean(`-a,--all`)
-  all: boolean = false;
+  // TODO: remove in next major
+  @Command.Boolean(`-a`, {hidden: true})
+  allLegacy: boolean = false;
 
-  @Command.Boolean(`-v,--verbose`)
+  @Command.Boolean(`-R,--recursive`, {description: `Find packages via dependencies/devDependencies instead of using the workspaces field`})
+  recursive: boolean = false;
+
+  @Command.Boolean(`-A,--all`, {description: `Run the command on all workspaces of a project`})
+  all?: boolean;
+
+  @Command.Boolean(`-v,--verbose`, {description: `Prefix each output line with the name of the originating workspace`})
   verbose: boolean = false;
 
-  @Command.Boolean(`-p,--parallel`)
+  @Command.Boolean(`-p,--parallel`, {description: `Run the commands in parallel`})
   parallel: boolean = false;
 
-  @Command.Boolean(`-i,--interlaced`)
+  @Command.Boolean(`-i,--interlaced`, {description: `Print the output of commands in real-time instead of buffering it`})
   interlaced: boolean = false;
 
-  @Command.String(`-j,--jobs`)
+  @Command.String(`-j,--jobs`, {description: `The maximum number of parallel tasks that the execution will be limited to`})
   jobs?: number;
 
-  @Command.Boolean(`-t,--topological`)
+  @Command.Boolean(`-t,--topological`, {description: `Run the command after all workspaces it depends on (regular) have finished`})
   topological: boolean = false;
 
-  @Command.Boolean(`--topological-dev`)
+  @Command.Boolean(`--topological-dev`, {description: `Run the command after all workspaces it depends on (regular + dev) have finished`})
   topologicalDev: boolean = false;
 
-  @Command.Array(`--include`)
+  @Command.Array(`--include`, {description: `An array of glob pattern idents; only matching workspaces will be traversed`})
   include: Array<string> = [];
 
-  @Command.Array(`--exclude`)
+  @Command.Array(`--exclude`, {description: `An array of glob pattern idents; matching workspaces won't be traversed`})
   exclude: Array<string> = [];
 
-  @Command.Boolean(`--private`)
-  private: boolean = true;
+  @Command.Boolean(`--no-private`, {description: `Avoid running the command on private workspaces`})
+  publicOnly: boolean = false;
 
   static schema = yup.object().shape({
     jobs: yup.number().min(2),
@@ -85,9 +118,11 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       - If \`-p,--parallel\` and \`-i,--interlaced\` are both set, Yarn will print the lines from the output as it receives them. If \`-i,--interlaced\` wasn't set, it would instead buffer the output from each process and print the resulting buffers only after their source processes have exited.
 
-      - If \`-t,--topological\` is set, Yarn will only run the command after all workspaces that depend on it through the \`dependencies\` field have successfully finished executing. If \`--topological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
+      - If \`-t,--topological\` is set, Yarn will only run the command after all workspaces that it depends on through the \`dependencies\` field have successfully finished executing. If \`--topological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
 
-      - If \`--all\` is set, Yarn will run the command on all the workspaces of a project. By default yarn runs the command only on current and all its descendant workspaces.
+      - If \`-A,--all\` is set, Yarn will run the command on all the workspaces of a project. By default yarn runs the command only on current and all its descendant workspaces.
+
+      - If \`-R,--recursive\` is set, Yarn will find workspaces to run the command on by recursively evaluating \`dependencies\` and \`devDependencies\` fields, instead of looking at the \`workspaces\` fields.
 
       - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
@@ -112,7 +147,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace: cwdWorkspace} = await Project.find(configuration, this.context.cwd);
 
-    if (!this.all && !cwdWorkspace)
+    const all = this.all ?? this.allLegacy;
+    if (!all && !cwdWorkspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const command = this.cli.process([this.commandName, ...this.args]) as {path: Array<string>, scriptName?: string};
@@ -123,11 +159,14 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (command.path.length === 0)
       throw new UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
 
-    const rootWorkspace = this.all
+    const rootWorkspace = all
       ? project.topLevelWorkspace
       : cwdWorkspace!;
 
-    const candidates = [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
+    const candidates = this.recursive
+      ? [rootWorkspace, ...getWorkspaceDependenciesRecursive(rootWorkspace, project)]
+      : [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
+
     const workspaces: Array<Workspace> = [];
 
     for (const workspace of candidates) {
@@ -145,7 +184,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       if (this.exclude.length > 0 && micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.exclude))
         continue;
 
-      if (this.private === false && workspace.manifest.private === true)
+      if (this.publicOnly && workspace.manifest.private === true)
         continue;
 
       workspaces.push(workspace);
@@ -166,11 +205,16 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     let commandCount = 0;
     let finalExitCode: number | null = null;
 
+    let abortNextCommands = false;
+
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
     }, async report => {
       const runCommand = async (workspace: Workspace, {commandIndex}: {commandIndex: number}) => {
+        if (abortNextCommands)
+          return -1;
+
         if (!this.parallel && this.verbose && commandIndex > 1)
           report.reportSeparator();
 
@@ -194,6 +238,13 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
           if (this.verbose && emptyStdout && emptyStderr)
             report.reportInfo(null, `${prefix} Process exited without output (exit code ${exitCode})`);
+
+          if (exitCode === 130) {
+            // Process exited with the SIGINT signal, aka ctrl+c. Since the process didn't handle
+            // the signal but chose to exit, we should exit as well.
+            abortNextCommands = true;
+            finalExitCode = exitCode;
+          }
 
           return exitCode;
         } catch (err) {
@@ -275,7 +326,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
         // The order in which the exit codes will be processed is fairly
         // opaque, so better just return a generic "1" for determinism.
-        finalExitCode = typeof errorCode !== `undefined` ? 1 : finalExitCode;
+        if (finalExitCode === null)
+          finalExitCode = typeof errorCode !== `undefined` ? 1 : finalExitCode;
 
         if ((this.topological || this.topologicalDev) && typeof errorCode !== `undefined`) {
           report.reportError(MessageName.UNNAMED, `The command failed for workspaces that are depended upon by other workspaces; can't satisfy the dependency graph`);
@@ -337,5 +389,5 @@ function getPrefix(workspace: Workspace, {configuration, commandIndex, verbose}:
   const colors = [`#2E86AB`, `#A23B72`, `#F18F01`, `#C73E1D`, `#CCE2A3`];
   const colorName = colors[commandIndex % colors.length];
 
-  return configuration.format(prefix, colorName);
+  return formatUtils.pretty(configuration, prefix, colorName);
 }

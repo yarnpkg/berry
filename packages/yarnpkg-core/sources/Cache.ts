@@ -1,19 +1,17 @@
-import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename} from '@yarnpkg/fslib';
-import {ppath, toFilename, xfs, DEFAULT_COMPRESSION_LEVEL}     from '@yarnpkg/fslib';
-import {getLibzipPromise}                                      from '@yarnpkg/libzip';
-import fs                                                      from 'fs';
+import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename, AliasFS} from '@yarnpkg/fslib';
+import {ppath, xfs, DEFAULT_COMPRESSION_LEVEL}                          from '@yarnpkg/fslib';
+import {getLibzipPromise}                                               from '@yarnpkg/libzip';
+import fs                                                               from 'fs';
 
-import {Configuration}                                         from './Configuration';
-import {MessageName}                                           from './MessageName';
-import {ReportError}                                           from './Report';
-import * as hashUtils                                          from './hashUtils';
-import * as miscUtils                                          from './miscUtils';
-import * as structUtils                                        from './structUtils';
-import {LocatorHash, Locator}                                  from './types';
+import {Configuration}                                                  from './Configuration';
+import {MessageName}                                                    from './MessageName';
+import {ReportError}                                                    from './Report';
+import * as hashUtils                                                   from './hashUtils';
+import * as miscUtils                                                   from './miscUtils';
+import * as structUtils                                                 from './structUtils';
+import {LocatorHash, Locator}                                           from './types';
 
-// Each time we'll bump this number the cache hashes will change, which will
-// cause all files to be fetched again. Use with caution.
-const CACHE_VERSION = 5;
+const CACHE_VERSION = 7;
 
 export type FetchFromCacheOptions = {
   checksums: Map<LocatorHash, Locator>,
@@ -49,7 +47,7 @@ export class Cache {
     return cache;
   }
 
-  constructor(cacheCwd: PortablePath, {configuration, immutable = configuration.get<boolean>(`enableImmutableCache`), check = false}: {configuration: Configuration, immutable?: boolean, check?: boolean}) {
+  constructor(cacheCwd: PortablePath, {configuration, immutable = configuration.get(`enableImmutableCache`), check = false}: {configuration: Configuration, immutable?: boolean, check?: boolean}) {
     this.configuration = configuration;
     this.cwd = cacheCwd;
 
@@ -123,14 +121,11 @@ export class Cache {
 
   async setup() {
     if (!this.configuration.get(`enableGlobalCache`)) {
-      await xfs.mkdirpPromise(this.cwd);
+      await xfs.mkdirPromise(this.cwd, {recursive: true});
 
-      const gitignorePath = ppath.resolve(this.cwd, toFilename(`.gitignore`));
-      const gitignoreExists = await xfs.existsPromise(gitignorePath);
+      const gitignorePath = ppath.resolve(this.cwd, `.gitignore` as Filename);
 
-      if (!gitignoreExists) {
-        await xfs.writeFilePromise(gitignorePath, `/.gitignore\n*.lock\n`);
-      }
+      await xfs.changeFilePromise(gitignorePath, `/.gitignore\n*.flock\n`);
     }
   }
 
@@ -193,17 +188,18 @@ export class Cache {
     };
 
     const loadPackageThroughMirror = async () => {
-      if (mirrorPath === null || !xfs.existsSync(mirrorPath))
-        return await loader!();
+      if (mirrorPath === null || !(await xfs.existsPromise(mirrorPath))) {
+        const zipFs = await loader!();
+        const realPath = zipFs.getRealPath();
+        zipFs.saveAndClose();
+        return realPath;
+      }
 
       const tempDir = await xfs.mktempPromise();
       const tempPath = ppath.join(tempDir, this.getVersionFilename(locator));
 
       await xfs.copyFilePromise(mirrorPath, tempPath, fs.constants.COPYFILE_FICLONE);
-
-      return new ZipFS(tempPath, {
-        libzip: await getLibzipPromise(),
-      });
+      return tempPath;
     };
 
     const loadPackage = async () => {
@@ -212,10 +208,7 @@ export class Cache {
       if (this.immutable)
         throw new ReportError(MessageName.IMMUTABLE_CACHE, `Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
 
-      const zipFs = await loadPackageThroughMirror();
-      const originalPath = zipFs.getRealPath();
-
-      zipFs.saveAndClose();
+      const originalPath = await loadPackageThroughMirror();
 
       await xfs.chmodPromise(originalPath, 0o644);
 
@@ -240,7 +233,38 @@ export class Cache {
     };
 
     const loadPackageThroughMutex = async () => {
-      const mutex = loadPackage();
+      const mutexedLoad = async () => {
+        // We don't yet know whether the cache path can be computed yet, since that
+        // depends on whether the cache is actually the mirror or not, and whether
+        // the checksum is known or not.
+        const tentativeCachePath = this.getLocatorPath(locator, expectedChecksum);
+
+        const cacheExists = tentativeCachePath !== null
+          ? await baseFs.existsPromise(tentativeCachePath)
+          : false;
+
+        const action = cacheExists
+          ? onHit
+          : onMiss;
+
+        if (action)
+          action();
+
+        if (!cacheExists) {
+          return loadPackage();
+        } else {
+          let checksum: string | null = null;
+          const cachePath = tentativeCachePath!;
+          if (this.check)
+            checksum = await validateFileAgainstRemote(cachePath);
+          else
+            checksum = await validateFile(cachePath);
+
+          return [cachePath, checksum] as const;
+        }
+      };
+
+      const mutex = mutexedLoad();
       this.mutexes.set(locator.locatorHash, mutex);
 
       try {
@@ -253,37 +277,7 @@ export class Cache {
     for (let mutex; (mutex = this.mutexes.get(locator.locatorHash));)
       await mutex;
 
-    // We don't yet know whether the cache path can be computed yet, since that
-    // depends on whether the cache is actually the mirror or not, and whether
-    // the checksum is known or not.
-    const tentativeCachePath = this.getLocatorPath(locator, expectedChecksum);
-
-    const cacheExists = tentativeCachePath !== null
-      ? baseFs.existsSync(tentativeCachePath)
-      : false;
-
-    const action = cacheExists
-      ? onHit
-      : onMiss;
-
-    // Note: must be synchronous, otherwise the mutex may break (a concurrent
-    // execution may start while we're running the action)
-    if (action)
-      action();
-
-    let cachePath: PortablePath;
-    let checksum: string;
-
-    if (!cacheExists) {
-      [cachePath, checksum] = await loadPackageThroughMutex();
-    } else {
-      cachePath = tentativeCachePath!;
-      if (this.check) {
-        checksum = await validateFileAgainstRemote(cachePath);
-      } else {
-        checksum = await validateFile(cachePath);
-      }
-    }
+    const [cachePath, checksum] = await loadPackageThroughMutex();
 
     this.markedFiles.add(cachePath);
 
@@ -296,20 +290,24 @@ export class Cache {
       return `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${message}`;
     }), ppath);
 
+    // We use an AliasFS to speed up getRealPath calls (e.g. VirtualFetcher.ensureVirtualLink)
+    // (there's no need to create the lazy baseFs instance to gather the already-known cachePath)
+    const aliasFs = new AliasFS(cachePath, {baseFs: lazyFs, pathUtils: ppath});
+
     const releaseFs = () => {
       if (zipFs !== null) {
         zipFs.discardAndClose();
       }
     };
 
-    return [lazyFs, releaseFs, checksum];
+    return [aliasFs, releaseFs, checksum];
   }
 
   private async writeFileWithLock<T>(file: PortablePath | null, generator: () => Promise<T>) {
     if (file === null)
       return await generator();
 
-    await xfs.mkdirpPromise(ppath.dirname(file));
+    await xfs.mkdirPromise(ppath.dirname(file), {recursive: true});
 
     return await xfs.lockPromise(file, async () => {
       return await generator();

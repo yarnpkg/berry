@@ -123,6 +123,31 @@ export interface Resolver {
   getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions): Promise<Array<Locator>>;
 
   /**
+   * This function will, given a descriptor and a list of locator references,
+   * find out which of the references potentially satisfy the descriptor.
+   *
+   * This function is different from `getCandidates`, as `getCandidates` will
+   * resolve the descriptor into a list of locators (potentially using the network),
+   * while `getSatisfying` will statically compute which known references potentially
+   * satisfy the target descriptor.
+   *
+   * Note that the parameter references aren't guaranteed to be supported by
+   * the resolver, so they'll probably need to be filtered beforehand.
+   *
+   * The returned array must be sorted in such a way that the preferred
+   * locators are first. This will cause the resolution algorithm to prioritize
+   * them if possible (it doesn't guarantee that they'll end up being used).
+   *
+   * If the operation is unsupported by the resolver (i.e. if it can't be statically
+   * determined which references satisfy the target descriptor), `null` should be returned.
+   *
+   * @param descriptor The target descriptor.
+   * @param references The candidate references.
+   * @param opts The resolution options.
+   */
+  getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions): Promise<Array<Locator> | null>;
+
+  /**
    * This function will, given a locator, return the full package definition
    * for the package pointed at.
    *

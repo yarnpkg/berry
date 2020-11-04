@@ -191,13 +191,13 @@ const Directory = ({name, path, baseURL, expandedDirs, files, onToggleDir}) => {
         return SORT_ORDER[a.type] - SORT_ORDER[b.type];
 
       // Then sort by filename, case insensitive
-      return a.name.localeCompare(b.name, 'en', {sensitivity: 'base'});
+      return a.name.localeCompare(b.name, `en`, {sensitivity: `base`});
     });
 
     return (
       <FileList>
         {files.map(file => {
-          if (file.type === 'directory') {
+          if (file.type === `directory`) {
             return (
               <Directory
                 baseURL={baseURL}
@@ -226,7 +226,7 @@ const Directory = ({name, path, baseURL, expandedDirs, files, onToggleDir}) => {
   };
 
 
-  if (path === '/') {
+  if (path === `/`) {
     // Special case for root - Only render the contents, not the outer
     // wrapper.
     return renderDirContents();

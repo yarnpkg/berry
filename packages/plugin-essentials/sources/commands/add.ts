@@ -4,7 +4,7 @@ import {Project, StreamReport, Workspace, Ident}                    from '@yarnp
 import {structUtils}                                                from '@yarnpkg/core';
 import {PortablePath}                                               from '@yarnpkg/fslib';
 import {Command, Usage, UsageError}                                 from 'clipanion';
-import inquirer                                                     from 'inquirer';
+import {prompt}                                                     from 'enquirer';
 
 import * as suggestUtils                                            from '../suggestUtils';
 import {Hooks}                                                      from '..';
@@ -14,34 +14,34 @@ export default class AddCommand extends BaseCommand {
   @Command.Rest()
   packages: Array<string> = [];
 
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
-  @Command.Boolean(`-E,--exact`)
+  @Command.Boolean(`-E,--exact`, {description: `Don't use any semver modifier on the resolved range`})
   exact: boolean = false;
 
-  @Command.Boolean(`-T,--tilde`)
+  @Command.Boolean(`-T,--tilde`, {description: `Use the \`~\` semver modifier on the resolved range`})
   tilde: boolean = false;
 
-  @Command.Boolean(`-C,--caret`)
+  @Command.Boolean(`-C,--caret`, {description: `Use the \`^\` semver modifier on the resolved range`})
   caret: boolean = false;
 
-  @Command.Boolean(`-D,--dev`)
+  @Command.Boolean(`-D,--dev`, {description: `Add a package as a dev dependency`})
   dev: boolean = false;
 
-  @Command.Boolean(`-P,--peer`)
+  @Command.Boolean(`-P,--peer`, {description: `Add a package as a peer dependency`})
   peer: boolean = false;
 
-  @Command.Boolean(`-O,--optional`)
+  @Command.Boolean(`-O,--optional`, {description: `Add / upgrade a package to an optional regular / peer dependency`})
   optional: boolean = false;
 
-  @Command.Boolean(`--prefer-dev`)
+  @Command.Boolean(`--prefer-dev`, {description: `Add / upgrade a package to a dev dependency`})
   preferDev: boolean = false;
 
-  @Command.Boolean(`-i,--interactive`)
-  interactive: boolean = false;
+  @Command.Boolean(`-i,--interactive`, {description: `Reuse the specified package from other workspaces in the project`})
+  interactive: boolean | null = null;
 
-  @Command.Boolean(`--cached`)
+  @Command.Boolean(`--cached`, {description: `Reuse the highest version already used somewhere within the project`})
   cached: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -57,17 +57,15 @@ export default class AddCommand extends BaseCommand {
 
       - If set, the \`-O,--optional\` flag will add the package to the \`optionalDependencies\` field and, in combination with the \`-P,--peer\` flag, it will add the package as an optional peer dependency. If the package was already listed in your \`dependencies\`, it will be upgraded to \`optionalDependencies\`. If the package was already listed in your \`peerDependencies\`, in combination with the \`-P,--peer\` flag, it will be upgraded to an optional peer dependency: \`"peerDependenciesMeta": { "<package>": { "optional": true } }\`
 
-      - If the added package doesn't specify a range at all its \`latest\` tag will be resolved and the returned version will be used to generate a new semver range (using the \`^\` modifier by default unless otherwise configured via the \`savePrefix\` configuration, or the \`~\` modifier if \`-T,--tilde\` is specified, or no modifier at all if \`-E,--exact\` is specified). Two exceptions to this rule: the first one is that if the package is a workspace then its local version will be used, and the second one is that if you use \`-P,--peer\` the default range will be \`*\` and won't be resolved at all.
+      - If the added package doesn't specify a range at all its \`latest\` tag will be resolved and the returned version will be used to generate a new semver range (using the \`^\` modifier by default unless otherwise configured via the \`defaultSemverRangePrefix\` configuration, or the \`~\` modifier if \`-T,--tilde\` is specified, or no modifier at all if \`-E,--exact\` is specified). Two exceptions to this rule: the first one is that if the package is a workspace then its local version will be used, and the second one is that if you use \`-P,--peer\` the default range will be \`*\` and won't be resolved at all.
 
-      - If the added package specifies a tag range (such as \`latest\` or \`rc\`), Yarn will resolve this tag to a semver version and use that in the resulting package.json entry (meaning that \`yarn add foo@latest\` will have exactly the same effect as \`yarn add foo\`).
+      - If the added package specifies a range (such as \`^1.0.0\`, \`latest\`, or \`rc\`), Yarn will add this range as-is in the resulting package.json entry (in particular, tags such as \`rc\` will be encoded as-is rather than being converted into a semver range).
 
       If the \`--cached\` option is used, Yarn will preferably reuse the highest version already used somewhere within the project, even if through a transitive dependency.
 
       If the \`-i,--interactive\` option is used (or if the \`preferInteractive\` settings is toggled on) the command will first try to check whether other workspaces in the project use the specified package and, if so, will offer to reuse them.
 
-      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
-
-      For a compilation of all the supported protocols, please consult the dedicated page from our website: .
+      For a compilation of all the supported protocols, please consult the dedicated page from our website: https://yarnpkg.com/features/protocols.
     `,
     examples: [[
       `Add a regular package to the current workspace`,
@@ -99,16 +97,12 @@ export default class AddCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    // @ts-ignore
-    const prompt = inquirer.createPromptModule({
-      input: this.context.stdin as NodeJS.ReadStream,
-      output: this.context.stdout as NodeJS.WriteStream,
-    });
+    const interactive = this.interactive ?? configuration.get(`preferInteractive`);
 
     const modifier = suggestUtils.getModifier(this, project);
 
     const strategies = [
-      ...this.interactive ? [
+      ...interactive ? [
         suggestUtils.Strategy.REUSE,
       ] : [],
       suggestUtils.Strategy.PROJECT,
@@ -118,13 +112,13 @@ export default class AddCommand extends BaseCommand {
       suggestUtils.Strategy.LATEST,
     ];
 
-    const maxResults = this.interactive
+    const maxResults = interactive
       ? Infinity
       : 1;
 
     const allSuggestions = await Promise.all(this.packages.map(async pseudoDescriptor => {
       const request = pseudoDescriptor.match(/^\.{0,2}\//)
-        ? await suggestUtils.extractDescriptorFromPath(pseudoDescriptor as PortablePath, {cache, cwd: this.context.cwd, workspace})
+        ? await suggestUtils.extractDescriptorFromPath(pseudoDescriptor as PortablePath, {cwd: this.context.cwd, workspace})
         : structUtils.parseDescriptor(pseudoDescriptor);
 
       const target = suggestTarget(workspace, request, {
@@ -136,7 +130,7 @@ export default class AddCommand extends BaseCommand {
 
       const suggestions = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, modifier, strategies, maxResults});
 
-      return [request, suggestions, target] as [Descriptor, Array<suggestUtils.Suggestion>, suggestUtils.Target];
+      return [request, suggestions, target] as const;
     }));
 
     const checkReport = await LightReport.start({
@@ -144,16 +138,22 @@ export default class AddCommand extends BaseCommand {
       stdout: this.context.stdout,
       suggestInstall: false,
     }, async report => {
-      for (const [request, suggestions] of allSuggestions) {
+      for (const [request, {suggestions, rejections}] of allSuggestions) {
         const nonNullSuggestions = suggestions.filter(suggestion => {
           return suggestion.descriptor !== null;
         });
 
         if (nonNullSuggestions.length === 0) {
+          const [firstError] = rejections;
+          if (typeof firstError === `undefined`)
+            throw new Error(`Assertion failed: Expected an error to have been set`);
+
+          const prettyError = this.cli.error(firstError);
+
           if (!project.configuration.get(`enableNetwork`)) {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range (note: network resolution has been disabled)`);
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range (note: network resolution has been disabled):\n\n${prettyError}`);
           } else {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range`);
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range:\n\n${prettyError}`);
           }
         }
       }
@@ -178,12 +178,12 @@ export default class AddCommand extends BaseCommand {
       Descriptor
     ]> = [];
 
-    for (const [/*request*/, suggestions, target] of allSuggestions) {
+    for (const [/*request*/, {suggestions}, target] of allSuggestions) {
       let selected: Descriptor;
 
       const nonNullSuggestions = suggestions.filter(suggestion => {
         return suggestion.descriptor !== null;
-      });
+      }) as Array<suggestUtils.Suggestion>;
 
       const firstSuggestedDescriptor = nonNullSuggestions[0].descriptor;
       const areAllTheSame = nonNullSuggestions.every(suggestion => structUtils.areDescriptorsEqual(suggestion.descriptor, firstSuggestedDescriptor));
@@ -193,17 +193,25 @@ export default class AddCommand extends BaseCommand {
       } else {
         askedQuestions = true;
         ({answer: selected} = await prompt({
-          type: `list`,
+          type: `select`,
           name: `answer`,
           message: `Which range do you want to use?`,
-          choices: suggestions.map(({descriptor, reason}) => descriptor ? {
-            name: reason,
-            value: descriptor as Descriptor,
-            short: structUtils.prettyDescriptor(project.configuration, descriptor),
+          choices: suggestions.map(({descriptor, name, reason}) => descriptor ? {
+            name,
+            hint: reason,
+            descriptor,
           } : {
-            name: reason,
-            disabled: (): boolean => true,
+            name,
+            hint: reason,
+            disabled: true,
           }),
+          onCancel: () => process.exit(130),
+          result(name: string) {
+            // @ts-expect-error: The enquirer types don't include find
+            return this.find(name, `descriptor`);
+          },
+          stdin: this.context.stdin as NodeJS.ReadStream,
+          stdout: this.context.stdout as NodeJS.WriteStream,
         }));
       }
 

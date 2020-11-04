@@ -1,11 +1,11 @@
-import fs, {Stats}                                          from 'fs';
+import fs, {Stats}                                                                                                                from 'fs';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions}  from './FakeFS';
-import {Dirent, SymlinkType}                                from './FakeFS';
-import {BasePortableFakeFS, WriteFileOptions}               from './FakeFS';
-import {MkdirOptions, WatchOptions, WatchCallback, Watcher} from './FakeFS';
-import {ENOSYS}                                             from './errors';
-import {FSPath, PortablePath, Filename, ppath, npath}       from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, Dir, StatWatcher, WatchFileCallback, WatchFileOptions, OpendirOptions} from './FakeFS';
+import {Dirent, SymlinkType}                                                                                                      from './FakeFS';
+import {BasePortableFakeFS, WriteFileOptions}                                                                                     from './FakeFS';
+import {MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher}                                                         from './FakeFS';
+import {ENOSYS}                                                                                                                   from './errors';
+import {FSPath, PortablePath, Filename, ppath, npath, NativePath}                                                                 from './path';
 
 export class NodeFS extends BasePortableFakeFS {
   private readonly realFs: typeof fs;
@@ -15,7 +15,7 @@ export class NodeFS extends BasePortableFakeFS {
 
     this.realFs = realFs;
 
-    // @ts-ignore
+    // @ts-expect-error
     if (typeof this.realFs.lutimes !== `undefined`) {
       this.lutimesPromise = this.lutimesPromiseImpl;
       this.lutimesSync = this.lutimesSyncImpl;
@@ -42,6 +42,26 @@ export class NodeFS extends BasePortableFakeFS {
 
   openSync(p: PortablePath, flags: string, mode?: number) {
     return this.realFs.openSync(npath.fromPortablePath(p), flags, mode);
+  }
+
+  async opendirPromise(p: PortablePath, opts?: OpendirOptions): Promise<Dir<PortablePath>> {
+    return await new Promise<Dir<NativePath>>((resolve, reject) => {
+      if (typeof opts !== `undefined`) {
+        this.realFs.opendir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject) as any);
+      } else {
+        this.realFs.opendir(npath.fromPortablePath(p), this.makeCallback(resolve, reject) as any);
+      }
+    }).then(dir => {
+      return Object.defineProperty(dir, `path`, {value: p, configurable: true, writable: true});
+    });
+  }
+
+  opendirSync(p: PortablePath, opts?: OpendirOptions): Dir<PortablePath> {
+    const dir = typeof opts !== `undefined`
+      ? this.realFs.opendirSync(npath.fromPortablePath(p), opts) as Dir<NativePath>
+      : this.realFs.opendirSync(npath.fromPortablePath(p)) as Dir<NativePath>;
+
+    return Object.defineProperty(dir, `path`, {value: p, configurable: true, writable: true});
   }
 
   async readPromise(fd: number, buffer: Buffer, offset: number = 0, length: number = 0, position: number | null = -1) {
@@ -164,6 +184,16 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.chmodSync(npath.fromPortablePath(p), mask);
   }
 
+  async chownPromise(p: PortablePath, uid: number, gid: number) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.chown(npath.fromPortablePath(p), uid, gid, this.makeCallback(resolve, reject));
+    });
+  }
+
+  chownSync(p: PortablePath, uid: number, gid: number) {
+    return this.realFs.chownSync(npath.fromPortablePath(p), uid, gid);
+  }
+
   async renamePromise(oldP: PortablePath, newP: PortablePath) {
     return await new Promise<void>((resolve, reject) => {
       this.realFs.rename(npath.fromPortablePath(oldP), npath.fromPortablePath(newP), this.makeCallback(resolve, reject));
@@ -245,7 +275,7 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   private async lutimesPromiseImpl(this: NodeFS, p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
-    // @ts-ignore: Not yet in DefinitelyTyped
+    // @ts-expect-error: Not yet in DefinitelyTyped
     const lutimes = this.realFs.lutimes;
     if (typeof lutimes === `undefined`)
       throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
@@ -256,7 +286,7 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   private lutimesSyncImpl(this: NodeFS, p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
-    // @ts-ignore: Not yet in DefinitelyTyped
+    // @ts-expect-error: Not yet in DefinitelyTyped
     const lutimesSync = this.realFs.lutimesSync;
     if (typeof lutimesSync === `undefined`)
       throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
@@ -274,14 +304,29 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.mkdirSync(npath.fromPortablePath(p), opts);
   }
 
-  async rmdirPromise(p: PortablePath) {
+  async rmdirPromise(p: PortablePath, opts?: RmdirOptions) {
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.rmdir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      // TODO: always pass opts when min node version is 12.10+
+      if (opts) {
+        this.realFs.rmdir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.rmdir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
     });
   }
 
-  rmdirSync(p: PortablePath) {
-    return this.realFs.rmdirSync(npath.fromPortablePath(p));
+  rmdirSync(p: PortablePath, opts?: RmdirOptions) {
+    return this.realFs.rmdirSync(npath.fromPortablePath(p), opts);
+  }
+
+  async linkPromise(existingP: PortablePath, newP: PortablePath) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.link(npath.fromPortablePath(existingP), npath.fromPortablePath(newP), this.makeCallback(resolve, reject));
+    });
+  }
+
+  linkSync(existingP: PortablePath, newP: PortablePath) {
+    return this.realFs.linkSync(npath.fromPortablePath(existingP), npath.fromPortablePath(newP));
   }
 
   async symlinkPromise(target: PortablePath, p: PortablePath, type?: SymlinkType) {
@@ -352,19 +397,44 @@ export class NodeFS extends BasePortableFakeFS {
     return npath.toPortablePath(this.realFs.readlinkSync(npath.fromPortablePath(p)));
   }
 
+  async truncatePromise(p: PortablePath, len?: number) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.truncate(npath.fromPortablePath(p), len, this.makeCallback(resolve, reject));
+    });
+  }
+
+  truncateSync(p: PortablePath, len?: number) {
+    return this.realFs.truncateSync(npath.fromPortablePath(p), len);
+  }
+
   watch(p: PortablePath, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
     return this.realFs.watch(
       npath.fromPortablePath(p),
-      // @ts-ignore
+      // @ts-expect-error
       a,
       b,
     );
   }
 
-  private makeCallback<T>(resolve: (value?: T) => void, reject: (reject: NodeJS.ErrnoException) => void) {
-    return (err: NodeJS.ErrnoException | null, result?: T) => {
+  watchFile(p: PortablePath, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, opts: WatchFileOptions, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: PortablePath, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback) {
+    return this.realFs.watchFile(
+      npath.fromPortablePath(p),
+      // @ts-expect-error
+      a,
+      b,
+    ) as unknown as StatWatcher;
+  }
+
+  unwatchFile(p: PortablePath, cb?: WatchFileCallback) {
+    return this.realFs.unwatchFile(npath.fromPortablePath(p), cb);
+  }
+
+  private makeCallback<T>(resolve: (value: T) => void, reject: (reject: NodeJS.ErrnoException) => void) {
+    return (err: NodeJS.ErrnoException | null, result: T) => {
       if (err) {
         reject(err);
       } else {

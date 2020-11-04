@@ -25,6 +25,7 @@ async function findFiles(pattern: string, cwd: PortablePath, {ignoredFolders = [
     absolute: true,
     cwd: npath.fromPortablePath(cwd),
     ignore: [`**/node_modules/**`, ...ignoredFolders.map(p => `${npath.fromPortablePath(p)}/**`)],
+    gitignore: true,
   });
 
   return files.map(p => {
@@ -196,7 +197,7 @@ async function buildJsonNode(p: PortablePath, accesses: Array<string>) {
     /*setParentNodes */ true,
   );
 
-  // @ts-ignore
+  // @ts-expect-error
   let node: ts.Node = sourceFile.statements[0].expression;
   if (!node)
     throw new Error(`Invalid source tree`);
@@ -225,6 +226,8 @@ async function checkForUnmetPeerDependency(workspace: Workspace, dependencyType:
   if (dependencyType === `dependencies` && workspace.manifest.hasConsumerDependency(peer))
     return;
   if (dependencyType === `devDependencies` && workspace.manifest.hasHardDependency(peer))
+    return;
+  if (workspace.manifest.name?.identHash === peer.identHash)
     return;
 
   const propertyNode = await buildJsonNode(ppath.join(workspace.cwd, Manifest.fileName), [dependencyType, structUtils.stringifyIdent(via)]);
@@ -290,7 +293,7 @@ async function processWorkspace(workspace: Workspace, {configuration, fileList, 
   const reportedProgress = report.reportProgress(progress);
 
   for (const scriptName of workspace.manifest.scripts.keys())
-    if (scriptName.match(/^(pre|post)(?!(install|pack)$)/))
+    if (scriptName.match(/^(pre|post)(?!(install|pack)$)/) && !scriptName.match(/^prettier/))
       report.reportWarning(MessageName.UNNAMED, `User scripts prefixed with "pre" or "post" (like "${scriptName}") will not be called in sequence anymore; prefer calling prologues and epilogues explicitly`);
 
   for (const p of fileList) {
@@ -309,9 +312,6 @@ async function processWorkspace(workspace: Workspace, {configuration, fileList, 
 }
 
 class EntryCommand extends Command {
-  @Command.Boolean(`--scoped`)
-  scoped: boolean = false;
-
   @Command.String({required: false})
   cwd: string = `.`;
 
@@ -414,8 +414,15 @@ class EntryCommand extends Command {
   }
 }
 
-const cli = new Cli({binaryName: `yarn dlx @yarnpkg/doctor`});
+const cli = new Cli({
+  binaryLabel: `Yarn Doctor`,
+  binaryName: `yarn dlx @yarnpkg/doctor`,
+  binaryVersion: require(`@yarnpkg/doctor/package.json`).version,
+});
+
 cli.register(EntryCommand);
+cli.register(Command.Entries.Version);
+
 cli.runExit(process.argv.slice(2), {
   stdin: process.stdin,
   stdout: process.stdout,

@@ -1,7 +1,7 @@
-import {BaseCommand}                                                                   from '@yarnpkg/cli';
-import {Configuration,  MessageName,  Project,  StreamReport, FormatType, structUtils} from '@yarnpkg/core';
-import {PortablePath, ppath, xfs}                                                      from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                                                    from 'clipanion';
+import {BaseCommand}                                                                 from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, StreamReport, formatUtils, structUtils} from '@yarnpkg/core';
+import {PortablePath, ppath, xfs}                                                    from '@yarnpkg/fslib';
+import {Command, Usage, UsageError}                                                  from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginRemoveCommand extends BaseCommand {
@@ -44,17 +44,26 @@ export default class PluginRemoveCommand extends BaseCommand {
       const absolutePath = ppath.resolve(project.cwd, relativePath);
 
       if (xfs.existsSync(absolutePath)) {
-        report.reportInfo(MessageName.UNNAMED, `Removing ${configuration.format(relativePath, FormatType.PATH)}...`);
+        report.reportInfo(MessageName.UNNAMED, `Removing ${formatUtils.pretty(configuration, relativePath, formatUtils.Type.PATH)}...`);
         await xfs.removePromise(absolutePath);
       }
 
       report.reportInfo(MessageName.UNNAMED, `Updating the configuration...`);
-      await Configuration.updateConfiguration(project.cwd, (current: any) => {
+      await Configuration.updateConfiguration(project.cwd, (current: {[key: string]: unknown}) => {
         if (!Array.isArray(current.plugins))
-          return {};
+          return current;
 
-        const plugins = current.plugins.filter((plugin: {path: string}) => plugin.path !== relativePath);
-        return {plugins};
+        const plugins = current.plugins.filter((plugin: {path: string}) => {
+          return plugin.path !== relativePath;
+        });
+
+        if (current.plugins.length === plugins.length)
+          return current;
+
+        return {
+          ...current,
+          plugins,
+        };
       });
     });
 

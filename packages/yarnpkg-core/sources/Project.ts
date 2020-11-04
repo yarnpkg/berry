@@ -1,40 +1,41 @@
-import {PortablePath, ppath, toFilename, xfs, normalizeLineEndings, Filename} from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                             from '@yarnpkg/parsers';
-import {UsageError}                                                           from 'clipanion';
-import {createHash}                                                           from 'crypto';
-import {structuredPatch}                                                      from 'diff';
-// @ts-ignore
-import Logic                                                                  from 'logic-solver';
-import pLimit                                                                 from 'p-limit';
-import semver                                                                 from 'semver';
-import {promisify}                                                            from 'util';
-import v8                                                                     from 'v8';
-import zlib                                                                   from 'zlib';
+import {PortablePath, ppath, xfs, normalizeLineEndings, Filename} from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                 from '@yarnpkg/parsers';
+import {UsageError}                                               from 'clipanion';
+import {createHash}                                               from 'crypto';
+import {structuredPatch}                                          from 'diff';
+// @ts-expect-error
+import Logic                                                      from 'logic-solver';
+import pLimit                                                     from 'p-limit';
+import semver                                                     from 'semver';
+import {promisify}                                                from 'util';
+import v8                                                         from 'v8';
+import zlib                                                       from 'zlib';
 
-import {Cache}                                                                from './Cache';
-import {Configuration, FormatType}                                            from './Configuration';
-import {Fetcher}                                                              from './Fetcher';
-import {Installer, BuildDirective, BuildType}                                 from './Installer';
-import {LegacyMigrationResolver}                                              from './LegacyMigrationResolver';
-import {Linker}                                                               from './Linker';
-import {LockfileResolver}                                                     from './LockfileResolver';
-import {DependencyMeta, Manifest}                                             from './Manifest';
-import {MessageName}                                                          from './MessageName';
-import {MultiResolver}                                                        from './MultiResolver';
-import {Report, ReportError}                                                  from './Report';
-import {ResolveOptions, Resolver}                                             from './Resolver';
-import {RunInstallPleaseResolver}                                             from './RunInstallPleaseResolver';
-import {ThrowReport}                                                          from './ThrowReport';
-import {Workspace}                                                            from './Workspace';
-import {isFolderInside}                                                       from './folderUtils';
-import * as hashUtils                                                         from './hashUtils';
-import * as miscUtils                                                         from './miscUtils';
-import * as scriptUtils                                                       from './scriptUtils';
-import * as semverUtils                                                       from './semverUtils';
-import * as structUtils                                                       from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash}                               from './types';
-import {Descriptor, Ident, Locator, Package}                                  from './types';
-import {LinkType}                                                             from './types';
+import {Cache}                                                    from './Cache';
+import {Configuration}                                            from './Configuration';
+import {Fetcher}                                                  from './Fetcher';
+import {Installer, BuildDirective, BuildType}                     from './Installer';
+import {LegacyMigrationResolver}                                  from './LegacyMigrationResolver';
+import {Linker}                                                   from './Linker';
+import {LockfileResolver}                                         from './LockfileResolver';
+import {DependencyMeta, Manifest}                                 from './Manifest';
+import {MessageName}                                              from './MessageName';
+import {MultiResolver}                                            from './MultiResolver';
+import {Report, ReportError}                                      from './Report';
+import {ResolveOptions, Resolver}                                 from './Resolver';
+import {RunInstallPleaseResolver}                                 from './RunInstallPleaseResolver';
+import {ThrowReport}                                              from './ThrowReport';
+import {Workspace}                                                from './Workspace';
+import {isFolderInside}                                           from './folderUtils';
+import * as formatUtils                                           from './formatUtils';
+import * as hashUtils                                             from './hashUtils';
+import * as miscUtils                                             from './miscUtils';
+import * as scriptUtils                                           from './scriptUtils';
+import * as semverUtils                                           from './semverUtils';
+import * as structUtils                                           from './structUtils';
+import {IdentHash, DescriptorHash, LocatorHash}                   from './types';
+import {Descriptor, Ident, Locator, Package}                      from './types';
+import {LinkType}                                                 from './types';
 
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
@@ -47,6 +48,7 @@ const LOCKFILE_VERSION = 4;
 const INSTALL_STATE_VERSION = 1;
 
 const MULTIPLE_KEYS_REGEXP = / *, */g;
+const TRAILING_SLASH_REGEXP = /\/$/;
 
 const FETCHER_CONCURRENCY = 32;
 
@@ -54,13 +56,60 @@ const gzip = promisify(zlib.gzip);
 const gunzip = promisify(zlib.gunzip);
 
 export type InstallOptions = {
+  /**
+   * Instance of the cache that the project will use when packages have to be
+   * fetched. Some fetches may occur even during the resolution, for example
+   * when resolving git packages.
+   */
   cache: Cache,
+
+  /**
+   * An optional override for the default fetching pipeline. This is for
+   * overrides only - if you need to _add_ resolvers, prefer adding them
+   * through regular plugins instead.
+   */
   fetcher?: Fetcher,
+
+  /**
+   * An optional override for the default resolution pipeline. This is for
+   * overrides only - if you need to _add_ resolvers, prefer adding them
+   * through regular plugins instead.
+   */
   resolver?: Resolver
+
+  /**
+   * Provide a report instance that'll be use to store the information emitted
+   * during the install process.
+   */
   report: Report,
+
+  /**
+   * If true, Yarn will check that the lockfile won't change after the
+   * resolution step. Additionally, after the link step, Yarn will retrieve
+   * the list of files in `immutablePatterns` and check that they didn't get
+   * modified either.
+   */
   immutable?: boolean,
+
+  /**
+   * If true, Yarn will exclusively use the lockfile metadata. Setting this
+   * flag will cause it to ignore any change in the manifests, and to abort
+   * if any dependency isn't present in the lockfile.
+   */
   lockfileOnly?: boolean,
+
+  /**
+   * If true (the default), Yarn will update the workspace manifests once the
+   * install has completed.
+   */
   persistProject?: boolean,
+
+  /**
+   * If true, Yarn will skip the build step during the install. Contrary to
+   * setting the `enableScripts` setting to false, setting this won't cause
+   * the generated artifacts to change.
+   */
+  skipBuild?: boolean,
 };
 
 export class Project {
@@ -107,7 +156,7 @@ export class Project {
     while (currentCwd !== configuration.projectCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, toFilename(`package.json`)))) {
+      if (xfs.existsSync(ppath.join(currentCwd, Filename.manifest))) {
         packageCwd = currentCwd;
         break;
       }
@@ -117,8 +166,13 @@ export class Project {
 
     const project = new Project(configuration.projectCwd, {configuration});
 
+    Configuration.telemetry?.reportProject(project.cwd);
+
     await project.setupResolutions();
     await project.setupWorkspaces();
+
+    Configuration.telemetry?.reportWorkspaceCount(project.workspaces.length);
+    Configuration.telemetry?.reportDependencyCount(project.workspaces.reduce((sum, workspace) => sum + workspace.manifest.dependencies.size + workspace.manifest.devDependencies.size, 0));
 
     // If we're in a workspace, no need to go any further to find which package we're in
     const workspace = project.tryWorkspaceByCwd(packageCwd);
@@ -127,11 +181,11 @@ export class Project {
 
     // Otherwise, we need to ask the project (which will in turn ask the linkers for help)
     // Note: the trailing slash is caused by a quirk in the PnP implementation that requires folders to end with a trailing slash to disambiguate them from regular files
-    const locator = await project.findLocatorForLocation(`${packageCwd}/` as PortablePath);
+    const locator = await project.findLocatorForLocation(`${packageCwd}/` as PortablePath, {strict: true});
     if (locator)
       return {project, locator, workspace: null};
 
-    throw new UsageError(`The nearest package directory (${packageCwd}) doesn't seem to be part of the project declared at ${project.cwd}. If the project directory is right, it might be that you forgot to list a workspace. If it isn't, it's likely because you have a yarn.lock file at the detected location, confusing the project detection.`);
+    throw new UsageError(`The nearest package directory (${formatUtils.pretty(configuration, packageCwd, formatUtils.Type.PATH)}) doesn't seem to be part of the project declared in ${formatUtils.pretty(configuration, project.cwd, formatUtils.Type.PATH)}.\n\n- If the project directory is right, it might be that you forgot to list ${formatUtils.pretty(configuration, ppath.relative(project.cwd, packageCwd), formatUtils.Type.PATH)} as a workspace.\n- If it isn't, it's likely because you have a yarn.lock or package.json file there, confusing the project root detection.`);
   }
 
   static generateBuildStateFile(buildState: Map<LocatorHash, string>, locatorStore: Map<LocatorHash, Locator>) {
@@ -420,16 +474,37 @@ export class Project {
   forgetResolution(descriptor: Descriptor): void;
   forgetResolution(locator: Locator): void;
   forgetResolution(dataStructure: Descriptor | Locator): void {
-    for (const [descriptorHash, locatorHash] of this.storedResolutions) {
-      const doDescriptorHashesMatch = `descriptorHash` in dataStructure
-        && dataStructure.descriptorHash === descriptorHash;
-      const doLocatorHashesMatch = `locatorHash` in dataStructure
-        && dataStructure.locatorHash === locatorHash;
+    const deleteDescriptor = (descriptorHash: DescriptorHash) => {
+      this.storedResolutions.delete(descriptorHash);
+      this.storedDescriptors.delete(descriptorHash);
+    };
 
-      if (doDescriptorHashesMatch || doLocatorHashesMatch) {
-        this.storedDescriptors.delete(descriptorHash);
-        this.storedResolutions.delete(descriptorHash);
-        this.originalPackages.delete(locatorHash);
+    const deleteLocator = (locatorHash: LocatorHash) => {
+      this.originalPackages.delete(locatorHash);
+      this.storedPackages.delete(locatorHash);
+      this.accessibleLocators.delete(locatorHash);
+    };
+
+    if (`descriptorHash` in dataStructure) {
+      const locatorHash = this.storedResolutions.get(dataStructure.descriptorHash);
+
+      deleteDescriptor(dataStructure.descriptorHash);
+
+      // We delete unused locators
+      const remainingResolutions = new Set(this.storedResolutions.values());
+      if (typeof locatorHash !== `undefined` && !remainingResolutions.has(locatorHash)) {
+        deleteLocator(locatorHash);
+      }
+    }
+
+    if (`locatorHash` in dataStructure) {
+      deleteLocator(dataStructure.locatorHash);
+
+      // We delete all of the descriptors that have been resolved to the locator
+      for (const [descriptorHash, locatorHash] of this.storedResolutions) {
+        if (locatorHash === dataStructure.locatorHash) {
+          deleteDescriptor(descriptorHash);
+        }
       }
     }
   }
@@ -484,7 +559,7 @@ export class Project {
     return dependencyMeta;
   }
 
-  async findLocatorForLocation(cwd: PortablePath) {
+  async findLocatorForLocation(cwd: PortablePath, {strict = false}: {strict?: boolean} = {}) {
     const report = new ThrowReport();
 
     const linkers = this.configuration.getLinkers();
@@ -493,6 +568,14 @@ export class Project {
     for (const linker of linkers) {
       const locator = await linker.findPackageLocator(cwd, linkerOptions);
       if (locator) {
+        // If strict mode, the specified cwd must be a package,
+        // not merely contained in a package.
+        if (strict) {
+          const location = await linker.findPackageLocation(locator, linkerOptions);
+          if (location.replace(TRAILING_SLASH_REGEXP, ``) !== cwd.replace(TRAILING_SLASH_REGEXP, ``)) {
+            continue;
+          }
+        }
         return locator;
       }
     }
@@ -568,8 +651,6 @@ export class Project {
       allDescriptors.set(workspaceDescriptor.descriptorHash, workspaceDescriptor);
       nextResolutionPass.add(workspaceDescriptor.descriptorHash);
     }
-
-    const limit = pLimit(10);
 
     while (nextResolutionPass.size !== 0) {
       const currentResolutionPass = nextResolutionPass;
@@ -648,7 +729,7 @@ export class Project {
       // match the given ranges. That will give us a set of candidate references
       // for each descriptor.
 
-      const passCandidates = new Map(await Promise.all(Array.from(currentResolutionPass).map(descriptorHash => limit(async () => {
+      const passCandidates = new Map(await Promise.all(Array.from(currentResolutionPass).map(async descriptorHash => {
         const descriptor = allDescriptors.get(descriptorHash);
         if (typeof descriptor === `undefined`)
           throw new Error(`Assertion failed: The descriptor should have been registered`);
@@ -669,7 +750,7 @@ export class Project {
           throw new Error(`No candidate found for ${structUtils.prettyDescriptor(this.configuration, descriptor)}`);
 
         return [descriptor.descriptorHash, candidateLocators] as [DescriptorHash, Array<Locator>];
-      }))));
+      })));
 
       // That's where we'll store our resolutions until everything has been
       // resolved and can be injected into the various stores.
@@ -948,13 +1029,19 @@ export class Project {
     const fetcher = userFetcher || this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
 
-    const locatorHashes = miscUtils.sortMap(this.storedResolutions.values(), [(locatorHash: LocatorHash) => {
-      const pkg = this.storedPackages.get(locatorHash);
-      if (!pkg)
-        throw new Error(`Assertion failed: The locator should have been registered`);
+    const locatorHashes = Array.from(
+      new Set(
+        miscUtils.sortMap(this.storedResolutions.values(), [
+          (locatorHash: LocatorHash) => {
+            const pkg = this.storedPackages.get(locatorHash);
+            if (!pkg)
+              throw new Error(`Assertion failed: The locator should have been registered`);
 
-      return structUtils.stringifyLocator(pkg);
-    }]);
+            return structUtils.stringifyLocator(pkg);
+          },
+        ])
+      )
+    );
 
     let firstError = false;
 
@@ -1000,7 +1087,7 @@ export class Project {
     }
   }
 
-  async linkEverything({cache, report, fetcher: optFetcher}: InstallOptions) {
+  async linkEverything({cache, report, fetcher: optFetcher, skipBuild}: InstallOptions) {
     const fetcher = optFetcher || this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, skipIntegrityCheck: true};
 
@@ -1183,6 +1270,9 @@ export class Project {
 
     // Step 4: Build the packages in multiple steps
 
+    if (skipBuild)
+      return;
+
     const readyPackages = new Set(this.storedPackages.keys());
     const buildablePackages = new Set(packageBuildDirectives.keys());
 
@@ -1232,7 +1322,7 @@ export class Project {
         if (typeof dependency === `undefined`)
           throw new Error(`Assertion failed: The package should have been registered`);
 
-        builder.update(getBaseHash(pkg));
+        builder.update(getBaseHash(dependency));
       }
 
       hash = builder.digest(`hex`);
@@ -1359,7 +1449,7 @@ export class Project {
 
                 xfs.detachTemp(logDir);
 
-                const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${this.configuration.format(String(exitCode), FormatType.NUMBER)}, logs can be found here: ${this.configuration.format(logFile, FormatType.PATH)})`;
+                const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${formatUtils.pretty(this.configuration, exitCode, formatUtils.Type.NUMBER)}, logs can be found here: ${formatUtils.pretty(this.configuration, logFile, formatUtils.Type.PATH)})`;
                 report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
 
                 if (this.optionalBuilds.has(pkg.locatorHash)) {
@@ -1400,10 +1490,10 @@ export class Project {
     // package (and avoid rebuilding it later if it didn't change).
 
     if (nextBState.size > 0) {
-      const bstatePath = this.configuration.get<PortablePath>(`bstatePath`);
+      const bstatePath = this.configuration.get(`bstatePath`);
       const bstateFile = Project.generateBuildStateFile(nextBState, this.storedPackages);
 
-      await xfs.mkdirpPromise(ppath.dirname(bstatePath));
+      await xfs.mkdirPromise(ppath.dirname(bstatePath), {recursive: true});
       await xfs.changeFilePromise(bstatePath, bstateFile, {
         automaticNewlines: true,
       });
@@ -1413,6 +1503,9 @@ export class Project {
   }
 
   async install(opts: InstallOptions) {
+    const nodeLinker = this.configuration.get(`nodeLinker`);
+    Configuration.telemetry?.reportInstall(nodeLinker);
+
     const validationWarnings: Array<{name: MessageName, text: string}> = [];
     const validationErrors: Array<{name: MessageName, text: string}> = [];
 
@@ -1430,6 +1523,11 @@ export class Project {
         await this.validateEverything({validationWarnings, validationErrors, report: opts.report});
       });
     }
+
+    for (const extensionsByIdent of this.configuration.packageExtensions.values())
+      for (const [, extensionsByRange] of extensionsByIdent)
+        for (const extension of extensionsByRange)
+          extension.active = false;
 
     await opts.report.startTimerPromise(`Resolution step`, async () => {
       const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
@@ -1462,11 +1560,11 @@ export class Project {
             opts.report.reportInfo(null, `@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`);
             for (const line of hunk.lines) {
               if (line.startsWith(`+`)) {
-                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, this.configuration.format(line, FormatType.ADDED));
+                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, formatUtils.pretty(this.configuration, line, formatUtils.Type.ADDED));
               } else if (line.startsWith(`-`)) {
-                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, this.configuration.format(line, FormatType.REMOVED));
+                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, formatUtils.pretty(this.configuration, line, formatUtils.Type.REMOVED));
               } else {
-                opts.report.reportInfo(null, this.configuration.format(line, `grey`));
+                opts.report.reportInfo(null, formatUtils.pretty(this.configuration, line, `grey`));
               }
             }
           }
@@ -1477,6 +1575,12 @@ export class Project {
         }
       }
     });
+
+    for (const extensionsByIdent of this.configuration.packageExtensions.values())
+      for (const [, extensionsByRange] of extensionsByIdent)
+        for (const extension of extensionsByRange)
+          if (extension.active)
+            Configuration.telemetry?.reportPackageExtension(extension.description);
 
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);
@@ -1490,12 +1594,30 @@ export class Project {
       await this.persist();
 
     await opts.report.startTimerPromise(`Link step`, async () => {
+      const immutablePatterns = opts.immutable
+        ? [...new Set(this.configuration.get(`immutablePatterns`))].sort()
+        : [];
+
+      const before = await Promise.all(immutablePatterns.map(async pattern => {
+        return hashUtils.checksumPattern(pattern, {cwd: this.cwd});
+      }));
+
       await this.linkEverything(opts);
+
+      const after = await Promise.all(immutablePatterns.map(async pattern => {
+        return hashUtils.checksumPattern(pattern, {cwd: this.cwd});
+      }));
+
+      for (let t = 0; t < immutablePatterns.length; ++t) {
+        if (before[t] !== after[t]) {
+          opts.report.reportError(MessageName.FROZEN_ARTIFACT_EXCEPTION, `The checksum for ${immutablePatterns[t]} has been modified by this install, which is explicitly forbidden.`);
+        }
+      }
     });
 
     await this.configuration.triggerHook(hooks => {
       return hooks.afterAllInstalled;
-    }, this);
+    }, this, opts);
   }
 
   generateLockfile() {
@@ -1612,14 +1734,14 @@ export class Project {
     const installState = {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, lockFileChecksum};
     const serializedState = await gzip(v8.serialize(installState));
 
-    const installStatePath = this.configuration.get<PortablePath>(`installStatePath`);
+    const installStatePath = this.configuration.get(`installStatePath`);
 
-    await xfs.mkdirpPromise(ppath.dirname(installStatePath));
+    await xfs.mkdirPromise(ppath.dirname(installStatePath), {recursive: true});
     await xfs.writeFilePromise(installStatePath, serializedState as Buffer);
   }
 
   async restoreInstallState() {
-    const installStatePath = this.configuration.get<PortablePath>(`installStatePath`);
+    const installStatePath = this.configuration.get(`installStatePath`);
     if (!xfs.existsSync(installStatePath)) {
       await this.applyLightResolution();
       return;
@@ -1676,10 +1798,10 @@ export class Project {
         continue;
 
       if (cache.immutable) {
-        report.reportError(MessageName.IMMUTABLE_CACHE, `${this.configuration.format(ppath.basename(entryPath), `magenta`)} appears to be unused and would marked for deletion, but the cache is immutable`);
+        report.reportError(MessageName.IMMUTABLE_CACHE, `${formatUtils.pretty(this.configuration, ppath.basename(entryPath), `magenta`)} appears to be unused and would marked for deletion, but the cache is immutable`);
       } else {
-        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${this.configuration.format(ppath.basename(entryPath), `magenta`)} appears to be unused - removing`);
-        await xfs.unlinkPromise(entryPath);
+        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${formatUtils.pretty(this.configuration, ppath.basename(entryPath), `magenta`)} appears to be unused - removing`);
+        await xfs.removePromise(entryPath);
       }
     }
 
@@ -1993,16 +2115,25 @@ function applyVirtualResolutionMutations({
         // We take all the dependencies from the new virtual instance and
         // generate a hash from it. By checking if this hash is already
         // registered, we know whether we can trim the new version.
-        const dependencyHash = hashUtils.makeHash(...[...virtualPackage.dependencies.values()].map(descriptor => {
-          const resolution = descriptor.range !== `missing:`
-            ? allResolutions.get(descriptor.descriptorHash)
-            : `missing:`;
+        const dependencyHash = hashUtils.makeHash(
+          ...[...virtualPackage.dependencies.values()].map(descriptor => {
+            const resolution = descriptor.range !== `missing:`
+              ? allResolutions.get(descriptor.descriptorHash)
+              : `missing:`;
 
-          if (typeof resolution === `undefined`)
-            throw new Error(`Assertion failed: Expected the resolution for ${structUtils.prettyDescriptor(project.configuration, descriptor)} to have been registered`);
+            if (typeof resolution === `undefined`)
+              throw new Error(`Assertion failed: Expected the resolution for ${structUtils.prettyDescriptor(project.configuration, descriptor)} to have been registered`);
 
-          return resolution;
-        }));
+            return resolution;
+          }),
+          // We use the identHash to disambiguate between virtual descriptors
+          // with different base idents being resolved to the same virtual package.
+          // Note: We don't use the descriptorHash because the whole point of duplicate
+          // virtual descriptors is that they have different `virtual:` ranges.
+          // This causes the virtual descriptors with different base idents
+          // to be preserved, while the virtual package they resolve to gets deduped.
+          virtualDescriptor.identHash,
+        );
 
         const masterDescriptor = otherVirtualInstances.get(dependencyHash);
         if (typeof masterDescriptor === `undefined`) {

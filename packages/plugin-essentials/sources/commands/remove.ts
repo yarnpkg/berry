@@ -1,16 +1,16 @@
-import {BaseCommand, WorkspaceRequiredError}       from '@yarnpkg/cli';
-import {Configuration, Cache, Descriptor, Project} from '@yarnpkg/core';
-import {StreamReport, Workspace}                   from '@yarnpkg/core';
-import {structUtils}                               from '@yarnpkg/core';
-import {Command, Usage, UsageError}                from 'clipanion';
-import micromatch                                  from 'micromatch';
+import {BaseCommand, WorkspaceRequiredError}                                from '@yarnpkg/cli';
+import {Configuration, Cache, Descriptor, Project, formatUtils, FormatType} from '@yarnpkg/core';
+import {StreamReport, Workspace}                                            from '@yarnpkg/core';
+import {structUtils}                                                        from '@yarnpkg/core';
+import {Command, Usage, UsageError}                                         from 'clipanion';
+import micromatch                                                           from 'micromatch';
 
-import * as suggestUtils                           from '../suggestUtils';
-import {Hooks}                                     from '..';
+import * as suggestUtils                                                    from '../suggestUtils';
+import {Hooks}                                                              from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RemoveCommand extends BaseCommand {
-  @Command.Boolean(`-A,--all`)
+  @Command.Boolean(`-A,--all`, {description: `Apply the operation to all workspaces from the current project`})
   all: boolean = false;
 
   @Command.Rest()
@@ -20,8 +20,6 @@ export default class RemoveCommand extends BaseCommand {
     description: `remove dependencies from the project`,
     details: `
       This command will remove the packages matching the specified patterns from the current workspace.
-
-      If the \`-A,--all\` option is set, the operation will be applied to all workspaces from the current project.
 
       This command accepts glob patterns as arguments (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
     `,
@@ -132,7 +130,7 @@ export default class RemoveCommand extends BaseCommand {
       : `this`;
 
     if (unreferencedPatterns.length > 0)
-      throw new UsageError(`${patterns} ${unreferencedPatterns.join(`, `)} ${dont} match packages referenced by ${which} workspace`);
+      throw new UsageError(`${patterns} ${formatUtils.prettyList(configuration, unreferencedPatterns, FormatType.CODE)} ${dont} match any packages referenced by ${which} workspace`);
 
     if (hasChanged) {
       await configuration.triggerMultipleHooks(

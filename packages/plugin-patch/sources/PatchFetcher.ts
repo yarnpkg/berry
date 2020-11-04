@@ -1,10 +1,12 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions}       from '@yarnpkg/core';
-import {Locator}                                          from '@yarnpkg/core';
-import {miscUtils, structUtils}                           from '@yarnpkg/core';
-import {ppath, xfs, ZipFS, Filename, CwdFS, PortablePath} from '@yarnpkg/fslib';
-import {getLibzipPromise}                                 from '@yarnpkg/libzip';
+import {Fetcher, FetchOptions, MinimalFetchOptions, ReportError, MessageName} from '@yarnpkg/core';
+import {Locator}                                                              from '@yarnpkg/core';
+import {miscUtils, structUtils}                                               from '@yarnpkg/core';
+import {ppath, xfs, ZipFS, Filename, CwdFS, PortablePath}                     from '@yarnpkg/fslib';
+import {getLibzipPromise}                                                     from '@yarnpkg/libzip';
 
-import * as patchUtils                                    from './patchUtils';
+import * as patchUtils                                                        from './patchUtils';
+import {UnmatchedHunkError}                                                   from './tools/UnmatchedHunkError';
+import {reportHunk}                                                           from './tools/format';
 
 export class PatchFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -49,33 +51,46 @@ export class PatchFetcher implements Fetcher {
 
     const libzip = await getLibzipPromise();
 
-    const copiedPackage = new ZipFS(tmpFile, {
+    const patchedPackage = new ZipFS(tmpFile, {
       libzip,
       create: true,
       level: opts.project.configuration.get(`compressionLevel`),
     });
 
-    await copiedPackage.mkdirpPromise(prefixPath);
+    await patchedPackage.mkdirpPromise(prefixPath);
 
     await miscUtils.releaseAfterUseAsync(async () => {
-      await copiedPackage.copyPromise(prefixPath, sourceFetch.prefixPath, {baseFs: sourceFetch.packageFs, stableSort: true});
+      await patchedPackage.copyPromise(prefixPath, sourceFetch.prefixPath, {baseFs: sourceFetch.packageFs, stableSort: true});
     }, sourceFetch.releaseFs);
-
-    copiedPackage.saveAndClose();
-
-    const patchedPackage = new ZipFS(tmpFile, {
-      libzip,
-      level: opts.project.configuration.get(`compressionLevel`),
-    });
 
     const patchFs = new CwdFS(ppath.resolve(PortablePath.root, prefixPath), {baseFs: patchedPackage});
 
     for (const patchFile of patchFiles) {
       if (patchFile !== null) {
-        await patchUtils.applyPatchFile(patchUtils.parsePatchFile(patchFile), {
-          baseFs: patchFs,
-          version: sourceVersion,
-        });
+        try {
+          await patchUtils.applyPatchFile(patchUtils.parsePatchFile(patchFile), {
+            baseFs: patchFs,
+            version: sourceVersion,
+          });
+        } catch (err) {
+          if (!(err instanceof UnmatchedHunkError))
+            throw err;
+
+          const enableInlineHunks = opts.project.configuration.get(`enableInlineHunks`);
+          const suggestion = !enableInlineHunks
+            ? ` (set enableInlineHunks for details)`
+            : ``;
+
+          throw new ReportError(MessageName.PATCH_HUNK_FAILED, err.message + suggestion, report => {
+            if (!enableInlineHunks)
+              return;
+
+            reportHunk(err.hunk, {
+              configuration: opts.project.configuration,
+              report,
+            });
+          });
+        }
       }
     }
 

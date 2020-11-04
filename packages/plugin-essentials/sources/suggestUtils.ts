@@ -1,12 +1,24 @@
-import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace} from '@yarnpkg/core';
-import {structUtils}                                                                                  from '@yarnpkg/core';
-import {ppath, PortablePath}                                                                          from '@yarnpkg/fslib';
-import semver                                                                                         from 'semver';
+import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace, FetchOptions, ResolveOptions, Configuration} from '@yarnpkg/core';
+import {formatUtils, structUtils}                                                                                                                  from '@yarnpkg/core';
+import {PortablePath, ppath, xfs}                                                                                                                  from '@yarnpkg/fslib';
+import semver                                                                                                                                      from 'semver';
 
 export type Suggestion = {
   descriptor: Descriptor,
+  name: string,
   reason: string,
 };
+
+export type NullableSuggestion = {
+  descriptor: Descriptor | null,
+  name: string,
+  reason: string,
+}
+
+export type Results = {
+  suggestions: Array<NullableSuggestion>,
+  rejections: Array<Error>,
+}
 
 export enum Target {
   REGULAR = `dependencies`,
@@ -59,7 +71,7 @@ export function getModifier(flags: {exact: boolean; caret: boolean; tilde: boole
     return Modifier.CARET;
   if (flags.tilde)
     return Modifier.TILDE;
-  return project.configuration.get<Modifier>(`defaultSemverRangePrefix`);
+  return project.configuration.get(`defaultSemverRangePrefix`) as Modifier;
 }
 
 const SIMPLE_SEMVER = /^([\^~]?)[0-9]+(?:\.[0-9]+){0,2}(?:-\S+)?$/;
@@ -67,7 +79,7 @@ const SIMPLE_SEMVER = /^([\^~]?)[0-9]+(?:\.[0-9]+){0,2}(?:-\S+)?$/;
 export function extractRangeModifier(range: string, {project}: {project: Project}) {
   const match = range.match(SIMPLE_SEMVER);
 
-  return match ? match[1] : project.configuration.get<Modifier>(`defaultSemverRangePrefix`);
+  return match ? match[1] : project.configuration.get(`defaultSemverRangePrefix`);
 }
 
 export function applyModifier(descriptor: Descriptor, modifier: Modifier) {
@@ -128,54 +140,74 @@ export async function findProjectDescriptors(ident: Ident, {project, target}: {p
   return matches;
 }
 
-export async function extractDescriptorFromPath(path: PortablePath, {cache, cwd, workspace}: {cache: Cache, cwd: PortablePath, workspace: Workspace}) {
-  if (!ppath.isAbsolute(path))
-    path = ppath.resolve(cwd, path);
+export async function extractDescriptorFromPath(path: PortablePath, {cwd, workspace}: {cwd: PortablePath, workspace: Workspace}) {
+  // We use a temporary cache so that we don't pollute the project cache with temporary archives
+  return await makeTemporaryCache(async cache => {
+    if (!ppath.isAbsolute(path)) {
+      path = ppath.relative(workspace.cwd, ppath.resolve(cwd, path));
+      if (!path.match(/^\.{0,2}\//)) {
+        path = `./${path}` as PortablePath;
+      }
+    }
 
-  const project = workspace.project;
+    const {project} = workspace;
 
-  const descriptor = await fetchDescriptorFrom(structUtils.makeIdent(null, `archive`), path, {project: workspace.project, cache});
-  if (!descriptor)
-    throw new Error(`Assertion failed: The descriptor should have been found`);
+    const descriptor = await fetchDescriptorFrom(structUtils.makeIdent(null, `archive`), path, {project: workspace.project, cache, workspace});
+    if (!descriptor)
+      throw new Error(`Assertion failed: The descriptor should have been found`);
 
-  const report = new ThrowReport();
+    const report = new ThrowReport();
 
-  const resolver = project.configuration.makeResolver();
-  const fetcher = project.configuration.makeFetcher();
+    const resolver = project.configuration.makeResolver();
+    const fetcher = project.configuration.makeFetcher();
 
-  const resolverOptions = {checksums: project.storedChecksums, project, cache, fetcher, report, resolver};
+    const resolverOptions = {checksums: project.storedChecksums, project, cache, fetcher, report, resolver};
 
-  // While not useful since it's an absolute path, descriptor always have to be bound before being sent to the fetchers
-  const boundDescriptor = resolver.bindDescriptor(descriptor, workspace.anchoredLocator, resolverOptions);
+    // While not useful since it's an absolute path, descriptor always have to be bound before being sent to the fetchers
+    const boundDescriptor = resolver.bindDescriptor(descriptor, workspace.anchoredLocator, resolverOptions);
 
-  // Since it's a file, we assume the returned descriptor is a valid locator
-  const locator = structUtils.convertDescriptorToLocator(boundDescriptor);
+    // Since it's a file, we assume the returned descriptor is a valid locator
+    const locator = structUtils.convertDescriptorToLocator(boundDescriptor);
 
-  const fetchResult = await fetcher.fetch(locator, resolverOptions);
-  const manifest = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
+    const fetchResult = await fetcher.fetch(locator, resolverOptions);
+    const manifest = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
 
-  if (!manifest.name)
-    throw new Error(`Target path doesn't have a name`);
+    if (!manifest.name)
+      throw new Error(`Target path doesn't have a name`);
 
-  return structUtils.makeDescriptor(manifest.name, path);
+    return structUtils.makeDescriptor(manifest.name, path);
+  });
 }
 
-export async function getSuggestedDescriptors(request: Descriptor, {project, workspace, cache, target, modifier, strategies, maxResults = Infinity}: {project: Project, workspace: Workspace, cache: Cache, target: Target, modifier: Modifier, strategies: Array<Strategy>, maxResults?: number}) {
+export async function getSuggestedDescriptors(request: Descriptor, {project, workspace, cache, target, modifier, strategies, maxResults = Infinity}: {project: Project, workspace: Workspace, cache: Cache, target: Target, modifier: Modifier, strategies: Array<Strategy>, maxResults?: number}): Promise<Results> {
   if (!(maxResults >= 0))
     throw new Error(`Invalid maxResults (${maxResults})`);
 
   if (request.range !== `unknown`) {
-    return [{
-      descriptor: request,
-      reason: `Unambiguous explicit request`,
-    }];
+    return {
+      suggestions: [{
+        descriptor: request,
+        name: `Use ${structUtils.prettyDescriptor(project.configuration, request)}`,
+        reason: `(unambiguous explicit request)`,
+      }],
+      rejections: [],
+    };
   }
 
   const existing = typeof workspace !== `undefined` && workspace !== null
     ? workspace.manifest[target].get(request.identHash) || null
     : null;
 
-  const suggested = [];
+  const suggested: Array<NullableSuggestion> = [];
+
+  const rejected: Array<Error> = [];
+  const trySuggest = async (cb: () => Promise<void>) => {
+    try {
+      await cb();
+    } catch (e) {
+      rejected.push(e);
+    }
+  };
 
   for (const strategy of strategies) {
     if (suggested.length >= maxResults)
@@ -183,84 +215,117 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
 
     switch (strategy) {
       case Strategy.KEEP: {
-        if (existing) {
-          const reason = `Keep ${structUtils.prettyDescriptor(project.configuration, existing)} (no changes)`;
-          suggested.push({descriptor: existing, reason});
-        }
+        await trySuggest(async () => {
+          if (existing) {
+            suggested.push({
+              descriptor: existing,
+              name: `Keep ${structUtils.prettyDescriptor(project.configuration, existing)}`,
+              reason: `(no changes)`,
+            });
+          }
+        });
       } break;
 
       case Strategy.REUSE: {
-        for (const {descriptor, locators} of (await findProjectDescriptors(request, {project, target})).values()) {
-          // We don't print the "reuse" key for the current workspace if the KEEP strategy is set since that would be redundant
-          if (locators.length === 1 && locators[0].locatorHash === workspace.anchoredLocator.locatorHash)
-            if (strategies.includes(Strategy.KEEP))
-              continue;
+        await trySuggest(async () => {
+          for (const {descriptor, locators} of (await findProjectDescriptors(request, {project, target})).values()) {
+            // We don't print the "reuse" key for the current workspace if the KEEP strategy is set since that would be redundant
+            if (locators.length === 1 && locators[0].locatorHash === workspace.anchoredLocator.locatorHash)
+              if (strategies.includes(Strategy.KEEP))
+                continue;
 
-          let reason = `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)} (originally used by ${structUtils.prettyLocator(project.configuration, locators[0])}`;
+            let reason = `(originally used by ${structUtils.prettyLocator(project.configuration, locators[0])}`;
 
-          reason += locators.length > 1
-            ? ` and ${locators.length - 1} other${locators.length > 2 ? `s` : ``})`
-            : `)`;
+            reason += locators.length > 1
+              ? ` and ${locators.length - 1} other${locators.length > 2 ? `s` : ``})`
+              : `)`;
 
-          suggested.push({descriptor, reason});
-        }
+            suggested.push({
+              descriptor,
+              name: `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)}`,
+              reason,
+            });
+          }
+        });
       } break;
 
       case Strategy.CACHE: {
-        for (const descriptor of project.storedDescriptors.values()) {
-          if (descriptor.identHash === request.identHash) {
-            const reason = `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)} (already used somewhere in the lockfile)`;
-            suggested.push({descriptor, reason});
+        await trySuggest(async () => {
+          for (const descriptor of project.storedDescriptors.values()) {
+            if (descriptor.identHash === request.identHash) {
+              suggested.push({
+                descriptor,
+                name: `Reuse ${structUtils.prettyDescriptor(project.configuration, descriptor)}`,
+                reason: `(already used somewhere in the lockfile)`,
+              });
+            }
           }
-        }
+        });
       } break;
 
       case Strategy.PROJECT: {
-        // Don't suggest a workspace to depend on itself
-        if (workspace.manifest.name !== null && request.identHash === workspace.manifest.name.identHash)
-          continue;
+        await trySuggest(async () => {
+          // Don't suggest a workspace to depend on itself
+          if (workspace.manifest.name !== null && request.identHash === workspace.manifest.name.identHash)
+            return;
 
-        const candidateWorkspace = project.tryWorkspaceByIdent(request);
-        if (candidateWorkspace === null)
-          continue;
+          const candidateWorkspace = project.tryWorkspaceByIdent(request);
+          if (candidateWorkspace === null)
+            return;
 
-        const reason = `Attach ${structUtils.prettyWorkspace(project.configuration, candidateWorkspace)} (local workspace at ${candidateWorkspace.cwd})`;
-        suggested.push({descriptor: candidateWorkspace.anchoredDescriptor, reason});
+          suggested.push({
+            descriptor: candidateWorkspace.anchoredDescriptor,
+            name: `Attach ${structUtils.prettyWorkspace(project.configuration, candidateWorkspace)}`,
+            reason: `(local workspace at ${candidateWorkspace.cwd})`,
+          });
+        });
       } break;
 
       case Strategy.LATEST: {
-        if (request.range !== `unknown`) {
-          const reason = `Use ${structUtils.prettyRange(project.configuration, request.range)} (explicit range requested)`;
-          suggested.push({descriptor: request, reason});
-        } else if (target === Target.PEER) {
-          const reason = `Use * (catch-all peer dependency pattern)`;
-          suggested.push({descriptor: structUtils.makeDescriptor(request, `*`), reason});
-        } else if (!project.configuration.get(`enableNetwork`)) {
-          const reason = `Resolve from latest ${project.configuration.format(`(unavailable because enableNetwork is toggled off)`, `grey`)}`;
-          suggested.push({descriptor: null, reason});
-        } else {
-          let latest;
-          try {
-            latest = await fetchDescriptorFrom(request, `latest`, {project, cache, preserveModifier: false});
-          } catch {
-            // Just ignore errors
-          }
+        await trySuggest(async () => {
+          if (request.range !== `unknown`) {
+            suggested.push({
+              descriptor: request,
+              name: `Use ${structUtils.prettyRange(project.configuration, request.range)}`,
+              reason: `(explicit range requested)`,
+            });
+          } else if (target === Target.PEER) {
+            suggested.push({
+              descriptor: structUtils.makeDescriptor(request, `*`),
+              name: `Use *`,
+              reason: `(catch-all peer dependency pattern)`,
+            });
+          } else if (!project.configuration.get(`enableNetwork`)) {
+            suggested.push({
+              descriptor: null,
+              name: `Resolve from latest`,
+              reason: formatUtils.pretty(project.configuration, `(unavailable because enableNetwork is toggled off)`, `grey`),
+            });
+          } else {
+            let latest = await fetchDescriptorFrom(request, `latest`, {project, cache, workspace, preserveModifier: false});
 
-          if (latest) {
-            latest = applyModifier(latest, modifier);
+            if (latest) {
+              latest = applyModifier(latest, modifier);
 
-            const reason = `Use ${structUtils.prettyDescriptor(project.configuration, latest)} (resolved from latest)`;
-            suggested.push({descriptor: latest, reason});
+              suggested.push({
+                descriptor: latest,
+                name: `Use ${structUtils.prettyDescriptor(project.configuration, latest)}`,
+                reason: `(resolved from latest)`,
+              });
+            }
           }
-        }
+        });
       } break;
     }
   }
 
-  return suggested.slice(0, maxResults);
+  return {
+    suggestions: suggested.slice(0, maxResults),
+    rejections: rejected.slice(0, maxResults),
+  };
 }
 
-export async function fetchDescriptorFrom(ident: Ident, range: string, {project, cache, preserveModifier = true}: {project: Project, cache: Cache, preserveModifier?: boolean | string}) {
+export async function fetchDescriptorFrom(ident: Ident, range: string, {project, cache, workspace, preserveModifier = true}: {project: Project, cache: Cache, workspace: Workspace, preserveModifier?: boolean | string}) {
   const latestDescriptor = structUtils.makeDescriptor(ident, range);
 
   const report = new ThrowReport();
@@ -268,14 +333,14 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   const fetcher = project.configuration.makeFetcher();
   const resolver = project.configuration.makeResolver();
 
-  const resolverOptions = {checksums: project.storedChecksums, project, cache, fetcher, report, resolver};
+  const fetchOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report, skipIntegrityCheck: true};
+  const resolveOptions: ResolveOptions = {...fetchOptions, resolver, fetchOptions};
 
-  let candidateLocators;
-  try {
-    candidateLocators = await resolver.getCandidates(latestDescriptor, new Map(), resolverOptions);
-  } catch {
-    return null;
-  }
+  // The descriptor has to be bound for the resolvers that need a parent locator. (e.g. FileResolver)
+  // If we didn't bind it, `yarn add ./folder` wouldn't work.
+  const boundDescriptor = resolver.bindDescriptor(latestDescriptor, workspace.anchoredLocator, resolveOptions);
+
+  const candidateLocators = await resolver.getCandidates(boundDescriptor, new Map(), resolveOptions);
 
   if (candidateLocators.length === 0)
     return null;
@@ -297,4 +362,19 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   }
 
   return structUtils.makeDescriptor(bestLocator, structUtils.makeRange({protocol, source, params, selector}));
+}
+
+async function makeTemporaryCache<T>(cb: (cache: Cache) => Promise<T>) {
+  return await xfs.mktempPromise(async cacheDir => {
+    const configuration = Configuration.create(cacheDir);
+
+    configuration.useWithSource(cacheDir, {
+      // Don't pollute the mirror with temporary archives
+      enableMirror: false,
+      // Don't spend time compressing what gets deleted later
+      compressionLevel: 0,
+    }, cacheDir, {overwrite: true});
+
+    return await cb(new Cache(cacheDir, {configuration, check: false, immutable: false}));
+  });
 }

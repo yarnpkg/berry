@@ -2,6 +2,7 @@
 category: advanced
 path: /advanced/error-codes
 title: "Error Codes"
+description: A list of Yarn's error codes with detailed explanations.
 ---
 
 <!-- Never remove the entries in this file, as we want to support older releases -->
@@ -11,7 +12,7 @@ title: "Error Codes"
 > *Keeping this convention will help our users to figure out which error codes can be found on this documentation and which ones should instead be checked against the individual documentation of the plugins they use.*
 
 ```toc
-# This code block gets replaced with the Table of Contents
+className: toc toc-no-item
 ```
 
 ## YN0000 - `UNNAMED`

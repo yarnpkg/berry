@@ -5,4 +5,4 @@ export default function useLocalStorage (key, initialValue)  {
   return typeof window !== `undefined`
     ? _useLocalStorage(key, initialValue)
     : [initialValue, () => undefined];
-};
+}

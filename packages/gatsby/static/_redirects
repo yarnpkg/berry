@@ -5,6 +5,9 @@
 /pnpify/cli /pnpify/cli/run 301
 /builder/cli /builder/cli/build/plugin 301
 /package/* /package 200
+/advanced/qa /getting-started/qa 301
+/advanced/editor-sdks /getting-started/editor-sdks 301
+/advanced/migration /getting-started/migration 301
 
 /playground/* code=:value https://viko0.sse.codesandbox.io/:splat?code=:value 301
 /playground/* https://viko0.sse.codesandbox.io/:splat 301

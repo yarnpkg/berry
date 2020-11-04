@@ -2,10 +2,12 @@ import {PortablePath, toFilename}               from '@yarnpkg/fslib';
 import querystring                              from 'querystring';
 import semver                                   from 'semver';
 
-import {Configuration, FormatType}              from './Configuration';
+import {Configuration}                          from './Configuration';
 import {Workspace}                              from './Workspace';
+import * as formatUtils                         from './formatUtils';
 import * as hashUtils                           from './hashUtils';
 import * as miscUtils                           from './miscUtils';
+import * as structUtils                         from './structUtils';
 import {IdentHash, DescriptorHash, LocatorHash} from './types';
 import {Ident, Descriptor, Locator, Package}    from './types';
 
@@ -13,6 +15,9 @@ const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 5;
 
 export function makeIdent(scope: string | null, name: string): Ident {
+  if (scope?.startsWith(`@`))
+    throw new Error(`Invalid scope: don't prefix it with '@'`);
+
   return {identHash: hashUtils.makeHash<IdentHash>(scope, name), scope, name};
 }
 
@@ -291,13 +296,13 @@ export function parseRange<Opts extends ParseRangeOptions>(range: string, opts?:
     : null;
 
   return {
-    // @ts-ignore
+    // @ts-expect-error
     protocol,
-    // @ts-ignore
+    // @ts-expect-error
     source,
-    // @ts-ignore
+    // @ts-expect-error
     selector,
-    // @ts-ignore
+    // @ts-expect-error
     params,
   };
 }
@@ -433,11 +438,11 @@ export function slugifyLocator(locator: Locator) {
   return toFilename(slug);
 }
 
-export function prettyIdent(configuration: Configuration, ident: Ident) {
+export function prettyIdent(configuration: Configuration, ident: Ident): string {
   if (ident.scope) {
-    return `${configuration.format(`@${ident.scope}/`, FormatType.SCOPE)}${configuration.format(ident.name, FormatType.NAME)}`;
+    return `${formatUtils.pretty(configuration, `@${ident.scope}/`, formatUtils.Type.SCOPE)}${formatUtils.pretty(configuration, ident.name, formatUtils.Type.NAME)}`;
   } else {
-    return `${configuration.format(ident.name, FormatType.NAME)}`;
+    return `${formatUtils.pretty(configuration, ident.name, formatUtils.Type.NAME)}`;
   }
 }
 
@@ -455,20 +460,20 @@ function prettyRangeNoColors(range: string): string {
   }
 }
 
-export function prettyRange(configuration: Configuration, range: string) {
-  return `${configuration.format(prettyRangeNoColors(range), FormatType.RANGE)}`;
+export function prettyRange(configuration: Configuration, range: string): string {
+  return `${formatUtils.pretty(configuration, prettyRangeNoColors(range), formatUtils.Type.RANGE)}`;
 }
 
-export function prettyDescriptor(configuration: Configuration, descriptor: Descriptor) {
-  return `${prettyIdent(configuration, descriptor)}${configuration.format(`@`, FormatType.RANGE)}${prettyRange(configuration, descriptor.range)}`;
+export function prettyDescriptor(configuration: Configuration, descriptor: Descriptor): string {
+  return `${prettyIdent(configuration, descriptor)}${formatUtils.pretty(configuration, `@`, formatUtils.Type.RANGE)}${prettyRange(configuration, descriptor.range)}`;
 }
 
 export function prettyReference(configuration: Configuration, reference: string) {
-  return `${configuration.format(prettyRangeNoColors(reference), FormatType.REFERENCE)}`;
+  return `${formatUtils.pretty(configuration, prettyRangeNoColors(reference), formatUtils.Type.REFERENCE)}`;
 }
 
-export function prettyLocator(configuration: Configuration, locator: Locator) {
-  return `${prettyIdent(configuration, locator)}${configuration.format(`@`, FormatType.REFERENCE)}${prettyReference(configuration, locator.reference)}`;
+export function prettyLocator(configuration: Configuration, locator: Locator): string {
+  return `${prettyIdent(configuration, locator)}${formatUtils.pretty(configuration, `@`, formatUtils.Type.REFERENCE)}${prettyReference(configuration, locator.reference)}`;
 }
 
 export function prettyLocatorNoColors(locator: Locator) {
@@ -484,6 +489,28 @@ export function sortDescriptors(descriptors: Iterable<Descriptor>) {
 
 export function prettyWorkspace(configuration: Configuration, workspace: Workspace) {
   return prettyIdent(configuration, workspace.locator);
+}
+
+export function prettyResolution(configuration: Configuration, descriptor: Descriptor, locator: Locator | null): string {
+  const devirtualizedDescriptor = isVirtualDescriptor(descriptor)
+    ? devirtualizeDescriptor(descriptor)
+    : descriptor;
+
+  if (locator === null) {
+    return `${structUtils.prettyDescriptor(configuration, devirtualizedDescriptor)} → ${formatUtils.pretty(configuration, `✘`, `red`)}`;
+  } else if (devirtualizedDescriptor.identHash === locator.identHash) {
+    return `${structUtils.prettyDescriptor(configuration, devirtualizedDescriptor)} → ${prettyReference(configuration, locator.reference)}`;
+  } else {
+    return `${structUtils.prettyDescriptor(configuration, devirtualizedDescriptor)} → ${prettyLocator(configuration, locator)}`;
+  }
+}
+
+export function prettyDependent(configuration: Configuration, locator: Locator, descriptor: Descriptor | null) {
+  if (descriptor === null) {
+    return `${prettyLocator(configuration, locator)}`;
+  } else {
+    return `${prettyLocator(configuration, locator)} (via ${structUtils.prettyRange(configuration, descriptor.range)})`;
+  }
 }
 
 /**

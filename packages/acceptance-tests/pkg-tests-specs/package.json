@@ -4,21 +4,23 @@
     "license": "BSD-2-Clause",
     "main": "./sources/index.js",
     "dependencies": {
-        "@yarnpkg/core": "workspace:^2.0.0-rc.30",
-        "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
+        "@yarnpkg/core": "workspace:^2.3.1",
+        "@yarnpkg/fslib": "workspace:^2.3.0",
         "@yarnpkg/monorepo": "workspace:0.0.0",
-        "@yarnpkg/parsers": "workspace:^2.0.0-rc.13",
+        "@yarnpkg/parsers": "workspace:^2.3.0",
         "fs-extra": "^7.0.1",
         "lodash": "^4.17.15",
         "pkg-tests-core": "workspace:0.0.0",
-        "semver": "^7.1.2"
+        "semver": "^7.1.2",
+        "tar": "^4.4.6"
     },
     "repository": {
         "type": "git",
         "url": "ssh://git@github.com/yarnpkg/berry.git"
     },
     "devDependencies": {
-        "@types/lodash": "^4.14.136"
+        "@types/lodash": "^4.14.136",
+        "@types/tar": "^4.0.0"
     },
     "engines": {
         "node": ">=10.19.0"

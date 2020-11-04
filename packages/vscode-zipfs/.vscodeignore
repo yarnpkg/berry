@@ -4,6 +4,7 @@
 
 # Whitelist
 !package.json
+!icon.png
 !.vscodeignore
 !build/**
 !README.md

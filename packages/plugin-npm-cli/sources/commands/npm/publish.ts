@@ -1,21 +1,18 @@
-import {BaseCommand, WorkspaceRequiredError}                                       from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, Workspace} from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                    from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils}                                              from '@yarnpkg/plugin-npm';
-import {packUtils}                                                                 from '@yarnpkg/plugin-pack';
-import {Command, Usage, UsageError}                                                from 'clipanion';
-import {createHash}                                                                from 'crypto';
-import ssri                                                                        from 'ssri';
+import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport, scriptUtils, miscUtils} from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                                          from '@yarnpkg/plugin-npm';
+import {packUtils}                                                                              from '@yarnpkg/plugin-pack';
+import {Command, Usage, UsageError}                                                             from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {
-  @Command.String(`--access`)
+  @Command.String(`--access`, {description: `The access for the published package (public or restricted)`})
   access?: string;
 
-  @Command.String(`--tag`)
+  @Command.String(`--tag`, {description: `The tag on the registry that the package should be attached to`})
   tag: string = `latest`;
 
-  @Command.Boolean(`--tolerate-republish`)
+  @Command.Boolean(`--tolerate-republish`, {description: `Warn and exit when republishing an already existing version of a package`})
   tolerateRepublish: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -66,7 +63,7 @@ export default class NpmPublishCommand extends BaseCommand {
             configuration,
             registry,
             ident,
-            json: true,
+            jsonResponse: true,
           });
 
           if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
@@ -85,6 +82,8 @@ export default class NpmPublishCommand extends BaseCommand {
         }
       }
 
+      await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepublish`, {report});
+
       await packUtils.prepareForPack(workspace, {report}, async () => {
         const files = await packUtils.genPackList(workspace);
 
@@ -94,7 +93,7 @@ export default class NpmPublishCommand extends BaseCommand {
         const pack = await packUtils.genPackStream(workspace, files);
         const buffer = await miscUtils.bufferStream(pack);
 
-        const body = await makePublishBody(workspace, buffer, {
+        const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
           access: this.access,
           tag: this.tag,
           registry,
@@ -105,7 +104,7 @@ export default class NpmPublishCommand extends BaseCommand {
             configuration,
             registry,
             ident,
-            json: true,
+            jsonResponse: true,
           });
         } catch (error) {
           if (error.name !== `HTTPError`) {
@@ -127,74 +126,4 @@ export default class NpmPublishCommand extends BaseCommand {
 
     return report.exitCode();
   }
-}
-
-async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry}: {access: string | undefined, tag: string, registry: string}) {
-  const configuration = workspace.project.configuration;
-
-  const ident = workspace.manifest.name!;
-  const version = workspace.manifest.version!;
-
-  const name = structUtils.stringifyIdent(ident);
-
-  const shasum = createHash(`sha1`).update(buffer).digest(`hex`);
-  const integrity = ssri.fromData(buffer).toString();
-
-  if (typeof access === `undefined`) {
-    if (workspace.manifest.publishConfig && typeof workspace.manifest.publishConfig.access === `string`) {
-      access = workspace.manifest.publishConfig.access;
-    } else if (configuration.get(`npmPublishAccess`) !== null) {
-      access = configuration.get(`npmPublishAccess`);
-    } else if (ident.scope) {
-      access = `restricted`;
-    } else {
-      access = `public`;
-    }
-  }
-
-  const raw = await packUtils.genPackageManifest(workspace);
-
-  // This matches Lerna's logic:
-  // https://github.com/evocateur/libnpmpublish/blob/latest/publish.js#L142
-  // While the npm registry ignores the provided tarball URL, it's used by
-  // other registries such as verdaccio.
-  const tarballName = `${name}-${version}.tgz`;
-  const tarballURL = new URL(`${name}/-/${tarballName}`, registry);
-
-  return {
-    _id: name,
-    _attachments: {
-      [tarballName]: {
-        [`content_type`]: `application/octet-stream`,
-        data: buffer.toString(`base64`),
-        length: buffer.length,
-      },
-    },
-
-    name,
-    access,
-
-    [`dist-tags`]: {
-      [tag]: version,
-    },
-
-    versions: {
-      [version]: {
-        ...raw,
-
-        _id: `${name}@${version}`,
-
-        name,
-        version,
-
-        dist: {
-          shasum,
-          integrity,
-
-          // the npm registry requires a tarball path, but it seems useless 🤷
-          tarball: tarballURL.toString(),
-        },
-      },
-    },
-  };
 }

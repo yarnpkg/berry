@@ -7,10 +7,10 @@ import * as versionUtils                     from '../../versionUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class VersionApplyCommand extends BaseCommand {
-  @Command.Boolean(`--all`)
+  @Command.Boolean(`--all`, {description: `Apply the deferred version changes on all workspaces`})
   all: boolean = false;
 
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -20,8 +20,6 @@ export default class VersionApplyCommand extends BaseCommand {
       This command will apply the deferred version changes (scheduled via \`yarn version major|minor|patch\`) on the current workspace (or all of them if \`--all\`) is specified.
 
       It will also update the \`workspace:\` references across all your local workspaces so that they keep refering to the same workspace even after the version bump.
-
-      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
     `,
     examples: [[
       `Apply the version change to the local workspace`,

@@ -20,7 +20,7 @@ export default function useCache(cb, dependencies) {
     return () => {
       cancelled = true;
     };
-  }, dependencies)
+  }, dependencies);
 
   return state;
-} 
+}

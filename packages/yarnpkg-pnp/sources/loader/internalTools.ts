@@ -1,3 +1,5 @@
+import {Path, npath} from '@yarnpkg/fslib';
+
 export enum ErrorCode {
   API_ERROR = `API_ERROR`,
   BLACKLISTED = `BLACKLISTED`,
@@ -65,4 +67,8 @@ export function getIssuerModule(parent: NodeModule | null | undefined): NodeModu
     issuer = issuer.parent;
 
   return issuer || null;
+}
+
+export function getPathForDisplay(p: Path) {
+  return npath.normalize(npath.fromPortablePath(p));
 }

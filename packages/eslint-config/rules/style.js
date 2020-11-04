@@ -9,15 +9,15 @@ module.exports = {
       default: `generic`,
     }],
 
-    '@typescript-eslint/camelcase': [`error`, {
-      allow: [
-        `__non_webpack_module__`,
-        `__non_webpack_require__`,
-        `^npm(_[a-z]+)+$`,
-      ],
+    '@typescript-eslint/naming-convention': [`error`, {
+      selector: `default`,
+      format: [`camelCase`, `UPPER_CASE`, `PascalCase`],
+      filter: {
+        regex: `^(__.*|__non_webpack_module__|__non_webpack_require__|npm(_[a-z]+)+)$`,
+        match: false,
+      },
+      leadingUnderscore: `allow`,
     }],
-
-    '@typescript-eslint/class-name-casing': 2,
 
     '@typescript-eslint/func-call-spacing': 2,
 

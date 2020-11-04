@@ -1,17 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Commands run with prefix it should print the list of available scripts if no parameters passed to command 1`] = `
-Object {
-  "code": 0,
-  "stderr": "",
-  "stdout": "➤ YN0000: foo   'echo hello'
-➤ YN0000: bar   'echo hi'
-➤ YN0000: Done
-",
-}
-`;
-
-exports[`Commands run without prefix it should print the list of available scripts if no parameters passed to command 1`] = `
+exports[`Commands run misc it should print the list of available scripts if no parameters passed to command 1`] = `
 Object {
   "code": 0,
   "stderr": "",

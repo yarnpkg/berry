@@ -10,7 +10,7 @@ import {savePlugin}                                                     from '..
 
 import {getAvailablePlugins}                                            from '../list';
 
-const BUILD_WORKFLOW = ({pluginName, noMinify}: {noMinify: boolean, pluginName: string}, target: PortablePath) => [
+const buildWorkflow = ({pluginName, noMinify}: {noMinify: boolean, pluginName: string}, target: PortablePath) => [
   [`yarn`, `build:${pluginName}`, ...noMinify ? [`--no-minify`] : [], `|`],
 ];
 
@@ -19,19 +19,19 @@ export default class PluginDlSourcesCommand extends BaseCommand {
   @Command.String()
   name!: string;
 
-  @Command.String(`--path`)
+  @Command.String(`--path`, {description: `The path where the repository should be cloned to`})
   installPath?: string;
 
-  @Command.String(`--repository`)
+  @Command.String(`--repository`, {description: `The repository that should be cloned`})
   repository: string = `https://github.com/yarnpkg/berry.git`;
 
-  @Command.String(`--branch`)
+  @Command.String(`--branch`, {description: `The branch of the repository that should be cloned`})
   branch: string = `master`;
 
-  @Command.Boolean(`--no-minify`)
+  @Command.Boolean(`--no-minify`, {description: `Build a plugin for development (debugging) - non-minified and non-mangled`})
   noMinify: boolean = false;
 
-  @Command.Boolean(`-f,--force`)
+  @Command.Boolean(`-f,--force`, {description: `Always clone the repository instead of trying to fetch the latest commits`})
   force: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -81,7 +81,7 @@ export default class PluginDlSourcesCommand extends BaseCommand {
       report.reportInfo(MessageName.UNNAMED, `Building a fresh ${pluginName}`);
       report.reportSeparator();
 
-      await runWorkflow(BUILD_WORKFLOW({
+      await runWorkflow(buildWorkflow({
         pluginName,
         noMinify: this.noMinify,
       }, target), {configuration, context: this.context, target});

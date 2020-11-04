@@ -1,17 +1,8 @@
-import {PortablePath, npath, ppath}                           from '@yarnpkg/fslib';
-import {PnpApi}                                               from '@yarnpkg/pnp';
-import mergeWith                                              from 'lodash/mergeWith';
+import {PortablePath, npath, ppath}                                                   from '@yarnpkg/fslib';
+import {PnpApi}                                                                       from '@yarnpkg/pnp';
 
-import {Wrapper, GenerateIntegrationWrapper, IntegrationSdks} from '../generateSdk';
-import * as sdkUtils                                          from '../sdkUtils';
-
-export const merge = (object: unknown, source: unknown) =>
-  mergeWith(object, source, (objValue, srcValue) => {
-    if (Array.isArray(objValue))
-      return [...new Set(objValue.concat(srcValue))];
-
-    return undefined;
-  });
+import {Wrapper, GenerateIntegrationWrapper, GenerateDefaultWrapper, IntegrationSdks} from '../generateSdk';
+import * as sdkUtils                                                                  from '../sdkUtils';
 
 export enum VSCodeConfiguration {
   settings = `settings.json`,
@@ -21,6 +12,21 @@ export enum VSCodeConfiguration {
 export const addVSCodeWorkspaceConfiguration = async (pnpApi: PnpApi, type: VSCodeConfiguration, patch: any) => {
   const relativeFilePath = `.vscode/${type}` as PortablePath;
   await sdkUtils.addSettingWorkspaceConfiguration(pnpApi, relativeFilePath, patch);
+};
+
+export const generateDefaultWrapper: GenerateDefaultWrapper = async (pnpApi: PnpApi) => {
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
+    [`search.exclude`]: {
+      [`**/.yarn`]: true,
+      [`**/.pnp.*`]: true,
+    },
+  });
+
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {
+    [`recommendations`]: [
+      `arcanis.vscode-zipfs`,
+    ],
+  });
 };
 
 export const generateEslintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
@@ -68,12 +74,6 @@ export const generateTypescriptWrapper: GenerateIntegrationWrapper = async (pnpA
     ),
     [`typescript.enablePromptUseWorkspaceTsdk`]: true,
   });
-
-  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {
-    [`recommendations`]: [
-      `arcanis.vscode-zipfs`,
-    ],
-  });
 };
 
 export const generateStylelintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
@@ -108,11 +108,29 @@ export const generateSvelteLanguageServerWrapper: GenerateIntegrationWrapper = a
   });
 };
 
+export const generateFlowBinWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
+    [`flow.pathToFlow`]: npath.fromPortablePath(
+      `\${workspaceFolder}/${wrapper.getProjectPathTo(
+        `cli.js` as PortablePath,
+      )}`,
+    ),
+  });
+
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {
+    [`recommendations`]: [
+      `flowtype.flow-for-vscode`,
+    ],
+  });
+};
+
 export const VSCODE_SDKS: IntegrationSdks = [
+  [null, generateDefaultWrapper],
   [`eslint`, generateEslintWrapper],
   [`prettier`, generatePrettierWrapper],
   [`typescript-language-server`, null],
   [`typescript`, generateTypescriptWrapper],
   [`stylelint`, generateStylelintWrapper],
   [`svelte-language-server`, generateSvelteLanguageServerWrapper],
+  [`flow-bin`, generateFlowBinWrapper],
 ];

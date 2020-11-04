@@ -11,14 +11,14 @@ module.exports = {
       name: `Getting started`,
       link: `/getting-started`,
     }, {
-      name: `Configuration`,
-      link: `/configuration`,
-    }, {
       name: `Features`,
       link: `/features`,
     }, {
       name: `CLI`,
       link: `/cli`,
+    }, {
+      name: `Configuration`,
+      link: `/configuration`,
     }, {
       name: `Advanced`,
       link: `/advanced`,
@@ -57,7 +57,7 @@ module.exports = {
       options: {
         fonts: [{
           family: `Open Sans`,
-          variants: [`300`, `400`, `700`],
+          variants: [`300`, `400`, `600`, `700`],
         }, {
           family: `PT Mono`,
         }],
@@ -99,17 +99,14 @@ module.exports = {
         binaries: [
           {
             namespace: null,
-            argv0: `yarn`,
             binary: `${__dirname}/../../scripts/run-yarn.js`,
           },
           {
             namespace: `pnpify`,
-            argv0: `pnpify`,
             binary: `${__dirname}/../../scripts/run-pnpify.js`,
           },
           {
             namespace: `builder`,
-            argv0: `builder`,
             binary: `${__dirname}/../../scripts/run-builder.js`,
           },
         ],
@@ -122,7 +119,12 @@ module.exports = {
           {
             resolve: `gatsby-remark-table-of-contents`,
           },
-          `gatsby-remark-autolink-headers`,
+          {
+            resolve: `gatsby-remark-autolink-headers`,
+            options: {
+              offsetY: `100`,
+            },
+          },
           `gatsby-remark-prismjs`,
         ],
       },

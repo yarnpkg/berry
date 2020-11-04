@@ -66,4 +66,12 @@ export enum MessageName {
   DEPRECATED_PACKAGE = 61,
   INCOMPATIBLE_OS = 62,
   INCOMPATIBLE_CPU = 63,
+  FROZEN_ARTIFACT_EXCEPTION = 64,
+  TELEMETRY_NOTICE = 65,
+  PATCH_HUNK_FAILED = 66,
+  INVALID_CONFIGURATION_VALUE = 67
+}
+
+export function stringifyMessageName(name: MessageName | number): string {
+  return `YN${name.toString(10).padStart(4, `0`)}`;
 }

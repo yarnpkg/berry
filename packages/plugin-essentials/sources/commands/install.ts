@@ -1,22 +1,29 @@
-import {BaseCommand, WorkspaceRequiredError}                                   from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport} from '@yarnpkg/core';
-import {xfs, ppath}                                                            from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                              from '@yarnpkg/parsers';
-import {Command, Usage}                                                        from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils} from '@yarnpkg/core';
+import {xfs, ppath}                                                                         from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                           from '@yarnpkg/parsers';
+import {TRAVIS}                                                                             from 'ci-info';
+import {Command, Usage}                                                                     from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
-  @Command.Boolean(`--immutable`)
+  @Command.Boolean(`--immutable`, {description: `Abort with an error exit code if the lockfile was to be modified`})
   immutable?: boolean;
 
-  @Command.Boolean(`--immutable-cache`)
+  @Command.Boolean(`--immutable-cache`, {description: `Abort with an error exit code if the cache folder was to be modified`})
   immutableCache?: boolean;
 
-  @Command.Boolean(`--check-cache`)
+  @Command.Boolean(`--check-cache`, {description: `Always refetch the packages and ensure that their checksums are consistent`})
   checkCache: boolean = false;
+
+  @Command.Boolean(`--production`, {hidden: true})
+  production?: boolean;
+
+  @Command.Boolean(`--non-interactive`, {hidden: true})
+  nonInteractive?: boolean;
 
   @Command.Boolean(`--frozen-lockfile`, {hidden: true})
   frozenLockfile?: boolean;
@@ -30,8 +37,11 @@ export default class YarnCommand extends BaseCommand {
   @Command.String(`--registry`, {hidden: true})
   registry?: string;
 
-  @Command.Boolean(`--inline-builds`)
+  @Command.Boolean(`--inline-builds`, {description: `Verbosely print the output of the build steps of dependencies`})
   inlineBuilds?: boolean;
+
+  @Command.Boolean(`--skip-builds`, {description: `Skip the build step altogether`})
+  skipBuilds?: boolean = false;
 
   @Command.String(`--cache-folder`, {hidden: true})
   cacheFolder?: string;
@@ -54,7 +64,7 @@ export default class YarnCommand extends BaseCommand {
 
       Note that running this command is not part of the recommended workflow. Yarn supports zero-installs, which means that as long as you store your cache and your .pnp.js file inside your repository, everything will work without requiring any install right after cloning your repository or switching branches.
 
-      If the \`--immutable\` option is set, Yarn will abort with an error exit code if anything in the install artifacts (\`yarn.lock\`, \`.pnp.js\`, ...) was to be modified. For backward compatibility we offer an alias under the name of \`--frozen-lockfile\`, but it will be removed in a later release.
+      If the \`--immutable\` option is set, Yarn will abort with an error exit code if the lockfile was to be modified (other paths can be added using the \`immutablePaths\` configuration setting). For backward compatibility we offer an alias under the name of \`--frozen-lockfile\`, but it will be removed in a later release.
 
       If the \`--immutable-cache\` option is set, Yarn will abort with an error exit code if the cache folder was to be modified (either because files would be added, or because they'd be removed).
 
@@ -62,7 +72,7 @@ export default class YarnCommand extends BaseCommand {
 
       If the \`--inline-builds\` option is set, Yarn will verbosely print the output of the build steps of your dependencies (instead of writing them into individual files). This is likely useful mostly for debug purposes only when using Docker-like environments.
 
-      If the \`--json\` flag is set the output will follow a JSON-stream output also known as NDJSON (https://github.com/ndjson/ndjson-spec).
+      If the \`--skip-builds\` option is set, Yarn will not run the build scripts at all. Note that this is different from setting \`enableScripts\` to false because the later will disable build scripts, and thus affect the content of the artifacts generated on disk, whereas the former will just disable the build step - but not the scripts themselves, which just won't run.
     `,
     examples: [[
       `Install the project`,
@@ -86,6 +96,11 @@ export default class YarnCommand extends BaseCommand {
 
     const isZeitNow = !!process.env.NOW_BUILDER;
     const isNetlify = !!process.env.NETLIFY;
+
+    // These variables are used in Google Cloud Platform environment
+    // in process of deploying Google Cloud Functions and
+    // Google App Engine
+    const isGCP = !!process.env.FUNCTION_TARGET || !!process.env.GOOGLE_RUNTIME;
 
     const reportDeprecation = async (message: string, {error}: {error: boolean}) => {
       const deprecationReport = await StreamReport.start({
@@ -153,12 +168,38 @@ export default class YarnCommand extends BaseCommand {
       }
     }
 
+    // Since the production flag would yield a different lockfile than the
+    // regular installs, it's not part of the regular `install` command anymore.
+    // Instead, we expect users to use it with `yarn workspaces focus` (which can
+    // be used even outside of monorepos).
+    if (typeof this.production !== `undefined`) {
+      const exitCode = await reportDeprecation(`The --production option is deprecated on 'install'; use 'yarn workspaces focus' instead`, {
+        error: true,
+      });
+
+      if (exitCode !== null) {
+        return exitCode;
+      }
+    }
+
+    // Yarn 2 isn't interactive during installs anyway, so there's no real point
+    // to this flag at the moment.
+    if (typeof this.nonInteractive !== `undefined`) {
+      const exitCode = await reportDeprecation(`The --non-interactive option is deprecated`, {
+        error: !isGCP,
+      });
+
+      if (exitCode !== null) {
+        return exitCode;
+      }
+    }
+
     // We want to prevent people from using --frozen-lockfile
     // Note: it's been deprecated because we're now locking more than just the
     // lockfile - for example the PnP artifacts will also be locked.
     if (typeof this.frozenLockfile !== `undefined`) {
       const exitCode = await reportDeprecation(`The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`, {
-        error: true,
+        error: !isGCP && !TRAVIS,
       });
 
       if (exitCode !== null) {
@@ -181,8 +222,8 @@ export default class YarnCommand extends BaseCommand {
     }
 
     const immutable = typeof this.immutable === `undefined` && typeof this.frozenLockfile === `undefined`
-      ? configuration.get(`enableImmutableInstalls`)
-      : this.immutable || this.frozenLockfile;
+      ? configuration.get(`enableImmutableInstalls`) ?? false
+      : this.immutable ?? this.frozenLockfile ?? false;
 
     if (configuration.projectCwd !== null) {
       const fixReport = await StreamReport.start({
@@ -193,11 +234,31 @@ export default class YarnCommand extends BaseCommand {
       }, async report => {
         if (await autofixMergeConflicts(configuration, immutable)) {
           report.reportInfo(MessageName.AUTOMERGE_SUCCESS, `Automatically fixed merge conflicts 👍`);
+          report.reportSeparator();
         }
       });
 
       if (fixReport.hasErrors()) {
         return fixReport.exitCode();
+      }
+    }
+
+    if (configuration.projectCwd !== null) {
+      const telemetryReport = await StreamReport.start({
+        configuration,
+        json: this.json,
+        stdout: this.context.stdout,
+        includeFooter: false,
+      }, async report => {
+        if (Configuration.telemetry?.isNew) {
+          report.reportInfo(MessageName.TELEMETRY_NOTICE, `Yarn will periodically gather anonymous telemetry: https://yarnpkg.com/advanced/telemetry`);
+          report.reportInfo(MessageName.TELEMETRY_NOTICE, `Run ${formatUtils.pretty(configuration, `yarn config set --home enableTelemetry 0`, formatUtils.Type.CODE)} to disable`);
+          report.reportSeparator();
+        }
+      });
+
+      if (telemetryReport.hasErrors()) {
+        return telemetryReport.exitCode();
       }
     }
 
@@ -221,7 +282,7 @@ export default class YarnCommand extends BaseCommand {
       stdout: this.context.stdout,
       includeLogs: true,
     }, async (report: StreamReport) => {
-      await project.install({cache, report, immutable});
+      await project.install({cache, report, immutable, skipBuild: this.skipBuilds});
     });
 
     return report.exitCode();

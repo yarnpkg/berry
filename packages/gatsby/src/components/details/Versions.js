@@ -6,10 +6,10 @@ import {ReadMoreButton, ReadMoreIcon} from './ReadMore';
 import {Di}                           from './';
 
 const _localeVersion = pubDate =>
-  new Date(pubDate).toLocaleDateString('en', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+  new Date(pubDate).toLocaleDateString(`en`, {
+    year: `numeric`,
+    month: `long`,
+    day: `numeric`,
   });
 
 export const Versions = ({versions}) => {
@@ -18,8 +18,8 @@ export const Versions = ({versions}) => {
 
   const versionKeys = Object.keys(versions);
   const buttonText = showMore
-    ? 'Hide'
-    : 'Display all';
+    ? `Hide`
+    : `Display all`;
   const versionsToShow = showMore
     ? versionKeys.reverse()
     : versionKeys.reverse().slice(0, 3);
@@ -42,7 +42,7 @@ export const Versions = ({versions}) => {
           <ReadMoreIcon
             src={IcoReadMore}
             alt=""
-            style={{transform: showMore ? 'rotate(180deg) translateY(3px)' : 'translateY(-1px)'}}
+            style={{transform: showMore ? `rotate(180deg) translateY(3px)` : `translateY(-1px)`}}
           />
         </ReadMoreButton>
       )}

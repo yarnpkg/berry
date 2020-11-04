@@ -1,7 +1,7 @@
-import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions} from './FakeFS';
-import {Dirent, SymlinkType}                                                           from './FakeFS';
-import {MkdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}          from './FakeFS';
-import {FSPath, Filename, Path}                                                        from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, Dir, OpendirOptions} from './FakeFS';
+import {Dirent, SymlinkType}                                                                                                                                  from './FakeFS';
+import {MkdirOptions, RmdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}                                                                   from './FakeFS';
+import {FSPath, Filename, Path}                                                                                                                               from './path';
 
 export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<P> {
   protected abstract readonly baseFs: FakeFS<IP>;
@@ -34,6 +34,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
 
   openSync(p: P, flags: string, mode?: number) {
     return this.baseFs.openSync(this.mapToBase(p), flags, mode);
+  }
+
+  async opendirPromise(p: P, opts?: OpendirOptions): Promise<Dir<P>> {
+    return Object.assign(await this.baseFs.opendirPromise(this.mapToBase(p), opts), {path: p});
+  }
+
+  opendirSync(p: P, opts?: OpendirOptions): Dir<P> {
+    return Object.assign(this.baseFs.opendirSync(this.mapToBase(p), opts), {path: p});
   }
 
   async readPromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number | null) {
@@ -128,6 +136,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.chmodSync(this.mapToBase(p), mask);
   }
 
+  chownPromise(p: P, uid: number, gid: number) {
+    return this.baseFs.chownPromise(this.mapToBase(p), uid, gid);
+  }
+
+  chownSync(p: P, uid: number, gid: number) {
+    return this.baseFs.chownSync(this.mapToBase(p), uid, gid);
+  }
+
   renamePromise(oldP: P, newP: P) {
     return this.baseFs.renamePromise(this.mapToBase(oldP), this.mapToBase(newP));
   }
@@ -184,12 +200,20 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.mkdirSync(this.mapToBase(p), opts);
   }
 
-  rmdirPromise(p: P) {
-    return this.baseFs.rmdirPromise(this.mapToBase(p));
+  rmdirPromise(p: P, opts?: RmdirOptions) {
+    return this.baseFs.rmdirPromise(this.mapToBase(p), opts);
   }
 
-  rmdirSync(p: P) {
-    return this.baseFs.rmdirSync(this.mapToBase(p));
+  rmdirSync(p: P, opts?: RmdirOptions) {
+    return this.baseFs.rmdirSync(this.mapToBase(p), opts);
+  }
+
+  linkPromise(existingP: P, newP: P) {
+    return this.baseFs.linkPromise(this.mapToBase(existingP), this.mapToBase(newP));
+  }
+
+  linkSync(existingP: P, newP: P) {
+    return this.baseFs.linkSync(this.mapToBase(existingP), this.mapToBase(newP));
   }
 
   symlinkPromise(target: P, p: P, type?: SymlinkType) {
@@ -246,15 +270,38 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.mapFromBase(this.baseFs.readlinkSync(this.mapToBase(p)));
   }
 
+  async truncatePromise(p: P, len?: number) {
+    return this.baseFs.truncatePromise(this.mapToBase(p), len);
+  }
+
+  truncateSync(p: P, len?: number) {
+    return this.baseFs.truncateSync(this.mapToBase(p), len);
+  }
+
   watch(p: P, cb?: WatchCallback): Watcher;
   watch(p: P, opts: WatchOptions, cb?: WatchCallback): Watcher;
   watch(p: P, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
     return this.baseFs.watch(
       this.mapToBase(p),
-      // @ts-ignore
+      // @ts-expect-error
       a,
       b,
     );
+  }
+
+  watchFile(p: P, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: P, opts: WatchFileOptions, cb: WatchFileCallback): StatWatcher;
+  watchFile(p: P, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback) {
+    return this.baseFs.watchFile(
+      this.mapToBase(p),
+      // @ts-expect-error
+      a,
+      b,
+    );
+  }
+
+  unwatchFile(p: P, cb?: WatchFileCallback) {
+    return this.baseFs.unwatchFile(this.mapToBase(p), cb);
   }
 
   private fsMapToBase(p: FSPath<P>) {

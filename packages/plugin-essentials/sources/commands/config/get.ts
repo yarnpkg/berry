@@ -9,10 +9,10 @@ export default class ConfigSetCommand extends BaseCommand {
   @Command.String()
   name!: string;
 
-  @Command.Boolean(`--json`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
-  @Command.Boolean(`--no-redacted`)
+  @Command.Boolean(`--no-redacted`, {description: `Don't redact secrets (such as tokens) from the output`})
   unsafe: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -76,12 +76,12 @@ export default class ConfigSetCommand extends BaseCommand {
         return report.exitCode();
       }
 
-      // @ts-ignore: The Node typings forgot one field
+      // @ts-expect-error: The Node typings forgot one field
       inspect.styles.name = `cyan`;
 
       this.context.stdout.write(`${inspect(requestedObject, {
         depth: Infinity,
-        colors: true,
+        colors: configuration.get(`enableColors`),
         compact: false,
       })}\n`);
     }

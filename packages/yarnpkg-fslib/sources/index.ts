@@ -5,17 +5,27 @@ import {promisify}                                        from 'util';
 import {FakeFS}                                           from './FakeFS';
 import {NodeFS}                                           from './NodeFS';
 import {Filename, PortablePath, NativePath, npath, ppath} from './path';
+import * as statUtils                                     from './statUtils';
+
+export {opendir} from './algorithms/opendir';
+
+export {statUtils};
 
 export {normalizeLineEndings}          from './FakeFS';
 export type {CreateReadStreamOptions}  from './FakeFS';
 export type {CreateWriteStreamOptions} from './FakeFS';
-export type {Dirent, SymlinkType}      from './FakeFS';
+export type {Dirent, Dir, SymlinkType} from './FakeFS';
 export type {MkdirOptions}             from './FakeFS';
+export type {RmdirOptions}             from './FakeFS';
 export type {WatchOptions}             from './FakeFS';
 export type {WatchCallback}            from './FakeFS';
 export type {Watcher}                  from './FakeFS';
 export type {WriteFileOptions}         from './FakeFS';
 export type {ExtractHintOptions}       from './FakeFS';
+export type {WatchFileOptions}         from './FakeFS';
+export type {WatchFileCallback}        from './FakeFS';
+export type {StatWatcher}              from './FakeFS';
+export type {OpendirOptions}           from './FakeFS';
 
 export {DEFAULT_COMPRESSION_LEVEL}     from './ZipFS';
 export type {ZipCompression}           from './ZipFS';
@@ -51,12 +61,15 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `appendFileSync`,
     `createReadStream`,
     `chmodSync`,
+    `chownSync`,
     `closeSync`,
     `copyFileSync`,
+    `linkSync`,
     `lstatSync`,
     `lutimesSync`,
     `mkdirSync`,
     `openSync`,
+    `opendirSync`,
     `readSync`,
     `readlinkSync`,
     `readFileSync`,
@@ -67,9 +80,12 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `rmdirSync`,
     `statSync`,
     `symlinkSync`,
+    `truncateSync`,
     `unlinkSync`,
+    `unwatchFile`,
     `utimesSync`,
     `watch`,
+    `watchFile`,
     `writeFileSync`,
     `writeSync`,
   ]);
@@ -78,12 +94,15 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `accessPromise`,
     `appendFilePromise`,
     `chmodPromise`,
+    `chownPromise`,
     `closePromise`,
     `copyFilePromise`,
+    `linkPromise`,
     `lstatPromise`,
     `lutimesPromise`,
     `mkdirPromise`,
     `openPromise`,
+    `opendirPromise`,
     `readdirPromise`,
     `realpathPromise`,
     `readFilePromise`,
@@ -93,17 +112,32 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     `rmdirPromise`,
     `statPromise`,
     `symlinkPromise`,
+    `truncatePromise`,
     `unlinkPromise`,
     `utimesPromise`,
     `writeFilePromise`,
     `writeSync`,
   ]);
 
+  const FILEHANDLE_IMPLEMENTATIONS = new Set([
+    `appendFilePromise`,
+    `chmodPromise`,
+    `chownPromise`,
+    `closePromise`,
+    `readPromise`,
+    `readFilePromise`,
+    `statPromise`,
+    `truncatePromise`,
+    `utimesPromise`,
+    `writePromise`,
+    `writeFilePromise`,
+  ]);
+
   const setupFn = (target: any, name: string, replacement: any) => {
     const orig = target[name];
     target[name] = replacement;
 
-    if (typeof orig[promisify.custom] !== `undefined`) {
+    if (typeof orig?.[promisify.custom] !== `undefined`) {
       replacement[promisify.custom] = orig[promisify.custom];
     }
   };
@@ -193,7 +227,17 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
   {
     // `fs.promises` is a getter that returns a reference to require(`fs/promises`),
     // so we can just patch `fs.promises` and both will be updated
-    const patchedFsPromises = patchedFs.promises;
+
+    const origEmitWarning = process.emitWarning;
+    process.emitWarning = () => {};
+
+    let patchedFsPromises;
+    try {
+      patchedFsPromises = patchedFs.promises;
+    } finally {
+      process.emitWarning = origEmitWarning;
+    }
+
     if (typeof patchedFsPromises !== `undefined`) {
       // `fs.promises.exists` doesn't exist
 
@@ -206,8 +250,36 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         if (typeof fakeImpl === `undefined`)
           continue;
 
+        // Open is a bit particular with fs.promises: it returns a file handle
+        // instance instead of the traditional file descriptor number
+        if (fnName === `open`)
+          continue;
+
         setupFn(patchedFsPromises, origName, fakeImpl.bind(fakeFs));
       }
+
+      class FileHandle {
+        constructor(public fd: number) {
+        }
+      }
+
+      for (const fnName of FILEHANDLE_IMPLEMENTATIONS) {
+        const origName = fnName.replace(/Promise$/, ``);
+
+        const fakeImpl: Function = (fakeFs as any)[fnName];
+        if (typeof fakeImpl === `undefined`)
+          continue;
+
+        setupFn(FileHandle.prototype, origName, function (this: FileHandle, ...args: Array<any>) {
+          return fakeImpl.call(fakeFs, this.fd, ...args);
+        });
+      }
+
+      setupFn(patchedFsPromises, `open`, async (...args: Array<any>) => {
+        // @ts-expect-error
+        const fd = await fakeFs.openPromise(...args);
+        return new FileHandle(fd);
+      });
 
       // `fs.promises.realpath` doesn't have a `native` property
     }
@@ -230,6 +302,16 @@ export type XFS = NodeFS & {
 
   mktempPromise(): Promise<PortablePath>;
   mktempPromise<T>(cb: (p: PortablePath) => Promise<T>): Promise<T>;
+
+  /**
+   * Tries to remove all temp folders created by mktempSync and mktempPromise
+   */
+  rmtempPromise(): Promise<void>;
+
+  /**
+   * Tries to remove all temp folders created by mktempSync and mktempPromise
+   */
+  rmtempSync(): void;
 };
 
 const tmpdirs = new Set<PortablePath>();
@@ -237,25 +319,13 @@ const tmpdirs = new Set<PortablePath>();
 let cleanExitRegistered = false;
 
 function registerCleanExit() {
-  if (!cleanExitRegistered)
-    cleanExitRegistered = true;
-  else
+  if (cleanExitRegistered)
     return;
 
-  const cleanExit = () => {
-    process.off(`exit`, cleanExit);
-
-    for (const p of tmpdirs) {
-      tmpdirs.delete(p);
-      try {
-        xfs.removeSync(p);
-      } catch {
-        // Too bad if there's an error
-      }
-    }
-  };
-
-  process.on(`exit`, cleanExit);
+  cleanExitRegistered = true;
+  process.once(`exit`, () => {
+    xfs.rmtempSync();
+  });
 }
 
 export const xfs: XFS = Object.assign(new NodeFS(), {
@@ -335,6 +405,28 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
         }
       } else {
         return realP;
+      }
+    }
+  },
+
+  async rmtempPromise() {
+    await Promise.all(Array.from(tmpdirs.values()).map(async p => {
+      try {
+        await xfs.removePromise(p, {maxRetries: 0});
+        tmpdirs.delete(p);
+      } catch {
+        // Too bad if there's an error
+      }
+    }));
+  },
+
+  rmtempSync() {
+    for (const p of tmpdirs) {
+      try {
+        xfs.removeSync(p);
+        tmpdirs.delete(p);
+      } catch {
+        // Too bad if there's an error
       }
     }
   },

@@ -2,6 +2,7 @@
 category: features
 path: /features/plugins
 title: "Plugins"
+description: An overview of Yarn's plugin capabilities.
 ---
 
 Ever since Yarn was created, our very essence has been about experimenting, evolving, pushing the status quo - rinse and repeat, each time one step further, each time paving the way for our next move.

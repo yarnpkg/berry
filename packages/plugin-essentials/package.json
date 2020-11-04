@@ -1,33 +1,34 @@
 {
   "name": "@yarnpkg/plugin-essentials",
-  "version": "2.0.0-rc.30",
+  "version": "2.3.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.0.0-rc.22",
-    "@yarnpkg/json-proxy": "workspace:^2.0.0-rc.9",
-    "@yarnpkg/parsers": "workspace:^2.0.0-rc.13",
-    "clipanion": "^2.4.2",
-    "inquirer": "^7.2.0",
+    "@yarnpkg/fslib": "workspace:^2.3.0",
+    "@yarnpkg/json-proxy": "workspace:^2.1.0",
+    "@yarnpkg/parsers": "workspace:^2.3.0",
+    "ci-info": "^2.0.0",
+    "clipanion": "^2.6.2",
+    "enquirer": "^2.3.6",
     "lodash": "^4.17.15",
     "micromatch": "^4.0.2",
     "semver": "^7.1.2",
-    "treeify": "^1.1.0",
     "tslib": "^1.13.0",
     "yup": "^0.27.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.0.0-rc.36",
-    "@yarnpkg/core": "^2.0.0-rc.30"
+    "@yarnpkg/cli": "^2.3.3",
+    "@yarnpkg/core": "^2.3.1"
   },
   "devDependencies": {
-    "@types/inquirer": "^0.0.43",
+    "@types/ci-info": "^2",
     "@types/lodash": "^4.14.136",
     "@types/micromatch": "^4.0.1",
     "@types/semver": "^7.1.0",
     "@types/treeify": "^1.0.0",
-    "@yarnpkg/cli": "workspace:^2.0.0-rc.36",
-    "@yarnpkg/core": "workspace:^2.0.0-rc.30"
+    "@types/yup": "0.26.12",
+    "@yarnpkg/cli": "workspace:^2.3.3",
+    "@yarnpkg/core": "workspace:^2.3.1"
   },
   "repository": {
     "type": "git",

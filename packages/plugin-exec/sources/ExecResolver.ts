@@ -44,18 +44,24 @@ export class ExecResolver implements Resolver {
 
     const {path, parentLocator} = execUtils.parseSpec(descriptor.range);
 
+    if (parentLocator === null)
+      throw new Error(`Assertion failed: The descriptor should have been bound`);
+
     const generatorFile = await execUtils.loadGeneratorFile(structUtils.makeRange({
       protocol: PROTOCOL,
       source: path,
       selector: path,
       params: {
-        // The Descriptor should already be bound
-        locator: structUtils.stringifyLocator(parentLocator!),
+        locator: structUtils.stringifyLocator(parentLocator),
       },
     }), PROTOCOL, opts.fetchOptions);
     const generatorHash = hashUtils.makeHash(`${CACHE_VERSION}`, generatorFile).slice(0, 6);
 
     return [execUtils.makeLocator(descriptor, {parentLocator, path, generatorHash, protocol: PROTOCOL})];
+  }
+
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
+    return null;
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

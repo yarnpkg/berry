@@ -43,6 +43,10 @@ export class WorkspaceResolver implements Resolver {
     return [workspace.anchoredLocator];
   }
 
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
+    return null;
+  }
+
   async resolve(locator: Locator, opts: ResolveOptions) {
     const workspace = opts.project.getWorkspaceByCwd(locator.reference.slice(WorkspaceResolver.protocol.length) as PortablePath);
 

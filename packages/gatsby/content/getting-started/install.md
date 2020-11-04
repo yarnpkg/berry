@@ -2,17 +2,18 @@
 category: getting-started
 path: /getting-started/install
 title: "2 - Installation"
+description: Yarn's in-depth installation guide.
 ---
 
 > **Migrating from Yarn 1**
 >
-> We've been compiling helpful advice when porting over from Yarn 1 on the following [Migration Guide](/advanced/migration). Give it a look and contribute to it if you see things that aren't covered yet! Make sure to consult the [PnP Compatibility Table](/features/pnp#compatibility-table) and [enable the node-modules plugin](/advanced/migration#if-required-enable-the-node-modules-plugin) if required!
+> We've been compiling helpful advice when porting over from Yarn 1 on the following [Migration Guide](/getting-started/migration). Give it a look and contribute to it if you see things that aren't covered yet! Make sure to consult the [PnP Compatibility Table](/features/pnp#compatibility-table) and [enable the node-modules plugin](/getting-started/migration#if-required-enable-the-node-modules-plugin) if required!
 
 ```toc
 # This code block gets replaced with the Table of Contents
 ```
 
-## Global Install
+## About global installs
 
 Using a single package manager across your system has always been a problem. To be stable, installs need to be run with the same package manager version across environments, otherwise there's a risk we introduce accidental breaking changes between versions - after all, that's why the concept of lockfile was introduced in the first place! And with Yarn being in a sense your very first project dependency, it should make sense to "lock it" as well.
 
@@ -28,7 +29,11 @@ Once you've followed the instructions (running `yarn --version` from your home d
 
 ## Per-project install
 
-1. Follow the global install instructions
+1. Install the Yarn global binary to its latest version:
+
+```bash
+npm install -g yarn
+```
 
 2. Move into your project folder:
 
@@ -36,16 +41,15 @@ Once you've followed the instructions (running `yarn --version` from your home d
 cd ~/path/to/project
 ```
 
-3. Run the following command:
+3. Run the following:
 
 ```bash
-yarn policies set-version berry # below v1.22
-yarn set version berry          # on v1.22+
+yarn set version berry
 ```
 
 > "Berry" is the codename for the Yarn 2 release line. It's also the name of our [repository](https://github.com/yarnpkg/berry)!
 
-4. Commit the `.yarn` and `.yarnrc.yml` changes
+4. Commit new & updated files. See: [Which files should be gitignored?](/getting-started/qa#which-files-should-be-gitignored)
 
 ## Updating to the latest versions
 

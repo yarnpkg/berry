@@ -3,7 +3,7 @@ import {Configuration, Manifest, Project}    from '@yarnpkg/core';
 import {execUtils, scriptUtils, structUtils} from '@yarnpkg/core';
 import {xfs, ppath, Filename}                from '@yarnpkg/fslib';
 import {Command, Usage, UsageError}          from 'clipanion';
-import {merge}                               from 'lodash';
+import merge                                 from 'lodash/merge';
 import {inspect}                             from 'util';
 
 // eslint-disable-next-line arca/no-default-export
@@ -17,13 +17,13 @@ export default class InitCommand extends BaseCommand {
   @Command.Boolean(`-y,--yes`, {hidden: true})
   yes: boolean = false;
 
-  @Command.Boolean(`-p,--private`)
+  @Command.Boolean(`-p,--private`, {description: `Initialize a private package`})
   private: boolean = false;
 
-  @Command.Boolean(`-w,--workspace`)
+  @Command.Boolean(`-w,--workspace`, {description: `Initialize a private workspace root with a \`packages/\` directory`})
   workspace: boolean = false;
 
-  @Command.String(`-i,--install`, {tolerateBoolean: true})
+  @Command.String(`-i,--install`, {tolerateBoolean: true, description: `Initialize a package with a specific bundle that will be locked in the project`})
   install: string | boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -80,9 +80,9 @@ export default class InitCommand extends BaseCommand {
       throw new UsageError(`Cannot use the --install flag when the current directory is already part of a project`);
 
     if (!xfs.existsSync(this.context.cwd))
-      await xfs.mkdirpPromise(this.context.cwd);
+      await xfs.mkdirPromise(this.context.cwd, {recursive: true});
 
-    const lockfilePath = ppath.join(this.context.cwd, configuration.get<Filename>(`lockfileFilename`));
+    const lockfilePath = ppath.join(this.context.cwd, configuration.get(`lockfileFilename`));
     if (!xfs.existsSync(lockfilePath))
       await xfs.writeFilePromise(lockfilePath, ``);
 
@@ -124,11 +124,11 @@ export default class InitCommand extends BaseCommand {
     }
 
     if (!xfs.existsSync(this.context.cwd))
-      await xfs.mkdirpPromise(this.context.cwd);
+      await xfs.mkdirPromise(this.context.cwd, {recursive: true});
 
     const manifest = new Manifest();
 
-    const fields = Object.fromEntries(configuration.get<Map<string, any>>(`initFields`).entries());
+    const fields = Object.fromEntries(configuration.get(`initFields`).entries());
     manifest.load(fields);
 
     manifest.name = structUtils.makeIdent(configuration.get(`initScope`), ppath.basename(this.context.cwd));
@@ -137,7 +137,7 @@ export default class InitCommand extends BaseCommand {
     manifest.license = configuration.get(`initLicense`);
 
     if (this.workspace) {
-      await xfs.mkdirpPromise(ppath.join(this.context.cwd, `packages` as Filename));
+      await xfs.mkdirPromise(ppath.join(this.context.cwd, `packages` as Filename), {recursive: true});
       manifest.workspaceDefinitions = [{
         pattern: `packages/*`,
       }];
@@ -146,7 +146,7 @@ export default class InitCommand extends BaseCommand {
     const serialized: any = {};
     manifest.exportTo(serialized);
 
-    // @ts-ignore: The Node typings forgot one field
+    // @ts-expect-error: The Node typings forgot one field
     inspect.styles.name = `cyan`;
 
     this.context.stdout.write(`${inspect(serialized, {

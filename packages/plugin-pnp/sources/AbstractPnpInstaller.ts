@@ -61,6 +61,7 @@ export abstract class AbstractPnpInstaller implements Installer {
     const manifest = !hasVirtualInstances || this.opts.skipIncompatiblePackageLinking
       ? await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs})
       : null;
+
     const isManifestCompatible = this.checkAndReportManifestIncompatibility(manifest, pkg);
     if (this.opts.skipIncompatiblePackageLinking && !isManifestCompatible)
       return {packageLocation: null, buildDirective: null};
@@ -69,7 +70,9 @@ export abstract class AbstractPnpInstaller implements Installer {
       ? await this.getBuildScripts(pkg, manifest, fetchResult)
       : [];
 
-    if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`)) {
+    const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
+
+    if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`) && !dependencyMeta.built) {
       this.opts.report.reportWarningOnce(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but all build scripts have been disabled.`);
       buildScripts.length = 0;
     }
@@ -78,8 +81,6 @@ export abstract class AbstractPnpInstaller implements Installer {
       this.opts.report.reportWarningOnce(MessageName.SOFT_LINK_BUILD, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but is referenced through a soft link. Soft links don't support build scripts, so they'll be ignored.`);
       buildScripts.length = 0;
     }
-
-    const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
 
     if (buildScripts.length > 0 && dependencyMeta && dependencyMeta.built === false) {
       this.opts.report.reportInfoOnce(MessageName.BUILD_DISABLED, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but its build has been explicitly disabled through configuration.`);
@@ -160,7 +161,7 @@ export abstract class AbstractPnpInstaller implements Installer {
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
-    const fallbackPool = this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator).packageDependencies;
+    const fallbackPool = new Map();
     const ignorePattern = miscUtils.buildIgnorePattern([`.yarn/sdks/**`, ...this.opts.project.configuration.get(`pnpIgnorePatterns`)]);
     const packageRegistry = this.packageRegistry;
     const shebang = this.opts.project.configuration.get(`pnpShebang`);

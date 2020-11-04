@@ -44,7 +44,7 @@ export function getDefaultRegistry({configuration, type = RegistryType.FETCH_REG
 }
 
 export function getRegistryConfiguration(registry: string, {configuration}: {configuration: Configuration}): MapLike | null {
-  const registryConfigurations: Map<string, MapLike> = configuration.get(`npmRegistries`);
+  const registryConfigurations = configuration.get(`npmRegistries`);
 
   const exactEntry = registryConfigurations.get(registry);
   if (typeof exactEntry !== `undefined`)
@@ -61,7 +61,7 @@ export function getScopeConfiguration(scope: string | null, {configuration}: {co
   if (scope === null)
     return null;
 
-  const scopeConfigurations: Map<string, MapLike> = configuration.get(`npmScopes`);
+  const scopeConfigurations = configuration.get(`npmScopes`);
 
   const scopeConfiguration = scopeConfigurations.get(scope);
   if (!scopeConfiguration)

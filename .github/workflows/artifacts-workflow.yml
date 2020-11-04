@@ -22,7 +22,7 @@ jobs:
 
     - name: 'Build the standard bundle'
       run: |
-        node ./scripts/run-yarn.js build:cli
+        node ./scripts/run-yarn.js build:cli+hook
 
     - name: Upload the standard bundle
       uses: actions/upload-artifact@v2
@@ -39,3 +39,13 @@ jobs:
       with:
         name: vscode-zipfs
         path: ./packages/vscode-zipfs/vscode-zipfs-*.vsix
+
+    - name: 'Build the pnp hook'
+      run: |
+        node ./scripts/run-yarn.js build:pnp:hook
+
+    - name: Upload the pnp hook
+      uses: actions/upload-artifact@v2
+      with:
+        name: pnp-hook
+        path: ./packages/yarnpkg-pnp/sources/hook.js

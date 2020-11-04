@@ -3,7 +3,7 @@ const cp = require(`child_process`);
 const {satisfies} = require(`semver`);
 
 const {
-  fs: {createTemporaryFolder, readFile, writeFile, writeJson},
+  fs: {createTemporaryFolder, readFile, writeFile, writeJson, mkdirp},
   tests: {getPackageDirectoryPath, testIf},
 } = require(`pkg-tests-core`);
 
@@ -135,6 +135,27 @@ describe(`Plug'n'Play`, () => {
         await expect(source(`require('various-requires/invalid-require')`)).resolves.toMatchObject({
           name: `no-deps`,
           version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it shouldn't print warning in the default install mode, even when the fallback is used`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`various-requires`]: `1.0.0`, [`no-deps`]: `1.0.0`},
+      },
+      {
+        // By default tests are executed with the fallback disabled; this
+        // setting forces this test to execute in the default mode instead
+        pnpFallbackMode: undefined,
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(run(`node`, `-e`, `require('various-requires/invalid-require')`)).resolves.toMatchObject({
+          stderr: ``,
         });
       },
     ),
@@ -284,6 +305,26 @@ describe(`Plug'n'Play`, () => {
         });
       },
     ),
+  );
+
+  test(
+    `it should implicitly allow @types accesses if there are matching peer dependencies`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`@types/no-deps`]: `1.0.0`,
+          [`peer-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(source(`require('peer-deps/get-types')`)).resolves.toMatchObject({
+          name: `@types/no-deps`,
+          version: `1.0.0`,
+        });
+      }
+    )
   );
 
   test(
@@ -919,7 +960,7 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
-    `it should not break relative requires for files within a blacklist`,
+    `it should not break relative requires for files matching pnpIgnorePatterns`,
     makeTemporaryEnv(
       {},
       {
@@ -1464,6 +1505,33 @@ describe(`Plug'n'Play`, () => {
     }),
   );
 
+  test(`it should NOT remove lingering node_modules inside folders matched by pnpIgnorePatterns`,
+    makeTemporaryEnv({
+      workspaces: [`foo`],
+    }, {
+      pnpIgnorePatterns: `foo/**`,
+    }, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/node_modules/foo`);
+      await writeJson(`${path}/foo/package.json`, {
+        name: `foo`,
+        version: `1.0.0`,
+        workspaces: [`baz`],
+      });
+      await xfs.mkdirpPromise(`${path}/foo/node_modules/dep`);
+      await writeJson(`${path}/foo/baz/package.json`, {
+        name: `baz`,
+        version: `1.0.0`,
+      });
+      await xfs.mkdirpPromise(`${path}/foo/baz/node_modules/dep`);
+
+      await run(`install`);
+
+      await expect(xfs.readdirPromise(path)).resolves.not.toContain(`node_modules`);
+      await expect(xfs.readdirPromise(`${path}/foo/baz`)).resolves.toContain(`node_modules`);
+      await expect(xfs.readdirPromise(`${path}/foo`)).resolves.toContain(`node_modules`);
+    }),
+  );
+
   test(
     `it should transparently support the "resolve" package`,
     makeTemporaryEnv(
@@ -1588,5 +1656,74 @@ describe(`Plug'n'Play`, () => {
 
       await expect(run(`node`, `file.js`)).resolves.toBeTruthy();
     }),
+  );
+
+  test(
+    `it should take trailing slashes into account when resolving paths`,
+    makeTemporaryEnv({},  async ({path, run, source}) => {
+      await writeFile(`${path}/foo.js`, ``);
+
+      await mkdirp(`${path}/foo`);
+      await writeFile(`${path}/foo/index.js`, ``);
+
+      await expect(source(`require.resolve('./foo')`)).resolves.toEqual(npath.fromPortablePath(`${path}/foo.js`));
+      await expect(source(`require.resolve('./foo/')`)).resolves.toEqual(npath.fromPortablePath(`${path}/foo/index.js`));
+    }),
+  );
+
+  /**
+   * Trailing slashes inside the packageLocations of the PnP serialized state
+   * are inserted when the target is a folder. (e.g. `link:`, `workspace:`)
+   */
+  test(
+    `it should take trailing slashes inside the packageLocations of the PnP serialized state into account when resolving packages`,
+    makeTemporaryEnv({},  async ({path, run, source}) => {
+      await writeFile(`${path}/package.json`, JSON.stringify({
+        dependencies: {
+          [`pkg`]: `link:./package`,
+        },
+      }));
+
+      await mkdirp(`${path}/package`);
+      await writeFile(`${path}/package/index.js`, ``);
+
+      await run(`install`);
+
+      // This shouldn't be resolved to the package.json
+      await expect(source(`require.resolve('pkg')`)).resolves.toEqual(npath.fromPortablePath(`${path}/package/index.js`));
+    }),
+  );
+
+  test(
+    `it should not loose the pnpapi on portals with virtual paths`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mktempPromise(async portalTarget => {
+        await xfs.writeJsonPromise(`${portalTarget}/package.json`, {
+          name: `portal`,
+          dependencies: {
+            [`no-deps`]: `*`,
+            [`peer-deps-fixed`]: `*`,
+          },
+          peerDependencies: {
+            [`left-pad`]: `*`,
+          },
+        });
+
+        await xfs.writeFilePromise(
+          `${portalTarget}/index.js`,
+          `module.exports = require.resolve('peer-deps-fixed', {paths: [__dirname]})`
+        );
+
+        await xfs.writeJsonPromise(`${path}/package.json`, {
+          dependencies: {
+            [`portal`]: `portal:${portalTarget}`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(source(`require('portal')`)).resolves.toMatch(`peer-deps-fixed-virtual-`);
+      });
+    })
   );
 });

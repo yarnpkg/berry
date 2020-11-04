@@ -1,8 +1,8 @@
-import {FetchOptions, FetchResult, Locator, Plugin} from '@yarnpkg/core';
+import {FetchOptions, FetchResult, Locator, Plugin, SettingsType} from '@yarnpkg/core';
 
-import {GitFetcher}                                 from './GitFetcher';
-import {GitResolver}                                from './GitResolver';
-import * as gitUtils                                from './gitUtils';
+import {GitFetcher}                                               from './GitFetcher';
+import {GitResolver}                                              from './GitResolver';
+import * as gitUtils                                              from './gitUtils';
 
 export interface Hooks {
   fetchHostedRepository?: (
@@ -12,7 +12,20 @@ export interface Hooks {
   ) => Promise<FetchResult | null>,
 }
 
+declare module '@yarnpkg/core' {
+  interface ConfigurationValueMap {
+    cloneConcurrency: number;
+  }
+}
+
 const plugin: Plugin = {
+  configuration: {
+    cloneConcurrency: {
+      description: `Maximal number of concurrent clones`,
+      type: SettingsType.NUMBER,
+      default: 2,
+    },
+  },
   fetchers: [
     GitFetcher,
   ],

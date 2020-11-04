@@ -11,12 +11,17 @@ import {DescriptorHash, Descriptor, Locator}             from './types';
 
 const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>) => string]> = [
   // These ones come from Git urls
-  [/^(git(?:\+(?:https|ssh))?:\/\/.*\.git)#(.*)$/, (version, $0, $1, $2) => `${$1}#commit:${$2}`],
+  [/^(git(?:\+(?:https|ssh))?:\/\/.*(?:\.git)?)#(.*)$/, (version, $0, $1, $2) => `${$1}#commit=${$2}`],
+
   // These ones come from the GitHub HTTP endpoints
-  [/^https:\/\/((?:[^/]+?)@)?codeload\.github\.com\/([^/]+\/[^/]+)\/tar\.gz\/([0-9a-f]+)$/, (version, $0, $1 = ``, $2, $3) => `https://${$1}github.com/${$2}.git#commit:${$3}`],
-  [/^https:\/\/((?:[^/]+?)@)?github\.com\/([^/]+\/[^/]+?)(?:\.git)?#([0-9a-f]+)$/, (version, $0, $1 = ``, $2, $3) => `https://${$1}github.com/${$2}.git#commit:${$3}`],
+  [/^https:\/\/((?:[^/]+?)@)?codeload\.github\.com\/([^/]+\/[^/]+)\/tar\.gz\/([0-9a-f]+)$/, (version, $0, $1 = ``, $2, $3) => `https://${$1}github.com/${$2}.git#commit=${$3}`],
+  [/^https:\/\/((?:[^/]+?)@)?github\.com\/([^/]+\/[^/]+?)(?:\.git)?#([0-9a-f]+)$/, (version, $0, $1 = ``, $2, $3) => `https://${$1}github.com/${$2}.git#commit=${$3}`],
+
   // These ones come from the npm registry
-  [/^https?:\/\/[^/]+\/(?:@[^/]+\/)?([^/]+)\/-\/\1-[^/]+\.tgz(?:#|$)/, version => `npm:${version}`],
+  [/^https?:\/\/[^/]+\/(?:[^/]+\/)*(?:@[^/]+\/)?([^/]+)\/-\/\1-[^/]+\.tgz(?:#|$)/, version => `npm:${version}`],
+  // The GitHub package registry uses a different style of URLs
+  [/^https:\/\/npm\.pkg\.github\.com\/download\/(?:@[^/]+)\/(?:[^/]+)\/(?:[^/]+)\/(?:[0-9a-f]+)$/, version => `npm:${version}`],
+
   // These ones come from the old Yarn offline mirror - we assume they came from npm
   [/^[^/]+\.tgz#[0-9a-f]+$/, version => `npm:${version}`],
 ];
@@ -113,6 +118,10 @@ export class LegacyMigrationResolver implements Resolver {
       throw new Error(`Assertion failed: The resolution should have been registered`);
 
     return [resolution];
+  }
+
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
+    return null;
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<never> {

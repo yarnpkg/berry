@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import {safeLoad, FAILSAFE_SCHEMA} from 'js-yaml';
 
 import {parse}                     from './grammars/syml';
@@ -20,6 +20,16 @@ function stringifyString(value: string): string {
   } else {
     return JSON.stringify(value);
   }
+}
+
+function isRemovableField(value: any): boolean {
+  if (typeof value === `undefined`)
+    return true;
+
+  if (typeof value === `object` && value !== null)
+    return Object.keys(value).every(key => isRemovableField(value[key]));
+
+  return false;
 }
 
 function stringifyValue(value: any, indentLevel: number, newLineIfObject: boolean): string {
@@ -78,7 +88,7 @@ function stringifyValue(value: any, indentLevel: number, newLineIfObject: boolea
     }
 
     const fields = keys.filter(key => {
-      return data[key] !== undefined;
+      return !isRemovableField(data[key]);
     }).map((key, index) => {
       const value = data[key];
 
@@ -108,7 +118,8 @@ function stringifyValue(value: any, indentLevel: number, newLineIfObject: boolea
 
 export function stringifySyml(value: any) {
   try {
-    return stringifyValue(value, 0, false);
+    const stringified = stringifyValue(value, 0, false);
+    return stringified !== `\n` ? stringified : ``;
   } catch (error) {
     if (error.location)
       error.message = error.message.replace(/(\.)?$/, ` (line ${error.location.start.line}, column ${error.location.start.column})$1`);

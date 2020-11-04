@@ -1,18 +1,18 @@
-import {BuildDirective, MessageName, Project, FetchResult}        from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, LinkType}        from '@yarnpkg/core';
-import {Locator, Package, BuildType, FinalizeInstallStatus}       from '@yarnpkg/core';
-import {structUtils, Report, Manifest, miscUtils, DependencyMeta} from '@yarnpkg/core';
-import {VirtualFS, ZipOpenFS, xfs, FakeFS}                        from '@yarnpkg/fslib';
-import {PortablePath, npath, ppath, toFilename, Filename}         from '@yarnpkg/fslib';
-import {getLibzipPromise}                                         from '@yarnpkg/libzip';
-import {parseSyml}                                                from '@yarnpkg/parsers';
-import {AbstractPnpInstaller}                                     from '@yarnpkg/plugin-pnp';
-import {NodeModulesLocatorMap, buildLocatorMap}                   from '@yarnpkg/pnpify';
-import {buildNodeModulesTree}                                     from '@yarnpkg/pnpify';
-import {PnpSettings, makeRuntimeApi}                              from '@yarnpkg/pnp';
-import cmdShim                                                    from '@zkochan/cmd-shim';
-import {UsageError}                                               from 'clipanion';
-import fs                                                         from 'fs';
+import {BuildDirective, MessageName, Project, FetchResult}                 from '@yarnpkg/core';
+import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                 from '@yarnpkg/core';
+import {Locator, Package, BuildType, FinalizeInstallStatus}                from '@yarnpkg/core';
+import {structUtils, Report, Manifest, miscUtils, DependencyMeta}          from '@yarnpkg/core';
+import {VirtualFS, ZipOpenFS, xfs, FakeFS}                                 from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, toFilename, Filename}                  from '@yarnpkg/fslib';
+import {getLibzipPromise}                                                  from '@yarnpkg/libzip';
+import {parseSyml}                                                         from '@yarnpkg/parsers';
+import {AbstractPnpInstaller}                                              from '@yarnpkg/plugin-pnp';
+import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits} from '@yarnpkg/pnpify';
+import {buildNodeModulesTree}                                              from '@yarnpkg/pnpify';
+import {PnpSettings, makeRuntimeApi, PnpApi}                               from '@yarnpkg/pnp';
+import cmdShim                                                             from '@zkochan/cmd-shim';
+import {UsageError}                                                        from 'clipanion';
+import fs                                                                  from 'fs';
 
 const STATE_FILE_VERSION = 1;
 const NODE_MODULES = `node_modules` as Filename;
@@ -21,6 +21,7 @@ const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
 
 type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap};
 type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
+type LoadManifest = (locator: LocatorKey, installLocation: PortablePath) => Promise<Manifest>;
 
 export class NodeModulesLinker implements Linker {
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
@@ -37,8 +38,11 @@ export class NodeModulesLinker implements Linker {
       throw new UsageError(`Couldn't find the node_modules state file - running an install might help (findPackageLocation)`);
 
     const locatorInfo = installState.locatorMap.get(structUtils.stringifyLocator(locator));
-    if (!locatorInfo)
-      throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed node_modules map - running an install might help`);
+    if (!locatorInfo) {
+      const err = new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed node_modules map - running an install might help`);
+      (err as any).code = `LOCATOR_NOT_INSTALLED`;
+      throw err;
+    }
 
     return locatorInfo.locations[0];
   }
@@ -101,15 +105,30 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
       preinstallState = {locatorMap: new Map(), binSymlinks: new Map(), locationTree: new Map()};
     }
 
+    const defaultHoistingLimits = this.opts.project.configuration.get(`nmHoistingLimits`) as NodeModulesHoistingLimits;
+
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
-    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false});
+    const hoistingLimitsByCwd = new Map(this.opts.project.workspaces.map(
+      workspace => {
+        const {relativeCwd, manifest} = workspace;
+        let hoistingLimits = defaultHoistingLimits;
+        try {
+          hoistingLimits = miscUtils.validateEnum(NodeModulesHoistingLimits, manifest.installConfig?.hoistingLimits ?? defaultHoistingLimits);
+        } catch (e) {
+          const workspaceName = structUtils.prettyWorkspace(this.opts.project.configuration, workspace);
+          this.opts.report.reportWarning(MessageName.INVALID_MANIFEST, `${workspaceName}: Invalid 'installConfig.hoistingLimits' value. Expected one of ${Object.values(NodeModulesHoistingLimits).join(`, `)}, using default: "${hoistingLimits}"`);
+        }
+        return [relativeCwd, hoistingLimits];
+      }
+    ));
+    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false, hoistingLimitsByCwd, project: this.opts.project});
     const locatorMap = buildLocatorMap(nmTree);
 
     await persistNodeModules(preinstallState, locatorMap, {
       baseFs: defaultFsLayer,
       project: this.opts.project,
       report: this.opts.report,
-      loadManifest: this.cachedManifestLoad.bind(this),
+      loadManifest: this.cachedManifestLoad.bind(this, pnp, defaultFsLayer),
     });
 
     const installStatuses: Array<FinalizeInstallStatus> = [];
@@ -127,7 +146,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
 
       const sourceLocation = npath.toPortablePath(installRecord.locations[0]);
 
-      const manifest = await this.cachedManifestLoad(sourceLocation);
+      const manifest = await this.cachedManifestLoad(pnp, defaultFsLayer, locatorKey, sourceLocation);
       const buildScripts = await this.getSourceBuildScripts(sourceLocation, manifest);
 
       if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`)) {
@@ -159,20 +178,26 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
     return installStatuses;
   }
 
-  private manifestCache: Map<PortablePath, Manifest> = new Map();
+  private manifestCache: Map<LocatorKey, Manifest> = new Map();
 
-  private async cachedManifestLoad(sourceLocation: PortablePath): Promise<Manifest> {
-    let manifest = this.manifestCache.get(sourceLocation);
+  private async cachedManifestLoad(pnp: PnpApi, baseFs: FakeFS<PortablePath>, locator: LocatorKey, installLocation: PortablePath): Promise<Manifest> {
+    let manifest = this.manifestCache.get(locator);
     if (manifest)
       return manifest;
 
     try {
-      manifest = await Manifest.find(sourceLocation);
+      // Optimization: try load manifest from inside node_modules first, if that fails - load from cached archive
+      manifest = await Manifest.find(installLocation);
     } catch (e) {
-      e.message = `While loading ${sourceLocation}: ${e.message}`;
-      throw e;
+      const fallbackLocation = npath.toPortablePath(pnp.getPackageInformation(structUtils.parseLocator(locator))!.packageLocation);
+      try {
+        manifest = await Manifest.find(fallbackLocation, {baseFs});
+      } catch (e) {
+        e.message = `While loading ${fallbackLocation}: ${e.message}`;
+        throw e;
+      }
     }
-    this.manifestCache.set(sourceLocation, manifest);
+    this.manifestCache.set(locator, manifest);
 
     return manifest;
   }
@@ -186,7 +211,7 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
         buildScripts.push([BuildType.SCRIPT, scriptName]);
 
     // Detect cases where a package has a binding.gyp but no install script
-    const bindingFilePath = ppath.resolve(packageLocation, toFilename(`binding.gyp`));
+    const bindingFilePath = ppath.resolve(packageLocation, `binding.gyp` as Filename);
     if (!scripts.has(`install`) && xfs.existsSync(bindingFilePath))
       buildScripts.push([BuildType.SHELLCODE, `node-gyp rebuild`]);
 
@@ -204,6 +229,7 @@ async function writeInstallState(project: Project, locatorMap: NodeModulesLocato
   locatorState += `  version: ${STATE_FILE_VERSION}\n`;
 
   const locators = Array.from(locatorMap.keys()).sort();
+  const topLevelLocator = structUtils.stringifyLocator(project.topLevelWorkspace.anchoredLocator);
 
   for (const locator of locators) {
     const installRecord = locatorMap.get(locator)!;
@@ -211,17 +237,12 @@ async function writeInstallState(project: Project, locatorMap: NodeModulesLocato
     locatorState += `${JSON.stringify(locator)}:\n`;
     locatorState += `  locations:\n`;
 
-    let topLevelLocator = false;
     for (const location of installRecord.locations) {
       const internalPath = ppath.contains(project.cwd, location);
       if (internalPath === null)
         throw new Error(`Assertion failed: Expected the path to be within the project (${location})`);
 
       locatorState += `    - ${JSON.stringify(internalPath)}\n`;
-
-      if (location === project.cwd) {
-        topLevelLocator = true;
-      }
     }
 
     if (installRecord.aliases.length > 0) {
@@ -231,7 +252,7 @@ async function writeInstallState(project: Project, locatorMap: NodeModulesLocato
       }
     }
 
-    if (topLevelLocator && binSymlinks.size > 0) {
+    if (locator === topLevelLocator && binSymlinks.size > 0) {
       locatorState += `  bin:\n`;
       for (const [location, symlinks] of binSymlinks) {
         const internalPath = ppath.contains(project.cwd, location);
@@ -370,14 +391,14 @@ type LocationRoot = PortablePath;
  *               children: Map {
  *                 'react-hooks' => {
  *                   children: Map {},
- *                   locator: '@apollo/react-hooks:virtual:cf51d203f9119859b7628364a64433e4a73a44a577d2ffd0dfd5dd737a980bc6cddc70ed15c1faf959fc2ad6a8e103ce52fe188f2b175b5f4371d4381544d74e#npm:3.1.3'
+ *                   locator: '@apollo/react-hooks:virtual:cf...#npm:3.1.3'
  *                 }
  *               }
  *             }
  *           }
  *         }
  *       },
- *       locator: 'react-apollo:virtual:2499dbb93d824027565d71b0716c4fb8b548ad61955d0a0286bfb3c5b4058e227894b6691d96808c00f576db14870018375210362c26ee321ea99fd6ed041c74#npm:3.1.3'
+ *       locator: 'react-apollo:virtual:24...#npm:3.1.3'
  *     },
  *   },
  *   'packages/client' => children: Map {
@@ -395,7 +416,10 @@ const parseLocation = (location: PortablePath, {skipPrefix}: {skipPrefix: Portab
   if (projectRelativePath === null)
     throw new Error(`Assertion failed: Cannot process a path that isn't part of the requested prefix (${location} isn't within ${skipPrefix})`);
 
-  const allSegments = projectRelativePath.split(ppath.sep);
+  const allSegments = projectRelativePath
+    .split(ppath.sep)
+    // Ignore empty segments (after trailing slashes)
+    .filter(segment => segment !== ``);
   const nmIndex = allSegments.indexOf(NODE_MODULES);
 
   // Project path, up until the first node_modules segment
@@ -454,11 +478,25 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
   return locationTree;
 };
 
-const symlinkPromise = async (srcDir: PortablePath, dstDir: PortablePath) =>
-  xfs.symlinkPromise(process.platform !== `win32` ? ppath.relative(ppath.dirname(dstDir), srcDir) : srcDir, dstDir, process.platform === `win32` ? `junction` : undefined);
+const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath) => {
+  let stats;
+
+  try {
+    if (process.platform === `win32`) {
+      stats = xfs.lstatSync(srcPath);
+    }
+  } catch (e) {
+  }
+
+  if (process.platform == `win32` && (!stats || stats.isDirectory())) {
+    xfs.symlinkPromise(srcPath, dstPath, `junction`);
+  } else {
+    xfs.symlinkPromise(ppath.relative(ppath.dirname(dstPath), srcPath), dstPath);
+  }
+};
 
 const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, innerLoop}: {baseFs: FakeFS<PortablePath>, innerLoop?: boolean}) => {
-  await xfs.mkdirpPromise(dstDir);
+  await xfs.mkdirPromise(dstDir, {recursive: true});
   const entries = await baseFs.readdirPromise(srcDir, {withFileTypes: true});
 
   const copy = async (dstPath: PortablePath, srcPath: PortablePath, srcType: fs.Dirent) => {
@@ -472,7 +510,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
       }
     } else if (srcType.isSymbolicLink()) {
       const target = await baseFs.readlinkPromise(srcPath);
-      await symlinkPromise(ppath.resolve(srcPath, target), dstPath);
+      await symlinkPromise(ppath.resolve(ppath.dirname(dstPath), target), dstPath);
     } else {
       throw new Error(`Unsupported file type (file: ${srcPath}, mode: 0o${await xfs.statSync(srcPath).mode.toString(8).padStart(6, `0`)})`);
     }
@@ -536,10 +574,10 @@ function isLinkLocator(locatorKey: LocatorKey): boolean {
   return descriptor.range.startsWith(`link:`);
 }
 
-async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, projectRoot: PortablePath, {loadManifest}: {loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
+async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, projectRoot: PortablePath, {loadManifest}: {loadManifest: LoadManifest}) {
   const locatorScriptMap = new Map<LocatorKey, Map<string, string>>();
   for (const [locatorKey, {locations}] of installState) {
-    const manifest = isLinkLocator(locatorKey) ? null : await loadManifest(locations[0]);
+    const manifest = isLinkLocator(locatorKey) ? null : await loadManifest(locatorKey, locations[0]);
 
     const bin = new Map();
     if (manifest) {
@@ -607,7 +645,7 @@ const areRealLocatorsEqual = (locatorKey1?: LocatorKey, locatorKey2?: LocatorKey
   return structUtils.areLocatorsEqual(locator1, locator2);
 };
 
-async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: (sourceLocation: PortablePath) => Promise<Manifest>}) {
+async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: LoadManifest}) {
   const rootNmDirPath = ppath.join(project.cwd, NODE_MODULES);
 
   const {locationTree: prevLocationTree, binSymlinks: prevBinSymlinks} = refineNodeModulesRoots(preinstallState.locationTree, preinstallState.binSymlinks);
@@ -618,7 +656,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     const promise: Promise<any> = (async () => {
       try {
         if (linkType === LinkType.SOFT) {
-          await xfs.mkdirpPromise(ppath.dirname(dstDir));
+          await xfs.mkdirPromise(ppath.dirname(dstDir), {recursive: true});
           await symlinkPromise(ppath.resolve(srcDir), dstDir);
         } else {
           await copyPromise(dstDir, srcDir, {baseFs});
@@ -641,7 +679,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       const cloneDir = async (srcDir: PortablePath, dstDir: PortablePath, options?: { innerLoop?: boolean }) => {
         try {
           if (!options || !options.innerLoop)
-            await xfs.mkdirpPromise(dstDir);
+            await xfs.mkdirPromise(dstDir, {recursive: true});
 
           const entries = await xfs.readdirPromise(srcDir, {withFileTypes: true});
           for (const entry of entries) {
@@ -653,7 +691,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
             if (entry.isDirectory()) {
               if (entry.name !== NODE_MODULES || (options && options.innerLoop)) {
-                await xfs.mkdirpPromise(dst);
+                await xfs.mkdirPromise(dst, {recursive: true});
                 await cloneDir(src, dst, {innerLoop: true});
               }
             } else {
@@ -839,7 +877,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
     await Promise.all(addQueue);
 
-    await xfs.mkdirpPromise(rootNmDirPath);
+    await xfs.mkdirPromise(rootNmDirPath, {recursive: true});
 
     const binSymlinks = await createBinSymlinkMap(installState, locationTree, project.cwd, {loadManifest});
     await persistBinSymlinks(prevBinSymlinks, binSymlinks);
@@ -862,7 +900,7 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
   for (const [location, symlinks] of binSymlinks) {
     const binDir = ppath.join(location, NODE_MODULES, DOT_BIN);
     const prevSymlinks = previousBinSymlinks.get(location) || new Map();
-    await xfs.mkdirpPromise(binDir);
+    await xfs.mkdirPromise(binDir, {recursive: true});
     for (const name of prevSymlinks.keys()) {
       if (!symlinks.has(name)) {
         // Remove outdated symlinks

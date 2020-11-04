@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                                              from '@yarnpkg/cli';
-import {Cache, Configuration, Project, structUtils, StreamReport, MessageName, miscUtils} from '@yarnpkg/core';
-import {npath}                                                                            from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                                                       from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                           from '@yarnpkg/cli';
+import {Cache, Configuration, Project, formatUtils, structUtils, StreamReport, MessageName, miscUtils} from '@yarnpkg/core';
+import {npath}                                                                                         from '@yarnpkg/fslib';
+import {Command, Usage, UsageError}                                                                    from 'clipanion';
 
-import * as patchUtils                                                                    from '../patchUtils';
+import * as patchUtils                                                                                 from '../patchUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PatchCommand extends BaseCommand {
@@ -58,8 +58,8 @@ export default class PatchCommand extends BaseCommand {
       const temp = await patchUtils.extractPackageToDisk(locator, {cache, project});
 
       report.reportInfo(MessageName.UNNAMED, `Package ${structUtils.prettyLocator(configuration, locator)} got extracted with success!`);
-      report.reportInfo(MessageName.UNNAMED, `You can now edit the following folder: ${configuration.format(npath.fromPortablePath(temp), `magenta`)}`);
-      report.reportInfo(MessageName.UNNAMED, `Once you are done run ${configuration.format(`yarn patch-commit ${npath.fromPortablePath(temp)}`, `cyan`)} and Yarn will store a patchfile based on your changes.`);
+      report.reportInfo(MessageName.UNNAMED, `You can now edit the following folder: ${formatUtils.pretty(configuration, npath.fromPortablePath(temp), `magenta`)}`);
+      report.reportInfo(MessageName.UNNAMED, `Once you are done run ${formatUtils.pretty(configuration, `yarn patch-commit ${npath.fromPortablePath(temp)}`, `cyan`)} and Yarn will store a patchfile based on your changes.`);
     });
   }
 }

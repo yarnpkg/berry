@@ -2,6 +2,7 @@
 category: features
 path: /features/pnp
 title: "Plug'n'Play"
+description: An overview of Plug'n'Play, a powerful and innovative installation strategy for Node.
 ---
 
 > **PnP API**
@@ -99,24 +100,25 @@ A lot of very common frontend tools now support Plug'n'Play natively!
 | Parcel | Starting from 2.0.0-nightly.212+ |
 | Prettier | Starting from 1.17+ |
 | Rollup | Starting from `resolve` 1.9+ |
-| TypeScript-ESLint | Starting from 2.12+ |
-| WebStorm | Starting from 2019.3+; See [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks) |
+| Storybook | Starting from 6.0+ |
 | TypeScript | Via [`plugin-compat`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-compat) (enabled by default)
-| Webpack | Native | Starting from 5+ ([plugin](https://github.com/arcanis/pnp-webpack-plugin) available for 4.x) |
+| TypeScript-ESLint | Starting from 2.12+ |
+| WebStorm | Starting from 2019.3+; See [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
+| Webpack | Starting from 5+ ([plugin](https://github.com/arcanis/pnp-webpack-plugin) available for 4.x) |
 
 #### Support via plugins
 
 | <div style="width:150px">Project name</div> | Note |
 | --- | --- |
-| VSCode-ESLint | Follow [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks) |
-| VSCode | Follow [Editor SDKs](https://yarnpkg.com/advanced/editor-sdks) |
+| VSCode-ESLint | Follow [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
+| VSCode | Follow [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
 | Webpack 4.x | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) (native starting from 5+) |
 
 #### Incompatible
 
 The following tools unfortunately cannot be used with pure Plug'n'Play install (even under loose mode).
 
-**Important:** Even if a tool is incompatible with Plug'n'Play, you can still enable the [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules). Just follow the [instructions](/advanced/migration#if-required-enable-the-node-modules-plugin) and you'll be ready to go in a minute 🙂
+**Important:** Even if a tool is incompatible with Plug'n'Play, you can still enable the [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules). Just follow the [instructions](/getting-started/migration#if-required-enable-the-node-modules-plugin) and you'll be ready to go in a minute 🙂
 
 | <div style="width:150px">Project name</div> | Note |
 | --- | --- |
@@ -141,3 +143,9 @@ const lodashCeilPath = require.resolve(`lodash/ceil`);
 
 console.log(readFileSync(lodashCeilPath));
 ```
+
+### Different behaviours based on workspace / not-a-workspace
+
+Back when PnP was implemented, the compatibility wasn't as good as it is now. To help with the transition, we designed a fallback mechanism: if a package tries to access an unlisted dependency, we still allow to resolve it *if the top-level package lists it as a dependency*. We allow this because there's no resolution ambiguity, as there's a single top-level package in any project. Unfortunately, it may cause confusing behaviors depending on how your project is setup - when that happens, remember that PnP is always right, and that the only reason it works when not in a workspace is due to some extra laxism. 
+
+Regardless, this behaviour was just a patch, and will eventually be removed to clear up the confusion. You can prepare for that by setting [`pnpFallbackMode`](https://yarnpkg.com/configuration/yarnrc#pnpFallbackMode) to `none`, which will disable the fallback mechanism altogether.

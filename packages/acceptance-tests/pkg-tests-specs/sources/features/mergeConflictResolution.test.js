@@ -55,7 +55,7 @@ describe(`Features`, () => {
           await execFile(`git`, [`checkout`, `master`], {cwd: path});
           await execFile(`git`, [`merge`, `1.0.0`], {cwd: path});
 
-          await expect(execFile(`git`, [`merge`, `2.0.0`], {cwd: path})).rejects.toThrow(/CONFLICT/);
+          await expect(execFile(`git`, [`merge`, `2.0.0`], {cwd: path, env: {LC_ALL: `C`}})).rejects.toThrow(/CONFLICT/);
 
           let lockfile = await readFile(`${path}/yarn.lock`, `utf8`);
           lockfile = lockfile.replace(/(checksum: ).*/g, `$1<checksum stripped>`);
@@ -96,7 +96,7 @@ describe(`Features`, () => {
           await execFile(`git`, [`checkout`, `master`], {cwd: path});
           await execFile(`git`, [`merge`, `2.0.0`], {cwd: path});
 
-          await expect(execFile(`git`, [`merge`, `yarn2`], {cwd: path})).rejects.toThrow(/CONFLICT/);
+          await expect(execFile(`git`, [`merge`, `yarn2`], {cwd: path, env: {LC_ALL: `C`}})).rejects.toThrow(/CONFLICT/);
 
           let lockfile = await readFile(`${path}/yarn.lock`, `utf8`);
           lockfile = lockfile.replace(/(checksum: ).*/g, `$1<checksum stripped>`);

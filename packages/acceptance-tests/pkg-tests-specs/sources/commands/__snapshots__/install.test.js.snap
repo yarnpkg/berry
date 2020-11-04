@@ -37,6 +37,18 @@ exports[`Commands install it should print the logs to the standard output when u
 "
 `;
 
+exports[`Commands install it should skip build scripts when using --skip-builds 1`] = `
+"➤ YN0000: ┌ Resolution step
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0013: │ no-deps-scripted@npm:1.0.0 can't be found in the cache and will be fetched from the remote registry
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed
+➤ YN0000: Done
+"
+`;
+
 exports[`Commands install reports warning if published binary field is a path but no package name is set 1`] = `
 Object {
   "code": 0,

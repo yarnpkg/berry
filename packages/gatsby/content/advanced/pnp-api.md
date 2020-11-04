@@ -2,6 +2,7 @@
 category: advanced
 path: /advanced/pnpapi
 title: "PnP API"
+description: In-depth documentation of the PnP API.
 ---
 
 ```toc
@@ -121,7 +122,7 @@ Note that the `pnpapi` builtin is *contextual*: while two packages from the same
 export const VERSIONS: {std: number, [key: string]: number};
 ```
 
-The `VERSIONS` object contains a set of numbers that detail which version of the API is currently exposed. The only version that is guaranteed to be there is `std`, which will refer to the version of this document. Other keys are meant to be used to describe extensions provided by third-party implementors.
+The `VERSIONS` object contains a set of numbers that detail which version of the API is currently exposed. The only version that is guaranteed to be there is `std`, which will refer to the version of this document. Other keys are meant to be used to describe extensions provided by third-party implementors. Versions will only be bumped when the signatures of the public API change.
 
 **Note:** The current version is 3. We bump it responsibly and strive to make each version backward-compatible with the previous ones, but as you can probably guess some features are only available with the latest versions.
 
@@ -156,6 +157,16 @@ export function getDependencyTreeRoots(): PackageLocator[];
 The `getDependencyTreeRoots` function will return the set of locators that constitute the roots of individual dependency trees. In Yarn, there is exactly one such locator for each workspace in the project.
 
 **Note:** This function will always return the physical locators, so it'll never return the special top-level locator described in the `topLevel` section.
+
+### `getAllLocators(...)`
+
+```ts
+export function getAllLocators(): PackageLocator[];
+```
+
+**Important:** This function is not part of the Plug'n'Play specification and only available as a Yarn extension. In order to use it, you first must check that the [`VERSIONS`](/advanced/pnp-api#versions) dictionary contains a valid `getAllLocators` property.
+
+The `getAllLocators` function will return all locators from the dependency tree, in no particular order (although it'll always be a consistent order between calls for the same API). It can be used when you wish to know more about the packages themselves, but not about the exact tree layout.
 
 ### `getPackageInformation(...)`
 
@@ -293,7 +304,9 @@ console.log(crossFs.readFileSync(`C:\\path\\to\\archive.zip\\package.json`));
 
 ## Traversing the dependency tree
 
-Note that the following implementation iterates over all the nodes in the tree and doesn't try at all to skip previously seen nodes. It results in an execution time of a few seconds for each workspace, which can quickly add up. Optimize as needed 🙂
+The following function implements a tree traversal in order to print the list of locators from the tree.
+
+**Important note:** This implementation iterates over **all** the nodes in the tree, even if they are found multiple times (which is very often the case). As a result the execution time is way higher than it could be. Optimize as needed 🙂
 
 ```ts
 const pnp = require(`pnpapi`);
@@ -316,6 +329,8 @@ const traverseDependencyTree = (locator, parentPkg = null) => {
 
   seen.add(key);
 
+  console.group(locator.name);
+
   for (const [name, referencish] of pkg.packageDependencies) {
     // Unmet peer dependencies
     if (referencish === null)
@@ -329,12 +344,16 @@ const traverseDependencyTree = (locator, parentPkg = null) => {
     traverseDependencyTree(childLocator, pkg);
   }
 
+  console.groupEnd(locator.name);
+
+  // Important: This `delete` here causes the traversal to go over nodes even
+  // if they have already been traversed in another branch. If you don't need
+  // that, remove this line for a hefty speed increase.
   seen.delete(key);
 };
 
 // Iterate on each workspace
 for (const locator of pnp.getDependencyTreeRoots()) {
-  console.log(locator.name);
   traverseDependencyTree(locator);
 }
 ```

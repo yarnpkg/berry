@@ -19,7 +19,7 @@ export const generatePrettierBaseWrapper: GenerateBaseWrapper = async (pnpApi: P
 
   await wrapper.writeManifest();
 
-  await wrapper.writeBinary(`index.js` as PortablePath);
+  await wrapper.writeBinary(`index.js` as PortablePath, {usePnpify: true});
 
   return wrapper;
 };
@@ -45,10 +45,22 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
 
       const Session = tsserver.server.Session;
       const {onMessage: originalOnMessage, send: originalSend} = Session.prototype;
+      let isVSCode = false;
 
       return Object.assign(Session.prototype, {
         onMessage(/** @type {string} */ message) {
-          return originalOnMessage.call(this, JSON.stringify(JSON.parse(message), (key, value) => {
+          const parsedMessage = JSON.parse(message)
+
+          if (
+            parsedMessage != null &&
+            typeof parsedMessage === 'object' &&
+            parsedMessage.arguments &&
+            parsedMessage.arguments.hostInfo === 'vscode'
+          ) {
+            isVSCode = true;
+          }
+
+          return originalOnMessage.call(this, JSON.stringify(parsedMessage, (key, value) => {
             return typeof value === 'string' ? removeZipPrefix(value) : value;
           }));
         },
@@ -62,11 +74,13 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
 
       function addZipPrefix(str) {
         // We add the \`zip:\` prefix to both \`.zip/\` paths and virtual paths
-        if (isAbsolute(str) && !str.match(/^zip:/) && (str.match(/\\.zip\\//) || str.match(/\\$\\$virtual\\//))) {
+        if (isAbsolute(str) && !str.match(/^\\^zip:/) && (str.match(/\\.zip\\//) || str.match(/\\$\\$virtual\\//))) {
           // Absolute VSCode \`Uri.fsPath\`s need to start with a slash.
           // VSCode only adds it automatically for supported schemes,
           // so we have to do it manually for the \`zip\` scheme.
-          return \`zip:\${str.replace(/^\\/?/, \`/\`)}\`;
+          // The path needs to start with a caret otherwise VSCode doesn't handle the protocol
+          // https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
+          return \`\${isVSCode ? '^' : ''}zip:\${str.replace(/^\\/?/, \`/\`)}\`;
         } else {
           return str;
         }
@@ -74,8 +88,8 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
 
       function removeZipPrefix(str) {
         return process.platform === 'win32'
-          ? str.replace(/^zip:\\//, \`\`)
-          : str.replace(/^zip:/, \`\`);
+          ? str.replace(/^\\^?zip:\\//, \`\`)
+          : str.replace(/^\\^?zip:/, \`\`);
       }
     };
   `;
@@ -115,6 +129,16 @@ export const generateSvelteLanguageServerBaseWrapper: GenerateBaseWrapper = asyn
   return wrapper;
 };
 
+export const generateFlowBinBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`flow-bin` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeManifest();
+
+  await wrapper.writeBinary(`cli.js` as PortablePath);
+
+  return wrapper;
+};
+
 export const BASE_SDKS: BaseSdks = [
   [`eslint`, generateEslintBaseWrapper],
   [`prettier`, generatePrettierBaseWrapper],
@@ -122,4 +146,5 @@ export const BASE_SDKS: BaseSdks = [
   [`typescript`, generateTypescriptBaseWrapper],
   [`stylelint`, generateStylelintBaseWrapper],
   [`svelte-language-server`, generateSvelteLanguageServerBaseWrapper],
+  [`flow-bin`, generateFlowBinBaseWrapper],
 ];

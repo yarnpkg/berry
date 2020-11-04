@@ -37,3 +37,29 @@ export function EEXIST(reason: string) {
 export function EROFS(reason: string) {
   return makeError(`EROFS`, `read-only filesystem, ${reason}`);
 }
+
+export function ENOTEMPTY(reason: string) {
+  return makeError(`ENOTEMPTY`, `directory not empty, ${reason}`);
+}
+
+export function EOPNOTSUPP(reason: string) {
+  return makeError(`EOPNOTSUPP`, `operation not supported, ${reason}`);
+}
+
+// ------------------------------------------------------------------------
+
+export function ERR_DIR_CLOSED() {
+  return makeError(`ERR_DIR_CLOSED`, `Directory handle was closed`);
+}
+
+// ------------------------------------------------------------------------
+
+export class LibzipError extends Error {
+  code: string;
+
+  constructor(message: string, code: string) {
+    super(message);
+    this.name = `Libzip Error`;
+    this.code = code;
+  }
+}

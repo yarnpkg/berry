@@ -1,12 +1,11 @@
-import {MessageName, ReportError, Report, Workspace, scriptUtils} from '@yarnpkg/core';
-import {FakeFS, JailFS, xfs, PortablePath, ppath, toFilename}     from '@yarnpkg/fslib';
-import {Hooks as StageHooks}                                      from '@yarnpkg/plugin-stage';
-import mm                                                         from 'micromatch';
-import {PassThrough}                                              from 'stream';
-import tar                                                        from 'tar-stream';
-import {createGzip}                                               from 'zlib';
+import {Report, Workspace, scriptUtils}                     from '@yarnpkg/core';
+import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
+import {Hooks as StageHooks}                                from '@yarnpkg/plugin-stage';
+import mm                                                   from 'micromatch';
+import tar                                                  from 'tar-stream';
+import {createGzip}                                         from 'zlib';
 
-import {Hooks}                                                    from './';
+import {Hooks}                                              from './';
 
 const NEVER_IGNORE = [
   `/package.json`,
@@ -45,40 +44,22 @@ type IgnoreList = {
 };
 
 export async function hasPackScripts(workspace: Workspace) {
-  if (await scriptUtils.hasWorkspaceScript(workspace, `prepack`))
+  if (scriptUtils.hasWorkspaceScript(workspace, `prepack`))
     return true;
 
-  if (await scriptUtils.hasWorkspaceScript(workspace, `postpack`))
+  if (scriptUtils.hasWorkspaceScript(workspace, `postpack`))
     return true;
 
   return false;
 }
 
 export async function prepareForPack(workspace: Workspace, {report}: {report: Report}, cb: () => Promise<void>) {
-  const stdin = null;
-  const stdout = new PassThrough();
-  const stderr = new PassThrough();
-
-  if (await scriptUtils.hasWorkspaceScript(workspace, `prepack`)) {
-    report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "prepack" lifecycle script`);
-    const exitCode = await scriptUtils.executeWorkspaceScript(workspace, `prepack`, [], {stdin, stdout, stderr});
-
-    if (exitCode !== 0) {
-      throw new ReportError(MessageName.LIFECYCLE_SCRIPT, `Prepack script failed; run "yarn prepack" to investigate`);
-    }
-  }
+  await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepack`, {report});
 
   try {
     await cb();
   } finally {
-    if (await scriptUtils.hasWorkspaceScript(workspace, `postpack`)) {
-      report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "postpack" lifecycle script`);
-
-      const exitCode = await scriptUtils.executeWorkspaceScript(workspace, `postpack`, [], {stdin, stdout, stderr});
-      if (exitCode !== 0) {
-        report.reportWarning(MessageName.LIFECYCLE_SCRIPT, `Postpack script failed; run "yarn postpack" to investigate`);
-      }
-    }
+    await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `postpack`, {report});
   }
 }
 
@@ -86,15 +67,27 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
   if (typeof files === `undefined`)
     files = await genPackList(workspace);
 
+  const executableFiles = new Set<PortablePath>();
+  for (const value of workspace.manifest.publishConfig?.executableFiles ?? new Set())
+    executableFiles.add(ppath.normalize(value));
+  for (const value of workspace.manifest.bin.values())
+    executableFiles.add(ppath.normalize(value));
+
   const pack = tar.pack();
 
   process.nextTick(async () => {
-    for (const file of files!) {
+    for (const fileRequest of files!) {
+      const file = ppath.normalize(fileRequest);
+
       const source = ppath.resolve(workspace.cwd, file);
       const dest = ppath.join(`package` as PortablePath, file);
 
       const stat = await xfs.lstatPromise(source);
-      const opts = {name: dest, mtime: new Date(315532800)};
+      const opts = {name: dest, mtime: new Date(315532800000)};
+
+      const mode = executableFiles.has(file)
+        ? 0o755
+        : 0o644;
 
       let resolveFn: Function;
       let rejectFn: Function;
@@ -121,9 +114,9 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
         else
           content = await xfs.readFilePromise(source);
 
-        pack.entry({...opts, type: `file`}, content, cb);
+        pack.entry({...opts, mode, type: `file`}, content, cb);
       } else if (stat.isSymbolicLink()) {
-        pack.entry({...opts, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
+        pack.entry({...opts, mode, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
       }
 
       await awaitTarget;
@@ -205,15 +198,28 @@ export async function genPackList(workspace: Workspace) {
     reject: [],
   };
 
-  if (workspace.manifest.publishConfig && workspace.manifest.publishConfig.main)
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.publishConfig.main));
-  else if (workspace.manifest.main)
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.main));
+  const main = workspace.manifest.publishConfig?.main ?? workspace.manifest.main;
+  const module = workspace.manifest.publishConfig?.module ?? workspace.manifest.module;
+  const browser = workspace.manifest.publishConfig?.browser ?? workspace.manifest.browser;
+  const bins = workspace.manifest.publishConfig?.bin ?? workspace.manifest.bin;
 
-  if (workspace.manifest.publishConfig && workspace.manifest.publishConfig.module)
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.publishConfig.module));
-  else if (workspace.manifest.module)
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, workspace.manifest.module));
+  if (main != null)
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, main));
+  if (module != null)
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, module));
+  if (typeof browser === `string`)
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, browser));
+  for (const path of bins.values())
+    ignoreList.accept.push(ppath.resolve(PortablePath.root, path));
+
+  if (browser instanceof Map) {
+    for (const [original, replacement] of browser.entries()) {
+      ignoreList.accept.push(ppath.resolve(PortablePath.root, original));
+      if (typeof replacement === `string`) {
+        ignoreList.accept.push(ppath.resolve(PortablePath.root, replacement));
+      }
+    }
+  }
 
   const hasExplicitFileList = workspace.manifest.files !== null;
   if (hasExplicitFileList) {
@@ -258,9 +264,9 @@ async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, 
       }
 
       const localIgnoreList = hasNpmIgnore
-        ? await loadIgnoreList(cwdFs, cwd, toFilename(`.npmignore`))
+        ? await loadIgnoreList(cwdFs, cwd, `.npmignore` as Filename)
         : hasGitIgnore
-          ? await loadIgnoreList(cwdFs, cwd, toFilename(`.gitignore`))
+          ? await loadIgnoreList(cwdFs, cwd, `.gitignore` as Filename)
           : null;
 
       let nextIgnoreLists = localIgnoreList !== null

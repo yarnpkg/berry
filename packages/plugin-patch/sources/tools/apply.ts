@@ -1,7 +1,8 @@
-import {miscUtils, semverUtils}              from '@yarnpkg/core';
-import {FakeFS, ppath, NodeFS, PortablePath} from '@yarnpkg/fslib';
+import {miscUtils, semverUtils}                              from '@yarnpkg/core';
+import {FakeFS, ppath, NodeFS, PortablePath}                 from '@yarnpkg/fslib';
 
-import {ParsedPatchFile, FilePatch, Hunk}    from './parse';
+import {UnmatchedHunkError}                                  from './UnmatchedHunkError';
+import {ParsedPatchFile, FilePatch, Hunk, PatchMutationType} from './parse';
 
 const DEFAULT_TIME = 315532800;
 
@@ -31,7 +32,7 @@ export async function applyPatchFile(effects: ParsedPatchFile, {baseFs = new Nod
       case `file deletion`: {
         if (dryRun) {
           if (!baseFs.existsSync(eff.path)) {
-            throw new Error(`Trying to delete file that doesn't exist: ${eff.path}`);
+            throw new Error(`Trying to delete a file that doesn't exist: ${eff.path}`);
           }
         } else {
           await preserveTime(baseFs, ppath.dirname(eff.path), async () => {
@@ -43,7 +44,7 @@ export async function applyPatchFile(effects: ParsedPatchFile, {baseFs = new Nod
       case `rename`: {
         if (dryRun) {
           if (!baseFs.existsSync(eff.fromPath)) {
-            throw new Error(`Trying to move file that doesn't exist: ${eff.fromPath}`);
+            throw new Error(`Trying to move a file that doesn't exist: ${eff.fromPath}`);
           }
         } else {
           await preserveTime(baseFs, ppath.dirname(eff.fromPath), async () => {
@@ -60,7 +61,7 @@ export async function applyPatchFile(effects: ParsedPatchFile, {baseFs = new Nod
       case `file creation`: {
         if (dryRun) {
           if (baseFs.existsSync(eff.path)) {
-            throw new Error(`Trying to create file that already exists: ${eff.path}`);
+            throw new Error(`Trying to create a file that already exists: ${eff.path}`);
           }
         } else {
           const fileContents = eff.hunk
@@ -180,7 +181,7 @@ export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = fal
     }
 
     if (modifications === null)
-      throw new Error(`Cannot apply hunk #${hunks.indexOf(hunk) + 1}`);
+      throw new UnmatchedHunkError(hunks.indexOf(hunk), hunk);
 
     result.push(modifications);
 
@@ -246,8 +247,8 @@ function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number): Arr
 
   for (const part of hunk.parts) {
     switch (part.type) {
-      case `deletion`:
-      case `context`: {
+      case PatchMutationType.Context:
+      case PatchMutationType.Deletion: {
         for (const line of part.lines) {
           const originalLine = fileLines[offset];
 
@@ -257,7 +258,7 @@ function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number): Arr
           offset += 1;
         }
 
-        if (part.type === `deletion`) {
+        if (part.type === PatchMutationType.Deletion) {
           result.push({
             type: `splice`,
             index: offset - part.lines.length,
@@ -274,7 +275,7 @@ function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number): Arr
         }
       } break;
 
-      case `insertion`: {
+      case PatchMutationType.Insertion: {
         result.push({
           type: `splice`,
           index: offset,

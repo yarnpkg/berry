@@ -14,16 +14,20 @@ const ALL_DRIVERS = [
 
 // eslint-disable-next-line arca/no-default-export
 export default class StageCommand extends BaseCommand {
-  @Command.Boolean(`-c,--commit`)
+  @Command.Boolean(`-c,--commit`, {description: `Commit the staged files`})
   commit: boolean = false;
 
-  @Command.Boolean(`-r,--reset`)
+  @Command.Boolean(`-r,--reset`, {description: `Remove all files from the staging area`})
   reset: boolean = false;
 
-  @Command.Boolean(`-u,--update`)
+  // TODO: implement it. Its purpose is, quoting @arcanis:
+  // "iirc I intended it to update (amend) the current
+  // commit if it exists, or to create a new one otherwise"
+  // TODO: unhide it and add a description once implemented
+  @Command.Boolean(`-u,--update`, {hidden: true})
   update: boolean = false;
 
-  @Command.Boolean(`-n,--dry-run`)
+  @Command.Boolean(`-n,--dry-run`, {description: `Print the commit message and the list of modified files without staging / committing`})
   dryRun: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -91,12 +95,20 @@ export default class StageCommand extends BaseCommand {
         }
       }
     } else {
-      if (changeList.length === 0) {
+      if (this.reset) {
+        const stagedChangeList = await driver.filterChanges(root, yarnPaths, yarnNames, {staged: true});
+        if (stagedChangeList.length === 0) {
+          this.context.stdout.write(`No staged changes found!`);
+        } else {
+          await driver.makeReset(root, stagedChangeList);
+        }
+      } else if (changeList.length === 0) {
         this.context.stdout.write(`No changes found!`);
       } else if (this.commit) {
         await driver.makeCommit(root, changeList, commitMessage);
-      } else if (this.reset) {
-        await driver.makeReset(root, changeList);
+      } else {
+        await driver.makeStage(root, changeList);
+        this.context.stdout.write(commitMessage);
       }
     }
   }

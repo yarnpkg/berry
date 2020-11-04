@@ -35,6 +35,7 @@ export type LocationLengthData = Array<number>;
 
 // This is what is stored within the .pnp.meta.json file
 export type SerializedState = {
+  // @eslint-ignore-next-line @typescript-eslint/naming-convention
   __info: Array<string>;
   enableTopLevelFallback: boolean,
   fallbackExclusionList: Array<[string, Array<string>]>,
@@ -106,6 +107,7 @@ export type PnpApi = {
   resolveUnqualified: (unqualified: NativePath, opts?: {extensions?: Array<string>}) => NativePath,
   resolveRequest: (request: string, issuer: NativePath | null, opts?: {considerBuiltins?: boolean, extensions?: Array<string>}) => NativePath | null,
 
-  // Extension method
+  // Extension methods
   resolveVirtual?: (p: NativePath) => NativePath | null,
+  getAllLocators?: () => Array<PhysicalPackageLocator>,
 };

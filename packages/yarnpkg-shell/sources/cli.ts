@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 
-import {Cli}          from 'clipanion';
+import {Cli, Command} from 'clipanion';
 
 import EntryCommand   from './commands/entry';
-import HelpCommand    from './commands/help';
-import VersionCommand from './commands/version';
 
 const cli = new Cli({
   binaryLabel: `Yarn Shell`,
@@ -13,8 +11,8 @@ const cli = new Cli({
 });
 
 cli.register(EntryCommand);
-cli.register(HelpCommand);
-cli.register(VersionCommand);
+cli.register(Command.Entries.Help);
+cli.register(Command.Entries.Version);
 
 cli.runExit(process.argv.slice(2), {
   stdin: process.stdin,

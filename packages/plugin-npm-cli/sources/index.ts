@@ -1,10 +1,21 @@
+
 import {Plugin, SettingsType} from '@yarnpkg/core';
 
-import info                   from './commands/npm/info';
-import login                  from './commands/npm/login';
-import logout                 from './commands/npm/logout';
+import npmAudit               from './commands/npm/audit';
+import npmInfo                from './commands/npm/info';
+import npmLogin               from './commands/npm/login';
+import npmLogout              from './commands/npm/logout';
 import npmPublish             from './commands/npm/publish';
-import whoami                 from './commands/npm/whoami';
+import npmTagAdd              from './commands/npm/tag/add';
+import npmTagList             from './commands/npm/tag/list';
+import npmTagRemove           from './commands/npm/tag/remove';
+import npmWhoami              from './commands/npm/whoami';
+
+declare module '@yarnpkg/core' {
+  interface ConfigurationValueMap {
+    npmPublishAccess: string|null;
+  }
+}
 
 const plugin: Plugin = {
   configuration: {
@@ -15,11 +26,15 @@ const plugin: Plugin = {
     },
   },
   commands: [
-    info,
-    login,
-    logout,
+    npmAudit,
+    npmInfo,
+    npmLogin,
+    npmLogout,
     npmPublish,
-    whoami,
+    npmTagAdd,
+    npmTagList,
+    npmTagRemove,
+    npmWhoami,
   ],
 };
 

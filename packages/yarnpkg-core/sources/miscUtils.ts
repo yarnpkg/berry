@@ -1,14 +1,25 @@
 import {PortablePath, npath} from '@yarnpkg/fslib';
 import {UsageError}          from 'clipanion';
 import micromatch            from 'micromatch';
+
 import {Readable, Transform} from 'stream';
 
 export function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
 }
 
+export function overrideType<T>(val: unknown): asserts val is T {
+}
+
 export function assertNever(arg: never): never {
   throw new Error(`Assertion failed: Unexpected object '${arg}'`);
+}
+
+export function validateEnum<T>(def: {[key: string]: T}, value: string): T {
+  if (!Object.values(def).includes(value as any))
+    throw new Error(`Assertion failed: Invalid value for enumeration`);
+
+  return value as any as T;
 }
 
 export function mapAndFilter<In, Out>(iterable: Iterable<In>, cb: (value: In) => Out | typeof mapAndFilterSkip): Array<Out> {
@@ -40,6 +51,10 @@ export function mapAndFind<In, Out>(iterable: Iterable<In>, cb: (value: In) => O
 
 const mapAndFindSkip = Symbol();
 mapAndFind.skip = mapAndFindSkip;
+
+export function isIndexableObject(value: unknown): value is {[key: string]: unknown} {
+  return typeof value === `object` && value !== null;
+}
 
 export function getFactoryWithDefault<K, T>(map: Map<K, T>, key: K, factory: () => T) {
   let value = map.get(key);
@@ -186,9 +201,9 @@ export class DefaultStream extends Transform {
 // of a web application, but is quite annoying when working with Node projects!
 
 export function dynamicRequire(path: string) {
-  // @ts-ignore
+  // @ts-expect-error
   if (typeof __non_webpack_require__ !== `undefined`) {
-    // @ts-ignore
+    // @ts-expect-error
     return __non_webpack_require__(path);
   } else {
     return require(path);
@@ -270,7 +285,6 @@ export function buildIgnorePattern(ignorePatterns: Array<string>) {
 
   return ignorePatterns.map(pattern => {
     return `(${micromatch.makeRe(pattern, {
-      // @ts-ignore
       windows: false,
     }).source})`;
   }).join(`|`);
@@ -283,7 +297,7 @@ export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: 
     const {variableName, colon, fallback} = args[args.length - 1];
 
     const variableExist = Object.prototype.hasOwnProperty.call(env, variableName);
-    const variableValue = process.env[variableName];
+    const variableValue = env[variableName];
 
     if (variableValue)
       return variableValue;
@@ -297,4 +311,3 @@ export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: 
     throw new UsageError(`Environment variable not found (${variableName})`);
   });
 }
-

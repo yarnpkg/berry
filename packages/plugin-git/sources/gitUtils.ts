@@ -1,7 +1,8 @@
-import {Configuration, Locator, execUtils, structUtils} from '@yarnpkg/core';
-import {npath, xfs}                                     from '@yarnpkg/fslib';
-import querystring                                      from 'querystring';
-import semver                                           from 'semver';
+import {Configuration, Locator, execUtils, structUtils, httpUtils} from '@yarnpkg/core';
+import {npath, xfs}                                                from '@yarnpkg/fslib';
+import querystring                                                 from 'querystring';
+import semver                                                      from 'semver';
+import urlLib                                                      from 'url';
 
 function makeGitEnvironment() {
   return {
@@ -13,12 +14,10 @@ function makeGitEnvironment() {
 
 const gitPatterns = [
   /^ssh:/,
-  /^git(?:\+ssh)?:/,
+  /^git(?:\+[^:]+)?:/,
 
   // `git+` is optional, `.git` is required
   /^(?:git\+)?https?:[^#]+\/[^#]+(?:\.git)(?:#.*)?$/,
-  // `git+` is required, `.git` is optional
-  /^(?:git\+)https?:[^#]+\/[^#]+(?:\.git)?(?:#.*)?$/,
 
   /^git@[^#]+\/[^#]+\.git(?:#.*)?$/,
 
@@ -128,7 +127,7 @@ export function splitRepoUrl(url: string): RepoUrlParts {
   }
 }
 
-export function normalizeRepoUrl(url: string) {
+export function normalizeRepoUrl(url: string, {git = false}: {git?: boolean} = {}) {
   // "git+https://" isn't an actual Git protocol. It's just a way to
   // disambiguate that this URL points to a Git repository.
   url = url.replace(/^git\+https:/, `https:`);
@@ -139,6 +138,30 @@ export function normalizeRepoUrl(url: string) {
   // We support GitHub `/tarball/` URLs
   url = url.replace(/^https:\/\/github\.com\/(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)\/tarball\/(.+)?$/, `https://github.com/$1/$2.git#$3`);
 
+  if (git) {
+    // The `git+` prefix doesn't mean anything at all for Git
+    url = url.replace(/^git\+([^:]+):/, `$1:`);
+
+    // The `ssh://` prefix should be removed because so URLs won't work in Git:
+    //   ssh://git@github.com:yarnpkg/berry.git
+    //   git@github.com/yarnpkg/berry.git
+    // Git only allows:
+    //   git@github.com:yarnpkg/berry.git (no ssh)
+    //   ssh://git@github.com/yarnpkg/berry.git (no colon)
+    // So we should cut `ssh://`, but only in URLs that contain colon after the hostname
+
+    let parsedUrl: urlLib.UrlWithStringQuery | null;
+    try {
+      parsedUrl = urlLib.parse(url);
+    } catch {
+      parsedUrl = null;
+    }
+
+    if (parsedUrl && parsedUrl.protocol === `ssh:` && parsedUrl.path?.startsWith(`/:`)) {
+      url = url.replace(/^ssh:\/\//, ``);
+    }
+  }
+
   return url;
 }
 
@@ -147,12 +170,15 @@ export function normalizeLocator(locator: Locator) {
 }
 
 export async function lsRemote(repo: string, configuration: Configuration) {
-  if (!configuration.get(`enableNetwork`))
-    throw new Error(`Network access has been disabled by configuration (${repo})`);
+  const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
+
+  const networkSettings = httpUtils.getNetworkSettings(normalizedRepoUrl, {configuration});
+  if (!networkSettings.enableNetwork)
+    throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
 
   let res: {stdout: string};
   try {
-    res = await execUtils.execvp(`git`, [`ls-remote`, `--refs`, normalizeRepoUrl(repo)], {
+    res = await execUtils.execvp(`git`, [`ls-remote`, `--refs`, normalizedRepoUrl], {
       cwd: configuration.startingCwd,
       env: makeGitEnvironment(),
       strict: true,
@@ -268,23 +294,26 @@ export async function resolveUrl(url: string, configuration: Configuration) {
 }
 
 export async function clone(url: string, configuration: Configuration) {
-  if (!configuration.get(`enableNetwork`))
-    throw new Error(`Network access has been disabled by configuration (${url})`);
+  return await configuration.getLimit(`cloneConcurrency`)(async () => {
+    const {repo, treeish: {protocol, request}} = splitRepoUrl(url);
+    if (protocol !== `commit`)
+      throw new Error(`Invalid treeish protocol when cloning`);
 
-  const {repo, treeish: {protocol, request}} = splitRepoUrl(url);
-  if (protocol !== `commit`)
-    throw new Error(`Invalid treeish protocol when cloning`);
+    const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
+    if (httpUtils.getNetworkSettings(normalizedRepoUrl, {configuration}).enableNetwork === false)
+      throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
 
-  const directory = await xfs.mktempPromise();
-  const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};
+    const directory = await xfs.mktempPromise();
+    const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};
 
-  try {
-    await execUtils.execvp(`git`, [`clone`, `-c core.autocrlf=false`, `${normalizeRepoUrl(repo)}`, npath.fromPortablePath(directory)], execOpts);
-    await execUtils.execvp(`git`, [`checkout`, `${request}`], execOpts);
-  } catch (error) {
-    error.message = `Repository clone failed: ${error.message}`;
-    throw error;
-  }
+    try {
+      await execUtils.execvp(`git`, [`clone`, `-c core.autocrlf=false`, normalizedRepoUrl, npath.fromPortablePath(directory)], execOpts);
+      await execUtils.execvp(`git`, [`checkout`, `${request}`], execOpts);
+    } catch (error) {
+      error.message = `Repository clone failed: ${error.message}`;
+      throw error;
+    }
 
-  return directory;
+    return directory;
+  });
 }

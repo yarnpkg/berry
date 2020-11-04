@@ -1,18 +1,15 @@
-import got, {ExtendOptions, Response} from 'got';
-import {Agent as HttpsAgent}          from 'https';
-import {Agent as HttpAgent}           from 'http';
-import micromatch                     from 'micromatch';
-import plimit                         from 'p-limit';
-import tunnel, {ProxyOptions}         from 'tunnel';
-import {URL}                          from 'url';
+import {PortablePath, xfs}       from '@yarnpkg/fslib';
+import {ExtendOptions, Response} from 'got';
+import {Agent as HttpsAgent}     from 'https';
+import {Agent as HttpAgent}      from 'http';
+import micromatch                from 'micromatch';
+import tunnel, {ProxyOptions}    from 'tunnel';
+import {URL}                     from 'url';
 
-import {Configuration}                from './Configuration';
-
-const NETWORK_CONCURRENCY = 8;
-
-const limit = plimit(NETWORK_CONCURRENCY);
+import {Configuration}           from './Configuration';
 
 const cache = new Map<string, Promise<Buffer> | Buffer>();
+const certCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
 
 const globalHttpAgent = new HttpAgent({keepAlive: true});
 const globalHttpsAgent = new HttpsAgent({keepAlive: true});
@@ -27,6 +24,57 @@ function parseProxy(specifier: string) {
   return {proxy};
 }
 
+async function getCachedCertificate(caFilePath: PortablePath) {
+  let certificate = certCache.get(caFilePath);
+
+  if (!certificate) {
+    certificate = xfs.readFilePromise(caFilePath).then(cert => {
+      certCache.set(caFilePath, cert);
+      return cert;
+    });
+    certCache.set(caFilePath, certificate);
+  }
+
+  return certificate;
+}
+
+/**
+ * Searches through networkSettings and returns the most specific match
+ */
+export function getNetworkSettings(target: string, opts: { configuration: Configuration }) {
+  // Sort the config by key length to match on the most specific pattern
+  const networkSettings = [...opts.configuration.get(`networkSettings`)].sort(([keyA], [keyB]) => {
+    return keyB.length - keyA.length;
+  });
+
+  const mergedNetworkSettings: {
+    enableNetwork?: boolean,
+    caFilePath?: PortablePath | null,
+  } = {};
+
+  const url = new URL(target);
+  for (const [glob, config] of networkSettings) {
+    if (micromatch.isMatch(url.hostname, glob)) {
+      const enableNetwork = config.get(`enableNetwork`);
+      if (enableNetwork !== null && typeof mergedNetworkSettings.enableNetwork === `undefined`)
+        mergedNetworkSettings.enableNetwork = enableNetwork;
+
+      const caFilePath = config.get(`caFilePath`);
+      if (caFilePath !== null && typeof mergedNetworkSettings.caFilePath === `undefined`) {
+        mergedNetworkSettings.caFilePath = caFilePath;
+      }
+    }
+  }
+
+  if (typeof mergedNetworkSettings.caFilePath === `undefined`)
+    mergedNetworkSettings.caFilePath = opts.configuration.get(`caFilePath`);
+
+  if (typeof mergedNetworkSettings.enableNetwork === `undefined`)
+    mergedNetworkSettings.enableNetwork = opts.configuration.get(`enableNetwork`);
+
+  return mergedNetworkSettings as Required<typeof mergedNetworkSettings>;
+}
+
 export type Body = (
   {[key: string]: any} |
   string |
@@ -37,18 +85,24 @@ export type Body = (
 export enum Method {
   GET = `GET`,
   PUT = `PUT`,
+  POST = `POST`,
+  DELETE = `DELETE`,
 }
 
 export type Options = {
   configuration: Configuration,
   headers?: {[headerName: string]: string};
-  json?: boolean,
+  jsonRequest?: boolean,
+  jsonResponse?: boolean,
+  /** @deprecated use jsonRequest and jsonResponse instead */
+  json?: boolean;
   method?: Method,
 };
 
-export async function request(target: string, body: Body, {configuration, headers, json, method = Method.GET}: Options) {
-  if (!configuration.get(`enableNetwork`))
-    throw new Error(`Network access have been disabled by configuration (${method} ${target})`);
+export async function request(target: string, body: Body, {configuration, headers, json, jsonRequest = json, jsonResponse = json, method = Method.GET}: Options) {
+  const networkConfig = getNetworkSettings(target, {configuration});
+  if (networkConfig.enableNetwork === false)
+    throw new Error(`Request to '${target}' has been blocked because of your configuration settings`);
 
   const url = new URL(target);
   if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
@@ -65,35 +119,49 @@ export async function request(target: string, body: Body, {configuration, header
       : globalHttpsAgent,
   };
 
-
   const gotOptions: ExtendOptions = {agent, headers, method};
-
-  gotOptions.responseType = json
+  gotOptions.responseType = jsonResponse
     ? `json`
     : `buffer`;
 
   if (body !== null) {
-    if (typeof body === `string` || Buffer.isBuffer(body)) {
+    if (Buffer.isBuffer(body) || (!jsonRequest && typeof body === `string`)) {
       gotOptions.body = body;
     } else {
+      // @ts-expect-error: The got types only allow an object, but got can stringify any valid JSON
       gotOptions.json = body;
     }
   }
 
-  const timeout = configuration.get(`httpTimeout`);
+  const socketTimeout = configuration.get(`httpTimeout`);
   const retry = configuration.get(`httpRetry`);
+  const rejectUnauthorized = configuration.get(`enableStrictSsl`);
+  const caFilePath = networkConfig.caFilePath;
 
-  //@ts-ignore
+  const {default: got} = await import(`got`);
+
+  const certificateAuthority = caFilePath
+    ? await getCachedCertificate(caFilePath)
+    : undefined;
+
   const gotClient = got.extend({
-    timeout,
+    timeout: {
+      socket: socketTimeout,
+    },
     retry,
+    https: {
+      rejectUnauthorized,
+      certificateAuthority,
+    },
     ...gotOptions,
   });
 
-  return limit(() => gotClient(target) as unknown as Response<any>);
+  return configuration.getLimit(`networkConcurrency`)(() => {
+    return gotClient(target) as unknown as Response<any>;
+  });
 }
 
-export async function get(target: string, {configuration, json, ...rest}: Options) {
+export async function get(target: string, {configuration, json, jsonResponse = json, ...rest}: Options) {
   let entry = cache.get(target);
 
   if (!entry) {
@@ -107,7 +175,7 @@ export async function get(target: string, {configuration, json, ...rest}: Option
   if (Buffer.isBuffer(entry) === false)
     entry = await entry;
 
-  if (json) {
+  if (jsonResponse) {
     return JSON.parse(entry.toString());
   } else {
     return entry;
@@ -116,6 +184,18 @@ export async function get(target: string, {configuration, json, ...rest}: Option
 
 export async function put(target: string, body: Body, options: Options): Promise<Buffer> {
   const response = await request(target, body, {...options, method: Method.PUT});
+
+  return response.body;
+}
+
+export async function post(target: string, body: Body, options: Options): Promise<Buffer> {
+  const response = await request(target, body, {...options, method: Method.POST});
+
+  return response.body;
+}
+
+export async function del(target: string, options: Options): Promise<Buffer> {
+  const response = await request(target, null, {...options, method: Method.DELETE});
 
   return response.body;
 }

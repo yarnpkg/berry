@@ -3,7 +3,8 @@ import {PassThrough, Readable, Transform, Writable} from 'stream';
 
 import {ShellOptions}                               from './index';
 
-enum Pipe {
+export enum Pipe {
+  STDIN = 0b00,
   STDOUT = 0b01,
   STDERR = 0b10,
 }
@@ -69,13 +70,13 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
           if (--sigintRefCount === 0)
             process.off(`SIGINT`, sigintHandler);
 
-          // @ts-ignore
+          // @ts-expect-error
           switch (error.code) {
             case `ENOENT`: {
               stdio[2].write(`command not found: ${name}\n`);
               resolve(127);
             } break;
-            case `EACCESS`: {
+            case `EACCES`: {
               stdio[2].write(`permission denied: ${name}\n`);
               resolve(128);
             } break;

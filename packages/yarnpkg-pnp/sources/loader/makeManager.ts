@@ -8,6 +8,7 @@ export type ApiMetadata = {
   cache: typeof Module._cache,
   instance: PnpApi,
   stats: fs.Stats,
+  lastRefreshCheck: number
 };
 
 export type MakeManagerOptions = {
@@ -25,28 +26,35 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
       cache: Module._cache,
       instance: pnpapi,
       stats: initialApiStats,
+      lastRefreshCheck: Date.now(),
     }],
   ]);
 
   function loadApiInstance(pnpApiPath: PortablePath): PnpApi {
     const nativePath = npath.fromPortablePath(pnpApiPath);
 
-    // @ts-ignore
+    // @ts-expect-error
     const module = new Module(nativePath, null);
-    // @ts-ignore
+    // @ts-expect-error
     module.load(nativePath);
 
     return module.exports;
   }
 
   function refreshApiEntry(pnpApiPath: PortablePath, apiEntry: ApiMetadata) {
+    const timeNow = Date.now();
+    if (timeNow - apiEntry.lastRefreshCheck < 500)
+      return;
+
+    apiEntry.lastRefreshCheck = timeNow;
+
     const stats = opts.fakeFs.statSync(pnpApiPath);
 
     if (stats.mtime > apiEntry.stats.mtime) {
-      console.warn(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance (${pnpApiPath})`);
+      console.warn(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance (${npath.fromPortablePath(pnpApiPath)})`);
 
-      apiEntry.instance = loadApiInstance(pnpApiPath);
       apiEntry.stats = stats;
+      apiEntry.instance = loadApiInstance(pnpApiPath);
     }
   }
 
@@ -62,6 +70,7 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
         cache: {},
         instance: loadApiInstance(pnpApiPath),
         stats: opts.fakeFs.statSync(pnpApiPath),
+        lastRefreshCheck: Date.now(),
       });
     }
 
@@ -70,7 +79,10 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
 
   const findApiPathCache = new Map<PortablePath, PortablePath | null>();
 
-  function addToCache(start: PortablePath, end: PortablePath, target: PortablePath | null) {
+  function addToCacheAndReturn(start: PortablePath, end: PortablePath, target: PortablePath | null) {
+    if (target !== null)
+      target = VirtualFS.resolveVirtual(target);
+
     let curr: PortablePath;
     let next = start;
 
@@ -79,12 +91,12 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
       findApiPathCache.set(curr, target);
       next = ppath.dirname(curr);
     } while (curr !== end);
+
+    return target;
   }
 
   function findApiPathFor(modulePath: NativePath) {
-    const start = VirtualFS.resolveVirtual(
-      ppath.resolve(npath.toPortablePath(modulePath)),
-    );
+    const start = ppath.resolve(npath.toPortablePath(modulePath));
 
     let curr: PortablePath;
     let next = start;
@@ -93,28 +105,21 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
       curr = next;
 
       const cached = findApiPathCache.get(curr);
-      if (cached !== undefined) {
-        addToCache(start, curr, cached);
-        return cached;
-      }
+      if (cached !== undefined)
+        return addToCacheAndReturn(start, curr, cached);
 
       const candidate = ppath.join(curr, `.pnp.js` as Filename);
-      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile()) {
-        addToCache(start, curr, candidate);
-        return candidate;
-      }
+      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile())
+        return addToCacheAndReturn(start, curr, candidate);
 
       const cjsCandidate = ppath.join(curr, `.pnp.cjs` as Filename);
-      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile()) {
-        addToCache(start, curr, cjsCandidate);
-        return cjsCandidate;
-      }
+      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile())
+        return addToCacheAndReturn(start, curr, cjsCandidate);
 
       next = ppath.dirname(curr);
     } while (curr !== PortablePath.root);
 
-    addToCache(start, curr, null);
-    return null;
+    return addToCacheAndReturn(start, curr, null);
   }
 
   function getApiPathFromParent(parent: Module | null | undefined): PortablePath | null {

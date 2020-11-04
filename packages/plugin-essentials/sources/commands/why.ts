@@ -1,22 +1,21 @@
-import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
-import {Configuration, LocatorHash, Package} from '@yarnpkg/core';
-import {IdentHash, Project}                  from '@yarnpkg/core';
-import {miscUtils, structUtils}              from '@yarnpkg/core';
-import {Command, Usage}                      from 'clipanion';
-import {Writable}                            from 'stream';
-import {asTree}                              from 'treeify';
-
-type TreeNode = {[key: string]: TreeNode};
+import {BaseCommand, WorkspaceRequiredError}                          from '@yarnpkg/cli';
+import {Configuration, LocatorHash, Package, formatUtils, Descriptor} from '@yarnpkg/core';
+import {IdentHash, Project}                                           from '@yarnpkg/core';
+import {miscUtils, structUtils, treeUtils}                            from '@yarnpkg/core';
+import {Command, Usage}                                               from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WhyCommand extends BaseCommand {
   @Command.String()
   package!: string;
 
-  @Command.Boolean(`-R,--recursive`)
+  @Command.Boolean(`-R,--recursive`, {description: `List, for each workspace, what are all the paths that lead to the dependency`})
   recursive: boolean = false;
 
-  @Command.Boolean(`--peers`)
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
+  json: boolean = false;
+
+  @Command.Boolean(`--peers`, {description: `Also print the peer dependencies that match the specified name`})
   peers: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -25,8 +24,6 @@ export default class WhyCommand extends BaseCommand {
       This command prints the exact reasons why a package appears in the dependency tree.
 
       If \`-R,--recursive\` is set, the listing will go in depth and will list, for each workspaces, what are all the paths that lead to the dependency. Note that the display is somewhat optimized in that it will not print the package listing twice for a single package, so if you see a leaf named "Foo" when looking for "Bar", it means that "Foo" already got printed higher in the tree.
-
-      If \`--peers\` is set, the command will also print the peer dependencies that match the specified name.
     `,
     examples: [[
       `Explain why lodash is used in your project`,
@@ -50,7 +47,12 @@ export default class WhyCommand extends BaseCommand {
       ? whyRecursive(project, identHash, {configuration, peers: this.peers})
       : whySimple(project, identHash, {configuration, peers: this.peers});
 
-    printTree(this.context.stdout, whyTree);
+    treeUtils.emitTree(whyTree, {
+      configuration,
+      stdout: this.context.stdout,
+      json: this.json,
+      separators: 1,
+    });
   }
 }
 
@@ -59,10 +61,12 @@ function whySimple(project: Project, identHash: IdentHash, {configuration, peers
     return structUtils.stringifyLocator(pkg);
   });
 
-  const tree = {} as TreeNode;
+  const rootChildren: treeUtils.TreeMap = {};
+  const root: treeUtils.TreeNode = {children: rootChildren};
 
   for (const pkg of sortedPackages) {
-    let node = null;
+    const nodeChildren: treeUtils.TreeMap = {};
+    const node: treeUtils.TreeNode | null = null;
 
     for (const dependency of pkg.dependencies.values()) {
       if (!peers && pkg.peerDependencies.has(dependency.identHash))
@@ -80,18 +84,19 @@ function whySimple(project: Project, identHash: IdentHash, {configuration, peers
         continue;
 
       if (node === null) {
-        node = {} as TreeNode;
-
-        const label = `${structUtils.prettyLocator(configuration, pkg)}`;
-        tree[label] = node;
+        const key = structUtils.stringifyLocator(pkg);
+        rootChildren[key] = {value: [pkg, formatUtils.Type.LOCATOR], children: nodeChildren};
       }
 
-      const label = `${structUtils.prettyLocator(configuration, nextPkg)} (via ${structUtils.prettyRange(configuration, dependency.range)})`;
-      node[label] = {};
+      const key = structUtils.stringifyLocator(nextPkg);
+      nodeChildren[key] = {value: [{
+        descriptor: dependency,
+        locator: nextPkg,
+      }, formatUtils.Type.DEPENDENT]};
     }
   }
 
-  return tree;
+  return root;
 }
 
 function whyRecursive(project: Project, identHash: IdentHash, {configuration, peers}: {configuration: Configuration, peers: boolean}) {
@@ -150,18 +155,26 @@ function whyRecursive(project: Project, identHash: IdentHash, {configuration, pe
   }
 
   const printed: Set<LocatorHash> = new Set();
-  const tree = {} as TreeNode;
 
-  const printAllDependents = (pkg: Package, tree: TreeNode, range: string | null) => {
+  const rootChildren: treeUtils.TreeMap = {};
+  const root: treeUtils.TreeNode = {children: rootChildren};
+
+  const printAllDependents = (pkg: Package, parentChildren: treeUtils.TreeMap, dependency: Descriptor | null) => {
     if (!dependents.has(pkg.locatorHash))
       return;
 
-    const label = range !== null
-      ? `${structUtils.prettyLocator(configuration, pkg)} (via ${structUtils.prettyRange(configuration, range)})`
-      : `${structUtils.prettyLocator(configuration, pkg)}`;
+    const nodeValue = dependency !== null
+      ? formatUtils.tuple(formatUtils.Type.DEPENDENT, {locator: pkg, descriptor: dependency})
+      : formatUtils.tuple(formatUtils.Type.LOCATOR, pkg);
 
-    const node = {} as TreeNode;
-    tree[label] = node;
+    const nodeChildren: treeUtils.TreeMap = {};
+    const node: treeUtils.TreeNode = {
+      value: nodeValue,
+      children: nodeChildren,
+    };
+
+    const key = structUtils.stringifyLocator(pkg);
+    parentChildren[key] = node;
 
     // We don't want to reprint the children for a package that already got
     // printed as part of another branch
@@ -172,7 +185,7 @@ function whyRecursive(project: Project, identHash: IdentHash, {configuration, pe
 
     // We don't want to print the children of our transitive workspace
     // dependencies, as they will be printed in their own top-level branch
-    if (range !== null && project.tryWorkspaceByLocator(pkg))
+    if (dependency !== null && project.tryWorkspaceByLocator(pkg))
       return;
 
     for (const dependency of pkg.dependencies.values()) {
@@ -187,7 +200,7 @@ function whyRecursive(project: Project, identHash: IdentHash, {configuration, pe
       if (!nextPkg)
         throw new Error(`Assertion failed: The package should have been registered`);
 
-      printAllDependents(nextPkg, node, dependency.range);
+      printAllDependents(nextPkg, nodeChildren, dependency);
     }
   };
 
@@ -196,17 +209,8 @@ function whyRecursive(project: Project, identHash: IdentHash, {configuration, pe
     if (!pkg)
       throw new Error(`Assertion failed: The package should have been registered`);
 
-    printAllDependents(pkg, tree, null);
+    printAllDependents(pkg, rootChildren, null);
   }
 
-  return tree;
-}
-
-function printTree(stdout: Writable, tree: TreeNode) {
-  let treeOutput = asTree(tree, false, false);
-
-  // A slight hack to add line returns between two workspaces
-  treeOutput = treeOutput.replace(/^([├└]─)/gm, `│\n$1`).replace(/^│\n/, ``);
-
-  stdout.write(treeOutput);
+  return root;
 }

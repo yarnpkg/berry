@@ -1,15 +1,15 @@
-import {PortablePath}                                           from '@yarnpkg/fslib';
-import {CommandClass}                                           from 'clipanion';
-import {Writable, Readable}                                     from 'stream';
+import {PortablePath}                                                   from '@yarnpkg/fslib';
+import {CommandClass}                                                   from 'clipanion';
+import {Writable, Readable}                                             from 'stream';
 
-import {SettingsDefinition, PluginConfiguration, Configuration} from './Configuration';
-import {Fetcher}                                                from './Fetcher';
-import {Linker}                                                 from './Linker';
-import {MessageName}                                            from './MessageName';
-import {Project}                                                from './Project';
-import {Resolver, ResolveOptions}                               from './Resolver';
-import {Workspace}                                              from './Workspace';
-import {Locator, Descriptor}                                    from './types';
+import {PluginConfiguration, Configuration, ConfigurationDefinitionMap} from './Configuration';
+import {Fetcher}                                                        from './Fetcher';
+import {Linker}                                                         from './Linker';
+import {MessageName}                                                    from './MessageName';
+import {Project, InstallOptions}                                        from './Project';
+import {Resolver, ResolveOptions}                                       from './Resolver';
+import {Workspace}                                                      from './Workspace';
+import {Locator, Descriptor}                                            from './types';
 
 type ProcessEnvironment = {[key: string]: string};
 
@@ -89,6 +89,7 @@ export type Hooks = {
   // completed.
   afterAllInstalled?: (
     project: Project,
+    options: InstallOptions
   ) => void,
 
   // Called during the `Validation step` of the `install` method from the `Project`
@@ -110,10 +111,16 @@ export type Hooks = {
       reportError: (name: MessageName, text: string) => void,
     }
   ) => void;
+
+  // Used to notify the core of all the potential artifacts of the availabe linkers.
+  populateYarnPaths?: (
+    project: Project,
+    definePath: (path: PortablePath | null) => void,
+  ) => Promise<void>,
 };
 
 export type Plugin<PluginHooks = any> = {
-  configuration?: {[key: string]: SettingsDefinition},
+  configuration?: Partial<ConfigurationDefinitionMap>,
   commands?: Array<CommandClass<CommandContext>>,
   fetchers?: Array<FetcherPlugin>,
   linkers?: Array<LinkerPlugin>,

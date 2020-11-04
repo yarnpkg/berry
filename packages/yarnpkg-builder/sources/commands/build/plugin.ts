@@ -1,16 +1,14 @@
-import {StreamReport, MessageName, Configuration, structUtils, FormatType} from '@yarnpkg/core';
-import {npath}                                                             from '@yarnpkg/fslib';
-import chalk                                                               from 'chalk';
-import {Command, Usage, UsageError}                                        from 'clipanion';
-import filesize                                                            from 'filesize';
-import fs                                                                  from 'fs';
-import path                                                                from 'path';
-import TerserPlugin                                                        from 'terser-webpack-plugin';
-import {RawSource}                                                         from 'webpack-sources';
-import webpack                                                             from 'webpack';
+import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
+import {npath}                                                              from '@yarnpkg/fslib';
+import chalk                                                                from 'chalk';
+import {Command, Usage, UsageError}                                         from 'clipanion';
+import fs                                                                   from 'fs';
+import path                                                                 from 'path';
+import TerserPlugin                                                         from 'terser-webpack-plugin';
+import webpack                                                              from 'webpack';
 
-import {isDynamicLib}                                                      from '../../tools/isDynamicLib';
-import {makeConfig, WebpackPlugin}                                         from '../../tools/makeConfig';
+import {isDynamicLib}                                                       from '../../tools/isDynamicLib';
+import {makeConfig, WebpackPlugin}                                          from '../../tools/makeConfig';
 
 // The name gets normalized so that everyone can override some plugins by
 // their own (@arcanis/yarn-plugin-foo would override @yarnpkg/plugin-foo
@@ -25,15 +23,13 @@ const getNormalizedName = (name: string) => {
 
 // eslint-disable-next-line arca/no-default-export
 export default class BuildPluginCommand extends Command {
-  @Command.Boolean(`--no-minify`)
+  @Command.Boolean(`--no-minify`, {description: `Build a plugin for development, without optimizations (minifying, mangling, treeshaking)`})
   noMinify: boolean = false;
 
   static usage: Usage = Command.Usage({
     description: `build a local plugin`,
     details: `
       This command builds a local plugin.
-
-      If the \`--no-minify\` option is used, the plugin will be built in development mode, without any optimizations like minifying, symbol scrambling, and treeshaking.
     `,
     examples: [[
       `Build a local plugin`,
@@ -117,8 +113,8 @@ export default class BuildPluginCommand extends Command {
                 compilation.hooks.optimizeChunkAssets.tap(`MyPlugin`, (chunks: Set<webpack.Chunk>) => {
                   for (const chunk of chunks) {
                     for (const file of chunk.files) {
-                      // @ts-ignore
-                      compilation.assets[file] = new RawSource(
+                      // @ts-expect-error
+                      compilation.assets[file] = new webpack.sources.RawSource(
                         [
                           `/* eslint-disable */`,
                           `module.exports = {`,
@@ -166,8 +162,8 @@ export default class BuildPluginCommand extends Command {
       report.reportError(MessageName.EXCEPTION, `${buildErrors}`);
     } else {
       report.reportInfo(null, `${chalk.green(`✓`)} Done building ${prettyName}!`);
-      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle path: ${configuration.format(output, FormatType.PATH)}`);
-      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle size: ${configuration.format(filesize(fs.statSync(output).size), FormatType.NUMBER)}`);
+      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);
+      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle size: ${formatUtils.pretty(configuration, fs.statSync(output).size, formatUtils.Type.SIZE)}`);
     }
 
     return report.exitCode();

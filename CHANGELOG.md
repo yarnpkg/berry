@@ -4,6 +4,123 @@
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn import plugin from sources <name>`).
 
+### Installs
+
+- Progress bars are rendered less often, which makes all installs faster
+
+### CLI
+
+- Explicitly disable administrator rights for the native binary jumper on Windows. When a filename contains "install", "setup", "update", or "patch" Windows thinks it's an installer and requires administrator rights to start the binary
+
+### Shell
+
+- Some shell errors (`No matches found`, `Bad file descriptor`, `Unbound variable`, `Unbound argument`) will now be recoverable errors that make the shell continue on to the next command in the chain instead of hard crashes. Fixes cases such as `rm -rf ./inexistentFolder/* || true`.
+
+## 2.3.1
+
+### CLI
+- Take into account peer dependency defaults when inheriting workspace peer dependencies in the node_modules linker
+
+## 2.3.0
+
+### CLI
+
+- The `yarn tag` set of commands has been ported over from Yarn Classic as `yarn npm tag`.
+- Running `yarn info` will now print many information about your dependencies. Various options are available to tweak the output, including `--json`. Plugin authors can provide their own information sections via the `fetchPackageInfo` hook.
+- Running `yarn stage` with the `-r,--reset` flag will now unstage all changes that seem related to Yarn.
+- All commands now document each of their options (run `yarn add -h` to see an example).
+- Publish registry errors will now be reported as is rather than being collapsed into a generic error message.
+- A native binary jumper will now be used on Windows to avoid the `Terminate batch job (Y/N)?` prompts when invoking dependency binaries.
+
+### Installs
+
+### PnP API
+
+The following changes only apply to the `pnp` linker (which is the default install strategy):
+
+- The `pnpapi` module now exposes a new function called `getAllLocators` allow you to access the list of all locators in the map without having to traverse the dependency tree. This method is considered a Yarn extension, so you should check for its existence if you plan to use it in your code.
+- When using a portal to a package that had peer dependencies, Yarn would loose the information required to resolve those peer dependencies. It will now properly resolve them the same way as all other packages in the dependency tree.
+
+The following changes only apply to the `node-modules` linker:
+
+- The bin symlinks will now be properly removed from the `node_modules/.bin` folder as their corresponding dependencies are removed.
+- A new setting called `nmHoistingLimits` has appeared. It replaces what was previously known as `nohoist` in Yarn 1.
+- We are now more forgiving for packages that make incorrect assumptions about the hoisting layout by first trying to maximize package exposure at the top-level. Only after the top-level has been populated will we deduplicate the remaining packages.
+- Fixed some pathological cases around peer dependencies. In particular, workspaces' peer dependencies will now be resolved against their closest workspace ancestor (according to the directory hierarchy) rather than be ignored. Note that peer dependencies are inherently problematic with workspaces when using the `node-modules` linker, and that the strictly correct behavior can only be obtained by using the default Plug'n'Play linker.
+- Running install after an interrupted install is supported now and will result in a consistent install state
+
+### Shell
+
+- Added support for `$$` and `$PPID`
+- Fixes some pathological globbing problems.
+
+### Bugfixes
+
+- The `yarn constraints --fix` command will now properly persist the changes on disk.
+- The `yarn unplug` command will now work when used on packages with peer dependencies.
+- The `yarn stage` command will now allow to stage files when called without the `-c,--commit` flag.
+- Fixes a performance regression when using FSEvents.
+
+### Miscellaneous
+
+- Removes extraneous subprocesses when using the `yarnPath` setting.
+
+### Third-party integrations
+
+- Updated the VSCode SDK to take into account changes in the TypeScript server protocol.
+- Added a few builtin extensions to improve compatibility with packages that weren't correctly listing their dependencies.
+- Updatedd the TypeScript patch to cover TypeScript 4.1.
+
+## 2.2.0
+
+### Ecosystem
+
+- Packages can now use the `publishConfig.executableFiles` field in their manifests to indicate which files should keep the executable flag once packed in the archive. This is important as for portability reasons Yarn strips the executable flag from all files during packing (otherwise `yarn pack` would yield different outputs when run on Posix vs Windows). Files listed in the `bin` field are assumed executable by default, so you don't need to explicitly list them in `executableFiles`.
+
+### Bugfixes
+
+- Requests won't timeout anymore as long as the server is still sending data.
+- `yarn pack` will properly include main/module/bin files, even when not explicitly referenced through the `files` field.
+- Local git repositories can now be fetched via the `git+file:` protocol.
+- The progress bars will be properly styled when using the new Windows terminal on certain days.
+- Yarn will now avoid using deprecated versions of the dependencies, unless only deprecated versions are available for the requested ranges.
+- Build keys are now properly computed, which fixes issues where build scripts weren't always triggered when they should have been.
+- Negated glob patterns in the `workspace` field will now be processed correctly.
+- Yarn will now allow relative paths inside the `workspace:` protocol to start with `./`
+- Yarn will now show the actual error when it fails to resolve a request during `yarn add` and `yarn up`
+- The portable shell will now support calling `cd` and `exit` without arguments
+- Yarn will now show the exit code when a lifecycle script fails
+- Yarn's portable shell will now also pipe the stderr when using the `|&` pipeline
+- Yarn's portable shell will now respect the left associativity of list operators
+
+### CLI
+
+- Yarn will now report an error when run through an incompatible Node version.
+- `yarn add` and `yarn up` will now respect the `preferInteractive` configuration option.
+- `yarn config set` now supports the `-H,--home` flag, which causes it to update the home configuration instead of the project configuration.
+
+### Configuration
+
+- The settings found in the home configuration file won't cause exceptions when consumed by older Yarn versions. Unsupported options will simply be silently ignored. This should improve the user experience when working with multiple projects configured with different Yarn versions.
+- A new `immutablePaths` setting allow you to specify paths that must not change when running Yarn with the `--immutable` flag set. You can use it to detect unforeseen changes to your install artifacts, be it `.pnp.js` or `node_modules` files.
+
+### Miscellaneous
+
+- Scripts can now use the `$RANDOM` variable as well as simple calculations using `+`, `-`, `*`, `/` and `()` inside `$(())`
+- Scripts can now use grouping curly braces (`{echo foo}`) to execute a command in the context of the current shell (without creating a subshell like in the case of `(echo foo)`).
+- Scripts can now end with a semicolon.
+- PnP linker will not remove lingering node_modules inside folders matching `pnpIgnorePatterns`
+
+### Third-party integrations
+
+- The PnP hook will now display clearer error message when requiring Node builtins from contexts that can't access them out of the box (for example when accessing the `fs` module from within a Webpack browser bundle).
+
+## 2.1.1
+
+- Fixed hyperlink rendering on iTerm
+
+## 2.1.0
+
 ### Ecosystem
 
 - Packages can now declare they they *need* to be unpacked in order to be functional using the new `"preferUnplugged": true` field in the manifest. This will hurt the experience of your users (your project will be the only one that will require hard installs), so please refrain using this field unless there's no other choice.
@@ -41,7 +158,8 @@
 - The new `changesetIgnorePatterns` setting can be used to ignore some paths from the changeset detection from `yarn version check` (changes to those paths won't be taken into account when deciding which workspaces need to fresh releases).
 - The new `changesetBaseRef` setting can be used to change the name of the master branch that `yarn version check` will use in its changeset heuristic.
 - The new `httpTimeout` and `httpRetry` settings allow you to configure the behavior of the HTTP(s) requests.
-- The cache compression level can now be configured through `compressionLevel`. If you don't use Zero-Installs, using a value of `0` may yield speed improvements at little cost. 
+- The new `preferTruncatedLines` setting allow you to tell Yarn that it's ok if info and warning messages are truncated to fit in a single line (errors will always wrap as much as needed, and piping Yarn's output will toggle off this behaviour altogether).
+- The cache compression level can now be configured through `compressionLevel`. If you don't use Zero-Installs, using a value of `0` may yield speed improvements at little cost.
 - Plugins are now loaded from the location of the RC file.
 
 ### Protocols
@@ -91,7 +209,7 @@
 
 ## 2.0.0
 
-Remember that a [migration guide](https://yarnpkg.com/advanced/migration) is available to help you port your applications to Yarn 2.
+Remember that a [migration guide](https://yarnpkg.com/getting-started/migration) is available to help you port your applications to Yarn 2.
 
 ### Notable fixes
 

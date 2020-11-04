@@ -41,7 +41,7 @@ export class NpmTagResolver implements Resolver {
     const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(descriptor), {
       configuration: opts.project.configuration,
       ident: descriptor,
-      json: true,
+      jsonResponse: true,
     });
 
     if (!Object.prototype.hasOwnProperty.call(registryData, `dist-tags`))
@@ -62,6 +62,11 @@ export class NpmTagResolver implements Resolver {
     } else {
       return [structUtils.bindLocator(versionLocator, {__archiveUrl: archiveUrl})];
     }
+  }
+
+  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
+    // We can't statically know if a tag resolves to a specific version without using the network
+    return null;
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
