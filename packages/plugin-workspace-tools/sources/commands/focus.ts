@@ -1,21 +1,21 @@
-import { BaseCommand, WorkspaceRequiredError } from '@yarnpkg/cli';
-import { Cache, Configuration, DependencyMeta, Manifest, Project, StreamReport, Workspace } from '@yarnpkg/core';
-import { structUtils } from '@yarnpkg/core';
-import { Command, Usage } from 'clipanion';
-import * as yup from 'yup';
+import {BaseCommand, WorkspaceRequiredError}                              from '@yarnpkg/cli';
+import {Cache, Configuration, Manifest, Project, StreamReport, Workspace} from '@yarnpkg/core';
+import {structUtils}                                                      from '@yarnpkg/core';
+import {Command, Usage}                                                   from 'clipanion';
+import * as yup                                                           from 'yup';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesFocus extends BaseCommand {
   @Command.Rest()
   workspaces: Array<string> = [];
 
-  @Command.Boolean(`--json`, { description: `Format the output as an NDJSON stream` })
+  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
   json: boolean = false;
 
-  @Command.Boolean(`--production`, { description: `Only install regular dependencies by omitting dev dependencies` })
+  @Command.Boolean(`--production`, {description: `Only install regular dependencies by omitting dev dependencies`})
   production: boolean = false;
 
-  @Command.Boolean(`-A,--all`, { description: `Install the entire project` })
+  @Command.Boolean(`-A,--all`, {description: `Install the entire project`})
   all: boolean = false;
 
   static usage: Usage = Command.Usage({
@@ -42,7 +42,7 @@ export default class WorkspacesFocus extends BaseCommand {
   @Command.Path(`workspaces`, `focus`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const { project, workspace } = await Project.find(configuration, this.context.cwd);
+    const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
     let requiredWorkspaces: Set<Workspace>;
@@ -80,6 +80,7 @@ export default class WorkspacesFocus extends BaseCommand {
 
     // Then we go over each workspace that didn't get selected, and remove all
     // their dependencies.
+
     for (const workspace of project.workspaces) {
       if (requiredWorkspaces.has(workspace)) {
         if (this.production) {
@@ -103,7 +104,7 @@ export default class WorkspacesFocus extends BaseCommand {
       stdout: this.context.stdout,
       includeLogs: true,
     }, async (report: StreamReport) => {
-      await project.install({ cache, report, persistProject: false });
+      await project.install({cache, report, persistProject: false});
       // Virtual package references may have changed so persist just the install state.
       await project.persistInstallStateFile();
     });
