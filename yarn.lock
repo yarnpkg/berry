@@ -4915,15 +4915,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/webpack-merge@npm:^4.1.5":
-  version: 4.1.5
-  resolution: "@types/webpack-merge@npm:4.1.5"
-  dependencies:
-    "@types/webpack": "*"
-  checksum: 2988bb97d79c48cb490832caf8b7cd94be33189aab247761ca669c3ac08741488cd5a93bef8a6e0164b1271b301999fb52b3623af05c1e6021f2cf470059d419
-  languageName: node
-  linkType: hard
-
 "@types/webpack@npm:*":
   version: 4.32.1
   resolution: "@types/webpack@npm:4.32.1"
@@ -5401,7 +5392,6 @@ __metadata:
     "@types/filesize": 4.1.0
     "@types/semver": ^7.1.0
     "@types/terser-webpack-plugin": ^3.0.0
-    "@types/webpack-merge": ^4.1.5
     "@yarnpkg/cli": "workspace:^2.3.3"
     "@yarnpkg/core": "workspace:^2.3.1"
     "@yarnpkg/fslib": "workspace:^2.3.0"

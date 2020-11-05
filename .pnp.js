@@ -8006,16 +8006,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["@types/webpack-merge", [
-        ["npm:4.1.5", {
-          "packageLocation": "./.yarn/cache/@types-webpack-merge-npm-4.1.5-2d7748bcf3-2988bb97d7.zip/node_modules/@types/webpack-merge/",
-          "packageDependencies": [
-            ["@types/webpack-merge", "npm:4.1.5"],
-            ["@types/webpack", "npm:4.32.1"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["@types/websocket", [
         ["npm:1.0.0", {
           "packageLocation": "./.yarn/cache/@types-websocket-npm-1.0.0-a50e7d54d2-98d274504c.zip/node_modules/@types/websocket/",
@@ -8707,7 +8697,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/semver", "npm:7.1.0"],
             ["@types/terser-webpack-plugin", "npm:3.0.0"],
             ["@types/typescript", null],
-            ["@types/webpack-merge", "npm:4.1.5"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -8742,7 +8731,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/filesize", "npm:4.1.0"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/terser-webpack-plugin", "npm:3.0.0"],
-            ["@types/webpack-merge", "npm:4.1.5"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
