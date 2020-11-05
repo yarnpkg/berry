@@ -1115,7 +1115,7 @@ export class Project {
 
       if (workspace !== null) {
         const buildScripts: Array<BuildDirective> = [];
-        const {scripts} = await workspace.manifest;
+        const {scripts} = workspace.manifest;
 
         for (const scriptName of [`preinstall`, `install`, `postinstall`])
           if (scripts.has(scriptName))
