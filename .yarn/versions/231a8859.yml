@@ -1,5 +1,5 @@
 releases:
-  "@yarnpkg/builder": prerelease
+  "@yarnpkg/builder": patch
 
 declined:
   - "@yarnpkg/plugin-constraints"
