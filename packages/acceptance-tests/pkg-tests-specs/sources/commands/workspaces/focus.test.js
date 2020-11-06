@@ -149,22 +149,12 @@ describe(`Commands`, () => {
         async ({path, run}) => {
           await setupProject(path);
 
-          await run(`install`);
-
-          await xfs.removePromise(ppath.join(path, `.yarn/cache`));
-          await xfs.removePromise(ppath.join(path, `.yarn/build-state.yml`));
-
-          const fooPostinstallPath = ppath.join(path, `packages/foo/postinstall.log`);
-          const quxPostinstallPath = ppath.join(path, `packages/qux/postinstall.log`);
-          await xfs.removePromise(fooPostinstallPath);
-          await xfs.removePromise(quxPostinstallPath);
-
           await run(`workspaces`, `focus`, `foo`, `bar`, {
             cwd: ppath.join(path, `packages/foo`),
           });
 
-          await expect(xfs.existsSync(fooPostinstallPath)).toBeTruthy();
-          await expect(xfs.existsSync(quxPostinstallPath)).toBeFalsy();
+          await expect(xfs.existsSync(ppath.join(path, `packages/foo/postinstall.log`))).toBeTruthy();
+          await expect(xfs.existsSync(ppath.join(path, `packages/qux/postinstall.log`))).toBeFalsy();
         }
       )
     );
