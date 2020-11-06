@@ -1,12 +1,10 @@
-import {BaseCommand}                              from '@yarnpkg/cli';
-import {Configuration, StreamReport, MessageName} from '@yarnpkg/core';
-import {Command, Usage, UsageError}               from 'clipanion';
-import cloneDeep                                  from 'lodash/cloneDeep';
-import getPath                                    from 'lodash/get';
-import setPath                                    from 'lodash/set';
-import {inspect}                                  from 'util';
-
-import {convertMapsToObjects}                     from './get';
+import {BaseCommand}                                         from '@yarnpkg/cli';
+import {Configuration, StreamReport, MessageName, miscUtils} from '@yarnpkg/core';
+import {Command, Usage, UsageError}                          from 'clipanion';
+import cloneDeep                                             from 'lodash/cloneDeep';
+import getPath                                               from 'lodash/get';
+import setPath                                               from 'lodash/set';
+import {inspect}                                             from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigSetCommand extends BaseCommand {
@@ -93,7 +91,7 @@ export default class ConfigSetCommand extends BaseCommand {
       getNativePaths: true,
     });
 
-    const asObject = convertMapsToObjects(displayedValue);
+    const asObject = miscUtils.convertMapsToIndexableObjects(displayedValue);
     const requestedObject = path
       ? getPath(asObject, path)
       : asObject;

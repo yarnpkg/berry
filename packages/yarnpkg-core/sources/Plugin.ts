@@ -1,15 +1,15 @@
-import {PortablePath}                                                   from '@yarnpkg/fslib';
-import {CommandClass}                                                   from 'clipanion';
-import {Writable, Readable}                                             from 'stream';
+import {PortablePath}                                                                         from '@yarnpkg/fslib';
+import {CommandClass}                                                                         from 'clipanion';
+import {Writable, Readable}                                                                   from 'stream';
 
-import {PluginConfiguration, Configuration, ConfigurationDefinitionMap} from './Configuration';
-import {Fetcher}                                                        from './Fetcher';
-import {Linker}                                                         from './Linker';
-import {MessageName}                                                    from './MessageName';
-import {Project, InstallOptions}                                        from './Project';
-import {Resolver, ResolveOptions}                                       from './Resolver';
-import {Workspace}                                                      from './Workspace';
-import {Locator, Descriptor}                                            from './types';
+import {PluginConfiguration, Configuration, ConfigurationDefinitionMap, PackageExtensionData} from './Configuration';
+import {Fetcher}                                                                              from './Fetcher';
+import {Linker}                                                                               from './Linker';
+import {MessageName}                                                                          from './MessageName';
+import {Project, InstallOptions}                                                              from './Project';
+import {Resolver, ResolveOptions}                                                             from './Resolver';
+import {Workspace}                                                                            from './Workspace';
+import {Locator, Descriptor}                                                                  from './types';
 
 type ProcessEnvironment = {[key: string]: string};
 
@@ -40,7 +40,7 @@ export type Hooks = {
   // metadata problems).
   registerPackageExtensions?: (
     configuration: Configuration,
-    registerPackageExtension: (descriptor: Descriptor, extensionData: any) => void,
+    registerPackageExtension: (descriptor: Descriptor, extensionData: PackageExtensionData) => void,
   ) => Promise<void>;
 
   // Called before a script is executed. The hooks are allowed to modify the

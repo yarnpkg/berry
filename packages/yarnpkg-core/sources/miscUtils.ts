@@ -56,6 +56,38 @@ export function isIndexableObject(value: unknown): value is {[key: string]: unkn
   return typeof value === `object` && value !== null;
 }
 
+export type MapValue<T> = T extends Map<any, infer V> ? V : never;
+
+export interface ToMapValue<T extends object> {
+  get<K extends keyof T>(key: K): T[K];
+}
+
+export type MapValueToObjectValue<T> =
+  T extends Map<infer K, infer V> ? (K extends string | number | symbol ? MapValueToObjectValue<Record<K, V>> : never)
+    : T extends ToMapValue<infer V> ? MapValueToObjectValue<V>
+      : T extends object ? {[K in keyof T]: MapValueToObjectValue<T[K]>}
+        : T;
+
+/**
+ * Converts Maps to indexable objects recursively.
+ */
+export function convertMapsToIndexableObjects<T>(arg: T): MapValueToObjectValue<T> {
+  if (arg instanceof Map)
+    arg = Object.fromEntries(arg);
+
+  if (isIndexableObject(arg)) {
+    for (const key of Object.keys(arg)) {
+      const value = arg[key];
+      if (isIndexableObject(value)) {
+        // @ts-expect-error: Apparently nothing in this world can be used to index type 'T & { [key: string]: unknown; }'
+        arg[key] = convertMapsToIndexableObjects(value);
+      }
+    }
+  }
+
+  return arg as MapValueToObjectValue<T>;
+}
+
 export function getFactoryWithDefault<K, T>(map: Map<K, T>, key: K, factory: () => T) {
   let value = map.get(key);
 

@@ -2,11 +2,13 @@
 // the same fields as you add here and prefix your changes with the relevant
 // PR url.
 
+import {PackageExtensionData} from '@yarnpkg/core';
+
 const optionalPeerDep = {
   optional: true,
 };
 
-export const packageExtensions: Array<[string, any]> = [
+export const packageExtensions: Array<[string, PackageExtensionData]> = [
   // https://github.com/SamVerschueren/stream-to-observable/pull/5
   [`@samverschueren/stream-to-observable@*`, {
     peerDependenciesMeta: {

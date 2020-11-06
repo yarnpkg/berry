@@ -426,14 +426,48 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.MAP,
     valueDefinition: {
       description: ``,
-      type: SettingsType.ANY,
+      type: SettingsType.SHAPE,
+      properties: {
+        dependencies: {
+          description: ``,
+          type: SettingsType.MAP,
+          valueDefinition: {
+            description: ``,
+            type: SettingsType.STRING,
+          },
+        },
+        peerDependencies: {
+          description: ``,
+          type: SettingsType.MAP,
+          valueDefinition: {
+            description: ``,
+            type: SettingsType.STRING,
+          },
+        },
+        peerDependenciesMeta: {
+          description: ``,
+          type: SettingsType.MAP,
+          valueDefinition: {
+            description: ``,
+            type: SettingsType.SHAPE,
+            properties: {
+              optional: {
+                description: ``,
+                type: SettingsType.BOOLEAN,
+                default: false,
+              },
+            },
+          },
+        },
+      },
     },
   },
 };
 
-export interface MapConfigurationValue<T extends object> {
-  get<K extends keyof T>(key: K): T[K];
-}
+/**
+ * @deprecated Use miscUtils.ToMapValue
+ */
+export type MapConfigurationValue<T extends object> = miscUtils.ToMapValue<T>;
 
 export interface ConfigurationValueMap {
   lastUpdateCheck: string | null;
@@ -477,11 +511,11 @@ export interface ConfigurationValueMap {
   httpTimeout: number;
   httpRetry: number;
   networkConcurrency: number;
-  networkSettings: Map<string, MapConfigurationValue<{caFilePath: PortablePath | null, enableNetwork: boolean | null}>>;
+  networkSettings: Map<string, miscUtils.ToMapValue<{caFilePath: PortablePath | null, enableNetwork: boolean | null}>>;
   caFilePath: PortablePath | null;
   enableStrictSsl: boolean;
 
-  logFilters: Array<MapConfigurationValue<{code?: string, text?: string, level?: formatUtils.LogLevel | null}>>;
+  logFilters: Array<miscUtils.ToMapValue<{code?: string, text?: string, level?: formatUtils.LogLevel | null}>>;
 
   // Settings related to telemetry
   enableTelemetry: boolean;
@@ -494,8 +528,14 @@ export interface ConfigurationValueMap {
   checksumBehavior: string;
 
   // Package patching - to fix incorrect definitions
-  packageExtensions: Map<string, any>;
+  packageExtensions: Map<string, miscUtils.ToMapValue<{
+    dependencies?: Map<string, string>,
+    peerDependencies?: Map<string, string>,
+    peerDependenciesMeta?: Map<string, miscUtils.ToMapValue<{optional?: boolean}>>,
+  }>>;
 }
+
+export type PackageExtensionData = miscUtils.MapValueToObjectValue<miscUtils.MapValue<ConfigurationValueMap['packageExtensions']>>;
 
 type SimpleDefinitionForType<T> = SimpleSettingsDefinition & {
   type:
@@ -509,7 +549,7 @@ type SimpleDefinitionForType<T> = SimpleSettingsDefinition & {
 
 type DefinitionForTypeHelper<T> = T extends Map<string, infer U>
   ? (MapSettingsDefinition & {valueDefinition: Omit<DefinitionForType<U>, 'default'>})
-  : T extends MapConfigurationValue<infer U>
+  : T extends miscUtils.ToMapValue<infer U>
     ? (ShapeSettingsDefinition & {properties: ConfigurationDefinitionMap<U>})
     : SimpleDefinitionForType<T>;
 
@@ -1388,7 +1428,7 @@ export class Configuration {
     this.packageExtensions = new Map();
     const packageExtensions = this.packageExtensions;
 
-    const registerPackageExtension = (descriptor: Descriptor, extensionData: any) => {
+    const registerPackageExtension = (descriptor: Descriptor, extensionData: PackageExtensionData) => {
       if (!semver.validRange(descriptor.range))
         throw new Error(`Only semver ranges are allowed as keys for the lockfileExtensions setting`);
 
@@ -1413,7 +1453,7 @@ export class Configuration {
     };
 
     for (const [descriptorString, extensionData] of this.get(`packageExtensions`))
-      registerPackageExtension(structUtils.parseDescriptor(descriptorString, true), extensionData);
+      registerPackageExtension(structUtils.parseDescriptor(descriptorString, true), miscUtils.convertMapsToIndexableObjects(extensionData));
 
     await this.triggerHook(hooks => {
       return hooks.registerPackageExtensions;
