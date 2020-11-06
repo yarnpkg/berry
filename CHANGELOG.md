@@ -7,6 +7,7 @@
 ### Installs
 
 - Progress bars are rendered less often, which makes all installs faster
+- Warnings are now printed on unused / unneeded packageExtensions during the Resolution step.
 
 ### CLI
 

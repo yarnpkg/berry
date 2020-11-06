@@ -1527,7 +1527,7 @@ export class Project {
     for (const extensionsByIdent of this.configuration.packageExtensions.values())
       for (const [, extensionsByRange] of extensionsByIdent)
         for (const extension of extensionsByRange)
-          extension.active = false;
+          extension.status = `inactive`;
 
     await opts.report.startTimerPromise(`Resolution step`, async () => {
       const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
@@ -1547,6 +1547,26 @@ export class Project {
       }
 
       await this.resolveEverything(opts);
+
+      for (const [, extensionsPerRange] of this.configuration.packageExtensions) {
+        for (const [, extensions] of extensionsPerRange) {
+          for (const extension of extensions) {
+            if (extension.userProvided) {
+              const prettyPackageExtension = formatUtils.pretty(this.configuration, extension, formatUtils.Type.PACKAGE_EXTENSION);
+
+              switch (extension.status) {
+                case `inactive`: {
+                  opts.report.reportWarning(MessageName.UNUSED_PACKAGE_EXTENSION, `Unused package extension: ${prettyPackageExtension}`);
+                } break;
+
+                case `redundant`: {
+                  opts.report.reportWarning(MessageName.UNNEEDED_PACKAGE_EXTENSION, `Unneeded package extension: ${prettyPackageExtension}`);
+                } break;
+              }
+            }
+          }
+        }
+      }
 
       if (initialLockfile !== null) {
         const newLockfile = normalizeLineEndings(initialLockfile, this.generateLockfile());
@@ -1579,8 +1599,8 @@ export class Project {
     for (const extensionsByIdent of this.configuration.packageExtensions.values())
       for (const [, extensionsByRange] of extensionsByIdent)
         for (const extension of extensionsByRange)
-          if (extension.active)
-            Configuration.telemetry?.reportPackageExtension(extension.description);
+          if (extension.userProvided && extension.status === `active`)
+            Configuration.telemetry?.reportPackageExtension(formatUtils.json(extension, formatUtils.Type.PACKAGE_EXTENSION));
 
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);

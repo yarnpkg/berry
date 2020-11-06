@@ -1,33 +1,32 @@
-import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
-import {DEFAULT_COMPRESSION_LEVEL}                 from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                  from '@yarnpkg/parsers';
-import camelcase                                   from 'camelcase';
-import {isCI}                                      from 'ci-info';
-import {UsageError}                                from 'clipanion';
-import pLimit, {Limit}                             from 'p-limit';
-import semver                                      from 'semver';
+import {Filename, PortablePath, npath, ppath, xfs}                              from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL}                                              from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                               from '@yarnpkg/parsers';
+import camelcase                                                                from 'camelcase';
+import {isCI}                                                                   from 'ci-info';
+import {UsageError}                                                             from 'clipanion';
+import pLimit, {Limit}                                                          from 'p-limit';
+import semver                                                                   from 'semver';
+import {PassThrough, Writable}                                                  from 'stream';
 
-import {PassThrough, Writable}                     from 'stream';
-
-import {CorePlugin}                                from './CorePlugin';
-import {Manifest, PeerDependencyMeta}              from './Manifest';
-import {MultiFetcher}                              from './MultiFetcher';
-import {MultiResolver}                             from './MultiResolver';
-import {Plugin, Hooks}                             from './Plugin';
-import {ProtocolResolver}                          from './ProtocolResolver';
-import {Report}                                    from './Report';
-import {TelemetryManager}                          from './TelemetryManager';
-import {VirtualFetcher}                            from './VirtualFetcher';
-import {VirtualResolver}                           from './VirtualResolver';
-import {WorkspaceFetcher}                          from './WorkspaceFetcher';
-import {WorkspaceResolver}                         from './WorkspaceResolver';
-import * as folderUtils                            from './folderUtils';
-import * as formatUtils                            from './formatUtils';
-import * as miscUtils                              from './miscUtils';
-import * as nodeUtils                              from './nodeUtils';
-import * as semverUtils                            from './semverUtils';
-import * as structUtils                            from './structUtils';
-import {IdentHash, Package, Descriptor}            from './types';
+import {CorePlugin}                                                             from './CorePlugin';
+import {Manifest, PeerDependencyMeta}                                           from './Manifest';
+import {MultiFetcher}                                                           from './MultiFetcher';
+import {MultiResolver}                                                          from './MultiResolver';
+import {Plugin, Hooks}                                                          from './Plugin';
+import {ProtocolResolver}                                                       from './ProtocolResolver';
+import {Report}                                                                 from './Report';
+import {TelemetryManager}                                                       from './TelemetryManager';
+import {VirtualFetcher}                                                         from './VirtualFetcher';
+import {VirtualResolver}                                                        from './VirtualResolver';
+import {WorkspaceFetcher}                                                       from './WorkspaceFetcher';
+import {WorkspaceResolver}                                                      from './WorkspaceResolver';
+import * as folderUtils                                                         from './folderUtils';
+import * as formatUtils                                                         from './formatUtils';
+import * as miscUtils                                                           from './miscUtils';
+import * as nodeUtils                                                           from './nodeUtils';
+import * as semverUtils                                                         from './semverUtils';
+import * as structUtils                                                         from './structUtils';
+import {IdentHash, Package, Descriptor, PackageExtension, PackageExtensionType} from './types';
 
 const IGNORED_ENV_VARIABLES = new Set([
   // "binFolder" is the magic location where the parent process stored the
@@ -567,28 +566,6 @@ export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
   [K in keyof V]: DefinitionForType<V[K]>;
 }
 
-function parseBoolean(value: unknown) {
-  switch (value) {
-    case `true`:
-    case `1`:
-    case 1:
-    case true: {
-      return true;
-    } break;
-
-    case `false`:
-    case `0`:
-    case 0:
-    case false: {
-      return false;
-    } break;
-
-    default: {
-      throw new Error(`Couldn't parse "${value}" as a boolean`);
-    } break;
-  }
-}
-
 function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
   if (definition.isArray) {
     if (!Array.isArray(value)) {
@@ -625,7 +602,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
 
   const interpretValue = () => {
     if (definition.type === SettingsType.BOOLEAN)
-      return parseBoolean(value);
+      return miscUtils.parseBoolean(value);
 
     if (typeof value !== `string`)
       throw new Error(`Expected value (${value}) to be a string`);
@@ -834,21 +811,6 @@ export type FindProjectOptions = {
   strict?: boolean,
   usePath?: boolean,
   useRc?: boolean,
-};
-
-export enum PackageExtensionType {
-  Dependency = `Dependency`,
-  PeerDependency = `PeerDependency`,
-  PeerDependencyMeta = `PeerDependencyMeta`,
-}
-
-export type PackageExtension = (
-  | {type: PackageExtensionType.Dependency, descriptor: Descriptor}
-  | {type: PackageExtensionType.PeerDependency, descriptor: Descriptor}
-  | {type: PackageExtensionType.PeerDependencyMeta, selector: string, key: keyof PeerDependencyMeta, value: any}
-) & {
-  active: boolean,
-  description: string,
 };
 
 export class Configuration {
@@ -1428,7 +1390,7 @@ export class Configuration {
     this.packageExtensions = new Map();
     const packageExtensions = this.packageExtensions;
 
-    const registerPackageExtension = (descriptor: Descriptor, extensionData: PackageExtensionData) => {
+    const registerPackageExtension = (descriptor: Descriptor, extensionData: PackageExtensionData, {userProvided = false}: {userProvided?: boolean} = {}) => {
       if (!semver.validRange(descriptor.range))
         throw new Error(`Only semver ranges are allowed as keys for the lockfileExtensions setting`);
 
@@ -1440,20 +1402,26 @@ export class Configuration {
       const extensionsPerRange: Array<PackageExtension> = [];
       extensionsPerIdent.push([descriptor.range, extensionsPerRange]);
 
+      const baseExtension = {
+        status: `inactive`,
+        userProvided,
+        parentDescriptor: descriptor,
+      } as const;
+
       for (const dependency of extension.dependencies.values())
-        extensionsPerRange.push({type: PackageExtensionType.Dependency, descriptor: dependency, active: false, description: `${structUtils.stringifyIdent(descriptor)} > ${structUtils.stringifyIdent(dependency)}`});
+        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.Dependency, descriptor: dependency, description: `${structUtils.stringifyIdent(descriptor)} > ${structUtils.stringifyIdent(dependency)}`});
       for (const peerDependency of extension.peerDependencies.values())
-        extensionsPerRange.push({type: PackageExtensionType.PeerDependency, descriptor: peerDependency, active: false, description: `${structUtils.stringifyIdent(descriptor)} >> ${structUtils.stringifyIdent(peerDependency)}`});
+        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependency, descriptor: peerDependency, description: `${structUtils.stringifyIdent(descriptor)} >> ${structUtils.stringifyIdent(peerDependency)}`});
 
       for (const [selector, meta] of extension.peerDependenciesMeta) {
         for (const [key, value] of Object.entries(meta)) {
-          extensionsPerRange.push({type: PackageExtensionType.PeerDependencyMeta, selector, key: key as keyof typeof meta, value, active: false, description: `${structUtils.stringifyIdent(descriptor)} >> ${selector} / ${key}`});
+          extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependencyMeta, selector, key: key as keyof typeof meta, value, description: `${structUtils.stringifyIdent(descriptor)} >> ${selector} / ${key}`});
         }
       }
     };
 
     for (const [descriptorString, extensionData] of this.get(`packageExtensions`))
-      registerPackageExtension(structUtils.parseDescriptor(descriptorString, true), miscUtils.convertMapsToIndexableObjects(extensionData));
+      registerPackageExtension(structUtils.parseDescriptor(descriptorString, true), miscUtils.convertMapsToIndexableObjects(extensionData), {userProvided: true});
 
     await this.triggerHook(hooks => {
       return hooks.registerPackageExtensions;
@@ -1479,20 +1447,34 @@ export class Configuration {
             continue;
 
           for (const extension of extensionsPerRange) {
+            // If an extension is active for a package but redundant
+            // for another one, it should be considered active
+            if (extension.status === `inactive`)
+              extension.status = `redundant`;
+
             switch (extension.type) {
               case PackageExtensionType.Dependency: {
-                pkg.dependencies.set(extension.descriptor.identHash, extension.descriptor);
-                extension.active = true;
+                const currentDependency = pkg.dependencies.get(extension.descriptor.identHash);
+                if (typeof currentDependency === `undefined` || !structUtils.areDescriptorsEqual(currentDependency, extension.descriptor)) {
+                  extension.status = `active`;
+                  pkg.dependencies.set(extension.descriptor.identHash, extension.descriptor);
+                }
               } break;
 
               case PackageExtensionType.PeerDependency: {
-                pkg.peerDependencies.set(extension.descriptor.identHash, extension.descriptor);
-                extension.active = true;
+                const currentPeerDependency = pkg.peerDependencies.get(extension.descriptor.identHash);
+                if (typeof currentPeerDependency === `undefined` || !structUtils.areDescriptorsEqual(currentPeerDependency, extension.descriptor)) {
+                  extension.status = `active`;
+                  pkg.peerDependencies.set(extension.descriptor.identHash, extension.descriptor);
+                }
               } break;
 
               case PackageExtensionType.PeerDependencyMeta: {
-                miscUtils.getFactoryWithDefault(pkg.peerDependenciesMeta, extension.selector, () => ({} as PeerDependencyMeta))[extension.key] = extension.value;
-                extension.active = true;
+                const currentPeerDependencyMeta = pkg.peerDependenciesMeta.get(extension.selector);
+                if (typeof currentPeerDependencyMeta === `undefined` || !Object.prototype.hasOwnProperty.call(currentPeerDependencyMeta, extension.key) || currentPeerDependencyMeta[extension.key] !== extension.value) {
+                  extension.status = `active`;
+                  miscUtils.getFactoryWithDefault(pkg.peerDependenciesMeta, extension.selector, () => ({} as PeerDependencyMeta))[extension.key] = extension.value;
+                }
               } break;
 
               default: {

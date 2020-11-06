@@ -343,3 +343,40 @@ export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: 
     throw new UsageError(`Environment variable not found (${variableName})`);
   });
 }
+
+export function parseBoolean(value: unknown): boolean {
+  switch (value) {
+    case `true`:
+    case `1`:
+    case 1:
+    case true: {
+      return true;
+    }
+
+    case `false`:
+    case `0`:
+    case 0:
+    case false: {
+      return false;
+    }
+
+    default: {
+      throw new Error(`Couldn't parse "${value}" as a boolean`);
+    }
+  }
+}
+
+export function parseOptionalBoolean(value: unknown): boolean | undefined {
+  if (typeof value === `undefined`)
+    return value;
+
+  return parseBoolean(value);
+}
+
+export function tryParseOptionalBoolean(value: unknown): boolean | undefined | null {
+  try {
+    return parseOptionalBoolean(value);
+  } catch {
+    return null;
+  }
+}
