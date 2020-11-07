@@ -1,18 +1,17 @@
-import {BuildDirective, MessageName, Project, FetchResult}                 from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                 from '@yarnpkg/core';
-import {Locator, Package, BuildType, FinalizeInstallStatus}                from '@yarnpkg/core';
-import {structUtils, Report, Manifest, miscUtils, DependencyMeta}          from '@yarnpkg/core';
-import {VirtualFS, ZipOpenFS, xfs, FakeFS}                                 from '@yarnpkg/fslib';
-import {PortablePath, npath, ppath, toFilename, Filename}                  from '@yarnpkg/fslib';
-import {getLibzipPromise}                                                  from '@yarnpkg/libzip';
-import {parseSyml}                                                         from '@yarnpkg/parsers';
-import {AbstractPnpInstaller}                                              from '@yarnpkg/plugin-pnp';
-import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits} from '@yarnpkg/pnpify';
-import {buildNodeModulesTree}                                              from '@yarnpkg/pnpify';
-import {PnpSettings, makeRuntimeApi, PnpApi}                               from '@yarnpkg/pnp';
-import cmdShim                                                             from '@zkochan/cmd-shim';
-import {UsageError}                                                        from 'clipanion';
-import fs                                                                  from 'fs';
+import {BuildDirective, MessageName, Project, FetchResult, Installer, LocatorHash, Descriptor} from '@yarnpkg/core';
+import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                                     from '@yarnpkg/core';
+import {Locator, Package, BuildType, FinalizeInstallStatus}                                    from '@yarnpkg/core';
+import {structUtils, Report, Manifest, miscUtils, DependencyMeta}                              from '@yarnpkg/core';
+import {VirtualFS, ZipOpenFS, xfs, FakeFS, NativePath}                                         from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, toFilename, Filename}                                      from '@yarnpkg/fslib';
+import {getLibzipPromise}                                                                      from '@yarnpkg/libzip';
+import {parseSyml}                                                                             from '@yarnpkg/parsers';
+import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits}                     from '@yarnpkg/pnpify';
+import {buildNodeModulesTree}                                                                  from '@yarnpkg/pnpify';
+import {PnpApi, PackageInformation}                                                            from '@yarnpkg/pnp';
+import cmdShim                                                                                 from '@zkochan/cmd-shim';
+import {UsageError}                                                                            from 'clipanion';
+import fs                                                                                      from 'fs';
 
 const STATE_FILE_VERSION = 1;
 const NODE_MODULES = `node_modules` as Filename;
@@ -69,20 +68,53 @@ export class NodeModulesLinker implements Linker {
   }
 
   makeInstaller(opts: LinkOptions) {
-    return new NodeModulesInstaller({...opts, skipIncompatiblePackageLinking: true});
+    return new NodeModulesInstaller(opts);
   }
 }
 
-class NodeModulesInstaller extends AbstractPnpInstaller {
-  async getBuildScripts(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult) {
-    return [];
+class NodeModulesInstaller implements Installer {
+  private store: Map<LocatorHash, PackageInformation<NativePath>> = new Map();
+
+  constructor(private opts: LinkOptions) {
+    // Nothing to do
   }
 
-  async transformPackage(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult, dependencyMeta: DependencyMeta, flags: {hasBuildScripts: boolean}) {
-    return fetchResult.packageFs;
+  async installPackage(pkg: Package, fetchResult: FetchResult) {
+    const packageLocation = ppath.resolve(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
+
+    this.store.set(pkg.locatorHash, {
+      packageLocation: npath.fromPortablePath(packageLocation),
+      packageDependencies: new Map(),
+      packagePeers: new Set(),
+      linkType: pkg.linkType,
+      discardFromLookup: fetchResult.discardFromLookup ?? false,
+    });
+
+    return {
+      packageLocation,
+      buildDirective: null,
+    };
   }
 
-  async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
+  async attachInternalDependencies(locator: Locator, dependencies: Array<[Descriptor, Locator]>) {
+    const packageInformation = this.store.get(locator.locatorHash);
+    if (typeof packageInformation === `undefined`)
+      throw new Error(`Assertion failed: Expected information object to have been registered`);
+
+    for (const [descriptor, locator] of dependencies) {
+      const target = !structUtils.areIdentsEqual(descriptor, locator)
+        ? [structUtils.requirableIdent(locator), locator.locatorHash] as [string, string]
+        : locator.locatorHash;
+
+      packageInformation.packageDependencies.set(structUtils.requirableIdent(descriptor), target);
+    }
+  }
+
+  async attachExternalDependents(locator: Locator, dependentPaths: Array<PortablePath>) {
+    throw new Error(`External dependencies haven't been implemented for the node-modules linker`);
+  }
+
+  async finalizeInstall() {
     if (this.opts.project.configuration.get(`nodeLinker`) !== `node-modules`)
       return undefined;
 
@@ -105,30 +137,69 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
       preinstallState = {locatorMap: new Map(), binSymlinks: new Map(), locationTree: new Map()};
     }
 
-    const defaultHoistingLimits = this.opts.project.configuration.get(`nmHoistingLimits`) as NodeModulesHoistingLimits;
-
-    const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
-    const hoistingLimitsByCwd = new Map(this.opts.project.workspaces.map(
-      workspace => {
-        const {relativeCwd, manifest} = workspace;
-        let hoistingLimits = defaultHoistingLimits;
-        try {
-          hoistingLimits = miscUtils.validateEnum(NodeModulesHoistingLimits, manifest.installConfig?.hoistingLimits ?? defaultHoistingLimits);
-        } catch (e) {
-          const workspaceName = structUtils.prettyWorkspace(this.opts.project.configuration, workspace);
-          this.opts.report.reportWarning(MessageName.INVALID_MANIFEST, `${workspaceName}: Invalid 'installConfig.hoistingLimits' value. Expected one of ${Object.values(NodeModulesHoistingLimits).join(`, `)}, using default: "${hoistingLimits}"`);
-        }
-        return [relativeCwd, hoistingLimits];
+    const hoistingLimitsByCwd = new Map(this.opts.project.workspaces.map(workspace => {
+      let hoistingLimits = this.opts.project.configuration.get(`nmHoistingLimits`);
+      try {
+        hoistingLimits = miscUtils.validateEnum(NodeModulesHoistingLimits, workspace.manifest.installConfig?.hoistingLimits ?? hoistingLimits);
+      } catch (e) {
+        const workspaceName = structUtils.prettyWorkspace(this.opts.project.configuration, workspace);
+        this.opts.report.reportWarning(MessageName.INVALID_MANIFEST, `${workspaceName}: Invalid 'installConfig.hoistingLimits' value. Expected one of ${Object.values(NodeModulesHoistingLimits).join(`, `)}, using default: "${hoistingLimits}"`);
       }
-    ));
-    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false, hoistingLimitsByCwd, project: this.opts.project});
+      return [workspace.relativeCwd, hoistingLimits];
+    }));
+
+    const pnpApi: PnpApi = {
+      VERSIONS: {
+        std: 1,
+      },
+      topLevel: {
+        name: null,
+        reference: null,
+      },
+      getLocator: (name, referencish) => {
+        if (Array.isArray(referencish)) {
+          return {name: referencish[0], reference: referencish[1]};
+        } else {
+          return {name, reference: referencish};
+        }
+      },
+      getDependencyTreeRoots: () => {
+        return this.opts.project.workspaces.map(workspace => {
+          return {name: structUtils.stringifyIdent(workspace.locator), reference: workspace.anchoredLocator.locatorHash};
+        });
+      },
+      getPackageInformation: locator => {
+        const info = this.store.get(locator.reference as LocatorHash);
+        if (typeof info === `undefined`)
+          throw new Error(`Assertion failed: Expected the package reference to have been registered`);
+
+        return info;
+      },
+      findPackageLocator: () => {
+        throw new Error(`Assertion failed: Unimplemented`);
+      },
+      resolveToUnqualified: () => {
+        throw new Error(`Assertion failed: Unimplemented`);
+      },
+      resolveUnqualified: () => {
+        throw new Error(`Assertion failed: Unimplemented`);
+      },
+      resolveRequest: () => {
+        throw new Error(`Assertion failed: Unimplemented`);
+      },
+      resolveVirtual: path => {
+        return npath.fromPortablePath(VirtualFS.resolveVirtual(npath.toPortablePath(path)));
+      },
+    };
+
+    const nmTree = buildNodeModulesTree(pnpApi, {pnpifyFs: false, hoistingLimitsByCwd, project: this.opts.project});
     const locatorMap = buildLocatorMap(nmTree);
 
     await persistNodeModules(preinstallState, locatorMap, {
       baseFs: defaultFsLayer,
       project: this.opts.project,
       report: this.opts.report,
-      loadManifest: this.cachedManifestLoad.bind(this, pnp, defaultFsLayer),
+      loadManifest: this.cachedManifestLoad.bind(this, pnpApi, defaultFsLayer),
     });
 
     const installStatuses: Array<FinalizeInstallStatus> = [];
@@ -140,13 +211,13 @@ class NodeModulesInstaller extends AbstractPnpInstaller {
       const locator = structUtils.parseLocator(locatorKey);
       const pnpLocator = {name: structUtils.stringifyIdent(locator), reference: locator.reference};
 
-      const pnpEntry = pnp.getPackageInformation(pnpLocator);
+      const pnpEntry = pnpApi.getPackageInformation(pnpLocator);
       if (pnpEntry === null)
         throw new Error(`Assertion failed: Expected the package to be registered (${structUtils.prettyLocator(this.opts.project.configuration, locator)})`);
 
       const sourceLocation = npath.toPortablePath(installRecord.locations[0]);
 
-      const manifest = await this.cachedManifestLoad(pnp, defaultFsLayer, locatorKey, sourceLocation);
+      const manifest = await this.cachedManifestLoad(pnpApi, defaultFsLayer, locatorKey, sourceLocation);
       const buildScripts = await this.getSourceBuildScripts(sourceLocation, manifest);
 
       if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`)) {
