@@ -1,5 +1,5 @@
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta} from '@yarnpkg/core';
-import {FetchResult, Ident, Locator, Package, BuildDirective, BuildType}                from '@yarnpkg/core';
+import {FetchResult, Ident, Locator, Package}                                           from '@yarnpkg/core';
 import {miscUtils, structUtils, formatUtils}                                            from '@yarnpkg/core';
 import {CwdFS, FakeFS, PortablePath, npath, ppath, xfs, Filename}                       from '@yarnpkg/fslib';
 import {generateInlinedScript, generateSplitScript, PnpSettings}                        from '@yarnpkg/pnp';

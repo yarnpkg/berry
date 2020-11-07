@@ -1,6 +1,6 @@
 import {BuildDirective, MessageName, Project, FetchResult, Installer, LocatorHash, Descriptor} from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                                     from '@yarnpkg/core';
-import {Locator, Package, BuildType, FinalizeInstallStatus}                                    from '@yarnpkg/core';
+import {Locator, Package, FinalizeInstallStatus}                                               from '@yarnpkg/core';
 import {structUtils, Report, Manifest, miscUtils}                                              from '@yarnpkg/core';
 import {VirtualFS, ZipOpenFS, xfs, FakeFS, NativePath}                                         from '@yarnpkg/fslib';
 import {PortablePath, npath, ppath, toFilename, Filename}                                      from '@yarnpkg/fslib';
