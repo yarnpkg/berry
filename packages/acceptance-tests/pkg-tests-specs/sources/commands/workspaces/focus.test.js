@@ -138,19 +138,39 @@ describe(`Commands`, () => {
         }
       )
     );
+
+    test(
+      `should not execute postinstall scripts of unspecified workspace`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await setupProject(path);
+
+          await run(`workspaces`, `focus`, `foo`, `bar`, {
+            cwd: ppath.join(path, `packages/foo`),
+          });
+
+          await expect(xfs.existsSync(ppath.join(path, `packages/foo/postinstall.log`))).toBeTruthy();
+          await expect(xfs.existsSync(ppath.join(path, `packages/qux/postinstall.log`))).toBeFalsy();
+        }
+      )
+    );
   });
 });
 
 async function setupProject(path) {
   await xfs.writeFilePromise(ppath.join(path, `.yarnrc.yml`), `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`))}\n`);
 
-  const pkg = async (name, dependencies, devDependencies) => {
+  const pkg = async (name, dependencies, devDependencies, scripts) => {
     await xfs.mkdirpPromise(ppath.join(path, `packages/${name}`));
-    await xfs.writeJsonPromise(ppath.join(path, `packages/${name}/package.json`), {name, dependencies, devDependencies});
+    await xfs.writeJsonPromise(ppath.join(path, `packages/${name}/package.json`), {name, dependencies, devDependencies, scripts});
   };
 
-  await pkg(`foo`, {[`no-deps`]: `1.0.0`});
+  await pkg(`foo`, {[`no-deps`]: `1.0.0`}, {},{postinstall: `echo 'postinstall' > postinstall.log`});
   await pkg(`bar`, {[`no-deps`]: `2.0.0`});
   await pkg(`baz`, {[`bar`]: `workspace:*`});
-  await pkg(`qux`, {[`no-deps`]: `1.0.0`}, {[`no-deps-bins`]: `1.0.0`});
+  await pkg(`qux`, {[`no-deps`]: `1.0.0`}, {[`no-deps-bins`]: `1.0.0`}, {postinstall: `echo 'postinstall' > postinstall.log`});
 }

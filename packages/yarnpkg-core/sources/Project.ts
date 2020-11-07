@@ -1111,9 +1111,11 @@ export class Project {
 
       const fetchResult = await fetcher.fetch(pkg, fetcherOptions);
 
-      if (this.tryWorkspaceByLocator(pkg) !== null) {
+      const workspace = this.tryWorkspaceByLocator(pkg);
+
+      if (workspace !== null) {
         const buildScripts: Array<BuildDirective> = [];
-        const {scripts} = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
+        const {scripts} = workspace.manifest;
 
         for (const scriptName of [`preinstall`, `install`, `postinstall`])
           if (scripts.has(scriptName))
