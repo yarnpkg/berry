@@ -2,6 +2,7 @@ on:
   push:
     branches:
     - master
+    - mael/linker-refactoring
   pull_request:
 
 name: 'Integration'
