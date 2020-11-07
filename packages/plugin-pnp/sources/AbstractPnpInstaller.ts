@@ -4,6 +4,8 @@ import {miscUtils, structUtils}                                                 
 import {FakeFS, PortablePath, ppath}                                                                    from '@yarnpkg/fslib';
 import {PackageRegistry, PnpSettings}                                                                   from '@yarnpkg/pnp';
 
+import {javascriptUtils}                                                                                from '.';
+
 export type AbstractInstallerOptions = LinkOptions & {
   skipIncompatiblePackageLinking?: boolean;
 };
@@ -16,11 +18,6 @@ export abstract class AbstractPnpInstaller implements Installer {
   constructor(protected opts: AbstractInstallerOptions) {
     this.opts = opts;
   }
-
-  /**
-   * Called in order to know whether the specified package has build scripts.
-   */
-  abstract getBuildScripts(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult): Promise<Array<BuildDirective>>;
 
   /**
    * Called to transform the package before it's stored in the PnP map. For
@@ -66,26 +63,11 @@ export abstract class AbstractPnpInstaller implements Installer {
     if (this.opts.skipIncompatiblePackageLinking && !isManifestCompatible)
       return {packageLocation: null, buildDirective: null};
 
-    const buildScripts = !hasVirtualInstances
-      ? await this.getBuildScripts(pkg, manifest, fetchResult)
-      : [];
-
     const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
 
-    if (buildScripts.length > 0 && !this.opts.project.configuration.get(`enableScripts`) && !dependencyMeta.built) {
-      this.opts.report.reportWarningOnce(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but all build scripts have been disabled.`);
-      buildScripts.length = 0;
-    }
-
-    if (buildScripts.length > 0 && pkg.linkType !== LinkType.HARD && !this.opts.project.tryWorkspaceByLocator(pkg)) {
-      this.opts.report.reportWarningOnce(MessageName.SOFT_LINK_BUILD, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but is referenced through a soft link. Soft links don't support build scripts, so they'll be ignored.`);
-      buildScripts.length = 0;
-    }
-
-    if (buildScripts.length > 0 && dependencyMeta && dependencyMeta.built === false) {
-      this.opts.report.reportInfoOnce(MessageName.BUILD_DISABLED, `${structUtils.prettyLocator(this.opts.project.configuration, pkg)} lists build scripts, but its build has been explicitly disabled through configuration.`);
-      buildScripts.length = 0;
-    }
+    const buildScripts = manifest !== null && !hasVirtualInstances
+      ? javascriptUtils.extractBuildScripts(pkg, fetchResult, manifest, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report})
+      : [];
 
     const packageFs = !hasVirtualInstances && pkg.linkType !== LinkType.SOFT
       ? await this.transformPackage(pkg, manifest, fetchResult, dependencyMeta, {hasBuildScripts: buildScripts.length > 0})

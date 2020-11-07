@@ -85,24 +85,6 @@ export class PnpInstaller extends AbstractPnpInstaller {
 
   private readonly unpluggedPaths: Set<string> = new Set();
 
-  async getBuildScripts(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult): Promise<Array<BuildDirective>> {
-    if (manifest === null)
-      return [];
-
-    const buildScripts: Array<BuildDirective> = [];
-
-    for (const scriptName of [`preinstall`, `install`, `postinstall`])
-      if (manifest.scripts.has(scriptName))
-        buildScripts.push([BuildType.SCRIPT, scriptName]);
-
-    // Detect cases where a package has a binding.gyp but no install script
-    const bindingFilePath = ppath.join(fetchResult.prefixPath, `binding.gyp` as Filename);
-    if (!manifest.scripts.has(`install`) && fetchResult.packageFs.existsSync(bindingFilePath))
-      buildScripts.push([BuildType.SHELLCODE, `node-gyp rebuild`]);
-
-    return buildScripts;
-  }
-
   async transformPackage(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult, dependencyMeta: DependencyMeta, {hasBuildScripts}: {hasBuildScripts: boolean}) {
     if (this.isUnplugged(locator, manifest, fetchResult, dependencyMeta, {hasBuildScripts})) {
       return this.unplugPackage(locator, fetchResult.packageFs);
