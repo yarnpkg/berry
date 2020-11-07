@@ -90,12 +90,13 @@ class NodeModulesInstaller implements Installer {
     const manifest = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
     const dependencyMeta = this.opts.project.getDependencyMeta(pkg, manifest.version);
 
+    const buildScripts = !this.opts.project.tryWorkspaceByLocator(pkg)
+      ? javascriptUtils.extractBuildScripts(pkg, fetchResult, manifest, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report}) ?? []
+      : [];
+
     this.store.set(pkg.locatorHash, {
       manifest,
-      buildScripts: javascriptUtils.extractBuildScripts(pkg, fetchResult, manifest, dependencyMeta, {
-        configuration: this.opts.project.configuration,
-        report: this.opts.report,
-      }) ?? [],
+      buildScripts,
       pnpNode: {
         packageLocation: npath.fromPortablePath(packageLocation),
         packageDependencies: new Map(),

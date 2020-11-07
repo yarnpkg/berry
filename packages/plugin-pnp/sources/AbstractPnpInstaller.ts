@@ -65,7 +65,7 @@ export abstract class AbstractPnpInstaller implements Installer {
 
     const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
 
-    const buildScripts = manifest !== null && !hasVirtualInstances
+    const buildScripts = manifest !== null && !hasVirtualInstances && !this.opts.project.tryWorkspaceByLocator(pkg)
       ? javascriptUtils.extractBuildScripts(pkg, fetchResult, manifest, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report})
       : [];
 
