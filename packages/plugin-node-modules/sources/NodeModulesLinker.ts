@@ -279,7 +279,7 @@ class NodeModulesInstaller implements Installer {
 
         const slot = this.localStore.get(locator.locatorHash);
         if (typeof slot === `undefined`)
-          throw new Error(`Assertion failedd: Expected the slot to exist`);
+          throw new Error(`Assertion failed: Expected the slot to exist`);
 
         return slot.customPackageData.manifest;
       },
@@ -294,7 +294,7 @@ class NodeModulesInstaller implements Installer {
       const locator = structUtils.parseLocator(locatorKey);
       const slot = this.localStore.get(locator.locatorHash);
       if (typeof slot === `undefined`)
-        throw new Error(`Assertion faile: Expected the slot to exist`);
+        throw new Error(`Assertion failed: Expected the slot to exist`);
 
       const buildScripts = javascriptUtils.extractBuildScripts(slot.pkg, slot.customPackageData, slot.dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report});
       if (buildScripts.length === 0)
