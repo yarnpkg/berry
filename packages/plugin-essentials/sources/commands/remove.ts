@@ -145,7 +145,7 @@ export default class RemoveCommand extends BaseCommand {
       const report = await StreamReport.start({
         configuration,
         stdout: this.context.stdout,
-      }, async (report: StreamReport) => {
+      }, async report => {
         await project.install({cache, report});
       });
 

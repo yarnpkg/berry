@@ -324,7 +324,7 @@ export class PnpInstaller implements Installer {
 
   private async unplugPackageIfNeeded(pkg: Package, customPackageData: CustomPackageData, fetchResult: FetchResult, dependencyMeta: DependencyMeta) {
     if (this.shouldBeUnplugged(pkg, customPackageData, dependencyMeta)) {
-      return this.unplugPackage(pkg, fetchResult.packageFs);
+      return this.unplugPackage(pkg, fetchResult);
     } else {
       return fetchResult.packageFs;
     }
@@ -346,12 +346,18 @@ export class PnpInstaller implements Installer {
     return false;
   }
 
-  private async unplugPackage(locator: Locator, packageFs: FakeFS<PortablePath>) {
+  private async unplugPackage(locator: Locator, fetchResult: FetchResult) {
     const unplugPath = pnpUtils.getUnpluggedPath(locator, {configuration: this.opts.project.configuration});
     this.unpluggedPaths.add(unplugPath);
 
+    const readyFile = ppath.join(unplugPath, fetchResult.prefixPath, `.ready` as Filename);
+    if (await xfs.existsPromise(readyFile))
+      return new CwdFS(unplugPath);
+
     await xfs.mkdirPromise(unplugPath, {recursive: true});
-    await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: packageFs, overwrite: false});
+    await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: fetchResult.packageFs, overwrite: false});
+
+    await xfs.writeFilePromise(readyFile, ``);
 
     return new CwdFS(unplugPath);
   }
@@ -410,6 +416,11 @@ type CustomPackageData = UnboxPromise<ReturnType<typeof extractCustomPackageData
 
 async function extractCustomPackageData(pkg: Package, fetchResult: FetchResult) {
   const manifest = await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs}) ?? new Manifest();
+
+  const preservedScripts = new Set([`preinstall`, `install`, `postinstall`]);
+  for (const scriptName of manifest.scripts.keys())
+    if (!preservedScripts.has(scriptName))
+      manifest.scripts.delete(scriptName);
 
   return {
     manifest: {

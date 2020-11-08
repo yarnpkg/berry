@@ -1114,14 +1114,24 @@ export class Project {
     const packageLocations: Map<LocatorHash, PortablePath | null> = new Map();
     const packageBuildDirectives: Map<LocatorHash, { directives: Array<BuildDirective>, buildLocations: Array<PortablePath> }> = new Map();
 
-    // Step 1: Installing the packages on the disk
-
-    for (const locatorHash of this.accessibleLocators) {
+    const fetchResultsPerPackage = new Map(await Promise.all([...this.accessibleLocators].map(async locatorHash => {
       const pkg = this.storedPackages.get(locatorHash);
       if (!pkg)
         throw new Error(`Assertion failed: The locator should have been registered`);
 
-      const fetchResult = await fetcher.fetch(pkg, fetcherOptions);
+      return [locatorHash, await fetcher.fetch(pkg, fetcherOptions)] as const;
+    })));
+
+    // Step 1: Installing the packages on the disk
+
+    for (const locatorHash of this.accessibleLocators) {
+      const pkg = this.storedPackages.get(locatorHash);
+      if (typeof pkg === `undefined`)
+        throw new Error(`Assertion failed: The locator should have been registered`);
+
+      const fetchResult = fetchResultsPerPackage.get(pkg.locatorHash);
+      if (typeof fetchResult === `undefined`)
+        throw new Error(`Assertion failed: The fetch result should have been registered`);
 
       if (this.tryWorkspaceByLocator(pkg) !== null) {
         const buildScripts: Array<BuildDirective> = [];
@@ -1774,6 +1784,8 @@ export class Project {
 
     const serializedState = await xfs.readFilePromise(installStatePath);
     const installState = v8.deserialize(await gunzip(serializedState) as Buffer);
+
+    this.installersCustomData = installState.installersCustomData;
 
     if (installState.lockFileChecksum !== this.lockFileChecksum) {
       if (lightResolutionFallback)

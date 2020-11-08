@@ -321,6 +321,11 @@ type CustomPackageData = UnboxPromise<ReturnType<typeof extractCustomPackageData
 async function extractCustomPackageData(pkg: Package, fetchResult: FetchResult) {
   const manifest = await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs}) ?? new Manifest();
 
+  const preservedScripts = new Set([`preinstall`, `install`, `postinstall`]);
+  for (const scriptName of manifest.scripts.keys())
+    if (!preservedScripts.has(scriptName))
+      manifest.scripts.delete(scriptName);
+
   return {
     manifest: {
       bin: manifest.bin,
