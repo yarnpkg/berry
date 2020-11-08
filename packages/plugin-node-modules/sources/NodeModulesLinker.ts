@@ -6,7 +6,7 @@ import {VirtualFS, ZipOpenFS, xfs, FakeFS, NativePath}                          
 import {PortablePath, npath, ppath, toFilename, Filename}                                      from '@yarnpkg/fslib';
 import {getLibzipPromise}                                                                      from '@yarnpkg/libzip';
 import {parseSyml}                                                                             from '@yarnpkg/parsers';
-import {javascriptUtils}                                                                       from '@yarnpkg/plugin-pnp';
+import {jsInstallUtils}                                                                        from '@yarnpkg/plugin-pnp';
 import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits}                     from '@yarnpkg/pnpify';
 import {buildNodeModulesTree}                                                                  from '@yarnpkg/pnpify';
 import {PnpApi, PackageInformation}                                                            from '@yarnpkg/pnp';
@@ -119,7 +119,7 @@ class NodeModulesInstaller implements Installer {
     }
 
     // We don't link the package at all if it's for an unsupported platform
-    if (!javascriptUtils.checkAndReportManifestCompatibility(pkg, customPackageData, `link`, {configuration: this.opts.project.configuration, report: this.opts.report}))
+    if (!jsInstallUtils.checkAndReportManifestCompatibility(pkg, customPackageData, `link`, {configuration: this.opts.project.configuration, report: this.opts.report}))
       return {packageLocation: null, buildDirective: null};
 
     const packageDependencies = new Map<string, string | [string, string] | null>();
@@ -296,7 +296,7 @@ class NodeModulesInstaller implements Installer {
       if (typeof slot === `undefined`)
         throw new Error(`Assertion failed: Expected the slot to exist`);
 
-      const buildScripts = javascriptUtils.extractBuildScripts(slot.pkg, slot.customPackageData, slot.dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report});
+      const buildScripts = jsInstallUtils.extractBuildScripts(slot.pkg, slot.customPackageData, slot.dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report});
       if (buildScripts.length === 0)
         continue;
 
@@ -334,8 +334,8 @@ async function extractCustomPackageData(pkg: Package, fetchResult: FetchResult) 
       scripts: manifest.scripts,
     },
     misc: {
-      extractHint: javascriptUtils.getExtractHint(fetchResult),
-      hasBindingGyp: javascriptUtils.hasBindingGyp(fetchResult),
+      extractHint: jsInstallUtils.getExtractHint(fetchResult),
+      hasBindingGyp: jsInstallUtils.hasBindingGyp(fetchResult),
     },
   };
 }

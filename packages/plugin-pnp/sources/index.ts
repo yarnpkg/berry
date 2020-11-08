@@ -6,10 +6,10 @@ import semver                                              from 'semver';
 
 import {PnpLinker}                                         from './PnpLinker';
 import unplug                                              from './commands/unplug';
-import * as javascriptUtils                                from './jsInstallUtils';
+import * as jsInstallUtils                                 from './jsInstallUtils';
 import * as pnpUtils                                       from './pnpUtils';
 
-export {javascriptUtils};
+export {jsInstallUtils};
 export {pnpUtils};
 
 export const getPnpPath = (project: Project) => {
