@@ -320,7 +320,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     if (request === `pnpapi`)
       return false;
 
-    if (!enableNativeHooks)
+    if ((isMain && npath.isAbsolute(request)) || !enableNativeHooks)
       return originalFindPath.call(Module, request, paths, isMain);
 
     for (const path of paths || []) {

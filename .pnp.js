@@ -41508,7 +41508,7 @@ function applyPatch(pnpapi, opts) {
 
   external_module_.Module._findPath = function (request, paths, isMain) {
     if (request === `pnpapi`) return false;
-    if (!enableNativeHooks) return originalFindPath.call(external_module_.Module, request, paths, isMain);
+    if (isMain && npath.isAbsolute(request) || !enableNativeHooks) return originalFindPath.call(external_module_.Module, request, paths, isMain);
 
     for (const path of paths || []) {
       let resolution;
