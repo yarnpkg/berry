@@ -5,7 +5,8 @@ import {CwdFS, FakeFS, PortablePath, npath, ppath, xfs, Filename}               
 import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpSettings}                            from '@yarnpkg/pnp';
 import {UsageError}                                                                                          from 'clipanion';
 
-import {getPnpPath, javascriptUtils}                                                                         from './index';
+import {getPnpPath}                                                                                          from './index';
+import * as jsInstallUtils                                                                                   from './jsInstallUtils';
 import * as pnpUtils                                                                                         from './pnpUtils';
 
 const FORCED_UNPLUG_PACKAGES = new Set([
@@ -131,7 +132,7 @@ export class PnpInstaller implements Installer {
     const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
 
     const buildScripts = mayNeedToBeBuilt
-      ? javascriptUtils.extractBuildScripts(pkg, customPackageData, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report})
+      ? jsInstallUtils.extractBuildScripts(pkg, customPackageData, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report})
       : [];
 
     const packageFs = mayNeedToBeUnplugged
@@ -339,7 +340,7 @@ export class PnpInstaller implements Installer {
     if (customPackageData.manifest.preferUnplugged !== null)
       return customPackageData.manifest.preferUnplugged;
 
-    if (javascriptUtils.extractBuildScripts(pkg, customPackageData, dependencyMeta, {configuration: this.opts.project.configuration}).length > 0 || customPackageData.misc.extractHint)
+    if (jsInstallUtils.extractBuildScripts(pkg, customPackageData, dependencyMeta, {configuration: this.opts.project.configuration}).length > 0 || customPackageData.misc.extractHint)
       return true;
 
     return false;
@@ -418,8 +419,8 @@ async function extractCustomPackageData(pkg: Package, fetchResult: FetchResult) 
       preferUnplugged: manifest.preferUnplugged,
     },
     misc: {
-      extractHint: javascriptUtils.getExtractHint(fetchResult),
-      hasBindingGyp: javascriptUtils.hasBindingGyp(fetchResult),
+      extractHint: jsInstallUtils.getExtractHint(fetchResult),
+      hasBindingGyp: jsInstallUtils.hasBindingGyp(fetchResult),
     },
   };
 }

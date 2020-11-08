@@ -110,6 +110,9 @@ export abstract class FakeFS<P extends Path> {
     this.pathUtils =  pathUtils;
   }
 
+  /**
+   * @deprecated: Moved to jsInstallUtils
+   */
   abstract getExtractHint(hints: ExtractHintOptions): boolean;
 
   abstract getRealPath(): P;

@@ -1288,6 +1288,8 @@ export class Project {
 
     this.installersCustomData = installersCustomData;
 
+    await this.persistInstallStateFile();
+
     // Step 4: Build the packages in multiple steps
 
     if (skipBuild)
@@ -1795,7 +1797,6 @@ export class Project {
 
   async persist() {
     await this.persistLockfile();
-    await this.persistInstallStateFile();
 
     for (const workspace of this.workspacesByCwd.values()) {
       await workspace.persistManifest();

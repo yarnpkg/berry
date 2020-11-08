@@ -6,7 +6,7 @@ import semver                                              from 'semver';
 
 import {PnpLinker}                                         from './PnpLinker';
 import unplug                                              from './commands/unplug';
-import * as javascriptUtils                                from './javascriptUtils';
+import * as javascriptUtils                                from './jsInstallUtils';
 import * as pnpUtils                                       from './pnpUtils';
 
 export {javascriptUtils};
