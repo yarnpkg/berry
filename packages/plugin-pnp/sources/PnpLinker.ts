@@ -74,7 +74,7 @@ export class PnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
   private readonly blacklistedPaths: Set<PortablePath> = new Set();
 
-  constructor(private opts: LinkOptions) {
+  constructor(protected opts: LinkOptions) {
     this.opts = opts;
   }
 
@@ -219,7 +219,7 @@ export class PnpInstaller implements Installer {
         if (this.opts.project.tryWorkspaceByLocator(pkg))
           fallbackExclusionList.push({name: structUtils.requirableIdent(pkg), reference: pkg.reference});
 
-    return await this.finalizeInstallWithPnp({
+    await this.finalizeInstallWithPnp({
       blacklistedLocations,
       dependencyTreeRoots,
       enableTopLevelFallback,
@@ -229,11 +229,15 @@ export class PnpInstaller implements Installer {
       packageRegistry,
       shebang,
     });
+
+    return {
+      customData: this.customData,
+    };
   }
 
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
     if (this.opts.project.configuration.get(`pnpMode`) !== this.mode)
-      return {};
+      return;
 
     const pnpPath = getPnpPath(this.opts.project);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
@@ -244,7 +248,7 @@ export class PnpInstaller implements Installer {
       await xfs.removePromise(pnpPath.main);
       await xfs.removePromise(pnpDataPath);
 
-      return {};
+      return;
     }
 
     const nodeModules = await this.locateNodeModules(pnpSettings.ignorePattern);
@@ -284,10 +288,6 @@ export class PnpInstaller implements Installer {
         }
       }
     }
-
-    return {
-      customData: this.customData,
-    };
   }
 
   private async locateNodeModules(ignorePattern?: string | null) {
