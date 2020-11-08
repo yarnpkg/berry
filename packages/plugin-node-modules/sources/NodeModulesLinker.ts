@@ -51,6 +51,7 @@ export class NodeModulesLinker implements Linker {
     const installState = await findInstallState(opts.project, {unrollAliases: true});
     if (installState === null)
       return null;
+
     const {locationRoot, segments} = parseLocation(ppath.resolve(location), {skipPrefix: opts.project.cwd});
 
     let locationNode = installState.locationTree.get(locationRoot);
@@ -87,20 +88,51 @@ class NodeModulesInstaller implements Installer {
   async installPackage(pkg: Package, fetchResult: FetchResult) {
     const packageLocation = ppath.resolve(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
 
-    const manifest = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
+    let manifest;
+    try {
+      manifest = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
+    } catch (error) {
+      if (pkg.linkType === LinkType.SOFT) {
+        manifest = new Manifest();
+      } else {
+        throw error;
+      }
+    }
+
     const dependencyMeta = this.opts.project.getDependencyMeta(pkg, manifest.version);
+
+    // We don't link the package at all if it's for an unsupported platform
+    if (!javascriptUtils.checkAndReportManifestCompatibility(pkg, manifest, `link`, {configuration: this.opts.project.configuration, report: this.opts.report}))
+      return {packageLocation: null, buildDirective: null};
 
     const buildScripts = !this.opts.project.tryWorkspaceByLocator(pkg)
       ? javascriptUtils.extractBuildScripts(pkg, fetchResult, manifest, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report}) ?? []
       : [];
 
+    const packageDependencies = new Map<string, string | [string, string] | null>();
+    const packagePeers = new Set<string>();
+
+    if (!packageDependencies.has(structUtils.stringifyIdent(pkg)))
+      packageDependencies.set(structUtils.stringifyIdent(pkg), pkg.reference);
+
+    // Only virtual packages should have effective peer dependencies, but the
+    // workspaces are a special case because the original packages are kept in
+    // the dependency tree even after being virtualized; so in their case we
+    // just ignore their declared peer dependencies.
+    if (structUtils.isVirtualLocator(pkg)) {
+      for (const descriptor of pkg.peerDependencies.values()) {
+        packageDependencies.set(structUtils.stringifyIdent(descriptor), null);
+        packagePeers.add(structUtils.stringifyIdent(descriptor));
+      }
+    }
+
     this.store.set(pkg.locatorHash, {
       manifest,
       buildScripts,
       pnpNode: {
-        packageLocation: npath.fromPortablePath(packageLocation),
-        packageDependencies: new Map(),
-        packagePeers: new Set(),
+        packageLocation: `${npath.fromPortablePath(packageLocation)}/`,
+        packageDependencies,
+        packagePeers,
         linkType: pkg.linkType,
         discardFromLookup: fetchResult.discardFromLookup ?? false,
       },
@@ -119,8 +151,8 @@ class NodeModulesInstaller implements Installer {
 
     for (const [descriptor, locator] of dependencies) {
       const target = !structUtils.areIdentsEqual(descriptor, locator)
-        ? [structUtils.requirableIdent(locator), locator.locatorHash] as [string, string]
-        : locator.locatorHash;
+        ? [structUtils.requirableIdent(locator), locator.reference] as [string, string]
+        : locator.reference;
 
       slot.pnpNode.packageDependencies.set(structUtils.requirableIdent(descriptor), target);
     }
@@ -164,6 +196,8 @@ class NodeModulesInstaller implements Installer {
       return [workspace.relativeCwd, hoistingLimits];
     }));
 
+    console.log(require(`util`).inspect(this.store, {depth: Infinity}));
+
     const pnpApi: PnpApi = {
       VERSIONS: {
         std: 1,
@@ -181,17 +215,28 @@ class NodeModulesInstaller implements Installer {
       },
       getDependencyTreeRoots: () => {
         return this.opts.project.workspaces.map(workspace => {
-          return {name: structUtils.stringifyIdent(workspace.locator), reference: workspace.anchoredLocator.locatorHash};
+          const anchoredLocator = workspace.anchoredLocator;
+          return {name: structUtils.stringifyIdent(workspace.locator), reference: anchoredLocator.reference};
         });
       },
-      getPackageInformation: locator => {
-        const slot = this.store.get(locator.reference as LocatorHash);
+      getPackageInformation: pnpLocator => {
+        const locator = pnpLocator.reference === null
+          ? this.opts.project.topLevelWorkspace.anchoredLocator
+          : structUtils.makeLocator(structUtils.parseIdent(pnpLocator.name), pnpLocator.reference);
+
+        const slot = this.store.get(locator.locatorHash);
         if (typeof slot === `undefined`)
           throw new Error(`Assertion failed: Expected the package reference to have been registered`);
 
         return slot.pnpNode;
       },
-      findPackageLocator: () => {
+      findPackageLocator: location => {
+        const workspace = this.opts.project.tryWorkspaceByCwd(npath.toPortablePath(location));
+        if (workspace !== null) {
+          const anchoredLocator = workspace.anchoredLocator;
+          return {name: structUtils.stringifyIdent(anchoredLocator), reference: anchoredLocator.reference};
+        }
+
         throw new Error(`Assertion failed: Unimplemented`);
       },
       resolveToUnqualified: () => {
@@ -217,9 +262,10 @@ class NodeModulesInstaller implements Installer {
       report: this.opts.report,
       loadManifest: async locatorKey => {
         const locator = structUtils.parseLocator(locatorKey);
+
         const slot = this.store.get(locator.locatorHash);
         if (typeof slot === `undefined`)
-          throw new Error(`Assertion faile: Expected the slot to exist`);
+          throw new Error(`Assertion failedd: Expected the slot to exist`);
 
         return slot.manifest;
       },

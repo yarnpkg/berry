@@ -1,14 +1,14 @@
 import {BuildDirective, BuildType, Configuration, DependencyMeta, FetchResult, LinkType, Manifest, MessageName, Package, Report, structUtils} from '@yarnpkg/core';
 import {Filename, ppath}                                                                                                                      from '@yarnpkg/fslib';
 
-export function checkAndReportManifestCompatibility(pkg: Package, manifest: Pick<Manifest, 'cpu' | 'os'>, {configuration, report}: {configuration: Configuration, report: Report}) {
+export function checkAndReportManifestCompatibility(pkg: Package, manifest: Pick<Manifest, 'cpu' | 'os'>, label: string, {configuration, report}: {configuration: Configuration, report: Report}) {
   if (manifest && !Manifest.isManifestFieldCompatible(manifest.os, process.platform)) {
-    report.reportWarningOnce(MessageName.INCOMPATIBLE_OS, `${structUtils.prettyLocator(configuration, pkg)} The platform ${process.platform} is incompatible with this module, build skipped.`);
+    report.reportWarningOnce(MessageName.INCOMPATIBLE_OS, `${structUtils.prettyLocator(configuration, pkg)} The platform ${process.platform} is incompatible with this module, ${label} skipped.`);
     return false;
   }
 
   if (manifest && !Manifest.isManifestFieldCompatible(manifest.cpu, process.arch)) {
-    report.reportWarningOnce(MessageName.INCOMPATIBLE_CPU, `${structUtils.prettyLocator(configuration, pkg)} The CPU architecture ${process.arch} is incompatible with this module, build skipped.`);
+    report.reportWarningOnce(MessageName.INCOMPATIBLE_CPU, `${structUtils.prettyLocator(configuration, pkg)} The CPU architecture ${process.arch} is incompatible with this module, ${label} skipped.`);
     return false;
   }
 
@@ -42,7 +42,7 @@ export function extractBuildScripts(pkg: Package, fetchResult: FetchResult, mani
     return [];
   }
 
-  const isManifestCompatible = checkAndReportManifestCompatibility(pkg, manifest, {configuration, report});
+  const isManifestCompatible = checkAndReportManifestCompatibility(pkg, manifest, `build`, {configuration, report});
   if (!isManifestCompatible)
     return [];
 

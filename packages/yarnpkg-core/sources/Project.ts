@@ -358,6 +358,9 @@ export class Project {
     if (!ppath.isAbsolute(workspaceCwd))
       workspaceCwd = ppath.resolve(this.cwd, workspaceCwd);
 
+    workspaceCwd = ppath.normalize(workspaceCwd)
+      .replace(/\/+$/, ``) as PortablePath;
+
     const workspace = this.workspacesByCwd.get(workspaceCwd);
     if (!workspace)
       return null;
@@ -1121,7 +1124,10 @@ export class Project {
 
         try {
           for (const installer of installers.values()) {
-            await installer.installPackage(pkg, fetchResult);
+            const result = await installer.installPackage(pkg, fetchResult);
+            if (result.buildDirective !== null) {
+              throw new Error(`Assertion failed: Linkers can't return build directives for workspaces; this responsibility befalls to the Yarn core`);
+            }
           }
         } finally {
           if (fetchResult.releaseFs) {
