@@ -1,41 +1,41 @@
-import {PortablePath, ppath, xfs, normalizeLineEndings, Filename} from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                 from '@yarnpkg/parsers';
-import {UsageError}                                               from 'clipanion';
-import {createHash}                                               from 'crypto';
-import {structuredPatch}                                          from 'diff';
+import {PortablePath, ppath, xfs, normalizeLineEndings, Filename}       from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                       from '@yarnpkg/parsers';
+import {UsageError}                                                     from 'clipanion';
+import {createHash}                                                     from 'crypto';
+import {structuredPatch}                                                from 'diff';
 // @ts-expect-error
-import Logic                                                      from 'logic-solver';
-import pLimit                                                     from 'p-limit';
-import semver                                                     from 'semver';
-import {promisify}                                                from 'util';
-import v8                                                         from 'v8';
-import zlib                                                       from 'zlib';
+import Logic                                                            from 'logic-solver';
+import pLimit                                                           from 'p-limit';
+import semver                                                           from 'semver';
+import {promisify}                                                      from 'util';
+import v8                                                               from 'v8';
+import zlib                                                             from 'zlib';
 
-import {Cache}                                                    from './Cache';
-import {Configuration}                                            from './Configuration';
-import {Fetcher}                                                  from './Fetcher';
-import {Installer, BuildDirective, BuildType}                     from './Installer';
-import {LegacyMigrationResolver}                                  from './LegacyMigrationResolver';
-import {Linker}                                                   from './Linker';
-import {LockfileResolver}                                         from './LockfileResolver';
-import {DependencyMeta, Manifest}                                 from './Manifest';
-import {MessageName}                                              from './MessageName';
-import {MultiResolver}                                            from './MultiResolver';
-import {Report, ReportError}                                      from './Report';
-import {ResolveOptions, Resolver}                                 from './Resolver';
-import {RunInstallPleaseResolver}                                 from './RunInstallPleaseResolver';
-import {ThrowReport}                                              from './ThrowReport';
-import {Workspace}                                                from './Workspace';
-import {isFolderInside}                                           from './folderUtils';
-import * as formatUtils                                           from './formatUtils';
-import * as hashUtils                                             from './hashUtils';
-import * as miscUtils                                             from './miscUtils';
-import * as scriptUtils                                           from './scriptUtils';
-import * as semverUtils                                           from './semverUtils';
-import * as structUtils                                           from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash}                   from './types';
-import {Descriptor, Ident, Locator, Package}                      from './types';
-import {LinkType}                                                 from './types';
+import {Cache}                                                          from './Cache';
+import {Configuration}                                                  from './Configuration';
+import {Fetcher}                                                        from './Fetcher';
+import {Installer, BuildDirective, BuildType}                           from './Installer';
+import {LegacyMigrationResolver}                                        from './LegacyMigrationResolver';
+import {Linker}                                                         from './Linker';
+import {LockfileResolver}                                               from './LockfileResolver';
+import {DependencyMeta, Manifest}                                       from './Manifest';
+import {MessageName}                                                    from './MessageName';
+import {MultiResolver}                                                  from './MultiResolver';
+import {Report, ReportError}                                            from './Report';
+import {ResolveOptions, Resolver}                                       from './Resolver';
+import {RunInstallPleaseResolver}                                       from './RunInstallPleaseResolver';
+import {ThrowReport}                                                    from './ThrowReport';
+import {Workspace}                                                      from './Workspace';
+import {isFolderInside}                                                 from './folderUtils';
+import * as formatUtils                                                 from './formatUtils';
+import * as hashUtils                                                   from './hashUtils';
+import * as miscUtils                                                   from './miscUtils';
+import * as scriptUtils                                                 from './scriptUtils';
+import * as semverUtils                                                 from './semverUtils';
+import * as structUtils                                                 from './structUtils';
+import {IdentHash, DescriptorHash, LocatorHash, PackageExtensionStatus} from './types';
+import {Descriptor, Ident, Locator, Package}                            from './types';
+import {LinkType}                                                       from './types';
 
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
@@ -1527,7 +1527,7 @@ export class Project {
     for (const extensionsByIdent of this.configuration.packageExtensions.values())
       for (const [, extensionsByRange] of extensionsByIdent)
         for (const extension of extensionsByRange)
-          extension.status = `inactive`;
+          extension.status = PackageExtensionStatus.Inactive;
 
     await opts.report.startTimerPromise(`Resolution step`, async () => {
       const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
@@ -1555,11 +1555,11 @@ export class Project {
               const prettyPackageExtension = formatUtils.pretty(this.configuration, extension, formatUtils.Type.PACKAGE_EXTENSION);
 
               switch (extension.status) {
-                case `inactive`: {
+                case PackageExtensionStatus.Inactive: {
                   opts.report.reportWarning(MessageName.UNUSED_PACKAGE_EXTENSION, `Unused package extension: ${prettyPackageExtension}`);
                 } break;
 
-                case `redundant`: {
+                case PackageExtensionStatus.Redundant: {
                   opts.report.reportWarning(MessageName.UNNEEDED_PACKAGE_EXTENSION, `Unneeded package extension: ${prettyPackageExtension}`);
                 } break;
               }
@@ -1599,7 +1599,7 @@ export class Project {
     for (const extensionsByIdent of this.configuration.packageExtensions.values())
       for (const [, extensionsByRange] of extensionsByIdent)
         for (const extension of extensionsByRange)
-          if (extension.userProvided && extension.status === `active`)
+          if (extension.userProvided && extension.status === PackageExtensionStatus.Active)
             Configuration.telemetry?.reportPackageExtension(formatUtils.json(extension, formatUtils.Type.PACKAGE_EXTENSION));
 
     await opts.report.startTimerPromise(`Fetch step`, async () => {

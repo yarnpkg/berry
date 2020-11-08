@@ -1,32 +1,32 @@
-import {Filename, PortablePath, npath, ppath, xfs}                              from '@yarnpkg/fslib';
-import {DEFAULT_COMPRESSION_LEVEL}                                              from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                               from '@yarnpkg/parsers';
-import camelcase                                                                from 'camelcase';
-import {isCI}                                                                   from 'ci-info';
-import {UsageError}                                                             from 'clipanion';
-import pLimit, {Limit}                                                          from 'p-limit';
-import semver                                                                   from 'semver';
-import {PassThrough, Writable}                                                  from 'stream';
+import {Filename, PortablePath, npath, ppath, xfs}                                                      from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL}                                                                      from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                       from '@yarnpkg/parsers';
+import camelcase                                                                                        from 'camelcase';
+import {isCI}                                                                                           from 'ci-info';
+import {UsageError}                                                                                     from 'clipanion';
+import pLimit, {Limit}                                                                                  from 'p-limit';
+import semver                                                                                           from 'semver';
+import {PassThrough, Writable}                                                                          from 'stream';
 
-import {CorePlugin}                                                             from './CorePlugin';
-import {Manifest, PeerDependencyMeta}                                           from './Manifest';
-import {MultiFetcher}                                                           from './MultiFetcher';
-import {MultiResolver}                                                          from './MultiResolver';
-import {Plugin, Hooks}                                                          from './Plugin';
-import {ProtocolResolver}                                                       from './ProtocolResolver';
-import {Report}                                                                 from './Report';
-import {TelemetryManager}                                                       from './TelemetryManager';
-import {VirtualFetcher}                                                         from './VirtualFetcher';
-import {VirtualResolver}                                                        from './VirtualResolver';
-import {WorkspaceFetcher}                                                       from './WorkspaceFetcher';
-import {WorkspaceResolver}                                                      from './WorkspaceResolver';
-import * as folderUtils                                                         from './folderUtils';
-import * as formatUtils                                                         from './formatUtils';
-import * as miscUtils                                                           from './miscUtils';
-import * as nodeUtils                                                           from './nodeUtils';
-import * as semverUtils                                                         from './semverUtils';
-import * as structUtils                                                         from './structUtils';
-import {IdentHash, Package, Descriptor, PackageExtension, PackageExtensionType} from './types';
+import {CorePlugin}                                                                                     from './CorePlugin';
+import {Manifest, PeerDependencyMeta}                                                                   from './Manifest';
+import {MultiFetcher}                                                                                   from './MultiFetcher';
+import {MultiResolver}                                                                                  from './MultiResolver';
+import {Plugin, Hooks}                                                                                  from './Plugin';
+import {ProtocolResolver}                                                                               from './ProtocolResolver';
+import {Report}                                                                                         from './Report';
+import {TelemetryManager}                                                                               from './TelemetryManager';
+import {VirtualFetcher}                                                                                 from './VirtualFetcher';
+import {VirtualResolver}                                                                                from './VirtualResolver';
+import {WorkspaceFetcher}                                                                               from './WorkspaceFetcher';
+import {WorkspaceResolver}                                                                              from './WorkspaceResolver';
+import * as folderUtils                                                                                 from './folderUtils';
+import * as formatUtils                                                                                 from './formatUtils';
+import * as miscUtils                                                                                   from './miscUtils';
+import * as nodeUtils                                                                                   from './nodeUtils';
+import * as semverUtils                                                                                 from './semverUtils';
+import * as structUtils                                                                                 from './structUtils';
+import {IdentHash, Package, Descriptor, PackageExtension, PackageExtensionType, PackageExtensionStatus} from './types';
 
 const IGNORED_ENV_VARIABLES = new Set([
   // "binFolder" is the magic location where the parent process stored the
@@ -1403,7 +1403,7 @@ export class Configuration {
       extensionsPerIdent.push([descriptor.range, extensionsPerRange]);
 
       const baseExtension = {
-        status: `inactive`,
+        status: PackageExtensionStatus.Inactive,
         userProvided,
         parentDescriptor: descriptor,
       } as const;
@@ -1449,14 +1449,14 @@ export class Configuration {
           for (const extension of extensionsPerRange) {
             // If an extension is active for a package but redundant
             // for another one, it should be considered active
-            if (extension.status === `inactive`)
-              extension.status = `redundant`;
+            if (extension.status === PackageExtensionStatus.Inactive)
+              extension.status = PackageExtensionStatus.Redundant;
 
             switch (extension.type) {
               case PackageExtensionType.Dependency: {
                 const currentDependency = pkg.dependencies.get(extension.descriptor.identHash);
                 if (typeof currentDependency === `undefined` || !structUtils.areDescriptorsEqual(currentDependency, extension.descriptor)) {
-                  extension.status = `active`;
+                  extension.status = PackageExtensionStatus.Active;
                   pkg.dependencies.set(extension.descriptor.identHash, extension.descriptor);
                 }
               } break;
@@ -1464,7 +1464,7 @@ export class Configuration {
               case PackageExtensionType.PeerDependency: {
                 const currentPeerDependency = pkg.peerDependencies.get(extension.descriptor.identHash);
                 if (typeof currentPeerDependency === `undefined` || !structUtils.areDescriptorsEqual(currentPeerDependency, extension.descriptor)) {
-                  extension.status = `active`;
+                  extension.status = PackageExtensionStatus.Active;
                   pkg.peerDependencies.set(extension.descriptor.identHash, extension.descriptor);
                 }
               } break;
@@ -1472,7 +1472,7 @@ export class Configuration {
               case PackageExtensionType.PeerDependencyMeta: {
                 const currentPeerDependencyMeta = pkg.peerDependenciesMeta.get(extension.selector);
                 if (typeof currentPeerDependencyMeta === `undefined` || !Object.prototype.hasOwnProperty.call(currentPeerDependencyMeta, extension.key) || currentPeerDependencyMeta[extension.key] !== extension.value) {
-                  extension.status = `active`;
+                  extension.status = PackageExtensionStatus.Active;
                   miscUtils.getFactoryWithDefault(pkg.peerDependenciesMeta, extension.selector, () => ({} as PeerDependencyMeta))[extension.key] = extension.value;
                 }
               } break;

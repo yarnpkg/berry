@@ -52,12 +52,18 @@ export enum PackageExtensionType {
   PeerDependencyMeta = `PeerDependencyMeta`,
 }
 
+export enum PackageExtensionStatus {
+  Inactive = `inactive`,
+  Redundant = `redundant`,
+  Active = `active`,
+}
+
 export type PackageExtension = (
   | {type: PackageExtensionType.Dependency, descriptor: Descriptor}
   | {type: PackageExtensionType.PeerDependency, descriptor: Descriptor}
   | {type: PackageExtensionType.PeerDependencyMeta, selector: string, key: keyof PeerDependencyMeta, value: any}
 ) & {
-  status: 'inactive' | 'redundant' | 'active',
+  status: PackageExtensionStatus,
   userProvided: boolean,
   parentDescriptor: Descriptor,
   /**

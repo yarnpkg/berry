@@ -37,7 +37,8 @@ export {Workspace}                                                              
 export {YarnVersion}                                                                                      from './YarnVersion';
 export type {IdentHash, DescriptorHash, LocatorHash}                                                      from './types';
 export type {Ident, Descriptor, Locator, Package}                                                         from './types';
-export {LinkType}                                                                                         from './types';
+export type {PackageExtension}                                                                            from './types';
+export {LinkType, PackageExtensionType, PackageExtensionStatus}                                           from './types';
 export {hashUtils};
 export {httpUtils};
 export {execUtils};
