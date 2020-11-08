@@ -39,4 +39,15 @@ describe(`NodeFS`, () => {
       await expect(nodeFs.readFilePromise(destination, `utf8`)).resolves.toStrictEqual(sourceContent);
     });
   });
+
+  it(`should support any paramter type for the Node.js "exists" function`, async () => {
+    await expect(xfs.existsPromise(undefined)).resolves.toBe(false);
+    expect(xfs.existsSync(undefined)).toBe(false);
+
+    await expect(xfs.existsPromise(1)).resolves.toBe(false);
+    expect(xfs.existsSync(1)).toBe(false);
+
+    await expect(xfs.existsPromise({})).resolves.toBe(false);
+    expect(xfs.existsSync({})).toBe(false);
+  });
 });

@@ -134,7 +134,10 @@ export class NodeFS extends BasePortableFakeFS {
     return npath.toPortablePath(this.realFs.realpathSync(npath.fromPortablePath(p), {}));
   }
 
-  async existsPromise(p: PortablePath) {
+  async existsPromise(p: any) {
+    if (typeof p !== `string`)
+      return Promise.resolve(false);
+
     return await new Promise<boolean>(resolve => {
       this.realFs.exists(npath.fromPortablePath(p), resolve);
     });
@@ -150,7 +153,10 @@ export class NodeFS extends BasePortableFakeFS {
     });
   }
 
-  existsSync(p: PortablePath) {
+  existsSync(p: any) {
+    if (typeof p !== `string`)
+      return false;
+
     return this.realFs.existsSync(npath.fromPortablePath(p));
   }
 
