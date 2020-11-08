@@ -1,4 +1,4 @@
-import {miscUtils, structUtils, formatUtils, BuildDirective, Descriptor}                                     from '@yarnpkg/core';
+import {miscUtils, structUtils, formatUtils, BuildDirective, Descriptor, LocatorHash}                        from '@yarnpkg/core';
 import {FetchResult, Ident, Locator, Package}                                                                from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer} from '@yarnpkg/core';
 import {CwdFS, FakeFS, PortablePath, npath, ppath, xfs, Filename}                                            from '@yarnpkg/fslib';
@@ -89,27 +89,59 @@ export class PnpInstaller implements Installer {
     this.opts = opts;
   }
 
+  getCustomDataKey() {
+    return JSON.stringify({
+      name: `PnpInstaller`,
+      version: 1,
+    });
+  }
+
+  private customData: {
+    store: Map<LocatorHash, CustomPackageData>,
+  } = {
+    store: new Map(),
+  };
+
+  attachCustomData(customData: unknown) {
+  }
+
   async installPackage(pkg: Package, fetchResult: FetchResult) {
     const key1 = structUtils.requirableIdent(pkg);
     const key2 = pkg.reference;
 
-    const hasVirtualInstances =
-      pkg.peerDependencies.size > 0 &&
-      !structUtils.isVirtualLocator(pkg) &&
-      !this.opts.project.tryWorkspaceByLocator(pkg);
+    const isWorkspace =
+      !!this.opts.project.tryWorkspaceByLocator(pkg);
 
-    const manifest = !hasVirtualInstances
-      ? await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs})
-      : null;
+    const hasVirtualInstances =
+      // Only packages with peer dependencies have virtual instances
+      pkg.peerDependencies.size > 0 &&
+      // Only packages with peer dependencies have virtual instances
+      !structUtils.isVirtualLocator(pkg);
+
+    const mayNeedToBeBuilt =
+      // Virtual instance templates don't need to be built, since they don't truly exist
+      !hasVirtualInstances &&
+      // Workspaces aren't built by the linkers; they are managed by the core itself
+      !isWorkspace;
+
+    const mayNeedToBeUnplugged =
+      // Virtual instance templates don't need to be unplugged, since they don't truly exist
+      !hasVirtualInstances &&
+      // We never need to unplug soft links, since we don't control them
+      pkg.linkType !== LinkType.SOFT;
+
+    let customPackageData = this.customData.store.get(pkg.locatorHash);
+    if (typeof customPackageData === `undefined`)
+      customPackageData = await extractCustomPackageData(pkg, fetchResult);
 
     const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
 
-    const buildScripts = manifest !== null && !hasVirtualInstances && !this.opts.project.tryWorkspaceByLocator(pkg)
-      ? javascriptUtils.extractBuildScripts(pkg, fetchResult, manifest, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report})
+    const buildScripts = mayNeedToBeBuilt
+      ? javascriptUtils.extractBuildScripts(pkg, fetchResult, customPackageData.manifest, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report})
       : [];
 
-    const packageFs = !hasVirtualInstances && pkg.linkType !== LinkType.SOFT
-      ? await this.unplugPackageIfNeeded(pkg, manifest, fetchResult, dependencyMeta, {hasBuildScripts: buildScripts.length > 0})
+    const packageFs = mayNeedToBeUnplugged
+      ? await this.unplugPackageIfNeeded(pkg, customPackageData, fetchResult, dependencyMeta, {hasBuildScripts: buildScripts.length > 0})
       : fetchResult.packageFs;
 
     if (ppath.isAbsolute(fetchResult.prefixPath))
@@ -140,12 +172,12 @@ export class PnpInstaller implements Installer {
       discardFromLookup: fetchResult.discardFromLookup || false,
     });
 
-    if (hasVirtualInstances)
+    if (hasVirtualInstances && !isWorkspace)
       this.blacklistedPaths.add(packageLocation);
 
     return {
       packageLocation: packageRawLocation,
-      buildDirective: buildScripts.length > 0 ? buildScripts as Array<BuildDirective> : null,
+      buildDirective: buildScripts.length > 0 ? buildScripts : null,
     };
   }
 
@@ -291,23 +323,23 @@ export class PnpInstaller implements Installer {
 
   private readonly unpluggedPaths: Set<string> = new Set();
 
-  private async unplugPackageIfNeeded(locator: Locator, manifest: Manifest | null, fetchResult: FetchResult, dependencyMeta: DependencyMeta, {hasBuildScripts}: {hasBuildScripts: boolean}) {
-    if (this.shouldBeUnplugged(locator, manifest, fetchResult, dependencyMeta, {hasBuildScripts})) {
+  private async unplugPackageIfNeeded(locator: Locator, customPackageData: CustomPackageData, fetchResult: FetchResult, dependencyMeta: DependencyMeta, {hasBuildScripts}: {hasBuildScripts: boolean}) {
+    if (this.shouldBeUnplugged(locator, customPackageData, fetchResult, dependencyMeta, {hasBuildScripts})) {
       return this.unplugPackage(locator, fetchResult.packageFs);
     } else {
       return fetchResult.packageFs;
     }
   }
 
-  private shouldBeUnplugged(ident: Ident, manifest: Manifest | null, fetchResult: FetchResult, dependencyMeta: DependencyMeta, {hasBuildScripts}: {hasBuildScripts: boolean}) {
+  private shouldBeUnplugged(ident: Ident, customPackageData: CustomPackageData, fetchResult: FetchResult, dependencyMeta: DependencyMeta, {hasBuildScripts}: {hasBuildScripts: boolean}) {
     if (typeof dependencyMeta.unplugged !== `undefined`)
       return dependencyMeta.unplugged;
 
     if (FORCED_UNPLUG_PACKAGES.has(ident.identHash))
       return true;
 
-    if (manifest !== null && manifest.preferUnplugged !== null)
-      return manifest.preferUnplugged;
+    if (customPackageData.manifest.preferUnplugged !== null)
+      return customPackageData.manifest.preferUnplugged;
 
     if (hasBuildScripts || fetchResult.packageFs.getExtractHint({relevantExtensions:FORCED_UNPLUG_FILETYPES}))
       return true;
@@ -372,4 +404,23 @@ function normalizeDirectoryPath(root: PortablePath, folder: PortablePath) {
     relativeFolder = `./${relativeFolder}` as PortablePath;
 
   return relativeFolder.replace(/\/?$/, `/`)  as PortablePath;
+}
+
+type UnboxPromise<T extends Promise<any>> = T extends Promise<infer U> ? U: never;
+type CustomPackageData = UnboxPromise<ReturnType<typeof extractCustomPackageData>>;
+
+async function extractCustomPackageData(pkg: Package, fetchResult: FetchResult) {
+  const manifest = await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs}) ?? new Manifest();
+
+  return {
+    manifest: {
+      os: manifest.os,
+      cpu: manifest.cpu,
+      scripts: manifest.scripts,
+      preferUnplugged: manifest.preferUnplugged,
+    },
+    misc: {
+      extractHint: fetchResult.packageFs.getExtractHint({relevantExtensions:FORCED_UNPLUG_FILETYPES}),
+    },
+  };
 }

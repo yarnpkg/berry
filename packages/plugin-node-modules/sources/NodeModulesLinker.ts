@@ -85,6 +85,16 @@ class NodeModulesInstaller implements Installer {
     // Nothing to do
   }
 
+  getCustomDataKey() {
+    return JSON.stringify({
+      name: `NodeModulesInstaller`,
+      version: 1,
+    });
+  }
+
+  attachCustomData(customData: unknown) {
+  }
+
   async installPackage(pkg: Package, fetchResult: FetchResult) {
     const packageLocation = ppath.resolve(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
 

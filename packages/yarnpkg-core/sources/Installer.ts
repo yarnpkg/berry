@@ -23,6 +23,22 @@ export type FinalizeInstallStatus = {
 
 export interface Installer {
   /**
+   * Return an arbitrary key.
+   *
+   * This key will be used to save and restore the installer's custom data. You
+   * typically will want to return the installer's name, but you can be fancy
+   * and send a stringified JSON payload that include the cache version, etc.
+   */
+  getCustomDataKey(): string;
+
+  /**
+   * Only called if the installer has a custom data key matching one currently
+   * stored. Will be called with whatever `finalizeInstall` returned in its
+   * `customData` field.
+   */
+  attachCustomData(customData: unknown): void;
+
+  /**
    * Install a package on the disk.
    *
    * Should return `null` if the package has no install steps, or an object
