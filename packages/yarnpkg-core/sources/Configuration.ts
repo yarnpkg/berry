@@ -471,8 +471,8 @@ export interface ConfigurationValueMap {
 
   enableMirror: boolean;
   enableNetwork: boolean;
-  httpProxy: string;
-  httpsProxy: string;
+  httpProxy: string | null;
+  httpsProxy: string | null;
   unsafeHttpWhitelist: Array<string>;
   httpTimeout: number;
   httpRetry: number;

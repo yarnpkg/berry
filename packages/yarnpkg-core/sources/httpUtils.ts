@@ -149,6 +149,7 @@ export async function request(target: string, body: Body, {configuration, header
       socket: socketTimeout,
     },
     retry,
+    http2: !httpsProxy,
     https: {
       rejectUnauthorized,
       certificateAuthority,
