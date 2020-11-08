@@ -21,6 +21,36 @@ export type FinalizeInstallStatus = {
   buildDirective: Array<BuildDirective>,
 };
 
+export type FinalizeInstallData = {
+  /**
+   * A list of extra package instances that may have been installed on the
+   * disk. While we usually recommend to avoid this feature (one package should
+   * only be installed once in a project, virtual dependencies excluded), it
+   * may be required to duplicate installs in some cases - for instance to
+   * replicate the hoisting that would happen with the node-modules linking
+   * strategy.
+   */
+  records?: Array<FinalizeInstallStatus>,
+
+  /**
+   * A set of data that are preserved from one install to the next. Linkers are
+   * allowed to cache whatever they want (including ES-native data structures
+   * like Map and Set) as long as they remember to follow basic rules:
+   *
+   * - They have to be prepared for no custom data to be passed at all; Yarn
+   *   is allowed to clear the cache at will.
+   *
+   * - They have to cache only things that are unlikely to change. For instance
+   *   caching the packages' `scripts` field is fine, but caching their
+   *   dependencies isn't (first because dependencies are provided by the core
+   *   itself, so caching wouldn't make sense, but also because users may
+   *   change the dependencies of any package via the `resolutions` field).
+   *
+   * And of course, they have to manage their own migration.
+   */
+  customData?: any;
+};
+
 export interface Installer {
   /**
    * Return an arbitrary key.
@@ -86,5 +116,5 @@ export interface Installer {
   /**
    * Finalize the install by writing miscellaneous files to the disk.
    */
-  finalizeInstall(): Promise<Array<FinalizeInstallStatus> | void>;
+  finalizeInstall(): Promise<FinalizeInstallData | undefined>;
 }

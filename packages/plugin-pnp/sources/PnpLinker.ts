@@ -18,17 +18,6 @@ const FORCED_UNPLUG_PACKAGES = new Set([
   structUtils.makeIdent(null, `fsevents`).identHash,
 ]);
 
-const FORCED_UNPLUG_FILETYPES = new Set([
-  // Windows can't execute exe files inside zip archives
-  `.exe`,
-  // The c/c++ compiler can't read files from zip archives
-  `.h`, `.hh`, `.hpp`, `.c`, `.cc`, `.cpp`,
-  // The java runtime can't read files from zip archives
-  `.java`, `.jar`,
-  // Node opens these through dlopen
-  `.node`,
-]);
-
 export class PnpLinker implements Linker {
   protected mode = `strict`;
 
@@ -102,7 +91,8 @@ export class PnpInstaller implements Installer {
     store: new Map(),
   };
 
-  attachCustomData(customData: unknown) {
+  attachCustomData(customData: any) {
+    this.customData = customData;
   }
 
   async installPackage(pkg: Package, fetchResult: FetchResult) {
@@ -131,17 +121,21 @@ export class PnpInstaller implements Installer {
       pkg.linkType !== LinkType.SOFT;
 
     let customPackageData = this.customData.store.get(pkg.locatorHash);
-    if (typeof customPackageData === `undefined`)
+    if (typeof customPackageData === `undefined`) {
       customPackageData = await extractCustomPackageData(pkg, fetchResult);
+      if (pkg.linkType === LinkType.HARD) {
+        this.customData.store.set(pkg.locatorHash, customPackageData);
+      }
+    }
 
     const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
 
     const buildScripts = mayNeedToBeBuilt
-      ? javascriptUtils.extractBuildScripts(pkg, fetchResult, customPackageData.manifest, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report})
+      ? javascriptUtils.extractBuildScripts(pkg, customPackageData, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report})
       : [];
 
     const packageFs = mayNeedToBeUnplugged
-      ? await this.unplugPackageIfNeeded(pkg, customPackageData, fetchResult, dependencyMeta, {hasBuildScripts: buildScripts.length > 0})
+      ? await this.unplugPackageIfNeeded(pkg, customPackageData, fetchResult, dependencyMeta)
       : fetchResult.packageFs;
 
     if (ppath.isAbsolute(fetchResult.prefixPath))
@@ -239,7 +233,7 @@ export class PnpInstaller implements Installer {
 
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
     if (this.opts.project.configuration.get(`pnpMode`) !== this.mode)
-      return;
+      return {};
 
     const pnpPath = getPnpPath(this.opts.project);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
@@ -250,7 +244,7 @@ export class PnpInstaller implements Installer {
       await xfs.removePromise(pnpPath.main);
       await xfs.removePromise(pnpDataPath);
 
-      return;
+      return {};
     }
 
     const nodeModules = await this.locateNodeModules(pnpSettings.ignorePattern);
@@ -290,6 +284,10 @@ export class PnpInstaller implements Installer {
         }
       }
     }
+
+    return {
+      customData: this.customData,
+    };
   }
 
   private async locateNodeModules(ignorePattern?: string | null) {
@@ -323,25 +321,25 @@ export class PnpInstaller implements Installer {
 
   private readonly unpluggedPaths: Set<string> = new Set();
 
-  private async unplugPackageIfNeeded(locator: Locator, customPackageData: CustomPackageData, fetchResult: FetchResult, dependencyMeta: DependencyMeta, {hasBuildScripts}: {hasBuildScripts: boolean}) {
-    if (this.shouldBeUnplugged(locator, customPackageData, fetchResult, dependencyMeta, {hasBuildScripts})) {
-      return this.unplugPackage(locator, fetchResult.packageFs);
+  private async unplugPackageIfNeeded(pkg: Package, customPackageData: CustomPackageData, fetchResult: FetchResult, dependencyMeta: DependencyMeta) {
+    if (this.shouldBeUnplugged(pkg, customPackageData, dependencyMeta)) {
+      return this.unplugPackage(pkg, fetchResult.packageFs);
     } else {
       return fetchResult.packageFs;
     }
   }
 
-  private shouldBeUnplugged(ident: Ident, customPackageData: CustomPackageData, fetchResult: FetchResult, dependencyMeta: DependencyMeta, {hasBuildScripts}: {hasBuildScripts: boolean}) {
+  private shouldBeUnplugged(pkg: Package, customPackageData: CustomPackageData, dependencyMeta: DependencyMeta) {
     if (typeof dependencyMeta.unplugged !== `undefined`)
       return dependencyMeta.unplugged;
 
-    if (FORCED_UNPLUG_PACKAGES.has(ident.identHash))
+    if (FORCED_UNPLUG_PACKAGES.has(pkg.identHash))
       return true;
 
     if (customPackageData.manifest.preferUnplugged !== null)
       return customPackageData.manifest.preferUnplugged;
 
-    if (hasBuildScripts || fetchResult.packageFs.getExtractHint({relevantExtensions:FORCED_UNPLUG_FILETYPES}))
+    if (javascriptUtils.extractBuildScripts(pkg, customPackageData, dependencyMeta, {configuration: this.opts.project.configuration}).length > 0 || customPackageData.misc.extractHint)
       return true;
 
     return false;
@@ -420,7 +418,8 @@ async function extractCustomPackageData(pkg: Package, fetchResult: FetchResult) 
       preferUnplugged: manifest.preferUnplugged,
     },
     misc: {
-      extractHint: fetchResult.packageFs.getExtractHint({relevantExtensions:FORCED_UNPLUG_FILETYPES}),
+      extractHint: javascriptUtils.getExtractHint(fetchResult),
+      hasBindingGyp: javascriptUtils.hasBindingGyp(fetchResult),
     },
   };
 }

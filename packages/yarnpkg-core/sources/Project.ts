@@ -142,6 +142,8 @@ export class Project {
   public originalPackages: Map<LocatorHash, Package> = new Map();
   public optionalBuilds: Set<LocatorHash> = new Set();
 
+  public installersCustomData: Map<string, unknown> = new Map();
+
   public lockFileChecksum: string | null = null;
 
   static async find(configuration: Configuration, startingCwd: PortablePath): Promise<{project: Project, workspace: Workspace | null, locator: Locator}> {
@@ -1098,7 +1100,14 @@ export class Project {
     const linkerOptions = {project: this, report};
 
     const installers = new Map(linkers.map(linker => {
-      return [linker, linker.makeInstaller(linkerOptions)] as [Linker, Installer];
+      const installer = linker.makeInstaller(linkerOptions);
+
+      const customDataKey = installer.getCustomDataKey();
+      const customData = this.installersCustomData.get(customDataKey);
+      if (typeof customData !== `undefined`)
+        installer.attachCustomData(customData);
+
+      return [linker, installer] as [Linker, Installer];
     }));
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
@@ -1260,19 +1269,24 @@ export class Project {
 
     // Step 3: Inform our linkers that they should have all the info needed
 
+    const installersCustomData = new Map();
+
     for (const installer of installers.values()) {
-      const installStatuses = await installer.finalizeInstall();
-      if (installStatuses) {
-        for (const installStatus of installStatuses) {
-          if (installStatus.buildDirective) {
-            packageBuildDirectives.set(installStatus.locatorHash!, {
-              directives: installStatus.buildDirective,
-              buildLocations: installStatus.buildLocations,
-            });
-          }
-        }
+      const finalizeInstallData = await installer.finalizeInstall();
+
+      for (const installStatus of finalizeInstallData?.records ?? []) {
+        packageBuildDirectives.set(installStatus.locatorHash, {
+          directives: installStatus.buildDirective,
+          buildLocations: installStatus.buildLocations,
+        });
+      }
+
+      if (typeof finalizeInstallData?.customData !== `undefined`) {
+        installersCustomData.set(installer.getCustomDataKey(), finalizeInstallData.customData);
       }
     }
+
+    this.installersCustomData = installersCustomData;
 
     // Step 4: Build the packages in multiple steps
 
@@ -1621,6 +1635,8 @@ export class Project {
       }
     });
 
+    await this.persistInstallStateFile();
+
     await this.configuration.triggerHook(hooks => {
       return hooks.afterAllInstalled;
     }, this, opts);
@@ -1736,20 +1752,21 @@ export class Project {
   }
 
   async persistInstallStateFile() {
-    const {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, lockFileChecksum} = this;
-    const installState = {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, lockFileChecksum};
+    const {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, installersCustomData, lockFileChecksum} = this;
+    const installState = {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, installersCustomData, lockFileChecksum};
     const serializedState = await gzip(v8.serialize(installState));
 
     const installStatePath = this.configuration.get(`installStatePath`);
 
     await xfs.mkdirPromise(ppath.dirname(installStatePath), {recursive: true});
-    await xfs.writeFilePromise(installStatePath, serializedState as Buffer);
+    await xfs.changeFilePromise(installStatePath, serializedState as Buffer);
   }
 
-  async restoreInstallState() {
+  async restoreInstallState({lightResolutionFallback = true}: {lightResolutionFallback?: boolean} = {}) {
     const installStatePath = this.configuration.get(`installStatePath`);
     if (!xfs.existsSync(installStatePath)) {
-      await this.applyLightResolution();
+      if (lightResolutionFallback)
+        await this.applyLightResolution();
       return;
     }
 
@@ -1757,7 +1774,8 @@ export class Project {
     const installState = v8.deserialize(await gunzip(serializedState) as Buffer);
 
     if (installState.lockFileChecksum !== this.lockFileChecksum) {
-      await this.applyLightResolution();
+      if (lightResolutionFallback)
+        await this.applyLightResolution();
       return;
     }
 

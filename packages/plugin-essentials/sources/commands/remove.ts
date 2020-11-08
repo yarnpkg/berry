@@ -50,6 +50,10 @@ export default class RemoveCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
+    await project.restoreInstallState({
+      lightResolutionFallback: false,
+    });
+
     const affectedWorkspaces = this.all
       ? project.workspaces
       : [workspace];

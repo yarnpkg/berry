@@ -109,14 +109,21 @@ class NodeModulesInstaller implements Installer {
       }
     }
 
+    const customPackageData = {
+      manifest,
+      misc: {
+        hasBindingGyp: javascriptUtils.hasBindingGyp(fetchResult),
+      },
+    };
+
     const dependencyMeta = this.opts.project.getDependencyMeta(pkg, manifest.version);
 
     // We don't link the package at all if it's for an unsupported platform
-    if (!javascriptUtils.checkAndReportManifestCompatibility(pkg, manifest, `link`, {configuration: this.opts.project.configuration, report: this.opts.report}))
+    if (!javascriptUtils.checkAndReportManifestCompatibility(pkg, customPackageData, `link`, {configuration: this.opts.project.configuration, report: this.opts.report}))
       return {packageLocation: null, buildDirective: null};
 
     const buildScripts = !this.opts.project.tryWorkspaceByLocator(pkg)
-      ? javascriptUtils.extractBuildScripts(pkg, fetchResult, manifest, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report}) ?? []
+      ? javascriptUtils.extractBuildScripts(pkg, customPackageData, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report}) ?? []
       : [];
 
     const packageDependencies = new Map<string, string | [string, string] | null>();
@@ -302,7 +309,9 @@ class NodeModulesInstaller implements Installer {
       });
     }
 
-    return installStatuses;
+    return {
+      records: installStatuses,
+    };
   }
 }
 
