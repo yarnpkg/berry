@@ -1785,7 +1785,8 @@ export class Project {
     const serializedState = await xfs.readFilePromise(installStatePath);
     const installState = v8.deserialize(await gunzip(serializedState) as Buffer);
 
-    this.installersCustomData = installState.installersCustomData;
+    if (typeof installState.installersCustomData !== `undefined`)
+      this.installersCustomData = installState.installersCustomData;
 
     if (installState.lockFileChecksum !== this.lockFileChecksum) {
       if (lightResolutionFallback)
