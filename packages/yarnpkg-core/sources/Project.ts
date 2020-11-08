@@ -142,6 +142,8 @@ export class Project {
   public originalPackages: Map<LocatorHash, Package> = new Map();
   public optionalBuilds: Set<LocatorHash> = new Set();
 
+  public installersCustomData: Map<string, unknown> = new Map();
+
   public lockFileChecksum: string | null = null;
 
   static async find(configuration: Configuration, startingCwd: PortablePath): Promise<{project: Project, workspace: Workspace | null, locator: Locator}> {
@@ -357,6 +359,9 @@ export class Project {
   tryWorkspaceByCwd(workspaceCwd: PortablePath) {
     if (!ppath.isAbsolute(workspaceCwd))
       workspaceCwd = ppath.resolve(this.cwd, workspaceCwd);
+
+    workspaceCwd = ppath.normalize(workspaceCwd)
+      .replace(/\/+$/, ``) as PortablePath;
 
     const workspace = this.workspacesByCwd.get(workspaceCwd);
     if (!workspace)
@@ -1095,21 +1100,38 @@ export class Project {
     const linkerOptions = {project: this, report};
 
     const installers = new Map(linkers.map(linker => {
-      return [linker, linker.makeInstaller(linkerOptions)] as [Linker, Installer];
+      const installer = linker.makeInstaller(linkerOptions);
+
+      const customDataKey = installer.getCustomDataKey();
+      const customData = this.installersCustomData.get(customDataKey);
+      if (typeof customData !== `undefined`)
+        installer.attachCustomData(customData);
+
+      return [linker, installer] as [Linker, Installer];
     }));
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
     const packageLocations: Map<LocatorHash, PortablePath | null> = new Map();
     const packageBuildDirectives: Map<LocatorHash, { directives: Array<BuildDirective>, buildLocations: Array<PortablePath> }> = new Map();
 
-    // Step 1: Installing the packages on the disk
-
-    for (const locatorHash of this.accessibleLocators) {
+    const fetchResultsPerPackage = new Map(await Promise.all([...this.accessibleLocators].map(async locatorHash => {
       const pkg = this.storedPackages.get(locatorHash);
       if (!pkg)
         throw new Error(`Assertion failed: The locator should have been registered`);
 
-      const fetchResult = await fetcher.fetch(pkg, fetcherOptions);
+      return [locatorHash, await fetcher.fetch(pkg, fetcherOptions)] as const;
+    })));
+
+    // Step 1: Installing the packages on the disk
+
+    for (const locatorHash of this.accessibleLocators) {
+      const pkg = this.storedPackages.get(locatorHash);
+      if (typeof pkg === `undefined`)
+        throw new Error(`Assertion failed: The locator should have been registered`);
+
+      const fetchResult = fetchResultsPerPackage.get(pkg.locatorHash);
+      if (typeof fetchResult === `undefined`)
+        throw new Error(`Assertion failed: The fetch result should have been registered`);
 
       const workspace = this.tryWorkspaceByLocator(pkg);
 
@@ -1123,7 +1145,10 @@ export class Project {
 
         try {
           for (const installer of installers.values()) {
-            await installer.installPackage(pkg, fetchResult);
+            const result = await installer.installPackage(pkg, fetchResult);
+            if (result.buildDirective !== null) {
+              throw new Error(`Assertion failed: Linkers can't return build directives for workspaces; this responsibility befalls to the Yarn core`);
+            }
           }
         } finally {
           if (fetchResult.releaseFs) {
@@ -1256,19 +1281,26 @@ export class Project {
 
     // Step 3: Inform our linkers that they should have all the info needed
 
+    const installersCustomData = new Map();
+
     for (const installer of installers.values()) {
-      const installStatuses = await installer.finalizeInstall();
-      if (installStatuses) {
-        for (const installStatus of installStatuses) {
-          if (installStatus.buildDirective) {
-            packageBuildDirectives.set(installStatus.locatorHash!, {
-              directives: installStatus.buildDirective,
-              buildLocations: installStatus.buildLocations,
-            });
-          }
-        }
+      const finalizeInstallData = await installer.finalizeInstall();
+
+      for (const installStatus of finalizeInstallData?.records ?? []) {
+        packageBuildDirectives.set(installStatus.locatorHash, {
+          directives: installStatus.buildDirective,
+          buildLocations: installStatus.buildLocations,
+        });
+      }
+
+      if (typeof finalizeInstallData?.customData !== `undefined`) {
+        installersCustomData.set(installer.getCustomDataKey(), finalizeInstallData.customData);
       }
     }
+
+    this.installersCustomData = installersCustomData;
+
+    await this.persistInstallStateFile();
 
     // Step 4: Build the packages in multiple steps
 
@@ -1617,6 +1649,8 @@ export class Project {
       }
     });
 
+    await this.persistInstallStateFile();
+
     await this.configuration.triggerHook(hooks => {
       return hooks.afterAllInstalled;
     }, this, opts);
@@ -1732,28 +1766,33 @@ export class Project {
   }
 
   async persistInstallStateFile() {
-    const {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, lockFileChecksum} = this;
-    const installState = {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, lockFileChecksum};
+    const {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, installersCustomData, lockFileChecksum} = this;
+    const installState = {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, installersCustomData, lockFileChecksum};
     const serializedState = await gzip(v8.serialize(installState));
 
     const installStatePath = this.configuration.get(`installStatePath`);
 
     await xfs.mkdirPromise(ppath.dirname(installStatePath), {recursive: true});
-    await xfs.writeFilePromise(installStatePath, serializedState as Buffer);
+    await xfs.changeFilePromise(installStatePath, serializedState as Buffer);
   }
 
-  async restoreInstallState() {
+  async restoreInstallState({lightResolutionFallback = true}: {lightResolutionFallback?: boolean} = {}) {
     const installStatePath = this.configuration.get(`installStatePath`);
     if (!xfs.existsSync(installStatePath)) {
-      await this.applyLightResolution();
+      if (lightResolutionFallback)
+        await this.applyLightResolution();
       return;
     }
 
     const serializedState = await xfs.readFilePromise(installStatePath);
     const installState = v8.deserialize(await gunzip(serializedState) as Buffer);
 
+    if (typeof installState.installersCustomData !== `undefined`)
+      this.installersCustomData = installState.installersCustomData;
+
     if (installState.lockFileChecksum !== this.lockFileChecksum) {
-      await this.applyLightResolution();
+      if (lightResolutionFallback)
+        await this.applyLightResolution();
       return;
     }
 
@@ -1773,7 +1812,6 @@ export class Project {
 
   async persist() {
     await this.persistLockfile();
-    await this.persistInstallStateFile();
 
     for (const workspace of this.workspacesByCwd.values()) {
       await workspace.persistManifest();

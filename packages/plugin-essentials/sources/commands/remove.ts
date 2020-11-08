@@ -50,6 +50,10 @@ export default class RemoveCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
+    await project.restoreInstallState({
+      lightResolutionFallback: false,
+    });
+
     const affectedWorkspaces = this.all
       ? project.workspaces
       : [workspace];
@@ -141,7 +145,7 @@ export default class RemoveCommand extends BaseCommand {
       const report = await StreamReport.start({
         configuration,
         stdout: this.context.stdout,
-      }, async (report: StreamReport) => {
+      }, async report => {
         await project.install({cache, report});
       });
 

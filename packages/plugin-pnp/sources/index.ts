@@ -6,8 +6,10 @@ import semver                                              from 'semver';
 
 import {PnpLinker}                                         from './PnpLinker';
 import unplug                                              from './commands/unplug';
+import * as javascriptUtils                                from './jsInstallUtils';
 import * as pnpUtils                                       from './pnpUtils';
 
+export {javascriptUtils};
 export {pnpUtils};
 
 export const getPnpPath = (project: Project) => {
@@ -128,7 +130,6 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
   ],
 };
 
-export {AbstractPnpInstaller} from './AbstractPnpInstaller';
 export {PnpInstaller, PnpLinker} from './PnpLinker';
 
 // eslint-disable-next-line arca/no-default-export
