@@ -1,7 +1,7 @@
-import {Cache, Configuration, Project, ThrowReport, structUtils, LocatorHash, Package} from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs}                                            from '@yarnpkg/fslib';
-import LinkPlugin                                                                      from '@yarnpkg/plugin-link';
-import PnpPlugin                                                                       from '@yarnpkg/plugin-pnp';
+import {Cache, Configuration, Project, ThrowReport, structUtils, LocatorHash, Resolver, Descriptor, Package} from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, xfs}                                                                  from '@yarnpkg/fslib';
+import LinkPlugin                                                                                            from '@yarnpkg/plugin-link';
+import PnpPlugin                                                                                             from '@yarnpkg/plugin-pnp';
 
 const getConfiguration = (p: PortablePath) => {
   return Configuration.create(p, p, new Map([
@@ -136,6 +136,62 @@ describe(`Project`, () => {
         descriptors: project2.storedDescriptors,
         resolutions: project2.storedResolutions,
       });
+    });
+  });
+
+  it(`should throw on cyclic resolution dependencies during 'resolveEverything'`, async () => {
+    await xfs.mktempPromise(async dir => {
+      await xfs.writeFilePromise(ppath.join(dir, Filename.manifest), JSON.stringify({
+        name: `foo`,
+      }, null, 2));
+
+      class CyclicResolutionDependenciesResolver implements Resolver {
+        supportsDescriptor() {
+          return true;
+        }
+
+        supportsLocator(): never {
+          throw new Error(`Unimplemented`);
+        }
+
+        getResolutionDependencies(descriptor: Descriptor) {
+          if (descriptor.name === `foo`)
+            return [structUtils.makeDescriptor(structUtils.makeIdent(null, `bar`), `*`)];
+          if (descriptor.name === `bar`)
+            return [structUtils.makeDescriptor(structUtils.makeIdent(null, `foo`), `*`)];
+
+          throw new Error(`Unimplemented`);
+        }
+
+        bindDescriptor(descriptor: Descriptor): never {
+          throw new Error(`Unimplemented`);
+        }
+
+        shouldPersistResolution(): never {
+          throw new Error(`Unimplemented`);
+        }
+
+        async getCandidates(): Promise<never> {
+          throw new Error(`Unimplemented`);
+        }
+
+        async getSatisfying(): Promise<never> {
+          throw new Error(`Unimplemented`);
+        }
+
+        async resolve(): Promise<never> {
+          throw new Error(`Unimplemented`);
+        }
+      }
+
+      const configuration = Configuration.create(dir, dir);
+      const {project} = await Project.find(configuration, dir);
+      const cache = await Cache.find(configuration);
+
+      const resolver = new CyclicResolutionDependenciesResolver();
+      const installOptions = {cache, report: new ThrowReport(), resolver};
+
+      await expect(project.install(installOptions)).rejects.toThrow(`Descriptors cannot have cyclic resolution dependencies`);
     });
   });
 });

@@ -671,7 +671,7 @@ export class Project {
 
     const resolutionQueue: Array<Promise<unknown>> = [];
 
-    const startPackageResolution = async (locator: Locator) => {
+    const startPackageResolution = async (locator: Locator, resolutionDependencyAncestors: Array<DescriptorHash>) => {
       const originalPkg = await miscUtils.prettifyAsyncErrors(async () => {
         return await resolver.resolve(locator, resolveOptions);
       }, message => {
@@ -701,7 +701,7 @@ export class Project {
       }
 
       resolutionQueue.push(Promise.all([...pkg.dependencies.values()].map(descriptor => {
-        return scheduleDescriptorResolution(descriptor);
+        return scheduleDescriptorResolution(descriptor, resolutionDependencyAncestors);
       })));
 
       allPackages.set(pkg.locatorHash, pkg);
@@ -709,18 +709,18 @@ export class Project {
       return pkg;
     };
 
-    const schedulePackageResolution = async (locator: Locator) => {
+    const schedulePackageResolution = async (locator: Locator, resolutionDependencyAncestors: Array<DescriptorHash>) => {
       const promise = packageResolutionPromises.get(locator.locatorHash);
       if (typeof promise !== `undefined`)
         return promise;
 
-      const newPromise = Promise.resolve().then(() => startPackageResolution(locator));
+      const newPromise = Promise.resolve().then(() => startPackageResolution(locator, resolutionDependencyAncestors));
       packageResolutionPromises.set(locator.locatorHash, newPromise);
       return newPromise;
     };
 
-    const startDescriptorAliasing = async (descriptor: Descriptor, alias: Descriptor): Promise<Package> => {
-      const resolution = await scheduleDescriptorResolution(alias);
+    const startDescriptorAliasing = async (descriptor: Descriptor, alias: Descriptor, resolutionDependencyAncestors: Array<DescriptorHash>): Promise<Package> => {
+      const resolution = await scheduleDescriptorResolution(alias, resolutionDependencyAncestors);
 
       allDescriptors.set(descriptor.descriptorHash, descriptor);
       allResolutions.set(descriptor.descriptorHash, resolution.locatorHash);
@@ -728,14 +728,14 @@ export class Project {
       return resolution;
     };
 
-    const startDescriptorResolution = async (descriptor: Descriptor): Promise<Package> => {
+    const startDescriptorResolution = async (descriptor: Descriptor, resolutionDependencyAncestors: Array<DescriptorHash>): Promise<Package> => {
       const alias = this.resolutionAliases.get(descriptor.descriptorHash);
       if (typeof alias !== `undefined`)
-        return startDescriptorAliasing(descriptor, this.storedDescriptors.get(alias)!);
+        return startDescriptorAliasing(descriptor, this.storedDescriptors.get(alias)!, resolutionDependencyAncestors);
 
       const resolutionDependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
       const resolvedDependencies = new Map(await Promise.all(resolutionDependencies.map(async dependency => {
-        return [dependency.descriptorHash, await scheduleDescriptorResolution(dependency)] as const;
+        return [dependency.descriptorHash, await scheduleDescriptorResolution(dependency, [...resolutionDependencyAncestors, descriptor.descriptorHash])] as const;
       })));
 
       const candidateResolutions = await resolver.getCandidates(descriptor, resolvedDependencies, resolveOptions);
@@ -744,24 +744,35 @@ export class Project {
       allDescriptors.set(descriptor.descriptorHash, descriptor);
       allResolutions.set(descriptor.descriptorHash, finalResolution.locatorHash);
 
-      return schedulePackageResolution(finalResolution);
+      return schedulePackageResolution(finalResolution, resolutionDependencyAncestors);
     };
 
-    const scheduleDescriptorResolution = (descriptor: Descriptor) => {
+    const scheduleDescriptorResolution = (descriptor: Descriptor, resolutionDependencyAncestors: Array<DescriptorHash>) => {
+      if (resolutionDependencyAncestors.includes(descriptor.descriptorHash)) {
+        const cycle = Array.from(resolutionDependencyAncestors, descriptorHash => {
+          const descriptor = allDescriptors.get(descriptorHash);
+          if (!descriptor)
+            throw new Error(`Assertion failed: The descriptor should have been registered`);
+
+          return structUtils.prettyDescriptor(this.configuration, descriptor);
+        }).join(`, `);
+        throw new Error(`Descriptors cannot have cyclic resolution dependencies: ${cycle}`);
+      }
+
       const promise = descriptorResolutionPromises.get(descriptor.descriptorHash);
       if (typeof promise !== `undefined`)
         return promise;
 
       allDescriptors.set(descriptor.descriptorHash, descriptor);
 
-      const newPromise = Promise.resolve().then(() => startDescriptorResolution(descriptor));
+      const newPromise = Promise.resolve().then(() => startDescriptorResolution(descriptor, resolutionDependencyAncestors));
       descriptorResolutionPromises.set(descriptor.descriptorHash, newPromise);
       return newPromise;
     };
 
     for (const workspace of this.workspaces) {
       const workspaceDescriptor = workspace.anchoredDescriptor;
-      resolutionQueue.push(scheduleDescriptorResolution(workspaceDescriptor));
+      resolutionQueue.push(scheduleDescriptorResolution(workspaceDescriptor, []));
     }
 
     while (resolutionQueue.length > 0) {
@@ -1324,8 +1335,12 @@ export class Project {
   }
 
   async install(opts: InstallOptions) {
-    const nodeLinker = this.configuration.get(`nodeLinker`);
-    Configuration.telemetry?.reportInstall(nodeLinker);
+    // nodeLinker is defined inside @yarnpkg/plugin-pnp, which
+    // causes the core to throw if the plugin isn't registered
+    try {
+      const nodeLinker = this.configuration.get(`nodeLinker`);
+      Configuration.telemetry?.reportInstall(nodeLinker);
+    } catch {}
 
     const validationWarnings: Array<{name: MessageName, text: string}> = [];
     const validationErrors: Array<{name: MessageName, text: string}> = [];
