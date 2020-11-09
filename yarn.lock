@@ -5506,7 +5506,6 @@ __metadata:
     got: ^11.7.0
     json-file-plus: ^3.3.1
     lodash: ^4.17.15
-    logic-solver: ^2.0.1
     micromatch: ^4.0.2
     mkdirp: ^0.5.1
     p-limit: ^2.2.0
@@ -18058,15 +18057,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"logic-solver@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "logic-solver@npm:2.0.1"
-  dependencies:
-    underscore: ^1.7.0
-  checksum: 48458c67714792417e9c79e61e1d0edcceb45d7fa402da2464a9e86374545e6abd54bcd1d50931e753bb3fc9c78eb7128291db530f801ca3ce294b0e115c39e2
-  languageName: node
-  linkType: hard
-
 "loglevel@npm:^1.6.8":
   version: 1.6.8
   resolution: "loglevel@npm:1.6.8"
@@ -26690,7 +26680,7 @@ typescript@4.1.0-beta:
   languageName: node
   linkType: hard
 
-"underscore@npm:>=1.8.3, underscore@npm:^1.7.0, underscore@npm:^1.9.1":
+"underscore@npm:>=1.8.3, underscore@npm:^1.9.1":
   version: 1.9.1
   resolution: "underscore@npm:1.9.1"
   checksum: db69d0e9f3e2c99c2ecc887180dea1118cb8a2f72f0cc6020c7c7d3860e9f2b37d830fd094658eebf41a047205d03feecc928b05d329d384886a6a1bc2cee9d7

@@ -8891,7 +8891,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["got", "npm:11.7.0"],
             ["json-file-plus", "npm:3.3.1"],
             ["lodash", "npm:4.17.15"],
-            ["logic-solver", "npm:2.0.1"],
             ["micromatch", "npm:4.0.2"],
             ["mkdirp", "npm:0.5.1"],
             ["p-limit", "npm:2.2.0"],
@@ -24361,16 +24360,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["logalot", "npm:2.1.0"],
             ["figures", "npm:1.7.0"],
             ["squeak", "npm:1.3.0"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["logic-solver", [
-        ["npm:2.0.1", {
-          "packageLocation": "./.yarn/cache/logic-solver-npm-2.0.1-3f092e9b27-48458c6771.zip/node_modules/logic-solver/",
-          "packageDependencies": [
-            ["logic-solver", "npm:2.0.1"],
-            ["underscore", "npm:1.9.1"]
           ],
           "linkType": "HARD",
         }]
