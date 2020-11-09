@@ -41063,11 +41063,15 @@ function patchFs(patchedFs, fakeFs) {
       const hasCallback = typeof args[args.length - 1] === `function`;
       const callback = hasCallback ? args.pop() : () => {};
       process.nextTick(() => {
-        fakeFs.existsPromise(p).then(exists => {
-          callback(exists);
-        }, () => {
+        if (typeof p !== `string`) {
           callback(false);
-        });
+        } else {
+          fakeFs.existsPromise(p).then(exists => {
+            callback(exists);
+          }, () => {
+            callback(false);
+          });
+        }
       });
     });
     setupFn(patchedFs, `read`, (p, buffer, ...args) => {
