@@ -3,7 +3,7 @@ import {parseSyml, stringifySyml}                                 from '@yarnpkg
 import {UsageError}                                               from 'clipanion';
 import {createHash}                                               from 'crypto';
 import {structuredPatch}                                          from 'diff';
-import {pick}                                                     from 'lodash';
+import pick                                                       from 'lodash/pick';
 // @ts-expect-error
 import Logic                                                      from 'logic-solver';
 import pLimit                                                     from 'p-limit';
