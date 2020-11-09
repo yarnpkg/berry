@@ -3,6 +3,7 @@ import {parseSyml, stringifySyml}                                 from '@yarnpkg
 import {UsageError}                                               from 'clipanion';
 import {createHash}                                               from 'crypto';
 import {structuredPatch}                                          from 'diff';
+import pick                                                       from 'lodash/pick';
 // @ts-expect-error
 import Logic                                                      from 'logic-solver';
 import pLimit                                                     from 'p-limit';
@@ -111,6 +112,28 @@ export type InstallOptions = {
    */
   skipBuild?: boolean,
 };
+
+const INSTALL_STATE_FIELDS = {
+  restoreInstallersCustomData: [
+    `installersCustomData`,
+  ] as const,
+
+  restoreResolutions: [
+    `accessibleLocators`,
+    `optionalBuilds`,
+    `storedDescriptors`,
+    `storedResolutions`,
+    `storedPackages`,
+    `lockFileChecksum`,
+  ] as const,
+};
+
+type RestoreInstallStateOpts = {
+  [key in keyof typeof INSTALL_STATE_FIELDS]?: boolean;
+};
+
+// Just a type that's the union of all the fields declared in `INSTALL_STATE_FIELDS`
+type InstallState = Pick<Project, typeof INSTALL_STATE_FIELDS[keyof typeof INSTALL_STATE_FIELDS][number]>;
 
 export class Project {
   public readonly configuration: Configuration;
@@ -1766,8 +1789,11 @@ export class Project {
   }
 
   async persistInstallStateFile() {
-    const {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, installersCustomData, lockFileChecksum} = this;
-    const installState = {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, installersCustomData, lockFileChecksum};
+    const fields = [];
+    for (const category of Object.values(INSTALL_STATE_FIELDS))
+      fields.push(...category);
+
+    const installState = pick(this, fields) as InstallState;
     const serializedState = await gzip(v8.serialize(installState));
 
     const installStatePath = this.configuration.get(`installStatePath`);
@@ -1776,29 +1802,29 @@ export class Project {
     await xfs.changeFilePromise(installStatePath, serializedState as Buffer);
   }
 
-  async restoreInstallState({lightResolutionFallback = true}: {lightResolutionFallback?: boolean} = {}) {
+  async restoreInstallState({restoreInstallersCustomData = true, restoreResolutions = true}: RestoreInstallStateOpts = {}) {
     const installStatePath = this.configuration.get(`installStatePath`);
     if (!xfs.existsSync(installStatePath)) {
-      if (lightResolutionFallback)
+      if (restoreResolutions)
         await this.applyLightResolution();
       return;
     }
 
     const serializedState = await xfs.readFilePromise(installStatePath);
-    const installState = v8.deserialize(await gunzip(serializedState) as Buffer);
+    const installState: InstallState = v8.deserialize(await gunzip(serializedState) as Buffer);
 
-    if (typeof installState.installersCustomData !== `undefined`)
-      this.installersCustomData = installState.installersCustomData;
+    if (restoreInstallersCustomData)
+      if (typeof installState.installersCustomData !== `undefined`)
+        this.installersCustomData = installState.installersCustomData;
 
-    if (installState.lockFileChecksum !== this.lockFileChecksum) {
-      if (lightResolutionFallback)
+    if (restoreResolutions) {
+      if (installState.lockFileChecksum === this.lockFileChecksum) {
+        Object.assign(this, pick(installState, INSTALL_STATE_FIELDS.restoreResolutions));
+        this.refreshWorkspaceDependencies();
+      } else {
         await this.applyLightResolution();
-      return;
+      }
     }
-
-    Object.assign(this, installState);
-
-    this.refreshWorkspaceDependencies();
   }
 
   async applyLightResolution() {
