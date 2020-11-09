@@ -8880,7 +8880,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-pnp", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-pnp"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],
-            ["binjumper", "npm:0.1.3"],
+            ["binjumper", "npm:0.1.4"],
             ["camelcase", "npm:5.3.1"],
             ["chalk", "npm:3.0.0"],
             ["ci-info", "npm:2.0.0"],
@@ -8891,7 +8891,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["got", "npm:11.7.0"],
             ["json-file-plus", "npm:3.3.1"],
             ["lodash", "npm:4.17.15"],
-            ["logic-solver", "npm:2.0.1"],
             ["micromatch", "npm:4.0.2"],
             ["mkdirp", "npm:0.5.1"],
             ["p-limit", "npm:2.2.0"],
@@ -12234,10 +12233,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["binjumper", [
-        ["npm:0.1.3", {
-          "packageLocation": "./.yarn/cache/binjumper-npm-0.1.3-160b213eed-660000e5a5.zip/node_modules/binjumper/",
+        ["npm:0.1.4", {
+          "packageLocation": "./.yarn/cache/binjumper-npm-0.1.4-8ed133195d-07b0f2cf66.zip/node_modules/binjumper/",
           "packageDependencies": [
-            ["binjumper", "npm:0.1.3"]
+            ["binjumper", "npm:0.1.4"]
           ],
           "linkType": "HARD",
         }]
@@ -24361,16 +24360,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["logalot", "npm:2.1.0"],
             ["figures", "npm:1.7.0"],
             ["squeak", "npm:1.3.0"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["logic-solver", [
-        ["npm:2.0.1", {
-          "packageLocation": "./.yarn/cache/logic-solver-npm-2.0.1-3f092e9b27-48458c6771.zip/node_modules/logic-solver/",
-          "packageDependencies": [
-            ["logic-solver", "npm:2.0.1"],
-            ["underscore", "npm:1.9.1"]
           ],
           "linkType": "HARD",
         }]
