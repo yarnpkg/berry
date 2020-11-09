@@ -335,7 +335,7 @@ export class Manifest {
     }
 
     if (typeof data.dependenciesMeta === `object` && data.dependenciesMeta !== null) {
-      for (const [pattern, meta] of Object.entries(data.dependenciesMeta)) {
+      for (const [pattern, meta] of Object.entries(data.dependenciesMeta) as Array<[string, any]>) {
         if (typeof meta !== `object` || meta === null) {
           errors.push(new Error(`Invalid meta field for '${pattern}`));
           continue;
@@ -367,7 +367,7 @@ export class Manifest {
     }
 
     if (typeof data.peerDependenciesMeta === `object` && data.peerDependenciesMeta !== null) {
-      for (const [pattern, meta] of Object.entries(data.peerDependenciesMeta)) {
+      for (const [pattern, meta] of Object.entries(data.peerDependenciesMeta) as Array<[string, any]>) {
         if (typeof meta !== `object` || meta === null) {
           errors.push(new Error(`Invalid meta field for '${pattern}'`));
           continue;
@@ -376,7 +376,7 @@ export class Manifest {
         const descriptor = structUtils.parseDescriptor(pattern);
         const peerDependencyMeta = this.ensurePeerDependencyMeta(descriptor);
 
-        const optional = optional = miscUtils.tryParseOptionalBoolean(meta.optional);
+        const optional = miscUtils.tryParseOptionalBoolean(meta.optional);
         if (optional === null) {
           errors.push(new Error(`Invalid optional meta field for '${pattern}'`));
           continue;
