@@ -749,13 +749,17 @@ export class Project {
 
     const scheduleDescriptorResolution = (descriptor: Descriptor, resolutionDependencyAncestors: Array<DescriptorHash>) => {
       if (resolutionDependencyAncestors.includes(descriptor.descriptorHash)) {
-        const cycle = Array.from(resolutionDependencyAncestors, descriptorHash => {
+        const descriptors = Array.from(resolutionDependencyAncestors, descriptorHash => {
           const descriptor = allDescriptors.get(descriptorHash);
           if (!descriptor)
             throw new Error(`Assertion failed: The descriptor should have been registered`);
 
-          return structUtils.prettyDescriptor(this.configuration, descriptor);
-        }).join(`, `);
+          return descriptor;
+        }).concat([descriptor]);
+        const cycle = descriptors
+          .map(descriptor => structUtils.prettyDescriptor(this.configuration, descriptor))
+          .join(`, `);
+
         throw new Error(`Descriptors cannot have cyclic resolution dependencies: ${cycle}`);
       }
 

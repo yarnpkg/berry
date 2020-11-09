@@ -158,7 +158,9 @@ describe(`Project`, () => {
           if (descriptor.name === `foo`)
             return [structUtils.makeDescriptor(structUtils.makeIdent(null, `bar`), `*`)];
           if (descriptor.name === `bar`)
-            return [structUtils.makeDescriptor(structUtils.makeIdent(null, `foo`), `*`)];
+            return [structUtils.makeDescriptor(structUtils.makeIdent(null, `baz`), `*`)];
+          if (descriptor.name === `baz`)
+            return [structUtils.makeDescriptor(structUtils.makeIdent(null, `foo`), `workspace:.`)];
 
           throw new Error(`Unimplemented`);
         }
