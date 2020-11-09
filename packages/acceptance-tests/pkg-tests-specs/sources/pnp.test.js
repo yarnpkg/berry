@@ -1786,4 +1786,18 @@ describe(`Plug'n'Play`, () => {
       });
     })
   );
+
+  test(
+    `it should be able to resolve an absolute file from a module in an ignored folder`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mkdirPromise(`${path}/ignored`);
+      await xfs.writeFilePromise(`${path}/ignored/index.js`, `module.exports = require(__dirname + '/foo.js')`);
+      await xfs.writeFilePromise(`${path}/ignored/foo.js`, `module.exports = 42`);
+
+      await xfs.writeFilePromise(`${path}/.yarnrc.yml`, `pnpIgnorePatterns:\n  - ./ignored/**\n`);
+      await run(`install`);
+
+      await expect(source(`require('./ignored/index.js')`)).resolves.toBe(42);
+    })
+  );
 });

@@ -37140,7 +37140,27 @@ class FakeFS {
     this.chmodSync(destination, mode);
   }
 
-  async changeFilePromise(p, content, {
+  async changeFilePromise(p, content, opts = {}) {
+    if (Buffer.isBuffer(content)) {
+      return this.changeFileBufferPromise(p, content);
+    } else {
+      return this.changeFileTextPromise(p, content, opts);
+    }
+  }
+
+  async changeFileBufferPromise(p, content) {
+    let current = Buffer.alloc(0);
+
+    try {
+      current = await this.readFilePromise(p);
+    } catch (error) {// ignore errors, no big deal
+    }
+
+    if (Buffer.compare(current, content) === 0) return;
+    await this.writeFilePromise(p, content);
+  }
+
+  async changeFileTextPromise(p, content, {
     automaticNewlines
   } = {}) {
     let current = ``;
@@ -37155,7 +37175,27 @@ class FakeFS {
     await this.writeFilePromise(p, normalizedContent);
   }
 
-  changeFileSync(p, content, {
+  changeFileSync(p, content, opts = {}) {
+    if (Buffer.isBuffer(content)) {
+      return this.changeFileBufferSync(p, content);
+    } else {
+      return this.changeFileTextSync(p, content, opts);
+    }
+  }
+
+  changeFileBufferSync(p, content) {
+    let current = Buffer.alloc(0);
+
+    try {
+      current = this.readFileSync(p);
+    } catch (error) {// ignore errors, no big deal
+    }
+
+    if (Buffer.compare(current, content) === 0) return;
+    this.writeFileSync(p, content);
+  }
+
+  changeFileTextSync(p, content, {
     automaticNewlines = false
   } = {}) {
     let current = ``;
@@ -41933,7 +41973,7 @@ function makeApi(runtimeState, opts) {
     // the {paths} option at all, since it internally makes _resolveFilename create another
     // fake module anyway.
 
-    return external_module_.Module._resolveFilename(request, makeFakeModule(npath.fromPortablePath(issuer)), false, {
+    return external_module_.Module._resolveFilename(npath.fromPortablePath(request), makeFakeModule(npath.fromPortablePath(issuer)), false, {
       plugnplay: false
     });
   }
