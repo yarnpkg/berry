@@ -37,6 +37,9 @@ export function extractBuildScripts(pkg: Package, requirements: ExtractBuildScri
   if (!requirements.manifest.scripts.has(`install`) && requirements.misc.hasBindingGyp)
     buildScripts.push([BuildType.SHELLCODE, `node-gyp rebuild`]);
 
+  if (buildScripts.length === 0)
+    return [];
+
   if (!configuration.get(`enableScripts`) && !dependencyMeta.built) {
     report?.reportWarningOnce(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(configuration, pkg)} lists build scripts, but all build scripts have been disabled.`);
     return [];
