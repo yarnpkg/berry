@@ -1818,12 +1818,12 @@ export class Project {
         this.installersCustomData = installState.installersCustomData;
 
     if (restoreResolutions) {
-      if (installState.lockFileChecksum !== this.lockFileChecksum)
+      if (installState.lockFileChecksum === this.lockFileChecksum) {
         Object.assign(this, pick(installState, INSTALL_STATE_FIELDS.restoreResolutions));
-      else
+        this.refreshWorkspaceDependencies();
+      } else {
         await this.applyLightResolution();
-
-      this.refreshWorkspaceDependencies();
+      }
     }
   }
 
