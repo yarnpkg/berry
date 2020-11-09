@@ -98,7 +98,7 @@ export default class AddCommand extends BaseCommand {
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     await project.restoreInstallState({
-      lightResolutionFallback: false,
+      restoreResolutions: false,
     });
 
     const interactive = this.interactive ?? configuration.get(`preferInteractive`);
