@@ -719,7 +719,20 @@ export class Project {
       return newPromise;
     };
 
+    const startDescriptorAliasing = async (descriptor: Descriptor, alias: Descriptor): Promise<Package> => {
+      const resolution = await scheduleDescriptorResolution(alias);
+
+      allDescriptors.set(descriptor.descriptorHash, descriptor);
+      allResolutions.set(descriptor.descriptorHash, resolution.locatorHash);
+
+      return resolution;
+    };
+
     const startDescriptorResolution = async (descriptor: Descriptor): Promise<Package> => {
+      const alias = this.resolutionAliases.get(descriptor.descriptorHash);
+      if (typeof alias !== `undefined`)
+        return startDescriptorAliasing(descriptor, this.storedDescriptors.get(alias)!);
+
       const resolutionDependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
       const resolvedDependencies = new Map(await Promise.all(resolutionDependencies.map(async dependency => {
         return [dependency.descriptorHash, await scheduleDescriptorResolution(dependency)] as const;
