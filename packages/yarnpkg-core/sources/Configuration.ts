@@ -424,34 +424,34 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `Map of package corrections to apply on the dependency tree`,
     type: SettingsType.MAP,
     valueDefinition: {
-      description: ``,
+      description: `The extension that will be applied to any package whose version matches the specified range`,
       type: SettingsType.SHAPE,
       properties: {
         dependencies: {
-          description: ``,
+          description: `The set of dependencies that must be made available to the current package in order for it to work properly`,
           type: SettingsType.MAP,
           valueDefinition: {
-            description: ``,
+            description: `A range`,
             type: SettingsType.STRING,
           },
         },
         peerDependencies: {
-          description: ``,
+          description: `Inherited dependencies - the consumer of the package will be tasked to provide them`,
           type: SettingsType.MAP,
           valueDefinition: {
-            description: ``,
+            description: `A semver range`,
             type: SettingsType.STRING,
           },
         },
         peerDependenciesMeta: {
-          description: ``,
+          description: `Extra information related to the dependencies listed in the peerDependencies field`,
           type: SettingsType.MAP,
           valueDefinition: {
-            description: ``,
+            description: `The peerDependency meta`,
             type: SettingsType.SHAPE,
             properties: {
               optional: {
-                description: ``,
+                description: `If true, the selected peer dependency will be marked as optional by the package manager and the consumer omitting it won't be reported as an error`,
                 type: SettingsType.BOOLEAN,
                 default: false,
               },
