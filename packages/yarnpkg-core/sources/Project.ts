@@ -738,8 +738,15 @@ export class Project {
         return [dependency.descriptorHash, await scheduleDescriptorResolution(dependency)] as const;
       })));
 
-      const candidateResolutions = await resolver.getCandidates(descriptor, resolvedDependencies, resolveOptions);
+      const candidateResolutions = await miscUtils.prettifyAsyncErrors(async () => {
+        return await resolver.getCandidates(descriptor, resolvedDependencies, resolveOptions);
+      }, message => {
+        return `${structUtils.prettyDescriptor(this.configuration, descriptor)}: ${message}`;
+      });
+
       const finalResolution = candidateResolutions[0];
+      if (typeof finalResolution === `undefined`)
+        throw new Error(`${structUtils.prettyDescriptor(this.configuration, descriptor)}: No candidates found`);
 
       allDescriptors.set(descriptor.descriptorHash, descriptor);
       allResolutions.set(descriptor.descriptorHash, finalResolution.locatorHash);
