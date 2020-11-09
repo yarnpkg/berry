@@ -344,17 +344,20 @@ export class Manifest {
         const descriptor = structUtils.parseDescriptor(pattern);
         const dependencyMeta = this.ensureDependencyMeta(descriptor);
 
-        let {built, optional, unplugged} = meta as any;
-
-        if ((built = miscUtils.tryParseOptionalBoolean(built)) === null) {
+        const built = miscUtils.tryParseOptionalBoolean(meta.built);
+        if (built === null) {
           errors.push(new Error(`Invalid built meta field for '${pattern}'`));
           continue;
         }
-        if ((optional = miscUtils.tryParseOptionalBoolean(optional)) === null) {
+
+        const optional = miscUtils.tryParseOptionalBoolean(meta.optional);
+        if (optional === null) {
           errors.push(new Error(`Invalid optional meta field for '${pattern}'`));
           continue;
         }
-        if ((unplugged = miscUtils.tryParseOptionalBoolean(unplugged)) === null) {
+
+        const unplugged = miscUtils.tryParseOptionalBoolean(meta.unplugged);
+        if (unplugged === null) {
           errors.push(new Error(`Invalid unplugged meta field for '${pattern}'`));
           continue;
         }
@@ -373,9 +376,8 @@ export class Manifest {
         const descriptor = structUtils.parseDescriptor(pattern);
         const peerDependencyMeta = this.ensurePeerDependencyMeta(descriptor);
 
-        let {optional} = meta as any;
-
-        if ((optional = miscUtils.tryParseOptionalBoolean(optional)) === null) {
+        const optional = optional = miscUtils.tryParseOptionalBoolean(meta.optional);
+        if (optional === null) {
           errors.push(new Error(`Invalid optional meta field for '${pattern}'`));
           continue;
         }
