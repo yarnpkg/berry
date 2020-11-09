@@ -269,7 +269,7 @@ export default class YarnCommand extends BaseCommand {
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     await project.restoreInstallState({
-      lightResolutionFallback: false,
+      restoreResolutions: false,
     });
 
     // Important: Because other commands also need to run installs, if you
