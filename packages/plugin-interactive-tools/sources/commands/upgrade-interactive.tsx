@@ -9,7 +9,7 @@ import {suggestUtils}                                                           
 import {Command, Usage}                                                                                                                 from 'clipanion';
 import {diffWords}                                                                                                                      from 'diff';
 import {Box, Text}                                                                                                                      from 'ink';
-import React, {useEffect, useState, useRef}                                                                                             from 'react';
+import React, {useEffect, useState}                                                                                                     from 'react';
 import semver                                                                                                                           from 'semver';
 
 const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
