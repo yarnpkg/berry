@@ -122,6 +122,33 @@ export class Manifest {
     return manifest;
   }
 
+  static isManifestFieldCompatible(rules: Array<string> | null, actual: string) {
+    if (rules === null)
+      return true;
+
+    let isNotOnAllowlist = true;
+    let isOnDenylist = false;
+
+    for (const rule of rules) {
+      if (rule[0] === `!`) {
+        isOnDenylist = true;
+
+        if (actual === rule.slice(1)) {
+          return false;
+        }
+      } else {
+        isNotOnAllowlist = false;
+
+        if (rule === actual) {
+          return true;
+        }
+      }
+    }
+
+    // Denylists with allowlisted items should be treated as allowlists for `os` and `cpu` in `package.json`
+    return isOnDenylist && isNotOnAllowlist;
+  }
+
   loadFromText(text: string) {
     let data;
     try {
@@ -563,11 +590,11 @@ export class Manifest {
   }
 
   isCompatibleWithOS(os: string): boolean {
-    return this.os === null || isManifestFieldCompatible(this.os, os);
+    return Manifest.isManifestFieldCompatible(this.os, os);
   }
 
   isCompatibleWithCPU(cpu: string): boolean {
-    return this.cpu === null || isManifestFieldCompatible(this.cpu, cpu);
+    return Manifest.isManifestFieldCompatible(this.cpu, cpu);
   }
 
   ensureDependencyMeta(descriptor: Descriptor) {
@@ -845,30 +872,6 @@ function stripBOM(content: string) {
   } else {
     return content;
   }
-}
-
-function isManifestFieldCompatible(rules: Array<string>, actual: string) {
-  let isNotOnAllowlist = true;
-  let isOnDenylist = false;
-
-  for (const rule of rules) {
-    if (rule[0] === `!`) {
-      isOnDenylist = true;
-
-      if (actual === rule.slice(1)) {
-        return false;
-      }
-    } else {
-      isNotOnAllowlist = false;
-
-      if (rule === actual) {
-        return true;
-      }
-    }
-  }
-
-  // Denylists with allowlisted items should be treated as allowlists for `os` and `cpu` in `package.json`
-  return isOnDenylist && isNotOnAllowlist;
 }
 
 function normalizeSlashes(str: string) {
