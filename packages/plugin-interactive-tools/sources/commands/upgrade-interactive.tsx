@@ -20,23 +20,15 @@ type UpgradeSuggestions = Array<UpgradeSuggestion>
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpgradeInteractiveCommand extends BaseCommand {
-  @Command.Boolean(`--new-only`, {description: `Only show packages for which there is an upgrade available`})
-  newOnly: boolean = false
-
   static usage: Usage = Command.Usage({
     category: `Interactive commands`,
     description: `open the upgrade interface`,
     details: `
       This command opens a fullscreen terminal interface where you can see the packages used by your application, their status compared to the latest versions available on the remote registry, and let you upgrade.
-
-      If the --new-only flag is set, only packages that have an available upgrade will be shown.
     `,
     examples: [[
       `Open the upgrade window`,
       `yarn upgrade-interactive`,
-    ], [
-      `Only show packages with an available upgrade`,
-      `yarn upgrade-interactive --new-only`,
     ]],
   });
 
@@ -112,7 +104,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       }
     };
 
-    const fetchSuggestions = async (descriptor: Descriptor) => {
+    const fetchSuggestions = async (descriptor: Descriptor): Promise<UpgradeSuggestions> => {
       const referenceRange = semver.valid(descriptor.range)
         ? `^${descriptor.range}`
         : descriptor.range;
@@ -189,7 +181,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       );
     };
 
-    const UpgradeEntryWithSuggestions = ({active, descriptor, suggestions}: {active: boolean, descriptor: Descriptor, suggestions: Array<UpgradeSuggestion>}) => {
+    const UpgradeEntry = ({active, descriptor, suggestions}: {active: boolean, descriptor: Descriptor, suggestions: Array<UpgradeSuggestion>}) => {
       const [action, setAction] = useMinistore<string | null>(descriptor.descriptorHash, null);
 
       const packageIdentifier = structUtils.stringifyIdent(descriptor);
@@ -210,44 +202,8 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       </>;
     };
 
-    const UpgradeEntry = ({active, descriptor}: {active: boolean, descriptor: Descriptor}) => {
-      const [suggestions, setSuggestions] = useState<UpgradeSuggestions | null>(null);
-
-      const mountedRef = useRef<boolean>(true);
-
-      useEffect(() => {
-        return () => {
-          mountedRef.current = false;
-        };
-      }, []);
-
-      useEffect(() => {
-        fetchSuggestions(descriptor).then(suggestions => {
-          if (mountedRef.current) {
-            setSuggestions(suggestions);
-          }
-        });
-      }, [
-        descriptor.descriptorHash,
-      ]);
-      const packageIdentifier = structUtils.stringifyIdent(descriptor);
-      const padLength = Math.max(0, 45 - packageIdentifier.length);
-
-      return (suggestions !== null)
-        ? <UpgradeEntryWithSuggestions active={active} descriptor={descriptor} suggestions={suggestions}/>
-        : <Box>
-          <Box width={45}>
-            <Text bold>
-              {structUtils.prettyIdent(configuration, descriptor)}
-            </Text>
-            <Pad active={active} length={padLength}/>
-          </Box>
-          <Box marginLeft={2}><Text color="gray">Fetching suggestions...</Text></Box>
-        </Box>;
-    };
-
-    const ShowNewUpgrades = ({dependencies}: { dependencies: Array<Descriptor> }) => {
-      const [suggestions, setSuggestions] = useState<Array<[Descriptor, UpgradeSuggestions]>>([]);
+    const UpgradeEntries = ({dependencies}: { dependencies: Array<Descriptor> }) => {
+      const [suggestions, setSuggestions] = useState<Array<[Descriptor, UpgradeSuggestions]>|null>(null);
 
       useEffect(() => {
         Promise.all(dependencies.map(descriptor => fetchSuggestions(descriptor)))
@@ -261,11 +217,15 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           });
       }, []);
 
-      if (!suggestions.length)
+      // Still fetching
+      if (!suggestions)
         return <Text>Fetching suggestions...</Text>;
 
+      if (!suggestions.length)
+        return <Text>No upgrades found</Text>;
+
       return <ScrollableItems radius={DEFAULT_WINDOW_SIZE} children={suggestions.map(([descriptor, upgrades]) => {
-        return <UpgradeEntryWithSuggestions key={descriptor.descriptorHash} active={false} descriptor={descriptor} suggestions={upgrades} />;
+        return <UpgradeEntry key={descriptor.descriptorHash} active={false} descriptor={descriptor} suggestions={upgrades} />;
       })} />;
     };
 
@@ -284,23 +244,11 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         return structUtils.stringifyDescriptor(descriptor);
       });
 
-      if (this.newOnly) {
-        return <Box flexDirection={`column`}>
-          <Prompt/>
-          <Header/>
-          <ShowNewUpgrades dependencies={sortedDependencies} />
-        </Box>;
-      }
-
-      return <>
-        <Box flexDirection={`column`}>
-          <Prompt/>
-          <Header/>
-          <ScrollableItems radius={DEFAULT_WINDOW_SIZE} children={sortedDependencies.map(descriptor => {
-            return <UpgradeEntry key={descriptor.descriptorHash} active={false} descriptor={descriptor} />;
-          })} />
-        </Box>
-      </>;
+      return <Box flexDirection={`column`}>
+        <Prompt/>
+        <Header/>
+        <UpgradeEntries dependencies={sortedDependencies} />
+      </Box>;
     };
 
     const updateRequests = await renderForm(GlobalListApp, {});
