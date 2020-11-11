@@ -40,12 +40,13 @@ export default class NpmLoginCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
-    const registry: string = await getRegistry({
+    const registryConfiguration = await getRegistryConfiguration({
       configuration,
       cwd: this.context.cwd,
       publish: this.publish,
       scope: this.scope,
     });
+    const registry = registryConfiguration.get(`npmRegistryServer`);
 
     const report = await StreamReport.start({
       configuration,
@@ -75,17 +76,17 @@ export default class NpmLoginCommand extends BaseCommand {
   }
 }
 
-export async function getRegistry({scope, publish, configuration, cwd}: {scope?: string, publish: boolean, configuration: Configuration, cwd: PortablePath}) {
+export async function getRegistryConfiguration({scope, publish, configuration, cwd}: {scope?: string, publish: boolean, configuration: Configuration, cwd: PortablePath}) {
   if (scope && publish)
-    return npmConfigUtils.getScopeRegistry(scope, {configuration, type: npmConfigUtils.RegistryType.PUBLISH_REGISTRY});
+    return npmConfigUtils.getScopeRegistryConfiguration(scope, {configuration, type: npmConfigUtils.RegistryType.PUBLISH_REGISTRY});
 
   if (scope)
-    return npmConfigUtils.getScopeRegistry(scope, {configuration});
+    return npmConfigUtils.getScopeRegistryConfiguration(scope, {configuration});
 
   if (publish)
-    return npmConfigUtils.getPublishRegistry((await openWorkspace(configuration, cwd)).manifest, {configuration});
+    return npmConfigUtils.getPublishRegistryConfiguration((await openWorkspace(configuration, cwd)).manifest, {configuration});
 
-  return npmConfigUtils.getDefaultRegistry({configuration});
+  return npmConfigUtils.getDefaultRegistryConfiguration({configuration});
 }
 
 async function setAuthToken(registry: string, npmAuthToken: string, {configuration, scope}: {configuration: Configuration, scope?: string}) {

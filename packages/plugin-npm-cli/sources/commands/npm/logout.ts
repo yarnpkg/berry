@@ -1,10 +1,9 @@
-import {BaseCommand}                                        from '@yarnpkg/cli';
-import {Configuration, MessageName, miscUtils, structUtils} from '@yarnpkg/core';
-import {StreamReport}                                       from '@yarnpkg/core';
-import {npmConfigUtils}                                     from '@yarnpkg/plugin-npm';
-import {Command, Usage}                                     from 'clipanion';
+import {BaseCommand}                           from '@yarnpkg/cli';
+import {Configuration, MessageName, miscUtils} from '@yarnpkg/core';
+import {StreamReport}                          from '@yarnpkg/core';
+import {Command, Usage}                        from 'clipanion';
 
-import {getRegistry}                                        from './login';
+import {getRegistryConfiguration}              from './login';
 
 const LOGOUT_KEYS = new Set([
   `npmAuthIdent`,
@@ -54,22 +53,16 @@ export default class NpmLogoutCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
     const checkLogout = async () => {
-      const registry: string | null = await getRegistry({
-        configuration,
+      const refreshedConfiguration = await Configuration.find(this.context.cwd, this.context.plugins);
+
+      const registry = await getRegistryConfiguration({
+        configuration: refreshedConfiguration,
         cwd: this.context.cwd,
         publish: this.publish,
         scope: this.scope,
       });
 
-      const refreshedConfiguration = await Configuration.find(this.context.cwd, this.context.plugins);
-      const fakeIdent = structUtils.makeIdent(this.scope ?? null, `pkg`);
-
-      const authConfiguration = npmConfigUtils.getAuthConfiguration(registry, {
-        configuration: refreshedConfiguration,
-        ident: fakeIdent,
-      });
-
-      return !authConfiguration.get(`npmAuthToken`);
+      return !registry.get(`npmAuthToken`);
     };
 
     const report = await StreamReport.start({
@@ -92,16 +85,17 @@ export default class NpmLogoutCommand extends BaseCommand {
         return;
       }
 
-      const registry: string | null = await getRegistry({
+      const registryConfiguration = await getRegistryConfiguration({
         configuration,
         cwd: this.context.cwd,
         publish: this.publish,
       });
+      const registryServer = registryConfiguration.get(`npmRegistryServer`);
 
-      await logoutFrom(`npmRegistries`, registry);
+      await logoutFrom(`npmRegistries`, registryServer);
 
       if (await checkLogout()) {
-        report.reportInfo(MessageName.UNNAMED, `Successfully logged out from ${registry}`);
+        report.reportInfo(MessageName.UNNAMED, `Successfully logged out from ${registryServer}`);
       } else {
         report.reportWarning(MessageName.UNNAMED, `Registry authentication settings removed, but some other ones settings still apply to it`);
       }

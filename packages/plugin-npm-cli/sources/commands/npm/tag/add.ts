@@ -39,7 +39,7 @@ export default class NpmTagAddCommand extends BaseCommand {
     if (!semver.valid(version))
       throw new UsageError(`The range ${formatUtils.pretty(configuration, descriptor.range, formatUtils.Type.RANGE)} must be a valid semver version`);
 
-    const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
+    const registry = npmConfigUtils.getPublishRegistryConfiguration(workspace.manifest, {configuration});
 
     const prettyIdent = formatUtils.pretty(configuration, descriptor, formatUtils.Type.IDENT);
     const prettyVersion = formatUtils.pretty(configuration, version, formatUtils.Type.RANGE);

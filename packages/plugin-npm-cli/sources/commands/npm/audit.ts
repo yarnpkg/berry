@@ -86,7 +86,7 @@ export default class AuditCommand extends BaseCommand {
       dependencies,
     };
 
-    const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {
+    const registry = npmConfigUtils.getPublishRegistryConfiguration(workspace.manifest, {
       configuration,
     });
 

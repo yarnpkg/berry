@@ -50,7 +50,7 @@ export default class NpmPublishCommand extends BaseCommand {
     const ident = workspace.manifest.name;
     const version = workspace.manifest.version;
 
-    const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
+    const registry = npmConfigUtils.getPublishRegistryConfiguration(workspace.manifest, {configuration});
 
     const report = await StreamReport.start({
       configuration,
@@ -96,7 +96,7 @@ export default class NpmPublishCommand extends BaseCommand {
         const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
           access: this.access,
           tag: this.tag,
-          registry,
+          registry: registry.get(`npmRegistryServer`),
         });
 
         try {

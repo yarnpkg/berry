@@ -41,7 +41,7 @@ export default class NpmTagRemoveCommand extends BaseCommand {
 
     const ident = structUtils.parseIdent(this.package);
 
-    const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
+    const registry = npmConfigUtils.getPublishRegistryConfiguration(workspace.manifest, {configuration});
 
     const prettyTag = formatUtils.pretty(configuration, this.tag, formatUtils.Type.CODE);
     const prettyIdent = formatUtils.pretty(configuration, ident, formatUtils.Type.IDENT);

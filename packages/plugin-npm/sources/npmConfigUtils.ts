@@ -1,49 +1,85 @@
-import {Configuration, Manifest, Ident} from '@yarnpkg/core';
+import {Configuration, Manifest, MapConfigurationValue} from '@yarnpkg/core';
 
 export enum RegistryType {
   FETCH_REGISTRY = `npmRegistryServer`,
   PUBLISH_REGISTRY = `npmPublishRegistry`,
 }
 
+export type RegistryConfiguration = MapConfigurationValue<{
+  npmAlwaysAuth: boolean | null;
+  npmAuthIdent: string | null;
+  npmAuthToken: string | null;
+
+  npmRegistryServer: string;
+}>
+
 export interface MapLike {
   get(key: string): any;
 }
 
-export function normalizeRegistry(registry: string) {
+export function normalizeRegistry(registry: string): string;
+export function normalizeRegistry(registry: null): null;
+export function normalizeRegistry(registry: string | null): string | null {
+  if (registry === null)
+    return null;
   return registry.replace(/\/$/, ``);
 }
 
+export function getRegistryByType({configuration, type = RegistryType.FETCH_REGISTRY}: {configuration: MapLike, type?: RegistryType}): string | null {
+  return normalizeRegistry(configuration.get(type) ?? configuration.get(RegistryType.FETCH_REGISTRY));
+}
+
 export function getPublishRegistry(manifest: Manifest, {configuration}: {configuration: Configuration}) {
-  if (manifest.publishConfig && manifest.publishConfig.registry)
-    return normalizeRegistry(manifest.publishConfig.registry);
-
-  if (manifest.name)
-    return getScopeRegistry(manifest.name.scope, {configuration, type: RegistryType.PUBLISH_REGISTRY});
-
-  return getDefaultRegistry({configuration, type: RegistryType.PUBLISH_REGISTRY});
+  return getPublishRegistryConfiguration(manifest, {configuration}).get(`npmRegistryServer`);
 }
 
 export function getScopeRegistry(scope: string | null, {configuration, type = RegistryType.FETCH_REGISTRY}: {configuration: Configuration, type?: RegistryType}): string {
-  const scopeConfiguration = getScopeConfiguration(scope, {configuration});
-  if (scopeConfiguration === null)
-    return getDefaultRegistry({configuration, type});
-
-  const scopeRegistry = scopeConfiguration.get(type);
-  if (scopeRegistry === null)
-    return getDefaultRegistry({configuration, type});
-
-  return normalizeRegistry(scopeRegistry);
+  return getScopeRegistryConfiguration(scope, {configuration, type}).get(`npmRegistryServer`);
 }
 
 export function getDefaultRegistry({configuration, type = RegistryType.FETCH_REGISTRY}: {configuration: Configuration, type?: RegistryType}): string {
-  const defaultRegistry = configuration.get(type);
-  if (defaultRegistry !== null)
-    return normalizeRegistry(defaultRegistry);
-
-  return normalizeRegistry(configuration.get(RegistryType.FETCH_REGISTRY));
+  return getDefaultRegistryConfiguration({configuration, type}).get(`npmRegistryServer`);
 }
 
-export function getRegistryConfiguration(registry: string, {configuration}: {configuration: Configuration}): MapLike | null {
+export function getPublishRegistryConfiguration(manifest: Manifest, {configuration}: {configuration: Configuration}) {
+  if (manifest.publishConfig && manifest.publishConfig.registry) {
+    const registry = normalizeRegistry(manifest.publishConfig.registry);
+    return getEffectiveRegistryConfiguration(registry, {configuration, authConfiguration: new Map()});
+  }
+
+  return getScopeRegistryConfiguration(manifest.name?.scope ?? null, {configuration, type: RegistryType.PUBLISH_REGISTRY});
+}
+
+export function getScopeRegistryConfiguration(scope: string | null, {configuration, type = RegistryType.FETCH_REGISTRY}: {configuration: Configuration, type?: RegistryType}): RegistryConfiguration {
+  const scopeConfiguration = getScopeAuthConfiguration(scope, {configuration});
+  if (scopeConfiguration === null)
+    return getDefaultRegistryConfiguration({configuration, type});
+
+  const scopeRegistry = getRegistryByType({configuration: scopeConfiguration, type});
+  if (scopeRegistry !== null)
+    return getEffectiveRegistryConfiguration(scopeRegistry, {configuration, authConfiguration: scopeConfiguration});
+
+  const authConfiguration = new Map();
+  const authFields = [`npmAlwaysAuth`, `npmAuthIdent`, `npmAuthToken`] as const;
+  for (const field of authFields)
+    authConfiguration.set(field, scopeConfiguration.get(field));
+
+  // the scope is falling back to the default registry URL declared at the top
+  // level, fill any missing values with the default auth configuration
+  for (const field of authFields)
+    if (authConfiguration.get(field) === null)
+      authConfiguration.set(field, configuration.get(field));
+
+  const defaultRegistry = getRegistryByType({configuration, type})!;
+  return getEffectiveRegistryConfiguration(defaultRegistry, {configuration, authConfiguration});
+}
+
+export function getDefaultRegistryConfiguration({configuration, type = RegistryType.FETCH_REGISTRY}: {configuration: Configuration, type?: RegistryType}): RegistryConfiguration {
+  const defaultRegistry = getRegistryByType({configuration, type})!;
+  return getEffectiveRegistryConfiguration(defaultRegistry, {configuration});
+}
+
+export function getRegistryAuthConfiguration(registry: string, {configuration}: {configuration: Configuration}): MapLike | null {
   const registryConfigurations = configuration.get(`npmRegistries`);
 
   const exactEntry = registryConfigurations.get(registry);
@@ -57,7 +93,7 @@ export function getRegistryConfiguration(registry: string, {configuration}: {con
   return null;
 }
 
-export function getScopeConfiguration(scope: string | null, {configuration}: {configuration: Configuration}): MapLike | null {
+export function getScopeAuthConfiguration(scope: string | null, {configuration}: {configuration: Configuration}): MapLike | null {
   if (scope === null)
     return null;
 
@@ -70,13 +106,27 @@ export function getScopeConfiguration(scope: string | null, {configuration}: {co
   return scopeConfiguration;
 }
 
-export function getAuthConfiguration(registry: string, {configuration, ident}: {configuration: Configuration, ident?: Ident}): MapLike {
-  const scopeConfiguration = ident && getScopeConfiguration(ident.scope, {configuration});
+export function getEffectiveRegistryConfiguration(registry: string, {configuration, authConfiguration}: {configuration: Configuration, authConfiguration?: MapLike}): RegistryConfiguration {
+  const effectiveConfiguration = new Map();
+  effectiveConfiguration.set(`npmRegistryServer`, registry);
+  const authFields = [`npmAlwaysAuth`, `npmAuthIdent`, `npmAuthToken`] as const;
 
-  if (scopeConfiguration?.get(`npmAuthIdent`) || scopeConfiguration?.get(`npmAuthToken`))
-    return scopeConfiguration;
+  const registryConfiguration = getRegistryAuthConfiguration(registry, {configuration});
+  if (registryConfiguration !== null)
+    for (const field of authFields)
+      effectiveConfiguration.set(field, registryConfiguration.get(field));
 
-  const registryConfiguration = getRegistryConfiguration(registry, {configuration});
+  // apply values on top of base registry configuration
+  if (authConfiguration)
+    for (const field of authFields)
+      if (authConfiguration.get(field) != null)
+        effectiveConfiguration.set(field, authConfiguration.get(field));
 
-  return registryConfiguration || configuration;
+  // fall back to top level defaults if no initial auth configuration was given
+  if (!authConfiguration)
+    for (const field of authFields)
+      if (effectiveConfiguration.get(field) == null)
+        effectiveConfiguration.set(field, configuration.get(field));
+
+  return effectiveConfiguration;
 }

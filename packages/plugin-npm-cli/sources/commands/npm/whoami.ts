@@ -1,8 +1,10 @@
-import {BaseCommand, openWorkspace}   from '@yarnpkg/cli';
-import {Configuration, MessageName}   from '@yarnpkg/core';
-import {StreamReport, structUtils}    from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils} from '@yarnpkg/plugin-npm';
-import {Command, Usage}               from 'clipanion';
+import {BaseCommand}                from '@yarnpkg/cli';
+import {Configuration, MessageName} from '@yarnpkg/core';
+import {StreamReport, structUtils}  from '@yarnpkg/core';
+import {npmHttpUtils}               from '@yarnpkg/plugin-npm';
+import {Command, Usage}             from 'clipanion';
+
+import {getRegistryConfiguration}   from './login';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmWhoamiCommand extends BaseCommand {
@@ -35,15 +37,12 @@ export default class NpmWhoamiCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
-    let registry: string;
-    if (this.scope && this.publish)
-      registry = npmConfigUtils.getScopeRegistry(this.scope, {configuration, type: npmConfigUtils.RegistryType.PUBLISH_REGISTRY});
-    else if (this.scope)
-      registry = npmConfigUtils.getScopeRegistry(this.scope, {configuration});
-    else if (this.publish)
-      registry = npmConfigUtils.getPublishRegistry((await openWorkspace(configuration, this.context.cwd)).manifest, {configuration});
-    else
-      registry = npmConfigUtils.getDefaultRegistry({configuration});
+    const registry = await getRegistryConfiguration({
+      configuration,
+      cwd: this.context.cwd,
+      publish: this.publish,
+      scope: this.scope,
+    });
 
     const report = await StreamReport.start({
       configuration,
