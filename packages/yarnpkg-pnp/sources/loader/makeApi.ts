@@ -278,7 +278,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     // would give us the paths to give to _resolveFilename), we can as well not use
     // the {paths} option at all, since it internally makes _resolveFilename create another
     // fake module anyway.
-    return Module._resolveFilename(request, makeFakeModule(npath.fromPortablePath(issuer)), false, {plugnplay: false});
+    return Module._resolveFilename(npath.fromPortablePath(request), makeFakeModule(npath.fromPortablePath(issuer)), false, {plugnplay: false});
   }
 
   /**

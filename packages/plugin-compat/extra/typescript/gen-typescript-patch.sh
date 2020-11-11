@@ -116,7 +116,7 @@ while [[ ${#HASHES[@]} -gt 0 ]]; do
   ORIG_DIR=$(build-dir-for "$CHERRYPICK_ONTO")
 
   make-build-for "$CHERRYPICK_ONTO" "$CHERRYPICK_FROM" "$CHERRYPICK_TO"
-  PATCHED_DIR=$(build-dir-for "$CHERRYPICK_ONTO" "$CHERRYPICK_FROM")
+  PATCHED_DIR=$(build-dir-for "$CHERRYPICK_ONTO" "$CHERRYPICK_TO")
 
   DIFF="$THIS_DIR"/patch."${HASH}"-on-"${BASE}".diff
 
