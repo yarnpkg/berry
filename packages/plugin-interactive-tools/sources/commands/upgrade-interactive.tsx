@@ -24,7 +24,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     category: `Interactive commands`,
     description: `open the upgrade interface`,
     details: `
-      This command opens a fullscreen terminal interface where you can see the packages used by your application, their status compared to the latest versions available on the remote registry, and let you upgrade.
+      This command opens a fullscreen terminal interface where you can see any out of date packages used by your application, their status compared to the latest versions available on the remote registry, and select packages to upgrade.
     `,
     examples: [[
       `Open the upgrade window`,
