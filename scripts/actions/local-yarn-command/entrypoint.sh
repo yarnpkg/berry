@@ -8,6 +8,6 @@ export SHARP_IGNORE_GLOBAL_LIBVIPS=1
 
 NONCE="$(cat /proc/sys/kernel/random/uuid | sha256sum | head -c 64)"
 
-echo "::stop-commands::$HASH"
+echo "::stop-commands::$NONCE"
 exec node ./scripts/run-yarn.js "$@"
-echo "::$HASH::"
+echo "::$NONCE::"
