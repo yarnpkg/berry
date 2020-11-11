@@ -37,7 +37,7 @@ describe(`Auth tests`, () => {
   );
 
   test(
-    `it should fail to install packages which if npmAlwaysAuth is set to true without auth present`,
+    `it should fail to install packages if npmAlwaysAuth is set to true without auth present`,
     makeTemporaryEnv(
       {
         dependencies: {[`no-deps`]: `1.0.0`},
@@ -85,6 +85,34 @@ describe(`Auth tests`, () => {
   );
 
   test(
+    `it should install scoped packages which require authentication if an authentication token is configured at the registry level`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@private/package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `npmRegistries:`,
+          `  "${url}":`,
+          `    npmAuthToken: ${AUTH_TOKEN}`,
+          `npmScopes:`,
+          `  private:`,
+          `    npmRegistryServer: "${url}"`,
+        ].join(`\n`));
+
+        await run(`install`);
+
+        await expect(source(`require('@private/package')`)).resolves.toMatchObject({
+          name: `@private/package`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
     `it should install scoped packages which require authentication if an authentication token is configured at the scope level`,
     makeTemporaryEnv(
       {
@@ -94,6 +122,9 @@ describe(`Auth tests`, () => {
         const url = await startPackageServer();
 
         await writeFile(`${path}/.yarnrc.yml`, [
+          `npmRegistries:`,
+          `  "${url}":`,
+          `    npmAuthToken: ${INVALID_AUTH_TOKEN}`,
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
@@ -218,6 +249,60 @@ describe(`Auth tests`, () => {
   );
 
   test(
+    `it should install unscoped packages which require authentication if npmAlwaysAuth is set to true and an authentication token is present at the registry level`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`private-package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `npmRegistryServer: "${url}"`,
+          `npmAlwaysAuth: true`,
+          `npmRegistries:`,
+          `  "${url}":`,
+          `    npmAuthToken: ${AUTH_TOKEN}`,
+        ].join(`\n`));
+
+        await run(`install`);
+
+        await expect(source(`require('private-package')`)).resolves.toMatchObject({
+          name: `private-package`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should install unscoped packages which require authentication if authentication token is present and npmAlwaysAuth is set to true at the registry level`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`private-package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `npmRegistryServer: "${url}"`,
+          `npmAuthToken: ${AUTH_TOKEN}`,
+          `npmRegistries:`,
+          `  "${url}":`,
+          `    npmAlwaysAuth: true`,
+        ].join(`\n`));
+
+        await run(`install`);
+
+        await expect(source(`require('private-package')`)).resolves.toMatchObject({
+          name: `private-package`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
     `it should install unscoped packages which require authentication if npmAlwaysAuth is set to true and an authentication ident is present`,
     makeTemporaryEnv(
       {
@@ -289,6 +374,56 @@ describe(`Auth tests`, () => {
           name: `private-unconventional-tarball`,
           version: `1.0.0`,
         });
+      },
+    ),
+  );
+
+  test(
+    `it should ignore default registry auth settings that are redefined at the registry level`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`private-package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `npmRegistryServer: "${url}"`,
+          `npmAuthToken: ${INVALID_AUTH_TOKEN}`,
+          `npmAlwaysAuth: false`,
+          `npmRegistries:`,
+          `  "${url}":`,
+          `    npmAuthToken: ${AUTH_TOKEN}`,
+          `    npmAlwaysAuth: true`,
+        ].join(`\n`));
+
+        await run(`install`);
+
+        await expect(source(`require('private-package')`)).resolves.toMatchObject({
+          name: `private-package`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should ignore default registry auth settings when a scoped package has a custom registry server`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@private/package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `npmAuthToken: ${AUTH_TOKEN}`,
+          `npmScopes:`,
+          `  private:`,
+          `    npmRegistryServer: ${url}`,
+        ].join(`\n`));
+
+        await expect(run(`install`)).rejects.toThrow();
       },
     ),
   );
