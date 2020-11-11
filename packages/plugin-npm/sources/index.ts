@@ -18,7 +18,7 @@ const authSettings = {
   npmAlwaysAuth: {
     description: `URL of the selected npm registry (note: npm enterprise isn't supported)`,
     type: SettingsType.BOOLEAN as const,
-    default: false,
+    default: null,
   },
   npmAuthIdent: {
     description: `Authentication identity for the npm registry (_auth in npm and yarn v1)`,
@@ -47,7 +47,7 @@ const registrySettings = {
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
-    npmAlwaysAuth: boolean;
+    npmAlwaysAuth: boolean|null;
     npmAuthIdent: string|null;
     npmAuthToken: string|null;
 
@@ -55,7 +55,7 @@ declare module '@yarnpkg/core' {
     npmRegistryServer: string;
 
     npmScopes:  Map<string, MapConfigurationValue<{
-      npmAlwaysAuth: boolean;
+      npmAlwaysAuth: boolean|null;
       npmAuthIdent: string|null;
       npmAuthToken: string|null;
 
@@ -63,7 +63,7 @@ declare module '@yarnpkg/core' {
       npmRegistryServer: string;
     }>>;
     npmRegistries: Map<string, MapConfigurationValue<{
-      npmAlwaysAuth: boolean;
+      npmAlwaysAuth: boolean|null;
       npmAuthIdent: string|null;
       npmAuthToken: string|null;
     }>>;

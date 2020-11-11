@@ -141,7 +141,7 @@ describe(`Configuration`, () => {
 
         const scopeConfiguration = configuration.get(`npmScopes`);
         expect(scopeConfiguration.get(`foo`)?.get(`npmAuthToken`)).toBe(`token for foo`);
-        expect(scopeConfiguration.get(`foo`)?.get(`npmAlwaysAuth`)).toBe(false);
+        expect(scopeConfiguration.get(`foo`)?.get(`npmAlwaysAuth`)).toBe(null);
 
         expect(scopeConfiguration.get(`bar`)?.get(`npmAlwaysAuth`)).toBe(true);
       });
