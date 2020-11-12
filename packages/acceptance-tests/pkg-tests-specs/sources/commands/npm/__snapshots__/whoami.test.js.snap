@@ -1,6 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Commands npm whoami it should print the npm publish registry username for a given scope when npmRegistries config has a valid npmAuthToken  1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: anotherTestUser
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands npm whoami it should print the npm publish registry username when npmRegistries has a valid npmAuthToken 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: anotherTestUser
+➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands npm whoami it should print the npm registry username for a given scope 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: anotherTestUser
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands npm whoami it should print the npm registry username for a given scope when npmRegistries config has a valid npmAuthToken 1`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -25,6 +55,16 @@ Object {
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: testUser
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands npm whoami it should print the npm registry username when npmRegistries has a valid npmAuthToken 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: anotherTestUser
 ➤ YN0000: Done
 ",
 }

@@ -51,6 +51,59 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should print the npm registry username when npmRegistries has a valid npmAuthToken`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `npmRegistryServer: "${url}"\n`,
+          `npmRegistries:\n`,
+          `  "${url}":\n`,
+          `    npmAuthToken: ${AUTH_TOKEN2}\n`,
+        ].join(``));
+
+        let code;
+        let stdout;
+        let stderr;
+
+        try {
+          ({code, stdout, stderr} = await run(`npm`, `whoami`));
+        } catch (error) {
+          ({code, stdout, stderr} = error);
+        }
+
+        expect({code, stdout, stderr}).toMatchSnapshot();
+      })
+    );
+
+    test(
+      `it should print the npm publish registry username when npmRegistries has a valid npmAuthToken`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `npmPublishRegistry: "${url}"\n`,
+          `npmAuthToken: ${AUTH_TOKEN}\n`,
+          `npmRegistries:\n`,
+          `  "${url}":\n`,
+          `    npmAuthToken: ${AUTH_TOKEN2}\n`,
+        ].join(``));
+
+        let code;
+        let stdout;
+        let stderr;
+
+        try {
+          ({code, stdout, stderr} = await run(`npm`, `whoami`, `--publish`));
+        } catch (error) {
+          ({code, stdout, stderr} = error);
+        }
+
+        expect({code, stdout, stderr}).toMatchSnapshot();
+      })
+    );
+
+    test(
       `it should print the npm registry username for a given scope`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const url = await startPackageServer();
@@ -70,6 +123,64 @@ describe(`Commands`, () => {
 
         try {
           ({code, stdout, stderr} = await run(`npm`, `whoami`, `--scope`, `testScope`));
+        } catch (error) {
+          ({code, stdout, stderr} = error);
+        }
+
+        expect({code, stdout, stderr}).toMatchSnapshot();
+      })
+    );
+
+    test(
+      `it should print the npm registry username for a given scope when npmRegistries config has a valid npmAuthToken`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `npmRegistries:\n`,
+          `  "${url}":\n`,
+          `    npmAuthToken: "${AUTH_TOKEN}"\n`,
+          `npmScopes:\n`,
+          `  testScope:\n`,
+          `    npmAuthToken: ${AUTH_TOKEN2}\n`,
+          `    npmRegistryServer: "${url}"\n`,
+        ].join(``));
+
+        let code;
+        let stdout;
+        let stderr;
+
+        try {
+          ({code, stdout, stderr} = await run(`npm`, `whoami`, `--scope`, `testScope`));
+        } catch (error) {
+          ({code, stdout, stderr} = error);
+        }
+
+        expect({code, stdout, stderr}).toMatchSnapshot();
+      })
+    );
+
+    test(
+      `it should print the npm publish registry username for a given scope when npmRegistries config has a valid npmAuthToken `,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const url = await startPackageServer();
+
+        await writeFile(`${path}/.yarnrc.yml`, [
+          `npmRegistries:\n`,
+          `  "${url}":\n`,
+          `    npmAuthToken: "${AUTH_TOKEN}"\n`,
+          `npmScopes:\n`,
+          `  testScope:\n`,
+          `    npmAuthToken: ${AUTH_TOKEN2}\n`,
+          `    npmPublishRegistry: "${url}"\n`,
+        ].join(``));
+
+        let code;
+        let stdout;
+        let stderr;
+
+        try {
+          ({code, stdout, stderr} = await run(`npm`, `whoami`, `--scope`, `testScope`, `--publish`));
         } catch (error) {
           ({code, stdout, stderr} = error);
         }
