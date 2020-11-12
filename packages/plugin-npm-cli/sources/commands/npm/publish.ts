@@ -62,7 +62,6 @@ export default class NpmPublishCommand extends BaseCommand {
           const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
             configuration,
             registry,
-            ident,
             jsonResponse: true,
           });
 
@@ -103,7 +102,6 @@ export default class NpmPublishCommand extends BaseCommand {
           await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
             configuration,
             registry,
-            ident,
             jsonResponse: true,
           });
         } catch (error) {

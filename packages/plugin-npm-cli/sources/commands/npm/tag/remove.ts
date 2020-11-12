@@ -60,7 +60,6 @@ export default class NpmTagRemoveCommand extends BaseCommand {
         await npmHttpUtils.del(url, {
           configuration,
           registry,
-          ident,
           jsonResponse: true,
         });
       } catch (error) {

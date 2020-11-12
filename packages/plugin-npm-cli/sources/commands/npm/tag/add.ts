@@ -59,7 +59,6 @@ export default class NpmTagAddCommand extends BaseCommand {
         await npmHttpUtils.put(url, version, {
           configuration,
           registry,
-          ident: descriptor,
           jsonRequest: true,
           jsonResponse: true,
         });

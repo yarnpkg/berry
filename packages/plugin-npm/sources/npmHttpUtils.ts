@@ -22,7 +22,10 @@ type RegistryOptions = {
   registry?: string,
 } | {
   ident?: Ident,
-  registry: string | RegistryConfiguration;
+  registry: string;
+} | {
+  ident?: never;
+  registry: RegistryConfiguration;
 };
 
 export type Options = httpUtils.Options & AuthOptions & RegistryOptions;
