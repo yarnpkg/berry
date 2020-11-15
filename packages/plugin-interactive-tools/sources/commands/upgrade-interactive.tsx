@@ -203,14 +203,14 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     };
 
     const UpgradeEntries = ({dependencies}: { dependencies: Array<Descriptor> }) => {
-      const [suggestions, setSuggestions] = useState<Array<[Descriptor, UpgradeSuggestions]>|null>(null);
+      const [suggestions, setSuggestions] = useState<Array<readonly [Descriptor, UpgradeSuggestions]>|null>(null);
 
       useEffect(() => {
         Promise.all(dependencies.map(descriptor => fetchSuggestions(descriptor)))
           .then(allSuggestions => {
             const mappedToSuggestions = dependencies.map((descriptor, i) => {
               const suggestionsForDescriptor = allSuggestions[i];
-              return [descriptor, suggestionsForDescriptor] as [Descriptor, UpgradeSuggestions];
+              return [descriptor, suggestionsForDescriptor] as const;
             }).filter(([_, suggestions]) => suggestions.length > 1);
 
             setSuggestions(mappedToSuggestions);
