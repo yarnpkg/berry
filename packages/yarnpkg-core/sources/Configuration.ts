@@ -1,5 +1,5 @@
-import {DEFAULT_COMPRESSION_LEVEL}                 from '@yarnpkg/fslib';
 import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL}                 from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                  from '@yarnpkg/parsers';
 import camelcase                                   from 'camelcase';
 import {isCI}                                      from 'ci-info';
@@ -79,8 +79,7 @@ export const FormatType = formatUtils.Type;
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
   description: string,
   type: T,
-  isArray?: boolean,
-};
+} & ({isArray?: false} | {isArray: true, concatenateValues?: boolean});
 
 export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE> & {
   properties: {[propertyName: string]: SettingsDefinition},
@@ -342,6 +341,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
           type: SettingsType.ABSOLUTE_PATH,
           default: null,
         },
+        enableNetwork: {
+          description: `If false, the package manager will refuse to use the network if required to`,
+          type: SettingsType.BOOLEAN,
+          default: null,
+        },
       },
     },
   },
@@ -354,6 +358,32 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `If false, SSL certificate errors will be ignored`,
     type: SettingsType.BOOLEAN,
     default: true,
+  },
+
+  logFilters: {
+    description: `Overrides for log levels`,
+    type: SettingsType.SHAPE,
+    isArray: true,
+    concatenateValues: true,
+    properties: {
+      code: {
+        description: `Code of the messages covered by this override`,
+        type: SettingsType.STRING,
+        default: undefined,
+      },
+      text: {
+        description: `Code of the texts covered by this override`,
+        type: SettingsType.STRING,
+        default: undefined,
+      },
+      level: {
+        description: `Log level override, set to null to remove override`,
+        type: SettingsType.STRING,
+        values: Object.values(formatUtils.LogLevel),
+        isNullable: true,
+        default: undefined,
+      },
+    },
   },
 
   // Settings related to telemetry
@@ -447,9 +477,11 @@ export interface ConfigurationValueMap {
   httpTimeout: number;
   httpRetry: number;
   networkConcurrency: number;
-  networkSettings: Map<string, MapConfigurationValue<{ caFilePath: PortablePath }>>;
-  caFilePath: PortablePath;
+  networkSettings: Map<string, MapConfigurationValue<{caFilePath: PortablePath | null, enableNetwork: boolean | null}>>;
+  caFilePath: PortablePath | null;
   enableStrictSsl: boolean;
+
+  logFilters: Array<MapConfigurationValue<{code?: string, text?: string, level?: formatUtils.LogLevel | null}>>;
 
   // Settings related to telemetry
   enableTelemetry: boolean;
@@ -588,7 +620,9 @@ function parseShape(configuration: Configuration, path: string, value: unknown, 
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Object configuration settings "${path}" must be an object`);
 
-  const result: Map<string, any> = getDefaultValue(configuration, definition);
+  const result: Map<string, any> = getDefaultValue(configuration, definition, {
+    ignoreArrays: true,
+  });
 
   if (value === null)
     return result;
@@ -629,9 +663,12 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
   return result;
 }
 
-function getDefaultValue(configuration: Configuration, definition: SettingsDefinition) {
+function getDefaultValue(configuration: Configuration, definition: SettingsDefinition, {ignoreArrays = false}: {ignoreArrays?: boolean} = {}) {
   switch (definition.type) {
     case SettingsType.SHAPE: {
+      if (definition.isArray && !ignoreArrays)
+        return [];
+
       const result = new Map<string, any>();
 
       for (const [propKey, propDefinition] of Object.entries(definition.properties))
@@ -641,6 +678,9 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
     } break;
 
     case SettingsType.MAP: {
+      if (definition.isArray && !ignoreArrays)
+        return [];
+
       return new Map<string, any>();
     } break;
 
@@ -1217,7 +1257,7 @@ export class Configuration {
         }
       }
 
-      if (this.sources.has(key) && !(overwrite || definition.type === SettingsType.MAP))
+      if (this.sources.has(key) && !(overwrite || definition.type === SettingsType.MAP || definition.isArray && definition.concatenateValues))
         continue;
 
       let parsed;
@@ -1234,6 +1274,13 @@ export class Configuration {
           ? [...previousValue, ...parsed as Map<string, any>]
           : [...parsed as Map<string, any>, ...previousValue]
         ));
+        this.sources.set(key, `${this.sources.get(key)}, ${source}`);
+      } else if (definition.isArray && definition.concatenateValues) {
+        const previousValue = this.values.get(key) as Array<unknown>;
+        this.values.set(key, overwrite
+          ? [...previousValue, ...parsed as Array<unknown>]
+          : [...parsed as Array<unknown>, ...previousValue]
+        );
         this.sources.set(key, `${this.sources.get(key)}, ${source}`);
       } else {
         this.values.set(key, parsed);

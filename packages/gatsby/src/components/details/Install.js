@@ -73,7 +73,7 @@ export const Install = ({name, onOpenFileBrowser}) => (
       >
         Try in RunKit
       </a>
-      {' · '}
+      {` · `}
       <BrowseFiles onClick={onOpenFileBrowser}>
         Browse Files
       </BrowseFiles>

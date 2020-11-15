@@ -87,8 +87,9 @@ const SellingPoints = styled.div`
   }
 `;
 
-const SellingPointContainer = styled.div`
+const SellingPointContainer = styled.a`
   display: flex;
+  color: #000;
 
   ${ifDesktop} {
     width: calc(50% - 20px);
@@ -98,9 +99,13 @@ const SellingPointContainer = styled.div`
   }
 
   margin-top: 40px;
+  transition: transform .15s ease-in-out;
 
   &:last-child {
     margin-bottom: 40px;
+  }
+  &:hover {
+    transform: scale(1.05);
   }
 `;
 
@@ -141,8 +146,8 @@ const Copy = styled.div`
   }
 `;
 
-const SellingPoint = ({imgUrl, children}) => <>
-  <SellingPointContainer>
+const SellingPoint = ({imgUrl, children, href}) => <>
+  <SellingPointContainer href={href}>
     <SellingPointIcon src={imgUrl}/>
     <SellingPointContent>
       {children}
@@ -191,27 +196,27 @@ const IndexPage = ({data, searchState, onSearchStateChange}) => {
           <Section>
             <SectionContent>
               <SellingPoints>
-                <SellingPoint imgUrl={agendaIcon}>
+                <SellingPoint imgUrl={agendaIcon} href={`/features/workspaces`}>
                   <h3>Workspaces</h3>
                   Split your project into sub-components kept within a single repository.
                 </SellingPoint>
-                <SellingPoint imgUrl={laptopIcon}>
+                <SellingPoint imgUrl={laptopIcon} href={`/features/zero-installs#how-does-yarn-impact-a-projects-stability`}>
                   <h3>Stability</h3>
                   Yarn guarantees that an install that works now will continue to work the same way in the future.
                 </SellingPoint>
-                <SellingPoint imgUrl={noteIcon}>
+                <SellingPoint imgUrl={noteIcon} href={`/getting-started`}>
                   <h3>Documentation</h3>
                   Special care is put into our documentation, and we keep improving it based on your feedback.
                 </SellingPoint>
-                <SellingPoint imgUrl={puzzleIcon}>
+                <SellingPoint imgUrl={puzzleIcon} href={`/features/plugins`}>
                   <h3>Plugins</h3>
                   Yarn cannot solve all your problems - but it can be the foundation for others to do it.
                 </SellingPoint>
-                <SellingPoint imgUrl={rocketIcon}>
+                <SellingPoint imgUrl={rocketIcon} href={`/features/pnp`}>
                   <h3>Innovation</h3>
                   We believe in challenging the status quo. What should the ideal developer experience be like?
                 </SellingPoint>
-                <SellingPoint imgUrl={worldwideIcon}>
+                <SellingPoint imgUrl={worldwideIcon} href={`/getting-started/qa#is-yarn-operated-by-facebook`}>
                   <h3>Openness</h3>
                   Yarn is an independent open-source project tied to no company. Your support makes us thrive.
                 </SellingPoint>

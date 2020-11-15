@@ -2,6 +2,7 @@
 category: advanced
 path: /advanced/contributing
 title: "Contributing"
+description: Yarn's contributing guide.
 ---
 
 Thanks for being here! Yarn gives a lot of importance to being a community project, and we rely on your help as much as you rely on ours. In order to help you help us, we've invested in an infra and documentation that should make contributing to Yarn very easy. If you have any feedback on what we could improve, please open an issue to discuss it!
@@ -103,7 +104,7 @@ Constraints can be checked with `yarn constraints`, and fixed with `yarn constra
 
 ## Preparing your PR to be released
 
-In order to track which packages need to be released, we use the workflow described in the [following document](https://yarnpkg.com/features/release-workflow). To summarize, you must run `yarn version check --interactive` on each PR you make, and select which packages should be released again for your changes to be effective (and to which version), if any.
+In order to track which packages need to be released, we use the workflow described in the [following document](/features/release-workflow). To summarize, you must run `yarn version check --interactive` on each PR you make, and select which packages should be released again for your changes to be effective (and to which version), if any.
 
 You can check if you've set everything correctly with `yarn version check`.
 

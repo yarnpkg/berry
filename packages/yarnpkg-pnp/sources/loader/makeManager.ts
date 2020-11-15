@@ -51,10 +51,10 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
     const stats = opts.fakeFs.statSync(pnpApiPath);
 
     if (stats.mtime > apiEntry.stats.mtime) {
-      console.warn(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance (${pnpApiPath})`);
+      console.warn(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance (${npath.fromPortablePath(pnpApiPath)})`);
 
-      apiEntry.instance = loadApiInstance(pnpApiPath);
       apiEntry.stats = stats;
+      apiEntry.instance = loadApiInstance(pnpApiPath);
     }
   }
 
@@ -96,6 +96,30 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
   }
 
   function findApiPathFor(modulePath: NativePath) {
+    const controlledBy: Array<PortablePath> = [];
+    for (const [apiPath, apiEntry] of apiMetadata) {
+      const locator = apiEntry.instance.findPackageLocator(modulePath);
+
+      if (locator) {
+        if (apiMetadata.size === 1) {
+          return apiPath;
+        } else {
+          controlledBy.push(apiPath);
+        }
+      }
+    }
+
+    if (controlledBy.length !== 0) {
+      if (controlledBy.length === 1)
+        return controlledBy[0];
+
+      throw new Error(
+        `Unable to locate pnpapi, the module '${modulePath}' is controlled by multiple pnpapi instances.\nThis is usually caused by using the global cache (enableGlobalCache: true)\n\nControlled by:\n${controlledBy
+          .map(pnpPath => `  ${npath.fromPortablePath(pnpPath)}`)
+          .join(`\n`)}`
+      );
+    }
+
     const start = ppath.resolve(npath.toPortablePath(modulePath));
 
     let curr: PortablePath;

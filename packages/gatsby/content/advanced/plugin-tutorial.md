@@ -2,6 +2,7 @@
 category: advanced
 path: /advanced/plugin-tutorial
 title: "Plugin Tutorial"
+description: A basic plugin tutorial which shows how to work with Yarn's plugin API.
 ---
 
 Starting from the Yarn 2, Yarn now supports plugins. For more information about what they are and in which case you'd want to use them, consult the [dedicated page](/features/plugins). We'll talk here about the exact steps needed to write one. It's quite simple, really!

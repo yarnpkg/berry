@@ -1,11 +1,13 @@
-import {npath}                      from '@yarnpkg/fslib';
+import {npath}                             from '@yarnpkg/fslib';
 
-import chalk                        from 'chalk';
+import chalk                               from 'chalk';
 
-import {Configuration}              from './Configuration';
-import * as miscUtils               from './miscUtils';
-import * as structUtils             from './structUtils';
-import {Descriptor, Locator, Ident} from './types';
+import {Configuration}                     from './Configuration';
+import {MessageName, stringifyMessageName} from './MessageName';
+import {Report}                            from './Report';
+import * as miscUtils                      from './miscUtils';
+import * as structUtils                    from './structUtils';
+import {Descriptor, Locator, Ident}        from './types';
 
 export enum Type {
   NO_HINT = `NO_HINT`,
@@ -274,4 +276,90 @@ export function json<T extends Type>(value: Source<T>, formatType: T | string): 
     throw new Error(`Assertion failed: Expected the value to be a string, got ${typeof value}`);
 
   return value;
+}
+
+export enum LogLevel {
+  Error = `error`,
+  Warning = `warning`,
+  Info = `info`,
+  Discard = `discard`,
+}
+
+/**
+ * Add support support for the `logFilters` setting to the specified Report
+ * instance.
+ */
+export function addLogFilterSupport(report: Report, {configuration}: {configuration: Configuration}) {
+  const logFilters = configuration.get(`logFilters`);
+
+  const logFiltersByCode = new Map<string, LogLevel | null>();
+  const logFiltersByText = new Map<string, LogLevel | null>();
+
+  for (const filter of logFilters) {
+    const level = filter.get(`level`);
+    if (typeof level === `undefined`)
+      continue;
+
+    const code = filter.get(`code`);
+    if (typeof code !== `undefined`)
+      logFiltersByCode.set(code, level);
+
+    const text = filter.get(`text`);
+    if (typeof text !== `undefined`) {
+      logFiltersByText.set(text, level);
+    }
+  }
+
+  const findLogLevel = (name: MessageName | null, text: string, defaultLevel: LogLevel) => {
+    if (name === null || name === MessageName.UNNAMED)
+      return defaultLevel;
+
+    if (logFiltersByText.size > 0) {
+      const level = logFiltersByText.get(chalk.reset(text));
+      if (typeof level !== `undefined`) {
+        return level ?? defaultLevel;
+      }
+    }
+
+    if (logFiltersByCode.size > 0) {
+      const level = logFiltersByCode.get(stringifyMessageName(name));
+      if (typeof level !== `undefined`) {
+        return level ?? defaultLevel;
+      }
+    }
+
+    return defaultLevel;
+  };
+
+  const reportInfo = report.reportInfo;
+  const reportWarning = report.reportWarning;
+  const reportError = report.reportError;
+
+  const routeMessage = function (report: Report, name: MessageName | null, text: string, level: LogLevel) {
+    switch (findLogLevel(name, text, level)) {
+      case LogLevel.Info: {
+        reportInfo.call(report, name, text);
+      } break;
+
+      case LogLevel.Warning: {
+        reportWarning.call(report, name ?? MessageName.UNNAMED, text);
+      } break;
+
+      case LogLevel.Error: {
+        reportError.call(report, name ?? MessageName.UNNAMED, text);
+      } break;
+    }
+  };
+
+  report.reportInfo = function (...args) {
+    return routeMessage(this, ...args, LogLevel.Info);
+  };
+
+  report.reportWarning = function (...args) {
+    return routeMessage(this, ...args, LogLevel.Warning);
+  };
+
+  report.reportError = function (...args) {
+    return routeMessage(this, ...args, LogLevel.Error);
+  };
 }

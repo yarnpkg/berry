@@ -63,15 +63,15 @@ export const runInput = async (input, {setLabel}) => {
   return await runReproduction(input, {setLabel});
 };
 
-export const encodeInput = (input) => Buffer.from(input).toString(ENCODING);
+export const encodeInput = input => Buffer.from(input).toString(ENCODING);
 
-export const decodeInput = (input) => Buffer.from(input, ENCODING).toString();
+export const decodeInput = input => Buffer.from(input, ENCODING).toString();
 
-export const getShareableUrl = (input) => new URL(`/playground?code=${
+export const getShareableUrl = input => new URL(`/playground?code=${
   encodeURIComponent(encodeInput(input))
 }`, window.location.href);
 
-export const parseShareableUrl = (url) => {
+export const parseShareableUrl = url => {
   const parsedUrl = new URL(url);
 
   return {
@@ -80,9 +80,9 @@ export const parseShareableUrl = (url) => {
   };
 };
 
-export const openUrl = (url) => window.open(url);
+export const openUrl = url => window.open(url);
 
-export const copyToClipboard = (text) => copy(text);
+export const copyToClipboard = text => copy(text);
 
 export const getGithubBugReportTemplate = async () => {
   const req = await fetch(`${RAW_REPO_URL}/master/.github/ISSUE_TEMPLATE/bug-report.md`);
@@ -92,7 +92,7 @@ export const getGithubBugReportTemplate = async () => {
 
 export const getFilledGithubBugReportTemplate = async (input, output) => {
   // Remove frontmatter
-  const template = (await getGithubBugReportTemplate()).replace(/^---[\s\S]+---\n\n/, ``);;
+  const template = (await getGithubBugReportTemplate()).replace(/^---[\s\S]+---\n\n/, ``);
 
   return template.replace(
     indentString(getPreview(`// Sherlock reproduction`), 2),
@@ -100,15 +100,15 @@ export const getFilledGithubBugReportTemplate = async (input, output) => {
   );
 };
 
-export const getShareableMarkdownLink = (input) => `[Playground](${getShareableUrl(input)})`;
+export const getShareableMarkdownLink = input => `[Playground](${getShareableUrl(input)})`;
 
-export const getPreview = (input) => dedent`
+export const getPreview = input => dedent`
   \`\`\`js repro
   ${input}
   \`\`\`
 `;
 
-export const getOutput = (output) => dedent`
+export const getOutput = output => dedent`
   Output:
 
   \`\`\`
@@ -128,8 +128,8 @@ export const getShareableMarkdownDigest = (input, output) => dedent`
   ---
 `;
 
-export const createSandbox = async (input) => {
-  const {'sandbox_id': id} = await fetchJson(`https://codesandbox.io/api/v1/sandboxes/define?json=1`, {
+export const createSandbox = async input => {
+  const {sandbox_id: id} = await fetchJson(`https://codesandbox.io/api/v1/sandboxes/define?json=1`, {
     method: `POST`,
     headers: {
       'Content-Type': `application/json`,

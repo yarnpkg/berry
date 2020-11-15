@@ -659,11 +659,7 @@ describe(`Plug'n'Play`, () => {
     ),
   );
 
-  // Skipped because not supported (we can't require files from within other dependency trees, since we couldn't
-  // reconcile them together: dependency tree A could think that package X has deps Y@1 while dependency tree B
-  // could think that X has deps Y@2 instead. Since they would share the same location on the disk, PnP wouldn't
-  // be able to tell which one should be used)
-  test.skip(
+  test(
     `it should support the 'paths' option from require.resolve (different dependency trees)`,
     makeTemporaryEnv(
       {
@@ -960,7 +956,7 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
-    `it should not break relative requires for files within a blacklist`,
+    `it should not break relative requires for files matching pnpIgnorePatterns`,
     makeTemporaryEnv(
       {},
       {
@@ -1613,7 +1609,7 @@ describe(`Plug'n'Play`, () => {
         const stdout = (await run(`install`)).stdout;
 
         expect(stdout).not.toContain(`Shall not be run`);
-        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The platform ${process.platform} is incompatible with this module, building skipped.`));
+        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The platform ${process.platform} is incompatible with this module, build skipped.`));
 
         await expect(source(`require('dep')`)).resolves.toMatchObject({
           name: `dep`,
@@ -1724,6 +1720,84 @@ describe(`Plug'n'Play`, () => {
 
         await expect(source(`require('portal')`)).resolves.toMatch(`peer-deps-fixed-virtual-`);
       });
+    })
+  );
+
+  test(
+    `it should not use the wrong pnpapi for a path owned by another pnpapi`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mktempPromise(async portalTarget => {
+        await xfs.writeJsonPromise(`${portalTarget}/package.json`, {
+          name: `portal`,
+          dependencies: {
+            [`no-deps`]: `*`,
+          },
+          peerDependencies: {
+            [`left-pad`]: `*`,
+          },
+        });
+
+        await xfs.writeFilePromise(
+          `${portalTarget}/index.js`,
+          `module.exports = require.resolve('no-deps', {paths: [__dirname]})`
+        );
+
+        await xfs.writeJsonPromise(`${path}/package.json`, {
+          dependencies: {
+            [`portal`]: `portal:${portalTarget}`,
+          },
+        });
+
+        await run(`install`, {cwd: portalTarget});
+        await run(`install`);
+
+        await expect(source(`require('portal')`)).resolves.toMatch(`no-deps-npm-2.0.0-`);
+      });
+    })
+  );
+
+  test(
+    `it should throw when a path is controlled by multiple pnpapi instances`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mktempPromise(async secondProject => {
+        await xfs.writeJsonPromise(`${secondProject}/package.json`, {
+          name: `project-b`,
+          dependencies: {
+            [`no-deps`]: `*`,
+          },
+        });
+        await xfs.writeFilePromise(`${secondProject}/index.js`, `module.exports = require.resolve('no-deps', {paths: [require.resolve('no-deps')]})`);
+
+        await xfs.writeJsonPromise(`${path}/package.json`, {
+          name: `project-a`,
+          dependencies: {
+            [`no-deps`]: `*`,
+          },
+        });
+        await xfs.writeFilePromise(`${path}/index.js`, `module.exports = require('${secondProject}/index.js')`);
+
+        await run(`install`, {cwd: secondProject, env: {YARN_ENABLE_GLOBAL_CACHE: `1`}});
+        await run(`install`, {env: {YARN_ENABLE_GLOBAL_CACHE: `1`}});
+
+        await expect(run(`node`, `./index.js`)).rejects.toMatchObject({
+          code: 1,
+          stderr: expect.stringContaining(`is controlled by multiple pnpapi instances`),
+        });
+      });
+    })
+  );
+
+  test(
+    `it should be able to resolve an absolute file from a module in an ignored folder`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mkdirPromise(`${path}/ignored`);
+      await xfs.writeFilePromise(`${path}/ignored/index.js`, `module.exports = require(__dirname + '/foo.js')`);
+      await xfs.writeFilePromise(`${path}/ignored/foo.js`, `module.exports = 42`);
+
+      await xfs.writeFilePromise(`${path}/.yarnrc.yml`, `pnpIgnorePatterns:\n  - ./ignored/**\n`);
+      await run(`install`);
+
+      await expect(source(`require('./ignored/index.js')`)).resolves.toBe(42);
     })
   );
 });

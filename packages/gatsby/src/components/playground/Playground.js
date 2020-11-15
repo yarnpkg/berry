@@ -52,9 +52,9 @@ const Right = styled(Slot)`
 `;
 
 const Playground = () => {
-  const defaultInput = SELECT_OPTIONS.find((option) => option.value === `default`).predefinedInput;
+  const defaultInput = SELECT_OPTIONS.find(option => option.value === `default`).predefinedInput;
 
-  const [select, setSelect] = useState(SELECT_OPTIONS.find((option) => option.value === `default`));
+  const [select, setSelect] = useState(SELECT_OPTIONS.find(option => option.value === `default`));
   const [input, setInput] = playgroundUtils.isLocalStorageSupported()
     ? useLocalStorage(`input`, defaultInput)
     : useState(defaultInput);
@@ -69,7 +69,7 @@ const Playground = () => {
     }
   });
 
-  const onSelectChanged = (selectedOption) => {
+  const onSelectChanged = selectedOption => {
     setSelect(selectedOption);
     setInput(`${selectedOption.predefinedInput}\n`);
   };

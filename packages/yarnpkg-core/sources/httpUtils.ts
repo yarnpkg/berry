@@ -1,12 +1,12 @@
-import {PortablePath, xfs}                     from '@yarnpkg/fslib';
-import {ExtendOptions, HTTPSOptions, Response} from 'got';
-import {Agent as HttpsAgent}                   from 'https';
-import {Agent as HttpAgent}                    from 'http';
-import micromatch                              from 'micromatch';
-import tunnel, {ProxyOptions}                  from 'tunnel';
-import {URL}                                   from 'url';
+import {PortablePath, xfs}       from '@yarnpkg/fslib';
+import {ExtendOptions, Response} from 'got';
+import {Agent as HttpsAgent}     from 'https';
+import {Agent as HttpAgent}      from 'http';
+import micromatch                from 'micromatch';
+import tunnel, {ProxyOptions}    from 'tunnel';
+import {URL}                     from 'url';
 
-import {Configuration}                         from './Configuration';
+import {Configuration}           from './Configuration';
 
 const cache = new Map<string, Promise<Buffer> | Buffer>();
 const certCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
@@ -38,6 +38,43 @@ async function getCachedCertificate(caFilePath: PortablePath) {
   return certificate;
 }
 
+/**
+ * Searches through networkSettings and returns the most specific match
+ */
+export function getNetworkSettings(target: string, opts: { configuration: Configuration }) {
+  // Sort the config by key length to match on the most specific pattern
+  const networkSettings = [...opts.configuration.get(`networkSettings`)].sort(([keyA], [keyB]) => {
+    return keyB.length - keyA.length;
+  });
+
+  const mergedNetworkSettings: {
+    enableNetwork?: boolean,
+    caFilePath?: PortablePath | null,
+  } = {};
+
+  const url = new URL(target);
+  for (const [glob, config] of networkSettings) {
+    if (micromatch.isMatch(url.hostname, glob)) {
+      const enableNetwork = config.get(`enableNetwork`);
+      if (enableNetwork !== null && typeof mergedNetworkSettings.enableNetwork === `undefined`)
+        mergedNetworkSettings.enableNetwork = enableNetwork;
+
+      const caFilePath = config.get(`caFilePath`);
+      if (caFilePath !== null && typeof mergedNetworkSettings.caFilePath === `undefined`) {
+        mergedNetworkSettings.caFilePath = caFilePath;
+      }
+    }
+  }
+
+  if (typeof mergedNetworkSettings.caFilePath === `undefined`)
+    mergedNetworkSettings.caFilePath = opts.configuration.get(`caFilePath`);
+
+  if (typeof mergedNetworkSettings.enableNetwork === `undefined`)
+    mergedNetworkSettings.enableNetwork = opts.configuration.get(`enableNetwork`);
+
+  return mergedNetworkSettings as Required<typeof mergedNetworkSettings>;
+}
+
 export type Body = (
   {[key: string]: any} |
   string |
@@ -63,8 +100,9 @@ export type Options = {
 };
 
 export async function request(target: string, body: Body, {configuration, headers, json, jsonRequest = json, jsonResponse = json, method = Method.GET}: Options) {
-  if (!configuration.get(`enableNetwork`))
-    throw new Error(`Network access have been disabled by configuration (${method} ${target})`);
+  const networkConfig = getNetworkSettings(target, {configuration});
+  if (networkConfig.enableNetwork === false)
+    throw new Error(`Request to '${target}' has been blocked because of your configuration settings`);
 
   const url = new URL(target);
   if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
@@ -81,9 +119,7 @@ export async function request(target: string, body: Body, {configuration, header
       : globalHttpsAgent,
   };
 
-
   const gotOptions: ExtendOptions = {agent, headers, method};
-
   gotOptions.responseType = jsonResponse
     ? `json`
     : `buffer`;
@@ -100,22 +136,13 @@ export async function request(target: string, body: Body, {configuration, header
   const socketTimeout = configuration.get(`httpTimeout`);
   const retry = configuration.get(`httpRetry`);
   const rejectUnauthorized = configuration.get(`enableStrictSsl`);
-  const globalCaFilePath = configuration.get(`caFilePath`);
+  const caFilePath = networkConfig.caFilePath;
 
   const {default: got} = await import(`got`);
 
-  const extraHttpsOptions: HTTPSOptions = {};
-
-  for (const [glob, scopeConfig] of configuration.get(`networkSettings`)) {
-    if (micromatch.isMatch(url.hostname, glob)) {
-      extraHttpsOptions.certificateAuthority = await getCachedCertificate(scopeConfig.get(`caFilePath`));
-      break;
-    }
-  }
-
-  if (!extraHttpsOptions.certificateAuthority && globalCaFilePath)
-    extraHttpsOptions.certificateAuthority = await getCachedCertificate(globalCaFilePath);
-
+  const certificateAuthority = caFilePath
+    ? await getCachedCertificate(caFilePath)
+    : undefined;
 
   const gotClient = got.extend({
     timeout: {
@@ -124,7 +151,7 @@ export async function request(target: string, body: Body, {configuration, header
     retry,
     https: {
       rejectUnauthorized,
-      ...extraHttpsOptions,
+      certificateAuthority,
     },
     ...gotOptions,
   });

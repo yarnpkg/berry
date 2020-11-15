@@ -19,9 +19,8 @@
     "ts-loader": "^7.0.5",
     "tslib": "^1.13.0",
     "val-loader": "^2.1.1",
-    "webpack": "^5.0.0-beta.17",
-    "webpack-merge": "^4.2.2",
-    "webpack-sources": "^1.4.3"
+    "webpack": "^5.1.1",
+    "webpack-merge": "^4.2.2"
   },
   "devDependencies": {
     "@datadog/build-plugin": "0.3.6",
@@ -29,7 +28,6 @@
     "@types/semver": "^7.1.0",
     "@types/terser-webpack-plugin": "^3.0.0",
     "@types/webpack-merge": "^4.1.5",
-    "@types/webpack-sources": "^1.4.0",
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "typescript": "4.1.0-beta"
   },

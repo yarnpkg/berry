@@ -38,7 +38,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   // Matches if the path starts with a valid path qualifier (./, ../, /)
   // eslint-disable-next-line no-unused-vars
-  const isStrictRegExp = /^\.{0,2}\//;
+  const isStrictRegExp = /^(\/|\.{1,2}(\/|$))/;
 
   // Matches if the path must point to a directory (ie ends with /)
   const isDirRegExp = /\/$/;
@@ -278,7 +278,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     // would give us the paths to give to _resolveFilename), we can as well not use
     // the {paths} option at all, since it internally makes _resolveFilename create another
     // fake module anyway.
-    return Module._resolveFilename(request, makeFakeModule(npath.fromPortablePath(issuer)), false, {plugnplay: false});
+    return Module._resolveFilename(npath.fromPortablePath(request), makeFakeModule(npath.fromPortablePath(issuer)), false, {plugnplay: false});
   }
 
   /**
@@ -423,6 +423,9 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function findPackageLocator(location: PortablePath): PhysicalPackageLocator | null {
+    if (isPathIgnored(location))
+      return null;
+
     let relativeLocation = normalizePath(ppath.relative(runtimeState.basePath, location));
 
     if (!relativeLocation.match(isStrictRegExp))

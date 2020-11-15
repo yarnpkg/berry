@@ -2,6 +2,7 @@
 category: advanced
 path: /advanced/rulebook
 title: "Rulebook"
+description: An in-depth rulebook of best-practices and recommendations regarding dependencies.
 ---
 
 Writing portable packages is incredibly important, as it ensures that your users will benefit from an optimal experience regardless of their package manager.

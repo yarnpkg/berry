@@ -20,15 +20,15 @@ const PackagePage = ({searchState, onSearchStateChange}) => {
   const [tags, setTags] = useState([]);
   const [owners, setOwners] = useState([]);
 
-  let packageName = '';
+  let packageName = ``;
 
-  if (typeof window !== 'undefined') {
+  if (typeof window !== `undefined`) {
     const [
       /* leading slash */,
       /* package/ */,
       ...parts
-    ] = window.location.pathname.split('/');
-    packageName = parts.join('/');
+    ] = window.location.pathname.split(`/`);
+    packageName = parts.join(`/`);
   }
 
   return (<>

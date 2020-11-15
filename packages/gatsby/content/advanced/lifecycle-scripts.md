@@ -2,6 +2,7 @@
 category: advanced
 path: /advanced/lifecycle-scripts
 title: "Lifecycle Scripts"
+description: An overview of Yarn's supported lifecycle scripts.
 ---
 
 Packages can define in the `scripts` field of their manifest various actions that should be executed when the package manager executes a particular workflow. Here they are:

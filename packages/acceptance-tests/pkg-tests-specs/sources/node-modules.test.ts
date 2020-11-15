@@ -1,4 +1,4 @@
-import {xfs, npath, PortablePath} from '@yarnpkg/fslib';
+import {xfs, npath, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
 
 const {
   fs: {readJson, writeFile, writeJson},
@@ -285,7 +285,7 @@ describe(`Node_Modules`, () => {
         const stdout = (await run(`install`)).stdout;
 
         expect(stdout).not.toContain(`Shall not be run`);
-        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The platform ${process.platform} is incompatible with this module, linking skipped.`));
+        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The platform ${process.platform} is incompatible with this module, link skipped.`));
 
         await expect(source(`require('dep')`)).rejects.toMatchObject({
           externalException: {
@@ -801,5 +801,40 @@ describe(`Node_Modules`, () => {
         });
       },
     )
+  );
+
+  it(`should allow running binaries unrelated to incompatible package`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          dep: `file:./dep`,
+          dep2: `file:./dep2`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await writeJson(ppath.resolve(path, `dep/package.json` as Filename), {
+          name: `dep`,
+          version: `1.0.0`,
+          os: [`!${process.platform}`],
+          bin: `./noop.js`,
+        });
+        await xfs.writeFilePromise(ppath.resolve(path, `dep/noop.js` as Filename), ``);
+
+        await writeJson(ppath.resolve(path, `dep2/package.json` as Filename), {
+          name: `dep2`,
+          version: `1.0.0`,
+          bin: `./echo.js`,
+        });
+        await xfs.writeFilePromise(ppath.resolve(path, `dep2/echo.js` as Filename), `console.log('echo')`);
+
+        await run(`install`);
+
+        await expect(run(`dep2`)).resolves.toMatchObject({stdout: `echo\n`});
+      },
+    ),
   );
 });

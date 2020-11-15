@@ -2,6 +2,7 @@
 category: features
 path: /features/protocols
 title: "Protocols"
+description: An in-depth guide to Yarn's various protocols.
 ---
 
 ```toc

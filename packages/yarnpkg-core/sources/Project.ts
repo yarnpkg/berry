@@ -3,8 +3,7 @@ import {parseSyml, stringifySyml}                                 from '@yarnpkg
 import {UsageError}                                               from 'clipanion';
 import {createHash}                                               from 'crypto';
 import {structuredPatch}                                          from 'diff';
-// @ts-expect-error
-import Logic                                                      from 'logic-solver';
+import pick                                                       from 'lodash/pick';
 import pLimit                                                     from 'p-limit';
 import semver                                                     from 'semver';
 import {promisify}                                                from 'util';
@@ -56,14 +55,83 @@ const gzip = promisify(zlib.gzip);
 const gunzip = promisify(zlib.gunzip);
 
 export type InstallOptions = {
+  /**
+   * Instance of the cache that the project will use when packages have to be
+   * fetched. Some fetches may occur even during the resolution, for example
+   * when resolving git packages.
+   */
   cache: Cache,
+
+  /**
+   * An optional override for the default fetching pipeline. This is for
+   * overrides only - if you need to _add_ resolvers, prefer adding them
+   * through regular plugins instead.
+   */
   fetcher?: Fetcher,
+
+  /**
+   * An optional override for the default resolution pipeline. This is for
+   * overrides only - if you need to _add_ resolvers, prefer adding them
+   * through regular plugins instead.
+   */
   resolver?: Resolver
+
+  /**
+   * Provide a report instance that'll be use to store the information emitted
+   * during the install process.
+   */
   report: Report,
+
+  /**
+   * If true, Yarn will check that the lockfile won't change after the
+   * resolution step. Additionally, after the link step, Yarn will retrieve
+   * the list of files in `immutablePatterns` and check that they didn't get
+   * modified either.
+   */
   immutable?: boolean,
+
+  /**
+   * If true, Yarn will exclusively use the lockfile metadata. Setting this
+   * flag will cause it to ignore any change in the manifests, and to abort
+   * if any dependency isn't present in the lockfile.
+   */
   lockfileOnly?: boolean,
+
+  /**
+   * If true (the default), Yarn will update the workspace manifests once the
+   * install has completed.
+   */
   persistProject?: boolean,
+
+  /**
+   * If true, Yarn will skip the build step during the install. Contrary to
+   * setting the `enableScripts` setting to false, setting this won't cause
+   * the generated artifacts to change.
+   */
+  skipBuild?: boolean,
 };
+
+const INSTALL_STATE_FIELDS = {
+  restoreInstallersCustomData: [
+    `installersCustomData`,
+  ] as const,
+
+  restoreResolutions: [
+    `accessibleLocators`,
+    `optionalBuilds`,
+    `storedDescriptors`,
+    `storedResolutions`,
+    `storedPackages`,
+    `lockFileChecksum`,
+  ] as const,
+};
+
+type RestoreInstallStateOpts = {
+  [key in keyof typeof INSTALL_STATE_FIELDS]?: boolean;
+};
+
+// Just a type that's the union of all the fields declared in `INSTALL_STATE_FIELDS`
+type InstallState = Pick<Project, typeof INSTALL_STATE_FIELDS[keyof typeof INSTALL_STATE_FIELDS][number]>;
 
 export class Project {
   public readonly configuration: Configuration;
@@ -94,6 +162,8 @@ export class Project {
   public accessibleLocators: Set<LocatorHash> = new Set();
   public originalPackages: Map<LocatorHash, Package> = new Map();
   public optionalBuilds: Set<LocatorHash> = new Set();
+
+  public installersCustomData: Map<string, unknown> = new Map();
 
   public lockFileChecksum: string | null = null;
 
@@ -310,6 +380,9 @@ export class Project {
   tryWorkspaceByCwd(workspaceCwd: PortablePath) {
     if (!ppath.isAbsolute(workspaceCwd))
       workspaceCwd = ppath.resolve(this.cwd, workspaceCwd);
+
+    workspaceCwd = ppath.normalize(workspaceCwd)
+      .replace(/\/+$/, ``) as PortablePath;
 
     const workspace = this.workspacesByCwd.get(workspaceCwd);
     if (!workspace)
@@ -593,342 +666,115 @@ export class Project {
 
     const originalPackages = new Map<LocatorHash, Package>();
 
-    const resolutionDependencies = new Map<DescriptorHash, Set<DescriptorHash>>();
-    const haveBeenAliased = new Set<DescriptorHash>();
+    const packageResolutionPromises = new Map<LocatorHash, Promise<Package>>();
+    const descriptorResolutionPromises = new Map<DescriptorHash, Promise<Package>>();
 
-    let nextResolutionPass = new Set<DescriptorHash>();
+    const resolutionQueue: Array<Promise<unknown>> = [];
+
+    const startPackageResolution = async (locator: Locator) => {
+      const originalPkg = await miscUtils.prettifyAsyncErrors(async () => {
+        return await resolver.resolve(locator, resolveOptions);
+      }, message => {
+        return `${structUtils.prettyLocator(this.configuration, locator)}: ${message}`;
+      });
+
+      if (!structUtils.areLocatorsEqual(locator, originalPkg))
+        throw new Error(`Assertion failed: The locator cannot be changed by the resolver (went from ${structUtils.prettyLocator(this.configuration, locator)} to ${structUtils.prettyLocator(this.configuration, originalPkg)})`);
+
+      originalPackages.set(originalPkg.locatorHash, originalPkg);
+
+      const pkg = this.configuration.normalizePackage(originalPkg);
+
+      for (const [identHash, descriptor] of pkg.dependencies) {
+        const dependency = await this.configuration.reduceHook(hooks => {
+          return hooks.reduceDependency;
+        }, descriptor, this, pkg, descriptor, {
+          resolver,
+          resolveOptions,
+        });
+
+        if (!structUtils.areIdentsEqual(descriptor, dependency))
+          throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
+
+        const bound = resolver.bindDescriptor(dependency, locator, resolveOptions);
+        pkg.dependencies.set(identHash, bound);
+      }
+
+      resolutionQueue.push(Promise.all([...pkg.dependencies.values()].map(descriptor => {
+        return scheduleDescriptorResolution(descriptor);
+      })));
+
+      allPackages.set(pkg.locatorHash, pkg);
+
+      return pkg;
+    };
+
+    const schedulePackageResolution = async (locator: Locator) => {
+      const promise = packageResolutionPromises.get(locator.locatorHash);
+      if (typeof promise !== `undefined`)
+        return promise;
+
+      const newPromise = Promise.resolve().then(() => startPackageResolution(locator));
+      packageResolutionPromises.set(locator.locatorHash, newPromise);
+      return newPromise;
+    };
+
+    const startDescriptorAliasing = async (descriptor: Descriptor, alias: Descriptor): Promise<Package> => {
+      const resolution = await scheduleDescriptorResolution(alias);
+
+      allDescriptors.set(descriptor.descriptorHash, descriptor);
+      allResolutions.set(descriptor.descriptorHash, resolution.locatorHash);
+
+      return resolution;
+    };
+
+    const startDescriptorResolution = async (descriptor: Descriptor): Promise<Package> => {
+      const alias = this.resolutionAliases.get(descriptor.descriptorHash);
+      if (typeof alias !== `undefined`)
+        return startDescriptorAliasing(descriptor, this.storedDescriptors.get(alias)!);
+
+      const resolutionDependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
+      const resolvedDependencies = new Map(await Promise.all(resolutionDependencies.map(async dependency => {
+        return [dependency.descriptorHash, await scheduleDescriptorResolution(dependency)] as const;
+      })));
+
+      const candidateResolutions = await miscUtils.prettifyAsyncErrors(async () => {
+        return await resolver.getCandidates(descriptor, resolvedDependencies, resolveOptions);
+      }, message => {
+        return `${structUtils.prettyDescriptor(this.configuration, descriptor)}: ${message}`;
+      });
+
+      const finalResolution = candidateResolutions[0];
+      if (typeof finalResolution === `undefined`)
+        throw new Error(`${structUtils.prettyDescriptor(this.configuration, descriptor)}: No candidates found`);
+
+      allDescriptors.set(descriptor.descriptorHash, descriptor);
+      allResolutions.set(descriptor.descriptorHash, finalResolution.locatorHash);
+
+      return schedulePackageResolution(finalResolution);
+    };
+
+    const scheduleDescriptorResolution = (descriptor: Descriptor) => {
+      const promise = descriptorResolutionPromises.get(descriptor.descriptorHash);
+      if (typeof promise !== `undefined`)
+        return promise;
+
+      allDescriptors.set(descriptor.descriptorHash, descriptor);
+
+      const newPromise = Promise.resolve().then(() => startDescriptorResolution(descriptor));
+      descriptorResolutionPromises.set(descriptor.descriptorHash, newPromise);
+      return newPromise;
+    };
 
     for (const workspace of this.workspaces) {
       const workspaceDescriptor = workspace.anchoredDescriptor;
-
-      allDescriptors.set(workspaceDescriptor.descriptorHash, workspaceDescriptor);
-      nextResolutionPass.add(workspaceDescriptor.descriptorHash);
+      resolutionQueue.push(scheduleDescriptorResolution(workspaceDescriptor));
     }
 
-    while (nextResolutionPass.size !== 0) {
-      const currentResolutionPass = nextResolutionPass;
-      nextResolutionPass = new Set();
-
-      // We remove from the "mustBeResolved" list all packages that have
-      // already been resolved previously.
-
-      for (const descriptorHash of currentResolutionPass)
-        if (allResolutions.has(descriptorHash))
-          currentResolutionPass.delete(descriptorHash);
-
-      if (currentResolutionPass.size === 0)
-        break;
-
-      // We check that the resolution dependencies have been resolved for all
-      // descriptors that we're about to resolve. Buffalo buffalo buffalo
-      // buffalo.
-
-      const deferredResolutions = new Set<DescriptorHash>();
-      const resolvedDependencies = new Map<DescriptorHash, Map<DescriptorHash, Package>>();
-
-      for (const descriptorHash of currentResolutionPass) {
-        const descriptor = allDescriptors.get(descriptorHash);
-        if (!descriptor)
-          throw new Error(`Assertion failed: The descriptor should have been registered`);
-
-        let dependencies = resolutionDependencies.get(descriptorHash);
-        if (typeof dependencies === `undefined`) {
-          resolutionDependencies.set(descriptorHash, dependencies = new Set());
-
-          for (const dependency of resolver.getResolutionDependencies(descriptor, resolveOptions)) {
-            allDescriptors.set(dependency.descriptorHash, dependency);
-            dependencies.add(dependency.descriptorHash);
-          }
-        }
-
-        const resolved = miscUtils.getMapWithDefault(resolvedDependencies, descriptorHash);
-
-        for (const dependencyHash of dependencies) {
-          const resolution = allResolutions.get(dependencyHash);
-
-          if (typeof resolution !== `undefined`) {
-            const dependencyPkg = allPackages.get(resolution);
-            if (typeof dependencyPkg === `undefined`)
-              throw new Error(`Assertion failed: The package should have been registered`);
-
-            // The dependency is ready. We register it into the map so
-            // that we can pass that to getCandidates right after.
-            resolved.set(dependencyHash, dependencyPkg);
-          } else {
-            // One of the resolution dependencies of this descriptor is
-            // missing; we need to postpone its resolution for now.
-            deferredResolutions.add(descriptorHash);
-
-            // For this pass however we'll want to schedule the resolution
-            // of the dependency (so that it's probably ready next pass).
-            currentResolutionPass.add(dependencyHash);
-          }
-        }
-      }
-
-      // Note: we're postponing the resolution only once we already know all
-      // those that are going to be postponed. This way we can detect
-      // potential cyclic dependencies.
-
-      for (const descriptorHash of deferredResolutions) {
-        currentResolutionPass.delete(descriptorHash);
-        nextResolutionPass.add(descriptorHash);
-      }
-
-      if (currentResolutionPass.size === 0)
-        throw new Error(`Assertion failed: Descriptors should not have cyclic dependencies`);
-
-      // Then we request the resolvers for the list of possible references that
-      // match the given ranges. That will give us a set of candidate references
-      // for each descriptor.
-
-      const passCandidates = new Map(await Promise.all(Array.from(currentResolutionPass).map(async descriptorHash => {
-        const descriptor = allDescriptors.get(descriptorHash);
-        if (typeof descriptor === `undefined`)
-          throw new Error(`Assertion failed: The descriptor should have been registered`);
-
-        const descriptorDependencies = resolvedDependencies.get(descriptor.descriptorHash);
-        if (typeof descriptorDependencies === `undefined`)
-          throw new Error(`Assertion failed: The descriptor dependencies should have been registered`);
-
-        let candidateLocators;
-        try {
-          candidateLocators = await resolver.getCandidates(descriptor, descriptorDependencies, resolveOptions);
-        } catch (error) {
-          error.message = `${structUtils.prettyDescriptor(this.configuration, descriptor)}: ${error.message}`;
-          throw error;
-        }
-
-        if (candidateLocators.length === 0)
-          throw new Error(`No candidate found for ${structUtils.prettyDescriptor(this.configuration, descriptor)}`);
-
-        return [descriptor.descriptorHash, candidateLocators] as [DescriptorHash, Array<Locator>];
-      })));
-
-      // That's where we'll store our resolutions until everything has been
-      // resolved and can be injected into the various stores.
-      //
-      // The reason we're storing them in a temporary store instead of writing
-      // them directly into the global ones is that otherwise we would end up
-      // with different store orderings between dependency loaded from a
-      // lockfiles and those who don't (when using a lockfile all descriptors
-      // will fall into the next shortcut, but when no lockfile is there only
-      // some of them will; since maps are sorted by insertion, it would affect
-      // the way they would be ordered).
-
-      const passResolutions = new Map<DescriptorHash, Locator>();
-
-      // We now make a pre-pass to automatically resolve the descriptors that
-      // can only be satisfied by a single reference.
-
-      for (const [descriptorHash, candidateLocators] of passCandidates) {
-        if (candidateLocators.length !== 1)
-          continue;
-
-        passResolutions.set(descriptorHash, candidateLocators[0]);
-        passCandidates.delete(descriptorHash);
-      }
-
-      // We make a second pre-pass to automatically resolve the descriptors
-      // that can be satisfied by a package we're already using (deduplication).
-
-      for (const [descriptorHash, candidateLocators] of passCandidates) {
-        const selectedLocator = candidateLocators.find(locator => allPackages.has(locator.locatorHash));
-        if (!selectedLocator)
-          continue;
-
-        passResolutions.set(descriptorHash, selectedLocator);
-        passCandidates.delete(descriptorHash);
-      }
-
-      // All entries that remain in "passCandidates" are from descriptors that
-      // we haven't been able to resolve in the first place. We'll now configure
-      // our SAT solver so that it can figure it out for us. To do this, we
-      // simply add a constraint for each descriptor that lists all the
-      // descriptors it would accept. We don't have to check whether the
-      // locators obtained have already been selected, because if they were the
-      // would have been resolved in the previous step (we never backtrace to
-      // try to find better solutions, it would be a too expensive process - we
-      // just want to get an acceptable solution, not the very best one).
-
-      if (passCandidates.size > 0) {
-        const solver = new Logic.Solver();
-
-        for (const candidateLocators of passCandidates.values())
-          solver.require(Logic.or(...candidateLocators.map(locator => locator.locatorHash)));
-
-        let remainingSolutions = 100;
-        let solution;
-
-        let bestSolution = null;
-        let bestScore = Infinity;
-
-        while (remainingSolutions > 0 && (solution = solver.solve()) !== null) {
-          const trueVars = solution.getTrueVars();
-          solver.forbid(solution.getFormula());
-
-          if (trueVars.length < bestScore) {
-            bestSolution = trueVars;
-            bestScore = trueVars.length;
-          }
-
-          remainingSolutions -= 1;
-        }
-
-        if (!bestSolution)
-          throw new Error(`Assertion failed: No resolution found by the SAT solver`);
-
-        const solutionSet = new Set<LocatorHash>(bestSolution as Array<LocatorHash>);
-
-        for (const [descriptorHash, candidateLocators] of passCandidates.entries()) {
-          const selectedLocator = candidateLocators.find(locator => solutionSet.has(locator.locatorHash));
-          if (!selectedLocator)
-            throw new Error(`Assertion failed: The descriptor should have been solved during the previous step`);
-
-          passResolutions.set(descriptorHash, selectedLocator);
-          passCandidates.delete(descriptorHash);
-        }
-      }
-
-      // We now iterate over the locators we've got and, for each of them that
-      // hasn't been seen before, we fetch its dependency list and schedule
-      // them for the next cycle.
-
-      const newLocators = Array.from(passResolutions.values()).filter(locator => {
-        return !allPackages.has(locator.locatorHash);
-      });
-
-      const newPackages = new Map(await Promise.all(newLocators.map(async locator => {
-        const original = await miscUtils.prettifyAsyncErrors(async () => {
-          return await resolver.resolve(locator, resolveOptions);
-        }, message => {
-          return `${structUtils.prettyLocator(this.configuration, locator)}: ${message}`;
-        });
-
-        if (!structUtils.areLocatorsEqual(locator, original))
-          throw new Error(`Assertion failed: The locator cannot be changed by the resolver (went from ${structUtils.prettyLocator(this.configuration, locator)} to ${structUtils.prettyLocator(this.configuration, original)})`);
-
-        const pkg = this.configuration.normalizePackage(original);
-
-        for (const [identHash, descriptor] of pkg.dependencies) {
-          const dependency = await this.configuration.reduceHook(hooks => {
-            return hooks.reduceDependency;
-          }, descriptor, this, pkg, descriptor, {
-            resolver,
-            resolveOptions,
-          });
-
-          if (!structUtils.areIdentsEqual(descriptor, dependency))
-            throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
-
-          const bound = resolver.bindDescriptor(dependency, locator, resolveOptions);
-          pkg.dependencies.set(identHash, bound);
-        }
-
-        return [pkg.locatorHash, {original, pkg}] as const;
-      })));
-
-      // Now that the resolution is finished, we can finally insert the data
-      // stored inside our pass stores into the resolution ones (we now have
-      // the guarantee that they'll always be inserted into in the same order,
-      // since mustBeResolved is stable regardless of the order in which the
-      // resolvers return)
-
-      for (const descriptorHash of currentResolutionPass) {
-        const locator = passResolutions.get(descriptorHash);
-        if (!locator)
-          throw new Error(`Assertion failed: The locator should have been registered`);
-
-        allResolutions.set(descriptorHash, locator.locatorHash);
-
-        // If undefined it means that the package was already known and thus
-        // didn't need to be resolved again.
-        const resolutionEntry = newPackages.get(locator.locatorHash);
-        if (typeof resolutionEntry === `undefined`)
-          continue;
-
-        const {original, pkg} = resolutionEntry;
-
-        originalPackages.set(original.locatorHash, original);
-        allPackages.set(pkg.locatorHash, pkg);
-
-        for (const descriptor of pkg.dependencies.values()) {
-          allDescriptors.set(descriptor.descriptorHash, descriptor);
-          nextResolutionPass.add(descriptor.descriptorHash);
-
-          // We must check and make sure that the descriptor didn't get aliased
-          // to something else
-          const aliasHash = this.resolutionAliases.get(descriptor.descriptorHash);
-          if (aliasHash === undefined)
-            continue;
-
-          // It doesn't cost us much to support the case where a descriptor is
-          // equal to its own alias (which should mean "no alias")
-          if (descriptor.descriptorHash === aliasHash)
-            continue;
-
-          const alias = this.storedDescriptors.get(aliasHash);
-          if (!alias)
-            throw new Error(`Assertion failed: The alias should have been registered`);
-
-          // If it's already been "resolved" (in reality it will be the temporary
-          // resolution we've set in the next few lines) we simply must skip it
-          if (allResolutions.has(descriptor.descriptorHash))
-            continue;
-
-          // Temporarily set an invalid resolution so that it won't be resolved
-          // multiple times if it is found multiple times in the dependency
-          // tree (this is only temporary, we will replace it by the actual
-          // resolution after we've finished resolving everything)
-          allResolutions.set(descriptor.descriptorHash, `temporary` as LocatorHash);
-
-          // We can now replace the descriptor by its alias in the list of
-          // descriptors that must be resolved
-          nextResolutionPass.delete(descriptor.descriptorHash);
-          nextResolutionPass.add(aliasHash);
-
-          allDescriptors.set(aliasHash, alias);
-
-          haveBeenAliased.add(descriptor.descriptorHash);
-        }
-      }
-    }
-
-    // Each package that should have been resolved but was skipped because it
-    // was aliased will now see the resolution for its alias propagated to it
-
-    while (haveBeenAliased.size > 0) {
-      let hasChanged = false;
-
-      for (const descriptorHash of haveBeenAliased) {
-        const descriptor = allDescriptors.get(descriptorHash);
-        if (!descriptor)
-          throw new Error(`Assertion failed: The descriptor should have been registered`);
-
-        const aliasHash = this.resolutionAliases.get(descriptorHash);
-        if (aliasHash === undefined)
-          throw new Error(`Assertion failed: The descriptor should have an alias`);
-
-        const resolution = allResolutions.get(aliasHash);
-        if (resolution === undefined)
-          throw new Error(`Assertion failed: The resolution should have been registered`);
-
-        // The following can happen if a package gets aliased to another package
-        // that's itself aliased - in this case we just process all those we can
-        // do, then make new passes until everything is resolved
-        if (resolution === `temporary`)
-          continue;
-
-        haveBeenAliased.delete(descriptorHash);
-
-        allResolutions.set(descriptorHash, resolution);
-
-        hasChanged = true;
-      }
-
-      if (!hasChanged) {
-        throw new Error(`Alias loop detected`);
-      }
+    while (resolutionQueue.length > 0) {
+      const copy = [...resolutionQueue];
+      resolutionQueue.length = 0;
+      await Promise.all(copy);
     }
 
     // In this step we now create virtual packages for each package with at
@@ -1040,7 +886,7 @@ export class Project {
     }
   }
 
-  async linkEverything({cache, report, fetcher: optFetcher}: InstallOptions) {
+  async linkEverything({cache, report, fetcher: optFetcher, skipBuild}: InstallOptions) {
     const fetcher = optFetcher || this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, skipIntegrityCheck: true};
 
@@ -1048,25 +894,44 @@ export class Project {
     const linkerOptions = {project: this, report};
 
     const installers = new Map(linkers.map(linker => {
-      return [linker, linker.makeInstaller(linkerOptions)] as [Linker, Installer];
+      const installer = linker.makeInstaller(linkerOptions);
+
+      const customDataKey = installer.getCustomDataKey();
+      const customData = this.installersCustomData.get(customDataKey);
+      if (typeof customData !== `undefined`)
+        installer.attachCustomData(customData);
+
+      return [linker, installer] as [Linker, Installer];
     }));
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
     const packageLocations: Map<LocatorHash, PortablePath | null> = new Map();
     const packageBuildDirectives: Map<LocatorHash, { directives: Array<BuildDirective>, buildLocations: Array<PortablePath> }> = new Map();
 
-    // Step 1: Installing the packages on the disk
-
-    for (const locatorHash of this.accessibleLocators) {
+    const fetchResultsPerPackage = new Map(await Promise.all([...this.accessibleLocators].map(async locatorHash => {
       const pkg = this.storedPackages.get(locatorHash);
       if (!pkg)
         throw new Error(`Assertion failed: The locator should have been registered`);
 
-      const fetchResult = await fetcher.fetch(pkg, fetcherOptions);
+      return [locatorHash, await fetcher.fetch(pkg, fetcherOptions)] as const;
+    })));
 
-      if (this.tryWorkspaceByLocator(pkg) !== null) {
+    // Step 1: Installing the packages on the disk
+
+    for (const locatorHash of this.accessibleLocators) {
+      const pkg = this.storedPackages.get(locatorHash);
+      if (typeof pkg === `undefined`)
+        throw new Error(`Assertion failed: The locator should have been registered`);
+
+      const fetchResult = fetchResultsPerPackage.get(pkg.locatorHash);
+      if (typeof fetchResult === `undefined`)
+        throw new Error(`Assertion failed: The fetch result should have been registered`);
+
+      const workspace = this.tryWorkspaceByLocator(pkg);
+
+      if (workspace !== null) {
         const buildScripts: Array<BuildDirective> = [];
-        const {scripts} = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
+        const {scripts} = workspace.manifest;
 
         for (const scriptName of [`preinstall`, `install`, `postinstall`])
           if (scripts.has(scriptName))
@@ -1074,7 +939,10 @@ export class Project {
 
         try {
           for (const installer of installers.values()) {
-            await installer.installPackage(pkg, fetchResult);
+            const result = await installer.installPackage(pkg, fetchResult);
+            if (result.buildDirective !== null) {
+              throw new Error(`Assertion failed: Linkers can't return build directives for workspaces; this responsibility befalls to the Yarn core`);
+            }
           }
         } finally {
           if (fetchResult.releaseFs) {
@@ -1207,21 +1075,31 @@ export class Project {
 
     // Step 3: Inform our linkers that they should have all the info needed
 
+    const installersCustomData = new Map();
+
     for (const installer of installers.values()) {
-      const installStatuses = await installer.finalizeInstall();
-      if (installStatuses) {
-        for (const installStatus of installStatuses) {
-          if (installStatus.buildDirective) {
-            packageBuildDirectives.set(installStatus.locatorHash!, {
-              directives: installStatus.buildDirective,
-              buildLocations: installStatus.buildLocations,
-            });
-          }
-        }
+      const finalizeInstallData = await installer.finalizeInstall();
+
+      for (const installStatus of finalizeInstallData?.records ?? []) {
+        packageBuildDirectives.set(installStatus.locatorHash, {
+          directives: installStatus.buildDirective,
+          buildLocations: installStatus.buildLocations,
+        });
+      }
+
+      if (typeof finalizeInstallData?.customData !== `undefined`) {
+        installersCustomData.set(installer.getCustomDataKey(), finalizeInstallData.customData);
       }
     }
 
+    this.installersCustomData = installersCustomData;
+
+    await this.persistInstallStateFile();
+
     // Step 4: Build the packages in multiple steps
+
+    if (skipBuild)
+      return;
 
     const readyPackages = new Set(this.storedPackages.keys());
     const buildablePackages = new Set(packageBuildDirectives.keys());
@@ -1565,6 +1443,8 @@ export class Project {
       }
     });
 
+    await this.persistInstallStateFile();
+
     await this.configuration.triggerHook(hooks => {
       return hooks.afterAllInstalled;
     }, this, opts);
@@ -1680,34 +1560,42 @@ export class Project {
   }
 
   async persistInstallStateFile() {
-    const {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, lockFileChecksum} = this;
-    const installState = {accessibleLocators, optionalBuilds, storedDescriptors, storedResolutions, storedPackages, lockFileChecksum};
+    const fields = [];
+    for (const category of Object.values(INSTALL_STATE_FIELDS))
+      fields.push(...category);
+
+    const installState = pick(this, fields) as InstallState;
     const serializedState = await gzip(v8.serialize(installState));
 
     const installStatePath = this.configuration.get(`installStatePath`);
 
     await xfs.mkdirPromise(ppath.dirname(installStatePath), {recursive: true});
-    await xfs.writeFilePromise(installStatePath, serializedState as Buffer);
+    await xfs.changeFilePromise(installStatePath, serializedState as Buffer);
   }
 
-  async restoreInstallState() {
+  async restoreInstallState({restoreInstallersCustomData = true, restoreResolutions = true}: RestoreInstallStateOpts = {}) {
     const installStatePath = this.configuration.get(`installStatePath`);
     if (!xfs.existsSync(installStatePath)) {
-      await this.applyLightResolution();
+      if (restoreResolutions)
+        await this.applyLightResolution();
       return;
     }
 
     const serializedState = await xfs.readFilePromise(installStatePath);
-    const installState = v8.deserialize(await gunzip(serializedState) as Buffer);
+    const installState: InstallState = v8.deserialize(await gunzip(serializedState) as Buffer);
 
-    if (installState.lockFileChecksum !== this.lockFileChecksum) {
-      await this.applyLightResolution();
-      return;
+    if (restoreInstallersCustomData)
+      if (typeof installState.installersCustomData !== `undefined`)
+        this.installersCustomData = installState.installersCustomData;
+
+    if (restoreResolutions) {
+      if (installState.lockFileChecksum === this.lockFileChecksum) {
+        Object.assign(this, pick(installState, INSTALL_STATE_FIELDS.restoreResolutions));
+        this.refreshWorkspaceDependencies();
+      } else {
+        await this.applyLightResolution();
+      }
     }
-
-    Object.assign(this, installState);
-
-    this.refreshWorkspaceDependencies();
   }
 
   async applyLightResolution() {
@@ -1721,7 +1609,6 @@ export class Project {
 
   async persist() {
     await this.persistLockfile();
-    await this.persistInstallStateFile();
 
     for (const workspace of this.workspacesByCwd.values()) {
       await workspace.persistManifest();

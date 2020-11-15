@@ -1,8 +1,8 @@
-import {Configuration, Locator, execUtils, structUtils} from '@yarnpkg/core';
-import {npath, xfs}                                     from '@yarnpkg/fslib';
-import querystring                                      from 'querystring';
-import semver                                           from 'semver';
-import urlLib                                           from 'url';
+import {Configuration, Locator, execUtils, structUtils, httpUtils} from '@yarnpkg/core';
+import {npath, xfs}                                                from '@yarnpkg/fslib';
+import querystring                                                 from 'querystring';
+import semver                                                      from 'semver';
+import urlLib                                                      from 'url';
 
 function makeGitEnvironment() {
   return {
@@ -170,12 +170,15 @@ export function normalizeLocator(locator: Locator) {
 }
 
 export async function lsRemote(repo: string, configuration: Configuration) {
-  if (!configuration.get(`enableNetwork`))
-    throw new Error(`Network access has been disabled by configuration (${repo})`);
+  const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
+
+  const networkSettings = httpUtils.getNetworkSettings(normalizedRepoUrl, {configuration});
+  if (!networkSettings.enableNetwork)
+    throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
 
   let res: {stdout: string};
   try {
-    res = await execUtils.execvp(`git`, [`ls-remote`, `--refs`, normalizeRepoUrl(repo, {git: true})], {
+    res = await execUtils.execvp(`git`, [`ls-remote`, `--refs`, normalizedRepoUrl], {
       cwd: configuration.startingCwd,
       env: makeGitEnvironment(),
       strict: true,
@@ -291,19 +294,20 @@ export async function resolveUrl(url: string, configuration: Configuration) {
 }
 
 export async function clone(url: string, configuration: Configuration) {
-  if (!configuration.get(`enableNetwork`))
-    throw new Error(`Network access has been disabled by configuration (${url})`);
-
   return await configuration.getLimit(`cloneConcurrency`)(async () => {
     const {repo, treeish: {protocol, request}} = splitRepoUrl(url);
     if (protocol !== `commit`)
       throw new Error(`Invalid treeish protocol when cloning`);
 
+    const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
+    if (httpUtils.getNetworkSettings(normalizedRepoUrl, {configuration}).enableNetwork === false)
+      throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
+
     const directory = await xfs.mktempPromise();
     const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};
 
     try {
-      await execUtils.execvp(`git`, [`clone`, `-c core.autocrlf=false`, normalizeRepoUrl(repo, {git: true}), npath.fromPortablePath(directory)], execOpts);
+      await execUtils.execvp(`git`, [`clone`, `-c core.autocrlf=false`, normalizedRepoUrl, npath.fromPortablePath(directory)], execOpts);
       await execUtils.execvp(`git`, [`checkout`, `${request}`], execOpts);
     } catch (error) {
       error.message = `Repository clone failed: ${error.message}`;

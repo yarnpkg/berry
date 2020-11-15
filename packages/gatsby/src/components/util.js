@@ -9,7 +9,7 @@ import xss                                from 'xss';
 
 import IcoTag                             from '../images/search/ico-tag.svg';
 
-export const isEmpty = item => typeof item === 'undefined' || item.length < 1;
+export const isEmpty = item => typeof item === `undefined` || item.length < 1;
 
 export const encode = val => encodeURIComponent(val);
 
@@ -17,13 +17,13 @@ export function getDownloadBucket(dl) {
   if (dl < 1000) {
     return null;
   } else if (dl < 5000) {
-    return 'hot-t1';
+    return `hot-t1`;
   } else if (dl < 25000) {
-    return 'hot-t2';
+    return `hot-t2`;
   } else if (dl < 1000000) {
-    return 'hot-t3';
+    return `hot-t3`;
   } else {
-    return 'hot-t4';
+    return `hot-t4`;
   }
 }
 
@@ -49,13 +49,13 @@ export const Keywords = ({name, keywords = [], maxKeywords = 4}) => {
         .slice(0, maxKeywords)
         .map(keyword => (
           <a
-            href={`${withPrefix('/')}?q=${' '}&keywords%5B0%5D=${keyword}`}
+            href={`${withPrefix(`/`)}?q=${` `}&keywords%5B0%5D=${keyword}`}
             key={`${name}-${keyword}`}
           >
             {keyword}
           </a>
         ))
-        .reduce((prev, curr) => [prev, ', ', curr])}
+        .reduce((prev, curr) => [prev, `, `, curr])}
     </HitKeywords>
   );
 };
@@ -74,16 +74,16 @@ export function formatKeywords(
     .sort((k1, k2) => {
       // sort keywords by match level
       if (k1.matchLevel !== k2.matchLevel) {
-        if (k1.matchLevel === 'full') return -1;
-        if (k2.matchLevel === 'full') return 1;
-        return k1.matchLevel === 'partial' ? -1 : 1;
+        if (k1.matchLevel === `full`) return -1;
+        if (k2.matchLevel === `full`) return 1;
+        return k1.matchLevel === `partial` ? -1 : 1;
       }
       if (k1.matchedWords.length !== k2.matchedWords.length)
         return k2.matchedWords.length - k1.matchedWords.length;
 
-      if (k1.matchedWords.join('').length !== k2.matchedWords.join('').length) {
+      if (k1.matchedWords.join(``).length !== k2.matchedWords.join(``).length) {
         return (
-          k2.matchedWords.join('').length - k1.matchedWords.join('').length
+          k2.matchedWords.join(``).length - k1.matchedWords.join(``).length
         );
       }
       return 0;
@@ -119,7 +119,7 @@ export function formatKeywords(
         );
       }
     )
-    .reduce((prev, curr) => [prev, ', ', curr]);
+    .reduce((prev, curr) => [prev, `, `, curr]);
 }
 
 function parseHighlightedAttribute({
@@ -130,7 +130,7 @@ function parseHighlightedAttribute({
   const splitByPreTag = highlightedValue.split(preTag);
   const firstValue = splitByPreTag.shift();
   const elements =
-    firstValue === '' ? [] : [{value: firstValue, isHighlighted: false}];
+    firstValue === `` ? [] : [{value: firstValue, isHighlighted: false}];
 
   if (postTag === preTag) {
     let isHighlighted = true;
@@ -146,7 +146,7 @@ function parseHighlightedAttribute({
         isHighlighted: true,
       });
 
-      if (splitByPostTag[1] !== '') {
+      if (splitByPostTag[1] !== ``) {
         elements.push({
           value: splitByPostTag[1],
           isHighlighted: false,
@@ -163,16 +163,16 @@ export const packageJSONLink = packageName => ({
 });
 
 export const packageLink = (name, prefix = true) =>
-  `${prefix ? withPrefix('/package/') : '/package/'}${name}`;
+  `${prefix ? withPrefix(`/package/`) : `/package/`}${name}`;
 
 export const prefixURL = (url, {base, user, project, head, path}) => {
-  if (url.indexOf('//') > 0) {
+  if (url.indexOf(`//`) > 0) {
     return url;
   } else {
     return new URL(
-      (path ? `${path.replace(/^\//, '')}/` : '') +
-        url.replace(/^(\.?\/?)/, ''),
-      `${base}/${user}/${project}/${path ? '' : `${head}/`}`
+      (path ? `${path.replace(/^\//, ``)}/` : ``) +
+        url.replace(/^(\.?\/?)/, ``),
+      `${base}/${user}/${project}/${path ? `` : `${head}/`}`
     );
   }
 };
@@ -198,7 +198,7 @@ export const get = ({url, type, headers, ...rest}) =>
     .catch(err => {
       // in case it's a useless response by GitHub, tell the caller to retry
       if (err.status === 202 || err.status === 204) {
-        throw new Error('retry');
+        throw new Error(`retry`);
       } else {
         console.warn(err);
       }
@@ -210,7 +210,7 @@ export const HighlightedMarkdown = connectHighlight(
       {highlight({
         attribute,
         hit,
-        highlightProperty: '_highlightResult',
+        highlightProperty: `_highlightResult`,
       }).map(
         (v, i) =>
           v.isHighlighted ? (
@@ -235,14 +235,14 @@ inlineRenderer.paragraph = function(text) {
 };
 
 export const safeMarkdown = input => ({
-  __html: xss(marked(unescape(input), {renderer: inlineRenderer})) || ' ',
+  __html: xss(marked(unescape(input), {renderer: inlineRenderer})) || ` `,
 });
 
 // Contains the repositories that we know how to handle
 const knownRepositoryHosts = new Set([
-  'github.com',
-  'gitlab.com',
-  'bitbucket.org',
+  `github.com`,
+  `gitlab.com`,
+  `bitbucket.org`,
 ]);
 
 export const isKnownRepositoryHost = host => knownRepositoryHosts.has(host);

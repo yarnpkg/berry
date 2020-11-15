@@ -1,4 +1,4 @@
-import {xfs, ppath} from '@yarnpkg/fslib';
+import {Filename, xfs, ppath} from '@yarnpkg/fslib';
 
 const {
   fs: {writeJson},
@@ -16,6 +16,40 @@ describe(`Commands`, () => {
         const {stdout} = await run(`install`, `--inline-builds`);
 
         await expect(stdout).toMatchSnapshot();
+      }),
+    );
+
+    test(
+      `it should skip build scripts when using --skip-builds`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps-scripted`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        const {stdout} = await run(`install`, `--inline-builds`, `--skip-builds`);
+
+        await expect(stdout).toMatchSnapshot();
+      }),
+    );
+
+    test(
+      `it shouldn't impact how artifacts are generated when using --skip-builds`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps-scripted`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        const pnpPath = ppath.join(path, Filename.pnpJs);
+
+        await run(`install`);
+        const pnpFileWithBuilds = await xfs.readFilePromise(pnpPath);
+
+        await xfs.removePromise(pnpPath);
+
+        await run(`install`, `--skip-builds`);
+        const pnpFileWithoutBuilds = await xfs.readFilePromise(pnpPath);
+
+        expect(pnpFileWithBuilds).toEqual(pnpFileWithoutBuilds);
       }),
     );
 
