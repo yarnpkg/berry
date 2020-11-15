@@ -162,4 +162,10 @@ export const packageExtensions: Array<[string, any]> = [
       'react-dom': `>= 16.3.0`,
     },
   }],
+  // https://github.com/apollographql/apollo-server/pull/4682
+  [`apollo-upload-client@<14`, {
+    peerDependencies: {
+      graphql: `14 - 15`,
+    },
+  }],
 ];
