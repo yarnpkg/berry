@@ -109,7 +109,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         ? `^${descriptor.range}`
         : descriptor.range;
 
-      const [resolution, dependency] = await Promise.all([
+      const [resolution, latest] = await Promise.all([
         fetchUpdatedDescriptor(descriptor, descriptor.range, referenceRange).catch(() => null),
         fetchUpdatedDescriptor(descriptor, descriptor.range, `latest`).catch(() => null),
       ]);
@@ -126,10 +126,10 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         });
       }
 
-      if (dependency && dependency !== resolution && dependency !== descriptor.range) {
+      if (latest && latest !== resolution && latest !== descriptor.range) {
         suggestions.push({
-          value: dependency,
-          label: colorizeVersionDiff(descriptor.range, dependency),
+          value: latest,
+          label: colorizeVersionDiff(descriptor.range, latest),
         });
       }
 
@@ -176,7 +176,8 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
             </Text>
           </Box>
           <Box width={17}><Text bold underline color="gray">Current</Text></Box>
-          <Box width={17}><Text bold underline color="gray">Range/Latest</Text></Box>
+          <Box width={17}><Text bold underline color="gray">Range</Text></Box>
+          <Box width={17}><Text bold underline color="gray">Latest</Text></Box>
         </Box>
       );
     };
