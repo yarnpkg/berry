@@ -273,7 +273,7 @@ export class Project {
           const locator = structUtils.parseLocator(data.resolution, true);
 
           const manifest = new Manifest();
-          manifest.load(data);
+          manifest.load(data, {yamlCompatibilityMode: true});
 
           const version = manifest.version;
 

@@ -1395,7 +1395,7 @@ export class Configuration {
         throw new Error(`Only semver ranges are allowed as keys for the lockfileExtensions setting`);
 
       const extension = new Manifest();
-      extension.load(extensionData);
+      extension.load(extensionData, {yamlCompatibilityMode: true});
 
       const extensionsPerIdent = miscUtils.getArrayWithDefault(packageExtensions, descriptor.identHash);
 

@@ -177,7 +177,7 @@ export class Manifest {
     this.indent = getIndent(content);
   }
 
-  load(data: any) {
+  load(data: any, {yamlCompatibilityMode = false}: {yamlCompatibilityMode?: boolean} = {}) {
     if (typeof data !== `object` || data === null)
       throw new Error(`Utterly invalid manifest data (${data})`);
 
@@ -371,19 +371,19 @@ export class Manifest {
         const descriptor = structUtils.parseDescriptor(pattern);
         const dependencyMeta = this.ensureDependencyMeta(descriptor);
 
-        const built = miscUtils.tryParseOptionalBoolean(meta.built);
+        const built = tryParseOptionalBoolean(meta.built, {yamlCompatibilityMode});
         if (built === null) {
           errors.push(new Error(`Invalid built meta field for '${pattern}'`));
           continue;
         }
 
-        const optional = miscUtils.tryParseOptionalBoolean(meta.optional);
+        const optional = tryParseOptionalBoolean(meta.optional, {yamlCompatibilityMode});
         if (optional === null) {
           errors.push(new Error(`Invalid optional meta field for '${pattern}'`));
           continue;
         }
 
-        const unplugged = miscUtils.tryParseOptionalBoolean(meta.unplugged);
+        const unplugged = tryParseOptionalBoolean(meta.unplugged, {yamlCompatibilityMode});
         if (unplugged === null) {
           errors.push(new Error(`Invalid unplugged meta field for '${pattern}'`));
           continue;
@@ -403,7 +403,7 @@ export class Manifest {
         const descriptor = structUtils.parseDescriptor(pattern);
         const peerDependencyMeta = this.ensurePeerDependencyMeta(descriptor);
 
-        const optional = miscUtils.tryParseOptionalBoolean(meta.optional);
+        const optional = tryParseOptionalBoolean(meta.optional, {yamlCompatibilityMode});
         if (optional === null) {
           errors.push(new Error(`Invalid optional meta field for '${pattern}'`));
           continue;
@@ -900,4 +900,14 @@ function stripBOM(content: string) {
 
 function normalizeSlashes(str: string) {
   return str.replace(/\\/g, `/`) as PortablePath;
+}
+
+function tryParseOptionalBoolean(value: unknown, {yamlCompatibilityMode}: {yamlCompatibilityMode: boolean}) {
+  if (yamlCompatibilityMode)
+    return miscUtils.tryParseOptionalBoolean(value);
+
+  if (typeof value === `undefined` || typeof value === `boolean`)
+    return value;
+
+  return null;
 }
