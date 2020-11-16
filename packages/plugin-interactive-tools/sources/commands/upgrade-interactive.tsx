@@ -9,7 +9,7 @@ import {suggestUtils}                                                           
 import {Command, Usage}                                                                                                                 from 'clipanion';
 import {diffWords}                                                                                                                      from 'diff';
 import {Box, Text}                                                                                                                      from 'ink';
-import React, {useEffect, useState}                                                                                                     from 'react';
+import React, {useEffect, useRef, useState}                                                                                             from 'react';
 import semver                                                                                                                           from 'semver';
 
 const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
@@ -205,6 +205,13 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
 
     const UpgradeEntries = ({dependencies}: { dependencies: Array<Descriptor> }) => {
       const [suggestions, setSuggestions] = useState<Array<readonly [Descriptor, UpgradeSuggestions]>|null>(null);
+      const mountedRef = useRef<boolean>(true);
+
+      useEffect(() => {
+        return () => {
+          mountedRef.current = false;
+        };
+      });
 
       useEffect(() => {
         Promise.all(dependencies.map(descriptor => fetchSuggestions(descriptor)))
@@ -214,7 +221,9 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
               return [descriptor, suggestionsForDescriptor] as const;
             }).filter(([_, suggestions]) => suggestions.length > 1);
 
-            setSuggestions(mappedToSuggestions);
+            if (mountedRef.current) {
+              setSuggestions(mappedToSuggestions);
+            }
           });
       }, []);
 
