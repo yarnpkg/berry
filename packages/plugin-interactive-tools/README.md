@@ -10,4 +10,5 @@ yarn plugin import interactive-tools
 
 ## Commands
 
+- [`yarn search`](https://yarnpkg.com/cli/search)
 - [`yarn upgrade-interactive`](https://yarnpkg.com/cli/upgrade-interactive)
