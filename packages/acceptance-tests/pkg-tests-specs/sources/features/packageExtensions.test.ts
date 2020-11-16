@@ -134,7 +134,7 @@ describe(`Features`, () => {
           });
 
           await expect(run(`add`, `one-fixed-dep@1.0.0`)).resolves.toMatchObject({
-            stdout: expect.stringContaining(`one-fixed-dep ➤ dependencies ➤ no-deps: This rule seems redundous when applied on the original package; the extension may have been applied upstream.`),
+            stdout: expect.stringContaining(`one-fixed-dep ➤ dependencies ➤ no-deps: This rule seems redundant when applied on the original package; the extension may have been applied upstream.`),
           });
         },
       ),
@@ -158,7 +158,7 @@ describe(`Features`, () => {
           });
 
           await expect(run(`add`, `optional-peer-deps`)).resolves.toMatchObject({
-            stdout: expect.stringContaining(`optional-peer-deps ➤ peerDependenciesMeta ➤ no-deps ➤ optional: This rule seems redundous when applied on the original package; the extension may have been applied upstream.`),
+            stdout: expect.stringContaining(`optional-peer-deps ➤ peerDependenciesMeta ➤ no-deps ➤ optional: This rule seems redundant when applied on the original package; the extension may have been applied upstream.`),
           });
         },
       ),
