@@ -1365,7 +1365,7 @@ export class Project {
                 } break;
 
                 case PackageExtensionStatus.Redundant: {
-                  opts.report.reportWarning(MessageName.UNNEEDED_PACKAGE_EXTENSION, `${prettyPackageExtension}: This rule seems redundant when applied on the original package; the extension may have been applied upstream.`);
+                  opts.report.reportWarning(MessageName.REDUNDANT_PACKAGE_EXTENSION, `${prettyPackageExtension}: This rule seems redundant when applied on the original package; the extension may have been applied upstream.`);
                 } break;
               }
             }

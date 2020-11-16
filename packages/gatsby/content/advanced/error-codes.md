@@ -316,6 +316,6 @@ A package is marked as deprecated by the publisher. Avoid using it, use the alte
 
 A packageExtension is detected by Yarn as being unused, which means that the selector doesn't match any of the installed packages.
 
-## YN0069 - `UNNEEDED_PACKAGE_EXTENSION`
+## YN0069 - `REDUNDANT_PACKAGE_EXTENSION`
 
 A packageExtension is detected by Yarn as being unneeded, which means that the selected packages have the same behavior with and without the extension.

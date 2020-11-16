@@ -71,7 +71,7 @@ export enum MessageName {
   PATCH_HUNK_FAILED = 66,
   INVALID_CONFIGURATION_VALUE = 67,
   UNUSED_PACKAGE_EXTENSION = 68,
-  UNNEEDED_PACKAGE_EXTENSION = 69,
+  REDUNDANT_PACKAGE_EXTENSION = 69,
 }
 
 export function stringifyMessageName(name: MessageName | number): string {
