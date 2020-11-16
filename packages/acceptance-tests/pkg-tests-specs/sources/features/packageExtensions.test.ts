@@ -112,7 +112,7 @@ describe(`Features`, () => {
           });
 
           await expect(run(`install`)).resolves.toMatchObject({
-            stdout: expect.stringContaining(`Unused package extension: various-requires > no-deps`),
+            stdout: expect.stringContaining(`various-requires ➤ dependencies ➤ no-deps: No matching package in the dependency tree; you may not need this rule anymore.`),
           });
         },
       ),
@@ -134,7 +134,7 @@ describe(`Features`, () => {
           });
 
           await expect(run(`add`, `one-fixed-dep@1.0.0`)).resolves.toMatchObject({
-            stdout: expect.stringContaining(`Unneeded package extension: one-fixed-dep > no-deps`),
+            stdout: expect.stringContaining(`one-fixed-dep ➤ dependencies ➤ no-deps: This rule seems redundous when applied on the original package; the extension may have been applied upstream.`),
           });
         },
       ),
@@ -158,7 +158,7 @@ describe(`Features`, () => {
           });
 
           await expect(run(`add`, `optional-peer-deps`)).resolves.toMatchObject({
-            stdout: expect.stringContaining(`Unneeded package extension: optional-peer-deps >> no-deps / optional`),
+            stdout: expect.stringContaining(`optional-peer-deps ➤ peerDependenciesMeta ➤ no-deps ➤ optional: This rule seems redundous when applied on the original package; the extension may have been applied upstream.`),
           });
         },
       ),
